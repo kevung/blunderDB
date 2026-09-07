@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "下書きは削除されます。マッチ #{id} はライブラリに残り、確定します。閉じますか？",
         "savedMatch": "マッチ #{id} を保存しました。",
         "replacedMatch": "マッチ #{id} を置き換えました。",
+        "resumeAnalysis": "解析が中断されました：直前に記譜したマッチの {n} 局面が未解析です。",
+        "resumeAnalysisFinish": "完了する",
         "saveFailed": "保存に失敗しました：{error}",
         "exported": "マッチを .mat に書き出しました。",
         "exportFailed": "書き出しに失敗しました：{error}",

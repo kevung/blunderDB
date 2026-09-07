@@ -63,6 +63,7 @@ const (
 	// in the desktop session, not a saved Match — `export --type mat` and
 	// /v1/matches.exportMat render the other object, so neither covers this.
 	whyTranscriptionMAT = whyTranscription
+	whyResumeOffer      = "the offer the desktop makes when a library is opened: a transcribed match whose targeted batch was cut short (ADR-0045 §8). Nothing is stored for it, so the fact exists only at the moment someone opens the library, which is a question only an interactive session asks. The other two modes have the DEED without the offer — `analyze --match` finishes exactly that batch — and the daemon exposes nothing of a transcription (ADR-0045 §9, ADR-0039)"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
@@ -214,6 +215,7 @@ var databaseParity = map[string]parityEntry{
 	"SaveTranscriptionAsMatch":          {Why: whyTranscription},
 	"ExportTranscriptionMAT":            {Why: whyTranscription},
 	"SuggestTranscriptionMatFilename":   {Why: whyTranscription},
+	"PendingTranscriptionAnalysis":      {Why: whyResumeOffer},
 	"GradeQuizChecker":                  {Server: "/v1/quiz.gradeChecker", Why: whyQuiz},
 	"GradeQuizCheckerMove":              {Server: "/v1/quiz.gradeCheckerMove", Why: whyQuiz},
 	"GradeQuizCube":                     {Server: "/v1/quiz.gradeCube", Why: whyQuiz},

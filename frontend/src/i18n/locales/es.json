@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "El borrador se eliminará; el partido n.º {id} permanece en la biblioteca, definitivo. ¿Cerrar?",
         "savedMatch": "Partido n.º {id} guardado.",
         "replacedMatch": "Partido n.º {id} reemplazado.",
+        "resumeAnalysis": "Análisis interrumpido: quedan {n} posición(es) por analizar del último partido transcrito.",
+        "resumeAnalysisFinish": "Terminar",
         "saveFailed": "Error al guardar: {error}",
         "exported": "Partido exportado a .mat.",
         "exportFailed": "Error al exportar: {error}",

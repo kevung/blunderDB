@@ -1136,6 +1136,12 @@ depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il
 été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un
 match déjà enregistré reste dans la bibliothèque, définitif.
 
+Si l'analyse d'un match transcrit a été interrompue — l'application fermée
+pendant le lot —, la barre d'état le signale à la prochaine ouverture de la base
+et propose de la terminer. Rien n'est retenu de cette interruption : la
+proposition revient tant qu'il reste des positions à analyser, et le lot relancé
+ne porte que sur ce match, jamais sur toute la bibliothèque.
+
 Un brouillon qui porte des incohérences est enregistré tout de même, après un
 avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
 joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et

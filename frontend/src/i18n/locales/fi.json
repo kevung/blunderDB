@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "Luonnos poistetaan; ottelu #{id} jää kirjastoon lopullisena. Suljetaanko?",
         "savedMatch": "Ottelu #{id} tallennettu.",
         "replacedMatch": "Ottelu #{id} korvattu.",
+        "resumeAnalysis": "Analyysi keskeytyi: viimeksi litteroidusta ottelusta on vielä {n} asemaa analysoitavana.",
+        "resumeAnalysisFinish": "Viimeistele",
         "saveFailed": "Tallennus epäonnistui: {error}",
         "exported": "Ottelu viety .mat-tiedostoon.",
         "exportFailed": "Vienti epäonnistui: {error}",

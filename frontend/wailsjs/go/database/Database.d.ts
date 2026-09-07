@@ -321,6 +321,8 @@ export function OpenTranscription(arg1:number):Promise<database.TranscriptionSta
 
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
+export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
+
 export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
 
 export function RankPositionsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<storage.SimilarPosition>>;

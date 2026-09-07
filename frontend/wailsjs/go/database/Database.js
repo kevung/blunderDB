@@ -618,6 +618,10 @@ export function ParsePositionText(arg1) {
   return window['go']['database']['Database']['ParsePositionText'](arg1);
 }
 
+export function PendingTranscriptionAnalysis() {
+  return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
+}
+
 export function RankPositionIDsByFilters(arg1, arg2) {
   return window['go']['database']['Database']['RankPositionIDsByFilters'](arg1, arg2);
 }
