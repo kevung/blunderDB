@@ -59,6 +59,10 @@ const (
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
 	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture, and its draft never leaves the library it names two players of: the daemon exposes nothing of it (ADR-0045 rule 9, ADR-0039) and the CLI's `transcribe` is lot 3 of tasks/transcription (T3.x), which reads a .mat rather than typing one"
+	// whyTranscriptionMAT: the panel's ".mat text" pane renders a DRAFT held
+	// in the desktop session, not a saved Match — `export --type mat` and
+	// /v1/matches.exportMat render the other object, so neither covers this.
+	whyTranscriptionMAT = whyTranscription
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
@@ -205,6 +209,7 @@ var databaseParity = map[string]parityEntry{
 	"OpenTranscription":                 {Why: whyTranscription},
 	"CloseTranscription":                {Why: whyTranscription},
 	"ApplyTranscriptionGesture":         {Why: whyTranscription},
+	"TranscriptionMAT":                  {Why: whyTranscriptionMAT},
 	"GradeQuizChecker":                  {Server: "/v1/quiz.gradeChecker", Why: whyQuiz},
 	"GradeQuizCheckerMove":              {Server: "/v1/quiz.gradeCheckerMove", Why: whyQuiz},
 	"GradeQuizCube":                     {Server: "/v1/quiz.gradeCube", Why: whyQuiz},

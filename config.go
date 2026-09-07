@@ -200,12 +200,12 @@ type Config struct {
 	// phase — ten checker-pips is nothing in a race and another position in
 	// the opening — and nobody has measured it. A number invented here would
 	// have been read as a measurement (ADR-0043 rule 4).
-	LikeLimit       int `json:"like_limit,omitempty"`
-	LikeMaxDistance int `json:"like_max_distance,omitempty"`
-	PanelPosition    string               `json:"panel_position,omitempty"`
-	PanelHeight      int                  `json:"panel_height,omitempty"`
-	PanelWidth       int                  `json:"panel_width,omitempty"`
-	TourSeen         bool                 `json:"tour_seen,omitempty"`
+	LikeLimit       int    `json:"like_limit,omitempty"`
+	LikeMaxDistance int    `json:"like_max_distance,omitempty"`
+	PanelPosition   string `json:"panel_position,omitempty"`
+	PanelHeight     int    `json:"panel_height,omitempty"`
+	PanelWidth      int    `json:"panel_width,omitempty"`
+	TourSeen        bool   `json:"tour_seen,omitempty"`
 	// TabOrder is the tabbed panel's tab ids (TabbedPanel.svelte's `tabs`
 	// array), in the order the user last dragged them to. Empty means "use
 	// the built-in order" — the frontend owns the canonical id list and

@@ -97,6 +97,7 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO command_history (tenant_id, command) VALUES ($1, 'cmd')`, tenantID)
 	exec(`INSERT INTO search_history (tenant_id, command, position, timestamp) VALUES ($1, 'cmd', 'pos', 0)`, tenantID)
 	exec(`INSERT INTO session_state (tenant_id, key, value) VALUES ($1, 'seed', 'v')`, tenantID)
+	exec(`INSERT INTO library_settings (tenant_id, key, value) VALUES ($1, 'seed', 'v')`, tenantID)
 
 	tournamentID := scalar(`INSERT INTO tournament (tenant_id, name) VALUES ($1, 't') RETURNING id`, tenantID)
 	matchID := scalar(`INSERT INTO match (tenant_id, player1_name, tournament_id) VALUES ($1, 'p1', $2) RETURNING id`, tenantID, tournamentID)
@@ -107,6 +108,9 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 
 	collectionID := scalar(`INSERT INTO collection (tenant_id, name) VALUES ($1, 'coll') RETURNING id`, tenantID)
 	exec(`INSERT INTO collection_position (tenant_id, collection_id, position_id) VALUES ($1, $2, $3)`, tenantID, collectionID, positionID)
+
+	sessionID := scalar(`INSERT INTO training_session (tenant_id, exercise) VALUES ($1, 'scores') RETURNING id`, tenantID)
+	exec(`INSERT INTO training_item (tenant_id, session_id, number_type) VALUES ($1, $2, 'tp4.last')`, tenantID, sessionID)
 
 	deckID := scalar(`INSERT INTO anki_deck (tenant_id, name) VALUES ($1, 'deck') RETURNING id`, tenantID)
 	cardID := scalar(`INSERT INTO anki_card (tenant_id, deck_id, position_id) VALUES ($1, $2, $3) RETURNING id`, tenantID, deckID, positionID)

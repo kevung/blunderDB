@@ -155,3 +155,28 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   two rows live in the file's own `metadata` table. Creates no row — a tenant
   that set no threshold reads the defaults, which are the constants every
   consumer used before.
+- `020_product_wave_2_20_0.sql` — the 2.20.0 wave: `position.max_cube` (#271),
+  the session's cube ceiling as the XGID's log2 exponent, and
+  `position.game_type` (#291), the derived plan of play. Neither joins the
+  Zobrist hash (ADR-0028's conclusion, again) and `game_type` is 0 on every
+  existing row until a repair pass reclassifies it — a derived label is
+  recomputed, never backfilled by SQL. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.20.0.
+- `023_training_journal.sql` — `training_session` and `training_item`, the
+  Training journal (#320, ADR-0040): two tables rather than a `metadata` key,
+  because the per-number detail is the whole point of the journal and a blob
+  that grows by one entry per revealed number is a register a table settles.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.22.0.
+- `024_anki_score_cards.sql` — `kind` and `key` on `anki_card` and
+  `anki_review_log`, `position_id` becomes nullable on both, the
+  `(deck_id, position_id)` uniqueness becomes `idx_anki_card_identity
+  (deck_id, kind, key)` (#324, ADR-0042): a card asks about a position OR
+  about a score, and a score card points at no position. Every existing card
+  is backfilled to `position` with its id as key. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.23.0.
+- `025_set_null_names_its_column.sql` — `match.import_batch_id` (019) and
+  `transcription.match_id` (021) get the `SET NULL (column)` list that `001`
+  and `017` already use. Without it a composite `ON DELETE SET NULL` nulls
+  `tenant_id` too and the delete fails on its NOT NULL instead of unlinking
+  the child. Constraint-only, like `006`/`008`/`010`/`017`: no
+  `DatabaseVersion` bump.

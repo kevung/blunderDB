@@ -154,94 +154,8 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// never read across tenants.
 	s.appendClosedListClauses(scope, f, &where, &args)
 
-	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
-		var allMatchIDs []int64
-		if f.MatchIDsFilter != "" {
-			if ids, err := searchfilter.ParseFilterIDList(f.MatchIDsFilter); err == nil {
-				allMatchIDs = append(allMatchIDs, ids...)
-			}
-		}
-		if f.TournamentIDsFilter != "" {
-			if tIDs, err := searchfilter.ParseFilterIDList(f.TournamentIDsFilter); err == nil {
-				for _, tID := range tIDs {
-					// A query failure here (a locked database, a dropped
-					// connection) must not silently narrow the tournament
-					// filter to "no matches" — that reads as "this
-					// tournament has no positions", not as the outage it
-					// is (B.6, #174).
-					matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID)
-					if err != nil {
-						return searchWhereClause{}, err
-					}
-					allMatchIDs = append(allMatchIDs, matchIDs...)
-				}
-			}
-		}
-		if len(allMatchIDs) > 0 {
-			placeholders := strings.Repeat("?,", len(allMatchIDs))
-			placeholders = placeholders[:len(placeholders)-1]
-			where.WriteString(
-				" AND p.id IN (SELECT m.position_id FROM move m" +
-					" WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (" + placeholders + ")))")
-			for _, id := range allMatchIDs {
-				args = append(args, id)
-			}
-		} else {
-			where.WriteString(" AND 0=1")
-		}
-	}
-
-	// Player filter: keep positions that occur in any match where the named
-	// player sat at either seat. A case-insensitive LIKE with no wildcards
-	// (Dialect.ILike: SQLite's LIKE is already case-insensitive for ASCII,
-	// PostgreSQL needs ILIKE) gives exact matching for ASCII names, mirroring
-	// the match-id subquery shape.
-	// The frontend sends the token whole (`pl"Name"`); the CLI and the server
-	// send a bare name. searchfilter.PlayerName accepts both.
-	if playerName := searchfilter.PlayerName(f.PlayerFilter); playerName != "" {
-		like := s.DB.ILike()
-		where.WriteString(
-			" AND p.id IN (SELECT mv.position_id FROM move mv" +
-				" JOIN game g ON mv.game_id = g.id" +
-				" JOIN match mt ON g.match_id = mt.id" +
-				" WHERE mt.player1_name " + like + " ? OR mt.player2_name " + like + " ?)")
-		args = append(args, playerName, playerName)
-	}
-
-	if f.RestrictToPositionIDs != "" {
-		var ids []int64
-		for _, idStr := range strings.Split(f.RestrictToPositionIDs, ",") {
-			if id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64); err == nil {
-				ids = append(ids, id)
-			}
-		}
-		if len(ids) > 0 {
-			placeholders := strings.Repeat("?,", len(ids))
-			placeholders = placeholders[:len(placeholders)-1]
-			where.WriteString(" AND p.id IN (" + placeholders + ")")
-			for _, id := range ids {
-				args = append(args, id)
-			}
-		} else {
-			where.WriteString(" AND 0=1")
-		}
-	}
-
-	// User-facing position-id filter (command-line token `id`). Uses the same
-	// list/range semantics as the match/tournament filters (e.g. "2,7" is the
-	// range 2..7; ";"-joined values are an explicit list).
-	if f.PositionIDsFilter != "" {
-		ids, err := searchfilter.ParseFilterIDList(f.PositionIDsFilter)
-		if err == nil && len(ids) > 0 {
-			placeholders := strings.Repeat("?,", len(ids))
-			placeholders = placeholders[:len(placeholders)-1]
-			where.WriteString(" AND p.id IN (" + placeholders + ")")
-			for _, id := range ids {
-				args = append(args, id)
-			}
-		} else {
-			where.WriteString(" AND 0=1")
-		}
+	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
+		return searchWhereClause{}, err
 	}
 
 	// A ranked query narrows to the target's equivalence class BEFORE anything
@@ -976,6 +890,110 @@ func boolToInt(p *bool) int {
 		return 1
 	}
 	return 0
+}
+
+// appendIdentityClauses narrows the search to positions NAMED by something
+// outside the board: the matches or tournaments they were met in, the player
+// who sat at one of the seats, an explicit list of position ids. They are one
+// family — each turns a closed list of ids into a `p.id IN (…)` clause, and an
+// empty list means "nothing matches" rather than "no narrowing", which is why
+// each writes `0=1` instead of falling through.
+//
+// Provenance stays in SQL even in mirror search, like the row properties
+// buildWhere writes just before calling this: mirroring a board cannot change
+// which match a position was met in.
+func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) error {
+	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
+		var allMatchIDs []int64
+		if f.MatchIDsFilter != "" {
+			if ids, err := searchfilter.ParseFilterIDList(f.MatchIDsFilter); err == nil {
+				allMatchIDs = append(allMatchIDs, ids...)
+			}
+		}
+		if f.TournamentIDsFilter != "" {
+			if tIDs, err := searchfilter.ParseFilterIDList(f.TournamentIDsFilter); err == nil {
+				for _, tID := range tIDs {
+					// A query failure here (a locked database, a dropped
+					// connection) must not silently narrow the tournament
+					// filter to "no matches" — that reads as "this
+					// tournament has no positions", not as the outage it
+					// is (B.6, #174).
+					matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID)
+					if err != nil {
+						return err
+					}
+					allMatchIDs = append(allMatchIDs, matchIDs...)
+				}
+			}
+		}
+		if len(allMatchIDs) > 0 {
+			placeholders := strings.Repeat("?,", len(allMatchIDs))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(
+				" AND p.id IN (SELECT m.position_id FROM move m" +
+					" WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (" + placeholders + ")))")
+			for _, id := range allMatchIDs {
+				*args = append(*args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1")
+		}
+	}
+
+	// Player filter: keep positions that occur in any match where the named
+	// player sat at either seat. A case-insensitive LIKE with no wildcards
+	// (Dialect.ILike: SQLite's LIKE is already case-insensitive for ASCII,
+	// PostgreSQL needs ILIKE) gives exact matching for ASCII names, mirroring
+	// the match-id subquery shape.
+	// The frontend sends the token whole (`pl"Name"`); the CLI and the server
+	// send a bare name. searchfilter.PlayerName accepts both.
+	if playerName := searchfilter.PlayerName(f.PlayerFilter); playerName != "" {
+		like := s.DB.ILike()
+		where.WriteString(
+			" AND p.id IN (SELECT mv.position_id FROM move mv" +
+				" JOIN game g ON mv.game_id = g.id" +
+				" JOIN match mt ON g.match_id = mt.id" +
+				" WHERE mt.player1_name " + like + " ? OR mt.player2_name " + like + " ?)")
+		*args = append(*args, playerName, playerName)
+	}
+
+	if f.RestrictToPositionIDs != "" {
+		var ids []int64
+		for _, idStr := range strings.Split(f.RestrictToPositionIDs, ",") {
+			if id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64); err == nil {
+				ids = append(ids, id)
+			}
+		}
+		if len(ids) > 0 {
+			placeholders := strings.Repeat("?,", len(ids))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(" AND p.id IN (" + placeholders + ")")
+			for _, id := range ids {
+				*args = append(*args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1")
+		}
+	}
+
+	// User-facing position-id filter (command-line token `id`). Uses the same
+	// list/range semantics as the match/tournament filters (e.g. "2,7" is the
+	// range 2..7; ";"-joined values are an explicit list).
+	if f.PositionIDsFilter != "" {
+		ids, err := searchfilter.ParseFilterIDList(f.PositionIDsFilter)
+		if err == nil && len(ids) > 0 {
+			placeholders := strings.Repeat("?,", len(ids))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(" AND p.id IN (" + placeholders + ")")
+			for _, id := range ids {
+				*args = append(*args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1")
+		}
+	}
+
+	return nil
 }
 
 // appendClosedListClauses adds the filters whose value comes from a short
