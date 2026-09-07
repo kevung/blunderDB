@@ -319,34 +319,9 @@ dans le transcript, jamais corrigées d'office, et le curseur se place sur la
 première d'entre elles après chaque geste. La pile d'annulation vit en mémoire :
 elle est perdue à la fermeture du brouillon.
 
-Une partie se termine par une passe, par une résignation ou par la sortie du
-quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du
-videau). Le score, la partie Crawford et la fin du match sont alors affichés
-au-dessus des dés, et l'ouverture de la partie suivante est attendue.
-
-Le transcript occupe la moitié droite du panneau : une colonne par joueur, une
-ligne par tour, l'action de videau et la fin de partie dans la colonne de celui
-qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le
-plateau à la position de l'action visée et affiche ses candidats, le coup joué
-sélectionné. Une incohérence (coup illégal, double trait, videau impossible,
-action au-delà de la fin du match, dés incohérents) décore sa cellule et se
-nomme dans une info-bulle. Les parties se replient ; celle du curseur est
-ouverte. Un volet dépliable montre le texte ``.mat`` exact du brouillon, avec un
-bouton pour le copier.
-
-La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit
-le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le
-même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt,
-avec sa progression et son annulation dans la barre d'état. La barre du
-brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié
-depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a
-été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un
-match déjà enregistré reste dans la bibliothèque, définitif.
-
-Un brouillon qui porte des incohérences est enregistré tout de même, après un
-avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
-joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
-divergeront ensuite.
+Le panneau lui-même — la liste des brouillons, la création, la saisie, le
+transcript et la barre du brouillon — est décrit dans
+:ref:`panneau_transcription`.
 
 .. _raccourcis_help_panel:
 
