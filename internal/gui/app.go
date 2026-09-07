@@ -71,6 +71,13 @@ type App struct {
 	// reason.
 	gnBatchMu     sync.Mutex
 	gnBatchCancel context.CancelFunc
+	// gnBatchDone is closed when the batch goroutine gnBatchCancel belongs
+	// to has actually stopped — nil when none is running. Cancelling is not
+	// the same as having stopped: a goroutine already mid-position finishes
+	// its search and its result is still written (analyzeIDsWithGammonNet
+	// drains what is in flight on purpose), so shutdown, which closes the
+	// database next, has to wait for this rather than merely ask.
+	gnBatchDone chan struct{}
 
 	// startupFilePath is the database file the OS handed this process on the
 	// command line — a .desktop's Exec=blunderDB %f, a Windows/macOS file

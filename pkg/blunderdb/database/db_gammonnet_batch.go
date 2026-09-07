@@ -404,3 +404,70 @@ func evaluateOnePositionWithGammonNet(pos *Position, id int64, searcher *gammonn
 
 	return &analysis, nil
 }
+
+// positionIDsWithoutAnalysisForMatch is positionIDsWithoutAnalysis narrowed
+// to the positions one match actually walks through — the same "no analysis
+// row at all" predicate, reached through the move -> game -> match chain a
+// Position is never linked to a Match by any other way (a Position row knows
+// nothing of the match it came from; the `move` row is the link).
+//
+// DISTINCT is load-bearing, not decoration: positions are deduplicated by
+// Zobrist hash across the whole library, so one Position can be reached by
+// several moves of the same match (a repeated position in two games, a
+// double and its take standing on the same board). Without it the same id
+// would be handed to the batch several times and analysed several times
+// over.
+//
+// A Position shared with ANOTHER match is analysed here all the same: it is
+// one of this match's positions and it has no analysis, which is the whole
+// predicate. Nothing else changes for the other match — the gap rule
+// (ADR-0013) means the write it gets is the write it would have got from a
+// full sweep.
+func (d *Database) positionIDsWithoutAnalysisForMatch(matchID int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	return queryInt64s(d.db, `
+		SELECT DISTINCT p.id
+		  FROM position p
+		  JOIN move mv ON mv.position_id = p.id
+		  JOIN game g ON mv.game_id = g.id
+		 WHERE g.match_id = ?
+		   AND NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)
+		 ORDER BY p.id`, matchID)
+}
+
+// CountMatchPositionsToAnalyze is the per-match figure
+// CountPositionsWithoutAnalysis is for the library: how many of this match's
+// positions still have no analysis at all. ADR-0045 §8 asks for exactly this
+// and for nothing to be stored: a transcribed match whose analysis never
+// finished is not a flag in the schema, it is this count being nonzero, so
+// the panel can announce it on reopening and offer to finish the job.
+func (d *Database) CountMatchPositionsToAnalyze(matchID int64) (int, error) {
+	ids, err := d.positionIDsWithoutAnalysisForMatch(matchID)
+	if err != nil {
+		return 0, err
+	}
+	return len(ids), nil
+}
+
+// AnalyzeMatchWithGammonNet is AnalyzeMissingWithGammonNet scoped to one
+// match: same batch, same parallelism, same yield/progress/cancellation
+// contract, only the list of ids feeding it is narrowed (ADR-0045 §8). A
+// transcription saved and then corrected must not pay for a full-library
+// sweep at every save — and, ADR-0013 being what it is, the second save
+// analyses only what the correction actually changed, because everything
+// else already carries an analysis.
+//
+// Deliberately NOT a variant of AnalyzeMissingWithGammonNet taking an
+// optional match id: the two are called from different places for different
+// reasons (a library catch-up, a match that was just written), and one
+// signature carrying a "0 means everything" sentinel is how a scoped batch
+// silently becomes a full one.
+func (d *Database) AnalyzeMatchWithGammonNet(ctx context.Context, matchID int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	ids, err := d.positionIDsWithoutAnalysisForMatch(matchID)
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+	return d.analyzeIDsWithGammonNet(ctx, ids, ply, pruneK, candidates, jobs, yield, onProgress)
+}

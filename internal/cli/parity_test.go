@@ -61,6 +61,7 @@ const (
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
+	whyMatchScoped      = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8), which `serve` exposes nothing of (ADR-0045 §9, ADR-0039); a client of the daemon asks for the library sweep it already has"
 	whyCtxVariant       = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
 )
 
@@ -116,6 +117,7 @@ var databaseParity = map[string]parityEntry{
 	"AddPositionToCollection":           {Server: "/v1/collections.addPosition", Why: whyGUIEdit},
 	"AddPositionsToCollection":          {Server: "/v1/collections.addPositions", Why: whyGUIEdit},
 	"AnalyzeImportDatabase":             {Why: whyTwoPhase},
+	"AnalyzeMatchWithGammonNet":         {CLI: "analyze --match", Why: whyMatchScoped},
 	"AnalyzeMissingWithGammonNet":       {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"AnalyzeStaleGammonNet":             {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
 	"CancelImport":                      {Server: "/v1/imports.cancel", Why: "the CLI import is a foreground process: Ctrl-C is its cancel"},
@@ -137,6 +139,7 @@ var databaseParity = map[string]parityEntry{
 	"CopyPositionToCollection":          {Server: "/v1/collections.copyPosition", Why: whyGUIEdit},
 	"CountOrphans":                      {CLI: "verify", Why: "orphaned game/move/analysis rows are the aftermath of the desktop pool enforcing foreign keys on one connection in ten (issue #157); the daemon's SQLite backend has always opened through DSN() and PostgreSQL enforces its keys server-side, so a library never carried any — its integrity is the operator's database tooling"},
 	"CountPositionsWithoutAnalysis":     {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
+	"CountMatchPositionsToAnalyze":      {CLI: "analyze --match", Why: whyMatchScoped},
 	"CountPositionsWithStaleGammonNet":  {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
 	"CreateAnkiDeck":                    {Server: "/v1/anki.createDeck", Why: "a deck is created from the GUI's current collection or search; the CLI lists, inspects and syncs decks"},
 	"CreateCollection":                  {CLI: "collection create", Server: "/v1/collections.create"},
