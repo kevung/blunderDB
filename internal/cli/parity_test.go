@@ -64,6 +64,7 @@ const (
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
 	whyMatchScoped      = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8), which `serve` exposes nothing of (ADR-0045 §9, ADR-0039); a client of the daemon asks for the library sweep it already has"
 	whyCtxVariant       = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
+	whyDirection        = "a Direction is what a tournament DIRECTOR decided while running a tournament (ADR-0047): the daemon exposes nothing of it, on the same ground ADR-0039 closed the web front's perimeter to tournaments, and the CLI's `tournament` subcommand — verify, standings, page, export, list, deliberately non-interactive since Nicomaque ships its own TD console — is lot 4 of tasks/nicomaque (D4.5, #395). This accessor hands out the persistence the direction package runs on; it carries no capability of its own"
 	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): the questions are drawn, timed and revealed in the tab, and a session exists only because someone answered it. The CLI and the daemon gain nothing in v1 — a script has no session to run, an HTTP client nothing to record — and the two tables live in the library, so a journal written on the desktop travels with the file"
 )
 
@@ -205,6 +206,7 @@ var databaseParity = map[string]parityEntry{
 	"OpenTranscription":                 {Why: whyTranscription},
 	"CloseTranscription":                {Why: whyTranscription},
 	"ApplyTranscriptionGesture":         {Why: whyTranscription},
+	"TranscriptionMAT":                  {Why: whyTranscription},
 	"GradeQuizChecker":                  {Server: "/v1/quiz.gradeChecker", Why: whyQuiz},
 	"GradeQuizCheckerMove":              {Server: "/v1/quiz.gradeCheckerMove", Why: whyQuiz},
 	"GradeQuizCube":                     {Server: "/v1/quiz.gradeCube", Why: whyQuiz},
@@ -235,6 +237,15 @@ var databaseParity = map[string]parityEntry{
 	"LoadPositionsByFiltersCoreCtx":     {Why: whyCtxVariant},
 	"LoadSearchHistory":                 {Server: "/v1/searchHistory.list", Why: whyGUIState},
 	"LoadSessionState":                  {Server: "/v1/session.load", Why: whyGUIState},
+	"CreateDirection":                   {Why: whyDirection},
+	"DeleteDirection":                   {Why: whyDirection},
+	"DirectionStore":                    {Why: whyDirection},
+	"GetDirection":                      {Why: whyDirection},
+	"HasDirection":                      {Why: whyDirection},
+	"ListDirections":                    {Why: whyDirection},
+	"SetDirectionConfig":                {Why: whyDirection},
+	"SetDirectionOutputDir":             {Why: whyDirection},
+	"StartDirection":                    {Why: whyDirection},
 	"LoadTrainingNumberStats":           {Why: whyTrainingJournal},
 	"LoadTrainingSessions":              {Why: whyTrainingJournal},
 	"MergePlayers":                      {Server: "/v1/matches.mergePlayers", Why: whyGUIEdit},

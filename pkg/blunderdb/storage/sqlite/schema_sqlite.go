@@ -203,7 +203,12 @@ var schemaStatements = []string{
 		canonical_hash TEXT,
 		comment TEXT DEFAULT '',
 		tournament_sort_order INTEGER DEFAULT 0,
-		import_batch_id INTEGER REFERENCES import_batch(id) ON DELETE SET NULL
+		import_batch_id INTEGER REFERENCES import_batch(id) ON DELETE SET NULL,
+		-- The Slot this Match fills in its Tournament's Direction (ADR-0047): the
+		-- Nicomaque match id ("M12"), empty when the Match fills no Slot. A Match
+		-- fills at most one Slot and a Slot carries at most one Match, which the
+		-- unique index below enforces per tournament.
+		direction_match_id TEXT DEFAULT ''
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
 	`CREATE TABLE IF NOT EXISTS game (
@@ -365,6 +370,42 @@ var schemaStatements = []string{
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		comment TEXT DEFAULT ''
 	)`,
+	// The Direction of a Tournament (ADR-0047): everything the tournament
+	// director decided while running it. One row per directed Tournament, plus
+	// one row per event in direction_event.
+	//
+	// `config` holds the configuration only while the Direction is in
+	// preparation; the first launched match freezes it into the `created` event
+	// and the column stops being read. The derived state — standings, brackets,
+	// pairings, what to do next — is NEVER stored: it is replayed from the
+	// events at every open, which is what makes a power cut cost nothing.
+	`CREATE TABLE IF NOT EXISTS direction (
+		tournament_id INTEGER PRIMARY KEY REFERENCES tournament(id) ON DELETE CASCADE,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		format_version INTEGER NOT NULL DEFAULT 1,
+		engine_version TEXT NOT NULL DEFAULT '',
+		state TEXT NOT NULL DEFAULT 'draft',
+		config TEXT NOT NULL DEFAULT '',
+		output_dir TEXT DEFAULT ''
+	)`,
+	// The events themselves: APPEND-ONLY. A wrong result is corrected by a later
+	// correction event, a match launched by mistake by a later cancellation —
+	// never by rewriting a row (ADR-0047). Nothing here is ever UPDATEd or
+	// DELETEd outside the cascade from a deleted Tournament.
+	`CREATE TABLE IF NOT EXISTS direction_event (
+		tournament_id INTEGER NOT NULL REFERENCES tournament(id) ON DELETE CASCADE,
+		seq INTEGER NOT NULL,
+		kind TEXT NOT NULL,
+		time DATETIME NOT NULL,
+		payload TEXT NOT NULL,
+		PRIMARY KEY (tournament_id, seq)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_direction_event_tournament ON direction_event(tournament_id, seq)`,
+	// A Slot carries at most one Match: the pair (tournament, slot) is unique
+	// wherever a slot is actually named. The partial index leaves the empty
+	// string free, which is what every Match that fills no Slot carries.
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_direction_slot ON match(tournament_id, direction_match_id) WHERE direction_match_id <> ''`,
 	`CREATE TABLE IF NOT EXISTS anki_deck (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,

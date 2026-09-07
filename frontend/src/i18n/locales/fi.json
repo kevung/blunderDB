@@ -1562,5 +1562,77 @@
         "empty": "Loki on tyhjä.",
         "copied": "{n} riviä kopioitu leikepöydälle.",
         "copyFailed": "Lokia ei voitu kopioida."
+    },
+    "direction": {
+        "title": "Johtaminen",
+        "direct": "Johda tätä turnausta",
+        "open": "Avaa johtaminen",
+        "close": "Sulje johtaminen",
+        "directed": "johdettu",
+        "state": {
+            "draft": "valmistelussa",
+            "running": "käynnissä",
+            "finished": "päättynyt"
+        },
+        "named": {
+            "suisse_tableau": "Sveitsiläinen kahdella elämällä, sitten kaavio",
+            "suisse_tableauHint": "Suositellaan 16–32 pelaajalle. Jokainen tappio painaa saman verran, ja loppu ratkeaa ilman erotteluperustetta.",
+            "elimination": "Yksinkertainen pudotuspeli",
+            "eliminationHint": "Lyhyin muoto. Yksi tappio ja turnaus on ohi.",
+            "consolante": "Pääkaavio ja lohdutuskaavio",
+            "consolanteHint": "Pääkaavion häviäjät pelaavat keskenään.",
+            "double_elimination": "Kaksinkertainen pudotuspeli",
+            "double_eliminationHint": "Ulos pääsee kahdella tappiolla; lohdutuskaavion voittaja pelaa finaalin uudelleen.",
+            "gsl": "GSL-lohkot",
+            "gslHint": "Neljän ryhmät, parit tuloksista: mikään ei riipu ilmoitusajankohdasta.",
+            "poules": "Lohkot, sitten kaavio",
+            "poulesHint": "Kaikki pelaavat saman määrän otteluita ennen kaaviota."
+        },
+        "format": {
+            "swiss_lives": "Sveitsiläinen elämillä",
+            "lives_bracket": "Kaavio vapaakierroksin",
+            "bracket": "Kaavio",
+            "gsl": "GSL-lohkot",
+            "round_robin": "Lohkot"
+        },
+        "settings": {
+            "format": "Muoto",
+            "recommended": "suositeltu",
+            "phases": "Vaiheet",
+            "length": "Pituus",
+            "lengthHint": "Tämän vaiheen ottelun pistemäärä.",
+            "lives": "Elämät",
+            "livesHint": "Tappioiden määrä ennen putoamista.",
+            "target": "Vaihto",
+            "targetHint": "Siirry kaavioon, kun elämien summa saavuttaa tämän luvun. 0: ei vaihtoa.",
+            "finalLength": "Finaali",
+            "finalLengthHint": "Finaalin pituus. 0: sama kuin muissa otteluissa.",
+            "tables": "Pöydät",
+            "tableCount": "Pöytien määrä",
+            "tableCountHint": "0: niin monta kuin tarvitaan.",
+            "entrants": "{n} osallistujaa",
+            "byes": "{n} vapaakierrosta ensimmäisellä kierroksella",
+            "apply": "Tallenna",
+            "start": "Aloita turnaus",
+            "delete": "Poista johtaminen",
+            "frozen": "Turnaus on alkanut: näitä asetuksia muutetaan tästä lähtien vain tapahtumalla.",
+            "deleteConfirm": "Poistetaanko tämän turnauksen johtaminen? Turnaus ja sen ottelut säilyvät; ottelut menettävät vain paikan, jonka ne täyttivät.",
+            "created": "Johtaminen luotu.",
+            "started": "Turnaus aloitettu.",
+            "deleted": "Johtaminen poistettu.",
+            "errorCreating": "Johtamisen luonti epäonnistui.",
+            "errorSaving": "Asetusten tallennus epäonnistui.",
+            "saved": "Asetukset tallennettu.",
+            "errorStarting": "Turnauksen aloitus epäonnistui."
+        },
+        "tabs": {
+            "direction": "Johtaminen",
+            "players": "Pelaajat",
+            "brackets": "Kaaviot",
+            "standings": "Sarjataulukko",
+            "history": "Historia",
+            "settings": "Asetukset",
+            "notYet": "Tämä näkymä tulee omassa erässään."
+        }
     }
 }

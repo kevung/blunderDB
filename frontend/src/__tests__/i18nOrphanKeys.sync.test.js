@@ -49,7 +49,14 @@ const DYNAMIC_PREFIXES = [
     'training.sources.',
     // Le panneau Transcription nomme une Incohérence par sa sorte, telle que le
     // moteur la rend : `$t(`transcription.inconsistency.${i.kind}`)`.
-    'transcription.inconsistency.'
+    'transcription.inconsistency.',
+    // La Direction d'un tournoi (ADR-0047) : l'état, le format nommé et le type de phase sont
+    // des CODES du moteur rendus par l'interface — `$t(`direction.state.${state}`)`. C'est
+    // exactement le mécanisme qui permet à blunderDB de parler neuf langues d'un moteur qui
+    // n'en parle aucune.
+    'direction.state.',
+    'direction.named.',
+    'direction.format.'
 ];
 
 function sourceFiles(dir) {

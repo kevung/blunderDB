@@ -1562,5 +1562,77 @@
         "empty": "ログは空です。",
         "copied": "{n} 行をクリップボードにコピーしました。",
         "copyFailed": "ログをコピーできませんでした。"
+    },
+    "direction": {
+        "title": "進行",
+        "direct": "この大会を進行する",
+        "open": "進行を開く",
+        "close": "進行を閉じる",
+        "directed": "進行中",
+        "state": {
+            "draft": "準備中",
+            "running": "進行中",
+            "finished": "終了"
+        },
+        "named": {
+            "suisse_tableau": "2ライフのスイス式のあとトーナメント表",
+            "suisse_tableauHint": "16〜32人に推奨。どの敗戦も同じ重みで、タイブレークなしに決着します。",
+            "elimination": "シングルイリミネーション",
+            "eliminationHint": "最も短い形式。1敗で大会は終わりです。",
+            "consolante": "本戦と敗者戦",
+            "consolanteHint": "本戦の敗者どうしが対戦します。",
+            "double_elimination": "ダブルイリミネーション",
+            "double_eliminationHint": "2敗するまで残ります。敗者戦の勝者が決勝をもう一度戦います。",
+            "gsl": "GSLブロック",
+            "gslHint": "4人組を結果で組み合わせます。結果を申告する時刻に何も左右されません。",
+            "poules": "予選リーグのあとトーナメント表",
+            "poulesHint": "トーナメント表の前に全員が同じ試合数を戦います。"
+        },
+        "format": {
+            "swiss_lives": "ライフ制スイス式",
+            "lives_bracket": "シード付きトーナメント表",
+            "bracket": "トーナメント表",
+            "gsl": "GSLブロック",
+            "round_robin": "予選リーグ"
+        },
+        "settings": {
+            "format": "形式",
+            "recommended": "推奨",
+            "phases": "フェーズ",
+            "length": "マッチ長",
+            "lengthHint": "このフェーズの1試合のポイント数。",
+            "lives": "ライフ",
+            "livesHint": "敗退までの敗戦数。",
+            "target": "移行",
+            "targetHint": "ライフの合計がこの数に達したらトーナメント表へ移ります。0：移行しません。",
+            "finalLength": "決勝",
+            "finalLengthHint": "決勝のマッチ長。0：他の試合と同じ。",
+            "tables": "卓",
+            "tableCount": "卓数",
+            "tableCountHint": "0：必要なだけ。",
+            "entrants": "参加者{n}人",
+            "byes": "1回戦の不戦勝{n}件",
+            "apply": "保存",
+            "start": "大会を開始",
+            "delete": "進行を削除",
+            "frozen": "大会が始まりました。これらの設定はイベントによってのみ変更されます。",
+            "deleteConfirm": "この大会の進行を削除しますか。大会とその試合は残り、試合は埋めていた枠を失うだけです。",
+            "created": "進行を作成しました。",
+            "started": "大会を開始しました。",
+            "deleted": "進行を削除しました。",
+            "errorCreating": "進行を作成できませんでした。",
+            "errorSaving": "設定を保存できませんでした。",
+            "saved": "設定を保存しました。",
+            "errorStarting": "大会を開始できませんでした。"
+        },
+        "tabs": {
+            "direction": "進行",
+            "players": "選手",
+            "brackets": "トーナメント表",
+            "standings": "順位",
+            "history": "履歴",
+            "settings": "設定",
+            "notYet": "この画面はそのロットで届きます。"
+        }
     }
 }

@@ -154,6 +154,10 @@ export function CreateCollection(arg1, arg2) {
   return window['go']['database']['Database']['CreateCollection'](arg1, arg2);
 }
 
+export function CreateDirection(arg1, arg2) {
+  return window['go']['database']['Database']['CreateDirection'](arg1, arg2);
+}
+
 export function CreateTournament(arg1, arg2, arg3) {
   return window['go']['database']['Database']['CreateTournament'](arg1, arg2, arg3);
 }
@@ -182,6 +186,10 @@ export function DeleteCommentEntry(arg1) {
   return window['go']['database']['Database']['DeleteCommentEntry'](arg1);
 }
 
+export function DeleteDirection(arg1) {
+  return window['go']['database']['Database']['DeleteDirection'](arg1);
+}
+
 export function DeleteFilter(arg1) {
   return window['go']['database']['Database']['DeleteFilter'](arg1);
 }
@@ -204,6 +212,10 @@ export function DeleteSearchHistoryEntry(arg1) {
 
 export function DeleteTournament(arg1) {
   return window['go']['database']['Database']['DeleteTournament'](arg1);
+}
+
+export function DirectionStore() {
+  return window['go']['database']['Database']['DirectionStore']();
 }
 
 export function DiscardFromTrash(arg1) {
@@ -306,6 +318,10 @@ export function GetDatabaseVersion() {
   return window['go']['database']['Database']['GetDatabaseVersion']();
 }
 
+export function GetDirection(arg1) {
+  return window['go']['database']['Database']['GetDirection'](arg1);
+}
+
 export function GetGamesByMatch(arg1) {
   return window['go']['database']['Database']['GetGamesByMatch'](arg1);
 }
@@ -402,6 +418,10 @@ export function GradeQuizCube(arg1, arg2) {
   return window['go']['database']['Database']['GradeQuizCube'](arg1, arg2);
 }
 
+export function HasDirection(arg1) {
+  return window['go']['database']['Database']['HasDirection'](arg1);
+}
+
 export function ImportBGFMatch(arg1) {
   return window['go']['database']['Database']['ImportBGFMatch'](arg1);
 }
@@ -448,6 +468,10 @@ export function IsProtectedCopyPath(arg1) {
 
 export function IsReadOnly() {
   return window['go']['database']['Database']['IsReadOnly']();
+}
+
+export function ListDirections() {
+  return window['go']['database']['Database']['ListDirections']();
 }
 
 export function ListImportBatches(arg1, arg2) {
@@ -694,6 +718,14 @@ export function SetCollectionFilter(arg1, arg2) {
   return window['go']['database']['Database']['SetCollectionFilter'](arg1, arg2);
 }
 
+export function SetDirectionConfig(arg1, arg2) {
+  return window['go']['database']['Database']['SetDirectionConfig'](arg1, arg2);
+}
+
+export function SetDirectionOutputDir(arg1, arg2) {
+  return window['go']['database']['Database']['SetDirectionOutputDir'](arg1, arg2);
+}
+
 export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['database']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }
@@ -708,6 +740,10 @@ export function SetupDatabase(arg1) {
 
 export function SimilarPositions(arg1, arg2) {
   return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
+}
+
+export function StartDirection(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StartDirection'](arg1, arg2, arg3);
 }
 
 export function StudyImpact(arg1) {

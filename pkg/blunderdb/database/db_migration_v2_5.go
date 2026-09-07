@@ -1115,3 +1115,26 @@ func sharedColumns(ctx context.Context, conn *sql.Conn, src, dst string) ([]stri
 	}
 	return shared, nil
 }
+
+// migrate_2_23_0_to_2_24_0 is the 2.24.0 wave.
+//
+//   - direction / direction_event — the Direction of a Tournament (issue #365,
+//     ADR-0047): everything the tournament director decided while running it,
+//     append-only, one row per event. The derived state is never stored.
+//   - match.direction_match_id — the Slot a Match fills, with a unique partial
+//     index per tournament.
+//
+// Nothing to execute: the tables, the column and the index are declared in
+// schemaStatements, and EnsureSchema creates what an existing database is
+// missing right after the chain runs. The step exists so the chain stays
+// unbroken from 1.0.0 to DatabaseVersion (TestMigrationSteps_ContinuousChain).
+//
+// No backfill, and none is possible: a Direction records decisions that were
+// made, and a Tournament assembled from imported files has none — that is
+// precisely the difference ADR-0047 draws between a Tournament that was
+// directed here and one that was merely labelled afterwards. Matches keep an
+// empty slot until someone attaches them, which is a deliberate gesture and
+// never an inference.
+func (d *Database) migrate_2_23_0_to_2_24_0(context.Context) error {
+	return nil
+}

@@ -7,6 +7,7 @@ import {sqlite} from '../models';
 import {gammonnet} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
+import {direction} from '../models';
 import {engine} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
@@ -87,6 +88,8 @@ export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,a
 
 export function CreateCollection(arg1:string,arg2:string):Promise<number>;
 
+export function CreateDirection(arg1:number,arg2:string):Promise<void>;
+
 export function CreateTournament(arg1:string,arg2:string,arg3:string):Promise<number>;
 
 export function CreateTranscription(arg1:transcript.Header):Promise<database.TranscriptionState>;
@@ -101,6 +104,8 @@ export function DeleteComment(arg1:number):Promise<void>;
 
 export function DeleteCommentEntry(arg1:number):Promise<void>;
 
+export function DeleteDirection(arg1:number):Promise<void>;
+
 export function DeleteFilter(arg1:number):Promise<void>;
 
 export function DeleteMatch(arg1:number):Promise<void>;
@@ -112,6 +117,8 @@ export function DeleteProtectedCopyPath(arg1:string):Promise<void>;
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function DeleteTournament(arg1:number):Promise<void>;
+
+export function DirectionStore():Promise<direction.Store>;
 
 export function DiscardFromTrash(arg1:number):Promise<void>;
 
@@ -163,6 +170,8 @@ export function GetDatabaseStats():Promise<Record<string, any>>;
 
 export function GetDatabaseVersion():Promise<string>;
 
+export function GetDirection(arg1:number):Promise<database.DirectionView>;
+
 export function GetGamesByMatch(arg1:number):Promise<Array<domain.Game>>;
 
 export function GetIssuanceInfo():Promise<domain.IssuanceInfo>;
@@ -211,6 +220,8 @@ export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.Qui
 
 export function GradeQuizCube(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
 
+export function HasDirection(arg1:number):Promise<boolean>;
+
 export function ImportBGFMatch(arg1:string):Promise<number>;
 
 export function ImportBGFPosition(arg1:string):Promise<number>;
@@ -234,6 +245,8 @@ export function ImportXGPPosition(arg1:string):Promise<number>;
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
+
+export function ListDirections():Promise<Array<database.DirectionSummary>>;
 
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 
@@ -357,6 +370,10 @@ export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
 
+export function SetDirectionConfig(arg1:number,arg2:string):Promise<void>;
+
+export function SetDirectionOutputDir(arg1:number,arg2:string):Promise<void>;
+
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
@@ -364,6 +381,8 @@ export function SetMigrationProgress(arg1:any):Promise<void>;
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
+
+export function StartDirection(arg1:number,arg2:number,arg3:string):Promise<void>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
