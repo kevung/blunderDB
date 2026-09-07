@@ -26,6 +26,16 @@ type MatchGraph struct {
 	// setting it here cannot be overridden by whatever the mapper left in
 	// Match.ImportBatchID.
 	ImportBatchID int64
+	// ReplaceMatchID names an existing match this graph REPLACES rather than
+	// creates, 0 for the ordinary "this match is arriving" case. It is how a
+	// transcription draft is saved again after a correction (ADR-0045 §2): the
+	// match keeps its id — a tournament, a living collection and the
+	// last-visited position all point at it — while its games, moves and
+	// positions are rewritten from scratch.
+	//
+	// Set only by a caller who knows which match it is rewriting; an importer
+	// never does, which is why nothing else has to change to keep creating.
+	ReplaceMatchID int64
 }
 
 // GameGraph is one game with its ordered moves.
@@ -55,6 +65,7 @@ type WriteResult struct {
 	Skipped        bool // true when an exact same-format duplicate was found (nothing written but flags)
 	FlagsApplied   int  // source-tool study marks raised on already-stored positions of a skipped duplicate
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
+	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
 	// Tournament is the event name the match was filed under, empty when the
 	// file named none or when the match already existed.
@@ -77,12 +88,31 @@ type WriteResult struct {
 //     stored (cross-engine cube analyses, extra checker moves). Enriched is
 //     true.
 //
+// A third mode, replacement, is asked for explicitly by MatchGraph.ReplaceMatchID
+// and short-circuits both: the caller is not offering a match that may already be
+// here, it is rewriting one it owns (ADR-0045 §2).
+//
 // Positions dedup independently by Zobrist hash inside PositionStore.Save.
 func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, prog func(Progress)) (WriteResult, error) {
 	var res WriteResult
 
-	// Exact same-format duplicate → skip entirely.
-	if g.Match.MatchHash != "" {
+	// Replacement: drop the old games first — their moves are what still names
+	// the outgoing positions, and the purge at the end needs that list. The
+	// match row itself stays, id and all.
+	replace := g.ReplaceMatchID != 0
+	var orphanCandidates []int64
+	if replace {
+		ids, err := tx.Matches().DeleteGames(ctx, scope, g.ReplaceMatchID)
+		if err != nil {
+			return res, err
+		}
+		orphanCandidates = ids
+	}
+
+	// Exact same-format duplicate → skip entirely. A replacement never asks:
+	// the caller named the match, and a draft re-saved unchanged would
+	// otherwise find its own hash and skip its own rewrite.
+	if !replace && g.Match.MatchHash != "" {
 		id, found, err := tx.Matches().FindByHash(ctx, scope, g.Match.MatchHash, "")
 		if err != nil {
 			return res, err
@@ -106,7 +136,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	// Cross-format (canonical) duplicate → enrich the existing match's positions.
 	enrich := false
 	var matchID int64
-	if g.Match.CanonicalHash != "" {
+	if !replace && g.Match.CanonicalHash != "" {
 		id, found, err := tx.Matches().FindByHash(ctx, scope, "", g.Match.CanonicalHash)
 		if err != nil {
 			return res, err
@@ -117,7 +147,21 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 
-	if !enrich {
+	switch {
+	case replace:
+		// The header is re-stated, never re-inserted: ReplaceHeader leaves the
+		// id, the import date, the import batch, the tournament, the match
+		// comment and the last-visited position exactly where they were. The
+		// tournament is deliberately not re-filed either — same reason as an
+		// enrich below: the match was put there by someone, and correcting a
+		// die three turns back is not a request to move it.
+		matchID = g.ReplaceMatchID
+		g.Match.ID = matchID
+		if err := tx.Matches().ReplaceHeader(ctx, scope, matchID, &g.Match); err != nil {
+			return res, err
+		}
+
+	case !enrich:
 		// The batch the caller opened wins over whatever a mapper left on the
 		// match: only the caller knows what the user meant as one import.
 		g.Match.ImportBatchID = g.ImportBatchID
@@ -147,6 +191,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	}
 	res.MatchID = matchID
 	res.Enriched = enrich
+	res.Replaced = replace
 
 	counter := Progress{Matches: 1}
 	for gi := range g.Games {
@@ -182,6 +227,20 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			if prog != nil {
 				prog(counter)
 			}
+		}
+	}
+
+	// Only now, with the new moves written, is the retention predicate asked
+	// about the positions the old ones referenced: a position both versions
+	// share is held by its new move and survives on its existing row, with its
+	// analysis and its id; one that only the corrected Action reached is held by
+	// nothing and goes, unless the user did something with it — a comment they
+	// wrote, a collection, an Anki card, a study mark, an individual import.
+	// The ordinary purge, no trash: replacing a match twenty times during a
+	// review is not twenty deletions (ADR-0045 §3).
+	if replace && len(orphanCandidates) > 0 {
+		if err := tx.Matches().PurgeOrphanPositions(ctx, scope, orphanCandidates); err != nil {
+			return res, err
 		}
 	}
 	return res, nil
