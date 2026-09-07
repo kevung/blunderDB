@@ -114,6 +114,9 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Positions/SimilarIsExactAndOrdered", testSimilarIsExactAndOrdered},
 		{"Anki/CubePairsAreChained", testAnkiCubePairsAreChained},
 		{"Collection/FilterQueryRoundTrips", testCollectionFilterQuery},
+		{"Transcription/CRUD", testTranscriptionCRUD},
+		{"Transcription/ListNewestFirst", testTranscriptionListNewestFirst},
+		{"Transcription/MatchLinkSurvivesTheMatch", testTranscriptionMatchLink},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

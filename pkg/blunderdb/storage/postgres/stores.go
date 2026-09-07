@@ -20,7 +20,7 @@ type execer interface {
 	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 }
 
-// binder provides the 14 per-family accessors over an execer. Storage embeds
+// binder provides the per-family accessors over an execer. Storage embeds
 // it bound to a *pgxpool.Pool; txImpl embeds it bound to a pgx.Tx.
 type binder struct {
 	db execer
@@ -50,6 +50,9 @@ func (b binder) ImportBatches() storage.ImportBatchStore {
 	return &sqlshared.ImportBatchStore{DB: b.shared()}
 }
 func (b binder) Trash() storage.TrashStore { return &sqlshared.TrashStore{DB: b.shared()} }
+func (b binder) Transcriptions() storage.TranscriptionStore {
+	return &sqlshared.TranscriptionStore{DB: b.shared()}
+}
 
 // withTx runs fn inside a transaction started from db. The pgx.Tx is passed to
 // fn as an execer; when db is already a transaction the pgx.Tx is a
