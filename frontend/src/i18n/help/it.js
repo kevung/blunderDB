@@ -1349,9 +1349,35 @@ export default {
 <td>CTRL-INVIO</td>
 <td>Salvare la bozza come partita.</td>
 </tr>
+<tr>
+<td>i</td>
+<td>Inserire un'azione prima di quella del cursore (il campo proposto è quello che mantiene coerente il seguito).</td>
+</tr>
+<tr>
+<td>a</td>
+<td>Inserire un'azione dopo quella del cursore.</td>
+</tr>
+<tr>
+<td>x, Canc</td>
+<td>Eliminare l'azione del cursore; le successive conservano il loro campo.</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Dare l'azione del cursore all'altro campo.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Annullare l'ultimo gesto sulla bozza.</td>
+</tr>
+<tr>
+<td>CTRL-MAIUSC-Z</td>
+<td>Ripristinare il gesto annullato.</td>
+</tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
+<p>Riportare il cursore su un'azione e ridigitare la corregge <strong>sul posto</strong>: la convalida sostituisce l'azione e il cursore torna dov'era. Se i dadi sono corretti e la mossa registrata resta una mossa legale del nuovo lancio, viene conservata; altrimenti viene proposto il primo candidato del nuovo lancio e la mossa è segnalata «da rivedere» fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa registra la correzione al passaggio.</p>
+<p>Nulla viene rifiutato né eliminato: inserire un'azione dello stesso campo della vicina crea un doppio turno, eliminare un'azione può crearne un altro, cambiare un campo può rendere illegali le mosse che seguono. Queste incoerenze sono segnalate nel transcript, mai corrette d'ufficio, e il cursore si posiziona sulla prima di esse dopo ogni gesto. La pila di annullamento vive in memoria: va persa alla chiusura della bozza.</p>
 <p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
 <p>La barra della bozza porta tre pulsanti. «Salva» (CTRL-INVIO) scrive la partita nella libreria: creata la prima volta, sostituita in seguito con lo stesso identificatore, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. La barra della bozza ne dice lo stato: mai salvata, salvata da tanto, o modificata da allora. «Esporta .mat» scrive la partita in un file Jellyfish, così come è stata digitata. «Chiudi la bozza» elimina la bozza dopo una conferma; una partita già salvata resta nella libreria, definitiva.</p>

@@ -37,7 +37,6 @@ msgid "Versionnage et migrations"
 msgstr "Versionado y migraciones"
 
 #: ../../source/annexe_db_scheme.rst:13
-#, fuzzy
 msgid ""
 "Le schéma de la base de données est **versionné**. La version courante du"
 " schéma est **2.23.0** ; elle est indépendante de la version de "

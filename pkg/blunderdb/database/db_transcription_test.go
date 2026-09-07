@@ -493,3 +493,141 @@ func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
 		}
 	}
 }
+
+// Undo and redo are the two gestures that do not go through transcript.Apply:
+// the stack is state and it lives in the session's Editor. What this file owes
+// them is the plumbing — that they reach the stack, that they report both of
+// its sides, and that taking a gesture back leaves the ROW without it, since a
+// crash must not resurrect what the user undid (fonctionnel.md §3).
+func TestApplyTranscriptionGesture_UndoAndRedo(t *testing.T) {
+	db := newTestDB(t)
+
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	id := state.ID
+	if state.CanUndo || state.CanRedo {
+		t.Fatalf("a fresh draft reports undo=%v redo=%v", state.CanUndo, state.CanRedo)
+	}
+	typeOpening(t, db, id)
+	typeChecker(t, db, id)
+	typeChecker(t, db, id, 5, 4)
+
+	before := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
+	want := len(before.Annotated.Document.Actions)
+	if !before.CanUndo {
+		t.Fatal("a draft with gestures behind it reports nothing to undo")
+	}
+
+	undone := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureUndo})
+	if !undone.CanRedo {
+		t.Error("an undone gesture is not reported as redoable")
+	}
+	redone := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureRedo})
+	if redone.CanRedo {
+		t.Error("a redone gesture is still reported as redoable")
+	}
+
+	// Undoing the last validation must leave the row one Action short: the
+	// draft on disk is the draft the user has, never one gesture ahead of it.
+	for range 3 {
+		applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureUndo})
+	}
+	stored, err := decodeTranscription(readTranscriptionRow(t, db, id))
+	if err != nil {
+		t.Fatalf("decoding the row: %v", err)
+	}
+	if len(stored.Actions) >= want {
+		t.Fatalf("the row still holds %d actions after three undos, want fewer than %d", len(stored.Actions), want)
+	}
+}
+
+// A stack with nothing on it is a keystroke that does nothing — never an error
+// the panel has to show.
+func TestApplyTranscriptionGesture_UndoOnAnEmptyStack(t *testing.T) {
+	db := newTestDB(t)
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	for _, kind := range []transcript.GestureKind{transcript.GestureUndo, transcript.GestureRedo} {
+		if _, err := db.ApplyTranscriptionGesture(state.ID, transcript.Gesture{Kind: kind}); err != nil {
+			t.Errorf("%s on an empty stack: %v", kind, err)
+		}
+	}
+}
+
+// After a gesture, the Cursor lands on the first Inconsistency the gesture left
+// behind — and the SESSION agrees with what was handed back, so the next `h`
+// counts from the cell the user is looking at (fonctionnel.md §1.4).
+func TestApplyTranscriptionGesture_CursorLandsOnTheInconsistency(t *testing.T) {
+	db := newTestDB(t)
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	id := state.ID
+	typeOpening(t, db, id)
+	typeChecker(t, db, id)
+	typeChecker(t, db, id, 5, 4)
+	typeChecker(t, db, id, 4, 2)
+
+	// Walk back to the middle and give that Action to the other camp: the
+	// double turn it makes is behind the Cursor, which the gesture leaves put.
+	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
+	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
+	flipped := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureFlipSide})
+
+	if !flipped.Annotated.Inconsistent() {
+		t.Fatal("changing a camp made no inconsistency")
+	}
+	at := flipped.Annotated.Cursor
+	if at < 0 || at >= len(flipped.Annotated.Actions) {
+		t.Fatalf("cursor = %d, outside the document", at)
+	}
+	if len(flipped.Annotated.Actions[at].Inconsistencies) == 0 {
+		t.Fatalf("the cursor landed on action %d, which carries no inconsistency", at)
+	}
+	// And the session was moved there too, not only the answer.
+	if got := flipped.Annotated.Document.Cursor; got != at {
+		t.Fatalf("the document's cursor is %d while the answer says %d", got, at)
+	}
+	// Nothing was deleted or repaired on the way (ADR-0044).
+	if n := len(flipped.Annotated.Document.Actions); n != 4 {
+		t.Fatalf("actions = %d, want 4", n)
+	}
+}
+
+// Reopening a draft puts the Cursor at the end, Inconsistencies or not: a
+// resumption continues after the last written Action (fonctionnel.md §3), and
+// an Inconsistency the user read and chose to keep must not drag them back to
+// it at every open.
+func TestOpenTranscription_DoesNotJumpToAnInconsistency(t *testing.T) {
+	db := newTestDB(t)
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	id := state.ID
+	typeOpening(t, db, id)
+	typeChecker(t, db, id)
+	typeChecker(t, db, id, 5, 4)
+	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
+	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureFlipSide})
+
+	db.forgetTranscriptSessions()
+	reopened, err := db.OpenTranscription(id)
+	if err != nil {
+		t.Fatalf("OpenTranscription: %v", err)
+	}
+	if !reopened.Annotated.Inconsistent() {
+		t.Fatal("the fixture lost its inconsistency across the reopen")
+	}
+	if got, want := reopened.Annotated.Cursor, len(reopened.Annotated.Document.Actions); got != want {
+		t.Fatalf("reopened cursor = %d, want %d (the end of the document)", got, want)
+	}
+	if reopened.CanUndo || reopened.CanRedo {
+		t.Error("a reopened draft carries an undo stack; it is in memory and a stop loses it")
+	}
+}

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:27+0200\n"
+"POT-Creation-Date: 2026-09-07 08:54+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -842,7 +842,59 @@ msgstr "CTRL-ENTER"
 msgid "Enregistrer le brouillon en match."
 msgstr "Save the draft as a match."
 
-#: ../../source/raccourcis.rst:299
+#: ../../source/raccourcis.rst:1
+msgid "i"
+msgstr "i"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Insérer une action devant celle du curseur (camp proposé pour que la "
+"suite reste cohérente)."
+msgstr ""
+"Insert an action before the one under the cursor (the side offered is the"
+" one that keeps what follows coherent)."
+
+#: ../../source/raccourcis.rst:1
+msgid "a"
+msgstr "a"
+
+#: ../../source/raccourcis.rst:1
+msgid "Insérer une action derrière celle du curseur."
+msgstr "Insert an action after the one under the cursor."
+
+#: ../../source/raccourcis.rst:1
+msgid "x, Del"
+msgstr "x, Del"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+msgstr "Delete the action under the cursor; the ones after it keep their side."
+
+#: ../../source/raccourcis.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/raccourcis.rst:1
+msgid "Donner l'action du curseur à l'autre camp."
+msgstr "Give the action under the cursor to the other side."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "CTRL-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Annuler le dernier geste sur le brouillon."
+msgstr "Undo the last gesture on the draft."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-Z"
+msgstr "CTRL-SHIFT-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Rétablir le geste annulé."
+msgstr "Redo the undone gesture."
+
+#: ../../source/raccourcis.rst:305
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -850,7 +902,43 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:302
+#: ../../source/raccourcis.rst:308
+msgid ""
+"Reculer le curseur sur une action puis ressaisir la corrige **en place** "
+": la validation remplace l'action et le curseur revient là où il était. "
+"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
+" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
+"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
+"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
+" la correction au passage."
+msgstr ""
+"Moving the cursor back onto an action and typing again corrects it **in "
+"place**: validating replaces the action, and the cursor returns where it "
+"was. If the dice are corrected and the recorded play is still a legal "
+"play of the new roll, it is kept; otherwise the first candidate of the "
+"new roll is offered and the play is flagged “to review” until it is "
+"validated. Moving the cursor forward or back after changing something "
+"records the correction on the way."
+
+#: ../../source/raccourcis.rst:315
+msgid ""
+"Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
+"voisine crée un double trait, supprimer une action peut en créer un "
+"autre, changer un camp peut rendre illégaux les coups qui suivent. Ces "
+"incohérences sont marquées dans le transcript, jamais corrigées d'office,"
+" et le curseur se place sur la première d'entre elles après chaque geste."
+" La pile d'annulation vit en mémoire : elle est perdue à la fermeture du "
+"brouillon."
+msgstr ""
+"Nothing is refused and nothing is deleted: inserting an action of the "
+"same side as its neighbour creates a double turn, deleting an action may "
+"create another one, changing a side may make the plays that follow "
+"illegal. These inconsistencies are marked in the transcript, never "
+"corrected on your behalf, and the cursor lands on the first of them after"
+" every gesture. The undo stack lives in memory: it is lost when the draft"
+" is closed."
+
+#: ../../source/raccourcis.rst:322
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -863,7 +951,7 @@ msgstr ""
 "score, the Crawford game and the end of the match are then shown above "
 "the dice, and the opening of the next game is expected."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -886,7 +974,7 @@ msgstr ""
 "tooltip. Games can be folded; the cursor's game is open. A collapsible "
 "pane shows the draft's exact ``.mat`` text, with a button to copy it."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:337
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -907,7 +995,7 @@ msgstr ""
 "was typed. “Close draft” deletes the draft after a confirmation; a match "
 "already saved stays in the library, final."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:346
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -919,7 +1007,7 @@ msgstr ""
 "the warning that gnubg and XG will flag it (“Invalid move”) and diverge "
 "from there."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:354
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 

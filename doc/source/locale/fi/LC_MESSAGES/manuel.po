@@ -4748,7 +4748,6 @@ msgid "Panneau Anki"
 msgstr "Anki-paneeli"
 
 #: ../../source/manuel.rst:2065
-#, fuzzy
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
@@ -4805,7 +4804,6 @@ msgstr ""
 " tilastot näe harjoitteluistuntoja."
 
 #: ../../source/manuel.rst:2088
-#, fuzzy
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4851,7 +4849,6 @@ msgstr ""
 " siinä siitä on hyötyä."
 
 #: ../../source/manuel.rst:2107
-#, fuzzy
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -5009,7 +5006,6 @@ msgstr ""
 "ole vastattu kortti, eikä se lasketa istunnon summaan."
 
 #: ../../source/manuel.rst:2171
-#, fuzzy
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -5098,7 +5094,6 @@ msgid "Panneau Entraînement"
 msgstr "Harjoittelu-paneeli"
 
 #: ../../source/manuel.rst:2213
-#, fuzzy
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "

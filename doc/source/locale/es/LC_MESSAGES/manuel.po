@@ -4813,7 +4813,6 @@ msgid "Panneau Anki"
 msgstr "Panel Anki"
 
 #: ../../source/manuel.rst:2065
-#, fuzzy
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
@@ -4872,7 +4871,6 @@ msgstr ""
 "Anki, y las estadísticas de Anki ignoran las sesiones de Entrenamiento."
 
 #: ../../source/manuel.rst:2088
-#, fuzzy
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4917,7 +4915,6 @@ msgstr ""
 "nacen juntas, vencen juntas la primera vez, y ahí es donde sirve."
 
 #: ../../source/manuel.rst:2107
-#, fuzzy
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -5075,7 +5072,6 @@ msgstr ""
 "es una tarjeta respondida, y no cuenta en el total de la sesión."
 
 #: ../../source/manuel.rst:2171
-#, fuzzy
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -5167,7 +5163,6 @@ msgid "Panneau Entraînement"
 msgstr "Panel Entrenamiento"
 
 #: ../../source/manuel.rst:2213
-#, fuzzy
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "

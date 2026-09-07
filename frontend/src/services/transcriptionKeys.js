@@ -50,6 +50,22 @@
  * §1.4). Seules `t` et `p` demandent une offre en face, faute de quoi elles ne
  * répondent à rien.
  *
+ * # La correction
+ *
+ * Les gestes de relecture — `h`/`l` pour le Cursor, `i`/`a` pour insérer, `x` et
+ * `Suppr` pour supprimer, `s` pour changer de camp — partent de TOUT état, y
+ * compris d'un jet à moitié tapé : c'est la ligne « tout » d'ux.md §3, et c'est
+ * l'usage qui gouverne, puisque transcrire une vidéo, c'est se reprendre. Chacun
+ * coûte une touche, ce qui donne les budgets d'ux.md §4.3 : coup oublié
+ * `h`×k `i` jet `l`×k, coup en double `h`×k `x` `l`×k, camp faux `h`×k `s` `l`×k.
+ *
+ * `Ctrl+Z` et `Ctrl+Maj+Z` sont dans le même tableau mais pas dans [pressKey] :
+ * une combinaison Ctrl est toujours globale (`isAlwaysGlobal`), elle est donc
+ * liée par le répartiteur, qui pose le geste dans un store que le panneau lit.
+ * COMMAND.UNDO et COMMAND.REDO restent nommés ici parce que ce sont des gestes
+ * de la Transcription comme les autres, et que le panneau les traduit au même
+ * endroit que les autres.
+ *
  * Conventions de clavier (voir utils/keys.js) : les CHIFFRES sont positionnels
  * (`event.code`, pour que la rangée du haut d'un AZERTY marche sans Maj), les
  * LETTRES sont lues au caractère produit (`event.key`).
@@ -88,7 +104,13 @@ export const COMMAND = Object.freeze({
     PASS: 'pass',
     RESIGN: 'resign',
     CURSOR_BACK: 'cursor_back',
-    CURSOR_FORWARD: 'cursor_forward'
+    CURSOR_FORWARD: 'cursor_forward',
+    INSERT_BEFORE: 'insert_before',
+    INSERT_AFTER: 'insert_after',
+    DELETE: 'delete',
+    FLIP_SIDE: 'flip_side',
+    UNDO: 'undo',
+    REDO: 'redo'
 });
 
 /** Les sortes d'Action dont la saisie passe par deux dés. */
@@ -206,6 +228,20 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
         };
     }
 
+    // Les quatre gestes de correction, eux aussi depuis « tout état » (ux.md §3).
+    // Ils portent les budgets d'ux.md §4.3 : le coup oublié coûte `i` et rien de
+    // plus avant le jet, le coup en double `x`, le camp faux `s` — une touche
+    // chacun, quelle que soit la distance déjà parcourue par le Cursor.
+    //
+    // Ils sont lus AVANT les dés : `i`, `a`, `x` et `s` ne sont pas des chiffres,
+    // et une saisie de jet à moitié tapée n'est pas une raison de refuser la
+    // relecture, pas plus qu'elle ne l'est pour `h`/`l`. La machine repart à zéro
+    // et le panneau la réarme sur ce que le moteur a rendu.
+    const edit = editCommand(event);
+    if (edit) {
+        return { handled: true, state: initialKeyState(), commands: [{ kind: edit }] };
+    }
+
     // `r` ouvre l'attente du niveau depuis n'importe quel état, et l'état
     // d'avant est mis de côté : `Échap` le rend intact, la résignation
     // « annule sans effet » (ux.md §3, fiche T1.5).
@@ -271,6 +307,31 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     }
 
     return ignored(state);
+}
+
+/**
+ * Le geste de correction qu'une touche désigne, ou null : `i` insère devant,
+ * `a` derrière, `x` et `Suppr` suppriment, `s` change le camp de l'Action au
+ * Cursor (ux.md §3, lignes « tout »).
+ *
+ * Aucun de ces gestes ne juge quoi que ce soit. Insérer une Action du même camp
+ * que sa voisine crée un double trait, supprimer en crée un autre, changer un
+ * camp peut rendre illégaux les coups qui suivent : ce sont des Incohérences que
+ * le Replay MARQUE, et rien ici ne les refuse ni ne les répare (ADR-0044,
+ * fonctionnel.md §1.4). C'est aussi pourquoi la suppression ne demande pas de
+ * confirmation : elle est annulable par `Ctrl+Z`, et une boîte de dialogue par
+ * pion effacé rendrait la relecture impraticable.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {string|null}
+ */
+function editCommand(event) {
+    if (isBareLetter(event, 'i')) return COMMAND.INSERT_BEFORE;
+    if (isBareLetter(event, 'a')) return COMMAND.INSERT_AFTER;
+    if (isBareLetter(event, 'x')) return COMMAND.DELETE;
+    if (isBareLetter(event, 's')) return COMMAND.FLIP_SIDE;
+    if (event.key === 'Delete' && !event.ctrlKey && !event.metaKey && !event.altKey) return COMMAND.DELETE;
+    return null;
 }
 
 /**

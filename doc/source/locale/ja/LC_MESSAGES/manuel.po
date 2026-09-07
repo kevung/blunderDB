@@ -4021,14 +4021,13 @@ msgid "Panneau Anki"
 msgstr "Anki パネル"
 
 #: ../../source/manuel.rst:2065
-#, fuzzy
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
 "souvent une position, tirée d'une collection ou d'une recherche ; ce peut"
 " aussi être un score."
 msgstr ""
-"**Anki** パネル（\\ *CTRL-K*\\ ）では、FSRS "
+"**Anki** パネル（\\\\ *CTRL-K*\\\\ ）では、FSRS "
 "アルゴリズムを使った間隔反復によってポジションを学習できます。ユーザーはコレクションや検索結果からデッキを作成できます。"
 
 #: ../../source/manuel.rst:2070
@@ -4074,7 +4073,6 @@ msgstr ""
 "の統計はトレーニングのセッションを見ません。"
 
 #: ../../source/manuel.rst:2088
-#, fuzzy
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4086,8 +4084,8 @@ msgid ""
 msgstr ""
 "**復習：** デッキを選択してから *Study* "
 "をクリックする（またはデッキをダブルクリックする）と、期限の来たカードの復習を開始できます。各カードは対応するポジションをボード上に表示します。あなたの想起度を"
-" *1*\\ （もう一度）、\\ *2*\\ （難しい）、\\ *3*\\ （普通）、または *4*\\ （簡単）のキーで評価してください。\\ "
-"*Esc* を押すと停止してデッキのリストに戻ります。"
+" *1*\\\\ （もう一度）、\\\\ *2*\\\\ （難しい）、\\\\ *3*\\\\ （普通）、または *4*\\\\ "
+"（簡単）のキーで評価してください。\\\\ *Esc* を押すと停止してデッキのリストに戻ります。"
 
 #: ../../source/manuel.rst:2095
 msgid ""
@@ -4113,7 +4111,6 @@ msgid ""
 msgstr "それぞれが自分の評価と自分の予定を保ちます。一枚のカードの二段階ではなく、二枚のカードです。連なりは期日を前倒ししません。すでに期日を迎えたカードの順序を決めるだけです。二枚は同時に生まれるので初回は同時に期日を迎えます。役に立つのはまさにそこです。"
 
 #: ../../source/manuel.rst:2107
-#, fuzzy
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -4249,7 +4246,6 @@ msgid ""
 msgstr "この 3 つはいずれも評価を記録しません。脇へ置いたカードは答えたカードではなく、セッションの集計にも入りません。"
 
 #: ../../source/manuel.rst:2171
-#, fuzzy
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -4326,7 +4322,6 @@ msgid "Panneau Entraînement"
 msgstr "トレーニングパネル"
 
 #: ../../source/manuel.rst:2213
-#, fuzzy
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:27+0200\n"
+"POT-Creation-Date: 2026-09-07 08:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -840,7 +840,59 @@ msgstr "CTRL-ENTER"
 msgid "Enregistrer le brouillon en match."
 msgstr "Сохранить черновик как матч."
 
-#: ../../source/raccourcis.rst:299
+#: ../../source/raccourcis.rst:1
+msgid "i"
+msgstr "i"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Insérer une action devant celle du curseur (camp proposé pour que la "
+"suite reste cohérente)."
+msgstr ""
+"Вставить действие перед действием курсора (предлагается та сторона, при "
+"которой продолжение остаётся согласованным)."
+
+#: ../../source/raccourcis.rst:1
+msgid "a"
+msgstr "a"
+
+#: ../../source/raccourcis.rst:1
+msgid "Insérer une action derrière celle du curseur."
+msgstr "Вставить действие после действия курсора."
+
+#: ../../source/raccourcis.rst:1
+msgid "x, Del"
+msgstr "x, Del"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+msgstr "Удалить действие курсора; последующие сохраняют свою сторону."
+
+#: ../../source/raccourcis.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/raccourcis.rst:1
+msgid "Donner l'action du curseur à l'autre camp."
+msgstr "Передать действие курсора другой стороне."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "CTRL-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Annuler le dernier geste sur le brouillon."
+msgstr "Отменить последний жест над черновиком."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-Z"
+msgstr "CTRL-SHIFT-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Rétablir le geste annulé."
+msgstr "Вернуть отменённый жест."
+
+#: ../../source/raccourcis.rst:305
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -848,7 +900,41 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:302
+#: ../../source/raccourcis.rst:308
+msgid ""
+"Reculer le curseur sur une action puis ressaisir la corrige **en place** "
+": la validation remplace l'action et le curseur revient là où il était. "
+"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
+" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
+"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
+"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
+" la correction au passage."
+msgstr ""
+"Если вернуть курсор на действие и ввести заново, оно исправляется **на "
+"месте**: подтверждение заменяет действие, а курсор возвращается туда, где"
+" он был. Если исправлены кости и записанный ход остаётся допустимым ходом"
+" нового броска, он сохраняется; иначе предлагается первый кандидат нового"
+" броска, а ход помечается «к проверке» до подтверждения. Перемещение "
+"курсора вперёд или назад после изменения записывает исправление попутно."
+
+#: ../../source/raccourcis.rst:315
+msgid ""
+"Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
+"voisine crée un double trait, supprimer une action peut en créer un "
+"autre, changer un camp peut rendre illégaux les coups qui suivent. Ces "
+"incohérences sont marquées dans le transcript, jamais corrigées d'office,"
+" et le curseur se place sur la première d'entre elles après chaque geste."
+" La pile d'annulation vit en mémoire : elle est perdue à la fermeture du "
+"brouillon."
+msgstr ""
+"Ничто не отвергается и не удаляется: вставка действия той же стороны, что"
+" и у соседнего, создаёт двойной ход, удаление действия может создать ещё "
+"один, смена стороны может сделать последующие ходы недопустимыми. Эти "
+"несоответствия отмечаются в транскрипте, никогда не исправляются "
+"самовольно, и курсор после каждого жеста встаёт на первое из них. Стек "
+"отмены живёт в памяти: он теряется при закрытии черновика."
+
+#: ../../source/raccourcis.rst:322
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -861,7 +947,7 @@ msgstr ""
 " партия Кроуфорда и окончание матча показываются тогда над кубиками, и "
 "ожидается открытие следующей партии."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -885,7 +971,7 @@ msgstr ""
 "Разворачиваемая панель показывает точный текст ``.mat`` черновика и "
 "кнопку для его копирования."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:337
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -907,7 +993,7 @@ msgstr ""
 "черновик после подтверждения; уже сохранённый матч остаётся в библиотеке "
 "окончательно."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:346
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -919,7 +1005,7 @@ msgstr ""
 "сыгран, с предупреждением, что gnubg и XG отметят его («Invalid move») и "
 "дальше разойдутся."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:354
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

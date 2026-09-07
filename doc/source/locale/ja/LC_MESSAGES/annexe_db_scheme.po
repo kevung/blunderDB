@@ -36,7 +36,6 @@ msgid "Versionnage et migrations"
 msgstr "バージョン管理と移行"
 
 #: ../../source/annexe_db_scheme.rst:13
-#, fuzzy
 msgid ""
 "Le schéma de la base de données est **versionné**. La version courante du"
 " schéma est **2.23.0** ; elle est indépendante de la version de "
@@ -44,9 +43,9 @@ msgid ""
 "évolue. La version du schéma d'une base ouverte est visible dans le "
 "panneau **Métadonnées** (commande ``meta``)."
 msgstr ""
-"データベーススキーマは\\ **バージョン管理**\\ されています。現在のスキーマバージョンは\\ **2.21.0**\\ "
-"です。これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ更新されます。開いているデータベースのスキーマバージョンは\\"
-" **メタデータ**\\ パネル（``meta`` コマンド）で確認できます。"
+"データベーススキーマは\\\\ **バージョン管理**\\\\ されています。現在のスキーマバージョンは\\\\ **2.21.0**\\\\ "
+"です。これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ更新されます。開いているデータベースのスキーマバージョンは\\\\"
+" **メタデータ**\\\\ パネル（``meta`` コマンド）で確認できます。"
 
 #: ../../source/annexe_db_scheme.rst:20
 msgid ""

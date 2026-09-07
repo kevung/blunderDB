@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:27+0200\n"
+"POT-Creation-Date: 2026-09-07 08:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -846,7 +846,59 @@ msgstr "CTRL-ENTER"
 msgid "Enregistrer le brouillon en match."
 msgstr "Tallenna luonnos otteluksi."
 
-#: ../../source/raccourcis.rst:299
+#: ../../source/raccourcis.rst:1
+msgid "i"
+msgstr "i"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Insérer une action devant celle du curseur (camp proposé pour que la "
+"suite reste cohérente)."
+msgstr ""
+"Lisää toiminto kohdistimen toiminnon eteen (ehdotettu puoli on se, joka "
+"pitää jatkon johdonmukaisena)."
+
+#: ../../source/raccourcis.rst:1
+msgid "a"
+msgstr "a"
+
+#: ../../source/raccourcis.rst:1
+msgid "Insérer une action derrière celle du curseur."
+msgstr "Lisää toiminto kohdistimen toiminnon jälkeen."
+
+#: ../../source/raccourcis.rst:1
+msgid "x, Del"
+msgstr "x, Del"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+msgstr "Poista kohdistimen toiminto; seuraavat säilyttävät puolensa."
+
+#: ../../source/raccourcis.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/raccourcis.rst:1
+msgid "Donner l'action du curseur à l'autre camp."
+msgstr "Anna kohdistimen toiminto toiselle puolelle."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "CTRL-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Annuler le dernier geste sur le brouillon."
+msgstr "Kumoa viimeisin luonnokseen tehty ele."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-Z"
+msgstr "CTRL-VAIHTO-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Rétablir le geste annulé."
+msgstr "Tee kumottu ele uudelleen."
+
+#: ../../source/raccourcis.rst:305
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -854,7 +906,43 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:302
+#: ../../source/raccourcis.rst:308
+msgid ""
+"Reculer le curseur sur une action puis ressaisir la corrige **en place** "
+": la validation remplace l'action et le curseur revient là où il était. "
+"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
+" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
+"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
+"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
+" la correction au passage."
+msgstr ""
+"Kohdistimen siirtäminen takaisin toiminnon kohdalle ja uudelleen "
+"kirjoittaminen korjaa sen **paikallaan**: hyväksyntä korvaa toiminnon ja "
+"kohdistin palaa sinne, missä se oli. Jos nopat korjataan ja tallennettu "
+"siirto on yhä uuden heiton laillinen siirto, se säilytetään; muuten "
+"tarjotaan uuden heiton ensimmäistä ehdokasta ja siirto merkitään "
+"”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai "
+"taaksepäin muutoksen jälkeen tallentaa korjauksen samalla."
+
+#: ../../source/raccourcis.rst:315
+msgid ""
+"Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
+"voisine crée un double trait, supprimer une action peut en créer un "
+"autre, changer un camp peut rendre illégaux les coups qui suivent. Ces "
+"incohérences sont marquées dans le transcript, jamais corrigées d'office,"
+" et le curseur se place sur la première d'entre elles après chaque geste."
+" La pile d'annulation vit en mémoire : elle est perdue à la fermeture du "
+"brouillon."
+msgstr ""
+"Mitään ei hylätä eikä poisteta: naapurinsa kanssa samalle puolelle "
+"lisätty toiminto luo kaksoisvuoron, toiminnon poistaminen voi luoda "
+"toisen, puolen vaihtaminen voi tehdä seuraavista siirroista laittomia. "
+"Nämä epäjohdonmukaisuudet merkitään transkriptiin, niitä ei koskaan "
+"korjata automaattisesti, ja kohdistin asettuu ensimmäisen niistä kohdalle"
+" jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun "
+"luonnos suljetaan."
+
+#: ../../source/raccourcis.rst:322
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -867,7 +955,7 @@ msgstr ""
 "arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
 "tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -891,7 +979,7 @@ msgstr ""
 "Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
 " sen kopioimiseen."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:337
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -912,7 +1000,7 @@ msgstr ""
 "sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen "
 "vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:346
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -924,7 +1012,7 @@ msgstr ""
 "kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä "
 "(”Invalid move”) ja poikkeavat siitä eteenpäin."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:354
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

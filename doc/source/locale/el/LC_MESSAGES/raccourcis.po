@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:27+0200\n"
+"POT-Creation-Date: 2026-09-07 08:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -855,7 +855,59 @@ msgstr "CTRL-ENTER"
 msgid "Enregistrer le brouillon en match."
 msgstr "Αποθήκευση του προσχεδίου ως αγώνα."
 
-#: ../../source/raccourcis.rst:299
+#: ../../source/raccourcis.rst:1
+msgid "i"
+msgstr "i"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Insérer une action devant celle du curseur (camp proposé pour que la "
+"suite reste cohérente)."
+msgstr ""
+"Εισαγωγή ενέργειας πριν από αυτήν του δρομέα (η προτεινόμενη πλευρά είναι"
+" εκείνη που διατηρεί τη συνέχεια συνεπή)."
+
+#: ../../source/raccourcis.rst:1
+msgid "a"
+msgstr "a"
+
+#: ../../source/raccourcis.rst:1
+msgid "Insérer une action derrière celle du curseur."
+msgstr "Εισαγωγή ενέργειας μετά από αυτήν του δρομέα."
+
+#: ../../source/raccourcis.rst:1
+msgid "x, Del"
+msgstr "x, Del"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+msgstr "Διαγραφή της ενέργειας του δρομέα· οι επόμενες διατηρούν την πλευρά τους."
+
+#: ../../source/raccourcis.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/raccourcis.rst:1
+msgid "Donner l'action du curseur à l'autre camp."
+msgstr "Απόδοση της ενέργειας του δρομέα στην άλλη πλευρά."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "CTRL-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Annuler le dernier geste sur le brouillon."
+msgstr "Αναίρεση της τελευταίας κίνησης στο πρόχειρο."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-Z"
+msgstr "CTRL-SHIFT-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Rétablir le geste annulé."
+msgstr "Επανάληψη της κίνησης που αναιρέθηκε."
+
+#: ../../source/raccourcis.rst:305
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -863,7 +915,44 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:302
+#: ../../source/raccourcis.rst:308
+msgid ""
+"Reculer le curseur sur une action puis ressaisir la corrige **en place** "
+": la validation remplace l'action et le curseur revient là où il était. "
+"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
+" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
+"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
+"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
+" la correction au passage."
+msgstr ""
+"Αν μετακινήσετε τον δρομέα πίσω σε μια ενέργεια και πληκτρολογήσετε ξανά,"
+" τη διορθώνετε **επί τόπου**: η επικύρωση αντικαθιστά την ενέργεια και ο "
+"δρομέας επιστρέφει εκεί που ήταν. Αν διορθωθούν τα ζάρια και η "
+"καταγεγραμμένη κίνηση παραμένει νόμιμη κίνηση της νέας ζαριάς, "
+"διατηρείται· διαφορετικά προτείνεται ο πρώτος υποψήφιος της νέας ζαριάς "
+"και η κίνηση επισημαίνεται ως «προς επανεξέταση» μέχρι την επικύρωση. Η "
+"μετακίνηση του δρομέα εμπρός ή πίσω μετά από κάποια αλλαγή καταγράφει τη "
+"διόρθωση στο πέρασμα."
+
+#: ../../source/raccourcis.rst:315
+msgid ""
+"Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
+"voisine crée un double trait, supprimer une action peut en créer un "
+"autre, changer un camp peut rendre illégaux les coups qui suivent. Ces "
+"incohérences sont marquées dans le transcript, jamais corrigées d'office,"
+" et le curseur se place sur la première d'entre elles après chaque geste."
+" La pile d'annulation vit en mémoire : elle est perdue à la fermeture du "
+"brouillon."
+msgstr ""
+"Τίποτα δεν απορρίπτεται και τίποτα δεν διαγράφεται: η εισαγωγή ενέργειας "
+"της ίδιας πλευράς με τη γειτονική της δημιουργεί διπλή σειρά, η διαγραφή "
+"μιας ενέργειας μπορεί να δημιουργήσει άλλη, η αλλαγή πλευράς μπορεί να "
+"καταστήσει παράνομες τις κινήσεις που ακολουθούν. Αυτές οι ασυνέπειες "
+"επισημαίνονται στο transcript, δεν διορθώνονται ποτέ αυτόματα, και ο "
+"δρομέας τοποθετείται στην πρώτη από αυτές μετά από κάθε κίνηση. Η στοίβα "
+"αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο του πρόχειρου."
+
+#: ../../source/raccourcis.rst:322
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -877,7 +966,7 @@ msgstr ""
 "εμφανίζονται τότε πάνω από τα ζάρια, και αναμένεται το άνοιγμα της "
 "επόμενης παρτίδας."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -902,7 +991,7 @@ msgstr ""
 "πλαίσιο δείχνει το ακριβές κείμενο ``.mat`` του προσχεδίου, με ένα κουμπί"
 " αντιγραφής."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:337
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -925,7 +1014,7 @@ msgstr ""
 "διαγράφει το προσχέδιο μετά από επιβεβαίωση· ένας ήδη αποθηκευμένος "
 "αγώνας παραμένει οριστικά στη βιβλιοθήκη."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:346
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -937,7 +1026,7 @@ msgstr ""
 "όπως παίχτηκε, με την προειδοποίηση ότι το gnubg και το XG θα την "
 "επισημάνουν («Invalid move») και θα αποκλίνουν στη συνέχεια."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:354
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 

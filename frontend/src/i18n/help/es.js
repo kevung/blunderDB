@@ -1349,9 +1349,35 @@ export default {
 <td>CTRL-INTRO</td>
 <td>Guardar el borrador como partido.</td>
 </tr>
+<tr>
+<td>i</td>
+<td>Insertar una acción delante de la del cursor (el bando propuesto es el que mantiene coherente lo que sigue).</td>
+</tr>
+<tr>
+<td>a</td>
+<td>Insertar una acción detrás de la del cursor.</td>
+</tr>
+<tr>
+<td>x, Supr</td>
+<td>Eliminar la acción del cursor; las siguientes conservan su bando.</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Dar la acción del cursor al otro bando.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Deshacer el último gesto sobre el borrador.</td>
+</tr>
+<tr>
+<td>CTRL-MAYÚS-Z</td>
+<td>Rehacer el gesto deshecho.</td>
+</tr>
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
+<p>Retroceder el cursor hasta una acción y volver a escribir la corrige <strong>en el sitio</strong>: la validación reemplaza la acción y el cursor vuelve donde estaba. Si se corrigen los dados y la jugada registrada sigue siendo una jugada legal de la nueva tirada, se conserva; si no, se propone el primer candidato de la nueva tirada y la jugada queda señalada «por revisar» hasta la validación. Avanzar o retroceder el cursor después de haber cambiado algo registra la corrección de paso.</p>
+<p>Nada se rechaza ni se elimina: insertar una acción del mismo bando que su vecina crea un doble turno, eliminar una acción puede crear otro, cambiar un bando puede volver ilegales las jugadas siguientes. Estas incoherencias se señalan en el transcript, nunca se corrigen de oficio, y el cursor se coloca sobre la primera de ellas después de cada gesto. La pila de deshacer vive en memoria: se pierde al cerrar el borrador.</p>
 <p>Una partida termina por un rechazo, por un abandono o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
 <p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una fila por turno, la acción de doblaje y el final de la partida en la columna de quien actúa. La celda del cursor está enmarcada; al mover el cursor, el tablero vuelve a la posición de la acción señalada y muestra sus candidatas, con la jugada registrada seleccionada. Una incoherencia (jugada ilegal, turno doble, doblaje imposible, acción más allá del final del match, dados incoherentes) decora su celda y se nombra en un mensaje emergente. Las partidas se pliegan; la del cursor queda abierta. Un panel desplegable muestra el texto <code>.mat</code> exacto del borrador, con un botón para copiarlo.</p>
 <p>La barra del borrador lleva tres botones. «Guardar» (CTRL-INTRO) escribe el partido en la biblioteca: creado la primera vez, reemplazado después con el mismo identificador, y el análisis únicamente de las posiciones nuevas empieza en seguida, con su progreso y su cancelación en la barra de estado. La barra del borrador dice en qué estado se encuentra: nunca guardado, guardado hace tanto, o modificado desde entonces. «Exportar .mat» escribe el partido en un archivo Jellyfish, tal como se ha tecleado. «Cerrar el borrador» elimina el borrador tras una confirmación; un partido ya guardado permanece en la biblioteca, definitivo.</p>

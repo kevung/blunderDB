@@ -890,6 +890,8 @@ export namespace database {
 	export class TranscriptionState {
 	    id: number;
 	    annotated: transcript.Annotated;
+	    can_undo: boolean;
+	    can_redo: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new TranscriptionState(source);
@@ -899,6 +901,8 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
 	        this.annotated = this.convertValues(source["annotated"], transcript.Annotated);
+	        this.can_undo = source["can_undo"];
+	        this.can_redo = source["can_redo"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3783,6 +3787,28 @@ export namespace transcript {
 		    return a;
 		}
 	}
+	export class EntryInfo {
+	    at: number;
+	    replacing: boolean;
+	    side: number;
+	    dice: number[];
+	    selected: boolean;
+	    review: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new EntryInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.at = source["at"];
+	        this.replacing = source["replacing"];
+	        this.side = source["side"];
+	        this.dice = source["dice"];
+	        this.selected = source["selected"];
+	        this.review = source["review"];
+	    }
+	}
 	export class Next {
 	    expects: string;
 	    side: number;
@@ -3945,6 +3971,7 @@ export namespace transcript {
 	    actions: ActionInfo[];
 	    games: GameInfo[];
 	    next: Next;
+	    entry?: EntryInfo;
 	    finished: boolean;
 	    winner: number;
 	    score: number[];
@@ -3960,6 +3987,7 @@ export namespace transcript {
 	        this.actions = this.convertValues(source["actions"], ActionInfo);
 	        this.games = this.convertValues(source["games"], GameInfo);
 	        this.next = this.convertValues(source["next"], Next);
+	        this.entry = this.convertValues(source["entry"], EntryInfo);
 	        this.finished = source["finished"];
 	        this.winner = source["winner"];
 	        this.score = source["score"];
@@ -3992,6 +4020,7 @@ export namespace transcript {
 	    Selected: boolean;
 	    Mode: number;
 	    At: number;
+	    Review: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Entry(source);
@@ -4005,6 +4034,7 @@ export namespace transcript {
 	        this.Selected = source["Selected"];
 	        this.Mode = source["Mode"];
 	        this.At = source["At"];
+	        this.Review = source["Review"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4025,6 +4055,7 @@ export namespace transcript {
 		    return a;
 		}
 	}
+	
 	
 	export class Gesture {
 	    Kind: string;

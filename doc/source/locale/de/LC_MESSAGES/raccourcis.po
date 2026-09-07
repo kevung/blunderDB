@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:27+0200\n"
+"POT-Creation-Date: 2026-09-07 08:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -856,7 +856,59 @@ msgstr "STRG-EINGABE"
 msgid "Enregistrer le brouillon en match."
 msgstr "Den Entwurf als Match speichern."
 
-#: ../../source/raccourcis.rst:299
+#: ../../source/raccourcis.rst:1
+msgid "i"
+msgstr "i"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Insérer une action devant celle du curseur (camp proposé pour que la "
+"suite reste cohérente)."
+msgstr ""
+"Eine Aktion vor der Aktion des Cursors einfügen (die vorgeschlagene Seite"
+" ist diejenige, die den weiteren Verlauf stimmig hält)."
+
+#: ../../source/raccourcis.rst:1
+msgid "a"
+msgstr "a"
+
+#: ../../source/raccourcis.rst:1
+msgid "Insérer une action derrière celle du curseur."
+msgstr "Eine Aktion nach der Aktion des Cursors einfügen."
+
+#: ../../source/raccourcis.rst:1
+msgid "x, Del"
+msgstr "x, Entf"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+msgstr "Die Aktion des Cursors löschen; die folgenden behalten ihre Seite."
+
+#: ../../source/raccourcis.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/raccourcis.rst:1
+msgid "Donner l'action du curseur à l'autre camp."
+msgstr "Die Aktion des Cursors der anderen Seite geben."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "STRG-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Annuler le dernier geste sur le brouillon."
+msgstr "Die letzte Geste am Entwurf rückgängig machen."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-Z"
+msgstr "STRG-UMSCHALT-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Rétablir le geste annulé."
+msgstr "Die rückgängig gemachte Geste wiederherstellen."
+
+#: ../../source/raccourcis.rst:305
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -864,7 +916,44 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:302
+#: ../../source/raccourcis.rst:308
+msgid ""
+"Reculer le curseur sur une action puis ressaisir la corrige **en place** "
+": la validation remplace l'action et le curseur revient là où il était. "
+"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
+" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
+"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
+"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
+" la correction au passage."
+msgstr ""
+"Den Cursor auf eine Aktion zurücksetzen und erneut eingeben korrigiert "
+"sie **an Ort und Stelle**: Das Bestätigen ersetzt die Aktion, und der "
+"Cursor kehrt dorthin zurück, wo er war. Werden die Würfel korrigiert und "
+"bleibt der erfasste Zug ein gültiger Zug des neuen Wurfs, wird er "
+"beibehalten; andernfalls wird der erste Kandidat des neuen Wurfs "
+"vorgeschlagen und der Zug bis zur Bestätigung als „zu prüfen“ "
+"gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
+"zurückbewegt, so wird die Korrektur dabei übernommen."
+
+#: ../../source/raccourcis.rst:315
+msgid ""
+"Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
+"voisine crée un double trait, supprimer une action peut en créer un "
+"autre, changer un camp peut rendre illégaux les coups qui suivent. Ces "
+"incohérences sont marquées dans le transcript, jamais corrigées d'office,"
+" et le curseur se place sur la première d'entre elles après chaque geste."
+" La pile d'annulation vit en mémoire : elle est perdue à la fermeture du "
+"brouillon."
+msgstr ""
+"Nichts wird abgelehnt und nichts gelöscht: Eine Aktion derselben Seite "
+"wie ihre Nachbarin einzufügen erzeugt einen doppelten Zug, eine Aktion zu"
+" löschen kann einen weiteren erzeugen, eine Seite zu ändern kann die "
+"folgenden Züge ungültig machen. Diese Unstimmigkeiten werden im "
+"Transkript markiert, niemals von selbst behoben, und der Cursor springt "
+"nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im "
+"Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird."
+
+#: ../../source/raccourcis.rst:322
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -878,7 +967,7 @@ msgstr ""
 "Partie und Matchende werden dann über den Würfeln angezeigt, und die "
 "Eröffnung der nächsten Partie wird erwartet."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -902,7 +991,7 @@ msgstr ""
 " des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten "
 "``.mat``-Text des Entwurfs mit einer Schaltfläche zum Kopieren."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:337
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -925,7 +1014,7 @@ msgstr ""
 "Bestätigung; ein bereits gespeichertes Match bleibt endgültig in der "
 "Bibliothek."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:346
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -937,7 +1026,7 @@ msgstr ""
 "wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden "
 "(„Invalid move“) und danach abweichen."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:354
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 
