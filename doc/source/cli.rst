@@ -1321,6 +1321,48 @@ l'aller-retour sur un fichier réel, en dehors des tests.
    #   Final score: 9-2
    # Inconsistencies: none
 
+tournament — Lire un tournoi dirigé
+------------------------------------
+
+Lit un tournoi dirigé sans interface graphique. Diriger un tournoi de façon
+interactive est le rôle de la console du moteur Nicomaque ; ces
+sous-commandes ne font que **lire**, et aucune n'attend de saisie.
+
+.. code-block:: bash
+
+   ./blunderdb tournament <sous-commande> --db <chemin> [options]
+
+**Sous-commandes:**
+
+* ``list [--format text|json]`` — Les tournois dirigés de la base, avec leur
+  état, la version du moteur et la date de la dernière décision.
+* ``verify --id N [--format text|json]`` — Rejoue la direction et signale tout
+  avertissement résiduel. **Sort en erreur** s'il en reste un : c'est la
+  vérification d'après-tournoi, et un script qui la passe sur les bases d'une
+  saison veut un code de retour, pas une ligne à filtrer.
+* ``standings --id N`` — Le classement en CSV, prix compris, dans la langue de
+  l'interface.
+* ``page --id N [--out <dossier>]`` — La page HTML d'affichage. Sans
+  ``--out`` elle part sur la sortie standard ; avec, elle est écrite dans le
+  dossier, qui devient celui de la direction.
+* ``export --id N`` — Le journal d'événements brut, rejouable par les outils du
+  moteur. Le journal est toute la vérité d'une direction : le classement, les
+  arbres et les avertissements en sont rejoués. Un outil qui lit cette sortie
+  n'a besoin d'aucun blunderDB.
+
+**Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
+``list``), ``--format``.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb tournament list --db base.db
+   ./blunderdb tournament verify --db base.db --id 3
+   ./blunderdb tournament standings --db base.db --id 3 > classement.csv
+   ./blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
+   ./blunderdb tournament export --db base.db --id 3 > journal.json
+
 trash — La corbeille
 ---------------------
 

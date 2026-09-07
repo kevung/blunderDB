@@ -298,6 +298,7 @@ var databaseParity = map[string]parityEntry{
 	"ParseDirectoryCSV":                 {Why: whyDirection},
 	"DirectionFreeSlots":                {Why: whyDirection},
 	"AddParticipantAtSlot":              {Why: whyDirection},
+	"DirectionJournalJSON":              {Why: whyDirection},
 	"HasDirection":                      {Why: whyDirection},
 	"ListDirections":                    {Why: whyDirection},
 	"SetDirectionConfig":                {Why: whyDirection},

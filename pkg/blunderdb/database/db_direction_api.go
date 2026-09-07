@@ -210,3 +210,21 @@ func parseDirectionConfig(configJSON string) (tournoi.Config, error) {
 	}
 	return cfg, nil
 }
+
+// DirectionJournalJSON gives a Direction's raw event journal (issue #395).
+//
+// Raw and not derived: the journal is the whole truth of a Direction, and everything else —
+// standings, brackets, warnings — is replayed from it. A tool that reads this output needs no
+// blunderDB at all, only the engine, which is exactly what makes the format an exit and not a
+// lock-in.
+func (d *Database) DirectionJournalJSON(tournamentID int64) (string, error) {
+	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err != nil {
+		return "", err
+	}
+	blob, err := json.MarshalIndent(dir.Journal(), "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("direction: journal: %w", err)
+	}
+	return string(blob) + "\n", nil
+}
