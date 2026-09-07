@@ -41,9 +41,10 @@ type searchParams struct {
 	format      string
 	outputDB    string
 	// like is the id of a position whose NEIGHBOURS are wanted (#293). It is
-	// not a filter: similarity is a ranking over the whole library, not a
-	// predicate the SQL scan can narrow on, so it replaces the query rather
-	// than joining it.
+	// not a filter: similarity RANKS its set, it does not narrow one, so it
+	// replaces the query rather than joining it. The set it ranks is the
+	// target's own class — same kind of decision, same regime for a cube
+	// decision, another match (ADR-0043).
 	like int
 }
 
@@ -107,7 +108,7 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 	// precedence rule and would quietly change what the ranking is over.
 	if *f.like > 0 {
 		if named := filterFlagsSet(searchCmd); len(named) > 1 {
-			return nil, "", fmt.Errorf("--like cannot be combined with the filter flags (%s): similarity ranks the whole library, it does not narrow it", strings.Join(named, ", "))
+			return nil, "", fmt.Errorf("--like cannot be combined with the filter flags (%s): similarity ranks a set, it does not narrow one", strings.Join(named, ", "))
 		}
 		return &searchParams{
 			like:   *f.like,
