@@ -298,6 +298,15 @@
                                 {$t('direction.settings.finalLength')}
                                 <input type="number" min="0" max="99" bind:value={phase.final_length} />
                             </label>
+                            <!-- Les têtes de série sont ÉTEINTES PAR DÉFAUT, et c'est une
+                                 décision : l'étude du moteur conclut « pas de têtes de série
+                                 protégées », qui est la culture actuelle du backgammon. Certains
+                                 organisateurs en veulent quand même ; l'infobulle dit pourquoi
+                                 en une phrase, sans faire la leçon. -->
+                            <label title={$t('direction.settings.seedingHint')}>
+                                <input type="checkbox" checked={phase.seeding === 'rating'} onchange={(e) => (phase.seeding = e.currentTarget.checked ? 'rating' : undefined)} />
+                                {$t('direction.settings.seeding')}
+                            </label>
                             <label class="wide" title={$t('direction.settings.lengthsHint')}>
                                 {$t('direction.settings.lengths')}
                                 <input

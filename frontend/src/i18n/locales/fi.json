@@ -1749,7 +1749,9 @@
             "scalePlaceholder": "50, 30, 20",
             "scaleHint": "Yksi arvo sijaa kohti, ensimmäisestä viimeiseen maksettuun.",
             "percent": "%",
-            "percentHint": "Valittuna: prosentteja jaettavasta potista. Valitsematta: kiinteitä summia."
+            "percentHint": "Valittuna: prosentteja jaettavasta potista. Valitsematta: kiinteitä summia.",
+            "seeding": "Sijoitukset",
+            "seedingHint": "Oletuksena pois: moottorin tutkimus päätyy siihen, ettei suojattuja sijoituksia käytetä, mikä on backgammonin nykyinen tapa. Päällä pelaajat sijoitetaan luokituksen mukaan — paras ja toiseksi paras vastakkaisiin puoliskoihin. ⓘ-painike vie tutkimukseen."
         },
         "tabs": {
             "direction": "Johtaminen",

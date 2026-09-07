@@ -90,3 +90,37 @@ describe('l’écran des Réglages se monte', () => {
         expect(container.querySelector('.confirm')).toBeNull();
     });
 });
+
+/*
+ * Les têtes de série (#394) : l'option est VISIBLE mais ÉTEINTE, et le défaut est une décision
+ * — l'étude du moteur conclut « pas de têtes de série protégées ». Un test le tient, parce
+ * qu'un défaut décidé se perd exactement comme un défaut oublié.
+ */
+describe('les têtes de série', () => {
+    const bracket = {
+        name: 'Open de Lyon',
+        tables: { count: 8 },
+        phases: [{ kind: 'bracket', length: 5 }]
+    };
+
+    test('l’option est là, éteinte, et dit pourquoi', () => {
+        const { container } = render(DirectionSettings, { props: { config: bracket, directionState: 'draft' } });
+        const boxes = [...container.querySelectorAll('input[type="checkbox"]')];
+        const seeding = boxes.find((b) => (b.closest('label')?.textContent || '').includes('Seeding'));
+        expect(seeding).toBeTruthy();
+        expect(seeding.checked).toBe(false);
+        // La raison est dans l'infobulle, pas dans une leçon à l'écran.
+        expect(seeding.closest('label').getAttribute('title')).toContain('no protected seeds');
+    });
+
+    test('cochée, elle écrit le placement par cote dans la configuration', async () => {
+        const config = { ...bracket, phases: [{ kind: 'bracket', length: 5 }] };
+        const { container } = render(DirectionSettings, { props: { config, directionState: 'draft' } });
+        const boxes = [...container.querySelectorAll('input[type="checkbox"]')];
+        const seeding = boxes.find((b) => (b.closest('label')?.textContent || '').includes('Seeding'));
+        await fireEvent.click(seeding);
+        expect(config.phases[0].seeding).toBe('rating');
+        await fireEvent.click(seeding);
+        expect(config.phases[0].seeding).toBeUndefined();
+    });
+});

@@ -1749,7 +1749,9 @@
             "scalePlaceholder": "50, 30, 20",
             "scaleHint": "Ein Wert pro Platz, vom ersten bis zum letzten bezahlten.",
             "percent": "%",
-            "percentHint": "Angehakt: Prozente des auszuschüttenden Pools. Nicht angehakt: feste Beträge."
+            "percentHint": "Angehakt: Prozente des auszuschüttenden Pools. Nicht angehakt: feste Beträge.",
+            "seeding": "Setzliste",
+            "seedingHint": "Standardmäßig aus: Die Studie der Engine kommt zu „keine geschützten Setzplätze“, was der heutigen Backgammon-Kultur entspricht. Eingeschaltet werden die Spieler nach Wertung gesetzt — der Beste und der Zweite in gegenüberliegenden Hälften. Die Schaltfläche ⓘ führt zur Studie."
         },
         "tabs": {
             "direction": "Leitung",

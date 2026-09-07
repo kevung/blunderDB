@@ -1749,7 +1749,9 @@
             "scalePlaceholder": "50, 30, 20",
             "scaleHint": "Un valor por puesto, del primero al último pagado.",
             "percent": "%",
-            "percentHint": "Marcado: porcentajes del bote repartible. Sin marcar: importes fijos."
+            "percentHint": "Marcado: porcentajes del bote repartible. Sin marcar: importes fijos.",
+            "seeding": "Cabezas de serie",
+            "seedingHint": "Desactivado por defecto: el estudio del motor concluye «sin cabezas de serie protegidas», que es la cultura actual del backgammon. Activado, los jugadores se colocan por valoración — el mejor y el segundo en mitades opuestas. El botón ⓘ lleva al estudio."
         },
         "tabs": {
             "direction": "Dirección",
