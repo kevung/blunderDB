@@ -1310,6 +1310,10 @@ export default {
 <td>Heiton syöttö yhdellä eleellä: ruutu kantaa molemmat nopat, tuplat lävistäjällä. Avauksessa kolmio väistyy kuuden nopan rivin tieltä, ja yksi napsautus antaa yhden osapuolen nopan.</td>
 </tr>
 <tr>
+<td>Napsautus (laudan pisteessä)</td>
+<td>Jäljelle jäävät vain ehdokkaat, joiden siirto lähtee tästä pisteestä; toinen piste kaventaa lisää, napsautus jo suodatetussa pisteessä poistaa sen, ja napsautus laudan ulkopuolella poistaa suodatuksen.</td>
+</tr>
+<tr>
 <td>ENTER</td>
 <td>Kirjaa valittu siirto (pelin viimeinen siirto).</td>
 </tr>
@@ -1357,6 +1361,7 @@ export default {
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
 <p>Kahdenkymmenenyhden heiton kolmio on heiton kahden ruudun alla, näppäimistön vierellä eikä sen tilalla: kaksi numeroa on yhä kaksi kertaa nopeampi kuin napsautus, ja kolmio on sitä varten, joka kirjaa käsi hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat sama heitto.</p>
+<p>Lähtöpisteen mukainen suodatus on kaukana listalla olevan siirron ele. Kahdenteentoista ehdokkaaseen laskeutuminen maksaa kolmetoista näppäilyä; napsautus pisteeseen, josta siirto lähtee, jättää jäljelle vain sieltä lähtevät siirrot, ja jäljelle jää kaksi tai kolme näppäilyä. Suodatus ei muuta luonnoksessa mitään: lista kapenee näytöllä, näppäimet j ja k kulkevat kavennettua listaa, ja seuraava heitto poistaa suodatuksen.</p>
 <p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
 <p>Luonnospalkissa on kolme painiketta. ”Tallenna” (CTRL-ENTER) kirjoittaa ottelun kirjastoon: se luodaan ensimmäisellä kerralla, korvataan sen jälkeen samalla tunnisteella, ja pelkkien uusien asemien analyysi alkaa heti, edistyminen ja peruutus tilarivillä. Luonnospalkki kertoo tilan: ei koskaan tallennettu, tallennettu jokin aika sitten, tai muokattu sen jälkeen. ”Vie .mat” kirjoittaa ottelun Jellyfish-tiedostoon juuri sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena.</p>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:58+0200\n"
+"POT-Creation-Date: 2026-09-07 09:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -777,6 +777,20 @@ msgstr ""
 "yksi napsautus antaa yhden osapuolen nopan."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur un point du damier)"
+msgstr "Napsautus (laudan pisteessä)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ne garder que les candidats dont un pas part de ce point ; un second "
+"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
+"clic hors du damier lève le filtre."
+msgstr ""
+"Jäljelle jäävät vain ehdokkaat, joiden siirto lähtee tästä pisteestä; "
+"toinen piste kaventaa lisää, napsautus jo suodatetussa pisteessä poistaa "
+"sen, ja napsautus laudan ulkopuolella poistaa suodatuksen."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Kirjaa valittu siirto (pelin viimeinen siirto)."
 
@@ -860,7 +874,7 @@ msgstr "CTRL-ENTER"
 msgid "Enregistrer le brouillon en match."
 msgstr "Tallenna luonnos otteluksi."
 
-#: ../../source/raccourcis.rst:300
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -868,7 +882,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:304
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -881,7 +895,23 @@ msgstr ""
 "hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat "
 "sama heitto."
 
-#: ../../source/raccourcis.rst:308
+#: ../../source/raccourcis.rst:309
+msgid ""
+"Le filtre par point de départ est le geste du coup lointain. Descendre au"
+" douzième candidat coûte treize touches ; un clic sur le point d'où part "
+"le coup ne laisse que les coups qui en partent, et il ne reste que deux "
+"ou trois touches à faire. Le filtre ne change rien au brouillon : la "
+"liste est réduite à l'écran, les touches j et k parcourent la liste "
+"réduite, et le jet suivant lève le filtre."
+msgstr ""
+"Lähtöpisteen mukainen suodatus on kaukana listalla olevan siirron ele. "
+"Kahdenteentoista ehdokkaaseen laskeutuminen maksaa kolmetoista näppäilyä;"
+" napsautus pisteeseen, josta siirto lähtee, jättää jäljelle vain sieltä "
+"lähtevät siirrot, ja jäljelle jää kaksi tai kolme näppäilyä. Suodatus ei "
+"muuta luonnoksessa mitään: lista kapenee näytöllä, näppäimet j ja k "
+"kulkevat kavennettua listaa, ja seuraava heitto poistaa suodatuksen."
+
+#: ../../source/raccourcis.rst:316
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -894,7 +924,7 @@ msgstr ""
 "arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
 "tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
-#: ../../source/raccourcis.rst:313
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -918,7 +948,7 @@ msgstr ""
 "Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
 " sen kopioimiseen."
 
-#: ../../source/raccourcis.rst:323
+#: ../../source/raccourcis.rst:331
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -939,7 +969,7 @@ msgstr ""
 "sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen "
 "vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena."
 
-#: ../../source/raccourcis.rst:332
+#: ../../source/raccourcis.rst:340
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -951,7 +981,7 @@ msgstr ""
 "kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä "
 "(”Invalid move”) ja poikkeavat siitä eteenpäin."
 
-#: ../../source/raccourcis.rst:340
+#: ../../source/raccourcis.rst:348
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

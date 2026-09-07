@@ -1091,6 +1091,7 @@
         "dance": "Ei laillista siirtoa: tanssi kirjataan.",
         "unranked": "Arviointi ei käytettävissä: lailliset siirrot ovat generaattorin järjestyksessä.",
         "correctable": "Heitto on yhä korjattavissa: numero aloittaa sen alusta, Enter kirjaa siirron.",
+        "pointFilter": "Suodatettu: {points} — {n} siirtoa. Napsautus laudan ulkopuolella poistaa suodatuksen.",
         "diceTriangle": "21 heittoa",
         "dieRow": "Kuusi noppaa",
         "rollTitle": "Heitto {a}-{b}",

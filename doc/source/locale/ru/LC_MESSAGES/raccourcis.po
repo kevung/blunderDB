@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:58+0200\n"
+"POT-Creation-Date: 2026-09-07 09:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -773,6 +773,20 @@ msgstr ""
 "ряду из шести костей, и один щелчок даёт кость одной стороны."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur un point du damier)"
+msgstr "Щелчок (по пункту доски)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ne garder que les candidats dont un pas part de ce point ; un second "
+"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
+"clic hors du damier lève le filtre."
+msgstr ""
+"Оставить только те варианты, в которых есть шаг из этого пункта; второй "
+"пункт сужает список ещё сильнее, щелчок по уже выбранному пункту снимает "
+"его, а щелчок вне доски снимает фильтр целиком."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Записать выбранный ход (последний ход партии)."
 
@@ -854,7 +868,7 @@ msgstr "CTRL-ENTER"
 msgid "Enregistrer le brouillon en match."
 msgstr "Сохранить черновик как матч."
 
-#: ../../source/raccourcis.rst:300
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -862,7 +876,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:304
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -875,7 +889,23 @@ msgstr ""
 " с рукой на мыши. Одна клетка на бросок, никогда не две: 3-1 и 1-3 — это "
 "один и тот же бросок."
 
-#: ../../source/raccourcis.rst:308
+#: ../../source/raccourcis.rst:309
+msgid ""
+"Le filtre par point de départ est le geste du coup lointain. Descendre au"
+" douzième candidat coûte treize touches ; un clic sur le point d'où part "
+"le coup ne laisse que les coups qui en partent, et il ne reste que deux "
+"ou trois touches à faire. Le filtre ne change rien au brouillon : la "
+"liste est réduite à l'écran, les touches j et k parcourent la liste "
+"réduite, et le jet suivant lève le filtre."
+msgstr ""
+"Фильтр по пункту отправления — это приём для хода, находящегося далеко в "
+"списке. Спуститься к двенадцатому варианту стоит тринадцати нажатий; "
+"щелчок по пункту, из которого идёт ход, оставляет только ходы, выходящие "
+"оттуда, и остаётся сделать два-три нажатия. Фильтр ничего не меняет в "
+"черновике: список сужается на экране, клавиши j и k проходят по суженному"
+" списку, а следующий бросок снимает фильтр."
+
+#: ../../source/raccourcis.rst:316
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -888,7 +918,7 @@ msgstr ""
 " партия Кроуфорда и окончание матча показываются тогда над кубиками, и "
 "ожидается открытие следующей партии."
 
-#: ../../source/raccourcis.rst:313
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -912,7 +942,7 @@ msgstr ""
 "Разворачиваемая панель показывает точный текст ``.mat`` черновика и "
 "кнопку для его копирования."
 
-#: ../../source/raccourcis.rst:323
+#: ../../source/raccourcis.rst:331
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -934,7 +964,7 @@ msgstr ""
 "черновик после подтверждения; уже сохранённый матч остаётся в библиотеке "
 "окончательно."
 
-#: ../../source/raccourcis.rst:332
+#: ../../source/raccourcis.rst:340
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -946,7 +976,7 @@ msgstr ""
 "сыгран, с предупреждением, что gnubg и XG отметят его («Invalid move») и "
 "дальше разойдутся."
 
-#: ../../source/raccourcis.rst:340
+#: ../../source/raccourcis.rst:348
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

@@ -1310,6 +1310,10 @@ export default {
 <td>Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Pendant l'ouverture, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp.</td>
 </tr>
 <tr>
+<td>Clic (sur un point du damier)</td>
+<td>Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre.</td>
+</tr>
+<tr>
 <td>ENTREE</td>
 <td>Valider le coup sélectionné (dernier coup d'une partie).</td>
 </tr>
@@ -1357,6 +1361,7 @@ export default {
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
 <p>Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un clic, et le triangle est là pour qui transcrit la souris à la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet.</p>
+<p>Le filtre par point de départ est le geste du coup lointain. Descendre au douzième candidat coûte treize touches ; un clic sur le point d'où part le coup ne laisse que les coups qui en partent, et il ne reste que deux ou trois touches à faire. Le filtre ne change rien au brouillon : la liste est réduite à l'écran, les touches j et k parcourent la liste réduite, et le jet suivant lève le filtre.</p>
 <p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
 <p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
 <p>La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. La barre du brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un match déjà enregistré reste dans la bibliothèque, définitif.</p>

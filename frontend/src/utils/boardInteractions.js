@@ -18,6 +18,7 @@ import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF, playHop, selectSource } from '../services/quizPlay.js';
+import { nextFilter, sourcesOf } from '../services/transcriptionFilter.js';
 
 // A second click on the same Except point within this delay blocks it.
 // Detected by hand because native 'dblclick' is unreliable here: each click
@@ -211,7 +212,8 @@ function stepDie(value, button) {
  *   getSize()            { width, height } of the drawing surface
  *   cfg                  Board.svelte's boardCfg (orientation, widthFactor read live)
  *   getCubeBox()         { x, y, size } where the cube was last drawn
- *   stores               { position, structureMode, activeTab, offeredCube, anyModalOpen }
+ *   stores               { position, structureMode, activeTab, offeredCube, anyModalOpen,
+ *                          quizPlay, transcriptionFilter, transcriptionCandidates }
  *   getPreviousDice()    dice saved when a player rectangle cleared them
  *   setPreviousDice(d)
  *   reset()              blank the board (double-click outside, mode-specific)
@@ -298,9 +300,66 @@ export function attachBoardInteractions(canvas, deps) {
         // Le plateau de sortie visé est TOUJOURS celui du bas : la position
         // affichée a toujours le joueur au trait en player 0, miroir compris.
         if (hitTestBearoffTray(x, y, metrics(), cfg, get(stores.position).player_on_roll, 0)) return OFF;
+        return pointAt(x, y);
+    }
+
+    /**
+     * Le point du MODÈLE visé par un clic, ou null hors du damier. Une position
+     * dont le joueur 2 est au trait est montrée retournée (#294) : le point
+     * cliqué n'est alors pas le point du modèle, et la conversion est celle de
+     * mirrorPosition — 25 - p, qui échange aussi les deux barres.
+     * @param {number} x
+     * @param {number} y
+     */
+    function pointAt(x, y) {
         const { checkerPoint } = checkerAt(x, y);
         if (checkerPoint < 0 || checkerPoint > 25) return null;
         return deps.quizDisplayMirrored?.() ? 25 - checkerPoint : checkerPoint;
+    }
+
+    /**
+     * Le clic qui réduit la liste des candidats d'une transcription (T2.2).
+     *
+     * Un clic sur un point d'où part au moins un candidat ne garde que les
+     * coups qui en partent ; un second point réduit encore ; un clic sur le
+     * point déjà filtré l'enlève, et un clic hors du damier lève tout. C'est le
+     * geste du coup lointain : le rang douze coûte treize touches au clavier.
+     *
+     * Rien de tout cela ne touche au document : le filtre est un état
+     * d'AFFICHAGE (services/transcriptionFilter.js), le moteur n'est pas
+     * rappelé, aucune Action n'est créée.
+     *
+     * Rend `true` quand le geste est pris — sur le modèle de `quizClick`, pour
+     * que l'édition, et le déplacement libre de pions qui viendra, ne voient
+     * pas ce clic.
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
+    function transcriptionClick(event, x, y) {
+        if (!stores.transcriptionFilter || !stores.transcriptionCandidates) return false;
+        const candidates = get(stores.transcriptionCandidates);
+        if (!candidates?.length) return false;
+        // Le bouton droit ouvre le menu de la position, ici comme ailleurs.
+        if (event.button !== 0) return false;
+
+        const points = get(stores.transcriptionFilter);
+        if (isOutsideBoard(x, y, metrics())) {
+            if (!points.length) return false;
+            stores.transcriptionFilter.set([]);
+            return true;
+        }
+
+        const point = pointAt(x, y);
+        if (point === null) return false;
+        // Un point d'où ne part aucun candidat ne fait RIEN : le geste reste
+        // disponible pour le déplacement libre de pions, qui a son propre état.
+        if (!points.includes(point) && !sourcesOf(candidates).has(point)) return false;
+
+        const next = nextFilter(points, point, candidates);
+        if (next === null) return false;
+        stores.transcriptionFilter.set(next);
+        return true;
     }
 
     /**
@@ -339,6 +398,7 @@ export function attachBoardInteractions(canvas, deps) {
         {
             const { x, y } = toDrawing(event);
             if (quizClick(event, x, y)) return;
+            if (transcriptionClick(event, x, y)) return;
         }
         if (!editable()) return;
         const { x, y } = toDrawing(event);

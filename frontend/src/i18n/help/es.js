@@ -1310,6 +1310,10 @@ export default {
 <td>Introducir la tirada con un solo gesto: la casilla lleva ambos dados, los dobles en la diagonal. Durante la apertura el triángulo deja paso a una fila de seis dados, y un clic da el dado de un bando.</td>
 </tr>
 <tr>
+<td>Clic (en un punto del tablero)</td>
+<td>Conservar solo los candidatos con un paso que sale de ese punto; un segundo punto reduce aún más, un clic en el punto ya filtrado lo quita, y un clic fuera del tablero levanta el filtro.</td>
+</tr>
+<tr>
 <td>INTRO</td>
 <td>Registrar el movimiento seleccionado (último movimiento de una partida).</td>
 </tr>
@@ -1357,6 +1361,7 @@ export default {
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
 <p>El triángulo de las veintiuna tiradas se sitúa bajo las dos casillas de la tirada, junto al teclado y no en su lugar: dos dígitos siguen siendo el doble de rápidos que un clic, y el triángulo está ahí para quien transcribe con la mano en el ratón. Una casilla por tirada, nunca dos: 3-1 y 1-3 son la misma tirada.</p>
+<p>El filtro por punto de salida es el gesto del movimiento lejano en la lista. Bajar hasta el duodécimo candidato cuesta trece pulsaciones; un clic en el punto del que sale el movimiento deja solo los que salen de él, y quedan dos o tres pulsaciones por hacer. El filtro no cambia nada del borrador: la lista se reduce en pantalla, las teclas j y k recorren la lista reducida, y la tirada siguiente levanta el filtro.</p>
 <p>Una partida termina por un rechazo, por un abandono o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
 <p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una fila por turno, la acción de doblaje y el final de la partida en la columna de quien actúa. La celda del cursor está enmarcada; al mover el cursor, el tablero vuelve a la posición de la acción señalada y muestra sus candidatas, con la jugada registrada seleccionada. Una incoherencia (jugada ilegal, turno doble, doblaje imposible, acción más allá del final del match, dados incoherentes) decora su celda y se nombra en un mensaje emergente. Las partidas se pliegan; la del cursor queda abierta. Un panel desplegable muestra el texto <code>.mat</code> exacto del borrador, con un botón para copiarlo.</p>
 <p>La barra del borrador lleva tres botones. «Guardar» (CTRL-INTRO) escribe el partido en la biblioteca: creado la primera vez, reemplazado después con el mismo identificador, y el análisis únicamente de las posiciones nuevas empieza en seguida, con su progreso y su cancelación en la barra de estado. La barra del borrador dice en qué estado se encuentra: nunca guardado, guardado hace tanto, o modificado desde entonces. «Exportar .mat» escribe el partido en un archivo Jellyfish, tal como se ha tecleado. «Cerrar el borrador» elimina el borrador tras una confirmación; un partido ya guardado permanece en la biblioteca, definitivo.</p>

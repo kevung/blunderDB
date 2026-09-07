@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:58+0200\n"
+"POT-Creation-Date: 2026-09-07 09:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -785,6 +785,21 @@ msgstr ""
 "Reihe von sechs Würfeln, ein Klick gibt den Würfel einer Seite."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur un point du damier)"
+msgstr "Klick (auf einen Punkt des Bretts)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ne garder que les candidats dont un pas part de ce point ; un second "
+"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
+"clic hors du damier lève le filtre."
+msgstr ""
+"Nur die Kandidaten behalten, bei denen ein Schritt von diesem Punkt "
+"ausgeht; ein zweiter Punkt engt weiter ein, ein Klick auf den bereits "
+"gefilterten Punkt entfernt ihn, und ein Klick neben das Brett hebt den "
+"Filter auf."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Den ausgewählten Zug erfassen (der letzte Zug einer Partie)."
 
@@ -870,7 +885,7 @@ msgstr "STRG-EINGABE"
 msgid "Enregistrer le brouillon en match."
 msgstr "Den Entwurf als Match speichern."
 
-#: ../../source/raccourcis.rst:300
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -878,7 +893,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:304
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -891,7 +906,24 @@ msgstr ""
 " der Hand an der Maus transkribiert. Ein Feld je Wurf, nie zwei: 3-1 und "
 "1-3 sind derselbe Wurf."
 
-#: ../../source/raccourcis.rst:308
+#: ../../source/raccourcis.rst:309
+msgid ""
+"Le filtre par point de départ est le geste du coup lointain. Descendre au"
+" douzième candidat coûte treize touches ; un clic sur le point d'où part "
+"le coup ne laisse que les coups qui en partent, et il ne reste que deux "
+"ou trois touches à faire. Le filtre ne change rien au brouillon : la "
+"liste est réduite à l'écran, les touches j et k parcourent la liste "
+"réduite, et le jet suivant lève le filtre."
+msgstr ""
+"Der Filter nach Ausgangspunkt ist die Geste für einen Zug weit unten in "
+"der Liste. Bis zum zwölften Kandidaten hinabzugehen kostet dreizehn "
+"Tastenanschläge; ein Klick auf den Punkt, von dem der Zug ausgeht, lässt "
+"nur die Züge übrig, die von dort ausgehen, und es bleiben zwei oder drei "
+"Anschläge. Der Filter ändert nichts am Entwurf: die Liste wird auf dem "
+"Bildschirm eingeengt, die Tasten j und k laufen durch die eingeengte "
+"Liste, und der nächste Wurf hebt den Filter auf."
+
+#: ../../source/raccourcis.rst:316
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -905,7 +937,7 @@ msgstr ""
 "Partie und Matchende werden dann über den Würfeln angezeigt, und die "
 "Eröffnung der nächsten Partie wird erwartet."
 
-#: ../../source/raccourcis.rst:313
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -929,7 +961,7 @@ msgstr ""
 " des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten "
 "``.mat``-Text des Entwurfs mit einer Schaltfläche zum Kopieren."
 
-#: ../../source/raccourcis.rst:323
+#: ../../source/raccourcis.rst:331
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -952,7 +984,7 @@ msgstr ""
 "Bestätigung; ein bereits gespeichertes Match bleibt endgültig in der "
 "Bibliothek."
 
-#: ../../source/raccourcis.rst:332
+#: ../../source/raccourcis.rst:340
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -964,7 +996,7 @@ msgstr ""
 "wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden "
 "(„Invalid move“) und danach abweichen."
 
-#: ../../source/raccourcis.rst:340
+#: ../../source/raccourcis.rst:348
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

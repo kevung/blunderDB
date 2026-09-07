@@ -66,7 +66,18 @@
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import DiceTriangle from './DiceTriangle.svelte';
     import TranscriptView from './TranscriptView.svelte';
-    import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, setTranscription, clearTranscription, resetTranscriptionKeys } from '../stores/transcriptionStore.js';
+    import {
+        transcriptionListStore,
+        transcriptionStore,
+        transcriptionKeyStore,
+        transcriptionPointFilterStore,
+        transcriptionCandidateStepsStore,
+        setTranscription,
+        clearTranscription,
+        resetTranscriptionKeys,
+        resetTranscriptionPointFilter
+    } from '../stores/transcriptionStore.js';
+    import { filterByPoints } from '../services/transcriptionFilter.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -293,7 +304,9 @@
             case COMMAND.CURSOR_FORWARD:
                 return { Kind: 'cursor_forward' };
             case COMMAND.SELECT: {
-                const entry = ranked[command.index];
+                // Le rang est celui de la liste MONTRÉE : filtrée, c'est elle
+                // que `j`/`k` et le clic parcourent (T2.2).
+                const entry = visible[command.index];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
             }
             default:
@@ -365,13 +378,17 @@
             const pruneK = await GetGammonNetPruneK();
             const result = await EvaluatePositionImmediate(pos, pruneK, 0);
             const moves = result?.refused ? [] : (result?.moves ?? []);
-            const list = moves.map((move) => ({ move, gen: byNotation[move.move] })).filter((row) => row.gen !== undefined);
+            const list = moves
+                .map((move) => ({ move, gen: byNotation[move.move] }))
+                .filter((row) => row.gen !== undefined)
+                // Les pas du coup, que le filtre par point de départ lit (T2.2).
+                .map((row) => ({ ...row, steps: plays[row.gen]?.steps ?? [] }));
             if (list.length) return { list, unranked: false };
         } catch (err) {
             logger.error('The 0-ply ranking of a transcription roll failed:', err);
         }
         // The generator's own order, which is an order and not a ranking.
-        return { list: plays.map((play, index) => ({ move: { index, move: play.notation }, gen: index })), unranked: true };
+        return { list: plays.map((play, index) => ({ move: { index, move: play.notation }, gen: index, steps: play.steps ?? [] })), unranked: true };
     }
 
     /**
@@ -381,6 +398,10 @@
      */
     async function settleCandidates() {
         if (!get(transcriptionKeyStore).awaitingCandidates) return;
+        // Un NOUVEAU jet : le filtre par point appartenait au précédent. Il est
+        // levé ici et non à chaque frappe — `j`/`k` doivent parcourir la liste
+        // réduite, c'est de là que vient le gain d'ux.md §4.1.
+        resetTranscriptionPointFilter();
         const pos = rollPosition();
         if (!pos) return;
 
@@ -422,6 +443,7 @@
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
         const info = (ann.actions ?? [])[ann.cursor ?? 0];
+        resetTranscriptionPointFilter();
         ranked = [];
         unranked = false;
         danced = false;
@@ -480,6 +502,7 @@
     // donne le jet, le clavier finit le tour, et rien ne se perd entre les deux.
 
     function applyMouseDice(next) {
+        resetTranscriptionPointFilter();
         ranked = [];
         unranked = false;
         danced = false;
@@ -541,6 +564,7 @@
         // leaves a list that belongs to nobody: it goes before the gestures do,
         // so no `select` can address it any more.
         if (result.state.phase === PHASE.DICE || result.state.phase === PHASE.DIE1) {
+            resetTranscriptionPointFilter();
             ranked = [];
             unranked = false;
         }
@@ -558,6 +582,10 @@
     onDestroy(() => {
         document.removeEventListener('keydown', handleKeyDown);
         selectedMoveStore.set(null);
+        // Le plateau lit ces deux magasins pour décider si un clic le concerne :
+        // un panneau démonté ne doit plus rien filtrer.
+        transcriptionCandidateStepsStore.set([]);
+        resetTranscriptionPointFilter();
     });
 
     // The panel takes the keyboard as soon as a draft is open: the whole point
@@ -601,7 +629,7 @@
             selectedMoveStore.set(null);
             return;
         }
-        selectedMoveStore.set(ranked[keys.selected]?.move?.move ?? null);
+        selectedMoveStore.set(visible[keys.selected]?.move?.move ?? null);
     });
 
     // ── what the panel reads ─────────────────────────────────────────────
@@ -687,7 +715,42 @@
     // dé à donner et une cible qui ne répond à rien vaut moins que pas de cible.
     let diceEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && DICE_KINDS.has(expects));
 
-    let rankedMoves = $derived(ranked.map((row) => row.move));
+    // ── le filtre par point de départ (T2.2) ─────────────────────────────
+    //
+    // Le plateau POSE le filtre (utils/boardInteractions.js), le panneau montre
+    // la liste réduite : c'est un état d'affichage, il ne crée aucune Action et
+    // ne rappelle pas le moteur. `ranked` reste le classement complet — c'est
+    // lui qu'on retrouve quand le filtre tombe — et `visible` est ce qui est
+    // montré, donc ce que tout rang désigne : `j`/`k`, le clic sur une ligne,
+    // les flèches du plateau.
+    let visible = $derived(filterByPoints(ranked, $transcriptionPointFilterStore));
+
+    // Ce que le plateau a besoin de savoir des candidats, et rien de plus : les
+    // pas, pour reconnaître un point de départ.
+    $effect(() => {
+        transcriptionCandidateStepsStore.set(ranked.map((row) => ({ steps: row.steps ?? [] })));
+    });
+
+    // Le filtre a changé : la liste montrée n'a plus la même longueur, et le
+    // premier de la liste réduite est présélectionné — sans quoi `j` partirait
+    // d'un rang qui ne veut plus rien dire. Gardé par la clé du filtre : la
+    // même liste ne doit pas se re-sélectionner à chaque changement de `ranked`.
+    let lastFilterKey = '';
+    $effect(() => {
+        const points = $transcriptionPointFilterStore;
+        const filterKey = points.join(',');
+        if (filterKey === lastFilterKey) return;
+        lastFilterKey = filterKey;
+
+        const state = get(transcriptionKeyStore);
+        if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return;
+        const list = filterByPoints(ranked, points);
+        if (!list.length) return;
+        transcriptionKeyStore.set({ ...state, candidateCount: list.length, selected: 0 });
+        run([{ kind: COMMAND.SELECT, index: 0 }]);
+    });
+
+    let rankedMoves = $derived(visible.map((row) => row.move));
     // Which referential the equity column is stated in (ADR-0016 point 6,
     // ADR-0019): money points at money play, normalised match equity at a score.
     let isMoney = $derived(isMoneyPosition(annotated?.next?.position));
@@ -839,11 +902,17 @@
                         <p class="hint">{$t('transcription.chosen')}</p>
                     {/if}
 
-                    {#if ranked.length}
+                    {#if $transcriptionPointFilterStore.length}
+                        <!-- Le filtre est un état d'AFFICHAGE (T2.2) : il est
+                             dit à l'écran, jamais écrit dans le document. -->
+                        <p class="hint">{$t('transcription.pointFilter', { points: $transcriptionPointFilterStore.join(', '), n: visible.length })}</p>
+                    {/if}
+
+                    {#if visible.length}
                         {#if unranked}
                             <p class="hint">{$t('transcription.unranked')}</p>
                             <ol class="plain-candidates">
-                                {#each ranked as row, index (row.gen)}
+                                {#each visible as row, index (row.gen)}
                                     <li>
                                         <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)}>{row.move.move}</button>
                                     </li>

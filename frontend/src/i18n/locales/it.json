@@ -1091,6 +1091,7 @@
         "dance": "Nessuna mossa legale: la danza è registrata.",
         "unranked": "Valutazione non disponibile: le mosse legali sono nell'ordine del generatore.",
         "correctable": "Tiro ancora correggibile: una cifra lo ricomincia, Invio registra la mossa.",
+        "pointFilter": "Filtrato su {points}: {n} mosse. Un clic fuori dal tavoliere toglie il filtro.",
         "diceTriangle": "I 21 tiri",
         "dieRow": "I sei dadi",
         "rollTitle": "Tiro {a}-{b}",

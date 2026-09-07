@@ -23,6 +23,7 @@
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore } from '../stores/quizPlayStore.js';
+    import { transcriptionPointFilterStore, transcriptionCandidateStepsStore } from '../stores/transcriptionStore.js';
     import { resetPlay } from '../services/quizPlay.js';
     import ContextMenu from './ContextMenu.svelte';
 
@@ -290,7 +291,12 @@
                 activeTab: activeTabStore,
                 offeredCube: searchOfferedCubeStore,
                 anyModalOpen: isAnyModalOpen,
-                quizPlay: quizPlayStore
+                quizPlay: quizPlayStore,
+                // Le filtre des candidats d'une transcription (T2.2) : le
+                // plateau le POSE au clic, le panneau le lit. Aucune des deux
+                // n'appelle l'autre.
+                transcriptionFilter: transcriptionPointFilterStore,
+                transcriptionCandidates: transcriptionCandidateStepsStore
             },
             // Le miroir de l'affichage (#294) : une position dont le joueur 2
             // est au trait est montrée retournée, donc le point CLIQUÉ n'est
