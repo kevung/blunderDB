@@ -122,7 +122,7 @@ func TestCorrectionInBracketRaisesAWarningThatClears(t *testing.T) {
 		t.Fatal(err)
 	}
 	cfg := `{"name":"Tableau","tables":{"count":8},"phases":[{"kind":"bracket","length":5}]}`
-	if err := d.CreateDirection(tID, cfg); err != nil {
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
 		t.Fatal(err)
 	}
 	var players []string
@@ -130,7 +130,7 @@ func TestCorrectionInBracketRaisesAWarningThatClears(t *testing.T) {
 		id := string(rune('a' + i))
 		players = append(players, `{"id":"`+id+`","name":"`+id+`"}`)
 	}
-	if err := d.StartDirection(tID, 5, "["+strings.Join(players, ",")+"]"); err != nil {
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
 	}
 	// Draw, then play the first round, then the next one: enough for a correction to matter.

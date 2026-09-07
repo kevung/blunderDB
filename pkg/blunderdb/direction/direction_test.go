@@ -86,23 +86,31 @@ func runToEnd(t *testing.T, d *Direction, now time.Time) int {
 
 func newDraft(t *testing.T, store Store, cfg tournoi.Config) *Direction {
 	t.Helper()
-	d, err := Create(context.Background(), store, 1, cfg)
+	d, err := Create(context.Background(), store, 1, cfg, 7,
+		time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC))
 	if err != nil {
 		t.Fatalf("create: %v", err)
 	}
 	return d
 }
 
+// enterAll records the entries of a Direction, as the panel does one name at a time.
+func enterAll(t *testing.T, d *Direction, now time.Time, players []tournoi.Player) {
+	t.Helper()
+	for _, p := range players {
+		if err := d.Enter(context.Background(), p, now); err != nil {
+			t.Fatalf("entry %s: %v", p.ID, err)
+		}
+	}
+}
+
 // TestTournoiDeClubDeBoutEnBout: a 24-player club tournament runs to a complete ranking with no
 // standing warning. This is the shape lot 1 must direct.
 func TestTournoiDeClubDeBoutEnBout(t *testing.T) {
-	ctx := context.Background()
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
 	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
-	if err := d.Start(ctx, 7, now, entrants(24)); err != nil {
-		t.Fatalf("start: %v", err)
-	}
+	enterAll(t, d, now, entrants(24))
 	matches := runToEnd(t, d, now)
 	if matches == 0 {
 		t.Fatal("no match was played")
@@ -132,9 +140,7 @@ func TestLEtatEstRejoueJamaisStocke(t *testing.T) {
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
 	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
-	if err := d.Start(ctx, 3, now, entrants(16)); err != nil {
-		t.Fatal(err)
-	}
+	enterAll(t, d, now, entrants(16))
 	runToEnd(t, d, now)
 
 	reopened, err := Open(ctx, store, 1)
@@ -164,9 +170,7 @@ func TestCoupureEntreDeuxDecisions(t *testing.T) {
 	// 24 entrants: twice the switch threshold, so the Swiss phase actually pairs. Eight
 	// players at two lives already sum to the target of 16 and the phase would be over
 	// before it began.
-	if err := d.Start(ctx, 5, now, entrants(24)); err != nil {
-		t.Fatal(err)
-	}
+	enterAll(t, d, now, entrants(24))
 	// Confirm a few proposals, then cut the power.
 	acts := d.Propose()
 	if len(acts) == 0 {
@@ -216,9 +220,7 @@ func TestJournalAppendOnly(t *testing.T) {
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
 	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
-	if err := d.Start(ctx, 5, now, entrants(24)); err != nil {
-		t.Fatal(err)
-	}
+	enterAll(t, d, now, entrants(24))
 	var started tournoi.Event
 	for _, a := range d.Propose() {
 		if a.Kind != tournoi.ActStartMatch {
@@ -272,9 +274,7 @@ func TestAucunTexteTraduitNeSortDuPaquet(t *testing.T) {
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
 	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
-	if err := d.Start(ctx, 11, now, entrants(16)); err != nil {
-		t.Fatal(err)
-	}
+	enterAll(t, d, now, entrants(16))
 	check := func(v any, what string) {
 		t.Helper()
 		b, err := json.Marshal(v)
@@ -341,49 +341,134 @@ func TestAucunTexteTraduitNeSortDuPaquet(t *testing.T) {
 	}
 }
 
-// TestBrouillonPuisDemarrage: while a Direction is a draft the configuration is rewritten in
-// place and nothing is logged; the first start freezes it.
-func TestBrouillonPuisDemarrage(t *testing.T) {
+// TestPreparationPuisDemarrage : en préparation, les inscriptions et la configuration vont et
+// viennent ; le premier MATCH lancé fait passer en cours.
+//
+// La frontière est le match, pas l'événement de création ni les inscriptions (ADR-0047 §2). Le
+// journal, lui, commence dès la création : un directeur qui a tapé vingt noms et fermé son
+// portable doit les retrouver, et un brouillon qui n'écrirait rien devrait les garder ailleurs,
+// c'est-à-dire dans un second endroit pour la même vérité.
+func TestPreparationPuisDemarrage(t *testing.T) {
 	ctx := context.Background()
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
 	if d.Record().State != StateDraft {
-		t.Fatalf("a new Direction is a draft, not %q", d.Record().State)
+		t.Fatalf("une Direction neuve est en préparation, pas %q", d.Record().State)
 	}
-	if len(d.Journal()) != 0 {
-		t.Error("a draft writes nothing to the log")
+	if d.Started() {
+		t.Error("aucun match n'a été lancé")
 	}
-	// The director changes their mind: three lives instead of two.
+	if len(d.Journal()) != 1 {
+		t.Fatalf("le journal commence par l'événement de création : %d événement(s)", len(d.Journal()))
+	}
+
+	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
+	enterAll(t, d, now, entrants(24))
+	if len(d.State().Order) != 24 {
+		t.Fatalf("%d inscrits", len(d.State().Order))
+	}
+	if d.Record().State != StateDraft {
+		t.Error("inscrire ne lance pas le tournoi")
+	}
+
+	// Le directeur change d'avis : trois vies au lieu de deux, donc plus de bascule.
 	cfg := clubConfig()
 	cfg.Phases[0].Lives = 3
 	cfg.Phases[0].Target = 0
 	if err := d.SetConfig(ctx, cfg); err != nil {
-		t.Fatalf("changing a draft configuration: %v", err)
+		t.Fatalf("changer la configuration en préparation : %v", err)
 	}
 	got, err := d.Config()
 	if err != nil {
 		t.Fatal(err)
 	}
 	if got.Phases[0].Lives != 3 {
-		t.Errorf("the draft configuration was not kept: %d lives", got.Phases[0].Lives)
+		t.Errorf("la configuration n'a pas été retenue : %d vies", got.Phases[0].Lives)
 	}
-	if len(d.Journal()) != 0 {
-		t.Error("changing a draft configuration writes nothing to the log")
+	if d.Record().State != StateDraft {
+		t.Error("changer la configuration ne lance pas le tournoi")
 	}
 
-	now := time.Now()
-	if err := d.Start(ctx, 1, now, entrants(8)); err != nil {
-		t.Fatal(err)
+	// Le premier match lancé fait basculer.
+	var lancé bool
+	for _, a := range d.Propose() {
+		if a.Kind != tournoi.ActStartMatch {
+			continue
+		}
+		ev, err := d.EventFor(a, now)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := d.Apply(ctx, ev); err != nil {
+			t.Fatal(err)
+		}
+		lancé = true
+		break
+	}
+	if !lancé {
+		t.Fatal("aucun match à lancer")
 	}
 	if d.Record().State != StateRunning {
-		t.Errorf("after starting, state %q", d.Record().State)
+		t.Errorf("le premier match lancé fait passer en cours, état %q", d.Record().State)
 	}
-	if d.State().Config.Phases[0].Lives != 3 {
-		t.Error("the started tournament should run on the edited configuration")
+	if !d.Started() {
+		t.Error("le tournoi a commencé")
 	}
-	// And now the configuration is frozen: a change is an event, not a rewrite.
-	if err := d.SetConfig(ctx, clubConfig()); err == nil {
-		t.Error("rewriting the configuration of a started tournament must be refused")
+
+	// Et la configuration reste modifiable, mais le moteur refuse ce qui changerait une phase
+	// déjà commencée — c'est lui qui tient cette règle, pas cette couche.
+	interdit := clubConfig()
+	interdit.Phases[0].Kind = tournoi.KindGSL
+	if err := d.SetConfig(ctx, interdit); err == nil {
+		t.Error("changer le type d'une phase commencée doit être refusé")
+	}
+}
+
+// TestPreparationRelueGardeSesInscriptions : rouvrir une Direction en préparation rend les
+// inscriptions et la configuration que le directeur composait.
+//
+// C'est le défaut que le premier modèle avait : un brouillon qui n'écrit rien perd ce qu'on lui
+// a donné dès qu'on change d'onglet.
+func TestPreparationRelueGardeSesInscriptions(t *testing.T) {
+	ctx := context.Background()
+	store := newMemStore()
+	d := newDraft(t, store, clubConfig())
+	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
+	enterAll(t, d, now, entrants(20))
+
+	rouverte, err := Open(ctx, store, 1)
+	if err != nil {
+		t.Fatalf("rouvrir une préparation : %v", err)
+	}
+	if rouverte.State() == nil {
+		t.Fatal("une Direction créée a un état, même sans match lancé")
+	}
+	if len(rouverte.State().Order) != 20 {
+		t.Errorf("les inscriptions ont été perdues : %d", len(rouverte.State().Order))
+	}
+	cfg, err := rouverte.Config()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cfg.Phases) != 2 || cfg.Phases[0].Target != 16 {
+		t.Fatalf("la configuration a été perdue : %+v", cfg)
+	}
+	if rouverte.Record().State != StateDraft {
+		t.Errorf("toujours en préparation : %q", rouverte.Record().State)
+	}
+	// Et elle reste modifiable après réouverture.
+	cfg.Phases[0].Lives = 3
+	cfg.Phases[0].Target = 0
+	if err := rouverte.SetConfig(ctx, cfg); err != nil {
+		t.Fatalf("modifier après réouverture : %v", err)
+	}
+	encore, err := Open(ctx, store, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, _ := encore.Config()
+	if got.Phases[0].Lives != 3 {
+		t.Errorf("la modification n'a pas survécu : %d vies", got.Phases[0].Lives)
 	}
 }
 
@@ -402,9 +487,7 @@ func TestClotureEtLectureSeule(t *testing.T) {
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
 	now := time.Now()
-	if err := d.Start(ctx, 2, now, entrants(24)); err != nil {
-		t.Fatal(err)
-	}
+	enterAll(t, d, now, entrants(24))
 	runToEnd(t, d, now)
 	if !d.State().Finished {
 		t.Fatal("the tournament should be finished")
@@ -420,9 +503,7 @@ func TestSuppressionDeLaDirection(t *testing.T) {
 	ctx := context.Background()
 	store := newMemStore()
 	d := newDraft(t, store, clubConfig())
-	if err := d.Start(ctx, 1, time.Now(), entrants(4)); err != nil {
-		t.Fatal(err)
-	}
+	enterAll(t, d, time.Now(), entrants(4))
 	if err := d.Delete(ctx); err != nil {
 		t.Fatal(err)
 	}
@@ -441,50 +522,4 @@ func TestLaVersionDuMoteurEstEnregistree(t *testing.T) {
 	if d.Record().FormatVersion != tournoi.JournalVersion {
 		t.Errorf("journal format %d, want %d", d.Record().FormatVersion, tournoi.JournalVersion)
 	}
-}
-
-// TestBrouillonRouvertGardeSaConfiguration : rouvrir un brouillon rend la configuration que le
-// directeur composait, pas une configuration vide.
-//
-// C'est le défaut qu'un test de l'issue #368 a trouvé : Open rejouait systématiquement, et le
-// rejeu d'un journal VIDE rend un état valide dont la configuration est vide — laquelle
-// masquait le brouillon. Un directeur perdait son format en changeant d'onglet.
-func TestBrouillonRouvertGardeSaConfiguration(t *testing.T) {
-	ctx := context.Background()
-	store := newMemStore()
-	d := newDraft(t, store, clubConfig())
-
-	reopened, err := Open(ctx, store, 1)
-	if err != nil {
-		t.Fatalf("rouvrir un brouillon : %v", err)
-	}
-	if reopened.State() != nil {
-		t.Error("un brouillon n'a pas d'état de tournoi : rien n'a encore été lancé")
-	}
-	cfg, err := reopened.Config()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(cfg.Phases) != 2 || cfg.Phases[0].Target != 16 {
-		t.Fatalf("la configuration du brouillon a été perdue : %+v", cfg)
-	}
-	if cfg.Name != "Open de Lyon" {
-		t.Errorf("nom perdu : %q", cfg.Name)
-	}
-	// Et elle reste modifiable après réouverture. Passer à trois vies oblige à retirer la
-	// bascule : le moteur la refuse ailleurs qu'à deux vies, et il a raison de le dire ici.
-	cfg.Phases[0].Lives = 3
-	cfg.Phases[0].Target = 0
-	if err := reopened.SetConfig(ctx, cfg); err != nil {
-		t.Fatalf("modifier après réouverture : %v", err)
-	}
-	again, err := Open(ctx, store, 1)
-	if err != nil {
-		t.Fatal(err)
-	}
-	got, _ := again.Config()
-	if got.Phases[0].Lives != 3 {
-		t.Errorf("la modification n'a pas survécu : %d vies", got.Phases[0].Lives)
-	}
-	_ = d
 }

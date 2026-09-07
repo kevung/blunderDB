@@ -64,12 +64,14 @@ func (d *Database) ListDirections() ([]DirectionSummary, error) {
 
 // CreateDirection starts directing a Tournament that has none. The configuration arrives as the
 // engine's own JSON so the frontend composes it without this file knowing every format option.
-func (d *Database) CreateDirection(tournamentID int64, configJSON string) error {
+// A seed of 0 means "pick one": a draw must be reproducible, but nobody should have to invent
+// the number it is reproducible from.
+func (d *Database) CreateDirection(tournamentID int64, configJSON string, seed int64) error {
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
 		return err
 	}
-	_, err = direction.Create(context.Background(), d.DirectionStore(), tournamentID, cfg)
+	_, err = direction.Create(context.Background(), d.DirectionStore(), tournamentID, cfg, seed, time.Now())
 	return err
 }
 
@@ -137,24 +139,40 @@ func (d *Database) SetDirectionOutputDir(tournamentID int64, dir string) error {
 	return dd.SetOutputDir(context.Background(), dir)
 }
 
-// StartDirection writes the created event and the entries, freezing the configuration.
-func (d *Database) StartDirection(tournamentID int64, seed int64, playersJSON string) error {
+// EnterParticipants records several entries at once — what an import or "take last time's
+// entrants" produces. Entering is possible in preparation and afterwards alike.
+func (d *Database) EnterParticipants(tournamentID int64, playersJSON string) error {
 	var players []tournoi.Player
-	if playersJSON != "" {
-		if err := json.Unmarshal([]byte(playersJSON), &players); err != nil {
-			return fmt.Errorf("entries: %w", err)
-		}
+	if playersJSON == "" {
+		return nil
 	}
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err := json.Unmarshal([]byte(playersJSON), &players); err != nil {
+		return fmt.Errorf("entries: %w", err)
+	}
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
 	if err != nil {
 		return err
 	}
-	if seed == 0 {
-		// A draw must be reproducible, so the seed is recorded — but nobody should have to
-		// invent one. The clock is as good a source as any and it is written in the log.
-		seed = time.Now().UnixNano()
+	st := dir.State()
+	if st == nil {
+		return direction.ErrNoDirection
 	}
-	return dir.Start(context.Background(), seed, time.Now(), players)
+	taken := map[string]bool{}
+	for id := range st.Players {
+		taken[string(id)] = true
+	}
+	now := time.Now()
+	for _, p := range players {
+		if p.ID == "" {
+			p.ID = tournoi.PlayerID(participantID(p.Name, taken))
+		}
+		taken[string(p.ID)] = true
+		if err := dir.Enter(ctx, p, now); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // DeleteDirection removes a Direction and its log. The Tournament and its Matches stay; the

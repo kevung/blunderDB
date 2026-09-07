@@ -18,7 +18,7 @@ func startedDirection(t *testing.T, d *Database, n int) int64 {
 	cfg := `{"name":"Open de Lyon","tables":{"count":8},"phases":[
 		{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":16},
 		{"kind":"lives_bracket","length":9}]}`
-	if err := d.CreateDirection(tID, cfg); err != nil {
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
 		t.Fatal(err)
 	}
 	var players []string
@@ -28,7 +28,7 @@ func startedDirection(t *testing.T, d *Database, n int) int64 {
 		// bien un nom là où elle doit en montrer un.
 		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
 	}
-	if err := d.StartDirection(tID, 7, "["+strings.Join(players, ",")+"]"); err != nil {
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
 	}
 	return tID

@@ -1672,17 +1672,14 @@
             "entrants": "{n} iscritti",
             "byes": "{n} esenzioni al primo turno",
             "apply": "Salva",
-            "start": "Avvia il torneo",
             "delete": "Elimina la direzione",
             "frozen": "Il torneo è iniziato: queste impostazioni cambiano ormai solo tramite un evento.",
             "deleteConfirm": "Eliminare la direzione di questo torneo? Il torneo e le sue partite restano; le partite perdono solo il posto che occupavano.",
             "created": "Direzione creata.",
-            "started": "Torneo avviato.",
             "deleted": "Direzione eliminata.",
             "errorCreating": "Impossibile creare la direzione.",
             "errorSaving": "Impossibile salvare la configurazione.",
-            "saved": "Configurazione salvata.",
-            "errorStarting": "Impossibile avviare il torneo."
+            "saved": "Configurazione salvata."
         },
         "tabs": {
             "direction": "Direzione",
@@ -1814,6 +1811,34 @@
             "correct": "Correggi",
             "cancel": "Annulla questa partita",
             "whoWon": "Chi ha vinto?"
+        },
+        "players": {
+            "name": "Nome",
+            "club": "Club",
+            "rating": "Valutazione",
+            "ratingHint": "PR d’ingresso: più basso è meglio. Vuoto se sconosciuto.",
+            "add": "Iscrivi",
+            "filter": "Filtra",
+            "count": "{n} iscritti",
+            "knownFor": "{n} partite nella biblioteca",
+            "record": "V–S",
+            "lives": "Vite",
+            "opponents": "Ha incontrato",
+            "state": "Stato",
+            "correct": "Correggi",
+            "save": "Salva",
+            "withdrawNow": "Ritira",
+            "withdrawNowHint": "Ritira subito: le partite in corso sono perse per forfait.",
+            "withdrawLater": "Dopo la sua partita",
+            "withdrawLaterHint": "Non viene più abbinato, ma finisce la partita in corso.",
+            "none": "Nessun iscritto.",
+            "states": {
+                "free": "libero",
+                "playing": "in gioco",
+                "withdrawn": "ritirato",
+                "leaving": "esce dopo la partita"
+            },
+            "error": "Impossibile registrare questa iscrizione."
         }
     }
 }

@@ -35,8 +35,13 @@ recherche) ne change de sens.
 | **terminée** | événement `finished` | lecture, sorties (§9), rattachement de Matchs (§7) | tout événement de direction, sauf `reopened` |
 | réouverte | événement `reopened` | comme *en cours* ; le classement final est recalculé à la prochaine clôture | — |
 
-En préparation, la configuration est un brouillon réécrit à chaque changement ; le premier
-match lancé la fige dans l'événement `created` et passe à *en cours*. La Direction se
+**Le journal commence à la création**, et « en préparation » ne veut pas dire « rien n'est
+écrit » : cela veut dire *aucun match n'a été lancé*. Corrigé à l'implémentation (#369) — un
+brouillon qui n'écrivait rien devait garder ailleurs les vingt noms qu'un directeur venait de
+taper, c'est-à-dire dans un second endroit pour la même vérité, et il les perdait au premier
+changement d'onglet. Tant qu'aucun match n'est lancé, la configuration change librement, mais
+par un événement `config_changed` comme tout le reste ; le premier match lancé fait passer à
+*en cours*, et le moteur refuse dès lors ce qui changerait le type d'une phase commencée. La Direction se
 **supprime** indépendamment du Tournament : les Slots perdent leur lien, les Matchs gardent
 leur tournoi, le Tournament reste. Supprimer le Tournament supprime sa Direction et délie ses
 Matchs (comportement actuel).

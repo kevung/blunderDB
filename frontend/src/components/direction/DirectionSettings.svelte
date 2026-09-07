@@ -15,7 +15,7 @@
     import { t } from '../../i18n';
     import { namedConfigs } from '../../stores/directionStore';
 
-    let { config = $bindable(), state = 'draft', tournamentName = '', onApply = () => {}, onStart = null, onDelete = null, entrantCount = 0 } = $props();
+    let { config = $bindable(), state = 'draft', tournamentName = '', onApply = () => {}, onDelete = null, entrantCount = 0 } = $props();
 
     const isDraft = $derived(state === 'draft');
     const frozenReason = $derived(isDraft ? '' : $t('direction.settings.frozen'));
@@ -111,11 +111,6 @@
             <button type="button" class="primary" onclick={() => onApply(config)}>
                 {$t('direction.settings.apply')}
             </button>
-            {#if isDraft && onStart}
-                <button type="button" class="primary" onclick={onStart}>
-                    {$t('direction.settings.start')}
-                </button>
-            {/if}
             {#if onDelete}
                 <button type="button" class="danger" onclick={onDelete}>
                     {$t('direction.settings.delete')}

@@ -1672,17 +1672,14 @@
             "entrants": "{n} entrants",
             "byes": "{n} byes in the first round",
             "apply": "Save",
-            "start": "Start the tournament",
             "delete": "Delete the direction",
             "frozen": "The tournament has started: these settings now change only through an event.",
             "deleteConfirm": "Delete this tournament's direction? The tournament and its matches stay; the matches only lose the slot they filled.",
             "created": "Direction created.",
-            "started": "Tournament started.",
             "deleted": "Direction deleted.",
             "errorCreating": "Could not create the direction.",
             "errorSaving": "Could not save the configuration.",
-            "saved": "Configuration saved.",
-            "errorStarting": "Could not start the tournament."
+            "saved": "Configuration saved."
         },
         "tabs": {
             "direction": "Direction",
@@ -1814,6 +1811,34 @@
             "correct": "Correct",
             "cancel": "Cancel this match",
             "whoWon": "Who won?"
+        },
+        "players": {
+            "name": "Name",
+            "club": "Club",
+            "rating": "Rating",
+            "ratingHint": "Entry PR: lower is better. Empty if unknown.",
+            "add": "Enter",
+            "filter": "Filter",
+            "count": "{n} entrants",
+            "knownFor": "{n} matches in the library",
+            "record": "W–L",
+            "lives": "Lives",
+            "opponents": "Has met",
+            "state": "State",
+            "correct": "Correct",
+            "save": "Save",
+            "withdrawNow": "Withdraw",
+            "withdrawNowHint": "Withdraw now: their running matches are lost by forfeit.",
+            "withdrawLater": "After their match",
+            "withdrawLaterHint": "No longer paired, but finishes the match they are at.",
+            "none": "Nobody entered.",
+            "states": {
+                "free": "free",
+                "playing": "playing",
+                "withdrawn": "withdrawn",
+                "leaving": "leaving after their match"
+            },
+            "error": "Could not record this entry."
         }
     }
 }

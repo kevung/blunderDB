@@ -180,7 +180,7 @@ func TestTableGridShowsUnavailableAndReserved(t *testing.T) {
 	cfg := `{"name":"Salle contrainte","tables":{"count":4,"unavailable":[2],
 		"reserved":[{"table":1,"section":"main","all_phases":true}]},
 		"phases":[{"kind":"swiss_lives","length":7,"lives":2}]}`
-	if err := d.CreateDirection(tID, cfg); err != nil {
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
 		t.Fatal(err)
 	}
 	var players []string
@@ -188,7 +188,7 @@ func TestTableGridShowsUnavailableAndReserved(t *testing.T) {
 		id := string(rune('a' + i))
 		players = append(players, `{"id":"`+id+`","name":"`+id+`"}`)
 	}
-	if err := d.StartDirection(tID, 3, "["+strings.Join(players, ",")+"]"); err != nil {
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
 	}
 	grid, err := d.TableGrid(tID)
@@ -221,7 +221,7 @@ func TestMoveAndCancel(t *testing.T) {
 	cfg := `{"name":"Grande salle","tables":{"count":16},"phases":[
 		{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":16},
 		{"kind":"lives_bracket","length":9}]}`
-	if err := d.CreateDirection(tID, cfg); err != nil {
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
 		t.Fatal(err)
 	}
 	var players []string
@@ -229,7 +229,7 @@ func TestMoveAndCancel(t *testing.T) {
 		id := string(rune('a'+i%26)) + string(rune('a'+i/26))
 		players = append(players, `{"id":"`+id+`","name":"`+id+`"}`)
 	}
-	if err := d.StartDirection(tID, 7, "["+strings.Join(players, ",")+"]"); err != nil {
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
 	}
 	m := runningMatch(t, d, tID)

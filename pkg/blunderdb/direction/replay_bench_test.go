@@ -24,17 +24,19 @@ func BenchmarkOpen(b *testing.B) {
 			{Kind: tournoi.KindSwissLives, Length: 7, Target: 16},
 			{Kind: tournoi.KindLivesBracket, Length: 9},
 		}}
-	d, err := Create(ctx, store, 1, cfg)
+	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
+	d, err := Create(ctx, store, 1, cfg, 7, now)
 	if err != nil {
 		b.Fatal(err)
 	}
-	now := time.Date(2026, 9, 12, 9, 0, 0, 0, time.UTC)
 	players := make([]tournoi.Player, 64)
 	for i := range players {
 		players[i] = tournoi.Player{ID: tournoi.PlayerID(string(rune('a'+i%26)) + string(rune('a'+i/26))), Name: "p"}
 	}
-	if err := d.Start(ctx, 7, now, players); err != nil {
-		b.Fatal(err)
+	for _, p := range players {
+		if err := d.Enter(ctx, p, now); err != nil {
+			b.Fatal(err)
+		}
 	}
 	// Run the tournament to the end so the log has its real length.
 	for step := 0; step < 4000; step++ {

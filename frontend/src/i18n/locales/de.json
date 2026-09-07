@@ -1672,17 +1672,14 @@
             "entrants": "{n} Teilnehmer",
             "byes": "{n} Freilose in der ersten Runde",
             "apply": "Speichern",
-            "start": "Turnier starten",
             "delete": "Leitung löschen",
             "frozen": "Das Turnier hat begonnen: diese Einstellungen ändern sich nur noch über ein Ereignis.",
             "deleteConfirm": "Die Leitung dieses Turniers löschen? Das Turnier und seine Partien bleiben; die Partien verlieren nur den Platz, den sie besetzt haben.",
             "created": "Leitung erstellt.",
-            "started": "Turnier gestartet.",
             "deleted": "Leitung gelöscht.",
             "errorCreating": "Die Leitung konnte nicht erstellt werden.",
             "errorSaving": "Die Konfiguration konnte nicht gespeichert werden.",
-            "saved": "Konfiguration gespeichert.",
-            "errorStarting": "Das Turnier konnte nicht gestartet werden."
+            "saved": "Konfiguration gespeichert."
         },
         "tabs": {
             "direction": "Leitung",
@@ -1814,6 +1811,34 @@
             "correct": "Korrigieren",
             "cancel": "Diese Partie abbrechen",
             "whoWon": "Wer hat gewonnen?"
+        },
+        "players": {
+            "name": "Name",
+            "club": "Verein",
+            "rating": "Wertung",
+            "ratingHint": "Start-PR: niedriger ist besser. Leer, wenn unbekannt.",
+            "add": "Eintragen",
+            "filter": "Filtern",
+            "count": "{n} Teilnehmer",
+            "knownFor": "{n} Partien in der Bibliothek",
+            "record": "S–N",
+            "lives": "Leben",
+            "opponents": "Traf auf",
+            "state": "Status",
+            "correct": "Korrigieren",
+            "save": "Speichern",
+            "withdrawNow": "Zurückziehen",
+            "withdrawNowHint": "Sofort zurückziehen: laufende Partien gehen als Aufgabe verloren.",
+            "withdrawLater": "Nach der Partie",
+            "withdrawLaterHint": "Wird nicht mehr gepaart, beendet aber die laufende Partie.",
+            "none": "Niemand eingetragen.",
+            "states": {
+                "free": "frei",
+                "playing": "spielt",
+                "withdrawn": "zurückgezogen",
+                "leaving": "geht nach der Partie"
+            },
+            "error": "Der Eintrag konnte nicht gespeichert werden."
         }
     }
 }

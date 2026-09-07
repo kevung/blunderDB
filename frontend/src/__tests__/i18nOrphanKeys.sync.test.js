@@ -64,7 +64,8 @@ const DYNAMIC_PREFIXES = [
     'direction.note.',
     'direction.warning.',
     'direction.section.',
-    'direction.reason.'
+    'direction.reason.',
+    'direction.players.states.'
 ];
 
 function sourceFiles(dir) {

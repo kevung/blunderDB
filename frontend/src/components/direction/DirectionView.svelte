@@ -19,12 +19,12 @@
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
     import LastDecision from './LastDecision.svelte';
+    import PlayersView from './PlayersView.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
         openDirectionIdStore,
         saveDirectionConfig,
-        startDirection,
         deleteDirection,
         closeDirection,
         confirmProposal,
@@ -37,7 +37,12 @@
         moveMatchToTable,
         cancelMatch,
         lastDecision,
-        correctResult
+        correctResult,
+        participants,
+        entrySuggestions,
+        addParticipant,
+        updateParticipant,
+        withdrawParticipant
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -77,20 +82,12 @@
         }
     }
 
-    async function start() {
-        try {
-            await startDirection($openDirectionIdStore, []);
-            statusBarTextStore.set(tMsg('direction.settings.started'));
-        } catch (e) {
-            logger.error('direction: start failed', e);
-            statusBarTextStore.set(tMsg('direction.settings.errorStarting'));
-        }
-    }
-
     let busy = $state(false);
     let free = $state([]);
     let cells = $state([]);
     let last = $state(null);
+    let rows = $state([]);
+    let suggestions = $state([]);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -100,6 +97,12 @@
         freeParticipants().then((p) => (free = p));
         tableGrid().then((c) => (cells = c));
         lastDecision().then((l) => (last = l));
+        participants().then((r) => (rows = r));
+    });
+
+    /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
+    $effect(() => {
+        entrySuggestions().then((s) => (suggestions = s));
     });
 
     /* Le temps écoulé d'un match avance sans qu'aucun événement ne soit écrit : la grille se
@@ -126,6 +129,9 @@
     const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
     const onCorrect = (m, w, a, b) => act(() => correctResult(m, w, a, b, ''), 'direction.result.error');
+    const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
+    const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
+    const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
 
     function playerName(id) {
         const p = (view?.players || []).find((x) => x.id === id);
@@ -194,15 +200,7 @@
 
     <div class="body">
         {#if tab === 'settings'}
-            <DirectionSettings
-                bind:config
-                {state}
-                tournamentName={view?.config?.name || ''}
-                entrantCount={view?.players?.length || 0}
-                onApply={apply}
-                onStart={state === 'draft' ? start : null}
-                onDelete={remove}
-            />
+            <DirectionSettings bind:config {state} tournamentName={view?.config?.name || ''} entrantCount={view?.players?.length || 0} onApply={apply} onDelete={remove} />
         {:else if tab === 'direction'}
             <div class="direction-page">
                 {#if (view?.warnings || []).length}
@@ -222,6 +220,8 @@
                     <p>{free.map((p) => p.name).join(' · ')}</p>
                 </section>
             </div>
+        {:else if tab === 'players'}
+            <PlayersView {rows} {suggestions} {busy} started={state !== 'draft'} {onAdd} {onUpdate} {onWithdraw} />
         {:else}
             <p class="placeholder">{$t('direction.tabs.notYet')}</p>
         {/if}

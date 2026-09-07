@@ -253,6 +253,22 @@ export namespace database {
 		    return a;
 		}
 	}
+	export class EntrySuggestion {
+	    name: string;
+	    pr: number;
+	    matches: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new EntrySuggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.pr = source["pr"];
+	        this.matches = source["matches"];
+	    }
+	}
 	export class ErrorBucket {
 	    MinMP: number;
 	    MaxMP: number;
@@ -498,6 +514,38 @@ export namespace database {
 	        this.reviews_without_deck = source["reviews_without_deck"];
 	        this.reviews_without_position = source["reviews_without_position"];
 	        this.training_items_without_session = source["training_items_without_session"];
+	    }
+	}
+	export class ParticipantRow {
+	    id: string;
+	    name: string;
+	    club?: string;
+	    rating?: number;
+	    wins: number;
+	    losses: number;
+	    lives: number;
+	    byes: number;
+	    opponents?: string[];
+	    state: string;
+	    table?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ParticipantRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.club = source["club"];
+	        this.rating = source["rating"];
+	        this.wins = source["wins"];
+	        this.losses = source["losses"];
+	        this.lives = source["lives"];
+	        this.byes = source["byes"];
+	        this.opponents = source["opponents"];
+	        this.state = source["state"];
+	        this.table = source["table"];
 	    }
 	}
 	export class PhaseStats {
