@@ -202,6 +202,10 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 type bgfRules struct{ jacoby, beaver, crawford bool }
 
 // createPositionFromBGF builds a domain.Position from BGF board state.
+//
+// rules.crawford is the game's own "isCrawford", so it goes into the away
+// score: a post-Crawford game gets the 0 sentinel rather than the ambiguous 1
+// (see domain.AwayScoresWithCrawford).
 func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, matchLen, cubeValue, cubeOwner int, rules bgfRules) (*domain.Position, error) {
 	scoreGreen := bgfGetInt(gameData, "scoreGreen")
 	scoreRed := bgfGetInt(gameData, "scoreRed")
@@ -209,7 +213,7 @@ func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, 
 	pos := &domain.Position{
 		PlayerOnRoll: 0,
 		DecisionType: domain.CheckerAction,
-		Score:        domain.AwayScores(matchLen, scoreGreen, scoreRed),
+		Score:        domain.AwayScoresWithCrawford(matchLen, scoreGreen, scoreRed, rules.crawford),
 		Cube: domain.Cube{
 			Value: domain.CubeExponent(cubeValue),
 			Owner: cubeOwner,

@@ -6,6 +6,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -435,8 +436,11 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		if rawPlayer == -1 {
 			fMove = 1
 		}
-		currentScore0 := matchLength - awayScore0
-		currentScore1 := matchLength - awayScore1
+		// The Crawford sentinel is decoded first (domain.PointsAway): a stored
+		// 0 is one point away, post-Crawford, and reading it as a distance
+		// says "has already won".
+		currentScore0 := matchLength - domain.PointsAway(awayScore0)
+		currentScore1 := matchLength - domain.PointsAway(awayScore1)
 		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
 		if math.IsNaN(mwcLoss) {
 			mwcLoss = 0
@@ -638,8 +642,11 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 		if rawPlayer == -1 {
 			fMove = 1
 		}
-		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss wants current scores.
-		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength)
+		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss wants
+		// current scores, and the Crawford sentinel is decoded on the way.
+		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP),
+			matchLength-domain.PointsAway(awayScore0), matchLength-domain.PointsAway(awayScore1),
+			fMove, cubeValue, matchLength)
 		pa := &a.p1
 		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
 			pa = &a.p2
@@ -714,7 +721,9 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 		a.SumErr += errMP
 		a.Cnt++
 		a.Matches[matchID] = struct{}{}
-		if mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+		if mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP),
+			matchLength-domain.PointsAway(awayScore0), matchLength-domain.PointsAway(awayScore1),
+			fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
 			a.MWC += mwcLoss
 		}
 	}

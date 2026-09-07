@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -533,9 +534,12 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 					fMove = 1
 				}
 				// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss
-				// expects current scores (games already won).
-				currentScore0 := matchLength - awayScore0
-				currentScore1 := matchLength - awayScore1
+				// expects current scores (games already won). domain.PointsAway
+				// decodes the Crawford sentinel first: a stored 0 is one point
+				// away, post-Crawford, and subtracting it raw says "has already
+				// won" — a score the MET refuses, silently dropping the row.
+				currentScore0 := matchLength - domain.PointsAway(awayScore0)
+				currentScore1 := matchLength - domain.PointsAway(awayScore1)
 
 				mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
 

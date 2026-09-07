@@ -13,6 +13,7 @@ import { analysisStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore, statusBarTextStore } from '../stores/uiStore.js';
 import { tMsg, t } from '../i18n';
 import { formatDateTime } from '../utils/format.js';
+import { pointsAway } from '../utils/awayScore.js';
 import { tableData as metTable } from '../stores/metTable';
 import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
 import { takePoint2LastTable } from '../stores/takePoint2LastTable';
@@ -23,10 +24,12 @@ import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
 import { takePoint4LastTable } from '../stores/takePoint4LastTable';
 
 // Each table is indexed by (away score − offset) on both axes; a score outside
-// the table reads as 'N/A'.
+// the table reads as 'N/A'. The tables are indexed by the DISTANCE to victory,
+// so the post-Crawford sentinel is decoded first (pointsAway): a stored 0 is
+// one point away, and reading it raw fell off the top of every table (#338).
 function lookup(table, score, rowOffset, colOffset, decimals) {
-    const row = score[0] - rowOffset;
-    const col = score[1] - colOffset;
+    const row = pointsAway(score[0]) - rowOffset;
+    const col = pointsAway(score[1]) - colOffset;
     if (row < 0 || row >= table.length || col < 0 || col >= table[0].length) return 'N/A';
     return table[row][col].toFixed(decimals);
 }
