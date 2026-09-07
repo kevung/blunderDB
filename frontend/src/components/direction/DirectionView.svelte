@@ -16,7 +16,20 @@
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
     import DirectionSettings from './DirectionSettings.svelte';
-    import { directionStore, openDirectionIdStore, saveDirectionConfig, startDirection, deleteDirection, closeDirection } from '../../stores/directionStore';
+    import ProposalList from './ProposalList.svelte';
+    import { renderWarning } from './labels.js';
+    import {
+        directionStore,
+        openDirectionIdStore,
+        saveDirectionConfig,
+        startDirection,
+        deleteDirection,
+        closeDirection,
+        confirmProposal,
+        confirmAllProposals,
+        startMatchManually,
+        freeParticipants
+    } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
     const state = $derived(view?.state || 'draft');
@@ -65,6 +78,58 @@
         }
     }
 
+    let busy = $state(false);
+    let free = $state([]);
+
+    /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
+       stockée. C'est la même règle que pour le classement et les arbres. */
+    $effect(() => {
+        // La dépendance explicite : la file se recalcule dès qu'un événement est écrit.
+        void view?.eventCount;
+        freeParticipants().then((p) => (free = p));
+    });
+
+    function playerName(id) {
+        const p = (view?.players || []).find((x) => x.id === id);
+        return p ? p.name : id;
+    }
+
+    async function confirm(action) {
+        busy = true;
+        try {
+            await confirmProposal(action);
+        } catch (e) {
+            logger.error('direction: confirm failed', e);
+            statusBarTextStore.set(tMsg('direction.proposals.errorConfirm'));
+        } finally {
+            busy = false;
+        }
+    }
+
+    async function confirmAll() {
+        busy = true;
+        try {
+            await confirmAllProposals();
+        } catch (e) {
+            logger.error('direction: confirm all failed', e);
+            statusBarTextStore.set(tMsg('direction.proposals.errorConfirm'));
+        } finally {
+            busy = false;
+        }
+    }
+
+    async function manual(a, b, length, table) {
+        busy = true;
+        try {
+            await startMatchManually(a, b, length, table);
+        } catch (e) {
+            logger.error('direction: manual pairing failed', e);
+            statusBarTextStore.set(tMsg('direction.proposals.errorManual'));
+        } finally {
+            busy = false;
+        }
+    }
+
     async function remove() {
         if (!window.confirm($t('direction.settings.deleteConfirm'))) return;
         try {
@@ -100,6 +165,23 @@
                 onStart={state === 'draft' ? start : null}
                 onDelete={remove}
             />
+        {:else if tab === 'direction'}
+            <div class="direction-page">
+                {#if (view?.warnings || []).length}
+                    <!-- Un avertissement est visible EN PERMANENCE et ne bloque rien : il
+                         disparaît quand sa cause disparaît, jamais parce qu'on l'a lu. -->
+                    <ul class="warnings">
+                        {#each view.warnings as w, i (w.code + (w.match || '') + i)}
+                            <li>{renderWarning($t, w, playerName)}</li>
+                        {/each}
+                    </ul>
+                {/if}
+                <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                <section class="waiting">
+                    <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
+                    <p>{free.map((p) => p.name).join(' · ')}</p>
+                </section>
+            </div>
         {:else}
             <p class="placeholder">{$t('direction.tabs.notYet')}</p>
         {/if}
@@ -170,6 +252,41 @@
         flex: 1;
         min-height: 0;
         overflow: auto;
+    }
+
+    .direction-page {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    /* Les avertissements sont une bande, pas une fenêtre : le directeur doit pouvoir continuer
+       à travailler avec eux sous les yeux. */
+    .warnings {
+        list-style: none;
+        margin: 0;
+        padding: var(--space-1) var(--space-2);
+        border-bottom: 1px solid var(--color-danger);
+        color: var(--color-danger);
+        font-size: var(--font-size-small);
+    }
+
+    .waiting {
+        padding: var(--space-1) var(--space-2);
+        border-top: 1px solid var(--color-border);
+    }
+
+    .waiting h3 {
+        margin: 0 0 2px;
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+
+    .waiting p {
+        margin: 0;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
     }
 
     .placeholder {
