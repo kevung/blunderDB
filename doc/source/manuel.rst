@@ -2641,18 +2641,20 @@ Le lanceur
 
 Trois choix, puis « Démarrer » :
 
-* l'**exercice** — *Scores* ou *Pions* ;
-* la **source** de la question, quand l'exercice en a plusieurs — *Plateau*
-  (la position telle qu'elle est) ou *Base* (une position de la liste
-  parcourue) ;
+* l'**exercice** — *Scores*, *Pions* ou *Bearoff* ;
+* la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
+  (des formes canoniques de l'exercice), *Plateau* (la position telle qu'elle
+  est) ou *Base* (une position de la liste parcourue) ;
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
-``train scores`` et ``train pips`` ouvrent le panneau et démarrent
-directement ; ``train tp`` et ``train takepoint`` sont des synonymes de
-``train scores``.
+La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
 
-Les deux exercices
-~~~~~~~~~~~~~~~~~~
+``train scores``, ``train pips`` et ``train bearoff`` ouvrent le panneau et
+démarrent directement ; ``train tp`` et ``train takepoint`` sont des synonymes
+de ``train scores``, ``train epc`` de ``train bearoff``.
+
+Les trois exercices
+~~~~~~~~~~~~~~~~~~~
 
 **Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et
 affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — et
@@ -2679,18 +2681,55 @@ suivante. La source *Plateau*
 pose une question sur la position affichée, et une seule ; la source *Base*
 tire une nouvelle position à chaque question et l'amène sur le plateau.
 
+**Bearoff** demande l'**EPC des deux camps** — le compte de pions effectif,
+celui qui ajoute au pipcount le gaspillage des pions qui sortent en trop.
+C'est le domaine où le moteur est exact, et celui où l'EPC se distingue
+vraiment du compte de pions.
+
+Chaque question est **engendrée** : le moteur part d'une graine et joue
+quelques lancers, et c'est l'instantané qui vous est posé. Un placement au
+hasard n'aurait pas les trous, les piles basses et les asymétries d'un vrai
+bearoff. La graine vient du *Vivier* (une position de bear-in, puis zéro à dix
+plis), du *Plateau* (la position affichée, puis un à quatre plis — jamais zéro,
+puisque vous venez de la voir) ou de la *Base* (une position de la liste
+parcourue, telle quelle : elle est déjà réelle).
+
+Le domaine de l'exercice : les **deux camps entièrement dans leur jan**, de
+**4 à 15 pions** par camp et le reste sorti, videau au centre, en partie
+d'argent. Une graine qui n'y entre pas est **refusée en le disant**, et rien ne
+démarre — aucune adaptation silencieuse : jouer jusqu'à ce que le contact se
+rompe vous donnerait une position que vous n'avez pas choisie. Un plateau vide
+fait exception : la question vient alors du vivier, et le panneau dit pourquoi.
+
+L'exercice a besoin de la table de bearoff à un camp ; tant qu'elle s'engendre
+en arrière-plan (voir :ref:`configuration`), il le dit plutôt que de poser une
+question sans réponse.
+
 Répondre
 ~~~~~~~~
 
-Le geste est **déclaré** : vous calculez de tête, vous cliquez « Révéler », et
-la vérité s'affiche. Chaque nombre est alors **juste par défaut** — vous
-cliquez celui que vous avez raté pour le marquer **faute** (*Tab* puis *Espace*
-fait le même geste au clavier), et un second clic annule la marque. Rien ne se
-tape : un compte de pions ou une case de table est juste ou faux, et l'écrire
-n'apprend rien de plus que de le lire.
+Le mode de réponse est une propriété de l'exercice, jamais un réglage : ce qui
+se **compte ou se récite** se déclare, ce qui s'**estime** se saisit — parce
+que là, la taille de l'erreur est la leçon.
 
-Le chronomètre part à l'affichage de la question et s'arrête à « Révéler » ;
-cocher ses fautes n'est pas chronométré. Avec une limite, une question restée
+*Scores* et *Pions* se **déclarent** : vous calculez de tête, vous cliquez
+« Révéler », et la vérité s'affiche. Chaque nombre est alors **juste par
+défaut** — vous cliquez celui que vous avez raté pour le marquer **faute**
+(*Tab* puis *Espace* fait le même geste au clavier), et un second clic annule
+la marque. Rien ne se tape : un compte de pions ou une case de table est juste
+ou faux, et l'écrire n'apprend rien de plus que de le lire.
+
+*Bearoff* se **saisit** : vous écrivez les deux EPC, « Valider » les juge à un
+demi-pion près — la granularité à laquelle l'EPC change une décision de course
+— et la vérité s'affiche à côté de ce que vous avez écrit. C'est l'application
+qui juge, il n'y a rien à cocher. L'écart est enregistré **avec son signe** :
+surestimer n'est pas sous-estimer, et c'est le bilan qui en fait une moyenne.
+
+Le chronomètre part à l'affichage de la question et s'arrête à « Révéler » ou
+« Valider » ; la question suivante se prépare pendant que vous répondez, elle
+n'est donc jamais chronométrée avec la vôtre. Cocher ses fautes n'est pas
+chronométré non plus.
+Avec une limite, une question restée
 sans réponse à l'échéance se révèle seule et compte **hors délai** : tous ses
 nombres sont faux, et son temps n'entre pas dans la médiane — on ne mesure pas
 une réponse qui n'a pas été donnée.
@@ -2717,34 +2756,21 @@ la même table, vue d'un côté ou de l'autre, est une seule faiblesse.
 
 .. _micro_entrainements:
 
-Micro-entraînements : EPC et quiz
----------------------------------
+Micro-entraînement : le quiz
+----------------------------
 
-Deux exercices se répondent encore au clavier, dans une bande affichée
-au-dessus du plateau. La commande ``train`` suivie de leur nom lance une
-session de cinq questions :
+Un exercice se répond encore au clavier, dans une bande affichée au-dessus du
+plateau : ``train quiz`` lance une session de cinq questions. La question EST
+la position affichée — le plateau est celui de l'application, et la bande ne
+porte que la question, la saisie et la correction. *Entrée* vérifie puis passe
+à la suivante, *Échap* quitte la session.
 
-* ``train epc`` — estimer l'EPC du joueur au trait, sur une position de course
-  que le moteur sait évaluer ;
-* ``train quiz`` — décider, sur une position déjà analysée.
+Seul le résumé de la session est conservé, dans les métadonnées de la base :
+elle ne garde pas la trace question par question, et rien n'est écrit tant
+qu'elle n'est pas terminée. Quitter en cours de route n'enregistre donc rien.
 
-La question EST la position affichée : le plateau est celui de l'application,
-et la bande ne porte que la question, la saisie et la correction. La réponse se
-tape et se valide au clavier (*Entrée* vérifie, puis passe à la suivante ;
-*Échap* quitte la session). L'EPC accepte un demi-pion d'écart, la granularité
-à laquelle il change une décision de course. À la fin, la session affiche le
-nombre de bonnes réponses et le temps **médian** par question.
-
-Seul ce résumé est conservé, dans les métadonnées de la base : la session ne
-garde pas la trace question par question, et rien n'est écrit tant qu'elle
-n'est pas terminée. Quitter en cours de route n'enregistre donc rien.
-
-Quiz : le PR d'entraînement
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-``train quiz`` pose une question d'une autre nature. Le panneau Anki fait
-mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées de la
-liste parcourue, et il faut décider :
+Le panneau Anki fait mémoriser ; le quiz **teste**. Cinq positions déjà
+analysées sont tirées de la liste parcourue, et il faut décider :
 
 * sur une décision de pions, **jouer le coup sur le damier** — cliquer le point
   de départ, puis la destination, autant de fois qu'il y a de dés ; ou écrire

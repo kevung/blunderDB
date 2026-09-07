@@ -715,32 +715,33 @@ export default {
 <h4>Aloitin</h4>
 <p>Kolme valintaa, sitten « Démarrer »:</p>
 <ul>
-<li><strong>harjoitus</strong> — <em>Scores</em> (tilanteet) tai <em>Pions</em> (pipit);</li>
-<li>kysymyksen <strong>lähde</strong>, kun harjoituksella on useita — <em>Plateau</em> (asema sellaisenaan) tai <em>Base</em> (asema selatusta listasta);</li>
+<li><strong>harjoitus</strong> — <em>Scores</em>, <em>Pions</em> (pip-laskenta) tai <em>Bearoff</em>;</li>
+<li>kysymyksen <strong>lähde</strong>, kun harjoituksella on useita — <em>Vivier</em> (harjoituksen vakiomuodot), <em>Plateau</em> (asema sellaisenaan) tai <em>Base</em> (asema selatusta luettelosta);</li>
 <li><strong>aikaraja kysymystä kohti</strong> — ei rajaa, 15, 30 tai 60 sekuntia.</li>
 </ul>
-<p><code>train scores</code> ja <code>train pips</code> avaavat paneelin ja aloittavat heti; <code>train tp</code> ja <code>train takepoint</code> ovat komennon <code>train scores</code> synonyymejä.</p>
-<h4>Kaksi harjoitusta</h4>
+<p>Valittu lähde muistetaan kullekin harjoitukselle istunnosta toiseen.</p>
+<p><code>train scores</code>, <code>train pips</code> ja <code>train bearoff</code> avaavat paneelin ja aloittavat suoraan; <code>train tp</code> ja <code>train takepoint</code> ovat <code>train scores</code>:n synonyymejä, <code>train epc</code> on <code>train bearoff</code>:n synonyymi.</p>
+<h4>Kolme harjoitusta</h4>
 <p><strong>Scores</strong> arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away ja näyttää <strong>tilannekortin</strong>: kaksi saraketta — <em>Vous</em> (sinä) ja <em>L'adversaire</em> (vastustaja) — ja seitsemän riviä — hyväksymispiste kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4.</p>
 <p>Kukin sarake kantaa vain ne ruudut, jotka viitetaulukot — ne, jotka komennot <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> ja <code>gv4</code> näyttävät — määrittelevät sen puolelle: kolme lukua tilanteessa 2a-2a, enintään neljätoista, ja vain yksi sarake tasatilanteessa. Rivi, jota kumpikaan puoli ei määrittele, ei esiinny kortilla — arvattavaa « n/a »-ruutua ei siis ole. Molemmat puolet ovat mukana, koska kuutiopäätös tilanteessa tarvitsee kummankin: korjattu hyväksymispiste yhdistää molempien pelaajien gammonarvot, ja juuri vastustajan hyväksymispiste kertoo, meneekö tuplauksesi läpi.</p>
 <p><strong>Pions</strong> (pipit) kysyy <strong>molempien</strong> osapuolten pip-lukua. Laudan pip-luku on piilotettu niin kauan kuin kysymys on auki; « Révéler » näyttää sen — <strong>vaikka olisit piilottanut pip-luvun</strong> näppäimellä <code>p</code>, sillä muuten vastaus jäisi näkymättömiin eikä harjoitusta voisi tarkistaa. Kyse on peitteestä eikä asetuksesta: omaa valintaasi ei muuteta, ja se palaa voimaan seuraavassa kysymyksessä. Lähde <em>Plateau</em> esittää yhden kysymyksen näytetystä asemasta, ja vain yhden; lähde <em>Base</em> arpoo uuden aseman joka kysymykseen ja tuo sen laudalle.</p>
+<p><strong>Bearoff</strong> kysyy <strong>molempien osapuolten EPC:tä</strong> — tehollista pip-lukua, joka lisää pip-laskentaan niiden nappuloiden hukan, jotka poistuvat yli tarpeen. Tällä alueella moottori on tarkka, ja juuri täällä EPC eroaa todella pip-laskennasta.</p>
+<p>Jokainen kysymys <strong>luodaan</strong>: moottori lähtee siemenestä ja pelaa muutaman heiton, ja tilannekuva on kysymys. Satunnainen sijoittelu ei toisi mukanaan oikean ulosvientiaseman aukkoja, matalia pinoja eikä epäsymmetriaa. Siemen tulee <em>Vivier</em>-varannosta (valmis kotiintuonti, sitten nollasta kymmeneen puolisiirtoa), <em>Plateau</em>-laudalta (näytöllä oleva asema, sitten yhdestä neljään puolisiirtoa — ei koskaan nolla, koska olet juuri nähnyt sen) tai <em>Base</em>-kirjastosta (asema selatusta luettelosta sellaisenaan: se on jo todellinen).</p>
+<p>Harjoituksen alue: <strong>molemmat osapuolet kokonaan omalla kotialueellaan</strong>, <strong>4–15 nappulaa</strong> puolta kohden ja loput ulos vietyinä, tuplauskuutio keskellä, rahapeli. Siemen, joka ei sovi, <strong>hylätään nimeltä mainiten</strong>, eikä mitään käynnisty — ei hiljaista sopeutusta: pelaaminen kunnes kosketus katkeaa antaisi sinulle aseman, jota et valinnut. Tyhjä lauta on poikkeus: kysymys tulee silloin varannosta, ja paneeli kertoo miksi.</p>
+<p>Harjoitus tarvitsee yksipuolisen bearoff-taulukon; niin kauan kuin sitä luodaan taustalla (katso Asetukset), se sanoo sen sen sijaan että esittäisi kysymyksen ilman vastausta.</p>
 <h4>Vastaaminen</h4>
-<p>Ele on <strong>ilmoitettu</strong>: lasket päässäsi, napsautat « Révéler », ja totuus ilmestyy. Jokainen luku on tällöin <strong>oletuksena oikein</strong> — napsautat sitä, jonka menit väärin, merkitäksesi sen <strong>virheeksi</strong> (<em>Sarkain</em> ja sitten <em>Välilyönti</em> tekee saman näppäimistöltä), ja toinen napsautus poistaa merkinnän. Mitään ei kirjoiteta: pip-luku tai taulukon ruutu on oikein tai väärin, eikä sen kirjoittaminen opeta enempää kuin sen lukeminen.</p>
-<p>Kello käynnistyy kysymyksen ilmestyessä ja pysähtyy kohdassa « Révéler »; virheiden merkitseminen ei ole ajastettua. Aikarajan kanssa kysymys, joka on määräaikaan mennessä yhä vastaamatta, paljastuu itsestään ja lasketaan <strong>ajan ylittäneeksi</strong>: kaikki sen luvut ovat väärin, eikä sen aika mene mediaaniin — vastausta, jota ei annettu, ei mitata.</p>
+<p>Vastaustapa on harjoituksen ominaisuus, ei koskaan asetus: se mitä <strong>lasketaan tai muistetaan</strong> paljastetaan, se mitä <strong>arvioidaan</strong> kirjoitetaan — sillä siellä virheen suuruus on opetus.</p>
+<p><em>Scores</em> ja <em>Pions</em> <strong>paljastetaan</strong>: lasket päässäsi, napsautat « Révéler », ja totuus ilmestyy. Jokainen luku on silloin <strong>oletuksena oikein</strong> — napsautat sitä jonka menit väärin merkitäksesi sen <strong>virheeksi</strong> (<em>Sarkain</em> ja sitten <em>Välilyönti</em> tekee saman näppäimistöltä), ja toinen napsautus poistaa merkinnän. Mitään ei kirjoiteta: pip-laskenta tai taulukon solu on oikein tai väärin, eikä sen kirjoittaminen opeta enempää kuin sen lukeminen.</p>
+<p><em>Bearoff</em> <strong>kirjoitetaan</strong>: kirjoitat molemmat EPC-luvut, « Valider » arvioi ne puolen pipin tarkkuudella — se on tarkkuus, jolla EPC muuttaa kilpajuoksun ratkaisun — ja totuus ilmestyy kirjoittamasi viereen. Sovellus arvioi, mitään ei tarvitse rastittaa. Poikkeama kirjataan <strong>etumerkkeineen</strong>: yliarviointi ei ole aliarviointia, ja yhteenveto tekee siitä keskiarvon.</p>
+<p>Kello käynnistyy kysymyksen ilmestyessä ja pysähtyy kohdassa « Révéler » tai « Valider »; seuraava kysymys valmistellaan sillä aikaa kun vastaat, joten sitä ei koskaan mitata sinun kanssasi. Virheiden rastittamista ei myöskään mitata. Rajan kanssa määräajassa vastaamatta jäänyt kysymys paljastuu itsestään ja lasketaan <strong>myöhästyneeksi</strong>: kaikki sen luvut ovat väärin, eikä sen aika mene mediaaniin — vastausta jota ei annettu ei mitata.</p>
 <p>« Suivante » tallentaa kysymyksen ja esittää uuden. Istunnolla ei ole kiinteää pituutta: se kestää kunnes « Terminer », joka kirjoittaa sen päiväkirjaan, tai « Quitter », joka hylkää sen. Kaikki painikkeet ovat paneelissa; lauta näyttää kysymyksen ja sen vastauksen, se ei kanna yhtään säädintä.</p>
 <h4>Päiväkirja ja yhteenveto</h4>
 <p>Päättyneet istunnot säilyvät itse tietokannassa — ne siis seuraavat tiedostoa — eikä niillä ole ylärajaa. Levossa paneeli näyttää yhden rivin harjoitusta kohti: istuntojen määrän, virheprosentin, mediaaniajan ja, kymmenestä istunnosta alkaen, <strong>suuntauksen</strong>, eli eron kymmenen viimeisen istunnon virheprosentin ja kaikkien istuntojen virheprosentin välillä — negatiivisena edistyt.</p>
 <p>Harjoituksen nimeä napsauttamalla avautuu erittely <strong>lukutyypeittäin</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Juuri tämä erittely tekee päiväkirjasta hyödyllisen, ja se laskee tyypin eikä puolen mukaan: saman taulukon sama ruutu, kummalta puolelta tahansa katsottuna, on yksi ja sama heikkous.</p>
-<h3>Mikroharjoitukset: EPC ja tietovisa</h3>
-<p>Kaksi harjoitusta vastataan yhä näppäimistöltä, laudan yläpuolella näkyvässä palkissa. Komento <code>train</code> ja harjoituksen nimi aloittaa viiden kysymyksen istunnon:</p>
-<ul>
-<li><code>train epc</code> — arvioi vuorossa olevan pelaajan EPC kilpajuoksuasemasta, jonka moottori osaa arvioida;</li>
-<li><code>train quiz</code> — päätä, jo analysoidusta asemasta.</li>
-</ul>
-<p>Kysymys ON näytetty asema: lauta on sovelluksen oma, ja palkki kantaa vain kysymyksen, syötön ja korjauksen. Vastaus kirjoitetaan ja vahvistetaan näppäimistöltä (<em>Enter</em> tarkistaa ja siirtyy sitten seuraavaan; <em>Esc</em> poistuu istunnosta). EPC hyväksyy puolen pipin poikkeaman, sen tarkkuuden, jolla se muuttaa kilpajuoksupäätöksen. Lopuksi istunto näyttää oikeiden vastausten määrän ja <strong>mediaaniajan</strong> kysymystä kohti.</p>
-<p>Vain tämä yhteenveto säilytetään, tietokannan metatiedoissa: istunto ei säilytä jälkeä kysymys kysymykseltä, eikä mitään kirjoiteta ennen kuin se on päättynyt. Kesken poistuminen ei siis tallenna mitään.</p>
-<h4>Tietovisa: harjoittelun PR</h4>
-<p><code>train quiz</code> esittää toisenlaisen kysymyksen. Anki-paneeli panee ulkoa opettelemaan; tietovisa <strong>testaa</strong>. Selatusta listasta arvotaan viisi jo analysoitua asemaa, ja päätös on tehtävä:</p>
+<h3>Mikroharjoitus: tietovisa</h3>
+<p>Yhteen harjoitukseen vastataan yhä näppäimistöltä, laudan yläpuolella näkyvässä palkissa: <code>train quiz</code> aloittaa viiden kysymyksen istunnon. Kysymys ON näytöllä oleva asema — lauta on sovelluksen oma, ja palkki kantaa vain kysymyksen, syötteen ja korjauksen. <em>Enter</em> tarkistaa ja siirtyy seuraavaan, <em>Esc</em> poistuu istunnosta.</p>
+<p>Vain istunnon yhteenveto säilytetään tietokannan metatiedoissa: se ei säilytä jälkeä kysymys kysymykseltä, eikä mitään kirjoiteta ennen kuin se on päättynyt. Kesken poistuminen ei siis kirjaa mitään.</p>
+<p>Anki-paneeli auttaa muistamaan; tietovisa <strong>koettelee</strong>. Selatusta luettelosta poimitaan viisi jo analysoitua asemaa, ja on ratkaistava:</p>
 <ul>
 <li>nappulasiirrossa <strong>pelaa siirto laudalla</strong> — napsauta lähtöpistettä ja sitten kohdetta, kerran kutakin noppaa kohti; tai kirjoita siirto näppäimistöllä notaationa (<code>13/7 8/7</code>);</li>
 <li>kuutiopäätöksessä napsauta <em>Ei tuplausta</em>, <em>Tuplaus, hyväksy</em> tai <em>Tuplaus, luovuta</em>.</li>
@@ -1645,7 +1646,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Avaa Harjoittelu-paneelin. Argumentin kanssa se avaa ja aloittaa: <code>train scores</code> (arvotun tilanteen tilannekortti; <code>train tp</code> ja <code>train takepoint</code> ovat synonyymejä), <code>train pips</code> (molempien osapuolten pip-luku). <code>train epc</code> ja <code>train quiz</code> aloittavat palkin kaksi mikroharjoitusta.</td>
+<td>Avaa Harjoittelu-paneelin. Argumentin kanssa se avaa ja aloittaa: <code>train scores</code> (arvotun tilanteen pistekortti; <code>train tp</code> ja <code>train takepoint</code> ovat synonyymejä), <code>train pips</code> (molempien osapuolten pip-laskenta), <code>train bearoff</code> (molempien osapuolten EPC luodussa asemassa; <code>train epc</code> on synonyymi). <code>train quiz</code> aloittaa palkin mikroharjoituksen.</td>
 </tr>
 <tr>
 <td>tp2</td>

@@ -715,32 +715,33 @@ export default {
 <h4>El lanzador</h4>
 <p>Tres opciones, y luego « Démarrer »:</p>
 <ul>
-<li>el <strong>ejercicio</strong> — <em>Scores</em> (marcadores) o <em>Pions</em> (pips);</li>
-<li>la <strong>fuente</strong> de la pregunta, cuando el ejercicio tiene varias — <em>Plateau</em> (la posición tal cual) o <em>Base</em> (una posición de la lista recorrida);</li>
+<li>el <strong>ejercicio</strong> — <em>Scores</em>, <em>Pions</em> (recuento) o <em>Bearoff</em>;</li>
+<li>la <strong>fuente</strong> de la pregunta, cuando el ejercicio tiene varias — <em>Vivier</em> (formas canónicas del ejercicio), <em>Plateau</em> (la posición tal cual está) o <em>Base</em> (una posición de la lista recorrida);</li>
 <li>el <strong>límite por pregunta</strong> — ninguno, 15, 30 o 60 segundos.</li>
 </ul>
-<p><code>train scores</code> y <code>train pips</code> abren el panel y arrancan directamente; <code>train tp</code> y <code>train takepoint</code> son sinónimos de <code>train scores</code>.</p>
-<h4>Los dos ejercicios</h4>
+<p>La fuente elegida se recuerda para cada ejercicio, de una sesión a otra.</p>
+<p><code>train scores</code>, <code>train pips</code> y <code>train bearoff</code> abren el panel y arrancan directamente; <code>train tp</code> y <code>train takepoint</code> son sinónimos de <code>train scores</code>, <code>train epc</code> de <code>train bearoff</code>.</p>
+<h4>Los tres ejercicios</h4>
 <p><strong>Scores</strong> sortea uno de los 36 marcadores no ordenados de 2 a 9 away y muestra una <strong>ficha de marcador</strong>: dos columnas — <em>Vous</em> (usted) y <em>L'adversaire</em> (el adversario) — y siete filas — el punto de aceptación con cubo 2 y luego con cubo 4, cada uno en carrera larga y en la última tirada, y después el valor del gammon con los cubos 1, 2 y 4.</p>
 <p>Cada columna solo lleva las casillas que las tablas de referencia — las que muestran las órdenes <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> y <code>gv4</code> — definen para su cara: tres números en 2a-2a, catorce como máximo, y una sola columna con marcador igualado. Una fila que ninguna de las dos caras define no aparece en la ficha, así que no hay ninguna casilla « n/a » que adivinar. Ambas caras están ahí porque una decisión de cubo con marcador necesita las dos: el punto de aceptación corregido combina los valores de gammon de ambos jugadores, y es el punto de aceptación del adversario el que dice si su doble pasa.</p>
 <p><strong>Pions</strong> (pips) pide el recuento de pips de <strong>ambos</strong> bandos. El pipcount del tablero queda oculto mientras la pregunta está abierta; « Révéler » lo muestra — <strong>incluso si usted había ocultado el pipcount</strong> con <code>p</code>, pues de lo contrario la respuesta quedaría invisible y el ejercicio no se podría verificar. Es una máscara y no un ajuste: su propia elección no se modifica y vuelve a mandar en la pregunta siguiente. La fuente <em>Plateau</em> plantea una pregunta sobre la posición mostrada, y solo una; la fuente <em>Base</em> saca una posición nueva en cada pregunta y la lleva al tablero.</p>
+<p><strong>Bearoff</strong> pide el <strong>EPC de ambos bandos</strong> — el recuento de fichas efectivo, el que añade al pipcount el desperdicio de las fichas que salen con puntos de sobra. Es el dominio donde el motor es exacto, y aquel donde el EPC se distingue de verdad del recuento de fichas.</p>
+<p>Cada pregunta se <strong>genera</strong>: el motor parte de una semilla y juega algunas tiradas, y la instantánea es lo que se le plantea. Una colocación al azar no tendría los huecos, las pilas bajas ni las asimetrías de un bearoff real. La semilla viene del <em>Vivier</em> (una entrada en casa completada, luego de cero a diez medias jugadas), del <em>Plateau</em> (la posición mostrada, luego de una a cuatro medias jugadas — nunca cero, puesto que acaba de verla) o de la <em>Base</em> (una posición de la lista recorrida, tal cual: ya es real).</p>
+<p>El dominio del ejercicio: <strong>ambos bandos enteramente en su casa</strong>, de <strong>4 a 15 fichas</strong> por bando y el resto retiradas, cubo en el centro, partida de dinero. Una semilla que no encaje se <strong>rechaza nombrándolo</strong>, y no arranca nada — ninguna adaptación silenciosa: seguir jugando hasta que se rompa el contacto le daría una posición que usted no ha elegido. Un tablero vacío es la excepción: la pregunta viene entonces del vivero, y el panel dice por qué.</p>
+<p>El ejercicio necesita la tabla de bearoff a un lado; mientras se genera en segundo plano (véase Configuración), lo dice en lugar de plantear una pregunta sin respuesta.</p>
 <h4>Responder</h4>
-<p>El gesto es <strong>declarado</strong>: usted calcula de cabeza, hace clic en « Révéler », y aparece la verdad. Cada número es entonces <strong>correcto por defecto</strong> — usted hace clic en el que ha fallado para marcarlo como <strong>fallo</strong> (<em>Tab</em> y luego <em>Espacio</em> hace lo mismo desde el teclado), y un segundo clic quita la marca. No se escribe nada: un recuento de pips o una casilla de tabla es correcta o falsa, y escribirla no enseña nada más que leerla.</p>
-<p>El cronómetro arranca al mostrarse la pregunta y se detiene en « Révéler »; marcar los fallos no está cronometrado. Con un límite, una pregunta sin respuesta al vencimiento se revela sola y cuenta <strong>fuera de tiempo</strong>: todos sus números son falsos, y su tiempo no entra en la mediana — no se mide una respuesta que no se ha dado.</p>
+<p>El modo de respuesta es una propiedad del ejercicio, nunca un ajuste: lo que se <strong>cuenta o se recita</strong> se declara, lo que se <strong>estima</strong> se escribe — porque ahí, el tamaño del error es la lección.</p>
+<p><em>Scores</em> y <em>Pions</em> se <strong>declaran</strong>: usted calcula de cabeza, hace clic en « Révéler », y aparece la verdad. Cada número es entonces <strong>correcto por omisión</strong> — hace clic en el que ha fallado para marcarlo como <strong>falta</strong> (<em>Tab</em> y luego <em>Espacio</em> hace el mismo gesto con el teclado), y un segundo clic anula la marca. No se escribe nada: un recuento de fichas o una casilla de tabla es correcta o falsa, y escribirla no enseña nada más que leerla.</p>
+<p><em>Bearoff</em> se <strong>escribe</strong>: usted escribe los dos EPC, « Valider » los juzga con medio punto de margen — la granularidad a la que el EPC cambia una decisión de carrera — y la verdad aparece junto a lo que ha escrito. Es la aplicación la que juzga, no hay nada que marcar. La desviación se registra <strong>con su signo</strong>: sobreestimar no es subestimar, y es el balance el que hace de ello una media.</p>
+<p>El cronómetro arranca al mostrarse la pregunta y se detiene en « Révéler » o « Valider »; la pregunta siguiente se prepara mientras usted responde, así que nunca se cronometra con la suya. Marcar las faltas tampoco se cronometra. Con un límite, una pregunta sin respuesta al vencimiento se revela sola y cuenta <strong>fuera de plazo</strong>: todos sus números son falsos, y su tiempo no entra en la mediana — no se mide una respuesta que no se ha dado.</p>
 <p>« Suivante » registra la pregunta y plantea otra. La sesión no tiene una duración fijada: dura hasta « Terminer », que la escribe en el diario, o « Quitter », que la descarta. Todos los botones están en el panel; el tablero muestra la pregunta y su respuesta, no lleva ningún control.</p>
 <h4>El diario y el balance</h4>
 <p>Las sesiones terminadas se conservan en la propia base — así que siguen al archivo — y sin límite. En reposo, el panel muestra una línea por ejercicio: el número de sesiones, la tasa de fallos, el tiempo mediano y, a partir de diez sesiones, la <strong>tendencia</strong>, es decir la diferencia entre la tasa de fallos de las diez últimas sesiones y la de todas — negativa, usted progresa.</p>
 <p>Al hacer clic en el nombre del ejercicio se despliega el detalle <strong>por tipo de número</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Ese detalle es lo que da valor al diario, y cuenta por tipo y no por cara: la misma casilla de la misma tabla, vista de un lado o del otro, es una sola debilidad.</p>
-<h3>Micro-entrenamientos: EPC y quiz</h3>
-<p>Dos ejercicios se siguen respondiendo con el teclado, en una barra mostrada encima del tablero. La orden <code>train</code> seguida de su nombre lanza una sesión de cinco preguntas:</p>
-<ul>
-<li><code>train epc</code> — estimar el EPC del jugador en turno, sobre una posición de carrera que el motor sabe evaluar;</li>
-<li><code>train quiz</code> — decidir, sobre una posición ya analizada.</li>
-</ul>
-<p>La pregunta ES la posición mostrada: el tablero es el de la aplicación, y la barra solo lleva la pregunta, la entrada y la corrección. La respuesta se escribe y se valida con el teclado (<em>Intro</em> comprueba y luego pasa a la siguiente; <em>Esc</em> sale de la sesión). El EPC acepta medio pip de desviación, la granularidad a la que cambia una decisión de carrera. Al final, la sesión muestra el número de aciertos y el tiempo <strong>mediano</strong> por pregunta.</p>
-<p>Solo se conserva ese resumen, en los metadatos de la base: la sesión no guarda rastro pregunta por pregunta, y no se escribe nada hasta que termina. Salir a mitad de camino, por tanto, no registra nada.</p>
-<h4>Cuestionario: el PR de entrenamiento</h4>
-<p><code>train quiz</code> plantea una pregunta de otra naturaleza. El panel Anki hace memorizar; el quiz <strong>pone a prueba</strong>. Se extraen cinco posiciones ya analizadas de la lista recorrida, y hay que decidir:</p>
+<h3>Microentrenamiento: el quiz</h3>
+<p>Un ejercicio se responde todavía con el teclado, en una banda mostrada encima del tablero: <code>train quiz</code> lanza una sesión de cinco preguntas. La pregunta ES la posición mostrada — el tablero es el de la aplicación, y la banda solo lleva la pregunta, la escritura y la corrección. <em>Intro</em> verifica y pasa a la siguiente, <em>Esc</em> abandona la sesión.</p>
+<p>Solo se conserva el resumen de la sesión, en los metadatos de la base: no guarda rastro pregunta por pregunta, y no se escribe nada mientras no haya terminado. Salir a medio camino no registra nada.</p>
+<p>El panel Anki hace memorizar; el quiz <strong>evalúa</strong>. Se extraen cinco posiciones ya analizadas de la lista recorrida, y hay que decidir:</p>
 <ul>
 <li>en una decisión de fichas, <strong>juegue el movimiento en el tablero</strong> — haga clic en el punto de origen y luego en el destino, una vez por dado; o escriba el movimiento con el teclado, en notación (<code>13/7 8/7</code>);</li>
 <li>en una decisión de cubo, pulsar <em>Sin doblar</em>, <em>Doblar, aceptar</em> o <em>Doblar, pasar</em>.</li>
@@ -1645,7 +1646,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Abre el panel Entrenamiento. Con un argumento, lo abre y lo inicia: <code>train scores</code> (la ficha de marcador de un marcador sorteado; <code>train tp</code> y <code>train takepoint</code> son sinónimos), <code>train pips</code> (el recuento de pips de ambos bandos). <code>train epc</code> y <code>train quiz</code> lanzan los dos micro-entrenamientos de la barra.</td>
+<td>Abre el panel Entrenamiento. Con un argumento, abre y arranca: <code>train scores</code> (la ficha de puntuación de un marcador sorteado; <code>train tp</code> y <code>train takepoint</code> son sinónimos), <code>train pips</code> (el recuento de fichas de ambos bandos), <code>train bearoff</code> (el EPC de ambos bandos en una posición generada; <code>train epc</code> es un sinónimo). <code>train quiz</code> lanza el microentrenamiento de la banda.</td>
 </tr>
 <tr>
 <td>tp2</td>
