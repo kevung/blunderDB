@@ -143,3 +143,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   with the `tenant_isolation` policy on the two new tenant-scoped tables.
   `origin` defaults to `'unknown'`, never `'user'` — see the file's header.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.19.0.
+- `021_transcription.sql` — the `transcription` table (#334, ADR-0045): the
+  draft a match is typed into, one opaque JSON `document` carrying its own
+  `format_version`, plus a nullable `match_id` pointing at the Match the draft
+  has already produced (`ON DELETE SET NULL`, composite FK on
+  `(tenant_id, id)`). Schema-visible: bumped `domain.DatabaseVersion` to
+  2.21.0.
