@@ -1042,11 +1042,27 @@
         "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metatiedot",
+        "transcription": "Litterointi",
         "hideTab": "Piilota tämä välilehti",
         "showTab": "Näytä: {tab}",
         "hiddenTabs": "Piilotetut välilehdet",
         "ankiDue": "{n} korttia kerrattavana",
         "training": "Harjoittelu"
+    },
+    "transcription": {
+        "title": "Litteroinnit",
+        "new": "Uusi litterointi",
+        "newTooltip": "Luo luonnos litteroitavasta ottelusta",
+        "empty": "Ei luonnoksia. Luo yksi litteroidaksesi ottelun.",
+        "updated": "Muokattu",
+        "players": "Pelaajat",
+        "length": "Pituus",
+        "actionCount": "Toiminnot",
+        "match": "Ottelu",
+        "money": "Rahapeli",
+        "points": "{n} pist.",
+        "notSaved": "ei tallennettu",
+        "unnamed": "Nimetön"
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",

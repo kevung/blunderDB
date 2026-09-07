@@ -967,6 +967,10 @@ export default {
 <td>Das Eval-Panel ein-/ausblenden.</td>
 </tr>
 <tr>
+<td>STRG-UMSCHALT-T</td>
+<td>Das Transkriptions-Panel ein-/ausblenden (Match-Entwürfe).</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Die Hilfe ein-/ausblenden.</td>
 </tr>
@@ -1352,6 +1356,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Öffnet das Eval-Panel (Effective Pip Count, Gewinnwahrscheinlichkeit und Doppler-Urteil im Bearoff). <code>epc</code> ist der alte, weiterhin gültige Name dieses Panels.</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>Öffnet das Transkriptions-Panel: die Match-Entwürfe, die gerade erfasst werden, und die Möglichkeit, einen neuen zu beginnen.</td>
 </tr>
 <tr>
 <td>met</td>

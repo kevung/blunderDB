@@ -58,6 +58,8 @@ import {
     enterEPCMode,
     exitEPCMode,
     toggleEPCMode,
+    enterTranscribeMode,
+    exitTranscribeMode,
     sendPositionToEval,
     toggleMatchMode,
     handleOpenCollection,
@@ -162,10 +164,15 @@ describe('positionService ré-exporte les transitions', () => {
         expect(positionService.toggleMatchMode).toBe(toggleMatchMode);
         expect(positionService.exitCollectionMode).toBe(exitCollectionMode);
         expect(positionService.handleOpenCollection).toBe(handleOpenCollection);
+        expect(positionService.enterTranscribeMode).toBe(enterTranscribeMode);
+        expect(positionService.exitTranscribeMode).toBe(exitTranscribeMode);
     });
 
     test('modeState expose { mode, savedContext } et démarre vide', () => {
-        expect(modeState()).toEqual({ mode: MODE.NORMAL, savedContext: { beforeEPC: null, beforeEdit: null, epcSeed: null, lastEPCBoard: null } });
+        expect(modeState()).toEqual({
+            mode: MODE.NORMAL,
+            savedContext: { beforeTranscribe: null, beforeEPC: null, beforeEdit: null, epcSeed: null, lastEPCBoard: null }
+        });
     });
 });
 

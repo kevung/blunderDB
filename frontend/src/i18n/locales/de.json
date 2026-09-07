@@ -1042,11 +1042,27 @@
         "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metadaten",
+        "transcription": "Transkription",
         "hideTab": "Diesen Tab ausblenden",
         "showTab": "Anzeigen: {tab}",
         "hiddenTabs": "Ausgeblendete Tabs",
         "ankiDue": "{n} Karten zu wiederholen",
         "training": "Training"
+    },
+    "transcription": {
+        "title": "Transkriptionen",
+        "new": "Neue Transkription",
+        "newTooltip": "Einen Entwurf für ein zu transkribierendes Match anlegen",
+        "empty": "Noch kein Entwurf. Legen Sie einen an, um ein Match zu transkribieren.",
+        "updated": "Geändert",
+        "players": "Spieler",
+        "length": "Länge",
+        "actionCount": "Aktionen",
+        "match": "Match",
+        "money": "Geldspiel",
+        "points": "{n} Pkt.",
+        "notSaved": "nicht gespeichert",
+        "unnamed": "Ohne Namen"
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",

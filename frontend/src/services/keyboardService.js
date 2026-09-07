@@ -23,6 +23,7 @@ import {
     toggleMatchPanel,
     toggleTournamentPanel,
     toggleStatsPanel,
+    toggleTranscriptionPanel,
     toggleSearchPanel,
     toggleEPCMode,
     togglePipcount,
@@ -383,6 +384,12 @@ export function handleKeyDown(event) {
         toggleTrainingPanel();
     } else if (event.ctrlKey && letter('k')) {
         toggleAnkiPanel();
+    } else if (event.ctrlKey && event.shiftKey && letter('t')) {
+        // BEFORE the Ctrl-T branch below, which does not exclude Shift: the
+        // same reason Ctrl-Maj-I sits before Ctrl-I and Ctrl-Maj-S before
+        // Ctrl-S. Reversed, every transcription would open a new view instead.
+        event.preventDefault();
+        toggleTranscriptionPanel();
     } else if (event.ctrlKey && letter('t')) {
         event.preventDefault();
         viewStore.addView();

@@ -34,6 +34,7 @@ export const COMMANDS = [
     { name: 'match', aliases: ['ma'] },
     { name: 'collection', aliases: ['coll'] },
     { name: 'epc', aliases: [] },
+    { name: 'transcribe', aliases: ['tr'] },
     { name: 'm', aliases: [] },
     { name: 'met', aliases: [] },
     { name: 'cm', aliases: [] },

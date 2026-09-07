@@ -1042,11 +1042,27 @@
         "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metadati",
+        "transcription": "Trascrizione",
         "hideTab": "Nascondi questa scheda",
         "showTab": "Mostra: {tab}",
         "hiddenTabs": "Schede nascoste",
         "ankiDue": "{n} carte da ripassare",
         "training": "Allenamento"
+    },
+    "transcription": {
+        "title": "Trascrizioni",
+        "new": "Nuova trascrizione",
+        "newTooltip": "Creare una bozza di partita da trascrivere",
+        "empty": "Nessuna bozza. Creane una per trascrivere una partita.",
+        "updated": "Modificato",
+        "players": "Giocatori",
+        "length": "Lunghezza",
+        "actionCount": "Azioni",
+        "match": "Partita",
+        "money": "Money",
+        "points": "{n} pti",
+        "notSaved": "non salvata",
+        "unnamed": "Senza nome"
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",

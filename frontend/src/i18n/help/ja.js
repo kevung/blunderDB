@@ -967,6 +967,10 @@ export default {
 <td>Eval パネルを表示/非表示にする。</td>
 </tr>
 <tr>
+<td>CTRL-SHIFT-T</td>
+<td>記譜パネルを表示/非表示にする（マッチの下書き）。</td>
+</tr>
+<tr>
 <td>?</td>
 <td>ヘルプを表示/非表示にする。</td>
 </tr>
@@ -1352,6 +1356,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Eval パネル（Effective Pip Count、勝率、ベアオフでのキューブの判定）を開きます。<code>epc</code> はこのパネルの旧名で、そのまま残されています。</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>記譜パネルを開きます。入力中のマッチの下書きと、新しく始めるための手段が表示されます。</td>
 </tr>
 <tr>
 <td>met</td>

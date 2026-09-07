@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 01:46+0200\n"
+"POT-Creation-Date: 2026-09-07 03:31+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -379,6 +379,14 @@ msgstr "CTRL-E"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher le panneau Eval."
 msgstr "Show/hide the Eval panel."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-T"
+msgstr "CTRL-SHIFT-T"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Transcription (brouillons de matchs)."
+msgstr "Show/hide the Transcription panel (match drafts)."
 
 #: ../../source/raccourcis.rst:1
 msgid "?"

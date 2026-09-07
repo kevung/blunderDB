@@ -1042,11 +1042,27 @@
         "epc": "評価",
         "anki": "Anki",
         "metadata": "メタデータ",
+        "transcription": "記譜",
         "hideTab": "このタブを非表示にする",
         "showTab": "表示: {tab}",
         "hiddenTabs": "非表示のタブ",
         "ankiDue": "復習待ち {n} 枚",
         "training": "トレーニング"
+    },
+    "transcription": {
+        "title": "記譜",
+        "new": "新しい記譜",
+        "newTooltip": "記譜するマッチの下書きを作成します",
+        "empty": "下書きがありません。作成してマッチを記譜してください。",
+        "updated": "更新日時",
+        "players": "プレイヤー",
+        "length": "マッチ長",
+        "actionCount": "アクション",
+        "match": "マッチ",
+        "money": "マネー",
+        "points": "{n} 点",
+        "notSaved": "未保存",
+        "unnamed": "名称未設定"
     },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",

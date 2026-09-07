@@ -53,10 +53,13 @@
         toggleEPCMode,
         toggleMatchMode,
         toggleStatsPanel,
+        toggleTranscriptionPanel,
         enterEditMode,
         exitEditMode,
         enterEPCMode,
         exitEPCMode,
+        enterTranscribeMode,
+        exitTranscribeMode,
         updateEPC,
         handleOpenCollection,
         addSearchToFilterLibrary
@@ -210,6 +213,11 @@
                 }
                 if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
                 else if (!isFirstRun && prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
+                // The transcription tab is a scratch mode like the two above:
+                // entering photographs the studied position, leaving puts it
+                // back (ADR-0045 — the board belongs to the draft's Cursor).
+                if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
+                else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();
                 applyTabPanels(tab);
             });
         });
@@ -340,6 +348,7 @@
             toggleMatchPanel,
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
+            toggleTranscriptionPanel,
             toggleMatchMode,
             onToggleStats: () => toggleStatsPanel(),
             onLoadBlunders: loadWorstBlunders

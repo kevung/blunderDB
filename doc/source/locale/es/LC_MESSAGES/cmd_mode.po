@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:09+0200\n"
+"POT-Creation-Date: 2026-09-07 03:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -140,6 +140,18 @@ msgstr ""
 "Abre el panel Eval (Effective Pip Count, probabilidad de victoria y "
 "veredicto de cubo en bearoff). ``epc`` es el antiguo nombre de este "
 "panel, conservado."
+
+#: ../../source/cmd_mode.rst:1
+msgid "transcribe, tr"
+msgstr "transcribe, tr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le panneau Transcription : les brouillons de matchs en cours de "
+"saisie, et de quoi en commencer un."
+msgstr ""
+"Abre el panel Transcripción: los borradores de partidas en curso de "
+"captura, y con qué empezar uno nuevo."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -277,7 +289,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Abre la tabla de valores de gammon con el cubo a 4."
 
-#: ../../source/cmd_mode.rst:51
+#: ../../source/cmd_mode.rst:52
 msgid "Positions et navigation"
 msgstr "Posiciones y navegación"
 
@@ -418,7 +430,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:76
+#: ../../source/cmd_mode.rst:77
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -454,11 +466,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Buscar entre las posiciones actualmente filtradas."
 
-#: ../../source/cmd_mode.rst:92
+#: ../../source/cmd_mode.rst:93
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -473,7 +485,7 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:102
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -493,7 +505,7 @@ msgstr ""
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -503,7 +515,7 @@ msgstr ""
 "resultado por distancia creciente a una posición objetivo, y todos los "
 "demás tokens restringen el conjunto así ordenado."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -513,11 +525,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:118
+#: ../../source/cmd_mode.rst:119
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -526,7 +538,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1490,7 +1502,7 @@ msgstr ""
 "``like42*`` amplía la clase del objetivo a todos los tipos de decisión y "
 "a ambos regímenes, dinero y partido. Ver :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:228
+#: ../../source/cmd_mode.rst:229
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

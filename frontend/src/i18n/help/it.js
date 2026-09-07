@@ -967,6 +967,10 @@ export default {
 <td>Mostra/nascondi il pannello Eval.</td>
 </tr>
 <tr>
+<td>CTRL-MAIUSC-T</td>
+<td>Mostra/nascondi il pannello Trascrizione (bozze di partite).</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Mostra/nascondi l'aiuto.</td>
 </tr>
@@ -1352,6 +1356,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Apre il pannello Eval (Effective Pip Count, probabilità di vittoria e verdetto di cubo in bearoff). <code>epc</code> è il vecchio nome di questo pannello, conservato.</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>Apre il pannello Trascrizione: le bozze di partite in corso di inserimento, e il modo di iniziarne una.</td>
 </tr>
 <tr>
 <td>met</td>

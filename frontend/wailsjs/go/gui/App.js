@@ -194,6 +194,10 @@ export function StartGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetBatch'](arg1, arg2, arg3);
 }
 
+export function StartGammonNetMatchBatch(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['StartGammonNetMatchBatch'](arg1, arg2, arg3, arg4);
+}
+
 export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetStaleBatch'](arg1, arg2, arg3);
 }

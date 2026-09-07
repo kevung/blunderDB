@@ -31,6 +31,7 @@
     import EPCPanel from './EPCPanel.svelte';
     import AnkiPanel from './AnkiPanel.svelte';
     import TrainingPanel from './TrainingPanel.svelte';
+    import TranscriptionPanel from './TranscriptionPanel.svelte';
 
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
@@ -53,6 +54,7 @@
         { id: 'training', labelKey: 'tabbedPanel.training', icon: 'training', shortcut: 'Ctrl+J' },
         { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
         { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
+        { id: 'transcription', labelKey: 'tabbedPanel.transcription', icon: 'transcription', shortcut: 'Ctrl+Maj+T' },
         { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }
     ];
 
@@ -334,6 +336,12 @@
                             stroke-linejoin="round"
                             d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
                         />
+                    {:else if tab.icon === 'transcription'}
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                        />
                     {:else if tab.icon === 'metadata'}
                         <path
                             stroke-linecap="round"
@@ -389,6 +397,8 @@
             <StatsPanel />
         {:else if $activeTabStore === 'epc'}
             <EPCPanel />
+        {:else if $activeTabStore === 'transcription'}
+            <TranscriptionPanel />
         {:else if $activeTabStore === 'metadata'}
             <MetadataPanel />
         {/if}

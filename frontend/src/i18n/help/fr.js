@@ -967,6 +967,10 @@ export default {
 <td>Afficher/cacher le panneau Eval.</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-T</td>
+<td>Afficher/cacher le panneau Transcription (brouillons de matchs).</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Afficher/cacher l'aide.</td>
 </tr>
@@ -1352,6 +1356,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff). <code>epc</code> est l'ancien nom de ce panneau, conservé.</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>Ouvre le panneau Transcription : les brouillons de matchs en cours de saisie, et de quoi en commencer un.</td>
 </tr>
 <tr>
 <td>met</td>

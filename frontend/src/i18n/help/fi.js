@@ -967,6 +967,10 @@ export default {
 <td>Näytä/piilota Eval-paneeli.</td>
 </tr>
 <tr>
+<td>CTRL-SHIFT-T</td>
+<td>Näytä/piilota Litterointi-paneeli (otteluluonnokset).</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Näytä/piilota ohje.</td>
 </tr>
@@ -1352,6 +1356,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Avaa Eval-paneelin (Effective Pip Count, voittotodennäköisyys ja kuutiopäätös bearoffissa). <code>epc</code> on tämän paneelin vanha nimi, joka on säilytetty.</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>Avaa Litterointi-paneelin: kirjattavana olevat otteluluonnokset ja keinon aloittaa uusi.</td>
 </tr>
 <tr>
 <td>met</td>

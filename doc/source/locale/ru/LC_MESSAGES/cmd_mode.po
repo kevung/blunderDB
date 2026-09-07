@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:09+0200\n"
+"POT-Creation-Date: 2026-09-07 03:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -141,6 +141,18 @@ msgstr ""
 "Открывает панель Eval (Effective Pip Count, вероятность выигрыша и "
 "вердикт по кубу при выбросе). ``epc`` — прежнее название этой панели, "
 "сохранённое как есть."
+
+#: ../../source/cmd_mode.rst:1
+msgid "transcribe, tr"
+msgstr "transcribe, tr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le panneau Transcription : les brouillons de matchs en cours de "
+"saisie, et de quoi en commencer un."
+msgstr ""
+"Открывает панель записи: черновики матчей, которые вводятся сейчас, и "
+"способ начать новый."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -277,7 +289,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Открывает таблицу значений гэммона при кубе на 4."
 
-#: ../../source/cmd_mode.rst:51
+#: ../../source/cmd_mode.rst:52
 msgid "Positions et navigation"
 msgstr "Позиции и навигация"
 
@@ -417,7 +429,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Навигация по последнему просмотренному матчу."
 
-#: ../../source/cmd_mode.rst:76
+#: ../../source/cmd_mode.rst:77
 msgid "Édition et recherche"
 msgstr "Редактирование и поиск"
 
@@ -453,11 +465,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Искать среди текущих отфильтрованных позиций."
 
-#: ../../source/cmd_mode.rst:92
+#: ../../source/cmd_mode.rst:93
 msgid "Filtres de recherche"
 msgstr "Фильтры поиска"
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -472,7 +484,7 @@ msgstr ""
 "``search``, делающий то же самое (см. :ref:`cli`); тире отмечает фильтр, "
 "который выражает только грамматика."
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:102
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -491,7 +503,7 @@ msgstr ""
 "(``xD65``). В командной строке, где доски нет, эти токены сравниваются с "
 "пустой доской; там нужно применять флаги из третьего столбца."
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -501,7 +513,7 @@ msgstr ""
 "располагает результат по возрастанию расстояния до целевой позиции, а все"
 " остальные токены сужают упорядоченное таким образом множество."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -511,11 +523,11 @@ msgstr ""
 " из таблицы ниже: ``E>100`` оставляет ходы, стоившие не менее одной "
 "десятой очка, поскольку очко равно 1000 тысячных."
 
-#: ../../source/cmd_mode.rst:118
+#: ../../source/cmd_mode.rst:119
 msgid "Deux recherches complètes :"
 msgstr "Два полных поиска:"
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -524,7 +536,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — отставание более 30 пипов, шансы на выигрыш от 40"
 " % до 60 %, без комментария."
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1474,7 +1486,7 @@ msgstr ""
 "шашко-пипсов, ``like42*`` расширяет класс цели на все типы решений и на "
 "оба режима, на деньги и матч. См. :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:228
+#: ../../source/cmd_mode.rst:229
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 
