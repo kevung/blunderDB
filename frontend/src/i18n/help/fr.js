@@ -615,12 +615,14 @@ export default {
 <p>Les bases de bearoff sont des tables mathématiques immuables. blunderDB les calcule lui-même, à l'identique de l'outil <code>makebearoff</code> de GNUbg — octet pour octet — dans l'onglet <em>Bearoff</em> de la configuration ou avec <code>blunderdb bearoff generate</code>.</p>
 </div>
 <h3>Panneau Anki</h3>
-<p>Le panneau <strong>Anki</strong> (<em>CTRL-K</em>) permet d'étudier des positions par répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut créer des paquets à partir de collections ou de résultats de recherche.</p>
+<p>Le panneau <strong>Anki</strong> (<em>CTRL-K</em>) permet d'étudier par répétition espacée, en utilisant l'algorithme FSRS. Une carte pose une question : le plus souvent une position, tirée d'une collection ou d'une recherche ; ce peut aussi être un score.</p>
 <p><strong>Création de paquets :</strong> Cliquez sur <em>New Deck</em> pour créer un paquet à partir d'une collection ou des résultats de recherche courants. Les paquets basés sur une recherche se synchronisent automatiquement à l'activation de l'onglet Anki.</p>
-<p><strong>Révision :</strong> Sélectionnez un paquet puis cliquez sur <em>Study</em> (ou double-cliquez sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche la position correspondante sur le plateau. Évaluez votre rappel avec les touches <em>1</em> (À revoir), <em>2</em> (Difficile), <em>3</em> (Bien), ou <em>4</em> (Facile). Appuyez sur <em>Esc</em> pour arrêter et revenir à la liste des paquets.</p>
+<p><strong>Un paquet de fiches de score.</strong> La troisième source, <em>Fiches de score</em>, ne demande rien d'autre qu'un nom : blunderDB remplit le paquet avec les 36 scores non ordonnés de 2 à 9 away, et la carte d'un score est la fiche que l'exercice Scores affiche — points de prise et valeurs de gammon, les deux faces. Ce paquet n'existe que si vous le créez : 36 cartes dues le premier jour sont une dette de révision, et elle se contracte volontairement. Le bouton de synchronisation le régénère.</p>
+<p>Les deux endroits ne font pas le même travail. L'exercice Scores fait retrouver ces nombres <strong>sous la pendule</strong> et mesure la vitesse ; le paquet les fait <strong>tenir dans le temps</strong> et n'en mesure rien. Les deux histoires restent séparées : le journal de l'Entraînement ignore les révisions Anki, et les statistiques d'Anki ignorent les sessions d'Entraînement.</p>
+<p><strong>Révision :</strong> Sélectionnez un paquet puis cliquez sur <em>Study</em> (ou double-cliquez sur un paquet) pour commencer la révision des cartes dues. Une carte de position affiche la position sur le plateau ; une carte de score annonce le score et laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches <em>1</em> (À revoir), <em>2</em> (Difficile), <em>3</em> (Bien), ou <em>4</em> (Facile). Appuyez sur <em>Esc</em> pour arrêter et revenir à la liste des paquets.</p>
 <p><strong>Les décisions de videau font deux cartes, enchaînées.</strong> Une décision de videau est deux questions — « double ? », puis « prend ? » — et blunderDB les enregistre depuis toujours comme deux positions. Un paquet qui n'en sélectionne qu'une moitié reçoit l'autre : la décision est complétée, pas augmentée. Et quand les deux sont dues, la seconde vient <strong>immédiatement</strong> après la première.</p>
 <p>Chacune garde sa propre note et son propre calendrier : ce ne sont pas deux temps d'une même carte, ce sont deux cartes. L'enchaînement n'avance aucune échéance — il ordonne les cartes déjà dues, rien de plus. Les deux naissant ensemble, elles sont dues ensemble la première fois, et c'est là qu'il sert.</p>
-<p><strong>Afficher la réponse :</strong> La carte pose une question — quel coup jouer, ou quelle action de videau. Réfléchissez, puis appuyez sur <em>ESPACE</em> (ou cliquez sur la zone masquée) pour dévoiler la réponse : l'analyse enregistrée de la position, telle que l'onglet Analyse la présente. Elle apparaît sous les boutons d'évaluation, qui restent à leur place et à portée. Cliquer sur un coup de la liste le montre sur le plateau.</p>
+<p><strong>Afficher la réponse :</strong> La carte pose une question — quel coup jouer, quelle action de videau, ou quels nombres porte un score. Réfléchissez, puis appuyez sur <em>ESPACE</em> (ou cliquez sur la zone masquée) pour dévoiler la réponse : l'analyse enregistrée de la position, telle que l'onglet Analyse la présente, ou la fiche du score, entière. Sur une fiche il n'y a rien à cocher : Anki planifie une mémoire, il ne mesure pas un calcul — c'est l'Entraînement qui compte les fautes. Elle apparaît sous les boutons d'évaluation, qui restent à leur place et à portée. Cliquer sur un coup de la liste le montre sur le plateau.</p>
 <p>Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr de vous, les touches <em>1</em> à <em>4</em> restent actives. La réponse se remasque à la carte suivante, mais pas si vous changez simplement d'onglet — allez consulter le panneau Éval ou le commentaire de la position, elle vous attendra au retour.</p>
 <p>Une position dépourvue d'analyse enregistrée l'indique directement, sans zone masquée.</p>
 <p><strong>Limiter la séance.</strong> Par défaut, une séance de révision va jusqu'au bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par paquet, dans les Paramètres : cochez <em>Limiter la séance</em> et indiquez combien de cartes une séance doit servir. Quand la limite est atteinte, la séance s'arrête en le disant — le message distingue « limite atteinte, tant de cartes encore dues » d'une file réellement épuisée. Pour continuer malgré tout, l'entraînement libre est là : il sert d'autres positions sans rien modifier au planning.</p>
@@ -634,14 +636,14 @@ export default {
 <li><strong>Retirer</strong> — la carte quitte le paquet, après confirmation. La position, elle, reste dans la base : un paquet est une liste d'étude sur la bibliothèque, jamais une copie de celle-ci.</li>
 </ul>
 <p>Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est pas une carte répondue, et elle ne compte pas dans le décompte de la séance.</p>
-<p><strong>Journal des révisions.</strong> Dans les Paramètres d'un paquet, le bouton <em>Journal des révisions</em> montre ce que le planificateur a été <strong>dit</strong> — date, position, note, état, intervalle accordé — par opposition à ce qu'il prévoit. C'est le seul endroit où une note entrée par erreur se voit. Elle ne s'y corrige pas : l'échéancier reste hors de portée, et cette règle est précisément ce qui rend le journal utile — on ne peut pas réécrire le passé, mais on peut savoir ce qu'il a été.</p>
+<p><strong>Journal des révisions.</strong> Dans les Paramètres d'un paquet, le bouton <em>Journal des révisions</em> montre ce que le planificateur a été <strong>dit</strong> — date, sujet (le numéro de la position, ou le score), note, état, intervalle accordé — par opposition à ce qu'il prévoit. C'est le seul endroit où une note entrée par erreur se voit. Elle ne s'y corrige pas : l'échéancier reste hors de portée, et cette règle est précisément ce qui rend le journal utile — on ne peut pas réécrire le passé, mais on peut savoir ce qu'il a été.</p>
 <p><strong>Arrêt/Reprise :</strong> Vous pouvez interrompre une session de révision à tout moment avec <em>Esc</em>. Le bouton change en <em>Resume</em> et affiche votre progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté.</p>
 <p><strong>Gestion des paquets :</strong> Utilisez les boutons d'action pour renommer, synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée pour ces deux dernières actions). Les paramètres FSRS (rétention cible, intervalle maximum, aléa) peuvent être configurés par paquet dans les Paramètres (icône engrenage).</p>
 <p><strong>Rétention : la cible et la mesure.</strong> La <em>rétention cible</em> est votre choix sur le compromis entre charge de travail et qualité du rappel : plus elle est haute, plus les intervalles raccourcissent et plus vous révisez. En regard, les Paramètres affichent la <strong>rétention mesurée</strong> sur vos propres révisions — une information, jamais un pilotage : blunderDB ne modifie pas votre cible pour poursuivre votre taux de réussite. Sous une vingtaine de révisions, la mesure n'est pas affichée : elle se lirait comme un fait alors qu'elle n'est que du bruit.</p>
 <p>Changer la rétention <strong>n'est pas rétroactif</strong> : chaque carte adopte le nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne bougent pas. L'effet est donc progressif, et invisible le jour même.</p>
 <p>L'<em>intervalle maximum</em> borne l'espacement. Un paquet créé récemment démarre à un an : une position que l'algorithme reporterait de plusieurs années a quitté le paquet sans que vous l'ayez décidé, et votre propre jeu change plus vite que cela. Les paquets plus anciens conservent la valeur qu'ils avaient.</p>
 <h3>Panneau Entraînement</h3>
-<p>Le panneau <strong>Anki</strong> fait réviser ce qui se <strong>retient</strong> ; le panneau <strong>Entraînement</strong> fait travailler ce qui se <strong>calcule</strong>, sous la pendule. Il s'ouvre par <code>CTRL-J</code>, par le bouton de la barre d'outils placé juste après « Position aléatoire », ou par la commande <code>train</code>.</p>
+<p>Le panneau <strong>Anki</strong> fait réviser ce qui se <strong>retient</strong> ; le panneau <strong>Entraînement</strong> fait travailler ce qui se <strong>calcule</strong>, sous la pendule. Il s'ouvre par <code>CTRL-J</code>, par le bouton de la barre d'outils placé juste après « Position aléatoire », ou par la commande <code>train</code>. La fiche de score relève des deux : elle se calcule ici et se retient dans un paquet de fiches de score.</p>
 <p>Au repos, le panneau montre le lanceur et le bilan des sessions passées.</p>
 <h4>Le lanceur</h4>
 <p>Trois choix, puis « Démarrer » :</p>
@@ -1315,9 +1317,39 @@ export default {
 <td>Esc</td>
 <td>Abandonner la saisie en cours.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Doubler ou redoubler : le coup sélectionné est validé au passage, en une seule touche.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Passer le double proposé : la partie est gagnée à la valeur d'avant le double.</td>
+</tr>
+<tr>
+<td>r puis 1, 2 ou 3</td>
+<td>Abandonner la partie pour le camp au trait : simple, gammon ou backgammon. Esc entre les deux touches annule sans rien enregistrer.</td>
+</tr>
+<tr>
+<td>GAUCHE, h</td>
+<td>Reculer le curseur d'une action dans le transcript.</td>
+</tr>
+<tr>
+<td>DROITE, l</td>
+<td>Avancer le curseur d'une action.</td>
+</tr>
+<tr>
+<td>Clic (sur une cellule)</td>
+<td>Placer le curseur sur cette action.</td>
+</tr>
 </tbody>
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
+<p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
+<p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>

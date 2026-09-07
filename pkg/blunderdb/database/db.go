@@ -42,6 +42,12 @@ type Database struct {
 	// A migration step cannot write a column the schema pass has not created
 	// yet, and the phase backfill is the only 2.19.0 change that writes at all.
 	pendingPhaseBackfill bool
+	// pendingAnkiCardKinds is raised by the 2.23.0 migration step and cleared
+	// by runMigrationChain once EnsureSchema has added anki_card.kind/key.
+	// Same reason as pendingPhaseBackfill above, plus one of its own: the
+	// repair rebuilds anki_card to make position_id nullable, which no schema
+	// pass can do — SQLite relaxes no constraint through ALTER TABLE.
+	pendingAnkiCardKinds bool
 	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
 	readOnly             bool      // opened read-only because another instance holds the write lock
 	// transcriptSessions holds the open transcription drafts, keyed by row id

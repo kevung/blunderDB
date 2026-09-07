@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:24+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -405,7 +405,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
-#: ../../source/raccourcis.rst:117
+#: ../../source/raccourcis.rst:118
 msgid "Onglets de vues"
 msgstr "Näkymävälilehdet"
 
@@ -457,7 +457,7 @@ msgstr "Välilehden kaksoisnapsautus"
 msgid "Renommer la vue."
 msgstr "Nimeä näkymä uudelleen."
 
-#: ../../source/raccourcis.rst:134
+#: ../../source/raccourcis.rst:135
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -477,7 +477,7 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:147
+#: ../../source/raccourcis.rst:148
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
@@ -497,7 +497,7 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
@@ -509,7 +509,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:174
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -545,7 +545,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:189
+#: ../../source/raccourcis.rst:190
 msgid "Panneau Eval"
 msgstr "Eval-paneeli"
 
@@ -553,7 +553,7 @@ msgstr "Eval-paneeli"
 msgid "Désélectionner le coup."
 msgstr "Poista siirron valinta."
 
-#: ../../source/raccourcis.rst:204
+#: ../../source/raccourcis.rst:205
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -589,7 +589,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:222
+#: ../../source/raccourcis.rst:223
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -645,7 +645,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:241
 msgid "Panneau des tournois"
 msgstr "Turnauspaneeli"
 
@@ -678,7 +678,7 @@ msgstr ""
 "muuten poista turnauksen valinta, muuten sulje paneeli (askel "
 "kerrallaan)."
 
-#: ../../source/raccourcis.rst:256
+#: ../../source/raccourcis.rst:257
 msgid "Panneau des collections"
 msgstr "Kokoelmapaneeli"
 
@@ -706,11 +706,11 @@ msgstr ""
 "Palaa kokoelmalistaan, muuten poista kokoelman valinta, muuten sulje "
 "paneeli (askel kerrallaan)."
 
-#: ../../source/raccourcis.rst:271
+#: ../../source/raccourcis.rst:272
 msgid "Panneau Transcription"
 msgstr "Litterointipaneeli"
 
-#: ../../source/raccourcis.rst:273
+#: ../../source/raccourcis.rst:274
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
 "ouvert."
@@ -774,7 +774,71 @@ msgstr "Tyhjennä molemmat syötetyt nopat."
 msgid "Abandonner la saisie en cours."
 msgstr "Hylkää kesken oleva syöttö."
 
-#: ../../source/raccourcis.rst:290
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Doubler ou redoubler : le coup sélectionné est validé au passage, en une "
+"seule touche."
+msgstr ""
+"Tuplaa tai uudelleentuplaa: valittu siirto vahvistetaan samalla, yhdellä "
+"ainoalla näppäimellä."
+
+#: ../../source/raccourcis.rst:1
+msgid "t"
+msgstr "t"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Prendre le double proposé : le videau passe au preneur à la valeur "
+"doublée et le doubleur rejoue."
+msgstr ""
+"Ota tarjottu tuplaus: kuutio siirtyy ottajalle kaksinkertaiseen arvoon ja"
+" tuplaaja heittää uudelleen."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Passer le double proposé : la partie est gagnée à la valeur d'avant le "
+"double."
+msgstr ""
+"Luovuta tarjotun tuplauksen edessä: peli voitetaan sillä arvolla, joka "
+"kuutiolla oli ennen tuplausta."
+
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r ja sitten 1, 2 tai 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Luovuta peli vuorossa olevan puolesta: yksinkertainen, gammon tai "
+"backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään."
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "VASEN, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "Siirrä kohdistinta yksi toiminto taaksepäin siirtoluettelossa."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "OIKEA, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "Siirrä kohdistinta yksi toiminto eteenpäin."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "Napsautus (solua)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "Vie kohdistin tähän toimintoon."
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -782,21 +846,50 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:296
+#: ../../source/raccourcis.rst:301
+msgid ""
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
+msgstr ""
+"Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan "
+"ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution "
+"arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
+"tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
+
+#: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa "
+"kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen "
+"sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta "
+"siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää "
+"sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton "
+"siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen "
+"toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään "
+"työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. "
+"Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
+" sen kopioimiseen."
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "VASEN, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "Edellinen välilehti."
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "OIKEA, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

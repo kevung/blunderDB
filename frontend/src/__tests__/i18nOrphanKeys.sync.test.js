@@ -46,7 +46,10 @@ const DYNAMIC_PREFIXES = [
     'explain.',
     'stats.gameType_',
     'training.exercise.',
-    'training.sources.'
+    'training.sources.',
+    // Le panneau Transcription nomme une Incohérence par sa sorte, telle que le
+    // moteur la rend : `$t(`transcription.inconsistency.${i.kind}`)`.
+    'transcription.inconsistency.'
 ];
 
 function sourceFiles(dir) {

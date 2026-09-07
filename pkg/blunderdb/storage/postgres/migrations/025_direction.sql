@@ -1,4 +1,4 @@
--- Forward migration: the 2.23.0 wave — the Direction of a Tournament (issue #365, ADR-0047).
+-- Forward migration: the 2.24.0 wave — the Direction of a Tournament (issue #365, ADR-0047).
 --
 -- A Tournament used to be an afterthought: a label put on Matches that came in
 -- from files. It can now be created BEFORE its Matches exist and run from here,
@@ -55,7 +55,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_match_direction_slot ON match(tournament_i
 
 -- Row-level security, applied only if this schema already has it (a schema
 -- bootstrapped without RLS must not silently gain half of it). Same shape as
--- 023_training_journal.sql.
+-- 024_anki_score_cards.sql.
 DO $$ BEGIN
     IF EXISTS (
         SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:24+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -407,7 +407,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:117
+#: ../../source/raccourcis.rst:118
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -459,7 +459,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:134
+#: ../../source/raccourcis.rst:135
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -479,7 +479,7 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:147
+#: ../../source/raccourcis.rst:148
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
@@ -499,7 +499,7 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
@@ -511,7 +511,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:174
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -547,7 +547,7 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:189
+#: ../../source/raccourcis.rst:190
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
@@ -555,7 +555,7 @@ msgstr "Πίνακας Eval"
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:204
+#: ../../source/raccourcis.rst:205
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -591,7 +591,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:222
+#: ../../source/raccourcis.rst:223
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -649,7 +649,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:241
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -682,7 +682,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:256
+#: ../../source/raccourcis.rst:257
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -710,11 +710,11 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:271
+#: ../../source/raccourcis.rst:272
 msgid "Panneau Transcription"
 msgstr "Πίνακας μεταγραφής"
 
-#: ../../source/raccourcis.rst:273
+#: ../../source/raccourcis.rst:274
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
 "ouvert."
@@ -782,7 +782,72 @@ msgstr "Διαγραφή και των δύο ζαριών που εισήχθη
 msgid "Abandonner la saisie en cours."
 msgstr "Εγκατάλειψη της τρέχουσας εισαγωγής."
 
-#: ../../source/raccourcis.rst:290
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Doubler ou redoubler : le coup sélectionné est validé au passage, en une "
+"seule touche."
+msgstr ""
+"Διπλασιασμός ή νέος διπλασιασμός: η επιλεγμένη κίνηση επικυρώνεται "
+"ταυτόχρονα, με ένα μόνο πλήκτρο."
+
+#: ../../source/raccourcis.rst:1
+msgid "t"
+msgstr "t"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Prendre le double proposé : le videau passe au preneur à la valeur "
+"doublée et le doubleur rejoue."
+msgstr ""
+"Αποδοχή του διπλασιασμού: ο κύβος περνά σε αυτόν που δέχεται στη διπλάσια"
+" τιμή και παίζει ξανά αυτός που διπλασίασε."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Passer le double proposé : la partie est gagnée à la valeur d'avant le "
+"double."
+msgstr ""
+"Απόρριψη του διπλασιασμού: η παρτίδα κερδίζεται στην τιμή που είχε ο "
+"κύβος πριν τον διπλασιασμό."
+
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r και μετά 1, 2 ή 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Παραίτηση από την παρτίδα για την πλευρά που παίζει: απλή, γκάμον ή "
+"μπάκγκαμον. Το Esc ανάμεσα στα δύο πλήκτρα ακυρώνει χωρίς να καταγραφεί "
+"τίποτε."
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "ΑΡΙΣΤΕΡΑ, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "Μετακίνηση του δρομέα μία ενέργεια πίσω στην καταγραφή."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "ΔΕΞΙΑ, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "Μετακίνηση του δρομέα μία ενέργεια εμπρός."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "Κλικ (σε ένα κελί)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "Τοποθέτηση του δρομέα σε αυτήν την ενέργεια."
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -790,21 +855,52 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:296
+#: ../../source/raccourcis.rst:301
+msgid ""
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
+msgstr ""
+"Μια παρτίδα τελειώνει με απόρριψη διπλασιασμού, με παραίτηση ή με την "
+"έξοδο του δέκατου πέμπτου πουλιού (απλή, γκάμον ή μπάκγκαμον, επί την "
+"τιμή του κύβου). Το σκορ, η παρτίδα Crawford και το τέλος του αγώνα "
+"εμφανίζονται τότε πάνω από τα ζάρια, και αναμένεται το άνοιγμα της "
+"επόμενης παρτίδας."
+
+#: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"Η καταγραφή καταλαμβάνει το δεξί μισό του πίνακα: μία στήλη ανά παίκτη, "
+"μία γραμμή ανά γύρο, η ενέργεια του κύβου και το τέλος της παρτίδας στη "
+"στήλη εκείνου που ενεργεί. Το κελί του δρομέα είναι πλαισιωμένο· η "
+"μετακίνηση του δρομέα επαναφέρει το ταμπλό στη θέση της ενέργειας που "
+"στοχεύεται και εμφανίζει τις υποψήφιες κινήσεις της, με επιλεγμένη την "
+"κίνηση που παίχτηκε. Μια ασυνέπεια (παράνομη κίνηση, διπλή σειρά, αδύνατη"
+" ενέργεια κύβου, ενέργεια μετά το τέλος του αγώνα, ασυνεπή ζάρια) "
+"διακοσμεί το κελί της και ονομάζεται σε επεξήγηση. Οι παρτίδες "
+"αναδιπλώνονται· εκείνη του δρομέα παραμένει ανοιχτή. Ένα αναπτυσσόμενο "
+"πλαίσιο δείχνει το ακριβές κείμενο ``.mat`` του προσχεδίου, με ένα κουμπί"
+" αντιγραφής."
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "ΑΡΙΣΤΕΡΑ, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "Προηγούμενη καρτέλα."
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "ΔΕΞΙΑ, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

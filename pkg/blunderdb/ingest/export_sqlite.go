@@ -941,9 +941,9 @@ func (e *exporter) writeAnkiDecks() error {
 		sourceID := sd.d.SourceID
 		sourceCmd := sd.d.SourceCommand
 		switch sd.d.SourceType {
-		case "collection":
+		case domain.AnkiSourceCollection:
 			sourceID = e.collMap[sd.d.SourceID] // 0 if the collection was not exported
-		case "search":
+		case domain.AnkiSourceSearch:
 			sourceCmd = remapIDList(sourceCmd, e.posMap)
 		}
 		newID, err := e.dst.Anki().CreateDeck(e.ctx, "", sd.d.Name, sd.d.Description, sd.d.SourceType, sourceID, sourceCmd)
@@ -952,6 +952,15 @@ func (e *exporter) writeAnkiDecks() error {
 		}
 		if len(sd.posIDs) > 0 {
 			if err := e.dst.Anki().SyncWithPositions(e.ctx, "", newID, sd.posIDs); err != nil {
+				return fmt.Errorf("ingest: fill deck %q: %w", sd.d.Name, err)
+			}
+		}
+		// A deck of scores holds no position, so nothing above filled it. Its
+		// content does not travel either — it is not the exporter's to carry:
+		// the application states the 36 score cards, and Sync states them here
+		// exactly as it would on the user's own machine (ADR-0042 rule 2).
+		if sd.d.SourceType == domain.AnkiSourceScores {
+			if err := e.dst.Anki().Sync(e.ctx, "", newID); err != nil {
 				return fmt.Errorf("ingest: fill deck %q: %w", sd.d.Name, err)
 			}
 		}

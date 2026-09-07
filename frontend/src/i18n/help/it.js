@@ -617,6 +617,8 @@ export default {
 <h3>Pannello Anki</h3>
 <p>Il pannello <strong>Anki</strong> (<em>CTRL-K</em>) permette di studiare le posizioni tramite ripetizione dilazionata utilizzando l'algoritmo FSRS. L'utente può creare mazzi a partire da raccolte o risultati di ricerca.</p>
 <p><strong>Creazione di mazzi:</strong> Cliccare su <em>New Deck</em> per creare un mazzo a partire da una raccolta o dai risultati di ricerca correnti. I mazzi basati su una ricerca si sincronizzano automaticamente all'apertura della scheda Anki.</p>
+<p><strong>Un mazzo di schede di punteggio.</strong> La terza sorgente, <em>Schede di punteggio</em>, non chiede altro che un nome: blunderDB riempie il mazzo con i 36 punteggi non ordinati da 2 a 9 away, e la carta di un punteggio è la scheda che l'esercizio Punteggi mostra — punti di presa e valori di gammon, entrambe le facce. Questo mazzo esiste solo se lo si crea: 36 carte in scadenza il primo giorno sono un debito di ripasso, e lo si contrae di proposito. Il pulsante di sincronizzazione lo rigenera.</p>
+<p>I due posti non fanno lo stesso lavoro. L'esercizio Punteggi fa ritrovare quei numeri <strong>sotto l'orologio</strong> e ne misura la velocità; il mazzo li fa <strong>durare nel tempo</strong> e non ne misura nulla. Le due storie restano separate: il registro dell'Allenamento ignora i ripassi di Anki, e le statistiche di Anki ignorano le sessioni di Allenamento.</p>
 <p><strong>Revisione:</strong> Selezionare un mazzo e poi cliccare su <em>Study</em> (oppure fare doppio clic su un mazzo) per iniziare la revisione delle carte in scadenza. Ogni carta mostra la posizione corrispondente sul board. Valutare il proprio richiamo con i tasti <em>1</em> (Da rivedere), <em>2</em> (Difficile), <em>3</em> (Bene) o <em>4</em> (Facile). Premere <em>Esc</em> per interrompere e tornare all'elenco dei mazzi.</p>
 <p><strong>Le decisioni di cubo fanno due carte, concatenate.</strong> Una decisione di cubo è due domande — «raddoppio?», poi «presa?» — e blunderDB le registra da sempre come due posizioni. Un mazzo che ne seleziona una sola metà riceve l'altra: la decisione è completata, non ampliata. E quando entrambe sono dovute, la seconda arriva <strong>immediatamente</strong> dopo la prima.</p>
 <p>Ciascuna conserva il proprio voto e il proprio calendario: non sono due tempi di una stessa carta, sono due carte. La concatenazione non anticipa alcuna scadenza — ordina le carte già dovute, nulla di più. Nascendo insieme, sono dovute insieme la prima volta, ed è lì che serve.</p>
@@ -1315,9 +1317,39 @@ export default {
 <td>Esc</td>
 <td>Abbandonare l'inserimento in corso.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Raddoppiare o ri-raddoppiare: la mossa selezionata viene convalidata al passaggio, con un solo tasto.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Accettare il raddoppio proposto: il cubo passa a chi accetta al valore raddoppiato e chi ha raddoppiato torna a tirare.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Rifiutare il raddoppio proposto: la partita è vinta al valore che il cubo aveva prima del raddoppio.</td>
+</tr>
+<tr>
+<td>r poi 1, 2 o 3</td>
+<td>Abbandonare la partita per il lato di turno: semplice, gammon o backgammon. Esc fra i due tasti annulla senza registrare nulla.</td>
+</tr>
+<tr>
+<td>SINISTRA, h</td>
+<td>Arretrare il cursore di un'azione nella trascrizione.</td>
+</tr>
+<tr>
+<td>DESTRA, l</td>
+<td>Avanzare il cursore di un'azione.</td>
+</tr>
+<tr>
+<td>Clic (su una cella)</td>
+<td>Portare il cursore su questa azione.</td>
+</tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
+<p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
+<p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

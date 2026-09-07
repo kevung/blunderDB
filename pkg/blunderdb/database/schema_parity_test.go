@@ -363,11 +363,12 @@ var migratedFromV1Allowed = []allowedDiff{
 		reason: "the 1.3.0→1.4.0 migration created move_analysis with REAL rates where " +
 			"the fresh DDL says INTEGER; same affinity-only argument as analysis.",
 	},
-	{
-		pattern: `^fk anki_review_log\.(deck_id|position_id) -> (anki_deck|position)\.id on_update=NO ACTION on_delete=CASCADE$`,
-		reason: "a fresh database constrains the review journal's deck_id and position_id " +
-			"(issue #185); the 2.10.0→2.11.0 migration created the table without them and " +
-			"SQLite adds no foreign key to a table that already exists. `blunderdb verify` " +
-			"counts the rows that dangle instead.",
-	},
+	// The review journal's missing foreign keys (issue #185) used to be
+	// allowed here: the 2.10.0→2.11.0 migration created the table without
+	// them, and SQLite adds no foreign key to a table that already exists.
+	// The 2.23.0 step REBUILDS anki_review_log — it has to, to make
+	// position_id nullable for a score card (ADR-0042) — and a rebuilt table
+	// is built from the fresh DDL, foreign keys included. So an upgraded
+	// database now constrains deck_id and position_id like a new one, and
+	// there is nothing left to allow.
 }
