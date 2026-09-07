@@ -70,6 +70,39 @@ export function cubeTurnability(position) {
     return null;
 }
 
+// currentScoreCell names the cell of the cube matrix the position actually
+// stands on — the "you are here" of the grid, so it is read from « ma case »
+// outwards rather than from a corner.
+//
+// The grid's axes are AWAY scores, not points scored, and the engine's own
+// cell computation (cubematrix.go's scoreForCell) writes nothing but an away
+// pair: the verdict at 4-away/6-away does not depend on how long the match
+// is. So the position has a cell in a grid whenever both its away scores fit
+// in it, and that cell is not an approximation of its decision — it is a
+// recomputation of the very same one.
+//
+// Three scores designate nothing, and designating an approaching cell would
+// be false: money (no away score at all), the Crawford game (raw 1 — the grid
+// is post-Crawford throughout, so row 1 is a different rule), and an away
+// beyond the grid. The raw 0 sentinel is 1-away post-Crawford and is the
+// grid's row 1 (see CONTEXT.md, "Away score").
+//
+// Returns `{ awayOnRoll, awayOpponent }` in the grid's own axes — the player
+// on roll is the one deciding, so it holds the rows — or null.
+export function currentScoreCell(position, gridLength) {
+    if (!position || !(gridLength > 0)) return null;
+    const score = position.score ?? [-1, -1];
+    if (isMoneyPosition(position)) return null;
+    if (score[0] === 1 || score[1] === 1) return null; // Crawford: no cube in play
+    const away = (raw) => (raw === 0 ? 1 : raw); // post-Crawford 1-away sentinel
+    const onRoll = position.player_on_roll === 1 ? 1 : 0;
+    const mine = away(score[onRoll]);
+    const theirs = away(score[1 - onRoll]);
+    if (!(mine >= 1) || !(theirs >= 1)) return null; // a half-money, malformed score
+    if (mine > gridLength || theirs > gridLength) return null;
+    return { awayOnRoll: mine, awayOpponent: theirs };
+}
+
 // fromRaceMoney maps a race.Money (`{cubeless, no_double, double_take,
 // double_pass, verdict}`) onto the common shape. Cubeless is deliberately
 // dropped: ADR-0017 rule 1 makes it a position fact, and the facts table has

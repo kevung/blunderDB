@@ -1005,6 +1005,7 @@
         "legendDoublePass": "double, pass",
         "legendTooGood": "too good",
         "legendRefused": "not evaluable",
+        "currentScore": "the position's score",
         "note": "The position's own score is replaced by each cell's; its cube is kept. The grid is post-Crawford: during the Crawford game the cube is not in play."
     },
     "met": {

@@ -1742,6 +1742,14 @@ point d'interrogation et dit pourquoi au survol, qui donne aussi les trois
 équités de la case. Trois longueurs de match sont proposées : 5, 7 et 9
 points.
 
+La case du score que la position porte réellement est encadrée, et ses deux
+en-têtes de ligne et de colonne soulignés : la lecture part de là, « ma case,
+et autour d'elle ». Elle l'est dès que les deux scores *away* de la position
+tiennent dans la grille affichée ; changer de longueur la déplace ou la
+retire. Une position money, la partie Crawford, ou un *away* au-delà de la
+grille n'en désignent aucune : il n'y a pas de case à montrer, et en montrer
+une approchante serait faux.
+
 Le score de la position est remplacé par celui de chaque case ; son
 **videau**, lui, est conservé. La grille répond à « à quel score
 retournerais-je *ce* videau », pas à ce que ferait une position centrée. Elle

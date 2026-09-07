@@ -305,6 +305,20 @@ type Position struct {
 	Flagged bool `json:"flagged"`
 }
 
+// IsMoney reports whether the position is played for money rather than at a
+// match score: both away scores sit at the -1 sentinel CONTEXT.md describes.
+//
+// This is THE form of the question, and it lives here so there is only one.
+// It had two independent, silently divergent spellings before #190/C.3 —
+// `Score[0] < 0 && Score[1] < 0` in one place, `Score[0] != -1 ||
+// Score[1] != -1` in another — which agreed on a clean score and disagreed on
+// a malformed one. Anything asking "money or match" reads this method:
+// gammonnet.IsMoneyPosition delegates to it, and so does the equivalence
+// class a similarity ranking is taken inside (ADR-0043).
+func (p *Position) IsMoney() bool {
+	return p.Score[0] < 0 && p.Score[1] < 0
+}
+
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.
 type SearchFilters struct {
 	Filter                      Position `json:"filter"`

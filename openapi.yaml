@@ -3536,6 +3536,10 @@ components:
         limit:
           type: integer
           format: int32
+        maxDistance:
+          type: integer
+          format: int32
+          nullable: true
     statsComputeReq:
       type: object
       properties:
