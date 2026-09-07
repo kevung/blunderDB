@@ -31,6 +31,7 @@ vi.mock('../services/trainingTabService.js', () => ({
 
 import TrainingPanel from '../components/TrainingPanel.svelte';
 import { trainingSessionStore, trainingJournalStore } from '../stores/trainingTabStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 import { newSession, askQuestion, reveal, recordQuestion, failNextQuestion } from '../services/trainingTab.js';
 
 function pipsQuestion() {
@@ -102,5 +103,26 @@ describe('quand la question suivante a échoué', () => {
         trainingSessionStore.set(sessionWithAFailedNextQuestion());
         const { container } = render(TrainingPanel);
         expect(container.querySelector('[data-testid="training-clock"]')).toBeNull();
+    });
+});
+
+describe('la source « base » (ADR-0041 règle 2)', () => {
+    // Un bouton qui accepte le clic pour refuser ensuite fait faire le geste
+    // avant de dire qu'il ne mène nulle part.
+    test('est grisée sans bibliothèque ouverte, et cliquable avec', async () => {
+        trainingSessionStore.set(null);
+        databasePathStore.set('');
+        const closed = render(TrainingPanel);
+        closed.getByTestId('training-exercise-bearoff').click();
+        await Promise.resolve();
+        expect(closed.getByTestId('training-source-library').disabled).toBe(true);
+        expect(closed.getByTestId('training-source-pool').disabled).toBe(false);
+        cleanup();
+
+        databasePathStore.set('/tmp/some.db');
+        const open = render(TrainingPanel);
+        open.getByTestId('training-exercise-bearoff').click();
+        await Promise.resolve();
+        expect(open.getByTestId('training-source-library').disabled).toBe(false);
     });
 });

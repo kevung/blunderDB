@@ -276,7 +276,10 @@ func TestTheLibrarySourceKeepsThePositionAsItIs(t *testing.T) {
 // purpose: what it guards against is not a slow machine but a change of
 // approach — a generator that searched instead of looking up, or that rebuilt
 // the table per question, lands two or three decades above it. Measured on the
-// reference machine on 2026-09-07: 48 µs, three decades under.
+// reference machine on 2026-09-07: 48 µs on an idle machine, 189 µs under a
+// load average of 6. Both are nearly three decades under, which is the point
+// of a ceiling this generous: it survives a busy machine and still catches a
+// change of approach.
 const budgetPerQuestion = 100 * time.Millisecond
 
 func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {

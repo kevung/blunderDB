@@ -14,6 +14,7 @@
     import { t } from '../i18n';
     import { GetTrainingSeedSources, SaveTrainingSeedSource } from '../../wailsjs/go/main/Config.js';
     import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
+    import { databasePathStore } from '../stores/databaseStore.js';
     import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise } from '../services/trainingTab.js';
     import {
         startTrainingSession,
@@ -44,7 +45,18 @@
     let session = $derived($trainingSessionStore);
     let question = $derived(session?.question ?? null);
     let chosen = $derived(TRAINING_EXERCISES.find((e) => e.id === exercise) ?? TRAINING_EXERCISES[0]);
-    let seedSource = $derived(chosen.sources.includes(rememberedSources[exercise]) ? rememberedSources[exercise] : chosen.defaultSource);
+    // La source « base » demande une bibliothèque ouverte : sans elle il n'y a
+    // rien à tirer, et un bouton qui accepte le clic pour refuser ensuite fait
+    // faire le geste avant de dire qu'il ne mène nulle part (ADR-0041 règle 2).
+    let hasLibrary = $derived(!!$databasePathStore);
+    let remembered = $derived(rememberedSources[exercise]);
+    let seedSource = $derived(chosen.sources.includes(remembered) && !(remembered === 'library' && !hasLibrary) ? remembered : usableDefault(chosen, hasLibrary));
+
+    /** @param {{sources: string[], defaultSource: string}} declared @param {boolean} library */
+    function usableDefault(declared, library) {
+        if (declared.defaultSource !== 'library' || library) return declared.defaultSource;
+        return declared.sources.find((source) => source !== 'library') ?? declared.defaultSource;
+    }
 
     let entered = $derived(!!session && isEnteredExercise(session.exercise));
     let another = $derived(!!session && canAskAnother(session.exercise, session.seedSource));
@@ -235,7 +247,13 @@
                     <span class="field-label" id="training-source-label">{$t('training.source')}</span>
                     <div class="choices" role="group" aria-labelledby="training-source-label">
                         {#each chosen.sources as source (source)}
-                            <button type="button" class:selected={seedSource === source} data-testid="training-source-{source}" onclick={() => chooseSource(source)}>
+                            <button
+                                type="button"
+                                class:selected={seedSource === source}
+                                disabled={source === 'library' && !hasLibrary}
+                                data-testid="training-source-{source}"
+                                onclick={() => chooseSource(source)}
+                            >
                                 {$t(`training.sources.${source}`)}
                             </button>
                         {/each}
@@ -346,6 +364,11 @@
     .choices button.selected {
         border-color: var(--color-primary);
         color: var(--color-primary);
+    }
+
+    .choices button:disabled {
+        cursor: default;
+        color: var(--color-text-muted);
     }
 
     .exercise {
