@@ -755,6 +755,7 @@ export {
     toggleMetadataPanel,
     toggleAnkiPanel,
     toggleTrainingPanel,
+    showTrainingPanel,
     toggleMatchPanel,
     toggleCollectionPanelAction,
     toggleTournamentPanel,

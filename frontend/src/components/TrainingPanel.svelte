@@ -14,7 +14,16 @@
     import { t } from '../i18n';
     import { trainingSessionStore, trainingElapsedStore, trainingJournalStore } from '../stores/trainingTabStore.js';
     import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise } from '../services/trainingTab.js';
-    import { startTrainingSession, revealQuestion, markFault, nextTrainingQuestion, finishTrainingSession, quitTrainingSession, refreshTrainingJournal } from '../services/trainingTabService.js';
+    import {
+        startTrainingSession,
+        revealQuestion,
+        markFault,
+        nextTrainingQuestion,
+        retryTrainingQuestion,
+        finishTrainingSession,
+        quitTrainingSession,
+        refreshTrainingJournal
+    } from '../services/trainingTabService.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
     import ScoreCard from './ScoreCard.svelte';
     import TrainingNumberCell from './TrainingNumberCell.svelte';
@@ -76,25 +85,32 @@
 </script>
 
 <div class="training-panel" data-testid="training-panel">
-    {#if session && question}
+    {#if session}
         <div class="session" role="group" aria-label={$t('training.title')}>
             <div class="session-head">
                 <span class="exercise">{$t(`training.exercise.${session.exercise}`)}</span>
                 <span class="counter">{$t('training.questionCount', { n: session.askedQuestions + 1 })}</span>
-                <span class="clock" data-testid="training-clock">
-                    {#if session.limitSeconds > 0}
-                        {$t('training.elapsedOfLimit', { n: elapsedSeconds, limit: session.limitSeconds })}
-                    {:else}
-                        {$t('training.elapsed', { n: elapsedSeconds })}
-                    {/if}
-                </span>
+                {#if question}
+                    <span class="clock" data-testid="training-clock">
+                        {#if session.limitSeconds > 0}
+                            {$t('training.elapsedOfLimit', { n: elapsedSeconds, limit: session.limitSeconds })}
+                        {:else}
+                            {$t('training.elapsed', { n: elapsedSeconds })}
+                        {/if}
+                    </span>
+                {/if}
                 {#if session.outOfTime}
                     <span class="out-of-time" data-testid="training-out-of-time">{$t('training.outOfTime')}</span>
                 {/if}
             </div>
 
             <div class="question">
-                {#if question.kind === 'scores'}
+                {#if !question}
+                    <!-- La question suivante n'a pas pu être bâtie. La session
+                         reste ouverte : ce qui a été répondu est encore là, et
+                         « Terminer » l'enregistre. -->
+                    <p class="refusal" data-testid="training-question-failed">{$t('training.noQuestion')}</p>
+                {:else if question.kind === 'scores'}
                     <ScoreCard card={question.card} numbers={question.numbers} revealed={session.revealed} faults={session.faults} locked={session.outOfTime} onToggle={markFault} />
                 {:else}
                     <table class="pips">
@@ -120,11 +136,19 @@
                 {/if}
             </div>
 
+            {#if question && session.revealed && !session.outOfTime}
+                <!-- Le geste ne se devine pas, et une infobulle ne se lit ni au
+                     clavier ni au doigt : la consigne est à l'écran. -->
+                <p class="hint">{$t('training.faultHint')}</p>
+            {/if}
+
             <div class="actions">
-                {#if !session.revealed}
+                {#if !question}
+                    <button type="button" data-testid="training-retry" onclick={() => retryTrainingQuestion()}>{$t('training.retry')}</button>
+                {:else if !session.revealed}
                     <button type="button" data-testid="training-reveal" onclick={() => revealQuestion()}>{$t('training.reveal')}</button>
                 {:else if canAskAnother}
-                    <button type="button" data-testid="training-next" onclick={() => nextTrainingQuestion()}>{$t('training.nextQuestion')}</button>
+                    <button type="button" data-testid="training-next" onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
                 {/if}
                 <button type="button" data-testid="training-finish" onclick={() => finishTrainingSession()}>{$t('training.finishSession')}</button>
                 <button type="button" data-testid="training-quit" onclick={() => quitTrainingSession()}>{$t('training.quit')}</button>
@@ -263,8 +287,18 @@
         font-variant-numeric: tabular-nums;
     }
 
-    .out-of-time {
+    .out-of-time,
+    .refusal {
         color: var(--color-danger);
+    }
+
+    .refusal,
+    .hint {
+        margin: 0;
+    }
+
+    .hint {
+        color: var(--color-text-muted);
     }
 
     .pips {

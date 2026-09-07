@@ -3,7 +3,7 @@ import { LoadPosition, SaveTrainingSession, LoadTrainingSessions, LoadTrainingNu
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { trainingSessionStore, trainingElapsedStore, trainingJournalStore } from '../stores/trainingTabStore.js';
-import { TRAINING_EXERCISES, newSession, askQuestion, reveal, toggleFault, recordQuestion, finishedSession } from './trainingTab.js';
+import { TRAINING_EXERCISES, newSession, askQuestion, reveal, toggleFault, recordQuestion, failNextQuestion, finishedSession } from './trainingTab.js';
 import { UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from './scoreCard.js';
 import { computePipCount } from '../utils/boardGeometry.js';
 import { showImportedPosition } from './importService.js';
@@ -160,24 +160,48 @@ export function markFault(index) {
     trainingSessionStore.set(toggleFault(session, index));
 }
 
-/** Enregistre la question révélée et en pose une nouvelle. */
+/**
+ * Enregistre la question révélée et en pose une nouvelle.
+ *
+ * Quand la suivante ne peut PAS être bâtie — la position tirée a été supprimée
+ * entre-temps, la liste parcourue s'est vidée — la session reste ouverte et le
+ * dit. Elle rebasculait sur le lanceur : « Terminer » disparaissait, les
+ * nombres déjà répondus devenaient inatteignables, et « Démarrer » les
+ * écrasait. Tout un journal de session partait sans un mot.
+ */
 export async function nextTrainingQuestion() {
     const session = get(trainingSessionStore);
     if (!session || !session.revealed) return;
     const recorded = recordQuestion(session);
+    await askNextQuestion(recorded);
+}
+
+/**
+ * Repose une question après un échec, sans rien enregistrer de plus : la
+ * question précédente l'a déjà été.
+ */
+export async function retryTrainingQuestion() {
+    const session = get(trainingSessionStore);
+    if (!session || session.question) return;
+    await askNextQuestion(session);
+}
+
+/** @param {import('./trainingTab.js').TrainingSessionState} session */
+async function askNextQuestion(session) {
     let question;
     try {
-        question = await buildQuestion(recorded.exercise, recorded.seedSource);
+        question = await buildQuestion(session.exercise, session.seedSource);
     } catch (error) {
         logger.error('could not build the next training question:', error);
         question = null;
     }
     if (!question) {
-        trainingSessionStore.set(recorded);
+        trainingSessionStore.set(failNextQuestion(session, 'noQuestion'));
+        trainingElapsedStore.set(0);
         setStatusBarMessage(tMsg('training.noQuestion'));
         return;
     }
-    trainingSessionStore.set(askQuestion(recorded, question, Date.now()));
+    trainingSessionStore.set(askQuestion(session, question, Date.now()));
     trainingElapsedStore.set(0);
 }
 

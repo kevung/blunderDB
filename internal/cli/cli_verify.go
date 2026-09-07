@@ -206,6 +206,7 @@ func printOrphans(o database.OrphanCounts) {
 	fmt.Printf("  Analyses without position: %d\n", o.AnalysesWithoutPosition)
 	fmt.Printf("  Reviews without deck: %d\n", o.ReviewsWithoutDeck)
 	fmt.Printf("  Reviews without position: %d\n", o.ReviewsWithoutPosition)
+	fmt.Printf("  Training items without session: %d\n", o.TrainingItemsWithoutSession)
 	fmt.Printf("WARNING: %d orphaned row(s) found. They were left behind by deletions made while\n", o.Total())
 	fmt.Println("foreign keys were not enforced on every connection (issue #157), or before the")
 	fmt.Println("review journal's own keys existed (issue #185); the rows are unreachable from any")

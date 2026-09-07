@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Έναρξη",
         "reveal": "Αποκάλυψη",
-        "nextQuestion": "Επόμενη",
         "finishSession": "Τέλος",
         "quit": "Έξοδος",
         "outOfTime": "Εκτός χρόνου",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Σημείο αποδοχής 4 · τελευταία ζαριά",
             "gv1": "Αξία gammon 1",
             "gv2": "Αξία gammon 2",
-            "gv4": "Αξία gammon 4",
-            "pipsBottom": "Κάτω (Μαύρα)",
-            "pipsTop": "Πάνω (Λευκά)"
-        }
+            "gv4": "Αξία gammon 4"
+        },
+        "retry": "Δοκιμή ξανά"
     },
     "explain": {
         "blots": "Χάνετε {cost} mMWC: η κίνηση που παίχτηκε αφήνει {blots} blots εκεί όπου η {best} αφήνει μόνο {bestBlots}.",

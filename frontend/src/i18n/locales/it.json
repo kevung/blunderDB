@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Iniziare",
         "reveal": "Rivelare",
-        "nextQuestion": "Successiva",
         "finishSession": "Terminare",
         "quit": "Uscire",
         "outOfTime": "Fuori tempo",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Punto di presa 4 · ultimo lancio",
             "gv1": "Valore del gammon 1",
             "gv2": "Valore del gammon 2",
-            "gv4": "Valore del gammon 4",
-            "pipsBottom": "In basso (Nero)",
-            "pipsTop": "In alto (Bianco)"
-        }
+            "gv4": "Valore del gammon 4"
+        },
+        "retry": "Riprovare"
     },
     "explain": {
         "blots": "Perdi {cost} mMWC: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

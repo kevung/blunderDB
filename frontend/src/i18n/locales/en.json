@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Start",
         "reveal": "Reveal",
-        "nextQuestion": "Next",
         "finishSession": "Finish",
         "quit": "Leave",
         "outOfTime": "Out of time",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Take point 4 · last roll",
             "gv1": "Gammon value 1",
             "gv2": "Gammon value 2",
-            "gv4": "Gammon value 4",
-            "pipsBottom": "Bottom (Black)",
-            "pipsTop": "Top (White)"
-        }
+            "gv4": "Gammon value 4"
+        },
+        "retry": "Retry"
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

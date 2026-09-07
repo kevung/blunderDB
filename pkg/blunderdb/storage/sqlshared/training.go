@@ -104,8 +104,8 @@ func (s *TrainingStore) NumberStats(ctx context.Context, scope, exercise string)
 	hasDeviation := s.DB.Bool("i.has_deviation", true)
 	rows, err := s.DB.Query(ctx,
 		`SELECT i.number_type, COUNT(*),
-			SUM(CASE WHEN `+s.DB.Bool("i.wrong", true)+` THEN 1 ELSE 0 END),
-			SUM(CASE WHEN `+hasDeviation+` THEN 1 ELSE 0 END),
+			`+s.DB.Bigint(`SUM(CASE WHEN `+s.DB.Bool("i.wrong", true)+` THEN 1 ELSE 0 END)`)+`,
+			`+s.DB.Bigint(`SUM(CASE WHEN `+hasDeviation+` THEN 1 ELSE 0 END)`)+`,
 			COALESCE(AVG(CASE WHEN `+hasDeviation+` THEN ABS(i.deviation) END), 0)
 		 FROM training_item i
 		 JOIN training_session s ON s.id = i.session_id

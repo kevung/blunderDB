@@ -22,10 +22,12 @@ vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() 
 vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), log: vi.fn() } }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
-import { positionStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { trainingSessionStore, trainingPipMaskStore } from '../stores/trainingTabStore.js';
-import { startTrainingSession, revealQuestion, markFault, finishTrainingSession, quitTrainingSession } from '../services/trainingTabService.js';
+import { trainingSessionStore } from '../stores/trainingTabStore.js';
+import { pipcountVisibleStore } from '../stores/uiStore.js';
+import { subscribeBoardRedrawTriggers } from '../services/boardRedraw.js';
+import { startTrainingSession, revealQuestion, markFault, nextTrainingQuestion, retryTrainingQuestion, finishTrainingSession, quitTrainingSession } from '../services/trainingTabService.js';
 
 /** Une position où le bas a deux pions sur le point 6 et le haut deux sur le 20. */
 function board() {
@@ -47,6 +49,7 @@ beforeEach(() => {
     quitTrainingSession();
     databasePathStore.set('/tmp/some.db');
     positionStore.set(board());
+    positionsStore.setIds([]);
 });
 
 describe('une session de Scores', () => {
@@ -81,15 +84,27 @@ describe('une session de Scores', () => {
 });
 
 describe('une session de Pions sur le plateau', () => {
-    test('demande les deux comptes, et masque le pipcount tant que la question est ouverte', async () => {
-        expect(get(trainingPipMaskStore)).toBe(false);
+    // L'oracle est le COMPTE de repaints demandés, et pas seulement la valeur
+    // du store : la première version de ce test n'assérait que la valeur, elle
+    // était verte alors que le plateau continuait d'afficher la réponse
+    // pendant toute la question (le masque se calculait sans jamais repeindre).
+    test('demande les deux comptes, masque le pipcount, et REPEINT le plateau', async () => {
+        const schedule = vi.fn();
+        const unsubscribe = subscribeBoardRedrawTriggers(schedule);
+        expect(get(pipcountVisibleStore)).toBe(true);
+        schedule.mockClear();
+
         expect(await startTrainingSession({ exercise: 'pips', seedSource: 'board' })).toBe(true);
-
         expect(get(trainingSessionStore).question.numbers.map((n) => n.type)).toEqual(['pips.bottom', 'pips.top']);
-        expect(get(trainingPipMaskStore), 'le plateau porte la réponse').toBe(true);
+        expect(get(pipcountVisibleStore), 'le plateau porte la réponse').toBe(false);
+        expect(schedule, 'masquer sans repeindre ne masque rien').toHaveBeenCalled();
 
+        schedule.mockClear();
         revealQuestion();
-        expect(get(trainingPipMaskStore), '« Révéler » l’affiche').toBe(false);
+        expect(get(pipcountVisibleStore), '« Révéler » l’affiche').toBe(true);
+        expect(schedule, 'révéler sans repeindre n’affiche rien').toHaveBeenCalled();
+
+        unsubscribe();
     });
 
     test('le compte demandé est celui que le plateau affiche', async () => {
@@ -103,5 +118,51 @@ describe('une session de Pions sur le plateau', () => {
         positionStore.set({});
         expect(await startTrainingSession({ exercise: 'pips', seedSource: 'board' })).toBe(false);
         expect(get(trainingSessionStore)).toBeNull();
+    });
+});
+
+describe('quand la question suivante ne peut pas être posée', () => {
+    // La position tirée a disparu entre-temps. La session rebasculait sur le
+    // lanceur : « Terminer » disparaissait, et le journal de la session partait
+    // sans un mot.
+    test('la session reste ouverte, le dit, et « Terminer » enregistre ce qui a été répondu', async () => {
+        positionsStore.setIds([7]);
+        db.LoadPosition.mockResolvedValueOnce(board());
+        expect(await startTrainingSession({ exercise: 'pips', seedSource: 'library' })).toBe(true);
+        revealQuestion();
+        markFault(0);
+
+        // La position suivante n'existe plus.
+        db.LoadPosition.mockResolvedValueOnce(null);
+        await nextTrainingQuestion();
+
+        const session = get(trainingSessionStore);
+        expect(session, 'une session ne se perd pas sans que l’utilisateur l’ait décidé').not.toBeNull();
+        expect(session.question).toBeNull();
+        expect(session.questionError).toBe('noQuestion');
+        expect(session.items, 'les nombres déjà répondus sont toujours là').toHaveLength(2);
+
+        await finishTrainingSession();
+        expect(db.SaveTrainingSession).toHaveBeenCalledTimes(1);
+        const row = db.SaveTrainingSession.mock.calls[0][0];
+        expect(row.numbersAsked).toBe(2);
+        expect(row.faults).toBe(1);
+    });
+
+    test('« Réessayer » repose une question sans rien enregistrer de plus', async () => {
+        positionsStore.setIds([7]);
+        db.LoadPosition.mockResolvedValueOnce(board());
+        await startTrainingSession({ exercise: 'pips', seedSource: 'library' });
+        revealQuestion();
+        db.LoadPosition.mockResolvedValueOnce(null);
+        await nextTrainingQuestion();
+        expect(get(trainingSessionStore).question).toBeNull();
+
+        db.LoadPosition.mockResolvedValueOnce(board());
+        await retryTrainingQuestion();
+        const session = get(trainingSessionStore);
+        expect(session.question).not.toBeNull();
+        expect(session.questionError).toBe('');
+        expect(session.items, 'la question ratée n’a rien ajouté').toHaveLength(2);
     });
 });

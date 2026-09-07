@@ -52,6 +52,7 @@ export const TREND_WINDOW = 10;
  * @property {boolean} revealed
  * @property {boolean} outOfTime
  * @property {boolean[]} faults
+ * @property {string} questionError la raison pour laquelle aucune question n'est posée, ou ''
  * @property {number} startedAt
  * @property {number} elapsedMs
  * @property {number} askedQuestions
@@ -74,6 +75,7 @@ export function newSession({ exercise, seedSource = '', limitSeconds = 0 }) {
         revealed: false,
         outOfTime: false,
         faults: [],
+        questionError: '',
         startedAt: 0,
         elapsedMs: 0,
         askedQuestions: 0,
@@ -95,9 +97,22 @@ export function askQuestion(session, question, now) {
         revealed: false,
         outOfTime: false,
         faults: question.numbers.map(() => false),
+        questionError: '',
         startedAt: now,
         elapsedMs: 0
     };
+}
+
+/**
+ * Aucune question n'a pu être posée — la position tirée a disparu, la source
+ * s'est vidée. La session RESTE OUVERTE et le dit : ce qui a déjà été répondu
+ * est encore là, « Terminer » l'enregistre, et l'on peut réessayer. Une
+ * session ne se perd jamais sans que l'utilisateur l'ait décidé, et un écran
+ * qui rebascule tout seul sur le lanceur est une perte, pas une information.
+ * @param {TrainingSessionState} session @param {string} reason
+ */
+export function failNextQuestion(session, reason) {
+    return { ...session, question: null, revealed: false, outOfTime: false, faults: [], questionError: reason };
 }
 
 /**
@@ -157,6 +172,7 @@ export function recordQuestion(session) {
         revealed: false,
         outOfTime: false,
         faults: [],
+        questionError: '',
         askedQuestions: session.askedQuestions + 1,
         times: session.outOfTime ? session.times : [...session.times, session.elapsedMs],
         items: [...session.items, ...items]
@@ -191,7 +207,9 @@ export function finishedSession(session) {
  * l'on est allé chercher un café ne dit rien du rythme, et une session entière
  * non plus. La tendance est l'écart entre le taux de fautes des dix dernières
  * sessions et celui de toutes : négatif, on s'améliore. Elle ne s'annonce pas
- * avant dix sessions, faute d'avoir quelque chose à comparer.
+ * AU-DELÀ de dix sessions : à dix pile, la fenêtre récente EST le tout, l'écart
+ * vaut structurellement zéro, et afficher ce zéro dirait « vous stagnez » là où
+ * il n'y a rien à comparer.
  *
  * @param {{numbersAsked: number, faults: number, deviations: number, meanDeviation: number, medianMs: number}[]} sessions
  */
@@ -215,7 +233,7 @@ export function summarizeExercise(sessions) {
         meanDeviation: deviations > 0 ? deviationTotal / deviations : null,
         medianMs: medianOf(rows.map((r) => r.medianMs || 0)),
         recentFaultRate,
-        trend: rows.length >= TREND_WINDOW && faultRate !== null && recentFaultRate !== null ? recentFaultRate - faultRate : null
+        trend: rows.length > TREND_WINDOW && faultRate !== null && recentFaultRate !== null ? recentFaultRate - faultRate : null
     };
 }
 

@@ -2175,8 +2175,11 @@ valeurs de gammon des deux joueurs, et c'est le point de prise de l'adversaire
 qui dit si votre double passe.
 
 **Pions** demande le compte de pions des **deux** camps. Le pipcount du
-plateau est masqué tant que la question est ouverte ; « Révéler » l'affiche, et
-votre réglage d'affichage (``p``) reste ce qu'il était. La source *Plateau*
+plateau est masqué tant que la question est ouverte ; « Révéler » l'affiche —
+**même si vous aviez masqué le pipcount** avec ``p``, sans quoi la réponse
+resterait invisible et l'exercice invérifiable. C'est un masque et non un
+réglage : votre choix n'est pas modifié, et il reprend la main dès la question
+suivante. La source *Plateau*
 pose une question sur la position affichée, et une seule ; la source *Base*
 tire une nouvelle position à chaque question et l'amène sur le plateau.
 
@@ -2243,9 +2246,9 @@ n'est pas terminée. Quitter en cours de route n'enregistre donc rien.
 Quiz : le PR d'entraînement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``train quiz`` pose un quatrième exercice, d'une autre nature. Le panneau Anki
-fait mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées
-de la liste parcourue, et il faut décider :
+``train quiz`` pose une question d'une autre nature. Le panneau Anki fait
+mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées de la
+liste parcourue, et il faut décider :
 
 * sur une décision de pions, **jouer le coup sur le damier** — cliquer le point
   de départ, puis la destination, autant de fois qu'il y a de dés ; ou écrire

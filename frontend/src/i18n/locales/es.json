@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Empezar",
         "reveal": "Revelar",
-        "nextQuestion": "Siguiente",
         "finishSession": "Terminar",
         "quit": "Salir",
         "outOfTime": "Fuera de tiempo",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Punto de aceptación 4 · última tirada",
             "gv1": "Valor del gammon 1",
             "gv2": "Valor del gammon 2",
-            "gv4": "Valor del gammon 4",
-            "pipsBottom": "Abajo (Negro)",
-            "pipsTop": "Arriba (Blanco)"
-        }
+            "gv4": "Valor del gammon 4"
+        },
+        "retry": "Reintentar"
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

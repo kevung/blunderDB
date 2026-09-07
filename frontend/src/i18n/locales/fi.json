@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Aloita",
         "reveal": "Paljasta",
-        "nextQuestion": "Seuraava",
         "finishSession": "Lopeta",
         "quit": "Poistu",
         "outOfTime": "Aika loppui",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Hyväksymispiste 4 · viimeinen heitto",
             "gv1": "Gammonin arvo 1",
             "gv2": "Gammonin arvo 2",
-            "gv4": "Gammonin arvo 4",
-            "pipsBottom": "Alhaalla (musta)",
-            "pipsTop": "Ylhäällä (valkoinen)"
-        }
+            "gv4": "Gammonin arvo 4"
+        },
+        "retry": "Yritä uudelleen"
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

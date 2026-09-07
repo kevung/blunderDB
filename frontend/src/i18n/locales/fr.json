@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Démarrer",
         "reveal": "Révéler",
-        "nextQuestion": "Suivante",
         "finishSession": "Terminer",
         "quit": "Quitter",
         "outOfTime": "Hors délai",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Point de prise 4 · dernier lancer",
             "gv1": "Valeur du gammon 1",
             "gv2": "Valeur du gammon 2",
-            "gv4": "Valeur du gammon 4",
-            "pipsBottom": "Bas (Noir)",
-            "pipsTop": "Haut (Blanc)"
-        }
+            "gv4": "Valeur du gammon 4"
+        },
+        "retry": "Réessayer"
     },
     "explain": {
         "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",

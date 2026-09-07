@@ -87,7 +87,7 @@
     import { DRILLS } from './services/trainingService.js';
     import { startTrainingSession } from './services/trainingTabService.js';
     import { TRAINING_EXERCISES } from './services/trainingTab.js';
-    import { showTab, toggleTrainingPanel } from './services/tabToggles.js';
+    import { showTab, showTrainingPanel } from './services/tabToggles.js';
     import { showSimilarPositions } from './services/similarService.js';
     import { askIntent } from './services/intentService.js';
     import HomeScreen from './components/HomeScreen.svelte';
@@ -297,7 +297,9 @@
             .trim()
             .toLowerCase();
         if (!wanted) {
-            toggleTrainingPanel();
+            // Ouvrir, jamais refermer : `cmd_mode.rst` dit « Ouvre », et taper
+            // `train` depuis l'onglet fermait la session sous les doigts.
+            showTrainingPanel();
             return;
         }
         const exercise = TAB_EXERCISE_ALIASES[wanted];

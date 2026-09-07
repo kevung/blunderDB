@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} s",
         "start": "Starten",
         "reveal": "Aufdecken",
-        "nextQuestion": "Weiter",
         "finishSession": "Beenden",
         "quit": "Verlassen",
         "outOfTime": "Zeit abgelaufen",
@@ -1433,10 +1432,9 @@
             "tp4Last": "Annahmepunkt 4 · letzter Wurf",
             "gv1": "Gammonwert 1",
             "gv2": "Gammonwert 2",
-            "gv4": "Gammonwert 4",
-            "pipsBottom": "Unten (Schwarz)",
-            "pipsTop": "Oben (Weiß)"
-        }
+            "gv4": "Gammonwert 4"
+        },
+        "retry": "Erneut versuchen"
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

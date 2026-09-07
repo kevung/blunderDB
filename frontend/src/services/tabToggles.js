@@ -111,6 +111,11 @@ export const toggleCommentPanel = () => toggleTab('comments');
 export const toggleMetadataPanel = () => toggleTab('metadata');
 export const toggleAnkiPanel = () => toggleTab('anki');
 export const toggleTrainingPanel = () => toggleTab('training');
+// Ouvrir, et non basculer : `cmd_mode.rst` dit « Ouvre le panneau
+// Entraînement », et le bouton de barre d'outils l'ouvre lui aussi (#320).
+// Refermer l'onglet sous une session en cours laissait le chronomètre courir
+// hors écran. Ctrl+J reste la bascule que `raccourcis.rst` documente.
+export const showTrainingPanel = () => showTab('training');
 export const toggleMatchPanel = () => toggleTab('matches');
 export const toggleCollectionPanelAction = () => toggleTab('collections');
 export const toggleTournamentPanel = () => toggleTab('tournaments');

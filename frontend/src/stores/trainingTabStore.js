@@ -29,12 +29,20 @@ export const trainingElapsedStore = writable(0);
 export const trainingJournalStore = writable({});
 
 /**
- * Le pipcount du plateau doit-il être masqué ?
+ * Le pipcount du plateau, pendant une question de Pions : `false` tant que la
+ * question est ouverte, `true` une fois révélée, `null` le reste du temps —
+ * c'est-à-dire « la préférence de l'utilisateur décide ».
  *
- * Vrai pendant qu'une question de Pions attend sa réponse : le plateau PORTE
- * la réponse, et une question dont la réponse est affichée à côté n'est pas
- * une question. « Révéler » l'affiche. C'est un masque, jamais un réglage : la
- * préférence de l'utilisateur (`showPipcountStore`) n'est pas touchée, donc
- * elle est intacte à la fin de la session.
+ * Un masque, jamais un réglage (ADR-0040) : `showPipcountStore` n'est pas
+ * touché, donc la préférence est intacte à la fin de la session, sans rien à
+ * restaurer. Et la révélation IMPOSE l'affichage, même à qui a masqué le
+ * pipcount avec `p` : un masque qui, retiré, laisse l'écran vide n'a pas rendu
+ * ce qu'il avait pris, et l'exercice deviendrait invérifiable — on ne peut pas
+ * comparer sa réponse à une vérité qui ne s'affiche pas.
+ *
+ * @type {import('svelte/store').Readable<boolean|null>}
  */
-export const trainingPipMaskStore = derived(trainingSessionStore, ($session) => !!$session && $session.exercise === 'pips' && !!$session.question && !$session.revealed);
+export const trainingPipOverrideStore = derived(trainingSessionStore, ($session) => {
+    if (!$session || $session.exercise !== 'pips' || !$session.question) return null;
+    return $session.revealed;
+});

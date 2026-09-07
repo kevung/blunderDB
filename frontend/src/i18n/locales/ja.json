@@ -1404,7 +1404,6 @@
         "limitSeconds": "{n} 秒",
         "start": "開始",
         "reveal": "公開",
-        "nextQuestion": "次へ",
         "finishSession": "終了",
         "quit": "中止",
         "outOfTime": "時間切れ",
@@ -1433,10 +1432,9 @@
             "tp4Last": "テイクポイント 4 · ラストロール",
             "gv1": "ギャモン価値 1",
             "gv2": "ギャモン価値 2",
-            "gv4": "ギャモン価値 4",
-            "pipsBottom": "下 (黒)",
-            "pipsTop": "上 (白)"
-        }
+            "gv4": "ギャモン価値 4"
+        },
+        "retry": "再試行"
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

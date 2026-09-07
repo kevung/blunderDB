@@ -16,8 +16,13 @@ const LABEL_KEYS = Object.freeze({
     gv1: 'training.numbers.gv1',
     gv2: 'training.numbers.gv2',
     gv4: 'training.numbers.gv4',
-    'pips.bottom': 'training.numbers.pipsBottom',
-    'pips.top': 'training.numbers.pipsTop'
+    // Nommés par le JOUEUR et non par la géométrie ni par la couleur : le
+    // plateau se retourne à la perspective du joueur 2 (« bas » et « haut »
+    // s'échangent) et la palette est modifiable (« Noir » et « Blanc » ne
+    // valent que pour la palette par défaut). L'indice du joueur, lui, ne
+    // bouge pas — c'est déjà celui que la description du plateau annonce.
+    'pips.bottom': 'board.player1',
+    'pips.top': 'board.player2'
 });
 
 /**

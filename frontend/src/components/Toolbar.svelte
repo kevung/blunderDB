@@ -18,7 +18,7 @@
         togglePipcount,
         loadRandomPosition,
         reloadAllPositions,
-        toggleTrainingPanel
+        showTrainingPanel
     } from '../services/positionService.js';
     import { toggleHelpModal } from '../services/keyboardService.js';
 
@@ -374,7 +374,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            toggleTrainingPanel(e);
+            showTrainingPanel(e);
         }}
         aria-label={$t('toolbar.training')}
         title="{$t('toolbar.training')} (Ctrl+J)"

@@ -8,7 +8,7 @@
  * c'est la couture, et c'est là qu'on la tient.
  */
 import { describe, test, expect } from 'vitest';
-import { TRAINING_EXERCISES, TIME_LIMITS, newSession, askQuestion, reveal, toggleFault, recordQuestion, finishedSession, summarizeExercise } from '../services/trainingTab.js';
+import { TRAINING_EXERCISES, TIME_LIMITS, newSession, askQuestion, reveal, toggleFault, recordQuestion, failNextQuestion, finishedSession, summarizeExercise } from '../services/trainingTab.js';
 
 /** @param {string[]} types */
 function question(types) {
@@ -80,6 +80,23 @@ describe('hors délai', () => {
     });
 });
 
+describe('quand aucune question ne peut être posée', () => {
+    test('la session reste ouverte, nomme la raison, et garde ses nombres', () => {
+        let s = newSession({ exercise: 'pips', seedSource: 'library' });
+        s = recordQuestion(reveal(askQuestion(s, question(['pips.bottom', 'pips.top']), 0), 3000));
+        s = failNextQuestion(s, 'noQuestion');
+        expect(s.question).toBeNull();
+        expect(s.questionError).toBe('noQuestion');
+        expect(finishedSession(s).numbersAsked).toBe(2);
+    });
+
+    test('reposer une question efface la raison', () => {
+        let s = failNextQuestion(newSession({ exercise: 'pips' }), 'noQuestion');
+        s = askQuestion(s, question(['pips.bottom']), 0);
+        expect(s.questionError).toBe('');
+    });
+});
+
 describe('la session finie', () => {
     test('rend la ligne du journal et ses nombres', () => {
         let s = newSession({ exercise: 'scores', seedSource: 'pool' });
@@ -148,6 +165,15 @@ describe('le bilan', () => {
 
     test('moins de dix sessions : pas de tendance à annoncer', () => {
         expect(summarizeExercise(sessions).trend).toBeNull();
+    });
+
+    // À dix pile, la fenêtre récente EST le tout : l'écart vaut structurellement
+    // zéro, et l'afficher dirait « vous stagnez » là où il n'y a rien à comparer.
+    test('à dix sessions exactement, il n’y a encore rien à comparer', () => {
+        const ten = [];
+        for (let i = 0; i < 10; i++) ten.push({ exercise: 'scores', numbersAsked: 10, faults: i, deviations: 0, meanDeviation: 0, medianMs: 1000 });
+        expect(summarizeExercise(ten).sessions).toBe(10);
+        expect(summarizeExercise(ten).trend).toBeNull();
     });
 
     test('aucune session : un bilan vide, pas une division par zéro', () => {
