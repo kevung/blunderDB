@@ -71,7 +71,11 @@ const DYNAMIC_PREFIXES = [
     // changer » nomme chaque réglage par son code, et la raison d'un format figé est un code
     // elle aussi — `t(`direction.change.${change.code}`)`, `t(`direction.lock.${reason}`)`.
     'direction.change.',
-    'direction.lock.'
+    'direction.lock.',
+    // Les mots du RENDU de la page d'affichage (#386) : en-têtes de colonne, états d'une table.
+    // Ils ne sont jamais lus par le front — ils partent au backend, qui écrit la page en Go et
+    // rend `term.<code>` par le même catalogue. Voir `pkg/blunderdb/direction/labeler.go`.
+    'direction.term.'
 ];
 
 function sourceFiles(dir) {

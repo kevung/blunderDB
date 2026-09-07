@@ -258,6 +258,10 @@ export function DetachMatchFromSlot(arg1, arg2) {
   return window['go']['database']['Database']['DetachMatchFromSlot'](arg1, arg2);
 }
 
+export function DirectionPageHTML(arg1) {
+  return window['go']['database']['Database']['DirectionPageHTML'](arg1);
+}
+
 export function DirectionStore() {
   return window['go']['database']['Database']['DirectionStore']();
 }
@@ -834,6 +838,10 @@ export function SetDirectionOutputDir(arg1, arg2) {
   return window['go']['database']['Database']['SetDirectionOutputDir'](arg1, arg2);
 }
 
+export function SetDirectionStrings(arg1, arg2) {
+  return window['go']['database']['Database']['SetDirectionStrings'](arg1, arg2);
+}
+
 export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['database']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }
@@ -980,4 +988,8 @@ export function Vacuum() {
 
 export function WithdrawParticipant(arg1, arg2, arg3) {
   return window['go']['database']['Database']['WithdrawParticipant'](arg1, arg2, arg3);
+}
+
+export function WriteDirectionPage(arg1) {
+  return window['go']['database']['Database']['WriteDirectionPage'](arg1);
 }

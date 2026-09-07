@@ -102,6 +102,10 @@ export function OpenDatabaseDialog() {
   return window['go']['gui']['App']['OpenDatabaseDialog']();
 }
 
+export function OpenDirectionOutputDialog() {
+  return window['go']['gui']['App']['OpenDirectionOutputDialog']();
+}
+
 export function OpenExportDatabaseDialog() {
   return window['go']['gui']['App']['OpenExportDatabaseDialog']();
 }

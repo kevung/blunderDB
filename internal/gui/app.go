@@ -297,6 +297,15 @@ func (a *App) OpenPositionFolderDialog() (string, error) {
 	})
 }
 
+// OpenDirectionOutputDialog asks for the folder the tournament display page is written into
+// (issue #386). Chosen once per Direction and remembered; after that the display refreshes
+// without a gesture.
+func (a *App) OpenDirectionOutputDialog() (string, error) {
+	return runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Tournament Display Folder",
+	})
+}
+
 // IsDirectory returns true if the given path is a directory.
 func (a *App) IsDirectory(path string) bool {
 	info, err := os.Stat(path)
