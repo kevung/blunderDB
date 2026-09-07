@@ -21,9 +21,10 @@ var _ sqlshared.Execer = shared{}
 // shared returns the binder's execer wrapped for the shared stores.
 func (b binder) shared() sqlshared.Execer { return shared(b) }
 
-func (shared) Name() string              { return "postgres" }
-func (shared) ScopeColumn() string       { return "tenant_id" }
-func (shared) ScopeArg(scope string) any { return tenantID(scope) }
+func (shared) Name() string                         { return "postgres" }
+func (shared) ScopeColumn() string                  { return "tenant_id" }
+func (shared) LibrarySettingsTable() (string, bool) { return "library_settings", true }
+func (shared) ScopeArg(scope string) any            { return tenantID(scope) }
 func (shared) TenantFilter(alias, scope string) (string, []any) {
 	col := "tenant_id"
 	if alias != "" {

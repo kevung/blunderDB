@@ -3,6 +3,8 @@ package sqlshared
 import (
 	"context"
 	"errors"
+	"math"
+	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -107,5 +109,91 @@ func (s *MetadataStore) Counts(ctx context.Context, scope string) (storage.Count
 	if err != nil {
 		return storage.Counts{}, errf(s.DB, "database counts", err)
 	}
+	if c.Blunders, err = s.blunderCount(ctx, scope); err != nil {
+		return storage.Counts{}, err
+	}
 	return c, nil
+}
+
+// blunderCount counts the Positions whose largest recorded cost reaches the
+// library's blunder threshold — the set `E>x` returns at that threshold, and
+// therefore the set the status bar's counter may promise.
+//
+// The denormalised error column scores ONE play (the first of the analysis'
+// PlayedMoves), which is exact for every Position player 1 played once — the
+// whole table but for a few openings. Counting off the column alone would
+// under-state the answer for those few and make the counter contradict the
+// search its own link opens. So the column does the counting, and the handful
+// of multi-played Positions (multiPlayedPlayer1Positions, the same list the
+// search builds) are re-scored one by one the way the search scores them.
+// That list is small by construction; when it is empty — the ordinary case —
+// this costs exactly one COUNT.
+func (s *MetadataStore) blunderCount(ctx context.Context, scope string) (int, error) {
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return 0, err
+	}
+	threshold := settings.BlunderThresholdMP
+
+	tenant, targs := s.DB.TenantFilter("p", scope)
+	const join = ` FROM position p INNER JOIN analysis a ON a.position_id = p.id WHERE `
+	byColumn := ` AND COALESCE(` + statsErrExpr + `, 0) >= ?`
+
+	var total int
+	if err := s.DB.QueryRow(ctx, `SELECT COUNT(*)`+join+tenant+byColumn,
+		append(append([]any{}, targs...), threshold)...).Scan(&total); err != nil {
+		return 0, errf(s.DB, "blunder count", err)
+	}
+
+	multi, err := multiPlayedPlayer1Positions(ctx, s.DB, scope)
+	if err != nil {
+		return 0, err
+	}
+	if len(multi) == 0 {
+		return total, nil
+	}
+	ids := make([]int64, 0, len(multi))
+	for id := range multi {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+
+	// What the column already counted among them, so it can be taken back
+	// out. Chunked like every other id list here, though this one is small:
+	// the bound-variable limit is a property of the query, not of the data.
+	const chunk = 900
+	var counted int
+	for start := 0; start < len(ids); start += chunk {
+		end := min(start+chunk, len(ids))
+		batch := ids[start:end]
+		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
+		args := append(append([]any{}, targs...), threshold)
+		for _, id := range batch {
+			args = append(args, id)
+		}
+		var n int
+		if err := s.DB.QueryRow(ctx,
+			`SELECT COUNT(*)`+join+tenant+byColumn+` AND p.id IN (`+placeholders+`)`,
+			args...).Scan(&n); err != nil {
+			return 0, errf(s.DB, "blunder count", err)
+		}
+		counted += n
+	}
+
+	moves, err := loadPlayer1Moves(ctx, s.DB, ids)
+	if err != nil {
+		return 0, err
+	}
+	var byLargest int
+	for _, id := range ids {
+		analysis := loadAnalysis(ctx, s.DB, id)
+		if analysis == nil {
+			continue
+		}
+		e, found := player1MaxMoveError(analysis, moves[id].checkerMoves, moves[id].cubeActions)
+		if found && math.Round(e*1000) >= float64(threshold) {
+			byLargest++
+		}
+	}
+	return total - counted + byLargest, nil
 }

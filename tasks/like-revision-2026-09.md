@@ -1,7 +1,7 @@
 # Révision de `like` et des commandes récentes — fiche de travail (2026-09-07)
 
 Issue de l'entretien de conception du 2026-09-07 (skill `grilling`). Les décisions
-sont dans l'[ADR-0043](../docs/adr/0043-a-neighbour-is-the-same-problem-nearby-and-like-is-a-ranking-token-of-the-search-grammar.md)
+sont dans l'[ADR-0046](../docs/adr/0043-a-neighbour-is-the-same-problem-nearby-and-like-is-a-ranking-token-of-the-search-grammar.md)
 et, pour le quiz, dans la règle 6 de l'ADR-0040 ; le glossaire porte
 *Neighbouring Position*. Cette fiche ne redit pas le pourquoi : elle liste ce
 qu'il y a à faire, dans l'ordre où chaque étape rend la suivante vérifiable.

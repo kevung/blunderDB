@@ -280,6 +280,11 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 		limit = domain.MaxStudyQueue
 	}
 
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return nil, fmt.Errorf("study queue settings: %w", err)
+	}
+
 	var out []domain.StudyQueueEntry
 	seen := map[int64]bool{}
 	add := func(entries []domain.StudyQueueEntry) {
@@ -299,8 +304,12 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	// to it. Wrapping also settles a dialect divergence for free — SQLite
 	// sorts NULLs last in DESC, PostgreSQL first — though this pass never
 	// sees one, its WHERE excluding them.
+	// The line is the library's error threshold (ADR-0046), not a constant of
+	// its own: this queue asks "what is worth revisiting", which is precisely
+	// what an Error is. Its default is the 50 millipoints the constant said,
+	// so a library that sets nothing gets exactly the queue it got before.
 	blunders, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyBlunder,
-		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`, []any{domain.StudyBlunderThresholdMP},
+		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`, []any{settings.ErrorThresholdMP},
 		` ORDER BY COALESCE(`+statsErrExpr+`, 0) DESC, p.id ASC`)
 	if err != nil {
 		return nil, err

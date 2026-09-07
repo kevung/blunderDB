@@ -9,7 +9,10 @@
 // matches (games + moves), tournaments (+ match links) and collections (+
 // membership). App-state families (anki decks/cards, filter library, search and
 // command history, session state) are intentionally NOT migrated yet: they
-// are lower-value for a data migration. Their per-tenant scoping is in place
+// are lower-value for a data migration. The library's own settings — the error
+// and blunder thresholds of ADR-0046 — ARE carried: they are not app state but
+// the reading habit the counts depend on, and a tenant that counted differently
+// from its source file would make the migration a silent change of meaning. Their per-tenant scoping is in place
 // (each has a tenant-scoped table, session_state since schema 2.17.0). See
 // tasks/headless/10-sqlite-to-postgres-tool.md.
 package migrate
@@ -157,6 +160,29 @@ func (m *mover) run(rep *Report) error {
 	}
 	if err := m.copyCollections(rep); err != nil {
 		return err
+	}
+	if err := m.copyLibrarySettings(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// copyLibrarySettings carries the library's own thresholds across (ADR-0046).
+// They are two integers, not a family — nothing counts them in the Report —
+// but leaving them behind would make the migrated tenant count different
+// blunders from the file it came from, which is the one thing the setting
+// exists to prevent. A source that never set them yields the defaults, and
+// writing the defaults is the same as not writing them.
+func (m *mover) copyLibrarySettings() error {
+	settings, err := m.src.LibrarySettings().Load(m.ctx, "")
+	if err != nil {
+		return fmt.Errorf("read library settings: %w", err)
+	}
+	if settings == storage.DefaultLibrarySettings() {
+		return nil
+	}
+	if err := m.dst.LibrarySettings().Save(m.ctx, m.scope, settings); err != nil {
+		return fmt.Errorf("write library settings: %w", err)
 	}
 	return nil
 }

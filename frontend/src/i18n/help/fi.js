@@ -70,7 +70,7 @@ export default {
 <li>komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä,</li>
 <li>käyttäjän suorittamaan toimintoon liittyvä tiedotusviesti,</li>
 <li>nykyisen aseman järjestysnumeron, jota seuraa asemien määrä nykyisessä kirjastossa (tai siirto-/pelitiedot ottelua selattaessa),</li>
-<li><strong>kirjastolaskurin</strong> — ”412 asemaa · 38 blunderia · 5 ottelua” — jossa jokainen luku <strong>avaa sen, mitä se laskee</strong>: asemat, komentoriville valmisteltu haku <code>E&gt;100</code> tai otteluluettelon. Luku, jota ei voi seurata, on koriste. Blunderin kynnys on tilastojen oma, sata millipistettä: kaksi kynnystä saisi saman sanan tarkoittamaan kahta asiaa.</li>
+<li><strong>kirjastolaskurin</strong> — ”412 asemaa · 38 blunderia · 5 ottelua” — jossa jokainen luku <strong>avaa sen, mitä se laskee</strong>: asemat, komentoriville kirjaston kynnyksellä valmistellun <code>E&gt;</code>-haun tai otteluluettelon. Luku, jota ei voi seurata, on koriste. Blunderin kynnys on kirjaston oma, säädetty asetusten <em>Kirjasto</em>-välilehdellä ja jaettu tilastojen kanssa: kaksi kynnystä saisi saman sanan tarkoittamaan kahta asiaa. Laskuri lupaa täsmälleen sen, minkä linkki avaa, myös sellaisen aseman osalta, joka on pelattu useilla eri tavoilla ja joka on suurimman kustannuksensa arvoinen.</li>
 </ul>
 <div class="admonition note">
 <p>Käyttäjän haun tuloksena saaduissa asemissa tilarivillä näkyvä asemien määrä vastaa suodatettujen asemien määrää.</p>
@@ -88,10 +88,11 @@ export default {
 </ul>
 <p>Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudelleenavauksen yhteydessä.</p>
 <h3>Asetukset</h3>
-<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kuuteen välilehteen:</p>
+<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu seitsemään välilehteen:</p>
 <ul>
 <li><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti;</li>
 <li><strong>Laudan värit</strong> — laudan värit;</li>
+<li><strong>Kirjasto</strong> — se, mikä kuuluu avoinna olevaan tietokantaan: virheen ja blunderin kynnykset sekä tiivistys ja korjaus, jotka kuvataan alla;</li>
 <li><strong>Bearoff</strong> — Eval-paneelin käyttämät ulosmenotaulukot;</li>
 <li><strong>gammonNet</strong> — sisäänrakennetun evaluaattorin asetukset, kuvattu alla;</li>
 <li><strong>Valvottu kansio</strong> — kansioon saapuvien otteluiden automaattinen tuonti, kuvattu alla;</li>
@@ -101,6 +102,11 @@ export default {
 <p>Sinulla on viimeinen sana, ja mekanismi takaa sen sen sijaan että lupaisi: <em>Värit</em>-välilehti säätää edelleen lautaa suoraan, ja teeman jälkeen valittu väri on sinun. Käynnistyksessä sovelletaan vain käyttöliittymän symboleja, ei koskaan lautapalettia — asettamasi on jo ladattu, ja sen ylikirjoittaminen joka käynnistyksessä pyyhkisi työsi istunto kerrallaan. Katso <code>ADR-0038 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md&gt;</code>__.</p>
 <p><em>Seuraa järjestelmää</em> on oletus: se noudattaa työpöydän vaalea/tumma-asetusta, myös kun se muuttuu kesken istunnon. Työkalu ei tyrkytä vaaleaansa tai tummaansa työpöydälle joka on jo päättänyt.</p>
 <p><em>Käyttöliittymä</em>-välilehdellä voi myös valita kielen: englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka tai venäjä. Koko käyttöliittymä (työkalurivi, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilyy istunnosta toiseen.</p>
+<p><em>Kirjasto</em>-välilehti kokoaa sen, mikä kuuluu avoinna olevaan tiedostoon eikä koneeseen. Se on tyhjä niin kauan kuin yhtään tietokantaa ei ole avattu, ja se sanoo sen.</p>
+<p>Se kantaa ensiksi kahta <strong>kynnystä</strong>, jotka ratkaisevat koko sovelluksen sanaston: päätös on <strong>virhe</strong> heti kun sen kustannus yltää virhekynnykseen, ja tuo virhe on <strong>blunder</strong> heti kun se yltää blunderin kynnykseen. Jokainen blunder on virhe, joten ensimmäinen kynnys ei voi ylittää toista, ja blunderDB kieltäytyy käänteisestä parista. Arvot syötetään equitynä — ”0,080” — kaikkien taulukoiden yksikkönä; komentorivi puolestaan puhuu millipisteinä, joten kynnys 0,080 kirjoitetaan haussa <code>E&gt;80</code>.</p>
+<p>Nämä kynnykset seuraavat tiedostoa, eivät tietokonetta: sama tietokanta laskee samat blunderit kaikkialla, missä se avataan, <code>blunderdb info</code> näyttää ne ja <code>blunderdb edit --error-threshold</code> / <code>--blunder-threshold</code> säätää niitä. Ne eivät kulje mukana viennissä: kynnys on lukutapa, ei asemien ominaisuus.</p>
+<p>Kolme <strong>esiasetusta</strong> on tarjolla yhdellä napsautuksella, kukin sen ohjelman nimellä, joka on vetänyt tuon rajan: blunderDB (0,050 / 0,100), XG (0,020 / 0,080) ja gnubg (0,040 / 0,080). Oletuksena kirjasto lukee 0,050 ja 0,100.</p>
+<p>Mitä ne muuttavat näytöllä: tilarivin laskurin blunderien määrän ja haun, jonka sen linkki valmistelee, tilastojen ja pelaajataulukon sarakkeet ”Virheet” ja ”Blunderit”, sekä luettelon asemista, joita blunderDB tarjoaa katsottavaksi tuonnin jälkeen.</p>
 <p>Samalta välilehdeltä löytyy myös painike <strong>Tiivistä tietokanta</strong>, joka ottaa takaisin poistojen (ottelut, turnaukset, siivoukset) jättämän levytilan: tietokanta ei koskaan pienene itsestään dataa poistettaessa, tiivistys on pyydettävä nimenomaisesti. Toiminto voi kestää suuressa tietokannassa ja vaatii tilapäisesti noin kaksinkertaisen koon verran vapaata levytilaa (blunderDB kieltäytyy käynnistymästä sen sijaan, että riskeeraisi keskeytyneen tiivistyksen); siksi ennen käynnistystä pyydetään vahvistus. Tulos — säästynyt tila megatavuina — näkyy sen jälkeen tilarivillä. Sama toiminto on käytettävissä komentoriviltä komennolla <code>blunderdb vacuum</code> (katso Komentoriviliittymä (CLI)).</p>
 <p>Sen alapuolella oleva <strong>Avaa lokikansio</strong> -painike avaa kansion, jossa sovelluksen loki sijaitsee — kätevää, kun vikailmoitukseen halutaan liittää yksityiskohtia, erityisesti kun blunderDB on käynnistetty pikakuvakkeesta tai kaksoisnapsautuksella ilman päätettä, joka näyttäisi mitään.</p>
 <p>Oletuksena pois päältä oleva <strong>Tarkista päivitykset käynnistyksessä</strong> -valintaruutu kysyy kerran käynnistystä kohden GitHub-arkiston julkaisusivulta ja näyttää tilarivillä viestin, jos uudempi versio on saatavilla — ei koskaan ikkunaa, joka estäisi työskentelyn. Tarkistus pysyy automaattisesti pois päältä asennuksessa, joka on tehty paketinhallinnan kautta (Flatpak, Homebrew, jakelun paketti…): silloin päivityksistä huolehtii se kanava eikä blunderDB itse.</p>
@@ -119,7 +125,7 @@ export default {
 <p><strong>Tauko ja jatkaminen.</strong> Laskennan aikana edistyminen näyttää <em>mitatun</em> jäljellä olevan ajan ja kaksi erillistä painiketta: <em>Tauko</em> ja <em>Peruuta</em>. Tauko kirjoittaa laskennan tilan taulukon viereen; uudelleen käynnistäminen jatkaa siitä mihin jäätiin sen sijaan että aloitettaisiin alusta. Peruuttaminen ei säilytä mitään. Asetusikkunan sulkeminen ei keskeytä mitään — laskenta jatkuu taustalla.</p>
 <p>Tauolle jätetty laskenta löytyy seuraavalta käynnistykseltä, nimettynä ja lukuineen (”TS-06-09 keskeytyi kohdassa 43 %”), painikkeineen <em>Jatka</em> ja <em>Poista</em>. Mikään ei käynnisty itsestään uudelleen: käyttäjä pyysi pysäytystä.</p>
 <p>Välilehti sallii lopuksi osoittaa ulkoiseen kaksipuoliseen <code>.bd</code>-tiedostoon, esimerkiksi gnubg:n itsensä tuottamaan tietokantaan: laajimman alueen taulukko voittaa.</p>
-<p><em>Yleiset</em>-välilehti kantaa lopuksi <strong>Korjaa analyysit</strong>: analyysisarakkeet, joita haku ja tilastot kysyvät, ovat projektio tallennetuista analyyseista, jotka pysyvät koskemattomina. Projektion vika on siis korjattavissa ilman uudelleentuontia. Se on nimenomaista eikä koskaan automaattista — jonkun analyysisarakkeiden uudelleenkirjoittaminen pelkästään siksi, että hän avaa tietokantansa, ei ole asia jonka työkalun tulisi tehdä hänen selkänsä takana. Sama <code>blunderdb repair</code> on käytettävissä komentoriviltä.</p>
+<p><em>Kirjasto</em>-välilehti kantaa lopuksi <strong>Korjaa analyysit</strong>: analyysisarakkeet, joita haku ja tilastot kysyvät, ovat projektio tallennetuista analyyseista, jotka pysyvät koskemattomina. Projektion vika on siis korjattavissa ilman uudelleentuontia. Se on nimenomaista eikä koskaan automaattista — jonkun analyysisarakkeiden uudelleenkirjoittaminen pelkästään siksi, että hän avaa tietokantansa, ei ole asia, jonka työkalun tulisi tehdä hänen selkänsä takana. Sama <code>blunderdb repair</code> on käytettävissä komentoriviltä.</p>
 <p><strong>gammonNet</strong>-välilehti säätää sisäänrakennettua evaluaattoria (katso <code>ADR-0011 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md&gt;</code>__). Siinä on kaksi säädettävää hakusyvyyttä, jotka on nimetty ja tallennetaan erikseen — toisen alentaminen ei koskaan muuta toista:</p>
 <ul>
 <li><strong>Näyttösyvyys</strong> — interaktiivinen mukavuus lautaa muokattaessa; ei koskaan kirjoiteta tietokantaan.</li>
@@ -482,7 +488,7 @@ export default {
 </tr>
 <tr>
 <td>Karkeat virheet</td>
-<td>Vakavien virheiden määrä (vähintään 0,100 EMG).</td>
+<td>Kirjaston blunderin kynnykseen yltävien virheiden määrä (oletuksena 0,100 EMG).</td>
 </tr>
 <tr>
 <td>Tuuri</td>

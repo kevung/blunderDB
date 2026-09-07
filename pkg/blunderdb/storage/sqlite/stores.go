@@ -52,6 +52,9 @@ func (b binder) ImportBatches() storage.ImportBatchStore {
 	return &sqlshared.ImportBatchStore{DB: b.shared()}
 }
 func (b binder) Trash() storage.TrashStore { return &sqlshared.TrashStore{DB: b.shared()} }
+func (b binder) LibrarySettings() storage.LibrarySettingsStore {
+	return &sqlshared.LibrarySettingsStore{DB: b.shared()}
+}
 func (b binder) Transcriptions() storage.TranscriptionStore {
 	return &sqlshared.TranscriptionStore{DB: b.shared()}
 }

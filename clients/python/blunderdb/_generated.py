@@ -338,6 +338,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/imports.xg — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.xg", payload)
 
+    def library_settings_load(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/librarySettings.load — JSON."
+        return self._call("/v1/librarySettings.load", payload)
+
+    def library_settings_save(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/librarySettings.save — JSON."
+        return self._call("/v1/librarySettings.save", payload)
+
     def matches_create_game(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.createGame — JSON."
         return self._call("/v1/matches.createGame", payload)

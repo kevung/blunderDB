@@ -7,6 +7,8 @@ import (
 	"log/slog"
 	"strings"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // GetAllMatches returns all matches from the database
@@ -514,25 +516,42 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 		stats["move_count"] = moveCount
 	}
 
-	// Count blunders (#287): positions whose stored error reaches the same
-	// threshold the statistics use — 100 millipoints, ≈ 0.1 of normalised
-	// equity. A second threshold here would make the status bar and the Stats
-	// tab disagree about the same word.
+	// Count blunders (#287): the Positions the library calls Blunders, at the
+	// threshold the library itself sets (ADR-0046) and by the same rule the
+	// search behind the status bar's link uses — a Position played several
+	// ways is scored by the largest of its plays (#167). The SQL is NOT
+	// restated here: this used to be a fourth hand-written copy of the
+	// statistics' predicate, and it read the denormalised first play, so the
+	// counter under-stated the list its own link opened.
 	//
 	// The count is of POSITIONS, not of decisions counted toward PR: the
 	// status bar answers "how much is there to look at", and a decision
 	// excluded from the PR denominator is still a position worth opening.
-	var blunderCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM position p
-		INNER JOIN analysis a ON a.position_id = p.id
-		WHERE (CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END) >= 100`).Scan(&blunderCount)
+	counts, err := d.store.Metadata().Counts(context.Background(), "")
 	if err != nil {
 		stats["blunder_count"] = int64(0)
 	} else {
-		stats["blunder_count"] = blunderCount
+		stats["blunder_count"] = int64(counts.Blunders)
 	}
 
 	return stats, nil
+}
+
+// GetLibrarySettings returns the library's error and blunder thresholds
+// (ADR-0046). A library that has never set them reads the defaults.
+func (d *Database) GetLibrarySettings() (storage.LibrarySettings, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.LibrarySettings().Load(context.Background(), "")
+}
+
+// SaveLibrarySettings records the library's thresholds, refusing a pair whose
+// error threshold sits above its blunder threshold — every Blunder is an
+// Error, so the inverted pair names a set that cannot exist.
+func (d *Database) SaveLibrarySettings(settings storage.LibrarySettings) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.store.LibrarySettings().Save(context.Background(), "", settings)
 }
 
 // UpdateMatch updates editable metadata for a match (player names and date).

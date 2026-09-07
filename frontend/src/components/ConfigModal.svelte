@@ -7,6 +7,9 @@
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
     import { confirmAction } from '../services/confirmService.js';
+    import { databasePathStore } from '../stores/databaseStore.js';
+    import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
+    import { loadLibrarySettings, saveLibrarySettings, mpToEquity, equityToMP, THRESHOLD_PRESETS, DEFAULT_SETTINGS } from '../services/librarySettingsService.js';
     import {
         GetIssuerIdentity,
         SetIssuerName,
@@ -83,6 +86,7 @@
     const TABS = [
         { id: 'interface', labelKey: 'config.interface' },
         { id: 'colors', labelKey: 'config.colors' },
+        { id: 'library', labelKey: 'config.libraryTitle' },
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
         { id: 'watch', labelKey: 'config.watchTitle' },
@@ -386,6 +390,53 @@
     // Compacts the currently open database file. Goes through the same
     // Database.Vacuum() the CLI's `blunderdb vacuum` uses (CLI/GUI parity) —
     // WAL checkpoint, free-space guard, VACUUM, ANALYZE all happen there.
+    // Les seuils de la bibliothèque (ADR-0046). Ils sont saisis en équité —
+    // « 0,080 », l'unité de toutes les tables de l'application — et stockés en
+    // millipoints, l'unité que parle la ligne de commande. La conversion est
+    // dans le service, faite une fois.
+    //
+    // La saisie est libre pendant la frappe et validée à la sortie du champ :
+    // un seuil d'erreur au-dessus du seuil de blunder est refusé par le
+    // stockage, qui valide la paire, et le message vient de lui.
+    let librarySettings = $state({ ...DEFAULT_SETTINGS });
+    let libraryError = $state('');
+
+    $effect(() => {
+        if (!visible) return;
+        void $databasePathStore;
+        if (!$databasePathStore) {
+            librarySettings = { ...DEFAULT_SETTINGS };
+            return;
+        }
+        loadLibrarySettings().then((s) => (librarySettings = s));
+    });
+
+    /**
+     * @param {'errorThresholdMP'|'blunderThresholdMP'} key
+     * @param {Event} event
+     */
+    async function onThresholdChange(key, event) {
+        const target = /** @type {HTMLInputElement} */ (event.currentTarget);
+        const mp = equityToMP(target.value);
+        await applyLibrarySettings({ ...librarySettings, [key]: mp });
+    }
+
+    /** @param {{errorThresholdMP: number, blunderThresholdMP: number}} next */
+    async function applyLibrarySettings(next) {
+        const previous = librarySettings;
+        try {
+            librarySettings = await saveLibrarySettings(next);
+            libraryError = '';
+            // Le compteur de la barre d'état compte des blunders : il ne dit
+            // plus la vérité tant qu'il n'a pas relu le seuil qui vient de
+            // changer.
+            await refreshLibraryCounts();
+        } catch (error) {
+            librarySettings = previous;
+            libraryError = String(error);
+        }
+    }
+
     async function vacuumDatabase() {
         if (!(await confirmAction(get(t)('config.vacuumConfirm'), { confirmLabel: get(t)('config.vacuumConfirmButton') }))) return;
         vacuumBusy = true;
@@ -707,18 +758,6 @@
                     {/each}
                 </select>
             </div>
-            <p class="setting-note">{$t('config.vacuumIntro')}</p>
-            <div class="tab-actions">
-                <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
-                    {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
-                </button>
-            </div>
-            <p class="setting-note">{$t('config.repairIntro')}</p>
-            <div class="tab-actions">
-                <button class="secondary-button" onclick={repairAnalyses} disabled={repairBusy}>
-                    {repairBusy ? $t('config.repairRunning') : $t('config.repairButton')}
-                </button>
-            </div>
             <p class="setting-note">{$t('config.logsIntro')}</p>
             <div class="tab-actions">
                 <button class="secondary-button" onclick={openLogsFolder}>{$t('config.logsButton')}</button>
@@ -738,6 +777,66 @@
             <div class="tab-actions">
                 <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
             </div>
+        {:else if activeTab === 'library'}
+            <!-- L'onglet Bibliothèque (ADR-0046) : ce qui suit le fichier, et
+                 non la machine. Les deux seuils y sont, et les deux actions
+                 qui portent sur la base ouverte — compacter et réparer —
+                 qui vivaient jusque-là parmi des réglages de machine sans le
+                 dire. -->
+            {#if !$databasePathStore}
+                <p class="setting-note">{$t('config.libraryNoDatabase')}</p>
+            {:else}
+                <p class="setting-note">{$t('config.thresholdsIntro')}</p>
+                <div class="setting-row">
+                    <label for="config-error-threshold">{$t('config.errorThreshold')}</label>
+                    <input
+                        id="config-error-threshold"
+                        type="number"
+                        class="setting-input"
+                        min="0.001"
+                        max="10"
+                        step="0.001"
+                        value={mpToEquity(librarySettings.errorThresholdMP).toFixed(3)}
+                        onchange={(e) => onThresholdChange('errorThresholdMP', e)}
+                    />
+                </div>
+                <div class="setting-row">
+                    <label for="config-blunder-threshold">{$t('config.blunderThreshold')}</label>
+                    <input
+                        id="config-blunder-threshold"
+                        type="number"
+                        class="setting-input"
+                        min="0.001"
+                        max="10"
+                        step="0.001"
+                        value={mpToEquity(librarySettings.blunderThresholdMP).toFixed(3)}
+                        onchange={(e) => onThresholdChange('blunderThresholdMP', e)}
+                    />
+                </div>
+                {#if libraryError}
+                    <p class="setting-note warn">{libraryError}</p>
+                {/if}
+                <p class="setting-note">{$t('config.thresholdPresetsIntro')}</p>
+                <div class="tab-actions">
+                    {#each THRESHOLD_PRESETS as preset (preset.key)}
+                        <button class="secondary-button" onclick={() => applyLibrarySettings({ errorThresholdMP: preset.errorThresholdMP, blunderThresholdMP: preset.blunderThresholdMP })}>
+                            {$t(`config.thresholdPreset_${preset.key}`)}
+                        </button>
+                    {/each}
+                </div>
+                <p class="setting-note">{$t('config.vacuumIntro')}</p>
+                <div class="tab-actions">
+                    <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
+                        {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
+                    </button>
+                </div>
+                <p class="setting-note">{$t('config.repairIntro')}</p>
+                <div class="tab-actions">
+                    <button class="secondary-button" onclick={repairAnalyses} disabled={repairBusy}>
+                        {repairBusy ? $t('config.repairRunning') : $t('config.repairButton')}
+                    </button>
+                </div>
+            {/if}
         {:else if activeTab === 'bearoff'}
             <p class="setting-note">{$t('config.bearoffIntro')}</p>
             {#if bearoff}

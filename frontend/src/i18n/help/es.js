@@ -70,7 +70,7 @@ export default {
 <li>la línea de comandos, accesible pulsando la tecla <em>ESPACIO</em>,</li>
 <li>un mensaje informativo relacionado con una operación realizada por el usuario,</li>
 <li>el índice de la posición actual, seguido del número de posiciones en la biblioteca actual (o la información de jugada/partida al navegar por un partido),</li>
-<li>el <strong>contador de biblioteca</strong> — «412 posiciones · 38 blunders · 5 partidos» — donde cada número <strong>abre lo que cuenta</strong>: las posiciones, la búsqueda <code>E&gt;100</code> preparada en la línea de comandos, o la lista de partidos. Una cifra que no se puede seguir es una decoración. El umbral de blunders es el de las estadísticas, cien milipuntos: dos umbrales harían que la misma palabra dijera dos cosas.</li>
+<li>el <strong>contador de la biblioteca</strong> — «412 posiciones · 38 blunders · 5 partidos» — donde cada número <strong>abre lo que cuenta</strong>: las posiciones, la búsqueda <code>E&gt;</code> preparada en la línea de comandos con el umbral de la biblioteca, o la lista de partidos. Una cifra que no se puede seguir es una decoración. El umbral de los blunders es el de la biblioteca, ajustado en la pestaña <em>Biblioteca</em> de la configuración y compartido con las estadísticas: dos umbrales harían decir dos cosas a la misma palabra. El contador promete exactamente lo que abre su enlace, incluso para una posición jugada de varias maneras, que vale su coste más elevado.</li>
 </ul>
 <div class="admonition note">
 <p>En el caso de posiciones resultantes de una búsqueda del usuario, el número de posiciones indicado en la barra de estado corresponde al número de posiciones filtradas.</p>
@@ -88,10 +88,11 @@ export default {
 </ul>
 <p>Las vistas se guardan con el estado de sesión de la base de datos y se restauran al reabrirla.</p>
 <h3>Configuración</h3>
-<p>El botón de configuración (icono de engranaje) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en seis pestañas:</p>
+<p>El botón de configuración (icono en forma de rueda dentada) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en siete pestañas:</p>
 <ul>
 <li><strong>Interfaz</strong> — idioma, escala de visualización, posición del panel;</li>
 <li><strong>Colores del tablero</strong> — los colores del tablero;</li>
+<li><strong>Biblioteca</strong> — lo que pertenece a la base de datos abierta: los umbrales de error y de blunder, la compactación y la reparación, descritos más abajo;</li>
 <li><strong>Bearoff</strong> — las tablas de bearoff utilizadas por el panel Eval;</li>
 <li><strong>gammonNet</strong> — los ajustes del evaluador integrado, descritos más abajo;</li>
 <li><strong>Carpeta vigilada</strong> — la importación automática de los partidos que llegan a una carpeta, descrita más abajo;</li>
@@ -101,6 +102,11 @@ export default {
 <p>Usted conserva la última palabra, y el mecanismo lo garantiza en vez de prometerlo: la pestaña <em>Colores</em> sigue ajustando el tablero directamente, y un color elegido después del tema es suyo. Al arrancar solo se aplican los tokens de la interfaz, nunca la paleta del tablero — la que usted ha ajustado ya está cargada, y reescribirla en cada lanzamiento borraría su trabajo una sesión cada vez. Véase <code>ADR-0038 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md&gt;</code>__.</p>
 <p><em>Seguir el sistema</em> es el valor por defecto: obedece a la preferencia claro/oscuro del escritorio, incluso cuando cambia a mitad de sesión. Una herramienta no impone su claro o su oscuro a un escritorio que ya ha decidido.</p>
 <p>La pestaña <em>Interfaz</em> permite también elegir el idioma entre inglés, francés, alemán, italiano, español, finés, japonés, griego y ruso. Toda la interfaz (barra de herramientas, paneles, mensajes, ayuda) se traduce al idioma seleccionado. La elección de idioma se guarda y se conserva de una sesión a otra.</p>
+<p>La pestaña <em>Biblioteca</em> reúne lo que pertenece al archivo abierto y no a la máquina. Está vacía mientras no haya ninguna base de datos abierta, y lo dice.</p>
+<p>Lleva en primer lugar los dos <strong>umbrales</strong> que deciden el vocabulario de toda la aplicación: una decisión es un <strong>error</strong> en cuanto su coste alcanza el umbral de error, y ese error es un <strong>blunder</strong> en cuanto alcanza el umbral de blunder. Todo blunder es un error, así que el primer umbral no puede superar al segundo, y blunderDB rechaza el par invertido. Los valores se introducen en equidad — «0,080» — la unidad de todas las tablas; la línea de comandos, por su parte, habla en milipuntos, de modo que el umbral 0,080 se escribe <code>E&gt;80</code> en una búsqueda.</p>
+<p>Estos umbrales siguen al archivo, no al ordenador: la misma base de datos cuenta los mismos blunders dondequiera que se abra, <code>blunderdb info</code> los muestra, y <code>blunderdb edit --error-threshold</code> / <code>--blunder-threshold</code> los ajusta. No viajan en una exportación: un umbral es un hábito de lectura, no un hecho de las posiciones.</p>
+<p>Se proponen tres <strong>preajustes</strong> con un solo clic, cada uno con el nombre del programa que trazó esa línea: blunderDB (0,050 / 0,100), XG (0,020 / 0,080) y gnubg (0,040 / 0,080). Por defecto, una biblioteca lee 0,050 y 0,100.</p>
+<p>Lo que cambian, en pantalla: el número de blunders del contador de la barra de estado y la búsqueda que prepara su enlace, las columnas «Errores» y «Blunders» de las estadísticas y de la tabla de jugadores, y la lista de posiciones que blunderDB propone revisar después de una importación.</p>
 <p>La misma pestaña ofrece también el botón <strong>Compactar la base</strong>, que recupera el espacio en disco dejado por las eliminaciones (partidas, torneos, purgas): la base de datos nunca se reduce por sí sola cuando se borran datos, hay que pedir explícitamente esa compactación. La operación puede tardar en una base grande y necesita, temporalmente, alrededor del doble de su tamaño en espacio libre (blunderDB se niega a arrancar en lugar de arriesgar una compactación interrumpida); por eso se pide confirmación antes de lanzarla. El resultado — el espacio ganado, en megabytes — se muestra después en la barra de estado. La misma operación está disponible en línea de comandos mediante <code>blunderdb vacuum</code> (véase Interfaz de línea de comandos (CLI)).</p>
 <p>El botón <strong>Abrir la carpeta de registros</strong>, justo debajo, abre la carpeta que contiene el registro de la aplicación — útil para adjuntar detalles a un informe de error, sobre todo cuando blunderDB se ha iniciado desde un acceso directo o un doble clic, sin terminal asociada que muestre nada.</p>
 <p>La casilla <strong>Buscar actualizaciones al iniciar</strong>, desactivada por defecto, consulta una vez por arranque la página de versiones del repositorio de GitHub y muestra en la barra de estado un mensaje si hay una versión más reciente — nunca una ventana que impida trabajar. Esta comprobación queda automáticamente desactivada en una instalación hecha mediante un gestor de paquetes (Flatpak, Homebrew, un paquete de la distribución…): entonces es ese canal el que gestiona las actualizaciones, no blunderDB.</p>
@@ -119,7 +125,7 @@ export default {
 <p><strong>Pausa y reanudación.</strong> Durante el cálculo, el progreso muestra el tiempo restante <em>medido</em> y dos botones distintos: <em>Pausa</em> y <em>Cancelar</em>. La pausa escribe el estado del cálculo junto a la tabla; relanzarlo continúa donde se detuvo en lugar de empezar de nuevo. Cancelar no guarda nada. Cerrar la ventana de configuración no interrumpe nada — el cálculo continúa en segundo plano.</p>
 <p>Un cálculo en pausa se reencuentra en el siguiente arranque, con su nombre y su cifra («TS-06-09 interrumpida al 43 %»), con <em>Reanudar</em> y <em>Eliminar</em>. Nada se reinicia solo: es el usuario quien pidió la parada.</p>
 <p>La pestaña permite por último apuntar a un archivo <code>.bd</code> de dos lados externo, por ejemplo una base producida por el propio gnubg: gana la tabla con el dominio más amplio.</p>
-<p>La pestaña <em>General</em> lleva por último <strong>Reparar los análisis</strong>: las columnas de análisis que consultan la búsqueda y las estadísticas son una proyección de los análisis almacenados, que quedan intactos. Un fallo de proyección se repara pues sin reimportar nada. Es explícito y nunca automático — reescribir las columnas de análisis de alguien por el mero hecho de que abra su base no es algo que una herramienta deba hacer a sus espaldas. El mismo <code>blunderdb repair</code> está disponible en la línea de comandos.</p>
+<p>La pestaña <em>Biblioteca</em> lleva por último <strong>Reparar los análisis</strong>: las columnas de análisis que consultan la búsqueda y las estadísticas son una proyección de los análisis almacenados, que permanecen intactos. Un defecto de proyección se repara, pues, sin volver a importar nada. Es explícito y nunca automático — reescribir las columnas de análisis de alguien por el solo motivo de que abra su base de datos no es algo que una herramienta deba hacer a sus espaldas. El mismo <code>blunderdb repair</code> está disponible en la línea de comandos.</p>
 <p>La pestaña <strong>gammonNet</strong> ajusta el evaluador integrado (véase <code>ADR-0011 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md&gt;</code>__). En ella se regulan dos profundidades de búsqueda, con nombre propio y guardadas por separado — bajar una nunca modifica la otra:</p>
 <ul>
 <li><strong>Profundidad de visualización</strong> — la comodidad interactiva durante la edición del tablero; nunca se escribe en la base.</li>
@@ -482,7 +488,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Número de errores graves (al menos 0,100 EMG).</td>
+<td>Número de errores que alcanzan el umbral de blunder de la biblioteca (0,100 EMG por defecto).</td>
 </tr>
 <tr>
 <td>Suerte</td>

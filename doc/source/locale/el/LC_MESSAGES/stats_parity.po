@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-07 01:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -49,9 +49,9 @@ msgid ""
 "coût moyen des erreurs par décision comptée, sur l'échelle d'eXtreme "
 "Gammon et de gnuBG : l'erreur moyenne d'équité, multipliée par 500."
 msgstr ""
-"Το PR (που ονομάζεται επίσης «error rate per decision» στο gnuBG) μετρά το "
-"μέσο κόστος των λαθών ανά μετρούμενη απόφαση, στην κλίμακα του eXtreme "
-"Gammon και του gnuBG: το μέσο σφάλμα ισοδυναμίας, πολλαπλασιασμένο επί "
+"Το PR (που ονομάζεται επίσης «error rate per decision» στο gnuBG) μετρά "
+"το μέσο κόστος των λαθών ανά μετρούμενη απόφαση, στην κλίμακα του eXtreme"
+" Gammon και του gnuBG: το μέσο σφάλμα ισοδυναμίας, πολλαπλασιασμένο επί "
 "500."
 
 #: ../../source/stats_parity.rst:26
@@ -90,12 +90,12 @@ msgid ""
 "magnitudes du panneau Stats."
 msgstr ""
 "Ο συντελεστής 500 είναι η σύμβαση του XG και του gnuBG (πρβλ. "
-"``gnubg/formatgs.c:399–409``). Δεν πρόκειται για μετατροπή σε millipoints: "
-"ένα μέσο σφάλμα ισοδυναμίας 0,010 — δηλαδή 10 millipoints (mpt) — δίνει PR "
-"5,0. Τα σφάλματα μιας θέσης, αντιθέτως, διαβάζονται όντως σε millipoints, "
-"δηλαδή σε χιλιοστά της ισοδυναμίας: το κατώφλι του blunder παρακάτω, τα "
-"φίλτρα αναζήτησης ``e>`` και ``E>``, το ιστόγραμμα των μεγεθών του πίνακα "
-"Stats."
+"``gnubg/formatgs.c:399–409``). Δεν πρόκειται για μετατροπή σε "
+"millipoints: ένα μέσο σφάλμα ισοδυναμίας 0,010 — δηλαδή 10 millipoints "
+"(mpt) — δίνει PR 5,0. Τα σφάλματα μιας θέσης, αντιθέτως, διαβάζονται "
+"όντως σε millipoints, δηλαδή σε χιλιοστά της ισοδυναμίας: το κατώφλι του "
+"blunder παρακάτω, τα φίλτρα αναζήτησης ``e>`` και ``E>``, το ιστόγραμμα "
+"των μεγεθών του πίνακα Stats."
 
 #: ../../source/stats_parity.rst:43
 msgid "Snowie Error Rate"
@@ -346,46 +346,60 @@ msgstr "Λάθη και σοβαρά λάθη"
 #: ../../source/stats_parity.rst:149
 msgid ""
 "Une décision est comptée comme **erreur** dès que l'erreur d'équité "
-"associée est strictement positive, et comme **blunder** lorsqu'elle "
-"atteint **0,100 EMG** (100 mpt). La comparaison est *inclusive* : une "
-"erreur d'exactement 0,100 est un blunder, dans tous les écrans "
-"(répartition par action de videau, détail de match, tableau des joueurs)."
+"associée atteint le **seuil d'erreur** de la bibliothèque, et comme "
+"**blunder** dès qu'elle atteint son **seuil de blunder**. Les deux se "
+"règlent dans l'onglet *Bibliothèque* de la configuration et valent par "
+"défaut **0,050** et **0,100 EMG** (50 et 100 mpt). La comparaison est "
+"*inclusive* : une erreur d'exactement 0,100 est un blunder au seuil par "
+"défaut, dans tous les écrans (répartition par action de videau, détail de"
+" match, tableau des joueurs), et la même paire sert au compteur de la "
+"barre d'état et à la liste proposée après un import."
 msgstr ""
-"Μια απόφαση μετρά ως **λάθος** μόλις το σχετικό σφάλμα ισοδυναμίας είναι "
-"γνησίως θετικό, και ως **σοβαρό λάθος** όταν φτάνει τα **0,100 EMG** (100 "
-"mpt). Η σύγκριση είναι *συμπεριληπτική*: ένα σφάλμα ακριβώς 0,100 είναι "
-"σοβαρό λάθος, σε όλες τις οθόνες (κατανομή ανά ενέργεια κύβου, λεπτομέρεια "
-"αγώνα, πίνακας παικτών)."
+"Μια απόφαση μετρά ως **σφάλμα** μόλις το σχετικό σφάλμα equity φτάσει το "
+"**κατώφλι σφάλματος** της βιβλιοθήκης, και ως **blunder** μόλις φτάσει το"
+" **κατώφλι blunder** της. Και τα δύο ρυθμίζονται στην καρτέλα "
+"*Βιβλιοθήκη* των ρυθμίσεων και έχουν εξ ορισμού τιμές **0,050** και "
+"**0,100 EMG** (50 και 100 mpt). Η σύγκριση είναι *συμπεριληπτική*: ένα "
+"σφάλμα ακριβώς 0,100 είναι blunder με το προκαθορισμένο κατώφλι, σε όλες "
+"τις οθόνες (κατανομή ανά ενέργεια κύβου, λεπτομέρεια αγώνα, πίνακας "
+"παικτών), και το ίδιο ζεύγος εξυπηρετεί τον μετρητή της γραμμής "
+"κατάστασης και τη λίστα που προτείνεται μετά από μια εισαγωγή."
 
-#: ../../source/stats_parity.rst:155
+#: ../../source/stats_parity.rst:159
 msgid ""
-"Ce seuil est propre à blunderDB : gnuBG classe les coups en trois crans "
+"Ces seuils sont propres à chaque bibliothèque, et les valeurs par défaut "
+"sont propres à blunderDB : gnuBG classe les coups en trois crans "
 "(``0.03`` douteux, ``0.06`` mauvais, ``0.12`` très mauvais — "
-"``gnubg/gnubg.c:281–286``) plutôt qu'en une catégorie unique."
+"``gnubg/gnubg.c:281–286``) plutôt qu'en une catégorie unique, et eXtreme "
+"Gammon trace les siennes à 0,020 et 0,080. Les deux sont proposés comme "
+"préréglages."
 msgstr ""
-"Το κατώφλι αυτό είναι ίδιον του blunderDB: το gnuBG κατατάσσει τις "
-"κινήσεις σε τρεις βαθμίδες (``0.03`` αμφίβολη, ``0.06`` κακή, ``0.12`` "
-"πολύ κακή — ``gnubg/gnubg.c:281–286``) αντί για μία μόνο κατηγορία."
+"Αυτά τα κατώφλια είναι ίδια για κάθε βιβλιοθήκη, και οι προκαθορισμένες "
+"τιμές είναι ίδιον του blunderDB: το gnuBG κατατάσσει τις κινήσεις σε "
+"τρεις βαθμίδες (``0.03`` αμφίβολη, ``0.06`` κακή, ``0.12`` πολύ κακή — "
+"``gnubg/gnubg.c:281–286``) αντί για μία μόνο κατηγορία, και το eXtreme "
+"Gammon χαράζει τα δικά του στο 0,020 και στο 0,080. Και τα δύο "
+"προσφέρονται ως προκαθορισμένες ρυθμίσεις."
 
-#: ../../source/stats_parity.rst:161
+#: ../../source/stats_parity.rst:167
 msgid "Décisions comptées au dénominateur du PR"
 msgstr "Μετρούμενες αποφάσεις στον παρονομαστή του PR"
 
-#: ../../source/stats_parity.rst:163
+#: ../../source/stats_parity.rst:169
 msgid "blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG."
 msgstr ""
 "Το blunderDB ακολουθεί τους ίδιους κανόνες αποκλεισμού με το XG και το "
 "gnuBG."
 
-#: ../../source/stats_parity.rst:166
+#: ../../source/stats_parity.rst:172
 msgid "Coups de pions — décisions comptées"
 msgstr "Κινήσεις πουλιών — μετρούμενες αποφάσεις"
 
-#: ../../source/stats_parity.rst:168
+#: ../../source/stats_parity.rst:174
 msgid "Seuls les **coups non-forcés** sont comptés :"
 msgstr "Μετρώνται μόνο οι **μη αναγκαστικές κινήσεις**:"
 
-#: ../../source/stats_parity.rst:170
+#: ../../source/stats_parity.rst:176
 msgid ""
 "Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves =="
 " 1`` dans ``gnubg/analysis.c:458``)."
@@ -393,7 +407,7 @@ msgstr ""
 "Μια κίνηση είναι **αναγκαστική** αν τα ζάρια προσφέρουν μόνο μία νόμιμη "
 "κίνηση (``cMoves == 1`` στο ``gnubg/analysis.c:458``)."
 
-#: ../../source/stats_parity.rst:172
+#: ../../source/stats_parity.rst:178
 msgid ""
 "Les coups forcés ont une erreur nulle par définition : le joueur n'avait "
 "pas le choix. Les inclure dans le dénominateur abaisserait "
@@ -403,15 +417,15 @@ msgstr ""
 "είχε επιλογή. Η συμπερίληψή τους στον παρονομαστή θα μείωνε τεχνητά το "
 "PR."
 
-#: ../../source/stats_parity.rst:176
+#: ../../source/stats_parity.rst:182
 msgid "Décisions de cube — décisions comptées"
 msgstr "Αποφάσεις κύβου — μετρούμενες αποφάσεις"
 
-#: ../../source/stats_parity.rst:178
+#: ../../source/stats_parity.rst:184
 msgid "Seules les **décisions de cube proches** sont comptées :"
 msgstr "Μετρώνται μόνο οι **οριακές αποφάσεις κύβου**:"
 
-#: ../../source/stats_parity.rst:180
+#: ../../source/stats_parity.rst:186
 msgid ""
 "Une décision cube est **proche** si elle se situe dans la fenêtre "
 "d'équité ``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
@@ -421,7 +435,7 @@ msgstr ""
 "equity ``[-0.16, +0.16]`` γύρω από το σημείο διπλασιασμού (κατηγόρημα "
 "``isCloseCubedecision`` στο ``gnubg/eval.c:5088–5100``)."
 
-#: ../../source/stats_parity.rst:183
+#: ../../source/stats_parity.rst:189
 msgid ""
 "Un « No Double » trivial (équité très négative ou très positive) n'est "
 "pas une vraie décision stratégique ; l'inclure gonflerait le dénominateur"
@@ -431,56 +445,56 @@ msgstr ""
 " μια πραγματική στρατηγική απόφαση· η συμπερίληψή του θα διόγκωνε τον "
 "παρονομαστή και θα μείωνε το PR."
 
-#: ../../source/stats_parity.rst:188
+#: ../../source/stats_parity.rst:194
 msgid "Résumé du filtre"
 msgstr "Σύνοψη φίλτρου"
 
-#: ../../source/stats_parity.rst:191
+#: ../../source/stats_parity.rst:197
 msgid "Type de décision"
 msgstr "Τύπος απόφασης"
 
-#: ../../source/stats_parity.rst:191
+#: ../../source/stats_parity.rst:197
 #, no-python-brace-format
 msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
 msgstr "Συμπεριλαμβάνεται στο :math:`N_\\text{compté}` (PR)"
 
-#: ../../source/stats_parity.rst:193
+#: ../../source/stats_parity.rst:199
 msgid "Coup non-forcé"
 msgstr "Μη αναγκαστική κίνηση"
 
-#: ../../source/stats_parity.rst:193 ../../source/stats_parity.rst:197
+#: ../../source/stats_parity.rst:199 ../../source/stats_parity.rst:203
 msgid "Oui"
 msgstr "Ναι"
 
-#: ../../source/stats_parity.rst:195
+#: ../../source/stats_parity.rst:201
 msgid "Coup forcé"
 msgstr "Αναγκαστική κίνηση"
 
-#: ../../source/stats_parity.rst:195 ../../source/stats_parity.rst:199
+#: ../../source/stats_parity.rst:201 ../../source/stats_parity.rst:205
 msgid "Non"
 msgstr "Όχι"
 
-#: ../../source/stats_parity.rst:197
+#: ../../source/stats_parity.rst:203
 msgid "Cube proche"
 msgstr "Οριακός κύβος"
 
-#: ../../source/stats_parity.rst:199
+#: ../../source/stats_parity.rst:205
 msgid "No Double trivial"
 msgstr "Τετριμμένο No Double"
 
-#: ../../source/stats_parity.rst:201
+#: ../../source/stats_parity.rst:207
 msgid "Take / Pass"
 msgstr "Take / Pass"
 
-#: ../../source/stats_parity.rst:201
+#: ../../source/stats_parity.rst:207
 msgid "Toujours (ce sont des réponses au double)"
 msgstr "Πάντα (είναι απαντήσεις σε διπλασιασμό)"
 
-#: ../../source/stats_parity.rst:206
+#: ../../source/stats_parity.rst:212
 msgid "Correspondance blunderDB ↔ XG ↔ gnuBG"
 msgstr "Αντιστοιχία blunderDB ↔ XG ↔ gnuBG"
 
-#: ../../source/stats_parity.rst:208
+#: ../../source/stats_parity.rst:214
 msgid ""
 "Les métriques sont alignées dans les limites ci-dessous. Ce sont des "
 "**bornes vérifiées par la suite de tests**, et non des écarts moyens : le"
@@ -492,110 +506,110 @@ msgid ""
 "apparié ; les références gnuBG portent sur deux autres matchs. La version"
 " d'eXtreme Gammon qui a produit ces chiffres n'est pas enregistrée."
 msgstr ""
-"Οι μετρικές είναι ευθυγραμμισμένες εντός των παρακάτω ορίων. Πρόκειται για "
-"**όρια που επαληθεύονται από τη σουίτα δοκιμών**, και όχι για μέσες "
+"Οι μετρικές είναι ευθυγραμμισμένες εντός των παρακάτω ορίων. Πρόκειται "
+"για **όρια που επαληθεύονται από τη σουίτα δοκιμών**, και όχι για μέσες "
 "αποκλίσεις: η δοκιμή συγκρίνει αγώνα προς αγώνα τους αριθμούς του "
 "blunderDB με εκείνους που έχουν καταγραφεί για τους αγώνες αναφοράς του "
 "αποθετηρίου, και αποτυγχάνει μόλις μία και μόνη απόκλιση ξεπεράσει το "
 "όριο. Οι αναφορές XG αφορούν δύο αγώνες — έναν πλήρη (317 μετρούμενες "
-"αποφάσεις, 156 και 161 ανά παίκτη) και έναν άλλο περιορισμένο μόνο στο PR "
-"του, με το όριο ανεβασμένο στο 0,15 εξαιτίας μιας κίνησης που δεν "
+"αποφάσεις, 156 και 161 ανά παίκτη) και έναν άλλο περιορισμένο μόνο στο PR"
+" του, με το όριο ανεβασμένο στο 0,15 εξαιτίας μιας κίνησης που δεν "
 "ταιριάχτηκε· οι αναφορές gnuBG αφορούν δύο άλλους αγώνες. Η έκδοση του "
 "eXtreme Gammon που παρήγαγε αυτούς τους αριθμούς δεν έχει καταγραφεί."
 
-#: ../../source/stats_parity.rst:219
+#: ../../source/stats_parity.rst:225
 msgid "Comparaison XG ↔ blunderDB (même moteur d'analyse)"
 msgstr "Σύγκριση XG ↔ blunderDB (ίδια μηχανή ανάλυσης)"
 
-#: ../../source/stats_parity.rst:222 ../../source/stats_parity.rst:239
+#: ../../source/stats_parity.rst:228 ../../source/stats_parity.rst:245
 msgid "Métrique"
 msgstr "Μετρική"
 
-#: ../../source/stats_parity.rst:222 ../../source/stats_parity.rst:239
+#: ../../source/stats_parity.rst:228 ../../source/stats_parity.rst:245
 msgid "Écart maximal"
 msgstr "Μέγιστη απόκλιση"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:230
 msgid "Décisions totales"
 msgstr "Συνολικές αποφάσεις"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:230
 msgid "≤ 5"
 msgstr "≤ 5"
 
-#: ../../source/stats_parity.rst:226
+#: ../../source/stats_parity.rst:232
 msgid "Coups non-forcés"
 msgstr "Μη αναγκαστικές κινήσεις"
 
-#: ../../source/stats_parity.rst:226
+#: ../../source/stats_parity.rst:232
 msgid "≤ 7"
 msgstr "≤ 7"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:234
 msgid "PR"
 msgstr "PR"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:234
 msgid "≤ 0.10"
 msgstr "≤ 0.10"
 
-#: ../../source/stats_parity.rst:230 ../../source/stats_parity.rst:243
+#: ../../source/stats_parity.rst:236 ../../source/stats_parity.rst:249
 msgid "Perte MWC"
 msgstr "Απώλεια MWC"
 
-#: ../../source/stats_parity.rst:230
+#: ../../source/stats_parity.rst:236
 msgid "≤ 1.0 pp"
 msgstr "≤ 1.0 pp"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:238
 msgid "Equity total (EMG)"
 msgstr "Συνολικό equity (EMG)"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:238
 msgid "≤ 0.05"
 msgstr "≤ 0.05"
 
-#: ../../source/stats_parity.rst:236
+#: ../../source/stats_parity.rst:242
 msgid "Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)"
 msgstr "Σύγκριση gnuBG ↔ blunderDB (εισαγωγή SGF — διαφορετικές μηχανές)"
 
-#: ../../source/stats_parity.rst:239
+#: ../../source/stats_parity.rst:245
 msgid "Cause principale"
 msgstr "Κύρια αιτία"
 
-#: ../../source/stats_parity.rst:241
+#: ../../source/stats_parity.rst:247
 msgid "PR (checker)"
 msgstr "PR (checker)"
 
-#: ../../source/stats_parity.rst:241
+#: ../../source/stats_parity.rst:247
 msgid "≤ 0.20"
 msgstr "≤ 0.20"
 
-#: ../../source/stats_parity.rst:241
+#: ../../source/stats_parity.rst:247
 msgid "equity cross-engine"
 msgstr "διαφορές equity μεταξύ μηχανών"
 
-#: ../../source/stats_parity.rst:243
+#: ../../source/stats_parity.rst:249
 msgid "≤ 3.5 pp"
 msgstr "≤ 3.5 pp"
 
-#: ../../source/stats_parity.rst:243
+#: ../../source/stats_parity.rst:249
 msgid "close-cube SGF incomplet"
 msgstr "ελλιπή δεδομένα οριακού κύβου στο SGF"
 
-#: ../../source/stats_parity.rst:245
+#: ../../source/stats_parity.rst:251
 msgid "Snowie ER"
 msgstr "Snowie ER"
 
-#: ../../source/stats_parity.rst:245
+#: ../../source/stats_parity.rst:251
 msgid "≤ 0.50"
 msgstr "≤ 0.50"
 
-#: ../../source/stats_parity.rst:245
+#: ../../source/stats_parity.rst:251
 msgid "forcés sans analyse (SGF)"
 msgstr "αναγκαστικές κινήσεις χωρίς ανάλυση (SGF)"
 
-#: ../../source/stats_parity.rst:250
+#: ../../source/stats_parity.rst:256
 msgid ""
 "Les fichiers SGF (gnuBG) n'incluent pas les alternatives pour les coups "
 "forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups"
@@ -608,11 +622,11 @@ msgstr ""
 "δημιουργεί μια δομική απόκλιση στο Snowie ER (ελαφρώς διαφορετικός "
 "παρονομαστής)."
 
-#: ../../source/stats_parity.rst:257
+#: ../../source/stats_parity.rst:263
 msgid "Valider vos propres chiffres"
 msgstr "Επαλήθευση των δικών σας αριθμών"
 
-#: ../../source/stats_parity.rst:259
+#: ../../source/stats_parity.rst:265
 msgid ""
 "Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
 "suivants :"
@@ -620,7 +634,7 @@ msgstr ""
 "Αν οι τιμές σας PR ή MWC αποκλίνουν από τους αριθμούς του XG, ελέγξτε τα "
 "ακόλουθα σημεία:"
 
-#: ../../source/stats_parity.rst:262
+#: ../../source/stats_parity.rst:268
 #, no-python-brace-format
 msgid ""
 "**Analyses complètes** — Le PR ne peut être calculé que sur les positions"
@@ -631,7 +645,7 @@ msgstr ""
 "διαθέτουν ανάλυση. Οι θέσεις χωρίς ανάλυση μετρώνται ως μηδενικό σφάλμα "
 "αλλά δεν συμπεριλαμβάνονται στο :math:`N_\\text{compté}`."
 
-#: ../../source/stats_parity.rst:266
+#: ../../source/stats_parity.rst:272
 msgid ""
 "**Version XG** — XG peut changer ses calculs entre versions. blunderDB "
 "s'aligne sur le comportement observé des versions récentes."
@@ -640,7 +654,7 @@ msgstr ""
 "εκδόσεων. Το blunderDB ευθυγραμμίζεται με τη συμπεριφορά που παρατηρείται"
 " στις πρόσφατες εκδόσεις."
 
-#: ../../source/stats_parity.rst:269
+#: ../../source/stats_parity.rst:275
 msgid ""
 "**Format d'import** — Les fichiers SGF gnuBG produisent des écarts plus "
 "importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut "
@@ -650,7 +664,7 @@ msgstr ""
 "αποκλίσεις στις μετρικές κύβου (βλ. πίνακα παραπάνω) επειδή το αρχείο δεν"
 " περιλαμβάνει πλήρεις αναλύσεις για όλες τις αποφάσεις κύβου."
 
-#: ../../source/stats_parity.rst:273
+#: ../../source/stats_parity.rst:279
 msgid ""
 "**Migration de base** — Après mise à jour de blunderDB, les bases "
 "existantes sont migrées automatiquement. Faire une sauvegarde avant "
@@ -660,11 +674,11 @@ msgstr ""
 "βάσεις μεταφέρονται αυτόματα. Δημιουργήστε αντίγραφο ασφαλείας πριν "
 "ανοίξετε μια βάση με νέα έκδοση."
 
-#: ../../source/stats_parity.rst:279
+#: ../../source/stats_parity.rst:285
 msgid "Référence gnuBG"
 msgstr "Αναφορά gnuBG"
 
-#: ../../source/stats_parity.rst:281
+#: ../../source/stats_parity.rst:287
 msgid ""
 "Les formules ont été vérifiées dans les fichiers source suivants (dépôt "
 "gnuBG) :"
@@ -672,15 +686,15 @@ msgstr ""
 "Οι τύποι έχουν επαληθευτεί στα ακόλουθα αρχεία πηγαίου κώδικα (αποθετήριο"
 " gnuBG):"
 
-#: ../../source/stats_parity.rst:283
+#: ../../source/stats_parity.rst:289
 msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
 msgstr "``gnubg/formatgs.c:399–409`` — PR («Error rate per decision»)."
 
-#: ../../source/stats_parity.rst:284
+#: ../../source/stats_parity.rst:290
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 
-#: ../../source/stats_parity.rst:285
+#: ../../source/stats_parity.rst:291
 msgid ""
 "``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés"
 " (``cMoves > 1``)."
@@ -688,17 +702,17 @@ msgstr ""
 "``gnubg/analysis.c:458–462`` — Συσσώρευση checker, αποκλεισμός "
 "αναγκαστικών κινήσεων (``cMoves > 1``)."
 
-#: ../../source/stats_parity.rst:286
+#: ../../source/stats_parity.rst:292
 msgid "``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision."
 msgstr "``gnubg/analysis.c:1430–1474`` — Μετατροπή EMG → MWC ανά απόφαση."
 
-#: ../../source/stats_parity.rst:287
+#: ../../source/stats_parity.rst:293
 msgid ""
 "``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC "
 "(``eq2mwc``)."
 msgstr "``gnubg/analysis.c:1449–1464`` — Συσσώρευση της απώλειας MWC (``eq2mwc``)."
 
-#: ../../source/stats_parity.rst:288
+#: ../../source/stats_parity.rst:294
 msgid ""
 "``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil "
 "0.16)."

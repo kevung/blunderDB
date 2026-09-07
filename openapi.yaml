@@ -1376,6 +1376,40 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/librarySettings.load:
+    post:
+      operationId: librarySettings.load
+      tags: [librarySettings]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_LibrarySettings"
+  /v1/librarySettings.save:
+    post:
+      operationId: librarySettings.save
+      tags: [librarySettings]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_LibrarySettings"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_LibrarySettings"
   /v1/matches.createGame:
     post:
       operationId: matches.createGame
@@ -3527,6 +3561,9 @@ components:
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."
+    storage_LibrarySettings:
+      type: object
+      description: "Opaque: see the Go type storage.LibrarySettings (defined outside internal/server, not expanded here)."
     storage_MatchBadge:
       type: object
       description: "Opaque: see the Go type storage.MatchBadge (defined outside internal/server, not expanded here)."
