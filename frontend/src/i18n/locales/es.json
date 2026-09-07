@@ -1724,7 +1724,9 @@
             "breakStart": "Inicio",
             "breakEnd": "Fin",
             "addBreak": "Añadir una pausa",
-            "removeBreak": "Quitar"
+            "removeBreak": "Quitar",
+            "batch": "Microrrondas",
+            "batchHint": "Emparejar por lotes, cada N minutos, para que la hora de anunciar un resultado ya no elija al rival. 0: sobre la marcha."
         },
         "tabs": {
             "direction": "Dirección",
@@ -1825,7 +1827,8 @@
             "finish": "Cerrar el torneo",
             "cancel": "Cancelar: {where}",
             "errorConfirm": "No se ha podido lanzar esta propuesta.",
-            "errorManual": "No se ha podido lanzar esta partida."
+            "errorManual": "No se ha podido lanzar esta partida.",
+            "appeared": "{n} propuesta(s) le esperan en el torneo."
         },
         "waiting": {
             "title": "En espera ({n})"

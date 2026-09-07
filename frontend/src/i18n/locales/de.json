@@ -1724,7 +1724,9 @@
             "breakStart": "Beginn",
             "breakEnd": "Ende",
             "addBreak": "Pause hinzufügen",
-            "removeBreak": "Entfernen"
+            "removeBreak": "Entfernen",
+            "batch": "Mikrorunden",
+            "batchHint": "Paarungen alle N Minuten im Block, damit die Uhrzeit einer Ergebnismeldung nicht mehr den Gegner wählt. 0: laufend."
         },
         "tabs": {
             "direction": "Leitung",
@@ -1825,7 +1827,8 @@
             "finish": "Turnier abschließen",
             "cancel": "Abbrechen: {where}",
             "errorConfirm": "Dieser Vorschlag konnte nicht gestartet werden.",
-            "errorManual": "Diese Partie konnte nicht gestartet werden."
+            "errorManual": "Diese Partie konnte nicht gestartet werden.",
+            "appeared": "{n} Vorschlag/Vorschläge warten im Turnier auf Sie."
         },
         "waiting": {
             "title": "Wartend ({n})"

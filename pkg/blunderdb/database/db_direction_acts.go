@@ -51,7 +51,10 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 	// One instant for the whole batch: what is launched together is one round, and the engine
 	// reads that from the start times.
 	now := time.Now()
-	for _, a := range dir.Propose() {
+	// Proposed at the SAME instant the events will carry: asking the engine at the journal's
+	// time and then writing at the wall clock is how a queue and its confirmation come to
+	// disagree about a micro-round's deadline (#388).
+	for _, a := range dir.ProposeAt(now) {
 		if a.Kind == tournoi.ActWait {
 			continue
 		}

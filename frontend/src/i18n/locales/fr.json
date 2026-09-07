@@ -1724,7 +1724,9 @@
             "breakStart": "Début",
             "breakEnd": "Fin",
             "addBreak": "Ajouter une pause",
-            "removeBreak": "Retirer"
+            "removeBreak": "Retirer",
+            "batch": "Micro-rondes",
+            "batchHint": "Apparier par lots, toutes les N minutes, pour que l'heure d'annonce d'un résultat ne choisisse plus l'adversaire. 0 : au fil de l'eau."
         },
         "tabs": {
             "direction": "Direction",
@@ -1825,7 +1827,8 @@
             "finish": "Clore le tournoi",
             "cancel": "Annuler : {where}",
             "errorConfirm": "Impossible de lancer cette proposition.",
-            "errorManual": "Impossible de lancer ce match."
+            "errorManual": "Impossible de lancer ce match.",
+            "appeared": "{n} proposition(s) vous attendent dans le tournoi."
         },
         "waiting": {
             "title": "En attente ({n})"

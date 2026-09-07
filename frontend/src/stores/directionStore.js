@@ -44,7 +44,8 @@ import {
     DirectionRounds
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
-import { language, messageBlock } from '../i18n';
+import { language, messageBlock, tMsg } from '../i18n';
+import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
 
 /*
@@ -189,17 +190,82 @@ export async function refreshDirection() {
     const id = get(openDirectionIdStore);
     if (id === null) {
         directionStore.set(null);
+        clearBatchTimer();
         return null;
     }
     try {
+        const before = get(pendingProposalsStore);
         const view = await GetDirection(id);
         directionStore.set(view);
+        announceNewProposals(before, get(pendingProposalsStore));
+        scheduleBatchRefresh(view);
         return view;
     } catch (e) {
         logger.error('direction: refresh failed', e);
         directionStore.set(null);
+        clearBatchTimer();
         return null;
     }
+}
+
+/*
+ * L'échéance d'une micro-ronde (issue #388).
+ *
+ * Elle tombe SANS QU'AUCUN ÉVÉNEMENT NE SOIT ÉCRIT : à 14 h 20, les joueurs libres deviennent
+ * appariables, et rien dans la base ne l'a dit. Le rafraîchissement est donc programmé ici, dans
+ * le store et non dans la vue — la vue tournoi n'est montée que lorsque son onglet est actif, et
+ * c'est justement quand le directeur est ailleurs que le badge doit apparaître tout seul.
+ *
+ * Ce que le minuteur fait : redemander l'état. Ce qu'il ne fait pas : lancer quoi que ce soit.
+ */
+let batchTimer = null;
+
+function clearBatchTimer() {
+    if (batchTimer !== null) {
+        clearTimeout(batchTimer);
+        batchTimer = null;
+    }
+}
+
+/** La prochaine échéance portée par la file, en millisecondes d'ici là, ou null. */
+export function nextBatchDelay(view, now = Date.now()) {
+    let soonest = null;
+    for (const a of view?.proposals || []) {
+        if (!a || !a.until) continue;
+        const at = new Date(a.until).getTime();
+        // Une date zéro côté Go arrive en l'an 1 : ce n'est pas une échéance.
+        if (!Number.isFinite(at) || at < 946684800000) continue;
+        if (soonest === null || at < soonest) soonest = at;
+    }
+    if (soonest === null) return null;
+    return Math.max(0, soonest - now);
+}
+
+function scheduleBatchRefresh(view) {
+    clearBatchTimer();
+    const delay = nextBatchDelay(view);
+    if (delay === null) return;
+    // Une seconde de marge : l'échéance est comparée à l'horloge du backend, et deux horloges
+    // qui se croisent à la milliseconde près feraient un aller-retour pour rien.
+    batchTimer = setTimeout(
+        () => {
+            batchTimer = null;
+            refreshDirection();
+        },
+        Math.min(delay + 1000, 3600000)
+    );
+}
+
+/**
+ * Prévient quand des propositions apparaissent alors que le directeur est ailleurs.
+ *
+ * Le badge de l'onglet le dit déjà en silence ; la barre d'état le dit une fois, au moment où
+ * ça arrive. Rien de tout cela ne lance quoi que ce soit.
+ */
+function announceNewProposals(before, after) {
+    if (after <= before || after === 0) return;
+    if (get(activeTabStore) === 'tournaments') return;
+    statusBarTextStore.set(tMsg('direction.proposals.appeared', { n: after }));
 }
 
 /**

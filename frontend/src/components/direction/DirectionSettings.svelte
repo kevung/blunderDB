@@ -200,6 +200,10 @@
                                 {$t('direction.settings.target')}
                                 <input type="number" min="0" step="8" bind:value={phase.target} />
                             </label>
+                            <label title={$t('direction.settings.batchHint')}>
+                                {$t('direction.settings.batch')}
+                                <input type="number" min="0" max="120" bind:value={phase.batch_minutes} />
+                            </label>
                         {/if}
                         {#if phase.kind === 'bracket' || phase.kind === 'lives_bracket'}
                             <label title={$t('direction.settings.finalLengthHint')}>

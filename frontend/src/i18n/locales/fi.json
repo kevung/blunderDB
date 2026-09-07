@@ -1724,7 +1724,9 @@
             "breakStart": "Alkaa",
             "breakEnd": "Päättyy",
             "addBreak": "Lisää tauko",
-            "removeBreak": "Poista"
+            "removeBreak": "Poista",
+            "batch": "Mikrokierrokset",
+            "batchHint": "Muodosta parit erissä, N minuutin välein, jottei tuloksen ilmoitusaika enää valitse vastustajaa. 0: sitä mukaa."
         },
         "tabs": {
             "direction": "Johtaminen",
@@ -1825,7 +1827,8 @@
             "finish": "Päätä turnaus",
             "cancel": "Peruuta: {where}",
             "errorConfirm": "Ehdotuksen aloitus epäonnistui.",
-            "errorManual": "Ottelun aloitus epäonnistui."
+            "errorManual": "Ottelun aloitus epäonnistui.",
+            "appeared": "{n} ehdotus(ta) odottaa sinua turnauksessa."
         },
         "waiting": {
             "title": "Odottaa ({n})"
