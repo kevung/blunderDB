@@ -69,7 +69,8 @@ func MapXG(path string) (*MatchGraph, error) {
 				MoveCount:    len(game.Moves),
 			},
 		}
-		gg.Moves, err = mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo, rawMarks)
+		gg.Moves, err = mapGameMoves(gameIdx, &game, match.Metadata.MatchLength,
+			isCrawfordGame(match.Metadata.MatchLength, gameIdx, match.Games), rawCubeInfo, rawMarks)
 		if err != nil {
 			return nil, fmt.Errorf("ingest: %s: %w", filepath.Base(path), err)
 		}
@@ -243,7 +244,7 @@ func luckOrNothing(luck map[flagKey]int32) map[flagKey]int32 {
 // associating raw cube records with moves, carrying a skipped "No Double"
 // comment forward to the next checker move, and flattening each XG move into
 // the one or two MoveGraphs it produces.
-func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction, marks rawMoveMarks) ([]MoveGraph, error) {
+func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, crawford bool, rawCubeInfo map[string]*rawCubeAction, marks rawMoveMarks) ([]MoveGraph, error) {
 	var out []MoveGraph
 
 	cubeIdx := 0
@@ -285,7 +286,7 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeIn
 			}
 		}
 
-		mgs, err := mapMove(int32(moveIdx), &move, game, matchLength, rawCube)
+		mgs, err := mapMove(int32(moveIdx), &move, game, matchLength, crawford, rawCube)
 		if err != nil {
 			return nil, fmt.Errorf("game %d, move %d: %w", gameIdx+1, moveIdx+1, err)
 		}
@@ -319,12 +320,12 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeIn
 // database.importMoveWithCacheAndRawCube. A checker move yields one MoveGraph; a
 // Double/Take or Double/Pass yields two; a skipped/irrelevant cube decision
 // yields none.
-func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
+func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	switch {
 	case move.MoveType == "checker" && move.CheckerMove != nil:
-		return mapCheckerMove(moveNumber, move, game, matchLength, rawCube)
+		return mapCheckerMove(moveNumber, move, game, matchLength, crawford, rawCube)
 	case move.MoveType == "cube" && move.CubeMove != nil:
-		return mapCubeMove(moveNumber, move, game, matchLength, rawCube)
+		return mapCubeMove(moveNumber, move, game, matchLength, crawford, rawCube)
 	default:
 		return nil, nil
 	}
@@ -334,9 +335,9 @@ func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLe
 // checker analysis with the preceding cube decision (attached to the checker
 // position so it can be inspected) exactly as the legacy two saveAnalysis calls
 // would merge.
-func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
+func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cm := move.CheckerMove
-	pos, err := createPositionFromXG(cm.Position, game, matchLength, cm.ActivePlayer)
+	pos, err := createPositionFromXG(cm.Position, game, matchLength, cm.ActivePlayer, crawford)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +381,7 @@ func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, 
 // mapCubeMove builds the MoveGraph(s) for a cube decision: an explicit
 // Double/Take (two positions), a Double/Pass (doubling + pass positions), a
 // single cube action, or a counted "No Double" decision.
-func mapCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
+func mapCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
 	isExplicitCubeAction := false
@@ -391,19 +392,19 @@ func mapCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, mat
 	}
 
 	if !isExplicitCubeAction {
-		return mapNoDoubleMove(moveNumber, move, game, matchLength, rawCube)
+		return mapNoDoubleMove(moveNumber, move, game, matchLength, crawford, rawCube)
 	}
 
 	if rawCube != nil && rawCube.Double == 1 && rawCube.Take == 1 {
-		return mapDoubleTakeMove(moveNumber, move, game, matchLength)
+		return mapDoubleTakeMove(moveNumber, move, game, matchLength, crawford)
 	}
-	return mapSingleCubeMove(moveNumber, move, game, matchLength, rawCube)
+	return mapSingleCubeMove(moveNumber, move, game, matchLength, crawford, rawCube)
 }
 
 // mapNoDoubleMove handles an implicit "No Double" decision that XG still counts
 // as a cube decision (only when the player actually holds the cube and analysis
 // is available).
-func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
+func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
 	hasRawAnalysis := rawCube != nil && rawCube.Doubled != nil
@@ -429,7 +430,7 @@ func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game,
 		}
 	}
 
-	pos, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer)
+	pos, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer, crawford)
 	if err != nil {
 		return nil, err
 	}
@@ -459,10 +460,10 @@ func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game,
 
 // mapDoubleTakeMove handles a Double that was Taken: a doubling-decision
 // position and the opponent's take-decision position.
-func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32) ([]MoveGraph, error) {
+func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
-	pos1, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer)
+	pos1, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer, crawford)
 	if err != nil {
 		return nil, err
 	}
@@ -511,10 +512,10 @@ func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 
 // mapSingleCubeMove handles a single explicit cube action (e.g. Double/Pass).
 // For a Double/Pass it also emits the passer's take/pass decision position.
-func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
+func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
-	pos, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer)
+	pos, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer, crawford)
 	if err != nil {
 		return nil, err
 	}

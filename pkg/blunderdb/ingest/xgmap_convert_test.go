@@ -1,6 +1,11 @@
 package ingest
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/xgparser/xgparser"
+)
 
 // Moved from the legacy tests/bearoff_unit_test.go and tests/xg_import_test.go
 // (root "tests" package, invisible to coverage since it built no code): both
@@ -67,5 +72,58 @@ func TestConvertXGMoveToString(t *testing.T) {
 				t.Errorf("convertXGMoveToString(%v) = %q, expected %q", tc.input, result, tc.expected)
 			}
 		})
+	}
+}
+
+// TestXGCrawfordSentinelIsDerivedFromTheScores pins the XG half of issue #338.
+//
+// An XG match states no rule per game — xgparser.Game carries a game number, an
+// initial score, a winner and its moves — so which game is the Crawford one is
+// DERIVED from the sequence of initial scores, and the away score then says so:
+// `1` in the Crawford game, `0` in every game after it (CONTEXT.md, « Away
+// score »). Before the fix both said `1`, and the engine read a dead cube in
+// the post-Crawford games, where the trailer doubles at the first opportunity.
+func TestXGCrawfordSentinelIsDerivedFromTheScores(t *testing.T) {
+	// A 7-point match: 2-2, then 6-2 (the Crawford game), then 6-3 and 6-5,
+	// both post-Crawford with the same player still one point away.
+	games := []xgparser.Game{
+		{GameNumber: 1, InitialScore: [2]int32{2, 2}},
+		{GameNumber: 2, InitialScore: [2]int32{6, 2}},
+		{GameNumber: 3, InitialScore: [2]int32{6, 3}},
+		{GameNumber: 4, InitialScore: [2]int32{6, 5}},
+	}
+	wantCrawford := []bool{false, true, false, false}
+	wantAway := [][2]int{{5, 5}, {domain.Crawford, 5}, {domain.PostCrawford, 4}, {domain.PostCrawford, 2}}
+
+	// A legal enough board for the mapper: one checker per side, everything
+	// else borne off. Only the score is under test here.
+	var xgPos xgparser.Position
+	xgPos.Checkers[1] = 1
+	xgPos.Checkers[24] = -1
+
+	for i := range games {
+		crawford := isCrawfordGame(7, i, games)
+		if crawford != wantCrawford[i] {
+			t.Errorf("isCrawfordGame(7, %d) = %v, want %v", i, crawford, wantCrawford[i])
+		}
+		pos, err := createPositionFromXG(xgPos, &games[i], 7, 1, crawford)
+		if err != nil {
+			t.Fatalf("game %d: createPositionFromXG: %v", i, err)
+		}
+		if pos.Score != wantAway[i] {
+			t.Errorf("game %d (initial %v): away score %v, want %v",
+				i, games[i].InitialScore, pos.Score, wantAway[i])
+		}
+	}
+
+	// Money play has no Crawford game at all, whatever the scores say.
+	if isCrawfordGame(0, 0, games) {
+		t.Error("isCrawfordGame reports a Crawford game in money play")
+	}
+	// A 1-point match is its own Crawford game: its only game starts at match
+	// point, and the [1 1] that follows is the cube-dead reading it wants.
+	one := []xgparser.Game{{GameNumber: 1, InitialScore: [2]int32{0, 0}}}
+	if !isCrawfordGame(1, 0, one) {
+		t.Error("the only game of a 1-point match is not reported as Crawford")
 	}
 }

@@ -94,11 +94,15 @@ func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.Mov
 }
 
 // createPositionFromGnuBG converts a gnubgparser.Position to a domain.Position.
+//
+// game.CrawfordGame is the file's own statement of which game this is, and it
+// goes into the away score: gnuBG writes the flag per game, so the sentinel is
+// read from the source rather than derived from the score sequence.
 func createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.Game, matchLength int) (*domain.Position, error) {
 	pos := &domain.Position{
 		PlayerOnRoll: gnubgPos.OnRoll,
 		DecisionType: domain.CheckerAction,
-		Score:        domain.AwayScores(matchLength, game.Score[0], game.Score[1]),
+		Score:        domain.AwayScoresWithCrawford(matchLength, game.Score[0], game.Score[1], game.CrawfordGame),
 		Cube: domain.Cube{
 			Value: domain.CubeExponent(gnubgPos.CubeValue),
 			Owner: gnubgPos.CubeOwner,

@@ -158,3 +158,42 @@ func TestCrawfordGameAgreesAcrossFormats(t *testing.T) {
 		}
 	}
 }
+
+// TestGnuBGCrawfordSentinelReachesTheAwayScore is issue #338 on the gnuBG side.
+//
+// The parser already reports CrawfordGame per game (issue #170 wired it to the
+// MWC→EMG conversion); what it never reached was the SCORE. The away score
+// carries the Crawford rule inside the number — `1` for the Crawford game, `0`
+// for the games after it (CONTEXT.md, « Away score ») — so the same 6-2 score
+// must map to two different away scores depending on which game it is, and
+// before the fix both said `1`, cube dead.
+func TestGnuBGCrawfordSentinelReachesTheAwayScore(t *testing.T) {
+	// A board the mapper accepts: one checker per side, the rest borne off.
+	var gnubgPos gnubgparser.Position
+	gnubgPos.Board[0][5] = 1
+	gnubgPos.Board[1][5] = 1
+	gnubgPos.CubeOwner = -1
+
+	for _, tc := range []struct {
+		name     string
+		score    [2]int
+		crawford bool
+		want     [2]int
+	}{
+		{"the Crawford game", [2]int{6, 2}, true, [2]int{domain.Crawford, 5}},
+		{"the game after it", [2]int{6, 2}, false, [2]int{domain.PostCrawford, 5}},
+		{"post-Crawford, both at match point", [2]int{6, 6}, false, [2]int{domain.PostCrawford, domain.PostCrawford}},
+		{"nowhere near match point", [2]int{2, 2}, false, [2]int{5, 5}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			game := &gnubgparser.Game{Score: tc.score, CrawfordGame: tc.crawford}
+			pos, err := createPositionFromGnuBG(&gnubgPos, game, 7)
+			if err != nil {
+				t.Fatalf("createPositionFromGnuBG: %v", err)
+			}
+			if pos.Score != tc.want {
+				t.Errorf("away score %v, want %v", pos.Score, tc.want)
+			}
+		})
+	}
+}

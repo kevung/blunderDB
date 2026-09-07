@@ -36,13 +36,17 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 	game := &match.Games[0]
 	move := &game.Moves[0]
 	matchLen := match.Metadata.MatchLength
+	// A single-position file is one game standing alone: it is the Crawford
+	// game only if it starts at match point, and there is no earlier game
+	// that could already have been one.
+	crawford := isCrawfordGame(matchLen, 0, match.Games)
 
 	var out []PositionGraph
 
 	switch {
 	case move.MoveType == "checker" && move.CheckerMove != nil:
 		cm := move.CheckerMove
-		pos, err := createPositionFromXG(cm.Position, game, matchLen, cm.ActivePlayer)
+		pos, err := createPositionFromXG(cm.Position, game, matchLen, cm.ActivePlayer, crawford)
 		if err != nil {
 			return nil, fmt.Errorf("ingest: create xgp position: %w", err)
 		}
@@ -59,7 +63,7 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 
 	case move.MoveType == "cube" && move.CubeMove != nil:
 		cube := move.CubeMove
-		pos, err := createPositionFromXG(cube.Position, game, matchLen, cube.ActivePlayer)
+		pos, err := createPositionFromXG(cube.Position, game, matchLen, cube.ActivePlayer, crawford)
 		if err != nil {
 			return nil, fmt.Errorf("ingest: create xgp position: %w", err)
 		}
@@ -84,7 +88,7 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 		sm := &game.Moves[1]
 		if sm.MoveType == "checker" && sm.CheckerMove != nil && len(sm.CheckerMove.Analysis) > 0 {
 			cm := sm.CheckerMove
-			if checkerPos, err := createPositionFromXG(cm.Position, game, matchLen, cm.ActivePlayer); err == nil {
+			if checkerPos, err := createPositionFromXG(cm.Position, game, matchLen, cm.ActivePlayer, crawford); err == nil {
 				checkerPos.PlayerOnRoll = convertXGPlayerToBlunderDB(cm.ActivePlayer)
 				checkerPos.DecisionType = domain.CheckerAction
 				checkerPos.Dice = [2]int{int(cm.Dice[0]), int(cm.Dice[1])}
