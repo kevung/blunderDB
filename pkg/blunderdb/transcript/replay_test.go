@@ -4,6 +4,7 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -124,17 +125,20 @@ func TestPostCrawfordSentinel(t *testing.T) {
 // TestReplayLatency measures a full Replay of a 300-Action document. The threshold is
 // a REGRESSION guard on this package, measured and not estimated.
 //
-// The T0.2 sheet asked for 20 ms and that is not what a full Replay costs today.
-// Measured on the author's machine: 101 ms for these 300 Actions, 337 µs each — and
-// every microsecond of it is domain.LegalMoves, called once per checker Action
-// (measured on its own at 175 µs for an ordinary roll from the opening position and
-// 3.6 ms for a double). Nothing in this package can close that gap: it would take a
-// faster legal-move generator, which is a change to domain with its own differential
-// test to answer to, or a memoised one. The ceiling below therefore guards against
-// this package getting slower, and the figure it logs is the one to argue about.
+// The T0.2 sheet asked for 20 ms, which was never what a full Replay costs: it is
+// domain.LegalMoves, called once per checker Action (175 µs for an ordinary roll from
+// the opening position, 3.6 ms for a double), and nothing in this package closes that
+// gap — it would take a faster legal-move generator, which is a change to domain with
+// its own differential test to answer to. Measured: 27 ms here, 101 ms on the machine
+// the sheet was written on, i.e. some 90 to 340 µs per Action. The ceiling below is
+// five times the slower of the two, and the figure the test logs is the one to argue
+// about.
+//
+// What the interactive budget rests on is NOT this number: typing replays one Action
+// through a [Replayer], which TestReplayIncrementalCostsOneAction measures.
 func TestReplayLatency(t *testing.T) {
 	const actions = 300
-	const ceiling = 750 * time.Millisecond
+	const ceiling = 500 * time.Millisecond
 
 	data, err := os.ReadFile(matFixtures[0])
 	if err != nil {
@@ -198,6 +202,179 @@ func TestPackageIsPure(t *testing.T) {
 					t.Errorf("%s imports %s", name, path)
 				}
 			}
+		}
+	}
+}
+
+// TestReplayIncrementalCostsOneAction is the measurement the entry loop needs: adding
+// an Action at the end of a long document must cost ONE Action, not the document.
+//
+// The ux.md §4.1 budget is 0.56 s for a whole turn, keystrokes included. A full Replay
+// of a 300-Action match spends most of that on its own, at every keystroke; the
+// ceiling below is what a single Action costs (some 340 µs at worst) with room for a
+// loaded machine, and it is two orders of magnitude under a full Replay.
+func TestReplayIncrementalCostsOneAction(t *testing.T) {
+	const actions = 300
+	const ceiling = 5 * time.Millisecond
+
+	data, err := os.ReadFile(matFixtures[0])
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+	doc, err := FromMAT(string(data))
+	if err != nil {
+		t.Fatalf("FromMAT: %v", err)
+	}
+	if len(doc.Actions) < actions {
+		t.Fatalf("the fixture has %d actions, %d wanted", len(doc.Actions), actions)
+	}
+	full := doc
+	full.Actions = doc.Actions[:actions]
+	full.Cursor = actions
+	short := doc
+	short.Actions = doc.Actions[:actions-1]
+	short.Cursor = actions - 1
+
+	// The best of three: the measurement wanted is the work done, not the scheduler.
+	best := time.Duration(1<<63 - 1)
+	for i := 0; i < 3; i++ {
+		var r Replayer
+		r.Replay(short, 0) // the document as it stood before the last keystroke
+		start := time.Now()
+		ann := r.Replay(full, 0)
+		if elapsed := time.Since(start); elapsed < best {
+			best = elapsed
+		}
+		if len(ann.Actions) != actions {
+			t.Fatalf("replayed %d actions", len(ann.Actions))
+		}
+	}
+	t.Logf("one Action appended to a document of %d: %v", actions, best)
+	if best > ceiling {
+		t.Errorf("appending one Action to %d took %v, over the %v guard — the replay is not incremental",
+			actions, best, ceiling)
+	}
+
+	// Correcting an Action replays it and everything after it, and nothing before.
+	// Correcting the LAST one must therefore cost what appending one costs.
+	var r Replayer
+	r.Replay(full, 0)
+	corrected := full.clone()
+	corrected.Actions[actions-1].Side = opponent(corrected.Actions[actions-1].Side)
+	start := time.Now()
+	r.Replay(corrected, 0)
+	if elapsed := time.Since(start); elapsed > ceiling {
+		t.Errorf("correcting the last of %d Actions took %v, over the %v guard", actions, elapsed, ceiling)
+	}
+}
+
+// kitchenSinkDoc is a document that goes through every Kind and raises every
+// InconsistencyKind, unknown kinds included — the widest state machine a Replay can be
+// asked to walk, and the one an incremental replay has to agree with.
+func kitchenSinkDoc(t *testing.T) Document {
+	t.Helper()
+	// The board a play that moves one checker for a 63 really leaves.
+	board := InitialBoard()
+	board.Points[24] = domain.Point{Checkers: 1, Color: domain.Black}
+	board.Points[18] = domain.Point{Checkers: 1, Color: domain.Black}
+
+	// A one-point match: everything after the first game is played past the end.
+	doc := docOf(1,
+		opening(domain.Black, 3, 3), // a tie: another opening follows, same game
+		opening(domain.Black, 6, 3),
+		Action{Side: domain.Black, Kind: KindChecker, Dice: [2]int{6, 3},
+			Steps: []domain.CheckerStep{{From: 24, To: 18}}, BoardAfter: &board}, // illegal
+		Action{Side: domain.White, Kind: KindDance, Dice: [2]int{6, 5}}, // the roll allows a play
+		Action{Side: domain.White, Kind: KindDouble},                    // and player 2 acts twice
+		Action{Side: domain.Black, Kind: KindDouble},                    // an answer is already pending
+		Action{Side: domain.White, Kind: KindTake},
+		Action{Side: domain.Black, Kind: KindChecker, Dice: [2]int{2, 1},
+			Steps: []domain.CheckerStep{{From: 13, To: 8}}}, // the play does not use the roll
+		Action{Side: domain.White, Kind: KindPass}, // nothing to answer: the game ends here
+		opening(domain.Black, 5, 2),                // past the end from now on
+		Action{Side: domain.Black, Kind: KindResign, Level: 2},
+		Action{Side: domain.White, Kind: "no such kind"},
+	)
+
+	ann := Replay(doc, 0)
+	kinds := map[Kind]bool{}
+	found := map[InconsistencyKind]bool{}
+	for i, a := range doc.Actions {
+		kinds[a.Kind] = true
+		for _, inc := range ann.Actions[i].Inconsistencies {
+			found[inc.Kind] = true
+		}
+	}
+	for _, k := range []Kind{KindOpening, KindChecker, KindDance, KindDouble, KindTake, KindPass, KindResign} {
+		if !kinds[k] {
+			t.Fatalf("the fixture no longer covers kind %q", k)
+		}
+	}
+	for _, k := range []InconsistencyKind{IllegalMove, DoubleTurn, ImpossibleCube, PastEnd, InconsistentDice} {
+		if !found[k] {
+			t.Fatalf("the fixture no longer raises %q", k)
+		}
+	}
+	return doc
+}
+
+// TestReplayIncrementalMatchesFull is the soundness of the cache: a Replayer grown one
+// Action at a time, then corrected in the middle, returns exactly what a Replay from
+// scratch returns — on a document that covers every Kind and every Inconsistency.
+//
+// It is the property the whole optimisation rests on, and it is stated on the WHOLE
+// Annotated, not on a chosen field: the derivation of an Action depends on the state
+// left by the previous one and on nothing else, or this test goes red.
+func TestReplayIncrementalMatchesFull(t *testing.T) {
+	doc := kitchenSinkDoc(t)
+
+	// Grown from nothing, one Action at a time — the entry loop.
+	var r Replayer
+	for n := 0; n <= len(doc.Actions); n++ {
+		grown := doc
+		grown.Actions = doc.Actions[:n]
+		grown.Cursor = n
+		if got, want := r.Replay(grown, 0), Replay(grown, 0); !reflect.DeepEqual(got, want) {
+			t.Fatalf("incremental replay of the first %d Actions differs from a full one", n)
+		}
+	}
+
+	// Corrected at every index in turn, on a Replayer that has just seen the whole
+	// document — the correction loop.
+	for n := range doc.Actions {
+		corrected := doc.clone()
+		corrected.Actions[n].Side = opponent(corrected.Actions[n].Side)
+		if got, want := r.Replay(corrected, 0), Replay(corrected, 0); !reflect.DeepEqual(got, want) {
+			t.Fatalf("incremental replay after correcting Action %d differs from a full one", n)
+		}
+		// And back, so the next round starts from the document the cache describes.
+		if got, want := r.Replay(doc, 0), Replay(doc, 0); !reflect.DeepEqual(got, want) {
+			t.Fatalf("incremental replay after undoing the correction at %d differs from a full one", n)
+		}
+	}
+
+	// The header the Replay reads is part of the key: changing the match length, and
+	// only it, must throw the cache away.
+	longer := doc.clone()
+	longer.Header.MatchLength = 7
+	if got, want := r.Replay(longer, 0), Replay(longer, 0); !reflect.DeepEqual(got, want) {
+		t.Fatal("incremental replay after a match-length change differs from a full one")
+	}
+	// A header field no Replay reads must NOT: it derives nothing.
+	named := longer.clone()
+	named.Header.Player1 = "Alice"
+	if got, want := r.Replay(named, 0), Replay(named, 0); !reflect.DeepEqual(got, want) {
+		t.Fatal("incremental replay after a player-name change differs from a full one")
+	}
+	if r.reusable(named) != len(named.Actions) {
+		t.Errorf("naming a player threw the cache away: %d of %d Actions kept",
+			r.reusable(named), len(named.Actions))
+	}
+
+	// `from` still chooses only where the Cursor lands, on either path.
+	for _, from := range []int{-1, 0, 3, len(doc.Actions)} {
+		if got, want := r.Replay(doc, from), Replay(doc, from); !reflect.DeepEqual(got, want) {
+			t.Fatalf("incremental replay with from=%d differs from a full one", from)
 		}
 	}
 }

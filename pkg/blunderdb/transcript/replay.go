@@ -136,18 +136,66 @@ func (a Annotated) Inconsistent() bool {
 // score of each game, its Crawford mention, its winner and points, the end of the
 // match — and the Inconsistencies of §1.4.
 //
-// It replays from the first Action whatever `from` says: a document of 300 Actions
-// costs well under a millisecond, so an incremental replay would buy a complexity
-// nobody can measure. What `from` selects is where the Cursor lands — on the first
-// Inconsistency at or after it, which is what a correction wants to show next.
+// It replays from the first Action, every time. `from` selects only where the Cursor
+// lands — on the first Inconsistency at or after it, which is what a correction wants
+// to show next.
+//
+// A full Replay costs what [domain.LegalMoves] costs, some 340 µs per checker Action:
+// a hundred milliseconds on a long match, which is a hundred milliseconds too many at
+// every keystroke. A caller that replays the SAME document again and again — which is
+// what entering a match is — holds a [Replayer] instead.
 func Replay(doc Document, from int) Annotated {
-	s := newState(doc.Header)
-	out := Annotated{Document: doc, Winner: -1, Cursor: doc.Cursor}
-	out.Actions = make([]ActionInfo, 0, len(doc.Actions))
-	for i, a := range doc.Actions {
-		out.Actions = append(out.Actions, s.step(i, a))
+	var r Replayer
+	return r.Replay(doc, from)
+}
+
+// Replayer is a [Replay] that remembers. It keeps, for the document it last replayed,
+// the state before each Action and what that Action derived; the next call replays
+// only from the first Action that changed.
+//
+// It buys nothing but time, and changes nothing else: what it returns is what the
+// free [Replay] returns for the same document, which is the property
+// TestReplayIncrementalMatchesFull holds. The derivation of an Action depends on the
+// state left by the one before it and on nothing else, which is what makes the cache
+// sound — and what any new field read by [state.step] must keep true.
+//
+// A Replayer is NOT safe for concurrent use, and it is not shared state: it belongs to
+// one editing session, exactly as [Editor] does. The package stays pure — a Replayer
+// remembers a computation, it reaches for nothing.
+type Replayer struct {
+	// doc is a deep copy of the document the cache describes, so that a caller editing
+	// its Actions in place cannot pass the cache off as still valid.
+	doc Document
+	// states[i] is the state BEFORE Action i, so states has one entry more than infos.
+	// It is empty until the first Replay.
+	states []state
+	infos  []ActionInfo
+}
+
+// Replay returns the annotation of doc, replaying only the Actions whose derivation
+// the previous call cannot supply.
+func (r *Replayer) Replay(doc Document, from int) Annotated {
+	reuse := r.reusable(doc)
+	if reuse == 0 {
+		r.states = append(r.states[:0], *newState(doc.Header))
+		r.infos = r.infos[:0]
+	} else {
+		r.states = r.states[:reuse+1]
+		r.infos = r.infos[:reuse]
 	}
-	out.Games = s.games
+
+	s := r.states[reuse].clone()
+	for i := reuse; i < len(doc.Actions); i++ {
+		r.infos = append(r.infos, s.step(i, doc.Actions[i]))
+		r.states = append(r.states, s.clone())
+	}
+	r.doc = doc.clone()
+
+	out := Annotated{Document: doc, Winner: -1, Cursor: doc.Cursor}
+	// The caller gets copies: the cache must survive whatever is done to what it
+	// handed out, and an Annotated is passed around and serialised.
+	out.Actions = append(make([]ActionInfo, 0, len(r.infos)), r.infos...)
+	out.Games = append([]GameInfo(nil), s.games...)
 	out.Score = s.points
 	if s.matchOver() {
 		out.Finished = true
@@ -167,6 +215,53 @@ func Replay(doc Document, from int) Annotated {
 		}
 	}
 	return out
+}
+
+// reusable returns how many leading Actions the cache still describes: the length of
+// the common prefix, or 0 when the head changed or nothing is cached yet.
+func (r *Replayer) reusable(doc Document) int {
+	if len(r.states) == 0 || !sameReplayRules(r.doc.Header, doc.Header) {
+		return 0
+	}
+	n := min(len(r.infos), len(doc.Actions))
+	for i := 0; i < n; i++ {
+		if !sameAction(r.doc.Actions[i], doc.Actions[i]) {
+			return i
+		}
+	}
+	return n
+}
+
+// sameReplayRules compares the header fields a Replay READS. The rest of it — the
+// names, the event, the tournament, the Match the draft owns — is carried through
+// untouched and derives nothing, so changing it must not throw the cache away.
+func sameReplayRules(a, b Header) bool {
+	return a.MatchLength == b.MatchLength && a.Jacoby == b.Jacoby &&
+		a.Beaver == b.Beaver && a.MaxCube == b.MaxCube
+}
+
+// sameAction compares two Actions by value, following the two references an Action
+// carries: its steps and the board an illegal play left.
+func sameAction(a, b Action) bool {
+	if a.Side != b.Side || a.Kind != b.Kind || a.Dice != b.Dice || a.Level != b.Level {
+		return false
+	}
+	if len(a.Steps) != len(b.Steps) {
+		return false
+	}
+	for i := range a.Steps {
+		if a.Steps[i] != b.Steps[i] {
+			return false
+		}
+	}
+	switch {
+	case a.BoardAfter == nil && b.BoardAfter == nil:
+		return true
+	case a.BoardAfter == nil || b.BoardAfter == nil:
+		return false
+	default:
+		return *a.BoardAfter == *b.BoardAfter
+	}
 }
 
 // state is the board the Replay walks. FromMAT drives it too, one Action at a time,
@@ -201,6 +296,14 @@ func newState(h Header) *state {
 		pendingDouble: -1,
 		turn:          -1,
 	}
+}
+
+// clone copies a state deeply enough to be replayed from without the original moving.
+// Everything in it is a value but the games, which step appends to and writes into.
+func (s *state) clone() state {
+	out := *s
+	out.games = append([]GameInfo(nil), s.games...)
+	return out
 }
 
 func (s *state) matchOver() bool {
