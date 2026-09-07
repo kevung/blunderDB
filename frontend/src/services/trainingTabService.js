@@ -83,12 +83,12 @@ function pipNumbers(position) {
 }
 
 /**
- * Une question de l'exercice Pions. La source `plateau` prend la position
- * telle quelle ; la source `base` en tire une de la liste parcourue et
- * l'amène sur le plateau.
- * @param {string} seedSource
+ * Une question de l'exercice Pions.
+ *
+ * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ * @param {string} seedSource @param {any} seed la graine « plateau », capturée au démarrage
  */
-async function buildPipsQuestion(seedSource) {
+async function buildPipsQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         if (length === 0) return { question: null, refusal: 'noQuestion' };
@@ -96,12 +96,10 @@ async function buildPipsQuestion(seedSource) {
         if (id == null) return { question: null, refusal: 'noQuestion' };
         const position = await LoadPosition(id);
         if (!position) return { question: null, refusal: 'noQuestion' };
-        await showImportedPosition(id);
         return { question: { kind: 'pips', key: String(id), positionId: id, numbers: pipNumbers(position) }, refusal: '' };
     }
-    const position = get(positionStore);
-    if (!position?.board?.points) return { question: null, refusal: 'noQuestion' };
-    return { question: { kind: 'pips', key: 'board', positionId: null, numbers: pipNumbers(position) }, refusal: '' };
+    if (!seed?.board?.points) return { question: null, refusal: 'noQuestion' };
+    return { question: { kind: 'pips', key: 'board', positionId: null, numbers: pipNumbers(seed) }, refusal: '' };
 }
 
 /** La tolérance de l'EPC : un demi-pion. C'est la granularité à laquelle il
@@ -148,9 +146,11 @@ function epcNumbers(epc) {
  * chaque candidate : le domaine n'est écrit qu'à un endroit, en Go, et une
  * seconde définition ici finirait par diverger de celle qui refuse.
  *
- * @param {string} seedSource
+ * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ *
+ * @param {string} seedSource @param {any} seed la graine « plateau », capturée au démarrage
  */
-async function buildBearoffQuestion(seedSource) {
+async function buildBearoffQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         let last = 'notBearoff';
@@ -164,13 +164,12 @@ async function buildBearoffQuestion(seedSource) {
                 last = generated?.refusal || last;
                 continue;
             }
-            await showImportedPosition(id);
             return { question: bearoffQuestion(generated, String(id), id), refusal: '' };
         }
         return { question: null, refusal: length === 0 ? 'noQuestion' : last };
     }
 
-    const request = seedSource === 'board' ? { source: 'board', seed: get(positionStore) } : { source: 'pool' };
+    const request = seedSource === 'board' ? { source: 'board', seed } : { source: 'pool' };
     const generated = await GenerateBearoffQuestion(request);
     if (!generated?.generated) return { question: null, refusal: generated?.refusal || 'noQuestion' };
     return { question: bearoffQuestion(generated, ''), refusal: generated.refusal || '' };
@@ -185,31 +184,51 @@ function bearoffQuestion(generated, key, positionId = null) {
         key: key || `pool:${generated.plies}:${JSON.stringify(generated.position.board.bearoff)}`,
         positionId,
         // La position engendrée n'est dans aucune base : elle est portée par la
-        // question, et c'est le service qui l'amène sur le plateau.
-        position: generated.position,
+        // question. Une question TIRÉE de la base, elle, en a une — et c'est
+        // celle-là qu'on montre, par son identifiant : deux écrivains sur le
+        // plateau, l'un asynchrone et l'autre non, laisseraient l'identifiant
+        // final dépendre de l'ordre d'arrivée.
+        position: positionId == null ? generated.position : null,
         numbers: epcNumbers(generated.epc)
     };
 }
 
+// ── Fabriquer n'est pas montrer ──────────────────────────────────────────────
+//
+// `buildQuestion` calcule une question — la position et sa vérité — et ne
+// touche NI au plateau, NI à l'onglet actif, NI à l'index de position.
+// `showQuestion` fait l'autre moitié, et une seule fois : au moment où la
+// question est posée.
+//
+// Les deux étaient un seul geste, et le préchargement les a mis en défaut : la
+// question n+1 se fabriquant pendant qu'on répond à la n, le plateau sautait
+// sur la position suivante sous les doigts de l'utilisateur, et
+// `showImportedPosition` refermait l'onglet Entraînement au passage (il force
+// l'onglet Analyse). Un préchargement qui pilote l'écran n'est pas un
+// préchargement, c'est une question posée deux fois.
+
 /**
- * @param {string} exercise @param {string} seedSource
+ * @param {string} exercise @param {string} seedSource @param {any} seed
  * @returns {Promise<{question: any, refusal: string}>}
  */
-async function buildQuestion(exercise, seedSource) {
+async function buildQuestion(exercise, seedSource, seed) {
     if (exercise === 'scores') return { question: buildScoresQuestion(), refusal: '' };
-    if (exercise === 'bearoff') return buildBearoffQuestion(seedSource);
-    return buildPipsQuestion(seedSource);
+    if (exercise === 'bearoff') return buildBearoffQuestion(seedSource, seed);
+    return buildPipsQuestion(seedSource, seed);
 }
 
 /**
- * Met la question sur le plateau quand elle en porte une. Les questions tirées
- * de la base y sont déjà arrivées par `showImportedPosition` ; une position
- * ENGENDRÉE n'a pas d'identifiant, donc rien d'autre ne peut l'y mettre.
+ * Amène la question sur le plateau. Une question tirée de la base y va par son
+ * identifiant ; une position engendrée n'en a pas, et rien d'autre ne peut
+ * l'y mettre. Une question de Scores ne touche pas au plateau du tout.
  * @param {any} question
  */
-function showQuestionOnBoard(question) {
-    if (!question?.position) return;
-    positionStore.set({ ...question.position, id: 0 });
+async function showQuestion(question) {
+    if (question?.positionId != null) {
+        await showImportedPosition(question.positionId);
+        return;
+    }
+    if (question?.position) positionStore.set({ ...question.position, id: 0 });
 }
 
 // ── La session ───────────────────────────────────────────────────────────────
@@ -226,6 +245,19 @@ function showQuestionOnBoard(question) {
  */
 let prefetched = null;
 
+/**
+ * La graine de la source « plateau », capturée UNE FOIS au démarrage.
+ *
+ * « La position telle qu'elle est au démarrage » (ADR-0041 règle 2) : relire
+ * le plateau à chaque question ferait de la QUESTION PRÉCÉDENTE la graine de
+ * la suivante, et les questions dériveraient de proche en proche — jusqu'à ce
+ * qu'un camp touche quatre pions, où `playOut` s'arrête à zéro pli et resert
+ * indéfiniment la position qu'on vient de répondre.
+ *
+ * @type {any}
+ */
+let boardSeed = null;
+
 /** Lance la fabrication de la question suivante, sans l'attendre.
  *  @param {string} exercise @param {string} seedSource */
 function prefetchNextQuestion(exercise, seedSource) {
@@ -233,7 +265,7 @@ function prefetchNextQuestion(exercise, seedSource) {
         prefetched = null;
         return;
     }
-    prefetched = buildQuestion(exercise, seedSource).catch((error) => {
+    prefetched = buildQuestion(exercise, seedSource, boardSeed).catch((error) => {
         logger.error('could not prepare the next training question:', error);
         return { question: null, refusal: 'noQuestion' };
     });
@@ -246,7 +278,7 @@ async function takeNextQuestion(exercise, seedSource) {
     prefetched = null;
     if (pending) return pending;
     try {
-        return await buildQuestion(exercise, seedSource);
+        return await buildQuestion(exercise, seedSource, boardSeed);
     } catch (error) {
         logger.error('could not build the next training question:', error);
         return { question: null, refusal: 'noQuestion' };
@@ -270,9 +302,11 @@ export async function startTrainingSession({ exercise, seedSource = '', limitSec
     }
     const source = declared.sources.includes(seedSource) ? seedSource : declared.defaultSource;
     prefetched = null;
+    // La graine « plateau » se prend ici, et ne se relit jamais.
+    boardSeed = get(positionStore);
     let built;
     try {
-        built = await buildQuestion(exercise, source);
+        built = await buildQuestion(exercise, source, boardSeed);
     } catch (error) {
         logger.error('could not build the first training question:', error);
         built = { question: null, refusal: 'noQuestion' };
@@ -282,7 +316,7 @@ export async function startTrainingSession({ exercise, seedSource = '', limitSec
         setStatusBarMessage(tMsg(refusalMessageKey(built.refusal)));
         return false;
     }
-    showQuestionOnBoard(built.question);
+    await showQuestion(built.question);
     trainingSessionStore.set(askQuestion(newSession({ exercise, seedSource: source, limitSeconds }), built.question, Date.now()));
     trainingElapsedStore.set(0);
     startTicker();
@@ -366,7 +400,7 @@ async function askNextQuestion(session) {
         setStatusBarMessage(tMsg(refusalMessageKey(built.refusal)));
         return;
     }
-    showQuestionOnBoard(built.question);
+    await showQuestion(built.question);
     trainingSessionStore.set(askQuestion(session, built.question, Date.now()));
     trainingElapsedStore.set(0);
     prefetchNextQuestion(session.exercise, session.seedSource);
@@ -382,6 +416,7 @@ export async function finishTrainingSession() {
     const closed = session.revealed ? recordQuestion(session) : session;
     stopTicker();
     prefetched = null;
+    boardSeed = null;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
     const row = finishedSession(closed);
@@ -401,6 +436,7 @@ export async function finishTrainingSession() {
 export function quitTrainingSession() {
     stopTicker();
     prefetched = null;
+    boardSeed = null;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
 }

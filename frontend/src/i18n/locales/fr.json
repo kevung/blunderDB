@@ -1634,7 +1634,7 @@
         },
         "retry": "Réessayer",
         "validate": "Valider",
-        "tolerance": "Tolérance {value} pion.",
+        "tolerance": "Tolérance : un demi-pion.",
         "refusal": {
             "notBearoff": "Cet exercice demande un bearoff : les deux camps entièrement dans leur jan.",
             "tooFewCheckers": "Cet exercice demande de 4 à 15 pions par camp, le reste sorti.",

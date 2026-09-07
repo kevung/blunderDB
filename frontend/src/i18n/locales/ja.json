@@ -1634,7 +1634,7 @@
         },
         "retry": "再試行",
         "validate": "判定",
-        "tolerance": "許容誤差 {value} ピップ。",
+        "tolerance": "許容誤差は半ピップです。",
         "refusal": {
             "notBearoff": "この練習にはベアオフが必要です。両者ともすべての駒が自陣内にある局面です。",
             "tooFewCheckers": "この練習には各side 4〜15 個の駒が必要です。残りは上がっていること。",

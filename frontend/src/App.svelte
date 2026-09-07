@@ -8,7 +8,7 @@
     import { WindowGetSize } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists, StartupFilePath, CheckForUpdate } from '../wailsjs/go/gui/App.js';
-    import { GetCheckForUpdates } from '../wailsjs/go/main/Config.js';
+    import { GetCheckForUpdates, GetTrainingSeedSources } from '../wailsjs/go/main/Config.js';
     import { metaStore } from './stores/metaStore.js';
     import { isNewerVersion } from './utils/semver.js';
     import { initLanguage, t, tMsg } from './i18n';
@@ -329,6 +329,11 @@
     // changé de nom en changeant de lieu — on regarde un bearoff, on répond un
     // EPC (ADR-0040 règle 3). Une commande qu'on tapait hier ne doit pas
     // répondre « exercice inconnu » aujourd'hui.
+    //
+    // La commande lit la MÊME source mémorisée que le lanceur (ADR-0041
+    // règle 2). Deux entrées du même exercice qui donnent deux sources ne sont
+    // pas deux entrées du même exercice, et le manuel promet la mémoire sans
+    // réserve.
     const TAB_EXERCISE_ALIASES = { scores: 'scores', tp: 'scores', takepoint: 'scores', pips: 'pips', pip: 'pips', bearoff: 'bearoff', epc: 'bearoff' };
 
     async function startTrainingCommand(drill) {
@@ -344,7 +349,13 @@
         const exercise = TAB_EXERCISE_ALIASES[wanted];
         if (exercise) {
             if (!showTab('training')) return;
-            await startTrainingSession({ exercise });
+            let seedSource = '';
+            try {
+                seedSource = (await GetTrainingSeedSources())?.[exercise] || '';
+            } catch (error) {
+                logger.error('could not read the remembered training source:', error);
+            }
+            await startTrainingSession({ exercise, seedSource });
             return;
         }
         if (DRILLS.includes(wanted)) {

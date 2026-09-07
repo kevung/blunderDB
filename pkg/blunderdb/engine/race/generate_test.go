@@ -198,9 +198,29 @@ func TestPoolShapesAreCompleteBearIns(t *testing.T) {
 }
 
 func TestEveryGeneratedQuestionIsInTheDomain(t *testing.T) {
+	// The three sources, not just the pool: they differ in where the seed
+	// comes from and in how many plies are played, so each can leave the
+	// domain in its own way.
+	seed := &domain.Position{
+		Board:        boardWith(sideBoard{3, 2, 3, 2, 3, 2}, sideBoard{2, 3, 2, 3, 2, 3}),
+		PlayerOnRoll: domain.White,
+	}
+	for _, source := range []string{SourcePool, SourceBoard, SourceLibrary} {
+		t.Run(source, func(t *testing.T) {
+			request := BearoffRequest{Source: source}
+			if source != SourcePool {
+				request.Seed = seed
+			}
+			assertQuestionsAreInDomain(t, request)
+		})
+	}
+}
+
+func assertQuestionsAreInDomain(t *testing.T, request BearoffRequest) {
+	t.Helper()
 	rng := seededRNG()
 	for i := 0; i < 500; i++ {
-		q := generateBearoff(BearoffRequest{Source: SourcePool}, rng)
+		q := generateBearoff(request, rng)
 		if !q.Generated {
 			t.Fatalf("draw %d refused: %q", i, q.Refusal)
 		}
@@ -312,5 +332,56 @@ func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
 	}
 	if per > budgetPerQuestion {
 		t.Errorf("a question costs %v, over the stated budget of %v", per, budgetPerQuestion)
+	}
+}
+
+// rollers reports how many of `draws` questions put each side on roll.
+func rollers(t *testing.T, req BearoffRequest, draws int) map[int]int {
+	t.Helper()
+	rng := seededRNG()
+	seen := map[int]int{}
+	for i := 0; i < draws; i++ {
+		q := generateBearoff(req, rng)
+		if !q.Generated {
+			t.Fatalf("draw %d refused: %q", i, q.Refusal)
+		}
+		seen[q.Position.PlayerOnRoll]++
+	}
+	return seen
+}
+
+func TestTheRollerIsDrawnFromThePoolAndKeptFromASeed(t *testing.T) {
+	// « Roller drawn » (rule 4). The first version of this test only checked
+	// that the side on roll was 0 or 1 — which is true of the zero value, so
+	// it stayed green while every library question handed the move to Black.
+	// The oracle has to tell a DRAW from a constant.
+	pool := rollers(t, BearoffRequest{Source: SourcePool}, 400)
+	if pool[domain.Black] == 0 || pool[domain.White] == 0 {
+		t.Errorf("pool questions put %v on roll: the roller is not drawn", pool)
+	}
+
+	// A seed the user brought keeps its own roller: at k = 0 the library
+	// source hands the position back as it is, and turning it over to the
+	// other side would be a silent adaptation on a field nobody checks.
+	for _, side := range []int{domain.Black, domain.White} {
+		seed := &domain.Position{
+			Board:        boardWith(sideBoard{3, 2, 3, 2, 3, 2}, sideBoard{2, 3, 2, 3, 2, 3}),
+			PlayerOnRoll: side,
+		}
+		got := rollers(t, BearoffRequest{Source: SourceLibrary, Seed: seed}, 50)
+		if len(got) != 1 || got[side] != 50 {
+			t.Errorf("a library seed with %d on roll produced %v", side, got)
+		}
+	}
+
+	// A board nobody assigned a side to falls back to the draw rather than to
+	// the zero value.
+	unassigned := &domain.Position{
+		Board:        boardWith(sideBoard{3, 2, 3, 2, 3, 2}, sideBoard{2, 3, 2, 3, 2, 3}),
+		PlayerOnRoll: domain.None,
+	}
+	got := rollers(t, BearoffRequest{Source: SourceLibrary, Seed: unassigned}, 400)
+	if got[domain.Black] == 0 || got[domain.White] == 0 {
+		t.Errorf("an unassigned seed produced %v: the roller is not drawn", got)
 	}
 }

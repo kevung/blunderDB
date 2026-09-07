@@ -149,6 +149,7 @@ func generateBearoff(req BearoffRequest, rng *rand.Rand) BearoffQuestion {
 			return BearoffQuestion{Source: req.Source, Refusal: RefusalNotBearoff}
 		}
 		seed, refusal := seedFromBoard(&req.Seed.Board)
+		seed.onRoll = rollerOf(req.Seed, rng)
 		switch {
 		case refusal == RefusalEmptyBoard:
 			// Rule 3: an empty board is not a wrong position, it is no
@@ -206,9 +207,10 @@ type bearoffSeed struct {
 // They are DATA OF THE EXERCISE, not a setting: adding one is a code change
 // with its histogram check (generate_histogram_test.go), never a user-facing
 // option. Each is fifteen chequers home — a bear-in that has just completed —
-// and the plies do the rest. The eight cover the shapes a bear-off actually
-// starts in: even, back-loaded, front-loaded, gapped, and thin on the ace
-// point.
+// and the plies do the rest. The ten cover the shapes a bear-off actually
+// starts in: even, back-loaded, front-loaded, gapped, thin on the ace point,
+// and — a fifth of them, which is what the real histogram asks for — buried
+// low on it.
 var pool = [10]sideBoard{
 	{0, 1, 2, 4, 4, 4}, // wastage 7.5 — the tightest bear-in there is
 	{1, 2, 2, 3, 3, 4}, // 8.3
@@ -220,6 +222,25 @@ var pool = [10]sideBoard{
 	{4, 0, 3, 2, 4, 2}, // 13.5, gapped on the two point
 	{4, 4, 3, 2, 1, 1}, // 18.6, chequers buried low
 	{5, 3, 3, 2, 1, 1}, // 19.5, the same, worse
+}
+
+// rollerOf is who moves next in the question.
+//
+// A seed the user brought — from the board or from the library — carries a
+// side on roll, and that is the one to keep: at k = 0 the library source hands
+// the position back « as it is », and quietly turning every one of them over
+// to Black would be exactly the silent adaptation rule 3 forbids, on the one
+// field nobody would think to check.
+//
+// Only when the seed names nobody is the roller DRAWN (rule 4). That is the
+// pool's case, and the case of a board somebody edited without choosing a
+// side. Drawing is not a fallback here: it is what makes the pool's questions
+// come from both sides of the board.
+func rollerOf(seed *domain.Position, rng *rand.Rand) int {
+	if seed != nil && (seed.PlayerOnRoll == domain.Black || seed.PlayerOnRoll == domain.White) {
+		return seed.PlayerOnRoll
+	}
+	return rng.IntN(2)
 }
 
 // poolSeed draws a shape for each side INDEPENDENTLY, so the two sides are
@@ -236,10 +257,12 @@ func poolSeed(rng *rand.Rand) bearoffSeed {
 // seedFromBoard reads a seed off a full board, or names why it is not one.
 //
 // Only the GEOMETRY is judged here — where the chequers are, and how many.
-// The session frame (cube centred, money, a side on roll) is not read from the
-// seed and not refused for: it is what the exercise IS (rule 4), it is stated
-// in the manual, and the EPC does not depend on it. Setting it on the question
-// is not an adaptation of the position the user chose.
+// The cube and the score are not read from the seed and not refused for: they
+// are what the exercise IS (rule 4, money play at a centred cube), the manual
+// says so, and the EPC does not depend on them.
+//
+// The SIDE ON ROLL is different, and it is not set here: it belongs to the
+// seed when the seed has one. See rollerOf.
 func seedFromBoard(b *domain.Board) (bearoffSeed, string) {
 	if b.Points[domain.WhiteBar].Checkers > 0 || b.Points[domain.BlackBar].Checkers > 0 {
 		return bearoffSeed{}, RefusalNotBearoff

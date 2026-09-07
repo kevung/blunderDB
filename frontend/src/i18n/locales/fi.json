@@ -1634,7 +1634,7 @@
         },
         "retry": "Yritä uudelleen",
         "validate": "Tarkista",
-        "tolerance": "Toleranssi {value} pip.",
+        "tolerance": "Toleranssi: puoli pippiä.",
         "refusal": {
             "notBearoff": "Tämä harjoitus vaatii ulosvientiaseman: molemmat osapuolet kokonaan omalla kotialueellaan.",
             "tooFewCheckers": "Tämä harjoitus vaatii 4–15 nappulaa puolta kohden, loput ulos vietyinä.",

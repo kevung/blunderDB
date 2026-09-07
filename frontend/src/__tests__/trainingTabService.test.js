@@ -24,6 +24,8 @@ vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), log: vi.fn() } 
 
 import * as db from '../../wailsjs/go/database/Database.js';
 import * as app from '../../wailsjs/go/gui/App.js';
+import * as importService from '../services/importService.js';
+import fr from '../i18n/locales/fr.json';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { trainingSessionStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
@@ -249,6 +251,94 @@ describe('le préchargement (ADR-0041 règle 5)', () => {
     });
 });
 
+describe('fabriquer n’est pas montrer', () => {
+    // Le défaut : le préchargement appelait la fabrication ENTIÈRE, effet
+    // d'affichage compris. Le plateau sautait sur la position de la question
+    // n+1 pendant qu'on répondait à la n, et `showImportedPosition` refermait
+    // l'onglet Entraînement au passage (il force l'onglet Analyse).
+    //
+    // L'oracle est un COMPTE d'appels — celui-là même que les tests de cette
+    // suite avaient cessé de faire quand ils sont passés à `mockResolvedValue`
+    // pour absorber l'appel supplémentaire au lieu de le contester.
+    test('Pions / base : deux questions fabriquées, une seule montrée', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        db.LoadPosition.mockResolvedValue(board());
+        expect(await startTrainingSession({ exercise: 'pips', seedSource: 'library' })).toBe(true);
+        await flush();
+
+        expect(db.LoadPosition, 'la question suivante se prépare bien').toHaveBeenCalledTimes(2);
+        expect(importService.showImportedPosition, 'une seule question est à l’écran').toHaveBeenCalledTimes(1);
+    });
+
+    test('Bearoff / base : le préchargement ne touche pas au plateau', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
+        await flush();
+
+        expect(app.GenerateBearoffQuestion).toHaveBeenCalledTimes(2);
+        expect(importService.showImportedPosition).toHaveBeenCalledTimes(1);
+    });
+
+    test('Bearoff / vivier : le plateau garde la question posée, pas la suivante', async () => {
+        // Deux positions distinctes : celle de la question à l'écran, et celle
+        // que le préchargement fabrique derrière.
+        const shown = generated(87.4, 91.2);
+        const next = generated(50, 50);
+        next.position = { ...board(), player_on_roll: 1 };
+        app.GenerateBearoffQuestion.mockResolvedValueOnce(shown).mockResolvedValue(next);
+
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' });
+        await flush();
+        expect(app.GenerateBearoffQuestion).toHaveBeenCalledTimes(2);
+        expect(get(positionStore).player_on_roll, 'le plateau a sauté sur la question suivante').toBe(shown.position.player_on_roll);
+    });
+
+    // Une question tirée de la base a un identifiant : c'est par lui qu'elle
+    // arrive sur le plateau. Deux écrivains — l'un asynchrone, l'autre non —
+    // auraient laissé l'identifiant final dépendre de l'ordre d'arrivée.
+    test('une question tirée de la base arrive par son identifiant, pas par sa copie', async () => {
+        positionsStore.setIds([7]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        positionStore.set({ id: 42 });
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' });
+
+        expect(importService.showImportedPosition).toHaveBeenCalledWith(7);
+        expect(get(positionStore).id, 'la copie engendrée a écrasé la position de la base').toBe(42);
+    });
+});
+
+describe('la source « plateau » ne dérive pas (ADR-0041 règle 2)', () => {
+    // « La position telle qu'elle est AU DÉMARRAGE ». Le défaut : la question
+    // était écrite dans `positionStore` avant que le préchargement n'y relise
+    // la graine, donc chaque question devenait la graine de la suivante — et
+    // dès qu'un camp touchait quatre pions, le générateur s'arrêtait à zéro pli
+    // et reservait indéfiniment la position qu'on venait de répondre.
+    test('toutes les questions partent de la MÊME graine', async () => {
+        const seed = board();
+        positionStore.set(seed);
+        app.GenerateBearoffQuestion.mockImplementation(() =>
+            // Le moteur rend une position DIFFÉRENTE de la graine, comme il le
+            // fait après un à quatre plis.
+            Promise.resolve(generated(70, 70, { position: { ...board(), player_on_roll: 1 } }))
+        );
+
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'board' });
+        await flush();
+        revealQuestion();
+        await nextTrainingQuestion();
+        await flush();
+
+        const seeds = app.GenerateBearoffQuestion.mock.calls.map((call) => call[0].seed);
+        expect(seeds.length).toBeGreaterThanOrEqual(3);
+        for (const sent of seeds) {
+            expect(sent, 'une question est devenue la graine de la suivante').toEqual(seed);
+        }
+    });
+});
+
 describe('une session de Bearoff', () => {
     test('le moteur est appelé avec la source, et les deux EPC deviennent les nombres', async () => {
         app.GenerateBearoffQuestion.mockResolvedValue(generated(87.4, 91.2));
@@ -330,5 +420,19 @@ describe('une session de Bearoff', () => {
         app.GenerateBearoffQuestion.mockResolvedValue({ generated: false, refusal: 'notBearoff' });
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(false);
         expect(get(trainingRefusalStore)).toBe('notBearoff');
+    });
+});
+
+describe('la tolérance dite en toutes lettres', () => {
+    // La phrase de l'interface porte le nombre en mots — « un demi-pion » —
+    // parce qu'un `toFixed(1)` écrivait « 0.5 » au milieu d'une phrase
+    // française. Le prix de ce choix est que la prose peut dériver du code :
+    // c'est ce que ce test interdit.
+    test('la prose des neuf langues et la constante disent la même chose', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' });
+        const [first] = get(trainingSessionStore).question.numbers;
+        expect(first.tolerance, 'la phrase dit « un demi-pion »').toBe(0.5);
+        expect(fr.training.tolerance).toContain('demi-pion');
     });
 });

@@ -1634,7 +1634,7 @@
         },
         "retry": "Riprovare",
         "validate": "Verifica",
-        "tolerance": "Tolleranza {value} pip.",
+        "tolerance": "Tolleranza: mezzo pip.",
         "refusal": {
             "notBearoff": "Questo esercizio richiede un bearoff: entrambi i lati interamente nella loro casa.",
             "tooFewCheckers": "Questo esercizio richiede da 4 a 15 pedine per lato, le altre uscite.",

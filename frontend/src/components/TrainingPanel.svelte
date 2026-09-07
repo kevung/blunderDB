@@ -214,7 +214,13 @@
                 <p class="hint">{$t('training.faultHint')}</p>
             {/if}
             {#if question && !session.revealed && entered}
-                <p class="hint">{$t('training.tolerance', { value: (question.numbers[0]?.tolerance ?? 0).toFixed(1) })}</p>
+                <!-- La tolérance est une CONSTANTE de l'exercice, pas une
+                     variable : elle se dit en toutes lettres, dans chaque
+                     langue, plutôt que par un nombre formaté — « 0.5 » dans
+                     une phrase française n'est pas un demi-pion, c'est un
+                     séparateur décimal anglais. `trainingTab.test.js` tient
+                     la prose et `EPC_TOLERANCE` ensemble. -->
+                <p class="hint">{$t('training.tolerance')}</p>
             {/if}
 
             <div class="actions">

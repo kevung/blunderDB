@@ -1634,7 +1634,7 @@
         },
         "retry": "Retry",
         "validate": "Check",
-        "tolerance": "Tolerance {value} pip.",
+        "tolerance": "Tolerance: half a pip.",
         "refusal": {
             "notBearoff": "This exercise needs a bear-off: both sides entirely in their home board.",
             "tooFewCheckers": "This exercise needs 4 to 15 chequers a side, the rest borne off.",

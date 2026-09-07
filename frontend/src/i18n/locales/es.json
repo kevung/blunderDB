@@ -1634,7 +1634,7 @@
         },
         "retry": "Reintentar",
         "validate": "Comprobar",
-        "tolerance": "Tolerancia {value} pip.",
+        "tolerance": "Tolerancia: medio pip.",
         "refusal": {
             "notBearoff": "Este ejercicio necesita un bearoff: ambos bandos enteramente en su casa.",
             "tooFewCheckers": "Este ejercicio necesita de 4 a 15 fichas por bando, el resto retiradas.",

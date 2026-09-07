@@ -12,7 +12,7 @@
     // SAISI, qui était la seule chose que la bande gardait de plus. #323 y
     // emmènera le quiz, et la bande disparaîtra.
     import { trainingActiveStore, trainingCurrentStore, trainingIndexStore, trainingQuestionsStore, trainingVerdictStore } from '../stores/trainingStore.js';
-    import { answerCurrent, answerQuiz, answerQuizBoard, nextQuestion, stopTraining } from '../services/trainingSessionService.js';
+    import { answerQuiz, answerQuizBoard, nextQuestion, stopTraining } from '../services/trainingSessionService.js';
     import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { resetPlay, undoLast } from '../services/quizPlay.js';
     import { positionStore } from '../stores/positionStore.js';
@@ -43,8 +43,11 @@
         field?.focus();
     });
 
-    let isQuiz = $derived(question?.drill === 'quiz');
-    let isCubeQuestion = $derived(isQuiz && question?.prompt === 'cube');
+    // La bande ne sert plus qu'un exercice : toute question qu'elle affiche
+    // est un quiz, et il ne reste à distinguer que ses deux formes — un coup
+    // de pions, qui se joue ou s'écrit, et une action de videau, qui se
+    // clique.
+    let isCubeQuestion = $derived(question?.prompt === 'cube');
 
     // Le coup joué sur le plateau l'emporte sur la saisie : quand les deux
     // existent, c'est le plateau qu'on vient de manipuler, et c'est lui qu'on
@@ -60,12 +63,7 @@
             answerQuizBoard();
             return;
         }
-        if (isQuiz) {
-            answerQuiz(String(input).trim());
-            return;
-        }
-        const value = parseFloat(String(input).replace(',', '.'));
-        answerCurrent(value);
+        answerQuiz(String(input).trim());
     }
 
     /** @param {string} action 'nd', 'dt' ou 'dp' */
@@ -88,16 +86,17 @@
         event.stopPropagation();
     }
 
+    /** @param {string} drill */
     function label(drill) {
         return drill === 'quiz' ? $t('training.drillQuiz') : drill;
     }
 </script>
 
 {#if $trainingActiveStore && question}
-    <div class="training-bar" role="region" aria-label={$t('training.title')}>
+    <div class="training-bar" role="region" aria-label={$t('training.title')} data-testid="training-bar">
         <span class="progress">{$t('training.progress', { i: index, n: total })}</span>
         <span class="drill">{label(question.drill)}</span>
-        {#if verdict && isQuiz}
+        {#if verdict}
             <!-- Trois issues à distinguer, et les confondre mentirait : un coup
                  impossible n'est pas un coup mal noté, et un coup légal que le
                  moteur n'a pas classé n'est pas une faute — il n'a simplement
@@ -127,10 +126,10 @@
                     bind:this={field}
                     bind:value={input}
                     type="text"
-                    inputmode={isQuiz ? 'text' : 'decimal'}
+                    inputmode="text"
                     disabled={!!verdict}
                     aria-label={$t('training.answer')}
-                    placeholder={isQuiz ? $t('training.movePlaceholder') : $t('training.answer')}
+                    placeholder={$t('training.movePlaceholder')}
                     onkeydown={onKeydown}
                 />
             {/if}

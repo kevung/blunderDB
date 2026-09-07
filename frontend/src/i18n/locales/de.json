@@ -1634,7 +1634,7 @@
         },
         "retry": "Erneut versuchen",
         "validate": "Prüfen",
-        "tolerance": "Toleranz {value} Punkt.",
+        "tolerance": "Toleranz: ein halber Punkt.",
         "refusal": {
             "notBearoff": "Diese Übung braucht ein Auswürfeln: beide Seiten vollständig im Heimfeld.",
             "tooFewCheckers": "Diese Übung braucht 4 bis 15 Steine je Seite, der Rest ausgewürfelt.",
