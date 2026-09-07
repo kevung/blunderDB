@@ -90,7 +90,7 @@ Commandes disponibles
    "edit", "Modifie les métadonnées et les seuils de la base."
    "verify", "Vérifie l'intégrité de la base."
    "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
-   "repair", "Recalcule les colonnes scalaires tirées de chaque analyse."
+   "repair", "Recalcule ce que la base dérive de ce qu'elle stocke."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
    "completion", "Affiche un script de complétion shell (bash, zsh, fish)."
@@ -1690,12 +1690,15 @@ message explicite plutôt que de risquer un compactage interrompu.
 
 .. _cli_repair:
 
-repair — Recalculer les colonnes d'analyse
-------------------------------------------
+repair — Recalculer ce qui est dérivé
+--------------------------------------
 
-Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse
-elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas
-touchées : ce sont les valeurs qu'on en avait tirées qui sont refaites.
+Recalcule ce que la base tire de ce qu'elle stocke : les colonnes scalaires de
+chaque analyse à partir de l'analyse elle-même, dont elles ne sont qu'une
+projection ; la phase et le type de jeu de chaque position à partir de son
+damier ; et la sentinelle de Crawford de chaque score à partir du match d'où la
+position vient. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en
+avait tirées qui sont refaites.
 
 .. code-block:: bash
 
@@ -1704,8 +1707,10 @@ touchées : ce sont les valeurs qu'on en avait tirées qui sont refaites.
 **Options:**
 
 * ``--db`` — Base de données (obligatoire).
-* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
-  (``{"repaired"}``, le nombre de lignes réellement changées).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un compteur
+  par passe : ``repaired`` (colonnes d'analyse), ``phases`` (positions
+  reclassées) et ``crawford`` (positions réhachées). Chacun dit le nombre de
+  lignes réellement changées.
 
 Utile après une correction de la façon dont une analyse importée est lue. Le
 cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de double » de
@@ -1717,9 +1722,22 @@ un PR de 0,00 ; la colonne se recalcule maintenant à partir des coups du
 match. Corriger la lecture ne change rien aux lignes déjà écrites ; cette
 commande les refait.
 
+La passe Crawford, elle, touche les positions elles-mêmes. Un score à ``1``
+signifie « un point à faire, et cette partie EST la Crawford » ; ``0`` signifie
+« un point à faire, la Crawford est derrière ». Tant que les importeurs n'ont
+pas écrit cette distinction, toute position post-Crawford a été enregistrée
+comme une position de Crawford, donc lue videau mort — là où le poursuivant
+double en réalité à la première occasion. Corriger le score change le hachage
+de la position : la ligne est donc réhachée, et fusionnée avec sa jumelle
+correcte si la base en tient déjà une — l'analyse, les commentaires, les
+collections, les cartes Anki et les coups du match suivent la ligne
+survivante. Une position qu'aucun match ne désigne est laissée telle quelle :
+rien ne contredit ce que son score annonce.
+
 Rien ne la déclenche automatiquement, et c'est voulu : réécrire les colonnes
-d'analyse de tout le monde à la simple ouverture d'une base n'est pas quelque
-chose qu'un outil doit faire dans le dos de son utilisateur.
+d'analyse de tout le monde, ou réhacher des positions, à la simple ouverture
+d'une base n'est pas quelque chose qu'un outil doit faire dans le dos de son
+utilisateur.
 
 **Exemple:**
 
@@ -1728,6 +1746,8 @@ chose qu'un outil doit faire dans le dos de son utilisateur.
    ./blunderdb repair --db base.db
 
    # 42 analyses repaired.
+   # 7 positions reclassified.
+   # 3 post-Crawford positions rehashed.
 
 delete — Supprimer des données
 -------------------------------

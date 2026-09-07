@@ -8,7 +8,9 @@ import (
 
 // runRepair is `blunderdb repair`: recompute what the database DERIVES from
 // what it stores — the scalar columns of every analysis, from the JSON they
-// are a projection of, and the phase of every position, from its board.
+// are a projection of, the phase of every position, from its board, and the
+// Crawford sentinel of every away score, from the match the position came
+// from (#338).
 //
 // The JSON stays intact, so a bug in the projection is repairable without
 // re-importing anything — it has been needed once already, when the XG
@@ -34,11 +36,15 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println()
 		fmt.Println("Recompute what the database derives from what it stores:")
 		fmt.Println("the scalar columns of every analysis, from the JSON they are")
-		fmt.Println("a projection of, and the phase of every position, from its")
-		fmt.Println("board. The analyses and the positions themselves are left")
-		fmt.Println("untouched: this repairs what was derived from them, and is")
-		fmt.Println("useful after a fix to how an imported analysis is read, or")
-		fmt.Println("after a change to how a phase is decided.")
+		fmt.Println("a projection of, the phase of every position, from its board,")
+		fmt.Println("and the Crawford sentinel of every away score, from the match")
+		fmt.Println("the position came from. Useful after a fix to how an imported")
+		fmt.Println("analysis is read, after a change to how a phase is decided,")
+		fmt.Println("and once, for the databases imported before the importers")
+		fmt.Println("wrote the sentinel: a post-Crawford position stored as a")
+		fmt.Println("Crawford one is read cube-dead. Correcting it changes the")
+		fmt.Println("position's Zobrist hash, so such a position is rehashed and")
+		fmt.Println("merged with its correct twin when the database holds one.")
 		fmt.Println("Nothing runs it automatically.")
 		fmt.Println()
 		fmt.Println("Options:")
@@ -75,12 +81,17 @@ func (cli *CLI) runRepair(args []string) error {
 	if err != nil {
 		return fmt.Errorf("repair failed: %w", err)
 	}
+	crawford, err := cli.db.RepairCrawfordSentinel()
+	if err != nil {
+		return fmt.Errorf("repair failed: %w", err)
+	}
 
 	if formatLower == "json" {
 		return printJSON(struct {
 			Repaired int `json:"repaired"`
 			Phases   int `json:"phases"`
-		}{repaired, phases})
+			Crawford int `json:"crawford"`
+		}{repaired, phases, crawford})
 	}
 	switch repaired {
 	case 0:
@@ -97,6 +108,14 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("1 position reclassified.")
 	default:
 		fmt.Printf("%d positions reclassified.\n", phases)
+	}
+	switch crawford {
+	case 0:
+		fmt.Println("Every position already carried the right Crawford sentinel.")
+	case 1:
+		fmt.Println("1 post-Crawford position rehashed.")
+	default:
+		fmt.Printf("%d post-Crawford positions rehashed.\n", crawford)
 	}
 	return nil
 }

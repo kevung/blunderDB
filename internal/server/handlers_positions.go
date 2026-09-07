@@ -106,6 +106,15 @@ func (s *Server) positionRoutes() []route {
 			n, err := ps().ReclassifyDerived(ctx, scope)
 			return reclassifyResp{Reclassified: n}, err
 		})},
+		// Réparation de la sentinelle Crawford (#338, ADR-0045 §7). Jumelle de
+		// la route ci-dessus, et pour la même raison : la valeur est dérivée du
+		// match, les importeurs l'ont longtemps écrite fausse, et la corriger
+		// après coup REHACHE la position — l'away score fait partie de
+		// l'identité Zobrist. Donc explicite, jamais automatique.
+		{http.MethodPost, "/v1/positions.repairCrawford", rpc(func(ctx context.Context, scope string, _ struct{}) (repairCrawfordResp, error) {
+			n, err := ps().RepairCrawfordSentinel(ctx, scope)
+			return repairCrawfordResp{Repaired: n}, err
+		})},
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {
 			return ps().Load(ctx, scope, req.ID)
 		})},
@@ -240,4 +249,10 @@ func (s *Server) positionRoutes() []route {
 // reclassifyResp reports how many positions had their derived phase rewritten.
 type reclassifyResp struct {
 	Reclassified int `json:"reclassified"`
+}
+
+// repairCrawfordResp reports how many positions were rehashed out of the
+// Crawford sentinel they had been imported with.
+type repairCrawfordResp struct {
+	Repaired int `json:"repaired"`
 }

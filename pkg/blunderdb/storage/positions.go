@@ -55,6 +55,23 @@ type PositionStore interface {
 	// migration, and so does /v1/positions.reclassifyPhases. Running it on a
 	// database that is already up to date rewrites nothing.
 	ReclassifyDerived(ctx context.Context, scope string) (int, error)
+
+	// RepairCrawfordSentinel rewrites the away score of every position that
+	// carries the ambiguous `1` although the game it was imported from is a
+	// post-Crawford one, and returns how many rows changed (issue #338,
+	// ADR-0045 §7).
+	//
+	// The away score carries the Crawford rule inside the number (CONTEXT.md,
+	// « Away score ») and the importers wrote `1` for both readings until
+	// this issue, so every post-Crawford position already in a database is
+	// read as cube-dead. Correcting it changes the Zobrist hash — the away
+	// score is part of the identity — so the row is REHASHED, merging into an
+	// already-correct twin when one exists rather than colliding with it.
+	//
+	// `blunderdb repair` runs it, so does /v1/positions.repairCrawford;
+	// nothing runs it automatically, and running it on a database that is
+	// already correct rewrites nothing.
+	RepairCrawfordSentinel(ctx context.Context, scope string) (int, error)
 }
 
 // Finding "positions like this one" is NOT here, and that is deliberate: it is

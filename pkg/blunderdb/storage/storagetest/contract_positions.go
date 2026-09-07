@@ -403,3 +403,126 @@ func testAnalysisSaveIsAnUpsert(t *testing.T, s storage.Storage) {
 		t.Errorf("Load after Delete: got %v, want ErrNotFound — a second row survived the upsert", err)
 	}
 }
+
+// testRepairCrawfordSentinel pins the repair of issue #338 on both backends.
+//
+// The importers wrote away `1` on every 1-away position, Crawford game or not,
+// so a post-Crawford position already stored reads as cube-dead (CONTEXT.md,
+// « Away score »). Correcting it changes the Zobrist hash — the away score is
+// part of the identity — so the row is rehashed, which is why this cannot be
+// an UPDATE and be done with it: when the corrected position is ALREADY
+// stored, the two must become one row rather than collide.
+//
+// Both halves are checked, plus what must not move: the Crawford game's own
+// position, and a position no game points at.
+func testRepairCrawfordSentinel(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps, ms := s.Positions(), s.Matches()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7, MatchHash: "crawford-repair"}
+	matchID, err := ms.Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	// The Crawford game (6-2), then the game after it (6-3).
+	var gameIDs [2]int64
+	for i, initial := range [2][2]int32{{6, 2}, {6, 3}} {
+		g := domain.Game{MatchID: matchID, GameNumber: int32(i + 1), InitialScore: initial}
+		id, err := ms.CreateGame(ctx, "", &g)
+		if err != nil {
+			t.Fatalf("CreateGame %d: %v", i+1, err)
+		}
+		gameIDs[i] = id
+	}
+	play := func(gameID, positionID int64, n int32) {
+		t.Helper()
+		mv := domain.Move{GameID: gameID, MoveNumber: n, MoveType: "checker",
+			PositionID: positionID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+		if _, err := ms.CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+	}
+	save := func(what string, p domain.Position) int64 {
+		t.Helper()
+		id, err := ps.Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save %s: %v", what, err)
+		}
+		return id
+	}
+
+	// In the Crawford game, away [1, 5] is right and must not move.
+	inCrawford := statsDecisionPos(t, 0)
+	inCrawford.Score = [2]int{domain.Crawford, 5}
+	crawfordID := save("the Crawford game's position", inCrawford)
+	play(gameIDs[0], crawfordID, 1)
+
+	// In the game after it, the same away score is the importers' bug.
+	stale := statsDecisionPos(t, 1)
+	stale.Score = [2]int{domain.Crawford, 4}
+	staleID := save("the stale post-Crawford position", stale)
+	play(gameIDs[1], staleID, 1)
+
+	// A second stale one whose corrected twin is already stored: the merge.
+	twinBoard := statsDecisionPos(t, 2)
+	twinBoard.Score = [2]int{domain.PostCrawford, 4}
+	twinID := save("the correct twin", twinBoard)
+	staleTwin := statsDecisionPos(t, 2)
+	staleTwin.Score = [2]int{domain.Crawford, 4}
+	staleTwinID := save("the stale twin", staleTwin)
+	if staleTwinID == twinID {
+		t.Fatal("the two away scores hashed to one row; the case proves nothing")
+	}
+	play(gameIDs[1], staleTwinID, 2)
+
+	// And one no game points at: away 1 is then nobody's mistake.
+	loose := statsDecisionPos(t, 3)
+	loose.Score = [2]int{domain.Crawford, 3}
+	looseID := save("the loose position", loose)
+
+	n, err := ps.RepairCrawfordSentinel(ctx, "")
+	if err != nil {
+		t.Fatalf("RepairCrawfordSentinel: %v", err)
+	}
+	if n != 2 {
+		t.Errorf("repaired %d positions, want 2 (the two post-Crawford ones)", n)
+	}
+
+	got, err := ps.Load(ctx, "", staleID)
+	if err != nil {
+		t.Fatalf("Load the repaired position: %v", err)
+	}
+	if got.Score != [2]int{domain.PostCrawford, 4} {
+		t.Errorf("away score after repair = %v, want [0 4]", got.Score)
+	}
+	// The merged one is gone, and its move now names the survivor.
+	if _, err := ps.Load(ctx, "", staleTwinID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("the merged position %d is still stored (err=%v)", staleTwinID, err)
+	}
+	for mv, err := range ms.Moves(ctx, "", gameIDs[1]) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		if mv.MoveNumber == 2 && mv.PositionID != twinID {
+			t.Errorf("the merged move names position %d, want the survivor %d", mv.PositionID, twinID)
+		}
+	}
+	// What must not move.
+	for id, want := range map[int64][2]int{
+		crawfordID: {domain.Crawford, 5},
+		looseID:    {domain.Crawford, 3},
+	} {
+		p, err := ps.Load(ctx, "", id)
+		if err != nil {
+			t.Fatalf("Load %d: %v", id, err)
+		}
+		if p.Score != want {
+			t.Errorf("position %d was rewritten to %v, want %v", id, p.Score, want)
+		}
+	}
+
+	// Idempotent: everything now says what it means.
+	if again, err := ps.RepairCrawfordSentinel(ctx, ""); err != nil || again != 0 {
+		t.Errorf("second pass: repaired=%d err=%v, want 0 and no error", again, err)
+	}
+}

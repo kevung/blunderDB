@@ -29,6 +29,14 @@ func (s *positionStore) ReclassifyDerived(ctx context.Context, scope string) (in
 	return sqlshared.ReclassifyDerived(ctx, s.shared, scope)
 }
 
+// RepairCrawfordSentinel rewrites the away score of the positions a
+// post-Crawford game was imported with the Crawford sentinel on, rehashing
+// them. See sqlshared.RepairCrawfordSentinel — the store goes in because the
+// repair rehashes through the same Load/Exists/Update this backend serves.
+func (s *positionStore) RepairCrawfordSentinel(ctx context.Context, scope string) (int, error) {
+	return sqlshared.RepairCrawfordSentinel(ctx, s.shared, scope, s)
+}
+
 var _ storage.PositionStore = (*positionStore)(nil)
 
 // scanner is satisfied by both pgx.Row and pgx.Rows.

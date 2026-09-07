@@ -2033,6 +2033,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/reclassifyResp"
+  /v1/positions.repairCrawford:
+    post:
+      operationId: positions.repairCrawford
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repairCrawfordResp"
   /v1/positions.save:
     post:
       operationId: positions.save
@@ -3440,6 +3457,12 @@ components:
           items:
             type: integer
             format: int64
+    repairCrawfordResp:
+      type: object
+      properties:
+        repaired:
+          type: integer
+          format: int32
     repairResp:
       type: object
       properties:

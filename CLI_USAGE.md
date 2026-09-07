@@ -1091,11 +1091,12 @@ Anything older than thirty days is dropped by `blunderdb vacuum` — never at op
 ## Repair Command
 
 Recompute what the database derives from what it stores: the scalar columns of
-every analysis, from the JSON they are a projection of, and each position's
-`game_phase` and `game_type`, from its board. Those derived values are what the
-search filters and the statistics read, so this is what to run after a fix to
-how an imported analysis is parsed, or after a change to how a phase or a game
-type is decided. Nothing runs it automatically.
+every analysis, from the JSON they are a projection of, each position's
+`game_phase` and `game_type`, from its board, and the Crawford sentinel of every
+away score, from the match the position came from. Those derived values are what
+the search filters, the statistics and the cube verdict read, so this is what to
+run after a fix to how an imported analysis is parsed, or after a change to how
+a phase or a game type is decided. Nothing runs it automatically.
 
 ```bash
 ./blunderDB repair --db database.db
@@ -1105,10 +1106,24 @@ type is decided. Nothing runs it automatically.
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` (default) or `json`
 
-The analyses and the positions themselves are left untouched: this repairs only
-what was derived from them, and a position with no analysis keeps its empty
-columns. Use `analyze` to compute the analyses that are missing. Running it on
-a database that is already up to date rewrites nothing and costs one scan.
+The analyses are left untouched: this repairs only what was derived from them,
+and a position with no analysis keeps its empty columns. Use `analyze` to
+compute the analyses that are missing. Running it on a database that is already
+up to date rewrites nothing and costs one scan.
+
+The Crawford pass is the one that touches the positions themselves, and it is
+worth knowing why. An away score of `1` means "one point to go, and this IS the
+Crawford game"; `0` means "one point to go, Crawford behind us". Until the
+importers wrote that distinction, every post-Crawford position was stored as a
+Crawford one and read with a dead cube — where the trailer in fact doubles at
+the first opportunity. Correcting the score changes the position's Zobrist hash,
+so such a row is rehashed, and merged with its correctly stored twin when the
+database already holds one: the analysis, the comments, the collections, the
+Anki cards and the match moves follow the surviving row. A position no match
+points at is left alone — nothing contradicts what its score says.
+
+The JSON report has one counter per pass: `repaired` (analysis columns),
+`phases` (positions reclassified) and `crawford` (positions rehashed).
 
 ## Info Command
 

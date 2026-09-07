@@ -360,6 +360,7 @@ var databaseParity = map[string]parityEntry{
 	"RemoveAnkiCard":                    {CLI: "anki card", Server: "/v1/anki.removeCard"},
 	"RepairAnalyses":                    {CLI: "repair", Server: "/v1/analyses.repair"},
 	"RepairGamePhases":                  {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},
+	"RepairCrawfordSentinel":            {CLI: "repair", Server: "/v1/positions.repairCrawford"},
 	"BeginImportBatch":                  {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
 	"FinishImportBatch":                 {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
 	"ImportReport":                      {CLI: "list", Server: "/v1/imports.report"},

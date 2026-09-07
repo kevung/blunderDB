@@ -486,6 +486,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.reclassifyPhases — JSON."
         return self._call("/v1/positions.reclassifyPhases", payload)
 
+    def positions_repair_crawford(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.repairCrawford — JSON."
+        return self._call("/v1/positions.repairCrawford", payload)
+
     def positions_save(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.save — JSON."
         return self._call("/v1/positions.save", payload)
