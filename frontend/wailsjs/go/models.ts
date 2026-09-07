@@ -536,6 +536,98 @@ export namespace database {
 		    return a;
 		}
 	}
+	export class DirectoryCSVError {
+	    line: number;
+	    code: string;
+	    text?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DirectoryCSVError(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.line = source["line"];
+	        this.code = source["code"];
+	        this.text = source["text"];
+	    }
+	}
+	export class DirectoryEntry {
+	    name: string;
+	    club?: string;
+	    rating?: number;
+	    entries: number;
+	    lastTournamentId?: number;
+	    lastTournament?: string;
+	    lastDate?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DirectoryEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.club = source["club"];
+	        this.rating = source["rating"];
+	        this.entries = source["entries"];
+	        this.lastTournamentId = source["lastTournamentId"];
+	        this.lastTournament = source["lastTournament"];
+	        this.lastDate = source["lastDate"];
+	    }
+	}
+	export class DirectoryImport {
+	    rows: DirectoryEntry[];
+	    errors: DirectoryCSVError[];
+	    skipped: DirectoryCSVError[];
+	
+	    static createFrom(source: any = {}) {
+	        return new DirectoryImport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rows = this.convertValues(source["rows"], DirectoryEntry);
+	        this.errors = this.convertValues(source["errors"], DirectoryCSVError);
+	        this.skipped = this.convertValues(source["skipped"], DirectoryCSVError);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class DirectorySource {
+	    tournamentId: number;
+	    name: string;
+	    date: string;
+	    entrants: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DirectorySource(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournamentId = source["tournamentId"];
+	        this.name = source["name"];
+	        this.date = source["date"];
+	        this.entrants = source["entrants"];
+	    }
+	}
 	export class EntrySuggestion {
 	    name: string;
 	    pr: number;

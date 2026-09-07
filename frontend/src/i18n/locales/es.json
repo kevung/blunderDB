@@ -2077,6 +2077,28 @@
             "roundHint": "Qué ronda imprimir. La más reciente por defecto.",
             "latest": "la más reciente",
             "error": "No se ha podido escribir la hoja de emparejamientos."
+        },
+        "directory": {
+            "title": "Directorio ({n})",
+            "hint": "Todos los inscritos de todos sus torneos, vistos como una sola lista. Nada se almacena: borrar una dirección retira a sus inscritos.",
+            "takeAgain": "Retomar los inscritos de un torneo",
+            "entrants": "{n} inscritos",
+            "take": "Retomar",
+            "empty": "Ningún torneo dirigido todavía: el directorio se llenará solo.",
+            "export": "Copiar el directorio (CSV)",
+            "exportHint": "El directorio va al portapapeles; péguelo en una hoja de cálculo.",
+            "importHint": "o pegue un CSV abajo (nombre, club, valoración)",
+            "paste": "nombre, club, valoración",
+            "read": "Leer",
+            "willEnter": "{n} líneas listas para inscribir.",
+            "skipped": "Línea {line} leída como encabezado ({text}).",
+            "confirm": "Inscribir",
+            "copied": "Directorio copiado al portapapeles.",
+            "failed": "No se han podido retomar esos inscritos.",
+            "errors": {
+                "noName": "Línea {line}: sin nombre.",
+                "badRating": "Línea {line}: «{text}» no es una valoración."
+            }
         }
     }
 }

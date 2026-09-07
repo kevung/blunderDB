@@ -2077,6 +2077,28 @@
             "roundHint": "Quelle ronde imprimer. Par défaut, la plus récente.",
             "latest": "la plus récente",
             "error": "Impossible d'écrire la feuille d'appariements."
+        },
+        "directory": {
+            "title": "Annuaire ({n})",
+            "hint": "Tous les inscrits de tous vos tournois, vus comme une seule liste. Rien n'est stocké : supprimer une direction en retire ses inscrits.",
+            "takeAgain": "Reprendre les inscrits d'un tournoi",
+            "entrants": "{n} inscrits",
+            "take": "Reprendre",
+            "empty": "Aucun tournoi dirigé pour l'instant : l'annuaire se remplira tout seul.",
+            "export": "Copier l'annuaire (CSV)",
+            "exportHint": "L'annuaire part dans le presse-papier ; collez-le dans un tableur.",
+            "importHint": "ou collez un CSV ci-dessous (nom, club, cote)",
+            "paste": "nom, club, cote",
+            "read": "Lire",
+            "willEnter": "{n} lignes prêtes à être inscrites.",
+            "skipped": "Ligne {line} lue comme un en-tête ({text}).",
+            "confirm": "Inscrire",
+            "copied": "Annuaire copié dans le presse-papier.",
+            "failed": "Impossible de reprendre ces inscrits.",
+            "errors": {
+                "noName": "Ligne {line} : pas de nom.",
+                "badRating": "Ligne {line} : « {text} » n'est pas une cote."
+            }
         }
     }
 }

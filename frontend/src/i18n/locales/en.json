@@ -2077,6 +2077,28 @@
             "roundHint": "Which round to print. The most recent by default.",
             "latest": "most recent",
             "error": "The pairing sheet could not be written."
+        },
+        "directory": {
+            "title": "Directory ({n})",
+            "hint": "Every entrant of every tournament of yours, seen as one list. Nothing is stored: deleting a direction takes its entrants out of it.",
+            "takeAgain": "Take a tournament's entrants again",
+            "entrants": "{n} entrants",
+            "take": "Take",
+            "empty": "No directed tournament yet: the directory will fill itself.",
+            "export": "Copy the directory (CSV)",
+            "exportHint": "The directory goes to the clipboard; paste it into a spreadsheet.",
+            "importHint": "or paste a CSV below (name, club, rating)",
+            "paste": "name, club, rating",
+            "read": "Read",
+            "willEnter": "{n} lines ready to enter.",
+            "skipped": "Line {line} read as a header ({text}).",
+            "confirm": "Enter them",
+            "copied": "Directory copied to the clipboard.",
+            "failed": "Those entrants could not be taken.",
+            "errors": {
+                "noName": "Line {line}: no name.",
+                "badRating": "Line {line}: “{text}” is not a rating."
+            }
         }
     }
 }

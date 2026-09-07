@@ -140,7 +140,9 @@ export async function installDirectionEngine(page, opts = {}) {
             db.DirectionRounds = () => Promise.resolve(running.length ? 1 : 0);
 
             db.EnterParticipants = (_id, blob) => {
-                for (const p of JSON.parse(blob || '[]')) players.push({ ...p });
+                // Le backend attribue un identifiant à qui n'en a pas (`participantID`) : sans
+                // lui, deux inscrits sans id auraient la même clé dans la liste.
+                for (const p of JSON.parse(blob || '[]')) players.push({ ...p, id: p.id || 'p' + (players.length + 1) });
                 proposals = pair();
                 events += 1;
                 return Promise.resolve(null);
@@ -271,6 +273,15 @@ export async function installDirectionEngine(page, opts = {}) {
                 return Promise.resolve(TOURNAMENT_ID);
             };
             db.GetTournamentMatches = () => Promise.resolve([]);
+
+            // L'annuaire (#391). Un tournoi précédent, déjà dirigé, dont on reprend les
+            // inscrits : c'est le geste que le budget mesure.
+            const PREVIOUS_ID = 99;
+            db.DirectorySources = () => Promise.resolve([{ tournamentId: PREVIOUS_ID, name: 'Open de Lyon, mars', date: '2026-03-14', entrants: entrants.length }]);
+            db.DirectoryEntrants = () => Promise.resolve(entrants.map((p) => ({ name: p.name, club: p.club, rating: p.rating, entries: 1 })));
+            db.Directory = () => Promise.resolve(entrants.map((p) => ({ name: p.name, club: p.club, rating: p.rating, entries: 1 })));
+            db.DirectoryCSV = () => Promise.resolve('name,club,rating\n');
+            db.ParseDirectoryCSV = () => Promise.resolve({ rows: [], errors: [], skipped: [] });
             db.GetMatchesByTournament = () => Promise.resolve([]);
         },
         { entrants: ENTRANTS, directed: opts.directed !== false }

@@ -274,6 +274,22 @@ export function DirectionStore() {
   return window['go']['database']['Database']['DirectionStore']();
 }
 
+export function Directory() {
+  return window['go']['database']['Database']['Directory']();
+}
+
+export function DirectoryCSV() {
+  return window['go']['database']['Database']['DirectoryCSV']();
+}
+
+export function DirectoryEntrants(arg1) {
+  return window['go']['database']['Database']['DirectoryEntrants'](arg1);
+}
+
+export function DirectorySources() {
+  return window['go']['database']['Database']['DirectorySources']();
+}
+
 export function DiscardFromTrash(arg1) {
   return window['go']['database']['Database']['DiscardFromTrash'](arg1);
 }
@@ -680,6 +696,10 @@ export function OpenProtectedCopyPath(arg1, arg2) {
 
 export function OpenTranscription(arg1) {
   return window['go']['database']['Database']['OpenTranscription'](arg1);
+}
+
+export function ParseDirectoryCSV(arg1) {
+  return window['go']['database']['Database']['ParseDirectoryCSV'](arg1);
 }
 
 export function ParsePositionText(arg1) {

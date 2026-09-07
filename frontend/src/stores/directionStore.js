@@ -41,7 +41,12 @@ import {
     SetDirectionStrings,
     WriteDirectionPage,
     WriteDirectionPairingSheet,
-    DirectionRounds
+    DirectionRounds,
+    Directory,
+    DirectorySources,
+    DirectoryEntrants,
+    DirectoryCSV,
+    ParseDirectoryCSV
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock, tMsg } from '../i18n';
@@ -344,6 +349,56 @@ export async function directionRounds() {
         logger.error('direction: counting rounds failed', e);
         return 0;
     }
+}
+
+/*
+ * L'annuaire (issue #391).
+ *
+ * Un directeur de club dirige les mêmes trente personnes tous les mois, et retaper leurs noms à
+ * chaque tournoi est le premier abandon possible du logiciel. L'annuaire est une VUE DÉRIVÉE de
+ * toutes les Directions de la base, jamais une table : blunderDB continue de n'avoir aucune
+ * notion de personne, et supprimer une Direction en retire ses Participants.
+ */
+
+/** Tous les Participants de toutes les Directions, dédoublonnés par nom. */
+export async function directory() {
+    try {
+        return (await Directory()) || [];
+    } catch (e) {
+        logger.error('direction: directory failed', e);
+        return [];
+    }
+}
+
+/** Les tournois dirigés dont on peut reprendre les inscrits d'un coup. */
+export async function directorySources() {
+    try {
+        return (await DirectorySources()) || [];
+    } catch (e) {
+        logger.error('direction: directory sources failed', e);
+        return [];
+    }
+}
+
+/** Reprend les inscrits d'un tournoi précédent dans celui qui est ouvert. */
+export async function takeEntrantsFrom(sourceTournamentId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const entrants = (await DirectoryEntrants(sourceTournamentId)) || [];
+    return enterParticipants(entrants.map((e) => ({ name: e.name, club: e.club || '', rating: e.rating || 0 })));
+}
+
+/** L'annuaire en CSV, tel qu'un directeur le garde d'une saison sur l'autre. */
+export async function directoryCSV() {
+    return (await DirectoryCSV()) || '';
+}
+
+/**
+ * Lit un CSV collé, SANS RIEN ÉCRIRE : l'aperçu et l'entrée sont deux gestes, et le directeur
+ * voit les lignes fautives avant que quoi que ce soit n'entre.
+ */
+export async function parseDirectoryCSV(body) {
+    return await ParseDirectoryCSV(body || '');
 }
 
 /**

@@ -2077,6 +2077,28 @@
             "roundHint": "Mikä kierros tulostetaan. Oletuksena viimeisin.",
             "latest": "viimeisin",
             "error": "Parituslomakkeen kirjoittaminen epäonnistui."
+        },
+        "directory": {
+            "title": "Hakemisto ({n})",
+            "hint": "Kaikkien turnaustesi kaikki osallistujat yhtenä listana. Mitään ei tallenneta: johtamisen poistaminen poistaa sen osallistujat.",
+            "takeAgain": "Ota turnauksen osallistujat uudelleen",
+            "entrants": "{n} osallistujaa",
+            "take": "Ota",
+            "empty": "Ei vielä johdettuja turnauksia: hakemisto täyttyy itsestään.",
+            "export": "Kopioi hakemisto (CSV)",
+            "exportHint": "Hakemisto menee leikepöydälle; liitä se taulukkolaskentaan.",
+            "importHint": "tai liitä CSV alle (nimi, seura, luokitus)",
+            "paste": "nimi, seura, luokitus",
+            "read": "Lue",
+            "willEnter": "{n} riviä valmiina ilmoitettavaksi.",
+            "skipped": "Rivi {line} luettiin otsikoksi ({text}).",
+            "confirm": "Ilmoita",
+            "copied": "Hakemisto kopioitu leikepöydälle.",
+            "failed": "Näitä osallistujia ei voitu ottaa.",
+            "errors": {
+                "noName": "Rivi {line}: ei nimeä.",
+                "badRating": "Rivi {line}: ”{text}” ei ole luokitus."
+            }
         }
     }
 }
