@@ -1,7 +1,9 @@
 package transcript
 
 import (
+	"reflect"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -485,4 +487,134 @@ func hasInconsistency(info ActionInfo, kind InconsistencyKind) bool {
 		}
 	}
 	return false
+}
+
+// TestSwapPlayersIsTheSameMatchFromTheOtherSide is the recipe of T3.1's "inverser
+// les joueurs": the gesture exchanges the names, gives every Action to the other
+// camp and turns the board around — and the proof is a Replay, not a diff of the
+// document. The same match must come back, read from the other side: the same
+// games, the same points, won by the other player, with the score and the cube
+// exchanged and not one Inconsistency more than before.
+//
+// The gesture is checked on a document that has actually derived something: a
+// double taken (a cube with an owner, which the mirror has to move too) and a game
+// finished by a resignation, whose winner is a fact of the Replay and not of any
+// Action.
+func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
+	doc := docOf(5, opening(domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions,
+		Action{Side: domain.White, Kind: KindDouble},
+		Action{Side: domain.Black, Kind: KindTake},
+		// Player 2 gives the game up at the doubled cube: 2 points to player 1.
+		Action{Side: domain.White, Kind: KindResign, Level: 1},
+	)
+	doc.Actions = append(doc.Actions, opening(domain.White, 2, 5))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.White, 5, 2))
+	doc.Header.Player1, doc.Header.Player2 = "Alice", "Bob"
+	doc.Cursor = len(doc.Actions)
+
+	before := Replay(doc, 0)
+	if before.Score != [2]int{2, 0} || len(before.Games) != 2 {
+		t.Fatalf("the fixture is not the match it means to be: score %v, %d games", before.Score, len(before.Games))
+	}
+
+	after, err := Apply(doc, Gesture{Kind: GestureSwapPlayers})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if after.Header.Player1 != "Bob" || after.Header.Player2 != "Alice" {
+		t.Fatalf("names = %q/%q", after.Header.Player1, after.Header.Player2)
+	}
+	if len(after.Actions) != len(doc.Actions) {
+		t.Fatalf("the gesture changed the document: %d actions for %d", len(after.Actions), len(doc.Actions))
+	}
+
+	swapped := Replay(after, 0)
+	if swapped.Inconsistent() && !before.Inconsistent() {
+		t.Fatal("swapping the players made the match illegal")
+	}
+	if got, want := swapped.Score, [2]int{before.Score[1], before.Score[0]}; got != want {
+		t.Errorf("score = %v, want %v", got, want)
+	}
+	if len(swapped.Games) != len(before.Games) {
+		t.Fatalf("games = %d, want %d", len(swapped.Games), len(before.Games))
+	}
+	for i, g := range before.Games {
+		got := swapped.Games[i]
+		if got.PointsWon != g.PointsWon || got.Finished != g.Finished {
+			t.Errorf("game %d: %d points (finished %v), want %d (%v)", i+1, got.PointsWon, got.Finished, g.PointsWon, g.Finished)
+		}
+		if g.Finished && got.Winner != opponent(g.Winner) {
+			t.Errorf("game %d: won by player %d, want player %d", i+1, got.Winner+1, opponent(g.Winner)+1)
+		}
+		if got.InitialScore != [2]int{g.InitialScore[1], g.InitialScore[0]} {
+			t.Errorf("game %d: initial score %v, want %v reversed", i+1, got.InitialScore, g.InitialScore)
+		}
+	}
+	// The cube is one of the two players' as well: the taker of the double is now
+	// the other camp, and the position the match goes on from says so.
+	if bc, sc := before.Next.Position.Cube, swapped.Next.Position.Cube; bc.Value != sc.Value {
+		t.Errorf("cube value = %d, want %d", sc.Value, bc.Value)
+	}
+	// And the side on roll is the other one, since the same player is on roll.
+	if got, want := swapped.Next.Side, opponent(before.Next.Side); got != want {
+		t.Errorf("side on roll = %d, want %d", got, want)
+	}
+	// Swapping twice is the identity: the document comes back as it was.
+	back, err := Apply(after, Gesture{Kind: GestureSwapPlayers})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(back.Actions, doc.Actions) || back.Header != doc.Header {
+		t.Error("swapping the players twice did not give the document back")
+	}
+}
+
+// TestSetHeaderWritesTheMetadataAndNothingElse holds the contract of T3.1's
+// metadata pane: the pane states the descriptive head of the document, and the
+// three things it is NOT asked for survive it — the length, the session's rules,
+// and the match id a first save posted. A form that sent a zero length would
+// otherwise turn a 7-point match into a money session, and a form that dropped
+// the match id would file a second Match at the next save.
+func TestSetHeaderWritesTheMetadataAndNothingElse(t *testing.T) {
+	doc := openedMatch(t, 7)
+	matchID := int64(42)
+	doc.Header.MatchID = &matchID
+	doc.Header.MaxCube = 3
+	doc.Header.Player1 = "Alice"
+
+	tournament := int64(7)
+	when := time.Date(2026, 9, 7, 0, 0, 0, 0, time.UTC)
+	after, err := Apply(doc, Gesture{Kind: GestureSetHeader, Header: Header{
+		Player1:      "Alice Martin",
+		Player2:      "Bob",
+		Event:        "Open de Paris",
+		Location:     "Paris",
+		Round:        "1/4",
+		Date:         when,
+		Transcriber:  "Kévin",
+		TournamentID: &tournament,
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := after.Header
+	if h.Player1 != "Alice Martin" || h.Player2 != "Bob" || h.Event != "Open de Paris" ||
+		h.Location != "Paris" || h.Round != "1/4" || !h.Date.Equal(when) || h.Transcriber != "Kévin" {
+		t.Fatalf("the metadata was not written: %+v", h)
+	}
+	if h.TournamentID == nil || *h.TournamentID != tournament {
+		t.Errorf("tournament = %v, want %d", h.TournamentID, tournament)
+	}
+	if h.MatchLength != 7 || h.Jacoby || h.Beaver || h.MaxCube != 3 {
+		t.Errorf("the session's own fields were overwritten: %+v", h)
+	}
+	if h.MatchID == nil || *h.MatchID != matchID {
+		t.Errorf("match id = %v, want %d: a form never posts one, and never takes one away", h.MatchID, matchID)
+	}
+	// And nothing of the match itself moved.
+	if len(after.Actions) != len(doc.Actions) {
+		t.Errorf("actions = %d, want %d", len(after.Actions), len(doc.Actions))
+	}
 }

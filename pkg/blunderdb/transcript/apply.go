@@ -57,8 +57,13 @@ const (
 	// GestureSwapPlayers exchanges the two players: names, every side, and the board,
 	// which is why every play's steps are mirrored with them.
 	GestureSwapPlayers GestureKind = "swap_players"
-	// GestureSetHeader replaces the header wholesale — the metadata, the tournament,
-	// and the match id a first save posts.
+	// GestureSetHeader writes the DESCRIPTIVE head of the document: the two names,
+	// the event, the place, the round, the date, who is typing it in, and the
+	// tournament the saved Match is to be attached to. Everything else the header
+	// carries has a gesture of its own and is kept as it stands — the length and
+	// the session's rules ([GestureSetLength]), and the match id, which only a
+	// first save posts. A metadata form that forgot one field would otherwise turn
+	// a match into a money session, or make a saved draft file a second Match.
 	GestureSetHeader GestureKind = "set_header"
 	// GestureUndo and GestureRedo walk the editing session's stack. They are
 	// NAMED here, so that a caller has one spelling of them, and they are the two
@@ -317,13 +322,27 @@ func Apply(doc Document, g Gesture) (Document, error) {
 		return out, nil
 
 	case GestureSetHeader:
-		out.Header = g.Header
+		out.Header = mergeHeader(out.Header, g.Header)
 		return out, nil
 
 	case GestureUndo, GestureRedo:
 		return doc, ErrNotPure
 	}
 	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)
+}
+
+// mergeHeader writes the descriptive fields of `in` over `cur` and keeps the rest.
+//
+// What is kept is what a form has no business stating: the length and the session's
+// rules, which [GestureSetLength] alone re-states, and the match id, which a first
+// save posts and nothing else ever changes (fonctionnel.md §1.1 — "jamais" saisi).
+func mergeHeader(cur, in Header) Header {
+	out := cur
+	out.Player1, out.Player2 = in.Player1, in.Player2
+	out.Event, out.Location, out.Round = in.Event, in.Location, in.Round
+	out.Date, out.Transcriber = in.Date, in.Transcriber
+	out.TournamentID = in.TournamentID
+	return out
 }
 
 // ensureEntry returns the Action being typed, opening one at the Cursor if none is.

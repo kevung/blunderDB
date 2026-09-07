@@ -10,6 +10,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -155,10 +156,31 @@ func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.Matc
 		_ = tx.Rollback()
 		return res, err
 	}
+	if err := attachTournament(ctx, tx, res.MatchID, header.TournamentID); err != nil {
+		_ = tx.Rollback()
+		return res, err
+	}
 	if err := tx.Commit(); err != nil {
 		return res, err
 	}
 	return res, nil
+}
+
+// attachTournament is the header's tournament made true of the Match, in the
+// same transaction as the write.
+//
+// It is stated HERE and not in the graph because ReplaceHeader does not touch
+// `tournament_id`: the column belongs to the tournament's own ordering
+// (tournament_sort_order goes with it), and the store that owns both is the
+// one asked. A save with no tournament DETACHES, so that clearing the field in
+// the metadata pane is a change like any other rather than one the next save
+// silently ignores — the attachment is decided at the save (fonctionnel.md
+// §1.1), and the draft is what decides it.
+func attachTournament(ctx context.Context, tx storage.Tx, matchID int64, tournamentID *int64) error {
+	if tournamentID != nil && *tournamentID != 0 {
+		return tx.Tournaments().AddMatch(ctx, "", *tournamentID, matchID)
+	}
+	return tx.Tournaments().RemoveMatch(ctx, "", matchID)
 }
 
 // transcriptGraph turns what the transcript package returns into the graph

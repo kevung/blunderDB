@@ -1080,6 +1080,16 @@ mention *Crawford* lorsque la partie en cours l'est, le numéro de la partie,
 l'état du videau — sa valeur, centré ou au nom de celui qui le possède — et le
 camp au trait.
 
+Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à tout
+moment : les noms des deux joueurs — autocomplétés depuis les joueurs de la
+base —, l'événement, le lieu, la ronde, la date (celle du jour par défaut), le
+transcripteur (l'utilisateur de la base par défaut) et le tournoi auquel le
+match sera rattaché lors de l'enregistrement. Aucun champ n'est obligatoire :
+un brouillon sans noms s'enregistre et s'exporte, avec des en-têtes vides. Le
+bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
+au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre
+côté.
+
 Sous la barre, le brouillon occupe deux moitiés : la **saisie** à gauche, le
 **transcript** à droite. Une barre de correction les surmonte — insérer avant,
 insérer après, supprimer, changer de camp, annuler, rétablir — qui reprend à la
