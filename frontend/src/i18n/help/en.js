@@ -1306,6 +1306,10 @@ export default {
 <td>Select that candidate.</td>
 </tr>
 <tr>
+<td>Click (on the roll triangle)</td>
+<td>Enter the roll in a single gesture: the cell carries both dice, doubles on the diagonal. During the opening the triangle gives way to a row of six dice, one click giving one side's die.</td>
+</tr>
+<tr>
 <td>ENTER</td>
 <td>Record the selected play (the last play of a game).</td>
 </tr>
@@ -1352,6 +1356,7 @@ export default {
 </tbody>
 </table>
 <p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
+<p>The triangle of the twenty-one rolls sits under the two roll cells, beside the keyboard and not in its place: two digits remain twice as fast as a click, and the triangle is there for whoever transcribes with a hand on the mouse. One cell per roll, never two: 3-1 and 1-3 are the same roll.</p>
 <p>A game ends by a pass, by a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, times the value of the cube). The score, the Crawford game and the end of the match are then shown above the dice, and the opening of the next game is expected.</p>
 <p>The transcript takes the right half of the panel: one column per player, one row per turn, the cube action and the end of the game in the column of whoever acted. The cursor's cell is framed; moving the cursor brings the board back to the position of the action aimed at and lists its candidates, with the play that was recorded selected. An inconsistency (illegal move, double turn, impossible cube action, action past the end of the match, inconsistent dice) decorates its cell and is named in a tooltip. Games can be folded; the cursor's game is open. A collapsible pane shows the draft's exact <code>.mat</code> text, with a button to copy it.</p>
 <p>The draft bar carries three buttons. “Save” (CTRL-ENTER) writes the match into the library: created the first time, replaced afterwards under the same identifier, and the analysis of the new positions alone starts at once, with its progress and its cancellation in the status bar. The draft bar states where it stands: never saved, saved so long ago, or modified since. “Export .mat” writes the match to a Jellyfish file, exactly as it was typed. “Close draft” deletes the draft after a confirmation; a match already saved stays in the library, final.</p>

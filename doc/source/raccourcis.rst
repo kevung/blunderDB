@@ -284,6 +284,7 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
    "Clic (sur une ligne)", "Sélectionner ce candidat."
+   "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Pendant l'ouverture, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis."
    "Esc", "Abandonner la saisie en cours."
@@ -298,6 +299,11 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
+
+Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du
+clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
+clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
+jet, jamais deux : 3-1 et 1-3 sont le même jet.
 
 Une partie se termine par une passe, par une résignation ou par la sortie du
 quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du

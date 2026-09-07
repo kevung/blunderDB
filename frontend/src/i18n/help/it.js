@@ -1306,6 +1306,10 @@ export default {
 <td>Selezionare quel candidato.</td>
 </tr>
 <tr>
+<td>Clic (sul triangolo dei tiri)</td>
+<td>Inserire il tiro con un solo gesto: la casella porta entrambi i dadi, i doppi sulla diagonale. Durante l'apertura il triangolo lascia il posto a una fila di sei dadi, e un clic dà il dado di un campo.</td>
+</tr>
+<tr>
 <td>INVIO</td>
 <td>Registrare la mossa selezionata (ultima mossa di una partita).</td>
 </tr>
@@ -1352,6 +1356,7 @@ export default {
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
+<p>Il triangolo dei ventuno tiri sta sotto le due caselle del tiro, accanto alla tastiera e non al suo posto: due cifre restano due volte più rapide di un clic, e il triangolo è lì per chi trascrive con la mano sul mouse. Una casella per tiro, mai due: 3-1 e 1-3 sono lo stesso tiro.</p>
 <p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
 <p>La barra della bozza porta tre pulsanti. «Salva» (CTRL-INVIO) scrive la partita nella libreria: creata la prima volta, sostituita in seguito con lo stesso identificatore, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. La barra della bozza ne dice lo stato: mai salvata, salvata da tanto, o modificata da allora. «Esporta .mat» scrive la partita in un file Jellyfish, così come è stata digitata. «Chiudi la bozza» elimina la bozza dopo una conferma; una partita già salvata resta nella libreria, definitiva.</p>

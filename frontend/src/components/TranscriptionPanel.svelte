@@ -62,8 +62,9 @@
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
-    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState } from '../services/transcriptionKeys.js';
+    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState, enterDicePair, enterSingleDie, DICE_KINDS } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
+    import DiceTriangle from './DiceTriangle.svelte';
     import TranscriptView from './TranscriptView.svelte';
     import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, setTranscription, clearTranscription, resetTranscriptionKeys } from '../stores/transcriptionStore.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
@@ -469,6 +470,36 @@
         panelEl?.focus({ preventScroll: true });
     }
 
+    // ── le triangle des jets (T2.1) ──────────────────────────────────────
+    //
+    // Le clic passe par la MÊME machine que les touches — `enterDicePair`
+    // applique les deux dés l'un après l'autre, comme deux frappes — et le
+    // panneau en fait exactement ce qu'il fait d'une frappe : la liste du jet
+    // précédent est jetée avant que les gestes ne partent, puis les candidats
+    // du nouveau jet sont demandés. Le focus revient au panneau : la souris
+    // donne le jet, le clavier finit le tour, et rien ne se perd entre les deux.
+
+    function applyMouseDice(next) {
+        ranked = [];
+        unranked = false;
+        danced = false;
+        transcriptionKeyStore.set(next.state);
+        run(next.commands).then(settleCandidates);
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    /** Une case du triangle : le jet entier, dé fort d'abord. */
+    function pickDice(high, low) {
+        if (!draft) return;
+        applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, { expects }));
+    }
+
+    /** Une case de la rangée des six : le dé d'un camp, à l'ouverture. */
+    function pickDie(die) {
+        if (!draft) return;
+        applyMouseDice(enterSingleDie(get(transcriptionKeyStore), die, { expects }));
+    }
+
     function chooseCandidate(index) {
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
@@ -651,6 +682,11 @@
     // here and not drawn on the board.
     let dieCells = $derived([keys.dice[0] || '·', keys.dice[1] || '·']);
 
+    // Le triangle n'est là que lorsqu'un jet est attendu : devant une réponse au
+    // videau, pendant une résignation ou une fois le match fini, il n'y a pas de
+    // dé à donner et une cible qui ne répond à rien vaut moins que pas de cible.
+    let diceEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && DICE_KINDS.has(expects));
+
     let rankedMoves = $derived(ranked.map((row) => row.move));
     // Which referential the equity column is stated in (ADR-0016 point 6,
     // ADR-0019): money points at money play, normalised match equity at a score.
@@ -765,6 +801,17 @@
                             <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
                         {/if}
                     </div>
+
+                    {#if diceEntryOpen}
+                        <!-- La cible souris des dés (T2.1), SOUS les deux cases
+                             du jet et jamais à leur place : le clavier reste
+                             deux fois plus rapide (0,56 s contre 1,21 s) et les
+                             deux entrées coexistent. Sous, et non à côté :
+                             mesuré à 178 px, le triangle ne laisserait pas de
+                             quoi écrire la phrase du camp au trait dans une
+                             colonne de 288 px. -->
+                        <DiceTriangle single={expects === 'opening'} onPick={pickDice} onDie={pickDie} />
+                    {/if}
 
                     {#if lastFlags.length}
                         <!-- Une Incohérence est MARQUÉE, jamais refusée (ADR-0044) :
