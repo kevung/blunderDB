@@ -14,9 +14,27 @@
      */
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
-    import { proposalLabel, actionKey } from './labels.js';
+    import { proposalLabel, actionKey, renderWarning, isRepair } from './labels.js';
 
     let { proposals = [], players = [], busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
+
+    /* Le compte à rebours d'une micro-ronde (issue #388). L'échéance vient du moteur ; ce qui
+       se compte ici, c'est le temps qui reste, et il faut donc un battement de seconde — aucun
+       événement ne sera écrit d'ici là. */
+    let tick = $state(Date.now());
+    $effect(() => {
+        const timer = setInterval(() => (tick = Date.now()), 1000);
+        return () => clearInterval(timer);
+    });
+
+    function remaining(until) {
+        if (!until) return '';
+        const at = new Date(until).getTime();
+        if (!Number.isFinite(at) || at < 946684800000) return '';
+        const left = Math.max(0, Math.round((at - tick) / 1000));
+        const m = Math.floor(left / 60);
+        return `${m}:${String(left % 60).padStart(2, '0')}`;
+    }
 
     /* « Attendre » n'est pas une proposition : c'est le moteur qui dit qu'il n'y a rien à
        faire, et sa raison intéresse le directeur. On la montre, sans bouton. */
@@ -97,7 +115,12 @@
             <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
             <ul>
                 {#each shown as a (actionKey(a))}
-                    <li>{proposalLabel($t, a, playerName)}</li>
+                    <li class:repair={isRepair(a)}>
+                        {#if isRepair(a)}
+                            <span class="tag">{$t('direction.proposals.repairTag')}</span>
+                        {/if}
+                        {proposalLabel($t, a, playerName)}
+                    </li>
                 {/each}
             </ul>
             <div class="confirm-actions">
@@ -109,7 +132,10 @@
 
     <ul class="queue">
         {#each shown as a, i (actionKey(a))}
-            <li class:selected={i === selected} onmouseenter={() => (selected = i)}>
+            <li class:selected={i === selected} class:repair={isRepair(a)} onmouseenter={() => (selected = i)}>
+                {#if isRepair(a)}
+                    <span class="tag">{$t('direction.proposals.repairTag')}</span>
+                {/if}
                 <span class="what">{proposalLabel($t, a, playerName)}</span>
                 {#if a.length}
                     <span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>
@@ -119,8 +145,15 @@
                 {:else if a.reason === 'waiting_table'}
                     <span class="meta warn">{$t('direction.reason.waiting_table')}</span>
                 {/if}
+                {#if a.warn}
+                    <!-- Le moteur a remarqué quelque chose sur CETTE proposition et ne bloque
+                         rien : le bouton reste là, et le directeur décide. -->
+                    <span class="meta warn">{renderWarning($t, { code: a.warn, length: a.length }, playerName)}</span>
+                {/if}
                 <span class="grow"></span>
-                <button type="button" class="go" disabled={busy} title={$t('direction.proposals.launchHint')} onclick={() => onConfirm(a)}>{$t('direction.proposals.launch')}</button>
+                <button type="button" class="go" disabled={busy} title={isRepair(a) ? $t('direction.proposals.repairHint') : $t('direction.proposals.launchHint')} onclick={() => onConfirm(a)}>
+                    {isRepair(a) ? $t('direction.proposals.cancelMatch') : $t('direction.proposals.launch')}
+                </button>
                 <button type="button" class="more" title={$t('direction.proposals.ignore')} onclick={() => ignore(a)}>⋯</button>
             </li>
         {/each}
@@ -128,6 +161,9 @@
             <li class="empty">
                 {#if waiting.length}
                     {$t(`direction.reason.${waiting[0].reason || 'no_pairing'}`)}
+                    {#if remaining(waiting[0].until)}
+                        <span class="countdown">{remaining(waiting[0].until)}</span>
+                    {/if}
                 {:else}
                     {$t('direction.proposals.none')}
                 {/if}
@@ -304,5 +340,26 @@
         background: var(--color-surface-alt);
         color: var(--color-text);
         font-size: var(--font-size-small);
+    }
+
+    /* Le compte à rebours est un chiffre, pas une alarme : il informe, il ne presse pas. */
+    .countdown {
+        margin-left: var(--space-1);
+        font-variant-numeric: tabular-nums;
+        color: var(--color-text-muted);
+    }
+
+    /* Une réparation n'est pas une proposition ordinaire : elle DÉFAIT. Elle se distingue donc
+       à l'œil, sans devenir une alerte — le directeur peut très bien préférer laisser le
+       tableau tel qu'il a été joué et le noter à la main. */
+    .repair {
+        border-left: 3px solid var(--color-danger);
+        padding-left: var(--space-1);
+    }
+
+    .tag {
+        font-size: var(--font-size-small);
+        color: var(--color-danger);
+        text-transform: lowercase;
     }
 </style>

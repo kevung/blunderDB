@@ -1724,7 +1724,9 @@
             "breakStart": "Inizio",
             "breakEnd": "Fine",
             "addBreak": "Aggiungi una pausa",
-            "removeBreak": "Rimuovi"
+            "removeBreak": "Rimuovi",
+            "batch": "Micro-turni",
+            "batchHint": "Abbinare a lotti, ogni N minuti, perché l'ora in cui si annuncia un risultato non scelga più l'avversario. 0: man mano."
         },
         "tabs": {
             "direction": "Direzione",
@@ -1823,9 +1825,13 @@
             "draw": "Sorteggio: {where}",
             "nextPhase": "Fase successiva: {where}",
             "finish": "Chiudi il torneo",
-            "cancel": "Annulla: {where}",
             "errorConfirm": "Impossibile avviare questa proposta.",
-            "errorManual": "Impossibile avviare questa partita."
+            "errorManual": "Impossibile avviare questa partita.",
+            "appeared": "{n} proposta/e ti aspettano nel torneo.",
+            "repair": "Annullare {where}: {a} – {b}",
+            "repairTag": "riparazione",
+            "repairHint": "Annullare questa partita, resa incoerente da una correzione. Nient'altro si muove: i rilanci corretti saranno proposti dopo.",
+            "cancelMatch": "Annulla"
         },
         "waiting": {
             "title": "In attesa ({n})"

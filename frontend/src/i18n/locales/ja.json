@@ -1724,7 +1724,9 @@
             "breakStart": "開始",
             "breakEnd": "終了",
             "addBreak": "休憩を追加",
-            "removeBreak": "削除"
+            "removeBreak": "削除",
+            "batch": "マイクロラウンド",
+            "batchHint": "N分ごとにまとめて組み合わせ、結果を申告する時刻で相手を選べないようにします。0：随時。"
         },
         "tabs": {
             "direction": "進行",
@@ -1823,9 +1825,13 @@
             "draw": "抽選：{where}",
             "nextPhase": "次のフェーズ：{where}",
             "finish": "大会を終了",
-            "cancel": "取り消し：{where}",
             "errorConfirm": "この提案を開始できませんでした。",
-            "errorManual": "この試合を開始できませんでした。"
+            "errorManual": "この試合を開始できませんでした。",
+            "appeared": "トーナメントで{n}件の提案が待っています。",
+            "repair": "{where}を取り消す：{a} – {b}",
+            "repairTag": "修復",
+            "repairHint": "訂正によって矛盾したこのマッチを取り消します。ほかは変わりません。正しい組み合わせは次に提案されます。",
+            "cancelMatch": "取り消す"
         },
         "waiting": {
             "title": "待機中（{n}人）"

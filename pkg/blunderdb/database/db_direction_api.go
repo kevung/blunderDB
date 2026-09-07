@@ -92,7 +92,12 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 		Config: cfg, EventCount: len(dir.Journal()),
 	}
 	if st := dir.State(); st != nil {
-		v.Proposals = dir.Propose()
+		// Proposed at the WALL CLOCK, not at the journal's last timestamp (issue #388). Two of
+		// the engine's rules are read against the current time and against nothing else: a
+		// micro-round's deadline falls while nobody writes anything, and a break's warning
+		// depends on when the match would end. Proposing at the journal's time would leave the
+		// queue frozen on what was true at the last result.
+		v.Proposals = dir.ProposeAt(time.Now())
 		v.Warnings = dir.Warnings()
 		v.Ranking = dir.Ranking()
 		v.Running = st.Running()

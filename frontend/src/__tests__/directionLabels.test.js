@@ -6,7 +6,7 @@
  * aucune, et ce fichier est le pivot de cette traduction — d'où ce test.
  */
 import { describe, test, expect } from 'vitest';
-import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabel, actionKey, renderConfigChange, renderLockReason } from '../components/direction/labels.js';
+import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabel, actionKey, renderConfigChange, renderLockReason, isRepair } from '../components/direction/labels.js';
 import fr from '../i18n/locales/fr.json';
 import en from '../i18n/locales/en.json';
 
@@ -156,5 +156,25 @@ describe('la liste de ce qui va changer (#385)', () => {
         expect(renderLockReason(tEn, 'finished')).toBe('phase over');
         expect(renderLockReason(t, 'quelquechose')).toBe('quelquechose');
         expect(renderLockReason(t, '')).toBe('');
+    });
+});
+
+describe('la réparation d’un tableau (#389)', () => {
+    const name = (id) => ({ a1: 'Hugo', b2: 'Léa' })[id] || id;
+
+    test('une annulation se lit comme une réparation, avec ceux qui ont joué là', () => {
+        const act = { kind: 'cancel_match', a: 'a1', b: 'b2', label: { kind: 'semi_final' } };
+        expect(proposalLabel(t, act, name)).toBe('Annuler Demi-finale : Hugo – Léa');
+        expect(proposalLabel(tEn, act, name)).toBe('Cancel Semi-final: Hugo – Léa');
+    });
+
+    /* Le moteur ne propose une annulation que pour remettre un graphe d'accord avec les
+       résultats : c'est le seul cas, et c'est ce qui distingue ces lignes sans inventer de
+       marqueur. */
+    test('seule une annulation est une réparation', () => {
+        expect(isRepair({ kind: 'cancel_match' })).toBe(true);
+        expect(isRepair({ kind: 'start_match' })).toBe(false);
+        expect(isRepair({ kind: 'wait' })).toBe(false);
+        expect(isRepair(null)).toBe(false);
     });
 });
