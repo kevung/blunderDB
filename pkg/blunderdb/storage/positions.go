@@ -55,7 +55,6 @@ type PositionStore interface {
 	// migration, and so does /v1/positions.reclassifyPhases. Running it on a
 	// database that is already up to date rewrites nothing.
 	ReclassifyDerived(ctx context.Context, scope string) (int, error)
-
 }
 
 // Finding "positions like this one" is NOT here, and that is deliberate: it is

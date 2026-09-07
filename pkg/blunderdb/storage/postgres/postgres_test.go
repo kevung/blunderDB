@@ -58,8 +58,9 @@ var wantTables = []string{
 	"analysis", "anki_card", "anki_deck", "anki_review_log",
 	"collection", "collection_position",
 	"command_history", "comment", "filter_library", "game", "import_batch",
-	"match", "metadata", "move", "move_analysis", "position",
-	"schema_migrations", "search_history", "session_state", "tournament",
+	"library_settings", "match", "metadata", "move", "move_analysis",
+	"position", "schema_migrations", "search_history", "session_state",
+	"tournament", "training_item", "training_session", "transcription",
 	"trash",
 }
 
@@ -74,7 +75,7 @@ var wantIndexes = []string{
 	"idx_analysis_is_forced", "idx_analysis_move_error",
 	"idx_analysis_position", "idx_analysis_win2",
 	"idx_analysis_win_gammon_covering",
-	"idx_anki_card_deck", "idx_anki_card_due",
+	"idx_anki_card_deck", "idx_anki_card_due", "idx_anki_card_identity",
 	"idx_anki_review_log_card", "idx_anki_review_log_deck",
 	"idx_collection_position_collection", "idx_comment_position",
 	"idx_game_match", "idx_match_canonical",
@@ -87,11 +88,13 @@ var wantIndexes = []string{
 	"idx_position_no_contact", "idx_position_off",
 	"idx_position_pip_1", "idx_position_pip_diff",
 	"idx_position_score_cube", "idx_position_zobrist",
+	"idx_training_item_session", "idx_training_item_type",
+	"idx_training_session_exercise", "idx_transcription_match",
 	"idx_trash_deleted_at", "idx_trash_kind",
 }
 
 // TestMigratePostgres opens a fresh database, runs Migrate, and confirms the
-// schema landed: all 20 tables, every named index, the database_version row,
+// schema landed: every table, every named index, the database_version row,
 // and a tenant_id column on every domain table.
 func TestMigratePostgres(t *testing.T) {
 	ctx := context.Background()

@@ -67,7 +67,6 @@ func testSimilarIsExactAndOrdered(t *testing.T, s storage.Storage) {
 	}
 }
 
-
 // testSimilarRanksInsideTheClass pins what a neighbour IS (ADR-0043): the same
 // PROBLEM nearby, not the nearest drawing.
 //
