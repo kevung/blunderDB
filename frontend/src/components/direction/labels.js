@@ -100,7 +100,14 @@ export function proposalLabel(t, a, playerName = (id) => id) {
         case 'finish':
             return t('direction.proposals.finish');
         case 'cancel_match':
-            return t('direction.proposals.cancel', { where });
+            // Une annulation n'est jamais proposée pour elle-même : le moteur ne la propose que
+            // pour réparer un graphe qu'une correction a désaccordé (Nicomaque reparation.go).
+            // Elle se lit donc comme une réparation, avec les deux joueurs qui ont joué là.
+            return t('direction.proposals.repair', {
+                where,
+                a: playerName(a.a),
+                b: playerName(a.b)
+            });
         default:
             return where || a.kind;
     }
@@ -156,4 +163,16 @@ export function renderLockReason(t, reason) {
     const key = `direction.lock.${reason}`;
     const out = t(key);
     return out === key ? reason : out;
+}
+
+/**
+ * Vrai quand la proposition fait partie d'une réparation (issue #389).
+ *
+ * Le moteur ne propose une annulation que pour remettre un graphe d'accord avec les résultats,
+ * après qu'une correction a fait jouer un match par les mauvaises personnes. C'est le seul cas,
+ * et c'est ce qui permet de distinguer ces lignes des propositions ordinaires sans inventer de
+ * marqueur.
+ */
+export function isRepair(a) {
+    return !!a && a.kind === 'cancel_match';
 }

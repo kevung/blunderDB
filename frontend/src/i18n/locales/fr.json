@@ -1825,10 +1825,13 @@
             "draw": "Tirage : {where}",
             "nextPhase": "Phase suivante : {where}",
             "finish": "Clore le tournoi",
-            "cancel": "Annuler : {where}",
             "errorConfirm": "Impossible de lancer cette proposition.",
             "errorManual": "Impossible de lancer ce match.",
-            "appeared": "{n} proposition(s) vous attendent dans le tournoi."
+            "appeared": "{n} proposition(s) vous attendent dans le tournoi.",
+            "repair": "Annuler {where} : {a} – {b}",
+            "repairTag": "réparation",
+            "repairHint": "Annuler ce match, devenu incohérent après une correction. Rien d'autre ne bouge : les relances correctes seront proposées ensuite.",
+            "cancelMatch": "Annuler"
         },
         "waiting": {
             "title": "En attente ({n})"

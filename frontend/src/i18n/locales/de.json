@@ -1825,10 +1825,13 @@
             "draw": "Auslosung: {where}",
             "nextPhase": "Nächste Phase: {where}",
             "finish": "Turnier abschließen",
-            "cancel": "Abbrechen: {where}",
             "errorConfirm": "Dieser Vorschlag konnte nicht gestartet werden.",
             "errorManual": "Diese Partie konnte nicht gestartet werden.",
-            "appeared": "{n} Vorschlag/Vorschläge warten im Turnier auf Sie."
+            "appeared": "{n} Vorschlag/Vorschläge warten im Turnier auf Sie.",
+            "repair": "{where} annullieren: {a} – {b}",
+            "repairTag": "Reparatur",
+            "repairHint": "Dieses Match annullieren, das durch eine Korrektur widersprüchlich geworden ist. Sonst ändert sich nichts: Die richtigen Neuansetzungen folgen als Vorschlag.",
+            "cancelMatch": "Annullieren"
         },
         "waiting": {
             "title": "Wartend ({n})"

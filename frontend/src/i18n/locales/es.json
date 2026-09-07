@@ -1825,10 +1825,13 @@
             "draw": "Sorteo: {where}",
             "nextPhase": "Fase siguiente: {where}",
             "finish": "Cerrar el torneo",
-            "cancel": "Cancelar: {where}",
             "errorConfirm": "No se ha podido lanzar esta propuesta.",
             "errorManual": "No se ha podido lanzar esta partida.",
-            "appeared": "{n} propuesta(s) le esperan en el torneo."
+            "appeared": "{n} propuesta(s) le esperan en el torneo.",
+            "repair": "Anular {where}: {a} – {b}",
+            "repairTag": "reparación",
+            "repairHint": "Anular este partido, incoherente tras una corrección. Nada más se mueve: los relanzamientos correctos se propondrán después.",
+            "cancelMatch": "Anular"
         },
         "waiting": {
             "title": "En espera ({n})"

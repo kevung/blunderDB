@@ -1825,10 +1825,13 @@
             "draw": "Draw: {where}",
             "nextPhase": "Next phase: {where}",
             "finish": "Close the tournament",
-            "cancel": "Cancel: {where}",
             "errorConfirm": "Could not launch this proposal.",
             "errorManual": "Could not launch this match.",
-            "appeared": "{n} proposal(s) are waiting for you in the tournament."
+            "appeared": "{n} proposal(s) are waiting for you in the tournament.",
+            "repair": "Cancel {where}: {a} – {b}",
+            "repairTag": "repair",
+            "repairHint": "Cancel this match, made inconsistent by a correction. Nothing else moves: the correct restarts will be proposed next.",
+            "cancelMatch": "Cancel"
         },
         "waiting": {
             "title": "Waiting ({n})"

@@ -14,7 +14,7 @@
      */
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
-    import { proposalLabel, actionKey, renderWarning } from './labels.js';
+    import { proposalLabel, actionKey, renderWarning, isRepair } from './labels.js';
 
     let { proposals = [], players = [], busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
 
@@ -115,7 +115,12 @@
             <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
             <ul>
                 {#each shown as a (actionKey(a))}
-                    <li>{proposalLabel($t, a, playerName)}</li>
+                    <li class:repair={isRepair(a)}>
+                        {#if isRepair(a)}
+                            <span class="tag">{$t('direction.proposals.repairTag')}</span>
+                        {/if}
+                        {proposalLabel($t, a, playerName)}
+                    </li>
                 {/each}
             </ul>
             <div class="confirm-actions">
@@ -127,7 +132,10 @@
 
     <ul class="queue">
         {#each shown as a, i (actionKey(a))}
-            <li class:selected={i === selected} onmouseenter={() => (selected = i)}>
+            <li class:selected={i === selected} class:repair={isRepair(a)} onmouseenter={() => (selected = i)}>
+                {#if isRepair(a)}
+                    <span class="tag">{$t('direction.proposals.repairTag')}</span>
+                {/if}
                 <span class="what">{proposalLabel($t, a, playerName)}</span>
                 {#if a.length}
                     <span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>
@@ -143,7 +151,9 @@
                     <span class="meta warn">{renderWarning($t, { code: a.warn, length: a.length }, playerName)}</span>
                 {/if}
                 <span class="grow"></span>
-                <button type="button" class="go" disabled={busy} title={$t('direction.proposals.launchHint')} onclick={() => onConfirm(a)}>{$t('direction.proposals.launch')}</button>
+                <button type="button" class="go" disabled={busy} title={isRepair(a) ? $t('direction.proposals.repairHint') : $t('direction.proposals.launchHint')} onclick={() => onConfirm(a)}>
+                    {isRepair(a) ? $t('direction.proposals.cancelMatch') : $t('direction.proposals.launch')}
+                </button>
                 <button type="button" class="more" title={$t('direction.proposals.ignore')} onclick={() => ignore(a)}>⋯</button>
             </li>
         {/each}
@@ -337,5 +347,19 @@
         margin-left: var(--space-1);
         font-variant-numeric: tabular-nums;
         color: var(--color-text-muted);
+    }
+
+    /* Une réparation n'est pas une proposition ordinaire : elle DÉFAIT. Elle se distingue donc
+       à l'œil, sans devenir une alerte — le directeur peut très bien préférer laisser le
+       tableau tel qu'il a été joué et le noter à la main. */
+    .repair {
+        border-left: 3px solid var(--color-danger);
+        padding-left: var(--space-1);
+    }
+
+    .tag {
+        font-size: var(--font-size-small);
+        color: var(--color-danger);
+        text-transform: lowercase;
     }
 </style>
