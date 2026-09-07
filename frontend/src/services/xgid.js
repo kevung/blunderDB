@@ -23,6 +23,8 @@
 // match play but the Jacoby/Beaver bitmask in a money game (bit 0 = Jacoby,
 // bit 1 = Beaver) — the same dual meaning domain.DecodeXGID documents — so
 // which one it emits is decided by the game type, never both.
+import { pointsAway } from '../utils/awayScore.js';
+
 export function generateXGID(position) {
     const { board, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver, max_cube } = position;
 
@@ -41,9 +43,17 @@ export function generateXGID(position) {
     const cubeOwner = cube.owner === 0 ? 1 : cube.owner === 1 ? -1 : 0;
     const dicePart = decision_type === 1 ? '00' : dice.join('');
     const isMoneyGame = score[0] === -1 || score[1] === -1;
-    const matchLength = isMoneyGame ? 0 : Math.max(score[0], score[1]);
-    const actualScore1 = isMoneyGame ? 0 : matchLength - score[0];
-    const actualScore2 = isMoneyGame ? 0 : matchLength - score[1];
+    // The reconstruction reads DISTANCES, so the post-Crawford sentinel is
+    // decoded first: an away pair of [0, 5] is one point away against five,
+    // and subtracting the raw 0 would emit a score equal to the match length —
+    // a match already won, which decodes back to nothing (#338).
+    const away1 = isMoneyGame ? 0 : pointsAway(score[0]);
+    const away2 = isMoneyGame ? 0 : pointsAway(score[1]);
+    const matchLength = isMoneyGame ? 0 : Math.max(away1, away2);
+    const actualScore1 = isMoneyGame ? 0 : matchLength - away1;
+    const actualScore2 = isMoneyGame ? 0 : matchLength - away2;
+    // Field 7 reads the RAW score, not the distance: `1` is what says this is
+    // the Crawford game, and `0` is precisely what says it is not.
     const isCrawford = !isMoneyGame && (score[0] === 1 || score[1] === 1) ? 1 : 0;
     const field7 = isMoneyGame ? (has_jacoby ? 1 : 0) | (has_beaver ? 2 : 0) : isCrawford;
     const playerOnRoll = player_on_roll === 0 ? 1 : -1;

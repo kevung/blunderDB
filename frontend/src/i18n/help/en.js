@@ -209,7 +209,8 @@ export default {
 <div class="admonition note">
 <p>The label is recomputed by the <code>blunderdb repair</code> command. On a database opened for the first time with this version, it is computed once, at that opening. A database whose phases were never computed returns nothing for <code>ph:</code> — nothing, rather than a wrong answer.</p>
 </div>
-<p>The <code>like</code> command answers a different question from the tokens: it replaces the browsed list by the positions <strong>closest</strong> to the current one, nearest first. Closeness is a transport distance, expressed in checker-pips — the amount of checker movement separating the two positions — and the point of view is always the player on roll's. It is not a filter: similarity <strong>ranks</strong> the whole library instead of narrowing it, and therefore does not combine with the tokens.</p>
+<p>The <code>like</code> token <strong>ranks</strong> instead of narrowing: its presence orders the result by ascending distance to a target position — <code>like</code> the current one, <code>like42</code> the one with index 42 — and the other tokens narrow the set it ranks, so that <code>s like42 E&gt;80</code> reads “the neighbours of 42 where I went wrong”. The distance is a transport distance in checker-pips, the amount of checker movement separating two positions, seen from the player on roll.</p>
+<p>A neighbour is the same <strong>problem</strong>, not the same drawing: the ranking is taken inside the target's class — the same kind of decision, the same regime (money or match) for a cube decision, and a match other than its own, since the positions surrounding it in its own game are its closest structures without ever being its neighbours. Dice, score and cube value stay outside the class; the ordinary tokens narrow on them when wanted. <code>like42*</code> widens the class to every kind of decision and to both regimes, never to the target's match; <code>like&lt;12</code> drops anything beyond twelve checker-pips. A ranking that finds nothing returns an empty list and says so, rather than ten unrelated positions.</p>
 <p>The <code>n</code> token counts <strong>encounters</strong>: <code>n&gt;3</code> keeps the positions more than three moves reach, across every match. That is a different question from “what did I get wrong” — a position met twenty times and played correctly nineteen is still the one to know cold. The count is of moves, not matches: the same position twice in one match counts twice, because those were two decisions.</p>
 <p>The <strong>plan of play</strong> is a second derived label, beside the phase, and it answers the question a bundle of saved filters cannot ask: “show me my errors in a holding game”. Token <code>gt:</code>, repeatable (<code>gt:holding gt:mutualholding</code>), from the point of view of the <strong>player on roll</strong> — the plan the decision was being made in.</p>
 <p>The ten recognised plans, in the order the rules exhaust them, from the most specific to the most general:</p>
@@ -1345,10 +1346,6 @@ export default {
 <td>Opens the activity log: the last two hundred lines of the log file, with what it takes to copy them into a report, or to open the folder holding them.</td>
 </tr>
 <tr>
-<td>like</td>
-<td>Replaces the browsed list by the positions closest to the current one — or to the one whose index is given (<code>like 42</code>). Closeness is a transport distance in checker-pips: it is not a filter, it ranks the whole database rather than narrowing it, and therefore does not combine with the search tokens.</td>
-</tr>
-<tr>
 <td>train</td>
 <td>Starts a micro-training session. Takes an argument: <code>train pips</code> (pip count), <code>train epc</code>, <code>train tp</code> (take point at a match score), <code>train quiz</code> (the move or the cube action, graded against the stored analysis). Five questions, timed, corrected on the spot.</td>
 </tr>
@@ -1487,6 +1484,7 @@ export default {
 <h3>Search Filters</h3>
 <p>This table is the reference for the search grammar: the command line, the filter library and the <code>--query</code> flag of <code>blunderdb search</code> all read the same tokens. The <em>CLI Equivalent</em> column gives, when one exists, the <code>search</code> flag that does the same thing (see Command Line Interface (CLI)); a dash marks a filter that only the grammar expresses.</p>
 <p>Five tokens do not carry their value: they read it from the search board. <code>cube</code> and <code>score</code> take up the cube and the score set there, <code>d</code> the decision type, <code>D</code> and <code>D1</code> the dice, <code>x</code> the structure drawn in the <em>Except</em> tab. A roll is therefore never written into the token: <code>D65</code> does not exist, only the exclusion form carries its digits (<code>xD65</code>). On the command line, where there is no board, these tokens compare against an empty board; it is the flags of the third column that must be used there instead.</p>
+<p>A single token <strong>ranks</strong> instead of narrowing: <code>like</code> orders the result by ascending distance to a target position, and every other token narrows the set it ranks.</p>
 <p>Errors and equities are counted in <strong>thousandths of equity</strong> — the <em>millipoints</em> of the table below: <code>E&gt;100</code> keeps the moves that cost at least a tenth of a point, one point being worth 1000 millipoints.</p>
 <p>Two full searches:</p>
 <ul>
@@ -1955,6 +1953,11 @@ export default {
 <tr>
 <td><code>pl'name'</code></td>
 <td>Search positions from a match involving the named player, at either seat (e.g. <code>pl'Alice'</code>). Case-insensitive.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>like, like42, like&lt;12, like42*</td>
+<td>Ranks the result by ascending distance to a target position instead of narrowing it: <code>like</code> takes the current position, <code>like42</code> the one with index 42, <code>like&lt;12</code> drops anything beyond twelve checker-pips, <code>like42*</code> widens the target's class to every kind of decision and to both regimes, money and match. See Search Panel.</td>
 <td>—</td>
 </tr>
 </tbody>

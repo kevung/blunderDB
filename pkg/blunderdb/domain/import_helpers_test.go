@@ -23,6 +23,36 @@ func TestAwayScores(t *testing.T) {
 	}
 }
 
+// TestAwayScoresWithCrawford: the sentinel is the whole point. Away 1 and away
+// 0 describe the same distance to victory and different rules (CONTEXT.md,
+// « Away score »), so the same score maps to two away scores depending on
+// which game it is — and only the ambiguous value is ever rewritten.
+func TestAwayScoresWithCrawford(t *testing.T) {
+	cases := []struct {
+		name                string
+		matchLength, s0, s1 int
+		crawford            bool
+		want                [2]int
+	}{
+		{"the Crawford game of a 7-pointer", 7, 6, 2, true, [2]int{Crawford, 5}},
+		{"the game after it, same score", 7, 6, 2, false, [2]int{PostCrawford, 5}},
+		{"double match point is post-Crawford on both sides", 7, 6, 6, false, [2]int{PostCrawford, PostCrawford}},
+		{"nowhere near match point: untouched", 7, 2, 4, false, [2]int{5, 3}},
+		{"a 1-point match is its own Crawford game", 1, 0, 0, true, [2]int{Crawford, Crawford}},
+		{"money play knows no Crawford", 0, 3, 1, false, [2]int{Unlimited, Unlimited}},
+		{"money play, flag set anyway", 0, 3, 1, true, [2]int{Unlimited, Unlimited}},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got := AwayScoresWithCrawford(c.matchLength, c.s0, c.s1, c.crawford)
+			if got != c.want {
+				t.Errorf("AwayScoresWithCrawford(%d, %d, %d, %v) = %v, want %v",
+					c.matchLength, c.s0, c.s1, c.crawford, got, c.want)
+			}
+		})
+	}
+}
+
 func TestCubeExponent(t *testing.T) {
 	for value, want := range map[int]int{0: 0, 1: 0, 2: 1, 4: 2, 8: 3, 16: 4, 64: 6, 3: 1} {
 		if got := CubeExponent(value); got != want {

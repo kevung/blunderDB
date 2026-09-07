@@ -888,6 +888,8 @@ either sweep (ADR-0013's protection is unconditional).
 - `--jobs` - Positions analysed in parallel (default: the number of CPUs)
 - `--stale` - Re-analyse positions whose gammonNet analysis is outdated,
   instead of filling gaps
+- `--match` - Restrict the sweep to the positions of one match (0, the
+  default, means the whole library)
 - `--format` - Output format: `text` (default, progress lines) or `json` (a single summary document, printed at the end)
 
 **Parallelism (`--jobs`).** The positions of a sweep are independent — no
@@ -905,6 +907,16 @@ written. This makes the command safe to re-run at any time, and safe to
 interrupt: Ctrl-C cancels cleanly, nothing already written is lost, and the
 next run picks up exactly where the last one left off — no journal needed,
 because "positions with no analysis" is re-derived fresh every time.
+
+**One match only (`--match`).** With the id `list --type matches` prints, the
+sweep is restricted to the positions that match walks through — the same gap
+rule, the same guarantees, a narrower scope. A match that has just been
+imported gets its analyses without the rest of the library being swept, and a
+match corrected and analysed a second time costs only the positions the
+correction created, since everything else already carries an analysis. It
+combines with neither `--stale` nor `--compare`, which both look at positions
+that already have an analysis; asking for both is an error rather than a
+silently ignored scope.
 
 **Refused, not failed.** A position gammonNet declines to evaluate — a match
 score beyond its MET's horizon, a cube decision the model refuses — reports
@@ -927,6 +939,9 @@ refusal) are retried on the next run.
 
 # One core only, on a machine that has other work to do
 ./blunderDB analyze --db database.db --jobs 1
+
+# One match only, the one just imported
+./blunderDB analyze --db database.db --match 12
 
 # Re-analyse everything gammonNet wrote at an outdated version or depth,
 # at 3-ply
@@ -1480,6 +1495,13 @@ gap (ADR-0013). Interrupted with Ctrl-C, the run is cancelled
 cleanly — nothing is lost, and re-running picks up exactly where
 it left off, with no journal needed.
 
+--match restricts the sweep to the positions of a single match,
+the id `blunderdb list --type matches` prints. Same gap rule and
+same guarantees, narrower scope: a match just imported or
+transcribed is analysed without sweeping the whole library, and
+a correction re-analysed a second time costs only the positions
+the correction created.
+
 --stale switches to the other sweep: every position whose stored
 analysis is entirely gammonNet's own (never an XG/GNUbg/BGBlitz
 one — ADR-0013 protects those unconditionally) but was written at
@@ -1516,6 +1538,8 @@ Options:
     	Positions analysed in parallel (one CPU each) (default 16)
   -limit int
     	With --compare: stop after this many positions (0 = all)
+  -match int
+    	Restrict the sweep to one match's positions (0 = the whole library)
   -ply int
     	Search depth (canonical: 2, k=12) (default 2)
   -prune-k int
@@ -1526,6 +1550,7 @@ Options:
 Examples:
   blunderdb analyze --db database.db
   blunderdb analyze --db database.db --jobs 1
+  blunderdb analyze --db database.db --match 12
   blunderdb analyze --db database.db --stale --ply 3
   blunderdb analyze --db database.db --format json
   blunderdb analyze --db database.db --compare --limit 500
@@ -2484,8 +2509,6 @@ Options:
     	Only positions carrying a comment (whatever its origin — yours or an imported note)
   -individual
     	Only positions imported on their own, not as part of a match
-  -like int
-    	Rank the whole library by how close it stands to this position id, nearest first (replaces the query rather than narrowing it)
   -limit int
     	Maximum number of results (0 = no limit)
   -match-ids string

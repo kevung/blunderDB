@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.20.0"
+	DatabaseVersion = "2.21.0"
 )
 
 // Anki deck source types
@@ -415,6 +415,37 @@ type SearchFilters struct {
 	// is the move rows, not the matches — the same position twice in one match
 	// is two encounters, because it was two decisions.
 	EncounterFilter string `json:"encounterFilter"`
+
+	// LikeFilter marks the query as RANKED instead of merely filtered: the
+	// positions come back nearest first, by the transport distance in
+	// checker-pips that engine.SimilarityDistance defines (ADR-0043).
+	//
+	// It is the one token that orders rather than narrows, and the two compose
+	// without ambiguity: every other token says WHICH positions are candidates,
+	// this one says in what order they come back and how many. That is what
+	// makes `like42 E>80` — "the neighbours of 42 that I blundered" — a
+	// question the grammar can ask at all.
+	//
+	// The set it ranks is the target's equivalence class, which the storage
+	// layer adds on top of the tokens: same kind of decision, same regime for
+	// a cube decision, another match. See storage.ClassOf.
+	LikeFilter bool `json:"likeFilter"`
+
+	// LikeTargetID is the position the ranking is taken against — the `42` of
+	// `like42`. Zero means the token was written bare, and then the CALLER
+	// resolves it to whatever "this position" means where the query was typed:
+	// the position being browsed, or the board being drawn. The storage layer
+	// never guesses it; a bare token that reached it unresolved is an error,
+	// not an empty result.
+	LikeTargetID int64 `json:"likeTargetId"`
+
+	// LikeMaxDistance drops neighbours beyond this many checker-pips (0 = no
+	// ceiling). A ranking whose ceiling nothing passes comes back EMPTY.
+	LikeMaxDistance int `json:"likeMaxDistance"`
+
+	// LikeWidened drops the class down to nothing but the match exclusion —
+	// the `*` form. Every kind of decision, both regimes.
+	LikeWidened bool `json:"likeWidened"`
 
 	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string `json:"equityFilter"`

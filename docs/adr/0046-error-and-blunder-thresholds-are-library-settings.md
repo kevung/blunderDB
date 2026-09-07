@@ -35,9 +35,9 @@ outside Row-Level Security, whose load/save routes were removed after #156.
 
 2. **They are Library settings**, behind one accessor of the `storage` contract. SQLite
    keeps them in `metadata`, next to the objective; PostgreSQL gets a tenant-scoped
-   key/value table under RLS (migration `021`, inside the existing 2.20.0 — nothing
-   changes on the SQLite side, so `DatabaseVersion` does not move, and a tenant with no
-   row reads the defaults). `migrate` copies them; `blunderdb
+   key/value table under RLS (migration `022`, carrying no version bump of its own —
+   nothing changes on the SQLite side, so `DatabaseVersion` does not move for this, and
+   a tenant with no row reads the defaults). `migrate` copies them; `blunderdb
    edit` sets them and `info` prints them; the daemon exposes them on a tenant-scoped
    `/v1` route. They are **not** in `issuance.CarriedMetadataKeys`: a threshold is the
    owner's reading habit, not a fact of the positions.

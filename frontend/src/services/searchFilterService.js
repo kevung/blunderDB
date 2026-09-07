@@ -170,6 +170,16 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
     const noContactFilter = filters.includes('nc');
+    // `like`, `like42`, `like<12`, `like42<12*` : le seul jeton qui CLASSE au
+    // lieu de restreindre (ADR-0043). Reconnu par sa FORME et non par son
+    // préfixe, pour la raison qui vaut pour `n` : une règle de préfixe
+    // réclamerait n'importe quel mot commençant par « like » et transformerait
+    // une faute de frappe en un tri silencieux du résultat.
+    const likeMatch = filters.map((f) => /^like(\d+)?(?:<(\d+))?(\*)?$/.exec(f)).find(Boolean);
+    const likeFilter = !!likeMatch;
+    const likeTargetId = likeMatch && likeMatch[1] ? parseInt(likeMatch[1], 10) : 0;
+    const likeMaxDistance = likeMatch && likeMatch[2] ? parseInt(likeMatch[2], 10) : 0;
+    const likeWidened = !!(likeMatch && likeMatch[3]);
     const decisionTypeFilter = filters.includes('d');
     const diceRollFilter = filters.includes('D') || filters.includes('D1');
     const diceRollMode = filters.includes('D1') ? 'first' : 'both';
@@ -305,6 +315,10 @@ export function parseSearchTokens(filtersOrCommand, command) {
         includeCube,
         includeScore,
         noContactFilter,
+        likeFilter,
+        likeTargetId,
+        likeMaxDistance,
+        likeWidened,
         decisionTypeFilter,
         diceRollFilter,
         diceRollMode,
@@ -405,7 +419,13 @@ export function parseFilterTokens(tokens) {
         // Comment-presence mode; 'contains' is the text-search mode, whose value
         // travels separately as the t"…" token.
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains',
-        cdFilter: p.dateFilter
+        cdFilter: p.dateFilter,
+        // Le classement garde ses noms entiers : il n'a pas d'abréviation
+        // historique à respecter, et `likeFilter` se lit.
+        likeFilter: p.likeFilter,
+        likeTargetId: p.likeTargetId,
+        likeMaxDistance: p.likeMaxDistance,
+        likeWidened: p.likeWidened
     };
 }
 
@@ -429,6 +449,13 @@ export function parseSearchCommand(command) {
         ic: p.includeCube,
         is: p.includeScore,
         nc: p.noContactFilter,
+        // Le classement garde ses noms entiers sur les trois chemins : il n'a
+        // pas d'abréviation historique à respecter, et une quatrième
+        // orthographe de `like` n'aurait servi personne.
+        likeFilter: p.likeFilter,
+        likeTargetId: p.likeTargetId,
+        likeMaxDistance: p.likeMaxDistance,
+        likeWidened: p.likeWidened,
         dt: p.decisionTypeFilter,
         dr: p.diceRollFilter,
         drMode: p.diceRollMode,
@@ -575,6 +602,10 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         commentOriginFilter: pf.commentOriginFilter || '',
         gamePhaseFilter: pf.gamePhaseFilter || '',
         gameTypeFilter: pf.gameTypeFilter || '',
+        likeFilter: pf.likeFilter || false,
+        likeTargetId: pf.likeTargetId || 0,
+        likeMaxDistance: pf.likeMaxDistance || 0,
+        likeWidened: pf.likeWidened || false,
         tagFilter: pf.tagFilter || '',
         player1AbsolutePipCountFilter: pf.player1AbsolutePipCountFilter || '',
         equityFilter: pf.equityFilter || '',

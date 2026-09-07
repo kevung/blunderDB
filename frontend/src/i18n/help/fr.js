@@ -209,7 +209,8 @@ export default {
 <div class="admonition note">
 <p>L'étiquette est recalculée par la commande <code>blunderdb repair</code>. Sur une base ouverte pour la première fois avec cette version, le calcul est fait une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées ne renvoie rien pour <code>ph:</code> — rien, plutôt qu'une réponse fausse.</p>
 </div>
-<p>La commande <code>like</code> répond à une autre question que les jetons : elle remplace la liste parcourue par les positions les plus <strong>proches</strong> de la position courante, de la plus proche à la plus lointaine. La proximité est une distance de transport, exprimée en pions-pas — la quantité de mouvement de pions qui sépare les deux positions — et le point de vue est toujours celui du joueur au trait. Ce n'est pas un filtre : la similarité <strong>classe</strong> toute la bibliothèque au lieu de la restreindre, et ne se combine donc pas avec les jetons.</p>
+<p>Le jeton <code>like</code> <strong>classe</strong> au lieu de restreindre : sa présence ordonne le résultat par distance croissante à une position cible — <code>like</code> la position courante, <code>like42</code> celle d'indice 42 — et les autres jetons restreignent l'ensemble ainsi classé, si bien que <code>s like42 E&gt;80</code> se lit « les voisines de la 42 où j'ai fauté ». La distance est une distance de transport en pions-pas, la quantité de mouvement de pions qui sépare deux positions, vue du joueur au trait.</p>
+<p>Une voisine est le même <strong>problème</strong>, pas le même dessin : le classement se prend dans la classe de la cible — même type de décision, même régime (argent ou match) pour une décision de videau, et un match différent du sien, car les positions qui l'entourent dans sa propre partie sont ses structures les plus proches sans jamais être ses voisines. Les dés, le score et le videau restent hors classe ; les jetons ordinaires les filtrent quand on le veut. <code>like42*</code> élargit la classe à tous les types de décision et aux deux régimes, jamais au match de la cible ; <code>like&lt;12</code> écarte ce qui est à plus de douze pions-pas. Un classement qui ne trouve rien rend une liste vide et le dit, plutôt que dix positions sans rapport.</p>
 <p>Le jeton <code>n</code> compte les <strong>rencontres</strong> : <code>n&gt;3</code> retient les positions auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une autre question que « qu'ai-je raté » — une position rencontrée vingt fois et bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte sur les coups, pas sur les matchs : la même position deux fois dans un match compte pour deux, parce que c'étaient deux décisions.</p>
 <p>Le <strong>plan de jeu</strong> est une seconde étiquette dérivée, à côté de la phase, et elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas poser : « montre-moi mes erreurs en holding game ». Jeton <code>gt:</code>, répétable (<code>gt:holding gt:mutualholding</code>), du point de vue du <strong>joueur au trait</strong> — le plan dans lequel se prenait la décision.</p>
 <p>Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus spécifique au plus général :</p>
@@ -1345,10 +1346,6 @@ export default {
 <td>Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient.</td>
 </tr>
 <tr>
-<td>like</td>
-<td>Remplace la liste parcourue par les positions les plus proches de la position courante — ou de celle dont l'indice est donné (<code>like 42</code>). La proximité est une distance de transport en pions-pas : ce n'est pas un filtre, elle classe toute la base plutôt que de la restreindre, et ne se combine donc pas avec les jetons de recherche.</td>
-</tr>
-<tr>
 <td>train</td>
 <td>Lance une session de micro-entraînement. Prend un argument : <code>train pips</code> (compte de pions), <code>train epc</code>, <code>train tp</code> (point de prise au score), <code>train quiz</code> (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ.</td>
 </tr>
@@ -1487,6 +1484,7 @@ export default {
 <h3>Filtres de recherche</h3>
 <p>Cette table est la référence de la grammaire de recherche : la ligne de commande, la bibliothèque de filtres et le drapeau <code>--query</code> de <code>blunderdb search</code> lisent tous les mêmes jetons. La colonne <em>Équivalent CLI</em> donne, quand il existe, le drapeau de <code>search</code> qui fait la même chose (voir Interface en ligne de commande (CLI)) ; un tiret signale un filtre que seule la grammaire exprime.</p>
 <p>Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de recherche. <code>cube</code> et <code>score</code> reprennent le videau et le score qui y sont posés, <code>d</code> le type de décision, <code>D</code> et <code>D1</code> les dés, <code>x</code> la structure dessinée dans l'onglet <em>Sauf</em>. Un lancer ne s'écrit donc jamais dans le jeton : <code>D65</code> n'existe pas, seule la forme d'exclusion porte ses chiffres (<code>xD65</code>). En ligne de commande, où il n'y a pas de plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux de la troisième colonne qu'il faut y employer.</p>
+<p>Un seul jeton <strong>classe</strong> au lieu de restreindre : <code>like</code> ordonne le résultat par distance croissante à une position cible, et tous les autres jetons restreignent l'ensemble ainsi classé.</p>
 <p>Les erreurs et les équités se comptent en <strong>millièmes d'équité</strong> — les <em>millipoints</em> de la table ci-dessous : <code>E&gt;100</code> retient les coups qui ont coûté au moins un dixième de point, un point valant 1000 millièmes.</p>
 <p>Deux recherches complètes :</p>
 <ul>
@@ -1955,6 +1953,11 @@ export default {
 <tr>
 <td><code>pl'nom'</code></td>
 <td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: <code>pl'Alice'</code>). La casse est ignorée.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>like, like42, like&lt;12, like42*</td>
+<td>Classe le résultat par distance croissante à une position cible, au lieu de le restreindre : <code>like</code> prend la position courante, <code>like42</code> celle d'indice 42, <code>like&lt;12</code> écarte ce qui est à plus de douze pions-pas, <code>like42*</code> élargit la classe de la cible à tous les types de décision et aux deux régimes, argent et match. Voir Panneau Recherche.</td>
 <td>—</td>
 </tr>
 </tbody>

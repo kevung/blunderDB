@@ -67,3 +67,31 @@ describe('XGID contract corpus (GUI generateXGID / computePipCount vs Go DecodeX
         });
     }
 });
+
+// The corpus holds no post-Crawford position — domain.DecodeXGID never emits
+// the `0` sentinel, since an XGID states Crawford in field 7 rather than in the
+// score — but the importers do write it since #338, and a position carrying it
+// must still re-encode into an XGID that means what it says: one point away,
+// Crawford behind, so a live cube.
+describe('the post-Crawford sentinel re-encodes as a distance', () => {
+    const base = corpus.cases.find((c) => c.position.score[0] > 0 && c.position.score[1] > 0);
+
+    test('away [0, 5] is a 5-point match at 4-0, not at 5-0', () => {
+        const position = structuredClone(base.position);
+        position.score = [0, 5];
+        const fields = generateXGID(position).split(':');
+        expect(fields[8]).toBe('5'); // match length
+        expect(fields[5]).toBe('4'); // the leader is one point away
+        expect(fields[6]).toBe('0');
+        expect(fields[7]).toBe('0'); // and Crawford is behind us
+    });
+
+    test('away [1, 5] keeps saying Crawford', () => {
+        const position = structuredClone(base.position);
+        position.score = [1, 5];
+        const fields = generateXGID(position).split(':');
+        expect(fields[8]).toBe('5');
+        expect(fields[5]).toBe('4');
+        expect(fields[7]).toBe('1');
+    });
+});

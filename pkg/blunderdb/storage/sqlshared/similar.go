@@ -1,52 +1,33 @@
 package sqlshared
 
 import (
-	"container/heap"
 	"context"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// « Des positions comme celle-ci » (#293, fiche J.3 ; révisé par l'ADR-0043),
-// côté stockage.
+// La classe d'équivalence d'un classement par similarité (#293, ADR-0043) :
+// ce qui restreint l'ENSEMBLE que la distance ordonne, dit en SQL.
 //
-// Un BALAYAGE EXHAUSTIF, et c'est une décision, pas un raccourci. Le rapport
-// P7 est net : sous ~100 000 vecteurs le scan linéaire donne un rappel PARFAIT
-// et rien de plus compliqué ne se justifie — « do not over-engineer a small
-// problem ». La dimension ici est 52, pas 768 : l'index approximatif qu'on
-// n'écrit pas serait aussi celui qu'on aurait à maintenir cohérent avec chaque
-// écriture.
+// Le classement lui-même est dans search.go, avec le reste de la recherche :
+// classer, c'est chercher dans un certain ordre, et un second balayage de la
+// table des positions aurait été une seconde moitié de grammaire à tenir en
+// phase avec la première. Ce fichier ne porte que ce que la classe ajoute à
+// la clause WHERE, et de quoi savoir dans quels matchs une cible a été
+// rencontrée.
 //
-// La requête ne lit que `state` et `player_on_roll` : ce sont les deux seules
-// colonnes dont la distance dépend. Une base de cent mille positions tient
-// donc dans quelques mégaoctets de lecture séquentielle.
-//
-// # La classe se dit en SQL, et c'est ce qui garde le scan linéaire
-//
-// L'ADR-0043 range la classe d'équivalence — même type de décision, même
-// régime pour un videau, un autre match — DANS la requête plutôt qu'après le
-// calcul de la distance. Deux raisons : le tas borné ne doit pas se remplir de
-// candidats qu'on jettera, et surtout le décodage de `state` est le vrai coût
-// du balayage. Filtrer sur des colonnes indexables avant de décoder, c'est
-// payer la classe une fois par ligne au lieu d'une fois par vecteur.
+// La classe se dit en SQL et non après le calcul de la distance : le décodage
+// de `state` est le vrai coût du balayage, donc filtrer sur des colonnes
+// indexables avant de décoder paye la classe une fois par ligne au lieu d'une
+// fois par vecteur.
 
-// Similar returns the neighbours of target inside opts' class, nearest first,
-// excluding target itself.
-func Similar(ctx context.Context, db Execer, scope string, target *domain.Position, opts storage.SimilarOptions) ([]storage.SimilarPosition, error) {
-	if target == nil || opts.Limit <= 0 {
-		return nil, nil
-	}
-	tenant, args := db.TenantFilter("p", scope)
-	wanted := engine.BuildSimilarityVector(target)
-
-	var where strings.Builder
-	where.WriteString(tenant)
+// AppendClassSQL writes opts' class into an existing WHERE clause.
+func AppendClassSQL(opts storage.SimilarOptions, excludedMatches []int64, where *strings.Builder, args *[]any) {
 	if opts.DecisionType != nil {
 		where.WriteString(" AND p.decision_type = ?")
-		args = append(args, *opts.DecisionType)
+		*args = append(*args, *opts.DecisionType)
 	}
 	if opts.Money != nil {
 		// The same test as domain.Position.IsMoney, in SQL: both away scores
@@ -59,82 +40,20 @@ func Similar(ctx context.Context, db Execer, scope string, target *domain.Positi
 			where.WriteString(" AND (p.score_1 >= 0 OR p.score_2 >= 0)")
 		}
 	}
-	// "Another match": the plies around the target are its closest structures
-	// and never its neighbours. Resolved from the target rather than asked of
-	// the caller — it is part of the class, not a choice (ADR-0043 rule 1).
-	excluded, err := MatchesOfPosition(ctx, db, scope, target.ID)
-	if err != nil {
-		return nil, err
-	}
-	if len(excluded) > 0 {
-		// Said once per row against move(position_id), which is indexed. The
-		// list is the matches the TARGET was met in — one or two in practice —
-		// so the IN stays tiny whatever the library holds.
+	if len(excludedMatches) > 0 {
+		// "Another match", said once per row against move(position_id), which
+		// is indexed. The list is the matches the TARGET was met in — one or
+		// two in practice — so the IN stays tiny whatever the library holds.
 		where.WriteString(` AND NOT EXISTS (SELECT 1 FROM move mv JOIN game g ON g.id = mv.game_id
-			WHERE mv.position_id = p.id AND g.match_id IN (` + Placeholders(len(excluded)) + `))`)
-		for _, id := range excluded {
-			args = append(args, id)
+			WHERE mv.position_id = p.id AND g.match_id IN (` + Placeholders(len(excludedMatches)) + `))`)
+		for _, id := range excludedMatches {
+			*args = append(*args, id)
 		}
 	}
-
-	rows, err := db.Query(ctx,
-		`SELECT p.id, p.state, p.player_on_roll FROM position p WHERE `+where.String()+` ORDER BY p.id`, args...)
-	if err != nil {
-		return nil, errf(db, "scan the positions for similarity", err)
-	}
-	defer rows.Close()
-
-	// A bounded max-heap of the best `limit`: the scan is O(N) and the ranking
-	// O(N log k), so a library of a hundred thousand positions costs one pass
-	// and a heap of ten entries — not a sort of a hundred thousand.
-	h := &farthestFirst{}
-	for rows.Next() {
-		var id int64
-		var state string
-		var onRoll *int64
-		if err := rows.Scan(&id, &state, &onRoll); err != nil {
-			return nil, errf(db, "scan the positions for similarity", err)
-		}
-		if id == target.ID {
-			continue
-		}
-		p, ok := positionOfState(state)
-		if !ok {
-			continue
-		}
-		if onRoll != nil {
-			p.PlayerOnRoll = int(*onRoll)
-		}
-		p.ID = id
-		d := engine.SimilarityDistance(wanted, engine.BuildSimilarityVector(&p))
-		// The ceiling drops a neighbour outright rather than ranking it last:
-		// a ranking that finds nothing close comes back empty, and says so,
-		// instead of handing over the least distant of the unrelated.
-		if opts.MaxDistance > 0 && d > opts.MaxDistance {
-			continue
-		}
-		if h.Len() < opts.Limit {
-			heap.Push(h, storage.SimilarPosition{Position: p, Distance: d})
-			continue
-		}
-		if d < (*h)[0].Distance {
-			(*h)[0] = storage.SimilarPosition{Position: p, Distance: d}
-			heap.Fix(h, 0)
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return nil, errf(db, "scan the positions for similarity", err)
-	}
-
-	out := make([]storage.SimilarPosition, h.Len())
-	for i := len(out) - 1; i >= 0; i-- {
-		out[i] = heap.Pop(h).(storage.SimilarPosition)
-	}
-	return out, nil
 }
 
 // MatchesOfPosition lists the matches a stored position was met in, which is
-// what SimilarOptions.ExcludeMatchIDs wants.
+// what the class's third rule excludes.
 //
 // Plural, and that is the point: positions are deduplicated by Zobrist hash,
 // so one row is reached by the moves of every match that played through it.
@@ -171,18 +90,51 @@ func MatchesOfPosition(ctx context.Context, db Execer, scope string, positionID 
 	return out, nil
 }
 
-// farthestFirst is a max-heap on the distance: its root is the worst of the
-// candidates kept so far, which is the one a better candidate replaces.
-type farthestFirst []storage.SimilarPosition
-
-func (h farthestFirst) Len() int           { return len(h) }
-func (h farthestFirst) Less(i, j int) bool { return h[i].Distance > h[j].Distance }
-func (h farthestFirst) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-func (h *farthestFirst) Push(x any)        { *h = append(*h, x.(storage.SimilarPosition)) }
-func (h *farthestFirst) Pop() any {
-	old := *h
-	n := len(old)
-	item := old[n-1]
-	*h = old[:n-1]
-	return item
+// LoadTargetPosition reads the position a ranking is taken against.
+func LoadTargetPosition(ctx context.Context, db Execer, scope string, id int64) (*domain.Position, error) {
+	tenant, args := db.TenantFilter("p", scope)
+	args = append(args, id)
+	rows, err := db.Query(ctx,
+		`SELECT p.id, p.state, p.player_on_roll, p.decision_type, p.score_1, p.score_2
+		 FROM position p WHERE `+tenant+` AND p.id = ?`, args...)
+	if err != nil {
+		return nil, errf(db, "load the position to rank against", err)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		if err := rows.Err(); err != nil {
+			return nil, errf(db, "load the position to rank against", err)
+		}
+		return nil, storage.ErrNotFound
+	}
+	var (
+		pid            int64
+		state          string
+		onRoll, kind   *int64
+		score1, score2 *int64
+	)
+	if err := rows.Scan(&pid, &state, &onRoll, &kind, &score1, &score2); err != nil {
+		return nil, errf(db, "load the position to rank against", err)
+	}
+	p, ok := positionOfState(state)
+	if !ok {
+		return nil, storage.ErrNotFound
+	}
+	p.ID = pid
+	if onRoll != nil {
+		p.PlayerOnRoll = int(*onRoll)
+	}
+	if kind != nil {
+		p.DecisionType = int(*kind)
+	}
+	// The score decides the regime, so it has to come from the columns rather
+	// than from the board blob, which does not carry it.
+	p.Score = [2]int{-1, -1}
+	if score1 != nil {
+		p.Score[0] = int(*score1)
+	}
+	if score2 != nil {
+		p.Score[1] = int(*score2)
+	}
+	return &p, nil
 }

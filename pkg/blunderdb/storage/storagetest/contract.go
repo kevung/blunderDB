@@ -124,6 +124,9 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"LibrarySettings/RoundTrip", testLibrarySettingsRoundTrip},
 		{"LibrarySettings/RejectsInvertedNesting", testLibrarySettingsRejectsInverted},
 		{"LibrarySettings/BlunderCountPromisesTheSearch", testBlunderCountPromisesTheSearch},
+		{"Transcription/CRUD", testTranscriptionCRUD},
+		{"Transcription/ListNewestFirst", testTranscriptionListNewestFirst},
+		{"Transcription/MatchLinkSurvivesTheMatch", testTranscriptionMatchLink},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

@@ -62,6 +62,7 @@ var rlsTables = []string{
 	"move_analysis", "tournament", "collection", "collection_position",
 	"filter_library", "command_history", "search_history", "session_state",
 	"library_settings", "anki_deck", "anki_card", "anki_review_log",
+	"transcription",
 }
 
 // ApplyRLS installs (idempotently) Row-Level Security on every tenant-scoped

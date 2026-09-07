@@ -69,6 +69,7 @@ var boundAppMethods = []string{
 	"SuggestWatchFolder",
 	"StartEvaluationAtRest",
 	"StartGammonNetBatch",
+	"StartGammonNetMatchBatch",
 	"StartGammonNetStaleBatch",
 	"StartupFilePath",
 }

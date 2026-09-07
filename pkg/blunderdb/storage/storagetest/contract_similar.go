@@ -46,7 +46,7 @@ func testSimilarIsExactAndOrdered(t *testing.T, s storage.Storage) {
 	}
 
 	base.ID = baseID
-	got, err := ps.Similar(ctx, "", &base, storage.SimilarOptions{Limit: 2})
+	got, err := rank(ctx, s, baseID, 2, 0, false)
 	if err != nil {
 		t.Fatalf("Similar: %v", err)
 	}
@@ -67,24 +67,6 @@ func testSimilarIsExactAndOrdered(t *testing.T, s storage.Storage) {
 	}
 }
 
-// similarityBoard builds a money-game checker position from Black's points,
-// with White standing clear of every point Black uses.
-func similarityBoard(black map[int]int) domain.Position {
-	var p domain.Position
-	for i := range p.Board.Points {
-		p.Board.Points[i] = domain.Point{Checkers: 0, Color: domain.None}
-	}
-	for pt, n := range black {
-		p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.Black}
-	}
-	for _, pt := range []int{17, 19, 21} {
-		p.Board.Points[pt] = domain.Point{Checkers: 5, Color: domain.White}
-	}
-	p.PlayerOnRoll = domain.Black
-	p.Dice = [2]int{3, 1}
-	p.Score = [2]int{-1, -1}
-	return p
-}
 
 // testSimilarRanksInsideTheClass pins what a neighbour IS (ADR-0043): the same
 // PROBLEM nearby, not the nearest drawing.
@@ -145,7 +127,7 @@ func testSimilarRanksInsideTheClass(t *testing.T, s storage.Storage) {
 		t.Fatalf("Save elsewhere: %v", err)
 	}
 
-	got, err := ps.Similar(ctx, "", &target, storage.SimilarOptions{Limit: 10})
+	got, err := rankWidened(ctx, s, targetID, 10)
 	if err != nil {
 		t.Fatalf("Similar: %v", err)
 	}
@@ -153,9 +135,7 @@ func testSimilarRanksInsideTheClass(t *testing.T, s storage.Storage) {
 		t.Fatalf("with no class asked for, every position is a candidate: got %d neighbours, want 3", len(got))
 	}
 
-	opts := storage.ClassOf(&target)
-	opts.Limit = 10
-	got, err = ps.Similar(ctx, "", &target, opts)
+	got, err = rank(ctx, s, targetID, 10, 0, false)
 	if err != nil {
 		t.Fatalf("Similar in class: %v", err)
 	}
@@ -220,9 +200,7 @@ func testSimilarExcludesTheTargetsMatches(t *testing.T, s storage.Storage) {
 		}
 	}
 
-	opts := storage.ClassOf(&target)
-	opts.Limit = 10
-	got, err := ps.Similar(ctx, "", &target, opts)
+	got, err := rank(ctx, s, targetID, 10, 0, false)
 	if err != nil {
 		t.Fatalf("Similar: %v", err)
 	}
@@ -264,9 +242,7 @@ func testSimilarCeilingLeavesAnEmptyRankingEmpty(t *testing.T, s storage.Storage
 		t.Fatalf("Save far: %v", err)
 	}
 
-	opts := storage.ClassOf(&target)
-	opts.Limit = 10
-	loose, err := ps.Similar(ctx, "", &target, opts)
+	loose, err := rank(ctx, s, targetID, 10, 0, false)
 	if err != nil {
 		t.Fatalf("Similar without a ceiling: %v", err)
 	}
@@ -274,8 +250,7 @@ func testSimilarCeilingLeavesAnEmptyRankingEmpty(t *testing.T, s storage.Storage
 		t.Fatal("without a ceiling the far position is still a neighbour")
 	}
 
-	opts.MaxDistance = 1
-	tight, err := ps.Similar(ctx, "", &target, opts)
+	tight, err := rank(ctx, s, targetID, 10, 1, false)
 	if err != nil {
 		t.Fatalf("Similar with a ceiling: %v", err)
 	}
@@ -283,8 +258,7 @@ func testSimilarCeilingLeavesAnEmptyRankingEmpty(t *testing.T, s storage.Storage
 		t.Errorf("a ceiling nothing passes returns nothing, never the least distant: got %d neighbours", len(tight))
 	}
 
-	opts.MaxDistance = loose[0].Distance
-	exact, err := ps.Similar(ctx, "", &target, opts)
+	exact, err := rank(ctx, s, targetID, 10, loose[0].Distance, false)
 	if err != nil {
 		t.Fatalf("Similar at the exact distance: %v", err)
 	}
@@ -311,28 +285,53 @@ func testSimilarWithoutAMatchExcludesNothing(t *testing.T, s storage.Storage) {
 		t.Fatalf("Save near: %v", err)
 	}
 
-	// Once as the stored position it is, once as a board carrying no id at
-	// all — the drawn-board case, which must rank exactly the same way.
-	for _, tc := range []struct {
-		name string
-		id   int64
-	}{{"stored", targetID}, {"drawn", 0}} {
-		probe := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
-		probe.ID = tc.id
-		opts := storage.ClassOf(&probe)
-		opts.Limit = 10
-		got, err := ps.Similar(ctx, "", &probe, opts)
-		if err != nil {
-			t.Fatalf("Similar (%s): %v", tc.name, err)
-		}
-		found := false
-		for _, n := range got {
-			if n.Position.ID == nearID {
-				found = true
-			}
-		}
-		if !found {
-			t.Errorf("%s target: a position belonging to no match excludes nothing, so the near one is a neighbour", tc.name)
+	got, err := rank(ctx, s, targetID, 10, 0, false)
+	if err != nil {
+		t.Fatalf("Rank: %v", err)
+	}
+	found := false
+	for _, n := range got {
+		if n.Position.ID == nearID {
+			found = true
 		}
 	}
+	if !found {
+		t.Error("a position belonging to no match excludes nothing, so the near one is a neighbour")
+	}
+}
+
+// rank runs a ranked query the way every caller does: the `like` token, its
+// target already resolved to an id, and the class the target imposes.
+func rank(ctx context.Context, s storage.Storage, targetID int64, limit, maxDistance int, widened bool) ([]storage.SimilarPosition, error) {
+	return s.Search().Rank(ctx, "", domain.SearchFilters{
+		LikeFilter:      true,
+		LikeTargetID:    targetID,
+		LikeMaxDistance: maxDistance,
+		LikeWidened:     widened,
+	}, storage.ListOpts{Limit: limit})
+}
+
+// rankWidened is the `*` form: the match exclusion still applies, but nothing
+// else does — every kind of decision, both regimes.
+func rankWidened(ctx context.Context, s storage.Storage, targetID int64, limit int) ([]storage.SimilarPosition, error) {
+	return rank(ctx, s, targetID, limit, 0, true)
+}
+
+// similarityBoard builds a money-game checker position from Black's points,
+// with White standing clear of every point Black uses.
+func similarityBoard(black map[int]int) domain.Position {
+	var p domain.Position
+	for i := range p.Board.Points {
+		p.Board.Points[i] = domain.Point{Checkers: 0, Color: domain.None}
+	}
+	for pt, n := range black {
+		p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.Black}
+	}
+	for _, pt := range []int{17, 19, 21} {
+		p.Board.Points[pt] = domain.Point{Checkers: 5, Color: domain.White}
+	}
+	p.PlayerOnRoll = domain.Black
+	p.Dice = [2]int{3, 1}
+	p.Score = [2]int{-1, -1}
+	return p
 }

@@ -26,7 +26,7 @@ func TestCreatePositionFromXGRefusesSixteenCheckers(t *testing.T) {
 	xgPos.Checkers[19] = -15
 	xgPos.Cube = 1
 
-	_, err := createPositionFromXG(xgPos, game, 7, 1)
+	_, err := createPositionFromXG(xgPos, game, 7, 1, false)
 	var tooMany *domain.TooManyCheckersError
 	if !errors.As(err, &tooMany) {
 		t.Fatalf("got %v, want *domain.TooManyCheckersError", err)
@@ -37,7 +37,7 @@ func TestCreatePositionFromXGRefusesSixteenCheckers(t *testing.T) {
 
 	// The same board with 15 is accepted, and the bearoff is derived from it.
 	xgPos.Checkers[24] = 2
-	pos, err := createPositionFromXG(xgPos, game, 7, 1)
+	pos, err := createPositionFromXG(xgPos, game, 7, 1, false)
 	if err != nil {
 		t.Fatalf("15 checkers refused: %v", err)
 	}

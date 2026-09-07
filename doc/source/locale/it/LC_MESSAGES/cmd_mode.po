@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 01:26+0200\n"
+"POT-Creation-Date: 2026-09-07 02:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -188,24 +188,6 @@ msgstr ""
 "contiene."
 
 #: ../../source/cmd_mode.rst:1
-msgid "like"
-msgstr "like"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Remplace la liste parcourue par les positions les plus proches de la "
-"position courante — ou de celle dont l'indice est donné (``like 42``). La"
-" proximité est une distance de transport en pions-pas : ce n'est pas un "
-"filtre, elle classe toute la base plutôt que de la restreindre, et ne se "
-"combine donc pas avec les jetons de recherche."
-msgstr ""
-"Sostituisce la lista percorsa con le posizioni più vicine a quella "
-"corrente — o a quella il cui indice è indicato (``like 42``). La "
-"vicinanza è una distanza di trasporto in pip di pedina: non è un filtro, "
-"ordina l'intera base invece di restringerla, e quindi non si combina con "
-"i token di ricerca."
-
-#: ../../source/cmd_mode.rst:1
 msgid "train"
 msgstr "train"
 
@@ -295,7 +277,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Apre la tabella dei valori di gammon con cubo a 4."
 
-#: ../../source/cmd_mode.rst:52
+#: ../../source/cmd_mode.rst:51
 msgid "Positions et navigation"
 msgstr "Posizioni e navigazione"
 
@@ -437,7 +419,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Naviga nell'ultima partita visitata."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:76
 msgid "Édition et recherche"
 msgstr "Modifica e ricerca"
 
@@ -473,11 +455,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Cerca tra le posizioni attualmente filtrate."
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:92
 msgid "Filtres de recherche"
 msgstr "Filtri di ricerca"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -493,7 +475,7 @@ msgstr ""
 ":ref:`cli`); un trattino segnala un filtro che solo la grammatica "
 "esprime."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -513,7 +495,17 @@ msgstr ""
 "questi token si confrontano con un tavoliere vuoto; sono le opzioni della"
 " terza colonna che occorre impiegare al loro posto."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:110
+msgid ""
+"Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
+"résultat par distance croissante à une position cible, et tous les autres"
+" jetons restreignent l'ensemble ainsi classé."
+msgstr ""
+"Un solo token **ordina** invece di restringere: ``like`` dispone il "
+"risultato per distanza crescente da una posizione bersaglio, e tutti gli "
+"altri token restringono l'insieme così ordinato."
+
+#: ../../source/cmd_mode.rst:114
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -523,11 +515,11 @@ msgstr ""
 "*millipoints* della tabella qui sotto: ``E>100`` mantiene le mosse che "
 "sono costate almeno un decimo di punto, un punto valendo 1000 millesimi."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:118
 msgid "Deux recherches complètes :"
 msgstr "Due ricerche complete:"
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:120
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -536,7 +528,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — più di 30 pip di ritardo, tra il 40 % e il 60 % "
 "di probabilità di vittoria, nessun commento."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:122
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1478,7 +1470,26 @@ msgstr ""
 "indicato, su entrambi i lati (es. ``pl'Alice'``). Non distingue maiuscole"
 " e minuscole."
 
-#: ../../source/cmd_mode.rst:224
+#: ../../source/cmd_mode.rst:1
+msgid "like, like42, like<12, like42*"
+msgstr "like, like42, like<12, like42*"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Classe le résultat par distance croissante à une position cible, au lieu "
+"de le restreindre : ``like`` prend la position courante, ``like42`` celle"
+" d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, "
+"``like42*`` élargit la classe de la cible à tous les types de décision et"
+" aux deux régimes, argent et match. Voir :ref:`panneau_recherche`."
+msgstr ""
+"Ordina il risultato per distanza crescente da una posizione bersaglio, "
+"invece di restringerlo: ``like`` prende la posizione corrente, ``like42``"
+" quella di indice 42, ``like<12`` scarta ciò che dista più di dodici pip "
+"di pedina, ``like42*`` allarga la classe del bersaglio a tutti i tipi di "
+"decisione e a entrambi i regimi, soldi e incontro. Vedere "
+":ref:`panneau_recherche`."
+
+#: ../../source/cmd_mode.rst:228
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 
@@ -1521,3 +1532,40 @@ msgstr "Cancella la cronologia dei comandi."
 #~ " che non è stato compreso viene "
 #~ "detto, mai indovinato."
 
+#~ msgid "like"
+#~ msgstr "like"
+
+#~ msgid ""
+#~ "Remplace la liste parcourue par les "
+#~ "positions les plus proches de la "
+#~ "position courante — ou de celle "
+#~ "dont l'indice est donné (``like 42``)."
+#~ " La proximité est une distance de "
+#~ "transport en pions-pas : ce n'est"
+#~ " pas un filtre, elle classe toute "
+#~ "la base plutôt que de la "
+#~ "restreindre, et ne se combine donc "
+#~ "pas avec les jetons de recherche."
+#~ msgstr ""
+#~ "Sostituisce la lista percorsa con le "
+#~ "posizioni più vicine a quella corrente"
+#~ " — o a quella il cui indice "
+#~ "è indicato (``like 42``). La vicinanza"
+#~ " è una distanza di trasporto in "
+#~ "pip di pedina: non è un filtro,"
+#~ " ordina l'intera base invece di "
+#~ "restringerla, e quindi non si combina"
+#~ " con i token di ricerca."
+
+#~ msgid ""
+#~ "Classe le résultat par distance "
+#~ "croissante à une position cible, au "
+#~ "lieu de le restreindre : ``like`` "
+#~ "prend la position courante, ``like42`` "
+#~ "celle d'indice 42, ``like<12`` écarte ce"
+#~ " qui est à plus de douze "
+#~ "pions-pas, ``like42*`` élargit la classe"
+#~ " de la cible à tous les types"
+#~ " de décision et aux deux régimes. "
+#~ "Voir :ref:`panneau_recherche`."
+#~ msgstr ""

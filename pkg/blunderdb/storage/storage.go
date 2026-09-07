@@ -63,6 +63,7 @@ type Stores interface {
 	ImportBatches() ImportBatchStore
 	Trash() TrashStore
 	LibrarySettings() LibrarySettingsStore
+	Transcriptions() TranscriptionStore
 }
 
 // Storage is the root persistence interface implemented by every backend.

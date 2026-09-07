@@ -384,3 +384,17 @@ func pointLabel(mover, idx int) string {
 		return strconv.Itoa(idx)
 	}
 }
+
+// Notation renders a play the way every transcript writes it, in the
+// mover-relative form described above. LegalPlay carries the notation of the
+// plays the generator produced; this is the same rule for the plays it did not —
+// a transcription records the illegal move that was made at the table and still
+// has to write it down (ADR-0044). Keeping one renderer is what stops the two
+// from drifting apart.
+func Notation(steps []CheckerStep, mover int) string { return notation(steps, mover) }
+
+// StepUsesDie reports whether one step is a move of exactly `die` pips — a
+// bear-off counting as such whenever the die covers the distance, which is the
+// overage rule. The larger-die rule uses it here; a transcription uses it to
+// tell whether a play still matches its roll after the roll was corrected.
+func StepUsesDie(s CheckerStep, mover, die int) bool { return stepUsesDie(s, mover, die) }

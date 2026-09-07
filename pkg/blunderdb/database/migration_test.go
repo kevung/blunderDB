@@ -334,6 +334,7 @@ func allExpectedTables() []string {
 		"match", "game", "move", "move_analysis",
 		"collection", "collection_position",
 		"tournament",
+		"transcription",
 	}
 }
 
@@ -2618,5 +2619,75 @@ func TestMigrate_2_19_0_to_2_20_0_MaxCube(t *testing.T) {
 	}
 	if maxCube != 0 {
 		t.Errorf("migration must not invent a cube ceiling: got max_cube=%d, want 0", maxCube)
+	}
+}
+
+// TestMigrate_2_20_0_to_2_21_0_Transcription pins the 2.21.0 wave's one table.
+// A database that predates it holds no draft — a transcription is the typing
+// that produces a Match, not something derivable from a saved one (ADR-0045
+// §2) — so the migration creates the table and leaves it empty, and the
+// matches the file already carried are untouched.
+func TestMigrate_2_20_0_to_2_21_0_Transcription(t *testing.T) {
+	t.Parallel()
+	tmpDir := tempDir(t)
+	dbPath := filepath.Join(tmpDir, "test_v2200.db")
+	createOldDatabase(t, dbPath, "2.20.0")
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.20.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+	if !tableExists(d.db, "transcription") {
+		t.Fatal("transcription should exist after migration")
+	}
+	for _, col := range []string{"id", "created_at", "updated_at", "format_version", "match_id", "label", "document"} {
+		if !columnExists(t, d.db, "transcription", col) {
+			t.Errorf("transcription.%s should exist after migration", col)
+		}
+	}
+
+	var n int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM transcription`).Scan(&n); err != nil {
+		t.Fatalf("count transcriptions: %v", err)
+	}
+	if n != 0 {
+		t.Errorf("the migration must invent no draft: got %d rows, want 0", n)
+	}
+
+	// The link to a match is nullable and gives way: a draft survives the
+	// deletion of the match it produced (ADR-0045 §2).
+	res, err := d.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length) VALUES ('A','B',5)`)
+	if err != nil {
+		t.Fatalf("insert match: %v", err)
+	}
+	matchID, _ := res.LastInsertId()
+	if _, err := d.db.Exec(
+		`INSERT INTO transcription (format_version, match_id, label, document) VALUES ('1', ?, 'A — B', '{}')`,
+		matchID); err != nil {
+		t.Fatalf("insert transcription: %v", err)
+	}
+	if _, err := d.db.Exec(`DELETE FROM match WHERE id = ?`, matchID); err != nil {
+		t.Fatalf("delete match: %v", err)
+	}
+	var linked sql.NullInt64
+	var document string
+	if err := d.db.QueryRow(`SELECT match_id, document FROM transcription`).Scan(&linked, &document); err != nil {
+		t.Fatalf("read transcription back: %v", err)
+	}
+	if linked.Valid {
+		t.Errorf("deleting the match must null the link, not keep it: got %d", linked.Int64)
+	}
+	if document != "{}" {
+		t.Errorf("the typing must survive its match: got document %q", document)
 	}
 }
