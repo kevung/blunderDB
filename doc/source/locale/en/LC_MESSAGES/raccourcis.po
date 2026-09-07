@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 10:24+0200\n"
+"POT-Creation-Date: 2026-09-07 16:08+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -397,6 +397,58 @@ msgid "Afficher/cacher le panneau Transcription (brouillons de matchs)."
 msgstr "Show/hide the Transcription panel (match drafts)."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "Show/hide the Tournaments panel to direct a tournament."
+
+#: ../../source/raccourcis.rst:1
+msgid "J / K"
+msgstr "J / K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
+msgstr "In the proposal queue of a directed tournament: down, up."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTRÉE"
+msgstr "ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Dans la file des propositions : confirmer la proposition choisie."
+msgstr "In the proposal queue: confirm the selected proposal."
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE / DROITE"
+msgstr "LEFT / RIGHT"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Dans la fiche de résultat : le joueur de gauche gagne, celui de droite "
+"gagne."
+msgstr ""
+"In the result card: the player on the left wins, the one on the right "
+"wins."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "CTRL-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre la dernière décision d'un tournoi dirigé."
+msgstr "Take back the last decision of a directed tournament."
+
+#: ../../source/raccourcis.rst:1
+msgid "ÉCHAP"
+msgstr "ESC"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer la fiche de résultat ou la reprise en cours."
+msgstr "Close the result card or the take-back in progress."
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr "?"
 
@@ -404,7 +456,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:124
 msgid "Onglets de vues"
 msgstr "View Tabs"
 
@@ -456,7 +508,7 @@ msgstr "Double-click the tab"
 msgid "Renommer la vue."
 msgstr "Rename the view."
 
-#: ../../source/raccourcis.rst:135
+#: ../../source/raccourcis.rst:141
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -476,7 +528,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:148
+#: ../../source/raccourcis.rst:154
 msgid "Historique de recherche"
 msgstr "Search History"
 
@@ -496,7 +548,7 @@ msgstr "Double-click"
 msgid "Exécuter la recherche."
 msgstr "Execute the search."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:167
 msgid "Bibliothèque de filtres"
 msgstr "Filter Library"
 
@@ -508,7 +560,7 @@ msgstr "Select/deselect a filter (show position)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Execute the filter search."
 
-#: ../../source/raccourcis.rst:174
+#: ../../source/raccourcis.rst:180
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -542,7 +594,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:196
 msgid "Panneau Eval"
 msgstr "Eval Panel"
 
@@ -550,7 +602,7 @@ msgstr "Eval Panel"
 msgid "Désélectionner le coup."
 msgstr "Deselect move."
 
-#: ../../source/raccourcis.rst:205
+#: ../../source/raccourcis.rst:211
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -586,7 +638,7 @@ msgstr "Delete the selected match."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:223
+#: ../../source/raccourcis.rst:229
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
 
@@ -642,7 +694,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
 
-#: ../../source/raccourcis.rst:241
+#: ../../source/raccourcis.rst:247
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
 
@@ -674,7 +726,7 @@ msgstr ""
 "Cancel the current edit, otherwise clear the add-match search, otherwise "
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:257
+#: ../../source/raccourcis.rst:263
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -702,11 +754,11 @@ msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:272
+#: ../../source/raccourcis.rst:278
 msgid "Panneau Transcription"
 msgstr "Transcription Panel"
 
-#: ../../source/raccourcis.rst:274
+#: ../../source/raccourcis.rst:280
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
 "ouvert."
@@ -955,10 +1007,6 @@ msgid "Donner l'action du curseur à l'autre camp."
 msgstr "Give the action under the cursor to the other side."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-Z"
-msgstr "CTRL-Z"
-
-#: ../../source/raccourcis.rst:1
 msgid "Annuler le dernier geste sur le brouillon."
 msgstr "Undo the last gesture on the draft."
 
@@ -970,7 +1018,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Redo the undone gesture."
 
-#: ../../source/raccourcis.rst:311
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -978,7 +1026,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:314
+#: ../../source/raccourcis.rst:320
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -996,7 +1044,7 @@ msgstr ""
 "validated. Moving the cursor forward or back after changing something "
 "records the correction on the way."
 
-#: ../../source/raccourcis.rst:321
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1014,7 +1062,7 @@ msgstr ""
 " every gesture. The undo stack lives in memory: it is lost when the draft"
 " is closed."
 
-#: ../../source/raccourcis.rst:328
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1024,7 +1072,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:335
+#: ../../source/raccourcis.rst:341
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
@@ -1240,9 +1288,3 @@ msgstr "Close the help."
 #~ "played, with the warning that gnubg "
 #~ "and XG will flag it (“Invalid "
 #~ "move”) and diverge from there."
-
-msgid "CTRL-MAJ-D"
-msgstr "CTRL-MAJ-D"
-
-msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
-msgstr "Show/hide the Tournaments panel to direct a tournament."

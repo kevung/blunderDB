@@ -21,5 +21,4 @@ msgstr ""
 
 #: ../../source/stats.rst:4
 msgid "Cette page a été intégrée dans la section :ref:`stats` du :ref:`manuel`."
-msgstr ""
-
+msgstr "Esta página se ha integrado en la sección :ref:`stats` del :ref:`manuel`."

@@ -1249,6 +1249,163 @@ pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
 reflète votre performance seule. Le nom du joueur de référence apparaît en
 infobulle au survol de la valeur.
 
+.. _diriger_un_tournoi:
+
+Diriger un tournoi
+------------------
+
+blunderDB sait **diriger** un tournoi, et pas seulement le ranger. La direction
+est portée par le moteur **Nicomaque**, de Nicolas Harmand : c'est lui qui tient
+le format, les appariements, les tableaux et le classement ; blunderDB lui donne
+son interface et garde ses matchs. Le bouton **ⓘ** de la barre du panneau
+rappelle ce crédit et mène au dépôt et à la documentation du moteur.
+
+Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois`
+(*CTRL-MAJ-D*, commande ``direct``) : ouvrir un tournoi, puis **Diriger ce
+tournoi**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
+devient **Ouvrir**. Tant qu'une direction est ouverte, la zone principale montre
+le tournoi **à la place du plateau** — c'est la seule exception de blunderDB à
+cette règle ; passer sur n'importe quel autre onglet ramène le plateau.
+
+Une direction a trois états : **en préparation** tant qu'aucun match n'a été
+lancé, **en cours** ensuite, **clos** une fois le classement figé. Rouvrir un
+tournoi clos est possible, et demande une confirmation : le classement final
+cesse d'être final.
+
+Tout ce qui est décidé est écrit dans un **journal**, et rien d'autre ne l'est.
+Le classement, les arbres, les propositions et les avertissements sont rejoués
+depuis ce journal à chaque ouverture : une coupure de courant ne coûte rien, et
+une correction n'efface jamais ce qui s'est passé — elle s'ajoute.
+
+La page Direction
+~~~~~~~~~~~~~~~~~
+
+C'est là que le directeur passe l'essentiel de son temps. Elle porte, de haut en
+bas : les **avertissements** du moteur, qui restent visibles et ne bloquent
+jamais rien ; le bouton **Imprimer la feuille** d'appariements ; la **file des
+propositions** ; la **grille des tables** ; la **dernière décision** ; et les
+joueurs libres.
+
+Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** confirme
+la file entière en deux clics, après en avoir montré la liste. « Ignorer pour
+l'instant » n'écrit rien : le moteur est déterministe, et la proposition revient
+identique au prochain appel. *Apparier à la main* reste offert en permanence — le
+moteur propose, le directeur décide.
+
+Une proposition peut porter une remarque du moteur : aucune table libre, ou une
+fin de match attendue pendant une pause. Elle reste lançable dans les deux cas.
+Lorsqu'une phase fonctionne par **micro-rondes**, la file montre le temps qui
+reste avant le prochain lot ; à l'échéance les propositions apparaissent d'
+elles-mêmes, et rien ne se lance tout seul.
+
+La fiche de résultat
+~~~~~~~~~~~~~~~~~~~~
+
+Un clic sur une table occupée ouvre la fiche du match. Elle montre deux grandes
+cibles : les **noms des deux joueurs**. Cliquer celui qui a gagné enregistre le
+résultat — deux clics en tout, table comprise. Le vainqueur est la seule chose
+exigée ; le score est libre, l'un et l'autre ou aucun des deux.
+
+Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait, une
+remarque libre (« tombé au temps », « abandonné pour raison de… »), le
+déplacement du match sur une autre table, et son annulation.
+
+Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille :
+**Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* ouvre la même
+reprise). Une correction plus ancienne se fait depuis l':ref:`historique
+<direction_historique>`.
+
+Les joueurs
+~~~~~~~~~~~
+
+L'onglet **Joueurs** inscrit, corrige et retire. Le champ d'inscription garde le
+focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul.
+L'autocomplétion propose les joueurs de la base ; en choisir un fixe
+l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.
+
+L'**annuaire** regroupe les inscrits de tous les tournois dirigés de la base,
+dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il
+n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre
+les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ;
+l'annuaire s'exporte en CSV et se relit collé.
+
+Un **retardataire** arrivé après le tirage prend une place d'exemption libre si
+le tableau en offre une, et l'interface écrit à côté du champ où il entrera avant
+qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans
+quelle phase il entrera. Aucun tirage déjà fait n'est refait.
+
+Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
+joueur part tout de suite ou finit ce qu'il joue.
+
+Arbres, emplacements, classement, historique
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+L'onglet **Arbres** dessine les tableaux et, pour un suisse, le tableau des vies.
+Un match déjà joué y porte son résultat ; un match que le moteur signale y est
+marqué sur place.
+
+.. _direction_emplacements:
+
+L'onglet **Emplacements** relie le tournoi à la bibliothèque. Chaque match du
+tournoi est un emplacement, que l'on peut remplir de deux façons : transcrire le
+match sur-le-champ (:ref:`panneau_transcription`), ou y rattacher un match déjà
+importé. **Rien n'est rattaché par déduction** : une coïncidence de noms est une
+suggestion à accepter, un appariement partiel n'est même pas suggéré, et si le
+fichier d'un match rattaché contredit le résultat enregistré, l'écart est montré
+sans être résolu — pendant un tournoi, la parole du directeur fait foi.
+
+L'onglet **Classement** montre le classement courant, section par section, avec
+les prix lorsqu'une dotation est réglée. Deux ex æquo partagent la place et le
+prix. **Clore le tournoi** fige le classement final ; le classement s'exporte en
+CSV, dans la langue de l'interface.
+
+.. _direction_historique:
+
+L'onglet **Historique** est le journal en clair : une ligne par décision, dans
+l'ordre, filtrable par joueur ou par match. C'est ce qu'un directeur relit après
+une contestation, et c'est là qu'une décision ancienne se corrige ou s'annote.
+
+Les réglages
+~~~~~~~~~~~~
+
+L'onglet **Réglages** s'ouvre sur des **formats nommés** : six tournois de club
+prêts à l'emploi, dont le premier est recommandé. En choisir un suffit à
+commencer ; les champs restent modifiables ensuite.
+
+Se règlent ici : les phases et leur longueur de match, les longueurs tour par
+tour d'un tableau (« 15, 13, 11 » se lit du dernier tour vers le premier), le
+nombre de tables, les pauses de la journée, la dotation (droit d'entrée, retenue
+du club, barème par section) et le dossier d'affichage.
+
+Les réglages restent accessibles **en cours de tournoi** : baisser la bascule à
+22 h pour finir plus tôt, ajouter une consolante le samedi soir. Deux choses
+seulement sont alors figées — le format d'une phase ouverte et le nombre de vies
+qu'elle a distribué — et elles sont grisées avec leur raison. Enregistrer en
+cours de tournoi montre d'abord la liste de ce qui va changer, et demande
+confirmation.
+
+Les **têtes de série** sont une option, éteinte par défaut : l'étude du moteur
+conclut « pas de têtes de série protégées », qui est la culture actuelle du
+backgammon. Activées, les joueurs sont placés par cote.
+
+L'affichage de la salle
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Un tournoi se regarde. Choisir un **dossier d'affichage** dans les Réglages suffit
+une fois pour toutes : blunderDB y réécrit une page HTML autonome à chaque
+événement, et la page se recharge d'elle-même. Elle s'ouvre hors ligne, sur un
+second écran ou projetée, et ne charge aucune ressource extérieure. *Ouvrir dans
+le navigateur* l'affiche immédiatement.
+
+La **feuille d'appariements** se pose sur la table d'accueil : un clic sur
+*Imprimer la feuille* ouvre le dialogue d'impression du système. Une ligne par
+match — les deux joueurs, la longueur, la table, deux cases vides pour le score —
+et une ronde de trente-deux joueurs tient sur une page A4.
+
+Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
+dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
+et ``export``. Voir :ref:`cli`.
+
 .. _stats:
 
 Panneau Stats

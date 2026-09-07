@@ -311,6 +311,38 @@ export default {
 <p>El panel <strong>Torneos</strong> (<em>CTRL-Y</em>) permite agrupar partidas en torneos para un seguimiento organizado y un análisis estadístico por evento. Los torneos pueden crearse, renombrarse y eliminarse; las partidas pueden asignarse a ellos. Las estadísticas del panel Stats pueden filtrarse por torneo. Pulse <em>CTRL-Y</em> para mostrar u ocultar el panel.</p>
 <p>Los torneos se llenan solos al importar. Los archivos XG, GnuBG y BGF nombran su evento; al importar una partida nueva, blunderDB la clasifica en el torneo de ese nombre y lo crea si aún no existe. La fecha y el lugar del torneo quedan vacíos: es aquí donde se rellenan. Una partida ya presente en la base nunca se reclasifica: reimportar su archivo no deshace la organización hecha a mano.</p>
 <p>La columna <strong>PR</strong> de cada torneo muestra el PR del <strong>jugador de referencia</strong> — es decir, el jugador presente en el mayor número de partidas del torneo (en caso de empate, el que haya tomado más decisiones). El PR no mezcla por tanto su juego con el de sus adversarios: para sus propios torneos, refleja únicamente su rendimiento. El nombre del jugador de referencia aparece en un cuadro emergente al pasar por encima del valor.</p>
+<h3>Dirigir un torneo</h3>
+<p>blunderDB sabe <strong>dirigir</strong> un torneo, y no solo archivarlo. La dirección la lleva el motor <strong>Nicomaque</strong>, de Nicolas Harmand: él sostiene el formato, los emparejamientos, los cuadros y la clasificación; blunderDB le da su interfaz y guarda sus partidos. El botón <strong>ⓘ</strong> de la barra del panel recuerda ese crédito y lleva al repositorio y a la documentación del motor.</p>
+<p>Un torneo dirigido se elige en el panel Panel de Torneos (<em>CTRL-MAYÚS-D</em>, comando <code>direct</code>): abrir un torneo y luego <strong>Dirigir este torneo</strong>. Un torneo ya dirigido muestra su estado junto a su nombre y el botón pasa a ser <strong>Abrir</strong>. Mientras una dirección está abierta, la zona principal muestra el torneo <strong>en lugar del tablero</strong> — la única excepción de blunderDB a esa regla; pasar a cualquier otra pestaña devuelve el tablero.</p>
+<p>Una dirección tiene tres estados: <strong>en preparación</strong> mientras no se ha lanzado ningún partido, <strong>en curso</strong> después, y <strong>cerrada</strong> una vez fijada la clasificación. Reabrir un torneo cerrado es posible, y pide confirmación: la clasificación final deja de ser final.</p>
+<p>Todo lo que se decide se escribe en un <strong>registro</strong>, y nada más. La clasificación, los cuadros, las propuestas y los avisos se reproducen desde ese registro en cada apertura: un corte de luz no cuesta nada, y una corrección nunca borra lo ocurrido — se añade.</p>
+<h4>La página Dirección</h4>
+<p>Aquí es donde el director pasa la mayor parte del tiempo. De arriba abajo: los <strong>avisos</strong> del motor, que quedan visibles y nunca bloquean nada; el botón <strong>Imprimir la hoja</strong> de emparejamientos; la <strong>cola de propuestas</strong>; la <strong>cuadrícula de mesas</strong>; la <strong>última decisión</strong>; y los jugadores libres.</p>
+<p>Una propuesta se confirma con <strong>un clic</strong> en <em>Lanzar</em>. <strong>Lanzar todo</strong> confirma la cola entera en dos clics, tras mostrar su lista. «Ignorar por ahora» no escribe nada: el motor es determinista, y la propuesta vuelve idéntica en la siguiente llamada. <em>Emparejar a mano</em> está siempre disponible — el motor propone, el director decide.</p>
+<p>Una propuesta puede llevar una observación del motor: ninguna mesa libre, o un final de partido previsto durante una pausa. Sigue siendo lanzable en ambos casos. Cuando una fase funciona por <strong>microrrondas</strong>, la cola muestra el tiempo que falta para el próximo lote; al vencer, las propuestas aparecen solas, y nada se lanza por su cuenta.</p>
+<h4>La ficha de resultado</h4>
+<p>Un clic en una mesa ocupada abre la ficha del partido. Muestra dos grandes objetivos: los <strong>nombres de los dos jugadores</strong>. Hacer clic en el que ha ganado registra el resultado — dos clics en total, mesa incluida. El ganador es lo único exigido; el marcador es libre, uno, ambos o ninguno.</p>
+<p>El botón <strong>⋯</strong> de la ficha despliega lo que se usa poco: la incomparecencia, una observación libre («se le acabó el tiempo», «abandonó por…»), el traslado del partido a otra mesa y su anulación.</p>
+<p>Un error de escritura visto en el acto se retoma en dos clics bajo la cuadrícula: <strong>Corregir</strong> la última decisión y luego el ganador correcto (<em>CTRL-Z</em> abre la misma corrección). Una corrección más antigua se hace desde el historial.</p>
+<h4>Los jugadores</h4>
+<p>La pestaña <strong>Jugadores</strong> inscribe, corrige y retira. El campo de inscripción mantiene el foco y se vacía tras cada nombre: veinte jugadores se inscriben solo con el teclado. El autocompletado propone los jugadores de la base; elegir uno fija la ortografía exacta que llevan sus partidos y rellena su valoración con su PR.</p>
+<p>El <strong>directorio</strong> reúne a los inscritos de todos los torneos dirigidos de la base, sin duplicados por nombre, con el club y la valoración de su última inscripción. Nunca se almacena: borrar una dirección retira de él a sus inscritos. Retomar los inscritos de un torneo anterior es un clic, sean cuantos sean; el directorio se exporta en CSV y se relee pegado.</p>
+<p>Un <strong>rezagado</strong> que llega tras el sorteo ocupa un bye libre si el cuadro ofrece alguno, y la interfaz escribe junto al campo dónde entrará antes de validar. Sin plaza libre, se inscribe igualmente y la vista dice en qué fase entrará. Ningún sorteo ya hecho se rehace.</p>
+<p>Una retirada se hace <em>ahora</em> o <em>tras su partido en curso</em>, según el jugador se marche enseguida o termine lo que juega.</p>
+<h4>Cuadros, huecos, clasificación, historial</h4>
+<p>La pestaña <strong>Cuadros</strong> dibuja los cuadros y, para un suizo, la tabla de vidas. Un partido ya jugado lleva allí su resultado; un partido que el motor señala queda marcado en su sitio.</p>
+<p>La pestaña <strong>Huecos</strong> enlaza el torneo con la biblioteca. Cada partido del torneo es un hueco, que se llena de dos maneras: transcribir el partido en el acto (Panel de Transcripción), o adjuntar un partido ya importado. <strong>Nada se adjunta por deducción</strong>: una coincidencia de nombres es una sugerencia que se acepta, un emparejamiento parcial ni siquiera se sugiere, y si el archivo de un partido adjunto contradice el resultado registrado, la discrepancia se muestra sin resolverla — durante un torneo, la palabra del director es la que vale.</p>
+<p>La pestaña <strong>Clasificación</strong> muestra la clasificación actual, sección por sección, con los premios cuando hay una dotación configurada. Dos empatados comparten el puesto y el premio. <strong>Cerrar el torneo</strong> fija la clasificación final; la clasificación se exporta en CSV, en el idioma de la interfaz.</p>
+<p>La pestaña <strong>Historial</strong> es el registro en claro: una línea por decisión, en orden, filtrable por jugador o por partido. Es lo que un director relee tras una reclamación, y ahí es donde una decisión antigua se corrige o se anota.</p>
+<h4>Los ajustes</h4>
+<p>La pestaña <strong>Ajustes</strong> se abre con <strong>formatos con nombre</strong>: seis torneos de club listos para usar, el primero recomendado. Elegir uno basta para empezar; los campos siguen siendo modificables después.</p>
+<p>Aquí se ajustan: las fases y la longitud de sus partidos, las longitudes ronda a ronda de un cuadro («15, 13, 11» se lee de la última ronda hacia atrás), el número de mesas, las pausas del día, la dotación (inscripción, retención del club, baremo por sección) y la carpeta de la pantalla.</p>
+<p>Los ajustes siguen accesibles <strong>durante el torneo</strong>: bajar la báscula a las 22 h para terminar antes, añadir una consolación el sábado por la noche. Solo dos cosas quedan entonces congeladas — el formato de una fase abierta y el número de vidas que ha repartido — y aparecen atenuadas con su motivo. Guardar durante el torneo muestra primero la lista de lo que va a cambiar y pide confirmación.</p>
+<p>Las <strong>cabezas de serie</strong> son una opción, desactivada por defecto: el estudio del motor concluye «sin cabezas de serie protegidas», que es la cultura actual del backgammon. Activadas, los jugadores se colocan por valoración.</p>
+<h4>La pantalla de la sala</h4>
+<p>Un torneo se mira. Elegir una <strong>carpeta de pantalla</strong> en los Ajustes basta de una vez por todas: blunderDB reescribe allí una página HTML autónoma en cada evento, y la página se recarga sola. Se abre sin conexión, en una segunda pantalla o proyectada, y no carga ningún recurso externo. <em>Abrir en el navegador</em> la muestra al instante.</p>
+<p>La <strong>hoja de emparejamientos</strong> se deja en la mesa de recepción: un clic en <em>Imprimir la hoja</em> abre el diálogo de impresión del sistema. Una línea por partido — los dos jugadores, la longitud, la mesa, dos casillas vacías para el marcador — y una ronda de treinta y dos jugadores cabe en una página A4.</p>
+<p>Fuera de la interfaz, el subcomando <code>blunderdb tournament</code> lee un torneo dirigido sin interfaz gráfica: <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> y <code>export</code>. Véase Interfaz de línea de comandos (CLI).</p>
 <h3>Panel Stats</h3>
 <h4>Introducción</h4>
 <p>El panel <strong>Stats</strong> permite analizar el nivel de juego y seguir la progresión a lo largo del tiempo a partir de las posiciones importadas en la base de datos. Calcula y muestra los indicadores <strong>PR</strong> (<em>Performance Rating</em>) y <strong>MWC cost</strong> (Match Winning Chance cost) para el conjunto de las posiciones o para un subconjunto filtrado.</p>
@@ -1008,6 +1040,26 @@ export default {
 <tr>
 <td>CTRL-MAJ-D</td>
 <td>Mostrar/ocultar el panel Torneos para dirigir un torneo.</td>
+</tr>
+<tr>
+<td>J / K</td>
+<td>En la cola de propuestas de un torneo dirigido: bajar, subir.</td>
+</tr>
+<tr>
+<td>INTRO</td>
+<td>En la cola de propuestas: confirmar la propuesta seleccionada.</td>
+</tr>
+<tr>
+<td>IZQUIERDA / DERECHA</td>
+<td>En la ficha de resultado: gana el jugador de la izquierda, gana el de la derecha.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Retomar la última decisión de un torneo dirigido.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Cerrar la ficha de resultado o la corrección en curso.</td>
 </tr>
 <tr>
 <td>?</td>

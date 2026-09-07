@@ -21,5 +21,4 @@ msgstr ""
 
 #: ../../source/stats.rst:4
 msgid "Cette page a été intégrée dans la section :ref:`stats` du :ref:`manuel`."
-msgstr ""
-
+msgstr "Tämä sivu on siirretty :ref:`manuel` -oppaan osioon :ref:`stats`."

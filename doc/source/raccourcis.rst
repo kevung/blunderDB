@@ -111,6 +111,11 @@ Outils
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
    "CTRL-MAJ-D", "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+   "J / K", "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
+   "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
+   "GAUCHE / DROITE", "Dans la fiche de résultat : le joueur de gauche gagne, celui de droite gagne."
+   "CTRL-Z", "Reprendre la dernière décision d'un tournoi dirigé."
+   "ÉCHAP", "Fermer la fiche de résultat ou la reprise en cours."
    "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_vues:

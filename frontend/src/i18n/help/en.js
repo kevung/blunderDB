@@ -311,6 +311,38 @@ export default {
 <p>The <strong>Tournaments</strong> panel (<em>CTRL-Y</em>) groups matches into tournaments for organised tracking and per-event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press <em>CTRL-Y</em> to show or hide the panel.</p>
 <p>Tournaments fill themselves at import time. XG, GnuBG and BGF files name their event; when a new match is imported, blunderDB files it under the tournament of that name, creating it if it does not exist yet. The tournament's date and location are left empty — this panel is where they are filled in. A match already in the database is never refiled: re-importing its file does not undo what was arranged by hand.</p>
 <p>The <strong>PR</strong> column of each tournament shows the PR of the <strong>reference player</strong> — that is, the player appearing in the greatest number of the tournament's matches (in case of a tie, the one who made the most decisions). The PR therefore does not mix your play with your opponents': for your own tournaments, it reflects your performance alone. The reference player's name appears in a tooltip when hovering over the value.</p>
+<h3>Directing a tournament</h3>
+<p>blunderDB can <strong>direct</strong> a tournament, not merely file it away. The directing is carried by the <strong>Nicomaque</strong> engine, by Nicolas Harmand: it holds the format, the pairings, the brackets and the standings; blunderDB gives it an interface and keeps its matches. The <strong>ⓘ</strong> button on the panel's bar recalls that credit and leads to the engine's repository and documentation.</p>
+<p>A directed tournament is chosen in the Tournaments Panel panel (<em>CTRL-SHIFT-D</em>, <code>direct</code> command): open a tournament, then <strong>Direct this tournament</strong>. A tournament already directed shows its state beside its name and the button becomes <strong>Open</strong>. While a direction is open, the main area shows the tournament <strong>in place of the board</strong> — blunderDB's only exception to that rule; switching to any other tab brings the board back.</p>
+<p>A direction has three states: <strong>in preparation</strong> while no match has been launched, <strong>under way</strong> afterwards, <strong>closed</strong> once the standings are frozen. Reopening a closed tournament is possible, and asks for confirmation: the final standings stop being final.</p>
+<p>Everything decided is written into a <strong>journal</strong>, and nothing else is. The standings, the brackets, the proposals and the warnings are replayed from that journal at every open: a power cut costs nothing, and a correction never erases what happened — it is added to it.</p>
+<h4>The Directing page</h4>
+<p>This is where the director spends most of their time. From top to bottom: the engine's <strong>warnings</strong>, which stay visible and never block anything; the <strong>Print the sheet</strong> button for the pairings; the <strong>proposal queue</strong>; the <strong>table grid</strong>; the <strong>last decision</strong>; and the free players.</p>
+<p>A proposal is confirmed with <strong>one click</strong> on <em>Launch</em>. <strong>Launch all</strong> confirms the whole queue in two clicks, after showing its list. “Ignore for now” writes nothing: the engine is deterministic, and the proposal comes back identical at the next call. <em>Pair by hand</em> is offered at all times — the engine proposes, the director decides.</p>
+<p>A proposal may carry a remark from the engine: no free table, or a match expected to end during a break. It stays launchable in both cases. When a phase runs in <strong>micro-rounds</strong>, the queue shows the time left before the next batch; at the deadline the proposals appear by themselves, and nothing launches on its own.</p>
+<h4>The result card</h4>
+<p>A click on a busy table opens the match's card. It shows two large targets: the <strong>names of the two players</strong>. Clicking the one who won records the result — two clicks in all, table included. The winner is the only thing required; the score is free, either one, both or neither.</p>
+<p>The card's <strong>⋯</strong> button unfolds what is rarely used: the forfeit, a free remark (“ran out of time”, “retired because of…”), moving the match to another table, and cancelling it.</p>
+<p>A typing mistake seen at once is taken back in two clicks below the grid: <strong>Correct</strong> the last decision, then the right winner (<em>CTRL-Z</em> opens the same take-back). An older correction is made from the history.</p>
+<h4>The players</h4>
+<p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
+<p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory exports as CSV and reads back pasted.</p>
+<p>A <strong>latecomer</strong> arriving after the draw takes a free bye if the bracket still offers one, and the interface writes beside the field where they will enter before it is validated. With no free place, they are entered all the same and the view says which phase they will enter. No draw already made is ever redone.</p>
+<p>A withdrawal happens <em>now</em> or <em>after their current match</em>, depending on whether the player leaves at once or finishes what they are playing.</p>
+<h4>Brackets, slots, standings, history</h4>
+<p>The <strong>Brackets</strong> tab draws the brackets and, for a Swiss, the lives table. A match already played carries its result there; a match the engine complains about is marked in place.</p>
+<p>The <strong>Slots</strong> tab links the tournament to the library. Every match of the tournament is a slot, which can be filled in two ways: transcribing the match on the spot (Transcription Panel), or attaching a match already imported. <strong>Nothing is attached by inference</strong>: a coincidence of names is a suggestion to accept, a partial match is not even suggested, and if the file of an attached match contradicts the recorded result, the disagreement is shown without being resolved — during a tournament, the director's word stands.</p>
+<p>The <strong>Standings</strong> tab shows the current standings, section by section, with the prizes when a prize fund is set. Two tied players share the place and the prize. <strong>Close the tournament</strong> freezes the final standings; the standings export as CSV, in the language of the interface.</p>
+<p>The <strong>History</strong> tab is the journal in plain words: one line per decision, in order, filterable by player or by match. It is what a director re-reads after a dispute, and it is where an older decision is corrected or annotated.</p>
+<h4>The settings</h4>
+<p>The <strong>Settings</strong> tab opens on <strong>named formats</strong>: six club tournaments ready to use, the first of which is recommended. Choosing one is enough to begin; the fields stay editable afterwards.</p>
+<p>Set here: the phases and their match length, the lengths round by round of a bracket (“15, 13, 11” reads from the last round backwards), the number of tables, the breaks of the day, the prize fund (entry fee, the club's retention, a scale per section) and the display folder.</p>
+<p>The settings stay reachable <strong>during a tournament</strong>: lowering the switch at 22:00 to finish earlier, adding a consolation on the Saturday evening. Only two things are frozen then — the format of an open phase and the number of lives it has dealt — and they are greyed out with their reason. Saving during a tournament first shows the list of what will change, and asks for confirmation.</p>
+<p><strong>Seeding</strong> is an option, off by default: the engine's study concludes “no protected seeds”, which is the current culture of backgammon. Switched on, players are placed by rating.</p>
+<h4>The hall display</h4>
+<p>A tournament is watched. Choosing a <strong>display folder</strong> in the Settings is enough once and for all: blunderDB rewrites a standalone HTML page there at every event, and the page reloads itself. It opens offline, on a second screen or projected, and loads no outside resource. <em>Open in the browser</em> shows it at once.</p>
+<p>The <strong>pairing sheet</strong> goes on the welcome desk: one click on <em>Print the sheet</em> opens the system's print dialog. One line per match — the two players, the length, the table, two empty boxes for the score — and a round of thirty-two players fits on one A4 page.</p>
+<p>Outside the interface, the <code>blunderdb tournament</code> sub-command reads a directed tournament without a graphical interface: <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> and <code>export</code>. See Command Line Interface (CLI).</p>
 <h3>Stats Panel</h3>
 <h4>Introduction</h4>
 <p>The <strong>Stats</strong> panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays <strong>PR</strong> (Performance Rating) and <strong>MWC cost</strong> (Match Winning Chance cost) for all positions or a filtered subset.</p>
@@ -1008,6 +1040,26 @@ export default {
 <tr>
 <td>CTRL-MAJ-D</td>
 <td>Show/hide the Tournaments panel to direct a tournament.</td>
+</tr>
+<tr>
+<td>J / K</td>
+<td>In the proposal queue of a directed tournament: down, up.</td>
+</tr>
+<tr>
+<td>ENTER</td>
+<td>In the proposal queue: confirm the selected proposal.</td>
+</tr>
+<tr>
+<td>LEFT / RIGHT</td>
+<td>In the result card: the player on the left wins, the one on the right wins.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Take back the last decision of a directed tournament.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Close the result card or the take-back in progress.</td>
 </tr>
 <tr>
 <td>?</td>

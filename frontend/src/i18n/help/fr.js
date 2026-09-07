@@ -311,6 +311,38 @@ export default {
 <p>Le panneau <strong>Tournois</strong> (<em>CTRL-Y</em>) permet de regrouper des matchs en tournois pour un suivi organisé et une analyse statistique par événement. Les tournois peuvent être créés, renommés et supprimés ; les matchs peuvent leur être assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi. Appuyer sur <em>CTRL-Y</em> pour afficher ou masquer le panneau.</p>
 <p>Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. La date et le lieu du tournoi restent vides — c'est ici qu'on les renseigne. Un match déjà présent dans la base n'est jamais reclassé : réimporter son fichier ne défait pas le rangement fait à la main.</p>
 <p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> — c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi (en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il reflète votre performance seule. Le nom du joueur de référence apparaît en infobulle au survol de la valeur.</p>
+<h3>Diriger un tournoi</h3>
+<p>blunderDB sait <strong>diriger</strong> un tournoi, et pas seulement le ranger. La direction est portée par le moteur <strong>Nicomaque</strong>, de Nicolas Harmand : c'est lui qui tient le format, les appariements, les tableaux et le classement ; blunderDB lui donne son interface et garde ses matchs. Le bouton <strong>ⓘ</strong> de la barre du panneau rappelle ce crédit et mène au dépôt et à la documentation du moteur.</p>
+<p>Un tournoi dirigé se choisit dans le panneau Panneau Tournois (<em>CTRL-MAJ-D</em>, commande <code>direct</code>) : ouvrir un tournoi, puis <strong>Diriger ce tournoi</strong>. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton devient <strong>Ouvrir</strong>. Tant qu'une direction est ouverte, la zone principale montre le tournoi <strong>à la place du plateau</strong> — c'est la seule exception de blunderDB à cette règle ; passer sur n'importe quel autre onglet ramène le plateau.</p>
+<p>Une direction a trois états : <strong>en préparation</strong> tant qu'aucun match n'a été lancé, <strong>en cours</strong> ensuite, <strong>clos</strong> une fois le classement figé. Rouvrir un tournoi clos est possible, et demande une confirmation : le classement final cesse d'être final.</p>
+<p>Tout ce qui est décidé est écrit dans un <strong>journal</strong>, et rien d'autre ne l'est. Le classement, les arbres, les propositions et les avertissements sont rejoués depuis ce journal à chaque ouverture : une coupure de courant ne coûte rien, et une correction n'efface jamais ce qui s'est passé — elle s'ajoute.</p>
+<h4>La page Direction</h4>
+<p>C'est là que le directeur passe l'essentiel de son temps. Elle porte, de haut en bas : les <strong>avertissements</strong> du moteur, qui restent visibles et ne bloquent jamais rien ; le bouton <strong>Imprimer la feuille</strong> d'appariements ; la <strong>file des propositions</strong> ; la <strong>grille des tables</strong> ; la <strong>dernière décision</strong> ; et les joueurs libres.</p>
+<p>Une proposition se confirme d'<strong>un clic</strong> sur <em>Lancer</em>. <strong>Tout lancer</strong> confirme la file entière en deux clics, après en avoir montré la liste. « Ignorer pour l'instant » n'écrit rien : le moteur est déterministe, et la proposition revient identique au prochain appel. <em>Apparier à la main</em> reste offert en permanence — le moteur propose, le directeur décide.</p>
+<p>Une proposition peut porter une remarque du moteur : aucune table libre, ou une fin de match attendue pendant une pause. Elle reste lançable dans les deux cas. Lorsqu'une phase fonctionne par <strong>micro-rondes</strong>, la file montre le temps qui reste avant le prochain lot ; à l'échéance les propositions apparaissent d' elles-mêmes, et rien ne se lance tout seul.</p>
+<h4>La fiche de résultat</h4>
+<p>Un clic sur une table occupée ouvre la fiche du match. Elle montre deux grandes cibles : les <strong>noms des deux joueurs</strong>. Cliquer celui qui a gagné enregistre le résultat — deux clics en tout, table comprise. Le vainqueur est la seule chose exigée ; le score est libre, l'un et l'autre ou aucun des deux.</p>
+<p>Le bouton <strong>⋯</strong> de la fiche déplie ce qui sert rarement : le forfait, une remarque libre (« tombé au temps », « abandonné pour raison de… »), le déplacement du match sur une autre table, et son annulation.</p>
+<p>Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille : <strong>Corriger</strong> la dernière décision, puis le bon vainqueur (<em>CTRL-Z</em> ouvre la même reprise). Une correction plus ancienne se fait depuis l'historique.</p>
+<h4>Les joueurs</h4>
+<p>L'onglet <strong>Joueurs</strong> inscrit, corrige et retire. Le champ d'inscription garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul. L'autocomplétion propose les joueurs de la base ; en choisir un fixe l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.</p>
+<p>L'<strong>annuaire</strong> regroupe les inscrits de tous les tournois dirigés de la base, dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ; l'annuaire s'exporte en CSV et se relit collé.</p>
+<p>Un <strong>retardataire</strong> arrivé après le tirage prend une place d'exemption libre si le tableau en offre une, et l'interface écrit à côté du champ où il entrera avant qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans quelle phase il entrera. Aucun tirage déjà fait n'est refait.</p>
+<p>Un retrait se fait <em>maintenant</em> ou <em>après son match en cours</em>, selon que le joueur part tout de suite ou finit ce qu'il joue.</p>
+<h4>Arbres, emplacements, classement, historique</h4>
+<p>L'onglet <strong>Arbres</strong> dessine les tableaux et, pour un suisse, le tableau des vies. Un match déjà joué y porte son résultat ; un match que le moteur signale y est marqué sur place.</p>
+<p>L'onglet <strong>Emplacements</strong> relie le tournoi à la bibliothèque. Chaque match du tournoi est un emplacement, que l'on peut remplir de deux façons : transcrire le match sur-le-champ (Panneau Transcription), ou y rattacher un match déjà importé. <strong>Rien n'est rattaché par déduction</strong> : une coïncidence de noms est une suggestion à accepter, un appariement partiel n'est même pas suggéré, et si le fichier d'un match rattaché contredit le résultat enregistré, l'écart est montré sans être résolu — pendant un tournoi, la parole du directeur fait foi.</p>
+<p>L'onglet <strong>Classement</strong> montre le classement courant, section par section, avec les prix lorsqu'une dotation est réglée. Deux ex æquo partagent la place et le prix. <strong>Clore le tournoi</strong> fige le classement final ; le classement s'exporte en CSV, dans la langue de l'interface.</p>
+<p>L'onglet <strong>Historique</strong> est le journal en clair : une ligne par décision, dans l'ordre, filtrable par joueur ou par match. C'est ce qu'un directeur relit après une contestation, et c'est là qu'une décision ancienne se corrige ou s'annote.</p>
+<h4>Les réglages</h4>
+<p>L'onglet <strong>Réglages</strong> s'ouvre sur des <strong>formats nommés</strong> : six tournois de club prêts à l'emploi, dont le premier est recommandé. En choisir un suffit à commencer ; les champs restent modifiables ensuite.</p>
+<p>Se règlent ici : les phases et leur longueur de match, les longueurs tour par tour d'un tableau (« 15, 13, 11 » se lit du dernier tour vers le premier), le nombre de tables, les pauses de la journée, la dotation (droit d'entrée, retenue du club, barème par section) et le dossier d'affichage.</p>
+<p>Les réglages restent accessibles <strong>en cours de tournoi</strong> : baisser la bascule à 22 h pour finir plus tôt, ajouter une consolante le samedi soir. Deux choses seulement sont alors figées — le format d'une phase ouverte et le nombre de vies qu'elle a distribué — et elles sont grisées avec leur raison. Enregistrer en cours de tournoi montre d'abord la liste de ce qui va changer, et demande confirmation.</p>
+<p>Les <strong>têtes de série</strong> sont une option, éteinte par défaut : l'étude du moteur conclut « pas de têtes de série protégées », qui est la culture actuelle du backgammon. Activées, les joueurs sont placés par cote.</p>
+<h4>L'affichage de la salle</h4>
+<p>Un tournoi se regarde. Choisir un <strong>dossier d'affichage</strong> dans les Réglages suffit une fois pour toutes : blunderDB y réécrit une page HTML autonome à chaque événement, et la page se recharge d'elle-même. Elle s'ouvre hors ligne, sur un second écran ou projetée, et ne charge aucune ressource extérieure. <em>Ouvrir dans le navigateur</em> l'affiche immédiatement.</p>
+<p>La <strong>feuille d'appariements</strong> se pose sur la table d'accueil : un clic sur <em>Imprimer la feuille</em> ouvre le dialogue d'impression du système. Une ligne par match — les deux joueurs, la longueur, la table, deux cases vides pour le score — et une ronde de trente-deux joueurs tient sur une page A4.</p>
+<p>Hors de l'interface, la sous-commande <code>blunderdb tournament</code> relit un tournoi dirigé sans interface graphique : <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> et <code>export</code>. Voir Interface en ligne de commande (CLI).</p>
 <h3>Panneau Stats</h3>
 <h4>Introduction</h4>
 <p>Le panneau <strong>Stats</strong> permet d'analyser son niveau de jeu et de suivre sa progression dans le temps à partir des positions importées dans la base de données. Il calcule et affiche les indicateurs <strong>PR</strong> (<em>Performance Rating</em>) et <strong>MWC cost</strong> (Match Winning Chance cost) pour l'ensemble des positions ou un sous-ensemble filtré.</p>
@@ -1008,6 +1040,26 @@ export default {
 <tr>
 <td>CTRL-MAJ-D</td>
 <td>Afficher/cacher le panneau Tournois pour diriger un tournoi.</td>
+</tr>
+<tr>
+<td>J / K</td>
+<td>Dans la file des propositions d'un tournoi dirigé : descendre, monter.</td>
+</tr>
+<tr>
+<td>ENTRÉE</td>
+<td>Dans la file des propositions : confirmer la proposition choisie.</td>
+</tr>
+<tr>
+<td>GAUCHE / DROITE</td>
+<td>Dans la fiche de résultat : le joueur de gauche gagne, celui de droite gagne.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Reprendre la dernière décision d'un tournoi dirigé.</td>
+</tr>
+<tr>
+<td>ÉCHAP</td>
+<td>Fermer la fiche de résultat ou la reprise en cours.</td>
 </tr>
 <tr>
 <td>?</td>
