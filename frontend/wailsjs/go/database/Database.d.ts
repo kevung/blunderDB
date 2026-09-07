@@ -9,6 +9,7 @@ import {domain} from '../models';
 import {race} from '../models';
 import {direction} from '../models';
 import {engine} from '../models';
+import {tournoi} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
 
@@ -69,6 +70,10 @@ export function ComputeEPCFromPosition(arg1:domain.Position):Promise<race.Result
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
+
+export function ConfirmAllProposals(arg1:number):Promise<database.DirectionView>;
+
+export function ConfirmProposal(arg1:number,arg2:string):Promise<database.DirectionView>;
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
@@ -137,6 +142,8 @@ export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
 export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
+
+export function FreeParticipants(arg1:number):Promise<Array<tournoi.Player>>;
 
 export function GetAllAnkiDecks():Promise<Array<domain.AnkiDeck>>;
 
@@ -383,6 +390,8 @@ export function SetupDatabase(arg1:string):Promise<void>;
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
 
 export function StartDirection(arg1:number,arg2:number,arg3:string):Promise<void>;
+
+export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number):Promise<database.DirectionView>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 

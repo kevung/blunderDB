@@ -118,6 +118,14 @@ export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
 }
 
+export function ConfirmAllProposals(arg1) {
+  return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
+}
+
+export function ConfirmProposal(arg1, arg2) {
+  return window['go']['database']['Database']['ConfirmProposal'](arg1, arg2);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
@@ -252,6 +260,10 @@ export function ExportTournaments(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
 
 export function FinishImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['FinishImportBatch'](arg1, arg2);
+}
+
+export function FreeParticipants(arg1) {
+  return window['go']['database']['Database']['FreeParticipants'](arg1);
 }
 
 export function GetAllAnkiDecks() {
@@ -744,6 +756,10 @@ export function SimilarPositions(arg1, arg2) {
 
 export function StartDirection(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StartDirection'](arg1, arg2, arg3);
+}
+
+export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['StartMatchManually'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function StudyImpact(arg1) {

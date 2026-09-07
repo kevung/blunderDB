@@ -56,7 +56,15 @@ const DYNAMIC_PREFIXES = [
     // n'en parle aucune.
     'direction.state.',
     'direction.named.',
-    'direction.format.'
+    'direction.format.',
+    // Les CODES du moteur, rendus par labels.js : `t(`direction.label.${label.kind}`)`. C'est
+    // le pivot de toute l'intégration — Nicomaque n'émet aucune phrase, et c'est ici que ses
+    // codes deviennent lisibles dans les neuf langues.
+    'direction.label.',
+    'direction.note.',
+    'direction.warning.',
+    'direction.section.',
+    'direction.reason.'
 ];
 
 function sourceFiles(dir) {

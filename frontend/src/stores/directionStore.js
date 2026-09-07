@@ -1,5 +1,17 @@
 import { writable, derived, get } from 'svelte/store';
-import { ListDirections, GetDirection, HasDirection, CreateDirection, SetDirectionConfig, StartDirection, DeleteDirection } from '../../wailsjs/go/database/Database.js';
+import {
+    ListDirections,
+    GetDirection,
+    HasDirection,
+    CreateDirection,
+    SetDirectionConfig,
+    StartDirection,
+    DeleteDirection,
+    ConfirmProposal,
+    ConfirmAllProposals,
+    StartMatchManually,
+    FreeParticipants
+} from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
 /*
@@ -203,4 +215,50 @@ export async function deleteDirection(tournamentId) {
     await DeleteDirection(tournamentId);
     if (get(openDirectionIdStore) === tournamentId) closeDirection();
     return refreshDirectionSummaries();
+}
+
+/**
+ * Confirme une proposition. L'événement est écrit AVANT d'être appliqué, côté Go ; la vue qui
+ * revient est déjà rejouée, si bien que la file se met à jour sans second aller-retour.
+ */
+export async function confirmProposal(action) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await ConfirmProposal(id, JSON.stringify(action));
+    directionStore.set(view);
+    return view;
+}
+
+/** Confirme toute la file. Deux clics pour le directeur, quel que soit le nombre. */
+export async function confirmAllProposals() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await ConfirmAllProposals(id);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Lance un match que le moteur n'a pas proposé. C'est l'échappatoire qui rend le panneau
+ * utilisable par un vrai directeur — celui qui sait qu'un joueur a un train. Un appariement
+ * hors graphe est accepté et laisse un avertissement ; seul l'impossible est refusé.
+ */
+export async function startMatchManually(a, b, length = 0, table = 0) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await StartMatchManually(id, a, b, length, table);
+    directionStore.set(view);
+    return view;
+}
+
+/** Les Participants de la phase courante qui ne jouent pas : la file d'attente. */
+export async function freeParticipants() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await FreeParticipants(id)) || [];
+    } catch (e) {
+        logger.error('direction: free participants failed', e);
+        return [];
+    }
 }
