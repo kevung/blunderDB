@@ -22,7 +22,8 @@ import {
     AddParticipant,
     UpdateParticipant,
     WithdrawParticipant,
-    EnterParticipants
+    EnterParticipants,
+    Brackets
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -398,4 +399,16 @@ export async function correctResult(matchId, winner, scoreA = 0, scoreB = 0, not
     const view = await CorrectResult(id, matchId, winner, scoreA, scoreB, note);
     directionStore.set(view);
     return view;
+}
+
+/** Les arbres de toutes les phases : structure brute, codes non traduits. */
+export async function brackets() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await Brackets(id)) || [];
+    } catch (e) {
+        logger.error('direction: brackets failed', e);
+        return [];
+    }
 }

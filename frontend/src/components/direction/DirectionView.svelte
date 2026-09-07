@@ -20,6 +20,7 @@
     import TableGrid from './TableGrid.svelte';
     import LastDecision from './LastDecision.svelte';
     import PlayersView from './PlayersView.svelte';
+    import BracketsView from './BracketsView.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
@@ -42,7 +43,8 @@
         entrySuggestions,
         addParticipant,
         updateParticipant,
-        withdrawParticipant
+        withdrawParticipant,
+        brackets
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -88,6 +90,7 @@
     let last = $state(null);
     let rows = $state([]);
     let suggestions = $state([]);
+    let phases = $state([]);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -98,6 +101,7 @@
         tableGrid().then((c) => (cells = c));
         lastDecision().then((l) => (last = l));
         participants().then((r) => (rows = r));
+        brackets().then((p) => (phases = p));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -132,6 +136,13 @@
     const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
+
+    /* Cliquer une place de l'arbre ramène à la page Direction, où le match se saisit : la
+       fiche de résultat vit sur la grille des tables, et il n'y en a qu'une. */
+    function openBracketMatch(m) {
+        if (!m.matchId) return;
+        tab = 'direction';
+    }
 
     function playerName(id) {
         const p = (view?.players || []).find((x) => x.id === id);
@@ -220,6 +231,8 @@
                     <p>{free.map((p) => p.name).join(' · ')}</p>
                 </section>
             </div>
+        {:else if tab === 'brackets'}
+            <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
             <PlayersView {rows} {suggestions} {busy} started={state !== 'draft'} {onAdd} {onUpdate} {onWithdraw} />
         {:else}
