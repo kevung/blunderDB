@@ -22,7 +22,21 @@
     import { namedConfigs } from '../../stores/directionStore';
     import { renderConfigChange, renderLockReason } from './labels.js';
 
-    let { config = $bindable(), state = 'draft', tournamentName = '', onApply = () => {}, onDelete = null, entrantCount = 0, onPreview = null, locks = [], opened = 0 } = $props();
+    let {
+        config = $bindable(),
+        state = 'draft',
+        tournamentName = '',
+        onApply = () => {},
+        onDelete = null,
+        entrantCount = 0,
+        onPreview = null,
+        locks = [],
+        opened = 0,
+        outputDir = '',
+        onChooseOutput = null,
+        onForgetOutput = null,
+        onOpenPage = null
+    } = $props();
 
     const isDraft = $derived(state === 'draft');
 
@@ -244,6 +258,27 @@
                 {/each}
             </ul>
             <button type="button" class="link" onclick={addBreak}>{$t('direction.settings.addBreak')}</button>
+        </section>
+
+        <section>
+            <h3>{$t('direction.display.title')}</h3>
+            <p class="facts">{$t('direction.display.hint')}</p>
+            {#if outputDir}
+                <p class="facts path">{outputDir}</p>
+            {/if}
+            <div class="actions">
+                {#if onChooseOutput}
+                    <button type="button" onclick={onChooseOutput}>
+                        {outputDir ? $t('direction.display.changeFolder') : $t('direction.display.chooseFolder')}
+                    </button>
+                {/if}
+                {#if outputDir && onOpenPage}
+                    <button type="button" onclick={onOpenPage}>{$t('direction.display.open')}</button>
+                {/if}
+                {#if outputDir && onForgetOutput}
+                    <button type="button" class="link" onclick={onForgetOutput}>{$t('direction.display.forget')}</button>
+                {/if}
+            </div>
         </section>
 
         <div class="actions">
@@ -518,5 +553,12 @@
 
     .refused {
         color: var(--color-danger);
+    }
+
+    /* Un chemin se lit d'un coup d'œil et se coupe où il veut : c'est une adresse, pas une
+       phrase. */
+    .path {
+        word-break: break-all;
+        font-family: ui-monospace, monospace;
     }
 </style>

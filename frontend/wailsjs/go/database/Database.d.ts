@@ -141,6 +141,8 @@ export function DeleteTournament(arg1:number):Promise<void>;
 
 export function DetachMatchFromSlot(arg1:number,arg2:string):Promise<void>;
 
+export function DirectionPageHTML(arg1:number):Promise<string>;
+
 export function DirectionStore():Promise<direction.Store>;
 
 export function DiscardFromTrash(arg1:number):Promise<void>;
@@ -429,6 +431,8 @@ export function SetDirectionConfig(arg1:number,arg2:string):Promise<void>;
 
 export function SetDirectionOutputDir(arg1:number,arg2:string):Promise<void>;
 
+export function SetDirectionStrings(arg1:string,arg2:string):Promise<void>;
+
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
@@ -502,3 +506,5 @@ export function UpdateTournamentComment(arg1:number,arg2:string):Promise<void>;
 export function Vacuum():Promise<database.VacuumResult>;
 
 export function WithdrawParticipant(arg1:number,arg2:string,arg3:boolean):Promise<database.DirectionView>;
+
+export function WriteDirectionPage(arg1:number):Promise<string>;

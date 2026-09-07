@@ -36,8 +36,13 @@ import {
     UnattachedMatches,
     AttachMatchToSlot,
     DetachMatchFromSlot,
-    StartTranscriptionFromSlot
+    StartTranscriptionFromSlot,
+    SetDirectionOutputDir,
+    SetDirectionStrings,
+    WriteDirectionPage
 } from '../../wailsjs/go/database/Database.js';
+import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
+import { language, messageBlock } from '../i18n';
 import { logger } from '../utils/logger.js';
 
 /*
@@ -201,6 +206,68 @@ export async function refreshDirection() {
  */
 export async function openDirection(tournamentId) {
     openDirectionIdStore.set(tournamentId);
+    await publishDirectionStrings();
+    return refreshDirection();
+}
+
+/**
+ * Donne au backend le bloc `direction` du catalogue courant (issue #386).
+ *
+ * La page d'affichage de la salle est écrite en Go, et Nicomaque n'émet que des codes : sans ce
+ * geste elle sortirait avec des codes bruts. Le front passe donc ses propres mots, et les deux
+ * côtés rendent les mêmes codes avec le même vocabulaire.
+ */
+export async function publishDirectionStrings() {
+    try {
+        await SetDirectionStrings(get(language), JSON.stringify(messageBlock('direction')));
+    } catch (e) {
+        logger.error('direction: publishing the catalogue failed', e);
+    }
+}
+
+/* Changer de langue en cours de tournoi doit changer la page affichée dans la salle : le
+   catalogue est republié dès que la langue bouge. Un `subscribe` est ici à sa place — la règle
+   des stores Svelte 5 vise les composants, pas les modules. */
+language.subscribe(() => {
+    if (get(openDirectionIdStore) !== null) publishDirectionStrings();
+});
+
+/**
+ * Réécrit la page d'affichage de la salle. Sans dossier choisi elle ne fait rien et ne dit
+ * rien : un directeur qui n'a jamais demandé d'affichage n'a pas à en entendre parler à chaque
+ * résultat. Un échec est signalé et n'interrompt JAMAIS la direction du tournoi.
+ */
+export async function writeDirectionPage() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return '';
+    try {
+        return (await WriteDirectionPage(id)) || '';
+    } catch (e) {
+        logger.error('direction: writing the display page failed', e);
+        return null;
+    }
+}
+
+/**
+ * Choisit le dossier d'affichage, une fois par Direction. Ensuite, plus aucun geste : la page
+ * est réécrite à chaque événement.
+ */
+export async function chooseDirectionOutputDir() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const dir = await OpenDirectionOutputDialog();
+    if (!dir) return null;
+    await SetDirectionOutputDir(id, dir);
+    await refreshDirection();
+    await writeDirectionPage();
+    return dir;
+}
+
+/** Oublie le dossier d'affichage : la page cesse d'être réécrite, celle qui existe reste. */
+export async function forgetDirectionOutputDir() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return;
+    await SetDirectionOutputDir(id, '');
     return refreshDirection();
 }
 

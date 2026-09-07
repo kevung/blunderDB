@@ -15,6 +15,7 @@
     import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
+    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
@@ -62,7 +63,10 @@
         attachMatchToSlot,
         detachMatchFromSlot,
         transcribeFromSlot,
-        previewDirectionConfig
+        previewDirectionConfig,
+        writeDirectionPage,
+        chooseDirectionOutputDir,
+        forgetDirectionOutputDir
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -143,6 +147,12 @@
         // Ils se lisent sur la configuration EN VIGUEUR, pas sur la copie en cours d'édition.
         const saved = view?.config;
         if (saved) previewDirectionConfig(saved).then((p) => (configPreview = p));
+        // L'affichage de la salle est réécrit à chaque événement, sans aucun geste (#386).
+        // L'appel ne fait rien tant qu'aucun dossier n'a été choisi, et un échec d'écriture
+        // n'interrompt jamais la direction du tournoi.
+        writeDirectionPage().then((path) => {
+            if (path === null) statusBarTextStore.set(tMsg('direction.display.error'));
+        });
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -190,6 +200,20 @@
         return act(() => reopenTournament(), 'direction.standings.error');
     };
     const onNote = (text) => act(() => addNote(text), 'direction.history.error');
+
+    /* L'affichage de la salle : un dossier choisi une fois, puis plus rien à faire. La page
+       s'ouvre dans le navigateur du poste, hors ligne — c'est la seule chose sur laquelle on
+       puisse compter un dimanche matin. */
+    const onChooseOutput = () => act(() => chooseDirectionOutputDir(), 'direction.display.error');
+    const onForgetOutput = () => act(() => forgetDirectionOutputDir(), 'direction.display.error');
+    async function onOpenPage() {
+        const path = await writeDirectionPage();
+        if (!path) {
+            statusBarTextStore.set(tMsg('direction.display.error'));
+            return;
+        }
+        BrowserOpenURL('file://' + path);
+    }
     const onAttach = (slot, matchId) =>
         act(async () => {
             await attachMatchToSlot(slot, matchId);
@@ -335,6 +359,10 @@
                 onPreview={previewDirectionConfig}
                 locks={configPreview?.locks || []}
                 opened={configPreview?.opened || 0}
+                outputDir={view?.outputDir || ''}
+                {onChooseOutput}
+                {onForgetOutput}
+                {onOpenPage}
             />
         {:else if tab === 'direction'}
             <div class="direction-page">

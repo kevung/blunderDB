@@ -94,6 +94,30 @@ export const language = writable(FALLBACK_LOCALE);
 // Reactive translation function. Components: `{$t('toolbar.newDatabase')}`.
 export const t = derived(language, ($lang) => (key, params) => translateFor($lang, key, params));
 
+/**
+ * Un bloc entier de messages, dans la langue courante, replié sur l'anglais clé par clé.
+ *
+ * Le backend en a besoin : la page d'affichage d'un tournoi (#386) est écrite en Go, et le
+ * moteur Nicomaque n'émet que des CODES. Plutôt que de recopier les traductions côté Go, le
+ * front lui passe son propre bloc, et les deux rendent les mêmes codes avec les mêmes mots.
+ *
+ * @param {string} section
+ */
+export function messageBlock(section) {
+    const base = lookup(messages[FALLBACK_LOCALE], section);
+    const own = lookup(messages[get(language)], section);
+    return mergeBlocks(base, own);
+}
+
+/** Repli profond : l'anglais dessous, la langue de l'utilisateur dessus. */
+function mergeBlocks(base, own) {
+    if (own === undefined) return base === undefined ? {} : base;
+    if (base === undefined || typeof base !== 'object' || typeof own !== 'object') return own;
+    const out = { ...base };
+    for (const [k, v] of Object.entries(own)) out[k] = mergeBlocks(base[k], v);
+    return out;
+}
+
 // Non-reactive translation for use outside Svelte components (.js modules).
 export function translate(key, params) {
     return translateFor(get(language), key, params);
