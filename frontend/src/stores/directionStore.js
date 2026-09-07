@@ -10,7 +10,12 @@ import {
     ConfirmProposal,
     ConfirmAllProposals,
     StartMatchManually,
-    FreeParticipants
+    FreeParticipants,
+    TableGrid,
+    EnterResult,
+    EnterForfeit,
+    MoveMatchToTable,
+    CancelMatch
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -261,4 +266,55 @@ export async function freeParticipants() {
         logger.error('direction: free participants failed', e);
         return [];
     }
+}
+
+/** La grille des tables : une case par table de la salle, dérivée à chaque appel. */
+export async function tableGrid() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await TableGrid(id)) || [];
+    } catch (e) {
+        logger.error('direction: table grid failed', e);
+        return [];
+    }
+}
+
+/**
+ * Enregistre un résultat. Le VAINQUEUR est la seule chose exigée : les scores peuvent être nuls
+ * tous les deux, ce que produit un directeur qui a seulement écrit « Alice gagne ».
+ */
+export async function enterResult(matchId, winner, scoreA = 0, scoreB = 0, note = '') {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await EnterResult(id, matchId, winner, scoreA, scoreB, note);
+    directionStore.set(view);
+    return view;
+}
+
+/** Forfait pour CE match, sans retirer le joueur du tournoi. */
+export async function enterForfeit(matchId, winner, note = '') {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await EnterForfeit(id, matchId, winner, note);
+    directionStore.set(view);
+    return view;
+}
+
+/** Déplace un match en cours vers une autre table. */
+export async function moveMatchToTable(matchId, table) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await MoveMatchToTable(id, matchId, table);
+    directionStore.set(view);
+    return view;
+}
+
+/** Annule un match lancé par erreur. Rien n'est effacé du journal. */
+export async function cancelMatch(matchId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await CancelMatch(id, matchId);
+    directionStore.set(view);
+    return view;
 }

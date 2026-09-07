@@ -37,6 +37,8 @@ export function BuryAnkiCard(arg1:number):Promise<void>;
 
 export function CancelImport():Promise<void>;
 
+export function CancelMatch(arg1:number,arg2:string):Promise<database.DirectionView>;
+
 export function CheckConstraints():Promise<Array<database.ConstraintViolation>>;
 
 export function CheckCounters():Promise<database.CounterDrift>;
@@ -128,6 +130,10 @@ export function DirectionStore():Promise<direction.Store>;
 export function DiscardFromTrash(arg1:number):Promise<void>;
 
 export function EmptyTrash(arg1:number):Promise<number>;
+
+export function EnterForfeit(arg1:number,arg2:string,arg3:string,arg4:string):Promise<database.DirectionView>;
+
+export function EnterResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<database.DirectionView>;
 
 export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
 
@@ -301,6 +307,8 @@ export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<stor
 
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 
+export function MoveMatchToTable(arg1:number,arg2:string,arg3:number):Promise<database.DirectionView>;
+
 export function MovePositionBetweenCollections(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function OpenDatabase(arg1:string):Promise<void>;
@@ -402,6 +410,8 @@ export function SwapMatchPlayers(arg1:number):Promise<void>;
 export function SyncAnkiDeck(arg1:number):Promise<void>;
 
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
+
+export function TableGrid(arg1:number):Promise<Array<database.TableCell>>;
 
 export function Tags():Promise<Array<domain.TagCount>>;
 

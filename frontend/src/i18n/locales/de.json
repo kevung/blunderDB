@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "Wartend ({n})"
+        },
+        "table": {
+            "title": "Tische ({n})",
+            "free": "frei",
+            "unavailable": "außer Betrieb",
+            "reserved": "reserviert",
+            "slow": "langsam",
+            "none": "Kein Tisch angegeben."
+        },
+        "result": {
+            "title": "Ergebnis",
+            "score": "Ergebnis",
+            "optional": "(optional)",
+            "forfeit": "Aufgabe von",
+            "note": "Anmerkung",
+            "notePlaceholder": "Zeit abgelaufen, aufgegeben…",
+            "move": "Tisch wechseln",
+            "cancelMatch": "Diese Partie abbrechen",
+            "error": "Das Ergebnis konnte nicht gespeichert werden.",
+            "more": "Mehr",
+            "apply": "Anwenden"
         }
     }
 }

@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "Waiting ({n})"
+        },
+        "table": {
+            "title": "Tables ({n})",
+            "free": "free",
+            "unavailable": "out of service",
+            "reserved": "reserved",
+            "slow": "slow",
+            "none": "No table declared."
+        },
+        "result": {
+            "title": "Result",
+            "score": "Score",
+            "optional": "(optional)",
+            "forfeit": "Forfeit by",
+            "note": "Remark",
+            "notePlaceholder": "ran out of time, abandoned…",
+            "move": "Move table",
+            "cancelMatch": "Cancel this match",
+            "error": "Could not record this result.",
+            "more": "More",
+            "apply": "Apply"
         }
     }
 }

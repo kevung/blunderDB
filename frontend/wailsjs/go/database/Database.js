@@ -50,6 +50,10 @@ export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }
 
+export function CancelMatch(arg1, arg2) {
+  return window['go']['database']['Database']['CancelMatch'](arg1, arg2);
+}
+
 export function CheckConstraints() {
   return window['go']['database']['Database']['CheckConstraints']();
 }
@@ -232,6 +236,14 @@ export function DiscardFromTrash(arg1) {
 
 export function EmptyTrash(arg1) {
   return window['go']['database']['Database']['EmptyTrash'](arg1);
+}
+
+export function EnterForfeit(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['EnterForfeit'](arg1, arg2, arg3, arg4);
+}
+
+export function EnterResult(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['EnterResult'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 export function ExplainDecision(arg1, arg2) {
@@ -578,6 +590,10 @@ export function MergePlayers(arg1, arg2) {
   return window['go']['database']['Database']['MergePlayers'](arg1, arg2);
 }
 
+export function MoveMatchToTable(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['MoveMatchToTable'](arg1, arg2, arg3);
+}
+
 export function MovePositionBetweenCollections(arg1, arg2, arg3) {
   return window['go']['database']['Database']['MovePositionBetweenCollections'](arg1, arg2, arg3);
 }
@@ -780,6 +796,10 @@ export function SyncAnkiDeck(arg1) {
 
 export function SyncAnkiDeckWithPositions(arg1, arg2) {
   return window['go']['database']['Database']['SyncAnkiDeckWithPositions'](arg1, arg2);
+}
+
+export function TableGrid(arg1) {
+  return window['go']['database']['Database']['TableGrid'](arg1);
 }
 
 export function Tags() {

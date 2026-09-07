@@ -88,9 +88,12 @@ func TestConfirmAll_WholeQueue(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// A proposal with no free table is NOT launched by "launch all": it stays in the queue
+	// for the director to launch with a table they picked. Eight tables are declared, so
+	// eight of the twelve proposals go.
 	want := 0
 	for _, a := range v.Proposals {
-		if a.Kind != tournoi.ActWait {
+		if a.Kind != tournoi.ActWait && a.Reason != tournoi.ReasonWaitingTable {
 			want++
 		}
 	}

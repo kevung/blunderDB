@@ -17,6 +17,7 @@
     import { logger } from '../../utils/logger.js';
     import DirectionSettings from './DirectionSettings.svelte';
     import ProposalList from './ProposalList.svelte';
+    import TableGrid from './TableGrid.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
@@ -28,7 +29,12 @@
         confirmProposal,
         confirmAllProposals,
         startMatchManually,
-        freeParticipants
+        freeParticipants,
+        tableGrid,
+        enterResult,
+        enterForfeit,
+        moveMatchToTable,
+        cancelMatch
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -80,6 +86,7 @@
 
     let busy = $state(false);
     let free = $state([]);
+    let cells = $state([]);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -87,7 +94,32 @@
         // La dépendance explicite : la file se recalcule dès qu'un événement est écrit.
         void view?.eventCount;
         freeParticipants().then((p) => (free = p));
+        tableGrid().then((c) => (cells = c));
     });
+
+    /* Le temps écoulé d'un match avance sans qu'aucun événement ne soit écrit : la grille se
+       rafraîchit donc à la minute, sans quoi une table qui traîne resterait invisible. */
+    $effect(() => {
+        const timer = setInterval(() => tableGrid().then((c) => (cells = c)), 60000);
+        return () => clearInterval(timer);
+    });
+
+    async function act(fn, key) {
+        busy = true;
+        try {
+            await fn();
+        } catch (e) {
+            logger.error('direction: ' + key, e);
+            statusBarTextStore.set(tMsg(key));
+        } finally {
+            busy = false;
+        }
+    }
+
+    const onResult = (m, w, a, b, note) => act(() => enterResult(m, w, a, b, note), 'direction.result.error');
+    const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
+    const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
+    const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
 
     function playerName(id) {
         const p = (view?.players || []).find((x) => x.id === id);
@@ -177,6 +209,7 @@
                     </ul>
                 {/if}
                 <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} />
                 <section class="waiting">
                     <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
                     <p>{free.map((p) => p.name).join(' · ')}</p>

@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "In attesa ({n})"
+        },
+        "table": {
+            "title": "Tavoli ({n})",
+            "free": "libero",
+            "unavailable": "fuori servizio",
+            "reserved": "riservato",
+            "slow": "lento",
+            "none": "Nessun tavolo dichiarato."
+        },
+        "result": {
+            "title": "Risultato",
+            "score": "Punteggio",
+            "optional": "(facoltativo)",
+            "forfeit": "Forfait di",
+            "note": "Nota",
+            "notePlaceholder": "tempo scaduto, ritiro…",
+            "move": "Cambia tavolo",
+            "cancelMatch": "Annulla questa partita",
+            "error": "Impossibile registrare questo risultato.",
+            "more": "Altro",
+            "apply": "Applica"
         }
     }
 }
