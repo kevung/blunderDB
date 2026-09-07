@@ -34,7 +34,6 @@ Opérations globales
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
    "log", "Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient."
-   "like", "Remplace la liste parcourue par les positions les plus proches de la position courante — ou de celle dont l'indice est donné (``like 42``). La proximité est une distance de transport en pions-pas : ce n'est pas un filtre, elle classe toute la base plutôt que de la restreindre, et ne se combine donc pas avec les jetons de recherche."
    "train", "Lance une session de micro-entraînement. Prend un argument : ``train pips`` (compte de pions), ``train epc``, ``train tp`` (point de prise au score), ``train quiz`` (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
@@ -107,6 +106,10 @@ jeton : ``D65`` n'existe pas, seule la forme d'exclusion porte ses chiffres
 (``xD65``). En ligne de commande, où il n'y a pas de plateau, ces jetons se
 comparent à un plateau vide ; ce sont les drapeaux de la troisième colonne
 qu'il faut y employer.
+
+Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le
+résultat par distance croissante à une position cible, et tous les autres
+jetons restreignent l'ensemble ainsi classé.
 
 Les erreurs et les équités se comptent en **millièmes d'équité** — les
 *millipoints* de la table ci-dessous : ``E>100`` retient les coups qui ont
@@ -217,6 +220,7 @@ Deux recherches complètes :
    "idx", "Rechercher la position d'identifiant x (ex: id12).", "``--position-ids``"
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10).", "``--position-ids``"
    "``pl'nom'``", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée.", "—"
+   "like, like42, like<12, like42*", "Classe le résultat par distance croissante à une position cible, au lieu de le restreindre : ``like`` prend la position courante, ``like42`` celle d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, ``like42*`` élargit la classe de la cible à tous les types de décision et aux deux régimes, argent et match. Voir :ref:`panneau_recherche`.", "—"
 
 .. _cmd_misc:
 

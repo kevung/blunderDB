@@ -748,14 +748,24 @@ qu'aucun n'est sur la barre.
    une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
    ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
 
-La commande ``like`` répond à une autre question que les jetons : elle
-remplace la liste parcourue par les positions les plus **proches** de la
-position courante, de la plus proche à la plus lointaine. La proximité est une
-distance de transport, exprimée en pions-pas — la quantité de mouvement de
-pions qui sépare les deux positions — et le point de vue est toujours celui du
-joueur au trait. Ce n'est pas un filtre : la similarité **classe** toute la
-bibliothèque au lieu de la restreindre, et ne se combine donc pas avec les
-jetons.
+Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne le
+résultat par distance croissante à une position cible — ``like`` la position
+courante, ``like42`` celle d'indice 42 — et les autres jetons restreignent
+l'ensemble ainsi classé, si bien que ``s like42 E>80`` se lit « les voisines
+de la 42 où j'ai fauté ». La distance est une distance de transport en
+pions-pas, la quantité de mouvement de pions qui sépare deux positions, vue du
+joueur au trait.
+
+Une voisine est le même **problème**, pas le même dessin : le classement se
+prend dans la classe de la cible — même type de décision, même régime (argent
+ou match) pour une décision de videau, et un match différent du sien, car les
+positions qui l'entourent dans sa propre partie sont ses structures les plus
+proches sans jamais être ses voisines. Les dés, le score et le videau restent
+hors classe ; les jetons ordinaires les filtrent quand on le veut. ``like42*`` élargit la classe à tous
+les types de décision et aux deux régimes, jamais au match de la cible ;
+``like<12`` écarte ce qui est à plus de douze pions-pas. Un classement qui ne
+trouve rien rend une liste vide et le dit, plutôt que dix positions sans
+rapport.
 
 Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
 auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une
