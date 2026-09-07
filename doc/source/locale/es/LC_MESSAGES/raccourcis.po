@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-07 03:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -312,6 +312,14 @@ msgid "Afficher/cacher l'analyse."
 msgstr "Mostrar/ocultar el análisis."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-L"
+msgstr "CTRL-MAYÚS-L"
+
+#: ../../source/raccourcis.rst:1
+msgid "Classer les positions voisines de la position courante."
+msgstr "Clasificar las vecinas de la posición actual."
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-P"
 msgstr "CTRL-P"
 
@@ -399,7 +407,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostrar/ocultar la ayuda."
 
-#: ../../source/raccourcis.rst:116
+#: ../../source/raccourcis.rst:118
 msgid "Onglets de vues"
 msgstr "Pestañas de vistas"
 
@@ -451,7 +459,7 @@ msgstr "Doble clic en la pestaña"
 msgid "Renommer la vue."
 msgstr "Renombrar la vista."
 
-#: ../../source/raccourcis.rst:133
+#: ../../source/raccourcis.rst:135
 msgid "Ligne de commande"
 msgstr "Línea de comandos"
 
@@ -471,7 +479,7 @@ msgstr "ABAJO"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Recorrer el historial de comandos hacia abajo."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:148
 msgid "Historique de recherche"
 msgstr "Historial de búsqueda"
 
@@ -491,7 +499,7 @@ msgstr "Doble clic"
 msgid "Exécuter la recherche."
 msgstr "Ejecutar la búsqueda."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Biblioteca de filtros"
 
@@ -503,7 +511,7 @@ msgstr "Seleccionar/deseleccionar un filtro (mostrar la posición)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Ejecutar la búsqueda del filtro."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:174
 msgid "Panneau d'analyse"
 msgstr "Panel de análisis"
 
@@ -541,7 +549,7 @@ msgstr ""
 "Deseleccionar la jugada. Si no hay ninguna jugada seleccionada, cerrar el"
 " panel."
 
-#: ../../source/raccourcis.rst:188
+#: ../../source/raccourcis.rst:190
 msgid "Panneau Eval"
 msgstr "Panel Eval"
 
@@ -549,7 +557,7 @@ msgstr "Panel Eval"
 msgid "Désélectionner le coup."
 msgstr "Deseleccionar la jugada."
 
-#: ../../source/raccourcis.rst:203
+#: ../../source/raccourcis.rst:205
 msgid "Panneau des matchs"
 msgstr "Panel de partidas"
 
@@ -585,7 +593,7 @@ msgstr "Eliminar la partida seleccionada."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleccionar/cerrar el panel."
 
-#: ../../source/raccourcis.rst:221
+#: ../../source/raccourcis.rst:223
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Panel Anki (repetición espaciada)"
 
@@ -643,7 +651,7 @@ msgstr ""
 "Detener la revisión y volver a la lista de mazos (se puede reanudar más "
 "tarde)."
 
-#: ../../source/raccourcis.rst:239
+#: ../../source/raccourcis.rst:241
 msgid "Panneau des tournois"
 msgstr "Panel de torneos"
 
@@ -675,7 +683,7 @@ msgstr ""
 "Cancelar la edición en curso, si no borrar la búsqueda de añadir partida,"
 " si no deseleccionar el torneo, si no cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:255
+#: ../../source/raccourcis.rst:257
 msgid "Panneau des collections"
 msgstr "Panel de colecciones"
 
@@ -703,7 +711,7 @@ msgstr ""
 "Volver a la lista de colecciones, si no deseleccionar la colección, si no"
 " cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:270
+#: ../../source/raccourcis.rst:272
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-07 03:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -310,6 +310,14 @@ msgid "Afficher/cacher l'analyse."
 msgstr "Näytä/piilota analyysi."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-L"
+msgstr "CTRL-SHIFT-L"
+
+#: ../../source/raccourcis.rst:1
+msgid "Classer les positions voisines de la position courante."
+msgstr "Järjestä nykyisen aseman naapurit."
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-P"
 msgstr "CTRL-P"
 
@@ -397,7 +405,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
-#: ../../source/raccourcis.rst:116
+#: ../../source/raccourcis.rst:118
 msgid "Onglets de vues"
 msgstr "Näkymävälilehdet"
 
@@ -449,7 +457,7 @@ msgstr "Välilehden kaksoisnapsautus"
 msgid "Renommer la vue."
 msgstr "Nimeä näkymä uudelleen."
 
-#: ../../source/raccourcis.rst:133
+#: ../../source/raccourcis.rst:135
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -469,7 +477,7 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:148
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
@@ -489,7 +497,7 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
@@ -501,7 +509,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:174
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -537,7 +545,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:188
+#: ../../source/raccourcis.rst:190
 msgid "Panneau Eval"
 msgstr "Eval-paneeli"
 
@@ -545,7 +553,7 @@ msgstr "Eval-paneeli"
 msgid "Désélectionner le coup."
 msgstr "Poista siirron valinta."
 
-#: ../../source/raccourcis.rst:203
+#: ../../source/raccourcis.rst:205
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -581,7 +589,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:221
+#: ../../source/raccourcis.rst:223
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -637,7 +645,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 
-#: ../../source/raccourcis.rst:239
+#: ../../source/raccourcis.rst:241
 msgid "Panneau des tournois"
 msgstr "Turnauspaneeli"
 
@@ -670,7 +678,7 @@ msgstr ""
 "muuten poista turnauksen valinta, muuten sulje paneeli (askel "
 "kerrallaan)."
 
-#: ../../source/raccourcis.rst:255
+#: ../../source/raccourcis.rst:257
 msgid "Panneau des collections"
 msgstr "Kokoelmapaneeli"
 
@@ -698,7 +706,7 @@ msgstr ""
 "Palaa kokoelmalistaan, muuten poista kokoelman valinta, muuten sulje "
 "paneeli (askel kerrallaan)."
 
-#: ../../source/raccourcis.rst:270
+#: ../../source/raccourcis.rst:272
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

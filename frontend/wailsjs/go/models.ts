@@ -1881,6 +1881,7 @@ export namespace domain {
 	    encounterFilter: string;
 	    likeFilter: boolean;
 	    likeTargetId: number;
+	    likeTargetBoard: Position;
 	    likeMaxDistance: number;
 	    likeWidened: boolean;
 	    player1AbsolutePipCountFilter: string;
@@ -1940,6 +1941,7 @@ export namespace domain {
 	        this.encounterFilter = source["encounterFilter"];
 	        this.likeFilter = source["likeFilter"];
 	        this.likeTargetId = source["likeTargetId"];
+	        this.likeTargetBoard = this.convertValues(source["likeTargetBoard"], Position);
 	        this.likeMaxDistance = source["likeMaxDistance"];
 	        this.likeWidened = source["likeWidened"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
@@ -2600,6 +2602,8 @@ export namespace main {
 	    language?: string;
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
+	    like_limit?: number;
+	    like_max_distance?: number;
 	    panel_position?: string;
 	    panel_height?: number;
 	    panel_width?: number;
@@ -2635,6 +2639,8 @@ export namespace main {
 	        this.language = source["language"];
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
+	        this.like_limit = source["like_limit"];
+	        this.like_max_distance = source["like_max_distance"];
 	        this.panel_position = source["panel_position"];
 	        this.panel_height = source["panel_height"];
 	        this.panel_width = source["panel_width"];

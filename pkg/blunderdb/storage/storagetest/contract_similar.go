@@ -300,6 +300,50 @@ func testSimilarWithoutAMatchExcludesNothing(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testSimilarRanksAgainstADrawnBoard pins the target that was never stored:
+// a board the user has merely DRAWN (ADR-0043 rule 3).
+//
+// It is the question the exact structure search believed it was asking — "I
+// vaguely remember a position like this" — and the one the structure filter
+// cannot answer, because it does not forgive an approximate drawing. The board
+// is read as a POSITION and not as a pattern: a point left empty counts as
+// checkers borne off, which is right for a real position.
+func testSimilarRanksAgainstADrawnBoard(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps := s.Positions()
+
+	near := similarityBoard(map[int]int{13: 4, 12: 1, 8: 5, 6: 5})
+	far := similarityBoard(map[int]int{2: 5, 8: 5, 6: 5})
+	nearID, err := ps.Save(ctx, "", &near)
+	if err != nil {
+		t.Fatalf("Save near: %v", err)
+	}
+	if _, err := ps.Save(ctx, "", &far); err != nil {
+		t.Fatalf("Save far: %v", err)
+	}
+
+	// Never saved: this board exists only on the screen.
+	drawn := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
+	got, err := s.Search().Rank(ctx, "", domain.SearchFilters{
+		LikeFilter:      true,
+		LikeTargetBoard: drawn,
+	}, storage.ListOpts{Limit: 10})
+	if err != nil {
+		t.Fatalf("Rank against a drawn board: %v", err)
+	}
+	if len(got) == 0 {
+		t.Fatal("a drawn board is a legitimate target: it ranked nothing")
+	}
+	if got[0].Position.ID != nearID {
+		t.Errorf("nearest to the drawn board = %d, want %d", got[0].Position.ID, nearID)
+	}
+	// Nothing is excluded: a drawing belongs to no match, and is its own
+	// neighbour of nobody.
+	if len(got) != 2 {
+		t.Errorf("a drawing excludes no match, so both stored positions are neighbours: got %d", len(got))
+	}
+}
+
 // rank runs a ranked query the way every caller does: the `like` token, its
 // target already resolved to an id, and the class the target imposes.
 func rank(ctx context.Context, s storage.Storage, targetID int64, limit, maxDistance int, widened bool) ([]storage.SimilarPosition, error) {

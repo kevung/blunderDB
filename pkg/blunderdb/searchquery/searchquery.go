@@ -523,6 +523,7 @@ var FieldTokens = map[string]string{
 // why. See the package doc.
 var Unrepresentable = map[string]string{
 	"Filter":                "a board position: the checkers are drawn, not typed",
+	"LikeTargetBoard":       "a board position: what a bare `like` ranks against in edit mode is drawn, not typed",
 	"ExcludeFilter":         "a board position: the exclusion structure is drawn, not typed",
 	"RestrictToPositionIDs": "an internal narrowing (search within a result set), not a user filter",
 	"Sort":                  "set by the caller; a Go-only token would fork the grammar",

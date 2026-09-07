@@ -250,12 +250,24 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// (ADR-0043).
 	var likeTarget *domain.Position
 	if f.LikeFilter {
-		if f.LikeTargetID <= 0 {
-			return searchWhereClause{}, fmt.Errorf("a `like` query needs a position to rank against: the bare token is resolved where it was typed, never guessed here")
-		}
-		t, err := LoadTargetPosition(ctx, s.DB, scope, f.LikeTargetID)
-		if err != nil {
-			return searchWhereClause{}, err
+		// The target is a stored position when the token named one, and the
+		// board otherwise — which is how a DRAWN board becomes a legitimate
+		// target (ADR-0043 rule 3). It is the question the exact structure
+		// search believed it was asking: "I vaguely remember a position like
+		// this". The board is read as a POSITION and not as a pattern, so a
+		// point left empty is fifteen checkers minus what was placed, borne
+		// off — which is right for a real position and is what the manual
+		// warns about for a half-drawn one.
+		var t *domain.Position
+		if f.LikeTargetID > 0 {
+			loaded, err := LoadTargetPosition(ctx, s.DB, scope, f.LikeTargetID)
+			if err != nil {
+				return searchWhereClause{}, err
+			}
+			t = loaded
+		} else {
+			board := f.LikeTargetBoard
+			t = &board
 		}
 		likeTarget = t
 		class := storage.SimilarOptions{}

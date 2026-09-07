@@ -117,7 +117,7 @@ du plateau avec son analyse dans le presse-papier (l'équivalent de *CTRL-X
 CTRL-X*, moins facile à découvrir), **enregistrer l'image dans un fichier**
 en SVG ou en PNG, ouvrir une nouvelle vue sur cette position, et — si la
 position vient déjà de la base — l'ajouter à un paquet Anki (répétition
-espacée).
+espacée) ou classer ses **positions voisines** (voir :ref:`panneau_recherche`).
 
 Le presse-papier est le geste courant ; enregistrer est l'autre besoin —
 l'illustration d'un article, d'un message de forum, d'une leçon. Le **SVG** y
@@ -297,6 +297,13 @@ Cette vérification reste désactivée automatiquement sur une installation
 passée par un gestionnaire de paquets (Flatpak, Homebrew, un paquet de
 distribution…) : c'est ce canal-là qui gère alors les mises à jour, pas
 blunderDB lui-même.
+
+Deux réglages gouvernent le classement des **positions voisines** (jeton
+``like``, voir :ref:`panneau_recherche`) : le nombre de voisines rendues, et la
+distance maximale au-delà de laquelle une position cesse d'en être une. Cette
+distance vaut zéro par défaut, c'est-à-dire aucun plafond : l'échelle dépend de
+la phase de la partie, et une valeur choisie ici se lirait comme une mesure. Le
+jeton ``like<12`` impose la sienne pour une recherche, sans toucher au réglage.
 
 L'onglet *Couleurs* permet de personnaliser les couleurs du
 plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
@@ -798,6 +805,19 @@ les types de décision et aux deux régimes, jamais au match de la cible ;
 ``like<12`` écarte ce qui est à plus de douze pions-pas. Un classement qui ne
 trouve rien rend une liste vide et le dit, plutôt que dix positions sans
 rapport.
+
+En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** : on
+dessine à peu près la position dont on se souvient, on lance, et la
+bibliothèque répond — là où la recherche par structure exige le dessin juste.
+Le plateau est alors lu comme une position et non comme un motif : un point
+laissé vide compte comme des pions sortis, ce qui est exact pour une position
+réelle et fausse le calcul pour un dessin laissé à moitié.
+
+Chaque voisine porte sa distance sous les tableaux d'analyse, avec la position
+dont elle est proche. C'est ce qui permet de juger si l'on regarde une voisine
+ou une coïncidence, et c'est la raison d'être du plafond. Le classement se
+lance aussi sans passer par la ligne de commande : *CTRL-MAJ-L*, ou l'entrée
+**Positions voisines** du menu contextuel du plateau.
 
 Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
 auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une

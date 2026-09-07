@@ -47,7 +47,11 @@
         GetWatchFolder,
         SaveGammonNetAutoAnalyze,
         GetCheckForUpdates,
-        SaveCheckForUpdates
+        SaveCheckForUpdates,
+        GetLikeLimit,
+        SaveLikeLimit,
+        GetLikeMaxDistance,
+        SaveLikeMaxDistance
     } from '../../wailsjs/go/main/Config.js';
     import { watchStatusStore } from '../stores/watchStore.js';
     import { themeStore, setTheme } from '../stores/themeStore.js';
@@ -165,6 +169,29 @@
         } catch (error) {
             identityError = String(error);
         }
+    }
+
+    // Les deux réglages du classement `like` (ADR-0043). Le plafond vaut zéro
+    // par défaut, et c'est une décision : l'échelle dépend de la phase — dix
+    // pions-pas ne sont rien en course et une autre position à l'ouverture —
+    // et personne ne l'a mesurée. Un nombre inventé ici se lirait comme une
+    // mesure.
+    const MAX_LIKE_LIMIT = 500;
+    let likeLimit = $state(30);
+    let likeMaxDistance = $state(0);
+
+    async function onLikeLimitChange(event) {
+        const n = parseInt(event.currentTarget.value, 10);
+        if (!Number.isFinite(n)) return;
+        likeLimit = Math.min(Math.max(n, 1), MAX_LIKE_LIMIT);
+        await SaveLikeLimit(likeLimit);
+    }
+
+    async function onLikeMaxDistanceChange(event) {
+        const n = parseInt(event.currentTarget.value, 10);
+        if (!Number.isFinite(n)) return;
+        likeMaxDistance = Math.max(n, 0);
+        await SaveLikeMaxDistance(likeMaxDistance);
     }
 
     // Board colour settings, in display order. Each maps a store key to a label.
@@ -346,9 +373,19 @@
         }
     }
 
+    async function refreshLikeSettings() {
+        try {
+            likeLimit = await GetLikeLimit();
+            likeMaxDistance = await GetLikeMaxDistance();
+        } catch (error) {
+            logger.error('Error loading the neighbour-ranking settings:', error);
+        }
+    }
+
     $effect(() => {
         if (visible) {
             refreshCheckForUpdates();
+            refreshLikeSettings();
         }
     });
 
@@ -767,6 +804,15 @@
                 <input id="config-check-for-updates" type="checkbox" checked={checkForUpdates} onchange={onCheckForUpdatesChange} />
             </div>
             <p class="setting-note">{$t('config.checkForUpdatesNote')}</p>
+            <div class="setting-row">
+                <label for="config-like-limit">{$t('config.likeLimit')}</label>
+                <input id="config-like-limit" type="number" class="setting-number" min="1" max={MAX_LIKE_LIMIT} value={likeLimit} onchange={onLikeLimitChange} />
+            </div>
+            <div class="setting-row">
+                <label for="config-like-max-distance">{$t('config.likeMaxDistance')}</label>
+                <input id="config-like-max-distance" type="number" class="setting-number" min="0" value={likeMaxDistance} onchange={onLikeMaxDistanceChange} />
+            </div>
+            <p class="setting-note">{$t('config.likeNote')}</p>
         {:else if activeTab === 'colors'}
             {#each COLOR_SETTINGS as setting (setting.key)}
                 <div class="setting-row">
