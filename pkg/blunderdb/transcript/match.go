@@ -16,6 +16,13 @@ type Parts struct {
 	Games     []*domain.Game
 	Moves     map[int64][]*domain.Move
 	Positions map[int64][]domain.Position
+
+	// Inconsistent says whether the document these parts were built from carries at
+	// least one Inconsistency — what a save warns about before writing the Match all
+	// the same (ADR-0044: nothing is refused). It is [Annotated.Inconsistent] of the
+	// very Replay this build already ran, kept here so a caller does not pay for a
+	// second one.
+	Inconsistent bool
 }
 
 // MatchParts returns the triplet ingest.RenderMAT takes, and that a save writes: the
@@ -50,6 +57,10 @@ func Build(doc Document) Parts {
 		MatchDate:    h.Date,
 		GameCount:    len(ann.Games),
 		TournamentID: h.TournamentID,
+		// Who typed the match in. It is the one field of domain.Match that has no
+		// column: it exists to be written as the .mat's [Transcriber] header
+		// (fonctionnel.md §5), and only a graph built here ever sets it.
+		Transcriber: h.Transcriber,
 	}
 	if h.MatchID != nil {
 		m.ID = *h.MatchID
@@ -100,7 +111,7 @@ func Build(doc Document) Parts {
 		g.MoveCount = len(moves[g.ID])
 	}
 
-	return Parts{Match: m, Games: games, Moves: moves, Positions: positions}
+	return Parts{Match: m, Games: games, Moves: moves, Positions: positions, Inconsistent: ann.Inconsistent()}
 }
 
 // sideToXG converts a Transcription's side (0 = player 1) into the encoding

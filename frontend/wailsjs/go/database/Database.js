@@ -238,6 +238,10 @@ export function ExportTournaments(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
+export function ExportTranscriptionMAT(arg1, arg2) {
+  return window['go']['database']['Database']['ExportTranscriptionMAT'](arg1, arg2);
+}
+
 export function FinishImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['FinishImportBatch'](arg1, arg2);
 }
@@ -682,6 +686,10 @@ export function SaveTrainingSession(arg1) {
   return window['go']['database']['Database']['SaveTrainingSession'](arg1);
 }
 
+export function SaveTranscriptionAsMatch(arg1) {
+  return window['go']['database']['Database']['SaveTranscriptionAsMatch'](arg1);
+}
+
 export function SearchComments(arg1) {
   return window['go']['database']['Database']['SearchComments'](arg1);
 }
@@ -716,6 +724,10 @@ export function StudyImpact(arg1) {
 
 export function SuggestMatFilename(arg1) {
   return window['go']['database']['Database']['SuggestMatFilename'](arg1);
+}
+
+export function SuggestTranscriptionMatFilename(arg1) {
+  return window['go']['database']['Database']['SuggestTranscriptionMatFilename'](arg1);
 }
 
 export function SwapMatchPlayers(arg1) {

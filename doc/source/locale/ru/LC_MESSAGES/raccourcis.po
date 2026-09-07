@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 05:17+0200\n"
+"POT-Creation-Date: 2026-09-07 08:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -832,7 +832,15 @@ msgstr "Щелчок (по ячейке)"
 msgid "Placer le curseur sur cette action."
 msgstr "Поставить курсор на это действие."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ENTREE"
+msgstr "CTRL-ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer le brouillon en match."
+msgstr "Сохранить черновик как матч."
+
+#: ../../source/raccourcis.rst:299
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -840,7 +848,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:301
+#: ../../source/raccourcis.rst:302
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -853,7 +861,7 @@ msgstr ""
 " партия Кроуфорда и окончание матча показываются тогда над кубиками, и "
 "ожидается открытие следующей партии."
 
-#: ../../source/raccourcis.rst:306
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -877,7 +885,41 @@ msgstr ""
 "Разворачиваемая панель показывает точный текст ``.mat`` черновика и "
 "кнопку для его копирования."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:317
+msgid ""
+"La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
+"écrit le match dans la bibliothèque : créé la première fois, remplacé "
+"ensuite sous le même identifiant, et l'analyse des seules positions "
+"nouvelles démarre aussitôt, avec sa progression et son annulation dans la"
+" barre d'état. La barre du brouillon dit son état : jamais enregistré, "
+"enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le "
+"match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le "
+"brouillon » supprime le brouillon après confirmation ; un match déjà "
+"enregistré reste dans la bibliothèque, définitif."
+msgstr ""
+"Панель черновика несёт три кнопки. «Сохранить» (CTRL-ENTER) записывает "
+"матч в библиотеку: он создаётся в первый раз, затем заменяется под тем же"
+" идентификатором, и анализ одних только новых позиций начинается сразу "
+"же, с его ходом и отменой в строке состояния. Панель черновика сообщает "
+"его состояние: ни разу не сохранён, сохранён столько-то назад, или "
+"изменён после сохранения. «Экспорт .mat» записывает матч в файл "
+"Jellyfish, ровно так, как он был набран. «Закрыть черновик» удаляет "
+"черновик после подтверждения; уже сохранённый матч остаётся в библиотеке "
+"окончательно."
+
+#: ../../source/raccourcis.rst:326
+msgid ""
+"Un brouillon qui porte des incohérences est enregistré tout de même, "
+"après un avertissement : rien n'est refusé. Un coup illégal est exporté "
+"tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront"
+" (« Invalid move ») et divergeront ensuite."
+msgstr ""
+"Черновик с несоответствиями всё равно сохраняется, после предупреждения: "
+"ничто не отвергается. Невозможный ход экспортируется таким, каким он был "
+"сыгран, с предупреждением, что gnubg и XG отметят его («Invalid move») и "
+"дальше разойдутся."
+
+#: ../../source/raccourcis.rst:334
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

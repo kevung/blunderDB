@@ -755,6 +755,30 @@ export namespace database {
 	}
 	
 	
+	export class TranscriptionSaveResult {
+	    match_id: number;
+	    replaced: boolean;
+	    games: number;
+	    moves: number;
+	    positions: number;
+	    to_analyze: number;
+	    inconsistent: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionSaveResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.replaced = source["replaced"];
+	        this.games = source["games"];
+	        this.moves = source["moves"];
+	        this.positions = source["positions"];
+	        this.to_analyze = source["to_analyze"];
+	        this.inconsistent = source["inconsistent"];
+	    }
+	}
 	export class TranscriptionState {
 	    id: number;
 	    annotated: transcript.Annotated;

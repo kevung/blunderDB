@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 05:17+0200\n"
+"POT-Creation-Date: 2026-09-07 08:27+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -834,7 +834,15 @@ msgstr "Click (on a cell)"
 msgid "Placer le curseur sur cette action."
 msgstr "Put the cursor on that action."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ENTREE"
+msgstr "CTRL-ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer le brouillon en match."
+msgstr "Save the draft as a match."
+
+#: ../../source/raccourcis.rst:299
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -842,7 +850,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:301
+#: ../../source/raccourcis.rst:302
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -855,7 +863,7 @@ msgstr ""
 "score, the Crawford game and the end of the match are then shown above "
 "the dice, and the opening of the next game is expected."
 
-#: ../../source/raccourcis.rst:306
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -878,7 +886,40 @@ msgstr ""
 "tooltip. Games can be folded; the cursor's game is open. A collapsible "
 "pane shows the draft's exact ``.mat`` text, with a button to copy it."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:317
+msgid ""
+"La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
+"écrit le match dans la bibliothèque : créé la première fois, remplacé "
+"ensuite sous le même identifiant, et l'analyse des seules positions "
+"nouvelles démarre aussitôt, avec sa progression et son annulation dans la"
+" barre d'état. La barre du brouillon dit son état : jamais enregistré, "
+"enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le "
+"match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le "
+"brouillon » supprime le brouillon après confirmation ; un match déjà "
+"enregistré reste dans la bibliothèque, définitif."
+msgstr ""
+"The draft bar carries three buttons. “Save” (CTRL-ENTER) writes the match"
+" into the library: created the first time, replaced afterwards under the "
+"same identifier, and the analysis of the new positions alone starts at "
+"once, with its progress and its cancellation in the status bar. The draft"
+" bar states where it stands: never saved, saved so long ago, or modified "
+"since. “Export .mat” writes the match to a Jellyfish file, exactly as it "
+"was typed. “Close draft” deletes the draft after a confirmation; a match "
+"already saved stays in the library, final."
+
+#: ../../source/raccourcis.rst:326
+msgid ""
+"Un brouillon qui porte des incohérences est enregistré tout de même, "
+"après un avertissement : rien n'est refusé. Un coup illégal est exporté "
+"tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront"
+" (« Invalid move ») et divergeront ensuite."
+msgstr ""
+"A draft carrying inconsistencies is saved all the same, after a warning: "
+"nothing is refused. An illegal move is exported as it was played, with "
+"the warning that gnubg and XG will flag it (“Invalid move”) and diverge "
+"from there."
+
+#: ../../source/raccourcis.rst:334
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 

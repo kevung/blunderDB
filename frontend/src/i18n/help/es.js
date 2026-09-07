@@ -1345,11 +1345,17 @@ export default {
 <td>Clic (en una celda)</td>
 <td>Situar el cursor en esa acción.</td>
 </tr>
+<tr>
+<td>CTRL-INTRO</td>
+<td>Guardar el borrador como partido.</td>
+</tr>
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
 <p>Una partida termina por un rechazo, por un abandono o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
 <p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una fila por turno, la acción de doblaje y el final de la partida en la columna de quien actúa. La celda del cursor está enmarcada; al mover el cursor, el tablero vuelve a la posición de la acción señalada y muestra sus candidatas, con la jugada registrada seleccionada. Una incoherencia (jugada ilegal, turno doble, doblaje imposible, acción más allá del final del match, dados incoherentes) decora su celda y se nombra en un mensaje emergente. Las partidas se pliegan; la del cursor queda abierta. Un panel desplegable muestra el texto <code>.mat</code> exacto del borrador, con un botón para copiarlo.</p>
+<p>La barra del borrador lleva tres botones. «Guardar» (CTRL-INTRO) escribe el partido en la biblioteca: creado la primera vez, reemplazado después con el mismo identificador, y el análisis únicamente de las posiciones nuevas empieza en seguida, con su progreso y su cancelación en la barra de estado. La barra del borrador dice en qué estado se encuentra: nunca guardado, guardado hace tanto, o modificado desde entonces. «Exportar .mat» escribe el partido en un archivo Jellyfish, tal como se ha tecleado. «Cerrar el borrador» elimina el borrador tras una confirmación; un partido ya guardado permanece en la biblioteca, definitivo.</p>
+<p>Un borrador que contiene incoherencias se guarda de todos modos, tras un aviso: no se rechaza nada. Una jugada ilegal se exporta tal como se jugó, con el aviso de que gnubg y XG la señalarán («Invalid move») y divergirán después.</p>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

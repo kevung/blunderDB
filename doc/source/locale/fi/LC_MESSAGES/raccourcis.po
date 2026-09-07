@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 05:17+0200\n"
+"POT-Creation-Date: 2026-09-07 08:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -838,7 +838,15 @@ msgstr "Napsautus (solua)"
 msgid "Placer le curseur sur cette action."
 msgstr "Vie kohdistin tähän toimintoon."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ENTREE"
+msgstr "CTRL-ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer le brouillon en match."
+msgstr "Tallenna luonnos otteluksi."
+
+#: ../../source/raccourcis.rst:299
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -846,7 +854,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:301
+#: ../../source/raccourcis.rst:302
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -859,7 +867,7 @@ msgstr ""
 "arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
 "tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
-#: ../../source/raccourcis.rst:306
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -883,7 +891,40 @@ msgstr ""
 "Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
 " sen kopioimiseen."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:317
+msgid ""
+"La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
+"écrit le match dans la bibliothèque : créé la première fois, remplacé "
+"ensuite sous le même identifiant, et l'analyse des seules positions "
+"nouvelles démarre aussitôt, avec sa progression et son annulation dans la"
+" barre d'état. La barre du brouillon dit son état : jamais enregistré, "
+"enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le "
+"match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le "
+"brouillon » supprime le brouillon après confirmation ; un match déjà "
+"enregistré reste dans la bibliothèque, définitif."
+msgstr ""
+"Luonnospalkissa on kolme painiketta. ”Tallenna” (CTRL-ENTER) kirjoittaa "
+"ottelun kirjastoon: se luodaan ensimmäisellä kerralla, korvataan sen "
+"jälkeen samalla tunnisteella, ja pelkkien uusien asemien analyysi alkaa "
+"heti, edistyminen ja peruutus tilarivillä. Luonnospalkki kertoo tilan: ei"
+" koskaan tallennettu, tallennettu jokin aika sitten, tai muokattu sen "
+"jälkeen. ”Vie .mat” kirjoittaa ottelun Jellyfish-tiedostoon juuri "
+"sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen "
+"vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena."
+
+#: ../../source/raccourcis.rst:326
+msgid ""
+"Un brouillon qui porte des incohérences est enregistré tout de même, "
+"après un avertissement : rien n'est refusé. Un coup illégal est exporté "
+"tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront"
+" (« Invalid move ») et divergeront ensuite."
+msgstr ""
+"Luonnos, jossa on epäjohdonmukaisuuksia, tallennetaan silti varoituksen "
+"jälkeen: mitään ei torjuta. Sääntöjenvastainen siirto viedään sellaisena "
+"kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä "
+"(”Invalid move”) ja poikkeavat siitä eteenpäin."
+
+#: ../../source/raccourcis.rst:334
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

@@ -90,7 +90,7 @@ correctifs d'import/export (T0.4–T0.7). Au lot 1, T1.6 et T1.8 avancent en par
 
 | Risque | Parade |
 |---|---|
-| `Ctrl+S` pris globalement par « sauver la position » | vérifier `isAlwaysGlobal` au T1.9 ; sinon `Ctrl+Entrée` |
+| `Ctrl+S` pris globalement par « sauver la position » | vérifié au T1.9 : `isAlwaysGlobal` rend vrai pour tout combo `Ctrl`, et le dispatcher lie déjà `Ctrl+S` ; l'enregistrement est donc `Ctrl+Entrée` |
 | `r` est « position au hasard » hors panneau | le panneau a le focus ; la résignation demande un second chiffre et `Échap` annule |
 | 0-ply sur un double ouvert (> 100 coups) | mesuré < 1 ms par coup ; test de latence T3.5 |
 | Prix documentaire (≈ 75 msgid × 8) | accepté comme section ; aucune page nouvelle |
