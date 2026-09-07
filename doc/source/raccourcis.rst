@@ -294,9 +294,29 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
    "DROITE, l", "Avancer le curseur d'une action."
    "Clic (sur une cellule)", "Placer le curseur sur cette action."
+   "i", "Insérer une action devant celle du curseur (camp proposé pour que la suite reste cohérente)."
+   "a", "Insérer une action derrière celle du curseur."
+   "x, Del", "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+   "s", "Donner l'action du curseur à l'autre camp."
+   "CTRL-Z", "Annuler le dernier geste sur le brouillon."
+   "CTRL-MAJ-Z", "Rétablir le geste annulé."
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
+
+Reculer le curseur sur une action puis ressaisir la corrige **en place** : la
+validation remplace l'action et le curseur revient là où il était. Si les dés
+sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il
+est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup
+est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur
+après avoir changé quelque chose enregistre la correction au passage.
+
+Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine
+crée un double trait, supprimer une action peut en créer un autre, changer un
+camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées
+dans le transcript, jamais corrigées d'office, et le curseur se place sur la
+première d'entre elles après chaque geste. La pile d'annulation vit en mémoire :
+elle est perdue à la fermeture du brouillon.
 
 Une partie se termine par une passe, par une résignation ou par la sortie du
 quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du

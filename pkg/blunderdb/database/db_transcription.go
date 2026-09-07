@@ -67,6 +67,11 @@ type TranscriptionSummary struct {
 type TranscriptionState struct {
 	ID        int64                `json:"id"`
 	Annotated transcript.Annotated `json:"annotated"`
+	// CanUndo and CanRedo are the two sides of the session's stack, which is
+	// in memory and nowhere else (ADR-0045 rule 1): they are false again the
+	// moment the application is restarted, and that is the promise, not a gap.
+	CanUndo bool `json:"can_undo"`
+	CanRedo bool `json:"can_redo"`
 }
 
 // ListTranscriptions returns the library's drafts, most recently updated
@@ -115,8 +120,7 @@ func (d *Database) CreateTranscription(header transcript.Header) (*Transcription
 
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
-	d.openTranscript(id, doc)
-	return &TranscriptionState{ID: id, Annotated: transcript.Replay(doc, 0)}, nil
+	return opened(id, d.openTranscript(id, doc)), nil
 }
 
 // OpenTranscription loads a draft and returns it replayed in full: the
@@ -134,10 +138,9 @@ func (d *Database) OpenTranscription(id int64) (*TranscriptionState, error) {
 	// A draft already open keeps the session it has: reopening the tab must
 	// not throw away an Entry or an undo stack the user still has in hand.
 	if e := d.transcriptSessions[id]; e != nil {
-		return &TranscriptionState{ID: id, Annotated: transcript.Replay(e.Doc, 0)}, nil
+		return opened(id, e), nil
 	}
-	d.openTranscript(id, doc)
-	return &TranscriptionState{ID: id, Annotated: transcript.Replay(doc, 0)}, nil
+	return opened(id, d.openTranscript(id, doc)), nil
 }
 
 // TranscriptionMAT renders the open draft as the .mat text a Jellyfish or a
@@ -192,9 +195,17 @@ func (d *Database) CloseTranscription(id int64) error {
 // Entry, which is not serialised, and the Cursor is normalised away by
 // durableJSON.
 //
-// The Replay starts at the Cursor the gesture left, so the Cursor comes back
-// on the first Inconsistency at or after the Action just touched, which is
-// what a correction wants to show next.
+// The Replay starts at the Action the gesture TOUCHED (transcript.Editor.From),
+// so the Cursor comes back on the first Inconsistency at or after it, which is
+// what a correction wants to show next. That is not the Cursor: a correction in
+// place sends the Cursor back where the user came from, and the Inconsistency it
+// just created sits several Actions behind it.
+//
+// Undo and redo are the two gestures that do NOT go through transcript.Apply —
+// a stack is state, and it lives in the Editor (transcript.ErrNotPure says so).
+// They are routed here, and they write like any other gesture: undoing a
+// validated Action must leave the row without it, or a crash would resurrect a
+// gesture the user took back.
 func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*TranscriptionState, error) {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
@@ -208,8 +219,18 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 	if err != nil {
 		return nil, fmt.Errorf("transcription %d: %w", id, err)
 	}
-	if err := ed.Apply(g); err != nil {
-		return nil, err
+	switch g.Kind {
+	case transcript.GestureUndo:
+		// A stack with nothing on it is not an error: Ctrl-Z at the start of a
+		// session is a keystroke that does nothing, exactly as it is in every
+		// editor, and an error dialog for it would be noise.
+		ed.Undo()
+	case transcript.GestureRedo:
+		ed.Redo()
+	default:
+		if err := ed.Apply(g); err != nil {
+			return nil, err
+		}
 	}
 	after, err := durableJSON(ed.Doc)
 	if err != nil {
@@ -220,7 +241,7 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 			return nil, err
 		}
 	}
-	return &TranscriptionState{ID: id, Annotated: transcript.Replay(ed.Doc, ed.Doc.Cursor)}, nil
+	return stateOf(id, ed, ed.From()), nil
 }
 
 // ── the session map ──────────────────────────────────────────────────
@@ -231,11 +252,40 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 // and not three interleavable ones.
 
 // openTranscript installs a session for id. Caller holds transcriptMu.
-func (d *Database) openTranscript(id int64, doc transcript.Document) {
+func (d *Database) openTranscript(id int64, doc transcript.Document) *transcript.Editor {
 	if d.transcriptSessions == nil {
 		d.transcriptSessions = make(map[int64]*transcript.Editor)
 	}
-	d.transcriptSessions[id] = transcript.NewEditor(doc)
+	ed := transcript.NewEditor(doc)
+	d.transcriptSessions[id] = ed
+	return ed
+}
+
+// stateOf annotates a session and hands back what every binding returns.
+//
+// It is where fonctionnel.md §1.4's last sentence is made true — "after a Replay
+// the Cursor jumps to the first Inconsistency". The Replay REPORTS where the
+// Cursor should land, at or after `from`; if that is not where the session's
+// document has it, the document is moved there and annotated again, so that the
+// next `h` counts from the cell the user is looking at and not from the one the
+// gesture happened to leave behind. The second Replay is the incremental one and
+// costs nothing: the Actions did not change, only the Cursor did.
+// opened is stateOf for a draft that has just been opened, which is the one
+// case where the Cursor does NOT jump to an Inconsistency. A resumed draft
+// continues after its last written Action (fonctionnel.md §3, and
+// loadTranscription's own comment), and an Inconsistency the user has read and
+// chosen to keep must not drag them back to it at every open.
+func opened(id int64, ed *transcript.Editor) *TranscriptionState {
+	return stateOf(id, ed, len(ed.Doc.Actions))
+}
+
+func stateOf(id int64, ed *transcript.Editor, from int) *TranscriptionState {
+	ann := ed.Replay(from)
+	if ann.Cursor != ed.Doc.Cursor {
+		ed.SeekCursor(ann.Cursor)
+		ann = ed.Replay(ed.Doc.Cursor)
+	}
+	return &TranscriptionState{ID: id, Annotated: ann, CanUndo: ed.CanUndo(), CanRedo: ed.CanRedo()}
 }
 
 // session returns the live editor for id, loading the row when the draft was
@@ -250,8 +300,7 @@ func (d *Database) session(id int64) (*transcript.Editor, error) {
 	if err != nil {
 		return nil, err
 	}
-	d.openTranscript(id, doc)
-	return d.transcriptSessions[id], nil
+	return d.openTranscript(id, doc), nil
 }
 
 // loadTranscription reads one row and decodes its document — the resumption

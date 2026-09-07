@@ -155,6 +155,21 @@ type Document struct {
 	Return    int    `json:"-"`
 	HasReturn bool   `json:"-"`
 
+	// Touched is the index of the Action the last gesture EDITED — replaced,
+	// inserted between two others, deleted, given to the other camp — and
+	// HasTouched says a gesture edited one at all. It is what a Replay is asked
+	// to start looking for Inconsistencies from (fonctionnel.md §1.4 — after a
+	// Replay the Cursor jumps to the first one).
+	//
+	// It is not the Cursor: a correction in place sends the Cursor back where
+	// the user came from, several Actions further on, and the Inconsistency the
+	// correction just created sits behind it. And a plain APPEND sets neither,
+	// deliberately: there is nothing behind the last Action, and pulling the
+	// Cursor onto the play just typed — one the rules happen to mark — would
+	// make the next roll correct it instead of following it.
+	Touched    int  `json:"-"`
+	HasTouched bool `json:"-"`
+
 	// pendingBoard is the board a hand-entered play left, held until validation
 	// decides whether the play was legal — a legal play's board is derived, and only
 	// an illegal one is written on the Action.
@@ -181,6 +196,15 @@ type Entry struct {
 	Selected bool
 	Mode     EntryMode
 	At       int
+
+	// Review marks a play the user has to look at again: correcting a roll
+	// under a recorded play, when the play is no longer legal for the new
+	// roll, preselects the first candidate of that roll rather than keeping a
+	// play the dice no longer allow (fonctionnel.md §2, "corriger un jet").
+	// The Action itself is NOT marked — nothing is written until validation,
+	// and a Replay of a document is the same whether an entry is under review
+	// or not.
+	Review bool
 }
 
 // New returns an empty draft of the given length, with an opening expected. A length of

@@ -1345,9 +1345,35 @@ export default {
 <td>Napsautus (solua)</td>
 <td>Vie kohdistin tähän toimintoon.</td>
 </tr>
+<tr>
+<td>i</td>
+<td>Lisää toiminto kohdistimen toiminnon eteen (ehdotettu puoli on se, joka pitää jatkon johdonmukaisena).</td>
+</tr>
+<tr>
+<td>a</td>
+<td>Lisää toiminto kohdistimen toiminnon jälkeen.</td>
+</tr>
+<tr>
+<td>x, Del</td>
+<td>Poista kohdistimen toiminto; seuraavat säilyttävät puolensa.</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Anna kohdistimen toiminto toiselle puolelle.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Kumoa viimeisin luonnokseen tehty ele.</td>
+</tr>
+<tr>
+<td>CTRL-VAIHTO-Z</td>
+<td>Tee kumottu ele uudelleen.</td>
+</tr>
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
+<p>Kohdistimen siirtäminen takaisin toiminnon kohdalle ja uudelleen kirjoittaminen korjaa sen <strong>paikallaan</strong>: hyväksyntä korvaa toiminnon ja kohdistin palaa sinne, missä se oli. Jos nopat korjataan ja tallennettu siirto on yhä uuden heiton laillinen siirto, se säilytetään; muuten tarjotaan uuden heiton ensimmäistä ehdokasta ja siirto merkitään ”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen samalla.</p>
+<p>Mitään ei hylätä eikä poisteta: naapurinsa kanssa samalle puolelle lisätty toiminto luo kaksoisvuoron, toiminnon poistaminen voi luoda toisen, puolen vaihtaminen voi tehdä seuraavista siirroista laittomia. Nämä epäjohdonmukaisuudet merkitään transkriptiin, niitä ei koskaan korjata automaattisesti, ja kohdistin asettuu ensimmäisen niistä kohdalle jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun luonnos suljetaan.</p>
 <p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
 <h3>Ohjepaneeli</h3>

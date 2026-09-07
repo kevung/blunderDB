@@ -13,7 +13,8 @@
  * that Entry is not serialisable and a gesture is therefore applied against a
  * live document held on the Go side (see pkg/blunderdb/database/db_transcription.go).
  * What this store keeps of it is what the panel has to draw: whether there is
- * anything to undo or redo. T1.7 fills those in from what the gesture reports.
+ * anything to undo or redo, filled in from what every gesture reports
+ * (`can_undo`/`can_redo` on the TranscriptionState).
  *
  * Sizing: this store survives the panel, which TabbedPanel unmounts on every tab
  * change (see its header comment). A draft opened in the panel must still be
@@ -46,10 +47,22 @@ export const transcriptionListStore = writable([]);
 
 /**
  * What the panel needs to enable or disable its undo/redo buttons. Written from
- * what a gesture reports (T1.7); false until then, which is what an unopened
- * draft is anyway.
+ * what a gesture reports; false for an unopened draft, and false again after a
+ * restart — the stack is in memory and nowhere else (ADR-0045 rule 1).
  */
 export const transcriptionHistoryStore = writable({ canUndo: false, canRedo: false });
+
+/**
+ * The undo or redo the global dispatcher asked for, `null` when it has been
+ * served. `Ctrl+Z` is a Ctrl combo and Ctrl combos are always global
+ * (keyboardService.js's `isAlwaysGlobal`, which exists so that a shortcut added
+ * to one list does not die behind another): the dispatcher therefore posts the
+ * gesture here and the panel, which owns the draft and the round trip, performs
+ * it. Same shape as `ankiReviewActionStore`, and for the same reason.
+ *
+ * @type {import('svelte/store').Writable<'undo'|'redo'|null>}
+ */
+export const transcriptionHistoryActionStore = writable(null);
 
 /**
  * The Action the Cursor is on, or null. Derived rather than stored: the Cursor
@@ -66,6 +79,10 @@ export const transcriptionCursorStore = derived(transcriptionStore, ($t) => {
 /** Puts a draft — the `TranscriptionState` a Go binding returned — in hand. */
 export function setTranscription(state) {
     transcriptionStore.set(state ? { id: state.id, annotated: state.annotated } : null);
+    // Both sides of the stack come back with every gesture: they are read off
+    // the live transcript.Editor on the Go side, which is the only place the
+    // stack exists (ADR-0045 rule 1 — a crash loses it, and that is the promise).
+    transcriptionHistoryStore.set({ canUndo: state?.can_undo === true, canRedo: state?.can_redo === true });
 }
 
 /**
@@ -76,6 +93,7 @@ export function setTranscription(state) {
 export function clearTranscription() {
     transcriptionStore.set(null);
     transcriptionHistoryStore.set({ canUndo: false, canRedo: false });
+    transcriptionHistoryActionStore.set(null);
     resetTranscriptionKeys();
 }
 

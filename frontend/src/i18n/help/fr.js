@@ -1345,9 +1345,35 @@ export default {
 <td>Clic (sur une cellule)</td>
 <td>Placer le curseur sur cette action.</td>
 </tr>
+<tr>
+<td>i</td>
+<td>Insérer une action devant celle du curseur (camp proposé pour que la suite reste cohérente).</td>
+</tr>
+<tr>
+<td>a</td>
+<td>Insérer une action derrière celle du curseur.</td>
+</tr>
+<tr>
+<td>x, Del</td>
+<td>Supprimer l'action du curseur ; les suivantes gardent leur camp.</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Donner l'action du curseur à l'autre camp.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Annuler le dernier geste sur le brouillon.</td>
+</tr>
+<tr>
+<td>CTRL-MAJ-Z</td>
+<td>Rétablir le geste annulé.</td>
+</tr>
 </tbody>
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
+<p>Reculer le curseur sur une action puis ressaisir la corrige <strong>en place</strong> : la validation remplace l'action et le curseur revient là où il était. Si les dés sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir changé quelque chose enregistre la correction au passage.</p>
+<p>Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine crée un double trait, supprimer une action peut en créer un autre, changer un camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées dans le transcript, jamais corrigées d'office, et le curseur se place sur la première d'entre elles après chaque geste. La pile d'annulation vit en mémoire : elle est perdue à la fermeture du brouillon.</p>
 <p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
 <p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
 <h3>Panneau d'aide</h3>

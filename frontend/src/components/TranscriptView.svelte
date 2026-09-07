@@ -146,6 +146,21 @@
         folds.set(number, open);
     }
 
+    // Le Transcript défile jusqu'à la cellule encadrée. C'est ce qui rend
+    // visible le saut du Cursor sur la première Incohérence après un Replay
+    // (fonctionnel.md §1.4) : le moteur l'y place, et une correction faite
+    // vingt tours plus haut serait autrement encadrée hors de l'écran.
+    //
+    // `block: 'nearest'` ne bouge rien quand la cellule est déjà visible, ce qui
+    // évite de faire sauter la page à chaque touche pendant une saisie normale.
+    let scroller = $state(null);
+    $effect(() => {
+        void at;
+        void layout;
+        const cell = scroller?.querySelector('.cell.cursor');
+        if (typeof cell?.scrollIntoView === 'function') cell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+
     function playerName(side) {
         const given = players?.[side];
         if (given) return given;
@@ -223,7 +238,7 @@
 </script>
 
 <div class="transcript-view" role="group" aria-label={$t('transcript.title')}>
-    <div class="scroller">
+    <div class="scroller" bind:this={scroller}>
         {#if !layout.length}
             <p class="empty">{$t('transcript.empty')}</p>
         {:else}

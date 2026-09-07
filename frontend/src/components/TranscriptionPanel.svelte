@@ -37,7 +37,18 @@
   Action aimed at and lists its candidates with the play that was recorded
   selected.
 
-  What is not here yet: correcting through the Cursor (T1.7), saving (T1.9).
+  The correction is the other half of the Transcript (T1.7). Walking back to a
+  cell and typing again REPLACES the Action there, and validating gives the
+  Cursor back where it came from; `i` and `a` insert beside it, `x` and Del
+  delete it, `s` gives it to the other camp, `Ctrl+Z` and `Ctrl+Maj+Z` walk the
+  session's undo stack — which lives in Go, in the draft's transcript.Editor,
+  and which a crash is allowed to lose (ADR-0045 rule 1). None of them judges:
+  an insertion beside its own camp makes a double turn, a deletion makes
+  another, a changed camp can make the plays that follow illegal — all of them
+  MARKED by the Replay and none of them refused (ADR-0044). After every Replay
+  the Cursor lands on the first Inconsistency the gesture left behind.
+
+  What is not here yet: saving (T1.9).
 
   The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
   to ApplyTranscriptionGesture and comes back as a whole annotated document. It
@@ -57,7 +68,16 @@
     import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import TranscriptView from './TranscriptView.svelte';
-    import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, setTranscription, clearTranscription, resetTranscriptionKeys } from '../stores/transcriptionStore.js';
+    import {
+        transcriptionListStore,
+        transcriptionStore,
+        transcriptionKeyStore,
+        transcriptionHistoryStore,
+        transcriptionHistoryActionStore,
+        setTranscription,
+        clearTranscription,
+        resetTranscriptionKeys
+    } from '../stores/transcriptionStore.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -228,6 +248,24 @@
                 return { Kind: 'cursor_back' };
             case COMMAND.CURSOR_FORWARD:
                 return { Kind: 'cursor_forward' };
+            // Les quatre gestes de correction. Aucun ne porte de camp : celui
+            // d'une insertion est PROPOSÉ par le moteur (celui qui rend la suite
+            // cohérente), et celui d'une Action existante lui appartient — seul
+            // `flip_side` le change (ADR-0045 §4).
+            case COMMAND.INSERT_BEFORE:
+                return { Kind: 'insert_before' };
+            case COMMAND.INSERT_AFTER:
+                return { Kind: 'insert_after' };
+            case COMMAND.DELETE:
+                return { Kind: 'delete' };
+            case COMMAND.FLIP_SIDE:
+                return { Kind: 'flip_side' };
+            // La pile vit dans le transcript.Editor de la session, en mémoire :
+            // ces deux-là ne passent pas par transcript.Apply, qui est pure.
+            case COMMAND.UNDO:
+                return { Kind: 'undo' };
+            case COMMAND.REDO:
+                return { Kind: 'redo' };
             case COMMAND.SELECT: {
                 const entry = ranked[command.index];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
@@ -270,17 +308,31 @@
 
     let candidateGeneration = 0;
 
-    /** The Position the roll being entered is played from, dice and side set. */
+    /**
+     * The Position the roll being entered is played from, dice and side set.
+     *
+     * A correction in place, and an insertion, are played from the Action they
+     * land ON — not from the position the match has reached. Reading it off
+     * `next.position` listed the candidates of the END of the document while
+     * the user was correcting the middle of it. `annotated.entry` is the engine's
+     * own account of the Action being typed (transcript.EntryInfo): where it
+     * lands, for which camp, and whether it replaces.
+     */
     function rollPosition() {
         const state = get(transcriptionKeyStore);
         const ann = get(transcriptionStore)?.annotated;
-        const base = ann?.next?.position;
-        if (!base || !state.dice[0] || !state.dice[1]) return null;
+        if (!ann || !state.dice[0] || !state.dice[1]) return null;
+        const entry = ann.entry;
+        const at = entry?.at ?? ann.cursor ?? 0;
+        const info = (ann.actions ?? [])[at];
+        const base = info?.has_position ? info.before : ann.next?.position;
+        const side = entry ? entry.side : ann.next?.side;
+        if (!base) return null;
         return {
             ...structuredClone(base),
             id: 0,
             dice: [state.dice[0], state.dice[1]],
-            player_on_roll: ann.next.side,
+            player_on_roll: side,
             decision_type: 0
         };
     }
@@ -362,7 +414,12 @@
         unranked = false;
         danced = false;
 
-        if (!info?.has_position || (info.kind !== 'checker' && info.kind !== 'dance')) {
+        // Une INSERTION attend une Action neuve à cet endroit : les dés et le
+        // coup de l'Action qui s'y trouve sont ceux du voisin qu'elle repousse,
+        // et les charger ferait taper par-dessus lui. Le moteur dit lequel des
+        // deux c'est (`entry.replacing`), le panneau ne le devine pas.
+        const inserting = ann.entry != null && ann.entry.replacing === false;
+        if (inserting || !info?.has_position || (info.kind !== 'checker' && info.kind !== 'dance')) {
             resetTranscriptionKeys();
             return;
         }
@@ -441,9 +498,62 @@
         danced = false;
 
         transcriptionKeyStore.set(result.state);
-        const walks = result.commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
-        run(result.commands).then(walks ? settleCursor : settleCandidates);
+        // A gesture that MOVES or EDITS lands the Cursor on an Action, and the
+        // panel has to be re-armed on it: its candidates are an Evaluation and
+        // are never stored, so they are asked for again (ADR-0045 rule 8). A
+        // gesture that fills a die waits for the roll instead.
+        // Une touche de correction est UNE commande, et elle passe par le même
+        // chemin que le bouton — d'où son refus silencieux là où il n'y a rien
+        // à corriger.
+        if (result.commands.length === 1 && EDITS.has(result.commands[0].kind)) {
+            runCommand(result.commands[0].kind);
+            return;
+        }
+
+        const rearms = result.commands.some((c) => REARMING.has(c.kind));
+        run(result.commands).then(rearms ? settleCursor : settleCandidates);
     }
+
+    // The commands that CHANGE the document without typing anything into it, and
+    // which a button offers as well as a key — so both go through runCommand.
+    const EDITS = new Set([COMMAND.INSERT_BEFORE, COMMAND.INSERT_AFTER, COMMAND.DELETE, COMMAND.FLIP_SIDE, COMMAND.UNDO, COMMAND.REDO]);
+    // The commands after which the panel re-reads the Cursor rather than the
+    // roll being typed. Walking is one of them, and so is every edit: each
+    // leaves the Cursor somewhere the ENGINE chose — on the first Inconsistency
+    // when the gesture made one — and the candidates there have to be asked for
+    // again, since an Evaluation is never stored (ADR-0045 rule 8).
+    const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, ...EDITS]);
+
+    /**
+     * Runs one command from a key, a button or the global dispatcher.
+     *
+     * Deleting and changing a camp need an Action to act on, and at the end of
+     * the document — where the Cursor spends most of its time — there is none.
+     * The keystroke then does NOTHING, like `Ctrl+Z` on an empty stack: sending
+     * the gesture anyway would answer the most ordinary `x` in the world with
+     * the engine's English "the cursor is not on an action".
+     */
+    function runCommand(kind) {
+        if (!draft) return;
+        if ((kind === COMMAND.DELETE || kind === COMMAND.FLIP_SIDE) && !onAction) return;
+        resetTranscriptionKeys();
+        ranked = [];
+        unranked = false;
+        danced = false;
+        run([{ kind }]).then(settleCursor);
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    // `Ctrl+Z` / `Ctrl+Maj+Z` reach the panel through a store, because a Ctrl
+    // combo is always global (keyboardService.js's isAlwaysGlobal) and the
+    // dispatcher is where it is bound. Same shape as the Anki review keys.
+    $effect(() => {
+        const wanted = $transcriptionHistoryActionStore;
+        if (!wanted) return;
+        transcriptionHistoryActionStore.set(null);
+        if ($activeTabStore !== 'transcription') return;
+        runCommand(wanted === 'redo' ? COMMAND.REDO : COMMAND.UNDO);
+    });
 
     onMount(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -571,6 +681,23 @@
         return (last?.inconsistencies ?? []).map((i) => $t(`transcription.inconsistency.${i.kind}`));
     });
 
+    // ── la correction ────────────────────────────────────────────────────
+    //
+    // Tout ce que ces boutons font, une touche le fait (ux.md §3) ; ils sont là
+    // pour que les gestes soient DÉCOUVRABLES, et parce que la souris est un
+    // chemin de plein droit — un clic sur une cellule du Transcript remplace
+    // déjà `h`×k (ux.md §4.3).
+
+    let history = $derived($transcriptionHistoryStore);
+    // Le Cursor est-il sur une Action ? Insérer, supprimer et changer de camp
+    // n'ont de sens que là ; en bout de document il n'y a rien à corriger.
+    let onAction = $derived((annotated?.actions?.length ?? 0) > 0 && (annotated?.cursor ?? 0) < (annotated?.actions?.length ?? 0));
+    // Le moteur a présélectionné un candidat parce que le coup enregistré n'est
+    // pas un coup du nouveau jet : marqué « à revoir » jusqu'à validation
+    // (fonctionnel.md §2). C'est le moteur qui le dit, jamais le panneau.
+    let underReview = $derived(annotated?.entry?.review === true);
+    let correcting = $derived(annotated?.entry?.replacing === true);
+
     // The two dice as they come in, "·" for a die not entered yet. An opening's
     // two dice belong to two different players, which is why they are shown
     // here and not drawn on the board.
@@ -667,6 +794,15 @@
                 <p class="hint">{$t('transcription.matchOver', { player: playerName(matchWinner), a: score[0], b: score[1] })}</p>
             {/if}
 
+            <div class="edit-bar">
+                <button class="edit-btn" onclick={() => runCommand(COMMAND.INSERT_BEFORE)} title={$t('transcription.insertBeforeTooltip')}>{$t('transcription.insertBefore')}</button>
+                <button class="edit-btn" onclick={() => runCommand(COMMAND.INSERT_AFTER)} title={$t('transcription.insertAfterTooltip')}>{$t('transcription.insertAfter')}</button>
+                <button class="edit-btn" onclick={() => runCommand(COMMAND.DELETE)} disabled={!onAction} title={$t('transcription.deleteTooltip')}>{$t('transcription.delete')}</button>
+                <button class="edit-btn" onclick={() => runCommand(COMMAND.FLIP_SIDE)} disabled={!onAction} title={$t('transcription.flipSideTooltip')}>{$t('transcription.flipSide')}</button>
+                <button class="edit-btn" onclick={() => runCommand(COMMAND.UNDO)} disabled={!history.canUndo} title={$t('transcription.undoTooltip')}>{$t('transcription.undo')}</button>
+                <button class="edit-btn" onclick={() => runCommand(COMMAND.REDO)} disabled={!history.canRedo} title={$t('transcription.redoTooltip')}>{$t('transcription.redo')}</button>
+            </div>
+
             <div class="draft-body">
                 <div class="entry-col">
                     <div class="entry">
@@ -691,6 +827,15 @@
                         <!-- Une Incohérence est MARQUÉE, jamais refusée (ADR-0044) :
                              l'Action est dans le document, et la phrase dit laquelle. -->
                         <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
+                    {/if}
+
+                    {#if underReview}
+                        <!-- Le coup enregistré n'est pas un coup du jet corrigé :
+                             le premier candidat est posé à sa place et rien n'est
+                             écrit avant la validation (fonctionnel.md §2). -->
+                        <p class="flag">{$t('transcription.reviewHint')}</p>
+                    {:else if correcting}
+                        <p class="hint">{$t('transcription.correcting')}</p>
                     {/if}
 
                     {#if keys.phase === PHASE.RESIGN}
@@ -838,6 +983,30 @@
     .on-roll {
         color: var(--color-text);
         font-weight: 600;
+    }
+
+    .edit-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-1);
+    }
+
+    .edit-btn {
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
+        cursor: pointer;
+    }
+
+    .edit-btn:hover:not(:disabled) {
+        background: var(--color-surface-alt);
+    }
+
+    .edit-btn:disabled {
+        color: var(--color-text-muted);
+        cursor: default;
     }
 
     .entry {

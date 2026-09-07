@@ -1345,9 +1345,35 @@ export default {
 <td>Klick (auf eine Zelle)</td>
 <td>Den Cursor auf diese Aktion setzen.</td>
 </tr>
+<tr>
+<td>i</td>
+<td>Eine Aktion vor der Aktion des Cursors einfügen (die vorgeschlagene Seite ist diejenige, die den weiteren Verlauf stimmig hält).</td>
+</tr>
+<tr>
+<td>a</td>
+<td>Eine Aktion nach der Aktion des Cursors einfügen.</td>
+</tr>
+<tr>
+<td>x, Entf</td>
+<td>Die Aktion des Cursors löschen; die folgenden behalten ihre Seite.</td>
+</tr>
+<tr>
+<td>s</td>
+<td>Die Aktion des Cursors der anderen Seite geben.</td>
+</tr>
+<tr>
+<td>STRG-Z</td>
+<td>Die letzte Geste am Entwurf rückgängig machen.</td>
+</tr>
+<tr>
+<td>STRG-UMSCHALT-Z</td>
+<td>Die rückgängig gemachte Geste wiederherstellen.</td>
+</tr>
 </tbody>
 </table>
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
+<p>Den Cursor auf eine Aktion zurücksetzen und erneut eingeben korrigiert sie <strong>an Ort und Stelle</strong>: Das Bestätigen ersetzt die Aktion, und der Cursor kehrt dorthin zurück, wo er war. Werden die Würfel korrigiert und bleibt der erfasste Zug ein gültiger Zug des neuen Wurfs, wird er beibehalten; andernfalls wird der erste Kandidat des neuen Wurfs vorgeschlagen und der Zug bis zur Bestätigung als „zu prüfen“ gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder zurückbewegt, so wird die Korrektur dabei übernommen.</p>
+<p>Nichts wird abgelehnt und nichts gelöscht: Eine Aktion derselben Seite wie ihre Nachbarin einzufügen erzeugt einen doppelten Zug, eine Aktion zu löschen kann einen weiteren erzeugen, eine Seite zu ändern kann die folgenden Züge ungültig machen. Diese Unstimmigkeiten werden im Transkript markiert, niemals von selbst behoben, und der Cursor springt nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird.</p>
 <p>Eine Partie endet durch ein Aufgeben, durch eine Resignation oder durch das Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit dem Wert des Dopplerwürfels). Punktestand, Crawford-Partie und Matchende werden dann über den Würfeln angezeigt, und die Eröffnung der nächsten Partie wird erwartet.</p>
 <p>Das Transkript nimmt die rechte Hälfte des Panels ein: eine Spalte je Spieler, eine Zeile je Zug, die Dopplerabgabe und das Partieende in der Spalte dessen, der handelt. Die Zelle des Cursors ist umrahmt; wird der Cursor bewegt, zeigt das Brett wieder die Position der angesteuerten Aktion und deren Kandidaten, wobei der gespielte Zug ausgewählt ist. Eine Unstimmigkeit (unerlaubter Zug, doppelter Zug, unmögliche Dopplerabgabe, Aktion nach dem Matchende, unstimmige Würfel) markiert ihre Zelle und wird in einem Tooltip benannt. Partien lassen sich einklappen; die Partie des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten <code>.mat</code>-Text des Entwurfs mit einer Schaltfläche zum Kopieren.</p>
 <h3>Hilfe-Fenster</h3>

@@ -33,6 +33,7 @@ import {
     showDatesAndMetadata
 } from './positionService.js';
 import { importDatabase, importPosition, importFolder, pastePosition } from './importService.js';
+import { undoTranscription } from './transcriptionService.js';
 import { exportDatabase } from './exportService.js';
 import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './clipboardService.js';
 
@@ -391,6 +392,23 @@ export function handleKeyDown(event) {
         toggleTrainingPanel();
     } else if (event.ctrlKey && letter('k')) {
         toggleAnkiPanel();
+    } else if (event.ctrlKey && event.shiftKey && letter('z')) {
+        // BEFORE the Ctrl-Z branch, which does not exclude Shift — the same
+        // ordering Ctrl-Maj-I/Ctrl-I and Ctrl-Maj-S/Ctrl-S already follow.
+        event.preventDefault();
+        undoTranscription(true);
+    } else if (event.ctrlKey && letter('z')) {
+        // Undo and redo of the open transcription draft (ux.md §3). They live
+        // here and not in TranscriptionPanel's own listener because a Ctrl combo
+        // is always global (isAlwaysGlobal above), and the panel is told through
+        // a store — the pattern the Anki review keys already follow. With no
+        // draft open they do nothing, silently.
+        //
+        // A text field never reaches this point: the isTextEditingCombo guard
+        // near the top of this function returns first, so Ctrl-Z in an input
+        // stays the WebView's own undo.
+        event.preventDefault();
+        undoTranscription(false);
     } else if (event.ctrlKey && event.shiftKey && letter('t')) {
         // BEFORE the Ctrl-T branch below, which does not exclude Shift: the
         // same reason Ctrl-Maj-I sits before Ctrl-I and Ctrl-Maj-S before

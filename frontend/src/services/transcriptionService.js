@@ -17,7 +17,7 @@
 import { get } from 'svelte/store';
 import { logger } from '../utils/logger.js';
 import { ListTranscriptions } from '../../wailsjs/go/database/Database.js';
-import { transcriptionListStore } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionHistoryActionStore } from '../stores/transcriptionStore.js';
 import { databaseLoadedStore } from '../stores/databaseStore.js';
 import { activeTabStore } from '../stores/uiStore.js';
 
@@ -63,4 +63,18 @@ export function draftLabel(draft, unnamed) {
 /** Brings the Transcription tab forward, where a draft is typed. */
 export function showTranscriptionTab() {
     activeTabStore.set('transcription');
+}
+
+/**
+ * Asks the open draft to undo, or to redo (`Ctrl+Z` / `Ctrl+Maj+Z`, ux.md §3).
+ *
+ * It only POSTS the request: the stack lives in Go, in the draft's
+ * `transcript.Editor`, and the round trip belongs to the panel that holds the
+ * draft. Nothing happens when no draft is open, which is what the shortcut does
+ * everywhere else in the application — nothing, silently.
+ *
+ * @param {boolean} redo
+ */
+export function undoTranscription(redo = false) {
+    transcriptionHistoryActionStore.set(redo ? 'redo' : 'undo');
 }

@@ -103,12 +103,37 @@ type Next struct {
 	MatchOver  bool            `json:"match_over"`
 }
 
+// EntryInfo is the Action being TYPED, as the panel needs to draw it. The Entry
+// itself is not serialisable (a crash is allowed to lose it, ADR-0045 rule 1),
+// so it travels here rather than on the Document, and it is nil when nothing is
+// being typed.
+//
+// It exists for one sentence on screen that the panel must not invent: whether
+// the play under a corrected roll is the one that was written down or a stand-in
+// the software preselected. The panel is a client of the engine (rule 9), so the
+// engine says which.
+type EntryInfo struct {
+	// At is the slot the entry lands on, and Replacing says whether validating
+	// it overwrites the Action there (a correction in place) or inserts.
+	At        int  `json:"at"`
+	Replacing bool `json:"replacing"`
+
+	Side     int    `json:"side"`
+	Dice     [2]int `json:"dice"`
+	Selected bool   `json:"selected"`
+	// Review marks a play the user has to look at again — see [Entry].
+	Review bool `json:"review"`
+}
+
 // Annotated is a document and everything a Replay derives from it.
 type Annotated struct {
 	Document Document     `json:"document"`
 	Actions  []ActionInfo `json:"actions"`
 	Games    []GameInfo   `json:"games"`
 	Next     Next         `json:"next"`
+
+	// Entry is the Action being typed, nil when none is.
+	Entry *EntryInfo `json:"entry,omitempty"`
 
 	// Finished and Winner describe the match: a score has reached the length.
 	Finished bool   `json:"finished"`
@@ -205,6 +230,16 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 		}
 	}
 	out.Next = s.next()
+	if e := doc.Entry; e != nil {
+		out.Entry = &EntryInfo{
+			At:        e.At,
+			Replacing: e.Mode == EntryReplace,
+			Side:      e.Side,
+			Dice:      e.Dice,
+			Selected:  e.Selected,
+			Review:    e.Review,
+		}
+	}
 	if from < 0 {
 		from = 0
 	}
