@@ -889,3 +889,21 @@ func (d *Database) migrate_2_18_0_to_2_19_0(context.Context) error {
 func (d *Database) migrate_2_19_0_to_2_20_0(context.Context) error {
 	return nil
 }
+
+// migrate_2_20_0_to_2_21_0 is the 2.21.0 wave.
+//
+//   - transcription — the draft a match is typed into (issue #334, ADR-0045):
+//     one opaque JSON document carrying its OWN format_version, plus the
+//     columns the library list needs to show a draft without parsing it.
+//
+// Like the two steps before it, this one has nothing to execute: EnsureSchema
+// derives the missing table from schemaStatements and runs right after the
+// chain. The step exists so the chain stays unbroken from 1.0.0 to
+// DatabaseVersion, which is what TestMigrationSteps_ContinuousChain requires.
+//
+// There is nothing to backfill: no database written before 2.21.0 holds a
+// draft, and a draft is not derivable from a saved match — a transcription is
+// the typing, the Match is its result (ADR-0045 §2).
+func (d *Database) migrate_2_20_0_to_2_21_0(context.Context) error {
+	return nil
+}

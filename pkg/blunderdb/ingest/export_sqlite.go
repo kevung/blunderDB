@@ -81,6 +81,7 @@ type ExportReport struct {
 	Positions, Analyses, Comments                int
 	Matches, Games, Moves, MoveAnalyses          int
 	Collections, Tournaments, Filters, AnkiDecks int
+	Transcriptions                               int
 	Skipped                                      int
 }
 
@@ -222,6 +223,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeCollections,
 		e.writeTournaments,
 		e.writeMatches,
+		e.writeTranscriptions,
 		e.writeFilters,
 		e.writeAnkiDecks,
 	} {
@@ -330,6 +332,15 @@ func (e *exporter) writeMetadata() error {
 		}
 	}
 	return nil
+}
+
+// wholeScope reports whether the export is the whole of the source scope —
+// every position, collection, match and tournament — as WholeTenant and the
+// GUI's "export everything" ask for. Families that no Selection flag can
+// address travel only in that case.
+func (e *exporter) wholeScope() bool {
+	sel := e.opts.Selection
+	return sel.AllPositions && sel.AllCollections && sel.AllMatches && sel.AllTournaments
 }
 
 // resolveSelection turns the Selection into ordered id lists, following the
@@ -859,6 +870,41 @@ func (e *exporter) writeFilters() error {
 			continue
 		}
 		e.report.Filters++
+	}
+	return nil
+}
+
+// writeTranscriptions copies the drafts (ADR-0045) — but only when the export
+// is the WHOLE scope. A draft is the typing of a match, not a position, a
+// collection or a tournament: no Selection flag reaches it, so there is no
+// honest way to decide which drafts belong in "these three tournaments". An
+// export that filters anything therefore carries none, and the recipient's
+// file holds the empty table sqlite.Bootstrap created.
+//
+// The link to the produced match travels through matchMap, which a whole-scope
+// export fills for every match; a draft whose match somehow did not export
+// keeps its typing and loses the link, the same treatment a move gets when
+// its position stayed behind.
+func (e *exporter) writeTranscriptions() error {
+	if !e.wholeScope() {
+		return nil
+	}
+	var drafts []*storage.Transcription
+	for tr, err := range e.src.Transcriptions().List(e.ctx, e.scope) {
+		if err != nil {
+			return fmt.Errorf("ingest: list transcriptions: %w", err)
+		}
+		d := *tr
+		drafts = append(drafts, &d)
+	}
+	for _, d := range drafts {
+		d.ID = 0
+		d.MatchID = e.matchMap[d.MatchID] // 0 when the match did not export
+		if _, err := e.dst.Transcriptions().Save(e.ctx, "", d); err != nil {
+			e.skip("inserting transcription", "label", d.Label, "err", err)
+			continue
+		}
+		e.report.Transcriptions++
 	}
 	return nil
 }

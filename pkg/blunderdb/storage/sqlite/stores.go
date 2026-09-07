@@ -22,7 +22,7 @@ type execer interface {
 	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 }
 
-// binder provides the 14 per-family accessors over an execer. Storage embeds
+// binder provides the per-family accessors over an execer. Storage embeds
 // it bound to a *sql.DB; txImpl embeds it bound to a *sql.Tx.
 type binder struct {
 	db execer
@@ -52,6 +52,9 @@ func (b binder) ImportBatches() storage.ImportBatchStore {
 	return &sqlshared.ImportBatchStore{DB: b.shared()}
 }
 func (b binder) Trash() storage.TrashStore { return &sqlshared.TrashStore{DB: b.shared()} }
+func (b binder) Transcriptions() storage.TranscriptionStore {
+	return &sqlshared.TranscriptionStore{DB: b.shared()}
+}
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
 // transaction and commits (or rolls back) around fn; when db is already a

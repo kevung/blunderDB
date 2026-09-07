@@ -19,7 +19,7 @@ import (
 var purgeOrder = []string{
 	"move_analysis", "anki_review_log", "collection_position",
 	"comment", "analysis", "move", "anki_card", "game",
-	"collection", "anki_deck", "match", "tournament", "position",
+	"collection", "anki_deck", "transcription", "match", "tournament", "position",
 	"filter_library", "command_history", "search_history", "session_state",
 }
 
