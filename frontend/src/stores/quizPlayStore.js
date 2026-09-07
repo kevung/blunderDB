@@ -5,7 +5,8 @@ import { completedPlay, sources, destinationsFrom } from '../services/quizPlay.j
 //
 // Deux surfaces l'écrivent, et c'est le même geste : la question de pions d'un
 // quiz (#294, fiche J.4) et le coup d'une transcription, dont les dés se
-// déduisent des pas joués (T2.3). Un seul magasin, parce qu'un second aurait redemandé au
+// déduisent des pas joués (T2.3) ou qui est déplacé librement parce qu'il est
+// illégal (T2.4). Un seul magasin, parce qu'un second aurait redemandé au
 // plateau, au dessin et au clic de choisir lequel des deux ils écoutent — pour
 // un état qui est le même, écrit par le même réducteur.
 //
@@ -24,7 +25,8 @@ export const quizPlayCompleteStore = derived(quizPlayStore, ($s) => ($s ? comple
 
 /**
  * Les points d'où un pas peut partir — ce que le plateau met en avant
- * (`drawPlayHighlights`, un anneau par point).
+ * (`drawPlayHighlights`, un anneau par point). Vide en déplacement libre :
+ * aucun coup légal ne s'y offre, et tout point qui porte un pion est bon.
  */
 export const quizPlaySourcesStore = derived(quizPlayStore, ($s) => ($s ? sources($s) : new Set()));
 

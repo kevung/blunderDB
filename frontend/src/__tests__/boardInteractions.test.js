@@ -15,7 +15,7 @@ import { boardMetrics } from '../utils/boardGeometry.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick } from '../utils/boardInteractions.js';
 import { newPlay } from '../services/quizPlay.js';
-import { newBoardPlay, deducedDice } from '../services/transcriptionPlay.js';
+import { newBoardPlay, newFreePlay, deducedDice } from '../services/transcriptionPlay.js';
 
 const W = 1000;
 const H = 720;
@@ -554,7 +554,7 @@ describe('the quiz move is played on the board', () => {
     });
 });
 
-describe('le coup joué au plateau d’une transcription (T2.3)', () => {
+describe('le coup joué au plateau d’une transcription (T2.3, T2.4)', () => {
     /**
      * @param {Record<number, [number, number]>} stacks
      */
@@ -575,10 +575,10 @@ describe('le coup joué au plateau d’une transcription (T2.3)', () => {
         { dice: [6, 6], plays: [play(step(13, 7), step(13, 7), step(8, 2), step(8, 2))] }
     ];
 
-    /** Un plateau monté sur le coup d'une transcription. */
-    function mountPlay() {
+    /** Un plateau monté sur un coup de transcription, contraint ou libre. */
+    function mountPlay({ free = false } = {}) {
         const b = mount({ mode: 'TRANSCRIBE', position: POSITION });
-        b.stores.quizPlay.set(newBoardPlay(POSITION, BY_ROLL));
+        b.stores.quizPlay.set(free ? newFreePlay(POSITION) : newBoardPlay(POSITION, BY_ROLL));
         return b;
     }
 
@@ -631,6 +631,17 @@ describe('le coup joué au plateau d’une transcription (T2.3)', () => {
         const b = mountPlay();
         b.drag(b.slot(13, 0), b.slot(3, 0));
         expect(get(b.stores.quizPlay).steps).toEqual([]);
+        b.detach();
+    });
+
+    // T2.4 : le même geste, sans aucune contrainte. C'est le coup qui a tenu à
+    // la table, et il n'est pas jugé (ADR-0044).
+    test('en déplacement libre, le pion va où le coup illégal l’a mis', () => {
+        const b = mountPlay({ free: true });
+        b.drag(b.slot(13, 0), b.slot(3, 0));
+        const state = get(b.stores.quizPlay);
+        expect(state.steps).toEqual([{ from: 13, to: 3 }]);
+        expect(state.board.points[3]).toEqual({ checkers: 1, color: 0 });
         b.detach();
     });
 

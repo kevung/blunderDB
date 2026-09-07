@@ -1,16 +1,17 @@
 /**
- * TranscriptionPanel.boardPlay.test.js — T2.3 dans le panneau.
+ * TranscriptionPanel.boardPlay.test.js — T2.3 et T2.4 dans le panneau.
  *
  * Le réducteur est éprouvé à part (transcriptionPlay.test.js) et le clic qui le
  * fait avancer aussi (boardInteractions.test.js). Ce qui ne se voit qu'ici est
  * la couture : que le plateau soit ARMÉ de l'union des vingt et un jets tant
  * qu'aucun dé n'est tapé, que le coup achevé parte au moteur avec ses deux dés
- * déduits et pas un chiffre tapé, et que l'ambiguïté n'enregistre rien et
- * n'offre que les jets possibles.
+ * déduits et pas un chiffre tapé, que l'ambiguïté n'enregistre rien et n'offre
+ * que les jets possibles, et que les deux chemins du coup illégal — plateau
+ * libre et notation — posent bien `board_after` sur l'Action.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, cleanup, fireEvent } from '@testing-library/svelte';
+import { render, cleanup, fireEvent, screen } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
@@ -38,6 +39,7 @@ import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
+import { freeClick } from '../services/transcriptionPlay.js';
 import { selectSource, playHop } from '../services/quizPlay.js';
 
 const BLACK = 0;
@@ -135,7 +137,8 @@ afterEach(() => {
 describe('le plateau joue le coup et déduit les dés (T2.3)', () => {
     test('tant qu’aucun dé n’est tapé, le plateau porte l’union des jets', async () => {
         const play = await armed();
-        // Un coup par jet jouable, quatre jets.
+        expect(play.free).toBe(false);
+        // Un coup par jet jouable, quatre jets, six coups en tout.
         expect(play.plays).toHaveLength(4);
         expect(new Set(play.plays.map((p) => p.roll.join('')))).toEqual(new Set(['61', '62', '66', '21']));
     });
@@ -166,6 +169,8 @@ describe('le plateau joue le coup et déduit les dés (T2.3)', () => {
             { from: 8, to: 2, hit: false },
             { from: 8, to: 2, hit: false }
         ]);
+        // Un coup LÉGAL ne porte pas de plateau : il n'a rien d'illégal à dire.
+        expect(sent[2].BoardAfter).toBeNull();
         expect(sent[3]).toEqual({ Kind: 'validate' });
     });
 
@@ -210,5 +215,65 @@ describe('l’ambiguïté n’est jamais tranchée par le logiciel', () => {
         expect(sent[0]).toEqual({ Kind: 'enter_die', Die: 6 });
         expect(sent[1]).toEqual({ Kind: 'enter_die', Die: 2 });
         expect(sent[2].Steps).toEqual([{ from: 13, to: 7, hit: false }]);
+    });
+});
+
+describe('le coup illégal (T2.4)', () => {
+    /** Le brouillon avec les deux dés tapés, prêt pour un coup à la main. */
+    async function withDice() {
+        transcriptionStore.set(state(annotated()));
+        render(TranscriptionPanel);
+        await tick();
+        document.getElementById('transcriptionPanel')?.focus();
+        await press('Digit6');
+        await press('Digit1');
+        await vi.waitFor(() => expect(get(quizPlayStore)).toBeNull());
+    }
+
+    test('le déplacement libre pose le plateau sur l’Action', async () => {
+        await withDice();
+        await fireEvent.click(screen.getByText('Free movement'));
+        await vi.waitFor(() => expect(get(quizPlayStore)?.free).toBe(true));
+
+        // 13/3 n'est le coup d'aucun jet : c'est celui qui a été joué.
+        quizPlayStore.update((s) => freeClick(freeClick(s, 13), 3));
+        await tick();
+        await fireEvent.click(screen.getByText('This board is the move played'));
+
+        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'validate')).toBe(true));
+        const entered = gestures().find((g) => g.Kind === 'enter_play');
+        expect(entered.Steps).toEqual([{ from: 13, to: 3, hit: false }]);
+        // Le plateau part avec les pas : c'est lui qui dit ce qui s'est passé.
+        expect(entered.BoardAfter.points[3]).toEqual({ checkers: 1, color: BLACK });
+        expect(entered.BoardAfter.points[13].checkers).toBe(4);
+    });
+
+    test('la notation tapée écrit le même coup, sans passer par le plateau', async () => {
+        await withDice();
+        const input = screen.getByLabelText('Move notation');
+        await fireEvent.input(input, { target: { value: '13/7 8/7' } });
+        await fireEvent.click(screen.getByText('Enter'));
+
+        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'validate')).toBe(true));
+        const entered = gestures().find((g) => g.Kind === 'enter_play');
+        expect(entered.Steps).toEqual([
+            { from: 13, to: 7, hit: false },
+            { from: 8, to: 7, hit: false }
+        ]);
+        // Le plateau est calculé, même pour un coup légal : c'est le MOTEUR qui
+        // le jette quand un coup légal l'atteint (transcript.validate), jamais
+        // le panneau, qui ne saurait pas le dire sans rejouer les règles.
+        expect(entered.BoardAfter.points[7]).toEqual({ checkers: 2, color: BLACK });
+    });
+
+    test('sans les deux dés, rien ne part : un coup illégal n’a pas de jet à deviner', async () => {
+        transcriptionStore.set(state(annotated()));
+        render(TranscriptionPanel);
+        await tick();
+        document.getElementById('transcriptionPanel')?.focus();
+
+        const input = screen.getByLabelText('Move notation');
+        await fireEvent.input(input, { target: { value: '13/3' } });
+        expect(screen.getByText('Enter').disabled).toBe(true);
     });
 });

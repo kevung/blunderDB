@@ -535,8 +535,9 @@
         const play = get(quizPlayStore);
         if (!play) return {};
         const shown = (point) => (flip && point >= 0 && point <= 25 ? 25 - point : point);
-        // Le point CHOISI est toujours marqué : le pion pris en main doit se
-        // voir, même quand la liste des sources ne l'offre plus.
+        // Le point CHOISI est toujours marqué, même quand aucune liste ne
+        // l'offre : en déplacement libre (T2.4) il n'y a pas de coup légal pour
+        // le proposer, et le pion pris en main doit se voir quand même.
         const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
         // Les points de DÉPART ne s'allument qu'une fois le coup engagé — un
         // pion pris en main, ou un pas déjà joué. Au départ ils sont presque

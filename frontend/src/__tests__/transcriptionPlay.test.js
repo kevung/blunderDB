@@ -13,9 +13,22 @@
 
 import { describe, test, expect } from 'vitest';
 import { selectSource, playHop } from '../services/quizPlay.js';
-import { ROLLS, rollKey, newBoardPlay, undoBoardStep, compatibleRolls, choosableRolls, deducedDice } from '../services/transcriptionPlay.js';
+import {
+    ROLLS,
+    rollKey,
+    newBoardPlay,
+    newFreePlay,
+    freeClick,
+    undoBoardStep,
+    compatibleRolls,
+    choosableRolls,
+    deducedDice,
+    stepsFromNotation,
+    boardAfterSteps
+} from '../services/transcriptionPlay.js';
 
 const BLACK = 0;
+const WHITE = 1;
 
 /** Une position : les piles données, le reste vide. */
 function positionWith(stacks, mover = BLACK) {
@@ -136,6 +149,7 @@ describe('rien n’est deviné', () => {
         const back = undoBoardStep(state);
         expect(back.steps).toEqual([{ from: 13, to: 7 }]);
         expect(back.board.points[7].checkers).toBe(1);
+        expect(back.free).toBe(false);
     });
 });
 
@@ -179,6 +193,45 @@ describe('le budget d’ux.md §4.1 : quatre pas à la souris ≤ 6 s', () => {
         expect(gestures).toBe(2);
         expect(cost(gestures)).toBeLessThanOrEqual(3.4);
         expect(deducedDice(state)).toEqual([6, 1]);
+    });
+});
+
+describe('le déplacement libre et la notation (T2.4)', () => {
+    test('un pion se déplace là où aucun coup légal ne le mène', () => {
+        let state = newFreePlay(POSITION);
+        // 13/3 n'est un coup d'aucun jet : il se transcrit tout de même.
+        state = freeClick(state, 13);
+        state = freeClick(state, 3);
+        expect(state.steps).toEqual([{ from: 13, to: 3 }]);
+        expect(state.board.points[3]).toEqual({ checkers: 1, color: BLACK });
+        expect(state.board.points[13].checkers).toBe(4);
+    });
+
+    test('un point sans pion du camp au trait ne se choisit pas', () => {
+        const state = freeClick(newFreePlay(POSITION), 5);
+        expect(state.selected).toBeNull();
+        expect(state.steps).toEqual([]);
+    });
+
+    test('la notation se lit dans le repère du camp qui joue', () => {
+        // Noir : la notation EST le numéro du modèle.
+        expect(stepsFromNotation('13/7 8/7*', BLACK)).toEqual([
+            { from: 13, to: 7 },
+            { from: 8, to: 7 }
+        ]);
+        // Blanc : mover-relative, donc 25 − p ; la barre est le point 0.
+        expect(stepsFromNotation('bar/22 6/off', WHITE)).toEqual([
+            { from: 0, to: 3 },
+            { from: 19, to: -1 }
+        ]);
+    });
+
+    test('les pas d’une notation posent le plateau, frappe comprise', () => {
+        const position = positionWith({ 13: [2, BLACK], 8: [2, BLACK], 7: [1, WHITE] });
+        const board = boardAfterSteps(position.board, stepsFromNotation('13/7 8/7', BLACK), BLACK);
+        expect(board.points[7]).toEqual({ checkers: 2, color: BLACK });
+        // Le blot frappé est sur la barre de l'adversaire (le point 0 pour blanc).
+        expect(board.points[0]).toEqual({ checkers: 1, color: WHITE });
     });
 });
 

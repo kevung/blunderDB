@@ -43,9 +43,20 @@
  * Deviner à la place de l'utilisateur aurait écrit dans le match un jet que
  * personne n'a vu ; demander à chaque coup aurait coûté le budget d'ux.md §4.1.
  *
+ * # Le déplacement libre (T2.4)
+ *
+ * Un coup illégal a tenu à la table : il se transcrit. L'état porte alors
+ * `free`, aucune liste de coups ne le contraint, et un pas est appliqué tel
+ * quel — par `applyStep` de quizPlay, encore lui, qui sait déjà retirer un
+ * pion, frapper un blot et sortir. Le plateau obtenu est ce qui s'est passé :
+ * c'est lui qui devient `board_after` sur l'Action, et le moteur le garde
+ * seulement si aucun coup légal ne l'atteint (transcript.validate).
  */
 
-import { newPlay, alivePlays, playHop, resetPlay } from './quizPlay.js';
+import { newPlay, alivePlays, applyStep, barOf, playHop, resetPlay, OFF } from './quizPlay.js';
+import { parseMoveNotation } from '../utils/boardGeometry.js';
+
+const WHITE = 1;
 
 /** Les vingt et un jets distincts, dé fort d'abord — l'ordre du triangle. */
 export const ROLLS = Object.freeze([1, 2, 3, 4, 5, 6].flatMap((high) => [1, 2, 3, 4, 5, 6].filter((low) => low <= high).map((low) => Object.freeze([high, low]))));
@@ -78,15 +89,20 @@ export function newBoardPlay(position, byRoll) {
         const roll = a >= b ? [a, b] : [b, a];
         for (const play of entry?.plays ?? []) plays.push({ ...play, roll });
     }
-    return { ...newPlay(position, plays), origin: position };
+    return { ...newPlay(position, plays), free: false, origin: position };
+}
+
+/** L'état de départ d'un déplacement LIBRE : aucun coup ne le contraint. */
+export function newFreePlay(position) {
+    return { ...newPlay(position, []), free: true, origin: position };
 }
 
 /**
  * Remet le plateau tel que le tour le pose, en gardant ce qui n'appartient pas
- * au réducteur : la position d'origine.
+ * au réducteur — le mode libre et la position d'origine.
  *
- * `resetPlay` rend un état NEUF de quizPlay, donc sans elle — c'est ici qu'elle
- * lui est rendue, plutôt que dans le réducteur, qui ne la connaît pas.
+ * `resetPlay` rend un état NEUF de quizPlay, donc sans eux : c'est ici qu'ils
+ * lui sont rendus, plutôt que dans le réducteur, qui ne les connaît pas.
  *
  * @param {any} state
  * @param {any} fallback la position à défaut d'origine (une question de quiz)
@@ -94,7 +110,52 @@ export function newBoardPlay(position, byRoll) {
 export function resetBoardPlay(state, fallback) {
     if (!state) return state;
     const base = state.origin ?? fallback;
-    return { ...resetPlay(state, base), origin: state.origin };
+    return { ...resetPlay(state, base), free: state.free === true, origin: state.origin };
+}
+
+/** Le point porte-t-il un pion du camp qui joue ? */
+function hasMoverChecker(state, point) {
+    const p = state?.board?.points?.[point];
+    return !!p && p.checkers > 0 && p.color === state.mover;
+}
+
+/**
+ * Choisir le pion à déplacer, en mode libre : n'importe quel point qui porte un
+ * pion du camp au trait, la barre comprise. Un second clic sur le même point le
+ * déselectionne.
+ * @param {any} state
+ * @param {number} point
+ */
+export function freeSelect(state, point) {
+    if (state.selected === point) return { ...state, selected: null };
+    if (!hasMoverChecker(state, point)) return state;
+    return { ...state, selected: point };
+}
+
+/**
+ * Déplacer un pion sans rien vérifier : c'est le coup qui a été joué à la
+ * table, et il n'est pas jugé (ADR-0044). Seule condition, physique : il faut
+ * un pion à prendre.
+ * @param {any} state
+ * @param {number} from
+ * @param {number} to
+ */
+export function freeStep(state, from, to) {
+    if (from === to || !hasMoverChecker(state, from)) return state;
+    const board = applyStep(state.board, { from, to }, state.mover);
+    return { ...state, board, steps: [...state.steps, { from, to }], selected: null };
+}
+
+/**
+ * Le clic du mode libre : il choisit une source, ou déplace le pion choisi.
+ * Même forme que le clic du quiz, pour que le plateau n'ait qu'une branche.
+ * @param {any} state
+ * @param {number} point
+ */
+export function freeClick(state, point) {
+    if (state.selected === null) return freeSelect(state, point);
+    const moved = freeStep(state, state.selected, point);
+    return moved === state ? freeSelect(state, point) : moved;
 }
 
 /**
@@ -102,8 +163,8 @@ export function resetBoardPlay(state, fallback) {
  * manqué, sans reprendre le coup au début.
  *
  * `undoLast` de quizPlay ferait la même chose, mais par `newPlay`, qui rend un
- * état neuf du réducteur — donc sans la position d'origine. Le rejeu passe ici
- * par le même chemin que le clic.
+ * état neuf du réducteur — donc sans le mode libre ni la position d'origine.
+ * Le rejeu passe ici par le même chemin que le clic, libre ou contraint.
  *
  * @param {any} state
  */
@@ -111,13 +172,13 @@ export function undoBoardStep(state) {
     if (!state || state.steps.length === 0) return state;
     const kept = state.steps.slice(0, -1);
     let next = resetBoardPlay(state, state.origin);
-    for (const s of kept) next = playHop(next, s.from, s.to);
+    for (const s of kept) next = state.free ? freeStep(next, s.from, s.to) : playHop(next, s.from, s.to);
     return next;
 }
 
 /** Les jets encore compatibles avec ce qui a été joué, clés triées. */
 export function compatibleRolls(state) {
-    if (!state) return [];
+    if (!state || state.free) return [];
     const keys = new Set();
     for (const play of alivePlays(state)) keys.add(rollKey(play.roll));
     return [...keys].sort();
@@ -129,7 +190,7 @@ export function compatibleRolls(state) {
  * @param {any} state
  */
 export function choosableRolls(state) {
-    if (!state || state.steps.length === 0) return [];
+    if (!state || state.free || state.steps.length === 0) return [];
     const keys = new Set();
     for (const play of alivePlays(state)) {
         if (play.steps.length === state.steps.length) keys.add(rollKey(play.roll));
@@ -148,7 +209,7 @@ export function choosableRolls(state) {
  * @returns {number[]|null} le jet, dé fort d'abord
  */
 export function deducedDice(state) {
-    if (!state || state.steps.length === 0) return null;
+    if (!state || state.free || state.steps.length === 0) return null;
     const alive = alivePlays(state);
     if (alive.length === 0) return null;
     const keys = new Set(alive.map((play) => rollKey(play.roll)));
@@ -156,4 +217,49 @@ export function deducedDice(state) {
     if (!alive.some((play) => play.steps.length === state.steps.length)) return null;
     const [high, low] = alive[0].roll;
     return [high, low];
+}
+
+/**
+ * Un point de la notation, rendu dans le repère ABSOLU du plateau.
+ *
+ * La notation est mover-relative — 24 nomme toujours les pions arrière du camp
+ * qui joue — et `domain.pointLabel` la produit en miroitant les points du camp
+ * blanc. Ceci en est l'inverse exact, et rien d'autre.
+ */
+function absolutePoint(relative, mover) {
+    return mover === WHITE ? 25 - relative : relative;
+}
+
+/**
+ * Les pas qu'un texte de notation décrit : `13/7 8/7*`, `bar/22`, `6/off(2)`.
+ *
+ * Le parseur n'est pas récrit : c'est `parseMoveNotation`, celui des flèches du
+ * plateau, qui rend déjà `bar` → 0, `off` → −1 et développe les `(n)`. Ce qui
+ * est ajouté ici est le passage au repère absolu, la seule chose que le
+ * parseur ne pouvait pas savoir : il ne connaît pas le camp qui joue.
+ *
+ * @param {string} text
+ * @param {number} mover
+ * @returns {{from: number, to: number}[]}
+ */
+export function stepsFromNotation(text, mover) {
+    return parseMoveNotation(text).map(({ from, to }) => ({
+        from: from === 0 ? barOf(mover) : absolutePoint(from, mover),
+        to: to === -1 ? OFF : absolutePoint(to, mover)
+    }));
+}
+
+/**
+ * Le plateau que ces pas laissent, appliqués l'un après l'autre au plateau
+ * donné. Rien n'est jugé : un pas dont la source est vide ne prend simplement
+ * aucun pion, et le Replay dira l'incohérence.
+ *
+ * @param {any} board
+ * @param {{from: number, to: number}[]} steps
+ * @param {number} mover
+ */
+export function boardAfterSteps(board, steps, mover) {
+    let out = board;
+    for (const step of steps ?? []) out = applyStep(out, step, mover);
+    return out;
 }

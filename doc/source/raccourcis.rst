@@ -347,6 +347,18 @@ même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas joua
 rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
 jet n'est jamais deviné à la place de celui qui regarde la partie.
 
+Un coup illégal se transcrit tel qu'il a été joué. Le bouton « Déplacement
+libre » libère le damier : les pions se déplacent sans aucune vérification, et
+« Ce plateau est le coup joué » enregistre le plateau obtenu. Le champ de
+notation, à côté, fait la même chose au clavier : ``13/7 8/7*``, ``bar/22`` ou
+``6/off`` s'écrivent et s'enregistrent par ENTREE. Les deux demandent que les
+dés du jet soient saisis d'abord, un coup illégal ne disant pas quel jet l'a
+produit. Un coup saisi par l'un de ces deux chemins qui se trouve être légal
+reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais
+sur la provenance du geste ; sinon il est marqué « coup illégal » dans le
+transcript, et l'export ``.mat`` avertit avant d'écrire le fichier, sans jamais
+refuser.
+
 Une partie se termine par une passe, par une résignation ou par la sortie du
 quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du
 videau). Le score, la partie Crawford et la fin du match sont alors affichés

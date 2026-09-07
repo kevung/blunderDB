@@ -18,6 +18,7 @@ import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF, playHop, selectSource } from '../services/quizPlay.js';
+import { freeClick, freeStep } from '../services/transcriptionPlay.js';
 import { nextFilter, sourcesOf } from '../services/transcriptionFilter.js';
 
 // A second click on the same Except point within this delay blocks it.
@@ -382,6 +383,10 @@ export function attachBoardInteractions(canvas, deps) {
         const target = quizTargetAt(x, y);
         if (target === null) return true;
         stores.quizPlay.update((/** @type {any} */ s) => {
+            // Le déplacement LIBRE d'une transcription (T2.4) : aucun coup légal
+            // ne le contraint, et c'est la seule différence — le geste, lui, est
+            // le même, source puis destination.
+            if (s.free) return freeClick(s, target);
             if (s.selected === null) return selectSource(s, target);
             const played = playHop(s, s.selected, target);
             // Le clic qui ne joue rien re-choisit une source : on change d'avis
@@ -410,7 +415,10 @@ export function attachBoardInteractions(canvas, deps) {
         const { x, y } = toDrawing(event);
         const target = quizTargetAt(x, y);
         if (target === null || target === from) return true;
-        stores.quizPlay.update((/** @type {any} */ s) => (s && s.selected === from ? playHop(s, from, target) : s));
+        stores.quizPlay.update((/** @type {any} */ s) => {
+            if (!s || s.selected !== from) return s;
+            return s.free ? freeStep(s, from, target) : playHop(s, from, target);
+        });
         return true;
     }
 
