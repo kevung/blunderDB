@@ -20,13 +20,13 @@
  * déjà les événements `gammonnet-batch:*` : il n'y a rien à rebrancher ici.
  */
 
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 import { translate, tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
 import { statusBarTextStore } from '../stores/uiStore.js';
 import { confirmAction } from './confirmService.js';
-import { SaveTranscriptionAsMatch, SuggestTranscriptionMatFilename, ExportTranscriptionMAT, CloseTranscription } from '../../wailsjs/go/database/Database.js';
+import { SaveTranscriptionAsMatch, SuggestTranscriptionMatFilename, ExportTranscriptionMAT, CloseTranscription, PendingTranscriptionAnalysis } from '../../wailsjs/go/database/Database.js';
 import { OpenExportMatDialog, StartGammonNetMatchBatch } from '../../wailsjs/go/gui/App.js';
 import { GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
 
@@ -181,6 +181,53 @@ async function startTargetedAnalysis(result) {
     } catch (error) {
         logger.error('The targeted gammonNet batch of a saved transcription failed to start:', error);
     }
+}
+
+/**
+ * La reprise de l'analyse (T3.3, fonctionnel.md §4, ADR-0045 §8).
+ *
+ * `{ transcription_id, match_id, label, to_analyze }` quand le match du
+ * dernier brouillon enregistré a des positions sans analyse, `null` sinon.
+ *
+ * Rien n'est stocké pour cela, ni ici ni en base : c'est un comptage refait à
+ * chaque ouverture de base. Ignorer la proposition n'écrit rien, donc elle
+ * revient tant qu'il manque des positions, et elle disparaît d'elle-même quand
+ * le lot a fini.
+ *
+ * @type {import('svelte/store').Writable<{transcription_id: number, match_id: number, label: string, to_analyze: number} | null>}
+ */
+export const transcriptionResumeStore = writable(null);
+
+/**
+ * Repose la question à la base ouverte. Appelée à l'ouverture d'une base, et
+ * nulle part en boucle : trois lignes de SQL une fois, jamais à chaque frappe.
+ */
+export async function refreshTranscriptionResume() {
+    try {
+        transcriptionResumeStore.set((await PendingTranscriptionAnalysis()) ?? null);
+    } catch (error) {
+        logger.error('Failed to look for a transcription analysis to finish:', error);
+        transcriptionResumeStore.set(null);
+    }
+}
+
+/**
+ * Termine le lot : exactement celui que l'enregistrement lance (T1.9), sur le
+ * seul match du brouillon. Jamais le rattrapage de toute la bibliothèque —
+ * l'utilisateur a transcrit un match, il n'a pas demandé les milliers de
+ * positions importées.
+ */
+export async function resumeTranscriptionAnalysis() {
+    const pending = get(transcriptionResumeStore);
+    if (!pending) return;
+
+    transcriptionResumeStore.set(null);
+    await startTargetedAnalysis(pending);
+}
+
+/** Écarte la proposition pour cette ouverture-ci. Rien n'est retenu. */
+export function dismissTranscriptionResume() {
+    transcriptionResumeStore.set(null);
 }
 
 /**

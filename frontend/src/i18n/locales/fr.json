@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "Le brouillon sera supprimé ; le match #{id} reste dans la bibliothèque, définitif. Fermer ?",
         "savedMatch": "Match #{id} enregistré.",
         "replacedMatch": "Match #{id} remplacé.",
+        "resumeAnalysis": "Analyse interrompue : {n} position(s) du dernier match transcrit restent à analyser.",
+        "resumeAnalysisFinish": "Terminer",
         "saveFailed": "Échec de l'enregistrement : {error}",
         "exported": "Match exporté en .mat.",
         "exportFailed": "Échec de l'export : {error}",

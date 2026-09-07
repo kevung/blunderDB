@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:08+0200\n"
+"POT-Creation-Date: 2026-09-07 09:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -388,10 +388,10 @@ msgstr "Luo uusi tietokantatiedosto valinnaisilla metatiedoilla."
 #: ../../source/cli.rst:112 ../../source/cli.rst:139 ../../source/cli.rst:320
 #: ../../source/cli.rst:391 ../../source/cli.rst:417 ../../source/cli.rst:820
 #: ../../source/cli.rst:983 ../../source/cli.rst:1028 ../../source/cli.rst:1143
-#: ../../source/cli.rst:1334 ../../source/cli.rst:1403
-#: ../../source/cli.rst:1437 ../../source/cli.rst:1571
-#: ../../source/cli.rst:1609 ../../source/cli.rst:1646
-#: ../../source/cli.rst:1676
+#: ../../source/cli.rst:1288 ../../source/cli.rst:1386
+#: ../../source/cli.rst:1455 ../../source/cli.rst:1489
+#: ../../source/cli.rst:1623 ../../source/cli.rst:1661
+#: ../../source/cli.rst:1698 ../../source/cli.rst:1728
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -427,8 +427,9 @@ msgstr ""
 "``.db``-pääte lisätään automaattisesti, jos se puuttuu. Ylähakemistot "
 "luodaan tarvittaessa."
 
-#: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1585
-#: ../../source/cli.rst:1629 ../../source/cli.rst:1688
+#: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1313
+#: ../../source/cli.rst:1637 ../../source/cli.rst:1681
+#: ../../source/cli.rst:1740
 msgid "**Exemple:**"
 msgstr "**Esimerkki:**"
 
@@ -484,7 +485,7 @@ msgstr ""
 "``--watch-every`` — Kuinka usein ``--watch`` katsoo (oletus: 10s, alaraja"
 " 2s)."
 
-#: ../../source/cli.rst:151
+#: ../../source/cli.rst:151 ../../source/cli.rst:1296
 msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json``."
 
@@ -801,10 +802,10 @@ msgstr ""
 #: ../../source/cli.rst:348 ../../source/cli.rst:619 ../../source/cli.rst:791
 #: ../../source/cli.rst:827 ../../source/cli.rst:875 ../../source/cli.rst:950
 #: ../../source/cli.rst:1003 ../../source/cli.rst:1043
-#: ../../source/cli.rst:1109 ../../source/cli.rst:1311
-#: ../../source/cli.rst:1339 ../../source/cli.rst:1419
-#: ../../source/cli.rst:1492 ../../source/cli.rst:1655
-#: ../../source/cli.rst:1717
+#: ../../source/cli.rst:1109 ../../source/cli.rst:1363
+#: ../../source/cli.rst:1391 ../../source/cli.rst:1471
+#: ../../source/cli.rst:1544 ../../source/cli.rst:1707
+#: ../../source/cli.rst:1769
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -947,9 +948,9 @@ msgid "**Options principales:**"
 msgstr "**Pääasialliset valitsimet:**"
 
 #: ../../source/cli.rst:441 ../../source/cli.rst:822 ../../source/cli.rst:1145
-#: ../../source/cli.rst:1336 ../../source/cli.rst:1405
-#: ../../source/cli.rst:1439 ../../source/cli.rst:1573
-#: ../../source/cli.rst:1611 ../../source/cli.rst:1648
+#: ../../source/cli.rst:1388 ../../source/cli.rst:1457
+#: ../../source/cli.rst:1491 ../../source/cli.rst:1625
+#: ../../source/cli.rst:1663 ../../source/cli.rst:1700
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Tietokanta (pakollinen)."
 
@@ -1501,7 +1502,7 @@ msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr "``--top-blunders`` — Lueteltavien pahimpien virheiden määrä (oletus: 10)."
 
 #: ../../source/cli.rst:732 ../../source/cli.rst:743 ../../source/cli.rst:1030
-#: ../../source/cli.rst:1337
+#: ../../source/cli.rst:1389
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — Tulostusmuoto: ``text`` tai ``json`` (oletus: ``text``)."
 
@@ -1641,7 +1642,7 @@ msgstr ""
 "``list`` ja ``show`` hyväksyvät parametrin ``--format text`` (oletus), "
 "``json`` tai ``csv``, kuten ``list``."
 
-#: ../../source/cli.rst:847 ../../source/cli.rst:914 ../../source/cli.rst:1283
+#: ../../source/cli.rst:847 ../../source/cli.rst:914 ../../source/cli.rst:1335
 msgid "**Sous-commandes:**"
 msgstr "**Alikomennot:**"
 
@@ -2392,11 +2393,93 @@ msgstr ""
 " asteikolla: se lasketaan nollakustannuksiseksi erimielisyydeksi eikä "
 "keksityksi kustannukseksi."
 
-#: ../../source/cli.rst:1272
+#: ../../source/cli.rst:1274
+msgid "transcribe — Rejouer une transcription"
+msgstr "transcribe — Toista litterointi uudelleen"
+
+#: ../../source/cli.rst:1276
+msgid ""
+"Rejoue une transcription et rend compte de ce que la relecture y trouve. "
+"La source est un fichier ``.mat``, un match de la bibliothèque ou un "
+"brouillon de transcription — exactement l'une des trois. Un match est lu "
+"par le ``.mat`` qu'il produirait à l'export : ce qui est rejoué est donc "
+"ce qu'un export contiendrait."
+msgstr ""
+"Toistaa litteroinnin uudelleen ja kertoo, mitä toisto siitä löytää. Lähde"
+" on ``.mat``-tiedosto, kirjaston ottelu tai litteroinnin luonnos — "
+"täsmälleen yksi kolmesta. Ottelu luetaan sen ``.mat``-muodon kautta, "
+"jonka se veisi ulos: toistettavaksi tulee siis se, mitä vienti "
+"sisältäisi."
+
+#: ../../source/cli.rst:1290
+msgid "``--mat`` — Fichier ``.mat`` à rejouer."
+msgstr "``--mat`` — Toistettava ``.mat``-tiedosto."
+
+#: ../../source/cli.rst:1291
+msgid "``--db`` — Base de données, pour ``--match`` et ``--draft``."
+msgstr "``--db`` — Tietokanta, valitsimia ``--match`` ja ``--draft`` varten."
+
+#: ../../source/cli.rst:1292
+msgid "``--match`` — Identifiant du match de la bibliothèque à rejouer."
+msgstr "``--match`` — Toistettavan kirjaston ottelun tunniste."
+
+#: ../../source/cli.rst:1293
+msgid "``--draft`` — Identifiant du brouillon de transcription à rejouer."
+msgstr "``--draft`` — Toistettavan litteroinnin luonnoksen tunniste."
+
+#: ../../source/cli.rst:1294
+msgid "``--check`` — Liste les incohérences trouvées (comportement par défaut)."
+msgstr "``--check`` — Luettelee löydetyt epäjohdonmukaisuudet (oletustoiminta)."
+
+#: ../../source/cli.rst:1295
+msgid "``--render`` — Réécrit la transcription en ``.mat`` à ce chemin."
+msgstr ""
+"``--render`` — Kirjoittaa litteroinnin takaisin ``.mat``-muodossa tähän "
+"polkuun."
+
+#: ../../source/cli.rst:1298
+msgid ""
+"``--check`` nomme chaque incohérence avec le numéro de l'action et la "
+"partie où elle se trouve : coup illégal, deux tours de suite pour le même"
+" joueur, action de videau impossible, action au-delà de la fin du match, "
+"coup dont les pas n'utilisent pas ses propres dés."
+msgstr ""
+"``--check`` nimeää jokaisen epäjohdonmukaisuuden siirron numerolla ja "
+"pelillä, jossa se on: laiton siirto, kaksi vuoroa peräkkäin samalle "
+"pelaajalle, mahdoton tuplauskuution toiminto, ottelun päättymisen "
+"jälkeinen toiminto, siirto jonka askeleet eivät käytä sen omia noppia."
+
+#: ../../source/cli.rst:1303
+msgid ""
+"Une incohérence est **rapportée, jamais opposée** : rien n'est refusé "
+"pour elle et le code de sortie reste 0 quoi que la relecture trouve. Un "
+"code non nul signale un vrai échec — fichier illisible, base qui ne "
+"s'ouvre pas, sortie impossible à écrire. Un script qui veut agir sur les "
+"constats les lit dans ``--format json``, où un fichier cassé et une "
+"partie contenant un coup illégal ne se confondent pas."
+msgstr ""
+"Epäjohdonmukaisuus **raportoidaan, sitä ei koskaan pidetä esteenä**: "
+"mitään ei hylätä sen takia, ja paluuarvo pysyy nollana riippumatta siitä,"
+" mitä toisto löytää. Nollasta poikkeava arvo kertoo todellisesta "
+"epäonnistumisesta — lukukelvoton tiedosto, tietokanta joka ei aukea, "
+"tuloste jota ei voi kirjoittaa. Skripti, joka haluaa toimia havaintojen "
+"perusteella, lukee ne muodossa ``--format json``, jossa rikkinäinen "
+"tiedosto ja laittoman siirron sisältävä peli eivät mene sekaisin."
+
+#: ../../source/cli.rst:1310
+msgid ""
+"``--render`` réécrit la transcription en ``.mat``, ce qui permet de "
+"vérifier l'aller-retour sur un fichier réel, en dehors des tests."
+msgstr ""
+"``--render`` kirjoittaa litteroinnin takaisin ``.mat``-muotoon, mikä "
+"sallii edestakaisen muunnoksen tarkistamisen oikealla tiedostolla testien"
+" ulkopuolella."
+
+#: ../../source/cli.rst:1324
 msgid "trash — La corbeille"
 msgstr "trash — Roskakori"
 
-#: ../../source/cli.rst:1274
+#: ../../source/cli.rst:1326
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -2408,21 +2491,21 @@ msgstr ""
 "tiedä tuon taulun olemassaolosta — ei hakusuodatin, ei tilasto, ei "
 "säilytyssääntö."
 
-#: ../../source/cli.rst:1285
+#: ../../source/cli.rst:1337
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — Mitä roskakorissa on, uusimmasta poistosta vanhimpaan."
 
-#: ../../source/cli.rst:1287
+#: ../../source/cli.rst:1339
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr "``restore --id N`` — Palauttaa merkinnän N ja poistaa sen roskakorista."
 
-#: ../../source/cli.rst:1288
+#: ../../source/cli.rst:1340
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr "``discard --id N`` — Poistaa merkinnän N heti, palauttamatta sitä."
 
-#: ../../source/cli.rst:1289
+#: ../../source/cli.rst:1341
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -2430,7 +2513,7 @@ msgstr ""
 "``empty [--older-than P]`` — Tyhjentää roskakorin tai vain sen, mikä on "
 "yli P päivää vanhaa."
 
-#: ../../source/cli.rst:1291
+#: ../../source/cli.rst:1343
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection`` ou "
@@ -2439,7 +2522,7 @@ msgstr ""
 "``delete --kind K --id N`` — Poistaa kohteen **roskakorin kautta**, jotta"
 " teon voi perua. ``K`` on ``position``, ``collection`` tai ``comment``."
 
-#: ../../source/cli.rst:1295
+#: ../../source/cli.rst:1347
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``)."
@@ -2447,7 +2530,7 @@ msgstr ""
 "**Yhteiset valitsimet:** ``--db`` (pakollinen), ``--kind``, ``--limit`` "
 "(oletus 50), ``--format`` (``text`` tai ``json``)."
 
-#: ../../source/cli.rst:1298
+#: ../../source/cli.rst:1350
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -2459,7 +2542,7 @@ msgstr ""
 "jättäminen kasvattaisi tiedostoa, jonka kasvua kukaan ei pyytänyt. "
 "``trash delete`` on se, joka säilyttää perumisen."
 
-#: ../../source/cli.rst:1303
+#: ../../source/cli.rst:1355
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon, mais elle ne rend pas son ancien identifiant —"
@@ -2471,7 +2554,7 @@ msgstr ""
 "alkuperäistä riviä ei enää ole. Palautettu asema on sama asema uudella "
 "numerolla."
 
-#: ../../source/cli.rst:1308
+#: ../../source/cli.rst:1360
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."
@@ -2479,15 +2562,15 @@ msgstr ""
 "Yli kolmekymmentä päivää vanhat poistaa ``blunderdb vacuum`` — ei koskaan"
 " tietokannan avaaminen."
 
-#: ../../source/cli.rst:1326
+#: ../../source/cli.rst:1378
 msgid "info — Métadonnées de la base"
 msgstr "info — Tietokannan metatiedot"
 
-#: ../../source/cli.rst:1328
+#: ../../source/cli.rst:1380
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Näytä tietokannan metatiedot ja tilastot."
 
-#: ../../source/cli.rst:1362
+#: ../../source/cli.rst:1414
 msgid ""
 "``--format json`` ajoute l'origine du fichier — ``issuance`` porte le "
 "filigrane s'il y en a un, et l'identité d'émetteur de cette machine :"
@@ -2496,33 +2579,33 @@ msgstr ""
 "vesileiman, jos sellainen on, sekä tämän koneen liikkeeseenlaskijan "
 "identiteetin:"
 
-#: ../../source/cli.rst:1394
+#: ../../source/cli.rst:1446
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Muokkaa metatietoja"
 
-#: ../../source/cli.rst:1396
+#: ../../source/cli.rst:1448
 msgid ""
 "Modifie le nom d'utilisateur, la description ou les seuils d'une base de "
 "données."
 msgstr "Muokkaa tietokannan käyttäjänimeä, kuvausta tai kynnysarvoja."
 
-#: ../../source/cli.rst:1406
+#: ../../source/cli.rst:1458
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Uusi käyttäjänimi."
 
-#: ../../source/cli.rst:1407
+#: ../../source/cli.rst:1459
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Uusi kuvaus."
 
-#: ../../source/cli.rst:1408
+#: ../../source/cli.rst:1460
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Tyhjennä käyttäjänimi."
 
-#: ../../source/cli.rst:1409
+#: ../../source/cli.rst:1461
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Tyhjennä kuvaus."
 
-#: ../../source/cli.rst:1410
+#: ../../source/cli.rst:1462
 msgid ""
 "``--error-threshold`` — Seuil d'erreur, en millipoints : une décision "
 "coûtant au moins cela est une erreur."
@@ -2530,7 +2613,7 @@ msgstr ""
 "``--error-threshold`` — Virhekynnys millipisteinä: päätös, joka maksaa "
 "vähintään tämän verran, on virhe."
 
-#: ../../source/cli.rst:1412
+#: ../../source/cli.rst:1464
 msgid ""
 "``--blunder-threshold`` — Seuil de blunder, en millipoints : une erreur "
 "coûtant au moins cela est un blunder."
@@ -2538,7 +2621,7 @@ msgstr ""
 "``--blunder-threshold`` — Blunderin kynnys millipisteinä: virhe, joka "
 "maksaa vähintään tämän verran, on blunder."
 
-#: ../../source/cli.rst:1414
+#: ../../source/cli.rst:1466
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2547,15 +2630,15 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1417
+#: ../../source/cli.rst:1469
 msgid "Au moins une option de modification est requise."
 msgstr "Vähintään yksi muokkausvalitsin vaaditaan."
 
-#: ../../source/cli.rst:1428
+#: ../../source/cli.rst:1480
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Tarkista eheys"
 
-#: ../../source/cli.rst:1430
+#: ../../source/cli.rst:1482
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
@@ -2563,17 +2646,17 @@ msgstr ""
 "Tarkista tietokannan eheys ja valinnaisesti vertaa ottelua sen "
 "lähdetiedostoon."
 
-#: ../../source/cli.rst:1440
+#: ../../source/cli.rst:1492
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — Tarkistettavan ottelun tunnus."
 
-#: ../../source/cli.rst:1441
+#: ../../source/cli.rst:1493
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr ""
 "``--mat`` — Verrattava MAT-tiedosto (käytetään yhdessä ``--match``:n "
 "kanssa)."
 
-#: ../../source/cli.rst:1442
+#: ../../source/cli.rst:1494
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(statistiques, orphelins, écart de schéma, et la vérification du match le"
@@ -2582,7 +2665,7 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` (tilastot, "
 "orvot rivit, skeemapoikkeama ja mahdollinen ottelun tarkistus)."
 
-#: ../../source/cli.rst:1446
+#: ../../source/cli.rst:1498
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -2592,7 +2675,7 @@ msgstr ""
 "tilastot. ``--match``-valitsimen kanssa se tarkistaa ottelun tiedot ja "
 "voi verrata niitä alkuperäiseen lähdetiedostoon."
 
-#: ../../source/cli.rst:1450
+#: ../../source/cli.rst:1502
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -2615,7 +2698,7 @@ msgstr ""
 " eivät kuulu mihinkään otteluun eivätkä mihinkään pakkaan ja vievät vain "
 "tilaa. Komento päättyy silti paluukoodiin 0."
 
-#: ../../source/cli.rst:1460
+#: ../../source/cli.rst:1512
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -2637,7 +2720,7 @@ msgstr ""
 "reference DDL``. Kuten orporivit, skeemapoikkeama on havainto, ei virhe: "
 "paluukoodi pysyy nollana."
 
-#: ../../source/cli.rst:1470
+#: ../../source/cli.rst:1522
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -2662,7 +2745,7 @@ msgstr ""
 " vastaa ``Constraints: every row satisfies the current DDL``. Yksi "
 "havainto lisää: mitään ei korjata ja paluukoodi pysyy nollassa."
 
-#: ../../source/cli.rst:1481
+#: ../../source/cli.rst:1533
 msgid ""
 "Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
 "``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
@@ -2686,7 +2769,7 @@ msgstr ""
 "kannattaa katsoa. Terve tietokanta vastaa ``Counters: game_count and "
 "move_count agree with the rows``."
 
-#: ../../source/cli.rst:1500
+#: ../../source/cli.rst:1552
 msgid ""
 "**En faire une garde.** Le code de sortie vaut 0 quoi que la commande "
 "trouve : c'est ``--format json`` qui porte le verdict, et un script doit "
@@ -2696,7 +2779,7 @@ msgstr ""
 "löytää: tuomion kantaa ``--format json``, ja skriptin on luettava "
 "laskurit itse."
 
-#: ../../source/cli.rst:1543
+#: ../../source/cli.rst:1595
 msgid ""
 "Trois champs valent une alarme : ``orphan_total``, ``schema_drift_count``"
 " et ``constraint_violation_total``. Non nuls, ils décrivent une base à "
@@ -2706,7 +2789,7 @@ msgstr ""
 "``schema_drift_count`` ja ``constraint_violation_total``. Nollasta "
 "poikkeavina ne kuvaavat tietokantaa, joka on korjattava."
 
-#: ../../source/cli.rst:1551
+#: ../../source/cli.rst:1603
 msgid ""
 "``counter_drift_total`` n'en fait pas partie, et l'exemple ci-dessus le "
 "montre : la base qui l'a produit venait d'être importée et affiche déjà "
@@ -2722,11 +2805,11 @@ msgstr ""
 "tuonnista, se ei ilmaise vioittumista. Katsokaa sitä, mutta älkää "
 "käyttäkö sitä kynnysarvona."
 
-#: ../../source/cli.rst:1559
+#: ../../source/cli.rst:1611
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Tietokannan tiivistäminen"
 
-#: ../../source/cli.rst:1561
+#: ../../source/cli.rst:1613
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -2741,7 +2824,7 @@ msgstr ""
 "käynnistää tiivistys — se ei tapahdu koskaan automaattisesti tietokantaa "
 "avattaessa, koska sen kustannus on suuressa tietokannassa arvaamaton."
 
-#: ../../source/cli.rst:1574
+#: ../../source/cli.rst:1626
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2750,7 +2833,7 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, tavuina)."
 
-#: ../../source/cli.rst:1577
+#: ../../source/cli.rst:1629
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -2770,11 +2853,11 @@ msgstr ""
 "kieltäytyy käynnistymästä selkeällä viestillä sen sijaan, että "
 "riskeeraisi keskeytyneen tiivistyksen."
 
-#: ../../source/cli.rst:1599
+#: ../../source/cli.rst:1651
 msgid "repair — Recalculer les colonnes d'analyse"
 msgstr "repair — Laske analyysisarakkeet uudelleen"
 
-#: ../../source/cli.rst:1601
+#: ../../source/cli.rst:1653
 msgid ""
 "Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse "
 "elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas"
@@ -2784,7 +2867,7 @@ msgstr ""
 "jonka projektio ne vain ovat. Analyyseihin ei kosketa: uusiksi tehdään "
 "niistä johdetut arvot."
 
-#: ../../source/cli.rst:1612
+#: ../../source/cli.rst:1664
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2793,7 +2876,7 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1615
+#: ../../source/cli.rst:1667
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -2815,7 +2898,7 @@ msgstr ""
 "korjaus ei muuta mitään jo kirjoitetuissa riveissä; tämä komento tekee ne"
 " uudelleen."
 
-#: ../../source/cli.rst:1625
+#: ../../source/cli.rst:1677
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde à la simple ouverture d'une base "
@@ -2827,11 +2910,11 @@ msgstr ""
 " avaamisesta ei ole jotain, mitä työkalun tulisi tehdä käyttäjänsä selän "
 "takana."
 
-#: ../../source/cli.rst:1638
+#: ../../source/cli.rst:1690
 msgid "delete — Supprimer des données"
 msgstr "delete — Poista tietoja"
 
-#: ../../source/cli.rst:1640
+#: ../../source/cli.rst:1692
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -2839,19 +2922,19 @@ msgstr ""
 "Poista ottelu ja kaikki siihen liittyvät tiedot (pelit, siirrot, "
 "analyysit)."
 
-#: ../../source/cli.rst:1649
+#: ../../source/cli.rst:1701
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Poistotyyppi: ``match`` (pakollinen)."
 
-#: ../../source/cli.rst:1650
+#: ../../source/cli.rst:1702
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Poistettavan kohteen tunnus (pakollinen)."
 
-#: ../../source/cli.rst:1651
+#: ../../source/cli.rst:1703
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Poista pyytämättä vahvistusta."
 
-#: ../../source/cli.rst:1652
+#: ../../source/cli.rst:1704
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2860,11 +2943,11 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1664
+#: ../../source/cli.rst:1716
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Taustaprosessin tarkistus"
 
-#: ../../source/cli.rst:1666
+#: ../../source/cli.rst:1718
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -2879,7 +2962,7 @@ msgstr ""
 "ei tavoitettavissa, vanhentunut skeema tai osoitteessa ei kuuntele "
 "mikään. Tietokantatiedostoa ei avata."
 
-#: ../../source/cli.rst:1678
+#: ../../source/cli.rst:1730
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -2890,7 +2973,7 @@ msgstr ""
 "tai yleisisännällä (``0.0.0.0``, ``[::]``) tarkistetaan loopback-"
 "liitännän kautta."
 
-#: ../../source/cli.rst:1681
+#: ../../source/cli.rst:1733
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -2898,7 +2981,7 @@ msgstr ""
 "``--timeout`` — Aika, jonka jälkeen tarkistus luovuttaa (oletuksena "
 "``2s``)."
 
-#: ../../source/cli.rst:1683
+#: ../../source/cli.rst:1735
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -2910,7 +2993,7 @@ msgstr ""
 "``cmd/serve``-hakemistosta käännetty ``serve``-binääri ymmärtää sen. Se "
 "sopii yhtä hyvin skriptiin tai systemd-yksikköön."
 
-#: ../../source/cli.rst:1697
+#: ../../source/cli.rst:1749
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -2918,11 +3001,11 @@ msgstr ""
 "Epäonnistuessa syy tulostetaan, ja ``docker inspect`` näyttää sen "
 "``unhealthy``-tilassa olevalle kontille:"
 
-#: ../../source/cli.rst:1705
+#: ../../source/cli.rst:1757
 msgid "completion — Complétion shell"
 msgstr "completion — Shell-täydennys"
 
-#: ../../source/cli.rst:1707
+#: ../../source/cli.rst:1759
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -2937,7 +3020,7 @@ msgstr ""
 "(``handlers()``) lukevat: uusi alikomento tarjotaan siis täydennyksessä "
 "heti, kun se on kytketty, eikä mitään tarvitse ylläpitää käsin."
 
-#: ../../source/cli.rst:1731
+#: ../../source/cli.rst:1783
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -2954,11 +3037,11 @@ msgstr ""
 "``generate_completions_from_executable``. Mitään ei tallenneta arkistoon,"
 " joten täydennys ei voi koskaan poiketa alikomentotaulukosta."
 
-#: ../../source/cli.rst:1739
+#: ../../source/cli.rst:1791
 msgid "version — Afficher la version"
 msgstr "version — Näytä versio"
 
-#: ../../source/cli.rst:1741
+#: ../../source/cli.rst:1793
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -2968,35 +3051,35 @@ msgstr ""
 "tietokantaskeeman version; se on ensimmäinen asia, joka liitetään "
 "virheraporttiin."
 
-#: ../../source/cli.rst:1750
+#: ../../source/cli.rst:1802
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:1753
+#: ../../source/cli.rst:1805
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:1762
+#: ../../source/cli.rst:1814
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:1769
+#: ../../source/cli.rst:1821
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:1781
+#: ../../source/cli.rst:1833
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:1783
+#: ../../source/cli.rst:1835
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:1784
+#: ../../source/cli.rst:1836
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:1786
+#: ../../source/cli.rst:1838
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "

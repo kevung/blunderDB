@@ -16,8 +16,18 @@ import { get } from 'svelte/store';
 
 // vi.hoisted, parce que les fabriques de vi.mock remontent en tête de fichier :
 // un `const` ordinaire ne serait pas encore initialisé quand elles s'exécutent.
-const { SaveTranscriptionAsMatch, SuggestTranscriptionMatFilename, ExportTranscriptionMAT, CloseTranscription, OpenExportMatDialog, StartGammonNetMatchBatch, confirmAction } = vi.hoisted(() => ({
+const {
+    SaveTranscriptionAsMatch,
+    SuggestTranscriptionMatFilename,
+    ExportTranscriptionMAT,
+    CloseTranscription,
+    PendingTranscriptionAnalysis,
+    OpenExportMatDialog,
+    StartGammonNetMatchBatch,
+    confirmAction
+} = vi.hoisted(() => ({
     SaveTranscriptionAsMatch: vi.fn(),
+    PendingTranscriptionAnalysis: vi.fn(),
     SuggestTranscriptionMatFilename: vi.fn(),
     ExportTranscriptionMAT: vi.fn(),
     CloseTranscription: vi.fn(),
@@ -30,7 +40,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveTranscriptionAsMatch,
     SuggestTranscriptionMatFilename,
     ExportTranscriptionMAT,
-    CloseTranscription
+    CloseTranscription,
+    PendingTranscriptionAnalysis
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     OpenExportMatDialog,
@@ -51,7 +62,11 @@ import {
     hasIllegalMove,
     hasInconsistency,
     transcriptionSaveStore,
-    resetTranscriptionSave
+    resetTranscriptionSave,
+    transcriptionResumeStore,
+    refreshTranscriptionResume,
+    resumeTranscriptionAnalysis,
+    dismissTranscriptionResume
 } from '../services/transcriptionSave.js';
 
 /** Un brouillon tel que le panneau le tient : l'id de la ligne et le document annoté. */
@@ -80,6 +95,8 @@ beforeEach(() => {
     OpenExportMatDialog.mockResolvedValue('/tmp/A_B.mat');
     ExportTranscriptionMAT.mockResolvedValue(undefined);
     CloseTranscription.mockResolvedValue(undefined);
+    PendingTranscriptionAnalysis.mockResolvedValue(null);
+    dismissTranscriptionResume();
     confirmAction.mockResolvedValue(true);
 });
 
@@ -196,5 +213,39 @@ describe("l'état du brouillon", () => {
     test("un brouillon enregistré lors d'une session précédente le dit sans mentir sur l'heure", () => {
         const d = draft({ matchId: 7, actions: clean });
         expect(draftSaveState(d, null)).toEqual({ key: 'transcription.stateSavedAs', params: { id: 7 } });
+    });
+});
+
+describe("la reprise de l'analyse", () => {
+    // T3.3 : rien n'est stocké (ADR-0045 §8), donc tout se joue sur le comptage
+    // refait à l'ouverture et sur le lot CIBLÉ qu'il relance.
+    test('un match transcrit à trous propose de terminer', async () => {
+        PendingTranscriptionAnalysis.mockResolvedValue({ transcription_id: 1, match_id: 7, label: 'A vs B', to_analyze: 12 });
+        await refreshTranscriptionResume();
+        expect(get(transcriptionResumeStore)).toEqual({ transcription_id: 1, match_id: 7, label: 'A vs B', to_analyze: 12 });
+    });
+
+    test('un match complet ne propose rien', async () => {
+        await refreshTranscriptionResume();
+        expect(get(transcriptionResumeStore)).toBeNull();
+    });
+
+    test('accepter relance le lot du seul match, jamais celui de la bibliothèque', async () => {
+        PendingTranscriptionAnalysis.mockResolvedValue({ transcription_id: 1, match_id: 7, label: '', to_analyze: 12 });
+        await refreshTranscriptionResume();
+        await resumeTranscriptionAnalysis();
+        expect(StartGammonNetMatchBatch).toHaveBeenCalledWith(7, 2, 12, 0);
+        expect(get(transcriptionResumeStore)).toBeNull();
+    });
+
+    test("écarter la proposition n'écrit rien : la question reposée la ramène", async () => {
+        PendingTranscriptionAnalysis.mockResolvedValue({ transcription_id: 1, match_id: 7, label: '', to_analyze: 12 });
+        await refreshTranscriptionResume();
+        dismissTranscriptionResume();
+        expect(get(transcriptionResumeStore)).toBeNull();
+        expect(StartGammonNetMatchBatch).not.toHaveBeenCalled();
+
+        await refreshTranscriptionResume();
+        expect(get(transcriptionResumeStore)?.to_analyze).toBe(12);
     });
 });

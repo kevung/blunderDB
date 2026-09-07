@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "The draft will be deleted; match #{id} stays in the library, final. Close?",
         "savedMatch": "Match #{id} saved.",
         "replacedMatch": "Match #{id} replaced.",
+        "resumeAnalysis": "Analysis interrupted: {n} position(s) of the last transcribed match are still to analyse.",
+        "resumeAnalysisFinish": "Finish",
         "saveFailed": "Save failed: {error}",
         "exported": "Match exported to .mat.",
         "exportFailed": "Export failed: {error}",

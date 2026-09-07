@@ -1268,6 +1268,58 @@ inventé.
    #   cube decision:  92.7% (51/55)
    # ...
 
+.. _cli_transcribe:
+
+transcribe — Rejouer une transcription
+--------------------------------------
+
+Rejoue une transcription et rend compte de ce que la relecture y trouve. La
+source est un fichier ``.mat``, un match de la bibliothèque ou un brouillon de
+transcription — exactement l'une des trois. Un match est lu par le ``.mat``
+qu'il produirait à l'export : ce qui est rejoué est donc ce qu'un export
+contiendrait.
+
+.. code-block:: bash
+
+   ./blunderdb transcribe --mat <fichier> [--check] [--render <sortie>]
+   ./blunderdb transcribe --db <path> --match <id> --check
+   ./blunderdb transcribe --db <path> --draft <id> --check
+
+**Options:**
+
+* ``--mat`` — Fichier ``.mat`` à rejouer.
+* ``--db`` — Base de données, pour ``--match`` et ``--draft``.
+* ``--match`` — Identifiant du match de la bibliothèque à rejouer.
+* ``--draft`` — Identifiant du brouillon de transcription à rejouer.
+* ``--check`` — Liste les incohérences trouvées (comportement par défaut).
+* ``--render`` — Réécrit la transcription en ``.mat`` à ce chemin.
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
+
+``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
+elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
+de videau impossible, action au-delà de la fin du match, coup dont les pas
+n'utilisent pas ses propres dés.
+
+Une incohérence est **rapportée, jamais opposée** : rien n'est refusé pour elle
+et le code de sortie reste 0 quoi que la relecture trouve. Un code non nul
+signale un vrai échec — fichier illisible, base qui ne s'ouvre pas, sortie
+impossible à écrire. Un script qui veut agir sur les constats les lit dans
+``--format json``, où un fichier cassé et une partie contenant un coup illégal
+ne se confondent pas.
+
+``--render`` réécrit la transcription en ``.mat``, ce qui permet de vérifier
+l'aller-retour sur un fichier réel, en dehors des tests.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb transcribe --mat match.mat --check
+
+   # match.mat: 7 point match, 4 game(s), 203 action(s)
+   #   Final score: 9-2
+   # Inconsistencies: none
+
 trash — La corbeille
 ---------------------
 

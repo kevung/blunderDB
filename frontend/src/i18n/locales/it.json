@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "La bozza sarà eliminata; la partita n. {id} resta nella libreria, definitiva. Chiudere?",
         "savedMatch": "Partita n. {id} salvata.",
         "replacedMatch": "Partita n. {id} sostituita.",
+        "resumeAnalysis": "Analisi interrotta: restano {n} posizione/i da analizzare dell'ultimo match trascritto.",
+        "resumeAnalysisFinish": "Completa",
         "saveFailed": "Salvataggio non riuscito: {error}",
         "exported": "Partita esportata in .mat.",
         "exportFailed": "Esportazione non riuscita: {error}",

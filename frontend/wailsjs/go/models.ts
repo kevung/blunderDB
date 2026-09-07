@@ -953,6 +953,24 @@ export namespace database {
 	}
 	
 	
+	export class TranscriptionAnalysisResume {
+	    transcription_id: number;
+	    match_id: number;
+	    label: string;
+	    to_analyze: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionAnalysisResume(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.transcription_id = source["transcription_id"];
+	        this.match_id = source["match_id"];
+	        this.label = source["label"];
+	        this.to_analyze = source["to_analyze"];
+	    }
+	}
 	export class TranscriptionSaveResult {
 	    match_id: number;
 	    replaced: boolean;

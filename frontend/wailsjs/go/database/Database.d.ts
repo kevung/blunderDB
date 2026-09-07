@@ -319,6 +319,8 @@ export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.Train
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
 
+export function MatchMAT(arg1:number):Promise<string>;
+
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 
 export function MoveMatchToTable(arg1:number,arg2:string,arg3:number):Promise<database.DirectionView>;
@@ -334,6 +336,8 @@ export function OpenTranscription(arg1:number):Promise<database.TranscriptionSta
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
 export function Participants(arg1:number):Promise<Array<database.ParticipantRow>>;
+
+export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
 export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
 

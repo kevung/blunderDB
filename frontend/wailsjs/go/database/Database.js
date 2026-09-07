@@ -614,6 +614,10 @@ export function LoadTrainingSessions(arg1, arg2) {
   return window['go']['database']['Database']['LoadTrainingSessions'](arg1, arg2);
 }
 
+export function MatchMAT(arg1) {
+  return window['go']['database']['Database']['MatchMAT'](arg1);
+}
+
 export function MergePlayers(arg1, arg2) {
   return window['go']['database']['Database']['MergePlayers'](arg1, arg2);
 }
@@ -644,6 +648,10 @@ export function ParsePositionText(arg1) {
 
 export function Participants(arg1) {
   return window['go']['database']['Database']['Participants'](arg1);
+}
+
+export function PendingTranscriptionAnalysis() {
+  return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
 
 export function RankPositionIDsByFilters(arg1, arg2) {
