@@ -1062,7 +1062,22 @@
         "money": "Geldspiel",
         "points": "{n} Pkt.",
         "notSaved": "nicht gespeichert",
-        "unnamed": "Ohne Namen"
+        "unnamed": "Ohne Namen",
+        "matchLength": "Länge",
+        "moneyHint": "0 = Geldpartie",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver",
+        "create": "Erstellen",
+        "cancel": "Abbrechen",
+        "backToList": "Entwürfe",
+        "score": "Stand {a}–{b}",
+        "crawford": "Crawford",
+        "player1": "Spieler 1",
+        "player2": "Spieler 2",
+        "openingPrompt": "Eröffnungswürfel",
+        "openingHint": "Würfel von Spieler 1, dann von Spieler 2: der höhere beginnt und spielt beide Würfel.",
+        "rollPrompt": "Würfel von {player}",
+        "tie": "Gleichstand: neu würfeln."
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",

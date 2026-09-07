@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-07 03:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -398,7 +398,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
 
-#: ../../source/raccourcis.rst:116
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "Вкладки представлений"
 
@@ -450,7 +450,7 @@ msgstr "Двойной клик по вкладке"
 msgid "Renommer la vue."
 msgstr "Переименовать представление."
 
-#: ../../source/raccourcis.rst:133
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
@@ -470,7 +470,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Просмотр истории команд вниз."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "История поиска"
 
@@ -490,7 +490,7 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
@@ -502,7 +502,7 @@ msgstr "Выбрать/отменить выбор фильтра (показа�
 msgid "Exécuter la recherche du filtre."
 msgstr "Выполнить поиск по фильтру."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -536,7 +536,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:188
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Панель Eval"
 
@@ -544,7 +544,7 @@ msgstr "Панель Eval"
 msgid "Désélectionner le coup."
 msgstr "Отменить выбор хода."
 
-#: ../../source/raccourcis.rst:203
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -580,7 +580,7 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:221
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -636,7 +636,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:239
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
 
@@ -668,7 +668,7 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:255
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -694,7 +694,41 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
-#: ../../source/raccourcis.rst:270
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "Панель транскрипции"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr "Панель принимает эти клавиши, пока она в фокусе и открыт черновик."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "Открыть черновик из списка."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr ""
+"Ввести кость: кость игрока 1, затем игрока 2 для открытия (больший "
+"начинает и играет обе кости)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "Стереть обе введённые кости."
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "Отменить текущий ввод."
+
+#: ../../source/raccourcis.rst:288
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

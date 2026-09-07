@@ -1262,6 +1262,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Litterointipaneeli</h3>
+<p>Paneeli ottaa nämä näppäimet, kun se on kohdistettuna ja luonnos on auki.</p>
+<table>
+<thead>
+<tr>
+<th>Oikotie</th>
+<th>Toiminto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Napsautus</td>
+<td>Avaa luonnos luettelosta.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Syötä noppa: pelaajan 1 noppa, sitten pelaajan 2 noppa avaukseen (suurempi aloittaa ja pelaa molemmat nopat).</td>
+</tr>
+<tr>
+<td>ASKELPALAUTIN</td>
+<td>Tyhjennä molemmat syötetyt nopat.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Hylkää kesken oleva syöttö.</td>
+</tr>
+</tbody>
+</table>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>

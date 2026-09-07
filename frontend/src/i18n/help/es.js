@@ -1262,6 +1262,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Panel de transcripción</h3>
+<p>El panel toma estas teclas mientras tiene el foco y hay un borrador abierto.</p>
+<table>
+<thead>
+<tr>
+<th>Atajo</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic</td>
+<td>Abrir un borrador de la lista.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Introducir un dado: dado del jugador 1, luego del jugador 2 para la apertura (el mayor empieza y juega ambos dados).</td>
+</tr>
+<tr>
+<td>RETROCESO</td>
+<td>Borrar los dos dados introducidos.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Abandonar la entrada en curso.</td>
+</tr>
+</tbody>
+</table>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

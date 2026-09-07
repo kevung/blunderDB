@@ -1262,6 +1262,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Pannello di trascrizione</h3>
+<p>Il pannello riceve questi tasti quando ha il focus e una bozza è aperta.</p>
+<table>
+<thead>
+<tr>
+<th>Scorciatoia</th>
+<th>Azione</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic</td>
+<td>Aprire una bozza dall'elenco.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Inserire un dado: dado del giocatore 1, poi del giocatore 2 per l'apertura (il più alto inizia e gioca entrambi i dadi).</td>
+</tr>
+<tr>
+<td>BACKSPACE</td>
+<td>Cancellare i due dadi inseriti.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Abbandonare l'inserimento in corso.</td>
+</tr>
+</tbody>
+</table>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

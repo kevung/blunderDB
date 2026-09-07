@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-07 03:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -395,7 +395,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostra/nascondi l'aiuto."
 
-#: ../../source/raccourcis.rst:116
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "Schede delle viste"
 
@@ -447,7 +447,7 @@ msgstr "Doppio clic sulla scheda"
 msgid "Renommer la vue."
 msgstr "Rinomina la vista."
 
-#: ../../source/raccourcis.rst:133
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "Riga di comando"
 
@@ -467,7 +467,7 @@ msgstr "GIÙ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Scorri la cronologia dei comandi verso il basso."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "Cronologia di ricerca"
 
@@ -487,7 +487,7 @@ msgstr "Doppio clic"
 msgid "Exécuter la recherche."
 msgstr "Esegui la ricerca."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "Libreria di filtri"
 
@@ -499,7 +499,7 @@ msgstr "Seleziona/deseleziona un filtro (mostra la posizione)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Esegui la ricerca del filtro."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "Pannello di analisi"
 
@@ -533,7 +533,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:188
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Pannello Eval"
 
@@ -541,7 +541,7 @@ msgstr "Pannello Eval"
 msgid "Désélectionner le coup."
 msgstr "Deseleziona la mossa."
 
-#: ../../source/raccourcis.rst:203
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "Pannello dei match"
 
@@ -577,7 +577,7 @@ msgstr "Elimina il match selezionato."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleziona/chiudi il pannello."
 
-#: ../../source/raccourcis.rst:221
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Pannello Anki (ripetizione dilazionata)"
 
@@ -633,7 +633,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
 
-#: ../../source/raccourcis.rst:239
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "Pannello dei tornei"
 
@@ -666,7 +666,7 @@ msgstr ""
 "match, altrimenti deseleziona il torneo, altrimenti chiudi il pannello (a"
 " tappe)."
 
-#: ../../source/raccourcis.rst:255
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "Pannello delle collezioni"
 
@@ -696,7 +696,41 @@ msgstr ""
 "Torna all'elenco delle collezioni, altrimenti deseleziona la collezione, "
 "altrimenti chiudi il pannello (a tappe)."
 
-#: ../../source/raccourcis.rst:270
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "Pannello di trascrizione"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr "Il pannello riceve questi tasti quando ha il focus e una bozza è aperta."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "Aprire una bozza dall'elenco."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr ""
+"Inserire un dado: dado del giocatore 1, poi del giocatore 2 per "
+"l'apertura (il più alto inizia e gioca entrambi i dadi)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "Cancellare i due dadi inseriti."
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "Abbandonare l'inserimento in corso."
+
+#: ../../source/raccourcis.rst:288
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

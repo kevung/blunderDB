@@ -265,6 +265,23 @@ Panneau des collections
    "Del", "Retirer la position courante (ou les positions cochées) de la collection ouverte."
    "Esc", "Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers)."
 
+.. _raccourcis_transcription_panel:
+
+Panneau Transcription
+---------------------
+
+Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Ouvrir un brouillon de la liste."
+   "1 … 6", "Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés)."
+   "RETOUR ARRIERE", "Effacer les deux dés saisis."
+   "Esc", "Abandonner la saisie en cours."
+
 .. _raccourcis_help_panel:
 
 Panneau d'aide

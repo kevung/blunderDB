@@ -1062,7 +1062,22 @@
         "money": "マネー",
         "points": "{n} 点",
         "notSaved": "未保存",
-        "unnamed": "名称未設定"
+        "unnamed": "名称未設定",
+        "matchLength": "マッチ長",
+        "moneyHint": "0 = マネーゲーム",
+        "jacoby": "ジャコビー",
+        "beaver": "ビーバー",
+        "create": "作成",
+        "cancel": "キャンセル",
+        "backToList": "下書き",
+        "score": "スコア {a}–{b}",
+        "crawford": "クロフォード",
+        "player1": "プレイヤー1",
+        "player2": "プレイヤー2",
+        "openingPrompt": "オープニングのダイス",
+        "openingHint": "プレイヤー1のダイス、次にプレイヤー2のダイス。大きい方が先手となり、両方のダイスを使います。",
+        "rollPrompt": "{player} のダイス",
+        "tie": "同点：振り直し。"
     },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",

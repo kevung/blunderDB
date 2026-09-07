@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-07 03:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -399,7 +399,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:116
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -451,7 +451,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:133
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -471,7 +471,7 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
@@ -491,7 +491,7 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
@@ -503,7 +503,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -539,7 +539,7 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:188
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
@@ -547,7 +547,7 @@ msgstr "Πίνακας Eval"
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:203
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -583,7 +583,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:221
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -641,7 +641,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:239
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -674,7 +674,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:255
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -702,7 +702,43 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:270
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "Πίνακας μεταγραφής"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr ""
+"Ο πίνακας δέχεται αυτά τα πλήκτρα όσο έχει την εστίαση και ένα πρόχειρο "
+"είναι ανοιχτό."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "Άνοιγμα ενός πρόχειρου από τη λίστα."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr ""
+"Εισαγωγή ζαριού: ζάρι του παίκτη 1, μετά του παίκτη 2 για το άνοιγμα (ο "
+"μεγαλύτερος ξεκινά και παίζει και τα δύο ζάρια)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "Διαγραφή και των δύο ζαριών που εισήχθησαν."
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "Εγκατάλειψη της τρέχουσας εισαγωγής."
+
+#: ../../source/raccourcis.rst:288
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 

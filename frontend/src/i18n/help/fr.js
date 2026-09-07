@@ -1262,6 +1262,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Panneau Transcription</h3>
+<p>Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.</p>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic</td>
+<td>Ouvrir un brouillon de la liste.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés).</td>
+</tr>
+<tr>
+<td>RETOUR ARRIERE</td>
+<td>Effacer les deux dés saisis.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Abandonner la saisie en cours.</td>
+</tr>
+</tbody>
+</table>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>

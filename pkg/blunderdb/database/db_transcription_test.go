@@ -147,3 +147,89 @@ func TestCloseTranscription_DeletesTheDraft(t *testing.T) {
 		t.Fatalf("reopening a closed draft: %v, want ErrNotFound", err)
 	}
 }
+
+// The opening, end to end through the plumbing (fonctionnel.md §6 flux 2): two
+// dice, the stronger one starts, and the roll it won with is the roll of the
+// first checker Action — the user does not type it again.
+func TestApplyTranscriptionGesture_Opening(t *testing.T) {
+	db := newTestDB(t)
+
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+
+	for _, g := range []transcript.Gesture{
+		{Kind: transcript.GestureEnterDie, Die: 2},
+		{Kind: transcript.GestureEnterDie, Die: 5},
+		{Kind: transcript.GestureValidate},
+	} {
+		if state, err = db.ApplyTranscriptionGesture(state.ID, g); err != nil {
+			t.Fatalf("gesture %s: %v", g.Kind, err)
+		}
+	}
+
+	actions := state.Annotated.Document.Actions
+	if len(actions) != 1 || actions[0].Kind != transcript.KindOpening {
+		t.Fatalf("actions = %+v, want one opening", actions)
+	}
+	if actions[0].Dice != [2]int{2, 5} {
+		t.Fatalf("opening dice = %v, want [2 5]", actions[0].Dice)
+	}
+	// Player 2 rolled the higher die, so player 2 starts and a checker play is
+	// what the document expects next.
+	if actions[0].Side != 1 {
+		t.Fatalf("side = %d, want player 2", actions[0].Side)
+	}
+	if state.Annotated.Next.Expects != transcript.KindChecker || state.Annotated.Next.Side != 1 {
+		t.Fatalf("next = %+v", state.Annotated.Next)
+	}
+	// And the candidates offered are those of the opening roll, not of a roll
+	// the user would have to type again.
+	cands := transcript.Candidates(state.Annotated.Document)
+	if len(cands) == 0 {
+		t.Fatal("no candidate for the opening roll")
+	}
+}
+
+// A tie is kept, produces neither Move nor Position, and another opening is
+// expected — the panel's "relance".
+func TestApplyTranscriptionGesture_OpeningTie(t *testing.T) {
+	db := newTestDB(t)
+
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	for _, g := range []transcript.Gesture{
+		{Kind: transcript.GestureEnterDie, Die: 4},
+		{Kind: transcript.GestureEnterDie, Die: 4},
+		{Kind: transcript.GestureValidate},
+	} {
+		if state, err = db.ApplyTranscriptionGesture(state.ID, g); err != nil {
+			t.Fatalf("gesture %s: %v", g.Kind, err)
+		}
+	}
+
+	if len(state.Annotated.Document.Actions) != 1 {
+		t.Fatalf("the tie was not kept: %+v", state.Annotated.Document.Actions)
+	}
+	if state.Annotated.Next.Expects != transcript.KindOpening {
+		t.Fatalf("next = %+v, want another opening", state.Annotated.Next)
+	}
+}
+
+// The money draft the form offers: a length of 0 with the session's rules, which
+// are flags of every Position and never Actions (ADR-0028, ADR-0044).
+func TestCreateTranscription_MoneyRulesAreKept(t *testing.T) {
+	db := newTestDB(t)
+
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 0, Jacoby: false, Beaver: true})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	header := state.Annotated.Document.Header
+	if header.MatchLength != 0 || header.Jacoby || !header.Beaver {
+		t.Fatalf("header = %+v, want a money draft without Jacoby and with the beaver", header)
+	}
+}

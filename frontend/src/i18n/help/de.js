@@ -1262,6 +1262,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Transkriptions-Fenster</h3>
+<p>Das Fenster nimmt diese Tasten entgegen, solange es den Fokus hat und ein Entwurf geöffnet ist.</p>
+<table>
+<thead>
+<tr>
+<th>Tastenkürzel</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Klick</td>
+<td>Einen Entwurf aus der Liste öffnen.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Einen Würfel eingeben: Würfel von Spieler 1, dann von Spieler 2 für die Eröffnung (der höhere beginnt und spielt beide Würfel).</td>
+</tr>
+<tr>
+<td>RÜCKTASTE</td>
+<td>Beide eingegebenen Würfel löschen.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Die laufende Eingabe verwerfen.</td>
+</tr>
+</tbody>
+</table>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>

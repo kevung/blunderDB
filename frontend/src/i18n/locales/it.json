@@ -1062,7 +1062,22 @@
         "money": "Money",
         "points": "{n} pti",
         "notSaved": "non salvata",
-        "unnamed": "Senza nome"
+        "unnamed": "Senza nome",
+        "matchLength": "Lunghezza",
+        "moneyHint": "0 = partita a soldi",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver",
+        "create": "Crea",
+        "cancel": "Annulla",
+        "backToList": "Bozze",
+        "score": "Punteggio {a}–{b}",
+        "crawford": "Crawford",
+        "player1": "Giocatore 1",
+        "player2": "Giocatore 2",
+        "openingPrompt": "Dadi di apertura",
+        "openingHint": "Dado del giocatore 1, poi del giocatore 2: il più alto inizia e gioca entrambi i dadi.",
+        "rollPrompt": "Dadi di {player}",
+        "tie": "Parità: si ritira."
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",

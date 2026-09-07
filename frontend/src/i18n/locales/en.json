@@ -1062,7 +1062,22 @@
         "money": "Money",
         "points": "{n} pts",
         "notSaved": "not saved",
-        "unnamed": "Unnamed"
+        "unnamed": "Unnamed",
+        "matchLength": "Length",
+        "moneyHint": "0 = money game",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver",
+        "create": "Create",
+        "cancel": "Cancel",
+        "backToList": "Drafts",
+        "score": "Score {a}–{b}",
+        "crawford": "Crawford",
+        "player1": "Player 1",
+        "player2": "Player 2",
+        "openingPrompt": "Opening dice",
+        "openingHint": "Player 1's die, then player 2's: the higher one starts and plays both dice.",
+        "rollPrompt": "{player}'s dice",
+        "tie": "Tie: roll again."
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",

@@ -1062,7 +1062,22 @@
         "money": "Dinero",
         "points": "{n} ptos",
         "notSaved": "sin guardar",
-        "unnamed": "Sin nombre"
+        "unnamed": "Sin nombre",
+        "matchLength": "Longitud",
+        "moneyHint": "0 = partida por dinero",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver",
+        "create": "Crear",
+        "cancel": "Cancelar",
+        "backToList": "Borradores",
+        "score": "Marcador {a}–{b}",
+        "crawford": "Crawford",
+        "player1": "Jugador 1",
+        "player2": "Jugador 2",
+        "openingPrompt": "Dados de apertura",
+        "openingHint": "Dado del jugador 1, luego del jugador 2: el mayor empieza y juega ambos dados.",
+        "rollPrompt": "Dados de {player}",
+        "tie": "Empate: tirar de nuevo."
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",

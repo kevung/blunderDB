@@ -1062,7 +1062,22 @@
         "money": "Rahapeli",
         "points": "{n} pist.",
         "notSaved": "ei tallennettu",
-        "unnamed": "Nimetön"
+        "unnamed": "Nimetön",
+        "matchLength": "Pituus",
+        "moneyHint": "0 = rahapeli",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver",
+        "create": "Luo",
+        "cancel": "Peruuta",
+        "backToList": "Luonnokset",
+        "score": "Tilanne {a}–{b}",
+        "crawford": "Crawford",
+        "player1": "Pelaaja 1",
+        "player2": "Pelaaja 2",
+        "openingPrompt": "Aloitusnopat",
+        "openingHint": "Pelaajan 1 noppa, sitten pelaajan 2: suurempi aloittaa ja pelaa molemmat nopat.",
+        "rollPrompt": "Pelaajan {player} nopat",
+        "tie": "Tasapeli: heitä uudelleen."
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",

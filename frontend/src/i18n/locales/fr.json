@@ -1062,7 +1062,22 @@
         "money": "Argent",
         "points": "{n} pts",
         "notSaved": "non enregistré",
-        "unnamed": "Sans nom"
+        "unnamed": "Sans nom",
+        "matchLength": "Longueur",
+        "moneyHint": "0 = partie d'argent",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver",
+        "create": "Créer",
+        "cancel": "Annuler",
+        "backToList": "Brouillons",
+        "score": "Score {a}–{b}",
+        "crawford": "Crawford",
+        "player1": "Joueur 1",
+        "player2": "Joueur 2",
+        "openingPrompt": "Dés d'ouverture",
+        "openingHint": "Dé du joueur 1, puis du joueur 2 : le plus fort commence et joue les deux dés.",
+        "rollPrompt": "Dés de {player}",
+        "tie": "Égalité : relance."
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
