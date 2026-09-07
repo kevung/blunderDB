@@ -996,6 +996,7 @@
         "legendDoublePass": "tuplaus, pass",
         "legendTooGood": "liian hyvä",
         "legendRefused": "ei arvioitavissa",
+        "currentScore": "aseman pistetilanne",
         "note": "Aseman oma pistetilanne korvataan kunkin ruudun tilanteella; sen kuutio säilyy. Ruudukko on Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä."
     },
     "met": {

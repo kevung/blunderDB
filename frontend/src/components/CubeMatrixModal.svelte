@@ -14,6 +14,7 @@
     import { ComputeCubeMatrix, CancelCubeMatrix } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetDisplayPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { positionStore } from '../stores/positionStore';
+    import { currentScoreCell } from '../utils/cubeDecision.js';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
 
@@ -132,12 +133,25 @@
 
     function cellTitle(cell) {
         if (!cell) return '';
-        if (cell.refused) return cell.reason;
+        const here = isCurrent(cell.awayOnRoll, cell.awayOpponent) ? `\n${$t('cubeMatrix.currentScore')}` : '';
+        if (cell.refused) return cell.reason + here;
         const fmt = (v) => v.toFixed(3);
-        return `${cell.awayOnRoll}-away / ${cell.awayOpponent}-away\nND ${fmt(cell.noDouble)}  DT ${fmt(cell.doubleTake)}  DP ${fmt(cell.doublePass)}`;
+        return `${cell.awayOnRoll}-away / ${cell.awayOpponent}-away\nND ${fmt(cell.noDouble)}  DT ${fmt(cell.doubleTake)}  DP ${fmt(cell.doublePass)}${here}`;
     }
 
     let rows = $derived(Array.from({ length: matchLength }, (_, i) => i + 1));
+
+    /** La case du score que la position porte réellement, ou null quand il n'y
+     *  en a pas à désigner (money, Crawford, un away au-delà de la grille).
+     *  Une mise en évidence, pas une sélection : la case reste ce qu'elle est,
+     *  elle est seulement reconnaissable — un cadre et un sigle gras, pas une
+     *  couleur de plus, puisque les quatre fonds portent déjà le verdict. */
+    let current = $derived(currentScoreCell($positionStore, matchLength));
+
+    /** @param {number} i @param {number} j */
+    function isCurrent(i, j) {
+        return current !== null && current.awayOnRoll === i && current.awayOpponent === j;
+    }
 </script>
 
 <Modal open={visible} onclose={onClose} size="auto" closeOnOverlay label={$t('cubeMatrix.title')}>
@@ -161,17 +175,22 @@
                     <tr>
                         <th class="corner" title={$t('cubeMatrix.axes')}></th>
                         {#each rows as j (j)}
-                            <th>{j}</th>
+                            <th class:axis-current={current?.awayOpponent === j}>{j}</th>
                         {/each}
                     </tr>
                 </thead>
                 <tbody>
                     {#each rows as i (i)}
                         <tr>
-                            <th>{i}</th>
+                            <th class:axis-current={current?.awayOnRoll === i}>{i}</th>
                             {#each rows as j (j)}
                                 {@const cell = cellAt(i, j)}
-                                <td class="verdict {cell?.refused ? 'refused' : (cell?.verdict ?? 'pending')}" title={cellTitle(cell)}>
+                                <td
+                                    class="verdict {cell?.refused ? 'refused' : (cell?.verdict ?? 'pending')}"
+                                    class:current={isCurrent(i, j)}
+                                    aria-current={isCurrent(i, j) ? 'true' : undefined}
+                                    title={cellTitle(cell)}
+                                >
                                     {glyph(cell)}
                                 </td>
                             {/each}
@@ -185,6 +204,9 @@
                 <span><b>{$t('cubeMatrix.glyphDoublePass')}</b> {$t('cubeMatrix.legendDoublePass')}</span>
                 <span><b>{$t('cubeMatrix.glyphTooGood')}</b> {$t('cubeMatrix.legendTooGood')}</span>
                 <span><b>?</b> {$t('cubeMatrix.legendRefused')}</span>
+                {#if current}
+                    <span><span class="swatch"></span> {$t('cubeMatrix.currentScore')}</span>
+                {/if}
             </div>
             <p class="note">{$t('cubeMatrix.note')}</p>
         {/if}
@@ -265,6 +287,34 @@
     td.refused,
     td.pending {
         color: var(--color-text-muted);
+    }
+
+    /* La case du score courant : un cadre à l'intérieur de la bordure (donc
+       sans décaler la grille d'un pixel), le sigle en gras, et les deux
+       en-têtes soulignés. Une forme, pas une teinte de plus — la couleur est
+       déjà prise par le verdict, et la case doit rester reconnaissable sans
+       distinguer les teintes. Le cadre est tracé dans l'encre de la case
+       (`currentColor`) plutôt que dans un jeton de couleur : il garde alors
+       exactement le contraste du sigle qu'il entoure, quel que soit le thème
+       et quelle que soit la surface sur laquelle la fenêtre est peinte. */
+    td.current {
+        outline: 2px solid currentColor;
+        outline-offset: -2px;
+        font-weight: 700;
+    }
+
+    tbody th.axis-current,
+    thead th.axis-current {
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    .swatch {
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        vertical-align: -0.1em;
+        border: 2px solid currentColor;
     }
 
     .legend {

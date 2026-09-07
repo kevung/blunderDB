@@ -996,6 +996,7 @@
         "legendDoublePass": "Doppel, Pass",
         "legendTooGood": "zu gut",
         "legendRefused": "nicht bewertbar",
+        "currentScore": "Punktestand der Position",
         "note": "Der Punktestand der Position wird durch den jeder Zelle ersetzt; ihr Dopplerwürfel bleibt erhalten. Das Raster gilt nach Crawford: während des Crawford-Spiels ist der Würfel nicht im Spiel."
     },
     "met": {
