@@ -6,49 +6,26 @@ import { logger } from '../utils/logger.js';
 // Anki fait réviser un jugement ; ceci fait travailler des calculs qui se font
 // en partie, sous la pendule, et qu'aucune révision espacée ne muscle.
 //
-// Depuis #320 il n'en reste que DEUX ici : l'EPC et le quiz. Le compte de
-// pions et le point de prise sont passés à l'onglet Entraînement, où ils se
-// répondent en mode déclaré — on révèle, on coche ce qu'on a raté — parce que
-// les taper n'apprenait rien de plus que de les lire. La bande garde ce qui
-// se SAISIT, le temps que les tranches suivantes l'y déplacent aussi.
+// Il n'en reste qu'UN ici : le quiz. Le compte de pions et le point de prise
+// sont partis à l'onglet Entraînement en #320, l'EPC en #321 — l'onglet sait
+// désormais le mode SAISI, qui était la seule raison pour laquelle la bande le
+// gardait, et il l'engendre au lieu de le tirer d'une base sans course. #323
+// y emmènera le quiz, et la bande disparaîtra.
 //
 // Ce fichier ne connaît ni Svelte ni le plateau : il choisit une question,
 // juge une réponse, et range une session. C'est ce qui le rend testable, et
 // c'est aussi ce qui permettra à J.4 (#294) de s'y brancher plutôt que de
 // réécrire une seconde notion de « note d'entraînement ».
 
-/** Les exercices que la bande sert encore : `epc` est un calcul (#273),
- *  `quiz` le module complet (#294), où le coup se joue sur le plateau et
- *  l'erreur se mesure contre l'analyse enregistrée. Les exercices déclarés
- *  vivent dans l'onglet (services/trainingTab.js). */
-export const DRILLS = Object.freeze(['epc', 'quiz']);
-
-// La tolérance de chaque exercice, et pourquoi elle vaut ce qu'elle vaut.
-//
-//   epc — 0.5. L'EPC est une estimation ; le demi-pion est la granularité à
-//         laquelle il change une décision de course.
-//
-// Un exercice absent de cette table ne tolère rien (`grade` lit 0 par défaut),
-// ce qui est la règle et non l'exception : seul un nombre ESTIMÉ a une
-// tolérance.
-export const TOLERANCE = Object.freeze({ epc: 0.5 });
+/** L'exercice que la bande sert encore : `quiz` (#294), où le coup se joue sur
+ *  le plateau et l'erreur se mesure contre l'analyse enregistrée. L'EPC est
+ *  parti à l'onglet, sous le nom de l'exercice et non du nombre : « Bearoff »,
+ *  parce qu'on regarde une position, pas un chiffre (#321, ADR-0040 règle 3).
+ *  Les exercices de l'onglet vivent dans services/trainingTab.js. */
+export const DRILLS = Object.freeze(['quiz']);
 
 const KEY_SESSIONS = 'training_sessions';
 const MAX_SESSIONS = 50;
-
-/**
- * Juge une réponse. `error` est signé (positif = surestimation) parce que le
- * sens de l'erreur est ce qu'on apprend : compter deux pions de trop n'est
- * pas la même faute que deux de moins.
- * @param {string} drill @param {number} answer @param {number} truth
- */
-export function grade(drill, answer, truth) {
-    if (!Number.isFinite(answer) || !Number.isFinite(truth)) {
-        return { correct: false, error: null };
-    }
-    const error = answer - truth;
-    return { correct: Math.abs(error) <= (TOLERANCE[drill] ?? 0), error };
-}
 
 /**
  * Le résumé d'une session : combien de bonnes réponses, l'erreur absolue

@@ -1,9 +1,10 @@
 import { get } from 'svelte/store';
 import { LoadPosition, SaveTrainingSession, LoadTrainingSessions, LoadTrainingNumberStats } from '../../wailsjs/go/database/Database.js';
+import { GenerateBearoffQuestion } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
-import { trainingSessionStore, trainingElapsedStore, trainingJournalStore } from '../stores/trainingTabStore.js';
-import { TRAINING_EXERCISES, newSession, askQuestion, reveal, toggleFault, recordQuestion, failNextQuestion, finishedSession } from './trainingTab.js';
+import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
+import { TRAINING_EXERCISES, newSession, askQuestion, reveal, toggleFault, setAnswer, recordQuestion, failNextQuestion, finishedSession, canAskAnother } from './trainingTab.js';
 import { UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from './scoreCard.js';
 import { computePipCount } from '../utils/boardGeometry.js';
 import { showImportedPosition } from './importService.js';
@@ -11,7 +12,7 @@ import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-// L'onglet Entraînement, côté application (#320, ADR-0040).
+// L'onglet Entraînement, côté application (#320 puis #321, ADR-0040/0041).
 //
 // Le service fabrique les questions, tient le chronomètre et écrit au journal.
 // Les RÈGLES — ce qu'une révélation produit, ce qu'une échéance produit à sa
@@ -71,7 +72,8 @@ function buildScoresQuestion() {
 }
 
 /** Les deux comptes de pions d'une position. Le compte des DEUX camps : c'est
- *  la différence qui décide, et compter un seul côté ne la donne pas. */
+ *  la différence qui décide, et compter un seul côté ne la donne pas.
+ *  @param {any} position */
 function pipNumbers(position) {
     const { pipCount1, pipCount2 } = computePipCount(position);
     return [
@@ -89,30 +91,175 @@ function pipNumbers(position) {
 async function buildPipsQuestion(seedSource) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
-        if (length === 0) return null;
+        if (length === 0) return { question: null, refusal: 'noQuestion' };
         const id = positionsStore.idAt(Math.floor(Math.random() * length));
-        if (id == null) return null;
+        if (id == null) return { question: null, refusal: 'noQuestion' };
         const position = await LoadPosition(id);
-        if (!position) return null;
+        if (!position) return { question: null, refusal: 'noQuestion' };
         await showImportedPosition(id);
-        return { kind: 'pips', key: String(id), positionId: id, numbers: pipNumbers(position) };
+        return { question: { kind: 'pips', key: String(id), positionId: id, numbers: pipNumbers(position) }, refusal: '' };
     }
     const position = get(positionStore);
-    if (!position?.board?.points) return null;
-    return { kind: 'pips', key: 'board', positionId: null, numbers: pipNumbers(position) };
+    if (!position?.board?.points) return { question: null, refusal: 'noQuestion' };
+    return { question: { kind: 'pips', key: 'board', positionId: null, numbers: pipNumbers(position) }, refusal: '' };
 }
 
-/** @param {string} exercise @param {string} seedSource */
+/** La tolérance de l'EPC : un demi-pion. C'est la granularité à laquelle il
+ *  change une décision de course — plus fin ne mesurerait que la patience. */
+const EPC_TOLERANCE = 0.5;
+
+/** Le nombre de tirages avant de renoncer à trouver un bearoff dans la liste
+ *  parcourue. Borné, parce qu'une base sans course en ferait autrement une
+ *  boucle : au bout, on refuse EN LE NOMMANT plutôt que de tourner. */
+const MAX_LIBRARY_DRAWS = 30;
+
+/**
+ * Tire `count` index DISTINCTS dans [0, length[. Sans remise : retomber deux
+ * fois sur la même position ferait passer le budget de tirages sans avoir
+ * regardé de candidate de plus.
+ * @param {number} length @param {number} count
+ */
+function drawDistinctIndices(length, count) {
+    const pool = Array.from({ length }, (_, i) => i);
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, Math.min(count, pool.length));
+}
+
+/** Les deux EPC d'une position engendrée, dans l'ordre du plateau.
+ *  @param {any} epc */
+function epcNumbers(epc) {
+    return [
+        { type: 'epc.bottom', value: epc?.bottom?.epc?.epc ?? 0, tolerance: EPC_TOLERANCE, precision: 1 },
+        { type: 'epc.top', value: epc?.top?.epc?.epc ?? 0, tolerance: EPC_TOLERANCE, precision: 1 }
+    ];
+}
+
+/**
+ * Une question de l'exercice Bearoff (#321, ADR-0041).
+ *
+ * TOUT se fait en un seul appel : le moteur joue les plis, compose la position
+ * ET rend les deux EPC. Le chrono démarre à l'affichage et ne contient donc ni
+ * la génération ni un second aller-retour pour la vérité.
+ *
+ * La source `base` tire dans la liste parcourue et laisse le moteur juger
+ * chaque candidate : le domaine n'est écrit qu'à un endroit, en Go, et une
+ * seconde définition ici finirait par diverger de celle qui refuse.
+ *
+ * @param {string} seedSource
+ */
+async function buildBearoffQuestion(seedSource) {
+    if (seedSource === 'library') {
+        const { length } = get(positionsStore);
+        let last = 'notBearoff';
+        for (const index of drawDistinctIndices(length, MAX_LIBRARY_DRAWS)) {
+            const id = positionsStore.idAt(index);
+            if (id == null) continue;
+            const seed = await LoadPosition(id);
+            if (!seed) continue;
+            const generated = await GenerateBearoffQuestion({ source: 'library', seed });
+            if (!generated?.generated) {
+                last = generated?.refusal || last;
+                continue;
+            }
+            await showImportedPosition(id);
+            return { question: bearoffQuestion(generated, String(id), id), refusal: '' };
+        }
+        return { question: null, refusal: length === 0 ? 'noQuestion' : last };
+    }
+
+    const request = seedSource === 'board' ? { source: 'board', seed: get(positionStore) } : { source: 'pool' };
+    const generated = await GenerateBearoffQuestion(request);
+    if (!generated?.generated) return { question: null, refusal: generated?.refusal || 'noQuestion' };
+    return { question: bearoffQuestion(generated, ''), refusal: generated.refusal || '' };
+}
+
+/**
+ * @param {any} generated @param {string} key @param {number|null} positionId
+ */
+function bearoffQuestion(generated, key, positionId = null) {
+    return {
+        kind: 'bearoff',
+        key: key || `pool:${generated.plies}:${JSON.stringify(generated.position.board.bearoff)}`,
+        positionId,
+        // La position engendrée n'est dans aucune base : elle est portée par la
+        // question, et c'est le service qui l'amène sur le plateau.
+        position: generated.position,
+        numbers: epcNumbers(generated.epc)
+    };
+}
+
+/**
+ * @param {string} exercise @param {string} seedSource
+ * @returns {Promise<{question: any, refusal: string}>}
+ */
 async function buildQuestion(exercise, seedSource) {
-    return exercise === 'scores' ? buildScoresQuestion() : buildPipsQuestion(seedSource);
+    if (exercise === 'scores') return { question: buildScoresQuestion(), refusal: '' };
+    if (exercise === 'bearoff') return buildBearoffQuestion(seedSource);
+    return buildPipsQuestion(seedSource);
+}
+
+/**
+ * Met la question sur le plateau quand elle en porte une. Les questions tirées
+ * de la base y sont déjà arrivées par `showImportedPosition` ; une position
+ * ENGENDRÉE n'a pas d'identifiant, donc rien d'autre ne peut l'y mettre.
+ * @param {any} question
+ */
+function showQuestionOnBoard(question) {
+    if (!question?.position) return;
+    positionStore.set({ ...question.position, id: 0 });
 }
 
 // ── La session ───────────────────────────────────────────────────────────────
 
 /**
- * Démarre une session. Refuse en le disant plutôt que d'ouvrir une session
- * vide : une source « base » sans position parcourue ne peut poser aucune
- * question, et le dire vaut mieux qu'un panneau qui n'affiche rien.
+ * La question SUIVANTE, en cours de fabrication (ADR-0041 règle 5).
+ *
+ * Elle se fabrique pendant qu'on répond à la précédente : la génération se
+ * cache derrière le temps de réflexion, et le chrono — qui part à l'affichage
+ * — ne la voit jamais. Sans ce préchargement, chaque « Suivante » aurait
+ * facturé sa propre fabrication à la question qu'elle ouvre.
+ *
+ * @type {Promise<{question: any, refusal: string}>|null}
+ */
+let prefetched = null;
+
+/** Lance la fabrication de la question suivante, sans l'attendre.
+ *  @param {string} exercise @param {string} seedSource */
+function prefetchNextQuestion(exercise, seedSource) {
+    if (!canAskAnother(exercise, seedSource)) {
+        prefetched = null;
+        return;
+    }
+    prefetched = buildQuestion(exercise, seedSource).catch((error) => {
+        logger.error('could not prepare the next training question:', error);
+        return { question: null, refusal: 'noQuestion' };
+    });
+}
+
+/** Prend la question préchargée, ou en fabrique une si aucune ne l'était.
+ *  @param {string} exercise @param {string} seedSource */
+async function takeNextQuestion(exercise, seedSource) {
+    const pending = prefetched;
+    prefetched = null;
+    if (pending) return pending;
+    try {
+        return await buildQuestion(exercise, seedSource);
+    } catch (error) {
+        logger.error('could not build the next training question:', error);
+        return { question: null, refusal: 'noQuestion' };
+    }
+}
+
+/**
+ * Démarre une session. Refuse en le NOMMANT plutôt que d'ouvrir une session
+ * vide : une graine hors du domaine de l'exercice ne démarre rien, et la
+ * phrase dit lequel (ADR-0041 règle 3). Un plateau vide, lui, retombe sur le
+ * vivier — et garde la phrase, sans quoi la géométrie aurait changé sans que
+ * personne l'ait décidé.
+ *
  * @param {{exercise: string, seedSource?: string, limitSeconds?: number}} opts
  */
 export async function startTrainingSession({ exercise, seedSource = '', limitSeconds = 0 }) {
@@ -122,27 +269,40 @@ export async function startTrainingSession({ exercise, seedSource = '', limitSec
         return false;
     }
     const source = declared.sources.includes(seedSource) ? seedSource : declared.defaultSource;
-    let question;
+    prefetched = null;
+    let built;
     try {
-        question = await buildQuestion(exercise, source);
+        built = await buildQuestion(exercise, source);
     } catch (error) {
         logger.error('could not build the first training question:', error);
-        question = null;
+        built = { question: null, refusal: 'noQuestion' };
     }
-    if (!question) {
-        setStatusBarMessage(tMsg('training.noQuestion'));
+    trainingRefusalStore.set(built.refusal || '');
+    if (!built.question) {
+        setStatusBarMessage(tMsg(refusalMessageKey(built.refusal)));
         return false;
     }
-    trainingSessionStore.set(askQuestion(newSession({ exercise, seedSource: source, limitSeconds }), question, Date.now()));
+    showQuestionOnBoard(built.question);
+    trainingSessionStore.set(askQuestion(newSession({ exercise, seedSource: source, limitSeconds }), built.question, Date.now()));
     trainingElapsedStore.set(0);
     startTicker();
+    prefetchNextQuestion(exercise, source);
+    if (built.refusal) setStatusBarMessage(tMsg(refusalMessageKey(built.refusal)));
     return true;
 }
 
+/** La clé de traduction d'un refus, générique quand le code est inconnu.
+ *  @param {string} code */
+export function refusalMessageKey(code) {
+    return code && code !== 'noQuestion' ? `training.refusal.${code}` : 'training.noQuestion';
+}
+
 /**
- * Arrête le chrono et montre la vérité. `outOfTime` n'est pas un argument que
- * l'interface passe : c'est le chronomètre lui-même qui l'apporte à
- * l'échéance.
+ * Arrête le chrono et montre la vérité. En mode SAISI, c'est « Valider » : le
+ * même geste, le même arrêt du chrono, et l'application juge.
+ *
+ * `outOfTime` n'est pas un argument que l'interface passe : c'est le
+ * chronomètre lui-même qui l'apporte à l'échéance.
  * @param {{outOfTime?: boolean}} [opts]
  */
 export function revealQuestion({ outOfTime = false } = {}) {
@@ -158,6 +318,17 @@ export function markFault(index) {
     const session = get(trainingSessionStore);
     if (!session) return;
     trainingSessionStore.set(toggleFault(session, index));
+}
+
+/**
+ * Ce qu'on tape dans un champ, en mode SAISI. Rien n'est jugé ici : le
+ * jugement est à « Valider », une fois.
+ * @param {number} index @param {string} text
+ */
+export function setTrainingAnswer(index, text) {
+    const session = get(trainingSessionStore);
+    if (!session) return;
+    trainingSessionStore.set(setAnswer(session, index, text));
 }
 
 /**
@@ -188,21 +359,17 @@ export async function retryTrainingQuestion() {
 
 /** @param {import('./trainingTab.js').TrainingSessionState} session */
 async function askNextQuestion(session) {
-    let question;
-    try {
-        question = await buildQuestion(session.exercise, session.seedSource);
-    } catch (error) {
-        logger.error('could not build the next training question:', error);
-        question = null;
-    }
-    if (!question) {
-        trainingSessionStore.set(failNextQuestion(session, 'noQuestion'));
+    const built = await takeNextQuestion(session.exercise, session.seedSource);
+    if (!built.question) {
+        trainingSessionStore.set(failNextQuestion(session, built.refusal || 'noQuestion'));
         trainingElapsedStore.set(0);
-        setStatusBarMessage(tMsg('training.noQuestion'));
+        setStatusBarMessage(tMsg(refusalMessageKey(built.refusal)));
         return;
     }
-    trainingSessionStore.set(askQuestion(session, question, Date.now()));
+    showQuestionOnBoard(built.question);
+    trainingSessionStore.set(askQuestion(session, built.question, Date.now()));
     trainingElapsedStore.set(0);
+    prefetchNextQuestion(session.exercise, session.seedSource);
 }
 
 /**
@@ -214,6 +381,7 @@ export async function finishTrainingSession() {
     if (!session) return null;
     const closed = session.revealed ? recordQuestion(session) : session;
     stopTicker();
+    prefetched = null;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
     const row = finishedSession(closed);
@@ -232,6 +400,7 @@ export async function finishTrainingSession() {
 /** Quitte la session sans rien enregistrer. */
 export function quitTrainingSession() {
     stopTicker();
+    prefetched = null;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
 }

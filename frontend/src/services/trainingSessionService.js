@@ -1,9 +1,9 @@
 import { get } from 'svelte/store';
-import { LoadPosition, LoadAnalysis, ComputeEPCFromPosition, GradeQuizChecker, GradeQuizCheckerMove, GradeQuizCube } from '../../wailsjs/go/database/Database.js';
+import { LoadPosition, LoadAnalysis, GradeQuizChecker, GradeQuizCheckerMove, GradeQuizCube } from '../../wailsjs/go/database/Database.js';
 import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { trainingDrillStore, trainingQuestionsStore, trainingIndexStore, trainingAnswersStore, trainingActiveStore, trainingVerdictStore, trainingCurrentStore } from '../stores/trainingStore.js';
-import { grade, summarize, saveSession, quizPR } from './trainingService.js';
+import { summarize, saveSession, quizPR } from './trainingService.js';
 import { showImportedPosition } from './importService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { completedPlay, newPlay } from './quizPlay.js';
@@ -13,9 +13,10 @@ import { tMsg } from '../i18n';
 
 // Les micro-entraînements (#273, fiche I.17), côté application.
 //
-// Depuis #320, la bande ne sert plus que l'EPC et le quiz : le compte de pions
-// et le point de prise sont dans l'onglet Entraînement, où ils se répondent en
-// mode déclaré (services/trainingTabService.js).
+// La bande ne sert plus que le quiz : le compte de pions et le point de prise
+// sont partis à l'onglet Entraînement en #320, l'EPC en #321 — où il s'appelle
+// Bearoff, se répond en mode saisi et s'ENGENDRE au lieu de se tirer d'une
+// base sans course (ADR-0041).
 //
 // Le service compose une session : il tire des positions de la base, calcule
 // la réponse attendue AVANT de poser la question, et amène chaque position sur
@@ -31,8 +32,8 @@ import { tMsg } from '../i18n';
  *  veuille dire quelque chose, assez peu pour tenir dans une pause. */
 export const SESSION_LENGTH = 5;
 
-/** Le nombre de tirages avant d'abandonner la recherche d'une position qui
- *  convient à l'exercice (une course, pour l'EPC). */
+/** Le nombre de tirages avant d'abandonner la recherche d'une position
+ *  analysée, la seule qui fasse une question de quiz. */
 const MAX_DRAWS = 60;
 
 let questionStartedAt = 0;
@@ -50,45 +51,6 @@ function drawIndices(length, count) {
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
     return pool.slice(0, Math.min(count, pool.length));
-}
-
-/**
- * Compose les questions d'une session d'EPC.
- * @param {string} drill
- */
-async function buildBoardQuestions(drill) {
-    const { length } = get(positionsStore);
-    if (length === 0) return [];
-    const questions = [];
-    const tried = new Set();
-    const candidates = drawIndices(length, Math.min(MAX_DRAWS, length));
-    for (const index of candidates) {
-        if (questions.length >= SESSION_LENGTH) break;
-        const id = positionsStore.idAt(index);
-        if (id == null || tried.has(id)) continue;
-        tried.add(id);
-        let position;
-        try {
-            position = await LoadPosition(id);
-        } catch {
-            continue;
-        }
-        if (!position) continue;
-        // EPC : seule une position que le moteur accepte fait une question.
-        // Une position de contact renverrait un refus, et poser une question
-        // dont la réponse est « on ne sait pas » n'entraîne à rien.
-        try {
-            const result = await ComputeEPCFromPosition(position);
-            // Bottom = Noir (index 0), Top = Blanc — la convention de race.EPC.
-            const side = position.player_on_roll === 0 ? result?.bottom : result?.top;
-            const truth = side?.epc?.epc;
-            if (!Number.isFinite(truth)) continue;
-            questions.push({ drill, positionId: id, truth, prompt: '' });
-        } catch {
-            continue;
-        }
-    }
-    return questions;
 }
 
 /**
@@ -126,14 +88,12 @@ async function buildQuizQuestions() {
 
 /**
  * Démarre une session. Refuse en le disant plutôt que d'ouvrir une session
- * vide : une base sans course ne peut pas faire travailler l'EPC, et le dire
- * vaut mieux que cinq questions sans réponse.
+ * vide : une base sans position analysée ne peut pas faire travailler le
+ * quiz, et le dire vaut mieux que cinq questions sans réponse.
  * @param {string} drill
  */
 export async function startTraining(drill) {
-    let questions;
-    if (drill === 'quiz') questions = await buildQuizQuestions();
-    else questions = await buildBoardQuestions(drill);
+    const questions = await buildQuizQuestions();
     if (questions.length === 0) {
         setStatusBarMessage(tMsg('training.noQuestion'));
         return false;
@@ -248,22 +208,6 @@ async function gradeQuizWith(judge) {
     return entry;
 }
 
-/**
- * Juge la réponse et l'enregistre. Le verdict reste affiché jusqu'au passage
- * à la question suivante : une correction qu'on n'a pas le temps de lire
- * n'apprend rien.
- * @param {number} answer
- */
-export function answerCurrent(answer) {
-    const question = get(trainingCurrentStore);
-    if (!question) return null;
-    const verdict = grade(question.drill, answer, question.truth);
-    const entry = { ...verdict, ms: Math.max(0, Date.now() - questionStartedAt) };
-    trainingAnswersStore.update((list) => [...list, entry]);
-    trainingVerdictStore.set({ ...entry, truth: question.truth, answer });
-    return entry;
-}
-
 /** Passe à la question suivante, ou termine la session à la dernière. */
 export async function nextQuestion() {
     const questions = get(trainingQuestionsStore);
@@ -282,35 +226,18 @@ export async function finishTraining() {
     const drill = get(trainingDrillStore);
     const answers = get(trainingAnswersStore);
     const summary = summarize(answers);
-    // Le PR de session n'existe que pour le quiz : il se calcule sur une
-    // erreur d'équité, et un compte de pions n'en produit pas.
-    const pr =
-        drill === 'quiz'
-            ? quizPR(
-                  answers.reduce((sum, a) => sum + (a.error || 0), 0),
-                  answers.length
-              )
-            : null;
+    const pr = quizPR(
+        answers.reduce((sum, a) => sum + (a.error || 0), 0),
+        answers.length
+    );
     stopTraining();
     if (summary.count === 0) return summary;
     try {
-        await saveSession({ drill, ...summary, ...(pr === null ? {} : { pr }) });
+        await saveSession({ drill, ...summary, pr });
     } catch (error) {
         logger.error('could not record the training session:', error);
     }
-    setStatusBarMessage(
-        pr === null
-            ? tMsg('training.finished', {
-                  correct: summary.correct,
-                  n: summary.count,
-                  seconds: (summary.medianMs / 1000).toFixed(1)
-              })
-            : tMsg('training.finishedQuiz', {
-                  correct: summary.correct,
-                  n: summary.count,
-                  pr: pr.toFixed(2)
-              })
-    );
+    setStatusBarMessage(tMsg('training.finishedQuiz', { correct: summary.correct, n: summary.count, pr: pr.toFixed(2) }));
     return { ...summary, pr };
 }
 

@@ -48,6 +48,8 @@ export function GetTheme():Promise<string>;
 
 export function GetTourSeen():Promise<boolean>;
 
+export function GetTrainingSeedSources():Promise<Record<string, string>>;
+
 export function GetUIScale():Promise<number>;
 
 export function GetWatchFolder():Promise<main.WatchFolderSettings>;
@@ -101,6 +103,8 @@ export function SaveTabOrder(arg1:Array<string>):Promise<void>;
 export function SaveTheme(arg1:string):Promise<void>;
 
 export function SaveTourSeen(arg1:boolean):Promise<void>;
+
+export function SaveTrainingSeedSource(arg1:string,arg2:string):Promise<void>;
 
 export function SaveUIScale(arg1:number):Promise<void>;
 

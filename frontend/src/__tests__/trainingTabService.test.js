@@ -17,17 +17,28 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
     LoadTrainingNumberStats: vi.fn(() => Promise.resolve([]))
 }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ GenerateBearoffQuestion: vi.fn() }));
 vi.mock('../services/importService.js', () => ({ showImportedPosition: vi.fn(() => Promise.resolve()) }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), log: vi.fn() } }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
+import * as app from '../../wailsjs/go/gui/App.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { trainingSessionStore } from '../stores/trainingTabStore.js';
+import { trainingSessionStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
 import { pipcountVisibleStore } from '../stores/uiStore.js';
 import { subscribeBoardRedrawTriggers } from '../services/boardRedraw.js';
-import { startTrainingSession, revealQuestion, markFault, nextTrainingQuestion, retryTrainingQuestion, finishTrainingSession, quitTrainingSession } from '../services/trainingTabService.js';
+import {
+    startTrainingSession,
+    revealQuestion,
+    markFault,
+    setTrainingAnswer,
+    nextTrainingQuestion,
+    retryTrainingQuestion,
+    finishTrainingSession,
+    quitTrainingSession
+} from '../services/trainingTabService.js';
 
 /** Une position où le bas a deux pions sur le point 6 et le haut deux sur le 20. */
 function board() {
@@ -44,7 +55,32 @@ function board() {
     };
 }
 
+/** Laisse tourner les micro-tâches en attente, sans horloge simulée. */
+function flush() {
+    return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/** Une question de Bearoff telle que le moteur la rend. */
+function generated(bottom = 87.4, top = 91.2, extra = {}) {
+    return {
+        generated: true,
+        refusal: '',
+        source: 'pool',
+        plies: 3,
+        position: board(),
+        epc: { bottom: { epc: { epc: bottom } }, top: { epc: { epc: top } } },
+        ...extra
+    };
+}
+
 beforeEach(() => {
+    // `clearAllMocks` n'efface QUE les appels : une valeur `once` qu'un test
+    // n'a pas consommée fuirait dans le suivant et le ferait échouer là où il
+    // n'y a rien. Le préchargement en consomme une de plus qu'avant, donc la
+    // fuite est devenue certaine plutôt que rare.
+    db.LoadPosition.mockReset();
+    db.LoadPosition.mockResolvedValue(null);
+    app.GenerateBearoffQuestion.mockReset();
     vi.clearAllMocks();
     quitTrainingSession();
     databasePathStore.set('/tmp/some.db');
@@ -125,44 +161,174 @@ describe('quand la question suivante ne peut pas être posée', () => {
     // La position tirée a disparu entre-temps. La session rebasculait sur le
     // lanceur : « Terminer » disparaissait, et le journal de la session partait
     // sans un mot.
+    //
+    // Le préchargement déplace le MOMENT de la découverte, pas la règle : la
+    // question qu'on regarde a été fabriquée avant, donc c'est celle d'après
+    // qui échoue. D'où les deux « Suivante » ci-dessous.
     test('la session reste ouverte, le dit, et « Terminer » enregistre ce qui a été répondu', async () => {
         positionsStore.setIds([7]);
-        db.LoadPosition.mockResolvedValueOnce(board());
+        db.LoadPosition.mockResolvedValue(board());
         expect(await startTrainingSession({ exercise: 'pips', seedSource: 'library' })).toBe(true);
         revealQuestion();
         markFault(0);
 
-        // La position suivante n'existe plus.
-        db.LoadPosition.mockResolvedValueOnce(null);
+        // Plus aucune position ne se charge.
+        db.LoadPosition.mockResolvedValue(null);
+        await nextTrainingQuestion();
+        revealQuestion();
         await nextTrainingQuestion();
 
         const session = get(trainingSessionStore);
         expect(session, 'une session ne se perd pas sans que l’utilisateur l’ait décidé').not.toBeNull();
         expect(session.question).toBeNull();
         expect(session.questionError).toBe('noQuestion');
-        expect(session.items, 'les nombres déjà répondus sont toujours là').toHaveLength(2);
+        expect(session.items, 'les nombres déjà répondus sont toujours là').toHaveLength(4);
 
         await finishTrainingSession();
         expect(db.SaveTrainingSession).toHaveBeenCalledTimes(1);
         const row = db.SaveTrainingSession.mock.calls[0][0];
-        expect(row.numbersAsked).toBe(2);
+        expect(row.numbersAsked).toBe(4);
         expect(row.faults).toBe(1);
     });
 
     test('« Réessayer » repose une question sans rien enregistrer de plus', async () => {
         positionsStore.setIds([7]);
-        db.LoadPosition.mockResolvedValueOnce(board());
+        db.LoadPosition.mockResolvedValue(board());
         await startTrainingSession({ exercise: 'pips', seedSource: 'library' });
         revealQuestion();
-        db.LoadPosition.mockResolvedValueOnce(null);
+        db.LoadPosition.mockResolvedValue(null);
+        await nextTrainingQuestion();
+        revealQuestion();
         await nextTrainingQuestion();
         expect(get(trainingSessionStore).question).toBeNull();
 
-        db.LoadPosition.mockResolvedValueOnce(board());
+        db.LoadPosition.mockResolvedValue(board());
         await retryTrainingQuestion();
         const session = get(trainingSessionStore);
         expect(session.question).not.toBeNull();
         expect(session.questionError).toBe('');
-        expect(session.items, 'la question ratée n’a rien ajouté').toHaveLength(2);
+        expect(session.items, 'la question ratée n’a rien ajouté').toHaveLength(4);
+    });
+});
+
+describe('le préchargement (ADR-0041 règle 5)', () => {
+    // Le critère : « le chrono d'une question ne contient pas sa génération ».
+    // On le tient par le MOMENT de la fabrication : la question n+1 se fait
+    // pendant qu'on répond à la n.
+    test('la question suivante est déjà en fabrication pendant qu’on répond à celle-ci', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' })).toBe(true);
+        await flush();
+        expect(app.GenerateBearoffQuestion, 'une question à l’écran, deux fabriquées').toHaveBeenCalledTimes(2);
+    });
+
+    // L'oracle qui rougit vraiment : le générateur ne rend plus rien À PARTIR
+    // DE « Valider ». Seule une fabrication lancée AVANT la réponse peut donc
+    // aboutir — c'est exactement ce que le critère demande, et sans
+    // préchargement « Suivante » attendrait pour toujours.
+    test('« Suivante » affiche une question fabriquée avant la réponse, pas après', async () => {
+        const ready = generated();
+        app.GenerateBearoffQuestion.mockImplementation(() => (get(trainingSessionStore)?.revealed ? new Promise(() => {}) : Promise.resolve(ready)));
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' });
+        await flush();
+        revealQuestion();
+
+        nextTrainingQuestion();
+        await flush();
+        expect(get(trainingSessionStore).question, 'la question suivante était prête').not.toBeNull();
+        expect(get(trainingSessionStore).askedQuestions).toBe(1);
+    });
+
+    // Sur la source « plateau » de Pions il n'y a qu'une question à poser :
+    // précharger reposerait la même, et fabriquer pour rien est du travail
+    // qu'on facture à la machine sans rien donner à personne.
+    test('rien n’est préchargé là où il n’y a qu’une question', async () => {
+        expect(await startTrainingSession({ exercise: 'pips', seedSource: 'board' })).toBe(true);
+        await flush();
+        expect(db.LoadPosition).not.toHaveBeenCalled();
+    });
+});
+
+describe('une session de Bearoff', () => {
+    test('le moteur est appelé avec la source, et les deux EPC deviennent les nombres', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated(87.4, 91.2));
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' })).toBe(true);
+        expect(app.GenerateBearoffQuestion.mock.calls[0][0]).toEqual({ source: 'pool' });
+
+        const question = get(trainingSessionStore).question;
+        expect(question.numbers).toEqual([
+            { type: 'epc.bottom', value: 87.4, tolerance: 0.5, precision: 1 },
+            { type: 'epc.top', value: 91.2, tolerance: 0.5, precision: 1 }
+        ]);
+    });
+
+    test('la source « plateau » envoie la position telle qu’elle est comme graine', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'board' });
+        const request = app.GenerateBearoffQuestion.mock.calls[0][0];
+        expect(request.source).toBe('board');
+        expect(request.seed).toEqual(board());
+    });
+
+    test('la position engendrée arrive SUR LE PLATEAU : elle n’est dans aucune base', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        positionStore.set({ id: 42 });
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' });
+        expect(get(positionStore).board).toEqual(board().board);
+        expect(get(positionStore).id, 'une position engendrée n’a pas d’identifiant').toBe(0);
+    });
+
+    test('la saisie est jugée par l’application et l’écart signé part au journal', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated(87.4, 91.2));
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'pool' });
+        setTrainingAnswer(0, '90.4');
+        setTrainingAnswer(1, '91.2');
+        revealQuestion();
+        expect(get(trainingSessionStore).faults).toEqual([true, false]);
+        await finishTrainingSession();
+
+        const row = db.SaveTrainingSession.mock.calls[0][0];
+        expect(row.exercise).toBe('bearoff');
+        expect(row.deviations).toBe(2);
+        expect(row.items.map((i) => i.deviation)).toEqual([3, 0]);
+    });
+
+    // ADR-0041 règle 3 : le refus NOMME le domaine, et rien ne démarre.
+    test('une graine hors domaine refuse en le nommant, et rien ne démarre', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue({ generated: false, refusal: 'notBearoff', source: 'board' });
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'board' })).toBe(false);
+        expect(get(trainingSessionStore)).toBeNull();
+        expect(get(trainingRefusalStore)).toBe('notBearoff');
+    });
+
+    // Le seul refus qui produit quand même une question : un plateau vide
+    // retombe sur le vivier, et garde la phrase.
+    test('un plateau vide démarre sur le vivier ET dit pourquoi', async () => {
+        app.GenerateBearoffQuestion.mockResolvedValue(generated(87.4, 91.2, { refusal: 'emptyBoard' }));
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'board' })).toBe(true);
+        expect(get(trainingSessionStore)).not.toBeNull();
+        expect(get(trainingRefusalStore)).toBe('emptyBoard');
+    });
+
+    // Le domaine n'est écrit qu'en Go : la liste parcourue est tirée, et c'est
+    // le moteur qui dit ce qui convient. Une seconde définition ici finirait
+    // par diverger de celle qui refuse.
+    test('la source « base » tire jusqu’à trouver un bearoff, et laisse le moteur juger', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValueOnce({ generated: false, refusal: 'notBearoff' })
+            .mockResolvedValueOnce({ generated: false, refusal: 'notBearoff' })
+            .mockResolvedValue(generated());
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
+        expect(app.GenerateBearoffQuestion.mock.calls[0][0].source).toBe('library');
+        expect(app.GenerateBearoffQuestion.mock.calls.length).toBeGreaterThanOrEqual(3);
+    });
+
+    test('une base sans course refuse en nommant le domaine, pas « aucune question »', async () => {
+        positionsStore.setIds([7, 8, 9]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue({ generated: false, refusal: 'notBearoff' });
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(false);
+        expect(get(trainingRefusalStore)).toBe('notBearoff');
     });
 });

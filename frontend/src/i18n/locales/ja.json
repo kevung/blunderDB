@@ -1567,16 +1567,12 @@
     "training": {
         "title": "トレーニング",
         "progress": "問題 {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "回答",
         "check": "判定",
         "next": "次へ",
         "finish": "終了",
         "leave": "やめる",
         "right": "正解",
-        "wrong": "不正解",
-        "truth": "正解は {value}",
-        "finished": "トレーニング終了：{correct}/{n}、中央値 {seconds} 秒。",
         "usage": "使い方：train <練習>（{drills}）。",
         "drillQuiz": "クイズ",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "やり直す",
         "exercise": {
             "scores": "スコア",
-            "pips": "ピップ"
+            "pips": "ピップ",
+            "bearoff": "ベアオフ"
         },
         "sources": {
             "board": "盤面",
-            "library": "データベース"
+            "library": "データベース",
+            "pool": "定型"
         },
         "exerciseLabel": "エクササイズ",
         "source": "ソース",
@@ -1634,7 +1632,16 @@
             "gv2": "ギャモン価値 2",
             "gv4": "ギャモン価値 4"
         },
-        "retry": "再試行"
+        "retry": "再試行",
+        "validate": "判定",
+        "tolerance": "許容誤差 {value} ピップ。",
+        "refusal": {
+            "notBearoff": "この練習にはベアオフが必要です。両者ともすべての駒が自陣内にある局面です。",
+            "tooFewCheckers": "この練習には各side 4〜15 個の駒が必要です。残りは上がっていること。",
+            "emptyBoard": "盤が空です。問題は定型から作ります。",
+            "noTable": "ベアオフ表がまだ生成されていません。表がなければ EPC に正解はありません。",
+            "unknownSource": "この練習にそのソースはありません。"
+        }
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

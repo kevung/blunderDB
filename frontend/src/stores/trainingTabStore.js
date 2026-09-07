@@ -46,3 +46,16 @@ export const trainingPipOverrideStore = derived(trainingSessionStore, ($session)
     if (!$session || $session.exercise !== 'pips' || !$session.question) return null;
     return $session.revealed;
 });
+
+/**
+ * Le refus qui a empêché la dernière session de démarrer, ou la phrase qui
+ * accompagne un repli — le code, jamais la phrase : c'est le panneau qui
+ * traduit (#321, ADR-0041 règle 3).
+ *
+ * Il vit à côté de la session et non dedans parce qu'il survit à l'absence de
+ * session : un refus se lit DANS LE LANCEUR, là où l'on vient de cliquer
+ * « Démarrer », et un message de barre d'état s'efface au geste suivant.
+ *
+ * @type {import('svelte/store').Writable<string>}
+ */
+export const trainingRefusalStore = writable('');

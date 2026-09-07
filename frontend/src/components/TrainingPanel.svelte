@@ -12,18 +12,22 @@
     // chiffres suffit (règle 6).
     import { onMount } from 'svelte';
     import { t } from '../i18n';
-    import { trainingSessionStore, trainingElapsedStore, trainingJournalStore } from '../stores/trainingTabStore.js';
-    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise } from '../services/trainingTab.js';
+    import { GetTrainingSeedSources, SaveTrainingSeedSource } from '../../wailsjs/go/main/Config.js';
+    import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
+    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise } from '../services/trainingTab.js';
     import {
         startTrainingSession,
         revealQuestion,
         markFault,
+        setTrainingAnswer,
         nextTrainingQuestion,
         retryTrainingQuestion,
         finishTrainingSession,
         quitTrainingSession,
-        refreshTrainingJournal
+        refreshTrainingJournal,
+        refusalMessageKey
     } from '../services/trainingTabService.js';
+    import { logger } from '../utils/logger.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
     import ScoreCard from './ScoreCard.svelte';
     import TrainingNumberCell from './TrainingNumberCell.svelte';
@@ -31,28 +35,40 @@
     let exercise = $state(TRAINING_EXERCISES[0].id);
     let limitSeconds = $state(0);
     let unfolded = $state('');
+    // La source choisie, PAR EXERCICE et mémorisée d'une session à l'autre
+    // (ADR-0041 règle 2). Par exercice parce qu'ils n'offrent pas les mêmes
+    // sources : une seule mémoire se serait réinitialisée à chaque passage de
+    // Bearoff à Pions.
+    let rememberedSources = $state(/** @type {Record<string, string>} */ ({}));
 
     let session = $derived($trainingSessionStore);
     let question = $derived(session?.question ?? null);
     let chosen = $derived(TRAINING_EXERCISES.find((e) => e.id === exercise) ?? TRAINING_EXERCISES[0]);
-    // `$derived` inscriptible : on peut choisir une autre source, et changer
-    // d'exercice la ramène à celle de l'exercice — c'est l'effet voulu, un
-    // exercice n'ayant pas les mêmes sources qu'un autre.
-    let seedSource = $derived(chosen.defaultSource);
+    let seedSource = $derived(chosen.sources.includes(rememberedSources[exercise]) ? rememberedSources[exercise] : chosen.defaultSource);
 
-    // La source « plateau » prend la position TELLE QUELLE : il n'y a donc
-    // qu'une question à poser, et proposer « Suivante » reposerait la même.
-    // Le voisinage d'une position — la graine jouée sur quelques coups — est
-    // le générateur de l'ADR-0041, qui n'est pas de cette tranche.
-    let canAskAnother = $derived(!!session && session.seedSource !== 'board');
+    let entered = $derived(!!session && isEnteredExercise(session.exercise));
+    let another = $derived(!!session && canAskAnother(session.exercise, session.seedSource));
 
     let elapsedSeconds = $derived(Math.floor($trainingElapsedStore / 1000));
 
     onMount(() => {
         refreshTrainingJournal();
+        GetTrainingSeedSources()
+            .then((sources) => {
+                rememberedSources = sources || {};
+            })
+            .catch((error) => logger.error('could not read the remembered training sources:', error));
     });
 
+    /** @param {string} source */
+    function chooseSource(source) {
+        rememberedSources = { ...rememberedSources, [exercise]: source };
+    }
+
     function start() {
+        // La mémoire est écrite au LANCEMENT et non au clic : c'est démarrer
+        // qui dit qu'on a choisi, cliquer pour regarder ne le dit pas.
+        SaveTrainingSeedSource(exercise, seedSource).catch((error) => logger.error('could not remember the training source:', error));
         startTrainingSession({ exercise, seedSource, limitSeconds });
     }
 
@@ -109,9 +125,51 @@
                     <!-- La question suivante n'a pas pu être bâtie. La session
                          reste ouverte : ce qui a été répondu est encore là, et
                          « Terminer » l'enregistre. -->
-                    <p class="refusal" data-testid="training-question-failed">{$t('training.noQuestion')}</p>
+                    <p class="refusal" data-testid="training-question-failed">{$t(refusalMessageKey(session.questionError))}</p>
                 {:else if question.kind === 'scores'}
                     <ScoreCard card={question.card} numbers={question.numbers} revealed={session.revealed} faults={session.faults} locked={session.outOfTime} onToggle={markFault} />
+                {:else if entered}
+                    <!-- Mode SAISI : on tape, l'application juge. La vérité
+                         apparaît à côté de ce qu'on a écrit — l'écart se lit
+                         entre les deux, et l'imprimer serait la même
+                         information une troisième fois (ADR-0031). Il est
+                         enregistré, SIGNÉ, et c'est le bilan qui en fait une
+                         moyenne. -->
+                    <table class="entered">
+                        <tbody>
+                            {#each question.numbers as number, i (number.type)}
+                                <tr>
+                                    <th scope="row"><label for="training-answer-{i}">{$t(numberTypeLabelKey(number.type))}</label></th>
+                                    <td>
+                                        <input
+                                            id="training-answer-{i}"
+                                            data-testid="training-answer-{i}"
+                                            type="text"
+                                            inputmode="decimal"
+                                            autocomplete="off"
+                                            class:fault={session.revealed && session.faults[i]}
+                                            disabled={session.revealed}
+                                            value={session.answers[i] ?? ''}
+                                            oninput={(event) => setTrainingAnswer(i, event.currentTarget.value)}
+                                            onkeydown={(event) => {
+                                                if (event.key === 'Enter') {
+                                                    event.preventDefault();
+                                                    revealQuestion();
+                                                }
+                                            }}
+                                        />
+                                    </td>
+                                    <td class="truth" data-testid="training-truth-{i}">
+                                        {#if session.revealed}
+                                            <span class="mark" aria-hidden="true">{session.faults[i] ? '×' : ''}</span><span class:fault={session.faults[i]}
+                                                >{number.value.toFixed(number.precision ?? 0)}</span
+                                            >
+                                        {/if}
+                                    </td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
                 {:else}
                     <table class="pips">
                         <tbody>
@@ -136,18 +194,23 @@
                 {/if}
             </div>
 
-            {#if question && session.revealed && !session.outOfTime}
+            {#if question && session.revealed && !session.outOfTime && !entered}
                 <!-- Le geste ne se devine pas, et une infobulle ne se lit ni au
-                     clavier ni au doigt : la consigne est à l'écran. -->
+                     clavier ni au doigt : la consigne est à l'écran. En mode
+                     SAISI il n'y a rien à cocher : c'est l'application qui
+                     juge, contre la tolérance. -->
                 <p class="hint">{$t('training.faultHint')}</p>
+            {/if}
+            {#if question && !session.revealed && entered}
+                <p class="hint">{$t('training.tolerance', { value: (question.numbers[0]?.tolerance ?? 0).toFixed(1) })}</p>
             {/if}
 
             <div class="actions">
                 {#if !question}
                     <button type="button" data-testid="training-retry" onclick={() => retryTrainingQuestion()}>{$t('training.retry')}</button>
                 {:else if !session.revealed}
-                    <button type="button" data-testid="training-reveal" onclick={() => revealQuestion()}>{$t('training.reveal')}</button>
-                {:else if canAskAnother}
+                    <button type="button" data-testid="training-reveal" onclick={() => revealQuestion()}>{entered ? $t('training.validate') : $t('training.reveal')}</button>
+                {:else if another}
                     <button type="button" data-testid="training-next" onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
                 {/if}
                 <button type="button" data-testid="training-finish" onclick={() => finishTrainingSession()}>{$t('training.finish')}</button>
@@ -172,7 +235,7 @@
                     <span class="field-label" id="training-source-label">{$t('training.source')}</span>
                     <div class="choices" role="group" aria-labelledby="training-source-label">
                         {#each chosen.sources as source (source)}
-                            <button type="button" class:selected={seedSource === source} data-testid="training-source-{source}" onclick={() => (seedSource = source)}>
+                            <button type="button" class:selected={seedSource === source} data-testid="training-source-{source}" onclick={() => chooseSource(source)}>
                                 {$t(`training.sources.${source}`)}
                             </button>
                         {/each}
@@ -194,6 +257,14 @@
             <div class="row">
                 <button type="button" class="start" data-testid="training-start" onclick={start}>{$t('training.start')}</button>
             </div>
+
+            {#if $trainingRefusalStore}
+                <!-- Le refus se lit LÀ OÙ l'on vient de cliquer, et il nomme le
+                     domaine (ADR-0041 règle 3). Un message de barre d'état
+                     s'efface au geste suivant ; celui-ci reste tant qu'on n'a
+                     pas démarré autre chose. -->
+                <p class="refusal" role="status" data-testid="training-refusal">{$t(refusalMessageKey($trainingRefusalStore))}</p>
+            {/if}
         </div>
 
         <div class="journal">
@@ -301,15 +372,49 @@
         color: var(--color-text-muted);
     }
 
-    .pips {
+    .pips,
+    .entered {
         border-collapse: collapse;
     }
 
-    .pips th {
+    .pips th,
+    .entered th {
         text-align: left;
         font-weight: normal;
         color: var(--color-text-muted);
         padding-right: 0.5em;
+    }
+
+    .entered input {
+        width: 5em;
+        padding: 0.1em 0.35em;
+        border: 1px solid var(--color-border);
+        border-radius: 3px;
+        background: var(--color-surface);
+        color: var(--color-text);
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .entered input.fault {
+        border-color: var(--color-danger);
+    }
+
+    .entered .truth {
+        padding-left: 0.6em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* La faute se dit par un glyphe que la couleur redouble, jamais par la
+       couleur seule (ADR-0031). */
+    .entered .truth .fault,
+    .entered .mark {
+        color: var(--color-danger);
+    }
+
+    .entered .mark {
+        font-weight: 600;
+        padding-right: 0.15em;
     }
 
     h3 {

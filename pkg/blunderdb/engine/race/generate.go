@@ -470,6 +470,13 @@ func meanRolls(b sideBoard) float64 {
 // centred, money, the rest of each side borne off (rule 4).
 func boardOf(seed bearoffSeed) domain.Board {
 	var b domain.Board
+	// An empty point is colourless, as the parser writes it and as the
+	// frontend's own empty board does. The zero value would say "Black", which
+	// is true of nothing and reads as a colour to anyone who forgets to check
+	// the chequer count first.
+	for i := range b.Points {
+		b.Points[i] = domain.Point{Color: domain.None}
+	}
 	for i := 0; i < 6; i++ {
 		if n := seed.black[i]; n > 0 {
 			b.Points[i+1] = domain.Point{Checkers: n, Color: domain.Black}

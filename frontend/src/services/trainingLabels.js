@@ -22,7 +22,12 @@ const LABEL_KEYS = Object.freeze({
     // valent que pour la palette par défaut). L'indice du joueur, lui, ne
     // bouge pas — c'est déjà celui que la description du plateau annonce.
     'pips.bottom': 'board.player1',
-    'pips.top': 'board.player2'
+    'pips.top': 'board.player2',
+    // L'EPC des deux camps, nommés comme les comptes de pions : par le
+    // JOUEUR. Le même camp ne peut pas s'appeler « bas » ici et « joueur 1 »
+    // là — un concept, un terme.
+    'epc.bottom': 'board.player1',
+    'epc.top': 'board.player2'
 });
 
 /**

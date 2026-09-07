@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Training",
         "progress": "Question {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Answer",
         "check": "Check",
         "next": "Next",
         "finish": "Finish",
         "leave": "Leave",
         "right": "Right",
-        "wrong": "Wrong",
-        "truth": "expected {value}",
-        "finished": "Training done: {correct}/{n}, median time {seconds} s.",
         "usage": "Usage: train <drill> ({drills}).",
         "drillQuiz": "Quiz",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Start over",
         "exercise": {
             "scores": "Scores",
-            "pips": "Pips"
+            "pips": "Pips",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Board",
-            "library": "Library"
+            "library": "Library",
+            "pool": "Pool"
         },
         "exerciseLabel": "Exercise",
         "source": "Source",
@@ -1634,7 +1632,16 @@
             "gv2": "Gammon value 2",
             "gv4": "Gammon value 4"
         },
-        "retry": "Retry"
+        "retry": "Retry",
+        "validate": "Check",
+        "tolerance": "Tolerance {value} pip.",
+        "refusal": {
+            "notBearoff": "This exercise needs a bear-off: both sides entirely in their home board.",
+            "tooFewCheckers": "This exercise needs 4 to 15 chequers a side, the rest borne off.",
+            "emptyBoard": "The board is empty: the question comes from the pool.",
+            "noTable": "The bear-off table has not been generated yet: without it the EPC has no truth.",
+            "unknownSource": "This exercise does not offer that source."
+        }
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

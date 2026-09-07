@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Entrenamiento",
         "progress": "Pregunta {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Respuesta",
         "check": "Comprobar",
         "next": "Siguiente",
         "finish": "Terminar",
         "leave": "Salir",
         "right": "Correcto",
-        "wrong": "Incorrecto",
-        "truth": "esperado {value}",
-        "finished": "Entrenamiento terminado: {correct}/{n}, tiempo mediano {seconds} s.",
         "usage": "Uso: train <ejercicio> ({drills}).",
         "drillQuiz": "Cuestionario",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Empezar de nuevo",
         "exercise": {
             "scores": "Marcadores",
-            "pips": "Pips"
+            "pips": "Pips",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Tablero",
-            "library": "Base"
+            "library": "Base",
+            "pool": "Vivero"
         },
         "exerciseLabel": "Ejercicio",
         "source": "Fuente",
@@ -1634,7 +1632,16 @@
             "gv2": "Valor del gammon 2",
             "gv4": "Valor del gammon 4"
         },
-        "retry": "Reintentar"
+        "retry": "Reintentar",
+        "validate": "Comprobar",
+        "tolerance": "Tolerancia {value} pip.",
+        "refusal": {
+            "notBearoff": "Este ejercicio necesita un bearoff: ambos bandos enteramente en su casa.",
+            "tooFewCheckers": "Este ejercicio necesita de 4 a 15 fichas por bando, el resto retiradas.",
+            "emptyBoard": "El tablero está vacío: la pregunta viene del vivero.",
+            "noTable": "La tabla de bearoff aún no se ha generado: sin ella el EPC no tiene verdad.",
+            "unknownSource": "Este ejercicio no ofrece esa fuente."
+        }
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

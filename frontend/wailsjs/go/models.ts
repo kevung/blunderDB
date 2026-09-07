@@ -3066,6 +3066,26 @@ export namespace domain {
 
 export namespace engine {
 	
+	export class EPCResult {
+	    epc: number;
+	    meanRolls: number;
+	    stdDev: number;
+	    pipCount: number;
+	    wastage: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new EPCResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.epc = source["epc"];
+	        this.meanRolls = source["meanRolls"];
+	        this.stdDev = source["stdDev"];
+	        this.pipCount = source["pipCount"];
+	        this.wastage = source["wastage"];
+	    }
+	}
 	export class Explanation {
 	    theme: string;
 	    costMp: number;
@@ -3597,6 +3617,7 @@ export namespace main {
 	    bearoff_rate?: number;
 	    bearoff_cores?: number;
 	    epc_challenge?: boolean;
+	    training_seed_sources?: Record<string, string>;
 	    gammonnet_display_ply?: number;
 	    gammonnet_analysis_ply?: number;
 	    gammonnet_prune_k?: number;
@@ -3634,6 +3655,7 @@ export namespace main {
 	        this.bearoff_rate = source["bearoff_rate"];
 	        this.bearoff_cores = source["bearoff_cores"];
 	        this.epc_challenge = source["epc_challenge"];
+	        this.training_seed_sources = source["training_seed_sources"];
 	        this.gammonnet_display_ply = source["gammonnet_display_ply"];
 	        this.gammonnet_analysis_ply = source["gammonnet_analysis_ply"];
 	        this.gammonnet_prune_k = source["gammonnet_prune_k"];
@@ -3725,6 +3747,148 @@ export namespace parser {
 
 export namespace race {
 	
+	export class Side {
+	    all_in_home: boolean;
+	    checker_count: number;
+	    farthest: number;
+	    points?: number;
+	    epc?: engine.EPCResult;
+	
+	    static createFrom(source: any = {}) {
+	        return new Side(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.all_in_home = source["all_in_home"];
+	        this.checker_count = source["checker_count"];
+	        this.farthest = source["farthest"];
+	        this.points = source["points"];
+	        this.epc = this.convertValues(source["epc"], engine.EPCResult);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class EPC {
+	    bottom: Side;
+	    top: Side;
+	
+	    static createFrom(source: any = {}) {
+	        return new EPC(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.bottom = this.convertValues(source["bottom"], Side);
+	        this.top = this.convertValues(source["top"], Side);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class BearoffQuestion {
+	    generated: boolean;
+	    refusal?: string;
+	    source: string;
+	    plies: number;
+	    position: domain.Position;
+	    epc: EPC;
+	
+	    static createFrom(source: any = {}) {
+	        return new BearoffQuestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.generated = source["generated"];
+	        this.refusal = source["refusal"];
+	        this.source = source["source"];
+	        this.plies = source["plies"];
+	        this.position = this.convertValues(source["position"], domain.Position);
+	        this.epc = this.convertValues(source["epc"], EPC);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class BearoffRequest {
+	    source: string;
+	    seed?: domain.Position;
+	
+	    static createFrom(source: any = {}) {
+	        return new BearoffRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.source = source["source"];
+	        this.seed = this.convertValues(source["seed"], domain.Position);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class CubeVerdict {
 	    cube_state: string;
 	    cubeless: number;
@@ -3747,6 +3911,7 @@ export namespace race {
 	        this.verdict = source["verdict"];
 	    }
 	}
+	
 	export class Eval {
 	    regime: string;
 	    on_roll: number;
@@ -3799,50 +3964,9 @@ export namespace race {
 		    return a;
 		}
 	}
-	export class Side {
-	    all_in_home: boolean;
-	    checker_count: number;
-	    farthest: number;
-	    points?: number;
-	    // Go type: engine
-	    epc?: any;
-	
-	    static createFrom(source: any = {}) {
-	        return new Side(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.all_in_home = source["all_in_home"];
-	        this.checker_count = source["checker_count"];
-	        this.farthest = source["farthest"];
-	        this.points = source["points"];
-	        this.epc = this.convertValues(source["epc"], null);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class Result {
-	    // Go type: Side
-	    bottom: any;
-	    // Go type: Side
-	    top: any;
+	    bottom: Side;
+	    top: Side;
 	    race?: Eval;
 	
 	    static createFrom(source: any = {}) {
@@ -3851,8 +3975,8 @@ export namespace race {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.bottom = this.convertValues(source["bottom"], null);
-	        this.top = this.convertValues(source["top"], null);
+	        this.bottom = this.convertValues(source["bottom"], Side);
+	        this.top = this.convertValues(source["top"], Side);
 	        this.race = this.convertValues(source["race"], Eval);
 	    }
 	

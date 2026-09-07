@@ -7,16 +7,15 @@
     // premier. La barre ne porte donc que la question, la saisie et la
     // correction — le plateau, lui, est celui de l'application.
     //
-    // Depuis #320 elle ne sert plus que l'EPC et le quiz : le compte de pions
-    // et le point de prise sont passés à l'onglet Entraînement, où le geste est
-    // déclaré et où toute la session tient dans un panneau. Les tranches
-    // suivantes y déplaceront ces deux-là aussi, et la bande disparaîtra.
+    // Elle ne sert plus que le quiz : le compte de pions et le point de prise
+    // sont passés à l'onglet en #320, l'EPC en #321 — l'onglet sait le mode
+    // SAISI, qui était la seule chose que la bande gardait de plus. #323 y
+    // emmènera le quiz, et la bande disparaîtra.
     import { trainingActiveStore, trainingCurrentStore, trainingIndexStore, trainingQuestionsStore, trainingVerdictStore } from '../stores/trainingStore.js';
     import { answerCurrent, answerQuiz, answerQuizBoard, nextQuestion, stopTraining } from '../services/trainingSessionService.js';
     import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { resetPlay, undoLast } from '../services/quizPlay.js';
     import { positionStore } from '../stores/positionStore.js';
-    import { TOLERANCE } from '../services/trainingService.js';
     import { t } from '../i18n';
 
     let input = $state('');
@@ -90,18 +89,7 @@
     }
 
     function label(drill) {
-        switch (drill) {
-            case 'epc':
-                return $t('training.drillEpc');
-            case 'quiz':
-                return $t('training.drillQuiz');
-            default:
-                return drill;
-        }
-    }
-
-    function decimals(drill) {
-        return TOLERANCE[drill] === 0 ? 0 : 1;
+        return drill === 'quiz' ? $t('training.drillQuiz') : drill;
     }
 </script>
 
@@ -127,11 +115,6 @@
                 {#if verdict.quiz?.best}
                     — {$t('training.best', { move: verdict.quiz.best })}
                 {/if}
-            </span>
-        {:else if verdict}
-            <span class="verdict" class:correct={verdict.correct}>
-                {verdict.correct ? $t('training.right') : $t('training.wrong')}
-                — {$t('training.truth', { value: question.truth.toFixed(decimals(question.drill)) })}
             </span>
         {/if}
         <span class="actions">

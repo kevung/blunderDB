@@ -81,7 +81,8 @@ const DYNAMIC_PREFIXES = [
     'direction.directory.errors.',
     // Le barème d'une section de dotation (#393) : `$t(`direction.settings.scale_${section}`)`,
     // la section étant un identifiant du moteur — all, main, conso, last.
-    'direction.settings.scale_'
+    'direction.settings.scale_',
+    'training.refusal.'
 ];
 
 function sourceFiles(dir) {

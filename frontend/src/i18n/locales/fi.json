@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Harjoittelu",
         "progress": "Kysymys {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Vastaus",
         "check": "Tarkista",
         "next": "Seuraava",
         "finish": "Lopeta",
         "leave": "Poistu",
         "right": "Oikein",
-        "wrong": "Väärin",
-        "truth": "odotettu {value}",
-        "finished": "Harjoitus valmis: {correct}/{n}, mediaaniaika {seconds} s.",
         "usage": "Käyttö: train <harjoitus> ({drills}).",
         "drillQuiz": "Tietovisa",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Aloita alusta",
         "exercise": {
             "scores": "Tilanteet",
-            "pips": "Pipit"
+            "pips": "Pipit",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Lauta",
-            "library": "Tietokanta"
+            "library": "Tietokanta",
+            "pool": "Varanto"
         },
         "exerciseLabel": "Harjoitus",
         "source": "Lähde",
@@ -1634,7 +1632,16 @@
             "gv2": "Gammonin arvo 2",
             "gv4": "Gammonin arvo 4"
         },
-        "retry": "Yritä uudelleen"
+        "retry": "Yritä uudelleen",
+        "validate": "Tarkista",
+        "tolerance": "Toleranssi {value} pip.",
+        "refusal": {
+            "notBearoff": "Tämä harjoitus vaatii ulosvientiaseman: molemmat osapuolet kokonaan omalla kotialueellaan.",
+            "tooFewCheckers": "Tämä harjoitus vaatii 4–15 nappulaa puolta kohden, loput ulos vietyinä.",
+            "emptyBoard": "Lauta on tyhjä: kysymys tulee varannosta.",
+            "noTable": "Bearoff-taulukkoa ei ole vielä luotu: ilman sitä EPC:llä ei ole totuutta.",
+            "unknownSource": "Tämä harjoitus ei tarjoa tuota lähdettä."
+        }
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

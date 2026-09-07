@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Training",
         "progress": "Frage {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Antwort",
         "check": "Prüfen",
         "next": "Weiter",
         "finish": "Beenden",
         "leave": "Verlassen",
         "right": "Richtig",
-        "wrong": "Falsch",
-        "truth": "erwartet {value}",
-        "finished": "Training beendet: {correct}/{n}, mittlere Zeit {seconds} s.",
         "usage": "Verwendung: train <Übung> ({drills}).",
         "drillQuiz": "Quiz",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Neu beginnen",
         "exercise": {
             "scores": "Stände",
-            "pips": "Pips"
+            "pips": "Pips",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Brett",
-            "library": "Datenbank"
+            "library": "Datenbank",
+            "pool": "Vorrat"
         },
         "exerciseLabel": "Übung",
         "source": "Quelle",
@@ -1634,7 +1632,16 @@
             "gv2": "Gammonwert 2",
             "gv4": "Gammonwert 4"
         },
-        "retry": "Erneut versuchen"
+        "retry": "Erneut versuchen",
+        "validate": "Prüfen",
+        "tolerance": "Toleranz {value} Punkt.",
+        "refusal": {
+            "notBearoff": "Diese Übung braucht ein Auswürfeln: beide Seiten vollständig im Heimfeld.",
+            "tooFewCheckers": "Diese Übung braucht 4 bis 15 Steine je Seite, der Rest ausgewürfelt.",
+            "emptyBoard": "Das Brett ist leer: die Frage kommt aus dem Vorrat.",
+            "noTable": "Die Bearoff-Tabelle ist noch nicht erzeugt: ohne sie hat der EPC keine Wahrheit.",
+            "unknownSource": "Diese Übung kennt diese Quelle nicht."
+        }
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

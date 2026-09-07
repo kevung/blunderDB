@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Entraînement",
         "progress": "Question {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Réponse",
         "check": "Vérifier",
         "next": "Suivante",
         "finish": "Terminer",
         "leave": "Quitter",
         "right": "Juste",
-        "wrong": "Faux",
-        "truth": "attendu {value}",
-        "finished": "Entraînement terminé : {correct}/{n}, temps médian {seconds} s.",
         "usage": "Utilisation : train <exercice> ({drills}).",
         "drillQuiz": "Quiz",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Recommencer",
         "exercise": {
             "scores": "Scores",
-            "pips": "Pions"
+            "pips": "Pions",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Plateau",
-            "library": "Base"
+            "library": "Base",
+            "pool": "Vivier"
         },
         "exerciseLabel": "Exercice",
         "source": "Source",
@@ -1634,7 +1632,16 @@
             "gv2": "Valeur du gammon 2",
             "gv4": "Valeur du gammon 4"
         },
-        "retry": "Réessayer"
+        "retry": "Réessayer",
+        "validate": "Valider",
+        "tolerance": "Tolérance {value} pion.",
+        "refusal": {
+            "notBearoff": "Cet exercice demande un bearoff : les deux camps entièrement dans leur jan.",
+            "tooFewCheckers": "Cet exercice demande de 4 à 15 pions par camp, le reste sorti.",
+            "emptyBoard": "Le plateau est vide : la question vient du vivier.",
+            "noTable": "La table de bearoff n'est pas encore engendrée : sans elle, l'EPC n'a pas de vérité.",
+            "unknownSource": "Cette source n'existe pas pour cet exercice."
+        }
     },
     "explain": {
         "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",

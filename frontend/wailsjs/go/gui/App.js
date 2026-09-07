@@ -70,6 +70,10 @@ export function FolderWatchStatus() {
   return window['go']['gui']['App']['FolderWatchStatus']();
 }
 
+export function GenerateBearoffQuestion(arg1) {
+  return window['go']['gui']['App']['GenerateBearoffQuestion'](arg1);
+}
+
 export function GenerateBearoffTable(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['GenerateBearoffTable'](arg1, arg2, arg3, arg4);
 }

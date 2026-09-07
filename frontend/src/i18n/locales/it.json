@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Allenamento",
         "progress": "Domanda {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Risposta",
         "check": "Verifica",
         "next": "Successiva",
         "finish": "Termina",
         "leave": "Esci",
         "right": "Giusto",
-        "wrong": "Sbagliato",
-        "truth": "atteso {value}",
-        "finished": "Allenamento terminato: {correct}/{n}, tempo mediano {seconds} s.",
         "usage": "Uso: train <esercizio> ({drills}).",
         "drillQuiz": "Quiz",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Ricomincia",
         "exercise": {
             "scores": "Punteggi",
-            "pips": "Pip"
+            "pips": "Pip",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Tavoliere",
-            "library": "Base"
+            "library": "Base",
+            "pool": "Vivaio"
         },
         "exerciseLabel": "Esercizio",
         "source": "Fonte",
@@ -1634,7 +1632,16 @@
             "gv2": "Valore del gammon 2",
             "gv4": "Valore del gammon 4"
         },
-        "retry": "Riprovare"
+        "retry": "Riprovare",
+        "validate": "Verifica",
+        "tolerance": "Tolleranza {value} pip.",
+        "refusal": {
+            "notBearoff": "Questo esercizio richiede un bearoff: entrambi i lati interamente nella loro casa.",
+            "tooFewCheckers": "Questo esercizio richiede da 4 a 15 pedine per lato, le altre uscite.",
+            "emptyBoard": "La tavola è vuota: la domanda viene dal vivaio.",
+            "noTable": "La tabella di bearoff non è ancora generata: senza di essa l’EPC non ha verità.",
+            "unknownSource": "Questo esercizio non offre quella fonte."
+        }
     },
     "explain": {
         "blots": "Perdi {cost} mMWC: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

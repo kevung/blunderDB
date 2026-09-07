@@ -12,15 +12,21 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 
+vi.mock('../../wailsjs/go/main/Config.js', () => ({
+    GetTrainingSeedSources: vi.fn(() => Promise.resolve({})),
+    SaveTrainingSeedSource: vi.fn(() => Promise.resolve())
+}));
 vi.mock('../services/trainingTabService.js', () => ({
     startTrainingSession: vi.fn(),
     revealQuestion: vi.fn(),
     markFault: vi.fn(),
+    setTrainingAnswer: vi.fn(),
     nextTrainingQuestion: vi.fn(),
     retryTrainingQuestion: vi.fn(),
     finishTrainingSession: vi.fn(),
     quitTrainingSession: vi.fn(),
-    refreshTrainingJournal: vi.fn(() => Promise.resolve())
+    refreshTrainingJournal: vi.fn(() => Promise.resolve()),
+    refusalMessageKey: (code) => (code && code !== 'noQuestion' ? `training.refusal.${code}` : 'training.noQuestion')
 }));
 
 import TrainingPanel from '../components/TrainingPanel.svelte';

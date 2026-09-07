@@ -14,38 +14,14 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveMetadata: vi.fn(() => Promise.resolve(undefined))
 }));
 
-import { grade, summarize, DRILLS, TOLERANCE } from '../services/trainingService.js';
+import { summarize, DRILLS } from '../services/trainingService.js';
 
-describe('la note', () => {
-    // Depuis #320, la bande ne sert plus que ce qui se SAISIT : le compte de
-    // pions et le point de prise sont passés à l'onglet, en mode déclaré.
-    test('la bande ne sert plus que l’EPC et le quiz', () => {
-        expect(DRILLS).toEqual(['epc', 'quiz']);
-    });
-
-    test("l'EPC tolère le demi-pion", () => {
-        expect(TOLERANCE.epc).toBe(0.5);
-        expect(grade('epc', 87.4, 87.0).correct).toBe(true);
-        expect(grade('epc', 87.6, 87.0).correct).toBe(false);
-    });
-
-    // Seul un nombre ESTIMÉ a une tolérance : un exercice qui n'en déclare pas
-    // ne tolère rien, et c'est la règle, pas l'oubli.
-    test('un exercice sans tolérance déclarée ne tolère rien', () => {
-        expect(TOLERANCE.quiz).toBeUndefined();
-        expect(grade('quiz', 167, 167).correct).toBe(true);
-        expect(grade('quiz', 167.5, 167).correct).toBe(false);
-    });
-
-    // Le SENS de l'erreur est ce qu'on apprend : deux pions de trop n'est pas
-    // la même faute que deux de moins.
-    test("l'erreur est signée", () => {
-        expect(grade('epc', 170, 167).error).toBe(3);
-        expect(grade('epc', 164, 167).error).toBe(-3);
-    });
-
-    test('une réponse vide est fausse, pas une exception', () => {
-        expect(grade('epc', NaN, 167)).toEqual({ correct: false, error: null });
+describe('ce que la bande sert encore', () => {
+    // #320 lui a pris ce qui se DÉCLARE, #321 ce qui se SAISIT : l'onglet sait
+    // désormais les deux gestes, et l'EPC y est devenu l'exercice « Bearoff ».
+    // Il ne reste que le quiz, que #323 emmènera à son tour.
+    test('un seul exercice : le quiz', () => {
+        expect(DRILLS).toEqual(['quiz']);
     });
 });
 

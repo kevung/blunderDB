@@ -15,19 +15,45 @@
  */
 
 /**
- * Les exercices de cette tranche. Bearoff, Évaluation et Décision viennent
- * ensuite : ils demandent le générateur de positions de l'ADR-0041 et le mode
- * SAISI, dont l'écart signé est tout l'intérêt.
+ * Les exercices servis à ce jour. Évaluation et Décision viennent ensuite
+ * (#322, #323).
  *
  * `sources` est la liste des sources de graine que l'exercice accepte, dans
  * l'ordre où le lanceur les propose ; une liste vide veut dire que la question
  * ne vient d'aucune position — c'est le cas de Scores, dont le vivier est les
  * 36 scores non ordonnés.
+ *
+ * `mode` est le mode de réponse (ADR-0040 règle 2), propriété de l'exercice et
+ * jamais réglage de session : ce qui est COMPTÉ ou RÉCITÉ se déclare (on
+ * révèle, on coche ce qu'on a raté), ce qui est ESTIMÉ se saisit — parce que
+ * là, la taille de l'erreur est la leçon.
+ *
+ * `boardIsTheQuestion` distingue les deux façons dont la source « plateau » se
+ * comporte. Pour Pions, le plateau EST la question : il n'y en a qu'une à
+ * poser, et « Suivante » reposerait la même. Pour Bearoff, le plateau est une
+ * GRAINE que le moteur joue sur un à quatre plis (ADR-0041 règle 2), donc
+ * chaque question diffère et l'enchaînement a un sens.
  */
 export const TRAINING_EXERCISES = Object.freeze([
     Object.freeze({ id: 'scores', mode: 'declared', sources: [], defaultSource: 'pool' }),
-    Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board' })
+    Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board', boardIsTheQuestion: true }),
+    Object.freeze({ id: 'bearoff', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool' })
 ]);
+
+/** @param {string} exercise */
+export function isEnteredExercise(exercise) {
+    return TRAINING_EXERCISES.some((e) => e.id === exercise && e.mode === 'entered');
+}
+
+/**
+ * Y a-t-il une question SUIVANTE à poser ? Non quand la source est le plateau
+ * d'un exercice dont le plateau est la question : on reposerait la même.
+ * @param {string} exercise @param {string} seedSource
+ */
+export function canAskAnother(exercise, seedSource) {
+    const declared = /** @type {{boardIsTheQuestion?: boolean}|undefined} */ (TRAINING_EXERCISES.find((e) => e.id === exercise));
+    return !(declared?.boardIsTheQuestion && seedSource === 'board');
+}
 
 /** Les limites par question : aucune par défaut, sinon 15, 30 ou 60 secondes. */
 export const TIME_LIMITS = Object.freeze([0, 15, 30, 60]);
@@ -39,6 +65,8 @@ export const TREND_WINDOW = 10;
  * @typedef {object} TrainingNumber
  * @property {string} type le type de nombre — c'est LUI que le journal compte
  * @property {number} value la vérité
+ * @property {number} [tolerance] en mode SAISI, l'écart toléré ; 0 sinon
+ * @property {number} [precision] les décimales à l'affichage
  *
  * @typedef {object} TrainingQuestion
  * @property {string} key de quoi la question est faite (un score, un id)
@@ -52,6 +80,8 @@ export const TREND_WINDOW = 10;
  * @property {boolean} revealed
  * @property {boolean} outOfTime
  * @property {boolean[]} faults
+ * @property {string[]} answers en mode SAISI, ce qui a été tapé, nombre par nombre
+ * @property {(number|null)[]} deviations l'écart SIGNÉ de chaque nombre saisi, `null` quand il n'y en a pas
  * @property {string} questionError la raison pour laquelle aucune question n'est posée, ou ''
  * @property {number} startedAt
  * @property {number} elapsedMs
@@ -75,6 +105,8 @@ export function newSession({ exercise, seedSource = '', limitSeconds = 0 }) {
         revealed: false,
         outOfTime: false,
         faults: [],
+        answers: [],
+        deviations: [],
         questionError: '',
         startedAt: 0,
         elapsedMs: 0,
@@ -97,10 +129,26 @@ export function askQuestion(session, question, now) {
         revealed: false,
         outOfTime: false,
         faults: question.numbers.map(() => false),
+        answers: question.numbers.map(() => ''),
+        deviations: question.numbers.map(() => null),
         questionError: '',
         startedAt: now,
         elapsedMs: 0
     };
+}
+
+/**
+ * Enregistre ce qui est tapé dans un champ, sans le juger : le jugement est à
+ * « Valider », une seule fois, et un champ qui se juge en cours de frappe
+ * annoncerait la réponse avant qu'on ait fini de la donner.
+ * @param {TrainingSessionState} session @param {number} index @param {string} text
+ */
+export function setAnswer(session, index, text) {
+    if (!session.question || session.revealed) return session;
+    if (index < 0 || index >= session.answers.length) return session;
+    const answers = session.answers.slice();
+    answers[index] = text;
+    return { ...session, answers };
 }
 
 /**
@@ -112,7 +160,7 @@ export function askQuestion(session, question, now) {
  * @param {TrainingSessionState} session @param {string} reason
  */
 export function failNextQuestion(session, reason) {
-    return { ...session, question: null, revealed: false, outOfTime: false, faults: [], questionError: reason };
+    return { ...session, question: null, revealed: false, outOfTime: false, faults: [], answers: [], deviations: [], questionError: reason };
 }
 
 /**
@@ -125,13 +173,35 @@ export function failNextQuestion(session, reason) {
  */
 export function reveal(session, now, { outOfTime = false } = {}) {
     if (!session.question || session.revealed) return session;
+    const judged = isEnteredExercise(session.exercise) && !outOfTime;
+    const verdicts = session.question.numbers.map((number, i) => (judged ? judgeNumber(number, session.answers[i]) : { wrong: outOfTime, deviation: null }));
     return {
         ...session,
         revealed: true,
         outOfTime,
         elapsedMs: Math.max(0, now - session.startedAt),
-        faults: session.question.numbers.map(() => outOfTime)
+        faults: verdicts.map((v) => v.wrong),
+        deviations: verdicts.map((v) => v.deviation)
     };
+}
+
+/**
+ * Le jugement d'un nombre SAISI (ADR-0040 règle 2). L'écart est SIGNÉ et il est
+ * gardé même quand la réponse est bonne : surestimer n'est pas sous-estimer, et
+ * c'est le sens de l'erreur qu'on vient apprendre — « je surestime les
+ * positions à trous » ne se lit que sur des écarts signés.
+ *
+ * Un champ vide ou illisible est une faute SANS écart : on ne mesure pas une
+ * réponse qui n'a pas été donnée, et la compter zéro tirerait la moyenne vers
+ * une justesse qui n'a pas eu lieu.
+ *
+ * @param {TrainingNumber} number @param {string} text
+ */
+function judgeNumber(number, text) {
+    const value = parseFloat(String(text ?? '').replace(',', '.'));
+    if (!Number.isFinite(value)) return { wrong: true, deviation: null };
+    const deviation = value - number.value;
+    return { wrong: Math.abs(deviation) > (number.tolerance ?? 0), deviation };
 }
 
 /**
@@ -142,6 +212,10 @@ export function reveal(session, now, { outOfTime = false } = {}) {
  */
 export function toggleFault(session, index) {
     if (!session.revealed || session.outOfTime) return session;
+    // En mode SAISI, c'est l'application qui juge : cocher reviendrait à se
+    // donner raison contre la tolérance, et l'écart enregistré ne
+    // correspondrait plus à la faute comptée.
+    if (isEnteredExercise(session.exercise)) return session;
     if (index < 0 || index >= session.faults.length) return session;
     const faults = session.faults.slice();
     faults[index] = !faults[index];
@@ -156,22 +230,27 @@ export function toggleFault(session, index) {
  */
 export function recordQuestion(session) {
     if (!session.question || !session.revealed) return session;
-    const items = session.question.numbers.map((number, i) => ({
-        numberType: number.type,
-        wrong: session.faults[i] === true,
+    const items = session.question.numbers.map((number, i) => {
         // Le mode déclaré ne produit aucun écart : un compte de pions ou une
-        // case de table est juste ou faux. Les colonnes existent pour le mode
-        // SAISI des tranches suivantes, et rester à `false` ici est ce qui
-        // garde la moyenne des écarts vide plutôt que nulle.
-        hasDeviation: false,
-        deviation: 0
-    }));
+        // case de table est juste ou faux. Rester à `false` ici est ce qui
+        // garde la moyenne des écarts vide plutôt que nulle — une colonne à
+        // zéro dirait « sans erreur », pas « sans mesure ».
+        const deviation = session.deviations[i];
+        return {
+            numberType: number.type,
+            wrong: session.faults[i] === true,
+            hasDeviation: deviation !== null && deviation !== undefined,
+            deviation: deviation ?? 0
+        };
+    });
     return {
         ...session,
         question: null,
         revealed: false,
         outOfTime: false,
         faults: [],
+        answers: [],
+        deviations: [],
         questionError: '',
         askedQuestions: session.askedQuestions + 1,
         times: session.outOfTime ? session.times : [...session.times, session.elapsedMs],

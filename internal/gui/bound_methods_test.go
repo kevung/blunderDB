@@ -29,6 +29,7 @@ var boundAppMethods = []string{
 	"CopyImageToClipboard",
 	"DeleteFile",
 	"EnsureBearoffTables",
+	"GenerateBearoffQuestion",
 	"GenerateBearoffTable",
 	"CancelBearoffGeneration",
 	"PauseBearoffGeneration",

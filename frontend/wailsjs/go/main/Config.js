@@ -94,6 +94,10 @@ export function GetTourSeen() {
   return window['go']['main']['Config']['GetTourSeen']();
 }
 
+export function GetTrainingSeedSources() {
+  return window['go']['main']['Config']['GetTrainingSeedSources']();
+}
+
 export function GetUIScale() {
   return window['go']['main']['Config']['GetUIScale']();
 }
@@ -200,6 +204,10 @@ export function SaveTheme(arg1) {
 
 export function SaveTourSeen(arg1) {
   return window['go']['main']['Config']['SaveTourSeen'](arg1);
+}
+
+export function SaveTrainingSeedSource(arg1, arg2) {
+  return window['go']['main']['Config']['SaveTrainingSeedSource'](arg1, arg2);
 }
 
 export function SaveUIScale(arg1) {

@@ -230,6 +230,17 @@ type Config struct {
 	// EpcChallenge persists the EPC panel's training mode ("défi"): results
 	// are masked after each edit until the user clicks a zone to reveal it.
 	EpcChallenge bool `json:"epc_challenge,omitempty"`
+	// TrainingSeedSources is the seed source each Training exercise was last
+	// started with — "pool", "board" or "library" (ADR-0041 rule 2: « chosen
+	// at launch and remembered »). Per exercise and not one value for all,
+	// because the exercises do not offer the same sources: Bearoff has three,
+	// Pips two, Scores none, and one remembered choice would keep resetting
+	// itself as the user moved between them.
+	//
+	// It lives here rather than in the library's metadata for the same reason
+	// the panel layout does: it is a habit of the person at this machine, not
+	// a property of the file they opened.
+	TrainingSeedSources map[string]string `json:"training_seed_sources,omitempty"`
 	// gammonNet settings (ADR-0011, ADR-0013). See the Min/Max/Default
 	// constants above for the meaning of each field. The two depths are
 	// pointers, like StatsFilterPersisted.DecisionType above: 0-ply is a
@@ -783,6 +794,30 @@ func (c *Config) GetEpcChallenge() bool {
 // SaveEpcChallenge persists the EPC training-mode flag.
 func (c *Config) SaveEpcChallenge(on bool) error {
 	c.EpcChallenge = on
+	return c.SaveConfig(c)
+}
+
+// GetTrainingSeedSources returns the remembered seed source of each Training
+// exercise, empty when none was ever chosen.
+func (c *Config) GetTrainingSeedSources() map[string]string {
+	out := make(map[string]string, len(c.TrainingSeedSources))
+	for exercise, source := range c.TrainingSeedSources {
+		out[exercise] = source
+	}
+	return out
+}
+
+// SaveTrainingSeedSource remembers the source one exercise was last started
+// with. An empty exercise is ignored rather than stored under "": a key nobody
+// can ask for again is a leak, not a memory.
+func (c *Config) SaveTrainingSeedSource(exercise, source string) error {
+	if exercise == "" {
+		return nil
+	}
+	if c.TrainingSeedSources == nil {
+		c.TrainingSeedSources = map[string]string{}
+	}
+	c.TrainingSeedSources[exercise] = source
 	return c.SaveConfig(c)
 }
 

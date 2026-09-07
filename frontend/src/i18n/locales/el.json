@@ -1567,16 +1567,12 @@
     "training": {
         "title": "Εξάσκηση",
         "progress": "Ερώτηση {i}/{n}",
-        "drillEpc": "EPC",
         "answer": "Απάντηση",
         "check": "Έλεγχος",
         "next": "Επόμενη",
         "finish": "Τέλος",
         "leave": "Έξοδος",
         "right": "Σωστό",
-        "wrong": "Λάθος",
-        "truth": "αναμενόμενο {value}",
-        "finished": "Η εξάσκηση τελείωσε: {correct}/{n}, διάμεσος χρόνος {seconds} δευτ.",
         "usage": "Χρήση: train <άσκηση> ({drills}).",
         "drillQuiz": "Κουίζ",
         "movePlaceholder": "13/7 8/7",
@@ -1593,11 +1589,13 @@
         "resetPlay": "Από την αρχή",
         "exercise": {
             "scores": "Σκορ",
-            "pips": "Pip"
+            "pips": "Pip",
+            "bearoff": "Bearoff"
         },
         "sources": {
             "board": "Ταμπλό",
-            "library": "Βάση"
+            "library": "Βάση",
+            "pool": "Δεξαμενή"
         },
         "exerciseLabel": "Άσκηση",
         "source": "Πηγή",
@@ -1634,7 +1632,16 @@
             "gv2": "Αξία gammon 2",
             "gv4": "Αξία gammon 4"
         },
-        "retry": "Δοκιμή ξανά"
+        "retry": "Δοκιμή ξανά",
+        "validate": "Έλεγχος",
+        "tolerance": "Ανοχή {value} πόντος.",
+        "refusal": {
+            "notBearoff": "Αυτή η άσκηση χρειάζεται bearoff: και οι δύο πλευρές εξ ολοκλήρου στην έδρα τους.",
+            "tooFewCheckers": "Αυτή η άσκηση χρειάζεται 4 έως 15 πούλια ανά πλευρά, τα υπόλοιπα βγαλμένα.",
+            "emptyBoard": "Ο πίνακας είναι άδειος: η ερώτηση έρχεται από τη δεξαμενή.",
+            "noTable": "Ο πίνακας bearoff δεν έχει δημιουργηθεί ακόμη: χωρίς αυτόν το EPC δεν έχει αλήθεια.",
+            "unknownSource": "Αυτή η άσκηση δεν προσφέρει αυτή την πηγή."
+        }
     },
     "explain": {
         "blots": "Χάνετε {cost} mMWC: η κίνηση που παίχτηκε αφήνει {blots} blots εκεί όπου η {best} αφήνει μόνο {bestBlots}.",

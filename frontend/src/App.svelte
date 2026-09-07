@@ -325,7 +325,11 @@
     // appris — `tp` et `takepoint` pour la fiche de score, comme les tables du
     // même nom ; `epc` et `quiz` restent servis par la bande, le temps que les
     // tranches suivantes les déplacent.
-    const TAB_EXERCISE_ALIASES = { scores: 'scores', tp: 'scores', takepoint: 'scores', pips: 'pips', pip: 'pips' };
+    // `epc` mène à `bearoff` : l'exercice n'a pas disparu de la bande, il a
+    // changé de nom en changeant de lieu — on regarde un bearoff, on répond un
+    // EPC (ADR-0040 règle 3). Une commande qu'on tapait hier ne doit pas
+    // répondre « exercice inconnu » aujourd'hui.
+    const TAB_EXERCISE_ALIASES = { scores: 'scores', tp: 'scores', takepoint: 'scores', pips: 'pips', pip: 'pips', bearoff: 'bearoff', epc: 'bearoff' };
 
     async function startTrainingCommand(drill) {
         const wanted = String(drill || '')
