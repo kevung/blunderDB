@@ -135,7 +135,7 @@ export async function startTraining(drill) {
     if (drill === 'quiz') questions = await buildQuizQuestions();
     else questions = await buildBoardQuestions(drill);
     if (questions.length === 0) {
-        setStatusBarMessage(tMsg('training.noQuestions'));
+        setStatusBarMessage(tMsg('training.noQuestion'));
         return false;
     }
     trainingDrillStore.set(drill);

@@ -150,8 +150,8 @@
                 {:else if canAskAnother}
                     <button type="button" data-testid="training-next" onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
                 {/if}
-                <button type="button" data-testid="training-finish" onclick={() => finishTrainingSession()}>{$t('training.finishSession')}</button>
-                <button type="button" data-testid="training-quit" onclick={() => quitTrainingSession()}>{$t('training.quit')}</button>
+                <button type="button" data-testid="training-finish" onclick={() => finishTrainingSession()}>{$t('training.finish')}</button>
+                <button type="button" data-testid="training-quit" onclick={() => quitTrainingSession()}>{$t('training.leave')}</button>
             </div>
         </div>
     {:else}
