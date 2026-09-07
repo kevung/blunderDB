@@ -19,7 +19,7 @@ Cadrage : entretien du 2026-09-07, dix-neuf décisions ; décision durable dans
 | [ux.md](ux.md) | placement, six vues, fiche de résultat, clavier, budgets de clics par persona, correction de saisie |
 | [integration.md](integration.md) | schéma 2.23.0, paquet `direction`, Wails, frontend, CLI, documentation, risques |
 | [nicomaque.md](nicomaque.md) | les quatorze demandes au moteur, à ouvrir dans son dépôt |
-| [plan.md](plan.md) | cinq lots, quarante-sept issues, ordre et parallélisme |
+| [plan.md](plan.md) | cinq lots, quarante-huit issues, ordre et parallélisme |
 
 ## Les deux contraintes de premier rang
 
