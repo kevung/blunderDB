@@ -105,13 +105,21 @@ M compté une fois par flux, hors comparaison. K = 0,28 s.
 | coup loin dans la liste (rang 12) | `3` `1` `j`×11 | 13 K = 3,6 s | → filtre du lot 2 |
 | idem, lot 2, filtre par clic sur le point de départ | `3` `1` H P B B H `j`×≤2 | 2 K + 2 H + P + 0,2 + ≤ 2 K ≈ 2,9 s | ≤ 3 s |
 | coup joué au plateau, dés déduits (lot 2) | H, 2 × (P B B) hops, H | 2 H + 2 P + 0,4 ≈ 3,4 s ; 4 pas (double) ≈ 5,9 s | souris seule ≤ 6 s |
-| dés à la souris, triangle 21 (lot 2) | H P(28 px) B B | 0,4 + 0,54 + 0,2 = 1,14 s | vs grille 36 : P(20 px) = 0,60 s → 1,20 s, et 36 cibles à lire |
+| dés à la souris, triangle 21 (lot 2) | H P(28 px) B B | 0,4 + 0,61 + 0,2 = **1,21 s** (mesuré) | vs grille 36 : P(20 px) = 0,66 s → 1,26 s, et 36 cibles à lire |
 | dés au clavier | 2 K | 0,56 s | référence |
 
 Le clavier bat la souris d'un facteur deux sur les dés ; le triangle bat la grille 6×6 de
-0,06 s par jet et supprime l'ambiguïté 3-1/1-3 (36 → 21 cibles à balayer du regard). Le coup
+0,05 s par jet et supprime l'ambiguïté 3-1/1-3 (36 → 21 cibles à balayer du regard). Le coup
 joué au plateau est le plus lent des trois modes de choix mais le seul qui couvre le coup
 illégal et qui dispense de saisir les dés.
+
+**Mesuré le 2026-09-07** (prototype jetable, trois variantes posées dans une fenêtre de
+1024 px, D pris du centre du plateau au centre de la case). La case de 28 px donne un ID de
+3,65 à 4,08 bits — et non 3,6 : la distance réelle dépasse les 300 px supposés — soit un clic
+de 1,15 à 1,21 s. La case élastique (37,6 px, bloc de 236 px) gagne 0,03 s, sous la résolution
+du modèle, contre 60 px de largeur et une cible dont la taille change avec le panneau : la
+case de 28 px est retenue. La grille de 36 à 20 px coûte 1,17 à 1,26 s. Le classement des
+trois designs tient donc, seule la valeur absolue était optimiste de 0,07 s.
 
 ### 4.2 Le videau
 

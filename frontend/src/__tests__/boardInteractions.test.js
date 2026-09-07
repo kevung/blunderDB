@@ -51,7 +51,11 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         anyModalOpen: writable(false),
         // Armé par les tests du quiz (#294) ; null partout ailleurs, donc le
         // clic retombe sur l'édition comme avant.
-        quizPlay: writable(/** @type {any} */ (null))
+        quizPlay: writable(/** @type {any} */ (null)),
+        // Le filtre des candidats d'une transcription (T2.2) : vide partout
+        // ailleurs, et le clic ne concerne alors pas le panneau.
+        transcriptionFilter: writable(/** @type {number[]} */ ([])),
+        transcriptionCandidates: writable(/** @type {any[]} */ ([]))
     };
     const state = { mode, previousDice: [3, 1], cubeBox: cubeBox(geom, position, false) };
     const deps = {
@@ -545,6 +549,94 @@ describe('the quiz move is played on the board', () => {
         const b = mount({ mode: 'EDIT' });
         b.click(b.slot(13, 2));
         expect(b.pos().board.points[13]).toEqual({ checkers: 3, color: 0 });
+        b.detach();
+    });
+});
+
+describe('le filtre des candidats par point de départ (T2.2)', () => {
+    /**
+     * Un plateau monté avec les candidats d'un jet en cours de transcription.
+     * @param {{mirrored?: boolean, candidates: any[]}} opts
+     */
+    function mountTranscription({ mirrored = false, candidates }) {
+        const b = mount({ mode: 'NORMAL', mirrored });
+        b.stores.transcriptionCandidates.set(candidates);
+        return b;
+    }
+
+    const step = (from) => ({ from, to: from - 1, hit: false });
+    const CANDIDATES = [{ steps: [step(13), step(8)] }, { steps: [step(13), step(13)] }, { steps: [step(24), step(6)] }];
+    const filter = (b) => get(b.stores.transcriptionFilter);
+
+    test('un clic sur un point de départ réduit la liste', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        b.click(b.slot(13, 0));
+        expect(filter(b)).toEqual([13]);
+        b.detach();
+    });
+
+    test('un second point réduit encore', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        b.click(b.slot(13, 0));
+        b.click(b.slot(8, 0));
+        expect(filter(b)).toEqual([13, 8]);
+        b.detach();
+    });
+
+    test('le point déjà filtré s’enlève : l’annulation sur la cible même', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        b.click(b.slot(13, 0));
+        b.click(b.slot(13, 0));
+        expect(filter(b)).toEqual([]);
+        b.detach();
+    });
+
+    test('un clic hors du damier lève le filtre', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        b.click(b.slot(13, 0));
+        b.click({ x: 4, y: 4 });
+        expect(filter(b)).toEqual([]);
+        b.detach();
+    });
+
+    // Le geste doit rester disponible pour le déplacement libre de pions
+    // (T2.4), qui a son propre état : un point d'où ne part aucun candidat ne
+    // fait rien du tout.
+    test('un point d’où ne part aucun candidat ne fait rien', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        b.click(b.slot(17, 0));
+        expect(filter(b)).toEqual([]);
+        b.detach();
+    });
+
+    test('sans candidats, le clic ne concerne pas la transcription', () => {
+        const b = mountTranscription({ candidates: [] });
+        b.click(b.slot(13, 0));
+        expect(filter(b)).toEqual([]);
+        b.detach();
+    });
+
+    test('un plateau en miroir ramène le point cliqué au modèle', () => {
+        const b = mountTranscription({ mirrored: true, candidates: CANDIDATES });
+        // En miroir, le point 13 du modèle est dessiné là où le 12 le serait.
+        b.click(b.slot(12, 0));
+        expect(filter(b)).toEqual([13]);
+        b.detach();
+    });
+
+    // Le filtre est un état d'AFFICHAGE : il ne touche pas à la position.
+    test('la position ne bouge pas', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        const before = JSON.stringify(b.pos());
+        b.click(b.slot(13, 0));
+        expect(JSON.stringify(b.pos())).toBe(before);
+        b.detach();
+    });
+
+    test('le bouton droit reste au menu de la position', () => {
+        const b = mountTranscription({ candidates: CANDIDATES });
+        b.click(b.slot(13, 0), 2);
+        expect(filter(b)).toEqual([]);
         b.detach();
     });
 });

@@ -284,6 +284,8 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
    "Clic (sur une ligne)", "Sélectionner ce candidat."
+   "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Pendant l'ouverture, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
+   "Clic (sur un point du damier)", "Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre."
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis."
    "Esc", "Abandonner la saisie en cours."
@@ -318,6 +320,18 @@ camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marqué
 dans le transcript, jamais corrigées d'office, et le curseur se place sur la
 première d'entre elles après chaque geste. La pile d'annulation vit en mémoire :
 elle est perdue à la fermeture du brouillon.
+
+Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du
+clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
+clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
+jet, jamais deux : 3-1 et 1-3 sont le même jet.
+
+Le filtre par point de départ est le geste du coup lointain. Descendre au
+douzième candidat coûte treize touches ; un clic sur le point d'où part le coup
+ne laisse que les coups qui en partent, et il ne reste que deux ou trois touches
+à faire. Le filtre ne change rien au brouillon : la liste est réduite à
+l'écran, les touches j et k parcourent la liste réduite, et le jet suivant lève
+le filtre.
 
 Une partie se termine par une passe, par une résignation ou par la sortie du
 quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du

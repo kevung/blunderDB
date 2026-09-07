@@ -95,6 +95,10 @@ export function clearTranscription() {
     transcriptionHistoryStore.set({ canUndo: false, canRedo: false });
     transcriptionHistoryActionStore.set(null);
     resetTranscriptionKeys();
+    // Le filtre par point appartient au jet en cours (T2.2) : sans brouillon
+    // ouvert il n'y a plus de jet, donc plus rien à filtrer.
+    transcriptionPointFilterStore.set([]);
+    transcriptionCandidateStepsStore.set([]);
 }
 
 /**
@@ -112,4 +116,35 @@ export const transcriptionKeyStore = writable(initialKeyState());
 /** Repart d'une saisie vide : à l'ouverture d'un brouillon, et à sa fermeture. */
 export function resetTranscriptionKeys() {
     transcriptionKeyStore.set(initialKeyState());
+}
+
+/**
+ * Les points de départ cliqués sur le plateau, qui réduisent la liste des
+ * candidats (T2.2, services/transcriptionFilter.js).
+ *
+ * Un état d'AFFICHAGE, et rien d'autre : il ne crée aucune Action, ne part
+ * jamais au moteur et disparaît avec le jet. Il vit ici parce que deux surfaces
+ * le regardent — le plateau, qui le pose au clic, et le panneau, qui montre la
+ * liste réduite — et qu'un troisième chemin entre les deux aurait été un
+ * chemin de plus à tenir en phase.
+ *
+ * @type {import('svelte/store').Writable<number[]>}
+ */
+export const transcriptionPointFilterStore = writable([]);
+
+/**
+ * Les candidats du jet en cours, réduits à ce que le filtre lit : leurs pas.
+ *
+ * Le plateau doit savoir de quels points part un coup pour décider si un clic
+ * le concerne, et il n'a pas à connaître le panneau pour cela. La liste
+ * complète (notations, équités, rangs) reste dans le composant : ici ne passe
+ * que ce que le geste utilise.
+ *
+ * @type {import('svelte/store').Writable<{steps: {from: number, to: number}[]}[]>}
+ */
+export const transcriptionCandidateStepsStore = writable([]);
+
+/** Plus de filtre : à chaque nouveau jet, à chaque déplacement du Cursor. */
+export function resetTranscriptionPointFilter() {
+    transcriptionPointFilterStore.set([]);
 }

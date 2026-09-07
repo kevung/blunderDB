@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:54+0200\n"
+"POT-Creation-Date: 2026-09-07 09:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -763,6 +763,34 @@ msgid "Sélectionner ce candidat."
 msgstr "Valitse kyseinen ehdokas."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le triangle des jets)"
+msgstr "Napsautus (heittokolmiossa)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur "
+"la diagonale. Pendant l'ouverture, le triangle laisse la place à une "
+"rangée de six dés, un clic donnant le dé d'un camp."
+msgstr ""
+"Heiton syöttö yhdellä eleellä: ruutu kantaa molemmat nopat, tuplat "
+"lävistäjällä. Avauksessa kolmio väistyy kuuden nopan rivin tieltä, ja "
+"yksi napsautus antaa yhden osapuolen nopan."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur un point du damier)"
+msgstr "Napsautus (laudan pisteessä)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ne garder que les candidats dont un pas part de ce point ; un second "
+"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
+"clic hors du damier lève le filtre."
+msgstr ""
+"Jäljelle jäävät vain ehdokkaat, joiden siirto lähtee tästä pisteestä; "
+"toinen piste kaventaa lisää, napsautus jo suodatetussa pisteessä poistaa "
+"sen, ja napsautus laudan ulkopuolella poistaa suodatuksen."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Kirjaa valittu siirto (pelin viimeinen siirto)."
 
@@ -898,7 +926,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -906,7 +934,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:308
+#: ../../source/raccourcis.rst:310
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -924,7 +952,7 @@ msgstr ""
 "”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai "
 "taaksepäin muutoksen jälkeen tallentaa korjauksen samalla."
 
-#: ../../source/raccourcis.rst:315
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -942,7 +970,36 @@ msgstr ""
 " jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun "
 "luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:322
+#: ../../source/raccourcis.rst:324
+msgid ""
+"Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
+"côté du clavier et non à sa place : deux chiffres restent deux fois plus "
+"rapides qu'un clic, et le triangle est là pour qui transcrit la souris à "
+"la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet."
+msgstr ""
+"Kahdenkymmenenyhden heiton kolmio on heiton kahden ruudun alla, "
+"näppäimistön vierellä eikä sen tilalla: kaksi numeroa on yhä kaksi kertaa"
+" nopeampi kuin napsautus, ja kolmio on sitä varten, joka kirjaa käsi "
+"hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat "
+"sama heitto."
+
+#: ../../source/raccourcis.rst:329
+msgid ""
+"Le filtre par point de départ est le geste du coup lointain. Descendre au"
+" douzième candidat coûte treize touches ; un clic sur le point d'où part "
+"le coup ne laisse que les coups qui en partent, et il ne reste que deux "
+"ou trois touches à faire. Le filtre ne change rien au brouillon : la "
+"liste est réduite à l'écran, les touches j et k parcourent la liste "
+"réduite, et le jet suivant lève le filtre."
+msgstr ""
+"Lähtöpisteen mukainen suodatus on kaukana listalla olevan siirron ele. "
+"Kahdenteentoista ehdokkaaseen laskeutuminen maksaa kolmetoista näppäilyä;"
+" napsautus pisteeseen, josta siirto lähtee, jättää jäljelle vain sieltä "
+"lähtevät siirrot, ja jäljelle jää kaksi tai kolme näppäilyä. Suodatus ei "
+"muuta luonnoksessa mitään: lista kapenee näytöllä, näppäimet j ja k "
+"kulkevat kavennettua listaa, ja seuraava heitto poistaa suodatuksen."
+
+#: ../../source/raccourcis.rst:336
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -955,7 +1012,7 @@ msgstr ""
 "arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
 "tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:341
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -979,7 +1036,7 @@ msgstr ""
 "Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
 " sen kopioimiseen."
 
-#: ../../source/raccourcis.rst:337
+#: ../../source/raccourcis.rst:351
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -1000,7 +1057,7 @@ msgstr ""
 "sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen "
 "vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena."
 
-#: ../../source/raccourcis.rst:346
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -1012,7 +1069,7 @@ msgstr ""
 "kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä "
 "(”Invalid move”) ja poikkeavat siitä eteenpäin."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:368
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

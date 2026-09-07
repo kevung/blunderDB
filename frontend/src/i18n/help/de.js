@@ -1306,6 +1306,14 @@ export default {
 <td>Diesen Kandidaten auswählen.</td>
 </tr>
 <tr>
+<td>Klick (auf das Wurfdreieck)</td>
+<td>Den Wurf mit einer einzigen Geste eingeben: das Feld trägt beide Würfel, Pasch auf der Diagonalen. Während der Eröffnung weicht das Dreieck einer Reihe von sechs Würfeln, ein Klick gibt den Würfel einer Seite.</td>
+</tr>
+<tr>
+<td>Klick (auf einen Punkt des Bretts)</td>
+<td>Nur die Kandidaten behalten, bei denen ein Schritt von diesem Punkt ausgeht; ein zweiter Punkt engt weiter ein, ein Klick auf den bereits gefilterten Punkt entfernt ihn, und ein Klick neben das Brett hebt den Filter auf.</td>
+</tr>
+<tr>
 <td>EINGABE</td>
 <td>Den ausgewählten Zug erfassen (der letzte Zug einer Partie).</td>
 </tr>
@@ -1378,6 +1386,8 @@ export default {
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
 <p>Den Cursor auf eine Aktion zurücksetzen und erneut eingeben korrigiert sie <strong>an Ort und Stelle</strong>: Das Bestätigen ersetzt die Aktion, und der Cursor kehrt dorthin zurück, wo er war. Werden die Würfel korrigiert und bleibt der erfasste Zug ein gültiger Zug des neuen Wurfs, wird er beibehalten; andernfalls wird der erste Kandidat des neuen Wurfs vorgeschlagen und der Zug bis zur Bestätigung als „zu prüfen“ gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder zurückbewegt, so wird die Korrektur dabei übernommen.</p>
 <p>Nichts wird abgelehnt und nichts gelöscht: Eine Aktion derselben Seite wie ihre Nachbarin einzufügen erzeugt einen doppelten Zug, eine Aktion zu löschen kann einen weiteren erzeugen, eine Seite zu ändern kann die folgenden Züge ungültig machen. Diese Unstimmigkeiten werden im Transkript markiert, niemals von selbst behoben, und der Cursor springt nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird.</p>
+<p>Das Dreieck der einundzwanzig Würfe liegt unter den beiden Wurffeldern, neben der Tastatur und nicht an ihrer Stelle: zwei Ziffern bleiben doppelt so schnell wie ein Klick, und das Dreieck ist für den da, der mit der Hand an der Maus transkribiert. Ein Feld je Wurf, nie zwei: 3-1 und 1-3 sind derselbe Wurf.</p>
+<p>Der Filter nach Ausgangspunkt ist die Geste für einen Zug weit unten in der Liste. Bis zum zwölften Kandidaten hinabzugehen kostet dreizehn Tastenanschläge; ein Klick auf den Punkt, von dem der Zug ausgeht, lässt nur die Züge übrig, die von dort ausgehen, und es bleiben zwei oder drei Anschläge. Der Filter ändert nichts am Entwurf: die Liste wird auf dem Bildschirm eingeengt, die Tasten j und k laufen durch die eingeengte Liste, und der nächste Wurf hebt den Filter auf.</p>
 <p>Eine Partie endet durch ein Aufgeben, durch eine Resignation oder durch das Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit dem Wert des Dopplerwürfels). Punktestand, Crawford-Partie und Matchende werden dann über den Würfeln angezeigt, und die Eröffnung der nächsten Partie wird erwartet.</p>
 <p>Das Transkript nimmt die rechte Hälfte des Panels ein: eine Spalte je Spieler, eine Zeile je Zug, die Dopplerabgabe und das Partieende in der Spalte dessen, der handelt. Die Zelle des Cursors ist umrahmt; wird der Cursor bewegt, zeigt das Brett wieder die Position der angesteuerten Aktion und deren Kandidaten, wobei der gespielte Zug ausgewählt ist. Eine Unstimmigkeit (unerlaubter Zug, doppelter Zug, unmögliche Dopplerabgabe, Aktion nach dem Matchende, unstimmige Würfel) markiert ihre Zelle und wird in einem Tooltip benannt. Partien lassen sich einklappen; die Partie des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten <code>.mat</code>-Text des Entwurfs mit einer Schaltfläche zum Kopieren.</p>
 <p>Die Entwurfsleiste trägt drei Schaltflächen. „Speichern“ (STRG-EINGABE) schreibt das Match in die Bibliothek: beim ersten Mal angelegt, danach unter derselben Kennung ersetzt, und die Analyse allein der neuen Positionen beginnt sofort, mit Fortschritt und Abbruch in der Statusleiste. Die Entwurfsleiste nennt den Zustand: nie gespeichert, vor so und so langer Zeit gespeichert, oder seitdem geändert. „.mat exportieren“ schreibt das Match in eine Jellyfish-Datei, genau so, wie es eingegeben wurde. „Entwurf schließen“ löscht den Entwurf nach einer Bestätigung; ein bereits gespeichertes Match bleibt endgültig in der Bibliothek.</p>

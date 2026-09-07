@@ -73,8 +73,9 @@
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
-    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState } from '../services/transcriptionKeys.js';
+    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState, enterDicePair, enterSingleDie, DICE_KINDS } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
+    import DiceTriangle from './DiceTriangle.svelte';
     import TranscriptView from './TranscriptView.svelte';
     import {
         transcriptionListStore,
@@ -82,10 +83,14 @@
         transcriptionKeyStore,
         transcriptionHistoryStore,
         transcriptionHistoryActionStore,
+        transcriptionPointFilterStore,
+        transcriptionCandidateStepsStore,
         setTranscription,
         clearTranscription,
-        resetTranscriptionKeys
+        resetTranscriptionKeys,
+        resetTranscriptionPointFilter
     } from '../stores/transcriptionStore.js';
+    import { filterByPoints } from '../services/transcriptionFilter.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -330,7 +335,9 @@
             case COMMAND.REDO:
                 return { Kind: 'redo' };
             case COMMAND.SELECT: {
-                const entry = ranked[command.index];
+                // Le rang est celui de la liste MONTRÉE : filtrée, c'est elle
+                // que `j`/`k` et le clic parcourent (T2.2).
+                const entry = visible[command.index];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
             }
             default:
@@ -416,13 +423,17 @@
             const pruneK = await GetGammonNetPruneK();
             const result = await EvaluatePositionImmediate(pos, pruneK, 0);
             const moves = result?.refused ? [] : (result?.moves ?? []);
-            const list = moves.map((move) => ({ move, gen: byNotation[move.move] })).filter((row) => row.gen !== undefined);
+            const list = moves
+                .map((move) => ({ move, gen: byNotation[move.move] }))
+                .filter((row) => row.gen !== undefined)
+                // Les pas du coup, que le filtre par point de départ lit (T2.2).
+                .map((row) => ({ ...row, steps: plays[row.gen]?.steps ?? [] }));
             if (list.length) return { list, unranked: false };
         } catch (err) {
             logger.error('The 0-ply ranking of a transcription roll failed:', err);
         }
         // The generator's own order, which is an order and not a ranking.
-        return { list: plays.map((play, index) => ({ move: { index, move: play.notation }, gen: index })), unranked: true };
+        return { list: plays.map((play, index) => ({ move: { index, move: play.notation }, gen: index, steps: play.steps ?? [] })), unranked: true };
     }
 
     /**
@@ -432,6 +443,10 @@
      */
     async function settleCandidates() {
         if (!get(transcriptionKeyStore).awaitingCandidates) return;
+        // Un NOUVEAU jet : le filtre par point appartenait au précédent. Il est
+        // levé ici et non à chaque frappe — `j`/`k` doivent parcourir la liste
+        // réduite, c'est de là que vient le gain d'ux.md §4.1.
+        resetTranscriptionPointFilter();
         const pos = rollPosition();
         if (!pos) return;
 
@@ -473,6 +488,7 @@
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
         const info = (ann.actions ?? [])[ann.cursor ?? 0];
+        resetTranscriptionPointFilter();
         ranked = [];
         unranked = false;
         danced = false;
@@ -526,6 +542,37 @@
         panelEl?.focus({ preventScroll: true });
     }
 
+    // ── le triangle des jets (T2.1) ──────────────────────────────────────
+    //
+    // Le clic passe par la MÊME machine que les touches — `enterDicePair`
+    // applique les deux dés l'un après l'autre, comme deux frappes — et le
+    // panneau en fait exactement ce qu'il fait d'une frappe : la liste du jet
+    // précédent est jetée avant que les gestes ne partent, puis les candidats
+    // du nouveau jet sont demandés. Le focus revient au panneau : la souris
+    // donne le jet, le clavier finit le tour, et rien ne se perd entre les deux.
+
+    function applyMouseDice(next) {
+        resetTranscriptionPointFilter();
+        ranked = [];
+        unranked = false;
+        danced = false;
+        transcriptionKeyStore.set(next.state);
+        run(next.commands).then(settleCandidates);
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    /** Une case du triangle : le jet entier, dé fort d'abord. */
+    function pickDice(high, low) {
+        if (!draft) return;
+        applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, { expects }));
+    }
+
+    /** Une case de la rangée des six : le dé d'un camp, à l'ouverture. */
+    function pickDie(die) {
+        if (!draft) return;
+        applyMouseDice(enterSingleDie(get(transcriptionKeyStore), die, { expects }));
+    }
+
     function chooseCandidate(index) {
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
@@ -567,6 +614,7 @@
         // leaves a list that belongs to nobody: it goes before the gestures do,
         // so no `select` can address it any more.
         if (result.state.phase === PHASE.DICE || result.state.phase === PHASE.DIE1) {
+            resetTranscriptionPointFilter();
             ranked = [];
             unranked = false;
         }
@@ -637,6 +685,10 @@
     onDestroy(() => {
         document.removeEventListener('keydown', handleKeyDown);
         selectedMoveStore.set(null);
+        // Le plateau lit ces deux magasins pour décider si un clic le concerne :
+        // un panneau démonté ne doit plus rien filtrer.
+        transcriptionCandidateStepsStore.set([]);
+        resetTranscriptionPointFilter();
     });
 
     // The panel takes the keyboard as soon as a draft is open: the whole point
@@ -680,7 +732,7 @@
             selectedMoveStore.set(null);
             return;
         }
-        selectedMoveStore.set(ranked[keys.selected]?.move?.move ?? null);
+        selectedMoveStore.set(visible[keys.selected]?.move?.move ?? null);
     });
 
     // ── what the panel reads ─────────────────────────────────────────────
@@ -778,7 +830,47 @@
     // here and not drawn on the board.
     let dieCells = $derived([keys.dice[0] || '·', keys.dice[1] || '·']);
 
-    let rankedMoves = $derived(ranked.map((row) => row.move));
+    // Le triangle n'est là que lorsqu'un jet est attendu : devant une réponse au
+    // videau, pendant une résignation ou une fois le match fini, il n'y a pas de
+    // dé à donner et une cible qui ne répond à rien vaut moins que pas de cible.
+    let diceEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && DICE_KINDS.has(expects));
+
+    // ── le filtre par point de départ (T2.2) ─────────────────────────────
+    //
+    // Le plateau POSE le filtre (utils/boardInteractions.js), le panneau montre
+    // la liste réduite : c'est un état d'affichage, il ne crée aucune Action et
+    // ne rappelle pas le moteur. `ranked` reste le classement complet — c'est
+    // lui qu'on retrouve quand le filtre tombe — et `visible` est ce qui est
+    // montré, donc ce que tout rang désigne : `j`/`k`, le clic sur une ligne,
+    // les flèches du plateau.
+    let visible = $derived(filterByPoints(ranked, $transcriptionPointFilterStore));
+
+    // Ce que le plateau a besoin de savoir des candidats, et rien de plus : les
+    // pas, pour reconnaître un point de départ.
+    $effect(() => {
+        transcriptionCandidateStepsStore.set(ranked.map((row) => ({ steps: row.steps ?? [] })));
+    });
+
+    // Le filtre a changé : la liste montrée n'a plus la même longueur, et le
+    // premier de la liste réduite est présélectionné — sans quoi `j` partirait
+    // d'un rang qui ne veut plus rien dire. Gardé par la clé du filtre : la
+    // même liste ne doit pas se re-sélectionner à chaque changement de `ranked`.
+    let lastFilterKey = '';
+    $effect(() => {
+        const points = $transcriptionPointFilterStore;
+        const filterKey = points.join(',');
+        if (filterKey === lastFilterKey) return;
+        lastFilterKey = filterKey;
+
+        const state = get(transcriptionKeyStore);
+        if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return;
+        const list = filterByPoints(ranked, points);
+        if (!list.length) return;
+        transcriptionKeyStore.set({ ...state, candidateCount: list.length, selected: 0 });
+        run([{ kind: COMMAND.SELECT, index: 0 }]);
+    });
+
+    let rankedMoves = $derived(visible.map((row) => row.move));
     // Which referential the equity column is stated in (ADR-0016 point 6,
     // ADR-0019): money points at money play, normalised match equity at a score.
     let isMoney = $derived(isMoneyPosition(annotated?.next?.position));
@@ -902,6 +994,17 @@
                         {/if}
                     </div>
 
+                    {#if diceEntryOpen}
+                        <!-- La cible souris des dés (T2.1), SOUS les deux cases
+                             du jet et jamais à leur place : le clavier reste
+                             deux fois plus rapide (0,56 s contre 1,21 s) et les
+                             deux entrées coexistent. Sous, et non à côté :
+                             mesuré à 178 px, le triangle ne laisserait pas de
+                             quoi écrire la phrase du camp au trait dans une
+                             colonne de 288 px. -->
+                        <DiceTriangle single={expects === 'opening'} onPick={pickDice} onDie={pickDie} />
+                    {/if}
+
                     {#if lastFlags.length}
                         <!-- Une Incohérence est MARQUÉE, jamais refusée (ADR-0044) :
                              l'Action est dans le document, et la phrase dit laquelle. -->
@@ -937,11 +1040,17 @@
                         <p class="hint">{$t('transcription.chosen')}</p>
                     {/if}
 
-                    {#if ranked.length}
+                    {#if $transcriptionPointFilterStore.length}
+                        <!-- Le filtre est un état d'AFFICHAGE (T2.2) : il est
+                             dit à l'écran, jamais écrit dans le document. -->
+                        <p class="hint">{$t('transcription.pointFilter', { points: $transcriptionPointFilterStore.join(', '), n: visible.length })}</p>
+                    {/if}
+
+                    {#if visible.length}
                         {#if unranked}
                             <p class="hint">{$t('transcription.unranked')}</p>
                             <ol class="plain-candidates">
-                                {#each ranked as row, index (row.gen)}
+                                {#each visible as row, index (row.gen)}
                                     <li>
                                         <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)}>{row.move.move}</button>
                                     </li>

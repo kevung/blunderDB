@@ -1306,6 +1306,14 @@ export default {
 <td>Selezionare quel candidato.</td>
 </tr>
 <tr>
+<td>Clic (sul triangolo dei tiri)</td>
+<td>Inserire il tiro con un solo gesto: la casella porta entrambi i dadi, i doppi sulla diagonale. Durante l'apertura il triangolo lascia il posto a una fila di sei dadi, e un clic dà il dado di un campo.</td>
+</tr>
+<tr>
+<td>Clic (su un punto del tavoliere)</td>
+<td>Tenere solo i candidati con un passo che parte da quel punto; un secondo punto riduce ancora, un clic sul punto già filtrato lo toglie, e un clic fuori dal tavoliere elimina il filtro.</td>
+</tr>
+<tr>
 <td>INVIO</td>
 <td>Registrare la mossa selezionata (ultima mossa di una partita).</td>
 </tr>
@@ -1378,6 +1386,8 @@ export default {
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
 <p>Riportare il cursore su un'azione e ridigitare la corregge <strong>sul posto</strong>: la convalida sostituisce l'azione e il cursore torna dov'era. Se i dadi sono corretti e la mossa registrata resta una mossa legale del nuovo lancio, viene conservata; altrimenti viene proposto il primo candidato del nuovo lancio e la mossa è segnalata «da rivedere» fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa registra la correzione al passaggio.</p>
 <p>Nulla viene rifiutato né eliminato: inserire un'azione dello stesso campo della vicina crea un doppio turno, eliminare un'azione può crearne un altro, cambiare un campo può rendere illegali le mosse che seguono. Queste incoerenze sono segnalate nel transcript, mai corrette d'ufficio, e il cursore si posiziona sulla prima di esse dopo ogni gesto. La pila di annullamento vive in memoria: va persa alla chiusura della bozza.</p>
+<p>Il triangolo dei ventuno tiri sta sotto le due caselle del tiro, accanto alla tastiera e non al suo posto: due cifre restano due volte più rapide di un clic, e il triangolo è lì per chi trascrive con la mano sul mouse. Una casella per tiro, mai due: 3-1 e 1-3 sono lo stesso tiro.</p>
+<p>Il filtro per punto di partenza è il gesto della mossa lontana nell'elenco. Scendere al dodicesimo candidato costa tredici tasti; un clic sul punto da cui parte la mossa lascia solo le mosse che ne partono, e restano due o tre tasti da battere. Il filtro non cambia nulla nella bozza: l'elenco è ridotto sullo schermo, i tasti j e k percorrono l'elenco ridotto, e il tiro successivo toglie il filtro.</p>
 <p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
 <p>La barra della bozza porta tre pulsanti. «Salva» (CTRL-INVIO) scrive la partita nella libreria: creata la prima volta, sostituita in seguito con lo stesso identificatore, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. La barra della bozza ne dice lo stato: mai salvata, salvata da tanto, o modificata da allora. «Esporta .mat» scrive la partita in un file Jellyfish, così come è stata digitata. «Chiudi la bozza» elimina la bozza dopo una conferma; una partita già salvata resta nella libreria, definitiva.</p>

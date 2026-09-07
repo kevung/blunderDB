@@ -113,8 +113,12 @@ export const COMMAND = Object.freeze({
     REDO: 'redo'
 });
 
-/** Les sortes d'Action dont la saisie passe par deux dés. */
-const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
+/**
+ * Les sortes d'Action dont la saisie passe par deux dés. Exporté parce que le
+ * panneau y lit s'il doit offrir sa cible souris (T2.1) : deux listes des mêmes
+ * sortes finiraient par diverger.
+ */
+export const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
 
 /** Le niveau d'une résignation : simple, gammon, backgammon. */
 const RESIGN_LEVELS = new Set([1, 2, 3]);
@@ -470,4 +474,42 @@ export function applyCandidates(state, count) {
         state: { ...state, awaitingCandidates: false, candidateCount: count, selected: 0, phase: PHASE.ROLL },
         commands: [{ kind: COMMAND.SELECT, index: 0 }]
     };
+}
+
+/**
+ * Le jet donné d'un seul geste — le clic sur une case du triangle (T2.1).
+ *
+ * C'est LA MÊME chose que les deux frappes, et pas une seconde règle : les deux
+ * dés passent par `enterDie`, dans l'ordre, exactement comme deux touches. Ce
+ * qu'un chiffre fait depuis « jet corrigeable » (recommencer) ou depuis
+ * « candidat choisi » (valider, puis ouvrir le jet suivant) est donc fait aussi
+ * par le clic, sans que rien de tout cela soit réécrit ici.
+ *
+ * Un clic n'est PAS moins cher qu'une frappe : ux.md §4.1 le mesure à 1,18 s
+ * contre 0,56 s pour les deux touches. Le triangle est une entrée pour la
+ * souris, jamais un remplacement du clavier.
+ *
+ * @param {object} state
+ * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
+ * @param {number} d2
+ * @param {{expects?: string}} context
+ * @returns {{state: object, commands: {kind: string, value?: number, index?: number}[]}}
+ */
+export function enterDicePair(state, d1, d2, { expects = 'checker' } = {}) {
+    const first = enterDie(state, d1, expects);
+    const second = enterDie(first.state, d2, expects);
+    return { state: second.state, commands: [...first.commands, ...second.commands] };
+}
+
+/**
+ * Un seul dé, au clic : la rangée des six dés de l'ouverture, où chaque camp
+ * donne le sien (fonctionnel.md §1.2). Même chemin qu'une touche chiffrée.
+ *
+ * @param {object} state
+ * @param {number} die
+ * @param {{expects?: string}} context
+ */
+export function enterSingleDie(state, die, { expects = 'checker' } = {}) {
+    const result = enterDie(state, die, expects);
+    return { state: result.state, commands: result.commands };
 }

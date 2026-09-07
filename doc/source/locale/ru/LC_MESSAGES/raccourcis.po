@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:54+0200\n"
+"POT-Creation-Date: 2026-09-07 09:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -759,6 +759,34 @@ msgid "Sélectionner ce candidat."
 msgstr "Выбрать этот вариант."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le triangle des jets)"
+msgstr "Щелчок (по треугольнику бросков)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur "
+"la diagonale. Pendant l'ouverture, le triangle laisse la place à une "
+"rangée de six dés, un clic donnant le dé d'un camp."
+msgstr ""
+"Ввод броска одним движением: клетка несёт обе кости, дубли — по "
+"диагонали. Во время розыгрыша первого хода треугольник уступает место "
+"ряду из шести костей, и один щелчок даёт кость одной стороны."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur un point du damier)"
+msgstr "Щелчок (по пункту доски)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ne garder que les candidats dont un pas part de ce point ; un second "
+"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
+"clic hors du damier lève le filtre."
+msgstr ""
+"Оставить только те варианты, в которых есть шаг из этого пункта; второй "
+"пункт сужает список ещё сильнее, щелчок по уже выбранному пункту снимает "
+"его, а щелчок вне доски снимает фильтр целиком."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Записать выбранный ход (последний ход партии)."
 
@@ -892,7 +920,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -900,7 +928,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:308
+#: ../../source/raccourcis.rst:310
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -917,7 +945,7 @@ msgstr ""
 " броска, а ход помечается «к проверке» до подтверждения. Перемещение "
 "курсора вперёд или назад после изменения записывает исправление попутно."
 
-#: ../../source/raccourcis.rst:315
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -934,7 +962,36 @@ msgstr ""
 "самовольно, и курсор после каждого жеста встаёт на первое из них. Стек "
 "отмены живёт в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:322
+#: ../../source/raccourcis.rst:324
+msgid ""
+"Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
+"côté du clavier et non à sa place : deux chiffres restent deux fois plus "
+"rapides qu'un clic, et le triangle est là pour qui transcrit la souris à "
+"la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet."
+msgstr ""
+"Треугольник из двадцати одного броска расположен под двумя клетками "
+"броска, рядом с клавиатурой, а не вместо неё: две цифры по-прежнему вдвое"
+" быстрее щелчка, а треугольник существует для того, кто записывает партию"
+" с рукой на мыши. Одна клетка на бросок, никогда не две: 3-1 и 1-3 — это "
+"один и тот же бросок."
+
+#: ../../source/raccourcis.rst:329
+msgid ""
+"Le filtre par point de départ est le geste du coup lointain. Descendre au"
+" douzième candidat coûte treize touches ; un clic sur le point d'où part "
+"le coup ne laisse que les coups qui en partent, et il ne reste que deux "
+"ou trois touches à faire. Le filtre ne change rien au brouillon : la "
+"liste est réduite à l'écran, les touches j et k parcourent la liste "
+"réduite, et le jet suivant lève le filtre."
+msgstr ""
+"Фильтр по пункту отправления — это приём для хода, находящегося далеко в "
+"списке. Спуститься к двенадцатому варианту стоит тринадцати нажатий; "
+"щелчок по пункту, из которого идёт ход, оставляет только ходы, выходящие "
+"оттуда, и остаётся сделать два-три нажатия. Фильтр ничего не меняет в "
+"черновике: список сужается на экране, клавиши j и k проходят по суженному"
+" списку, а следующий бросок снимает фильтр."
+
+#: ../../source/raccourcis.rst:336
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -947,7 +1004,7 @@ msgstr ""
 " партия Кроуфорда и окончание матча показываются тогда над кубиками, и "
 "ожидается открытие следующей партии."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:341
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -971,7 +1028,7 @@ msgstr ""
 "Разворачиваемая панель показывает точный текст ``.mat`` черновика и "
 "кнопку для его копирования."
 
-#: ../../source/raccourcis.rst:337
+#: ../../source/raccourcis.rst:351
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -993,7 +1050,7 @@ msgstr ""
 "черновик после подтверждения; уже сохранённый матч остаётся в библиотеке "
 "окончательно."
 
-#: ../../source/raccourcis.rst:346
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -1005,7 +1062,7 @@ msgstr ""
 "сыгран, с предупреждением, что gnubg и XG отметят его («Invalid move») и "
 "дальше разойдутся."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:368
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

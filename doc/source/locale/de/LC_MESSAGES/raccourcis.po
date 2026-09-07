@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 08:54+0200\n"
+"POT-Creation-Date: 2026-09-07 09:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -771,6 +771,35 @@ msgid "Sélectionner ce candidat."
 msgstr "Diesen Kandidaten auswählen."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le triangle des jets)"
+msgstr "Klick (auf das Wurfdreieck)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur "
+"la diagonale. Pendant l'ouverture, le triangle laisse la place à une "
+"rangée de six dés, un clic donnant le dé d'un camp."
+msgstr ""
+"Den Wurf mit einer einzigen Geste eingeben: das Feld trägt beide Würfel, "
+"Pasch auf der Diagonalen. Während der Eröffnung weicht das Dreieck einer "
+"Reihe von sechs Würfeln, ein Klick gibt den Würfel einer Seite."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur un point du damier)"
+msgstr "Klick (auf einen Punkt des Bretts)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ne garder que les candidats dont un pas part de ce point ; un second "
+"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
+"clic hors du damier lève le filtre."
+msgstr ""
+"Nur die Kandidaten behalten, bei denen ein Schritt von diesem Punkt "
+"ausgeht; ein zweiter Punkt engt weiter ein, ein Klick auf den bereits "
+"gefilterten Punkt entfernt ihn, und ein Klick neben das Brett hebt den "
+"Filter auf."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Den ausgewählten Zug erfassen (der letzte Zug einer Partie)."
 
@@ -908,7 +937,7 @@ msgstr "STRG-UMSCHALT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Die rückgängig gemachte Geste wiederherstellen."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -916,7 +945,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:308
+#: ../../source/raccourcis.rst:310
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -935,7 +964,7 @@ msgstr ""
 "gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
 "zurückbewegt, so wird die Korrektur dabei übernommen."
 
-#: ../../source/raccourcis.rst:315
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -953,7 +982,37 @@ msgstr ""
 "nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im "
 "Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:322
+#: ../../source/raccourcis.rst:324
+msgid ""
+"Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
+"côté du clavier et non à sa place : deux chiffres restent deux fois plus "
+"rapides qu'un clic, et le triangle est là pour qui transcrit la souris à "
+"la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet."
+msgstr ""
+"Das Dreieck der einundzwanzig Würfe liegt unter den beiden Wurffeldern, "
+"neben der Tastatur und nicht an ihrer Stelle: zwei Ziffern bleiben "
+"doppelt so schnell wie ein Klick, und das Dreieck ist für den da, der mit"
+" der Hand an der Maus transkribiert. Ein Feld je Wurf, nie zwei: 3-1 und "
+"1-3 sind derselbe Wurf."
+
+#: ../../source/raccourcis.rst:329
+msgid ""
+"Le filtre par point de départ est le geste du coup lointain. Descendre au"
+" douzième candidat coûte treize touches ; un clic sur le point d'où part "
+"le coup ne laisse que les coups qui en partent, et il ne reste que deux "
+"ou trois touches à faire. Le filtre ne change rien au brouillon : la "
+"liste est réduite à l'écran, les touches j et k parcourent la liste "
+"réduite, et le jet suivant lève le filtre."
+msgstr ""
+"Der Filter nach Ausgangspunkt ist die Geste für einen Zug weit unten in "
+"der Liste. Bis zum zwölften Kandidaten hinabzugehen kostet dreizehn "
+"Tastenanschläge; ein Klick auf den Punkt, von dem der Zug ausgeht, lässt "
+"nur die Züge übrig, die von dort ausgehen, und es bleiben zwei oder drei "
+"Anschläge. Der Filter ändert nichts am Entwurf: die Liste wird auf dem "
+"Bildschirm eingeengt, die Tasten j und k laufen durch die eingeengte "
+"Liste, und der nächste Wurf hebt den Filter auf."
+
+#: ../../source/raccourcis.rst:336
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -967,7 +1026,7 @@ msgstr ""
 "Partie und Matchende werden dann über den Würfeln angezeigt, und die "
 "Eröffnung der nächsten Partie wird erwartet."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:341
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -991,7 +1050,7 @@ msgstr ""
 " des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten "
 "``.mat``-Text des Entwurfs mit einer Schaltfläche zum Kopieren."
 
-#: ../../source/raccourcis.rst:337
+#: ../../source/raccourcis.rst:351
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -1014,7 +1073,7 @@ msgstr ""
 "Bestätigung; ein bereits gespeichertes Match bleibt endgültig in der "
 "Bibliothek."
 
-#: ../../source/raccourcis.rst:346
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -1026,7 +1085,7 @@ msgstr ""
 "wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden "
 "(„Invalid move“) und danach abweichen."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:368
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 
