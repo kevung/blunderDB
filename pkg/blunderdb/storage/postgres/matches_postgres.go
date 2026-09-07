@@ -276,6 +276,25 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 	return nil
 }
 
+// ReplaceHeader rewrites a match's header columns in place — see
+// storage.MatchStore. The hashes go in through nullableString for the same
+// reason Save does it: their UNIQUE index counts two empty strings as a
+// duplicate, where two NULLs are two unknowns.
+func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, m *domain.Match) error {
+	if _, err := s.db.Exec(ctx,
+		`UPDATE match SET player1_name = $1, player2_name = $2, event = $3, location = $4,
+		                  round = $5, match_length = $6, match_date = $7, game_count = $8,
+		                  match_hash = $9, canonical_hash = $10
+		 WHERE id = $11 AND tenant_id = $12`,
+		m.Player1Name, m.Player2Name, m.Event, m.Location,
+		m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash),
+		id, tenantID(scope)); err != nil {
+		return fmt.Errorf("postgres: replace match %d header: %w", id, err)
+	}
+	return nil
+}
+
 // UpdateComment sets the free-text comment on a match.
 func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, comment string) error {
 	if _, err := s.db.Exec(ctx,
@@ -386,6 +405,60 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 		}
 		return nil
 	})
+}
+
+// DeleteGames removes a match's games (moves and move analyses cascade off
+// them) and returns the positions they referenced, without touching the match
+// row — see storage.MatchStore. The collection query is DeleteCascade's, run
+// before the delete for the same reason: the moves that name the positions are
+// about to be gone.
+func (s *matchStore) DeleteGames(ctx context.Context, scope string, matchID int64) ([]int64, error) {
+	tenant := tenantID(scope)
+	var positionIDs []int64
+	err := s.inTx(ctx, fmt.Sprintf("delete games of match %d", matchID), func(tx pgx.Tx) error {
+		rows, err := tx.Query(ctx,
+			`SELECT DISTINCT mv.position_id
+			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 WHERE g.match_id = $1 AND mv.tenant_id = $2 AND mv.position_id IS NOT NULL`,
+			matchID, tenant)
+		if err != nil {
+			return fmt.Errorf("collect positions: %w", err)
+		}
+		for rows.Next() {
+			var pid int64
+			if err := rows.Scan(&pid); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan position id: %w", err)
+			}
+			positionIDs = append(positionIDs, pid)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("collect positions: %w", err)
+		}
+
+		// move/move_analysis cascade off the game delete.
+		if _, err := tx.Exec(ctx,
+			`DELETE FROM game WHERE match_id = $1 AND tenant_id = $2`, matchID, tenant); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return positionIDs, nil
+}
+
+// PurgeOrphanPositions drops the positions in ids that positionIsHeldSQL no
+// longer holds — see storage.MatchStore. It is deleteOrphanedPositions, the
+// half of DeleteCascade a replacement needs on its own, once the new rows are
+// written.
+func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids []int64) error {
+	if err := deleteOrphanedPositions(ctx, s.db, tenantID(scope), ids); err != nil {
+		return fmt.Errorf("postgres: purge orphan positions: %w", err)
+	}
+	return nil
 }
 
 // SwapPlayers swaps player 1 and player 2 for the match: it swaps the header

@@ -61,11 +61,32 @@ func RenderMAT(m *domain.Match, games []*domain.Game, movesByGame map[int64][]*d
 	p1, p2 := orDefault(m.Player1Name, "Player 1"), orDefault(m.Player2Name, "Player 2")
 
 	// PGN-style headers help XG show names/event; all optional to the parser.
+	// Each is written only when it carries something: gnubg's reader stores
+	// whatever is between the quotes, so an empty [Site ""] would replace "we
+	// do not know where" by "nowhere" on every round-trip.
 	if m.Event != "" {
 		fmt.Fprintf(&b, "; [Event \"%s\"]\n", m.Event)
 	}
 	fmt.Fprintf(&b, "; [Player 1 \"%s\"]\n", p1)
-	fmt.Fprintf(&b, "; [Player 2 \"%s\"]\n\n", p2)
+	fmt.Fprintf(&b, "; [Player 2 \"%s\"]\n", p2)
+	if m.Location != "" {
+		fmt.Fprintf(&b, "; [Site \"%s\"]\n", m.Location)
+	}
+	if m.Round != "" {
+		fmt.Fprintf(&b, "; [Round \"%s\"]\n", m.Round)
+	}
+	// The dotted YYYY.MM.DD is the only shape the reader's [EventDate] regex
+	// accepts — an ISO date with dashes goes back in as no date at all.
+	if !m.MatchDate.IsZero() {
+		fmt.Fprintf(&b, "; [EventDate \"%s\"]\n", m.MatchDate.Format("2006.01.02"))
+	}
+	// Who typed the match in. It is never a column of `match` (ADR-0045): the
+	// header exists so a transcribed .mat says whose reading it is, and it is
+	// the transcription graph, not the database, that supplies it.
+	if m.Transcriber != "" {
+		fmt.Fprintf(&b, "; [Transcriber \"%s\"]\n", m.Transcriber)
+	}
+	b.WriteString("\n")
 
 	// A money session has no match length. gnubg/Jellyfish (and gnubgparser,
 	// our round-trip gate) encode it as "0 point match" — 0 means money game.
