@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:49+0200\n"
+"POT-Creation-Date: 2026-09-07 04:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -407,7 +407,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Die Hilfe ein-/ausblenden."
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "Ansichts-Reiter"
 
@@ -459,7 +459,7 @@ msgstr "Doppelklick auf den Reiter"
 msgid "Renommer la vue."
 msgstr "Die Ansicht umbenennen."
 
-#: ../../source/raccourcis.rst:135
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "Befehlszeile"
 
@@ -479,7 +479,7 @@ msgstr "UNTEN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Im Befehlsverlauf nach unten blättern."
 
-#: ../../source/raccourcis.rst:148
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "Suchverlauf"
 
@@ -499,7 +499,7 @@ msgstr "Doppelklick"
 msgid "Exécuter la recherche."
 msgstr "Die Suche ausführen."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "Filterbibliothek"
 
@@ -511,7 +511,7 @@ msgstr "Einen Filter auswählen/abwählen (Position anzeigen)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Die Suche des Filters ausführen."
 
-#: ../../source/raccourcis.rst:174
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "Analyse-Fenster"
 
@@ -545,7 +545,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Eval-Fenster"
 
@@ -553,7 +553,7 @@ msgstr "Eval-Fenster"
 msgid "Désélectionner le coup."
 msgstr "Den Zug abwählen."
 
-#: ../../source/raccourcis.rst:205
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "Match-Fenster"
 
@@ -589,7 +589,7 @@ msgstr "Das ausgewählte Match löschen."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Abwählen/Fenster schließen."
 
-#: ../../source/raccourcis.rst:223
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-Fenster (verteiltes Wiederholen)"
 
@@ -647,7 +647,7 @@ msgstr ""
 "Die Wiederholung beenden und zur Stapelliste zurückkehren (später "
 "fortsetzbar)."
 
-#: ../../source/raccourcis.rst:241
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "Turnier-Fenster"
 
@@ -680,7 +680,7 @@ msgstr ""
 "Matches leeren, sonst die Turnierauswahl aufheben, sonst das Fenster "
 "schließen (schrittweise)."
 
-#: ../../source/raccourcis.rst:257
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "Sammlungs-Fenster"
 
@@ -710,7 +710,87 @@ msgstr ""
 "Zur Liste der Sammlungen zurückkehren, sonst die Sammlungsauswahl "
 "aufheben, sonst das Fenster schließen (schrittweise)."
 
-#: ../../source/raccourcis.rst:272
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "Transkriptions-Fenster"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr ""
+"Das Fenster nimmt diese Tasten entgegen, solange es den Fokus hat und ein"
+" Entwurf geöffnet ist."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "Einen Entwurf aus der Liste öffnen."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr ""
+"Einen Würfel eingeben: Würfel von Spieler 1, dann von Spieler 2 für die "
+"Eröffnung (der höhere beginnt und spielt beide Würfel)."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6 (jet saisi)"
+msgstr "1 … 6 (Wurf eingegeben)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
+"candidat choisi, valider le coup et ouvrir le jet suivant."
+msgstr ""
+"Den Wurf neu beginnen, solange kein Kandidat gewählt wurde; sobald einer "
+"gewählt ist, den Zug erfassen und den nächsten Wurf öffnen."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
+" plateau)."
+msgstr ""
+"Den nächsten Kandidaten auswählen (die Pfeile des Zuges erscheinen auf "
+"dem Brett)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le candidat précédent."
+msgstr "Den vorherigen Kandidaten auswählen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une ligne)"
+msgstr "Klick (auf eine Zeile)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner ce candidat."
+msgstr "Diesen Kandidaten auswählen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup sélectionné (dernier coup d'une partie)."
+msgstr "Den ausgewählten Zug erfassen (der letzte Zug einer Partie)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "Beide eingegebenen Würfel löschen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "Die laufende Eingabe verwerfen."
+
+#: ../../source/raccourcis.rst:290
+msgid ""
+"Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
+"touche supplémentaire."
+msgstr ""
+"Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
+"zusätzlichen Tastendruck."
+
+#: ../../source/raccourcis.rst:296
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:49+0200\n"
+"POT-Creation-Date: 2026-09-07 04:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -403,7 +403,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "ヘルプを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "ビュータブ"
 
@@ -455,7 +455,7 @@ msgstr "タブをダブルクリック"
 msgid "Renommer la vue."
 msgstr "ビューの名前を変更する。"
 
-#: ../../source/raccourcis.rst:135
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "コマンドライン"
 
@@ -475,7 +475,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "コマンド履歴を下方向に参照する。"
 
-#: ../../source/raccourcis.rst:148
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "検索履歴"
 
@@ -495,7 +495,7 @@ msgstr "ダブルクリック"
 msgid "Exécuter la recherche."
 msgstr "検索を実行する。"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
 
@@ -507,7 +507,7 @@ msgstr "フィルターを選択/選択解除する（ポジションを表示�
 msgid "Exécuter la recherche du filtre."
 msgstr "フィルター検索を実行する。"
 
-#: ../../source/raccourcis.rst:174
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -541,7 +541,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Eval パネル"
 
@@ -549,7 +549,7 @@ msgstr "Eval パネル"
 msgid "Désélectionner le coup."
 msgstr "手の選択を解除する。"
 
-#: ../../source/raccourcis.rst:205
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -585,7 +585,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:223
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -639,7 +639,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:241
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -669,7 +669,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:257
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -693,7 +693,77 @@ msgid ""
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:272
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "トランスクリプションパネル"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr "パネルにフォーカスがあり、下書きが開いている間、これらのキーはパネルが受け取ります。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "リストから下書きを開く。"
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr "ダイスを入力する：オープニングではプレイヤー1のダイス、次にプレイヤー2のダイス（大きい方が先手となり、両方のダイスを使う）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6 (jet saisi)"
+msgstr "1 … 6（出目を入力済み）"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
+"candidat choisi, valider le coup et ouvrir le jet suivant."
+msgstr "候補を選ぶまでは出目を振り直す。候補を選んだあとは着手を記録し、次の出目に進む。"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
+" plateau)."
+msgstr "次の候補を選択する（着手の矢印が盤面に表示される）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le candidat précédent."
+msgstr "前の候補を選択する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une ligne)"
+msgstr "クリック（行の上で）"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner ce candidat."
+msgstr "その候補を選択する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup sélectionné (dernier coup d'une partie)."
+msgstr "選択中の着手を記録する（ゲーム最後の着手）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "入力した2つのダイスを消す。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "入力中の内容を破棄する。"
+
+#: ../../source/raccourcis.rst:290
+msgid ""
+"Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
+"touche supplémentaire."
+msgstr "どの着手も許さない出目は、追加のキー操作なしにダンスを記録します。"
+
+#: ../../source/raccourcis.rst:296
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 

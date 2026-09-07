@@ -23,6 +23,8 @@
 
 import { writable, derived } from 'svelte/store';
 
+import { initialKeyState } from '../services/transcriptionKeys.js';
+
 /**
  * The draft currently open, or null when none is.
  *
@@ -74,4 +76,22 @@ export function setTranscription(state) {
 export function clearTranscription() {
     transcriptionStore.set(null);
     transcriptionHistoryStore.set({ canUndo: false, canRedo: false });
+    resetTranscriptionKeys();
+}
+
+/**
+ * L'état de la machine à touches (services/transcriptionKeys.js) : la phase, les
+ * dés en cours de saisie, le candidat sélectionné.
+ *
+ * Il vit ici et pas dans le composant pour la même raison que le brouillon :
+ * TabbedPanel démonte le panneau à chaque changement d'onglet, et un jet à
+ * moitié tapé ne doit pas disparaître parce que l'utilisateur est allé voir
+ * l'onglet Eval. Il n'est pas persisté non plus — c'est l'Entry, que le moteur
+ * garde en mémoire et qu'un plantage a le droit de perdre (ADR-0045 règle 1).
+ */
+export const transcriptionKeyStore = writable(initialKeyState());
+
+/** Repart d'une saisie vide : à l'ouverture d'un brouillon, et à sa fermeture. */
+export function resetTranscriptionKeys() {
+    transcriptionKeyStore.set(initialKeyState());
 }

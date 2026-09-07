@@ -1269,6 +1269,55 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Panneau Transcription</h3>
+<p>Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.</p>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic</td>
+<td>Ouvrir un brouillon de la liste.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés).</td>
+</tr>
+<tr>
+<td>1 … 6 (jet saisi)</td>
+<td>Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un candidat choisi, valider le coup et ouvrir le jet suivant.</td>
+</tr>
+<tr>
+<td>BAS, j</td>
+<td>Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau).</td>
+</tr>
+<tr>
+<td>HAUT, k</td>
+<td>Sélectionner le candidat précédent.</td>
+</tr>
+<tr>
+<td>Clic (sur une ligne)</td>
+<td>Sélectionner ce candidat.</td>
+</tr>
+<tr>
+<td>ENTREE</td>
+<td>Valider le coup sélectionné (dernier coup d'une partie).</td>
+</tr>
+<tr>
+<td>RETOUR ARRIERE</td>
+<td>Effacer les deux dés saisis.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Abandonner la saisie en cours.</td>
+</tr>
+</tbody>
+</table>
+<p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>

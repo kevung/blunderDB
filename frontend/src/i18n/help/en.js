@@ -1269,6 +1269,55 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Transcription Panel</h3>
+<p>The panel takes these keys while it has focus and a draft is open.</p>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Click</td>
+<td>Open a draft from the list.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Enter a die: player 1's die, then player 2's for the opening (the higher one starts and plays both dice).</td>
+</tr>
+<tr>
+<td>1 … 6 (roll entered)</td>
+<td>Start the roll again as long as no candidate has been chosen; once one is chosen, record the play and open the next roll.</td>
+</tr>
+<tr>
+<td>DOWN, j</td>
+<td>Select the next candidate (the play's arrows appear on the board).</td>
+</tr>
+<tr>
+<td>UP, k</td>
+<td>Select the previous candidate.</td>
+</tr>
+<tr>
+<td>Click (on a row)</td>
+<td>Select that candidate.</td>
+</tr>
+<tr>
+<td>ENTER</td>
+<td>Record the selected play (the last play of a game).</td>
+</tr>
+<tr>
+<td>BACKSPACE</td>
+<td>Clear both entered dice.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Abandon the entry in progress.</td>
+</tr>
+</tbody>
+</table>
+<p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
 <h3>Help Panel</h3>
 <table>
 <thead>

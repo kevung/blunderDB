@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:49+0200\n"
+"POT-Creation-Date: 2026-09-07 04:24+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -404,7 +404,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "View Tabs"
 
@@ -456,7 +456,7 @@ msgstr "Double-click the tab"
 msgid "Renommer la vue."
 msgstr "Rename the view."
 
-#: ../../source/raccourcis.rst:135
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -476,7 +476,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:148
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "Search History"
 
@@ -496,7 +496,7 @@ msgstr "Double-click"
 msgid "Exécuter la recherche."
 msgstr "Execute the search."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "Filter Library"
 
@@ -508,7 +508,7 @@ msgstr "Select/deselect a filter (show position)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Execute the filter search."
 
-#: ../../source/raccourcis.rst:174
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -542,7 +542,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Eval Panel"
 
@@ -550,7 +550,7 @@ msgstr "Eval Panel"
 msgid "Désélectionner le coup."
 msgstr "Deselect move."
 
-#: ../../source/raccourcis.rst:205
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -586,7 +586,7 @@ msgstr "Delete the selected match."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:223
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
 
@@ -642,7 +642,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
 
-#: ../../source/raccourcis.rst:241
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
 
@@ -674,7 +674,7 @@ msgstr ""
 "Cancel the current edit, otherwise clear the add-match search, otherwise "
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:257
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -702,7 +702,83 @@ msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:272
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "Transcription Panel"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr "The panel takes these keys while it has focus and a draft is open."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "Open a draft from the list."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr ""
+"Enter a die: player 1's die, then player 2's for the opening (the higher "
+"one starts and plays both dice)."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6 (jet saisi)"
+msgstr "1 … 6 (roll entered)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
+"candidat choisi, valider le coup et ouvrir le jet suivant."
+msgstr ""
+"Start the roll again as long as no candidate has been chosen; once one is"
+" chosen, record the play and open the next roll."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
+" plateau)."
+msgstr "Select the next candidate (the play's arrows appear on the board)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le candidat précédent."
+msgstr "Select the previous candidate."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une ligne)"
+msgstr "Click (on a row)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner ce candidat."
+msgstr "Select that candidate."
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup sélectionné (dernier coup d'une partie)."
+msgstr "Record the selected play (the last play of a game)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "Clear both entered dice."
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "Abandon the entry in progress."
+
+#: ../../source/raccourcis.rst:290
+msgid ""
+"Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
+"touche supplémentaire."
+msgstr ""
+"A roll that allows no play records the dance on its own, with no extra "
+"keystroke."
+
+#: ../../source/raccourcis.rst:296
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 

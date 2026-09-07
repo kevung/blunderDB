@@ -1269,6 +1269,55 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Panel de transcripción</h3>
+<p>El panel toma estas teclas mientras tiene el foco y hay un borrador abierto.</p>
+<table>
+<thead>
+<tr>
+<th>Atajo</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic</td>
+<td>Abrir un borrador de la lista.</td>
+</tr>
+<tr>
+<td>1 … 6</td>
+<td>Introducir un dado: dado del jugador 1, luego del jugador 2 para la apertura (el mayor empieza y juega ambos dados).</td>
+</tr>
+<tr>
+<td>1 … 6 (tirada introducida)</td>
+<td>Reiniciar la tirada mientras no se haya elegido ningún candidato; una vez elegido, registrar el movimiento y abrir la siguiente tirada.</td>
+</tr>
+<tr>
+<td>ABAJO, j</td>
+<td>Seleccionar el candidato siguiente (las flechas del movimiento aparecen en el tablero).</td>
+</tr>
+<tr>
+<td>ARRIBA, k</td>
+<td>Seleccionar el candidato anterior.</td>
+</tr>
+<tr>
+<td>Clic (en una fila)</td>
+<td>Seleccionar ese candidato.</td>
+</tr>
+<tr>
+<td>INTRO</td>
+<td>Registrar el movimiento seleccionado (último movimiento de una partida).</td>
+</tr>
+<tr>
+<td>RETROCESO</td>
+<td>Borrar los dos dados introducidos.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Abandonar la entrada en curso.</td>
+</tr>
+</tbody>
+</table>
+<p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

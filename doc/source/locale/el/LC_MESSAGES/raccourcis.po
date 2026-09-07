@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:49+0200\n"
+"POT-Creation-Date: 2026-09-07 04:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -407,7 +407,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:117
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -459,7 +459,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:135
+#: ../../source/raccourcis.rst:134
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -479,7 +479,7 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:148
+#: ../../source/raccourcis.rst:147
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
@@ -499,7 +499,7 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:160
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
@@ -511,7 +511,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:174
+#: ../../source/raccourcis.rst:173
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -547,7 +547,7 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:189
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
@@ -555,7 +555,7 @@ msgstr "Πίνακας Eval"
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:205
+#: ../../source/raccourcis.rst:204
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -591,7 +591,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:223
+#: ../../source/raccourcis.rst:222
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -649,7 +649,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:241
+#: ../../source/raccourcis.rst:240
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -682,7 +682,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:257
+#: ../../source/raccourcis.rst:256
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -710,7 +710,87 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:272
+#: ../../source/raccourcis.rst:271
+msgid "Panneau Transcription"
+msgstr "Πίνακας μεταγραφής"
+
+#: ../../source/raccourcis.rst:273
+msgid ""
+"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
+"ouvert."
+msgstr ""
+"Ο πίνακας δέχεται αυτά τα πλήκτρα όσο έχει την εστίαση και ένα πρόχειρο "
+"είναι ανοιχτό."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir un brouillon de la liste."
+msgstr "Άνοιγμα ενός πρόχειρου από τη λίστα."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6"
+msgstr "1 … 6"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
+"plus fort commence et joue les deux dés)."
+msgstr ""
+"Εισαγωγή ζαριού: ζάρι του παίκτη 1, μετά του παίκτη 2 για το άνοιγμα (ο "
+"μεγαλύτερος ξεκινά και παίζει και τα δύο ζάρια)."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 … 6 (jet saisi)"
+msgstr "1 … 6 (ζαριά καταχωρημένη)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
+"candidat choisi, valider le coup et ouvrir le jet suivant."
+msgstr ""
+"Επανεκκίνηση της ζαριάς όσο δεν έχει επιλεγεί υποψήφια κίνηση· μόλις "
+"επιλεγεί, καταγραφή της κίνησης και άνοιγμα της επόμενης ζαριάς."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
+" plateau)."
+msgstr ""
+"Επιλογή της επόμενης υποψήφιας κίνησης (τα βέλη της εμφανίζονται στον "
+"πίνακα)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le candidat précédent."
+msgstr "Επιλογή της προηγούμενης υποψήφιας κίνησης."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une ligne)"
+msgstr "Κλικ (σε μια γραμμή)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner ce candidat."
+msgstr "Επιλογή αυτής της υποψήφιας κίνησης."
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup sélectionné (dernier coup d'une partie)."
+msgstr "Καταγραφή της επιλεγμένης κίνησης (τελευταία κίνηση μιας παρτίδας)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis."
+msgstr "Διαγραφή και των δύο ζαριών που εισήχθησαν."
+
+#: ../../source/raccourcis.rst:1
+msgid "Abandonner la saisie en cours."
+msgstr "Εγκατάλειψη της τρέχουσας εισαγωγής."
+
+#: ../../source/raccourcis.rst:290
+msgid ""
+"Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
+"touche supplémentaire."
+msgstr ""
+"Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
+"της, χωρίς επιπλέον πλήκτρο."
+
+#: ../../source/raccourcis.rst:296
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
