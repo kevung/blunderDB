@@ -52,6 +52,12 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 		if a.Kind == tournoi.ActWait {
 			continue
 		}
+		if a.Reason == tournoi.ReasonWaitingTable {
+			// A proposal with no free table stays in the queue: launching it here would put
+			// two matches on one table, or none, without the director ever choosing. They
+			// launch it themselves with a table they picked (ADR-0047 §3.2).
+			continue
+		}
 		if err := confirm(ctx, dir, a); err != nil {
 			return nil, err
 		}

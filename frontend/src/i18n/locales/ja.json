@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "待機中（{n}人）"
+        },
+        "table": {
+            "title": "卓（{n}）",
+            "free": "空き",
+            "unavailable": "使用不可",
+            "reserved": "予約済み",
+            "slow": "長引き",
+            "none": "卓が登録されていません。"
+        },
+        "result": {
+            "title": "結果",
+            "score": "スコア",
+            "optional": "（任意）",
+            "forfeit": "不戦敗：",
+            "note": "備考",
+            "notePlaceholder": "時間切れ、中断…",
+            "move": "卓を変更",
+            "cancelMatch": "この試合を取り消す",
+            "error": "結果を記録できませんでした。",
+            "more": "その他",
+            "apply": "適用"
         }
     }
 }

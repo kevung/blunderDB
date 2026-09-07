@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "En espera ({n})"
+        },
+        "table": {
+            "title": "Mesas ({n})",
+            "free": "libre",
+            "unavailable": "fuera de servicio",
+            "reserved": "reservada",
+            "slow": "lenta",
+            "none": "Ninguna mesa declarada."
+        },
+        "result": {
+            "title": "Resultado",
+            "score": "Marcador",
+            "optional": "(opcional)",
+            "forfeit": "Incomparecencia de",
+            "note": "Observación",
+            "notePlaceholder": "se acabó el tiempo, abandono…",
+            "move": "Cambiar de mesa",
+            "cancelMatch": "Anular esta partida",
+            "error": "No se ha podido registrar este resultado.",
+            "more": "Más",
+            "apply": "Aplicar"
         }
     }
 }

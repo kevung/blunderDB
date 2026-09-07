@@ -827,6 +827,40 @@ export namespace database {
 	        this.decisionsAfter = source["decisionsAfter"];
 	    }
 	}
+	export class TableCell {
+	    table: number;
+	    free: boolean;
+	    unavailable: boolean;
+	    reserved: boolean;
+	    matchId?: string;
+	    a?: string;
+	    b?: string;
+	    aName?: string;
+	    bName?: string;
+	    length?: number;
+	    elapsedSeconds?: number;
+	    slow?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new TableCell(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.table = source["table"];
+	        this.free = source["free"];
+	        this.unavailable = source["unavailable"];
+	        this.reserved = source["reserved"];
+	        this.matchId = source["matchId"];
+	        this.a = source["a"];
+	        this.b = source["b"];
+	        this.aName = source["aName"];
+	        this.bName = source["bName"];
+	        this.length = source["length"];
+	        this.elapsedSeconds = source["elapsedSeconds"];
+	        this.slow = source["slow"];
+	    }
+	}
 	
 	
 	export class TranscriptionState {

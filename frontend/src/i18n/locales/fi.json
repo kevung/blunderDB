@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "Odottaa ({n})"
+        },
+        "table": {
+            "title": "Pöydät ({n})",
+            "free": "vapaa",
+            "unavailable": "poissa käytöstä",
+            "reserved": "varattu",
+            "slow": "hidas",
+            "none": "Pöytiä ei ole ilmoitettu."
+        },
+        "result": {
+            "title": "Tulos",
+            "score": "Pisteet",
+            "optional": "(valinnainen)",
+            "forfeit": "Luovutus:",
+            "note": "Huomautus",
+            "notePlaceholder": "aika loppui, keskeytti…",
+            "move": "Vaihda pöytää",
+            "cancelMatch": "Peruuta tämä ottelu",
+            "error": "Tulosta ei voitu kirjata.",
+            "more": "Lisää",
+            "apply": "Käytä"
         }
     }
 }

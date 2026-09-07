@@ -233,6 +233,11 @@ F23 : Réglages › Sorties : dossier (dialogue système, une fois) ; la page s'
    import qui a touché ce Tournament, et se ferme d'un clic.
 6. **Une Direction d'exemple** entre dans `demo.db` (32 joueurs fictifs, suisse au bord de la
    bascule).
-7. **Les noms dans la fiche de résultat** sont l'exception typographique nommée à l'ADR-0008.
+7. ~~**Les noms dans la fiche de résultat** sont l'exception typographique nommée à
+   l'ADR-0008.~~ **Écartée à l'implémentation (#371)** : ce qui rend ces deux noms faciles à
+   cliquer en se penchant, c'est la taille de la CIBLE — 44 px de haut, la moitié de la fiche —
+   et non celle de la police. L'ADR-0008 fait venir la hiérarchie du poids et de la couleur, et
+   son garde-fou a refusé l'agrandissement. Si le tournoi réel (#380) montre que les noms sont
+   trop petits, ce sera à l'ADR-0008 d'être amendé, avec la mesure qui le justifie.
 8. **Deux chiffres pour une table > 9** avec un délai de 400 ms, comme une numérotation de
    canal ; les chiffres suivent `event.code` (convention du clavier).

@@ -1727,6 +1727,27 @@
         },
         "waiting": {
             "title": "En attente ({n})"
+        },
+        "table": {
+            "title": "Tables ({n})",
+            "free": "libre",
+            "unavailable": "indisponible",
+            "reserved": "réservée",
+            "slow": "lent",
+            "none": "Aucune table déclarée."
+        },
+        "result": {
+            "title": "Résultat",
+            "score": "Score",
+            "optional": "(facultatif)",
+            "forfeit": "Forfait de",
+            "note": "Remarque",
+            "notePlaceholder": "tombé au temps, abandon…",
+            "move": "Changer de table",
+            "cancelMatch": "Annuler ce match",
+            "error": "Impossible d’enregistrer ce résultat.",
+            "more": "Plus",
+            "apply": "Appliquer"
         }
     }
 }
