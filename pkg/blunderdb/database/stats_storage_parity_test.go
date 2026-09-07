@@ -129,6 +129,22 @@ func TestStatsStorageParity(t *testing.T) {
 				t.Fatalf("ANALYZE: %v", err)
 			}
 
+			// The frozen oracle counts an error as any cost above zero, which is
+			// what the code said before the two thresholds became the library's
+			// own (ADR-0046). That behaviour did not disappear — it is the
+			// error threshold at its lowest, 1 millipoint — so the fixture says
+			// so and the two sides compare like for like. Setting it here rather
+			// than dropping the counts from the comparison keeps the oracle
+			// guarding what it was built to guard: that moving the statistics
+			// onto the Storage contract changed no number. The blunder threshold
+			// stays at its default, which is the 100 the oracle also hard-codes.
+			if err := d.SaveLibrarySettings(storage.LibrarySettings{
+				ErrorThresholdMP:   storage.MinThresholdMP,
+				BlunderThresholdMP: storage.DefaultBlunderThresholdMP,
+			}); err != nil {
+				t.Fatalf("SaveLibrarySettings: %v", err)
+			}
+
 			// 2. Legacy results. These call the legacy* reference implementations
 			// directly (the production Database methods now delegate to storage, so
 			// calling them here would compare storage against itself).
