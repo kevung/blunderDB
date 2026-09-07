@@ -92,6 +92,17 @@ type ExportOptions struct {
 	Metadata  map[string]string
 	Watermark string
 	Password  string
+
+	// AfterWrite runs on the freshly written file, BEFORE it is sealed into a protected
+	// container and while it is still a plain SQLite database.
+	//
+	// It exists for what the storage contract deliberately does not carry: the Direction of a
+	// tournament (ADR-0047, issue #396). The direction tables live on the desktop wrapper —
+	// the daemon exposes nothing of them, on purpose — so `ingest` cannot copy them, and a
+	// post-pass on the finished file would arrive too late for a protected export, whose
+	// plain intermediate is removed. The caller that knows about directions writes them here;
+	// this package keeps knowing nothing about them.
+	AfterWrite func(ctx context.Context, path string, report ExportReport) error
 }
 
 // Importer reads a Source and writes its contents through Storage, emitting
