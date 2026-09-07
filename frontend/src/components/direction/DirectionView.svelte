@@ -61,17 +61,24 @@
         unattachedMatches,
         attachMatchToSlot,
         detachMatchFromSlot,
-        transcribeFromSlot
+        transcribeFromSlot,
+        previewDirectionConfig
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
     const state = $derived(view?.state || 'draft');
 
     /* En préparation la vue s'ouvre sur les Réglages, puisque c'est le seul geste possible ;
-       en cours elle s'ouvrira sur la page Direction, où le directeur passe 95 % de son temps. */
+       en cours elle s'ouvrira sur la page Direction, où le directeur passe 95 % de son temps.
+       Le choix ne vaut QUE pour l'ouverture : les Réglages restent accessibles en cours de
+       tournoi — c'est là qu'on baisse la bascule à 22 h (#385) — et un onglet qui se dérobe
+       sous le curseur serait pire que pas d'onglet du tout. */
     let tab = $state('settings');
+    let tabChosen = false;
     $effect(() => {
-        if (state !== 'draft' && tab === 'settings') tab = 'direction';
+        if (tabChosen) return;
+        if (state !== 'draft') tab = 'direction';
+        tabChosen = true;
     });
 
     let config = $state(null);
@@ -115,6 +122,7 @@
     let creditOpen = $state(false);
     let slotRows = $state([]);
     let unattached = $state([]);
+    let configPreview = $state(null);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -131,6 +139,10 @@
         clock().then((c) => (clockView = c));
         slots().then((r) => (slotRows = r));
         unattachedMatches().then((u) => (unattached = u));
+        // Les verrous de configuration : quels formats de phase ne changent plus, et pourquoi.
+        // Ils se lisent sur la configuration EN VIGUEUR, pas sur la copie en cours d'édition.
+        const saved = view?.config;
+        if (saved) previewDirectionConfig(saved).then((p) => (configPreview = p));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -171,7 +183,12 @@
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
-    const onReopen = () => act(() => reopenTournament(), 'direction.standings.error');
+    /* Rouvrir est un geste explicite : le classement final cesse d'être final, et le journal
+       en gardera la trace. Une confirmation, pas davantage. */
+    const onReopen = () => {
+        if (!window.confirm($t('direction.standings.reopenConfirm'))) return;
+        return act(() => reopenTournament(), 'direction.standings.error');
+    };
     const onNote = (text) => act(() => addNote(text), 'direction.history.error');
     const onAttach = (slot, matchId) =>
         act(async () => {
@@ -308,7 +325,17 @@
 
     <div class="body">
         {#if tab === 'settings'}
-            <DirectionSettings bind:config {state} tournamentName={view?.config?.name || ''} entrantCount={view?.players?.length || 0} onApply={apply} onDelete={remove} />
+            <DirectionSettings
+                bind:config
+                {state}
+                tournamentName={view?.config?.name || ''}
+                entrantCount={view?.players?.length || 0}
+                onApply={apply}
+                onDelete={remove}
+                onPreview={previewDirectionConfig}
+                locks={configPreview?.locks || []}
+                opened={configPreview?.opened || 0}
+            />
         {:else if tab === 'direction'}
             <div class="direction-page">
                 {#if (view?.warnings || []).length}

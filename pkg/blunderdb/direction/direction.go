@@ -256,9 +256,10 @@ func (d *Direction) Warnings() []tournoi.Warning {
 	return d.st.Warnings
 }
 
-// Apply records one decision: it writes the event first, then applies it. The order matters —
-// a crash between the two leaves a log that replays to exactly what the director last saw,
-// whereas applying first would lose the decision.
+// Apply records one decision: the engine judges the event first, and only an accepted event is
+// written. The order matters — the engine refuses (a result on a match that is not running, a
+// format change on a phase already drawn), and a log is a record of what happened, so a refused
+// decision must leave nothing behind.
 func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 	if d.st == nil {
 		return fmt.Errorf("direction: the tournament has not started")

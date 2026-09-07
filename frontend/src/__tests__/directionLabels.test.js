@@ -6,7 +6,7 @@
  * aucune, et ce fichier est le pivot de cette traduction — d'où ce test.
  */
 import { describe, test, expect } from 'vitest';
-import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabel, actionKey } from '../components/direction/labels.js';
+import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabel, actionKey, renderConfigChange, renderLockReason } from '../components/direction/labels.js';
 import fr from '../i18n/locales/fr.json';
 import en from '../i18n/locales/en.json';
 
@@ -124,5 +124,37 @@ describe('la clé d’une proposition est stable', () => {
         const a = { kind: 'start_match', phase: 0, a: 'alice', b: 'bob', table: 3 };
         const b = { kind: 'start_match', phase: 0, a: 'alice', b: 'bob', table: 7 };
         expect(actionKey(a)).toBe(actionKey(b));
+    });
+});
+
+describe('la liste de ce qui va changer (#385)', () => {
+    test('un changement nomme le réglage, sa valeur d’avant et celle d’après', () => {
+        expect(renderConfigChange(t, { code: 'tableCount', phase: 0, from: '8', to: '12' })).toBe('Nombre de tables : 8 → 12');
+        expect(renderConfigChange(t, { code: 'target', phase: 1, from: '16', to: '8' })).toBe('Phase 1 — bascule : 16 → 8');
+        expect(renderConfigChange(tEn, { code: 'target', phase: 1, from: '16', to: '8' })).toBe('Phase 1 — switch: 16 → 8');
+    });
+
+    test('un format se dit par son nom, pas par son identifiant', () => {
+        expect(renderConfigChange(t, { code: 'phaseAdded', phase: 3, to: 'bracket' })).toBe('Phase 3 ajoutée : Tableau');
+        expect(renderConfigChange(t, { code: 'kind', phase: 2, from: 'bracket', to: 'round_robin' })).toBe('Phase 2 — format : Tableau → Poules');
+    });
+
+    test('un booléen se dit oui ou non, une valeur absente se dit aucun', () => {
+        expect(renderConfigChange(t, { code: 'consolation', phase: 1, from: 'false', to: 'true' })).toBe('Phase 1 — consolante : non → oui');
+        expect(renderConfigChange(t, { code: 'phaseRemoved', phase: 2, from: 'gsl' })).toBe('Phase 2 retirée : Blocs GSL');
+        expect(renderConfigChange(t, { code: 'name', phase: 0, from: '', to: 'Open de Lyon' })).toBe('Nom : aucun → Open de Lyon');
+    });
+
+    test('un code inconnu s’affiche tel quel plutôt que de laisser un blanc', () => {
+        expect(renderConfigChange(t, { code: 'somethingNew', phase: 1 })).toBe('somethingNew');
+        expect(renderConfigChange(t, null)).toBe('');
+    });
+
+    test('la raison d’un format figé est un code, rendue dans la langue de l’utilisateur', () => {
+        expect(renderLockReason(t, 'started')).toBe('matchs lancés');
+        expect(renderLockReason(t, 'drawn')).toBe('tirage fait');
+        expect(renderLockReason(tEn, 'finished')).toBe('phase over');
+        expect(renderLockReason(t, 'quelquechose')).toBe('quelquechose');
+        expect(renderLockReason(t, '')).toBe('');
     });
 });

@@ -5,6 +5,7 @@ import {
     HasDirection,
     CreateDirection,
     SetDirectionConfig,
+    PreviewDirectionConfig,
     DeleteDirection,
     ConfirmProposal,
     ConfirmAllProposals,
@@ -216,10 +217,32 @@ export async function createDirection(tournamentId, config, seed = 0) {
     return openDirection(tournamentId);
 }
 
-/** Réécrit la configuration d'un brouillon. Refusée une fois le tournoi commencé. */
+/**
+ * Installe une configuration, en préparation comme en cours de tournoi (issue #385). Le moteur
+ * refuse exactement deux choses : retirer une phase ouverte, et changer le format d'une phase
+ * commencée — previewDirectionConfig le dit AVANT le clic.
+ */
 export async function saveDirectionConfig(tournamentId, config) {
     await SetDirectionConfig(tournamentId, JSON.stringify(config));
     return refreshDirection();
+}
+
+/**
+ * Compare une configuration candidate à celle en vigueur, sans rien écrire.
+ *
+ * Appelée avec la configuration inchangée elle ne rapporte aucun changement et remplit quand
+ * même les verrous : c'est ainsi que la vue Réglages sait, en s'ouvrant, quels formats sont
+ * figés et pourquoi.
+ */
+export async function previewDirectionConfig(config) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    try {
+        return await PreviewDirectionConfig(id, JSON.stringify(config));
+    } catch (e) {
+        logger.error('direction: previewing configuration failed', e);
+        return null;
+    }
 }
 
 /** Inscrit plusieurs joueurs d'un coup : ce que produit un import ou une reprise d'annuaire. */

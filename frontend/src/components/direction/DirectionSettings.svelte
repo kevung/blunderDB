@@ -1,6 +1,6 @@
 <script>
     /*
-     * Les réglages d'une Direction (ADR-0047 §3, tasks/nicomaque/ux.md §2.1).
+     * Les réglages d'une Direction (ADR-0047 §3, tasks/nicomaque/ux.md §2.1, issue #385).
      *
      * Deux contraintes commandent le dessin de cet écran, et elles viennent du cadrage :
      * le coût d'entrée doit être bas — un directeur qui dirige un tournoi par an ne doit rien
@@ -8,17 +8,47 @@
      * formulaire vide, un défaut qui tient pour un tournoi de club dans chaque champ, une
      * phrase d'infobulle par réglage, et aucun assistant en plusieurs écrans.
      *
-     * En préparation tout est modifiable ; une fois le tournoi commencé les champs figés sont
-     * GRISÉS AVEC LEUR RAISON plutôt qu'absents, pour que le directeur sache que ce n'est pas
-     * lui qui a mal cherché.
+     * L'écran sert AUSSI en cours de tournoi : à 22 h un directeur baisse la bascule pour finir
+     * plus tôt, le samedi soir il ajoute une consolante qu'il n'avait pas prévue. Deux choses
+     * seulement sont alors figées — le format d'une phase ouverte, et le nombre de vies qu'elle
+     * a déjà distribué — et elles sont GRISÉES AVEC LEUR RAISON plutôt qu'absentes, pour que le
+     * directeur sache que ce n'est pas lui qui a mal cherché.
+     *
+     * En cours de tournoi, enregistrer n'est pas la sauvegarde d'un formulaire mais une
+     * décision : la liste de ce qui va changer s'affiche d'abord, et le directeur confirme.
+     * En préparation, rien n'est encore décidé, et la confirmation ne ferait que coûter un clic.
      */
     import { t } from '../../i18n';
     import { namedConfigs } from '../../stores/directionStore';
+    import { renderConfigChange, renderLockReason } from './labels.js';
 
-    let { config = $bindable(), state = 'draft', tournamentName = '', onApply = () => {}, onDelete = null, entrantCount = 0 } = $props();
+    let { config = $bindable(), state = 'draft', tournamentName = '', onApply = () => {}, onDelete = null, entrantCount = 0, onPreview = null, locks = [], opened = 0 } = $props();
 
     const isDraft = $derived(state === 'draft');
-    const frozenReason = $derived(isDraft ? '' : $t('direction.settings.frozen'));
+
+    /* Les cinq formats de phase du moteur. Ce sont des IDENTIFIANTS : leur nom lisible passe
+       par direction.format.<kind>, comme partout ailleurs. */
+    const phaseKinds = ['swiss_lives', 'lives_bracket', 'gsl', 'bracket', 'round_robin'];
+
+    function lockOf(i) {
+        return locks.find((l) => l.phase === i + 1) || null;
+    }
+
+    function kindLocked(i) {
+        const l = lockOf(i);
+        return !!(l && l.locked);
+    }
+
+    function kindTitle(i) {
+        const l = lockOf(i);
+        if (l && l.locked) return $t('direction.settings.kindFrozen', { reason: renderLockReason($t, l.reason) });
+        return $t('direction.settings.kindHint');
+    }
+
+    /* Une phase OUVERTE a déjà distribué ses vies : changer le nombre ne rattraperait pas les
+       joueurs entrés. Le reste — longueurs, bascule, finale — porte sur les matchs à venir. */
+    const isOpen = (i) => i < opened;
+    const openTitle = $derived($t('direction.settings.phaseOpened'));
 
     function pickNamed(named) {
         config = named.build(tournamentName || config?.name || '');
@@ -27,6 +57,73 @@
 
     function phaseKindLabel(kind) {
         return $t(`direction.format.${kind}`);
+    }
+
+    /* Ajouter une phase, c'est l'ajouter APRÈS toutes les autres : une consolante décidée le
+       samedi soir n'interrompt pas ce qui se joue. */
+    function addPhase() {
+        const last = config.phases[config.phases.length - 1];
+        config.phases = [...config.phases, { kind: 'bracket', length: last?.length || 7 }];
+    }
+
+    function removePhase(i) {
+        config.phases = config.phases.filter((_, k) => k !== i);
+    }
+
+    /* Les pauses de la journée. Rien n'est bloqué : un match qui finirait dedans porte un
+       avertissement, et le directeur décide. */
+    function addBreak() {
+        // L'heure ronde qui vient de passer : un défaut qu'un directeur corrige d'un geste.
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
+        const end = new Date(start.getTime() + 3600000);
+        config.breaks = [...(config.breaks || []), { start: start.toISOString(), end: end.toISOString() }];
+    }
+
+    function removeBreak(i) {
+        config.breaks = (config.breaks || []).filter((_, k) => k !== i);
+    }
+
+    /* Un `datetime-local` parle l'heure locale sans fuseau ; le moteur ne connaît que des
+       instants. La conversion se fait ici, aux deux bouts, et nulle part ailleurs. */
+    function toLocalInput(iso) {
+        if (!iso) return '';
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return '';
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function setBreakBound(i, which, value) {
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return;
+        const next = [...(config.breaks || [])];
+        next[i] = { ...next[i], [which]: d.toISOString() };
+        config.breaks = next;
+    }
+
+    /* La liste de contrôle : ce que « Enregistrer » va faire, montré avant de le faire. */
+    let pending = $state(null);
+    const blocked = $derived(!!pending && pending.refusals && pending.refusals.length > 0);
+    const nothing = $derived(!!pending && (pending.changes || []).length === 0 && (pending.refusals || []).length === 0);
+
+    async function askApply() {
+        // En préparation, rien n'est encore décidé : la confirmation ne coûterait qu'un clic.
+        if (isDraft || !onPreview) {
+            onApply(config);
+            return;
+        }
+        const p = await onPreview(config);
+        if (!p) {
+            onApply(config);
+            return;
+        }
+        pending = p;
+    }
+
+    function confirmApply() {
+        pending = null;
+        onApply(config);
     }
 
     /* Le nombre d'exemptions qu'un tableau devrait donner au premier tour avec cet effectif :
@@ -61,33 +158,52 @@
         <section>
             <h3>{$t('direction.settings.phases')}</h3>
             <ul class="phases">
-                {#each config.phases || [] as phase, i (phase.kind + i)}
+                {#each config.phases || [] as phase, i (i)}
                     <li>
                         <span class="phase-index">{i + 1}</span>
-                        <span class="phase-kind">{phaseKindLabel(phase.kind)}</span>
+                        {#if kindLocked(i)}
+                            <span class="phase-kind frozen" title={kindTitle(i)}>
+                                {phaseKindLabel(phase.kind)}
+                                <span class="reason">{renderLockReason($t, lockOf(i)?.reason)}</span>
+                            </span>
+                        {:else}
+                            <select class="phase-kind" bind:value={phase.kind} title={kindTitle(i)}>
+                                {#each phaseKinds as kind (kind)}
+                                    <option value={kind}>{phaseKindLabel(kind)}</option>
+                                {/each}
+                            </select>
+                        {/if}
                         <label title={$t('direction.settings.lengthHint')}>
                             {$t('direction.settings.length')}
-                            <input type="number" min="1" max="99" bind:value={phase.length} disabled={!isDraft} title={frozenReason} />
+                            <input type="number" min="1" max="99" bind:value={phase.length} />
                         </label>
                         {#if phase.kind === 'swiss_lives'}
-                            <label title={$t('direction.settings.livesHint')}>
+                            <label title={isOpen(i) ? openTitle : $t('direction.settings.livesHint')}>
                                 {$t('direction.settings.lives')}
-                                <input type="number" min="1" max="5" bind:value={phase.lives} disabled={!isDraft} title={frozenReason} />
+                                <input type="number" min="1" max="5" bind:value={phase.lives} disabled={isOpen(i)} />
                             </label>
                             <label title={$t('direction.settings.targetHint')}>
                                 {$t('direction.settings.target')}
-                                <input type="number" min="0" step="8" bind:value={phase.target} title={$t('direction.settings.targetHint')} />
+                                <input type="number" min="0" step="8" bind:value={phase.target} />
                             </label>
                         {/if}
                         {#if phase.kind === 'bracket' || phase.kind === 'lives_bracket'}
                             <label title={$t('direction.settings.finalLengthHint')}>
                                 {$t('direction.settings.finalLength')}
-                                <input type="number" min="0" max="99" bind:value={phase.final_length} disabled={!isDraft} title={frozenReason} />
+                                <input type="number" min="0" max="99" bind:value={phase.final_length} />
                             </label>
+                        {/if}
+                        {#if !isOpen(i) && (config.phases || []).length > 1}
+                            <button type="button" class="link" onclick={() => removePhase(i)} title={$t('direction.settings.removePhaseHint')}>
+                                {$t('direction.settings.removePhase')}
+                            </button>
                         {/if}
                     </li>
                 {/each}
             </ul>
+            <button type="button" class="link" onclick={addPhase} title={$t('direction.settings.addPhaseHint')}>
+                {$t('direction.settings.addPhase')}
+            </button>
         </section>
 
         <section>
@@ -107,8 +223,31 @@
             {/if}
         </section>
 
+        <section>
+            <h3>{$t('direction.settings.breaks')}</h3>
+            <p class="facts">{$t('direction.settings.breaksHint')}</p>
+            <ul class="breaks">
+                {#each config.breaks || [] as pause, i (i)}
+                    <li>
+                        <label>
+                            {$t('direction.settings.breakStart')}
+                            <input type="datetime-local" value={toLocalInput(pause.start)} onchange={(e) => setBreakBound(i, 'start', e.currentTarget.value)} />
+                        </label>
+                        <label>
+                            {$t('direction.settings.breakEnd')}
+                            <input type="datetime-local" value={toLocalInput(pause.end)} onchange={(e) => setBreakBound(i, 'end', e.currentTarget.value)} />
+                        </label>
+                        <button type="button" class="link" onclick={() => removeBreak(i)}>
+                            {$t('direction.settings.removeBreak')}
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+            <button type="button" class="link" onclick={addBreak}>{$t('direction.settings.addBreak')}</button>
+        </section>
+
         <div class="actions">
-            <button type="button" class="primary" onclick={() => onApply(config)}>
+            <button type="button" class="primary" onclick={askApply}>
                 {$t('direction.settings.apply')}
             </button>
             {#if onDelete}
@@ -118,7 +257,41 @@
             {/if}
         </div>
         {#if !isDraft}
-            <p class="frozen-note">{frozenReason}</p>
+            <p class="frozen-note">{$t('direction.settings.frozen')}</p>
+        {/if}
+
+        {#if pending}
+            <section class="confirm">
+                <h3>{$t('direction.change.title')}</h3>
+                {#if nothing}
+                    <p class="facts">{$t('direction.change.nothing')}</p>
+                {:else}
+                    <ul class="changes">
+                        {#each pending.changes || [] as change, i (change.code + i)}
+                            <li>{renderConfigChange($t, change)}</li>
+                        {/each}
+                        {#each pending.refusals || [] as refusal, i (refusal.code + i)}
+                            <li class="refused">
+                                {renderConfigChange($t, refusal)}
+                                &nbsp;&middot;&nbsp;{renderLockReason($t, refusal.reason)}
+                            </li>
+                        {/each}
+                    </ul>
+                {/if}
+                {#if blocked}
+                    <p class="facts">{$t('direction.change.blocked')}</p>
+                {/if}
+                <div class="actions">
+                    {#if !nothing && !blocked}
+                        <button type="button" class="primary" onclick={confirmApply}>
+                            {$t('direction.change.confirm')}
+                        </button>
+                    {/if}
+                    <button type="button" onclick={() => (pending = null)}>
+                        {nothing || blocked ? $t('direction.change.close') : $t('direction.change.cancel')}
+                    </button>
+                </div>
+            </section>
         {/if}
     {/if}
 </div>
@@ -270,5 +443,80 @@
 
     button.danger {
         border-color: var(--color-danger);
+    }
+
+    select.phase-kind {
+        min-width: 9rem;
+        padding: 0.15rem 0.3rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface-alt);
+        color: var(--color-text);
+    }
+
+    /* Un format figé reste À SA PLACE, grisé avec sa raison : un contrôle absent se lit comme
+       une erreur de recherche, un contrôle grisé se lit comme une règle. */
+    .phase-kind.frozen {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.35rem;
+        opacity: 0.75;
+    }
+
+    .reason {
+        font-weight: 400;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+    }
+
+    button.link {
+        border: none;
+        background: none;
+        padding: 0.2rem 0.1rem;
+        color: var(--color-primary);
+        cursor: pointer;
+        align-self: flex-start;
+    }
+
+    .breaks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .breaks li {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .breaks input {
+        width: auto;
+    }
+
+    /* La liste de contrôle : elle s'ouvre sous les actions, là où le regard vient de cliquer,
+       plutôt que dans une fenêtre qui recouvrirait ce qu'elle décrit. */
+    .confirm {
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        padding: 0.6rem 0.7rem;
+        background: var(--color-surface-alt);
+    }
+
+    .changes {
+        list-style: none;
+        margin: 0 0 0.5rem;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .refused {
+        color: var(--color-danger);
     }
 </style>

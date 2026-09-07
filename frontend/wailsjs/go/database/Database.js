@@ -682,6 +682,10 @@ export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
 
+export function PreviewDirectionConfig(arg1, arg2) {
+  return window['go']['database']['Database']['PreviewDirectionConfig'](arg1, arg2);
+}
+
 export function RankPositionIDsByFilters(arg1, arg2) {
   return window['go']['database']['Database']['RankPositionIDsByFilters'](arg1, arg2);
 }
