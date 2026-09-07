@@ -1094,6 +1094,8 @@
         "doubleOffered": "Doble a {v}",
         "answerPrompt": "Respuesta de {player} al doble",
         "answerHint": "t = aceptar, p = rechazar.",
+        "resignPrompt": "Abandono de {player}",
+        "resignHint": "1 = sencilla, 2 = gammon, 3 = backgammon; Esc cancela.",
         "matchOver": "Partido terminado: {player} gana {a}–{b}.",
         "inconsistencyPrefix": "Incoherencia:",
         "inconsistency": {

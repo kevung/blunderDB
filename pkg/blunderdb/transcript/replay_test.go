@@ -472,3 +472,59 @@ func TestCubeFlowsThroughAMatch(t *testing.T) {
 		t.Error("the match is won and Next does not say so")
 	}
 }
+
+// TestResignationIsAGameFactNotAMove holds the two properties of ADR-0045 §6 that
+// nothing else states, and that are both invisible until a match is saved.
+//
+// A resignation adds no row to `move`: the Game carries the winner and the points,
+// and the .mat format has no token for it anyway. And it is not a double turn —
+// a player gives up at any moment, their own roll included, so counting it would
+// mark every resignation that follows its author's last play.
+//
+// The abandoned match is the third: a draft left in the middle is an UNFINISHED
+// Match, `winner = -1` on its last game, which is what the domain's Game already
+// means by -1 and what a save must carry through untouched.
+func TestResignationIsAGameFactNotAMove(t *testing.T) {
+	doc := docOf(7, opening(domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
+	// Player 1 has just played, and player 1 gives the game up: two Actions of the
+	// same side in a row, and NOT a double turn.
+	doc.Actions = append(doc.Actions, Action{Side: domain.Black, Kind: KindResign, Level: 2})
+	doc.Cursor = len(doc.Actions)
+
+	ann := Replay(doc, 0)
+	if hasInconsistency(ann.Actions[2], DoubleTurn) {
+		t.Error("a resignation after its author's own play was counted as a double turn")
+	}
+	if g := ann.Games[0]; g.Winner != domain.White || g.PointsWon != 2 {
+		t.Fatalf("game = %+v, want player 2 winning a gammon", g)
+	}
+	if ann.Score != [2]int{0, 2} {
+		t.Errorf("score = %v, want [0 2]", ann.Score)
+	}
+	// The resignation itself produces no Move, and no Position either.
+	if info := ann.Actions[2]; info.MoveNumber != -1 || info.HasPosition {
+		t.Errorf("the resignation produced a move slot: %+v", info)
+	}
+	_, games, moves := MatchParts(doc)
+	if n := len(moves[games[0].ID]); n != 1 {
+		t.Errorf("moves of game 1 = %d, want the single checker play", n)
+	}
+
+	// A match abandoned mid-game: the last Game is unfinished and says so.
+	doc.Actions = append(doc.Actions, opening(domain.Black, 5, 2))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 5, 2))
+	doc.Cursor = len(doc.Actions)
+
+	ann = Replay(doc, 0)
+	if len(ann.Games) != 2 || ann.Games[1].Finished {
+		t.Fatalf("games = %+v, want an unfinished second game", ann.Games)
+	}
+	_, games, _ = MatchParts(doc)
+	if games[1].Winner != -1 || games[1].PointsWon != 0 {
+		t.Errorf("abandoned game = winner %d, %d points; want -1 and 0", games[1].Winner, games[1].PointsWon)
+	}
+	if ann.Finished {
+		t.Error("an abandoned match is not a finished one")
+	}
+}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:44+0200\n"
+"POT-Creation-Date: 2026-09-07 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -811,7 +811,20 @@ msgstr ""
 "Die angebotene Verdopplung aufgeben: die Partie wird zum Wert vor der "
 "Verdopplung gewonnen."
 
-#: ../../source/raccourcis.rst:294
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r, dann 1, 2 oder 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Die Partie für die Seite am Zug aufgeben: einfach, Gammon oder "
+"Backgammon. Esc zwischen den beiden Tasten bricht ab, ohne etwas "
+"aufzuzeichnen."
+
+#: ../../source/raccourcis.rst:295
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -819,20 +832,21 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:298
 msgid ""
-"Une partie se termine par une passe ou par la sortie du quinzième pion "
-"(simple, gammon ou backgammon, multiplié par la valeur du videau). Le "
-"score, la partie Crawford et la fin du match sont alors affichés au-"
-"dessus des dés, et l'ouverture de la partie suivante est attendue."
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
 msgstr ""
-"Eine Partie endet durch ein Aufgeben oder durch das Auswürfeln des "
-"fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit "
-"dem Wert des Dopplerwürfels). Punktestand, Crawford-Partie und Matchende "
-"werden dann über den Würfeln angezeigt, und die Eröffnung der nächsten "
-"Partie wird erwartet."
+"Eine Partie endet durch ein Aufgeben, durch eine Resignation oder durch "
+"das Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, "
+"multipliziert mit dem Wert des Dopplerwürfels). Punktestand, Crawford-"
+"Partie und Matchende werden dann über den Würfeln angezeigt, und die "
+"Eröffnung der nächsten Partie wird erwartet."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:306
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

@@ -1094,6 +1094,8 @@
         "doubleOffered": "Verdopplung auf {v}",
         "answerPrompt": "Antwort von {player} auf die Verdopplung",
         "answerHint": "t = Annehmen, p = Aufgeben.",
+        "resignPrompt": "Aufgabe von {player}",
+        "resignHint": "1 = einfach, 2 = Gammon, 3 = Backgammon; Esc bricht ab.",
         "matchOver": "Match beendet: {player} gewinnt {a}–{b}.",
         "inconsistencyPrefix": "Unstimmigkeit:",
         "inconsistency": {

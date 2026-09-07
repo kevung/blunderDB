@@ -1094,6 +1094,8 @@
         "doubleOffered": "Дабл до {v}",
         "answerPrompt": "Ответ {player} на дабл",
         "answerHint": "t = взять, p = пас.",
+        "resignPrompt": "{player} сдаётся",
+        "resignHint": "1 = простая, 2 = гаммон, 3 = бэкгаммон; Esc отменяет.",
         "matchOver": "Матч окончен: {player} побеждает {a}–{b}.",
         "inconsistencyPrefix": "Несоответствие:",
         "inconsistency": {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:44+0200\n"
+"POT-Creation-Date: 2026-09-07 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -811,7 +811,19 @@ msgstr ""
 "Rechazar el doble ofrecido: la partida se gana con el valor que tenía el "
 "cubo antes del doble."
 
-#: ../../source/raccourcis.rst:294
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r y luego 1, 2 o 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Abandonar la partida por el bando en juego: sencilla, gammon o "
+"backgammon. Esc entre las dos teclas cancela sin registrar nada."
+
+#: ../../source/raccourcis.rst:295
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -819,20 +831,21 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:298
 msgid ""
-"Une partie se termine par une passe ou par la sortie du quinzième pion "
-"(simple, gammon ou backgammon, multiplié par la valeur du videau). Le "
-"score, la partie Crawford et la fin du match sont alors affichés au-"
-"dessus des dés, et l'ouverture de la partie suivante est attendue."
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
 msgstr ""
-"Una partida termina por un rechazo o por la salida de la decimoquinta "
-"ficha (sencilla, gammon o backgammon, multiplicada por el valor del "
-"cubo). El marcador, la partida Crawford y el final del partido se "
-"muestran entonces encima de los dados, y se espera la apertura de la "
+"Una partida termina por un rechazo, por un abandono o por la salida de la"
+" decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el "
+"valor del cubo). El marcador, la partida Crawford y el final del partido "
+"se muestran entonces encima de los dados, y se espera la apertura de la "
 "partida siguiente."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:306
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 

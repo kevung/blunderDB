@@ -1327,10 +1327,14 @@ export default {
 <td>p</td>
 <td>Rifiutare il raddoppio proposto: la partita è vinta al valore che il cubo aveva prima del raddoppio.</td>
 </tr>
+<tr>
+<td>r poi 1, 2 o 3</td>
+<td>Abbandonare la partita per il lato di turno: semplice, gammon o backgammon. Esc fra i due tasti annulla senza registrare nulla.</td>
+</tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
-<p>Una partita finisce con un rifiuto o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
+<p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

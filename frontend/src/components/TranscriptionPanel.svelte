@@ -25,8 +25,13 @@
   Crawford game is derived, and the next opening is expected, all of it read off
   the Replay and none of it computed here.
 
-  What is not here yet: the resignation (T1.5), the Transcript column (T1.6),
-  correcting through the Cursor (T1.7), saving (T1.9).
+  A resignation is `r` then `1`/`2`/`3`, `Escape` between the two cancelling it:
+  the game is given up by the side on roll, at that level times the cube, and it
+  adds no Move at all to the saved match — only the winner and the points of the
+  Game (ADR-0045 §6).
+
+  What is not here yet: the Transcript column (T1.6), correcting through the
+  Cursor (T1.7), saving (T1.9).
 
   The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
   to ApplyTranscriptionGesture and comes back as a whole annotated document. It
@@ -206,6 +211,12 @@
                 return { Kind: 'take' };
             case COMMAND.PASS:
                 return { Kind: 'pass' };
+            // Le camp qui abandonne est celui au trait, « sauf indication
+            // contraire » : sans `HasSide` le moteur prend celui qu'il attend,
+            // et l'indication contraire est le geste « changer de camp » sur
+            // l'Action une fois créée (fonctionnel.md §1.2, §2).
+            case COMMAND.RESIGN:
+                return { Kind: 'resign', Level: command.value };
             case COMMAND.SELECT: {
                 const entry = ranked[command.index];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
@@ -553,7 +564,9 @@
 
             <div class="entry">
                 <span class="entry-label">
-                    {#if awaitingAnswer}
+                    {#if keys.phase === PHASE.RESIGN}
+                        {$t('transcription.resignPrompt', { player: playerName(sideOnRoll) })}
+                    {:else if awaitingAnswer}
                         {$t('transcription.answerPrompt', { player: playerName(sideOnRoll) })}
                     {:else if expects === 'opening'}
                         {$t('transcription.openingPrompt')}
@@ -561,7 +574,7 @@
                         {$t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
                     {/if}
                 </span>
-                {#if !awaitingAnswer}
+                {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
                     <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
                     <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
                 {/if}
@@ -573,7 +586,9 @@
                 <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
             {/if}
 
-            {#if awaitingAnswer}
+            {#if keys.phase === PHASE.RESIGN}
+                <p class="hint">{$t('transcription.resignHint')}</p>
+            {:else if awaitingAnswer}
                 <p class="hint">{$t('transcription.answerHint')}</p>
             {:else if keys.tie}
                 <p class="hint">{$t('transcription.tie')}</p>
@@ -591,7 +606,7 @@
                 <p class="hint">{$t('transcription.chosen')}</p>
             {/if}
 
-            {#if ranked.length && !awaitingAnswer}
+            {#if ranked.length && !awaitingAnswer && keys.phase !== PHASE.RESIGN}
                 {#if unranked}
                     <p class="hint">{$t('transcription.unranked')}</p>
                     <ol class="plain-candidates">

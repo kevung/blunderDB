@@ -1094,6 +1094,8 @@
         "doubleOffered": "Double to {v}",
         "answerPrompt": "{player}'s answer to the double",
         "answerHint": "t = take, p = pass.",
+        "resignPrompt": "{player} resigns",
+        "resignHint": "1 = single, 2 = gammon, 3 = backgammon; Escape cancels.",
         "matchOver": "Match over: {player} wins {a}–{b}.",
         "inconsistencyPrefix": "Inconsistency:",
         "inconsistency": {

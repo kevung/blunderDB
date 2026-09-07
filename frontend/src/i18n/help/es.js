@@ -1327,10 +1327,14 @@ export default {
 <td>p</td>
 <td>Rechazar el doble ofrecido: la partida se gana con el valor que tenía el cubo antes del doble.</td>
 </tr>
+<tr>
+<td>r y luego 1, 2 o 3</td>
+<td>Abandonar la partida por el bando en juego: sencilla, gammon o backgammon. Esc entre las dos teclas cancela sin registrar nada.</td>
+</tr>
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
-<p>Una partida termina por un rechazo o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
+<p>Una partida termina por un rechazo, por un abandono o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

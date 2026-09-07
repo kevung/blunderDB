@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:44+0200\n"
+"POT-Creation-Date: 2026-09-07 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -810,7 +810,20 @@ msgstr ""
 "Απόρριψη του διπλασιασμού: η παρτίδα κερδίζεται στην τιμή που είχε ο "
 "κύβος πριν τον διπλασιασμό."
 
-#: ../../source/raccourcis.rst:294
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r και μετά 1, 2 ή 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Παραίτηση από την παρτίδα για την πλευρά που παίζει: απλή, γκάμον ή "
+"μπάκγκαμον. Το Esc ανάμεσα στα δύο πλήκτρα ακυρώνει χωρίς να καταγραφεί "
+"τίποτε."
+
+#: ../../source/raccourcis.rst:295
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -818,19 +831,21 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:298
 msgid ""
-"Une partie se termine par une passe ou par la sortie du quinzième pion "
-"(simple, gammon ou backgammon, multiplié par la valeur du videau). Le "
-"score, la partie Crawford et la fin du match sont alors affichés au-"
-"dessus des dés, et l'ouverture de la partie suivante est attendue."
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
 msgstr ""
-"Μια παρτίδα τελειώνει με απόρριψη διπλασιασμού ή με την έξοδο του δέκατου"
-" πέμπτου πουλιού (απλή, γκάμον ή μπάκγκαμον, επί την τιμή του κύβου). Το "
-"σκορ, η παρτίδα Crawford και το τέλος του αγώνα εμφανίζονται τότε πάνω "
-"από τα ζάρια, και αναμένεται το άνοιγμα της επόμενης παρτίδας."
+"Μια παρτίδα τελειώνει με απόρριψη διπλασιασμού, με παραίτηση ή με την "
+"έξοδο του δέκατου πέμπτου πουλιού (απλή, γκάμον ή μπάκγκαμον, επί την "
+"τιμή του κύβου). Το σκορ, η παρτίδα Crawford και το τέλος του αγώνα "
+"εμφανίζονται τότε πάνω από τα ζάρια, και αναμένεται το άνοιγμα της "
+"επόμενης παρτίδας."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:306
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 

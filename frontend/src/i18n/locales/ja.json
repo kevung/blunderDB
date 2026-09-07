@@ -1094,6 +1094,8 @@
         "doubleOffered": "{v} へのダブル",
         "answerPrompt": "{player} のダブルへの応答",
         "answerHint": "t = テイク、p = パス。",
+        "resignPrompt": "{player} のレジグン",
+        "resignHint": "1 = シングル、2 = ギャモン、3 = バックギャモン。Esc で取り消し。",
         "matchOver": "マッチ終了：{player} が {a}–{b} で勝利。",
         "inconsistencyPrefix": "不整合：",
         "inconsistency": {

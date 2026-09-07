@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:44+0200\n"
+"POT-Creation-Date: 2026-09-07 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -802,7 +802,19 @@ msgstr ""
 "Luovuta tarjotun tuplauksen edessä: peli voitetaan sillä arvolla, joka "
 "kuutiolla oli ennen tuplausta."
 
-#: ../../source/raccourcis.rst:294
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r ja sitten 1, 2 tai 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Luovuta peli vuorossa olevan puolesta: yksinkertainen, gammon tai "
+"backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään."
+
+#: ../../source/raccourcis.rst:295
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -810,19 +822,20 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:298
 msgid ""
-"Une partie se termine par une passe ou par la sortie du quinzième pion "
-"(simple, gammon ou backgammon, multiplié par la valeur du videau). Le "
-"score, la partie Crawford et la fin du match sont alors affichés au-"
-"dessus des dés, et l'ouverture de la partie suivante est attendue."
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
 msgstr ""
-"Peli päättyy luovutukseen tai viidennentoista nappulan ulosjuoksuun "
-"(yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). "
-"Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin "
-"noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
+"Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan "
+"ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution "
+"arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
+"tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:306
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

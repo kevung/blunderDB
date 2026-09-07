@@ -1327,10 +1327,14 @@ export default {
 <td>p</td>
 <td>Luovuta tarjotun tuplauksen edessä: peli voitetaan sillä arvolla, joka kuutiolla oli ennen tuplausta.</td>
 </tr>
+<tr>
+<td>r ja sitten 1, 2 tai 3</td>
+<td>Luovuta peli vuorossa olevan puolesta: yksinkertainen, gammon tai backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään.</td>
+</tr>
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
-<p>Peli päättyy luovutukseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
+<p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>

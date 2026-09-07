@@ -1094,6 +1094,8 @@
         "doubleOffered": "Raddoppio a {v}",
         "answerPrompt": "Risposta di {player} al raddoppio",
         "answerHint": "t = accetta, p = rifiuta.",
+        "resignPrompt": "Resa di {player}",
+        "resignHint": "1 = semplice, 2 = gammon, 3 = backgammon; Esc annulla.",
         "matchOver": "Match terminato: {player} vince {a}–{b}.",
         "inconsistencyPrefix": "Incoerenza:",
         "inconsistency": {

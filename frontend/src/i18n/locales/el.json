@@ -1094,6 +1094,8 @@
         "doubleOffered": "Διπλασιασμός στο {v}",
         "answerPrompt": "Απάντηση του {player} στον διπλασιασμό",
         "answerHint": "t = δέχομαι, p = παραιτούμαι.",
+        "resignPrompt": "Παραίτηση του {player}",
+        "resignHint": "1 = απλή, 2 = γκάμον, 3 = μπάκγκαμον· Esc ακυρώνει.",
         "matchOver": "Ο αγώνας τελείωσε: ο {player} κερδίζει {a}–{b}.",
         "inconsistencyPrefix": "Ασυνέπεια:",
         "inconsistency": {

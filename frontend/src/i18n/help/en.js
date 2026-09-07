@@ -1327,10 +1327,14 @@ export default {
 <td>p</td>
 <td>Pass the double offered: the game is won at the value the cube had before the double.</td>
 </tr>
+<tr>
+<td>r then 1, 2 or 3</td>
+<td>Give the game up for the side on roll: single, gammon or backgammon. Escape between the two keys cancels without recording anything.</td>
+</tr>
 </tbody>
 </table>
 <p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
-<p>A game ends by a pass or by bearing off the fifteenth checker (single, gammon or backgammon, times the value of the cube). The score, the Crawford game and the end of the match are then shown above the dice, and the opening of the next game is expected.</p>
+<p>A game ends by a pass, by a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, times the value of the cube). The score, the Crawford game and the end of the match are then shown above the dice, and the opening of the next game is expected.</p>
 <h3>Help Panel</h3>
 <table>
 <thead>

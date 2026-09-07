@@ -1327,10 +1327,14 @@ export default {
 <td>p</td>
 <td>Passer le double proposé : la partie est gagnée à la valeur d'avant le double.</td>
 </tr>
+<tr>
+<td>r puis 1, 2 ou 3</td>
+<td>Abandonner la partie pour le camp au trait : simple, gammon ou backgammon. Esc entre les deux touches annule sans rien enregistrer.</td>
+</tr>
 </tbody>
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
-<p>Une partie se termine par une passe ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
+<p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>

@@ -1094,6 +1094,8 @@
         "doubleOffered": "Tuplaus arvoon {v}",
         "answerPrompt": "{player}: vastaus tuplaukseen",
         "answerHint": "t = ota, p = luovuta.",
+        "resignPrompt": "{player} luovuttaa",
+        "resignHint": "1 = yksinkertainen, 2 = gammon, 3 = backgammon; Esc peruuttaa.",
         "matchOver": "Ottelu päättyi: {player} voittaa {a}–{b}.",
         "inconsistencyPrefix": "Epäjohdonmukaisuus:",
         "inconsistency": {

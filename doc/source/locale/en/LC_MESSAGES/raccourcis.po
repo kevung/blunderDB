@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:44+0200\n"
+"POT-Creation-Date: 2026-09-07 04:55+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -798,7 +798,19 @@ msgstr ""
 "Pass the double offered: the game is won at the value the cube had before"
 " the double."
 
-#: ../../source/raccourcis.rst:294
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r then 1, 2 or 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr ""
+"Give the game up for the side on roll: single, gammon or backgammon. "
+"Escape between the two keys cancels without recording anything."
+
+#: ../../source/raccourcis.rst:295
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -806,19 +818,20 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:298
 msgid ""
-"Une partie se termine par une passe ou par la sortie du quinzième pion "
-"(simple, gammon ou backgammon, multiplié par la valeur du videau). Le "
-"score, la partie Crawford et la fin du match sont alors affichés au-"
-"dessus des dés, et l'ouverture de la partie suivante est attendue."
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
 msgstr ""
-"A game ends by a pass or by bearing off the fifteenth checker (single, "
-"gammon or backgammon, times the value of the cube). The score, the "
-"Crawford game and the end of the match are then shown above the dice, and"
-" the opening of the next game is expected."
+"A game ends by a pass, by a resignation or by bearing off the fifteenth "
+"checker (single, gammon or backgammon, times the value of the cube). The "
+"score, the Crawford game and the end of the match are then shown above "
+"the dice, and the opening of the next game is expected."
 
-#: ../../source/raccourcis.rst:305
+#: ../../source/raccourcis.rst:306
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
