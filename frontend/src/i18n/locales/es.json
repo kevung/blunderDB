@@ -1087,7 +1087,22 @@
         "dance": "Ningún movimiento legal: se registra el baile.",
         "unranked": "Evaluación no disponible: los movimientos legales están en el orden del generador.",
         "correctable": "Tirada aún corregible: un dígito la reinicia, Intro registra el movimiento.",
-        "chosen": "Movimiento elegido: un dígito lo registra y abre la siguiente tirada."
+        "chosen": "Movimiento elegido: un dígito lo registra y abre la siguiente tirada.",
+        "gameNumber": "Partida {n}",
+        "cubeCentred": "Cubo {v} (centrado)",
+        "cubeOwned": "Cubo {v} · {player}",
+        "doubleOffered": "Doble a {v}",
+        "answerPrompt": "Respuesta de {player} al doble",
+        "answerHint": "t = aceptar, p = rechazar.",
+        "matchOver": "Partido terminado: {player} gana {a}–{b}.",
+        "inconsistencyPrefix": "Incoherencia:",
+        "inconsistency": {
+            "illegal_move": "jugada ilegal",
+            "double_turn": "doble turno",
+            "impossible_cube": "acción de cubo imposible",
+            "past_end": "más allá del final del partido",
+            "inconsistent_dice": "jugada incoherente con la tirada"
+        }
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",

@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Abbandonare l'inserimento in corso.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Raddoppiare o ri-raddoppiare: la mossa selezionata viene convalidata al passaggio, con un solo tasto.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Accettare il raddoppio proposto: il cubo passa a chi accetta al valore raddoppiato e chi ha raddoppiato torna a tirare.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Rifiutare il raddoppio proposto: la partita è vinta al valore che il cubo aveva prima del raddoppio.</td>
+</tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
+<p>Una partita finisce con un rifiuto o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

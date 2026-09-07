@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Abandonar la entrada en curso.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Doblar o redoblar: la jugada seleccionada se valida de paso, con una sola tecla.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Aceptar el doble ofrecido: el cubo pasa al que acepta con el valor doblado y el que dobló vuelve a tirar.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Rechazar el doble ofrecido: la partida se gana con el valor que tenía el cubo antes del doble.</td>
+</tr>
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
+<p>Una partida termina por un rechazo o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

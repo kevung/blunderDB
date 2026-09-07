@@ -35,6 +35,19 @@
  * C'est de là que sort la danse — un jet sans aucun coup légal crée l'Action
  * `dance` aussitôt, zéro touche de plus (ux.md §3, dernière ligne).
  *
+ * # Le videau
+ *
+ * `d`, `t` et `p` ne coûtent chacune qu'une touche parce que le moteur valide
+ * de lui-même le candidat resté en attente (`transcript.cubeGesture`) : la
+ * machine n'émet donc PAS de `validate` avant elles, et « double + prise »
+ * tient dans `d` `t` (ux.md §4.2).
+ *
+ * Ce que ces touches ne font PAS : juger. Doubler sans posséder le videau, en
+ * partie Crawford ou au-delà du plafond reste transcriptible — c'est une
+ * Incohérence du Replay, marquée et jamais refusée (ADR-0044, fonctionnel.md
+ * §1.4). Seules `t` et `p` demandent une offre en face, faute de quoi elles ne
+ * répondent à rien.
+ *
  * Conventions de clavier (voir utils/keys.js) : les CHIFFRES sont positionnels
  * (`event.code`, pour que la rangée du haut d'un AZERTY marche sans Maj), les
  * LETTRES sont lues au caractère produit (`event.key`).
@@ -60,7 +73,10 @@ export const COMMAND = Object.freeze({
     CLEAR: 'clear',
     VALIDATE: 'validate',
     SELECT: 'select',
-    DANCE: 'dance'
+    DANCE: 'dance',
+    DOUBLE: 'double',
+    TAKE: 'take',
+    PASS: 'pass'
 });
 
 /** Les sortes d'Action dont la saisie passe par deux dés. */
@@ -121,8 +137,31 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  * @returns {{handled: boolean, state: object, commands: {kind: string, value?: number, index?: number}[]}}
  */
 export function pressKey(state, event, { expects = 'checker' } = {}) {
+    // `d` double ou redouble depuis n'importe quel état de saisie. Une seule
+    // touche : le moteur valide d'abord le candidat en attente s'il y en a un
+    // (transcript.cubeGesture), donc « double + prise » coûte `d` `t` et rien
+    // de plus (ux.md §4.2).
+    //
+    // Elle n'est JAMAIS avalée au motif que le camp ne possède pas le videau,
+    // qu'on est en partie Crawford ou que le videau est au plafond : ce sont
+    // les trois « videau impossible » de fonctionnel.md §1.4, et une
+    // Incohérence est MARQUÉE, jamais refusée (ADR-0044). Le moteur la pose,
+    // le panneau l'affiche.
+    if (isBareLetter(event, 'd')) {
+        return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.DOUBLE }] };
+    }
+
+    // `t`/`p` ne répondent qu'à une offre. Ce n'est pas un refus : sans double
+    // qui précède il n'y a pas de réponse à transcrire, et la touche reste
+    // disponible pour le répartiteur global (ux.md §3 : « réponse attendue |
+    // t / p »).
+    if (expects === 'take') {
+        if (isBareLetter(event, 't')) return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.TAKE }] };
+        if (isBareLetter(event, 'p')) return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.PASS }] };
+    }
+
     // Une réponse à un double n'est pas une saisie de dés : ses touches sont
-    // `t`/`p` et elles sont à T1.4. Rien n'est avalé ici en attendant.
+    // `t`/`p`, traitées juste au-dessus.
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);

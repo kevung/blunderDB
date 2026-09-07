@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:24+0200\n"
+"POT-Creation-Date: 2026-09-07 04:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -403,7 +403,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostra/nascondi l'aiuto."
 
-#: ../../source/raccourcis.rst:117
+#: ../../source/raccourcis.rst:118
 msgid "Onglets de vues"
 msgstr "Schede delle viste"
 
@@ -455,7 +455,7 @@ msgstr "Doppio clic sulla scheda"
 msgid "Renommer la vue."
 msgstr "Rinomina la vista."
 
-#: ../../source/raccourcis.rst:134
+#: ../../source/raccourcis.rst:135
 msgid "Ligne de commande"
 msgstr "Riga di comando"
 
@@ -475,7 +475,7 @@ msgstr "GIÙ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Scorri la cronologia dei comandi verso il basso."
 
-#: ../../source/raccourcis.rst:147
+#: ../../source/raccourcis.rst:148
 msgid "Historique de recherche"
 msgstr "Cronologia di ricerca"
 
@@ -495,7 +495,7 @@ msgstr "Doppio clic"
 msgid "Exécuter la recherche."
 msgstr "Esegui la ricerca."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Libreria di filtri"
 
@@ -507,7 +507,7 @@ msgstr "Seleziona/deseleziona un filtro (mostra la posizione)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Esegui la ricerca del filtro."
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:174
 msgid "Panneau d'analyse"
 msgstr "Pannello di analisi"
 
@@ -541,7 +541,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:189
+#: ../../source/raccourcis.rst:190
 msgid "Panneau Eval"
 msgstr "Pannello Eval"
 
@@ -549,7 +549,7 @@ msgstr "Pannello Eval"
 msgid "Désélectionner le coup."
 msgstr "Deseleziona la mossa."
 
-#: ../../source/raccourcis.rst:204
+#: ../../source/raccourcis.rst:205
 msgid "Panneau des matchs"
 msgstr "Pannello dei match"
 
@@ -585,7 +585,7 @@ msgstr "Elimina il match selezionato."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleziona/chiudi il pannello."
 
-#: ../../source/raccourcis.rst:222
+#: ../../source/raccourcis.rst:223
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Pannello Anki (ripetizione dilazionata)"
 
@@ -641,7 +641,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:241
 msgid "Panneau des tournois"
 msgstr "Pannello dei tornei"
 
@@ -674,7 +674,7 @@ msgstr ""
 "match, altrimenti deseleziona il torneo, altrimenti chiudi il pannello (a"
 " tappe)."
 
-#: ../../source/raccourcis.rst:256
+#: ../../source/raccourcis.rst:257
 msgid "Panneau des collections"
 msgstr "Pannello delle collezioni"
 
@@ -704,11 +704,11 @@ msgstr ""
 "Torna all'elenco delle collezioni, altrimenti deseleziona la collezione, "
 "altrimenti chiudi il pannello (a tappe)."
 
-#: ../../source/raccourcis.rst:271
+#: ../../source/raccourcis.rst:272
 msgid "Panneau Transcription"
 msgstr "Pannello di trascrizione"
 
-#: ../../source/raccourcis.rst:273
+#: ../../source/raccourcis.rst:274
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
 "ouvert."
@@ -774,7 +774,35 @@ msgstr "Cancellare i due dadi inseriti."
 msgid "Abandonner la saisie en cours."
 msgstr "Abbandonare l'inserimento in corso."
 
-#: ../../source/raccourcis.rst:290
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Doubler ou redoubler : le coup sélectionné est validé au passage, en une "
+"seule touche."
+msgstr ""
+"Raddoppiare o ri-raddoppiare: la mossa selezionata viene convalidata al "
+"passaggio, con un solo tasto."
+
+#: ../../source/raccourcis.rst:1
+msgid "t"
+msgstr "t"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Prendre le double proposé : le videau passe au preneur à la valeur "
+"doublée et le doubleur rejoue."
+msgstr ""
+"Accettare il raddoppio proposto: il cubo passa a chi accetta al valore "
+"raddoppiato e chi ha raddoppiato torna a tirare."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Passer le double proposé : la partie est gagnée à la valeur d'avant le "
+"double."
+msgstr ""
+"Rifiutare il raddoppio proposto: la partita è vinta al valore che il cubo"
+" aveva prima del raddoppio."
+
+#: ../../source/raccourcis.rst:294
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -782,7 +810,19 @@ msgstr ""
 "Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
 "tasto in più."
 
-#: ../../source/raccourcis.rst:296
+#: ../../source/raccourcis.rst:297
+msgid ""
+"Une partie se termine par une passe ou par la sortie du quinzième pion "
+"(simple, gammon ou backgammon, multiplié par la valeur du videau). Le "
+"score, la partie Crawford et la fin du match sont alors affichés au-"
+"dessus des dés, et l'ouverture de la partie suivante est attendue."
+msgstr ""
+"Una partita finisce con un rifiuto o con l'uscita della quindicesima "
+"pedina (semplice, gammon o backgammon, moltiplicata per il valore del "
+"cubo). Il punteggio, la partita Crawford e la fine del match sono allora "
+"mostrati sopra i dadi, e si attende l'apertura della partita successiva."
+
+#: ../../source/raccourcis.rst:305
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

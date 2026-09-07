@@ -378,3 +378,97 @@ func TestReplayIncrementalMatchesFull(t *testing.T) {
 		}
 	}
 }
+
+// TestCubeFlowsThroughAMatch walks fonctionnel.md §6, flows 5 to 11, on one
+// document: a double taken, a redouble passed, the score that follows, the game
+// after it, and — on a match short enough to reach it — the Crawford game and the
+// end of the match.
+//
+// The single-flow pieces are already held elsewhere (the gestures test for one
+// double and one take, the inconsistency test for a double in the Crawford game).
+// What is held HERE is their sequence, which is the thing a transcription
+// actually is: each derivation feeds the next, and a score that advances by the
+// wrong amount is invisible until the game after it.
+func TestCubeFlowsThroughAMatch(t *testing.T) {
+	// Flow 5 — double, take: the cube goes to the taker at the doubled value and
+	// the DOUBLER rolls next.
+	doc := docOf(7, opening(domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions,
+		Action{Side: domain.White, Kind: KindDouble},
+		Action{Side: domain.Black, Kind: KindTake},
+	)
+	doc.Cursor = len(doc.Actions)
+
+	ann := Replay(doc, 0)
+	if got := ann.Next.Position.Cube; got.Owner != domain.Black || got.Value != 1 {
+		t.Fatalf("after the take the cube is %+v, want player 1 owning 2", got)
+	}
+	if ann.Next.Expects != KindChecker || ann.Next.Side != domain.White {
+		t.Fatalf("after the take, next = %+v, want the doubler's roll", ann.Next)
+	}
+	if ann.Inconsistent() {
+		t.Fatalf("an ordinary double and take are consistent: %+v", ann.Actions)
+	}
+
+	// Flow 7 — redouble: the cube is held by player 1, who may turn it again.
+	// Flow 6 — pass: the game is won at the value the cube had BEFORE the offer.
+	doc.Actions = append(doc.Actions,
+		Action{Side: domain.Black, Kind: KindDouble},
+		Action{Side: domain.White, Kind: KindPass},
+	)
+	doc.Cursor = len(doc.Actions)
+
+	ann = Replay(doc, 0)
+	if ann.Inconsistent() {
+		t.Fatalf("the owner of the cube may redouble: %+v", ann.Actions)
+	}
+	g := ann.Games[0]
+	if g.Winner != domain.Black || g.PointsWon != 2 || !g.Finished {
+		t.Fatalf("game 1 = %+v, want player 1 winning 2 points", g)
+	}
+	if ann.Score != [2]int{2, 0} {
+		t.Fatalf("score = %v, want [2 0]", ann.Score)
+	}
+
+	// Flow 10 — the next game: its number, its initial score and the away score
+	// the next Position carries are all derived before a single Action of it.
+	if ann.Next.Expects != KindOpening || ann.Next.GameNumber != 2 {
+		t.Fatalf("next = %+v, want the opening of game 2", ann.Next)
+	}
+	if ann.Next.Crawford {
+		t.Error("2-0 in a 7-point match is not the Crawford game")
+	}
+	if got := ann.Next.Position.Score; got != [2]int{5, 7} {
+		t.Errorf("away score = %v, want [5 7]", got)
+	}
+
+	// Flow 11 — the end of the match, on a length short enough to reach by the
+	// cube alone: a double passed in game 1 puts player 2 one point from a
+	// two-point match, so game 2 is the Crawford game and a double in it is
+	// impossible; a second pass ends the match.
+	short := docOf(2,
+		opening(domain.Black, 6, 3),
+		Action{Side: domain.Black, Kind: KindDouble},
+		Action{Side: domain.White, Kind: KindPass},
+		opening(domain.Black, 5, 2),
+		Action{Side: domain.Black, Kind: KindDouble},
+		Action{Side: domain.White, Kind: KindPass},
+	)
+	ann = Replay(short, 0)
+	if len(ann.Games) != 2 {
+		t.Fatalf("games = %d, want 2", len(ann.Games))
+	}
+	if !ann.Games[1].Crawford {
+		t.Errorf("game 2 is the Crawford game: %+v", ann.Games)
+	}
+	if !hasInconsistency(ann.Actions[4], ImpossibleCube) {
+		t.Error("the cube is dead in the Crawford game; the double was not marked")
+	}
+	if !ann.Finished || ann.Winner != domain.Black || ann.Score != [2]int{2, 0} {
+		t.Errorf("match = finished %v winner %d score %v, want player 1 at 2-0", ann.Finished, ann.Winner, ann.Score)
+	}
+	if !ann.Next.MatchOver {
+		t.Error("the match is won and Next does not say so")
+	}
+}
