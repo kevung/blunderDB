@@ -2063,6 +2063,14 @@
             "open": "Avaa selaimessa",
             "forget": "Lopeta kirjoittaminen",
             "error": "Näyttösivun kirjoittaminen epäonnistui."
+        },
+        "sheet": {
+            "print": "Tulosta lomake",
+            "hint": "Kierroksen parituslomake ilmoittautumispöydälle. Tulostusikkuna avautuu itsestään.",
+            "round": "Kierros",
+            "roundHint": "Mikä kierros tulostetaan. Oletuksena viimeisin.",
+            "latest": "viimeisin",
+            "error": "Parituslomakkeen kirjoittaminen epäonnistui."
         }
     }
 }

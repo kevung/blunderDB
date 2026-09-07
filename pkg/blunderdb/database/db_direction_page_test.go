@@ -207,3 +207,207 @@ func TestDirectionPage_CostOfARewrite(t *testing.T) {
 		t.Errorf("a rewrite costs %v, which a director would feel at every result", each)
 	}
 }
+
+// The printable pairing sheet (issue #387).
+//
+// What is held here is what the paper is for: the two names, the length, the table, and an empty
+// box for the score — readable at a metre, and printable without hunting for Ctrl+P.
+
+func TestDirectionSheet_OneLinePerMatch(t *testing.T) {
+	d := newTestDB(t)
+	frenchStrings(t, d, "fr")
+	tID := startedDirection(t, d, 16)
+	runningMatch(t, d, tID)
+
+	rounds, err := d.DirectionRounds(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rounds < 1 {
+		t.Fatalf("a launched batch should be a printable round, got %d", rounds)
+	}
+
+	sheet, err := d.DirectionPairingSheetHTML(tID, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The sheet exists to leave the screen: the system dialog opens on its own.
+	if !strings.Contains(sheet, "window.print()") {
+		t.Error("the sheet does not ask to be printed")
+	}
+	// One line per match, both names on it, and an empty box for the score.
+	view, err := d.GetDirection(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range view.Running {
+		for _, id := range []string{string(m.A), string(m.B)} {
+			if !strings.Contains(sheet, "Joueur "+id) {
+				t.Errorf("the sheet does not name %s", id)
+			}
+		}
+	}
+	if !strings.Contains(sheet, `class="case"`) {
+		t.Error("the sheet has no box to write the score in")
+	}
+	if strings.Contains(sheet, "http://") || strings.Contains(sheet, "https://") {
+		t.Error("the sheet reaches outside itself")
+	}
+	if !strings.Contains(sheet, "Nicolas Harmand") {
+		t.Error("the sheet does not credit the engine's author")
+	}
+}
+
+func TestDirectionSheet_SpeaksTheInterfacesLanguage(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 16)
+	runningMatch(t, d, tID)
+
+	frenchStrings(t, d, "ja")
+	sheet, err := d.DirectionPairingSheetHTML(tID, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(sheet, `lang="ja"`) || !strings.Contains(sheet, "組み合わせ表") {
+		t.Error("the sheet is not in the interface's language")
+	}
+}
+
+// Printing must not require choosing a folder first: that would be a click, and the budget is
+// three.
+func TestDirectionSheet_PrintableWithNoFolderChosen(t *testing.T) {
+	d := newTestDB(t)
+	frenchStrings(t, d, "fr")
+	tID := startedDirection(t, d, 16)
+	runningMatch(t, d, tID)
+
+	path, err := d.WriteDirectionPairingSheet(tID, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(path)
+	if filepath.Base(path) != direction.SheetName {
+		t.Errorf("the sheet was written to %q", path)
+	}
+	if _, err := os.Stat(path); err != nil {
+		t.Fatal(err)
+	}
+
+	// With a folder chosen, it lands beside the display page rather than in /tmp.
+	out := t.TempDir()
+	if err := d.SetDirectionOutputDir(tID, out); err != nil {
+		t.Fatal(err)
+	}
+	path, err = d.WriteDirectionPairingSheet(tID, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if filepath.Dir(path) != out {
+		t.Errorf("the sheet went to %q instead of the display folder", path)
+	}
+}
+
+// An earlier round stays printable: a director who is asked for the sheet of round 2 while
+// round 5 is running must get round 2.
+func TestDirectionSheet_AnEarlierRound(t *testing.T) {
+	d := newTestDB(t)
+	frenchStrings(t, d, "fr")
+	tID := startedDirection(t, d, 16)
+	playToTheEnd(t, d, tID)
+
+	rounds, err := d.DirectionRounds(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rounds < 2 {
+		t.Skipf("only %d batch(es) played: nothing to choose between", rounds)
+	}
+	first, err := d.DirectionPairingSheetHTML(tID, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	last, err := d.DirectionPairingSheetHTML(tID, rounds)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first == last {
+		t.Error("the first round's sheet is the same as the last one's")
+	}
+	// Out of range gives the most recent, which is the one printed in practice.
+	beyond, err := d.DirectionPairingSheetHTML(tID, rounds+5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if beyond != last {
+		t.Error("a round beyond the last should give the most recent sheet")
+	}
+}
+
+// What is launched together is ONE round. The engine groups matches into batches by their start
+// time — that is how it knows what a director calls a round — so "launch all" must carry one
+// instant for the whole batch. Eight successive time.Now() made eight rounds of one match each,
+// and the pairing sheet printed one line per page.
+func TestDirectionSheet_LaunchingTogetherIsOneRound(t *testing.T) {
+	d := newTestDB(t)
+	frenchStrings(t, d, "fr")
+	tID := startedDirection(t, d, 32)
+	view, err := d.ConfirmAllProposals(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(view.Running) < 8 {
+		t.Fatalf("only %d matches launched: the case is not the one being tested", len(view.Running))
+	}
+	rounds, err := d.DirectionRounds(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rounds != 1 {
+		t.Errorf("%d matches launched together made %d rounds", len(view.Running), rounds)
+	}
+	// And every one of them is on the sheet: a director who prints round 1 gets round 1 whole.
+	sheet, err := d.DirectionPairingSheetHTML(tID, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n := strings.Count(sheet, `<td class="case">`); n != 2*len(view.Running) {
+		t.Errorf("the sheet has %d score boxes for %d matches", n, len(view.Running))
+	}
+}
+
+// Accents and long names are neither cut nor overlapped: the sheet is read at a metre, and a
+// name that came out as "Jean-Baptiste de la Villemarqu" would be read as a different player.
+func TestDirectionSheet_LongAccentedNamesSurvive(t *testing.T) {
+	d := newTestDB(t)
+	frenchStrings(t, d, "fr")
+	tID := preparedDirection(t, d)
+	const long = "Jean-Baptiste de la Villemarqué-Kärkkäinen"
+	players := `[{"id":"jb","name":"` + long + `"},{"id":"eo","name":"Éloïse Ångström"}]`
+	if err := d.EnterParticipants(tID, players); err != nil {
+		t.Fatal(err)
+	}
+	// The draw comes first, the match second: two rounds of "launch all" reach a running match.
+	for i := 0; i < 4; i++ {
+		v, err := d.ConfirmAllProposals(tID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(v.Running) > 0 {
+			break
+		}
+	}
+	sheet, err := d.DirectionPairingSheetHTML(tID, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{long, "Éloïse Ångström"} {
+		if !strings.Contains(sheet, name) {
+			t.Errorf("the sheet does not carry %q whole", name)
+		}
+	}
+	// Nothing forces a cell onto one line: a long name wraps rather than pushing the table off
+	// the page.
+	if strings.Contains(sheet, "nowrap") {
+		t.Error("a cell is held on one line, so a long name will run off the sheet")
+	}
+}

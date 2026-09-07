@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
@@ -21,6 +22,10 @@ import (
 // PageName is the file's name inside the chosen folder. It never changes, so the browser tab
 // the director opened at 9 h is still the right one at 19 h: a refresh shows the new page.
 const PageName = "tournoi.html"
+
+// SheetName is the printable pairing sheet's file name (issue #387). Paper is still the
+// director's tool: the sheet goes on the welcome desk and the players come and read it.
+const SheetName = "appariements.html"
 
 // Page renders the display page in the host's language.
 func (d *Direction) Page(cat *Catalog, lang string, now time.Time) (string, error) {
@@ -57,32 +62,71 @@ func (d *Direction) playerName(id tournoi.PlayerID) string {
 	return string(id)
 }
 
+// PairingSheet renders the printable pairing sheet of one batch — a round, a block, a bracket
+// round, whatever the director calls it. round 0, or beyond the last, gives the most recent,
+// which is the one printed in practice.
+//
+// The page carries a print instruction, so the system dialog opens on its own: the director's
+// gesture is ONE click, and what they wanted was the paper, not a tab.
+func (d *Direction) PairingSheet(cat *Catalog, lang string, round int) (string, error) {
+	if d.st == nil {
+		return "", ErrNoDirection
+	}
+	return printOnOpen(d.renderer(cat, lang).PairingSheet(d.st, round)), nil
+}
+
+// Rounds counts the batches of the current phase — how many sheets there are to choose from.
+func (d *Direction) Rounds() int {
+	if d.st == nil {
+		return 0
+	}
+	return len(render.Batches(d.st))
+}
+
+// printOnOpen adds the one script blunderDB ever puts in a page it produces.
+//
+// The display page must carry NONE — it is a wall display, it reloads itself, and a test
+// forbids a script there. A pairing sheet is the opposite: it exists to leave the screen, and
+// without this the director opens a tab and then hunts for Ctrl+P.
+func printOnOpen(doc string) string {
+	const script = `<script>window.addEventListener("load",function(){window.print()})</script>`
+	if i := strings.LastIndex(doc, "</body>"); i >= 0 {
+		return doc[:i] + script + doc[i:]
+	}
+	return doc + script
+}
+
 // WritePage writes the page into dir, atomically: a display that is being refreshed must never
 // be caught half-written by the browser reading it at that instant.
 //
 // It returns the path written, which is what "open in the browser" needs.
 func WritePage(dir, page string) (string, error) {
+	return WriteFileAtomically(dir, PageName, page)
+}
+
+// WriteFileAtomically writes one of the pages this package produces, atomically.
+func WriteFileAtomically(dir, name, page string) (string, error) {
 	if dir == "" {
 		return "", fmt.Errorf("direction: no output folder chosen")
 	}
-	final := filepath.Join(dir, PageName)
-	tmp, err := os.CreateTemp(dir, ".tournoi-*.html")
+	final := filepath.Join(dir, name)
+	tmp, err := os.CreateTemp(dir, "."+strings.TrimSuffix(name, ".html")+"-*.html")
 	if err != nil {
-		return "", fmt.Errorf("direction: writing the display page: %w", err)
+		return "", fmt.Errorf("direction: writing %s: %w", name, err)
 	}
-	name := tmp.Name()
+	partial := tmp.Name()
 	if _, err := tmp.WriteString(page); err != nil {
 		tmp.Close()
-		os.Remove(name)
-		return "", fmt.Errorf("direction: writing the display page: %w", err)
+		os.Remove(partial)
+		return "", fmt.Errorf("direction: writing %s: %w", name, err)
 	}
 	if err := tmp.Close(); err != nil {
-		os.Remove(name)
-		return "", fmt.Errorf("direction: writing the display page: %w", err)
+		os.Remove(partial)
+		return "", fmt.Errorf("direction: writing %s: %w", name, err)
 	}
-	if err := os.Rename(name, final); err != nil {
-		os.Remove(name)
-		return "", fmt.Errorf("direction: writing the display page: %w", err)
+	if err := os.Rename(partial, final); err != nil {
+		os.Remove(partial)
+		return "", fmt.Errorf("direction: writing %s: %w", name, err)
 	}
 	return final, nil
 }

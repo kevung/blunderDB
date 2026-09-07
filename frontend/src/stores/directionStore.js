@@ -39,7 +39,9 @@ import {
     StartTranscriptionFromSlot,
     SetDirectionOutputDir,
     SetDirectionStrings,
-    WriteDirectionPage
+    WriteDirectionPage,
+    WriteDirectionPairingSheet,
+    DirectionRounds
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock } from '../i18n';
@@ -245,6 +247,36 @@ export async function writeDirectionPage() {
     } catch (e) {
         logger.error('direction: writing the display page failed', e);
         return null;
+    }
+}
+
+/**
+ * Écrit la feuille d'appariements d'une ronde et rend le fichier à ouvrir (issue #387).
+ *
+ * Le papier reste l'outil du directeur : la feuille se pose sur la table d'accueil, et les
+ * joueurs viennent la lire. `round` vaut 0 pour la ronde la plus récente, celle qu'on imprime
+ * en pratique.
+ */
+export async function writePairingSheet(round = 0) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    try {
+        return await WriteDirectionPairingSheet(id, round);
+    } catch (e) {
+        logger.error('direction: writing the pairing sheet failed', e);
+        return null;
+    }
+}
+
+/** Le nombre de rondes imprimables de la phase courante. */
+export async function directionRounds() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return 0;
+    try {
+        return (await DirectionRounds(id)) || 0;
+    } catch (e) {
+        logger.error('direction: counting rounds failed', e);
+        return 0;
     }
 }
 

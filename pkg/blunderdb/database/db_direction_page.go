@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"os"
 	"sync"
 	"time"
 
@@ -86,4 +87,54 @@ func (d *Database) DirectionPageHTML(tournamentID int64) (string, error) {
 	}
 	cat, lang := currentDirectionStrings()
 	return dir.Page(cat, lang, time.Now())
+}
+
+// The printable pairing sheet (issue #387).
+//
+// Paper is still the director's tool: the sheet goes on the welcome desk, and the players come
+// and read it rather than asking. It is the same rendering plumbing as the display page — same
+// catalogue, same credit — with one difference of purpose: it exists to leave the screen, so it
+// carries a print instruction and opens the system dialog by itself.
+
+// DirectionPairingSheetHTML renders the sheet of one batch without writing it.
+func (d *Database) DirectionPairingSheetHTML(tournamentID int64, round int) (string, error) {
+	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err != nil {
+		return "", err
+	}
+	cat, lang := currentDirectionStrings()
+	return dir.PairingSheet(cat, lang, round)
+}
+
+// WriteDirectionPairingSheet writes the sheet and returns the file to open.
+//
+// It goes into the Direction's display folder when there is one, and into the system's
+// temporary folder otherwise: printing must not require choosing a folder first — that would be
+// a click, and the budget is three.
+func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (string, error) {
+	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err != nil {
+		return "", err
+	}
+	cat, lang := currentDirectionStrings()
+	sheet, err := dir.PairingSheet(cat, lang, round)
+	if err != nil {
+		return "", err
+	}
+	out := dir.Record().OutputDir
+	if out == "" {
+		out = os.TempDir()
+	}
+	return direction.WriteFileAtomically(out, direction.SheetName, sheet)
+}
+
+// DirectionRounds counts the batches of the current phase: how many sheets there are to choose
+// from. A batch is what a director calls a round in a Swiss by rounds, a block in a GSL, a
+// round in a bracket — the engine has no word for it, and needs none.
+func (d *Database) DirectionRounds(tournamentID int64) (int, error) {
+	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err != nil {
+		return 0, err
+	}
+	return dir.Rounds(), nil
 }

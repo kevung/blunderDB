@@ -2063,6 +2063,14 @@
             "open": "Apri nel browser",
             "forget": "Non scrivere più",
             "error": "Impossibile scrivere la pagina del display."
+        },
+        "sheet": {
+            "print": "Stampa il foglio",
+            "hint": "Il foglio degli abbinamenti del turno, da posare sul tavolo dell'accoglienza. La finestra di stampa si apre da sola.",
+            "round": "Turno",
+            "roundHint": "Quale turno stampare. Il più recente per impostazione predefinita.",
+            "latest": "il più recente",
+            "error": "Impossibile scrivere il foglio degli abbinamenti."
         }
     }
 }
