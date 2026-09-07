@@ -110,3 +110,12 @@ CONTRAINTE (utilisateur) : le COÛT D'ENTRÉE doit être bas — premier tournoi
 D19. Hypothèses UX 1-8 acceptées. Exigence : CORRIGER UNE ERREUR DE SAISIE sur place (F28) —
     dernier résultat affiché avec [Corriger] à 1 clic, Ctrl+Z = correction du dernier événement,
     case du match fini rouvrable, Participant corrigeable sans changer de slug.
+
+D20. CORRECTION du modèle de brouillon, trouvée en implémentant #369. Le journal commence à la
+    CRÉATION, pas au lancement : « en préparation » signifie « aucun match lancé », pas « rien
+    n'est écrit ». Sans cela les inscriptions devaient vivre ailleurs que dans le journal, et
+    elles étaient perdues au premier changement d'onglet. La configuration reste modifiable en
+    préparation, par `config_changed` comme partout ailleurs.
+D21. Hypothèse UX 7 ÉCARTÉE (#371) : les noms de la fiche de résultat ne sont pas agrandis.
+    Ce qui les rend faciles à cliquer est la taille de la CIBLE, pas de la police, et le
+    garde-fou de l'ADR-0008 a eu raison contre le document d'ergonomie.

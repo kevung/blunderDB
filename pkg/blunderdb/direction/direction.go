@@ -19,8 +19,8 @@ const EngineVersion = "v0.2.0"
 type State string
 
 const (
-	// StateDraft: no match launched yet. The configuration is rewritten in place and entries
-	// come and go freely.
+	// StateDraft: no match launched yet. Entries come and go, and the configuration still
+	// changes — through an event like everything else, but freely.
 	StateDraft State = "draft"
 	// StateRunning: the first match froze the configuration into the created event. From here
 	// the configuration only changes through an event.
@@ -103,9 +103,8 @@ func Open(ctx context.Context, store Store, tournamentID int64) (*Direction, err
 		d.journal = append(d.journal, ev)
 	}
 	if len(d.journal) == 0 {
-		// Un brouillon n'a rien écrit : il n'y a pas d'état de tournoi, et il ne faut pas en
-		// fabriquer un. Replay sur un journal vide rend un State valide mais VIDE, dont la
-		// configuration écraserait celle que le directeur est en train de composer.
+		// Only a Direction whose creation failed half-way has an empty log; there is no
+		// tournament state to make up for it.
 		return d, nil
 	}
 	if d.st, err = tournoi.Replay(d.journal); err != nil {
@@ -114,30 +113,44 @@ func Open(ctx context.Context, store Store, tournamentID int64) (*Direction, err
 	return d, nil
 }
 
-// Create starts a Direction on a Tournament that has none. The configuration is kept on the
-// record while the Direction is a draft; nothing is written to the log until the tournament
-// actually starts, so a director who changes their mind leaves no trace to unwind.
-func Create(ctx context.Context, store Store, tournamentID int64, cfg tournoi.Config) (*Direction, error) {
+// Create starts a Direction on a Tournament that has none: it writes the created event at once,
+// with the seed the draw will be reproducible from.
+//
+// The log therefore begins immediately, and that is deliberate. Entries have to survive — a
+// director who typed twenty names and closed the laptop must find them again — and a draft that
+// wrote nothing would have to keep them somewhere else, which is a second place for the same
+// truth. "In preparation" is not "nothing is written": it is "no match has been launched yet",
+// which is exactly what ADR-0047 says, and while that holds the configuration still changes
+// freely (through an event, like everything else).
+func Create(ctx context.Context, store Store, tournamentID int64, cfg tournoi.Config, seed int64, now time.Time) (*Direction, error) {
 	if _, err := store.GetDirection(ctx, tournamentID); err == nil {
 		return nil, fmt.Errorf("direction: tournament %d is already directed", tournamentID)
 	} else if !errors.Is(err, ErrNoDirection) {
 		return nil, err
 	}
-	blob, err := json.Marshal(cfg)
+	if seed == 0 {
+		// A draw must be reproducible, so the seed is recorded — but nobody should have to
+		// invent one. The clock is as good a source as any, and it goes in the log.
+		seed = now.UnixNano()
+	}
+	st, created, err := tournoi.New(cfg, seed, now)
 	if err != nil {
-		return nil, fmt.Errorf("direction: configuration: %w", err)
+		return nil, err
 	}
 	rec := Record{
 		TournamentID:  tournamentID,
 		FormatVersion: tournoi.JournalVersion,
 		EngineVersion: EngineVersion,
 		State:         StateDraft,
-		Config:        string(blob),
 	}
 	if err := store.CreateDirection(ctx, rec); err != nil {
 		return nil, err
 	}
-	return &Direction{rec: rec, store: store, st: nil}, nil
+	d := &Direction{rec: rec, store: store, st: st}
+	if err := d.append(ctx, created); err != nil {
+		return nil, err
+	}
+	return d, nil
 }
 
 // Record returns the Direction's own facts.
@@ -150,36 +163,26 @@ func (d *Direction) State() *tournoi.State { return d.st }
 // Journal returns the log as it stands. The slice is the Direction's own; do not modify it.
 func (d *Direction) Journal() tournoi.Journal { return d.journal }
 
-// Config returns the configuration this Direction runs on: the one in the created event once it
-// has started, and the draft being edited before that.
+// Config returns the configuration this Direction runs on: the one the log carries, as the
+// created event wrote it and every configuration change since amended it.
 func (d *Direction) Config() (tournoi.Config, error) {
-	if d.st != nil {
-		return d.st.Config, nil
+	if d.st == nil {
+		return tournoi.Config{}, ErrNoDirection
 	}
-	var cfg tournoi.Config
-	if d.rec.Config == "" {
-		return cfg, nil
-	}
-	err := json.Unmarshal([]byte(d.rec.Config), &cfg)
-	return cfg, err
+	return d.st.Config, nil
 }
 
-// SetConfig rewrites the draft configuration. It is refused once the tournament has started:
-// from there a configuration change is an event, so that what the director decided stays
-// readable in order (ADR-0047).
+// SetConfig changes the configuration. It is an EVENT, in preparation as afterwards, so that
+// what the director decided stays readable in order (ADR-0047 §3.5). The engine validates it
+// and refuses what would change the kind of a phase already begun.
 func (d *Direction) SetConfig(ctx context.Context, cfg tournoi.Config) error {
-	if d.rec.State != StateDraft {
-		return fmt.Errorf("direction: the tournament has started; a configuration change is an event")
+	if d.st == nil {
+		return ErrNoDirection
 	}
 	if err := cfg.Validate(); err != nil {
 		return err
 	}
-	blob, err := json.Marshal(cfg)
-	if err != nil {
-		return err
-	}
-	d.rec.Config = string(blob)
-	return d.store.UpdateDirection(ctx, d.rec)
+	return d.Apply(ctx, tournoi.ConfigChangedEvent(cfg, time.Now()))
 }
 
 // SetOutputDir remembers where the standalone display page is written.
@@ -188,29 +191,37 @@ func (d *Direction) SetOutputDir(ctx context.Context, dir string) error {
 	return d.store.UpdateDirection(ctx, d.rec)
 }
 
-// Start writes the created event, freezing the draft configuration into the log and moving the
-// Direction to running. Entries made before this point are written right after it, in the order
-// they were made, so the log is complete on its own.
-func (d *Direction) Start(ctx context.Context, seed int64, now time.Time, entries []tournoi.Player) error {
+// Enter records one entry. It works in preparation and afterwards: a late arrival is an entry
+// like any other, and the engine decides where they come in (ADR-0047 §4.4).
+func (d *Direction) Enter(ctx context.Context, p tournoi.Player, now time.Time) error {
+	return d.Apply(ctx, tournoi.PlayerAddedEvent(p, now))
+}
+
+// markRunning moves a Direction out of preparation. It is called the moment a match is
+// launched, which is what ADR-0047 makes the boundary: not the created event, not the entries.
+func (d *Direction) markRunning(ctx context.Context) error {
 	if d.rec.State != StateDraft {
-		return fmt.Errorf("direction: already started")
+		return nil
 	}
-	cfg, err := d.Config()
-	if err != nil {
+	d.rec.State = StateRunning
+	return d.store.UpdateDirection(ctx, d.rec)
+}
+
+// Started says whether a match has been launched: the boundary between preparation and a
+// tournament under way.
+func (d *Direction) Started() bool { return d.rec.State != StateDraft }
+
+// Reopen takes a closed tournament back, because a result was wrong. The final standings are
+// recomputed at the next close; the log keeps everything.
+func (d *Direction) Reopen(ctx context.Context, now time.Time) error {
+	if d.st == nil {
+		return ErrNoDirection
+	}
+	if err := d.st.Apply(tournoi.ReopenedEvent(now)); err != nil {
 		return err
 	}
-	st, created, err := tournoi.New(cfg, seed, now)
-	if err != nil {
+	if err := d.append(ctx, tournoi.ReopenedEvent(now)); err != nil {
 		return err
-	}
-	d.st = st
-	if err := d.append(ctx, created); err != nil {
-		return err
-	}
-	for _, p := range entries {
-		if err := d.Apply(ctx, tournoi.PlayerAddedEvent(p, now)); err != nil {
-			return err
-		}
 	}
 	d.rec.State = StateRunning
 	return d.store.UpdateDirection(ctx, d.rec)
@@ -258,7 +269,13 @@ func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 	if err := d.st.Apply(ev); err != nil {
 		return err
 	}
-	return d.append(ctx, ev)
+	if err := d.append(ctx, ev); err != nil {
+		return err
+	}
+	if ev.Kind == tournoi.EvMatchStarted {
+		return d.markRunning(ctx)
+	}
+	return nil
 }
 
 // EventFor turns a proposal the director confirmed into the event that records it.

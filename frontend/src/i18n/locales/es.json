@@ -1657,17 +1657,14 @@
             "entrants": "{n} inscritos",
             "byes": "{n} exenciones en la primera ronda",
             "apply": "Guardar",
-            "start": "Empezar el torneo",
             "delete": "Eliminar la dirección",
             "frozen": "El torneo ha empezado: estos ajustes solo cambian ya mediante un evento.",
             "deleteConfirm": "¿Eliminar la dirección de este torneo? El torneo y sus partidas se mantienen; las partidas solo pierden el puesto que ocupaban.",
             "created": "Dirección creada.",
-            "started": "Torneo iniciado.",
             "deleted": "Dirección eliminada.",
             "errorCreating": "No se ha podido crear la dirección.",
             "errorSaving": "No se ha podido guardar la configuración.",
-            "saved": "Configuración guardada.",
-            "errorStarting": "No se ha podido empezar el torneo."
+            "saved": "Configuración guardada."
         },
         "tabs": {
             "direction": "Dirección",
@@ -1799,6 +1796,34 @@
             "correct": "Corregir",
             "cancel": "Anular esta partida",
             "whoWon": "¿Quién ha ganado?"
+        },
+        "players": {
+            "name": "Nombre",
+            "club": "Club",
+            "rating": "Valoración",
+            "ratingHint": "PR de entrada: más bajo es mejor. Vacío si se desconoce.",
+            "add": "Inscribir",
+            "filter": "Filtrar",
+            "count": "{n} inscritos",
+            "knownFor": "{n} partidas en la biblioteca",
+            "record": "V–D",
+            "lives": "Vidas",
+            "opponents": "Ha jugado con",
+            "state": "Estado",
+            "correct": "Corregir",
+            "save": "Guardar",
+            "withdrawNow": "Retirar",
+            "withdrawNowHint": "Retirar ahora: sus partidas en curso se pierden por incomparecencia.",
+            "withdrawLater": "Tras su partida",
+            "withdrawLaterHint": "Ya no se le empareja, pero termina la partida que juega.",
+            "none": "Nadie inscrito.",
+            "states": {
+                "free": "libre",
+                "playing": "jugando",
+                "withdrawn": "retirado",
+                "leaving": "se va tras su partida"
+            },
+            "error": "No se ha podido registrar esta inscripción."
         }
     }
 }

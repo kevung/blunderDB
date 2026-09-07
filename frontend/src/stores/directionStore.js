@@ -5,7 +5,6 @@ import {
     HasDirection,
     CreateDirection,
     SetDirectionConfig,
-    StartDirection,
     DeleteDirection,
     ConfirmProposal,
     ConfirmAllProposals,
@@ -17,7 +16,13 @@ import {
     MoveMatchToTable,
     CancelMatch,
     LastDecision,
-    CorrectResult
+    CorrectResult,
+    Participants,
+    EntrySuggestions,
+    AddParticipant,
+    UpdateParticipant,
+    WithdrawParticipant,
+    EnterParticipants
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -192,8 +197,8 @@ export function closeDirection() {
 }
 
 /** Commence à diriger un tournoi qui ne l'était pas, et l'ouvre. */
-export async function createDirection(tournamentId, config) {
-    await CreateDirection(tournamentId, JSON.stringify(config));
+export async function createDirection(tournamentId, config, seed = 0) {
+    await CreateDirection(tournamentId, JSON.stringify(config), seed);
     await refreshDirectionSummaries();
     return openDirection(tournamentId);
 }
@@ -204,14 +209,64 @@ export async function saveDirectionConfig(tournamentId, config) {
     return refreshDirection();
 }
 
-/**
- * Lance le tournoi : la configuration se fige dans le journal, les inscrits y sont écrits, et
- * la Direction passe en cours.
- */
-export async function startDirection(tournamentId, players, seed = 0) {
-    await StartDirection(tournamentId, seed, JSON.stringify(players || []));
-    await refreshDirectionSummaries();
+/** Inscrit plusieurs joueurs d'un coup : ce que produit un import ou une reprise d'annuaire. */
+export async function enterParticipants(players) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    await EnterParticipants(id, JSON.stringify(players || []));
     return refreshDirection();
+}
+
+/** Les inscrits, avec ce que l'état rejoué sait d'eux. */
+export async function participants() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await Participants(id)) || [];
+    } catch (e) {
+        logger.error('direction: participants failed', e);
+        return [];
+    }
+}
+
+/** Les Players de la base, proposés à l'inscription. */
+export async function entrySuggestions() {
+    try {
+        return (await EntrySuggestions()) || [];
+    } catch (e) {
+        logger.error('direction: entry suggestions failed', e);
+        return [];
+    }
+}
+
+/** Inscrit un joueur. */
+export async function addParticipant(name, club, rating) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await AddParticipant(id, name, club, rating);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Corrige une inscription SANS changer son identifiant : c'est lui que désigne un emplacement,
+ * donc corriger un nom ne doit pas défaire un Match déjà rattaché.
+ */
+export async function updateParticipant(participantId, name, club, rating) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await UpdateParticipant(id, participantId, name, club, rating);
+    directionStore.set(view);
+    return view;
+}
+
+/** Retire un joueur, tout de suite ou après le match qu'il joue. */
+export async function withdrawParticipant(participantId, afterCurrent) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await WithdrawParticipant(id, participantId, afterCurrent);
+    directionStore.set(view);
+    return view;
 }
 
 /**

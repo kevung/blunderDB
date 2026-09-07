@@ -10,6 +10,10 @@ export function AddMatchToTournament(arg1, arg2) {
   return window['go']['database']['Database']['AddMatchToTournament'](arg1, arg2);
 }
 
+export function AddParticipant(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['AddParticipant'](arg1, arg2, arg3, arg4);
+}
+
 export function AddPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['AddPositionToCollection'](arg1, arg2);
 }
@@ -170,8 +174,8 @@ export function CreateCollection(arg1, arg2) {
   return window['go']['database']['Database']['CreateCollection'](arg1, arg2);
 }
 
-export function CreateDirection(arg1, arg2) {
-  return window['go']['database']['Database']['CreateDirection'](arg1, arg2);
+export function CreateDirection(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['CreateDirection'](arg1, arg2, arg3);
 }
 
 export function CreateTournament(arg1, arg2, arg3) {
@@ -246,8 +250,16 @@ export function EnterForfeit(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['EnterForfeit'](arg1, arg2, arg3, arg4);
 }
 
+export function EnterParticipants(arg1, arg2) {
+  return window['go']['database']['Database']['EnterParticipants'](arg1, arg2);
+}
+
 export function EnterResult(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['database']['Database']['EnterResult'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
+export function EntrySuggestions() {
+  return window['go']['database']['Database']['EntrySuggestions']();
 }
 
 export function ExplainDecision(arg1, arg2) {
@@ -630,6 +642,10 @@ export function ParsePositionText(arg1) {
   return window['go']['database']['Database']['ParsePositionText'](arg1);
 }
 
+export function Participants(arg1) {
+  return window['go']['database']['Database']['Participants'](arg1);
+}
+
 export function RankPositionIDsByFilters(arg1, arg2) {
   return window['go']['database']['Database']['RankPositionIDsByFilters'](arg1, arg2);
 }
@@ -790,10 +806,6 @@ export function SimilarPositions(arg1, arg2) {
   return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
 }
 
-export function StartDirection(arg1, arg2, arg3) {
-  return window['go']['database']['Database']['StartDirection'](arg1, arg2, arg3);
-}
-
 export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['database']['Database']['StartMatchManually'](arg1, arg2, arg3, arg4, arg5);
 }
@@ -874,6 +886,10 @@ export function UpdateMatchComment(arg1, arg2) {
   return window['go']['database']['Database']['UpdateMatchComment'](arg1, arg2);
 }
 
+export function UpdateParticipant(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['UpdateParticipant'](arg1, arg2, arg3, arg4, arg5);
+}
+
 export function UpdatePosition(arg1) {
   return window['go']['database']['Database']['UpdatePosition'](arg1);
 }
@@ -888,4 +904,8 @@ export function UpdateTournamentComment(arg1, arg2) {
 
 export function Vacuum() {
   return window['go']['database']['Database']['Vacuum']();
+}
+
+export function WithdrawParticipant(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['WithdrawParticipant'](arg1, arg2, arg3);
 }

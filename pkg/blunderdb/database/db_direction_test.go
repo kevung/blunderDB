@@ -25,7 +25,7 @@ func directedTournament(t *testing.T, d *Database, n int) (*direction.Direction,
 			{Kind: tournoi.KindSwissLives, Length: 7, Target: 16},
 			{Kind: tournoi.KindLivesBracket, Length: 9},
 		}}
-	dir, err := direction.Create(ctx, d.DirectionStore(), tID, cfg)
+	dir, err := direction.Create(ctx, d.DirectionStore(), tID, cfg, 7, time.Now())
 	if err != nil {
 		t.Fatalf("create direction: %v", err)
 	}
@@ -37,8 +37,11 @@ func directedTournament(t *testing.T, d *Database, n int) (*direction.Direction,
 		}
 		players[i] = tournoi.Player{ID: id, Name: string(id)}
 	}
-	if err := dir.Start(ctx, 7, time.Now(), players); err != nil {
-		t.Fatalf("start: %v", err)
+	now := time.Now()
+	for _, p := range players {
+		if err := dir.Enter(ctx, p, now); err != nil {
+			t.Fatalf("entry %s: %v", p.ID, err)
+		}
 	}
 	return dir, tID
 }
@@ -168,17 +171,19 @@ func TestDirectionStore_List(t *testing.T) {
 	if len(recs) != 1 || recs[0].TournamentID != tID {
 		t.Fatalf("expected one direction on tournament %d, got %+v", tID, recs)
 	}
-	if recs[0].State != direction.StateRunning {
-		t.Errorf("state %q, want %q", recs[0].State, direction.StateRunning)
+	// Entering players does not start the tournament: only a launched match does.
+	if recs[0].State != direction.StateDraft {
+		t.Errorf("state %q, want %q", recs[0].State, direction.StateDraft)
 	}
 	if recs[0].EngineVersion != direction.EngineVersion {
 		t.Errorf("engine version %q, want %q", recs[0].EngineVersion, direction.EngineVersion)
 	}
 }
 
-// TestDirectionAPI_CreateThenStart covers the shape the panel drives: create a Direction on a
-// Tournament, edit its draft configuration, then start it (issue #368).
-func TestDirectionAPI_CreateThenStart(t *testing.T) {
+// TestDirectionAPI_PreparationThenFirstMatch covers the shape the panel drives: direct a
+// Tournament, edit the configuration and enter players while in preparation, then launch the
+// first match — which is what ends preparation (issue #368, #369).
+func TestDirectionAPI_PreparationThenFirstMatch(t *testing.T) {
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
 	if err != nil {
@@ -194,7 +199,7 @@ func TestDirectionAPI_CreateThenStart(t *testing.T) {
 	cfg := `{"name":"Open de Lyon","tables":{"count":8},"phases":[
 		{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":16},
 		{"kind":"lives_bracket","length":9,"final_length":11}]}`
-	if err := d.CreateDirection(tID, cfg); err != nil {
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
 		t.Fatalf("create: %v", err)
 	}
 	if directed, err = d.HasDirection(tID); err != nil || !directed {
@@ -206,21 +211,21 @@ func TestDirectionAPI_CreateThenStart(t *testing.T) {
 		t.Fatal(err)
 	}
 	if v.State != "draft" {
-		t.Errorf("a new Direction is a draft, not %q", v.State)
+		t.Errorf("a new Direction is in preparation, not %q", v.State)
 	}
-	if v.EventCount != 0 {
-		t.Errorf("a draft writes nothing to the log, %d event(s)", v.EventCount)
+	if v.EventCount != 1 {
+		t.Errorf("the log starts with the created event, %d event(s)", v.EventCount)
 	}
 	if len(v.Config.Phases) != 2 {
 		t.Fatalf("configuration not kept: %+v", v.Config)
 	}
 
-	// The director changes their mind while it is still a draft.
+	// The director changes their mind while still in preparation.
 	edited := `{"name":"Open de Lyon","tables":{"count":6},"phases":[
 		{"kind":"swiss_lives","length":7,"lives":3,"mode":"continuous"},
 		{"kind":"lives_bracket","length":9}]}`
 	if err := d.SetDirectionConfig(tID, edited); err != nil {
-		t.Fatalf("editing a draft: %v", err)
+		t.Fatalf("editing in preparation: %v", err)
 	}
 	if v, err = d.GetDirection(tID); err != nil {
 		t.Fatal(err)
@@ -228,31 +233,35 @@ func TestDirectionAPI_CreateThenStart(t *testing.T) {
 	if v.Config.Phases[0].Lives != 3 || v.Config.Tables.Count != 6 {
 		t.Errorf("the edited configuration was not kept: %+v", v.Config)
 	}
+	if v.State != "draft" {
+		t.Error("changing the configuration does not start the tournament")
+	}
 
 	players := `[{"id":"alice","name":"Alice"},{"id":"bob","name":"Bob"},
 	             {"id":"chloe","name":"Chloé"},{"id":"dan","name":"Dan"}]`
-	if err := d.StartDirection(tID, 7, players); err != nil {
-		t.Fatalf("start: %v", err)
+	if err := d.EnterParticipants(tID, players); err != nil {
+		t.Fatalf("entries: %v", err)
 	}
 	if v, err = d.GetDirection(tID); err != nil {
 		t.Fatal(err)
 	}
-	if v.State != "running" {
-		t.Errorf("after starting, state %q", v.State)
-	}
 	if len(v.Players) != 4 {
 		t.Errorf("%d entrants written to the log, want 4", len(v.Players))
 	}
-	if v.EventCount != 5 { // created + four entries
-		t.Errorf("%d events, want 5 (created + four entries)", v.EventCount)
+	if v.State != "draft" {
+		t.Error("entering players does not start the tournament")
 	}
 	if len(v.Proposals) == 0 {
-		t.Error("a started tournament proposes something to do")
+		t.Error("with four entrants the engine already proposes something")
 	}
 
-	// Now the configuration is frozen: a change is an event, not a rewrite.
-	if err := d.SetDirectionConfig(tID, edited); err == nil {
-		t.Error("rewriting a started tournament's configuration must be refused")
+	// Launching the first match is what ends preparation.
+	after, err := d.ConfirmAllProposals(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if after.State != "running" {
+		t.Errorf("the first launched match makes it running, state %q", after.State)
 	}
 
 	// And a listing sees it without replaying it.
@@ -275,7 +284,7 @@ func TestDirectionAPI_NoTranslatedText(t *testing.T) {
 		t.Fatal(err)
 	}
 	cfg := `{"name":"T","tables":{"count":4},"phases":[{"kind":"swiss_lives","length":7,"lives":2}]}`
-	if err := d.CreateDirection(tID, cfg); err != nil {
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
 		t.Fatal(err)
 	}
 	var players []string
@@ -283,7 +292,7 @@ func TestDirectionAPI_NoTranslatedText(t *testing.T) {
 		id := string(rune('a' + i))
 		players = append(players, `{"id":"`+id+`","name":"`+id+`"}`)
 	}
-	if err := d.StartDirection(tID, 3, "["+strings.Join(players, ",")+"]"); err != nil {
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
 	}
 	v, err := d.GetDirection(tID)

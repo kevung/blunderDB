@@ -1657,17 +1657,14 @@
             "entrants": "参加者{n}人",
             "byes": "1回戦の不戦勝{n}件",
             "apply": "保存",
-            "start": "大会を開始",
             "delete": "進行を削除",
             "frozen": "大会が始まりました。これらの設定はイベントによってのみ変更されます。",
             "deleteConfirm": "この大会の進行を削除しますか。大会とその試合は残り、試合は埋めていた枠を失うだけです。",
             "created": "進行を作成しました。",
-            "started": "大会を開始しました。",
             "deleted": "進行を削除しました。",
             "errorCreating": "進行を作成できませんでした。",
             "errorSaving": "設定を保存できませんでした。",
-            "saved": "設定を保存しました。",
-            "errorStarting": "大会を開始できませんでした。"
+            "saved": "設定を保存しました。"
         },
         "tabs": {
             "direction": "進行",
@@ -1799,6 +1796,34 @@
             "correct": "訂正",
             "cancel": "この試合を取り消す",
             "whoWon": "勝者は？"
+        },
+        "players": {
+            "name": "名前",
+            "club": "クラブ",
+            "rating": "レーティング",
+            "ratingHint": "参加時PR：低いほど強い。不明なら空欄。",
+            "add": "登録",
+            "filter": "絞り込み",
+            "count": "{n}人",
+            "knownFor": "ライブラリに{n}試合",
+            "record": "勝–敗",
+            "lives": "ライフ",
+            "opponents": "対戦済み",
+            "state": "状態",
+            "correct": "訂正",
+            "save": "保存",
+            "withdrawNow": "棄権",
+            "withdrawNowHint": "即時棄権：進行中の試合は不戦敗になります。",
+            "withdrawLater": "試合終了後",
+            "withdrawLaterHint": "以後は組まれませんが、今の試合は最後まで行います。",
+            "none": "登録者がいません。",
+            "states": {
+                "free": "待機",
+                "playing": "対戦中",
+                "withdrawn": "棄権",
+                "leaving": "試合後に退出"
+            },
+            "error": "登録できませんでした。"
         }
     }
 }

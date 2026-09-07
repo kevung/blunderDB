@@ -1657,17 +1657,14 @@
             "entrants": "{n} osallistujaa",
             "byes": "{n} vapaakierrosta ensimmäisellä kierroksella",
             "apply": "Tallenna",
-            "start": "Aloita turnaus",
             "delete": "Poista johtaminen",
             "frozen": "Turnaus on alkanut: näitä asetuksia muutetaan tästä lähtien vain tapahtumalla.",
             "deleteConfirm": "Poistetaanko tämän turnauksen johtaminen? Turnaus ja sen ottelut säilyvät; ottelut menettävät vain paikan, jonka ne täyttivät.",
             "created": "Johtaminen luotu.",
-            "started": "Turnaus aloitettu.",
             "deleted": "Johtaminen poistettu.",
             "errorCreating": "Johtamisen luonti epäonnistui.",
             "errorSaving": "Asetusten tallennus epäonnistui.",
-            "saved": "Asetukset tallennettu.",
-            "errorStarting": "Turnauksen aloitus epäonnistui."
+            "saved": "Asetukset tallennettu."
         },
         "tabs": {
             "direction": "Johtaminen",
@@ -1799,6 +1796,34 @@
             "correct": "Korjaa",
             "cancel": "Peruuta tämä ottelu",
             "whoWon": "Kuka voitti?"
+        },
+        "players": {
+            "name": "Nimi",
+            "club": "Seura",
+            "rating": "Luokitus",
+            "ratingHint": "Aloitus-PR: pienempi on parempi. Tyhjä jos tuntematon.",
+            "add": "Ilmoita",
+            "filter": "Suodata",
+            "count": "{n} osallistujaa",
+            "knownFor": "{n} ottelua kirjastossa",
+            "record": "V–H",
+            "lives": "Elämät",
+            "opponents": "On kohdannut",
+            "state": "Tila",
+            "correct": "Korjaa",
+            "save": "Tallenna",
+            "withdrawNow": "Poista",
+            "withdrawNowHint": "Poista heti: käynnissä olevat ottelut häviävät luovutuksella.",
+            "withdrawLater": "Ottelun jälkeen",
+            "withdrawLaterHint": "Ei enää pareja, mutta pelaa ottelunsa loppuun.",
+            "none": "Ei ilmoittautuneita.",
+            "states": {
+                "free": "vapaa",
+                "playing": "pelaa",
+                "withdrawn": "poistunut",
+                "leaving": "lähtee ottelun jälkeen"
+            },
+            "error": "Ilmoittautumista ei voitu kirjata."
         }
     }
 }
