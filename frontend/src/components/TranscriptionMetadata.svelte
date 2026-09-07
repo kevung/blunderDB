@@ -20,6 +20,14 @@
     face et retourne le plateau. Le geste ne touche à aucune Action : c'est le
     même match, lu de l'autre côté.
 
+  La longueur du match est ici aussi (T3.2), parce que c'est le même en-tête :
+  la changer en cours de transcription relance le Replay entier — le score away
+  de chaque position, la partie Crawford, le référentiel (argent si 0) et la
+  marque « au-delà de la fin » sur les Actions postérieures à la victoire. Rien
+  n'est jamais supprimé. Passer en argent fait apparaître les règles de session
+  (Jacoby, beaver), et repasser en match les masque sans les perdre : elles
+  restent dans le document, où aucune Position ne les lit (ADR-0028).
+
   Les deux noms et le tournoi passent par EntityAutocomplete, le même widget
   que les panneaux Matchs et Tournois : la liste des joueurs et celle des
   tournois de la base y sont filtrées, au clavier comme à la souris, et un nom
@@ -113,6 +121,21 @@
         };
     });
 
+    // La longueur est un texte, comme dans le formulaire de création : `0` — la
+    // partie d'argent — est la seule réponse qu'un champ numérique lié à un
+    // nombre rendrait indiscernable d'un champ vide.
+    let lengthField = $state('');
+    let lengthSynced = null;
+    let matchLength = $derived(header?.match_length ?? 0);
+    let isMoney = $derived(matchLength === 0);
+
+    $effect(() => {
+        const length = matchLength;
+        if (length === lengthSynced) return;
+        lengthSynced = length;
+        lengthField = String(length);
+    });
+
     async function loadLists() {
         try {
             const [names, tours] = await Promise.all([GetAllPlayerNames(), GetAllTournaments()]);
@@ -142,6 +165,35 @@
         const tournamentId = tournamentIdOf(form.tournament);
         if (tournamentId) next.tournament_id = tournamentId;
         apply({ Kind: 'set_header', Header: next });
+    }
+
+    /**
+     * Change la longueur du match. Le Replay entier suit, dans le moteur : le
+     * volet ne dérive ni score, ni Crawford, ni fin de match.
+     *
+     * Les règles de session partent avec elle, telles que le document les
+     * porte : c'est ce qui les rend au retour d'un aller en match.
+     */
+    function commitLength() {
+        if (busy) return;
+        const text = lengthField.trim();
+        if (!/^\d+$/.test(text)) {
+            lengthField = String(matchLength);
+            return;
+        }
+        const length = Number(text);
+        if (length === matchLength) return;
+        applyLength(length, header?.jacoby ?? false, header?.beaver ?? false);
+    }
+
+    /** Les règles de la session : elles ne se posent qu'en argent (ADR-0028). */
+    function commitRules(jacoby, beaver) {
+        if (busy) return;
+        applyLength(matchLength, jacoby, beaver);
+    }
+
+    function applyLength(length, jacoby, beaver) {
+        apply({ Kind: 'set_length', HasLength: true, MatchLength: length, HasRules: true, Jacoby: jacoby, Beaver: beaver });
     }
 
     /**
@@ -230,9 +282,26 @@
                 onDismiss={commit}
             />
         </label>
+        <label class="field narrow">
+            <span>{$t('transcription.matchLength')}</span>
+            <input type="text" inputmode="numeric" bind:value={lengthField} onchange={commitLength} disabled={busy} title={$t('transcription.lengthTooltip')} />
+        </label>
+        {#if isMoney}
+            <!-- Les règles de la session n'existent qu'en argent : elles sont
+                 posées sur chaque Position, jamais sur une Action (ADR-0028). -->
+            <label class="rule">
+                <input type="checkbox" checked={header?.jacoby ?? false} onchange={(e) => commitRules(e.currentTarget.checked, header?.beaver ?? false)} disabled={busy} />
+                {$t('transcription.jacoby')}
+            </label>
+            <label class="rule">
+                <input type="checkbox" checked={header?.beaver ?? false} onchange={(e) => commitRules(header?.jacoby ?? false, e.currentTarget.checked)} disabled={busy} />
+                {$t('transcription.beaver')}
+            </label>
+        {/if}
     </div>
 
     <p class="hint">{$t('transcription.metadataHint')}</p>
+    <p class="hint">{$t('transcription.lengthHint')}</p>
 </div>
 
 <style>
@@ -272,6 +341,13 @@
         border: 1px solid var(--color-border);
         border-radius: var(--radius);
         background: var(--color-surface);
+        color: var(--color-text);
+    }
+
+    .rule {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
         color: var(--color-text);
     }
 

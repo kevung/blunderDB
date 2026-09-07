@@ -1087,6 +1087,8 @@
         "swapPlayersTooltip": "Vaihda kaksi pelaajaa keskenään: nimet, puolet ja lauta",
         "matchLength": "Pituus",
         "moneyHint": "0 = rahapeli",
+        "lengthTooltip": "Pituuden muuttaminen toistaa koko ottelun uudelleen",
+        "lengthHint": "Pituuden muuttaminen laskee pisteet ja Crawford-pelin uudelleen; lopun jälkeiset toiminnot merkitään, niitä ei koskaan poisteta.",
         "jacoby": "Jacoby",
         "beaver": "Beaver",
         "create": "Luo",

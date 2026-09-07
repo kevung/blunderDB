@@ -51,8 +51,10 @@ const (
 	GestureDelete GestureKind = "delete"
 	// GestureFlipSide gives the Action under the Cursor to the other camp.
 	GestureFlipSide GestureKind = "flip_side"
-	// GestureSetLength changes the match length, money play included, and re-states
-	// the session's rules.
+	// GestureSetLength changes the match length, money play included, and states
+	// the session's rules with it. It is the one gesture a length goes through: a
+	// Replay of the whole document follows, since every away score, the Crawford
+	// game, the referential and the end of the match are derived from it.
 	GestureSetLength GestureKind = "set_length"
 	// GestureSwapPlayers exchanges the two players: names, every side, and the board,
 	// which is why every play's steps are mirrored with them.
@@ -294,10 +296,19 @@ func Apply(doc Document, g Gesture) (Document, error) {
 			return doc, fmt.Errorf("transcript: no match length given")
 		}
 		out.Header.MatchLength = g.MatchLength
-		// Money and match do not carry the same rules: crossing between them
-		// re-states the session's flags rather than keeping the other side's.
-		out.Header.Jacoby = g.MatchLength == 0 && (!g.HasRules || g.Jacoby)
-		out.Header.Beaver = g.MatchLength == 0 && g.HasRules && g.Beaver
+		// The session's rules SURVIVE a crossing: they stay in the document
+		// while the match is played to a length — where no Position carries
+		// them (see position()) — so that money → match → money gives back the
+		// flags the session had, and not the defaults of a draft that never
+		// stated any. The gesture re-states them when it says so, and a
+		// document reaching money without ever having stated one is Jacoby,
+		// like a new money draft (fonctionnel.md §1.1).
+		switch {
+		case g.HasRules:
+			out.Header.Jacoby, out.Header.Beaver = g.Jacoby, g.Beaver
+		case g.MatchLength == 0 && !out.Header.Jacoby && !out.Header.Beaver:
+			out.Header.Jacoby = true
+		}
 		out.Entry = nil
 		return out, nil
 

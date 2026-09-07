@@ -1087,6 +1087,8 @@
         "swapPlayersTooltip": "Exchange the two players: the names, the sides and the board",
         "matchLength": "Length",
         "moneyHint": "0 = money game",
+        "lengthTooltip": "Changing the length replays the whole match",
+        "lengthHint": "Changing the length recomputes the score and the Crawford game; actions past the end are marked, never removed.",
         "jacoby": "Jacoby",
         "beaver": "Beaver",
         "create": "Create",

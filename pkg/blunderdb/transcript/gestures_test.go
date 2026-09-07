@@ -408,10 +408,15 @@ func TestGesturesOnTheDocument(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if back.Header.Jacoby || back.Header.Beaver {
-			t.Error("a match carries neither Jacoby nor beaver")
+		// A match carries neither Jacoby nor beaver — on its POSITIONS, which
+		// is where the rules of a session are read. The header keeps them,
+		// deliberately: it is what makes money → match → money give back the
+		// session that was stated and not the defaults (T3.2).
+		annBack := Replay(back, 0)
+		if annBack.Actions[1].Before.HasJacoby != 0 || annBack.Actions[1].Before.HasBeaver != 0 {
+			t.Error("a match position carries neither Jacoby nor beaver")
 		}
-		if got := Replay(back, 0).Actions[1].Before.Score; got != [2]int{5, 5} {
+		if got := annBack.Actions[1].Before.Score; got != [2]int{5, 5} {
 			t.Errorf("away score = %v", got)
 		}
 	})
@@ -617,4 +622,131 @@ func TestSetHeaderWritesTheMetadataAndNothingElse(t *testing.T) {
 	if len(after.Actions) != len(doc.Actions) {
 		t.Errorf("actions = %d, want %d", len(after.Actions), len(doc.Actions))
 	}
+}
+
+// TestSetLengthReplaysTheWholeMatch is T3.2's recipe: the length of a match is
+// changed in the middle of a transcription — a score sheet misread, "5 points"
+// where the match was played to 3 — and everything the Replay derives from it is
+// derived again. The away score of every Position, the Crawford game, the
+// referential, and the Actions that now fall past the end of the match, MARKED
+// and never removed (ADR-0044).
+//
+// The document is three games won by resignation and a fourth started: at 7 it
+// is an ordinary match, at 3 it was over two games ago, and at 0 it is a money
+// session with no Crawford and no end at all.
+func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
+	doc := docOf(7, opening(domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
+	// Player 2 gives up three games in a row: 3-0.
+	for range 3 {
+		doc.Actions = append(doc.Actions, Action{Side: domain.White, Kind: KindResign, Level: 1})
+		doc.Actions = append(doc.Actions, opening(domain.Black, 5, 2))
+		doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 5, 2))
+	}
+	doc.Cursor = len(doc.Actions)
+	last := len(doc.Actions) - 1
+
+	// At seven, nothing is over and no game is the Crawford game.
+	long := Replay(doc, 0)
+	if long.Score != [2]int{3, 0} || long.Finished {
+		t.Fatalf("at 7 points: score %v, finished %v", long.Score, long.Finished)
+	}
+	if got := long.Actions[1].Before.Score; got != [2]int{7, 7} {
+		t.Fatalf("away score = %v, want [7 7]", got)
+	}
+	for i, g := range long.Games {
+		if g.Crawford {
+			t.Fatalf("game %d is Crawford in a match nobody is one point from winning", i+1)
+		}
+	}
+	if long.Inconsistent() {
+		t.Fatalf("the fixture is inconsistent before the length ever changes")
+	}
+
+	// Shortened to three: the match was won at the third game, which is
+	// therefore the Crawford game, and what follows is past the end.
+	short, err := Apply(doc, Gesture{Kind: GestureSetLength, HasLength: true, MatchLength: 3})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(short.Actions) != len(doc.Actions) {
+		t.Fatalf("the gesture removed %d Actions; it marks, it never deletes", len(doc.Actions)-len(short.Actions))
+	}
+	ann := Replay(short, 0)
+	if !ann.Finished || ann.Winner != domain.Black || ann.Score != [2]int{3, 0} {
+		t.Fatalf("at 3 points: finished %v, winner %d, score %v", ann.Finished, ann.Winner, ann.Score)
+	}
+	if got := ann.Actions[1].Before.Score; got != [2]int{3, 3} {
+		t.Errorf("away score of the first play = %v, want [3 3]", got)
+	}
+	// The third game is the one a player enters at 2-0, one point from the
+	// match: its positions carry the Crawford sentinel.
+	if !ann.Games[2].Crawford || ann.Games[0].Crawford || ann.Games[1].Crawford {
+		t.Errorf("Crawford is on the wrong game: %+v", ann.Games)
+	}
+	crawfordPlay := 7 // opening, play, resign, opening, play, resign, opening, play
+	if got := ann.Actions[crawfordPlay].Before.Score; got != [2]int{domain.Crawford, 3} {
+		t.Errorf("Crawford away score = %v, want [%d 3]", got, domain.Crawford)
+	}
+	if kinds := kindsOf(ann.Actions[last].Inconsistencies); !kinds[PastEnd] {
+		t.Errorf("the last Action is not marked past the end: %v", ann.Actions[last].Inconsistencies)
+	}
+
+	// Money: no length, no Crawford, no end — and the referential of every
+	// Position is the money one (the unlimited away score, ADR-0028's flags).
+	money, err := Apply(short, Gesture{Kind: GestureSetLength, HasLength: true, MatchLength: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !money.Header.Jacoby {
+		t.Error("a money session is Jacoby by default")
+	}
+	annMoney := Replay(money, 0)
+	if annMoney.Finished {
+		t.Error("a money session never ends by a score")
+	}
+	if got := annMoney.Actions[1].Before.Score; got != [2]int{domain.Unlimited, domain.Unlimited} {
+		t.Errorf("money away score = %v", got)
+	}
+	if annMoney.Actions[1].Before.HasJacoby != 1 {
+		t.Error("the session's rules are posted on every money position")
+	}
+	for i, g := range annMoney.Games {
+		if g.Crawford {
+			t.Fatalf("game %d is Crawford in a money session", i+1)
+		}
+	}
+	if kindsOf(annMoney.Actions[last].Inconsistencies)[PastEnd] {
+		t.Error("an Action of a money session cannot be past the end of the match")
+	}
+
+	// And the session's rules travel with the document rather than with the
+	// length: money → match → money gives back the session that was stated.
+	withBeaver, err := Apply(money, Gesture{Kind: GestureSetLength, HasLength: true, MatchLength: 0, HasRules: true, Jacoby: false, Beaver: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	asMatch, err := Apply(withBeaver, Gesture{Kind: GestureSetLength, HasLength: true, MatchLength: 5})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pos := Replay(asMatch, 0).Actions[1].Before; pos.HasBeaver != 0 || pos.HasJacoby != 0 {
+		t.Error("a match position carries no session rule")
+	}
+	backToMoney, err := Apply(asMatch, Gesture{Kind: GestureSetLength, HasLength: true, MatchLength: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if backToMoney.Header.Jacoby || !backToMoney.Header.Beaver {
+		t.Errorf("the session's rules came back as %+v, want beaver alone", backToMoney.Header)
+	}
+}
+
+// kindsOf indexes an Action's Inconsistencies by kind.
+func kindsOf(flags []Inconsistency) map[InconsistencyKind]bool {
+	out := map[InconsistencyKind]bool{}
+	for _, f := range flags {
+		out[f.Kind] = true
+	}
+	return out
 }

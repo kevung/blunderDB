@@ -1087,6 +1087,8 @@
         "swapPlayersTooltip": "Intercambiar los dos jugadores: los nombres, los bandos y el tablero",
         "matchLength": "Longitud",
         "moneyHint": "0 = partida por dinero",
+        "lengthTooltip": "Cambiar la longitud vuelve a reproducir toda la partida",
+        "lengthHint": "Cambiar la longitud recalcula el marcador y la partida Crawford; las acciones más allá del final se señalan, nunca se eliminan.",
         "jacoby": "Jacoby",
         "beaver": "Beaver",
         "create": "Crear",

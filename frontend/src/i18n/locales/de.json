@@ -1087,6 +1087,8 @@
         "swapPlayersTooltip": "Die beiden Spieler tauschen: Namen, Seiten und Brett",
         "matchLength": "Länge",
         "moneyHint": "0 = Geldpartie",
+        "lengthTooltip": "Eine geänderte Länge spielt das ganze Match neu ab",
+        "lengthHint": "Eine geänderte Länge berechnet Punktstand und Crawford-Partie neu; Aktionen nach dem Matchende werden markiert, nie gelöscht.",
         "jacoby": "Jacoby",
         "beaver": "Beaver",
         "create": "Erstellen",

@@ -1087,6 +1087,8 @@
         "swapPlayersTooltip": "Échanger les deux joueurs : les noms, les camps et le plateau",
         "matchLength": "Longueur",
         "moneyHint": "0 = partie d'argent",
+        "lengthTooltip": "Changer la longueur rejoue tout le match",
+        "lengthHint": "Changer la longueur recalcule le score et la partie Crawford ; les actions au-delà de la fin sont marquées, jamais supprimées.",
         "jacoby": "Jacoby",
         "beaver": "Beaver",
         "create": "Créer",

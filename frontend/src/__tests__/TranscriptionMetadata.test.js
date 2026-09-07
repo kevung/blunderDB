@@ -46,11 +46,17 @@ function headerOf(extra = {}) {
 
 /** Monte le volet et attend que les deux listes soient chargées. */
 async function mount(header = headerOf()) {
-    const apply = vi.fn();
-    render(TranscriptionMetadata, { props: { header, apply } });
-    await tick();
-    await tick();
+    const { apply } = await mountRaw(header);
     return apply;
+}
+
+/** Le même montage, mais qui rend aussi de quoi changer l'en-tête reçu. */
+async function mountRaw(header = headerOf()) {
+    const apply = vi.fn();
+    const { rerender } = render(TranscriptionMetadata, { props: { header, apply } });
+    await tick();
+    await tick();
+    return { apply, rerender };
 }
 
 beforeEach(() => {
@@ -156,5 +162,67 @@ describe('le volet des métadonnées', () => {
         const apply = await mount();
         await fireEvent.click(screen.getByText('Swap the players'));
         expect(apply).toHaveBeenCalledWith({ Kind: 'swap_players' });
+    });
+});
+
+// T3.2 — la longueur se change en cours de transcription. Le volet n'en dérive
+// rien : il envoie le geste, et le moteur rejoue le document entier.
+describe('le changement de longueur', () => {
+    test('montre la longueur du brouillon et l’envoie changée', async () => {
+        const apply = await mount(headerOf({ match_length: 5 }));
+        const field = screen.getByLabelText('Length');
+        expect(field.value).toBe('5');
+
+        await fireEvent.input(field, { target: { value: '7' } });
+        await fireEvent.change(field);
+
+        expect(apply).toHaveBeenCalledWith({
+            Kind: 'set_length',
+            HasLength: true,
+            MatchLength: 7,
+            HasRules: true,
+            Jacoby: false,
+            Beaver: false
+        });
+    });
+
+    test('une longueur illisible ne part pas et le champ revient à ce qu’il était', async () => {
+        const apply = await mount(headerOf({ match_length: 5 }));
+        const field = screen.getByLabelText('Length');
+
+        await fireEvent.input(field, { target: { value: 'sept' } });
+        await fireEvent.change(field);
+        expect(apply).not.toHaveBeenCalled();
+        expect(field.value).toBe('5');
+
+        // La même longueur n'est pas un changement : rien ne part.
+        await fireEvent.input(field, { target: { value: '5' } });
+        await fireEvent.change(field);
+        expect(apply).not.toHaveBeenCalled();
+    });
+
+    test('les règles de session n’apparaissent qu’en argent', async () => {
+        const { rerender } = await mountRaw(headerOf({ match_length: 7 }));
+        expect(screen.queryByText('Jacoby')).toBeNull();
+        expect(screen.queryByText('Beaver')).toBeNull();
+
+        await rerender({ header: headerOf({ match_length: 0, jacoby: true, beaver: false }) });
+        expect(screen.getByText('Jacoby')).toBeTruthy();
+        expect(screen.getByText('Beaver')).toBeTruthy();
+        expect(screen.getByLabelText('Length').value).toBe('0');
+    });
+
+    test('cocher le beaver garde la longueur et l’autre règle', async () => {
+        const apply = await mount(headerOf({ match_length: 0, jacoby: true, beaver: false }));
+        await fireEvent.click(screen.getByLabelText('Beaver'));
+
+        expect(apply).toHaveBeenCalledWith({
+            Kind: 'set_length',
+            HasLength: true,
+            MatchLength: 0,
+            HasRules: true,
+            Jacoby: true,
+            Beaver: true
+        });
     });
 });
