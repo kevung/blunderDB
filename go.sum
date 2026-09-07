@@ -8,6 +8,8 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/PileOfCells/backgammon-tournoi v0.1.0 h1:YSWEM7jKQklpUj4KN6y6GbR/GP4HCfB1caBFsM2Fiuc=
 github.com/PileOfCells/backgammon-tournoi v0.1.0/go.mod h1:F/dRMEA0MteLOOE92AZn382p8rT7YnvpywDs6kCuA+o=
+github.com/PileOfCells/backgammon-tournoi v0.2.0 h1:ak3nUDE/ArFPJCZCRrbD5wSvlhPGCQ4Nar5RHtwXfMg=
+github.com/PileOfCells/backgammon-tournoi v0.2.0/go.mod h1:F/dRMEA0MteLOOE92AZn382p8rT7YnvpywDs6kCuA+o=
 github.com/adrg/xdg v0.5.3 h1:xRnxJXne7+oWDatRhR1JLnvuccuIeCoBu2rtuLqQB78=
 github.com/adrg/xdg v0.5.3/go.mod h1:nlTsY+NNiCBGCK2tpm09vRqfVzrc2fLmXGpBLF0zlTQ=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=

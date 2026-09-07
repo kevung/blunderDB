@@ -1792,6 +1792,13 @@
             "error": "Could not record this result.",
             "more": "More",
             "apply": "Apply"
+        },
+        "last": {
+            "result": "{winner} beat {loser}",
+            "started": "{a} – {b} launched",
+            "correct": "Correct",
+            "cancel": "Cancel this match",
+            "whoWon": "Who won?"
         }
     }
 }

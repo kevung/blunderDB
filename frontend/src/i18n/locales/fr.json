@@ -1792,6 +1792,13 @@
             "error": "Impossible d’enregistrer ce résultat.",
             "more": "Plus",
             "apply": "Appliquer"
+        },
+        "last": {
+            "result": "{winner} bat {loser}",
+            "started": "{a} – {b} lancé",
+            "correct": "Corriger",
+            "cancel": "Annuler ce match",
+            "whoWon": "Qui a gagné ?"
         }
     }
 }

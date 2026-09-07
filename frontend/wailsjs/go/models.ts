@@ -317,6 +317,48 @@ export namespace database {
 	        this.existed = source["existed"];
 	    }
 	}
+	export class LastDecision {
+	    kind: string;
+	    seq: number;
+	    matchId?: string;
+	    a?: string;
+	    b?: string;
+	    aName?: string;
+	    bName?: string;
+	    winner?: string;
+	    winnerName?: string;
+	    scoreA?: number;
+	    scoreB?: number;
+	    length?: number;
+	    table?: number;
+	    forfeit?: boolean;
+	    correctable: boolean;
+	    cancellable: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new LastDecision(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.seq = source["seq"];
+	        this.matchId = source["matchId"];
+	        this.a = source["a"];
+	        this.b = source["b"];
+	        this.aName = source["aName"];
+	        this.bName = source["bName"];
+	        this.winner = source["winner"];
+	        this.winnerName = source["winnerName"];
+	        this.scoreA = source["scoreA"];
+	        this.scoreB = source["scoreB"];
+	        this.length = source["length"];
+	        this.table = source["table"];
+	        this.forfeit = source["forfeit"];
+	        this.correctable = source["correctable"];
+	        this.cancellable = source["cancellable"];
+	    }
+	}
 	export class MatchPlayerDetailStats {
 	    total_decisions: number;
 	    total_errors: number;
@@ -3283,6 +3325,7 @@ export namespace tournoi {
 	    label?: Label;
 	    round?: number;
 	    key?: string;
+	    match?: string;
 	    a?: string;
 	    b?: string;
 	    length?: number;
@@ -3291,6 +3334,7 @@ export namespace tournoi {
 	    reason?: string;
 	    // Go type: time
 	    until?: any;
+	    warn?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Action(source);
@@ -3304,6 +3348,7 @@ export namespace tournoi {
 	        this.label = this.convertValues(source["label"], Label);
 	        this.round = source["round"];
 	        this.key = source["key"];
+	        this.match = source["match"];
 	        this.a = source["a"];
 	        this.b = source["b"];
 	        this.length = source["length"];
@@ -3311,6 +3356,103 @@ export namespace tournoi {
 	        this.draw = this.convertValues(source["draw"], Draw);
 	        this.reason = source["reason"];
 	        this.until = this.convertValues(source["until"], null);
+	        this.warn = source["warn"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TimeRange {
+	    // Go type: time
+	    start: any;
+	    // Go type: time
+	    end: any;
+	
+	    static createFrom(source: any = {}) {
+	        return new TimeRange(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.start = this.convertValues(source["start"], null);
+	        this.end = this.convertValues(source["end"], null);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class PrizeScale {
+	    percents?: number[];
+	    amounts?: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PrizeScale(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.percents = source["percents"];
+	        this.amounts = source["amounts"];
+	    }
+	}
+	export class Retention {
+	    amount?: number;
+	    percent?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Retention(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.amount = source["amount"];
+	        this.percent = source["percent"];
+	    }
+	}
+	export class PrizePool {
+	    entry_fee?: number;
+	    retention?: Retention;
+	    sections?: Record<string, PrizeScale>;
+	
+	    static createFrom(source: any = {}) {
+	        return new PrizePool(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.entry_fee = source["entry_fee"];
+	        this.retention = this.convertValues(source["retention"], Retention);
+	        this.sections = this.convertValues(source["sections"], PrizeScale, true);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3389,6 +3531,10 @@ export namespace tournoi {
 	    lives?: number;
 	    length: number;
 	    final_length?: number;
+	    lengths?: number[];
+	    length_late?: number;
+	    late_threshold?: number;
+	    batch_minutes?: number;
 	    mode?: string;
 	    pairing?: string;
 	    avoid_clubs?: boolean;
@@ -3401,6 +3547,7 @@ export namespace tournoi {
 	    group_size?: number;
 	    qualifiers?: number;
 	    entry?: string;
+	    seeding?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new PhaseConfig(source);
@@ -3413,6 +3560,10 @@ export namespace tournoi {
 	        this.lives = source["lives"];
 	        this.length = source["length"];
 	        this.final_length = source["final_length"];
+	        this.lengths = source["lengths"];
+	        this.length_late = source["length_late"];
+	        this.late_threshold = source["late_threshold"];
+	        this.batch_minutes = source["batch_minutes"];
 	        this.mode = source["mode"];
 	        this.pairing = source["pairing"];
 	        this.avoid_clubs = source["avoid_clubs"];
@@ -3425,6 +3576,7 @@ export namespace tournoi {
 	        this.group_size = source["group_size"];
 	        this.qualifiers = source["qualifiers"];
 	        this.entry = source["entry"];
+	        this.seeding = source["seeding"];
 	    }
 	}
 	export class Config {
@@ -3432,7 +3584,8 @@ export namespace tournoi {
 	    phases: PhaseConfig[];
 	    min_per_point?: number;
 	    tables?: Tables;
-	    prizes?: number[];
+	    prizes?: PrizePool;
+	    breaks?: TimeRange[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -3444,7 +3597,8 @@ export namespace tournoi {
 	        this.phases = this.convertValues(source["phases"], PhaseConfig);
 	        this.min_per_point = source["min_per_point"];
 	        this.tables = this.convertValues(source["tables"], Tables);
-	        this.prizes = source["prizes"];
+	        this.prizes = this.convertValues(source["prizes"], PrizePool);
+	        this.breaks = this.convertValues(source["breaks"], TimeRange);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3590,6 +3744,8 @@ export namespace tournoi {
 	        this.rating = source["rating"];
 	    }
 	}
+	
+	
 	export class Rank {
 	    player: string;
 	    rank: number;
@@ -3624,6 +3780,8 @@ export namespace tournoi {
 		    return a;
 		}
 	}
+	
+	
 	
 	
 	export class Warning {

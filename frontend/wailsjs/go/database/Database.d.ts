@@ -79,6 +79,8 @@ export function ConfirmProposal(arg1:number,arg2:string):Promise<database.Direct
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
+export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<database.DirectionView>;
+
 export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
@@ -150,6 +152,8 @@ export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<str
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
 export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
+
+export function FinishedMatches(arg1:number,arg2:number):Promise<Array<database.TableCell>>;
 
 export function FreeParticipants(arg1:number):Promise<Array<tournoi.Player>>;
 
@@ -260,6 +264,8 @@ export function ImportXGPPosition(arg1:string):Promise<number>;
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
+
+export function LastDecision(arg1:number):Promise<database.LastDecision>;
 
 export function ListDirections():Promise<Array<database.DirectionSummary>>;
 

@@ -15,7 +15,9 @@ import {
     EnterResult,
     EnterForfeit,
     MoveMatchToTable,
-    CancelMatch
+    CancelMatch,
+    LastDecision,
+    CorrectResult
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -315,6 +317,30 @@ export async function cancelMatch(matchId) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
     const view = await CancelMatch(id, matchId);
+    directionStore.set(view);
+    return view;
+}
+
+/** Le dernier geste du directeur, avec de quoi le reprendre en deux clics. */
+export async function lastDecision() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    try {
+        return await LastDecision(id);
+    } catch (e) {
+        logger.error('direction: last decision failed', e);
+        return null;
+    }
+}
+
+/**
+ * Corrige le résultat d'un match déjà fini. Rien n'est effacé : la correction est un événement
+ * de plus, et le premier résultat reste dans l'historique là où il a eu lieu.
+ */
+export async function correctResult(matchId, winner, scoreA = 0, scoreB = 0, note = '') {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await CorrectResult(id, matchId, winner, scoreA, scoreB, note);
     directionStore.set(view);
     return view;
 }
