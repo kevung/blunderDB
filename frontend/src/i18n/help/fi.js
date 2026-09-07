@@ -1281,6 +1281,26 @@ export default {
 <td>Syötä noppa: pelaajan 1 noppa, sitten pelaajan 2 noppa avaukseen (suurempi aloittaa ja pelaa molemmat nopat).</td>
 </tr>
 <tr>
+<td>1 … 6 (heitto syötetty)</td>
+<td>Aloita heitto alusta niin kauan kuin ehdokasta ei ole valittu; kun sellainen on valittu, kirjaa siirto ja avaa seuraava heitto.</td>
+</tr>
+<tr>
+<td>ALAS, j</td>
+<td>Valitse seuraava ehdokas (siirron nuolet ilmestyvät laudalle).</td>
+</tr>
+<tr>
+<td>YLÖS, k</td>
+<td>Valitse edellinen ehdokas.</td>
+</tr>
+<tr>
+<td>Napsautus (riviä)</td>
+<td>Valitse kyseinen ehdokas.</td>
+</tr>
+<tr>
+<td>ENTER</td>
+<td>Kirjaa valittu siirto (pelin viimeinen siirto).</td>
+</tr>
+<tr>
 <td>ASKELPALAUTIN</td>
 <td>Tyhjennä molemmat syötetyt nopat.</td>
 </tr>
@@ -1290,6 +1310,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>

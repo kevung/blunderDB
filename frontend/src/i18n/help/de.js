@@ -1281,6 +1281,26 @@ export default {
 <td>Einen Würfel eingeben: Würfel von Spieler 1, dann von Spieler 2 für die Eröffnung (der höhere beginnt und spielt beide Würfel).</td>
 </tr>
 <tr>
+<td>1 … 6 (Wurf eingegeben)</td>
+<td>Den Wurf neu beginnen, solange kein Kandidat gewählt wurde; sobald einer gewählt ist, den Zug erfassen und den nächsten Wurf öffnen.</td>
+</tr>
+<tr>
+<td>UNTEN, j</td>
+<td>Den nächsten Kandidaten auswählen (die Pfeile des Zuges erscheinen auf dem Brett).</td>
+</tr>
+<tr>
+<td>OBEN, k</td>
+<td>Den vorherigen Kandidaten auswählen.</td>
+</tr>
+<tr>
+<td>Klick (auf eine Zeile)</td>
+<td>Diesen Kandidaten auswählen.</td>
+</tr>
+<tr>
+<td>EINGABE</td>
+<td>Den ausgewählten Zug erfassen (der letzte Zug einer Partie).</td>
+</tr>
+<tr>
 <td>RÜCKTASTE</td>
 <td>Beide eingegebenen Würfel löschen.</td>
 </tr>
@@ -1290,6 +1310,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>

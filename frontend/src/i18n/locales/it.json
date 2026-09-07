@@ -1077,7 +1077,11 @@
         "openingPrompt": "Dadi di apertura",
         "openingHint": "Dado del giocatore 1, poi del giocatore 2: il più alto inizia e gioca entrambi i dadi.",
         "rollPrompt": "Dadi di {player}",
-        "tie": "Parità: si ritira."
+        "tie": "Parità: si ritira.",
+        "dance": "Nessuna mossa legale: la danza è registrata.",
+        "unranked": "Valutazione non disponibile: le mosse legali sono nell'ordine del generatore.",
+        "correctable": "Tiro ancora correggibile: una cifra lo ricomincia, Invio registra la mossa.",
+        "chosen": "Mossa scelta: una cifra la registra e apre il tiro successivo."
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",

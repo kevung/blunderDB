@@ -1077,7 +1077,11 @@
         "openingPrompt": "Dados de apertura",
         "openingHint": "Dado del jugador 1, luego del jugador 2: el mayor empieza y juega ambos dados.",
         "rollPrompt": "Dados de {player}",
-        "tie": "Empate: tirar de nuevo."
+        "tie": "Empate: tirar de nuevo.",
+        "dance": "Ningún movimiento legal: se registra el baile.",
+        "unranked": "Evaluación no disponible: los movimientos legales están en el orden del generador.",
+        "correctable": "Tirada aún corregible: un dígito la reinicia, Intro registra el movimiento.",
+        "chosen": "Movimiento elegido: un dígito lo registra y abre la siguiente tirada."
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",

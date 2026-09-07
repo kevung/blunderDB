@@ -6,15 +6,21 @@
   exist, the form that starts one — and, once a draft is open, the surface the
   match is typed on.
 
-  What T1.2 puts here: the creation form (fonctionnel.md §1.1 — the LENGTH is
-  the only field asked for, `0` being a money session, which is what unfolds the
-  Jacoby and beaver flags) and the opening (§6 flux 2 — the die of player 1, the
-  die of player 2, the stronger one starts and plays BOTH dice as its first
-  checker play; a tie reads "relance" and waits for another opening).
+  What is here: the creation form (fonctionnel.md §1.1 — the LENGTH is the only
+  field asked for, `0` being a money session, which is what unfolds the Jacoby
+  and beaver flags), the opening (§6 flux 2 — the die of player 1, the die of
+  player 2, the stronger one starts and plays BOTH dice as its first checker
+  play; a tie reads "relance" and waits for another opening), and the turn of
+  checkers: two dice, every legal play ranked by a 0-ply Evaluation, the first
+  preselected, `j`/`k` to walk them, a digit to validate and open the next roll.
 
-  What is not here yet: the candidate list and the rest of the turn (T1.3), the
-  cube (T1.4), the resignation (T1.5), the Transcript column (T1.6), correcting
-  through the Cursor (T1.7), saving (T1.9).
+  The candidate list is a 0-ply EVALUATION in the glossary's sense: it is shown,
+  it is never written to the library (ADR-0045 rule 8). The ranking is the Eval
+  panel's own — EvaluatePositionImmediate — and the table is the Eval panel's own
+  component, mounted here exactly as EPCPanel mounts it.
+
+  What is not here yet: the cube (T1.4), the resignation (T1.5), the Transcript
+  column (T1.6), correcting through the Cursor (T1.7), saving (T1.9).
 
   The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
   to ApplyTranscriptionGesture and comes back as a whole annotated document. It
@@ -28,10 +34,16 @@
     import { databaseLoadedStore } from '../stores/databaseStore.js';
     import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
     import { positionStore } from '../stores/positionStore.js';
+    import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
-    import { COMMAND, pressKey } from '../services/transcriptionKeys.js';
+    import { isMoneyPosition } from '../utils/cubeDecision.js';
+    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate } from '../services/transcriptionKeys.js';
+    import CandidateMovesTable from './CandidateMovesTable.svelte';
     import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, setTranscription, clearTranscription, resetTranscriptionKeys } from '../stores/transcriptionStore.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
+    import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+    import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
+    import { get } from 'svelte/store';
 
     // The length a first draft is offered when the library holds none. It is
     // Go's transcript.DefaultMatchLength; stated here because the form has to
@@ -154,6 +166,21 @@
 
     let pending = Promise.resolve();
 
+    // The candidates of the roll being entered, RANKED by the 0-ply evaluation.
+    // `gen` is the same play's index in LegalMoves' own order, which is what
+    // `select_candidate` addresses: the engine ranks, the generator numbers, and
+    // the two orders are joined here rather than in Go — LegalMoves deduplicates
+    // by resulting board, so one notation is one play and the join is exact.
+    let ranked = $state([]);
+    // The evaluation could not rank this roll (a score beyond the MET's horizon,
+    // a build without weights). The plays are still listed, in the generator's
+    // order, because a transcription that cannot be typed is worse than one typed
+    // without a ranking.
+    let unranked = $state(false);
+    // The last roll allowed no play at all: the `dance` Action was recorded on
+    // its own, without a keystroke.
+    let danced = $state(false);
+
     function gestureOf(command) {
         switch (command.kind) {
             case COMMAND.DIE:
@@ -162,20 +189,28 @@
                 return { Kind: 'clear_dice' };
             case COMMAND.VALIDATE:
                 return { Kind: 'validate' };
+            case COMMAND.DANCE:
+                return { Kind: 'dance' };
+            case COMMAND.SELECT: {
+                const entry = ranked[command.index];
+                return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
+            }
             default:
                 return null;
         }
     }
 
+    // The commands are turned into gestures HERE, synchronously, and not inside
+    // the chain below: a `select` names a rank in the list as it stands at the
+    // keystroke, and the list is replaced as soon as the next roll comes in.
     function run(commands) {
-        if (!commands.length) return pending;
+        const gestures = commands.map(gestureOf).filter(Boolean);
+        if (!gestures.length) return pending;
         const id = draft?.id;
         if (id == null) return pending;
         pending = pending
             .then(async () => {
-                for (const command of commands) {
-                    const gesture = gestureOf(command);
-                    if (!gesture) continue;
+                for (const gesture of gestures) {
                     setTranscription(await ApplyTranscriptionGesture(id, gesture));
                 }
                 error = '';
@@ -185,6 +220,94 @@
                 error = String(err);
             });
         return pending;
+    }
+
+    // ── the candidates ───────────────────────────────────────────────────
+    //
+    // Two calls, both of them the ones the Eval panel already makes: LegalMoves
+    // for the plays and their steps, EvaluatePositionImmediate for the 0-ply
+    // ranking (candidates = 0, so ALL of them come back — not the ten a stored
+    // analysis keeps). Never StartEvaluationAtRest: a transcription must answer
+    // between two keystrokes, and the display-depth tier costs a fifth of a
+    // second.
+
+    let candidateGeneration = 0;
+
+    /** The Position the roll being entered is played from, dice and side set. */
+    function rollPosition() {
+        const state = get(transcriptionKeyStore);
+        const ann = get(transcriptionStore)?.annotated;
+        const base = ann?.next?.position;
+        if (!base || !state.dice[0] || !state.dice[1]) return null;
+        return {
+            ...structuredClone(base),
+            id: 0,
+            dice: [state.dice[0], state.dice[1]],
+            player_on_roll: ann.next.side,
+            decision_type: 0
+        };
+    }
+
+    /** The plays of the roll, best first, each with its index in LegalMoves. */
+    async function computeCandidates(pos) {
+        const plays = (await LegalMoves(pos)) ?? [];
+        if (!plays.length) return { list: [], unranked: false };
+
+        // A plain lookup, not a Map: it is built and thrown away inside this
+        // call, and nothing reactive ever reads it.
+        const byNotation = Object.create(null);
+        plays.forEach((play, index) => {
+            if (byNotation[play.notation] === undefined) byNotation[play.notation] = index;
+        });
+
+        try {
+            const pruneK = await GetGammonNetPruneK();
+            const result = await EvaluatePositionImmediate(pos, pruneK, 0);
+            const moves = result?.refused ? [] : (result?.moves ?? []);
+            const list = moves.map((move) => ({ move, gen: byNotation[move.move] })).filter((row) => row.gen !== undefined);
+            if (list.length) return { list, unranked: false };
+        } catch (err) {
+            logger.error('The 0-ply ranking of a transcription roll failed:', err);
+        }
+        // The generator's own order, which is an order and not a ranking.
+        return { list: plays.map((play, index) => ({ move: { index, move: play.notation }, gen: index })), unranked: true };
+    }
+
+    /**
+     * Answers the roll the machine is waiting on: no legal play is a dance, one
+     * or more preselects the first. Superseded by a newer roll rather than
+     * cancelled — a stale answer must never land on the roll that replaced it.
+     */
+    async function settleCandidates() {
+        if (!get(transcriptionKeyStore).awaitingCandidates) return;
+        const pos = rollPosition();
+        if (!pos) return;
+
+        const generation = ++candidateGeneration;
+        let answer;
+        try {
+            answer = await computeCandidates(pos);
+        } catch (err) {
+            logger.error('The legal plays of a transcription roll failed:', err);
+            error = String(err);
+            return;
+        }
+        if (generation !== candidateGeneration) return;
+
+        ranked = answer.list;
+        unranked = answer.unranked;
+        danced = answer.list.length === 0;
+
+        const next = applyCandidates(get(transcriptionKeyStore), answer.list.length);
+        transcriptionKeyStore.set(next.state);
+        await run(next.commands);
+    }
+
+    function chooseCandidate(index) {
+        const next = selectCandidate(get(transcriptionKeyStore), index);
+        transcriptionKeyStore.set(next.state);
+        run(next.commands);
+        panelEl?.focus({ preventScroll: true });
     }
 
     // ── the keyboard ─────────────────────────────────────────────────────
@@ -204,8 +327,18 @@
         if (!result.handled) return;
         event.preventDefault();
         event.stopPropagation();
+
+        // A roll that is starting again, or one that has just been validated,
+        // leaves a list that belongs to nobody: it goes before the gestures do,
+        // so no `select` can address it any more.
+        if (result.state.phase === PHASE.DICE || result.state.phase === PHASE.DIE1) {
+            ranked = [];
+            unranked = false;
+        }
+        danced = false;
+
         transcriptionKeyStore.set(result.state);
-        run(result.commands);
+        run(result.commands).then(settleCandidates);
     }
 
     onMount(() => {
@@ -214,6 +347,7 @@
 
     onDestroy(() => {
         document.removeEventListener('keydown', handleKeyDown);
+        selectedMoveStore.set(null);
     });
 
     // The panel takes the keyboard as soon as a draft is open: the whole point
@@ -229,19 +363,35 @@
     // The Position the board shows: the one the Cursor's Action was played
     // from, and the one the match has reached when the Cursor sits at the end.
     // An opening produces no Position (fonctionnel.md §1.2), hence has_position.
-    function boardPosition(ann) {
+    //
+    // The dice of the roll being entered go on it as they come in — an opening's
+    // two dice excepted, which belong to two different players and are shown in
+    // the panel instead.
+    function boardPosition(ann, dice, opening) {
         const actions = ann.actions ?? [];
         const at = ann.cursor ?? 0;
         const current = at >= 0 && at < actions.length ? actions[at] : null;
         const base = current?.has_position ? current.before : ann.next?.position;
         if (!base) return null;
-        return { ...structuredClone(base), id: 0 };
+        const rolled = !opening && dice[0] > 0 && dice[1] > 0 ? [dice[0], dice[1]] : [0, 0];
+        return { ...structuredClone(base), id: 0, dice: rolled };
     }
 
     $effect(() => {
         if (!annotated || $statusBarModeStore !== 'TRANSCRIBE') return;
-        const pos = boardPosition(annotated);
+        const pos = boardPosition(annotated, keys.dice, expects === 'opening');
         if (pos) positionStore.set(pos);
+    });
+
+    // The arrows of the selected candidate, through the store Board.svelte
+    // already reads. It is a display of the Evaluation and nothing else: no
+    // candidate is ever written to the library.
+    $effect(() => {
+        if (!draft || !ranked.length || keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1) {
+            selectedMoveStore.set(null);
+            return;
+        }
+        selectedMoveStore.set(ranked[keys.selected]?.move?.move ?? null);
     });
 
     // ── what the panel reads ─────────────────────────────────────────────
@@ -289,6 +439,11 @@
     // two dice belong to two different players, which is why they are shown
     // here and not drawn on the board.
     let dieCells = $derived([keys.dice[0] || '·', keys.dice[1] || '·']);
+
+    let rankedMoves = $derived(ranked.map((row) => row.move));
+    // Which referential the equity column is stated in (ADR-0016 point 6,
+    // ADR-0019): money points at money play, normalised match equity at a score.
+    let isMoney = $derived(isMoneyPosition(annotated?.next?.position));
 </script>
 
 <section class="transcription-panel" id="transcriptionPanel" aria-label={$t('transcription.title')} tabindex="-1" bind:this={panelEl}>
@@ -355,6 +510,40 @@
                 <p class="hint">{$t('transcription.tie')}</p>
             {:else if expects === 'opening'}
                 <p class="hint">{$t('transcription.openingHint')}</p>
+            {:else if danced}
+                <p class="hint">{$t('transcription.dance')}</p>
+            {:else if keys.phase === PHASE.ROLL}
+                <!-- Les deux états d'ux.md §3 sont DITS, parce qu'un même écran
+                     y répond de deux façons opposées au même chiffre : tant que
+                     la liste n'a pas été touchée il recommence le jet, après il
+                     valide. Une différence invisible serait un piège. -->
+                <p class="hint">{$t('transcription.correctable')}</p>
+            {:else if keys.phase === PHASE.CANDIDATE}
+                <p class="hint">{$t('transcription.chosen')}</p>
+            {/if}
+
+            {#if ranked.length}
+                {#if unranked}
+                    <p class="hint">{$t('transcription.unranked')}</p>
+                    <ol class="plain-candidates">
+                        {#each ranked as row, index (row.gen)}
+                            <li>
+                                <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)}>{row.move.move}</button>
+                            </li>
+                        {/each}
+                    </ol>
+                {:else}
+                    <div class="candidates">
+                        <CandidateMovesTable
+                            moves={rankedMoves}
+                            selectedMove={$selectedMoveStore}
+                            onRowClick={(move) => chooseCandidate(rankedMoves.indexOf(move))}
+                            showProvenance={false}
+                            baseline={null}
+                            {isMoney}
+                        />
+                    </div>
+                {/if}
             {/if}
         </div>
     {/if}
@@ -474,6 +663,30 @@
 
     .die.filled {
         color: var(--color-text);
+        font-weight: 600;
+    }
+
+    .candidates {
+        min-height: 0;
+        overflow: auto;
+    }
+
+    .plain-candidates {
+        margin: 0;
+        padding-left: var(--space-4);
+        max-height: 12em;
+        overflow: auto;
+    }
+
+    .plain-candidate {
+        padding: 0;
+        border: none;
+        background: none;
+        color: var(--color-text);
+        cursor: pointer;
+    }
+
+    .plain-candidate.selected {
         font-weight: 600;
     }
 

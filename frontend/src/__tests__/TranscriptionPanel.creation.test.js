@@ -21,8 +21,19 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     OpenTranscription: vi.fn(),
     ApplyTranscriptionGesture: vi.fn()
 }));
+// Le classement des candidats est l'affaire de T1.3 et de son propre fichier ;
+// ici il ne doit qu'exister, pour que la validation de l'ouverture ne bute pas
+// dessus.
+vi.mock('../../wailsjs/go/gui/App.js', () => ({
+    LegalMoves: vi.fn().mockResolvedValue([]),
+    EvaluatePositionImmediate: vi.fn().mockResolvedValue({ moves: [] })
+}));
+vi.mock('../../wailsjs/go/main/Config.js', () => ({
+    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+}));
 
 import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, clearTranscription } from '../stores/transcriptionStore.js';
@@ -172,6 +183,10 @@ describe("l'ouverture", () => {
         // Le moteur ne change ce qu'il attend qu'une fois l'ouverture validée :
         // saisir un dé ne décide de rien.
         ApplyTranscriptionGesture.mockImplementation((_id, gesture) => Promise.resolve(stateFor(gesture.Kind === 'validate' ? annotated({ expects: 'checker', side: 1 }) : annotated())));
+        // Le jet du gagnant a des coups : sans cela ce serait une danse, et la
+        // machine repartirait à zéro (ce que couvre TranscriptionPanel.turn).
+        LegalMoves.mockResolvedValue([{ notation: '13/8 13/11' }]);
+        EvaluatePositionImmediate.mockResolvedValue({ moves: [{ index: 0, move: '13/8 13/11', equity: 0.1 }] });
         await openedPanel();
         await press('Digit2');
         await press('Digit5');

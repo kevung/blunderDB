@@ -1077,7 +1077,11 @@
         "openingPrompt": "Opening dice",
         "openingHint": "Player 1's die, then player 2's: the higher one starts and plays both dice.",
         "rollPrompt": "{player}'s dice",
-        "tie": "Tie: roll again."
+        "tie": "Tie: roll again.",
+        "dance": "No legal play: the dance is recorded.",
+        "unranked": "Evaluation unavailable: the legal plays are in the generator's order.",
+        "correctable": "Roll still correctable: a digit starts it again, Enter records the play.",
+        "chosen": "Play chosen: a digit records it and opens the next roll."
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",

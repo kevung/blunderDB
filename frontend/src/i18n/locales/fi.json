@@ -1077,7 +1077,11 @@
         "openingPrompt": "Aloitusnopat",
         "openingHint": "Pelaajan 1 noppa, sitten pelaajan 2: suurempi aloittaa ja pelaa molemmat nopat.",
         "rollPrompt": "Pelaajan {player} nopat",
-        "tie": "Tasapeli: heitä uudelleen."
+        "tie": "Tasapeli: heitä uudelleen.",
+        "dance": "Ei laillista siirtoa: tanssi kirjataan.",
+        "unranked": "Arviointi ei käytettävissä: lailliset siirrot ovat generaattorin järjestyksessä.",
+        "correctable": "Heitto on yhä korjattavissa: numero aloittaa sen alusta, Enter kirjaa siirron.",
+        "chosen": "Siirto valittu: numero kirjaa sen ja avaa seuraavan heiton."
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",

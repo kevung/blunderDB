@@ -1077,7 +1077,11 @@
         "openingPrompt": "Dés d'ouverture",
         "openingHint": "Dé du joueur 1, puis du joueur 2 : le plus fort commence et joue les deux dés.",
         "rollPrompt": "Dés de {player}",
-        "tie": "Égalité : relance."
+        "tie": "Égalité : relance.",
+        "dance": "Aucun coup légal : la danse est enregistrée.",
+        "unranked": "Évaluation indisponible : les coups légaux sont dans l'ordre du générateur.",
+        "correctable": "Jet corrigeable : un chiffre le recommence, Entrée valide le coup.",
+        "chosen": "Coup choisi : un chiffre valide et ouvre le jet suivant."
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",

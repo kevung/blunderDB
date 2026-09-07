@@ -279,8 +279,16 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
 
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés)."
+   "1 … 6 (jet saisi)", "Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un candidat choisi, valider le coup et ouvrir le jet suivant."
+   "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
+   "HAUT, k", "Sélectionner le candidat précédent."
+   "Clic (sur une ligne)", "Sélectionner ce candidat."
+   "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis."
    "Esc", "Abandonner la saisie en cours."
+
+Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
+supplémentaire.
 
 .. _raccourcis_help_panel:
 

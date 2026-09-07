@@ -1281,6 +1281,26 @@ export default {
 <td>Inserire un dado: dado del giocatore 1, poi del giocatore 2 per l'apertura (il più alto inizia e gioca entrambi i dadi).</td>
 </tr>
 <tr>
+<td>1 … 6 (tiro inserito)</td>
+<td>Ricominciare il tiro finché non è stato scelto alcun candidato; una volta scelto, registrare la mossa e aprire il tiro successivo.</td>
+</tr>
+<tr>
+<td>GIÙ, j</td>
+<td>Selezionare il candidato successivo (le frecce della mossa appaiono sul tavoliere).</td>
+</tr>
+<tr>
+<td>SU, k</td>
+<td>Selezionare il candidato precedente.</td>
+</tr>
+<tr>
+<td>Clic (su una riga)</td>
+<td>Selezionare quel candidato.</td>
+</tr>
+<tr>
+<td>INVIO</td>
+<td>Registrare la mossa selezionata (ultima mossa di una partita).</td>
+</tr>
+<tr>
 <td>BACKSPACE</td>
 <td>Cancellare i due dadi inseriti.</td>
 </tr>
@@ -1290,6 +1310,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

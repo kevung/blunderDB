@@ -1077,7 +1077,11 @@
         "openingPrompt": "Eröffnungswürfel",
         "openingHint": "Würfel von Spieler 1, dann von Spieler 2: der höhere beginnt und spielt beide Würfel.",
         "rollPrompt": "Würfel von {player}",
-        "tie": "Gleichstand: neu würfeln."
+        "tie": "Gleichstand: neu würfeln.",
+        "dance": "Kein legaler Zug: der Tanz wird aufgezeichnet.",
+        "unranked": "Bewertung nicht verfügbar: die legalen Züge stehen in der Reihenfolge des Generators.",
+        "correctable": "Wurf noch korrigierbar: eine Ziffer beginnt ihn neu, Eingabe erfasst den Zug.",
+        "chosen": "Zug gewählt: eine Ziffer erfasst ihn und öffnet den nächsten Wurf."
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",

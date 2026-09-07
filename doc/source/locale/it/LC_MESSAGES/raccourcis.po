@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:59+0200\n"
+"POT-Creation-Date: 2026-09-07 04:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -723,6 +723,42 @@ msgstr ""
 "l'apertura (il più alto inizia e gioca entrambi i dadi)."
 
 #: ../../source/raccourcis.rst:1
+msgid "1 … 6 (jet saisi)"
+msgstr "1 … 6 (tiro inserito)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
+"candidat choisi, valider le coup et ouvrir le jet suivant."
+msgstr ""
+"Ricominciare il tiro finché non è stato scelto alcun candidato; una volta"
+" scelto, registrare la mossa e aprire il tiro successivo."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
+" plateau)."
+msgstr ""
+"Selezionare il candidato successivo (le frecce della mossa appaiono sul "
+"tavoliere)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le candidat précédent."
+msgstr "Selezionare il candidato precedente."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une ligne)"
+msgstr "Clic (su una riga)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner ce candidat."
+msgstr "Selezionare quel candidato."
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup sélectionné (dernier coup d'une partie)."
+msgstr "Registrare la mossa selezionata (ultima mossa di una partita)."
+
+#: ../../source/raccourcis.rst:1
 msgid "Effacer les deux dés saisis."
 msgstr "Cancellare i due dadi inseriti."
 
@@ -730,7 +766,15 @@ msgstr "Cancellare i due dadi inseriti."
 msgid "Abandonner la saisie en cours."
 msgstr "Abbandonare l'inserimento in corso."
 
-#: ../../source/raccourcis.rst:288
+#: ../../source/raccourcis.rst:290
+msgid ""
+"Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
+"touche supplémentaire."
+msgstr ""
+"Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
+"tasto in più."
+
+#: ../../source/raccourcis.rst:296
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

@@ -6,8 +6,8 @@
  * l'ouverture coûte DEUX touches, pas trois — le second dé valide, on ne
  * confirme pas.
  *
- * Les tours de pions (jet corrigeable, candidats, j/k, Entrée, danse) sont
- * T1.3 ; ici la machine les laisse remonter au répartiteur global.
+ * Les tours de pions (jet corrigeable, candidats, j/k, Entrée, danse) ont leur
+ * propre fichier, transcriptionKeys.turn.test.js.
  */
 
 import { describe, test, expect } from 'vitest';
@@ -15,10 +15,16 @@ import { PHASE, COMMAND, initialKeyState, pressKey, dieOf } from '../services/tr
 
 const OPENING = { expects: 'opening' };
 
-/** Une frappe. Les chiffres sont positionnels, les autres touches nommées. */
+/**
+ * Une frappe. Les chiffres sont positionnels (`event.code`), les lettres se
+ * lisent au caractère produit (`event.key`) : le pilote pose les deux, comme le
+ * navigateur le fait.
+ */
 function key(code, extra = {}) {
-    const digit = /^Digit([1-9])$/.exec(code);
-    return new KeyboardEvent('keydown', { code, key: digit ? digit[1] : code, ...extra });
+    const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
+    const letter = /^Key([A-Z])$/.exec(code);
+    const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;
+    return new KeyboardEvent('keydown', { code, key: produced, ...extra });
 }
 
 /** Enchaîne des frappes et rend l'état final avec tous les gestes émis. */
@@ -102,15 +108,15 @@ describe('la saisie des dés', () => {
     });
 
     test('les touches qui ne sont pas des dés remontent au répartiteur', () => {
-        for (const code of ['KeyJ', 'KeyP', 'Enter', 'Digit7', 'Digit9']) {
+        for (const code of ['KeyP', 'Enter', 'Digit7', 'Digit9']) {
             expect(pressKey(initialKeyState(), key(code), OPENING).handled).toBe(false);
         }
     });
 
-    // Le tour de pions est T1.3 : jusque-là la machine ne prend rien hors
-    // ouverture, plutôt que d'avaler des touches en silence.
-    test('hors ouverture, aucune touche n’est prise', () => {
-        expect(pressKey(initialKeyState(), key('Digit3'), { expects: 'checker' }).handled).toBe(false);
+    // Une réponse à un double n'est pas une saisie de dés : ses touches sont
+    // `t`/`p` (T1.4), et rien n'est avalé ici en attendant.
+    test('une réponse au videau n’est pas une saisie de dés', () => {
+        expect(pressKey(initialKeyState(), key('Digit3'), { expects: 'take' }).handled).toBe(false);
     });
 });
 

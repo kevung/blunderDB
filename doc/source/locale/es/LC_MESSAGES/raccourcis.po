@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:59+0200\n"
+"POT-Creation-Date: 2026-09-07 04:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -732,6 +732,42 @@ msgstr ""
 "apertura (el mayor empieza y juega ambos dados)."
 
 #: ../../source/raccourcis.rst:1
+msgid "1 … 6 (jet saisi)"
+msgstr "1 … 6 (tirada introducida)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
+"candidat choisi, valider le coup et ouvrir le jet suivant."
+msgstr ""
+"Reiniciar la tirada mientras no se haya elegido ningún candidato; una vez"
+" elegido, registrar el movimiento y abrir la siguiente tirada."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
+" plateau)."
+msgstr ""
+"Seleccionar el candidato siguiente (las flechas del movimiento aparecen "
+"en el tablero)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le candidat précédent."
+msgstr "Seleccionar el candidato anterior."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une ligne)"
+msgstr "Clic (en una fila)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner ce candidat."
+msgstr "Seleccionar ese candidato."
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup sélectionné (dernier coup d'une partie)."
+msgstr "Registrar el movimiento seleccionado (último movimiento de una partida)."
+
+#: ../../source/raccourcis.rst:1
 msgid "Effacer les deux dés saisis."
 msgstr "Borrar los dos dados introducidos."
 
@@ -739,7 +775,15 @@ msgstr "Borrar los dos dados introducidos."
 msgid "Abandonner la saisie en cours."
 msgstr "Abandonar la entrada en curso."
 
-#: ../../source/raccourcis.rst:288
+#: ../../source/raccourcis.rst:290
+msgid ""
+"Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
+"touche supplémentaire."
+msgstr ""
+"Una tirada que no permite ningún movimiento registra el baile por sí "
+"sola, sin pulsación adicional."
+
+#: ../../source/raccourcis.rst:296
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 
