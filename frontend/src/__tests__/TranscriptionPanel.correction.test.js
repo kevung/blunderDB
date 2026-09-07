@@ -184,7 +184,10 @@ describe('une correction se joue depuis la position visée', () => {
         await press('Digit2');
 
         await vi.waitFor(() => expect(LegalMoves).toHaveBeenCalled());
-        const asked = LegalMoves.mock.calls.at(-1)[0];
+        // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
+        // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
+        // et non par son rang dans la liste des appels.
+        const asked = LegalMoves.mock.calls.findLast(([p]) => p.dice[0] === 5 && p.dice[1] === 2)[0];
         // La position de l'Action 1, jouée par le camp que le moteur nomme —
         // et non `next.position`, qui est celle de la fin du match.
         expect(asked.player_on_roll).toBe(1);

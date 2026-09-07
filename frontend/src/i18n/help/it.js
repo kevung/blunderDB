@@ -291,6 +291,8 @@ export default {
 <p>Appena cade il secondo dado, tutte le <strong>mosse legali</strong> del lancio sono elencate, ordinate dal motore integrato, la prima preselezionata e le sue frecce poste sulla damiera. Questo ordinamento è una valutazione: è mostrato, non è mai scritto nella base. Quando il motore non è disponibile, le mosse sono elencate senza ordinamento e il pannello lo dice.</p>
 <p>Il triangolo dei ventuno tiri sta sotto le due caselle del tiro, accanto alla tastiera e non al suo posto: due cifre restano due volte più rapide di un clic, e il triangolo è lì per chi trascrive con la mano sul mouse. Una casella per tiro, mai due: 3-1 e 1-3 sono lo stesso tiro.</p>
 <p>Un clic su un punto della tavola lascia solo le mosse che partono da lì. È il gesto della mossa lontana: arrivare al dodicesimo candidato costa tredici tasti, mentre il filtro ne lascia solo due o tre. Il filtro non cambia nulla nella bozza, riduce l'elenco sullo schermo; il lancio successivo lo toglie.</p>
+<p>Una mossa giocata sul tavoliere risparmia la lettura dei dadi. Finché nessun dado è stato inserito, un clic su una pedina e poi sulla sua destinazione — o un trascinamento dall'una all'altra — gioca la mossa sul tavoliere, vincolata alle mosse legali; le destinazioni offerte dalla pedina scelta si illuminano. I due dadi si deducono dai passi: giocare 13/7 e poi 8/7 dice 6-1 senza che sia stata digitata una cifra, e l'azione viene registrata non appena la mossa è completa. Backspace annulla l'ultimo passo, una cifra abbandona la mossa e torna all'inserimento dei dadi, e un doppio clic fuori dal tavoliere la ricomincia. Quando più lanci producono la stessa mossa — un'uscita che più dadi coprono, un dado non giocabile — nulla viene registrato e il triangolo lascia cliccabili solo quei lanci: il lancio non viene mai indovinato al posto di chi guarda la partita.</p>
+<p>Una mossa illegale si trascrive così come è stata giocata. Il pulsante « Spostamento libero » libera il tavoliere: le pedine si spostano senza alcuna verifica, e « Questo tavoliere è la mossa giocata » registra il tavoliere ottenuto. Il campo di notazione, accanto, fa lo stesso da tastiera: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> si scrivono e si registrano con INVIO. Entrambi richiedono che i dadi del lancio siano inseriti prima, poiché una mossa illegale non dice quale lancio l'ha prodotta. Una mossa inserita per una di queste due vie che risulti legale resta una mossa ordinaria — il confronto avviene sul tavoliere ottenuto, mai sulla provenienza del gesto; altrimenti viene segnata « mossa illegale » nel trascritto, e l'esportazione <code>.mat</code> avvisa prima di scrivere il file, senza mai rifiutare.</p>
 <p>Sotto i dadi, una riga dice lo stato dell'inserimento: il lancio ancora correggibile, il candidato scelto, la danza registrata da sé, la parità da rilanciare, la risposta attesa a un raddoppio, il livello atteso dopo un abbandono, la correzione sul posto, la mossa «da rivedere» il cui lancio è cambiato, e l'incoerenza lasciata dall'ultima azione.</p>
 <p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
@@ -1332,6 +1334,14 @@ export default {
 <tr>
 <td>Clic (su un punto del tavoliere)</td>
 <td>Tenere solo i candidati con un passo che parte da quel punto; un secondo punto riduce ancora, un clic sul punto già filtrato lo toglie, e un clic fuori dal tavoliere elimina il filtro.</td>
+</tr>
+<tr>
+<td>Clic, trascinamento (nessun dado inserito)</td>
+<td>Giocare la mossa direttamente sul tavoliere: la pedina va dal punto cliccato alla sua destinazione, vincolata alle mosse legali, e i due dadi si deducono dai passi giocati.</td>
+</tr>
+<tr>
+<td>BACKSPACE (mossa in corso sul tavoliere)</td>
+<td>Annullare l'ultimo passo giocato sul tavoliere.</td>
 </tr>
 <tr>
 <td>INVIO</td>

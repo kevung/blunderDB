@@ -286,6 +286,8 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "Clic (sur une ligne)", "Sélectionner ce candidat."
    "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Pendant l'ouverture, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
    "Clic (sur un point du damier)", "Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre."
+   "Clic, glisser (aucun dé saisi)", "Jouer le coup directement sur le damier : le pion va du point cliqué à sa destination, contraint aux coups légaux, et les deux dés se déduisent des pas joués."
+   "RETOUR ARRIERE (coup en cours au plateau)", "Défaire le dernier pas joué au plateau."
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis."
    "Esc", "Abandonner la saisie en cours."

@@ -291,6 +291,8 @@ export default {
 <p>Dès que le second dé tombe, tous les <strong>coups légaux</strong> du jet sont listés, classés par le moteur embarqué, le premier présélectionné et ses flèches posées sur le plateau. Ce classement est une évaluation : il est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas disponible, les coups sont listés sans classement et le panneau le dit.</p>
 <p>Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un clic, et le triangle est là pour qui transcrit la souris à la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet.</p>
 <p>Un clic sur un point du plateau ne laisse que les coups qui en partent. C'est le geste du coup lointain : descendre au douzième candidat coûte treize touches, là où le filtre n'en laisse que deux ou trois. Le filtre ne change rien au brouillon, il réduit la liste à l'écran ; le jet suivant le lève.</p>
+<p>Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre — joue le coup sur le damier, contraint aux coups légaux ; les destinations offertes par le pion choisi s'allument. Les deux dés se déduisent des pas : jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un chiffre abandonne le coup et revient à la saisie par les dés, et un double-clic hors du damier le reprend depuis le début. Quand plusieurs jets produisent le même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable — rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le jet n'est jamais deviné à la place de celui qui regarde la partie.</p>
+<p>Un coup illégal se transcrit tel qu'il a été joué. Le bouton « Déplacement libre » libère le damier : les pions se déplacent sans aucune vérification, et « Ce plateau est le coup joué » enregistre le plateau obtenu. Le champ de notation, à côté, fait la même chose au clavier : <code>13/7 8/7*</code>, <code>bar/22</code> ou <code>6/off</code> s'écrivent et s'enregistrent par ENTREE. Les deux demandent que les dés du jet soient saisis d'abord, un coup illégal ne disant pas quel jet l'a produit. Un coup saisi par l'un de ces deux chemins qui se trouve être légal reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais sur la provenance du geste ; sinon il est marqué « coup illégal » dans le transcript, et l'export <code>.mat</code> avertit avant d'écrire le fichier, sans jamais refuser.</p>
 <p>Sous les dés, une ligne dit l'état de la saisie : le jet encore corrigeable, le candidat choisi, la danse enregistrée d'office, l'égalité à relancer, la réponse attendue à un double, le niveau attendu après une résignation, la correction en place, le coup « à revoir » dont le jet a changé, et l'incohérence que la dernière action a laissée derrière elle.</p>
 <p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
 <p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
@@ -1332,6 +1334,14 @@ export default {
 <tr>
 <td>Clic (sur un point du damier)</td>
 <td>Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre.</td>
+</tr>
+<tr>
+<td>Clic, glisser (aucun dé saisi)</td>
+<td>Jouer le coup directement sur le damier : le pion va du point cliqué à sa destination, contraint aux coups légaux, et les deux dés se déduisent des pas joués.</td>
+</tr>
+<tr>
+<td>RETOUR ARRIERE (coup en cours au plateau)</td>
+<td>Défaire le dernier pas joué au plateau.</td>
 </tr>
 <tr>
 <td>ENTREE</td>
