@@ -442,3 +442,49 @@ func TestLaVersionDuMoteurEstEnregistree(t *testing.T) {
 		t.Errorf("journal format %d, want %d", d.Record().FormatVersion, tournoi.JournalVersion)
 	}
 }
+
+// TestBrouillonRouvertGardeSaConfiguration : rouvrir un brouillon rend la configuration que le
+// directeur composait, pas une configuration vide.
+//
+// C'est le défaut qu'un test de l'issue #368 a trouvé : Open rejouait systématiquement, et le
+// rejeu d'un journal VIDE rend un état valide dont la configuration est vide — laquelle
+// masquait le brouillon. Un directeur perdait son format en changeant d'onglet.
+func TestBrouillonRouvertGardeSaConfiguration(t *testing.T) {
+	ctx := context.Background()
+	store := newMemStore()
+	d := newDraft(t, store, clubConfig())
+
+	reopened, err := Open(ctx, store, 1)
+	if err != nil {
+		t.Fatalf("rouvrir un brouillon : %v", err)
+	}
+	if reopened.State() != nil {
+		t.Error("un brouillon n'a pas d'état de tournoi : rien n'a encore été lancé")
+	}
+	cfg, err := reopened.Config()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cfg.Phases) != 2 || cfg.Phases[0].Target != 16 {
+		t.Fatalf("la configuration du brouillon a été perdue : %+v", cfg)
+	}
+	if cfg.Name != "Open de Lyon" {
+		t.Errorf("nom perdu : %q", cfg.Name)
+	}
+	// Et elle reste modifiable après réouverture. Passer à trois vies oblige à retirer la
+	// bascule : le moteur la refuse ailleurs qu'à deux vies, et il a raison de le dire ici.
+	cfg.Phases[0].Lives = 3
+	cfg.Phases[0].Target = 0
+	if err := reopened.SetConfig(ctx, cfg); err != nil {
+		t.Fatalf("modifier après réouverture : %v", err)
+	}
+	again, err := Open(ctx, store, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, _ := again.Config()
+	if got.Phases[0].Lives != 3 {
+		t.Errorf("la modification n'a pas survécu : %d vies", got.Phases[0].Lives)
+	}
+	_ = d
+}

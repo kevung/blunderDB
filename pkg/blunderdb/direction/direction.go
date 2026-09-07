@@ -102,6 +102,12 @@ func Open(ctx context.Context, store Store, tournamentID int64) (*Direction, err
 		}
 		d.journal = append(d.journal, ev)
 	}
+	if len(d.journal) == 0 {
+		// Un brouillon n'a rien écrit : il n'y a pas d'état de tournoi, et il ne faut pas en
+		// fabriquer un. Replay sur un journal vide rend un State valide mais VIDE, dont la
+		// configuration écraserait celle que le directeur est en train de composer.
+		return d, nil
+	}
 	if d.st, err = tournoi.Replay(d.journal); err != nil {
 		return nil, fmt.Errorf("direction %d: replay: %w", tournamentID, err)
 	}
