@@ -1749,7 +1749,9 @@
             "scalePlaceholder": "50, 30, 20",
             "scaleHint": "Une valeur par place, de la première à la dernière payée.",
             "percent": "%",
-            "percentHint": "Coché : des pourcentages du distribuable. Décoché : des montants fixes."
+            "percentHint": "Coché : des pourcentages du distribuable. Décoché : des montants fixes.",
+            "seeding": "Têtes de série",
+            "seedingHint": "Éteint par défaut : l'étude du moteur conclut « pas de têtes de série protégées », qui est la culture actuelle du backgammon. Activé, les joueurs sont placés par cote — le meilleur et le deuxième dans des moitiés opposées. Le bouton ⓘ mène à l'étude."
         },
         "tabs": {
             "direction": "Direction",

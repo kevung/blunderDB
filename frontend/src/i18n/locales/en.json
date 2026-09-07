@@ -1749,7 +1749,9 @@
             "scalePlaceholder": "50, 30, 20",
             "scaleHint": "One value per place, from the first to the last paid.",
             "percent": "%",
-            "percentHint": "Ticked: percentages of the payable pool. Unticked: fixed amounts."
+            "percentHint": "Ticked: percentages of the payable pool. Unticked: fixed amounts.",
+            "seeding": "Seeding",
+            "seedingHint": "Off by default: the engine's study concludes “no protected seeds”, which is the current culture of backgammon. On, players are placed by rating — the best and the second in opposite halves. The ⓘ button leads to the study."
         },
         "tabs": {
             "direction": "Direction",

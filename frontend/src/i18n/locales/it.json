@@ -1749,7 +1749,9 @@
             "scalePlaceholder": "50, 30, 20",
             "scaleHint": "Un valore per posto, dal primo all'ultimo pagato.",
             "percent": "%",
-            "percentHint": "Spuntato: percentuali del distribuibile. Non spuntato: importi fissi."
+            "percentHint": "Spuntato: percentuali del distribuibile. Non spuntato: importi fissi.",
+            "seeding": "Teste di serie",
+            "seedingHint": "Disattivato per impostazione predefinita: lo studio del motore conclude «nessuna testa di serie protetta», che è la cultura attuale del backgammon. Attivato, i giocatori sono piazzati per punteggio — il migliore e il secondo in metà opposte. Il pulsante ⓘ porta allo studio."
         },
         "tabs": {
             "direction": "Direzione",
