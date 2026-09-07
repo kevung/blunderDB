@@ -39,10 +39,15 @@ type DirectionView struct {
 	Warnings      []tournoi.Warning `json:"warnings"`
 	Ranking       []tournoi.Rank    `json:"ranking"`
 	Players       []tournoi.Player  `json:"players"`
-	Running       []*tournoi.Match  `json:"running"`
-	Phase         int               `json:"phase"`
-	Finished      bool              `json:"finished"`
-	EventCount    int               `json:"eventCount"`
+	// Infos says, for every entrant engaged in no phase yet, where they will enter — a free
+	// bye of the phase under way, a later phase open to all, or nowhere. Derived at every
+	// call: a player the director finally gives a place to leaves the list at that instant
+	// (issue #392).
+	Infos      []tournoi.Info   `json:"infos,omitempty"`
+	Running    []*tournoi.Match `json:"running"`
+	Phase      int              `json:"phase"`
+	Finished   bool             `json:"finished"`
+	EventCount int              `json:"eventCount"`
 }
 
 // ListDirections names the directed tournaments of this database.
@@ -103,6 +108,7 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 		v.Running = st.Running()
 		v.Phase = st.Current
 		v.Finished = st.Finished
+		v.Infos = st.Infos
 		for _, id := range st.Order {
 			if p := st.Players[id]; p != nil {
 				v.Players = append(v.Players, *p)

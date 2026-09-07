@@ -46,7 +46,9 @@ import {
     DirectorySources,
     DirectoryEntrants,
     DirectoryCSV,
-    ParseDirectoryCSV
+    ParseDirectoryCSV,
+    DirectionFreeSlots,
+    AddParticipantAtSlot
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock, tMsg } from '../i18n';
@@ -349,6 +351,35 @@ export async function directionRounds() {
         logger.error('direction: counting rounds failed', e);
         return 0;
     }
+}
+
+/*
+ * Les retardataires (issue #392).
+ *
+ * Il en arrive un à chaque tournoi. Le moteur ne refait JAMAIS un tirage déjà fait — le
+ * retardataire prend une place d'exemption libre, ou il entre plus tard — et le rôle de
+ * l'interface est de DIRE LEQUEL des deux avant que le directeur valide l'inscription.
+ */
+
+/** Les places d'exemption encore libres, dans l'ordre du tableau. */
+export async function freeSlots() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await DirectionFreeSlots(id)) || [];
+    } catch (e) {
+        logger.error('direction: free slots failed', e);
+        return [];
+    }
+}
+
+/** Inscrit un retardataire sur une place d'exemption nommée. */
+export async function addParticipantAtSlot(name, club, rating, section, key) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await AddParticipantAtSlot(id, name, club, Number(rating) || 0, section, key);
+    directionStore.set(view);
+    return view;
 }
 
 /*

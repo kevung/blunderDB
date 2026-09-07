@@ -120,6 +120,22 @@
         config.breaks = next;
     }
 
+    /* Les longueurs tour par tour d'un tableau, DU DERNIER TOUR VERS LE PREMIER : « 15, 13, 11 »
+       veut dire finale en 15, demies en 13, quarts en 11. C'est l'ordre dans lequel un
+       organisateur annonce son tournoi, et il ne dépend pas de la taille du tableau — la même
+       liste sert un tableau de 16 et un de 64, où elle allonge les quatre derniers tours. */
+    function lengthsText(phase) {
+        return (phase.lengths || []).join(', ');
+    }
+
+    function setLengths(phase, text) {
+        const parsed = String(text)
+            .split(/[,;]/)
+            .map((x) => parseInt(x.trim(), 10))
+            .filter((n) => Number.isFinite(n) && n > 0);
+        phase.lengths = parsed.length ? parsed : undefined;
+    }
+
     /* La liste de contrôle : ce que « Enregistrer » va faire, montré avant de le faire. */
     let pending = $state(null);
     const blocked = $derived(!!pending && pending.refusals && pending.refusals.length > 0);
@@ -208,11 +224,29 @@
                                 {$t('direction.settings.batch')}
                                 <input type="number" min="0" max="120" bind:value={phase.batch_minutes} />
                             </label>
+                            <label title={$t('direction.settings.lengthLateHint')}>
+                                {$t('direction.settings.lengthLate')}
+                                <input type="number" min="0" max="99" bind:value={phase.length_late} />
+                            </label>
+                            <label title={$t('direction.settings.lateThresholdHint')}>
+                                {$t('direction.settings.lateThreshold')}
+                                <input type="number" min="0" max="99" bind:value={phase.late_threshold} />
+                            </label>
                         {/if}
                         {#if phase.kind === 'bracket' || phase.kind === 'lives_bracket'}
                             <label title={$t('direction.settings.finalLengthHint')}>
                                 {$t('direction.settings.finalLength')}
                                 <input type="number" min="0" max="99" bind:value={phase.final_length} />
+                            </label>
+                            <label class="wide" title={$t('direction.settings.lengthsHint')}>
+                                {$t('direction.settings.lengths')}
+                                <input
+                                    type="text"
+                                    class="lengths"
+                                    value={lengthsText(phase)}
+                                    placeholder={$t('direction.settings.lengthsPlaceholder')}
+                                    onchange={(e) => setLengths(phase, e.currentTarget.value)}
+                                />
                             </label>
                         {/if}
                         {#if !isOpen(i) && (config.phases || []).length > 1}
@@ -568,5 +602,11 @@
     .path {
         word-break: break-all;
         font-family: ui-monospace, monospace;
+    }
+
+    /* Une liste de longueurs est plus large qu'un nombre : « 15, 13, 11, 9 » doit se lire d'un
+       coup d'œil, sans défilement dans le champ. */
+    input.lengths {
+        width: 9rem;
     }
 </style>

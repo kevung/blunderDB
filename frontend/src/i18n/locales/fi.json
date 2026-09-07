@@ -1726,7 +1726,14 @@
             "addBreak": "Lisää tauko",
             "removeBreak": "Poista",
             "batch": "Mikrokierrokset",
-            "batchHint": "Muodosta parit erissä, N minuutin välein, jottei tuloksen ilmoitusaika enää valitse vastustajaa. 0: sitä mukaa."
+            "batchHint": "Muodosta parit erissä, N minuutin välein, jottei tuloksen ilmoitusaika enää valitse vastustajaa. 0: sitä mukaa.",
+            "lengths": "Pituudet kierroksittain",
+            "lengthsHint": "Pituus kierros kerrallaan, VIIMEISESTÄ ENSIMMÄISEEN: ”15, 13, 11” = finaali 15, välierät 13, puolivälierät 11. Tyhjä: vaiheen pituus.",
+            "lengthsPlaceholder": "15, 13, 11",
+            "lengthLate": "Loppuvaiheen pituus",
+            "lengthLateHint": "Pidennä otteluita, kun jäljellä on enää muutama pelaaja. 0: ei koskaan.",
+            "lateThreshold": "Alkaen",
+            "lateThresholdHint": "Montako pelaajaa vielä mukana, ennen kuin ottelut pitenevät."
         },
         "tabs": {
             "direction": "Johtaminen",
@@ -1890,7 +1897,13 @@
                 "withdrawn": "poistunut",
                 "leaving": "lähtee ottelun jälkeen"
             },
-            "error": "Ilmoittautumista ei voitu kirjata."
+            "error": "Ilmoittautumista ei voitu kirjata.",
+            "entersAt": "tulee mukaan",
+            "slotHint": "Mihin tämä pelaaja tulee mukaan. Vapaa vapaakierros tai myöhemmin: arvontaa ei koskaan tehdä uudelleen.",
+            "later": "myöhemmin",
+            "willEnter": "{player} tulee mukaan: {where}",
+            "noEntry": "{player} on ilmoitettu mutta ei tule mihinkään vaiheeseen.",
+            "phaseN": "vaihe {n}"
         },
         "bracket": {
             "current": "käynnissä",

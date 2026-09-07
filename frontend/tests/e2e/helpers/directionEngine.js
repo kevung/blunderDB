@@ -282,6 +282,19 @@ export async function installDirectionEngine(page, opts = {}) {
             db.Directory = () => Promise.resolve(entrants.map((p) => ({ name: p.name, club: p.club, rating: p.rating, entries: 1 })));
             db.DirectoryCSV = () => Promise.resolve('name,club,rating\n');
             db.ParseDirectoryCSV = () => Promise.resolve({ rows: [], errors: [], skipped: [] });
+
+            // Une place d'exemption libre (#392). Le faux moteur ne tire aucun tableau : il
+            // fournit la FORME que l'interface doit savoir montrer — où le retardataire entre —
+            // et c'est ce que le budget mesure.
+            let slots = [{ phase: 0, section: 'main', key: 'm-1-2', label: { kind: 'bracket_round', n: 1 } }];
+            db.DirectionFreeSlots = () => Promise.resolve(slots.slice());
+            db.AddParticipantAtSlot = (_id, name, club, rating, _section, key) => {
+                slots = slots.filter((s) => s.key !== key);
+                players.push({ id: 'p' + (players.length + 1), name, club, rating: Number(rating) || 0 });
+                proposals = pair();
+                events += 1;
+                return Promise.resolve(view());
+            };
             db.GetMatchesByTournament = () => Promise.resolve([]);
         },
         { entrants: ENTRANTS, directed: opts.directed !== false }

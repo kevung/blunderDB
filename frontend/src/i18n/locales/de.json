@@ -1726,7 +1726,14 @@
             "addBreak": "Pause hinzufügen",
             "removeBreak": "Entfernen",
             "batch": "Mikrorunden",
-            "batchHint": "Paarungen alle N Minuten im Block, damit die Uhrzeit einer Ergebnismeldung nicht mehr den Gegner wählt. 0: laufend."
+            "batchHint": "Paarungen alle N Minuten im Block, damit die Uhrzeit einer Ergebnismeldung nicht mehr den Gegner wählt. 0: laufend.",
+            "lengths": "Längen pro Runde",
+            "lengthsHint": "Länge Runde für Runde, VON DER LETZTEN ZUR ERSTEN: „15, 13, 11“ = Finale auf 15, Halbfinale auf 13, Viertelfinale auf 11. Leer: die Länge der Phase.",
+            "lengthsPlaceholder": "15, 13, 11",
+            "lengthLate": "Länge am Ende",
+            "lengthLateHint": "Matches verlängern, sobald nur noch wenige Spieler im Rennen sind. 0: nie.",
+            "lateThreshold": "Ab",
+            "lateThresholdHint": "Ab wie vielen verbliebenen Spielern die Matches länger werden."
         },
         "tabs": {
             "direction": "Leitung",
@@ -1890,7 +1897,13 @@
                 "withdrawn": "zurückgezogen",
                 "leaving": "geht nach der Partie"
             },
-            "error": "Der Eintrag konnte nicht gespeichert werden."
+            "error": "Der Eintrag konnte nicht gespeichert werden.",
+            "entersAt": "tritt ein",
+            "slotHint": "Wo dieser Spieler einsteigt. Ein freies Freilos oder später: keine Auslosung wird wiederholt.",
+            "later": "später",
+            "willEnter": "{player} steigt ein: {where}",
+            "noEntry": "{player} ist gemeldet, steigt aber in keine Phase ein.",
+            "phaseN": "Phase {n}"
         },
         "bracket": {
             "current": "laufend",

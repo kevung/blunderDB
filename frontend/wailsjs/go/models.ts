@@ -492,6 +492,7 @@ export namespace database {
 	    warnings: tournoi.Warning[];
 	    ranking: tournoi.Rank[];
 	    players: tournoi.Player[];
+	    infos?: tournoi.Info[];
 	    running: tournoi.Match[];
 	    phase: number;
 	    finished: boolean;
@@ -512,6 +513,7 @@ export namespace database {
 	        this.warnings = this.convertValues(source["warnings"], tournoi.Warning);
 	        this.ranking = this.convertValues(source["ranking"], tournoi.Rank);
 	        this.players = this.convertValues(source["players"], tournoi.Player);
+	        this.infos = this.convertValues(source["infos"], tournoi.Info);
 	        this.running = this.convertValues(source["running"], tournoi.Match);
 	        this.phase = source["phase"];
 	        this.finished = source["finished"];
@@ -659,6 +661,42 @@ export namespace database {
 	        this.MaxMP = source["MaxMP"];
 	        this.Count = source["Count"];
 	    }
+	}
+	export class FreeSlot {
+	    phase: number;
+	    section: string;
+	    key: string;
+	    label?: tournoi.Label;
+	
+	    static createFrom(source: any = {}) {
+	        return new FreeSlot(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.phase = source["phase"];
+	        this.section = source["section"];
+	        this.key = source["key"];
+	        this.label = this.convertValues(source["label"], tournoi.Label);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class GameTypeStats {
 	    GameType: string;
@@ -4379,6 +4417,44 @@ export namespace tournoi {
 		}
 	}
 	
+	export class Info {
+	    code: string;
+	    player?: string;
+	    phase?: number;
+	    section?: string;
+	    label?: Label;
+	
+	    static createFrom(source: any = {}) {
+	        return new Info(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.code = source["code"];
+	        this.player = source["player"];
+	        this.phase = source["phase"];
+	        this.section = source["section"];
+	        this.label = this.convertValues(source["label"], Label);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	
 	export class Match {
 	    id: string;

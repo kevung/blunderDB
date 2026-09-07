@@ -12,8 +12,22 @@
      * inférence, et jamais une fiche « personne » — l'identité que le glossaire refuse.
      */
     import { t } from '../../i18n';
+    import { renderLabel, renderSectionName } from './labels.js';
 
-    let { rows = [], suggestions = [], busy = false, started = false, onAdd = () => {}, onUpdate = () => {}, onWithdraw = () => {} } = $props();
+    let {
+        rows = [],
+        suggestions = [],
+        busy = false,
+        started = false,
+        onAdd = () => {},
+        onUpdate = () => {},
+        onWithdraw = () => {},
+        // Les places d'exemption encore libres et les inscrits qui n'ont pas encore de place
+        // (issue #392). Vides en préparation : il n'y a pas de retardataire avant le tirage.
+        slots = [],
+        infos = [],
+        onAddAtSlot = null
+    } = $props();
 
     let name = $state('');
     let club = $state('');
@@ -38,10 +52,31 @@
         return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
+    /* Où le retardataire entrera. Par défaut la première place libre : c'est le cas de très
+       loin le plus fréquent, et la destination est écrite à côté du champ avant de valider.
+       « plus tard » reste à un geste, et le moteur ne refait jamais un tirage. */
+    let slotKey = $state('');
+    $effect(() => {
+        const keys = slots.map((s) => s.key);
+        if (!keys.includes(slotKey)) slotKey = keys[0] || '';
+    });
+
+    const chosenSlot = $derived(slots.find((s) => s.key === slotKey) || null);
+
+    function slotLabel(s) {
+        const where = renderSectionName($t, s.section);
+        const what = renderLabel($t, s.label);
+        return [where, what].filter(Boolean).join(' · ') || s.key;
+    }
+
     async function add() {
         const n = name.trim();
         if (!n) return;
-        await onAdd(n, club.trim(), num(rating));
+        if (chosenSlot && onAddAtSlot) {
+            await onAddAtSlot(n, club.trim(), num(rating), chosenSlot.section, chosenSlot.key);
+        } else {
+            await onAdd(n, club.trim(), num(rating));
+        }
         name = '';
         rating = '';
         // Le club reste : dans un tournoi de club, il est le même vingt fois de suite.
@@ -77,8 +112,39 @@
         <input bind:this={nameInput} bind:value={name} type="text" placeholder={$t('direction.players.name')} disabled={busy} autocomplete="off" />
         <input bind:value={club} type="text" placeholder={$t('direction.players.club')} disabled={busy} />
         <input bind:value={rating} type="text" inputmode="decimal" placeholder={$t('direction.players.rating')} title={$t('direction.players.ratingHint')} disabled={busy} />
+        {#if slots.length}
+            <!-- Ce que le directeur voit AVANT de valider : où ce joueur va entrer. -->
+            <label class="slot" title={$t('direction.players.slotHint')}>
+                {$t('direction.players.entersAt')}
+                <select bind:value={slotKey}>
+                    {#each slots as s (s.key)}
+                        <option value={s.key}>{slotLabel(s)}</option>
+                    {/each}
+                    <option value="">{$t('direction.players.later')}</option>
+                </select>
+            </label>
+        {/if}
         <button type="submit" class="primary" disabled={busy || !name.trim()}>{$t('direction.players.add')}</button>
     </form>
+
+    {#if infos.length}
+        <!-- Les inscrits qui ne jouent encore nulle part. La liste est DÉRIVÉE : celui à qui le
+             directeur finit par donner une place en disparaît au même instant. -->
+        <ul class="infos">
+            {#each infos as i (i.player + i.code)}
+                <li>
+                    {#if i.code === 'enters_at'}
+                        {$t('direction.players.willEnter', {
+                            player: (rows.find((r) => r.id === i.player) || {}).name || i.player,
+                            where: [renderSectionName($t, i.section), renderLabel($t, i.label)].filter(Boolean).join(' · ') || $t('direction.players.phaseN', { n: i.phase + 1 })
+                        })}
+                    {:else}
+                        {$t('direction.players.noEntry', { player: (rows.find((r) => r.id === i.player) || {}).name || i.player })}
+                    {/if}
+                </li>
+            {/each}
+        </ul>
+    {/if}
 
     {#if matches.length}
         <ul class="suggestions">
@@ -304,5 +370,31 @@
     button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    /* La destination d'un retardataire se lit à côté du champ, pas dans une fenêtre : le
+       directeur la voit en tapant le nom. */
+    .slot {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+    }
+
+    .slot select {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface-alt);
+        color: var(--color-text);
+        padding: 0.15rem 0.3rem;
+    }
+
+    .infos {
+        list-style: none;
+        margin: 0.2rem 0;
+        padding: 0;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
     }
 </style>

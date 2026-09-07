@@ -1726,7 +1726,14 @@
             "addBreak": "Add a break",
             "removeBreak": "Remove",
             "batch": "Micro-rounds",
-            "batchHint": "Pair in batches, every N minutes, so that the time a result is announced no longer picks the opponent. 0: as they come."
+            "batchHint": "Pair in batches, every N minutes, so that the time a result is announced no longer picks the opponent. 0: as they come.",
+            "lengths": "Lengths per round",
+            "lengthsHint": "Length round by round, FROM THE LAST TO THE FIRST: “15, 13, 11” = final at 15, semis at 13, quarters at 11. Empty: the phase's length.",
+            "lengthsPlaceholder": "15, 13, 11",
+            "lengthLate": "Late length",
+            "lengthLateHint": "Lengthen matches once only a few players are still alive. 0: never.",
+            "lateThreshold": "From",
+            "lateThresholdHint": "How many players still alive before matches lengthen."
         },
         "tabs": {
             "direction": "Direction",
@@ -1890,7 +1897,13 @@
                 "withdrawn": "withdrawn",
                 "leaving": "leaving after their match"
             },
-            "error": "Could not record this entry."
+            "error": "Could not record this entry.",
+            "entersAt": "enters",
+            "slotHint": "Where this player will enter. A free bye, or later: no draw is ever redone.",
+            "later": "later",
+            "willEnter": "{player} will enter: {where}",
+            "noEntry": "{player} is entered but enters no phase.",
+            "phaseN": "phase {n}"
         },
         "bracket": {
             "current": "current",
