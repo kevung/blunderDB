@@ -77,6 +77,7 @@
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import DiceTriangle from './DiceTriangle.svelte';
     import TranscriptView from './TranscriptView.svelte';
+    import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import {
         transcriptionListStore,
         transcriptionStore,
@@ -115,6 +116,10 @@
     let formJacoby = $state(true);
     let formBeaver = $state(false);
     let panelEl = $state(null);
+    // Le volet des métadonnées (T3.1) : replié par défaut, ouvrable à tout
+    // moment, et il survit au va-et-vient entre les onglets comme le reste du
+    // brouillon puisqu'il ne tient rien — l'en-tête est dans le document.
+    let metaOpen = $state(false);
 
     let draft = $derived($transcriptionStore);
     let annotated = $derived(draft?.annotated ?? null);
@@ -362,7 +367,11 @@
     // the chain below: a `select` names a rank in the list as it stands at the
     // keystroke, and the list is replaced as soon as the next roll comes in.
     function run(commands) {
-        const gestures = commands.map(gestureOf).filter(Boolean);
+        return queue(commands.map(gestureOf).filter(Boolean));
+    }
+
+    /** La file elle-même : les gestes partent dans l'ordre, un par aller-retour. */
+    function queue(gestures) {
         if (!gestures.length) return pending;
         const id = draft?.id;
         if (id == null) return pending;
@@ -378,6 +387,17 @@
                 error = String(err);
             });
         return pending;
+    }
+
+    /**
+     * Un geste qui ne vient pas du clavier : le volet des métadonnées (T3.1).
+     *
+     * Il passe par la MÊME file que les touches, et pour la même raison : un
+     * nom validé pendant qu'un jet part encore ne doit pas doubler le tour
+     * d'aller-retour de ce jet.
+     */
+    function sendGesture(gesture) {
+        return gesture ? queue([gesture]) : pending;
     }
 
     // ── the candidates ───────────────────────────────────────────────────
@@ -1155,10 +1175,19 @@
                 <span class="badge">{cubeLabel}</span>
                 <span class="badge on-roll">{playerName(sideOnRoll)}</span>
                 <span class="badge save-state">{$t(saveState.key, saveState.params)}</span>
+                <button class="new-btn" onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}>{$t('transcription.metadata')}</button>
                 <button class="new-btn" onclick={handleSave} disabled={busy} title={$t('transcription.saveTooltip')}>{$t('transcription.save')}</button>
                 <button class="new-btn" onclick={handleExport} disabled={busy} title={$t('transcription.exportMatTooltip')}>{$t('transcription.exportMat')}</button>
                 <button class="new-btn" onclick={handleClose} disabled={busy} title={$t('transcription.closeDraftTooltip')}>{$t('transcription.closeDraft')}</button>
             </div>
+
+            {#if metaOpen}
+                <!-- L'en-tête du brouillon (T3.1) : les deux noms, l'événement,
+                     le lieu, la ronde, la date, le transcripteur, le tournoi.
+                     Rien n'y est exigé — un brouillon sans noms s'enregistre et
+                     s'exporte, avec des en-têtes vides. -->
+                <TranscriptionMetadata header={annotated?.document?.header ?? {}} apply={sendGesture} {busy} />
+            {/if}
 
             {#if matchOver}
                 <p class="hint">{$t('transcription.matchOver', { player: playerName(matchWinner), a: score[0], b: score[1] })}</p>

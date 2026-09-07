@@ -303,3 +303,87 @@ func TestSaveTranscriptionAsMatch_RefusesAnEmptyDraft(t *testing.T) {
 		t.Errorf("%d matches written by a refused save", n)
 	}
 }
+
+// TestSetLength_RehashesEveryPosition is the warning T3.2 carries, made into a
+// test: the length of a match is part of the away score of every Position, and
+// the away score is part of its Zobrist identity. Changing the length after a
+// save therefore produces entirely NEW positions at the next save — not
+// corrected ones — and the ones the match no longer stands on are purged by the
+// ordinary retention rule, held by nothing.
+//
+// It is the expected behaviour and not a leak, but it is expensive (every
+// position of the match loses its analysis), which is why it is written down
+// here rather than discovered on a five-hour transcription.
+func TestSetLength_RehashesEveryPosition(t *testing.T) {
+	db := newTestDB(t)
+	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
+
+	first, err := db.SaveTranscriptionAsMatch(id)
+	if err != nil {
+		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+	}
+	before := matchPositionIDs(t, db, first.MatchID)
+	if len(before) == 0 {
+		t.Fatal("the saved match stands on no position")
+	}
+	for posID := range before {
+		if err := db.SaveAnalysis(posID, PositionAnalysis{AnalysisType: "CheckerMove"}); err != nil {
+			t.Fatalf("SaveAnalysis(%d): %v", posID, err)
+		}
+	}
+
+	state, err := db.OpenTranscription(id)
+	if err != nil {
+		t.Fatalf("OpenTranscription: %v", err)
+	}
+	length := state.Annotated.Document.Header.MatchLength
+	if length <= 0 {
+		t.Fatalf("the fixture is a money session (%d): there is no away score to change", length)
+	}
+
+	// The score sheet was misread: the match was played to two points more.
+	if _, err := db.ApplyTranscriptionGesture(id, transcript.Gesture{
+		Kind: transcript.GestureSetLength, HasLength: true, MatchLength: length + 2,
+	}); err != nil {
+		t.Fatalf("set_length: %v", err)
+	}
+
+	second, err := db.SaveTranscriptionAsMatch(id)
+	if err != nil {
+		t.Fatalf("second SaveTranscriptionAsMatch: %v", err)
+	}
+	if second.MatchID != first.MatchID || !second.Replaced {
+		t.Fatalf("the second save produced match %d (replaced %v), want the same match replaced", second.MatchID, second.Replaced)
+	}
+
+	after := matchPositionIDs(t, db, second.MatchID)
+	if len(after) != len(before) {
+		t.Errorf("%d positions after the length change, %d before: the same match was written", len(after), len(before))
+	}
+	for posID := range after {
+		if before[posID] {
+			t.Fatalf("position %d survived a change of match length: the away score is part of its identity", posID)
+		}
+	}
+	// Every position is new, so every position of the match is to be analysed.
+	if second.ToAnalyze != len(after) {
+		t.Errorf("the save reports %d positions to analyse, %d are new", second.ToAnalyze, len(after))
+	}
+	// And the old set is gone — purged by the ordinary retention rule, with
+	// nothing through the trash (ADR-0045 §3).
+	for posID := range before {
+		if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM position WHERE id = ?`, posID); n != 0 {
+			t.Errorf("position %d is held by nothing and was not purged", posID)
+		}
+		if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM analysis WHERE position_id = ?`, posID); n != 0 {
+			t.Errorf("the analysis of the purged position %d outlived it", posID)
+		}
+	}
+	if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM trash`); n != 0 {
+		t.Errorf("%d rows in the trash: a replacement is not a deletion", n)
+	}
+	// The match itself states its new length.
+	if got := countTranscriptRows(t, db, `SELECT match_length FROM match WHERE id = ?`, second.MatchID); got != length+2 {
+		t.Errorf("the saved match is %d points long, want %d", got, length+2)
+	}
+}

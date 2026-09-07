@@ -51,14 +51,21 @@ const (
 	GestureDelete GestureKind = "delete"
 	// GestureFlipSide gives the Action under the Cursor to the other camp.
 	GestureFlipSide GestureKind = "flip_side"
-	// GestureSetLength changes the match length, money play included, and re-states
-	// the session's rules.
+	// GestureSetLength changes the match length, money play included, and states
+	// the session's rules with it. It is the one gesture a length goes through: a
+	// Replay of the whole document follows, since every away score, the Crawford
+	// game, the referential and the end of the match are derived from it.
 	GestureSetLength GestureKind = "set_length"
 	// GestureSwapPlayers exchanges the two players: names, every side, and the board,
 	// which is why every play's steps are mirrored with them.
 	GestureSwapPlayers GestureKind = "swap_players"
-	// GestureSetHeader replaces the header wholesale — the metadata, the tournament,
-	// and the match id a first save posts.
+	// GestureSetHeader writes the DESCRIPTIVE head of the document: the two names,
+	// the event, the place, the round, the date, who is typing it in, and the
+	// tournament the saved Match is to be attached to. Everything else the header
+	// carries has a gesture of its own and is kept as it stands — the length and
+	// the session's rules ([GestureSetLength]), and the match id, which only a
+	// first save posts. A metadata form that forgot one field would otherwise turn
+	// a match into a money session, or make a saved draft file a second Match.
 	GestureSetHeader GestureKind = "set_header"
 	// GestureUndo and GestureRedo walk the editing session's stack. They are
 	// NAMED here, so that a caller has one spelling of them, and they are the two
@@ -289,10 +296,19 @@ func Apply(doc Document, g Gesture) (Document, error) {
 			return doc, fmt.Errorf("transcript: no match length given")
 		}
 		out.Header.MatchLength = g.MatchLength
-		// Money and match do not carry the same rules: crossing between them
-		// re-states the session's flags rather than keeping the other side's.
-		out.Header.Jacoby = g.MatchLength == 0 && (!g.HasRules || g.Jacoby)
-		out.Header.Beaver = g.MatchLength == 0 && g.HasRules && g.Beaver
+		// The session's rules SURVIVE a crossing: they stay in the document
+		// while the match is played to a length — where no Position carries
+		// them (see position()) — so that money → match → money gives back the
+		// flags the session had, and not the defaults of a draft that never
+		// stated any. The gesture re-states them when it says so, and a
+		// document reaching money without ever having stated one is Jacoby,
+		// like a new money draft (fonctionnel.md §1.1).
+		switch {
+		case g.HasRules:
+			out.Header.Jacoby, out.Header.Beaver = g.Jacoby, g.Beaver
+		case g.MatchLength == 0 && !out.Header.Jacoby && !out.Header.Beaver:
+			out.Header.Jacoby = true
+		}
 		out.Entry = nil
 		return out, nil
 
@@ -317,13 +333,27 @@ func Apply(doc Document, g Gesture) (Document, error) {
 		return out, nil
 
 	case GestureSetHeader:
-		out.Header = g.Header
+		out.Header = mergeHeader(out.Header, g.Header)
 		return out, nil
 
 	case GestureUndo, GestureRedo:
 		return doc, ErrNotPure
 	}
 	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)
+}
+
+// mergeHeader writes the descriptive fields of `in` over `cur` and keeps the rest.
+//
+// What is kept is what a form has no business stating: the length and the session's
+// rules, which [GestureSetLength] alone re-states, and the match id, which a first
+// save posts and nothing else ever changes (fonctionnel.md §1.1 — "jamais" saisi).
+func mergeHeader(cur, in Header) Header {
+	out := cur
+	out.Player1, out.Player2 = in.Player1, in.Player2
+	out.Event, out.Location, out.Round = in.Event, in.Location, in.Round
+	out.Date, out.Transcriber = in.Date, in.Transcriber
+	out.TournamentID = in.TournamentID
+	return out
 }
 
 // ensureEntry returns the Action being typed, opening one at the Cursor if none is.

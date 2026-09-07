@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -629,5 +630,117 @@ func TestOpenTranscription_DoesNotJumpToAnInconsistency(t *testing.T) {
 	}
 	if reopened.CanUndo || reopened.CanRedo {
 		t.Error("a reopened draft carries an undo stack; it is in memory and a stop loses it")
+	}
+}
+
+// TestCreateTranscription_DatesAndCreditsTheDraft holds the two defaults of
+// T3.1 that only the library can state: today's date, and the transcriber —
+// the library's own `user` metadata, which is who is sitting in front of the
+// board. Both are DEFAULTS: the metadata pane overwrites them, and overwriting
+// the transcriber must not touch the library's setting.
+func TestCreateTranscription_DatesAndCreditsTheDraft(t *testing.T) {
+	db := newTestDB(t)
+	if err := db.SaveMetadata(map[string]string{"user": "  Kévin Unger  "}); err != nil {
+		t.Fatalf("SaveMetadata: %v", err)
+	}
+
+	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	header := state.Annotated.Document.Header
+	if header.Transcriber != "Kévin Unger" {
+		t.Errorf("transcriber = %q, want the library's user", header.Transcriber)
+	}
+	if header.Date.IsZero() || time.Since(header.Date) > time.Hour {
+		t.Errorf("date = %v, want today", header.Date)
+	}
+
+	// A header that states them keeps them: the default fills a silence, it
+	// never overwrites an answer.
+	when := time.Date(2019, 3, 2, 0, 0, 0, 0, time.UTC)
+	stated, err := db.CreateTranscription(transcript.Header{MatchLength: 7, Date: when, Transcriber: "Alice"})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	if h := stated.Annotated.Document.Header; h.Transcriber != "Alice" || !h.Date.Equal(when) {
+		t.Errorf("a stated header was overwritten: %+v", h)
+	}
+
+	// And the pane's own gesture leaves the library's user alone.
+	if _, err := db.ApplyTranscriptionGesture(state.ID, transcript.Gesture{
+		Kind:   transcript.GestureSetHeader,
+		Header: transcript.Header{Transcriber: "Bob"},
+	}); err != nil {
+		t.Fatalf("set_header: %v", err)
+	}
+	meta, err := db.LoadMetadata()
+	if err != nil {
+		t.Fatalf("LoadMetadata: %v", err)
+	}
+	if strings.TrimSpace(meta["user"]) != "Kévin Unger" {
+		t.Errorf("the library's user became %q: a draft credits itself, it does not rename the library", meta["user"])
+	}
+}
+
+// TestSaveTranscription_AttachesTheTournament is T3.1's "rattachement au
+// moment de l'enregistrement": the tournament named in the draft's header is
+// the tournament the Match belongs to once it is written, and clearing it
+// detaches the Match at the next save.
+func TestSaveTranscription_AttachesTheTournament(t *testing.T) {
+	db := newTestDB(t)
+	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
+
+	tournamentID, err := db.CreateTournament("Open de Paris", "2026-09-07", "Paris")
+	if err != nil {
+		t.Fatalf("CreateTournament: %v", err)
+	}
+	if _, err := db.ApplyTranscriptionGesture(id, transcript.Gesture{
+		Kind:   transcript.GestureSetHeader,
+		Header: transcript.Header{Player1: "Alice", Player2: "Bob", TournamentID: &tournamentID},
+	}); err != nil {
+		t.Fatalf("set_header: %v", err)
+	}
+
+	saved, err := db.SaveTranscriptionAsMatch(id)
+	if err != nil {
+		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+	}
+	tour, err := db.GetMatchTournament(saved.MatchID)
+	if err != nil {
+		t.Fatalf("GetMatchTournament: %v", err)
+	}
+	if tour == nil || tour.ID != tournamentID {
+		t.Fatalf("match %d belongs to %v, want tournament %d", saved.MatchID, tour, tournamentID)
+	}
+
+	// The names travelled with it, and they are the ones the pane wrote.
+	matches, err := db.GetTournamentMatches(tournamentID)
+	if err != nil {
+		t.Fatalf("GetTournamentMatches: %v", err)
+	}
+	if len(matches) != 1 || matches[0].Player1Name != "Alice" || matches[0].Player2Name != "Bob" {
+		t.Fatalf("tournament matches = %+v", matches)
+	}
+
+	// Clearing the field detaches at the next save: the attachment is decided
+	// by the draft, at every save, and not once and for all.
+	if _, err := db.ApplyTranscriptionGesture(id, transcript.Gesture{
+		Kind:   transcript.GestureSetHeader,
+		Header: transcript.Header{Player1: "Alice", Player2: "Bob"},
+	}); err != nil {
+		t.Fatalf("set_header: %v", err)
+	}
+	again, err := db.SaveTranscriptionAsMatch(id)
+	if err != nil {
+		t.Fatalf("second SaveTranscriptionAsMatch: %v", err)
+	}
+	if again.MatchID != saved.MatchID {
+		t.Fatalf("the second save produced match %d, want %d", again.MatchID, saved.MatchID)
+	}
+	if tour, err := db.GetMatchTournament(again.MatchID); err != nil {
+		t.Fatalf("GetMatchTournament: %v", err)
+	} else if tour != nil {
+		t.Errorf("the match is still in tournament %d after the draft let it go", tour.ID)
 	}
 }

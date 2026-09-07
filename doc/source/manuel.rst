@@ -1080,6 +1080,25 @@ mention *Crawford* lorsque la partie en cours l'est, le numéro de la partie,
 l'état du videau — sa valeur, centré ou au nom de celui qui le possède — et le
 camp au trait.
 
+Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à tout
+moment : les noms des deux joueurs — autocomplétés depuis les joueurs de la
+base —, l'événement, le lieu, la ronde, la date (celle du jour par défaut), le
+transcripteur (l'utilisateur de la base par défaut) et le tournoi auquel le
+match sera rattaché lors de l'enregistrement. Aucun champ n'est obligatoire :
+un brouillon sans noms s'enregistre et s'exporte, avec des en-têtes vides. Le
+bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
+au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre
+côté.
+
+La **longueur du match** se change dans ce même volet, à tout moment : le score,
+la partie Crawford et le référentiel — les parties d'argent lorsque la longueur
+vaut ``0``, et les cases *Jacoby* et *Beaver* apparaissent alors — sont
+recalculés d'un bout à l'autre du brouillon, et les actions postérieures à la
+victoire sont marquées « au-delà de la fin » sans qu'aucune ne soit supprimée.
+La longueur entre dans l'identité des positions : après un enregistrement, la
+changer puis réenregistrer écrit des positions neuves, à analyser, et les
+anciennes disparaissent dès que plus rien ne les retient.
+
 Sous la barre, le brouillon occupe deux moitiés : la **saisie** à gauche, le
 **transcript** à droite. Une barre de correction les surmonte — insérer avant,
 insérer après, supprimer, changer de camp, annuler, rétablir — qui reprend à la

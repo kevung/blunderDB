@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -112,6 +113,16 @@ func (d *Database) CreateTranscription(header transcript.Header) (*Transcription
 		// header is "unstated", not "Jacoby off".
 		doc.Header.Jacoby = true
 	}
+	// The two fields the user is not asked for and would have to type anyway
+	// (fonctionnel.md §1.1): today, and whoever this library says they are.
+	// Defaults only — the metadata pane overwrites both, and overwriting the
+	// transcriber there never touches the library's own `user` setting.
+	if doc.Header.Date.IsZero() {
+		doc.Header.Date = time.Now()
+	}
+	if strings.TrimSpace(doc.Header.Transcriber) == "" {
+		doc.Header.Transcriber = d.metadataUser()
+	}
 
 	id, err := d.saveTranscription(0, doc)
 	if err != nil {
@@ -121,6 +132,24 @@ func (d *Database) CreateTranscription(header transcript.Header) (*Transcription
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
 	return opened(id, d.openTranscript(id, doc)), nil
+}
+
+// metadataUser is the library's `user` metadata, trimmed, and "" when the
+// library says nothing or is not open. It is the default transcriber of a new
+// draft and nothing else: a draft carries the name it was given at creation,
+// so renaming the user later does not rewrite the drafts already typed.
+func (d *Database) metadataUser() string {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return ""
+	}
+	meta, err := d.store.Metadata().Load(context.Background(), "")
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(meta["user"])
 }
 
 // OpenTranscription loads a draft and returns it replayed in full: the
