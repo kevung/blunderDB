@@ -266,6 +266,10 @@ export function DirectionFreeSlots(arg1) {
   return window['go']['database']['Database']['DirectionFreeSlots'](arg1);
 }
 
+export function DirectionJournalJSON(arg1) {
+  return window['go']['database']['Database']['DirectionJournalJSON'](arg1);
+}
+
 export function DirectionPageHTML(arg1) {
   return window['go']['database']['Database']['DirectionPageHTML'](arg1);
 }

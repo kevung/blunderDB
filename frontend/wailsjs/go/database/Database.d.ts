@@ -145,6 +145,8 @@ export function DetachMatchFromSlot(arg1:number,arg2:string):Promise<void>;
 
 export function DirectionFreeSlots(arg1:number):Promise<Array<database.FreeSlot>>;
 
+export function DirectionJournalJSON(arg1:number):Promise<string>;
+
 export function DirectionPageHTML(arg1:number):Promise<string>;
 
 export function DirectionPairingSheetHTML(arg1:number,arg2:number):Promise<string>;
