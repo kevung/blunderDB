@@ -120,6 +120,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"vacuum":      cli.runVacuum,
 		"repair":      cli.runRepair,
 		"analyze":     cli.runAnalyze,
+		"transcribe":  cli.runTranscribe,
 		"collection":  cli.runCollection,
 		"anki":        cli.runAnki,
 		"bearoff":     cli.runBearoff,
@@ -173,6 +174,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")
 	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
+	fmt.Println("  transcribe  Replay a .mat, a match or a draft and report its inconsistencies")
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")

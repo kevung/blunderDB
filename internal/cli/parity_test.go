@@ -58,7 +58,7 @@ const (
 	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
-	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture, and its draft never leaves the library it names two players of: the daemon exposes nothing of it (ADR-0045 rule 9, ADR-0039) and the CLI's `transcribe` is lot 3 of tasks/transcription (T3.x), which reads a .mat rather than typing one"
+	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture, and its draft never leaves the library it names two players of: the daemon exposes nothing of it (ADR-0045 rule 9, ADR-0039), and the CLI's `transcribe` REPLAYS a transcription rather than typing one — it reads a document, it never writes a gesture into one"
 	// whyTranscriptionMAT: the panel's ".mat text" pane renders a DRAFT held
 	// in the desktop session, not a saved Match — `export --type mat` and
 	// /v1/matches.exportMat render the other object, so neither covers this.
@@ -167,6 +167,7 @@ var databaseParity = map[string]parityEntry{
 	"ExportDatabase":                    {CLI: "export", Server: "/v1/exports.sqlite"},
 	"ExportDatabaseCtx":                 {Why: whyCtxVariant},
 	"ExportMatchMAT":                    {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
+	"MatchMAT":                          {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
 	"ExportTournaments":                 {CLI: "export --tournament-ids", Why: whySubsetExp},
 	"GetAllAnkiDecks":                   {CLI: "anki decks", Server: "/v1/anki.listDecks"},
 	"GetAllCollections":                 {CLI: "collection list", Server: "/v1/collections.list"},
@@ -208,7 +209,7 @@ var databaseParity = map[string]parityEntry{
 	"ExplainDecision":                   {Server: "/v1/positions.explain", Why: whyExplain},
 	"ListTranscriptions":                {Why: whyTranscription},
 	"CreateTranscription":               {Why: whyTranscription},
-	"OpenTranscription":                 {Why: whyTranscription},
+	"OpenTranscription":                 {CLI: "transcribe --draft", Why: whyTranscription},
 	"CloseTranscription":                {Why: whyTranscription},
 	"ApplyTranscriptionGesture":         {Why: whyTranscription},
 	"TranscriptionMAT":                  {Why: whyTranscriptionMAT},
