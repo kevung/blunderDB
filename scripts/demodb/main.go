@@ -162,7 +162,11 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	if err := d.SyncAnkiDeck(deckID); err != nil {
 		return fmt.Errorf("syncing anki deck: %w", err)
 	}
-	return simulateReviews(database.RawConn(d), deckID, now, seed)
+	if err := simulateReviews(database.RawConn(d), deckID, now, seed); err != nil {
+		return err
+	}
+	// A directed tournament, so the demonstration shows a room running (issue #397).
+	return buildDemoDirection(d, now, seed)
 }
 
 // disguiseMatches gives every imported match its fictional identity and

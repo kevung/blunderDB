@@ -46,6 +46,7 @@ var boundAppMethods = []string{
 	"ReadLogTail",
 	"OpenBearoffFileDialog",
 	"OpenDatabaseDialog",
+	"OpenDirectionOutputDialog",
 	"OpenExportDatabaseDialog",
 	"OpenExportMatDialog",
 	"OpenImportDatabaseDialog",
