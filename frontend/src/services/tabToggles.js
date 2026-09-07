@@ -36,7 +36,8 @@ const TAB_TOGGLES = Object.freeze({
     collections: { tab: 'collections' },
     tournaments: { tab: 'tournaments' },
     stats: { tab: 'stats' },
-    search: { tab: 'search', noDbMessage: 'status.searchHistoryRequiresDb' }
+    search: { tab: 'search', noDbMessage: 'status.searchHistoryRequiresDb' },
+    transcription: { tab: 'transcription' }
 });
 
 // The tab to fall back to on a "toggle back" when there is nothing more
@@ -98,6 +99,8 @@ export const toggleCollectionPanelAction = () => toggleTab('collections');
 export const toggleTournamentPanel = () => toggleTab('tournaments');
 export const toggleStatsPanel = () => toggleTab('stats');
 export const toggleSearchPanel = () => toggleTab('search');
+// Bound to the `transcribe`/`tr` command and Ctrl+Maj+T.
+export const toggleTranscriptionPanel = () => toggleTab('transcription');
 
 export function togglePipcount() {
     logger.log('togglePipcount');

@@ -17,6 +17,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
 type Database struct {
@@ -43,6 +44,13 @@ type Database struct {
 	pendingPhaseBackfill bool
 	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
 	readOnly             bool      // opened read-only because another instance holds the write lock
+	// transcriptSessions holds the open transcription drafts, keyed by row id
+	// (db_transcription.go). They cache what the stored JSON cannot hold — the
+	// Action being typed and the undo stack, both in memory by design
+	// (ADR-0045 rule 1). transcriptMu guards the map; the lock ORDER is
+	// transcriptMu -> mu, never the reverse.
+	transcriptMu       sync.Mutex
+	transcriptSessions map[int64]*transcript.Editor
 }
 
 // acquireFileLock takes the single-writer advisory lock for a file-backed
@@ -205,6 +213,7 @@ func (d *Database) Checkpoint() error {
 // Close closes the underlying connection and clears it. It is safe to call
 // when the connection is already nil or closed.
 func (d *Database) Close() error {
+	d.forgetTranscriptSessions()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.releaseFileLock()
@@ -229,6 +238,7 @@ func (d *Database) Close() error {
 }
 
 func (d *Database) SetupDatabase(path string) (err error) {
+	d.forgetTranscriptSessions()
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
@@ -314,6 +324,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 }
 
 func (d *Database) OpenDatabase(path string) (err error) {
+	d.forgetTranscriptSessions()
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 

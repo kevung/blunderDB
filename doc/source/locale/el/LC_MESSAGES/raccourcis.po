@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:17+0200\n"
+"POT-Creation-Date: 2026-09-07 03:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -376,6 +376,14 @@ msgid "Afficher/cacher le panneau Eval."
 msgstr "Εμφάνιση/απόκρυψη του πίνακα Eval."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-T"
+msgstr "CTRL-SHIFT-T"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Transcription (brouillons de matchs)."
+msgstr "Εμφάνιση/απόκρυψη του πίνακα Μεταγραφής (προσχέδια αγώνων)."
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr "?"
 
@@ -383,7 +391,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:116
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -435,7 +443,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:132
+#: ../../source/raccourcis.rst:133
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -455,7 +463,7 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:146
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
@@ -475,7 +483,7 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:158
+#: ../../source/raccourcis.rst:159
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
@@ -487,7 +495,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:172
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -523,7 +531,7 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:187
+#: ../../source/raccourcis.rst:188
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
@@ -531,7 +539,7 @@ msgstr "Πίνακας Eval"
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:203
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -567,7 +575,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:220
+#: ../../source/raccourcis.rst:221
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -625,7 +633,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:238
+#: ../../source/raccourcis.rst:239
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -658,7 +666,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:254
+#: ../../source/raccourcis.rst:255
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -686,7 +694,7 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:270
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
@@ -741,4 +749,3 @@ msgstr "?, CTRL-F, Esc"
 #: ../../source/raccourcis.rst:1
 msgid "Fermer l'aide."
 msgstr "Κλείσιμο της βοήθειας."
-

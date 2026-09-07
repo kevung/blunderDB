@@ -937,6 +937,10 @@ export default {
 <td>Mostrar/ocultar el panel Eval.</td>
 </tr>
 <tr>
+<td>CTRL-MAYÚS-T</td>
+<td>Mostrar/ocultar el panel Transcripción (borradores de partidas).</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Mostrar/ocultar la ayuda.</td>
 </tr>
@@ -1322,6 +1326,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Abre el panel Eval (Effective Pip Count, probabilidad de victoria y veredicto de cubo en bearoff). <code>epc</code> es el antiguo nombre de este panel, conservado.</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>Abre el panel Transcripción: los borradores de partidas en curso de captura, y con qué empezar uno nuevo.</td>
 </tr>
 <tr>
 <td>met</td>

@@ -107,6 +107,7 @@ Outils
    "CTRL-Y", "Afficher/cacher le panneau des tournois."
    "CTRL-D", "Afficher/cacher le panneau Stats."
    "CTRL-E", "Afficher/cacher le panneau Eval."
+   "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
    "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_vues:

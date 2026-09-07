@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:17+0200\n"
+"POT-Creation-Date: 2026-09-07 03:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -375,6 +375,14 @@ msgid "Afficher/cacher le panneau Eval."
 msgstr "Показать/скрыть панель Eval."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-T"
+msgstr "CTRL-SHIFT-T"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Transcription (brouillons de matchs)."
+msgstr "Показать/скрыть панель записи (черновики матчей)."
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr "?"
 
@@ -382,7 +390,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:116
 msgid "Onglets de vues"
 msgstr "Вкладки представлений"
 
@@ -434,7 +442,7 @@ msgstr "Двойной клик по вкладке"
 msgid "Renommer la vue."
 msgstr "Переименовать представление."
 
-#: ../../source/raccourcis.rst:132
+#: ../../source/raccourcis.rst:133
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
@@ -454,7 +462,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Просмотр истории команд вниз."
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:146
 msgid "Historique de recherche"
 msgstr "История поиска"
 
@@ -474,7 +482,7 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:158
+#: ../../source/raccourcis.rst:159
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
@@ -486,7 +494,7 @@ msgstr "Выбрать/отменить выбор фильтра (показа�
 msgid "Exécuter la recherche du filtre."
 msgstr "Выполнить поиск по фильтру."
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:172
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -520,7 +528,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:187
+#: ../../source/raccourcis.rst:188
 msgid "Panneau Eval"
 msgstr "Панель Eval"
 
@@ -528,7 +536,7 @@ msgstr "Панель Eval"
 msgid "Désélectionner le coup."
 msgstr "Отменить выбор хода."
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:203
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -564,7 +572,7 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:220
+#: ../../source/raccourcis.rst:221
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -620,7 +628,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:238
+#: ../../source/raccourcis.rst:239
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
 
@@ -652,7 +660,7 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:254
+#: ../../source/raccourcis.rst:255
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -678,7 +686,7 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:270
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -733,4 +741,3 @@ msgstr "?, CTRL-F, Esc"
 #: ../../source/raccourcis.rst:1
 msgid "Fermer l'aide."
 msgstr "Закрыть справку."
-

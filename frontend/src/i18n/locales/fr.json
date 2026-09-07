@@ -1032,10 +1032,26 @@
         "epc": "Eval",
         "anki": "Anki",
         "metadata": "Métadonnées",
+        "transcription": "Transcription",
         "hideTab": "Masquer cet onglet",
         "showTab": "Afficher : {tab}",
         "hiddenTabs": "Onglets masqués",
         "ankiDue": "{n} cartes à réviser"
+    },
+    "transcription": {
+        "title": "Transcriptions",
+        "new": "Nouvelle transcription",
+        "newTooltip": "Créer un brouillon de match à transcrire",
+        "empty": "Aucun brouillon. Créez-en un pour transcrire un match.",
+        "updated": "Modifié",
+        "players": "Joueurs",
+        "length": "Longueur",
+        "actionCount": "Actions",
+        "match": "Match",
+        "money": "Argent",
+        "points": "{n} pts",
+        "notSaved": "non enregistré",
+        "unnamed": "Sans nom"
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",

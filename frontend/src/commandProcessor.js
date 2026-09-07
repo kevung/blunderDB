@@ -103,6 +103,8 @@ export function processCommand(command) {
         callbacks.toggleCollectionPanel?.();
     } else if (command === 'epc') {
         callbacks.toggleEPCMode?.();
+    } else if (command === 'transcribe' || command === 'tr') {
+        callbacks.toggleTranscriptionPanel?.();
     } else if (command === 'm') {
         callbacks.toggleMatchMode?.();
     } else if (command === 'met') {

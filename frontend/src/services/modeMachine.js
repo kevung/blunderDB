@@ -10,9 +10,10 @@
  *   COLLECTION  browsing a collection (positionsStore holds its ids)
  *   EDIT        the search tab: the board is a query being drawn
  *   EPC         the Eval tab: the board is a scratch pad for the engine
+ *   TRANSCRIBE  the Transcription tab: the board is the draft's Cursor
  *
- * EDIT and EPC are *scratch* modes: the board they show is not a library
- * record. Entering one snapshots what was being studied and leaving it
+ * EDIT, EPC and TRANSCRIBE are *scratch* modes: the board they show is not a
+ * library record. Entering one snapshots what was being studied and leaving it
  * restores that snapshot — this is the `savedContext` half of the state.
  * A snapshot holds positions only, never an analysis: on the way back the
  * analysis is fetched again through showPosition(), and while a scratch
@@ -26,6 +27,8 @@
  *   enterEPCMode        NORMAL | MATCH | COLLECTION | EDIT → EPC
  *   exitEPCMode         EPC → MATCH (entered from a match) | NORMAL
  *   toggleEPCMode       EPC → (exit + analysis tab) | * → Eval tab
+ *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EPC → TRANSCRIBE
+ *   exitTranscribeMode  TRANSCRIBE → MATCH (entered from a match) | NORMAL
  *   sendPositionToEval  * → EPC on a given position (id cleared)
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
@@ -65,7 +68,11 @@ export const MODE = Object.freeze({
     MATCH: 'MATCH',
     COLLECTION: 'COLLECTION',
     EDIT: 'EDIT',
-    EPC: 'EPC'
+    EPC: 'EPC',
+    // The Transcription tab (ADR-0045). A scratch mode like EDIT and EPC: the
+    // board shows the Action the Cursor is on, which belongs to a draft and
+    // not to the library.
+    TRANSCRIBE: 'TRANSCRIBE'
 });
 
 const NO_MATCH_CONTEXT = Object.freeze({
@@ -92,6 +99,11 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               NORMAL-entered one; consumed by exitEditMode (bug 2 again:
  *               leaving the search tab used to reload the whole library and
  *               bounce the user to the Matches tab).
+ *   beforeTranscribe  the same photograph, taken by enterTranscribeMode and
+ *               consumed by exitTranscribeMode. It is a slot of its own and not
+ *               a second use of beforeEPC: the two panels can be visited one
+ *               after the other, and one snapshot buried under the other is the
+ *               bug the EDIT/EPC pair already had.
  *   epcSeed     the position the Eval panel must open on instead of its
  *               default bearoff. A hand-off between sendPositionToEval() and
  *               enterEPCMode(), which run one tick apart (the tab switch reaches
@@ -113,9 +125,10 @@ const NO_MATCH_CONTEXT = Object.freeze({
  * The slots are all `null` at rest, so without this annotation the checker
  * infers the type `null` for each and rejects every assignment to them.
  *
- * @type {{beforeEPC: any, beforeEdit: any, epcSeed: any, lastEPCBoard: any}}
+ * @type {{beforeTranscribe: any, beforeEPC: any, beforeEdit: any, epcSeed: any, lastEPCBoard: any}}
  */
 const savedContext = {
+    beforeTranscribe: null,
     beforeEPC: null,
     beforeEdit: null,
     epcSeed: null,
@@ -172,6 +185,13 @@ function blankEditBoard(pos) {
 export async function enterEditMode() {
     logger.log('enterEditMode');
     if (!get(databasePathStore)) return;
+
+    if (currentMode() === MODE.TRANSCRIBE) {
+        // Same reason as the Eval branch below: leave the transcription panel
+        // through its exit, which restores the studied position before the
+        // snapshot is taken.
+        await exitTranscribeMode();
+    }
 
     if (currentMode() === MODE.EPC) {
         // Leave the scratch board of the Eval tab first — through the exit
@@ -332,6 +352,11 @@ export function sendPositionToEval(position) {
 export async function enterEPCMode() {
     if (currentMode() === MODE.EPC) return;
 
+    if (currentMode() === MODE.TRANSCRIBE) {
+        await exitTranscribeMode();
+        if (currentMode() === MODE.EPC) return;
+    }
+
     if (currentMode() === MODE.EDIT) {
         // Leave the search tab's scratch board first, so the snapshot below is
         // the studied position (or match), not the blank query board. Awaited:
@@ -404,6 +429,78 @@ export async function exitEPCMode() {
         // return. In MATCH mode the nav effect no longer redraws (bug 1
         // guard), so without this the panel stayed empty after EPC; in
         // NORMAL mode this simply mirrors the index-driven redraw.
+        await showPosition(saved.position);
+    }
+}
+
+// ── TRANSCRIBE (Transcription tab) ───────────────────────────────────────────
+
+/**
+ * NORMAL | MATCH | COLLECTION | EDIT | EPC → TRANSCRIBE.
+ *
+ * The transcription panel takes the board over: it shows the Action the Cursor
+ * is on, which is a draft's board and never a library record. So entering
+ * photographs what was being studied, exactly as the Eval tab does, and
+ * leaving puts it back — a user who steps into the panel to look at a draft
+ * must come back to the position, or the match, they were on.
+ *
+ * The board itself is not replaced here. Until a draft is opened there is no
+ * Cursor to show, and blanking the board would lose the studied position for
+ * nothing; the panel puts the Cursor's position on it when one exists.
+ */
+export async function enterTranscribeMode() {
+    if (currentMode() === MODE.TRANSCRIBE) return;
+
+    // Leave the other scratch modes first, so the snapshot below is the
+    // studied position (or match) and not the query board or the Eval scratch
+    // pad — the same ordering enterEPCMode applies to EDIT.
+    if (currentMode() === MODE.EDIT) {
+        await exitEditMode();
+        if (currentMode() === MODE.TRANSCRIBE) return;
+    }
+    if (currentMode() === MODE.EPC) {
+        await exitEPCMode();
+        if (currentMode() === MODE.TRANSCRIBE) return;
+    }
+
+    savedContext.beforeTranscribe = {
+        mode: currentMode(),
+        matchContext: { ...get(matchContextStore) },
+        position: get(positionStore) ? { ...get(positionStore) } : null,
+        positionIndex: get(currentPositionIndexStore),
+        ids: get(positionsStore)?.ids ?? null
+    };
+
+    statusBarModeStore.set(MODE.TRANSCRIBE);
+}
+
+/** TRANSCRIBE → MATCH (if entered from a match) | NORMAL. */
+export async function exitTranscribeMode() {
+    if (currentMode() !== MODE.TRANSCRIBE) return;
+
+    const saved = savedContext.beforeTranscribe;
+    savedContext.beforeTranscribe = null;
+
+    statusBarTextStore.set('');
+
+    const returnToMatch = saved?.mode === MODE.MATCH && saved.matchContext?.isMatchMode;
+    if (returnToMatch) {
+        matchContextStore.set(saved.matchContext);
+        statusBarModeStore.set(MODE.MATCH);
+        statusBarTextStore.set(`${saved.matchContext.player1Name} vs ${saved.matchContext.player2Name}`);
+    } else {
+        statusBarModeStore.set(MODE.NORMAL);
+    }
+
+    if (!saved?.ids) {
+        loadAllPositions({ focusId: saved?.position?.id ?? null });
+        return;
+    }
+    positionsStore.setIds(saved.ids);
+    if (saved.position) {
+        currentPositionIndexStore.set(saved.positionIndex);
+        // Through showPosition, not a bare set: the analysis panel is
+        // repopulated on the way back, as it is on the way out of EPC.
         await showPosition(saved.position);
     }
 }

@@ -1032,10 +1032,26 @@
         "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metadata",
+        "transcription": "Transcription",
         "hideTab": "Hide this tab",
         "showTab": "Show: {tab}",
         "hiddenTabs": "Hidden tabs",
         "ankiDue": "{n} cards to review"
+    },
+    "transcription": {
+        "title": "Transcriptions",
+        "new": "New transcription",
+        "newTooltip": "Create a draft of a match to transcribe",
+        "empty": "No draft yet. Create one to transcribe a match.",
+        "updated": "Modified",
+        "players": "Players",
+        "length": "Length",
+        "actionCount": "Actions",
+        "match": "Match",
+        "money": "Money",
+        "points": "{n} pts",
+        "notSaved": "not saved",
+        "unnamed": "Unnamed"
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",

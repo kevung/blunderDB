@@ -1032,10 +1032,26 @@
         "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metadatos",
+        "transcription": "Transcripción",
         "hideTab": "Ocultar esta pestaña",
         "showTab": "Mostrar: {tab}",
         "hiddenTabs": "Pestañas ocultas",
         "ankiDue": "{n} tarjetas por repasar"
+    },
+    "transcription": {
+        "title": "Transcripciones",
+        "new": "Nueva transcripción",
+        "newTooltip": "Crear un borrador de partida para transcribir",
+        "empty": "Ningún borrador. Cree uno para transcribir una partida.",
+        "updated": "Modificado",
+        "players": "Jugadores",
+        "length": "Duración",
+        "actionCount": "Acciones",
+        "match": "Partida",
+        "money": "Dinero",
+        "points": "{n} ptos",
+        "notSaved": "sin guardar",
+        "unnamed": "Sin nombre"
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",

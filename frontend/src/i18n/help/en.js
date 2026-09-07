@@ -937,6 +937,10 @@ export default {
 <td>Show/hide the Eval panel.</td>
 </tr>
 <tr>
+<td>CTRL-SHIFT-T</td>
+<td>Show/hide the Transcription panel (match drafts).</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Show/hide the help.</td>
 </tr>
@@ -1322,6 +1326,10 @@ export default {
 <tr>
 <td>epc</td>
 <td>Opens the Eval panel (Effective Pip Count, winning probability and cube verdict in bearoff). <code>epc</code> is this panel's former name, kept for compatibility.</td>
+</tr>
+<tr>
+<td>transcribe, tr</td>
+<td>Opens the Transcription panel: the match drafts being typed in, and what it takes to start one.</td>
 </tr>
 <tr>
 <td>met</td>

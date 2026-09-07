@@ -36,7 +36,19 @@ export { showDatesAndMetadata } from './metadataStatus.js';
 // The mode automaton (NORMAL / MATCH / COLLECTION / EDIT / EPC) lives in
 // modeMachine.js; its transitions stay reachable from here so that callers
 // keep one import for everything position-related.
-export { enterEditMode, exitEditMode, toggleEPCMode, sendPositionToEval, enterEPCMode, exitEPCMode, toggleMatchMode, handleOpenCollection, exitCollectionMode } from './modeMachine.js';
+export {
+    enterEditMode,
+    exitEditMode,
+    toggleEPCMode,
+    sendPositionToEval,
+    enterEPCMode,
+    exitEPCMode,
+    enterTranscribeMode,
+    exitTranscribeMode,
+    toggleMatchMode,
+    handleOpenCollection,
+    exitCollectionMode
+} from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { tMsg, t } from '../i18n';
@@ -826,6 +838,7 @@ export {
     toggleTournamentPanel,
     toggleStatsPanel,
     toggleSearchPanel,
+    toggleTranscriptionPanel,
     togglePipcount
 } from './tabToggles.js';
 

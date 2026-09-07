@@ -30,6 +30,7 @@ Opérations globales
    "demo", "Charge une base d'exemple (matchs, tournoi, collections, commentaires, paquet Anki, analyses) pour découvrir l'outil."
    "meta", "Affiche les métadonnées de la base de données."
    "epc", "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, conservé."
+   "transcribe, tr", "Ouvre le panneau Transcription : les brouillons de matchs en cours de saisie, et de quoi en commencer un."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
