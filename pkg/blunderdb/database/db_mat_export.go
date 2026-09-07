@@ -13,12 +13,23 @@ import (
 // single-tenant, hence the empty scope. The same path backs the GUI export
 // button and the CLI `export --type mat` command (CLI/GUI parity).
 func (d *Database) ExportMatchMAT(matchID int64, outputPath string) error {
-	ctx := context.Background()
-	m, games, moves, err := ingest.ReadMatchForMAT(ctx, d.store, "", matchID)
+	text, err := d.MatchMAT(matchID)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(outputPath, []byte(ingest.RenderMAT(m, games, moves)), 0o644)
+	return os.WriteFile(outputPath, []byte(text), 0o644)
+}
+
+// MatchMAT renders match matchID as .mat text without writing anything. It is
+// what ExportMatchMAT writes, and what `blunderdb transcribe --match` reads
+// back through transcript.FromMAT to replay a match of the library against the
+// transcription engine.
+func (d *Database) MatchMAT(matchID int64) (string, error) {
+	m, games, moves, err := ingest.ReadMatchForMAT(context.Background(), d.store, "", matchID)
+	if err != nil {
+		return "", err
+	}
+	return ingest.RenderMAT(m, games, moves), nil
 }
 
 // SuggestMatFilename returns the default .mat filename for a match — the name

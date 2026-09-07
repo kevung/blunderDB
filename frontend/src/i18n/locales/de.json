@@ -1135,6 +1135,8 @@
         "closeSavedConfirm": "Der Entwurf wird gelöscht; Match #{id} bleibt endgültig in der Bibliothek. Schließen?",
         "savedMatch": "Match #{id} gespeichert.",
         "replacedMatch": "Match #{id} ersetzt.",
+        "resumeAnalysis": "Analyse unterbrochen: {n} Stellung(en) des zuletzt transkribierten Matches sind noch zu analysieren.",
+        "resumeAnalysisFinish": "Abschließen",
         "saveFailed": "Speichern fehlgeschlagen: {error}",
         "exported": "Match als .mat exportiert.",
         "exportFailed": "Export fehlgeschlagen: {error}",

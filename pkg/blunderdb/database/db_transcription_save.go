@@ -295,3 +295,69 @@ func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
 	}
 	return os.WriteFile(outputPath, []byte(text), 0o644)
 }
+
+// TranscriptionAnalysisResume is the fact ADR-0045 §8 refuses to store: the
+// last draft that produced a Match, and how many of that Match's positions
+// still carry no analysis. A batch cut short by a close leaves nothing behind
+// — no flag, no journal, no `.ckpt` — so "the analysis never finished" is not
+// a state to be read back but a count to be taken again, which is what this
+// is.
+type TranscriptionAnalysisResume struct {
+	// TranscriptionID is the draft that produced the Match, and Label what the
+	// drafts list shows for it, so the offer can name what it is about.
+	TranscriptionID int64  `json:"transcription_id"`
+	MatchID         int64  `json:"match_id"`
+	Label           string `json:"label"`
+	// ToAnalyze is CountMatchPositionsToAnalyze at the moment of asking, and
+	// never anything else: the figure the targeted batch is about to work
+	// through.
+	ToAnalyze int `json:"to_analyze"`
+}
+
+// PendingTranscriptionAnalysis reports whether the last SAVED draft's Match
+// has positions left to analyse, and returns nil when it has none — which is
+// also what a library with no saved draft at all answers.
+//
+// It is what the status bar asks when a database is opened (fonctionnel.md
+// §4, "Reprise de l'analyse"), and it is deliberately a QUESTION rather than a
+// reminder someone left: ignoring the offer stores nothing, so reopening the
+// database asks again for as long as positions are missing, and finishing the
+// batch makes the offer disappear on its own.
+//
+// The scope is one match on purpose. The library-wide catch-up already exists
+// in the settings, and it is not what is wanted here: a user who transcribed
+// one match must not be handed the thousands of imported positions he never
+// asked to have analysed.
+//
+// "The last saved draft" is the most recently updated draft that carries a
+// match id — ListTranscriptions is already ordered that way. A draft whose
+// Match was deleted has had its column set back to NULL by the schema, so it
+// is not a candidate, and no stale match id is ever counted.
+func (d *Database) PendingTranscriptionAnalysis() (*TranscriptionAnalysisResume, error) {
+	drafts, err := d.ListTranscriptions()
+	if err != nil {
+		return nil, err
+	}
+	for _, draft := range drafts {
+		if draft.MatchID == 0 {
+			continue
+		}
+		// CountMatchPositionsToAnalyze takes the read lock itself; taking it
+		// around this loop as well would deadlock the moment a writer queued
+		// up between the two (sync.RWMutex does not admit nested readers).
+		n, err := d.CountMatchPositionsToAnalyze(draft.MatchID)
+		if err != nil {
+			return nil, err
+		}
+		if n == 0 {
+			return nil, nil
+		}
+		return &TranscriptionAnalysisResume{
+			TranscriptionID: draft.ID,
+			MatchID:         draft.MatchID,
+			Label:           draft.Label,
+			ToAnalyze:       n,
+		}, nil
+	}
+	return nil, nil
+}

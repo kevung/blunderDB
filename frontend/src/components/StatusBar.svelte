@@ -5,6 +5,7 @@
     import { databasePathStore } from '../stores/databaseStore';
     import { loadAllPositions } from '../services/positionService.js';
     import { watchImportNoticeStore } from '../stores/watchStore.js';
+    import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
     import { showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
@@ -88,6 +89,22 @@
         void $databasePathStore;
         void $dbMutationCounterStore;
         refreshLibraryCounts();
+    });
+
+    // La reprise de l'analyse d'une transcription (T3.3, ADR-0045 §8). La
+    // question est posée à l'ouverture d'une base et à ce moment-là seulement :
+    // le compte n'est pas un état qu'on suit, c'est le fait qu'un lot n'a pas
+    // fini, et le relancer à chaque mutation ferait réapparaître la
+    // proposition juste après qu'on l'a écartée.
+    $effect(() => {
+        const path = $databasePathStore;
+        if (!path) {
+            // Aucune base ouverte : il n'y a personne à qui poser la question,
+            // et la proposition d'une base précédente n'a plus d'objet.
+            dismissTranscriptionResume();
+            return;
+        }
+        refreshTranscriptionResume();
     });
 
     /**
@@ -279,6 +296,17 @@
             <button type="button" class="watch-import-action" onclick={() => watchImportNoticeStore.set(null)}>{$t('common.close')}</button>
         </span>
     {/if}
+    <!-- Le lot d'analyse d'un match transcrit que la fermeture a coupé
+         (T3.3, ADR-0045 §8) : rien n'a été noté nulle part, le compte est
+         refait à l'ouverture. Écarter la proposition n'écrit rien — elle
+         revient à la prochaine ouverture tant qu'il manque des positions. -->
+    {#if $transcriptionResumeStore}
+        <span class="transcription-resume-chip">
+            {$t('transcription.resumeAnalysis', { n: $transcriptionResumeStore.to_analyze })}
+            <button type="button" class="transcription-resume-action" onclick={resumeTranscriptionAnalysis}>{$t('transcription.resumeAnalysisFinish')}</button>
+            <button type="button" class="transcription-resume-action" onclick={dismissTranscriptionResume}>{$t('common.close')}</button>
+        </span>
+    {/if}
     {#if gammonNetBatch}
         <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>
             {$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}
@@ -324,6 +352,18 @@
     }
 
     .watch-import-action {
+        cursor: pointer;
+    }
+
+    .transcription-resume-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4em;
+        margin-left: 0.8em;
+        white-space: nowrap;
+    }
+
+    .transcription-resume-action {
         cursor: pointer;
     }
 

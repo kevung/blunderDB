@@ -42,6 +42,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `epc` - EPC, win probability and money cube verdict for a bearoff position
 - `analyze` - Write a gammonNet analysis for every position missing one
+- `transcribe` - Replay a `.mat`, a match or a draft and report its inconsistencies
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
@@ -946,6 +947,73 @@ refusal) are retried on the next run.
 # Re-analyse everything gammonNet wrote at an outdated version or depth,
 # at 3-ply
 ./blunderDB analyze --db database.db --stale --ply 3
+```
+
+## Transcribe Command
+
+Replay a transcription and report what the replay finds. The engine is the pure
+`transcript` package the transcription panel already runs, so this command adds
+no rule of its own: it is the CLI's window onto it.
+
+The source is one of three, and exactly one: a `.mat` file, a match of a
+library, or a transcription draft being typed. A match has no document of its
+own — a match is what a transcription *produces* — so it is replayed through the
+`.mat` it would export, which means what is checked is what an export of it
+would contain.
+
+```bash
+./blunderDB transcribe --mat <file> [--check] [--render <output>]
+./blunderDB transcribe --db <path> --match <id> --check
+./blunderDB transcribe --db <path> --draft <id> --check
+```
+
+**Options:**
+
+- `--mat` - `.mat` file to replay
+- `--db` - Database holding the match or the draft
+- `--match` - Match id to replay (requires `--db`)
+- `--draft` - Transcription draft id to replay (requires `--db`)
+- `--check` - List the inconsistencies found (the default)
+- `--render` - Write the transcription back as a `.mat` file to this path
+- `--format` - Output format: `text` (default) or `json`
+
+`--check` names each inconsistency with the action number and the game it sits
+in: an illegal play, two turns in a row for the same player, an impossible cube
+action, an action past the end of the match, a play whose steps do not use its
+own dice.
+
+**An inconsistency is reported, never held against the input.** Nothing is
+refused for one, and the exit status stays 0 whatever the replay finds — an
+illegal play in a `.mat` is what the players did, or what the file's author
+typed, not a defect in the file. A non-zero status is kept for a real failure:
+an unreadable file, a database that will not open, an output that cannot be
+written. A script that wants to act on the findings reads them from
+`--format json`, where "this file is broken" and "this game had an illegal
+move" do not get confused with one another.
+
+`--render` writes the transcription back out as a `.mat`, which is how the round
+trip is checked on a real file outside the test suite.
+
+**Examples:**
+
+```bash
+# What does this .mat contain that a replay cannot account for?
+./blunderDB transcribe --mat match.mat --check
+
+# match.mat: 7 point match, 4 game(s), 203 action(s)
+#   Final score: 9-2
+# Inconsistencies: none
+
+# Machine-readable, for a script
+./blunderDB transcribe --mat match.mat --check --format json
+
+# Round trip: render it back out and compare
+./blunderDB transcribe --mat match.mat --render out.mat
+diff match.mat out.mat
+
+# A match of the library, and a draft being typed
+./blunderDB transcribe --db database.db --match 5 --check
+./blunderDB transcribe --db database.db --draft 3 --check
 ```
 
 ## Trash Command
@@ -2051,6 +2119,8 @@ Usage: blunderdb edit [options]
 Edit database metadata.
 
 Options:
+  -blunder-threshold int
+    	Set the blunder threshold, in millipoints (an error costing this much or more is a blunder) (default -1)
   -clear-description
     	Clear description
   -clear-user
@@ -2059,6 +2129,8 @@ Options:
     	Path to the database file (required)
   -description string
     	Set description
+  -error-threshold int
+    	Set the error threshold, in millipoints (a decision costing this much or more is an error) (default -1)
   -format string
     	Output format: text or json (default "text")
   -user string
@@ -2076,6 +2148,9 @@ Examples:
 
   # Set multiple values
   blunderdb edit --db database.db --user "John" --description "Tournament positions"
+
+  # Draw the library's own lines: XG's thresholds
+  blunderdb edit --db database.db --error-threshold 20 --blunder-threshold 80
 ```
 
 ### `blunderdb epc`
@@ -2598,6 +2673,63 @@ Examples:
 
   # Filters no flag exposes: a move pattern, a comment tag, a player, a date
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
+```
+
+### `blunderdb transcribe`
+
+```
+Usage: blunderdb transcribe [options]
+
+Replay a transcription and report what the replay finds.
+
+The source is a .mat file, a match of a library, or a
+transcription draft of one — exactly one of the three.
+A match is read through its own .mat rendering, so what
+is replayed is what an export of it would contain.
+
+--check lists the inconsistencies: an illegal play, two
+turns in a row for the same player, an impossible cube
+action, an action past the end of the match, a play that
+does not use its own roll. Each is named with the action
+number and the game it belongs to.
+
+An inconsistency is REPORTED, never held against the
+input: nothing is refused for one, and the exit status is
+0 whatever the replay finds. A non-zero status means the
+file, the database or the output failed.
+
+--render writes the transcription back as a .mat file,
+which is how the round trip is checked on real files.
+
+Options:
+  -check
+    	List the inconsistencies the replay finds (the default)
+  -db string
+    	Database holding the match or the draft to replay
+  -draft int
+    	Transcription draft id to replay (requires --db)
+  -format string
+    	Output format: text or json (default "text")
+  -mat string
+    	Jellyfish/gnubg .mat file to replay
+  -match int
+    	Match id to replay (requires --db)
+  -render string
+    	Write the transcription back as a .mat file to this path
+
+Examples:
+  # List what a .mat file's replay finds
+  blunderdb transcribe --mat match.mat --check
+
+  # Same, machine-readable
+  blunderdb transcribe --mat match.mat --check --format json
+
+  # Round trip: render it back and compare
+  blunderdb transcribe --mat match.mat --render out.mat
+
+  # Replay a match of the library, or a draft being typed
+  blunderdb transcribe --db database.db --match 5 --check
+  blunderdb transcribe --db database.db --draft 3 --check
 ```
 
 ### `blunderdb trash`
