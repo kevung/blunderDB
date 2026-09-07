@@ -250,6 +250,7 @@ var databaseParity = map[string]parityEntry{
 	"AddDirectionNote":                  {Why: whyDirection},
 	"AddParticipant":                    {Why: whyDirection},
 	"Brackets":                          {Why: whyDirection},
+	"Clock":                             {Why: whyDirection},
 	"CloseDirection":                    {Why: whyDirection},
 	"History":                           {Why: whyDirection},
 	"ReopenDirection":                   {Why: whyDirection},

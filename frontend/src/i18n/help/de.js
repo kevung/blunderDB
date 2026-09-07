@@ -1006,6 +1006,10 @@ export default {
 <td>Das Transkriptions-Panel ein-/ausblenden (Match-Entwürfe).</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-D</td>
+<td>Turnier-Panel zum Leiten eines Turniers ein-/ausblenden.</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Die Hilfe ein-/ausblenden.</td>
 </tr>
@@ -1527,6 +1531,10 @@ export default {
 <tr>
 <td>transcribe, tr</td>
 <td>Öffnet das Transkriptions-Panel: die Match-Entwürfe, die gerade erfasst werden, und die Möglichkeit, einen neuen zu beginnen.</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>Öffnet das Turnier-Panel, um ein Turnier zu leiten, und schließt es wieder. Solange dort eine Leitung geöffnet ist, zeigt der Hauptbereich das Turnier statt des Boards; jeder andere Reiter holt das Board zurück.</td>
 </tr>
 <tr>
 <td>met</td>

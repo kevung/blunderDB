@@ -1918,6 +1918,23 @@
             "finished": "Turnier abgeschlossen",
             "reopened": "Turnier wieder geöffnet",
             "error": "Die Notiz konnte nicht hinzugefügt werden."
+        },
+        "clock": {
+            "matches": "gespielt {played} · laufend {running}",
+            "pace": "{observed} Min/Pkt (geplant {planned})",
+            "slow": "{n} langsam",
+            "break": "Pause um {at}",
+            "warnings": "{n}"
+        },
+        "pending": "{n} Vorschläge warten",
+        "credit": {
+            "title": "Über die Engine",
+            "by": "Nicomaque, eine Turnier-Engine von Nicolas Harmand.",
+            "what": "Sie hält das Format, die Paarungen, die Tableaus und die Rangliste; blunderDB gibt ihr eine Oberfläche und bewahrt ihre Partien.",
+            "repo": "Das Repository",
+            "docs": "Die Dokumentation",
+            "version": "Eingebettete Version: {version}",
+            "open": "Über die Engine"
         }
     }
 }

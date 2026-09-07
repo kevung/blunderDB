@@ -31,6 +31,7 @@ Opérations globales
    "meta", "Affiche les métadonnées de la base de données."
    "epc", "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, conservé."
    "transcribe, tr", "Ouvre le panneau Transcription : les brouillons de matchs en cours de saisie, et de quoi en commencer un."
+   "direct", "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."

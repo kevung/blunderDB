@@ -1227,3 +1227,9 @@ msgstr "Закрыть справку."
 #~ "предупреждением, что gnubg и XG отметят"
 #~ " его («Invalid move») и дальше "
 #~ "разойдутся."
+
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "Показать/скрыть панель «Турниры» для проведения турнира."

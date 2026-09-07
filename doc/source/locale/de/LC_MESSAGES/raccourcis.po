@@ -1259,3 +1259,9 @@ msgstr "Hilfe schließen."
 #~ "gespielt wurde, mit dem Hinweis, dass"
 #~ " gnubg und XG ihn melden („Invalid"
 #~ " move“) und danach abweichen."
+
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "Turnier-Panel zum Leiten eines Turniers ein-/ausblenden."

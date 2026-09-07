@@ -1006,6 +1006,10 @@ export default {
 <td>Afficher/cacher le panneau Transcription (brouillons de matchs).</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-D</td>
+<td>Afficher/cacher le panneau Tournois pour diriger un tournoi.</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Afficher/cacher l'aide.</td>
 </tr>
@@ -1527,6 +1531,10 @@ export default {
 <tr>
 <td>transcribe, tr</td>
 <td>Ouvre le panneau Transcription : les brouillons de matchs en cours de saisie, et de quoi en commencer un.</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau.</td>
 </tr>
 <tr>
 <td>met</td>

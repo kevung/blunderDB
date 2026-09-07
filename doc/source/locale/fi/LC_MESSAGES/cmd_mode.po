@@ -1577,3 +1577,9 @@ msgstr "Tyhjentää komentohistorian."
 #~ " kuutiopäätös, arvosteltuna tallennettua "
 #~ "analyysiä vasten). Viisi kysymystä, "
 #~ "ajastettuna, heti korjattuna."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Avaa Turnaukset-paneelin turnauksen johtamista varten ja sulkee sen taas. Kun siellä on johtaminen auki, pääalue näyttää turnauksen laudan sijaan; mikä tahansa muu välilehti tuo laudan takaisin."
+
+msgid "direct"
+msgstr "direct"

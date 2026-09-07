@@ -124,6 +124,10 @@ export const toggleStatsPanel = () => toggleTab('stats');
 export const toggleSearchPanel = () => toggleTab('search');
 // Bound to the `transcribe`/`tr` command and Ctrl+Maj+T.
 export const toggleTranscriptionPanel = () => toggleTab('transcription');
+// Bound to the `direct` command and Ctrl+Maj+D. The tournament view takes over the main area
+// only when this tab is active AND a Direction is open (ADR-0047), so the shortcut is the
+// round trip between the room and the board.
+export const toggleDirectionPanel = () => toggleTab('tournaments');
 
 export function togglePipcount() {
     logger.log('togglePipcount');

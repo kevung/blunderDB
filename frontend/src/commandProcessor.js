@@ -105,6 +105,10 @@ export function processCommand(command) {
         callbacks.toggleEPCMode?.();
     } else if (command === 'transcribe' || command === 'tr') {
         callbacks.toggleTranscriptionPanel?.();
+    } else if (command === 'direct') {
+        // L'aller-retour entre la salle et le plateau (ADR-0047) : la vue tournoi occupe la
+        // zone principale seulement quand cet onglet est actif ET qu'une Direction est ouverte.
+        callbacks.toggleDirectionPanel?.();
     } else if (command === 'm') {
         callbacks.toggleMatchMode?.();
     } else if (command === 'met') {

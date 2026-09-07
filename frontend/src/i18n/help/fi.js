@@ -1006,6 +1006,10 @@ export default {
 <td>Näytä/piilota Litterointi-paneeli (otteluluonnokset).</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-D</td>
+<td>Näytä/piilota Turnaukset-paneeli turnauksen johtamista varten.</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Näytä/piilota ohje.</td>
 </tr>
@@ -1527,6 +1531,10 @@ export default {
 <tr>
 <td>transcribe, tr</td>
 <td>Avaa Litterointi-paneelin: kirjattavana olevat otteluluonnokset ja keinon aloittaa uusi.</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>Avaa Turnaukset-paneelin turnauksen johtamista varten ja sulkee sen taas. Kun siellä on johtaminen auki, pääalue näyttää turnauksen laudan sijaan; mikä tahansa muu välilehti tuo laudan takaisin.</td>
 </tr>
 <tr>
 <td>met</td>

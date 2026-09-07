@@ -1006,6 +1006,10 @@ export default {
 <td>Show/hide the Transcription panel (match drafts).</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-D</td>
+<td>Show/hide the Tournaments panel to direct a tournament.</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Show/hide the help.</td>
 </tr>
@@ -1527,6 +1531,10 @@ export default {
 <tr>
 <td>transcribe, tr</td>
 <td>Opens the Transcription panel: the match drafts being typed in, and what it takes to start one.</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>Opens the Tournaments panel to direct a tournament, and closes it again. While a direction is open there, the main area shows the tournament instead of the board; any other tab brings the board back.</td>
 </tr>
 <tr>
 <td>met</td>

@@ -54,6 +54,7 @@
         toggleMatchMode,
         toggleStatsPanel,
         toggleTranscriptionPanel,
+        toggleDirectionPanel,
         enterEditMode,
         exitEditMode,
         enterEPCMode,
@@ -351,6 +352,7 @@
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
             toggleTranscriptionPanel,
+            toggleDirectionPanel,
             toggleMatchMode,
             onToggleStats: () => toggleStatsPanel(),
             onLoadBlunders: loadWorstBlunders
