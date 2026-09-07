@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -20,15 +19,6 @@ import (
 // the tournament. A director in a hall does not stop running their tournament because a USB key
 // was pulled out (ADR-0004's posture: detect and degrade).
 
-// directionStrings holds the catalogue the frontend handed over, so the page speaks the user's
-// language. It is per-process and not per-database: it is the interface's language, not the
-// tournament's.
-var directionStrings struct {
-	mu   sync.RWMutex
-	cat  *direction.Catalog
-	lang string
-}
-
 // SetDirectionStrings hands the frontend's `direction` catalogue to the backend, so the page it
 // writes speaks the language the panel speaks.
 //
@@ -40,20 +30,22 @@ func (d *Database) SetDirectionStrings(lang, catalogJSON string) error {
 	if err != nil {
 		return err
 	}
-	directionStrings.mu.Lock()
-	defer directionStrings.mu.Unlock()
-	directionStrings.cat, directionStrings.lang = cat, lang
+	d.directionMu.Lock()
+	defer d.directionMu.Unlock()
+	d.directionCatalog, d.directionLang = cat, lang
 	return nil
 }
 
-func currentDirectionStrings() (*direction.Catalog, string) {
-	directionStrings.mu.RLock()
-	defer directionStrings.mu.RUnlock()
-	lang := directionStrings.lang
+// directionStrings gives the catalogue in force, defaulting to French — the engine's own
+// language, so a host that never published one still gets sentences rather than codes.
+func (d *Database) directionStrings() (*direction.Catalog, string) {
+	d.directionMu.RLock()
+	defer d.directionMu.RUnlock()
+	lang := d.directionLang
 	if lang == "" {
 		lang = "fr"
 	}
-	return directionStrings.cat, lang
+	return d.directionCatalog, lang
 }
 
 // WriteDirectionPage rewrites the display page of a Direction and returns the file written.
@@ -70,7 +62,7 @@ func (d *Database) WriteDirectionPage(tournamentID int64) (string, error) {
 	if out == "" {
 		return "", nil
 	}
-	cat, lang := currentDirectionStrings()
+	cat, lang := d.directionStrings()
 	page, err := dir.Page(cat, lang, time.Now())
 	if err != nil {
 		return "", err
@@ -85,7 +77,7 @@ func (d *Database) DirectionPageHTML(tournamentID int64) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	cat, lang := currentDirectionStrings()
+	cat, lang := d.directionStrings()
 	return dir.Page(cat, lang, time.Now())
 }
 
@@ -102,7 +94,7 @@ func (d *Database) DirectionPairingSheetHTML(tournamentID int64, round int) (str
 	if err != nil {
 		return "", err
 	}
-	cat, lang := currentDirectionStrings()
+	cat, lang := d.directionStrings()
 	return dir.PairingSheet(cat, lang, round)
 }
 
@@ -116,7 +108,7 @@ func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (st
 	if err != nil {
 		return "", err
 	}
-	cat, lang := currentDirectionStrings()
+	cat, lang := d.directionStrings()
 	sheet, err := dir.PairingSheet(cat, lang, round)
 	if err != nil {
 		return "", err

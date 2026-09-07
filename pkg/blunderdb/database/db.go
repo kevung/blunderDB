@@ -15,6 +15,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -57,6 +58,15 @@ type Database struct {
 	// transcriptMu -> mu, never the reverse.
 	transcriptMu       sync.Mutex
 	transcriptSessions map[int64]*transcript.Editor
+	// directionCatalog and directionLang are the translations the frontend handed over, so
+	// the pages blunderDB writes for a tournament — the hall display, the pairing sheet, the
+	// standings CSV — speak the user's language (ADR-0047, issue #386). They belong to the
+	// interface and not to the file, which is why nothing about them is persisted; they live
+	// on the Database rather than in a package variable so two open databases, and two tests,
+	// never share one language.
+	directionMu      sync.RWMutex
+	directionCatalog *direction.Catalog
+	directionLang    string
 }
 
 // acquireFileLock takes the single-writer advisory lock for a file-backed

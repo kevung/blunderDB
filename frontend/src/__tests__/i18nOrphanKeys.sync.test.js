@@ -78,7 +78,10 @@ const DYNAMIC_PREFIXES = [
     'direction.term.',
     // Les erreurs d'un CSV d'annuaire (#391) sont des CODES rendus par l'interface —
     // `$t(`direction.directory.errors.${e.code}`)` — comme tout ce qui vient du backend.
-    'direction.directory.errors.'
+    'direction.directory.errors.',
+    // Le barème d'une section de dotation (#393) : `$t(`direction.settings.scale_${section}`)`,
+    // la section étant un identifiant du moteur — all, main, conso, last.
+    'direction.settings.scale_'
 ];
 
 function sourceFiles(dir) {

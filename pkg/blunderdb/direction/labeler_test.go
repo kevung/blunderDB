@@ -94,25 +94,6 @@ func TestLabeler_SectionNamesAreIdentifiers(t *testing.T) {
 	}
 }
 
-// A warning is the one place a reader needs the FACTS as well as the sentence: who played whom,
-// on which match. Rendering the code alone would say "the bracket expects other players" and
-// leave the director hunting.
-func TestLabeler_WarningCarriesItsFacts(t *testing.T) {
-	l := direction.NewLabeler(catalog(t, "fr"), func(id tournoi.PlayerID) string {
-		return "Joueur " + string(id)
-	})
-	got := l.Warning(tournoi.Warning{
-		Code: "bracket_wrong_players", Match: "m12", Section: "main",
-		Label: tournoi.Label{Kind: "final"},
-		A:     "a", B: "b", ExpectedA: "c", ExpectedB: "d",
-	})
-	for _, want := range []string{"m12", "principal", "Finale", "Joueur a", "Joueur b", "Joueur c", "Joueur d"} {
-		if !strings.Contains(got, want) {
-			t.Errorf("warning %q lacks %q", got, want)
-		}
-	}
-}
-
 // An unknown code shows AS ITSELF rather than as a blank: a future version of the engine is
 // then visible on screen, and the missing key names what to translate.
 func TestLabeler_UnknownCodeShowsItself(t *testing.T) {

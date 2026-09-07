@@ -115,7 +115,14 @@ type CatalogLabeler struct {
 var _ render.Labeler = (*CatalogLabeler)(nil)
 
 // NewLabeler builds a Labeler over a catalogue.
-func NewLabeler(c *Catalog, name PlayerNamer) *CatalogLabeler {
+//
+// With NO catalogue it falls back to the engine's own French labeler rather than to the raw
+// codes. A host that never published its translations — the CLI, a test — then gets sentences;
+// codes in a director's CSV would be a defect, and French is at least a language.
+func NewLabeler(c *Catalog, name PlayerNamer) render.Labeler {
+	if c == nil {
+		return render.French()
+	}
 	if name == nil {
 		name = func(id tournoi.PlayerID) string { return string(id) }
 	}
@@ -183,23 +190,6 @@ func (l *CatalogLabeler) Warn(w tournoi.WarningCode) string {
 	out, ok := l.C.t("warning."+string(w), nil)
 	if !ok {
 		return string(w)
-	}
-	return out
-}
-
-// Warning renders a warning WITH its facts, which is what a reader needs to act on it.
-func (l *CatalogLabeler) Warning(w tournoi.Warning) string {
-	if w.Code == "" {
-		return ""
-	}
-	out, ok := l.C.t("warning."+string(w.Code), map[string]any{
-		"match": string(w.Match), "section": l.SectionName(w.Section), "label": l.Label(w.Label),
-		"a": l.Name(w.A), "b": l.Name(w.B),
-		"expectedA": l.Name(w.ExpectedA), "expectedB": l.Name(w.ExpectedB),
-		"length": w.Length, "scoreA": w.ScoreA, "scoreB": w.ScoreB,
-	})
-	if !ok {
-		return string(w.Code)
 	}
 	return out
 }

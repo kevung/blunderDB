@@ -213,6 +213,10 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // C'est LE coût d'entrée, mesuré de bout en bout depuis rien : pas de tournoi, pas de
     // direction, pas d'inscrit.
     test('le coût d’entrée, de rien à la première ronde lancée', async ({ page }) => {
+        // Le plus long parcours de la suite : dix gestes et autant d'allers-retours au faux
+        // backend. Le délai par défaut du projet (10 s) est juste pour lui sur une machine
+        // chargée, et un budget qui rougit parce que le processeur était pris ne dit rien.
+        test.setTimeout(30000);
         await openTournaments(page, { directed: false });
 
         const counted = await countGestures(page, async (g) => {
@@ -251,6 +255,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // qui compte pour un directeur de club, celui qui dirige les mêmes trente personnes tous
     // les mois.
     test('le coût d’entrée avec l’annuaire, sans taper un seul nom', async ({ page }) => {
+        test.setTimeout(30000);
         await openTournaments(page, { directed: false });
 
         const counted = await countGestures(page, async (g) => {
