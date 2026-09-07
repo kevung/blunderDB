@@ -176,7 +176,7 @@ export function copyPosition() {
 // no such requirement, and it is the same clipboard the paste side already reads
 // with ClipboardGetText(). The WebView call stays as a fallback for hosts where
 // the backend one is unavailable.
-async function writeTextToClipboard(text) {
+export async function writeTextToClipboard(text) {
     try {
         if (await ClipboardSetText(text)) return;
         throw new Error('backend clipboard write returned false');

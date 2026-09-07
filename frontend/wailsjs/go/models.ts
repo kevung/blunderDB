@@ -841,6 +841,8 @@ export namespace domain {
 	export class AnkiCard {
 	    id: number;
 	    deckId: number;
+	    kind: string;
+	    key: string;
 	    positionId: number;
 	    due: string;
 	    stability: number;
@@ -860,6 +862,8 @@ export namespace domain {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
 	        this.deckId = source["deckId"];
+	        this.kind = source["kind"];
+	        this.key = source["key"];
 	        this.positionId = source["positionId"];
 	        this.due = source["due"];
 	        this.stability = source["stability"];
@@ -1110,6 +1114,8 @@ export namespace domain {
 	    id: number;
 	    cardId: number;
 	    deckId: number;
+	    kind: string;
+	    key: string;
 	    positionId: number;
 	    rating: number;
 	    state: number;
@@ -1128,6 +1134,8 @@ export namespace domain {
 	        this.id = source["id"];
 	        this.cardId = source["cardId"];
 	        this.deckId = source["deckId"];
+	        this.kind = source["kind"];
+	        this.key = source["key"];
 	        this.positionId = source["positionId"];
 	        this.rating = source["rating"];
 	        this.state = source["state"];

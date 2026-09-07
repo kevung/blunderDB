@@ -6,8 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -452,5 +454,42 @@ func TestCreateTranscription_MoneyRulesAreKept(t *testing.T) {
 	header := state.Annotated.Document.Header
 	if header.MatchLength != 0 || header.Jacoby || !header.Beaver {
 		t.Fatalf("header = %+v, want a money draft without Jacoby and with the beaver", header)
+	}
+}
+
+// TestTranscriptionMAT_IsTheExportRenderer: the panel's ".mat text" pane is a
+// view OF THE EXPORT, not a second opinion about it. What is checked here is
+// therefore the join and nothing else — the open draft goes through
+// transcript.MatchParts and ingest.RenderMAT, so the pane shows the two
+// columns of a score sheet with the header the file will carry, and no row is
+// written on the way.
+func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
+	db := newTestDB(t)
+
+	state, err := db.CreateTranscription(transcript.Header{
+		MatchLength: 7,
+		Player1:     "Kévin",
+		Player2:     "Alice",
+	})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	typeOpening(t, db, state.ID)
+	typeChecker(t, db, state.ID)
+	typeChecker(t, db, state.ID, 5, 2)
+
+	text, err := db.TranscriptionMAT(state.ID)
+	if err != nil {
+		t.Fatalf("TranscriptionMAT: %v", err)
+	}
+
+	doc := db.transcriptSessions[state.ID].Doc
+	if want := ingest.RenderMAT(transcript.MatchParts(doc)); text != want {
+		t.Fatalf("the pane's text is not the exporter's:\n--- got ---\n%s\n--- want ---\n%s", text, want)
+	}
+	for _, want := range []string{"7 point match", " Game 1", "Kévin : 0", "Alice : 0", "63:", "52:"} {
+		if !strings.Contains(text, want) {
+			t.Fatalf("the .mat text does not carry %q:\n%s", want, text)
+		}
 	}
 }
