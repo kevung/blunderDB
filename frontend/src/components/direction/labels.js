@@ -114,3 +114,46 @@ export function proposalLabel(t, a, playerName = (id) => id) {
 export function actionKey(a) {
     return [a.kind, a.phase, a.section || '', a.key || '', a.a || '', a.b || ''].join('|');
 }
+
+/**
+ * Rend une VALEUR de configuration : un nombre reste un nombre, un booléen devient oui/non, un
+ * type de phase passe par son nom de format. Une valeur vide se dit « aucune », sans quoi la
+ * liste des changements comporterait des trous que personne ne sait lire.
+ */
+function renderConfigValue(t, code, value) {
+    if (value === undefined || value === null || value === '') return t('direction.change.none');
+    if (value === 'true') return t('direction.change.yes');
+    if (value === 'false') return t('direction.change.no');
+    if (code === 'kind' || code === 'phaseAdded' || code === 'phaseRemoved') {
+        const key = `direction.format.${value}`;
+        const out = t(key);
+        return out === key ? value : out;
+    }
+    return value;
+}
+
+/**
+ * Rend une ligne de la liste « voici ce qui va changer » (issue #385).
+ *
+ * Appliquer une configuration en cours de tournoi n'est pas l'enregistrement d'un formulaire,
+ * c'est une décision : elle se montre avant d'être prise, réglage par réglage, avec la valeur
+ * d'avant et celle d'après.
+ */
+export function renderConfigChange(t, change) {
+    if (!change || !change.code) return '';
+    const key = `direction.change.${change.code}`;
+    const out = t(key, {
+        phase: change.phase ?? 0,
+        from: renderConfigValue(t, change.code, change.from),
+        to: renderConfigValue(t, change.code, change.to)
+    });
+    return out === key ? change.code : out;
+}
+
+/** Rend la raison pour laquelle le format d'une phase ne change plus. */
+export function renderLockReason(t, reason) {
+    if (!reason) return '';
+    const key = `direction.lock.${reason}`;
+    const out = t(key);
+    return out === key ? reason : out;
+}

@@ -259,6 +259,84 @@ export namespace database {
 	        this.filterQuery = source["filterQuery"];
 	    }
 	}
+	export class ConfigChange {
+	    code: string;
+	    phase: number;
+	    from?: string;
+	    to?: string;
+	    reason?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ConfigChange(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.code = source["code"];
+	        this.phase = source["phase"];
+	        this.from = source["from"];
+	        this.to = source["to"];
+	        this.reason = source["reason"];
+	    }
+	}
+	export class PhaseLock {
+	    phase: number;
+	    kind: string;
+	    locked: boolean;
+	    reason?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PhaseLock(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.phase = source["phase"];
+	        this.kind = source["kind"];
+	        this.locked = source["locked"];
+	        this.reason = source["reason"];
+	    }
+	}
+	export class ConfigPreview {
+	    changes: ConfigChange[];
+	    refusals: ConfigChange[];
+	    locks: PhaseLock[];
+	    opened: number;
+	    current: number;
+	    started: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ConfigPreview(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.changes = this.convertValues(source["changes"], ConfigChange);
+	        this.refusals = this.convertValues(source["refusals"], ConfigChange);
+	        this.locks = this.convertValues(source["locks"], PhaseLock);
+	        this.opened = source["opened"];
+	        this.current = source["current"];
+	        this.started = source["started"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ConstraintViolation {
 	    name: string;
 	    count: number;
@@ -868,6 +946,7 @@ export namespace database {
 	        this.table = source["table"];
 	    }
 	}
+	
 	export class PhaseStats {
 	    Phase: string;
 	    PR: number;

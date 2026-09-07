@@ -284,6 +284,7 @@ var databaseParity = map[string]parityEntry{
 	"DeleteDirection":                   {Why: whyDirection},
 	"DirectionStore":                    {Why: whyDirection},
 	"GetDirection":                      {Why: whyDirection},
+	"PreviewDirectionConfig":            {Why: whyDirection},
 	"HasDirection":                      {Why: whyDirection},
 	"ListDirections":                    {Why: whyDirection},
 	"SetDirectionConfig":                {Why: whyDirection},

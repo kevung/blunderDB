@@ -116,8 +116,12 @@ func (d *Database) HasDirection(tournamentID int64) (bool, error) {
 	return err == nil, err
 }
 
-// SetDirectionConfig rewrites the draft configuration. Refused once the tournament has started:
-// from there a change is an event, so what the director decided stays readable in order.
+// SetDirectionConfig installs a configuration, in preparation and in the middle of a tournament
+// alike (issue #385). It is always an event: a director who lowers the switch at 22 h leaves a
+// trace, and what they decided stays readable in order.
+//
+// The engine refuses exactly two things — removing a phase that is open, and changing the format
+// of a phase that has begun. PreviewDirectionConfig says so BEFORE the click.
 func (d *Database) SetDirectionConfig(tournamentID int64, configJSON string) error {
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {

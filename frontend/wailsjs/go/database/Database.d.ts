@@ -353,6 +353,8 @@ export function Participants(arg1:number):Promise<Array<database.ParticipantRow>
 
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
+export function PreviewDirectionConfig(arg1:number,arg2:string):Promise<database.ConfigPreview>;
+
 export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
 
 export function RankPositionsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<storage.SimilarPosition>>;

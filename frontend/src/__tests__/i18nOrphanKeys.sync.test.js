@@ -66,7 +66,12 @@ const DYNAMIC_PREFIXES = [
     'direction.section.',
     'direction.reason.',
     'direction.players.states.',
-    'direction.bracket.'
+    'direction.bracket.',
+    // Changer la configuration en cours de tournoi (#385) : la liste « voici ce qui va
+    // changer » nomme chaque réglage par son code, et la raison d'un format figé est un code
+    // elle aussi — `t(`direction.change.${change.code}`)`, `t(`direction.lock.${reason}`)`.
+    'direction.change.',
+    'direction.lock.'
 ];
 
 function sourceFiles(dir) {
