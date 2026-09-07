@@ -30,7 +30,12 @@ import {
     ReopenDirection as ReopenDirectionBinding,
     History,
     AddDirectionNote,
-    Clock
+    Clock,
+    Slots,
+    UnattachedMatches,
+    AttachMatchToSlot,
+    DetachMatchFromSlot,
+    StartTranscriptionFromSlot
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -492,4 +497,57 @@ export async function clock() {
         logger.error('direction: clock failed', e);
         return null;
     }
+}
+
+/** Les emplacements du tournoi, avec ce qui les remplit. */
+export async function slots() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await Slots(id)) || [];
+    } catch (e) {
+        logger.error('direction: slots failed', e);
+        return [];
+    }
+}
+
+/** Les matchs du tournoi qui ne remplissent aucun emplacement, avec la suggestion. */
+export async function unattachedMatches() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await UnattachedMatches(id)) || [];
+    } catch (e) {
+        logger.error('direction: unattached matches failed', e);
+        return [];
+    }
+}
+
+/**
+ * Rattache un Match à un emplacement. C'est TOUJOURS un geste : une coïncidence de noms est une
+ * suggestion, jamais une décision du logiciel.
+ */
+export async function attachMatchToSlot(slotId, matchId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return;
+    await AttachMatchToSlot(id, slotId, matchId);
+    await refreshDirection();
+}
+
+/** Vide un emplacement, sans toucher au Match ni au résultat enregistré. */
+export async function detachMatchFromSlot(slotId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return;
+    await DetachMatchFromSlot(id, slotId);
+    await refreshDirection();
+}
+
+/**
+ * Ouvre un brouillon depuis un emplacement : l'en-tête est déjà rempli, et l'emplacement est
+ * réservé dès le brouillon — sans quoi deux personnes taperaient le même match.
+ */
+export async function transcribeFromSlot(slotId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    return StartTranscriptionFromSlot(id, slotId);
 }

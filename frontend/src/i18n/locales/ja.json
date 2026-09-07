@@ -1720,7 +1720,8 @@
             "standings": "順位",
             "history": "履歴",
             "settings": "設定",
-            "notYet": "この画面はそのロットで届きます。"
+            "notYet": "この画面はそのロットで届きます。",
+            "slots": "試合"
         },
         "label": {
             "swiss_group": "{losses} loss(es), match {match}",
@@ -1935,6 +1936,25 @@
             "docs": "ドキュメント",
             "version": "同梱バージョン：{version}",
             "open": "エンジンについて"
+        },
+        "slots": {
+            "title": "枠（{total} 中 {filled} 充当）",
+            "where": "位置",
+            "players": "選手",
+            "match": "試合",
+            "open": "開く",
+            "draft": "下書き",
+            "detach": "外す",
+            "transcribe": "記録する",
+            "transcribeHint": "見出しを埋めた下書きを開き、枠を確保します。",
+            "attach": "紐づけ",
+            "disagrees": "相違",
+            "none": "開始された試合はありません。",
+            "unattached": "読み込んだ試合 {n} 件がどの枠にも入っていません。",
+            "dismiss": "隠す",
+            "noSuggestion": "該当する枠なし",
+            "noneSuggested": "いずれの試合も枠の両方の名前と一致しません。手動で紐づけてください。",
+            "error": "この試合を紐づけできませんでした。"
         }
     }
 }

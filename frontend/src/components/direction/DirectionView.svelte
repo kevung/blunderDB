@@ -12,7 +12,7 @@
      * un oubli : ils sont vides tant que leur issue n'a pas livré, et le disent.
      */
     import { t } from '../../i18n';
-    import { statusBarTextStore } from '../../stores/uiStore';
+    import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
     import DirectionSettings from './DirectionSettings.svelte';
@@ -25,6 +25,7 @@
     import HistoryView from './HistoryView.svelte';
     import ClockBar from './ClockBar.svelte';
     import CreditModal from './CreditModal.svelte';
+    import SlotsView from './SlotsView.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
@@ -55,7 +56,12 @@
         reopenTournament,
         history,
         addNote,
-        clock
+        clock,
+        slots,
+        unattachedMatches,
+        attachMatchToSlot,
+        detachMatchFromSlot,
+        transcribeFromSlot
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -80,6 +86,7 @@
         { id: 'direction', labelKey: 'direction.tabs.direction' },
         { id: 'players', labelKey: 'direction.tabs.players' },
         { id: 'brackets', labelKey: 'direction.tabs.brackets' },
+        { id: 'slots', labelKey: 'direction.tabs.slots' },
         { id: 'standings', labelKey: 'direction.tabs.standings' },
         { id: 'history', labelKey: 'direction.tabs.history' },
         { id: 'settings', labelKey: 'direction.tabs.settings' }
@@ -106,6 +113,8 @@
     let entries = $state([]);
     let clockView = $state(null);
     let creditOpen = $state(false);
+    let slotRows = $state([]);
+    let unattached = $state([]);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -120,6 +129,8 @@
         standings().then((r) => (ranking = r));
         history().then((h) => (entries = h));
         clock().then((c) => (clockView = c));
+        slots().then((r) => (slotRows = r));
+        unattachedMatches().then((u) => (unattached = u));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -162,6 +173,39 @@
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
     const onReopen = () => act(() => reopenTournament(), 'direction.standings.error');
     const onNote = (text) => act(() => addNote(text), 'direction.history.error');
+    const onAttach = (slot, matchId) =>
+        act(async () => {
+            await attachMatchToSlot(slot, matchId);
+            slotRows = await slots();
+            unattached = await unattachedMatches();
+        }, 'direction.slots.error');
+    const onDetach = (slot) =>
+        act(async () => {
+            await detachMatchFromSlot(slot);
+            slotRows = await slots();
+            unattached = await unattachedMatches();
+        }, 'direction.slots.error');
+
+    /* Transcrire depuis un emplacement ouvre l'onglet Transcription : le brouillon se tape
+       devant le plateau, pas dans la vue tournoi. */
+    async function onTranscribe(slotId) {
+        busy = true;
+        try {
+            await transcribeFromSlot(slotId);
+            slotRows = await slots();
+            activeTabStore.set('transcription');
+        } catch (e) {
+            logger.error('direction: transcribe from slot failed', e);
+            statusBarTextStore.set(tMsg('direction.slots.error'));
+        } finally {
+            busy = false;
+        }
+    }
+
+    /* Ouvrir le Match d'un emplacement ramène au plateau, dans l'onglet Matchs. */
+    function onOpenMatch() {
+        activeTabStore.set('matches');
+    }
 
     /* Le CSV part dans le presse-papier : il n'y a pas de dialogue d'enregistrement ici, et
        coller dans un tableur est le geste qu'un directeur fait de toute façon. */
@@ -284,6 +328,8 @@
                     <p>{free.map((p) => p.name).join(' · ')}</p>
                 </section>
             </div>
+        {:else if tab === 'slots'}
+            <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
         {:else if tab === 'standings'}
             <StandingsView view={ranking} {busy} {onClose} {onReopen} {onCSV} />
         {:else if tab === 'history'}

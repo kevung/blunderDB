@@ -35,6 +35,8 @@ export function AnalyzeStaleGammonNet(arg1:context.Context,arg2:number,arg3:numb
 
 export function ApplyTranscriptionGesture(arg1:number,arg2:transcript.Gesture):Promise<database.TranscriptionState>;
 
+export function AttachMatchToSlot(arg1:number,arg2:string,arg3:number):Promise<void>;
+
 export function BeginImportBatch(arg1:string,arg2:string):Promise<number>;
 
 export function Brackets(arg1:number):Promise<Array<database.BracketPhase>>;
@@ -62,6 +64,8 @@ export function Checkpoint():Promise<void>;
 export function ClearCommandHistory():Promise<void>;
 
 export function ClearSessionState():Promise<void>;
+
+export function Clock(arg1:number):Promise<database.ClockView>;
 
 export function Close():Promise<void>;
 
@@ -134,6 +138,8 @@ export function DeleteProtectedCopyPath(arg1:string):Promise<void>;
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function DeleteTournament(arg1:number):Promise<void>;
+
+export function DetachMatchFromSlot(arg1:number,arg2:string):Promise<void>;
 
 export function DirectionStore():Promise<direction.Store>;
 
@@ -431,11 +437,17 @@ export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.
 
 export function SinceLastGesture(arg1:number,arg2:number):Promise<Array<database.HistoryEntry>>;
 
+export function SlotOfMatch(arg1:number):Promise<database.MatchSlot>;
+
+export function Slots(arg1:number):Promise<Array<database.SlotRow>>;
+
 export function Standings(arg1:number):Promise<database.StandingsView>;
 
 export function StandingsCSV(arg1:number):Promise<string>;
 
 export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number):Promise<database.DirectionView>;
+
+export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
@@ -460,6 +472,8 @@ export function TrashCollection(arg1:number):Promise<number>;
 export function TrashCommentEntry(arg1:number):Promise<number>;
 
 export function TrashPosition(arg1:number):Promise<number>;
+
+export function UnattachedMatches(arg1:number):Promise<Array<database.SlotSuggestion>>;
 
 export function UpdateAnkiDeck(arg1:number,arg2:string,arg3:string):Promise<void>;
 

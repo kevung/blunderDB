@@ -207,6 +207,32 @@ export namespace database {
 		}
 	}
 	
+	export class ClockView {
+	    elapsedSeconds: number;
+	    played: number;
+	    running: number;
+	    minutesPerPoint: number;
+	    plannedPerPoint: number;
+	    slowMatches: number;
+	    nextBreak?: string;
+	    warnings: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ClockView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.elapsedSeconds = source["elapsedSeconds"];
+	        this.played = source["played"];
+	        this.running = source["running"];
+	        this.minutesPerPoint = source["minutesPerPoint"];
+	        this.plannedPerPoint = source["plannedPerPoint"];
+	        this.slowMatches = source["slowMatches"];
+	        this.nextBreak = source["nextBreak"];
+	        this.warnings = source["warnings"];
+	    }
+	}
 	export class Collection {
 	    id: number;
 	    name: string;
@@ -722,6 +748,48 @@ export namespace database {
 		}
 	}
 	
+	export class MatchSlot {
+	    tournamentId: number;
+	    tournamentName: string;
+	    slotId: string;
+	    label: tournoi.Label;
+	    phase: number;
+	    table?: number;
+	    opponent?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchSlot(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournamentId = source["tournamentId"];
+	        this.tournamentName = source["tournamentName"];
+	        this.slotId = source["slotId"];
+	        this.label = this.convertValues(source["label"], tournoi.Label);
+	        this.phase = source["phase"];
+	        this.table = source["table"];
+	        this.opponent = source["opponent"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class MatchStats {
 	    ID: number;
 	    Date: string;
@@ -978,6 +1046,92 @@ export namespace database {
 	        this.lastPositionIds = source["lastPositionIds"];
 	        this.hasActiveSearch = source["hasActiveSearch"];
 	        this.viewsJSON = source["viewsJSON"];
+	    }
+	}
+	export class SlotRow {
+	    slotId: string;
+	    label: tournoi.Label;
+	    phase: number;
+	    a: string;
+	    b: string;
+	    aName: string;
+	    bName: string;
+	    length: number;
+	    table?: number;
+	    winner?: string;
+	    winnerName?: string;
+	    scoreA?: number;
+	    scoreB?: number;
+	    done: boolean;
+	    matchId?: number;
+	    draftId?: number;
+	    disagreement?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SlotRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.slotId = source["slotId"];
+	        this.label = this.convertValues(source["label"], tournoi.Label);
+	        this.phase = source["phase"];
+	        this.a = source["a"];
+	        this.b = source["b"];
+	        this.aName = source["aName"];
+	        this.bName = source["bName"];
+	        this.length = source["length"];
+	        this.table = source["table"];
+	        this.winner = source["winner"];
+	        this.winnerName = source["winnerName"];
+	        this.scoreA = source["scoreA"];
+	        this.scoreB = source["scoreB"];
+	        this.done = source["done"];
+	        this.matchId = source["matchId"];
+	        this.draftId = source["draftId"];
+	        this.disagreement = source["disagreement"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class SlotSuggestion {
+	    matchId: number;
+	    player1: string;
+	    player2: string;
+	    length: number;
+	    date?: string;
+	    suggestSlot?: string;
+	    slotLabel?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SlotSuggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matchId = source["matchId"];
+	        this.player1 = source["player1"];
+	        this.player2 = source["player2"];
+	        this.length = source["length"];
+	        this.date = source["date"];
+	        this.suggestSlot = source["suggestSlot"];
+	        this.slotLabel = source["slotLabel"];
 	    }
 	}
 	export class StandingRow {

@@ -1720,7 +1720,8 @@
             "standings": "Standings",
             "history": "History",
             "settings": "Settings",
-            "notYet": "This view arrives with its own batch."
+            "notYet": "This view arrives with its own batch.",
+            "slots": "Matches"
         },
         "label": {
             "swiss_group": "{losses} loss(es), match {match}",
@@ -1935,6 +1936,25 @@
             "docs": "The documentation",
             "version": "Embedded version: {version}",
             "open": "About the engine"
+        },
+        "slots": {
+            "title": "Slots ({filled} of {total} filled)",
+            "where": "Where",
+            "players": "Players",
+            "match": "Match",
+            "open": "Open",
+            "draft": "draft",
+            "detach": "Detach",
+            "transcribe": "Transcribe",
+            "transcribeHint": "Opens a draft with the header already filled and reserves the slot.",
+            "attach": "Attach",
+            "disagrees": "disagrees",
+            "none": "No match launched.",
+            "unattached": "{n} imported matches fill no slot.",
+            "dismiss": "Hide",
+            "noSuggestion": "no obvious slot",
+            "noneSuggested": "None of these matches carries both names of a slot: attach them by hand.",
+            "error": "Could not attach this match."
         }
     }
 }

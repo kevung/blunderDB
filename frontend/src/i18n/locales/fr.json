@@ -1720,7 +1720,8 @@
             "standings": "Classement",
             "history": "Historique",
             "settings": "Réglages",
-            "notYet": "Cette vue arrive avec son lot."
+            "notYet": "Cette vue arrive avec son lot.",
+            "slots": "Matchs"
         },
         "label": {
             "swiss_group": "{losses} défaite(s), match {match}",
@@ -1935,6 +1936,25 @@
             "docs": "La documentation",
             "version": "Version embarquée : {version}",
             "open": "À propos du moteur"
+        },
+        "slots": {
+            "title": "Emplacements ({filled} remplis sur {total})",
+            "where": "Où",
+            "players": "Joueurs",
+            "match": "Match",
+            "open": "Ouvrir",
+            "draft": "brouillon",
+            "detach": "Détacher",
+            "transcribe": "Transcrire",
+            "transcribeHint": "Ouvre un brouillon avec l’en-tête déjà rempli et réserve l’emplacement.",
+            "attach": "Rattacher",
+            "disagrees": "écart",
+            "none": "Aucun match lancé.",
+            "unattached": "{n} matchs importés ne remplissent aucun emplacement.",
+            "dismiss": "Masquer",
+            "noSuggestion": "aucun emplacement évident",
+            "noneSuggested": "Aucun de ces matchs ne porte les deux noms d’un emplacement : à rattacher à la main.",
+            "error": "Impossible de rattacher ce match."
         }
     }
 }
