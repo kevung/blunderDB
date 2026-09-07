@@ -83,6 +83,13 @@ type ExportReport struct {
 	Collections, Tournaments, Filters, AnkiDecks int
 	Transcriptions                               int
 	Skipped                                      int
+	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
+	//
+	// It is here because a Direction travels with its tournament (ADR-0047, issue #396) and
+	// the direction tables live on the DESKTOP wrapper, not on the storage contract — the
+	// daemon exposes nothing of them, deliberately. The caller that knows about directions
+	// copies them itself, and this map is all it needs from the export it just ran.
+	TournamentMap map[int64]int64
 }
 
 // WholeTenant is the export the daemon offers by default: everything the
@@ -177,6 +184,14 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 		return report, err
 	}
 	report.Path = finalPath
+
+	// While the file is still plain: what the storage contract does not carry gets its turn
+	// here, and a protected export seals it in with the rest (#396).
+	if opts.AfterWrite != nil {
+		if err := opts.AfterWrite(ctx, path, report); err != nil {
+			return report, err
+		}
+	}
 
 	if opts.Password != "" {
 		env, err := issuance.DecodeEnvelope(opts.Watermark)
@@ -718,6 +733,8 @@ func (e *exporter) writeTournaments() error {
 	if len(e.tournamentIDs) > 0 {
 		slog.Info("exported tournaments", "count", e.report.Tournaments)
 	}
+	// Handed back so a caller that knows about Directions can carry them across (#396).
+	e.report.TournamentMap = e.tourMap
 	return nil
 }
 

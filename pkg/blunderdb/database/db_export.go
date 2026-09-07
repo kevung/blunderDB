@@ -77,6 +77,10 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 		Metadata:      opts.Metadata,
 		Watermark:     watermarkDocument,
 		Password:      opts.Password,
+		// A Direction travels with its tournament (#396). The copy is ours and not ingest's:
+		// the direction tables belong to the desktop wrapper, and the daemon exposes none of
+		// them.
+		AfterWrite: d.directionAfterWrite(),
 	})
 	return err
 }
