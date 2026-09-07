@@ -157,7 +157,10 @@
         "theme_light": "Hell",
         "theme_dark": "Dunkel",
         "theme_contrast": "Hoher Kontrast",
-        "theme_print": "Druckbar"
+        "theme_print": "Druckbar",
+        "likeLimit": "Nachbarn pro Rangliste",
+        "likeMaxDistance": "Maximale Distanz (Stein-Pips)",
+        "likeNote": "Null: keine Obergrenze. Das Token like<12 setzt seine eigene für eine Suche."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -809,7 +812,8 @@
             "newView": "Neue Ansicht",
             "addToAnkiDeck": "Zum Anki-Stapel hinzufügen: {deck}",
             "saveImageSVG": "Bild speichern (SVG)…",
-            "saveImagePNG": "Bild speichern (PNG)…"
+            "saveImagePNG": "Bild speichern (PNG)…",
+            "neighbours": "Benachbarte Stellungen"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "Keine aktuelle Stellung, zu der Nachbarn gesucht werden könnten.",
         "failed": "Die Suche nach nahen Stellungen ist fehlgeschlagen.",
         "none": "Keine nahe Stellung in dieser Datenbank.",
-        "found": "{n} nahe Stellungen, von {nearest} bis {farthest} Stein-Pips."
+        "found": "{n} Nachbarstellungen, von {nearest} bis {farthest} Stein-Pips.",
+        "fromPosition": "{distance} Stein-Pips von Stellung Nr. {id} entfernt.",
+        "fromBoard": "{distance} Stein-Pips vom gezeichneten Brett entfernt."
     },
     "log": {
         "title": "Aktivitätsprotokoll",

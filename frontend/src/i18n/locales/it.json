@@ -157,7 +157,10 @@
         "theme_light": "Chiaro",
         "theme_dark": "Scuro",
         "theme_contrast": "Contrasto elevato",
-        "theme_print": "Stampabile"
+        "theme_print": "Stampabile",
+        "likeLimit": "Vicine per classifica",
+        "likeMaxDistance": "Distanza massima (pip di pedina)",
+        "likeNote": "Zero: nessun limite. Il token like<12 impone il proprio per una ricerca."
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -809,7 +812,8 @@
             "newView": "Nuova vista",
             "addToAnkiDeck": "Aggiungi al mazzo Anki: {deck}",
             "saveImageSVG": "Salvare l'immagine (SVG)…",
-            "saveImagePNG": "Salvare l'immagine (PNG)…"
+            "saveImagePNG": "Salvare l'immagine (PNG)…",
+            "neighbours": "Posizioni vicine"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "Nessuna posizione corrente di cui cercare le vicine.",
         "failed": "La ricerca di posizioni vicine è fallita.",
         "none": "Nessuna posizione vicina in questa base.",
-        "found": "{n} posizioni vicine, da {nearest} a {farthest} pip di pedina."
+        "found": "{n} posizioni vicine, da {nearest} a {farthest} pip di pedina.",
+        "fromPosition": "A {distance} pip di pedina dalla posizione n. {id}.",
+        "fromBoard": "A {distance} pip di pedina dalla scacchiera disegnata."
     },
     "log": {
         "title": "Registro attività",

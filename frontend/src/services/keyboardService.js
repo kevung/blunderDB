@@ -1,4 +1,5 @@
 import { get } from 'svelte/store';
+import { rankNeighboursOfCurrentPosition } from './rankService.js';
 import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
 import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../stores/ankiStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
@@ -364,6 +365,12 @@ export function handleKeyDown(event) {
     } else if (!event.ctrlKey && event.code === 'Space') {
         event.preventDefault();
         showCommandInputStore.set(true);
+    } else if (event.ctrlKey && event.shiftKey && letter('l')) {
+        // Ctrl+Maj+L : les voisines de la position courante (ADR-0043). Testé
+        // AVANT Ctrl+L, que la branche suivante capte — sans quoi le panneau
+        // d'analyse s'ouvrirait à la place.
+        event.preventDefault();
+        rankNeighboursOfCurrentPosition();
     } else if (event.ctrlKey && letter('l')) {
         event.preventDefault();
         if (showComment) toggleCommentPanel();

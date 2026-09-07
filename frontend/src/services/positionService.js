@@ -25,6 +25,7 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
+import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
@@ -453,10 +454,16 @@ export async function loadPositionsByFilters({
         // the same lazy path the library already uses.
         // La cible d'un `like` nu est résolue ICI, là où la requête a été
         // tapée : « cette position » veut dire celle qu'on feuillette, et rien
-        // en aval ne peut le deviner. Une requête classée sans cible se dit,
-        // elle ne se replie pas sur une recherche ordinaire.
+        // en aval ne peut le deviner.
+        //
+        // En mode ÉDITION, en revanche, elle ne se résout pas : le plateau
+        // DESSINÉ est la cible, et c'est la question que la recherche exacte
+        // par structure croyait poser — « je me souviens vaguement d'une
+        // position comme ça ». On dessine à peu près, on lance, la base
+        // répond, là où la recherche par structure ne pardonne pas le dessin
+        // approximatif.
         let likeTarget = likeTargetId;
-        if (likeFilter && !likeTarget) {
+        if (likeFilter && !likeTarget && get(statusBarModeStore) !== 'EDIT') {
             likeTarget = positionsStore.idAt(get(currentPositionIndexStore)) || 0;
             if (!likeTarget) {
                 setStatusBarMessage(tMsg('similar.noPosition'));
@@ -464,8 +471,18 @@ export async function loadPositionsByFilters({
             }
         }
 
+        // Dans un classement, le plateau est la CIBLE et jamais un motif.
+        //
+        // Une recherche ordinaire prend le plateau affiché comme structure à
+        // contenir ; `like` lui donne l'autre rôle. Garder les deux vidait le
+        // classement — la recherche exigeait de chaque candidate qu'elle
+        // contienne exactement la structure de la cible, ce que seule la cible
+        // fait, et elle est exclue. `filter` part donc vide, et le plateau
+        // dessiné voyage comme cible quand aucun indice ne la nomme.
+        const rankAgainstDrawnBoard = likeFilter && !likeTarget;
         const payload = {
-            filter: currentPosition,
+            filter: likeFilter ? emptySearchBoardPosition() : currentPosition,
+            likeTargetBoard: rankAgainstDrawnBoard ? currentPosition : emptySearchBoardPosition(),
             excludeFilter: excludePosition,
             includeCube,
             includeScore,
@@ -526,7 +543,12 @@ export async function loadPositionsByFilters({
         if (likeFilter) {
             let ranked;
             try {
-                ranked = (await RankPositionIDsByFilters(payload, 0)) || [];
+                // Les deux réglages du panneau de configuration, que le jeton
+                // surcharge pour une requête : `like<12` l'emporte sur le
+                // plafond enregistré, et l'emporte seulement là (ADR-0043).
+                const [limit, ceiling] = await Promise.all([GetLikeLimit(), GetLikeMaxDistance()]);
+                if (!payload.likeMaxDistance) payload.likeMaxDistance = ceiling || 0;
+                ranked = (await RankPositionIDsByFilters(payload, limit || 0)) || [];
             } catch (error) {
                 logger.error('could not rank the neighbours:', error);
                 setStatusBarMessage(tMsg('similar.failed'));

@@ -20,6 +20,8 @@ export function AddPositionsToCollection(arg1:number,arg2:Array<number>):Promise
 
 export function AnalyzeImportDatabase(arg1:string):Promise<Record<string, any>>;
 
+export function AnalyzeMatchWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number,arg7:any,arg8:any):Promise<database.GammonNetBatchSummary>;
+
 export function AnalyzeMissingWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:any,arg7:any):Promise<database.GammonNetBatchSummary>;
 
 export function AnalyzeStaleGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:any,arg7:any):Promise<database.GammonNetBatchSummary>;
@@ -63,6 +65,8 @@ export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsRe
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
+
+export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
 
@@ -269,6 +273,10 @@ export function OpenDatabase(arg1:string):Promise<void>;
 export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
+
+export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
+
+export function RankPositionsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<storage.SimilarPosition>>;
 
 export function RecommendedTags():Promise<Array<string>>;
 

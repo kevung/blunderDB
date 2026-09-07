@@ -604,6 +604,11 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         gameTypeFilter: pf.gameTypeFilter || '',
         likeFilter: pf.likeFilter || false,
         likeTargetId: pf.likeTargetId || 0,
+        // Le plateau dessiné voyage dans son propre champ. Le mettre dans
+        // `filter` l'aurait fait servir deux fois — comme cible ET comme motif
+        // de structure que toute candidate doit contenir — ce qui est
+        // l'inverse de pardonner un dessin approximatif (ADR-0043).
+        likeTargetBoard: pf.likeTargetBoard || emptySearchBoardPosition(),
         likeMaxDistance: pf.likeMaxDistance || 0,
         likeWidened: pf.likeWidened || false,
         tagFilter: pf.tagFilter || '',

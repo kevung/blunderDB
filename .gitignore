@@ -52,6 +52,11 @@ doc/.venv/
 # 0.32.0 and shipped in every clone of the module before being removed.
 *.test
 
+# A dev tool built at the repo root by `go build ./cmd/<name>` — the binary
+# lands beside the module rather than under build/. Named, not globbed: a
+# blanket rule here would swallow a real file the day one is added.
+/likecorpus
+
 # Browser "Save page as" output (e.g. a saved GnuBG Bot Match Report page),
 # dropped under testdata/ by hand while investigating an issue. Not a fixture
 # anything reads.

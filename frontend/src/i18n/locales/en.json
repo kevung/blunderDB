@@ -157,7 +157,10 @@
         "theme_light": "Light",
         "theme_dark": "Dark",
         "theme_contrast": "High contrast",
-        "theme_print": "Printable"
+        "theme_print": "Printable",
+        "likeLimit": "Neighbours per ranking",
+        "likeMaxDistance": "Maximum distance (checker-pips)",
+        "likeNote": "Zero: no ceiling. The token like<12 sets its own for one search."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -809,7 +812,8 @@
             "newView": "New view",
             "addToAnkiDeck": "Add to Anki deck: {deck}",
             "saveImageSVG": "Save the image (SVG)…",
-            "saveImagePNG": "Save the image (PNG)…"
+            "saveImagePNG": "Save the image (PNG)…",
+            "neighbours": "Neighbouring positions"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "No current position to find neighbours of.",
         "failed": "The search for close positions failed.",
         "none": "No close position in this database.",
-        "found": "{n} close positions, from {nearest} to {farthest} checker-pips."
+        "found": "{n} neighbours, from {nearest} to {farthest} checker-pips.",
+        "fromPosition": "{distance} checker-pips from position no. {id}.",
+        "fromBoard": "{distance} checker-pips from the drawn board."
     },
     "log": {
         "title": "Activity log",

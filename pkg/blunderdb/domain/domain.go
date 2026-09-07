@@ -439,6 +439,17 @@ type SearchFilters struct {
 	// not an empty result.
 	LikeTargetID int64 `json:"likeTargetId"`
 
+	// LikeTargetBoard is the board a ranking compares against when no id names
+	// one: the position the user has DRAWN. It is a field of its own and not
+	// Filter, which the same drawing would otherwise serve twice — as the
+	// target AND as the structure pattern every candidate must contain, which
+	// is the opposite of forgiving an approximate drawing.
+	//
+	// Read as a POSITION, not as a pattern: a point left empty is checkers
+	// borne off, which is right for a real position and is what the manual
+	// warns about for a half-drawn one.
+	LikeTargetBoard Position `json:"likeTargetBoard"`
+
 	// LikeMaxDistance drops neighbours beyond this many checker-pips (0 = no
 	// ceiling). A ranking whose ceiling nothing passes comes back EMPTY.
 	LikeMaxDistance int `json:"likeMaxDistance"`

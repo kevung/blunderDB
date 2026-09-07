@@ -157,7 +157,10 @@
         "theme_light": "Vaalea",
         "theme_dark": "Tumma",
         "theme_contrast": "Suuri kontrasti",
-        "theme_print": "Tulostettava"
+        "theme_print": "Tulostettava",
+        "likeLimit": "Naapureita järjestystä kohden",
+        "likeMaxDistance": "Enimmäisetäisyys (nappulapip)",
+        "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -809,7 +812,8 @@
             "newView": "Uusi näkymä",
             "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}",
             "saveImageSVG": "Tallenna kuva (SVG)…",
-            "saveImagePNG": "Tallenna kuva (PNG)…"
+            "saveImagePNG": "Tallenna kuva (PNG)…",
+            "neighbours": "Naapuriasemat"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "Ei nykyistä asemaa, jolle etsiä naapureita.",
         "failed": "Läheisten asemien haku epäonnistui.",
         "none": "Ei läheisiä asemia tässä tietokannassa.",
-        "found": "{n} läheistä asemaa, {nearest}–{farthest} nappulapipiä."
+        "found": "{n} naapuriasemaa, {nearest}–{farthest} nappulapipiä.",
+        "fromPosition": "{distance} nappulapipiä asemasta nro {id}.",
+        "fromBoard": "{distance} nappulapipiä piirretystä laudasta."
     },
     "log": {
         "title": "Toimintaloki",

@@ -22,6 +22,10 @@ export function AnalyzeImportDatabase(arg1) {
   return window['go']['database']['Database']['AnalyzeImportDatabase'](arg1);
 }
 
+export function AnalyzeMatchWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+  return window['go']['database']['Database']['AnalyzeMatchWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+}
+
 export function AnalyzeMissingWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['AnalyzeMissingWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
@@ -108,6 +112,10 @@ export function ComputeStatsCtx(arg1, arg2) {
 
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
+}
+
+export function CountMatchPositionsToAnalyze(arg1) {
+  return window['go']['database']['Database']['CountMatchPositionsToAnalyze'](arg1);
 }
 
 export function CountOrphans() {
@@ -520,6 +528,14 @@ export function OpenProtectedCopyPath(arg1, arg2) {
 
 export function ParsePositionText(arg1) {
   return window['go']['database']['Database']['ParsePositionText'](arg1);
+}
+
+export function RankPositionIDsByFilters(arg1, arg2) {
+  return window['go']['database']['Database']['RankPositionIDsByFilters'](arg1, arg2);
+}
+
+export function RankPositionsByFilters(arg1, arg2) {
+  return window['go']['database']['Database']['RankPositionsByFilters'](arg1, arg2);
 }
 
 export function RecommendedTags() {

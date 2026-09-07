@@ -157,7 +157,10 @@
         "theme_light": "Claro",
         "theme_dark": "Oscuro",
         "theme_contrast": "Contraste alto",
-        "theme_print": "Imprimible"
+        "theme_print": "Imprimible",
+        "likeLimit": "Vecinas por clasificación",
+        "likeMaxDistance": "Distancia máxima (pips de ficha)",
+        "likeNote": "Cero: sin límite. El token like<12 impone el suyo para una búsqueda."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -809,7 +812,8 @@
             "newView": "Nueva vista",
             "addToAnkiDeck": "Añadir al mazo de Anki: {deck}",
             "saveImageSVG": "Guardar la imagen (SVG)…",
-            "saveImagePNG": "Guardar la imagen (PNG)…"
+            "saveImagePNG": "Guardar la imagen (PNG)…",
+            "neighbours": "Posiciones vecinas"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "No hay posición actual de la que buscar vecinas.",
         "failed": "La búsqueda de posiciones cercanas ha fallado.",
         "none": "Ninguna posición cercana en esta base.",
-        "found": "{n} posiciones cercanas, de {nearest} a {farthest} pips de ficha."
+        "found": "{n} posiciones vecinas, de {nearest} a {farthest} pips de ficha.",
+        "fromPosition": "A {distance} pips de ficha de la posición n.º {id}.",
+        "fromBoard": "A {distance} pips de ficha del tablero dibujado."
     },
     "log": {
         "title": "Registro de actividad",

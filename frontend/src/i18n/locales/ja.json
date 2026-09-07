@@ -157,7 +157,10 @@
         "theme_light": "ライト",
         "theme_dark": "ダーク",
         "theme_contrast": "ハイコントラスト",
-        "theme_print": "印刷向け"
+        "theme_print": "印刷向け",
+        "likeLimit": "並べ替えごとの近い局面の数",
+        "likeMaxDistance": "最大距離（チェッカーピップ）",
+        "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -809,7 +812,8 @@
             "newView": "新しいビュー",
             "addToAnkiDeck": "Ankiデッキに追加: {deck}",
             "saveImageSVG": "画像を保存（SVG）…",
-            "saveImagePNG": "画像を保存（PNG）…"
+            "saveImagePNG": "画像を保存（PNG）…",
+            "neighbours": "近い局面"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "近い局面を探す対象の局面がありません。",
         "failed": "近い局面の検索に失敗しました。",
         "none": "このデータベースに近い局面はありません。",
-        "found": "近い局面 {n} 件、{nearest} から {farthest} チェッカーピップ。"
+        "found": "近い局面 {n} 件、{nearest}〜{farthest} チェッカーピップ。",
+        "fromPosition": "局面 {id} から {distance} チェッカーピップ。",
+        "fromBoard": "描いた盤面から {distance} チェッカーピップ。"
     },
     "log": {
         "title": "動作ログ",

@@ -157,7 +157,10 @@
         "theme_light": "Clair",
         "theme_dark": "Sombre",
         "theme_contrast": "Contraste élevé",
-        "theme_print": "Imprimable"
+        "theme_print": "Imprimable",
+        "likeLimit": "Voisines par classement",
+        "likeMaxDistance": "Distance maximale (pions-pas)",
+        "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -809,7 +812,8 @@
             "newView": "Nouvelle vue",
             "addToAnkiDeck": "Ajouter au paquet Anki : {deck}",
             "saveImageSVG": "Enregistrer l'image (SVG)…",
-            "saveImagePNG": "Enregistrer l'image (PNG)…"
+            "saveImagePNG": "Enregistrer l'image (PNG)…",
+            "neighbours": "Positions voisines"
         }
     },
     "epc": {
@@ -1406,7 +1410,9 @@
         "noPosition": "Aucune position courante dont chercher les voisines.",
         "failed": "La recherche de positions proches a échoué.",
         "none": "Aucune position proche dans cette base.",
-        "found": "{n} positions proches, de {nearest} à {farthest} pions-pas."
+        "found": "{n} positions proches, de {nearest} à {farthest} pions-pas.",
+        "fromPosition": "À {distance} pions-pas de la position n° {id}.",
+        "fromBoard": "À {distance} pions-pas du plateau dessiné."
     },
     "log": {
         "title": "Journal d'activité",

@@ -456,6 +456,20 @@ export namespace database {
 	        this.luck_rolls = source["luck_rolls"];
 	    }
 	}
+	export class RankedID {
+	    id: number;
+	    distance: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RankedID(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.distance = source["distance"];
+	    }
+	}
 	export class ScoreCellStats {
 	    MoverAway: number;
 	    OpponentAway: number;
@@ -1582,6 +1596,7 @@ export namespace domain {
 	    match_hash?: string;
 	    canonical_hash?: string;
 	    import_batch_id?: number;
+	    transcriber?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -1612,6 +1627,7 @@ export namespace domain {
 	        this.match_hash = source["match_hash"];
 	        this.canonical_hash = source["canonical_hash"];
 	        this.import_batch_id = source["import_batch_id"];
+	        this.transcriber = source["transcriber"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1799,6 +1815,11 @@ export namespace domain {
 	    gamePhaseFilter: string;
 	    gameTypeFilter: string;
 	    encounterFilter: string;
+	    likeFilter: boolean;
+	    likeTargetId: number;
+	    likeTargetBoard: Position;
+	    likeMaxDistance: number;
+	    likeWidened: boolean;
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
@@ -1854,6 +1875,11 @@ export namespace domain {
 	        this.gamePhaseFilter = source["gamePhaseFilter"];
 	        this.gameTypeFilter = source["gameTypeFilter"];
 	        this.encounterFilter = source["encounterFilter"];
+	        this.likeFilter = source["likeFilter"];
+	        this.likeTargetId = source["likeTargetId"];
+	        this.likeTargetBoard = this.convertValues(source["likeTargetBoard"], Position);
+	        this.likeMaxDistance = source["likeMaxDistance"];
+	        this.likeWidened = source["likeWidened"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];
@@ -2512,6 +2538,8 @@ export namespace main {
 	    language?: string;
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
+	    like_limit?: number;
+	    like_max_distance?: number;
 	    panel_position?: string;
 	    panel_height?: number;
 	    panel_width?: number;
@@ -2547,6 +2575,8 @@ export namespace main {
 	        this.language = source["language"];
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
+	        this.like_limit = source["like_limit"];
+	        this.like_max_distance = source["like_max_distance"];
 	        this.panel_position = source["panel_position"];
 	        this.panel_height = source["panel_height"];
 	        this.panel_width = source["panel_width"];

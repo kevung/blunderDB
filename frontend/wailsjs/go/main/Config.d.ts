@@ -30,6 +30,10 @@ export function GetLanguage():Promise<string>;
 
 export function GetLastDatabasePath():Promise<string>;
 
+export function GetLikeLimit():Promise<number>;
+
+export function GetLikeMaxDistance():Promise<number>;
+
 export function GetPanelHeight():Promise<number>;
 
 export function GetPanelPosition():Promise<string>;
@@ -79,6 +83,10 @@ export function SaveHiddenTabs(arg1:Array<string>):Promise<void>;
 export function SaveLanguage(arg1:string):Promise<void>;
 
 export function SaveLastDatabasePath(arg1:string):Promise<void>;
+
+export function SaveLikeLimit(arg1:number):Promise<void>;
+
+export function SaveLikeMaxDistance(arg1:number):Promise<void>;
 
 export function SavePanelHeight(arg1:number):Promise<void>;
 

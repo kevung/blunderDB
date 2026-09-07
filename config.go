@@ -114,6 +114,16 @@ const (
 	DefaultUIScale = 100
 )
 
+// Bounds for the `like` ranking preferences (ADR-0043).
+const (
+	// DefaultLikeLimit is how many neighbours a ranking returns when nothing
+	// says otherwise. Thirty: a ranked list is browsed, not read at a glance.
+	DefaultLikeLimit = 30
+	// MaxLikeLimit bounds what the preference may be set to. A ranking is a
+	// reading list, not an export: past a few hundred it stops being one.
+	MaxLikeLimit = 500
+)
+
 // Panel position modes. The tabbed panel is either docked at the bottom (the
 // historical default), pinned as a vertical column on the side, or switched
 // automatically based on the window aspect ratio (handled frontend-side).
@@ -182,6 +192,16 @@ type Config struct {
 	Language         string               `json:"language,omitempty"`
 	BoardColors      BoardColors          `json:"board_colors,omitempty"`
 	UIScale          int                  `json:"ui_scale,omitempty"`
+	// LikeLimit is how many neighbours a `like` ranking returns, and
+	// LikeMaxDistance the ceiling in checker-pips beyond which a position
+	// stops being a neighbour (0 = no ceiling, the default).
+	//
+	// No ceiling ships as the default on purpose: the scale depends on the
+	// phase — ten checker-pips is nothing in a race and another position in
+	// the opening — and nobody has measured it. A number invented here would
+	// have been read as a measurement (ADR-0043 rule 4).
+	LikeLimit       int `json:"like_limit,omitempty"`
+	LikeMaxDistance int `json:"like_max_distance,omitempty"`
 	PanelPosition    string               `json:"panel_position,omitempty"`
 	PanelHeight      int                  `json:"panel_height,omitempty"`
 	PanelWidth       int                  `json:"panel_width,omitempty"`
@@ -592,6 +612,49 @@ func (c *Config) SaveBoardColors(colors BoardColors) error {
 // the supported range; defaults to 100).
 func (c *Config) GetUIScale() int {
 	return clampUIScale(c.UIScale)
+}
+
+// GetLikeLimit reports how many neighbours a ranking returns. Thirty by
+// default: a ranked list is browsed, not read at a glance, and ten was chosen
+// when the ranking still returned the plies of the match being looked at.
+func (c *Config) GetLikeLimit() int {
+	if c.LikeLimit <= 0 {
+		return DefaultLikeLimit
+	}
+	if c.LikeLimit > MaxLikeLimit {
+		return MaxLikeLimit
+	}
+	return c.LikeLimit
+}
+
+// SaveLikeLimit persists how many neighbours a ranking returns.
+func (c *Config) SaveLikeLimit(n int) error {
+	if n < 0 {
+		n = 0
+	}
+	if n > MaxLikeLimit {
+		n = MaxLikeLimit
+	}
+	c.LikeLimit = n
+	return c.SaveConfig(c)
+}
+
+// GetLikeMaxDistance reports the ceiling, in checker-pips, beyond which a
+// position stops being a neighbour. Zero means no ceiling.
+func (c *Config) GetLikeMaxDistance() int {
+	if c.LikeMaxDistance < 0 {
+		return 0
+	}
+	return c.LikeMaxDistance
+}
+
+// SaveLikeMaxDistance persists that ceiling. Zero removes it.
+func (c *Config) SaveLikeMaxDistance(d int) error {
+	if d < 0 {
+		d = 0
+	}
+	c.LikeMaxDistance = d
+	return c.SaveConfig(c)
 }
 
 // SaveUIScale persists the given interface scale (percentage) to disk, clamped

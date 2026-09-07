@@ -8,6 +8,7 @@
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
     import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
     import { attachBoardInteractions } from '../utils/boardInteractions.js';
+    import { rankNeighboursOfCurrentPosition } from '../services/rankService.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -389,6 +390,15 @@
         const position = get(positionStore);
         if (position?.id) {
             items.push(...ankiDeckMenuItems(position.id));
+            // « Positions voisines » (ADR-0043) : le geste est « je regarde
+            // une position et je me demande si je l'ai déjà vue ». Il part
+            // donc d'ici, du plateau, et pas seulement de la ligne de
+            // commande. Un plateau brouillon (id 0) n'a pas de voisines à
+            // demander : il n'est dans aucune bibliothèque.
+            items.push({
+                label: $t('board.menu.neighbours'),
+                onClick: () => rankNeighboursOfCurrentPosition()
+            });
         }
 
         boardMenu = { x, y, items };

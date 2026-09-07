@@ -58,6 +58,14 @@ export function GetLastDatabasePath() {
   return window['go']['main']['Config']['GetLastDatabasePath']();
 }
 
+export function GetLikeLimit() {
+  return window['go']['main']['Config']['GetLikeLimit']();
+}
+
+export function GetLikeMaxDistance() {
+  return window['go']['main']['Config']['GetLikeMaxDistance']();
+}
+
 export function GetPanelHeight() {
   return window['go']['main']['Config']['GetPanelHeight']();
 }
@@ -156,6 +164,14 @@ export function SaveLanguage(arg1) {
 
 export function SaveLastDatabasePath(arg1) {
   return window['go']['main']['Config']['SaveLastDatabasePath'](arg1);
+}
+
+export function SaveLikeLimit(arg1) {
+  return window['go']['main']['Config']['SaveLikeLimit'](arg1);
+}
+
+export function SaveLikeMaxDistance(arg1) {
+  return window['go']['main']['Config']['SaveLikeMaxDistance'](arg1);
 }
 
 export function SavePanelHeight(arg1) {
