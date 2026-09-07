@@ -15,7 +15,7 @@ Opérateurs KLM, valeurs standard (Card, Moran & Newell) retenues pour tout le d
 | B | 0,10 s | presser ou relâcher un bouton (un clic = 0,20 s) |
 | H | 0,40 s | déplacer la main clavier ↔ souris |
 | M | 1,35 s | préparation mentale ; **comptée une fois par décision de l'utilisateur**, identique entre designs, donc hors comparaison |
-| R | mesuré | attente du système : 0-ply < 1 ms, aller-retour Wails ≈ 1 ms, 2-ply 55–277 ms **hors chemin** |
+| R | mesuré | attente du système : liste 0-ply d'un jet 0,8–1,2 ms (mesuré, §7), aller-retour Wails ≈ 1 ms, 2-ply 55–277 ms **hors chemin** |
 
 Loi de Fitts pour affiner P quand la taille de cible varie : `T = a + b · log2(D/W + 1)`,
 `a = 0`, `b = 0,15 s/bit` ; sur une fenêtre de 1024 px, D ≈ 300 px du plateau au panneau.
@@ -139,13 +139,22 @@ trois designs tient donc, seule la valeur absolue était optimiste de 0,07 s.
 | candidat voisin, vu aussitôt | `j` | 0,28 s |
 | erreur vue un tour plus tard, dés déjà tapés | Retour, `h`, `j`, `l` | 4 K = 1,12 s |
 | erreur vue k tours plus tard | Retour, `h`×k, `j`/`k`×m, `l`×k | (1 + 2k + m) K ; k = 5, m = 1 → 3,4 s |
-| coup oublié | `h`×k, `i`, `3` `1` (`j`…), `l`×k | (2k + 3 + m) K |
+| coup oublié | `h`×k, `i`, `3` `1` (`j`…), Entrée, `l`×k | (2k + 4 + m) K |
 | coup en double | `h`×k, `x`, `l`×k | (2k + 1) K |
 | camp faux | `h`×k, `s`, `l`×k | (2k + 1) K |
 
 Le coût d'une correction croît avec la distance k, jamais avec la longueur du match : le
 Replay est de l'ordre de la milliseconde et n'entre pas dans le budget. À la souris, un clic
 sur la cellule du Transcript remplace `h`×k (P B B = 1,3 s).
+
+**Mesuré le 2026-09-07, ligne « coup oublié ».** Elle coûte une touche de plus que ce
+document annonçait : `2k + 4 + m` et non `2k + 3 + m`. Un déplacement du Cursor valide une
+correction EN PLACE — c'est ce qui garde la ligne « erreur vue un tour plus tard » à quatre
+touches — mais il ne valide pas une INSERTION : `commitCorrection` (`transcript/apply.go`) ne
+commet qu'une Entry de mode `EntryReplace`, et le moteur interrogé laisse le document à sept
+Actions sur un `cursor_forward` là où `validate` le porte à huit. La touche qui manquait est
+Entrée. Les deux autres lignes en `2k + 1` sont inchangées : `x` et `s` agissent sur l'Action
+au Cursor et n'ouvrent aucune saisie.
 
 ### 4.4 Le match entier
 
@@ -193,10 +202,19 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
 
 - **Prototype jetable** (skill `prototype`) avant le lot 2 : le triangle des 21 jets et la
   liste filtrable, pour confirmer les P mesurés ci-dessus sur une vraie fenêtre.
-- **Specs Playwright** (lot 3) : une spec par ligne des tableaux 4.1–4.3, qui compte les
-  `keyboard.press`/`mouse.click` émis et échoue si le nombre dépasse le budget, sous
-  `frontend/tests/e2e/`. Le conflit de port avec gammonGo est déjà paré dans le dépôt par
-  `BLUNDERDB_E2E_PORT` (`frontend/playwright.config.js`).
+- **Specs Playwright** — ÉCRITES le 2026-09-07 :
+  `frontend/tests/e2e/transcription-budgets.spec.js`, dix-sept specs qui comptent les gestes
+  par `helpers/gestureCount.js` et échouent au-delà du budget (vérifié : deux touches
+  superflues font rougir « meilleur coup joué »). Le moteur Go y est remplacé par un
+  document figé (`helpers/transcriptionDraft.js`) qui ne dérive que deux faits, le Cursor et
+  la réponse attendue après un double ; ce que la suite de gestes produit comme DOCUMENT est
+  tenu en Go, Action par Action. Deux lignes de §4.1 ne sont pas là et ne le seront pas
+  ainsi : « filtré par clic sur le point de départ » et « coup joué au plateau » passent par
+  un point du damier, dessiné par two.js et sans cible DOM — les viser à la coordonnée
+  donnerait une spec instable pour une mesure que `transcriptionFilter.test.js` fait déjà en
+  comptant clics et touches. La ligne « videau à la souris » de §4.2 attend T2.5. Le conflit
+  de port avec gammonGo est paré par `BLUNDERDB_E2E_PORT`
+  (`frontend/playwright.config.js`).
 - **Latence** — MESURÉE le 2026-09-07, le seuil de 20 ms annoncé ici était faux d'un facteur
   cinq. Un rejeu complet de 300 Actions coûte **39 ms** (101 ms sur un document plus dense),
   entièrement dans `domain.LegalMoves` (175 µs un jet ordinaire, 3,6 ms un double). Le rejeu
@@ -205,3 +223,15 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
   invalide. Les tests figent les deux : un seuil de 5 ms pour l'ajout, et l'égalité stricte
   entre le rejeu incrémental et le rejeu complet sur un document couvrant tous les `kind` et
   toutes les incohérences.
+- **Latence de la liste 0-ply** — MESURÉE le 2026-09-07
+  (`internal/gui/transcription_latency_test.go`, position de contact, 892 coups sur les
+  21 jets). Le geste de chaque tour — `domain.LegalMoves` d'un jet puis le classement 0-ply
+  de ses coups, les deux appels que fait `computeCandidates` — coûte **0,8 à 1,2 ms**, soit
+  un trentième de son seuil de 30 ms. Le coup joué au plateau, qui balaie les 21 jets pour
+  déduire lequel a été lancé, coûte **5 à 6,6 ms** ; son seuil est posé à 60 ms, le double
+  de celui annoncé, parce que le même travail a pris 19 ms sur une machine chargée et qu'un
+  garde-fou qui rougit chez le voisin ne garde rien. Le seuil de 30 ms proposé pour « les
+  21 jets triés au 0-ply » est en revanche **démenti** : ce balayage coûte 35 à 46 ms, et
+  jusqu'à 177 ms sous charge. Il ne l'est que pour un geste qui n'existe pas — rien dans
+  l'application ne classe vingt et un jets — et il reste mesuré, sans seuil serré, comme
+  prix de la question que §4.1 laisse ouverte.

@@ -105,10 +105,17 @@ describe('ux.md §4.3 — erreur vue k tours plus tard', () => {
 });
 
 describe('ux.md §4.3 — coup oublié', () => {
+    // 2k + 4 + m, et non 2k + 3 + m comme ux.md l'annonçait jusqu'au
+    // 2026-09-07 : une insertion N'EST PAS validée par le déplacement du
+    // Cursor. `commitCorrection` (transcript/apply.go) ne commet qu'une Entry
+    // de mode `EntryReplace` — la correction en place, celle qui garde la ligne
+    // « erreur vue un tour plus tard » à quatre touches. Le moteur interrogé
+    // laisse le document à sept Actions sur un `cursor_forward` là où
+    // `validate` le porte à huit : la touche qui manquait est Entrée.
     test.each([
         [1, 0],
         [5, 1]
-    ])('k=%i, m=%i : 2k + 3 + m touches', (k, m) => {
+    ])('k=%i, m=%i : 2k + 4 + m touches', (k, m) => {
         const back = Array.from({ length: k }, () => 'KeyH');
         const forward = Array.from({ length: k }, () => 'KeyL');
         const walk = Array.from({ length: m }, () => 'KeyJ');
@@ -119,10 +126,12 @@ describe('ux.md §4.3 — coup oublié', () => {
 
         const rolled = press(['Digit3', 'Digit1'], { state: inserted.state });
         const chosen = press(walk, { state: applyCandidates(rolled.state, 4).state });
-        const home = press(forward, { state: chosen.state });
+        const validated = press(['Enter'], { state: chosen.state });
+        expect(kinds(validated.commands)).toEqual([COMMAND.VALIDATE]);
+        const home = press(forward, { state: validated.state });
 
-        const total = walked.keys + inserted.keys + rolled.keys + chosen.keys + home.keys;
-        expect(total).toBeLessThanOrEqual(2 * k + 3 + m);
+        const total = walked.keys + inserted.keys + rolled.keys + chosen.keys + validated.keys + home.keys;
+        expect(total).toBeLessThanOrEqual(2 * k + 4 + m);
     });
 
     test('`a` insère derrière, pour le coup oublié qui suit celui du Cursor', () => {
