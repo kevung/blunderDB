@@ -13,7 +13,7 @@ import (
 // EngineVersion is the Nicomaque tag this build embeds. It is stored with every Direction and
 // shown by the credit button, so a replay problem can be traced to the engine that wrote it.
 // Keep it in step with the require line in go.mod.
-const EngineVersion = "v0.1.0"
+const EngineVersion = "v0.2.0"
 
 // State is where a Direction stands in its life (ADR-0047 § "Le cycle de vie").
 type State string
@@ -216,12 +216,23 @@ func (d *Direction) Start(ctx context.Context, seed int64, now time.Time, entrie
 	return d.store.UpdateDirection(ctx, d.rec)
 }
 
-// Propose asks the engine what to do now. It returns nothing while the Direction is a draft.
+// Propose asks the engine what to do now — at the host's clock.
+//
+// The engine has no clock of its own and refuses to invent one, so it takes the instant as an
+// argument (Nicomaque v0.2.0). It matters: a micro-round's countdown and a break's warning are
+// both answers to "what time is it", and calling the clockless Propose() would freeze them at
+// the last recorded event. Returns nothing while the Direction is a draft.
 func (d *Direction) Propose() []tournoi.Action {
+	return d.ProposeAt(time.Now())
+}
+
+// ProposeAt asks the engine what to do at a given instant. Tests pass a fixed one so a run is
+// reproducible; the panel passes the wall clock.
+func (d *Direction) ProposeAt(now time.Time) []tournoi.Action {
 	if d.st == nil {
 		return nil
 	}
-	return d.st.Propose()
+	return d.st.ProposeAt(now)
 }
 
 // Warnings are the engine's standing complaints: a bracket match played by the wrong players, a

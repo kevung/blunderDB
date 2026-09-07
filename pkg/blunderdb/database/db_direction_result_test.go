@@ -70,9 +70,7 @@ func TestResultBeyondLengthIsAcceptedAndFlagged(t *testing.T) {
 		}
 	}
 	if !found {
-		t.Skip("the engine only recomputes its warnings on a correction, not on an ordinary " +
-			"result, so an impossible score goes unflagged until then — reported upstream " +
-			"(Nicomaque, check() is called from recompute() alone)")
+		t.Errorf("a score beyond the length must be flagged as soon as it is entered: %v", v.Warnings)
 	}
 }
 
