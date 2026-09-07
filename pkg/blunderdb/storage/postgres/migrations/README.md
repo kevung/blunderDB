@@ -174,7 +174,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   about a score, and a score card points at no position. Every existing card
   is backfilled to `position` with its id as key. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.23.0.
-- `025_set_null_names_its_column.sql` — `match.import_batch_id` (019) and
+- `026_set_null_names_its_column.sql` — `match.import_batch_id` (019) and
   `transcription.match_id` (021) get the `SET NULL (column)` list that `001`
   and `017` already use. Without it a composite `ON DELETE SET NULL` nulls
   `tenant_id` too and the delete fails on its NOT NULL instead of unlinking
