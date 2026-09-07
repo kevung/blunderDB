@@ -1853,6 +1853,17 @@
                 "leaving": "lähtee ottelun jälkeen"
             },
             "error": "Ilmoittautumista ei voitu kirjata."
+        },
+        "bracket": {
+            "current": "käynnissä",
+            "notDrawn": "ei vielä arvottu",
+            "pending": "—",
+            "running": "käynnissä",
+            "walkover": "vapaakierros",
+            "skipped": "ei pelattu",
+            "byes": "Vapaakierrokset",
+            "playoff": "Ratkaisu pelaajien {players} välillä {spots} paikasta.",
+            "none": "Ei vielä kaaviota."
         }
     }
 }

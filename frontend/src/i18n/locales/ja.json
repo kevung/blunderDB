@@ -1853,6 +1853,17 @@
                 "leaving": "試合後に退出"
             },
             "error": "登録できませんでした。"
+        },
+        "bracket": {
+            "current": "進行中",
+            "notDrawn": "未抽選",
+            "pending": "—",
+            "running": "対戦中",
+            "walkover": "不戦勝",
+            "skipped": "不実施",
+            "byes": "不戦勝",
+            "playoff": "{spots}枠をめぐる {players} のプレーオフ。",
+            "none": "まだトーナメント表はありません。"
         }
     }
 }
