@@ -24,7 +24,11 @@
 
     let {
         config = $bindable(),
-        state = 'draft',
+        // Le nom compte : une prop nommée `state` ferait lire la rune `$state` de ce fichier
+        // comme un abonnement au store `state` — Svelte 5 résout `$x` en abonnement dès qu'un
+        // `x` est en portée. L'écran des Réglages a planté ainsi pendant une journée, invisible
+        // aux tests unitaires, jusqu'à la première spec de bout en bout (#390).
+        directionState = 'draft',
         tournamentName = '',
         onApply = () => {},
         onDelete = null,
@@ -38,7 +42,7 @@
         onOpenPage = null
     } = $props();
 
-    const isDraft = $derived(state === 'draft');
+    const isDraft = $derived(directionState === 'draft');
 
     /* Les cinq formats de phase du moteur. Ce sont des IDENTIFIANTS : leur nom lisible passe
        par direction.format.<kind>, comme partout ailleurs. */
