@@ -2,9 +2,13 @@ package database
 
 import (
 	"context"
+	"encoding/csv"
+	"strconv"
+	"strings"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	"github.com/PileOfCells/backgammon-tournoi/render"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -62,7 +66,10 @@ func (d *Database) Standings(tournamentID int64) (*StandingsView, error) {
 	}
 	v.Retained = v.Pool - v.Payable
 
-	overall := StandingsSection{Rows: rowsFor(st, st.Ranking(), nil)}
+	// The overall ranking has a scale of its own, under the key `all`. Passing nil here paid
+	// nobody at all when a director had put their whole prize fund on the general standings —
+	// the commonest configuration there is (found by the arithmetic test of #393).
+	overall := StandingsSection{Rows: rowsFor(st, st.Ranking(), st.PrizeAmounts(tournoi.PrizeSectionAll))}
 	v.Sections = append(v.Sections, overall)
 
 	// A section with prizes of its own ranks and pays on its own: the consolation's winner is
@@ -111,17 +118,52 @@ func rowsFor(st *tournoi.State, ranking []tournoi.Rank, amounts []float64) []Sta
 	return out
 }
 
-// StandingsCSV exports the standings as the engine writes them.
+// StandingsCSV exports the standings in the USER'S LANGUAGE.
+//
+// The engine writes a CSV of its own, and it writes it in French — headings and ranking notes
+// alike. That is fine for its own console and wrong here: this file is pasted into a director's
+// accounts, and blunderDB speaks nine languages. So the CSV is built from the same catalogue the
+// display page and the pairing sheet use (issue #386), and a ranking note goes through the same
+// labeler rather than through the engine's `String()`.
+//
+// The separator stays a semicolon, which is what shipped and what a French spreadsheet opens
+// without being asked.
 func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	v, err := d.Standings(tournamentID)
 	if err != nil {
 		return "", err
 	}
-	st := dir.State()
-	if st == nil {
+	if v == nil {
 		return "", direction.ErrNoDirection
 	}
-	return string(st.StandingsCSV()), nil
+	cat, _ := d.directionStrings()
+	l := direction.NewLabeler(cat, nil)
+	var b strings.Builder
+	w := csv.NewWriter(&b)
+	w.Comma = ';'
+	head := []string{
+		l.Term(render.TermPhase, 0), l.Term(render.TermRank, 0), "id",
+		l.Term(render.TermPlayer, 0), l.Term(render.TermClub, 0),
+		l.Term(render.TermState, 0), l.Term(render.TermPrize, 0),
+	}
+	if err := w.Write(head); err != nil {
+		return "", err
+	}
+	for _, sec := range v.Sections {
+		name := l.SectionName(sec.Name)
+		for _, r := range sec.Rows {
+			prize := ""
+			if r.Prize != 0 {
+				prize = strconv.FormatFloat(r.Prize, 'f', 2, 64)
+			}
+			row := []string{name, strconv.Itoa(r.Rank), r.ID, r.Name, r.Club, l.Note(r.Note), prize}
+			if err := w.Write(row); err != nil {
+				return "", err
+			}
+		}
+	}
+	w.Flush()
+	return b.String(), w.Error()
 }
 
 // CloseDirection closes the tournament and freezes the final standings.

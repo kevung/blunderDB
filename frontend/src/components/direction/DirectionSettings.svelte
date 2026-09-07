@@ -136,6 +136,66 @@
         phase.lengths = parsed.length ? parsed : undefined;
     }
 
+    /*
+     * La dotation (issue #393).
+     *
+     * Un droit d'entrée, une retenue pour le club, et un barème PAR SECTION : le vainqueur de
+     * la consolante n'est pas le finaliste du tournoi, et le payer sur le classement général
+     * dirait le contraire.
+     *
+     * Aucune devise n'est supposée : les montants sont des nombres, écrits avec les séparateurs
+     * de la langue de l'utilisateur, et le directeur sait dans quelle monnaie il encaisse.
+     */
+    const prizeSections = ['all', 'main', 'conso', 'last'];
+
+    function prizes() {
+        if (!config.prizes) config.prizes = {};
+        if (!config.prizes.retention) config.prizes.retention = {};
+        if (!config.prizes.sections) config.prizes.sections = {};
+        return config.prizes;
+    }
+
+    function scaleText(section) {
+        const sc = config.prizes?.sections?.[section];
+        if (!sc) return '';
+        return (sc.percents || sc.amounts || []).join(', ');
+    }
+
+    /* Un barème se saisit en une ligne : « 50, 30, 20 ». Le signe % dit lequel des deux champs
+       du moteur est rempli — des pourcentages du distribuable, ou des montants fixes. */
+    function setScale(section, text, asPercent) {
+        const list = String(text)
+            .split(/[,;]/)
+            .map((x) => parseFloat(x.trim().replace(',', '.')))
+            .filter((n) => Number.isFinite(n) && n > 0);
+        const p = prizes();
+        if (!list.length) {
+            const next = { ...p.sections };
+            delete next[section];
+            p.sections = next;
+            return;
+        }
+        p.sections = { ...p.sections, [section]: asPercent ? { percents: list } : { amounts: list } };
+    }
+
+    function isPercent(section) {
+        const sc = config.prizes?.sections?.[section];
+        return !sc || !!sc.percents;
+    }
+
+    /* Le pool, à côté de l'effectif : il se recalcule à chaque inscription et chaque retrait,
+       sans que personne ait à le demander. */
+    const pool = $derived((config?.prizes?.entry_fee || 0) * entrantCount);
+    const retained = $derived.by(() => {
+        const r = config?.prizes?.retention || {};
+        return Math.min(pool, (pool * (r.percent || 0)) / 100 + (r.amount || 0));
+    });
+    const payable = $derived(Math.max(0, pool - retained));
+
+    function money(v) {
+        return (v || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+
     /* La liste de contrôle : ce que « Enregistrer » va faire, montré avant de le faire. */
     let pending = $state(null);
     const blocked = $derived(!!pending && pending.refusals && pending.refusals.length > 0);
@@ -277,6 +337,59 @@
                     {/if}
                 </p>
             {/if}
+        </section>
+
+        <section>
+            <h3>{$t('direction.settings.prizes')}</h3>
+            <div class="row">
+                <label title={$t('direction.settings.entryFeeHint')}>
+                    {$t('direction.settings.entryFee')}
+                    <input type="number" min="0" step="1" value={config.prizes?.entry_fee || 0} onchange={(e) => (prizes().entry_fee = parseFloat(e.currentTarget.value) || 0)} />
+                </label>
+                <label title={$t('direction.settings.retentionPercentHint')}>
+                    {$t('direction.settings.retentionPercent')}
+                    <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={config.prizes?.retention?.percent || 0}
+                        onchange={(e) => (prizes().retention = { ...prizes().retention, percent: parseFloat(e.currentTarget.value) || 0 })}
+                    />
+                </label>
+                <label title={$t('direction.settings.retentionAmountHint')}>
+                    {$t('direction.settings.retentionAmount')}
+                    <input
+                        type="number"
+                        min="0"
+                        value={config.prizes?.retention?.amount || 0}
+                        onchange={(e) => (prizes().retention = { ...prizes().retention, amount: parseFloat(e.currentTarget.value) || 0 })}
+                    />
+                </label>
+            </div>
+            {#if pool > 0}
+                <p class="facts">
+                    {$t('direction.settings.pool', { pool: money(pool), retained: money(retained), payable: money(payable) })}
+                </p>
+            {/if}
+            <ul class="scales">
+                {#each prizeSections as section (section)}
+                    <li>
+                        <span class="scale-name">{$t(`direction.settings.scale_${section}`)}</span>
+                        <input
+                            type="text"
+                            class="scale"
+                            value={scaleText(section)}
+                            placeholder={$t('direction.settings.scalePlaceholder')}
+                            title={$t('direction.settings.scaleHint')}
+                            onchange={(e) => setScale(section, e.currentTarget.value, isPercent(section))}
+                        />
+                        <label title={$t('direction.settings.percentHint')}>
+                            <input type="checkbox" checked={isPercent(section)} onchange={(e) => setScale(section, scaleText(section), e.currentTarget.checked)} />
+                            {$t('direction.settings.percent')}
+                        </label>
+                    </li>
+                {/each}
+            </ul>
         </section>
 
         <section>
@@ -608,5 +721,41 @@
        coup d'œil, sans défilement dans le champ. */
     input.lengths {
         width: 9rem;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+    }
+
+    .scales {
+        list-style: none;
+        margin: 0.3rem 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .scales li {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .scale-name {
+        min-width: 9rem;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+    }
+
+    input.scale {
+        width: 9rem;
+    }
+
+    input[type='checkbox'] {
+        width: auto;
     }
 </style>
