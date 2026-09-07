@@ -11,7 +11,8 @@
 // It walks cli.CommandNames() (the exported, sorted view of the same
 // handlers() table main.go's mode dispatch trusts), plus the two composite
 // commands' own sub-command tables (cli.CollectionSubcommands(),
-// cli.AnkiSubcommands()), invoking each in-process with a trailing --help
+// cli.AnkiSubcommands(), cli.TournamentSubcommands()), invoking each
+// in-process with a trailing --help
 // and capturing what its Usage() prints to stdout. `help` and `version` are
 // skipped: neither takes flags, so there is nothing here for them to drift
 // on.
@@ -44,7 +45,7 @@ var skip = map[string]bool{"help": true, "version": true}
 
 // composite maps a top-level command to the accessor for its own
 // sub-command names, for the commands whose flags live one level down
-// (`collection <sub>`, `anki <sub>`, `bearoff <sub>`) rather than on the
+// (`collection <sub>`, `anki <sub>`, `bearoff <sub>`, `tournament <sub>`) rather than on the
 // top-level command itself.
 func composite(name string) []string {
 	switch name {
@@ -54,6 +55,8 @@ func composite(name string) []string {
 		return cli.NewCLI().AnkiSubcommands()
 	case "bearoff":
 		return cli.NewCLI().BearoffSubcommands()
+	case "tournament":
+		return cli.NewCLI().TournamentSubcommands()
 	default:
 		return nil
 	}

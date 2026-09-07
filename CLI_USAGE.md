@@ -1016,6 +1016,28 @@ diff match.mat out.mat
 ./blunderDB transcribe --db database.db --draft 3 --check
 ```
 
+## Tournament Command
+
+Read a directed tournament without a graphical interface. Directing one
+interactively is the engine's own console (Nicomaque ships it); these
+sub-commands only read, and none of them waits for input.
+
+Use it after a tournament rather than during one: `verify` is the check you run
+on last season's databases, `standings` is what goes into the accounts, `page`
+is what goes on the second screen, and `export` is the way out — the raw journal
+is the whole truth of a direction, and a tool that reads it needs no blunderDB.
+
+```bash
+./blunderDB tournament list --db database.db
+./blunderDB tournament verify --db database.db --id 3
+./blunderDB tournament standings --db database.db --id 3 > standings.csv
+./blunderDB tournament page --db database.db --id 3 --out /tmp/display
+./blunderDB tournament export --db database.db --id 3 > journal.json
+```
+
+`verify` **exits in error** when a warning remains after the replay: a script
+that runs it over a season's databases wants a status, not a line to grep.
+
 ## Trash Command
 
 What was deleted through the trash, and how to put it back. A delete is still a
@@ -2675,6 +2697,99 @@ Examples:
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
+### `blunderdb tournament export`
+
+```
+Usage: blunderdb tournament export [options]
+
+Print the raw event journal of a direction.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Tournament ID (required)
+
+Examples:
+  blunderdb tournament export --db base.db --id 3 > journal.json
+```
+
+### `blunderdb tournament list`
+
+```
+Usage: blunderdb tournament list [options]
+
+List the directed tournaments of the database.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb tournament list --db base.db
+  blunderdb tournament list --db base.db --format json
+```
+
+### `blunderdb tournament page`
+
+```
+Usage: blunderdb tournament page [options]
+
+Write the standalone display page of a direction.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Tournament ID (required)
+  -out string
+    	Folder to write the page into (default: standard output)
+
+Examples:
+  blunderdb tournament page --db base.db --id 3 > affichage.html
+  blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
+```
+
+### `blunderdb tournament standings`
+
+```
+Usage: blunderdb tournament standings [options]
+
+Print the standings of a direction as CSV.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Tournament ID (required)
+
+Examples:
+  blunderdb tournament standings --db base.db --id 3
+  blunderdb tournament standings --db base.db --id 3 > classement.csv
+```
+
+### `blunderdb tournament verify`
+
+```
+Usage: blunderdb tournament verify [options]
+
+Replay a direction and report any remaining warning. Exits in error if one remains.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Tournament ID (required)
+
+Examples:
+  blunderdb tournament verify --db base.db --id 3
+  blunderdb tournament verify --db base.db --id 3 --format json
+```
+
 ### `blunderdb transcribe`
 
 ```
@@ -2690,8 +2805,9 @@ is replayed is what an export of it would contain.
 --check lists the inconsistencies: an illegal play, two
 turns in a row for the same player, an impossible cube
 action, an action past the end of the match, a play that
-does not use its own roll. Each is named with the action
-number and the game it belongs to.
+does not use its own roll, a play the record does not
+carry (gnubg writes it "???"). Each is named with the
+action number and the game it belongs to.
 
 An inconsistency is REPORTED, never held against the
 input: nothing is refused for one, and the exit status is

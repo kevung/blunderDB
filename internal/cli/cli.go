@@ -123,6 +123,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"transcribe":  cli.runTranscribe,
 		"collection":  cli.runCollection,
 		"anki":        cli.runAnki,
+		"tournament":  cli.runTournament,
 		"bearoff":     cli.runBearoff,
 		"healthcheck": cli.runHealthcheck,
 		"completion":  cli.runCompletion,
@@ -175,6 +176,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")
 	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
 	fmt.Println("  transcribe  Replay a .mat, a match or a draft and report its inconsistencies")
+	fmt.Println("  tournament  Read a directed tournament (list, verify, standings, page, export)")
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")
