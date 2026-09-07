@@ -123,6 +123,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Positions/SimilarWithoutAMatchExcludesNothing", testSimilarWithoutAMatchExcludesNothing},
 		{"Positions/SimilarRanksAgainstADrawnBoard", testSimilarRanksAgainstADrawnBoard},
 		{"Anki/CubePairsAreChained", testAnkiCubePairsAreChained},
+		{"Anki/ScoreDeckHoldsScores", testAnkiScoreDeckHoldsScores},
 		{"Collection/FilterQueryRoundTrips", testCollectionFilterQuery},
 		{"LibrarySettings/DefaultsWhenNeverSet", testLibrarySettingsDefaults},
 		{"LibrarySettings/RoundTrip", testLibrarySettingsRoundTrip},

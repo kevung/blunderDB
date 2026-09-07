@@ -133,8 +133,34 @@ export function sourceLabel(deck, collections = []) {
         const coll = collections.find((c) => c.id === deck.sourceId);
         return coll ? coll.name : `Collection #${deck.sourceId}`;
     }
+    if (deck.sourceType === SOURCE_SCORES) return 'Score sheets';
     if (!deck.sourceCommand) return 'Search';
     return parseSourceCommand(deck.sourceCommand).command ?? 'Search';
+}
+
+/**
+ * A deck of score sheets (ADR-0042 rule 2). The application fills it with the
+ * 36 unordered scores of 2 to 9 away — the user enters none of them, and the
+ * cards hold no position, which is why so much of what follows asks the KIND
+ * of a card rather than looking for its position.
+ */
+export const SOURCE_SCORES = 'scores';
+
+/** A card that asks about a score rather than about a position. */
+export function isScoreCard(card) {
+    return card?.card?.kind === 'score';
+}
+
+/**
+ * The two aways of a score card, smaller first, or null when the key is not
+ * one. Read from the card's key rather than from a table: the deck states
+ * which scores it holds, the review view only renders what it is handed.
+ */
+export function scoreCardAways(card) {
+    const key = card?.card?.key ?? '';
+    const [a, b] = key.split(':').map((n) => Number.parseInt(n, 10));
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+    return a <= b ? [a, b] : [b, a];
 }
 
 /**
@@ -263,6 +289,8 @@ export async function syncAllDecksAndReload() {
  */
 export async function createDeck({ name, sourceType, sourceId, lastSearch = null, positionIds = [] }) {
     const search = sourceType === 'search';
+    // A score deck names no source of its own: syncDeckCards below asks the
+    // backend to state its 36 cards.
     const sourceCommand = search ? buildSearchSource(lastSearch, positionIds) : '';
     const deckId = await CreateAnkiDeck(name, '', sourceType, search ? 0 : sourceId, sourceCommand);
     await syncDeckCards({ id: deckId, sourceType, sourceCommand });
@@ -343,6 +371,11 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
  * revealed answer of ADR-0025 rule 1 would have inherited that lie.
  */
 export async function showCard(card) {
+    // A score card has no position: putting the previous card's board back on
+    // screen would be the very lie showPosition was introduced to stop (see
+    // the note above), so the board is left exactly as the user left it and
+    // the review view renders the score sheet instead.
+    if (isScoreCard(card)) return;
     await showPosition(card.position);
     const idx = positionsStore.indexOf(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);
@@ -429,7 +462,7 @@ export async function reviewCard(card, rating, { cram = false } = {}) {
  * @param {boolean} cram whether this is a cram session
  */
 async function setAsideAndAdvance(card, deck, cram) {
-    const next = cram ? await GetRandomAnkiCard(deck.id, card.position.id) : await GetNextAnkiCard(deck.id);
+    const next = cram ? await GetRandomAnkiCard(deck.id, isScoreCard(card) ? 0 : card.position.id) : await GetNextAnkiCard(deck.id);
     return await advance(next);
 }
 
@@ -471,7 +504,9 @@ export async function removeCard(card, deck, { cram = false } = {}) {
 
 /** Draw the next random card of a cram session, never the one just shown. */
 export async function nextCramCard(deck, card) {
-    const next = await GetRandomAnkiCard(deck.id, card.position.id);
+    // The exclusion names the POSITION just served, so a card that has none
+    // excludes nothing — a score deck simply draws freely from its 36 cards.
+    const next = await GetRandomAnkiCard(deck.id, isScoreCard(card) ? 0 : card.position.id);
     return await advance(next);
 }
 

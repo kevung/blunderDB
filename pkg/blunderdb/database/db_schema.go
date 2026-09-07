@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -304,6 +305,18 @@ func mergePositionInto(ctx context.Context, tx *sql.Tx, keepID, dupID int64) err
 		if _, err := tx.ExecContext(ctx, stmt, keepID, dupID); err != nil {
 			return fmt.Errorf("merging duplicate position %d into %d: %w", dupID, keepID, err)
 		}
+	}
+	// A position card names its position twice since 2.23.0 — in position_id
+	// and in the key that identifies it within its deck (ADR-0042) — so the
+	// key follows the merge. Best-effort on purpose: the 2.18.0 rehash calls
+	// this from inside the migration chain, ahead of the schema pass that
+	// creates the column, and there the key is written afterwards anyway by
+	// repairAnkiCardKinds.
+	for _, table := range []string{"anki_card", "anki_review_log"} {
+		_, _ = tx.ExecContext(ctx,
+			`UPDATE OR IGNORE `+table+` SET key = CAST(position_id AS TEXT)
+			 WHERE position_id = ? AND kind = ? AND key <> CAST(position_id AS TEXT)`,
+			keepID, domain.AnkiKindPosition)
 	}
 	// The analysis blob names its position inside the JSON as well as in the
 	// row, so it is re-encoded rather than merely re-pointed.
