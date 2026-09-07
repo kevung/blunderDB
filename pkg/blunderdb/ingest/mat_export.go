@@ -117,29 +117,71 @@ func renderMATGame(b *strings.Builder, m *domain.Match, p1, p2 string, g *domain
 	left := fmt.Sprintf(" %s : %d", p1, g.InitialScore[0])
 	fmt.Fprintf(b, "%s%s%s : %d\n", left, gap(len(left), 30), p2, g.InitialScore[1])
 
-	plays := movesToPlays(moves)
-	line := 1
+	rows := layoutRows(movesToPlays(moves))
+
+	// The result is a cell like any other, and it belongs to the WINNER: gnubg
+	// writes " Wins N points" in the winner's column, appended to the running
+	// line when that column is still free there and otherwise on a line of its
+	// own — a line with no number, because no turn was played on it. Writing it
+	// at the margin instead, as this did, put it in player 1's column whatever
+	// the game had decided, so every game player 2 won came back from a
+	// round-trip credited to player 1.
+	unnumbered := -1
+	if wins := winsLine(m, g); wins != "" {
+		winner := int32(1)
+		if g.Winner == 1 {
+			winner = -1
+		}
+		last := len(rows) - 1
+		// Player 2's column can take the cell on the spot; player 1's opens a
+		// line, exactly as an ordinary play of theirs would.
+		if winner == -1 && last >= 0 && rows[last].left != "" && rows[last].right == "" {
+			rows[last].right = wins
+		} else if winner == 1 {
+			rows = append(rows, matRow{left: wins})
+			unnumbered = len(rows) - 1
+		} else {
+			rows = append(rows, matRow{right: wins})
+			unnumbered = len(rows) - 1
+		}
+	}
+
+	for i, row := range rows {
+		// The unnumbered line still starts at the column the numbers vacate, so
+		// the cell it carries stays under the ones above it.
+		head := fmt.Sprintf("%3d) ", i+1)
+		if i == unnumbered {
+			head = strings.Repeat(" ", len(head))
+		}
+		text := head + row.left + gap(len(row.left), 30) + row.right
+		b.WriteString(strings.TrimRight(text, " ") + "\n")
+	}
+}
+
+// matRow is one numbered line of a .mat game: player 1's cell and player 2's.
+type matRow struct{ left, right string }
+
+// layoutRows deals the cells into lines. A play by player 1 opens a line; a play
+// by player 2 joins the line player 1 just opened, or takes one of its own with
+// the left column blank.
+func layoutRows(plays []play) []matRow {
+	var rows []matRow
 	for i := 0; i < len(plays); {
-		var l, r string
+		var row matRow
 		if plays[i].player == 1 {
-			l = plays[i].text
+			row.left = plays[i].text
 			i++
 			if i < len(plays) && plays[i].player == -1 {
-				r = plays[i].text
+				row.right = plays[i].text
 				i++
 			}
 		} else {
-			r = plays[i].text
+			row.right = plays[i].text
 			i++
 		}
-		row := fmt.Sprintf("%3d) %s%s%s", line, l, gap(len(l), 30), r)
-		b.WriteString(strings.TrimRight(row, " ") + "\n")
-		line++
+		rows = append(rows, row)
 	}
-
-	if wins := winsLine(m, g); wins != "" {
-		b.WriteString(wins + "\n")
-	}
+	return rows
 }
 
 // movesToPlays turns stored moves into ordered cells, expanding a combined cube
