@@ -6,6 +6,10 @@ export function AddComment(arg1, arg2) {
   return window['go']['database']['Database']['AddComment'](arg1, arg2);
 }
 
+export function AddDirectionNote(arg1, arg2) {
+  return window['go']['database']['Database']['AddDirectionNote'](arg1, arg2);
+}
+
 export function AddMatchToTournament(arg1, arg2) {
   return window['go']['database']['Database']['AddMatchToTournament'](arg1, arg2);
 }
@@ -100,6 +104,10 @@ export function ClearSessionState() {
 
 export function Close() {
   return window['go']['database']['Database']['Close']();
+}
+
+export function CloseDirection(arg1) {
+  return window['go']['database']['Database']['CloseDirection'](arg1);
 }
 
 export function CloseTranscription(arg1) {
@@ -474,6 +482,10 @@ export function HasDirection(arg1) {
   return window['go']['database']['Database']['HasDirection'](arg1);
 }
 
+export function History(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['History'](arg1, arg2, arg3);
+}
+
 export function ImportBGFMatch(arg1) {
   return window['go']['database']['Database']['ImportBGFMatch'](arg1);
 }
@@ -690,6 +702,10 @@ export function RemovePositionsFromCollection(arg1, arg2) {
   return window['go']['database']['Database']['RemovePositionsFromCollection'](arg1, arg2);
 }
 
+export function ReopenDirection(arg1) {
+  return window['go']['database']['Database']['ReopenDirection'](arg1);
+}
+
 export function ReorderCollectionPositions(arg1, arg2) {
   return window['go']['database']['Database']['ReorderCollectionPositions'](arg1, arg2);
 }
@@ -816,6 +832,18 @@ export function SetupDatabase(arg1) {
 
 export function SimilarPositions(arg1, arg2) {
   return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
+}
+
+export function SinceLastGesture(arg1, arg2) {
+  return window['go']['database']['Database']['SinceLastGesture'](arg1, arg2);
+}
+
+export function Standings(arg1) {
+  return window['go']['database']['Database']['Standings'](arg1);
+}
+
+export function StandingsCSV(arg1) {
+  return window['go']['database']['Database']['StandingsCSV'](arg1);
 }
 
 export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {

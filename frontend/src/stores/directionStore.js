@@ -23,7 +23,13 @@ import {
     UpdateParticipant,
     WithdrawParticipant,
     EnterParticipants,
-    Brackets
+    Brackets,
+    Standings,
+    StandingsCSV,
+    CloseDirection as CloseDirectionBinding,
+    ReopenDirection as ReopenDirectionBinding,
+    History,
+    AddDirectionNote
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -411,4 +417,66 @@ export async function brackets() {
         logger.error('direction: brackets failed', e);
         return [];
     }
+}
+/** Le classement et les prix, rejoués. */
+export async function standings() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    try {
+        return await Standings(id);
+    } catch (e) {
+        logger.error('direction: standings failed', e);
+        return null;
+    }
+}
+
+/** Le classement en CSV, tel que le moteur l'écrit. */
+export async function standingsCSV() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return '';
+    return StandingsCSV(id);
+}
+
+/**
+ * Clot le TOURNOI et fige le classement final — à ne pas confondre avec closeDirection, qui
+ * ferme seulement la vue. Le mot « fermer » a deux sens ici, et les confondre coûterait cher.
+ */
+export async function finishTournament() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await CloseDirectionBinding(id);
+    directionStore.set(view);
+    await refreshDirectionSummaries();
+    return view;
+}
+
+/** Rouvre un tournoi clos, parce qu'un résultat était faux. Le journal garde tout. */
+export async function reopenTournament() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await ReopenDirectionBinding(id);
+    directionStore.set(view);
+    await refreshDirectionSummaries();
+    return view;
+}
+
+/** L'historique des décisions, filtrable par joueur ou par match. */
+export async function history(player = '', match = '') {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    try {
+        return (await History(id, player, match)) || [];
+    } catch (e) {
+        logger.error('direction: history failed', e);
+        return [];
+    }
+}
+
+/** Une annotation libre du directeur, horodatée. */
+export async function addNote(text) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await AddDirectionNote(id, text);
+    directionStore.set(view);
+    return view;
 }

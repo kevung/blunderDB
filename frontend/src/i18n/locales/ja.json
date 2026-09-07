@@ -1867,6 +1867,42 @@
             "byes": "不戦勝",
             "playoff": "{spots}枠をめぐる {players} のプレーオフ。",
             "none": "まだトーナメント表はありません。"
+        },
+        "standings": {
+            "overall": "総合順位",
+            "note": "備考",
+            "prize": "賞金",
+            "csv": "書き出し（CSV）",
+            "close": "大会を終了",
+            "reopen": "再開",
+            "tiedHint": "同順位：順位と賞金は分け合います。",
+            "pool": "総額 {pool}・配分 {payable}・控除 {retained}",
+            "error": "大会を終了できませんでした。",
+            "copied": "順位をクリップボードにコピーしました。"
+        },
+        "history": {
+            "filter": "選手または試合で絞り込み",
+            "count": "{n}件",
+            "none": "表示するものがありません。",
+            "addNote": "備考を追加",
+            "notePlaceholder": "進行担当の覚え書き…",
+            "created": "大会を作成",
+            "entered": "{player} を登録",
+            "withdrawn": "{player} が棄権",
+            "started": "{a} – {b} 開始 · {where}",
+            "result": "{winner} が {scoreA}–{scoreB} で勝利",
+            "forfeit": "{winner} が不戦勝",
+            "corrected": "結果を訂正：{winner} の勝ち",
+            "cancelled": "試合 {match} を取り消し",
+            "bye": "不戦勝：{player}",
+            "draw": "抽選：{where}",
+            "nextPhase": "次のフェーズ",
+            "configChanged": "設定を変更",
+            "tableChanged": "卓{n}へ移動",
+            "lengthChanged": "マッチ長を{n}に変更",
+            "finished": "大会終了",
+            "reopened": "大会を再開",
+            "error": "備考を追加できませんでした。"
         }
     }
 }

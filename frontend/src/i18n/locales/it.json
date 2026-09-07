@@ -1867,6 +1867,42 @@
             "byes": "Esenzioni",
             "playoff": "Spareggio tra {players} per {spots} posto/i.",
             "none": "Nessun tabellone per ora."
+        },
+        "standings": {
+            "overall": "Classifica generale",
+            "note": "Nota",
+            "prize": "Premio",
+            "csv": "Esporta (CSV)",
+            "close": "Chiudi il torneo",
+            "reopen": "Riapri",
+            "tiedHint": "Pari merito: posto e premio sono divisi.",
+            "pool": "Monte {pool} · da distribuire {payable} · trattenuto {retained}",
+            "error": "Impossibile chiudere il torneo.",
+            "copied": "Classifica copiata negli appunti."
+        },
+        "history": {
+            "filter": "Filtra per giocatore o partita",
+            "count": "{n} voci",
+            "none": "Niente da mostrare.",
+            "addNote": "Annota",
+            "notePlaceholder": "Una nota del direttore…",
+            "created": "Torneo creato",
+            "entered": "{player} iscritto",
+            "withdrawn": "{player} ritirato",
+            "started": "{a} – {b} avviata · {where}",
+            "result": "{winner} vince {scoreA}–{scoreB}",
+            "forfeit": "{winner} vince per forfait",
+            "corrected": "Risultato corretto: vince {winner}",
+            "cancelled": "Partita {match} annullata",
+            "bye": "Esenzione: {player}",
+            "draw": "Sorteggio: {where}",
+            "nextPhase": "Fase successiva",
+            "configChanged": "Configurazione modificata",
+            "tableChanged": "Spostata al tavolo {n}",
+            "lengthChanged": "Lunghezza portata a {n}",
+            "finished": "Torneo chiuso",
+            "reopened": "Torneo riaperto",
+            "error": "Impossibile aggiungere questa nota."
         }
     }
 }

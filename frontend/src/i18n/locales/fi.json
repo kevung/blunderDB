@@ -1867,6 +1867,42 @@
             "byes": "Vapaakierrokset",
             "playoff": "Ratkaisu pelaajien {players} välillä {spots} paikasta.",
             "none": "Ei vielä kaaviota."
+        },
+        "standings": {
+            "overall": "Kokonaissijoitus",
+            "note": "Huomautus",
+            "prize": "Palkinto",
+            "csv": "Vie (CSV)",
+            "close": "Päätä turnaus",
+            "reopen": "Avaa uudelleen",
+            "tiedHint": "Tasapisteissä: sija ja palkinto jaetaan.",
+            "pool": "Potti {pool} · jaettavaa {payable} · pidätetty {retained}",
+            "error": "Turnausta ei voitu päättää.",
+            "copied": "Sarjataulukko kopioitu leikepöydälle."
+        },
+        "history": {
+            "filter": "Suodata pelaajan tai ottelun mukaan",
+            "count": "{n} merkintää",
+            "none": "Ei näytettävää.",
+            "addNote": "Lisää huomautus",
+            "notePlaceholder": "Johtajan huomautus…",
+            "created": "Turnaus luotu",
+            "entered": "{player} ilmoittautui",
+            "withdrawn": "{player} poistui",
+            "started": "{a} – {b} aloitettu · {where}",
+            "result": "{winner} voittaa {scoreA}–{scoreB}",
+            "forfeit": "{winner} voittaa luovutuksella",
+            "corrected": "Tulos korjattu: {winner} voittaa",
+            "cancelled": "Ottelu {match} peruttu",
+            "bye": "Vapaakierros: {player}",
+            "draw": "Arvonta: {where}",
+            "nextPhase": "Seuraava vaihe",
+            "configChanged": "Asetuksia muutettu",
+            "tableChanged": "Siirretty pöytään {n}",
+            "lengthChanged": "Pituudeksi {n}",
+            "finished": "Turnaus päättyi",
+            "reopened": "Turnaus avattu uudelleen",
+            "error": "Huomautusta ei voitu lisätä."
         }
     }
 }
