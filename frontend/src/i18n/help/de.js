@@ -1317,9 +1317,26 @@ export default {
 <td>Esc</td>
 <td>Die laufende Eingabe verwerfen.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Verdoppeln oder erneut verdoppeln: der ausgewählte Zug wird dabei mit bestätigt, in einer einzigen Taste.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Die angebotene Verdopplung annehmen: der Dopplerwürfel geht zum verdoppelten Wert an den Annehmenden, und der Verdoppelnde würfelt erneut.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Die angebotene Verdopplung aufgeben: die Partie wird zum Wert vor der Verdopplung gewonnen.</td>
+</tr>
+<tr>
+<td>r, dann 1, 2 oder 3</td>
+<td>Die Partie für die Seite am Zug aufgeben: einfach, Gammon oder Backgammon. Esc zwischen den beiden Tasten bricht ab, ohne etwas aufzuzeichnen.</td>
+</tr>
 </tbody>
 </table>
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
+<p>Eine Partie endet durch ein Aufgeben, durch eine Resignation oder durch das Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit dem Wert des Dopplerwürfels). Punktestand, Crawford-Partie und Matchende werden dann über den Würfeln angezeigt, und die Eröffnung der nächsten Partie wird erwartet.</p>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>

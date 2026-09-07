@@ -1091,7 +1091,24 @@
         "dance": "Nessuna mossa legale: la danza è registrata.",
         "unranked": "Valutazione non disponibile: le mosse legali sono nell'ordine del generatore.",
         "correctable": "Tiro ancora correggibile: una cifra lo ricomincia, Invio registra la mossa.",
-        "chosen": "Mossa scelta: una cifra la registra e apre il tiro successivo."
+        "chosen": "Mossa scelta: una cifra la registra e apre il tiro successivo.",
+        "gameNumber": "Partita {n}",
+        "cubeCentred": "Cubo {v} (al centro)",
+        "cubeOwned": "Cubo {v} · {player}",
+        "doubleOffered": "Raddoppio a {v}",
+        "answerPrompt": "Risposta di {player} al raddoppio",
+        "answerHint": "t = accetta, p = rifiuta.",
+        "resignPrompt": "Resa di {player}",
+        "resignHint": "1 = semplice, 2 = gammon, 3 = backgammon; Esc annulla.",
+        "matchOver": "Match terminato: {player} vince {a}–{b}.",
+        "inconsistencyPrefix": "Incoerenza:",
+        "inconsistency": {
+            "illegal_move": "mossa illegale",
+            "double_turn": "doppio turno",
+            "impossible_cube": "azione di cubo impossibile",
+            "past_end": "oltre la fine del match",
+            "inconsistent_dice": "mossa incoerente con il lancio"
+        }
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",

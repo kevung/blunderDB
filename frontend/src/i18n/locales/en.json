@@ -1091,7 +1091,24 @@
         "dance": "No legal play: the dance is recorded.",
         "unranked": "Evaluation unavailable: the legal plays are in the generator's order.",
         "correctable": "Roll still correctable: a digit starts it again, Enter records the play.",
-        "chosen": "Play chosen: a digit records it and opens the next roll."
+        "chosen": "Play chosen: a digit records it and opens the next roll.",
+        "gameNumber": "Game {n}",
+        "cubeCentred": "Cube {v} (centred)",
+        "cubeOwned": "Cube {v} · {player}",
+        "doubleOffered": "Double to {v}",
+        "answerPrompt": "{player}'s answer to the double",
+        "answerHint": "t = take, p = pass.",
+        "resignPrompt": "{player} resigns",
+        "resignHint": "1 = single, 2 = gammon, 3 = backgammon; Escape cancels.",
+        "matchOver": "Match over: {player} wins {a}–{b}.",
+        "inconsistencyPrefix": "Inconsistency:",
+        "inconsistency": {
+            "illegal_move": "illegal move",
+            "double_turn": "double turn",
+            "impossible_cube": "impossible cube action",
+            "past_end": "past the end of the match",
+            "inconsistent_dice": "play inconsistent with the roll"
+        }
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",

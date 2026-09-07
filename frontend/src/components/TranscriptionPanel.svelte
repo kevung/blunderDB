@@ -19,8 +19,19 @@
   panel's own — EvaluatePositionImmediate — and the table is the Eval panel's own
   component, mounted here exactly as EPCPanel mounts it.
 
-  What is not here yet: the cube (T1.4), the resignation (T1.5), the Transcript
-  column (T1.6), correcting through the Cursor (T1.7), saving (T1.9).
+  The cube is three keys: `d` doubles or redoubles, `t` takes, `p` passes, each
+  of them validating a play left selected before it (fonctionnel.md §6 flux 5-7).
+  A game ends by a pass, by a bear-off or past the cube — the score advances, the
+  Crawford game is derived, and the next opening is expected, all of it read off
+  the Replay and none of it computed here.
+
+  A resignation is `r` then `1`/`2`/`3`, `Escape` between the two cancelling it:
+  the game is given up by the side on roll, at that level times the cube, and it
+  adds no Move at all to the saved match — only the winner and the points of the
+  Game (ADR-0045 §6).
+
+  What is not here yet: the Transcript column (T1.6), correcting through the
+  Cursor (T1.7), saving (T1.9).
 
   The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
   to ApplyTranscriptionGesture and comes back as a whole annotated document. It
@@ -191,6 +202,21 @@
                 return { Kind: 'validate' };
             case COMMAND.DANCE:
                 return { Kind: 'dance' };
+            // Le camp d'une action de videau n'est PAS posé ici : sans `HasSide`
+            // le moteur prend celui qu'il attend — le camp au trait pour un
+            // double, le camp d'en face pour une réponse (transcript.cubeGesture).
+            case COMMAND.DOUBLE:
+                return { Kind: 'double' };
+            case COMMAND.TAKE:
+                return { Kind: 'take' };
+            case COMMAND.PASS:
+                return { Kind: 'pass' };
+            // Le camp qui abandonne est celui au trait, « sauf indication
+            // contraire » : sans `HasSide` le moteur prend celui qu'il attend,
+            // et l'indication contraire est le geste « changer de camp » sur
+            // l'Action une fois créée (fonctionnel.md §1.2, §2).
+            case COMMAND.RESIGN:
+                return { Kind: 'resign', Level: command.value };
             case COMMAND.SELECT: {
                 const entry = ranked[command.index];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
@@ -435,6 +461,38 @@
         return named || (side === 0 ? $t('transcription.player1') : $t('transcription.player2'));
     }
 
+    // ── the cube, the end of a game and the end of the match ─────────────
+    //
+    // All of it is READ off the Replay: the panel derives no score, no Crawford
+    // and no cube of its own (ADR-0045 rule 9).
+
+    // `value` is the log2 exponent everywhere in the code base (XGID contract),
+    // and `owner` is -1 — domain.None — while the cube sits in the middle.
+    let cube = $derived(annotated?.next?.position?.cube ?? { owner: -1, value: 0 });
+    // While a double waits for its answer, next.position carries the cube AT THE
+    // LEVEL OFFERED, which is the one the answerer weighs (fonctionnel.md §1.2).
+    let awaitingAnswer = $derived(expects === 'take');
+    let cubeLabel = $derived.by(() => {
+        const v = 1 << (cube.value ?? 0);
+        if (awaitingAnswer) return $t('transcription.doubleOffered', { v });
+        if (cube.owner !== 0 && cube.owner !== 1) return $t('transcription.cubeCentred', { v });
+        return $t('transcription.cubeOwned', { v, player: playerName(cube.owner) });
+    });
+
+    let matchOver = $derived(annotated?.finished === true);
+    let matchWinner = $derived(annotated?.winner ?? -1);
+    let gameNumber = $derived(annotated?.next?.game_number ?? 1);
+
+    // The Inconsistencies of the Action just recorded — a double by a side that
+    // does not hold the cube, an answer with no offer, an Action past the end of
+    // the match. They are SHOWN, never a refusal (ADR-0044): the sentence comes
+    // from the kind, so the engine's English detail never reaches the screen.
+    let lastFlags = $derived.by(() => {
+        const actions = annotated?.actions ?? [];
+        const last = actions[actions.length - 1];
+        return (last?.inconsistencies ?? []).map((i) => $t(`transcription.inconsistency.${i.kind}`));
+    });
+
     // The two dice as they come in, "·" for a die not entered yet. An opening's
     // two dice belong to two different players, which is why they are shown
     // here and not drawn on the board.
@@ -495,18 +553,44 @@
                 {#if annotated?.next?.crawford}
                     <span class="badge">{$t('transcription.crawford')}</span>
                 {/if}
+                <span class="badge">{$t('transcription.gameNumber', { n: gameNumber })}</span>
+                <span class="badge">{cubeLabel}</span>
                 <span class="badge on-roll">{playerName(sideOnRoll)}</span>
             </div>
 
+            {#if matchOver}
+                <p class="hint">{$t('transcription.matchOver', { player: playerName(matchWinner), a: score[0], b: score[1] })}</p>
+            {/if}
+
             <div class="entry">
                 <span class="entry-label">
-                    {expects === 'opening' ? $t('transcription.openingPrompt') : $t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
+                    {#if keys.phase === PHASE.RESIGN}
+                        {$t('transcription.resignPrompt', { player: playerName(sideOnRoll) })}
+                    {:else if awaitingAnswer}
+                        {$t('transcription.answerPrompt', { player: playerName(sideOnRoll) })}
+                    {:else if expects === 'opening'}
+                        {$t('transcription.openingPrompt')}
+                    {:else}
+                        {$t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
+                    {/if}
                 </span>
-                <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
-                <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
+                {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
+                    <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
+                    <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
+                {/if}
             </div>
 
-            {#if keys.tie}
+            {#if lastFlags.length}
+                <!-- Une Incohérence est MARQUÉE, jamais refusée (ADR-0044) :
+                     l'Action est dans le document, et la phrase dit laquelle. -->
+                <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
+            {/if}
+
+            {#if keys.phase === PHASE.RESIGN}
+                <p class="hint">{$t('transcription.resignHint')}</p>
+            {:else if awaitingAnswer}
+                <p class="hint">{$t('transcription.answerHint')}</p>
+            {:else if keys.tie}
                 <p class="hint">{$t('transcription.tie')}</p>
             {:else if expects === 'opening'}
                 <p class="hint">{$t('transcription.openingHint')}</p>
@@ -522,7 +606,7 @@
                 <p class="hint">{$t('transcription.chosen')}</p>
             {/if}
 
-            {#if ranked.length}
+            {#if ranked.length && !awaitingAnswer && keys.phase !== PHASE.RESIGN}
                 {#if unranked}
                     <p class="hint">{$t('transcription.unranked')}</p>
                     <ol class="plain-candidates">
@@ -693,6 +777,12 @@
     .hint {
         margin: 0;
         color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
+
+    .flag {
+        margin: 0;
+        color: var(--color-danger);
         font-size: var(--font-size-small);
     }
 

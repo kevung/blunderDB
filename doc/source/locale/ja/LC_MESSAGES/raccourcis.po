@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:24+0200\n"
+"POT-Creation-Date: 2026-09-07 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -403,7 +403,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "ヘルプを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:117
+#: ../../source/raccourcis.rst:118
 msgid "Onglets de vues"
 msgstr "ビュータブ"
 
@@ -455,7 +455,7 @@ msgstr "タブをダブルクリック"
 msgid "Renommer la vue."
 msgstr "ビューの名前を変更する。"
 
-#: ../../source/raccourcis.rst:134
+#: ../../source/raccourcis.rst:135
 msgid "Ligne de commande"
 msgstr "コマンドライン"
 
@@ -475,7 +475,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "コマンド履歴を下方向に参照する。"
 
-#: ../../source/raccourcis.rst:147
+#: ../../source/raccourcis.rst:148
 msgid "Historique de recherche"
 msgstr "検索履歴"
 
@@ -495,7 +495,7 @@ msgstr "ダブルクリック"
 msgid "Exécuter la recherche."
 msgstr "検索を実行する。"
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
 
@@ -507,7 +507,7 @@ msgstr "フィルターを選択/選択解除する（ポジションを表示�
 msgid "Exécuter la recherche du filtre."
 msgstr "フィルター検索を実行する。"
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:174
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -541,7 +541,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:189
+#: ../../source/raccourcis.rst:190
 msgid "Panneau Eval"
 msgstr "Eval パネル"
 
@@ -549,7 +549,7 @@ msgstr "Eval パネル"
 msgid "Désélectionner le coup."
 msgstr "手の選択を解除する。"
 
-#: ../../source/raccourcis.rst:204
+#: ../../source/raccourcis.rst:205
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -585,7 +585,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:222
+#: ../../source/raccourcis.rst:223
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -639,7 +639,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:241
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -669,7 +669,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:256
+#: ../../source/raccourcis.rst:257
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -693,11 +693,11 @@ msgid ""
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:271
+#: ../../source/raccourcis.rst:272
 msgid "Panneau Transcription"
 msgstr "トランスクリプションパネル"
 
-#: ../../source/raccourcis.rst:273
+#: ../../source/raccourcis.rst:274
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
 "ouvert."
@@ -757,13 +757,54 @@ msgstr "入力した2つのダイスを消す。"
 msgid "Abandonner la saisie en cours."
 msgstr "入力中の内容を破棄する。"
 
-#: ../../source/raccourcis.rst:290
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Doubler ou redoubler : le coup sélectionné est validé au passage, en une "
+"seule touche."
+msgstr "ダブルまたはリダブル。選択中のムーブは同時に確定され、キーは一つで済む。"
+
+#: ../../source/raccourcis.rst:1
+msgid "t"
+msgstr "t"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Prendre le double proposé : le videau passe au preneur à la valeur "
+"doublée et le doubleur rejoue."
+msgstr "提示されたダブルをテイクする。キューブは倍の値でテイクした側に渡り、ダブルした側が再び振る。"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Passer le double proposé : la partie est gagnée à la valeur d'avant le "
+"double."
+msgstr "提示されたダブルをパスする。ゲームはダブル前のキューブの値で決着する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "r puis 1, 2 ou 3"
+msgstr "r のあと 1、2 または 3"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Abandonner la partie pour le camp au trait : simple, gammon ou "
+"backgammon. Esc entre les deux touches annule sans rien enregistrer."
+msgstr "手番の側がゲームを投了する。シングル、ギャモン、バックギャモン。二つのキーの間に Esc を押すと何も記録せずに取り消す。"
+
+#: ../../source/raccourcis.rst:295
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
 msgstr "どの着手も許さない出目は、追加のキー操作なしにダンスを記録します。"
 
-#: ../../source/raccourcis.rst:296
+#: ../../source/raccourcis.rst:298
+msgid ""
+"Une partie se termine par une passe, par une résignation ou par la sortie"
+" du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
+" du videau). Le score, la partie Crawford et la fin du match sont alors "
+"affichés au-dessus des dés, et l'ouverture de la partie suivante est "
+"attendue."
+msgstr "ゲームはパス、レジグン、または十五個目のチェッカーのベアオフ（シングル、ギャモン、バックギャモンにキューブの値を掛ける）で終わる。得点、クロフォードゲーム、マッチの終了はダイスの上に表示され、次のゲームのオープニングが待たれる。"
+
+#: ../../source/raccourcis.rst:306
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 

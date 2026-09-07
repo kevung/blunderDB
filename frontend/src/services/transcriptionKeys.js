@@ -35,6 +35,21 @@
  * C'est de là que sort la danse — un jet sans aucun coup légal crée l'Action
  * `dance` aussitôt, zéro touche de plus (ux.md §3, dernière ligne).
  *
+ * # Le videau et la résignation
+ *
+ * `d`, `t`, `p` et `r` ne coûtent chacune qu'une touche parce que le moteur
+ * valide de lui-même le candidat resté en attente (`transcript.cubeGesture`) :
+ * la machine n'émet donc PAS de `validate` avant elles, et « double + prise »
+ * tient dans `d` `t` (ux.md §4.2). `r` est la seule touche qui ouvre un état :
+ * elle attend un niveau, met l'état d'avant de côté et le rend tel quel si
+ * `Échap` tombe entre les deux — « résignation gammon » coûte `r` `2`.
+ *
+ * Ce que ces touches ne font PAS : juger. Doubler sans posséder le videau, en
+ * partie Crawford ou au-delà du plafond reste transcriptible — c'est une
+ * Incohérence du Replay, marquée et jamais refusée (ADR-0044, fonctionnel.md
+ * §1.4). Seules `t` et `p` demandent une offre en face, faute de quoi elles ne
+ * répondent à rien.
+ *
  * Conventions de clavier (voir utils/keys.js) : les CHIFFRES sont positionnels
  * (`event.code`, pour que la rangée du haut d'un AZERTY marche sans Maj), les
  * LETTRES sont lues au caractère produit (`event.key`).
@@ -42,7 +57,7 @@
 
 import { isBareLetter } from '../utils/keys.js';
 
-/** Les quatre états d'ux.md §3. */
+/** Les cinq états d'ux.md §3. */
 export const PHASE = Object.freeze({
     /** Dés attendus, aucun dé saisi. */
     DICE: 'dice',
@@ -51,7 +66,14 @@ export const PHASE = Object.freeze({
     /** Jet saisi, premier candidat présélectionné : un chiffre recommence le jet. */
     ROLL: 'roll',
     /** Candidat choisi : un chiffre valide et ouvre le tour suivant. */
-    CANDIDATE: 'candidate'
+    CANDIDATE: 'candidate',
+    /**
+     * Résignation annoncée, son niveau attendu : `1` simple, `2` gammon, `3`
+     * backgammon, `Échap` annule. C'est le seul état qui détourne les chiffres
+     * des dés, et c'est tout ce qui le distingue — d'où un état de la machine
+     * et non un drapeau du panneau.
+     */
+    RESIGN: 'resign'
 });
 
 /** Les gestes que la machine demande ; le panneau les traduit en appels Go. */
@@ -60,11 +82,18 @@ export const COMMAND = Object.freeze({
     CLEAR: 'clear',
     VALIDATE: 'validate',
     SELECT: 'select',
-    DANCE: 'dance'
+    DANCE: 'dance',
+    DOUBLE: 'double',
+    TAKE: 'take',
+    PASS: 'pass',
+    RESIGN: 'resign'
 });
 
 /** Les sortes d'Action dont la saisie passe par deux dés. */
 const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
+
+/** Le niveau d'une résignation : simple, gammon, backgammon. */
+const RESIGN_LEVELS = new Set([1, 2, 3]);
 
 /**
  * L'état initial : dés attendus, rien de saisi.
@@ -80,7 +109,10 @@ export function initialKeyState() {
         selected: 0,
         candidateCount: 0,
         awaitingCandidates: false,
-        tie: false
+        tie: false,
+        // L'état à rendre si la résignation est abandonnée par Échap. Nul
+        // partout ailleurs : seule la phase RESIGN en pose un.
+        resume: null
     };
 }
 
@@ -121,8 +153,43 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  * @returns {{handled: boolean, state: object, commands: {kind: string, value?: number, index?: number}[]}}
  */
 export function pressKey(state, event, { expects = 'checker' } = {}) {
+    // La résignation capte tout tant que son niveau n'est pas donné : ses
+    // chiffres SONT des niveaux et non des dés, et rien d'autre ne doit passer
+    // entre `r` et la touche qui la termine.
+    if (state.phase === PHASE.RESIGN) return resignLevel(state, event);
+
+    // `r` ouvre l'attente du niveau depuis n'importe quel état, et l'état
+    // d'avant est mis de côté : `Échap` le rend intact, la résignation
+    // « annule sans effet » (ux.md §3, fiche T1.5).
+    if (isBareLetter(event, 'r')) {
+        return { handled: true, state: { ...initialKeyState(), phase: PHASE.RESIGN, resume: state }, commands: [] };
+    }
+
+    // `d` double ou redouble depuis n'importe quel état de saisie. Une seule
+    // touche : le moteur valide d'abord le candidat en attente s'il y en a un
+    // (transcript.cubeGesture), donc « double + prise » coûte `d` `t` et rien
+    // de plus (ux.md §4.2).
+    //
+    // Elle n'est JAMAIS avalée au motif que le camp ne possède pas le videau,
+    // qu'on est en partie Crawford ou que le videau est au plafond : ce sont
+    // les trois « videau impossible » de fonctionnel.md §1.4, et une
+    // Incohérence est MARQUÉE, jamais refusée (ADR-0044). Le moteur la pose,
+    // le panneau l'affiche.
+    if (isBareLetter(event, 'd')) {
+        return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.DOUBLE }] };
+    }
+
+    // `t`/`p` ne répondent qu'à une offre. Ce n'est pas un refus : sans double
+    // qui précède il n'y a pas de réponse à transcrire, et la touche reste
+    // disponible pour le répartiteur global (ux.md §3 : « réponse attendue |
+    // t / p »).
+    if (expects === 'take') {
+        if (isBareLetter(event, 't')) return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.TAKE }] };
+        if (isBareLetter(event, 'p')) return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.PASS }] };
+    }
+
     // Une réponse à un double n'est pas une saisie de dés : ses touches sont
-    // `t`/`p` et elles sont à T1.4. Rien n'est avalé ici en attendant.
+    // `t`/`p`, traitées juste au-dessus.
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);
@@ -156,6 +223,28 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     }
 
     return ignored(state);
+}
+
+/**
+ * Le niveau d'une résignation. `1`/`2`/`3` la crée — deux touches en tout avec
+ * le `r` qui l'a ouverte, le budget d'ux.md §4.2 — et `Échap` rend la main à
+ * l'état d'avant sans avoir créé la moindre Action.
+ *
+ * Tout le reste est AVALÉ : entre `r` et son chiffre, une touche qui n'est ni
+ * un niveau ni l'annulation ne doit pas retomber sur les dés, sinon `r` puis
+ * `5` enregistrerait un dé au lieu de ne rien faire.
+ *
+ * Le camp n'est pas dit ici. Il est celui au trait, et c'est le moteur qui le
+ * sait (`transcript.cubeGesture`) : la machine à touches ne connaît pas le
+ * document (fonctionnel.md §1.2).
+ */
+function resignLevel(state, event) {
+    if (event.key === 'Escape') {
+        return { handled: true, state: state.resume ?? initialKeyState(), commands: [] };
+    }
+    const level = dieOf(event);
+    if (!RESIGN_LEVELS.has(level)) return swallowed(state);
+    return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.RESIGN, value: level }] };
 }
 
 /**

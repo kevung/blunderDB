@@ -1091,7 +1091,24 @@
         "dance": "Aucun coup légal : la danse est enregistrée.",
         "unranked": "Évaluation indisponible : les coups légaux sont dans l'ordre du générateur.",
         "correctable": "Jet corrigeable : un chiffre le recommence, Entrée valide le coup.",
-        "chosen": "Coup choisi : un chiffre valide et ouvre le jet suivant."
+        "chosen": "Coup choisi : un chiffre valide et ouvre le jet suivant.",
+        "gameNumber": "Partie {n}",
+        "cubeCentred": "Videau {v} (centré)",
+        "cubeOwned": "Videau {v} · {player}",
+        "doubleOffered": "Double à {v}",
+        "answerPrompt": "Réponse de {player} au double",
+        "answerHint": "t = prise, p = passe.",
+        "resignPrompt": "Résignation de {player}",
+        "resignHint": "1 = simple, 2 = gammon, 3 = backgammon ; Échap annule.",
+        "matchOver": "Match terminé : {player} l'emporte {a}–{b}.",
+        "inconsistencyPrefix": "Incohérence :",
+        "inconsistency": {
+            "illegal_move": "coup illégal",
+            "double_turn": "double trait",
+            "impossible_cube": "action de videau impossible",
+            "past_end": "au-delà de la fin du match",
+            "inconsistent_dice": "coup incohérent avec le jet"
+        }
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
