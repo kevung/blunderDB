@@ -73,7 +73,16 @@ globales (`Ctrl+*`, Espace, `?`, `Maj+J`/`Maj+K`) restent globales.
 Danse : dès le second dé, si la liste est vide, l'Action `dance` est créée et l'on passe à
 « dés attendus » pour l'autre camp — zéro touche de plus.
 
-Ce que la règle « un chiffre valide » exclut, et ce qui le remplace : dernier coup d'une
+**Arbitrage mesuré le 2026-09-07.** Les deux lectures possibles de la touche chiffrée depuis
+l'état « jet corrigeable » s'excluent : ou bien elle recommence le jet, et corriger un dé mal
+lu coûte deux touches ; ou bien elle valide, et le meilleur coup coûte deux touches mais la
+correction en coûte trois. La première est retenue, parce qu'elle est celle que l'auteur a
+décrite et parce que la correction est le geste de l'usage qui gouverne, la relecture. Le
+meilleur coup coûte donc **trois** touches, `3` `1` Entrée, et non deux comme ce document
+l'annonçait. Les deux états sont distingués à l'écran sous les dés : sans cela, le même écran
+détruirait ou enregistrerait un coup selon un historique invisible.
+
+Ce que la règle « un chiffre valide depuis un candidat choisi » exclut, et ce qui le remplace : dernier coup d'une
 partie → Entrée ; action de videau → sa lettre valide d'abord ; erreur découverte un tour
 trop tard → Retour arrière, `h`, `j`/`k`, puis `l` ou la reprise des dés.
 
@@ -91,8 +100,8 @@ M compté une fois par flux, hors comparaison. K = 0,28 s.
 
 | Cas | Gestes | KLM | Budget |
 |---|---|---|---|
-| meilleur coup joué | `3` `1` (le chiffre suivant valide) | 2 K = 0,56 s | ≤ 0,6 s |
-| n-ième coup, n ≤ 5 | `3` `1` `j`×(n−1) | (n+1) K ; n = 3 → 1,12 s | ≤ 1,2 s |
+| meilleur coup joué | `3` `1` Entrée | 3 K = 0,84 s | ≤ 0,9 s |
+| n-ième coup, n ≤ 5 | `3` `1` `j`×(n−1) puis le jet suivant | (n+1) K ; n = 3 → 1,12 s | ≤ 1,2 s |
 | coup loin dans la liste (rang 12) | `3` `1` `j`×11 | 13 K = 3,6 s | → filtre du lot 2 |
 | idem, lot 2, filtre par clic sur le point de départ | `3` `1` H P B B H `j`×≤2 | 2 K + 2 H + P + 0,2 + ≤ 2 K ≈ 2,9 s | ≤ 3 s |
 | coup joué au plateau, dés déduits (lot 2) | H, 2 × (P B B) hops, H | 2 H + 2 P + 0,4 ≈ 3,4 s ; 4 pas (double) ≈ 5,9 s | souris seule ≤ 6 s |
