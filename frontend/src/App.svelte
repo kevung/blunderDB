@@ -76,6 +76,8 @@
     // Components
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
+    import DirectionView from './components/direction/DirectionView.svelte';
+    import { directionOpenStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
@@ -491,7 +493,14 @@
             {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
                 <div class="exclude-structure-badge">EXCLUDE</div>
             {/if}
-            <Board />
+            <!-- La seule chose qui remplace le plateau dans la zone principale (ADR-0047) :
+                 l'onglet Tournoi actif ET une Direction ouverte. Tout autre onglet ramène le
+                 plateau sans rien fermer — la Direction reste ouverte et continue de vivre. -->
+            {#if $activeTabStore === 'tournaments' && $directionOpenStore}
+                <DirectionView />
+            {:else}
+                <Board />
+            {/if}
         </div>
 
         <div class="resize-handle" class:side={isSidePanel} use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : panelHeight, onResize: setPanelSize, onCommit: savePanelSize }}></div>

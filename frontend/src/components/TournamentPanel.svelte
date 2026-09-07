@@ -26,6 +26,7 @@
     } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
+    import { directionSummariesStore, openDirectionIdStore, refreshDirectionSummaries, createDirection, openDirection, closeDirection, defaultConfig } from '../stores/directionStore';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
@@ -39,6 +40,33 @@
     let selectedTournament = $derived($selectedTournamentStore);
     let tournamentMatches = $derived($tournamentMatchesStore || []);
     let visible = $derived($openPanels.has(PANEL.TOURNAMENT));
+
+    /* Les tournois dirigés, par identifiant. Une ligne de la liste doit dire si un tournoi
+       porte une Direction sans qu'on ait à la rejouer : la liste s'ouvre souvent, une Direction
+       ne se rejoue que quand on l'ouvre vraiment. */
+    const directedById = $derived(new Map(($directionSummariesStore || []).map((d) => [d.tournamentId, d])));
+    const selectedDirection = $derived(selectedTournament ? directedById.get(selectedTournament.id) || null : null);
+
+    /* Diriger un tournoi qui ne l'était pas : la configuration recommandée par l'étude est le
+       point de départ, et tout reste modifiable tant que rien n'est lancé. Le coût d'entrée
+       est une contrainte du cadrage — de « Nouveau » à la première ronde en moins de 90 s. */
+    async function startDirecting(tournament) {
+        try {
+            await createDirection(tournament.id, defaultConfig(tournament.name));
+            statusBarTextStore.set(tMsg('direction.settings.created'));
+        } catch (e) {
+            logger.error('direction: create failed', e);
+            statusBarTextStore.set(tMsg('direction.settings.errorCreating'));
+        }
+    }
+
+    async function toggleDirection(tournament) {
+        if ($openDirectionIdStore === tournament.id) {
+            closeDirection();
+            return;
+        }
+        await openDirection(tournament.id);
+    }
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
     let sort = $state({ column: null, direction: 'asc' });
@@ -474,6 +502,7 @@
     });
     onMount(() => {
         document.addEventListener('keydown', handleKeyDown);
+        refreshDirectionSummaries();
     });
 
     onDestroy(() => {
@@ -633,6 +662,28 @@
                             }}
                             title={$t('common.edit')}>✎</button
                         >
+                        {#if selectedDirection}
+                            <span class="direction-badge" title={$t('direction.title')}>
+                                {$t('direction.directed')} &middot;
+                                {$t(`direction.state.${selectedDirection.state}`)}
+                            </span>
+                            <button
+                                class="direction-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    toggleDirection(selectedTournament);
+                                }}>{$openDirectionIdStore === selectedTournament.id ? $t('direction.close') : $t('direction.open')}</button
+                            >
+                        {:else}
+                            <button
+                                class="direction-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    startDirecting(selectedTournament);
+                                }}
+                                title={$t('direction.named.suisse_tableauHint')}>{$t('direction.direct')}</button
+                            >
+                        {/if}
                         <span class="header-spacer"></span>
                         {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
                             <input
@@ -753,6 +804,25 @@
 </section>
 
 <style>
+    /* La Direction d'un tournoi, dans l'en-tête du tournoi sélectionné : un badge d'état quand
+       il est dirigé, et un seul bouton — ouvrir/fermer, ou commencer à diriger. */
+    .direction-badge {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        white-space: nowrap;
+    }
+
+    .direction-btn {
+        font-size: var(--font-size-small);
+        padding: 0.1rem 0.5rem;
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
     .tournament-panel {
         width: 100%;
         height: 100%;

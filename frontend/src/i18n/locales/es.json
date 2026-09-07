@@ -1562,5 +1562,77 @@
         "empty": "El registro está vacío.",
         "copied": "{n} líneas copiadas al portapapeles.",
         "copyFailed": "No se ha podido copiar el registro."
+    },
+    "direction": {
+        "title": "Dirección",
+        "direct": "Dirigir este torneo",
+        "open": "Abrir la dirección",
+        "close": "Cerrar la dirección",
+        "directed": "dirigido",
+        "state": {
+            "draft": "en preparación",
+            "running": "en curso",
+            "finished": "terminado"
+        },
+        "named": {
+            "suisse_tableau": "Suizo a 2 vidas y luego cuadro",
+            "suisse_tableauHint": "Recomendado para 16 a 32 jugadores. Cada derrota cuenta igual, y el final se resuelve sin desempate.",
+            "elimination": "Eliminación simple",
+            "eliminationHint": "El formato más corto. Una derrota y el torneo se acaba.",
+            "consolante": "Principal y consolación",
+            "consolanteHint": "Los perdedores del cuadro principal juegan entre ellos.",
+            "double_elimination": "Doble eliminación",
+            "double_eliminationHint": "Hacen falta dos derrotas para salir; el ganador de la consolación vuelve a jugar la final.",
+            "gsl": "Bloques GSL",
+            "gslHint": "Grupos de cuatro, emparejados por los resultados: nada depende de la hora del anuncio.",
+            "poules": "Grupos y luego cuadro",
+            "poulesHint": "Todos juegan el mismo número de partidas antes del cuadro."
+        },
+        "format": {
+            "swiss_lives": "Suizo a vidas",
+            "lives_bracket": "Cuadro con exenciones",
+            "bracket": "Cuadro",
+            "gsl": "Bloques GSL",
+            "round_robin": "Grupos"
+        },
+        "settings": {
+            "format": "Formato",
+            "recommended": "recomendado",
+            "phases": "Fases",
+            "length": "Longitud",
+            "lengthHint": "Número de puntos de una partida de esta fase.",
+            "lives": "Vidas",
+            "livesHint": "Número de derrotas antes de la eliminación.",
+            "target": "Cambio",
+            "targetHint": "Pasar al cuadro cuando la suma de vidas alcance este número. 0: sin cambio.",
+            "finalLength": "Final",
+            "finalLengthHint": "Longitud de la final. 0: igual que las demás partidas.",
+            "tables": "Mesas",
+            "tableCount": "Número de mesas",
+            "tableCountHint": "0: tantas como haga falta.",
+            "entrants": "{n} inscritos",
+            "byes": "{n} exenciones en la primera ronda",
+            "apply": "Guardar",
+            "start": "Empezar el torneo",
+            "delete": "Eliminar la dirección",
+            "frozen": "El torneo ha empezado: estos ajustes solo cambian ya mediante un evento.",
+            "deleteConfirm": "¿Eliminar la dirección de este torneo? El torneo y sus partidas se mantienen; las partidas solo pierden el puesto que ocupaban.",
+            "created": "Dirección creada.",
+            "started": "Torneo iniciado.",
+            "deleted": "Dirección eliminada.",
+            "errorCreating": "No se ha podido crear la dirección.",
+            "errorSaving": "No se ha podido guardar la configuración.",
+            "saved": "Configuración guardada.",
+            "errorStarting": "No se ha podido empezar el torneo."
+        },
+        "tabs": {
+            "direction": "Dirección",
+            "players": "Jugadores",
+            "brackets": "Cuadros",
+            "standings": "Clasificación",
+            "history": "Historial",
+            "settings": "Ajustes",
+            "notYet": "Esta vista llega con su propio lote."
+        }
     }
 }

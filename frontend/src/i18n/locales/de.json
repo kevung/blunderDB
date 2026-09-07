@@ -1562,5 +1562,77 @@
         "empty": "Das Protokoll ist leer.",
         "copied": "{n} Zeilen in die Zwischenablage kopiert.",
         "copyFailed": "Das Protokoll konnte nicht kopiert werden."
+    },
+    "direction": {
+        "title": "Leitung",
+        "direct": "Dieses Turnier leiten",
+        "open": "Leitung öffnen",
+        "close": "Leitung schließen",
+        "directed": "geleitet",
+        "state": {
+            "draft": "in Vorbereitung",
+            "running": "laufend",
+            "finished": "beendet"
+        },
+        "named": {
+            "suisse_tableau": "Schweizer System mit 2 Leben, dann K.-o.-Runde",
+            "suisse_tableauHint": "Empfohlen für 16 bis 32 Spieler. Jede Niederlage zählt gleich, und das Ende löst sich ohne Stichentscheid.",
+            "elimination": "Einfaches K.-o.-System",
+            "eliminationHint": "Das kürzeste Format. Eine Niederlage und das Turnier ist vorbei.",
+            "consolante": "Hauptrunde und Trostrunde",
+            "consolanteHint": "Die Verlierer der Hauptrunde spielen gegeneinander.",
+            "double_elimination": "Doppel-K.-o.",
+            "double_eliminationHint": "Zwei Niederlagen bedeuten das Aus; der Sieger der Trostrunde spielt das Finale erneut.",
+            "gsl": "GSL-Blöcke",
+            "gslHint": "Vierergruppen, nach Ergebnissen gepaart: nichts hängt vom Zeitpunkt der Meldung ab.",
+            "poules": "Gruppen, dann K.-o.-Runde",
+            "poulesHint": "Alle spielen vor der K.-o.-Runde gleich viele Partien."
+        },
+        "format": {
+            "swiss_lives": "Schweizer System mit Leben",
+            "lives_bracket": "K.-o.-Runde mit Freilosen",
+            "bracket": "K.-o.-Runde",
+            "gsl": "GSL-Blöcke",
+            "round_robin": "Gruppen"
+        },
+        "settings": {
+            "format": "Format",
+            "recommended": "empfohlen",
+            "phases": "Phasen",
+            "length": "Länge",
+            "lengthHint": "Anzahl der Punkte einer Partie dieser Phase.",
+            "lives": "Leben",
+            "livesHint": "Anzahl der Niederlagen bis zum Ausscheiden.",
+            "target": "Umstieg",
+            "targetHint": "Zur K.-o.-Runde wechseln, wenn die Summe der Leben diese Zahl erreicht. 0: kein Umstieg.",
+            "finalLength": "Finale",
+            "finalLengthHint": "Länge des Finales. 0: wie die anderen Partien.",
+            "tables": "Tische",
+            "tableCount": "Anzahl der Tische",
+            "tableCountHint": "0: so viele wie nötig.",
+            "entrants": "{n} Teilnehmer",
+            "byes": "{n} Freilose in der ersten Runde",
+            "apply": "Speichern",
+            "start": "Turnier starten",
+            "delete": "Leitung löschen",
+            "frozen": "Das Turnier hat begonnen: diese Einstellungen ändern sich nur noch über ein Ereignis.",
+            "deleteConfirm": "Die Leitung dieses Turniers löschen? Das Turnier und seine Partien bleiben; die Partien verlieren nur den Platz, den sie besetzt haben.",
+            "created": "Leitung erstellt.",
+            "started": "Turnier gestartet.",
+            "deleted": "Leitung gelöscht.",
+            "errorCreating": "Die Leitung konnte nicht erstellt werden.",
+            "errorSaving": "Die Konfiguration konnte nicht gespeichert werden.",
+            "saved": "Konfiguration gespeichert.",
+            "errorStarting": "Das Turnier konnte nicht gestartet werden."
+        },
+        "tabs": {
+            "direction": "Leitung",
+            "players": "Spieler",
+            "brackets": "Tableaus",
+            "standings": "Rangliste",
+            "history": "Verlauf",
+            "settings": "Einstellungen",
+            "notYet": "Diese Ansicht kommt mit ihrem eigenen Paket."
+        }
     }
 }

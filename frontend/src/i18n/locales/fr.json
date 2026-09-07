@@ -1562,5 +1562,77 @@
         "empty": "Le journal est vide.",
         "copied": "{n} lignes copiées dans le presse-papier.",
         "copyFailed": "Le journal n'a pas pu être copié."
+    },
+    "direction": {
+        "title": "Direction",
+        "direct": "Diriger ce tournoi",
+        "open": "Ouvrir la direction",
+        "close": "Fermer la direction",
+        "directed": "dirigé",
+        "state": {
+            "draft": "en préparation",
+            "running": "en cours",
+            "finished": "terminé"
+        },
+        "named": {
+            "suisse_tableau": "Suisse 2 vies puis tableau",
+            "suisse_tableauHint": "Recommandé pour 16 à 32 joueurs. Chaque défaite compte pareil, et la fin se règle sans départage.",
+            "elimination": "Élimination simple",
+            "eliminationHint": "Le format le plus court. Une défaite et le tournoi s'arrête.",
+            "consolante": "Principal et consolante",
+            "consolanteHint": "Les perdants du tableau principal rejouent entre eux.",
+            "double_elimination": "Double élimination",
+            "double_eliminationHint": "Il faut perdre deux fois pour sortir ; le vainqueur de la consolante rejoue la finale.",
+            "gsl": "Blocs GSL",
+            "gslHint": "Des groupes de quatre, appariés par les résultats : rien ne dépend de l'heure d'annonce.",
+            "poules": "Poules puis tableau",
+            "poulesHint": "Tout le monde joue le même nombre de matchs avant le tableau."
+        },
+        "format": {
+            "swiss_lives": "Suisse à vies",
+            "lives_bracket": "Tableau à exemptions",
+            "bracket": "Tableau",
+            "gsl": "Blocs GSL",
+            "round_robin": "Poules"
+        },
+        "settings": {
+            "format": "Format",
+            "recommended": "recommandé",
+            "phases": "Phases",
+            "length": "Longueur",
+            "lengthHint": "Nombre de points d'un match de cette phase.",
+            "lives": "Vies",
+            "livesHint": "Nombre de défaites avant l'élimination.",
+            "target": "Bascule",
+            "targetHint": "Passer au tableau quand la somme des vies atteint ce nombre. 0 : pas de bascule.",
+            "finalLength": "Finale",
+            "finalLengthHint": "Longueur de la finale. 0 : la même que les autres matchs.",
+            "tables": "Tables",
+            "tableCount": "Nombre de tables",
+            "tableCountHint": "0 : autant que nécessaire.",
+            "entrants": "{n} inscrits",
+            "byes": "{n} exemptions au premier tour",
+            "apply": "Enregistrer",
+            "start": "Lancer le tournoi",
+            "delete": "Supprimer la direction",
+            "frozen": "Le tournoi a commencé : ces réglages ne changent plus que par un événement.",
+            "deleteConfirm": "Supprimer la direction de ce tournoi ? Le tournoi et ses matchs restent ; les matchs perdent seulement l'emplacement qu'ils remplissaient.",
+            "created": "Direction créée.",
+            "started": "Tournoi lancé.",
+            "deleted": "Direction supprimée.",
+            "errorCreating": "Impossible de créer la direction.",
+            "errorSaving": "Impossible d'enregistrer la configuration.",
+            "saved": "Configuration enregistrée.",
+            "errorStarting": "Impossible de lancer le tournoi."
+        },
+        "tabs": {
+            "direction": "Direction",
+            "players": "Joueurs",
+            "brackets": "Arbres",
+            "standings": "Classement",
+            "history": "Historique",
+            "settings": "Réglages",
+            "notYet": "Cette vue arrive avec son lot."
+        }
     }
 }

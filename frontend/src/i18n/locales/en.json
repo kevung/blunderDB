@@ -1562,5 +1562,77 @@
         "empty": "The log is empty.",
         "copied": "{n} lines copied to the clipboard.",
         "copyFailed": "The log could not be copied."
+    },
+    "direction": {
+        "title": "Direction",
+        "direct": "Direct this tournament",
+        "open": "Open the direction",
+        "close": "Close the direction",
+        "directed": "directed",
+        "state": {
+            "draft": "in preparation",
+            "running": "running",
+            "finished": "finished"
+        },
+        "named": {
+            "suisse_tableau": "Two-life Swiss then bracket",
+            "suisse_tableauHint": "Recommended for 16 to 32 players. Every loss counts the same, and the end resolves without a tie-break.",
+            "elimination": "Single elimination",
+            "eliminationHint": "The shortest format. One loss and the tournament is over.",
+            "consolante": "Main and consolation",
+            "consolanteHint": "Losers from the main bracket play each other.",
+            "double_elimination": "Double elimination",
+            "double_eliminationHint": "It takes two losses to go out; the consolation winner plays the final again.",
+            "gsl": "GSL blocks",
+            "gslHint": "Groups of four, paired by results: nothing depends on when a result is announced.",
+            "poules": "Pools then bracket",
+            "poulesHint": "Everyone plays the same number of matches before the bracket."
+        },
+        "format": {
+            "swiss_lives": "Swiss with lives",
+            "lives_bracket": "Bracket with byes",
+            "bracket": "Bracket",
+            "gsl": "GSL blocks",
+            "round_robin": "Pools"
+        },
+        "settings": {
+            "format": "Format",
+            "recommended": "recommended",
+            "phases": "Phases",
+            "length": "Length",
+            "lengthHint": "Number of points in a match of this phase.",
+            "lives": "Lives",
+            "livesHint": "Number of losses before elimination.",
+            "target": "Switch",
+            "targetHint": "Move to the bracket when the sum of lives reaches this number. 0: no switch.",
+            "finalLength": "Final",
+            "finalLengthHint": "Length of the final. 0: same as the other matches.",
+            "tables": "Tables",
+            "tableCount": "Number of tables",
+            "tableCountHint": "0: as many as needed.",
+            "entrants": "{n} entrants",
+            "byes": "{n} byes in the first round",
+            "apply": "Save",
+            "start": "Start the tournament",
+            "delete": "Delete the direction",
+            "frozen": "The tournament has started: these settings now change only through an event.",
+            "deleteConfirm": "Delete this tournament's direction? The tournament and its matches stay; the matches only lose the slot they filled.",
+            "created": "Direction created.",
+            "started": "Tournament started.",
+            "deleted": "Direction deleted.",
+            "errorCreating": "Could not create the direction.",
+            "errorSaving": "Could not save the configuration.",
+            "saved": "Configuration saved.",
+            "errorStarting": "Could not start the tournament."
+        },
+        "tabs": {
+            "direction": "Direction",
+            "players": "Players",
+            "brackets": "Brackets",
+            "standings": "Standings",
+            "history": "History",
+            "settings": "Settings",
+            "notYet": "This view arrives with its own batch."
+        }
     }
 }

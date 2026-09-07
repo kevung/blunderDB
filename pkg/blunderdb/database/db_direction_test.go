@@ -2,7 +2,9 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -172,4 +174,156 @@ func TestDirectionStore_List(t *testing.T) {
 	if recs[0].EngineVersion != direction.EngineVersion {
 		t.Errorf("engine version %q, want %q", recs[0].EngineVersion, direction.EngineVersion)
 	}
+}
+
+// TestDirectionAPI_CreateThenStart covers the shape the panel drives: create a Direction on a
+// Tournament, edit its draft configuration, then start it (issue #368).
+func TestDirectionAPI_CreateThenStart(t *testing.T) {
+	d := newTestDB(t)
+	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// A Tournament assembled from files is not directed, and saying so must not cost a replay.
+	directed, err := d.HasDirection(tID)
+	if err != nil || directed {
+		t.Fatalf("a fresh Tournament is not directed: %v %v", directed, err)
+	}
+
+	cfg := `{"name":"Open de Lyon","tables":{"count":8},"phases":[
+		{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":16},
+		{"kind":"lives_bracket","length":9,"final_length":11}]}`
+	if err := d.CreateDirection(tID, cfg); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+	if directed, err = d.HasDirection(tID); err != nil || !directed {
+		t.Fatalf("the Tournament should now be directed: %v %v", directed, err)
+	}
+
+	v, err := d.GetDirection(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v.State != "draft" {
+		t.Errorf("a new Direction is a draft, not %q", v.State)
+	}
+	if v.EventCount != 0 {
+		t.Errorf("a draft writes nothing to the log, %d event(s)", v.EventCount)
+	}
+	if len(v.Config.Phases) != 2 {
+		t.Fatalf("configuration not kept: %+v", v.Config)
+	}
+
+	// The director changes their mind while it is still a draft.
+	edited := `{"name":"Open de Lyon","tables":{"count":6},"phases":[
+		{"kind":"swiss_lives","length":7,"lives":3,"mode":"continuous"},
+		{"kind":"lives_bracket","length":9}]}`
+	if err := d.SetDirectionConfig(tID, edited); err != nil {
+		t.Fatalf("editing a draft: %v", err)
+	}
+	if v, err = d.GetDirection(tID); err != nil {
+		t.Fatal(err)
+	}
+	if v.Config.Phases[0].Lives != 3 || v.Config.Tables.Count != 6 {
+		t.Errorf("the edited configuration was not kept: %+v", v.Config)
+	}
+
+	players := `[{"id":"alice","name":"Alice"},{"id":"bob","name":"Bob"},
+	             {"id":"chloe","name":"Chloé"},{"id":"dan","name":"Dan"}]`
+	if err := d.StartDirection(tID, 7, players); err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	if v, err = d.GetDirection(tID); err != nil {
+		t.Fatal(err)
+	}
+	if v.State != "running" {
+		t.Errorf("after starting, state %q", v.State)
+	}
+	if len(v.Players) != 4 {
+		t.Errorf("%d entrants written to the log, want 4", len(v.Players))
+	}
+	if v.EventCount != 5 { // created + four entries
+		t.Errorf("%d events, want 5 (created + four entries)", v.EventCount)
+	}
+	if len(v.Proposals) == 0 {
+		t.Error("a started tournament proposes something to do")
+	}
+
+	// Now the configuration is frozen: a change is an event, not a rewrite.
+	if err := d.SetDirectionConfig(tID, edited); err == nil {
+		t.Error("rewriting a started tournament's configuration must be refused")
+	}
+
+	// And a listing sees it without replaying it.
+	list, err := d.ListDirections()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 1 || list[0].State != "running" {
+		t.Fatalf("listing: %+v", list)
+	}
+}
+
+// TestDirectionAPI_NoTranslatedText: nothing the panel receives is a sentence. Labels, notes,
+// warnings and wait reasons are the engine's codes, rendered by the frontend — blunderDB
+// speaks nine languages and these values live in the database.
+func TestDirectionAPI_NoTranslatedText(t *testing.T) {
+	d := newTestDB(t)
+	tID, err := d.CreateTournament("T", "2026-09-12", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"T","tables":{"count":4},"phases":[{"kind":"swiss_lives","length":7,"lives":2}]}`
+	if err := d.CreateDirection(tID, cfg); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for i := 0; i < 8; i++ {
+		id := string(rune('a' + i))
+		players = append(players, `{"id":"`+id+`","name":"`+id+`"}`)
+	}
+	if err := d.StartDirection(tID, 3, "["+strings.Join(players, ",")+"]"); err != nil {
+		t.Fatal(err)
+	}
+	v, err := d.GetDirection(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	blob, err := json.Marshal(struct {
+		P any
+		W any
+		R any
+	}{v.Proposals, v.Warnings, v.Ranking})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var raw any
+	if err := json.Unmarshal(blob, &raw); err != nil {
+		t.Fatal(err)
+	}
+	var walk func(any, string)
+	walk = func(x any, path string) {
+		switch val := x.(type) {
+		case map[string]any:
+			for k, e := range val {
+				if k == "Text" || k == "text" || k == "name" || k == "club" {
+					continue
+				}
+				walk(e, path+"."+k)
+			}
+		case []any:
+			for _, e := range val {
+				walk(e, path)
+			}
+		case string:
+			for _, r := range val {
+				if r > 127 || r == ' ' {
+					t.Errorf("%s is %q — a sentence reached the frontend instead of a code", path, val)
+					return
+				}
+			}
+		}
+	}
+	walk(raw, "view")
 }

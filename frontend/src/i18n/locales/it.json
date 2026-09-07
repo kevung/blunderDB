@@ -1562,5 +1562,77 @@
         "empty": "Il registro è vuoto.",
         "copied": "{n} righe copiate negli appunti.",
         "copyFailed": "Non è stato possibile copiare il registro."
+    },
+    "direction": {
+        "title": "Direzione",
+        "direct": "Dirigi questo torneo",
+        "open": "Apri la direzione",
+        "close": "Chiudi la direzione",
+        "directed": "diretto",
+        "state": {
+            "draft": "in preparazione",
+            "running": "in corso",
+            "finished": "terminato"
+        },
+        "named": {
+            "suisse_tableau": "Svizzero a 2 vite poi tabellone",
+            "suisse_tableauHint": "Consigliato per 16-32 giocatori. Ogni sconfitta conta uguale, e la fine si risolve senza spareggio.",
+            "elimination": "Eliminazione diretta",
+            "eliminationHint": "Il formato più breve. Una sconfitta e il torneo è finito.",
+            "consolante": "Principale e consolazione",
+            "consolanteHint": "I perdenti del tabellone principale giocano fra loro.",
+            "double_elimination": "Doppia eliminazione",
+            "double_eliminationHint": "Servono due sconfitte per uscire; il vincitore della consolazione rigioca la finale.",
+            "gsl": "Blocchi GSL",
+            "gslHint": "Gruppi di quattro, abbinati dai risultati: nulla dipende dall'ora dell'annuncio.",
+            "poules": "Gironi poi tabellone",
+            "poulesHint": "Tutti giocano lo stesso numero di partite prima del tabellone."
+        },
+        "format": {
+            "swiss_lives": "Svizzero a vite",
+            "lives_bracket": "Tabellone con esenzioni",
+            "bracket": "Tabellone",
+            "gsl": "Blocchi GSL",
+            "round_robin": "Gironi"
+        },
+        "settings": {
+            "format": "Formato",
+            "recommended": "consigliato",
+            "phases": "Fasi",
+            "length": "Lunghezza",
+            "lengthHint": "Numero di punti di una partita di questa fase.",
+            "lives": "Vite",
+            "livesHint": "Numero di sconfitte prima dell'eliminazione.",
+            "target": "Passaggio",
+            "targetHint": "Passare al tabellone quando la somma delle vite raggiunge questo numero. 0: nessun passaggio.",
+            "finalLength": "Finale",
+            "finalLengthHint": "Lunghezza della finale. 0: come le altre partite.",
+            "tables": "Tavoli",
+            "tableCount": "Numero di tavoli",
+            "tableCountHint": "0: quanti ne servono.",
+            "entrants": "{n} iscritti",
+            "byes": "{n} esenzioni al primo turno",
+            "apply": "Salva",
+            "start": "Avvia il torneo",
+            "delete": "Elimina la direzione",
+            "frozen": "Il torneo è iniziato: queste impostazioni cambiano ormai solo tramite un evento.",
+            "deleteConfirm": "Eliminare la direzione di questo torneo? Il torneo e le sue partite restano; le partite perdono solo il posto che occupavano.",
+            "created": "Direzione creata.",
+            "started": "Torneo avviato.",
+            "deleted": "Direzione eliminata.",
+            "errorCreating": "Impossibile creare la direzione.",
+            "errorSaving": "Impossibile salvare la configurazione.",
+            "saved": "Configurazione salvata.",
+            "errorStarting": "Impossibile avviare il torneo."
+        },
+        "tabs": {
+            "direction": "Direzione",
+            "players": "Giocatori",
+            "brackets": "Tabelloni",
+            "standings": "Classifica",
+            "history": "Cronologia",
+            "settings": "Impostazioni",
+            "notYet": "Questa vista arriva con il suo lotto."
+        }
     }
 }
