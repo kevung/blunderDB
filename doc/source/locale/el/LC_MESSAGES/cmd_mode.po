@@ -1596,3 +1596,9 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 #~ "βαθμολογημένες έναντι της αποθηκευμένης "
 #~ "ανάλυσης). Πέντε ερωτήσεις, με χρόνο, με"
 #~ " άμεση διόρθωση."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Ανοίγει τον πίνακα Τουρνουά για τη διεύθυνση ενός τουρνουά και τον ξανακλείνει. Όσο είναι ανοιχτή μια διεύθυνση, η κύρια περιοχή δείχνει το τουρνουά αντί για το ταμπλό· οποιαδήποτε άλλη καρτέλα επαναφέρει το ταμπλό."
+
+msgid "direct"
+msgstr "direct"

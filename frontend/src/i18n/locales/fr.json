@@ -1903,6 +1903,23 @@
             "finished": "Tournoi clos",
             "reopened": "Tournoi rouvert",
             "error": "Impossible d’ajouter cette note."
+        },
+        "clock": {
+            "matches": "joués {played} · en cours {running}",
+            "pace": "{observed} min/pt (prévu {planned})",
+            "slow": "{n} lent(s)",
+            "break": "pause à {at}",
+            "warnings": "{n}"
+        },
+        "pending": "{n} propositions en attente",
+        "credit": {
+            "title": "À propos du moteur",
+            "by": "Nicomaque, moteur de tournoi créé par Nicolas Harmand.",
+            "what": "Il tient le format, les appariements, les tableaux et le classement ; blunderDB lui donne son interface et garde ses matchs.",
+            "repo": "Le dépôt",
+            "docs": "La documentation",
+            "version": "Version embarquée : {version}",
+            "open": "À propos du moteur"
         }
     }
 }

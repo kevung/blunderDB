@@ -23,6 +23,8 @@
     import BracketsView from './BracketsView.svelte';
     import StandingsView from './StandingsView.svelte';
     import HistoryView from './HistoryView.svelte';
+    import ClockBar from './ClockBar.svelte';
+    import CreditModal from './CreditModal.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
@@ -52,7 +54,8 @@
         finishTournament,
         reopenTournament,
         history,
-        addNote
+        addNote,
+        clock
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -101,6 +104,8 @@
     let phases = $state([]);
     let ranking = $state(null);
     let entries = $state([]);
+    let clockView = $state(null);
+    let creditOpen = $state(false);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -114,6 +119,7 @@
         brackets().then((p) => (phases = p));
         standings().then((r) => (ranking = r));
         history().then((h) => (entries = h));
+        clock().then((c) => (clockView = c));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -121,10 +127,14 @@
         entrySuggestions().then((s) => (suggestions = s));
     });
 
-    /* Le temps écoulé d'un match avance sans qu'aucun événement ne soit écrit : la grille se
-       rafraîchit donc à la minute, sans quoi une table qui traîne resterait invisible. */
+    /* Le temps écoulé d'un match avance sans qu'aucun événement ne soit écrit : la grille et
+       l'horloge se rafraîchissent donc à la minute, sans quoi une table qui traîne resterait
+       invisible. */
     $effect(() => {
-        const timer = setInterval(() => tableGrid().then((c) => (cells = c)), 60000);
+        const timer = setInterval(() => {
+            tableGrid().then((c) => (cells = c));
+            clock().then((c) => (clockView = c));
+        }, 60000);
         return () => clearInterval(timer);
     });
 
@@ -240,8 +250,17 @@
             {/each}
         </nav>
         <span class="spacer"></span>
+        <button type="button" class="credit-btn" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}>ⓘ</button>
         <button type="button" class="close" onclick={closeDirection}>{$t('direction.close')}</button>
     </header>
+
+    {#if creditOpen}
+        <div class="credit-layer">
+            <CreditModal engineVersion={view?.engineVersion || ''} onClose={() => (creditOpen = false)} />
+        </div>
+    {/if}
+
+    <ClockBar clock={clockView} warnings={view?.warnings?.length || 0} onWarnings={() => (tab = 'direction')} />
 
     <div class="body">
         {#if tab === 'settings'}
@@ -281,6 +300,7 @@
 
 <style>
     .direction-view {
+        position: relative;
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -378,6 +398,24 @@
         margin: 0;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
+    }
+
+    /* Le crédit s'ouvre sous l'en-tête, là où le bouton est : il n'interrompt pas le travail
+       en cours et se referme d'un clic. */
+    .credit-layer {
+        position: absolute;
+        top: 2.2rem;
+        right: var(--space-2);
+        z-index: 30;
+    }
+
+    .credit-btn {
+        border-color: transparent;
+        color: var(--color-text-muted);
+        background: transparent;
+        cursor: pointer;
+        font-size: var(--font-size-base);
+        padding: 0 0.3rem;
     }
 
     .placeholder {

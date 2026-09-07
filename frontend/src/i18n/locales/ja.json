@@ -1903,6 +1903,23 @@
             "finished": "大会終了",
             "reopened": "大会を再開",
             "error": "備考を追加できませんでした。"
+        },
+        "clock": {
+            "matches": "終了 {played}・進行中 {running}",
+            "pace": "{observed} 分/点（予定 {planned}）",
+            "slow": "長引き {n}",
+            "break": "{at} に休憩",
+            "warnings": "{n}"
+        },
+        "pending": "保留中の提案 {n} 件",
+        "credit": {
+            "title": "エンジンについて",
+            "by": "Nicomaque — Nicolas Harmand が作成した大会運営エンジン。",
+            "what": "形式、組み合わせ、トーナメント表、順位を担います。blunderDB はその画面を用意し、試合を保管します。",
+            "repo": "リポジトリ",
+            "docs": "ドキュメント",
+            "version": "同梱バージョン：{version}",
+            "open": "エンジンについて"
         }
     }
 }

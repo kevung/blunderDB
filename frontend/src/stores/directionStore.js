@@ -29,7 +29,8 @@ import {
     CloseDirection as CloseDirectionBinding,
     ReopenDirection as ReopenDirectionBinding,
     History,
-    AddDirectionNote
+    AddDirectionNote,
+    Clock
 } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
@@ -479,4 +480,16 @@ export async function addNote(text) {
     const view = await AddDirectionNote(id, text);
     directionStore.set(view);
     return view;
+}
+
+/** L'horloge : le temps, les matchs, l'allure, les matchs lents, la prochaine pause. */
+export async function clock() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    try {
+        return await Clock(id);
+    } catch (e) {
+        logger.error('direction: clock failed', e);
+        return null;
+    }
 }

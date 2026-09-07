@@ -1004,6 +1004,10 @@ export default {
 <td>Mostrar/ocultar el panel Transcripción (borradores de partidas).</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-D</td>
+<td>Mostrar/ocultar el panel Torneos para dirigir un torneo.</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Mostrar/ocultar la ayuda.</td>
 </tr>
@@ -1517,6 +1521,10 @@ export default {
 <tr>
 <td>transcribe, tr</td>
 <td>Abre el panel Transcripción: los borradores de partidas en curso de captura, y con qué empezar uno nuevo.</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>Abre el panel Torneos para dirigir un torneo, y lo vuelve a cerrar. Mientras hay una dirección abierta, la zona principal muestra el torneo en lugar del tablero; cualquier otra pestaña devuelve el tablero.</td>
 </tr>
 <tr>
 <td>met</td>

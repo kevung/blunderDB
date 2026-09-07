@@ -1113,3 +1113,9 @@ msgstr "ヘルプを閉じる。"
 #~ msgstr ""
 #~ "不整合のある下書きも、警告のうえでそのまま保存されます。拒否されるものはありません。不正な着手は打たれたとおりに書き出され、gnubg"
 #~ " と XG がそれを「Invalid move」と表示し、以降は食い違うという警告が出ます。"
+
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "大会を進行するための「大会」パネルの表示・非表示。"

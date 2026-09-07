@@ -14,6 +14,7 @@
     import { activeTabStore, dbMutationCounterStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
     import { ankiDueStore, refreshAnkiDue } from '../stores/ankiDueStore.js';
+    import { pendingProposalsStore } from '../stores/directionStore.js';
     import { t } from '../i18n';
     import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
     import { logger } from '../utils/logger.js';
@@ -357,6 +358,12 @@
                      bruit. -->
                 {#if tab.id === 'anki' && $ankiDueStore > 0}
                     <span class="tab-badge" aria-label={$t('tabbedPanel.ankiDue', { n: $ankiDueStore })}>{$ankiDueStore}</span>
+                {/if}
+                <!-- Le badge des propositions en attente (ADR-0047 §8) : pendant que le
+                     directeur est ailleurs, la Direction vit. C'est la même raison que pour
+                     Anki — ce chiffre est la RAISON de revenir à l'onglet. -->
+                {#if tab.id === 'tournaments' && $pendingProposalsStore > 0}
+                    <span class="tab-badge" aria-label={$t('direction.pending', { n: $pendingProposalsStore })}>{$pendingProposalsStore}</span>
                 {/if}
             </button>
         {/each}

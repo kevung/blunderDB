@@ -1903,6 +1903,23 @@
             "finished": "Turnaus päättyi",
             "reopened": "Turnaus avattu uudelleen",
             "error": "Huomautusta ei voitu lisätä."
+        },
+        "clock": {
+            "matches": "pelattu {played} · käynnissä {running}",
+            "pace": "{observed} min/piste (arvio {planned})",
+            "slow": "{n} hidasta",
+            "break": "tauko klo {at}",
+            "warnings": "{n}"
+        },
+        "pending": "{n} ehdotusta odottaa",
+        "credit": {
+            "title": "Tietoja moottorista",
+            "by": "Nicomaque, Nicolas Harmandin luoma turnausmoottori.",
+            "what": "Se pitää huolta muodosta, pareista, kaavioista ja sijoituksista; blunderDB antaa sille käyttöliittymän ja säilyttää sen ottelut.",
+            "repo": "Repositorio",
+            "docs": "Dokumentaatio",
+            "version": "Sisällytetty versio: {version}",
+            "open": "Tietoja moottorista"
         }
     }
 }

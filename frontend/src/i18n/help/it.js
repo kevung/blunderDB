@@ -1004,6 +1004,10 @@ export default {
 <td>Mostra/nascondi il pannello Trascrizione (bozze di partite).</td>
 </tr>
 <tr>
+<td>CTRL-MAJ-D</td>
+<td>Mostra/nasconde il pannello Tornei per dirigere un torneo.</td>
+</tr>
+<tr>
 <td>?</td>
 <td>Mostra/nascondi l'aiuto.</td>
 </tr>
@@ -1517,6 +1521,10 @@ export default {
 <tr>
 <td>transcribe, tr</td>
 <td>Apre il pannello Trascrizione: le bozze di partite in corso di inserimento, e il modo di iniziarne una.</td>
+</tr>
+<tr>
+<td>direct</td>
+<td>Apre il pannello Tornei per dirigere un torneo, e lo richiude. Finché vi è aperta una direzione, l'area principale mostra il torneo invece del tavoliere; qualsiasi altra scheda riporta il tavoliere.</td>
 </tr>
 <tr>
 <td>met</td>

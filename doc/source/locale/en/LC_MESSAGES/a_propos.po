@@ -256,3 +256,8 @@ msgstr ""
 "the `Nunito <https://github.com/googlefonts/nunito>`__ and `Noto Sans JP "
 "<https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ fonts (SIL Open "
 "Font License 1.1)."
+
+msgid ""
+"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format, les appariements, les tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa `documentation <https://pileofcells.github.io/backgammon-tournoi/>`__ est publiée à part ;"
+msgstr ""
+"the tournament engine **Nicomaque** is the work of *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__): it holds the format, the pairings, the brackets and the standings of a tournament directed from blunderDB. Its `documentation <https://pileofcells.github.io/backgammon-tournoi/>`__ is published separately;"

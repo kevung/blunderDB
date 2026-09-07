@@ -1216,3 +1216,9 @@ msgstr "Chiudi la guida."
 #~ "stata giocata, con l'avvertimento che "
 #~ "gnubg e XG la segnaleranno («Invalid "
 #~ "move») e divergeranno da lì."
+
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "Mostra/nasconde il pannello Tornei per dirigere un torneo."

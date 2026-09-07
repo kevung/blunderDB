@@ -1600,3 +1600,9 @@ msgstr "Cancella la cronologia dei comandi."
 #~ " l'azione di cubo, valutate contro "
 #~ "l'analisi registrata). Cinque domande, "
 #~ "cronometrate, corrette sul momento."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Apre il pannello Tornei per dirigere un torneo, e lo richiude. Finché vi è aperta una direzione, l'area principale mostra il torneo invece del tavoliere; qualsiasi altra scheda riporta il tavoliere."
+
+msgid "direct"
+msgstr "direct"

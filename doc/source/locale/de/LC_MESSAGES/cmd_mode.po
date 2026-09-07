@@ -1604,3 +1604,9 @@ msgstr "Löscht den Befehlsverlauf."
 #~ "Verdopplungsentscheidung, bewertet gegen die "
 #~ "gespeicherte Analyse). Fünf Fragen, auf "
 #~ "Zeit, sofort korrigiert."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Öffnet das Turnier-Panel, um ein Turnier zu leiten, und schließt es wieder. Solange dort eine Leitung geöffnet ist, zeigt der Hauptbereich das Turnier statt des Boards; jeder andere Reiter holt das Board zurück."
+
+msgid "direct"
+msgstr "direct"

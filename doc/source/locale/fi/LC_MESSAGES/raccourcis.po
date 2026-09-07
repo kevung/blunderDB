@@ -1207,3 +1207,9 @@ msgstr "Sulje ohje."
 #~ "varoituksella että gnubg ja XG "
 #~ "ilmoittavat siitä (”Invalid move”) ja "
 #~ "poikkeavat siitä eteenpäin."
+
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "Näytä/piilota Turnaukset-paneeli turnauksen johtamista varten."

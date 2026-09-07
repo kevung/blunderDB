@@ -1583,3 +1583,9 @@ msgstr "Clear the command history."
 #~ "cube action, graded against the stored"
 #~ " analysis). Five questions, timed, "
 #~ "corrected on the spot."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Opens the Tournaments panel to direct a tournament, and closes it again. While a direction is open there, the main area shows the tournament instead of the board; any other tab brings the board back."
+
+msgid "direct"
+msgstr "direct"

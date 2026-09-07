@@ -1602,3 +1602,9 @@ msgstr "Borra el historial de comandos."
 #~ "contra el análisis guardado). Cinco "
 #~ "preguntas, cronometradas, corregidas al "
 #~ "instante."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Abre el panel Torneos para dirigir un torneo, y lo vuelve a cerrar. Mientras hay una dirección abierta, la zona principal muestra el torneo en lugar del tablero; cualquier otra pestaña devuelve el tablero."
+
+msgid "direct"
+msgstr "direct"

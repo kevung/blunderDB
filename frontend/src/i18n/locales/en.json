@@ -1903,6 +1903,23 @@
             "finished": "Tournament closed",
             "reopened": "Tournament reopened",
             "error": "Could not add this note."
+        },
+        "clock": {
+            "matches": "played {played} · running {running}",
+            "pace": "{observed} min/pt (planned {planned})",
+            "slow": "{n} slow",
+            "break": "break at {at}",
+            "warnings": "{n}"
+        },
+        "pending": "{n} proposals waiting",
+        "credit": {
+            "title": "About the engine",
+            "by": "Nicomaque, a tournament engine created by Nicolas Harmand.",
+            "what": "It holds the format, the pairings, the brackets and the standings; blunderDB gives it an interface and keeps its matches.",
+            "repo": "The repository",
+            "docs": "The documentation",
+            "version": "Embedded version: {version}",
+            "open": "About the engine"
         }
     }
 }

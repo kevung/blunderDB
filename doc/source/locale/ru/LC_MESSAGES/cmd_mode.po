@@ -1582,3 +1582,9 @@ msgstr "Очищает историю команд."
 #~ " (ход или решение по кубу, оценённые"
 #~ " по сохранённому анализу). Пять вопросов,"
 #~ " на время, с немедленной проверкой."
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "Открывает панель «Турниры» для проведения турнира и закрывает её. Пока там открыто управление, основная область показывает турнир вместо доски; любая другая вкладка возвращает доску."
+
+msgid "direct"
+msgstr "direct"

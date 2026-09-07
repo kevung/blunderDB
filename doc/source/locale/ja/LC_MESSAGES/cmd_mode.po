@@ -1515,3 +1515,9 @@ msgstr "コマンド履歴を消去します。"
 #~ "マイクロトレーニングのセッションを始めます。引数を一つ取ります：``train pips``（ピップカウント）、``train"
 #~ " epc``、``train tp``（マッチスコアでのテイクポイント）、``train "
 #~ "quiz``（着手またはキューブ判断を、保存済みの分析に照らして採点）。五問、時間を計り、その場で採点します。"
+
+msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
+msgstr "大会を進行するために「大会」パネルを開き、また閉じます。そこで進行が開いている間、主要領域には盤面ではなく大会が表示され、他のタブに切り替えると盤面が戻ります。"
+
+msgid "direct"
+msgstr "direct"
