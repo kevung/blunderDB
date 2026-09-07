@@ -28,12 +28,15 @@ tests/e2e/
 ├── helpers/
 │   ├── wailsMock.js   – injecte window.go + window.runtime avant le boot
 │   ├── fixtures.js    – positions, matches, stats, résultats EPC factices
-│   └── showcase.js    – jeu « vitrine » de la capture d'écran (30 positions, match, analyse)
+│   ├── showcase.js    – jeu « vitrine » de la capture d'écran (30 positions, match, analyse)
+│   ├── gestureCount.js       – compte les keyboard.press / clics d'un bloc (budgets ux.md §4)
+│   └── transcriptionDraft.js – un brouillon de transcription ouvert, moteur Go figé
 ├── tab-switch-stats.spec.js          – S2 : transitions d'onglets Stats
 ├── epc-bar-refreshes-on-return.spec.js – S1 étendu : mise à jour EPC
 ├── search-flow.spec.js               – Recherche : filtres + structure, résultats, navigation
 ├── match-navigation.spec.js          – Match : ouverture, parcours des coups, sortie
 ├── import-position.spec.js           – Import : XGID collé, fichier via dialogue
+├── transcription-budgets.spec.js     – T3.5 : les budgets de gestes d'ux.md §§4.1–4.3, comptés
 ├── screenshot.spec.js                – Capture documentaire (hors suite, voir plus bas)
 └── README.md (ce fichier)
 ```
@@ -101,6 +104,33 @@ qu'un champ a le focus) gardent les touches nues pour eux : Tab, flèches, j/k
 n'atteignent pas le dispatcher global. Dans une spec, ouvrir la recherche par
 `Ctrl+F`, sortir d'un champ en cliquant un bouton, et parcourir la bibliothèque
 depuis l'onglet Analyse.
+
+### `countGestures(page, fn)` — `helpers/gestureCount.js`
+
+Compte les gestes émis dans `fn` et rend `{ keys, clicks, total }` : c'est ce qui
+tient les budgets KLM de `tasks/transcription/ux.md` §4. `page.keyboard.press`
+est remplacé le temps du bloc, donc tout appui est compté ; un clic, en revanche,
+passe par `g.click(locator)` — `locator.click()` ne descend pas par `page.mouse`
+et aucun remplacement ne le verrait.
+
+```js
+const count = await countGestures(page, async (g) => {
+    await g.press('Digit3');
+    await g.press('Digit1');
+    await g.press('Enter');
+});
+expect(count.keys).toBe(3);
+```
+
+### `installTranscriptionEngine(page, opts?)` — `helpers/transcriptionDraft.js`
+
+Un brouillon de transcription ouvert : la liste, l'ouverture, les candidats d'un
+jet, et un `ApplyTranscriptionGesture` qui NOTE le geste et rend un document
+annoté **figé**. Deux faits seulement y sont dérivés — la position du Cursor et
+la réponse attendue après un double — parce que les budgets de correction se
+comptent en pas de Cursor et que `t`/`p` ne sont des touches que devant une
+offre. Le reste appartient aux tests Go du paquet `transcript`. `sentKinds(page)`
+rend la suite des gestes reçus, `resetGestures(page)` remet le compteur à zéro.
 
 ## Conventions
 
