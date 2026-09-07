@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -418,4 +419,128 @@ func TestRenderMATGameEndsWithoutLastMove(t *testing.T) {
 	if _, err := gnubgparser.ParseMAT(strings.NewReader(empty)); err != nil {
 		t.Fatalf("re-parse move-less game: %v\n%s", err, empty)
 	}
+}
+
+// TestRenderMATWinsGoesToWinnersColumn: the result cell belongs to the winner,
+// and a .mat says who won by WHICH COLUMN it is written in. Rendered at the
+// margin — player 1's column — every game player 2 won came back from a
+// round-trip credited to player 1. The three ways a game ends for player 2 are
+// covered: bearing off, a refused double, a resignation.
+func TestRenderMATWinsGoesToWinnersColumn(t *testing.T) {
+	tests := []struct {
+		name  string
+		moves []*domain.Move
+	}{
+		{
+			name: "player 2 bears off",
+			moves: []*domain.Move{
+				{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+				{Player: -1, MoveType: "checker", Dice: [2]int32{6, 4}, CheckerMove: "24/18 13/9"},
+			},
+		},
+		{
+			name: "player 1 refuses player 2's double",
+			moves: []*domain.Move{
+				{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+				{Player: -1, MoveType: "cube", CubeAction: "Double"},
+				{Player: 1, MoveType: "cube", CubeAction: "Pass"},
+			},
+		},
+		{
+			name: "player 1 resigns after their own play",
+			moves: []*domain.Move{
+				{Player: -1, MoveType: "checker", Dice: [2]int32{6, 4}, CheckerMove: "24/18 13/9"},
+				{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+			// Winner 1 is gnubg's player 2.
+			games := []*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 1, PointsWon: 1}}
+			out := RenderMAT(m, games, map[int64][]*domain.Move{1: tt.moves})
+
+			// The result must never sit at player 1's column.
+			for _, line := range strings.Split(out, "\n") {
+				if i := strings.Index(line, "Wins"); i >= 0 && i < 20 {
+					t.Fatalf("the result is in player 1's column (offset %d):\n%s", i, out)
+				}
+			}
+
+			parsed, err := gnubgparser.ParseMAT(strings.NewReader(out))
+			if err != nil {
+				t.Fatalf("re-parse: %v\n%s", err, out)
+			}
+			if got := parsed.Games[0].Winner; got != 1 {
+				t.Errorf("re-read winner = player %d, want player 2\n%s", got+1, out)
+			}
+		})
+	}
+}
+
+// TestRenderMATWinsLineShape pins the two shapes testdata/test.mat shows, which
+// are the two gnubg writes:
+//
+//  16. Doubles => 2                Drops
+//     Wins 1 point                              <- own line, no number, left column
+//
+//  6. Drops                       Wins 1 point  <- appended, right column
+func TestRenderMATWinsLineShape(t *testing.T) {
+	m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+
+	// Player 1's column is taken by the double they just made: own line, and the
+	// cell lands under the cells above it — byte for byte what test.mat writes.
+	p1 := RenderMAT(m,
+		[]*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1}},
+		map[int64][]*domain.Move{1: {{Player: 1, MoveType: "cube", CubeAction: "Double/Pass"}}})
+	if !strings.Contains(p1, "\n      Wins 1 point\n") {
+		t.Errorf("player 1's result must take an unnumbered line at their own column:\n%q", p1)
+	}
+	if got := matLine(t, "testdata", " Wins 1 point"); got != "      Wins 1 point" {
+		t.Fatalf("test.mat's own line reads %q — the shape above no longer matches it", got)
+	}
+
+	// Player 2's column is free on the line player 1 just opened: the cell joins
+	// it, on the same line, and no new numbered line appears.
+	p2 := RenderMAT(m,
+		[]*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 1, PointsWon: 1}},
+		map[int64][]*domain.Move{1: {
+			{Player: -1, MoveType: "cube", CubeAction: "Double"},
+			{Player: 1, MoveType: "cube", CubeAction: "Pass"},
+		}})
+	if n := strings.Count(p2, ")"); n != 2 {
+		t.Errorf("the result must join the running line, not open a third:\n%s", p2)
+	}
+	var joined string
+	for _, line := range strings.Split(p2, "\n") {
+		if strings.Contains(line, "Wins") {
+			joined = line
+		}
+	}
+	if !strings.Contains(joined, "Drops") {
+		t.Errorf("player 2's result must sit on the line carrying player 1's drop, got %q", joined)
+	}
+	if strings.Index(joined, "Wins") <= strings.Index(joined, "Drops") {
+		t.Errorf("player 2's result must sit to the RIGHT of player 1's cell: %q", joined)
+	}
+}
+
+// matLine returns the first line of testdata/test.mat whose trimmed content is
+// want, with its indentation and without its CR. It is how a shape assertion
+// stays anchored on a real gnubg file rather than on a literal nobody rechecks.
+func matLine(t *testing.T, dir, want string) string {
+	t.Helper()
+	data, err := os.ReadFile("../../../" + dir + "/test.mat")
+	if err != nil {
+		t.Fatalf("read test.mat: %v", err)
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimRight(line, "\r")
+		if strings.TrimSpace(line) == strings.TrimSpace(want) {
+			return line
+		}
+	}
+	t.Fatalf("no line %q in test.mat", want)
+	return ""
 }

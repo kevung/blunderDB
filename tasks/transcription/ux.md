@@ -180,6 +180,11 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
   `keyboard.press`/`mouse.click` émis et échoue si le nombre dépasse le budget, sous
   `frontend/tests/e2e/`. Le conflit de port avec gammonGo est déjà paré dans le dépôt par
   `BLUNDERDB_E2E_PORT` (`frontend/playwright.config.js`).
-- **Latence** : un test Go mesure `transcript.Replay` sur un match de 300 Actions (seuil
-  proposé : 20 ms) et `LegalMoves` + tri 0-ply sur les 21 jets d'une position de contact
-  (seuil : 30 ms) ; au-delà, rouge.
+- **Latence** — MESURÉE le 2026-09-07, le seuil de 20 ms annoncé ici était faux d'un facteur
+  cinq. Un rejeu complet de 300 Actions coûte **39 ms** (101 ms sur un document plus dense),
+  entièrement dans `domain.LegalMoves` (175 µs un jet ordinaire, 3,6 ms un double). Le rejeu
+  est donc **incrémental** : ajouter une Action à la fin, le geste de chaque tour, coûte
+  **104 µs**, soit 380 fois moins. Une correction ne coûte que la queue du document qu'elle
+  invalide. Les tests figent les deux : un seuil de 5 ms pour l'ajout, et l'égalité stricte
+  entre le rejeu incrémental et le rejeu complet sur un document couvrant tous les `kind` et
+  toutes les incohérences.
