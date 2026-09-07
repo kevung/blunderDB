@@ -8,7 +8,11 @@ the question from being reopened. Refined by 0041 (the engine playing a few
 plies out of sight to make a training position). Amended by 0044 (2026-09-07):
 *transcribing* a match played elsewhere lands on most of the surface listed
 below and is accepted — nobody decides, the rules check and never enforce, the
-output is an ordinary Match; the refusal of a play mode stands.
+output is an ordinary Match; the refusal of a play mode stands. Amended again by 0047
+(2026-09-07): *directing* a tournament is accepted for the same kind of reason — the
+tournament creates the Matches its own users then transcribe or import, so it feeds the
+loop this record describes rather than competing with it; no game is played inside the
+tool, and the refusal of a play mode still stands.
 
 ## Context
 

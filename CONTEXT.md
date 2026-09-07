@@ -524,6 +524,16 @@ carry that Player's literal name. Choosing an existing Player at entry time fixe
 and pre-fills the rating from that Player's PR; nothing is inferred afterwards.
 _Avoid_: player (the literal name in a Match), entrant, competitor, member
 
+**Slot** (interface: *emplacement*):
+One match of a Direction — two Participants, a length, a table, a phase, a result — seen as
+the place a Match of the library can fill. A Slot exists as soon as the director launches
+the match, and stays empty unless a Transcription is started from it or an existing Match
+is attached to it by an explicit gesture. The result of a Slot is what the director said
+(pre-filled from the Match when one is attached, never derived from it); a Match whose final
+score disagrees with it is shown as a warning, not reconciled. Deleting a Direction empties
+every Slot's link; the Matches keep their Tournament.
+_Avoid_: fixture, pairing (that is the proposal, before the match is launched), game
+
 **Directory** (interface: *annuaire*):
 The Participants of every Direction in the database, seen as one list deduplicated by name,
 each with the club and rating of their latest entry. A *view*, never a table: it is
