@@ -617,6 +617,8 @@ export default {
 <h3>Anki-paneeli</h3>
 <p><strong>Anki-paneeli</strong> (<em>CTRL-K</em>) mahdollistaa asemien opiskelun välitoistolla FSRS-algoritmia käyttäen. Käyttäjä voi luoda pakkoja kokoelmista tai hakutuloksista.</p>
 <p><strong>Pakkojen luominen:</strong> Napsauta <em>New Deck</em> luodaksesi pakan kokoelmasta tai nykyisistä hakutuloksista. Hakuun perustuvat pakat synkronoituvat automaattisesti, kun Anki-välilehti avataan.</p>
+<p><strong>Tilannekorttien pakka.</strong> Kolmas lähde, <em>Tilannekortit</em>, ei pyydä muuta kuin nimen: blunderDB täyttää pakan 36:lla järjestämättömällä tilanteella väliltä 2–9 away, ja tilanteen kortti on sama taulukko, jonka Tilanteet-harjoitus näyttää — hyväksymispisteet ja gammon-arvot, molemmat puolet. Tämä pakka on olemassa vain, jos luot sen: 36 ensimmäisenä päivänä erääntyvää korttia on kertausvelkaa, ja se otetaan tietoisesti. Synkronointipainike luo pakan uudelleen.</p>
+<p>Nämä kaksi paikkaa eivät tee samaa työtä. Tilanteet-harjoitus panee palauttamaan nämä luvut <strong>kellon käydessä</strong> ja mittaa nopeuden; pakka panee ne <strong>kestämään ajassa</strong> eikä mittaa siitä mitään. Kaksi tarinaa pysyvät erillään: Harjoittelun loki ei näe Anki-kertauksia, eivätkä Ankin tilastot näe harjoitteluistuntoja.</p>
 <p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Study</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti näyttää vastaavan aseman laudalla. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
 <p><strong>Kuutiopäätöksistä tulee kaksi korttia, ketjutettuina.</strong> Kuutiopäätös on kaksi kysymystä — ”tuplaus?”, sitten ”hyväksy?” — ja blunderDB on aina tallentanut ne kahtena asemana. Pakka, joka valitsee vain toisen puolikkaan, saa toisenkin: päätös täydennetään, ei laajenneta. Ja kun molemmat ovat vuorossa, toinen tulee <strong>heti</strong> ensimmäisen jälkeen.</p>
 <p>Kumpikin säilyttää oman arvosanansa ja oman aikataulunsa: nämä eivät ole yhden kortin kaksi vaihetta, vaan kaksi korttia. Ketjutus ei aikaista mitään eräpäivää — se järjestää jo erääntyneet kortit, ei muuta. Koska ne syntyvät yhdessä, ne erääntyvät yhdessä ensimmäisellä kerralla, ja juuri siinä siitä on hyötyä.</p>
@@ -1316,6 +1318,22 @@ export default {
 <td>Hylkää kesken oleva syöttö.</td>
 </tr>
 <tr>
+<td>d</td>
+<td>Tuplaa tai uudelleentuplaa: valittu siirto vahvistetaan samalla, yhdellä ainoalla näppäimellä.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Ota tarjottu tuplaus: kuutio siirtyy ottajalle kaksinkertaiseen arvoon ja tuplaaja heittää uudelleen.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Luovuta tarjotun tuplauksen edessä: peli voitetaan sillä arvolla, joka kuutiolla oli ennen tuplausta.</td>
+</tr>
+<tr>
+<td>r ja sitten 1, 2 tai 3</td>
+<td>Luovuta peli vuorossa olevan puolesta: yksinkertainen, gammon tai backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään.</td>
+</tr>
+<tr>
 <td>VASEN, h</td>
 <td>Siirrä kohdistinta yksi toiminto taaksepäin siirtoluettelossa.</td>
 </tr>
@@ -1330,6 +1348,7 @@ export default {
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
+<p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
 <h3>Ohjepaneeli</h3>
 <table>
