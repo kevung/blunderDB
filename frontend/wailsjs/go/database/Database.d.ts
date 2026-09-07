@@ -143,6 +143,10 @@ export function DetachMatchFromSlot(arg1:number,arg2:string):Promise<void>;
 
 export function DirectionPageHTML(arg1:number):Promise<string>;
 
+export function DirectionPairingSheetHTML(arg1:number,arg2:number):Promise<string>;
+
+export function DirectionRounds(arg1:number):Promise<number>;
+
 export function DirectionStore():Promise<direction.Store>;
 
 export function DiscardFromTrash(arg1:number):Promise<void>;
@@ -508,3 +512,5 @@ export function Vacuum():Promise<database.VacuumResult>;
 export function WithdrawParticipant(arg1:number,arg2:string,arg3:boolean):Promise<database.DirectionView>;
 
 export function WriteDirectionPage(arg1:number):Promise<string>;
+
+export function WriteDirectionPairingSheet(arg1:number,arg2:number):Promise<string>;

@@ -2063,6 +2063,14 @@
             "open": "Im Browser öffnen",
             "forget": "Nicht mehr schreiben",
             "error": "Die Anzeigeseite konnte nicht geschrieben werden."
+        },
+        "sheet": {
+            "print": "Blatt drucken",
+            "hint": "Das Paarungsblatt der Runde, für den Empfangstisch. Der Druckdialog öffnet sich von selbst.",
+            "round": "Runde",
+            "roundHint": "Welche Runde gedruckt wird. Standardmäßig die jüngste.",
+            "latest": "jüngste",
+            "error": "Das Paarungsblatt konnte nicht geschrieben werden."
         }
     }
 }

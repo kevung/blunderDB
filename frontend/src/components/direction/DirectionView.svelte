@@ -66,7 +66,9 @@
         previewDirectionConfig,
         writeDirectionPage,
         chooseDirectionOutputDir,
-        forgetDirectionOutputDir
+        forgetDirectionOutputDir,
+        writePairingSheet,
+        directionRounds
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -127,6 +129,8 @@
     let slotRows = $state([]);
     let unattached = $state([]);
     let configPreview = $state(null);
+    let rounds = $state(0);
+    let sheetRound = $state(0);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -153,6 +157,7 @@
         writeDirectionPage().then((path) => {
             if (path === null) statusBarTextStore.set(tMsg('direction.display.error'));
         });
+        directionRounds().then((n) => (rounds = n));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -206,6 +211,17 @@
        puisse compter un dimanche matin. */
     const onChooseOutput = () => act(() => chooseDirectionOutputDir(), 'direction.display.error');
     const onForgetOutput = () => act(() => forgetDirectionOutputDir(), 'direction.display.error');
+    /* La feuille d'appariements : un clic, et le dialogue d'impression du système s'ouvre. Ce
+       que le directeur voulait, c'est le papier, pas un onglet. */
+    async function onPrintSheet() {
+        const path = await writePairingSheet(sheetRound);
+        if (!path) {
+            statusBarTextStore.set(tMsg('direction.sheet.error'));
+            return;
+        }
+        BrowserOpenURL('file://' + path);
+    }
+
     async function onOpenPage() {
         const path = await writeDirectionPage();
         if (!path) {
@@ -375,6 +391,24 @@
                         {/each}
                     </ul>
                 {/if}
+                {#if rounds > 0}
+                    <div class="sheet">
+                        {#if rounds > 1}
+                            <label title={$t('direction.sheet.roundHint')}>
+                                {$t('direction.sheet.round')}
+                                <select bind:value={sheetRound}>
+                                    <option value={0}>{$t('direction.sheet.latest')}</option>
+                                    {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
+                                        <option value={n}>{n}</option>
+                                    {/each}
+                                </select>
+                            </label>
+                        {/if}
+                        <button type="button" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
+                            {$t('direction.sheet.print')}
+                        </button>
+                    </div>
+                {/if}
                 <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
                 <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} />
                 <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
@@ -470,6 +504,33 @@
         display: flex;
         flex-direction: column;
         min-height: 0;
+    }
+
+    /* La feuille d'appariements se demande d'une ligne discrète : c'est un geste de quelques
+       fois par tournoi, pas de toutes les minutes. */
+    .sheet {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-1) var(--space-2);
+    }
+
+    .sheet label {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+    }
+
+    .sheet button,
+    .sheet select {
+        padding: 0.2rem 0.6rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
+        cursor: pointer;
     }
 
     /* Les avertissements sont une bande, pas une fenêtre : le directeur doit pouvoir continuer

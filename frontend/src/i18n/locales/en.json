@@ -2063,6 +2063,14 @@
             "open": "Open in the browser",
             "forget": "Stop writing",
             "error": "The display page could not be written."
+        },
+        "sheet": {
+            "print": "Print the sheet",
+            "hint": "The round's pairing sheet, to put on the welcome desk. The print dialog opens by itself.",
+            "round": "Round",
+            "roundHint": "Which round to print. The most recent by default.",
+            "latest": "most recent",
+            "error": "The pairing sheet could not be written."
         }
     }
 }

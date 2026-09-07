@@ -48,6 +48,9 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 	if err != nil {
 		return nil, err
 	}
+	// One instant for the whole batch: what is launched together is one round, and the engine
+	// reads that from the start times.
+	now := time.Now()
 	for _, a := range dir.Propose() {
 		if a.Kind == tournoi.ActWait {
 			continue
@@ -64,7 +67,7 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 			// launch it themselves with a table they picked (ADR-0047 §3.2).
 			continue
 		}
-		if err := confirm(ctx, dir, a); err != nil {
+		if err := confirmAt(ctx, dir, a, now); err != nil {
 			return nil, err
 		}
 	}
@@ -73,7 +76,17 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 
 // confirm turns one action into its event and records it.
 func confirm(ctx context.Context, dir *direction.Direction, a tournoi.Action) error {
-	ev, err := dir.EventFor(a, time.Now())
+	return confirmAt(ctx, dir, a, time.Now())
+}
+
+// confirmAt is confirm with the instant given rather than taken.
+//
+// It exists because a BATCH of matches must carry ONE instant. The engine groups matches into
+// batches by their start time — that is how it knows what a director calls a round — so
+// launching eight matches with eight successive time.Now() would make eight rounds of one match
+// each, and the pairing sheet (#387) would print one line per page.
+func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, now time.Time) error {
+	ev, err := dir.EventFor(a, now)
 	if err != nil {
 		return err
 	}

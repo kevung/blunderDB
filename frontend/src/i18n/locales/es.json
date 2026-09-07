@@ -2063,6 +2063,14 @@
             "open": "Abrir en el navegador",
             "forget": "Dejar de escribir",
             "error": "No se ha podido escribir la página de la pantalla."
+        },
+        "sheet": {
+            "print": "Imprimir la hoja",
+            "hint": "La hoja de emparejamientos de la ronda, para dejar en la mesa de recepción. El diálogo de impresión se abre solo.",
+            "round": "Ronda",
+            "roundHint": "Qué ronda imprimir. La más reciente por defecto.",
+            "latest": "la más reciente",
+            "error": "No se ha podido escribir la hoja de emparejamientos."
         }
     }
 }

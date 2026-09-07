@@ -262,6 +262,14 @@ export function DirectionPageHTML(arg1) {
   return window['go']['database']['Database']['DirectionPageHTML'](arg1);
 }
 
+export function DirectionPairingSheetHTML(arg1, arg2) {
+  return window['go']['database']['Database']['DirectionPairingSheetHTML'](arg1, arg2);
+}
+
+export function DirectionRounds(arg1) {
+  return window['go']['database']['Database']['DirectionRounds'](arg1);
+}
+
 export function DirectionStore() {
   return window['go']['database']['Database']['DirectionStore']();
 }
@@ -992,4 +1000,8 @@ export function WithdrawParticipant(arg1, arg2, arg3) {
 
 export function WriteDirectionPage(arg1) {
   return window['go']['database']['Database']['WriteDirectionPage'](arg1);
+}
+
+export function WriteDirectionPairingSheet(arg1, arg2) {
+  return window['go']['database']['Database']['WriteDirectionPairingSheet'](arg1, arg2);
 }

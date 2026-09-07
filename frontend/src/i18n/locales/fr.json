@@ -2063,6 +2063,14 @@
             "open": "Ouvrir dans le navigateur",
             "forget": "Ne plus écrire",
             "error": "Impossible d'écrire la page d'affichage."
+        },
+        "sheet": {
+            "print": "Imprimer la feuille",
+            "hint": "La feuille d'appariements de la ronde, à poser sur la table d'accueil. Le dialogue d'impression s'ouvre tout seul.",
+            "round": "Ronde",
+            "roundHint": "Quelle ronde imprimer. Par défaut, la plus récente.",
+            "latest": "la plus récente",
+            "error": "Impossible d'écrire la feuille d'appariements."
         }
     }
 }
