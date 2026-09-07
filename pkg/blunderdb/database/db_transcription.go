@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -158,9 +159,16 @@ func (d *Database) CloseTranscription(id int64) error {
 
 // ApplyTranscriptionGesture records one gesture and returns the draft as it
 // became. The gesture itself is transcript's business; what happens here is
-// the write: the row is rewritten whenever the persisted part of the document
-// changed, which the dice being typed do not — Entry lives in the session and
-// nowhere else, so a keystroke that only fills a die costs no write at all.
+// the write: the row is rewritten, in its own transaction, whenever the
+// durable part of the document changed — the header and the Actions.
+//
+// That is the whole of fonctionnel.md §3, read in both directions. A gesture
+// that changes an Action (validating one, correcting it, inserting, deleting,
+// changing a side, a length, the metadata) is on disk before the call
+// returns. A gesture that only moves the Cursor, only fills a die or only
+// picks a candidate writes nothing: the dice and the candidate live in the
+// Entry, which is not serialised, and the Cursor is normalised away by
+// durableJSON.
 //
 // The Replay starts at the Cursor the gesture left, so the Cursor comes back
 // on the first Inconsistency at or after the Action just touched, which is
@@ -174,19 +182,19 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 		return nil, err
 	}
 
-	before, err := json.Marshal(ed.Doc)
+	before, err := durableJSON(ed.Doc)
 	if err != nil {
-		return nil, fmt.Errorf("encode transcription %d: %w", id, err)
+		return nil, fmt.Errorf("transcription %d: %w", id, err)
 	}
 	if err := ed.Apply(g); err != nil {
 		return nil, err
 	}
-	after, err := json.Marshal(ed.Doc)
+	after, err := durableJSON(ed.Doc)
 	if err != nil {
-		return nil, fmt.Errorf("encode transcription %d: %w", id, err)
+		return nil, fmt.Errorf("transcription %d: %w", id, err)
 	}
-	if string(before) != string(after) {
-		if _, err := d.saveTranscription(id, ed.Doc); err != nil {
+	if !bytes.Equal(before, after) {
+		if _, err := d.writeTranscription(id, ed.Doc, after); err != nil {
 			return nil, err
 		}
 	}
@@ -224,7 +232,14 @@ func (d *Database) session(id int64) (*transcript.Editor, error) {
 	return d.transcriptSessions[id], nil
 }
 
-// loadTranscription reads one row and decodes its document.
+// loadTranscription reads one row and decodes its document — the resumption
+// of fonctionnel.md §3, whether it follows a crash or simply a tab the user
+// had left. The Cursor is put back at the END of the document rather than
+// wherever the row happens to say: the Action the user was in the middle of
+// correcting lived in the Entry, which is not persisted, so the only place a
+// resumed draft can honestly continue from is after its last written Action.
+// (durableJSON already writes it there; doing it again here is what makes the
+// rule true of any row, including one written by another build.)
 func (d *Database) loadTranscription(id int64) (transcript.Document, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -237,20 +252,63 @@ func (d *Database) loadTranscription(id int64) (transcript.Document, error) {
 	if err != nil {
 		return doc, err
 	}
-	return decodeTranscription(row)
+	doc, err = decodeTranscription(row)
+	if err != nil {
+		return doc, err
+	}
+	doc.Cursor = len(doc.Actions)
+	return doc, nil
+}
+
+// durableJSON encodes the part of a document that a crash must not lose: the
+// header and the Actions. It is what the row holds and what "has the draft
+// changed?" is asked of.
+//
+// The Cursor is normalised to the end of the document rather than serialised
+// as it stands, and the two reasons are the same one. It is not a fact of the
+// match — moving it changes no Action — so a gesture that only walks the
+// Transcript must cost no write (fonctionnel.md §3); and a resumed draft
+// continues after its last written Action anyway, since the Entry a
+// correction was in the middle of is not persisted. The row therefore states
+// the Cursor a resumption will actually use.
+//
+// Entry, the correction's return position and the pending board are `json:"-"`
+// in transcript.Document: a crash is allowed to lose the dice half typed and
+// the undo stack, never a validated Action (ADR-0045 rule 1).
+func durableJSON(doc transcript.Document) ([]byte, error) {
+	doc.Cursor = len(doc.Actions)
+	blob, err := json.Marshal(doc)
+	if err != nil {
+		return nil, fmt.Errorf("encode transcription: %w", err)
+	}
+	return blob, nil
 }
 
 // saveTranscription writes doc into row id (0 to insert) and returns the id
-// the row has. The format version travels in the document AND in its own
-// column: the column is what a future reader filters on without decoding
-// every draft, the document is what makes the string true when the row is
-// copied elsewhere.
+// the row has.
 func (d *Database) saveTranscription(id int64, doc transcript.Document) (int64, error) {
-	blob, err := json.Marshal(doc)
+	blob, err := durableJSON(doc)
 	if err != nil {
-		return 0, fmt.Errorf("encode transcription: %w", err)
+		return 0, err
 	}
+	return d.writeTranscription(id, doc, blob)
+}
 
+// writeTranscription is the write itself: one statement, and therefore one
+// transaction of its own (ADR-0045 rule 1 — the store issues a single INSERT
+// or UPDATE in autocommit, so a gesture is committed or it is not, and the
+// next gesture cannot be riding in the same transaction as this one).
+//
+// What "committed" buys is a crash of the application: the row is in the
+// write-ahead log, and the next open recovers it. SQLite runs with
+// synchronous=NORMAL (storage/sqlite/sqlite.go), so a power cut in the same
+// instant may still cost the last commits — the trade the whole database
+// makes, not one this file may quietly change for itself.
+//
+// The format version travels in the document AND in its own column: the
+// column is what a future reader filters on without decoding every draft, the
+// document is what makes the string true when the row is copied elsewhere.
+func (d *Database) writeTranscription(id int64, doc transcript.Document, blob []byte) (int64, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	if d.db == nil {

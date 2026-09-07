@@ -1062,6 +1062,8 @@
         "money": "Rahapeli",
         "points": "{n} pist.",
         "notSaved": "ei tallennettu",
+        "draftInProgress": "Luonnos kesken",
+        "openDraftTooltip": "Avaa Litterointi-välilehti",
         "unnamed": "Nimetön"
     },
     "status": {

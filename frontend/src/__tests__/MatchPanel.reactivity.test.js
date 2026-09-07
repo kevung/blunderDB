@@ -17,6 +17,7 @@ import { tick } from 'svelte';
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllMatches: vi.fn(() => Promise.resolve([])),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
+    ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
     UpdateMatch: vi.fn(() => Promise.resolve()),
     UpdateMatchComment: vi.fn(() => Promise.resolve()),

@@ -1062,6 +1062,8 @@
         "money": "Money",
         "points": "{n} pts",
         "notSaved": "not saved",
+        "draftInProgress": "Draft in progress",
+        "openDraftTooltip": "Open the Transcription tab",
         "unnamed": "Unnamed"
     },
     "status": {

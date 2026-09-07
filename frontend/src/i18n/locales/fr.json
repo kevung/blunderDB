@@ -1062,6 +1062,8 @@
         "money": "Argent",
         "points": "{n} pts",
         "notSaved": "non enregistré",
+        "draftInProgress": "Brouillon en cours",
+        "openDraftTooltip": "Ouvrir l'onglet Transcription",
         "unnamed": "Sans nom"
     },
     "status": {

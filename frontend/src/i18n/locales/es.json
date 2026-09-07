@@ -1062,6 +1062,8 @@
         "money": "Dinero",
         "points": "{n} ptos",
         "notSaved": "sin guardar",
+        "draftInProgress": "Borrador en curso",
+        "openDraftTooltip": "Abrir la pestaña Transcripción",
         "unnamed": "Sin nombre"
     },
     "status": {

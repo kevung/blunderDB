@@ -1062,6 +1062,8 @@
         "money": "На деньги",
         "points": "{n} оч.",
         "notSaved": "не сохранено",
+        "draftInProgress": "Черновик в работе",
+        "openDraftTooltip": "Открыть вкладку «Запись»",
         "unnamed": "Без названия"
     },
     "status": {
