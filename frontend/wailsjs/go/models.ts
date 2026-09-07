@@ -367,6 +367,7 @@ export namespace database {
 	    analyses_without_position: number;
 	    reviews_without_deck: number;
 	    reviews_without_position: number;
+	    training_items_without_session: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new OrphanCounts(source);
@@ -380,6 +381,7 @@ export namespace database {
 	        this.analyses_without_position = source["analyses_without_position"];
 	        this.reviews_without_deck = source["reviews_without_deck"];
 	        this.reviews_without_position = source["reviews_without_position"];
+	        this.training_items_without_session = source["training_items_without_session"];
 	    }
 	}
 	export class PhaseStats {
