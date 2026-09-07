@@ -95,7 +95,10 @@ func (s *AnkiStore) LinkedCard(ctx context.Context, scope string, deckID, cardID
 		return nil, errf(s.DB, fmt.Sprintf("linked card of %d", cardID), err)
 	}
 	tenant, targs := s.DB.TenantFilter("", scope)
-	var positionID int64
+	// Nullable, and NULL is an answer: a card that asks about something other
+	// than a position (a score, ADR-0042) has no cube decision and therefore
+	// no other half.
+	var positionID *int64
 	err := s.DB.QueryRow(ctx,
 		`SELECT position_id FROM anki_card WHERE id = ? AND deck_id = ? AND `+tenant,
 		append([]any{cardID, deckID}, targs...)...).Scan(&positionID)
@@ -105,8 +108,11 @@ func (s *AnkiStore) LinkedCard(ctx context.Context, scope string, deckID, cardID
 	if err != nil {
 		return fail(err)
 	}
+	if positionID == nil {
+		return nil, storage.ErrNotFound
+	}
 
-	counterparts, err := cubeCounterparts(ctx, s.DB, scope, []int64{positionID})
+	counterparts, err := cubeCounterparts(ctx, s.DB, scope, []int64{*positionID})
 	if err != nil {
 		return fail(err)
 	}

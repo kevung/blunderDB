@@ -617,6 +617,8 @@ export default {
 <h3>Anki Panel</h3>
 <p>The <strong>Anki</strong> panel (<em>CTRL-K</em>) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.</p>
 <p><strong>Creating decks:</strong> Click <em>New Deck</em> to create a deck from a collection or the current search results. Search-based decks sync automatically when the Anki tab is opened.</p>
+<p><strong>A deck of score sheets.</strong> The third source, <em>Score sheets</em>, asks for nothing but a name: blunderDB fills the deck with the 36 unordered scores from 2 to 9 away, and the card of a score is the sheet the Scores exercise displays — take points and gammon values, both faces. That deck exists only if you create it: 36 cards due on the first day are a review debt, and it is contracted on purpose. The sync button regenerates it.</p>
+<p>The two places do not do the same work. The Scores exercise makes you retrieve those numbers <strong>against the clock</strong> and measures the speed; the deck makes them <strong>last over time</strong> and measures none of it. The two histories stay apart: the Training journal ignores Anki reviews, and Anki's statistics ignore Training sessions.</p>
 <p><strong>Reviewing:</strong> Select a deck then click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys <em>1</em> (Again), <em>2</em> (Hard), <em>3</em> (Good), or <em>4</em> (Easy). Press <em>Esc</em> to stop and return to the deck list.</p>
 <p><strong>Cube decisions make two cards, chained.</strong> A cube decision is two questions — “double?”, then “take?” — and blunderDB has always stored them as two positions. A deck that selects only one half gets the other: the decision is completed, not enlarged. And when both are due, the second comes <strong>immediately</strong> after the first.</p>
 <p>Each keeps its own grade and its own schedule: these are not two stages of one card, they are two cards. Chaining advances no due date — it orders the cards already due, nothing more. Both being born together, they are due together the first time, and that is where it serves.</p>
@@ -1315,9 +1317,39 @@ export default {
 <td>Esc</td>
 <td>Abandon the entry in progress.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Double or redouble: the selected play is validated on the way, in a single key.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Take the double offered: the cube goes to the taker at the doubled value and the doubler rolls again.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Pass the double offered: the game is won at the value the cube had before the double.</td>
+</tr>
+<tr>
+<td>r then 1, 2 or 3</td>
+<td>Give the game up for the side on roll: single, gammon or backgammon. Escape between the two keys cancels without recording anything.</td>
+</tr>
+<tr>
+<td>LEFT, h</td>
+<td>Move the cursor back one action in the transcript.</td>
+</tr>
+<tr>
+<td>RIGHT, l</td>
+<td>Move the cursor forward one action.</td>
+</tr>
+<tr>
+<td>Click (on a cell)</td>
+<td>Put the cursor on that action.</td>
+</tr>
 </tbody>
 </table>
 <p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
+<p>A game ends by a pass, by a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, times the value of the cube). The score, the Crawford game and the end of the match are then shown above the dice, and the opening of the next game is expected.</p>
+<p>The transcript takes the right half of the panel: one column per player, one row per turn, the cube action and the end of the game in the column of whoever acted. The cursor's cell is framed; moving the cursor brings the board back to the position of the action aimed at and lists its candidates, with the play that was recorded selected. An inconsistency (illegal move, double turn, impossible cube action, action past the end of the match, inconsistent dice) decorates its cell and is named in a tooltip. Games can be folded; the cursor's game is open. A collapsible pane shows the draft's exact <code>.mat</code> text, with a button to copy it.</p>
 <h3>Help Panel</h3>
 <table>
 <thead>

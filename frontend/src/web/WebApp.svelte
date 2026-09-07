@@ -58,7 +58,12 @@
 
     async function loadDecks() {
         await run(async () => {
-            decks = (await call('anki.listDecks')) || [];
+            // Les paquets de fiches de score (ADR-0042) ne sont pas offerts
+            // ici : leur carte n'est pas une position, et la consultation web
+            // ne sait dessiner qu'un damier. Le périmètre est verrouillé
+            // (ADR-0039) — on ne propose donc pas un paquet dont la révision
+            // n'aurait rien à montrer, plutôt que d'afficher un damier vide.
+            decks = ((await call('anki.listDecks')) || []).filter((deck) => deck.sourceType !== 'scores');
             if (decks.length > 0 && !deckId) deckId = decks[0].id;
         });
     }

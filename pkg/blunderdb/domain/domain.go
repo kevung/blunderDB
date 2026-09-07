@@ -42,13 +42,25 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.23.0"
+	DatabaseVersion = "2.24.0"
 )
 
 // Anki deck source types
 const (
 	AnkiSourceCollection = "collection"
 	AnkiSourceSearch     = "search"
+	// AnkiSourceScores is the deck of score cards (ADR-0042 rule 2): the
+	// application fills it with the 36 unordered scores of 2-9 away, and the
+	// user enters none of them. It is never created on its own — a deck that
+	// appears with 36 cards due on day one is a review debt nobody contracted.
+	AnkiSourceScores = "scores"
+)
+
+// What an Anki card asks about (ADR-0042 rule 1). The kind decides what Key
+// names: a position's id, or an unordered score such as "3:5".
+const (
+	AnkiKindPosition = "position"
+	AnkiKindScore    = "score"
 )
 
 // AnkiDeck represents a spaced repetition deck
@@ -79,10 +91,19 @@ type AnkiDeck struct {
 	UpdatedAt    string `json:"updatedAt"`
 }
 
-// AnkiCard represents a single FSRS card linked to a position
+// AnkiCard represents a single FSRS card: what it asks about is its Kind and
+// Key (ADR-0042 rule 1), the rest is scheduling state.
+//
+// PositionID is 0 for a card that is not a position — the column is NULL in
+// the database, which is what keeps the foreign key honest. Read Kind, never
+// "PositionID != 0", when deciding what a card is.
 type AnkiCard struct {
-	ID            int64   `json:"id"`
-	DeckID        int64   `json:"deckId"`
+	ID     int64 `json:"id"`
+	DeckID int64 `json:"deckId"`
+	// Kind is AnkiKindPosition or AnkiKindScore; Key is the position id as
+	// text, or the unordered score ("3:5").
+	Kind          string  `json:"kind"`
+	Key           string  `json:"key"`
 	PositionID    int64   `json:"positionId"`
 	Due           string  `json:"due"`
 	Stability     float64 `json:"stability"`
@@ -95,7 +116,9 @@ type AnkiCard struct {
 	LastReview    string  `json:"lastReview"`
 }
 
-// AnkiReviewCard is the card plus position data sent to the frontend for review
+// AnkiReviewCard is the card plus, for a position card, the position it asks
+// about. A score card carries the zero Position: its whole question is the
+// card's Key, and the review view builds the score sheet from it.
 type AnkiReviewCard struct {
 	Card     AnkiCard `json:"card"`
 	Position Position `json:"position"`
@@ -105,9 +128,14 @@ type AnkiReviewCard struct {
 // the FSRS scheduling outcome. It is append-only and powers retention/streak
 // statistics, the review heatmap and a faithful undo of the last review.
 type AnkiReviewLog struct {
-	ID            int64   `json:"id"`
-	CardID        int64   `json:"cardId"`
-	DeckID        int64   `json:"deckId"`
+	ID     int64 `json:"id"`
+	CardID int64 `json:"cardId"`
+	DeckID int64 `json:"deckId"`
+	// The reviewed card's kind and key, copied at review time so the journal
+	// stays readable after the card is gone. PositionID is 0 (NULL in the
+	// database) for anything that is not a position.
+	Kind          string  `json:"kind"`
+	Key           string  `json:"key"`
 	PositionID    int64   `json:"positionId"`
 	Rating        int     `json:"rating"`        // 1=Again, 2=Hard, 3=Good, 4=Easy
 	State         int     `json:"state"`         // FSRS state recorded at review time

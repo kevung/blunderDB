@@ -617,6 +617,8 @@ export default {
 <h3>Anki-Panel</h3>
 <p>Das Panel <strong>Anki</strong> (<em>CTRL-K</em>) ermöglicht es, Stellungen durch verteiltes Wiederholen mithilfe des FSRS-Algorithmus zu studieren. Der Benutzer kann Stapel aus Sammlungen oder Suchergebnissen erstellen.</p>
 <p><strong>Stapel erstellen:</strong> Klicken Sie auf <em>New Deck</em>, um einen Stapel aus einer Sammlung oder den aktuellen Suchergebnissen zu erstellen. Suchbasierte Stapel werden beim Aktivieren des Anki-Tabs automatisch synchronisiert.</p>
+<p><strong>Ein Stapel mit Standkarten.</strong> Die dritte Quelle, <em>Standkarten</em>, verlangt nichts als einen Namen: blunderDB füllt den Stapel mit den 36 ungeordneten Ständen von 2 bis 9 away, und die Karte eines Standes ist genau das Blatt, das die Übung Stände anzeigt — Annahmepunkte und Gammonwerte, beide Seiten. Diesen Stapel gibt es nur, wenn Sie ihn anlegen: 36 am ersten Tag fällige Karten sind eine Wiederholungsschuld, und die geht man bewusst ein. Die Schaltfläche zum Synchronisieren erzeugt ihn neu.</p>
+<p>Die beiden Orte leisten nicht dasselbe. Die Übung Stände lässt diese Zahlen <strong>unter Zeitdruck</strong> wiederfinden und misst das Tempo; der Stapel lässt sie <strong>über die Zeit halten</strong> und misst davon nichts. Die beiden Geschichten bleiben getrennt: das Trainingsprotokoll kennt die Anki-Wiederholungen nicht, und die Anki-Statistiken kennen die Trainingssitzungen nicht.</p>
 <p><strong>Wiederholung:</strong> Wählen Sie einen Stapel aus und klicken Sie dann auf <em>Study</em> (oder doppelklicken Sie auf einen Stapel), um mit der Wiederholung der fälligen Karten zu beginnen. Jede Karte zeigt die entsprechende Stellung auf dem Brett an. Bewerten Sie Ihre Erinnerung mit den Tasten <em>1</em> (Nochmal), <em>2</em> (Schwierig), <em>3</em> (Gut) oder <em>4</em> (Einfach). Drücken Sie <em>Esc</em>, um anzuhalten und zur Stapelliste zurückzukehren.</p>
 <p><strong>Verdopplungsentscheidungen ergeben zwei Karten, verkettet.</strong> Eine Verdopplungsentscheidung ist zwei Fragen — „doppeln?“, dann „annehmen?“ — und blunderDB speichert sie seit jeher als zwei Stellungen. Ein Stapel, der nur eine Hälfte auswählt, bekommt die andere: Die Entscheidung wird vervollständigt, nicht erweitert. Und wenn beide fällig sind, kommt die zweite <strong>unmittelbar</strong> nach der ersten.</p>
 <p>Jede behält ihre eigene Note und ihren eigenen Plan: Das sind nicht zwei Stufen einer Karte, das sind zwei Karten. Die Verkettung zieht keinen Termin vor — sie ordnet die bereits fälligen Karten, mehr nicht. Da beide zusammen entstehen, sind sie beim ersten Mal zusammen fällig, und genau dort nützt sie.</p>
@@ -1315,9 +1317,39 @@ export default {
 <td>Esc</td>
 <td>Die laufende Eingabe verwerfen.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Verdoppeln oder erneut verdoppeln: der ausgewählte Zug wird dabei mit bestätigt, in einer einzigen Taste.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Die angebotene Verdopplung annehmen: der Dopplerwürfel geht zum verdoppelten Wert an den Annehmenden, und der Verdoppelnde würfelt erneut.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Die angebotene Verdopplung aufgeben: die Partie wird zum Wert vor der Verdopplung gewonnen.</td>
+</tr>
+<tr>
+<td>r, dann 1, 2 oder 3</td>
+<td>Die Partie für die Seite am Zug aufgeben: einfach, Gammon oder Backgammon. Esc zwischen den beiden Tasten bricht ab, ohne etwas aufzuzeichnen.</td>
+</tr>
+<tr>
+<td>LINKS, h</td>
+<td>Den Cursor im Transkript um eine Aktion zurücksetzen.</td>
+</tr>
+<tr>
+<td>RECHTS, l</td>
+<td>Den Cursor um eine Aktion vorrücken.</td>
+</tr>
+<tr>
+<td>Klick (auf eine Zelle)</td>
+<td>Den Cursor auf diese Aktion setzen.</td>
+</tr>
 </tbody>
 </table>
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
+<p>Eine Partie endet durch ein Aufgeben, durch eine Resignation oder durch das Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit dem Wert des Dopplerwürfels). Punktestand, Crawford-Partie und Matchende werden dann über den Würfeln angezeigt, und die Eröffnung der nächsten Partie wird erwartet.</p>
+<p>Das Transkript nimmt die rechte Hälfte des Panels ein: eine Spalte je Spieler, eine Zeile je Zug, die Dopplerabgabe und das Partieende in der Spalte dessen, der handelt. Die Zelle des Cursors ist umrahmt; wird der Cursor bewegt, zeigt das Brett wieder die Position der angesteuerten Aktion und deren Kandidaten, wobei der gespielte Zug ausgewählt ist. Eine Unstimmigkeit (unerlaubter Zug, doppelter Zug, unmögliche Dopplerabgabe, Aktion nach dem Matchende, unstimmige Würfel) markiert ihre Zelle und wird in einem Tooltip benannt. Partien lassen sich einklappen; die Partie des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten <code>.mat</code>-Text des Entwurfs mit einer Schaltfläche zum Kopieren.</p>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>

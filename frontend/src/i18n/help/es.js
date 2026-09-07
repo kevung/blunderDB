@@ -617,6 +617,8 @@ export default {
 <h3>Panel Anki</h3>
 <p>El panel <strong>Anki</strong> (<em>CTRL-K</em>) permite estudiar posiciones mediante repetición espaciada utilizando el algoritmo FSRS. El usuario puede crear mazos a partir de colecciones o de resultados de búsqueda.</p>
 <p><strong>Creación de mazos:</strong> Haga clic en <em>New Deck</em> para crear un mazo a partir de una colección o de los resultados de búsqueda actuales. Los mazos basados en una búsqueda se sincronizan automáticamente al activar la pestaña Anki.</p>
+<p><strong>Un mazo de fichas de marcador.</strong> La tercera fuente, <em>Fichas de marcador</em>, no pide más que un nombre: blunderDB llena el mazo con los 36 marcadores no ordenados de 2 a 9 away, y la carta de un marcador es la ficha que muestra el ejercicio Marcadores — puntos de aceptación y valores de gammon, ambas caras. Ese mazo solo existe si usted lo crea: 36 cartas pendientes el primer día son una deuda de repaso, y se contrae a propósito. El botón de sincronización lo regenera.</p>
+<p>Los dos sitios no hacen el mismo trabajo. El ejercicio Marcadores hace recuperar esos números <strong>contra el reloj</strong> y mide la velocidad; el mazo los hace <strong>durar en el tiempo</strong> y no mide nada de eso. Las dos historias quedan separadas: el registro del Entrenamiento ignora los repasos de Anki, y las estadísticas de Anki ignoran las sesiones de Entrenamiento.</p>
 <p><strong>Repaso:</strong> Seleccione un mazo y luego haga clic en <em>Study</em> (o haga doble clic en un mazo) para empezar a repasar las cartas pendientes. Cada carta muestra la posición correspondiente en el tablero. Evalúe su recuerdo con las teclas <em>1</em> (Repetir), <em>2</em> (Difícil), <em>3</em> (Bien) o <em>4</em> (Fácil). Pulse <em>Esc</em> para detenerse y volver a la lista de mazos.</p>
 <p><strong>Las decisiones de cubo hacen dos tarjetas, encadenadas.</strong> Una decisión de cubo son dos preguntas — «¿doblar?», luego «¿aceptar?» — y blunderDB siempre las ha guardado como dos posiciones. Un mazo que selecciona solo una mitad recibe la otra: la decisión se completa, no se amplía. Y cuando ambas vencen, la segunda viene <strong>inmediatamente</strong> después de la primera.</p>
 <p>Cada una conserva su propia nota y su propio calendario: no son dos tiempos de una tarjeta, son dos tarjetas. El encadenamiento no adelanta ningún vencimiento — ordena las tarjetas ya vencidas, nada más. Como nacen juntas, vencen juntas la primera vez, y ahí es donde sirve.</p>
@@ -1315,9 +1317,39 @@ export default {
 <td>Esc</td>
 <td>Abandonar la entrada en curso.</td>
 </tr>
+<tr>
+<td>d</td>
+<td>Doblar o redoblar: la jugada seleccionada se valida de paso, con una sola tecla.</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Aceptar el doble ofrecido: el cubo pasa al que acepta con el valor doblado y el que dobló vuelve a tirar.</td>
+</tr>
+<tr>
+<td>p</td>
+<td>Rechazar el doble ofrecido: la partida se gana con el valor que tenía el cubo antes del doble.</td>
+</tr>
+<tr>
+<td>r y luego 1, 2 o 3</td>
+<td>Abandonar la partida por el bando en juego: sencilla, gammon o backgammon. Esc entre las dos teclas cancela sin registrar nada.</td>
+</tr>
+<tr>
+<td>IZQUIERDA, h</td>
+<td>Retroceder el cursor una acción en la transcripción.</td>
+</tr>
+<tr>
+<td>DERECHA, l</td>
+<td>Avanzar el cursor una acción.</td>
+</tr>
+<tr>
+<td>Clic (en una celda)</td>
+<td>Situar el cursor en esa acción.</td>
+</tr>
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
+<p>Una partida termina por un rechazo, por un abandono o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
+<p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una fila por turno, la acción de doblaje y el final de la partida en la columna de quien actúa. La celda del cursor está enmarcada; al mover el cursor, el tablero vuelve a la posición de la acción señalada y muestra sus candidatas, con la jugada registrada seleccionada. Una incoherencia (jugada ilegal, turno doble, doblaje imposible, acción más allá del final del match, dados incoherentes) decora su celda y se nombra en un mensaje emergente. Las partidas se pliegan; la del cursor queda abierta. Un panel desplegable muestra el texto <code>.mat</code> exacto del borrador, con un botón para copiarlo.</p>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

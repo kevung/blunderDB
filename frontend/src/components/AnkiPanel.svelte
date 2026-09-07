@@ -30,6 +30,8 @@
     import PanelTable from './panels/PanelTable.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import AnalysisView from './AnalysisView.svelte';
+    import ScoreCard from './ScoreCard.svelte';
+    import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
 
     // Read-only mirrors of stores — declared as $derived so Svelte tracks
     // dependencies via $store reads (the project rule, see CLAUDE.md).
@@ -46,6 +48,13 @@
     let answerShown = $derived($ankiAnswerShownStore);
 
     // ── The answer of the card under review (ADR-0025) ──────────────────
+    // A card asks about a position or about a score (ADR-0042). Everything
+    // that reads the board, the analysis or the position id below is about a
+    // position card; a score card's whole question is its key, and its whole
+    // answer is the sheet the Training tab draws — the same component.
+    let isScoreCard = $derived(anki.isScoreCard(reviewCard));
+    let scoreAways = $derived(anki.scoreCardAways(reviewCard));
+    let scoreSheet = $derived(scoreAways ? buildScoreCard(scoreAways[0], scoreAways[1]) : null);
     // The stored analysis of the card's position, loaded by showCard through
     // showPosition — never a live evaluation (rule 1).
     let analysis = $derived($analysisStore);
@@ -58,7 +67,7 @@
     // ABSENT answer, not a hidden one, so it is named rather than masked
     // (rule 3's rejected alternative) — a mask revealing nothing would be a
     // lie the interface tells.
-    let hasAnswer = $derived(answerKind === 'cube' ? cubeAnalysesCount(analysis) > 0 : answerMoves.length > 0);
+    let hasAnswer = $derived(isScoreCard ? scoreSheet !== null : answerKind === 'cube' ? cubeAnalysesCount(analysis) > 0 : answerMoves.length > 0);
     let turnability = $derived(cubeTurnability($positionStore));
     let cubeValue = $derived($positionStore?.cube?.value ?? 0);
     let onRoll = $derived($positionStore?.player_on_roll ?? 0);
@@ -163,7 +172,7 @@
 
     const reviewLogColumns = $derived([
         { key: 'reviewedAt', label: $t('anki.colReviewedAt') },
-        { key: 'positionId', label: $t('anki.colPosition'), narrow: true, align: 'center' },
+        { key: 'subject', label: $t('anki.colSubject'), narrow: true, align: 'center' },
         { key: 'rating', label: $t('anki.colRating'), narrow: true, align: 'center' },
         { key: 'state', label: $t('anki.colState'), narrow: true, align: 'center' },
         { key: 'scheduledDays', label: $t('anki.colInterval'), narrow: true, align: 'center' }
@@ -175,7 +184,11 @@
         reviewLog.map((/** @type {any} */ e) => ({
             id: e.id,
             reviewedAt: (e.reviewedAt || '').replace('T', ' ').slice(0, 19),
-            positionId: e.positionId,
+            // What the review was about: the position's number, or the score
+            // of a score card (ADR-0042). The key holds either, so the column
+            // reads it and falls back on the id for a journal written before
+            // the column existed.
+            subject: e.key || e.positionId,
             rating: RATING_KEYS[e.rating] ? $t(RATING_KEYS[e.rating]) : String(e.rating),
             state: anki.stateLabel(e.state),
             // The interval this review granted, in days. Zero is a card that
@@ -506,7 +519,13 @@
              column it would push the buttons out of reach on every card. -->
         <div class="review-body">
             <div class="review-strip">
-                <div class="review-position-id">{$t('anki.positionNumber', { id: reviewCard.position.id })}</div>
+                <div class="review-position-id">
+                    {#if isScoreCard}
+                        {$t('anki.scoreQuestion', { a: scoreAways?.[0] ?? 0, b: scoreAways?.[1] ?? 0 })}
+                    {:else}
+                        {$t('anki.positionNumber', { id: reviewCard.position.id })}
+                    {/if}
+                </div>
                 {#if cramMode}
                     <div class="review-buttons">
                         <button class="btn-rating" onclick={() => submitReview(1)} title={$t('anki.next') + ' (1-4)'}>
@@ -527,7 +546,13 @@
 
             <div class="review-answer">
                 {#if !hasAnswer}
-                    <div class="answer-absent">{$t('anki.noAnalysis')}</div>
+                    <div class="answer-absent">{isScoreCard ? $t('anki.badScoreKey') : $t('anki.noAnalysis')}</div>
+                {:else if answerShown && isScoreCard}
+                    <!-- The sheet is the answer, whole: no ticking of faults
+                         here. Anki schedules a memory, it does not measure a
+                         calculation (ADR-0042 rule 3) — that is the Training
+                         tab's job, and its own journal's. -->
+                    <ScoreCard card={scoreSheet} revealed locked />
                 {:else if answerShown}
                     <AnalysisView
                         {analysis}
@@ -615,7 +640,7 @@
             <PanelTable rows={reviewLogRows} columns={reviewLogColumns}>
                 {#snippet cells(/** @type {any} */ entry)}
                     <td>{entry.reviewedAt}</td>
-                    <td class="num">{entry.positionId}</td>
+                    <td class="num">{entry.subject}</td>
                     <td class="num">{entry.rating}</td>
                     <td class="num">{entry.state}</td>
                     <td class="num">{entry.scheduledDays}</td>
@@ -646,6 +671,7 @@
                     <select bind:value={newDeckSourceType} class="input-source">
                         <option value="collection">{$t('anki.sourceCollection')}</option>
                         <option value="search">{$t('anki.sourceCurrentSearch')}</option>
+                        <option value={anki.SOURCE_SCORES}>{$t('anki.sourceScores')}</option>
                     </select>
                     {#if newDeckSourceType === 'collection'}
                         <select bind:value={newDeckSourceId} class="input-source">
@@ -654,6 +680,11 @@
                                 <option value={coll.id}>{coll.name} ({coll.positionCount})</option>
                             {/each}
                         </select>
+                    {:else if newDeckSourceType === anki.SOURCE_SCORES}
+                        <!-- Nothing to choose: the deck is the 36 unordered
+                             scores of 2 to 9 away, and the user enters none of
+                             them (ADR-0042 rule 2). -->
+                        <span class="search-hint">{$t('anki.scoresCount', { count: UNORDERED_SCORES.length })}</span>
                     {:else}
                         <span class="search-hint">{$t('anki.positionsCount', { count: positionIds.length })}</span>
                     {/if}
