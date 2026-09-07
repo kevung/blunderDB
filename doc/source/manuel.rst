@@ -1049,6 +1049,104 @@ commencer immédiatement la navigation.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
+.. _panneau_transcription:
+
+Panneau Transcription
+---------------------
+
+Le panneau **Transcription** (*CTRL-MAJ-T*, commande ``transcribe`` ou ``tr``)
+sert à taper un match qu'on a sous les yeux — une feuille de match, un
+enregistrement vidéo — pour en faire un match de la bibliothèque. Ce qui se
+tape est un **brouillon** : il vit dans la base, se referme et se rouvre, et
+n'entre ni dans les statistiques ni dans les recherches tant qu'il n'a pas été
+enregistré en match.
+
+Le panneau s'ouvre sur la **liste des brouillons** de la base : date de
+dernière modification, joueurs, longueur, nombre d'actions, et le match déjà
+produit (``#`` suivi de son identifiant) ou la mention « non enregistré ». Un
+clic ouvre un brouillon, et le bouton **Brouillons** de la barre y ramène. Le
+bouton **Nouvelle transcription** déplie le formulaire de création.
+
+Le formulaire ne demande qu'une chose : la **longueur du match**. La valeur
+``0`` désigne une partie d'argent et fait apparaître les cases *Jacoby* et
+*Beaver*. Le champ s'ouvre sur la longueur du dernier brouillon modifié, ou sur
+7 lorsque la base n'en contient aucun. Les noms des joueurs ne sont pas
+demandés : le brouillon désigne les camps par *Joueur 1* et *Joueur 2*, et la
+liste affiche « Sans nom ».
+
+Un brouillon ouvert porte en tête sa **barre**, qui dit tout ce qui se déduit
+de ce qui a été tapé : la longueur du match (ou « Argent »), le score, la
+mention *Crawford* lorsque la partie en cours l'est, le numéro de la partie,
+l'état du videau — sa valeur, centré ou au nom de celui qui le possède — et le
+camp au trait.
+
+Sous la barre, le brouillon occupe deux moitiés : la **saisie** à gauche, le
+**transcript** à droite. Une barre de correction les surmonte — insérer avant,
+insérer après, supprimer, changer de camp, annuler, rétablir — qui reprend à la
+souris les touches du panneau.
+
+La moitié gauche annonce ce qu'elle attend et montre les deux dés au fur et à
+mesure de leur saisie. Une partie s'ouvre par un dé de chaque camp : le plus
+fort commence et joue les deux dés sans avoir à les ressaisir ; une égalité est
+enregistrée telle quelle et une autre ouverture est attendue.
+
+Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,
+classés par le moteur embarqué, le premier présélectionné et ses flèches posées
+sur le plateau. Ce classement est une évaluation : il est affiché, il n'est
+jamais écrit dans la base. Lorsque le moteur n'est pas disponible, les coups
+sont listés sans classement et le panneau le dit.
+
+Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du
+clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
+clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
+jet, jamais deux : 3-1 et 1-3 sont le même jet.
+
+Un clic sur un point du plateau ne laisse que les coups qui en partent. C'est le
+geste du coup lointain : descendre au douzième candidat coûte treize touches, là
+où le filtre n'en laisse que deux ou trois. Le filtre ne change rien au
+brouillon, il réduit la liste à l'écran ; le jet suivant le lève.
+
+Sous les dés, une ligne dit l'état de la saisie : le jet encore corrigeable, le
+candidat choisi, la danse enregistrée d'office, l'égalité à relancer, la
+réponse attendue à un double, le niveau attendu après une résignation, la
+correction en place, le coup « à revoir » dont le jet a changé, et
+l'incohérence que la dernière action a laissée derrière elle.
+
+Une partie se termine par une passe, par une résignation ou par la sortie du
+quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du
+videau). Le score, la partie Crawford et la fin du match sont alors affichés
+au-dessus des dés, et l'ouverture de la partie suivante est attendue.
+
+Le transcript occupe la moitié droite du panneau : une colonne par joueur, une
+ligne par tour, l'action de videau et la fin de partie dans la colonne de celui
+qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le
+plateau à la position de l'action visée et affiche ses candidats, le coup joué
+sélectionné. Une incohérence (coup illégal, double trait, videau impossible,
+action au-delà de la fin du match, dés incohérents) décore sa cellule et se
+nomme dans une info-bulle. Les parties se replient ; celle du curseur est
+ouverte. Un volet dépliable montre le texte ``.mat`` exact du brouillon, avec un
+bouton pour le copier.
+
+La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit
+le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le
+même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt,
+avec sa progression et son annulation dans la barre d'état. La barre du
+brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié
+depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a
+été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un
+match déjà enregistré reste dans la bibliothèque, définitif.
+
+Un brouillon qui porte des incohérences est enregistré tout de même, après un
+avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
+joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
+divergeront ensuite.
+
+Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la
+liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet
+Transcription.
+
+.. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
+
 .. _panneau_tournois:
 
 Panneau Tournois
