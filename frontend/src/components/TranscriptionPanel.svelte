@@ -681,8 +681,10 @@
                                 {$t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
                             {/if}
                         </span>
-                        <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
-                        <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
+                        {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
+                            <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
+                            <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
+                        {/if}
                     </div>
 
                     {#if lastFlags.length}
@@ -691,7 +693,11 @@
                         <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
                     {/if}
 
-                    {#if keys.tie}
+                    {#if keys.phase === PHASE.RESIGN}
+                        <p class="hint">{$t('transcription.resignHint')}</p>
+                    {:else if awaitingAnswer}
+                        <p class="hint">{$t('transcription.answerHint')}</p>
+                    {:else if keys.tie}
                         <p class="hint">{$t('transcription.tie')}</p>
                     {:else if expects === 'opening'}
                         <p class="hint">{$t('transcription.openingHint')}</p>
