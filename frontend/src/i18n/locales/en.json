@@ -1864,6 +1864,42 @@
             "byes": "Byes",
             "playoff": "Playoff between {players} for {spots} place(s).",
             "none": "No bracket yet."
+        },
+        "standings": {
+            "overall": "Overall standings",
+            "note": "Note",
+            "prize": "Prize",
+            "csv": "Export (CSV)",
+            "close": "Close the tournament",
+            "reopen": "Reopen",
+            "tiedHint": "Tied: the place and the prize are shared.",
+            "pool": "Pool {pool} · payable {payable} · retained {retained}",
+            "error": "Could not close the tournament.",
+            "copied": "Standings copied to the clipboard."
+        },
+        "history": {
+            "filter": "Filter by player or match",
+            "count": "{n} entries",
+            "none": "Nothing to show.",
+            "addNote": "Add note",
+            "notePlaceholder": "A note from the director…",
+            "created": "Tournament created",
+            "entered": "{player} entered",
+            "withdrawn": "{player} withdrawn",
+            "started": "{a} – {b} launched · {where}",
+            "result": "{winner} wins {scoreA}–{scoreB}",
+            "forfeit": "{winner} wins by forfeit",
+            "corrected": "Result corrected: {winner} wins",
+            "cancelled": "Match {match} cancelled",
+            "bye": "Bye: {player}",
+            "draw": "Draw: {where}",
+            "nextPhase": "Next phase",
+            "configChanged": "Configuration changed",
+            "tableChanged": "Moved to table {n}",
+            "lengthChanged": "Length set to {n}",
+            "finished": "Tournament closed",
+            "reopened": "Tournament reopened",
+            "error": "Could not add this note."
         }
     }
 }

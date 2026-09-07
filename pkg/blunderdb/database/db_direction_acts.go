@@ -52,6 +52,12 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 		if a.Kind == tournoi.ActWait {
 			continue
 		}
+		if a.Kind == tournoi.ActFinish {
+			// Closing is not launching. It freezes the final standings, so it deserves a
+			// deliberate click of its own rather than riding along with a queue of matches
+			// (found by the standings test, which closed the tournament without meaning to).
+			continue
+		}
 		if a.Reason == tournoi.ReasonWaitingTable {
 			// A proposal with no free table stays in the queue: launching it here would put
 			// two matches on one table, or none, without the director ever choosing. They

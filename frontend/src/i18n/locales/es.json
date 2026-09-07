@@ -1864,6 +1864,42 @@
             "byes": "Exenciones",
             "playoff": "Desempate entre {players} por {spots} plaza(s).",
             "none": "Aún no hay cuadro."
+        },
+        "standings": {
+            "overall": "Clasificación general",
+            "note": "Nota",
+            "prize": "Premio",
+            "csv": "Exportar (CSV)",
+            "close": "Cerrar el torneo",
+            "reopen": "Reabrir",
+            "tiedHint": "Empate: la plaza y el premio se reparten.",
+            "pool": "Bote {pool} · a repartir {payable} · retenido {retained}",
+            "error": "No se ha podido cerrar el torneo.",
+            "copied": "Clasificación copiada al portapapeles."
+        },
+        "history": {
+            "filter": "Filtrar por jugador o partida",
+            "count": "{n} entradas",
+            "none": "Nada que mostrar.",
+            "addNote": "Anotar",
+            "notePlaceholder": "Una nota del director…",
+            "created": "Torneo creado",
+            "entered": "{player} inscrito",
+            "withdrawn": "{player} retirado",
+            "started": "{a} – {b} iniciada · {where}",
+            "result": "{winner} gana {scoreA}–{scoreB}",
+            "forfeit": "{winner} gana por incomparecencia",
+            "corrected": "Resultado corregido: gana {winner}",
+            "cancelled": "Partida {match} anulada",
+            "bye": "Exención: {player}",
+            "draw": "Sorteo: {where}",
+            "nextPhase": "Fase siguiente",
+            "configChanged": "Configuración modificada",
+            "tableChanged": "Trasladada a la mesa {n}",
+            "lengthChanged": "Longitud fijada en {n}",
+            "finished": "Torneo cerrado",
+            "reopened": "Torneo reabierto",
+            "error": "No se ha podido añadir esta nota."
         }
     }
 }

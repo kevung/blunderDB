@@ -15,6 +15,8 @@ import {parser} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
 
+export function AddDirectionNote(arg1:number,arg2:string):Promise<database.DirectionView>;
+
 export function AddMatchToTournament(arg1:number,arg2:number):Promise<void>;
 
 export function AddParticipant(arg1:number,arg2:string,arg3:string,arg4:number):Promise<database.DirectionView>;
@@ -62,6 +64,8 @@ export function ClearCommandHistory():Promise<void>;
 export function ClearSessionState():Promise<void>;
 
 export function Close():Promise<void>;
+
+export function CloseDirection(arg1:number):Promise<database.DirectionView>;
 
 export function CloseTranscription(arg1:number):Promise<void>;
 
@@ -249,6 +253,8 @@ export function GradeQuizCube(arg1:number,arg2:string):Promise<engine.QuizVerdic
 
 export function HasDirection(arg1:number):Promise<boolean>;
 
+export function History(arg1:number,arg2:string,arg3:string):Promise<Array<database.HistoryEntry>>;
+
 export function ImportBGFMatch(arg1:string):Promise<number>;
 
 export function ImportBGFPosition(arg1:string):Promise<number>;
@@ -357,6 +363,8 @@ export function RemovePositionFromCollection(arg1:number,arg2:number):Promise<vo
 
 export function RemovePositionsFromCollection(arg1:number,arg2:Array<number>):Promise<void>;
 
+export function ReopenDirection(arg1:number):Promise<database.DirectionView>;
+
 export function ReorderCollectionPositions(arg1:number,arg2:Array<number>):Promise<void>;
 
 export function ReorderCollections(arg1:Array<number>):Promise<void>;
@@ -420,6 +428,12 @@ export function SetMigrationProgress(arg1:any):Promise<void>;
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
+
+export function SinceLastGesture(arg1:number,arg2:number):Promise<Array<database.HistoryEntry>>;
+
+export function Standings(arg1:number):Promise<database.StandingsView>;
+
+export function StandingsCSV(arg1:number):Promise<string>;
 
 export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number):Promise<database.DirectionView>;
 

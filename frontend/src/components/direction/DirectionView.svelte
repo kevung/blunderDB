@@ -21,6 +21,8 @@
     import LastDecision from './LastDecision.svelte';
     import PlayersView from './PlayersView.svelte';
     import BracketsView from './BracketsView.svelte';
+    import StandingsView from './StandingsView.svelte';
+    import HistoryView from './HistoryView.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
@@ -44,7 +46,13 @@
         addParticipant,
         updateParticipant,
         withdrawParticipant,
-        brackets
+        brackets,
+        standings,
+        standingsCSV,
+        finishTournament,
+        reopenTournament,
+        history,
+        addNote
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -91,6 +99,8 @@
     let rows = $state([]);
     let suggestions = $state([]);
     let phases = $state([]);
+    let ranking = $state(null);
+    let entries = $state([]);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -102,6 +112,8 @@
         lastDecision().then((l) => (last = l));
         participants().then((r) => (rows = r));
         brackets().then((p) => (phases = p));
+        standings().then((r) => (ranking = r));
+        history().then((h) => (entries = h));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -136,6 +148,28 @@
     const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
+
+    const onClose = () => act(() => finishTournament(), 'direction.standings.error');
+    const onReopen = () => act(() => reopenTournament(), 'direction.standings.error');
+    const onNote = (text) => act(() => addNote(text), 'direction.history.error');
+
+    /* Le CSV part dans le presse-papier : il n'y a pas de dialogue d'enregistrement ici, et
+       coller dans un tableur est le geste qu'un directeur fait de toute façon. */
+    async function onCSV() {
+        try {
+            const csv = await standingsCSV();
+            await navigator.clipboard.writeText(csv);
+            statusBarTextStore.set(tMsg('direction.standings.copied'));
+        } catch (e) {
+            logger.error('direction: standings csv failed', e);
+            statusBarTextStore.set(tMsg('direction.standings.error'));
+        }
+    }
+
+    /* Corriger depuis l'historique : la fiche vit sur la grille des tables, donc on y ramène. */
+    function correctFromHistory() {
+        tab = 'direction';
+    }
 
     /* Cliquer une place de l'arbre ramène à la page Direction, où le match se saisit : la
        fiche de résultat vit sur la grille des tables, et il n'y en a qu'une. */
@@ -231,6 +265,10 @@
                     <p>{free.map((p) => p.name).join(' · ')}</p>
                 </section>
             </div>
+        {:else if tab === 'standings'}
+            <StandingsView view={ranking} {busy} {onClose} {onReopen} {onCSV} />
+        {:else if tab === 'history'}
+            <HistoryView {entries} {busy} onCorrect={correctFromHistory} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}

@@ -1864,6 +1864,42 @@
             "byes": "Freilose",
             "playoff": "Entscheidung zwischen {players} um {spots} Platz/Plätze.",
             "none": "Noch kein Tableau."
+        },
+        "standings": {
+            "overall": "Gesamtrangliste",
+            "note": "Anmerkung",
+            "prize": "Preis",
+            "csv": "Export (CSV)",
+            "close": "Turnier abschließen",
+            "reopen": "Wieder öffnen",
+            "tiedHint": "Gleichstand: Platz und Preis werden geteilt.",
+            "pool": "Pool {pool} · auszuzahlen {payable} · einbehalten {retained}",
+            "error": "Das Turnier konnte nicht abgeschlossen werden.",
+            "copied": "Rangliste in die Zwischenablage kopiert."
+        },
+        "history": {
+            "filter": "Nach Spieler oder Partie filtern",
+            "count": "{n} Einträge",
+            "none": "Nichts zu zeigen.",
+            "addNote": "Notiz",
+            "notePlaceholder": "Eine Notiz der Turnierleitung…",
+            "created": "Turnier erstellt",
+            "entered": "{player} eingetragen",
+            "withdrawn": "{player} zurückgezogen",
+            "started": "{a} – {b} gestartet · {where}",
+            "result": "{winner} gewinnt {scoreA}–{scoreB}",
+            "forfeit": "{winner} gewinnt durch Aufgabe",
+            "corrected": "Ergebnis korrigiert: {winner} gewinnt",
+            "cancelled": "Partie {match} abgebrochen",
+            "bye": "Freilos: {player}",
+            "draw": "Auslosung: {where}",
+            "nextPhase": "Nächste Phase",
+            "configChanged": "Konfiguration geändert",
+            "tableChanged": "An Tisch {n} verlegt",
+            "lengthChanged": "Länge auf {n} gesetzt",
+            "finished": "Turnier abgeschlossen",
+            "reopened": "Turnier wieder geöffnet",
+            "error": "Die Notiz konnte nicht hinzugefügt werden."
         }
     }
 }
