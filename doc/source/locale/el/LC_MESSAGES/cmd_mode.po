@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 02:58+0200\n"
+"POT-Creation-Date: 2026-09-07 03:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -188,24 +188,6 @@ msgstr ""
 "ανοίξετε τον φάκελο που τις περιέχει."
 
 #: ../../source/cmd_mode.rst:1
-msgid "like"
-msgstr "like"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Remplace la liste parcourue par les positions les plus proches de la "
-"position courante — ou de celle dont l'indice est donné (``like 42``). La"
-" proximité est une distance de transport en pions-pas : ce n'est pas un "
-"filtre, elle classe toute la base plutôt que de la restreindre, et ne se "
-"combine donc pas avec les jetons de recherche."
-msgstr ""
-"Αντικαθιστά τη λίστα που διατρέχεται με τις θέσεις που βρίσκονται πιο "
-"κοντά στην τρέχουσα — ή σε εκείνη της οποίας δίνεται ο δείκτης (``like "
-"42``). Η εγγύτητα είναι απόσταση μεταφοράς σε pip πουλιών: δεν είναι "
-"φίλτρο, κατατάσσει όλη τη βάση αντί να τη στενεύει, και επομένως δεν "
-"συνδυάζεται με τα σύμβολα αναζήτησης."
-
-#: ../../source/cmd_mode.rst:1
 msgid "train"
 msgstr "train"
 
@@ -295,7 +277,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 4."
 
-#: ../../source/cmd_mode.rst:52
+#: ../../source/cmd_mode.rst:51
 msgid "Positions et navigation"
 msgstr "Θέσεις και πλοήγηση"
 
@@ -437,7 +419,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:76
 msgid "Édition et recherche"
 msgstr "Επεξεργασία και αναζήτηση"
 
@@ -473,11 +455,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Αναζήτηση μεταξύ των θέσεων που είναι ήδη φιλτραρισμένες."
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:92
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -493,7 +475,7 @@ msgstr ""
 "(δείτε :ref:`cli`)· μια παύλα σημαίνει φίλτρο που το εκφράζει μόνο η "
 "γραμματική."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -513,7 +495,17 @@ msgstr ""
 "εντολών, όπου δεν υπάρχει ταμπλό, τα διακριτικά αυτά συγκρίνονται με κενό"
 " ταμπλό· εκεί πρέπει να χρησιμοποιούνται οι επιλογές της τρίτης στήλης."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:110
+msgid ""
+"Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
+"résultat par distance croissante à une position cible, et tous les autres"
+" jetons restreignent l'ensemble ainsi classé."
+msgstr ""
+"Ένα μόνο διακριτικό **κατατάσσει** αντί να περιορίζει: το ``like`` "
+"ταξινομεί το αποτέλεσμα κατά αύξουσα απόσταση από μια θέση-στόχο, και όλα"
+" τα άλλα διακριτικά περιορίζουν το σύνολο που κατατάσσεται έτσι."
+
+#: ../../source/cmd_mode.rst:114
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -524,11 +516,11 @@ msgstr ""
 "κόστισαν τουλάχιστον ένα δέκατο του πόντου, αφού ένας πόντος αξίζει 1000 "
 "χιλιοστά."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:118
 msgid "Deux recherches complètes :"
 msgstr "Δύο πλήρεις αναζητήσεις:"
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:120
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -537,7 +529,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — πάνω από 30 pips καθυστέρηση, μεταξύ 40 % και 60 "
 "% πιθανότητες νίκης, κανένα σχόλιο."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:122
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1475,7 +1467,26 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. ``pl'Alice'``). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:224
+#: ../../source/cmd_mode.rst:1
+msgid "like, like42, like<12, like42*"
+msgstr "like, like42, like<12, like42*"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Classe le résultat par distance croissante à une position cible, au lieu "
+"de le restreindre : ``like`` prend la position courante, ``like42`` celle"
+" d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, "
+"``like42*`` élargit la classe de la cible à tous les types de décision et"
+" aux deux régimes, argent et match. Voir :ref:`panneau_recherche`."
+msgstr ""
+"Κατατάσσει το αποτέλεσμα κατά αύξουσα απόσταση από μια θέση-στόχο, αντί "
+"να το περιορίζει: το ``like`` παίρνει την τρέχουσα θέση, το ``like42`` "
+"αυτή με δείκτη 42, το ``like<12`` απορρίπτει ό,τι απέχει πάνω από δώδεκα "
+"pip πουλιών, το ``like42*`` διευρύνει την κλάση του στόχου σε όλους τους "
+"τύπους απόφασης και στα δύο καθεστώτα, χρήματα και αγώνας. Δείτε "
+":ref:`panneau_recherche`."
+
+#: ../../source/cmd_mode.rst:228
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -1516,6 +1527,44 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 #~ " γραμμή εντολών, δεν εκτελούνται: τα "
 #~ "διαβάζετε και μετά Enter. Ό,τι δεν "
 #~ "κατανοήθηκε δηλώνεται, ποτέ δεν μαντεύεται."
+
+#~ msgid "like"
+#~ msgstr "like"
+
+#~ msgid ""
+#~ "Remplace la liste parcourue par les "
+#~ "positions les plus proches de la "
+#~ "position courante — ou de celle "
+#~ "dont l'indice est donné (``like 42``)."
+#~ " La proximité est une distance de "
+#~ "transport en pions-pas : ce n'est"
+#~ " pas un filtre, elle classe toute "
+#~ "la base plutôt que de la "
+#~ "restreindre, et ne se combine donc "
+#~ "pas avec les jetons de recherche."
+#~ msgstr ""
+#~ "Αντικαθιστά τη λίστα που διατρέχεται με"
+#~ " τις θέσεις που βρίσκονται πιο κοντά"
+#~ " στην τρέχουσα — ή σε εκείνη "
+#~ "της οποίας δίνεται ο δείκτης (``like "
+#~ "42``). Η εγγύτητα είναι απόσταση "
+#~ "μεταφοράς σε pip πουλιών: δεν είναι "
+#~ "φίλτρο, κατατάσσει όλη τη βάση αντί "
+#~ "να τη στενεύει, και επομένως δεν "
+#~ "συνδυάζεται με τα σύμβολα αναζήτησης."
+
+#~ msgid ""
+#~ "Classe le résultat par distance "
+#~ "croissante à une position cible, au "
+#~ "lieu de le restreindre : ``like`` "
+#~ "prend la position courante, ``like42`` "
+#~ "celle d'indice 42, ``like<12`` écarte ce"
+#~ " qui est à plus de douze "
+#~ "pions-pas, ``like42*`` élargit la classe"
+#~ " de la cible à tous les types"
+#~ " de décision et aux deux régimes. "
+#~ "Voir :ref:`panneau_recherche`."
+#~ msgstr ""
 
 #~ msgid ""
 #~ "Lance une session de micro-entraînement."

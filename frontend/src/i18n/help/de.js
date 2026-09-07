@@ -203,7 +203,8 @@ export default {
 <div class="admonition note">
 <p>Die Kennzeichnung wird vom Befehl <code>blunderdb repair</code> neu berechnet. Bei einer Datenbank, die zum ersten Mal mit dieser Version geöffnet wird, geschieht das einmal beim Öffnen. Eine Datenbank, deren Phasen nie berechnet wurden, liefert für <code>ph:</code> nichts — nichts statt einer falschen Antwort.</p>
 </div>
-<p>Der Befehl <code>like</code> beantwortet eine andere Frage als die Token: Er ersetzt die durchblätterte Liste durch die Stellungen, die der aktuellen am <strong>nächsten</strong> stehen, die nächste zuerst. Die Nähe ist eine Transportdistanz in Stein-Pips — die Menge an Steinbewegung, die die beiden Stellungen trennt — und der Blickwinkel ist immer der des Spielers am Zug. Es ist kein Filter: Die Ähnlichkeit <strong>ordnet</strong> die ganze Datenbank, statt sie einzuschränken, und lässt sich daher nicht mit den Token kombinieren.</p>
+<p>Das Token <code>like</code> <strong>ordnet</strong>, statt einzuschränken: Seine Anwesenheit sortiert das Ergebnis nach aufsteigender Entfernung zu einer Zielstellung — <code>like</code> die aktuelle, <code>like42</code> die mit dem Index 42 — und die übrigen Token schränken die so geordnete Menge ein, sodass <code>s like42 E&gt;80</code> heißt „die Nachbarn von 42, bei denen ich gefehlt habe“. Die Entfernung ist eine Transportdistanz in Stein-Pips, die Menge an Steinbewegung, die zwei Stellungen trennt, aus Sicht des Spielers am Zug.</p>
+<p>Eine Nachbarstellung ist dasselbe <strong>Problem</strong>, nicht dieselbe Zeichnung: Geordnet wird innerhalb der Klasse der Zielstellung — dieselbe Entscheidungsart, dieselbe Spielform (Geldspiel oder Match) bei einer Doppler-Entscheidung, und ein anderes Match als ihr eigenes, denn die Stellungen, die sie in ihrer eigenen Partie umgeben, sind ihre nächstliegenden Strukturen, ohne je ihre Nachbarn zu sein. Würfel, Spielstand und Dopplerwert bleiben außerhalb der Klasse; die gewöhnlichen Token schränken darauf ein, wenn man es will. <code>like42*</code> erweitert die Klasse auf alle Entscheidungsarten und auf beide Spielformen, nie auf das Match der Zielstellung; <code>like&lt;12</code> verwirft alles über zwölf Stein-Pips. Eine Ordnung, die nichts findet, liefert eine leere Liste und sagt es, statt zehn zusammenhangloser Stellungen.</p>
 <p>Das Token <code>n</code> zählt <strong>Begegnungen</strong>: <code>n&gt;3</code> behält die Stellungen, die mehr als drei Züge erreichen, über alle Matches hinweg. Das ist eine andere Frage als „was habe ich falsch gemacht“ — eine Stellung, die zwanzigmal vorkam und neunzehnmal richtig gespielt wurde, ist immer noch die, die man auswendig können muss. Gezählt werden Züge, nicht Matches: dieselbe Stellung zweimal in einem Match zählt zweimal, denn das waren zwei Entscheidungen.</p>
 <p>Der <strong>Spielplan</strong> ist ein zweites abgeleitetes Etikett neben der Phase, und es beantwortet die Frage, die ein Bündel gespeicherter Filter nicht stellen kann: „zeig mir meine Fehler im Holding Game“. Token <code>gt:</code>, wiederholbar (<code>gt:holding gt:mutualholding</code>), aus Sicht des <strong>Spielers am Zug</strong> — des Plans, in dem die Entscheidung fiel.</p>
 <p>Die zehn erkannten Pläne, in der Reihenfolge, in der die Regeln sie abarbeiten, vom Spezifischsten zum Allgemeinsten:</p>
@@ -1363,10 +1364,6 @@ export default {
 <td>Öffnet das Aktivitätsprotokoll: die letzten zweihundert Zeilen der Protokolldatei, mit dem Nötigen, um sie für einen Bericht zu kopieren oder den Ordner zu öffnen, der sie enthält.</td>
 </tr>
 <tr>
-<td>like</td>
-<td>Ersetzt die durchblätterte Liste durch die Stellungen, die der aktuellen am nächsten stehen — oder der, deren Index angegeben ist (<code>like 42</code>). Die Nähe ist eine Transportdistanz in Stein-Pips: Sie ist kein Filter, sie ordnet die ganze Datenbank, statt sie einzuschränken, und lässt sich daher nicht mit den Suchtoken kombinieren.</td>
-</tr>
-<tr>
 <td>train</td>
 <td>Öffnet das Training-Panel. Mit einem Argument öffnet und startet es: <code>train scores</code> (die Standkarte eines zufällig gezogenen Standes; <code>train tp</code> und <code>train takepoint</code> sind Synonyme), <code>train pips</code> (die Pip-Zahl beider Seiten). <code>train epc</code> und <code>train quiz</code> starten die beiden Micro-Trainings der Leiste.</td>
 </tr>
@@ -1505,6 +1502,7 @@ export default {
 <h3>Suchfilter</h3>
 <p>Diese Tabelle ist die Referenz der Suchgrammatik: die Befehlszeile, die Filterbibliothek und die Option <code>--query</code> von <code>blunderdb search</code> lesen alle dieselben Token. Die Spalte <em>CLI-Äquivalent</em> nennt, wenn es eine gibt, die Option von <code>search</code>, die dasselbe bewirkt (siehe Befehlszeilenschnittstelle (CLI)); ein Gedankenstrich zeigt einen Filter an, den nur die Grammatik ausdrückt.</p>
 <p>Fünf Token tragen ihren Wert nicht selbst: Sie lesen ihn vom Suchbrett ab. <code>cube</code> und <code>score</code> übernehmen den dort eingestellten Doppler und Spielstand, <code>d</code> den Entscheidungstyp, <code>D</code> und <code>D1</code> die Würfel, <code>x</code> die im Reiter <em>Außer</em> gezeichnete Struktur. Ein Wurf steht also nie im Token selbst: <code>D65</code> gibt es nicht, nur die Ausschlussform trägt seine Ziffern (<code>xD65</code>). Auf der Kommandozeile, wo es kein Brett gibt, vergleichen diese Token mit einem leeren Brett; dort sind die Optionen der dritten Spalte zu verwenden.</p>
+<p>Ein einziges Token <strong>ordnet</strong>, statt einzuschränken: <code>like</code> sortiert das Ergebnis nach aufsteigender Entfernung zu einer Zielstellung, und alle anderen Token schränken die so geordnete Menge ein.</p>
 <p>Fehler und Equitys werden in <strong>Tausendstel Equity</strong> gezählt — den <em>Millipunkten</em> der Tabelle unten: <code>E&gt;100</code> behält Züge, die mindestens ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln entspricht.</p>
 <p>Zwei vollständige Suchen:</p>
 <ul>
@@ -1973,6 +1971,11 @@ export default {
 <tr>
 <td><code>pl'Name'</code></td>
 <td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. <code>pl'Alice'</code>). Groß-/Kleinschreibung wird ignoriert.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>like, like42, like&lt;12, like42*</td>
+<td>Ordnet das Ergebnis nach aufsteigender Entfernung zu einer Zielstellung, statt es einzuschränken: <code>like</code> nimmt die aktuelle Stellung, <code>like42</code> die mit dem Index 42, <code>like&lt;12</code> verwirft alles über zwölf Stein-Pips, <code>like42*</code> erweitert die Klasse der Zielstellung auf alle Entscheidungsarten und auf beide Spielformen, Geldspiel und Match. Siehe Such-Panel.</td>
 <td>—</td>
 </tr>
 </tbody>

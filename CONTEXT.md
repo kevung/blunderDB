@@ -472,6 +472,44 @@ from there.
 _Avoid_: error (the analysed blunder), fault (Training), invalid move (what gnubg
 refuses — a Transcription refuses nothing)
 
+### Directing a tournament
+
+**Tournament**:
+A named event (name, date, location, comment) that Matches belong to. Until now it was
+only ever an *afterthought*: a label put on Matches that came in from files. It can also be
+created *before* its Matches exist — see Direction. Deleting a Tournament unlinks its
+Matches, never deletes them.
+_Avoid_: event (the `.mat` header field), competition, organisation (the club or
+federation that runs it)
+
+**Direction** (of a Tournament):
+Everything the tournament director decided while running the Tournament: the format, the
+entries, every match launched, every result, correction, withdrawal, draw and phase change,
+in the order they happened. It is the *source of truth* of a directed Tournament — the
+standings, the brackets, the pairings and the next thing to do are all derived from it and
+never stored on their own. A Direction is only ever *extended*, never edited: a wrong result
+is corrected by a later correction, a match launched by mistake by a later cancellation. A
+Tournament made from imported files has no Direction; a Tournament run with blunderDB has
+one; a BMAB-style Tournament, run here and whose matches are then transcribed or imported,
+has both. The engine that derives state from a Direction is Nicomaque (ADR-0047).
+_Avoid_: journal (the Training Journal), log, event log, replay (a Transcription's Replay) —
+these are how Nicomaque names its own internals and must not leak into the interface
+
+**Participant** (of a Direction):
+An entry in one Tournament's Direction: a name, a club, an entry rating. It belongs to that
+Direction alone. It is not a Player and not a person: the only link to a Player is a name
+the director chose to spell the same, so that the Matches that fill this Participant's slots
+carry that Player's literal name. Choosing an existing Player at entry time fixes the name
+and pre-fills the rating from that Player's PR; nothing is inferred afterwards.
+_Avoid_: player (the literal name in a Match), entrant, competitor, member
+
+**Directory** (interface: *annuaire*):
+The Participants of every Direction in the database, seen as one list deduplicated by name,
+each with the club and rating of their latest entry. A *view*, never a table: it is
+recomputed from the Directions, exported and imported as CSV, and copied from one
+Tournament into the entries of the next. It is not an identity: two spellings are two rows.
+_Avoid_: player list, address book, roster (a roster is one Tournament's Participants)
+
 ### Players
 
 **Player**:

@@ -88,7 +88,6 @@
     import { startTrainingSession } from './services/trainingTabService.js';
     import { TRAINING_EXERCISES } from './services/trainingTab.js';
     import { showTab, showTrainingPanel } from './services/tabToggles.js';
-    import { showSimilarPositions } from './services/similarService.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
     import { initTheme } from './stores/themeStore.js';
@@ -315,14 +314,6 @@
         setStatusBarMessage(tMsg('training.usage', { drills: known.join(', ') }));
     }
 
-    // `like [id]` (#293). Sans argument, la position courante : c'est le geste
-    // — on regarde une position et on demande « et quoi d'autre ressemble à
-    // ça ? ».
-    async function showSimilarCommand(id) {
-        const target = Number.isFinite(id) && id > 0 ? id : positionsStore.idAt(get(currentPositionIndexStore));
-        await showSimilarPositions(target);
-    }
-
     onMount(async () => {
         maybeCheckForUpdate();
 
@@ -336,7 +327,6 @@
             importPosition,
             onImportIdentifier: importIdentifier,
             onTraining: startTrainingCommand,
-            onSimilar: showSimilarCommand,
             onSavePosition: saveCurrentPosition,
             onUpdatePosition: updatePosition,
             onDeletePosition: deletePosition,

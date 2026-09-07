@@ -7,6 +7,7 @@ import {
     SaveAnalysis,
     LoadAnalysis,
     LoadPositionIDsByFilters,
+    RankPositionIDsByFilters,
     ComputeEPCFromPosition,
     SaveLastVisitedPosition,
     SaveEditPosition,
@@ -23,6 +24,7 @@ import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
+import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
@@ -332,6 +334,13 @@ export async function reloadAllPositions() {
 // a different question.
 export async function loadPositionsByFilters({
     filters = [],
+    // Le classement par similarité (ADR-0043). `likeFilter` dit que la requête
+    // CLASSE au lieu de seulement restreindre ; les autres jetons continuent de
+    // dire lesquelles sont candidates.
+    likeFilter = false,
+    likeTargetId = 0,
+    likeMaxDistance = 0,
+    likeWidened = false,
     includeCube = false,
     includeScore = false,
     pipCountFilter = '',
@@ -442,7 +451,20 @@ export async function loadPositionsByFilters({
         // time. positionsStore (positionList.js) keeps the id list and
         // fetches the window it is about to show through LoadPositionsByIDs —
         // the same lazy path the library already uses.
-        const ids = await LoadPositionIDsByFilters({
+        // La cible d'un `like` nu est résolue ICI, là où la requête a été
+        // tapée : « cette position » veut dire celle qu'on feuillette, et rien
+        // en aval ne peut le deviner. Une requête classée sans cible se dit,
+        // elle ne se replie pas sur une recherche ordinaire.
+        let likeTarget = likeTargetId;
+        if (likeFilter && !likeTarget) {
+            likeTarget = positionsStore.idAt(get(currentPositionIndexStore)) || 0;
+            if (!likeTarget) {
+                setStatusBarMessage(tMsg('similar.noPosition'));
+                return;
+            }
+        }
+
+        const payload = {
             filter: currentPosition,
             excludeFilter: excludePosition,
             includeCube,
@@ -488,8 +510,43 @@ export async function loadPositionsByFilters({
             tournamentIDsFilter,
             playerFilter,
             positionIDsFilter,
-            restrictToPositionIDs
-        });
+            restrictToPositionIDs,
+            likeFilter,
+            likeTargetId: likeTarget,
+            likeMaxDistance,
+            likeWidened
+        };
+
+        // Une requête classée passe par son propre appel, parce que la
+        // DISTANCE fait partie de la réponse : une voisine sans sa distance est
+        // illisible, c'est la seule chose qui dise si l'on regarde une voisine
+        // ou une coïncidence.
+        let ids;
+        let rankedSummary = null;
+        if (likeFilter) {
+            let ranked;
+            try {
+                ranked = (await RankPositionIDsByFilters(payload, 0)) || [];
+            } catch (error) {
+                logger.error('could not rank the neighbours:', error);
+                setStatusBarMessage(tMsg('similar.failed'));
+                return;
+            }
+            ids = ranked.map((n) => n.id);
+            rankedDistancesStore.set(new Map(ranked.map((n) => [n.id, n.distance])));
+            rankedTargetStore.set(likeTarget);
+            if (ranked.length > 0) {
+                rankedSummary = tMsg('similar.found', {
+                    n: ranked.length,
+                    nearest: ranked[0].distance,
+                    farthest: ranked[ranked.length - 1].distance
+                });
+            }
+        } else {
+            ids = await LoadPositionIDsByFilters(payload);
+            rankedDistancesStore.set(new Map());
+            rankedTargetStore.set(0);
+        }
 
         if (ids && ids.length > 0) {
             if (openInNewTab) {
@@ -523,8 +580,19 @@ export async function loadPositionsByFilters({
 
             const { saveSessionState } = await import('./sessionService.js');
             saveSessionState();
+
+            // La fourchette des distances est dite après coup, une fois la
+            // liste posée : c'est ce qui permet de juger d'un coup d'œil si le
+            // classement a trouvé des voisines ou des inconnues.
+            if (rankedSummary) {
+                setStatusBarMessage(rankedSummary);
+            }
         } else {
-            setStatusBarMessage(tMsg('status.noMatchingPositions'));
+            // Un classement qui ne trouve rien le dit autrement qu'une
+            // recherche vide : la question n'était pas « lesquelles
+            // correspondent » mais « laquelle est proche », et la réponse est
+            // qu'aucune ne l'est (ADR-0043).
+            setStatusBarMessage(tMsg(likeFilter ? 'similar.none' : 'status.noMatchingPositions'));
             if (get(activeTabStore) === 'search') {
                 statusBarModeStore.set('EDIT');
             }

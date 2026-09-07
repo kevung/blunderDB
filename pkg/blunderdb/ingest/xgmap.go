@@ -55,9 +55,41 @@ func xgAbs(x int8) int {
 	return int(x)
 }
 
+// isCrawfordGame reports whether games[gameIdx] is the Crawford game of the
+// match: the FIRST game a player starts at match point.
+//
+// Unlike the gnuBG and BGF files, an XG match states nothing per game —
+// xgparser.Game carries a game number, the score it started on, its winner and
+// its moves, and no rule flag — so the fact is DERIVED from the sequence of
+// initial scores, which is the same derivation the engine's own gate test
+// makes (gammonnet/integration_gate_test.go). A match has at most one Crawford
+// game, hence the "first": every later game starting at match point is a
+// post-Crawford one.
+//
+// Money play (no match length) has no Crawford game at all.
+func isCrawfordGame(matchLength int32, gameIdx int, games []xgparser.Game) bool {
+	if matchLength <= 0 || gameIdx < 0 || gameIdx >= len(games) {
+		return false
+	}
+	atMatchPoint := func(g xgparser.Game) bool {
+		return g.InitialScore[0] == matchLength-1 || g.InitialScore[1] == matchLength-1
+	}
+	if !atMatchPoint(games[gameIdx]) {
+		return false
+	}
+	for i := 0; i < gameIdx; i++ {
+		if atMatchPoint(games[i]) {
+			return false // Crawford already played
+		}
+	}
+	return true
+}
+
 // createPositionFromXG converts an xgparser.Position to a domain.Position.
-// activePlayer indicates which XG player (-1 or 1) is on roll in this position.
-func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLength int32, activePlayer int32) (*domain.Position, error) {
+// activePlayer indicates which XG player (-1 or 1) is on roll in this position;
+// crawford says whether the game it belongs to is the Crawford game, which the
+// away score encodes (domain.AwayScoresWithCrawford).
+func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLength int32, activePlayer int32, crawford bool) (*domain.Position, error) {
 	activePlayerBlunderDB := convertXGPlayerToBlunderDB(activePlayer)
 	opponentPlayerBlunderDB := 1 - activePlayerBlunderDB
 
@@ -72,7 +104,7 @@ func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLen
 	pos := &domain.Position{
 		PlayerOnRoll: 0,
 		DecisionType: domain.CheckerAction,
-		Score:        domain.AwayScores(int(matchLength), int(game.InitialScore[0]), int(game.InitialScore[1])),
+		Score:        domain.AwayScoresWithCrawford(int(matchLength), int(game.InitialScore[0]), int(game.InitialScore[1]), crawford),
 		Cube: domain.Cube{
 			Value: domain.CubeExponent(int(xgPos.Cube)),
 			Owner: cubeOwner,

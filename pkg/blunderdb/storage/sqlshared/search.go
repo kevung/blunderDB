@@ -2,8 +2,10 @@ package sqlshared
 
 import (
 	"context"
+	"fmt"
 	"iter"
 	"math"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -67,6 +69,10 @@ type searchWhereClause struct {
 	// effInclude is f.Filter with the points shared with ExcludeFilter
 	// cleared, so "Except" wins over "At least" on those points.
 	effInclude domain.Position
+	// likeTarget is the position a ranked query ranks against, loaded once
+	// here because the class it imposes on the WHERE clause is read off it —
+	// its kind of decision, its regime, and the matches it was met in.
+	likeTarget *domain.Position
 }
 
 // buildWhere translates f into the WHERE clause of the search query: cheap
@@ -236,6 +242,31 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		} else {
 			where.WriteString(" AND 0=1")
 		}
+	}
+
+	// A ranked query narrows to the target's equivalence class BEFORE anything
+	// else: a neighbour is the same problem nearby, and the rest of the WHERE
+	// clause then says which of those problems the user is asking about
+	// (ADR-0043).
+	var likeTarget *domain.Position
+	if f.LikeFilter {
+		if f.LikeTargetID <= 0 {
+			return searchWhereClause{}, fmt.Errorf("a `like` query needs a position to rank against: the bare token is resolved where it was typed, never guessed here")
+		}
+		t, err := LoadTargetPosition(ctx, s.DB, scope, f.LikeTargetID)
+		if err != nil {
+			return searchWhereClause{}, err
+		}
+		likeTarget = t
+		class := storage.SimilarOptions{}
+		if !f.LikeWidened {
+			class = storage.ClassOf(t)
+		}
+		excluded, err := MatchesOfPosition(ctx, s.DB, scope, t.ID)
+		if err != nil {
+			return searchWhereClause{}, err
+		}
+		AppendClassSQL(class, excluded, &where, &args)
 	}
 
 	var bitboardTight bool
@@ -427,7 +458,72 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		bitboardTight: bitboardTight,
 		multiPlayed:   multiPlayed,
 		effInclude:    effInclude,
+		likeTarget:    likeTarget,
 	}, nil
+}
+
+// Rank answers a query carrying the `like` token: the same candidates Find
+// would return, ordered by how far each stands from the target, with that
+// distance attached (ADR-0043).
+//
+// The ordering is done in Go and not in SQL, and there is no choice about it:
+// several of this grammar's filters — mirror search, checker structure on a
+// loose mask, date, equity, move pattern — are decided in applyGoFilters,
+// after the scan. A distance computed in SQL would order rows that the next
+// step then removes, so the ranking has to see the survivors, which means
+// seeing all of them. That is the exhaustive scan P7 recommends and ADR-0043
+// keeps: below a hundred thousand positions the exact answer is cheaper than
+// the machinery an approximate index would need kept in step with every write.
+func (s *SearchStore) Rank(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]storage.SimilarPosition, error) {
+	if !f.LikeFilter {
+		return nil, fmt.Errorf("Rank needs a query carrying the `like` token; use Find for an unordered search")
+	}
+	wc, err := s.buildWhere(ctx, scope, f)
+	if err != nil {
+		return nil, err
+	}
+	// The candidates are gathered UNBOUNDED: opts bounds the ranking, not the
+	// scan. Paging the scan would rank an arbitrary page and call it nearest.
+	candidates, err := s.findWith(ctx, f, wc, storage.ListOpts{})
+	if err != nil {
+		return nil, err
+	}
+
+	wanted := engine.BuildSimilarityVector(wc.likeTarget)
+	out := make([]storage.SimilarPosition, 0, len(candidates))
+	for i := range candidates {
+		if candidates[i].ID == wc.likeTarget.ID {
+			continue
+		}
+		d := engine.SimilarityDistance(wanted, engine.BuildSimilarityVector(&candidates[i]))
+		// The ceiling drops a neighbour outright rather than ranking it last:
+		// a ranking that finds nothing close comes back empty, and says so,
+		// instead of handing over the least distant of the unrelated.
+		if f.LikeMaxDistance > 0 && d > f.LikeMaxDistance {
+			continue
+		}
+		out = append(out, storage.SimilarPosition{Position: candidates[i], Distance: d})
+	}
+	// Ties break on the id, so the same library answers the same question the
+	// same way twice — a ranking whose order wobbles between two runs cannot
+	// be paged, and cannot be compared against a recorded result.
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Distance != out[j].Distance {
+			return out[i].Distance < out[j].Distance
+		}
+		return out[i].Position.ID < out[j].Position.ID
+	})
+
+	if opts.Offset > 0 {
+		if opts.Offset >= len(out) {
+			return nil, nil
+		}
+		out = out[opts.Offset:]
+	}
+	if opts.Limit > 0 && len(out) > opts.Limit {
+		out = out[:opts.Limit]
+	}
+	return out, nil
 }
 
 func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]domain.Position, error) {
@@ -435,6 +531,14 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	if err != nil {
 		return nil, err
 	}
+	return s.findWith(ctx, f, wc, opts)
+}
+
+// findWith is find once the WHERE clause is built: the scan, and the Go-side
+// predicates that finish it. Rank shares it so a ranked query and a plain one
+// select the same rows by the same rules, and differ only in what happens to
+// the survivors afterwards.
+func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts) ([]domain.Position, error) {
 
 	// a.data is the compressed analysis blob (~600 bytes/row on the tournois
 	// fixture) and is the only column here wc.needAnalysis gates: every other

@@ -203,7 +203,8 @@ export default {
 <div class="admonition note">
 <p>Merkinnän laskee uudelleen komento <code>blunderdb repair</code>. Tietokannassa, joka avataan ensimmäistä kertaa tällä versiolla, laskenta tehdään kerran, avattaessa. Tietokanta, jonka vaiheita ei ole koskaan laskettu, ei palauta mitään <code>ph:</code>-haulle — ei mitään, väärän vastauksen sijaan.</p>
 </div>
-<p>Komento <code>like</code> vastaa eri kysymykseen kuin tunnukset: se korvaa selatun listan nykyistä <strong>lähimmillä</strong> asemilla, lähimmästä kaukaisimpaan. Läheisyys on kuljetusetäisyys nappulapipeinä — se määrä nappuloiden liikettä, joka erottaa asemat — ja näkökulma on aina vuorossa olevan pelaajan. Se ei ole suodatin: samankaltaisuus <strong>järjestää</strong> koko kirjaston sen sijaan että rajaisi sitä, eikä siksi yhdisty tunnuksiin.</p>
+<p>Tunnus <code>like</code> <strong>järjestää</strong> sen sijaan että rajaisi: sen läsnäolo järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta — <code>like</code> nykyisestä, <code>like42</code> siitä, jonka indeksi on 42 — ja muut tunnukset rajaavat näin järjestettyä joukkoa, joten <code>s like42 E&gt;80</code> luetaan ”aseman 42 naapurit, joissa mokasin”. Etäisyys on kuljetusetäisyys nappulapipeinä, se määrä nappuloiden liikettä, joka erottaa kaksi asemaa, vuorossa olevan pelaajan näkökulmasta.</p>
+<p>Naapuri on sama <strong>ongelma</strong>, ei sama kuvio: järjestys otetaan kohteen luokan sisältä — sama päätöksen tyyppi, sama pelimuoto (raha tai ottelu) kuutiopäätöksessä, ja eri ottelu kuin sen oma, sillä asemat, jotka ympäröivät sitä sen omassa pelissä, ovat sen lähimmät rakenteet olematta koskaan sen naapureita. Nopat, tulos ja kuutio jäävät luokan ulkopuolelle; tavalliset tunnukset rajaavat niillä silloin kun halutaan. <code>like42*</code> laajentaa luokan kaikkiin päätöstyyppeihin ja molempiin pelimuotoihin, ei koskaan kohteen otteluun; <code>like&lt;12</code> hylkää kaiken yli kahdentoista nappulapipin päässä olevan. Järjestys, joka ei löydä mitään, palauttaa tyhjän listan ja sanoo sen, eikä kymmentä asiaankuulumatonta asemaa.</p>
 <p>Tunnus <code>n</code> laskee <strong>kohtaamisia</strong>: <code>n&gt;3</code> säilyttää asemat, joihin johtaa yli kolme siirtoa, kaikissa otteluissa. Se on eri kysymys kuin ”missä menin vikaan” — kaksikymmentä kertaa kohdattu ja yhdeksäntoista kertaa oikein pelattu asema on yhä se, joka pitää osata ulkoa. Lasketaan siirrot, ei otteluita: sama asema kahdesti yhdessä ottelussa on kaksi, koska ne olivat kaksi päätöstä.</p>
 <p><strong>Pelisuunnitelma</strong> on toinen johdettu merkintä vaiheen rinnalla, ja se vastaa kysymykseen, jota nippu tallennettuja suodattimia ei osaa esittää: ”näytä virheeni holding gamessa”. Tunnus <code>gt:</code>, toistettavissa (<code>gt:holding gt:mutualholding</code>), vuorossa olevan <strong>pelaajan</strong> näkökulmasta — sen suunnitelman, jossa päätös tehtiin.</p>
 <p>Kymmenen tunnistettua suunnitelmaa, siinä järjestyksessä kuin säännöt ne käyvät läpi, tarkimmasta yleisimpään:</p>
@@ -1363,10 +1364,6 @@ export default {
 <td>Avaa toimintalokin: lokitiedoston kaksisataa viimeistä riviä, sekä keinot kopioida ne raporttiin tai avata ne sisältävä kansio.</td>
 </tr>
 <tr>
-<td>like</td>
-<td>Korvaa selatun listan asemilla, jotka ovat lähimpänä nykyistä — tai sitä, jonka indeksi annetaan (<code>like 42</code>). Läheisyys on kuljetusetäisyys nappulapipeinä: se ei ole suodatin, se järjestää koko tietokannan sen sijaan että rajaisi sitä, eikä siksi yhdisty hakutunnuksiin.</td>
-</tr>
-<tr>
 <td>train</td>
 <td>Avaa Harjoittelu-paneelin. Argumentin kanssa se avaa ja aloittaa: <code>train scores</code> (arvotun tilanteen tilannekortti; <code>train tp</code> ja <code>train takepoint</code> ovat synonyymejä), <code>train pips</code> (molempien osapuolten pip-luku). <code>train epc</code> ja <code>train quiz</code> aloittavat palkin kaksi mikroharjoitusta.</td>
 </tr>
@@ -1505,6 +1502,7 @@ export default {
 <h3>Hakusuodattimet</h3>
 <p>Tämä taulukko on hakukieliopin viite: komentorivi, suodatinkirjasto ja <code>blunderdb search</code> -komennon valitsin <code>--query</code> lukevat kaikki samoja tunnuksia. Sarake <em>CLI-vastine</em> antaa, silloin kun sellainen on olemassa, saman asian tekevän <code>search</code>-valitsimen (ks. Komentoriviliittymä (CLI)); viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista.</p>
 <p>Viisi tunnusta ei kanna omaa arvoaan: ne lukevat sen hakulaudalta. <code>cube</code> ja <code>score</code> ottavat sille asetetun kuution ja tuloksen, <code>d</code> päätöksen tyypin, <code>D</code> ja <code>D1</code> nopat, <code>x</code> <em>Paitsi</em>-välilehdellä piirretyn rakenteen. Heittoa ei siis koskaan kirjoiteta tunnukseen: <code>D65</code> ei ole olemassa, ja vain poissulkeva muoto kantaa numeronsa (<code>xD65</code>). Komentorivillä, jossa lautaa ei ole, nämä tunnukset vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen valitsimia.</p>
+<p>Yksi ainoa tunnus <strong>järjestää</strong> sen sijaan että rajaisi: <code>like</code> järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta, ja kaikki muut tunnukset rajaavat näin järjestettyä joukkoa.</p>
 <p>Virheet ja equityt lasketaan <strong>equityn tuhannesosina</strong> — alla olevan taulukon <em>millipisteinä</em>: <code>E&gt;100</code> poimii siirrot, jotka ovat maksaneet vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa.</p>
 <p>Kaksi täydellistä hakua:</p>
 <ul>
@@ -1973,6 +1971,11 @@ export default {
 <tr>
 <td><code>pl'nimi'</code></td>
 <td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. <code>pl'Alice'</code>). Kirjainkoolla ei ole väliä.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>like, like42, like&lt;12, like42*</td>
+<td>Järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta sen sijaan että rajaisi sitä: <code>like</code> ottaa nykyisen aseman, <code>like42</code> sen, jonka indeksi on 42, <code>like&lt;12</code> hylkää kaiken yli kahdentoista nappulapipin päässä olevan, <code>like42*</code> laajentaa kohteen luokan kaikkiin päätöstyyppeihin ja molempiin pelimuotoihin, rahapeliin ja otteluun. Ks. Hakupaneeli.</td>
 <td>—</td>
 </tr>
 </tbody>

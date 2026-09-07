@@ -568,6 +568,10 @@ quand il en existe un. Cette page ne la répète pas.
    ./blunderdb search --db base.db --query 's p>30 E>50'
    ./blunderdb search --db base.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 
+Le classement des voisines d'une position passe par la même grammaire :
+``--query 's like42'``, seul ou suivi d'autres jetons pour restreindre
+l'ensemble classé.
+
 ``--query-help`` en rappelle la liste sans ouvrir de base :
 
 .. code-block:: text

@@ -29,6 +29,23 @@ type SearchStore interface {
 	// opts caps how many SQL-matched candidates are considered, not how many
 	// of them survive.
 	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
+
+	// Rank answers a query carrying the `like` token: the same filters as
+	// Find, but ORDERED by how far each survivor stands from the query's
+	// target, nearest first, with that distance attached (ADR-0043).
+	//
+	// It is a second entry point rather than a mode of Find for one reason:
+	// the distance is part of the answer. A neighbour without its distance is
+	// unreadable — it is the only thing that says whether one is looking at a
+	// neighbour or at a coincidence — and domain.Position has no business
+	// carrying a number that belongs to a comparison rather than to itself.
+	//
+	// The set it ranks is the filters INTERSECTED with the target's
+	// equivalence class (ClassOf), so "the neighbours of 42 that I blundered"
+	// is one query. opts bounds the RANKING, not the scan: every candidate has
+	// to be seen before any can be called nearest, which is the exhaustive
+	// scan P7 recommends and ADR-0043 keeps.
+	Rank(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]SimilarPosition, error)
 }
 
 // SearchHistoryStore persists the log of executed searches.

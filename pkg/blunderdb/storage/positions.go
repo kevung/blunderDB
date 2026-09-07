@@ -56,20 +56,13 @@ type PositionStore interface {
 	// database that is already up to date rewrites nothing.
 	ReclassifyDerived(ctx context.Context, scope string) (int, error)
 
-	// Similar returns the neighbours of target, nearest first and excluding
-	// target itself, by the transport distance engine.SimilarityDistance
-	// defines (issue #293, ADR-0043).
-	//
-	// It is an EXHAUSTIVE scan, deliberately: below about a hundred thousand
-	// positions an exact scan beats any approximate index on both recall and
-	// on the amount of machinery to keep in step with every write
-	// (docs/recherche/P7-similarite-knn-go.md). The contract therefore
-	// promises exact nearest neighbours, not approximate ones.
-	//
-	// What it ranks is opts, not the whole library: a neighbour is the same
-	// PROBLEM nearby, and SimilarOptions carries the class that says so.
-	Similar(ctx context.Context, scope string, target *domain.Position, opts SimilarOptions) ([]SimilarPosition, error)
 }
+
+// Finding "positions like this one" is NOT here, and that is deliberate: it is
+// SearchStore.Rank. Ranking by similarity is a search that happens to be
+// ordered, so it shares the filters, the Go-side predicates and the paging of
+// every other search rather than owning a second scan of the position table
+// with its own half of the grammar (ADR-0043).
 
 // SimilarPosition is one neighbour and how far it stands, in checker-pips: the
 // amount of checker movement separating it from the position asked about.
@@ -78,8 +71,10 @@ type SimilarPosition struct {
 	Distance int             `json:"distance"`
 }
 
-// SimilarOptions is the SET a similarity ranking is taken over — the target's
-// equivalence class — plus how much of it comes back (ADR-0043).
+// SimilarOptions is the SET a similarity ranking is taken over: the target's
+// equivalence class (ADR-0043). How much of it comes back is the query's
+// business, not the class's — see domain.SearchFilters.LikeMaxDistance and
+// ListOpts.
 //
 // The distance was never the problem. Ranking the whole library WAS: measured
 // on the demo library, the ten nearest of any position were the checker play
@@ -93,16 +88,6 @@ type SimilarPosition struct {
 // user wants them to. Nothing is ever folded into the distance either — one
 // unit, readable in checker-pips, is what the metric has going for it.
 type SimilarOptions struct {
-	// Limit is how many neighbours come back. Zero or less returns nothing:
-	// a ranking of nobody is a caller's mistake, not an empty library.
-	Limit int
-
-	// MaxDistance drops every neighbour further than this many checker-pips.
-	// Zero means no ceiling. A ranking whose ceiling nothing passes comes back
-	// EMPTY — never padded with the least distant of the unrelated, which is
-	// what a fixed count alone produces on a small library.
-	MaxDistance int
-
 	// DecisionType, when set, keeps only neighbours of that kind — a cube
 	// decision and the checker play on the same board are two problems, and
 	// they are two rows one pip-pip apart.
@@ -117,10 +102,9 @@ type SimilarOptions struct {
 
 // The third rule of the class — "another match" — is not in SimilarOptions on
 // purpose. It is never a caller's choice: the plies around the target are its
-// closest structures in every match that played through it, and Similar reads
-// them off the target itself. A drawn board or a position imported on its own
-// belongs to no match, and then nothing is excluded.
-
+// closest structures in every match that played through it, and the ranking
+// reads them off the target itself. A drawn board or a position imported on
+// its own belongs to no match, and then nothing is excluded.
 
 // ClassOf returns the equivalence class of target: same kind of decision, and
 // for a cube decision the same regime (ADR-0043 rule 1). It carries neither

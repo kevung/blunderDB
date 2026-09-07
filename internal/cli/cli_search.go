@@ -40,12 +40,6 @@ type searchParams struct {
 	offset      int
 	format      string
 	outputDB    string
-	// like is the id of a position whose NEIGHBOURS are wanted (#293). It is
-	// not a filter: similarity RANKS its set, it does not narrow one, so it
-	// replaces the query rather than joining it. The set it ranks is the
-	// target's own class — same kind of decision, same regime for a cube
-	// decision, another match (ADR-0043).
-	like int
 }
 
 // parseSearchFlags defines and parses the `search` command's flags, and
@@ -104,19 +98,6 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		}, *f.dbPath, nil
 	}
 
-	// --like ranks, it does not narrow: combining it with filters would need a
-	// precedence rule and would quietly change what the ranking is over.
-	if *f.like > 0 {
-		if named := filterFlagsSet(searchCmd); len(named) > 1 {
-			return nil, "", fmt.Errorf("--like cannot be combined with the filter flags (%s): similarity ranks a set, it does not narrow one", strings.Join(named, ", "))
-		}
-		return &searchParams{
-			like:   *f.like,
-			limit:  *f.limit,
-			format: strings.ToLower(*f.format),
-		}, *f.dbPath, nil
-	}
-
 	filters, err := f.toFilters()
 	if err != nil {
 		return nil, "", err
@@ -139,7 +120,7 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 func filterFlagsSet(fs *flag.FlagSet) []string {
 	passthrough := map[string]bool{
 		"db": true, "format": true, "limit": true, "offset": true,
-		"export": true, "query": true, "query-help": true, "like": true,
+		"export": true, "query": true, "query-help": true,
 	}
 	var named []string
 	fs.Visit(func(f *flag.Flag) {
@@ -219,12 +200,12 @@ func (cli *CLI) runSearch(args []string) error {
 		return err
 	}
 
-	// --like ranks the whole library by distance instead of narrowing it, so
-	// it is answered here and returns: combining it with a filter would be a
-	// second, silent semantics ("the nearest AMONG those that match"), and a
-	// ranking that quietly stopped ranking would be worse than a refusal.
-	if params.like > 0 {
-		return cli.runSearchLike(params)
+	// A ranked query — one carrying the `like` token — is answered here and
+	// returns: its result is neighbours WITH their distance, which the ordinary
+	// table has no column for. Every filter still applies; ranking is what the
+	// token adds, not what it replaces (ADR-0043).
+	if params.filters.LikeFilter {
+		return cli.runSearchRanked(params)
 	}
 
 	// --error-min/--has-analysis are applied client-side below, on the
@@ -452,26 +433,29 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 	return nil
 }
 
-// runSearchLike prints the neighbours of a position, nearest first, with the
-// distance that ranked them — in checker-pips, so the number can be read and
-// not merely compared.
-func (cli *CLI) runSearchLike(params *searchParams) error {
+// runSearchRanked prints the neighbours a `like` query selects, nearest first,
+// with the distance that ranked them — in checker-pips, so the number can be
+// read and not merely compared.
+func (cli *CLI) runSearchRanked(params *searchParams) error {
 	limit := params.limit
 	if limit <= 0 {
 		limit = 10
 	}
-	neighbours, err := cli.db.SimilarPositions(params.like, limit)
+	neighbours, err := cli.db.RankPositionsByFilters(params.filters, limit)
 	if err != nil {
-		return fmt.Errorf("failed to find similar positions: %w", err)
+		return fmt.Errorf("failed to rank the neighbours: %w", err)
 	}
 	if strings.ToLower(params.format) == "json" {
 		return json.NewEncoder(os.Stdout).Encode(neighbours)
 	}
 	if len(neighbours) == 0 {
-		fmt.Println("No similar position found.")
+		// An empty ranking is an answer, not a failure: nothing stood close
+		// enough, and saying so beats handing over the least distant of the
+		// unrelated (ADR-0043 rule 4).
+		fmt.Println("No neighbour found.")
 		return nil
 	}
-	fmt.Printf("\n%d position(s) closest to %d:\n\n", len(neighbours), params.like)
+	fmt.Printf("\n%d neighbour(s) of position %d:\n\n", len(neighbours), params.filters.LikeTargetID)
 	fmt.Println("ID      Distance  XGID")
 	fmt.Println("--      --------  ----")
 	for _, n := range neighbours {

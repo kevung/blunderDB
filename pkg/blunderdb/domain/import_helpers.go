@@ -17,6 +17,53 @@ func AwayScores(matchLength, score0, score1 int) [2]int {
 	return [2]int{matchLength - score0, matchLength - score1}
 }
 
+// AwayScoresWithCrawford is AwayScores with the Crawford sentinel written in,
+// and it is what an importer that knows WHICH game it is reading must call.
+//
+// The away score carries the Crawford rule INSIDE the number (CONTEXT.md,
+// « Away score »): `1` means "one point to go, and this IS the Crawford game",
+// `0` means "one point to go, and Crawford is behind us". AwayScores only ever
+// computes matchLength − score, so it says `1` for both — and every reader that
+// decodes the sentinel (gammonnet.MatchStateFromPosition, the XGID the frontend
+// copies) then reads a Crawford game in every post-Crawford one, cube dead,
+// where the trailer in fact doubles at the first opportunity.
+//
+// So: outside the Crawford game a raw away of 1 becomes the post-Crawford
+// sentinel 0. Money play (AwayScores' [Unlimited, Unlimited]) and any away of
+// 2 or more are left alone — only the value that is ambiguous is rewritten.
+//
+// A 1-point match is its own Crawford game — its only game starts at match
+// point — which is what the derivations the callers use report, and the [1, 1]
+// it then yields is the cube-dead reading that match wants.
+func AwayScoresWithCrawford(matchLength, score0, score1 int, isCrawfordGame bool) [2]int {
+	away := AwayScores(matchLength, score0, score1)
+	if isCrawfordGame {
+		return away
+	}
+	for i, a := range away {
+		if a == Crawford {
+			away[i] = PostCrawford
+		}
+	}
+	return away
+}
+
+// PointsAway decodes an away score into the DISTANCE to victory it means, and
+// is the reading every consumer of a stored score owes CONTEXT.md's « Away
+// score » entry: the two sentinels 0 and 1 describe the SAME distance — one
+// point — and differ only on whether the Crawford game has been played. Code
+// that subtracts a stored 0 from the match length reads "has already won", and
+// a match-equity lookup then refuses the score and drops the row silently.
+//
+// Money play (Unlimited) has no distance and is returned unchanged, for the
+// caller to recognise as it already must.
+func PointsAway(away int) int {
+	if away == PostCrawford {
+		return Crawford
+	}
+	return away
+}
+
 // CubeExponent converts a cube value as the match files write it (1, 2, 4, …)
 // into the exponent Cube.Value stores (0, 1, 2, …). A value of 0 or 1 — an
 // unset or centred cube — is exponent 0. Values that are not a power of two
