@@ -33,8 +33,9 @@ ID = 4,0 bits → 0,60 s. Les P ci-dessous utilisent ces valeurs quand la cible 
 ## 2. Le placement
 
 Onzième onglet du panneau ancré, mode `TRANSCRIBE`, brouillon dans un store. Dock **bas**,
-hauteur minimale **300 px** sur cet onglet (ADR-0048 décision 5 ; 280 px annoncés, 300 après
-mesure — la barre d'onglets prend 30 px du dock) :
+hauteur minimale **320 px** sur cet onglet (ADR-0048 décision 5 ; 280 px annoncés, puis 300,
+puis 320 après mesure — la barre d'onglets prend 30 px du dock, et la rangée de videau porte
+des mots, donc sa propre ligne) :
 
 ```
 ┌─────────────────────────── plateau (position du Cursor, J1 en bas) ───────────────────────────┐
@@ -43,7 +44,8 @@ mesure — la barre d'onglets prend 30 px du dock) :
 │  ← Liste          [aucun match] [Créer le match] [Texte .mat] [Exporter] [Fermer]  ↶ ↷        │
 ├──────────────┼────────────────────────────────┼───────────────────────────────────────────────┤
 │ palette      │ candidats (identify)           │ Transcript                                    │
-│ [3][1] D T P R ✎ │  1  8/5 6/5     +0,000  ——  │ Partie 3   3–2                                │
+│ [3][1] ✎     │  1  8/5 6/5     +0,000  ——     │ Partie 3   3–2                                │
+│ [Doubler][Prendre][Passer][Abandonner]         │                                               │
 │ ┌ 21 jets ─┐ │  2  13/10 6/5   −0,041 −0,041 │  Kévin              │ Alice                   │
 │ │11        │ │  3  24/21 13/12 −0,103 −0,103 │  31: 8/5 6/5        │ 52: 13/8 13/11          │
 │ │21 22     │ │  4  …                         │  64: 24/14          │ Doubles => 2            │

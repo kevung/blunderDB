@@ -1682,17 +1682,6 @@
                                 >{dieCells[1]}</button
                             >
                         {/if}
-                        {#if cubeRowOpen}
-                            <CubeActionRow
-                                canAct={canCubeAct}
-                                canAnswer={canCubeAnswer}
-                                {resigning}
-                                onGesture={sendCube}
-                                onResign={startResign}
-                                onLevel={pickResignLevel}
-                                onCancelResign={abortResign}
-                            />
-                        {/if}
                         {#if handEntryOpen}
                             <button
                                 class="icon-btn"
@@ -1703,6 +1692,10 @@
                             >
                         {/if}
                     </div>
+
+                    {#if cubeRowOpen}
+                        <CubeActionRow canAct={canCubeAct} canAnswer={canCubeAnswer} {resigning} onGesture={sendCube} onResign={startResign} onLevel={pickResignLevel} onCancelResign={abortResign} />
+                    {/if}
 
                     {#if handOpen && handEntryOpen}
                         <!-- Le secours (T2.4) : il prend la PLACE du triangle, les

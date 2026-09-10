@@ -149,12 +149,15 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
    Transcript`, la palette sous les dés, donc la proximité mesurée du triangle est conservée)
    et **sous** la liste quand elle est étroite. Un seul point de rupture, et il n'est pas
    porteur : le contrat tient des deux côtés. L'onglet demande une **hauteur minimale de dock
-   de 300 px** : un panneau qui a un contrat mesurable a le droit de dire de combien il a
-   besoin. (280 px à la décision, **300 px après mesure** : la barre d'onglets prend 30 px du
-   dock avant que le panneau n'en voie rien, ce que le calcul de séance oubliait — c'est
-   exactement le genre d'écart que la spec de la décision 13 existe pour trouver.) Sous ce
-   plancher, si l'utilisateur écrase le dock quand même, c'est la **palette** qui cède dans sa
-   propre boîte : le bas du triangle disparaît, jamais les cases du jet ni la liste.
+   de 320 px** : un panneau qui a un contrat mesurable a le droit de dire de combien il a
+   besoin. Le chiffre a été **corrigé deux fois par la mesure**, et les deux écarts disent la
+   même chose sur les calculs de séance : 280 px oubliait que la barre d'onglets prend 30 px
+   du dock avant que le panneau n'en voie rien ; 300 px oubliait que la rangée de videau porte
+   des MOTS — « Doubler », « Prendre », « Passer », « Abandonner » — et non les quatre lettres
+   `[D][T][P][R]` de la maquette, si bien qu'elle ne tient pas sur la ligne des dés et prend
+   la sienne (décision 7). Sous ce plancher, si l'utilisateur écrase le dock quand même, c'est
+   la **palette** qui cède dans sa propre boîte : le bas du triangle disparaît, jamais les
+   cases du jet ni la liste.
 
 6. **Le texte `.mat` devient une modale**, ouverte depuis la barre du brouillon à côté
    d'`Exporter .mat`. Ce n'est pas une question d'encombrement mais d'alignement : le `.mat`
@@ -271,6 +274,12 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
       doublent pas.
     - **Un clic sur les cases du jet les efface**, équivalent souris de `Retour arrière`. Elles
       sont aujourd'hui des `<span>`.
+
+    **Corrigé à l'implémentation** : la ligne du haut porte les dés et le bouton `✎`, la rangée
+    de videau prend la ligne suivante. La formule de séance — « les cinq réponses à *qu'a fait
+    le camp au trait ?* sur une ligne » — était juste comme idée et fausse en pixels : quatre
+    boutons de mots ne tiennent pas dans 220 px à côté de deux dés. Vouloir les y mettre
+    rognait le bas du triangle, c'est-à-dire une cible souris, en silence.
 
 12. **La pastille et le bouton nomment le Match, non le salut du brouillon.** Un mot portait
     deux concepts et l'interface montrait l'alarmant. `CONTEXT.md` est pourtant net : le

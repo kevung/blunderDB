@@ -104,13 +104,14 @@
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
     // La hauteur PLANCHER de l'onglet Transcription (ADR-0048 décision 5). Un
     // panneau qui a un contrat mesurable a le droit de dire de combien il a
-    // besoin. Le compte, MESURÉ et non estimé : la palette demande 207 px (la
-    // ligne du jet 25, le triangle 178, le gap 4), la barre du brouillon et son
-    // gap 34, le padding 16 — et la barre d'onglets prend 30 px du dock avant
-    // que le panneau n'en voie rien, ce que le premier chiffre de l'ADR (280)
-    // oubliait. La valeur stockée n'est pas touchée : c'est un plancher à
+    // besoin. Le compte, MESURÉ et non estimé : la palette demande 236 px (la
+    // ligne du jet 25, la rangée de videau 25, le triangle 178, deux gaps de 4),
+    // la barre du brouillon et son gap 34, le padding 16 — et la barre d'onglets
+    // prend 30 px du dock avant que le panneau n'en voie rien. Les deux chiffres
+    // annoncés en séance (280, puis 300) oubliaient l'un cette barre, l'autre
+    // que la rangée de videau porte des MOTS et non quatre lettres. La valeur stockée n'est pas touchée : c'est un plancher à
     // l'application, de sorte qu'un autre onglet retrouve la hauteur choisie.
-    const TRANSCRIPTION_MIN_HEIGHT = 300;
+    const TRANSCRIPTION_MIN_HEIGHT = 320;
     let appliedPanelHeight = $derived($activeTabStore === 'transcription' ? Math.max(panelHeight, TRANSCRIPTION_MIN_HEIGHT) : panelHeight);
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
