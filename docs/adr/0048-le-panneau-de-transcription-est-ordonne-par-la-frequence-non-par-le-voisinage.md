@@ -62,6 +62,12 @@ Deux règles engendrent les huit décisions, et répondent d'avance à la neuvi�
 > contrat ci-dessous.
 >
 > **R2 — Un message habite là où est ce dont il parle.** Un seul domicile par message.
+>
+> **R3 — Tout geste a un chemin clavier ET un chemin souris.** Aucun des deux n'est un
+> raccourci de l'autre : le clavier est mesuré deux fois plus rapide sur les dés (2 K contre
+> 1,2 s) et reste la voie par défaut ; la souris est une voie de plein droit — une main sur la
+> souris, l'autre sur la vidéo —, non un pis-aller pour débutants. R3 exige que chaque geste
+> soit **atteignable** à la souris, jamais qu'il y coûte le même temps.
 
 Le contrat, mesurable et tenu par une spec Playwright qui compte des pixels et non des
 présences dans le DOM :
@@ -222,6 +228,37 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
     bascule d'onglet ne doit pas avoir d'effet de bord sur le document, et `Ctrl+Maj+T` en est
     une.
 
+11. **Le chemin souris est complet, et la molette fait un pas dans la liste.** L'audit de R3 a
+    trouvé quatre trous et un défaut. Trous : parcourir la liste demandait de cliquer une ligne
+    *précise*, donc de l'avoir lue, sans aucun pas ni molette ; **valider** n'avait de chemin
+    qu'implicite — cliquer la case du jet suivant, `enterDicePair` émettant `VALIDATE` puis
+    `DIE` — donc aucun pour le dernier coup d'une partie ni du match ; **annuler / rétablir**
+    n'en avait plus du tout après la décision 3 ; **effacer le jet en cours** n'existait qu'au
+    clavier. Défaut : `handleWheel` (`App.svelte`) fait naviguer la liste des positions quand la
+    roulette tourne au-dessus du plateau et s'exclut de `EDIT` et `EPC` mais **pas de
+    `TRANSCRIBE`** — une molette au-dessus du plateau, résultats de recherche chargés, emmène
+    donc le plateau ailleurs, contre quoi l'effet du panneau se bat au geste suivant.
+
+    - **La molette fait un pas dans la liste des candidats**, l'exact équivalent de `j`/`k`,
+      au-dessus de la liste **et au-dessus du plateau**, `TRANSCRIBE` étant ajouté à
+      l'exclusion de `handleWheel`. C'est le meilleur des deux mondes : l'œil reste sur le
+      plateau, la molette fait défiler les flèches du candidat, et l'on reconnaît le coup vu
+      sur la vidéo par son **image** au lieu de traduire « 13/10 13/11 » de tête. La liste suit
+      la sélection — elle défile parce que la sélection bouge, comme une liste déroulante — et
+      non l'inverse.
+    - **Le double-clic sur une ligne de candidat valide.** Simple clic : sélectionner et voir
+      les flèches. Double-clic : enregistrer. Zéro pixel, idiome universel, et le seul chemin
+      souris qui couvre le dernier coup d'une partie — celui qui n'a pas de jet suivant pour
+      porter sa validation, le trou que `Entrée` bouche au clavier.
+    - **Les deux boutons `↶ ↷` reviennent** dans la barre du brouillon. C'est l'option écartée
+      à la décision 9, et la contradiction est apparente : deux questions distinctes avaient été
+      fusionnées. *Où se dit « rien à annuler » ?* → dans la barre d'état, transitoirement
+      (décision 9, inchangée). *Par où la souris atteint-elle l'annulation ?* → par ces deux
+      boutons, et la réponse ne pouvait pas être « nulle part ». Le chemin et le message ne se
+      doublent pas.
+    - **Un clic sur les cases du jet les efface**, équivalent souris de `Retour arrière`. Elles
+      sont aujourd'hui des `<span>`.
+
 ## Options écartées
 
 - **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet partout, `Entrée`
@@ -245,6 +282,8 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
   les quatre gestes qui agissent sur l'Action au Cursor, pas pour ces deux-là, dont la cible
   est la session et n'a pas de lieu. Écarté parce qu'un signal permanent répond à une question
   qu'on ne pose presque jamais, et parce que la décision 9 en couvre quatre au lieu d'un.
+  **Repris en partie par la décision 11** : les deux boutons reviennent, non pour porter le
+  message, mais parce que R3 exige un chemin souris vers l'annulation.
 - **Une ligne de message unique dans le panneau**, montrant au plus un message par priorité.
   Écartée : un ordre de priorité veut dire qu'un jour « filtre actif » masquera
   « incohérence ».
