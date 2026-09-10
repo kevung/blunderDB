@@ -75,14 +75,33 @@ présences dans le DOM :
 le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 % des tours.
 164 px.
 
-1. **La touche chiffrée n'a qu'un sens : elle valide le candidat sélectionné et ouvre le jet
-   suivant.** `Entrée` reste un synonyme (elle sert le dernier coup d'une partie, qui n'a pas
-   de tour suivant pour porter sa validation) ; `Retour arrière` garde le sien, il efface le
-   jet en cours. Le meilleur coup joué revient à **2 K** — le docstring de
-   `transcriptionKeys.js` redevient vrai — et l'état « jet corrigeable » disparaît avec ses
-   deux phrases. Corriger un dé mal relu passe de 2 K à 3 K. Sur 250 Actions, 60 % de
-   meilleurs coups et ~5 % de dés mal relus : **−138 K, soit −39 s par match**, et un mode
-   caché en moins.
+1. **La touche chiffrée commence un jet là où le Cursor est.** En bout de document il n'y a
+   rien sous le Cursor : le chiffre valide le candidat sélectionné et ouvre le jet suivant.
+   Sur une Action existante il y a quelque chose : le chiffre en **recommence le jet, sur
+   place**. `Entrée` reste un synonyme de la validation (elle sert le dernier coup d'une
+   partie, qui n'a pas de tour suivant pour la porter) ; `Retour arrière` garde le sien, il
+   efface le jet en cours. Le discriminant est `entry.replacing`, que le moteur expose et que
+   le panneau lit déjà.
+
+   C'est **un seul sens**, et c'est là que l'arbitrage du 2026-09-07 se trompait : il
+   distinguait aussi deux comportements, mais sur un **historique invisible** — « avez-vous
+   touché la liste ? ». Ici la différence est un **objet dessiné** : la cellule encadrée dans
+   le Transcript, où l'utilisateur s'est rendu délibérément une frappe plus tôt. Un état que
+   l'on voit n'est pas un mode.
+
+   Le meilleur coup joué revient à **2 K** — le docstring de `transcriptionKeys.js` redevient
+   vrai — l'état « jet corrigeable » disparaît avec ses deux phrases, et les budgets de
+   correction d'`ux.md` §4.3 sont tous **inchangés** : dé mal lu vu aussitôt 2 K, vu k tours
+   plus tard `h`×k `4` `1` soit 3 K. Sur 250 Actions dont ~60 % de meilleurs coups :
+   **−150 K, soit −42 s par match**, sans contrepartie sur la relecture.
+
+   La formulation « le chiffre valide toujours, partout » a été essayée et écartée en séance :
+   `GestureValidate` appelle `validate`, qui — contrairement à `commitCorrection` — n'est pas
+   gardé par `entryDiffers`, réécrit l'Action à l'identique et rend le Cursor à `doc.Return`.
+   Un seul chiffre égaré pendant une relecture aurait donc **mis fin à la relecture** et renvoyé
+   le Cursor en bout de document, quand la règle retenue le garde local. Le filet `Ctrl+Z`
+   n'aurait pas rattrapé la faute le lendemain : la pile vit dans le `transcript.Editor` de la
+   session et un brouillon réouvert n'en a pas (ADR-0045 règle 1).
 
 2. **L'état du brouillon quitte le panneau**, comme `ux.md` §5 le disait : six badges vers
    `MatchInfoBar`, la phrase du jet vers la barre d'état. **Exception** : l'état
@@ -148,10 +167,15 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
 
 ## Options écartées
 
-- **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet, `Entrée` valide),
-  au motif que la relecture est l'usage qui gouverne. Écarté : la relecture gouverne les
-  *gestes de correction*, pas la boucle de frappe, et le coût réel de l'arbitrage — un mode
-  caché vérifié 250 fois — est ce que le compteur retenu ne savait pas voir.
+- **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet partout, `Entrée`
+  valide), au motif que la relecture est l'usage qui gouverne. Écarté : la relecture gouverne
+  les *gestes de correction*, pas la boucle de frappe, et le coût réel de l'arbitrage — un mode
+  caché vérifié 250 fois — est ce que le compteur retenu ne savait pas voir. La décision 1 lui
+  donne raison là où il avait raison, sur l'Action que l'on relit, et lui retire le bout du
+  document, où il n'y a rien à corriger.
+- **Le chiffre valide partout, sans regarder le Cursor.** Écarté en séance après lecture du
+  chemin Go : voir la décision 1. Une règle plus courte à énoncer, mais qui rend non locale la
+  faute de frappe commise précisément là où l'on tâtonne.
 - **Replier la palette derrière une bascule** pour garder les neuf colonnes de la liste.
   Écarté : une cible souris cachée par défaut est une cible morte, et le triangle a été
   mesuré et retenu (`ux.md` §4.1) — ce n'est pas le moment de le tuer par la mise en page.
