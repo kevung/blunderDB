@@ -132,4 +132,53 @@ test.describe('dock latéral, à sa largeur par défaut', () => {
         const list = await page.locator('[data-testid="transcription-candidates"]').boundingBox();
         expect(palette.y).toBeGreaterThanOrEqual(list.y + list.height - 1);
     });
+
+    test('le Transcript est SOUS la palette : la place n’est pas là pour l’apparier', async ({ page }) => {
+        const palette = await page.locator('[data-testid="transcription-palette"]').boundingBox();
+        const transcript = await page.locator('.transcript-col').boundingBox();
+        expect(transcript.y).toBeGreaterThanOrEqual(palette.y + palette.height - 1);
+    });
+});
+
+/**
+ * Le troisième régime : un dock latéral élargi, où le Transcript vient occuper
+ * le blanc que le triangle laissait à sa droite.
+ *
+ * Il a son point de rupture à lui — 500 px —, et c'est une mesure : le triangle
+ * demande 211 px et un Transcript 250 px, soit 485 px de panneau. La spec le
+ * vérifie à 520, le premier cran où l'appariement est censé tenir. Sans elle,
+ * régler le seuil sur l'impression laisserait passer un Transcript dont la
+ * seconde colonne est rognée — ce qui n'est pas un Transcript rétréci mais autre
+ * chose (ADR-0048 décision 6, l'argument qui a sorti le texte `.mat` d'ici).
+ */
+test.describe('dock latéral élargi, au-delà du second point de rupture', () => {
+    test.beforeEach(async ({ page }) => {
+        await openDraft(page, { GetPanelPosition: 'side', GetPanelWidth: 520 });
+    });
+
+    test('le panneau ne défile pas', async ({ page }) => {
+        expect(await overflow(page)).toBe(0);
+    });
+
+    test('cinq lignes de candidats sont entièrement visibles', async ({ page }) => {
+        expect(await fullyVisibleRows(page)).toBeGreaterThanOrEqual(5);
+    });
+
+    test('le Transcript est À CÔTÉ du triangle, pas dessous', async ({ page }) => {
+        const palette = await page.locator('[data-testid="transcription-palette"]').boundingBox();
+        const transcript = await page.locator('.transcript-col').boundingBox();
+        expect(transcript.x).toBeGreaterThanOrEqual(palette.x + palette.width - 1);
+        // Les deux partagent la rangée : ils commencent à la même hauteur.
+        expect(Math.abs(transcript.y - palette.y)).toBeLessThanOrEqual(1);
+    });
+
+    test('les deux colonnes du Transcript tiennent sans être rognées', async ({ page }) => {
+        // La table est ce qui doit tenir : rognée, c'est la colonne du joueur 2
+        // qui disparaît, et le Transcript n'a plus qu'un camp.
+        const clipped = await page.locator('.transcript-col').evaluate((col) => {
+            const table = col.querySelector('table');
+            return table ? table.scrollWidth - col.clientWidth : 0;
+        });
+        expect(clipped).toBeLessThanOrEqual(0);
+    });
 });

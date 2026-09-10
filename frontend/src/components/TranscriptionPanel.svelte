@@ -1936,10 +1936,29 @@
         color: var(--color-text-muted);
     }
 
-    /* Trois régions. L'ordre du DOM est celui de la boîte ÉTROITE — candidats,
-       palette, Transcript — et la palette passe première en boîte large. Un seul
-       point de rupture, et il n'est pas porteur : le contrat (les deux cases du
-       jet et cinq lignes de candidats sans défilement) tient des deux côtés. */
+    /* Trois régions. En boîte étroite elles se SUIVENT — candidats, palette,
+       Transcript, l'ordre du DOM — et les deux points de rupture les posent sur
+       une grille nommée, où l'ordre du DOM ne les place plus. Le contrat (les
+       deux cases du jet et cinq lignes de candidats sans défilement) tient des
+       trois côtés.
+
+       Pourquoi un SECOND point de rupture. Le triangle des 21 jets est un
+       escalier de 6 cases de large : posé seul sur toute la largeur, il laisse à
+       sa droite un rectangle blanc aussi haut que lui, et repousse le Transcript
+       tout en bas — 101 px de haut mesurés à 420 px de dock, c'est-à-dire hors
+       de l'écran. Le Transcript vient donc partager cette rangée, et les
+       candidats gagnent la place qu'il rendait : 15 lignes entières au lieu de
+       10, mesuré à 520 px.
+
+       Le seuil est une mesure, pas un goût : le triangle demande 211 px et un
+       Transcript 250 px — deux colonnes de « 31: 13/10 24/23 » et le numéro du
+       tour —, soit 469 px de rangée et 485 px de panneau. Au-dessous, les
+       apparier rognerait la seconde colonne du Transcript, et un Transcript à
+       185 px n'est pas un Transcript rétréci : c'est autre chose, exactement
+       l'argument qui a sorti le texte `.mat` de cette colonne (ADR-0048
+       décision 6). Sous le seuil, rien ne change donc — la place n'y est pas, et
+       la prendre aux candidats coûterait deux de leurs lignes pour une du
+       Transcript. */
     .draft-body {
         display: flex;
         flex: 1;
@@ -1960,6 +1979,7 @@
 
     .candidates-col {
         flex: 1 1 auto;
+        grid-area: candidates;
     }
 
     /* Sous le plancher — un dock que l'utilisateur écrase quand même — c'est la
@@ -1969,28 +1989,33 @@
     .palette-col {
         flex: 0 0 auto;
         overflow: auto;
+        grid-area: palette;
     }
 
     .transcript-col {
         flex: 1 1 auto;
+        grid-area: transcript;
     }
 
+    /* Le Transcript à côté du triangle, dans le blanc qu'il laissait. */
+    @container (min-width: 500px) {
+        .draft-body {
+            display: grid;
+            grid-template-columns: max-content minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr) auto;
+            grid-template-areas:
+                'candidates candidates'
+                'palette    transcript';
+        }
+    }
+
+    /* Assez large pour les trois de front : la palette sous les dés, donc la
+       proximité mesurée du triangle est conservée (ADR-0048 décision 5). */
     @container (min-width: 900px) {
         .draft-body {
-            flex-direction: row;
-        }
-
-        .palette-col {
-            order: -1;
-            flex: 0 0 220px;
-        }
-
-        .candidates-col {
-            flex: 1 1 280px;
-        }
-
-        .transcript-col {
-            flex: 1 1 320px;
+            grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1.14fr);
+            grid-template-rows: minmax(0, 1fr);
+            grid-template-areas: 'palette candidates transcript';
         }
     }
 

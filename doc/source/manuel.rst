@@ -1122,13 +1122,17 @@ changer puis réenregistrer écrit des positions neuves, à analyser, et les
 anciennes disparaissent dès que plus rien ne les retient.
 
 Sous la barre, le brouillon occupe trois régions : la **palette** des cibles
-souris, les **coups candidats** et le **transcript**. Dans un panneau large — le
-dock du bas — elles sont côte à côte, la palette à gauche ; dans un panneau
-étroit — le dock latéral — les candidats viennent en premier, la palette
-au-dessous, le transcript en dernier. Dans les deux cas la règle est la même :
-rien ne s'intercale entre les deux cases du jet et la première ligne des
-candidats, et cinq candidats au moins se lisent sans faire défiler quoi que ce
-soit.
+souris, les **coups candidats** et le **transcript**. Elles se placent selon la
+largeur du panneau. Dans un panneau large — le dock du bas — les trois sont de
+front, la palette à gauche. Dans un panneau moyen, les candidats occupent le
+haut et le transcript vient à côté du triangle des jets, dans la place que
+celui-ci laisse à sa droite. Dans un panneau étroit, les trois se suivent : les
+candidats, la palette, le transcript — le triangle et le transcript n'y tiennent
+pas côte à côte sans amputer le transcript de sa seconde colonne, et élargir le
+dock de quelques dizaines de pixels suffit à les réunir. Dans tous les cas la
+règle est la même : rien ne s'intercale entre les deux cases du jet et la
+première ligne des candidats, et cinq candidats au moins se lisent sans faire
+défiler quoi que ce soit.
 
 La palette montre les deux dés au fur et à mesure de leur saisie ; un clic
 dessus les efface, comme *RETOUR ARRIERE*. Une partie s'ouvre par un dé de chaque camp : le plus

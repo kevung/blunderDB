@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 04:02+0200\n"
+"POT-Creation-Date: 2026-09-10 05:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Manuel"
 msgstr "マニュアル"
 
-#: ../../source/manuel.rst:7 ../../source/manuel.rst:1463
+#: ../../source/manuel.rst:7 ../../source/manuel.rst:1467
 msgid "Introduction"
 msgstr "はじめに"
 
@@ -1118,7 +1118,7 @@ msgstr ""
 "コマンドに相当します（:ref:`cmd_positions` を参照）。"
 
 #: ../../source/manuel.rst:556 ../../source/manuel.rst:569
-#: ../../source/manuel.rst:1050 ../../source/manuel.rst:1266
+#: ../../source/manuel.rst:1050 ../../source/manuel.rst:1270
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "利用可能なショートカットについては :ref:`raccourcis` を参照してください。"
 
@@ -2190,19 +2190,23 @@ msgstr ""
 #: ../../source/manuel.rst:1124
 msgid ""
 "Sous la barre, le brouillon occupe trois régions : la **palette** des "
-"cibles souris, les **coups candidats** et le **transcript**. Dans un "
-"panneau large — le dock du bas — elles sont côte à côte, la palette à "
-"gauche ; dans un panneau étroit — le dock latéral — les candidats "
-"viennent en premier, la palette au-dessous, le transcript en dernier. "
-"Dans les deux cas la règle est la même : rien ne s'intercale entre les "
-"deux cases du jet et la première ligne des candidats, et cinq candidats "
-"au moins se lisent sans faire défiler quoi que ce soit."
+"cibles souris, les **coups candidats** et le **transcript**. Elles se "
+"placent selon la largeur du panneau. Dans un panneau large — le dock du "
+"bas — les trois sont de front, la palette à gauche. Dans un panneau "
+"moyen, les candidats occupent le haut et le transcript vient à côté du "
+"triangle des jets, dans la place que celui-ci laisse à sa droite. Dans un"
+" panneau étroit, les trois se suivent : les candidats, la palette, le "
+"transcript — le triangle et le transcript n'y tiennent pas côte à côte "
+"sans amputer le transcript de sa seconde colonne, et élargir le dock de "
+"quelques dizaines de pixels suffit à les réunir. Dans tous les cas la "
+"règle est la même : rien ne s'intercale entre les deux cases du jet et la"
+" première ligne des candidats, et cinq candidats au moins se lisent sans "
+"faire défiler quoi que ce soit."
 msgstr ""
-"バーの下で、下書きは三つの区画を占めます。マウス標的の\\ **パレット**\\ 、\\ **候補手**\\ 、そして\\ "
-"**トランスクリプト**\\ "
-"です。広いパネル——下のドック——では横に並び、パレットが左に来ます。狭いパネル——横のドック——では候補手が先、パレットがその下、トランスクリプトが最後です。規則はどちらでも同じで、ダイスの二つのマスと候補手の最初の行のあいだには何も割り込まず、少なくとも五つの候補手がまったくスクロールせずに読めます。"
+"バーの下で、下書きは三つの領域を占めます。マウス操作の\\ **パレット**\\ 、\\ **候補手**\\ 、そして\\ **記譜**\\ "
+"です。三つの配置はパネルの幅で決まります。広いパネル——下部ドック——では三つが横に並び、パレットが左に来ます。中くらいのパネルでは候補手が上を占め、記譜は出目の三角形の右に残る場所に入ります。狭いパネルでは三つが順に続きます。候補手、パレット、記譜の順です——そこでは三角形と記譜を横に並べると記譜の第二列が切れてしまうので並べません。ドックを数十ピクセル広げれば両者は並びます。いずれの場合も規則は同じです。出目の二つの枠と候補手の一行目のあいだには何も入らず、候補手は少なくとも五行がスクロールなしで読めます。"
 
-#: ../../source/manuel.rst:1133
+#: ../../source/manuel.rst:1137
 msgid ""
 "La palette montre les deux dés au fur et à mesure de leur saisie ; un "
 "clic dessus les efface, comme *RETOUR ARRIERE*. Une partie s'ouvre par un"
@@ -2213,7 +2217,7 @@ msgstr ""
 "パレットは入力されるにつれて二つのダイスを示します。それをクリックすると、\\ *BACKSPACE*\\ "
 "と同じく消えます。ゲームは両者一つずつのダイスで始まり、大きいほうが先手となって両方のダイスを打ち直すことなく使います。同数はそのまま記録され、もう一度の開始が待たれます。"
 
-#: ../../source/manuel.rst:1138
+#: ../../source/manuel.rst:1142
 msgid ""
 "Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,"
 " classés par le moteur embarqué, le premier présélectionné et ses flèches"
@@ -2229,7 +2233,7 @@ msgstr ""
 " **評価**\\ "
 "パネルがあります。この順位づけは評価であり、表示はされますがデータベースには決して書き込まれません。エンジンが使えないときは順位なしで列挙され、一覧はそれを冒頭で告げます。"
 
-#: ../../source/manuel.rst:1146
+#: ../../source/manuel.rst:1150
 msgid ""
 "La **molette** sélectionne le candidat suivant ou précédent, au-dessus de"
 " la liste comme au-dessus du damier : le regard reste sur le plateau et "
@@ -2240,7 +2244,7 @@ msgstr ""
 "\\ **ホイール**\\ "
 "は次または前の候補手を選びます。一覧の上でも盤の上でも同じで、視線は盤に残り矢印が流れていきます。これは記法を読むより速く手を見分けます。行をクリックすると選択、ダブルクリックで確定します。"
 
-#: ../../source/manuel.rst:1151
+#: ../../source/manuel.rst:1155
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -2251,7 +2255,7 @@ msgstr ""
 "倍速いままであり、三角形はマウスに手を置いて書き起こす人のためにあります。出目ごとにマスはひとつ、決して 2 つではありません。3-1 と 1-3"
 " は同じ出目です。"
 
-#: ../../source/manuel.rst:1156
+#: ../../source/manuel.rst:1160
 msgid ""
 "Un clic sur un point du plateau ne laisse que les coups qui en partent. "
 "C'est le geste du coup lointain : descendre au douzième candidat coûte "
@@ -2261,7 +2265,7 @@ msgid ""
 "lève aussi."
 msgstr "盤の一点をクリックすると、そこから始まる手だけが残ります。これは遠い手のための操作です。十二番目の候補手まで下るのに十三打鍵かかるところ、フィルターは二つか三つしか残しません。フィルターは下書きを変えず、画面上の一覧を短くするだけです。一覧の冒頭のチップがそれを告げ、解除もできます。次の出目でも解除されます。"
 
-#: ../../source/manuel.rst:1162
+#: ../../source/manuel.rst:1166
 msgid ""
 "Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est "
 "saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un"
@@ -2282,7 +2286,7 @@ msgstr ""
 "が決まり、手が完成した時点でアクションが記録されます。Backspace は最後の 1 "
 "手を取り消し、数字キーは手を破棄してサイコロ入力に戻り、盤の外でのダブルクリックは最初からやり直します。同じ手を複数の出目が生む場合（複数のサイコロで上がれるベアオフ、打てないサイコロ）には何も記録されず、三角形はそれらの出目だけをクリック可能に残します。対局を見ている人に代わって出目が推測されることは決してありません。"
 
-#: ../../source/manuel.rst:1174
+#: ../../source/manuel.rst:1178
 msgid ""
 "Un coup illégal se transcrit tel qu'il a été joué. Le bouton **✎** de la "
 "palette déplie les deux chemins qui le permettent, à la place du triangle"
@@ -2305,7 +2309,7 @@ msgstr ""
 "で記録します。どちらも先に出目の入力を求めます。非合法な手はどの出目から生じたかを語らないからです。この二つの道のいずれかで入力された手がたまたま合法であれば、それは普通の手のままです——比較は得られた盤で行われ、操作の出どころでは決してありません。そうでなければトランスクリプトに「非合法な手」と記され、``.mat``\\"
 " 書き出しはファイルを書く前に警告しますが、決して拒みません。"
 
-#: ../../source/manuel.rst:1188
+#: ../../source/manuel.rst:1192
 msgid ""
 "Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**, "
 "**Abandonner** reprend à la souris les quatre gestes de videau : ce sont,"
@@ -2327,7 +2331,7 @@ msgstr ""
 " "
 "キーを重ねる「取消」に変わります。盤に描かれたキューブはこれらの操作の第二の標的です。それをクリックするとダブルを提案します。申し出の前では答えません——テイクとパスは対称な二つの答えであり、並びの中に共に住み、それぞれ一クリックです。"
 
-#: ../../source/manuel.rst:1203
+#: ../../source/manuel.rst:1207
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, l'égalité à relancer, la réponse attendue à un "
@@ -2341,7 +2345,7 @@ msgstr ""
 "\\ **ステータスバー**\\ "
 "は下書きが何を待っているかを一言で告げます。自動的に記録されたダンス、振り直しの同数、ダブルへの応答待ち、投了後の水準待ち、その場での訂正、出目が変わって「要確認」となった手です。何もすることのない操作にもそこで答えます——「取り消すものがありません」「カーソルの下にアクションがありません」——一秒半のあいだ。ある行動が残した不整合のほうは、誤りのあるセルがある場所、すなわちトランスクリプトの冒頭で知らされます。"
 
-#: ../../source/manuel.rst:1211
+#: ../../source/manuel.rst:1215
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -2350,7 +2354,7 @@ msgid ""
 "attendue."
 msgstr "ゲームはパス、投了、または十五個目の駒の上がり(シングル、ギャモン、バックギャモンに、キューブの値を掛けたもの)で終わります。スコア、クロフォードゲーム、マッチの終わりはそのときマッチバーに現れ、次のゲームの開始が待たれます。"
 
-#: ../../source/manuel.rst:1216
+#: ../../source/manuel.rst:1220
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -2369,7 +2373,7 @@ msgstr ""
 " ``.mat``\\ ファイルの場合です。gnubg は打たれた手を保っていないとき ``???`` "
 "と書きます。出目は分かっていて手が分からないので、そのセルにカーソルを置くとその出目の手が示され、補うことができます。ゲームは折りたたまれ、カーソルのあるものが開いています。"
 
-#: ../../source/manuel.rst:1228
+#: ../../source/manuel.rst:1232
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -2383,7 +2387,7 @@ msgstr ""
 "*i*\\ 、\\ *a*\\ 、\\ *x*\\ 、\\ *s*\\ "
 "のキーと同じ操作であり、ブラウザのメニューが外されるのはそこだけです。ほかの場所にボタンはありません。「カーソルの下のアクション」に作用するボタンは、見えているとは限らないセルを狙うことになりますが、右クリックは自分のセルを名指すからです。"
 
-#: ../../source/manuel.rst:1235
+#: ../../source/manuel.rst:1239
 msgid ""
 "La barre du brouillon porte les gestes qui le font sortir de lui-même. « "
 "**Créer le match** » (CTRL-ENTREE) l'écrit dans la bibliothèque, et "
@@ -2399,7 +2403,7 @@ msgstr ""
 "ENTER)がライブラリに書き込み、その後は「マッチ #\\ *n*\\ "
 "を更新」になります。マッチは同じ識別子のもとで置き換えられ、新しい局面だけの解析がただちに始まり、その進捗と中止はステータスバーに出ます。その隣で、バーはそのマッチがどうなっているかを告げます——マッチなし、最新、または下書きより古い。下書き自身の安全については何も言いません。下書きは一つのアクションごとにデータベースへ書かれており、見張るべきものは何もないからです。"
 
-#: ../../source/manuel.rst:1244
+#: ../../source/manuel.rst:1248
 msgid ""
 "« **Texte .mat** » ouvre le fichier Jellyfish tel qu'il serait écrit, "
 "dans une fenêtre assez large pour que ses colonnes restent alignées, avec"
@@ -2415,7 +2419,7 @@ msgstr ""
 "」は確認のうえでそれを削除します。すでに作られたマッチはライブラリに決定的に残ります。二つの矢印\\ **↶**\\ と\\ **↷**\\ "
 "は、\\ *CTRL-Z*\\ および\\ *CTRL-SHIFT-Z*\\ と同じく取り消しとやり直しを行います。"
 
-#: ../../source/manuel.rst:1251
+#: ../../source/manuel.rst:1255
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -2425,7 +2429,7 @@ msgid ""
 " sur toute la bibliothèque."
 msgstr "記譜したマッチの解析が中断された場合（解析中にアプリケーションを閉じたとき）、次にデータベースを開いたときにステータスバーがそれを知らせ、続きを実行するか尋ねます。この中断について記録は何も残りません。未解析の局面が残っているかぎり提案は繰り返し現れ、再開される解析はそのマッチだけを対象とし、ライブラリ全体には及びません。"
 
-#: ../../source/manuel.rst:1257
+#: ../../source/manuel.rst:1261
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -2435,24 +2439,24 @@ msgstr ""
 "不整合のある下書きも、警告のうえでそのまま保存されます。拒否されるものはありません。不正な着手は打たれたとおりに書き出され、gnubg と XG "
 "がそれを「Invalid move」と表示し、以降は食い違うという警告が出ます。"
 
-#: ../../source/manuel.rst:1262
+#: ../../source/manuel.rst:1266
 msgid ""
 "Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
 "liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
 "Transcription."
 msgstr "\\ **マッチ**\\ パネルは、マッチ一覧の上で進行中の下書きを一つずつ示します。「作成中の下書き」の行から記譜タブが開きます。"
 
-#: ../../source/manuel.rst:1271 ../../source/manuel.rst:1273
+#: ../../source/manuel.rst:1275 ../../source/manuel.rst:1277
 msgid "Panneau Tournois"
 msgstr "トーナメントパネル"
 
-#: ../../source/manuel.rst:1277
+#: ../../source/manuel.rst:1281
 msgid ""
 "Le panneau Tournois : un tournoi par ligne, nombre de matchs, PR du "
 "joueur de référence."
 msgstr "Tournaments パネル：一行が一トーナメント、マッチ数、基準プレイヤーの PR。"
 
-#: ../../source/manuel.rst:1280
+#: ../../source/manuel.rst:1284
 msgid ""
 "Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en "
 "tournois pour un suivi organisé et une analyse statistique par événement."
@@ -2465,7 +2469,7 @@ msgstr ""
 "）では、整理された記録管理とイベントごとの統計分析のために、マッチをトーナメントにまとめることができます。トーナメントは作成、名前変更、削除ができ、マッチを割り当てられます。Stats"
 " パネルの統計はトーナメントごとにフィルターできます。パネルを表示または非表示にするには、\\ *CTRL-Y* を押します。"
 
-#: ../../source/manuel.rst:1286
+#: ../../source/manuel.rst:1290
 msgid ""
 "Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, "
 "GnuBG et BGF nomment leur événement ; à l'import d'un match nouveau, "
@@ -2479,7 +2483,7 @@ msgstr ""
 "の各ファイルはイベント名を持っており、新しいマッチをインポートすると、blunderDB "
 "はその名前のトーナメントに分類し、まだ存在しなければ作成します。トーナメントの日付と場所は空のままです。ここで記入してください。すでにデータベースにあるマッチが分類し直されることはありません。ファイルを再インポートしても、手で行った整理は失われません。"
 
-#: ../../source/manuel.rst:1293
+#: ../../source/manuel.rst:1297
 msgid ""
 "La colonne **PR** de chaque tournoi affiche le PR du **joueur de "
 "référence** — c'est-à-dire le joueur présent dans le plus grand nombre de"
@@ -2494,11 +2498,11 @@ msgstr ""
 " PR "
 "にご自身の対局と対戦相手の対局が混ざることはありません。ご自身のトーナメントでは、あなた自身の成績のみを反映します。基準プレイヤーの名前は、値にマウスを重ねるとツールチップに表示されます。"
 
-#: ../../source/manuel.rst:1303
+#: ../../source/manuel.rst:1307
 msgid "Diriger un tournoi"
 msgstr "大会を運営する"
 
-#: ../../source/manuel.rst:1305
+#: ../../source/manuel.rst:1309
 msgid ""
 "blunderDB sait **diriger** un tournoi, et pas seulement le ranger. La "
 "direction est portée par le moteur **Nicomaque**, de Nicolas Harmand : "
@@ -2511,7 +2515,7 @@ msgstr ""
 "**Nicomaque** です。形式、組み合わせ、トーナメント表、順位を保持するのはこのエンジンで、blunderDB "
 "はその画面を与え、マッチを保管します。パネルのバーにある **ⓘ** ボタンはこのクレジットを示し、エンジンのリポジトリとドキュメントへ導きます。"
 
-#: ../../source/manuel.rst:1311
+#: ../../source/manuel.rst:1315
 msgid ""
 "Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois` "
 "(*CTRL-MAJ-D*, commande ``direct``) : ouvrir un tournoi, puis **Diriger "
@@ -2526,7 +2530,7 @@ msgstr ""
 "になります。運営が開いている間、主領域は盤面ではなく **大会** を表示します。これは blunderDB "
 "におけるこの規則の唯一の例外で、ほかのタブに移れば盤面が戻ります。"
 
-#: ../../source/manuel.rst:1318
+#: ../../source/manuel.rst:1322
 msgid ""
 "Une direction a trois états : **en préparation** tant qu'aucun match n'a "
 "été lancé, **en cours** ensuite, **clos** une fois le classement figé. "
@@ -2536,7 +2540,7 @@ msgstr ""
 "運営には3つの状態があります。マッチがまだ1つも開始されていない間は **準備中**、その後は **進行中**、順位が確定すれば **終了** "
 "です。終了した大会は確認のうえ再開できます。そのとき最終順位は確定ではなくなります。"
 
-#: ../../source/manuel.rst:1323
+#: ../../source/manuel.rst:1327
 msgid ""
 "Tout ce qui est décidé est écrit dans un **journal**, et rien d'autre ne "
 "l'est. Le classement, les arbres, les propositions et les avertissements "
@@ -2547,11 +2551,11 @@ msgstr ""
 "決定されたことはすべて **ジャーナル** "
 "に書かれ、それ以外は書かれません。順位、トーナメント表、提案、警告は開くたびにこのジャーナルから再生されます。停電が起きても失うものはなく、訂正が起きたことを消すことは決してありません。訂正は追加されるだけです。"
 
-#: ../../source/manuel.rst:1329
+#: ../../source/manuel.rst:1333
 msgid "La page Direction"
 msgstr "運営ページ"
 
-#: ../../source/manuel.rst:1331
+#: ../../source/manuel.rst:1335
 msgid ""
 "C'est là que le directeur passe l'essentiel de son temps. Elle porte, de "
 "haut en bas : les **avertissements** du moteur, qui restent visibles et "
@@ -2562,7 +2566,7 @@ msgstr ""
 "運営者が最も長く過ごす画面です。上から順に、常に見えていて何も妨げないエンジンの **警告**、組み合わせ表の **印刷** "
 "ボタン、**提案リスト**、**テーブルの一覧**、**直前の決定**、そして待機中のプレイヤーです。"
 
-#: ../../source/manuel.rst:1337
+#: ../../source/manuel.rst:1341
 msgid ""
 "Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** "
 "confirme la file entière en deux clics, après en avoir montré la liste. «"
@@ -2574,7 +2578,7 @@ msgstr ""
 "はリストを見せたうえで、2クリックで全体を確定します。「いまは見送る」は何も書き込みません。エンジンは決定的なので、次に呼び出せば同じ提案が戻ります。*手動で組む*"
 " は常に用意されています。エンジンは提案し、決めるのは運営者です。"
 
-#: ../../source/manuel.rst:1343
+#: ../../source/manuel.rst:1347
 msgid ""
 "Une proposition peut porter une remarque du moteur : aucune table libre, "
 "ou une fin de match attendue pendant une pause. Elle reste lançable dans "
@@ -2586,11 +2590,11 @@ msgstr ""
 " **マイクロラウンド** "
 "で動くときは、次のまとまりまでの残り時間がリストに出ます。期限が来ると提案は自動的に現れますが、自動で開始されるものは何もありません。"
 
-#: ../../source/manuel.rst:1350
+#: ../../source/manuel.rst:1354
 msgid "La fiche de résultat"
 msgstr "結果カード"
 
-#: ../../source/manuel.rst:1352
+#: ../../source/manuel.rst:1356
 msgid ""
 "Un clic sur une table occupée ouvre la fiche du match. Elle montre deux "
 "grandes cibles : les **noms des deux joueurs**. Cliquer celui qui a gagné"
@@ -2601,7 +2605,7 @@ msgstr ""
 "使用中のテーブルをクリックすると、そのマッチのカードが開きます。大きな的が2つ、すなわち **両プレイヤーの名前** "
 "が並びます。勝った側をクリックすれば結果が記録されます。テーブルを含めて計2クリックです。必須なのは勝者だけで、スコアは自由です。片方でも、両方でも、書かなくてもかまいません。"
 
-#: ../../source/manuel.rst:1357
+#: ../../source/manuel.rst:1361
 msgid ""
 "Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait, une"
 " remarque libre (« tombé au temps », « abandonné pour raison de… »), le "
@@ -2610,7 +2614,7 @@ msgstr ""
 "カードの **⋯** "
 "ボタンは、めったに使わないものを開きます。不戦勝、自由記述の注記（「時間切れ」「…のため棄権」）、別テーブルへの移動、そしてマッチの取り消しです。"
 
-#: ../../source/manuel.rst:1361
+#: ../../source/manuel.rst:1365
 msgid ""
 "Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille"
 " : **Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* "
@@ -2620,11 +2624,11 @@ msgstr ""
 "すぐ気づいた入力ミスは、一覧の下で2クリックでやり直せます。直前の決定を **訂正** し、正しい勝者を選ぶだけです（*CTRL-Z* "
 "でも同じやり直しが開きます）。それより古い訂正は :ref:`履歴 <direction_historique>` から行います。"
 
-#: ../../source/manuel.rst:1367
+#: ../../source/manuel.rst:1371
 msgid "Les joueurs"
 msgstr "プレイヤー"
 
-#: ../../source/manuel.rst:1369
+#: ../../source/manuel.rst:1373
 msgid ""
 "L'onglet **Joueurs** inscrit, corrige et retire. Le champ d'inscription "
 "garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent "
@@ -2636,7 +2640,7 @@ msgstr ""
 "タブで登録、修正、離脱を扱います。登録欄はフォーカスを保ち、名前ごとに空になるので、20人をキーボードだけで登録できます。補完はデータベースのプレイヤーを提示します。選べばそのマッチが持つ正確な表記が固定され、レーティングに"
 " PR が入ります。"
 
-#: ../../source/manuel.rst:1374
+#: ../../source/manuel.rst:1378
 msgid ""
 "L'**annuaire** regroupe les inscrits de tous les tournois dirigés de la "
 "base, dédoublonnés par nom, avec le club et la cote de leur dernière "
@@ -2649,7 +2653,7 @@ msgstr ""
 "は、データベース内のすべての運営済み大会の参加者を名前で重複を除いてまとめ、最後に登録したときのクラブとレーティングを添えます。保存はされません。運営を削除すれば、その参加者も名簿から消えます。前回大会の参加者を取り込むのは、人数にかかわらずワンクリックです。名簿は"
 " CSV に書き出せ、貼り付ければ読み戻せます。"
 
-#: ../../source/manuel.rst:1380
+#: ../../source/manuel.rst:1384
 msgid ""
 "Un **retardataire** arrivé après le tirage prend une place d'exemption "
 "libre si le tableau en offre une, et l'interface écrit à côté du champ où"
@@ -2660,17 +2664,17 @@ msgstr ""
 "抽選後に来た **遅参者** "
 "は、トーナメント表に空きの不戦勝枠があればそこに入ります。確定の前に、どこへ入るかが入力欄の横に表示されます。空きがなければそれでも登録され、どのフェーズに入るかが表示されます。すでに行った抽選をやり直すことはありません。"
 
-#: ../../source/manuel.rst:1385
+#: ../../source/manuel.rst:1389
 msgid ""
 "Un retrait se fait *maintenant* ou *après son match en cours*, selon que "
 "le joueur part tout de suite ou finit ce qu'il joue."
 msgstr "離脱は *いま* か *進行中のマッチのあと* かを選べます。すぐ帰るのか、打っている分は終えるのかによります。"
 
-#: ../../source/manuel.rst:1389
+#: ../../source/manuel.rst:1393
 msgid "Arbres, emplacements, classement, historique"
 msgstr "トーナメント表、枠、順位表、履歴"
 
-#: ../../source/manuel.rst:1391
+#: ../../source/manuel.rst:1395
 msgid ""
 "L'onglet **Arbres** dessine les tableaux et, pour un suisse, le tableau "
 "des vies. Un match déjà joué y porte son résultat ; un match que le "
@@ -2679,7 +2683,7 @@ msgstr ""
 "**トーナメント表** "
 "タブは各表を描き、スイス式ではライフ表も描きます。すでに打たれたマッチにはその結果が入り、エンジンが指摘したマッチはその場に印が付きます。"
 
-#: ../../source/manuel.rst:1397
+#: ../../source/manuel.rst:1401
 msgid ""
 "L'onglet **Emplacements** relie le tournoi à la bibliothèque. Chaque "
 "match du tournoi est un emplacement, que l'on peut remplir de deux façons"
@@ -2693,7 +2697,7 @@ msgstr ""
 "**枠** "
 "タブは大会をライブラリにつなぎます。大会の各マッチが1つの枠であり、埋め方は2通りです。その場でマッチを記録するか（:ref:`panneau_transcription`）、すでに取り込んだマッチを紐づけるかです。**推測による紐づけは一切行いません**。名前の一致は受け入れるかどうかの提案にすぎず、部分一致は提案すらされません。紐づけたマッチのファイルが記録した結果と食い違う場合、その差は解消されずに表示されます。大会の最中は運営者の言葉が優先されるからです。"
 
-#: ../../source/manuel.rst:1405
+#: ../../source/manuel.rst:1409
 msgid ""
 "L'onglet **Classement** montre le classement courant, section par "
 "section, avec les prix lorsqu'une dotation est réglée. Deux ex æquo "
@@ -2704,7 +2708,7 @@ msgstr ""
 "タブは現在の順位をセクションごとに表示し、賞金が設定されていれば賞金も示します。同順位の2人は順位と賞金を分け合います。**大会を終了** "
 "で最終順位が確定します。順位表は画面の言語のまま CSV に書き出せます。"
 
-#: ../../source/manuel.rst:1412
+#: ../../source/manuel.rst:1416
 msgid ""
 "L'onglet **Historique** est le journal en clair : une ligne par décision,"
 " dans l'ordre, filtrable par joueur ou par match. C'est ce qu'un "
@@ -2714,11 +2718,11 @@ msgstr ""
 "**履歴** "
 "タブはジャーナルを平文で示します。決定ごとに1行、順番どおりで、プレイヤーやマッチで絞り込めます。異議が出たあとに運営者が読み返すものであり、古い決定を訂正したり注記したりするのもここです。"
 
-#: ../../source/manuel.rst:1417
+#: ../../source/manuel.rst:1421
 msgid "Les réglages"
 msgstr "設定"
 
-#: ../../source/manuel.rst:1419
+#: ../../source/manuel.rst:1423
 msgid ""
 "L'onglet **Réglages** s'ouvre sur des **formats nommés** : six tournois "
 "de club prêts à l'emploi, dont le premier est recommandé. En choisir un "
@@ -2727,7 +2731,7 @@ msgstr ""
 "**設定** タブは **名前付きの形式** "
 "で開きます。すぐ使えるクラブ向けの6つの大会形式で、最初のものが推奨です。1つ選べば始められ、各項目はあとからでも変更できます。"
 
-#: ../../source/manuel.rst:1423
+#: ../../source/manuel.rst:1427
 msgid ""
 "Se règlent ici : les phases et leur longueur de match, les longueurs tour"
 " par tour d'un tableau (« 15, 13, 11 » se lit du dernier tour vers le "
@@ -2738,7 +2742,7 @@ msgstr ""
 "ここで設定するのは、各フェーズとそのマッチ長、トーナメント表のラウンドごとの長さ（「15, 13, "
 "11」は最終ラウンドから逆に読みます）、テーブル数、その日の休憩、賞金（参加費、クラブの控除、セクションごとの配分）、そして表示用フォルダーです。"
 
-#: ../../source/manuel.rst:1428
+#: ../../source/manuel.rst:1432
 msgid ""
 "Les réglages restent accessibles **en cours de tournoi** : baisser la "
 "bascule à 22 h pour finir plus tôt, ajouter une consolante le samedi "
@@ -2750,7 +2754,7 @@ msgstr ""
 "設定は **大会の最中でも** "
 "開けます。22時に切替点を下げて早く終わらせる、土曜の夜に敗者戦を足す、といったことができます。そのとき固定されるのは2つだけ、開始済みフェーズの形式と、そのフェーズがすでに配ったライフの数です。どちらも理由を添えてグレー表示になります。大会中の保存は、まず変更される内容の一覧を示し、確認を求めます。"
 
-#: ../../source/manuel.rst:1435
+#: ../../source/manuel.rst:1439
 msgid ""
 "Les **têtes de série** sont une option, éteinte par défaut : l'étude du "
 "moteur conclut « pas de têtes de série protégées », qui est la culture "
@@ -2759,11 +2763,11 @@ msgstr ""
 "**シード** "
 "は既定でオフの選択肢です。エンジンの研究は「保護されたシードを置かない」と結論しており、それが現在のバックギャモンの文化です。オンにすると、プレイヤーはレーティング順に配置されます。"
 
-#: ../../source/manuel.rst:1440
+#: ../../source/manuel.rst:1444
 msgid "L'affichage de la salle"
 msgstr "会場ディスプレイ"
 
-#: ../../source/manuel.rst:1442
+#: ../../source/manuel.rst:1446
 msgid ""
 "Un tournoi se regarde. Choisir un **dossier d'affichage** dans les "
 "Réglages suffit une fois pour toutes : blunderDB y réécrit une page HTML "
@@ -2777,7 +2781,7 @@ msgstr ""
 "ページを書き直し、ページは自動で再読み込みされます。オフラインでも開き、サブ画面でも投影でも使え、外部のリソースは一切読み込みません。*ブラウザーで開く*"
 " を押せばすぐ表示されます。"
 
-#: ../../source/manuel.rst:1448
+#: ../../source/manuel.rst:1452
 msgid ""
 "La **feuille d'appariements** se pose sur la table d'accueil : un clic "
 "sur *Imprimer la feuille* ouvre le dialogue d'impression du système. Une "
@@ -2789,7 +2793,7 @@ msgstr ""
 "をクリックすればシステムの印刷ダイアログが開きます。1マッチ1行で、両プレイヤー、長さ、テーブル、スコア用の空欄2つが並び、32人のラウンドが "
 "A4 の1ページに収まります。"
 
-#: ../../source/manuel.rst:1453
+#: ../../source/manuel.rst:1457
 msgid ""
 "Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un "
 "tournoi dirigé sans interface graphique : ``list``, ``verify``, "
@@ -2799,11 +2803,11 @@ msgstr ""
 "なしで運営済みの大会を読みます。``list``、``verify``、``standings``、``page``、``export`` "
 "があります。:ref:`cli` を参照してください。"
 
-#: ../../source/manuel.rst:1460
+#: ../../source/manuel.rst:1464
 msgid "Panneau Stats"
 msgstr "Stats パネル"
 
-#: ../../source/manuel.rst:1465
+#: ../../source/manuel.rst:1469
 msgid ""
 "Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
 "progression dans le temps à partir des positions importées dans la base "
@@ -2816,11 +2820,11 @@ msgstr ""
 " **PR**\\ （\\ *Performance Rating*\\ ）と\\ **MWC cost**\\ （Match Winning "
 "Chance cost）の指標を計算して表示します。"
 
-#: ../../source/manuel.rst:1471
+#: ../../source/manuel.rst:1475
 msgid "Le panneau Stats est particulièrement utile pour :"
 msgstr "Stats パネルは特に次の用途に役立ちます："
 
-#: ../../source/manuel.rst:1473
+#: ../../source/manuel.rst:1477
 msgid ""
 "**situer son niveau** par rapport aux bandes de niveau (*Classe "
 "mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
@@ -2828,48 +2832,48 @@ msgstr ""
 "全体の PR を使って、レベル帯（\\ *ワールドクラス*\\ 、\\ *エキスパート*\\ 、\\ *上級者*\\ など）に対して\\ "
 "**自分のレベルを把握する**\\ 。"
 
-#: ../../source/manuel.rst:1476
+#: ../../source/manuel.rst:1480
 msgid ""
 "**suivre sa progression** tournoi après tournoi ou match après match "
 "grâce aux graphiques de l'onglet Progression ;"
 msgstr "Progression タブのグラフを使って、トーナメントごと、またはマッチごとに **自分の上達を追跡する** ；"
 
-#: ../../source/manuel.rst:1479
+#: ../../source/manuel.rst:1483
 msgid ""
 "**identifier ses points faibles** : onglet Erreurs pour voir la "
 "répartition entre coups joués et décisions de videau, et la distribution "
 "des magnitudes d'erreur ;"
 msgstr "**自分の弱点を特定する** ：Erreurs タブで、プレイした手とキューブの判断の内訳、およびエラーの大きさの分布を確認できます ；"
 
-#: ../../source/manuel.rst:1483
+#: ../../source/manuel.rst:1487
 msgid ""
 "**comparer les joueurs de la base** entre eux, une ligne par joueur, "
 "grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
 msgstr "**データベースのプレイヤー同士を比較する**\\ ——プレイヤータブで、1人につき1行。大会全体を追うのに向いています。"
 
-#: ../../source/manuel.rst:1486
+#: ../../source/manuel.rst:1490
 msgid ""
 "**accéder directement aux positions concernées** en cliquant sur "
 "n'importe quel indicateur (drill-down)."
 msgstr "任意の指標をクリックすることで、\\ **該当するポジションに直接アクセスする**\\ （ドリルダウン）。"
 
-#: ../../source/manuel.rst:1490
+#: ../../source/manuel.rst:1494
 msgid "Ouverture du panneau"
 msgstr "パネルを開く"
 
-#: ../../source/manuel.rst:1492
+#: ../../source/manuel.rst:1496
 msgid "Pour ouvrir le panneau Stats :"
 msgstr "Stats パネルを開くには："
 
-#: ../../source/manuel.rst:1494
+#: ../../source/manuel.rst:1498
 msgid "Appuyer sur *CTRL-D*."
 msgstr "*CTRL-D* を押します。"
 
-#: ../../source/manuel.rst:1495
+#: ../../source/manuel.rst:1499
 msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
 msgstr "コマンドラインで ``stats`` または ``st`` コマンドを入力します。"
 
-#: ../../source/manuel.rst:1498
+#: ../../source/manuel.rst:1502
 msgid ""
 "Le panneau se rafraîchit automatiquement à chaque modification du filtre."
 " Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
@@ -2878,21 +2882,21 @@ msgstr ""
 "パネルはフィルターを変更するたびに自動的に更新されます。単に PR ↔ MWC "
 "を切り替えるだけでは統計を再計算しません。両方の指標はバックエンドによって同時に計算されます。"
 
-#: ../../source/manuel.rst:1503
+#: ../../source/manuel.rst:1507
 msgid "Barre de filtre"
 msgstr "フィルターバー"
 
-#: ../../source/manuel.rst:1505
+#: ../../source/manuel.rst:1509
 msgid ""
 "La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
 " un sous-ensemble de positions."
 msgstr "パネル上部のフィルターバーでは、計算をポジションの部分集合に限定できます。"
 
-#: ../../source/manuel.rst:1509
+#: ../../source/manuel.rst:1513
 msgid "Perspective joueur"
 msgstr "プレイヤーの視点"
 
-#: ../../source/manuel.rst:1511
+#: ../../source/manuel.rst:1515
 msgid ""
 "La liste déroulante **Joueur** permet de filtrer les statistiques selon "
 "le joueur analysé. blunderDB sélectionne automatiquement le joueur dont "
@@ -2902,66 +2906,66 @@ msgstr ""
 "**プレイヤー** ドロップダウンリストでは、分析対象のプレイヤーに従って統計をフィルターできます。blunderDB "
 "はデータベースで最も頻繁に名前が出てくるプレイヤーを自動的に選択します。これはいつでも変更できます。"
 
-#: ../../source/manuel.rst:1516
+#: ../../source/manuel.rst:1520
 msgid ""
 "Changer de joueur ne provoque pas de perte de données ; il suffit de re-"
 "sélectionner le joueur précédent dans la liste."
 msgstr "プレイヤーを変更してもデータが失われることはありません。リストで前のプレイヤーを再選択するだけで済みます。"
 
-#: ../../source/manuel.rst:1520
+#: ../../source/manuel.rst:1524
 msgid "Filtres disponibles"
 msgstr "利用可能なフィルター"
 
-#: ../../source/manuel.rst:1522
+#: ../../source/manuel.rst:1526
 msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
 msgstr "**トーナメント** — 1 つまたは複数のトーナメントへの限定。複数のトーナメントを同時に選択できます。"
 
-#: ../../source/manuel.rst:1525
+#: ../../source/manuel.rst:1529
 msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
 msgstr "**日付** — 期間の範囲（\\ *開始* … *終了*\\ ）。開始日のみが指定された場合、それ以降のポジションが含まれます。"
 
-#: ../../source/manuel.rst:1528
+#: ../../source/manuel.rst:1532
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
 msgstr "**判断タイプ** — すべて／プレイした手／キューブの判断。"
 
-#: ../../source/manuel.rst:1530
+#: ../../source/manuel.rst:1534
 msgid ""
 "**Longueur de match** — restriction à des longueurs de match précises (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
 msgstr "**マッチ長** — 特定のマッチ長への限定（1、3、5、7、9、11、13、15、21 ポイント）。複数の長さを組み合わせられます。"
 
-#: ../../source/manuel.rst:1533
+#: ../../source/manuel.rst:1537
 msgid ""
 "Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur auto-"
 "détecté)."
 msgstr "**Reset** ボタンはすべてのフィルターをリセットします（自動検出されたプレイヤーを除く）。"
 
-#: ../../source/manuel.rst:1537
+#: ../../source/manuel.rst:1541
 msgid ""
 "Les filtres sont persistés dans la configuration de blunderDB "
 "(``config.yaml``) et sont restaurés à la prochaine ouverture."
 msgstr "フィルターは blunderDB の設定（\\ ``config.yaml``\\ ）に保存され、次回起動時に復元されます。"
 
-#: ../../source/manuel.rst:1541
+#: ../../source/manuel.rst:1545
 msgid "Toggle PR / MWC"
 msgstr "PR / MWC の切り替え"
 
-#: ../../source/manuel.rst:1543
+#: ../../source/manuel.rst:1547
 msgid ""
 "Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
 "dans tous les onglets."
 msgstr "パネル上部の **PR / MWC** ボタンは、すべてのタブで表示される指標を切り替えます。"
 
-#: ../../source/manuel.rst:1546
+#: ../../source/manuel.rst:1550
 msgid "**PR (Performance Rating)**"
 msgstr "**PR（Performance Rating）**"
 
-#: ../../source/manuel.rst:1548
+#: ../../source/manuel.rst:1552
 msgid ""
 "L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
 "le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
@@ -2974,7 +2978,7 @@ msgstr ""
 "ミリポイント（mpt）にあたります。正確な計数ルール——どの決定が分母に入るか、スコアがどのように変換されるか——は "
 ":ref:`stats_parity` に定められたものです。"
 
-#: ../../source/manuel.rst:1554
+#: ../../source/manuel.rst:1558
 msgid ""
 "Les bandes de niveau que le panneau dessine derrière la courbe de "
 "progression sont un **repère indicatif propre à blunderDB** : aucune "
@@ -3041,11 +3045,11 @@ msgstr "初級者"
 msgid "≥ 12"
 msgstr "≥ 12"
 
-#: ../../source/manuel.rst:1571
+#: ../../source/manuel.rst:1575
 msgid "**MWC cost (Match Winning Chance cost)**"
 msgstr "**MWC cost（Match Winning Chance cost）**"
 
-#: ../../source/manuel.rst:1573
+#: ../../source/manuel.rst:1577
 msgid ""
 "Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
 "l'ensemble du jeu de données filtré. Calculé à partir de la MET Kazaross-"
@@ -3054,7 +3058,7 @@ msgstr ""
 "フィルターされたデータセット全体について、エラーによって失われたマッチ勝利確率の累積です。blunderDB に組み込まれた MET "
 "Kazaross-XG2 から計算されます。"
 
-#: ../../source/manuel.rst:1578
+#: ../../source/manuel.rst:1582
 msgid ""
 "Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
 "enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
@@ -3064,17 +3068,17 @@ msgstr ""
 "MWC cost は *money-game* のポジション（マッチの懸かりがない）には **適用されません**\\ 。これらのポジションは "
 "MWC の計算から除外されます。MWC の値は使用される MET に依存します。異なる MET を使用するソフトウェア間では直接比較できません。"
 
-#: ../../source/manuel.rst:1583
+#: ../../source/manuel.rst:1587
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
 "effectué."
 msgstr "PR ↔ MWC の切り替えは瞬時に行われます。バックエンドでの再計算は実行されません。"
 
-#: ../../source/manuel.rst:1589
+#: ../../source/manuel.rst:1593
 msgid "Le rapport HTML"
 msgstr "HTML レポート"
 
-#: ../../source/manuel.rst:1591
+#: ../../source/manuel.rst:1595
 msgid ""
 "Le bouton **Rapport HTML** de l'en-tête du panneau produit un document "
 "**autonome** : un seul fichier, sans image externe, sans feuille de style"
@@ -3090,7 +3094,7 @@ msgstr ""
 "を直接埋め込んだもので、画面上の盤と同じ描画、同じパレットで描かれます。どのブラウザでも開き、メールで送れ、\\ **ブラウザ自身で PDF "
 "に印刷**\\ できます。誰もがすでに持っているものを作るために PDF 生成器を同梱せずに済みます。"
 
-#: ../../source/manuel.rst:1599
+#: ../../source/manuel.rst:1603
 msgid ""
 "Il contient les indicateurs du périmètre courant (positions, matchs, "
 "décisions comptées, PR global, pions et videau), puis les **dix décisions"
@@ -3100,7 +3104,7 @@ msgstr ""
 "現在の範囲の指標（局面数、マッチ数、計上した判断、総合・チェッカー・キューブの PR）に続いて、\\ **最も損失の大きい 10 の判断**\\ "
 "が並びます。それぞれに図、損失、出どころのマッチ、そして解析があれば最善手が付きます。"
 
-#: ../../source/manuel.rst:1604
+#: ../../source/manuel.rst:1608
 msgid ""
 "Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui "
 "ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien"
@@ -3110,57 +3114,57 @@ msgstr ""
 "レポートは Stats パネルの\\ **現在のフィルタ**\\ "
 "を反映します。範囲を述べないレポートは、数字が何も意味しないレポートです。トーナメント、期間、対戦者などのフィルタを整えてから出力してください。"
 
-#: ../../source/manuel.rst:1610
+#: ../../source/manuel.rst:1614
 msgid "Onglet Dashboard"
 msgstr "Dashboard タブ"
 
-#: ../../source/manuel.rst:1612
+#: ../../source/manuel.rst:1616
 msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
 msgstr "**Dashboard** タブは主要な指標の概要を示します。"
 
-#: ../../source/manuel.rst:1614
+#: ../../source/manuel.rst:1618
 msgid "Onglet Dashboard du panneau Stats"
 msgstr "Stats パネルの Dashboard タブ"
 
-#: ../../source/manuel.rst:1618
+#: ../../source/manuel.rst:1622
 msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
 msgstr "Dashboard タブ：全体 PR、チェッカー PR、キューブ PR。"
 
-#: ../../source/manuel.rst:1621
+#: ../../source/manuel.rst:1625
 msgid "Cartes de niveau"
 msgstr "レベルカード"
 
-#: ../../source/manuel.rst:1623
+#: ../../source/manuel.rst:1627
 msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "3 つのカードが次の項目について PR（または MWC）を表示します："
 
-#: ../../source/manuel.rst:1625
+#: ../../source/manuel.rst:1629
 msgid "**PR Global** — toutes les décisions (coups + videau) ;"
 msgstr "**PR 全体** — すべての決定（手＋キューブ）。"
 
-#: ../../source/manuel.rst:1626
+#: ../../source/manuel.rst:1630
 msgid "**PR Coup** — coups joués seulement ;"
 msgstr "**PR チェッカー** — プレイした手のみ。"
 
-#: ../../source/manuel.rst:1627
+#: ../../source/manuel.rst:1631
 msgid "**PR Cube** — décisions de videau seulement."
 msgstr "**PR キューブ** — キューブの決定のみ。"
 
-#: ../../source/manuel.rst:1629
+#: ../../source/manuel.rst:1633
 msgid ""
 "Cliquer sur une carte charge dans le panneau d'analyse les positions du "
 "sous-ensemble correspondant (drill-down)."
 msgstr "カードをクリックすると、対応する部分集合のポジションが分析パネルに読み込まれます（ドリルダウン）。"
 
-#: ../../source/manuel.rst:1633
+#: ../../source/manuel.rst:1637
 msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
 msgstr "判断の総数は、各カードの下部にマウスオーバー時に表示されます。"
 
-#: ../../source/manuel.rst:1636
+#: ../../source/manuel.rst:1640
 msgid "PR glissant sur N dernières décisions"
 msgstr "直近 N 回の判断にわたる移動 PR"
 
-#: ../../source/manuel.rst:1638
+#: ../../source/manuel.rst:1642
 msgid ""
 "Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
 "décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
@@ -3170,15 +3174,15 @@ msgstr ""
 "直近 *N* 回の判断（N = 5、10、50、100、250、500、1000）について計算された PR（または "
 "MWC）値の列により、最近の傾向を把握できます。グレー表示の値は、利用可能な判断数を超える N に対応します。"
 
-#: ../../source/manuel.rst:1643
+#: ../../source/manuel.rst:1647
 msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
 msgstr "値をクリックすると、対応する直近 *N* 件のポジションが読み込まれます。"
 
-#: ../../source/manuel.rst:1646
+#: ../../source/manuel.rst:1650
 msgid "Top blunders"
 msgstr "Top blunders"
 
-#: ../../source/manuel.rst:1648
+#: ../../source/manuel.rst:1652
 msgid ""
 "La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
 "décroissante. Cliquer sur une ligne charge la position concernée dans le "
@@ -3187,15 +3191,15 @@ msgstr ""
 "最悪のエラー（または MWC cost）上位 10 "
 "件のリストで、大きさの降順に並べられています。行をクリックすると、該当するポジションが分析パネルに読み込まれます。"
 
-#: ../../source/manuel.rst:1652
+#: ../../source/manuel.rst:1656
 msgid "Onglet Progression"
 msgstr "Progression タブ"
 
-#: ../../source/manuel.rst:1654
+#: ../../source/manuel.rst:1658
 msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
 msgstr "**Progression** タブは、時間の経過に伴うレベルの推移を示します。"
 
-#: ../../source/manuel.rst:1656
+#: ../../source/manuel.rst:1660
 msgid ""
 "En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». "
 "Une cible, une échéance, et une tendance qui dit où l'on va — rien de "
@@ -3205,7 +3209,7 @@ msgstr ""
 "タブの先頭に\\ **目標**\\ があります。「12 週間で PR < "
 "5」。目標、期限、そしてどこへ向かっているかを告げる傾向。それだけです。採点したり、褒めたり、催促したりし始める目標は、別の機能であってこれではありません。"
 
-#: ../../source/manuel.rst:1661
+#: ../../source/manuel.rst:1665
 msgid ""
 "Le bouton **Proposer** suggère une cible à partir du niveau actuel : la "
 "borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande"
@@ -3215,7 +3219,7 @@ msgstr ""
 "**候補**\\ "
 "ボタンは、現在の水準から目標を提案します。いまいる帯の下限、つまり次の帯への入り口です。「少し良く」では何にも根ざしませんが、段位を提案すれば意味があります。中級から上級に上がることは、目に見えるし語れます。"
 
-#: ../../source/manuel.rst:1666
+#: ../../source/manuel.rst:1670
 msgid ""
 "La **tendance** est un ajustement par les moindres carrés sur le PR de "
 "vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois "
@@ -3226,7 +3230,7 @@ msgstr ""
 "**傾向**\\ は、あなたのマッチの PR に最小二乗法をあてはめ、期限まで延ばしたものです。3 マッチ未満では何も言いません。2 "
 "点の間に直線を引くのは、支えられない主張だからです。そして文言は毎回そう述べます——\\ *傾向は予測ではありません*\\ 。"
 
-#: ../../source/manuel.rst:1672
+#: ../../source/manuel.rst:1676
 msgid ""
 "L'objectif est enregistré dans les **métadonnées de la base**, pas dans "
 "la configuration : il porte sur cette bibliothèque-là, et suit donc le "
@@ -3238,11 +3242,11 @@ msgstr ""
 "に保存されます。そのライブラリについての事柄なので、マシンではなくファイルに従います。スキーマの変更はありません。``metadata`` "
 "はすでにキーと値の表で、``blunderdb info`` からもデーモンからも読めます。"
 
-#: ../../source/manuel.rst:1678
+#: ../../source/manuel.rst:1682
 msgid "Courbe par tournoi"
 msgstr "トーナメントごとの曲線"
 
-#: ../../source/manuel.rst:1680
+#: ../../source/manuel.rst:1684
 msgid ""
 "Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :"
 " ordre des tournois, axe Y : valeur de la métrique). Des bandes de "
@@ -3251,68 +3255,68 @@ msgstr ""
 "折れ線グラフが各トーナメントの PR（または MWC）を表示します（X 軸：トーナメントの順序、Y "
 "軸：指標の値）。色付きの帯がレベルのしきい値を表します。"
 
-#: ../../source/manuel.rst:1684
+#: ../../source/manuel.rst:1688
 msgid ""
 "Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
 "options :"
 msgstr "グラフ上の点をクリックすると、2 つのオプションを持つコンテキストメニューが開きます："
 
-#: ../../source/manuel.rst:1686
+#: ../../source/manuel.rst:1690
 msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
 msgstr "**トーナメントを開く** — トーナメントパネルでトーナメントを開きます。"
 
-#: ../../source/manuel.rst:1687
+#: ../../source/manuel.rst:1691
 msgid ""
 "**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
 " panneau d'analyse."
 msgstr "**ポジションを開く** — トーナメントのすべてのポジションを分析パネルに読み込みます。"
 
-#: ../../source/manuel.rst:1691
+#: ../../source/manuel.rst:1695
 msgid "Scatter plot par match"
 msgstr "マッチごとの散布図"
 
-#: ../../source/manuel.rst:1693
+#: ../../source/manuel.rst:1697
 msgid ""
 "Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
 "MWC). La taille du point est proportionnelle au nombre de décisions dans "
 "le match."
 msgstr "散布図が各マッチを表します（X 軸：日付、Y 軸：PR または MWC）。点の大きさはマッチ内の判断数に比例します。"
 
-#: ../../source/manuel.rst:1696
+#: ../../source/manuel.rst:1700
 msgid "Cliquer sur un point ouvre un menu contextuel :"
 msgstr "点をクリックするとコンテキストメニューが開きます："
 
-#: ../../source/manuel.rst:1698
+#: ../../source/manuel.rst:1702
 msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
 msgstr "**対局を開く** — マッチパネルでマッチを開きます。"
 
-#: ../../source/manuel.rst:1699
+#: ../../source/manuel.rst:1703
 msgid ""
 "**Ouvrir les positions** — charge toutes les positions du match dans le "
 "panneau d'analyse."
 msgstr "**ポジションを開く** — マッチのすべてのポジションを分析パネルに読み込みます。"
 
-#: ../../source/manuel.rst:1703
+#: ../../source/manuel.rst:1707
 msgid "Onglet Erreurs"
 msgstr "Erreurs タブ"
 
-#: ../../source/manuel.rst:1705
+#: ../../source/manuel.rst:1709
 msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
 msgstr "**Erreurs** タブはエラーの原因を分解して示します。"
 
-#: ../../source/manuel.rst:1707
+#: ../../source/manuel.rst:1711
 msgid "Onglet Erreurs du panneau Stats"
 msgstr "Stats パネルの Errors タブ"
 
-#: ../../source/manuel.rst:1711
+#: ../../source/manuel.rst:1715
 msgid "L'onglet Erreurs : répartition du PR par action de videau."
 msgstr "Errors タブ：キューブアクション別の PR 内訳。"
 
-#: ../../source/manuel.rst:1714
+#: ../../source/manuel.rst:1718
 msgid "Répartition par action de videau"
 msgstr "キューブのアクションごとの内訳"
 
-#: ../../source/manuel.rst:1716
+#: ../../source/manuel.rst:1720
 msgid ""
 "Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
 "décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
@@ -3322,29 +3326,29 @@ msgstr ""
 "棒グラフが各種のキューブの判断について PR（または MWC）を表示します：\\ *NoDouble*\\ 、\\ *DoubleTake*\\ "
 "、\\ *DoublePass*\\ 、\\ *TooGood*\\ 。各バーはツールチップで判断数とブランダー率も示します。"
 
-#: ../../source/manuel.rst:1720
+#: ../../source/manuel.rst:1724
 msgid ""
 "Cliquer sur une barre charge les positions correspondant à cette action "
 "de videau, **uniquement celles avec une erreur** (drill-down)."
 msgstr "バーをクリックすると、そのキューブのアクションに対応するポジションのうち **エラーがあるものだけ** が読み込まれます（ドリルダウン）。"
 
-#: ../../source/manuel.rst:1724
+#: ../../source/manuel.rst:1728
 msgid "Direction des erreurs de videau"
 msgstr "キューブエラーの方向"
 
-#: ../../source/manuel.rst:1726
+#: ../../source/manuel.rst:1730
 msgid ""
 "La répartition ci-dessus indique *combien* coûtent les décisions de "
 "videau ; ce tableau indique dans *quel sens* elles se trompent."
 msgstr "上の内訳はキューブの判断が\\ *どれだけ*\\ 損をしたかを示します。この表は\\ *どの方向*\\ に誤ったかを示します。"
 
-#: ../../source/manuel.rst:1729
+#: ../../source/manuel.rst:1733
 msgid ""
 "Une position de videau porte deux décisions prises par deux joueurs "
 "différents, présentées ici en deux lignes :"
 msgstr "キューブ局面には、別々のプレイヤーが下す2つの判断があり、ここでは2行に分けて示します。"
 
-#: ../../source/manuel.rst:1732
+#: ../../source/manuel.rst:1736
 msgid ""
 "**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
 "erreurs sont les **doubles manqués** (il fallait doubler) et les "
@@ -3353,7 +3357,7 @@ msgstr ""
 "**提示**\\ — キューブを持つ側がダブルするか、しないか。その誤りは\\ **見送ったダブル**\\ （ダブルすべきだった）と\\ "
 "**早すぎたダブル**\\ （すべきでなかった）です。"
 
-#: ../../source/manuel.rst:1736
+#: ../../source/manuel.rst:1740
 msgid ""
 "**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
 "erreurs sont les **passes à tort** (une prise correcte a été passée) et "
@@ -3362,32 +3366,32 @@ msgstr ""
 "**応答**\\ — キューブを差し出された側がテイクするかパスするか。その誤りは\\ **誤ったパス**\\ "
 "（正しくはテイクだったのにパスした）と\\ **誤ったテイク**\\ （正しくはパスだったのにテイクした）です。"
 
-#: ../../source/manuel.rst:1740
+#: ../../source/manuel.rst:1744
 msgid ""
 "Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
 "doubler tard *et* prendre large, et un indicateur unique appellerait cela"
 " « équilibré » en perdant les deux moitiés de l'information."
 msgstr "2行を分けているのは意図的です。同じ人が遅めにダブルし、かつ緩めにテイクすることは十分にありえます。単一の指標ではそれを「バランスが取れている」と呼び、情報の両半分を失ってしまいます。"
 
-#: ../../source/manuel.rst:1744
+#: ../../source/manuel.rst:1748
 msgid ""
 "Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
 "perdue cumulée. Cliquer sur une case charge les positions "
 "correspondantes. Une case à zéro n'est pas cliquable."
 msgstr "各セルには判断の件数が表示され、ツールチップには失ったエクイティの累計が出ます。セルをクリックすると該当する局面が読み込まれます。ゼロのセルはクリックできません。"
 
-#: ../../source/manuel.rst:1749
+#: ../../source/manuel.rst:1753
 msgid ""
 "Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
 " quel écart une tendance mérite d'être nommée dépend de l'effectif et "
 "d'un point de référence, qui ne sont pas des données du moteur."
 msgstr "この表は判断を数えるだけで、評価は下しません。どれだけの偏りから傾向と呼ぶに値するかは、母数と基準点しだいであり、そのどちらもエンジンの持つデータではありません。"
 
-#: ../../source/manuel.rst:1754
+#: ../../source/manuel.rst:1758
 msgid "Répartition Checker / Cube"
 msgstr "Checker / Cube の内訳"
 
-#: ../../source/manuel.rst:1756
+#: ../../source/manuel.rst:1760
 msgid ""
 "Un diagramme comparatif place côte à côte le PR des coups joués et des "
 "décisions de videau. Cliquer sur une barre charge les positions du sous-"
@@ -3396,11 +3400,11 @@ msgstr ""
 "比較図が、プレイした手の PR とキューブの判断の PR "
 "を並べて表示します。バーをクリックすると、エラーがある部分集合のポジションが読み込まれます。"
 
-#: ../../source/manuel.rst:1761
+#: ../../source/manuel.rst:1765
 msgid "Histogramme des magnitudes d'erreur"
 msgstr "エラーの大きさのヒストグラム"
 
-#: ../../source/manuel.rst:1763
+#: ../../source/manuel.rst:1767
 msgid ""
 "Un histogramme distribue les erreurs selon leur magnitude en millipoints "
 "(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
@@ -3409,11 +3413,11 @@ msgstr ""
 "ヒストグラムが、ミリポイント（mpt）で表した大きさに従ってエラーを分布させます（区分：0–5、5–10、10–25、25–50、50–100、≥"
 " 100）。バーをクリックすると、その区分のポジションが読み込まれます。"
 
-#: ../../source/manuel.rst:1768
+#: ../../source/manuel.rst:1772
 msgid "Onglet Ventilations"
 msgstr "内訳タブ"
 
-#: ../../source/manuel.rst:1770
+#: ../../source/manuel.rst:1774
 msgid ""
 "L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
 "globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme "
@@ -3423,7 +3427,7 @@ msgstr ""
 "タブは、全体の数字が数えるのと同じ判断を四つの軸で切り分けます。どの軸も「何を判断と数えるか」を定義し直しません。それをすれば同じ名前の二つ目の "
 "PR になってしまいます。"
 
-#: ../../source/manuel.rst:1774
+#: ../../source/manuel.rst:1778
 msgid ""
 "**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
 " pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
@@ -3436,7 +3440,7 @@ msgstr ""
 "PR」に答えるのがこれである。ラベルは盤面から計算される\\ （:ref:`panneau_recherche` を参照\\ "
 "）。段階が一度も計算されていないデータベースはすべてを\\ *未分類*\\ に入れ、``blunderdb repair`` がそれを埋める。"
 
-#: ../../source/manuel.rst:1780
+#: ../../source/manuel.rst:1784
 msgid ""
 "**Par plan de jeu** — course, blitz, tenue, backgame, amorce contre "
 "amorce… C'est la ventilation pour laquelle le classificateur existe : « "
@@ -3448,7 +3452,7 @@ msgstr ""
 "レース、ブリッツ、ホールディング、バックゲーム、プライム対プライム……。分類器が存在する理由そのものの内訳です。「どこで最も失っているか」を戦型ごとに示します。フェーズと同じ派生ラベルで、留保も同じ、``blunderdb"
 " repair`` が同じように埋めます。"
 
-#: ../../source/manuel.rst:1786
+#: ../../source/manuel.rst:1790
 msgid ""
 "**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
 "position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
@@ -3458,7 +3462,7 @@ msgstr ""
 "**タグ別**\\ ——コメントに書かれた ``#語``\\ 。一つの局面が複数持つことがあり、\\ **これらの行は合計に一致しない**\\ "
 "。パネルは表の下にそう書く。タグは性質を述べるものであって、分割するものではない。"
 
-#: ../../source/manuel.rst:1791
+#: ../../source/manuel.rst:1795
 msgid ""
 "**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
 "trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
@@ -3470,7 +3474,7 @@ msgstr ""
 "行はマネープレイである。判断が十件未満のセルは隠さず\\ **件数を見せたまま灰色にする**\\ "
 "：読むには少なすぎるが、省略は検証可能なままである。"
 
-#: ../../source/manuel.rst:1796
+#: ../../source/manuel.rst:1800
 msgid ""
 "La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas cet "
 "indicateur sur une position. L'effet pratique est faible — une partie "
@@ -3480,11 +3484,11 @@ msgstr ""
 "クロフォードゲームは区別されない\\ ：blunderDB "
 "は局面にその印を記録しない。実務上の影響は小さい——クロフォードゲームにはキューブ判断がそもそも存在しない——が、省略は本物であり、推測に委ねるより書いておくほうがよい。"
 
-#: ../../source/manuel.rst:1802
+#: ../../source/manuel.rst:1806
 msgid "Étude et jeu réel"
 msgstr "学習と実戦"
 
-#: ../../source/manuel.rst:1804
+#: ../../source/manuel.rst:1808
 msgid ""
 "La commande ``blunderdb list --type study --days 30`` met côte à côte, "
 "plan de jeu par plan de jeu, trois nombres : combien de **positions "
@@ -3494,7 +3498,7 @@ msgstr ""
 "``blunderdb list --type study --days 30`` は、戦型ごとに三つの数を並べます。その期間に復習した "
 "**異なる局面** の数、その期間の **前** の PR、その **後** の PR です。"
 
-#: ../../source/manuel.rst:1809
+#: ../../source/manuel.rst:1813
 msgid ""
 "Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni "
 "flèche**, parce que rien ici ne contrôle quoi que ce soit : le joueur a "
@@ -3504,7 +3508,7 @@ msgid ""
 "causalité que ces données ne portent pas. Les nombres, eux, sont exacts."
 msgstr "三つの数だけで、四つ目はありません。**増減の列も矢印もありません**。ここでは何一つ条件を揃えていないからです。相手が強くなったのかもしれず、形式を変えたのかもしれず、今月はレースを多く打っただけかもしれません。並べて読むのは読者の仕事です。効果を告げる列は、これらのデータが持たない因果を主張することになります。数そのものは正確です。"
 
-#: ../../source/manuel.rst:1816
+#: ../../source/manuel.rst:1820
 msgid ""
 "Les révisions sont comptées en **positions distinctes** : une carte revue"
 " quatre fois dans le mois est une position étudiée, et compter les "
@@ -3517,11 +3521,11 @@ msgstr ""
 "の数で数えます。ひと月に四回復習したカードは学習した局面が一つであり、繰り返しを数えれば詰め込みのひと月が網羅のひと月に見えてしまいます。一方 "
 "PR の判断はすべて数えます。どれも一度ずつ下されたからです。十未満の判断に基づく PR は ``—`` と表示され、その母数が隣に見えます。"
 
-#: ../../source/manuel.rst:1824
+#: ../../source/manuel.rst:1828
 msgid "Onglet Joueurs"
 msgstr "プレイヤータブ"
 
-#: ../../source/manuel.rst:1826
+#: ../../source/manuel.rst:1830
 msgid ""
 "Les quatre onglets précédents décrivent **un** joueur ; l'onglet "
 "**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
@@ -3531,17 +3535,17 @@ msgstr ""
 "前の四つのタブは\\ **一人の**\\ プレイヤーを記述する。\\ **プレイヤー**\\ "
 "タブはその全員を比較する。データベースのプレイヤーごとに一行を示し、一人のプレイヤーではなく大会全体を追う主催者の必要に応える。"
 
-#: ../../source/manuel.rst:1831
+#: ../../source/manuel.rst:1835
 msgid "Onglet Joueurs du panneau Stats"
 msgstr "Stats パネルの Players タブ"
 
-#: ../../source/manuel.rst:1835
+#: ../../source/manuel.rst:1839
 msgid ""
 "L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
 "colonne."
 msgstr "Players タブ：プレイヤーごとに一行、どの列でも並べ替え可能。"
 
-#: ../../source/manuel.rst:1838
+#: ../../source/manuel.rst:1842
 msgid "Colonnes, dans l'ordre :"
 msgstr "列（左から順に）："
 
@@ -3638,11 +3642,11 @@ msgid ""
 " dés ont été favorables."
 msgstr "1 ロールあたりの平均の運。ミリポイント（mpt）単位の符号付きで、正なら出目に恵まれたことを意味します。"
 
-#: ../../source/manuel.rst:1854
+#: ../../source/manuel.rst:1858
 msgid "Utilisation :"
 msgstr "使い方："
 
-#: ../../source/manuel.rst:1856
+#: ../../source/manuel.rst:1860
 msgid ""
 "**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
 "par PR croissant, meilleur joueur en tête. Les joueurs dont rien n'a été "
@@ -3652,7 +3656,7 @@ msgstr ""
 "**並べ替え**\\ — 列見出しをクリックします。表は PR "
 "の昇順、つまり最良のプレイヤーを先頭にして開きます。何も測定されていないプレイヤーは、並べ替えの向きにかかわらず最下部に留まります。データがないゆえのゼロは、完璧な成績ではないからです。"
 
-#: ../../source/manuel.rst:1860
+#: ../../source/manuel.rst:1864
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
@@ -3661,14 +3665,14 @@ msgstr ""
 "**プレイヤーの詳細を開く**\\ — 行をクリックします。そのプレイヤーがフィルタバーで選択され、表示は Dashboard "
 "タブに切り替わります。"
 
-#: ../../source/manuel.rst:1863
+#: ../../source/manuel.rst:1867
 msgid ""
 "**Restreindre la période** — les filtres de dates, de tournois et de "
 "longueur de match s'appliquent normalement, ce qui permet de borner le "
 "tableau aux dates d'une compétition."
 msgstr "**期間を絞る**\\ — 日付、トーナメント、マッチ長のフィルタは通常どおり効くので、表を大会の開催日に限定できます。"
 
-#: ../../source/manuel.rst:1866
+#: ../../source/manuel.rst:1870
 msgid ""
 "**Comparer deux joueurs** — cochez la case de la première colonne sur "
 "deux lignes. Un bloc apparaît au-dessus du tableau et met leurs "
@@ -3679,7 +3683,7 @@ msgstr ""
 "**2人のプレイヤーを比較する** —— "
 "2つの行で、最初の列のチェックボックスをオンにします。表の上にブロックが現れ、両者の指標を向かい合わせに並べます。3人目をチェックすると、古いほうが置き換わります。チェックボックスは行を選択しません。チェックは比較、クリックは詳細です。"
 
-#: ../../source/manuel.rst:1871
+#: ../../source/manuel.rst:1875
 msgid ""
 "Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
 " deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
@@ -3699,14 +3703,14 @@ msgstr ""
 "は生のままでは比べられません——1000回の判断で12回は、100回で10回より良いのです。そこでブロックは\\ *ブランダー / 100 "
 "判断*\\ の行を加えます。こちらは比較でき、回数はその横に文脈として残ります。"
 
-#: ../../source/manuel.rst:1881
+#: ../../source/manuel.rst:1885
 msgid ""
 "Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
 "côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
 "rien."
 msgstr "同点は勝ちではありません。どちらの側も太字にはなりません。裏づけのない比率は「—」と表示され、何も決めません。"
 
-#: ../../source/manuel.rst:1885
+#: ../../source/manuel.rst:1889
 msgid ""
 "Dans cet onglet, la liste **Joueur** et le choix du **type de décision** "
 "sont désactivés : le tableau montre tous les joueurs, et il ventile déjà "
@@ -3715,7 +3719,7 @@ msgstr ""
 "このタブでは\\ **プレイヤー**\\ の一覧と\\ **判断の種別**\\ "
 "の選択は無効です。表はすべてのプレイヤーを表示し、チェッカーとキューブの判断はすでに別の列に分けているからです。"
 
-#: ../../source/manuel.rst:1890
+#: ../../source/manuel.rst:1894
 msgid ""
 "Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
 "confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
@@ -3729,11 +3733,11 @@ msgstr ""
 "より前にインポートしたすべての対戦の「運」列がこれにあたります。当時は運が保存されておらず、後から復元する手立てもありません。元ファイルを再インポートする必要があります。運を運ばない形式（BGF、Jellyfish"
 " の ``.mat``）からは決して得られません。"
 
-#: ../../source/manuel.rst:1898
+#: ../../source/manuel.rst:1902
 msgid "Règle d'agrégation"
 msgstr "集計ルール"
 
-#: ../../source/manuel.rst:1901
+#: ../../source/manuel.rst:1905
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -3742,11 +3746,11 @@ msgstr ""
 "トーナメント（または任意の部分集合）の PR は **合計／合計** ルールで計算されます。各マッチの個別 PR "
 "の平均としては決して計算されません。"
 
-#: ../../source/manuel.rst:1905
+#: ../../source/manuel.rst:1909
 msgid "Formule :"
 msgstr "計算式："
 
-#: ../../source/manuel.rst:1907
+#: ../../source/manuel.rst:1911
 msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
@@ -3754,37 +3758,37 @@ msgstr ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
 
-#: ../../source/manuel.rst:1911
+#: ../../source/manuel.rst:1915
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**例：** あるプレイヤーがトーナメントで 2 つのマッチを戦う —"
 
-#: ../../source/manuel.rst:1913
+#: ../../source/manuel.rst:1917
 msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
 msgstr "マッチ A：10 回の決定、失われたエクイティ 0,100 → PR = 5,0"
 
-#: ../../source/manuel.rst:1914
+#: ../../source/manuel.rst:1918
 msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
 msgstr "マッチ B：90 回の決定、失われたエクイティ 0,540 → PR = 3,0"
 
-#: ../../source/manuel.rst:1916
+#: ../../source/manuel.rst:1920
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "PR の単純平均：(5,0 + 3,0) / 2 = **4,0** *(誤り)*"
 
-#: ../../source/manuel.rst:1918
+#: ../../source/manuel.rst:1922
 msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
 msgstr "合計／合計ルール：500 × 0,640 / (10 + 90) = **3,2** *(正しい)*"
 
-#: ../../source/manuel.rst:1920
+#: ../../source/manuel.rst:1924
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
 msgstr "合計／合計ルールは、マッチ長のばらつきに耐えられる唯一のルールです（21 ポイントのマッチは 1 ポイントのマッチより重みがあります）。"
 
-#: ../../source/manuel.rst:1924
+#: ../../source/manuel.rst:1928
 msgid "MWC : limitations"
 msgstr "MWC：制限事項"
 
-#: ../../source/manuel.rst:1926
+#: ../../source/manuel.rst:1930
 msgid ""
 "Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de "
 "référence de facto dans le backgammon compétitif. Les résultats ne sont "
@@ -3801,7 +3805,7 @@ msgstr ""
 "を使うソフトウェアの結果とは直接比較できません。これは、内蔵の評価エンジンがスコアでのキューブの決定に使うのとまったく同じ表であり、同じ入口から読まれます。統計とエンジンがこの点で食い違うことはありえません。この表は双方の残りが"
 " 25 ポイントまでは固有の値を与え、それを超える範囲は、GNUbg と同じように計算された Zadeh の表によって 64 まで延長されます。"
 
-#: ../../source/manuel.rst:1935
+#: ../../source/manuel.rst:1939
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -3810,7 +3814,7 @@ msgstr ""
 "*money-game* のポジション（マッチスコアなし）は MWC の計算から **除外** されます。データベースに money-game "
 "のポジションが多く含まれている場合、MWC cost は過小評価されるか、利用できないことがあります。"
 
-#: ../../source/manuel.rst:1939
+#: ../../source/manuel.rst:1943
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -3819,11 +3823,11 @@ msgstr ""
 "MWC cost "
 "はフィルターされたデータセット全体にわたる累積であり、判断ごとの指標ではありません。あなたのエラーが勝利の可能性に与えた総合的な影響を測定します。"
 
-#: ../../source/manuel.rst:1946
+#: ../../source/manuel.rst:1950
 msgid "Panneau Eval"
 msgstr "Eval パネル"
 
-#: ../../source/manuel.rst:1948
+#: ../../source/manuel.rst:1952
 msgid ""
 "Le panneau **Eval** (*CTRL-E*) évalue en direct la position posée sur le "
 "plateau, quelle qu'elle soit ; sur une position de bearoff il se "
@@ -3841,7 +3845,7 @@ msgstr ""
 "*Bearoff* と呼ばれてから *Eval* になりました。したがって、以前のバージョンで Bearoff "
 "パネルと呼ばれていたものは、ここで探すことになります。その名前は今ではベアオフテーブルの設定タブだけを指します。"
 
-#: ../../source/manuel.rst:1958
+#: ../../source/manuel.rst:1962
 msgid ""
 "Le panneau montre toujours la **seule décision** que la position posée "
 "sur le plateau appelle — jamais deux à la fois — et les faits qui vont "
@@ -3878,7 +3882,7 @@ msgstr ""
 "EPC、ピップカウント、ウェステージ、平均ロール数、標準偏差を示します；これら5列は決して移動しません。二つの表は積み重ねられ、同じ列グリッドを共有します：同じ端、同じ列の目印、点の列は一つだけ——二階建ての一つのオブジェクトとして読めます。方式のバッジ、エンジンの表示（直近の評価の深さもそこに示されます）、\\"
 " *チャレンジ*\\ チェックボックスは別のバンドを成し、表の上に右揃えで並びます。"
 
-#: ../../source/manuel.rst:1981
+#: ../../source/manuel.rst:1985
 msgid ""
 "Seule la liste des coups candidats défile — la ligne *avant le jet*, elle"
 " aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, "
@@ -3888,7 +3892,7 @@ msgstr ""
 "スクロールするのは候補手リストだけです——\\ *ロール前*\\ "
 "の行もリストの上に固定されたままです；パネルの残り（事実、バッジ、キューブの判断）は、パネルのサイズを特に調整しなくても常に見えています。"
 
-#: ../../source/manuel.rst:1986
+#: ../../source/manuel.rst:1990
 msgid ""
 "Le tableau de faits et la décision sont calculés par gammonNet, embarqué,"
 " sans XG ni gnubg. Le calcul suit la position sans jamais figer "
@@ -3942,7 +3946,7 @@ msgstr ""
 "<https://github.com/kevung/gammonNet>`_ へ導きます；完全な帰属表示（Strehl "
 "のネットワーク、gammonNet の構成）はヘルプの謝辞にあります。"
 
-#: ../../source/manuel.rst:2021
+#: ../../source/manuel.rst:2025
 msgid ""
 "L'utilisateur édite la position des pions sur l'ensemble du plateau, "
 "exactement comme en mode édition : clic gauche place un pion du joueur du"
@@ -3954,7 +3958,7 @@ msgid ""
 "un videau générique selon que des dés sont posés."
 msgstr "ユーザーは編集モードとまったく同じように、ボード全体でチェッカーの配置を編集します：左クリックで下側プレイヤーのチェッカーを、右クリックで上側プレイヤーのチェッカーを置きます。第二の表、すなわちレースの表は、得られたポジションが純粋なベアオフ（両プレイヤーの全チェッカーが自分のインナーボード内にある）であるときにだけ現れます；それ以外のポジションでは、共通の4列（勝率、ギャモン、バックギャモン、キューブレス）の表だけが応答し、判断はダイスが置かれているかどうかに応じて、チェッカープレイまたは一般的なキューブに関するものになります。"
 
-#: ../../source/manuel.rst:2030
+#: ../../source/manuel.rst:2034
 msgid ""
 "Dans chaque tableau de faits, une ligne par joueur — repérée par sa "
 "pastille de couleur, le joueur noir étant toujours en bas. Le premier "
@@ -3973,7 +3977,7 @@ msgstr ""
 " **Δ**\\ 行が\\ *符号付き*\\ "
 "の差（下−上：黒のプレイヤーがリードしているときは負）を示します。レースポジション以外では、ダイスを置くと事実の表そのものが消えます：表が持っていた4列は軸を変え、手番側として、候補手リストの先頭に移ったのです。"
 
-#: ../../source/manuel.rst:2043
+#: ../../source/manuel.rst:2047
 msgid ""
 "La décision de videau a toujours la même forme, quelle que soit l'origine"
 " des chiffres — table exacte, régime évalué ou évaluation gammonNet "
@@ -3991,7 +3995,7 @@ msgstr ""
 "の順で、ポジションの基準系におけるエクイティと最善の選択肢との差を伴います。手のリストとは異なり、順序は決して変わりません：三つの選択肢には名前があるので、読むのは名前であって順位ではありません。最善の選択肢は強調表示と、空欄のままの差のセルで見分けられます。キューブがすでに回されている場合、選択肢は\\"
 " *ノーリダブル*\\ 、\\ *リダブル/テイク*\\ 、\\ *リダブル/パス*\\ と読めます。"
 
-#: ../../source/manuel.rst:2053
+#: ../../source/manuel.rst:2057
 msgid ""
 "Une dernière ligne donne le **verdict**. Il prend quatre valeurs : *pas "
 "de double*, *double, prend*, *double, passe* et *trop bon pour doubler*, "
@@ -4007,13 +4011,13 @@ msgstr ""
 "とは逆の理由でミスになります。ここはまた、計算中だと思わせるのではなく、判定が\\ **ない**\\ "
 "ことをパネルが明言する唯一の場所でもあります："
 
-#: ../../source/manuel.rst:2060
+#: ../../source/manuel.rst:2064
 msgid ""
 "*pas de décision* — le régime n'y a pas droit ; le verdict de videau "
 "n'est jamais estimé (voir le badge *estimé*) ;"
 msgstr "*判断なし*\\ ——その方式には判定の権利がありません；キューブ判定は決して推定されません（\\ *推定*\\ バッジを参照）；"
 
-#: ../../source/manuel.rst:2062
+#: ../../source/manuel.rst:2066
 msgid ""
 "*non évaluable à ce score* — le moteur refuse la position, typiquement un"
 " score hors de l'horizon de la table d'équité de match, c'est-à-dire un "
@@ -4023,7 +4027,7 @@ msgstr ""
 "——エンジンがポジションを拒否します。典型的には、マッチエクイティテーブルの見通しの外にあるスコア、すなわち一方の陣営に残り 64 "
 "ポイントを超えるものがある場合です。"
 
-#: ../../source/manuel.rst:2065
+#: ../../source/manuel.rst:2069
 msgid ""
 "*videau adverse* et *videau mort (Crawford)* — le videau ne peut pas être"
 " retourné. Les équités restent affichées, à titre indicatif, mais aucune "
@@ -4033,7 +4037,7 @@ msgstr ""
 "*相手がキューブを保有*\\ と\\ *キューブ無効（クロフォード）*\\ "
 "——キューブを回すことができません。エクイティは参考として表示されたままですが、どの選択肢にも差は付きません：エラーとは選択のコストであり、ここには選択がないからです。"
 
-#: ../../source/manuel.rst:2070
+#: ../../source/manuel.rst:2074
 msgid ""
 "En money game, les règles **Jacoby** et **Beaver** actives sur la "
 "position apparaissent sous le tableau de videau, en petits badges à côté "
@@ -4044,7 +4048,7 @@ msgstr ""
 "マネーゲームでは、そのポジションで有効な**Jacoby**ルールと**Beaver**ルールが、キューブテーブルの下に、それらが変える判定の隣に小さなバッジとして表示されます。Jacoby"
 " ルール下のポジションの「ノーダブル」判定は、それがない場合と同じ計算ではなく、それを画面上で示すものは他にありませんでした。"
 
-#: ../../source/manuel.rst:2076
+#: ../../source/manuel.rst:2080
 msgid ""
 "Un troisième badge, **Videau max**, apparaît lorsque l'identifiant "
 "d'origine plafonne le videau — au score comme en money game. Celui-là ne "
@@ -4058,14 +4062,14 @@ msgstr ""
 "は、元の識別子がキューブに上限を課しているときに現れます。マッチスコアでもマネーゲームでも同じです。これは上に表示された計算を説明するものではありません。内蔵の評価器は上限をまったくモデル化しておらず、判定は上限のないキューブのものだからです。バッジがそこにある理由はまさにそれです。上限つきのキューブは、blunderDB"
 " と eXtreme Gammon が同じ局面に対して異なる判定を出しうる、唯一の目に見える理由なのです。"
 
-#: ../../source/manuel.rst:2084
+#: ../../source/manuel.rst:2088
 msgid ""
 "Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et"
 " la case *Défi* forment une bande à part, alignée à droite au-dessus des "
 "tableaux."
 msgstr "方式のバッジ、評価の深さ、エンジンへのリンク、\\ *チャレンジ*\\ チェックボックスは別のバンドを成し、表の上に右揃えで並びます。"
 
-#: ../../source/manuel.rst:2088
+#: ../../source/manuel.rst:2092
 msgid ""
 "Le **joueur au trait** et la **position du videau** s'éditent directement"
 " sur le plateau, comme en mode édition : cliquer le rectangle "
@@ -4087,7 +4091,7 @@ msgstr ""
 "chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__\\ "
 "）と正確な範囲を広げる方法を説明します。"
 
-#: ../../source/manuel.rst:2100
+#: ../../source/manuel.rst:2104
 msgid ""
 "Le **score** s'édite lui aussi directement sur le plateau, comme en mode "
 "édition : clic gauche sur le rectangle score d'un joueur décrémente son "
@@ -4109,7 +4113,7 @@ msgstr ""
 " *評価*\\ "
 "方式のものに切り替わります——正確な表は構造上マネーのものであり、スコアで問われる問いには答えられないからです。バッジはそれを明示するために複合表示（「正確（勝率）・評価（キューブ）」）になります。"
 
-#: ../../source/manuel.rst:2113
+#: ../../source/manuel.rst:2117
 msgid ""
 "Les **dés** s'éditent enfin de la même façon, et ce sont eux qui décident"
 " de la question posée : des dés posés font une décision de pions (la "
@@ -4126,7 +4130,7 @@ msgstr ""
 " の次は 1）、右クリックすると下がります（1 の次は 6）。ダイスのないボードでダイスをクリックすると 2 つが一度に置かれます——ダイス 1 "
 "つではチェッカープレイの判断にもキューブの判断にもならないからです。プレイヤーの矩形をクリックするとダイスが取り除かれてキューブの問いになり、次にダイスをクリックすると元どおりに戻ります。"
 
-#: ../../source/manuel.rst:2122
+#: ../../source/manuel.rst:2126
 msgid ""
 "*RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la "
 "position : plateau vide, score money (-1, -1), pas de dés posés — des "
@@ -4138,11 +4142,11 @@ msgstr ""
 "-1）、ダイスなし——Eval パネル固有の値で、編集モードで使われる値（両者 7、ダイス "
 "3-1）とは異なり、パネルがデフォルトで表示する内容と整合するようになっています。"
 
-#: ../../source/manuel.rst:2131
+#: ../../source/manuel.rst:2135
 msgid "Matrice du videau"
 msgstr "キューブ判断のマトリクス"
 
-#: ../../source/manuel.rst:2133
+#: ../../source/manuel.rst:2137
 msgid ""
 "Une décision de videau n'est pas une propriété du damier. Les mêmes "
 "pions, le même compte de pips, se doublent à 2-away/4-away et ne se "
@@ -4154,7 +4158,7 @@ msgstr ""
 "ではダブルになりません。マネーゲームの答えを覚えた人は、グリッドのうち 1 マスを覚えたにすぎません。Eval "
 "パネルは局面が持つそのマスを示し、\\ **キューブ判断のマトリクス**\\ はグリッド全体を示します。"
 
-#: ../../source/manuel.rst:2139
+#: ../../source/manuel.rst:2143
 msgid ""
 "La commande ``cm`` l'ouvre sur la position affichée. Chaque case donne le"
 " verdict à un score : la ligne est le nombre de points qu'il reste à "
@@ -4171,7 +4175,7 @@ msgstr ""
 "（トゥーグッド）と表されます。エンジンが評価を拒んだセルには疑問符が付き、カーソルを重ねると理由と、そのセルの三つのエクイティが表示されます。マッチ長は"
 " 5・7・9 点の三つから選べます。"
 
-#: ../../source/manuel.rst:2148
+#: ../../source/manuel.rst:2152
 msgid ""
 "La case du score que la position porte réellement est encadrée, et ses "
 "deux en-têtes de ligne et de colonne soulignés : la lecture part de là, «"
@@ -4186,7 +4190,7 @@ msgstr ""
 "スコアが表示中のグリッドに収まっていれば枠が付き、長さを変えると枠は移動するか消えます。マネーのポジション、クロフォードゲーム、グリッドを超える\\"
 " *away*\\ は、どのセルも指し示しません。示すべきセルがなく、近いセルを示すのは誤りだからです。"
 
-#: ../../source/manuel.rst:2156
+#: ../../source/manuel.rst:2160
 msgid ""
 "Le score de la position est remplacé par celui de chaque case ; son "
 "**videau**, lui, est conservé. La grille répond à « à quel score "
@@ -4199,7 +4203,7 @@ msgstr ""
 "*この*\\ "
 "キューブを回すか」であって、センターのキューブならどうかではありません。グリッドは全体がクロフォード後のものです。クロフォードゲーム中はキューブが使えず、「ダブルできません」だけの列は局面について何も語らないからです。"
 
-#: ../../source/manuel.rst:2163
+#: ../../source/manuel.rst:2167
 msgid ""
 "Chaque case est une recherche à part entière. Le moteur tient compte du "
 "score — il ne joue pas la même partie à 2-away qu'à 7-away —, donc une "
@@ -4214,7 +4218,7 @@ msgstr ""
 " 0-ply で表示され、ウィンドウが静止すると設定された表示深さで計算し直されます。パネルの他の部分と同じ段階的な深化で、9 "
 "点のグリッドでおよそ 1.5 秒です。"
 
-#: ../../source/manuel.rst:2171
+#: ../../source/manuel.rst:2175
 msgid ""
 "La même grille se calcule hors de l'interface, avec la commande "
 ":ref:`cubematrix <cli_cubematrix>` de la ligne de commande."
@@ -4222,18 +4226,18 @@ msgstr ""
 "同じグリッドは、コマンドラインの :ref:`cubematrix <cli_cubematrix>` "
 "コマンドでインターフェースの外からも計算できます。"
 
-#: ../../source/manuel.rst:2177
+#: ../../source/manuel.rst:2181
 msgid "Amener une position dans le panneau Eval"
 msgstr "ポジションを Eval パネルに持ち込む"
 
-#: ../../source/manuel.rst:2179
+#: ../../source/manuel.rst:2183
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Deux gestes l'y amènent"
 " :"
 msgstr "パネルはデフォルトでベアオフポジションで開きますが、検討はたいてい既に手元にあるポジションから始まります。二つの操作でそれを持ち込めます："
 
-#: ../../source/manuel.rst:2182
+#: ../../source/manuel.rst:2186
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -4246,7 +4250,7 @@ msgstr ""
 "パネルが、表示されているままのそのポジションで直接開きます。コンテキストメニューは Eval "
 "パネルと検索パネルでは表示されません。そこでは右ボタンがすでにもう一方の色のチェッカーを置くために使われているからです。"
 
-#: ../../source/manuel.rst:2189
+#: ../../source/manuel.rst:2193
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
@@ -4259,7 +4263,7 @@ msgstr ""
 "Backgammon、別の blunderDB インスタンス）でも "
 "OGID（OpenGammon）でも構いません：クリップボードにあれば十分です。"
 
-#: ../../source/manuel.rst:2195
+#: ../../source/manuel.rst:2199
 msgid ""
 "**La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où "
 "l'identifiant n'est pas dans le presse-papier mais dans un message, sur "
@@ -4274,7 +4278,7 @@ msgstr ""
 "``import`` "
 "と同じ動詞で、引数がなければファイル選択を開き、引数があれば識別子を読みます。以降の経路は貼り付けとまったく同じです。同じ読み取り、同じ重複排除、取り込んだ局面の同じ開き方です。"
 
-#: ../../source/manuel.rst:2203
+#: ../../source/manuel.rst:2207
 msgid ""
 "Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La "
 "position arrive donc sans analyse, exactement comme un XGID nu, et "
@@ -4283,7 +4287,7 @@ msgstr ""
 "OGID が運ぶのは局面だけで、評価もコメントも含みません。したがって局面は分析なしで届きます。裸の XGID "
 "とまったく同じで、内蔵の評価器が後からその空白を埋められます。"
 
-#: ../../source/manuel.rst:2207
+#: ../../source/manuel.rst:2211
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -4294,7 +4298,7 @@ msgstr ""
 "Eval "
 "パネルのボードは下書きです：ポジションはデータベースの識別子なしでそこに届くため、ここで行ったどんな変更も、元のレコードを書き換えることはありません。ボードの通常の編集（チェッカー、キューブ、ダイス、スコア）はすべてそこで利用でき、評価は各変更に追従します。"
 
-#: ../../source/manuel.rst:2213
+#: ../../source/manuel.rst:2217
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -4307,20 +4311,20 @@ msgstr ""
 "とともにクリップボードにコピーします——したがって eXtreme Gammon や別の blunderDB "
 "インスタンスに直接貼り付けられます。移動するのはポジションだけです：パネルが表示する評価はデータベースのレコードではなく、コピーには同行しません。"
 
-#: ../../source/manuel.rst:2219
+#: ../../source/manuel.rst:2223
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
 msgstr "Eval パネルを離れると、直前に閲覧していたポジションが復元されます：下書きが勝手に保存されることは決してありません。"
 
-#: ../../source/manuel.rst:2222
+#: ../../source/manuel.rst:2226
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
 "pour le joueur au trait :"
 msgstr "ポジションが純粋なベアオフ（両プレイヤーの全チェッカーが自分のインナーボード内にある）で、ダイスが置かれていない場合、キューブの判断には手番のプレイヤーについて次が表示されます："
 
-#: ../../source/manuel.rst:2226
+#: ../../source/manuel.rst:2230
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -4331,7 +4335,7 @@ msgstr ""
 "**マネーゲームのキューブ判定**\\ "
 "（ノーダブル、ダブル/テイク、ダブル/パス、またはダブルには強すぎる）——マッチスコア以外の場合。スコアの場合については上記を参照、"
 
-#: ../../source/manuel.rst:2231
+#: ../../source/manuel.rst:2235
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -4342,14 +4346,14 @@ msgstr ""
 "したもの（探索 + Janowski のキューブモデル）——\\ **マッチスコアでも**\\ "
 "利用可能で、これは推定方式が一度も提供できなかったものです；"
 
-#: ../../source/manuel.rst:2236
+#: ../../source/manuel.rst:2240
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
 "accompagnée de sa marge d'erreur, reste disponible."
 msgstr "*推定*\\ 方式では：キューブ判定は意図的に表示されません——事実の表の中の勝率だけが、その誤差の範囲を添えて利用可能なままです。"
 
-#: ../../source/manuel.rst:2240
+#: ../../source/manuel.rst:2244
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -4362,7 +4366,7 @@ msgstr ""
 "のキューブの判断は消えます——ボードはそのときキューブではなくチェッカープレイの判断を求めているからです——しかし勝率は判断ではなくポジションの事実のままです：勝率は手のリストの先頭の\\"
 " *ロール前*\\ の行に加わり、EPC はそのすぐ左に表示されたままです。"
 
-#: ../../source/manuel.rst:2247
+#: ../../source/manuel.rst:2251
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -4380,7 +4384,7 @@ msgstr ""
 "——上記を参照。正確方式は利用可能なところではどこでも優先されます；そうでなければ、評価方式が計算を終え次第表示され、待機中に示されていた推定方式をその場で置き換えます。三つの方式とその仮定の正確な定義については"
 " :ref:`epc_methodologie` を参照してください。"
 
-#: ../../source/manuel.rst:2257
+#: ../../source/manuel.rst:2261
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -4389,7 +4393,7 @@ msgstr ""
 "**正確な領域を広げる。** 初回起動時に計算されるテーブルは片側 6 チェッカーを扱います。それを超える方法は、設定の\\ "
 "*Bearoff*\\ タブに二つあります。"
 
-#: ../../source/manuel.rst:2261
+#: ../../source/manuel.rst:2265
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -4401,13 +4405,13 @@ msgstr ""
 "まで。タブは開始前にこの計算機での大きさ・メモリ・時間を示し、計算は一時停止と再開ができます。中止された計算は \\ ``.part``\\  "
 "ファイルを残しますが、これが表として読まれることはありません。"
 
-#: ../../source/manuel.rst:2267
+#: ../../source/manuel.rst:2271
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
 msgstr "gnubgの任意のtwo-sided ``.bd`` ファイルを指定する。最も広い範囲を持つデータベースが自動的に優先されます。"
 
-#: ../../source/manuel.rst:2270
+#: ../../source/manuel.rst:2274
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -4423,7 +4427,7 @@ msgstr ""
 " *BACKSPACE* "
 "はいつでも既定の盤に戻します。その途中でデータベースには何も書き込まれません。下書きはポジションとしての同一性を持たず、その評価は運ばれるのではなく到着時に計算し直されます。"
 
-#: ../../source/manuel.rst:2279
+#: ../../source/manuel.rst:2283
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande de badges, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -4451,23 +4455,23 @@ msgstr ""
 "覆います：リストは最善の手から最悪の手へ並んでいるため、一部だけ表示してもすでに答えを与えてしまうからです。レースポジション以外でダイスが置かれると、この単一のゾーンだけでパネルが表示するすべてを覆います。こうして、各陣営の"
 " EPC を見積もり、次にキューブや指すべき手について判断を下し、それから確認するという練習ができます。この設定は記憶されます。"
 
-#: ../../source/manuel.rst:2297
+#: ../../source/manuel.rst:2301
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
 msgstr "Eval パネルを閉じるには、\\ *CTRL-E* を押すか、別のタブに切り替えます。"
 
-#: ../../source/manuel.rst:2302
+#: ../../source/manuel.rst:2306
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Eval パネルの方法論と仮定"
 
-#: ../../source/manuel.rst:2304
+#: ../../source/manuel.rst:2308
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
 msgstr "パネルに表示される各値は明確な仮定に基づいています。ここではそれらを漏れなく述べます。"
 
-#: ../../source/manuel.rst:2307
+#: ../../source/manuel.rst:2311
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -4477,7 +4481,7 @@ msgstr ""
 "**領域。** *レース領域* — 勝率とキューブ判定 — "
 "が扱うのは純粋なベアオフだけです。両者の残りの駒がすべて自分の内奥にある局面です。局面は *振る前* に評価され、置かれた賽の目は無視されます。"
 
-#: ../../source/manuel.rst:2312
+#: ../../source/manuel.rst:2316
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -4495,7 +4499,7 @@ msgstr ""
 "の点に駒がある側も他と同じに扱われます。外挿は一切しません。1 点だけ遠い駒には単に EPC がない、というだけで、以前 7 の点の駒に EPC "
 "がなかったのと同じです。答えた表が六点のものでないときは、その名前がレース欄の隅に出ます（「OS-08」）。これがなければ既定で「六」と読み、その側が完全に内奥に入っていると信じてしまいます。"
 
-#: ../../source/manuel.rst:2322
+#: ../../source/manuel.rst:2326
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -4511,7 +4515,7 @@ msgstr ""
 "1 回の振りあたりのピップの厳密な平均。ゾロ目は 4 回と数える）。wastage = EPC − ピップ数。唯一の理想化は *片面の最適プレー*"
 " です。各プレーヤーは相手を無視して自分の振り数を最小にします — これが EPC の標準的な定義です。"
 
-#: ../../source/manuel.rst:2331
+#: ../../source/manuel.rst:2335
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -4524,7 +4528,7 @@ msgstr ""
 "*Bearoff* タブから計算する TS-06-11）から直接読み取ります。これらのデータベースは、両陣営の最適な two-sided "
 "プレイの下での完全な後退解析の結果です。追加の仮定はなく、誤差は量子化によるもの（< 0.002 %）に限られます。"
 
-#: ../../source/manuel.rst:2337
+#: ../../source/manuel.rst:2341
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -4535,13 +4539,13 @@ msgstr ""
 "**勝率、推定方式。** データベースの範囲外では、勝率は2つのone-"
 "sided分布の畳み込み（手番のプレイヤーは、自分のロール数が相手のロール数以下であれば勝ちます）により求め、その後、TS-06-11データベースに対してオフラインで較正された固定の多項式補正を適用します。3つの仮定があります："
 
-#: ../../source/manuel.rst:2343
+#: ../../source/manuel.rst:2347
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
 msgstr "2つのベアオフ過程の\\ **独立性**\\ ——レースでは構造的なもので、コンタクトがなければ相互作用は一切ありません；"
 
-#: ../../source/manuel.rst:2346
+#: ../../source/manuel.rst:2350
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -4551,7 +4555,7 @@ msgstr ""
 "**両陣営の最適なone-sidedプレイ**\\ ——これが\\ *近似*\\ "
 "です。実際には、リードされている側は分散を求めてプレイを変え、リードしている側は安全策を取ります。測定された効果は反対称のバイアス（畳み込みはリードしている側の優位を誇張します）で、補正がこれを統計的に吸収します；"
 
-#: ../../source/manuel.rst:2351
+#: ../../source/manuel.rst:2355
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -4563,7 +4567,7 @@ msgstr ""
 "%、第99百分位0.17 %、観測された最大値0.9 %（勝率のポイント単位）。\\ "
 "**各プレイヤー11チェッカーを超えると、この上限は外挿されたものです**\\ ——傾向は単調ですが、それを保証するオラクルはありません。"
 
-#: ../../source/manuel.rst:2357
+#: ../../source/manuel.rst:2361
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -4577,7 +4581,7 @@ msgstr ""
 "**ジャコビールールなしのマネーゲーム**\\ "
 "のものです。各プレイヤー11チェッカー以下の範囲ではギャモンは不可能です（各陣営はすでに少なくとも4チェッカーを上げています）。これは近似ではありません。判定（ノーダブル／ダブル・テイク／ダブル・パス）は、保存されたエクイティからGNUbgの規則に従って正確に再構築され、GNUbgの分析と一つひとつ照合して検証されています。"
 
-#: ../../source/manuel.rst:2365
+#: ../../source/manuel.rst:2369
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -4595,7 +4599,7 @@ msgstr ""
 "ことを前提とします。将来のリキューブは完全に評価されます（完全な後退解析）。終盤の非常に変動の大きいレースでは、リキューブの連鎖が手番の陣営の優位のほとんどを食いつぶします——そのため「ノーダブル」と「ダブル/テイク」のエクイティはゼロに近くなることがあり、一方、キューブモデルがこの連鎖を評価しないXGのようなエンジンは、デッドキューブに近い値を表示します（例えば3ポイントに2チェッカー対2ポイントに2チェッカー：勝率62"
 " %、正確なD/Tは+0.006、XGでは+0.475）。ただし、表示される\\ **判断**\\ はエンジンのものと一致します。"
 
-#: ../../source/manuel.rst:2376
+#: ../../source/manuel.rst:2380
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -4612,7 +4616,7 @@ msgstr ""
 "します。これはまさに推定方式にはできなかったことであり（下記参照）、三つの方式のうち正確方式と並んで唯一、\\ **マッチスコアでの**\\ "
 "判定を可能にします。"
 
-#: ../../source/manuel.rst:2384
+#: ../../source/manuel.rst:2388
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -4637,7 +4641,7 @@ msgstr ""
 "0.039、中央値 0.018、第95百分位 0.151、最大 "
 "0.406。この形は期待どおりのものです：不一致の大部分はまさにテイクポイントに集中しており、そこは正当に異なる二つの方法が僅差の判断で最も分かれる場所です——至るところでエクイティを失わせるような拡散したエラーではありません。"
 
-#: ../../source/manuel.rst:2397
+#: ../../source/manuel.rst:2401
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -4647,7 +4651,7 @@ msgstr ""
 "この測定は、レースにおける\\ **マネー**\\ "
 "の決定を対象としています。マッチスコアでの判定——この方式だけが下せるものです——と、コンタクトのあるポジションについては、公表された測定がありません。以上のことはこれらの場合には当てはまりません。"
 
-#: ../../source/manuel.rst:2401
+#: ../../source/manuel.rst:2405
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 "
@@ -4664,7 +4668,7 @@ msgstr ""
 "だけであり、その二度とも自らの選択に付けた利得はせいぜい 0,0005 正規化エクイティだった\\ ：eXtreme Gammon "
 "がそもそも誤りと呼び始める 0,020 の二桁下である。全件をならすと、判断あたりの利得は 0,0000 である。"
 
-#: ../../source/manuel.rst:2410
+#: ../../source/manuel.rst:2414
 msgid ""
 "Le réglage n'est donc pas proposé. Il ne s'agit pas de dire que 3 plis ne"
 " vaut rien en général, mais que sur *ce* réseau, avec le filtre "
@@ -4676,7 +4680,7 @@ msgstr ""
 "ネットワークで、標準のフィルタのもとでは、パネルの前で待つ人の時間に見合わないという話である。測定は再現可能であり\\ "
 "（``TestThreePlyMeasure``\\ ）、ネットワークが変われば結論は下し直される。"
 
-#: ../../source/manuel.rst:2415
+#: ../../source/manuel.rst:2419
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -4699,7 +4703,7 @@ msgstr ""
 " "
 "%、本物のブランダーを含む）。自信満々に表示される誤った判定は判定なしより悪いため、畳み込みには判定を表示する権利が一度も与えられませんでした——この穴を埋めるのは、統計的要約ではなく、軌道を実際にプレイする探索です。"
 
-#: ../../source/manuel.rst:2428
+#: ../../source/manuel.rst:2432
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
@@ -4709,11 +4713,11 @@ msgstr ""
 "ベアオフのデータベースは不変の数学的な表です。blunderDB はそれを自ら計算します。GNUbg の \\ ``makebearoff``\\"
 "  ツールとバイト単位で同一に、設定の *Bearoff* タブか \\ ``blunderdb bearoff generate``\\  で。"
 
-#: ../../source/manuel.rst:2436
+#: ../../source/manuel.rst:2440
 msgid "Panneau Anki"
 msgstr "Anki パネル"
 
-#: ../../source/manuel.rst:2438
+#: ../../source/manuel.rst:2442
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
@@ -4723,7 +4727,7 @@ msgstr ""
 "**Anki** パネル（\\\\ *CTRL-K*\\\\ ）では、FSRS "
 "アルゴリズムを使った間隔反復によってポジションを学習できます。ユーザーはコレクションや検索結果からデッキを作成できます。"
 
-#: ../../source/manuel.rst:2443
+#: ../../source/manuel.rst:2447
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -4734,7 +4738,7 @@ msgstr ""
 "をクリックすると、コレクションまたは現在の検索結果からデッキを作成できます。検索に基づくデッキは、Anki "
 "タブをアクティブにすると自動的に同期されます。"
 
-#: ../../source/manuel.rst:2447
+#: ../../source/manuel.rst:2451
 msgid ""
 "**Un paquet de fiches de score.** La troisième source, *Fiches de score*,"
 " ne demande rien d'autre qu'un nom : blunderDB remplit le paquet avec les"
@@ -4751,7 +4755,7 @@ msgstr ""
 "が表示するのと同じ表——両者のテイクポイントとギャモン値——になります。このデッキは自分で作ったときにだけ存在します。初日に 36 "
 "枚の期限が来るのは復習の負債であり、それは意図して負うものだからです。同期ボタンで作り直せます。"
 
-#: ../../source/manuel.rst:2455
+#: ../../source/manuel.rst:2459
 msgid ""
 "Les deux endroits ne font pas le même travail. L'exercice Scores fait "
 "retrouver ces nombres **sous la pendule** et mesure la vitesse ; le "
@@ -4765,7 +4769,7 @@ msgstr ""
 "、速さは何も測りません。二つの履歴は別々のままです。トレーニングの記録は Anki の復習を見ませんし、Anki "
 "の統計はトレーニングのセッションを見ません。"
 
-#: ../../source/manuel.rst:2461
+#: ../../source/manuel.rst:2465
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4780,7 +4784,7 @@ msgstr ""
 " *1*\\\\ （もう一度）、\\\\ *2*\\\\ （難しい）、\\\\ *3*\\\\ （普通）、または *4*\\\\ "
 "（簡単）のキーで評価してください。\\\\ *Esc* を押すと停止してデッキのリストに戻ります。"
 
-#: ../../source/manuel.rst:2468
+#: ../../source/manuel.rst:2472
 msgid ""
 "**Les décisions de videau font deux cartes, enchaînées.** Une décision de"
 " videau est deux questions — « double ? », puis « prend ? » — et "
@@ -4794,7 +4798,7 @@ msgstr ""
 "は以前からそれを二つの局面として記録しています。片方だけを選んだデッキにはもう片方が加わります。判断を **完成させる** "
 "のであって、水増しではありません。両方が出題期日を迎えているとき、二枚目は一枚目の **直後** に出ます。"
 
-#: ../../source/manuel.rst:2475
+#: ../../source/manuel.rst:2479
 msgid ""
 "Chacune garde sa propre note et son propre calendrier : ce ne sont pas "
 "deux temps d'une même carte, ce sont deux cartes. L'enchaînement n'avance"
@@ -4803,7 +4807,7 @@ msgid ""
 "c'est là qu'il sert."
 msgstr "それぞれが自分の評価と自分の予定を保ちます。一枚のカードの二段階ではなく、二枚のカードです。連なりは期日を前倒ししません。すでに期日を迎えたカードの順序を決めるだけです。二枚は同時に生まれるので初回は同時に期日を迎えます。役に立つのはまさにそこです。"
 
-#: ../../source/manuel.rst:2480
+#: ../../source/manuel.rst:2484
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -4818,7 +4822,7 @@ msgstr ""
 "**答えを表示する：** カードは問いを立てます——どの手を打つか、あるいはどのキューブアクションを取るか。考えてから *SPACE* "
 "を押す（または隠された領域をクリックする）と答えが現れます：分析タブが示すのと同じ、そのポジションに記録された分析です。答えは評価ボタンの下に表示され、ボタンはそのままの位置で手の届くところに残ります。リストの手をクリックするとボード上に表示されます。"
 
-#: ../../source/manuel.rst:2490
+#: ../../source/manuel.rst:2494
 msgid ""
 "Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr"
 " de vous, les touches *1* à *4* restent actives. La réponse se remasque à"
@@ -4830,13 +4834,13 @@ msgstr ""
 "のキーはそのまま使えます。答えは次のカードで再び隠されますが、単にタブを切り替えただけでは隠されません——Eval "
 "パネルやポジションのコメントを見に行っても、戻ってくれば答えはそこで待っています。"
 
-#: ../../source/manuel.rst:2495
+#: ../../source/manuel.rst:2499
 msgid ""
 "Une position dépourvue d'analyse enregistrée l'indique directement, sans "
 "zone masquée."
 msgstr "記録された分析のないポジションでは、隠された領域なしにその旨が直接表示されます。"
 
-#: ../../source/manuel.rst:2498
+#: ../../source/manuel.rst:2502
 msgid ""
 "**Limiter la séance.** Par défaut, une séance de révision va jusqu'au "
 "bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par "
@@ -4852,7 +4856,7 @@ msgstr ""
 "にチェックを入れ、1 "
 "回のセッションで出す枚数を指定してください。上限に達するとセッションはその旨を伝えて終了します。メッセージは「上限に達しました、期限の来たカードが残り何枚」と、待ち行列が本当に空になった場合とを区別します。それでも続けたいときはフリー練習があります。スケジュールを何も変えずに別の局面を出します。"
 
-#: ../../source/manuel.rst:2506
+#: ../../source/manuel.rst:2510
 msgid ""
 "Une limite de **0** ne sert aucune carte : c'est un état à part entière, "
 "utile pour geler un paquet le temps de préparer un tournoi, et ce n'est "
@@ -4863,7 +4867,7 @@ msgstr ""
 "枚も出しません。これはそれ自体が一つの状態で、トーナメントの準備中にデッキを凍結しておくのに使えます。「上限なし」とは別物です。このとき "
 "*Study* ボタンは無効になります。"
 
-#: ../../source/manuel.rst:2510
+#: ../../source/manuel.rst:2514
 msgid ""
 "La limite porte sur la **séance**, pas sur la journée. Un paquet "
 "blunderDB est bâti sur une collection ou une recherche : c'est un corpus "
@@ -4876,7 +4880,7 @@ msgstr ""
 "日あたりの量はその大きさによってすでに抑えられています。1 日あたりの上限は決して効かないか、あるいは 1 "
 "回のセッションで収まっていたデッキに滞留を生むだけです。"
 
-#: ../../source/manuel.rst:2516
+#: ../../source/manuel.rst:2520
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -4894,7 +4898,7 @@ msgstr ""
 "バッジが表示され、\\ *次へ* ボタン（キー *1*\\ 〜\\ *4*\\ ）で局面を切り替えます。\\ *Esc* "
 "を押すと、中断したセッションを保存せずに一覧に戻ります。"
 
-#: ../../source/manuel.rst:2525
+#: ../../source/manuel.rst:2529
 msgid ""
 "**Écarter une carte, sans la noter.** Pendant une révision, un clic droit"
 " sur l'en-tête de la carte ouvre trois gestes qui la sortent de la séance"
@@ -4903,7 +4907,7 @@ msgstr ""
 "**評価せずにカードを脇へ置く。** 復習中、カードの見出しを右クリックすると、スケジューラに何も告げずにそのカードをセッションから外す 3 "
 "つの操作が出ます。"
 
-#: ../../source/manuel.rst:2529
+#: ../../source/manuel.rst:2533
 msgid ""
 "**Suspendre** — la carte garde son échéancier et ne remonte plus jamais "
 "tant qu'elle est suspendue. C'est la manière de mettre de côté une carte "
@@ -4912,7 +4916,7 @@ msgstr ""
 "**保留** — "
 "カードは予定を保ったまま、保留のあいだ二度と出てきません。誤ったカードやまだ役に立たないカードを、付随する履歴を失わずに脇へ置く方法です。"
 
-#: ../../source/manuel.rst:2533
+#: ../../source/manuel.rst:2537
 msgid ""
 "**Enterrer** — la carte disparaît jusqu'au lendemain. Contrairement à la "
 "suspension, cela ne dit rien de sa valeur : c'est pour celle que l'on "
@@ -4922,7 +4926,7 @@ msgstr ""
 "**伏せる** — "
 "カードは翌日まで消えます。保留と違い、これはカードの価値について何も言いません。ついさっき別の場所で見たもの、あるいは一晩に二度は会いたくないものに使います。"
 
-#: ../../source/manuel.rst:2537
+#: ../../source/manuel.rst:2541
 msgid ""
 "**Retirer** — la carte quitte le paquet, après confirmation. La position,"
 " elle, reste dans la base : un paquet est une liste d'étude sur la "
@@ -4931,14 +4935,14 @@ msgstr ""
 "**外す** — "
 "確認のうえ、カードはデッキを離れます。局面そのものはデータベースに残ります。デッキはライブラリの上に置かれた学習リストであって、その複製ではありません。"
 
-#: ../../source/manuel.rst:2541
+#: ../../source/manuel.rst:2545
 msgid ""
 "Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est "
 "pas une carte répondue, et elle ne compte pas dans le décompte de la "
 "séance."
 msgstr "この 3 つはいずれも評価を記録しません。脇へ置いたカードは答えたカードではなく、セッションの集計にも入りません。"
 
-#: ../../source/manuel.rst:2544
+#: ../../source/manuel.rst:2548
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -4953,7 +4957,7 @@ msgstr ""
 "日時、局面、評価、状態、与えられた間隔 — "
 "これから何をする予定かではありません。誤って入れた評価が見えるのはここだけです。そこで直すことはできません。予定表は手の届かないところにあり、まさにその規則が記録を有用にしています。過去は書き換えられませんが、知ることはできます。"
 
-#: ../../source/manuel.rst:2553
+#: ../../source/manuel.rst:2557
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
@@ -4962,7 +4966,7 @@ msgstr ""
 "**停止／再開：** 復習セッションは *Esc* でいつでも中断できます。ボタンが *Resume* "
 "に変わり、進捗状況が表示されます。それをクリックすると、中断した場所から再開できます。"
 
-#: ../../source/manuel.rst:2557
+#: ../../source/manuel.rst:2561
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets (confirmation "
@@ -4973,7 +4977,7 @@ msgstr ""
 "**デッキの管理：**\\ 操作ボタンでデッキの名前変更、同期、リセット、削除ができます（後ろの2つは確認を求められます）。FSRS "
 "のパラメータ（目標保持率、最大間隔、ゆらぎ）は、設定（歯車のアイコン）でデッキごとに指定できます。"
 
-#: ../../source/manuel.rst:2563
+#: ../../source/manuel.rst:2567
 msgid ""
 "**Rétention : la cible et la mesure.** La *rétention cible* est votre "
 "choix sur le compromis entre charge de travail et qualité du rappel : "
@@ -4990,7 +4994,7 @@ msgstr ""
 "があなたの正答率を追いかけて目標を書き換えることはありません。復習が 20 "
 "回に満たないあいだは実測を表示しません。ただの雑音を事実として読ませてしまうからです。"
 
-#: ../../source/manuel.rst:2572
+#: ../../source/manuel.rst:2576
 msgid ""
 "Changer la rétention **n'est pas rétroactif** : chaque carte adopte le "
 "nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne "
@@ -4999,7 +5003,7 @@ msgstr ""
 "保持率の変更は\\ **さかのぼって効きません**\\ "
 "。各カードは次の復習のときに新しいペースを取り入れ、すでに決まっている期日は動きません。したがって効果は少しずつ現れ、その日のうちには見えません。"
 
-#: ../../source/manuel.rst:2576
+#: ../../source/manuel.rst:2580
 msgid ""
 "L'*intervalle maximum* borne l'espacement. Un paquet créé récemment "
 "démarre à un an : une position que l'algorithme reporterait de plusieurs "
@@ -5010,11 +5014,11 @@ msgstr ""
 "*最大間隔* は間隔の上限を定めます。新しく作ったデッキは 1 "
 "年から始まります。アルゴリズムが数年先まで先送りする局面は、あなたが決めたわけでもないのにデッキから抜け落ちたも同然ですし、あなた自身の打ち方はそれより速く変わります。古いデッキはそれまでの値を保ちます。"
 
-#: ../../source/manuel.rst:2584
+#: ../../source/manuel.rst:2588
 msgid "Panneau Entraînement"
 msgstr "トレーニングパネル"
 
-#: ../../source/manuel.rst:2586
+#: ../../source/manuel.rst:2590
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "
@@ -5027,34 +5031,34 @@ msgstr ""
 "パネルは**記憶する**ものを復習させ、**トレーニング**パネルは時計の下で**計算する**ものを鍛えます。``CTRL-J``、ツールバーの "
 "« Position aléatoire » の直後に置かれたボタン、またはコマンド ``train`` で開きます。"
 
-#: ../../source/manuel.rst:2593
+#: ../../source/manuel.rst:2597
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."
 msgstr "待機中、パネルはランチャーと過去のセッションの集計を表示します。"
 
-#: ../../source/manuel.rst:2596
+#: ../../source/manuel.rst:2600
 msgid "Le lanceur"
 msgstr "ランチャー"
 
-#: ../../source/manuel.rst:2598
+#: ../../source/manuel.rst:2602
 msgid "Trois choix, puis « Démarrer » :"
 msgstr "3つの選択、そして « Démarrer »:"
 
-#: ../../source/manuel.rst:2600
+#: ../../source/manuel.rst:2604
 msgid "l'**exercice** — *Scores* ou *Pions* ;"
 msgstr "**エクササイズ** — *Scores*（スコア）または *Pions*（ピップ）;"
 
-#: ../../source/manuel.rst:2601
+#: ../../source/manuel.rst:2605
 msgid ""
 "la **source** de la question, quand l'exercice en a plusieurs — *Plateau*"
 " (la position telle qu'elle est) ou *Base* (une position de la liste "
 "parcourue) ;"
 msgstr "問題の**ソース**（エクササイズが複数持つ場合）— *Plateau*（そのままの局面）または *Base*（閲覧中のリストの局面）;"
 
-#: ../../source/manuel.rst:2604
+#: ../../source/manuel.rst:2608
 msgid "la **limite par question** — aucune, 15, 30 ou 60 secondes."
 msgstr "**1問あたりの制限** — なし、15、30 または 60 秒。"
 
-#: ../../source/manuel.rst:2606
+#: ../../source/manuel.rst:2610
 msgid ""
 "``train scores`` et ``train pips`` ouvrent le panneau et démarrent "
 "directement ; ``train tp`` et ``train takepoint`` sont des synonymes de "
@@ -5063,11 +5067,11 @@ msgstr ""
 "``train scores`` と ``train pips`` はパネルを開いてそのまま開始します。``train tp`` と "
 "``train takepoint`` は ``train scores`` の同義語です。"
 
-#: ../../source/manuel.rst:2611
+#: ../../source/manuel.rst:2615
 msgid "Les deux exercices"
 msgstr "2つのエクササイズ"
 
-#: ../../source/manuel.rst:2613
+#: ../../source/manuel.rst:2617
 msgid ""
 "**Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et "
 "affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire*"
@@ -5079,7 +5083,7 @@ msgstr ""
 "*Vous*（あなた）と *L'adversaire*（相手）— と 7 行 — キューブ 2 のテイクポイント、次にキューブ 4 "
 "のテイクポイント（それぞれロングレースとラストロール）、そしてキューブ 1、2、4 のギャモン価値。"
 
-#: ../../source/manuel.rst:2618
+#: ../../source/manuel.rst:2622
 msgid ""
 "Chaque colonne ne porte que les cases que les tables de référence — "
 "celles qu'affichent les commandes ``tp2_live``, ``tp2_last``, "
@@ -5098,7 +5102,7 @@ msgstr ""
 "列だけ。どちらの面も定義しない行はカードに現れないので、推測すべき « n/a » のマスはありません。2 "
 "つの面があるのは、スコアでのキューブ判断が両方を必要とするからです。補正テイクポイントは両プレイヤーのギャモン価値を組み合わせ、あなたのダブルが通るかを言うのは相手のテイクポイントです。"
 
-#: ../../source/manuel.rst:2629
+#: ../../source/manuel.rst:2633
 msgid ""
 "**Pions** demande le compte de pions des **deux** camps. Le pipcount du "
 "plateau est masqué tant que la question est ouverte ; « Révéler » "
@@ -5115,11 +5119,11 @@ msgstr ""
 " あなた自身の選択は変更されず、次の問題から再び有効になります。ソース *Plateau* は表示中の局面について 1 問だけ出題します。ソース "
 "*Base* は問題ごとに新しい局面を引いて盤に出します。"
 
-#: ../../source/manuel.rst:2639
+#: ../../source/manuel.rst:2643
 msgid "Répondre"
 msgstr "答える"
 
-#: ../../source/manuel.rst:2641
+#: ../../source/manuel.rst:2645
 msgid ""
 "Le geste est **déclaré** : vous calculez de tête, vous cliquez « Révéler "
 "», et la vérité s'affiche. Chaque nombre est alors **juste par défaut** —"
@@ -5133,7 +5137,7 @@ msgstr ""
 "のあと *Space* でも同じ動作）。もう一度クリックすると印は消えます。何も入力しません: "
 "ピップ数や表のマスは正しいか誤りかであり、書いても読む以上のことは学べません。"
 
-#: ../../source/manuel.rst:2648
+#: ../../source/manuel.rst:2652
 msgid ""
 "Le chronomètre part à l'affichage de la question et s'arrête à « Révéler "
 "» ; cocher ses fautes n'est pas chronométré. Avec une limite, une "
@@ -5145,7 +5149,7 @@ msgstr ""
 "で止まります。誤りに印を付ける時間は計られません。制限がある場合、期限までに答えのない問題は自動的に開示され、**時間切れ**として数えられます:"
 " その数値はすべて誤りとなり、その時間は中央値に入りません — 与えられなかった答えは測らないからです。"
 
-#: ../../source/manuel.rst:2654
+#: ../../source/manuel.rst:2658
 msgid ""
 "« Suivante » enregistre la question et en pose une autre. La session n'a "
 "pas de longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au "
@@ -5157,11 +5161,11 @@ msgstr ""
 "»（ジャーナルに書き込む）または « Quitter "
 "»（破棄する）まで続きます。すべてのボタンはパネルにあります。盤は問題とその答えを示すだけで、操作は一切持ちません。"
 
-#: ../../source/manuel.rst:2660
+#: ../../source/manuel.rst:2664
 msgid "Le journal et le bilan"
 msgstr "ジャーナルと集計"
 
-#: ../../source/manuel.rst:2662
+#: ../../source/manuel.rst:2666
 msgid ""
 "Les sessions terminées sont conservées dans la base elle-même — elles "
 "suivent donc le fichier — et sans plafond. Au repos, le panneau affiche "
@@ -5174,7 +5178,7 @@ msgstr ""
 "行を表示します: セッション数、誤り率、中央値の時間、そして 10 セッション以降は**傾向**、すなわち直近 10 "
 "セッションの誤り率と全体の誤り率との差 — 負であれば上達しています。"
 
-#: ../../source/manuel.rst:2669
+#: ../../source/manuel.rst:2673
 msgid ""
 "Cliquer le nom de l'exercice déplie le détail **par type de nombre** : « "
 "Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait "
@@ -5185,11 +5189,11 @@ msgstr ""
 "エクササイズ名をクリックすると**数値の種類ごと**の内訳が開きます: « Point de prise 4 · dernier lancer, "
 "6 / 9 »。この内訳こそがジャーナルの値打ちであり、面ではなく種類で数えます: 同じ表の同じマスは、どちらの側から見ても 1 つの弱点です。"
 
-#: ../../source/manuel.rst:2677
+#: ../../source/manuel.rst:2681
 msgid "Micro-entraînements : EPC et quiz"
 msgstr "マイクロトレーニング: EPC とクイズ"
 
-#: ../../source/manuel.rst:2679
+#: ../../source/manuel.rst:2683
 msgid ""
 "Deux exercices se répondent encore au clavier, dans une bande affichée "
 "au-dessus du plateau. La commande ``train`` suivie de leur nom lance une "
@@ -5198,17 +5202,17 @@ msgstr ""
 "2 つのエクササイズは今もキーボードで答えます。盤の上に表示されるバーで行います。``train`` コマンドに名前を続けると 5 "
 "問のセッションが始まります:"
 
-#: ../../source/manuel.rst:2683
+#: ../../source/manuel.rst:2687
 msgid ""
 "``train epc`` — estimer l'EPC du joueur au trait, sur une position de "
 "course que le moteur sait évaluer ;"
 msgstr "``train epc`` — 手番のプレイヤーの EPC を、エンジンが評価できるレース局面で見積もる;"
 
-#: ../../source/manuel.rst:2685
+#: ../../source/manuel.rst:2689
 msgid "``train quiz`` — décider, sur une position déjà analysée."
 msgstr "``train quiz`` — すでに解析済みの局面で判断する。"
 
-#: ../../source/manuel.rst:2687
+#: ../../source/manuel.rst:2691
 msgid ""
 "La question EST la position affichée : le plateau est celui de "
 "l'application, et la bande ne porte que la question, la saisie et la "
@@ -5223,7 +5227,7 @@ msgstr ""
 "で確認し次へ、*Esc* でセッションを離れます）。EPC は半ピップの誤差を許容します — "
 "レースの判断が変わる粒度です。最後にセッションは正解数と 1 問あたりの**中央値**の時間を表示します。"
 
-#: ../../source/manuel.rst:2694
+#: ../../source/manuel.rst:2698
 msgid ""
 "Seul ce résumé est conservé, dans les métadonnées de la base : la session"
 " ne garde pas la trace question par question, et rien n'est écrit tant "
@@ -5231,11 +5235,11 @@ msgid ""
 "rien."
 msgstr "保存されるのはその要約だけで、データベースのメタデータに入ります。セッションは一問ごとの記録を残しませんし、終了するまで何も書き込みません。途中でやめれば何も記録されません。"
 
-#: ../../source/manuel.rst:2699
+#: ../../source/manuel.rst:2703
 msgid "Quiz : le PR d'entraînement"
 msgstr "クイズ：トレーニングの PR"
 
-#: ../../source/manuel.rst:2701
+#: ../../source/manuel.rst:2705
 msgid ""
 "``train quiz`` pose une question d'une autre nature. Le panneau Anki fait"
 " mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées"
@@ -5244,7 +5248,7 @@ msgstr ""
 "``train quiz`` は別の種類の問題を出します。Anki パネルは暗記させ、クイズは**試します**。閲覧中のリストから解析済みの局面が"
 " 5 つ引かれ、判断が求められます:"
 
-#: ../../source/manuel.rst:2705
+#: ../../source/manuel.rst:2709
 msgid ""
 "sur une décision de pions, **jouer le coup sur le damier** — cliquer le "
 "point de départ, puis la destination, autant de fois qu'il y a de dés ; "
@@ -5254,13 +5258,13 @@ msgstr ""
 "——出発点をクリックし、次に目的地をクリックします。これをサイコロの数だけ繰り返します。あるいはキーボードで記譜法によって手を入力します "
 "(``13/7 8/7``)。"
 
-#: ../../source/manuel.rst:2708
+#: ../../source/manuel.rst:2712
 msgid ""
 "sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou "
 "*Double, passe*."
 msgstr "キューブの判断では、*ノーダブル*、*ダブル、テイク*、*ダブル、パス* のいずれかをクリックします。"
 
-#: ../../source/manuel.rst:2711
+#: ../../source/manuel.rst:2715
 msgid ""
 "Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal "
 "n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, "
@@ -5272,7 +5276,7 @@ msgstr ""
 " "
 "は問題が示すとおりの局面に戻します——盤の外でのダブルクリックも同じ働きをします。問題そのものは変わりません。サイコロ、キューブ、スコアは局面のままです。"
 
-#: ../../source/manuel.rst:2717
+#: ../../source/manuel.rst:2721
 msgid ""
 "Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie "
 "au clavier reste disponible tant qu'aucun pion n'a bougé. Les deux "
@@ -5281,14 +5285,14 @@ msgstr ""
 "盤上で手が打たれている場合、\\ *判定*\\ "
 "はその手を採点します。まだ駒を動かしていないあいだは、キーボード入力も使えます。どちらの道も同じ採点を通ります。"
 
-#: ../../source/manuel.rst:2721
+#: ../../source/manuel.rst:2725
 msgid ""
 "Le panneau Analyse est masqué tant que la question n'a pas reçu de "
 "réponse : il porte la réponse, et une question dont la réponse est "
 "affichée à côté n'est pas une question."
 msgstr "回答するまで分析パネルは隠されます。そこに答えが書いてあるからで、答えが横に出ている問題は問題ではありません。"
 
-#: ../../source/manuel.rst:2725
+#: ../../source/manuel.rst:2729
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -5301,7 +5305,7 @@ msgstr ""
 "は選択の誤りではなく、ルール違反です。**合法だがエンジンが評価しなかった手** "
 "は誤りですらありません。値段がないだけで、セッションには何の損もつきません。評価された手は、分析が示す分だけミリポイントで損をします。"
 
-#: ../../source/manuel.rst:2731
+#: ../../source/manuel.rst:2735
 msgid ""
 "À la fin, la session affiche un **PR de quiz** calculé par la formule que"
 " les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité"
@@ -5312,11 +5316,11 @@ msgstr ""
 "最後にセッションは **クイズの PR** を表示します。統計が実戦に用いるのと同じ式 — 正規化エクイティの平均誤差 × 500 — "
 "で計算されます。だからこそ二つの数は比べられます。クイズの PR 6 とマッチの PR 6 は、同じ尺度で同じものを測っています。"
 
-#: ../../source/manuel.rst:2739
+#: ../../source/manuel.rst:2743
 msgid "Panneau Métadonnées"
 msgstr "メタデータパネル"
 
-#: ../../source/manuel.rst:2741
+#: ../../source/manuel.rst:2745
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -5326,7 +5330,7 @@ msgstr ""
 "**メタデータ** パネルは、現在のデータベースの一般情報を表示します：名前、説明、ポジション数、マッチ数とゲーム数、スキーマのバージョン。\\ "
 "``meta`` コマンドでアクセスできます。"
 
-#: ../../source/manuel.rst:2745
+#: ../../source/manuel.rst:2749
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -5335,11 +5339,11 @@ msgstr ""
 "また、\\ **存在する場合に限り**\\ データベースの出所も表示します（\\ :ref:`diffusion_controlee`\\ "
 "を参照）。通常のデータベースではこの区画は表示されません。"
 
-#: ../../source/manuel.rst:2751
+#: ../../source/manuel.rst:2755
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "データベースの配布：出所とパスワード"
 
-#: ../../source/manuel.rst:2753
+#: ../../source/manuel.rst:2757
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -5349,7 +5353,7 @@ msgstr ""
 "ポジションのデータベースを配る指導者には、互いに独立した二つの仕組みがあります。どちらも任意で、\\ **エクスポート時**\\ "
 "に選びます。ファイルに出所を記載すること、そしてパスワードで保護することです。"
 
-#: ../../source/manuel.rst:2760
+#: ../../source/manuel.rst:2764
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -5359,11 +5363,11 @@ msgstr ""
 "どちらもファイルのその後を追跡しません。blunderDB は\\ **データベースを受け取った側では何も記録しません**\\ "
 "。記載のあるデータベースを開く操作は、ほかのどのデータベースを開く場合とまったく同じで、誰がいつ開いたのか、内容がどこから来たのかは、どこにも残りません。"
 
-#: ../../source/manuel.rst:2766
+#: ../../source/manuel.rst:2770
 msgid "Marquer une base de son origine"
 msgstr "データベースに出所を記載する"
 
-#: ../../source/manuel.rst:2768
+#: ../../source/manuel.rst:2772
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -5371,11 +5375,11 @@ msgid ""
 "d'état."
 msgstr "エクスポートのウィンドウは一画面に収まります。入力フォームがあり、書き込み中はその上に進捗表示が重なります。完了すると自動的に閉じ、結果はステータスバーに表示されます。"
 
-#: ../../source/manuel.rst:2772
+#: ../../source/manuel.rst:2776
 msgid "Trois points méritent l'attention :"
 msgstr "注意すべき点が三つあります。"
 
-#: ../../source/manuel.rst:2774
+#: ../../source/manuel.rst:2778
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -5384,7 +5388,7 @@ msgstr ""
 "**エクスポートの対象は現在表示中のポジション**\\ "
 "であり、データベース全体ではありません。検索後は結果だけが書き出されます。ウィンドウの冒頭にもその旨が示されます。"
 
-#: ../../source/manuel.rst:2777
+#: ../../source/manuel.rst:2781
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -5393,7 +5397,7 @@ msgstr ""
 "**選択に含まれないポジションがあるコレクションは、欠けた状態で届きます。**\\ "
 "そのため一覧には、コレクションごとに含まれている割合（「12/40」）が示され、不完全な場合は赤で強調されます。"
 
-#: ../../source/manuel.rst:2780
+#: ../../source/manuel.rst:2784
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -5402,7 +5406,7 @@ msgstr ""
 "**トーナメントはマッチと一緒でなければエクスポートできません**\\ "
 "。マッチがなければトーナメントとマッチの結び付きが存在せず、トーナメントは空のまま届いてしまいます。「マッチを含める」が選ばれるまで、このチェックボックスは無効のままです。"
 
-#: ../../source/manuel.rst:2784
+#: ../../source/manuel.rst:2788
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -5414,11 +5418,11 @@ msgstr ""
 "を説明するもので、元のデータベースの値があらかじめ入力されています。\\ *保存済みフィルター*\\ "
 "のチェックボックスだけは性質が異なり、内容ではなく自分の保存した検索を書き出します。他人のデータベースでは役に立ちません。"
 
-#: ../../source/manuel.rst:2790
+#: ../../source/manuel.rst:2794
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr "**このファイルに出所を記載する**\\ にチェックを入れると、二つの入力欄が現れます。"
 
-#: ../../source/manuel.rst:2792
+#: ../../source/manuel.rst:2796
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -5427,13 +5431,13 @@ msgstr ""
 "**出所** — このファイルが何であり、どこから来たのかを自分の言葉で書きます。たとえば「Jean Dupont のレッスン — "
 "2026年3月12日」。この欄は\\ **必須**\\ で、空のあいだはエクスポートのボタンが押せません。"
 
-#: ../../source/manuel.rst:2795
+#: ../../source/manuel.rst:2799
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
 msgstr "**備考**\\ （任意） — 利用条件、連絡先、再配布しないでほしいという依頼など。"
 
-#: ../../source/manuel.rst:2798
+#: ../../source/manuel.rst:2802
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -5446,11 +5450,11 @@ msgstr ""
 "。配布されるファイルはごく普通の SQLite データベースであり、blunderDB "
 "は自由ソフトウェアだからです。記載は何かを禁じるものではなく、ファイルの出所を告げるだけです。"
 
-#: ../../source/manuel.rst:2805
+#: ../../source/manuel.rst:2809
 msgid "Identité d'émetteur"
 msgstr "発行者の識別情報"
 
-#: ../../source/manuel.rst:2807
+#: ../../source/manuel.rst:2811
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -5462,7 +5466,7 @@ msgstr ""
 "で署名されます。これは初めてファイルに記載したときに自動で作られ、設定は不要です。データベースではなく人に属するので、あなたのすべてのファイルが\\"
 " ``A3F1-9C24-7B05-E1D8``\\ のような同じ公開フィンガープリントを持ちます。"
 
-#: ../../source/manuel.rst:2812
+#: ../../source/manuel.rst:2816
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -5474,7 +5478,7 @@ msgstr ""
 "``.bdbid``\\ ）として別のパソコンへ持ち運べ、必要ならパスフレーズで保護できます。\\ "
 "**このファイルがあればあなたの名前で署名できます。共有しないでください。**"
 
-#: ../../source/manuel.rst:2818
+#: ../../source/manuel.rst:2822
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -5483,7 +5487,7 @@ msgstr ""
 "設定（ツールバーの歯車アイコン）の\\ *発行者の識別情報*\\ タブには、名前とフィンガープリントが表示され、\\ *識別情報を保存…*\\ "
 "、\\ *識別情報を読み込む…*\\ 、\\ *再生成…*\\ が用意されています。"
 
-#: ../../source/manuel.rst:2824
+#: ../../source/manuel.rst:2828
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -5493,24 +5497,24 @@ msgstr ""
 "**再生成しても、何かが失効するわけではありません。**\\ "
 "記載には署名に使われた公開鍵が埋め込まれているため、それ自体でいつまでも検証できます。識別情報のファイルが漏れた場合、それを持つ人は古いフィンガープリントで署名し続けられ、その記載は有効なままです。"
 
-#: ../../source/manuel.rst:2829
+#: ../../source/manuel.rst:2833
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
 "destinataires."
 msgstr "漏洩のあとにあなたを守るのはソフトウェアではありません。新しいフィンガープリントを公表し、古いものはもう自分のものではないと配布先に伝えることです。"
 
-#: ../../source/manuel.rst:2833
+#: ../../source/manuel.rst:2837
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
 msgstr "再生成は現在の鍵を上書きします。blunderDB は置き換える前に保存するかどうかを尋ねます。"
 
-#: ../../source/manuel.rst:2837
+#: ../../source/manuel.rst:2841
 msgid "Protéger une base par un mot de passe"
 msgstr "データベースをパスワードで保護する"
 
-#: ../../source/manuel.rst:2839
+#: ../../source/manuel.rst:2843
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -5519,7 +5523,7 @@ msgstr ""
 "パスワードは伏せ字で入力します。保護されたファイルを開くときも同じです。目の形のアイコンは\\ **押している間だけ**\\ "
 "パスワードを表示し、離すとすぐにまた隠します。"
 
-#: ../../source/manuel.rst:2843
+#: ../../source/manuel.rst:2847
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -5534,7 +5538,7 @@ msgstr ""
 "の名前を選んでいた場合も同じです。開くときは通常のデータベースを開く操作を使います。選択ダイアログは\\ ``.db``\\ も\\ "
 "``.dbx``\\ も受け付けます。blunderDB はパスワードを尋ね、その隣に通常のデータベースを用意します。以後は何も尋ねられません。"
 
-#: ../../source/manuel.rst:2851
+#: ../../source/manuel.rst:2855
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -5545,7 +5549,7 @@ msgstr ""
 "ウィンドウでは\\ **開いたあとに保護ファイルを削除する**\\ "
 "ことも選べます。そうしなければ、同じ内容を二つの名前で持ち続けることになります。このチェックは既定では入っていません（渡すつもりなら保護ファイルは手元に残ります）。削除は開くことに成功したあとにだけ行われます。"
 
-#: ../../source/manuel.rst:2858
+#: ../../source/manuel.rst:2862
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -5555,13 +5559,13 @@ msgstr ""
 "パスワードが守るのはファイルの\\ **受け渡し**\\ "
 "であって、データベースそのものではありません。ダウンロードフォルダーに置き忘れたファイルや、誤って転送された添付ファイルを第三者が開くのを防ぎます。パスワードを教えた相手からは守れません。"
 
-#: ../../source/manuel.rst:2863
+#: ../../source/manuel.rst:2867
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
 msgstr "パスワードは\\ **開くたびに**\\ 検証されます。そのパソコンで以前に開いたことがあるファイルでも同じです。"
 
-#: ../../source/manuel.rst:2866
+#: ../../source/manuel.rst:2870
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -5574,17 +5578,17 @@ msgstr ""
 " （メモリ 64 MiB、3 パス、4 スレッド）で導出されます。ソルトはファイルごとに無作為です。GCM "
 "モードは全体を認証するため、誤ったパスワードはそれと判別され、暗号化ファイルの改変も同様に検出されます。壊れたデータベースが黙って開かれることはありません。"
 
-#: ../../source/manuel.rst:2873
+#: ../../source/manuel.rst:2877
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
 msgstr "保護ファイルのヘッダーは\\ **平文のまま**\\ です。出所はパスワードなしでも読めます。"
 
-#: ../../source/manuel.rst:2877
+#: ../../source/manuel.rst:2881
 msgid "Lire l'origine d'un fichier"
 msgstr "ファイルの出所を読む"
 
-#: ../../source/manuel.rst:2879
+#: ../../source/manuel.rst:2883
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -5594,27 +5598,27 @@ msgstr ""
 "アプリケーションでファイルを開き、\\ **メタデータ**\\ パネルを表示します（コマンド\\ ``meta``\\ "
 "）。パネルの先頭に読み取り専用の\\ **出所**\\ の区画が現れ、何が記載されたか、誰が、いつ、そして署名の状態が示されます。"
 
-#: ../../source/manuel.rst:2884
+#: ../../source/manuel.rst:2888
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
 msgstr "「✓ 署名を検証しました — あなたによる記載」：そのファイルにはあなたの記載がそのまま残っています。"
 
-#: ../../source/manuel.rst:2886
+#: ../../source/manuel.rst:2890
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
 msgstr "「✓ 署名を検証しました」：記載は無傷で、別の鍵によるものです。作成者から伝えられたフィンガープリントと見比べてください。"
 
-#: ../../source/manuel.rst:2888
+#: ../../source/manuel.rst:2892
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "「⚠ 署名が無効です」：文書が改変されたか、偽造されています。"
 
-#: ../../source/manuel.rst:2890
+#: ../../source/manuel.rst:2894
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "通常のデータベースではこの区画は表示されません。"
 
-#: ../../source/manuel.rst:2892
+#: ../../source/manuel.rst:2896
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -5627,11 +5631,11 @@ msgstr ""
 "``--watermark``\\ と\\ ``--password``\\ 、および\\ ``identity``\\ と\\ "
 "``open``\\ については\\ ``CLI_USAGE.md``\\ を参照してください。"
 
-#: ../../source/manuel.rst:2901
+#: ../../source/manuel.rst:2905
 msgid "Publier une base pour d'autres"
 msgstr "データベースを他者に公開する"
 
-#: ../../source/manuel.rst:2903
+#: ../../source/manuel.rst:2907
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -5644,26 +5648,26 @@ msgstr ""
 "**いかなるサービスも提供しない**\\ ：リポジトリも、ホストされたカタログも、アカウントもない。これは設計から直接導かれる\\ "
 "：ファイルを受け取った側では何も記録されないのだから、たとえサービスがあったとしても報告するものが何もない。"
 
-#: ../../source/manuel.rst:2909
+#: ../../source/manuel.rst:2913
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
 msgstr "公開されたデータベースを他人が使えるものにするのは、すでに存在する四つの欄に尽きる\\ ："
 
-#: ../../source/manuel.rst:2912
+#: ../../source/manuel.rst:2916
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**ユーザー**\\ ——誰が構築したか。名前として挙げてほしい表記で書く。"
 
-#: ../../source/manuel.rst:2913
+#: ../../source/manuel.rst:2917
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
 "intermédiaire »."
 msgstr "**説明**\\ ——データベースの中身を、一覧に収まる一文で\\ ：「スコアでのキューブ判断 240 件、コメント付き、中級」。"
 
-#: ../../source/manuel.rst:2915
+#: ../../source/manuel.rst:2919
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -5672,7 +5676,7 @@ msgstr ""
 "**出所**\\ （透かしの）——このファイルが何であり、誰のために作られたか。受け取った側が\\ *メタデータ*\\ "
 "パネルで最初に読むものである。"
 
-#: ../../source/manuel.rst:2918
+#: ../../source/manuel.rst:2922
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -5681,7 +5685,7 @@ msgstr ""
 "**発行者の指紋**\\ ——ファイルの中ではなく、ファイルの傍らに公開する\\ "
 "：受け取った側はそれを照合して、そのファイルがあなたから来たものであり、あなたの名を騙る誰かからのものではないことを確かめる。"
 
-#: ../../source/manuel.rst:2922
+#: ../../source/manuel.rst:2926
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -5690,7 +5694,7 @@ msgstr ""
 "透かしなしで公開されたデータベースも完全に使える。ただ匿名であるというだけで、\\ *メタデータ*\\ パネルには\\ *出所*\\ "
 "の節が現れない。"
 
-#: ../../source/manuel.rst:2926
+#: ../../source/manuel.rst:2930
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
