@@ -193,6 +193,35 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
    double lecture de `p` a la structure retenue à la décision 1 : le discriminant est dessiné
    — la barre d'état dit « réponse de X au double » et la rangée n'allume `[T][P]` que là.
 
+10. **La porte d'entrée est au clavier comme le reste.** `handleKeyDown` commence par
+    `if (!draft) return;` : tant que la liste des brouillons est à l'écran, le panneau ne
+    traite **aucune** touche, alors que son propre docstring pose l'objectif — « a match is
+    typed without ever reaching for the mouse, and a first keystroke that landed nowhere would
+    break the count before it starts ». La toute première frappe atterrit nulle part, et le
+    seul chemin pour reprendre le brouillon d'hier est un clic sur sa ligne.
+
+    La liste reçoit donc `j`/`k` et `Entrée` — `PanelTable` expose déjà `navigate(delta)`, que
+    le panneau n'appelle pas — avec la **première ligne présélectionnée**, `ListTranscriptions`
+    rendant les brouillons du plus récemment modifié au plus ancien. Reprendre coûte
+    `Ctrl+Maj+T` `Entrée`, soit **2 K et zéro souris** ; créer coûte `Ctrl+Maj+T` `n` `7`
+    `Entrée`. `n` nu est libre (seul `Ctrl+N` est lié, `keyboardService.js`), et cette
+    vérification se note dans `ux.md` §3 à côté de celles du 2026-09-07.
+
+    Le travail réel n'est pas le clavier mais de séparer, dans l'usage que le panneau fait de
+    `PanelTable`, **surligner** d'**ouvrir** : `onSelect` fait aujourd'hui les deux, si bien
+    qu'un `j` ouvrirait un brouillon.
+
+    `ux.md` §4.5 est corrigé au passage sur deux points : sa ligne « nouveau brouillon ≈ 1,5 s »
+    comptait le clic sur « Nouvelle » comme une frappe, quand le trajet souris seul coûte
+    H + P + 2B = 1,7 s ; et **reprendre un brouillon existant n'y figure pas**, alors que c'est
+    le geste de chaque session après la première — un match en 7 points ne se transcrit pas
+    d'une traite.
+
+    Écarté : la **réouverture automatique** du brouillon le plus récent à l'entrée dans
+    l'onglet. Non pour son coût, qui est nul, mais pour ce qu'elle fait dire à l'onglet — une
+    bascule d'onglet ne doit pas avoir d'effet de bord sur le document, et `Ctrl+Maj+T` en est
+    une.
+
 ## Options écartées
 
 - **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet partout, `Entrée`
