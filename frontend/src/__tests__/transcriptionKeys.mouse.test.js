@@ -66,14 +66,26 @@ describe('un clic vaut ses deux touches', () => {
         expect(clicked.state.dice).toEqual([6, 5]);
     });
 
-    // « Jet corrigeable » : le clic recommence le jet, comme le chiffre.
-    test('depuis un jet corrigeable, le clic recommence le jet sans rien valider', () => {
+    // Le clic dit exactement ce que dit le chiffre, y compris sa dépendance au
+    // Cursor (ADR-0048 décision 1) : le triangle n'est pas une seconde règle.
+    test('sur une Action relue, le clic recommence le jet sans rien valider', () => {
+        const replaying = { expects: 'checker', replacing: true };
+        let state = enterDicePair(initialKeyState(), 3, 1, replaying).state;
+        state = applyCandidates(state, 17).state;
+        expect(state.phase).toBe(PHASE.ROLL);
+
+        const clicked = enterDicePair(state, 4, 2, replaying);
+        expect(clicked.commands.map((c) => c.kind)).not.toContain(COMMAND.VALIDATE);
+        expect(clicked.state.dice).toEqual([4, 2]);
+    });
+
+    test('en bout de document, le clic valide d’abord, comme le chiffre', () => {
         let state = typed(initialKeyState(), 3, 1, 'checker').state;
         state = applyCandidates(state, 17).state;
         expect(state.phase).toBe(PHASE.ROLL);
 
         const clicked = enterDicePair(state, 4, 2, { expects: 'checker' });
-        expect(clicked.commands.map((c) => c.kind)).not.toContain(COMMAND.VALIDATE);
+        expect(clicked.commands[0]).toEqual({ kind: COMMAND.VALIDATE });
         expect(clicked.state.dice).toEqual([4, 2]);
     });
 

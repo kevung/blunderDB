@@ -170,6 +170,30 @@ export function cubeFactRows(cube) {
 // caller that hides them (EPCPanel, ADR-0018 rule 4) just truncates.
 export const CHECKER_COLUMNS = ['move', 'equity', 'error', 'pw', 'pg', 'pb', 'ow', 'og', 'ob', 'depth', 'engine'];
 
+/**
+ * The two — and only two — named projections of a candidate list (ADR-0048
+ * decision 4).
+ *
+ * `judge` is the list you weigh a play with: the six probability columns are the
+ * matter of the judgement, and it is what the Eval and Analysis panels show.
+ *
+ * `identify` is the list you RECOGNISE a play in — the transcription of a match
+ * played elsewhere, where the play is a fact already made and the question is
+ * only "which of these is the one I saw". The probabilities are not read there;
+ * they invite being read, and they cost 290 px of width, which is what stops the
+ * three-column layout from fitting at 1024 px. `error` stays, because it says at
+ * the moment of validation that the play just recorded was a blunder — the
+ * reason the product exists.
+ *
+ * They are NAMED rather than exposed as a free `columns` list on purpose: a
+ * third caller has to justify a third projection here, where the two are read
+ * side by side, instead of inventing its own list and drifting.
+ */
+export const CHECKER_PROJECTIONS = Object.freeze({
+    judge: CHECKER_COLUMNS,
+    identify: ['move', 'equity', 'error']
+});
+
 const CHECKER_HEADER_KEYS = {
     move: 'analysis.move',
     equity: 'analysis.equity',
@@ -351,9 +375,13 @@ function chanceCells(vector) {
  *
  * @returns {{ columns: string[], header: string[], baseline: object|null, rows: {key, move, label, cells: string[], highlight: boolean}[] }}
  */
-export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null, isMoney } = {}) {
-    const columns = showProvenance ? CHECKER_COLUMNS : CHECKER_COLUMNS.slice(0, 9);
-    const provenance = (cells) => (showProvenance ? cells : []);
+export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null, isMoney, projection = 'judge' } = {}) {
+    // `identify` names its columns; `judge` keeps the historical truncation by
+    // showProvenance, which is ADR-0018 rule 4 and not a projection of its own.
+    const identifying = projection === 'identify';
+    const columns = identifying ? CHECKER_PROJECTIONS.identify : showProvenance ? CHECKER_COLUMNS : CHECKER_COLUMNS.slice(0, 9);
+    const provenance = (cells) => (showProvenance && !identifying ? cells : []);
+    const chances = (row) => (identifying ? [] : chanceCells(row));
     return {
         columns,
         header: columns.map((c) => (c === 'equity' ? t(equityHeaderKey(isMoney)) : t(CHECKER_HEADER_KEYS[c]))),
@@ -362,14 +390,14 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
         baseline: baseline
             ? {
                   label: t('eval.baseline'),
-                  cells: [formatEquity(baseline.cubelessEquity) ?? DASH, '', ...chanceCells(baseline), ...provenance(['', ''])]
+                  cells: [formatEquity(baseline.cubelessEquity) ?? DASH, '', ...chances(baseline), ...provenance(['', ''])]
               }
             : null,
         rows: (moves ?? []).map((move) => ({
             key: move.index ?? move.move,
             move,
             label: moveLabel(move.move),
-            cells: [formatEquity(move.equity) ?? DASH, formatEquity(move.equityError ?? 0), ...chanceCells(move), ...provenance([move.analysisDepth ?? '', move.analysisEngine ?? ''])],
+            cells: [formatEquity(move.equity) ?? DASH, formatEquity(move.equityError ?? 0), ...chances(move), ...provenance([move.analysisDepth ?? '', move.analysisEngine ?? ''])],
             highlight: isPlayedMove(move)
         }))
     };

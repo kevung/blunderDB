@@ -115,10 +115,16 @@ dessiné — la cellule encadrée du Transcript, où l'on s'est rendu délibér�
 tôt. Un état que l'on voit n'est pas un mode.
 
 Le discriminant est `entry.replacing`, que le moteur expose déjà. Le meilleur coup coûte donc
-**deux** touches, et les trois lignes de correction de §4.3 sont inchangées : « le chiffre
-valide partout » aurait coûté une touche de plus à chacune, et pire — `validate` n'est pas
-gardé par `entryDiffers`, il réécrit l'Action et rend le Cursor à `doc.Return`, si bien qu'un
-chiffre égaré en relecture aurait mis fin à la relecture.
+**deux** touches. « Le chiffre valide partout » aurait coûté une touche de plus à chacune des
+trois lignes de §4.3, et pire — `validate` n'est pas gardé par `entryDiffers`, il réécrit
+l'Action et rend le Cursor à `doc.Return`, si bien qu'un chiffre égaré en relecture aurait mis
+fin à la relecture.
+
+**Une ligne de §4.3 bouge quand même**, mesurée à l'implémentation : « dé mal lu, vu aussitôt »
+en **bout de document** passe de 2 K à 3 K, parce que le chiffre y valide et qu'il faut donc
+effacer le jet avant de le reprendre. Sur une Action relue elle reste à 2 K. Les deux lectures
+du chiffre depuis un jet complet s'excluent ; à 150 tours gagnés contre 12 perdus, c'est le bon
+sens de l'échange.
 
 Ce que la règle « un chiffre valide depuis un candidat choisi » exclut, et ce qui le remplace : dernier coup d'une
 partie → Entrée ; action de videau → sa lettre valide d'abord ; erreur découverte un tour
@@ -182,7 +188,8 @@ trois designs tient donc, seule la valeur absolue était optimiste de 0,07 s.
 
 | Cas | Gestes | KLM |
 |---|---|---|
-| dé mal lu, vu aussitôt (jet corrigeable) | `4` `1` | 2 K = 0,56 s |
+| dé mal lu, vu aussitôt, en bout de document | Retour arrière, `4` `1` | 3 K = 0,84 s |
+| dé mal lu, vu aussitôt, sur une Action relue | `4` `1` | 2 K = 0,56 s |
 | candidat voisin, vu aussitôt | `j` | 0,28 s |
 | erreur vue un tour plus tard, dés déjà tapés | Retour, `h`, `j`, `l` | 4 K = 1,12 s |
 | erreur vue k tours plus tard | Retour, `h`×k, `j`/`k`×m, `l`×k | (1 + 2k + m) K ; k = 5, m = 1 → 3,4 s |

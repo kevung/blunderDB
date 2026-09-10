@@ -96,10 +96,19 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
    l'on voit n'est pas un mode.
 
    Le meilleur coup joué revient à **2 K** — le docstring de `transcriptionKeys.js` redevient
-   vrai — l'état « jet corrigeable » disparaît avec ses deux phrases, et les budgets de
-   correction d'`ux.md` §4.3 sont tous **inchangés** : dé mal lu vu aussitôt 2 K, vu k tours
-   plus tard `h`×k `4` `1` soit 3 K. Sur 250 Actions dont ~60 % de meilleurs coups :
-   **−150 K, soit −42 s par match**, sans contrepartie sur la relecture.
+   vrai — et l'état « jet corrigeable » disparaît avec ses deux phrases.
+
+   **Une contrepartie, mesurée à l'implémentation et non en séance** (elle a démenti le tableau
+   présenté au moment de la décision, qui annonçait §4.3 intégralement conservé). En **bout de
+   document**, reprendre un jet qu'on vient de mal taper commence désormais par l'effacer :
+   « dé mal lu, vu aussitôt » passe de 2 K à **3 K** (`Retour arrière`, puis les deux chiffres).
+   C'est la seule ligne de §4.3 qui bouge — « erreur vue k tours plus tard » reste à
+   `h`×k `4` `1`, précisément parce que le chiffre recommence le jet sur une Action relue —, et
+   rien ne pouvait l'éviter : les deux lectures du chiffre depuis un jet complet s'excluent, et
+   un discriminant invisible est ce que cette décision supprime.
+
+   Le compte honnête, sur 250 Actions dont ~60 % de meilleurs coups et ~5 % de dés mal relus :
+   150 × (−1 K) + 12 × (+1 K) = **−138 K, soit −39 s par match**.
 
    La formulation « le chiffre valide toujours, partout » a été essayée et écartée en séance :
    `GestureValidate` appelle `validate`, qui — contrairement à `commitCorrection` — n'est pas

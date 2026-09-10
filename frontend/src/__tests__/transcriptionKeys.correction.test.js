@@ -52,9 +52,26 @@ function armed(n = 4) {
 const kinds = (commands) => commands.map((c) => c.kind);
 
 describe('ux.md §4.3 — dé mal lu, vu aussitôt', () => {
-    test('deux touches, et le jet est repris depuis le premier dé', () => {
-        // Le budget compte la CORRECTION, à partir de l'état « jet corrigeable ».
-        const { commands, keys } = press(['Digit4', 'Digit1'], { state: armed() });
+    // TROIS touches depuis ADR-0048, et c'est la contrepartie assumée de la
+    // décision 1 : en bout de document le chiffre VALIDE, donc reprendre un jet
+    // qu'on vient de taper commence par l'effacer. C'est le seul budget de §4.3
+    // que la décision coûte, et il se paie ~12 fois par match contre ~150 tours
+    // gagnés sur le meilleur coup — −138 K net.
+    //
+    // Rien ne pouvait l'éviter : les deux lectures du chiffre depuis un jet
+    // complet s'excluent, et un discriminant invisible est ce que la décision 1
+    // supprime.
+    test('trois touches en bout de document : Retour arrière, puis le jet', () => {
+        const { commands, keys } = press(['Backspace', 'Digit4', 'Digit1'], { state: armed() });
+        expect(keys).toBeLessThanOrEqual(3);
+        expect(kinds(commands)).toEqual([COMMAND.CLEAR, COMMAND.DIE, COMMAND.DIE]);
+        expect(commands.map((c) => c.value)).toEqual([undefined, 4, 1]);
+    });
+
+    test('deux touches sur une Action relue : le chiffre y recommence le jet', () => {
+        const replaying = { expects: 'checker', replacing: true };
+        const state = applyCandidates(press(['Digit6', 'Digit3'], { context: replaying }).state, 4).state;
+        const { commands, keys } = press(['Digit4', 'Digit1'], { state, context: replaying });
         expect(keys).toBeLessThanOrEqual(2);
         expect(kinds(commands)).toEqual([COMMAND.DIE, COMMAND.DIE]);
         expect(commands.map((c) => c.value)).toEqual([4, 1]);
