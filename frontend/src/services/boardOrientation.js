@@ -18,6 +18,25 @@
  *     camp au trait, et le jan dessiné en bas à droite est celui de la couleur 0
  *     de la position AFFICHÉE. Rien n'est retourné pour autant.
  *
+ * Et il faut bien les deux, parce que le code reçoit des points dans DEUX
+ * numérotations, jamais dans une seule :
+ *
+ *   • ABSOLUE — celle du damier du modèle, le jan du joueur 1 en 1-6 et celui du
+ *     joueur 2 en 19-24. C'est celle des `CheckerStep` que `domain.LegalMoves`
+ *     rend (`singleMoves` parcourt `Board.Points[src]`), donc celle du coup en
+ *     cours et du filtre par point. Elle se convertit avec [screenOfModelPoint].
+ *
+ *   • RELATIVE AU CAMP AU TRAIT — celle de toute notation de backgammon, « 24 »
+ *     nommant toujours les pions arriérés de celui qui joue (`domain.pointLabel`
+ *     écrit 25-idx pour White). C'est celle des flèches, lues d'une notation.
+ *     Elle se convertit avec [screenOfNotationPoint].
+ *
+ * Les deux numérotations coïncident quand le camp au trait est le joueur 1, et
+ * les deux conversions coïncidaient quand le camp au trait était toujours en
+ * bas : rien ne signalait qu'on employait l'une pour l'autre. Une position de la
+ * bibliothèque étant enregistrée normalisée — camp au trait = joueur 1 —, aucun
+ * des deux cas de divergence ne se rencontre hors transcription.
+ *
  * Le composant n'a pas de test de rendu — two.js dessine sur un canvas que jsdom
  * n'implémente pas —, et c'est la raison pour laquelle ces deux réponses sont
  * ici plutôt que dans `Board.svelte` : elles sont la règle, elles se vérifient,
@@ -71,4 +90,40 @@ export function boardIsMirrored({ mode, position, matchContext, transcriptionSwa
  */
 export function labelsFlipped(displayPosition) {
     return displayPosition?.player_on_roll === 1;
+}
+
+/** Le symétrique d'un point ; la barre (0/25) et la sortie (-1) comprises. */
+function opposite(point) {
+    return point >= 0 && point <= 25 ? 25 - point : point;
+}
+
+/**
+ * La place, à l'écran, d'un point donné dans la numérotation ABSOLUE du modèle —
+ * un pas de `domain.LegalMoves`, un point cliqué rendu au modèle.
+ *
+ * La conversion est celle du miroir, et elle est involutive : le clic s'en sert
+ * dans l'autre sens, de l'écran vers le modèle.
+ *
+ * @param {number} point
+ * @param {boolean} mirrored la réponse de [boardIsMirrored]
+ */
+export function screenOfModelPoint(point, mirrored) {
+    return mirrored ? opposite(point) : point;
+}
+
+/**
+ * La place, à l'écran, d'un point donné dans la numérotation RELATIVE AU CAMP AU
+ * TRAIT — celle que porte toute notation, donc les flèches du coup choisi.
+ *
+ * Ce n'est PAS la conversion ci-dessus : la notation est déjà écrite du point de
+ * vue de celui qui joue, et la seule question est de savoir si celui-ci est
+ * dessiné en bas (numérotation de l'écran) ou en haut (numérotation inversée) —
+ * c'est-à-dire exactement ce que dit [labelsFlipped], et exactement ce que les
+ * étiquettes affichent sous chaque flèche.
+ *
+ * @param {number} point
+ * @param {boolean} flipped la réponse de [labelsFlipped]
+ */
+export function screenOfNotationPoint(point, flipped) {
+    return flipped ? opposite(point) : point;
 }

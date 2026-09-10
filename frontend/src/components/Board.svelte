@@ -14,7 +14,7 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
-    import { boardIsMirrored, labelsFlipped } from '../services/boardOrientation.js';
+    import { boardIsMirrored, labelsFlipped, screenOfModelPoint, screenOfNotationPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
@@ -509,18 +509,16 @@
         return acts.some(isResponseCubeAction);
     }
 
-    // The selected move's checkers, in the display position's point numbers.
-    // Move notation uses the model's numbering; when the display is MIRRORED
-    // (point i → 25 - i), the arrows must be too.
     // Les points que le coup en cours offre (#294 pour le quiz, T2.3 pour la
-    // transcription), dans les numéros de la position AFFICHÉE : un anneau posé
-    // sur le point 24 du modèle se dessine sur le point 1 de l'écran quand le
-    // plateau est retourné — exactement la conversion que le clic fait dans
-    // l'autre sens, d'où le MÊME `mirrored` des deux côtés.
+    // transcription), dans les numéros de la position AFFICHÉE. Ils viennent des
+    // pas de `LegalMoves`, en numérotation ABSOLUE : un anneau posé sur le point
+    // 24 du modèle se dessine sur le point 1 de l'écran quand le plateau est
+    // retourné — exactement la conversion que le clic fait dans l'autre sens,
+    // d'où le MÊME `mirrored` des deux côtés.
     function playHighlights(mirrored) {
         const play = get(quizPlayStore);
         if (!play) return {};
-        const shown = (point) => (mirrored && point >= 0 && point <= 25 ? 25 - point : point);
+        const shown = (point) => screenOfModelPoint(point, mirrored);
         // Le point CHOISI est toujours marqué, même quand aucune liste ne
         // l'offre : en déplacement libre (T2.4) il n'y a pas de coup légal pour
         // le proposer, et le pion pris en main doit se voir quand même.
@@ -538,10 +536,18 @@
         };
     }
 
-    function selectedMoveArrows(mirrored) {
+    // Les flèches du coup choisi. Elles sortent d'une NOTATION, qui est écrite
+    // dans la numérotation du camp au trait et non dans celle du damier : la
+    // question n'est donc pas de savoir si le plateau est retourné, mais si
+    // celui qui joue est dessiné en haut — `flip`, celui-là même qui renumérote
+    // les étiquettes sous les flèches. Les deux conversions coïncident partout
+    // sauf en transcription, la bibliothèque n'enregistrant que des positions
+    // normalisées ; les employer l'une pour l'autre y dessinait le coup du
+    // joueur 2 sur les pions du joueur 1, deux tours de suite.
+    function selectedMoveArrows(flipped) {
         const moves = parseMoveNotation(selectedMove);
-        if (moves.length === 0 || !mirrored) return moves;
-        return moves.map((m) => ({ ...m, from: m.from === -1 ? -1 : 25 - m.from, to: m.to === -1 ? -1 : 25 - m.to }));
+        if (moves.length === 0 || !flipped) return moves;
+        return moves.map((m) => ({ ...m, from: screenOfNotationPoint(m.from, true), to: screenOfNotationPoint(m.to, true) }));
     }
 
     // ── Static / dynamic layers ────────────────────────────────────────────
@@ -578,8 +584,9 @@
 
         const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
-        // Deux questions distinctes, et c'est exprès : `flip` numérote les
-        // points, `mirrored` convertit des coordonnées.
+        // Deux questions distinctes, et c'est exprès — voir boardOrientation.js :
+        // `mirrored` convertit un point ABSOLU, `flip` un point de NOTATION (et
+        // numérote les étiquettes, qui sont la même question).
         const flip = isPlayer2Perspective(position);
         const mirrored = displayMirrored();
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
@@ -590,7 +597,7 @@
             offeredCube: isOfferedCube(position),
             showPipcount,
             play: playHighlights(mirrored),
-            moves: selectedMoveArrows(mirrored)
+            moves: selectedMoveArrows(flip)
         });
 
         two.update();
