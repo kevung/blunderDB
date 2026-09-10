@@ -33,7 +33,8 @@ ID = 4,0 bits → 0,60 s. Les P ci-dessous utilisent ces valeurs quand la cible 
 ## 2. Le placement
 
 Onzième onglet du panneau ancré, mode `TRANSCRIBE`, brouillon dans un store. Dock **bas**,
-hauteur minimale **280 px** sur cet onglet (ADR-0048 décision 5) :
+hauteur minimale **300 px** sur cet onglet (ADR-0048 décision 5 ; 280 px annoncés, 300 après
+mesure — la barre d'onglets prend 30 px du dock) :
 
 ```
 ┌─────────────────────────── plateau (position du Cursor, J1 en bas) ───────────────────────────┐

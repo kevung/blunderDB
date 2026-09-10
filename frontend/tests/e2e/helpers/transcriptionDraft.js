@@ -12,14 +12,18 @@
  *
  * Ce mock ne le réécrit donc pas. Il **fige** un document annoté — un brouillon
  * de sept points, dix Actions, une position de contact — et le rend tel quel à
- * chaque geste, après avoir noté le geste. Deux faits seulement y sont dérivés,
+ * chaque geste, après avoir noté le geste. TROIS faits seulement y sont dérivés,
  * et chacun parce qu'un tableau de budgets serait injouable sans lui : la
  * position du Cursor (`cursor_back` recule d'un, `cursor_forward` avance d'un),
  * parce que les corrections d'ux.md §4.3 se comptent en pas de Cursor et que le
- * panneau réarme sa liste sur l'Action visée ; et l'Action attendue après un
+ * panneau réarme sa liste sur l'Action visée ; l'Action attendue après un
  * double, parce que `t` et `p` ne sont des touches de réponse que devant une
- * offre. Tout le reste — score, Crawford, Incohérences, camp au trait — reste ce
- * qu'il était, et appartient aux tests Go du paquet `transcript`
+ * offre ; et **`entry.replacing`**, depuis ADR-0048, parce que c'est lui qui
+ * décide du sens de la touche chiffrée — elle valide en bout de document et
+ * recommence le jet sur une Action relue —, donc de tout le budget §4.1. Il se
+ * lit du Cursor : sur une Action existante on remplace, au bout on ajoute. Tout
+ * le reste — score, Crawford, Incohérences, camp au trait — reste ce qu'il
+ * était, et appartient aux tests Go du paquet `transcript`
  * (`gestures_test.go`, `replay_test.go`, `correction_test.go`).
  *
  * Ce que les specs de budget mesurent est donc exactement ceci : **combien de
@@ -185,6 +189,13 @@ export async function installTranscriptionEngine(page, opts = {}) {
                 annotated.cursor = at;
                 annotated.document.cursor = at;
                 annotated.next.expects = waiting;
+                // Le troisième fait dérivé : sur une Action existante la saisie
+                // REMPLACE, au bout du document elle ajoute. C'est le
+                // discriminant de la touche chiffrée (ADR-0048 décision 1).
+                const info = annotated.actions[at];
+                annotated.entry = info
+                    ? { at, side: info.side, replacing: true, review: false, selected: true, dice: [3, 1] }
+                    : { at, side: annotated.next.side, replacing: false, review: false, selected: false, dice: [0, 0] };
                 return { id: row.id, annotated, can_undo: true, can_redo: true };
             };
 

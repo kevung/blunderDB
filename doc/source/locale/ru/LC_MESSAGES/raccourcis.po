@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -758,9 +758,41 @@ msgstr "Панель транскрипции"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
-msgstr "Панель принимает эти клавиши, пока она в фокусе и открыт черновик."
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
+msgstr ""
+"Панель принимает эти клавиши, пока у неё фокус. Перед списком черновиков "
+"она уже принимает несколько, чтобы возобновление вчерашней работы не "
+"требовало мыши."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "ВНИЗ, j / ВВЕРХ, k (список черновиков)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr ""
+"Проходить черновики. Первый подсвечен при открытии: это самый недавно "
+"изменённый."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "ВВОД (список черновиков)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "Открыть подсвеченный черновик."
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n (список черновиков)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "Открыть форму создания."
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -784,11 +816,13 @@ msgstr "1 … 6 (бросок введён)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
 msgstr ""
-"Начать бросок заново, пока не выбран ни один вариант; после выбора — "
-"записать ход и открыть следующий бросок."
+"Подтвердить выбранный ход и открыть следующий бросок. На пересматриваемом"
+" действии, где курсор стоит на уже записанном действии, цифра начинает "
+"бросок этого действия заново, а не подтверждает."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -801,12 +835,33 @@ msgid "Sélectionner le candidat précédent."
 msgstr "Выбрать предыдущий вариант."
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "Колесо"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr ""
+"Выбрать следующего или предыдущего кандидата — как над списком, так и над"
+" доской: взгляд остаётся на доске, а стрелки прокручиваются."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "Щелчок (по строке)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "Выбрать этот вариант."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "Двойной щелчок (по строке)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "Подтвердить этого кандидата."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -862,8 +917,20 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Записать выбранный ход (последний ход партии)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "Стереть обе введённые кости."
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr ""
+"Стереть две введённые кости. Через это проходит переигрывание неверно "
+"прочитанного броска, поскольку цифра подтверждает."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "Щелчок (по клеткам броска)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "Стереть две введённые кости, как BACKSPACE."
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -962,8 +1029,10 @@ msgid "CTRL-ENTREE"
 msgstr "CTRL-ENTER"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "Сохранить черновик как матч."
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr "Создать матч из черновика или обновить его, если он уже существует."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1013,7 +1082,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1021,7 +1090,39 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"У цифры один-единственный смысл: **она начинает бросок там, где курсор**."
+" В конце документа под курсором ничего нет, поэтому она подтверждает "
+"выбранный ход, прежде чем открыть следующий бросок, — лучший сыгранный "
+"ход стоит, таким образом, двух костей и не более, ибо его подтверждение "
+"несёт первая клавиша следующего хода. На уже записанном действии, к "
+"которому вернулись ради исправления, под курсором есть нечто: цифра "
+"начинает бросок этого действия заново, на месте. Разница видна на экране,"
+" поскольку указанная ячейка обведена в транскрипте."
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr ""
+"Жест, которому нечего делать, говорит об этом один раз в строке "
+"состояния: «нечего отменять» при пустом стеке, «под курсором нет "
+"действия» в конце документа. Фраза стирается сама и возвращает место "
+"ожидаемому действию."
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1038,7 +1139,7 @@ msgstr ""
 " броска, а ход помечается «к проверке» до подтверждения. Перемещение "
 "курсора вперёд или назад после изменения записывает исправление попутно."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1055,7 +1156,7 @@ msgstr ""
 "самовольно, и курсор после каждого жеста встаёт на первое из них. Стек "
 "отмены живёт в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1064,7 +1165,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -1273,3 +1374,19 @@ msgstr "Закрыть справку."
 #~ "предупреждением, что gnubg и XG отметят"
 #~ " его («Invalid move») и дальше "
 #~ "разойдутся."
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr "Панель принимает эти клавиши, пока она в фокусе и открыт черновик."
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr ""
+#~ "Начать бросок заново, пока не выбран "
+#~ "ни один вариант; после выбора — "
+#~ "записать ход и открыть следующий бросок."

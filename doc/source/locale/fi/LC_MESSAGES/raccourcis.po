@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -762,9 +762,41 @@ msgstr "Litterointipaneeli"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
-msgstr "Paneeli ottaa nämä näppäimet, kun se on kohdistettuna ja luonnos on auki."
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
+msgstr ""
+"Paneeli ottaa nämä näppäimet kun sillä on kohdistus. Luonnosluettelon "
+"edessä se ottaa jo muutaman, jotta eilisen työn jatkaminen ei vaatisi "
+"hiirtä."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "ALAS, j / YLÖS, k (luonnosluettelo)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr ""
+"Selaa luonnoksia. Ensimmäinen on korostettuna avattaessa: se on viimeksi "
+"muutettu."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "ENTER (luonnosluettelo)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "Avaa korostettu luonnos."
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n (luonnosluettelo)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "Avaa luontilomake."
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -788,11 +820,14 @@ msgstr "1 … 6 (heitto syötetty)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
 msgstr ""
-"Aloita heitto alusta niin kauan kuin ehdokasta ei ole valittu; kun "
-"sellainen on valittu, kirjaa siirto ja avaa seuraava heitto."
+"Vahvista valittu siirto ja avaa seuraava heitto. Uudelleen "
+"tarkasteltavassa toiminnossa, jossa kohdistin on jo kirjoitetun toiminnon"
+" päällä, numero aloittaa tämän toiminnon heiton uudelleen vahvistamisen "
+"sijaan."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -805,12 +840,33 @@ msgid "Sélectionner le candidat précédent."
 msgstr "Valitse edellinen ehdokas."
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "Rulla"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr ""
+"Valitse seuraava tai edellinen ehdokas sekä luettelon että laudan päällä:"
+" katse pysyy laudalla ja nuolet vierivät ohi."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "Napsautus (riviä)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "Valitse kyseinen ehdokas."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "Kaksoisnapsautus (riviin)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "Vahvista tämä ehdokas."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -867,8 +923,20 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Kirjaa valittu siirto (pelin viimeinen siirto)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "Tyhjennä molemmat syötetyt nopat."
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr ""
+"Pyyhi kaksi syötettyä noppaa. Sitä kautta kulkee väärin luetun heiton "
+"uusiminen, koska numero vahvistaa."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "Napsautus (heiton ruutuihin)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "Pyyhi kaksi syötettyä noppaa, kuten ASKELPALAUTIN."
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -969,8 +1037,10 @@ msgid "CTRL-ENTREE"
 msgstr "CTRL-ENTER"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "Tallenna luonnos otteluksi."
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr "Luo ottelu luonnoksesta, tai päivitä se jos se on jo olemassa."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1020,7 +1090,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1028,7 +1098,40 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"Numerolla on yksi ainoa merkitys: **se aloittaa heiton siellä missä "
+"kohdistin on**. Asiakirjan lopussa kohdistimen alla ei ole mitään, joten "
+"se vahvistaa valitun siirron ennen seuraavan heiton avaamista — parhaan "
+"pelatun siirron hinnaksi tulee näin kaksi noppaa eikä enempää, sillä sen "
+"vahvistuksen kantaa seuraavan vuoron ensimmäinen näppäin. Jo "
+"kirjoitetussa toiminnossa, jonka luo on palattu korjaamaan, kohdistimen "
+"alla on jotakin: numero aloittaa tämän toiminnon heiton uudelleen, "
+"paikallaan. Ero näkyy näytöllä, sillä kohdennettu solu on kehystetty "
+"transkriptissä."
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr ""
+"Ele, jolla ei ole mitään tehtävää, sanoo sen kerran tilapalkissa: ”ei "
+"mitään kumottavaa” tyhjällä pinolla, ”ei toimintoa kohdistimen alla” "
+"asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin "
+"odotetulle toiminnolle."
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1046,7 +1149,7 @@ msgstr ""
 "”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai "
 "taaksepäin muutoksen jälkeen tallentaa korjauksen samalla."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1064,7 +1167,7 @@ msgstr ""
 " jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun "
 "luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1073,7 +1176,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 
@@ -1279,3 +1382,22 @@ msgstr "Sulje ohje."
 #~ "varoituksella että gnubg ja XG "
 #~ "ilmoittavat siitä (”Invalid move”) ja "
 #~ "poikkeavat siitä eteenpäin."
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr ""
+#~ "Paneeli ottaa nämä näppäimet, kun se "
+#~ "on kohdistettuna ja luonnos on auki."
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr ""
+#~ "Aloita heitto alusta niin kauan kuin "
+#~ "ehdokasta ei ole valittu; kun sellainen"
+#~ " on valittu, kirjaa siirto ja avaa"
+#~ " seuraava heitto."

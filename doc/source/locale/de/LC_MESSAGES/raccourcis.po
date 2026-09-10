@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -766,11 +766,41 @@ msgstr "Transkriptions-Fenster"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
 msgstr ""
-"Das Fenster nimmt diese Tasten entgegen, solange es den Fokus hat und ein"
-" Entwurf geöffnet ist."
+"Das Panel nimmt diese Tasten, solange es den Fokus hat. Vor der Liste der"
+" Entwürfe nimmt es bereits einige, damit die Arbeit von gestern nicht die"
+" Maus verlangt."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "AB, j / AUF, k (Liste der Entwürfe)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr ""
+"Die Entwürfe durchlaufen. Der erste ist beim Öffnen hervorgehoben: es ist"
+" der zuletzt geänderte."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "EINGABE (Liste der Entwürfe)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "Den hervorgehobenen Entwurf öffnen."
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n (Liste der Entwürfe)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "Das Erstellungsformular öffnen."
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -794,11 +824,14 @@ msgstr "1 … 6 (Wurf eingegeben)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
 msgstr ""
-"Den Wurf neu beginnen, solange kein Kandidat gewählt wurde; sobald einer "
-"gewählt ist, den Zug erfassen und den nächsten Wurf öffnen."
+"Den ausgewählten Zug bestätigen und den nächsten Wurf öffnen. Bei einer "
+"erneut betrachteten Aktion, wo der Cursor auf einer bereits geschriebenen"
+" Aktion steht, beginnt die Ziffer den Wurf dieser Aktion neu, statt zu "
+"bestätigen."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -813,12 +846,34 @@ msgid "Sélectionner le candidat précédent."
 msgstr "Den vorherigen Kandidaten auswählen."
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "Mausrad"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr ""
+"Den nächsten oder vorherigen Kandidaten wählen, über der Liste ebenso wie"
+" über dem Brett: der Blick bleibt auf dem Brett und die Pfeile ziehen "
+"vorbei."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "Klick (auf eine Zeile)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "Diesen Kandidaten auswählen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "Doppelklick (auf eine Zeile)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "Diesen Kandidaten bestätigen."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -876,8 +931,20 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Den ausgewählten Zug erfassen (der letzte Zug einer Partie)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "Beide eingegebenen Würfel löschen."
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr ""
+"Die beiden eingegebenen Würfel löschen. Darüber führt der Weg zurück zu "
+"einem falsch gelesenen Wurf, da eine Ziffer bestätigt."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "Klick (auf die Würfelfelder)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "Die beiden eingegebenen Würfel löschen, wie RÜCKTASTE."
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -981,8 +1048,12 @@ msgid "CTRL-ENTREE"
 msgstr "STRG-EINGABE"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "Den Entwurf als Match speichern."
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr ""
+"Das Match aus dem Entwurf erstellen oder es aktualisieren, wenn es "
+"bereits besteht."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1032,7 +1103,7 @@ msgstr "STRG-UMSCHALT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Die rückgängig gemachte Geste wiederherstellen."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1040,7 +1111,40 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"Die Ziffer hat eine einzige Bedeutung: **sie beginnt einen Wurf dort, wo "
+"der Cursor ist**. Am Ende des Dokuments ist nichts unter dem Cursor, also"
+" bestätigt sie den ausgewählten Zug, bevor sie den nächsten Wurf öffnet —"
+" der beste gespielte Zug kostet damit die beiden Würfel und nicht mehr, "
+"seine Bestätigung wird von der ersten Taste des folgenden Zuges getragen."
+" Bei einer bereits geschriebenen Aktion, zu der man zur Korrektur "
+"zurückgekehrt ist, steht etwas unter dem Cursor: die Ziffer beginnt den "
+"Wurf dieser Aktion an Ort und Stelle neu. Der Unterschied ist auf dem "
+"Bildschirm zu sehen, denn die angezielte Zelle ist im Transkript umrahmt."
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr ""
+"Eine Geste, die nichts zu tun hat, sagt es einmal in der Statusleiste: "
+"„nichts rückgängig zu machen“ bei leerem Stapel, „keine Aktion unter dem "
+"Cursor“ am Ende des Dokuments. Der Satz verschwindet von selbst und gibt "
+"den Platz an die erwartete Aktion zurück."
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1059,7 +1163,7 @@ msgstr ""
 "gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
 "zurückbewegt, so wird die Korrektur dabei übernommen."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1077,7 +1181,7 @@ msgstr ""
 "nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im "
 "Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1087,7 +1191,7 @@ msgstr ""
 "Transkript und die Entwurfsleiste — wird in :ref:`panneau_transcription` "
 "beschrieben."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 
@@ -1305,3 +1409,23 @@ msgstr "Hilfe schließen."
 #~ "gespielt wurde, mit dem Hinweis, dass"
 #~ " gnubg und XG ihn melden („Invalid"
 #~ " move“) und danach abweichen."
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr ""
+#~ "Das Fenster nimmt diese Tasten entgegen,"
+#~ " solange es den Fokus hat und "
+#~ "ein Entwurf geöffnet ist."
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr ""
+#~ "Den Wurf neu beginnen, solange kein "
+#~ "Kandidat gewählt wurde; sobald einer "
+#~ "gewählt ist, den Zug erfassen und "
+#~ "den nächsten Wurf öffnen."

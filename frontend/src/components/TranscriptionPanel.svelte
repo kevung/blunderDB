@@ -1960,8 +1960,13 @@
         flex: 1 1 auto;
     }
 
+    /* Sous le plancher — un dock que l'utilisateur écrase quand même — c'est la
+       PALETTE qui cède, dans sa propre boîte, et non le panneau qui se met à
+       défiler en bloc. La ligne du jet est en tête, donc le contrat tient
+       encore : ce qui disparaît est le bas du triangle, pas les dés. */
     .palette-col {
         flex: 0 0 auto;
+        overflow: auto;
     }
 
     .transcript-col {

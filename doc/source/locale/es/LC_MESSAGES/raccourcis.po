@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -769,11 +769,41 @@ msgstr "Panel de transcripción"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
 msgstr ""
-"El panel toma estas teclas mientras tiene el foco y hay un borrador "
-"abierto."
+"El panel toma estas teclas mientras tiene el foco. Ante la lista de "
+"borradores ya toma algunas, para que retomar el trabajo de ayer no exija "
+"el ratón."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "ABAJO, j / ARRIBA, k (lista de borradores)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr ""
+"Recorrer los borradores. El primero está resaltado al abrir: es el "
+"modificado más recientemente."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "INTRO (lista de borradores)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "Abrir el borrador resaltado."
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n (lista de borradores)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "Abrir el formulario de creación."
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -797,11 +827,13 @@ msgstr "1 … 6 (tirada introducida)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
 msgstr ""
-"Reiniciar la tirada mientras no se haya elegido ningún candidato; una vez"
-" elegido, registrar el movimiento y abrir la siguiente tirada."
+"Validar el movimiento seleccionado y abrir la tirada siguiente. En una "
+"acción releída, donde el cursor está puesto sobre una acción ya escrita, "
+"la cifra reinicia la tirada de esa acción en lugar de validar."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -816,12 +848,34 @@ msgid "Sélectionner le candidat précédent."
 msgstr "Seleccionar el candidato anterior."
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "Rueda"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr ""
+"Seleccionar el candidato siguiente o anterior, tanto sobre la lista como "
+"sobre el tablero: la mirada permanece en el tablero y las flechas "
+"desfilan."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "Clic (en una fila)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "Seleccionar ese candidato."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "Doble clic (en una fila)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "Validar ese candidato."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -878,8 +932,20 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Registrar el movimiento seleccionado (último movimiento de una partida)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "Borrar los dos dados introducidos."
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr ""
+"Borrar los dos dados introducidos. Por ahí pasa la reanudación de una "
+"tirada mal leída, ya que una cifra valida."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "Clic (en las casillas de la tirada)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "Borrar los dos dados introducidos, como RETROCESO."
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -980,8 +1046,10 @@ msgid "CTRL-ENTREE"
 msgstr "CTRL-INTRO"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "Guardar el borrador como partido."
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr "Crear el partido a partir del borrador, o actualizarlo si ya existe."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1031,7 +1099,7 @@ msgstr "CTRL-MAYÚS-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Rehacer el gesto deshecho."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1039,7 +1107,40 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"La cifra tiene un solo sentido: **empieza una tirada allí donde está el "
+"cursor**. Al final del documento no hay nada bajo el cursor, así que "
+"valida el movimiento seleccionado antes de abrir la tirada siguiente — el"
+" mejor movimiento jugado cuesta así los dos dados y nada más, pues su "
+"validación la lleva la primera tecla del turno siguiente. En una acción "
+"ya escrita, a la que se ha vuelto para corregirla, hay algo bajo el "
+"cursor: la cifra reinicia la tirada de esa acción, en su sitio. La "
+"diferencia se ve en pantalla, pues la celda señalada está enmarcada en la"
+" transcripción."
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr ""
+"Un gesto que no tiene nada que hacer lo dice, una vez, en la barra de "
+"estado: «nada que deshacer» con la pila vacía, «ninguna acción bajo el "
+"cursor» al final del documento. La frase se borra sola y devuelve el "
+"sitio a la acción esperada."
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1057,7 +1158,7 @@ msgstr ""
 "hasta la validación. Avanzar o retroceder el cursor después de haber "
 "cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1074,7 +1175,7 @@ msgstr ""
 " el cursor se coloca sobre la primera de ellas después de cada gesto. La "
 "pila de deshacer vive en memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1084,7 +1185,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 
@@ -1303,3 +1404,23 @@ msgstr "Cerrar la ayuda."
 #~ "se jugó, con el aviso de que "
 #~ "gnubg y XG la señalarán («Invalid "
 #~ "move») y divergirán después."
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr ""
+#~ "El panel toma estas teclas mientras "
+#~ "tiene el foco y hay un borrador"
+#~ " abierto."
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr ""
+#~ "Reiniciar la tirada mientras no se "
+#~ "haya elegido ningún candidato; una vez"
+#~ " elegido, registrar el movimiento y "
+#~ "abrir la siguiente tirada."

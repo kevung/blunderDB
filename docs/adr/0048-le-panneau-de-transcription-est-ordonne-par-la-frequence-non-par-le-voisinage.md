@@ -149,8 +149,12 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
    Transcript`, la palette sous les dés, donc la proximité mesurée du triangle est conservée)
    et **sous** la liste quand elle est étroite. Un seul point de rupture, et il n'est pas
    porteur : le contrat tient des deux côtés. L'onglet demande une **hauteur minimale de dock
-   de 280 px** : un panneau qui a un contrat mesurable a le droit de dire de combien il a
-   besoin.
+   de 300 px** : un panneau qui a un contrat mesurable a le droit de dire de combien il a
+   besoin. (280 px à la décision, **300 px après mesure** : la barre d'onglets prend 30 px du
+   dock avant que le panneau n'en voie rien, ce que le calcul de séance oubliait — c'est
+   exactement le genre d'écart que la spec de la décision 13 existe pour trouver.) Sous ce
+   plancher, si l'utilisateur écrase le dock quand même, c'est la **palette** qui cède dans sa
+   propre boîte : le bas du triangle disparaît, jamais les cases du jet ni la liste.
 
 6. **Le texte `.mat` devient une modale**, ouverte depuis la barre du brouillon à côté
    d'`Exporter .mat`. Ce n'est pas une question d'encombrement mais d'alignement : le `.mat`
@@ -303,8 +307,9 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
     `transcription-budgets.spec.js` compte déjà les gestes de `ux.md` §§4.1–4.3 sur
     l'application réelle avec `countGestures`.
 
-    Tailles : **dock bas 280 px** (viewport 1280×800 de la configuration, où les trois colonnes
-    demandent 220 + 8 + 280 + 8 + 320 = 836 px) et **dock latéral 420 px**. Assertions :
+    Tailles : **dock bas au plancher de l'onglet** (viewport 1280×800 de la configuration, où
+    les trois colonnes demandent 220 + 8 + 280 + 8 + 320 = 836 px) et **dock latéral 420 px**.
+    Assertions :
 
     1. **`.tab-content` ne défile pas**, brouillon ouvert — l'anti-régression précise du
        défaut : c'est ce conteneur-là qui défile aujourd'hui, pas le panneau.

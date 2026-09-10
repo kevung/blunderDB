@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -768,11 +768,41 @@ msgstr "Πίνακας μεταγραφής"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
 msgstr ""
-"Ο πίνακας δέχεται αυτά τα πλήκτρα όσο έχει την εστίαση και ένα πρόχειρο "
-"είναι ανοιχτό."
+"Ο πίνακας παίρνει αυτά τα πλήκτρα όσο έχει την εστίαση. Μπροστά στη λίστα"
+" των προσχεδίων παίρνει ήδη μερικά, ώστε η επανάληψη της χθεσινής "
+"δουλειάς να μη χρειάζεται το ποντίκι."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "ΚΑΤΩ, j / ΠΑΝΩ, k (λίστα προσχεδίων)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr ""
+"Διάτρεξη των προσχεδίων. Το πρώτο είναι επισημασμένο κατά το άνοιγμα: "
+"είναι το πιο πρόσφατα τροποποιημένο."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "ENTER (λίστα προσχεδίων)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "Άνοιγμα του επισημασμένου προσχεδίου."
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n (λίστα προσχεδίων)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "Άνοιγμα της φόρμας δημιουργίας."
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -796,11 +826,14 @@ msgstr "1 … 6 (ζαριά καταχωρημένη)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
 msgstr ""
-"Επανεκκίνηση της ζαριάς όσο δεν έχει επιλεγεί υποψήφια κίνηση· μόλις "
-"επιλεγεί, καταγραφή της κίνησης και άνοιγμα της επόμενης ζαριάς."
+"Επικύρωση της επιλεγμένης κίνησης και άνοιγμα της επόμενης ριξιάς. Σε μια"
+" ενέργεια που επανεξετάζεται, όπου ο δρομέας βρίσκεται σε ενέργεια ήδη "
+"γραμμένη, το ψηφίο ξαναρχίζει τη ριξιά αυτής της ενέργειας αντί να "
+"επικυρώσει."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -815,12 +848,34 @@ msgid "Sélectionner le candidat précédent."
 msgstr "Επιλογή της προηγούμενης υποψήφιας κίνησης."
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "Τροχός"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr ""
+"Επιλογή της επόμενης ή της προηγούμενης υποψήφιας, τόσο πάνω από τη λίστα"
+" όσο και πάνω από το ταμπλό: το βλέμμα μένει στο ταμπλό και τα βέλη "
+"περνούν."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "Κλικ (σε μια γραμμή)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "Επιλογή αυτής της υποψήφιας κίνησης."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "Διπλό κλικ (σε μια γραμμή)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "Επικύρωση αυτής της υποψήφιας."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -877,8 +932,20 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Καταγραφή της επιλεγμένης κίνησης (τελευταία κίνηση μιας παρτίδας)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "Διαγραφή και των δύο ζαριών που εισήχθησαν."
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr ""
+"Σβήσιμο των δύο ζαριών που εισήχθησαν. Από εκεί περνά η επανάληψη μιας "
+"ριξιάς που διαβάστηκε λάθος, αφού ένα ψηφίο επικυρώνει."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "Κλικ (στα κελιά της ριξιάς)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "Σβήσιμο των δύο ζαριών που εισήχθησαν, όπως το BACKSPACE."
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -981,8 +1048,10 @@ msgid "CTRL-ENTREE"
 msgstr "CTRL-ENTER"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "Αποθήκευση του προσχεδίου ως αγώνα."
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr "Δημιουργία του αγώνα από το προσχέδιο, ή ενημέρωσή του αν υπάρχει ήδη."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1032,7 +1101,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Επανάληψη της κίνησης που αναιρέθηκε."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1040,7 +1109,40 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"Το ψηφίο έχει ένα μόνο νόημα: **αρχίζει μια ριξιά εκεί όπου βρίσκεται ο "
+"δρομέας**. Στο τέλος του εγγράφου δεν υπάρχει τίποτα κάτω από τον δρομέα,"
+" οπότε επικυρώνει την επιλεγμένη κίνηση πριν ανοίξει την επόμενη ριξιά — "
+"η καλύτερη κίνηση που παίχτηκε κοστίζει έτσι τα δύο ζάρια και τίποτα "
+"άλλο, αφού την επικύρωσή της τη φέρει το πρώτο πλήκτρο του επόμενου "
+"γύρου. Σε μια ενέργεια ήδη γραμμένη, στην οποία επέστρεψε κανείς για να "
+"τη διορθώσει, υπάρχει κάτι κάτω από τον δρομέα: το ψηφίο ξαναρχίζει τη "
+"ριξιά αυτής της ενέργειας, επί τόπου. Η διαφορά φαίνεται στην οθόνη, "
+"καθώς το στοχευμένο κελί είναι πλαισιωμένο στο μεταγραφικό."
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr ""
+"Μια χειρονομία που δεν έχει τίποτα να κάνει το λέει, μία φορά, στη γραμμή"
+" κατάστασης: «τίποτα προς αναίρεση» με άδεια στοίβα, «καμία ενέργεια κάτω"
+" από τον δρομέα» στο τέλος του εγγράφου. Η φράση σβήνεται μόνη της και "
+"δίνει τη θέση της στην αναμενόμενη ενέργεια."
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1059,7 +1161,7 @@ msgstr ""
 "μετακίνηση του δρομέα εμπρός ή πίσω μετά από κάποια αλλαγή καταγράφει τη "
 "διόρθωση στο πέρασμα."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1077,7 +1179,7 @@ msgstr ""
 "δρομέας τοποθετείται στην πρώτη από αυτές μετά από κάθε κίνηση. Η στοίβα "
 "αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο του πρόχειρου."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1087,7 +1189,7 @@ msgstr ""
 "καταγραφή και η γραμμή του προσχεδίου — περιγράφεται στο "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
@@ -1308,3 +1410,23 @@ msgstr "Κλείσιμο της βοήθειας."
 #~ "και το XG θα την επισημάνουν "
 #~ "(«Invalid move») και θα αποκλίνουν στη"
 #~ " συνέχεια."
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr ""
+#~ "Ο πίνακας δέχεται αυτά τα πλήκτρα "
+#~ "όσο έχει την εστίαση και ένα "
+#~ "πρόχειρο είναι ανοιχτό."
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr ""
+#~ "Επανεκκίνηση της ζαριάς όσο δεν έχει "
+#~ "επιλεγεί υποψήφια κίνηση· μόλις επιλεγεί, "
+#~ "καταγραφή της κίνησης και άνοιγμα της"
+#~ " επόμενης ζαριάς."
