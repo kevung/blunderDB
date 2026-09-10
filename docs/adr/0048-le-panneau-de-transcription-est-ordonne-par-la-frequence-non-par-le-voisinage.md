@@ -259,6 +259,33 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
     - **Un clic sur les cases du jet les efface**, équivalent souris de `Retour arrière`. Elles
       sont aujourd'hui des `<span>`.
 
+12. **La pastille et le bouton nomment le Match, non le salut du brouillon.** Un mot portait
+    deux concepts et l'interface montrait l'alarmant. `CONTEXT.md` est pourtant net : le
+    brouillon « survives a crash of the application » et « saving it materialises a Match » —
+    et le code le tient, `ApplyTranscriptionGesture` écrivant la ligne à **chaque geste**
+    (`durableJSON` avant/après). Seules la pile d'annulation et l'Entry en cours sont volatiles.
+
+    Or la pastille affiche « **jamais enregistré** » pendant les 250 tours de la frappe. Un
+    transcripteur y lit le sens ordinaire — « mon travail n'est pas sauvé » — et fait
+    `Ctrl+Entrée` par prudence ; chaque enregistrement matérialise ou **remplace le Match
+    entier et lance le lot d'analyse 2-ply**. Le mauvais mot provoque donc un comportement
+    coûteux, en boucle, contre un risque inexistant. L'info-bulle du bouton, elle, était déjà
+    juste — « Enregistrer le brouillon **en Match** » —, à l'endroit que personne ne lit.
+
+    Le bouton devient « **Créer le match** », puis « **Mettre à jour le match #123** » — ce qui
+    énonce gratuitement que le second enregistrement *remplace*, sur le même `id`, ce que rien
+    ne dit aujourd'hui. La pastille cesse de parler du brouillon : « aucun match », « match #123
+    à jour », « match #123 en retard sur le brouillon » (l'actuel `stateModifiedSince`, qui
+    était déjà le bon). **Aucune phrase sur la sûreté du brouillon** : il n'y a rien à
+    signaler, et l'absence d'alarme est le message juste — une pastille « brouillon écrit »
+    serait la prose que la décision 8 chasse.
+
+    Ce qui n'est **pas** décidé ici, et volontairement : découpler l'enregistrement du lot
+    d'analyse. Le couplage est à ADR-0045 §8, le lot est ciblé et reprenable, et qui matérialise
+    un match veut un match utilisable, donc analysé. Le correctif est de supprimer la **cause**
+    des enregistrements inutiles — le mot — non de rendre l'enregistrement moins cher pour
+    qu'on continue de le faire pour de mauvaises raisons.
+
 ## Options écartées
 
 - **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet partout, `Entrée`
