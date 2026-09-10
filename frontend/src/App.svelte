@@ -32,6 +32,7 @@
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
     import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
+    import { transcriptionWheelStore } from './stores/transcriptionStore.js';
 
     // Services
     import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, setStatusBarMessage } from './services/databaseService.js';
@@ -101,6 +102,17 @@
     // Component state
     let mainArea;
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
+    // La hauteur PLANCHER de l'onglet Transcription (ADR-0048 décision 5). Un
+    // panneau qui a un contrat mesurable a le droit de dire de combien il a
+    // besoin. Le compte, MESURÉ et non estimé : la palette demande 236 px (la
+    // ligne du jet 25, la rangée de videau 25, le triangle 178, deux gaps de 4),
+    // la barre du brouillon et son gap 34, le padding 16 — et la barre d'onglets
+    // prend 30 px du dock avant que le panneau n'en voie rien. Les deux chiffres
+    // annoncés en séance (280, puis 300) oubliaient l'un cette barre, l'autre
+    // que la rangée de videau porte des MOTS et non quatre lettres. La valeur stockée n'est pas touchée : c'est un plancher à
+    // l'application, de sorte qu'un autre onglet retrouve la hauteur choisie.
+    const TRANSCRIPTION_MIN_HEIGHT = 320;
+    let appliedPanelHeight = $derived($activeTabStore === 'transcription' ? Math.max(panelHeight, TRANSCRIPTION_MIN_HEIGHT) : panelHeight);
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
@@ -250,6 +262,20 @@
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') return;
         const boardArea = mainArea?.querySelector('.scrollable-content');
         if (!boardArea || !boardArea.contains(event.target)) return;
+        // En TRANSCRIBE, la molette au-dessus du plateau fait un pas dans la
+        // liste des candidats (ADR-0048 décision 11) : l'œil reste sur le
+        // plateau, les flèches du candidat défilent, et l'on reconnaît le coup
+        // vu sur la vidéo par son image. Ce mode manquait à l'exclusion
+        // ci-dessus, si bien qu'une molette y emmenait le plateau sur une autre
+        // position, contre laquelle l'effet du panneau se battait au geste
+        // suivant.
+        if ($statusBarModeStore === 'TRANSCRIBE') {
+            const delta = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
+            if (delta === 0) return;
+            event.preventDefault();
+            transcriptionWheelStore.set({ delta, at: performance.now() });
+            return;
+        }
         if (positionCount > 0) {
             event.preventDefault();
             const now = performance.now();
@@ -507,7 +533,7 @@
 
         <div class="resize-handle" class:side={isSidePanel} use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : panelHeight, onResize: setPanelSize, onCommit: savePanelSize }}></div>
 
-        <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${panelHeight}px;`}>
+        <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${appliedPanelHeight}px;`}>
             <TabbedPanel
                 onLoadPositionsByFilters={loadPositionsByFilters}
                 onCloseAnalysis={toggleAnalysisPanel}

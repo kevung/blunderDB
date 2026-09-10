@@ -20,6 +20,13 @@
   calls back with the index that was clicked — or right-clicked, `onMenu` —, and
   what those indices mean is the caller's business.
 
+  That promise used to be false in one place: a `.mat` pane lived here, with a
+  clipboard call, an acknowledgement timer and a fold state that belong to a
+  DRAFT — a stored match has its own export. It is a modal of the transcription
+  panel now (ADR-0048 decision 6), which is also where 62 columns of aligned
+  ASCII can be read: the 320 px column this component gets destroyed the
+  alignment, which is the only reason to look at a `.mat` at all.
+
   The one thing it computes is the LAYOUT — which cell of which row an Action
   goes in — because that is a fact about the two columns and about nothing
   else. `transcriptRows` is the same rule as ingest/mat_export.go's
@@ -86,10 +93,8 @@
 </script>
 
 <script>
-    import { onDestroy } from 'svelte';
     import { SvelteMap } from 'svelte/reactivity';
     import { t } from '../i18n';
-    import { writeTextToClipboard } from '../services/clipboardService.js';
 
     let {
         /** A `transcript.Annotated`, verbatim. */
@@ -98,8 +103,6 @@
         cursor = null,
         /** `[player 1, player 2]`; the header's names are used when absent. */
         players = null,
-        /** The exact `.mat` text of the same document, for the pane below. */
-        matText = '',
         /** Told when a cell is clicked: `(index) => void`. */
         onSelect = null,
         /**
@@ -112,11 +115,7 @@
          * and a Transcript that swallowed it everywhere would take away the
          * browser's own menu from the panel around it (fiche T2.5).
          */
-        onMenu = null,
-        /** Told when the `.mat` pane is folded or unfolded: `(open) => void`. */
-        onMatToggle = null,
-        /** Overrides the copy button's action; the clipboard by default. */
-        onCopy = null
+        onMenu = null
     } = $props();
 
     let header = $derived(annotated?.document?.header ?? {});
@@ -239,19 +238,6 @@
     function flawTitle(flaws) {
         return $t('transcript.flawed', { names: flaws.map((f) => (FLAW_KEY[f.kind] ? $t(FLAW_KEY[f.kind]) : f.kind)).join(' · ') });
     }
-
-    let copied = $state(false);
-    let copyTimer = null;
-
-    async function copy() {
-        if (onCopy) onCopy(matText);
-        else await writeTextToClipboard(matText);
-        copied = true;
-        clearTimeout(copyTimer);
-        copyTimer = setTimeout(() => (copied = false), 1500);
-    }
-
-    onDestroy(() => clearTimeout(copyTimer));
 </script>
 
 <div class="transcript-view" role="group" aria-label={$t('transcript.title')}>
@@ -297,16 +283,6 @@
             {/each}
         {/if}
     </div>
-
-    {#if matText !== null}
-        <details class="mat" ontoggle={(e) => onMatToggle?.(e.currentTarget.open)}>
-            <summary class="mat-header">{$t('transcript.matPane')}</summary>
-            <div class="mat-body">
-                <button class="copy-btn" type="button" onclick={copy}>{copied ? $t('transcript.copied') : $t('transcript.copy')}</button>
-                <pre class="mat-text">{matText}</pre>
-            </div>
-        </details>
-    {/if}
 </div>
 
 <!--
@@ -356,8 +332,14 @@
 {/snippet}
 
 <style>
+    /* Borné, et c'est ce qui rend le `.scroller` effectif : sans `flex: 1` ni
+       `min-height: 0` sur toute la chaîne, un `overflow: auto` n'a rien à faire
+       déborder et le conteneur du panneau devient le seul qui défile — d'où le
+       `scrollIntoView` du Cursor qui faisait sauter le panneau entier à chaque
+       Action validée (ADR-0048 décision 5). */
     .transcript-view {
         display: flex;
+        flex: 1;
         flex-direction: column;
         min-height: 0;
         gap: var(--space-1);
@@ -365,6 +347,7 @@
 
     /* The wide content scrolls in ITS OWN box; the page never scrolls sideways. */
     .scroller {
+        flex: 1;
         min-height: 0;
         overflow: auto;
     }
@@ -486,44 +469,5 @@
 
     .empty-cell {
         border-color: transparent;
-    }
-
-    .mat {
-        border-top: 1px solid var(--color-border);
-    }
-
-    .mat-header {
-        padding: var(--space-1) var(--space-2);
-        color: var(--color-text-muted);
-        cursor: pointer;
-    }
-
-    .mat-body {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-        padding: var(--space-1) var(--space-2);
-    }
-
-    .copy-btn {
-        align-self: flex-start;
-        padding: var(--space-1) var(--space-2);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        background: var(--color-surface);
-        color: var(--color-text);
-        cursor: pointer;
-    }
-
-    .copy-btn:hover {
-        background: var(--color-surface-alt);
-    }
-
-    .mat-text {
-        margin: 0;
-        max-height: 16em;
-        overflow: auto;
-        font-family: var(--font-family-mono);
-        font-size: var(--font-size-small);
     }
 </style>

@@ -283,24 +283,28 @@ export default {
 </div>
 <h3>Transcription Panel</h3>
 <p>The <strong>Transcription</strong> panel (<em>CTRL-SHIFT-T</em>, <code>transcribe</code> or <code>tr</code> command) is where a match one has in front of one — a score sheet, a video recording — is typed in and turned into a match of the library. What is typed is a <strong>draft</strong>: it lives in the database, it closes and reopens, and it enters neither the statistics nor the searches until it has been saved as a match.</p>
-<p>The panel opens on the <strong>list of drafts</strong> of the database: date of the last change, players, length, number of actions, and the match already produced (<code>#</code> followed by its identifier) or the mention “not saved”. A click opens a draft, and the <strong>Drafts</strong> button of the bar comes back to the list. The <strong>New transcription</strong> button unfolds the creation form.</p>
+<p>The panel opens on the library's <strong>list of drafts</strong>: last modified, players, match length, number of actions, and the match already produced (<code>#</code> followed by its id) or the words "no match". A click opens a draft, and the <strong>Drafts</strong> button in the bar comes back to the list. The <strong>New transcription</strong> button unfolds the creation form.</p>
+<p>The list is walked from the keyboard too: <em>DOWN</em> and <em>UP</em> (or <em>j</em> and <em>k</em>) move the highlight, <em>ENTER</em> opens the highlighted draft, <em>n</em> unfolds the form. The first draft is highlighted on opening and it is the most recently modified one: picking up yesterday's work therefore takes two keys, <em>CTRL-SHIFT-T</em> then <em>ENTER</em>.</p>
 <p>The form asks for one thing only: the <strong>match length</strong>. The value <code>0</code> means a money session and brings up the <em>Jacoby</em> and <em>Beaver</em> boxes. The field opens on the length of the last modified draft, or on 7 when the database holds none. Player names are not asked for: the draft names the sides <em>Player 1</em> and <em>Player 2</em>, and the list shows “Unnamed”.</p>
-<p>An open draft carries its <strong>bar</strong> at the top, which states everything that follows from what has been typed: the match length (or “Money”), the score, the <em>Crawford</em> mention when the current game is one, the game number, the state of the cube — its value, centred or in the name of whoever owns it — and the side on roll.</p>
+<p>Everything derived from what has been typed — the match length (or "Money"), the score, the <em>Crawford</em> mention when the current game is one, the game number, the state of the cube — its value, centred or in the name of whoever owns it — and the side on roll — is shown in the <strong>match bar</strong>, above the board: that is where the eye already is when one wonders who is on roll. The expected action is spelled out in the <strong>status bar</strong>: "Kévin's dice", "Alice's answer to the double", "roll again".</p>
+<p>The <strong>draft bar</strong>, at the top of the panel, carries only the gestures that take the draft out of itself, plus the two undo arrows.</p>
 <p>The <strong>Metadata</strong> button on the bar unfolds the draft's header, at any time: the names of the two players — autocompleted from the players in the database —, the event, the location, the round, the date (today by default), the transcriber (the database's user by default) and the tournament the match will be attached to when it is saved. No field is required: a draft with no names saves and exports all the same, with empty headers. The <strong>Swap the players</strong> button exchanges the two names, gives every action to the opposite camp and turns the board around: it is the same match, read from the other side.</p>
 <p>The <strong>match length</strong> is changed in that same pane, at any time: the score, the Crawford game and the referential — money play when the length is <code>0</code>, and the <em>Jacoby</em> and <em>Beaver</em> boxes then appear — are recomputed from one end of the draft to the other, and the actions recorded after the match was won are marked "past the end" without a single one being removed. The length is part of a position's identity: after a save, changing it and saving again writes brand-new positions, to be analysed, and the old ones disappear as soon as nothing holds them any more.</p>
-<p>Below the bar, the draft occupies two halves: the <strong>entry</strong> on the left, the <strong>transcript</strong> on the right. A correction bar sits above them — insert before, insert after, delete, flip side, undo, redo — which takes up with the mouse the keys of the panel.</p>
-<p>The left half announces what it expects and shows the two dice as they are entered. A game opens with one die from each side: the higher one starts and plays both dice without having to enter them again; a tie is recorded as such and another opening is expected.</p>
-<p>As soon as the second die falls, every <strong>legal play</strong> of the roll is listed, ranked by the embedded engine, the first one preselected and its arrows laid on the board. That ranking is an evaluation: it is displayed, it is never written into the database. When the engine is not available, the plays are listed without a ranking and the panel says so.</p>
+<p>Below the bar the draft occupies three regions: the <strong>palette</strong> of mouse targets, the <strong>candidate moves</strong> and the <strong>transcript</strong>. In a wide panel — the bottom dock — they sit side by side, palette on the left; in a narrow panel — the side dock — the candidates come first, the palette below them, the transcript last. The rule is the same either way: nothing comes between the two dice cells and the first line of candidates, and at least five candidates are read without scrolling anything.</p>
+<p>The palette shows the two dice as they are entered; a click on them clears the roll, like <em>BACKSPACE</em>. A game opens with one die from each side: the higher one starts and plays both dice without having to enter them again; a tie is recorded as it stands and another opening is expected.</p>
+<p>As soon as the second die falls, every <strong>legal play</strong> of the roll is listed, ranked by the built-in engine, the first preselected and its arrows drawn on the board. The list gives the play, its equity and its error against the best one: transcribing means recognising the play one saw, not judging it — the <strong>Evaluation</strong> panel is there for that. This ranking is an evaluation: it is shown, it is never written to the library. When the engine is unavailable the plays are listed unranked and the list says so at its head.</p>
+<p>The <strong>wheel</strong> selects the next or previous candidate, over the list as well as over the board: the eye stays on the board and the arrows scroll past, which recognises a play faster than reading its notation. A click on a row selects it, a double-click validates it.</p>
 <p>The triangle of the twenty-one rolls sits under the two roll cells, beside the keyboard and not in its place: two digits remain twice as fast as a click, and the triangle is there for whoever transcribes with a hand on the mouse. One cell per roll, never two: 3-1 and 1-3 are the same roll.</p>
-<p>Clicking a point on the board leaves only the plays that start from it. This is the gesture for a play far down the list: reaching the twelfth candidate costs thirteen keystrokes, where the filter leaves only two or three. The filter changes nothing in the draft, it narrows the list on screen; the next roll lifts it.</p>
+<p>A click on a point of the board keeps only the plays that start from it. This is the gesture for the distant play: walking down to the twelfth candidate costs thirteen keys, where the filter leaves only two or three. The filter changes nothing in the draft, it shortens the list on screen; a chip at the head of the list recalls it and clears it, and the next roll clears it too.</p>
 <p>A move played on the board spares you reading the dice. As long as no die has been entered, a click on a checker then on its destination — or a drag from one to the other — plays the move on the board, constrained to the legal plays; the destinations the chosen checker offers light up. The two dice follow from the steps: playing 13/7 then 8/7 says 6-1 without a digit having been typed, and the action is recorded as soon as the move is complete. Backspace undoes the last step, a digit abandons the move and goes back to entering the dice, and a double-click off the board starts it again. When several rolls make the same move — a bear-off several dice cover, a die that cannot be played — nothing is recorded and the triangle leaves only those rolls clickable: the roll is never guessed in place of the person watching the game.</p>
-<p>An illegal move is transcribed as it was played. The « Free movement » button releases the board: the checkers move with nothing checked, and « This board is the move played » records the board obtained. The notation field beside it does the same from the keyboard: <code>13/7 8/7*</code>, <code>bar/22</code> or <code>6/off</code> are written and recorded with ENTER. Both ask for the dice of the roll first, an illegal move not saying which roll produced it. A move entered by either of these two paths that turns out to be legal stays an ordinary move — the comparison is on the board obtained, never on where the gesture came from; otherwise it is marked « illegal move » in the transcript, and the <code>.mat</code> export warns before writing the file, without ever refusing.</p>
-<p>Below the triangle, the row <strong>Double</strong>, <strong>Take</strong>, <strong>Pass</strong>, <strong>Resign</strong> brings the four cube gestures to the mouse. It says whose turn it is: the side on roll announces — double, resign — or the side opposite answers — take, pass; never all four at once, and a button whose gesture would answer nothing stays disabled. The keyboard, for its part, never refuses anything: a disabled button is a target that is not offered, not a forbidden gesture. “Resign” records nothing yet: the row becomes the three levels — single, gammon, backgammon — and “Cancel”, which takes up the ESC key. The cube drawn on the board is the second target of these gestures: a click on it offers a double. It does not answer an offer — take and pass are two symmetrical answers and live together in the row, one click each.</p>
-<p>Below the dice, a line states where the entry stands: the roll still correctable, the candidate chosen, the dance recorded on its own, the tie to be rolled again, the answer expected to a double, the level expected after a resignation, the correction in place, the play “to review” whose roll has changed, and the inconsistency the last action left behind.</p>
-<p>A game ends by a pass, by a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, times the value of the cube). The score, the Crawford game and the end of the match are then shown above the dice, and the opening of the next game is expected.</p>
-<p>The transcript takes the right half of the panel: one column per player, one row per turn, the cube action and the end of the game in the column of whoever acted. The cursor's cell is framed; moving the cursor brings the board back to the position of the action aimed at and lists its candidates, with the play that was recorded selected. An inconsistency (illegal move, double turn, impossible cube action, action past the end of the match, inconsistent dice, unrecorded play) decorates its cell and is named in a tooltip. An unrecorded play is what a <code>.mat</code> file read back can hold: gnubg writes <code>???</code> there when it did not keep the play that was made, the roll is known and the play is not, and putting the cursor on that cell offers the plays of that roll to fill it in. Games can be folded; the cursor's game is open. A collapsible pane shows the draft's exact <code>.mat</code> text, with a button to copy it.</p>
-<p>Right-clicking a cell opens that action's corrections — insert before, insert after, delete, change side — and brings the cursor onto it on the way; these are the same gestures as the correction bar and the keys, and the browser menu is suppressed there and nowhere else.</p>
-<p>The draft bar carries three buttons. “Save” (CTRL-ENTER) writes the match into the library: created the first time, replaced afterwards under the same identifier, and the analysis of the new positions alone starts at once, with its progress and its cancellation in the status bar. The draft bar states where it stands: never saved, saved so long ago, or modified since. “Export .mat” writes the match to a Jellyfish file, exactly as it was typed. “Close draft” deletes the draft after a confirmation; a match already saved stays in the library, final.</p>
+<p>An illegal move is transcribed as it was played. The <strong>✎</strong> button of the palette unfolds the two ways of doing it, in place of the triangle: they serve once per match where the triangle serves every turn. The "Free movement" button releases the board: checkers move without any check, and "This board is the move played" records the board reached. The notation field beside it does the same from the keyboard: <code>13/7 8/7*</code>, <code>bar/22</code> or <code>6/off</code> are typed and recorded with ENTER. Both require the dice of the roll to be entered first, since an illegal move does not say which roll produced it. A move entered through either of these two paths that happens to be legal stays an ordinary move — the comparison is made on the board reached, never on where the gesture came from; otherwise it is marked "illegal move" in the transcript, and the <code>.mat</code> export warns before writing the file, without ever refusing.</p>
+<p>On the dice line, the <strong>Double</strong>, <strong>Take</strong>, <strong>Pass</strong>, <strong>Resign</strong> row takes the four cube gestures to the mouse: they are, with the two dice, the five possible answers to a single question — what did the side on roll do? It says whose turn it is: the side on roll announces — double, resign — or the other side answers — take, pass; never all four at once, and a button whose gesture would answer nothing stays off. The keyboard, for its part, never refuses anything: a button that is off is a target one does not offer, not a forbidden gesture. "Resign" records nothing yet: the row becomes the three levels — single, gammon, backgammon — and "Cancel", which doubles the ESCAPE key. The cube drawn on the board is the second target of these gestures: a click on it offers a double. Facing an offer it does not answer — take and pass are two symmetric answers and live together in the row, one click each.</p>
+<p>The <strong>status bar</strong> says what the draft expects, in a word: the dance recorded on its own, the tie to roll again, the answer expected to a double, the level expected after a resignation, the correction in place, the move "to review" whose roll has changed. It also answers there the gestures that have nothing to do — "nothing to undo", "no action under the cursor" — for a second and a half. The inconsistency an action left behind it is flagged at the head of the transcript instead, where the offending cell is.</p>
+<p>A game ends with a pass, with a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, multiplied by the value of the cube). The score, the Crawford game and the end of the match then appear in the match bar, and the opening of the next game is expected.</p>
+<p>The transcript occupies the right half of the panel: one column per player, one row per turn, the cube action and the end of the game in the column of whoever acted. The cursor's cell is framed; moving the cursor brings the board back to the position of the action aimed at and lists its candidates, with the play that was recorded selected. An inconsistency (illegal move, double turn, impossible cube action, action past the end of the match, inconsistent dice, unrecorded move) decorates its cell and is named in a tooltip. The unrecorded move is the case of a <code>.mat</code> file read back: gnubg writes <code>???</code> there when it did not keep the play, the roll is known and the play is not, and putting the cursor on that cell offers the plays of that roll to fill it in. Games fold away; the cursor's is open.</p>
+<p>A right click on a cell opens the corrections of that action — insert before, insert after, delete, change side — and brings the cursor onto it on the way; these are the same gestures as the <em>i</em>, <em>a</em>, <em>x</em> and <em>s</em> keys, and the browser menu is suppressed only there. They have no buttons elsewhere: a button acting on "the action under the cursor" would aim at a cell one may not see, where the right click names its own.</p>
+<p>The draft bar carries the gestures that take the draft out of itself. "<strong>Create the match</strong>" (CTRL-ENTER) writes it into the library, and then becomes "Update match #<em>n</em>": the match is replaced under the same id, and the analysis of the new positions only starts at once, with its progress and its cancellation in the status bar. Beside it, the bar says where that match stands — no match, up to date, or behind the draft. It says nothing about the safety of the draft itself: it is written to the library after every action, there is nothing to watch.</p>
+<p>"<strong>.mat text</strong>" opens the Jellyfish file as it would be written, in a window wide enough for its columns to stay aligned, with a button to copy it. "<strong>Export .mat</strong>" writes that same file to disk. "<strong>Close the draft</strong>" deletes it after confirmation; a match already created stays in the library, for good. The two arrows <strong>↶</strong> and <strong>↷</strong> undo and redo, like <em>CTRL-Z</em> and <em>CTRL-SHIFT-Z</em>.</p>
 <p>If the analysis of a transcribed match was interrupted — the application closed while the batch was running — the status bar says so the next time the database is opened and offers to finish it. Nothing is kept about that interruption: the offer comes back for as long as positions remain to be analysed, and the batch that restarts covers only that match, never the whole library.</p>
 <p>A draft carrying inconsistencies is saved all the same, after a warning: nothing is refused. An illegal move is exported as it was played, with the warning that gnubg and XG will flag it (“Invalid move”) and diverge from there.</p>
 <p>The <strong>Matches</strong> panel recalls every draft in progress above the list of matches: the “Draft in progress” line opens the Transcription tab.</p>
@@ -1354,7 +1358,7 @@ export default {
 </tbody>
 </table>
 <h3>Transcription Panel</h3>
-<p>The panel takes these keys while it has focus and a draft is open.</p>
+<p>The panel takes these keys while it has the focus. In front of the list of drafts it already takes a few, so that picking up yesterday's work does not call for the mouse.</p>
 <table>
 <thead>
 <tr>
@@ -1363,6 +1367,18 @@ export default {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>DOWN, j / UP, k (list of drafts)</td>
+<td>Walk the drafts. The first is highlighted on opening: it is the most recently modified one.</td>
+</tr>
+<tr>
+<td>ENTER (list of drafts)</td>
+<td>Open the highlighted draft.</td>
+</tr>
+<tr>
+<td>n (list of drafts)</td>
+<td>Open the creation form.</td>
+</tr>
 <tr>
 <td>Click</td>
 <td>Open a draft from the list.</td>
@@ -1373,7 +1389,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (roll entered)</td>
-<td>Start the roll again as long as no candidate has been chosen; once one is chosen, record the play and open the next roll.</td>
+<td>Validate the selected move and open the next roll. On an action being reviewed, where the cursor sits on an action already written, the digit restarts the roll of that action instead of validating.</td>
 </tr>
 <tr>
 <td>DOWN, j</td>
@@ -1384,8 +1400,16 @@ export default {
 <td>Select the previous candidate.</td>
 </tr>
 <tr>
+<td>Wheel</td>
+<td>Select the next or previous candidate, over the list as well as over the board: the eye stays on the board and the arrows scroll past.</td>
+</tr>
+<tr>
 <td>Click (on a row)</td>
 <td>Select that candidate.</td>
+</tr>
+<tr>
+<td>Double-click (on a row)</td>
+<td>Validate that candidate.</td>
 </tr>
 <tr>
 <td>Click (on the roll triangle)</td>
@@ -1409,7 +1433,11 @@ export default {
 </tr>
 <tr>
 <td>BACKSPACE</td>
-<td>Clear both entered dice.</td>
+<td>Clear the two dice entered. This is the way back to a misread roll, since a digit validates.</td>
+</tr>
+<tr>
+<td>Click (on the dice cells)</td>
+<td>Clear the two dice entered, like BACKSPACE.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1453,7 +1481,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-ENTER</td>
-<td>Save the draft as a match.</td>
+<td>Create the match from the draft, or update it if it already exists.</td>
 </tr>
 <tr>
 <td>i</td>
@@ -1482,6 +1510,8 @@ export default {
 </tbody>
 </table>
 <p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
+<p>The digit has one meaning: <strong>it starts a roll where the cursor is</strong>. At the end of the document there is nothing under the cursor, so it validates the selected move before opening the next roll — the best move played therefore costs the two dice and nothing more, its validation being carried by the first key of the following turn. On an action already written, which one came back to correct, there is something under the cursor: the digit restarts the roll of that action, in place. The difference is visible on screen, the cell aimed at being framed in the transcript.</p>
+<p>A gesture with nothing to do says so, once, in the status bar: "nothing to undo" on an empty stack, "no action under the cursor" at the end of the document. The sentence clears itself and gives the place back to the expected action.</p>
 <p>Moving the cursor back onto an action and typing again corrects it <strong>in place</strong>: validating replaces the action, and the cursor returns where it was. If the dice are corrected and the recorded play is still a legal play of the new roll, it is kept; otherwise the first candidate of the new roll is offered and the play is flagged “to review” until it is validated. Moving the cursor forward or back after changing something records the correction on the way.</p>
 <p>Nothing is refused and nothing is deleted: inserting an action of the same side as its neighbour creates a double turn, deleting an action may create another one, changing a side may make the plays that follow illegal. These inconsistencies are marked in the transcript, never corrected on your behalf, and the cursor lands on the first of them after every gesture. The undo stack lives in memory: it is lost when the draft is closed.</p>
 <p>The panel itself — the list of drafts, the creation, the entry, the transcript and the draft bar — is described in Transcription Panel.</p>

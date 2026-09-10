@@ -78,6 +78,7 @@
     import { positionStore } from '../stores/positionStore.js';
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { isBareLetter } from '../utils/keys.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
     import {
         PHASE,
@@ -90,6 +91,7 @@
         enterDicePair,
         enterSingleDie,
         cubeGesture,
+        selectionDelta,
         beginResign,
         resignWithLevel,
         cancelResign,
@@ -111,12 +113,19 @@
         transcriptionPointFilterStore,
         transcriptionCandidateStepsStore,
         transcriptionCubeRequestStore,
+        transcriptionWheelStore,
+        transcriptionInfoStore,
+        transcriptionPromptStore,
         setTranscription,
         clearTranscription,
         resetTranscriptionKeys,
-        resetTranscriptionPointFilter
+        resetTranscriptionPointFilter,
+        noticeTranscription,
+        clearTranscriptionNotice
     } from '../stores/transcriptionStore.js';
+    import Modal from './Modal.svelte';
     import { filterByPoints } from '../services/transcriptionFilter.js';
+    import { writeTextToClipboard } from '../services/clipboardService.js';
     import { quizPlayStore } from '../stores/quizPlayStore.js';
     import { ROLLS, newBoardPlay, newFreePlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
@@ -150,6 +159,11 @@
     let annotated = $derived(draft?.annotated ?? null);
     let keys = $derived($transcriptionKeyStore);
     let expects = $derived(annotated?.next?.expects ?? '');
+    // Le Cursor est-il sur une Action existante que la saisie remplacerait ?
+    // C'est le discriminant de la touche chiffrée (ADR-0048 décision 1) : en
+    // bout de document elle valide, ici elle recommence le jet sur place.
+    let replacing = $derived(annotated?.entry?.replacing === true);
+    let keyContext = $derived({ expects, replacing });
 
     // A length of 0 is a money session, and money is the only case where the
     // session's rules are asked for (ADR-0028: rules of the session, posted on
@@ -293,6 +307,15 @@
     });
 
     let saveState = $derived(draftSaveState(draft, $transcriptionSaveStore, nowTick));
+
+    // ADR-0048 décision 12 : le bouton NOMME le Match. « Enregistrer » portait
+    // deux concepts en un mot — le brouillon est écrit après chaque Action, le
+    // Match est matérialisé par ce bouton — et l'interface montrait l'alarmant
+    // (« jamais enregistré »), ce qui fait matérialiser le Match et lancer un lot
+    // d'analyse 2-ply par prudence, contre un risque inexistant. L'info-bulle
+    // disait déjà juste, à l'endroit que personne ne lit.
+    let savedMatchId = $derived(annotated?.document?.match_id || draft?.match_id || 0);
+    let saveLabel = $derived(savedMatchId ? $t('transcription.updateMatch', { id: savedMatchId }) : $t('transcription.createMatch'));
 
     // ── the gestures ─────────────────────────────────────────────────────
     //
@@ -636,19 +659,96 @@
             panelEl?.focus({ preventScroll: true });
             return;
         }
-        applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, { expects }));
+        applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
     }
 
     /** Une case de la rangée des six : le dé d'un camp, à l'ouverture. */
     function pickDie(die) {
         if (!draft) return;
-        applyMouseDice(enterSingleDie(get(transcriptionKeyStore), die, { expects }));
+        applyMouseDice(enterSingleDie(get(transcriptionKeyStore), die, keyContext));
     }
 
     function chooseCandidate(index) {
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
         run(next.commands);
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    // ── R3 : le chemin souris complet (ADR-0048 décision 11) ─────────────
+    //
+    // Le clavier reste la voie par défaut — les dés y sont mesurés deux fois
+    // plus rapides — mais chaque geste doit être ATTEIGNABLE à la souris. Il
+    // manquait : parcourir la liste par pas (il fallait cliquer une ligne
+    // précise, donc l'avoir lue), valider le dernier coup d'une partie, annuler,
+    // et effacer le jet en cours.
+
+    /**
+     * Un cran de molette = un pas dans la liste, l'exact équivalent de `j`/`k`.
+     *
+     * Posé sur la liste ET sur le plateau (App.svelte laisse passer la molette
+     * en mode TRANSCRIBE au lieu de faire naviguer les positions) : l'œil reste
+     * sur le plateau, les flèches du candidat défilent, et l'on reconnaît le
+     * coup vu sur la vidéo par son IMAGE au lieu de traduire « 13/10 13/11 » de
+     * tête. La liste suit la sélection ; elle ne défile pas d'elle-même.
+     */
+    function stepCandidate(delta) {
+        const state = get(transcriptionKeyStore);
+        if (state.candidateCount <= 0) return false;
+        const next = selectCandidate(state, state.selected + delta);
+        if (next.state.selected === state.selected && state.phase === next.state.phase) return true;
+        transcriptionKeyStore.set(next.state);
+        run(next.commands);
+        return true;
+    }
+
+    // Le cran donné au-dessus du PLATEAU, que le dispatcher de App.svelte pose
+    // dans un magasin — le plateau ne connaît pas la liste, et le panneau ne
+    // reçoit pas ses événements. Même chemin que `Ctrl+Z` et que le videau
+    // cliqué, pour la même raison.
+    $effect(() => {
+        const wanted = $transcriptionWheelStore;
+        if (!wanted) return;
+        transcriptionWheelStore.set(null);
+        if (!draft || $activeTabStore !== 'transcription') return;
+        stepCandidate(wanted.delta);
+    });
+
+    function wheelCandidates(event) {
+        if (!draft || !visible.length) return;
+        const delta = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
+        if (delta === 0) return;
+        event.preventDefault();
+        stepCandidate(delta);
+    }
+
+    /**
+     * Double-clic : valider. Le simple clic sélectionne — les flèches du plateau
+     * suivent, et c'est là que l'on reconnaît le coup. C'est le seul chemin
+     * souris qui couvre le dernier coup d'une partie, qui n'a pas de jet suivant
+     * pour porter sa validation ; au clavier, c'est `Entrée`.
+     */
+    function commitCandidate(index) {
+        if (!draft) return;
+        const next = selectCandidate(get(transcriptionKeyStore), index);
+        transcriptionKeyStore.set(initialKeyState());
+        ranked = [];
+        unranked = false;
+        danced = false;
+        resetTranscriptionPointFilter();
+        run([...next.commands, { kind: COMMAND.VALIDATE }]).then(settleCandidates);
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    /** Un clic sur les cases du jet les efface : l'équivalent de Retour arrière. */
+    function clearDice() {
+        if (!draft) return;
+        const state = get(transcriptionKeyStore);
+        if (state.phase === PHASE.DICE) {
+            noticeTranscription('transcription.notice.noDice');
+            return;
+        }
+        applyResult({ state: { ...initialKeyState(), tie: state.tie }, commands: [{ kind: COMMAND.CLEAR }] });
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -753,7 +853,7 @@
     // anything typed in a field.
 
     function handleKeyDown(event) {
-        if (!draft) return;
+        if (!draft) return handleListKeyDown(event);
         // Ctrl+Entrée enregistre. Ctrl+S ne peut pas : le dispatcher global le
         // tient pour « sauver la position » (keyboardService.js), et
         // isAlwaysGlobal renvoie vrai pour tout combo Ctrl — ce qui veut aussi
@@ -779,11 +879,67 @@
             return;
         }
 
-        const result = pressKey(keys, event, { expects });
+        const result = pressKey(keys, event, keyContext);
+        // Retour arrière sur un jet vide est PRIS (le plateau appartient au
+        // brouillon) mais ne fait rien : il répond, comme toute la famille.
+        if (result.handled && event.key === 'Backspace' && !result.commands.length && keys.phase === PHASE.DICE) {
+            event.preventDefault();
+            event.stopPropagation();
+            noticeTranscription('transcription.notice.noDice');
+            return;
+        }
         if (!result.handled) return;
         event.preventDefault();
         event.stopPropagation();
         applyResult(result);
+    }
+
+    // ── la porte d'entrée, au clavier (ADR-0048 décision 10) ─────────────
+    //
+    // `handleKeyDown` sortait sur `if (!draft) return;` : la liste ne traitait
+    // AUCUNE touche, alors que le docstring du panneau pose l'objectif inverse —
+    // « a match is typed without ever reaching for the mouse, and a first
+    // keystroke that landed nowhere would break the count before it starts ».
+    // Reprendre le brouillon de la veille, geste de chaque session après la
+    // première, n'avait aucun chemin clavier du tout.
+    //
+    // `ListTranscriptions` rend les brouillons du plus récemment modifié au plus
+    // ancien : la première ligne surlignée est donc celui en cours, et
+    // `Ctrl+Maj+T` `Entrée` le rouvre en deux touches.
+
+    let listIndex = $state(0);
+
+    // La liste change (autre bibliothèque, brouillon fermé) : le surlignage
+    // retombe sur la ligne du haut plutôt que sur un rang qui n'existe plus.
+    $effect(() => {
+        const rows = $transcriptionListStore;
+        if (listIndex >= rows.length) listIndex = 0;
+    });
+
+    function handleListKeyDown(event) {
+        if ($activeTabStore !== 'transcription') return;
+        if (panelKeyGuard(event)) return;
+        if (!panelEl?.contains(document.activeElement)) return;
+
+        const rows = $transcriptionListStore;
+        const delta = selectionDelta(event);
+        if (delta !== 0 && rows.length) {
+            event.preventDefault();
+            event.stopPropagation();
+            listIndex = Math.min(Math.max(listIndex + delta, 0), rows.length - 1);
+            return;
+        }
+        if (event.key === 'Enter' && !showForm && rows[listIndex]) {
+            event.preventDefault();
+            event.stopPropagation();
+            openDraft(rows[listIndex]);
+            return;
+        }
+        if (isBareLetter(event, 'n') && !showForm) {
+            event.preventDefault();
+            event.stopPropagation();
+            openForm();
+        }
     }
 
     /**
@@ -849,7 +1005,21 @@
      */
     function runCommand(kind) {
         if (!draft) return;
-        if ((kind === COMMAND.DELETE || kind === COMMAND.FLIP_SIDE) && !onAction) return;
+        // ADR-0048 décision 9 : un geste sans effet RÉPOND, une fois, dans la
+        // barre d'état. Il se taisait, et le seul de la famille qui disait
+        // quelque chose était un bouton grisé — celui que la décision 3 retire.
+        if ((kind === COMMAND.DELETE || kind === COMMAND.FLIP_SIDE) && !onAction) {
+            noticeTranscription('transcription.notice.noAction');
+            return;
+        }
+        if (kind === COMMAND.UNDO && !history.canUndo) {
+            noticeTranscription('transcription.notice.nothingToUndo');
+            return;
+        }
+        if (kind === COMMAND.REDO && !history.canRedo) {
+            noticeTranscription('transcription.notice.nothingToRedo');
+            return;
+        }
         resetTranscriptionKeys();
         ranked = [];
         unranked = false;
@@ -875,6 +1045,8 @@
 
     onDestroy(() => {
         document.removeEventListener('keydown', handleKeyDown);
+        clearTimeout(matCopyTimer);
+        clearTranscriptionNotice();
         selectedMoveStore.set(null);
         // Le plateau lit ces deux magasins pour décider si un clic le concerne :
         // un panneau démonté ne doit plus rien filtrer.
@@ -889,12 +1061,68 @@
         transcriptionCubeRequestStore.set(null);
     });
 
-    // The panel takes the keyboard as soon as a draft is open: the whole point
-    // of the design is that a match is typed without ever reaching for the
-    // mouse, and a first keystroke that landed nowhere would break the count
-    // before it starts.
+    // The panel takes the keyboard as soon as the TAB is entered — draft open or
+    // draft list — because the whole point of the design is that a match is
+    // typed without ever reaching for the mouse, and a first keystroke that
+    // landed nowhere would break the count before it starts. Until ADR-0048 the
+    // list was exactly such a keystroke (decision 10).
     $effect(() => {
-        if (draft) panelEl?.focus({ preventScroll: true });
+        void draft;
+        if ($activeTabStore === 'transcription') panelEl?.focus({ preventScroll: true });
+    });
+
+    // ── ce que les DEUX BARRES disent (ADR-0048 décision 2) ──────────────
+    //
+    // Le panneau POSE ces deux faits et ne les dessine plus. `ux.md` §5 les
+    // plaçait déjà dehors — l'état dans la barre de match, au-dessus du plateau
+    // donc lu au moment où l'œil y est ; l'Action attendue dans la barre d'état
+    // — et ce câblage manquait. Les sept pastilles qui les remplaçaient
+    // coûtaient 66 des 354 px qui repoussaient la liste des candidats hors de
+    // l'écran.
+
+    $effect(() => {
+        if (!draft || !annotated) {
+            transcriptionInfoStore.set(null);
+            return;
+        }
+        transcriptionInfoStore.set({
+            lengthKey: matchLength === 0 ? 'transcription.money' : 'transcription.points',
+            lengthParams: { n: matchLength },
+            score: matchLength > 0 ? [score[0], score[1]] : null,
+            crawford: annotated?.next?.crawford === true,
+            gameNumber,
+            cubeKey: cubeLabelKey.key,
+            cubeParams: cubeLabelKey.params,
+            onRoll: playerName(sideOnRoll),
+            player1: playerName(0),
+            player2: playerName(1)
+        });
+    });
+
+    /**
+     * L'Action attendue en un mot. Un ÉTAT : il y en a toujours exactement un
+     * tant qu'un brouillon est ouvert.
+     *
+     * Les six lignes d'instruction permanentes qui l'accompagnaient sous les dés
+     * ne sont plus nulle part dans le panneau (décision 8) : une instruction
+     * permanente est l'aveu qu'un geste ne se devine pas, et sa place est
+     * `raccourcis.rst` et l'aide qui en est engendrée, pas 13 px lus 250 fois.
+     */
+    let promptState = $derived.by(() => {
+        if (!draft) return null;
+        if (matchOver) return { key: 'transcription.matchOver', params: { player: playerName(matchWinner), a: score[0], b: score[1] } };
+        if (keys.phase === PHASE.RESIGN) return { key: 'transcription.resignPrompt', params: { player: playerName(sideOnRoll) } };
+        if (awaitingAnswer) return { key: 'transcription.answerPrompt', params: { player: playerName(sideOnRoll) } };
+        if (underReview) return { key: 'transcription.reviewHint', params: {} };
+        if (correcting) return { key: 'transcription.correcting', params: {} };
+        if (keys.tie) return { key: 'transcription.tie', params: {} };
+        if (danced) return { key: 'transcription.dance', params: {} };
+        if (expects === 'opening') return { key: 'transcription.openingPrompt', params: {} };
+        return { key: 'transcription.rollPrompt', params: { player: playerName(sideOnRoll) } };
+    });
+
+    $effect(() => {
+        transcriptionPromptStore.set(promptState);
     });
 
     // ── the board ────────────────────────────────────────────────────────
@@ -964,7 +1192,6 @@
     }
 
     let matchLength = $derived(annotated?.document?.header?.match_length ?? 0);
-    let lengthLabel = $derived(matchLength === 0 ? $t('transcription.money') : $t('transcription.points', { n: matchLength }));
     let score = $derived(annotated?.score ?? [0, 0]);
     let sideOnRoll = $derived(annotated?.next?.side ?? 0);
 
@@ -985,11 +1212,13 @@
     // While a double waits for its answer, next.position carries the cube AT THE
     // LEVEL OFFERED, which is the one the answerer weighs (fonctionnel.md §1.2).
     let awaitingAnswer = $derived(expects === 'take');
-    let cubeLabel = $derived.by(() => {
+    // La CLÉ et ses paramètres, non la phrase : c'est la barre de match qui la
+    // traduit, et deux traductions du même fait finiraient par diverger.
+    let cubeLabelKey = $derived.by(() => {
         const v = 1 << (cube.value ?? 0);
-        if (awaitingAnswer) return $t('transcription.doubleOffered', { v });
-        if (cube.owner !== 0 && cube.owner !== 1) return $t('transcription.cubeCentred', { v });
-        return $t('transcription.cubeOwned', { v, player: playerName(cube.owner) });
+        if (awaitingAnswer) return { key: 'transcription.doubleOffered', params: { v } };
+        if (cube.owner !== 0 && cube.owner !== 1) return { key: 'transcription.cubeCentred', params: { v } };
+        return { key: 'transcription.cubeOwned', params: { v, player: playerName(cube.owner) } };
     });
 
     let matchOver = $derived(annotated?.finished === true);
@@ -1114,6 +1343,17 @@
 
     let freeMode = $state(false);
     let notationText = $state('');
+    // Le secours de saisie à la main est REPLIÉ par défaut (ADR-0048 décision 7).
+    // `handEntryOpen` était vrai à chaque tour de pions — 250 fois par match pour
+    // un usage attendu d'une fois — et ses 29 px de haut faisaient partie des
+    // 49 px qui empêchaient la palette de tenir dans un dock de 280 px.
+    let handOpen = $state(false);
+
+    // Replier le secours rend le plateau à son mode contraint : laisser le
+    // déplacement libre armé derrière un volet fermé serait un piège.
+    $effect(() => {
+        if (!handOpen && freeMode) freeMode = false;
+    });
     // Verrou d'enregistrement : il désarme le plateau pendant les quatre gestes
     // qui partent au moteur, sinon chaque réponse ré-armerait le coup — 21
     // appels à LegalMoves par geste, et un plateau qui se rejoue sous la souris.
@@ -1122,6 +1362,8 @@
     let boardPlayGeneration = 0;
 
     let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && !freeMode && keys.phase === PHASE.DICE && expects === 'checker');
+    // Le coup joué au plateau reste possible volet fermé : c'est le PLATEAU qui
+    // le porte, pas ce volet, qui n'offre que la bascule libre et la notation.
 
     /** L'union des coups légaux des 21 jets, demandée en une salve. */
     async function loadBoardPlay(pos, generation) {
@@ -1176,8 +1418,10 @@
         return new Set(choosableRolls(play));
     });
 
-    let boardPlaySteps = $derived($quizPlayStore && !$quizPlayStore.free ? $quizPlayStore.steps.length : 0);
-    let boardPlayAmbiguous = $derived((rollsAllowed?.size ?? 0) > 1);
+    // Ce que « n pas joués » et « plusieurs jets produisent ce coup » disaient
+    // en prose est déjà DIT par les deux objets concernés (ADR-0048 décision 8) :
+    // les pions déplacés sur le plateau, et le triangle, qui n'allume que les
+    // jets encore possibles (`rollsAllowed`). Deux phrases pour ce qu'on voit.
     let freeSteps = $derived($quizPlayStore?.free ? $quizPlayStore.steps.length : 0);
     let diceEntered = $derived(keys.dice[0] > 0 && keys.dice[1] > 0);
     // Les deux chemins du coup illégal ne s'ouvrent que là où un coup de pions
@@ -1252,15 +1496,33 @@
         quizPlayStore.update((play) => undoBoardStep(play));
     }
 
-    // ── the .mat text ────────────────────────────────────────────────────
+    // ── le texte .mat, en MODALE (ADR-0048 décision 6) ───────────────────
     //
-    // Rendered by the SAME renderer the library's matches go through
-    // (TranscriptionMAT → transcript.MatchParts → ingest.RenderMAT): the pane
-    // shows the file that would be written, not a second opinion about it.
-    // It is fetched only while the pane is unfolded, and again at every change
-    // of the document, so a folded pane costs no round trip per keystroke.
+    // Rendu par le MÊME moteur que les matchs de la bibliothèque
+    // (TranscriptionMAT → transcript.MatchParts → ingest.RenderMAT) : la modale
+    // montre le fichier qui serait écrit, non un second avis sur lui. Il n'est
+    // demandé que pendant qu'elle est ouverte, et à chaque changement du
+    // document : fermée, elle ne coûte aucun aller-retour par frappe.
+    //
+    // Pourquoi une modale et non le volet qu'elle remplace, sous le Transcript :
+    // le `.mat` est de l'ASCII ALIGNÉ EN COLONNES — c'est sa seule raison d'être
+    // regardé — et sa ligne la plus longue fait 62 caractères, ~409 px en
+    // monospace 11 px, là où la colonne offrait 320. Un `.mat` désaligné n'est
+    // pas une version dégradée du `.mat`, c'est autre chose. Le volet vivait de
+    // surcroît dans `TranscriptView`, dont le docstring promet qu'il ne tient
+    // rien : il y portait un presse-papiers, un minuteur et un état propres au
+    // brouillon, ce qui l'empêchait d'être monté un jour sur un match stocké.
     let matOpen = $state(false);
     let matText = $state('');
+    let matCopied = $state(false);
+    let matCopyTimer = null;
+
+    async function copyMat() {
+        await writeTextToClipboard(matText);
+        matCopied = true;
+        clearTimeout(matCopyTimer);
+        matCopyTimer = setTimeout(() => (matCopied = false), 1500);
+    }
 
     $effect(() => {
         const id = draft?.id;
@@ -1299,7 +1561,8 @@
                         }}
                     >
                         <label for="transcriptionLength">{$t('transcription.matchLength')}</label>
-                        <input id="transcriptionLength" class="length-input" type="text" inputmode="numeric" bind:value={formLength} />
+                        <!-- svelte-ignore a11y_autofocus -->
+                        <input id="transcriptionLength" class="length-input" type="text" inputmode="numeric" autofocus bind:value={formLength} />
                         <span class="hint">{$t('transcription.moneyHint')}</span>
                         {#if formIsMoney}
                             <label class="rule"><input type="checkbox" bind:checked={formJacoby} /> {$t('transcription.jacoby')}</label>
@@ -1315,28 +1578,29 @@
                 <td>{playersOf(row)}</td>
                 <td class="narrow-col align-right">{lengthOf(row)}</td>
                 <td class="narrow-col align-right">{row.action_count < 0 ? '—' : row.action_count}</td>
-                <td class="narrow-col">{row.match_id ? `#${row.match_id}` : $t('transcription.notSaved')}</td>
+                <td class="narrow-col">{row.match_id ? `#${row.match_id}` : $t('transcription.noMatch')}</td>
             {/snippet}
         </PanelTable>
     {:else}
         <div class="draft">
+            <!-- La barre du brouillon : les gestes qui le font SORTIR de lui-même,
+                 et rien d'autre (ADR-0048 décisions 2, 3 et 11). Les sept pastilles
+                 d'état sont parties dans la barre de match, les six boutons de
+                 correction dans le clic droit du Transcript ; il reste ce qui n'a
+                 pas d'autre domicile, plus l'état DU MATCH — le seul qui réponde à
+                 une question qu'on se pose en regardant ce bouton — et les deux
+                 flèches, qui sont le chemin souris vers l'annulation (R3). -->
             <div class="draft-bar">
                 <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
-                <span class="badge">{lengthLabel}</span>
-                {#if matchLength > 0}
-                    <span class="badge">{$t('transcription.score', { a: score[0], b: score[1] })}</span>
-                {/if}
-                {#if annotated?.next?.crawford}
-                    <span class="badge">{$t('transcription.crawford')}</span>
-                {/if}
-                <span class="badge">{$t('transcription.gameNumber', { n: gameNumber })}</span>
-                <span class="badge">{cubeLabel}</span>
-                <span class="badge on-roll">{playerName(sideOnRoll)}</span>
-                <span class="badge save-state">{$t(saveState.key, saveState.params)}</span>
+                <span class="save-state">{$t(saveState.key, saveState.params)}</span>
+                <span class="bar-gap"></span>
+                <button class="icon-btn" onclick={() => runCommand(COMMAND.UNDO)} title={$t('transcription.undoTooltip')} aria-label={$t('transcription.undo')}>↶</button>
+                <button class="icon-btn" onclick={() => runCommand(COMMAND.REDO)} title={$t('transcription.redoTooltip')} aria-label={$t('transcription.redo')}>↷</button>
                 <button class="new-btn" onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}>{$t('transcription.metadata')}</button>
-                <button class="new-btn" onclick={handleSave} disabled={busy} title={$t('transcription.saveTooltip')}>{$t('transcription.save')}</button>
+                <button class="new-btn" onclick={() => (matOpen = true)} title={$t('transcription.matModalTooltip')}>{$t('transcription.matModal')}</button>
                 <button class="new-btn" onclick={handleExport} disabled={busy} title={$t('transcription.exportMatTooltip')}>{$t('transcription.exportMat')}</button>
-                <button class="new-btn" onclick={handleClose} disabled={busy} title={$t('transcription.closeDraftTooltip')}>{$t('transcription.closeDraft')}</button>
+                <button class="primary-btn" onclick={handleSave} disabled={busy} title={$t('transcription.saveTooltip')}>{saveLabel}</button>
+                <button class="danger-btn" onclick={handleClose} disabled={busy} title={$t('transcription.closeDraftTooltip')}>{$t('transcription.closeDraft')}</button>
             </div>
 
             {#if metaOpen}
@@ -1347,64 +1611,96 @@
                 <TranscriptionMetadata header={annotated?.document?.header ?? {}} apply={sendGesture} {busy} />
             {/if}
 
-            {#if matchOver}
-                <p class="hint">{$t('transcription.matchOver', { player: playerName(matchWinner), a: score[0], b: score[1] })}</p>
-            {/if}
-
-            <div class="edit-bar">
-                <button class="edit-btn" onclick={() => runCommand(COMMAND.INSERT_BEFORE)} title={$t('transcription.insertBeforeTooltip')}>{$t('transcription.insertBefore')}</button>
-                <button class="edit-btn" onclick={() => runCommand(COMMAND.INSERT_AFTER)} title={$t('transcription.insertAfterTooltip')}>{$t('transcription.insertAfter')}</button>
-                <button class="edit-btn" onclick={() => runCommand(COMMAND.DELETE)} disabled={!onAction} title={$t('transcription.deleteTooltip')}>{$t('transcription.delete')}</button>
-                <button class="edit-btn" onclick={() => runCommand(COMMAND.FLIP_SIDE)} disabled={!onAction} title={$t('transcription.flipSideTooltip')}>{$t('transcription.flipSide')}</button>
-                <button class="edit-btn" onclick={() => runCommand(COMMAND.UNDO)} disabled={!history.canUndo} title={$t('transcription.undoTooltip')}>{$t('transcription.undo')}</button>
-                <button class="edit-btn" onclick={() => runCommand(COMMAND.REDO)} disabled={!history.canRedo} title={$t('transcription.redoTooltip')}>{$t('transcription.redo')}</button>
-            </div>
-
+            <!-- Trois régions, et l'ordre du DOM est celui de la boîte ÉTROITE :
+                 candidats, palette, Transcript. En boîte large la palette passe
+                 première par `order` (ADR-0048 décision 5). L'invariant tient
+                 dans les deux : rien ne s'intercale entre les cases du jet et la
+                 première ligne de candidats. -->
             <div class="draft-body">
-                <div class="entry-col">
-                    <div class="entry">
-                        <span class="entry-label">
-                            {#if keys.phase === PHASE.RESIGN}
-                                {$t('transcription.resignPrompt', { player: playerName(sideOnRoll) })}
-                            {:else if awaitingAnswer}
-                                {$t('transcription.answerPrompt', { player: playerName(sideOnRoll) })}
-                            {:else if expects === 'opening'}
-                                {$t('transcription.openingPrompt')}
-                            {:else}
-                                {$t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
-                            {/if}
-                        </span>
+                <div class="candidates-col">
+                    {#if unranked && visible.length}
+                        <!-- R2 : ce message parle de LA LISTE — le classement 0-ply
+                             n'a pas abouti, l'ordre est celui du générateur — donc
+                             il habite son en-tête, et non la pile de prose sous les
+                             dés d'où il vient. -->
+                        <div class="list-head">
+                            <span class="list-note">{$t('transcription.unranked')}</span>
+                        </div>
+                    {/if}
+                    {#if $transcriptionPointFilterStore.length}
+                        <!-- Le filtre est un état d'AFFICHAGE (T2.2), jamais écrit
+                             dans le document. En PUCE et non en phrase : elle
+                             annonçait le filtre sans dire comment en sortir. -->
+                        <div class="list-head">
+                            <button class="chip" onclick={resetTranscriptionPointFilter} title={$t('transcription.pointFilterClear')}>
+                                {$transcriptionPointFilterStore.join(', ')} · {visible.length} ✕
+                            </button>
+                        </div>
+                    {/if}
+                    {#if visible.length}
+                        {#if unranked}
+                            <ol class="plain-candidates" data-testid="transcription-candidates">
+                                {#each visible as row, index (row.gen)}
+                                    <li>
+                                        <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)} ondblclick={() => commitCandidate(index)}
+                                            >{row.move.move}</button
+                                        >
+                                    </li>
+                                {/each}
+                            </ol>
+                        {:else}
+                            <!-- La molette fait un pas dans la liste : l'exact
+                                 équivalent de `j`/`k` (R3, décision 11). -->
+                            <div class="candidates" data-testid="transcription-candidates" role="listbox" tabindex="-1" aria-label={$t('transcription.candidatesLabel')} onwheel={wheelCandidates}>
+                                <CandidateMovesTable
+                                    moves={rankedMoves}
+                                    selectedMove={$selectedMoveStore}
+                                    onRowClick={(move) => chooseCandidate(rankedMoves.indexOf(move))}
+                                    onRowDblClick={(move) => commitCandidate(rankedMoves.indexOf(move))}
+                                    showProvenance={false}
+                                    baseline={null}
+                                    projection="identify"
+                                    {isMoney}
+                                />
+                            </div>
+                        {/if}
+                    {/if}
+                </div>
+
+                <div class="palette-col" data-testid="transcription-palette">
+                    <!-- Les cinq réponses possibles à une seule question — « qu'a
+                         fait le camp au trait ? » — sur une ligne : les deux dés,
+                         et les quatre gestes de videau. Puis le triangle dessous,
+                         sous les dés qu'il double (décision 7). -->
+                    <div class="entry-row" data-testid="transcription-dice">
                         {#if !awaitingAnswer && keys.phase !== PHASE.RESIGN}
-                            <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
-                            <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
+                            <!-- Cliquables : l'équivalent souris de Retour arrière (R3). -->
+                            <button class="die" class:filled={keys.dice[0] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
+                                >{dieCells[0]}</button
+                            >
+                            <button class="die" class:filled={keys.dice[1] > 0} onclick={clearDice} title={$t('transcription.clearDice')} aria-label={$t('transcription.clearDice')}
+                                >{dieCells[1]}</button
+                            >
+                        {/if}
+                        {#if handEntryOpen}
+                            <button
+                                class="icon-btn"
+                                class:active={handOpen}
+                                onclick={() => (handOpen = !handOpen)}
+                                title={$t('transcription.handEntryTooltip')}
+                                aria-label={$t('transcription.handEntry')}>✎</button
+                            >
                         {/if}
                     </div>
 
-                    {#if diceEntryOpen}
-                        <!-- La cible souris des dés (T2.1), SOUS les deux cases
-                             du jet et jamais à leur place : le clavier reste
-                             deux fois plus rapide (0,56 s contre 1,21 s) et les
-                             deux entrées coexistent. Sous, et non à côté :
-                             mesuré à 178 px, le triangle ne laisserait pas de
-                             quoi écrire la phrase du camp au trait dans une
-                             colonne de 288 px. -->
-                        <DiceTriangle single={expects === 'opening'} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
-                    {/if}
-
                     {#if cubeRowOpen}
-                        <!-- La rangée [D] [T] [P] [R] de la maquette
-                             (ux.md §2), SOUS le triangle : les gestes de
-                             videau sont rares au regard des jets, et la
-                             colonne se lit de haut en bas dans l'ordre de ce
-                             qui sert. -->
                         <CubeActionRow canAct={canCubeAct} canAnswer={canCubeAnswer} {resigning} onGesture={sendCube} onResign={startResign} onLevel={pickResignLevel} onCancelResign={abortResign} />
                     {/if}
 
-                    {#if handEntryOpen}
-                        <!-- Le coup au plateau (T2.3) et ses deux replis (T2.4).
-                             La bascule et la notation sont SOUS le triangle :
-                             elles servent une fois par match, quand le triangle
-                             sert à chaque tour. -->
+                    {#if handOpen && handEntryOpen}
+                        <!-- Le secours (T2.4) : il prend la PLACE du triangle, les
+                             deux ne servant jamais en même temps. Il était visible
+                             250 fois par match pour un usage attendu d'une fois. -->
                         <div class="hand-entry">
                             <button class="edit-btn" class:active={freeMode} onclick={toggleFreeMode} title={$t('transcription.freeMoveTooltip')}>{$t('transcription.freeMove')}</button>
                             {#if freeMode}
@@ -1430,98 +1726,24 @@
                                 >{$t('transcription.notationApply')}</button
                             >
                         </div>
-                    {/if}
-
-                    {#if freeMode}
-                        <p class="hint">{diceEntered ? $t('transcription.freeMoveHint') : $t('transcription.freeMoveNeedsDice')}</p>
-                    {:else if boardPlayAmbiguous}
-                        <!-- Le plateau ne peut pas trancher : plusieurs jets
-                             produisent ce coup (une sortie, un dé injouable).
-                             Le triangle n'offre plus qu'eux, et rien n'est
-                             enregistré avant le clic. -->
-                        <p class="hint">{$t('transcription.rollAmbiguous', { rolls: [...(rollsAllowed ?? [])].join(', ') })}</p>
-                    {:else if boardPlaySteps > 0}
-                        <p class="hint">{$t('transcription.boardPlaySteps', { n: boardPlaySteps })}</p>
-                    {:else if boardPlayOpen}
-                        <p class="hint">{$t('transcription.boardPlayHint')}</p>
-                    {/if}
-
-                    {#if lastFlags.length}
-                        <!-- Une Incohérence est MARQUÉE, jamais refusée (ADR-0044) :
-                             l'Action est dans le document, et la phrase dit laquelle. -->
-                        <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
-                    {/if}
-
-                    {#if underReview}
-                        <!-- Le coup enregistré n'est pas un coup du jet corrigé :
-                             le premier candidat est posé à sa place et rien n'est
-                             écrit avant la validation (fonctionnel.md §2). -->
-                        <p class="flag">{$t('transcription.reviewHint')}</p>
-                    {:else if correcting}
-                        <p class="hint">{$t('transcription.correcting')}</p>
-                    {/if}
-
-                    {#if keys.phase === PHASE.RESIGN}
-                        <p class="hint">{$t('transcription.resignHint')}</p>
-                    {:else if awaitingAnswer}
-                        <p class="hint">{$t('transcription.answerHint')}</p>
-                    {:else if keys.tie}
-                        <p class="hint">{$t('transcription.tie')}</p>
-                    {:else if expects === 'opening'}
-                        <p class="hint">{$t('transcription.openingHint')}</p>
-                    {:else if danced}
-                        <p class="hint">{$t('transcription.dance')}</p>
-                    {:else if keys.phase === PHASE.ROLL}
-                        <!-- Les deux états d'ux.md §3 sont DITS, parce qu'un même écran
-                             y répond de deux façons opposées au même chiffre : tant que
-                             la liste n'a pas été touchée il recommence le jet, après il
-                             valide. Une différence invisible serait un piège. -->
-                        <p class="hint">{$t('transcription.correctable')}</p>
-                    {:else if keys.phase === PHASE.CANDIDATE}
-                        <p class="hint">{$t('transcription.chosen')}</p>
-                    {/if}
-
-                    {#if $transcriptionPointFilterStore.length}
-                        <!-- Le filtre est un état d'AFFICHAGE (T2.2) : il est
-                             dit à l'écran, jamais écrit dans le document. -->
-                        <p class="hint">{$t('transcription.pointFilter', { points: $transcriptionPointFilterStore.join(', '), n: visible.length })}</p>
-                    {/if}
-
-                    {#if visible.length}
-                        {#if unranked}
-                            <p class="hint">{$t('transcription.unranked')}</p>
-                            <ol class="plain-candidates">
-                                {#each visible as row, index (row.gen)}
-                                    <li>
-                                        <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)}>{row.move.move}</button>
-                                    </li>
-                                {/each}
-                            </ol>
-                        {:else}
-                            <div class="candidates">
-                                <CandidateMovesTable
-                                    moves={rankedMoves}
-                                    selectedMove={$selectedMoveStore}
-                                    onRowClick={(move) => chooseCandidate(rankedMoves.indexOf(move))}
-                                    showProvenance={false}
-                                    baseline={null}
-                                    {isMoney}
-                                />
-                            </div>
-                        {/if}
+                    {:else if diceEntryOpen}
+                        <!-- La cible souris des dés (T2.1), sous les deux cases du
+                             jet et jamais à leur place : le clavier reste deux fois
+                             plus rapide (0,56 s contre 1,21 s) et les deux entrées
+                             coexistent. -->
+                        <DiceTriangle single={expects === 'opening'} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
                     {/if}
                 </div>
 
                 <div class="transcript-col">
-                    <TranscriptView
-                        {annotated}
-                        cursor={annotated?.cursor ?? 0}
-                        players={[playerName(0), playerName(1)]}
-                        {matText}
-                        onSelect={selectAction}
-                        onMenu={openTranscriptMenu}
-                        onMatToggle={(open) => (matOpen = open)}
-                    />
+                    {#if lastFlags.length}
+                        <!-- L'alerte habite là où est la cellule fautive (R2) :
+                             une Incohérence est MARQUÉE, jamais refusée (ADR-0044),
+                             et « il y en a une » doit se voir sans chercher un ⚠
+                             dans une colonne. -->
+                        <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
+                    {/if}
+                    <TranscriptView {annotated} cursor={annotated?.cursor ?? 0} players={[playerName(0), playerName(1)]} onSelect={selectAction} onMenu={openTranscriptMenu} />
                 </div>
             </div>
         </div>
@@ -1533,6 +1755,16 @@
         <ContextMenu x={transcriptMenu.x} y={transcriptMenu.y} items={transcriptMenuItems} onClose={() => (transcriptMenu = null)} />
     {/if}
 </section>
+
+<!-- La largeur `wide` est le point de la décision 6 : 62 caractères de monospace
+     demandent ~409 px, et l'alignement en colonnes EST l'information. -->
+<Modal open={matOpen} onclose={() => (matOpen = false)} size="wide" closeOnOverlay label={$t('transcription.matModal')}>
+    <h2 class="mat-title">{$t('transcription.matModal')}</h2>
+    <div class="mat-body">
+        <button class="new-btn" type="button" onclick={copyMat}>{matCopied ? $t('transcript.copied') : $t('transcript.copy')}</button>
+        <pre class="mat-text">{matText}</pre>
+    </div>
+</Modal>
 
 <style>
     .transcription-panel {
@@ -1561,9 +1793,54 @@
         background: var(--color-surface-alt);
     }
 
-    .new-btn:disabled {
+    .new-btn:disabled,
+    .primary-btn:disabled,
+    .danger-btn:disabled {
         color: var(--color-text-muted);
         cursor: default;
+    }
+
+    /* HIÉRARCHIE (ADR-0048 décision 3). Onze contrôles portaient la même bordure,
+       le même fond et la même taille : une pastille en lecture seule et un bouton
+       qui réécrit le match se ressemblaient trait pour trait. L'action principale
+       est le bouton qui matérialise le Match ; celui qui supprime la ligne se
+       distingue sans crier. */
+    .primary-btn,
+    .danger-btn,
+    .icon-btn {
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
+        cursor: pointer;
+    }
+
+    .primary-btn {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
+    .primary-btn:hover:not(:disabled),
+    .danger-btn:hover:not(:disabled),
+    .icon-btn:hover:not(:disabled) {
+        background: var(--color-surface-alt);
+    }
+
+    .danger-btn {
+        color: var(--color-danger);
+    }
+
+    .icon-btn {
+        min-width: 1.9em;
+        text-align: center;
+    }
+
+    .icon-btn.active {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        font-weight: 600;
     }
 
     .hand-entry {
@@ -1571,7 +1848,6 @@
         flex-wrap: wrap;
         align-items: center;
         gap: var(--space-1);
-        margin-top: var(--space-1);
     }
 
     /* Ni taille ni famille ici : la règle globale de style.css met déjà
@@ -1614,41 +1890,189 @@
         gap: var(--space-1);
     }
 
+    /* LA CHAÎNE DE HAUTEUR (ADR-0048 décision 5). Sans `flex: 1; min-height: 0`
+       jusqu'en bas, les `overflow: auto` intérieurs n'ont rien à faire déborder :
+       `.tab-content` devient le seul conteneur qui défile, le panneau défile en
+       bloc, et le `scrollIntoView` du Cursor le fait sauter à chaque Action
+       validée. `container-type` sert le point de rupture ci-dessous. */
     .draft {
         display: flex;
+        flex: 1;
         flex-direction: column;
         gap: var(--space-2);
         padding: var(--space-2);
         min-height: 0;
+        container-type: inline-size;
     }
 
     .draft-bar {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: var(--space-2);
+        gap: var(--space-1);
+        flex: 0 0 auto;
     }
 
     .draft-bar .new-btn {
         margin-left: 0;
     }
 
-    .badge {
-        padding: var(--space-1) var(--space-2);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
+    /* Pousse les gestes vers la droite : l'état reste à gauche, collé au bouton
+       qu'il concerne, et les gestes forment un groupe. */
+    .bar-gap {
+        flex: 1 1 auto;
+    }
+
+    .save-state {
         color: var(--color-text-muted);
     }
 
-    .on-roll {
+    /* Trois régions. L'ordre du DOM est celui de la boîte ÉTROITE — candidats,
+       palette, Transcript — et la palette passe première en boîte large. Un seul
+       point de rupture, et il n'est pas porteur : le contrat (les deux cases du
+       jet et cinq lignes de candidats sans défilement) tient des deux côtés. */
+    .draft-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: var(--space-2);
+        min-height: 0;
+    }
+
+    .candidates-col,
+    .palette-col,
+    .transcript-col {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        min-width: 0;
+        min-height: 0;
+    }
+
+    .candidates-col {
+        flex: 1 1 auto;
+    }
+
+    /* Sous le plancher — un dock que l'utilisateur écrase quand même — c'est la
+       PALETTE qui cède, dans sa propre boîte, et non le panneau qui se met à
+       défiler en bloc. La ligne du jet est en tête, donc le contrat tient
+       encore : ce qui disparaît est le bas du triangle, pas les dés. */
+    .palette-col {
+        flex: 0 0 auto;
+        overflow: auto;
+    }
+
+    .transcript-col {
+        flex: 1 1 auto;
+    }
+
+    @container (min-width: 900px) {
+        .draft-body {
+            flex-direction: row;
+        }
+
+        .palette-col {
+            order: -1;
+            flex: 0 0 220px;
+        }
+
+        .candidates-col {
+            flex: 1 1 280px;
+        }
+
+        .transcript-col {
+            flex: 1 1 320px;
+        }
+    }
+
+    /* Les cinq réponses possibles à « qu'a fait le camp au trait ? » sur une
+       ligne : les deux dés, les quatre gestes de videau, et le volet de secours
+       (ADR-0048 décision 7). */
+    .entry-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-1);
+        flex: 0 0 auto;
+    }
+
+    .die {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text-muted);
+        font-variant-numeric: tabular-nums;
+        cursor: pointer;
+    }
+
+    .die:hover {
+        background: var(--color-surface-alt);
+    }
+
+    .die.filled {
         color: var(--color-text);
         font-weight: 600;
     }
 
-    .edit-bar {
+    .list-head {
         display: flex;
-        flex-wrap: wrap;
+        align-items: center;
         gap: var(--space-1);
+        flex: 0 0 auto;
+    }
+
+    /* Le filtre par point : une PUCE et non une phrase. Elle disait qu'il était
+       posé sans dire comment en sortir ; le ✕ est le geste (décision 8). */
+    .list-note {
+        color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
+
+    .chip {
+        padding: 0 var(--space-2);
+        border: 1px solid var(--color-primary);
+        border-radius: 999px;
+        background: var(--color-surface);
+        color: var(--color-primary);
+        cursor: pointer;
+    }
+
+    .chip:hover {
+        background: var(--color-surface-alt);
+    }
+
+    /* C'est ICI que le défilement a lieu, et nulle part ailleurs. */
+    .candidates {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        container-type: inline-size;
+    }
+
+    .plain-candidates {
+        flex: 1;
+        margin: 0;
+        padding-left: var(--space-4);
+        min-height: 0;
+        overflow: auto;
+    }
+
+    .plain-candidate {
+        padding: 0;
+        border: none;
+        background: none;
+        color: var(--color-text);
+        cursor: pointer;
+    }
+
+    .plain-candidate.selected {
+        font-weight: 600;
     }
 
     .edit-btn {
@@ -1677,72 +2101,6 @@
         font-weight: 600;
     }
 
-    .entry {
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-    }
-
-    .die {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        color: var(--color-text-muted);
-        font-variant-numeric: tabular-nums;
-    }
-
-    .die.filled {
-        color: var(--color-text);
-        font-weight: 600;
-    }
-
-    .candidates {
-        min-height: 0;
-        overflow: auto;
-    }
-
-    .plain-candidates {
-        margin: 0;
-        padding-left: var(--space-4);
-        max-height: 12em;
-        overflow: auto;
-    }
-
-    .plain-candidate {
-        padding: 0;
-        border: none;
-        background: none;
-        color: var(--color-text);
-        cursor: pointer;
-    }
-
-    .plain-candidate.selected {
-        font-weight: 600;
-    }
-
-    /* Saisie à gauche, Transcript à droite (ux.md §2). Chaque colonne défile
-       dans sa propre boîte : la page, elle, ne défile jamais latéralement. */
-    .draft-body {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-2);
-        min-height: 0;
-    }
-
-    .entry-col,
-    .transcript-col {
-        display: flex;
-        flex: 1 1 18em;
-        flex-direction: column;
-        gap: var(--space-2);
-        min-width: 0;
-        min-height: 0;
-    }
-
     .hint {
         margin: 0;
         color: var(--color-text-muted);
@@ -1751,6 +2109,7 @@
 
     .flag {
         margin: 0;
+        flex: 0 0 auto;
         color: var(--color-danger);
         font-size: var(--font-size-small);
     }
@@ -1763,5 +2122,26 @@
     .error {
         margin: var(--space-2);
         color: var(--color-danger);
+    }
+
+    .mat-title {
+        margin: 0 0 var(--space-2);
+        font-size: var(--font-size-title);
+    }
+
+    .mat-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    /* 62 caractères, la ligne la plus longue d'un `.mat` : la modale leur donne
+       la largeur que la colonne du Transcript n'avait pas. */
+    .mat-text {
+        margin: 0;
+        max-height: 60vh;
+        overflow: auto;
+        font-family: var(--font-family-mono);
+        font-size: var(--font-size-small);
     }
 </style>

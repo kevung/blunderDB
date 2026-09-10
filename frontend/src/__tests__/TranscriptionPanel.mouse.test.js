@@ -53,6 +53,7 @@ import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { setTranscription, clearTranscription, transcriptionCubeRequestStore, transcriptionKeyStore } from '../stores/transcriptionStore.js';
 import { PHASE } from '../services/transcriptionKeys.js';
+import { TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 
 const POSITION = (dice = [0, 0]) => ({
@@ -222,5 +223,29 @@ describe('le menu contextuel du Transcript', () => {
 
         const menu = document.querySelector('.context-menu');
         expect([...menu.querySelectorAll('button')].map((b) => b.textContent.trim())).toEqual(['Insert before', 'Insert after', 'Delete', 'Change side']);
+    });
+});
+
+// ── la modale du texte .mat (ADR-0048 décision 6) ────────────────────────
+//
+// Le volet vivait sous le tableau des décisions, dans `TranscriptView`, avec un
+// presse-papiers et un minuteur que le docstring de ce composant promet qu'il ne
+// tient pas. Il est ici, en modale, et pour une raison mesurée : la ligne la plus
+// longue d'un `.mat` fait 62 caractères, ~409 px en monospace 11 px, là où la
+// colonne du Transcript en offrait 320 — l'alignement en colonnes, qui EST
+// l'information, y était détruit.
+describe('le texte .mat', () => {
+    test('le bouton de la barre ouvre la modale, qui va chercher le texte', async () => {
+        const MAT = '; [Player 1 "Kévin"]\n\n7 point match\n';
+        TranscriptionMAT.mockResolvedValue(MAT);
+        await mount(draftState());
+
+        // Fermée, elle ne coûte aucun aller-retour : c'est ce qui permettait au
+        // volet d'origine d'être là sans peser, et cela reste vrai.
+        expect(document.querySelector('.mat-text')).toBeNull();
+        expect(TranscriptionMAT).not.toHaveBeenCalled();
+
+        await fireEvent.click(buttonNamed('.mat text'));
+        await vi.waitFor(() => expect(document.querySelector('.mat-text')?.textContent).toBe(MAT));
     });
 });

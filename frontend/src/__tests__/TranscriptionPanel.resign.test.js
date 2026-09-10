@@ -9,8 +9,9 @@
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
+import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListTranscriptions: vi.fn().mockResolvedValue([]),
@@ -30,7 +31,7 @@ import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionStore, clearTranscription, transcriptionPromptStore } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -90,6 +91,8 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
+const buttonNamed = (label) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === label);
+
 describe('la résignation', () => {
     test('r puis 2 envoie un resign de niveau 2, sans camp', async () => {
         await openedPanel();
@@ -101,8 +104,15 @@ describe('la résignation', () => {
     test('l’attente du niveau se voit : le camp au trait, les trois niveaux, l’échappatoire', async () => {
         await openedPanel(annotated({ side: 1 }));
         await press('KeyR');
-        expect(await screen.findByText('Alice resigns')).toBeTruthy();
-        expect(screen.getByText('1 = single, 2 = gammon, 3 = backgammon; Escape cancels.')).toBeTruthy();
+        await vi.waitFor(() => {
+            const prompt = get(transcriptionPromptStore);
+            expect(prompt?.key).toBe('transcription.resignPrompt');
+            expect(prompt?.params?.player).toBe('Alice');
+        });
+        // L'instruction permanente est partie (ADR-0048 décision 8). Ce qui
+        // reste, et qui est la vraie affordance : les trois niveaux sont des
+        // BOUTONS, et l'échappatoire aussi.
+        expect(buttonNamed('Single')).toBeTruthy();
         // Les dés n'ont plus de sens tant que le niveau n'est pas donné.
         expect(document.querySelectorAll('.die')).toHaveLength(0);
     });
@@ -112,7 +122,11 @@ describe('la résignation', () => {
         await press('KeyR');
         await press('Escape');
         expect(gestures()).toEqual([]);
-        expect(await screen.findByText("Kévin's dice")).toBeTruthy();
+        await vi.waitFor(() => {
+            const prompt = get(transcriptionPromptStore);
+            expect(prompt?.key).toBe('transcription.rollPrompt');
+            expect(prompt?.params?.player).toBe('Kévin');
+        });
     });
 
     test('entre r et son niveau, un 5 n’enregistre pas de dé', async () => {
@@ -120,6 +134,6 @@ describe('la résignation', () => {
         await press('KeyR');
         await press('Digit5');
         expect(gestures()).toEqual([]);
-        expect(screen.getByText('Kévin resigns')).toBeTruthy();
+        expect(get(transcriptionPromptStore)?.key).toBe('transcription.resignPrompt');
     });
 });

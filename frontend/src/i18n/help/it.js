@@ -283,24 +283,28 @@ export default {
 </div>
 <h3>Pannello Trascrizione</h3>
 <p>Il pannello <strong>Trascrizione</strong> (<em>CTRL-MAIUSC-T</em>, comando <code>transcribe</code> o <code>tr</code>) serve a digitare un match che si ha sotto gli occhi — un foglio di match, una registrazione video — per farne un match della libreria. Ciò che si digita è una <strong>bozza</strong>: vive nella base, si chiude e si riapre, e non entra né nelle statistiche né nelle ricerche finché non è stata salvata come match.</p>
-<p>Il pannello si apre sull'<strong>elenco delle bozze</strong> della base: data dell'ultima modifica, giocatori, lunghezza, numero di azioni, e il match già prodotto (<code>#</code> seguito dal suo identificatore) oppure la dicitura «non salvata». Un clic apre una bozza, e il pulsante <strong>Bozze</strong> della barra riporta all'elenco. Il pulsante <strong>Nuova trascrizione</strong> apre il modulo di creazione.</p>
+<p>Il pannello si apre sulla <strong>lista delle bozze</strong> del database: ultima modifica, giocatori, lunghezza, numero di azioni e la partita già prodotta (<code>#</code> seguito dal suo identificativo) oppure la dicitura «nessuna partita». Un clic apre una bozza, e il pulsante <strong>Bozze</strong> della barra vi riporta. Il pulsante <strong>Nuova trascrizione</strong> apre il modulo di creazione.</p>
+<p>La lista si percorre anche da tastiera: <em>GIÙ</em> e <em>SU</em> (o <em>j</em> e <em>k</em>) spostano l'evidenziazione, <em>INVIO</em> apre la bozza evidenziata, <em>n</em> apre il modulo. La prima bozza è evidenziata all'apertura ed è quella modificata più di recente: riprendere il lavoro di ieri costa dunque due tasti, <em>CTRL-MAIUSC-T</em> e poi <em>INVIO</em>.</p>
 <p>Il modulo chiede una cosa sola: la <strong>lunghezza del match</strong>. Il valore <code>0</code> indica una partita a soldi e fa comparire le caselle <em>Jacoby</em> e <em>Beaver</em>. Il campo si apre sulla lunghezza dell'ultima bozza modificata, oppure su 7 quando la base non ne contiene alcuna. I nomi dei giocatori non vengono chiesti: la bozza designa i lati come <em>Giocatore 1</em> e <em>Giocatore 2</em>, e l'elenco mostra «Senza nome».</p>
-<p>Una bozza aperta porta in alto la sua <strong>barra</strong>, che dice tutto ciò che si deduce da quanto è stato digitato: la lunghezza del match (o «Money»), il punteggio, la dicitura <em>Crawford</em> quando la partita in corso lo è, il numero della partita, lo stato del cubo — il suo valore, centrato o a nome di chi lo possiede — e il lato di turno.</p>
+<p>Tutto ciò che si deduce da quanto è stato digitato — la lunghezza della partita (o «Denaro»), il punteggio, la dicitura <em>Crawford</em> quando la partita in corso lo è, il numero della partita, lo stato del cubo — il suo valore, al centro o a nome di chi lo possiede — e il campo di turno — compare nella <strong>barra della partita</strong>, sopra la tavola: è lì che lo sguardo si trova già quando ci si chiede chi sia di turno. L'azione attesa, invece, è scritta per esteso nella <strong>barra di stato</strong>: «dadi di Kévin», «risposta di Alice al raddoppio», «si ritira».</p>
+<p>La <strong>barra della bozza</strong>, in testa al pannello, porta soltanto i gesti che fanno uscire la bozza da sé stessa, più le due frecce di annullamento.</p>
 <p>Il pulsante <strong>Metadati</strong> della barra apre l'intestazione della bozza, in qualsiasi momento: i nomi dei due giocatori — completati automaticamente dai giocatori della base —, l'evento, il luogo, il turno, la data (quella odierna per impostazione predefinita), il trascrittore (l'utente della base per impostazione predefinita) e il torneo a cui il match sarà collegato al momento del salvataggio. Nessun campo è obbligatorio: una bozza senza nomi si salva e si esporta lo stesso, con intestazioni vuote. Il pulsante <strong>Invertire i giocatori</strong> scambia i due nomi, assegna tutte le azioni al campo opposto e gira la damiera: è lo stesso match, letto dall'altro lato.</p>
 <p>La <strong>lunghezza del match</strong> si cambia in questo stesso pannello, in qualsiasi momento: il punteggio, la partita Crawford e il riferimento — le partite a soldi quando la lunghezza vale <code>0</code>, e compaiono allora le caselle <em>Jacoby</em> e <em>Beaver</em> — sono ricalcolati da un capo all'altro della bozza, e le azioni registrate dopo la vittoria sono segnalate «oltre la fine» senza che nessuna venga eliminata. La lunghezza fa parte dell'identità di una posizione: dopo un salvataggio, cambiarla e salvare di nuovo scrive posizioni nuove, da analizzare, e le vecchie spariscono non appena più nulla le trattiene.</p>
-<p>Sotto la barra, la bozza occupa due metà: l'<strong>inserimento</strong> a sinistra, la <strong>trascrizione</strong> a destra. Sopra di esse una barra di correzione — inserisci prima, inserisci dopo, elimina, cambia lato, annulla, ripristina — riprende col mouse i tasti del pannello.</p>
-<p>La metà sinistra annuncia ciò che attende e mostra i due dadi via via che vengono digitati. Una partita si apre con un dado per ciascun lato: il più alto comincia e gioca entrambi i dadi senza doverli ridigitare; una parità è registrata così com'è e si attende un'altra apertura.</p>
-<p>Appena cade il secondo dado, tutte le <strong>mosse legali</strong> del lancio sono elencate, ordinate dal motore integrato, la prima preselezionata e le sue frecce poste sulla damiera. Questo ordinamento è una valutazione: è mostrato, non è mai scritto nella base. Quando il motore non è disponibile, le mosse sono elencate senza ordinamento e il pannello lo dice.</p>
+<p>Sotto la barra, la bozza occupa tre regioni: la <strong>tavolozza</strong> dei bersagli del mouse, le <strong>mosse candidate</strong> e la <strong>trascrizione</strong>. In un pannello largo — l'aggancio in basso — stanno affiancate, la tavolozza a sinistra; in un pannello stretto — l'aggancio laterale — vengono prima le candidate, poi la tavolozza, infine la trascrizione. La regola è la stessa nei due casi: nulla si frappone tra le due caselle del lancio e la prima riga delle candidate, e almeno cinque candidate si leggono senza far scorrere nulla.</p>
+<p>La tavolozza mostra i due dadi via via che vengono immessi; un clic su di essi li cancella, come <em>BACKSPACE</em>. Una partita si apre con un dado per ciascun campo: il più alto comincia e gioca entrambi i dadi senza doverli reimmettere; una parità viene registrata così com'è e si attende un'altra apertura.</p>
+<p>Non appena cade il secondo dado, tutte le <strong>mosse legali</strong> del lancio vengono elencate, classificate dal motore incorporato, la prima preselezionata e le sue frecce poste sulla tavola. La lista dà la mossa, la sua equità e il suo scarto dalla migliore: trascrivere significa riconoscere la mossa che si è vista giocare, non giudicarla — per questo c'è il pannello <strong>Valutazione</strong>. Questa classifica è una valutazione: viene mostrata, non viene mai scritta nel database. Quando il motore non è disponibile, le mosse sono elencate senza classifica e la lista lo dice in testa.</p>
+<p>La <strong>rotellina</strong> seleziona la candidata successiva o precedente, sia sopra la lista sia sopra la tavola: lo sguardo resta sulla tavola e le frecce scorrono, il che riconosce una mossa più in fretta della lettura della sua notazione. Un clic su una riga la seleziona, un doppio clic la convalida.</p>
 <p>Il triangolo dei ventuno tiri sta sotto le due caselle del tiro, accanto alla tastiera e non al suo posto: due cifre restano due volte più rapide di un clic, e il triangolo è lì per chi trascrive con la mano sul mouse. Una casella per tiro, mai due: 3-1 e 1-3 sono lo stesso tiro.</p>
-<p>Un clic su un punto della tavola lascia solo le mosse che partono da lì. È il gesto della mossa lontana: arrivare al dodicesimo candidato costa tredici tasti, mentre il filtro ne lascia solo due o tre. Il filtro non cambia nulla nella bozza, riduce l'elenco sullo schermo; il lancio successivo lo toglie.</p>
+<p>Un clic su un punto della tavola lascia solo le mosse che ne partono. È il gesto della mossa lontana: scendere alla dodicesima candidata costa tredici tasti, mentre il filtro ne lascia solo due o tre. Il filtro non cambia nulla nella bozza, accorcia la lista sullo schermo; un'etichetta in testa alla lista lo ricorda e permette di toglierlo, e anche il lancio successivo lo toglie.</p>
 <p>Una mossa giocata sul tavoliere risparmia la lettura dei dadi. Finché nessun dado è stato inserito, un clic su una pedina e poi sulla sua destinazione — o un trascinamento dall'una all'altra — gioca la mossa sul tavoliere, vincolata alle mosse legali; le destinazioni offerte dalla pedina scelta si illuminano. I due dadi si deducono dai passi: giocare 13/7 e poi 8/7 dice 6-1 senza che sia stata digitata una cifra, e l'azione viene registrata non appena la mossa è completa. Backspace annulla l'ultimo passo, una cifra abbandona la mossa e torna all'inserimento dei dadi, e un doppio clic fuori dal tavoliere la ricomincia. Quando più lanci producono la stessa mossa — un'uscita che più dadi coprono, un dado non giocabile — nulla viene registrato e il triangolo lascia cliccabili solo quei lanci: il lancio non viene mai indovinato al posto di chi guarda la partita.</p>
-<p>Una mossa illegale si trascrive così come è stata giocata. Il pulsante « Spostamento libero » libera il tavoliere: le pedine si spostano senza alcuna verifica, e « Questo tavoliere è la mossa giocata » registra il tavoliere ottenuto. Il campo di notazione, accanto, fa lo stesso da tastiera: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> si scrivono e si registrano con INVIO. Entrambi richiedono che i dadi del lancio siano inseriti prima, poiché una mossa illegale non dice quale lancio l'ha prodotta. Una mossa inserita per una di queste due vie che risulti legale resta una mossa ordinaria — il confronto avviene sul tavoliere ottenuto, mai sulla provenienza del gesto; altrimenti viene segnata « mossa illegale » nel trascritto, e l'esportazione <code>.mat</code> avvisa prima di scrivere il file, senza mai rifiutare.</p>
-<p>Sotto il triangolo, la riga <strong>Raddoppia</strong>, <strong>Accetta</strong>, <strong>Passa</strong>, <strong>Abbandona</strong> porta al mouse i quattro gesti di cubo. Dice di chi è il turno: il campo di turno annuncia — raddoppiare, abbandonare — oppure il campo avversario risponde — accettare, passare; mai tutti e quattro insieme, e un pulsante il cui gesto non risponderebbe a nulla resta spento. La tastiera, invece, non rifiuta mai nulla: un pulsante spento è un bersaglio che non viene offerto, non un gesto proibito. «Abbandona» non registra ancora nulla: la riga diventa i tre livelli — semplice, gammon, backgammon — e «Annulla», che riprende il tasto ESC. Il cubo disegnato sul tavoliere è il secondo bersaglio di questi gesti: un clic su di esso propone un raddoppio. Davanti a un'offerta non risponde: accettare e passare sono due risposte simmetriche e vivono insieme nella riga, un clic ciascuna.</p>
-<p>Sotto i dadi, una riga dice lo stato dell'inserimento: il lancio ancora correggibile, il candidato scelto, la danza registrata da sé, la parità da rilanciare, la risposta attesa a un raddoppio, il livello atteso dopo un abbandono, la correzione sul posto, la mossa «da rivedere» il cui lancio è cambiato, e l'incoerenza lasciata dall'ultima azione.</p>
-<p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
-<p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti, mossa non registrata) decora la sua cella ed è nominata in un suggerimento. La mossa non registrata viene dalla rilettura di un file <code>.mat</code>: gnubg vi scrive <code>???</code> quando non ha conservato la mossa giocata, il lancio è noto e la mossa no, e posare il cursore su quella cella propone le mosse di quel lancio per completarla. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
-<p>Un clic destro su una cella apre le correzioni di quell'azione — inserisci prima, inserisci dopo, elimina, cambia campo — e vi porta il cursore al passaggio; sono gli stessi gesti della barra di correzione e dei tasti, e il menu del browser è soppresso solo lì.</p>
-<p>La barra della bozza porta tre pulsanti. «Salva» (CTRL-INVIO) scrive la partita nella libreria: creata la prima volta, sostituita in seguito con lo stesso identificatore, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. La barra della bozza ne dice lo stato: mai salvata, salvata da tanto, o modificata da allora. «Esporta .mat» scrive la partita in un file Jellyfish, così come è stata digitata. «Chiudi la bozza» elimina la bozza dopo una conferma; una partita già salvata resta nella libreria, definitiva.</p>
+<p>Una mossa illegale si trascrive così come è stata giocata. Il pulsante <strong>✎</strong> della tavolozza apre le due vie che lo consentono, al posto del triangolo: servono una volta per partita, mentre il triangolo serve a ogni turno. Il pulsante «Movimento libero» libera la tavola: le pedine si spostano senza alcuna verifica, e «Questa tavola è la mossa giocata» registra la tavola ottenuta. Il campo di notazione, accanto, fa lo stesso da tastiera: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> si scrivono e si registrano con INVIO. Entrambi richiedono che i dadi del lancio siano immessi prima, poiché una mossa illegale non dice quale lancio l'abbia prodotta. Una mossa immessa per una di queste due vie che risulti legale resta una mossa ordinaria — il confronto si fa sulla tavola ottenuta, mai sulla provenienza del gesto; altrimenti viene marcata «mossa illegale» nella trascrizione, e l'esportazione <code>.mat</code> avverte prima di scrivere il file, senza mai rifiutare.</p>
+<p>Sulla riga dei dadi, la fila <strong>Raddoppiare</strong>, <strong>Accettare</strong>, <strong>Passare</strong>, <strong>Abbandonare</strong> porta al mouse i quattro gesti del cubo: sono, insieme ai due dadi, le cinque risposte possibili a una sola domanda — che cosa ha fatto il campo di turno? Dice a chi tocca: il campo di turno annuncia — raddoppiare, abbandonare — oppure il campo avverso risponde — accettare, passare; mai tutti e quattro insieme, e un pulsante il cui gesto non risponderebbe a nulla resta spento. La tastiera, invece, non rifiuta mai nulla: un pulsante spento è un bersaglio che non si offre, non un gesto vietato. «Abbandonare» non registra ancora nulla: la fila diventa i tre livelli — semplice, gammon, backgammon — e «Annulla», che raddoppia il tasto ESC. Il cubo disegnato sulla tavola è il secondo bersaglio di questi gesti: un clic su di esso propone un raddoppio. Davanti a un'offerta non risponde — accettare e passare sono due risposte simmetriche e vivono insieme nella fila, un clic ciascuna.</p>
+<p>La <strong>barra di stato</strong> dice in una parola che cosa la bozza attende: la danza registrata d'ufficio, la parità da rilanciare, la risposta attesa a un raddoppio, il livello atteso dopo un abbandono, la correzione sul posto, la mossa «da rivedere» il cui lancio è cambiato. Vi risponde anche ai gesti che non hanno nulla da fare — «niente da annullare», «nessuna azione sotto il cursore» — per un secondo e mezzo. L'incoerenza che un'azione ha lasciato dietro di sé è invece segnalata in testa alla trascrizione, là dove si trova la cella difettosa.</p>
+<p>Una partita finisce con un passo, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicato per il valore del cubo). Il punteggio, la partita Crawford e la fine dell'incontro compaiono allora nella barra della partita, e si attende l'apertura della partita successiva.</p>
+<p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di cubo e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostare il cursore riporta la tavola alla posizione dell'azione mirata e mostra le sue candidate, con la mossa registrata selezionata. Un'incoerenza (mossa illegale, doppio turno, azione di cubo impossibile, azione oltre la fine dell'incontro, dadi incoerenti, mossa non registrata) decora la sua cella e viene nominata in un suggerimento. La mossa non registrata è il caso di un file <code>.mat</code> riletto: gnubg vi scrive <code>???</code> quando non ha conservato la mossa giocata, il lancio è noto e la mossa no, e mettere il cursore su quella cella propone le mosse di quel lancio per completarla. Le partite si ripiegano; quella del cursore è aperta.</p>
+<p>Un clic destro su una cella apre le correzioni di quell'azione — inserire prima, inserire dopo, eliminare, cambiare campo — e vi porta il cursore per strada; sono gli stessi gesti dei tasti <em>i</em>, <em>a</em>, <em>x</em> e <em>s</em>, e il menu del browser viene soppresso soltanto lì. Altrove non hanno pulsanti: un pulsante che agisse sull'«azione sotto il cursore» mirerebbe a una cella che si può non vedere, mentre il clic destro nomina la propria.</p>
+<p>La barra della bozza porta i gesti che la fanno uscire da sé stessa. «<strong>Creare la partita</strong>» (CTRL-INVIO) la scrive nella biblioteca, e diventa poi «Aggiornare la partita #<em>n</em>»: la partita è sostituita sotto lo stesso identificativo, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. Accanto, la barra dice a che punto sia quella partita — nessuna partita, aggiornata, oppure indietro rispetto alla bozza. Non dice nulla sulla salvezza della bozza stessa: viene scritta nel database dopo ogni azione, non c'è nulla da sorvegliare.</p>
+<p>«<strong>Testo .mat</strong>» apre il file Jellyfish così come verrebbe scritto, in una finestra abbastanza larga perché le sue colonne restino allineate, con un pulsante per copiarlo. «<strong>Esportare .mat</strong>» scrive quello stesso file su disco. «<strong>Chiudere la bozza</strong>» la elimina dopo conferma; una partita già creata resta nella biblioteca, definitiva. Le due frecce <strong>↶</strong> e <strong>↷</strong> annullano e ripristinano, come <em>CTRL-Z</em> e <em>CTRL-MAIUSC-Z</em>.</p>
 <p>Se l'analisi di un match trascritto è stata interrotta — l'applicazione chiusa durante il lotto —, la barra di stato lo segnala alla successiva apertura della base e propone di terminarla. Di questa interruzione non viene conservato nulla: la proposta ritorna finché restano posizioni da analizzare, e il lotto riavviato riguarda solo questo match, mai l'intera biblioteca.</p>
 <p>Una bozza che contiene incoerenze viene salvata comunque, dopo un avvertimento: nulla viene rifiutato. Una mossa illegale è esportata così come è stata giocata, con l'avvertimento che gnubg e XG la segnaleranno («Invalid move») e divergeranno da lì.</p>
 <p>Il pannello <strong>Match</strong> ricorda ogni bozza in corso sopra l'elenco dei match: la riga «Bozza in corso» apre la scheda Trascrizione.</p>
@@ -1354,7 +1358,7 @@ export default {
 </tbody>
 </table>
 <h3>Pannello di trascrizione</h3>
-<p>Il pannello riceve questi tasti quando ha il focus e una bozza è aperta.</p>
+<p>Il pannello prende questi tasti quando ha il fuoco. Davanti alla lista delle bozze ne prende già alcuni, perché riprendere il lavoro di ieri non richieda il mouse.</p>
 <table>
 <thead>
 <tr>
@@ -1363,6 +1367,18 @@ export default {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>GIÙ, j / SU, k (lista delle bozze)</td>
+<td>Percorrere le bozze. La prima è evidenziata all'apertura: è quella modificata più di recente.</td>
+</tr>
+<tr>
+<td>INVIO (lista delle bozze)</td>
+<td>Aprire la bozza evidenziata.</td>
+</tr>
+<tr>
+<td>n (lista delle bozze)</td>
+<td>Aprire il modulo di creazione.</td>
+</tr>
 <tr>
 <td>Clic</td>
 <td>Aprire una bozza dall'elenco.</td>
@@ -1373,7 +1389,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (tiro inserito)</td>
-<td>Ricominciare il tiro finché non è stato scelto alcun candidato; una volta scelto, registrare la mossa e aprire il tiro successivo.</td>
+<td>Convalidare la mossa selezionata e aprire il lancio successivo. Su un'azione rivista, dove il cursore è posato su un'azione già scritta, la cifra ricomincia il lancio di quell'azione invece di convalidare.</td>
 </tr>
 <tr>
 <td>GIÙ, j</td>
@@ -1384,8 +1400,16 @@ export default {
 <td>Selezionare il candidato precedente.</td>
 </tr>
 <tr>
+<td>Rotellina</td>
+<td>Selezionare la candidata successiva o precedente, sia sopra la lista sia sopra la tavola: lo sguardo resta sulla tavola e le frecce scorrono.</td>
+</tr>
+<tr>
 <td>Clic (su una riga)</td>
 <td>Selezionare quel candidato.</td>
+</tr>
+<tr>
+<td>Doppio clic (su una riga)</td>
+<td>Convalidare questa candidata.</td>
 </tr>
 <tr>
 <td>Clic (sul triangolo dei tiri)</td>
@@ -1409,7 +1433,11 @@ export default {
 </tr>
 <tr>
 <td>BACKSPACE</td>
-<td>Cancellare i due dadi inseriti.</td>
+<td>Cancellare i due dadi immessi. È di qui che passa la ripresa di un lancio letto male, dato che una cifra convalida.</td>
+</tr>
+<tr>
+<td>Clic (sulle caselle del lancio)</td>
+<td>Cancellare i due dadi immessi, come BACKSPACE.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1453,7 +1481,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-INVIO</td>
-<td>Salvare la bozza come partita.</td>
+<td>Creare la partita a partire dalla bozza, o aggiornarla se esiste già.</td>
 </tr>
 <tr>
 <td>i</td>
@@ -1482,6 +1510,8 @@ export default {
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
+<p>La cifra ha un solo senso: <strong>comincia un lancio là dove si trova il cursore</strong>. In fondo al documento non c'è nulla sotto il cursore, quindi convalida la mossa selezionata prima di aprire il lancio successivo — la mossa migliore giocata costa così i due dadi e nulla più, poiché la sua convalida è portata dal primo tasto del turno seguente. Su un'azione già scritta, alla quale si è tornati per correggerla, c'è qualcosa sotto il cursore: la cifra ricomincia il lancio di quell'azione, sul posto. La differenza si vede sullo schermo, perché la cella mirata è incorniciata nella trascrizione.</p>
+<p>Un gesto che non ha nulla da fare lo dice, una volta, nella barra di stato: «niente da annullare» con la pila vuota, «nessuna azione sotto il cursore» in fondo al documento. La frase si cancella da sola e rende il posto all'azione attesa.</p>
 <p>Riportare il cursore su un'azione e ridigitare la corregge <strong>sul posto</strong>: la convalida sostituisce l'azione e il cursore torna dov'era. Se i dadi sono corretti e la mossa registrata resta una mossa legale del nuovo lancio, viene conservata; altrimenti viene proposto il primo candidato del nuovo lancio e la mossa è segnalata «da rivedere» fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa registra la correzione al passaggio.</p>
 <p>Nulla viene rifiutato né eliminato: inserire un'azione dello stesso campo della vicina crea un doppio turno, eliminare un'azione può crearne un altro, cambiare un campo può rendere illegali le mosse che seguono. Queste incoerenze sono segnalate nel transcript, mai corrette d'ufficio, e il cursore si posiziona sulla prima di esse dopo ogni gesto. La pila di annullamento vive in memoria: va persa alla chiusura della bozza.</p>
 <p>Il pannello stesso — l'elenco delle bozze, la creazione, l'inserimento, la trascrizione e la barra della bozza — è descritto in Pannello Trascrizione.</p>

@@ -283,24 +283,28 @@ export default {
 </div>
 <h3>Panneau Transcription</h3>
 <p>Le panneau <strong>Transcription</strong> (<em>CTRL-MAJ-T</em>, commande <code>transcribe</code> ou <code>tr</code>) sert à taper un match qu'on a sous les yeux — une feuille de match, un enregistrement vidéo — pour en faire un match de la bibliothèque. Ce qui se tape est un <strong>brouillon</strong> : il vit dans la base, se referme et se rouvre, et n'entre ni dans les statistiques ni dans les recherches tant qu'il n'a pas été enregistré en match.</p>
-<p>Le panneau s'ouvre sur la <strong>liste des brouillons</strong> de la base : date de dernière modification, joueurs, longueur, nombre d'actions, et le match déjà produit (<code>#</code> suivi de son identifiant) ou la mention « non enregistré ». Un clic ouvre un brouillon, et le bouton <strong>Brouillons</strong> de la barre y ramène. Le bouton <strong>Nouvelle transcription</strong> déplie le formulaire de création.</p>
+<p>Le panneau s'ouvre sur la <strong>liste des brouillons</strong> de la base : date de dernière modification, joueurs, longueur, nombre d'actions, et le match déjà produit (<code>#</code> suivi de son identifiant) ou la mention « aucun match ». Un clic ouvre un brouillon, et le bouton <strong>Brouillons</strong> de la barre y ramène. Le bouton <strong>Nouvelle transcription</strong> déplie le formulaire de création.</p>
+<p>La liste se parcourt aussi au clavier : <em>BAS</em> et <em>HAUT</em> (ou <em>j</em> et <em>k</em>) déplacent le surlignage, <em>ENTREE</em> ouvre le brouillon surligné, <em>n</em> déplie le formulaire. Le premier brouillon est surligné à l'ouverture et c'est le plus récemment modifié : reprendre le travail de la veille tient donc en deux touches, <em>CTRL-MAJ-T</em> puis <em>ENTREE</em>.</p>
 <p>Le formulaire ne demande qu'une chose : la <strong>longueur du match</strong>. La valeur <code>0</code> désigne une partie d'argent et fait apparaître les cases <em>Jacoby</em> et <em>Beaver</em>. Le champ s'ouvre sur la longueur du dernier brouillon modifié, ou sur 7 lorsque la base n'en contient aucun. Les noms des joueurs ne sont pas demandés : le brouillon désigne les camps par <em>Joueur 1</em> et <em>Joueur 2</em>, et la liste affiche « Sans nom ».</p>
-<p>Un brouillon ouvert porte en tête sa <strong>barre</strong>, qui dit tout ce qui se déduit de ce qui a été tapé : la longueur du match (ou « Argent »), le score, la mention <em>Crawford</em> lorsque la partie en cours l'est, le numéro de la partie, l'état du videau — sa valeur, centré ou au nom de celui qui le possède — et le camp au trait.</p>
+<p>Tout ce qui se déduit de ce qui a été tapé — la longueur du match (ou « Argent »), le score, la mention <em>Crawford</em> lorsque la partie en cours l'est, le numéro de la partie, l'état du videau — sa valeur, centré ou au nom de celui qui le possède — et le camp au trait — s'affiche dans la <strong>barre de match</strong>, au-dessus du plateau : c'est là que le regard se trouve déjà quand on se demande qui est au trait. L'action attendue, elle, est écrite en toutes lettres dans la <strong>barre d'état</strong> : « dés de Kévin », « réponse d'Alice au double », « relance ».</p>
+<p>La <strong>barre du brouillon</strong>, en tête du panneau, ne porte que les gestes qui font sortir le brouillon de lui-même, plus les deux flèches d'annulation.</p>
 <p>Le bouton <strong>Métadonnées</strong> de la barre déplie l'en-tête du brouillon, à tout moment : les noms des deux joueurs — autocomplétés depuis les joueurs de la base —, l'événement, le lieu, la ronde, la date (celle du jour par défaut), le transcripteur (l'utilisateur de la base par défaut) et le tournoi auquel le match sera rattaché lors de l'enregistrement. Aucun champ n'est obligatoire : un brouillon sans noms s'enregistre et s'exporte, avec des en-têtes vides. Le bouton <strong>Inverser les joueurs</strong> échange les deux noms, donne toutes les actions au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre côté.</p>
 <p>La <strong>longueur du match</strong> se change dans ce même volet, à tout moment : le score, la partie Crawford et le référentiel — les parties d'argent lorsque la longueur vaut <code>0</code>, et les cases <em>Jacoby</em> et <em>Beaver</em> apparaissent alors — sont recalculés d'un bout à l'autre du brouillon, et les actions postérieures à la victoire sont marquées « au-delà de la fin » sans qu'aucune ne soit supprimée. La longueur entre dans l'identité des positions : après un enregistrement, la changer puis réenregistrer écrit des positions neuves, à analyser, et les anciennes disparaissent dès que plus rien ne les retient.</p>
-<p>Sous la barre, le brouillon occupe deux moitiés : la <strong>saisie</strong> à gauche, le <strong>transcript</strong> à droite. Une barre de correction les surmonte — insérer avant, insérer après, supprimer, changer de camp, annuler, rétablir — qui reprend à la souris les touches du panneau.</p>
-<p>La moitié gauche annonce ce qu'elle attend et montre les deux dés au fur et à mesure de leur saisie. Une partie s'ouvre par un dé de chaque camp : le plus fort commence et joue les deux dés sans avoir à les ressaisir ; une égalité est enregistrée telle quelle et une autre ouverture est attendue.</p>
-<p>Dès que le second dé tombe, tous les <strong>coups légaux</strong> du jet sont listés, classés par le moteur embarqué, le premier présélectionné et ses flèches posées sur le plateau. Ce classement est une évaluation : il est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas disponible, les coups sont listés sans classement et le panneau le dit.</p>
+<p>Sous la barre, le brouillon occupe trois régions : la <strong>palette</strong> des cibles souris, les <strong>coups candidats</strong> et le <strong>transcript</strong>. Dans un panneau large — le dock du bas — elles sont côte à côte, la palette à gauche ; dans un panneau étroit — le dock latéral — les candidats viennent en premier, la palette au-dessous, le transcript en dernier. Dans les deux cas la règle est la même : rien ne s'intercale entre les deux cases du jet et la première ligne des candidats, et cinq candidats au moins se lisent sans faire défiler quoi que ce soit.</p>
+<p>La palette montre les deux dés au fur et à mesure de leur saisie ; un clic dessus les efface, comme <em>RETOUR ARRIERE</em>. Une partie s'ouvre par un dé de chaque camp : le plus fort commence et joue les deux dés sans avoir à les ressaisir ; une égalité est enregistrée telle quelle et une autre ouverture est attendue.</p>
+<p>Dès que le second dé tombe, tous les <strong>coups légaux</strong> du jet sont listés, classés par le moteur embarqué, le premier présélectionné et ses flèches posées sur le plateau. La liste donne le coup, son équité et son écart au meilleur : transcrire, c'est reconnaître le coup qu'on a vu jouer, pas le juger — le panneau <strong>Évaluation</strong> est là pour cela. Ce classement est une évaluation : il est affiché, il n'est jamais écrit dans la base. Lorsque le moteur n'est pas disponible, les coups sont listés sans classement et la liste le dit en tête.</p>
+<p>La <strong>molette</strong> sélectionne le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent, ce qui reconnaît un coup plus vite que la lecture de sa notation. Un clic sur une ligne la sélectionne, un double-clic la valide.</p>
 <p>Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un clic, et le triangle est là pour qui transcrit la souris à la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet.</p>
-<p>Un clic sur un point du plateau ne laisse que les coups qui en partent. C'est le geste du coup lointain : descendre au douzième candidat coûte treize touches, là où le filtre n'en laisse que deux ou trois. Le filtre ne change rien au brouillon, il réduit la liste à l'écran ; le jet suivant le lève.</p>
+<p>Un clic sur un point du plateau ne laisse que les coups qui en partent. C'est le geste du coup lointain : descendre au douzième candidat coûte treize touches, là où le filtre n'en laisse que deux ou trois. Le filtre ne change rien au brouillon, il réduit la liste à l'écran ; une puce en tête de la liste le rappelle et permet de le lever, et le jet suivant le lève aussi.</p>
 <p>Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre — joue le coup sur le damier, contraint aux coups légaux ; les destinations offertes par le pion choisi s'allument. Les deux dés se déduisent des pas : jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un chiffre abandonne le coup et revient à la saisie par les dés, et un double-clic hors du damier le reprend depuis le début. Quand plusieurs jets produisent le même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable — rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le jet n'est jamais deviné à la place de celui qui regarde la partie.</p>
-<p>Un coup illégal se transcrit tel qu'il a été joué. Le bouton « Déplacement libre » libère le damier : les pions se déplacent sans aucune vérification, et « Ce plateau est le coup joué » enregistre le plateau obtenu. Le champ de notation, à côté, fait la même chose au clavier : <code>13/7 8/7*</code>, <code>bar/22</code> ou <code>6/off</code> s'écrivent et s'enregistrent par ENTREE. Les deux demandent que les dés du jet soient saisis d'abord, un coup illégal ne disant pas quel jet l'a produit. Un coup saisi par l'un de ces deux chemins qui se trouve être légal reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais sur la provenance du geste ; sinon il est marqué « coup illégal » dans le transcript, et l'export <code>.mat</code> avertit avant d'écrire le fichier, sans jamais refuser.</p>
-<p>Sous le triangle, la rangée <strong>Doubler</strong>, <strong>Prendre</strong>, <strong>Passer</strong>, <strong>Abandonner</strong> reprend à la souris les quatre gestes de videau. Elle dit de qui est le tour : le camp au trait annonce — doubler, abandonner — ou le camp d'en face répond — prendre, passer ; jamais les quatre à la fois, et un bouton dont le geste ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste interdit. « Abandonner » n'enregistre rien encore : la rangée devient les trois niveaux — simple, gammon, backgammon — et « Annuler », qui reprend la touche ÉCHAP. Le videau dessiné sur le plateau est la seconde cible de ces gestes : un clic dessus propose un double. Devant une offre il ne répond pas — la prise et la passe sont deux réponses symétriques et vivent ensemble dans la rangée, un clic chacune.</p>
-<p>Sous les dés, une ligne dit l'état de la saisie : le jet encore corrigeable, le candidat choisi, la danse enregistrée d'office, l'égalité à relancer, la réponse attendue à un double, le niveau attendu après une résignation, la correction en place, le coup « à revoir » dont le jet a changé, et l'incohérence que la dernière action a laissée derrière elle.</p>
-<p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
-<p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents, coup non consigné) décore sa cellule et se nomme dans une info-bulle. Le coup non consigné est le cas d'un fichier <code>.mat</code> relu : gnubg y écrit <code>???</code> quand il n'a pas gardé le coup joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette cellule propose les coups de ce jet pour le renseigner. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
-<p>Un clic droit sur une cellule ouvre les corrections de cette action — insérer avant, insérer après, supprimer, changer de camp — et amène le curseur dessus au passage ; ce sont les mêmes gestes que la barre de correction et que les touches, et le menu du navigateur n'est retiré que là.</p>
-<p>La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. La barre du brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un match déjà enregistré reste dans la bibliothèque, définitif.</p>
+<p>Un coup illégal se transcrit tel qu'il a été joué. Le bouton <strong>✎</strong> de la palette déplie les deux chemins qui le permettent, à la place du triangle : ils servent une fois par match quand le triangle sert à chaque tour. Le bouton « Déplacement libre » libère le damier : les pions se déplacent sans aucune vérification, et « Ce plateau est le coup joué » enregistre le plateau obtenu. Le champ de notation, à côté, fait la même chose au clavier : <code>13/7 8/7*</code>, <code>bar/22</code> ou <code>6/off</code> s'écrivent et s'enregistrent par ENTREE. Les deux demandent que les dés du jet soient saisis d'abord, un coup illégal ne disant pas quel jet l'a produit. Un coup saisi par l'un de ces deux chemins qui se trouve être légal reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais sur la provenance du geste ; sinon il est marqué « coup illégal » dans le transcript, et l'export <code>.mat</code> avertit avant d'écrire le fichier, sans jamais refuser.</p>
+<p>Sur la ligne des dés, la rangée <strong>Doubler</strong>, <strong>Prendre</strong>, <strong>Passer</strong>, <strong>Abandonner</strong> reprend à la souris les quatre gestes de videau : ce sont, avec les deux dés, les cinq réponses possibles à une seule question — qu'a fait le camp au trait ? Elle dit de qui est le tour : le camp au trait annonce — doubler, abandonner — ou le camp d'en face répond — prendre, passer ; jamais les quatre à la fois, et un bouton dont le geste ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste interdit. « Abandonner » n'enregistre rien encore : la rangée devient les trois niveaux — simple, gammon, backgammon — et « Annuler », qui reprend la touche ÉCHAP. Le videau dessiné sur le plateau est la seconde cible de ces gestes : un clic dessus propose un double. Devant une offre il ne répond pas — la prise et la passe sont deux réponses symétriques et vivent ensemble dans la rangée, un clic chacune.</p>
+<p>La <strong>barre d'état</strong> dit ce que le brouillon attend, en un mot : la danse enregistrée d'office, l'égalité à relancer, la réponse attendue à un double, le niveau attendu après une résignation, la correction en place, le coup « à revoir » dont le jet a changé. Elle y répond aussi aux gestes qui n'ont rien à faire — « rien à annuler », « aucune action sous le curseur » — le temps d'une seconde et demie. L'incohérence qu'une action a laissée derrière elle, elle, est signalée en tête du transcript, là où se trouve la cellule fautive.</p>
+<p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match paraissent alors dans la barre de match, et l'ouverture de la partie suivante est attendue.</p>
+<p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents, coup non consigné) décore sa cellule et se nomme dans une info-bulle. Le coup non consigné est le cas d'un fichier <code>.mat</code> relu : gnubg y écrit <code>???</code> quand il n'a pas gardé le coup joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette cellule propose les coups de ce jet pour le renseigner. Les parties se replient ; celle du curseur est ouverte.</p>
+<p>Un clic droit sur une cellule ouvre les corrections de cette action — insérer avant, insérer après, supprimer, changer de camp — et amène le curseur dessus au passage ; ce sont les mêmes gestes que les touches <em>i</em>, <em>a</em>, <em>x</em> et <em>s</em>, et le menu du navigateur n'est retiré que là. Ils n'ont pas de boutons ailleurs : un bouton qui agirait sur « l'action du curseur » viserait une cellule que l'on ne voit pas forcément, quand le clic droit désigne la sienne.</p>
+<p>La barre du brouillon porte les gestes qui le font sortir de lui-même. « <strong>Créer le match</strong> » (CTRL-ENTREE) l'écrit dans la bibliothèque, et devient ensuite « Mettre à jour le match #<em>n</em> » : le match est remplacé sous le même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. À côté, la barre dit où en est ce match — aucun match, à jour, ou en retard sur le brouillon. Elle ne dit rien du salut du brouillon lui-même : il est écrit dans la base après chaque action, il n'y a rien à surveiller.</p>
+<p>« <strong>Texte .mat</strong> » ouvre le fichier Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que ses colonnes restent alignées, avec un bouton pour le copier. « <strong>Exporter .mat</strong> » écrit ce même fichier sur le disque. « <strong>Fermer le brouillon</strong> » le supprime après confirmation ; un match déjà créé reste dans la bibliothèque, définitif. Les deux flèches <strong>↶</strong> et <strong>↷</strong> annulent et rétablissent, comme <em>CTRL-Z</em> et <em>CTRL-MAJ-Z</em>.</p>
 <p>Si l'analyse d'un match transcrit a été interrompue — l'application fermée pendant le lot —, la barre d'état le signale à la prochaine ouverture de la base et propose de la terminer. Rien n'est retenu de cette interruption : la proposition revient tant qu'il reste des positions à analyser, et le lot relancé ne porte que sur ce match, jamais sur toute la bibliothèque.</p>
 <p>Un brouillon qui porte des incohérences est enregistré tout de même, après un avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et divergeront ensuite.</p>
 <p>Le panneau <strong>Matchs</strong> rappelle chaque brouillon en cours au-dessus de la liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet Transcription.</p>
@@ -1354,7 +1358,7 @@ export default {
 </tbody>
 </table>
 <h3>Panneau Transcription</h3>
-<p>Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.</p>
+<p>Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des brouillons il en prend déjà quelques-unes, pour que reprendre le travail de la veille ne demande pas la souris.</p>
 <table>
 <thead>
 <tr>
@@ -1363,6 +1367,18 @@ export default {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>BAS, j / HAUT, k (liste des brouillons)</td>
+<td>Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est le plus récemment modifié.</td>
+</tr>
+<tr>
+<td>ENTREE (liste des brouillons)</td>
+<td>Ouvrir le brouillon surligné.</td>
+</tr>
+<tr>
+<td>n (liste des brouillons)</td>
+<td>Ouvrir le formulaire de création.</td>
+</tr>
 <tr>
 <td>Clic</td>
 <td>Ouvrir un brouillon de la liste.</td>
@@ -1373,7 +1389,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (jet saisi)</td>
-<td>Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un candidat choisi, valider le coup et ouvrir le jet suivant.</td>
+<td>Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider.</td>
 </tr>
 <tr>
 <td>BAS, j</td>
@@ -1384,8 +1400,16 @@ export default {
 <td>Sélectionner le candidat précédent.</td>
 </tr>
 <tr>
+<td>Molette</td>
+<td>Sélectionner le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent.</td>
+</tr>
+<tr>
 <td>Clic (sur une ligne)</td>
 <td>Sélectionner ce candidat.</td>
+</tr>
+<tr>
+<td>Double-clic (sur une ligne)</td>
+<td>Valider ce candidat.</td>
 </tr>
 <tr>
 <td>Clic (sur le triangle des jets)</td>
@@ -1409,7 +1433,11 @@ export default {
 </tr>
 <tr>
 <td>RETOUR ARRIERE</td>
-<td>Effacer les deux dés saisis.</td>
+<td>Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet mal lu, puisqu'un chiffre valide.</td>
+</tr>
+<tr>
+<td>Clic (sur les cases du jet)</td>
+<td>Effacer les deux dés saisis, comme RETOUR ARRIERE.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1453,7 +1481,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-ENTREE</td>
-<td>Enregistrer le brouillon en match.</td>
+<td>Créer le match à partir du brouillon, ou le mettre à jour s'il existe déjà.</td>
 </tr>
 <tr>
 <td>i</td>
@@ -1482,6 +1510,8 @@ export default {
 </tbody>
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
+<p>Le chiffre a un seul sens : <strong>il commence un jet là où le curseur est</strong>. En bout de document il n'y a rien sous le curseur, donc il valide le coup sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte ainsi les deux dés et rien de plus, sa validation étant portée par la première touche du tour d'après. Sur une action déjà écrite, où l'on est revenu pour la corriger, il y a quelque chose sous le curseur : le chiffre recommence le jet de cette action, sur place. La différence se voit à l'écran, la cellule visée étant encadrée dans le transcript.</p>
+<p>Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « rien à annuler » sur une pile vide, « aucune action sous le curseur » en bout de document. La phrase s'efface d'elle-même et rend la place à l'action attendue.</p>
 <p>Reculer le curseur sur une action puis ressaisir la corrige <strong>en place</strong> : la validation remplace l'action et le curseur revient là où il était. Si les dés sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir changé quelque chose enregistre la correction au passage.</p>
 <p>Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine crée un double trait, supprimer une action peut en créer un autre, changer un camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées dans le transcript, jamais corrigées d'office, et le curseur se place sur la première d'entre elles après chaque geste. La pile d'annulation vit en mémoire : elle est perdue à la fermeture du brouillon.</p>
 <p>Le panneau lui-même — la liste des brouillons, la création, la saisie, le transcript et la barre du brouillon — est décrit dans Panneau Transcription.</p>

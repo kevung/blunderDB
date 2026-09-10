@@ -86,6 +86,83 @@ export function setTranscription(state) {
 }
 
 /**
+ * Ce que la BARRE DE MATCH dit du brouillon ouvert : longueur, score, Crawford,
+ * numéro de partie, videau, camp au trait. `null` quand aucun brouillon ne l'est.
+ *
+ * Ces six faits étaient sept pastilles dans le panneau (ADR-0048 décision 2), ce
+ * que `ux.md` §5 n'avait jamais demandé : il les plaçait dans `MatchInfoBar`,
+ * qui est déjà au-dessus du plateau — donc lue au moment où l'œil est sur le
+ * plateau, qui est le bon moment pour « Kévin au trait, videau à 2 ». Le panneau
+ * les POSE ici et ne les dessine plus ; la barre les lit.
+ *
+ * @type {import('svelte/store').Writable<null | {lengthKey: string, lengthParams: object, score: number[], crawford: boolean, gameNumber: number, cubeKey: string, cubeParams: object, onRoll: string}>}
+ */
+export const transcriptionInfoStore = writable(null);
+
+/**
+ * L'Action attendue, en un mot, pour la BARRE D'ÉTAT (`ux.md` §5, jamais câblé
+ * avant ADR-0048 décision 2). Une clé i18n et ses paramètres, ou `null`.
+ *
+ * C'est un ÉTAT : il y en a toujours exactement un tant qu'un brouillon est
+ * ouvert, et il ne s'efface pas tout seul.
+ *
+ * @type {import('svelte/store').Writable<null | {key: string, params?: object}>}
+ */
+export const transcriptionPromptStore = writable(null);
+
+/**
+ * La réponse TRANSITOIRE d'un geste sans effet (ADR-0048 décision 9) : « rien à
+ * annuler », « aucune Action sous le curseur ». Elle cède la place à la phrase
+ * de l'Action attendue au bout de [NOTICE_MS].
+ *
+ * Pourquoi elle existe. Quatre gestes n'ont rien à faire dans un état
+ * parfaitement ordinaire et se taisaient tous les quatre : `Ctrl+Z` sur une pile
+ * vide — vide PAR CONSTRUCTION sur un brouillon réouvert, la pile vivant dans le
+ * `transcript.Editor` de la session (ADR-0045 règle 1) —, `x`/`Suppr`/`s` en
+ * bout de document, `Retour arrière` sans dé saisi. Le seul de la famille qui
+ * disait quelque chose était un bouton grisé, et c'est celui que la décision 3
+ * supprime. Une promesse prise exprès qui ne se dit jamais est indiscernable
+ * d'un bug.
+ *
+ * @type {import('svelte/store').Writable<null | {key: string, params?: object}>}
+ */
+export const transcriptionNoticeStore = writable(null);
+
+/**
+ * Un cran de molette donné AU-DESSUS DU PLATEAU (ADR-0048 décision 11).
+ *
+ * Le plateau ne connaît pas la liste des candidats, et le panneau ne reçoit pas
+ * les événements du plateau : le dispatcher de `App.svelte` pose donc le cran
+ * ici et le panneau, qui possède la sélection, le sert. Même forme que
+ * `transcriptionCubeRequestStore` et que `Ctrl+Z`, pour la même raison.
+ *
+ * `at` distingue deux crans identiques qui se suivent : un magasin dédoublonne
+ * les valeurs égales, et deux `{delta: 1}` de suite n'en feraient qu'un.
+ *
+ * @type {import('svelte/store').Writable<null | {delta: number, at: number}>}
+ */
+export const transcriptionWheelStore = writable(null);
+
+/** Combien de temps une réponse transitoire reste à l'écran. */
+export const NOTICE_MS = 1500;
+
+let noticeTimer = null;
+
+/** Pose une réponse transitoire, en remplaçant celle qui traînait. */
+export function noticeTranscription(key, params = undefined) {
+    clearTimeout(noticeTimer);
+    transcriptionNoticeStore.set({ key, params });
+    noticeTimer = setTimeout(() => transcriptionNoticeStore.set(null), NOTICE_MS);
+}
+
+/** Efface la réponse transitoire et son minuteur (démontage, fermeture). */
+export function clearTranscriptionNotice() {
+    clearTimeout(noticeTimer);
+    noticeTimer = null;
+    transcriptionNoticeStore.set(null);
+}
+
+/**
  * Lets go of the open draft. Called when the draft is closed and when the
  * library changes — a draft belongs to the library it names two players of, and
  * a stale one would keep answering for a row id of another file.
@@ -93,6 +170,12 @@ export function setTranscription(state) {
 export function clearTranscription() {
     transcriptionStore.set(null);
     transcriptionHistoryStore.set({ canUndo: false, canRedo: false });
+    // La barre de match et la barre d'état parlent du brouillon OUVERT : sans
+    // brouillon elles n'ont plus rien à dire (ADR-0048 décisions 2 et 9).
+    transcriptionInfoStore.set(null);
+    transcriptionPromptStore.set(null);
+    transcriptionWheelStore.set(null);
+    clearTranscriptionNotice();
     transcriptionHistoryActionStore.set(null);
     resetTranscriptionKeys();
     // Le filtre par point appartient au jet en cours (T2.2) : sans brouillon

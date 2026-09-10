@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -749,9 +749,36 @@ msgstr "トランスクリプションパネル"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
-msgstr "パネルにフォーカスがあり、下書きが開いている間、これらのキーはパネルが受け取ります。"
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
+msgstr "パネルは焦点を持つあいだこれらのキーを受け取ります。下書き一覧の前でもすでにいくつかを受け取ります。昨日の作業の再開がマウスを要さないようにするためです。"
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "下, j / 上, k(下書き一覧)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr "下書きをたどる。最初のものが開いた時点で強調されている。最後に更新されたものである。"
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "ENTER(下書き一覧)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "強調された下書きを開く。"
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n(下書き一覧)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "作成フォームを開く。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -773,9 +800,10 @@ msgstr "1 … 6（出目を入力済み）"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
-msgstr "候補を選ぶまでは出目を振り直す。候補を選んだあとは着手を記録し、次の出目に進む。"
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
+msgstr "選択された手を確定し、次の出目を開く。カーソルがすでに書かれたアクションの上にある見直し中のアクションでは、数字は確定せずそのアクションの出目をやり直す。"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -788,12 +816,31 @@ msgid "Sélectionner le candidat précédent."
 msgstr "前の候補を選択する。"
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "ホイール"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr "次または前の候補手を選ぶ。一覧の上でも盤の上でも同じで、視線は盤に残り矢印が流れていく。"
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "クリック（行の上で）"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "その候補を選択する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "ダブルクリック(行の上で)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "その候補手を確定する。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -845,8 +892,18 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "選択中の着手を記録する（ゲーム最後の着手）。"
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "入力した2つのダイスを消す。"
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr "入力した二つのダイスを消す。数字が確定するため、読み違えた出目のやり直しはここを通る。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "クリック(出目のマスの上で)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "入力した二つのダイスを消す。BACKSPACE と同じ。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -935,8 +992,10 @@ msgid "CTRL-ENTREE"
 msgstr "CTRL-ENTER"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "下書きをマッチとして保存する。"
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr "下書きからマッチを作成する。すでにあればそれを更新する。"
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -984,13 +1043,35 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "元に戻した操作をやり直します。"
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
 msgstr "どの着手も許さない出目は、追加のキー操作なしにダンスを記録します。"
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"数字の意味はただ一つ、\\ **カーソルのある場所で出目を始める**\\ "
+"ことです。文書の末尾ではカーソルの下に何もないので、次の出目を開く前に選択された手を確定します——最善手を打った場合の費用はこうして二つのダイスだけとなり、その確定は次の手番の最初の打鍵が担います。訂正のために戻ったすでに書かれたアクションの上では、カーソルの下に何かがあります。数字はそのアクションの出目をその場でやり直します。違いは画面に見えます。指されたセルがトランスクリプトで枠に囲まれているからです。"
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr "何もすることのない操作は、ステータスバーで一度そう告げます。積みが空なら「取り消すものがありません」、文書の末尾なら「カーソルの下にアクションがありません」。この文はひとりでに消え、期待される行動に場所を返します。"
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1001,7 +1082,7 @@ msgid ""
 " la correction au passage."
 msgstr "カーソルをあるアクションまで戻して入力し直すと、そのアクションをその場で修正できます。確定するとアクションが置き換えられ、カーソルは元の位置に戻ります。ダイスを修正しても記録済みの手が新しいロールの合法手のままであれば、その手は保たれます。そうでない場合は新しいロールの最初の候補が提示され、その手は確定するまで「要確認」と表示されます。何かを変更したあとでカーソルを前後に動かすと、その際に修正が記録されます。"
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1012,7 +1093,7 @@ msgid ""
 "brouillon."
 msgstr "拒否されるものも削除されるものもありません。隣と同じ手番のアクションを挿入すれば二重手番になり、アクションを削除すれば別の二重手番が生じることがあり、手番を変えれば以降の手が不正になることがあります。これらの不整合はトランスクリプトに印が付き、勝手に修正されることはありません。カーソルは操作のたびにその最初の不整合へ移動します。取り消し履歴はメモリ上にあり、下書きを閉じると失われます。"
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1021,7 +1102,7 @@ msgstr ""
 "パネルそのもの — 下書き一覧、作成、入力、棋譜、下書きのバー — は :ref:`panneau_transcription` "
 "で説明されています。"
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 
@@ -1181,3 +1262,16 @@ msgstr "ヘルプを閉じる。"
 #~ msgstr ""
 #~ "不整合のある下書きも、警告のうえでそのまま保存されます。拒否されるものはありません。不正な着手は打たれたとおりに書き出され、gnubg"
 #~ " と XG がそれを「Invalid move」と表示し、以降は食い違うという警告が出ます。"
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr "パネルにフォーカスがあり、下書きが開いている間、これらのキーはパネルが受け取ります。"
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr "候補を選ぶまでは出目を振り直す。候補を選んだあとは着手を記録し、次の出目に進む。"

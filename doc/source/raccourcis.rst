@@ -277,25 +277,33 @@ Panneau des collections
 Panneau Transcription
 ---------------------
 
-Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
+Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des
+brouillons il en prend déjà quelques-unes, pour que reprendre le travail de la
+veille ne demande pas la souris.
 
 .. csv-table::
    :header: "Raccourci", "Action"
    :widths: 7, 20
    :align: center
 
+   "BAS, j / HAUT, k (liste des brouillons)", "Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est le plus récemment modifié."
+   "ENTREE (liste des brouillons)", "Ouvrir le brouillon surligné."
+   "n (liste des brouillons)", "Ouvrir le formulaire de création."
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés)."
-   "1 … 6 (jet saisi)", "Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un candidat choisi, valider le coup et ouvrir le jet suivant."
+   "1 … 6 (jet saisi)", "Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider."
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
+   "Molette", "Sélectionner le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent."
    "Clic (sur une ligne)", "Sélectionner ce candidat."
+   "Double-clic (sur une ligne)", "Valider ce candidat."
    "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Pendant l'ouverture, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
    "Clic (sur un point du damier)", "Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre."
    "Clic, glisser (aucun dé saisi)", "Jouer le coup directement sur le damier : le pion va du point cliqué à sa destination, contraint aux coups légaux, et les deux dés se déduisent des pas joués."
    "RETOUR ARRIERE (coup en cours au plateau)", "Défaire le dernier pas joué au plateau."
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
-   "RETOUR ARRIERE", "Effacer les deux dés saisis."
+   "RETOUR ARRIERE", "Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet mal lu, puisqu'un chiffre valide."
+   "Clic (sur les cases du jet)", "Effacer les deux dés saisis, comme RETOUR ARRIERE."
    "Esc", "Abandonner la saisie en cours."
    "d", "Doubler ou redoubler : le coup sélectionné est validé au passage, en une seule touche."
    "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue."
@@ -306,7 +314,7 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "DROITE, l", "Avancer le curseur d'une action."
    "Clic (sur une cellule)", "Placer le curseur sur cette action."
    "Clic droit (sur une cellule)", "Ouvrir les corrections de cette action : insérer avant, insérer après, supprimer, changer de camp. Le curseur est amené sur la cellule au passage."
-   "CTRL-ENTREE", "Enregistrer le brouillon en match."
+   "CTRL-ENTREE", "Créer le match à partir du brouillon, ou le mettre à jour s'il existe déjà."
    "i", "Insérer une action devant celle du curseur (camp proposé pour que la suite reste cohérente)."
    "a", "Insérer une action derrière celle du curseur."
    "x, Del", "Supprimer l'action du curseur ; les suivantes gardent leur camp."
@@ -316,6 +324,20 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
+
+Le chiffre a un seul sens : **il commence un jet là où le curseur est**. En bout
+de document il n'y a rien sous le curseur, donc il valide le coup sélectionné
+avant d'ouvrir le jet suivant — le meilleur coup joué coûte ainsi les deux dés
+et rien de plus, sa validation étant portée par la première touche du tour
+d'après. Sur une action déjà écrite, où l'on est revenu pour la corriger, il y a
+quelque chose sous le curseur : le chiffre recommence le jet de cette action,
+sur place. La différence se voit à l'écran, la cellule visée étant encadrée dans
+le transcript.
+
+Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état :
+« rien à annuler » sur une pile vide, « aucune action sous le curseur » en bout
+de document. La phrase s'efface d'elle-même et rend la place à l'action
+attendue.
 
 Reculer le curseur sur une action puis ressaisir la corrige **en place** : la
 validation remplace l'action et le curseur revient là où il était. Si les dés

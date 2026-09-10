@@ -283,24 +283,28 @@ export default {
 </div>
 <h3>Panel de Transcripción</h3>
 <p>El panel <strong>Transcripción</strong> (<em>CTRL-MAJ-T</em>, comando <code>transcribe</code> o <code>tr</code>) sirve para teclear un partido que se tiene delante — una hoja de partido, una grabación de vídeo — y convertirlo en un partido de la biblioteca. Lo que se teclea es un <strong>borrador</strong>: vive en la base, se cierra y se vuelve a abrir, y no entra ni en las estadísticas ni en las búsquedas mientras no se haya guardado como partido.</p>
-<p>El panel se abre en la <strong>lista de borradores</strong> de la base: fecha de la última modificación, jugadores, longitud, número de acciones, y el partido ya producido (<code>#</code> seguido de su identificador) o la mención «sin guardar». Un clic abre un borrador, y el botón <strong>Borradores</strong> de la barra devuelve a la lista. El botón <strong>Nueva transcripción</strong> despliega el formulario de creación.</p>
+<p>El panel se abre con la <strong>lista de borradores</strong> de la base: última modificación, jugadores, longitud, número de acciones y el partido ya producido (<code>#</code> seguido de su identificador) o la mención «sin partido». Un clic abre un borrador, y el botón <strong>Borradores</strong> de la barra vuelve a la lista. El botón <strong>Nueva transcripción</strong> despliega el formulario de creación.</p>
+<p>La lista también se recorre con el teclado: <em>ABAJO</em> y <em>ARRIBA</em> (o <em>j</em> y <em>k</em>) mueven el resaltado, <em>INTRO</em> abre el borrador resaltado, <em>n</em> despliega el formulario. El primer borrador está resaltado al abrir y es el modificado más recientemente: retomar el trabajo de ayer cuesta por tanto dos teclas, <em>CTRL-MAYÚS-T</em> y luego <em>INTRO</em>.</p>
 <p>El formulario solo pide una cosa: la <strong>longitud del partido</strong>. El valor <code>0</code> designa una partida por dinero y hace aparecer las casillas <em>Jacoby</em> y <em>Beaver</em>. El campo se abre con la longitud del último borrador modificado, o con 7 cuando la base no contiene ninguno. Los nombres de los jugadores no se piden: el borrador designa los bandos como <em>Jugador 1</em> y <em>Jugador 2</em>, y la lista muestra «Sin nombre».</p>
-<p>Un borrador abierto lleva arriba su <strong>barra</strong>, que dice todo lo que se deduce de lo tecleado: la longitud del partido (o «Dinero»), el marcador, la mención <em>Crawford</em> cuando la partida en curso lo es, el número de partida, el estado del cubo — su valor, centrado o a nombre de quien lo posee — y el bando en juego.</p>
+<p>Todo lo que se deduce de lo tecleado — la longitud del partido (o «Dinero»), el marcador, la mención <em>Crawford</em> cuando la partida en curso lo es, el número de partida, el estado del cubo — su valor, centrado o a nombre de quien lo posee — y el bando en turno — se muestra en la <strong>barra de partido</strong>, encima del tablero: ahí es donde ya está la mirada cuando uno se pregunta quién juega. La acción esperada, en cambio, se escribe con todas sus letras en la <strong>barra de estado</strong>: «dados de Kévin», «respuesta de Alice al doble», «se repite la tirada».</p>
+<p>La <strong>barra del borrador</strong>, en la cabecera del panel, solo lleva los gestos que sacan al borrador de sí mismo, además de las dos flechas de deshacer.</p>
 <p>El botón <strong>Metadatos</strong> de la barra despliega la cabecera del borrador, en cualquier momento: los nombres de los dos jugadores — autocompletados a partir de los jugadores de la base —, el evento, el lugar, la ronda, la fecha (la de hoy por defecto), el transcriptor (el usuario de la base por defecto) y el torneo al que se vinculará la partida al guardarla. Ningún campo es obligatorio: un borrador sin nombres se guarda y se exporta igual, con cabeceras vacías. El botón <strong>Invertir los jugadores</strong> intercambia los dos nombres, da todas las acciones al bando contrario y da la vuelta al tablero: es la misma partida, leída desde el otro lado.</p>
 <p>La <strong>longitud de la partida</strong> se cambia en ese mismo panel, en cualquier momento: el marcador, la partida Crawford y el referencial — las partidas por dinero cuando la longitud es <code>0</code>, y aparecen entonces las casillas <em>Jacoby</em> y <em>Beaver</em> — se recalculan de un extremo a otro del borrador, y las acciones registradas después de la victoria se señalan «más allá del final» sin que se elimine ninguna. La longitud forma parte de la identidad de una posición: tras guardar, cambiarla y volver a guardar escribe posiciones nuevas, por analizar, y las antiguas desaparecen en cuanto ya nada las retiene.</p>
-<p>Bajo la barra, el borrador ocupa dos mitades: la <strong>entrada</strong> a la izquierda, la <strong>transcripción</strong> a la derecha. Una barra de corrección las corona — insertar antes, insertar después, eliminar, cambiar de bando, deshacer, rehacer — que retoma con el ratón las teclas del panel.</p>
-<p>La mitad izquierda anuncia lo que espera y muestra los dos dados a medida que se introducen. Una partida se abre con un dado de cada bando: el más alto empieza y juega los dos dados sin tener que volver a introducirlos; un empate se registra tal cual y se espera otra apertura.</p>
-<p>En cuanto cae el segundo dado, se listan todas las <strong>jugadas legales</strong> de la tirada, clasificadas por el motor integrado, con la primera preseleccionada y sus flechas puestas sobre el tablero. Esa clasificación es una evaluación: se muestra, nunca se escribe en la base. Cuando el motor no está disponible, las jugadas se listan sin clasificación y el panel lo dice.</p>
+<p>Bajo la barra, el borrador ocupa tres regiones: la <strong>paleta</strong> de objetivos de ratón, los <strong>movimientos candidatos</strong> y la <strong>transcripción</strong>. En un panel ancho — el acople inferior — están una al lado de otra, con la paleta a la izquierda; en un panel estrecho — el acople lateral — los candidatos van primero, la paleta debajo y la transcripción al final. La regla es la misma en ambos casos: nada se interpone entre las dos casillas de la tirada y la primera línea de candidatos, y al menos cinco candidatos se leen sin desplazar nada.</p>
+<p>La paleta muestra los dos dados a medida que se introducen; un clic sobre ellos los borra, como <em>RETROCESO</em>. Una partida se abre con un dado de cada bando: el más alto empieza y juega los dos dados sin tener que volver a introducirlos; un empate se registra tal cual y se espera otra apertura.</p>
+<p>En cuanto cae el segundo dado, se listan todos los <strong>movimientos legales</strong> de la tirada, clasificados por el motor incorporado, el primero preseleccionado y sus flechas puestas sobre el tablero. La lista da el movimiento, su equidad y su diferencia con el mejor: transcribir es reconocer el movimiento que se ha visto jugar, no juzgarlo — para eso está el panel <strong>Evaluación</strong>. Esta clasificación es una evaluación: se muestra, nunca se escribe en la base. Cuando el motor no está disponible, los movimientos se listan sin clasificar y la lista lo dice en su cabecera.</p>
+<p>La <strong>rueda</strong> selecciona el candidato siguiente o anterior, tanto sobre la lista como sobre el tablero: la mirada permanece en el tablero y las flechas desfilan, lo que reconoce un movimiento más rápido que leer su notación. Un clic en una fila la selecciona, un doble clic la valida.</p>
 <p>El triángulo de las veintiuna tiradas se sitúa bajo las dos casillas de la tirada, junto al teclado y no en su lugar: dos dígitos siguen siendo el doble de rápidos que un clic, y el triángulo está ahí para quien transcribe con la mano en el ratón. Una casilla por tirada, nunca dos: 3-1 y 1-3 son la misma tirada.</p>
-<p>Un clic en un punto del tablero deja solo las jugadas que parten de él. Es el gesto de la jugada lejana: llegar al duodécimo candidato cuesta trece pulsaciones, mientras que el filtro deja solo dos o tres. El filtro no cambia nada en el borrador, reduce la lista en pantalla; la siguiente tirada lo levanta.</p>
+<p>Un clic en un punto del tablero deja solo los movimientos que parten de él. Es el gesto del movimiento lejano: bajar hasta el duodécimo candidato cuesta trece teclas, mientras que el filtro deja solo dos o tres. El filtro no cambia nada del borrador, acorta la lista en pantalla; una etiqueta en la cabecera de la lista lo recuerda y permite quitarlo, y la tirada siguiente también lo quita.</p>
 <p>Una jugada realizada en el tablero ahorra leer los dados. Mientras no se haya introducido ningún dado, un clic en una ficha y luego en su destino — o un arrastre de una a otro — juega la jugada en el tablero, limitada a las jugadas legales; los destinos que ofrece la ficha elegida se iluminan. Los dos dados se deducen de los pasos: jugar 13/7 y luego 8/7 dice 6-1 sin que se haya tecleado una cifra, y la acción se registra en cuanto la jugada está completa. Retroceso deshace el último paso, una cifra abandona la jugada y vuelve a la entrada de dados, y un doble clic fuera del tablero la reinicia. Cuando varias tiradas producen la misma jugada — una salida que varios dados cubren, un dado que no se puede jugar — no se registra nada y el triángulo solo deja pulsables esas tiradas: la tirada nunca se adivina en lugar de quien mira la partida.</p>
-<p>Una jugada ilegal se transcribe tal como se realizó. El botón « Movimiento libre » libera el tablero: las fichas se mueven sin ninguna comprobación, y « Este tablero es la jugada realizada » registra el tablero obtenido. El campo de notación, al lado, hace lo mismo con el teclado: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> se escriben y se registran con INTRO. Ambos exigen que se introduzcan antes los dados de la tirada, ya que una jugada ilegal no dice qué tirada la produjo. Una jugada introducida por cualquiera de estos dos caminos que resulte ser legal sigue siendo una jugada ordinaria — la comparación se hace sobre el tablero obtenido, nunca sobre la procedencia del gesto; en caso contrario se marca « jugada ilegal » en la transcripción, y la exportación <code>.mat</code> avisa antes de escribir el archivo, sin negarse nunca.</p>
-<p>Bajo el triángulo, la fila <strong>Doblar</strong>, <strong>Aceptar</strong>, <strong>Pasar</strong>, <strong>Abandonar</strong> lleva al ratón los cuatro gestos de cubo. Dice de quién es el turno: el bando en turno anuncia — doblar, abandonar — o el bando contrario responde — aceptar, pasar; nunca los cuatro a la vez, y un botón cuyo gesto no respondería a nada queda apagado. El teclado, en cambio, no rechaza nunca nada: un botón apagado es un blanco que no se ofrece, no un gesto prohibido. «Abandonar» todavía no registra nada: la fila pasa a ser los tres niveles — sencilla, gammon, backgammon — y «Cancelar», que retoma la tecla ESC. El cubo dibujado en el tablero es el segundo blanco de estos gestos: un clic en él propone un doble. Ante una oferta no responde: aceptar y pasar son dos respuestas simétricas y viven juntas en la fila, un clic cada una.</p>
-<p>Bajo los dados, una línea dice en qué estado se encuentra la entrada: la tirada aún corregible, el candidato elegido, el baile registrado por sí solo, el empate por relanzar, la respuesta esperada a un doble, el nivel esperado tras un abandono, la corrección en el sitio, la jugada «por revisar» cuya tirada ha cambiado, y la incoherencia que ha dejado la última acción.</p>
-<p>Una partida termina por un rechazo, por un abandono o por la salida de la decimoquinta ficha (sencilla, gammon o backgammon, multiplicada por el valor del cubo). El marcador, la partida Crawford y el final del partido se muestran entonces encima de los dados, y se espera la apertura de la partida siguiente.</p>
-<p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una fila por turno, la acción de doblaje y el final de la partida en la columna de quien actúa. La celda del cursor está enmarcada; al mover el cursor, el tablero vuelve a la posición de la acción señalada y muestra sus candidatas, con la jugada registrada seleccionada. Una incoherencia (jugada ilegal, turno doble, doblaje imposible, acción más allá del final del match, dados incoherentes, jugada no registrada) decora su celda y se nombra en un mensaje emergente. La jugada no registrada aparece al releer un archivo <code>.mat</code>: gnubg escribe <code>???</code> cuando no ha conservado la jugada realizada, la tirada se conoce y la jugada no, y colocar el cursor en esa celda propone las jugadas de esa tirada para rellenarla. Las partidas se pliegan; la del cursor queda abierta. Un panel desplegable muestra el texto <code>.mat</code> exacto del borrador, con un botón para copiarlo.</p>
-<p>Un clic derecho sobre una celda abre las correcciones de esa acción — insertar antes, insertar después, eliminar, cambiar de bando — y lleva el cursor sobre ella de paso; son los mismos gestos que la barra de corrección y las teclas, y el menú del navegador solo se suprime ahí.</p>
-<p>La barra del borrador lleva tres botones. «Guardar» (CTRL-INTRO) escribe el partido en la biblioteca: creado la primera vez, reemplazado después con el mismo identificador, y el análisis únicamente de las posiciones nuevas empieza en seguida, con su progreso y su cancelación en la barra de estado. La barra del borrador dice en qué estado se encuentra: nunca guardado, guardado hace tanto, o modificado desde entonces. «Exportar .mat» escribe el partido en un archivo Jellyfish, tal como se ha tecleado. «Cerrar el borrador» elimina el borrador tras una confirmación; un partido ya guardado permanece en la biblioteca, definitivo.</p>
+<p>Un movimiento ilegal se transcribe tal como se jugó. El botón <strong>✎</strong> de la paleta despliega los dos caminos que lo permiten, en lugar del triángulo: sirven una vez por partido, mientras que el triángulo sirve en cada turno. El botón «Movimiento libre» libera el tablero: las fichas se mueven sin comprobación alguna, y «Este tablero es el movimiento jugado» registra el tablero obtenido. El campo de notación, al lado, hace lo mismo con el teclado: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> se escriben y se registran con INTRO. Ambos exigen que los dados de la tirada se introduzcan antes, pues un movimiento ilegal no dice qué tirada lo produjo. Un movimiento introducido por cualquiera de estos dos caminos que resulte ser legal sigue siendo un movimiento ordinario — la comparación se hace sobre el tablero obtenido, nunca sobre la procedencia del gesto; si no, se marca «movimiento ilegal» en la transcripción, y la exportación <code>.mat</code> advierte antes de escribir el archivo, sin negarse nunca.</p>
+<p>En la línea de los dados, la fila <strong>Doblar</strong>, <strong>Aceptar</strong>, <strong>Pasar</strong>, <strong>Abandonar</strong> lleva al ratón los cuatro gestos de cubo: son, junto con los dos dados, las cinco respuestas posibles a una sola pregunta — ¿qué hizo el bando en turno? Dice a quién le toca: el bando en turno anuncia — doblar, abandonar — o el bando contrario responde — aceptar, pasar; nunca los cuatro a la vez, y un botón cuyo gesto no respondería a nada permanece apagado. El teclado, en cambio, nunca rechaza nada: un botón apagado es un objetivo que no se ofrece, no un gesto prohibido. «Abandonar» todavía no registra nada: la fila se convierte en los tres niveles — simple, gammon, backgammon — y «Cancelar», que duplica la tecla ESCAPE. El cubo dibujado en el tablero es el segundo objetivo de estos gestos: un clic en él propone un doble. Ante una oferta no responde — aceptar y pasar son dos respuestas simétricas y viven juntas en la fila, un clic cada una.</p>
+<p>La <strong>barra de estado</strong> dice en una palabra lo que el borrador espera: el baile registrado de oficio, el empate que hay que repetir, la respuesta esperada a un doble, el nivel esperado tras un abandono, la corrección en su sitio, el movimiento «a revisar» cuya tirada ha cambiado. También responde ahí a los gestos que no tienen nada que hacer — «nada que deshacer», «ninguna acción bajo el cursor» — durante un segundo y medio. La incoherencia que una acción ha dejado tras de sí se señala, en cambio, en la cabecera de la transcripción, allí donde está la celda defectuosa.</p>
+<p>Una partida termina con un paso, con un abandono o con la salida de la decimoquinta ficha (simple, gammon o backgammon, multiplicado por el valor del cubo). El marcador, la partida Crawford y el final del partido aparecen entonces en la barra de partido, y se espera la apertura de la partida siguiente.</p>
+<p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una línea por turno, la acción de cubo y el final de partida en la columna de quien actúa. La celda del cursor está enmarcada; mover el cursor devuelve el tablero a la posición de la acción señalada y muestra sus candidatos, con el movimiento registrado seleccionado. Una incoherencia (movimiento ilegal, doble turno, acción de cubo imposible, acción más allá del final del partido, dados incoherentes, movimiento no consignado) decora su celda y se nombra en una información emergente. El movimiento no consignado es el caso de un archivo <code>.mat</code> releído: gnubg escribe ahí <code>???</code> cuando no ha guardado el movimiento jugado, la tirada se conoce y el movimiento no, y poner el cursor en esa celda propone los movimientos de esa tirada para completarlo. Las partidas se pliegan; la del cursor está abierta.</p>
+<p>Un clic derecho en una celda abre las correcciones de esa acción — insertar antes, insertar después, eliminar, cambiar de bando — y lleva el cursor hasta ella de paso; son los mismos gestos que las teclas <em>i</em>, <em>a</em>, <em>x</em> y <em>s</em>, y el menú del navegador solo se suprime ahí. No tienen botones en otro sitio: un botón que actuara sobre «la acción bajo el cursor» apuntaría a una celda que quizá no se vea, mientras que el clic derecho nombra la suya.</p>
+<p>La barra del borrador lleva los gestos que lo sacan de sí mismo. «<strong>Crear el partido</strong>» (CTRL-INTRO) lo escribe en la biblioteca, y pasa después a ser «Actualizar el partido #<em>n</em>»: el partido se reemplaza bajo el mismo identificador, y el análisis de las posiciones nuevas únicamente arranca en seguida, con su progreso y su cancelación en la barra de estado. Al lado, la barra dice cómo está ese partido — sin partido, al día, o por detrás del borrador. No dice nada sobre la salvaguarda del borrador mismo: se escribe en la base tras cada acción, no hay nada que vigilar.</p>
+<p>«<strong>Texto .mat</strong>» abre el archivo Jellyfish tal como se escribiría, en una ventana lo bastante ancha para que sus columnas sigan alineadas, con un botón para copiarlo. «<strong>Exportar .mat</strong>» escribe ese mismo archivo en el disco. «<strong>Cerrar el borrador</strong>» lo elimina tras confirmación; un partido ya creado permanece en la biblioteca, definitivo. Las dos flechas <strong>↶</strong> y <strong>↷</strong> deshacen y rehacen, como <em>CTRL-Z</em> y <em>CTRL-MAYÚS-Z</em>.</p>
 <p>Si el análisis de una partida transcrita se interrumpió — la aplicación se cerró durante el lote —, la barra de estado lo indica en la siguiente apertura de la base y propone terminarlo. No se guarda nada de esa interrupción: la propuesta vuelve mientras queden posiciones por analizar, y el lote reanudado solo abarca esa partida, nunca toda la biblioteca.</p>
 <p>Un borrador que contiene incoherencias se guarda de todos modos, tras un aviso: no se rechaza nada. Una jugada ilegal se exporta tal como se jugó, con el aviso de que gnubg y XG la señalarán («Invalid move») y divergirán después.</p>
 <p>El panel <strong>Partidas</strong> recuerda cada borrador en curso encima de la lista de partidos: la línea «Borrador en curso» abre la pestaña Transcripción.</p>
@@ -1354,7 +1358,7 @@ export default {
 </tbody>
 </table>
 <h3>Panel de transcripción</h3>
-<p>El panel toma estas teclas mientras tiene el foco y hay un borrador abierto.</p>
+<p>El panel toma estas teclas mientras tiene el foco. Ante la lista de borradores ya toma algunas, para que retomar el trabajo de ayer no exija el ratón.</p>
 <table>
 <thead>
 <tr>
@@ -1363,6 +1367,18 @@ export default {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>ABAJO, j / ARRIBA, k (lista de borradores)</td>
+<td>Recorrer los borradores. El primero está resaltado al abrir: es el modificado más recientemente.</td>
+</tr>
+<tr>
+<td>INTRO (lista de borradores)</td>
+<td>Abrir el borrador resaltado.</td>
+</tr>
+<tr>
+<td>n (lista de borradores)</td>
+<td>Abrir el formulario de creación.</td>
+</tr>
 <tr>
 <td>Clic</td>
 <td>Abrir un borrador de la lista.</td>
@@ -1373,7 +1389,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (tirada introducida)</td>
-<td>Reiniciar la tirada mientras no se haya elegido ningún candidato; una vez elegido, registrar el movimiento y abrir la siguiente tirada.</td>
+<td>Validar el movimiento seleccionado y abrir la tirada siguiente. En una acción releída, donde el cursor está puesto sobre una acción ya escrita, la cifra reinicia la tirada de esa acción en lugar de validar.</td>
 </tr>
 <tr>
 <td>ABAJO, j</td>
@@ -1384,8 +1400,16 @@ export default {
 <td>Seleccionar el candidato anterior.</td>
 </tr>
 <tr>
+<td>Rueda</td>
+<td>Seleccionar el candidato siguiente o anterior, tanto sobre la lista como sobre el tablero: la mirada permanece en el tablero y las flechas desfilan.</td>
+</tr>
+<tr>
 <td>Clic (en una fila)</td>
 <td>Seleccionar ese candidato.</td>
+</tr>
+<tr>
+<td>Doble clic (en una fila)</td>
+<td>Validar ese candidato.</td>
 </tr>
 <tr>
 <td>Clic (en el triángulo de las tiradas)</td>
@@ -1409,7 +1433,11 @@ export default {
 </tr>
 <tr>
 <td>RETROCESO</td>
-<td>Borrar los dos dados introducidos.</td>
+<td>Borrar los dos dados introducidos. Por ahí pasa la reanudación de una tirada mal leída, ya que una cifra valida.</td>
+</tr>
+<tr>
+<td>Clic (en las casillas de la tirada)</td>
+<td>Borrar los dos dados introducidos, como RETROCESO.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1453,7 +1481,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-INTRO</td>
-<td>Guardar el borrador como partido.</td>
+<td>Crear el partido a partir del borrador, o actualizarlo si ya existe.</td>
 </tr>
 <tr>
 <td>i</td>
@@ -1482,6 +1510,8 @@ export default {
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
+<p>La cifra tiene un solo sentido: <strong>empieza una tirada allí donde está el cursor</strong>. Al final del documento no hay nada bajo el cursor, así que valida el movimiento seleccionado antes de abrir la tirada siguiente — el mejor movimiento jugado cuesta así los dos dados y nada más, pues su validación la lleva la primera tecla del turno siguiente. En una acción ya escrita, a la que se ha vuelto para corregirla, hay algo bajo el cursor: la cifra reinicia la tirada de esa acción, en su sitio. La diferencia se ve en pantalla, pues la celda señalada está enmarcada en la transcripción.</p>
+<p>Un gesto que no tiene nada que hacer lo dice, una vez, en la barra de estado: «nada que deshacer» con la pila vacía, «ninguna acción bajo el cursor» al final del documento. La frase se borra sola y devuelve el sitio a la acción esperada.</p>
 <p>Retroceder el cursor hasta una acción y volver a escribir la corrige <strong>en el sitio</strong>: la validación reemplaza la acción y el cursor vuelve donde estaba. Si se corrigen los dados y la jugada registrada sigue siendo una jugada legal de la nueva tirada, se conserva; si no, se propone el primer candidato de la nueva tirada y la jugada queda señalada «por revisar» hasta la validación. Avanzar o retroceder el cursor después de haber cambiado algo registra la corrección de paso.</p>
 <p>Nada se rechaza ni se elimina: insertar una acción del mismo bando que su vecina crea un doble turno, eliminar una acción puede crear otro, cambiar un bando puede volver ilegales las jugadas siguientes. Estas incoherencias se señalan en el transcript, nunca se corrigen de oficio, y el cursor se coloca sobre la primera de ellas después de cada gesto. La pila de deshacer vive en memoria: se pierde al cerrar el borrador.</p>
 <p>El panel en sí — la lista de borradores, la creación, la entrada, la transcripción y la barra del borrador — se describe en Panel de Transcripción.</p>

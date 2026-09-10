@@ -283,24 +283,28 @@ export default {
 </div>
 <h3>Litterointipaneeli</h3>
 <p><strong>Litterointipaneeli</strong> (<em>CTRL-SHIFT-T</em>, komento <code>transcribe</code> tai <code>tr</code>) on tarkoitettu edessä olevan ottelun kirjoittamiseen — tuloslomakkeesta tai videotallenteesta — ja sen tekemiseen kirjaston otteluksi. Kirjoitettava on <strong>luonnos</strong>: se elää tietokannassa, sen voi sulkea ja avata uudelleen, eikä se tule mukaan tilastoihin eikä hakuihin ennen kuin se on tallennettu otteluksi.</p>
-<p>Paneeli avautuu tietokannan <strong>luonnosten luetteloon</strong>: viimeisen muutoksen päivämäärä, pelaajat, pituus, toimintojen määrä sekä jo tuotettu ottelu (<code>#</code> ja sen tunniste) tai maininta ”ei tallennettu”. Napsautus avaa luonnoksen, ja palkin <strong>Luonnokset</strong>-painike palaa luetteloon. <strong>Uusi litterointi</strong> -painike avaa luontilomakkeen.</p>
+<p>Paneeli avautuu tietokannan <strong>luonnosluetteloon</strong>: viimeisin muutos, pelaajat, ottelun pituus, toimintojen määrä ja jo tuotettu ottelu (<code>#</code> ja sen tunniste) tai maininta ”ei ottelua”. Napsautus avaa luonnoksen, ja palkin <strong>Luonnokset</strong>-painike palaa luetteloon. <strong>Uusi transkriptio</strong> -painike avaa luontilomakkeen.</p>
+<p>Luetteloa selataan myös näppäimistöllä: <em>ALAS</em> ja <em>YLÖS</em> (tai <em>j</em> ja <em>k</em>) siirtävät korostusta, <em>ENTER</em> avaa korostetun luonnoksen ja <em>n</em> avaa lomakkeen. Ensimmäinen luonnos on korostettuna avattaessa ja se on viimeksi muutettu: eilisen työn jatkaminen maksaa siis kaksi näppäintä, <em>CTRL-VAIHTO-T</em> ja sitten <em>ENTER</em>.</p>
 <p>Lomake kysyy vain yhtä asiaa: <strong>ottelun pituutta</strong>. Arvo <code>0</code> tarkoittaa rahapeliä ja tuo näkyviin <em>Jacoby</em>- ja <em>Beaver</em>-ruudut. Kenttä avautuu viimeksi muokatun luonnoksen pituudella, tai arvolla 7, kun tietokannassa ei ole yhtään. Pelaajien nimiä ei kysytä: luonnos nimeää puolet <em>Pelaaja 1</em> ja <em>Pelaaja 2</em>, ja luettelo näyttää ”Nimetön”.</p>
-<p>Avoin luonnos kantaa ylimpänä <strong>palkkiaan</strong>, joka kertoo kaiken kirjoitetusta johtuvan: ottelun pituuden (tai ”Rahapeli”), pistetilanteen, <em>Crawford</em>-maininnan kun käynnissä oleva peli on sellainen, pelin numeron, kuution tilan — sen arvon, keskellä vai sen nimissä jolla se on — ja vuorossa olevan puolen.</p>
+<p>Kaikki, mikä johdetaan kirjoitetusta — ottelun pituus (tai ”Raha”), pistetilanne, maininta <em>Crawford</em> kun käynnissä oleva peli on sellainen, pelin numero, kuution tila — sen arvo, keskellä tai omistajansa nimissä — ja vuorossa oleva puoli — näkyy <strong>ottelupalkissa</strong> laudan yläpuolella: siellä katse jo on, kun kysyy kenen vuoro on. Odotettu toiminto sen sijaan kirjoitetaan kokonaisin sanoin <strong>tilapalkkiin</strong>: ”Kévinin nopat”, ”Alicen vastaus tuplaukseen”, ”uusi heitto”.</p>
+<p>Paneelin yläreunan <strong>luonnospalkki</strong> kantaa vain ne eleet, jotka vievät luonnoksen itsensä ulkopuolelle, sekä kaksi kumoamisnuolta.</p>
 <p>Palkin <strong>Metatiedot</strong>-painike avaa luonnoksen otsakkeen milloin tahansa: molempien pelaajien nimet — täydennettyinä kannan pelaajista —, tapahtuman, paikan, kierroksen, päivämäärän (oletuksena tämä päivä), kirjaajan (oletuksena kannan käyttäjä) ja turnauksen, johon ottelu liitetään tallennettaessa. Mikään kenttä ei ole pakollinen: nimetön luonnos tallentuu ja vie tiedostoon samoin, tyhjin otsakkein. <strong>Vaihda pelaajat keskenään</strong> -painike vaihtaa nimet keskenään, antaa kaikki toiminnot vastapuolelle ja kääntää laudan: se on sama ottelu, luettuna toiselta puolelta.</p>
 <p><strong>Ottelun pituus</strong> vaihdetaan samasta paneelista, milloin tahansa: pisteet, Crawford-peli ja viitekehys — rahapelit kun pituus on <code>0</code>, jolloin <em>Jacoby</em>- ja <em>Beaver</em>-ruudut tulevat näkyviin — lasketaan uudelleen luonnoksen päästä päähän, ja voiton jälkeen kirjatut toiminnot merkitään «lopun jälkeisiksi» ilman että yhtäkään poistetaan. Pituus kuuluu aseman identiteettiin: tallennuksen jälkeen sen muuttaminen ja uusi tallennus kirjoittaa täysin uudet asemat, jotka on analysoitava, ja vanhat katoavat heti kun mikään ei enää pidä niitä.</p>
-<p>Palkin alla luonnos jakautuu kahteen puoliskoon: <strong>syöttö</strong> vasemmalla, <strong>siirtoluettelo</strong> oikealla. Niiden yllä on korjauspalkki — lisää eteen, lisää perään, poista, vaihda puolta, kumoa, tee uudelleen — joka toistaa hiirellä paneelin näppäimet.</p>
-<p>Vasen puolisko ilmoittaa, mitä se odottaa, ja näyttää molemmat nopat sitä mukaa kuin ne syötetään. Peli avataan yhdellä nopalla kummaltakin puolelta: suurempi aloittaa ja pelaa molemmat nopat ilman uutta syöttöä; tasatulos kirjataan sellaisenaan ja odotetaan uutta avausta.</p>
-<p>Heti kun toinen noppa putoaa, kaikki heiton <strong>lailliset siirrot</strong> luetellaan sisäisen moottorin järjestäminä, ensimmäinen valmiiksi valittuna ja sen nuolet laudalla. Tämä järjestys on arvio: se näytetään, sitä ei koskaan kirjoiteta tietokantaan. Kun moottori ei ole käytettävissä, siirrot luetellaan ilman järjestystä ja paneeli kertoo sen.</p>
+<p>Palkin alla luonnos jakautuu kolmeen alueeseen: hiiren kohteiden <strong>paletti</strong>, <strong>siirtoehdokkaat</strong> ja <strong>transkripti</strong>. Leveässä paneelissa — alatelakassa — ne ovat vierekkäin, paletti vasemmalla; kapeassa paneelissa — sivutelakassa — ehdokkaat tulevat ensin, paletti niiden alle ja transkripti viimeiseksi. Sääntö on kummassakin tapauksessa sama: mikään ei asetu heiton kahden ruudun ja ehdokkaiden ensimmäisen rivin väliin, ja vähintään viisi ehdokasta luetaan ilman minkäänlaista vieritystä.</p>
+<p>Paletti näyttää kaksi noppaa sitä mukaa kuin ne syötetään; napsautus niihin pyyhkii ne, kuten <em>ASKELPALAUTIN</em>. Peli avataan yhdellä nopalla kummaltakin puolelta: suurempi aloittaa ja pelaa molemmat nopat ilman että niitä tarvitsee syöttää uudelleen; tasapeli kirjataan sellaisenaan ja odotetaan uutta avausta.</p>
+<p>Heti kun toinen noppa putoaa, luetellaan kaikki heiton <strong>lailliset siirrot</strong>, sisäisen moottorin järjestäminä, ensimmäinen esivalittuna ja sen nuolet laudalle asetettuina. Luettelo antaa siirron, sen ekviteetin ja eron parhaaseen: transkriptio on nähdyn siirron tunnistamista, ei sen arvostelua — siihen on <strong>Arviointi</strong>-paneeli. Tämä järjestys on arviointi: se näytetään, sitä ei koskaan kirjoiteta tietokantaan. Kun moottori ei ole käytettävissä, siirrot luetellaan järjestämättöminä ja luettelo kertoo sen otsikossaan.</p>
+<p><strong>Rulla</strong> valitsee seuraavan tai edellisen ehdokkaan sekä luettelon että laudan päällä: katse pysyy laudalla ja nuolet vierivät ohi, mikä tunnistaa siirron nopeammin kuin sen notaation lukeminen. Napsautus riviin valitsee sen, kaksoisnapsautus vahvistaa sen.</p>
 <p>Kahdenkymmenenyhden heiton kolmio on heiton kahden ruudun alla, näppäimistön vierellä eikä sen tilalla: kaksi numeroa on yhä kaksi kertaa nopeampi kuin napsautus, ja kolmio on sitä varten, joka kirjaa käsi hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat sama heitto.</p>
-<p>Laudan pisteen napsautus jättää vain siitä lähtevät siirrot. Tämä on kaukana listalla olevan siirron ele: kahdenteentoista ehdokkaaseen pääsy maksaa kolmetoista näppäintä, kun suodattimella niitä jää vain kaksi tai kolme. Suodatin ei muuta luonnosta, se kaventaa listaa näytöllä; seuraava heitto poistaa sen.</p>
+<p>Napsautus laudan pisteeseen jättää vain siitä lähtevät siirrot. Se on kaukaisen siirron ele: kahdenteentoista ehdokkaaseen laskeutuminen maksaa kolmetoista näppäintä, kun suodatin jättää vain kaksi tai kolme. Suodatin ei muuta luonnoksessa mitään, se lyhentää luettelon näytöllä; luettelon otsikon merkki muistuttaa siitä ja poistaa sen, ja seuraava heitto poistaa sen myös.</p>
 <p>Laudalla pelattu siirto säästää noppien lukemiselta. Niin kauan kuin yhtään noppaa ei ole syötetty, napsautus nappulaan ja sitten sen kohteeseen — tai veto toisesta toiseen — pelaa siirron laudalla laillisten siirtojen rajoissa; valitun nappulan tarjoamat kohteet syttyvät. Molemmat nopat päätellään askelista: 13/7 ja sitten 8/7 kertoo 6-1 ilman että numeroa on näppäilty, ja toiminto kirjataan heti kun siirto on valmis. Askelpalautin kumoaa viimeisen askeleen, numero hylkää siirron ja palaa noppien syöttöön, ja kaksoisnapsautus laudan ulkopuolella aloittaa sen alusta. Kun useampi heitto tuottaa saman siirron — ulosnosto, jonka useampi noppa kattaa, tai noppa jota ei voi pelata — mitään ei kirjata ja kolmio jättää napsautettaviksi vain nuo heitot: heittoa ei koskaan arvata pelin katsojan puolesta.</p>
-<p>Laiton siirto kirjataan sellaisena kuin se pelattiin. Painike « Vapaa siirto » vapauttaa laudan: nappulat liikkuvat ilman mitään tarkistusta, ja « Tämä lauta on pelattu siirto » kirjaa saadun laudan. Viereinen merkintäkenttä tekee saman näppäimistöltä: <code>13/7 8/7*</code>, <code>bar/22</code> tai <code>6/off</code> kirjoitetaan ja kirjataan ENTER-näppäimellä. Molemmat vaativat, että heiton nopat syötetään ensin, sillä laiton siirto ei kerro mikä heitto sen tuotti. Kumpaa tahansa näistä kahdesta tiestä syötetty siirto, joka osoittautuu lailliseksi, pysyy tavallisena siirtona — vertailu tehdään saadusta laudasta, ei koskaan eleen alkuperästä; muuten se merkitään litteroinnissa « laiton siirto », ja <code>.mat</code>-vienti varoittaa ennen tiedoston kirjoittamista, koskaan kieltäytymättä.</p>
-<p>Kolmion alla rivi <strong>Tuplaa</strong>, <strong>Ota vastaan</strong>, <strong>Passaa</strong>, <strong>Luovuta</strong> tuo tuplauskuution neljä toimintoa hiirelle. Se kertoo, kenen vuoro on: vuorossa oleva puoli ilmoittaa — tuplaa, luovuttaa — tai vastapuoli vastaa — ottaa vastaan, passaa; ei koskaan kaikkia neljää yhtä aikaa, ja painike, jonka toiminto ei vastaisi mihinkään, pysyy sammuneena. Näppäimistö sen sijaan ei kiellä koskaan mitään: sammunut painike on kohde, jota ei tarjota, ei kielletty toiminto. ”Luovuta” ei tallenna vielä mitään: rivistä tulevat kolme tasoa — yksinkertainen, gammon, backgammon — ja ”Peruuta”, joka toistaa ESC-näppäimen. Laudalle piirretty tuplauskuutio on näiden toimintojen toinen kohde: sen napsauttaminen tarjoaa tuplausta. Tarjoukseen se ei vastaa — vastaanotto ja passaus ovat kaksi symmetristä vastausta ja asuvat yhdessä rivillä, yksi napsautus kumpikin.</p>
-<p>Noppien alla rivi kertoo syötön tilan: heitto vielä korjattavissa, ehdokas valittuna, tanssi itsestään kirjattuna, tasatulos uudelleen heitettävänä, tuplaukseen odotettu vastaus, antautumisen jälkeen odotettu taso, korjaus paikallaan, siirto ”tarkistettavaksi” jonka heitto on muuttunut, ja epäjohdonmukaisuus jonka viimeinen toiminto jätti jälkeensä.</p>
-<p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
-<p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat, kirjaamaton siirto) merkitsee solunsa ja nimetään työkaluvihjeessä. Kirjaamaton siirto tulee luetusta <code>.mat</code>-tiedostosta: gnubg kirjoittaa siihen <code>???</code>, kun se ei säilyttänyt pelattua siirtoa; heitto tiedetään, siirtoa ei, ja kohdistimen asettaminen tähän soluun tarjoaa tämän heiton siirrot sen täydentämiseksi. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
-<p>Solun napsautus hiiren oikealla painikkeella avaa kyseisen toiminnon korjaukset — lisää ennen, lisää jälkeen, poista, vaihda puolta — ja siirtää kohdistimen siihen samalla; nämä ovat samat eleet kuin korjauspalkissa ja näppäimillä, ja selaimen valikko poistetaan vain siinä.</p>
-<p>Luonnospalkissa on kolme painiketta. ”Tallenna” (CTRL-ENTER) kirjoittaa ottelun kirjastoon: se luodaan ensimmäisellä kerralla, korvataan sen jälkeen samalla tunnisteella, ja pelkkien uusien asemien analyysi alkaa heti, edistyminen ja peruutus tilarivillä. Luonnospalkki kertoo tilan: ei koskaan tallennettu, tallennettu jokin aika sitten, tai muokattu sen jälkeen. ”Vie .mat” kirjoittaa ottelun Jellyfish-tiedostoon juuri sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena.</p>
+<p>Laiton siirto kirjataan sellaisena kuin se pelattiin. Paletin <strong>✎</strong>-painike avaa kaksi tapaa tehdä se, kolmion tilalle: ne palvelevat kerran ottelussa, kun kolmio palvelee joka vuorolla. ”Vapaa siirto” -painike vapauttaa laudan: nappulat liikkuvat ilman mitään tarkistusta, ja ”Tämä lauta on pelattu siirto” kirjaa saadun laudan. Viereinen notaatiokenttä tekee saman näppäimistöltä: <code>13/7 8/7*</code>, <code>bar/22</code> tai <code>6/off</code> kirjoitetaan ja kirjataan ENTER-näppäimellä. Molemmat vaativat, että heiton nopat syötetään ensin, sillä laiton siirto ei kerro mikä heitto sen tuotti. Jompaakumpaa näistä teistä syötetty siirto, joka sattuu olemaan laillinen, pysyy tavallisena siirtona — vertailu tehdään saadusta laudasta, ei koskaan eleen alkuperästä; muutoin se merkitään transkriptiin ”laiton siirto”, ja <code>.mat</code>-vienti varoittaa ennen tiedoston kirjoittamista kieltäytymättä koskaan.</p>
+<p>Noppien rivillä rivi <strong>Tuplaa</strong>, <strong>Ota</strong>, <strong>Passaa</strong>, <strong>Luovuta</strong> tuo hiirelle kuution neljä elettä: ne ovat kahden nopan kanssa viisi mahdollista vastausta yhteen ainoaan kysymykseen — mitä vuorossa oleva puoli teki? Se kertoo kenen vuoro on: vuorossa oleva puoli ilmoittaa — tuplaa, luovuttaa — tai vastapuoli vastaa — ottaa, passaa; ei koskaan kaikkia neljää yhtaikaa, ja painike, jonka ele ei vastaisi mihinkään, pysyy sammuneena. Näppäimistö sen sijaan ei koskaan kiellä mitään: sammunut painike on kohde, jota ei tarjota, ei kielletty ele. ”Luovuta” ei vielä kirjaa mitään: rivistä tulee kolme tasoa — yksinkertainen, gammon, backgammon — ja ”Peruuta”, joka kahdentaa ESC-näppäimen. Laudalle piirretty kuutio on näiden eleiden toinen kohde: napsautus siihen tarjoaa tuplausta. Tarjouksen edessä se ei vastaa — ottaminen ja passaaminen ovat kaksi symmetristä vastausta ja asuvat yhdessä rivillä, kumpikin yhden napsautuksen päässä.</p>
+<p><strong>Tilapalkki</strong> kertoo yhdellä sanalla, mitä luonnos odottaa: itsestään kirjatun tanssin, uudelleen heitettävän tasapelin, tuplaukseen odotetun vastauksen, luovutuksen jälkeen odotetun tason, paikalla tehtävän korjauksen, siirron ”tarkistettavaksi”, jonka heitto on muuttunut. Se vastaa siellä myös eleille, joilla ei ole mitään tehtävää — ”ei mitään kumottavaa”, ”ei toimintoa kohdistimen alla” — puolentoista sekunnin ajan. Toiminnon jälkeensä jättämä epäjohdonmukaisuus sen sijaan ilmoitetaan transkriptin otsikossa, siellä missä virheellinen solu on.</p>
+<p>Peli päättyy passiin, luovutukseen tai viidennentoista nappulan ulos kantamiseen (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun loppu näkyvät silloin ottelupalkissa, ja seuraavan pelin avausta odotetaan.</p>
+<p>Transkripti täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, kuutiotoiminto ja pelin loppu toimijan sarakkeessa. Kohdistimen solu on kehystetty; kohdistimen siirtäminen tuo laudan takaisin kohdennetun toiminnon asemaan ja näyttää sen ehdokkaat kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton kuutiotoiminto, toiminto ottelun lopun jälkeen, ristiriitaiset nopat, kirjaamaton siirto) koristaa solunsa ja nimetään työkaluvihjeessä. Kirjaamaton siirto on uudelleen luetun <code>.mat</code>-tiedoston tapaus: gnubg kirjoittaa siihen <code>???</code>, kun se ei säilyttänyt pelattua siirtoa, heitto tunnetaan mutta siirtoa ei, ja kohdistimen asettaminen tähän soluun tarjoaa tämän heiton siirrot sen täydentämiseksi. Pelit taittuvat kokoon; kohdistimen peli on auki.</p>
+<p>Napsautus hiiren oikealla painikkeella soluun avaa tämän toiminnon korjaukset — lisää ennen, lisää jälkeen, poista, vaihda puolta — ja tuo kohdistimen sen päälle matkalla; ne ovat samat eleet kuin näppäimet <em>i</em>, <em>a</em>, <em>x</em> ja <em>s</em>, ja selaimen valikko poistetaan vain siellä. Muualla niillä ei ole painikkeita: painike, joka vaikuttaisi ”kohdistimen alla olevaan toimintoon”, tähtäisi soluun, jota ei ehkä näe, kun taas oikea napsautus nimeää omansa.</p>
+<p>Luonnospalkki kantaa eleet, jotka vievät luonnoksen itsensä ulkopuolelle. ”<strong>Luo ottelu</strong>” (CTRL-ENTER) kirjoittaa sen kirjastoon, ja siitä tulee sitten ”Päivitä ottelu #<em>n</em>”: ottelu korvataan samalla tunnisteella, ja pelkästään uusien asemien analyysi alkaa heti, sen edistyminen ja peruutus tilapalkissa. Vieressä palkki kertoo, missä tämä ottelu on — ei ottelua, ajan tasalla, tai luonnosta jäljessä. Se ei kerro mitään itse luonnoksen turvasta: se kirjoitetaan tietokantaan jokaisen toiminnon jälkeen, mitään ei ole vahdittavana.</p>
+<p>”<strong>.mat-teksti</strong>” avaa Jellyfish-tiedoston sellaisena kuin se kirjoitettaisiin, ikkunassa, joka on riittävän leveä pitämään sen sarakkeet kohdakkain, ja painikkeella sen kopioimiseen. ”<strong>Vie .mat</strong>” kirjoittaa saman tiedoston levylle. ”<strong>Sulje luonnos</strong>” poistaa sen vahvistuksen jälkeen; jo luotu ottelu jää kirjastoon lopullisesti. Kaksi nuolta <strong>↶</strong> ja <strong>↷</strong> kumoavat ja tekevät uudelleen, kuten <em>CTRL-Z</em> ja <em>CTRL-VAIHTO-Z</em>.</p>
 <p>Jos litteroidun ottelun analyysi keskeytyi — sovellus suljettiin erän ollessa kesken —, tilarivi kertoo siitä seuraavalla kerralla, kun tietokanta avataan, ja tarjoutuu viemään sen loppuun. Keskeytyksestä ei jää mitään muistiin: tarjous palaa niin kauan kuin asemia on analysoimatta, ja uudelleen käynnistetty erä koskee vain tätä ottelua, ei koskaan koko kirjastoa.</p>
 <p>Luonnos, jossa on epäjohdonmukaisuuksia, tallennetaan silti varoituksen jälkeen: mitään ei torjuta. Sääntöjenvastainen siirto viedään sellaisena kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä (”Invalid move”) ja poikkeavat siitä eteenpäin.</p>
 <p><strong>Ottelupaneeli</strong> muistuttaa jokaisesta kesken olevasta luonnoksesta otteluluettelon yläpuolella: rivi ”Luonnos kesken” avaa Litterointi-välilehden.</p>
@@ -1354,7 +1358,7 @@ export default {
 </tbody>
 </table>
 <h3>Litterointipaneeli</h3>
-<p>Paneeli ottaa nämä näppäimet, kun se on kohdistettuna ja luonnos on auki.</p>
+<p>Paneeli ottaa nämä näppäimet kun sillä on kohdistus. Luonnosluettelon edessä se ottaa jo muutaman, jotta eilisen työn jatkaminen ei vaatisi hiirtä.</p>
 <table>
 <thead>
 <tr>
@@ -1363,6 +1367,18 @@ export default {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>ALAS, j / YLÖS, k (luonnosluettelo)</td>
+<td>Selaa luonnoksia. Ensimmäinen on korostettuna avattaessa: se on viimeksi muutettu.</td>
+</tr>
+<tr>
+<td>ENTER (luonnosluettelo)</td>
+<td>Avaa korostettu luonnos.</td>
+</tr>
+<tr>
+<td>n (luonnosluettelo)</td>
+<td>Avaa luontilomake.</td>
+</tr>
 <tr>
 <td>Napsautus</td>
 <td>Avaa luonnos luettelosta.</td>
@@ -1373,7 +1389,7 @@ export default {
 </tr>
 <tr>
 <td>1 … 6 (heitto syötetty)</td>
-<td>Aloita heitto alusta niin kauan kuin ehdokasta ei ole valittu; kun sellainen on valittu, kirjaa siirto ja avaa seuraava heitto.</td>
+<td>Vahvista valittu siirto ja avaa seuraava heitto. Uudelleen tarkasteltavassa toiminnossa, jossa kohdistin on jo kirjoitetun toiminnon päällä, numero aloittaa tämän toiminnon heiton uudelleen vahvistamisen sijaan.</td>
 </tr>
 <tr>
 <td>ALAS, j</td>
@@ -1384,8 +1400,16 @@ export default {
 <td>Valitse edellinen ehdokas.</td>
 </tr>
 <tr>
+<td>Rulla</td>
+<td>Valitse seuraava tai edellinen ehdokas sekä luettelon että laudan päällä: katse pysyy laudalla ja nuolet vierivät ohi.</td>
+</tr>
+<tr>
 <td>Napsautus (riviä)</td>
 <td>Valitse kyseinen ehdokas.</td>
+</tr>
+<tr>
+<td>Kaksoisnapsautus (riviin)</td>
+<td>Vahvista tämä ehdokas.</td>
 </tr>
 <tr>
 <td>Napsautus (heittokolmiossa)</td>
@@ -1409,7 +1433,11 @@ export default {
 </tr>
 <tr>
 <td>ASKELPALAUTIN</td>
-<td>Tyhjennä molemmat syötetyt nopat.</td>
+<td>Pyyhi kaksi syötettyä noppaa. Sitä kautta kulkee väärin luetun heiton uusiminen, koska numero vahvistaa.</td>
+</tr>
+<tr>
+<td>Napsautus (heiton ruutuihin)</td>
+<td>Pyyhi kaksi syötettyä noppaa, kuten ASKELPALAUTIN.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1453,7 +1481,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-ENTER</td>
-<td>Tallenna luonnos otteluksi.</td>
+<td>Luo ottelu luonnoksesta, tai päivitä se jos se on jo olemassa.</td>
 </tr>
 <tr>
 <td>i</td>
@@ -1482,6 +1510,8 @@ export default {
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
+<p>Numerolla on yksi ainoa merkitys: <strong>se aloittaa heiton siellä missä kohdistin on</strong>. Asiakirjan lopussa kohdistimen alla ei ole mitään, joten se vahvistaa valitun siirron ennen seuraavan heiton avaamista — parhaan pelatun siirron hinnaksi tulee näin kaksi noppaa eikä enempää, sillä sen vahvistuksen kantaa seuraavan vuoron ensimmäinen näppäin. Jo kirjoitetussa toiminnossa, jonka luo on palattu korjaamaan, kohdistimen alla on jotakin: numero aloittaa tämän toiminnon heiton uudelleen, paikallaan. Ero näkyy näytöllä, sillä kohdennettu solu on kehystetty transkriptissä.</p>
+<p>Ele, jolla ei ole mitään tehtävää, sanoo sen kerran tilapalkissa: ”ei mitään kumottavaa” tyhjällä pinolla, ”ei toimintoa kohdistimen alla” asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin odotetulle toiminnolle.</p>
 <p>Kohdistimen siirtäminen takaisin toiminnon kohdalle ja uudelleen kirjoittaminen korjaa sen <strong>paikallaan</strong>: hyväksyntä korvaa toiminnon ja kohdistin palaa sinne, missä se oli. Jos nopat korjataan ja tallennettu siirto on yhä uuden heiton laillinen siirto, se säilytetään; muuten tarjotaan uuden heiton ensimmäistä ehdokasta ja siirto merkitään ”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen samalla.</p>
 <p>Mitään ei hylätä eikä poisteta: naapurinsa kanssa samalle puolelle lisätty toiminto luo kaksoisvuoron, toiminnon poistaminen voi luoda toisen, puolen vaihtaminen voi tehdä seuraavista siirroista laittomia. Nämä epäjohdonmukaisuudet merkitään transkriptiin, niitä ei koskaan korjata automaattisesti, ja kohdistin asettuu ensimmäisen niistä kohdalle jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun luonnos suljetaan.</p>
 <p>Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja luonnospalkki — kuvataan kohdassa Litterointipaneeli.</p>

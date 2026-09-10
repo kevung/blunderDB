@@ -17,15 +17,29 @@
  * # Les deux règles qui font le budget
  *
  * Le second dé n'est pas confirmé : dès qu'il tombe, la liste des coups légaux
- * est classée en 0-ply et le PREMIER est présélectionné. Et un chiffre depuis
- * « candidat choisi » VALIDE le coup avant d'ouvrir le jet suivant : le meilleur
- * coup joué coûte donc les deux dés et rien de plus, la validation étant portée
- * par la première touche du tour d'après. Ce que cette règle exclut a sa sortie :
- * le dernier coup d'une partie se valide par Entrée.
+ * est classée en 0-ply et le PREMIER est présélectionné.
  *
- * Tant que la liste n'a pas été touchée, l'état est « jet corrigeable » : un
- * chiffre y RECOMMENCE le jet plutôt que de valider. Dès que `j`/`k` bouge la
- * sélection, on est en « candidat choisi » et le chiffre suivant valide.
+ * Et **la touche chiffrée commence un jet là où le Cursor est** (ADR-0048
+ * décision 1). En bout de document il n'y a rien sous le Cursor : elle VALIDE le
+ * candidat sélectionné avant d'ouvrir le jet suivant, si bien que le meilleur
+ * coup joué coûte les deux dés et rien de plus, la validation étant portée par
+ * la première touche du tour d'après. Sur une Action relue il y a quelque chose :
+ * elle en RECOMMENCE le jet, sur place, ce qui est la raison même d'y être
+ * revenu. Ce que cette règle exclut a sa sortie : le dernier coup d'une partie,
+ * qui n'a pas de tour suivant pour porter sa validation, se valide par Entrée.
+ *
+ * C'est UN SEUL sens, et c'est ce qui la sépare de l'arbitrage du 2026-09-07
+ * qu'elle renverse : celui-ci distinguait « jet corrigeable » de « candidat
+ * choisi », donc un HISTORIQUE invisible — « avez-vous touché la liste ? » —,
+ * quand le discriminant est ici un objet DESSINÉ, la cellule encadrée du
+ * Transcript où l'utilisateur s'est rendu une frappe plus tôt. Un état que l'on
+ * voit n'est pas un mode, et un mode est ce que le budget KLM ne savait pas
+ * compter (ux.md §1, la réserve sur M).
+ *
+ * Le discriminant est `replacing`, que le moteur pose sur `annotated.entry` et
+ * que le panneau passe en contexte. Pourquoi pas ici : cette machine ne connaît
+ * pas le document (fonctionnel.md §1.2), elle en reçoit les deux faits dont elle
+ * a besoin.
  *
  * # Ce que la machine ne décide pas
  *
@@ -84,9 +98,14 @@ export const PHASE = Object.freeze({
     DICE: 'dice',
     /** Dés attendus, un dé saisi. */
     DIE1: 'die1',
-    /** Jet saisi, premier candidat présélectionné : un chiffre recommence le jet. */
+    /** Jet saisi, premier candidat présélectionné. */
     ROLL: 'roll',
-    /** Candidat choisi : un chiffre valide et ouvre le tour suivant. */
+    /**
+     * Jet saisi, liste touchée. Depuis ADR-0048 les deux états répondent la
+     * même chose au chiffre — le Cursor décide, pas l'historique — et cette
+     * phase ne sert plus qu'à dire que la sélection vient de l'utilisateur, ce
+     * dont le panneau se sert pour ne pas la réécrire sous ses doigts.
+     */
     CANDIDATE: 'candidate',
     /**
      * Résignation annoncée, son niveau attendu : `1` simple, `2` gammon, `3`
@@ -219,11 +238,13 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  *
  * @param {object} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
- * @param {{expects?: string}} context - `expects` est `annotated.next.expects`,
- *   la sorte d'Action que le document attend.
+ * @param {{expects?: string, replacing?: boolean}} context - `expects` est
+ *   `annotated.next.expects`, la sorte d'Action que le document attend ;
+ *   `replacing` est `annotated.entry.replacing`, vrai quand le Cursor est sur
+ *   une Action existante que la saisie remplacerait (ADR-0048 décision 1).
  * @returns {{handled: boolean, state: object, commands: {kind: string, value?: number, index?: number}[]}}
  */
-export function pressKey(state, event, { expects = 'checker' } = {}) {
+export function pressKey(state, event, { expects = 'checker', replacing = false } = {}) {
     // La résignation capte tout tant que son niveau n'est pas donné : ses
     // chiffres SONT des niveaux et non des dés, et rien d'autre ne doit passer
     // entre `r` et la touche qui la termine.
@@ -294,7 +315,7 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);
-    if (die > 0) return enterDie(state, die, expects);
+    if (die > 0) return enterDie(state, die, expects, replacing);
 
     const delta = selectionDelta(event);
     if (delta !== 0) return moveSelection(state, delta);
@@ -439,11 +460,21 @@ export function menuCommands(from, to, kind) {
 
 /**
  * Un chiffre. Premier dé, puis second ; sur une ouverture le second dé valide
- * aussitôt. Depuis « jet corrigeable » il RECOMMENCE le jet, depuis « candidat
- * choisi » il VALIDE le candidat et ouvre le tour suivant — c'est la règle qui
- * ramène le meilleur coup joué à deux touches.
+ * aussitôt.
+ *
+ * Sur un jet déjà saisi, il commence un jet LÀ OÙ LE CURSOR EST (ADR-0048
+ * décision 1) : en bout de document il valide le candidat puis ouvre le jet
+ * suivant — la règle qui ramène le meilleur coup joué à deux touches —, sur une
+ * Action relue (`replacing`) il recommence le jet sur place, ce qui est la
+ * raison même d'y être revenu.
+ *
+ * Pourquoi pas « valider partout » : `GestureValidate` passe par `validate`,
+ * qui — contrairement à `commitCorrection` — n'est pas gardé par `entryDiffers`,
+ * réécrit l'Action à l'identique et rend le Cursor à `doc.Return`. Un chiffre
+ * égaré en relecture aurait donc mis fin à la relecture et renvoyé le Cursor en
+ * bout de document, quand la règle retenue le garde local.
  */
-function enterDie(state, die, expects) {
+function enterDie(state, die, expects, replacing = false) {
     switch (state.phase) {
         case PHASE.DICE:
             return {
@@ -480,20 +511,24 @@ function enterDie(state, die, expects) {
         }
 
         case PHASE.ROLL:
-            // Jet corrigeable : le chiffre recommence le jet. Le moteur fait de
-            // même — `enter_die` sur une Entry aux deux dés pleins repart de zéro.
+        case PHASE.CANDIDATE: {
+            // Le Cursor décide, pas l'historique de la liste : les deux phases
+            // répondent la même chose.
+            //
+            // Sur une Action relue, le chiffre recommence le jet sur place. Le
+            // moteur fait de même — `enter_die` sur une Entry aux deux dés
+            // pleins repart de zéro — et rien n'est validé, donc le Cursor ne
+            // bouge pas.
+            //
+            // En bout de document, il valide d'abord : la validation du tour
+            // est portée par la première touche du tour d'après.
+            const commands = replacing ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
             return {
                 handled: true,
                 state: { ...initialKeyState(), phase: PHASE.DIE1, dice: [die, 0] },
-                commands: [{ kind: COMMAND.DIE, value: die }]
+                commands
             };
-
-        case PHASE.CANDIDATE:
-            return {
-                handled: true,
-                state: { ...initialKeyState(), phase: PHASE.DIE1, dice: [die, 0] },
-                commands: [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }]
-            };
+        }
 
         default:
             return ignored(state);
@@ -501,9 +536,12 @@ function enterDie(state, die, expects) {
 }
 
 /**
- * `j`/`k` et bas/haut déplacent la sélection et FONT SORTIR du jet corrigeable :
- * dès que la liste a été touchée, le chiffre suivant valide au lieu de
- * recommencer le jet. Le déplacement est borné, il ne boucle pas.
+ * `j`/`k`, bas/haut et la molette déplacent la sélection. Le déplacement est
+ * borné, il ne boucle pas.
+ *
+ * La phase passe à CANDIDATE, ce qui ne change plus rien au sens du chiffre
+ * depuis ADR-0048 — c'est le Cursor qui le décide — et sert seulement à dire
+ * que la sélection vient de l'utilisateur.
  */
 function moveSelection(state, delta) {
     if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return ignored(state);
@@ -518,7 +556,12 @@ function moveSelection(state, delta) {
 
 /**
  * Choisir un candidat au clic, dans la liste classée. Même effet qu'un `j`/`k`
- * qui tomberait juste : la sélection bouge et l'on sort du jet corrigeable.
+ * qui tomberait juste.
+ *
+ * Le simple clic SÉLECTIONNE — les flèches du plateau suivent, et c'est là que
+ * l'on reconnaît le coup vu sur la vidéo. C'est le double-clic qui valide
+ * (ADR-0048 décision 11), seul chemin souris pour le dernier coup d'une partie,
+ * qui n'a pas de jet suivant pour porter sa validation.
  */
 export function selectCandidate(state, index) {
     if (state.candidateCount <= 0) return { state, commands: [] };
@@ -533,9 +576,8 @@ export function selectCandidate(state, index) {
  * La réponse du moteur au jet que la machine attendait : combien de coups légaux.
  *
  * Aucun : c'est une danse, l'Action est créée sans une touche de plus et le trait
- * passe à l'autre camp. Au moins un : le premier est présélectionné, ses flèches
- * partent sur le plateau, et le jet reste corrigeable tant que l'utilisateur n'a
- * pas touché à la liste.
+ * passe à l'autre camp. Au moins un : le premier est présélectionné et ses
+ * flèches partent sur le plateau.
  *
  * @param {object} state
  * @param {number} count
@@ -564,17 +606,18 @@ export function applyCandidates(state, count) {
  *
  * Un clic n'est PAS moins cher qu'une frappe : ux.md §4.1 le mesure à 1,18 s
  * contre 0,56 s pour les deux touches. Le triangle est une entrée pour la
- * souris, jamais un remplacement du clavier.
+ * souris, jamais un remplacement du clavier — et R3 (ADR-0048) demande que
+ * chaque geste soit ATTEIGNABLE à la souris, jamais qu'il y coûte le même temps.
  *
  * @param {object} state
  * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
  * @param {number} d2
- * @param {{expects?: string}} context
+ * @param {{expects?: string, replacing?: boolean}} context
  * @returns {{state: object, commands: {kind: string, value?: number, index?: number}[]}}
  */
-export function enterDicePair(state, d1, d2, { expects = 'checker' } = {}) {
-    const first = enterDie(state, d1, expects);
-    const second = enterDie(first.state, d2, expects);
+export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = false } = {}) {
+    const first = enterDie(state, d1, expects, replacing);
+    const second = enterDie(first.state, d2, expects, replacing);
     return { state: second.state, commands: [...first.commands, ...second.commands] };
 }
 
@@ -584,9 +627,9 @@ export function enterDicePair(state, d1, d2, { expects = 'checker' } = {}) {
  *
  * @param {object} state
  * @param {number} die
- * @param {{expects?: string}} context
+ * @param {{expects?: string, replacing?: boolean}} context
  */
-export function enterSingleDie(state, die, { expects = 'checker' } = {}) {
-    const result = enterDie(state, die, expects);
+export function enterSingleDie(state, die, { expects = 'checker', replacing = false } = {}) {
+    const result = enterDie(state, die, expects, replacing);
     return { state: result.state, commands: result.commands };
 }

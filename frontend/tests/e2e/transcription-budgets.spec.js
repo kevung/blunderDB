@@ -86,11 +86,30 @@ test.describe('ux.md §4.1 — un tour de pions', () => {
         await openDraft(page);
     });
 
-    // « meilleur coup joué | 3 1 Entrée | 3 K = 0,84 s ». Trois et non deux :
-    // depuis « jet corrigeable » un chiffre RECOMMENCE le jet (ux.md §3), et
-    // l'arbitrage du 2026-09-07 a tranché en faveur de la correction à deux
-    // touches. Le document porte les trois depuis.
-    test('le meilleur coup joué coûte trois touches', async ({ page }) => {
+    // « meilleur coup joué | 3 1 puis le jet suivant | 2 K = 0,56 s ». Deux
+    // depuis ADR-0048 décision 1 : le Cursor est en bout de document, donc le
+    // chiffre y VALIDE avant d'ouvrir le jet suivant, et la validation de ce
+    // tour-ci est portée par la première touche du tour d'après.
+    test('le meilleur coup joué coûte deux touches', async ({ page }) => {
+        const count = await countGestures(page, async (g) => {
+            await g.press('Digit3');
+            await g.press('Digit1');
+            await candidatesListed(page);
+        });
+        expect(count.keys).toBe(2);
+        expect(count.clicks).toBe(0);
+        await expect.poll(() => sentKinds(page)).toEqual(['enter_die', 'enter_die', 'select_candidate']);
+
+        // Et la troisième frappe appartient au tour SUIVANT : elle valide
+        // celui-ci en passant.
+        const next = await countGestures(page, (g) => g.press('Digit6'));
+        expect(next.keys).toBe(1);
+        await expect.poll(() => sentKinds(page)).toEqual(['enter_die', 'enter_die', 'select_candidate', 'validate', 'enter_die']);
+    });
+
+    // La sortie que la règle laisse ouverte : le dernier coup d'une partie n'a
+    // pas de tour suivant pour porter sa validation.
+    test('le dernier coup d’une partie coûte trois touches, Entrée comprise', async ({ page }) => {
         const count = await countGestures(page, async (g) => {
             await g.press('Digit3');
             await g.press('Digit1');
@@ -98,7 +117,6 @@ test.describe('ux.md §4.1 — un tour de pions', () => {
             await g.press('Enter');
         });
         expect(count.keys).toBe(3);
-        expect(count.clicks).toBe(0);
         await expect.poll(() => sentKinds(page)).toEqual(['enter_die', 'enter_die', 'select_candidate', 'validate']);
     });
 
@@ -238,16 +256,21 @@ test.describe('ux.md §4.3 — la correction', () => {
 
     // « dé mal lu, vu aussitôt (jet corrigeable) | 4 1 | 2 K ». Rien n'est
     // validé au passage : c'est toute la raison d'être de l'état.
-    test('un dé mal lu se corrige en deux touches, sans rien valider', async ({ page }) => {
+    // ADR-0048 décision 1 : en bout de document, reprendre un jet qu'on vient de
+    // taper commence par l'effacer, puisque le chiffre y valide. C'est la seule
+    // ligne de §4.3 que la décision coûte — sur une Action relue elle reste à
+    // deux touches — et elle se paie ~12 fois par match contre ~150 tours gagnés.
+    test('un dé mal lu se corrige en trois touches, sans rien valider', async ({ page }) => {
         await typeRoll(page);
         const count = await countGestures(page, async (g) => {
+            await g.press('Backspace');
             await g.press('Digit4');
             await g.press('Digit1');
             await candidatesListed(page);
         });
-        expect(count.keys).toBe(2);
+        expect(count.keys).toBe(3);
         const kinds = await sentKinds(page);
-        expect(kinds).toEqual(['enter_die', 'enter_die', 'select_candidate']);
+        expect(kinds).toEqual(['clear_dice', 'enter_die', 'enter_die', 'select_candidate']);
         expect(kinds).not.toContain('validate');
     });
 

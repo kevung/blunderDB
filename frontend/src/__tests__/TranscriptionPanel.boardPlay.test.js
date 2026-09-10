@@ -134,6 +134,21 @@ afterEach(() => {
     quizPlayStore.set(null);
 });
 
+/**
+ * Déplie le secours de saisie à la main (`✎`).
+ *
+ * Il était visible à chaque tour de pions — 250 fois par match pour un usage
+ * attendu d'une fois — et ses 29 px faisaient partie de ce qui empêchait la
+ * palette de tenir dans un dock de 280 px. Il est replié depuis ADR-0048
+ * décision 7, et il prend la place du triangle quand on l'ouvre : les deux ne
+ * servent jamais en même temps.
+ */
+async function openHandEntry() {
+    const toggle = [...document.querySelectorAll('#transcriptionPanel button')].find((b) => b.textContent.trim() === '✎');
+    expect(toggle, 'le volet de saisie à la main est introuvable').toBeTruthy();
+    await fireEvent.click(toggle);
+}
+
 describe('le plateau joue le coup et déduit les dés (T2.3)', () => {
     test('tant qu’aucun dé n’est tapé, le plateau porte l’union des jets', async () => {
         const play = await armed();
@@ -232,6 +247,7 @@ describe('le coup illégal (T2.4)', () => {
 
     test('le déplacement libre pose le plateau sur l’Action', async () => {
         await withDice();
+        await openHandEntry();
         await fireEvent.click(screen.getByText('Free movement'));
         await vi.waitFor(() => expect(get(quizPlayStore)?.free).toBe(true));
 
@@ -250,6 +266,7 @@ describe('le coup illégal (T2.4)', () => {
 
     test('la notation tapée écrit le même coup, sans passer par le plateau', async () => {
         await withDice();
+        await openHandEntry();
         const input = screen.getByLabelText('Move notation');
         await fireEvent.input(input, { target: { value: '13/7 8/7' } });
         await fireEvent.click(screen.getByText('Enter'));
@@ -272,6 +289,7 @@ describe('le coup illégal (T2.4)', () => {
         await tick();
         document.getElementById('transcriptionPanel')?.focus();
 
+        await openHandEntry();
         const input = screen.getByLabelText('Move notation');
         await fireEvent.input(input, { target: { value: '13/3' } });
         expect(screen.getByText('Enter').disabled).toBe(true);

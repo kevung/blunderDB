@@ -6,6 +6,7 @@
     import { loadAllPositions } from '../services/positionService.js';
     import { watchImportNoticeStore } from '../stores/watchStore.js';
     import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
+    import { transcriptionPromptStore, transcriptionNoticeStore } from '../stores/transcriptionStore.js';
     import { showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
@@ -296,6 +297,16 @@
             <button type="button" class="watch-import-action" onclick={() => watchImportNoticeStore.set(null)}>{$t('common.close')}</button>
         </span>
     {/if}
+    <!-- L'Action attendue en un mot (`ux.md` §5, câblé par ADR-0048 décision 2)
+         et, par-dessus, la réponse TRANSITOIRE d'un geste sans effet (décision 9).
+         Un seul emplacement : la réponse cède la place à la phrase au bout de
+         1,5 s. Elles ne se disputent rien d'autre — l'alerte d'Incohérence vit
+         dans le bandeau du Transcript, là où est la cellule fautive. -->
+    {#if $transcriptionNoticeStore}
+        <span class="transcription-notice" data-testid="transcription-notice">{$t($transcriptionNoticeStore.key, $transcriptionNoticeStore.params)}</span>
+    {:else if $transcriptionPromptStore}
+        <span class="transcription-prompt" data-testid="transcription-prompt">{$t($transcriptionPromptStore.key, $transcriptionPromptStore.params)}</span>
+    {/if}
     <!-- Le lot d'analyse d'un match transcrit que la fermeture a coupé
          (T3.3, ADR-0045 §8) : rien n'a été noté nulle part, le compte est
          refait à l'ouverture. Écarter la proposition n'écrit rien — elle
@@ -353,6 +364,17 @@
 
     .watch-import-action {
         cursor: pointer;
+    }
+
+    .transcription-prompt {
+        color: var(--color-text);
+    }
+
+    /* Une réponse, pas une alerte : elle dit qu'un geste n'avait rien à faire,
+       ce qui est une information ordinaire. */
+    .transcription-notice {
+        color: var(--color-text-muted);
+        font-style: italic;
     }
 
     .transcription-resume-chip {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:08+0200\n"
+"POT-Creation-Date: 2026-09-10 03:20+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -760,9 +760,41 @@ msgstr "Transcription Panel"
 
 #: ../../source/raccourcis.rst:280
 msgid ""
-"Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
-"ouvert."
-msgstr "The panel takes these keys while it has focus and a draft is open."
+"Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
+"brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
+"de la veille ne demande pas la souris."
+msgstr ""
+"The panel takes these keys while it has the focus. In front of the list "
+"of drafts it already takes a few, so that picking up yesterday's work "
+"does not call for the mouse."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j / HAUT, k (liste des brouillons)"
+msgstr "DOWN, j / UP, k (list of drafts)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est "
+"le plus récemment modifié."
+msgstr ""
+"Walk the drafts. The first is highlighted on opening: it is the most "
+"recently modified one."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (liste des brouillons)"
+msgstr "ENTER (list of drafts)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le brouillon surligné."
+msgstr "Open the highlighted draft."
+
+#: ../../source/raccourcis.rst:1
+msgid "n (liste des brouillons)"
+msgstr "n (list of drafts)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le formulaire de création."
+msgstr "Open the creation form."
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
@@ -786,11 +818,13 @@ msgstr "1 … 6 (roll entered)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Recommencer le jet tant qu'aucun candidat n'a été choisi ; une fois un "
-"candidat choisi, valider le coup et ouvrir le jet suivant."
+"Valider le coup sélectionné et ouvrir le jet suivant. Sur une action "
+"relue, où le curseur est posé sur une action déjà écrite, le chiffre "
+"recommence le jet de cette action au lieu de valider."
 msgstr ""
-"Start the roll again as long as no candidate has been chosen; once one is"
-" chosen, record the play and open the next roll."
+"Validate the selected move and open the next roll. On an action being "
+"reviewed, where the cursor sits on an action already written, the digit "
+"restarts the roll of that action instead of validating."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -803,12 +837,33 @@ msgid "Sélectionner le candidat précédent."
 msgstr "Select the previous candidate."
 
 #: ../../source/raccourcis.rst:1
+msgid "Molette"
+msgstr "Wheel"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner le candidat suivant ou précédent, au-dessus de la liste "
+"comme au-dessus du damier : le regard reste sur le plateau et les flèches"
+" défilent."
+msgstr ""
+"Select the next or previous candidate, over the list as well as over the "
+"board: the eye stays on the board and the arrows scroll past."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic (sur une ligne)"
 msgstr "Click (on a row)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner ce candidat."
 msgstr "Select that candidate."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une ligne)"
+msgstr "Double-click (on a row)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider ce candidat."
+msgstr "Validate that candidate."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le triangle des jets)"
@@ -865,8 +920,20 @@ msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Record the selected play (the last play of a game)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Effacer les deux dés saisis."
-msgstr "Clear both entered dice."
+msgid ""
+"Effacer les deux dés saisis. C'est par là que passe la reprise d'un jet "
+"mal lu, puisqu'un chiffre valide."
+msgstr ""
+"Clear the two dice entered. This is the way back to a misread roll, since"
+" a digit validates."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur les cases du jet)"
+msgstr "Click (on the dice cells)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer les deux dés saisis, comme RETOUR ARRIERE."
+msgstr "Clear the two dice entered, like BACKSPACE."
 
 #: ../../source/raccourcis.rst:1
 msgid "Abandonner la saisie en cours."
@@ -967,8 +1034,10 @@ msgid "CTRL-ENTREE"
 msgstr "CTRL-ENTER"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer le brouillon en match."
-msgstr "Save the draft as a match."
+msgid ""
+"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
+"déjà."
+msgstr "Create the match from the draft, or update it if it already exists."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1018,7 +1087,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Redo the undone gesture."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1026,7 +1095,40 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:328
+msgid ""
+"Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
+"En bout de document il n'y a rien sous le curseur, donc il valide le coup"
+" sélectionné avant d'ouvrir le jet suivant — le meilleur coup joué coûte "
+"ainsi les deux dés et rien de plus, sa validation étant portée par la "
+"première touche du tour d'après. Sur une action déjà écrite, où l'on est "
+"revenu pour la corriger, il y a quelque chose sous le curseur : le "
+"chiffre recommence le jet de cette action, sur place. La différence se "
+"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+msgstr ""
+"The digit has one meaning: **it starts a roll where the cursor is**. At "
+"the end of the document there is nothing under the cursor, so it "
+"validates the selected move before opening the next roll — the best move "
+"played therefore costs the two dice and nothing more, its validation "
+"being carried by the first key of the following turn. On an action "
+"already written, which one came back to correct, there is something under"
+" the cursor: the digit restarts the roll of that action, in place. The "
+"difference is visible on screen, the cell aimed at being framed in the "
+"transcript."
+
+#: ../../source/raccourcis.rst:337
+msgid ""
+"Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
+"rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
+"bout de document. La phrase s'efface d'elle-même et rend la place à "
+"l'action attendue."
+msgstr ""
+"A gesture with nothing to do says so, once, in the status bar: \"nothing "
+"to undo\" on an empty stack, \"no action under the cursor\" at the end of"
+" the document. The sentence clears itself and gives the place back to the"
+" expected action."
+
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1044,7 +1146,7 @@ msgstr ""
 "validated. Moving the cursor forward or back after changing something "
 "records the correction on the way."
 
-#: ../../source/raccourcis.rst:327
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1062,7 +1164,7 @@ msgstr ""
 " every gesture. The undo stack lives in memory: it is lost when the draft"
 " is closed."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:356
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1072,7 +1174,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:363
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
@@ -1288,3 +1390,20 @@ msgstr "Close the help."
 #~ "played, with the warning that gnubg "
 #~ "and XG will flag it (“Invalid "
 #~ "move”) and diverge from there."
+
+#~ msgid ""
+#~ "Le panneau prend ces touches lorsqu'il"
+#~ " a le focus et qu'un brouillon "
+#~ "est ouvert."
+#~ msgstr "The panel takes these keys while it has focus and a draft is open."
+
+#~ msgid ""
+#~ "Recommencer le jet tant qu'aucun "
+#~ "candidat n'a été choisi ; une fois"
+#~ " un candidat choisi, valider le coup"
+#~ " et ouvrir le jet suivant."
+#~ msgstr ""
+#~ "Start the roll again as long as"
+#~ " no candidate has been chosen; once"
+#~ " one is chosen, record the play "
+#~ "and open the next roll."

@@ -26,6 +26,12 @@
     // referential (money points vs normalised match equity, ADR-0019);
     // undefined keeps the plain, scale-silent header a caller with no
     // position to read one from (a bare unit test) already relied on.
+    //
+    // projection (ADR-0048 decision 4): `judge` — the nine columns, what you
+    // weigh a play with — or `identify` — move, equity, error, what you
+    // RECOGNISE a play in while transcribing a match played elsewhere. The two
+    // are named in utils/analysisRows.js and nowhere else; this component does
+    // not choose, it is told.
     let {
         moves = [],
         sortColumn = 'equity',
@@ -34,12 +40,19 @@
         isPlayedMove = () => false,
         onSort = () => {},
         onRowClick = () => {},
+        // Double-clic : valider (ADR-0048 décision 11). Le simple clic
+        // sélectionne — les flèches du plateau suivent, et c'est là que l'on
+        // reconnaît le coup —, le double enregistre. C'est le seul chemin souris
+        // vers le dernier coup d'une partie, qui n'a pas de jet suivant pour
+        // porter sa validation.
+        onRowDblClick = undefined,
         showProvenance = true,
         baseline = null,
-        isMoney = undefined
+        isMoney = undefined,
+        projection = 'judge'
     } = $props();
 
-    let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline, isMoney }));
+    let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline, isMoney, projection }));
 
     // The equity column never carried an indicator (it is the default sort,
     // and the arrow would sit on it at every opening); the others do.
@@ -50,7 +63,7 @@
 </script>
 
 <div class="checker-scroll">
-    <table class="checker-table">
+    <table class="checker-table" class:identify={projection === 'identify'}>
         <thead>
             <tr>
                 {#each block.columns as column, i (column)}
@@ -77,7 +90,7 @@
         {/if}
         <tbody>
             {#each block.rows as row (row.key)}
-                <tr class:selected={selectedMove === row.move.move} class:played={row.highlight} onclick={() => onRowClick(row.move)}>
+                <tr class:selected={selectedMove === row.move.move} class:played={row.highlight} onclick={() => onRowClick(row.move)} ondblclick={() => onRowDblClick?.(row.move)}>
                     <td>{row.label}</td>
                     {#each row.cells as cell, i (i)}
                         <td>{cell}</td>
@@ -131,6 +144,18 @@
 
     th:nth-child(n + 2) {
         width: 60px;
+    }
+
+    /* Projection `identify` : trois colonnes, et la notation prend tout ce que
+       les six colonnes de probabilités laissent. À 150 px fixes une notation de
+       double — « 24/18 18/14 13/9 9/5 » — se faisait tronquer. */
+    .checker-table.identify th:nth-child(1) {
+        width: auto;
+        text-align: left;
+    }
+
+    .checker-table.identify td:nth-child(1) {
+        text-align: left;
     }
 
     .checker-table th:nth-child(3),
@@ -209,7 +234,7 @@
             overflow-x: auto;
         }
 
-        .checker-table {
+        .checker-table:not(.identify) {
             min-width: 560px;
         }
     }

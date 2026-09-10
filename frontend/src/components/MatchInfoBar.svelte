@@ -8,6 +8,7 @@
     // positions dedupe across imports, provenance can be one-to-many: the first
     // match is shown and a "+N" badge lists the rest.
     import { matchContextStore, positionStore } from '../stores/positionStore';
+    import { transcriptionInfoStore } from '../stores/transcriptionStore.js';
     import { GetMatchByID, GetPositionProvenance } from '../../wailsjs/go/database/Database.js';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { t } from '../i18n';
@@ -73,8 +74,8 @@
 
     // Prefer the live names from the context store (always present) and fall
     // back to the fetched match.
-    let player1Name = $derived($matchContextStore.player1Name || match?.player1_name || '');
-    let player2Name = $derived($matchContextStore.player2Name || match?.player2_name || '');
+    let player1Name = $derived($matchContextStore.player1Name || match?.player1_name || $transcriptionInfoStore?.player1 || '');
+    let player2Name = $derived($matchContextStore.player2Name || match?.player2_name || $transcriptionInfoStore?.player2 || '');
 
     function formatDate(value) {
         if (!value) return '';
@@ -115,8 +116,33 @@
     // Data only — player names — so it needs no translation.
     let otherMatchesTitle = $derived(otherMatches.map((m) => `${m.player1_name} ${$t('matchInfo.vs')} ${m.player2_name}`).join('\n'));
 
-    // Visible in match mode, or whenever a studied position resolves to a match.
-    let visible = $derived(($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match);
+    // ── le troisième contexte : un brouillon en cours de frappe ──────────
+    //
+    // `ux.md` §5 plaçait ici l'état du brouillon — longueur, score, Crawford,
+    // camp au trait, videau — et ce câblage n'avait jamais été fait ; le panneau
+    // l'avait réimplémenté en sept pastilles, qui coûtaient 66 des 354 px
+    // repoussant sa liste de candidats hors de l'écran (ADR-0048 décision 2).
+    //
+    // C'est le bon endroit et pas seulement une place libre : la barre est
+    // au-dessus du plateau, donc lue au moment où l'œil y est — qui est le
+    // moment où l'on se demande « qui est au trait, et où en est le videau ».
+    // Le panneau POSE ces faits et n'en dessine aucun ; rien n'est dérivé ici.
+    let draftInfo = $derived($transcriptionInfoStore);
+
+    let draftParts = $derived.by(() => {
+        const info = draftInfo;
+        if (!info) return [];
+        const out = [$t(info.lengthKey, info.lengthParams)];
+        if (info.score) out.push($t('transcription.score', { a: info.score[0], b: info.score[1] }));
+        if (info.crawford) out.push($t('transcription.crawford'));
+        out.push($t('transcription.gameNumber', { n: info.gameNumber }));
+        out.push($t(info.cubeKey, info.cubeParams));
+        return out;
+    });
+
+    // Visible in match mode, whenever a studied position resolves to a match, or
+    // while a transcription draft is open.
+    let visible = $derived(($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match || !!draftInfo);
 
     // The bar takes its 22 px above the board, and Board.svelte measures its
     // container on 'resize' only: inserted or removed without one, the board
@@ -148,6 +174,11 @@
         {#if otherMatches.length > 0}
             <span class="more" title={otherMatchesTitle}>+{otherMatches.length}</span>
         {/if}
+        {#if draftInfo}
+            <span class="sep">·</span>
+            <span class="meta" data-testid="match-info-draft">{draftParts.join(' · ')}</span>
+            <span class="on-roll">{draftInfo.onRoll}</span>
+        {/if}
     </div>
 {/if}
 
@@ -169,6 +200,14 @@
         user-select: none;
         overflow: hidden;
         white-space: nowrap;
+    }
+
+    /* Le camp au trait est le seul fait de la barre qu'on relit à chaque tour :
+       il porte le poids que les six autres n'ont pas. */
+    .on-roll {
+        flex-shrink: 0;
+        color: var(--color-text);
+        font-weight: 600;
     }
 
     .player {

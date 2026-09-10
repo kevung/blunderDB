@@ -33,7 +33,7 @@ function key(code, extra = {}) {
  * `candidates` est ce que le moteur répond à chaque jet — c'est le seul point
  * où la machine attend quelqu'un d'autre.
  */
-function driver({ expects = 'checker', candidates = 5 } = {}) {
+function driver({ expects = 'checker', candidates = 5, replacing = false } = {}) {
     let state = initialKeyState();
     const commands = [];
     let presses = 0;
@@ -48,7 +48,7 @@ function driver({ expects = 'checker', candidates = 5 } = {}) {
     return {
         press(code, extra) {
             presses += 1;
-            const result = pressKey(state, key(code, extra), { expects });
+            const result = pressKey(state, key(code, extra), { expects, replacing });
             state = result.state;
             commands.push(...result.commands);
             settle();
@@ -94,18 +94,50 @@ describe('les transitions d’ux.md §3', () => {
         expect(d.commands.at(-1)).toEqual({ kind: COMMAND.SELECT, index: 0 });
     });
 
-    // « jet corrigeable » : c'est ce que veut dire ce nom.
-    test('jet corrigeable + un chiffre → le jet recommence, rien n’est validé', () => {
+    // ADR-0048 décision 1 : le chiffre commence un jet LÀ OÙ LE CURSOR EST. Les
+    // deux tests qui suivent sont les deux moitiés de cette seule règle, et le
+    // discriminant est `replacing` — jamais l'historique de la liste.
+    test('jet saisi en bout de document + un chiffre → valide, puis ouvre le jet suivant', () => {
         const d = driver();
         d.press('Digit3');
         d.press('Digit1');
         d.press('Digit4');
         expect(d.state.phase).toBe(PHASE.DIE1);
         expect(d.state.dice).toEqual([4, 0]);
+        expect(d.kinds()).toContain(COMMAND.VALIDATE);
+        // Dans l'ordre : la validation d'abord, le dé du tour suivant ensuite.
+        const tail = d.kinds().slice(-2);
+        expect(tail).toEqual([COMMAND.VALIDATE, COMMAND.DIE]);
+    });
+
+    test('jet saisi sur une Action relue + un chiffre → recommence le jet, sur place', () => {
+        const d = driver({ replacing: true });
+        d.press('Digit3');
+        d.press('Digit1');
+        d.press('Digit4');
+        expect(d.state.phase).toBe(PHASE.DIE1);
+        expect(d.state.dice).toEqual([4, 0]);
+        // Rien n'est validé : `validate` sur un remplacement réécrirait l'Action
+        // et rendrait le Cursor à `doc.Return`, mettant fin à la relecture.
         expect(d.kinds()).not.toContain(COMMAND.VALIDATE);
     });
 
-    test('jet corrigeable + j/k → la sélection bouge et l’on sort du jet corrigeable', () => {
+    test('la sélection touchée ne change plus le sens du chiffre : seul le Cursor le fait', () => {
+        // Le vice de l'arbitrage renversé était là : deux sens séparés par un
+        // historique invisible. `j` ne doit plus rien changer au sens de `4`.
+        const withoutTouch = driver({ candidates: 5 });
+        withoutTouch.press('Digit3');
+        withoutTouch.press('Digit1');
+        withoutTouch.press('Digit4');
+        const withTouch = driver({ candidates: 5 });
+        withTouch.press('Digit3');
+        withTouch.press('Digit1');
+        withTouch.press('KeyJ');
+        withTouch.press('Digit4');
+        expect(withoutTouch.kinds().slice(-2)).toEqual(withTouch.kinds().slice(-2));
+    });
+
+    test('jet saisi + j/k → la sélection bouge', () => {
         const d = driver({ candidates: 5 });
         d.press('Digit3');
         d.press('Digit1');
@@ -133,7 +165,8 @@ describe('les transitions d’ux.md §3', () => {
         d.press('Digit1');
         d.press('KeyK'); // déjà en haut
         expect(d.state.selected).toBe(0);
-        // Mais on a bien quitté le jet corrigeable : la liste a été touchée.
+        // La phase dit seulement que la sélection vient de l'utilisateur ; elle
+        // ne décide plus du sens du chiffre (ADR-0048).
         expect(d.state.phase).toBe(PHASE.CANDIDATE);
         d.press('KeyJ');
         d.press('KeyJ');
@@ -257,23 +290,18 @@ describe('la danse', () => {
 });
 
 describe('le budget d’ux.md §4.1', () => {
-    // DIVERGENCE MESURÉE, et signalée plutôt que tranchée en silence.
+    // LA DIVERGENCE EST LEVÉE (ADR-0048 décision 1).
     //
-    // ux.md §3 et ux.md §4.1 ne disent pas la même chose de la même touche. §3 :
-    // « jet corrigeable | 1–6 | recommence : premier dé » — un chiffre re-saisit
-    // le jet, ce qui EST la correction chiffrée à 2 K par §4.3 (« dé mal lu, vu
-    // aussitôt : 4 1 »). §4.1 : « meilleur coup joué | 3 1 (le chiffre suivant
-    // valide) | 2 K ». Les deux décrivent la même frappe depuis le même état, et
-    // s'excluent : un chiffre ne peut pas à la fois recommencer le jet et
-    // valider le coup présélectionné.
+    // ux.md §3 et §4.1 se contredisaient sur la même touche : §3 la faisait
+    // recommencer le jet (correction à 2 K), §4.1 la faisait valider (meilleur
+    // coup à 2 K). L'arbitrage du 2026-09-07 avait tranché pour §3 et fait
+    // passer le meilleur coup à trois touches.
     //
-    // C'est §3 qui est implémenté — la fiche T1.3 dit « exactement le tableau
-    // §3 », et §3 est le seul des deux qui garde une correction à deux touches.
-    // Le coût mesuré du meilleur coup joué est donc de TROIS touches, `3` `1`
-    // Entrée, et non deux ; le n-ième coup tient son budget, sa validation étant
-    // portée par le premier chiffre du tour suivant. À l'auteur de trancher :
-    // faire valider un chiffre depuis « jet corrigeable » ramène le meilleur
-    // coup à 2 K et pousse la correction de §4.3 à 3 K (Retour, `4`, `1`).
+    // Les deux avaient raison, mais pas du même état : le chiffre commence un
+    // jet LÀ OÙ LE CURSOR EST. En bout de document il valide (§4.1, 2 K), sur
+    // une Action relue il recommence (§3 et §4.3, 2 K). Aucune des deux lignes
+    // n'est sacrifiée, et le mode que l'arbitrage avait introduit — deux sens
+    // séparés par un historique invisible — disparaît.
 
     // « n-ième coup, n ≤ 5 : 3 1 j×(n−1) — (n+1) K » : tenu.
     test('le n-ième coup coûte 2 + (n−1) touches', () => {
@@ -301,8 +329,8 @@ describe('le budget d’ux.md §4.1', () => {
         expect(d.presses).toBe(before + 1);
     });
 
-    // Le meilleur coup joué : deux touches pour le désigner, une troisième pour
-    // l'enregistrer tant que §3 fait recommencer le jet sur un chiffre.
+    // Le meilleur coup joué : deux touches, sa validation étant portée par la
+    // première touche du tour d'après — l'annonce d'origine d'ux.md §4.1.
     test('le meilleur coup est désigné en deux touches', () => {
         const d = driver({ candidates: 17 });
         d.press('Digit3');
@@ -312,13 +340,37 @@ describe('le budget d’ux.md §4.1', () => {
         expect(d.commands.at(-1)).toEqual({ kind: COMMAND.SELECT, index: 0 });
     });
 
-    test('et enregistré en trois — la divergence mesurée, budget §4.1 : 2', () => {
+    test('et enregistré en DEUX : le jet suivant porte la validation — budget §4.1', () => {
+        const d = driver({ candidates: 17 });
+        d.press('Digit3');
+        d.press('Digit1');
+        expect(d.presses).toBe(2);
+        expect(d.kinds()).not.toContain(COMMAND.VALIDATE);
+        // La troisième frappe appartient au tour SUIVANT, et elle valide celui-ci.
+        d.press('Digit6');
+        expect(d.kinds()).toContain(COMMAND.VALIDATE);
+    });
+
+    // La sortie que la règle laisse ouverte : le dernier coup d'une partie n'a
+    // pas de tour suivant pour porter sa validation.
+    test('le dernier coup d’une partie coûte trois touches, Entrée comprise', () => {
         const d = driver({ candidates: 17 });
         d.press('Digit3');
         d.press('Digit1');
         d.press('Enter');
         expect(d.kinds()).toContain(COMMAND.VALIDATE);
         expect(d.presses).toBe(3);
+    });
+
+    // ux.md §4.3, « dé mal lu, vu aussitôt » et « erreur vue un tour plus tard » :
+    // les deux restent à leur budget parce que le chiffre recommence le jet sur
+    // une Action relue. C'est ce que « valider partout » aurait coûté.
+    test('un dé mal relu sur une Action relue se corrige en deux touches', () => {
+        const d = driver({ candidates: 17, replacing: true });
+        d.press('Digit4');
+        d.press('Digit1');
+        expect(d.presses).toBe(2);
+        expect(d.kinds()).not.toContain(COMMAND.VALIDATE);
     });
 
     // Le budget est une propriété du dessin, pas d'un tour choisi : aucun rang
