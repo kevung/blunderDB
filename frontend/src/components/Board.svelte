@@ -14,6 +14,7 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
     import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
+    import { boardIsMirrored, labelsFlipped } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
@@ -23,7 +24,7 @@
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore, quizPlaySourcesStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
-    import { transcriptionPointFilterStore, transcriptionCandidateStepsStore, transcriptionCubeRequestStore } from '../stores/transcriptionStore.js';
+    import { transcriptionPointFilterStore, transcriptionCandidateStepsStore, transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
 
@@ -301,13 +302,16 @@
                 // plateau pose la demande, le panneau en fait un double.
                 transcriptionCube: transcriptionCubeRequestStore
             },
-            // Le miroir de l'affichage (#294) : une position dont le joueur 2
-            // est au trait est montrée retournée, donc le point CLIQUÉ n'est
-            // pas le point du modèle. La conversion est celle de
-            // mirrorPosition — 25 - p — et le plateau de sortie du joueur au
-            // trait est toujours celui du bas, la position affichée ayant
-            // toujours le joueur au trait en player 0.
-            quizDisplayMirrored: () => isPlayer2Perspective(getDisplayPosition()),
+            // Le miroir de l'affichage (#294) : quand le plateau est montré
+            // retourné, le point CLIQUÉ n'est pas le point du modèle, et la
+            // conversion est celle de mirrorPosition — 25 - p.
+            quizDisplayMirrored: () => displayMirrored(),
+            // De quel CÔTÉ de l'écran se trouve le plateau de sortie du camp au
+            // trait : 0 en bas, 1 en haut. Il était tenu pour toujours en bas,
+            // ce qui n'est vrai que d'un affichage où le camp au trait descend
+            // — en transcription le joueur 1 reste en bas et un pion sorti par
+            // le joueur 2 quitte le plateau par le HAUT.
+            quizBearoffSide: () => getDisplayPosition().player_on_roll,
             resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
             setPreviousDice: (dice) => (previousDice = dice),
@@ -438,20 +442,22 @@
         }
     }
 
-    // Helper function to get the position to display
-    //
-    // STORAGE: All positions are stored normalized with player_on_roll = 0
-    //          (player on roll is always the bottom player in stored positions)
-    //
-    // NORMAL MODE: Player on roll should always be at the bottom.
-    //   - Stored positions already have player_on_roll = 0, so they display correctly.
-    //   - If editing and player_on_roll = 1, mirror for display so player on roll is at bottom.
-    //
-    // MATCH MODE: Player 1 is always at the bottom, Player 2 at top.
-    //   - Positions are stored normalized (player_on_roll = 0)
-    //   - MatchMovePosition.player_on_roll tells us who was actually on roll in the match
-    //   - If Player 2 was on roll (player_on_roll = 1), we need to mirror the stored position
-    //     so that Player 1 appears at bottom and Player 2 (who was actually on roll) appears at top
+    // Le sens du plateau est décidé UNE fois, dans services/boardOrientation.js,
+    // et trois choses y lisent la même réponse : les pions dessinés, les
+    // coordonnées d'un clic et celles des flèches. Elles la déduisaient chacune
+    // de leur côté — du miroir pour les unes, de la NUMÉROTATION des points pour
+    // les autres —, deux questions qui coïncidaient tant que le camp au trait
+    // était toujours en bas, et qui divergent dès qu'il ne l'est plus.
+    function displayIsMirrored(position) {
+        return boardIsMirrored({
+            mode,
+            position,
+            matchContext: get(matchContextStore),
+            transcriptionSwap: get(transcriptionBoardSwapStore)
+        });
+    }
+
+    // La position telle qu'elle est DESSINÉE.
     function getDisplayPosition() {
         const stored = get(positionStore);
         // Pendant une question de quiz, ce qu'on montre est le plateau du coup
@@ -460,49 +466,27 @@
         // la question ne bouge pas parce qu'on déplace un pion.
         const play = get(quizPlayStore);
         const position = play ? { ...stored, board: play.board } : stored;
-        const matchCtx = get(matchContextStore);
-
-        // In EPC mode, always use position as-is (player_on_roll is always 0)
-        if (mode === 'EPC') {
-            return position;
-        }
-
-        // In EDIT mode, show position as-is so editing coordinates match the display.
-        // The mirroring (if player2 is on roll) is handled at search time instead.
-        if (mode === 'EDIT') {
-            return position;
-        }
-
-        // In match mode, check who was actually on roll
-        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-            if (currentMovePos && currentMovePos.player_on_roll === 1) {
-                // Player 2 was on roll - mirror the position so Player 1 stays at bottom
-                // but the dice show on Player 2's side (top)
-                return mirrorPosition(position);
-            }
-            return position;
-        }
-
-        // In normal mode, if player_on_roll is 1, mirror so player on roll is at bottom
-        if (position.player_on_roll === 1) {
-            return mirrorPosition(position);
-        }
-
-        return position;
+        return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
-    // Whether the board is shown from player 2's side: in match mode when
-    // player 2 is on roll for the current move (the stored position is then
-    // mirrored for display), otherwise when the displayed position itself has
-    // player 2 on roll (an edited position before it is saved).
+    // Le miroir en vigueur, sans reconstruire la position : c'est la question
+    // que se posent le clic et les flèches, et elle a la même réponse. Le coup
+    // en cours n'y entre pas — il ne remplace que le damier, jamais le camp au
+    // trait dont la réponse se lit.
+    function displayMirrored() {
+        return displayIsMirrored(get(positionStore));
+    }
+
+    // Les points sont-ils NUMÉROTÉS depuis le camp du joueur 2 ?
+    //
+    // Ce n'est pas la question du miroir (displayIsMirrored) : les points se
+    // comptent depuis le jan du camp au trait, et le jan dessiné en bas à droite
+    // est celui de la couleur 0 de la position AFFICHÉE. Les deux questions
+    // coïncidaient tant que le camp au trait était toujours en bas ; en
+    // transcription le joueur 1 y reste, et il faut alors renuméroter sans rien
+    // retourner.
     function isPlayer2Perspective(displayPosition) {
-        const matchCtx = get(matchContextStore);
-        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-            return !!currentMovePos && currentMovePos.player_on_roll === 1;
-        }
-        return displayPosition.player_on_roll === 1;
+        return labelsFlipped(displayPosition);
     }
 
     // A take/pass (response) decision: the cube has been offered to the
@@ -526,18 +510,17 @@
     }
 
     // The selected move's checkers, in the display position's point numbers.
-    // Move notation uses the stored (normalised) numbering; in match mode with
-    // player 2 on roll the display is mirrored (point i → 25 - i), so the
-    // arrows must be too.
+    // Move notation uses the model's numbering; when the display is MIRRORED
+    // (point i → 25 - i), the arrows must be too.
     // Les points que le coup en cours offre (#294 pour le quiz, T2.3 pour la
-    // transcription), dans les numéros de la position AFFICHÉE : le plateau est
-    // retourné quand le camp au trait est le joueur 2, et un anneau posé sur le
-    // point 24 du modèle doit alors se dessiner sur le point 1 de l'écran —
-    // exactement la conversion que le clic fait dans l'autre sens.
-    function playHighlights(flip) {
+    // transcription), dans les numéros de la position AFFICHÉE : un anneau posé
+    // sur le point 24 du modèle se dessine sur le point 1 de l'écran quand le
+    // plateau est retourné — exactement la conversion que le clic fait dans
+    // l'autre sens, d'où le MÊME `mirrored` des deux côtés.
+    function playHighlights(mirrored) {
         const play = get(quizPlayStore);
         if (!play) return {};
-        const shown = (point) => (flip && point >= 0 && point <= 25 ? 25 - point : point);
+        const shown = (point) => (mirrored && point >= 0 && point <= 25 ? 25 - point : point);
         // Le point CHOISI est toujours marqué, même quand aucune liste ne
         // l'offre : en déplacement libre (T2.4) il n'y a pas de coup légal pour
         // le proposer, et le pion pris en main doit se voir quand même.
@@ -555,17 +538,10 @@
         };
     }
 
-    function selectedMoveArrows() {
+    function selectedMoveArrows(mirrored) {
         const moves = parseMoveNotation(selectedMove);
-        if (moves.length === 0) return moves;
-        const matchCtx = get(matchContextStore);
-        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-            if (currentMovePos && currentMovePos.player_on_roll === 1) {
-                return moves.map((m) => ({ ...m, from: m.from === -1 ? -1 : 25 - m.from, to: m.to === -1 ? -1 : 25 - m.to }));
-            }
-        }
-        return moves;
+        if (moves.length === 0 || !mirrored) return moves;
+        return moves.map((m) => ({ ...m, from: m.from === -1 ? -1 : 25 - m.from, to: m.to === -1 ? -1 : 25 - m.to }));
     }
 
     // ── Static / dynamic layers ────────────────────────────────────────────
@@ -602,7 +578,10 @@
 
         const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
+        // Deux questions distinctes, et c'est exprès : `flip` numérote les
+        // points, `mirrored` convertit des coordonnées.
         const flip = isPlayer2Perspective(position);
+        const mirrored = displayMirrored();
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
 
         if (!staticLayer || staticFlip !== flip) rebuildStaticLayers(geom, flip);
@@ -610,8 +589,8 @@
         cubePosition = drawDynamicScene(layerOf(two, dynamicLayer), geom, boardCfg, position, {
             offeredCube: isOfferedCube(position),
             showPipcount,
-            play: playHighlights(flip),
-            moves: selectedMoveArrows()
+            play: playHighlights(mirrored),
+            moves: selectedMoveArrows(mirrored)
         });
 
         two.update();

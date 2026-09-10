@@ -301,9 +301,12 @@ export function attachBoardInteractions(canvas, deps) {
      * @param {number} y
      */
     function quizTargetAt(x, y) {
-        // Le plateau de sortie visé est TOUJOURS celui du bas : la position
-        // affichée a toujours le joueur au trait en player 0, miroir compris.
-        if (hitTestBearoffTray(x, y, metrics(), cfg, get(stores.position).player_on_roll, 0)) return OFF;
+        // Le plateau de sortie visé est celui du camp au trait, en bas ou en
+        // haut selon l'affichage : il n'est en bas que là où le camp au trait
+        // descend. En transcription le joueur 1 reste en bas quel que soit le
+        // trait, et le joueur 2 sort donc ses pions par le haut.
+        const bearoffSide = deps.quizBearoffSide?.() ?? 0;
+        if (hitTestBearoffTray(x, y, metrics(), cfg, get(stores.position).player_on_roll, bearoffSide)) return OFF;
         return pointAt(x, y);
     }
 

@@ -1084,6 +1084,8 @@
         "tournamentNone": "なし",
         "swapPlayers": "プレイヤーを入れ替え",
         "swapPlayersTooltip": "2人のプレイヤーを入れ替える：名前、手番、盤面",
+        "boardSwap": "盤を反転",
+        "boardSwapTooltip": "プレイヤー2を下に表示します。表示のみで、下書きは変更されません",
         "matchLength": "マッチ長",
         "moneyHint": "0 = マネーゲーム",
         "lengthTooltip": "マッチ長を変えると全体を再生し直します",

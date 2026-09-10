@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 03:20+0200\n"
+"POT-Creation-Date: 2026-09-10 04:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Manuel"
 msgstr "Εγχειρίδιο"
 
-#: ../../source/manuel.rst:7 ../../source/manuel.rst:1452
+#: ../../source/manuel.rst:7 ../../source/manuel.rst:1463
 msgid "Introduction"
 msgstr "Εισαγωγή"
 
@@ -1352,7 +1352,7 @@ msgstr ""
 "της γραμμής εντολών (βλ. :ref:`cmd_positions`)."
 
 #: ../../source/manuel.rst:556 ../../source/manuel.rst:569
-#: ../../source/manuel.rst:1050 ../../source/manuel.rst:1255
+#: ../../source/manuel.rst:1050 ../../source/manuel.rst:1266
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Ανατρέξτε στο :ref:`raccourcis` για τις διαθέσιμες συντομεύσεις."
 
@@ -2592,14 +2592,38 @@ msgstr ""
 #: ../../source/manuel.rst:1091
 msgid ""
 "La **barre du brouillon**, en tête du panneau, ne porte que les gestes "
-"qui font sortir le brouillon de lui-même, plus les deux flèches "
-"d'annulation."
+"qui font sortir le brouillon de lui-même, les deux flèches d'annulation "
+"et le sens du plateau."
 msgstr ""
 "Η **μπάρα του προσχεδίου**, στην κορυφή του πίνακα, φέρει μόνο τις "
-"χειρονομίες που βγάζουν το προσχέδιο από τον εαυτό του, καθώς και τα δύο "
-"βέλη αναίρεσης."
+"κινήσεις που βγάζουν το προσχέδιο από τον εαυτό του, τα δύο βέλη "
+"αναίρεσης και τον προσανατολισμό του ταμπλό."
 
-#: ../../source/manuel.rst:1094
+#: ../../source/manuel.rst:1095
+msgid ""
+"Le **joueur 1 reste en bas du plateau**, quel que soit le camp au trait. "
+"Un match qui se transcrit est une partie qui se déroule : le trait change"
+" à chaque demi-coup, et suivre le trait retournerait le damier d'un tour "
+"sur l'autre — les pions qu'on vient de regarder passeraient en haut et "
+"l'œil referait le trajet à chaque jet. Le trait se lit aux **dés**, qui "
+"changent de côté. Le bouton ⇅ de la barre retourne le plateau et montre "
+"le joueur 2 en bas ; il ne modifie pas le brouillon, et l'affichage "
+"revient à l'endroit à la fermeture. À ne pas confondre avec le bouton "
+"*Inverser les joueurs* du volet Métadonnées, qui échange les deux joueurs"
+" dans le document lui-même."
+msgstr ""
+"**Ο παίκτης 1 παραμένει στο κάτω μέρος του ταμπλό**, όποιος κι αν έχει τη"
+" σειρά. Ένας αγώνας που μεταγράφεται είναι μια παρτίδα που εξελίσσεται: η"
+" σειρά αλλάζει σε κάθε ημικίνηση, και το να την ακολουθεί κανείς θα "
+"αναποδογύριζε το ταμπλό από τη μια σειρά στην άλλη — τα πούλια που μόλις "
+"κοίταξε θα περνούσαν πάνω και το μάτι θα ξανάκανε τη διαδρομή σε κάθε "
+"ζαριά. Η σειρά διαβάζεται από τα **ζάρια**, που αλλάζουν πλευρά. Το "
+"κουμπί ⇅ της μπάρας αναστρέφει το ταμπλό και δείχνει τον παίκτη 2 κάτω· "
+"δεν τροποποιεί το προσχέδιο, και η προβολή επανέρχεται στη θέση της με το"
+" κλείσιμο. Να μη συγχέεται με το κουμπί *Εναλλαγή παικτών* του πίνακα "
+"Μεταδεδομένων, που εναλλάσσει τους δύο παίκτες μέσα στο ίδιο το έγγραφο."
+
+#: ../../source/manuel.rst:1105
 msgid ""
 "Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à "
 "tout moment : les noms des deux joueurs — autocomplétés depuis les "
@@ -2622,7 +2646,7 @@ msgstr ""
 "ονόματα, δίνει όλες τις ενέργειες στην απέναντι πλευρά και γυρίζει το "
 "ταμπλό: είναι ο ίδιος αγώνας, διαβασμένος από την άλλη πλευρά."
 
-#: ../../source/manuel.rst:1104
+#: ../../source/manuel.rst:1115
 msgid ""
 "La **longueur du match** se change dans ce même volet, à tout moment : le"
 " score, la partie Crawford et le référentiel — les parties d'argent "
@@ -2644,7 +2668,7 @@ msgstr ""
 "αποθηκεύοντας ξανά γράφονται ολοκαίνουργιες θέσεις, προς ανάλυση, ενώ οι "
 "παλιές εξαφανίζονται μόλις τίποτα δεν τις κρατά πια."
 
-#: ../../source/manuel.rst:1113
+#: ../../source/manuel.rst:1124
 msgid ""
 "Sous la barre, le brouillon occupe trois régions : la **palette** des "
 "cibles souris, les **coups candidats** et le **transcript**. Dans un "
@@ -2665,7 +2689,7 @@ msgstr ""
 "υποψηφίων, και τουλάχιστον πέντε υποψήφιες διαβάζονται χωρίς καμία "
 "κύλιση."
 
-#: ../../source/manuel.rst:1122
+#: ../../source/manuel.rst:1133
 msgid ""
 "La palette montre les deux dés au fur et à mesure de leur saisie ; un "
 "clic dessus les efface, comme *RETOUR ARRIERE*. Une partie s'ouvre par un"
@@ -2679,7 +2703,7 @@ msgstr ""
 "χρειάζεται να τα ξαναεισαγάγει· η ισοπαλία καταγράφεται ως έχει και "
 "αναμένεται άλλο άνοιγμα."
 
-#: ../../source/manuel.rst:1127
+#: ../../source/manuel.rst:1138
 msgid ""
 "Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,"
 " classés par le moteur embarqué, le premier présélectionné et ses flèches"
@@ -2700,7 +2724,7 @@ msgstr ""
 "δεν είναι διαθέσιμη, οι κινήσεις καταγράφονται χωρίς κατάταξη και η λίστα"
 " το λέει στην κορυφή της."
 
-#: ../../source/manuel.rst:1135
+#: ../../source/manuel.rst:1146
 msgid ""
 "La **molette** sélectionne le candidat suivant ou précédent, au-dessus de"
 " la liste comme au-dessus du damier : le regard reste sur le plateau et "
@@ -2714,7 +2738,7 @@ msgstr ""
 "ανάγνωση της σημειογραφίας της. Ένα κλικ σε μια γραμμή την επιλέγει, ένα "
 "διπλό κλικ την επικυρώνει."
 
-#: ../../source/manuel.rst:1140
+#: ../../source/manuel.rst:1151
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -2727,7 +2751,7 @@ msgstr ""
 "καταγράφει με το χέρι στο ποντίκι. Ένα κελί ανά ζαριά, ποτέ δύο: το 3-1 "
 "και το 1-3 είναι η ίδια ζαριά."
 
-#: ../../source/manuel.rst:1145
+#: ../../source/manuel.rst:1156
 msgid ""
 "Un clic sur un point du plateau ne laisse que les coups qui en partent. "
 "C'est le geste du coup lointain : descendre au douzième candidat coûte "
@@ -2743,7 +2767,7 @@ msgstr ""
 "λίστα στην οθόνη· μια ετικέτα στην κορυφή της λίστας το υπενθυμίζει και "
 "επιτρέπει την άρση του, και η επόμενη ριξιά το αίρει επίσης."
 
-#: ../../source/manuel.rst:1151
+#: ../../source/manuel.rst:1162
 msgid ""
 "Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est "
 "saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un"
@@ -2772,7 +2796,7 @@ msgstr ""
 "καταγράφεται και το τρίγωνο αφήνει πατήσιμες μόνο αυτές τις ζαριές: η "
 "ζαριά δεν μαντεύεται ποτέ στη θέση εκείνου που παρακολουθεί την παρτίδα."
 
-#: ../../source/manuel.rst:1163
+#: ../../source/manuel.rst:1174
 msgid ""
 "Un coup illégal se transcrit tel qu'il a été joué. Le bouton **✎** de la "
 "palette déplie les deux chemins qui le permettent, à la place du triangle"
@@ -2805,7 +2829,7 @@ msgstr ""
 "«παράνομη κίνηση» στο μεταγραφικό, και η εξαγωγή ``.mat`` προειδοποιεί "
 "πριν γράψει το αρχείο, χωρίς ποτέ να αρνείται."
 
-#: ../../source/manuel.rst:1177
+#: ../../source/manuel.rst:1188
 msgid ""
 "Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**, "
 "**Abandonner** reprend à la souris les quatre gestes de videau : ce sont,"
@@ -2838,7 +2862,7 @@ msgstr ""
 "προσφορά δεν απαντά — η αποδοχή και το πάσο είναι δύο συμμετρικές "
 "απαντήσεις και ζουν μαζί στη σειρά, ένα κλικ η καθεμία."
 
-#: ../../source/manuel.rst:1192
+#: ../../source/manuel.rst:1203
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, l'égalité à relancer, la réponse attendue à un "
@@ -2859,7 +2883,7 @@ msgstr ""
 "ενέργεια επισημαίνεται, αντίθετα, στην κορυφή του μεταγραφικού, εκεί όπου"
 " βρίσκεται το εσφαλμένο κελί."
 
-#: ../../source/manuel.rst:1200
+#: ../../source/manuel.rst:1211
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -2873,7 +2897,7 @@ msgstr ""
 "εμφανίζονται τότε στη μπάρα του αγώνα, και αναμένεται το άνοιγμα της "
 "επόμενης παρτίδας."
 
-#: ../../source/manuel.rst:1205
+#: ../../source/manuel.rst:1216
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -2903,7 +2927,7 @@ msgstr ""
 "κινήσεις αυτής της ριξιάς για να τη συμπληρώσει. Οι παρτίδες διπλώνονται·"
 " αυτή του δρομέα είναι ανοιχτή."
 
-#: ../../source/manuel.rst:1217
+#: ../../source/manuel.rst:1228
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -2921,7 +2945,7 @@ msgstr ""
 "από τον δρομέα» θα στόχευε ένα κελί που ίσως δεν βλέπει κανείς, ενώ το "
 "δεξί κλικ ονομάζει το δικό του."
 
-#: ../../source/manuel.rst:1224
+#: ../../source/manuel.rst:1235
 msgid ""
 "La barre du brouillon porte les gestes qui le font sortir de lui-même. « "
 "**Créer le match** » (CTRL-ENTREE) l'écrit dans la bibliothèque, et "
@@ -2943,7 +2967,7 @@ msgstr ""
 "σωτηρία του ίδιου του προσχεδίου: γράφεται στη βάση μετά από κάθε "
 "ενέργεια, δεν υπάρχει τίποτα να επιτηρηθεί."
 
-#: ../../source/manuel.rst:1233
+#: ../../source/manuel.rst:1244
 msgid ""
 "« **Texte .mat** » ouvre le fichier Jellyfish tel qu'il serait écrit, "
 "dans une fenêtre assez large pour que ses colonnes restent alignées, avec"
@@ -2961,7 +2985,7 @@ msgstr ""
 "βιβλιοθήκη, οριστικός. Τα δύο βέλη **↶** και **↷** αναιρούν και "
 "επαναλαμβάνουν, όπως τα *CTRL-Z* και *CTRL-SHIFT-Z*."
 
-#: ../../source/manuel.rst:1240
+#: ../../source/manuel.rst:1251
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -2977,7 +3001,7 @@ msgstr ""
 " προς ανάλυση, και η ανάλυση που ξαναρχίζει αφορά μόνο αυτόν τον αγώνα, "
 "ποτέ ολόκληρη τη βιβλιοθήκη."
 
-#: ../../source/manuel.rst:1246
+#: ../../source/manuel.rst:1257
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -2989,7 +3013,7 @@ msgstr ""
 "όπως παίχτηκε, με την προειδοποίηση ότι το gnubg και το XG θα την "
 "επισημάνουν («Invalid move») και θα αποκλίνουν στη συνέχεια."
 
-#: ../../source/manuel.rst:1251
+#: ../../source/manuel.rst:1262
 msgid ""
 "Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
 "liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
@@ -2999,11 +3023,11 @@ msgstr ""
 "λίστα των αγώνων: η γραμμή «Προσχέδιο σε εξέλιξη» ανοίγει την καρτέλα "
 "Μεταγραφή."
 
-#: ../../source/manuel.rst:1260 ../../source/manuel.rst:1262
+#: ../../source/manuel.rst:1271 ../../source/manuel.rst:1273
 msgid "Panneau Tournois"
 msgstr "Πίνακας Τουρνουά"
 
-#: ../../source/manuel.rst:1266
+#: ../../source/manuel.rst:1277
 msgid ""
 "Le panneau Tournois : un tournoi par ligne, nombre de matchs, PR du "
 "joueur de référence."
@@ -3011,7 +3035,7 @@ msgstr ""
 "Ο πίνακας Τουρνουά: ένα τουρνουά ανά γραμμή, αριθμός ματς, PR του παίκτη "
 "αναφοράς."
 
-#: ../../source/manuel.rst:1269
+#: ../../source/manuel.rst:1280
 msgid ""
 "Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en "
 "tournois pour un suivi organisé et une analyse statistique par événement."
@@ -3027,7 +3051,7 @@ msgstr ""
 "πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε *CTRL-Y* για "
 "να εμφανίσετε ή να αποκρύψετε τον πίνακα."
 
-#: ../../source/manuel.rst:1275
+#: ../../source/manuel.rst:1286
 msgid ""
 "Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, "
 "GnuBG et BGF nomment leur événement ; à l'import d'un match nouveau, "
@@ -3045,7 +3069,7 @@ msgstr ""
 "δεν ανακατατάσσεται ποτέ: η εκ νέου εισαγωγή του αρχείου του δεν αναιρεί "
 "την ταξινόμηση που έγινε με το χέρι."
 
-#: ../../source/manuel.rst:1282
+#: ../../source/manuel.rst:1293
 msgid ""
 "La colonne **PR** de chaque tournoi affiche le PR du **joueur de "
 "référence** — c'est-à-dire le joueur présent dans le plus grand nombre de"
@@ -3063,11 +3087,11 @@ msgstr ""
 " Το όνομα του παίκτη αναφοράς εμφανίζεται σε πλαίσιο υπόδειξης όταν "
 "περνάτε πάνω από την τιμή."
 
-#: ../../source/manuel.rst:1292
+#: ../../source/manuel.rst:1303
 msgid "Diriger un tournoi"
 msgstr "Διεύθυνση τουρνουά"
 
-#: ../../source/manuel.rst:1294
+#: ../../source/manuel.rst:1305
 msgid ""
 "blunderDB sait **diriger** un tournoi, et pas seulement le ranger. La "
 "direction est portée par le moteur **Nicomaque**, de Nicolas Harmand : "
@@ -3083,7 +3107,7 @@ msgstr ""
 "αγώνες της. Το κουμπί **ⓘ** της μπάρας του πίνακα θυμίζει αυτή την "
 "αναφορά και οδηγεί στο αποθετήριο και στην τεκμηρίωση της μηχανής."
 
-#: ../../source/manuel.rst:1300
+#: ../../source/manuel.rst:1311
 msgid ""
 "Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois` "
 "(*CTRL-MAJ-D*, commande ``direct``) : ouvrir un tournoi, puis **Diriger "
@@ -3102,7 +3126,7 @@ msgstr ""
 "blunderDB σε αυτόν τον κανόνα· οποιαδήποτε άλλη καρτέλα επαναφέρει τον "
 "πίνακα."
 
-#: ../../source/manuel.rst:1307
+#: ../../source/manuel.rst:1318
 msgid ""
 "Une direction a trois états : **en préparation** tant qu'aucun match n'a "
 "été lancé, **en cours** ensuite, **clos** une fois le classement figé. "
@@ -3114,7 +3138,7 @@ msgstr ""
 "παγώσει η κατάταξη. Το άνοιγμα ενός κλειστού τουρνουά είναι δυνατό και "
 "ζητά επιβεβαίωση: η τελική κατάταξη παύει να είναι τελική."
 
-#: ../../source/manuel.rst:1312
+#: ../../source/manuel.rst:1323
 msgid ""
 "Tout ce qui est décidé est écrit dans un **journal**, et rien d'autre ne "
 "l'est. Le classement, les arbres, les propositions et les avertissements "
@@ -3128,11 +3152,11 @@ msgstr ""
 " τίποτα, και μια διόρθωση δεν σβήνει ποτέ ό,τι συνέβη — προστίθεται σε "
 "αυτό."
 
-#: ../../source/manuel.rst:1318
+#: ../../source/manuel.rst:1329
 msgid "La page Direction"
 msgstr "Η σελίδα Διεύθυνσης"
 
-#: ../../source/manuel.rst:1320
+#: ../../source/manuel.rst:1331
 msgid ""
 "C'est là que le directeur passe l'essentiel de son temps. Elle porte, de "
 "haut en bas : les **avertissements** du moteur, qui restent visibles et "
@@ -3146,7 +3170,7 @@ msgstr ""
 "προτάσεων**· το **πλέγμα των τραπεζιών**· η **τελευταία απόφαση**· και οι"
 " ελεύθεροι παίκτες."
 
-#: ../../source/manuel.rst:1326
+#: ../../source/manuel.rst:1337
 msgid ""
 "Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** "
 "confirme la file entière en deux clics, après en avoir montré la liste. «"
@@ -3161,7 +3185,7 @@ msgstr ""
 "*χειροκίνητη κλήρωση ζεύγους* προσφέρεται πάντοτε — η μηχανή προτείνει, ο"
 " διευθυντής αποφασίζει."
 
-#: ../../source/manuel.rst:1332
+#: ../../source/manuel.rst:1343
 msgid ""
 "Une proposition peut porter une remarque du moteur : aucune table libre, "
 "ou une fin de match attendue pendant une pause. Elle reste lançable dans "
@@ -3176,11 +3200,11 @@ msgstr ""
 " παρτίδα· στη λήξη οι προτάσεις εμφανίζονται μόνες τους, και τίποτα δεν "
 "ξεκινά από μόνο του."
 
-#: ../../source/manuel.rst:1339
+#: ../../source/manuel.rst:1350
 msgid "La fiche de résultat"
 msgstr "Η καρτέλα αποτελέσματος"
 
-#: ../../source/manuel.rst:1341
+#: ../../source/manuel.rst:1352
 msgid ""
 "Un clic sur une table occupée ouvre la fiche du match. Elle montre deux "
 "grandes cibles : les **noms des deux joueurs**. Cliquer celui qui a gagné"
@@ -3194,7 +3218,7 @@ msgstr ""
 " το τραπέζι. Ο νικητής είναι το μόνο που απαιτείται· το σκορ είναι "
 "ελεύθερο, το ένα, και τα δύο ή κανένα."
 
-#: ../../source/manuel.rst:1346
+#: ../../source/manuel.rst:1357
 msgid ""
 "Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait, une"
 " remarque libre (« tombé au temps », « abandonné pour raison de… »), le "
@@ -3204,7 +3228,7 @@ msgstr ""
 "αγώνα, μια ελεύθερη παρατήρηση («τελείωσε ο χρόνος», «εγκατέλειψε "
 "λόγω…»), τη μεταφορά του αγώνα σε άλλο τραπέζι και την ακύρωσή του."
 
-#: ../../source/manuel.rst:1350
+#: ../../source/manuel.rst:1361
 msgid ""
 "Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille"
 " : **Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* "
@@ -3216,11 +3240,11 @@ msgstr ""
 "νικητής (το *CTRL-Z* ανοίγει την ίδια διόρθωση). Μια παλαιότερη διόρθωση "
 "γίνεται από το :ref:`ιστορικό <direction_historique>`."
 
-#: ../../source/manuel.rst:1356
+#: ../../source/manuel.rst:1367
 msgid "Les joueurs"
 msgstr "Οι παίκτες"
 
-#: ../../source/manuel.rst:1358
+#: ../../source/manuel.rst:1369
 msgid ""
 "L'onglet **Joueurs** inscrit, corrige et retire. Le champ d'inscription "
 "garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent "
@@ -3234,7 +3258,7 @@ msgstr ""
 " παίκτες της βάσης· επιλέγοντας έναν καθορίζεται η ακριβής γραφή που "
 "φέρουν οι αγώνες του και προσυμπληρώνεται η βαθμολογία του με το PR του."
 
-#: ../../source/manuel.rst:1363
+#: ../../source/manuel.rst:1374
 msgid ""
 "L'**annuaire** regroupe les inscrits de tous les tournois dirigés de la "
 "base, dédoublonnés par nom, avec le club et la cote de leur dernière "
@@ -3250,7 +3274,7 @@ msgstr ""
 "επαναφορά των συμμετεχόντων προηγούμενου τουρνουά είναι ένα κλικ, όσοι κι"
 " αν είναι· το ευρετήριο εξάγεται σε CSV και διαβάζεται ξανά επικολλημένο."
 
-#: ../../source/manuel.rst:1369
+#: ../../source/manuel.rst:1380
 msgid ""
 "Un **retardataire** arrivé après le tirage prend une place d'exemption "
 "libre si le tableau en offre une, et l'interface écrit à côté du champ où"
@@ -3264,7 +3288,7 @@ msgstr ""
 "και η προβολή λέει σε ποια φάση θα μπει. Καμία κλήρωση που έχει ήδη γίνει"
 " δεν ξαναγίνεται."
 
-#: ../../source/manuel.rst:1374
+#: ../../source/manuel.rst:1385
 msgid ""
 "Un retrait se fait *maintenant* ou *après son match en cours*, selon que "
 "le joueur part tout de suite ou finit ce qu'il joue."
@@ -3272,11 +3296,11 @@ msgstr ""
 "Μια απόσυρση γίνεται *τώρα* ή *μετά τον τρέχοντα αγώνα του*, ανάλογα με "
 "το αν ο παίκτης φεύγει αμέσως ή τελειώνει αυτό που παίζει."
 
-#: ../../source/manuel.rst:1378
+#: ../../source/manuel.rst:1389
 msgid "Arbres, emplacements, classement, historique"
 msgstr "Πίνακες, θέσεις, κατάταξη, ιστορικό"
 
-#: ../../source/manuel.rst:1380
+#: ../../source/manuel.rst:1391
 msgid ""
 "L'onglet **Arbres** dessine les tableaux et, pour un suisse, le tableau "
 "des vies. Un match déjà joué y porte son résultat ; un match que le "
@@ -3287,7 +3311,7 @@ msgstr ""
 "αποτέλεσμά του· ένας αγώνας που επισημαίνει η μηχανή σημειώνεται επί "
 "τόπου."
 
-#: ../../source/manuel.rst:1386
+#: ../../source/manuel.rst:1397
 msgid ""
 "L'onglet **Emplacements** relie le tournoi à la bibliothèque. Chaque "
 "match du tournoi est un emplacement, que l'on peut remplir de deux façons"
@@ -3307,7 +3331,7 @@ msgstr ""
 "με το καταγεγραμμένο αποτέλεσμα, η διαφορά δείχνεται χωρίς να επιλύεται —"
 " κατά τη διάρκεια ενός τουρνουά, ο λόγος του διευθυντή ισχύει."
 
-#: ../../source/manuel.rst:1394
+#: ../../source/manuel.rst:1405
 msgid ""
 "L'onglet **Classement** montre le classement courant, section par "
 "section, avec les prix lorsqu'une dotation est réglée. Deux ex æquo "
@@ -3319,7 +3343,7 @@ msgstr ""
 "μοιράζονται τη θέση και το έπαθλο. Το **Κλείσιμο τουρνουά** παγώνει την "
 "τελική κατάταξη· η κατάταξη εξάγεται σε CSV, στη γλώσσα της διεπαφής."
 
-#: ../../source/manuel.rst:1401
+#: ../../source/manuel.rst:1412
 msgid ""
 "L'onglet **Historique** est le journal en clair : une ligne par décision,"
 " dans l'ordre, filtrable par joueur ou par match. C'est ce qu'un "
@@ -3331,11 +3355,11 @@ msgstr ""
 "ξαναδιαβάζει ένας διευθυντής μετά από ένσταση, και εκεί διορθώνεται ή "
 "σχολιάζεται μια παλαιότερη απόφαση."
 
-#: ../../source/manuel.rst:1406
+#: ../../source/manuel.rst:1417
 msgid "Les réglages"
 msgstr "Οι ρυθμίσεις"
 
-#: ../../source/manuel.rst:1408
+#: ../../source/manuel.rst:1419
 msgid ""
 "L'onglet **Réglages** s'ouvre sur des **formats nommés** : six tournois "
 "de club prêts à l'emploi, dont le premier est recommandé. En choisir un "
@@ -3345,7 +3369,7 @@ msgstr ""
 "τουρνουά συλλόγου, με το πρώτο να συνιστάται. Η επιλογή ενός αρκεί για να"
 " ξεκινήσετε· τα πεδία παραμένουν τροποποιήσιμα στη συνέχεια."
 
-#: ../../source/manuel.rst:1412
+#: ../../source/manuel.rst:1423
 msgid ""
 "Se règlent ici : les phases et leur longueur de match, les longueurs tour"
 " par tour d'un tableau (« 15, 13, 11 » se lit du dernier tour vers le "
@@ -3359,7 +3383,7 @@ msgstr ""
 "(δικαίωμα συμμετοχής, παρακράτηση του συλλόγου, κλίμακα ανά ενότητα) και "
 "ο φάκελος προβολής."
 
-#: ../../source/manuel.rst:1417
+#: ../../source/manuel.rst:1428
 msgid ""
 "Les réglages restent accessibles **en cours de tournoi** : baisser la "
 "bascule à 22 h pour finir plus tôt, ajouter une consolante le samedi "
@@ -3376,7 +3400,7 @@ msgstr ""
 " κατά τη διάρκεια του τουρνουά δείχνει πρώτα τη λίστα με ό,τι θα αλλάξει "
 "και ζητά επιβεβαίωση."
 
-#: ../../source/manuel.rst:1424
+#: ../../source/manuel.rst:1435
 msgid ""
 "Les **têtes de série** sont une option, éteinte par défaut : l'étude du "
 "moteur conclut « pas de têtes de série protégées », qui est la culture "
@@ -3387,11 +3411,11 @@ msgstr ""
 "σημερινή κουλτούρα του τάβλι. Ενεργοποιημένη, οι παίκτες τοποθετούνται "
 "κατά βαθμολογία."
 
-#: ../../source/manuel.rst:1429
+#: ../../source/manuel.rst:1440
 msgid "L'affichage de la salle"
 msgstr "Η οθόνη της αίθουσας"
 
-#: ../../source/manuel.rst:1431
+#: ../../source/manuel.rst:1442
 msgid ""
 "Un tournoi se regarde. Choisir un **dossier d'affichage** dans les "
 "Réglages suffit une fois pour toutes : blunderDB y réécrit une page HTML "
@@ -3407,7 +3431,7 @@ msgstr ""
 " εξωτερικό πόρο. Το *Άνοιγμα στο πρόγραμμα περιήγησης* την εμφανίζει "
 "αμέσως."
 
-#: ../../source/manuel.rst:1437
+#: ../../source/manuel.rst:1448
 msgid ""
 "La **feuille d'appariements** se pose sur la table d'accueil : un clic "
 "sur *Imprimer la feuille* ouvre le dialogue d'impression du système. Une "
@@ -3421,7 +3445,7 @@ msgstr ""
 "κουτάκια για το σκορ — και ένας γύρος τριάντα δύο παικτών χωρά σε μία "
 "σελίδα A4."
 
-#: ../../source/manuel.rst:1442
+#: ../../source/manuel.rst:1453
 msgid ""
 "Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un "
 "tournoi dirigé sans interface graphique : ``list``, ``verify``, "
@@ -3431,11 +3455,11 @@ msgstr ""
 "διευθυνόμενο τουρνουά χωρίς γραφικό περιβάλλον: ``list``, ``verify``, "
 "``standings``, ``page`` και ``export``. Δείτε :ref:`cli`."
 
-#: ../../source/manuel.rst:1449
+#: ../../source/manuel.rst:1460
 msgid "Panneau Stats"
 msgstr "Πίνακας Stats"
 
-#: ../../source/manuel.rst:1454
+#: ../../source/manuel.rst:1465
 msgid ""
 "Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
 "progression dans le temps à partir des positions importées dans la base "
@@ -3449,11 +3473,11 @@ msgstr ""
 " (*Performance Rating*) και **MWC cost** (Match Winning Chance cost) για "
 "το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο."
 
-#: ../../source/manuel.rst:1460
+#: ../../source/manuel.rst:1471
 msgid "Le panneau Stats est particulièrement utile pour :"
 msgstr "Ο πίνακας Stats είναι ιδιαίτερα χρήσιμος για:"
 
-#: ../../source/manuel.rst:1462
+#: ../../source/manuel.rst:1473
 msgid ""
 "**situer son niveau** par rapport aux bandes de niveau (*Classe "
 "mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
@@ -3461,7 +3485,7 @@ msgstr ""
 "**τον προσδιορισμό του επιπέδου σας** σε σχέση με τις ζώνες επιπέδου "
 "(*Παγκόσμια κλάση*, *Ειδικός*, *Προχωρημένος*…) χάρη στο συνολικό PR·"
 
-#: ../../source/manuel.rst:1465
+#: ../../source/manuel.rst:1476
 msgid ""
 "**suivre sa progression** tournoi après tournoi ou match après match "
 "grâce aux graphiques de l'onglet Progression ;"
@@ -3469,7 +3493,7 @@ msgstr ""
 "**την παρακολούθηση της προόδου σας** τουρνουά προς τουρνουά ή αγώνα προς"
 " αγώνα χάρη στα γραφήματα της καρτέλας Progression·"
 
-#: ../../source/manuel.rst:1468
+#: ../../source/manuel.rst:1479
 msgid ""
 "**identifier ses points faibles** : onglet Erreurs pour voir la "
 "répartition entre coups joués et décisions de videau, et la distribution "
@@ -3479,7 +3503,7 @@ msgstr ""
 "κατανομή μεταξύ κινήσεων πουλιών και αποφάσεων κύβου, καθώς και την "
 "κατανομή των μεγεθών σφάλματος·"
 
-#: ../../source/manuel.rst:1472
+#: ../../source/manuel.rst:1483
 msgid ""
 "**comparer les joueurs de la base** entre eux, une ligne par joueur, "
 "grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
@@ -3488,7 +3512,7 @@ msgstr ""
 "μέσω της καρτέλας Παίκτες — χρήσιμο για την παρακολούθηση μιας ολόκληρης "
 "διοργάνωσης·"
 
-#: ../../source/manuel.rst:1475
+#: ../../source/manuel.rst:1486
 msgid ""
 "**accéder directement aux positions concernées** en cliquant sur "
 "n'importe quel indicateur (drill-down)."
@@ -3496,23 +3520,23 @@ msgstr ""
 "**την άμεση πρόσβαση στις σχετικές θέσεις** κάνοντας κλικ σε οποιονδήποτε"
 " δείκτη (drill-down)."
 
-#: ../../source/manuel.rst:1479
+#: ../../source/manuel.rst:1490
 msgid "Ouverture du panneau"
 msgstr "Άνοιγμα του πίνακα"
 
-#: ../../source/manuel.rst:1481
+#: ../../source/manuel.rst:1492
 msgid "Pour ouvrir le panneau Stats :"
 msgstr "Για να ανοίξετε τον πίνακα Stats:"
 
-#: ../../source/manuel.rst:1483
+#: ../../source/manuel.rst:1494
 msgid "Appuyer sur *CTRL-D*."
 msgstr "Πατήστε *CTRL-D*."
 
-#: ../../source/manuel.rst:1484
+#: ../../source/manuel.rst:1495
 msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
 msgstr "Πληκτρολογήστε την εντολή ``stats`` ή ``st`` στη γραμμή εντολών."
 
-#: ../../source/manuel.rst:1487
+#: ../../source/manuel.rst:1498
 msgid ""
 "Le panneau se rafraîchit automatiquement à chaque modification du filtre."
 " Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
@@ -3522,11 +3546,11 @@ msgstr ""
 "επανυπολογίζει τα στατιστικά κατά την απλή εναλλαγή PR ↔ MWC: και οι δύο "
 "μετρικές υπολογίζονται ταυτόχρονα από το backend."
 
-#: ../../source/manuel.rst:1492
+#: ../../source/manuel.rst:1503
 msgid "Barre de filtre"
 msgstr "Γραμμή φίλτρου"
 
-#: ../../source/manuel.rst:1494
+#: ../../source/manuel.rst:1505
 msgid ""
 "La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
 " un sous-ensemble de positions."
@@ -3534,11 +3558,11 @@ msgstr ""
 "Η γραμμή φίλτρου, στο επάνω μέρος του πίνακα, επιτρέπει τον περιορισμό "
 "του υπολογισμού σε ένα υποσύνολο θέσεων."
 
-#: ../../source/manuel.rst:1498
+#: ../../source/manuel.rst:1509
 msgid "Perspective joueur"
 msgstr "Οπτική γωνία παίκτη"
 
-#: ../../source/manuel.rst:1500
+#: ../../source/manuel.rst:1511
 msgid ""
 "La liste déroulante **Joueur** permet de filtrer les statistiques selon "
 "le joueur analysé. blunderDB sélectionne automatiquement le joueur dont "
@@ -3550,7 +3574,7 @@ msgstr ""
 "αυτόματα τον παίκτη του οποίου το όνομα εμφανίζεται πιο συχνά στη βάση "
 "δεδομένων — τροποποιήσιμο ανά πάσα στιγμή."
 
-#: ../../source/manuel.rst:1505
+#: ../../source/manuel.rst:1516
 msgid ""
 "Changer de joueur ne provoque pas de perte de données ; il suffit de re-"
 "sélectionner le joueur précédent dans la liste."
@@ -3558,11 +3582,11 @@ msgstr ""
 "Η αλλαγή παίκτη δεν προκαλεί απώλεια δεδομένων· αρκεί να επιλέξετε ξανά "
 "τον προηγούμενο παίκτη από τη λίστα."
 
-#: ../../source/manuel.rst:1509
+#: ../../source/manuel.rst:1520
 msgid "Filtres disponibles"
 msgstr "Διαθέσιμα φίλτρα"
 
-#: ../../source/manuel.rst:1511
+#: ../../source/manuel.rst:1522
 msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
@@ -3570,7 +3594,7 @@ msgstr ""
 "**Τουρνουά** — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να "
 "επιλεγούν πολλά τουρνουά ταυτόχρονα."
 
-#: ../../source/manuel.rst:1514
+#: ../../source/manuel.rst:1525
 msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
@@ -3578,11 +3602,11 @@ msgstr ""
 "**Ημερομηνίες** — χρονικό εύρος (*Από* … *Έως*). Αν συμπληρωθεί μόνο η "
 "ημερομηνία έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις."
 
-#: ../../source/manuel.rst:1517
+#: ../../source/manuel.rst:1528
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
 msgstr "**Τύπος απόφασης** — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου."
 
-#: ../../source/manuel.rst:1519
+#: ../../source/manuel.rst:1530
 msgid ""
 "**Longueur de match** — restriction à des longueurs de match précises (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
@@ -3591,7 +3615,7 @@ msgstr ""
 "**Διάρκεια αγώνα** — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, 7, "
 "9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη."
 
-#: ../../source/manuel.rst:1522
+#: ../../source/manuel.rst:1533
 msgid ""
 "Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur auto-"
 "détecté)."
@@ -3599,7 +3623,7 @@ msgstr ""
 "Ένα κουμπί **Reset** μηδενίζει όλα τα φίλτρα (εκτός από τον αυτόματα "
 "εντοπισμένο παίκτη)."
 
-#: ../../source/manuel.rst:1526
+#: ../../source/manuel.rst:1537
 msgid ""
 "Les filtres sont persistés dans la configuration de blunderDB "
 "(``config.yaml``) et sont restaurés à la prochaine ouverture."
@@ -3607,11 +3631,11 @@ msgstr ""
 "Τα φίλτρα αποθηκεύονται στις ρυθμίσεις του blunderDB (``config.yaml``) "
 "και επαναφέρονται κατά το επόμενο άνοιγμα."
 
-#: ../../source/manuel.rst:1530
+#: ../../source/manuel.rst:1541
 msgid "Toggle PR / MWC"
 msgstr "Εναλλαγή PR / MWC"
 
-#: ../../source/manuel.rst:1532
+#: ../../source/manuel.rst:1543
 msgid ""
 "Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
 "dans tous les onglets."
@@ -3619,11 +3643,11 @@ msgstr ""
 "Το κουμπί **PR / MWC** στο επάνω μέρος του πίνακα εναλλάσσει την "
 "εμφανιζόμενη μετρική σε όλες τις καρτέλες."
 
-#: ../../source/manuel.rst:1535
+#: ../../source/manuel.rst:1546
 msgid "**PR (Performance Rating)**"
 msgstr "**PR (Performance Rating)**"
 
-#: ../../source/manuel.rst:1537
+#: ../../source/manuel.rst:1548
 msgid ""
 "L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
 "le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
@@ -3637,7 +3661,7 @@ msgstr ""
 "ακριβής κανόνας μέτρησης — ποιες αποφάσεις μπαίνουν στον παρονομαστή, πώς"
 " μετατρέπεται το σκορ — είναι αυτός του :ref:`stats_parity`."
 
-#: ../../source/manuel.rst:1543
+#: ../../source/manuel.rst:1554
 msgid ""
 "Les bandes de niveau que le panneau dessine derrière la courbe de "
 "progression sont un **repère indicatif propre à blunderDB** : aucune "
@@ -3705,11 +3729,11 @@ msgstr "Αρχάριος"
 msgid "≥ 12"
 msgstr "≥ 12"
 
-#: ../../source/manuel.rst:1560
+#: ../../source/manuel.rst:1571
 msgid "**MWC cost (Match Winning Chance cost)**"
 msgstr "**MWC cost (Match Winning Chance cost)**"
 
-#: ../../source/manuel.rst:1562
+#: ../../source/manuel.rst:1573
 msgid ""
 "Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
 "l'ensemble du jeu de données filtré. Calculé à partir de la MET Kazaross-"
@@ -3719,7 +3743,7 @@ msgstr ""
 "ολόκληρο το φιλτραρισμένο σύνολο δεδομένων. Υπολογίζεται με βάση τη MET "
 "Kazaross-XG2 που είναι ενσωματωμένη στο blunderDB."
 
-#: ../../source/manuel.rst:1567
+#: ../../source/manuel.rst:1578
 msgid ""
 "Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
 "enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
@@ -3731,7 +3755,7 @@ msgstr ""
 " τιμές MWC εξαρτώνται από τη MET που χρησιμοποιείται· δεν είναι άμεσα "
 "συγκρίσιμες μεταξύ λογισμικών που χρησιμοποιούν διαφορετικές METs."
 
-#: ../../source/manuel.rst:1572
+#: ../../source/manuel.rst:1583
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
 "effectué."
@@ -3739,11 +3763,11 @@ msgstr ""
 "Η εναλλαγή PR ↔ MWC είναι ακαριαία: δεν πραγματοποιείται κανένας "
 "επανυπολογισμός στο backend."
 
-#: ../../source/manuel.rst:1578
+#: ../../source/manuel.rst:1589
 msgid "Le rapport HTML"
 msgstr "Η αναφορά HTML"
 
-#: ../../source/manuel.rst:1580
+#: ../../source/manuel.rst:1591
 msgid ""
 "Le bouton **Rapport HTML** de l'en-tête du panneau produit un document "
 "**autonome** : un seul fichier, sans image externe, sans feuille de style"
@@ -3763,7 +3787,7 @@ msgstr ""
 " τον περιηγητή** — πράγμα που αποφεύγει την ενσωμάτωση γεννήτριας PDF για"
 " κάτι που όλοι έχουν ήδη."
 
-#: ../../source/manuel.rst:1588
+#: ../../source/manuel.rst:1599
 msgid ""
 "Il contient les indicateurs du périmètre courant (positions, matchs, "
 "décisions comptées, PR global, pions et videau), puis les **dix décisions"
@@ -3776,7 +3800,7 @@ msgstr ""
 "αγώνα από τον οποίο προέρχεται και την καλύτερη κίνηση όταν μια ανάλυση "
 "τη δίνει."
 
-#: ../../source/manuel.rst:1593
+#: ../../source/manuel.rst:1604
 msgid ""
 "Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui "
 "ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien"
@@ -3788,43 +3812,43 @@ msgstr ""
 "σημαίνουν τίποτα: ρυθμίστε το φίλτρο — ένα τουρνουά, ένα εύρος "
 "ημερομηνιών, έναν παίκτη — πριν την παραγάγετε."
 
-#: ../../source/manuel.rst:1599
+#: ../../source/manuel.rst:1610
 msgid "Onglet Dashboard"
 msgstr "Καρτέλα Dashboard"
 
-#: ../../source/manuel.rst:1601
+#: ../../source/manuel.rst:1612
 msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
 msgstr "Η καρτέλα **Dashboard** παρέχει μια συνοπτική εικόνα των βασικών δεικτών."
 
-#: ../../source/manuel.rst:1603
+#: ../../source/manuel.rst:1614
 msgid "Onglet Dashboard du panneau Stats"
 msgstr "Καρτέλα Dashboard του πίνακα Stats"
 
-#: ../../source/manuel.rst:1607
+#: ../../source/manuel.rst:1618
 msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
 msgstr "Η καρτέλα Dashboard: συνολικό PR, PR πουλιών, PR κύβου."
 
-#: ../../source/manuel.rst:1610
+#: ../../source/manuel.rst:1621
 msgid "Cartes de niveau"
 msgstr "Κάρτες επιπέδου"
 
-#: ../../source/manuel.rst:1612
+#: ../../source/manuel.rst:1623
 msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Τρεις κάρτες εμφανίζουν το PR (ή το MWC) για:"
 
-#: ../../source/manuel.rst:1614
+#: ../../source/manuel.rst:1625
 msgid "**PR Global** — toutes les décisions (coups + videau) ;"
 msgstr "**PR Συνολικό** — όλες τις αποφάσεις (κινήσεις + κύβος)·"
 
-#: ../../source/manuel.rst:1615
+#: ../../source/manuel.rst:1626
 msgid "**PR Coup** — coups joués seulement ;"
 msgstr "**PR Πούλι** — μόνο τις κινήσεις που παίχτηκαν·"
 
-#: ../../source/manuel.rst:1616
+#: ../../source/manuel.rst:1627
 msgid "**PR Cube** — décisions de videau seulement."
 msgstr "**PR Κύβος** — μόνο τις αποφάσεις κύβου."
 
-#: ../../source/manuel.rst:1618
+#: ../../source/manuel.rst:1629
 msgid ""
 "Cliquer sur une carte charge dans le panneau d'analyse les positions du "
 "sous-ensemble correspondant (drill-down)."
@@ -3832,17 +3856,17 @@ msgstr ""
 "Κάνοντας κλικ σε μια κάρτα φορτώνονται στον πίνακα ανάλυσης οι θέσεις του"
 " αντίστοιχου υποσυνόλου (drill-down)."
 
-#: ../../source/manuel.rst:1622
+#: ../../source/manuel.rst:1633
 msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
 msgstr ""
 "Ο συνολικός αριθμός των αποφάσεων εμφανίζεται στο κάτω μέρος κάθε κάρτας "
 "κατά την αιώρηση του δείκτη."
 
-#: ../../source/manuel.rst:1625
+#: ../../source/manuel.rst:1636
 msgid "PR glissant sur N dernières décisions"
 msgstr "Κυλιόμενο PR στις τελευταίες N αποφάσεις"
 
-#: ../../source/manuel.rst:1627
+#: ../../source/manuel.rst:1638
 msgid ""
 "Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
 "décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
@@ -3854,17 +3878,17 @@ msgstr ""
 "πρόσφατης τάσης. Οι αχνές τιμές αντιστοιχούν σε N μεγαλύτερο από τον "
 "αριθμό των διαθέσιμων αποφάσεων."
 
-#: ../../source/manuel.rst:1632
+#: ../../source/manuel.rst:1643
 msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
 msgstr ""
 "Κάνοντας κλικ σε μια τιμή φορτώνονται οι τελευταίες *N* αντίστοιχες "
 "θέσεις."
 
-#: ../../source/manuel.rst:1635
+#: ../../source/manuel.rst:1646
 msgid "Top blunders"
 msgstr "Κορυφαία σφάλματα (Top blunders)"
 
-#: ../../source/manuel.rst:1637
+#: ../../source/manuel.rst:1648
 msgid ""
 "La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
 "décroissante. Cliquer sur une ligne charge la position concernée dans le "
@@ -3874,15 +3898,15 @@ msgstr ""
 "φθίνον μέγεθος. Κάνοντας κλικ σε μια γραμμή φορτώνεται η σχετική θέση "
 "στον πίνακα ανάλυσης."
 
-#: ../../source/manuel.rst:1641
+#: ../../source/manuel.rst:1652
 msgid "Onglet Progression"
 msgstr "Καρτέλα Progression"
 
-#: ../../source/manuel.rst:1643
+#: ../../source/manuel.rst:1654
 msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
 msgstr "Η καρτέλα **Progression** παρουσιάζει την εξέλιξη του επιπέδου στο χρόνο."
 
-#: ../../source/manuel.rst:1645
+#: ../../source/manuel.rst:1656
 msgid ""
 "En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». "
 "Une cible, une échéance, et une tendance qui dit où l'on va — rien de "
@@ -3894,7 +3918,7 @@ msgstr ""
 " πάτε — τίποτα παραπάνω. Ένας στόχος που θα άρχιζε να βαθμολογεί, να "
 "συγχαίρει ή να υπενθυμίζει θα ήταν άλλη λειτουργία, όχι αυτή."
 
-#: ../../source/manuel.rst:1650
+#: ../../source/manuel.rst:1661
 msgid ""
 "Le bouton **Proposer** suggère une cible à partir du niveau actuel : la "
 "borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande"
@@ -3907,7 +3931,7 @@ msgstr ""
 "μια ζώνη λέει κάτι — το πέρασμα από μέσο σε προχωρημένο φαίνεται και "
 "λέγεται."
 
-#: ../../source/manuel.rst:1655
+#: ../../source/manuel.rst:1666
 msgid ""
 "La **tendance** est un ajustement par les moindres carrés sur le PR de "
 "vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois "
@@ -3920,7 +3944,7 @@ msgstr ""
 " το να χαράξεις ευθεία ανάμεσα σε δύο σημεία θα ήταν ισχυρισμός που δεν "
 "στέκει. Και η φράση το λέει κάθε φορά — *μια τάση δεν είναι πρόβλεψη*."
 
-#: ../../source/manuel.rst:1661
+#: ../../source/manuel.rst:1672
 msgid ""
 "L'objectif est enregistré dans les **métadonnées de la base**, pas dans "
 "la configuration : il porte sur cette bibliothèque-là, et suit donc le "
@@ -3933,11 +3957,11 @@ msgstr ""
 "Καμία αλλαγή σχήματος: το ``metadata`` είναι ήδη πίνακας κλειδιών/τιμών, "
 "αναγνώσιμος από το ``blunderdb info`` όπως και από τον δαίμονα."
 
-#: ../../source/manuel.rst:1667
+#: ../../source/manuel.rst:1678
 msgid "Courbe par tournoi"
 msgstr "Γραμμικό γράφημα ανά τουρνουά"
 
-#: ../../source/manuel.rst:1669
+#: ../../source/manuel.rst:1680
 msgid ""
 "Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :"
 " ordre des tournois, axe Y : valeur de la métrique). Des bandes de "
@@ -3947,7 +3971,7 @@ msgstr ""
 " X: σειρά των τουρνουά, άξονας Y: τιμή της μετρικής). Έγχρωμες ζώνες "
 "αποτυπώνουν τα κατώφλια επιπέδου."
 
-#: ../../source/manuel.rst:1673
+#: ../../source/manuel.rst:1684
 msgid ""
 "Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
 "options :"
@@ -3955,11 +3979,11 @@ msgstr ""
 "Κάνοντας κλικ σε ένα σημείο του γραφήματος ανοίγει ένα μενού "
 "περιβάλλοντος με δύο επιλογές:"
 
-#: ../../source/manuel.rst:1675
+#: ../../source/manuel.rst:1686
 msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
 msgstr "**Άνοιγμα τουρνουά** — ανοίγει το τουρνουά στον πίνακα Τουρνουά."
 
-#: ../../source/manuel.rst:1676
+#: ../../source/manuel.rst:1687
 msgid ""
 "**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
 " panneau d'analyse."
@@ -3967,11 +3991,11 @@ msgstr ""
 "**Άνοιγμα θέσεων** — φορτώνει όλες τις θέσεις του τουρνουά στον πίνακα "
 "ανάλυσης."
 
-#: ../../source/manuel.rst:1680
+#: ../../source/manuel.rst:1691
 msgid "Scatter plot par match"
 msgstr "Διάγραμμα διασποράς ανά αγώνα"
 
-#: ../../source/manuel.rst:1682
+#: ../../source/manuel.rst:1693
 msgid ""
 "Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
 "MWC). La taille du point est proportionnelle au nombre de décisions dans "
@@ -3981,15 +4005,15 @@ msgstr ""
 "άξονας Y: PR ή MWC). Το μέγεθος του σημείου είναι ανάλογο του αριθμού των"
 " αποφάσεων στον αγώνα."
 
-#: ../../source/manuel.rst:1685
+#: ../../source/manuel.rst:1696
 msgid "Cliquer sur un point ouvre un menu contextuel :"
 msgstr "Κάνοντας κλικ σε ένα σημείο ανοίγει ένα μενού περιβάλλοντος:"
 
-#: ../../source/manuel.rst:1687
+#: ../../source/manuel.rst:1698
 msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
 msgstr "**Άνοιγμα αγώνα** — ανοίγει τον αγώνα στον πίνακα αγώνων."
 
-#: ../../source/manuel.rst:1688
+#: ../../source/manuel.rst:1699
 msgid ""
 "**Ouvrir les positions** — charge toutes les positions du match dans le "
 "panneau d'analyse."
@@ -3997,27 +4021,27 @@ msgstr ""
 "**Άνοιγμα θέσεων** — φορτώνει όλες τις θέσεις του αγώνα στον πίνακα "
 "ανάλυσης."
 
-#: ../../source/manuel.rst:1692
+#: ../../source/manuel.rst:1703
 msgid "Onglet Erreurs"
 msgstr "Καρτέλα Erreurs"
 
-#: ../../source/manuel.rst:1694
+#: ../../source/manuel.rst:1705
 msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
 msgstr "Η καρτέλα **Erreurs** αναλύει τις πηγές των σφαλμάτων."
 
-#: ../../source/manuel.rst:1696
+#: ../../source/manuel.rst:1707
 msgid "Onglet Erreurs du panneau Stats"
 msgstr "Καρτέλα Errors του πίνακα Stats"
 
-#: ../../source/manuel.rst:1700
+#: ../../source/manuel.rst:1711
 msgid "L'onglet Erreurs : répartition du PR par action de videau."
 msgstr "Η καρτέλα Errors: κατανομή του PR ανά ενέργεια κύβου."
 
-#: ../../source/manuel.rst:1703
+#: ../../source/manuel.rst:1714
 msgid "Répartition par action de videau"
 msgstr "Κατανομή ανά ενέργεια κύβου"
 
-#: ../../source/manuel.rst:1705
+#: ../../source/manuel.rst:1716
 msgid ""
 "Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
 "décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
@@ -4029,7 +4053,7 @@ msgstr ""
 "υποδεικνύει επίσης τον αριθμό των αποφάσεων και το ποσοστό σφαλμάτων σε "
 "επεξηγηματική ετικέτα."
 
-#: ../../source/manuel.rst:1709
+#: ../../source/manuel.rst:1720
 msgid ""
 "Cliquer sur une barre charge les positions correspondant à cette action "
 "de videau, **uniquement celles avec une erreur** (drill-down)."
@@ -4037,11 +4061,11 @@ msgstr ""
 "Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις που αντιστοιχούν σε αυτή"
 " την ενέργεια κύβου, **μόνο εκείνες με σφάλμα** (drill-down)."
 
-#: ../../source/manuel.rst:1713
+#: ../../source/manuel.rst:1724
 msgid "Direction des erreurs de videau"
 msgstr "Κατεύθυνση των λαθών κύβου"
 
-#: ../../source/manuel.rst:1715
+#: ../../source/manuel.rst:1726
 msgid ""
 "La répartition ci-dessus indique *combien* coûtent les décisions de "
 "videau ; ce tableau indique dans *quel sens* elles se trompent."
@@ -4049,7 +4073,7 @@ msgstr ""
 "Η παραπάνω κατανομή δείχνει *πόσο* κοστίζουν οι αποφάσεις κύβου· ο "
 "πίνακας αυτός δείχνει προς *ποια κατεύθυνση* σφάλλουν."
 
-#: ../../source/manuel.rst:1718
+#: ../../source/manuel.rst:1729
 msgid ""
 "Une position de videau porte deux décisions prises par deux joueurs "
 "différents, présentées ici en deux lignes :"
@@ -4057,7 +4081,7 @@ msgstr ""
 "Μια θέση κύβου φέρει δύο αποφάσεις που λαμβάνονται από δύο διαφορετικούς "
 "παίκτες, οι οποίες παρουσιάζονται εδώ σε δύο γραμμές:"
 
-#: ../../source/manuel.rst:1721
+#: ../../source/manuel.rst:1732
 msgid ""
 "**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
 "erreurs sont les **doubles manqués** (il fallait doubler) et les "
@@ -4067,7 +4091,7 @@ msgstr ""
 "του είναι τα **χαμένα διπλασιάσματα** (έπρεπε να διπλασιάσει) και τα "
 "**πρόωρα διπλασιάσματα** (δεν έπρεπε)."
 
-#: ../../source/manuel.rst:1725
+#: ../../source/manuel.rst:1736
 msgid ""
 "**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
 "erreurs sont les **passes à tort** (une prise correcte a été passée) et "
@@ -4078,7 +4102,7 @@ msgstr ""
 "πασαρίστηκε) και οι **λανθασμένες αποδοχές** (ένα σωστό πάσο έγινε "
 "αποδεκτό)."
 
-#: ../../source/manuel.rst:1729
+#: ../../source/manuel.rst:1740
 msgid ""
 "Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
 "doubler tard *et* prendre large, et un indicateur unique appellerait cela"
@@ -4088,7 +4112,7 @@ msgstr ""
 "να διπλασιάζει αργά *και* να δέχεται χαλαρά, και ένας ενιαίος δείκτης θα "
 "το αποκαλούσε «ισορροπημένο» χάνοντας και τα δύο μισά της πληροφορίας."
 
-#: ../../source/manuel.rst:1733
+#: ../../source/manuel.rst:1744
 msgid ""
 "Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
 "perdue cumulée. Cliquer sur une case charge les positions "
@@ -4098,7 +4122,7 @@ msgstr ""
 "συσσωρευμένη χαμένη ισοδυναμία. Το κλικ σε ένα κελί φορτώνει τις "
 "αντίστοιχες θέσεις. Ένα κελί με μηδέν δεν είναι κλικαρίσιμο."
 
-#: ../../source/manuel.rst:1738
+#: ../../source/manuel.rst:1749
 msgid ""
 "Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
 " quel écart une tendance mérite d'être nommée dépend de l'effectif et "
@@ -4108,11 +4132,11 @@ msgstr ""
 " μια τάση αξίζει να ονομαστεί εξαρτάται από το μέγεθος του δείγματος και "
 "από ένα σημείο αναφοράς, που δεν είναι δεδομένα της μηχανής."
 
-#: ../../source/manuel.rst:1743
+#: ../../source/manuel.rst:1754
 msgid "Répartition Checker / Cube"
 msgstr "Σύγκριση Checker / Cube"
 
-#: ../../source/manuel.rst:1745
+#: ../../source/manuel.rst:1756
 msgid ""
 "Un diagramme comparatif place côte à côte le PR des coups joués et des "
 "décisions de videau. Cliquer sur une barre charge les positions du sous-"
@@ -4122,11 +4146,11 @@ msgstr ""
 " και των αποφάσεων κύβου. Κάνοντας κλικ σε μια ράβδο φορτώνονται οι "
 "θέσεις του υποσυνόλου με σφάλμα."
 
-#: ../../source/manuel.rst:1750
+#: ../../source/manuel.rst:1761
 msgid "Histogramme des magnitudes d'erreur"
 msgstr "Ιστόγραμμα των μεγεθών σφάλματος"
 
-#: ../../source/manuel.rst:1752
+#: ../../source/manuel.rst:1763
 msgid ""
 "Un histogramme distribue les erreurs selon leur magnitude en millipoints "
 "(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
@@ -4136,11 +4160,11 @@ msgstr ""
 "millipoints (mpt, διαστήματα: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). "
 "Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του διαστήματος."
 
-#: ../../source/manuel.rst:1757
+#: ../../source/manuel.rst:1768
 msgid "Onglet Ventilations"
 msgstr "Καρτέλα Αναλύσεις"
 
-#: ../../source/manuel.rst:1759
+#: ../../source/manuel.rst:1770
 msgid ""
 "L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
 "globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme "
@@ -4150,7 +4174,7 @@ msgstr ""
 "συνολικά μεγέθη κατά τέσσερις άξονες. Κανένας δεν επαναπροσδιορίζει τι "
 "μετρά ως απόφαση: θα ήταν ένα δεύτερο PR με το ίδιο όνομα."
 
-#: ../../source/manuel.rst:1763
+#: ../../source/manuel.rst:1774
 msgid ""
 "**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
 " pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
@@ -4165,7 +4189,7 @@ msgstr ""
 "βάση της οποίας οι φάσεις δεν υπολογίστηκαν ποτέ τα κατατάσσει όλα ως "
 "*Αταξινόμητη*, και η ``blunderdb repair`` τη συμπληρώνει."
 
-#: ../../source/manuel.rst:1769
+#: ../../source/manuel.rst:1780
 msgid ""
 "**Par plan de jeu** — course, blitz, tenue, backgame, amorce contre "
 "amorce… C'est la ventilation pour laquelle le classificateur existe : « "
@@ -4179,7 +4203,7 @@ msgstr ""
 "φάση, ίδιες επιφυλάξεις, και το ``blunderdb repair`` τη γεμίζει με τον "
 "ίδιο τρόπο."
 
-#: ../../source/manuel.rst:1775
+#: ../../source/manuel.rst:1786
 msgid ""
 "**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
 "position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
@@ -4190,7 +4214,7 @@ msgstr ""
 "φέρει πολλές: **αυτές οι γραμμές δεν αθροίζονται στο σύνολο**, και ο "
 "πίνακας το λέει από κάτω. Μια ετικέτα χαρακτηρίζει, δεν διαμερίζει."
 
-#: ../../source/manuel.rst:1780
+#: ../../source/manuel.rst:1791
 msgid ""
 "**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
 "trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
@@ -4205,7 +4229,7 @@ msgstr ""
 "ορατό** αντί να κρύβεται: πολύ λίγες για να διαβαστούν, αλλά η παράλειψη "
 "παραμένει επαληθεύσιμη."
 
-#: ../../source/manuel.rst:1785
+#: ../../source/manuel.rst:1796
 msgid ""
 "La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas cet "
 "indicateur sur une position. L'effet pratique est faible — une partie "
@@ -4217,11 +4241,11 @@ msgstr ""
 "Crawford δεν έχει καμία απόφαση κύβου — αλλά η παράλειψη είναι πραγματική"
 " και αξίζει να γραφτεί παρά να αφεθεί στην εικασία."
 
-#: ../../source/manuel.rst:1791
+#: ../../source/manuel.rst:1802
 msgid "Étude et jeu réel"
 msgstr "Μελέτη και πραγματικό παιχνίδι"
 
-#: ../../source/manuel.rst:1793
+#: ../../source/manuel.rst:1804
 msgid ""
 "La commande ``blunderdb list --type study --days 30`` met côte à côte, "
 "plan de jeu par plan de jeu, trois nombres : combien de **positions "
@@ -4233,7 +4257,7 @@ msgstr ""
 "επαναλήφθηκαν στην περίοδο, ποιο ήταν το PR **πριν** από αυτήν, ποιο "
 "είναι το PR **έκτοτε**."
 
-#: ../../source/manuel.rst:1798
+#: ../../source/manuel.rst:1809
 msgid ""
 "Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni "
 "flèche**, parce que rien ici ne contrôle quoi que ce soit : le joueur a "
@@ -4249,7 +4273,7 @@ msgstr ""
 "μια στήλη που θα ανήγγελλε αποτέλεσμα θα ισχυριζόταν αιτιότητα που αυτά "
 "τα δεδομένα δεν φέρουν. Οι αριθμοί, πάντως, είναι ακριβείς."
 
-#: ../../source/manuel.rst:1805
+#: ../../source/manuel.rst:1816
 msgid ""
 "Les révisions sont comptées en **positions distinctes** : une carte revue"
 " quatre fois dans le mois est une position étudiée, et compter les "
@@ -4265,11 +4289,11 @@ msgstr ""
 "πάρθηκε μία φορά. Ένα PR που στηρίζεται σε λιγότερες από δέκα αποφάσεις "
 "εμφανίζεται ``—``, με το δείγμα του ορατό δίπλα."
 
-#: ../../source/manuel.rst:1813
+#: ../../source/manuel.rst:1824
 msgid "Onglet Joueurs"
 msgstr "Καρτέλα Παίκτες"
 
-#: ../../source/manuel.rst:1815
+#: ../../source/manuel.rst:1826
 msgid ""
 "Les quatre onglets précédents décrivent **un** joueur ; l'onglet "
 "**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
@@ -4281,11 +4305,11 @@ msgstr ""
 "βάσης, πράγμα που απαντά στην ανάγκη ενός διοργανωτή που παρακολουθεί ένα"
 " ολόκληρο τουρνουά αντί για έναν παίκτη."
 
-#: ../../source/manuel.rst:1820
+#: ../../source/manuel.rst:1831
 msgid "Onglet Joueurs du panneau Stats"
 msgstr "Καρτέλα Players του πίνακα Stats"
 
-#: ../../source/manuel.rst:1824
+#: ../../source/manuel.rst:1835
 msgid ""
 "L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
 "colonne."
@@ -4293,7 +4317,7 @@ msgstr ""
 "Η καρτέλα Players: μία γραμμή ανά παίκτη, ταξινομήσιμη κατά οποιαδήποτε "
 "στήλη."
 
-#: ../../source/manuel.rst:1827
+#: ../../source/manuel.rst:1838
 msgid "Colonnes, dans l'ordre :"
 msgstr "Στήλες, με τη σειρά:"
 
@@ -4399,11 +4423,11 @@ msgstr ""
 "Μέση τύχη ανά ζαριά, σε millipoints (mpt), με πρόσημο: θετική αν τα ζάρια"
 " ήταν ευνοϊκά."
 
-#: ../../source/manuel.rst:1843
+#: ../../source/manuel.rst:1854
 msgid "Utilisation :"
 msgstr "Χρήση:"
 
-#: ../../source/manuel.rst:1845
+#: ../../source/manuel.rst:1856
 msgid ""
 "**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
 "par PR croissant, meilleur joueur en tête. Les joueurs dont rien n'a été "
@@ -4416,7 +4440,7 @@ msgstr ""
 " είναι η φορά της ταξινόμησης: ένα μηδέν ελλείψει δεδομένων δεν είναι "
 "τέλεια απόδοση."
 
-#: ../../source/manuel.rst:1849
+#: ../../source/manuel.rst:1860
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
@@ -4426,7 +4450,7 @@ msgstr ""
 "επιλέγεται στη γραμμή φίλτρων και η προβολή μεταβαίνει στην καρτέλα "
 "Dashboard."
 
-#: ../../source/manuel.rst:1852
+#: ../../source/manuel.rst:1863
 msgid ""
 "**Restreindre la période** — les filtres de dates, de tournois et de "
 "longueur de match s'appliquent normalement, ce qui permet de borner le "
@@ -4436,7 +4460,7 @@ msgstr ""
 " αγώνα ισχύουν κανονικά, πράγμα που επιτρέπει τον περιορισμό του πίνακα "
 "στις ημερομηνίες μιας διοργάνωσης."
 
-#: ../../source/manuel.rst:1855
+#: ../../source/manuel.rst:1866
 msgid ""
 "**Comparer deux joueurs** — cochez la case de la première colonne sur "
 "deux lignes. Un bloc apparaît au-dessus du tableau et met leurs "
@@ -4450,7 +4474,7 @@ msgstr ""
 "παλαιότερος από τους δύο. Το κουτί δεν επιλέγει τη γραμμή: το τσεκάρισμα "
 "συγκρίνει, το κλικ ανοίγει τη λεπτομέρεια."
 
-#: ../../source/manuel.rst:1860
+#: ../../source/manuel.rst:1871
 msgid ""
 "Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
 " deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
@@ -4473,7 +4497,7 @@ msgstr ""
 "στις εκατό —, γι' αυτό το πλαίσιο προσθέτει μια γραμμή *Blunder / 100 "
 "αποφ.* που όντως συγκρίνεται, και αφήνει το πλήθος δίπλα ως συμφραζόμενο."
 
-#: ../../source/manuel.rst:1870
+#: ../../source/manuel.rst:1881
 msgid ""
 "Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
 "côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
@@ -4482,7 +4506,7 @@ msgstr ""
 "Η ισοπαλία δεν είναι νίκη: δεν μπαίνει με έντονα σε καμία πλευρά. Ένας "
 "ρυθμός χωρίς τίποτα από πίσω εμφανίζεται ως «—» και δεν κρίνει τίποτα."
 
-#: ../../source/manuel.rst:1874
+#: ../../source/manuel.rst:1885
 msgid ""
 "Dans cet onglet, la liste **Joueur** et le choix du **type de décision** "
 "sont désactivés : le tableau montre tous les joueurs, et il ventile déjà "
@@ -4492,7 +4516,7 @@ msgstr ""
 "απόφασης** είναι απενεργοποιημένες: ο πίνακας δείχνει όλους τους παίκτες "
 "και ήδη διαχωρίζει τις αποφάσεις πουλιών και κύβου σε ξεχωριστές στήλες."
 
-#: ../../source/manuel.rst:1879
+#: ../../source/manuel.rst:1890
 msgid ""
 "Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
 "confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
@@ -4508,11 +4532,11 @@ msgstr ""
 " να εισαχθούν ξανά τα αρχεία προέλευσης. Οι μορφές που δεν τη μεταφέρουν "
 "(BGF, Jellyfish ``.mat``) δεν θα τη δώσουν ποτέ."
 
-#: ../../source/manuel.rst:1887
+#: ../../source/manuel.rst:1898
 msgid "Règle d'agrégation"
 msgstr "Κανόνας συνάθροισης"
 
-#: ../../source/manuel.rst:1890
+#: ../../source/manuel.rst:1901
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -4522,11 +4546,11 @@ msgstr ""
 "κανόνα **άθροισμα/άθροισμα** — ποτέ ως μέσος όρος των επιμέρους PR των "
 "αγώνων."
 
-#: ../../source/manuel.rst:1894
+#: ../../source/manuel.rst:1905
 msgid "Formule :"
 msgstr "Τύπος:"
 
-#: ../../source/manuel.rst:1896
+#: ../../source/manuel.rst:1907
 msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
@@ -4534,27 +4558,27 @@ msgstr ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
 
-#: ../../source/manuel.rst:1900
+#: ../../source/manuel.rst:1911
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**Παράδειγμα:** ένας παίκτης παίζει δύο αγώνες σε ένα τουρνουά —"
 
-#: ../../source/manuel.rst:1902
+#: ../../source/manuel.rst:1913
 msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
 msgstr "Αγώνας A: 10 αποφάσεις, 0,100 χαμένης ισοδυναμίας → PR = 5,0"
 
-#: ../../source/manuel.rst:1903
+#: ../../source/manuel.rst:1914
 msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
 msgstr "Αγώνας B: 90 αποφάσεις, 0,540 χαμένης ισοδυναμίας → PR = 3,0"
 
-#: ../../source/manuel.rst:1905
+#: ../../source/manuel.rst:1916
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "Αφελής μέσος όρος των PR: (5,0 + 3,0) / 2 = **4,0** *(λανθασμένο)*"
 
-#: ../../source/manuel.rst:1907
+#: ../../source/manuel.rst:1918
 msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
 msgstr "Κανόνας άθροισμα/άθροισμα: 500 × 0,640 / (10 + 90) = **3,2** *(σωστό)*"
 
-#: ../../source/manuel.rst:1909
+#: ../../source/manuel.rst:1920
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
@@ -4563,11 +4587,11 @@ msgstr ""
 "διακύμανση του μήκους των αγώνων (ένας αγώνας 21 πόντων ζυγίζει "
 "περισσότερο από έναν αγώνα 1 πόντου)."
 
-#: ../../source/manuel.rst:1913
+#: ../../source/manuel.rst:1924
 msgid "MWC : limitations"
 msgstr "MWC: περιορισμοί"
 
-#: ../../source/manuel.rst:1915
+#: ../../source/manuel.rst:1926
 msgid ""
 "Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de "
 "référence de facto dans le backgammon compétitif. Les résultats ne sont "
@@ -4589,7 +4613,7 @@ msgstr ""
 " από εκεί, επεκτείνεται με έναν πίνακα Zadeh υπολογισμένο όπως αυτόν του "
 "GNUbg, μέχρι τους 64."
 
-#: ../../source/manuel.rst:1924
+#: ../../source/manuel.rst:1935
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -4599,7 +4623,7 @@ msgstr ""
 "υπολογισμό MWC. Αν η βάση δεδομένων σας περιέχει πολλές θέσεις money-"
 "game, το MWC cost μπορεί να υποεκτιμηθεί ή να μην είναι διαθέσιμο."
 
-#: ../../source/manuel.rst:1928
+#: ../../source/manuel.rst:1939
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -4609,11 +4633,11 @@ msgstr ""
 " — όχι δείκτης ανά απόφαση. Μετρά τη συνολική επίδραση των σφαλμάτων σας "
 "στις πιθανότητες νίκης σας."
 
-#: ../../source/manuel.rst:1935
+#: ../../source/manuel.rst:1946
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
-#: ../../source/manuel.rst:1937
+#: ../../source/manuel.rst:1948
 msgid ""
 "Le panneau **Eval** (*CTRL-E*) évalue en direct la position posée sur le "
 "plateau, quelle qu'elle soit ; sur une position de bearoff il se "
@@ -4634,7 +4658,7 @@ msgstr ""
 "αναζητηθεί ό,τι μια προηγούμενη έκδοση αποκαλούσε πίνακα Bearoff, καθώς "
 "το όνομα δηλώνει πλέον μόνο την καρτέλα ρυθμίσεων των πινάκων bearoff."
 
-#: ../../source/manuel.rst:1947
+#: ../../source/manuel.rst:1958
 msgid ""
 "Le panneau montre toujours la **seule décision** que la position posée "
 "sur le plateau appelle — jamais deux à la fois — et les faits qui vont "
@@ -4688,7 +4712,7 @@ msgstr ""
 "σχηματίζουν μια ξεχωριστή λωρίδα, στοιχισμένη δεξιά πάνω από τους "
 "πίνακες."
 
-#: ../../source/manuel.rst:1970
+#: ../../source/manuel.rst:1981
 msgid ""
 "Seule la liste des coups candidats défile — la ligne *avant le jet*, elle"
 " aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, "
@@ -4700,7 +4724,7 @@ msgstr ""
 "(γεγονότα, σήμα, απόφαση κύβου) παραμένει πάντα ορατό, χωρίς ιδιαίτερη "
 "ρύθμιση του μεγέθους του πίνακα."
 
-#: ../../source/manuel.rst:1975
+#: ../../source/manuel.rst:1986
 msgid ""
 "Le tableau de faits et la décision sont calculés par gammonNet, embarqué,"
 " sans XG ni gnubg. Le calcul suit la position sans jamais figer "
@@ -4771,7 +4795,7 @@ msgstr ""
 "<https://github.com/kevung/gammonNet>`_· η πλήρης απόδοση (δίκτυο Strehl,"
 " διαμόρφωση gammonNet) βρίσκεται στις Ευχαριστίες της βοήθειας."
 
-#: ../../source/manuel.rst:2010
+#: ../../source/manuel.rst:2021
 msgid ""
 "L'utilisateur édite la position des pions sur l'ensemble du plateau, "
 "exactement comme en mode édition : clic gauche place un pion du joueur du"
@@ -4791,7 +4815,7 @@ msgstr ""
 "(νίκη, gammon, backgammon, cubeless) αποκρίνεται, και η απόφαση αφορά τα "
 "πούλια ή έναν γενικό κύβο ανάλογα με το αν είναι τοποθετημένα ζάρια."
 
-#: ../../source/manuel.rst:2019
+#: ../../source/manuel.rst:2030
 msgid ""
 "Dans chaque tableau de faits, une ligne par joueur — repérée par sa "
 "pastille de couleur, le joueur noir étant toujours en bas. Le premier "
@@ -4819,7 +4843,7 @@ msgstr ""
 "τους ίδιους τους πίνακες γεγονότων: οι τέσσερις στήλες που έφεραν μόλις "
 "άλλαξαν άξονα, στη βολή, στην κορυφή της λίστας των κινήσεων."
 
-#: ../../source/manuel.rst:2032
+#: ../../source/manuel.rst:2043
 msgid ""
 "La décision de videau a toujours la même forme, quelle que soit l'origine"
 " des chiffres — table exacte, régime évalué ou évaluation gammonNet "
@@ -4844,7 +4868,7 @@ msgstr ""
 "διαβάζονται *όχι αναδιπλασιασμός*, *αναδιπλασιασμός/αποδοχή*, "
 "*αναδιπλασιασμός/πάσο*."
 
-#: ../../source/manuel.rst:2042
+#: ../../source/manuel.rst:2053
 msgid ""
 "Une dernière ligne donne le **verdict**. Il prend quatre valeurs : *pas "
 "de double*, *double, prend*, *double, passe* et *trop bon pour doubler*, "
@@ -4863,7 +4887,7 @@ msgstr ""
 "**δεν** υπάρχει ετυμηγορία, αντί να αφήνει να εννοηθεί ότι ένας "
 "υπολογισμός βρίσκεται σε εξέλιξη:"
 
-#: ../../source/manuel.rst:2049
+#: ../../source/manuel.rst:2060
 msgid ""
 "*pas de décision* — le régime n'y a pas droit ; le verdict de videau "
 "n'est jamais estimé (voir le badge *estimé*) ;"
@@ -4871,7 +4895,7 @@ msgstr ""
 "*καμία απόφαση* — το καθεστώς δεν τη δικαιούται· η ετυμηγορία κύβου δεν "
 "εκτιμάται ποτέ (βλ. το σήμα *εκτιμώμενο*)·"
 
-#: ../../source/manuel.rst:2051
+#: ../../source/manuel.rst:2062
 msgid ""
 "*non évaluable à ce score* — le moteur refuse la position, typiquement un"
 " score hors de l'horizon de la table d'équité de match, c'est-à-dire un "
@@ -4881,7 +4905,7 @@ msgstr ""
 "τυπικά ένα σκορ εκτός του ορίζοντα του πίνακα ισοδυναμίας αγώνα, δηλαδή "
 "μια πλευρά με περισσότερους από 64 πόντους προς κατάκτηση·"
 
-#: ../../source/manuel.rst:2054
+#: ../../source/manuel.rst:2065
 msgid ""
 "*videau adverse* et *videau mort (Crawford)* — le videau ne peut pas être"
 " retourné. Les équités restent affichées, à titre indicatif, mais aucune "
@@ -4893,7 +4917,7 @@ msgstr ""
 "επιλογή δεν φέρει απόκλιση: ένα σφάλμα είναι αυτό που κοστίζει μια "
 "επιλογή, και εδώ δεν υπάρχει επιλογή."
 
-#: ../../source/manuel.rst:2059
+#: ../../source/manuel.rst:2070
 msgid ""
 "En money game, les règles **Jacoby** et **Beaver** actives sur la "
 "position apparaissent sous le tableau de videau, en petits badges à côté "
@@ -4907,7 +4931,7 @@ msgstr ""
 "τον κανόνα Jacoby δεν είναι ο ίδιος υπολογισμός όπως χωρίς αυτόν, και "
 "τίποτα άλλο στην οθόνη δεν το δήλωνε."
 
-#: ../../source/manuel.rst:2065
+#: ../../source/manuel.rst:2076
 msgid ""
 "Un troisième badge, **Videau max**, apparaît lorsque l'identifiant "
 "d'origine plafonne le videau — au score comme en money game. Celui-là ne "
@@ -4926,7 +4950,7 @@ msgstr ""
 "οποίο το blunderDB και το eXtreme Gammon μπορούν να ανακοινώσουν δύο "
 "διαφορετικές ετυμηγορίες για την ίδια θέση."
 
-#: ../../source/manuel.rst:2073
+#: ../../source/manuel.rst:2084
 msgid ""
 "Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et"
 " la case *Défi* forment une bande à part, alignée à droite au-dessus des "
@@ -4936,7 +4960,7 @@ msgstr ""
 "το πλαίσιο επιλογής *Πρόκληση* σχηματίζουν μια ξεχωριστή λωρίδα, "
 "στοιχισμένη δεξιά πάνω από τους πίνακες."
 
-#: ../../source/manuel.rst:2077
+#: ../../source/manuel.rst:2088
 msgid ""
 "Le **joueur au trait** et la **position du videau** s'éditent directement"
 " sur le plateau, comme en mode édition : cliquer le rectangle "
@@ -4965,7 +4989,7 @@ msgstr ""
 "-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-"
 "estimated.md>`__) και πώς να επεκτείνετε το ακριβές πεδίο."
 
-#: ../../source/manuel.rst:2089
+#: ../../source/manuel.rst:2100
 msgid ""
 "Le **score** s'édite lui aussi directement sur le plateau, comme en mode "
 "édition : clic gauche sur le rectangle score d'un joueur décrémente son "
@@ -4994,7 +5018,7 @@ msgstr ""
 " Το σήμα γίνεται τότε σύνθετο («ακριβές (νίκη) · αξιολογημένο (κύβος)») "
 "για να το δηλώσει ρητά."
 
-#: ../../source/manuel.rst:2102
+#: ../../source/manuel.rst:2113
 msgid ""
 "Les **dés** s'éditent enfin de la même façon, et ce sont eux qui décident"
 " de la question posée : des dés posés font une décision de pions (la "
@@ -5016,7 +5040,7 @@ msgstr ""
 "αφαιρεί τα ζάρια για να τεθεί ερώτημα κύβου, και το επόμενο κλικ σε ένα "
 "ζάρι τα επαναφέρει όπως ήταν."
 
-#: ../../source/manuel.rst:2111
+#: ../../source/manuel.rst:2122
 msgid ""
 "*RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la "
 "position : plateau vide, score money (-1, -1), pas de dés posés — des "
@@ -5030,11 +5054,11 @@ msgstr ""
 "χρησιμοποιούνται στη λειτουργία επεξεργασίας (7 παντού, ζάρια 3-1), ώστε "
 "να παραμένουν συνεπείς με ό,τι εμφανίζει ο πίνακας από προεπιλογή."
 
-#: ../../source/manuel.rst:2120
+#: ../../source/manuel.rst:2131
 msgid "Matrice du videau"
 msgstr "Μήτρα του κύβου"
 
-#: ../../source/manuel.rst:2122
+#: ../../source/manuel.rst:2133
 msgid ""
 "Une décision de videau n'est pas une propriété du damier. Les mêmes "
 "pions, le même compte de pips, se doublent à 2-away/4-away et ne se "
@@ -5048,7 +5072,7 @@ msgstr ""
 "πλέγματος. Ο πίνακας Eval δείχνει το κελί που φέρει η θέση· η **μήτρα του"
 " κύβου** δείχνει ολόκληρο το πλέγμα."
 
-#: ../../source/manuel.rst:2128
+#: ../../source/manuel.rst:2139
 msgid ""
 "La commande ``cm`` l'ouvre sur la position affichée. Chaque case donne le"
 " verdict à un score : la ligne est le nombre de points qu'il reste à "
@@ -5067,7 +5091,7 @@ msgstr ""
 "μηχανή φέρει ερωτηματικό και εξηγεί γιατί όταν το δείχνεις, μαζί με τις "
 "τρεις ισοδυναμίες του. Προσφέρονται τρία μήκη αγώνα: 5, 7 και 9 πόντοι."
 
-#: ../../source/manuel.rst:2137
+#: ../../source/manuel.rst:2148
 msgid ""
 "La case du score que la position porte réellement est encadrée, et ses "
 "deux en-têtes de ligne et de colonne soulignés : la lecture part de là, «"
@@ -5085,7 +5109,7 @@ msgstr ""
 " πέρα από το πλέγμα δεν υποδεικνύουν κανένα: δεν υπάρχει κελί να "
 "δείξουμε, και το να δείξουμε ένα κατά προσέγγιση θα ήταν λάθος."
 
-#: ../../source/manuel.rst:2145
+#: ../../source/manuel.rst:2156
 msgid ""
 "Le score de la position est remplacé par celui de chaque case ; son "
 "**videau**, lui, est conservé. La grille répond à « à quel score "
@@ -5100,7 +5124,7 @@ msgstr ""
 "από άκρη σε άκρη: στο παιχνίδι Crawford ο κύβος δεν παίζει, και μια στήλη"
 " με «δεν μπορείτε να διπλασιάσετε» δεν θα έλεγε τίποτα για τη θέση."
 
-#: ../../source/manuel.rst:2152
+#: ../../source/manuel.rst:2163
 msgid ""
 "Chaque case est une recherche à part entière. Le moteur tient compte du "
 "score — il ne joue pas la même partie à 2-away qu'à 7-away —, donc une "
@@ -5118,7 +5142,7 @@ msgstr ""
 "ηρεμήσει: η ίδια κλιμάκωση με τον υπόλοιπο πίνακα, για ένα πλέγμα 9 "
 "πόντων που κοστίζει περίπου ενάμιση δευτερόλεπτο."
 
-#: ../../source/manuel.rst:2160
+#: ../../source/manuel.rst:2171
 msgid ""
 "La même grille se calcule hors de l'interface, avec la commande "
 ":ref:`cubematrix <cli_cubematrix>` de la ligne de commande."
@@ -5126,11 +5150,11 @@ msgstr ""
 "Το ίδιο πλέγμα υπολογίζεται εκτός διεπαφής, με την εντολή "
 ":ref:`cubematrix <cli_cubematrix>` της γραμμής εντολών."
 
-#: ../../source/manuel.rst:2166
+#: ../../source/manuel.rst:2177
 msgid "Amener une position dans le panneau Eval"
 msgstr "Μεταφορά μιας θέσης στον πίνακα Eval"
 
-#: ../../source/manuel.rst:2168
+#: ../../source/manuel.rst:2179
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Deux gestes l'y amènent"
@@ -5140,7 +5164,7 @@ msgstr ""
 "ξεκινά συνήθως από μια θέση που έχετε ήδη στα χέρια σας. Δύο χειρισμοί τη"
 " φέρνουν εκεί:"
 
-#: ../../source/manuel.rst:2171
+#: ../../source/manuel.rst:2182
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -5156,7 +5180,7 @@ msgstr ""
 "Αναζήτησης, όπου το δεξί κουμπί χρησιμεύει ήδη για την τοποθέτηση των "
 "πουλιών του άλλου χρώματος."
 
-#: ../../source/manuel.rst:2178
+#: ../../source/manuel.rst:2189
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
@@ -5170,7 +5194,7 @@ msgstr ""
 "GNU Backgammon, άλλη εμφάνιση του blunderDB) ή ένα OGID (OpenGammon): "
 "αρκεί να βρίσκεται στο πρόχειρο."
 
-#: ../../source/manuel.rst:2184
+#: ../../source/manuel.rst:2195
 msgid ""
 "**La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où "
 "l'identifiant n'est pas dans le presse-papier mais dans un message, sur "
@@ -5188,7 +5212,7 @@ msgstr ""
 "με της επικόλλησης — ίδια ανάγνωση, ίδια αποδιπλασίαση, ίδιο άνοιγμα της "
 "εισηγμένης θέσης."
 
-#: ../../source/manuel.rst:2192
+#: ../../source/manuel.rst:2203
 msgid ""
 "Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La "
 "position arrive donc sans analyse, exactement comme un XGID nu, et "
@@ -5198,7 +5222,7 @@ msgstr ""
 "φτάνει επομένως χωρίς ανάλυση, ακριβώς όπως ένα γυμνό XGID, και ο "
 "ενσωματωμένος αξιολογητής μπορεί να καλύψει το κενό στη συνέχεια."
 
-#: ../../source/manuel.rst:2196
+#: ../../source/manuel.rst:2207
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -5213,7 +5237,7 @@ msgstr ""
 "(πούλια, κύβος, ζάρια, σκορ), και η αξιολόγηση ακολουθεί κάθε "
 "τροποποίηση."
 
-#: ../../source/manuel.rst:2202
+#: ../../source/manuel.rst:2213
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -5228,7 +5252,7 @@ msgstr ""
 " blunderDB. Μόνο η θέση ταξιδεύει: η αξιολόγηση που εμφανίζει ο πίνακας "
 "δεν είναι εγγραφή της βάσης και δεν συνοδεύει την αντιγραφή."
 
-#: ../../source/manuel.rst:2208
+#: ../../source/manuel.rst:2219
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
@@ -5236,7 +5260,7 @@ msgstr ""
 "Φεύγοντας από τον πίνακα Eval, η θέση που εξεταζόταν προηγουμένως "
 "αποκαθίσταται: το προσχέδιο δεν αποθηκεύεται ποτέ από μόνο του."
 
-#: ../../source/manuel.rst:2211
+#: ../../source/manuel.rst:2222
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
@@ -5246,7 +5270,7 @@ msgstr ""
 "τεταρτημόριό τους) και δεν είναι τοποθετημένο κανένα ζάρι, η απόφαση "
 "κύβου εμφανίζει, για τον παίκτη στη βολή:"
 
-#: ../../source/manuel.rst:2215
+#: ../../source/manuel.rst:2226
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -5259,7 +5283,7 @@ msgstr ""
 "διπλασιασμός/πάσο ή πολύ καλό για διπλασιασμό) — εκτός σκορ αγώνα, βλ. "
 "παραπάνω για την περίπτωση του σκορ,"
 
-#: ../../source/manuel.rst:2220
+#: ../../source/manuel.rst:2231
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -5272,7 +5296,7 @@ msgstr ""
 "διαθέσιμες **ακόμη και στο σκορ αγώνα**, κάτι που το εκτιμώμενο καθεστώς "
 "δεν μπόρεσε ποτέ να προσφέρει·"
 
-#: ../../source/manuel.rst:2225
+#: ../../source/manuel.rst:2236
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
@@ -5282,7 +5306,7 @@ msgstr ""
 "εμφανίζεται — μόνο η πιθανότητα νίκης, στον πίνακα γεγονότων, "
 "συνοδευόμενη από το περιθώριο σφάλματός της, παραμένει διαθέσιμη."
 
-#: ../../source/manuel.rst:2229
+#: ../../source/manuel.rst:2240
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -5298,7 +5322,7 @@ msgstr ""
 "λίστας των κινήσεων, δίπλα στο EPC, το οποίο παραμένει εμφανές ακριβώς "
 "στα αριστερά."
 
-#: ../../source/manuel.rst:2236
+#: ../../source/manuel.rst:2247
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -5321,7 +5345,7 @@ msgstr ""
 "εμφανιζόταν κατά την αναμονή. Βλ. :ref:`epc_methodologie` για τον ακριβή "
 "ορισμό των τριών καθεστώτων και των υποθέσεών τους."
 
-#: ../../source/manuel.rst:2246
+#: ../../source/manuel.rst:2257
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -5331,7 +5355,7 @@ msgstr ""
 "εκκίνηση καλύπτει 6 πούλια ανά παίκτη. Δύο τρόποι να πάτε παραπέρα, στην "
 "καρτέλα *Bearoff* των ρυθμίσεων:"
 
-#: ../../source/manuel.rst:2250
+#: ../../source/manuel.rst:2261
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -5345,7 +5369,7 @@ msgstr ""
 " συνεχίζει. Ένας ακυρωμένος υπολογισμός αφήνει ένα αρχείο ``.part`` που "
 "δεν διαβάζεται ποτέ ως πίνακας·"
 
-#: ../../source/manuel.rst:2256
+#: ../../source/manuel.rst:2267
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
@@ -5353,7 +5377,7 @@ msgstr ""
 "ορισμός οποιουδήποτε αρχείου ``.bd`` two-sided του gnubg. Η βάση με το "
 "ευρύτερο πεδίο υπερισχύει αυτόματα."
 
-#: ../../source/manuel.rst:2259
+#: ../../source/manuel.rst:2270
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -5373,7 +5397,7 @@ msgstr ""
 "στη βάση στο μεταξύ — το πρόχειρο δεν έχει ταυτότητα θέσης και η "
 "αξιολόγησή του υπολογίζεται εκ νέου κατά την άφιξη αντί να μεταφέρεται."
 
-#: ../../source/manuel.rst:2268
+#: ../../source/manuel.rst:2279
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande de badges, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -5412,7 +5436,7 @@ msgstr ""
 "κάθε πλευράς, και έπειτα να αποφανθείτε για τον κύβο ή για την κίνηση που"
 " πρέπει να παιχτεί, πριν επαληθεύσετε. Η ρύθμιση απομνημονεύεται."
 
-#: ../../source/manuel.rst:2286
+#: ../../source/manuel.rst:2297
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -5420,11 +5444,11 @@ msgstr ""
 "Για να κλείσετε τον πίνακα Eval, πατήστε *CTRL-E* ή μεταβείτε σε άλλη "
 "καρτέλα."
 
-#: ../../source/manuel.rst:2291
+#: ../../source/manuel.rst:2302
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Μεθοδολογία και υποθέσεις του πίνακα Eval"
 
-#: ../../source/manuel.rst:2293
+#: ../../source/manuel.rst:2304
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -5432,7 +5456,7 @@ msgstr ""
 "Κάθε τιμή που εμφανίζεται στον πίνακα βασίζεται σε συγκεκριμένες "
 "υποθέσεις, που διατυπώνονται εδώ εξαντλητικά."
 
-#: ../../source/manuel.rst:2296
+#: ../../source/manuel.rst:2307
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -5444,7 +5468,7 @@ msgstr ""
 " στο σπίτι τους. Η θέση αποτιμάται *πριν από τη ζαριά*· τα τυχόν "
 "τοποθετημένα ζάρια αγνοούνται."
 
-#: ../../source/manuel.rst:2301
+#: ../../source/manuel.rst:2312
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -5468,7 +5492,7 @@ msgstr ""
 "γωνία του μπλοκ κούρσας («OS-08») — χωρίς αυτό θα διάβαζε κανείς «έξι» εξ"
 " ορισμού και θα πίστευε την πλευρά εντελώς μέσα."
 
-#: ../../source/manuel.rst:2311
+#: ../../source/manuel.rst:2322
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -5489,7 +5513,7 @@ msgstr ""
 "ελαχιστοποιεί τις δικές του ζαριές αγνοώντας τον αντίπαλο — αυτός είναι ο"
 " καθιερωμένος ορισμός του EPC."
 
-#: ../../source/manuel.rst:2320
+#: ../../source/manuel.rst:2331
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -5505,7 +5529,7 @@ msgstr ""
 "βέλτιστο two-sided παιχνίδι και των δύο πλευρών: καμία πρόσθετη υπόθεση, "
 "σφάλμα περιορισμένο στην κβάντιση (< 0,002 %)."
 
-#: ../../source/manuel.rst:2326
+#: ../../source/manuel.rst:2337
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -5520,7 +5544,7 @@ msgstr ""
 " διόρθωσης, βαθμονομημένης εκτός σύνδεσης έναντι της βάσης TS-06-11. "
 "Τρεις υποθέσεις:"
 
-#: ../../source/manuel.rst:2332
+#: ../../source/manuel.rst:2343
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -5528,7 +5552,7 @@ msgstr ""
 "**ανεξαρτησία** των δύο διαδικασιών εξόδου — δομική στην κούρσα, χωρίς "
 "επαφή δεν υπάρχει καμία αλληλεπίδραση·"
 
-#: ../../source/manuel.rst:2335
+#: ../../source/manuel.rst:2346
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -5541,7 +5565,7 @@ msgstr ""
 "αποτέλεσμα είναι μια αντισυμμετρική μεροληψία (η συνέλιξη υπερβάλλει το "
 "προβάδισμα του προπορευόμενου) την οποία η διόρθωση απορροφά στατιστικά·"
 
-#: ../../source/manuel.rst:2340
+#: ../../source/manuel.rst:2351
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -5556,7 +5580,7 @@ msgstr ""
 "προεκτείνεται** — η τάση είναι μονότονη αλλά κανένα oracle δεν την "
 "πιστοποιεί."
 
-#: ../../source/manuel.rst:2346
+#: ../../source/manuel.rst:2357
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -5575,7 +5599,7 @@ msgstr ""
 "ανακατασκευάζεται ακριβώς από τις αποθηκευμένες ισοδυναμίες, σύμφωνα με "
 "τον κανόνα του GNUbg, επικυρωμένο ένα προς ένα έναντι της ανάλυσής του."
 
-#: ../../source/manuel.rst:2354
+#: ../../source/manuel.rst:2365
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -5601,7 +5625,7 @@ msgstr ""
 " έναντι +0,475 στο XG). Η εμφανιζόμενη **απόφαση**, ωστόσο, συμπίπτει με "
 "εκείνη των μηχανών."
 
-#: ../../source/manuel.rst:2365
+#: ../../source/manuel.rst:2376
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -5621,7 +5645,7 @@ msgstr ""
 "μπορούσε να κάνει (βλ. παρακάτω) και επιτρέπει, μόνο αυτό από τα τρία "
 "καθεστώτα μαζί με το ακριβές, μια ετυμηγορία **στο σκορ αγώνα**."
 
-#: ../../source/manuel.rst:2373
+#: ../../source/manuel.rst:2384
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -5653,7 +5677,7 @@ msgstr ""
 "αποκλίνουν περισσότερο σε μια οριακή απόφαση — όχι ένα διάχυτο σφάλμα που"
 " θα κόστιζε ισοδυναμία παντού."
 
-#: ../../source/manuel.rst:2386
+#: ../../source/manuel.rst:2397
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -5665,7 +5689,7 @@ msgstr ""
 "επαφής δεν έχουν δημοσιευμένη μέτρηση: τα παραπάνω δεν μεταφέρονται σε "
 "αυτές τις περιπτώσεις."
 
-#: ../../source/manuel.rst:2390
+#: ../../source/manuel.rst:2401
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 "
@@ -5686,7 +5710,7 @@ msgstr ""
 "οποίο το eXtreme Gammon μιλά για σφάλμα. Ανά απόφαση, όλες οι περιπτώσεις"
 " μαζί, το κέρδος είναι 0,0000."
 
-#: ../../source/manuel.rst:2399
+#: ../../source/manuel.rst:2410
 msgid ""
 "Le réglage n'est donc pas proposé. Il ne s'agit pas de dire que 3 plis ne"
 " vaut rien en général, mais que sur *ce* réseau, avec le filtre "
@@ -5700,7 +5724,7 @@ msgstr ""
 "μέτρηση είναι αναπαραγώγιμη (``TestThreePlyMeasure``) και το συμπέρασμα "
 "θα ξανακριθεί αν το δίκτυο αλλάξει."
 
-#: ../../source/manuel.rst:2404
+#: ../../source/manuel.rst:2415
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -5732,7 +5756,7 @@ msgstr ""
 "αναζήτηση που παίζει την τροχιά, όχι μια στατιστική σύνοψη, που καλύπτει "
 "αυτό το κενό."
 
-#: ../../source/manuel.rst:2417
+#: ../../source/manuel.rst:2428
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
@@ -5744,11 +5768,11 @@ msgstr ""
 "GNUbg — byte προς byte — στην καρτέλα *Bearoff* των ρυθμίσεων ή με "
 "``blunderdb bearoff generate``."
 
-#: ../../source/manuel.rst:2425
+#: ../../source/manuel.rst:2436
 msgid "Panneau Anki"
 msgstr "Πίνακας Anki"
 
-#: ../../source/manuel.rst:2427
+#: ../../source/manuel.rst:2438
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
@@ -5759,7 +5783,7 @@ msgstr ""
 "επανάληψης χρησιμοποιώντας τον αλγόριθμο FSRS. Ο χρήστης μπορεί να "
 "δημιουργήσει πακέτα (decks) από συλλογές ή από αποτελέσματα αναζήτησης."
 
-#: ../../source/manuel.rst:2432
+#: ../../source/manuel.rst:2443
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -5771,7 +5795,7 @@ msgstr ""
 "πακέτα που βασίζονται σε αναζήτηση συγχρονίζονται αυτόματα κατά την "
 "ενεργοποίηση της καρτέλας Anki."
 
-#: ../../source/manuel.rst:2436
+#: ../../source/manuel.rst:2447
 msgid ""
 "**Un paquet de fiches de score.** La troisième source, *Fiches de score*,"
 " ne demande rien d'autre qu'un nom : blunderDB remplit le paquet avec les"
@@ -5791,7 +5815,7 @@ msgstr ""
 " είναι ένα χρέος επανάληψης, και συνάπτεται εσκεμμένα. Το κουμπί "
 "συγχρονισμού το αναδημιουργεί."
 
-#: ../../source/manuel.rst:2444
+#: ../../source/manuel.rst:2455
 msgid ""
 "Les deux endroits ne font pas le même travail. L'exercice Scores fait "
 "retrouver ces nombres **sous la pendule** et mesure la vitesse ; le "
@@ -5807,7 +5831,7 @@ msgstr ""
 "Εξάσκησης αγνοεί τις επαναλήψεις του Anki, και οι στατιστικές του Anki "
 "αγνοούν τις συνεδρίες Εξάσκησης."
 
-#: ../../source/manuel.rst:2450
+#: ../../source/manuel.rst:2461
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -5824,7 +5848,7 @@ msgstr ""
 "(Δύσκολο), *3* (Καλό), ή *4* (Εύκολο). Πατήστε *Esc* για να σταματήσετε "
 "και να επιστρέψετε στη λίστα των πακέτων."
 
-#: ../../source/manuel.rst:2457
+#: ../../source/manuel.rst:2468
 msgid ""
 "**Les décisions de videau font deux cartes, enchaînées.** Une décision de"
 " videau est deux questions — « double ? », puis « prend ? » — et "
@@ -5840,7 +5864,7 @@ msgstr ""
 " Και όταν και οι δύο είναι απαιτητές, η δεύτερη έρχεται **αμέσως** μετά "
 "την πρώτη."
 
-#: ../../source/manuel.rst:2464
+#: ../../source/manuel.rst:2475
 msgid ""
 "Chacune garde sa propre note et son propre calendrier : ce ne sont pas "
 "deux temps d'une même carte, ce sont deux cartes. L'enchaînement n'avance"
@@ -5854,7 +5878,7 @@ msgstr ""
 "γεννιούνται μαζί, είναι απαιτητές μαζί την πρώτη φορά, και εκεί ακριβώς "
 "χρησιμεύει."
 
-#: ../../source/manuel.rst:2469
+#: ../../source/manuel.rst:2480
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -5874,7 +5898,7 @@ msgstr ""
 " θέση τους και προσιτά. Κλικ σε μια κίνηση της λίστας την εμφανίζει στο "
 "ταμπλό."
 
-#: ../../source/manuel.rst:2479
+#: ../../source/manuel.rst:2490
 msgid ""
 "Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr"
 " de vous, les touches *1* à *4* restent actives. La réponse se remasque à"
@@ -5888,7 +5912,7 @@ msgstr ""
 "αλλάξετε καρτέλα — πηγαίνετε να συμβουλευτείτε τον πίνακα Eval ή το "
 "σχόλιο της θέσης, θα σας περιμένει όταν επιστρέψετε."
 
-#: ../../source/manuel.rst:2484
+#: ../../source/manuel.rst:2495
 msgid ""
 "Une position dépourvue d'analyse enregistrée l'indique directement, sans "
 "zone masquée."
@@ -5896,7 +5920,7 @@ msgstr ""
 "Μια θέση χωρίς καταγεγραμμένη ανάλυση το δηλώνει απευθείας, χωρίς "
 "κρυμμένη περιοχή."
 
-#: ../../source/manuel.rst:2487
+#: ../../source/manuel.rst:2498
 msgid ""
 "**Limiter la séance.** Par défaut, une séance de révision va jusqu'au "
 "bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par "
@@ -5917,7 +5941,7 @@ msgstr ""
 "υπάρχει η ελεύθερη εξάσκηση: παρουσιάζει άλλες θέσεις χωρίς να αλλάζει "
 "τίποτα στο πρόγραμμα."
 
-#: ../../source/manuel.rst:2495
+#: ../../source/manuel.rst:2506
 msgid ""
 "Une limite de **0** ne sert aucune carte : c'est un état à part entière, "
 "utile pour geler un paquet le temps de préparer un tournoi, et ce n'est "
@@ -5929,7 +5953,7 @@ msgstr ""
 "τουρνουά, και δεν είναι το ίδιο με το «χωρίς όριο». Το κουμπί *Study* "
 "είναι τότε ανενεργό."
 
-#: ../../source/manuel.rst:2499
+#: ../../source/manuel.rst:2510
 msgid ""
 "La limite porte sur la **séance**, pas sur la journée. Un paquet "
 "blunderDB est bâti sur une collection ou une recherche : c'est un corpus "
@@ -5944,7 +5968,7 @@ msgstr ""
 "ενεργοποιούνταν ποτέ, ή αλλιώς θα δημιουργούσε καθυστέρηση σε ένα πακέτο "
 "που χωρούσε σε μία συνεδρία."
 
-#: ../../source/manuel.rst:2505
+#: ../../source/manuel.rst:2516
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -5966,7 +5990,7 @@ msgstr ""
 "(πλήκτρα *1* έως *4*) μετακινείται στις θέσεις. Το *Esc* επιστρέφει στη "
 "λίστα χωρίς να αποθηκεύει διακοπείσα συνεδρία."
 
-#: ../../source/manuel.rst:2514
+#: ../../source/manuel.rst:2525
 msgid ""
 "**Écarter une carte, sans la noter.** Pendant une révision, un clic droit"
 " sur l'en-tête de la carte ouvre trois gestes qui la sortent de la séance"
@@ -5977,7 +6001,7 @@ msgstr ""
 "χειρονομίες που τη βγάζουν από τη συνεδρία χωρίς να πουν τίποτα στον "
 "προγραμματιστή:"
 
-#: ../../source/manuel.rst:2518
+#: ../../source/manuel.rst:2529
 msgid ""
 "**Suspendre** — la carte garde son échéancier et ne remonte plus jamais "
 "tant qu'elle est suspendue. C'est la manière de mettre de côté une carte "
@@ -5987,7 +6011,7 @@ msgstr ""
 " είναι σε αναστολή. Έτσι παραμερίζεται μια λανθασμένη ή όχι ακόμη χρήσιμη"
 " κάρτα, χωρίς να χαθεί το ιστορικό που τη συνοδεύει."
 
-#: ../../source/manuel.rst:2522
+#: ../../source/manuel.rst:2533
 msgid ""
 "**Enterrer** — la carte disparaît jusqu'au lendemain. Contrairement à la "
 "suspension, cela ne dit rien de sa valeur : c'est pour celle que l'on "
@@ -5999,7 +6023,7 @@ msgstr ""
 " μόλις είδατε αλλού, ή που προτιμάτε να μη συναντήσετε δύο φορές σε ένα "
 "βράδυ."
 
-#: ../../source/manuel.rst:2526
+#: ../../source/manuel.rst:2537
 msgid ""
 "**Retirer** — la carte quitte le paquet, après confirmation. La position,"
 " elle, reste dans la base : un paquet est une liste d'étude sur la "
@@ -6009,7 +6033,7 @@ msgstr ""
 "ίδια η θέση μένει στη βάση: μια τράπουλα είναι λίστα μελέτης πάνω στη "
 "βιβλιοθήκη, ποτέ αντίγραφό της."
 
-#: ../../source/manuel.rst:2530
+#: ../../source/manuel.rst:2541
 msgid ""
 "Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est "
 "pas une carte répondue, et elle ne compte pas dans le décompte de la "
@@ -6018,7 +6042,7 @@ msgstr ""
 "Καμία από τις τρεις δεν καταγράφει βαθμό: μια παραμερισμένη κάρτα δεν "
 "είναι απαντημένη κάρτα και δεν μετρά στο σύνολο της συνεδρίας."
 
-#: ../../source/manuel.rst:2533
+#: ../../source/manuel.rst:2544
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -6037,7 +6061,7 @@ msgstr ""
 "εμβέλειας, και ακριβώς αυτός ο κανόνας κάνει το ιστορικό χρήσιμο — το "
 "παρελθόν δεν ξαναγράφεται, αλλά μπορεί να γίνει γνωστό."
 
-#: ../../source/manuel.rst:2542
+#: ../../source/manuel.rst:2553
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
@@ -6048,7 +6072,7 @@ msgstr ""
 "πρόοδό σας. Κάντε κλικ σε αυτό για να συνεχίσετε από εκεί που "
 "σταματήσατε."
 
-#: ../../source/manuel.rst:2546
+#: ../../source/manuel.rst:2557
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets (confirmation "
@@ -6062,7 +6086,7 @@ msgstr ""
 " διατήρησης, μέγιστο διάστημα, τυχαιότητα) ρυθμίζονται ανά πακέτο στις "
 "Ρυθμίσεις (εικονίδιο γραναζιού)."
 
-#: ../../source/manuel.rst:2552
+#: ../../source/manuel.rst:2563
 msgid ""
 "**Rétention : la cible et la mesure.** La *rétention cible* est votre "
 "choix sur le compromis entre charge de travail et qualité du rappel : "
@@ -6083,7 +6107,7 @@ msgstr ""
 "επαναλήψεις, η μέτρηση δεν εμφανίζεται: θα διαβαζόταν ως γεγονός ενώ "
 "είναι μόνο θόρυβος."
 
-#: ../../source/manuel.rst:2561
+#: ../../source/manuel.rst:2572
 msgid ""
 "Changer la rétention **n'est pas rétroactif** : chaque carte adopte le "
 "nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne "
@@ -6094,7 +6118,7 @@ msgstr ""
 "δεν μετακινούνται. Το αποτέλεσμα είναι επομένως σταδιακό, και αόρατο την "
 "ίδια ημέρα."
 
-#: ../../source/manuel.rst:2565
+#: ../../source/manuel.rst:2576
 msgid ""
 "L'*intervalle maximum* borne l'espacement. Un paquet créé récemment "
 "démarre à un an : une position que l'algorithme reporterait de plusieurs "
@@ -6108,11 +6132,11 @@ msgstr ""
 "αποφασίσετε εσείς, και το δικό σας παιχνίδι αλλάζει γρηγορότερα από αυτό."
 " Τα παλαιότερα πακέτα διατηρούν την τιμή που είχαν."
 
-#: ../../source/manuel.rst:2573
+#: ../../source/manuel.rst:2584
 msgid "Panneau Entraînement"
 msgstr "Πίνακας Εξάσκηση"
 
-#: ../../source/manuel.rst:2575
+#: ../../source/manuel.rst:2586
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "
@@ -6126,25 +6150,25 @@ msgstr ""
 " ``CTRL-J``, με το κουμπί της γραμμής εργαλείων αμέσως μετά το « Position"
 " aléatoire », ή με την εντολή ``train``."
 
-#: ../../source/manuel.rst:2582
+#: ../../source/manuel.rst:2593
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."
 msgstr ""
 "Σε ηρεμία, ο πίνακας δείχνει τον εκκινητή και τον απολογισμό των "
 "προηγούμενων συνεδριών."
 
-#: ../../source/manuel.rst:2585
+#: ../../source/manuel.rst:2596
 msgid "Le lanceur"
 msgstr "Ο εκκινητής"
 
-#: ../../source/manuel.rst:2587
+#: ../../source/manuel.rst:2598
 msgid "Trois choix, puis « Démarrer » :"
 msgstr "Τρεις επιλογές, και μετά « Démarrer »:"
 
-#: ../../source/manuel.rst:2589
+#: ../../source/manuel.rst:2600
 msgid "l'**exercice** — *Scores* ou *Pions* ;"
 msgstr "η **άσκηση** — *Scores* (σκορ) ή *Pions* (pip)·"
 
-#: ../../source/manuel.rst:2590
+#: ../../source/manuel.rst:2601
 msgid ""
 "la **source** de la question, quand l'exercice en a plusieurs — *Plateau*"
 " (la position telle qu'elle est) ou *Base* (une position de la liste "
@@ -6154,11 +6178,11 @@ msgstr ""
 "*Plateau* (η θέση όπως είναι) ή *Base* (μια θέση της λίστας που "
 "διατρέχεται)·"
 
-#: ../../source/manuel.rst:2593
+#: ../../source/manuel.rst:2604
 msgid "la **limite par question** — aucune, 15, 30 ou 60 secondes."
 msgstr "το **όριο ανά ερώτηση** — κανένα, 15, 30 ή 60 δευτερόλεπτα."
 
-#: ../../source/manuel.rst:2595
+#: ../../source/manuel.rst:2606
 msgid ""
 "``train scores`` et ``train pips`` ouvrent le panneau et démarrent "
 "directement ; ``train tp`` et ``train takepoint`` sont des synonymes de "
@@ -6168,11 +6192,11 @@ msgstr ""
 "ξεκινούν αμέσως· το ``train tp`` και το ``train takepoint`` είναι "
 "συνώνυμα του ``train scores``."
 
-#: ../../source/manuel.rst:2600
+#: ../../source/manuel.rst:2611
 msgid "Les deux exercices"
 msgstr "Οι δύο ασκήσεις"
 
-#: ../../source/manuel.rst:2602
+#: ../../source/manuel.rst:2613
 msgid ""
 "**Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et "
 "affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire*"
@@ -6186,7 +6210,7 @@ msgstr ""
 "αποδοχής με κύβο 2 και μετά με κύβο 4, καθένα για μακρά κούρσα και για "
 "την τελευταία ζαριά, και έπειτα την αξία του gammon με κύβους 1, 2 και 4."
 
-#: ../../source/manuel.rst:2607
+#: ../../source/manuel.rst:2618
 msgid ""
 "Chaque colonne ne porte que les cases que les tables de référence — "
 "celles qu'affichent les commandes ``tp2_live``, ``tp2_last``, "
@@ -6210,7 +6234,7 @@ msgstr ""
 " gammon και των δύο παικτών, και είναι το σημείο αποδοχής του αντιπάλου "
 "που λέει αν το δικό σας διπλασιασμό τον περνάει."
 
-#: ../../source/manuel.rst:2618
+#: ../../source/manuel.rst:2629
 msgid ""
 "**Pions** demande le compte de pions des **deux** camps. Le pipcount du "
 "plateau est masqué tant que la question est ouverte ; « Révéler » "
@@ -6230,11 +6254,11 @@ msgstr ""
 "για τη θέση που εμφανίζεται, και μόνο μία· η πηγή *Base* τραβά μια νέα "
 "θέση σε κάθε ερώτηση και τη φέρνει στο ταμπλό."
 
-#: ../../source/manuel.rst:2628
+#: ../../source/manuel.rst:2639
 msgid "Répondre"
 msgstr "Να απαντήσετε"
 
-#: ../../source/manuel.rst:2630
+#: ../../source/manuel.rst:2641
 msgid ""
 "Le geste est **déclaré** : vous calculez de tête, vous cliquez « Révéler "
 "», et la vérité s'affiche. Chaque nombre est alors **juste par défaut** —"
@@ -6251,7 +6275,7 @@ msgstr ""
 "κελί πίνακα είναι σωστό ή λάθος, και το να το γράψετε δεν διδάσκει τίποτα"
 " παραπάνω από το να το διαβάσετε."
 
-#: ../../source/manuel.rst:2637
+#: ../../source/manuel.rst:2648
 msgid ""
 "Le chronomètre part à l'affichage de la question et s'arrête à « Révéler "
 "» ; cocher ses fautes n'est pas chronométré. Avec une limite, une "
@@ -6265,7 +6289,7 @@ msgstr ""
 " χρόνου**: όλοι οι αριθμοί της είναι λάθος, και ο χρόνος της δεν μπαίνει "
 "στη διάμεσο — δεν μετράμε μια απάντηση που δεν δόθηκε."
 
-#: ../../source/manuel.rst:2643
+#: ../../source/manuel.rst:2654
 msgid ""
 "« Suivante » enregistre la question et en pose une autre. La session n'a "
 "pas de longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au "
@@ -6279,11 +6303,11 @@ msgstr ""
 " πίνακα· το ταμπλό δείχνει την ερώτηση και την απάντησή της, δεν φέρει "
 "κανένα χειριστήριο."
 
-#: ../../source/manuel.rst:2649
+#: ../../source/manuel.rst:2660
 msgid "Le journal et le bilan"
 msgstr "Το ημερολόγιο και ο απολογισμός"
 
-#: ../../source/manuel.rst:2651
+#: ../../source/manuel.rst:2662
 msgid ""
 "Les sessions terminées sont conservées dans la base elle-même — elles "
 "suivent donc le fichier — et sans plafond. Au repos, le panneau affiche "
@@ -6299,7 +6323,7 @@ msgstr ""
 "**τάση**, δηλαδή τη διαφορά ανάμεσα στο ποσοστό λαθών των δέκα τελευταίων"
 " συνεδριών και σε αυτό όλων — αρνητική, βελτιώνεστε."
 
-#: ../../source/manuel.rst:2658
+#: ../../source/manuel.rst:2669
 msgid ""
 "Cliquer le nom de l'exercice déplie le détail **par type de nombre** : « "
 "Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait "
@@ -6313,11 +6337,11 @@ msgstr ""
 " όχι ανά πλευρά: το ίδιο κελί του ίδιου πίνακα, ιδωμένο από τη μία ή την "
 "άλλη πλευρά, είναι μία και μόνη αδυναμία."
 
-#: ../../source/manuel.rst:2666
+#: ../../source/manuel.rst:2677
 msgid "Micro-entraînements : EPC et quiz"
 msgstr "Μικρο-εξασκήσεις: EPC και κουίζ"
 
-#: ../../source/manuel.rst:2668
+#: ../../source/manuel.rst:2679
 msgid ""
 "Deux exercices se répondent encore au clavier, dans une bande affichée "
 "au-dessus du plateau. La commande ``train`` suivie de leur nom lance une "
@@ -6327,7 +6351,7 @@ msgstr ""
 "το ταμπλό. Η εντολή ``train`` ακολουθούμενη από το όνομά τους ξεκινά μια "
 "συνεδρία πέντε ερωτήσεων:"
 
-#: ../../source/manuel.rst:2672
+#: ../../source/manuel.rst:2683
 msgid ""
 "``train epc`` — estimer l'EPC du joueur au trait, sur une position de "
 "course que le moteur sait évaluer ;"
@@ -6335,11 +6359,11 @@ msgstr ""
 "``train epc`` — εκτίμηση του EPC του παίκτη που παίζει, σε μια θέση "
 "κούρσας που η μηχανή μπορεί να αξιολογήσει·"
 
-#: ../../source/manuel.rst:2674
+#: ../../source/manuel.rst:2685
 msgid "``train quiz`` — décider, sur une position déjà analysée."
 msgstr "``train quiz`` — απόφαση, σε μια ήδη αναλυμένη θέση."
 
-#: ../../source/manuel.rst:2676
+#: ../../source/manuel.rst:2687
 msgid ""
 "La question EST la position affichée : le plateau est celui de "
 "l'application, et la bande ne porte que la question, la saisie et la "
@@ -6357,7 +6381,7 @@ msgstr ""
 "αλλάζει μια απόφαση κούρσας. Στο τέλος, η συνεδρία δείχνει τον αριθμό των"
 " σωστών απαντήσεων και τον **διάμεσο** χρόνο ανά ερώτηση."
 
-#: ../../source/manuel.rst:2683
+#: ../../source/manuel.rst:2694
 msgid ""
 "Seul ce résumé est conservé, dans les métadonnées de la base : la session"
 " ne garde pas la trace question par question, et rien n'est écrit tant "
@@ -6368,11 +6392,11 @@ msgstr ""
 "κρατά ίχνος ερώτηση προς ερώτηση, και τίποτα δεν γράφεται πριν τελειώσει."
 " Η έξοδος στα μισά επομένως δεν καταγράφει τίποτα."
 
-#: ../../source/manuel.rst:2688
+#: ../../source/manuel.rst:2699
 msgid "Quiz : le PR d'entraînement"
 msgstr "Κουίζ: το PR εξάσκησης"
 
-#: ../../source/manuel.rst:2690
+#: ../../source/manuel.rst:2701
 msgid ""
 "``train quiz`` pose une question d'une autre nature. Le panneau Anki fait"
 " mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées"
@@ -6382,7 +6406,7 @@ msgstr ""
 "απομνημόνευση· το κουίζ **δοκιμάζει**. Πέντε ήδη αναλυμένες θέσεις "
 "τραβιούνται από τη λίστα που διατρέχεται, και πρέπει να παρθεί απόφαση:"
 
-#: ../../source/manuel.rst:2694
+#: ../../source/manuel.rst:2705
 msgid ""
 "sur une décision de pions, **jouer le coup sur le damier** — cliquer le "
 "point de départ, puis la destination, autant de fois qu'il y a de dés ; "
@@ -6392,7 +6416,7 @@ msgstr ""
 " σημείο εκκίνησης, έπειτα στον προορισμό, μία φορά για κάθε ζάρι· ή "
 "γράψτε την κίνηση στο πληκτρολόγιο, σε σημειογραφία (``13/7 8/7``)·"
 
-#: ../../source/manuel.rst:2697
+#: ../../source/manuel.rst:2708
 msgid ""
 "sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou "
 "*Double, passe*."
@@ -6400,7 +6424,7 @@ msgstr ""
 "σε απόφαση κύβου, πατήστε *Χωρίς διπλασιασμό*, *Διπλασιασμός, αποδοχή* ή "
 "*Διπλασιασμός, πάσο*."
 
-#: ../../source/manuel.rst:2700
+#: ../../source/manuel.rst:2711
 msgid ""
 "Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal "
 "n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, "
@@ -6414,7 +6438,7 @@ msgstr ""
 " διπλό κλικ έξω από το ταμπλό κάνει το ίδιο. Η ερώτηση δεν αλλάζει: τα "
 "ζάρια, ο κύβος και το σκορ παραμένουν εκείνα της θέσης."
 
-#: ../../source/manuel.rst:2706
+#: ../../source/manuel.rst:2717
 msgid ""
 "Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie "
 "au clavier reste disponible tant qu'aucun pion n'a bougé. Les deux "
@@ -6424,7 +6448,7 @@ msgstr ""
 "πληκτρολόγηση παραμένει διαθέσιμη όσο δεν έχει μετακινηθεί κανένα πούλι. "
 "Και οι δύο δρόμοι περνούν από την ίδια διόρθωση."
 
-#: ../../source/manuel.rst:2710
+#: ../../source/manuel.rst:2721
 msgid ""
 "Le panneau Analyse est masqué tant que la question n'a pas reçu de "
 "réponse : il porte la réponse, et une question dont la réponse est "
@@ -6434,7 +6458,7 @@ msgstr ""
 "φέρει την απάντηση, και μια ερώτηση της οποίας η απάντηση εμφανίζεται "
 "δίπλα δεν είναι ερώτηση."
 
-#: ../../source/manuel.rst:2714
+#: ../../source/manuel.rst:2725
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -6449,7 +6473,7 @@ msgstr ""
 " σφάλμα: απλώς δεν έχει τιμή, και δεν κοστίζει τίποτα στη συνεδρία. Μια "
 "καταταγμένη κίνηση κοστίζει ό,τι λέει η ανάλυση, σε χιλιοστά του πόντου."
 
-#: ../../source/manuel.rst:2720
+#: ../../source/manuel.rst:2731
 msgid ""
 "À la fin, la session affiche un **PR de quiz** calculé par la formule que"
 " les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité"
@@ -6463,11 +6487,11 @@ msgstr ""
 "συγκρίσιμους: ένα PR κουίζ 6 και ένα PR αγώνα 6 μετρούν το ίδιο πράγμα "
 "στην ίδια κλίμακα."
 
-#: ../../source/manuel.rst:2728
+#: ../../source/manuel.rst:2739
 msgid "Panneau Métadonnées"
 msgstr "Πίνακας Μεταδεδομένων"
 
-#: ../../source/manuel.rst:2730
+#: ../../source/manuel.rst:2741
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -6479,7 +6503,7 @@ msgstr ""
 " και παρτίδων, έκδοση του σχήματος. Προσβάσιμος μέσω της εντολής "
 "``meta``."
 
-#: ../../source/manuel.rst:2734
+#: ../../source/manuel.rst:2745
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -6489,11 +6513,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Μια συνηθισμένη βάση δεν εμφανίζει αυτή την "
 "ενότητα."
 
-#: ../../source/manuel.rst:2740
+#: ../../source/manuel.rst:2751
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης"
 
-#: ../../source/manuel.rst:2742
+#: ../../source/manuel.rst:2753
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -6505,7 +6529,7 @@ msgstr ""
 " την εξαγωγή**: να σημάνει το αρχείο με την προέλευσή του και να το "
 "προστατεύσει με κωδικό πρόσβασης."
 
-#: ../../source/manuel.rst:2749
+#: ../../source/manuel.rst:2760
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -6518,11 +6542,11 @@ msgstr ""
 "άλλης, και πουθενά δεν καταγράφεται ποιος την άνοιξε, πότε, ούτε από πού "
 "προέρχεται το περιεχόμενό της."
 
-#: ../../source/manuel.rst:2755
+#: ../../source/manuel.rst:2766
 msgid "Marquer une base de son origine"
 msgstr "Σήμανση μιας βάσης με την προέλευσή της"
 
-#: ../../source/manuel.rst:2757
+#: ../../source/manuel.rst:2768
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -6533,11 +6557,11 @@ msgstr ""
 " ένδειξη προόδου κατά τη διάρκεια της εγγραφής. Κλείνει από μόνο του όταν"
 " ολοκληρωθεί και το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης."
 
-#: ../../source/manuel.rst:2761
+#: ../../source/manuel.rst:2772
 msgid "Trois points méritent l'attention :"
 msgstr "Τρία σημεία αξίζουν προσοχής:"
 
-#: ../../source/manuel.rst:2763
+#: ../../source/manuel.rst:2774
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -6547,7 +6571,7 @@ msgstr ""
 "ολόκληρη τη βάση. Μετά από μια αναζήτηση εξάγονται μόνο τα αποτελέσματα —"
 " το παράθυρο το υπενθυμίζει στην κορυφή."
 
-#: ../../source/manuel.rst:2766
+#: ../../source/manuel.rst:2777
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -6558,7 +6582,7 @@ msgstr ""
 "καλυπτόμενο μέρος («12/40») και το επισημαίνει με κόκκινο όταν είναι "
 "μερικό."
 
-#: ../../source/manuel.rst:2769
+#: ../../source/manuel.rst:2780
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -6569,7 +6593,7 @@ msgstr ""
 "κενό. Το πλαίσιο παραμένει απενεργοποιημένο όσο δεν έχει επιλεγεί το "
 "«συμπερίληψη των αγώνων»."
 
-#: ../../source/manuel.rst:2773
+#: ../../source/manuel.rst:2784
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -6583,13 +6607,13 @@ msgstr ""
 "δεν εξάγει περιεχόμενο αλλά τις δικές σας αποθηκευμένες αναζητήσεις, οι "
 "οποίες δεν χρησιμεύουν στη βάση κάποιου άλλου."
 
-#: ../../source/manuel.rst:2779
+#: ../../source/manuel.rst:2790
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "Η επιλογή **Σήμανση αυτού του αρχείου με την προέλευσή του** εμφανίζει "
 "δύο πεδία:"
 
-#: ../../source/manuel.rst:2781
+#: ../../source/manuel.rst:2792
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -6600,7 +6624,7 @@ msgstr ""
 "είναι **υποχρεωτικό**: όσο παραμένει κενό, το κουμπί εξαγωγής μένει "
 "ανενεργό."
 
-#: ../../source/manuel.rst:2784
+#: ../../source/manuel.rst:2795
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -6608,7 +6632,7 @@ msgstr ""
 "**Σημείωση**, προαιρετική — όροι χρήσης, διεύθυνση επικοινωνίας, ένα "
 "αίτημα να μην αναδιανεμηθεί."
 
-#: ../../source/manuel.rst:2787
+#: ../../source/manuel.rst:2798
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -6623,11 +6647,11 @@ msgstr ""
 "SQLite και το blunderDB είναι ελεύθερο λογισμικό. Δεν εμποδίζει τίποτε: "
 "λέει από πού προέρχεται το αρχείο."
 
-#: ../../source/manuel.rst:2794
+#: ../../source/manuel.rst:2805
 msgid "Identité d'émetteur"
 msgstr "Ταυτότητα εκδότη"
 
-#: ../../source/manuel.rst:2796
+#: ../../source/manuel.rst:2807
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -6641,7 +6665,7 @@ msgstr ""
 "σας τα αρχεία φέρουν το ίδιο δημόσιο αποτύπωμα, της μορφής "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:2801
+#: ../../source/manuel.rst:2812
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -6656,7 +6680,7 @@ msgstr ""
 "**Το αρχείο αυτό επιτρέπει την υπογραφή στο όνομά σας: μην το "
 "μοιράζεστε.**"
 
-#: ../../source/manuel.rst:2807
+#: ../../source/manuel.rst:2818
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -6666,7 +6690,7 @@ msgstr ""
 "*Ταυτότητα εκδότη* εμφανίζει το όνομα και το αποτύπωμά σας και προσφέρει "
 "*Αποθήκευση ταυτότητας…*, *Φόρτωση ταυτότητας…* και *Αναδημιουργία…*."
 
-#: ../../source/manuel.rst:2813
+#: ../../source/manuel.rst:2824
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -6679,7 +6703,7 @@ msgstr ""
 "μπορεί να συνεχίσει να υπογράφει με το παλιό σας αποτύπωμα, και οι "
 "σημάνσεις αυτές θα παραμένουν έγκυρες."
 
-#: ../../source/manuel.rst:2818
+#: ../../source/manuel.rst:2829
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -6689,7 +6713,7 @@ msgstr ""
 "να δημοσιοποιήσετε το νέο σας αποτύπωμα και να αποκηρύξετε το παλιό "
 "απέναντι στους παραλήπτες σας."
 
-#: ../../source/manuel.rst:2822
+#: ../../source/manuel.rst:2833
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -6697,11 +6721,11 @@ msgstr ""
 "Η αναδημιουργία αντικαθιστά το τρέχον κλειδί· το blunderDB προτείνει να "
 "το αποθηκεύσετε πριν το αντικαταστήσει."
 
-#: ../../source/manuel.rst:2826
+#: ../../source/manuel.rst:2837
 msgid "Protéger une base par un mot de passe"
 msgstr "Προστασία μιας βάσης με κωδικό πρόσβασης"
 
-#: ../../source/manuel.rst:2828
+#: ../../source/manuel.rst:2839
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -6711,7 +6735,7 @@ msgstr ""
 "προστατευμένου αρχείου· το εικονίδιο σε σχήμα ματιού τον εμφανίζει **όσο "
 "το κρατάτε πατημένο** και τον κρύβει ξανά μόλις το αφήσετε."
 
-#: ../../source/manuel.rst:2832
+#: ../../source/manuel.rst:2843
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -6729,7 +6753,7 @@ msgstr ""
 " ζητά τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· στη "
 "συνέχεια δεν ζητείται τίποτε άλλο."
 
-#: ../../source/manuel.rst:2840
+#: ../../source/manuel.rst:2851
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -6743,7 +6767,7 @@ msgstr ""
 "παραμένει δικό σας αν σκοπεύετε να το διαβιβάσετε — και η διαγραφή "
 "γίνεται μόνο μετά από επιτυχές άνοιγμα."
 
-#: ../../source/manuel.rst:2847
+#: ../../source/manuel.rst:2858
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -6755,7 +6779,7 @@ msgstr ""
 "συνημμένο που προωθήθηκε κατά λάθος. Δεν προστατεύει από εκείνον στον "
 "οποίο δώσατε τον κωδικό."
 
-#: ../../source/manuel.rst:2852
+#: ../../source/manuel.rst:2863
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -6763,7 +6787,7 @@ msgstr ""
 "Ο κωδικός επαληθεύεται σε **κάθε** άνοιγμα, ακόμη και όταν το αρχείο έχει"
 " ήδη ανοιχτεί προηγουμένως σε αυτόν τον υπολογιστή."
 
-#: ../../source/manuel.rst:2855
+#: ../../source/manuel.rst:2866
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -6779,7 +6803,7 @@ msgstr ""
 " ως τέτοιος, όπως και κάθε αλλοίωση του κρυπτογραφημένου αρχείου — ποτέ "
 "δεν καταλήγει κανείς σιωπηλά με κατεστραμμένη βάση."
 
-#: ../../source/manuel.rst:2862
+#: ../../source/manuel.rst:2873
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -6787,11 +6811,11 @@ msgstr ""
 "Η κεφαλίδα του προστατευμένου αρχείου παραμένει **μη κρυπτογραφημένη**: η"
 " προέλευσή του παραμένει αναγνώσιμη χωρίς τον κωδικό."
 
-#: ../../source/manuel.rst:2866
+#: ../../source/manuel.rst:2877
 msgid "Lire l'origine d'un fichier"
 msgstr "Ανάγνωση της προέλευσης ενός αρχείου"
 
-#: ../../source/manuel.rst:2868
+#: ../../source/manuel.rst:2879
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -6803,7 +6827,7 @@ msgstr ""
 "μια ενότητα **Προέλευση**, μόνο για ανάγνωση, που δείχνει τι "
 "καταχωρήθηκε, από ποιον, πότε, και την κατάσταση της υπογραφής:"
 
-#: ../../source/manuel.rst:2873
+#: ../../source/manuel.rst:2884
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -6811,7 +6835,7 @@ msgstr ""
 "«✓ η υπογραφή επαληθεύτηκε — σημάνθηκε από εσάς»: το αρχείο φέρει τη δική"
 " σας σήμανση, ανέπαφη·"
 
-#: ../../source/manuel.rst:2875
+#: ../../source/manuel.rst:2886
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -6820,15 +6844,15 @@ msgstr ""
 "άλλο κλειδί — συγκρίνετε το αποτύπωμά της με εκείνο που σας γνωστοποίησε "
 "ο δημιουργός·"
 
-#: ../../source/manuel.rst:2877
+#: ../../source/manuel.rst:2888
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ μη έγκυρη υπογραφή»: το έγγραφο τροποποιήθηκε ή πλαστογραφήθηκε."
 
-#: ../../source/manuel.rst:2879
+#: ../../source/manuel.rst:2890
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Η ενότητα αυτή δεν εμφανίζεται σε μια συνηθισμένη βάση."
 
-#: ../../source/manuel.rst:2881
+#: ../../source/manuel.rst:2892
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -6843,11 +6867,11 @@ msgstr ""
 "``--password`` της ``export``, καθώς και για τις ``identity`` και "
 "``open``."
 
-#: ../../source/manuel.rst:2890
+#: ../../source/manuel.rst:2901
 msgid "Publier une base pour d'autres"
 msgstr "Δημοσίευση μιας βάσης για άλλους"
 
-#: ../../source/manuel.rst:2892
+#: ../../source/manuel.rst:2903
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -6864,7 +6888,7 @@ msgstr ""
 " θα υπήρχε λοιπόν τίποτα να αναφερθεί σε μια υπηρεσία, ακόμη κι αν "
 "υπήρχε."
 
-#: ../../source/manuel.rst:2898
+#: ../../source/manuel.rst:2909
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -6872,13 +6896,13 @@ msgstr ""
 "Αυτό που κάνει μια δημοσιευμένη βάση χρήσιμη σε κάποιον άλλο περιορίζεται"
 " σε τέσσερα πεδία, όλα ήδη παρόντα:"
 
-#: ../../source/manuel.rst:2901
+#: ../../source/manuel.rst:2912
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Χρήστης** — ποιος τη συγκρότησε, με το όνομα που θέλετε να αναφέρεται."
 
-#: ../../source/manuel.rst:2902
+#: ../../source/manuel.rst:2913
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -6887,7 +6911,7 @@ msgstr ""
 "**Περιγραφή** — τι περιέχει η βάση, σε μία φράση που χωράει σε μια λίστα:"
 " «240 αποφάσεις κύβου στο σκορ, σχολιασμένες, ενδιάμεσο επίπεδο»."
 
-#: ../../source/manuel.rst:2904
+#: ../../source/manuel.rst:2915
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -6897,7 +6921,7 @@ msgstr ""
 "ποιον παρήχθη. Είναι το πρώτο που διαβάζει ο παραλήπτης στον πίνακα "
 "*Μεταδεδομένα*."
 
-#: ../../source/manuel.rst:2907
+#: ../../source/manuel.rst:2918
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -6907,7 +6931,7 @@ msgstr ""
 "συγκρίνοντάς το ο παραλήπτης επαληθεύει ότι το αρχείο προέρχεται από εσάς"
 " και όχι από κάποιον που πήρε το όνομά σας."
 
-#: ../../source/manuel.rst:2911
+#: ../../source/manuel.rst:2922
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -6917,7 +6941,7 @@ msgstr ""
 "είναι απλώς ανώνυμη, και ο πίνακας *Μεταδεδομένα* δεν εμφανίζει τότε "
 "καμία ενότητα *Προέλευση*."
 
-#: ../../source/manuel.rst:2915
+#: ../../source/manuel.rst:2926
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"

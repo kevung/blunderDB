@@ -1089,7 +1089,18 @@ qui est au trait. L'action attendue, elle, est écrite en toutes lettres dans la
 **barre d'état** : « dés de Kévin », « réponse d'Alice au double », « relance ».
 
 La **barre du brouillon**, en tête du panneau, ne porte que les gestes qui font
-sortir le brouillon de lui-même, plus les deux flèches d'annulation.
+sortir le brouillon de lui-même, les deux flèches d'annulation et le sens du
+plateau.
+
+Le **joueur 1 reste en bas du plateau**, quel que soit le camp au trait. Un
+match qui se transcrit est une partie qui se déroule : le trait change à chaque
+demi-coup, et suivre le trait retournerait le damier d'un tour sur l'autre — les
+pions qu'on vient de regarder passeraient en haut et l'œil referait le trajet à
+chaque jet. Le trait se lit aux **dés**, qui changent de côté. Le bouton ⇅ de la
+barre retourne le plateau et montre le joueur 2 en bas ; il ne modifie pas le
+brouillon, et l'affichage revient à l'endroit à la fermeture. À ne pas confondre
+avec le bouton *Inverser les joueurs* du volet Métadonnées, qui échange les deux
+joueurs dans le document lui-même.
 
 Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à tout
 moment : les noms des deux joueurs — autocomplétés depuis les joueurs de la

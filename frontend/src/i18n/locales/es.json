@@ -1084,6 +1084,8 @@
         "tournamentNone": "Ninguno",
         "swapPlayers": "Invertir los jugadores",
         "swapPlayersTooltip": "Intercambiar los dos jugadores: los nombres, los bandos y el tablero",
+        "boardSwap": "Girar el tablero",
+        "boardSwapTooltip": "Mostrar al jugador 2 abajo; solo la vista, el borrador no cambia",
         "matchLength": "Longitud",
         "moneyHint": "0 = partida por dinero",
         "lengthTooltip": "Cambiar la longitud vuelve a reproducir toda la partida",

@@ -1084,6 +1084,8 @@
         "tournamentNone": "Aucun",
         "swapPlayers": "Inverser les joueurs",
         "swapPlayersTooltip": "Échanger les deux joueurs : les noms, les camps et le plateau",
+        "boardSwap": "Retourner le plateau",
+        "boardSwapTooltip": "Montrer le joueur 2 en bas ; l’affichage seulement, le brouillon n’est pas modifié",
         "matchLength": "Longueur",
         "moneyHint": "0 = partie d'argent",
         "lengthTooltip": "Changer la longueur rejoue tout le match",

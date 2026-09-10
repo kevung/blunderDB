@@ -1084,6 +1084,8 @@
         "tournamentNone": "Nessuno",
         "swapPlayers": "Invertire i giocatori",
         "swapPlayersTooltip": "Scambiare i due giocatori: i nomi, i campi e la damiera",
+        "boardSwap": "Ruotare il tavoliere",
+        "boardSwapTooltip": "Mostrare il giocatore 2 in basso; solo la visualizzazione, la bozza non cambia",
         "matchLength": "Lunghezza",
         "moneyHint": "0 = partita a soldi",
         "lengthTooltip": "Cambiare la lunghezza riesegue tutto il match",

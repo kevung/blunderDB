@@ -185,6 +185,11 @@ export function clearTranscription() {
     // Un clic sur le videau resté sans réponse ne doit pas servir le brouillon
     // suivant (T2.5).
     transcriptionCubeRequestStore.set(null);
+    // Le sens du plateau appartient au brouillon regardé, pas à la session :
+    // « le joueur 1 » n'est pas la même personne d'un brouillon à l'autre, et
+    // une inversion retenue montrerait le suivant à l'envers sans qu'on l'ait
+    // demandé.
+    transcriptionBoardSwapStore.set(false);
 }
 
 /**
@@ -248,3 +253,26 @@ export function resetTranscriptionPointFilter() {
  * @type {import('svelte/store').Writable<'double'|null>}
  */
 export const transcriptionCubeRequestStore = writable(null);
+
+/**
+ * Le plateau du brouillon est-il montré RETOURNÉ, joueur 2 en bas ?
+ *
+ * Pourquoi il existe. Hors transcription, le plateau montre toujours le camp au
+ * trait en bas : une position de la bibliothèque est enregistrée normalisée, le
+ * camp au trait EST le joueur 0, et rien n'oscille. Un brouillon, lui, est une
+ * partie qui se déroule : le trait change à chaque demi-coup, et la même règle y
+ * faisait basculer le damier d'un tour sur l'autre — les pions de celui qu'on
+ * vient de regarder passaient en haut, ceux d'en face descendaient, et l'œil
+ * refaisait le trajet à chaque jet. Le panneau montre donc le JOUEUR 1 en bas,
+ * comme le fait déjà le mode Match, et le trait se lit aux dés, qui changent de
+ * côté.
+ *
+ * Ce que ce magasin n'est PAS : le geste `swap_players` de l'en-tête
+ * (TranscriptionMetadata.svelte), qui échange les deux joueurs DANS le document
+ * — les noms, les camps, les Actions. Ici rien n'est modifié : c'est une
+ * préférence d'affichage, et le brouillon enregistré est le même dans les deux
+ * sens.
+ *
+ * @type {import('svelte/store').Writable<boolean>}
+ */
+export const transcriptionBoardSwapStore = writable(false);

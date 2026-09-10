@@ -1084,6 +1084,8 @@
         "tournamentNone": "None",
         "swapPlayers": "Swap the players",
         "swapPlayersTooltip": "Exchange the two players: the names, the sides and the board",
+        "boardSwap": "Flip the board",
+        "boardSwapTooltip": "Show player 2 at the bottom; display only, the draft is unchanged",
         "matchLength": "Length",
         "moneyHint": "0 = money game",
         "lengthTooltip": "Changing the length replays the whole match",

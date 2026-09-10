@@ -116,6 +116,7 @@
         transcriptionWheelStore,
         transcriptionInfoStore,
         transcriptionPromptStore,
+        transcriptionBoardSwapStore,
         setTranscription,
         clearTranscription,
         resetTranscriptionKeys,
@@ -1594,6 +1595,14 @@
                 <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
                 <span class="save-state">{$t(saveState.key, saveState.params)}</span>
                 <span class="bar-gap"></span>
+                <button
+                    class="icon-btn"
+                    class:active={$transcriptionBoardSwapStore}
+                    onclick={() => transcriptionBoardSwapStore.update((v) => !v)}
+                    title={$t('transcription.boardSwapTooltip')}
+                    aria-label={$t('transcription.boardSwap')}
+                    aria-pressed={$transcriptionBoardSwapStore}>⇅</button
+                >
                 <button class="icon-btn" onclick={() => runCommand(COMMAND.UNDO)} title={$t('transcription.undoTooltip')} aria-label={$t('transcription.undo')}>↶</button>
                 <button class="icon-btn" onclick={() => runCommand(COMMAND.REDO)} title={$t('transcription.redoTooltip')} aria-label={$t('transcription.redo')}>↷</button>
                 <button class="new-btn" onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}>{$t('transcription.metadata')}</button>

@@ -1084,6 +1084,8 @@
         "tournamentNone": "Ei mitään",
         "swapPlayers": "Vaihda pelaajat keskenään",
         "swapPlayersTooltip": "Vaihda kaksi pelaajaa keskenään: nimet, puolet ja lauta",
+        "boardSwap": "Käännä lauta",
+        "boardSwapTooltip": "Näytä pelaaja 2 alhaalla; vain näkymä, luonnos ei muutu",
         "matchLength": "Pituus",
         "moneyHint": "0 = rahapeli",
         "lengthTooltip": "Pituuden muuttaminen toistaa koko ottelun uudelleen",

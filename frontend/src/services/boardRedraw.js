@@ -17,6 +17,7 @@ import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { searchOfferedCubeStore } from '../stores/searchExcludePositionStore.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { pipcountVisibleStore } from '../stores/uiStore.js';
+import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 
 /**
  * Les stores dont tout changement rend le plateau sale. Nommés, parce qu'un
@@ -34,7 +35,11 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     Object.freeze({ name: 'quizPlay', store: quizPlayStore }),
     // La visibilité du pipcount : la préférence de l'utilisateur, ou le masque
     // d'une question de Pions (#320).
-    Object.freeze({ name: 'pipcountVisible', store: pipcountVisibleStore })
+    Object.freeze({ name: 'pipcountVisible', store: pipcountVisibleStore }),
+    // Le sens du plateau pendant une transcription : le joueur 1 en bas, ou le
+    // joueur 2. Rien d'autre ne change quand on la bascule — pas même la
+    // position — donc rien d'autre ne demanderait le repaint.
+    Object.freeze({ name: 'transcriptionBoardSwap', store: transcriptionBoardSwapStore })
 ]);
 
 /**

@@ -17,6 +17,7 @@ import { get } from 'svelte/store';
 
 import { BOARD_REDRAW_TRIGGERS, subscribeBoardRedrawTriggers } from '../services/boardRedraw.js';
 import { showPipcountStore, pipcountVisibleStore } from '../stores/uiStore.js';
+import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 import { trainingSessionStore } from '../stores/trainingTabStore.js';
 import { newSession, askQuestion, reveal } from '../services/trainingTab.js';
 
@@ -40,6 +41,21 @@ beforeEach(() => {
 describe('les déclencheurs de repaint', () => {
     test('la visibilité du pipcount en fait partie', () => {
         expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('pipcountVisible');
+    });
+
+    test('le sens du plateau d’une transcription aussi', () => {
+        // Rien d'autre ne change quand on la bascule — pas même la position —,
+        // donc rien d'autre ne demanderait le repaint : le bouton resterait
+        // enfoncé sur un plateau immobile.
+        expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('transcriptionBoardSwap');
+
+        const schedule = vi.fn();
+        const unsubscribe = subscribeBoardRedrawTriggers(schedule);
+        schedule.mockClear();
+        transcriptionBoardSwapStore.set(true);
+        expect(schedule, 'inverser les camps doit REPEINDRE').toHaveBeenCalled();
+        transcriptionBoardSwapStore.set(false);
+        unsubscribe();
     });
 
     test('chaque déclencheur demande un repaint, et le désabonnement les arrête tous', () => {

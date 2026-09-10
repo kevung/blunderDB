@@ -1084,6 +1084,8 @@
         "tournamentNone": "Keine",
         "swapPlayers": "Spieler vertauschen",
         "swapPlayersTooltip": "Die beiden Spieler tauschen: Namen, Seiten und Brett",
+        "boardSwap": "Brett umdrehen",
+        "boardSwapTooltip": "Spieler 2 unten anzeigen; nur die Anzeige, der Entwurf bleibt unverändert",
         "matchLength": "Länge",
         "moneyHint": "0 = Geldpartie",
         "lengthTooltip": "Eine geänderte Länge spielt das ganze Match neu ab",
