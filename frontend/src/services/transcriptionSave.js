@@ -103,25 +103,36 @@ export function savedMatchID(annotated) {
  * enregistrement, avant que le geste suivant ne rapporte un document portant
  * enfin son `match_id`.
  */
+/**
+ * Ce que la barre du brouillon dit de son MATCH — jamais du salut du brouillon
+ * (ADR-0048 décision 12).
+ *
+ * « jamais enregistré » portait deux concepts en un mot et montrait l'alarmant :
+ * le brouillon est écrit après chaque Action (`ApplyTranscriptionGesture` écrit
+ * la ligne, `durableJSON` avant/après), il n'y a rien à signaler, et la prudence
+ * que la phrase inspirait matérialisait le Match entier et lançait un lot
+ * d'analyse 2-ply à chaque fois. Ces clés nomment donc l'objet qui existe ou
+ * n'existe pas : le Match.
+ */
 export function draftSaveState(draft, saved, now = Date.now()) {
     const annotated = draft?.annotated ?? null;
     const own = saved && draft && saved.id === draft.id ? saved : null;
     const matchId = savedMatchID(annotated) || own?.matchId || 0;
-    if (!matchId) return { key: 'transcription.stateNeverSaved', params: {} };
+    if (!matchId) return { key: 'transcription.stateNoMatch', params: {} };
 
     // Un brouillon enregistré lors d'une session précédente porte son match id
     // et rien d'autre : l'heure de l'enregistrement n'a jamais été écrite nulle
     // part (ADR-0045 §8 — aucun état n'est stocké pour cela).
     if (!own || own.matchId !== matchId) {
-        return { key: 'transcription.stateSavedAs', params: { id: matchId } };
+        return { key: 'transcription.stateMatchUpToDate', params: { id: matchId } };
     }
     if (own.signature !== documentSignature(annotated)) {
-        return { key: 'transcription.stateModifiedSince', params: {} };
+        return { key: 'transcription.stateMatchBehind', params: {} };
     }
     const minutes = Math.floor(Math.max(0, now - own.at) / 60000);
-    if (minutes < 1) return { key: 'transcription.stateSavedJustNow', params: {} };
-    if (minutes < 60) return { key: 'transcription.stateSavedMinutes', params: { n: minutes } };
-    return { key: 'transcription.stateSavedHours', params: { n: Math.floor(minutes / 60) } };
+    if (minutes < 1) return { key: 'transcription.stateMatchJustUpdated', params: {} };
+    if (minutes < 60) return { key: 'transcription.stateMatchMinutes', params: { n: minutes } };
+    return { key: 'transcription.stateMatchHours', params: { n: Math.floor(minutes / 60) } };
 }
 
 /**

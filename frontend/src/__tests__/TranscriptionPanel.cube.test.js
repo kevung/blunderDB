@@ -17,6 +17,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListTranscriptions: vi.fn().mockResolvedValue([]),
@@ -36,7 +37,7 @@ import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionStore, clearTranscription, transcriptionPromptStore, transcriptionInfoStore } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -118,38 +119,58 @@ describe('le videau', () => {
 
     test('une réponse attendue montre les deux touches et cache les dés', async () => {
         await openedPanel(annotated({ expects: 'take', side: 1, cube: { owner: 1, value: 1 } }));
-        expect(await screen.findByText('t = take, p = pass.')).toBeTruthy();
-        expect(screen.getByText("Alice's answer to the double")).toBeTruthy();
+        // La ligne d'instruction « t = take, p = pass » a disparu du panneau
+        // (ADR-0048 décision 8) : une instruction permanente est l'aveu qu'un
+        // geste ne se devine pas, et sa place est raccourcis.rst et l'aide
+        // engendrée. Ce qui reste dit, et qui suffit : l'Action attendue, et la
+        // rangée qui n'allume que les deux boutons qui répondent à quelque chose.
+        await vi.waitFor(() => {
+            const prompt = get(transcriptionPromptStore);
+            expect(prompt?.key).toBe('transcription.answerPrompt');
+            expect(prompt?.params?.player).toBe('Alice');
+        });
         // La valeur affichée est celle OFFERTE : c'est ce que pèse le preneur.
-        expect(screen.getByText('Double to 2')).toBeTruthy();
+        expect(get(transcriptionInfoStore)?.cubeKey).toBe('transcription.doubleOffered');
+        expect(get(transcriptionInfoStore)?.cubeParams?.v).toBe(2);
         expect(document.querySelectorAll('.die')).toHaveLength(0);
     });
 
     test('le videau centré, puis possédé, est dit tel quel', async () => {
         await openedPanel();
-        expect(await screen.findByText('Cube 1 (centred)')).toBeTruthy();
+        await vi.waitFor(() => expect(get(transcriptionInfoStore)?.cubeKey).toBe('transcription.cubeCentred'));
 
         cleanup();
         await openedPanel(annotated({ cube: { owner: 0, value: 2 } }));
-        expect(await screen.findByText('Cube 4 · Kévin')).toBeTruthy();
+        await vi.waitFor(() => {
+            const info = get(transcriptionInfoStore);
+            expect(info?.cubeKey).toBe('transcription.cubeOwned');
+            expect(info?.cubeParams).toEqual({ v: 4, player: 'Kévin' });
+        });
     });
 });
 
 describe('la fin de partie et la fin de match', () => {
     test('le score et la partie suivante viennent du Replay', async () => {
         await openedPanel(annotated({ expects: 'opening', score: [3, 2], game: 4 }));
-        expect(await screen.findByText('Score 3–2')).toBeTruthy();
-        expect(screen.getByText('Game 4')).toBeTruthy();
+        await vi.waitFor(() => {
+            const info = get(transcriptionInfoStore);
+            expect(info?.score).toEqual([3, 2]);
+            expect(info?.gameNumber).toBe(4);
+        });
     });
 
     test('la mention Crawford est celle que le moteur a dérivée', async () => {
         await openedPanel(annotated({ expects: 'opening', score: [6, 2], crawford: true, game: 7 }));
-        expect(await screen.findByText('Crawford')).toBeTruthy();
+        await vi.waitFor(() => expect(get(transcriptionInfoStore)?.crawford).toBe(true));
     });
 
     test('le match terminé le dit, avec son vainqueur', async () => {
         await openedPanel(annotated({ expects: 'opening', score: [7, 4], finished: true, winner: 0 }));
-        expect(await screen.findByText('Match over: Kévin wins 7–4.')).toBeTruthy();
+        await vi.waitFor(() => {
+            const prompt = get(transcriptionPromptStore);
+            expect(prompt?.key).toBe('transcription.matchOver');
+            expect(prompt?.params).toEqual({ player: 'Kévin', a: 7, b: 4 });
+        });
     });
 });
 

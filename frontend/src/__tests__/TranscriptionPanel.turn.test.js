@@ -35,7 +35,7 @@ import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, transcriptionPromptStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -182,7 +182,11 @@ describe('le tour de pions', () => {
         await vi.waitFor(() => expect(gestures().at(-1)).toEqual({ Kind: 'dance' }));
         // Aucun classement n'a été demandé : il n'y a rien à classer.
         expect(EvaluatePositionImmediate).not.toHaveBeenCalled();
-        expect(await screen.findByText('No legal play: the dance is recorded.')).toBeTruthy();
+        // La phrase habite la BARRE D'ÉTAT depuis ADR-0048 (décisions 2 et 8) :
+        // le panneau ne porte plus de prose, il pose l'Action attendue dans un
+        // magasin que la barre lit. Ce test monte le panneau seul, donc il lit
+        // le magasin — ce que la barre lirait.
+        await vi.waitFor(() => expect(get(transcriptionPromptStore)?.key).toBe('transcription.dance'));
     });
 
     // Un moteur qui refuse (un score hors de portée de la MET, une compilation

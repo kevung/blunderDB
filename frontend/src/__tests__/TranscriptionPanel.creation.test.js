@@ -36,7 +36,7 @@ import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTransc
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, clearTranscription, transcriptionPromptStore } from '../stores/transcriptionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 
@@ -130,7 +130,10 @@ describe('le formulaire de création', () => {
         await tick();
 
         expect(CreateTranscription).toHaveBeenCalledWith({ match_length: 5, jacoby: false, beaver: false });
-        await screen.findByText('Opening dice');
+        // L'Action attendue habite la barre d'état (ADR-0048 décision 2, qui
+        // applique enfin ux.md §5) ; ce test monte le panneau seul et lit donc
+        // le magasin que la barre lit.
+        await vi.waitFor(() => expect(get(transcriptionPromptStore)?.key).toBe('transcription.openingPrompt'));
     });
 
     test('une partie d’argent porte les règles de session cochées', async () => {
@@ -176,7 +179,7 @@ describe("l'ouverture", () => {
         await tick();
 
         expect(get(transcriptionKeyStore).tie).toBe(true);
-        expect(await screen.findByText('Tie: roll again.')).toBeTruthy();
+        await vi.waitFor(() => expect(get(transcriptionPromptStore)?.key).toBe('transcription.tie'));
     });
 
     test('le gagnant a le trait, avec les deux dés de l’ouverture', async () => {
@@ -195,6 +198,10 @@ describe("l'ouverture", () => {
 
         // Le jet reste affiché, plus fort d'abord : il n'est pas ressaisi.
         expect(get(transcriptionKeyStore).dice).toEqual([5, 2]);
-        expect(await screen.findByText("Player 2's dice")).toBeTruthy();
+        await vi.waitFor(() => {
+            const prompt = get(transcriptionPromptStore);
+            expect(prompt?.key).toBe('transcription.rollPrompt');
+            expect(prompt?.params?.player).toBe('Player 2');
+        });
     });
 });

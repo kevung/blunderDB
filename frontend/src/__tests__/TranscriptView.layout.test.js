@@ -7,7 +7,11 @@
  * disposition de `testdata/test.mat` et de toute feuille de match. Plus les
  * quatre autres promesses de la recette (ux.md §5) : la cellule du Cursor
  * encadrée, chaque Incohérence décorée et NOMMÉE, la partie courante ouverte
- * et les autres repliées, le texte `.mat` copié tel quel.
+ * et les autres repliées. Le texte `.mat` a quitté ce composant : c'est une
+ * modale du panneau de transcription (ADR-0048 décision 6), parce qu'un `.mat`
+ * est de l'ASCII aligné en colonnes que 320 px désalignent, et parce qu'un volet
+ * propre au brouillon n'avait rien à faire dans un composant que le panneau
+ * Match doit pouvoir monter sur un match stocké.
  *
  * La vue ne dérive rien : tout ce qu'elle affiche lui est donné par le Replay
  * annoté du paquet Go. Les documents montés ici sont donc des `Annotated`
@@ -18,11 +22,6 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
-vi.mock('../services/clipboardService.js', () => ({
-    writeTextToClipboard: vi.fn().mockResolvedValue(undefined)
-}));
-
-import { writeTextToClipboard } from '../services/clipboardService.js';
 // La langue par défaut des tests est l'anglais : les info-bulles sont
 // comparées au catalogue lui-même, jamais à une phrase recopiée à la main.
 import en from '../i18n/locales/en.json';
@@ -258,27 +257,5 @@ describe('les parties sont repliables', () => {
         for (let i = 0; i < 4; i++) await tick();
 
         expect(container.querySelector('[data-index="1"]')).not.toBeNull();
-    });
-});
-
-describe('le volet du texte .mat', () => {
-    const MAT = '; [Player 1 "Kévin"]\n\n7 point match\n\n Game 1\n Kévin : 0                 Alice : 0\n  1) 31: 8/5 6/5                52: 13/8 13/11\n';
-
-    test('le texte est montré tel quel et copié tel quel', async () => {
-        const { container } = render(TranscriptView, { props: { annotated: ORDINARY, matText: MAT } });
-        expect(container.querySelector('.mat-text').textContent).toBe(MAT);
-
-        await fireEvent.click(container.querySelector('.copy-btn'));
-        expect(writeTextToClipboard).toHaveBeenCalledWith(MAT);
-    });
-
-    test('déplier le volet est annoncé à l’appelant, qui va chercher le texte', async () => {
-        const onMatToggle = vi.fn();
-        const { container } = render(TranscriptView, { props: { annotated: ORDINARY, matText: '', onMatToggle } });
-        const pane = container.querySelector('details.mat');
-
-        pane.open = true;
-        await fireEvent(pane, new Event('toggle'));
-        expect(onMatToggle).toHaveBeenCalledWith(true);
     });
 });

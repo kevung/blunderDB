@@ -40,6 +40,12 @@
         isPlayedMove = () => false,
         onSort = () => {},
         onRowClick = () => {},
+        // Double-clic : valider (ADR-0048 décision 11). Le simple clic
+        // sélectionne — les flèches du plateau suivent, et c'est là que l'on
+        // reconnaît le coup —, le double enregistre. C'est le seul chemin souris
+        // vers le dernier coup d'une partie, qui n'a pas de jet suivant pour
+        // porter sa validation.
+        onRowDblClick = undefined,
         showProvenance = true,
         baseline = null,
         isMoney = undefined,
@@ -84,7 +90,7 @@
         {/if}
         <tbody>
             {#each block.rows as row (row.key)}
-                <tr class:selected={selectedMove === row.move.move} class:played={row.highlight} onclick={() => onRowClick(row.move)}>
+                <tr class:selected={selectedMove === row.move.move} class:played={row.highlight} onclick={() => onRowClick(row.move)} ondblclick={() => onRowDblClick?.(row.move)}>
                     <td>{row.label}</td>
                     {#each row.cells as cell, i (i)}
                         <td>{cell}</td>

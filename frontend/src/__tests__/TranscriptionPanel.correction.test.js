@@ -37,7 +37,8 @@ import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, transcriptionHistoryStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { get } from 'svelte/store';
+import { transcriptionListStore, transcriptionStore, transcriptionHistoryStore, transcriptionNoticeStore, transcriptionPromptStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -131,14 +132,19 @@ describe('les touches de correction deviennent des gestes, sans camp', () => {
 });
 
 describe('les mêmes gestes à la souris', () => {
-    test('les six boutons de la barre de correction', async () => {
+    // ADR-0048 décision 3 : la barre de correction n'existe plus. Ses six
+    // boutons agissaient sur « l'Action au Cursor », c'est-à-dire sur une cible
+    // que l'utilisateur ne voit pas nécessairement, quand le clic droit sur une
+    // cellule du Transcript offre les quatre mêmes gestes EN NOMMANT sa cible.
+    // Les quatre passent donc par le menu — tenu par TranscriptionPanel.mouse —
+    // et l'annulation garde ses deux flèches, qui sont le chemin souris exigé
+    // par R3 (décision 11).
+    test('annuler et rétablir ont chacun leur bouton dans la barre du brouillon', async () => {
+        // La pile reste garnie des deux côtés : ce test regarde le CHEMIN (R3),
+        // pas l'épuisement de la pile, qui est le test suivant.
+        ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated(), { can_undo: true, can_redo: true })));
         await openedPanel(annotated(), { can_undo: true, can_redo: true });
-        // Les tests tournent en anglais : ce sont les libellés du bundle `en`.
         for (const [title, kind] of [
-            [/Insert an action before/i, 'insert_before'],
-            [/Insert an action after/i, 'insert_after'],
-            [/Delete the action under the cursor/i, 'delete'],
-            [/Give the action under the cursor/i, 'flip_side'],
             [/Undo the last gesture/i, 'undo'],
             [/Redo the undone gesture/i, 'redo']
         ]) {
@@ -148,24 +154,21 @@ describe('les mêmes gestes à la souris', () => {
         }
     });
 
-    test('annuler et rétablir sont éteints quand la pile est vide', async () => {
+    // ADR-0048 décision 9 : le bouton grisé était le seul de la famille des
+    // gestes sans effet à dire quelque chose, et c'est celui qui disparaît. La
+    // réponse est désormais transitoire, dans la barre d'état — ce qui vaut
+    // aussi pour le clavier, où aucun bouton grisé n'a jamais rien dit.
+    test('annuler sur une pile vide répond au lieu de se taire', async () => {
         await openedPanel();
-        expect(screen.getByTitle(/Undo the last gesture/i)).toBeDisabled();
-        expect(screen.getByTitle(/Redo the undone gesture/i)).toBeDisabled();
+        await fireEvent.click(screen.getByTitle(/Undo the last gesture/i));
+        expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.nothingToUndo');
+        expect(gestures()).toEqual([]);
     });
 
-    test('supprimer et changer de camp sont éteints en bout de document, insérer non', async () => {
-        // Le Cursor est passé la dernière Action : il n'y a rien à supprimer ni
-        // à donner à l'autre camp, mais il y a toujours une place où insérer.
-        await openedPanel(annotated({ cursor: 3 }));
-        expect(screen.getByTitle(/Delete the action under the cursor/i)).toBeDisabled();
-        expect(screen.getByTitle(/Give the action under the cursor/i)).toBeDisabled();
-        expect(screen.getByTitle(/Insert an action before/i)).not.toBeDisabled();
-    });
-
-    test('x et s en bout de document ne font rien plutôt que d’afficher une erreur du moteur', async () => {
+    test('x et s en bout de document répondent, et n’envoient rien', async () => {
         await openedPanel(annotated({ cursor: 3 }));
         await press('KeyX');
+        expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.noAction');
         await press('KeyS');
         await tick();
         expect(gestures()).toEqual([]);
@@ -194,18 +197,21 @@ describe('une correction se joue depuis la position visée', () => {
         expect(asked.dice).toEqual([5, 2]);
     });
 
+    // Les deux phrases sont des états de l'Entry, donc de la nature « ce que le
+    // document attend » : elles habitent la barre d'état (ADR-0048 décision 8),
+    // que ce test lit par son magasin puisqu'il monte le panneau seul.
     test('« à revoir » est dit par le moteur, jamais deviné par le panneau', async () => {
         await openedPanel(annotated({ cursor: 1, entry: { at: 1, replacing: true, side: 1, dice: [2, 1], selected: true, review: true } }));
-        expect(screen.getByText(/to review/i)).toBeInTheDocument();
+        expect(get(transcriptionPromptStore)?.key).toBe('transcription.reviewHint');
     });
 
     test('une correction en place se dit à l’écran, et une saisie neuve ne le dit pas', async () => {
         await openedPanel(annotated({ cursor: 1, entry: { at: 1, replacing: true, side: 1, dice: [6, 3], selected: true, review: false } }));
-        expect(screen.getByText(/Correcting in place/i)).toBeInTheDocument();
+        expect(get(transcriptionPromptStore)?.key).toBe('transcription.correcting');
 
         cleanup();
         await openedPanel(annotated({ cursor: 3, entry: { at: 3, replacing: false, side: 1, dice: [0, 0], selected: false, review: false } }));
-        expect(screen.queryByText(/Correcting in place/i)).toBeNull();
+        expect(get(transcriptionPromptStore)?.key).not.toBe('transcription.correcting');
     });
 });
 

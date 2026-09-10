@@ -189,30 +189,30 @@ describe('la fermeture', () => {
 
 describe("l'état du brouillon", () => {
     test('jamais enregistré tant que le document ne porte pas de match', () => {
-        expect(draftSaveState(draft({ actions: clean }), null).key).toBe('transcription.stateNeverSaved');
+        expect(draftSaveState(draft({ actions: clean }), null).key).toBe('transcription.stateNoMatch');
     });
 
     test('enregistré il y a tant, puis modifié depuis', () => {
         const d = draft({ matchId: 7, actions: clean });
         const saved = { id: 1, matchId: 7, at: 0, signature: documentSignature(d.annotated) };
 
-        expect(draftSaveState(d, saved, 30_000).key).toBe('transcription.stateSavedJustNow');
+        expect(draftSaveState(d, saved, 30_000).key).toBe('transcription.stateMatchJustUpdated');
         expect(draftSaveState(d, saved, 5 * 60_000)).toEqual({
-            key: 'transcription.stateSavedMinutes',
+            key: 'transcription.stateMatchMinutes',
             params: { n: 5 }
         });
         expect(draftSaveState(d, saved, 3 * 3_600_000)).toEqual({
-            key: 'transcription.stateSavedHours',
+            key: 'transcription.stateMatchHours',
             params: { n: 3 }
         });
 
         const corrected = draft({ matchId: 7, actions: [...clean, { kind: 'checker', inconsistencies: [] }] });
-        expect(draftSaveState(corrected, saved, 30_000).key).toBe('transcription.stateModifiedSince');
+        expect(draftSaveState(corrected, saved, 30_000).key).toBe('transcription.stateMatchBehind');
     });
 
     test("un brouillon enregistré lors d'une session précédente le dit sans mentir sur l'heure", () => {
         const d = draft({ matchId: 7, actions: clean });
-        expect(draftSaveState(d, null)).toEqual({ key: 'transcription.stateSavedAs', params: { id: 7 } });
+        expect(draftSaveState(d, null)).toEqual({ key: 'transcription.stateMatchUpToDate', params: { id: 7 } });
     });
 });
 
