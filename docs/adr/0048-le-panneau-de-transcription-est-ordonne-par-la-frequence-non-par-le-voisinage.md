@@ -286,6 +286,38 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
     des enregistrements inutiles — le mot — non de rendre l'enregistrement moins cher pour
     qu'on continue de le faire pour de mauvaises raisons.
 
+13. **Le contrat est mesuré à deux tailles nommées, et l'une des trois assertions tient la
+    règle et non le symptôme.** La maison a déjà les deux patrons : `eval-panel-no-scroll.spec.js`
+    mesure `scrollHeight - clientHeight` à la taille par défaut et compare des `boundingBox`
+    pour tenir « à côté, pas dessous » (ADR-0021) — son en-tête énonce le principe qui manquait
+    ici, *« a property nobody measures after three layout changes is not a property »* — et
+    `transcription-budgets.spec.js` compte déjà les gestes de `ux.md` §§4.1–4.3 sur
+    l'application réelle avec `countGestures`.
+
+    Tailles : **dock bas 280 px** (viewport 1280×800 de la configuration, où les trois colonnes
+    demandent 220 + 8 + 280 + 8 + 320 = 836 px) et **dock latéral 420 px**. Assertions :
+
+    1. **`.tab-content` ne défile pas**, brouillon ouvert — l'anti-régression précise du
+       défaut : c'est ce conteneur-là qui défile aujourd'hui, pas le panneau.
+    2. **Cinq lignes de candidats sont *entièrement* dans le rectangle visible de la liste**,
+       par `boundingBox` et non par `count()` : une ligne montée mais rognée ne compte pas,
+       sinon on affirme une présence dans le DOM et non le contrat.
+    3. **Le haut de la première ligne de candidats est à moins de X px du bas des cases du
+       jet.** C'est la seule des trois qui mesure la **règle** plutôt que le symptôme. Sans
+       elle, on satisfait 1 et 2 en rétrécissant le triangle et en le remettant entre les deux
+       — c'est-à-dire par la faute même que cet enregistrement corrige.
+
+    La spec est posée **avant** les changements, en rouge. `test('le meilleur coup joué coûte
+    trois touches')` de `transcription-budgets.spec.js` passera au rouge de lui-même sous la
+    décision 1 : c'est le comportement voulu, il devient « deux touches », et une ligne s'y
+    ajoute pour le chiffre sur une Action relue. Exécution locale avec `BLUNDERDB_E2E_PORT`
+    sur un port libre — 5173 est squatté, et un port squatté fait passer toute la suite sur
+    une autre application en silence.
+
+    Écarté : le **balayage paramétré** de largeurs et de hauteurs. Il trouve davantage, mais il
+    transforme un contrat en distribution, et personne ne saura dire dans six mois à quel point
+    de rupture le rouge est légitime.
+
 ## Options écartées
 
 - **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet partout, `Entrée`
@@ -332,8 +364,8 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
   colonnes par celle à trois. La méthode de mesure de §1 reçoit une note : M n'est hors
   comparaison que lorsque les designs comparés n'ajoutent pas de mode.
 - Le contrat `N = 5` est **testé en pixels**, pas en présence dans le DOM, dans les deux
-  régimes de dock. Une spec qui vérifie que la liste est montée ne verrait rien de tout ce que
-  cet enregistrement corrige.
+  régimes de dock (décision 13). Une spec qui vérifie que la liste est montée ne verrait rien
+  de tout ce que cet enregistrement corrige.
 - Les chiffres de cet enregistrement sont **calculés** depuis les tokens et les styles des
   composants, non relevés dans l'application en marche. La spec Playwright ci-dessus est aussi
   ce qui les confirmera ou les démentira ; le cas échéant, c'est elle qui a raison.
