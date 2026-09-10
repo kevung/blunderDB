@@ -165,6 +165,34 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
    moyen de le lever. *Alerte* (Incohérence) → un **bandeau en tête de la colonne Transcript**,
    là où est la cellule fautive.
 
+9. **Un geste sans effet répond, une fois, dans la barre d'état.** Retirer la barre de
+   correction (décision 3) supprimait le seul endroit où l'application disait « il n'y a rien
+   à annuler » — le bouton `disabled={!history.canUndo}` — et ce n'est pas un cas rare : la
+   pile vit dans le `transcript.Editor` de la session et nulle part ailleurs (ADR-0045
+   règle 1), donc un brouillon réouvert en a une **vide par construction**, c'est-à-dire à
+   chaque session après la première. Une promesse prise exprès qui ne se dit jamais est
+   indiscernable d'un bug.
+
+   C'est une famille, non un cas. Quatre gestes n'ont rien à faire dans un état ordinaire et
+   se taisent tous les quatre : `Ctrl+Z` sur une pile vide, `x` / `Suppr` / `s` quand le
+   Cursor est en bout de document — donc la plupart du temps —, `t` / `p` sans offre en face,
+   `Retour arrière` sans dé saisi. Trois d'entre eux sont au clavier, donc sans même un bouton
+   grisé pour les porter.
+
+   R2 tranche l'emplacement : un geste sans effet ne parle ni du document, ni de la liste, ni
+   du Transcript — il parle de lui-même, et un geste n'a pas de lieu. Il va donc dans la barre
+   d'état, **transitoirement** (~1,5 s, puis la phrase de l'Action attendue revient). Rien de
+   permanent : un bouton grisé répond à une question que personne ne pose 249 tours sur 250,
+   une phrase qui paraît sous la frappe répond exactement quand on la pose. Aucune concurrence
+   avec l'alerte d'Incohérence, qui vit dans le bandeau du Transcript (décision 8).
+
+   **Exception assumée : `t` et `p` filent au répartiteur global et ne reçoivent pas de
+   réponse.** `p` y vaut `togglePipcount()` — le compte de pions, inoffensif et légitimement
+   voulu pendant qu'on transcrit — et `t` n'a aucune liaison globale. Refuser `p` par « aucun
+   double en attente » quand l'utilisateur voulait le compte de pions serait une calomnie. La
+   double lecture de `p` a la structure retenue à la décision 1 : le discriminant est dessiné
+   — la barre d'état dit « réponse de X au double » et la rangée n'allume `[T][P]` que là.
+
 ## Options écartées
 
 - **Garder l'arbitrage du 2026-09-07** (la touche chiffrée recommence le jet partout, `Entrée`
@@ -182,6 +210,12 @@ le meilleur coup rend le contrat faux dès qu'on s'en sert. Rangs 1 à 5 ≈ 88 
 - **Une page dédiée plein écran pour la transcription.** Écartée pour l'instant : le contrat
   tient dans le dock une fois les quatre causes traitées, et un douzième mode d'affichage se
   paie en documentation, en visite guidée et en tests. À rouvrir si le contrat cède.
+- **Garder deux boutons `↶ ↷`** dans la barre du brouillon, désactivés sur une pile vide.
+  Écarté au profit de la décision 9 — mais ce n'était **pas** incohérent avec la décision 3 :
+  l'argument « un bouton dont la cible est invisible est moins découvrable » ne vaut que pour
+  les quatre gestes qui agissent sur l'Action au Cursor, pas pour ces deux-là, dont la cible
+  est la session et n'a pas de lieu. Écarté parce qu'un signal permanent répond à une question
+  qu'on ne pose presque jamais, et parce que la décision 9 en couvre quatre au lieu d'un.
 - **Une ligne de message unique dans le panneau**, montrant au plus un message par priorité.
   Écartée : un ordre de priorité veut dire qu'un jour « filtre actif » masquera
   « incohérence ».
