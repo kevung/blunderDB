@@ -535,6 +535,12 @@
                 exceptDiceFilter: f.xd,
                 positionIDsFilter: f.posIds,
                 gamePhaseFilter: f.ph,
+                // `gt:`, `#tag` et `n>3` étaient lus par parseSearchCommand et
+                // jamais transmis (#362) : le rejeu d'un historique ou d'un
+                // filtre de la bibliothèque rendait la recherche sans eux.
+                gameTypeFilter: f.gt,
+                tagFilter: f.tags,
+                encounterFilter: f.encounterFilter,
                 commentOriginFilter: f.coOrigin
             });
         }
