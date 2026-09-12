@@ -56,6 +56,6 @@
 
     .highlight {
         font-weight: bold;
-        color: red;
+        color: var(--color-danger);
     }
 </style>

@@ -1188,7 +1188,8 @@
         border: 1px solid var(--color-border);
         border-radius: 4px;
         box-sizing: border-box;
-        background-color: white;
+        background-color: var(--color-surface);
+        color: var(--color-text);
     }
 
     .setting-select:focus {
@@ -1218,7 +1219,7 @@
     }
 
     .regenerate-confirm {
-        border-left: 3px solid #b3261e;
+        border-left: 3px solid var(--color-danger);
         padding-left: 8px;
         margin: 4px 0;
     }
@@ -1240,11 +1241,13 @@
     }
 
     .setting-note.warn {
-        color: #b3261e;
+        color: var(--color-danger);
     }
 
     .setting-note.ok {
-        color: #1a7f37;
+        /* Green alone falls to 3.3:1 on the dark surface: drawn towards the ink, it
+           keeps its hue and stays above 4.5:1 in every theme. */
+        color: color-mix(in srgb, #1a7f37 70%, var(--color-text));
     }
 
     .setting-input {
@@ -1267,7 +1270,7 @@
     .tabs {
         display: flex;
         gap: 2px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--color-border);
         margin-bottom: 8px;
     }
 
@@ -1277,12 +1280,12 @@
         border: none;
         border-bottom: 2px solid transparent;
         background: none;
-        color: #5f6368;
+        color: var(--color-text-muted);
         cursor: pointer;
     }
 
     .tab:hover {
-        color: #202124;
+        color: var(--color-text);
     }
 
     .tab.active {
@@ -1331,11 +1334,12 @@
         padding: 4px 10px;
         border: 1px solid var(--color-border);
         border-radius: 4px;
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
+        color: var(--color-text);
         cursor: pointer;
     }
 
     .secondary-button:hover {
-        background-color: #e9e9e9;
+        background-color: color-mix(in srgb, var(--color-border) 40%, var(--color-surface-alt));
     }
 </style>

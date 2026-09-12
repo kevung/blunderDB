@@ -75,7 +75,7 @@
         margin: 0 0 8px;
         font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
-        color: #555;
+        color: var(--color-text-muted);
         word-break: break-all;
     }
 
@@ -113,12 +113,12 @@
         gap: 6px;
         margin-top: 10px;
         font-size: var(--font-size-base);
-        color: #3c4043;
+        color: var(--color-text);
         cursor: pointer;
     }
 
     .error {
-        color: #b3261e;
+        color: var(--color-danger);
         font-size: var(--font-size-base);
         margin: 6px 0 0;
     }

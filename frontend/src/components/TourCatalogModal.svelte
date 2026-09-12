@@ -46,7 +46,7 @@
 <style>
     .catalog-desc {
         margin: 0;
-        color: #555;
+        color: var(--color-text-muted);
         font-size: var(--font-size-title);
     }
 
@@ -65,7 +65,7 @@
         justify-content: space-between;
         gap: 12px;
         padding: 10px 12px;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--color-border);
         border-radius: 6px;
         text-align: left;
     }
@@ -102,7 +102,7 @@
 
     .demo-row {
         padding-top: 12px;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -118,15 +118,15 @@
     .demo-button {
         flex: 0 0 auto;
         padding: 6px 14px;
-        border: 1px solid #6c757d;
+        border: 1px solid var(--color-text-muted);
         border-radius: 4px;
-        background-color: white;
-        color: #6c757d;
+        background-color: var(--color-surface);
+        color: var(--color-text-muted);
         cursor: pointer;
         font-size: var(--font-size-base);
     }
 
     .demo-button:hover {
-        background-color: #f0f0f0;
+        background-color: var(--color-surface-alt);
     }
 </style>

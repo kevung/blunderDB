@@ -122,9 +122,9 @@
     .stat-item {
         text-align: center;
         padding: 15px;
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
         border-radius: 4px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
     }
 
     .stat-label {

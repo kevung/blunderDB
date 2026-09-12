@@ -196,7 +196,7 @@
     }
 
     .player-list {
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         overflow-y: auto;
         max-height: 240px;
@@ -210,7 +210,7 @@
         padding: 4px 8px;
         cursor: pointer;
         font-size: var(--font-size-base);
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--color-border);
         transition: background-color 0.1s;
     }
 
@@ -219,15 +219,15 @@
     }
 
     .player-row:hover {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
     }
 
     .player-row.selected {
-        background: #e3f2fd;
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     }
 
     .player-row.selected:hover {
-        background: #bbdefb;
+        background: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface));
     }
 
     .player-name {
@@ -248,7 +248,7 @@
         border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
         cursor: pointer;
         padding: 1px 5px;
         white-space: nowrap;
@@ -276,7 +276,7 @@
 
     .canonical-label {
         font-size: var(--font-size-base);
-        color: #444;
+        color: var(--color-text);
         white-space: nowrap;
         flex-shrink: 0;
     }
@@ -301,7 +301,7 @@
 
     .selection-summary {
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
         font-style: italic;
         word-break: break-word;
     }
