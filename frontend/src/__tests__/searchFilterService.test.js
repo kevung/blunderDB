@@ -567,6 +567,12 @@ describe('buildSearchFilterPayload', () => {
         expect(buildSearchFilterPayload(board, {}, []).cubeResponseFilter).toBe('');
     });
 
+    // #362 : la synchronisation d'un paquet Anki « recherche » passe par ici.
+    test('the encounter filter (n>3) reaches the payload', () => {
+        const pf = parseFilters(['n>3'], 's n>3');
+        expect(buildSearchFilterPayload(board, pf, ['n>3']).encounterFilter).toBe('n>3');
+    });
+
     test('the comment filter survives the round trip', () => {
         const pf = parseFilters(['co'], 's co');
         expect(buildSearchFilterPayload(board, pf, ['co']).commentFilter).toBe('has');

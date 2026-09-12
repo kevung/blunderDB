@@ -62,6 +62,19 @@ describe('SearchPanel — replaying a history entry keeps every filter (#203)', 
         expect(opts.positionIDsFilter).toBe('5,10');
     });
 
+    // #362 : `n`, `gt:` et `#tag` étaient lus au rejeu et jamais transmis.
+    // Le filtre de la bibliothèque rejoue par le même executeSearch.
+    test('n (rencontres) survives the double-click replay', async () => {
+        expect((await replayHistoryEntry('s n>3')).encounterFilter).toBe('n>3');
+        expect((await replayHistoryEntry('s n2,5')).encounterFilter).toBe('n2,5');
+    });
+
+    test('gt: (plan de jeu) and #tag survive the double-click replay', async () => {
+        const opts = await replayHistoryEntry('s gt:holding #prime');
+        expect(opts.gameTypeFilter).toBe('holding');
+        expect(opts.tagFilter).toBe('#prime');
+    });
+
     test('co/xco keep resolving to the right comment presence on replay', async () => {
         expect((await replayHistoryEntry('s co')).filters).toContain('co');
         expect((await replayHistoryEntry('s xco')).filters).toContain('xco');

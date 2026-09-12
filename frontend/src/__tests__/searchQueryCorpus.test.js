@@ -91,7 +91,8 @@ const SHORT_TO_LONG = {
     posIds: 'positionIDsFilter',
     ph: 'gamePhaseFilter',
     coOrigin: 'commentOriginFilter',
-    tags: 'tagFilter'
+    tags: 'tagFilter',
+    encounterFilter: 'encounterFilter'
 };
 const LONG_TO_SHORT = Object.fromEntries(Object.entries(SHORT_TO_LONG).map(([short, long]) => [long, short]));
 

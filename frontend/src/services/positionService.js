@@ -370,6 +370,7 @@ export async function loadPositionsByFilters({
     playerFilter = '',
     gamePhaseFilter = '',
     gameTypeFilter = '',
+    encounterFilter = '',
     commentOriginFilter = '',
     tagFilter = ''
 } = {}) {
@@ -496,6 +497,7 @@ export async function loadPositionsByFilters({
             exceptDiceFilter,
             gamePhaseFilter,
             gameTypeFilter,
+            encounterFilter,
             commentOriginFilter,
             tagFilter,
             movePatternFilter,

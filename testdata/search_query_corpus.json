@@ -213,6 +213,31 @@
       }
     },
     {
+      "command": "s n>3",
+      "expected": {
+        "encounterFilter": "n>3"
+      }
+    },
+    {
+      "command": "s n2,5",
+      "expected": {
+        "encounterFilter": "n2,5"
+      }
+    },
+    {
+      "command": "s n4",
+      "expected": {
+        "encounterFilter": "n4,4"
+      }
+    },
+    {
+      "command": "s nc n<10",
+      "expected": {
+        "noContactFilter": true,
+        "encounterFilter": "n<10"
+      }
+    },
+    {
       "command": "s ph:race",
       "expected": {
         "gamePhaseFilter": "race"

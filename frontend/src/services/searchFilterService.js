@@ -237,6 +237,16 @@ export function parseSearchTokens(filtersOrCommand, command) {
         .filter((f) => typeof f === 'string' && /^#[^\s#]+$/.test(f))
         .map((f) => f.toLowerCase())
         .join(';');
+    // Rencontres : `n>3`, `n<10`, `n2,5` ou `n4` (« exactement quatre »), le
+    // nombre de coups qui aboutissent à la position (EncounterFilter, #282).
+    // Reconnu par sa FORME, pas par son préfixe : `nc` commence par la même
+    // lettre, et une règle de préfixe ferait d'une faute de frappe un filtre
+    // silencieux. Absent de cette grammaire jusqu'à #362 : tapé dans
+    // l'application, le jeton partait nulle part et la recherche rendait tout.
+    let encounterFilter = filters.find((f) => typeof f === 'string' && /^n(?:[<>]\d+|\d+(?:,\d+)?)$/.test(f)) || '';
+    if (encounterFilter && !/[,<>]/.test(encounterFilter)) {
+        encounterFilter = `${encounterFilter},${encounterFilter.slice(1)}`;
+    }
     // Exclude `pl"…"` (player filter) and `ph:…` (phase) — both start with 'p'
     // and neither is a pipcount.
     const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
@@ -350,6 +360,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         gamePhaseFilter,
         gameTypeFilter,
         tagFilter,
+        encounterFilter,
         player1OutfieldBlotFilter,
         player2OutfieldBlotFilter,
         player1JanBlotFilter,
@@ -413,6 +424,7 @@ export function parseFilterTokens(tokens) {
         gtFilter: p.gameTypeFilter,
         coOriginFilter: p.commentOriginFilter,
         tagFilter: p.tagFilter,
+        encounterFilter: p.encounterFilter,
         dtFilter: p.decisionTypeFilter,
         drFilter: p.diceRollFilter,
         drMode: p.diceRollMode,
@@ -497,6 +509,9 @@ export function parseSearchCommand(command) {
         gt: p.gameTypeFilter,
         coOrigin: p.commentOriginFilter,
         tags: p.tagFilter,
+        // Comme `like`, le jeton garde son nom entier : pas d'abréviation
+        // historique à respecter.
+        encounterFilter: p.encounterFilter,
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains'
     };
 }
@@ -602,6 +617,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         commentOriginFilter: pf.commentOriginFilter || '',
         gamePhaseFilter: pf.gamePhaseFilter || '',
         gameTypeFilter: pf.gameTypeFilter || '',
+        encounterFilter: pf.encounterFilter || '',
         likeFilter: pf.likeFilter || false,
         likeTargetId: pf.likeTargetId || 0,
         // Le plateau dessiné voyage dans son propre champ. Le mettre dans
