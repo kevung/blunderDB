@@ -213,7 +213,7 @@
 
     .progress-bar-container {
         width: 100%;
-        background-color: #e0e0e0;
+        background-color: var(--color-border);
         border-radius: 4px;
         overflow: hidden;
         height: 8px;
@@ -243,9 +243,9 @@
     .stat-item {
         text-align: center;
         padding: 15px;
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
         border-radius: 4px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
     }
 
     .stat-label {
@@ -262,21 +262,21 @@
     }
 
     .stat-value.errors {
-        color: #c33;
+        color: var(--color-danger);
     }
 
     .error-list {
         max-height: 150px;
         overflow-y: auto;
-        background-color: #fff5f5;
-        border: 1px solid #e0c0c0;
+        background-color: color-mix(in srgb, var(--color-danger) 6%, var(--color-surface));
+        border: 1px solid color-mix(in srgb, var(--color-danger) 30%, var(--color-surface));
         border-radius: 4px;
         padding: 10px;
     }
 
     .error-item {
         font-size: var(--font-size-base);
-        color: #833;
+        color: var(--color-danger);
         margin: 4px 0;
         word-break: break-all;
     }

@@ -69,16 +69,16 @@
 
     th,
     td {
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         padding: 8px;
         text-align: center;
     }
 
     .even-row {
-        background-color: #f2f2f2;
+        background-color: var(--color-surface-alt);
     }
 
     .odd-row {
-        background-color: #ffffff;
+        background-color: var(--color-surface);
     }
 </style>

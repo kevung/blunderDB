@@ -41,17 +41,17 @@
 
     th,
     td {
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         padding: 8px;
         text-align: center;
         width: calc(100% / 16); /* Ensure cells are square */
     }
 
     .even-row {
-        background-color: #f2f2f2; /* Increase contrast for alternating row color */
+        background-color: var(--color-surface-alt); /* Increase contrast for alternating row color */
     }
 
     .odd-row {
-        background-color: #ffffff; /* Increase contrast for alternating row color */
+        background-color: var(--color-surface); /* Increase contrast for alternating row color */
     }
 </style>

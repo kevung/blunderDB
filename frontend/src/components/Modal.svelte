@@ -133,7 +133,10 @@
         flex: none;
         box-sizing: border-box;
         padding: 20px;
-        background-color: white;
+        /* The surface and ink of the theme: a literal white box kept its light
+           face under the dark theme while the text around it went light (issue 359). */
+        background-color: var(--color-surface);
+        color: var(--color-text);
         border-radius: 6px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
         font-size: var(--font-size-base);
@@ -191,8 +194,8 @@
         display: inline-block;
         width: 16px;
         height: 16px;
-        border: 3px solid #e0e0e0;
-        border-top: 3px solid #666;
+        border: 3px solid var(--color-border);
+        border-top: 3px solid var(--color-text-muted);
         border-radius: 50%;
         animation: modal-spin 1s linear infinite;
         margin-left: 10px;
@@ -211,20 +214,20 @@
     }
 
     .modal-box :global(.summary) {
-        background-color: #f9f9f9;
+        background-color: var(--color-surface-alt);
         padding: 15px;
         border-radius: 4px;
-        border-left: 4px solid #666;
+        border-left: 4px solid var(--color-text-muted);
     }
 
     .modal-box :global(.summary.warning) {
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
         border-left-color: var(--color-text-muted);
     }
 
     .modal-box :global(.summary p) {
         margin: 5px 0;
-        color: #555;
+        color: var(--color-text-muted);
     }
 
     .modal-box :global(.summary strong) {
@@ -250,7 +253,7 @@
         padding: 8px 16px;
         border: 1px solid var(--color-border);
         border-radius: 4px;
-        background-color: white;
+        background-color: var(--color-surface);
         color: var(--color-text);
         font-weight: 500;
         cursor: pointer;
@@ -260,7 +263,7 @@
     }
 
     .modal-footer :global(button:hover:not(:disabled)) {
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
         border-color: var(--color-text-muted);
     }
 
@@ -272,12 +275,12 @@
     .modal-footer :global(button.primary) {
         background-color: var(--color-text);
         border-color: var(--color-text);
-        color: white;
+        color: var(--color-surface);
     }
 
     .modal-footer :global(button.primary:hover:not(:disabled)) {
-        background-color: #555;
-        border-color: #555;
+        background-color: color-mix(in srgb, var(--color-text) 80%, var(--color-surface));
+        border-color: color-mix(in srgb, var(--color-text) 80%, var(--color-surface));
     }
 
     .modal-footer :global(button.danger) {

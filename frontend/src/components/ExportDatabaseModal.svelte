@@ -445,7 +445,7 @@
     .busy-overlay {
         position: absolute;
         inset: 0;
-        background-color: rgba(255, 255, 255, 0.94);
+        background-color: color-mix(in srgb, var(--color-surface) 94%, transparent);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -491,9 +491,9 @@
         flex-direction: column;
         gap: 10px;
         padding: 15px;
-        background-color: #f9f9f9;
+        background-color: var(--color-surface-alt);
         border-radius: 4px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
     }
 
     .checkbox-item {
@@ -534,7 +534,7 @@
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
-        background-color: white;
+        background-color: var(--color-surface);
         color: var(--color-text);
     }
 
@@ -545,12 +545,12 @@
 
     .reveal:hover,
     .busy-overlay button:hover:not(:disabled) {
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
         border-color: var(--color-text-muted);
     }
 
     .issuance-toggle {
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--color-border);
         padding-top: 8px;
     }
 
@@ -568,8 +568,8 @@
         height: 15px;
         margin-left: 4px;
         border-radius: 50%;
-        border: 1px solid #9aa0a6;
-        color: #5f6368;
+        border: 1px solid var(--color-text-muted);
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
         font-weight: 700;
         line-height: 1;
@@ -607,7 +607,7 @@
 
     .issuance-required {
         font-size: var(--font-size-small);
-        color: #b3261e;
+        color: var(--color-danger);
         margin: 2px 0 6px;
     }
 </style>

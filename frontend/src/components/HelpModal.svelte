@@ -156,7 +156,8 @@
     .tab-header button {
         flex: 1;
         padding: 0; /* Remove padding */
-        background-color: #eee;
+        background-color: var(--color-surface-alt);
+        color: var(--color-text);
         border: none;
         cursor: pointer;
         font-size: var(--font-size-title);
@@ -171,14 +172,14 @@
     }
 
     .tab-header button.active {
-        background-color: #ccc;
+        background-color: var(--color-border);
         font-weight: bold;
     }
 
     .tab-content {
         flex-grow: 1;
         overflow-y: auto;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid var(--color-border);
         padding: 0; /* Remove padding */
         box-sizing: border-box;
         height: calc(100% - 50px); /* Adjust height to ensure uniform tab size */
@@ -224,16 +225,16 @@
     .tab-content :global(td) {
         padding: 12px;
         text-align: center;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--color-border);
         width: 50%;
     }
 
     .tab-content :global(th) {
-        background-color: #f4f4f4;
+        background-color: var(--color-surface-alt);
     }
 
     .tab-content :global(tr:hover) {
-        background-color: #f1f1f1;
+        background-color: var(--color-surface-alt);
     }
 
     /* A term's indented definition, and the manual is full of them: the
@@ -277,6 +278,12 @@
 
     .tab-content :global(.admonition p:last-child) {
         margin-bottom: 0;
+    }
+
+    /* The About tab's links. The browser's own link blue falls under 2:1 on the
+       dark surface; the palette's accent holds in every theme (issue 359). */
+    .tab-content :global(a) {
+        color: var(--color-primary);
     }
 
     /* ``literal`` from the .rst sources: command names, filter tokens, keys. */
