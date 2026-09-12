@@ -105,43 +105,17 @@ export function setSearchState(cmdOrObj, pos, active) {
 export { generateXGID } from './xgid.js';
 import { generateXGID } from './xgid.js';
 
+// The rules live in positionRefusal.js, a pure function a panel can read to
+// disable its save button; this wrapper says the refusal in the status bar.
+export { positionRefusal } from './positionRefusal.js';
+import { positionRefusal } from './positionRefusal.js';
+
 export function isValidPosition(position) {
-    const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
-    const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
-
-    if (player1Checkers > 15) {
-        setStatusBarMessage(tMsg('status.invalidP1Over15'));
+    const refusal = positionRefusal(position);
+    if (refusal) {
+        setStatusBarMessage(tMsg(refusal));
         return false;
     }
-    if (player2Checkers > 15) {
-        setStatusBarMessage(tMsg('status.invalidP2Over15'));
-        return false;
-    }
-    if (player1Checkers === 0) {
-        setStatusBarMessage(tMsg('status.invalidP1BorneOff'));
-        return false;
-    }
-    if (player2Checkers === 0) {
-        setStatusBarMessage(tMsg('status.invalidP2BorneOff'));
-        return false;
-    }
-
-    if (position.decision_type === 1) {
-        if (position.cube.owner !== position.player_on_roll && position.cube.owner !== -1) {
-            setStatusBarMessage(tMsg('status.invalidCubeUnavailable'));
-            return false;
-        }
-        if (position.score[position.player_on_roll] === 1) {
-            setStatusBarMessage(tMsg('status.invalidCrawford'));
-            return false;
-        }
-    }
-
-    if ((position.score[0] === -1 && position.score[1] !== -1) || (position.score[1] === -1 && position.score[0] !== -1)) {
-        setStatusBarMessage(tMsg('status.invalidUnlimitedScore'));
-        return false;
-    }
-
     return true;
 }
 
@@ -772,32 +746,11 @@ export async function updatePosition() {
     }
 }
 
+// Ctrl-S, the toolbar button and `w`. The board that can be saved is a
+// scratch board, and scratchBoard.js is its one write path (#400).
 export async function saveCurrentPosition() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    if (get(statusBarModeStore) !== 'EDIT') {
-        setStatusBarMessage(tMsg('status.saveOnlyEdit'));
-        return;
-    }
-
-    logger.log('saveCurrentPosition');
-
-    const position = get(positionStore);
-    const analysis = get(analysisStore);
-
-    if (!isValidPosition(position)) return;
-
-    analysis.xgid = generateXGID(position);
-    analysis.analysisType = '';
-    analysis.checkerAnalysis = { moves: [] };
-    analysis.doublingCubeAnalysis = emptyDoublingCubeAnalysis();
-    analysis.analysisEngineVersion = '';
-
-    const { savePositionAndAnalysis } = await import('./importService.js');
-    await savePositionAndAnalysis(position, analysis, tMsg('status.positionSaved'));
-    statusBarModeStore.set('NORMAL');
+    const { saveScratchBoard } = await import('./scratchBoard.js');
+    await saveScratchBoard();
 }
 
 export async function updateEPC(position) {

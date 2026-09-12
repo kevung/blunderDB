@@ -491,6 +491,10 @@ dans la barre d'outils sur le bouton *Enregistrer la position*.
 
 .. tip:: Ouvrir la ligne de commande et exécuter: ``w``
 
+Le plateau reste affiché dans le panneau de recherche, et la barre d'état
+annonce le numéro de la position : « Position n° 1234 ajoutée à la base », ou
+« Position déjà dans la base (n° 1234) » si elle y figurait déjà.
+
 Etiqueter une position
 ----------------------
 

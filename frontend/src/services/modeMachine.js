@@ -59,7 +59,7 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, PANEL, closePanel, activeTabStore } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
-import { showPosition, loadAllPositions, loadAnalysisForPosition, setSearchState } from './positionService.js';
+import { showPosition, loadAllPositions, loadAnalysisForPosition, setSearchState, getSearchState } from './positionService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
@@ -177,6 +177,63 @@ function blankEditBoard(pos) {
     pos.decision_type = 0;
     pos.player_on_roll = 0;
     return pos;
+}
+
+// ── Saving a scratch board ───────────────────────────────────────────────────
+
+/**
+ * A position just saved from a scratch board (scratchBoard.js) joins the list
+ * the board's exit will put back — and only when that list is the whole
+ * library. Any other list is what the user was studying (a match, a search
+ * result, a collection, a deck, a statistics selection): leaving the panel
+ * must find it exactly as it was, so it is left alone.
+ *
+ * The list behind the board is the machine's to know. In EDIT it is still in
+ * positionsStore (enterEditMode keeps it there, exitEditMode redraws from it)
+ * and a match entry is recorded in beforeEdit; in EPC it is the id snapshot
+ * beforeEPC holds, with the mode it was taken in.
+ *
+ * "The whole library" is checked on the ids rather than inferred from flags:
+ * a deck or a statistics selection is shown in NORMAL mode with no search
+ * active. The list is the library when it plus the new id is exactly what
+ * ListPositionIDs answers. The index is never touched: the id goes last.
+ *
+ * @param {number} id the position just written (a new one: a known position
+ *   is already in the library)
+ * @returns {Promise<boolean>} whether the id was added
+ */
+export async function joinLibraryBehindScratchBoard(id) {
+    /** @type {(number | null)[]} */
+    let ids;
+    /** @type {(next: number[]) => void} */
+    let replace;
+    if (currentMode() === MODE.EDIT) {
+        if (savedContext.beforeEdit) return false;
+        ids = get(positionsStore)?.ids ?? [];
+        replace = (next) => positionsStore.setIds(next);
+    } else if (currentMode() === MODE.EPC) {
+        const saved = savedContext.beforeEPC;
+        if (!saved || saved.mode !== MODE.NORMAL || !saved.ids) return false;
+        ids = saved.ids;
+        replace = (next) => {
+            saved.ids = next;
+        };
+    } else {
+        return false;
+    }
+    if (getSearchState().hasActiveSearch || ids.includes(id)) return false;
+
+    let library;
+    try {
+        library = (await ListPositionIDs()) || [];
+    } catch (error) {
+        logger.error('Error listing the library after a scratch-board save:', error);
+        return false;
+    }
+    const next = [...ids, id];
+    if (library.length !== next.length || library.some((libraryId, i) => libraryId !== next[i])) return false;
+    replace(next);
+    return true;
 }
 
 // ── EDIT ─────────────────────────────────────────────────────────────────────

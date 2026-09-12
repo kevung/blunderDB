@@ -94,7 +94,7 @@ async function leaveMatchModeIfStillIn() {
 // no analysis, .xg/.sgf/.bgf that already carry one, a whole-database merge)
 // on purpose: the batch itself is a no-op when the count is zero, so there is
 // nothing to special-case by import type.
-async function maybeAutoAnalyzeAfterImport() {
+export async function maybeAutoAnalyzeAfterImport() {
     try {
         const auto = await GetGammonNetAutoAnalyze();
         if (!auto) return;
@@ -292,11 +292,25 @@ export async function showImportedPosition(positionID) {
 
 // Returns the ID of the saved (or merged) position, or null on failure.
 //
+// `successMessage` is the status-bar text for a new position, or a function
+// `({ id, existed }) => text` that words both outcomes (a known position
+// otherwise says status.positionMerged).
+//
 // `reload` (default true) refreshes the position table after a brand-new row
-// is written. A batch import passes false: it reloads once itself, after its
-// last file, instead of paying one full reload per position (see
-// importMultipleFilesCore).
-export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage, { reload = true } = {}) {
+// is written, and points the index at a known position. Passing false leaves
+// the list, the index and the comment panel as they are: a batch import
+// reloads once itself, after its last file, instead of paying one full reload
+// per position (see importMultipleFilesCore), and a scratch board is saved
+// without leaving it (scratchBoard.js).
+//
+// `mergeIntoExisting` (default true) merges the analysis and comment into a
+// position that is already stored. A scratch board passes false: it carries
+// no analysis, and an empty one sent over a stored one blanks its players and
+// engine (SaveAnalysis replaces every field it does not merge). The provenance
+// flag is recorded either way.
+export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage, { reload = true, mergeIntoExisting = true } = {}) {
+    const announce = (id, existed, fallback) => (typeof successMessage === 'function' ? successMessage({ id, existed }) : fallback);
+
     if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
         parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
     }
@@ -324,6 +338,12 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
     }
     const positionID = saveResult.id;
 
+    if (saveResult.existed && !mergeIntoExisting) {
+        logger.log('Position already exists with ID:', positionID);
+        setStatusBarMessage(announce(positionID, true, tMsg('status.positionMerged')));
+        return positionID;
+    }
+
     if (saveResult.existed) {
         logger.log('Position already exists with ID:', positionID);
         try {
@@ -346,11 +366,13 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
 
             await SaveComment(positionID, mergedComment);
             logger.log('Analysis and comment updated for position ID:', positionID);
-            setStatusBarMessage(tMsg('status.positionMerged'));
+            setStatusBarMessage(announce(positionID, true, tMsg('status.positionMerged')));
 
-            currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(positionsStore.indexOf(positionID));
-            commentTextStore.set(mergedComment);
+            if (reload) {
+                currentPositionIndexStore.set(-1);
+                currentPositionIndexStore.set(positionsStore.indexOf(positionID));
+                commentTextStore.set(mergedComment);
+            }
         } catch (error) {
             logger.error('Error updating analysis and comment:', error);
             setStatusBarMessage(tMsg('status.errorUpdatingAnalysisComment'));
@@ -369,7 +391,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
         logger.log('Analysis and comment saved for position ID:', positionID);
 
         if (reload) await reloadPositions();
-        setStatusBarMessage(successMessage);
+        setStatusBarMessage(announce(positionID, false, successMessage));
         return positionID;
     } catch (error) {
         logger.error('Error saving position, analysis, and comment:', error);
