@@ -78,8 +78,8 @@ describe('applyTabPanels — individual tab', () => {
         expectAllClosed();
     });
 
-    test('epc (non-panel tab) → all managed panels closed', () => {
-        applyTabPanels('epc');
+    test('eval (non-panel tab) → all managed panels closed', () => {
+        applyTabPanels('eval');
         expectAllClosed();
     });
 
@@ -106,8 +106,8 @@ describe('applyTabPanels — transitions (S2 fix)', () => {
         expect(get(openPanels).has(PANEL.MATCH)).toBe(false);
     });
 
-    test('epc → stats: STATS opens, all others closed', () => {
-        applyTabPanels('epc');
+    test('eval → stats: STATS opens, all others closed', () => {
+        applyTabPanels('eval');
         applyTabPanels('stats');
         expectOnlyOpen(PANEL.STATS);
     });

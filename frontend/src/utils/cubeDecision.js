@@ -37,7 +37,7 @@ export const DECISION_STATE = {
 
 // isMoneyPosition is THE money/match predicate on the frontend's own position
 // shape — the JS twin of gammonnet.IsMoneyPosition (#190/C.3 point 2). Before
-// it existed, cubeTurnability below and EPCPanel's own hasScore each wrote
+// it existed, cubeTurnability below and EvalPanel's own hasScore each wrote
 // this test independently (`score[0] < 0 && score[1] < 0` here,
 // `score[0] !== -1 || score[1] !== -1` there): equivalent on a well-formed
 // score, and silently NOT equivalent on the malformed one — exactly one side

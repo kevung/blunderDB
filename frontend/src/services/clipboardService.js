@@ -73,14 +73,14 @@ export function copyPosition() {
         )
     );
 
-    // A scratch board — the Eval panel (EPC) and the search board (EDIT) —
+    // A scratch board — the Eval panel (EVAL) and the search board (EDIT) —
     // shows a position no stored record describes, but analysisStore still
     // holds the record last opened: its xgid, its analysis and its comment all
     // belong to a DIFFERENT position. Copying the board there must therefore
     // regenerate the XGID from the board itself and carry nothing else, which
     // is exactly what this clipboard is for in the Eval panel: pasting the
     // position into XG, or into another blunderDB.
-    const scratchBoard = mode === 'EPC' || mode === 'EDIT';
+    const scratchBoard = mode === 'EVAL' || mode === 'EDIT';
     const xgid = !scratchBoard && analysis.xgid ? analysis.xgid : generateXGID(position);
 
     let clipboardContent = `XGID=${xgid}\n\n`;

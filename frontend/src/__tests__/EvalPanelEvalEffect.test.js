@@ -36,9 +36,9 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 
 import { statusBarModeStore } from '../stores/uiStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
-import EPCPanel from '../components/EPCPanel.svelte';
+import EvalPanel from '../components/EvalPanel.svelte';
 
-describe('EPCPanel eval-escalation effect', () => {
+describe('EvalPanel eval-escalation effect', () => {
     /** @type {string[]} */
     let svelteErrors;
     let restore;
@@ -48,7 +48,7 @@ describe('EPCPanel eval-escalation effect', () => {
         evaluatePositionImmediate.mockClear();
         startEvaluationAtRest.mockClear();
         cancelEvaluationAtRest.mockClear();
-        statusBarModeStore.set('EPC');
+        statusBarModeStore.set('EVAL');
         positionStore.set(emptyPosition());
         svelteErrors = [];
         // effect_update_depth_exceeded reaches console.error inside Svelte's
@@ -67,7 +67,7 @@ describe('EPCPanel eval-escalation effect', () => {
     });
 
     test('mounting does not loop the escalation effect', async () => {
-        render(EPCPanel);
+        render(EvalPanel);
         await vi.advanceTimersByTimeAsync(0);
 
         expect(svelteErrors.join('\n')).not.toMatch(/effect_update_depth_exceeded/);
@@ -75,7 +75,7 @@ describe('EPCPanel eval-escalation effect', () => {
     });
 
     test('rapid position edits re-run 0-ply each time without looping, and debounce the 2-ply search', async () => {
-        render(EPCPanel);
+        render(EvalPanel);
         await vi.advanceTimersByTimeAsync(0);
 
         for (let i = 0; i < 5; i++) {
@@ -93,7 +93,7 @@ describe('EPCPanel eval-escalation effect', () => {
     });
 
     test('500ms of rest starts exactly one 2-ply search at the configured depth', async () => {
-        render(EPCPanel);
+        render(EvalPanel);
         await vi.advanceTimersByTimeAsync(0);
         evaluatePositionImmediate.mockClear();
         cancelEvaluationAtRest.mockClear();

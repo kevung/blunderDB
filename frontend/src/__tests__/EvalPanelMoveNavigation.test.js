@@ -41,21 +41,21 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 import { statusBarModeStore } from '../stores/uiStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
-import EPCPanel from '../components/EPCPanel.svelte';
+import EvalPanel from '../components/EvalPanel.svelte';
 
 async function mountWithMoves() {
-    const { container } = render(EPCPanel);
+    const { container } = render(EvalPanel);
     // Let the 0-ply round trip land; the 2-ply escalation stays pending.
     await vi.advanceTimersByTimeAsync(0);
-    const panel = container.querySelector('.epc-panel');
+    const panel = container.querySelector('.eval-panel');
     const rows = [...container.querySelectorAll('tbody tr')];
     return { panel, rows };
 }
 
-describe('EPCPanel candidate-list keyboard navigation', () => {
+describe('EvalPanel candidate-list keyboard navigation', () => {
     beforeEach(() => {
         vi.useFakeTimers();
-        statusBarModeStore.set('EPC');
+        statusBarModeStore.set('EVAL');
         positionStore.set(emptyPosition()); // dice [3, 1]: the moves list is shown
         selectedMoveStore.set(null);
     });

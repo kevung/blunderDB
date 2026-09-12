@@ -34,7 +34,7 @@ test('Tab completes the highlighted suggestion', async ({ page }) => {
     await page.locator('.command-input').fill('ep');
     await page.waitForSelector('.command-suggestions');
     await page.keyboard.press('Tab');
-    await expect(page.locator('.command-input')).toHaveValue('epc');
+    await expect(page.locator('.command-input')).toHaveValue('eval');
 });
 
 test('no suggestions for a position number', async ({ page }) => {

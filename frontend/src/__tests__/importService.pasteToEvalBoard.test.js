@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 // Ctrl-V has two destinations, and the mode decides which. On a database
 // record it IMPORTS: the pasted position is saved and shown. On a scratch
 // board — the search board (EDIT) and, since this change, the Eval panel
-// (EPC) — it DROPS THE POSITION ONTO THE BOARD instead, which is the paste
+// (EVAL) — it DROPS THE POSITION ONTO THE BOARD instead, which is the paste
 // side of the Ctrl-C that copied it. Before this, pasting in the Eval panel
 // silently imported a new record into the database and left the Eval board
 // untouched, so there was no way to bring an existing position in to edit it.
@@ -89,13 +89,13 @@ beforeEach(() => {
     ParsePositionText.mockResolvedValue({ position: makePosition({ dice: [6, 5] }), analysis: {}, comment: '' });
 });
 
-describe('pastePosition in the Eval panel (EPC mode)', () => {
+describe('pastePosition in the Eval panel (EVAL mode)', () => {
     test('drops the copied position onto the board instead of importing it', async () => {
         const copied = makePosition({ dice: [6, 5], score: [2, 3], player_on_roll: 1 });
         copied.board.bearoff = [4, 7];
         copied.board.points[6] = { checkers: 5, color: 0 };
         clipboardPositionStore.set(copied);
-        statusBarModeStore.set('EPC');
+        statusBarModeStore.set('EVAL');
 
         await pastePosition();
 
@@ -110,11 +110,11 @@ describe('pastePosition in the Eval panel (EPC mode)', () => {
 
     test('leaves the mode alone — a paste is not a way out of the Eval panel', async () => {
         clipboardPositionStore.set(makePosition({ dice: [3, 1] }));
-        statusBarModeStore.set('EPC');
+        statusBarModeStore.set('EVAL');
 
         await pastePosition();
 
-        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(statusBarModeStore)).toBe('EVAL');
     });
 
     test('still imports into the database in NORMAL mode', async () => {

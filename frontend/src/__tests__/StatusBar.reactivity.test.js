@@ -21,7 +21,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 // #129: StatusBar now listens for the gammonNet batch's progress events and
 // exposes a cancel button — neither exists in this suite's jsdom environment
 // (no real Wails runtime), so both need the same per-file mock every other
-// EventsOn-consuming component test already uses (see EPCPanelEvalEffect.test.js).
+// EventsOn-consuming component test already uses (see EvalPanelEvalEffect.test.js).
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     CancelGammonNetBatch: vi.fn(() => Promise.resolve(undefined))
 }));

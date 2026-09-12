@@ -70,7 +70,7 @@ export const PANEL = {
 /** @type {import('svelte/store').Writable<string | null>} */
 export const activeModal = writable(null);
 
-// Initial tab requested for the Config modal (e.g. the EPC panel's download
+// Initial tab requested for the Config modal (e.g. the Eval panel's download
 // hint opens straight onto the Bearoff tab). Consumed once by ConfigModal.
 export const configInitialTabStore = writable(null);
 

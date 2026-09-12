@@ -4,7 +4,7 @@
  * C'est la couture entre la liste canonique du code et la liste persistée.
  */
 import { describe, test, expect } from 'vitest';
-import { applyTabOrder } from '../services/tabOrder.js';
+import { applyTabOrder, normalizeTabId } from '../services/tabOrder.js';
 
 const DEFAULTS = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }];
 
@@ -32,5 +32,24 @@ describe('applyTabOrder', () => {
 
     test('un identifiant enregistré qui n’existe plus est ignoré', () => {
         expect(applyTabOrder(DEFAULTS, ['a', 'disparu', 'b', 'c', 'd']).map((t) => t.id)).toEqual(['a', 'b', 'c', 'd']);
+    });
+});
+
+// #401 : l'onglet Eval s'appelait `epc`. Un ordre enregistré avant le
+// renommage garde la place qu'on lui avait donnée, sous son nom actuel.
+describe('normalizeTabId', () => {
+    test('`epc` enregistré rouvre `eval`', () => {
+        expect(normalizeTabId('epc')).toBe('eval');
+    });
+
+    test('tout autre identifiant revient tel quel', () => {
+        expect(normalizeTabId('eval')).toBe('eval');
+        expect(normalizeTabId('stats')).toBe('stats');
+        expect(normalizeTabId(undefined)).toBe(undefined);
+    });
+
+    test('un ordre enregistré avec `epc` place Eval là où il était', () => {
+        const defaults = [{ id: 'matches' }, { id: 'eval' }, { id: 'training' }, { id: 'stats' }];
+        expect(applyTabOrder(defaults, ['stats', 'epc', 'matches', 'training']).map((t) => t.id)).toEqual(['stats', 'eval', 'matches', 'training']);
     });
 });

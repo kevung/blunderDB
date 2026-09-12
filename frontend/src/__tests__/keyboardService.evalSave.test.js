@@ -43,7 +43,7 @@ vi.mock('../services/positionService.js', () => ({
     toggleTournamentPanel: vi.fn(),
     toggleStatsPanel: vi.fn(),
     toggleSearchPanel: vi.fn(),
-    toggleEPCMode: vi.fn(),
+    toggleEvalMode: vi.fn(),
     togglePipcount: vi.fn(),
     reloadAllPositions: vi.fn(),
     loadRandomPosition: vi.fn(),
@@ -62,9 +62,9 @@ function ctrl(key) {
 describe('CTRL-S on the Eval tab (#399)', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        activeTabStore.set('epc');
-        statusBarModeStore.set('EPC');
-        document.body.innerHTML = '<section class="epc-panel" tabindex="-1"><div class="badges-strip"><button class="add-position">+</button></div></section>';
+        activeTabStore.set('eval');
+        statusBarModeStore.set('EVAL');
+        document.body.innerHTML = '<section class="eval-panel" tabindex="-1"><div class="badges-strip"><button class="add-position">+</button></div></section>';
     });
     afterEach(() => {
         document.body.innerHTML = '';

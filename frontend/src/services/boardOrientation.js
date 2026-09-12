@@ -50,7 +50,7 @@
  * Rappel du STOCKAGE : toute position enregistrée est normalisée, camp au trait
  * en `player_on_roll = 0` — donc en bas, sans miroir.
  *
- * - `EPC` et `EDIT` : jamais. La position est montrée telle quelle pour que les
+ * - `EVAL` et `EDIT` : jamais. La position est montrée telle quelle pour que les
  *   coordonnées de la souris soient celles du modèle ; le miroir de la recherche
  *   est appliqué ailleurs, au moment de chercher.
  * - `TRANSCRIBE` : seulement si l'utilisateur le demande. Le moteur y rend une
@@ -69,7 +69,7 @@
  * @returns {boolean}
  */
 export function boardIsMirrored({ mode, position, matchContext, transcriptionSwap }) {
-    if (mode === 'EPC' || mode === 'EDIT') return false;
+    if (mode === 'EVAL' || mode === 'EDIT') return false;
     if (mode === 'TRANSCRIBE') return transcriptionSwap === true;
     if (matchContext && matchContext.isMatchMode && matchContext.movePositions?.length > 0) {
         const current = matchContext.movePositions[matchContext.currentIndex];

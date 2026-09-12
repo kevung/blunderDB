@@ -6,7 +6,7 @@
  * default bearoff), plus the small ergonomics batch added for #215: evaluate
  * the mirror, copy the board image with its analysis, open a new view, and —
  * only once the position has a database id — add it to an Anki deck. The
- * menu is deliberately absent in EDIT and EPC, where the right button
+ * menu is deliberately absent in EDIT and EVAL, where the right button
  * already places the other colour's checkers.
  *
  * two.js is mocked exactly as in Board.redraw.test.js — the drawing backend is
@@ -169,7 +169,7 @@ describe('Board context menu', () => {
         });
     });
 
-    test.each([['EDIT'], ['EPC']])('stays out of the way in %s mode, where the right button places checkers', async (mode) => {
+    test.each([['EDIT'], ['EVAL']])('stays out of the way in %s mode, where the right button places checkers', async (mode) => {
         statusBarModeStore.set(mode);
 
         const event = await rightClickBoard();

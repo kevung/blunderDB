@@ -54,7 +54,7 @@ import { analysisStore, emptyAnalysis } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
-import { saveCurrentPosition, updatePosition, enterEditMode, exitEditMode, enterEPCMode, exitEPCMode, sendPositionToEval, setSearchState } from '../services/positionService.js';
+import { saveCurrentPosition, updatePosition, enterEditMode, exitEditMode, enterEvalMode, exitEvalMode, sendPositionToEval, setSearchState } from '../services/positionService.js';
 import { joinLibraryBehindScratchBoard } from '../services/modeMachine.js';
 
 function emptyPoints() {
@@ -314,10 +314,10 @@ describe('the list behind the Eval board', () => {
         await positionsStore.getPosition(2);
         currentPositionIndexStore.set(2);
         positionStore.set(libraryPosition(13));
-        await enterEPCMode();
+        await enterEvalMode();
 
         expect(await joinLibraryBehindScratchBoard(99)).toBe(true);
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(get(positionsStore).ids).toEqual([11, 12, 13, 14, 99]);
         expect(get(currentPositionIndexStore)).toBe(2);
@@ -336,7 +336,7 @@ describe('the list behind the Eval board', () => {
             player2Name: 'B'
         });
         statusBarModeStore.set('MATCH');
-        await enterEPCMode();
+        await enterEvalMode();
 
         expect(await joinLibraryBehindScratchBoard(99)).toBe(false);
     });
@@ -352,14 +352,14 @@ async function openEvalFromLibrary() {
     currentPositionIndexStore.set(2);
     positionStore.set(libraryPosition(13));
     analysisStore.set(studiedAnalysis(13));
-    activeTabStore.set('epc');
-    await enterEPCMode();
+    activeTabStore.set('eval');
+    await enterEvalMode();
     positionStore.update(drawBoard);
 }
 
 // #399: CTRL-S, `w` and the toolbar button all call saveCurrentPosition, which
 // hands over to saveScratchBoard() — the Eval panel's own button calls it
-// directly (EPCPanelAddPosition.test.js).
+// directly (EvalPanelAddPosition.test.js).
 describe('saving the Eval scratch board (#399)', () => {
     test('the board is written as a copy without id, and nothing of analysisStore goes with it', async () => {
         await openEvalFromLibrary();
@@ -384,14 +384,14 @@ describe('saving the Eval scratch board (#399)', () => {
         expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardSaved', i18nParams: { id: 99 } });
     });
 
-    test('afterwards: still EPC, still the Eval tab, the same board, still id 0', async () => {
+    test('afterwards: still EVAL, still the Eval tab, the same board, still id 0', async () => {
         await openEvalFromLibrary();
         const board = JSON.parse(JSON.stringify(get(positionStore)));
 
         await saveCurrentPosition();
 
-        expect(get(statusBarModeStore)).toBe('EPC');
-        expect(get(activeTabStore)).toBe('epc');
+        expect(get(statusBarModeStore)).toBe('EVAL');
+        expect(get(activeTabStore)).toBe('eval');
         expect(get(positionStore)).toEqual(board);
         expect(get(positionStore).id).toBe(0);
     });
@@ -413,7 +413,7 @@ describe('saving the Eval scratch board (#399)', () => {
         await openEvalFromLibrary();
 
         await saveCurrentPosition();
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe('NORMAL');
         expect(get(positionsStore).ids).toEqual([11, 12, 13, 14, 99]);
@@ -432,9 +432,9 @@ describe('saving the Eval scratch board (#399)', () => {
         statusBarModeStore.set('MATCH');
         // The tab is already Eval so the hand-off enters the mode itself
         // (App.svelte's tab effect is not mounted here).
-        activeTabStore.set('epc');
+        activeTabStore.set('eval');
         sendPositionToEval(libraryPosition(22));
-        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(statusBarModeStore)).toBe('EVAL');
         expect(get(positionStore).id).toBe(0);
 
         await saveCurrentPosition();
@@ -442,9 +442,9 @@ describe('saving the Eval scratch board (#399)', () => {
         // Already stored as a match position: its provenance flag, nothing else.
         expect(db.SaveAnalysis).not.toHaveBeenCalled();
         expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardAlreadyStored', i18nParams: { id: 22 } });
-        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(statusBarModeStore)).toBe('EVAL');
 
-        await exitEPCMode();
+        await exitEvalMode();
         expect(get(statusBarModeStore)).toBe('MATCH');
         expect(get(matchContextStore).matchID).toBe(5);
         expect(get(matchContextStore).currentIndex).toBe(1);

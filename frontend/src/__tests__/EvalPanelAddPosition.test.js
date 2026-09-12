@@ -1,5 +1,5 @@
 /**
- * EPCPanelAddPosition.test.js — the Eval panel's « Ajouter à la base » (#399).
+ * EvalPanelAddPosition.test.js — the Eval panel's « Ajouter à la base » (#399).
  *
  * The panel is mounted for real: a prop or a rune clash only shows at mount,
  * and a test that stubs the component would never see it. The save itself is
@@ -39,8 +39,8 @@ import { statusBarModeStore } from '../stores/uiStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
-import { enterEPCMode, exitEPCMode } from '../services/modeMachine.js';
-import EPCPanel from '../components/EPCPanel.svelte';
+import { enterEvalMode, exitEvalMode } from '../services/modeMachine.js';
+import EvalPanel from '../components/EvalPanel.svelte';
 
 function validBoard() {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
@@ -65,13 +65,13 @@ const addButton = (container) => /** @type {HTMLButtonElement} */ (container.que
 
 // The board the Eval panel opens on the first time: the default bearoff,
 // fifteen top checkers borne off. Taken before any test runs, because leaving
-// the panel remembers the board it was left on (lastEPCBoard).
+// the panel remembers the board it was left on (lastEvalBoard).
 let defaultBoard;
 beforeAll(async () => {
     statusBarModeStore.set('NORMAL');
-    await enterEPCMode();
+    await enterEvalMode();
     defaultBoard = JSON.parse(JSON.stringify(get(positionStore)));
-    await exitEPCMode();
+    await exitEvalMode();
 });
 
 beforeEach(async () => {
@@ -80,18 +80,18 @@ beforeEach(async () => {
     databasePathStore.set('');
     epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
     statusBarModeStore.set('NORMAL');
-    await enterEPCMode();
+    await enterEvalMode();
 });
 
 afterEach(async () => {
     cleanup();
-    await exitEPCMode();
+    await exitEvalMode();
     databasePathStore.set('');
 });
 
 describe('the Eval panel’s add-to-database button (#399)', () => {
     test('leads the badge strip, with its label', async () => {
-        const { container } = render(EPCPanel);
+        const { container } = render(EvalPanel);
         await tick();
 
         const strip = container.querySelector('.badges-strip');
@@ -102,7 +102,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
 
     test('without a database it is disabled, and says to open one', async () => {
         positionStore.set(validBoard());
-        const { container } = render(EPCPanel);
+        const { container } = render(EvalPanel);
         await tick();
 
         expect(addButton(container).disabled).toBe(true);
@@ -112,7 +112,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
     test('on the default Eval board it is disabled with the refusal the save would give', async () => {
         databasePathStore.set('/tmp/test.db');
         positionStore.set(JSON.parse(JSON.stringify(defaultBoard)));
-        const { container } = render(EPCPanel);
+        const { container } = render(EvalPanel);
         await tick();
 
         expect(defaultBoard.board.bearoff).toEqual([0, 15]);
@@ -123,7 +123,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
     test('on a valid board with a database it is enabled, and the click goes to saveScratchBoard', async () => {
         databasePathStore.set('/tmp/test.db');
         positionStore.set(validBoard());
-        const { container } = render(EPCPanel);
+        const { container } = render(EvalPanel);
         await tick();
 
         expect(addButton(container).disabled).toBe(false);
@@ -136,7 +136,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
     test('it follows the board: a refused edit disables it, the fix enables it again', async () => {
         databasePathStore.set('/tmp/test.db');
         positionStore.set(validBoard());
-        const { container } = render(EPCPanel);
+        const { container } = render(EvalPanel);
         await tick();
         expect(addButton(container).disabled).toBe(false);
 
@@ -154,7 +154,7 @@ describe('the Eval panel’s add-to-database button (#399)', () => {
         databasePathStore.set('/tmp/test.db');
         positionStore.set(validBoard());
         epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: 'boom' });
-        const { container } = render(EPCPanel);
+        const { container } = render(EvalPanel);
         await tick();
 
         expect(container.querySelector('.error-text').textContent).toBe('boom');

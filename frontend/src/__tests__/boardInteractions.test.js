@@ -150,7 +150,7 @@ describe('checker clicks land on the point they were drawn on', () => {
         expect(points.filter((pt) => pt.checkers > 0)).toHaveLength(4);
     });
 
-    test('nothing happens outside EDIT/EPC, or on a click outside the board', () => {
+    test('nothing happens outside EDIT/EVAL, or on a click outside the board', () => {
         const b = mount({ mode: 'NORMAL' });
         b.click(b.slot(7, 0));
         expect(b.pos()).toEqual(emptyPos());
@@ -259,8 +259,8 @@ describe('cube clicks', () => {
         expect(applyCubeClick({ ...pos, cube: { owner: 1, value: 6 } }, 2).cube).toEqual({ owner: 1, value: 6 }); // 64 is the ceiling
     });
 
-    test('EPC: clicks cycle the owner and pin the value', () => {
-        const b = mount({ mode: 'EPC' });
+    test('EVAL: clicks cycle the owner and pin the value', () => {
+        const b = mount({ mode: 'EVAL' });
         const seen = [];
         for (let i = 0; i < 3; i++) {
             b.click(b.state.cubeBox, 0);
@@ -341,7 +341,7 @@ describe('dice and player rectangles', () => {
     });
 
     // The Eval panel's own report: a position pasted from the analysis panel
-    // carries its roll, but previousDice is still the [0, 0] enterEPCMode
+    // carries its roll, but previousDice is still the [0, 0] enterEvalMode
     // seeds an Eval session with. A die click used to restore that [0, 0]
     // over the pasted roll, leaving half a roll — read as "no dice", i.e. a
     // cube decision on a board plainly asking a checker question, and the
@@ -441,7 +441,7 @@ describe('double-click and context menu', () => {
         expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
         b.stores.anyModalOpen.set(false);
 
-        for (const mode of ['EDIT', 'EPC']) {
+        for (const mode of ['EDIT', 'EVAL']) {
             b.state.mode = mode;
             event = b.fire('contextmenu', at, 2);
             expect(event.defaultPrevented).toBe(true);
@@ -786,10 +786,10 @@ describe('le clic sur le videau, en transcription', () => {
         b.detach();
     });
 
-    // En EDIT et en EPC le videau s'ÉDITE (applyCubeClick) : la demande de
+    // En EDIT et en EVAL le videau s'ÉDITE (applyCubeClick) : la demande de
     // transcription ne doit pas s'y glisser.
     test('hors du mode TRANSCRIBE, le videau s’édite comme avant', () => {
-        for (const mode of ['EDIT', 'EPC', 'NORMAL']) {
+        for (const mode of ['EDIT', 'EVAL', 'NORMAL']) {
             const b = mount({ mode });
             b.click(b.state.cubeBox, 0);
             expect(cubeOf(b), mode).toBeNull();

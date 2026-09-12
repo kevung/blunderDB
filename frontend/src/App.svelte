@@ -51,15 +51,15 @@
         toggleMetadataPanel,
         toggleMatchPanel,
         toggleCollectionPanelAction,
-        toggleEPCMode,
+        toggleEvalMode,
         toggleMatchMode,
         toggleStatsPanel,
         toggleTranscriptionPanel,
         toggleDirectionPanel,
         enterEditMode,
         exitEditMode,
-        enterEPCMode,
-        exitEPCMode,
+        enterEvalMode,
+        exitEvalMode,
         enterTranscribeMode,
         exitTranscribeMode,
         updateEPC,
@@ -127,9 +127,9 @@
 
     // ── Reactive effects (Svelte 5) ────────────────────────────────
 
-    // EPC sync: re-runs when position OR mode changes (both are tracked deps)
+    // Eval sync (the EPC measure): re-runs when position OR mode changes (both are tracked deps)
     $effect(() => {
-        if ($statusBarModeStore === 'EPC' && $positionStore) updateEPC($positionStore);
+        if ($statusBarModeStore === 'EVAL' && $positionStore) updateEPC($positionStore);
     });
 
     // Re-fit the board whenever the effective panel position flips (manual mode
@@ -209,8 +209,8 @@
     // inside untrack() so that mode/db-path changes alone don't re-run this.
     //
     // On the first run we must NOT return early: session restore may have
-    // already set activeTabStore to 'epc' or 'search', and we need to call
-    // enterEPCMode / enterEditMode immediately. We use `isFirstRun` to skip
+    // already set activeTabStore to 'eval' or 'search', and we need to call
+    // enterEvalMode / enterEditMode immediately. We use `isFirstRun` to skip
     // the exit paths (which depend on prevTab, unknown on the first call).
     $effect(() => {
         const tab = $activeTabStore;
@@ -226,8 +226,8 @@
                     if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
                     else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
                 }
-                if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
-                else if (!isFirstRun && prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
+                if (tab === 'eval' && $statusBarModeStore !== 'EVAL') logger.perf('App:evalSync', () => enterEvalMode());
+                else if (!isFirstRun && prevTab === 'eval' && tab !== 'eval' && $statusBarModeStore === 'EVAL') exitEvalMode();
                 // The transcription tab is a scratch mode like the two above:
                 // entering photographs the studied position, leaving puts it
                 // back (ADR-0045 — the board belongs to the draft's Cursor).
@@ -259,7 +259,7 @@
     // navigations keeps one scroll gesture to a handful of steps (D.8, #208).
     let lastWheelNavTime = 0;
     function handleWheel(event) {
-        if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') return;
+        if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL') return;
         const boardArea = mainArea?.querySelector('.scrollable-content');
         if (!boardArea || !boardArea.contains(event.target)) return;
         // En TRANSCRIBE, la molette au-dessus du plateau fait un pas dans la
@@ -376,7 +376,7 @@
             focusSearchTab,
             toggleMatchPanel,
             toggleCollectionPanel: toggleCollectionPanelAction,
-            toggleEPCMode,
+            toggleEvalMode,
             toggleTranscriptionPanel,
             toggleDirectionPanel,
             toggleMatchMode,

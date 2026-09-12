@@ -84,7 +84,7 @@ describe('copyPosition', () => {
     });
 });
 
-// Entering the Eval panel (EPC) or the search board (EDIT) replaces the board
+// Entering the Eval panel (EVAL) or the search board (EDIT) replaces the board
 // but leaves analysisStore holding the record last opened. Copying there used
 // to emit THAT record's xgid and analysis — so a position built in Eval was
 // pasted into XG, or into another blunderDB, as an entirely different one.
@@ -112,7 +112,7 @@ describe('copyPosition on a scratch board', () => {
         }));
     });
 
-    test.each([['EPC'], ['EDIT']])('%s copies the board it shows, not the record left in the store', async (mode) => {
+    test.each([['EVAL'], ['EDIT']])('%s copies the board it shows, not the record left in the store', async (mode) => {
         statusBarModeStore.set(mode);
 
         copyPosition();

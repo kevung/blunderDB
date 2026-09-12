@@ -10,6 +10,24 @@
  */
 
 /**
+ * Les identifiants d'onglet qu'une version antérieure a pu enregistrer (ordre
+ * des onglets, onglets masqués, onglet actif d'une vue) et le nom qu'ils
+ * portent aujourd'hui. `epc` est le premier nom du panneau Eval (#401) : le
+ * mode et l'onglet ont pris le nom du panneau, la mesure EPC garde le sien.
+ */
+const LEGACY_TAB_IDS = Object.freeze({ epc: 'eval' });
+
+/**
+ * L'identifiant d'onglet actuel d'un identifiant relu depuis un état
+ * enregistré ; tout autre valeur revient telle quelle.
+ * @param {unknown} id
+ * @returns {unknown}
+ */
+export function normalizeTabId(id) {
+    return typeof id === 'string' && Object.hasOwn(LEGACY_TAB_IDS, id) ? LEGACY_TAB_IDS[id] : id;
+}
+
+/**
  * @template {{id: string}} T
  * @param {readonly T[]} defaults la liste canonique, dans son ordre de conception
  * @param {unknown} order les identifiants enregistrés, dans l'ordre choisi
@@ -18,7 +36,7 @@
 export function applyTabOrder(defaults, order) {
     if (!Array.isArray(order) || order.length === 0) return [...defaults];
     const byId = new Map(defaults.map((tab) => [tab.id, tab]));
-    const ordered = order.map((id) => byId.get(id)).filter(Boolean);
+    const ordered = order.map((id) => byId.get(normalizeTabId(id))).filter(Boolean);
     defaults.forEach((tab, index) => {
         if (ordered.some((t) => t.id === tab.id)) return;
         // Après le plus proche voisin de gauche encore présent ; à la fin s'il

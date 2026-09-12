@@ -147,7 +147,7 @@ describe('cubeTurnability', () => {
 });
 
 // #190/C.3 point 2: THE money/match predicate on the frontend's own position
-// shape, so cubeTurnability above and EPCPanel's own hasScore read the exact
+// shape, so cubeTurnability above and EvalPanel's own hasScore read the exact
 // same rule instead of two independently-written forms that only agreed on a
 // well-formed score.
 describe('isMoneyPosition', () => {

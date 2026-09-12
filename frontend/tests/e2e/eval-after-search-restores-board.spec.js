@@ -3,7 +3,7 @@
  *
  * Bibliothèque → onglet Recherche (damier vierge) → onglet Eval → retour à
  * l'analyse : la position étudiée doit être de retour sur le damier. App.svelte
- * enchaîne exitEditMode() sans await puis enterEPCMode() ; le damier vierge
+ * enchaîne exitEditMode() sans await puis enterEvalMode() ; le damier vierge
  * de la recherche est un clone sous l'id de la position, et son redessin est
  * asynchrone : la photo prise à l'entrée d'Eval était le damier vierge, que
  * la sortie remettait à l'écran — définitivement quand la position étudiée
@@ -48,7 +48,7 @@ test('revenir d’Eval après la recherche remet la position étudiée sur le da
     await expect(board(page)).not.toHaveAttribute('aria-label', studied);
 
     // Eval : bearoff par défaut.
-    await clickTab(page, 'epc');
+    await clickTab(page, 'eval');
     await expect(board(page)).not.toHaveAttribute('aria-label', studied);
 
     // Retour : la position étudiée, pas le damier vierge de la recherche.

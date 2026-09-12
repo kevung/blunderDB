@@ -35,11 +35,11 @@ describe('getCommandSuggestions', () => {
         const lower = getCommandSuggestions('ep').map((c) => c.name);
         const upper = getCommandSuggestions('EP').map((c) => c.name);
         expect(lower).toEqual(upper);
-        expect(lower).toContain('epc');
+        expect(lower).toContain('eval');
     });
 
     test('exact command still appears (so it can be confirmed)', () => {
-        expect(getCommandSuggestions('epc').map((c) => c.name)).toContain('epc');
+        expect(getCommandSuggestions('eval').map((c) => c.name)).toContain('eval');
     });
 
     test('every command entry has a non-empty name', () => {

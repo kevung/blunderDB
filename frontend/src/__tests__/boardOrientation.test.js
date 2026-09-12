@@ -47,8 +47,8 @@ describe('en transcription, le joueur 1 reste en bas', () => {
 });
 
 describe('les autres modes ne bougent pas', () => {
-    test('EDIT et EPC montrent la position telle quelle', () => {
-        for (const mode of ['EDIT', 'EPC']) {
+    test('EDIT et EVAL montrent la position telle quelle', () => {
+        for (const mode of ['EDIT', 'EVAL']) {
             expect(boardIsMirrored({ mode, position: pos(1) }), mode).toBe(false);
         }
     });

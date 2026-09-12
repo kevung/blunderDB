@@ -100,7 +100,7 @@
 
     $effect(() => {
         if (visible) {
-            // A caller may request a specific tab (EPC panel → Bearoff).
+            // A caller may request a specific tab (Eval panel → Bearoff).
             const requested = get(configInitialTabStore);
             if (requested) {
                 activeTab = requested;

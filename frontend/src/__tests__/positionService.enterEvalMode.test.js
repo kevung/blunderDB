@@ -1,12 +1,12 @@
 /**
- * positionService.enterEPCMode.test.js
+ * positionService.enterEvalMode.test.js
  *
  * Vérifie que :
- *   - enterEPCMode positionne statusBarModeStore à 'EPC' AVANT positionStore.
- *   - exitEPCMode réinitialise statusBarModeStore à 'NORMAL' AVANT de restaurer
- *     positionStore (évite que l'effet EPC se re-déclenche sur la position
- *     restaurée alors que le mode est encore 'EPC').
- *   - enterEPCMode est idempotent (pas de double set si déjà en mode EPC).
+ *   - enterEvalMode positionne statusBarModeStore à 'EVAL' AVANT positionStore.
+ *   - exitEvalMode réinitialise statusBarModeStore à 'NORMAL' AVANT de restaurer
+ *     positionStore (évite que l'effet EVAL se re-déclenche sur la position
+ *     restaurée alors que le mode est encore 'EVAL').
+ *   - enterEvalMode est idempotent (pas de double set si déjà en mode EVAL).
  *
  * Stratégie : on importe les vrais stores Svelte (partagés avec le module
  * positionService) et on espionne leur méthode `.set` via vi.spyOn pour
@@ -50,11 +50,11 @@ import { epcDataStore } from '../stores/epcStore.js';
 import { LoadAnalysis } from '../../wailsjs/go/database/Database.js';
 
 // ── Module testé ──────────────────────────────────────────────────────────────
-import { enterEPCMode, exitEPCMode, sendPositionToEval } from '../services/positionService.js';
+import { enterEvalMode, exitEvalMode, sendPositionToEval } from '../services/positionService.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Position factice représentant une vraie partie, à sauvegarder avant EPC. */
+/** Position factice représentant une vraie partie, à sauvegarder avant EVAL. */
 function makeRealPosition(id = 99) {
     return {
         id,
@@ -102,9 +102,9 @@ function installSetSpies(storeMap, callOrder) {
     return spies;
 }
 
-// ── Tests enterEPCMode ────────────────────────────────────────────────────────
+// ── Tests enterEvalMode ────────────────────────────────────────────────────────
 
-describe('enterEPCMode — ordre des set', () => {
+describe('enterEvalMode — ordre des set', () => {
     let callOrder;
     let spies;
 
@@ -118,21 +118,21 @@ describe('enterEPCMode — ordre des set', () => {
         vi.restoreAllMocks();
     });
 
-    test('T1 — statusBarModeStore(EPC) est appelé avant positionStore', () => {
-        enterEPCMode();
+    test('T1 — statusBarModeStore(EVAL) est appelé avant positionStore', () => {
+        enterEvalMode();
 
-        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'EPC');
+        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'EVAL');
         const posIdx = callOrder.findIndex((c) => c.store === 'positionStore');
 
-        expect(modeIdx, 'statusBarModeStore.set("EPC") doit avoir eu lieu').toBeGreaterThanOrEqual(0);
+        expect(modeIdx, 'statusBarModeStore.set("EVAL") doit avoir eu lieu').toBeGreaterThanOrEqual(0);
         expect(posIdx, 'positionStore.set doit avoir eu lieu').toBeGreaterThanOrEqual(0);
         expect(modeIdx, 'mode doit être défini avant position').toBeLessThan(posIdx);
     });
 
-    test('T2 — statusBarModeStore(EPC) est appelé avant positionsStore', () => {
-        enterEPCMode();
+    test('T2 — statusBarModeStore(EVAL) est appelé avant positionsStore', () => {
+        enterEvalMode();
 
-        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'EPC');
+        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'EVAL');
         const posListIdx = callOrder.findIndex((c) => c.store === 'positionsStore');
 
         expect(modeIdx).toBeGreaterThanOrEqual(0);
@@ -140,18 +140,18 @@ describe('enterEPCMode — ordre des set', () => {
         expect(modeIdx).toBeLessThan(posListIdx);
     });
 
-    test('T3 — idempotent : second appel ignoré si déjà en mode EPC', () => {
+    test('T3 — idempotent : second appel ignoré si déjà en mode EVAL', () => {
         // Premier appel réel (via les espions call-through)
-        enterEPCMode();
-        // Le store reflète maintenant 'EPC' grâce au call-through
-        expect(get(statusBarModeStore)).toBe('EPC');
+        enterEvalMode();
+        // Le store reflète maintenant 'EVAL' grâce au call-through
+        expect(get(statusBarModeStore)).toBe('EVAL');
 
         // Réinitialiser les compteurs
         callOrder.length = 0;
         for (const spy of Object.values(spies)) spy.mockClear();
 
-        // Second appel : doit retourner immédiatement (mode déjà EPC)
-        enterEPCMode();
+        // Second appel : doit retourner immédiatement (mode déjà EVAL)
+        enterEvalMode();
 
         expect(spies.statusBarModeStore).not.toHaveBeenCalled();
         expect(spies.positionStore).not.toHaveBeenCalled();
@@ -159,26 +159,26 @@ describe('enterEPCMode — ordre des set', () => {
     });
 });
 
-// ── Tests exitEPCMode ─────────────────────────────────────────────────────────
+// ── Tests exitEvalMode ─────────────────────────────────────────────────────────
 
-describe('exitEPCMode — ordre des set', () => {
+describe('exitEvalMode — ordre des set', () => {
     let callOrder;
     let spies;
 
     beforeEach(() => {
-        // Préparer un état "en mode EPC avec position sauvegardée"
+        // Préparer un état "en mode EVAL avec position sauvegardée"
         resetStores();
         const realPos = makeRealPosition();
         positionStore.set(realPos);
         positionsStore.set([realPos]);
         currentPositionIndexStore.set(0);
 
-        // Entrer en mode EPC via la vraie fonction (sans espions actifs)
-        enterEPCMode();
-        expect(get(statusBarModeStore)).toBe('EPC');
+        // Entrer en mode EVAL via la vraie fonction (sans espions actifs)
+        enterEvalMode();
+        expect(get(statusBarModeStore)).toBe('EVAL');
 
-        // Installer les espions call-through APRÈS enterEPCMode pour ne mesurer
-        // que les appels issus de exitEPCMode.
+        // Installer les espions call-through APRÈS enterEvalMode pour ne mesurer
+        // que les appels issus de exitEvalMode.
         callOrder = [];
         spies = installSetSpies({ statusBarModeStore, positionStore }, callOrder);
     });
@@ -189,7 +189,7 @@ describe('exitEPCMode — ordre des set', () => {
     });
 
     test('T4 — statusBarModeStore(NORMAL) est appelé avant positionStore lors du exit', () => {
-        exitEPCMode();
+        exitEvalMode();
 
         const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'NORMAL');
         const posIdx = callOrder.findIndex((c) => c.store === 'positionStore');
@@ -199,13 +199,13 @@ describe('exitEPCMode — ordre des set', () => {
         expect(modeIdx, 'mode doit être remis à NORMAL avant la restauration de la position').toBeLessThan(posIdx);
     });
 
-    test('T6 — exitEPCMode recharge l’analyse de la position restaurée (bug X2)', async () => {
+    test('T6 — exitEvalMode recharge l’analyse de la position restaurée (bug X2)', async () => {
         // Sans ce rechargement, le panneau d’analyse restait vide après un aller-retour
-        // position → EPC → analyse (l’effet de nav ne redessine plus en mode match).
+        // position → EVAL → analyse (l’effet de nav ne redessine plus en mode match).
         LoadAnalysis.mockClear();
         LoadAnalysis.mockResolvedValueOnce({ positionId: 99, checkerAnalysis: { moves: [] } });
 
-        await exitEPCMode();
+        await exitEvalMode();
 
         // showPosition a été appelée sur la position restaurée (id 99) → analyse rechargée.
         expect(LoadAnalysis).toHaveBeenCalledWith(99);
@@ -213,7 +213,7 @@ describe('exitEPCMode — ordre des set', () => {
         expect(get(analysisStore).checkerAnalysis).toEqual({ moves: [] });
     });
 
-    test('T5 — exitEPCMode ignoré si mode !== EPC', () => {
+    test('T5 — exitEvalMode ignoré si mode !== EVAL', () => {
         // Forcer un mode différent (via le spy call-through : store mis à jour)
         spies.statusBarModeStore.mockClear();
         spies.positionStore.mockClear();
@@ -222,7 +222,7 @@ describe('exitEPCMode — ordre des set', () => {
         spies.statusBarModeStore.mockClear();
         spies.positionStore.mockClear();
 
-        exitEPCMode(); // doit retourner immédiatement (mode !== EPC)
+        exitEvalMode(); // doit retourner immédiatement (mode !== EVAL)
 
         // positionStore ne doit pas avoir été touché
         expect(spies.positionStore).not.toHaveBeenCalled();
@@ -248,13 +248,13 @@ describe('sendPositionToEval — ouvrir le panneau Eval sur une position existan
         positionsStore.set([studied]);
 
         sendPositionToEval(studied);
-        // App.svelte relaie le changement d’onglet vers enterEPCMode() ; le test
+        // App.svelte relaie le changement d’onglet vers enterEvalMode() ; le test
         // joue ce relais lui-même.
-        expect(get(activeTabStore)).toBe('epc');
-        enterEPCMode();
+        expect(get(activeTabStore)).toBe('eval');
+        enterEvalMode();
 
         const board = get(positionStore);
-        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(statusBarModeStore)).toBe('EVAL');
         expect(board.board.bearoff, 'la position transmise, pas le bearoff par défaut').toEqual([3, 3]);
         expect(board.dice).toEqual([3, 1]);
         expect(board.id, 'le damier Eval est un brouillon : pas d’id de base').toBe(0);
@@ -263,7 +263,7 @@ describe('sendPositionToEval — ouvrir le panneau Eval sur une position existan
     test('T8 — la copie est détachée : éditer le damier Eval ne touche pas l’originale', () => {
         const studied = makeRealPosition(42);
         sendPositionToEval(studied);
-        enterEPCMode();
+        enterEvalMode();
 
         get(positionStore).board.bearoff[0] = 12;
         expect(studied.board.bearoff[0], 'la position d’origine reste intacte').toBe(3);
@@ -271,13 +271,13 @@ describe('sendPositionToEval — ouvrir le panneau Eval sur une position existan
     });
 
     test('T9 — déjà dans Eval : le damier est remplacé sur place', () => {
-        enterEPCMode();
-        expect(get(statusBarModeStore)).toBe('EPC');
+        enterEvalMode();
+        expect(get(statusBarModeStore)).toBe('EVAL');
         expect(get(positionStore).board.bearoff, 'bearoff par défaut du panneau').toEqual([0, 15]);
 
         sendPositionToEval(makeRealPosition(7));
 
-        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(statusBarModeStore)).toBe('EVAL');
         expect(get(positionStore).board.bearoff).toEqual([3, 3]);
         expect(get(positionStore).id).toBe(0);
     });
@@ -286,7 +286,7 @@ describe('sendPositionToEval — ouvrir le panneau Eval sur une position existan
         sendPositionToEval(null);
         expect(get(activeTabStore), 'aucune bascule sur une position absente').toBe('analysis');
 
-        enterEPCMode();
+        enterEvalMode();
         expect(get(positionStore).board.bearoff).toEqual([0, 15]);
     });
 });

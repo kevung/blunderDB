@@ -108,7 +108,7 @@ describe('Toolbar — service wiring', () => {
     // #399: the Eval board is a scratch board too — save opens there, the
     // Ctrl-U rewrite stays Search's.
     test('on the Eval tab, save is enabled and update is not', () => {
-        activeTabStore.set('epc');
+        activeTabStore.set('eval');
         const { container } = render(Toolbar);
         const buttons = container.querySelectorAll('.toolbar button');
         expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(false);

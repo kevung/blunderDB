@@ -20,7 +20,7 @@
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
 
-    let isActive = $derived($statusBarModeStore === 'EPC');
+    let isActive = $derived($statusBarModeStore === 'EVAL');
 
     // « Ajouter à la base » (#399): the board on screen is a scratch board, and
     // the button writes it through saveScratchBoard() — the position alone,
@@ -479,10 +479,10 @@
 <!-- A <section> rather than a <div>: the panel takes focus and listens for
      keys (handleKeyDown), which is a landmark's business and a static
      element's a11y warning — the same shape AnalysisPanel already has. -->
-<section class="epc-panel" bind:this={panelEl} aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
+<section class="eval-panel" bind:this={panelEl} aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
     {#if !isActive}
-        <div class="epc-inactive">
-            <div class="epc-inactive-message">
+        <div class="eval-inactive">
+            <div class="eval-inactive-message">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inactive-icon">
                     <path
                         stroke-linecap="round"
@@ -490,25 +490,25 @@
                         d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"
                     />
                 </svg>
-                <span>{$t('epc.inactive')}</span>
+                <span>{$t('eval.inactive')}</span>
             </div>
         </div>
     {:else if data.error}
-        <div class="epc-content">
+        <div class="eval-content">
             <div class="badges-strip">{@render addPositionButton()}</div>
-            <div class="epc-error">
+            <div class="eval-error">
                 <span class="error-text">{data.error}</span>
             </div>
         </div>
     {:else if evalFailed}
-        <div class="epc-content">
+        <div class="eval-content">
             <div class="badges-strip">{@render addPositionButton()}</div>
-            <div class="epc-error">
+            <div class="eval-error">
                 <span class="error-text">{$t('eval.failed', { error: evalFailedMessage })}</span>
             </div>
         </div>
     {:else}
-        <div class="epc-content">
+        <div class="eval-content">
             <!-- The strip: the add-to-database button, regime badge, depth,
                  engine link and the Défi toggle, on their own full-width line (ADR-0018 rule 4, applied
                  as written by ADR-0020 rule 8). It was a third member of the
@@ -618,7 +618,7 @@
 </section>
 
 <style>
-    .epc-panel {
+    .eval-panel {
         height: 100%;
         box-sizing: border-box;
         /* Only .moves-scroll below ever scrolls (ADR-0017) — the panel
@@ -635,7 +635,7 @@
         outline: none;
     }
 
-    .epc-inactive {
+    .eval-inactive {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -643,7 +643,7 @@
         color: var(--color-text-muted);
     }
 
-    .epc-inactive-message {
+    .eval-inactive-message {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -656,7 +656,7 @@
         flex-shrink: 0;
     }
 
-    .epc-error {
+    .eval-error {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -668,7 +668,7 @@
         font-size: var(--font-size-base);
     }
 
-    .epc-content {
+    .eval-content {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -676,7 +676,7 @@
     }
 
     /* Under the strip, the error message takes what is left of the panel. */
-    .epc-content > .epc-error {
+    .eval-content > .eval-error {
         flex: 1 1 auto;
         height: auto;
     }

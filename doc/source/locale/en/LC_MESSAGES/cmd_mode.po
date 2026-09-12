@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-13 01:02+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -127,8 +127,8 @@ msgid "Affiche les métadonnées de la base de données."
 msgstr "Display database metadata."
 
 #: ../../source/cmd_mode.rst:1
-msgid "epc"
-msgstr "epc"
+msgid "eval, epc"
+msgstr "eval, epc"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
@@ -151,6 +151,20 @@ msgid ""
 msgstr ""
 "Opens the Transcription panel: the match drafts being typed in, and what "
 "it takes to start one."
+
+#: ../../source/cmd_mode.rst:1
+msgid "direct"
+msgstr "direct"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand "
+"une direction y est ouverte, la zone principale montre le tournoi à la "
+"place du plateau ; tout autre onglet ramène le plateau."
+msgstr ""
+"Opens the Tournaments panel to direct a tournament, and closes it again. "
+"While a direction is open there, the main area shows the tournament "
+"instead of the board; any other tab brings the board back."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -288,7 +302,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Open the gammon value table with a 4-cube."
 
-#: ../../source/cmd_mode.rst:52
+#: ../../source/cmd_mode.rst:53
 msgid "Positions et navigation"
 msgstr "Positions and navigation"
 
@@ -425,7 +439,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigate to the last visited match."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:78
 msgid "Édition et recherche"
 msgstr "Editing and search"
 
@@ -461,11 +475,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Search among the currently filtered positions."
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -480,7 +494,7 @@ msgstr ""
 " ``search`` flag that does the same thing (see :ref:`cli`); a dash marks "
 "a filter that only the grammar expresses."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -500,7 +514,7 @@ msgstr ""
 "compare against an empty board; it is the flags of the third column that "
 "must be used there instead."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -510,7 +524,7 @@ msgstr ""
 " by ascending distance to a target position, and every other token "
 "narrows the set it ranks."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -520,11 +534,11 @@ msgstr ""
 "*millipoints* of the table below: ``E>100`` keeps the moves that cost at "
 "least a tenth of a point, one point being worth 1000 millipoints."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid "Deux recherches complètes :"
 msgstr "Two full searches:"
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:122
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -533,7 +547,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — more than 30 pips behind, between 40% and 60% "
 "winning chances, no comment."
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:124
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1485,7 +1499,7 @@ msgstr ""
 "``like42*`` widens the target's class to every kind of decision and to "
 "both regimes, money and match. See :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:230
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1584,8 +1598,5 @@ msgstr "Clear the command history."
 #~ " analysis). Five questions, timed, "
 #~ "corrected on the spot."
 
-msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
-msgstr "Opens the Tournaments panel to direct a tournament, and closes it again. While a direction is open there, the main area shows the tournament instead of the board; any other tab brings the board back."
-
-msgid "direct"
-msgstr "direct"
+#~ msgid "epc"
+#~ msgstr "epc"

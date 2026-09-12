@@ -17,7 +17,7 @@
   The candidate list is a 0-ply EVALUATION in the glossary's sense: it is shown,
   it is never written to the library (ADR-0045 rule 8). The ranking is the Eval
   panel's own — EvaluatePositionImmediate — and the table is the Eval panel's own
-  component, mounted here exactly as EPCPanel mounts it.
+  component, mounted here exactly as EvalPanel mounts it.
 
   The cube is three keys: `d` doubles or redoubles, `t` takes, `p` passes, each
   of them validating a play left selected before it (fonctionnel.md §6 flux 5-7).

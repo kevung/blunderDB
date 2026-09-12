@@ -101,8 +101,8 @@ export function processCommand(command) {
         callbacks.toggleMatchPanel?.();
     } else if (command === 'collection' || command === 'coll') {
         callbacks.toggleCollectionPanel?.();
-    } else if (command === 'epc') {
-        callbacks.toggleEPCMode?.();
+    } else if (command === 'eval' || command === 'epc') {
+        callbacks.toggleEvalMode?.();
     } else if (command === 'transcribe' || command === 'tr') {
         callbacks.toggleTranscriptionPanel?.();
     } else if (command === 'direct') {

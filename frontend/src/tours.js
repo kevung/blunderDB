@@ -62,7 +62,7 @@ export const TOURS = [
         descKey: 'tour.eval.desc',
         steps: [
             { titleKey: 'tour.eval.intro.title', bodyKey: 'tour.eval.intro.body' },
-            { element: '[data-tour="panels"]', activateTab: 'epc', titleKey: 'tour.eval.tab.title', bodyKey: 'tour.eval.tab.body', side: 'top' },
+            { element: '[data-tour="panels"]', activateTab: 'eval', titleKey: 'tour.eval.tab.title', bodyKey: 'tour.eval.tab.body', side: 'top' },
             { element: '[data-tour="board"]', titleKey: 'tour.eval.position.title', bodyKey: 'tour.eval.position.body', side: 'top' },
             { titleKey: 'tour.eval.scale.title', bodyKey: 'tour.eval.scale.body' }
         ]

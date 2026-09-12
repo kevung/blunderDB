@@ -57,7 +57,7 @@ describe('TabbedPanel — l’ordre par défaut', () => {
         const { container } = mount();
         const ids = [...container.querySelectorAll('[role="tab"]')].map((tab) => tab.getAttribute('data-testid'));
         expect(ids).toContain('tab-training');
-        expect(ids.indexOf('tab-training')).toBe(ids.indexOf('tab-epc') + 1);
+        expect(ids.indexOf('tab-training')).toBe(ids.indexOf('tab-eval') + 1);
         expect(ids.indexOf('tab-anki')).toBe(ids.indexOf('tab-training') + 1);
     });
 });

@@ -4,7 +4,7 @@
 
     // The cube Decision, in the one shape it has whatever regime produced it
     // (ADR-0020): three named options in rows, canonical order, never sorted,
-    // plus the verdict. Mounted by EPCPanel (a live evaluation) and by
+    // plus the verdict. Mounted by EvalPanel (a live evaluation) and by
     // AnalysisPanel (a stored record, possibly several engines side by side) —
     // one rendering, two content rules, which is ADR-0017 rule 5.
     //
@@ -20,7 +20,7 @@
     // played/best marks — come from utils/analysisRows.js, the same rows the
     // copied image paints: this component lays them out and nothing more.
     //
-    // showInfo (ADR-0018 rule 4): EPCPanel hides that footer — depth and engine
+    // showInfo (ADR-0018 rule 4): EvalPanel hides that footer — depth and engine
     // are named once in its own strip, since every row of a live evaluation
     // shares them — while AnalysisPanel keeps it, a stored record's provenance
     // being shown nowhere else.

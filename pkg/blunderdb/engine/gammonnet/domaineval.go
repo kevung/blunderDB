@@ -543,7 +543,7 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 	// domain.DoublingCubeAnalysis's chance fields are percentages [0,100],
 	// same convention as CheckerMove above and every importer — unlike
 	// preRoll above, built from the same probs but staying a fraction for
-	// EPCPanel's live "position fact" display (moverFactsToSides.js).
+	// EvalPanel's live "position fact" display (moverFactsToSides.js).
 	return &domain.DoublingCubeAnalysis{
 		AnalysisDepth:             depthLabel,
 		AnalysisEngine:            EngineVersion,

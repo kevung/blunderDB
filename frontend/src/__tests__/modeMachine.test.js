@@ -5,7 +5,7 @@
  * bloc : chaque « bug 1 » / « bug 2 » que les commentaires du code citaient
  * est verrouillé ici.
  *
- * Stratégie (celle de positionService.enterEPCMode.test.js) : stores Svelte
+ * Stratégie (celle de positionService.enterEvalMode.test.js) : stores Svelte
  * réels, partagés avec les modules testés ; seules les liaisons Wails et
  * databaseService (E/S asynchrones) sont mockées.
  */
@@ -52,12 +52,12 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import {
     MODE,
     modeState,
-    forgetContextBeforeEPC,
+    forgetContextBeforeEval,
     enterEditMode,
     exitEditMode,
-    enterEPCMode,
-    exitEPCMode,
-    toggleEPCMode,
+    enterEvalMode,
+    exitEvalMode,
+    toggleEvalMode,
     enterTranscribeMode,
     exitTranscribeMode,
     sendPositionToEval,
@@ -144,7 +144,7 @@ beforeEach(() => {
     vi.clearAllMocks();
     resetStores();
     // Un exit précédent peut avoir laissé un contexte : on repart d'un automate vierge.
-    forgetContextBeforeEPC();
+    forgetContextBeforeEval();
 });
 
 afterEach(() => {
@@ -157,9 +157,9 @@ describe('positionService ré-exporte les transitions', () => {
     test('les callers historiques (App, keyboardService) trouvent les mêmes fonctions', () => {
         expect(positionService.enterEditMode).toBe(enterEditMode);
         expect(positionService.exitEditMode).toBe(exitEditMode);
-        expect(positionService.enterEPCMode).toBe(enterEPCMode);
-        expect(positionService.exitEPCMode).toBe(exitEPCMode);
-        expect(positionService.toggleEPCMode).toBe(toggleEPCMode);
+        expect(positionService.enterEvalMode).toBe(enterEvalMode);
+        expect(positionService.exitEvalMode).toBe(exitEvalMode);
+        expect(positionService.toggleEvalMode).toBe(toggleEvalMode);
         expect(positionService.sendPositionToEval).toBe(sendPositionToEval);
         expect(positionService.toggleMatchMode).toBe(toggleMatchMode);
         expect(positionService.exitCollectionMode).toBe(exitCollectionMode);
@@ -171,7 +171,7 @@ describe('positionService ré-exporte les transitions', () => {
     test('modeState expose { mode, savedContext } et démarre vide', () => {
         expect(modeState()).toEqual({
             mode: MODE.NORMAL,
-            savedContext: { beforeTranscribe: null, beforeEPC: null, beforeEdit: null, epcSeed: null, lastEPCBoard: null }
+            savedContext: { beforeTranscribe: null, beforeEval: null, beforeEdit: null, evalSeed: null, lastEvalBoard: null }
         });
     });
 });
@@ -279,32 +279,32 @@ describe('MATCH → EDIT → MATCH (bug 2 : l’onglet recherche ne perd pas la 
     });
 });
 
-// ── NORMAL → EPC → NORMAL ─────────────────────────────────────────────────────
+// ── NORMAL → EVAL → NORMAL ─────────────────────────────────────────────────────
 
-describe('NORMAL → EPC → NORMAL', () => {
-    test('enterEPCMode sauvegarde la bibliothèque et pose le bearoff par défaut', () => {
+describe('NORMAL → EVAL → NORMAL', () => {
+    test('enterEvalMode sauvegarde la bibliothèque et pose le bearoff par défaut', () => {
         const lib = setLibrary();
 
-        enterEPCMode();
+        enterEvalMode();
 
-        expect(get(statusBarModeStore)).toBe(MODE.EPC);
+        expect(get(statusBarModeStore)).toBe(MODE.EVAL);
         expect(get(positionsStore)).toHaveLength(1);
         expect(get(positionStore).board.bearoff).toEqual([0, 15]);
         expect(get(positionStore).id).toBe(0);
         expect(get(currentPositionIndexStore)).toBe(0);
-        const { beforeEPC } = modeState().savedContext;
-        expect(beforeEPC.mode).toBe(MODE.NORMAL);
-        expect(beforeEPC.ids).toEqual(lib.map((p) => p.id));
-        expect(beforeEPC.position.id).toBe(2);
-        expect(beforeEPC.positionIndex).toBe(1);
+        const { beforeEval } = modeState().savedContext;
+        expect(beforeEval.mode).toBe(MODE.NORMAL);
+        expect(beforeEval.ids).toEqual(lib.map((p) => p.id));
+        expect(beforeEval.position.id).toBe(2);
+        expect(beforeEval.positionIndex).toBe(1);
     });
 
-    test('exitEPCMode restaure la liste et l’index, recharge l’analyse, vide le contexte', async () => {
+    test('exitEvalMode restaure la liste et l’index, recharge l’analyse, vide le contexte', async () => {
         const lib = setLibrary();
-        enterEPCMode();
+        enterEvalMode();
         LoadAnalysis.mockResolvedValueOnce({ positionId: 2, checkerAnalysis: { moves: [] } });
 
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(positionsStore).ids).toEqual(lib.map((p) => p.id));
@@ -312,30 +312,30 @@ describe('NORMAL → EPC → NORMAL', () => {
         expect(get(positionStore).id).toBe(2);
         expect(LoadAnalysis).toHaveBeenCalledWith(2);
         expect(get(statusBarTextStore)).toBe('');
-        expect(modeState().savedContext.beforeEPC).toBeNull();
+        expect(modeState().savedContext.beforeEval).toBeNull();
     });
 
-    test('après forgetContextBeforeEPC (rechargement de la bibliothèque), exitEPCMode recharge au lieu de restaurer', async () => {
+    test('après forgetContextBeforeEval (rechargement de la bibliothèque), exitEvalMode recharge au lieu de restaurer', async () => {
         setLibrary();
-        enterEPCMode();
-        forgetContextBeforeEPC();
+        enterEvalMode();
+        forgetContextBeforeEval();
 
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(ListPositionIDs).toHaveBeenCalledTimes(1);
     });
 });
 
-// ── MATCH → EPC → MATCH (bug 2, bug 1) ────────────────────────────────────────
+// ── MATCH → EVAL → MATCH (bug 2, bug 1) ────────────────────────────────────────
 
-describe('MATCH → EPC → MATCH', () => {
-    test('exitEPCMode revient à la partie étudiée, contexte de match restauré (bug 2)', async () => {
+describe('MATCH → EVAL → MATCH', () => {
+    test('exitEvalMode revient à la partie étudiée, contexte de match restauré (bug 2)', async () => {
         const ctx = setMatch(2);
-        enterEPCMode();
-        expect(get(statusBarModeStore)).toBe(MODE.EPC);
+        enterEvalMode();
+        expect(get(statusBarModeStore)).toBe(MODE.EVAL);
 
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.MATCH);
         expect(get(matchContextStore)).toEqual(ctx);
@@ -343,21 +343,21 @@ describe('MATCH → EPC → MATCH', () => {
         expect(get(positionStore).id).toBe(103);
     });
 
-    test('exitEPCMode repasse par showPosition : l’analyse est rechargée alors que l’effet de nav ne redessine plus en MATCH (bug 1)', async () => {
+    test('exitEvalMode repasse par showPosition : l’analyse est rechargée alors que l’effet de nav ne redessine plus en MATCH (bug 1)', async () => {
         setMatch(2);
-        enterEPCMode();
+        enterEvalMode();
         LoadAnalysis.mockResolvedValueOnce({ positionId: 103, checkerAnalysis: { moves: [{ move: '24/21' }] } });
 
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(LoadAnalysis).toHaveBeenCalledWith(103);
         expect(get(analysisStore).checkerAnalysis.moves).toEqual([{ move: '24/21' }]);
         expect(get(analysisStore).playedMove, 'le coup joué vient du contexte de match').toBe('24/21');
     });
 
-    test('le mode est restauré avant la position (l’effet EPC ne doit pas voir la position restaurée sous le mode EPC)', async () => {
+    test('le mode est restauré avant la position (l’effet EVAL ne doit pas voir la position restaurée sous le mode EVAL)', async () => {
         setMatch(1);
-        enterEPCMode();
+        enterEvalMode();
         const order = [];
         for (const [name, store] of Object.entries({ statusBarModeStore, positionStore })) {
             const orig = store.set;
@@ -367,31 +367,31 @@ describe('MATCH → EPC → MATCH', () => {
             });
         }
 
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(order.indexOf('statusBarModeStore')).toBeLessThan(order.indexOf('positionStore'));
     });
 });
 
-// ── EPC ↔ EDIT ────────────────────────────────────────────────────────────────
+// ── EVAL ↔ EDIT ────────────────────────────────────────────────────────────────
 
-describe('EPC → EDIT : l’automate quitte Eval avant d’entrer en recherche', () => {
-    test('enterEditMode depuis EPC ne rebascule pas l’onglet (l’utilisateur a cliqué « recherche »)', async () => {
+describe('EVAL → EDIT : l’automate quitte Eval avant d’entrer en recherche', () => {
+    test('enterEditMode depuis EVAL ne rebascule pas l’onglet (l’utilisateur a cliqué « recherche »)', async () => {
         setLibrary();
-        activeTabStore.set('epc');
-        enterEPCMode();
+        activeTabStore.set('eval');
+        enterEvalMode();
         activeTabStore.set('search');
 
         await enterEditMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
-        expect(get(activeTabStore), 'toggleEPCMode aurait renvoyé sur analysis').toBe('search');
-        expect(modeState().savedContext.beforeEPC, 'contexte EPC consommé').toBeNull();
+        expect(get(activeTabStore), 'toggleEvalMode aurait renvoyé sur analysis').toBe('search');
+        expect(modeState().savedContext.beforeEval, 'contexte EVAL consommé').toBeNull();
     });
 
-    test('MATCH → EPC → EDIT → MATCH : la partie survit aux deux brouillons', async () => {
+    test('MATCH → EVAL → EDIT → MATCH : la partie survit aux deux brouillons', async () => {
         setMatch(1);
-        enterEPCMode();
+        enterEvalMode();
 
         await enterEditMode();
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
@@ -404,33 +404,33 @@ describe('EPC → EDIT : l’automate quitte Eval avant d’entrer en recherche'
     });
 });
 
-describe('EDIT → EPC : l’automate quitte la recherche avant d’entrer dans Eval', () => {
-    test('enterEPCMode depuis EDIT ne sauvegarde pas le damier vierge de la recherche', async () => {
+describe('EDIT → EVAL : l’automate quitte la recherche avant d’entrer dans Eval', () => {
+    test('enterEvalMode depuis EDIT ne sauvegarde pas le damier vierge de la recherche', async () => {
         setMatch(1);
         await enterEditMode();
         expect(get(positionStore).board.bearoff).toEqual([15, 15]);
 
-        await enterEPCMode();
+        await enterEvalMode();
 
-        expect(get(statusBarModeStore)).toBe(MODE.EPC);
-        const { beforeEPC, beforeEdit } = modeState().savedContext;
+        expect(get(statusBarModeStore)).toBe(MODE.EVAL);
+        const { beforeEval, beforeEdit } = modeState().savedContext;
         expect(beforeEdit, 'la session EDIT est close').toBeNull();
-        expect(beforeEPC.mode).toBe(MODE.MATCH);
-        expect(beforeEPC.matchContext.matchID).toBe(7);
-        expect(beforeEPC.position.id, 'la position de la partie, pas le damier vierge').toBe(102);
-        expect(beforeEPC.position.board.bearoff, 'le damier de la partie, pas celui de la requête').toEqual([3, 3]);
+        expect(beforeEval.mode).toBe(MODE.MATCH);
+        expect(beforeEval.matchContext.matchID).toBe(7);
+        expect(beforeEval.position.id, 'la position de la partie, pas le damier vierge').toBe(102);
+        expect(beforeEval.position.board.bearoff, 'le damier de la partie, pas celui de la requête').toEqual([3, 3]);
 
-        await exitEPCMode();
+        await exitEvalMode();
         expect(get(statusBarModeStore)).toBe(MODE.MATCH);
         expect(get(positionStore).id).toBe(102);
         expect(get(positionStore).board.bearoff).toEqual([3, 3]);
     });
 
-    // #201 : App.svelte enchaîne exitEditMode() SANS await puis enterEPCMode()
+    // #201 : App.svelte enchaîne exitEditMode() SANS await puis enterEvalMode()
     // quand l'onglet passe de « recherche » à « Eval ». Le damier vierge de la
     // recherche est un clone sous l'id de la position de bibliothèque ; le
     // redessin déclenché par l'index est asynchrone. La photo prise par
-    // enterEPCMode était donc toujours le damier vierge, et la sortie d'Eval
+    // enterEvalMode était donc toujours le damier vierge, et la sortie d'Eval
     // le remettait à l'écran.
     test('depuis la bibliothèque, enchaînement d’App.svelte : la position revient sur le damier avant la photo', async () => {
         const lib = setLibrary();
@@ -442,72 +442,72 @@ describe('EDIT → EPC : l’automate quitte la recherche avant d’entrer dans 
         expect(get(positionStore).board.bearoff, 'restaurée depuis le cache, de façon synchrone').toEqual([3, 3]);
         expect(get(positionStore)).not.toBe(lib[1]);
 
-        await enterEPCMode();
-        const { beforeEPC } = modeState().savedContext;
-        expect(beforeEPC.mode).toBe(MODE.NORMAL);
-        expect(beforeEPC.position.id).toBe(2);
-        expect(beforeEPC.position.board.bearoff).toEqual([3, 3]);
-        expect(beforeEPC.positionIndex).toBe(1);
+        await enterEvalMode();
+        const { beforeEval } = modeState().savedContext;
+        expect(beforeEval.mode).toBe(MODE.NORMAL);
+        expect(beforeEval.position.id).toBe(2);
+        expect(beforeEval.position.board.bearoff).toEqual([3, 3]);
+        expect(beforeEval.positionIndex).toBe(1);
 
-        await exitEPCMode();
+        await exitEvalMode();
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(positionStore).id).toBe(2);
         expect(get(positionStore).board.bearoff, 'jamais le damier vierge au retour').toEqual([3, 3]);
     });
 
-    test('depuis la bibliothèque, appel direct : enterEPCMode attend la sortie de la recherche', async () => {
+    test('depuis la bibliothèque, appel direct : enterEvalMode attend la sortie de la recherche', async () => {
         setLibrary();
         await enterEditMode();
 
-        await enterEPCMode();
+        await enterEvalMode();
 
-        expect(get(statusBarModeStore)).toBe(MODE.EPC);
-        const { beforeEPC, beforeEdit } = modeState().savedContext;
+        expect(get(statusBarModeStore)).toBe(MODE.EVAL);
+        const { beforeEval, beforeEdit } = modeState().savedContext;
         expect(beforeEdit).toBeNull();
-        expect(beforeEPC.mode).toBe(MODE.NORMAL);
-        expect(beforeEPC.position.board.bearoff).toEqual([3, 3]);
-        expect(beforeEPC.ids).toEqual([1, 2, 3]);
+        expect(beforeEval.mode).toBe(MODE.NORMAL);
+        expect(beforeEval.position.board.bearoff).toEqual([3, 3]);
+        expect(beforeEval.ids).toEqual([1, 2, 3]);
 
-        await exitEPCMode();
+        await exitEvalMode();
         expect(get(positionsStore).ids).toEqual([1, 2, 3]);
         expect(get(positionStore).board.bearoff).toEqual([3, 3]);
     });
 });
 
-// ── toggleEPCMode ─────────────────────────────────────────────────────────────
+// ── toggleEvalMode ─────────────────────────────────────────────────────────────
 
-describe('toggleEPCMode', () => {
-    test('hors EPC : demande l’onglet Eval (App.svelte relaie vers enterEPCMode)', () => {
+describe('toggleEvalMode', () => {
+    test('hors EVAL : demande l’onglet Eval (App.svelte relaie vers enterEvalMode)', () => {
         setLibrary();
-        toggleEPCMode();
-        expect(get(activeTabStore)).toBe('epc');
+        toggleEvalMode();
+        expect(get(activeTabStore)).toBe('eval');
         expect(get(statusBarModeStore), 'le mode change via l’effet d’onglet, pas ici').toBe(MODE.NORMAL);
     });
 
-    test('en EPC : sort et revient sur l’onglet analyse', () => {
+    test('en EVAL : sort et revient sur l’onglet analyse', () => {
         setLibrary();
-        activeTabStore.set('epc');
-        enterEPCMode();
-        toggleEPCMode();
+        activeTabStore.set('eval');
+        enterEvalMode();
+        toggleEvalMode();
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(activeTabStore)).toBe('analysis');
     });
 });
 
-// ── Entrée en EPC depuis une position existante ───────────────────────────────
+// ── Entrée en EVAL depuis une position existante ───────────────────────────────
 
 describe('une position existante entre dans le panneau Eval et en ressort', () => {
-    test('exitEPCMode rend la position étudiée, pas le brouillon transmis', async () => {
+    test('exitEvalMode rend la position étudiée, pas le brouillon transmis', async () => {
         const lib = setLibrary();
         sendPositionToEval(lib[1]);
-        expect(modeState().savedContext.epcSeed.id).toBe(0);
-        enterEPCMode();
-        expect(modeState().savedContext.epcSeed, 'graine consommée').toBeNull();
+        expect(modeState().savedContext.evalSeed.id).toBe(0);
+        enterEvalMode();
+        expect(modeState().savedContext.evalSeed, 'graine consommée').toBeNull();
         expect(get(positionStore).id).toBe(0);
         expect(get(positionStore).board.bearoff).toEqual([3, 3]);
 
         get(positionStore).board.bearoff[0] = 9; // édition du brouillon
-        await exitEPCMode();
+        await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(positionStore).id).toBe(2);
@@ -518,11 +518,11 @@ describe('une position existante entre dans le panneau Eval et en ressort', () =
     test('depuis une partie : la graine ouvre Eval et la sortie revient à la partie', async () => {
         const ctx = setMatch(1);
         sendPositionToEval(ctx.movePositions[1].position);
-        expect(get(activeTabStore)).toBe('epc');
-        enterEPCMode();
+        expect(get(activeTabStore)).toBe('eval');
+        enterEvalMode();
         expect(get(positionStore).id).toBe(0);
 
-        await exitEPCMode();
+        await exitEvalMode();
         expect(get(statusBarModeStore)).toBe(MODE.MATCH);
         expect(get(matchContextStore).matchID).toBe(7);
     });
@@ -578,16 +578,16 @@ describe('toggleMatchMode', () => {
         expect(get(lastVisitedMatchStore)).toEqual({ matchID: 7, currentIndex: 2, gameNumber: 1 });
     });
 
-    test('depuis EPC : le brouillon est abandonné, son contexte oublié', async () => {
+    test('depuis EVAL : le brouillon est abandonné, son contexte oublié', async () => {
         setLibrary();
-        enterEPCMode();
+        enterEvalMode();
         GetLastVisitedMatch.mockResolvedValueOnce({ id: 7, player1_name: 'Alice', player2_name: 'Bob', last_visited_position: 0 });
         GetMatchMovePositions.mockResolvedValueOnce(makeMatchContext().movePositions);
 
         await toggleMatchMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.MATCH);
-        expect(modeState().savedContext.beforeEPC).toBeNull();
+        expect(modeState().savedContext.beforeEval).toBeNull();
     });
 
     test('sans partie en base : reste en NORMAL', async () => {

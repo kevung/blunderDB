@@ -51,14 +51,14 @@ async function openEval(page, mock) {
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
     await dismissHomeScreen(page);
-    await page.click('[data-testid="tab-epc"]');
-    await expect(page.locator('[data-testid="tab-epc"]')).toHaveClass(/active/);
-    await expect(page.locator('.epc-panel .badges-strip .badge')).toBeVisible({ timeout: 4000 });
+    await page.click('[data-testid="tab-eval"]');
+    await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
+    await expect(page.locator('.eval-panel .badges-strip .badge')).toBeVisible({ timeout: 4000 });
 }
 
 /** Every child of the strip, as the rectangles the browser laid out. */
 async function stripLayout(page) {
-    return page.locator('.epc-panel .badges-strip').evaluate((strip) => ({
+    return page.locator('.eval-panel .badges-strip').evaluate((strip) => ({
         firstIsButton: strip.firstElementChild?.classList.contains('add-position') ?? false,
         children: [...strip.children].map((el) => {
             const r = el.getBoundingClientRect();
@@ -91,7 +91,7 @@ test.describe("at blunderDB's default window width", () => {
     test('French, no database: the strip is one line and the button says to open a database', async ({ page }) => {
         await openEval(page, { config: { GetLanguage: 'fr' } });
 
-        const button = page.locator('.epc-panel .badges-strip .add-position');
+        const button = page.locator('.eval-panel .badges-strip .add-position');
         await expect(button).toHaveText(fr.eval.addPosition);
         await expect(button).toBeDisabled();
         await expect(button).toHaveAttribute('title', fr.eval.addPositionNoDatabase);
@@ -102,7 +102,7 @@ test.describe("at blunderDB's default window width", () => {
     test('German, a database open, the default board: one line, and the refusal as the reason', async ({ page }) => {
         await openEval(page, openLibraryMock({ config: { GetLanguage: 'de' } }));
 
-        const button = page.locator('.epc-panel .badges-strip .add-position');
+        const button = page.locator('.eval-panel .badges-strip .add-position');
         await expect(button).toHaveText(de.eval.addPosition);
         await expect(button).toBeDisabled();
         await expect(button).toHaveAttribute('title', de.status.invalidP2BorneOff);

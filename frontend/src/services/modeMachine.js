@@ -9,10 +9,10 @@
  *   MATCH       replaying a match (matchContextStore drives the navigation)
  *   COLLECTION  browsing a collection (positionsStore holds its ids)
  *   EDIT        the search tab: the board is a query being drawn
- *   EPC         the Eval tab: the board is a scratch pad for the engine
+ *   EVAL        the Eval tab: the board is a scratch pad for the engine
  *   TRANSCRIBE  the Transcription tab: the board is the draft's Cursor
  *
- * EDIT, EPC and TRANSCRIBE are *scratch* modes: the board they show is not a
+ * EDIT, EVAL and TRANSCRIBE are *scratch* modes: the board they show is not a
  * library record. Entering one snapshots what was being studied and leaving it
  * restores that snapshot — this is the `savedContext` half of the state.
  * A snapshot holds positions only, never an analysis: on the way back the
@@ -22,23 +22,23 @@
  *
  * Transitions (each is one exported function):
  *
- *   enterEditMode       NORMAL | MATCH | COLLECTION | EPC → EDIT
+ *   enterEditMode       NORMAL | MATCH | COLLECTION | EVAL → EDIT
  *   exitEditMode        EDIT → MATCH (entered from a match) | NORMAL
- *   enterEPCMode        NORMAL | MATCH | COLLECTION | EDIT → EPC
- *   exitEPCMode         EPC → MATCH (entered from a match) | NORMAL
- *   toggleEPCMode       EPC → (exit + analysis tab) | * → Eval tab
- *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EPC → TRANSCRIBE
+ *   enterEvalMode       NORMAL | MATCH | COLLECTION | EDIT → EVAL
+ *   exitEvalMode        EVAL → MATCH (entered from a match) | NORMAL
+ *   toggleEvalMode      EVAL → (exit + analysis tab) | * → Eval tab
+ *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE
  *   exitTranscribeMode  TRANSCRIBE → MATCH (entered from a match) | NORMAL
- *   sendPositionToEval  * → EPC on a given position (id cleared)
+ *   sendPositionToEval  * → EVAL on a given position (id cleared)
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
  *   exitCollectionMode  COLLECTION → NORMAL
  *
  * The scratch modes are reached from the tab bar: App.svelte's tab effect
- * calls enterEditMode/exitEditMode and enterEPCMode/exitEPCMode when the
+ * calls enterEditMode/exitEditMode and enterEvalMode/exitEvalMode when the
  * active tab changes, and it runs the *exit* of the previous tab's mode
  * before the *entry* of the new one. The machine still copes with a direct
- * EDIT ↔ EPC call by leaving the current scratch mode first, so that the
+ * EDIT ↔ EVAL call by leaving the current scratch mode first, so that the
  * saved context of one scratch mode is never buried under the other's.
  *
  * positionService.js re-exports every transition, so callers keep importing
@@ -68,8 +68,8 @@ export const MODE = Object.freeze({
     MATCH: 'MATCH',
     COLLECTION: 'COLLECTION',
     EDIT: 'EDIT',
-    EPC: 'EPC',
-    // The Transcription tab (ADR-0045). A scratch mode like EDIT and EPC: the
+    EVAL: 'EVAL',
+    // The Transcription tab (ADR-0045). A scratch mode like EDIT and EVAL: the
     // board shows the Action the Cursor is on, which belongs to a draft and
     // not to the library.
     TRANSCRIBE: 'TRANSCRIBE'
@@ -88,8 +88,8 @@ const NO_MATCH_CONTEXT = Object.freeze({
  * The `savedContext` half of the state. Each slot is written by one entry
  * transition and consumed (nulled) by the matching exit:
  *
- *   beforeEPC   { mode, matchContext, position, positionIndex, positions }
- *               written by enterEPCMode, consumed by exitEPCMode. `mode` and
+ *   beforeEval  { mode, matchContext, position, positionIndex, positions }
+ *               written by enterEvalMode, consumed by exitEvalMode. `mode` and
  *               `matchContext` let the exit return to the studied match instead
  *               of dropping to NORMAL while matchContext still says a match is
  *               on (bug 2) — that left match navigation broken.
@@ -101,16 +101,16 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               bounce the user to the Matches tab).
  *   beforeTranscribe  the same photograph, taken by enterTranscribeMode and
  *               consumed by exitTranscribeMode. It is a slot of its own and not
- *               a second use of beforeEPC: the two panels can be visited one
+ *               a second use of beforeEval: the two panels can be visited one
  *               after the other, and one snapshot buried under the other is the
- *               bug the EDIT/EPC pair already had.
- *   epcSeed     the position the Eval panel must open on instead of its
+ *               bug the EDIT/EVAL pair already had.
+ *   evalSeed    the position the Eval panel must open on instead of its
  *               default bearoff. A hand-off between sendPositionToEval() and
- *               enterEPCMode(), which run one tick apart (the tab switch reaches
- *               enterEPCMode through App.svelte's tab effect, not a direct
+ *               enterEvalMode(), which run one tick apart (the tab switch reaches
+ *               enterEvalMode through App.svelte's tab effect, not a direct
  *               call) — hence a slot rather than a parameter.
- *   lastEPCBoard  the board the Eval panel was last left on, photographed by
- *               exitEPCMode and reused by the next enterEPCMode. Unlike the
+ *   lastEvalBoard the board the Eval panel was last left on, photographed by
+ *               exitEvalMode and reused by the next enterEvalMode. Unlike the
  *               slots above it is NOT consumed on use: leaving and returning
  *               to the panel used to hand back the default bearoff, throwing
  *               away whatever the user had built. It is a board, never a
@@ -118,21 +118,21 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               with it (the panel evaluates live, and a stale analysis
  *               describing another position is exactly the bug the scratch
  *               boards had). It outlives a library reload on purpose —
- *               forgetContextBeforeEPC drops beforeEPC, not this: a scratch
+ *               forgetContextBeforeEval drops beforeEval, not this: a scratch
  *               board belongs to the session, not to the open database.
  */
 /**
  * The slots are all `null` at rest, so without this annotation the checker
  * infers the type `null` for each and rejects every assignment to them.
  *
- * @type {{beforeTranscribe: any, beforeEPC: any, beforeEdit: any, epcSeed: any, lastEPCBoard: any}}
+ * @type {{beforeTranscribe: any, beforeEval: any, beforeEdit: any, evalSeed: any, lastEvalBoard: any}}
  */
 const savedContext = {
     beforeTranscribe: null,
-    beforeEPC: null,
+    beforeEval: null,
     beforeEdit: null,
-    epcSeed: null,
-    lastEPCBoard: null
+    evalSeed: null,
+    lastEvalBoard: null
 };
 
 /** Read-only snapshot of the machine's state, for tests and debugging. */
@@ -141,12 +141,12 @@ export function modeState() {
 }
 
 /**
- * Forget what enterEPCMode saved. loadAllPositions() calls this: reloading
- * the whole library redefines what "the position before EPC" is, so a
- * later exitEPCMode reloads too instead of restoring a stale list.
+ * Forget what enterEvalMode saved. loadAllPositions() calls this: reloading
+ * the whole library redefines what "the position before EVAL" is, so a
+ * later exitEvalMode reloads too instead of restoring a stale list.
  */
-export function forgetContextBeforeEPC() {
-    savedContext.beforeEPC = null;
+export function forgetContextBeforeEval() {
+    savedContext.beforeEval = null;
 }
 
 function currentMode() {
@@ -190,8 +190,8 @@ function blankEditBoard(pos) {
  *
  * The list behind the board is the machine's to know. In EDIT it is still in
  * positionsStore (enterEditMode keeps it there, exitEditMode redraws from it)
- * and a match entry is recorded in beforeEdit; in EPC it is the id snapshot
- * beforeEPC holds, with the mode it was taken in.
+ * and a match entry is recorded in beforeEdit; in EVAL it is the id snapshot
+ * beforeEval holds, with the mode it was taken in.
  *
  * "The whole library" is checked on the ids rather than inferred from flags:
  * a deck or a statistics selection is shown in NORMAL mode with no search
@@ -211,8 +211,8 @@ export async function joinLibraryBehindScratchBoard(id) {
         if (savedContext.beforeEdit) return false;
         ids = get(positionsStore)?.ids ?? [];
         replace = (next) => positionsStore.setIds(next);
-    } else if (currentMode() === MODE.EPC) {
-        const saved = savedContext.beforeEPC;
+    } else if (currentMode() === MODE.EVAL) {
+        const saved = savedContext.beforeEval;
         if (!saved || saved.mode !== MODE.NORMAL || !saved.ids) return false;
         ids = saved.ids;
         replace = (next) => {
@@ -238,7 +238,7 @@ export async function joinLibraryBehindScratchBoard(id) {
 
 // ── EDIT ─────────────────────────────────────────────────────────────────────
 
-/** NORMAL | MATCH | COLLECTION | EPC → EDIT. */
+/** NORMAL | MATCH | COLLECTION | EVAL → EDIT. */
 export async function enterEditMode() {
     logger.log('enterEditMode');
     if (!get(databasePathStore)) return;
@@ -250,13 +250,13 @@ export async function enterEditMode() {
         await exitTranscribeMode();
     }
 
-    if (currentMode() === MODE.EPC) {
+    if (currentMode() === MODE.EVAL) {
         // Leave the scratch board of the Eval tab first — through the exit
-        // transition, not toggleEPCMode(): the toggle also flips the active tab
+        // transition, not toggleEvalMode(): the toggle also flips the active tab
         // to 'analysis', which bounced a user who had just clicked the search
         // tab. The exit's synchronous prefix restores the mode (NORMAL or MATCH)
         // and the studied position before we snapshot them below.
-        exitEPCMode();
+        exitEvalMode();
     }
 
     // Snapshot the studied match (if any) so leaving the search tab restores it.
@@ -313,7 +313,7 @@ export async function exitEditMode() {
     // window cache, before bumping the index. The redraw the bump triggers
     // (App.svelte's nav effect) fetches asynchronously, and whoever runs right
     // after this exit — App.svelte calls it without await and then
-    // enterEPCMode, which photographs the board — would otherwise see the
+    // enterEvalMode, which photographs the board — would otherwise see the
     // blank query board under the library's id, and put it back on screen on
     // the way out of Eval (#201). enterEditMode blanked a clone, so the cache
     // still holds the record intact; on a miss the nav effect fetches it.
@@ -326,32 +326,32 @@ export async function exitEditMode() {
     currentPositionIndexStore.set(currentIndex);
 }
 
-// ── EPC (Eval tab) ───────────────────────────────────────────────────────────
+// ── EVAL (Eval tab) ──────────────────────────────────────────────────────────
 
-/** EPC → exit and show the analysis tab; otherwise open the Eval tab. */
-export function toggleEPCMode() {
-    if (currentMode() === MODE.EPC) {
-        exitEPCMode();
+/** EVAL → exit and show the analysis tab; otherwise open the Eval tab. */
+export function toggleEvalMode() {
+    if (currentMode() === MODE.EVAL) {
+        exitEvalMode();
         activeTabStore.set('analysis');
     } else {
-        activeTabStore.set('epc');
+        activeTabStore.set('eval');
     }
 }
 
 // The board the Eval panel opens on when nothing was handed to it: the
-// canonical 6-point bearoff the EPC trainer starts from.
-function defaultEPCPosition() {
-    const epcPoints = Array(26).fill({ checkers: 0, color: -1 });
-    epcPoints[1] = { checkers: 2, color: 0 };
-    epcPoints[2] = { checkers: 2, color: 0 };
-    epcPoints[3] = { checkers: 2, color: 0 };
-    epcPoints[4] = { checkers: 3, color: 0 };
-    epcPoints[5] = { checkers: 3, color: 0 };
-    epcPoints[6] = { checkers: 3, color: 0 };
+// canonical 6-point bearoff.
+function defaultEvalPosition() {
+    const points = Array(26).fill({ checkers: 0, color: -1 });
+    points[1] = { checkers: 2, color: 0 };
+    points[2] = { checkers: 2, color: 0 };
+    points[3] = { checkers: 2, color: 0 };
+    points[4] = { checkers: 3, color: 0 };
+    points[5] = { checkers: 3, color: 0 };
+    points[6] = { checkers: 3, color: 0 };
 
     return {
         id: 0,
-        board: { points: epcPoints, bearoff: [0, 15] },
+        board: { points, bearoff: [0, 15] },
         cube: { owner: -1, value: 0 },
         dice: [0, 0],
         score: [-1, -1],
@@ -382,36 +382,36 @@ export function sendPositionToEval(position) {
     const seed = JSON.parse(JSON.stringify(position));
     seed.id = 0;
 
-    if (currentMode() === MODE.EPC) {
+    if (currentMode() === MODE.EVAL) {
         // Already in the Eval panel: replace the board in place. Going through
-        // the tab store would be a no-op and enterEPCMode() returns early.
+        // the tab store would be a no-op and enterEvalMode() returns early.
         positionsStore.set([seed]);
         positionStore.set(seed);
         currentPositionIndexStore.set(0);
         return;
     }
 
-    savedContext.epcSeed = seed;
-    // Normally the tab switch reaches enterEPCMode() through App.svelte's tab
-    // effect. If the Eval tab is somehow already selected without EPC mode
+    savedContext.evalSeed = seed;
+    // Normally the tab switch reaches enterEvalMode() through App.svelte's tab
+    // effect. If the Eval tab is somehow already selected without EVAL mode
     // being on, that set() is a no-op and the effect never re-runs, so enter
     // directly rather than leave the seed stranded.
-    if (get(activeTabStore) === 'epc') enterEPCMode();
-    else activeTabStore.set('epc');
+    if (get(activeTabStore) === 'eval') enterEvalMode();
+    else activeTabStore.set('eval');
 }
 
 /**
- * NORMAL | MATCH | COLLECTION | EDIT → EPC. The mode is set to EPC *before*
+ * NORMAL | MATCH | COLLECTION | EDIT → EVAL. The mode is set to EVAL *before*
  * the scratch board lands in positionStore, in one synchronous run, or the
- * board's EPC effect fires on the wrong position. The function is async only
+ * board's Eval effect (updateEPC in App.svelte) fires on the wrong position. The function is async only
  * for the way in from EDIT, and that await sits before the run, never inside.
  */
-export async function enterEPCMode() {
-    if (currentMode() === MODE.EPC) return;
+export async function enterEvalMode() {
+    if (currentMode() === MODE.EVAL) return;
 
     if (currentMode() === MODE.TRANSCRIBE) {
         await exitTranscribeMode();
-        if (currentMode() === MODE.EPC) return;
+        if (currentMode() === MODE.EVAL) return;
     }
 
     if (currentMode() === MODE.EDIT) {
@@ -421,10 +421,10 @@ export async function enterEPCMode() {
         // completed exit guarantees the record is back (#201) — see
         // exitEditMode for why its own restore is synchronous.
         await exitEditMode();
-        if (currentMode() === MODE.EPC) return;
+        if (currentMode() === MODE.EVAL) return;
     }
 
-    savedContext.beforeEPC = {
+    savedContext.beforeEval = {
         mode: currentMode(),
         matchContext: { ...get(matchContextStore) },
         position: get(positionStore) ? { ...get(positionStore) } : null,
@@ -435,32 +435,32 @@ export async function enterEPCMode() {
     // A position sent from the library wins; otherwise pick up the board the
     // panel was last left on, and only fall back to the default bearoff the
     // first time it is opened.
-    const epcPosition = savedContext.epcSeed ?? savedContext.lastEPCBoard ?? defaultEPCPosition();
-    savedContext.epcSeed = null;
+    const evalPosition = savedContext.evalSeed ?? savedContext.lastEvalBoard ?? defaultEvalPosition();
+    savedContext.evalSeed = null;
 
-    statusBarModeStore.set(MODE.EPC);
+    statusBarModeStore.set(MODE.EVAL);
 
-    positionsStore.set([epcPosition]);
-    positionStore.set(epcPosition);
+    positionsStore.set([evalPosition]);
+    positionStore.set(evalPosition);
     currentPositionIndexStore.set(0);
 }
 
 /**
- * EPC → MATCH (if entered from a match) | NORMAL. The mode is restored
+ * EVAL → MATCH (if entered from a match) | NORMAL. The mode is restored
  * synchronously, before the studied position is put back, so the board's
- * EPC effect never sees the restored position under an EPC mode.
+ * Eval effect never sees the restored position under EVAL mode.
  */
-export async function exitEPCMode() {
-    if (currentMode() !== MODE.EPC) return;
+export async function exitEvalMode() {
+    if (currentMode() !== MODE.EVAL) return;
 
-    const saved = savedContext.beforeEPC;
-    savedContext.beforeEPC = null;
+    const saved = savedContext.beforeEval;
+    savedContext.beforeEval = null;
 
     // Photograph the board on the way out so returning to the panel finds the
     // work rather than the default bearoff. A board, not a record: the id is
     // dropped so it can never be mistaken for a library position.
     const leaving = get(positionStore);
-    savedContext.lastEPCBoard = leaving ? { ...leaving, id: 0 } : null;
+    savedContext.lastEvalBoard = leaving ? { ...leaving, id: 0 } : null;
 
     statusBarTextStore.set('');
     epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
@@ -484,7 +484,7 @@ export async function exitEPCMode() {
         // Reload through showPosition (not a bare positionStore.set) so the
         // analysis is fetched again and the analysis panel is repopulated on
         // return. In MATCH mode the nav effect no longer redraws (bug 1
-        // guard), so without this the panel stayed empty after EPC; in
+        // guard), so without this the panel stayed empty after EVAL; in
         // NORMAL mode this simply mirrors the index-driven redraw.
         await showPosition(saved.position);
     }
@@ -493,7 +493,7 @@ export async function exitEPCMode() {
 // ── TRANSCRIBE (Transcription tab) ───────────────────────────────────────────
 
 /**
- * NORMAL | MATCH | COLLECTION | EDIT | EPC → TRANSCRIBE.
+ * NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE.
  *
  * The transcription panel takes the board over: it shows the Action the Cursor
  * is on, which is a draft's board and never a library record. So entering
@@ -510,13 +510,13 @@ export async function enterTranscribeMode() {
 
     // Leave the other scratch modes first, so the snapshot below is the
     // studied position (or match) and not the query board or the Eval scratch
-    // pad — the same ordering enterEPCMode applies to EDIT.
+    // pad — the same ordering enterEvalMode applies to EDIT.
     if (currentMode() === MODE.EDIT) {
         await exitEditMode();
         if (currentMode() === MODE.TRANSCRIBE) return;
     }
-    if (currentMode() === MODE.EPC) {
-        await exitEPCMode();
+    if (currentMode() === MODE.EVAL) {
+        await exitEvalMode();
         if (currentMode() === MODE.TRANSCRIBE) return;
     }
 
@@ -557,7 +557,7 @@ export async function exitTranscribeMode() {
     if (saved.position) {
         currentPositionIndexStore.set(saved.positionIndex);
         // Through showPosition, not a bare set: the analysis panel is
-        // repopulated on the way back, as it is on the way out of EPC.
+        // repopulated on the way back, as it is on the way out of EVAL.
         await showPosition(saved.position);
     }
 }
@@ -588,7 +588,7 @@ export async function toggleMatchMode() {
         // A scratch or collection mode is abandoned, not exited: its board is
         // about to be replaced by the match position anyway.
         statusBarModeStore.set(MODE.NORMAL);
-        savedContext.beforeEPC = null;
+        savedContext.beforeEval = null;
         savedContext.beforeEdit = null;
     }
     activeCollectionStore.set(null);

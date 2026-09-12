@@ -86,15 +86,15 @@ test('galerie de captures panneau par panneau', async ({ page }) => {
 
     // 3. Panneau Eval — même position (dés posés) : évaluation gammonNet.
     // Cliquer l'onglet Eval directement ouvre le panneau sur un plateau vierge
-    // (defaultEPCPosition) : c'est le clic droit sur le plateau, « Evaluate
+    // (defaultEvalPosition) : c'est le clic droit sur le plateau, « Evaluate
     // this position » (Board.svelte → sendPositionToEval), qui y envoie la
     // position étudiée — le même geste que documenté (guide_utilisateur.rst,
     // section Calculer l'EPC : « le calculateur fonctionne pour les deux
     // joueurs », depuis n'importe quel mode).
     await page.locator('#backgammon-board').click({ button: 'right' });
     await page.getByRole('menuitem', { name: 'Evaluate this position' }).click();
-    await expect(page.getByTestId('tab-epc')).toHaveClass(/active/);
-    await expect(page.locator('.epc-panel .checker-table tbody tr').first()).toBeVisible();
+    await expect(page.getByTestId('tab-eval')).toHaveClass(/active/);
+    await expect(page.locator('.eval-panel .checker-table tbody tr').first()).toBeVisible();
     await capture('eval');
 
     // 4. Panneau Commentaires — deux commentaires sur la position vitrine.

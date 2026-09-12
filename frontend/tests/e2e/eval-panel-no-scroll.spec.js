@@ -90,13 +90,13 @@ async function openEval(page, { epc, evalResult }) {
     // Le panneau Eval se lit sans base ouverte ; l'accueil, lui, couvre les
     // onglets jusqu'à ce qu'on l'écarte — le geste que fait l'utilisateur.
     await dismissHomeScreen(page);
-    await page.click('[data-testid="tab-epc"]');
-    await expect(page.locator('[data-testid="tab-epc"]')).toHaveClass(/active/);
-    await expect(page.locator('.epc-panel .cube-table')).toBeVisible({ timeout: 4000 });
+    await page.click('[data-testid="tab-eval"]');
+    await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
+    await expect(page.locator('.eval-panel .cube-table')).toBeVisible({ timeout: 4000 });
 }
 
 async function overflow(page) {
-    return page.locator('.epc-panel').evaluate((el) => el.scrollHeight - el.clientHeight);
+    return page.locator('.eval-panel').evaluate((el) => el.scrollHeight - el.clientHeight);
 }
 
 test('a non-race cube position fits the panel at the default size', async ({ page }) => {
@@ -106,7 +106,7 @@ test('a non-race cube position fits the panel at the default size', async ({ pag
 
 test('a race cube position fits too — five race columns and all', async ({ page }) => {
     await openEval(page, { epc: raceEpc, evalResult: cubeEval });
-    await expect(page.locator('.epc-panel')).toContainText('66.47');
+    await expect(page.locator('.eval-panel')).toContainText('66.47');
     expect(await overflow(page)).toBeLessThanOrEqual(0);
 });
 
@@ -126,11 +126,11 @@ test.describe("at blunderDB's default window width", () => {
         // (fr) to 1125 px (el) against the 996 px the panel has, so the cube
         // block, last in the flex row, wrapped under them in seven languages
         // out of nine.
-        await expect(page.locator('.epc-panel .facts-table tbody')).toHaveCount(2);
+        await expect(page.locator('.eval-panel .facts-table tbody')).toHaveCount(2);
 
         const box = (sel) => page.locator(sel).boundingBox();
-        const facts = await box('.epc-panel .facts-table');
-        const cube = await box('.epc-panel .decision-cube');
+        const facts = await box('.eval-panel .facts-table');
+        const cube = await box('.eval-panel .decision-cube');
         expect(cube.x).toBeGreaterThan(facts.x + facts.width - 1); // to the right of
         expect(cube.y).toBeLessThan(facts.y + 4); // and on the same line, not below
 
@@ -147,11 +147,11 @@ test.describe("at blunderDB's default window width", () => {
 
 test('the decision has the same three options plus a verdict, race or not', async ({ page }) => {
     await openEval(page, { epc: raceEpc, evalResult: cubeEval });
-    await expect(page.locator('.epc-panel .cube-table tbody tr')).toHaveCount(4);
+    await expect(page.locator('.eval-panel .cube-table tbody tr')).toHaveCount(4);
 
     // The strip sits above the content, never inside it: that is what stops a
     // `margin-left: auto` from manufacturing a void across the middle.
-    const stripThenRow = await page.locator('.epc-content').evaluate((el) => {
+    const stripThenRow = await page.locator('.eval-content').evaluate((el) => {
         const kids = [...el.children].map((c) => c.className);
         return kids.findIndex((c) => c.includes('badges-strip')) < kids.findIndex((c) => c.includes('top-row'));
     });

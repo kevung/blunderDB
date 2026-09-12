@@ -1953,7 +1953,7 @@ Le panneau **Eval** (*CTRL-E*) évalue en direct la position posée sur le
 plateau, quelle qu'elle soit ; sur une position de bearoff il se spécialise et
 calcule en plus l'EPC (Effective Pip Count). Il est activé en appuyant sur
 *CTRL-E*, en cliquant sur l'onglet Eval dans le panneau inférieur, ou en
-exécutant la commande ``epc``. Cette commande garde son nom d'origine : le
+exécutant la commande ``eval`` ; ``epc``, son ancien nom, l'ouvre aussi. Le
 panneau s'est appelé *EPC*, puis *Bearoff*, avant de devenir *Eval* — c'est
 donc ici qu'il faut chercher ce qu'une version antérieure appelait le panneau
 Bearoff, le nom ne désignant plus que l'onglet de configuration des tables de

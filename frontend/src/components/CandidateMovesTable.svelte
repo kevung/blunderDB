@@ -3,7 +3,7 @@
     import { checkerRows } from '../utils/analysisRows.js';
 
     // Rendering component for a ranked list of checker-move candidates —
-    // mounted by AnalysisPanel (a stored record) and by EPCPanel (a live
+    // mounted by AnalysisPanel (a stored record) and by EvalPanel (a live
     // evaluation, wired in #125). It owns no data: sorting, selection and
     // highlighting stay with the caller, which knows whether the moves come
     // from a database row or a fresh computation. The cells themselves come
@@ -11,14 +11,14 @@
     // so this component lays them out and nothing more.
     //
     // showProvenance (ADR-0018 rule 4): depth/engine are constant across
-    // every row of a live evaluation (EPCPanel), so that caller hides the
+    // every row of a live evaluation (EvalPanel), so that caller hides the
     // two columns and shows them once in its own badge strip instead.
     // AnalysisPanel keeps them — sortedMoves there is genuinely sorted by
     // engine, so the columns carry real information.
     //
     // baseline (ADR-0018 rule 2): the pre-roll vector, in the same
     // player/opponent frame as a move row (domain.CheckerMove's own field
-    // names — see EPCPanel's baselineFacts), rendered as a row pinned right
+    // names — see EvalPanel's baselineFacts), rendered as a row pinned right
     // below the header. It is not a candidate: no selection, no play
     // notation, no error figure (rule 3 — the gap to it is the luck of the
     // roll, ADR-0010, never the merit of a play).
@@ -131,7 +131,7 @@
         box-sizing: border-box;
         vertical-align: middle;
         background: #fff;
-        /* EPCPanel's own scroll region is this table's list — the header
+        /* EvalPanel's own scroll region is this table's list — the header
            stays readable while the rows scroll under it (ADR-0017). */
         position: sticky;
         top: 0;

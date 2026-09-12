@@ -3,6 +3,7 @@ import { positionStore, positionsStore, matchContextStore, emptyPosition } from 
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
 import { logger } from '../utils/logger.js';
+import { normalizeTabId } from '../services/tabOrder.js';
 
 function createDefaultAnalysis() {
     return {
@@ -81,11 +82,11 @@ function createViewStore() {
         positionStore.set(view.position ?? (cached ? JSON.parse(JSON.stringify(cached)) : emptyPosition()));
         analysisStore.set(view.analysis);
         selectedMoveStore.set(view.selectedMove ?? null);
-        // EPC and EDIT are transient modes driven by the active tab: always
+        // EVAL and EDIT are transient modes driven by the active tab: always
         // restore as NORMAL so the tab handler re-enters them cleanly via
-        // enterEPCMode() / enterEditMode() once the DB is fully open.
+        // enterEvalMode() / enterEditMode() once the DB is fully open.
         const mode = view.mode || 'NORMAL';
-        statusBarModeStore.set(mode === 'EPC' || mode === 'EDIT' ? 'NORMAL' : mode);
+        statusBarModeStore.set(mode === 'EVAL' || mode === 'EDIT' ? 'NORMAL' : mode);
         activeTabStore.set(view.activeTab || 'matches');
         commentTextStore.set(view.commentText || '');
         matchContextStore.set(view.matchContext || createDefaultMatchContext());
@@ -182,9 +183,11 @@ function createViewStore() {
                     position: null,
                     analysis: createDefaultAnalysis(),
                     selectedMove: sv.selectedMove ?? null,
-                    activeTab: sv.activeTab || 'analysis',
+                    // A session saved before #401 names the Eval tab `epc` and
+                    // its mode `EPC`: both reopen Eval under today's names.
+                    activeTab: normalizeTabId(sv.activeTab) || 'analysis',
                     commentText: sv.commentText || '',
-                    mode: sv.mode || 'NORMAL',
+                    mode: (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL',
                     previousMode: sv.previousMode || 'NORMAL',
                     matchContext: createDefaultMatchContext()
                 };

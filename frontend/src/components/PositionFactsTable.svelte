@@ -3,7 +3,7 @@
 
     // The "position fact" half of ADR-0017's layout rule: quantities that
     // belong to the board itself, never to a choice a player might make.
-    // Shared by EPCPanel (live evaluation) and AnalysisPanel (a stored
+    // Shared by EvalPanel (live evaluation) and AnalysisPanel (a stored
     // record) — one rendering, two callers, so the two never drift on what
     // a "position fact" looks like on screen (CONTEXT.md).
     //

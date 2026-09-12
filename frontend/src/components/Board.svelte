@@ -61,12 +61,12 @@
     let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
     let previousDice = get(positionStore).dice; // Save previous dice values
 
-    // enterEPCMode() (positionService.js) always starts the Eval panel's
+    // enterEvalMode() (positionService.js) always starts the Eval panel's
     // position with dice = [0, 0]; without this, the first die click of an
     // Eval session would restore whatever previousDice was left over from an
     // unrelated position seen earlier, instead of starting from a clean roll.
     $effect(() => {
-        if (mode === 'EPC') {
+        if (mode === 'EVAL') {
             previousDice = [0, 0];
         }
     });
@@ -204,13 +204,13 @@
         });
     }
 
-    // EPC's own "clear" target: a blank board the user can build up from
-    // scratch, but with the defaults enterEPCMode() itself uses — money
+    // Eval's own "clear" target: a blank board the user can build up from
+    // scratch, but with the defaults enterEvalMode() itself uses — money
     // score (not a 7-away match), no dice in progress — rather than EDIT's
     // search-flavoured 7-7/3-1. See the grilling session that settled this:
     // reusing resetBoard() verbatim would inject an arbitrary match score
     // into a panel whose race table otherwise reads as money by default.
-    function resetEPCBoard() {
+    function resetEvalBoard() {
         positionStore.update((pos) => {
             pos.board.points.forEach((point) => (point.checkers = 0));
             pos.board.bearoff = [15, 15];
@@ -248,11 +248,11 @@
     }
 
     function handleKeyDown(event) {
-        if ((mode !== 'EDIT' && mode !== 'EPC') || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
+        if ((mode !== 'EDIT' && mode !== 'EVAL') || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
 
         if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             event.preventDefault();
-            if (mode === 'EPC') resetEPCBoard();
+            if (mode === 'EVAL') resetEvalBoard();
             else resetBoard();
         }
     }
@@ -315,7 +315,7 @@
             resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
             setPreviousDice: (dice) => (previousDice = dice),
-            reset: () => (mode === 'EPC' ? resetEPCBoard() : resetBoard()),
+            reset: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()),
             openContextMenu,
             logger
         });
@@ -349,7 +349,7 @@
 
     // ── Board context menu ─────────────────────────────────────────────────
     // Right-clicking the board opens actions on the position it shows. The
-    // gating (never in EDIT/EPC where the right button places checkers,
+    // gating (never in EDIT/EVAL where the right button places checkers,
     // never over a modal) is boardInteractions.js's; this only builds the
     // menu at the spot it asks for.
     let boardMenu = $state(null);

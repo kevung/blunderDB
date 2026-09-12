@@ -3,7 +3,7 @@
  * `getter()`'s value actually changed since the last run," with the new value (and
  * the one it replaced) as arguments.
  *
- * Three components (EPCPanel, TournamentPanel, MatchPanel) each kept their own
+ * Three components (EvalPanel, TournamentPanel, MatchPanel) each kept their own
  * `_prevActive`/`_prevVisible` local and repeated the same three lines around it —
  * remember the previous value, compare, call the side effect only on an actual
  * change, then update the remembered value, in that order, so `fn` never sees a

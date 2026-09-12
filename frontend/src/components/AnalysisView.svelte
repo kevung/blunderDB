@@ -41,7 +41,7 @@
         maxCube = 0
     } = $props();
 
-    // ADR-0017 rule 5: the facts table is shared with EPCPanel, fed here by
+    // ADR-0017 rule 5: the facts table is shared with EvalPanel, fed here by
     // the stored record instead of a live evaluation. cubelessNoDoubleEquity
     // is the single cubeless figure this table shows (see CubeVerdictTable's
     // own doc comment on why the pair it used to render collapsed to one

@@ -98,7 +98,7 @@ test('search tour activates the Search tab under the spotlight', async ({ page }
 // tours.js only knows strings. So each is started for real and the tab it
 // claims to open is checked.
 for (const [id, tab] of [
-    ['eval', 'epc'],
+    ['eval', 'eval'],
     ['anki', 'anki'],
     ['stats', 'stats']
 ]) {

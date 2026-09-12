@@ -32,7 +32,7 @@
     let isSearchTab = $derived($activeTabStore === 'search');
     // Both scratch boards can be saved — Search's and Eval's (#399); a Ctrl-U
     // rewrite stays Search's alone.
-    let hasScratchBoard = $derived(isSearchTab || $activeTabStore === 'epc');
+    let hasScratchBoard = $derived(isSearchTab || $activeTabStore === 'eval');
 </script>
 
 <!--// https://heroicons.com/-->

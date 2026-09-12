@@ -307,7 +307,7 @@ export async function getWailsCalls(page, methodName) {
  *
  * L'accueil (#284) couvre l'application tant qu'aucune base n'est ouverte, et
  * intercepte donc les clics sur les onglets. Une spec qui travaille sur le
- * plateau brouillon — Eval, EPC — est exactement le cas pour lequel le bouton
+ * plateau brouillon — Eval — est exactement le cas pour lequel le bouton
  * « écarter » existe : elle fait ici le geste que l'utilisateur ferait, plutôt
  * que d'ouvrir une base dont elle n'a pas besoin.
  *

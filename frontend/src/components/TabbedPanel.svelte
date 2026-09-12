@@ -18,7 +18,7 @@
     import { t } from '../i18n';
     import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
     import { logger } from '../utils/logger.js';
-    import { applyTabOrder } from '../services/tabOrder.js';
+    import { applyTabOrder, normalizeTabId } from '../services/tabOrder.js';
     import ContextMenu from './ContextMenu.svelte';
 
     import AnalysisPanel from './AnalysisPanel.svelte';
@@ -29,7 +29,7 @@
     import MatchPanel from './MatchPanel.svelte';
     import TournamentPanel from './TournamentPanel.svelte';
     import StatsPanel from './stats/StatsPanel.svelte';
-    import EPCPanel from './EPCPanel.svelte';
+    import EvalPanel from './EvalPanel.svelte';
     import AnkiPanel from './AnkiPanel.svelte';
     import TrainingPanel from './TrainingPanel.svelte';
     import TranscriptionPanel from './TranscriptionPanel.svelte';
@@ -48,7 +48,7 @@
         { id: 'search', labelKey: 'tabbedPanel.search', icon: 'search', shortcut: 'Ctrl+F' },
         { id: 'analysis', labelKey: 'tabbedPanel.analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
         { id: 'comments', labelKey: 'tabbedPanel.comments', icon: 'comments', shortcut: 'Ctrl+P' },
-        { id: 'epc', labelKey: 'tabbedPanel.epc', icon: 'epc', shortcut: 'Ctrl+E' },
+        { id: 'eval', labelKey: 'tabbedPanel.eval', icon: 'eval', shortcut: 'Ctrl+E' },
         // Entraînement entre Eval et Anki : l'ordre est celui de « calculer /
         // retenir » (ADR-0040 règle 1). Anki fait réviser ce qui se RETIENT,
         // l'Entraînement fait travailler ce qui se CALCULE.
@@ -78,7 +78,8 @@
         try {
             const [order, hidden] = await Promise.all([GetTabOrder(), GetHiddenTabs()]);
             tabs = applyTabOrder(DEFAULT_TABS, order);
-            for (const id of hidden || []) {
+            for (const saved of hidden || []) {
+                const id = normalizeTabId(saved);
                 if (DEFAULT_TABS.some((tab) => tab.id === id)) hiddenIds.add(id);
             }
             // A tab hidden in a previous session can still be the active one
@@ -323,7 +324,7 @@
                             stroke-linejoin="round"
                             d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
                         />
-                    {:else if tab.icon === 'epc'}
+                    {:else if tab.icon === 'eval'}
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
@@ -402,8 +403,8 @@
             <TournamentPanel />
         {:else if $activeTabStore === 'stats'}
             <StatsPanel />
-        {:else if $activeTabStore === 'epc'}
-            <EPCPanel />
+        {:else if $activeTabStore === 'eval'}
+            <EvalPanel />
         {:else if $activeTabStore === 'transcription'}
             <TranscriptionPanel />
         {:else if $activeTabStore === 'metadata'}

@@ -2,7 +2,7 @@
  * positionService.evalBoardMemory.test.js
  *
  * Reported: leaving the Eval panel and coming back loses the position and its
- * evaluation. enterEPCMode always opened on the default bearoff, so whatever
+ * evaluation. enterEvalMode always opened on the default bearoff, so whatever
  * the user had built on the scratch board was thrown away on the way out.
  *
  * The panel now reopens on the board it was last left on. Three rules go with
@@ -41,7 +41,7 @@ vi.mock('../services/databaseService.js', () => ({
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
-import { enterEPCMode, exitEPCMode, sendPositionToEval } from '../services/positionService.js';
+import { enterEvalMode, exitEvalMode, sendPositionToEval } from '../services/positionService.js';
 
 function emptyPoints() {
     return Array(26)
@@ -92,45 +92,45 @@ beforeEach(() => {
 
 describe('the Eval panel reopens on the board it was left on', () => {
     test('the first opening gets the default bearoff', async () => {
-        await enterEPCMode();
-        expect(get(statusBarModeStore)).toBe('EPC');
+        await enterEvalMode();
+        expect(get(statusBarModeStore)).toBe('EVAL');
         // The default bearoff: 15 checkers spread over the six home points.
         expect(checkerSignature(get(positionStore))).toBe('1:2,2:2,3:2,4:3,5:3,6:3');
     });
 
     test('a board built in the panel is still there on the way back', async () => {
-        await enterEPCMode();
+        await enterEvalMode();
 
         // The user rearranges the board.
         const built = scratchBoard();
         positionStore.set(built);
         const signature = checkerSignature(built);
 
-        await exitEPCMode();
+        await exitEvalMode();
         expect(get(statusBarModeStore)).toBe('NORMAL');
 
-        await enterEPCMode();
+        await enterEvalMode();
         expect(checkerSignature(get(positionStore)), 'the panel found its board again').toBe(signature);
     });
 
     test('the remembered board is a board, never a library record', async () => {
-        await enterEPCMode();
+        await enterEvalMode();
         positionStore.set({ ...scratchBoard(), id: 77 });
-        await exitEPCMode();
-        await enterEPCMode();
+        await exitEvalMode();
+        await enterEvalMode();
         expect(get(positionStore).id, 'no library id rides along').toBe(0);
     });
 
     test('a position sent from the library wins over the remembered board', async () => {
-        await enterEPCMode();
+        await enterEvalMode();
         positionStore.set(scratchBoard());
-        await exitEPCMode();
+        await exitEvalMode();
 
         const fromLibrary = libraryPosition();
         await sendPositionToEval(fromLibrary);
         // sendPositionToEval hands the position off through the tab effect;
-        // enterEPCMode is what consumes it.
-        if (get(statusBarModeStore) !== 'EPC') await enterEPCMode();
+        // enterEvalMode is what consumes it.
+        if (get(statusBarModeStore) !== 'EVAL') await enterEvalMode();
 
         expect(checkerSignature(get(positionStore))).toBe(checkerSignature(fromLibrary));
     });

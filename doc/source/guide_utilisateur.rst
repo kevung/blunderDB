@@ -788,7 +788,7 @@ hors ligne, sans XG ni GNUbg.
    chaque coup candidat, calculées par gammonNet.
 
 #. Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur,
-   ou exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau
+   ou exécuter la commande ``eval`` : le panneau s'ouvre sur un plateau
    vierge, prêt à éditer.
 
 #. Pour évaluer la position déjà affichée (une position de la bibliothèque,

@@ -30,7 +30,7 @@ async function waitForApp(page) {
  * Clique sur un onglet et attend que le DOM se stabilise (l'onglet cliqué
  * devient effectivement actif).
  * @param {import('@playwright/test').Page} page
- * @param {string} tabId  — identifiant d'onglet (ex: 'stats', 'matches', 'epc')
+ * @param {string} tabId  — identifiant d'onglet (ex: 'stats', 'matches', 'eval')
  */
 async function clickTab(page, tabId) {
     await page.click(`[data-testid="tab-${tabId}"]`);
@@ -92,8 +92,8 @@ test('T4 — transition Stats → Match : contenu match rendu', async ({ page })
     await expect(statsTab).not.toHaveClass(/active/);
 });
 
-test('T5 — transition EPC → Stats → Match (chaîne tripartite)', async ({ page }) => {
-    await clickTab(page, 'epc');
+test('T5 — transition Eval → Stats → Match (chaîne tripartite)', async ({ page }) => {
+    await clickTab(page, 'eval');
     await clickTab(page, 'stats');
     await clickTab(page, 'matches');
 
@@ -125,8 +125,8 @@ test('T7 — 5 bascules rapides Match ↔ Stats toutes passent', async ({ page }
 
 // ── Variante : toutes les transitions impliquant Stats ───────────────────────
 
-test('T8 — séquence Analysis → Stats → EPC → Stats → Anki → Stats', async ({ page }) => {
-    const transitions = ['stats', 'epc', 'stats', 'anki', 'stats'];
+test('T8 — séquence Analysis → Stats → Eval → Stats → Anki → Stats', async ({ page }) => {
+    const transitions = ['stats', 'eval', 'stats', 'anki', 'stats'];
     for (const tab of transitions) {
         await clickTab(page, tab);
     }

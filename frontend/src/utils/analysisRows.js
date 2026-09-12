@@ -167,7 +167,7 @@ export function cubeFactRows(cube) {
 // ---------------------------------------------------------------------------
 
 // Column ids, in display order; the two provenance columns come last so a
-// caller that hides them (EPCPanel, ADR-0018 rule 4) just truncates.
+// caller that hides them (EvalPanel, ADR-0018 rule 4) just truncates.
 export const CHECKER_COLUMNS = ['move', 'equity', 'error', 'pw', 'pg', 'pb', 'ow', 'og', 'ob', 'depth', 'engine'];
 
 /**

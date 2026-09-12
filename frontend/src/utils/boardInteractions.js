@@ -1,6 +1,6 @@
 // Mouse handling of the board, extracted from Board.svelte: hit-testing of
 // the drawn scene (checkers, cube, dice, player rectangles, scores) and the
-// position edits each click performs in EDIT and EPC mode, plus the
+// position edits each click performs in EDIT and EVAL mode, plus the
 // double-click reset and the right-click menu gate.
 //
 // attachBoardInteractions(canvas, deps) wires the DOM listeners and returns
@@ -30,7 +30,7 @@ const EXCEPT_DOUBLE_CLICK_MS = 450;
 const MAX_CUBE_VALUE = 6; // log2 exponent: 64
 
 function isEditable(mode) {
-    return mode === 'EDIT' || mode === 'EPC';
+    return mode === 'EDIT' || mode === 'EVAL';
 }
 
 /** A real roll: both dice on a face. Anything else is "no dice" (a cube decision). */
@@ -137,16 +137,16 @@ export function applyCheckerEdit(pos, point, count, button, isSearchStructure) {
 }
 
 /**
- * Cube click. EPC: only the owner matters (money equities are in units of
+ * Cube click. EVAL: only the owner matters (money equities are in units of
  * the current cube), so clicks cycle centred → bottom owns → top owns →
  * centred (right-click backwards) and pin the value. Offered cube (take/pass
  * search): edit the value while keeping it centred, at least a double. EDIT:
  * a centred cube is taken by the clicking side; the owner's own button
  * raises it, the other lowers it, back to centred at 1.
  */
-export function applyCubeClick(pos, button, { epc = false, offeredTakePass = false } = {}) {
+export function applyCubeClick(pos, button, { evalMode = false, offeredTakePass = false } = {}) {
     const up = (v) => Math.min(v + 1, MAX_CUBE_VALUE);
-    if (epc) {
+    if (evalMode) {
         const cycle = [-1, 0, 1];
         const dir = button === 2 ? -1 : 1;
         const cur = cycle.indexOf(pos.cube.owner === undefined ? -1 : pos.cube.owner);
@@ -180,7 +180,7 @@ export function applyCubeClick(pos, button, { epc = false, offeredTakePass = fal
  * it (up to 99). Money is symmetric — reaching -1 on one side sets the
  * other, and leaving money by editing one side alone copies the score to
  * the other: an away score with no opponent away score is not a valid
- * match state (EPC's own money default is [-1, -1], the only state where a
+ * match state (the Eval panel's own money default is [-1, -1], the only state where a
  * lone -1 is meaningful).
  */
 export function applyScoreClick(pos, player, button) {
@@ -209,7 +209,7 @@ function stepDie(value, button) {
  * Wire the board's mouse interactions to `canvas`. Returns the detach function.
  *
  * deps:
- *   getMode()            current status-bar mode ('EDIT' / 'EPC' edit the board)
+ *   getMode()            current status-bar mode ('EDIT' / 'EVAL' edit the board)
  *   getSize()            { width, height } of the drawing surface
  *   cfg                  Board.svelte's boardCfg (orientation, widthFactor read live)
  *   getCubeBox()         { x, y, size } where the cube was last drawn
@@ -248,12 +248,12 @@ export function attachBoardInteractions(canvas, deps) {
         const box = deps.getCubeBox();
         if (!box || Math.abs(x - box.x) > box.size / 2 || Math.abs(y - box.y) > box.size / 2) return;
         const mode = deps.getMode();
-        stores.position.update((pos) => applyCubeClick(pos, event.button, { epc: mode === 'EPC', offeredTakePass: get(stores.offeredCube) && pos.decision_type === 1 }));
+        stores.position.update((pos) => applyCubeClick(pos, event.button, { evalMode: mode === 'EVAL', offeredTakePass: get(stores.offeredCube) && pos.decision_type === 1 }));
     }
 
-    // EPC mode shares this whole flow with EDIT mode: the Eval panel's
+    // EVAL mode shares this whole flow with EDIT mode: the Eval panel's
     // evaluation volet needs real dice to show candidate moves (no dice
-    // means a cube verdict instead, EPCPanel.svelte) — a player's rectangle
+    // means a cube verdict instead, EvalPanel.svelte) — a player's rectangle
     // clearing the dice to show the cube decision, then a die click
     // restoring/bumping them for a move decision, is exactly EDIT mode's
     // own toggle.
@@ -270,7 +270,7 @@ export function attachBoardInteractions(canvas, deps) {
                 // by hand) a die click steps THAT die; reinstating an older
                 // roll used to overwrite both dice with a stale [0, 0], and
                 // the click then left [n, 0] — half a roll, which every
-                // reader of the position (EPCPanel's hasDiceSet, the engine's
+                // reader of the position (EvalPanel's hasDiceSet, the engine's
                 // own hasDice) takes for "no dice", i.e. a cube decision on a
                 // board plainly asking a checker question.
                 const base = hasRoll(pos.dice) ? pos.dice : deps.getPreviousDice();
@@ -552,7 +552,7 @@ export function attachBoardInteractions(canvas, deps) {
 
     // Right-clicking the board opens actions on the position it shows, but
     // ONLY in the modes where the right button is otherwise idle. In EDIT
-    // and EPC the right button already means "place the other colour's
+    // and EVAL the right button already means "place the other colour's
     // checker", so the menu stays out of their way.
     function onContextMenu(event) {
         event.preventDefault(); // no native menu, in every mode

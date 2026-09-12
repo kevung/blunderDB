@@ -478,7 +478,7 @@ describe('processCommand', () => {
             focusSearchTab: vi.fn(),
             toggleMatchPanel: vi.fn(),
             toggleCollectionPanel: vi.fn(),
-            toggleEPCMode: vi.fn(),
+            toggleEvalMode: vi.fn(),
             toggleMatchMode: vi.fn(),
             onToggleStats: vi.fn(),
             onLoadBlunders: vi.fn()
@@ -573,7 +573,8 @@ describe('processCommand', () => {
         ['st', 'onToggleStats'],
         ['blunders', 'onLoadBlunders'],
         ['bl', 'onLoadBlunders'],
-        ['epc', 'toggleEPCMode'],
+        ['eval', 'toggleEvalMode'],
+        ['epc', 'toggleEvalMode'],
         ['m', 'toggleMatchMode']
     ];
 

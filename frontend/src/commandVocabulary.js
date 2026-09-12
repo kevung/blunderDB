@@ -33,7 +33,7 @@ export const COMMANDS = [
     { name: 'history', aliases: ['hi'] },
     { name: 'match', aliases: ['ma'] },
     { name: 'collection', aliases: ['coll'] },
-    { name: 'epc', aliases: [] },
+    { name: 'eval', aliases: ['epc'] },
     { name: 'transcribe', aliases: ['tr'] },
     { name: 'direct', aliases: [] },
     { name: 'm', aliases: [] },

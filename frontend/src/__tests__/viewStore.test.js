@@ -281,7 +281,7 @@ describe('viewStore — serialize/deserialize round trip', () => {
         expect(ok).toBe(false);
     });
 
-    test('EPC/EDIT transient modes are not restored: deserialize resets them to NORMAL', async () => {
+    test('EVAL/EDIT transient modes are not restored: deserialize resets them to NORMAL', async () => {
         const posA = fakePosition(1);
         const json = JSON.stringify({
             nextViewId: 2,
@@ -292,9 +292,9 @@ describe('viewStore — serialize/deserialize round trip', () => {
                     name: '#1',
                     positionIds: [1],
                     positionIndex: 0,
-                    activeTab: 'epc',
+                    activeTab: 'eval',
                     commentText: '',
-                    mode: 'EPC'
+                    mode: 'EVAL'
                 }
             ]
         });
@@ -304,5 +304,24 @@ describe('viewStore — serialize/deserialize round trip', () => {
         const ok = await ctx.viewStore.deserialize(json, async () => [posA]);
         expect(ok).toBe(true);
         expect(get(uiStoreMod.statusBarModeStore)).toBe('NORMAL');
+    });
+
+    // #401 : l'onglet Eval s'appelait `epc` et son mode `EPC`. Une session
+    // enregistrée sous ces noms rouvre Eval, sans mode brouillon fantôme.
+    test('a session saved on the legacy `epc` tab reopens Eval', async () => {
+        const posA = fakePosition(1);
+        const json = JSON.stringify({
+            nextViewId: 2,
+            activeViewId: 1,
+            views: [{ id: 1, name: '#1', positionIds: [1], positionIndex: 0, activeTab: 'epc', commentText: '', mode: 'EPC' }]
+        });
+        const uiStoreMod = await import('../stores/uiStore.js');
+
+        const ok = await ctx.viewStore.deserialize(json, async () => [posA]);
+        expect(ok).toBe(true);
+        expect(get(uiStoreMod.activeTabStore)).toBe('eval');
+        expect(get(uiStoreMod.statusBarModeStore)).toBe('NORMAL');
+        expect(get(ctx.viewStore.views)[0].activeTab).toBe('eval');
+        expect(get(ctx.viewStore.views)[0].mode).toBe('EVAL');
     });
 });

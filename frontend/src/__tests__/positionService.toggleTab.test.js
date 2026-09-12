@@ -68,7 +68,7 @@ beforeEach(() => {
     vi.clearAllMocks();
     databasePathStore.set('/fake/db.sqlite');
     statusBarModeStore.set('NORMAL');
-    activeTabStore.set('epc');
+    activeTabStore.set('eval');
     positionsStore.set([{ id: 1 }]);
     currentPositionIndexStore.set(0);
 });
@@ -86,7 +86,7 @@ describe('toggleTab', () => {
             if (tab === 'metadata') continue;
             setStatusBarMessage.mockClear();
             fn();
-            expect(get(activeTabStore), tab).toBe('epc');
+            expect(get(activeTabStore), tab).toBe('eval');
             // search has its own no-database message (status.searchHistoryRequiresDb);
             // every other entry falls back to the generic one.
             expect(setStatusBarMessage, tab).toHaveBeenCalledWith(tMsg(tab === 'search' ? 'status.searchHistoryRequiresDb' : 'commands.noDatabaseOpened'));
@@ -96,21 +96,21 @@ describe('toggleTab', () => {
     test('métadonnées sans base ouverte : silencieux', () => {
         databasePathStore.set('');
         toggleMetadataPanel();
-        expect(get(activeTabStore)).toBe('epc');
+        expect(get(activeTabStore)).toBe('eval');
         expect(setStatusBarMessage).not.toHaveBeenCalled();
     });
 
     test('commentaire sans position courante : refusé', () => {
         currentPositionIndexStore.set(-1);
         toggleCommentPanel();
-        expect(get(activeTabStore)).toBe('epc');
+        expect(get(activeTabStore)).toBe('eval');
         expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('status.noCurrentPositionComment'));
     });
 
     test('métadonnées en mode EDIT : refusé', () => {
         statusBarModeStore.set('EDIT');
         toggleMetadataPanel();
-        expect(get(activeTabStore)).toBe('epc');
+        expect(get(activeTabStore)).toBe('eval');
         expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('status.cannotShowMetadataEdit'));
     });
 

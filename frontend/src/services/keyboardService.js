@@ -27,7 +27,7 @@ import {
     toggleTranscriptionPanel,
     toggleDirectionPanel,
     toggleSearchPanel,
-    toggleEPCMode,
+    toggleEvalMode,
     togglePipcount,
     reloadAllPositions,
     loadRandomPosition,
@@ -436,7 +436,7 @@ export function handleKeyDown(event) {
         toggleStatsPanel();
     } else if (event.ctrlKey && letter('e')) {
         event.preventDefault();
-        toggleEPCMode();
+        toggleEvalMode();
     } else if (event.ctrlKey && letter('g')) {
         event.preventDefault();
         showDatesAndMetadata();

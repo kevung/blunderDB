@@ -30,20 +30,20 @@ import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
-import { forgetContextBeforeEPC } from './modeMachine.js';
+import { forgetContextBeforeEval } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
 
-// The mode automaton (NORMAL / MATCH / COLLECTION / EDIT / EPC) lives in
+// The mode automaton (NORMAL / MATCH / COLLECTION / EDIT / EVAL) lives in
 // modeMachine.js; its transitions stay reachable from here so that callers
 // keep one import for everything position-related.
 export {
     enterEditMode,
     exitEditMode,
-    toggleEPCMode,
+    toggleEvalMode,
     sendPositionToEval,
-    enterEPCMode,
-    exitEPCMode,
+    enterEvalMode,
+    exitEvalMode,
     enterTranscribeMode,
     exitTranscribeMode,
     toggleMatchMode,
@@ -275,7 +275,7 @@ export async function loadAllPositions({ focusId = null } = {}) {
             player1Name: '',
             player2Name: ''
         });
-        forgetContextBeforeEPC();
+        forgetContextBeforeEval();
         activeCollectionStore.set(null);
 
         positionsStore.setIds(ids, { reset: true });

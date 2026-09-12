@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:31+0200\n"
+"POT-Creation-Date: 2026-09-13 01:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -128,8 +128,8 @@ msgid "Affiche les métadonnées de la base de données."
 msgstr "Näyttää tietokannan metatiedot."
 
 #: ../../source/cmd_mode.rst:1
-msgid "epc"
-msgstr "epc"
+msgid "eval, epc"
+msgstr "eval, epc"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
@@ -152,6 +152,20 @@ msgid ""
 msgstr ""
 "Avaa Litterointi-paneelin: kirjattavana olevat otteluluonnokset ja keinon"
 " aloittaa uusi."
+
+#: ../../source/cmd_mode.rst:1
+msgid "direct"
+msgstr "direct"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand "
+"une direction y est ouverte, la zone principale montre le tournoi à la "
+"place du plateau ; tout autre onglet ramène le plateau."
+msgstr ""
+"Avaa Turnaukset-paneelin turnauksen johtamista varten ja sulkee sen taas."
+" Kun siellä on johtaminen auki, pääalue näyttää turnauksen laudan sijaan;"
+" mikä tahansa muu välilehti tuo laudan takaisin."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -288,7 +302,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Avaa gammon-arvojen taulukon kuution arvolla 4."
 
-#: ../../source/cmd_mode.rst:52
+#: ../../source/cmd_mode.rst:53
 msgid "Positions et navigation"
 msgstr "Asemat ja navigointi"
 
@@ -425,7 +439,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigoi viimeksi käytyyn otteluun."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:78
 msgid "Édition et recherche"
 msgstr "Muokkaus ja haku"
 
@@ -461,11 +475,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
 msgstr "Hakusuodattimet"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -480,7 +494,7 @@ msgstr ""
 "olemassa, saman asian tekevän ``search``-valitsimen (ks. :ref:`cli`); "
 "viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -500,7 +514,7 @@ msgstr ""
 "vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen "
 "valitsimia."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -510,7 +524,7 @@ msgstr ""
 "järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta, ja kaikki "
 "muut tunnukset rajaavat näin järjestettyä joukkoa."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -520,11 +534,11 @@ msgstr ""
 "taulukon *millipisteinä*: ``E>100`` poimii siirrot, jotka ovat maksaneet "
 "vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid "Deux recherches complètes :"
 msgstr "Kaksi täydellistä hakua:"
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:122
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -533,7 +547,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 "
 "%, ei yhtään kommenttia."
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:124
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1482,7 +1496,7 @@ msgstr ""
 "päätöstyyppeihin ja molempiin pelimuotoihin, rahapeliin ja otteluun. Ks. "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:230
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -1578,8 +1592,5 @@ msgstr "Tyhjentää komentohistorian."
 #~ "analyysiä vasten). Viisi kysymystä, "
 #~ "ajastettuna, heti korjattuna."
 
-msgid "Ouvre le panneau Tournois pour diriger un tournoi, et le referme. Quand une direction y est ouverte, la zone principale montre le tournoi à la place du plateau ; tout autre onglet ramène le plateau."
-msgstr "Avaa Turnaukset-paneelin turnauksen johtamista varten ja sulkee sen taas. Kun siellä on johtaminen auki, pääalue näyttää turnauksen laudan sijaan; mikä tahansa muu välilehti tuo laudan takaisin."
-
-msgid "direct"
-msgstr "direct"
+#~ msgid "epc"
+#~ msgstr "epc"
