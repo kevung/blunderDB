@@ -18,6 +18,7 @@ import { get } from 'svelte/store';
 
 const db = vi.hoisted(() => ({
     SaveIndividualPosition: vi.fn(),
+    UpdatePosition: vi.fn(() => Promise.resolve()),
     SaveAnalysis: vi.fn(() => Promise.resolve()),
     SaveComment: vi.fn(() => Promise.resolve()),
     LoadComment: vi.fn(() => Promise.resolve('')),
@@ -53,7 +54,7 @@ import { analysisStore, emptyAnalysis } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
-import { saveCurrentPosition, enterEditMode, exitEditMode, enterEPCMode, exitEPCMode, setSearchState } from '../services/positionService.js';
+import { saveCurrentPosition, updatePosition, enterEditMode, exitEditMode, enterEPCMode, exitEPCMode, sendPositionToEval, setSearchState } from '../services/positionService.js';
 import { joinLibraryBehindScratchBoard } from '../services/modeMachine.js';
 
 function emptyPoints() {
@@ -304,7 +305,7 @@ describe('saving the Search scratch board', () => {
     });
 });
 
-describe('the list behind the Eval board (#399 will save from there)', () => {
+describe('the list behind the Eval board', () => {
     test('entered from the library, the saved id joins the list the exit puts back', async () => {
         const ids = [11, 12, 13, 14];
         const byId = new Map(ids.map((id) => [id, libraryPosition(id)]));
@@ -338,5 +339,135 @@ describe('the list behind the Eval board (#399 will save from there)', () => {
         await enterEPCMode();
 
         expect(await joinLibraryBehindScratchBoard(99)).toBe(false);
+    });
+});
+
+/** A library of four positions, the third one studied, then the Eval tab with a drawn board. */
+async function openEvalFromLibrary() {
+    const ids = [11, 12, 13, 14];
+    const byId = new Map(ids.map((id) => [id, libraryPosition(id)]));
+    positionsStore.setLoader(async (wanted) => wanted.map((id) => byId.get(id)).filter(Boolean));
+    positionsStore.setIds(ids, { reset: true });
+    await positionsStore.getPosition(2);
+    currentPositionIndexStore.set(2);
+    positionStore.set(libraryPosition(13));
+    analysisStore.set(studiedAnalysis(13));
+    activeTabStore.set('epc');
+    await enterEPCMode();
+    positionStore.update(drawBoard);
+}
+
+// #399: CTRL-S, `w` and the toolbar button all call saveCurrentPosition, which
+// hands over to saveScratchBoard() — the Eval panel's own button calls it
+// directly (EPCPanelAddPosition.test.js).
+describe('saving the Eval scratch board (#399)', () => {
+    test('the board is written as a copy without id, and nothing of analysisStore goes with it', async () => {
+        await openEvalFromLibrary();
+        const before = JSON.parse(JSON.stringify(get(analysisStore)));
+        let sentId;
+        db.SaveIndividualPosition.mockImplementation(async (position) => {
+            sentId = position.id;
+            return { id: 99, existed: false };
+        });
+
+        await saveCurrentPosition();
+
+        expect(sentId).toBe(0);
+        expect(db.SaveAnalysis).toHaveBeenCalledTimes(1);
+        const [, sent] = db.SaveAnalysis.mock.calls[0];
+        expect(sent.playedMoves ?? []).toEqual([]);
+        expect(sent.allCubeAnalyses ?? []).toEqual([]);
+        expect(sent.checkerAnalysis?.moves ?? []).toEqual([]);
+        expect(sent.player1 ?? '').toBe('');
+        expect(sent.xgid).not.toBe(before.xgid);
+        expect(get(analysisStore)).toEqual(before);
+        expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardSaved', i18nParams: { id: 99 } });
+    });
+
+    test('afterwards: still EPC, still the Eval tab, the same board, still id 0', async () => {
+        await openEvalFromLibrary();
+        const board = JSON.parse(JSON.stringify(get(positionStore)));
+
+        await saveCurrentPosition();
+
+        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(activeTabStore)).toBe('epc');
+        expect(get(positionStore)).toEqual(board);
+        expect(get(positionStore).id).toBe(0);
+    });
+
+    test('a CTRL-U after the save does not rewrite the stored position', async () => {
+        await openEvalFromLibrary();
+        await saveCurrentPosition();
+        vi.clearAllMocks();
+
+        await updatePosition();
+
+        expect(db.UpdatePosition).not.toHaveBeenCalled();
+        expect(db.SaveAnalysis).not.toHaveBeenCalled();
+        expect(db.SaveIndividualPosition).not.toHaveBeenCalled();
+        expect(lastStatus()).toEqual({ i18nKey: 'status.updateOnlyEdit', i18nParams: null });
+    });
+
+    test('entered from the library, the new position is in the list the exit puts back', async () => {
+        await openEvalFromLibrary();
+
+        await saveCurrentPosition();
+        await exitEPCMode();
+
+        expect(get(statusBarModeStore)).toBe('NORMAL');
+        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14, 99]);
+        expect(get(currentPositionIndexStore)).toBe(2);
+        expect(get(positionStore).id).toBe(13);
+    });
+
+    test('sent from a match (Évaluer cette position), added, then left: back to the match at the same move', async () => {
+        db.SaveIndividualPosition.mockResolvedValue({ id: 22, existed: true });
+        const movePositions = [{ position: libraryPosition(21) }, { position: libraryPosition(22) }];
+        positionsStore.setIds([21, 22], { reset: true });
+        currentPositionIndexStore.set(1);
+        positionStore.set(libraryPosition(22));
+        analysisStore.set(studiedAnalysis(22));
+        matchContextStore.set({ isMatchMode: true, matchID: 5, movePositions, currentIndex: 1, player1Name: 'Alice', player2Name: 'Bob' });
+        statusBarModeStore.set('MATCH');
+        // The tab is already Eval so the hand-off enters the mode itself
+        // (App.svelte's tab effect is not mounted here).
+        activeTabStore.set('epc');
+        sendPositionToEval(libraryPosition(22));
+        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(positionStore).id).toBe(0);
+
+        await saveCurrentPosition();
+        expect(db.SaveIndividualPosition).toHaveBeenCalledTimes(1);
+        // Already stored as a match position: its provenance flag, nothing else.
+        expect(db.SaveAnalysis).not.toHaveBeenCalled();
+        expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardAlreadyStored', i18nParams: { id: 22 } });
+        expect(get(statusBarModeStore)).toBe('EPC');
+
+        await exitEPCMode();
+        expect(get(statusBarModeStore)).toBe('MATCH');
+        expect(get(matchContextStore).matchID).toBe(5);
+        expect(get(matchContextStore).currentIndex).toBe(1);
+        expect(get(positionsStore).ids).toEqual([21, 22]);
+        expect(get(currentPositionIndexStore)).toBe(1);
+    });
+
+    test('the gammonNet auto-analysis starts after a save from Eval when it is enabled', async () => {
+        config.GetGammonNetAutoAnalyze.mockResolvedValue(true);
+        db.CountPositionsWithoutAnalysis.mockResolvedValue(1);
+        await openEvalFromLibrary();
+
+        await saveCurrentPosition();
+
+        expect(app.StartGammonNetBatch).toHaveBeenCalledWith(2, 12, 0);
+    });
+
+    test('outside a scratch board the save is still refused', async () => {
+        statusBarModeStore.set('MATCH');
+
+        await saveCurrentPosition();
+
+        expect(db.SaveIndividualPosition).not.toHaveBeenCalled();
+        expect(lastStatus()).toEqual({ i18nKey: 'status.saveOnlyEdit', i18nParams: null });
     });
 });

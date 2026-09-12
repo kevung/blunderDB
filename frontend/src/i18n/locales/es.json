@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC leído de la tabla {domain}: una ficha está fuera del cuadro."
     },
     "eval": {
+        "addPosition": "Añadir a la base",
+        "addPositionTooltip": "Añadir esta posición a la base (Ctrl+S)",
+        "addPositionNoDatabase": "Abra una base para añadirle posiciones",
         "pending": "La evaluación aparecerá aquí.",
         "failed": "La evaluación falló: {error}",
         "panelLabel": "Panel Eval",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Posición pegada en el tablero desde el portapapeles",
         "positionPasted": "Posición pegada en el tablero",
         "positionCopied": "Posición, análisis y comentario copiados al portapapeles",
-        "saveOnlyEdit": "Guardar solo es posible en modo de edición",
+        "saveOnlyEdit": "Guardar solo es posible desde los paneles Búsqueda y Eval",
         "searchHistoryRequiresDb": "El historial de búsqueda requiere una base de datos abierta",
         "sessionRestoredViews": "Sesión restaurada con vistas",
         "matchAlreadyImported": "Esta partida ya ha sido importada",

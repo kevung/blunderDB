@@ -1978,9 +1978,10 @@ toujours présent, dés posés ou non, porte l'EPC, le pip count, le wastage,
 le nombre moyen de lancers et l'écart type ; ces cinq colonnes ne migrent
 jamais. Les deux tableaux sont empilés et partagent la même grille de
 colonnes : mêmes bords, mêmes repères de colonne, une seule colonne de
-pastilles — ils se lisent comme un seul objet à deux étages. Le badge de régime, l'attribution du moteur (la profondeur de la
-dernière évaluation y figure aussi) et la case *Défi* forment une bande à
-part, alignée à droite au-dessus des tableaux.
+pastilles — ils se lisent comme un seul objet à deux étages. Le bouton
+*Ajouter à la base*, le badge de régime, l'attribution du moteur (la
+profondeur de la dernière évaluation y figure aussi) et la case *Défi*
+forment une bande à part, alignée à droite au-dessus des tableaux.
 
 Seule la liste des coups candidats défile — la ligne *avant le jet*, elle
 aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, badge,
@@ -2013,14 +2014,28 @@ score les effets gammon-go et gammon-save — à 4-away/2-away, le joueur mené
 joue 8/2 6/2 sur un 6-4 d'ouverture parce que son double précoce donnera
 au gammon la valeur du match, ce qu'une évaluation sans videau ne peut pas
 voir. La ligne *avant le jet*, elle, reste une équité **cubeless** : c'est
-un fait de la position, pas une décision. Ce panneau ne modifie jamais la
-base : c'est un calcul, pas une analyse enregistrée. Cliquer un coup
+un fait de la position, pas une décision. L'évaluation n'est jamais
+enregistrée : c'est un calcul, pas une analyse. Cliquer un coup
 candidat l'affiche sur le plateau sous forme de flèches, exactement comme
 dans le panneau Analyse. Le bouton **?** discret, dans la bande de
 badges, mène au dépôt du moteur
 `gammonNet <https://github.com/kevung/gammonNet>`_ ; l'attribution complète
 (réseau Strehl, configuration gammonNet) figure dans les Remerciements de
 l'aide.
+
+Le bouton **Ajouter à la base**, en tête de la bande de badges, enregistre
+dans la base la position posée sur le plateau ; *CTRL-S*, la commande ``w``
+et le bouton *Enregistrer la position* de la barre d'outils font de même.
+Seule la position est écrite, jamais l'évaluation affichée ; si l'analyse
+automatique gammonNet est activée, son lot démarre ensuite, comme après un
+import. La barre d'état annonce le numéro de la position, y compris quand
+elle figurait déjà dans la base : elle y est alors marquée comme importée
+seule, et le filtre *Importée seule* (``s i``) la retrouve. Le panneau reste ouvert sur le même plateau, qui reste un plateau
+brouillon : on peut déplacer un pion et ajouter la variante, et quitter le
+panneau ramène à ce qu'on étudiait. Le bouton est désactivé tant qu'aucune
+base n'est ouverte, ou tant que la position ne peut pas être enregistrée
+(par exemple la position de départ du panneau, dont le joueur du haut a
+sorti tous ses pions) ; son infobulle en donne la raison.
 
 L'utilisateur édite la position des pions sur l'ensemble du plateau,
 exactement comme en mode édition : clic gauche place un pion du joueur du

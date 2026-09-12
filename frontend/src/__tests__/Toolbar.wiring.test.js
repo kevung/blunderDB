@@ -73,7 +73,7 @@ const EXPECTED = [
 
 beforeEach(() => {
     databasePathStore.set('/tmp/some.db'); // enables the database-bound buttons
-    activeTabStore.set('search'); // enables save / update (search tab only)
+    activeTabStore.set('search'); // enables save / update (save also on the Eval tab)
     activeModal.set(null);
 });
 
@@ -103,5 +103,22 @@ describe('Toolbar — service wiring', () => {
             const others = EXPECTED.filter((f) => typeof f === 'function' && f !== target);
             others.forEach((f) => expect(f).not.toHaveBeenCalled());
         }
+    });
+
+    // #399: the Eval board is a scratch board too — save opens there, the
+    // Ctrl-U rewrite stays Search's.
+    test('on the Eval tab, save is enabled and update is not', () => {
+        activeTabStore.set('epc');
+        const { container } = render(Toolbar);
+        const buttons = container.querySelectorAll('.toolbar button');
+        expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(false);
+        expect(buttons[EXPECTED.indexOf(positionService.updatePosition)].disabled).toBe(true);
+    });
+
+    test('on the Matches tab, save is disabled', () => {
+        activeTabStore.set('matches');
+        const { container } = render(Toolbar);
+        const buttons = container.querySelectorAll('.toolbar button');
+        expect(buttons[EXPECTED.indexOf(positionService.saveCurrentPosition)].disabled).toBe(true);
     });
 });

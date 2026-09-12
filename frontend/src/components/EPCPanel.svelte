@@ -4,6 +4,9 @@
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
     import { positionStore } from '../stores/positionStore';
     import { selectedMoveStore } from '../stores/analysisStore';
+    import { databasePathStore } from '../stores/databaseStore';
+    import { positionRefusal } from '../services/positionRefusal.js';
+    import { saveScratchBoard } from '../services/scratchBoard.js';
     import { GetEpcChallenge, SaveEpcChallenge, GetGammonNetDisplayPly, GetGammonNetPruneK, GetGammonNetCandidates } from '../../wailsjs/go/main/Config.js';
     import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
     import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
@@ -18,6 +21,27 @@
     import PositionFactsTable from './PositionFactsTable.svelte';
 
     let isActive = $derived($statusBarModeStore === 'EPC');
+
+    // « Ajouter à la base » (#399): the board on screen is a scratch board, and
+    // the button writes it through saveScratchBoard() — the position alone,
+    // never the evaluation shown, whose depth depends on when it is clicked.
+    // Disabled when nothing could be written, the tooltip saying why: no
+    // database (the panel works without one), or the refusal the save itself
+    // would give (the default bearoff, one side borne off, is one). No live
+    // "already stored" state: the click says it, and is not idle there — it
+    // marks the stored position individually imported.
+    let addRefusal = $derived(!$databasePathStore ? 'eval.addPositionNoDatabase' : $positionStore?.board ? positionRefusal($positionStore) : null);
+    let adding = $state(false);
+
+    async function addPosition() {
+        if (addRefusal || adding) return;
+        adding = true;
+        try {
+            await saveScratchBoard(); // says the number, or the refusal, itself
+        } finally {
+            adding = false;
+        }
+    }
     let data = $derived($epcDataStore);
     let challenge = $derived($epcChallengeStore);
     let revealed = $derived($epcRevealedStore);
@@ -440,6 +464,18 @@
     let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));
 </script>
 
+<!-- First in the strip, left of the regime badge (#399), and present in every
+     state where a board is posed — the error states included: a failed
+     evaluation does not make the position unsavable. -->
+{#snippet addPositionButton()}
+    <button type="button" class="add-position" onclick={addPosition} disabled={!!addRefusal || adding} title={addRefusal ? $t(addRefusal) : $t('eval.addPositionTooltip')}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <span>{$t('eval.addPosition')}</span>
+    </button>
+{/snippet}
+
 <!-- A <section> rather than a <div>: the panel takes focus and listens for
      keys (handleKeyDown), which is a landmark's business and a static
      element's a11y warning — the same shape AnalysisPanel already has. -->
@@ -458,23 +494,30 @@
             </div>
         </div>
     {:else if data.error}
-        <div class="epc-error">
-            <span class="error-text">{data.error}</span>
+        <div class="epc-content">
+            <div class="badges-strip">{@render addPositionButton()}</div>
+            <div class="epc-error">
+                <span class="error-text">{data.error}</span>
+            </div>
         </div>
     {:else if evalFailed}
-        <div class="epc-error">
-            <span class="error-text">{$t('eval.failed', { error: evalFailedMessage })}</span>
+        <div class="epc-content">
+            <div class="badges-strip">{@render addPositionButton()}</div>
+            <div class="epc-error">
+                <span class="error-text">{$t('eval.failed', { error: evalFailedMessage })}</span>
+            </div>
         </div>
     {:else}
         <div class="epc-content">
-            <!-- The strip: regime badge, depth, engine link and the Défi
-                 toggle, on their own full-width line (ADR-0018 rule 4, applied
+            <!-- The strip: the add-to-database button, regime badge, depth,
+                 engine link and the Défi toggle, on their own full-width line (ADR-0018 rule 4, applied
                  as written by ADR-0020 rule 8). It was a third member of the
                  content row until then, held in the corner by a
                  `margin-left: auto` that manufactured a band of white across
                  the middle whenever the row had something in it. It stays at
                  the top: a badge qualifies the numbers below it. -->
             <div class="badges-strip">
+                {@render addPositionButton()}
                 {#if data.race}
                     {#if displayRace?.exactWin}
                         <span class="badge badge-composite" title={$t('epc.race.exactAndEvaluatedTooltip')}>
@@ -632,6 +675,12 @@
         gap: 6px;
     }
 
+    /* Under the strip, the error message takes what is left of the panel. */
+    .epc-content > .epc-error {
+        flex: 1 1 auto;
+        height: auto;
+    }
+
     /* The strip (ADR-0020 rule 8): its own full-width line above the content,
        right-aligned, so nothing in the content row has to be pushed to a far
        edge to keep it in the corner — the rule that used to make the void. */
@@ -702,6 +751,38 @@
         flex: 1 1 auto;
         min-height: 0;
         width: 100%;
+    }
+
+    /* A labelled button, not an icon (issue 399): discoverability is its purpose.
+       Shaped like the badges it leads so the strip stays one line of pills. */
+    .add-position {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: 0 var(--space-2);
+        border: 1px solid var(--color-border);
+        border-radius: 9px;
+        background: var(--color-surface);
+        color: var(--color-primary);
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .add-position:hover:not(:disabled) {
+        border-color: var(--color-primary);
+    }
+
+    .add-position:disabled {
+        color: var(--color-text-muted);
+        cursor: default;
+    }
+
+    .add-position svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
     }
 
     .badge {

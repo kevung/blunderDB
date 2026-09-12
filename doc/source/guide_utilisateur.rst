@@ -495,6 +495,9 @@ Le plateau reste affiché dans le panneau de recherche, et la barre d'état
 annonce le numéro de la position : « Position n° 1234 ajoutée à la base », ou
 « Position déjà dans la base (n° 1234) » si elle y figurait déjà.
 
+Une position composée dans le panneau Eval s'ajoute de la même façon, ou par
+le bouton *Ajouter à la base* du panneau : voir :ref:`panneau_epc`.
+
 Etiqueter une position
 ----------------------
 

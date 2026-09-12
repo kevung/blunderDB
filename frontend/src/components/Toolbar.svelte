@@ -30,6 +30,9 @@
     import { databasePathStore } from '../stores/databaseStore';
     let databasePath = $derived($databasePathStore);
     let isSearchTab = $derived($activeTabStore === 'search');
+    // Both scratch boards can be saved — Search's and Eval's (#399); a Ctrl-U
+    // rewrite stays Search's alone.
+    let hasScratchBoard = $derived(isSearchTab || $activeTabStore === 'epc');
 </script>
 
 <!--// https://heroicons.com/-->
@@ -202,7 +205,7 @@
         }}
         aria-label={$t('toolbar.savePosition')}
         title="{$t('toolbar.savePosition')} (Ctrl+S)"
-        disabled={!isSearchTab || !databasePath}
+        disabled={!hasScratchBoard || !databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />

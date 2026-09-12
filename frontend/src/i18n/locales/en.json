@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC read from the {domain} table: a chequer is outside the home board."
     },
     "eval": {
+        "addPosition": "Add to database",
+        "addPositionTooltip": "Add this position to the database (Ctrl+S)",
+        "addPositionNoDatabase": "Open a database to add positions to it",
         "pending": "Evaluation will appear here.",
         "failed": "Evaluation failed: {error}",
         "panelLabel": "Eval panel",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Position pasted to board from clipboard",
         "positionPasted": "Position pasted to board",
         "positionCopied": "Position, analysis, and comment copied to clipboard",
-        "saveOnlyEdit": "Save is only possible in edit mode",
+        "saveOnlyEdit": "Saving is only possible from the Search and Eval panels",
         "searchHistoryRequiresDb": "Search history requires an open database",
         "sessionRestoredViews": "Session restored with views",
         "matchAlreadyImported": "This match has already been imported",

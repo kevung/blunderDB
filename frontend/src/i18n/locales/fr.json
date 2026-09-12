@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC calculé depuis la table {domain} : un pion est hors du jan."
     },
     "eval": {
+        "addPosition": "Ajouter à la base",
+        "addPositionTooltip": "Ajouter cette position à la base (Ctrl+S)",
+        "addPositionNoDatabase": "Ouvrez une base pour y ajouter des positions",
         "pending": "L'évaluation apparaîtra ici.",
         "failed": "L'évaluation a échoué : {error}",
         "panelLabel": "Panneau Eval",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Position collée sur le plateau depuis le presse-papiers",
         "positionPasted": "Position collée sur le plateau",
         "positionCopied": "Position, analyse et commentaire copiés dans le presse-papiers",
-        "saveOnlyEdit": "L'enregistrement n'est possible qu'en mode édition",
+        "saveOnlyEdit": "L'enregistrement n'est possible que depuis les panneaux Recherche et Eval",
         "searchHistoryRequiresDb": "L'historique de recherche nécessite une base de données ouverte",
         "sessionRestoredViews": "Session restaurée avec les vues",
         "matchAlreadyImported": "Ce match a déjà été importé",

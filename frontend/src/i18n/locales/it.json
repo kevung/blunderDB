@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC letto dalla tabella {domain}: una pedina è fuori dalla casa."
     },
     "eval": {
+        "addPosition": "Aggiungi al database",
+        "addPositionTooltip": "Aggiungi questa posizione al database (Ctrl+S)",
+        "addPositionNoDatabase": "Apri un database per aggiungervi posizioni",
         "pending": "La valutazione apparirà qui.",
         "failed": "Valutazione non riuscita: {error}",
         "panelLabel": "Pannello Eval",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Posizione incollata sul board dagli appunti",
         "positionPasted": "Posizione incollata sul board",
         "positionCopied": "Posizione, analisi e commento copiati negli appunti",
-        "saveOnlyEdit": "Il salvataggio è possibile solo in modalità di modifica",
+        "saveOnlyEdit": "Il salvataggio è possibile solo dai pannelli Ricerca ed Eval",
         "searchHistoryRequiresDb": "La cronologia delle ricerche richiede un database aperto",
         "sessionRestoredViews": "Sessione ripristinata con le viste",
         "matchAlreadyImported": "Questo match è già stato importato",

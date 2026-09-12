@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC luettu taulukosta {domain}: nappula on kotialueen ulkopuolella."
     },
     "eval": {
+        "addPosition": "Lisää tietokantaan",
+        "addPositionTooltip": "Lisää tämä asema tietokantaan (Ctrl+S)",
+        "addPositionNoDatabase": "Avaa tietokanta lisätäksesi siihen asemia",
         "pending": "Arviointi tulee tähän.",
         "failed": "Arviointi epäonnistui: {error}",
         "panelLabel": "Eval-paneeli",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Positio liitetty laudalle leikepöydältä",
         "positionPasted": "Positio liitetty laudalle",
         "positionCopied": "Positio, analyysi ja kommentti kopioitu leikepöydälle",
-        "saveOnlyEdit": "Tallennus on mahdollista vain muokkaustilassa",
+        "saveOnlyEdit": "Tallennus on mahdollista vain Haku- ja Eval-paneeleista",
         "searchHistoryRequiresDb": "Hakuhistoria vaatii avoimen tietokannan",
         "sessionRestoredViews": "Istunto palautettu näkymineen",
         "matchAlreadyImported": "Tämä ottelu on jo tuotu",

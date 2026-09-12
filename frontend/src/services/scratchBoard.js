@@ -23,10 +23,12 @@
  *    is the whole library (modeMachine.joinLibraryBehindScratchBoard), so that
  *    leaving the panel finds exactly what was being studied.
  *
- * The modes it serves are listed in SCRATCH_SAVE_MODES. Search's EDIT is the
- * only one today; the Eval panel's EPC board goes through the same function
- * once it is added there (#399) — the mode machine already knows the list
- * behind both.
+ * The modes it serves are listed in SCRATCH_SAVE_MODES: Search's EDIT board
+ * and the Eval panel's EPC board (#399). Every gesture reaches this one
+ * function — CTRL-S, `w`, the toolbar button and the Eval panel's own button —
+ * and the mode machine knows the list behind both boards. Elsewhere (NORMAL,
+ * MATCH, COLLECTION, TRANSCRIBE) the board is a record or a draft's, and the
+ * save is refused.
  */
 
 import { get } from 'svelte/store';
@@ -42,8 +44,8 @@ import { joinLibraryBehindScratchBoard } from './modeMachine.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-/** The modes whose board saveScratchBoard() writes. #399 adds 'EPC'. */
-export const SCRATCH_SAVE_MODES = Object.freeze(['EDIT']);
+/** The modes whose board saveScratchBoard() writes: Search (EDIT) and Eval (EPC). */
+export const SCRATCH_SAVE_MODES = Object.freeze(['EDIT', 'EPC']);
 
 /**
  * Write the board on screen as an individually imported Position.

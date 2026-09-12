@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC aus der Tabelle {domain}: ein Stein steht außerhalb des Heimfelds."
     },
     "eval": {
+        "addPosition": "Zur Datenbank hinzufügen",
+        "addPositionTooltip": "Diese Position zur Datenbank hinzufügen (Ctrl+S)",
+        "addPositionNoDatabase": "Öffnen Sie eine Datenbank, um Positionen hinzuzufügen",
         "pending": "Die Auswertung erscheint hier.",
         "failed": "Auswertung fehlgeschlagen: {error}",
         "panelLabel": "Eval-Panel",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Position aus der Zwischenablage auf das Brett eingefügt",
         "positionPasted": "Position auf das Brett eingefügt",
         "positionCopied": "Position, Analyse und Kommentar in die Zwischenablage kopiert",
-        "saveOnlyEdit": "Speichern ist nur im Bearbeitungsmodus möglich",
+        "saveOnlyEdit": "Speichern ist nur in den Bereichen Suche und Eval möglich",
         "searchHistoryRequiresDb": "Der Suchverlauf erfordert eine geöffnete Datenbank",
         "sessionRestoredViews": "Sitzung mit Ansichten wiederhergestellt",
         "matchAlreadyImported": "Dieses Match wurde bereits importiert",

@@ -864,6 +864,9 @@
         "raceDomainTooltip": "{domain} の表から求めた EPC。駒が内奥の外にあります。"
     },
     "eval": {
+        "addPosition": "データベースに追加",
+        "addPositionTooltip": "このポジションをデータベースに追加 (Ctrl+S)",
+        "addPositionNoDatabase": "ポジションを追加するにはデータベースを開いてください",
         "pending": "評価はここに表示されます。",
         "failed": "評価に失敗しました: {error}",
         "panelLabel": "評価パネル",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "クリップボードからポジションをボードに貼り付けました",
         "positionPasted": "ポジションをボードに貼り付けました",
         "positionCopied": "ポジション、分析、コメントをクリップボードにコピーしました",
-        "saveOnlyEdit": "保存は編集モードでのみ可能です",
+        "saveOnlyEdit": "保存は検索パネルと評価パネルでのみ可能です",
         "searchHistoryRequiresDb": "検索履歴には開いているデータベースが必要です",
         "sessionRestoredViews": "ビューとともにセッションを復元しました",
         "matchAlreadyImported": "このマッチはすでにインポートされています",

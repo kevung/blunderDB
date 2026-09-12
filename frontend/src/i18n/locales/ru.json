@@ -864,6 +864,9 @@
         "raceDomainTooltip": "EPC из таблицы {domain}: шашка вне дома."
     },
     "eval": {
+        "addPosition": "Добавить в базу",
+        "addPositionTooltip": "Добавить эту позицию в базу (Ctrl+S)",
+        "addPositionNoDatabase": "Откройте базу, чтобы добавлять в неё позиции",
         "pending": "Оценка появится здесь.",
         "failed": "Оценка не удалась: {error}",
         "panelLabel": "Панель расчёта",
@@ -1282,7 +1285,7 @@
         "positionPastedClipboard": "Позиция вставлена на доску из буфера обмена",
         "positionPasted": "Позиция вставлена на доску",
         "positionCopied": "Позиция, анализ и комментарий скопированы в буфер обмена",
-        "saveOnlyEdit": "Сохранение возможно только в режиме редактирования",
+        "saveOnlyEdit": "Сохранение возможно только из панелей «Поиск» и «Расчёт»",
         "searchHistoryRequiresDb": "Для истории поиска требуется открытая база данных",
         "sessionRestoredViews": "Сессия восстановлена с видами",
         "matchAlreadyImported": "Этот матч уже импортирован",
