@@ -56,7 +56,10 @@ func configureRLSPool(cfg *pgxpool.Config) {
 // per-tenant data. session_state joined the list with schema 2.17.0, when the
 // session left metadata (#156), and library_settings with ADR-0046, when the
 // library's own thresholds needed a per-tenant home for the same reason.
-// purgeOrder (purge_postgres.go) must stay a permutation of this list.
+// purgeOrder (purge_postgres.go) must stay a permutation of this list, and
+// both must match the tenant_id tables of the embedded migrations
+// (TestPurgeOrderMatchesRLSTables); TestTenantTablesSchemaGuards checks that
+// ApplyRLS polices every one of them on the live schema (#363).
 var rlsTables = []string{
 	"position", "analysis", "comment", "match", "game", "move",
 	"move_analysis", "tournament", "collection", "collection_position",
@@ -64,6 +67,8 @@ var rlsTables = []string{
 	"library_settings", "anki_deck", "anki_card", "anki_review_log",
 	"transcription",
 	"training_session", "training_item",
+	"import_batch", "trash",
+	"direction", "direction_event",
 }
 
 // ApplyRLS installs (idempotently) Row-Level Security on every tenant-scoped

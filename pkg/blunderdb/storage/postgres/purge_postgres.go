@@ -13,16 +13,22 @@ import (
 // already gone by the time its parent's row is deleted) — explicit rather
 // than relying on cascade ordering.
 //
-// purgeOrder must stay a permutation of rlsTables (rls_postgres.go);
-// TestPurgeOrderMatchesRLSTables (purge_order_test.go) fails loudly if a
-// table is added to one list and not the other.
+// purgeOrder must list exactly the tables the migrations create with a
+// tenant_id column, like rlsTables (rls_postgres.go):
+// TestPurgeOrderMatchesRLSTables (purge_order_test.go) reads that set from the
+// embedded migrations, and TestPurgeTenant/TestTenantTablesSchemaGuards
+// (purge_postgres_test.go) from the live schema — row counts after a purge and
+// foreign-key order. Comparing the two lists with each other let trash and
+// import_batch (2.19.0) and direction/direction_event (2.24.0) go missing from
+// both at once (#363).
 var purgeOrder = []string{
 	"move_analysis", "anki_review_log", "collection_position", "training_item",
-	"training_session",
+	"training_session", "direction_event", "direction",
 	"comment", "analysis", "move", "anki_card", "game",
-	"collection", "anki_deck", "transcription", "match", "tournament", "position",
+	"collection", "anki_deck", "transcription", "match", "import_batch",
+	"tournament", "position",
 	"filter_library", "command_history", "search_history", "session_state",
-	"library_settings",
+	"library_settings", "trash",
 }
 
 // PurgeTenant permanently deletes every row belonging to scope across all

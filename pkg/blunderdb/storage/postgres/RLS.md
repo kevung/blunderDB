@@ -34,10 +34,14 @@ in `rls_postgres.go`:
 - **Non-superuser** — PostgreSQL **superusers bypass RLS even with FORCE**, so
   the application must connect as a non-superuser role for RLS to take effect.
 
-- **Which tables** — `rlsTables` in `rls_postgres.go` lists the seventeen
+- **Which tables** — `rlsTables` in `rls_postgres.go` lists the
   tenant-scoped tables (every table with a `tenant_id` column, `session_state`
   included since schema 2.17.0); `purgeOrder` in `purge_postgres.go` must stay
-  a permutation of it (`TestPurgeOrderMatchesRLSTables`). `metadata` and
+  a permutation of it. Both are checked against the schema, not against each
+  other: `TestPurgeOrderMatchesRLSTables` reads the `tenant_id` tables from the
+  embedded migrations, `TestTenantTablesSchemaGuards` checks on a live database
+  that `ApplyRLS` polices each of them, and `TestPurgeTenant` counts what a
+  purge leaves behind (#363). `metadata` and
   `schema_migrations` are database infrastructure with no `tenant_id` and no
   per-tenant data, and stay outside. A forward migration that adds a
   tenant-scoped table installs the policy itself when the database already
