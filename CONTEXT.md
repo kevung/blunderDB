@@ -35,6 +35,14 @@ property forever, even if a Match containing it is imported afterwards. It is se
 import that created or re-touched the row, and is never set or cleared by a user gesture.
 _Avoid_: manual position, hand-added position, favourite, marked position
 
+**Scratch board**:
+A board the user composes rather than reads from the library — the Eval panel's and the
+Search panel's. What stands on it has no identity: no edit made there can rewrite a stored
+Position, and nothing known about the position it was copied from travels with it. Saving
+a scratch board is individually importing a Position, never updating one; the board stays
+a scratch board afterwards.
+_Avoid_: edit board, draft position, custom position
+
 **Match-sourced Position**:
 A Position reachable from a Match through the `move` → `game` → `match` chain. Not the
 complement of "individually imported": a Position can be both.
