@@ -29,7 +29,12 @@
 
     let openTable = $state(0);
 
-    /** @param {number} seconds */
+    /**
+     * Le temps écoulé d'un match. Zéro seconde est omis par le backend (`omitempty`) : un match
+     * qui vient d'être lancé arrive sans `elapsedSeconds`, d'où le `|| 0` à l'appel.
+     *
+     * @param {number} seconds
+     */
     function elapsed(seconds) {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
@@ -74,7 +79,7 @@
                         <span class="players">{c.aName} – {c.bName}</span>
                         <span class="meta">
                             {$t('direction.proposals.points', { n: c.length })} &middot;
-                            {elapsed(c.elapsedSeconds)}
+                            {elapsed(c.elapsedSeconds || 0)}
                             {#if c.slow}
                                 &middot; {$t('direction.table.slow')}
                             {/if}
