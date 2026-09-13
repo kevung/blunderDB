@@ -68,11 +68,10 @@ describe('XGID contract corpus (GUI generateXGID / computePipCount vs Go DecodeX
     }
 });
 
-// The corpus holds no post-Crawford position — domain.DecodeXGID never emits
-// the `0` sentinel, since an XGID states Crawford in field 7 rather than in the
-// score — but the importers do write it since #338, and a position carrying it
-// must still re-encode into an XGID that means what it says: one point away,
-// Crawford behind, so a live cube.
+// The corpus holds one post-Crawford position since domain.DecodeXGID reads
+// field 7 (#360), on O's side; these two pin the encoder on both sentinels for
+// X, so a position carrying `0` still re-encodes into an XGID that means what
+// it says: one point away, Crawford behind, so a live cube.
 describe('the post-Crawford sentinel re-encodes as a distance', () => {
     const base = corpus.cases.find((c) => c.position.score[0] > 0 && c.position.score[1] > 0);
 

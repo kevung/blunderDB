@@ -179,10 +179,11 @@ func checkerChancesRead(moves []domain.CheckerMove) bool {
 }
 
 // ── Position metadata ─────────────────────────────────────────────
-// Reuse domain.DecodeXGID for the board/cube/dice/jacoby/beaver decode (shared
-// with the server path), then apply the two GUI-specific patches the JS does and
-// DecodeXGID does not: decision_type from the analysis TEXT, and the Crawford
-// away-score remap (1→0 when field 7 is 0 in match play).
+// Reuse domain.DecodeXGID for the board/cube/dice/score/jacoby/beaver decode
+// (shared with the server path) — the Crawford sentinel included, which this
+// parser used to write on its own and DecodeXGID now reads once for every
+// caller (#360) — then apply the one GUI-specific patch DecodeXGID does not:
+// decision_type from the analysis TEXT.
 func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman, isInternalChecker bool) domain.Position {
 	pos, err := domain.DecodeXGID(xgid)
 	if err != nil {
@@ -192,20 +193,6 @@ func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman,
 		pos = domain.Position{}
 		for i := range pos.Board.Points {
 			pos.Board.Points[i] = domain.Point{Checkers: 0, Color: domain.None}
-		}
-	}
-
-	fields := strings.Split(xgid, ":")
-	field7, has7 := atoi(fields, 7)
-	matchLen, hasM := atoi(fields, 8)
-
-	// Crawford away-score remap (JS:870-872): when field 7 == 0, a 1-away score
-	// becomes 0. Money games already collapsed to [-1,-1] by DecodeXGID.
-	if has7 && field7 == 0 && hasM && matchLen > 0 {
-		for i := range pos.Score {
-			if pos.Score[i] == 1 {
-				pos.Score[i] = 0
-			}
 		}
 	}
 
@@ -630,17 +617,6 @@ func pfOrZero(s string) float64 {
 }
 
 func ptr(f float64) *float64 { return &f }
-
-func atoi(fields []string, idx int) (int, bool) {
-	if idx >= len(fields) {
-		return 0, false
-	}
-	n, err := strconv.Atoi(strings.TrimSpace(fields[idx]))
-	if err != nil {
-		return 0, false
-	}
-	return n, true
-}
 
 func atoiOne(s string) int {
 	n, _ := strconv.Atoi(strings.TrimSpace(s))

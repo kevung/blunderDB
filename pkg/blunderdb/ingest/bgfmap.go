@@ -537,7 +537,14 @@ func convertBGFTextPosition(bgfPos *bgfparser.Position) *domain.Position {
 	}
 
 	if bgfPos.MatchLength > 0 {
-		pos.Score = [2]int{bgfPos.MatchLength - bgfPos.ScoreX, bgfPos.MatchLength - bgfPos.ScoreO}
+		// bgfparser reads the scores and never field 7 of the XGID the file
+		// carries, which is where BGBlitz states the Crawford rule (its gnubg
+		// Match-ID says the same). Read it, once, the way DecodeXGID does, so a
+		// post-Crawford position gets the 0 sentinel rather than the ambiguous 1
+		// (CONTEXT.md, « Away score »; #360). A file without an XGID, or one
+		// whose field 7 states nothing, keeps the 1 it always had.
+		crawford, stated := domain.XGIDCrawfordGame(bgfPos.XGID)
+		pos.Score = domain.AwayScoresWithCrawford(bgfPos.MatchLength, bgfPos.ScoreX, bgfPos.ScoreO, crawford || !stated)
 	} else {
 		pos.Score = [2]int{-1, -1}
 	}

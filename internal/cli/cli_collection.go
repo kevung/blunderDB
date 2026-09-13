@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 )
 
@@ -476,49 +477,12 @@ func (cli *CLI) runCollectionExport(args []string) error {
 	return nil
 }
 
-// xgidOf renders a Position as an XGID the way the GUI's clipboard does when
-// no imported analysis carries one (generateXGID in
-// frontend/src/services/positionService.js): the match length is taken as the
-// larger away score — a Position does not retain the real one — and the
-// Crawford flag is raised whenever a player is 1-away. Keep the two in step.
+// xgidOf renders a Position as an XGID when no imported analysis carries one:
+// domain.EncodeXGID, the Go twin of the GUI clipboard's generateXGID, which
+// the XGID corpus holds to the same string — the post-Crawford sentinel read
+// as one point away, not as a match already won (#360).
 func xgidOf(pos *Position) string {
-	board := make([]byte, 26)
-	for i := 0; i < 26; i++ {
-		p := pos.Board.Points[i]
-		switch {
-		case p.Checkers <= 0:
-			board[i] = '-'
-		case p.Color == Black:
-			board[i] = byte('A' + p.Checkers - 1)
-		default:
-			board[i] = byte('a' + p.Checkers - 1)
-		}
-	}
-	cubeOwner := 0
-	switch pos.Cube.Owner {
-	case Black:
-		cubeOwner = 1
-	case White:
-		cubeOwner = -1
-	}
-	dice := "00"
-	if pos.DecisionType == CheckerAction {
-		dice = fmt.Sprintf("%d%d", pos.Dice[0], pos.Dice[1])
-	}
-	matchLength, score1, score2, crawford := 0, 0, 0, 0
-	if pos.Score[0] != -1 && pos.Score[1] != -1 {
-		matchLength = max(pos.Score[0], pos.Score[1])
-		score1, score2 = matchLength-pos.Score[0], matchLength-pos.Score[1]
-		if pos.Score[0] == 1 || pos.Score[1] == 1 {
-			crawford = 1
-		}
-	}
-	turn := 1
-	if pos.PlayerOnRoll != Black {
-		turn = -1
-	}
-	return fmt.Sprintf("%s:%d:%d:%d:%s:%d:%d:%d:%d:0",
-		board, pos.Cube.Value, cubeOwner, turn, dice, score1, score2, crawford, matchLength)
+	return domain.EncodeXGID(pos)
 }
 
 // printJSON writes v to stdout, indented, the way every --format json output

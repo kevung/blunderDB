@@ -103,6 +103,23 @@ func TestDecodeXGIDContract(t *testing.T) {
 			if got := EncodeXGIDBoard(&pos); got != board {
 				t.Errorf("EncodeXGIDBoard: got %q, want %q (board of xgidCanonical)", got, board)
 			}
+
+			// The round trip: `xgidCanonical` is what the GUI writes back out
+			// for this position, and it must decode to the very same position.
+			// A re-encoding that is lossy on the match length is fine; one that
+			// turns a post-Crawford game into a Crawford one is not (#360).
+			// EncodeXGID is the Go twin of the GUI's generateXGID: it must write
+			// the very string the GUI test pins, so the two encoders cannot drift.
+			if got := EncodeXGID(&want); got != c.XGIDCanonical {
+				t.Errorf("EncodeXGID: got %q, want %q (xgidCanonical)", got, c.XGIDCanonical)
+			}
+			back, err := DecodeXGID(c.XGIDCanonical)
+			if err != nil {
+				t.Fatalf("DecodeXGID(xgidCanonical %q): %v", c.XGIDCanonical, err)
+			}
+			if !reflect.DeepEqual(back, want) {
+				t.Errorf("round trip: xgidCanonical decodes to\n%+v\nnot the corpus position\n%+v", back, want)
+			}
 		})
 	}
 }
