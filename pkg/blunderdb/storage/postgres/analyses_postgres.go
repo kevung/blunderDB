@@ -173,27 +173,36 @@ func deref(s *string) string {
 	return *s
 }
 
-// LoadMany — see storage.AnalysisStore. One query, decoded in parallel
+// LoadMany — see storage.AnalysisStore. ids is walked in loadByIDsChunk-sized
+// rounds, each its own `= ANY($1)` query, exactly as positionStore.LoadByIDs
+// walks its own (#232: a caller's cancelled context is noticed between
+// rounds); the payloads are then decoded in parallel
 // (engine.DecodeAnalysesConcurrently).
 func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64) (map[int64]*domain.PositionAnalysis, error) {
 	raw := make(map[int64][]byte, len(ids))
-	if len(ids) > 0 {
-		rows, err := s.db.Query(ctx,
-			`SELECT position_id, data FROM analysis WHERE position_id = ANY($1) AND tenant_id = $2`,
-			ids, tenantID(scope))
-		if err != nil {
-			return nil, fmt.Errorf("postgres: load analyses: %w", err)
+	for start := 0; start < len(ids); start += loadByIDsChunk {
+		if err := ctx.Err(); err != nil {
+			return nil, err
 		}
-		defer rows.Close()
-		for rows.Next() {
-			var id int64
-			var data []byte
-			if err := rows.Scan(&id, &data); err != nil {
-				return nil, fmt.Errorf("postgres: load analyses: %w", err)
+		batch := ids[start:min(start+loadByIDsChunk, len(ids))]
+		if err := func() error {
+			rows, err := s.db.Query(ctx,
+				`SELECT position_id, data FROM analysis WHERE position_id = ANY($1) AND tenant_id = $2`,
+				batch, tenantID(scope))
+			if err != nil {
+				return err
 			}
-			raw[id] = data
-		}
-		if err := rows.Err(); err != nil {
+			defer rows.Close()
+			for rows.Next() {
+				var id int64
+				var data []byte
+				if err := rows.Scan(&id, &data); err != nil {
+					return err
+				}
+				raw[id] = data
+			}
+			return rows.Err()
+		}(); err != nil {
 			return nil, fmt.Errorf("postgres: load analyses: %w", err)
 		}
 	}

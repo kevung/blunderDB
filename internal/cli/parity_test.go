@@ -88,6 +88,7 @@ var serverOnly = map[string]string{
 	// and the CLI never save a bare match row or ask whether a Zobrist hash is
 	// present: SavePosition and the importers do that inside one operation.
 	// A client speaking HTTP has no such operation and needs the pieces.
+	"/v1/analyses.loadByIds":     "the batch face of LoadAnalysis for a client that shows a page of positions at once (a feed, a search result): over HTTP one round trip per position is the cost, where the desktop shows one board at a time and reads its analysis in-process; an exporter reaches the same batch through Storage (AnalysisStore.LoadMany)",
 	"/v1/anki.reviewsByGameType": "the piece the desktop composes StudyImpact from, exposed on its own so an HTTP client can compose the same figures; the desktop reaches it through Database.StudyImpact rather than by itself (#275)",
 	"/v1/matches.createGame":     whyStoragePrimitive,
 	"/v1/matches.createMove":     whyStoragePrimitive,
