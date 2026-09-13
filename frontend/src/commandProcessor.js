@@ -11,7 +11,7 @@ import { logger } from './utils/logger.js';
 // NOTE: status messages are emitted as tMsg() descriptors so the status bar can
 // re-translate them live when the language changes.
 import { tMsg } from './i18n';
-import { displayedPositionIDs } from './services/positionService.js';
+import { displayedPositionIDs, searchQueryBoard } from './services/positionService.js';
 // The search-token grammar (parseSearchTokens) and its quote-stripping helper
 // live in searchFilterService.js, shared with the "retour" replay path
 // (parseSearchCommand) — see that module's doc comment and #203. Re-exported
@@ -197,31 +197,40 @@ function handleSearchCommand(command, { isSubSearch }) {
         currentIDs = displayed.join(',');
     }
 
+    const bareCommand = isSubSearch ? 'ss' : 's';
+    const prefixLength = isSubSearch ? 2 : 1;
+    const filters =
+        command === bareCommand
+            ? []
+            : stripQuotedTokens(command.slice(prefixLength).trim())
+                  .split(' ')
+                  .map((filter) => filter.trim());
+    const parsedFilters = command === bareCommand ? null : parseFilters(filters, command);
+
+    // The entry records the board the search sends — without checkers outside
+    // EDIT (#410) — so that replaying it from the history asks the same
+    // question. A `like` keeps the board on screen: it is the target a bare
+    // `like` is replayed against (#404), never a structure.
+    const historyBoard = JSON.stringify(/** @type {any} */ (parsedFilters)?.likeFilter ? get(positionStore) : searchQueryBoard());
     const searchHistoryEntry = {
         command: command,
-        position: JSON.stringify(get(positionStore)),
+        position: historyBoard,
         timestamp: Date.now()
     };
     searchHistoryStore.update((history) => {
         const newHistory = [searchHistoryEntry, ...history].slice(0, MAX_SEARCH_HISTORY);
         return newHistory;
     });
-    SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {
+    SaveSearchHistory(command, historyBoard, excludePositionHistoryJSON()).catch((err) => {
         logger.error('Error saving search history:', err);
     });
 
-    const bareCommand = isSubSearch ? 'ss' : 's';
     if (command === bareCommand) {
         callbacks.onLoadPositionsByFilters?.({
             searchCommand: command,
             ...(isSubSearch ? { restrictToPositionIDs: currentIDs } : {})
         });
     } else {
-        const prefixLength = isSubSearch ? 2 : 1;
-        const filters = stripQuotedTokens(command.slice(prefixLength).trim())
-            .split(' ')
-            .map((filter) => filter.trim());
-        const parsedFilters = parseFilters(filters, command);
         callbacks.onLoadPositionsByFilters?.({
             filters,
             ...parsedFilters,

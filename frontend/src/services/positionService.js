@@ -121,6 +121,32 @@ export function isValidPosition(position) {
     return true;
 }
 
+/**
+ * The board a search sends as its "at least" checker structure (#410).
+ *
+ * The backend reads any board carrying a checker as a structure the results
+ * must contain (sqlshared/search.go, HasBoardFilter). In EDIT mode the board is
+ * the query the user drew, and that is what they ask. Anywhere else it is the
+ * position on screen — thirty checkers — and sending it answered `s E>80` or
+ * `ss E>80` with that one position: measured on a real database, 40 positions
+ * without a board, 1 with (TestSearch_DisplayedBoardOutsideEdit).
+ *
+ * So outside EDIT the checkers are dropped, and only them: dice, cube, score,
+ * the side on roll and the decision type still travel, because the `D`, `cube`,
+ * `score` and `d` tokens read them from the position on screen on purpose.
+ * The history and the last search record this board, not the screen's, so
+ * replaying the entry asks the same question.
+ *
+ * @param {any} [position] defaults to the board on screen
+ * @returns {any} a copy outside EDIT; the position itself in EDIT
+ */
+export function searchQueryBoard(position = get(positionStore)) {
+    if (!position || get(statusBarModeStore) === 'EDIT') return position;
+    const board = JSON.parse(JSON.stringify(position));
+    board.board = { ...board.board, points: Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 })) };
+    return board;
+}
+
 export function mirrorPositionForSearch(pos) {
     const mirrored = JSON.parse(JSON.stringify(pos));
 
@@ -389,7 +415,8 @@ export async function loadPositionsByFilters({
     document.body.style.cursor = 'wait';
 
     try {
-        let currentPosition = get(positionStore);
+        // The structure comes from the board only in EDIT, the query board (#410).
+        let currentPosition = searchQueryBoard(get(positionStore));
 
         // The exclude ("Sauf") structure must use the same mirror orientation as
         // the include structure so its points/colors stay aligned with stored
