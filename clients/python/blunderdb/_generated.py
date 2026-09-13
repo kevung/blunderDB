@@ -34,6 +34,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/analyses.load — JSON."
         return self._call("/v1/analyses.load", payload)
 
+    def analyses_load_by_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/analyses.loadByIds — JSON."
+        return self._call("/v1/analyses.loadByIds", payload)
+
     def analyses_repair(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/analyses.repair — JSON."
         return self._call("/v1/analyses.repair", payload)

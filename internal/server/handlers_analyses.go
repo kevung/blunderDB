@@ -29,6 +29,25 @@ func (s *Server) analysisRoutes() []route {
 		{http.MethodPost, "/v1/analyses.load", rpc(func(ctx context.Context, scope string, req positionIDReq) (*domain.PositionAnalysis, error) {
 			return as().Load(ctx, scope, req.PositionID)
 		})},
+		// The analyses of the listed positions, in the order the ids were given;
+		// an id without an analysis (unknown position, other tenant, never
+		// analysed) is skipped, as positions.loadByIds skips an unknown id. One
+		// round trip for a page of positions instead of one analyses.load each.
+		{http.MethodPost, "/v1/analyses.loadByIds", rpc(func(ctx context.Context, scope string, req idsReq) ([]domain.PositionAnalysis, error) {
+			byID, err := as().LoadMany(ctx, scope, req.IDs)
+			if err != nil {
+				return nil, err
+			}
+			out := make([]domain.PositionAnalysis, 0, len(req.IDs))
+			for _, id := range req.IDs {
+				if a := byID[id]; a != nil {
+					cp := *a
+					cp.PositionID = int(id)
+					out = append(out, cp)
+				}
+			}
+			return out, nil
+		})},
 		{http.MethodPost, "/v1/analyses.delete", rpcVoid(func(ctx context.Context, scope string, req positionIDReq) error {
 			return as().Delete(ctx, scope, req.PositionID)
 		})},
