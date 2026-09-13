@@ -19,7 +19,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 import { tick } from 'svelte';
 
-const engine = vi.hoisted(() => ({ sent: [], state: null }));
+const engine = vi.hoisted(() => ({ sent: /** @type {any[]} */ ([]), state: /** @type {any} */ (null) }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
@@ -99,7 +99,7 @@ function draftState(expects = 'checker', cursor = 2) {
 }
 
 /** Monte le panneau sur un brouillon ouvert et laisse les effets s'installer. */
-async function mount(state) {
+async function mount(/** @type {any} */ state) {
     engine.state = state;
     engine.sent = [];
     const view = render(TranscriptionPanel);
@@ -114,8 +114,8 @@ async function settle() {
 }
 
 const kinds = () => engine.sent.map((g) => g.Kind);
-const buttonNamed = (label) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === label);
-const menuItemNamed = (label) => [...document.querySelectorAll('.context-menu button')].find((b) => b.textContent.trim() === label);
+const buttonNamed = (/** @type {string} */ label) => /** @type {HTMLButtonElement} */ ([...document.querySelectorAll('button')].find((b) => b.textContent.trim() === label));
+const menuItemNamed = (/** @type {string} */ label) => /** @type {HTMLButtonElement} */ ([...document.querySelectorAll('.context-menu button')].find((b) => b.textContent.trim() === label));
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -200,7 +200,7 @@ describe('le menu contextuel du Transcript', () => {
         // Le Cursor est au bout du document (2) ; la cellule visée est la 0.
         const { container } = await mount(draftState('checker', 2));
 
-        await fireEvent.contextMenu(container.querySelector('[data-index="0"]'), { clientX: 40, clientY: 60 });
+        await fireEvent.contextMenu(/** @type {Element} */ (container.querySelector('[data-index="0"]')), { clientX: 40, clientY: 60 });
         await tick();
 
         // Dans le MENU, et non dans la barre de correction, qui porte le même
@@ -218,10 +218,10 @@ describe('le menu contextuel du Transcript', () => {
     test('les quatre entrées sont les quatre corrections, et rien de plus', async () => {
         const { container } = await mount(draftState('checker', 2));
 
-        await fireEvent.contextMenu(container.querySelector('[data-index="1"]'), { clientX: 40, clientY: 60 });
+        await fireEvent.contextMenu(/** @type {Element} */ (container.querySelector('[data-index="1"]')), { clientX: 40, clientY: 60 });
         await tick();
 
-        const menu = document.querySelector('.context-menu');
+        const menu = /** @type {Element} */ (document.querySelector('.context-menu'));
         expect([...menu.querySelectorAll('button')].map((b) => b.textContent.trim())).toEqual(['Insert before', 'Insert after', 'Delete', 'Change side']);
     });
 });
@@ -237,7 +237,7 @@ describe('le menu contextuel du Transcript', () => {
 describe('le texte .mat', () => {
     test('le bouton de la barre ouvre la modale, qui va chercher le texte', async () => {
         const MAT = '; [Player 1 "Kévin"]\n\n7 point match\n';
-        TranscriptionMAT.mockResolvedValue(MAT);
+        /** @type {any} */ (TranscriptionMAT).mockResolvedValue(MAT);
         await mount(draftState());
 
         // Fermée, elle ne coûte aucun aller-retour : c'est ce qui permettait au

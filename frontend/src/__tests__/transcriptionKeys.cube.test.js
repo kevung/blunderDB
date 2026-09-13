@@ -16,7 +16,7 @@
 import { describe, test, expect } from 'vitest';
 import { PHASE, COMMAND, initialKeyState, pressKey, applyCandidates } from '../services/transcriptionKeys.js';
 
-function key(code, extra = {}) {
+function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;
@@ -31,6 +31,7 @@ function key(code, extra = {}) {
  */
 function driver({ expects = 'checker', candidates = 5 } = {}) {
     let state = initialKeyState();
+    /** @type {import('../services/transcriptionKeys.js').KeyCommand[]} */
     const commands = [];
     let presses = 0;
 
@@ -42,6 +43,10 @@ function driver({ expects = 'checker', candidates = 5 } = {}) {
     };
 
     return {
+        /**
+         * @param {string} code
+         * @param {object} [extra]
+         */
         press(code, extra) {
             presses += 1;
             const result = pressKey(state, key(code, extra), { expects });
@@ -50,7 +55,7 @@ function driver({ expects = 'checker', candidates = 5 } = {}) {
             settle();
             return result;
         },
-        expects(next) {
+        expects(/** @type {any} */ next) {
             expects = next;
         },
         get state() {

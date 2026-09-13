@@ -15,7 +15,7 @@
 import { describe, test, expect } from 'vitest';
 import { sourcesOf, filterByPoints, nextFilter } from '../services/transcriptionFilter.js';
 
-const play = (notation, froms) => ({ move: { move: notation }, steps: froms.map((from) => ({ from, to: from - 1 })) });
+const play = (/** @type {any} */ notation, /** @type {any} */ froms) => ({ move: { move: notation }, steps: froms.map((/** @type {number} */ from) => ({ from, to: from - 1 })) });
 
 // Un jet 3-1 vu du camp au trait : dix-sept coups légaux, dont le douzième est
 // celui qui a été joué. Seuls les points de départ comptent ici.
@@ -49,7 +49,7 @@ describe('le filtre par point de départ', () => {
         const kept = filterByPoints(CANDIDATES, [24]);
         expect(kept.length).toBeGreaterThan(0);
         expect(kept.length).toBeLessThan(CANDIDATES.length);
-        for (const candidate of kept) expect(candidate.steps.some((s) => s.from === 24)).toBe(true);
+        for (const candidate of kept) expect(candidate.steps.some((/** @type {any} */ s) => s.from === 24)).toBe(true);
     });
 
     // « Un second clic sur un autre point la réduit encore » : ET, jamais OU.
@@ -58,8 +58,8 @@ describe('le filtre par point de départ', () => {
         const two = filterByPoints(CANDIDATES, [24, 13]);
         expect(two.length).toBeLessThanOrEqual(one.length);
         for (const candidate of two) {
-            expect(candidate.steps.some((s) => s.from === 24)).toBe(true);
-            expect(candidate.steps.some((s) => s.from === 13)).toBe(true);
+            expect(candidate.steps.some((/** @type {any} */ s) => s.from === 24)).toBe(true);
+            expect(candidate.steps.some((/** @type {any} */ s) => s.from === 13)).toBe(true);
         }
     });
 
@@ -102,7 +102,7 @@ describe('le budget d’ux.md §4.1, ligne « coup loin dans la liste »', () =>
     const P_POINT = 0.15 * Math.log2(300 / 45 + 1);
 
     /** Le rang du coup joué dans une liste, ou -1. */
-    const rankOf = (list, notation) => list.findIndex((c) => c.move.move === notation);
+    const rankOf = (/** @type {any} */ list, /** @type {any} */ notation) => list.findIndex((/** @type {any} */ c) => c.move.move === notation);
 
     test('le rang douze au clavier coûte treize touches', () => {
         const rank = rankOf(CANDIDATES, '8/5 8/7');
@@ -115,10 +115,10 @@ describe('le budget d’ux.md §4.1, ligne « coup loin dans la liste »', () =>
     // Le geste que la fiche demande : cliquer le point de départ du premier pas
     // connu, puis finir au clavier. La main reste sur la souris entre deux
     // clics, donc un seul H, et un P par clic.
-    const cost = (clicks, ranks) => 2 * K + H + clicks * (P_POINT + 2 * B) + ranks * K;
+    const cost = (/** @type {any} */ clicks, /** @type {any} */ ranks) => 2 * K + H + clicks * (P_POINT + 2 * B) + ranks * K;
 
     /** Les points de départ distincts d'un coup, dans l'ordre de ses pas. */
-    const departures = (candidate) => [...new Set(candidate.steps.map((s) => s.from))];
+    const departures = (/** @type {any} */ candidate) => [...new Set(candidate.steps.map((/** @type {any} */ s) => s.from))];
 
     test('le même coup, filtré par son point de départ, tient sous les trois secondes', () => {
         const filtered = filterByPoints(CANDIDATES, [8]);

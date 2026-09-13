@@ -20,7 +20,7 @@
 import { describe, test, expect } from 'vitest';
 import { COMMAND, PHASE, initialKeyState, pressKey, applyCandidates, cubeGesture, beginResign, resignWithLevel, cancelResign, menuCommands, cursorCommands } from '../services/transcriptionKeys.js';
 
-function key(code, extra = {}) {
+function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;
@@ -28,7 +28,7 @@ function key(code, extra = {}) {
 }
 
 /** Ce que la touche fait, dépouillé du `handled` que la souris n'a pas. */
-function typed(state, code, expects) {
+function typed(/** @type {any} */ state, /** @type {string} */ code, /** @type {any} */ expects) {
     const result = pressKey(state, key(code), { expects });
     return { state: result.state, commands: result.commands };
 }
@@ -98,7 +98,7 @@ describe('la résignation, deux gestes à la souris comme au clavier', () => {
     });
 
     test('un niveau cliqué fait ce que fait son chiffre', () => {
-        for (const level of [1, 2, 3]) {
+        for (const level of /** @type {any[]} */ ([1, 2, 3])) {
             const armed = beginResign(initialKeyState()).state;
             const clicked = resignWithLevel(armed, level);
             const pressed = typed(armed, `Digit${level}`, 'checker');
@@ -172,16 +172,17 @@ describe('le budget d’ux.md §4.2, à la souris', () => {
     /** Un pilote qui compte les CLICS, comme celui des touches compte les frappes. */
     function driver({ expects = 'checker' } = {}) {
         let state = initialKeyState();
+        /** @type {import('../services/transcriptionKeys.js').KeyCommand[]} */
         const commands = [];
         let clicks = 0;
         return {
-            clickCube(kind) {
+            clickCube(/** @type {string} */ kind) {
                 clicks += 1;
                 const result = cubeGesture(state, kind);
                 state = result.state;
                 commands.push(...result.commands);
             },
-            expects(next) {
+            expects(/** @type {any} */ next) {
                 expects = next;
                 void expects;
             },

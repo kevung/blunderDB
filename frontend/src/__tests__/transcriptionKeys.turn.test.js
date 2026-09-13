@@ -21,7 +21,7 @@ const CHECKER = { expects: 'checker' };
  * lisent au caractère produit (`event.key`) : le pilote pose les deux, comme le
  * navigateur le fait.
  */
-function key(code, extra = {}) {
+function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;
@@ -35,6 +35,7 @@ function key(code, extra = {}) {
  */
 function driver({ expects = 'checker', candidates = 5, replacing = false } = {}) {
     let state = initialKeyState();
+    /** @type {import('../services/transcriptionKeys.js').KeyCommand[]} */
     const commands = [];
     let presses = 0;
 
@@ -46,6 +47,10 @@ function driver({ expects = 'checker', candidates = 5, replacing = false } = {})
     };
 
     return {
+        /**
+         * @param {string} code
+         * @param {object} [extra]
+         */
         press(code, extra) {
             presses += 1;
             const result = pressKey(state, key(code, extra), { expects, replacing });
@@ -54,7 +59,7 @@ function driver({ expects = 'checker', candidates = 5, replacing = false } = {})
             settle();
             return result;
         },
-        answer(count) {
+        answer(/** @type {any} */ count) {
             candidates = count;
             settle();
         },

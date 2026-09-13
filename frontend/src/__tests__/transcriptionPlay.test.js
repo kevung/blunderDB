@@ -31,7 +31,7 @@ const BLACK = 0;
 const WHITE = 1;
 
 /** Une position : les piles données, le reste vide. */
-function positionWith(stacks, mover = BLACK) {
+function positionWith(/** @type {any} */ stacks, mover = BLACK) {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
     for (const [point, [checkers, color]] of Object.entries(stacks)) {
         points[Number(point)] = { checkers, color };
@@ -47,8 +47,8 @@ function positionWith(stacks, mover = BLACK) {
     };
 }
 
-const step = (from, to) => ({ from, to, hit: false });
-const play = (...steps) => ({ steps, notation: steps.map((s) => `${s.from}/${s.to}`).join(' '), result: {} });
+const step = (/** @type {number} */ from, /** @type {number} */ to) => ({ from, to, hit: false });
+const play = (/** @type {any[]} */ ...steps) => ({ steps, notation: steps.map((s) => `${s.from}/${s.to}`).join(' '), result: {} });
 
 // Un milieu de partie ordinaire : cinq pions en 13, trois en 8, cinq en 6.
 const POSITION = positionWith({ 13: [5, BLACK], 8: [3, BLACK], 6: [5, BLACK], 24: [2, BLACK] });
@@ -64,7 +64,7 @@ const BY_ROLL = [
 ];
 
 /** Un glissé : la source est choisie, le pion est lâché sur la destination. */
-function drag(state, from, to) {
+function drag(/** @type {any} */ state, /** @type {number} */ from, /** @type {number} */ to) {
     return playHop(selectSource(state, from), from, to);
 }
 
@@ -92,7 +92,7 @@ describe('les jets se réduisent avec les pas', () => {
     });
 
     test('les quatre pas d’un double se déduisent en 6-6', () => {
-        let state = newBoardPlay(POSITION, BY_ROLL);
+        let state = /** @type {any} */ (newBoardPlay(POSITION, BY_ROLL));
         for (const [from, to] of [
             [13, 7],
             [13, 7],
@@ -108,7 +108,7 @@ describe('les jets se réduisent avec les pas', () => {
     // L'ordre est libre : `LegalMoves` déduplique par plateau résultant et ne
     // rend qu'un ordre des deux pas, mais les deux se jouent (quizPlay.js).
     test('l’ordre des pas ne change pas le jet déduit', () => {
-        let state = newBoardPlay(POSITION, BY_ROLL);
+        let state = /** @type {any} */ (newBoardPlay(POSITION, BY_ROLL));
         state = drag(state, 8, 7);
         state = drag(state, 13, 7);
         expect(deducedDice(state)).toEqual([6, 1]);
@@ -160,10 +160,10 @@ describe('le budget d’ux.md §4.1 : quatre pas à la souris ≤ 6 s', () => {
     const P = 1.1;
     const B = 0.1;
     const H = 0.4;
-    const cost = (gestures) => Math.round((2 * H + gestures * (P + 2 * B)) * 100) / 100;
+    const cost = (/** @type {any} */ gestures) => Math.round((2 * H + gestures * (P + 2 * B)) * 100) / 100;
 
     /** Le coup joué en comptant les gestes, un glissé par pas. */
-    function playByDragging(state, hops) {
+    function playByDragging(/** @type {any} */ state, /** @type {any} */ hops) {
         let gestures = 0;
         for (const [from, to] of hops) {
             state = drag(state, from, to);

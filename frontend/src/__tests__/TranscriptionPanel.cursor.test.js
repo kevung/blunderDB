@@ -38,7 +38,7 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 
-const POSITION = (dice) => ({
+const POSITION = (/** @type {any} */ dice) => ({
     board: { points: Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 })), bearoff: [0, 0] },
     cube: { owner: -1, value: 0 },
     dice,
@@ -55,7 +55,7 @@ const ACTIONS = [
 const NOTATIONS = ['', '8/5 6/5', '13/8 13/11'];
 
 /** L'annoté que le moteur rend, le Cursor où on le lui demande. */
-function annotated(cursor) {
+function annotated(/** @type {number} */ cursor) {
     return {
         document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice' }, actions: ACTIONS, cursor },
         actions: ACTIONS.map((a, index) => ({
@@ -87,7 +87,7 @@ const RANKED = [
     { index: 2, move: '24/23 13/11', equity: -0.1, equityError: 0.22 }
 ];
 
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 async function openedPanel(cursor = 3) {
     transcriptionStore.set({ id: 1, annotated: annotated(cursor) });
@@ -109,11 +109,11 @@ beforeEach(() => {
     databasePathStore.set('/tmp/test.db');
     activeTabStore.set('transcription');
     statusBarModeStore.set('TRANSCRIBE');
-    LegalMoves.mockResolvedValue(PLAYS);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: RANKED });
+    /** @type {any} */ (LegalMoves).mockResolvedValue(PLAYS);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED });
     // Le moteur déplace le Cursor et rend le document entier, comme la liaison.
     let at = 3;
-    ApplyTranscriptionGesture.mockImplementation((_id, gesture) => {
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
         if (gesture.Kind === 'cursor_back') at = Math.max(0, at - 1);
         if (gesture.Kind === 'cursor_forward') at = Math.min(ACTIONS.length, at + 1);
         return Promise.resolve({ id: 1, annotated: annotated(at) });
@@ -136,7 +136,7 @@ describe('le Cursor au clavier', () => {
         await settle();
 
         expect(gestures()).toEqual([{ Kind: 'cursor_back' }]);
-        expect(get(transcriptionStore).annotated.cursor).toBe(2);
+        expect(/** @type {any} */ (get(transcriptionStore)).annotated.cursor).toBe(2);
         // L'Action visée est le 52: 13/8 13/11 d'Alice... dont la notation
         // n'est pas dans la liste classée ici ; c'est le cas suivant qui tient
         // la présélection. Ce qui compte à cette ligne : les dés de l'Action
@@ -152,7 +152,7 @@ describe('le Cursor au clavier', () => {
         await fireEvent.keyDown(document, { code: 'KeyH', key: 'h' });
         await settle();
 
-        expect(get(transcriptionStore).annotated.cursor).toBe(1);
+        expect(/** @type {any} */ (get(transcriptionStore)).annotated.cursor).toBe(1);
         // Le coup joué est le SECOND de la liste classée : c'est lui qui est
         // sélectionné, pas le meilleur.
         expect(get(transcriptionKeyStore).selected).toBe(1);
@@ -162,13 +162,13 @@ describe('le Cursor au clavier', () => {
     test('`l` avance', async () => {
         await openedPanel(1);
         // Le pilote du moteur part de la fin ; on le remet là où le panneau est.
-        ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve({ id: 1, annotated: annotated(2) }));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve({ id: 1, annotated: annotated(2) }));
 
         await fireEvent.keyDown(document, { code: 'KeyL', key: 'l' });
         await settle();
 
         expect(gestures()).toEqual([{ Kind: 'cursor_forward' }]);
-        expect(get(transcriptionStore).annotated.cursor).toBe(2);
+        expect(/** @type {any} */ (get(transcriptionStore)).annotated.cursor).toBe(2);
     });
 });
 
@@ -177,19 +177,19 @@ describe('le Cursor à la souris', () => {
         const { container } = await openedPanel();
         await settle();
 
-        const cell = container.querySelector('.cell[data-index="1"]');
+        const cell = /** @type {Element} */ (container.querySelector('.cell[data-index="1"]'));
         expect(cell).not.toBeNull();
         await fireEvent.click(cell);
         await settle();
 
         // Du bout du document (3) jusqu'à l'Action 1 : deux pas en arrière.
         expect(gestures()).toEqual([{ Kind: 'cursor_back' }, { Kind: 'cursor_back' }]);
-        expect(get(transcriptionStore).annotated.cursor).toBe(1);
+        expect(/** @type {any} */ (get(transcriptionStore)).annotated.cursor).toBe(1);
     });
 
     test('la cellule du Cursor est encadrée dans le Transcript du panneau', async () => {
         const { container } = await openedPanel(1);
         await settle();
-        expect(container.querySelector('.cell.cursor')?.dataset.index).toBe('1');
+        expect(/** @type {HTMLElement | null} */ (container.querySelector('.cell.cursor'))?.dataset.index).toBe('1');
     });
 });

@@ -43,6 +43,10 @@ const { activeModal } = await import('../stores/uiStore.js');
 const { transcriptionHistoryActionStore } = await import('../stores/transcriptionStore.js');
 const { get } = await import('svelte/store');
 
+/**
+ * @param {KeyboardEventInit} init
+ * @param {EventTarget} [target]
+ */
 function press(init, target) {
     const event = new KeyboardEvent('keydown', { cancelable: true, bubbles: true, ...init });
     if (target) target.dispatchEvent(event);
@@ -76,6 +80,7 @@ describe('CTRL-Z et CTRL-MAJ-Z', () => {
 });
 
 describe('un champ de saisie garde CTRL-Z', () => {
+    /** @type {HTMLInputElement} */
     let field;
 
     beforeEach(() => {

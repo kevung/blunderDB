@@ -59,9 +59,9 @@ function annotated() {
     };
 }
 
-const state = (ann) => ({ id: 1, annotated: ann });
+const state = (/** @type {any} */ ann) => ({ id: 1, annotated: ann });
 
-const step = (from) => ({ from, to: from - 1, hit: false });
+const step = (/** @type {number} */ from) => ({ from, to: from - 1, hit: false });
 // L'ordre du générateur et celui du classement diffèrent exprès : le geste
 // envoyé au moteur porte le rang du GÉNÉRATEUR, celui de l'écran est le rang du
 // classement, et le filtre ne doit pas confondre les deux.
@@ -76,11 +76,11 @@ const RANKED = [
     { index: 2, move: '24/23 13/11', equity: -0.1, equityError: 0.22 }
 ];
 
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
-const selects = () => gestures().filter((g) => g.Kind === 'select_candidate');
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
+const selects = () => gestures().filter((/** @type {any} */ g) => g.Kind === 'select_candidate');
 const rows = () => [...document.querySelectorAll('.candidates tbody tr')].map((tr) => tr.textContent);
 
-function press(code) {
+function press(/** @type {string} */ code) {
     const digit = /^Digit([1-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     return fireEvent.keyDown(document, { code, key: digit ? digit[1] : letter ? letter[1].toLowerCase() : code });
@@ -99,10 +99,10 @@ async function rolled() {
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockResolvedValue(PLAYS);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: RANKED });
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockResolvedValue(PLAYS);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -185,10 +185,10 @@ describe('la liste réduite par le point de départ', () => {
     // lui-même, seule la présélection bouge.
     test('poser un filtre ne crée aucune Action', async () => {
         await rolled();
-        const before = gestures().filter((g) => g.Kind !== 'select_candidate').length;
+        const before = gestures().filter((/** @type {any} */ g) => g.Kind !== 'select_candidate').length;
         transcriptionPointFilterStore.set([13]);
         await tick();
         await vi.waitFor(() => expect(selects().length).toBeGreaterThan(1));
-        expect(gestures().filter((g) => g.Kind !== 'select_candidate')).toHaveLength(before);
+        expect(gestures().filter((/** @type {any} */ g) => g.Kind !== 'select_candidate')).toHaveLength(before);
     });
 });

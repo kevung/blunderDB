@@ -45,7 +45,7 @@ import { selectSource, playHop } from '../services/quizPlay.js';
 const BLACK = 0;
 const WHITE = 1;
 
-function positionWith(stacks, mover = BLACK) {
+function positionWith(/** @type {any} */ stacks, mover = BLACK) {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
     for (const [point, [checkers, color]] of Object.entries(stacks)) points[Number(point)] = { checkers, color };
     return {
@@ -61,11 +61,12 @@ function positionWith(stacks, mover = BLACK) {
 
 const POSITION = positionWith({ 13: [5, BLACK], 8: [3, BLACK], 6: [5, BLACK], 12: [2, WHITE] });
 
-const step = (from, to) => ({ from, to, hit: false });
-const play = (...steps) => ({ steps, notation: steps.map((s) => `${s.from}/${s.to}`).join(' '), result: {} });
+const step = (/** @type {number} */ from, /** @type {number} */ to) => ({ from, to, hit: false });
+const play = (/** @type {any[]} */ ...steps) => ({ steps, notation: steps.map((s) => `${s.from}/${s.to}`).join(' '), result: {} });
 
 // Ce que `LegalMoves` rendrait, jet par jet. Tout ce qui n'est pas nommé ici est
 // un jet sans coup, et il s'écarte de lui-même de l'union.
+/** @type {Record<string, any[]>} */
 const PLAYS_BY_ROLL = {
     61: [play(step(13, 7), step(8, 7))],
     62: [play(step(13, 7), step(13, 11))],
@@ -85,10 +86,10 @@ function annotated(extra = {}) {
     };
 }
 
-const state = (ann) => ({ id: 1, annotated: ann });
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const state = (/** @type {any} */ ann) => ({ id: 1, annotated: ann });
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
-function press(code) {
+function press(/** @type {string} */ code) {
     const digit = /^Digit([1-9])$/.exec(code);
     return fireEvent.keyDown(document, { code, key: digit ? digit[1] : code });
 }
@@ -100,26 +101,26 @@ async function armed() {
     await tick();
     document.getElementById('transcriptionPanel')?.focus();
     await vi.waitFor(() => expect(get(quizPlayStore)).not.toBeNull());
-    return get(quizPlayStore);
+    return /** @type {any} */ (get(quizPlayStore));
 }
 
 /** Un pas joué au plateau, tel que le clic le joue. */
-function hop(from, to) {
-    quizPlayStore.update((s) => playHop(selectSource(s, from), from, to));
+function hop(/** @type {number} */ from, /** @type {number} */ to) {
+    quizPlayStore.update((/** @type {any} */ s) => playHop(selectSource(s, from), from, to));
 }
 
 const diceCells = () => [...document.querySelectorAll('.dice-triangle button')];
-const cell = (label) => diceCells().find((b) => b.textContent.trim() === label);
+const cell = (/** @type {string} */ label) => /** @type {HTMLButtonElement} */ (diceCells().find((b) => b.textContent.trim() === label));
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockImplementation((pos) => {
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockImplementation((/** @type {any} */ pos) => {
         const [a, b] = pos.dice;
         return Promise.resolve(PLAYS_BY_ROLL[a >= b ? `${a}${b}` : `${b}${a}`] ?? []);
     });
-    EvaluatePositionImmediate.mockResolvedValue({ moves: [] });
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
     transcriptionListStore.set([]);
     clearTranscription();
     quizPlayStore.set(null);
@@ -144,7 +145,7 @@ afterEach(() => {
  * servent jamais en même temps.
  */
 async function openHandEntry() {
-    const toggle = [...document.querySelectorAll('#transcriptionPanel button')].find((b) => b.textContent.trim() === '✎');
+    const toggle = /** @type {HTMLButtonElement} */ ([...document.querySelectorAll('#transcriptionPanel button')].find((b) => b.textContent.trim() === '✎'));
     expect(toggle, 'le volet de saisie à la main est introuvable').toBeTruthy();
     await fireEvent.click(toggle);
 }
@@ -155,7 +156,7 @@ describe('le plateau joue le coup et déduit les dés (T2.3)', () => {
         expect(play.free).toBe(false);
         // Un coup par jet jouable, quatre jets, six coups en tout.
         expect(play.plays).toHaveLength(4);
-        expect(new Set(play.plays.map((p) => p.roll.join('')))).toEqual(new Set(['61', '62', '66', '21']));
+        expect(new Set(play.plays.map((/** @type {any} */ p) => p.roll.join('')))).toEqual(new Set(['61', '62', '66', '21']));
     });
 
     test('un dé tapé rend la main à la saisie par les dés', async () => {
@@ -173,7 +174,7 @@ describe('le plateau joue le coup et déduit les dés (T2.3)', () => {
         hop(8, 2);
         hop(8, 2);
 
-        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'validate')).toBe(true));
+        await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
         const sent = gestures();
         expect(sent[0]).toEqual({ Kind: 'enter_die', Die: 6 });
         expect(sent[1]).toEqual({ Kind: 'enter_die', Die: 6 });
@@ -199,10 +200,11 @@ describe('le plateau joue le coup et déduit les dés (T2.3)', () => {
 
 describe('l’ambiguïté n’est jamais tranchée par le logiciel', () => {
     // Deux jets dont un seul dé est jouable : le même pas les achève tous deux.
+    /** @type {Record<string, any[]>} */
     const AMBIGUOUS = { 61: [play(step(13, 7))], 62: [play(step(13, 7))] };
 
     async function ambiguous() {
-        LegalMoves.mockImplementation((pos) => {
+        /** @type {any} */ (LegalMoves).mockImplementation((/** @type {any} */ pos) => {
             const [a, b] = pos.dice;
             return Promise.resolve(AMBIGUOUS[a >= b ? `${a}${b}` : `${b}${a}`] ?? []);
         });
@@ -225,7 +227,7 @@ describe('l’ambiguïté n’est jamais tranchée par le logiciel', () => {
         await vi.waitFor(() => expect(cell('62')?.disabled).toBe(false));
         await fireEvent.click(cell('62'));
 
-        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'validate')).toBe(true));
+        await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
         const sent = gestures();
         expect(sent[0]).toEqual({ Kind: 'enter_die', Die: 6 });
         expect(sent[1]).toEqual({ Kind: 'enter_die', Die: 2 });
@@ -249,15 +251,15 @@ describe('le coup illégal (T2.4)', () => {
         await withDice();
         await openHandEntry();
         await fireEvent.click(screen.getByText('Free movement'));
-        await vi.waitFor(() => expect(get(quizPlayStore)?.free).toBe(true));
+        await vi.waitFor(() => expect(/** @type {any} */ (get(quizPlayStore))?.free).toBe(true));
 
         // 13/3 n'est le coup d'aucun jet : c'est celui qui a été joué.
         quizPlayStore.update((s) => freeClick(freeClick(s, 13), 3));
         await tick();
         await fireEvent.click(screen.getByText('This board is the move played'));
 
-        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'validate')).toBe(true));
-        const entered = gestures().find((g) => g.Kind === 'enter_play');
+        await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
+        const entered = gestures().find((/** @type {any} */ g) => g.Kind === 'enter_play');
         expect(entered.Steps).toEqual([{ from: 13, to: 3, hit: false }]);
         // Le plateau part avec les pas : c'est lui qui dit ce qui s'est passé.
         expect(entered.BoardAfter.points[3]).toEqual({ checkers: 1, color: BLACK });
@@ -271,8 +273,8 @@ describe('le coup illégal (T2.4)', () => {
         await fireEvent.input(input, { target: { value: '13/7 8/7' } });
         await fireEvent.click(screen.getByText('Enter'));
 
-        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'validate')).toBe(true));
-        const entered = gestures().find((g) => g.Kind === 'enter_play');
+        await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
+        const entered = gestures().find((/** @type {any} */ g) => g.Kind === 'enter_play');
         expect(entered.Steps).toEqual([
             { from: 13, to: 7, hit: false },
             { from: 8, to: 7, hit: false }
@@ -292,6 +294,6 @@ describe('le coup illégal (T2.4)', () => {
         await openHandEntry();
         const input = screen.getByLabelText('Move notation');
         await fireEvent.input(input, { target: { value: '13/3' } });
-        expect(screen.getByText('Enter').disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (screen.getByText('Enter')).disabled).toBe(true);
     });
 });

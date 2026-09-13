@@ -69,7 +69,11 @@ import {
     dismissTranscriptionResume
 } from '../services/transcriptionSave.js';
 
-/** Un brouillon tel que le panneau le tient : l'id de la ligne et le document annoté. */
+/**
+ * Un brouillon tel que le panneau le tient : l'id de la ligne et le document annoté.
+ *
+ * @param {{id?: number, matchId?: number, actions?: any[], header?: object}} [options]
+ */
 function draft({ id = 1, matchId = 0, actions = [], header = {} } = {}) {
     return {
         id,
@@ -102,7 +106,7 @@ beforeEach(() => {
 
 describe("l'enregistrement", () => {
     test('un brouillon sans incohérence est écrit sans rien demander', async () => {
-        const result = await saveDraft(draft({ actions: clean }));
+        const result = /** @type {any} */ (await saveDraft(draft({ actions: clean })));
         expect(confirmAction).not.toHaveBeenCalled();
         expect(SaveTranscriptionAsMatch).toHaveBeenCalledWith(1);
         expect(result.match_id).toBe(7);

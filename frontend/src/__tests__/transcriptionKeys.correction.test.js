@@ -16,7 +16,7 @@
 import { describe, test, expect } from 'vitest';
 import { PHASE, COMMAND, initialKeyState, pressKey, applyCandidates } from '../services/transcriptionKeys.js';
 
-function key(code, extra = {}) {
+function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;
@@ -30,7 +30,7 @@ const CHECKER = { expects: 'checker' };
  * demandés, et le NOMBRE de touches qui ont porté (une touche ignorée par la
  * machine ne compte pas comme un geste réussi — elle compte comme un échec).
  */
-function press(codes, { state = initialKeyState(), context = CHECKER } = {}) {
+function press(/** @type {any} */ codes, { state = initialKeyState(), context = CHECKER } = {}) {
     const commands = [];
     let count = 0;
     for (const code of codes) {
@@ -49,7 +49,7 @@ function armed(n = 4) {
     return applyCandidates(rolled, n).state;
 }
 
-const kinds = (commands) => commands.map((c) => c.kind);
+const kinds = (/** @type {any} */ commands) => commands.map((/** @type {any} */ c) => c.kind);
 
 describe('ux.md §4.3 — dé mal lu, vu aussitôt', () => {
     // TROIS touches depuis ADR-0048, et c'est la contrepartie assumée de la
@@ -117,7 +117,7 @@ describe('ux.md §4.3 — erreur vue k tours plus tard', () => {
         expect(kinds(home.commands)).toEqual(forward.map(() => COMMAND.CURSOR_FORWARD));
         // Le choix a bien changé de candidat, sans quoi le budget serait tenu
         // pour rien.
-        expect(kinds(chosen.commands).filter((x) => x === COMMAND.SELECT).length).toBe(m);
+        expect(kinds(chosen.commands).filter((/** @type {any} */ x) => x === COMMAND.SELECT).length).toBe(m);
     });
 });
 

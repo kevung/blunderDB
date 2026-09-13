@@ -20,7 +20,7 @@ const OPENING = { expects: 'opening' };
  * lisent au caractère produit (`event.key`) : le pilote pose les deux, comme le
  * navigateur le fait.
  */
-function key(code, extra = {}) {
+function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;
@@ -28,7 +28,7 @@ function key(code, extra = {}) {
 }
 
 /** Enchaîne des frappes et rend l'état final avec tous les gestes émis. */
-function type(codes, context = OPENING, start = initialKeyState()) {
+function type(/** @type {any} */ codes, context = OPENING, start = initialKeyState()) {
     let state = start;
     const commands = [];
     let presses = 0;

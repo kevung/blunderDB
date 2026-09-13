@@ -42,6 +42,7 @@ import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 
 // Un document annoté minimal, tel que le moteur Go le renvoie : ce que le
 // panneau lit, et rien de plus (il ne dérive ni score, ni Crawford, ni trait).
+/** @param {{expects?: string, side?: number, length?: number, actions?: any[], cursor?: number, score?: number[]}} [options] */
 function annotated({ expects = 'opening', side = 0, length = 7, actions = [], cursor = 0, score = [0, 0] } = {}) {
     return {
         document: { header: { match_length: length, player1: '', player2: '' }, actions, cursor },
@@ -53,16 +54,16 @@ function annotated({ expects = 'opening', side = 0, length = 7, actions = [], cu
     };
 }
 
-function stateFor(ann) {
+function stateFor(/** @type {any} */ ann) {
     return { id: 1, annotated: ann };
 }
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    CreateTranscription.mockResolvedValue(stateFor(annotated()));
-    OpenTranscription.mockResolvedValue(stateFor(annotated()));
-    ApplyTranscriptionGesture.mockResolvedValue(stateFor(annotated()));
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (CreateTranscription).mockResolvedValue(stateFor(annotated()));
+    /** @type {any} */ (OpenTranscription).mockResolvedValue(stateFor(annotated()));
+    /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(stateFor(annotated()));
     transcriptionListStore.set([]);
     clearTranscription();
     databasePathStore.set('/tmp/library.db');
@@ -76,24 +77,24 @@ describe('le formulaire de création', () => {
     test('propose 7 quand la bibliothèque ne tient aucun brouillon', async () => {
         render(TranscriptionPanel);
         await fireEvent.click(await screen.findByText('New transcription'));
-        expect(screen.getByLabelText('Length').value).toBe('7');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Length')).value).toBe('7');
     });
 
     // « défaut : celle du dernier brouillon, sinon 7 » — la liste arrive triée
     // du plus récemment modifié au plus ancien.
     test('propose la longueur du dernier brouillon', async () => {
-        ListTranscriptions.mockResolvedValue([{ id: 2, match_length: 11, action_count: 3 }]);
+        /** @type {any} */ (ListTranscriptions).mockResolvedValue([{ id: 2, match_length: 11, action_count: 3 }]);
         render(TranscriptionPanel);
         await screen.findByText('11 pts');
         await fireEvent.click(await screen.findByText('New transcription'));
-        expect(screen.getByLabelText('Length').value).toBe('11');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Length')).value).toBe('11');
     });
 
     test('une longueur non renseignée bloque la création, et rien d’autre ne la bloque', async () => {
         render(TranscriptionPanel);
         await fireEvent.click(await screen.findByText('New transcription'));
         const input = screen.getByLabelText('Length');
-        const create = screen.getByText('Create');
+        const create = /** @type {HTMLButtonElement} */ (screen.getByText('Create'));
 
         await fireEvent.input(input, { target: { value: '' } });
         expect(create.disabled).toBe(true);
@@ -156,7 +157,7 @@ describe("l'ouverture", () => {
         return rendered;
     }
 
-    function press(code) {
+    function press(/** @type {string} */ code) {
         const digit = /^Digit([1-9])$/.exec(code);
         return fireEvent.keyDown(document, { code, key: digit ? digit[1] : code });
     }
@@ -167,12 +168,16 @@ describe("l'ouverture", () => {
         await press('Digit3');
         await tick();
 
-        expect(ApplyTranscriptionGesture.mock.calls.map((c) => c[1])).toEqual([{ Kind: 'enter_die', Die: 6 }, { Kind: 'enter_die', Die: 3 }, { Kind: 'validate' }]);
+        expect(/** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1])).toEqual([
+            { Kind: 'enter_die', Die: 6 },
+            { Kind: 'enter_die', Die: 3 },
+            { Kind: 'validate' }
+        ]);
     });
 
     test('une égalité affiche « relance » et n’attend rien d’autre', async () => {
         // Le moteur répond qu'une ouverture est de nouveau attendue.
-        ApplyTranscriptionGesture.mockResolvedValue(stateFor(annotated({ expects: 'opening' })));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(stateFor(annotated({ expects: 'opening' })));
         await openedPanel();
         await press('Digit4');
         await press('Digit4');
@@ -185,11 +190,13 @@ describe("l'ouverture", () => {
     test('le gagnant a le trait, avec les deux dés de l’ouverture', async () => {
         // Le moteur ne change ce qu'il attend qu'une fois l'ouverture validée :
         // saisir un dé ne décide de rien.
-        ApplyTranscriptionGesture.mockImplementation((_id, gesture) => Promise.resolve(stateFor(gesture.Kind === 'validate' ? annotated({ expects: 'checker', side: 1 }) : annotated())));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) =>
+            Promise.resolve(stateFor(gesture.Kind === 'validate' ? annotated({ expects: 'checker', side: 1 }) : annotated()))
+        );
         // Le jet du gagnant a des coups : sans cela ce serait une danse, et la
         // machine repartirait à zéro (ce que couvre TranscriptionPanel.turn).
-        LegalMoves.mockResolvedValue([{ notation: '13/8 13/11' }]);
-        EvaluatePositionImmediate.mockResolvedValue({ moves: [{ index: 0, move: '13/8 13/11', equity: 0.1 }] });
+        /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '13/8 13/11' }]);
+        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '13/8 13/11', equity: 0.1 }] });
         await openedPanel();
         await press('Digit2');
         await press('Digit5');

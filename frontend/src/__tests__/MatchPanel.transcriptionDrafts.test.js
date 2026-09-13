@@ -17,7 +17,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 import { tick } from 'svelte';
 
-const drafts = vi.hoisted(() => ({ rows: [] }));
+const drafts = vi.hoisted(() => ({ rows: /** @type {any[]} */ ([]) }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllMatches: vi.fn(() => Promise.resolve([])),

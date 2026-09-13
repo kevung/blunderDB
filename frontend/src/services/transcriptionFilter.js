@@ -23,7 +23,7 @@
 /**
  * Les points d'où au moins un candidat fait partir un pas.
  *
- * @param {{steps?: {from: number}[]}[]} candidates
+ * @param {{steps?: {from: number}[]}[] | null | undefined} candidates
  * @returns {Set<number>}
  */
 export function sourcesOf(candidates) {
@@ -41,8 +41,8 @@ export function sourcesOf(candidates) {
  * entière — le filtre vide est l'absence de filtre, et non une liste vide.
  *
  * @template {{steps?: {from: number}[]}} C
- * @param {C[]} candidates
- * @param {number[]} points
+ * @param {C[] | null | undefined} candidates
+ * @param {number[] | null | undefined} points
  * @returns {C[]}
  */
 export function filterByPoints(candidates, points) {
@@ -62,9 +62,9 @@ export function filterByPoints(candidates, points) {
  * reste disponible pour le déplacement libre de pions (T2.4), qui a son propre
  * état, et un filtre vide n'aurait de toute façon rien à montrer.
  *
- * @param {number[]} points - le filtre courant
+ * @param {number[] | null | undefined} points - le filtre courant
  * @param {number} point
- * @param {{steps?: {from: number}[]}[]} candidates - la liste COMPLÈTE du jet
+ * @param {{steps?: {from: number}[]}[] | null | undefined} candidates - la liste COMPLÈTE du jet
  * @returns {number[] | null} le filtre suivant, ou null si le clic ne fait rien
  */
 export function nextFilter(points, point, candidates) {

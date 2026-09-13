@@ -51,9 +51,11 @@ const position = (dice = [0, 0], mark = 0) => ({ board: board(), cube: { owner: 
  * Un document de trois coups, le Cursor sur celui du milieu — l'état exact dans
  * lequel une correction se fait. `entry` est ce que le moteur dit de la saisie
  * en cours (transcript.EntryInfo) ; nul quand rien n'est tapé.
+ *
+ * @param {{cursor?: number, entry?: any, flags?: string[]}} [options]
  */
 function annotated({ cursor = 1, entry = null, flags = [] } = {}) {
-    const action = (i) => ({
+    const action = (/** @type {number} */ i) => ({
         index: i,
         side: i % 2,
         kind: 'checker',
@@ -83,14 +85,18 @@ function annotated({ cursor = 1, entry = null, flags = [] } = {}) {
     };
 }
 
-const state = (ann, history = {}) => ({ id: 1, annotated: ann, can_undo: false, can_redo: false, ...history });
+const state = (/** @type {any} */ ann, history = {}) => ({ id: 1, annotated: ann, can_undo: false, can_redo: false, ...history });
 
-function press(code, init = {}) {
+function press(/** @type {string} */ code, init = {}) {
     const digit = /^Digit([1-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     return fireEvent.keyDown(document, { code, key: digit ? digit[1] : letter ? letter[1].toLowerCase() : code, ...init });
 }
 
+/**
+ * @param {any} [ann]
+ * @param {{can_undo?: boolean, can_redo?: boolean}} [history]
+ */
 async function openedPanel(ann = annotated(), history = {}) {
     transcriptionStore.set(state(ann, history));
     transcriptionHistoryStore.set({ canUndo: history.can_undo === true, canRedo: history.can_redo === true });
@@ -99,14 +105,14 @@ async function openedPanel(ann = annotated(), history = {}) {
     document.getElementById('transcriptionPanel')?.focus();
 }
 
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockResolvedValue([]);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: [] });
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockResolvedValue([]);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -142,13 +148,13 @@ describe('les mêmes gestes à la souris', () => {
     test('annuler et rétablir ont chacun leur bouton dans la barre du brouillon', async () => {
         // La pile reste garnie des deux côtés : ce test regarde le CHEMIN (R3),
         // pas l'épuisement de la pile, qui est le test suivant.
-        ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated(), { can_undo: true, can_redo: true })));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated(), { can_undo: true, can_redo: true })));
         await openedPanel(annotated(), { can_undo: true, can_redo: true });
         for (const [title, kind] of [
             [/Undo the last gesture/i, 'undo'],
             [/Redo the undone gesture/i, 'redo']
         ]) {
-            ApplyTranscriptionGesture.mockClear();
+            /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
             await fireEvent.click(screen.getByTitle(title));
             await vi.waitFor(() => expect(gestures().at(-1)).toEqual({ Kind: kind }));
         }
@@ -179,7 +185,7 @@ describe('une correction se joue depuis la position visée', () => {
     test('les candidats demandés sont ceux de l’Action corrigée, pas ceux de la fin du document', async () => {
         const entry = { at: 1, replacing: true, side: 1, dice: [5, 2], selected: true, review: false };
         const corrected = annotated({ cursor: 1, entry });
-        ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(corrected)));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(corrected)));
         await openedPanel(corrected);
 
         // Deux dés retapés sur l'Action du Cursor.
@@ -190,7 +196,7 @@ describe('une correction se joue depuis la position visée', () => {
         // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
         // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
         // et non par son rang dans la liste des appels.
-        const asked = LegalMoves.mock.calls.findLast(([p]) => p.dice[0] === 5 && p.dice[1] === 2)[0];
+        const asked = /** @type {any} */ (LegalMoves).mock.calls.findLast((/** @type {any[]} */ [p]) => p.dice[0] === 5 && p.dice[1] === 2)[0];
         // La position de l'Action 1, jouée par le camp que le moteur nomme —
         // et non `next.position`, qui est celle de la fin du match.
         expect(asked.player_on_roll).toBe(1);
@@ -218,7 +224,7 @@ describe('une correction se joue depuis la position visée', () => {
 describe('rien n’est refusé : l’Incohérence est montrée là où elle est', () => {
     test('la cellule du Transcript porte la marque, et le Cursor est dessus', async () => {
         await openedPanel(annotated({ cursor: 1, flags: ['double_turn'] }));
-        const cell = document.querySelector('[data-inconsistency~="double_turn"]');
+        const cell = /** @type {Element} */ (document.querySelector('[data-inconsistency~="double_turn"]'));
         expect(cell).not.toBeNull();
         expect(cell.getAttribute('data-index')).toBe('1');
         expect(cell.getAttribute('aria-current')).toBe('true');

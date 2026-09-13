@@ -58,9 +58,9 @@ function annotated({ expects = 'checker', side = 0, score = [0, 0] } = {}) {
     };
 }
 
-const state = (ann) => ({ id: 1, annotated: ann });
+const state = (/** @type {any} */ ann) => ({ id: 1, annotated: ann });
 
-function press(code) {
+function press(/** @type {string} */ code) {
     const digit = /^Digit([1-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     return fireEvent.keyDown(document, { code, key: digit ? digit[1] : letter ? letter[1].toLowerCase() : code });
@@ -73,14 +73,14 @@ async function openedPanel(ann = annotated()) {
     document.getElementById('transcriptionPanel')?.focus();
 }
 
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockResolvedValue([]);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: [] });
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockResolvedValue([]);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -91,7 +91,7 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-const buttonNamed = (label) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === label);
+const buttonNamed = (/** @type {string} */ label) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === label);
 
 describe('la résignation', () => {
     test('r puis 2 envoie un resign de niveau 2, sans camp', async () => {

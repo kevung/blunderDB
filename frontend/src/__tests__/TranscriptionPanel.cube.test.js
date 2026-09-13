@@ -51,6 +51,8 @@ function position({ cube = { owner: -1, value: 0 }, decision = 0 } = {}) {
 /**
  * Un document annoté comme le moteur le rend. Tout ce que le panneau affiche en
  * sort : rien n'est recalculé côté Svelte.
+ *
+ * @param {{expects?: string, side?: number, cube?: {owner: number, value: number}, crawford?: boolean, score?: number[], finished?: boolean, winner?: number, game?: number, flags?: string[]}} [options]
  */
 function annotated({ expects = 'checker', side = 0, cube, crawford = false, score = [0, 0], finished = false, winner = -1, game = 1, flags = [] } = {}) {
     return {
@@ -65,9 +67,9 @@ function annotated({ expects = 'checker', side = 0, cube, crawford = false, scor
     };
 }
 
-const state = (ann) => ({ id: 1, annotated: ann });
+const state = (/** @type {any} */ ann) => ({ id: 1, annotated: ann });
 
-function press(code) {
+function press(/** @type {string} */ code) {
     const digit = /^Digit([1-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     return fireEvent.keyDown(document, { code, key: digit ? digit[1] : letter ? letter[1].toLowerCase() : code });
@@ -80,14 +82,14 @@ async function openedPanel(ann = annotated()) {
     document.getElementById('transcriptionPanel')?.focus();
 }
 
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockResolvedValue([]);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: [] });
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockResolvedValue([]);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -111,7 +113,7 @@ describe('le videau', () => {
         await vi.waitFor(() => expect(gestures().at(-1)).toEqual({ Kind: 'take' }));
 
         cleanup();
-        ApplyTranscriptionGesture.mockClear();
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
         await openedPanel(annotated({ expects: 'take', side: 1, cube: { owner: 1, value: 1 } }));
         await press('KeyP');
         await vi.waitFor(() => expect(gestures().at(-1)).toEqual({ Kind: 'pass' }));
@@ -176,7 +178,7 @@ describe('la fin de partie et la fin de match', () => {
 
 describe('les incohérences sont montrées, jamais refusées', () => {
     test('un videau impossible est nommé sous les dés', async () => {
-        ApplyTranscriptionGesture.mockResolvedValue(state(annotated({ flags: ['impossible_cube'] })));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(state(annotated({ flags: ['impossible_cube'] })));
         await openedPanel();
         await press('KeyD');
         // L'Action existe : le geste est parti, et la phrase la commente.
@@ -185,7 +187,7 @@ describe('les incohérences sont montrées, jamais refusées', () => {
     });
 
     test('la phrase est celle du panneau, pas la prose anglaise du moteur', async () => {
-        ApplyTranscriptionGesture.mockResolvedValue(state(annotated({ flags: ['past_end'] })));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(state(annotated({ flags: ['past_end'] })));
         await openedPanel();
         await press('KeyD');
         expect(await screen.findByText(/past the end of the match/)).toBeTruthy();

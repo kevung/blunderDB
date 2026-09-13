@@ -56,12 +56,12 @@ function annotated({ expects = 'checker' } = {}) {
     };
 }
 
-const state = (ann) => ({ id: 1, annotated: ann });
+const state = (/** @type {any} */ ann) => ({ id: 1, annotated: ann });
 
 const PLAYS = [{ notation: '8/5 6/5', steps: [] }];
 const RANKED = [{ index: 0, move: '8/5 6/5', equity: 0.1 }];
 
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 const diceCells = () => [...document.querySelectorAll('.transcription-panel button')].filter((b) => /^\d{1,2}$/.test(b.textContent.trim()));
 
 async function openedPanel(expects = 'checker') {
@@ -72,10 +72,10 @@ async function openedPanel(expects = 'checker') {
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockResolvedValue(PLAYS);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: RANKED });
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockResolvedValue(PLAYS);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -94,7 +94,7 @@ describe('le triangle des jets dans le panneau', () => {
 
     test('un clic sur la case 31 envoie les deux dés, dans l-ordre, puis demande les candidats', async () => {
         await openedPanel();
-        const cell = diceCells().find((b) => b.textContent.trim() === '31');
+        const cell = /** @type {Element} */ (diceCells().find((b) => b.textContent.trim() === '31'));
         await fireEvent.click(cell);
 
         await vi.waitFor(() =>
@@ -107,7 +107,7 @@ describe('le triangle des jets dans le panneau', () => {
         // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
         // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
         // et non par son rang dans la liste des appels.
-        const [pos] = LegalMoves.mock.calls.find(([p]) => p.dice[0] === 3 && p.dice[1] === 1);
+        const [pos] = /** @type {any} */ (LegalMoves).mock.calls.find((/** @type {any[]} */ [p]) => p.dice[0] === 3 && p.dice[1] === 1);
         expect(pos.dice).toEqual([3, 1]);
     });
 
@@ -115,7 +115,7 @@ describe('le triangle des jets dans le panneau', () => {
     // clic tomberait sur le bouton et le budget serait faux d'un geste.
     test('le focus revient au panneau après le clic', async () => {
         await openedPanel();
-        await fireEvent.click(diceCells().find((b) => b.textContent.trim() === '31'));
+        await fireEvent.click(/** @type {Element} */ (diceCells().find((b) => b.textContent.trim() === '31')));
         expect(document.activeElement?.id).toBe('transcriptionPanel');
     });
 

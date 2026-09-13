@@ -99,7 +99,7 @@ export function setTranscription(state) {
  * plateau, qui est le bon moment pour « Kévin au trait, videau à 2 ». Le panneau
  * les POSE ici et ne les dessine plus ; la barre les lit.
  *
- * @type {import('svelte/store').Writable<null | {lengthKey: string, lengthParams: object, score: number[] | null, crawford: boolean, gameNumber: number, cubeKey: string, cubeParams: object, onRoll: string, player1?: string, player2?: string}>}
+ * @type {import('svelte/store').Writable<null | {lengthKey: string, lengthParams: Record<string, any>, score: number[] | null, crawford: boolean, gameNumber: number, cubeKey: string, cubeParams: Record<string, any>, onRoll: string, player1?: string, player2?: string}>}
  */
 export const transcriptionInfoStore = writable(null);
 
@@ -110,7 +110,7 @@ export const transcriptionInfoStore = writable(null);
  * C'est un ÉTAT : il y en a toujours exactement un tant qu'un brouillon est
  * ouvert, et il ne s'efface pas tout seul.
  *
- * @type {import('svelte/store').Writable<null | {key: string, params?: object}>}
+ * @type {import('svelte/store').Writable<null | {key: string, params?: Record<string, any>}>}
  */
 export const transcriptionPromptStore = writable(null);
 
@@ -128,7 +128,7 @@ export const transcriptionPromptStore = writable(null);
  * supprime. Une promesse prise exprès qui ne se dit jamais est indiscernable
  * d'un bug.
  *
- * @type {import('svelte/store').Writable<null | {key: string, params?: object}>}
+ * @type {import('svelte/store').Writable<null | {key: string, params?: Record<string, any>}>}
  */
 export const transcriptionNoticeStore = writable(null);
 

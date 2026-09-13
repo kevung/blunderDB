@@ -16,13 +16,13 @@
 import { describe, test, expect } from 'vitest';
 import { COMMAND, PHASE, initialKeyState, pressKey, applyCandidates, selectCandidate, enterDicePair, enterSingleDie } from '../services/transcriptionKeys.js';
 
-function key(code) {
+function key(/** @type {string} */ code) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     return new KeyboardEvent('keydown', { code, key: digit ? digit[1] : code });
 }
 
 /** Les deux frappes, telles qu'un utilisateur les presse. */
-function typed(state, d1, d2, expects) {
+function typed(/** @type {any} */ state, /** @type {any} */ d1, /** @type {any} */ d2, /** @type {any} */ expects) {
     const first = pressKey(state, key(`Digit${d1}`), { expects });
     const second = pressKey(first.state, key(`Digit${d2}`), { expects });
     return { state: second.state, commands: [...first.commands, ...second.commands] };
@@ -37,7 +37,7 @@ const H = 0.4;
 const P_TRIANGLE = 0.612;
 const P_GRID36 = 0.658;
 
-const click = (p) => H + p + B + B;
+const click = (/** @type {any} */ p) => H + p + B + B;
 
 describe('un clic vaut ses deux touches', () => {
     test('la case (3,1) fait ce que font les touches 3 puis 1', () => {

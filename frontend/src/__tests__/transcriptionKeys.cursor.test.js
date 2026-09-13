@@ -15,7 +15,7 @@
 import { describe, test, expect } from 'vitest';
 import { PHASE, COMMAND, initialKeyState, pressKey, cursorDelta, cursorCommands } from '../services/transcriptionKeys.js';
 
-function key(code, extra = {}) {
+function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     const produced = digit ? digit[1] : letter ? letter[1].toLowerCase() : code;

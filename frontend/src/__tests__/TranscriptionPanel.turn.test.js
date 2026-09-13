@@ -60,7 +60,7 @@ function annotated({ expects = 'checker', side = 0 } = {}) {
     };
 }
 
-const state = (ann) => ({ id: 1, annotated: ann });
+const state = (/** @type {any} */ ann) => ({ id: 1, annotated: ann });
 
 // Le générateur rend les coups dans SON ordre ; l'évaluation les rend classés.
 // Les deux ordres diffèrent ici exprès : c'est tout l'objet du test.
@@ -71,7 +71,7 @@ const RANKED = [
     { index: 2, move: '24/23 13/11', equity: -0.1, equityError: 0.22 }
 ];
 
-function press(code) {
+function press(/** @type {string} */ code) {
     const digit = /^Digit([1-9])$/.exec(code);
     const letter = /^Key([A-Z])$/.exec(code);
     return fireEvent.keyDown(document, { code, key: digit ? digit[1] : letter ? letter[1].toLowerCase() : code });
@@ -85,14 +85,14 @@ async function openedPanel() {
 }
 
 /** Les gestes envoyés au moteur, dans l'ordre. */
-const gestures = () => ApplyTranscriptionGesture.mock.calls.map((call) => call[1]);
+const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 
 beforeEach(() => {
     vi.clearAllMocks();
-    ListTranscriptions.mockResolvedValue([]);
-    ApplyTranscriptionGesture.mockImplementation(() => Promise.resolve(state(annotated())));
-    LegalMoves.mockResolvedValue(PLAYS);
-    EvaluatePositionImmediate.mockResolvedValue({ moves: RANKED });
+    /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
+    /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
+    /** @type {any} */ (LegalMoves).mockResolvedValue(PLAYS);
+    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -115,12 +115,12 @@ describe('le tour de pions', () => {
         // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
         // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
         // et non par son rang dans la liste des appels.
-        const [pos] = LegalMoves.mock.calls.find(([p]) => p.dice[0] === 3 && p.dice[1] === 1);
+        const [pos] = /** @type {any} */ (LegalMoves).mock.calls.find((/** @type {any[]} */ [p]) => p.dice[0] === 3 && p.dice[1] === 1);
         expect(pos.dice).toEqual([3, 1]);
         expect(pos.player_on_roll).toBe(0);
 
         // candidates = 0 : tous les coups, pas les dix d'une analyse stockée.
-        expect(EvaluatePositionImmediate.mock.calls[0][2]).toBe(0);
+        expect(/** @type {any} */ (EvaluatePositionImmediate).mock.calls[0][2]).toBe(0);
 
         // La table montre l'ordre de l'évaluation, meilleur d'abord.
         await vi.waitFor(() => expect(screen.getByText('8/5')).toBeTruthy());
@@ -174,7 +174,7 @@ describe('le tour de pions', () => {
     });
 
     test('la danse est créée sans une touche de plus', async () => {
-        LegalMoves.mockResolvedValue([]);
+        /** @type {any} */ (LegalMoves).mockResolvedValue([]);
         await openedPanel();
         await press('Digit6');
         await press('Digit6');
@@ -192,7 +192,7 @@ describe('le tour de pions', () => {
     // Un moteur qui refuse (un score hors de portée de la MET, une compilation
     // sans poids) ne doit pas empêcher de transcrire.
     test('sans classement, les coups légaux restent saisissables', async () => {
-        EvaluatePositionImmediate.mockResolvedValue({ refused: true });
+        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ refused: true });
         await openedPanel();
         await press('Digit3');
         await press('Digit1');
