@@ -151,7 +151,9 @@
     async function loadLists() {
         try {
             const [names, tours] = await Promise.all([GetAllPlayerNames(), GetAllTournaments()]);
-            players = names ?? [];
+            // `GetAllPlayerNames` rend des `PlayerFrequency` ({Name, Count}) : le
+            // champ ne propose et n'écrit que le nom.
+            players = (names ?? []).map((row) => row.Name);
             tournaments = tours ?? [];
         } catch (err) {
             logger.error('Failed to load the players and tournaments of the metadata pane:', err);

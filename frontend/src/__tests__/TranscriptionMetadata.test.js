@@ -61,7 +61,13 @@ async function mountRaw(header = headerOf()) {
 
 beforeEach(() => {
     vi.clearAllMocks();
-    /** @type {any} */ (GetAllPlayerNames).mockResolvedValue(['Alice', 'Bob', 'Charlie']);
+    // La forme que rend la liaison Go : `database.PlayerFrequency`, un nom et
+    // son nombre de matchs — jamais une chaîne nue.
+    /** @type {any} */ (GetAllPlayerNames).mockResolvedValue([
+        { Name: 'Alice', Count: 3 },
+        { Name: 'Bob', Count: 2 },
+        { Name: 'Charlie', Count: 1 }
+    ]);
     /** @type {any} */ (GetAllTournaments).mockResolvedValue(TOURNAMENTS);
 });
 
