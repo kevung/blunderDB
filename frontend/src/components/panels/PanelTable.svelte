@@ -227,7 +227,7 @@
     thead {
         position: sticky;
         top: 0;
-        background-color: #f5f5f5;
+        background-color: var(--color-surface-alt);
         z-index: 1;
     }
 
@@ -282,7 +282,7 @@
     }
 
     tbody tr:hover {
-        background-color: #f9f9f9;
+        background-color: var(--color-surface-alt);
     }
 
     tbody tr.pointer {
@@ -290,11 +290,11 @@
     }
 
     tbody tr.selected {
-        background-color: #e3f2fd;
+        background-color: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     }
 
     tbody tr.selected:hover {
-        background-color: #bbdefb;
+        background-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-surface));
     }
 
     tbody tr.editing-row {

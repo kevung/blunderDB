@@ -421,7 +421,7 @@
         width: 100%;
         height: 100%;
         overflow-y: auto;
-        background-color: white;
+        background-color: var(--color-surface);
         padding: 10px;
         box-sizing: border-box;
         outline: none;
@@ -434,7 +434,7 @@
 
     .analysis-content {
         font-size: var(--font-size-base); /* Reduce font size */
-        color: black; /* Set text color */
+        color: var(--color-text);
         cursor: default; /* Make analysis content interactive in MATCH mode (toggle on click) */
     }
 </style>

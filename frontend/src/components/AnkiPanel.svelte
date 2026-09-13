@@ -778,7 +778,7 @@
         height: 100%;
         font-size: var(--font-size-base);
         overflow: hidden;
-        background: white;
+        background: var(--color-surface);
         user-select: none;
         -webkit-user-select: none;
     }

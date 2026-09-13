@@ -386,7 +386,7 @@
         font-size: var(--font-size-small);
         flex-shrink: 0;
         min-height: 28px;
-        background: var(--panel-bg, #fafafa);
+        background: var(--panel-bg, var(--color-surface-alt));
     }
 
     .empty-hint {
@@ -414,7 +414,7 @@
         border: 1px solid #d0d0d0;
         border-radius: 3px;
         padding: 1px 4px;
-        background: #fff;
+        background: var(--color-surface);
         color: inherit;
         height: 22px;
     }

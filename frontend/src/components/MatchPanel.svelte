@@ -1038,7 +1038,7 @@
     .match-panel {
         width: 100%;
         height: 100%;
-        background-color: white;
+        background-color: var(--color-surface);
         outline: none;
         user-select: none;
         -webkit-user-select: none;
@@ -1179,7 +1179,7 @@
         flex-shrink: 0;
         padding: 8px 12px 0 12px;
         border-bottom: 1px solid #e0e0e0;
-        background: #fafafa;
+        background: var(--color-surface-alt);
     }
 
     .detail-title {
@@ -1188,7 +1188,7 @@
         gap: 6px;
         font-size: var(--font-size-base);
         font-weight: 600;
-        color: #222;
+        color: var(--color-text);
         margin-bottom: 4px;
     }
 
@@ -1381,13 +1381,13 @@
         text-align: center;
         font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
     }
 
     .transcript-move {
         font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #222;
+        color: var(--color-text);
     }
 
     .cube-row {

@@ -432,8 +432,8 @@
         flex-direction: column;
         height: 100%;
         min-height: 0;
-        border-top: 1px solid #ccc;
-        background: #fff;
+        border-top: 1px solid var(--color-border);
+        background: var(--color-surface);
     }
 
     .tab-bar {

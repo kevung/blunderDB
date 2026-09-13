@@ -323,7 +323,7 @@
         margin: 0 0 6px;
         font-size: var(--font-size-base);
         font-weight: 600;
-        color: #555;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.04em;
     }

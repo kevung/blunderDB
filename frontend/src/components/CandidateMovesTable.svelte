@@ -123,14 +123,14 @@
 
     th {
         font-size: var(--font-size-small);
-        color: #777;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.3px;
         font-weight: 600;
         height: 24px;
         box-sizing: border-box;
         vertical-align: middle;
-        background: #fff;
+        background: var(--color-surface);
         /* EvalPanel's own scroll region is this table's list — the header
            stays readable while the rows scroll under it (ADR-0017). */
         position: sticky;
@@ -172,24 +172,24 @@
     }
 
     tbody:last-of-type tr:nth-child(even) {
-        background-color: #fafafa;
+        background-color: var(--color-surface-alt);
     }
 
     .checker-table tr.selected {
-        background-color: #b3d9ff !important;
+        background-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface)) !important;
         font-weight: bold;
     }
 
     .checker-table tr.played {
-        background-color: #fff3cd !important;
+        background-color: color-mix(in srgb, #ffc107 20%, var(--color-surface)) !important;
     }
 
     .checker-table tr.played.selected {
-        background-color: #a3c9ef !important;
+        background-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-surface)) !important;
     }
 
     tbody:last-of-type tr:hover {
-        background-color: #eaf1fb;
+        background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
     }
 
     /* The pre-roll vector, in the axis of this list — a reference mark, not
@@ -202,7 +202,7 @@
         height: 24px;
         box-sizing: border-box;
         vertical-align: middle;
-        background: #fafafa;
+        background: var(--color-surface-alt);
         color: var(--color-text-muted);
         font-style: italic;
         border-bottom: 2px solid #ddd;

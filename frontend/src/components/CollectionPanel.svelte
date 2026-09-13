@@ -756,7 +756,7 @@
     .collection-panel {
         width: 100%;
         height: 100%;
-        background: white;
+        background: var(--color-surface);
         box-sizing: border-box;
         outline: none;
         overflow: hidden;

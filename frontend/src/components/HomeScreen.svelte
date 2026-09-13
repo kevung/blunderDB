@@ -133,6 +133,9 @@
         cursor: pointer;
         border: 1px solid var(--color-border);
         background: var(--color-surface);
+        /* A button does not inherit the ink (the browser paints it buttontext): without
+           this the card titles stayed black on the dark surface (#403). */
+        color: inherit;
     }
 
     .choice.primary {

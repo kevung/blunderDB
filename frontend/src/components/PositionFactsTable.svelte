@@ -206,7 +206,7 @@
         padding-right: 6px;
         font-size: var(--font-size-small);
         font-weight: 600;
-        color: #444;
+        color: var(--color-text);
     }
 
     .main-value {
@@ -217,7 +217,7 @@
 
     td {
         font-variant-numeric: tabular-nums;
-        color: #222;
+        color: var(--color-text);
     }
 
     .delta-row td {

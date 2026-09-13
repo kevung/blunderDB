@@ -878,7 +878,7 @@
         align-items: center;
         gap: 5px;
         cursor: pointer;
-        color: #555;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
         user-select: none;
         white-space: nowrap;

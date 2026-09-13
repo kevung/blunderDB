@@ -109,7 +109,7 @@
         flex-direction: column;
         height: 100%;
         min-height: 0;
-        background: #fff;
+        background: var(--color-surface);
         font-size: var(--font-size-base);
     }
 
@@ -121,7 +121,7 @@
         padding: 4px 8px;
         border-bottom: 1px solid #e0e0e0;
         flex-shrink: 0;
-        background: #fafafa;
+        background: var(--color-surface-alt);
     }
 
     .stats-title {
@@ -146,7 +146,7 @@
         padding: 2px 8px;
         font-size: var(--font-size-small);
         cursor: pointer;
-        color: #555;
+        color: var(--color-text-muted);
         transition: background 0.1s;
     }
 

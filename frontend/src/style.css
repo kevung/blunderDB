@@ -21,9 +21,11 @@ body {
 }
 
 html {
+    /* The board's surround, not the interface's chrome: boardSnapshot.js paints the
+       same colour behind an exported board, so it follows the board palette, not a
+       UI token (ADR-0031, ADR-0038). */
     background-color: rgba(247, 240, 230, 1);
     text-align: center;
-    color: white;
 }
 
 body {
@@ -31,7 +33,11 @@ body {
        component has to restate its own — which is how twenty different values accumulated.
        See docs/adr/0008. */
     font-size: var(--font-size-base);
-    color: black;
+    /* The ink everything inherits is the theme's (#403). A literal black here outlived
+       every theme switch: whatever set no colour of its own stayed black on a dark
+       surface, and whatever painted a light background of its own looked right only
+       because of it. themes.js rewrites the token on :root. */
+    color: var(--color-text);
     font-family: var(--font-family-ui);
 }
 

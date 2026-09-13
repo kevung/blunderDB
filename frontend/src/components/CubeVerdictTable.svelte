@@ -151,14 +151,14 @@
     thead th,
     .info-table th {
         font-size: var(--font-size-small);
-        color: #777;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.3px;
         font-weight: 600;
     }
 
     td {
-        color: #222;
+        color: var(--color-text);
     }
 
     .option {
@@ -174,7 +174,7 @@
        weight and colour, so a played action that is also the best reads as both
        (ADR-0020). */
     tbody tr.played td {
-        background-color: #fff3cd;
+        background-color: color-mix(in srgb, #ffc107 20%, var(--color-surface));
     }
 
     tbody tr.best td {
