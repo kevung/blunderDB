@@ -8,6 +8,7 @@ import (
 	"slices"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -47,11 +48,11 @@ type gameFacts struct {
 	matchLength int64
 }
 
-// RepairCrawfordSentinel rewrites the away score of every stored position that
-// carries the ambiguous `1` while the game it was imported from is a
-// post-Crawford one, and returns how many rows changed.
+// RepairCrawfordSentinel rewrites the away score of every stored position whose
+// sentinel contradicts what its source states, and returns how many rows
+// changed. It runs two passes, one per direction.
 //
-// What it repairs, and only that:
+// Out of the Crawford game, `1` → `0`, and only:
 //
 //   - a position whose EVERY move belongs to a post-Crawford game is corrected
 //     to the `0` sentinel and rehashed;
@@ -68,26 +69,47 @@ type gameFacts struct {
 //     splitting it would hand the copy an analysis that was computed for the
 //     other score.
 //
+// Into the Crawford game, `0` → `1`, and only for a position no game points
+// at, stored at [0, 0], whose analysis keeps an XGID of a 1-point match that
+// describes it (#411, see sourceXGIDSaysOnePointMatch). A 1-point match's only
+// game starts one point from the match, so it is the Crawford game — the
+// importers' rule — yet a pasted one used to come in at [0, 0] when its field 7
+// was 0. The DMP after the Crawford game of a longer match is [0, 0] by every
+// path, and its XGID states that longer match: it is never touched.
+//
 // Nothing runs it automatically: like ReclassifyDerived it is a repair of data,
 // explicitly asked for (`blunderdb repair`, /v1/positions.repairCrawford).
 // Running it on a database that is already correct rewrites nothing.
 func RepairCrawfordSentinel(ctx context.Context, db Execer, scope string, positions storage.PositionStore) (int, error) {
 	fail := func(err error) (int, error) { return 0, errf(db, "repair the Crawford sentinel", err) }
 
-	stale, err := staleSentinelIDs(ctx, db, scope)
+	outOf, err := repairOutOfCrawford(ctx, db, scope, positions)
 	if err != nil {
 		return fail(err)
+	}
+	into, err := repairIntoCrawford(ctx, db, scope, positions)
+	if err != nil {
+		return fail(err)
+	}
+	return outOf + into, nil
+}
+
+// repairOutOfCrawford is the `1` → `0` pass of RepairCrawfordSentinel.
+func repairOutOfCrawford(ctx context.Context, db Execer, scope string, positions storage.PositionStore) (int, error) {
+	stale, err := positionIDsAt(ctx, db, scope, `(p.score_1 = 1 OR p.score_2 = 1)`)
+	if err != nil {
+		return 0, err
 	}
 	if len(stale) == 0 {
 		return 0, nil
 	}
 	crawfordGames, err := crawfordGameIDs(ctx, db, scope)
 	if err != nil {
-		return fail(err)
+		return 0, err
 	}
 	gamesOf, err := gamesOfPositions(ctx, db, scope, stale)
 	if err != nil {
-		return fail(err)
+		return 0, err
 	}
 
 	repaired := 0
@@ -99,15 +121,51 @@ func RepairCrawfordSentinel(ctx context.Context, db Execer, scope string, positi
 			// No match behind it: only the XGID it came in with can speak.
 			postCrawford, err = sourceXGIDSaysPostCrawford(ctx, db, scope, positions, id)
 			if err != nil {
-				return fail(err)
+				return 0, err
 			}
 		}
 		if !postCrawford {
 			continue
 		}
-		changed, err := rehashOutOfCrawford(ctx, db, scope, positions, id)
+		changed, err := rehashSentinel(ctx, db, scope, positions, id, domain.Crawford, domain.PostCrawford)
 		if err != nil {
-			return fail(err)
+			return 0, err
+		}
+		if changed {
+			repaired++
+		}
+	}
+	return repaired, nil
+}
+
+// repairIntoCrawford is the `0` → `1` pass of RepairCrawfordSentinel (#411):
+// a position stored at [0, 0] that no game points at, whose source XGID is a
+// 1-point match describing it. A [0, 0] position of a game is the match's to
+// decide, and the importers have always written a 1-point match at [1, 1].
+func repairIntoCrawford(ctx context.Context, db Execer, scope string, positions storage.PositionStore) (int, error) {
+	candidates, err := positionIDsAt(ctx, db, scope, `p.score_1 = 0 AND p.score_2 = 0`)
+	if err != nil || len(candidates) == 0 {
+		return 0, err
+	}
+	gamesOf, err := gamesOfPositions(ctx, db, scope, candidates)
+	if err != nil {
+		return 0, err
+	}
+	repaired := 0
+	for _, id := range candidates {
+		if len(gamesOf[id]) > 0 {
+			continue
+		}
+		onePoint, err := sourceXGIDSaysOnePointMatch(ctx, db, scope, positions, id)
+		if err != nil {
+			return 0, err
+		}
+		if !onePoint {
+			continue
+		}
+		changed, err := rehashSentinel(ctx, db, scope, positions, id, domain.PostCrawford, domain.Crawford)
+		if err != nil {
+			return 0, err
 		}
 		if changed {
 			repaired++
@@ -153,29 +211,19 @@ func onlyPostCrawfordGames(games []int64, crawfordGames map[int64]bool) bool {
 // A position whose analysis is missing or unreadable, or whose XGID does not
 // decode, keeps its score: nothing then states anything.
 func sourceXGIDSaysPostCrawford(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64) (bool, error) {
-	tenant, targs := db.TenantFilter("", scope)
-	var data []byte
-	err := db.QueryRow(ctx,
-		`SELECT data FROM analysis WHERE `+tenant+` AND position_id = ?`,
-		append(append([]any{}, targs...), id)...).Scan(&data)
-	if errors.Is(err, ErrNoRows) {
-		return false, nil
-	}
-	if err != nil {
+	xgid, err := sourceXGIDOf(ctx, db, scope, id)
+	if err != nil || xgid == "" {
 		return false, err
 	}
-	analysis, err := engine.DecodeAnalysisFromStorage(data)
-	if err != nil || analysis.XGID == "" {
-		return false, nil // an analysis nobody can read states nothing
-	}
-	if crawford, stated := domain.XGIDCrawfordGame(analysis.XGID); !stated || crawford {
+	// A 1-point match states Crawford by its length alone (#411): stated and
+	// crawford, so it never reaches the hash below.
+	if crawford, stated := domain.XGIDCrawfordGame(xgid); !stated || crawford {
 		return false, nil
 	}
-	source, err := domain.DecodeXGID(analysis.XGID)
+	source, err := domain.DecodeXGID(xgid)
 	if err != nil {
 		return false, nil
 	}
-
 	pos, err := positions.Load(ctx, scope, id)
 	if errors.Is(err, storage.ErrNotFound) {
 		return false, nil
@@ -183,10 +231,93 @@ func sourceXGIDSaysPostCrawford(ctx context.Context, db Execer, scope string, po
 	if err != nil {
 		return false, err
 	}
+	return sourceDescribes(source, pos, domain.Crawford, domain.PostCrawford), nil
+}
+
+// sourceXGIDSaysOnePointMatch decides a [0, 0] position no game points at from
+// the XGID its analysis keeps (#411). It says yes only on proof:
+//
+//   - the XGID states a 1-point match in field 8. Such a match is the Crawford
+//     game whatever field 7 says, and DecodeXGID reads it at [1, 1]; the DMP
+//     after the Crawford game of a longer match states that longer match;
+//   - the XGID is not the one blunderDB's own encoders wrote for this very row.
+//     Between #338 and #411 the GUI's generateXGID — rewriting the analysis XGID
+//     whenever a board is saved or a position edited — encoded a stored [0, 0]
+//     as the smallest match holding it: a 1-point match at 0-0, field 7 at 0,
+//     the ceiling as stored (see blunderDBOnePointEncoding). Such an XGID only
+//     echoes the stored [0, 0], a genuine DMP included, and proves nothing.
+//     Before #338 that encoder wrote a match length of 0, and since #411 a
+//     2-point match at 1-1: neither states a 1-point match;
+//   - the XGID describes THIS position once corrected to [1, 1], compared
+//     through the Zobrist hash, as for the post-Crawford half.
+func sourceXGIDSaysOnePointMatch(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64) (bool, error) {
+	xgid, err := sourceXGIDOf(ctx, db, scope, id)
+	if err != nil || xgid == "" {
+		return false, err
+	}
+	if length, ok := domain.XGIDMatchLength(xgid); !ok || length != 1 {
+		return false, nil
+	}
+	source, err := domain.DecodeXGID(xgid)
+	if err != nil {
+		return false, nil
+	}
+	pos, err := positions.Load(ctx, scope, id)
+	if errors.Is(err, storage.ErrNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	if strings.TrimPrefix(strings.TrimSpace(xgid), "XGID=") == blunderDBOnePointEncoding(pos) {
+		return false, nil
+	}
+	return sourceDescribes(source, pos, domain.PostCrawford, domain.Crawford), nil
+}
+
+// blunderDBOnePointEncoding is the XGID blunderDB's encoders wrote for a stored
+// [0, 0] between #338 and #411: domain.EncodeXGID's string — pinned to the
+// GUI's generateXGID by testdata/xgid_corpus.json — with the 2-point match at
+// 1-1 it writes today put back to the 1-point match at 0-0 it wrote then.
+func blunderDBOnePointEncoding(pos *domain.Position) string {
+	fields := strings.Split(domain.EncodeXGID(pos), ":")
+	if len(fields) != 10 {
+		return ""
+	}
+	fields[5], fields[6], fields[8] = "0", "0", "1"
+	return strings.Join(fields, ":")
+}
+
+// sourceXGIDOf reads the XGID a position's analysis keeps. An analysis that is
+// missing or that nobody can read states nothing, and comes back as "".
+func sourceXGIDOf(ctx context.Context, db Execer, scope string, id int64) (string, error) {
+	tenant, targs := db.TenantFilter("", scope)
+	var data []byte
+	err := db.QueryRow(ctx,
+		`SELECT data FROM analysis WHERE `+tenant+` AND position_id = ?`,
+		append(append([]any{}, targs...), id)...).Scan(&data)
+	if errors.Is(err, ErrNoRows) {
+		return "", nil
+	}
+	if err != nil {
+		return "", err
+	}
+	analysis, err := engine.DecodeAnalysisFromStorage(data)
+	if err != nil {
+		return "", nil
+	}
+	return analysis.XGID, nil
+}
+
+// sourceDescribes reports whether source — the position its XGID decodes to —
+// is the stored row pos once the row's away `from` sentinels are rewritten to
+// `to`: the same board, cube, player on roll, dice and distances, compared
+// through the Zobrist hash the dedup uses.
+func sourceDescribes(source domain.Position, pos *domain.Position, from, to int) bool {
 	fixed := *pos
 	for i, away := range fixed.Score {
-		if away == domain.Crawford {
-			fixed.Score[i] = domain.PostCrawford
+		if away == from {
+			fixed.Score[i] = to
 		}
 	}
 	// The decision type is not the XGID's to state — the text parser reads it
@@ -197,15 +328,16 @@ func sourceXGIDSaysPostCrawford(ctx context.Context, db Execer, scope string, po
 		source.Dice = pos.Dice
 	}
 	normSource, normFixed := source.NormalizeForStorage(), fixed.NormalizeForStorage()
-	return engine.ZobristHash(&normSource) == engine.ZobristHash(&normFixed), nil
+	return engine.ZobristHash(&normSource) == engine.ZobristHash(&normFixed)
 }
 
-// staleSentinelIDs lists the positions carrying a raw away score of 1 — the
-// candidates, before the match behind them has its say.
-func staleSentinelIDs(ctx context.Context, db Execer, scope string) ([]int64, error) {
+// positionIDsAt lists the positions whose away scores match cond, a condition
+// on the columns of `position p` — the candidates of one pass, before the match
+// or the XGID behind them has its say.
+func positionIDsAt(ctx context.Context, db Execer, scope, cond string) ([]int64, error) {
 	tenant, targs := db.TenantFilter("p", scope)
 	rows, err := db.Query(ctx,
-		`SELECT p.id FROM position p WHERE `+tenant+` AND (p.score_1 = 1 OR p.score_2 = 1) ORDER BY p.id`, targs...)
+		`SELECT p.id FROM position p WHERE `+tenant+` AND `+cond+` ORDER BY p.id`, targs...)
 	if err != nil {
 		return nil, err
 	}
@@ -317,8 +449,9 @@ func gamesOfPositions(ctx context.Context, db Execer, scope string, positionIDs 
 	return out, nil
 }
 
-// rehashOutOfCrawford turns the position's away `1` into the post-Crawford `0`
-// and rehashes it, reporting whether anything changed.
+// rehashSentinel turns the position's away `from` sentinels into `to` — the
+// Crawford `1` into the post-Crawford `0`, or back — and rehashes it,
+// reporting whether anything changed.
 //
 // The rehash asks the dedup question first: a position already stored with the
 // corrected score is the row to keep, and this one is merged into it — that is
@@ -326,7 +459,7 @@ func gamesOfPositions(ctx context.Context, db Execer, scope string, positionIDs 
 // exists the id is kept and the row rewritten in place, which is the same final
 // state a re-save would reach without moving a single analysis, comment, card
 // or move to a new id.
-func rehashOutOfCrawford(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64) (bool, error) {
+func rehashSentinel(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64, from, to int) (bool, error) {
 	pos, err := positions.Load(ctx, scope, id)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
@@ -337,8 +470,8 @@ func rehashOutOfCrawford(ctx context.Context, db Execer, scope string, positions
 	fixed := *pos
 	corrected := false
 	for i, away := range fixed.Score {
-		if away == 1 {
-			fixed.Score[i] = 0
+		if away == from {
+			fixed.Score[i] = to
 			corrected = true
 		}
 	}

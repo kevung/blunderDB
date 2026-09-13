@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 12:13+0200\n"
+"POT-Creation-Date: 2026-09-13 16:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -396,7 +396,7 @@ msgstr "Erstellt eine neue Datenbankdatei mit optionalen Metadaten."
 #: ../../source/cli.rst:1288 ../../source/cli.rst:1429
 #: ../../source/cli.rst:1498 ../../source/cli.rst:1532
 #: ../../source/cli.rst:1666 ../../source/cli.rst:1707
-#: ../../source/cli.rst:1766 ../../source/cli.rst:1796
+#: ../../source/cli.rst:1771 ../../source/cli.rst:1801
 msgid "**Options:**"
 msgstr "**Optionen:**"
 
@@ -433,8 +433,8 @@ msgstr ""
 "Übergeordnete Verzeichnisse werden bei Bedarf erstellt."
 
 #: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1314
-#: ../../source/cli.rst:1680 ../../source/cli.rst:1747
-#: ../../source/cli.rst:1808
+#: ../../source/cli.rst:1680 ../../source/cli.rst:1752
+#: ../../source/cli.rst:1813
 msgid "**Exemple:**"
 msgstr "**Beispiel:**"
 
@@ -813,7 +813,7 @@ msgstr ""
 #: ../../source/cli.rst:1109 ../../source/cli.rst:1356
 #: ../../source/cli.rst:1406 ../../source/cli.rst:1434
 #: ../../source/cli.rst:1514 ../../source/cli.rst:1587
-#: ../../source/cli.rst:1775 ../../source/cli.rst:1837
+#: ../../source/cli.rst:1780 ../../source/cli.rst:1842
 msgid "**Exemples:**"
 msgstr "**Beispiele:**"
 
@@ -959,7 +959,7 @@ msgstr "**Hauptoptionen:**"
 #: ../../source/cli.rst:441 ../../source/cli.rst:822 ../../source/cli.rst:1145
 #: ../../source/cli.rst:1431 ../../source/cli.rst:1500
 #: ../../source/cli.rst:1534 ../../source/cli.rst:1668
-#: ../../source/cli.rst:1709 ../../source/cli.rst:1768
+#: ../../source/cli.rst:1709 ../../source/cli.rst:1773
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Datenbank (erforderlich)."
 
@@ -3065,10 +3065,15 @@ msgid ""
 "qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID "
 "qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ "
 "Crawford de cet XGID dit que la partie n'est pas la Crawford, et que "
-"l'XGID décrit bien cette position. Un XGID que blunderDB a lui-même "
-"réécrit ne fait que répéter le score enregistré et ne prouve rien. Toute "
-"autre position sans match est laissée telle quelle : rien ne contredit ce"
-" que son score annonce."
+"l'XGID décrit bien cette position. Dans l'autre sens, une position sans "
+"match enregistrée à ``0`` des deux côtés passe à ``1`` quand l'XGID "
+"qu'elle a apporté est celui d'un match en 1 point et qu'il la décrit : la"
+" seule partie d'un match en 1 point commence à un point du but, c'est "
+"donc la Crawford, comme l'écrivent les importeurs. Le DMP d'après la "
+"Crawford d'un match plus long reste à ``0`` : son XGID donne la longueur "
+"de ce match. Un XGID que blunderDB a lui-même réécrit ne fait que répéter"
+" le score enregistré et ne prouve rien. Toute autre position sans match "
+"est laissée telle quelle : rien ne contredit ce que son score annonce."
 msgstr ""
 "Der Crawford-Durchgang rührt dagegen die Stellungen selbst an. Ein "
 "Spielstand von ``1`` bedeutet „noch ein Punkt, und dieses Spiel IST das "
@@ -3086,12 +3091,19 @@ msgstr ""
 "auf das Wort der XGID hin korrigiert, die sie aus einem anderen Programm "
 "mitgebracht hat (XG, BGBlitz…): wenn das Crawford-Feld dieser XGID sagt, "
 "dass das Spiel nicht das Crawford-Spiel ist, und die XGID wirklich diese "
-"Stellung beschreibt. Eine XGID, die blunderDB selbst neu geschrieben hat,"
-" wiederholt nur den gespeicherten Spielstand und beweist nichts. Jede "
-"andere Stellung ohne Partie bleibt unverändert: nichts widerspricht dem, "
-"was ihr Spielstand angibt."
+"Stellung beschreibt. In der anderen Richtung wird eine Stellung ohne "
+"Partie, die auf beiden Seiten mit ``0`` gespeichert ist, zu ``1``, wenn "
+"die mitgebrachte XGID die einer Partie auf 1 Punkt ist und sie "
+"beschreibt: Das einzige Spiel einer Partie auf 1 Punkt beginnt einen "
+"Punkt vor dem Ziel, es ist also das Crawford-Spiel, so wie die Importeure"
+" es schreiben. Das DMP nach dem Crawford-Spiel einer längeren Partie "
+"bleibt bei ``0``: seine XGID nennt die Länge dieser Partie. Eine XGID, "
+"die blunderDB selbst neu geschrieben hat, wiederholt nur den "
+"gespeicherten Spielstand und beweist nichts. Jede andere Stellung ohne "
+"Partie bleibt unverändert: nichts widerspricht dem, was ihr Spielstand "
+"angibt."
 
-#: ../../source/cli.rst:1742
+#: ../../source/cli.rst:1747
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -3103,29 +3115,29 @@ msgstr ""
 "eine Datenbank geöffnet wird, ist nichts, was ein Werkzeug hinter dem "
 "Rücken seines Nutzers tun sollte."
 
-#: ../../source/cli.rst:1758
+#: ../../source/cli.rst:1763
 msgid "delete — Supprimer des données"
 msgstr "delete — Daten löschen"
 
-#: ../../source/cli.rst:1760
+#: ../../source/cli.rst:1765
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Löscht ein Match und alle zugehörigen Daten (Spiele, Züge, Analysen)."
 
-#: ../../source/cli.rst:1769
+#: ../../source/cli.rst:1774
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Löschtyp: ``match`` (erforderlich)."
 
-#: ../../source/cli.rst:1770
+#: ../../source/cli.rst:1775
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID des zu löschenden Elements (erforderlich)."
 
-#: ../../source/cli.rst:1771
+#: ../../source/cli.rst:1776
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Ohne Bestätigungsabfrage löschen."
 
-#: ../../source/cli.rst:1772
+#: ../../source/cli.rst:1777
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -3134,11 +3146,11 @@ msgstr ""
 "``--format`` — Ausgabeformat: ``text`` (Standard) oder ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1784
+#: ../../source/cli.rst:1789
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Einen Daemon abfragen"
 
-#: ../../source/cli.rst:1786
+#: ../../source/cli.rst:1791
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -3152,7 +3164,7 @@ msgstr ""
 "Version), sonst ``1`` — Speicher nicht erreichbar, veraltetes Schema oder"
 " nichts lauscht an der Adresse. Es wird keine Datenbankdatei geöffnet."
 
-#: ../../source/cli.rst:1798
+#: ../../source/cli.rst:1803
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -3163,13 +3175,13 @@ msgstr ""
 "oder mit einem Platzhalter-Host (``0.0.0.0``, ``[::]``) wird über die "
 "Loopback-Schnittstelle abgefragt."
 
-#: ../../source/cli.rst:1801
+#: ../../source/cli.rst:1806
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — Zeit, nach der die Sonde aufgibt (standardmäßig ``2s``)."
 
-#: ../../source/cli.rst:1803
+#: ../../source/cli.rst:1808
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -3181,7 +3193,7 @@ msgstr ""
 "``serve``-Binary versteht ihn ebenfalls. Er eignet sich genauso für ein "
 "Skript oder eine systemd-Unit."
 
-#: ../../source/cli.rst:1817
+#: ../../source/cli.rst:1822
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -3189,11 +3201,11 @@ msgstr ""
 "Im Fehlerfall wird der Grund ausgegeben, den ``docker inspect`` für einen"
 " ``unhealthy``-Container wiedergibt:"
 
-#: ../../source/cli.rst:1825
+#: ../../source/cli.rst:1830
 msgid "completion — Complétion shell"
 msgstr "completion — Shell-Vervollständigung"
 
-#: ../../source/cli.rst:1827
+#: ../../source/cli.rst:1832
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -3209,7 +3221,7 @@ msgstr ""
 "Unterbefehl wird der Vervollständigung also angeboten, sobald er "
 "eingebunden ist, ohne dass etwas von Hand gepflegt werden müsste."
 
-#: ../../source/cli.rst:1851
+#: ../../source/cli.rst:1856
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -3227,11 +3239,11 @@ msgstr ""
 "Repository eingecheckt, sodass die Vervollständigung nie von der "
 "Unterbefehlstabelle abweichen kann."
 
-#: ../../source/cli.rst:1859
+#: ../../source/cli.rst:1864
 msgid "version — Afficher la version"
 msgstr "version — Version anzeigen"
 
-#: ../../source/cli.rst:1861
+#: ../../source/cli.rst:1866
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -3241,35 +3253,35 @@ msgstr ""
 " diese Binärdatei schreibt; das ist das Erste, was einem Fehlerbericht "
 "beizulegen ist."
 
-#: ../../source/cli.rst:1870
+#: ../../source/cli.rst:1875
 msgid "Exemples de flux de travail"
 msgstr "Workflow-Beispiele"
 
-#: ../../source/cli.rst:1873
+#: ../../source/cli.rst:1878
 msgid "Import d'un répertoire de tournoi"
 msgstr "Ein Turnierverzeichnis importieren"
 
-#: ../../source/cli.rst:1882
+#: ../../source/cli.rst:1887
 msgid "Sauvegarde régulière"
 msgstr "Regelmäßige Sicherung"
 
-#: ../../source/cli.rst:1889
+#: ../../source/cli.rst:1894
 msgid "Analyse des erreurs"
 msgstr "Fehleranalyse"
 
-#: ../../source/cli.rst:1901
+#: ../../source/cli.rst:1906
 msgid "Codes de retour"
 msgstr "Rückgabecodes"
 
-#: ../../source/cli.rst:1903
+#: ../../source/cli.rst:1908
 msgid "``0`` — Succès."
 msgstr "``0`` — Erfolg."
 
-#: ../../source/cli.rst:1904
+#: ../../source/cli.rst:1909
 msgid "``1`` — Erreur."
 msgstr "``1`` — Fehler."
 
-#: ../../source/cli.rst:1906
+#: ../../source/cli.rst:1911
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Dadurch lässt sich die CLI in Skripten mit Fehlerbehandlung verwenden:"
 

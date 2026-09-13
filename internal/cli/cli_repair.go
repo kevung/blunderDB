@@ -115,9 +115,9 @@ func (cli *CLI) runRepair(args []string) error {
 	case 0:
 		fmt.Println("Every position already carried the right Crawford sentinel.")
 	case 1:
-		fmt.Println("1 post-Crawford position rehashed.")
+		fmt.Println("1 position rehashed onto the right Crawford sentinel.")
 	default:
-		fmt.Printf("%d post-Crawford positions rehashed.\n", crawford)
+		fmt.Printf("%d positions rehashed onto the right Crawford sentinel.\n", crawford)
 	}
 	return nil
 }

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 12:13+0200\n"
+"POT-Creation-Date: 2026-09-13 16:53+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -377,7 +377,7 @@ msgstr "Create a new database file with optional metadata."
 #: ../../source/cli.rst:1288 ../../source/cli.rst:1429
 #: ../../source/cli.rst:1498 ../../source/cli.rst:1532
 #: ../../source/cli.rst:1666 ../../source/cli.rst:1707
-#: ../../source/cli.rst:1766 ../../source/cli.rst:1796
+#: ../../source/cli.rst:1771 ../../source/cli.rst:1801
 msgid "**Options:**"
 msgstr "**Options:**"
 
@@ -414,8 +414,8 @@ msgstr ""
 "directories are created as needed."
 
 #: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1314
-#: ../../source/cli.rst:1680 ../../source/cli.rst:1747
-#: ../../source/cli.rst:1808
+#: ../../source/cli.rst:1680 ../../source/cli.rst:1752
+#: ../../source/cli.rst:1813
 msgid "**Exemple:**"
 msgstr "**Example:**"
 
@@ -774,7 +774,7 @@ msgstr ""
 #: ../../source/cli.rst:1109 ../../source/cli.rst:1356
 #: ../../source/cli.rst:1406 ../../source/cli.rst:1434
 #: ../../source/cli.rst:1514 ../../source/cli.rst:1587
-#: ../../source/cli.rst:1775 ../../source/cli.rst:1837
+#: ../../source/cli.rst:1780 ../../source/cli.rst:1842
 msgid "**Exemples:**"
 msgstr "**Examples:**"
 
@@ -916,7 +916,7 @@ msgstr "**Main options:**"
 #: ../../source/cli.rst:441 ../../source/cli.rst:822 ../../source/cli.rst:1145
 #: ../../source/cli.rst:1431 ../../source/cli.rst:1500
 #: ../../source/cli.rst:1534 ../../source/cli.rst:1668
-#: ../../source/cli.rst:1709 ../../source/cli.rst:1768
+#: ../../source/cli.rst:1709 ../../source/cli.rst:1773
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Database (required)."
 
@@ -2934,10 +2934,15 @@ msgid ""
 "qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID "
 "qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ "
 "Crawford de cet XGID dit que la partie n'est pas la Crawford, et que "
-"l'XGID décrit bien cette position. Un XGID que blunderDB a lui-même "
-"réécrit ne fait que répéter le score enregistré et ne prouve rien. Toute "
-"autre position sans match est laissée telle quelle : rien ne contredit ce"
-" que son score annonce."
+"l'XGID décrit bien cette position. Dans l'autre sens, une position sans "
+"match enregistrée à ``0`` des deux côtés passe à ``1`` quand l'XGID "
+"qu'elle a apporté est celui d'un match en 1 point et qu'il la décrit : la"
+" seule partie d'un match en 1 point commence à un point du but, c'est "
+"donc la Crawford, comme l'écrivent les importeurs. Le DMP d'après la "
+"Crawford d'un match plus long reste à ``0`` : son XGID donne la longueur "
+"de ce match. Un XGID que blunderDB a lui-même réécrit ne fait que répéter"
+" le score enregistré et ne prouve rien. Toute autre position sans match "
+"est laissée telle quelle : rien ne contredit ce que son score annonce."
 msgstr ""
 "The Crawford pass, for its part, touches the positions themselves. A "
 "score of ``1`` means “one point to go, and this game IS the Crawford "
@@ -2952,11 +2957,17 @@ msgstr ""
 "surviving row. A position no match points at is corrected only on the "
 "word of the XGID it brought from another program (XG, BGBlitz…): when "
 "that XGID's Crawford field says the game is not the Crawford one, and the"
-" XGID does describe this position. An XGID blunderDB rewrote itself only "
-"repeats the stored score and proves nothing. Any other position without a"
-" match is left as it is: nothing contradicts what its score announces."
+" XGID does describe this position. The other way round, a position "
+"without a match stored at ``0`` on both sides moves to ``1`` when the "
+"XGID it brought is that of a 1-point match and describes it: the only "
+"game of a 1-point match starts one point from the goal, so it is the "
+"Crawford game, as the importers write it. The DMP after the Crawford game"
+" of a longer match stays at ``0``: its XGID gives the length of that "
+"match. An XGID blunderDB rewrote itself only repeats the stored score and"
+" proves nothing. Any other position without a match is left as it is: "
+"nothing contradicts what its score announces."
 
-#: ../../source/cli.rst:1742
+#: ../../source/cli.rst:1747
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -2968,29 +2979,29 @@ msgstr ""
 "opening a database is not something a tool should do behind its user's "
 "back."
 
-#: ../../source/cli.rst:1758
+#: ../../source/cli.rst:1763
 msgid "delete — Supprimer des données"
 msgstr "delete — Delete data"
 
-#: ../../source/cli.rst:1760
+#: ../../source/cli.rst:1765
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Delete a match and all associated data (games, moves, analyses)."
 
-#: ../../source/cli.rst:1769
+#: ../../source/cli.rst:1774
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Delete type: ``match`` (required)."
 
-#: ../../source/cli.rst:1770
+#: ../../source/cli.rst:1775
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID of the item to delete (required)."
 
-#: ../../source/cli.rst:1771
+#: ../../source/cli.rst:1776
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Delete without asking for confirmation."
 
-#: ../../source/cli.rst:1772
+#: ../../source/cli.rst:1777
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2999,11 +3010,11 @@ msgstr ""
 "``--format`` — Output format: ``text`` (default) or ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1784
+#: ../../source/cli.rst:1789
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Probing a daemon"
 
-#: ../../source/cli.rst:1786
+#: ../../source/cli.rst:1791
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -3017,7 +3028,7 @@ msgstr ""
 "otherwise — storage unreachable, stale schema, or nothing listening at "
 "the address. No database file is opened."
 
-#: ../../source/cli.rst:1798
+#: ../../source/cli.rst:1803
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -3027,13 +3038,13 @@ msgstr ""
 "else ``:8080``). An address without a host (``:8080``) or with a wildcard"
 " host (``0.0.0.0``, ``[::]``) is probed on the loopback interface."
 
-#: ../../source/cli.rst:1801
+#: ../../source/cli.rst:1806
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — Give up after this long (``2s`` by default)."
 
-#: ../../source/cli.rst:1803
+#: ../../source/cli.rst:1808
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -3045,7 +3056,7 @@ msgstr ""
 "``cmd/serve`` understands it too. It works just as well from a script or "
 "a systemd unit."
 
-#: ../../source/cli.rst:1817
+#: ../../source/cli.rst:1822
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -3053,11 +3064,11 @@ msgstr ""
 "On failure the reason is printed, which ``docker inspect`` reproduces for"
 " an ``unhealthy`` container:"
 
-#: ../../source/cli.rst:1825
+#: ../../source/cli.rst:1830
 msgid "completion — Complétion shell"
 msgstr "completion — Shell completion"
 
-#: ../../source/cli.rst:1827
+#: ../../source/cli.rst:1832
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -3072,7 +3083,7 @@ msgstr ""
 "(``handlers()``): a new subcommand is therefore offered by completion as "
 "soon as it is wired in, with nothing to keep up to date by hand."
 
-#: ../../source/cli.rst:1851
+#: ../../source/cli.rst:1856
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -3089,11 +3100,11 @@ msgstr ""
 "committed to the repository, so completion can never drift from the "
 "subcommand table."
 
-#: ../../source/cli.rst:1859
+#: ../../source/cli.rst:1864
 msgid "version — Afficher la version"
 msgstr "version — Show the version"
 
-#: ../../source/cli.rst:1861
+#: ../../source/cli.rst:1866
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -3102,35 +3113,35 @@ msgstr ""
 "Prints blunderDB's version and the database schema version this binary "
 "writes; it is the first thing to attach to a bug report."
 
-#: ../../source/cli.rst:1870
+#: ../../source/cli.rst:1875
 msgid "Exemples de flux de travail"
 msgstr "Workflow examples"
 
-#: ../../source/cli.rst:1873
+#: ../../source/cli.rst:1878
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import a tournament directory"
 
-#: ../../source/cli.rst:1882
+#: ../../source/cli.rst:1887
 msgid "Sauvegarde régulière"
 msgstr "Regular backup"
 
-#: ../../source/cli.rst:1889
+#: ../../source/cli.rst:1894
 msgid "Analyse des erreurs"
 msgstr "Error analysis"
 
-#: ../../source/cli.rst:1901
+#: ../../source/cli.rst:1906
 msgid "Codes de retour"
 msgstr "Exit codes"
 
-#: ../../source/cli.rst:1903
+#: ../../source/cli.rst:1908
 msgid "``0`` — Succès."
 msgstr "``0`` — Success."
 
-#: ../../source/cli.rst:1904
+#: ../../source/cli.rst:1909
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:1906
+#: ../../source/cli.rst:1911
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
 

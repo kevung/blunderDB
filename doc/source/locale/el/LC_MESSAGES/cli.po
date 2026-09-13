@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 12:13+0200\n"
+"POT-Creation-Date: 2026-09-13 16:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -391,7 +391,7 @@ msgstr "Δημιουργεί ένα νέο αρχείο βάσης δεδομέ�
 #: ../../source/cli.rst:1288 ../../source/cli.rst:1429
 #: ../../source/cli.rst:1498 ../../source/cli.rst:1532
 #: ../../source/cli.rst:1666 ../../source/cli.rst:1707
-#: ../../source/cli.rst:1766 ../../source/cli.rst:1796
+#: ../../source/cli.rst:1771 ../../source/cli.rst:1801
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -430,8 +430,8 @@ msgstr ""
 "δημιουργούνται όταν χρειάζεται."
 
 #: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1314
-#: ../../source/cli.rst:1680 ../../source/cli.rst:1747
-#: ../../source/cli.rst:1808
+#: ../../source/cli.rst:1680 ../../source/cli.rst:1752
+#: ../../source/cli.rst:1813
 msgid "**Exemple:**"
 msgstr "**Παράδειγμα:**"
 
@@ -805,7 +805,7 @@ msgstr ""
 #: ../../source/cli.rst:1109 ../../source/cli.rst:1356
 #: ../../source/cli.rst:1406 ../../source/cli.rst:1434
 #: ../../source/cli.rst:1514 ../../source/cli.rst:1587
-#: ../../source/cli.rst:1775 ../../source/cli.rst:1837
+#: ../../source/cli.rst:1780 ../../source/cli.rst:1842
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
@@ -952,7 +952,7 @@ msgstr "**Κύριες επιλογές:**"
 #: ../../source/cli.rst:441 ../../source/cli.rst:822 ../../source/cli.rst:1145
 #: ../../source/cli.rst:1431 ../../source/cli.rst:1500
 #: ../../source/cli.rst:1534 ../../source/cli.rst:1668
-#: ../../source/cli.rst:1709 ../../source/cli.rst:1768
+#: ../../source/cli.rst:1709 ../../source/cli.rst:1773
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
 
@@ -3043,10 +3043,15 @@ msgid ""
 "qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID "
 "qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ "
 "Crawford de cet XGID dit que la partie n'est pas la Crawford, et que "
-"l'XGID décrit bien cette position. Un XGID que blunderDB a lui-même "
-"réécrit ne fait que répéter le score enregistré et ne prouve rien. Toute "
-"autre position sans match est laissée telle quelle : rien ne contredit ce"
-" que son score annonce."
+"l'XGID décrit bien cette position. Dans l'autre sens, une position sans "
+"match enregistrée à ``0`` des deux côtés passe à ``1`` quand l'XGID "
+"qu'elle a apporté est celui d'un match en 1 point et qu'il la décrit : la"
+" seule partie d'un match en 1 point commence à un point du but, c'est "
+"donc la Crawford, comme l'écrivent les importeurs. Le DMP d'après la "
+"Crawford d'un match plus long reste à ``0`` : son XGID donne la longueur "
+"de ce match. Un XGID que blunderDB a lui-même réécrit ne fait que répéter"
+" le score enregistré et ne prouve rien. Toute autre position sans match "
+"est laissée telle quelle : rien ne contredit ce que son score annonce."
 msgstr ""
 "Το πέρασμα του Crawford, αντιθέτως, αγγίζει τις ίδιες τις θέσεις. Σκορ "
 "``1`` σημαίνει «μένει ένας πόντος, και αυτή η παρτίδα ΕΙΝΑΙ η παρτίδα "
@@ -3063,12 +3068,18 @@ msgstr ""
 "κανένας αγώνας διορθώνεται μόνο με τον λόγο του XGID που έφερε από άλλο "
 "πρόγραμμα (XG, BGBlitz…): όταν το πεδίο Crawford αυτού του XGID λέει ότι "
 "η παρτίδα δεν είναι η παρτίδα Crawford, και το XGID περιγράφει πράγματι "
-"αυτή τη θέση. Ένα XGID που το blunderDB ξανάγραψε μόνο του απλώς "
-"επαναλαμβάνει το αποθηκευμένο σκορ και δεν αποδεικνύει τίποτα. Κάθε άλλη "
-"θέση χωρίς αγώνα μένει ως έχει: τίποτα δεν αντιφάσκει με όσα δηλώνει το "
-"σκορ της."
+"αυτή τη θέση. Προς την αντίθετη κατεύθυνση, μια θέση χωρίς αγώνα, "
+"αποθηκευμένη με ``0`` και από τις δύο πλευρές, περνά σε ``1`` όταν το "
+"XGID που έφερε είναι ενός αγώνα 1 πόντου και την περιγράφει: η μόνη "
+"παρτίδα ενός αγώνα 1 πόντου ξεκινά έναν πόντο πριν από τον στόχο, άρα "
+"είναι η παρτίδα Crawford, όπως τη γράφουν οι εισαγωγείς. Το DMP μετά την "
+"παρτίδα Crawford ενός μακρύτερου αγώνα μένει στο ``0``: το XGID του δίνει"
+" το μήκος αυτού του αγώνα. Ένα XGID που το blunderDB ξανάγραψε μόνο του "
+"απλώς επαναλαμβάνει το αποθηκευμένο σκορ και δεν αποδεικνύει τίποτα. Κάθε"
+" άλλη θέση χωρίς αγώνα μένει ως έχει: τίποτα δεν αντιφάσκει με όσα "
+"δηλώνει το σκορ της."
 
-#: ../../source/cli.rst:1742
+#: ../../source/cli.rst:1747
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -3080,11 +3091,11 @@ msgstr ""
 " με το απλό άνοιγμα μιας βάσης δεν είναι κάτι που ένα εργαλείο πρέπει να "
 "κάνει πίσω από την πλάτη του χρήστη του."
 
-#: ../../source/cli.rst:1758
+#: ../../source/cli.rst:1763
 msgid "delete — Supprimer des données"
 msgstr "delete — Διαγραφή δεδομένων"
 
-#: ../../source/cli.rst:1760
+#: ../../source/cli.rst:1765
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -3092,19 +3103,19 @@ msgstr ""
 "Διαγράφει έναν αγώνα και όλα τα σχετικά δεδομένα (παρτίδες, κινήσεις, "
 "αναλύσεις)."
 
-#: ../../source/cli.rst:1769
+#: ../../source/cli.rst:1774
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Τύπος διαγραφής: ``match`` (υποχρεωτικό)."
 
-#: ../../source/cli.rst:1770
+#: ../../source/cli.rst:1775
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID του στοιχείου προς διαγραφή (υποχρεωτικό)."
 
-#: ../../source/cli.rst:1771
+#: ../../source/cli.rst:1776
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Διαγραφή χωρίς αίτημα επιβεβαίωσης."
 
-#: ../../source/cli.rst:1772
+#: ../../source/cli.rst:1777
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -3113,11 +3124,11 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1784
+#: ../../source/cli.rst:1789
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Έλεγχος ενός δαίμονα"
 
-#: ../../source/cli.rst:1786
+#: ../../source/cli.rst:1791
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -3131,7 +3142,7 @@ msgstr ""
 "έκδοση), ``1`` αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή "
 "τίποτα δεν ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης."
 
-#: ../../source/cli.rst:1798
+#: ../../source/cli.rst:1803
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -3142,7 +3153,7 @@ msgstr ""
 "(``:8080``) ή με γενικό host (``0.0.0.0``, ``[::]``) ελέγχεται μέσω της "
 "διεπαφής loopback."
 
-#: ../../source/cli.rst:1801
+#: ../../source/cli.rst:1806
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -3150,7 +3161,7 @@ msgstr ""
 "``--timeout`` — Χρόνος μετά τον οποίο ο έλεγχος εγκαταλείπει (``2s`` από "
 "προεπιλογή)."
 
-#: ../../source/cli.rst:1803
+#: ../../source/cli.rst:1808
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -3162,7 +3173,7 @@ msgstr ""
 "από το ``cmd/serve`` την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα"
 " script ή σε μια μονάδα systemd."
 
-#: ../../source/cli.rst:1817
+#: ../../source/cli.rst:1822
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -3170,11 +3181,11 @@ msgstr ""
 "Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το ``docker "
 "inspect`` αναπαράγει για ένα container ``unhealthy``:"
 
-#: ../../source/cli.rst:1825
+#: ../../source/cli.rst:1830
 msgid "completion — Complétion shell"
 msgstr "completion — Συμπλήρωση κελύφους"
 
-#: ../../source/cli.rst:1827
+#: ../../source/cli.rst:1832
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -3190,7 +3201,7 @@ msgstr ""
 "προσφέρεται από τη συμπλήρωση μόλις συνδεθεί, χωρίς τίποτα να χρειάζεται "
 "χειροκίνητη συντήρηση."
 
-#: ../../source/cli.rst:1851
+#: ../../source/cli.rst:1856
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -3208,11 +3219,11 @@ msgstr ""
 "αποθετήριο, οπότε η συμπλήρωση δεν μπορεί ποτέ να αποκλίνει από τον "
 "πίνακα υποεντολών."
 
-#: ../../source/cli.rst:1859
+#: ../../source/cli.rst:1864
 msgid "version — Afficher la version"
 msgstr "version — Εμφάνιση της έκδοσης"
 
-#: ../../source/cli.rst:1861
+#: ../../source/cli.rst:1866
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -3222,35 +3233,35 @@ msgstr ""
 "δεδομένων που γράφει αυτό το εκτελέσιμο· είναι το πρώτο πράγμα που "
 "επισυνάπτεται σε μια αναφορά σφάλματος."
 
-#: ../../source/cli.rst:1870
+#: ../../source/cli.rst:1875
 msgid "Exemples de flux de travail"
 msgstr "Παραδείγματα ροών εργασίας"
 
-#: ../../source/cli.rst:1873
+#: ../../source/cli.rst:1878
 msgid "Import d'un répertoire de tournoi"
 msgstr "Εισαγωγή ενός καταλόγου τουρνουά"
 
-#: ../../source/cli.rst:1882
+#: ../../source/cli.rst:1887
 msgid "Sauvegarde régulière"
 msgstr "Τακτικό αντίγραφο ασφαλείας"
 
-#: ../../source/cli.rst:1889
+#: ../../source/cli.rst:1894
 msgid "Analyse des erreurs"
 msgstr "Ανάλυση σφαλμάτων"
 
-#: ../../source/cli.rst:1901
+#: ../../source/cli.rst:1906
 msgid "Codes de retour"
 msgstr "Κωδικοί εξόδου"
 
-#: ../../source/cli.rst:1903
+#: ../../source/cli.rst:1908
 msgid "``0`` — Succès."
 msgstr "``0`` — Επιτυχία."
 
-#: ../../source/cli.rst:1904
+#: ../../source/cli.rst:1909
 msgid "``1`` — Erreur."
 msgstr "``1`` — Σφάλμα."
 
-#: ../../source/cli.rst:1906
+#: ../../source/cli.rst:1911
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρια με διαχείριση σφαλμάτων:"
 

@@ -1735,9 +1735,14 @@ les entrées de la corbeille qui la nomment suivent la ligne survivante. Une
 position qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID
 qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ Crawford
 de cet XGID dit que la partie n'est pas la Crawford, et que l'XGID décrit bien
-cette position. Un XGID que blunderDB a lui-même réécrit ne fait que répéter le
-score enregistré et ne prouve rien. Toute autre position sans match est laissée
-telle quelle : rien ne contredit ce que son score annonce.
+cette position. Dans l'autre sens, une position sans match enregistrée à ``0``
+des deux côtés passe à ``1`` quand l'XGID qu'elle a apporté est celui d'un match
+en 1 point et qu'il la décrit : la seule partie d'un match en 1 point commence à
+un point du but, c'est donc la Crawford, comme l'écrivent les importeurs. Le DMP
+d'après la Crawford d'un match plus long reste à ``0`` : son XGID donne la
+longueur de ce match. Un XGID que blunderDB a lui-même réécrit ne fait que
+répéter le score enregistré et ne prouve rien. Toute autre position sans match
+est laissée telle quelle : rien ne contredit ce que son score annonce.
 
 Rien ne la déclenche automatiquement, et c'est voulu : réécrire les colonnes
 d'analyse de tout le monde, ou réhacher des positions, à la simple ouverture
@@ -1752,7 +1757,7 @@ utilisateur.
 
    # 42 analyses repaired.
    # 7 positions reclassified.
-   # 3 post-Crawford positions rehashed.
+   # 3 positions rehashed onto the right Crawford sentinel.
 
 delete — Supprimer des données
 -------------------------------

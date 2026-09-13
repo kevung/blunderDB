@@ -1123,10 +1123,14 @@ Anki cards and their review journal, the match moves and the trash entries that
 name it follow the surviving row. A position no match
 points at is corrected only on the word of the XGID it brought from another
 program (XG, BGBlitz…): when that XGID's Crawford field says the game is not the
-Crawford one, and the XGID describes this very position. An XGID blunderDB
-rewrote itself only echoes the stored score and proves nothing. Any other
-position without a match is left alone — nothing contradicts what its score
-says.
+Crawford one, and the XGID describes this very position. The other way round, a
+position without a match stored at `0` on both sides becomes `1` when the XGID it
+brought is a 1-point match that describes it: a 1-point match's only game starts
+one point from the goal, so it is the Crawford game, as the importers write it.
+The DMP after the Crawford game of a longer match stays at `0` — its XGID gives
+that longer match. An XGID blunderDB rewrote itself only echoes the stored score
+and proves nothing. Any other position without a match is left alone — nothing
+contradicts what its score says.
 
 The JSON report has one counter per pass: `repaired` (analysis columns),
 `phases` (positions reclassified) and `crawford` (positions rehashed).

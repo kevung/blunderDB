@@ -353,3 +353,79 @@ func TestRepairCrawfordSentinelMergeKeepsTheDatabaseConsistent(t *testing.T) {
 		t.Fatalf("foreign_key_check: %v", err)
 	}
 }
+
+// TestRepairCrawfordSentinelOnePointMatch is #411 on the Database the GUI and
+// the CLI run. A 1-point match's only game starts one point from the match, so
+// it is the Crawford game, and the paste path — Ctrl-V and the command line's
+// `import XGID=…`, both through ParsePositionText — reads it at [1, 1] whatever
+// field 7 says. A position pasted before that, with field 7 at 0, was stored at
+// [0, 0]; the repair rehashes it onto [1, 1] on the word of the XGID it kept.
+// A [0, 0] position of a match game is the match's to decide, and the DMP
+// after the Crawford game of a longer match stays where it is.
+func TestRepairCrawfordSentinelOnePointMatch(t *testing.T) {
+	t.Parallel()
+	db, raw, games := crawfordFixture(t, "onepoint.db")
+
+	const board = "-B-CBBB---a---A---ABcbbbd-"
+	paste := func(what, xgid string, stored [2]int, game int64) int64 {
+		t.Helper()
+		res, err := db.ParsePositionText(xgid)
+		if err != nil {
+			t.Fatalf("ParsePositionText(%s): %v", what, err)
+		}
+		pos := res.Position
+		pos.Score = stored
+		saved, err := db.SaveIndividualPosition(&pos)
+		id := saved.ID
+		if err != nil {
+			t.Fatalf("SaveIndividualPosition(%s): %v", what, err)
+		}
+		if err := db.SaveAnalysis(id, PositionAnalysis{PositionID: int(id), XGID: xgid}); err != nil {
+			t.Fatalf("SaveAnalysis(%s): %v", what, err)
+		}
+		if game != 0 {
+			attach(t, raw, game, id)
+		}
+		return id
+	}
+
+	onePoint := "XGID=" + board + ":0:0:1:21:0:0:0:1:10"
+	if res, err := db.ParsePositionText(onePoint); err != nil || res.Position.Score != [2]int{domain.Crawford, domain.Crawford} {
+		t.Fatalf("ParsePositionText(1-point match, field 7 = 0) = %v (err=%v), want away [1 1]", res.Position.Score, err)
+	}
+
+	dmp := [2]int{domain.PostCrawford, domain.PostCrawford}
+	pastedID := paste("the pasted 1-point position", onePoint, dmp, 0)
+	inGameID := paste("a [0, 0] position of a match game", "XGID="+board+":0:0:1:43:0:0:0:1:10", dmp, games[2])
+	longDMP := "XGID=" + board + ":0:0:1:52:6:6:0:7:10"
+	if res, err := db.ParsePositionText(longDMP); err != nil || res.Position.Score != dmp {
+		t.Fatalf("ParsePositionText(DMP of a 7-point match) = %v (err=%v), want away [0 0]", res.Position.Score, err)
+	}
+	longDMPID := paste("the DMP after the Crawford game of a 7-point match", longDMP, dmp, 0)
+
+	_, hashBefore := awayAndHashOf(t, raw, pastedID)
+	repaired, err := db.RepairCrawfordSentinel()
+	if err != nil {
+		t.Fatalf("RepairCrawfordSentinel: %v", err)
+	}
+	if repaired != 1 {
+		t.Errorf("repaired %d positions, want 1 (the pasted 1-point one)", repaired)
+	}
+	away, hashAfter := awayAndHashOf(t, raw, pastedID)
+	if away != [2]int{domain.Crawford, domain.Crawford} {
+		t.Errorf("away score after repair = %v, want [1 1]", away)
+	}
+	if hashAfter == hashBefore {
+		t.Error("the Zobrist hash did not change: the away score is part of the identity")
+	}
+	if got, _ := awayAndHashOf(t, raw, inGameID); got != dmp {
+		t.Errorf("a position of a match game was rewritten to %v", got)
+	}
+	if got, _ := awayAndHashOf(t, raw, longDMPID); got != dmp {
+		t.Errorf("the DMP of a 7-point match was rewritten to %v", got)
+	}
+
+	if again, err := db.RepairCrawfordSentinel(); err != nil || again != 0 {
+		t.Errorf("second pass: repaired=%d err=%v, want 0 and no error", again, err)
+	}
+}
