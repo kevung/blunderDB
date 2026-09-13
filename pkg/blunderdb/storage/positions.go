@@ -68,6 +68,12 @@ type PositionStore interface {
 	// score is part of the identity — so the row is REHASHED, merging into an
 	// already-correct twin when one exists rather than colliding with it.
 	//
+	// A position no game points at has no match to ask. It is corrected only
+	// when the XGID its analysis keeps was written by another program and
+	// states, in field 7, that the game is not the Crawford one, and describes
+	// that very position (#360); an XGID blunderDB regenerated itself echoes
+	// the stored `1` and proves nothing.
+	//
 	// `blunderdb repair` runs it, so does /v1/positions.repairCrawford;
 	// nothing runs it automatically, and running it on a database that is
 	// already correct rewrites nothing.

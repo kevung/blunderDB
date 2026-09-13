@@ -1697,7 +1697,7 @@ Recalcule ce que la base tire de ce qu'elle stocke : les colonnes scalaires de
 chaque analyse à partir de l'analyse elle-même, dont elles ne sont qu'une
 projection ; la phase et le type de jeu de chaque position à partir de son
 damier ; et la sentinelle de Crawford de chaque score à partir du match d'où la
-position vient. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en
+position vient, ou de l'XGID avec lequel elle est entrée. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en
 avait tirées qui sont refaites.
 
 .. code-block:: bash
@@ -1731,8 +1731,13 @@ double en réalité à la première occasion. Corriger le score change le hachag
 de la position : la ligne est donc réhachée, et fusionnée avec sa jumelle
 correcte si la base en tient déjà une — l'analyse, les commentaires, les
 collections, les cartes Anki et leur journal de révision, les coups du match et
-les entrées de la corbeille qui la nomment suivent la ligne survivante. Une position qu'aucun match ne désigne est laissée telle quelle :
-rien ne contredit ce que son score annonce.
+les entrées de la corbeille qui la nomment suivent la ligne survivante. Une
+position qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID
+qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ Crawford
+de cet XGID dit que la partie n'est pas la Crawford, et que l'XGID décrit bien
+cette position. Un XGID que blunderDB a lui-même réécrit ne fait que répéter le
+score enregistré et ne prouve rien. Toute autre position sans match est laissée
+telle quelle : rien ne contredit ce que son score annonce.
 
 Rien ne la déclenche automatiquement, et c'est voulu : réécrire les colonnes
 d'analyse de tout le monde, ou réhacher des positions, à la simple ouverture

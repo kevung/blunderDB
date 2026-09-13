@@ -55,10 +55,13 @@ type gameFacts struct {
 //
 //   - a position whose EVERY move belongs to a post-Crawford game is corrected
 //     to the `0` sentinel and rehashed;
-//   - a position that belongs to no game at all — typed on the board, pasted as
-//     an XGID, imported on its own — is left alone: away `1` is then the user's
-//     own statement that this is the Crawford game, and there is no match to
-//     contradict it;
+//   - a position that belongs to no game at all is corrected only when the
+//     XGID its analysis keeps was written by another program and says, in
+//     field 7, that the game is not the Crawford one — and describes this very
+//     position (see sourceXGIDSaysPostCrawford). Everything else that no game
+//     points at — typed on the board, saved from blunderDB's own XGID, a file
+//     without one — is left alone: away `1` is then its author's word, and
+//     nothing contradicts it;
 //   - a position that belongs to a Crawford game AND to a post-Crawford one is
 //     left alone too. Today they are one row (the away score being the same),
 //     and the row is legitimately the Crawford one for one of its games;
@@ -89,19 +92,17 @@ func RepairCrawfordSentinel(ctx context.Context, db Execer, scope string, positi
 
 	repaired := 0
 	for _, id := range stale {
-		games := gamesOf[id]
-		if len(games) == 0 {
-			continue // no match behind it: the sentinel is the user's word
-		}
-		postCrawfordOnly := true
-		for _, gameID := range games {
-			isCrawford, known := crawfordGames[gameID]
-			if !known || isCrawford {
-				postCrawfordOnly = false
-				break
+		var postCrawford bool
+		if games := gamesOf[id]; len(games) > 0 {
+			postCrawford = onlyPostCrawfordGames(games, crawfordGames)
+		} else {
+			// No match behind it: only the XGID it came in with can speak.
+			postCrawford, err = sourceXGIDSaysPostCrawford(ctx, db, scope, positions, id)
+			if err != nil {
+				return fail(err)
 			}
 		}
-		if !postCrawfordOnly {
+		if !postCrawford {
 			continue
 		}
 		changed, err := rehashOutOfCrawford(ctx, db, scope, positions, id)
@@ -113,6 +114,90 @@ func RepairCrawfordSentinel(ctx context.Context, db Execer, scope string, positi
 		}
 	}
 	return repaired, nil
+}
+
+// onlyPostCrawfordGames reports whether every game a position was played in is
+// a post-Crawford one. A game this pass cannot place, or the Crawford game
+// itself, keeps the position as it is.
+func onlyPostCrawfordGames(games []int64, crawfordGames map[int64]bool) bool {
+	for _, gameID := range games {
+		isCrawford, known := crawfordGames[gameID]
+		if !known || isCrawford {
+			return false
+		}
+	}
+	return true
+}
+
+// sourceXGIDSaysPostCrawford decides a position no game points at from the XGID
+// its analysis keeps (#360). It says yes only on proof, and each condition is
+// what stands between a fact and a supposition:
+//
+//   - the XGID states the rule: a match length, and field 7 present. That field
+//     is the Crawford flag (eXtreme Gammon 2 Help, « XGID », part 8), and 0
+//     means the game is not the Crawford one;
+//   - field 7 is 0 NEXT TO a stored away 1. blunderDB's own encoders — the
+//     GUI's generateXGID, which rewrites the analysis XGID whenever a board is
+//     saved or a position edited, and the CLI's domain.EncodeXGID — write field
+//     7 FROM the stored sentinel, so at an away 1 they have always written 1.
+//     An XGID with 0 there was therefore written by another program: XG,
+//     BGBlitz, a client of /v1/positions.fromXGID. A regenerated XGID only
+//     echoes the stored 1 and proves nothing, and it is excluded by this very
+//     condition rather than by a guess about where it came from;
+//   - the XGID describes THIS position: the same board, cube, player on roll,
+//     dice and distances, compared through the Zobrist hash the dedup uses, the
+//     away score taken as the XGID states it. An analysis left over from
+//     another position — a stale row, a client that updated the position and
+//     not its analysis — is not this position's source.
+//
+// A position whose analysis is missing or unreadable, or whose XGID does not
+// decode, keeps its score: nothing then states anything.
+func sourceXGIDSaysPostCrawford(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64) (bool, error) {
+	tenant, targs := db.TenantFilter("", scope)
+	var data []byte
+	err := db.QueryRow(ctx,
+		`SELECT data FROM analysis WHERE `+tenant+` AND position_id = ?`,
+		append(append([]any{}, targs...), id)...).Scan(&data)
+	if errors.Is(err, ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	analysis, err := engine.DecodeAnalysisFromStorage(data)
+	if err != nil || analysis.XGID == "" {
+		return false, nil // an analysis nobody can read states nothing
+	}
+	if crawford, stated := domain.XGIDCrawfordGame(analysis.XGID); !stated || crawford {
+		return false, nil
+	}
+	source, err := domain.DecodeXGID(analysis.XGID)
+	if err != nil {
+		return false, nil
+	}
+
+	pos, err := positions.Load(ctx, scope, id)
+	if errors.Is(err, storage.ErrNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	fixed := *pos
+	for i, away := range fixed.Score {
+		if away == domain.Crawford {
+			fixed.Score[i] = domain.PostCrawford
+		}
+	}
+	// The decision type is not the XGID's to state — the text parser reads it
+	// from the analysis block around the XGID — and a cube decision's dice mean
+	// nothing; both are taken from the row so the hash compares the rest.
+	source.DecisionType = pos.DecisionType
+	if pos.DecisionType == domain.CubeAction {
+		source.Dice = pos.Dice
+	}
+	normSource, normFixed := source.NormalizeForStorage(), fixed.NormalizeForStorage()
+	return engine.ZobristHash(&normSource) == engine.ZobristHash(&normFixed), nil
 }
 
 // staleSentinelIDs lists the positions carrying a raw away score of 1 — the

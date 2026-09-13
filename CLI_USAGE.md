@@ -1093,7 +1093,7 @@ Anything older than thirty days is dropped by `blunderdb vacuum` — never at op
 Recompute what the database derives from what it stores: the scalar columns of
 every analysis, from the JSON they are a projection of, each position's
 `game_phase` and `game_type`, from its board, and the Crawford sentinel of every
-away score, from the match the position came from. Those derived values are what
+away score, from the match the position came from or the XGID it came in with. Those derived values are what
 the search filters, the statistics and the cube verdict read, so this is what to
 run after a fix to how an imported analysis is parsed, or after a change to how
 a phase or a game type is decided. Nothing runs it automatically.
@@ -1121,7 +1121,12 @@ so such a row is rehashed, and merged with its correctly stored twin when the
 database already holds one: the analysis, the comments, the collections, the
 Anki cards and their review journal, the match moves and the trash entries that
 name it follow the surviving row. A position no match
-points at is left alone — nothing contradicts what its score says.
+points at is corrected only on the word of the XGID it brought from another
+program (XG, BGBlitz…): when that XGID's Crawford field says the game is not the
+Crawford one, and the XGID describes this very position. An XGID blunderDB
+rewrote itself only echoes the stored score and proves nothing. Any other
+position without a match is left alone — nothing contradicts what its score
+says.
 
 The JSON report has one counter per pass: `repaired` (analysis columns),
 `phases` (positions reclassified) and `crawford` (positions rehashed).

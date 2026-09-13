@@ -10,7 +10,8 @@ import (
 // what it stores — the scalar columns of every analysis, from the JSON they
 // are a projection of, the phase of every position, from its board, and the
 // Crawford sentinel of every away score, from the match the position came
-// from (#338).
+// from or, for a position no match points at, the XGID it came in with from
+// another program (#338, #360).
 //
 // The JSON stays intact, so a bug in the projection is repairable without
 // re-importing anything — it has been needed once already, when the XG
@@ -38,7 +39,8 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("the scalar columns of every analysis, from the JSON they are")
 		fmt.Println("a projection of, the phase of every position, from its board,")
 		fmt.Println("and the Crawford sentinel of every away score, from the match")
-		fmt.Println("the position came from. Useful after a fix to how an imported")
+		fmt.Println("the position came from or the XGID it came in with from")
+		fmt.Println("another program. Useful after a fix to how an imported")
 		fmt.Println("analysis is read, after a change to how a phase is decided,")
 		fmt.Println("and once, for the databases imported before the importers")
 		fmt.Println("wrote the sentinel: a post-Crawford position stored as a")

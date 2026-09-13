@@ -46,6 +46,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/ListIDsAndLoadByIDs", testPositionListIDsAndLoadByIDs},
 		{"Position/RepairCrawfordSentinel", testRepairCrawfordSentinel},
 		{"Position/RepairCrawfordMergeCarriesDependents", testRepairCrawfordMergeCarriesDependents},
+		{"Position/RepairCrawfordSentinelFromPastedXGID", testRepairCrawfordSentinelFromPastedXGID},
 		{"Search/FilterByIndividuallyImported", testSearchFilterByIndividuallyImported},
 		{"Search/FilterByCommentPresence", testSearchFilterByCommentPresence},
 		{"Search/FilterByFlagged", testSearchFilterByFlagged},

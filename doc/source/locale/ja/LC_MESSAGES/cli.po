@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 11:41+0200\n"
+"POT-Creation-Date: 2026-09-13 12:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -360,7 +360,7 @@ msgstr "任意のメタデータとともに新しいデータベースファイ
 #: ../../source/cli.rst:1288 ../../source/cli.rst:1429
 #: ../../source/cli.rst:1498 ../../source/cli.rst:1532
 #: ../../source/cli.rst:1666 ../../source/cli.rst:1707
-#: ../../source/cli.rst:1761 ../../source/cli.rst:1791
+#: ../../source/cli.rst:1766 ../../source/cli.rst:1796
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -395,8 +395,8 @@ msgid ""
 msgstr "``.db`` 拡張子がない場合は自動的に追加されます。必要に応じて親ディレクトリが作成されます。"
 
 #: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1314
-#: ../../source/cli.rst:1680 ../../source/cli.rst:1742
-#: ../../source/cli.rst:1803
+#: ../../source/cli.rst:1680 ../../source/cli.rst:1747
+#: ../../source/cli.rst:1808
 msgid "**Exemple:**"
 msgstr "**例：**"
 
@@ -734,7 +734,7 @@ msgstr ""
 #: ../../source/cli.rst:1109 ../../source/cli.rst:1356
 #: ../../source/cli.rst:1406 ../../source/cli.rst:1434
 #: ../../source/cli.rst:1514 ../../source/cli.rst:1587
-#: ../../source/cli.rst:1770 ../../source/cli.rst:1832
+#: ../../source/cli.rst:1775 ../../source/cli.rst:1837
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -863,7 +863,7 @@ msgstr "**主なオプション：**"
 #: ../../source/cli.rst:441 ../../source/cli.rst:822 ../../source/cli.rst:1145
 #: ../../source/cli.rst:1431 ../../source/cli.rst:1500
 #: ../../source/cli.rst:1534 ../../source/cli.rst:1668
-#: ../../source/cli.rst:1709 ../../source/cli.rst:1763
+#: ../../source/cli.rst:1709 ../../source/cli.rst:1768
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — データベース（必須）。"
 
@@ -2620,12 +2620,14 @@ msgid ""
 "scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
 "ne sont qu'une projection ; la phase et le type de jeu de chaque position"
 " à partir de son damier ; et la sentinelle de Crawford de chaque score à "
-"partir du match d'où la position vient. Les analyses ne sont pas touchées"
-" : ce sont les valeurs qu'on en avait tirées qui sont refaites."
+"partir du match d'où la position vient, ou de l'XGID avec lequel elle est"
+" entrée. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en"
+" avait tirées qui sont refaites."
 msgstr ""
 "データベースが保存内容から導くものを再計算します。各分析の scalar "
 "列を、その分析自体から。各局面の局面フェーズと戦型を、その盤面から。そして各スコアの Crawford "
-"標識を、その局面が由来する対戦から。分析そのものには手を触れません。作り直されるのは、そこから導かれていた値です。"
+"標識を、その局面が由来する対戦、またはその局面が持ち込まれた XGID "
+"から。分析そのものには手を触れません。作り直されるのは、そこから導かれていた値です。"
 
 #: ../../source/cli.rst:1710
 #, no-python-brace-format
@@ -2668,7 +2670,12 @@ msgid ""
 "tient déjà une — l'analyse, les commentaires, les collections, les cartes"
 " Anki et leur journal de révision, les coups du match et les entrées de "
 "la corbeille qui la nomment suivent la ligne survivante. Une position "
-"qu'aucun match ne désigne est laissée telle quelle : rien ne contredit ce"
+"qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID "
+"qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ "
+"Crawford de cet XGID dit que la partie n'est pas la Crawford, et que "
+"l'XGID décrit bien cette position. Un XGID que blunderDB a lui-même "
+"réécrit ne fait que répéter le score enregistré et ne prouve rien. Toute "
+"autre position sans match est laissée telle quelle : rien ne contredit ce"
 " que son score annonce."
 msgstr ""
 "Crawford のパスだけは、局面そのものに手を入れます。スコアの\\ ``1``\\ は「あと 1 点、そしてこの試合が Crawford "
@@ -2676,9 +2683,12 @@ msgstr ""
 "はもう終わっている」を意味します。インポータがこの区別を書かなかった間、Crawford 後の局面はすべて Crawford "
 "の局面として保存され、したがってダブリングキューブが死んだものとして読まれていました。実際には、負けている側が最初の機会にダブルする場面です。スコアを直すと局面のハッシュが変わります。つまりその行はハッシュを取り直され、正しい双子がすでにデータベースにあればそれと統合されます。分析、コメント、コレクション、Anki"
 " "
-"のカードとその復習履歴、対戦の指し手、そしてその行を指すゴミ箱の項目は、残った行に従います。どの対戦からも指されていない局面はそのままにされます。そのスコアが述べていることに反するものが何もないからです。"
+"のカードとその復習履歴、対戦の指し手、そしてその行を指すゴミ箱の項目は、残った行に従います。どの対戦からも指されていない局面が修正されるのは、別のソフトウェア（XG、BGBlitz…）から持ち込んだ"
+" XGID の言葉によってだけです。その XGID の Crawford 欄がこの試合は Crawford ではないと述べ、かつその XGID "
+"がまさにこの局面を表しているときです。blunderDB 自身が書き直した XGID "
+"は保存済みのスコアを繰り返すだけで、何も証明しません。対戦のないそれ以外の局面はそのままにされます。そのスコアが述べていることに反するものが何もないからです。"
 
-#: ../../source/cli.rst:1737
+#: ../../source/cli.rst:1742
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -2686,29 +2696,29 @@ msgid ""
 "faire dans le dos de son utilisateur."
 msgstr "自動的に実行されることはありません。これは意図的です。データベースを開いただけで全員の分析列を書き換えたり、局面のハッシュを取り直したりするのは、道具が利用者に黙ってやってよいことではないからです。"
 
-#: ../../source/cli.rst:1753
+#: ../../source/cli.rst:1758
 msgid "delete — Supprimer des données"
 msgstr "delete — データを削除する"
 
-#: ../../source/cli.rst:1755
+#: ../../source/cli.rst:1760
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "マッチとすべての関連データ（ゲーム、手、分析）を削除します。"
 
-#: ../../source/cli.rst:1764
+#: ../../source/cli.rst:1769
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — 削除の種類：\\ ``match``\\ （必須）。"
 
-#: ../../source/cli.rst:1765
+#: ../../source/cli.rst:1770
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — 削除する要素のID（必須）。"
 
-#: ../../source/cli.rst:1766
+#: ../../source/cli.rst:1771
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — 確認なしで削除する。"
 
-#: ../../source/cli.rst:1767
+#: ../../source/cli.rst:1772
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2717,11 +2727,11 @@ msgstr ""
 "``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ （\\ "
 "``{\"match_id\": N, \"deleted\": true}``\\ ）。"
 
-#: ../../source/cli.rst:1779
+#: ../../source/cli.rst:1784
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — デーモンを確認する"
 
-#: ../../source/cli.rst:1781
+#: ../../source/cli.rst:1786
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -2735,7 +2745,7 @@ msgstr ""
 "、それ以外（ストレージに到達できない、スキーマが古い、アドレスで何もリッスンしていない）なら\\ ``1``\\ "
 "を返します。データベースファイルは一切開きません。"
 
-#: ../../source/cli.rst:1793
+#: ../../source/cli.rst:1798
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -2745,13 +2755,13 @@ msgstr ""
 "``:8080``\\ ）。ホストのないアドレス（\\ ``:8080``\\ ）やワイルドカードホスト（\\ ``0.0.0.0``\\ 、\\"
 " ``[::]``\\ ）はループバックインターフェースで確認します。"
 
-#: ../../source/cli.rst:1796
+#: ../../source/cli.rst:1801
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — この時間を過ぎると確認を諦めます（既定は\\ ``2s``\\ ）。"
 
-#: ../../source/cli.rst:1798
+#: ../../source/cli.rst:1803
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -2762,7 +2772,7 @@ msgstr ""
 "``curl``\\ はありません）。\\ ``cmd/serve``\\ からビルドした\\ ``serve``\\ "
 "バイナリも同じコマンドを理解します。スクリプトや systemd ユニットからも同様に使えます。"
 
-#: ../../source/cli.rst:1812
+#: ../../source/cli.rst:1817
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -2770,11 +2780,11 @@ msgstr ""
 "失敗した場合はその理由が表示され、\\ ``docker inspect``\\ も\\ ``unhealthy``\\ "
 "なコンテナについて同じ内容を示します："
 
-#: ../../source/cli.rst:1820
+#: ../../source/cli.rst:1825
 msgid "completion — Complétion shell"
 msgstr "completion ――― シェル補完"
 
-#: ../../source/cli.rst:1822
+#: ../../source/cli.rst:1827
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -2787,7 +2797,7 @@ msgstr ""
 "や\\ ``main.go``\\ のディスパッチ（\\ ``handlers()``\\ "
 "）が読み込むのと同じテーブルから生成される。そのため、新しいサブコマンドが組み込まれると同時に補完でも提供され、手作業で維持する必要は何もない。"
 
-#: ../../source/cli.rst:1846
+#: ../../source/cli.rst:1851
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -2802,46 +2812,46 @@ msgstr ""
 "``generate_completions_from_executable``\\ を通じて\\ ``blunderdb completion "
 "<shell>``\\ を実行する。リポジトリには何もコミットされないため、補完がサブコマンドのテーブルからずれることは決してない。"
 
-#: ../../source/cli.rst:1854
+#: ../../source/cli.rst:1859
 msgid "version — Afficher la version"
 msgstr "version — バージョンを表示する"
 
-#: ../../source/cli.rst:1856
+#: ../../source/cli.rst:1861
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
 "bug."
 msgstr "blunderDB のバージョンと、このバイナリが書き込むデータベーススキーマのバージョンを表示します。バグ報告に最初に添えるべき情報です。"
 
-#: ../../source/cli.rst:1865
+#: ../../source/cli.rst:1870
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:1868
+#: ../../source/cli.rst:1873
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:1877
+#: ../../source/cli.rst:1882
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:1884
+#: ../../source/cli.rst:1889
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:1896
+#: ../../source/cli.rst:1901
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:1898
+#: ../../source/cli.rst:1903
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:1899
+#: ../../source/cli.rst:1904
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:1901
+#: ../../source/cli.rst:1906
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 
