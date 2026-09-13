@@ -204,7 +204,8 @@ export default {
 </div>
 <h3>Panneau Recherche</h3>
 <p>Le panneau <strong>Recherche</strong> (<em>CTRL-F</em> ou <em>TAB</em>) permet de filtrer les positions selon des critères combinables librement : structure de pions, type de décision de videau, magnitude d'erreur, dates, tags, etc. La touche <em>TAB</em> ouvre simultanément le panneau de recherche et l'éditeur de position, permettant de définir une structure de pions à rechercher sur le plateau.</p>
-<p>Pour affiner une recherche parmi les positions actuellement filtrées, utiliser la commande <code>ss</code> suivie de filtres (ex: <code>ss nc</code>, <code>ss E&gt;40</code>). Le panneau de recherche propose également une case à cocher <em>Rechercher dans les résultats actuels</em> pour la même fonctionnalité.</p>
+<p>Pour chercher parmi les positions affichées, utiliser la commande <code>ss</code> suivie de filtres (ex: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> cherche dans la liste à l'écran : les résultats de la recherche précédente, la collection ouverte ou les positions du match en cours de revue, que la commande soit tapée directement ou depuis le panneau de recherche (<em>TAB</em>). La case à cocher <em>Rechercher dans les résultats actuels</em> du panneau suit la même règle. En collection et en match, <code>s</code> est refusé : il chercherait dans toute la bibliothèque et remplacerait la liste affichée.</p>
+<p>Les résultats d'une recherche <code>ss</code> lancée depuis une collection ou un match se quittent avec <em>Esc</em>, le plateau ayant le focus : blunderDB revient à la collection entière, ou au match sur le coup étudié, et à la position quittée.</p>
 <p>Le panneau propose un contrôle explicite du <strong>type de décision</strong> recherché : <em>Indifférent</em> (aucun filtre), <em>Pions</em> (décisions de coup) ou <em>Videau</em> (décisions de cube). Lorsque <em>Videau</em> est sélectionné, une seconde liste précise le sous-type : <em>Tous</em>, <em>Double / Pas de double</em> (le joueur au trait doit décider de doubler) ou <em>Prise / Passe</em> (réponse à un doublement adverse). Le contrôle est synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à jour le type de décision, et inversement. En mode <em>Prise / Passe</em>, le videau est affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.</p>
 <p>La <strong>phase de partie</strong> — ouverture, milieu de partie, course, sortie des pions — est une étiquette calculée par blunderDB à partir du plateau seul, jamais modifiable, et disponible en recherche par le jeton <code>ph:</code> de la ligne de commande (<code>ph:race</code>, répétable : <code>ph:race ph:bearoff</code>). Trois de ses quatre frontières sont celles que GNU Backgammon emploie pour aiguiller ses réseaux ; la quatrième, où s'arrête l'ouverture, est une convention de blunderDB : une position en est encore à l'ouverture tant qu'aucun des deux camps n'a déplacé plus de quatre pions de leurs points de départ, qu'aucun pion n'est sorti et qu'aucun n'est sur la barre.</p>
 <div class="admonition note">
@@ -248,7 +249,7 @@ export default {
 <p>Se référer à la liste des commandes pour la liste des filtres disponibles.</p>
 </div>
 <h3>Panneau Collections</h3>
-<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. La commande <code>ss</code> cherche parmi les positions de la collection ouverte ; <em>Esc</em> ramène ensuite à la collection (voir Panneau Recherche). L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
 <h3>Import : ce qui est écrit, ce qui ne l'est jamais</h3>
 <p>Importer un match, une position ou une autre base ajoute ce qui manque ; cela ne remplace pas ce qui est déjà là.</p>
 <ul>
@@ -268,7 +269,8 @@ export default {
 <li>passer d'une partie à l'autre à l'aide des touches <em>PageUp</em> et <em>PageDown</em>,</li>
 <li>afficher l'analyse des coups (pions et cube) en appuyant sur <em>CTRL-L</em>,</li>
 <li>basculer entre l'analyse des coups de pions et du cube avec la touche <em>d</em>,</li>
-<li>voir le coup effectivement joué mis en évidence dans l'analyse.</li>
+<li>voir le coup effectivement joué mis en évidence dans l'analyse,</li>
+<li>chercher parmi les positions du match avec la commande <code>ss</code> (ex: <code>ss E&gt;80</code>) ; <em>Esc</em> ramène ensuite au coup étudié (voir Panneau Recherche).</li>
 </ul>
 <p>La dernière position visitée dans chaque match est mémorisée et restaurée automatiquement. Appuyer sur <em>CTRL-Tab</em> ou exécuter la commande <code>match</code> pour afficher ou masquer le panneau.</p>
 <p>Le bouton <strong>⊕</strong> d'une ligne enrichit ce match depuis un fichier. Il n'y a rien de nouveau derrière : réimporter le même match dans un autre format l'enrichit déjà en place — l'empreinte canonique reconnaît qu'il s'agit du même match, et les analyses et commentaires du second fichier viennent compléter le premier. Ce que le bouton apporte, c'est qu'on le trouve : personne ne devine qu'un import est aussi un enrichissement. Le compte rendu qui suit dit lequel des deux a eu lieu — « enrichis : 1 » plutôt que « importés : 1 ».</p>
@@ -942,6 +944,10 @@ export default {
 <tr>
 <td>r</td>
 <td>Charger une position aléatoire.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Quitter les résultats d'une recherche <code>ss</code> lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié.</td>
 </tr>
 </tbody>
 </table>
@@ -1769,7 +1775,7 @@ export default {
 </tr>
 <tr>
 <td>ss</td>
-<td>Chercher parmi les positions actuellement filtrées.</td>
+<td>Chercher parmi les positions affichées : résultats courants, collection ouverte ou match en cours de revue.</td>
 </tr>
 </tbody>
 </table>

@@ -85,7 +85,7 @@ Positions et navigation
    "write, wr, w", "Enregistre la position courante."
    "write!, wr!, w!", "Mettre à jour la position courante."
    "s", "Chercher des positions avec des filtres."
-   "ss", "Chercher parmi les positions actuellement filtrées."
+   "ss", "Chercher parmi les positions affichées : résultats courants, collection ouverte ou match en cours de revue."
    
 
 .. _cmd_filter:

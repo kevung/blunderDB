@@ -36,6 +36,12 @@
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
  *   exitCollectionMode  COLLECTION → NORMAL
+ *   leaveSubSearchResults NORMAL (results of an `ss` run from a collection or a
+ *                       match) → that COLLECTION | MATCH, on the position left
+ *
+ * The machine also answers one question no other module may answer on its
+ * own: which list is on screen — displayedPositionIDs(). `ss` and the Search
+ * panel's "search in current results" box both search in it (#410).
  *
  * The scratch modes are reached from the tab bar: App.svelte's tab effect
  * calls enterEditMode/exitEditMode and enterEvalMode/exitEvalMode when the
@@ -125,15 +131,27 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               boards had). It outlives a library reload on purpose —
  *               forgetContextBeforeEval drops beforeEval, not this: a scratch
  *               board belongs to the session, not to the open database.
+ *   beforeSubSearch the collection or the match an `ss` was run from, taken by
+ *               noteSubSearchOrigin() when its results replace the list and
+ *               consumed by leaveSubSearchResults() (#410):
+ *               { mode: COLLECTION, collection, ids, positionIndex, position, resultIds }
+ *               or { mode: MATCH, matchContext, resultIds }. `resultIds` is the
+ *               list the sub-search put on screen: the way back is offered only
+ *               while that list is still the one shown, so a list another
+ *               gesture put there (a deck, a blunder list, a view) is never
+ *               swapped for a collection the user left long ago. A sub-search
+ *               run inside those results keeps the origin; a search of the whole
+ *               library, a library reload, a match or a collection opened drop it.
  */
 /**
  * The slots are all `null` at rest, so without this annotation the checker
  * infers the type `null` for each and rejects every assignment to them.
  *
- * @type {{beforeTranscribe: any, beforeEval: any, beforeEdit: any, evalSeed: any, lastEvalBoard: any}}
+ * @type {{beforeTranscribe: any, beforeEval: any, beforeEdit: any, beforeSubSearch: any, evalSeed: any, lastEvalBoard: any}}
  */
 const savedContext = {
     beforeTranscribe: null,
+    beforeSubSearch: null,
     beforeEval: null,
     beforeEdit: null,
     evalSeed: null,
@@ -195,6 +213,142 @@ function returnToStudiedMode(saved) {
     }
     statusBarModeStore.set(MODE.NORMAL);
     return MODE.NORMAL;
+}
+
+// ── The list on screen, and the way back from a sub-search (#410) ────────────
+
+/**
+ * The positions of the list on screen — the one `ss` and the Search panel's
+ * "search in current results" box search in, stated once for both.
+ *
+ *   MATCH       the match's positions (matchContextStore.movePositions)
+ *   EDIT        the list behind the query board: the match photographed on
+ *               entry (enterEditMode empties matchContextStore, and the library
+ *               list left in positionsStore is not what the user was looking
+ *               at), otherwise positionsStore — a collection's ids stay there
+ *               since #406
+ *   otherwise   positionsStore: the library, a search's results, a collection
+ *
+ * A position met twice in a match is searched once: the backend receives a
+ * set of ids, and order is not part of the question.
+ *
+ * @returns {number[]}
+ */
+export function displayedPositionIDs() {
+    const mode = currentMode();
+    const behindQueryBoard = mode === MODE.EDIT ? savedContext.beforeEdit : null;
+    const matchContext = mode === MODE.MATCH ? get(matchContextStore) : behindQueryBoard?.mode === MODE.MATCH ? behindQueryBoard.matchContext : null;
+    const ids = matchContext?.isMatchMode ? (matchContext.movePositions ?? []).map((/** @type {any} */ mp) => mp?.position?.id) : (get(positionsStore)?.ids ?? []);
+    return [...new Set(ids.filter((/** @type {any} */ id) => id != null))];
+}
+
+/**
+ * The collection or match being studied, as a sub-search must remember it —
+ * read through the query board when the search was run from the Search tab.
+ * On the query board the position on screen is a blank query, so the
+ * collection's position is taken back from the list's cache, as exitEditMode
+ * does.
+ */
+function subSearchOriginNow() {
+    const mode = currentMode();
+    const behindQueryBoard = mode === MODE.EDIT ? savedContext.beforeEdit : null;
+    const studied = behindQueryBoard ? behindQueryBoard.mode : mode;
+    if (studied === MODE.MATCH) {
+        const matchContext = behindQueryBoard ? behindQueryBoard.matchContext : get(matchContextStore);
+        if (matchContext?.isMatchMode) return { mode: MODE.MATCH, matchContext: { ...matchContext } };
+        return null;
+    }
+    if (studied === MODE.COLLECTION && get(activeCollectionStore)) {
+        const positionIndex = get(currentPositionIndexStore);
+        const onScreen = behindQueryBoard ? positionsStore.peek(positionIndex) : get(positionStore);
+        return {
+            mode: MODE.COLLECTION,
+            collection: get(activeCollectionStore),
+            ids: [...(get(positionsStore)?.ids ?? [])],
+            positionIndex,
+            position: onScreen ? JSON.parse(JSON.stringify(onScreen)) : null
+        };
+    }
+    return null;
+}
+
+/** Whether the list on screen is still the one the last sub-search put there. */
+function subSearchResultsOnScreen() {
+    const saved = savedContext.beforeSubSearch;
+    if (!saved) return false;
+    const mode = currentMode();
+    const listMode = mode === MODE.EDIT ? savedContext.beforeEdit?.mode : mode;
+    if (listMode !== MODE.NORMAL) return false;
+    const ids = get(positionsStore)?.ids ?? [];
+    return ids.length === saved.resultIds.length && ids.every((id, i) => id === saved.resultIds[i]);
+}
+
+/**
+ * Called by loadPositionsByFilters when a search's results are about to
+ * replace the list, before any store moves. A sub-search run from a collection
+ * or a match photographs it; one run inside the results of such a sub-search
+ * keeps the origin it already has; any other search forgets it.
+ *
+ * @param {boolean} isSubSearch the search was restricted to the list on screen
+ * @param {number[]} resultIds the list about to be shown
+ * @returns {string | null} the mode the results can return to (MATCH | COLLECTION), or null
+ */
+export function noteSubSearchOrigin(isSubSearch, resultIds) {
+    if (!isSubSearch) {
+        savedContext.beforeSubSearch = null;
+        return null;
+    }
+    const origin = subSearchOriginNow();
+    if (origin) {
+        savedContext.beforeSubSearch = { ...origin, resultIds: [...resultIds] };
+    } else if (subSearchResultsOnScreen()) {
+        savedContext.beforeSubSearch = { ...savedContext.beforeSubSearch, resultIds: [...resultIds] };
+    } else {
+        savedContext.beforeSubSearch = null;
+    }
+    return savedContext.beforeSubSearch?.mode ?? null;
+}
+
+/** Forget where a sub-search came from: the list it could return to is gone. */
+export function forgetSubSearchOrigin() {
+    savedContext.beforeSubSearch = null;
+}
+
+/**
+ * NORMAL, on the results of an `ss` run from a collection or a match → back to
+ * that collection, whole, or that match, on the move studied — and on the
+ * position the user left (#410). Does nothing, and says so by returning false,
+ * when the list on screen is not those results any more.
+ *
+ * The mode comes first and the position after, through showPosition, exactly
+ * as the scratch exits do: no effect sees the restored position under the
+ * wrong mode, and the analysis panel is repopulated (bug 1, bug 2).
+ *
+ * @returns {Promise<boolean>} whether a list was returned to
+ */
+export async function leaveSubSearchResults() {
+    if (currentMode() !== MODE.NORMAL || !subSearchResultsOnScreen()) return false;
+    const saved = savedContext.beforeSubSearch;
+    savedContext.beforeSubSearch = null;
+
+    setSearchState('', null, false);
+    lastSearchStore.set(null);
+    statusBarTextStore.set('');
+
+    if (saved.mode === MODE.MATCH) {
+        matchContextStore.set(saved.matchContext);
+        statusBarModeStore.set(MODE.MATCH);
+        const movePos = saved.matchContext.movePositions?.[saved.matchContext.currentIndex];
+        if (movePos) await showPosition(movePos.position);
+        return true;
+    }
+
+    activeCollectionStore.set(saved.collection);
+    statusBarModeStore.set(MODE.COLLECTION);
+    positionsStore.setIds(saved.ids);
+    currentPositionIndexStore.set(saved.positionIndex);
+    if (saved.position) await showPosition(saved.position);
+    return true;
 }
 
 async function persistLastVisitedMatchPosition() {
@@ -629,6 +783,7 @@ export async function toggleMatchMode() {
         savedContext.beforeEdit = null;
     }
     activeCollectionStore.set(null);
+    savedContext.beforeSubSearch = null;
 
     try {
         const match = await GetLastVisitedMatch();
@@ -698,6 +853,7 @@ export function handleOpenCollection(collection, collectionPositions) {
         return;
     }
 
+    savedContext.beforeSubSearch = null;
     if (get(matchContextStore).isMatchMode) {
         matchContextStore.update((ctx) => ({
             ...ctx,

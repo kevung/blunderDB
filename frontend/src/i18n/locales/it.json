@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "Nessun risultato corrente in cui cercare.",
         "searchRequiresMode": "La ricerca richiede la modalità NORMAL o EDIT.",
         "subSearchModeUnavailable": "La ricerca nei risultati non è disponibile nella modalità attuale.",
+        "searchWouldReplaceCollection": "s cerca in tutta la libreria e sostituirebbe la collezione visualizzata: usa ss per cercare nella collezione.",
+        "searchWouldReplaceMatch": "s cerca in tutta la libreria e sostituirebbe il match visualizzato: usa ss per cercare nel match.",
         "tagsAdded": "Tag aggiunti: {tags}",
         "unknown": "Comando sconosciuto: {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "Nessun file importabile trovato nella cartella",
         "noMatchesInDb": "Nessun match nel database",
         "noMatchingPositions": "Nessuna posizione corrispondente trovata",
+        "subSearchInCollection": "Risultati nella collezione — Esc per tornarci.",
+        "subSearchInMatch": "Risultati nel match — Esc per tornare alla mossa studiata.",
         "noMovesInMatch": "Nessuna mossa trovata in questo match",
         "noPositionToPasteHint": "Nessuna posizione da incollare (usa Ctrl-C per copiare prima una posizione)",
         "noPositionToPaste": "Nessuna posizione da incollare",

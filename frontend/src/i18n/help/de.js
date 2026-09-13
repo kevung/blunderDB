@@ -204,7 +204,8 @@ export default {
 </div>
 <h3>Such-Panel</h3>
 <p>Das Panel <strong>Suche</strong> (<em>CTRL-F</em> oder <em>TAB</em>) ermöglicht es, Stellungen nach frei kombinierbaren Kriterien zu filtern: Steinstruktur, Typ der Doppler-Entscheidung, Fehlergröße, Datum, Tags usw. Die Taste <em>TAB</em> öffnet gleichzeitig das Suchpanel und den Stellungseditor, sodass eine zu suchende Steinstruktur direkt auf dem Brett definiert werden kann.</p>
-<p>Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden Sie den Befehl <code>ss</code> gefolgt von Filtern (z. B.: <code>ss nc</code>, <code>ss E&gt;40</code>). Das Suchpanel bietet für dieselbe Funktion auch ein Kontrollkästchen <em>In aktuellen Ergebnissen suchen</em>.</p>
+<p>Um unter den angezeigten Stellungen zu suchen, verwenden Sie den Befehl <code>ss</code> gefolgt von Filtern (z. B.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> sucht in der Liste auf dem Bildschirm: in den Ergebnissen der vorherigen Suche, in der geöffneten Sammlung oder in den Stellungen des gerade durchgesehenen Matches, ob der Befehl direkt oder aus dem Suchpanel (<em>TAB</em>) eingegeben wird. Das Kontrollkästchen <em>In aktuellen Ergebnissen suchen</em> des Panels folgt derselben Regel. In einer Sammlung und in einem Match wird <code>s</code> abgelehnt: Es würde die ganze Bibliothek durchsuchen und die angezeigte Liste ersetzen.</p>
+<p>Die Ergebnisse einer aus einer Sammlung oder einem Match gestarteten <code>ss</code>-Suche verlässt man mit <em>Esc</em>, wenn das Brett den Fokus hat: blunderDB kehrt zur ganzen Sammlung oder zum Match auf dem betrachteten Zug zurück, und zur verlassenen Stellung.</p>
 <p>Das Panel bietet eine explizite Steuerung des gesuchten <strong>Entscheidungstyps</strong>: <em>Egal</em> (kein Filter), <em>Zug</em> (Zugentscheidungen) oder <em>Dopplung</em> (Doppler-Entscheidungen). Wenn <em>Dopplung</em> ausgewählt ist, gibt eine zweite Liste den Untertyp an: <em>Alle</em>, <em>Dopplung / Kein Doppel</em> (der Spieler am Zug muss über das Doppeln entscheiden) oder <em>Annehmen / Aufgeben</em> (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus <em>Annehmen / Aufgeben</em> wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.</p>
 <p>Die <strong>Spielphase</strong> — Eröffnung, Mittelspiel, Wettlauf, Auswürfeln — ist eine Kennzeichnung, die blunderDB allein aus dem Brett berechnet. Sie ist nie editierbar und über das Kommandozeilen-Token <code>ph:</code> durchsuchbar (<code>ph:race</code>, wiederholbar: <code>ph:race ph:bearoff</code>). Drei ihrer vier Grenzen sind die, mit denen GNU Backgammon seine Netze auswählt; die vierte, wo die Eröffnung endet, ist eine Konvention von blunderDB: eine Stellung befindet sich noch in der Eröffnung, solange keine Seite mehr als vier Steine von ihren Ausgangspunkten bewegt hat, nichts ausgewürfelt wurde und nichts auf der Bar steht.</p>
 <div class="admonition note">
@@ -248,7 +249,7 @@ export default {
 <p>Siehe Liste der Befehle für die Liste der verfügbaren Filter.</p>
 </div>
 <h3>Sammlungen-Panel</h3>
-<p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
+<p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
 <h3>Import: was geschrieben wird, was es niemals ist</h3>
 <p>Das Importieren eines Matches, einer Stellung oder einer anderen Datenbank fügt hinzu, was fehlt; es ersetzt nicht, was bereits da ist.</p>
 <ul>
@@ -268,7 +269,8 @@ export default {
 <li>mit den Tasten <em>PageUp</em> und <em>PageDown</em> von einer Partie zur anderen wechseln,</li>
 <li>die Analyse der Züge (Steine und Doppler) durch Drücken von <em>CTRL-L</em> anzeigen,</li>
 <li>mit der Taste <em>d</em> zwischen der Analyse der Steinzüge und des Dopplers umschalten,</li>
-<li>den tatsächlich gespielten Zug in der Analyse hervorgehoben sehen.</li>
+<li>den tatsächlich gespielten Zug in der Analyse hervorgehoben sehen,</li>
+<li>mit dem Befehl <code>ss</code> unter den Stellungen des Matches suchen (z. B.: <code>ss E&gt;80</code>); <em>Esc</em> kehrt danach zum betrachteten Zug zurück (siehe Such-Panel).</li>
 </ul>
 <p>Die zuletzt besuchte Stellung in jedem Match wird gespeichert und automatisch wiederhergestellt. Drücken Sie <em>CTRL-Tab</em> oder führen Sie den Befehl <code>match</code> aus, um das Panel ein- oder auszublenden.</p>
 <p>Die Schaltfläche <strong>⊕</strong> einer Zeile reichert dieses Match aus einer Datei an. Dahinter steckt nichts Neues: dasselbe Match in einem anderen Format erneut zu importieren reichert es bereits an Ort und Stelle an — der kanonische Hash erkennt, dass es dasselbe Match ist, und die Analysen und Kommentare der zweiten Datei ergänzen die erste. Was die Schaltfläche bringt, ist, dass man sie findet: niemand errät, dass ein Import auch eine Anreicherung ist. Der folgende Bericht sagt, welches von beiden geschehen ist — „angereichert: 1“ statt „importiert: 1“.</p>
@@ -942,6 +944,10 @@ export default {
 <tr>
 <td>r</td>
 <td>Eine zufällige Position laden.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Die Ergebnisse einer aus einer Sammlung oder einem Match gestarteten <code>ss</code>-Suche verlassen: zurück zur Sammlung oder zum Match auf dem betrachteten Zug.</td>
 </tr>
 </tbody>
 </table>
@@ -1769,7 +1775,7 @@ export default {
 </tr>
 <tr>
 <td>ss</td>
-<td>Sucht unter den aktuell gefilterten Positionen.</td>
+<td>Unter den angezeigten Stellungen suchen: aktuelle Ergebnisse, geöffnete Sammlung oder durchgesehenes Match.</td>
 </tr>
 </tbody>
 </table>

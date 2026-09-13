@@ -7,7 +7,7 @@
     import { formatDateTime } from '../utils/format.js';
     import { onMount, onDestroy, tick, untrack } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
-    import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
+    import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore, MAX_SEARCH_HISTORY } from '../stores/searchHistoryStore';
     import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, describeCommandTokens } from '../services/searchFilterService.js';
@@ -15,6 +15,7 @@
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
+    import { displayedPositionIDs } from '../services/positionService.js';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
@@ -413,9 +414,17 @@
         searchHistoryStore.update((h) => [entry, ...h].slice(0, MAX_SEARCH_HISTORY));
         SaveSearchHistory(searchCommand, JSON.stringify($positionStore), excludePositionJSON).catch((err) => logger.error('Error saving search history:', err));
 
+        // The box searches in the list on screen, by the same rule as `ss` (#410): the
+        // machine says which list that is — a match or a collection left behind the query
+        // board, or positionsStore. An empty list is refused rather than sent as '', which
+        // the backend reads as "no restriction" and answers with the whole library.
         let restrictToPositionIDs = '';
         if (searchInCurrentResults) {
-            restrictToPositionIDs = ($positionsStore?.ids || []).filter((id) => id != null).join(',');
+            restrictToPositionIDs = displayedPositionIDs().join(',');
+            if (!restrictToPositionIDs) {
+                statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
+                return;
+            }
         }
 
         onLoadPositionsByFilters({

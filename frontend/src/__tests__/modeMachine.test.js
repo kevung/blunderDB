@@ -63,7 +63,8 @@ import {
     sendPositionToEval,
     toggleMatchMode,
     handleOpenCollection,
-    exitCollectionMode
+    exitCollectionMode,
+    leaveSubSearchResults
 } from '../services/modeMachine.js';
 import * as positionService from '../services/positionService.js';
 
@@ -166,12 +167,13 @@ describe('positionService ré-exporte les transitions', () => {
         expect(positionService.handleOpenCollection).toBe(handleOpenCollection);
         expect(positionService.enterTranscribeMode).toBe(enterTranscribeMode);
         expect(positionService.exitTranscribeMode).toBe(exitTranscribeMode);
+        expect(positionService.leaveSubSearchResults).toBe(leaveSubSearchResults);
     });
 
     test('modeState expose { mode, savedContext } et démarre vide', () => {
         expect(modeState()).toEqual({
             mode: MODE.NORMAL,
-            savedContext: { beforeTranscribe: null, beforeEval: null, beforeEdit: null, evalSeed: null, lastEvalBoard: null }
+            savedContext: { beforeTranscribe: null, beforeEval: null, beforeEdit: null, beforeSubSearch: null, evalSeed: null, lastEvalBoard: null }
         });
     });
 });

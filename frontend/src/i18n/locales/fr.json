@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "Aucun résultat actuel dans lequel rechercher.",
         "searchRequiresMode": "La recherche nécessite le mode NORMAL ou EDIT.",
         "subSearchModeUnavailable": "La recherche dans les résultats n'est pas disponible dans le mode actuel.",
+        "searchWouldReplaceCollection": "s cherche dans toute la bibliothèque et remplacerait la collection affichée : utilisez ss pour chercher dans la collection.",
+        "searchWouldReplaceMatch": "s cherche dans toute la bibliothèque et remplacerait le match affiché : utilisez ss pour chercher dans le match.",
         "tagsAdded": "Étiquettes ajoutées : {tags}",
         "unknown": "Commande inconnue : {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "Aucun fichier importable trouvé dans le dossier",
         "noMatchesInDb": "Aucun match dans la base de données",
         "noMatchingPositions": "Aucune position correspondante trouvée",
+        "subSearchInCollection": "Résultats dans la collection — Échap pour y revenir.",
+        "subSearchInMatch": "Résultats dans le match — Échap pour revenir au coup étudié.",
         "noMovesInMatch": "Aucun coup trouvé dans ce match",
         "noPositionToPasteHint": "Aucune position à coller (utilisez Ctrl-C pour copier d'abord une position)",
         "noPositionToPaste": "Aucune position à coller",

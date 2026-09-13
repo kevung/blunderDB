@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "Ei nykyisiä tuloksia, joista hakea.",
         "searchRequiresMode": "Haku vaatii NORMAL- tai EDIT-tilan.",
         "subSearchModeUnavailable": "Tuloksista hakeminen ei ole käytettävissä nykyisessä tilassa.",
+        "searchWouldReplaceCollection": "s hakee koko kirjastosta ja korvaisi näytetyn kokoelman: käytä ss-komentoa hakeaksesi kokoelman sisältä.",
+        "searchWouldReplaceMatch": "s hakee koko kirjastosta ja korvaisi näytetyn ottelun: käytä ss-komentoa hakeaksesi ottelun sisältä.",
         "tagsAdded": "Tunnisteet lisätty: {tags}",
         "unknown": "Tuntematon komento: {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "Kansiosta ei löytynyt tuotavia tiedostoja",
         "noMatchesInDb": "Ei otteluita tietokannassa",
         "noMatchingPositions": "Vastaavia positioita ei löytynyt",
+        "subSearchInCollection": "Tulokset kokoelman sisältä — Esc palaa siihen.",
+        "subSearchInMatch": "Tulokset ottelun sisältä — Esc palaa tarkasteltuun siirtoon.",
         "noMovesInMatch": "Tästä ottelusta ei löytynyt siirtoja",
         "noPositionToPasteHint": "Ei liitettävää positiota (kopioi positio ensin näppäimillä Ctrl-C)",
         "noPositionToPaste": "Ei liitettävää positiota",

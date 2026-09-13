@@ -30,7 +30,7 @@ import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
-import { forgetContextBeforeEval } from './modeMachine.js';
+import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
 
@@ -48,7 +48,9 @@ export {
     exitTranscribeMode,
     toggleMatchMode,
     handleOpenCollection,
-    exitCollectionMode
+    exitCollectionMode,
+    leaveSubSearchResults,
+    displayedPositionIDs
 } from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -276,6 +278,7 @@ export async function loadAllPositions({ focusId = null } = {}) {
             player2Name: ''
         });
         forgetContextBeforeEval();
+        forgetSubSearchOrigin();
         activeCollectionStore.set(null);
 
         positionsStore.setIds(ids, { reset: true });
@@ -563,6 +566,10 @@ export async function loadPositionsByFilters({
                 viewStore.addView();
             }
 
+            // Before any store moves: a sub-search run from a collection or a
+            // match remembers it, so that leaving the results returns there (#410).
+            const subSearchOrigin = noteSubSearchOrigin(Boolean(restrictToPositionIDs), Array.isArray(ids) ? ids : []);
+
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
                 isMatchMode: false,
@@ -596,6 +603,10 @@ export async function loadPositionsByFilters({
             // classement a trouvé des voisines ou des inconnues.
             if (rankedSummary) {
                 setStatusBarMessage(rankedSummary);
+            } else if (subSearchOrigin) {
+                // Say where the results come from and how to get back: the list
+                // the user was studying is no longer on screen.
+                setStatusBarMessage(tMsg(subSearchOrigin === 'MATCH' ? 'status.subSearchInMatch' : 'status.subSearchInCollection'));
             }
         } else {
             // Un classement qui ne trouve rien le dit autrement qu'une

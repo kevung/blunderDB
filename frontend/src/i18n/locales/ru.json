@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "Нет текущих результатов для поиска.",
         "searchRequiresMode": "Для поиска требуется режим NORMAL или EDIT.",
         "subSearchModeUnavailable": "Поиск по результатам недоступен в текущем режиме.",
+        "searchWouldReplaceCollection": "s ищет по всей библиотеке и заменит показанную коллекцию: используйте ss, чтобы искать внутри коллекции.",
+        "searchWouldReplaceMatch": "s ищет по всей библиотеке и заменит показанный матч (match): используйте ss, чтобы искать внутри матча.",
         "tagsAdded": "Добавлены теги: {tags}",
         "unknown": "Неизвестная команда: {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "В папке не найдено файлов для импорта",
         "noMatchesInDb": "В базе данных нет матчей",
         "noMatchingPositions": "Подходящих позиций не найдено",
+        "subSearchInCollection": "Результаты внутри коллекции — Esc возвращает к ней.",
+        "subSearchInMatch": "Результаты внутри матча (match) — Esc возвращает к изучаемому ходу.",
         "noMovesInMatch": "В этом матче не найдено ходов",
         "noPositionToPasteHint": "Нет позиции для вставки (используйте Ctrl-C, чтобы сначала скопировать позицию)",
         "noPositionToPaste": "Нет позиции для вставки",

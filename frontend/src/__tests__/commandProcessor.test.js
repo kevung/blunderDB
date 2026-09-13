@@ -710,10 +710,17 @@ describe('processCommand', () => {
     });
 
     test('s command blocked outside NORMAL/EDIT mode', () => {
-        statusBarModeStore.set('MATCH');
+        statusBarModeStore.set('EVAL');
         processCommand('s p>30');
         expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();
         expect(statusText()).toBe('Search requires NORMAL or EDIT mode.');
+    });
+
+    test('s in MATCH mode is refused and names ss (#410)', () => {
+        statusBarModeStore.set('MATCH');
+        processCommand('s p>30');
+        expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();
+        expect(statusText()).toBe('s searches the whole library and would replace the match on screen: use ss to search within the match.');
     });
 
     test('s in EDIT mode is allowed', () => {
@@ -759,8 +766,8 @@ describe('processCommand', () => {
         expect(statusText()).toBe('No current results to search in.');
     });
 
-    test('ss blocked outside NORMAL/EDIT mode', () => {
-        statusBarModeStore.set('MATCH');
+    test('ss blocked in a scratch mode other than EDIT', () => {
+        statusBarModeStore.set('EVAL');
         positionsStore.set([{ id: 1 }]);
         processCommand('ss p>30');
         expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();

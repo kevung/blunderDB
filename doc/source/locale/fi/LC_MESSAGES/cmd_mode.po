@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 01:02+0200\n"
+"POT-Creation-Date: 2026-09-13 16:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -472,8 +472,12 @@ msgid "ss"
 msgstr "ss"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Chercher parmi les positions actuellement filtrées."
-msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."
+msgid ""
+"Chercher parmi les positions affichées : résultats courants, collection "
+"ouverte ou match en cours de revue."
+msgstr ""
+"Hae näytetyistä asemista: nykyiset tulokset, avoin kokoelma tai "
+"läpikäytävä ottelu."
 
 #: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
@@ -1594,3 +1598,6 @@ msgstr "Tyhjentää komentohistorian."
 
 #~ msgid "epc"
 #~ msgstr "epc"
+
+#~ msgid "Chercher parmi les positions actuellement filtrées."
+#~ msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."

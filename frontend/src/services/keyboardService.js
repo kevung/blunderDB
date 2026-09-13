@@ -30,6 +30,7 @@ import {
     toggleEvalMode,
     togglePipcount,
     reloadAllPositions,
+    leaveSubSearchResults,
     loadRandomPosition,
     showDatesAndMetadata
 } from './positionService.js';
@@ -287,6 +288,11 @@ export function handleKeyDown(event) {
         event.stopPropagation();
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
+        } else if (!document.activeElement?.closest('.panel-wrapper')) {
+            // Escape on the board, once no field and no panel has claimed it: leave the
+            // results of an `ss` run from a collection or a match, back to that list
+            // (#410). The panels keep their own tiered Escape — deselect, close — first.
+            leaveSubSearchResults();
         }
     } else if (event.ctrlKey && letter('n')) {
         newDatabase();

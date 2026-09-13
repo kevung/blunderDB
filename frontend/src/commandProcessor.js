@@ -11,6 +11,7 @@ import { logger } from './utils/logger.js';
 // NOTE: status messages are emitted as tMsg() descriptors so the status bar can
 // re-translate them live when the language changes.
 import { tMsg } from './i18n';
+import { displayedPositionIDs } from './services/positionService.js';
 // The search-token grammar (parseSearchTokens) and its quote-stripping helper
 // live in searchFilterService.js, shared with the "retour" replay path
 // (parseSearchCommand) — see that module's doc comment and #203. Re-exported
@@ -92,9 +93,9 @@ export function processCommand(command) {
         const n = parseInt(command.split(/\s+/)[1], 10);
         callbacks.onLoadBlunders?.(Number.isInteger(n) && n > 0 ? n : undefined);
     } else if (command === 'ss' || command.startsWith('ss ')) {
-        handleSearchCommand(command, positions, { isSubSearch: true });
+        handleSearchCommand(command, { isSubSearch: true });
     } else if (command === 's' || command.startsWith('s ')) {
-        handleSearchCommand(command, positions, { isSubSearch: false });
+        handleSearchCommand(command, { isSubSearch: false });
     } else if (command === 'history' || command === 'hi') {
         callbacks.focusSearchTab?.();
     } else if (command === 'match' || command === 'ma') {
@@ -165,23 +166,35 @@ export function processCommand(command) {
 }
 
 // Handles both `s...` (search) and `ss...` (sub-search, restricted to the IDs of the
-// currently displayed positions) — same body throughout, differing only in the command
-// prefix length, the bare-command spelling, whether positions must be non-empty first, and
-// which IDs (if any) get sent as restrictToPositionIDs.
-function handleSearchCommand(command, positions, { isSubSearch }) {
+// displayed list) — same body throughout, differing only in the command prefix length, the
+// bare-command spelling, whether the displayed list must be non-empty first, and which IDs
+// (if any) get sent as restrictToPositionIDs.
+//
+// `ss` searches in the list on screen whatever the path (#410): a collection's positions,
+// a match's positions — typed straight away or after TAB — or positionsStore otherwise.
+// The machine states that list (displayedPositionIDs); this function never guesses it.
+// `s` stays refused in a collection and in a match: it searches the whole library and
+// would replace the list the user is studying, so the refusal says so and names `ss`.
+function handleSearchCommand(command, { isSubSearch }) {
     const mode = get(statusBarModeStore);
-    if (mode !== 'NORMAL' && mode !== 'EDIT') {
+    if (!isSubSearch && (mode === 'COLLECTION' || mode === 'MATCH')) {
+        statusBarTextStore.set(tMsg(mode === 'MATCH' ? 'commands.searchWouldReplaceMatch' : 'commands.searchWouldReplaceCollection'));
+        return;
+    }
+    const allowed = isSubSearch ? ['NORMAL', 'EDIT', 'COLLECTION', 'MATCH'] : ['NORMAL', 'EDIT'];
+    if (!allowed.includes(mode)) {
         statusBarTextStore.set(tMsg(isSubSearch ? 'commands.subSearchModeUnavailable' : 'commands.searchRequiresMode'));
         return;
     }
 
     let currentIDs = '';
     if (isSubSearch) {
-        if (positions.length === 0) {
+        const displayed = displayedPositionIDs();
+        if (displayed.length === 0) {
             statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
             return;
         }
-        currentIDs = positions.ids.filter((id) => id != null).join(',');
+        currentIDs = displayed.join(',');
     }
 
     const searchHistoryEntry = {

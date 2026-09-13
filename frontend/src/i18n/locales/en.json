@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "No current results to search in.",
         "searchRequiresMode": "Search requires NORMAL or EDIT mode.",
         "subSearchModeUnavailable": "Search in results is not available in current mode.",
+        "searchWouldReplaceCollection": "s searches the whole library and would replace the collection on screen: use ss to search within the collection.",
+        "searchWouldReplaceMatch": "s searches the whole library and would replace the match on screen: use ss to search within the match.",
         "tagsAdded": "Tags added: {tags}",
         "unknown": "Unknown command: {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "No importable files found in folder",
         "noMatchesInDb": "No matches in database",
         "noMatchingPositions": "No matching positions found",
+        "subSearchInCollection": "Results within the collection — Esc returns to it.",
+        "subSearchInMatch": "Results within the match — Esc returns to the move studied.",
         "noMovesInMatch": "No moves found in this match",
         "noPositionToPasteHint": "No position to paste (use Ctrl-C to copy a position first)",
         "noPositionToPaste": "No position to paste",

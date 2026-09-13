@@ -204,7 +204,8 @@ export default {
 </div>
 <h3>Pannello Ricerca</h3>
 <p>Il pannello <strong>Ricerca</strong> (<em>CTRL-F</em> o <em>TAB</em>) permette di filtrare le posizioni secondo criteri liberamente combinabili: struttura delle pedine, tipo di decisione di cubo, magnitudo dell'errore, date, tag, ecc. Il tasto <em>TAB</em> apre contemporaneamente il pannello di ricerca e l'editor di posizione, consentendo di definire una struttura di pedine da cercare direttamente sul board.</p>
-<p>Per affinare una ricerca tra le posizioni attualmente filtrate, usare il comando <code>ss</code> seguito da filtri (es.: <code>ss nc</code>, <code>ss E&gt;40</code>). Il pannello di ricerca offre anche una casella di spunta <em>Cerca nei risultati correnti</em> per la stessa funzionalità.</p>
+<p>Per cercare tra le posizioni visualizzate, usare il comando <code>ss</code> seguito da filtri (es.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> cerca nell'elenco sullo schermo: i risultati della ricerca precedente, la collezione aperta o le posizioni del match in revisione, sia che il comando venga digitato direttamente sia dal pannello di ricerca (<em>TAB</em>). La casella di spunta <em>Cerca nei risultati correnti</em> del pannello segue la stessa regola. In una collezione e in un match, <code>s</code> viene rifiutato: cercherebbe in tutta la libreria e sostituirebbe l'elenco visualizzato.</p>
+<p>Dai risultati di una ricerca <code>ss</code> avviata da una collezione o da un match si esce con <em>Esc</em>, con il focus sulla scacchiera: blunderDB torna alla collezione intera, o al match sulla mossa studiata, e alla posizione lasciata.</p>
 <p>Il pannello offre un controllo esplicito del <strong>tipo di decisione</strong> ricercato: <em>Indifferente</em> (nessun filtro), <em>Pedine</em> (decisioni di mossa) o <em>Cubo</em> (decisioni di cubo). Quando è selezionato <em>Cubo</em>, un secondo elenco precisa il sotto-tipo: <em>Tutti</em>, <em>Raddoppio / No raddoppio</em> (il giocatore di turno deve decidere se raddoppiare) o <em>Accetta / Passa</em> (risposta a un raddoppio avversario). Il controllo è sincronizzato con il board: modificare i dadi o il cubo sul board aggiorna il tipo di decisione, e viceversa. In modalità <em>Accetta / Passa</em>, il cubo è mostrato al centro del board al valore offerto; tale valore resta modificabile.</p>
 <p>La <strong>fase di gioco</strong> — apertura, mediogioco, corsa, uscita delle pedine — è un'etichetta che blunderDB calcola dalla sola tavola. Non è mai modificabile ed è cercabile tramite il token <code>ph:</code> della riga di comando (<code>ph:race</code>, ripetibile: <code>ph:race ph:bearoff</code>). Tre delle sue quattro frontiere sono quelle che GNU Backgammon usa per indirizzare le sue reti; la quarta, dove finisce l'apertura, è una convenzione di blunderDB: una posizione è ancora in apertura finché nessuno dei due campi ha mosso più di quattro pedine dai propri punti di partenza, nessuna è uscita e nessuna è sulla barra.</p>
 <div class="admonition note">
@@ -248,7 +249,7 @@ export default {
 <p>Fare riferimento a elenco dei comandi per l'elenco dei filtri disponibili.</p>
 </div>
 <h3>Pannello Raccolte</h3>
-<p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
+<p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
 <h3>Importazione: cosa viene scritto, cosa non lo è mai</h3>
 <p>Importare un match, una posizione o un altro database aggiunge ciò che manca; non sostituisce ciò che è già presente.</p>
 <ul>
@@ -268,7 +269,8 @@ export default {
 <li>passare da una partita all'altra con i tasti <em>PageUp</em> e <em>PageDown</em>,</li>
 <li>visualizzare l'analisi delle mosse (pedine e cubo) premendo <em>CTRL-L</em>,</li>
 <li>alternare tra l'analisi delle mosse di pedine e quella del cubo con il tasto <em>d</em>,</li>
-<li>vedere la mossa effettivamente giocata evidenziata nell'analisi.</li>
+<li>vedere la mossa effettivamente giocata evidenziata nell'analisi,</li>
+<li>cercare tra le posizioni del match con il comando <code>ss</code> (es.: <code>ss E&gt;80</code>); <em>Esc</em> riporta poi alla mossa studiata (vedere Pannello Ricerca).</li>
 </ul>
 <p>L'ultima posizione visitata in ciascun match viene memorizzata e ripristinata automaticamente. Premere <em>CTRL-Tab</em> o eseguire il comando <code>match</code> per mostrare o nascondere il pannello.</p>
 <p>Il pulsante <strong>⊕</strong> di una riga arricchisce quell'incontro da un file. Dietro non c'è nulla di nuovo: reimportare lo stesso incontro in un altro formato lo arricchisce già sul posto — l'impronta canonica riconosce che si tratta dello stesso incontro, e le analisi e i commenti del secondo file completano il primo. Ciò che il pulsante apporta è che lo si trova: nessuno indovina che un'importazione è anche un arricchimento. Il resoconto che segue dice quale dei due è avvenuto — «arricchiti: 1» invece di «importati: 1».</p>
@@ -942,6 +944,10 @@ export default {
 <tr>
 <td>r</td>
 <td>Carica una posizione casuale.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Uscire dai risultati di una ricerca <code>ss</code> avviata da una collezione o da un match: ritorno alla collezione, o al match sulla mossa studiata.</td>
 </tr>
 </tbody>
 </table>
@@ -1769,7 +1775,7 @@ export default {
 </tr>
 <tr>
 <td>ss</td>
-<td>Cerca tra le posizioni attualmente filtrate.</td>
+<td>Cercare tra le posizioni visualizzate: risultati correnti, collezione aperta o match in revisione.</td>
 </tr>
 </tbody>
 </table>
