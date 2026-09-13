@@ -191,7 +191,7 @@ describe('NORMAL → EDIT → NORMAL', () => {
         expect(board.board.bearoff).toEqual([15, 15]);
         expect(board.board.points.every((p) => p.checkers === 0)).toBe(true);
         expect(board.score).toEqual([7, 7]);
-        expect(modeState().savedContext.beforeEdit, 'pas de partie à restaurer').toBeNull();
+        expect(modeState().savedContext.beforeEdit.mode, 'pas de partie à restaurer').toBe(MODE.NORMAL);
     });
 
     test('enterEditMode sans base ouverte est un no-op', async () => {
@@ -238,7 +238,7 @@ describe('MATCH → EDIT → MATCH (bug 2 : l’onglet recherche ne perd pas la 
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
         expect(SaveLastVisitedPosition).toHaveBeenCalledWith(7, 1);
         expect(get(matchContextStore).isMatchMode).toBe(false);
-        expect(modeState().savedContext.beforeEdit).toMatchObject({ isMatchMode: true, matchID: 7, currentIndex: 1 });
+        expect(modeState().savedContext.beforeEdit).toMatchObject({ mode: MODE.MATCH, matchContext: { isMatchMode: true, matchID: 7, currentIndex: 1 } });
         // C’est loadAllPositions() qui, en résolvant, basculait l’onglet sur
         // 'matches' et écrasait le mode : il ne doit pas être appelé.
         expect(ListPositionIDs).not.toHaveBeenCalled();
@@ -271,7 +271,7 @@ describe('MATCH → EDIT → MATCH (bug 2 : l’onglet recherche ne perd pas la 
         matchContextStore.set({ ...NO_MATCH });
         setLibrary();
         await enterEditMode();
-        expect(modeState().savedContext.beforeEdit).toBeNull();
+        expect(modeState().savedContext.beforeEdit.mode).toBe(MODE.NORMAL);
         await exitEditMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
@@ -395,7 +395,7 @@ describe('EVAL → EDIT : l’automate quitte Eval avant d’entrer en recherche
 
         await enterEditMode();
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
-        expect(modeState().savedContext.beforeEdit).toMatchObject({ isMatchMode: true, matchID: 7, currentIndex: 1 });
+        expect(modeState().savedContext.beforeEdit).toMatchObject({ mode: MODE.MATCH, matchContext: { isMatchMode: true, matchID: 7, currentIndex: 1 } });
 
         await exitEditMode();
         expect(get(statusBarModeStore)).toBe(MODE.MATCH);
@@ -675,15 +675,128 @@ describe('COLLECTION → NORMAL', () => {
         expect(get(collectionPositionsStore)).toEqual([]);
         expect(ListPositionIDs).toHaveBeenCalledTimes(2);
     });
+});
 
-    test('enterEditMode depuis COLLECTION passe par exitCollectionMode', async () => {
-        handleOpenCollection({ name: 'Backgames' }, [makePosition(2)]);
-        ListPositionIDs.mockResolvedValueOnce([1, 2]);
+// ── COLLECTION → brouillon → COLLECTION (#406) ────────────────────────────────
+
+describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon ne fait pas quitter la collection)', () => {
+    const COLLECTION = Object.freeze({ id: 4, name: 'Backgames' });
+
+    /**
+     * Ce que fait CollectionPanel.openCollection() : les trois stores du
+     * panneau, puis handleOpenCollection. Le panneau est ouvert (onglet
+     * Collections). Avec `index`, l'effet de navigation d'App.svelte a déplacé
+     * l'utilisateur sur une autre position : un clone sur le damier.
+     *
+     * @param {number | null} [index]
+     */
+    function openCollection(index = null) {
+        const positions = [makePosition(2), makePosition(3), makePosition(5)];
+        selectedCollectionStore.set(COLLECTION);
+        collectionPositionsStore.set(positions);
+        activeCollectionStore.set(COLLECTION);
+        openPanel(PANEL.COLLECTION);
+        handleOpenCollection(COLLECTION, positions);
+        if (index != null) {
+            currentPositionIndexStore.set(index);
+            positionStore.set(structuredClone(positions[index]));
+        }
+        return positions;
+    }
+
+    /**
+     * La collection est intacte : mode, stores du panneau, liste, position.
+     *
+     * @param {{ index: number, id: number }} expected
+     */
+    function expectBackInCollection({ index, id }) {
+        expect(get(statusBarModeStore)).toBe(MODE.COLLECTION);
+        expect(get(activeCollectionStore)).toEqual(COLLECTION);
+        expect(get(selectedCollectionStore), 'le panneau garde sa collection sélectionnée').toEqual(COLLECTION);
+        expect(get(collectionPositionsStore).map((p) => p.id)).toEqual([2, 3, 5]);
+        expect(get(openPanels).has(PANEL.COLLECTION), 'l’automate ne ferme pas le panneau').toBe(true);
+        expect(get(positionsStore).ids).toEqual([2, 3, 5]);
+        expect(get(currentPositionIndexStore)).toBe(index);
+        expect(get(positionStore).id).toBe(id);
+        expect(get(positionStore).board.bearoff, 'jamais le damier vierge de la requête').toEqual([3, 3]);
+        expect(ListPositionIDs, 'la bibliothèque n’est pas rechargée').not.toHaveBeenCalled();
+    }
+
+    test('Recherche : entrer puis sortir revient à la même collection, à la même position', async () => {
+        openCollection(1);
 
         await enterEditMode();
-
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
-        expect(get(activeCollectionStore)).toBeNull();
-        expect(get(positionStore).board.bearoff).toEqual([15, 15]);
+        expect(get(positionStore).board.bearoff, 'le damier de la requête').toEqual([15, 15]);
+
+        await exitEditMode();
+
+        expectBackInCollection({ index: 1, id: 3 });
+    });
+
+    test('Recherche ouverte aussitôt la collection ouverte : la position de la collection n’est pas vidée avec le damier', async () => {
+        // handleOpenCollection pose la position même de la liste sur le damier,
+        // sans clone : vider le damier en place viderait l'enregistrement.
+        const positions = openCollection();
+
+        await enterEditMode();
+        expect(positions[0].board.bearoff).toEqual([3, 3]);
+        await exitEditMode();
+
+        expectBackInCollection({ index: 0, id: 2 });
+    });
+
+    test('Eval : entrer puis sortir revient à la même collection, à la même position (analyse rechargée)', async () => {
+        openCollection(1);
+
+        await enterEvalMode();
+        expect(get(statusBarModeStore)).toBe(MODE.EVAL);
+
+        await exitEvalMode();
+
+        expectBackInCollection({ index: 1, id: 3 });
+        expect(LoadAnalysis).toHaveBeenCalledWith(3);
+    });
+
+    test('Transcription : entrer puis sortir revient à la même collection', async () => {
+        openCollection(1);
+
+        await enterTranscribeMode();
+        await exitTranscribeMode();
+
+        expectBackInCollection({ index: 1, id: 3 });
+    });
+
+    test('Recherche puis Eval, enchaînement d’App.svelte : la collection survit aux deux brouillons', async () => {
+        openCollection(1);
+        await enterEditMode();
+
+        exitEditMode(); // sans await, comme App.svelte
+        await enterEvalMode();
+        expect(modeState().savedContext.beforeEval.mode).toBe(MODE.COLLECTION);
+        await exitEvalMode();
+
+        expectBackInCollection({ index: 1, id: 3 });
+    });
+
+    test('une collection qui n’est plus active à la sortie (mise à la corbeille) n’est pas reprise : NORMAL', async () => {
+        openCollection(1);
+        await enterEvalMode();
+        activeCollectionStore.set(null);
+
+        await exitEvalMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+    });
+
+    test('depuis une partie, la sortie ne ramène pas une collection ouverte avant la partie', async () => {
+        openCollection(1);
+        setMatch(1);
+        activeCollectionStore.set(null);
+
+        await enterEditMode();
+        await exitEditMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.MATCH);
     });
 });
