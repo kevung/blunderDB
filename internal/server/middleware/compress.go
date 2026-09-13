@@ -95,9 +95,30 @@ func (c *compressWriter) decide() {
 		c.Header().Del("Content-Length")
 		c.Header().Set("Content-Encoding", "gzip")
 		c.Header().Add("Vary", "Accept-Encoding")
-		c.gz = gzip.NewWriter(c.ResponseWriter)
+		// The level is not a tuning knob, it is what keeps the first property
+		// above worth having. A listing is flushed after every record, and
+		// from Go 1.27 the rewritten encoders behind levels 1-6 (and so
+		// DefaultCompression) no longer find matches across those flushes: a
+		// flush of fewer than 128 bytes is written as a Huffman-only (or
+		// stored) block and resets the encoder's history (deflateFast in
+		// compress/flate), a record is ~70 bytes, and the "compressed"
+		// listing comes out LARGER than the plain one —
+		// 108-115 % on 1.27.1, against 13-18 % on 1.26.8 (measured 2026-09-13,
+		// #412). Levels 7-9 kept the chained encoder, which does: 13-20 % on
+		// 1.27.1. On the 1.26 this repository builds with today, the default
+		// still works and level 7 only matches it (13-17 %), for more CPU on
+		// varied records — 5.3 µs against 3.4 µs per record, best of five.
+		// That is the price of not shipping listings that grow the day
+		// GO_VERSION moves to 1.27 (#409); level 9 buys no ratio for up to six
+		// times the CPU. TestCompress_GzipsARepetitiveListing is what notices if
+		// a future release moves that line again.
+		c.gz, _ = gzip.NewWriterLevel(c.ResponseWriter, gzipLevel)
 	})
 }
+
+// gzipLevel: see decide. NewWriterLevel only errors on a level outside
+// [-2, 9], which a constant cannot be.
+const gzipLevel = 7
 
 func (c *compressWriter) WriteHeader(status int) {
 	c.decide()
