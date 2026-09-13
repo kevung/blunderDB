@@ -166,6 +166,9 @@ func TestDirectionExport_TheAllowListIsExplicit(t *testing.T) {
 		}
 		columns[name] = true
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	for _, c := range exportedDirectionColumns {
 		if !columns[c] {
 			t.Errorf("the allow-list names %q, which the table does not have", c)
@@ -211,6 +214,9 @@ func TestDirectionExport_TheAllowListIsExplicit(t *testing.T) {
 			t.Fatal(err)
 		}
 		eventColumns[name] = true
+	}
+	if err := erows.Err(); err != nil {
+		t.Fatal(err)
 	}
 	if len(eventColumns) != len(exportedEventColumns) {
 		t.Errorf("direction_event has %d columns and the allow-list names %d", len(eventColumns), len(exportedEventColumns))

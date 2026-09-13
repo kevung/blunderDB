@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -95,7 +96,7 @@ func (d *Database) copyDirection(ctx context.Context, tx *sql.Tx, src, newID int
 		SELECT tournament_id, format_version, engine_version, state, config, created_at, updated_at
 		  FROM direction WHERE tournament_id = ?`, src).
 		Scan(&tournamentID, &formatVersion, &engineVersion, &state, &config, &createdAt, &updatedAt)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	}
 	if err != nil {

@@ -295,30 +295,8 @@ func (d *Database) UnattachedMatches(tournamentID int64) ([]SlotSuggestion, erro
 	}
 	st := dir.State()
 
-	d.mu.RLock()
-	rows, err := d.db.QueryContext(ctx, `
-		SELECT id, COALESCE(player1_name,''), COALESCE(player2_name,''),
-		       COALESCE(match_length,0), COALESCE(match_date,'')
-		  FROM match
-		 WHERE tournament_id = ? AND (direction_match_id IS NULL OR direction_match_id = '')
-		 ORDER BY id`, tournamentID)
+	out, err := d.unattachedMatchRows(ctx, tournamentID)
 	if err != nil {
-		d.mu.RUnlock()
-		return nil, fmt.Errorf("listing unattached matches: %w", err)
-	}
-	var out []SlotSuggestion
-	for rows.Next() {
-		var s SlotSuggestion
-		if err := rows.Scan(&s.MatchID, &s.Player1, &s.Player2, &s.Length, &s.Date); err != nil {
-			rows.Close()
-			d.mu.RUnlock()
-			return nil, err
-		}
-		out = append(out, s)
-	}
-	rows.Close()
-	d.mu.RUnlock()
-	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 	if st == nil {
@@ -345,6 +323,36 @@ func (d *Database) UnattachedMatches(tournamentID int64) ([]SlotSuggestion, erro
 				break
 			}
 		}
+	}
+	return out, nil
+}
+
+// unattachedMatchRows reads the Matches of a Tournament that fill no Slot. The read lock and
+// the cursor are released together, by defer, before the caller goes on to slotMatches: the
+// lock is not reentrant, and a cursor left open would outlive the read it belongs to.
+func (d *Database) unattachedMatchRows(ctx context.Context, tournamentID int64) ([]SlotSuggestion, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	rows, err := d.db.QueryContext(ctx, `
+		SELECT id, COALESCE(player1_name,''), COALESCE(player2_name,''),
+		       COALESCE(match_length,0), COALESCE(match_date,'')
+		  FROM match
+		 WHERE tournament_id = ? AND (direction_match_id IS NULL OR direction_match_id = '')
+		 ORDER BY id`, tournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("listing unattached matches: %w", err)
+	}
+	defer rows.Close()
+	var out []SlotSuggestion
+	for rows.Next() {
+		var s SlotSuggestion
+		if err := rows.Scan(&s.MatchID, &s.Player1, &s.Player2, &s.Length, &s.Date); err != nil {
+			return nil, err
+		}
+		out = append(out, s)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return out, nil
 }

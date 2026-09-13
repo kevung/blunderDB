@@ -276,16 +276,9 @@ func TestTranscribeFromSlotInheritsTheHeaderAndReservesTheSlot(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	blob, err := RawConn(d).Query(`SELECT document FROM transcription WHERE id = ?`, st.ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer blob.Close()
 	var document string
-	if blob.Next() {
-		if err := blob.Scan(&document); err != nil {
-			t.Fatal(err)
-		}
+	if err := RawConn(d).QueryRow(`SELECT document FROM transcription WHERE id = ?`, st.ID).Scan(&document); err != nil {
+		t.Fatal(err)
 	}
 	for _, want := range []string{"Open de Lyon", string(m.ID)} {
 		if !strings.Contains(document, want) {
