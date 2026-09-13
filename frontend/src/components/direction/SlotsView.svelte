@@ -80,7 +80,7 @@
                         {#if s.done}
                             {s.winnerName}
                             {#if s.scoreA || s.scoreB}
-                                {s.scoreA}–{s.scoreB}
+                                {s.scoreA || 0}–{s.scoreB || 0}
                             {/if}
                         {/if}
                     </td>

@@ -53,7 +53,8 @@
     function outcome(m) {
         if (m.skipped) return $t('direction.bracket.skipped');
         if (m.walkover) return $t('direction.bracket.walkover');
-        if (m.done && m.scoreA + m.scoreB > 0) return `${m.scoreA}–${m.scoreB}`;
+        // Un score nul est omis par le backend (`omitempty`) : un 7–0 arrive sans `scoreB`.
+        if (m.done && (m.scoreA || 0) + (m.scoreB || 0) > 0) return `${m.scoreA || 0}–${m.scoreB || 0}`;
         if (m.running) return $t('direction.bracket.running');
         return '';
     }
