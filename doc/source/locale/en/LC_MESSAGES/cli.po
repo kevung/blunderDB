@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 14:39+0200\n"
+"POT-Creation-Date: 2026-09-13 11:41+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -304,8 +304,8 @@ msgid "repair"
 msgstr "repair"
 
 #: ../../source/cli.rst:1
-msgid "Recalcule les colonnes scalaires tirées de chaque analyse."
-msgstr "Recomputes the scalar columns derived from each analysis."
+msgid "Recalcule ce que la base dérive de ce qu'elle stocke."
+msgstr "Recomputes what the database derives from what it stores."
 
 #: ../../source/cli.rst:1
 msgid "delete"
@@ -376,8 +376,8 @@ msgstr "Create a new database file with optional metadata."
 #: ../../source/cli.rst:983 ../../source/cli.rst:1028 ../../source/cli.rst:1143
 #: ../../source/cli.rst:1288 ../../source/cli.rst:1429
 #: ../../source/cli.rst:1498 ../../source/cli.rst:1532
-#: ../../source/cli.rst:1666 ../../source/cli.rst:1704
-#: ../../source/cli.rst:1741 ../../source/cli.rst:1771
+#: ../../source/cli.rst:1666 ../../source/cli.rst:1707
+#: ../../source/cli.rst:1761 ../../source/cli.rst:1791
 msgid "**Options:**"
 msgstr "**Options:**"
 
@@ -414,8 +414,8 @@ msgstr ""
 "directories are created as needed."
 
 #: ../../source/cli.rst:124 ../../source/cli.rst:1201 ../../source/cli.rst:1314
-#: ../../source/cli.rst:1680 ../../source/cli.rst:1724
-#: ../../source/cli.rst:1783
+#: ../../source/cli.rst:1680 ../../source/cli.rst:1742
+#: ../../source/cli.rst:1803
 msgid "**Exemple:**"
 msgstr "**Example:**"
 
@@ -774,7 +774,7 @@ msgstr ""
 #: ../../source/cli.rst:1109 ../../source/cli.rst:1356
 #: ../../source/cli.rst:1406 ../../source/cli.rst:1434
 #: ../../source/cli.rst:1514 ../../source/cli.rst:1587
-#: ../../source/cli.rst:1750 ../../source/cli.rst:1812
+#: ../../source/cli.rst:1770 ../../source/cli.rst:1832
 msgid "**Exemples:**"
 msgstr "**Examples:**"
 
@@ -916,7 +916,7 @@ msgstr "**Main options:**"
 #: ../../source/cli.rst:441 ../../source/cli.rst:822 ../../source/cli.rst:1145
 #: ../../source/cli.rst:1431 ../../source/cli.rst:1500
 #: ../../source/cli.rst:1534 ../../source/cli.rst:1668
-#: ../../source/cli.rst:1706 ../../source/cli.rst:1743
+#: ../../source/cli.rst:1709 ../../source/cli.rst:1763
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Database (required)."
 
@@ -2865,29 +2865,37 @@ msgstr ""
 " interrupted compaction."
 
 #: ../../source/cli.rst:1694
-msgid "repair — Recalculer les colonnes d'analyse"
-msgstr "repair — Recompute the analysis columns"
+msgid "repair — Recalculer ce qui est dérivé"
+msgstr "repair — Recompute what is derived"
 
 #: ../../source/cli.rst:1696
 msgid ""
-"Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse "
-"elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas"
-" touchées : ce sont les valeurs qu'on en avait tirées qui sont refaites."
+"Recalcule ce que la base tire de ce qu'elle stocke : les colonnes "
+"scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
+"ne sont qu'une projection ; la phase et le type de jeu de chaque position"
+" à partir de son damier ; et la sentinelle de Crawford de chaque score à "
+"partir du match d'où la position vient. Les analyses ne sont pas touchées"
+" : ce sont les valeurs qu'on en avait tirées qui sont refaites."
 msgstr ""
-"Recomputes the scalar columns of every analysis from the analysis itself,"
-" of which they are only a projection. The analyses are not touched: what "
-"is redone are the values that had been derived from them."
+"Recomputes what the database derives from what it stores: the scalar "
+"columns of every analysis from the analysis itself, of which they are "
+"only a projection; each position's phase and game type from its board; "
+"and the Crawford sentinel of every score from the match the position came"
+" from. The analyses are not touched: what is redone are the values that "
+"had been derived from them."
 
-#: ../../source/cli.rst:1707
+#: ../../source/cli.rst:1710
 #, no-python-brace-format
 msgid ""
-"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
-"(``{\"repaired\"}``, le nombre de lignes réellement changées)."
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
+"compteur par passe : ``repaired`` (colonnes d'analyse), ``phases`` "
+"(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
+"le nombre de lignes réellement changées."
 msgstr ""
 "``--format`` — Output format: ``text`` (default) or ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1710
+#: ../../source/cli.rst:1715
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -2909,40 +2917,70 @@ msgstr ""
 "match's moves. Correcting the reading changes nothing in the rows already"
 " written; this command redoes them."
 
-#: ../../source/cli.rst:1720
+#: ../../source/cli.rst:1725
+msgid ""
+"La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
+"``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
+"``0`` signifie « un point à faire, la Crawford est derrière ». Tant que "
+"les importeurs n'ont pas écrit cette distinction, toute position post-"
+"Crawford a été enregistrée comme une position de Crawford, donc lue "
+"videau mort — là où le poursuivant double en réalité à la première "
+"occasion. Corriger le score change le hachage de la position : la ligne "
+"est donc réhachée, et fusionnée avec sa jumelle correcte si la base en "
+"tient déjà une — l'analyse, les commentaires, les collections, les cartes"
+" Anki et leur journal de révision, les coups du match et les entrées de "
+"la corbeille qui la nomment suivent la ligne survivante. Une position "
+"qu'aucun match ne désigne est laissée telle quelle : rien ne contredit ce"
+" que son score annonce."
+msgstr ""
+"The Crawford pass, for its part, touches the positions themselves. A "
+"score of ``1`` means “one point to go, and this game IS the Crawford "
+"game”; ``0`` means “one point to go, Crawford behind us”. Until the "
+"importers wrote that distinction, every post-Crawford position was "
+"recorded as a Crawford one, and therefore read with a dead cube — where "
+"the trailer in fact doubles at the first opportunity. Correcting the "
+"score changes the position's hash: the row is therefore rehashed, and "
+"merged with its correct twin if the database already holds one — the "
+"analysis, the comments, the collections, the Anki cards and their review "
+"journal, the match moves and the trash entries that name it follow the "
+"surviving row. A position no match points at is left as it is: nothing "
+"contradicts what its score announces."
+
+#: ../../source/cli.rst:1737
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
-"colonnes d'analyse de tout le monde à la simple ouverture d'une base "
-"n'est pas quelque chose qu'un outil doit faire dans le dos de son "
-"utilisateur."
+"colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
+"simple ouverture d'une base n'est pas quelque chose qu'un outil doit "
+"faire dans le dos de son utilisateur."
 msgstr ""
 "Nothing triggers it automatically, and that is deliberate: rewriting "
-"everyone's analysis columns on the mere act of opening a database is not "
-"something a tool should do behind its user's back."
+"everyone's analysis columns, or rehashing positions, on the mere act of "
+"opening a database is not something a tool should do behind its user's "
+"back."
 
-#: ../../source/cli.rst:1733
+#: ../../source/cli.rst:1753
 msgid "delete — Supprimer des données"
 msgstr "delete — Delete data"
 
-#: ../../source/cli.rst:1735
+#: ../../source/cli.rst:1755
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Delete a match and all associated data (games, moves, analyses)."
 
-#: ../../source/cli.rst:1744
+#: ../../source/cli.rst:1764
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Delete type: ``match`` (required)."
 
-#: ../../source/cli.rst:1745
+#: ../../source/cli.rst:1765
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID of the item to delete (required)."
 
-#: ../../source/cli.rst:1746
+#: ../../source/cli.rst:1766
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Delete without asking for confirmation."
 
-#: ../../source/cli.rst:1747
+#: ../../source/cli.rst:1767
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2951,11 +2989,11 @@ msgstr ""
 "``--format`` — Output format: ``text`` (default) or ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1759
+#: ../../source/cli.rst:1779
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Probing a daemon"
 
-#: ../../source/cli.rst:1761
+#: ../../source/cli.rst:1781
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -2969,7 +3007,7 @@ msgstr ""
 "otherwise — storage unreachable, stale schema, or nothing listening at "
 "the address. No database file is opened."
 
-#: ../../source/cli.rst:1773
+#: ../../source/cli.rst:1793
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -2979,13 +3017,13 @@ msgstr ""
 "else ``:8080``). An address without a host (``:8080``) or with a wildcard"
 " host (``0.0.0.0``, ``[::]``) is probed on the loopback interface."
 
-#: ../../source/cli.rst:1776
+#: ../../source/cli.rst:1796
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — Give up after this long (``2s`` by default)."
 
-#: ../../source/cli.rst:1778
+#: ../../source/cli.rst:1798
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -2997,7 +3035,7 @@ msgstr ""
 "``cmd/serve`` understands it too. It works just as well from a script or "
 "a systemd unit."
 
-#: ../../source/cli.rst:1792
+#: ../../source/cli.rst:1812
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -3005,11 +3043,11 @@ msgstr ""
 "On failure the reason is printed, which ``docker inspect`` reproduces for"
 " an ``unhealthy`` container:"
 
-#: ../../source/cli.rst:1800
+#: ../../source/cli.rst:1820
 msgid "completion — Complétion shell"
 msgstr "completion — Shell completion"
 
-#: ../../source/cli.rst:1802
+#: ../../source/cli.rst:1822
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -3024,7 +3062,7 @@ msgstr ""
 "(``handlers()``): a new subcommand is therefore offered by completion as "
 "soon as it is wired in, with nothing to keep up to date by hand."
 
-#: ../../source/cli.rst:1826
+#: ../../source/cli.rst:1846
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -3041,11 +3079,11 @@ msgstr ""
 "committed to the repository, so completion can never drift from the "
 "subcommand table."
 
-#: ../../source/cli.rst:1834
+#: ../../source/cli.rst:1854
 msgid "version — Afficher la version"
 msgstr "version — Show the version"
 
-#: ../../source/cli.rst:1836
+#: ../../source/cli.rst:1856
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -3054,37 +3092,40 @@ msgstr ""
 "Prints blunderDB's version and the database schema version this binary "
 "writes; it is the first thing to attach to a bug report."
 
-#: ../../source/cli.rst:1845
+#: ../../source/cli.rst:1865
 msgid "Exemples de flux de travail"
 msgstr "Workflow examples"
 
-#: ../../source/cli.rst:1848
+#: ../../source/cli.rst:1868
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import a tournament directory"
 
-#: ../../source/cli.rst:1857
+#: ../../source/cli.rst:1877
 msgid "Sauvegarde régulière"
 msgstr "Regular backup"
 
-#: ../../source/cli.rst:1864
+#: ../../source/cli.rst:1884
 msgid "Analyse des erreurs"
 msgstr "Error analysis"
 
-#: ../../source/cli.rst:1876
+#: ../../source/cli.rst:1896
 msgid "Codes de retour"
 msgstr "Exit codes"
 
-#: ../../source/cli.rst:1878
+#: ../../source/cli.rst:1898
 msgid "``0`` — Succès."
 msgstr "``0`` — Success."
 
-#: ../../source/cli.rst:1879
+#: ../../source/cli.rst:1899
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:1881
+#: ../../source/cli.rst:1901
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
 
 #~ msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
 #~ msgstr "``positions`` — List of positions (limited to 10 by default)."
+
+#~ msgid "Recalcule les colonnes scalaires tirées de chaque analyse."
+#~ msgstr "Recomputes the scalar columns derived from each analysis."

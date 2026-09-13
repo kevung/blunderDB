@@ -1730,8 +1730,8 @@ comme une position de Crawford, donc lue videau mort — là où le poursuivant
 double en réalité à la première occasion. Corriger le score change le hachage
 de la position : la ligne est donc réhachée, et fusionnée avec sa jumelle
 correcte si la base en tient déjà une — l'analyse, les commentaires, les
-collections, les cartes Anki et les coups du match suivent la ligne
-survivante. Une position qu'aucun match ne désigne est laissée telle quelle :
+collections, les cartes Anki et leur journal de révision, les coups du match et
+les entrées de la corbeille qui la nomment suivent la ligne survivante. Une position qu'aucun match ne désigne est laissée telle quelle :
 rien ne contredit ce que son score annonce.
 
 Rien ne la déclenche automatiquement, et c'est voulu : réécrire les colonnes

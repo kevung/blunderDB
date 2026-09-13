@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"path/filepath"
+	"strconv"
 	"testing"
 	"time"
 
@@ -249,5 +250,106 @@ func TestRepairCrawfordSentinelMergesWithTheCorrectTwin(t *testing.T) {
 	}
 	if analysis.XGID != "correct" {
 		t.Errorf("the survivor's analysis is %q, want the one it already had", analysis.XGID)
+	}
+}
+
+// TestRepairCrawfordSentinelMergeKeepsTheDatabaseConsistent is the merge seen
+// from the file the GUI and the CLI open: the sticky marks of the merged row
+// climb onto the survivor, and no row is left pointing at the deleted one —
+// PRAGMA foreign_key_check is the judge, including on the Anki tables that
+// name a position twice (position_id and key, ADR-0042).
+func TestRepairCrawfordSentinelMergeKeepsTheDatabaseConsistent(t *testing.T) {
+	t.Parallel()
+	db, raw, games := crawfordFixture(t, "consistent.db")
+
+	correct := InitializePosition()
+	correct.Score = [2]int{domain.PostCrawford, 4}
+	correct.Dice = [2]int{6, 5}
+	correctID, err := db.SavePosition(&correct)
+	if err != nil {
+		t.Fatalf("SavePosition (correct twin): %v", err)
+	}
+	stale := InitializePosition()
+	stale.Score = [2]int{domain.Crawford, 4}
+	stale.Dice = [2]int{6, 5}
+	saved, err := db.SaveIndividualPosition(&stale)
+	if err != nil {
+		t.Fatalf("SaveIndividualPosition (stale): %v", err)
+	}
+	staleID := saved.ID
+	if staleID == correctID {
+		t.Fatal("the two away scores hashed to the same row; the fixture proves nothing")
+	}
+	attach(t, raw, games[2], staleID)
+	if _, err := raw.Exec(`UPDATE position SET flagged = 1 WHERE id = ?`, staleID); err != nil {
+		t.Fatalf("flag: %v", err)
+	}
+
+	// Both rows in one deck, the stale one reviewed there.
+	deckRes, err := raw.Exec(`INSERT INTO anki_deck (name) VALUES ('deck')`)
+	if err != nil {
+		t.Fatalf("insert deck: %v", err)
+	}
+	deckID, _ := deckRes.LastInsertId()
+	cardOf := map[int64]int64{}
+	for _, pid := range []int64{correctID, staleID} {
+		res, err := raw.Exec(
+			`INSERT INTO anki_card (deck_id, kind, key, position_id) VALUES (?, ?, CAST(? AS TEXT), ?)`,
+			deckID, domain.AnkiKindPosition, pid, pid)
+		if err != nil {
+			t.Fatalf("insert card: %v", err)
+		}
+		cardOf[pid], _ = res.LastInsertId()
+	}
+	if _, err := raw.Exec(
+		`INSERT INTO anki_review_log (card_id, deck_id, kind, key, position_id, rating)
+		 VALUES (?, ?, ?, CAST(? AS TEXT), ?, 3)`,
+		cardOf[staleID], deckID, domain.AnkiKindPosition, staleID, staleID); err != nil {
+		t.Fatalf("insert review: %v", err)
+	}
+
+	if _, err := db.RepairCrawfordSentinel(); err != nil {
+		t.Fatalf("RepairCrawfordSentinel: %v", err)
+	}
+
+	assertTableCount(t, raw, "position", 1)
+	var individual, flagged bool
+	if err := raw.QueryRow(`SELECT individually_imported, flagged FROM position WHERE id = ?`, correctID).
+		Scan(&individual, &flagged); err != nil {
+		t.Fatalf("reading marks: %v", err)
+	}
+	if !individual || !flagged {
+		t.Errorf("survivor marks individually_imported=%v flagged=%v, want both raised from the merged row", individual, flagged)
+	}
+
+	assertTableCount(t, raw, "anki_card", 1)
+	var logCard, logPosition int64
+	var logKey string
+	if err := raw.QueryRow(`SELECT card_id, position_id, key FROM anki_review_log`).
+		Scan(&logCard, &logPosition, &logKey); err != nil {
+		t.Fatalf("the review of the dropped card did not survive: %v", err)
+	}
+	if logCard != cardOf[correctID] || logPosition != correctID || logKey != strconv.FormatInt(correctID, 10) {
+		t.Errorf("review names card %d position %d key %q, want card %d position %d",
+			logCard, logPosition, logKey, cardOf[correctID], correctID)
+	}
+
+	rows, err := raw.Query(`PRAGMA foreign_key_check`)
+	if err != nil {
+		t.Fatalf("foreign_key_check: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var table string
+		var rowid sql.NullInt64
+		var parent string
+		var fkid int64
+		if err := rows.Scan(&table, &rowid, &parent, &fkid); err != nil {
+			t.Fatalf("scan foreign_key_check: %v", err)
+		}
+		t.Errorf("%s row %v points at a missing %s", table, rowid.Int64, parent)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("foreign_key_check: %v", err)
 	}
 }

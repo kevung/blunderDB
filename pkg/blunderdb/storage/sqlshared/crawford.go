@@ -2,10 +2,14 @@ package sqlshared
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"sort"
+	"strconv"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -277,13 +281,25 @@ func rehashOutOfCrawford(ctx context.Context, db Execer, scope string, positions
 // MergePositionInto moves everything attached to the duplicate position dupID
 // onto keepID — the row the Zobrist index already holds — and deletes dupID.
 //
-// Match moves, collection memberships, Anki cards and their journal, and
-// comments follow the position; an analysis follows only when keepID has none
-// (there is one per position, and the held row's own wins); the sticky marks
-// (individually_imported, flagged — ADR-0001, ADR-0006) are raised on keepID
-// when dupID carried them, and never lowered. Whatever cannot be re-pointed —
-// a collection keepID is already in, a deck it already has a card in — is
-// deleted first and goes with dupID.
+// What hangs off a position, and what each does in the merge:
+//
+//   - match moves and comments follow the position;
+//   - collection memberships follow it, except in a collection keepID is
+//     already in, where the duplicate membership goes with dupID;
+//   - Anki cards follow it, and so does the key that names the position inside
+//     its deck (ADR-0042: a position card's key is its position id as text).
+//     In a deck keepID already has a card in, dupID's card goes, but its
+//     review journal is handed to keepID's card first — the reviews happened,
+//     and the journal is what the retention figures are read from;
+//   - the review journal follows it, key included;
+//   - an analysis follows only when keepID has none (there is one per
+//     position, and the held row's own wins);
+//   - the sticky marks (individually_imported, flagged — ADR-0001, ADR-0006)
+//     are raised on keepID when dupID carried them, and never lowered;
+//   - the trash entries that name dupID by id — a deleted comment, a deleted
+//     collection's member list — are rewritten to name keepID, so restoring
+//     them later lands on the survivor instead of on a row that no longer
+//     exists.
 //
 // Written with an explicit DELETE of the conflicting rows rather than SQLite's
 // `UPDATE OR IGNORE`, which PostgreSQL has no equivalent of: the final state is
@@ -293,8 +309,38 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 		return fmt.Errorf("merging position %d into %d: %w", dupID, keepID, err)
 	}
 
-	// The uniquely-constrained memberships first: a duplicate the kept row
-	// already holds is dropped, so the re-pointing below cannot collide.
+	// A card of dupID's in a deck where keepID already has one is about to
+	// go; its journal goes to keepID's card of the same deck first, or the
+	// ON DELETE CASCADE on card_id would take the reviews with it.
+	{
+		ktenant, kargs := tx.TenantFilter("k", scope)
+		ltenant, largs := tx.TenantFilter("", scope)
+		ctenant, cargs := tx.TenantFilter("c", scope)
+		k2tenant, k2args := tx.TenantFilter("k2", scope)
+		args := append([]any{}, kargs...)
+		args = append(args, keepID)
+		args = append(args, largs...)
+		args = append(args, dupID)
+		args = append(args, cargs...)
+		args = append(args, dupID)
+		args = append(args, k2args...)
+		args = append(args, keepID)
+		if _, err := tx.Exec(ctx,
+			`UPDATE anki_review_log
+			    SET card_id = (SELECT k.id FROM anki_card k
+			                    WHERE `+ktenant+` AND k.position_id = ? AND k.deck_id = anki_review_log.deck_id)
+			  WHERE `+ltenant+` AND position_id = ?
+			    AND card_id IN (SELECT c.id FROM anki_card c
+			                     WHERE `+ctenant+` AND c.position_id = ?
+			                       AND c.deck_id IN (SELECT k2.deck_id FROM anki_card k2
+			                                          WHERE `+k2tenant+` AND k2.position_id = ?))`,
+			args...); err != nil {
+			return fail(err)
+		}
+	}
+
+	// The uniquely-constrained memberships: a duplicate the kept row already
+	// holds is dropped, so the re-pointing below cannot collide.
 	for _, dedup := range []struct{ table, by string }{
 		{"collection_position", "collection_id"},
 		{"anki_card", "deck_id"},
@@ -312,12 +358,26 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 			return fail(err)
 		}
 	}
-	for _, table := range []string{"move", "collection_position", "anki_card", "anki_review_log", "comment"} {
+	for _, table := range []string{"move", "collection_position", "comment"} {
 		tenant, targs := tx.TenantFilter("", scope)
 		args := append([]any{keepID}, targs...)
 		args = append(args, dupID)
 		if _, err := tx.Exec(ctx,
 			`UPDATE `+table+` SET position_id = ? WHERE `+tenant+` AND position_id = ?`, args...); err != nil {
+			return fail(err)
+		}
+	}
+	// A position card and its journal name the position twice: in position_id
+	// and in the key (ADR-0042). Both move, or the card is found by one and
+	// not by the other — and the deck's unique (deck_id, kind, key) would let a
+	// later sync add a second card for the survivor.
+	keepKey := strconv.FormatInt(keepID, 10)
+	for _, table := range []string{"anki_card", "anki_review_log"} {
+		tenant, targs := tx.TenantFilter("", scope)
+		args := append([]any{keepID, keepKey}, targs...)
+		args = append(args, dupID)
+		if _, err := tx.Exec(ctx,
+			`UPDATE `+table+` SET position_id = ?, key = ? WHERE `+tenant+` AND position_id = ?`, args...); err != nil {
 			return fail(err)
 		}
 	}
@@ -328,6 +388,9 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 	if err := raiseStickyMarks(ctx, tx, scope, keepID, dupID); err != nil {
 		return fail(err)
 	}
+	if err := repointTrash(ctx, tx, scope, keepID, dupID); err != nil {
+		return fail(err)
+	}
 
 	tenant, targs := tx.TenantFilter("", scope)
 	if _, err := tx.Exec(ctx,
@@ -335,6 +398,103 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 		return fail(err)
 	}
 	return nil
+}
+
+// repointTrash rewrites the trash entries that name dupID by id so they name
+// keepID. Two kinds do: a deleted comment (restored onto its position id) and a
+// deleted collection (restored with its member ids). A deleted POSITION names
+// no id worth rewriting — it is restored by re-Saving its board, which the
+// Zobrist dedup already sends to the survivor. The trash holds thirty days at
+// most, so reading its two kinds whole is cheap.
+func repointTrash(ctx context.Context, tx Execer, scope string, keepID, dupID int64) error {
+	tenant, targs := tx.TenantFilter("", scope)
+	rows, err := tx.Query(ctx,
+		`SELECT id, kind, payload FROM trash WHERE `+tenant+` AND kind IN (?, ?)`,
+		append(append([]any{}, targs...), string(domain.TrashComment), string(domain.TrashCollection))...)
+	if err != nil {
+		return err
+	}
+	type rewrite struct {
+		id      int64
+		payload string
+	}
+	var rewrites []rewrite
+	err = func() error {
+		defer rows.Close()
+		for rows.Next() {
+			var id int64
+			var kind, payload string
+			if err := rows.Scan(&id, &kind, &payload); err != nil {
+				return err
+			}
+			updated, changed, err := repointTrashPayload(domain.TrashKind(kind), payload, keepID, dupID)
+			if err != nil {
+				return fmt.Errorf("trash entry %d: %w", id, err)
+			}
+			if changed {
+				rewrites = append(rewrites, rewrite{id, updated})
+			}
+		}
+		return rows.Err()
+	}()
+	if err != nil {
+		return err
+	}
+	for _, r := range rewrites {
+		utenant, uargs := tx.TenantFilter("", scope)
+		args := append([]any{r.payload}, uargs...)
+		args = append(args, r.id)
+		if _, err := tx.Exec(ctx,
+			`UPDATE trash SET payload = ? WHERE `+utenant+` AND id = ?`, args...); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// repointTrashPayload is repointTrash's decision for one payload: the rewritten
+// JSON, and whether anything named dupID. A collection that held both rows
+// keeps the survivor once, at the earlier of the two places.
+func repointTrashPayload(kind domain.TrashKind, payload string, keepID, dupID int64) (string, bool, error) {
+	var out any
+	switch kind {
+	case domain.TrashComment:
+		var p domain.TrashCommentPayload
+		if err := json.Unmarshal([]byte(payload), &p); err != nil {
+			return "", false, err
+		}
+		if p.Comment.PositionID != dupID {
+			return payload, false, nil
+		}
+		p.Comment.PositionID = keepID
+		out = p
+	case domain.TrashCollection:
+		var p domain.TrashCollectionPayload
+		if err := json.Unmarshal([]byte(payload), &p); err != nil {
+			return "", false, err
+		}
+		if !slices.Contains(p.PositionIDs, dupID) {
+			return payload, false, nil
+		}
+		ids := make([]int64, 0, len(p.PositionIDs))
+		for _, id := range p.PositionIDs {
+			if id == dupID {
+				id = keepID
+			}
+			if !slices.Contains(ids, id) {
+				ids = append(ids, id)
+			}
+		}
+		p.PositionIDs = ids
+		out = p
+	default:
+		return payload, false, nil
+	}
+	blob, err := json.Marshal(out)
+	if err != nil {
+		return "", false, err
+	}
+	return string(blob), true, nil
 }
 
 // mergeAnalysisInto hands the duplicate's analysis to the kept position when

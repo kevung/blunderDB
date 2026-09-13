@@ -5,7 +5,10 @@ package storagetest
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"slices"
+	"strconv"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -524,5 +527,264 @@ func testRepairCrawfordSentinel(t *testing.T, s storage.Storage) {
 	// Idempotent: everything now says what it means.
 	if again, err := ps.RepairCrawfordSentinel(ctx, ""); err != nil || again != 0 {
 		t.Errorf("second pass: repaired=%d err=%v, want 0 and no error", again, err)
+	}
+}
+
+// testRepairCrawfordMergeCarriesDependents pins what the Crawford repair's
+// merge carries when a stale row folds into its correct twin: everything that
+// hangs off a position today, on both backends.
+//
+// The list is the schema's, not the September one: moves and comments,
+// collection memberships (one kept where both rows were members), Anki cards
+// with the KEY that names the position inside its deck (ADR-0042), the review
+// journal — including the reviews of a card dropped because the deck already
+// held the twin's — and the trash entries that name the stale row by id.
+func testRepairCrawfordMergeCarriesDependents(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps, ms, cs, anki := s.Positions(), s.Matches(), s.Collections(), s.Anki()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7, MatchHash: "crawford-merge"}
+	matchID, err := ms.Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	// The Crawford game (6-2), then the post-Crawford one (6-3) the stale row
+	// was played in.
+	var postCrawfordGame int64
+	for i, initial := range [2][2]int32{{6, 2}, {6, 3}} {
+		g := domain.Game{MatchID: matchID, GameNumber: int32(i + 1), InitialScore: initial}
+		gameID, err := ms.CreateGame(ctx, "", &g)
+		if err != nil {
+			t.Fatalf("CreateGame %d: %v", i+1, err)
+		}
+		postCrawfordGame = gameID
+	}
+
+	twin := statsDecisionPos(t, 0)
+	twin.Score = [2]int{domain.PostCrawford, 4}
+	twinID, err := ps.Save(ctx, "", &twin)
+	if err != nil {
+		t.Fatalf("Save twin: %v", err)
+	}
+	stale := statsDecisionPos(t, 0)
+	stale.Score = [2]int{domain.Crawford, 4}
+	staleID, err := ps.Save(ctx, "", &stale)
+	if err != nil {
+		t.Fatalf("Save stale: %v", err)
+	}
+	if staleID == twinID {
+		t.Fatal("the two away scores hashed to one row; the case proves nothing")
+	}
+	mv := domain.Move{GameID: postCrawfordGame, MoveNumber: 1, MoveType: "checker",
+		PositionID: staleID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+	if _, err := ms.CreateMove(ctx, "", &mv); err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+
+	// Collections: one holds both rows, one only the stale row.
+	both, err := cs.Create(ctx, "", "both", "")
+	if err != nil {
+		t.Fatalf("Create collection: %v", err)
+	}
+	if err := cs.AddPositions(ctx, "", both, []int64{staleID, twinID}); err != nil {
+		t.Fatalf("AddPositions: %v", err)
+	}
+	staleOnly, err := cs.Create(ctx, "", "stale only", "")
+	if err != nil {
+		t.Fatalf("Create collection: %v", err)
+	}
+	if err := cs.AddPosition(ctx, "", staleOnly, staleID); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+
+	// Decks: the same shape, and the stale card is reviewed in each, so its
+	// journal has to survive both the re-pointing and the drop.
+	deckBoth, err := anki.CreateDeck(ctx, "", "both", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	if err := anki.SyncWithPositions(ctx, "", deckBoth, []int64{twinID, staleID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	deckStale, err := anki.CreateDeck(ctx, "", "stale only", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	if err := anki.SyncWithPositions(ctx, "", deckStale, []int64{staleID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	reviewStaleCard := func(deckID int64) {
+		t.Helper()
+		for range 2 {
+			next, err := anki.NextCard(ctx, "", deckID)
+			if err != nil {
+				t.Fatalf("NextCard deck %d: %v", deckID, err)
+			}
+			if next.Card.PositionID != staleID {
+				if err := anki.BuryCard(ctx, "", next.Card.ID); err != nil {
+					t.Fatalf("BuryCard: %v", err)
+				}
+				continue
+			}
+			if _, err := anki.ReviewCard(ctx, "", next.Card.ID, 3); err != nil {
+				t.Fatalf("ReviewCard: %v", err)
+			}
+			return
+		}
+		t.Fatalf("deck %d never served the stale card", deckID)
+	}
+	reviewStaleCard(deckBoth)
+	reviewStaleCard(deckStale)
+
+	if _, err := s.Comments().Add(ctx, "", staleID, "the trailer doubles here"); err != nil {
+		t.Fatalf("Add comment: %v", err)
+	}
+
+	// Trash entries naming the stale row by id.
+	putTrash := func(kind domain.TrashKind, payload any) int64 {
+		t.Helper()
+		blob, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatalf("marshal: %v", err)
+		}
+		id, err := s.Trash().Put(ctx, "", kind, "entry", blob)
+		if err != nil {
+			t.Fatalf("Trash Put: %v", err)
+		}
+		return id
+	}
+	trashedComment := putTrash(domain.TrashComment, domain.TrashCommentPayload{
+		Comment: domain.CommentEntry{PositionID: staleID, Text: "deleted note"}})
+	trashedCollection := putTrash(domain.TrashCollection, domain.TrashCollectionPayload{
+		Name: "deleted", PositionIDs: []int64{staleID, twinID}})
+
+	n, err := ps.RepairCrawfordSentinel(ctx, "")
+	if err != nil {
+		t.Fatalf("RepairCrawfordSentinel: %v", err)
+	}
+	if n != 1 {
+		t.Fatalf("repaired %d positions, want 1", n)
+	}
+	if _, err := ps.Load(ctx, "", staleID); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("the merged position %d is still stored (err=%v)", staleID, err)
+	}
+
+	for mv, err := range ms.Moves(ctx, "", postCrawfordGame) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		if mv.PositionID != twinID {
+			t.Errorf("the move names position %d, want the survivor %d", mv.PositionID, twinID)
+		}
+	}
+
+	members := func(collectionID int64) []int64 {
+		t.Helper()
+		var ids []int64
+		for cp, err := range cs.Members(ctx, "", collectionID) {
+			if err != nil {
+				t.Fatalf("Members: %v", err)
+			}
+			ids = append(ids, cp.PositionID)
+		}
+		return ids
+	}
+	if got := members(both); !slices.Equal(got, []int64{twinID}) {
+		t.Errorf("collection holding both rows = %v, want the survivor once [%d]", got, twinID)
+	}
+	if got := members(staleOnly); !slices.Equal(got, []int64{twinID}) {
+		t.Errorf("collection holding the stale row = %v, want [%d]", got, twinID)
+	}
+
+	for _, deckID := range []int64{deckBoth, deckStale} {
+		assertDeckFollowsSurvivor(t, s, deckID, twinID)
+	}
+
+	var comments []string
+	for c, err := range s.Comments().ByPosition(ctx, "", twinID) {
+		if err != nil {
+			t.Fatalf("ByPosition: %v", err)
+		}
+		comments = append(comments, c.Text)
+	}
+	if !slices.Contains(comments, "the trailer doubles here") {
+		t.Errorf("the survivor's comments = %q, want the stale row's note", comments)
+	}
+
+	assertTrashFollowsSurvivor(t, s, trashedComment, trashedCollection, twinID)
+}
+
+// assertDeckFollowsSurvivor checks one deck after the merge: a single card for
+// the survivor, a journal of one review naming it by id and by key, and a key
+// that a later sync recognises instead of adding a second card.
+func assertDeckFollowsSurvivor(t *testing.T, s storage.Storage, deckID, twinID int64) {
+	t.Helper()
+	ctx := context.Background()
+	anki := s.Anki()
+	deckPositions := func() []int64 {
+		t.Helper()
+		var ids []int64
+		for p, err := range anki.DeckPositions(ctx, "", deckID) {
+			if err != nil {
+				t.Fatalf("DeckPositions: %v", err)
+			}
+			ids = append(ids, p.ID)
+		}
+		return ids
+	}
+	if got := deckPositions(); !slices.Equal(got, []int64{twinID}) {
+		t.Errorf("deck %d holds %v, want one card for the survivor [%d]", deckID, got, twinID)
+	}
+	var logs []*domain.AnkiReviewLog
+	for l, err := range anki.ReviewLog(ctx, "", deckID, 10) {
+		if err != nil {
+			t.Fatalf("ReviewLog: %v", err)
+		}
+		logs = append(logs, l)
+	}
+	if len(logs) != 1 {
+		t.Fatalf("deck %d journal has %d reviews, want the stale card's 1", deckID, len(logs))
+	}
+	twinKey := strconv.FormatInt(twinID, 10)
+	if logs[0].PositionID != twinID || logs[0].Key != twinKey {
+		t.Errorf("deck %d journal names position %d key %q, want %d %q",
+			deckID, logs[0].PositionID, logs[0].Key, twinID, twinKey)
+	}
+	// The key moved with the card: a sync naming the survivor finds its card
+	// instead of adding a second one.
+	if err := anki.SyncWithPositions(ctx, "", deckID, []int64{twinID}); err != nil {
+		t.Fatalf("SyncWithPositions after repair: %v", err)
+	}
+	if got := deckPositions(); !slices.Equal(got, []int64{twinID}) {
+		t.Errorf("deck %d after a sync holds %v, want [%d]: the card key did not follow", deckID, got, twinID)
+	}
+}
+
+// assertTrashFollowsSurvivor checks that the trashed comment and the trashed
+// collection that named the merged row now name the survivor, once.
+func assertTrashFollowsSurvivor(t *testing.T, s storage.Storage, commentEntry, collectionEntry, twinID int64) {
+	t.Helper()
+	ctx := context.Background()
+	entry, err := s.Trash().Load(ctx, "", commentEntry)
+	if err != nil {
+		t.Fatalf("Trash Load: %v", err)
+	}
+	var cp domain.TrashCommentPayload
+	if err := json.Unmarshal(entry.Payload, &cp); err != nil {
+		t.Fatalf("decode comment payload: %v", err)
+	}
+	if cp.Comment.PositionID != twinID || cp.Comment.Text != "deleted note" {
+		t.Errorf("trashed comment names position %d (%q), want %d", cp.Comment.PositionID, cp.Comment.Text, twinID)
+	}
+	entry, err = s.Trash().Load(ctx, "", collectionEntry)
+	if err != nil {
+		t.Fatalf("Trash Load: %v", err)
+	}
+	var colp domain.TrashCollectionPayload
+	if err := json.Unmarshal(entry.Payload, &colp); err != nil {
+		t.Fatalf("decode collection payload: %v", err)
+	}
+	if !slices.Equal(colp.PositionIDs, []int64{twinID}) || colp.Name != "deleted" {
+		t.Errorf("trashed collection = %q %v, want \"deleted\" [%d]", colp.Name, colp.PositionIDs, twinID)
 	}
 }

@@ -1119,7 +1119,8 @@ Crawford one and read with a dead cube — where the trailer in fact doubles at
 the first opportunity. Correcting the score changes the position's Zobrist hash,
 so such a row is rehashed, and merged with its correctly stored twin when the
 database already holds one: the analysis, the comments, the collections, the
-Anki cards and the match moves follow the surviving row. A position no match
+Anki cards and their review journal, the match moves and the trash entries that
+name it follow the surviving row. A position no match
 points at is left alone — nothing contradicts what its score says.
 
 The JSON report has one counter per pass: `repaired` (analysis columns),
