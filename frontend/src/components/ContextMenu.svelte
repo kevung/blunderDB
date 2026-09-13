@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { t } from '../i18n';
+    import { closeOnEscape } from '../services/escapeService.js';
 
     /**
      * Reusable context-menu popover.
@@ -23,11 +24,12 @@
         menuEl?.querySelector('button')?.focus();
     });
 
+    // Escape closes the menu before anything else sees it — the panels' tiers,
+    // the global dispatcher (escapeService.js, #414).
+    $effect(() => closeOnEscape(() => onClose?.()));
+
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
-        if (event.key === 'Escape') {
-            event.stopPropagation();
-            onClose?.();
-        }
         if (event.key === 'Tab' && menuEl) {
             // Trap focus inside menu
             const focusable = [...menuEl.querySelectorAll('button')];

@@ -10,6 +10,8 @@
      * plus, et le premier résultat reste dans l'historique là où il a eu lieu.
      */
     import { t } from '../../i18n';
+    import { closeOnEscape } from '../../services/escapeService.js';
+    import { isLetter } from '../../utils/keys.js';
 
     let { last = null, busy = false, onCorrect = () => {}, onCancelMatch = () => {} } = $props();
 
@@ -19,15 +21,19 @@
 
     /* Ctrl+Z ouvre la reprise du dernier geste. Il n'annule rien tout seul : ce serait défaire
        sans montrer quoi, et le directeur doit voir ce qu'il reprend. */
+    /** @param {KeyboardEvent} e */
     function onKey(e) {
         if (!last) return;
-        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && isLetter(e, 'z')) {
             e.preventDefault();
             open = true;
-        } else if (e.key === 'Escape' && open) {
-            open = false;
         }
     }
+
+    /* Échap ferme la reprise avant tout geste global, où que soit le focus (#414). */
+    $effect(() => {
+        if (open) return closeOnEscape(() => (open = false));
+    });
 
     function num(v) {
         const n = parseInt(v, 10);

@@ -85,7 +85,11 @@
         manualOpen = false;
     }
 
+    /* Nues seulement : CTRL-J ouvre l'Entraînement et CTRL-ENTRÉE ne confirme rien. Tant que le
+       répartiteur appelait stopPropagation(), cet écouteur ne recevait aucune touche (#414) ; il
+       reçoit maintenant celles qui lui parviennent, et ce sont d'abord des combinaisons. */
     function onKey(e) {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
         if (e.target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
         if (e.key === 'j' || e.key === 'ArrowDown') {
             selected = Math.min(selected + 1, shown.length - 1);
