@@ -200,6 +200,10 @@ type Replayer struct {
 	// It is empty until the first Replay.
 	states []state
 	infos  []ActionInfo
+	// replayed is how many Actions the last call stepped through — the work it did, as
+	// opposed to the work it reused. It is what TestReplayIncrementalCostsOneAction
+	// holds, rather than a duration a loaded machine can stretch.
+	replayed int
 }
 
 // Replay returns the annotation of doc, replaying only the Actions whose derivation
@@ -215,6 +219,7 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 	}
 
 	s := r.states[reuse].clone()
+	r.replayed = len(doc.Actions) - reuse
 	for i := reuse; i < len(doc.Actions); i++ {
 		r.infos = append(r.infos, s.step(i, doc.Actions[i]))
 		r.states = append(r.states, s.clone())

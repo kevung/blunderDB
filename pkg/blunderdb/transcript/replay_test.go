@@ -210,12 +210,17 @@ func TestPackageIsPure(t *testing.T) {
 // an Action at the end of a long document must cost ONE Action, not the document.
 //
 // The ux.md §4.1 budget is 0.56 s for a whole turn, keystrokes included. A full Replay
-// of a 300-Action match spends most of that on its own, at every keystroke; the
-// ceiling below is what a single Action costs (some 340 µs at worst) with room for a
-// loaded machine, and it is two orders of magnitude under a full Replay.
+// of a 300-Action match spends most of that on its own, at every keystroke; one Action
+// costs some 340 µs at worst, two orders of magnitude under it.
+//
+// What is held is the number of Actions the Replayer steps through, not a duration: the
+// guard used to be a 5 ms wall-clock ceiling, and the hostile-smoke image, running the
+// whole suite in parallel, stretched a single correction to 9.4 ms with the replay still
+// incremental. A count cannot be stretched, and it fails on exactly the regression the
+// test is about — a Replayer that replays the document. The duration is logged, to argue
+// about, not asserted.
 func TestReplayIncrementalCostsOneAction(t *testing.T) {
 	const actions = 300
-	const ceiling = 5 * time.Millisecond
 
 	data, err := os.ReadFile(matFixtures[0])
 	if err != nil {
@@ -235,36 +240,44 @@ func TestReplayIncrementalCostsOneAction(t *testing.T) {
 	short.Actions = doc.Actions[:actions-1]
 	short.Cursor = actions - 1
 
-	// The best of three: the measurement wanted is the work done, not the scheduler.
-	best := time.Duration(1<<63 - 1)
-	for i := 0; i < 3; i++ {
-		var r Replayer
-		r.Replay(short, 0) // the document as it stood before the last keystroke
-		start := time.Now()
-		ann := r.Replay(full, 0)
-		if elapsed := time.Since(start); elapsed < best {
-			best = elapsed
-		}
-		if len(ann.Actions) != actions {
-			t.Fatalf("replayed %d actions", len(ann.Actions))
-		}
+	var r Replayer
+	// The counter counts: a Replayer with nothing cached walks the whole document.
+	r.Replay(short, 0) // the document as it stood before the last keystroke
+	if r.replayed != actions-1 {
+		t.Fatalf("a first Replay of %d Actions stepped through %d", actions-1, r.replayed)
 	}
-	t.Logf("one Action appended to a document of %d: %v", actions, best)
-	if best > ceiling {
-		t.Errorf("appending one Action to %d took %v, over the %v guard — the replay is not incremental",
-			actions, best, ceiling)
+	start := time.Now()
+	ann := r.Replay(full, 0)
+	elapsed := time.Since(start)
+	if len(ann.Actions) != actions {
+		t.Fatalf("replayed %d actions", len(ann.Actions))
+	}
+	t.Logf("one Action appended to a document of %d: %v", actions, elapsed)
+	if r.replayed != 1 {
+		t.Errorf("appending one Action to %d replayed %d of them — the replay is not incremental",
+			actions, r.replayed)
+	}
+	// And the Action it replayed says what a full Replay says: counting one is not skipping it.
+	if want := Replay(full, 0); !reflect.DeepEqual(ann, want) {
+		t.Errorf("the incremental annotation differs from a full Replay")
 	}
 
 	// Correcting an Action replays it and everything after it, and nothing before.
 	// Correcting the LAST one must therefore cost what appending one costs.
-	var r Replayer
-	r.Replay(full, 0)
 	corrected := full.clone()
 	corrected.Actions[actions-1].Side = opponent(corrected.Actions[actions-1].Side)
-	start := time.Now()
+	start = time.Now()
 	r.Replay(corrected, 0)
-	if elapsed := time.Since(start); elapsed > ceiling {
-		t.Errorf("correcting the last of %d Actions took %v, over the %v guard", actions, elapsed, ceiling)
+	t.Logf("the last of %d Actions corrected: %v", actions, time.Since(start))
+	if r.replayed != 1 {
+		t.Errorf("correcting the last of %d Actions replayed %d of them", actions, r.replayed)
+	}
+	// Correcting one in the middle replays from there: the tail, not the head.
+	middle := corrected.clone()
+	middle.Actions[actions/2].Side = opponent(middle.Actions[actions/2].Side)
+	r.Replay(middle, 0)
+	if want := actions - actions/2; r.replayed != want {
+		t.Errorf("correcting Action %d of %d replayed %d, want %d", actions/2, actions, r.replayed, want)
 	}
 }
 
