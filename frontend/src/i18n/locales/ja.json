@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "検索対象となる現在の結果がありません。",
         "searchRequiresMode": "検索には NORMAL または EDIT モードが必要です。",
         "subSearchModeUnavailable": "結果内の検索は現在のモードでは利用できません。",
+        "searchWouldReplaceCollection": "s はライブラリ全体を検索し、表示中のコレクションを置き換えてしまいます。コレクション内を検索するには ss を使ってください。",
+        "searchWouldReplaceMatch": "s はライブラリ全体を検索し、表示中のマッチ (match) を置き換えてしまいます。マッチ内を検索するには ss を使ってください。",
         "tagsAdded": "タグを追加しました: {tags}",
         "unknown": "不明なコマンド: {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "フォルダにインポート可能なファイルが見つかりません",
         "noMatchesInDb": "データベースにマッチがありません",
         "noMatchingPositions": "一致するポジションが見つかりません",
+        "subSearchInCollection": "コレクション内の結果 — Esc でコレクションに戻ります。",
+        "subSearchInMatch": "マッチ (match) 内の結果 — Esc で検討中の手に戻ります。",
         "noMovesInMatch": "このマッチにムーブが見つかりません",
         "noPositionToPasteHint": "貼り付けるポジションがありません（先にCtrl-Cでポジションをコピーしてください）",
         "noPositionToPaste": "貼り付けるポジションがありません",

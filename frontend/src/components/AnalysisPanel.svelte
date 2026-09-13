@@ -11,6 +11,7 @@
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import { trainingMaskStore } from '../stores/trainingStore.js';
     import ExplanationLine from './ExplanationLine.svelte';
+    import { canLeaveSubSearchResults } from '../services/positionService.js';
 
     // Le même remplaçant que le panneau Eval en mode Défi (ADR-0018 règle 6).
     const HIDDEN = '···';
@@ -111,10 +112,17 @@
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
-            // Clear selection first if a move is selected
+            // Clear selection first if a move is selected. What the panel closes
+            // itself, it claims (preventDefault), so the global dispatcher leaves it be.
             if ($selectedMoveStore) {
+                event.preventDefault();
                 selectedMoveStore.set(null);
+            } else if (canLeaveSubSearchResults()) {
+                // Nothing of its own to close, and the results of an `ss` run from a
+                // collection or a match are on screen: the Escape goes on to the
+                // dispatcher, which returns to that list — one press, not two (#410).
             } else {
+                event.preventDefault();
                 onClose();
             }
             return;

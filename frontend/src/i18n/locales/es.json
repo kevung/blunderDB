@@ -388,6 +388,8 @@
         "noResultsToSearchIn": "No hay resultados actuales en los que buscar.",
         "searchRequiresMode": "La búsqueda requiere el modo NORMAL o EDIT.",
         "subSearchModeUnavailable": "La búsqueda en los resultados no está disponible en el modo actual.",
+        "searchWouldReplaceCollection": "s busca en toda la biblioteca y reemplazaría la colección mostrada: use ss para buscar dentro de la colección.",
+        "searchWouldReplaceMatch": "s busca en toda la biblioteca y reemplazaría el match mostrado: use ss para buscar dentro del match.",
         "tagsAdded": "Etiquetas añadidas: {tags}",
         "unknown": "Comando desconocido: {command}"
     },
@@ -1274,6 +1276,8 @@
         "noImportableFolder": "No se encontraron archivos importables en la carpeta",
         "noMatchesInDb": "No hay partidas en la base de datos",
         "noMatchingPositions": "No se encontraron posiciones coincidentes",
+        "subSearchInCollection": "Resultados dentro de la colección — Esc vuelve a ella.",
+        "subSearchInMatch": "Resultados dentro del match — Esc vuelve a la jugada estudiada.",
         "noMovesInMatch": "No se encontraron jugadas en esta partida",
         "noPositionToPasteHint": "No hay posición para pegar (usa Ctrl-C para copiar primero una posición)",
         "noPositionToPaste": "No hay posición para pegar",

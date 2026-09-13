@@ -758,10 +758,23 @@ définir une structure de pions à rechercher sur le plateau.
    Le panneau Recherche : filtres numériques, structure de pions au plateau,
    onglets *Au moins* / *Sauf*.
 
-Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
-la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). Le panneau
-de recherche propose également une case à cocher *Rechercher dans les
-résultats actuels* pour la même fonctionnalité.
+Pour chercher parmi les positions affichées, utiliser la commande ``ss``
+suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la liste à
+l'écran : les résultats de la recherche précédente, la collection ouverte ou
+les positions du match en cours de revue, que la commande soit tapée
+directement ou depuis le panneau de recherche (*TAB*). La case à cocher
+*Rechercher dans les résultats actuels* du panneau suit la même règle. En
+collection et en match, ``s`` est refusé : il chercherait dans toute la
+bibliothèque et remplacerait la liste affichée.
+
+Les résultats d'une recherche ``ss`` lancée depuis une collection ou un match
+se quittent avec *Esc*, en un seul appui dès que ni un champ ni le panneau qui a
+le focus n'a quelque chose à fermer (un coup sélectionné dans l'analyse, par
+exemple) : blunderDB revient à la collection entière, ou au match sur le coup
+étudié, et à la position quittée.
+Ce retour ne suit que ``ss`` : ``s``, lancé depuis le panneau de recherche
+ouvert sur une collection ou un match, cherche dans toute la bibliothèque, et
+*Esc* ne ramène plus à la liste quittée.
 
 Le panneau propose un contrôle explicite du **type de décision** recherché :
 *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*
@@ -941,7 +954,9 @@ Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
 positions. Les collections peuvent être créées, renommées et supprimées. Des
 positions peuvent y être ajoutées ou retirées (touche *Suppr*, confirmation
 demandée). Double-cliquer sur une collection pour parcourir ses positions
-avec les touches *GAUCHE* et *DROITE*. L'ordre des collections et des
+avec les touches *GAUCHE* et *DROITE*. La commande ``ss`` cherche parmi les
+positions de la collection ouverte ; *Esc* ramène ensuite à la collection
+(voir :ref:`panneau_recherche`). L'ordre des collections et des
 positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
@@ -1009,7 +1024,11 @@ L'utilisateur peut:
 
 * basculer entre l'analyse des coups de pions et du cube avec la touche *d*,
 
-* voir le coup effectivement joué mis en évidence dans l'analyse.
+* voir le coup effectivement joué mis en évidence dans l'analyse,
+
+* chercher parmi les positions du match avec la commande ``ss`` (ex:
+  ``ss E>80``) ; *Esc* ramène ensuite au coup étudié (voir
+  :ref:`panneau_recherche`).
 
 La dernière position visitée dans chaque match est mémorisée et restaurée
 automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande ``match``

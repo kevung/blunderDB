@@ -204,7 +204,8 @@ export default {
 </div>
 <h3>Panel de Búsqueda</h3>
 <p>El panel <strong>Búsqueda</strong> (<em>CTRL-F</em> o <em>TAB</em>) permite filtrar las posiciones según criterios libremente combinables: estructura de fichas, tipo de decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla <em>TAB</em> abre simultáneamente el panel de búsqueda y el editor de posición, lo que permite definir una estructura de fichas que buscar directamente en el tablero.</p>
-<p>Para afinar una búsqueda entre las posiciones filtradas actualmente, use el comando <code>ss</code> seguido de filtros (p. ej.: <code>ss nc</code>, <code>ss E&gt;40</code>). El panel de búsqueda ofrece también una casilla <em>Buscar en los resultados actuales</em> para la misma funcionalidad.</p>
+<p>Para buscar entre las posiciones mostradas, use el comando <code>ss</code> seguido de filtros (p. ej.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> busca en la lista en pantalla: los resultados de la búsqueda anterior, la colección abierta o las posiciones de la partida en revisión, tanto si el comando se escribe directamente como desde el panel de búsqueda (<em>TAB</em>). La casilla <em>Buscar en los resultados actuales</em> del panel sigue la misma regla. En una colección y en una partida, <code>s</code> se rechaza: buscaría en toda la biblioteca y reemplazaría la lista mostrada.</p>
+<p>Los resultados de una búsqueda <code>ss</code> lanzada desde una colección o una partida se abandonan con <em>Esc</em>, con una sola pulsación en cuanto ni un campo ni el panel que tiene el foco tiene algo que cerrar (una jugada seleccionada en el análisis, por ejemplo): blunderDB vuelve a la colección completa, o a la partida en la jugada estudiada, y a la posición que se dejó. Esta vuelta solo sigue a <code>ss</code>: <code>s</code>, lanzada desde el panel de búsqueda abierto sobre una colección o una partida, busca en toda la biblioteca, y <em>Esc</em> ya no devuelve a la lista que se dejó.</p>
 <p>El panel ofrece un control explícito del <strong>tipo de decisión</strong> buscado: <em>Indiferente</em> (ningún filtro), <em>Fichas</em> (decisiones de jugada) o <em>Cubo</em> (decisiones de cubo). Cuando se selecciona <em>Cubo</em>, una segunda lista precisa el subtipo: <em>Todos</em>, <em>Doblar / No doblar</em> (el jugador con el turno debe decidir si doblar) o <em>Aceptar / Pasar</em> (respuesta a un doblaje del rival). El control está sincronizado con el tablero: modificar los dados o el cubo en el tablero actualiza el tipo de decisión, y viceversa. En modo <em>Aceptar / Pasar</em>, el cubo se muestra en el centro del tablero con el valor ofrecido; ese valor sigue siendo editable.</p>
 <p>La <strong>fase de la partida</strong> — apertura, medio juego, carrera, retirada de fichas — es una etiqueta que blunderDB calcula únicamente a partir del tablero. Nunca es editable y se puede buscar con el token <code>ph:</code> de la línea de comandos (<code>ph:race</code>, repetible: <code>ph:race ph:bearoff</code>). Tres de sus cuatro fronteras son las que GNU Backgammon emplea para dirigir sus redes; la cuarta, donde termina la apertura, es una convención de blunderDB: una posición sigue en la apertura mientras ninguno de los dos bandos haya movido más de cuatro fichas de sus puntos de partida, no se haya retirado ninguna y ninguna esté en la barra.</p>
 <div class="admonition note">
@@ -248,7 +249,7 @@ export default {
 <p>Consulte la lista de comandos para ver la lista de filtros disponibles.</p>
 </div>
 <h3>Panel de Colecciones</h3>
-<p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
+<p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
 <h3>Importación: lo que se escribe, lo que nunca se escribe</h3>
 <p>Importar un match, una posición u otra base añade lo que falta; no reemplaza lo que ya está ahí.</p>
 <ul>
@@ -268,7 +269,8 @@ export default {
 <li>pasar de una partida a otra con las teclas <em>PageUp</em> y <em>PageDown</em>,</li>
 <li>mostrar el análisis de las jugadas (fichas y cubo) pulsando <em>CTRL-L</em>,</li>
 <li>alternar entre el análisis de las jugadas de fichas y del cubo con la tecla <em>d</em>,</li>
-<li>ver la jugada realmente jugada resaltada en el análisis.</li>
+<li>ver la jugada realmente jugada resaltada en el análisis,</li>
+<li>buscar entre las posiciones de la partida con el comando <code>ss</code> (p. ej.: <code>ss E&gt;80</code>); <em>Esc</em> vuelve después a la jugada estudiada (véase Panel de Búsqueda).</li>
 </ul>
 <p>La última posición visitada en cada partida se guarda y se restaura automáticamente. Pulse <em>CTRL-Tab</em> o ejecute el comando <code>match</code> para mostrar u ocultar el panel.</p>
 <p>El botón <strong>⊕</strong> de una fila enriquece ese partido desde un fichero. No hay nada nuevo detrás: reimportar el mismo partido en otro formato ya lo enriquece en su sitio — la huella canónica reconoce que se trata del mismo partido, y los análisis y comentarios del segundo fichero completan el primero. Lo que aporta el botón es que se encuentra: nadie adivina que una importación es también un enriquecimiento. El informe que sigue dice cuál de los dos ha ocurrido — «enriquecidos: 1» en lugar de «importados: 1».</p>
@@ -942,6 +944,10 @@ export default {
 <tr>
 <td>r</td>
 <td>Cargar una posición aleatoria.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Salir de los resultados de una búsqueda <code>ss</code> lanzada desde una colección o una partida: vuelta a la colección, o a la partida en la jugada estudiada.</td>
 </tr>
 </tbody>
 </table>
@@ -1769,7 +1775,7 @@ export default {
 </tr>
 <tr>
 <td>ss</td>
-<td>Buscar entre las posiciones actualmente filtradas.</td>
+<td>Buscar entre las posiciones mostradas: resultados actuales, colección abierta o partida en revisión.</td>
 </tr>
 </tbody>
 </table>

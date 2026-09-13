@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 01:02+0200\n"
+"POT-Creation-Date: 2026-09-13 16:58+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -472,8 +472,12 @@ msgid "ss"
 msgstr "ss"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Chercher parmi les positions actuellement filtrées."
-msgstr "Search among the currently filtered positions."
+msgid ""
+"Chercher parmi les positions affichées : résultats courants, collection "
+"ouverte ou match en cours de revue."
+msgstr ""
+"Search among the positions on screen: current results, open collection or"
+" match under review."
 
 #: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
@@ -1600,3 +1604,6 @@ msgstr "Clear the command history."
 
 #~ msgid "epc"
 #~ msgstr "epc"
+
+#~ msgid "Chercher parmi les positions actuellement filtrées."
+#~ msgstr "Search among the currently filtered positions."

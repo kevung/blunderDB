@@ -30,7 +30,7 @@ import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
-import { forgetContextBeforeEval } from './modeMachine.js';
+import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
 
@@ -48,7 +48,10 @@ export {
     exitTranscribeMode,
     toggleMatchMode,
     handleOpenCollection,
-    exitCollectionMode
+    exitCollectionMode,
+    leaveSubSearchResults,
+    canLeaveSubSearchResults,
+    displayedPositionIDs
 } from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -117,6 +120,32 @@ export function isValidPosition(position) {
         return false;
     }
     return true;
+}
+
+/**
+ * The board a search sends as its "at least" checker structure (#410).
+ *
+ * The backend reads any board carrying a checker as a structure the results
+ * must contain (sqlshared/search.go, HasBoardFilter). In EDIT mode the board is
+ * the query the user drew, and that is what they ask. Anywhere else it is the
+ * position on screen — thirty checkers — and sending it answered `s E>80` or
+ * `ss E>80` with that one position: measured on a real database, 40 positions
+ * without a board, 1 with (TestSearch_DisplayedBoardOutsideEdit).
+ *
+ * So outside EDIT the checkers are dropped, and only them: dice, cube, score,
+ * the side on roll and the decision type still travel, because the `D`, `cube`,
+ * `score` and `d` tokens read them from the position on screen on purpose.
+ * The history and the last search record this board, not the screen's, so
+ * replaying the entry asks the same question.
+ *
+ * @param {any} [position] defaults to the board on screen
+ * @returns {any} a copy outside EDIT; the position itself in EDIT
+ */
+export function searchQueryBoard(position = get(positionStore)) {
+    if (!position || get(statusBarModeStore) === 'EDIT') return position;
+    const board = JSON.parse(JSON.stringify(position));
+    board.board = { ...board.board, points: Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 })) };
+    return board;
 }
 
 export function mirrorPositionForSearch(pos) {
@@ -276,6 +305,7 @@ export async function loadAllPositions({ focusId = null } = {}) {
             player2Name: ''
         });
         forgetContextBeforeEval();
+        forgetSubSearchOrigin();
         activeCollectionStore.set(null);
 
         positionsStore.setIds(ids, { reset: true });
@@ -386,7 +416,8 @@ export async function loadPositionsByFilters({
     document.body.style.cursor = 'wait';
 
     try {
-        let currentPosition = get(positionStore);
+        // The structure comes from the board only in EDIT, the query board (#410).
+        let currentPosition = searchQueryBoard(get(positionStore));
 
         // The exclude ("Sauf") structure must use the same mirror orientation as
         // the include structure so its points/colors stay aligned with stored
@@ -563,6 +594,10 @@ export async function loadPositionsByFilters({
                 viewStore.addView();
             }
 
+            // Before any store moves: a sub-search run from a collection or a
+            // match remembers it, so that leaving the results returns there (#410).
+            const subSearchOrigin = noteSubSearchOrigin(Boolean(restrictToPositionIDs), Array.isArray(ids) ? ids : []);
+
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
                 isMatchMode: false,
@@ -596,6 +631,10 @@ export async function loadPositionsByFilters({
             // classement a trouvé des voisines ou des inconnues.
             if (rankedSummary) {
                 setStatusBarMessage(rankedSummary);
+            } else if (subSearchOrigin) {
+                // Say where the results come from and how to get back: the list
+                // the user was studying is no longer on screen.
+                setStatusBarMessage(tMsg(subSearchOrigin === 'MATCH' ? 'status.subSearchInMatch' : 'status.subSearchInCollection'));
             }
         } else {
             // Un classement qui ne trouve rien le dit autrement qu'une

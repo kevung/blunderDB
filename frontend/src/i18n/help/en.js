@@ -204,7 +204,8 @@ export default {
 </div>
 <h3>Search Panel</h3>
 <p>The <strong>Search</strong> panel (<em>CTRL-F</em> or <em>TAB</em>) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The <em>TAB</em> key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.</p>
-<p>To refine a search among the currently filtered positions, use the <code>ss</code> command followed by filters (e.g.: <code>ss nc</code>, <code>ss E&gt;40</code>). The search panel also offers a <em>Search in current results</em> checkbox for the same functionality.</p>
+<p>To search among the positions on screen, use the <code>ss</code> command followed by filters (e.g.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> searches the list on screen: the results of the previous search, the open collection or the positions of the match under review, whether the command is typed directly or from the search panel (<em>TAB</em>). The panel's <em>Search in current results</em> checkbox follows the same rule. In a collection and in a match, <code>s</code> is refused: it would search the whole library and replace the list on screen.</p>
+<p>The results of an <code>ss</code> search run from a collection or a match are left with <em>Esc</em>, in a single press as soon as neither a field nor the focused panel has something to close (a move selected in the analysis, for example): blunderDB returns to the whole collection, or to the match on the move studied, and to the position left. This way back follows <code>ss</code> only: <code>s</code>, run from the search panel opened on a collection or a match, searches the whole library, and <em>Esc</em> no longer returns to the list left.</p>
 <p>The panel offers an explicit control over the <strong>decision type</strong> searched for: <em>Indifferent</em> (no filter), <em>Checker</em> (checker decisions) or <em>Cube</em> (cube decisions). When <em>Cube</em> is selected, a second list specifies the sub-type: <em>All</em>, <em>Double / No double</em> (the player on roll has to decide whether to double) or <em>Take / Pass</em> (response to an opponent's double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In <em>Take / Pass</em> mode, the cube is shown in the centre of the board at the offered value; that value remains editable.</p>
 <p>The <strong>game phase</strong> — opening, middlegame, race, bearoff — is a label blunderDB computes from the board alone. It is never editable, and is searchable through the command line's <code>ph:</code> token (<code>ph:race</code>, repeatable: <code>ph:race ph:bearoff</code>). Three of its four boundaries are the ones GNU Backgammon uses to route its networks; the fourth, where the opening stops, is a blunderDB convention: a position is still in the opening as long as neither side has moved more than four checkers off its starting points, nothing has been borne off and nothing is on the bar.</p>
 <div class="admonition note">
@@ -248,7 +249,7 @@ export default {
 <p>Refer to list of commands for the list of available filters.</p>
 </div>
 <h3>Collections Panel</h3>
-<p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
+<p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>
 <ul>
@@ -268,7 +269,8 @@ export default {
 <li>switch between games using the <em>PageUp</em> and <em>PageDown</em> keys,</li>
 <li>display the move analysis (checker and cube) by pressing <em>CTRL-L</em>,</li>
 <li>toggle between checker move and cube analysis with the <em>d</em> key,</li>
-<li>see the actually played move highlighted in the analysis.</li>
+<li>see the actually played move highlighted in the analysis,</li>
+<li>search among the positions of the match with the <code>ss</code> command (e.g.: <code>ss E&gt;80</code>); <em>Esc</em> then returns to the move studied (see Search Panel).</li>
 </ul>
 <p>The last visited position in each match is saved and restored automatically. Press <em>CTRL-Tab</em> or run the <code>match</code> command to show or hide the panel.</p>
 <p>A row's <strong>⊕</strong> button enriches that match from a file. There is nothing new behind it: re-importing the same match in another format already enriches it in place — the canonical hash recognises that it is the same match, and the analyses and comments of the second file complete the first. What the button adds is that it can be found: nobody guesses that an import is also an enrichment. The report that follows says which of the two happened — “enriched: 1” rather than “imported: 1”.</p>
@@ -942,6 +944,10 @@ export default {
 <tr>
 <td>r</td>
 <td>Load a random position.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Leave the results of an <code>ss</code> search run from a collection or a match: back to the collection, or to the match on the move studied.</td>
 </tr>
 </tbody>
 </table>
@@ -1769,7 +1775,7 @@ export default {
 </tr>
 <tr>
 <td>ss</td>
-<td>Search among the currently filtered positions.</td>
+<td>Search among the positions on screen: current results, open collection or match under review.</td>
 </tr>
 </tbody>
 </table>

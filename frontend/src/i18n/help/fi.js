@@ -204,7 +204,8 @@ export default {
 </div>
 <h3>Hakupaneeli</h3>
 <p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
-<p>Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä komentoa <code>ss</code>, jota seuraavat suodattimet (esim. <code>ss nc</code>, <code>ss E&gt;40</code>). Hakupaneeli tarjoaa samaa toimintoa varten myös valintaruudun <em>Hae nykyisistä tuloksista</em>.</p>
+<p>Hae näytetyistä asemista komennolla <code>ss</code>, jota seuraavat suodattimet (esim. <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> hakee näytöllä olevasta luettelosta: edellisen haun tuloksista, avoimesta kokoelmasta tai läpikäytävän ottelun asemista, kirjoitettiinpa komento suoraan tai hakupaneelista (<em>TAB</em>). Paneelin valintaruutu <em>Hae nykyisistä tuloksista</em> noudattaa samaa sääntöä. Kokoelmassa ja ottelussa <code>s</code> hylätään: se hakisi koko kirjastosta ja korvaisi näytetyn luettelon.</p>
+<p>Kokoelmasta tai ottelusta käynnistetyn <code>ss</code>-haun tuloksista poistutaan <em>Esc</em>-näppäimellä yhdellä painalluksella heti, kun kentällä tai kohdistetulla paneelilla ei ole mitään suljettavaa (esimerkiksi analyysissä valittu siirto): blunderDB palaa koko kokoelmaan tai ottelun tarkasteltuun siirtoon ja jätettyyn asemaan. Tämä paluu seuraa vain <code>ss</code>-komentoa: kokoelman tai ottelun päälle avatusta hakupaneelista käynnistetty <code>s</code> hakee koko kirjastosta, eikä <em>Esc</em> enää palaa jätettyyn luetteloon.</p>
 <p>Paneeli tarjoaa nimenomaisen hallinnan haettavalle <strong>päätöstyypille</strong>: <em>Indifférent</em> (ei suodatinta), <em>Siirto</em> (siirtopäätökset) tai <em>Tuplaus</em> (kuutiopäätökset). Kun <em>Tuplaus</em> on valittuna, toinen luettelo tarkentaa alityypin: <em>Kaikki</em>, <em>Tuplaus / Ei tuplausta</em> (vuorossa olevan pelaajan on päätettävä, tuplaako) tai <em>Hyväksy / Luovuta</em> (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. <em>Hyväksy / Luovuta</em> -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.</p>
 <p><strong>Pelin vaihe</strong> — avaus, keskipeli, kilpajuoksu, nappuloiden poisto — on merkintä, jonka blunderDB laskee pelkästä laudasta. Sitä ei voi koskaan muokata, ja se on haettavissa komentorivin <code>ph:</code>-merkinnällä (<code>ph:race</code>, toistettavissa: <code>ph:race ph:bearoff</code>). Kolme sen neljästä rajasta ovat ne, joilla GNU Backgammon ohjaa verkkojaan; neljäs, jossa avaus päättyy, on blunderDB:n käytäntö: asema on yhä avauksessa niin kauan kuin kumpikaan puoli ei ole siirtänyt yli neljää nappulaa lähtöpisteiltään, mitään ei ole poistettu eikä mikään ole palkissa.</p>
 <div class="admonition note">
@@ -248,7 +249,7 @@ export default {
 <p>Katso saatavilla olevien suodattimien luettelo kohdasta komentoluettelo.</p>
 </div>
 <h3>Kokoelmapaneeli</h3>
-<p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
 <h3>Tuonti: mitä kirjoitetaan ja mitä ei koskaan</h3>
 <p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>
 <ul>
@@ -268,7 +269,8 @@ export default {
 <li>vaihtaa pelistä toiseen näppäimillä <em>PageUp</em> ja <em>PageDown</em>,</li>
 <li>näyttää siirtojen analyysin (pelinappulat ja kuutio) painamalla <em>CTRL-L</em>,</li>
 <li>vaihtaa pelinappulasiirtojen ja kuution analyysin välillä <em>d</em>-näppäimellä,</li>
-<li>nähdä todella pelatun siirron korostettuna analyysissä.</li>
+<li>nähdä todella pelatun siirron korostettuna analyysissä,</li>
+<li>hakea ottelun asemista komennolla <code>ss</code> (esim. <code>ss E&gt;80</code>); <em>Esc</em> palaa sen jälkeen tarkasteltuun siirtoon (katso Hakupaneeli).</li>
 </ul>
 <p>Kunkin ottelun viimeksi katsottu asema tallennetaan ja palautetaan automaattisesti. Näytä tai piilota paneeli painamalla <em>CTRL-Tab</em> tai suorittamalla komento <code>match</code>.</p>
 <p>Rivin <strong>⊕</strong>-painike rikastaa ottelun tiedostosta. Sen takana ei ole mitään uutta: saman ottelun tuominen uudelleen toisessa muodossa rikastaa sen jo paikallaan — kanoninen tiiviste tunnistaa, että kyseessä on sama ottelu, ja toisen tiedoston analyysit ja kommentit täydentävät ensimmäistä. Painike tuo sen, että se löytyy: kukaan ei arvaa, että tuonti on myös rikastus. Seuraava raportti kertoo kumpi näistä tapahtui — ”rikastettu: 1” eikä ”tuotu: 1”.</p>
@@ -942,6 +944,10 @@ export default {
 <tr>
 <td>r</td>
 <td>Lataa satunnainen asema.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Poistu kokoelmasta tai ottelusta käynnistetyn <code>ss</code>-haun tuloksista: paluu kokoelmaan tai ottelun tarkasteltuun siirtoon.</td>
 </tr>
 </tbody>
 </table>
@@ -1769,7 +1775,7 @@ export default {
 </tr>
 <tr>
 <td>ss</td>
-<td>Etsi tällä hetkellä suodatettujen asemien joukosta.</td>
+<td>Hae näytetyistä asemista: nykyiset tulokset, avoin kokoelma tai läpikäytävä ottelu.</td>
 </tr>
 </tbody>
 </table>

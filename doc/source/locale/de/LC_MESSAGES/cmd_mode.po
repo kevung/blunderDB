@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 01:02+0200\n"
+"POT-Creation-Date: 2026-09-13 16:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -478,8 +478,12 @@ msgid "ss"
 msgstr "ss"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Chercher parmi les positions actuellement filtrées."
-msgstr "Sucht unter den aktuell gefilterten Positionen."
+msgid ""
+"Chercher parmi les positions affichées : résultats courants, collection "
+"ouverte ou match en cours de revue."
+msgstr ""
+"Unter den angezeigten Stellungen suchen: aktuelle Ergebnisse, geöffnete "
+"Sammlung oder durchgesehenes Match."
 
 #: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
@@ -1621,3 +1625,6 @@ msgstr "Löscht den Befehlsverlauf."
 
 #~ msgid "epc"
 #~ msgstr "epc"
+
+#~ msgid "Chercher parmi les positions actuellement filtrées."
+#~ msgstr "Sucht unter den aktuell gefilterten Positionen."
