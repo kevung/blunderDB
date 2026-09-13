@@ -49,12 +49,17 @@ export function generateXGID(position) {
     // a match already won, which decodes back to nothing (#338).
     const away1 = isMoneyGame ? 0 : pointsAway(score[0]);
     const away2 = isMoneyGame ? 0 : pointsAway(score[1]);
-    const matchLength = isMoneyGame ? 0 : Math.max(away1, away2);
-    const actualScore1 = isMoneyGame ? 0 : matchLength - away1;
-    const actualScore2 = isMoneyGame ? 0 : matchLength - away2;
     // Field 7 reads the RAW score, not the distance: `1` is what says this is
     // the Crawford game, and `0` is precisely what says it is not.
     const isCrawford = !isMoneyGame && (score[0] === 1 || score[1] === 1) ? 1 : 0;
+    // A 1-point match IS the Crawford game — its only game starts one point
+    // from the match, and domain.DecodeXGID reads it so whatever field 7 says
+    // (#411) — so two post-Crawford sentinels [0, 0] go out as a 2-point match
+    // at 1-1, the smallest match that is post-Crawford.
+    const smallest = isMoneyGame ? 0 : Math.max(away1, away2);
+    const matchLength = smallest === 1 && !isCrawford ? 2 : smallest;
+    const actualScore1 = isMoneyGame ? 0 : matchLength - away1;
+    const actualScore2 = isMoneyGame ? 0 : matchLength - away2;
     const field7 = isMoneyGame ? (has_jacoby ? 1 : 0) | (has_beaver ? 2 : 0) : isCrawford;
     const playerOnRoll = player_on_roll === 0 ? 1 : -1;
     // Field 9 (max cube): the ceiling the SOURCE stated, carried back out

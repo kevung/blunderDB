@@ -130,7 +130,10 @@ func DecodeXGID(xgid string) (Position, error) {
 	// the match importers decide from their own per-game flag (#338). This is
 	// the one reading of it: the shared text parser, /v1/positions.fromXGID and
 	// the BGBlitz position import all go through it (#360). An XGID whose field
-	// 7 is empty states nothing, and the ambiguous 1 stays.
+	// 7 is empty states nothing, and the ambiguous 1 stays. A 1-point match is
+	// the one score where field 7 is not needed: its only game starts one point
+	// from the match, so it is the Crawford game — the importers' rule — and
+	// both players are at 1 whatever the flag says (#411).
 	score1, ok1 := xgidInt(fields, 5)
 	score2, ok2 := xgidInt(fields, 6)
 	matchLen, okM := xgidInt(fields, 8)
@@ -172,14 +175,33 @@ func DecodeXGID(xgid string) (Position, error) {
 // that is neither 0 nor 1. Otherwise crawford is field 7's own word — the
 // current game is the Crawford game — which is what DecodeXGID writes into the
 // away score. The "XGID=" prefix is optional.
+//
+// A 1-point match is stated by its length alone: the Crawford game is the
+// first game of a match started one point from the goal, which the match
+// importers derive from the scores (ingest's isCrawfordGame, the transcript
+// replay), and a 1-point match's only game starts there. So it is the Crawford
+// game whatever field 7 says (#411) — the same position pasted or imported
+// hashes to one row.
 func XGIDCrawfordGame(xgid string) (crawford, stated bool) {
 	s := strings.TrimPrefix(strings.TrimSpace(xgid), "XGID=")
 	return xgidCrawfordGame(strings.Split(s, ":"))
 }
 
+// XGIDMatchLength reads the match length an XGID states in field 8. ok is
+// false when the field is absent or not a number; 0 is money play. The
+// "XGID=" prefix is optional.
+func XGIDMatchLength(xgid string) (length int, ok bool) {
+	s := strings.TrimPrefix(strings.TrimSpace(xgid), "XGID=")
+	return xgidInt(strings.Split(s, ":"), 8)
+}
+
 func xgidCrawfordGame(fields []string) (crawford, stated bool) {
-	if matchLen, ok := xgidInt(fields, 8); !ok || matchLen <= 0 {
+	matchLen, ok := xgidInt(fields, 8)
+	if !ok || matchLen <= 0 {
 		return false, false
+	}
+	if matchLen == 1 {
+		return true, true
 	}
 	switch flag, ok := xgidInt(fields, 7); {
 	case !ok:
@@ -204,6 +226,9 @@ func xgidCrawfordGame(fields []string) (crawford, stated bool) {
 // to the same away scores. The distances are read through PointsAway, so the
 // post-Crawford 0 is one point away and not a match already won; field 7 is
 // read from the sentinel itself: 1 is the Crawford game, 0 is not (#338, #360).
+// The one pair the smallest match cannot carry is two post-Crawford sentinels:
+// a 1-point match is the Crawford game (#411), so away [0, 0] goes out as a
+// 2-point match at 1-1, which is post-Crawford and decodes back to [0, 0].
 // In money play field 7 is the Jacoby/Beaver bitmask instead. A cube decision
 // writes dice 00, and the cube ceiling goes back out as the source stated it.
 func EncodeXGID(pos *Position) string {
@@ -233,10 +258,13 @@ func EncodeXGID(pos *Position) string {
 	} else {
 		away1, away2 := PointsAway(pos.Score[0]), PointsAway(pos.Score[1])
 		matchLength = max(away1, away2)
-		score1, score2 = matchLength-away1, matchLength-away2
 		if pos.Score[0] == Crawford || pos.Score[1] == Crawford {
 			field7 = 1
 		}
+		if matchLength == 1 && field7 == 0 {
+			matchLength = 2 // a 1-point match would say Crawford
+		}
+		score1, score2 = matchLength-away1, matchLength-away2
 	}
 	return fmt.Sprintf("%s:%d:%d:%d:%s:%d:%d:%d:%d:%d", EncodeXGIDBoard(pos),
 		pos.Cube.Value, cubeOwner, turn, dice, score1, score2, field7, matchLength, pos.MaxCube)

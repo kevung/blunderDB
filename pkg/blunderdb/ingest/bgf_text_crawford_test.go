@@ -29,6 +29,10 @@ func TestBGFTextPositionWritesTheCrawfordSentinel(t *testing.T) {
 	if !strings.Contains(string(raw), postCrawford) {
 		t.Fatalf("fixture no longer carries the XGID tail %q; the case proves nothing", postCrawford)
 	}
+	const scoreLine = "Vert - 6 Rouge - 3 in a 7 point match."
+	if !strings.Contains(string(raw), scoreLine) {
+		t.Fatalf("fixture no longer carries the score line %q; the 1-point case proves nothing", scoreLine)
+	}
 
 	for _, c := range []struct {
 		name, text string
@@ -36,6 +40,12 @@ func TestBGFTextPositionWritesTheCrawfordSentinel(t *testing.T) {
 	}{
 		{"after the Crawford game", string(raw), [2]int{4, domain.PostCrawford}},
 		{"in the Crawford game", strings.Replace(string(raw), postCrawford, ":1:-1:1:21:3:6:1:7:10", 1), [2]int{4, domain.Crawford}},
+		// The same text as a 1-point match, field 7 still 0: the match's only
+		// game is its Crawford game, as the match importers write it (#411).
+		{"a 1-point match", strings.NewReplacer(
+			postCrawford, ":0:0:1:21:0:0:0:1:10",
+			scoreLine, "Vert - 0 Rouge - 0 in a 1 point match.",
+		).Replace(string(raw)), [2]int{domain.Crawford, domain.Crawford}},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			graphs, err := MapBGFTextPositionText(c.text)

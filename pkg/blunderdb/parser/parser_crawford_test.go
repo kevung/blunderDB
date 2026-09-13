@@ -27,6 +27,11 @@ func TestParsePositionWritesTheCrawfordSentinel(t *testing.T) {
 		{"after the Crawford game", "XGID=" + board + ":1:-1:1:21:3:6:0:7:10", [2]int{4, domain.PostCrawford}},
 		{"in the Crawford game", "XGID=" + board + ":1:-1:1:21:3:6:1:7:10", [2]int{4, domain.Crawford}},
 		{"both one point away after Crawford", "XGID=" + board + ":1:-1:1:21:6:6:0:7:10", [2]int{domain.PostCrawford, domain.PostCrawford}},
+		// A 1-point match's only game starts one point from the match: it is
+		// the Crawford game whatever field 7 says, as the match importers
+		// write it (#411).
+		{"1-point match, field 7 = 0", "XGID=" + board + ":0:0:1:21:0:0:0:1:10", [2]int{domain.Crawford, domain.Crawford}},
+		{"1-point match, field 7 = 1", "XGID=" + board + ":0:0:1:21:0:0:1:1:10", [2]int{domain.Crawford, domain.Crawford}},
 		// An empty field 7 states nothing about the rule: the ambiguous 1 is
 		// what it leaves, as before.
 		{"empty field 7", "XGID=" + board + ":1:-1:1:21:3:6::7:10", [2]int{4, domain.Crawford}},

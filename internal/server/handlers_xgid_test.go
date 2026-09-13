@@ -90,6 +90,10 @@ func TestPositionsFromXGIDWritesTheCrawfordSentinel(t *testing.T) {
 	}{
 		{"after the Crawford game", "XGID=" + board + ":1:-1:1:21:3:6:0:7:10", [2]int{4, domain.PostCrawford}},
 		{"in the Crawford game", "XGID=" + board + ":1:-1:1:21:3:6:1:7:10", [2]int{4, domain.Crawford}},
+		// A 1-point match is its own Crawford game, field 7 or not (#411);
+		// the DMP after the Crawford game of a longer match is not.
+		{"a 1-point match with field 7 = 0", "XGID=" + board + ":0:0:1:21:0:0:0:1:10", [2]int{domain.Crawford, domain.Crawford}},
+		{"DMP after the Crawford game of a 7-point match", "XGID=" + board + ":1:-1:1:21:6:6:0:7:10", [2]int{domain.PostCrawford, domain.PostCrawford}},
 	} {
 		t.Run(c.name+"/fromXGID", func(t *testing.T) {
 			rec := post("/v1/positions.fromXGID", map[string]string{"xgid": c.xgid})
