@@ -15,8 +15,18 @@
     import { t } from '../../i18n';
     import { renderNote, renderSectionName } from './labels.js';
 
+    /**
+     * @type {{
+     *     view?: import('../../../wailsjs/go/models').database.StandingsView | null,
+     *     busy?: boolean,
+     *     onClose?: () => void,
+     *     onReopen?: () => void,
+     *     onCSV?: () => void
+     * }}
+     */
     let { view = null, busy = false, onClose = () => {}, onReopen = () => {}, onCSV = () => {} } = $props();
 
+    /** @param {number | undefined} v */
     function money(v) {
         if (!v) return '';
         return v.toLocaleString(undefined, { maximumFractionDigits: 0 });

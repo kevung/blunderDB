@@ -26,6 +26,7 @@
             : entries
     );
 
+    /** @param {string} iso */
     function when(iso) {
         if (!iso) return '';
         const d = new Date(iso);
@@ -34,6 +35,7 @@
 
     /* Ce que la ligne raconte. Chaque sorte d'événement a sa phrase, dans la langue de
        l'utilisateur : le moteur, lui, n'en écrit aucune. */
+    /** @param {import('../../../wailsjs/go/models').database.HistoryEntry} e */
     function what(e) {
         switch (e.kind) {
             case 'created':

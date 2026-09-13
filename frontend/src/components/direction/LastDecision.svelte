@@ -35,11 +35,13 @@
         if (open) return closeOnEscape(() => (open = false));
     });
 
+    /** @param {string} v */
     function num(v) {
         const n = parseInt(v, 10);
         return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
+    /** @param {string} winner */
     function correct(winner) {
         onCorrect(last.matchId, winner, num(scoreA), num(scoreB));
         open = false;

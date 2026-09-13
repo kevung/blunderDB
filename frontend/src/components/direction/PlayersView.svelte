@@ -33,8 +33,8 @@
     let club = $state('');
     let rating = $state('');
     let filter = $state('');
-    let editing = $state(null);
-    let nameInput = $state(null);
+    let editing = $state(/** @type {{ id: string, name: string, club: string, rating: number | string } | null} */ (null));
+    let nameInput = $state(/** @type {HTMLInputElement | null} */ (null));
 
     const shown = $derived(filter.trim() ? rows.filter((r) => (r.name + ' ' + (r.club || '')).toLowerCase().includes(filter.trim().toLowerCase())) : rows);
 
@@ -47,6 +47,7 @@
         return suggestions.filter((s) => s.name.toLowerCase().includes(q) && !already.has(s.name.toLowerCase())).slice(0, 6);
     });
 
+    /** @param {number | string} v */
     function num(v) {
         const n = parseFloat(String(v).replace(',', '.'));
         return Number.isFinite(n) && n >= 0 ? n : 0;
@@ -63,6 +64,7 @@
 
     const chosenSlot = $derived(slots.find((s) => s.key === slotKey) || null);
 
+    /** @param {import('../../../wailsjs/go/models').database.FreeSlot} s */
     function slotLabel(s) {
         const where = renderSectionName($t, s.section);
         const what = renderLabel($t, s.label);
@@ -84,12 +86,14 @@
     }
 
     /* Choisir un Player fixe l'orthographe et la cote, puis inscrit : un seul geste. */
+    /** @param {import('../../../wailsjs/go/models').database.EntrySuggestion} s */
     async function pick(s) {
         name = s.name;
         rating = s.pr ? s.pr.toFixed(1) : '';
         await add();
     }
 
+    /** @param {import('../../../wailsjs/go/models').database.ParticipantRow} r */
     function startEdit(r) {
         editing = { id: r.id, name: r.name, club: r.club || '', rating: r.rating || '' };
     }

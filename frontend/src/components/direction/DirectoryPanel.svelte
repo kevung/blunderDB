@@ -11,11 +11,25 @@
      */
     import { t } from '../../i18n';
 
+    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryImport} DirectoryImport */
+    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryEntry} DirectoryEntry */
+
+    /**
+     * @type {{
+     *     sources?: import('../../../wailsjs/go/models').database.DirectorySource[],
+     *     entries?: DirectoryEntry[],
+     *     busy?: boolean,
+     *     onTake?: (tournamentId: number) => void,
+     *     onExport?: () => void,
+     *     onParse?: (body: string) => Promise<DirectoryImport | null>,
+     *     onImport?: (rows: DirectoryEntry[]) => void
+     * }}
+     */
     let { sources = [], entries = [], busy = false, onTake = () => {}, onExport = () => {}, onParse = async () => null, onImport = () => {} } = $props();
 
     let open = $state(false);
     let pasted = $state('');
-    let preview = $state(null);
+    let preview = $state(/** @type {DirectoryImport | null} */ (null));
 
     async function read() {
         preview = await onParse(pasted);

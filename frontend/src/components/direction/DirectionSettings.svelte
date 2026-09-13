@@ -22,6 +22,33 @@
     import { namedConfigs } from '../../stores/directionStore';
     import { renderConfigChange, renderLockReason } from './labels.js';
 
+    /** @typedef {import('../../stores/directionStore.js').DirectionConfig} DirectionConfig */
+    /** @typedef {import('../../../wailsjs/go/models').tournoi.PhaseConfig} PhaseConfig */
+    /** @typedef {import('../../../wailsjs/go/models').database.PhaseLock} PhaseLock */
+    /** @typedef {import('../../../wailsjs/go/models').database.ConfigChange} ConfigChange */
+    /**
+     * Ce que rend l'aperçu d'une configuration : les changements, et ceux que le moteur refuse.
+     *
+     * @typedef {{ changes?: ConfigChange[], refusals?: ConfigChange[] }} ConfigCheck
+     */
+
+    /**
+     * @type {{
+     *     config?: DirectionConfig | null,
+     *     directionState?: string,
+     *     tournamentName?: string,
+     *     onApply?: (config: DirectionConfig) => void,
+     *     onDelete?: (() => void) | null,
+     *     entrantCount?: number,
+     *     onPreview?: ((config: DirectionConfig) => Promise<ConfigCheck | null>) | null,
+     *     locks?: PhaseLock[],
+     *     opened?: number,
+     *     outputDir?: string,
+     *     onChooseOutput?: (() => void) | null,
+     *     onForgetOutput?: (() => void) | null,
+     *     onOpenPage?: (() => void) | null
+     * }}
+     */
     let {
         config = $bindable(),
         // Le nom compte : une prop nommée `state` ferait lire la rune `$state` de ce fichier
@@ -48,15 +75,18 @@
        par direction.format.<kind>, comme partout ailleurs. */
     const phaseKinds = ['swiss_lives', 'lives_bracket', 'gsl', 'bracket', 'round_robin'];
 
+    /** @param {number} i */
     function lockOf(i) {
         return locks.find((l) => l.phase === i + 1) || null;
     }
 
+    /** @param {number} i */
     function kindLocked(i) {
         const l = lockOf(i);
         return !!(l && l.locked);
     }
 
+    /** @param {number} i */
     function kindTitle(i) {
         const l = lockOf(i);
         if (l && l.locked) return $t('direction.settings.kindFrozen', { reason: renderLockReason($t, l.reason) });
@@ -65,14 +95,16 @@
 
     /* Une phase OUVERTE a déjà distribué ses vies : changer le nombre ne rattraperait pas les
        joueurs entrés. Le reste — longueurs, bascule, finale — porte sur les matchs à venir. */
-    const isOpen = (i) => i < opened;
+    const isOpen = (/** @type {number} */ i) => i < opened;
     const openTitle = $derived($t('direction.settings.phaseOpened'));
 
+    /** @param {(typeof namedConfigs)[number]} named */
     function pickNamed(named) {
         config = named.build(tournamentName || config?.name || '');
         onApply(config);
     }
 
+    /** @param {string} kind */
     function phaseKindLabel(kind) {
         return $t(`direction.format.${kind}`);
     }
@@ -80,17 +112,21 @@
     /* Ajouter une phase, c'est l'ajouter APRÈS toutes les autres : une consolante décidée le
        samedi soir n'interrompt pas ce qui se joue. */
     function addPhase() {
+        if (!config) return;
         const last = config.phases[config.phases.length - 1];
         config.phases = [...config.phases, { kind: 'bracket', length: last?.length || 7 }];
     }
 
+    /** @param {number} i */
     function removePhase(i) {
+        if (!config) return;
         config.phases = config.phases.filter((_, k) => k !== i);
     }
 
     /* Les pauses de la journée. Rien n'est bloqué : un match qui finirait dedans porte un
        avertissement, et le directeur décide. */
     function addBreak() {
+        if (!config) return;
         // L'heure ronde qui vient de passer : un défaut qu'un directeur corrige d'un geste.
         const now = new Date();
         const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
@@ -98,21 +134,30 @@
         config.breaks = [...(config.breaks || []), { start: start.toISOString(), end: end.toISOString() }];
     }
 
+    /** @param {number} i */
     function removeBreak(i) {
+        if (!config) return;
         config.breaks = (config.breaks || []).filter((_, k) => k !== i);
     }
 
     /* Un `datetime-local` parle l'heure locale sans fuseau ; le moteur ne connaît que des
        instants. La conversion se fait ici, aux deux bouts, et nulle part ailleurs. */
+    /** @param {string} iso */
     function toLocalInput(iso) {
         if (!iso) return '';
         const d = new Date(iso);
         if (Number.isNaN(d.getTime())) return '';
-        const pad = (n) => String(n).padStart(2, '0');
+        const pad = (/** @type {number} */ n) => String(n).padStart(2, '0');
         return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
+    /**
+     * @param {number} i
+     * @param {'start' | 'end'} which
+     * @param {string} value
+     */
     function setBreakBound(i, which, value) {
+        if (!config) return;
         const d = new Date(value);
         if (Number.isNaN(d.getTime())) return;
         const next = [...(config.breaks || [])];
@@ -124,10 +169,15 @@
        veut dire finale en 15, demies en 13, quarts en 11. C'est l'ordre dans lequel un
        organisateur annonce son tournoi, et il ne dépend pas de la taille du tableau — la même
        liste sert un tableau de 16 et un de 64, où elle allonge les quatre derniers tours. */
+    /** @param {PhaseConfig} phase */
     function lengthsText(phase) {
         return (phase.lengths || []).join(', ');
     }
 
+    /**
+     * @param {PhaseConfig} phase
+     * @param {string} text
+     */
     function setLengths(phase, text) {
         const parsed = String(text)
             .split(/[,;]/)
@@ -149,20 +199,28 @@
     const prizeSections = ['all', 'main', 'conso', 'last'];
 
     function prizes() {
-        if (!config.prizes) config.prizes = {};
-        if (!config.prizes.retention) config.prizes.retention = {};
-        if (!config.prizes.sections) config.prizes.sections = {};
-        return config.prizes;
+        // Appelée seulement depuis le formulaire, qui n'existe que lorsqu'une configuration est là.
+        const c = /** @type {DirectionConfig} */ (config);
+        if (!c.prizes) c.prizes = {};
+        if (!c.prizes.retention) c.prizes.retention = {};
+        if (!c.prizes.sections) c.prizes.sections = {};
+        return c.prizes;
     }
 
+    /** @param {string} section */
     function scaleText(section) {
-        const sc = config.prizes?.sections?.[section];
+        const sc = config?.prizes?.sections?.[section];
         if (!sc) return '';
         return (sc.percents || sc.amounts || []).join(', ');
     }
 
     /* Un barème se saisit en une ligne : « 50, 30, 20 ». Le signe % dit lequel des deux champs
        du moteur est rempli — des pourcentages du distribuable, ou des montants fixes. */
+    /**
+     * @param {string} section
+     * @param {string} text
+     * @param {boolean} asPercent
+     */
     function setScale(section, text, asPercent) {
         const list = String(text)
             .split(/[,;]/)
@@ -178,8 +236,9 @@
         p.sections = { ...p.sections, [section]: asPercent ? { percents: list } : { amounts: list } };
     }
 
+    /** @param {string} section */
     function isPercent(section) {
-        const sc = config.prizes?.sections?.[section];
+        const sc = config?.prizes?.sections?.[section];
         return !sc || !!sc.percents;
     }
 
@@ -192,17 +251,19 @@
     });
     const payable = $derived(Math.max(0, pool - retained));
 
+    /** @param {number | undefined} v */
     function money(v) {
         return (v || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
     }
 
     /* La liste de contrôle : ce que « Enregistrer » va faire, montré avant de le faire. */
-    let pending = $state(null);
+    let pending = $state(/** @type {ConfigCheck | null} */ (null));
     const blocked = $derived(!!pending && pending.refusals && pending.refusals.length > 0);
     const nothing = $derived(!!pending && (pending.changes || []).length === 0 && (pending.refusals || []).length === 0);
 
     async function askApply() {
         // En préparation, rien n'est encore décidé : la confirmation ne coûterait qu'un clic.
+        if (!config) return;
         if (isDraft || !onPreview) {
             onApply(config);
             return;
@@ -217,6 +278,7 @@
 
     function confirmApply() {
         pending = null;
+        if (!config) return;
         onApply(config);
     }
 
