@@ -13,16 +13,41 @@
     import { t } from '../../i18n';
     import ResultCard from './ResultCard.svelte';
 
+    /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
+
+    /**
+     * @type {{
+     *     cells?: TableCell[],
+     *     busy?: boolean,
+     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
+     *     onForfeit?: (matchId: string, winner: string, note: string) => void,
+     *     onMove?: (matchId: string, table: number) => void,
+     *     onCancel?: (matchId: string) => void
+     * }}
+     */
     let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
 
     let openTable = $state(0);
 
+    /** @param {number} seconds */
     function elapsed(seconds) {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
         return h > 0 ? `${h} h ${String(m).padStart(2, '0')}` : `${m} min`;
     }
 
+    /**
+     * La fiche ne s'ouvre que sur une table où un match est en cours : ses deux joueurs et son
+     * identifiant sont là. Rend la case elle-même, typée comme telle.
+     *
+     * @param {TableCell} c
+     * @returns {TableCell & { matchId: string, a: string, b: string }}
+     */
+    function runningCell(c) {
+        return /** @type {TableCell & { matchId: string, a: string, b: string }} */ (c);
+    }
+
+    /** @param {TableCell} c */
     function label(c) {
         if (c.unavailable) return $t('direction.table.unavailable');
         if (c.reserved) return $t('direction.table.reserved');
@@ -60,7 +85,7 @@
                 </button>
 
                 {#if openTable === c.table && c.matchId}
-                    <ResultCard cell={c} {busy} onClose={() => (openTable = 0)} {onResult} {onForfeit} {onMove} {onCancel} />
+                    <ResultCard cell={runningCell(c)} {busy} onClose={() => (openTable = 0)} {onResult} {onForfeit} {onMove} {onCancel} />
                 {/if}
             </div>
         {/each}

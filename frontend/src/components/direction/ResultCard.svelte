@@ -15,6 +15,23 @@
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
 
+    /**
+     * La case d'une table où un match est en cours : la fiche ne s'ouvre que sur celle-là.
+     *
+     * @typedef {{ table?: number, length?: number, matchId: string, a: string, b: string, aName?: string, bName?: string }} ResultCell
+     */
+
+    /**
+     * @type {{
+     *     cell: ResultCell,
+     *     busy?: boolean,
+     *     onClose?: () => void,
+     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
+     *     onForfeit?: (matchId: string, winner: string, note: string) => void,
+     *     onMove?: (matchId: string, table: number) => void,
+     *     onCancel?: (matchId: string) => void
+     * }}
+     */
     let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
 
     let scoreA = $state('');
@@ -23,17 +40,20 @@
     let note = $state('');
     let moveTo = $state('');
 
+    /** @param {string} v */
     function num(v) {
         const n = parseInt(v, 10);
         return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
     /* Cliquer un nom valide : avec ou sans score, c'est le même geste. */
+    /** @param {string} winner */
     function win(winner) {
         onResult(cell.matchId, winner, num(scoreA), num(scoreB), note.trim());
         onClose();
     }
 
+    /** @param {string} winner */
     function forfeit(winner) {
         onForfeit(cell.matchId, winner, note.trim());
         onClose();

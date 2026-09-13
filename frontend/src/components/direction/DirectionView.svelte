@@ -80,8 +80,29 @@
         addParticipantAtSlot
     } from '../../stores/directionStore';
 
+    /** @typedef {import('../../stores/directionStore.js').DirectionConfig} DirectionConfig */
+    /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
+    /** @typedef {import('../../stores/directionStore.js').EntrantInput} EntrantInput */
+    /** @typedef {import('../../../wailsjs/go/models').tournoi.Player} Player */
+    /** @typedef {import('../../../wailsjs/go/models').database.BracketPhase} BracketPhase */
+    /** @typedef {import('../../../wailsjs/go/models').database.ClockView} ClockView */
+    /** @typedef {import('../../../wailsjs/go/models').database.ConfigPreview} ConfigPreview */
+    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryEntry} DirectoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').database.DirectorySource} DirectorySource */
+    /** @typedef {import('../../../wailsjs/go/models').database.EntrySuggestion} EntrySuggestion */
+    /** @typedef {import('../../../wailsjs/go/models').database.FreeSlot} FreeSlot */
+    /** @typedef {import('../../../wailsjs/go/models').database.HistoryEntry} HistoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').database.LastDecision} LastDecision */
+    /** @typedef {import('../../../wailsjs/go/models').database.ParticipantRow} ParticipantRow */
+    /** @typedef {import('../../../wailsjs/go/models').database.SlotRow} SlotRow */
+    /** @typedef {import('../../../wailsjs/go/models').database.SlotSuggestion} SlotSuggestion */
+    /** @typedef {import('../../../wailsjs/go/models').database.StandingsView} StandingsView */
+    /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
+
     const view = $derived($directionStore);
-    const state = $derived(view?.state || 'draft');
+    // Pas `state` : svelte-check lirait alors chaque rune `$state` de ce fichier comme un abonnement
+    // au store `state` — le piège qui avait fait planter DirectionSettings (#390).
+    const directionState = $derived(view?.state || 'draft');
 
     /* En préparation la vue s'ouvre sur les Réglages, puisque c'est le seul geste possible ;
        en cours elle s'ouvrira sur la page Direction, où le directeur passe 95 % de son temps.
@@ -92,11 +113,11 @@
     let tabChosen = false;
     $effect(() => {
         if (tabChosen) return;
-        if (state !== 'draft') tab = 'direction';
+        if (directionState !== 'draft') tab = 'direction';
         tabChosen = true;
     });
 
-    let config = $state(null);
+    let config = $state(/** @type {DirectionConfig | null} */ (null));
     $effect(() => {
         // La configuration éditée est une copie : tant qu'elle n'est pas enregistrée, elle ne
         // doit pas se confondre avec ce que la base contient.
@@ -114,9 +135,11 @@
         { id: 'settings', labelKey: 'direction.tabs.settings' }
     ];
 
+    /** @param {DirectionConfig} next */
     async function apply(next) {
         try {
-            await saveDirectionConfig($openDirectionIdStore, next);
+            // La vue n'est montée que lorsqu'une Direction est ouverte : l'identifiant est là.
+            await saveDirectionConfig(/** @type {number} */ ($openDirectionIdStore), next);
             statusBarTextStore.set(tMsg('direction.settings.saved'));
         } catch (e) {
             logger.error('direction: saving configuration failed', e);
@@ -125,23 +148,23 @@
     }
 
     let busy = $state(false);
-    let free = $state([]);
-    let cells = $state([]);
-    let last = $state(null);
-    let rows = $state([]);
-    let suggestions = $state([]);
-    let phases = $state([]);
-    let ranking = $state(null);
-    let entries = $state([]);
-    let clockView = $state(null);
+    let free = $state(/** @type {Player[]} */ ([]));
+    let cells = $state(/** @type {TableCell[]} */ ([]));
+    let last = $state(/** @type {LastDecision | null} */ (null));
+    let rows = $state(/** @type {ParticipantRow[]} */ ([]));
+    let suggestions = $state(/** @type {EntrySuggestion[]} */ ([]));
+    let phases = $state(/** @type {BracketPhase[]} */ ([]));
+    let ranking = $state(/** @type {StandingsView | null} */ (null));
+    let entries = $state(/** @type {HistoryEntry[]} */ ([]));
+    let clockView = $state(/** @type {ClockView | null} */ (null));
     let creditOpen = $state(false);
-    let slotRows = $state([]);
-    let unattached = $state([]);
-    let configPreview = $state(null);
+    let slotRows = $state(/** @type {SlotRow[]} */ ([]));
+    let unattached = $state(/** @type {SlotSuggestion[]} */ ([]));
+    let configPreview = $state(/** @type {ConfigPreview | null} */ (null));
     let rounds = $state(0);
-    let dirEntries = $state([]);
-    let dirSources = $state([]);
-    let openSlots = $state([]);
+    let dirEntries = $state(/** @type {DirectoryEntry[]} */ ([]));
+    let dirSources = $state(/** @type {DirectorySource[]} */ ([]));
+    let openSlots = $state(/** @type {FreeSlot[]} */ ([]));
     let sheetRound = $state(0);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
@@ -194,6 +217,10 @@
         return () => clearInterval(timer);
     });
 
+    /**
+     * @param {() => Promise<unknown>} fn
+     * @param {string} key
+     */
     async function act(fn, key) {
         busy = true;
         try {
@@ -206,14 +233,23 @@
         }
     }
 
+    /** @type {(m: string, w: string, a: number, b: number, note: string) => Promise<void>} */
     const onResult = (m, w, a, b, note) => act(() => enterResult(m, w, a, b, note), 'direction.result.error');
+    /** @type {(m: string, w: string, note: string) => Promise<void>} */
     const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
+    /** @type {(m: string, table: number) => Promise<void>} */
     const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
+    /** @type {(m: string) => Promise<void>} */
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
+    /** @type {(m: string, w: string, a: number, b: number) => Promise<void>} */
     const onCorrect = (m, w, a, b) => act(() => correctResult(m, w, a, b, ''), 'direction.result.error');
+    /** @type {(n: string, c: string, r: number) => Promise<void>} */
     const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
+    /** @type {(n: string, c: string, r: number, section: string, key: string) => Promise<void>} */
     const onAddAtSlot = (n, c, r, section, key) => act(() => addParticipantAtSlot(n, c, r, section, key), 'direction.players.error');
+    /** @type {(i: string, n: string, c: string, r: number) => Promise<void>} */
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
+    /** @type {(i: string, after: boolean) => Promise<void>} */
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
@@ -223,7 +259,7 @@
         if (!window.confirm($t('direction.standings.reopenConfirm'))) return;
         return act(() => reopenTournament(), 'direction.standings.error');
     };
-    const onNote = (text) => act(() => addNote(text), 'direction.history.error');
+    const onNote = (/** @type {string} */ text) => act(() => addNote(text), 'direction.history.error');
 
     /* L'affichage de la salle : un dossier choisi une fois, puis plus rien à faire. La page
        s'ouvre dans le navigateur du poste, hors ligne — c'est la seule chose sur laquelle on
@@ -243,8 +279,8 @@
 
     /* L'annuaire : reprendre les inscrits d'un tournoi précédent est UN clic, et c'est tout le
        sujet — retaper trente noms tous les mois est le premier abandon possible du logiciel. */
-    const onTakeEntrants = (sourceId) => act(() => takeEntrantsFrom(sourceId), 'direction.directory.failed');
-    const onImportEntrants = (rows) => act(() => enterParticipants(rows), 'direction.directory.failed');
+    const onTakeEntrants = (/** @type {number} */ sourceId) => act(() => takeEntrantsFrom(sourceId), 'direction.directory.failed');
+    const onImportEntrants = (/** @type {EntrantInput[]} */ rows) => act(() => enterParticipants(rows), 'direction.directory.failed');
     async function onExportDirectory() {
         try {
             await navigator.clipboard.writeText(await directoryCSV());
@@ -263,12 +299,14 @@
         }
         BrowserOpenURL('file://' + path);
     }
+    /** @type {(slot: string, matchId: number) => Promise<void>} */
     const onAttach = (slot, matchId) =>
         act(async () => {
             await attachMatchToSlot(slot, matchId);
             slotRows = await slots();
             unattached = await unattachedMatches();
         }, 'direction.slots.error');
+    /** @type {(slot: string) => Promise<void>} */
     const onDetach = (slot) =>
         act(async () => {
             await detachMatchFromSlot(slot);
@@ -278,6 +316,7 @@
 
     /* Transcrire depuis un emplacement ouvre l'onglet Transcription : le brouillon se tape
        devant le plateau, pas dans la vue tournoi. */
+    /** @param {string} slotId */
     async function onTranscribe(slotId) {
         busy = true;
         try {
@@ -317,16 +356,19 @@
 
     /* Cliquer une place de l'arbre ramène à la page Direction, où le match se saisit : la
        fiche de résultat vit sur la grille des tables, et il n'y en a qu'une. */
+    /** @param {{ matchId?: string }} m */
     function openBracketMatch(m) {
         if (!m.matchId) return;
         tab = 'direction';
     }
 
+    /** @param {string | undefined} id */
     function playerName(id) {
         const p = (view?.players || []).find((x) => x.id === id);
         return p ? p.name : id;
     }
 
+    /** @param {ProposalAction} action */
     async function confirm(action) {
         busy = true;
         try {
@@ -351,6 +393,12 @@
         }
     }
 
+    /**
+     * @param {string} a
+     * @param {string} b
+     * @param {number} length
+     * @param {number} table
+     */
     async function manual(a, b, length, table) {
         busy = true;
         try {
@@ -366,7 +414,7 @@
     async function remove() {
         if (!window.confirm($t('direction.settings.deleteConfirm'))) return;
         try {
-            await deleteDirection($openDirectionIdStore);
+            await deleteDirection(/** @type {number} */ ($openDirectionIdStore));
             statusBarTextStore.set(tMsg('direction.settings.deleted'));
         } catch (e) {
             logger.error('direction: delete failed', e);
@@ -377,7 +425,7 @@
 <div class="direction-view">
     <header>
         <span class="name">{view?.config?.name || ''}</span>
-        <span class="state">{$t(`direction.state.${state}`)}</span>
+        <span class="state">{$t(`direction.state.${directionState}`)}</span>
         <nav>
             {#each tabs as item (item.id)}
                 <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}>{$t(item.labelKey)}</button>
@@ -400,7 +448,7 @@
         {#if tab === 'settings'}
             <DirectionSettings
                 bind:config
-                directionState={state}
+                {directionState}
                 tournamentName={view?.config?.name || ''}
                 entrantCount={view?.players?.length || 0}
                 onApply={apply}
@@ -419,7 +467,7 @@
                     <!-- Un avertissement est visible EN PERMANENCE et ne bloque rien : il
                          disparaît quand sa cause disparaît, jamais parce qu'on l'a lu. -->
                     <ul class="warnings">
-                        {#each view.warnings as w, i (w.code + (w.match || '') + i)}
+                        {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
                             <li>{renderWarning($t, w, playerName)}</li>
                         {/each}
                     </ul>
@@ -460,7 +508,7 @@
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
             <DirectoryPanel sources={dirSources} entries={dirEntries} {busy} onTake={onTakeEntrants} onExport={onExportDirectory} onParse={parseDirectoryCSV} onImport={onImportEntrants} />
-            <PlayersView {rows} {suggestions} {busy} started={state !== 'draft'} {onAdd} {onUpdate} {onWithdraw} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
+            <PlayersView {rows} {suggestions} {busy} started={directionState !== 'draft'} {onAdd} {onUpdate} {onWithdraw} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
         {:else}
             <p class="placeholder">{$t('direction.tabs.notYet')}</p>
         {/if}

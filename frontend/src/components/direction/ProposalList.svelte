@@ -16,6 +16,18 @@
     import { SvelteSet } from 'svelte/reactivity';
     import { proposalLabel, actionKey, renderWarning, isRepair } from './labels.js';
 
+    /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
+
+    /**
+     * @type {{
+     *     proposals?: ProposalAction[],
+     *     players?: { id: string, name: string }[],
+     *     busy?: boolean,
+     *     onConfirm?: (action: ProposalAction) => void,
+     *     onConfirmAll?: () => void | Promise<void>,
+     *     onManual?: (a: string, b: string, length: number, table: number) => void | Promise<void>
+     * }}
+     */
     let { proposals = [], players = [], busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
 
     /* Le compte à rebours d'une micro-ronde (issue #388). L'échéance vient du moteur ; ce qui
@@ -27,6 +39,7 @@
         return () => clearInterval(timer);
     });
 
+    /** @param {string | undefined} until */
     function remaining(until) {
         if (!until) return '';
         const at = new Date(until).getTime();
@@ -56,11 +69,13 @@
         if (selected >= shown.length) selected = Math.max(0, shown.length - 1);
     });
 
+    /** @param {string | undefined} id */
     function playerName(id) {
         const p = players.find((x) => x.id === id);
         return p ? p.name : id;
     }
 
+    /** @param {ProposalAction} a */
     function ignore(a) {
         ignored.add(actionKey(a));
     }
@@ -88,9 +103,10 @@
     /* Nues seulement : CTRL-J ouvre l'Entraînement et CTRL-ENTRÉE ne confirme rien. Tant que le
        répartiteur appelait stopPropagation(), cet écouteur ne recevait aucune touche (#414) ; il
        reçoit maintenant celles qui lui parviennent, et ce sont d'abord des combinaisons. */
+    /** @param {KeyboardEvent} e */
     function onKey(e) {
         if (e.ctrlKey || e.metaKey || e.altKey) return;
-        if (e.target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+        if (e.target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(/** @type {HTMLElement} */ (e.target).tagName)) return;
         if (e.key === 'j' || e.key === 'ArrowDown') {
             selected = Math.min(selected + 1, shown.length - 1);
             e.preventDefault();

@@ -21,28 +21,39 @@
 
     /* La phase courante est dépliée ; les précédentes sont repliées mais consultables — un
        directeur relit le tableau des vies pendant que le tableau final tourne. */
-    let openPhases = $state(null);
+    /** @typedef {import('../../../wailsjs/go/models').database.BracketPhase} BracketPhase */
+    /** @typedef {import('../../../wailsjs/go/models').database.BracketSection} BracketSection */
+    /** @typedef {import('../../../wailsjs/go/models').database.BracketMatch} BracketMatch */
 
-    const state = $derived.by(() => {
+    let openPhases = $state(/** @type {Record<number, boolean> | null} */ (null));
+
+    // Pas `state` : svelte-check lirait alors la rune `$state` ci-dessus comme un abonnement au
+    // store `state` — le piège qui avait fait planter DirectionSettings (#390).
+    const unfolded = $derived.by(() => {
         if (openPhases) return openPhases;
+        /** @type {Record<number, boolean>} */
         const s = {};
         for (const p of phases) s[p.index] = p.current;
         return s;
     });
 
+    /** @param {number} i */
     function toggle(i) {
-        const next = { ...state };
+        const next = { ...unfolded };
         next[i] = !next[i];
         openPhases = next;
     }
 
+    /** @param {BracketPhase} p */
     function phaseTitle(p) {
         return p.name || $t(`direction.format.${p.kind}`);
     }
 
     /* Les places d'une section, rangées par tour : c'est ainsi qu'un tableau se lit, en
        colonnes du premier tour à la finale. */
+    /** @param {BracketSection} section */
     function columns(section) {
+        /** @type {BracketMatch[][]} */
         const cols = [];
         for (const m of section.matches) {
             (cols[m.round] ||= []).push(m);
@@ -50,6 +61,7 @@
         return cols.map((c) => c || []);
     }
 
+    /** @param {BracketMatch} m */
     function outcome(m) {
         if (m.skipped) return $t('direction.bracket.skipped');
         if (m.walkover) return $t('direction.bracket.walkover');
@@ -64,7 +76,7 @@
     {#each phases as p (p.index)}
         <section class="phase">
             <button type="button" class="phase-head" onclick={() => toggle(p.index)}>
-                <span class="chevron">{state[p.index] ? '▾' : '▸'}</span>
+                <span class="chevron">{unfolded[p.index] ? '▾' : '▸'}</span>
                 <span class="phase-name">{phaseTitle(p)}</span>
                 {#if p.current}
                     <span class="badge">{$t('direction.bracket.current')}</span>
@@ -74,7 +86,7 @@
                 {/if}
             </button>
 
-            {#if state[p.index]}
+            {#if unfolded[p.index]}
                 {#if p.lives && p.lives.length}
                     <table class="lives">
                         <thead>

@@ -11,6 +11,13 @@
      */
     import { t } from '../../i18n';
 
+    /**
+     * @type {{
+     *     clock?: import('../../../wailsjs/go/models').database.ClockView | null,
+     *     warnings?: number,
+     *     onWarnings?: () => void
+     * }}
+     */
     let { clock = null, warnings = 0, onWarnings = () => {} } = $props();
 
     /* L'heure avance sans qu'aucun événement ne soit écrit : sans ce battement, la bande
@@ -23,6 +30,7 @@
 
     const hhmm = $derived(now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
 
+    /** @param {number | undefined} seconds */
     function duration(seconds) {
         if (!seconds || seconds < 0) return '';
         const h = Math.floor(seconds / 3600);
@@ -30,6 +38,7 @@
         return h > 0 ? `${h} h ${String(m).padStart(2, '0')}` : `${m} min`;
     }
 
+    /** @param {string | undefined} iso */
     function at(iso) {
         if (!iso) return '';
         const d = new Date(iso);

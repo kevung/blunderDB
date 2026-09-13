@@ -13,11 +13,13 @@
     import { t } from '../../i18n';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
 
+    /** @type {{ engineVersion?: string, onClose?: () => void }} */
     let { engineVersion = '', onClose = () => {} } = $props();
 
     const REPO = 'https://github.com/PileOfCells/backgammon-tournoi';
     const DOCS = 'https://pileofcells.github.io/backgammon-tournoi/';
 
+    /** @param {string} url */
     function open(url) {
         // Le navigateur du système, pas la vue web : une page de documentation n'a rien à
         // faire dans la fenêtre de l'application.

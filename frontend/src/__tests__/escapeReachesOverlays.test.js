@@ -67,7 +67,7 @@ function menu(onClose) {
 }
 
 const LAST = { matchId: 7, a: 'ha', b: 'lb', aName: 'Hugo Andrieu', bName: 'Léa Bonnet', winner: 'ha', winnerName: 'Hugo Andrieu', correctable: true, cancellable: false };
-const CELL = { table: 1, matchId: 7, a: 'ha', b: 'lb', aName: 'Hugo Andrieu', bName: 'Léa Bonnet' };
+const CELL = { table: 1, matchId: 'M7', a: 'ha', b: 'lb', aName: 'Hugo Andrieu', bName: 'Léa Bonnet' };
 const PROPOSALS = [
     { kind: 'start_match', phase: 0, a: 'ha', b: 'lb', length: 7 },
     { kind: 'start_match', phase: 0, a: 'mc', b: 'nd', length: 7 }
