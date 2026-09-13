@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
@@ -628,8 +629,8 @@
     $effect(() => {
         if (visible) {
             const id = setTimeout(() => {
-                const panel = document.getElementById('matchPanel');
-                if (panel) panel.focus();
+                // Deferred, so the user may be typing by then: never take their field (utils/panelFocus.js).
+                focusPanelUnlessTyping(document.getElementById('matchPanel'));
                 if (selectedMatch) table?.scrollToSelected('center');
             }, 100);
             return () => clearTimeout(id);

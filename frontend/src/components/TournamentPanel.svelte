@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
     import { onChange } from '../utils/onChange.js';
@@ -494,10 +495,8 @@
     // focuses a panel the user has already closed.
     $effect(() => {
         if (!visible) return;
-        const timer = setTimeout(() => {
-            const panel = document.getElementById('tournamentPanel');
-            if (panel) panel.focus();
-        }, 100);
+        // Deferred, so the user may be typing by then: never take their field (utils/panelFocus.js).
+        const timer = setTimeout(() => focusPanelUnlessTyping(document.getElementById('tournamentPanel')), 100);
         return () => clearTimeout(timer);
     });
     onMount(() => {

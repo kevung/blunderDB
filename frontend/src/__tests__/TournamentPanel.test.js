@@ -241,3 +241,31 @@ describe('TournamentPanel — keyboard shortcuts', () => {
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 2 }));
     });
 });
+
+// ── Deferred focus ────────────────────────────────────────────────────────────
+
+/** Past the panel's own 100 ms focus timer. */
+const pastFocusTimer = () => new Promise((resolve) => setTimeout(resolve, 150));
+
+describe('TournamentPanel — deferred focus', () => {
+    // The panel focuses itself 100 ms after it opens. A user (or a slow CI
+    // runner) already typing a name by then lost the caret: Enter reached the
+    // panel instead of the field, and no tournament was created.
+    test('does not take the caret from the new-tournament field', async () => {
+        renderOpen();
+        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        nameInput.focus();
+
+        await pastFocusTimer();
+
+        expect(document.activeElement).toBe(nameInput);
+    });
+
+    test('still takes the keyboard when nobody is typing', async () => {
+        renderOpen();
+
+        await pastFocusTimer();
+
+        expect(document.activeElement?.id).toBe('tournamentPanel');
+    });
+});

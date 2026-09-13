@@ -36,6 +36,7 @@ import MatchPanel from '../components/MatchPanel.svelte';
 import { openPanels, PANEL, activeModal, MODAL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 
+/** @type {HTMLInputElement} */
 let field;
 
 beforeEach(() => {
@@ -84,5 +85,22 @@ describe('MatchPanel click-away handling', () => {
 
         // The panel's own behaviour is unchanged: this is what the listener is for.
         expect(document.activeElement).not.toBe(field);
+    });
+});
+
+describe('MatchPanel deferred focus', () => {
+    // The panel focuses itself 100 ms after it becomes visible. A field that
+    // took the caret in between — the command line, whose input closes itself
+    // on blur — must keep it.
+    test('does not take the caret from a field focused before the timer', async () => {
+        // PANEL.MATCH is the flag the panel reads as « visible » (the click-away
+        // tests above do not need it, and set PANEL.MATCHES).
+        openPanels.set(new Set([PANEL.MATCH]));
+        render(MatchPanel);
+        field.focus();
+
+        await new Promise((resolve) => setTimeout(resolve, 150));
+
+        expect(document.activeElement).toBe(field);
     });
 });

@@ -1,6 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { logger } from '../utils/logger.js';
+    import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { nextSort } from '../utils/tableSort.js';
     import { isLetter, isBareLetter } from '../utils/keys.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
@@ -95,10 +96,8 @@
                 }
             }
         }
-        setTimeout(() => {
-            const analysisEl = document.getElementById('analysisPanel');
-            if (analysisEl) analysisEl.focus();
-        }, 0);
+        // Deferred, so the user may be typing by then: never take their field (utils/panelFocus.js).
+        setTimeout(() => focusPanelUnlessTyping(document.getElementById('analysisPanel')), 0);
     });
 
     // A move selected here must not survive past this panel: keyboardService's
