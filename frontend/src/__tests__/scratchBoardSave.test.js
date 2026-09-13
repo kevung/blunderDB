@@ -53,9 +53,9 @@ import { positionStore, positionsStore, matchContextStore } from '../stores/posi
 import { analysisStore, emptyAnalysis } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
-import { activeCollectionStore } from '../stores/collectionStore.js';
+import { activeCollectionStore, collectionPositionsStore } from '../stores/collectionStore.js';
 import { saveCurrentPosition, updatePosition, enterEditMode, exitEditMode, enterEvalMode, exitEvalMode, sendPositionToEval, setSearchState } from '../services/positionService.js';
-import { joinLibraryBehindScratchBoard } from '../services/modeMachine.js';
+import { joinLibraryBehindScratchBoard, handleOpenCollection } from '../services/modeMachine.js';
 
 function emptyPoints() {
     return Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
@@ -254,6 +254,34 @@ describe('saving the Search scratch board', () => {
         expect(get(currentPositionIndexStore)).toBe(1);
     });
 
+    test('entered from a collection, the new position does not join the collection, and leaving returns to it (#406)', async () => {
+        // The collection holds the whole library, in library order: the one list
+        // the "is it the library?" check alone cannot tell from the library.
+        const ids = [11, 12, 13, 14];
+        const positions = ids.map(libraryPosition);
+        const collection = { id: 4, name: 'Backgames' };
+        collectionPositionsStore.set(positions);
+        activeCollectionStore.set(collection);
+        handleOpenCollection(collection, positions);
+        currentPositionIndexStore.set(2);
+        positionStore.set(libraryPosition(13));
+        activeTabStore.set('search');
+        await enterEditMode();
+        positionStore.update(drawBoard);
+
+        await saveCurrentPosition();
+        expect(db.SaveIndividualPosition).toHaveBeenCalledTimes(1);
+        expect(get(positionsStore).ids).toEqual(ids);
+
+        await exitEditMode();
+        expect(get(statusBarModeStore)).toBe('COLLECTION');
+        expect(get(activeCollectionStore)).toEqual(collection);
+        expect(get(positionsStore).ids).toEqual(ids);
+        expect(get(collectionPositionsStore).map((p) => p.id)).toEqual(ids);
+        expect(get(currentPositionIndexStore)).toBe(2);
+        expect(get(positionStore).id).toBe(13);
+    });
+
     test('the board keeps no id: it does not become a library record', async () => {
         await openSearchFromLibrary();
         const idBefore = get(positionStore).id;
@@ -339,6 +367,25 @@ describe('the list behind the Eval board', () => {
         await enterEvalMode();
 
         expect(await joinLibraryBehindScratchBoard(99)).toBe(false);
+    });
+
+    test('entered from a collection holding the whole library, nothing joins, and leaving returns to the collection (#406)', async () => {
+        const ids = [11, 12, 13, 14];
+        const positions = ids.map(libraryPosition);
+        const collection = { id: 4, name: 'Backgames' };
+        collectionPositionsStore.set(positions);
+        activeCollectionStore.set(collection);
+        handleOpenCollection(collection, positions);
+        currentPositionIndexStore.set(2);
+        positionStore.set(libraryPosition(13));
+        await enterEvalMode();
+
+        expect(await joinLibraryBehindScratchBoard(99)).toBe(false);
+        await exitEvalMode();
+
+        expect(get(statusBarModeStore)).toBe('COLLECTION');
+        expect(get(positionsStore).ids).toEqual(ids);
+        expect(get(currentPositionIndexStore)).toBe(2);
     });
 });
 

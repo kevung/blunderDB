@@ -14,7 +14,10 @@
  *
  * EDIT, EVAL and TRANSCRIBE are *scratch* modes: the board they show is not a
  * library record. Entering one snapshots what was being studied and leaving it
- * restores that snapshot — this is the `savedContext` half of the state.
+ * restores that snapshot — this is the `savedContext` half of the state. The
+ * snapshot starts with the mode it was taken in, and every exit resumes that
+ * mode through returnToStudiedMode(): a match or a collection is returned to,
+ * never dropped to NORMAL (#406).
  * A snapshot holds positions only, never an analysis: on the way back the
  * analysis is fetched again through showPosition(), and while a scratch
  * mode is on, analysisStore still describes the position studied *before*
@@ -23,12 +26,12 @@
  * Transitions (each is one exported function):
  *
  *   enterEditMode       NORMAL | MATCH | COLLECTION | EVAL → EDIT
- *   exitEditMode        EDIT → MATCH (entered from a match) | NORMAL
+ *   exitEditMode        EDIT → the mode it was entered from (MATCH | COLLECTION | NORMAL)
  *   enterEvalMode       NORMAL | MATCH | COLLECTION | EDIT → EVAL
- *   exitEvalMode        EVAL → MATCH (entered from a match) | NORMAL
+ *   exitEvalMode        EVAL → the mode it was entered from (MATCH | COLLECTION | NORMAL)
  *   toggleEvalMode      EVAL → (exit + analysis tab) | * → Eval tab
  *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE
- *   exitTranscribeMode  TRANSCRIBE → MATCH (entered from a match) | NORMAL
+ *   exitTranscribeMode  TRANSCRIBE → the mode it was entered from (MATCH | COLLECTION | NORMAL)
  *   sendPositionToEval  * → EVAL on a given position (id cleared)
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
@@ -88,17 +91,19 @@ const NO_MATCH_CONTEXT = Object.freeze({
  * The `savedContext` half of the state. Each slot is written by one entry
  * transition and consumed (nulled) by the matching exit:
  *
- *   beforeEval  { mode, matchContext, position, positionIndex, positions }
+ *   beforeEval  { mode, matchContext, position, positionIndex, ids }
  *               written by enterEvalMode, consumed by exitEvalMode. `mode` and
  *               `matchContext` let the exit return to the studied match instead
  *               of dropping to NORMAL while matchContext still says a match is
  *               on (bug 2) — that left match navigation broken.
- *   beforeEdit  the match context EDIT was entered from, or null. Written on
- *               *every* enterEditMode so a stale snapshot from an earlier
+ *   beforeEdit  { mode, matchContext }: the mode EDIT was entered from. Written
+ *               on *every* enterEditMode so a stale snapshot from an earlier
  *               match-entered EDIT can never be restored into a later
  *               NORMAL-entered one; consumed by exitEditMode (bug 2 again:
  *               leaving the search tab used to reload the whole library and
- *               bounce the user to the Matches tab).
+ *               bounce the user to the Matches tab). It holds no list: the one
+ *               behind the query board — library, match, collection — stays in
+ *               positionsStore.
  *   beforeTranscribe  the same photograph, taken by enterTranscribeMode and
  *               consumed by exitTranscribeMode. It is a slot of its own and not
  *               a second use of beforeEval: the two panels can be visited one
@@ -153,8 +158,43 @@ function currentMode() {
     return get(statusBarModeStore);
 }
 
-function inMatch() {
-    return currentMode() === MODE.MATCH && get(matchContextStore).isMatchMode;
+/**
+ * The mode half of a scratch mode's snapshot: the mode it was entered from,
+ * and the match context that mode needs to be resumed. Every entry into a
+ * scratch mode takes one (beforeEdit, beforeEval, beforeTranscribe) and every
+ * exit hands it to returnToStudiedMode() — one rule for the three panels, so
+ * that a list the user was studying cannot be resumed by one exit and dropped
+ * by another (#406: Search left the collection on the way in, and Eval came
+ * back to its ids in NORMAL mode).
+ */
+function photographStudiedMode() {
+    return { mode: currentMode(), matchContext: { ...get(matchContextStore) } };
+}
+
+/**
+ * Put back the mode a scratch mode was entered from: the match (its context
+ * restored), the collection, or the library. A collection is resumed only
+ * while it is still the active one — a gesture that dropped it (a search, a
+ * match opened) has already replaced the list behind the board.
+ *
+ * The caller restores the position; the mode comes first, so that no effect
+ * sees the studied position under a scratch mode.
+ *
+ * @param {{ mode: string, matchContext: any } | null | undefined} saved
+ * @returns {string} the mode now on
+ */
+function returnToStudiedMode(saved) {
+    if (saved?.mode === MODE.MATCH && saved.matchContext?.isMatchMode) {
+        matchContextStore.set(saved.matchContext);
+        statusBarModeStore.set(MODE.MATCH);
+        return MODE.MATCH;
+    }
+    if (saved?.mode === MODE.COLLECTION && get(activeCollectionStore)) {
+        statusBarModeStore.set(MODE.COLLECTION);
+        return MODE.COLLECTION;
+    }
+    statusBarModeStore.set(MODE.NORMAL);
+    return MODE.NORMAL;
 }
 
 async function persistLastVisitedMatchPosition() {
@@ -189,9 +229,11 @@ function blankEditBoard(pos) {
  * must find it exactly as it was, so it is left alone.
  *
  * The list behind the board is the machine's to know. In EDIT it is still in
- * positionsStore (enterEditMode keeps it there, exitEditMode redraws from it)
- * and a match entry is recorded in beforeEdit; in EVAL it is the id snapshot
- * beforeEval holds, with the mode it was taken in.
+ * positionsStore (enterEditMode keeps it there, exitEditMode redraws from it);
+ * in EVAL it is the id snapshot beforeEval holds. Both snapshots carry the
+ * mode they were taken in, and only a board entered from NORMAL can have the
+ * library behind it: a collection holding every position, in library order,
+ * is still a collection (#406).
  *
  * "The whole library" is checked on the ids rather than inferred from flags:
  * a deck or a statistics selection is shown in NORMAL mode with no search
@@ -208,7 +250,8 @@ export async function joinLibraryBehindScratchBoard(id) {
     /** @type {(next: number[]) => void} */
     let replace;
     if (currentMode() === MODE.EDIT) {
-        if (savedContext.beforeEdit) return false;
+        const saved = savedContext.beforeEdit;
+        if (saved && saved.mode !== MODE.NORMAL) return false;
         ids = get(positionsStore)?.ids ?? [];
         replace = (next) => positionsStore.setIds(next);
     } else if (currentMode() === MODE.EVAL) {
@@ -259,8 +302,9 @@ export async function enterEditMode() {
         exitEvalMode();
     }
 
-    // Snapshot the studied match (if any) so leaving the search tab restores it.
-    savedContext.beforeEdit = inMatch() ? { ...get(matchContextStore) } : null;
+    // Snapshot what is studied — the library, a match or a collection — so that
+    // leaving the search tab returns to it.
+    savedContext.beforeEdit = photographStudiedMode();
 
     if (currentMode() === MODE.MATCH) {
         logger.log('Exiting MATCH mode to enter EDIT');
@@ -274,33 +318,38 @@ export async function enterEditMode() {
         // nothing to load; exitEditMode restores the snapshot taken above.
     }
 
-    if (currentMode() === MODE.COLLECTION) {
-        await exitCollectionMode();
-    }
+    // A collection is NOT left (#406). exitCollectionMode() here closed its
+    // panel, emptied its stores and reloaded the whole library, so the way out
+    // of the search tab could only return to the library. As for a match, what
+    // was studied stays behind the query board — the collection's ids in
+    // positionsStore — and exitEditMode resumes the mode from the snapshot.
 
     if (currentMode() !== MODE.EDIT) {
         statusBarModeStore.set(MODE.EDIT);
         // Clear the selected analysis move so its move arrows are erased when
         // leaving a match/analysis position for the search tab. The board only
         // auto-clears the selection on a position-ID change, and here the id is
-        // unchanged (we blank the same position object below), so the arrows
-        // would otherwise persist over the empty EDIT board.
+        // unchanged (the blank board keeps the studied position's id), so the
+        // arrows would otherwise persist over the empty EDIT board.
         selectedMoveStore.set(null);
-        positionStore.update(blankEditBoard);
+        // A copy is blanked, never the object on the board: handleOpenCollection
+        // puts the collection's own record there, which is also the list's
+        // cached entry, and blanking it in place emptied the very record
+        // exitEditMode puts back (#406) — what #201 was for the library.
+        positionStore.update((pos) => blankEditBoard(JSON.parse(JSON.stringify(pos))));
     }
 }
 
-/** EDIT → MATCH (if entered from a match) | NORMAL. */
+/** EDIT → the mode it was entered from: MATCH | COLLECTION | NORMAL. */
 export async function exitEditMode() {
     if (currentMode() !== MODE.EDIT) return;
 
-    // If we entered search from a match, return to that studied position
-    // rather than dropping into the flat "all positions" list (bug 2).
-    const snap = savedContext.beforeEdit;
+    const saved = savedContext.beforeEdit;
     savedContext.beforeEdit = null;
-    if (snap && snap.isMatchMode) {
-        matchContextStore.set(snap);
-        statusBarModeStore.set(MODE.MATCH);
+    // Entered from a match: return to the studied move rather than dropping
+    // into the flat "all positions" list (bug 2).
+    if (returnToStudiedMode(saved) === MODE.MATCH) {
+        const snap = saved.matchContext;
         const movePos = snap.movePositions?.[snap.currentIndex];
         if (movePos) {
             await showPosition(movePos.position);
@@ -308,8 +357,8 @@ export async function exitEditMode() {
         }
         return;
     }
-    statusBarModeStore.set(MODE.NORMAL);
-    // Put the library position back on the board synchronously, from the
+    // NORMAL or COLLECTION: the list is the one positionsStore still holds.
+    // Put the studied position back on the board synchronously, from the
     // window cache, before bumping the index. The redraw the bump triggers
     // (App.svelte's nav effect) fetches asynchronously, and whoever runs right
     // after this exit — App.svelte calls it without await and then
@@ -425,8 +474,7 @@ export async function enterEvalMode() {
     }
 
     savedContext.beforeEval = {
-        mode: currentMode(),
-        matchContext: { ...get(matchContextStore) },
+        ...photographStudiedMode(),
         position: get(positionStore) ? { ...get(positionStore) } : null,
         positionIndex: get(currentPositionIndexStore),
         ids: get(positionsStore)?.ids ?? null
@@ -446,7 +494,7 @@ export async function enterEvalMode() {
 }
 
 /**
- * EVAL → MATCH (if entered from a match) | NORMAL. The mode is restored
+ * EVAL → the mode it was entered from: MATCH | COLLECTION | NORMAL. The mode is restored
  * synchronously, before the studied position is put back, so the board's
  * Eval effect never sees the restored position under EVAL mode.
  */
@@ -465,13 +513,8 @@ export async function exitEvalMode() {
     statusBarTextStore.set('');
     epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
 
-    const returnToMatch = saved?.mode === MODE.MATCH && saved.matchContext?.isMatchMode;
-    if (returnToMatch) {
-        matchContextStore.set(saved.matchContext);
-        statusBarModeStore.set(MODE.MATCH);
+    if (returnToStudiedMode(saved) === MODE.MATCH) {
         statusBarTextStore.set(`${saved.matchContext.player1Name} vs ${saved.matchContext.player2Name}`);
-    } else {
-        statusBarModeStore.set(MODE.NORMAL);
     }
 
     if (!saved?.ids) {
@@ -521,8 +564,7 @@ export async function enterTranscribeMode() {
     }
 
     savedContext.beforeTranscribe = {
-        mode: currentMode(),
-        matchContext: { ...get(matchContextStore) },
+        ...photographStudiedMode(),
         position: get(positionStore) ? { ...get(positionStore) } : null,
         positionIndex: get(currentPositionIndexStore),
         ids: get(positionsStore)?.ids ?? null
@@ -531,7 +573,7 @@ export async function enterTranscribeMode() {
     statusBarModeStore.set(MODE.TRANSCRIBE);
 }
 
-/** TRANSCRIBE → MATCH (if entered from a match) | NORMAL. */
+/** TRANSCRIBE → the mode it was entered from: MATCH | COLLECTION | NORMAL. */
 export async function exitTranscribeMode() {
     if (currentMode() !== MODE.TRANSCRIBE) return;
 
@@ -540,13 +582,8 @@ export async function exitTranscribeMode() {
 
     statusBarTextStore.set('');
 
-    const returnToMatch = saved?.mode === MODE.MATCH && saved.matchContext?.isMatchMode;
-    if (returnToMatch) {
-        matchContextStore.set(saved.matchContext);
-        statusBarModeStore.set(MODE.MATCH);
+    if (returnToStudiedMode(saved) === MODE.MATCH) {
         statusBarTextStore.set(`${saved.matchContext.player1Name} vs ${saved.matchContext.player2Name}`);
-    } else {
-        statusBarModeStore.set(MODE.NORMAL);
     }
 
     if (!saved?.ids) {
