@@ -696,7 +696,8 @@
                                 use:autofocus
                             />
                         {:else}
-                            <span
+                            <button
+                                type="button"
                                 class="tournament-comment-text"
                                 class:has-comment={selectedTournament.comment}
                                 onclick={(e) => {
@@ -706,7 +707,7 @@
                                 title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
                             >
                                 {selectedTournament.comment || $t('tournament.notesPlaceholder')}
-                            </span>
+                            </button>
                         {/if}
                     {/snippet}
                     {#snippet cells(match, index)}
@@ -720,7 +721,8 @@
                             {#if matchCommentEdit.isEditing(match.id)}
                                 <input class="edit-input" type="text" bind:value={matchCommentEdit.draft} onkeydown={matchCommentEdit.onKeyDown} onblur={matchCommentEdit.onBlur} use:autofocus />
                             {:else}
-                                <span
+                                <button
+                                    type="button"
                                     class="comment-text"
                                     class:has-comment={match.comment}
                                     onclick={(e) => {
@@ -730,7 +732,7 @@
                                     title={match.comment || $t('tournament.clickToAddComment')}
                                 >
                                     {match.comment || ''}
-                                </span>
+                                </button>
                             {/if}
                         </td>
                         <td class="actions-col no-select">
@@ -907,6 +909,15 @@
         box-sizing: border-box;
         outline: none;
     }
+    /* Both click-to-edit comments are <button>s (Tab, Enter) drawn as the
+       plain text they replaced. */
+    .tournament-comment-text,
+    .comment-text {
+        padding: 0;
+        border: none;
+        background: none;
+        text-align: left;
+    }
     .tournament-comment-text {
         flex-shrink: 1;
         font-size: var(--font-size-small);
@@ -976,6 +987,7 @@
     }
     .comment-text {
         display: block;
+        width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

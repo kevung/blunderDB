@@ -66,7 +66,7 @@
     }
 </script>
 
-<div class="card" role="dialog" aria-label={$t('direction.result.title')} onkeydown={onKey}>
+<div class="card" role="dialog" aria-label={$t('direction.result.title')} tabindex="-1" onkeydown={onKey}>
     <header>
         <span class="where"
             >{$t('direction.proposals.table', { n: cell.table })} &middot;

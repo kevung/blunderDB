@@ -8,10 +8,12 @@
     let editingName = $state('');
     let editInput = $state();
 
+    /** @param {number} viewId */
     function handleTabClick(viewId) {
         switchTo(viewId);
     }
 
+    /** @param {{ id: number, name: string }} view */
     function handleDoubleClick(view) {
         editingId = view.id;
         editingName = view.name;
@@ -26,6 +28,7 @@
         editingName = '';
     }
 
+    /** @param {KeyboardEvent} event */
     function handleRenameKeydown(event) {
         if (event.key === 'Enter') {
             event.stopPropagation();
@@ -37,11 +40,30 @@
         }
     }
 
+    // Enter on a focused tab switches to it. Only Enter: Space stays the global
+    // command-line key and the arrows the board's, so a click on a tab (which
+    // now focuses it) changes nothing that follows.
+    /**
+     * @param {KeyboardEvent} event
+     * @param {number} viewId
+     */
+    function handleTabKeydown(event, viewId) {
+        if (event.target !== event.currentTarget) return; // rename field and close button own their keys
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        handleTabClick(viewId);
+    }
+
+    /**
+     * @param {MouseEvent} event
+     * @param {number} viewId
+     */
     function handleClose(event, viewId) {
         event.stopPropagation();
         closeView(viewId);
     }
 
+    /** @param {KeyboardEvent} event */
     function handleKeydown(event) {
         // Match the digit by physical key (event.code) so the labeled number keys
         // work without Shift on layouts where the top row is shifted (e.g. AZERTY,
@@ -68,17 +90,27 @@
 -->
 <div class="view-tabs" class:collapsed={$views.length <= 1}>
     {#if $views.length > 1}
-        {#each $views as view, _i (view.id)}
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <div class="view-tab" class:active={$activeViewId === view.id} onclick={() => handleTabClick(view.id)} ondblclick={() => handleDoubleClick(view)}>
-                {#if editingId === view.id}
-                    <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
-                {:else}
-                    <span class="tab-name">{view.name}</span>
-                {/if}
-                <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
-            </div>
-        {/each}
+        <div class="view-tab-list" role="tablist">
+            {#each $views as view, _i (view.id)}
+                <div
+                    class="view-tab"
+                    class:active={$activeViewId === view.id}
+                    role="tab"
+                    aria-selected={$activeViewId === view.id}
+                    tabindex="0"
+                    onclick={() => handleTabClick(view.id)}
+                    ondblclick={() => handleDoubleClick(view)}
+                    onkeydown={(e) => handleTabKeydown(e, view.id)}
+                >
+                    {#if editingId === view.id}
+                        <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
+                    {:else}
+                        <span class="tab-name">{view.name}</span>
+                    {/if}
+                    <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
+                </div>
+            {/each}
+        </div>
     {/if}
     <button class="add-btn" onclick={addView} title={$t('viewTabs.newView')}>+</button>
 </div>
@@ -105,6 +137,13 @@
     .view-tabs.collapsed .add-btn {
         font-size: var(--font-size-small);
         padding: 0 6px;
+    }
+
+    /* The tabs' own row inside the bar, which also holds the "+" button (not a tab). */
+    .view-tab-list {
+        display: flex;
+        align-items: stretch;
+        min-width: 0;
     }
 
     .view-tab {

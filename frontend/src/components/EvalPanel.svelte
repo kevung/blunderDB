@@ -310,6 +310,7 @@
 
     // The panel element itself: focus target for the keyboard navigation
     // below (a click on a row hands it the keyboard).
+    /** @type {HTMLElement | undefined} */
     let panelEl;
 
     function handleMoveRowClick(move) {
@@ -478,7 +479,11 @@
 
 <!-- A <section> rather than a <div>: the panel takes focus and listens for
      keys (handleKeyDown), which is a landmark's business and a static
-     element's a11y warning — the same shape AnalysisPanel already has. -->
+     element's a11y warning — the same shape AnalysisPanel already has. The
+     section itself still draws a11y_no_noninteractive_element_interactions:
+     it is keyboard delegation on a focus container (tabindex="-1", no pointer
+     handler), and no ARIA role is both a landmark and interactive. -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section class="eval-panel" bind:this={panelEl} aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
     {#if !isActive}
         <div class="eval-inactive">
@@ -603,7 +608,19 @@
                  reveal (ADR-0018 rule 6). -->
             {#if hasDiceSet}
                 {#if maskedDecision}
-                    <div class="decision-cube-masked moves-masked" onclick={() => reveal('decision')} title={$t('epc.clickToReveal')}>{HIDDEN}</div>
+                    <!-- A button, so Défi reveals from the keyboard too. The click would
+                         otherwise strand the focus on a button that the reveal
+                         removes: hand it back to the panel, where a click on
+                         the old <div> left it. -->
+                    <button
+                        type="button"
+                        class="decision-cube-masked moves-masked"
+                        onclick={() => {
+                            reveal('decision');
+                            panelEl?.focus({ preventScroll: true });
+                        }}
+                        title={$t('epc.clickToReveal')}>{HIDDEN}</button
+                    >
                 {:else}
                     <div class="moves-scroll">
                         <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} {isMoney} />
@@ -728,6 +745,9 @@
     }
 
     .decision-cube-masked {
+        padding: 0;
+        border: none;
+        background: none;
         display: flex;
         align-items: center;
         justify-content: center;

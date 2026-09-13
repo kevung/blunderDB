@@ -18,11 +18,11 @@
 // same-shaped stale-closure bug in SearchPanel, six redundant `role="region"`
 // attributes already implied by `aria-label` on a `<section>`, and five HTML
 // `autofocus` attributes replaced by the `autofocus` Svelte action in
-// `utils/autofocus.js`). It is deliberately a ceiling, not a target of zero:
-// the remaining 20 (keyboard handlers for click-only interactive elements,
-// unassociated `<label>`s, a combobox missing ARIA props, a dialog to
-// migrate onto `Modal.svelte`, …) are real work for a later fiche, not a
-// one-sitting rewrite of a dozen components.
+// `utils/autofocus.js`). The remaining twenty were fixed in one pass on
+// 2026-09-13 (click-only elements turned into buttons, options or tabs,
+// labels bound to their inputs, a combobox naming its listbox, three dead
+// selectors removed, and two keyboard-delegating panel sections annotated),
+// so the ceiling is now 0: any new compiler warning fails the build.
 //
 // Usage: node scripts/check-svelte-warnings.mjs (run from frontend/, as the
 // `check:svelte-warnings` npm script does).

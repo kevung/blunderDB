@@ -708,9 +708,9 @@
                             />
                         </div>
                     {:else}
-                        <div class="desc-bar clickable" onclick={(e) => startEditing(activeCollection, e)}>
+                        <button type="button" class="desc-bar clickable" onclick={(e) => startEditing(activeCollection, e)}>
                             <span class="desc-text" title={$t('collection.clickToEdit')}>{activeCollection.description || $t('collection.addDescription')}</span>
-                        </div>
+                        </button>
                     {/if}
                 {/snippet}
                 {#snippet cells(position, index)}
@@ -767,8 +767,7 @@
         user-select: none;
         -webkit-user-select: none;
     }
-    .collection-panel input,
-    .collection-panel textarea {
+    .collection-panel input {
         user-select: text;
         -webkit-user-select: text;
     }
@@ -910,7 +909,17 @@
         border-bottom: 1px solid #eee;
         flex-shrink: 0;
     }
+    /* A <button> (click-to-edit, reachable with Tab and Enter) drawn as the
+       plain bar it replaced. */
     .desc-bar.clickable {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        /* Only the bottom edge, whose colour .desc-bar already gives. */
+        border-width: 0 0 1px;
+        background: none;
+        text-align: left;
         cursor: pointer;
     }
     .desc-bar .desc-text {

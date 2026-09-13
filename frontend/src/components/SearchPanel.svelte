@@ -71,6 +71,7 @@
 
     // Saved (filter library) state
     let savedFilters = $derived($filterLibraryStore || []);
+    /** @type {{ id: number, name: string, command: string } | null} */
     let selectedSavedFilter = $state(null);
 
     // Command-line-only filters (#203): `xD65` (exclude a dice roll) and
@@ -642,6 +643,21 @@
         executeSearch({ command: filter.command, position: editPosition, excludePosition });
     }
 
+    // Enter on a focused saved filter runs it, as the double-click does. Only
+    // Enter: Space stays the global command-line key, so a click followed by
+    // Space behaves as it did before the row could take the focus.
+    /**
+     * @param {KeyboardEvent} event
+     * @param {{ id: number, name: string, command: string }} filter
+     */
+    function handleSavedItemKeyDown(event, filter) {
+        if (event.target !== event.currentTarget) return; // the delete button owns its keys
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        event.stopPropagation();
+        executeSavedFilter(filter);
+    }
+
     async function deleteSavedFilter() {
         if (selectedSavedFilter) {
             await DeleteFilter(selectedSavedFilter.id);
@@ -983,13 +999,17 @@
                 {#if savedFilters.length === 0}
                     <p class="empty-message">{$t('search.noSaved')}</p>
                 {:else}
-                    <div class="saved-list">
+                    <div class="saved-list" role="listbox" aria-label={$t('search.savedTab')}>
                         {#each savedFilters as sf (sf.id)}
                             <div
                                 class="saved-item"
                                 class:selected={selectedSavedFilter && selectedSavedFilter.id === sf.id}
+                                role="option"
+                                aria-selected={!!(selectedSavedFilter && selectedSavedFilter.id === sf.id)}
+                                tabindex="0"
                                 onclick={() => selectSavedFilter(sf)}
                                 ondblclick={() => executeSavedFilter(sf)}
+                                onkeydown={(e) => handleSavedItemKeyDown(e, sf)}
                             >
                                 <span class="saved-name">{sf.name}</span>
                                 <span class="saved-cmd">{sf.command}</span>
@@ -1054,8 +1074,7 @@
         user-select: none;
         -webkit-user-select: none;
     }
-    .search-panel input,
-    .search-panel textarea {
+    .search-panel input {
         user-select: text;
         -webkit-user-select: text;
     }
@@ -1289,11 +1308,6 @@
         font-size: var(--font-size-base);
         user-select: none;
         -webkit-user-select: none;
-    }
-    .num-input {
-        width: 60px;
-        font-size: var(--font-size-base);
-        padding: 2px 3px;
     }
     .date-input {
         font-size: var(--font-size-base);

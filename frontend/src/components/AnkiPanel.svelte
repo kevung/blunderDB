@@ -134,6 +134,8 @@
     });
 
     // Settings
+    // Ids tying the settings labels to their inputs.
+    const settingsId = $props.id();
     let settingsRetention = $state(0.9);
     let settingsMaxInterval = $state(36500);
     let settingsFuzz = $state(true);
@@ -583,8 +585,8 @@
         </div>
         <div class="settings-body">
             <div class="settings-row">
-                <label>{$t('anki.retentionTarget')}</label>
-                <input type="number" bind:value={settingsRetention} min="0.7" max="0.99" step="0.01" />
+                <label for="{settingsId}-retention">{$t('anki.retentionTarget')}</label>
+                <input id="{settingsId}-retention" type="number" bind:value={settingsRetention} min="0.7" max="0.99" step="0.01" />
                 <span class="settings-hint">{Math.round(settingsRetention * 100)}%</span>
             </div>
             <!-- The target is a choice; this is its outcome, shown and never
@@ -600,8 +602,8 @@
                  review at a time and moves no existing due date (rule 8). -->
             <div class="settings-note">{$t('anki.retentionNotRetroactive')}</div>
             <div class="settings-row">
-                <label>{$t('anki.maxInterval')}</label>
-                <input type="number" bind:value={settingsMaxInterval} min="1" max="36500" step="1" />
+                <label for="{settingsId}-max-interval">{$t('anki.maxInterval')}</label>
+                <input id="{settingsId}-max-interval" type="number" bind:value={settingsMaxInterval} min="1" max="36500" step="1" />
             </div>
             <div class="settings-row">
                 <label>

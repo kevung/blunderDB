@@ -352,6 +352,11 @@
     let viewKind = $derived(showTabs ? activeTab : analysisData.analysisType === 'DoublingCube' ? 'cube' : 'checker');
 </script>
 
+<!-- The panel focuses itself and handles the keys bubbling up from its rows:
+     keyboard delegation on a focus container (tabindex="-1", no pointer
+     handler). No ARIA role is both a landmark and interactive, so the rule
+     has nothing better to offer here. -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section class="analysis-panel" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
         <!-- La comparaison inter-moteurs (#269) vit ICI et pas dans le panneau

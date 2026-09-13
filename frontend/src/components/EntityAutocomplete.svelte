@@ -12,6 +12,9 @@
 
     import { tick } from 'svelte';
 
+    // The listbox's id, which the combobox names in aria-controls.
+    const listId = $props.id();
+
     let {
         /** The typed text (bindable). */
         value = $bindable(''),
@@ -152,6 +155,7 @@
         bind:value
         {placeholder}
         role="combobox"
+        aria-controls={listId}
         aria-expanded={showList}
         aria-autocomplete="list"
         onfocus={handleFocus}
@@ -160,7 +164,7 @@
         onkeydown={handleKeyDown}
     />
     {#if showList}
-        <div class="dropdown" style={dropdownStyle} role="listbox">
+        <div class="dropdown" id={listId} style={dropdownStyle} role="listbox">
             {#each filtered as entry, i (key(entry))}
                 <!-- mousedown, not click: keeps the focus (and so the list) on the input -->
                 <div
