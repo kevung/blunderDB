@@ -284,14 +284,18 @@ export function handleKeyDown(event) {
 
     // Key dispatch
     if (event.key === 'Escape') {
+        // Read before this branch claims the event itself: a panel that had something
+        // of its own to close — a selected move, a result card, a draft — has already
+        // claimed it (preventDefault) or stopped it before it reached window.
+        const claimedByPanel = event.defaultPrevented;
         event.preventDefault();
         event.stopPropagation();
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
-        } else if (!document.activeElement?.closest('.panel-wrapper')) {
-            // Escape on the board, once no field and no panel has claimed it: leave the
-            // results of an `ss` run from a collection or a match, back to that list
-            // (#410). The panels keep their own tiered Escape — deselect, close — first.
+        } else if (!claimedByPanel && !document.activeElement?.closest('[role="menu"], [role="dialog"]')) {
+            // Nothing claimed the Escape — the board has the focus, or a panel with
+            // nothing of its own to close: leave the results of an `ss` run from a
+            // collection or a match, back to that list, in one press (#410).
             leaveSubSearchResults();
         }
     } else if (event.ctrlKey && letter('n')) {

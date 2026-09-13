@@ -60,7 +60,7 @@ Navigation
    "BAS, j", "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
    "PageDown, l", "Dernière position / Partie suivante (navigation match)."
    "r", "Charger une position aléatoire."
-   "Esc", "Quitter les résultats d'une recherche ``ss`` lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié."
+   "ÉCHAP", "Quitter les résultats d'une recherche ``ss`` lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié."
 
 .. _raccourcis_affichage:
 

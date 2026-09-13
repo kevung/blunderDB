@@ -205,7 +205,7 @@ export default {
 <h3>Search Panel</h3>
 <p>The <strong>Search</strong> panel (<em>CTRL-F</em> or <em>TAB</em>) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The <em>TAB</em> key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.</p>
 <p>To search among the positions on screen, use the <code>ss</code> command followed by filters (e.g.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> searches the list on screen: the results of the previous search, the open collection or the positions of the match under review, whether the command is typed directly or from the search panel (<em>TAB</em>). The panel's <em>Search in current results</em> checkbox follows the same rule. In a collection and in a match, <code>s</code> is refused: it would search the whole library and replace the list on screen.</p>
-<p>The results of an <code>ss</code> search run from a collection or a match are left with <em>Esc</em>, with the focus on the board: blunderDB returns to the whole collection, or to the match on the move studied, and to the position left.</p>
+<p>The results of an <code>ss</code> search run from a collection or a match are left with <em>Esc</em>, in a single press as soon as neither a field nor the focused panel has something to close (a move selected in the analysis, for example): blunderDB returns to the whole collection, or to the match on the move studied, and to the position left. This way back follows <code>ss</code> only: <code>s</code>, run from the search panel opened on a collection or a match, searches the whole library, and <em>Esc</em> no longer returns to the list left.</p>
 <p>The panel offers an explicit control over the <strong>decision type</strong> searched for: <em>Indifferent</em> (no filter), <em>Checker</em> (checker decisions) or <em>Cube</em> (cube decisions). When <em>Cube</em> is selected, a second list specifies the sub-type: <em>All</em>, <em>Double / No double</em> (the player on roll has to decide whether to double) or <em>Take / Pass</em> (response to an opponent's double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In <em>Take / Pass</em> mode, the cube is shown in the centre of the board at the offered value; that value remains editable.</p>
 <p>The <strong>game phase</strong> — opening, middlegame, race, bearoff — is a label blunderDB computes from the board alone. It is never editable, and is searchable through the command line's <code>ph:</code> token (<code>ph:race</code>, repeatable: <code>ph:race ph:bearoff</code>). Three of its four boundaries are the ones GNU Backgammon uses to route its networks; the fourth, where the opening stops, is a blunderDB convention: a position is still in the opening as long as neither side has moved more than four checkers off its starting points, nothing has been borne off and nothing is on the bar.</p>
 <div class="admonition note">
@@ -946,7 +946,7 @@ export default {
 <td>Load a random position.</td>
 </tr>
 <tr>
-<td>Esc</td>
+<td>ESC</td>
 <td>Leave the results of an <code>ss</code> search run from a collection or a match: back to the collection, or to the match on the move studied.</td>
 </tr>
 </tbody>

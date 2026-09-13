@@ -63,6 +63,9 @@ import { MODE, enterEditMode, exitEditMode, handleOpenCollection, leaveSubSearch
 import { loadPositionsByFilters, loadAllPositions } from '../services/positionService.js';
 import { handleKeyDown } from '../services/keyboardService.js';
 import SearchPanel from '../components/SearchPanel.svelte';
+import AnalysisPanel from '../components/AnalysisPanel.svelte';
+import ContextMenu from '../components/ContextMenu.svelte';
+import { selectedMoveStore } from '../stores/analysisStore.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -244,6 +247,25 @@ describe('la case « Rechercher dans les résultats actuels » suit la même rè
         expect((await searchFromPanel()).restrictToPositionIDs).toBe('101,102,103');
     });
 
+    test('liste affichée vide : refusée avec le message même de `ss`, aucune recherche', async () => {
+        activeTabStore.set('search');
+        await enterEditMode();
+        expect(get(statusBarModeStore)).toBe(MODE.EDIT);
+        const utils = render(SearchPanel, { props: { onLoadPositionsByFilters, onAddToFilterLibrary: vi.fn() } });
+        await tick();
+        const box = /** @type {HTMLInputElement} */ (utils.container.querySelector('.search-in-results input[type="checkbox"]'));
+        if (!box.checked) await fireEvent.click(box);
+        await fireEvent.click(/** @type {Element} */ (utils.container.querySelector('.btn-search')));
+        await tick();
+        expect(onLoadPositionsByFilters).not.toHaveBeenCalled();
+        const panelMessage = get(statusBarTextStore);
+        statusBarTextStore.set('');
+        statusBarModeStore.set(MODE.NORMAL);
+        processCommand('ss E>80');
+        expect(panelMessage).toEqual(get(statusBarTextStore));
+        expect(panelMessage).toEqual({ i18nKey: 'commands.noResultsToSearchIn', i18nParams: null });
+    });
+
     test('entré depuis une collection : les positions de la collection', async () => {
         openCollection();
         activeTabStore.set('search');
@@ -362,13 +384,46 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
         expect(statusText()).toMatch(/Esc/);
     });
 
-    describe('Échap sur le plateau', () => {
+    test('`s` depuis le panneau Recherche entré depuis une collection cherche la bibliothèque et oublie le retour', async () => {
+        openCollection();
+        await enterEditMode();
+        await subSearch('s E>80', [1, 2]);
+        expect(await leaveSubSearchResults()).toBe(false);
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+    });
+
+    describe('Échap', () => {
         const press = () => {
             const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
             handleKeyDown(event);
         };
 
-        test('revient à la collection', async () => {
+        /** Dispatch Escape from the focused element, the global dispatcher listening on window as in App.svelte. */
+        async function pressFromFocus() {
+            window.addEventListener('keydown', handleKeyDown);
+            try {
+                /** @type {Element} */ (document.activeElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+                await flush();
+            } finally {
+                window.removeEventListener('keydown', handleKeyDown);
+            }
+        }
+
+        async function mountAnalysisPanel() {
+            const onClose = vi.fn();
+            // Inside the panel wrapper, as TabbedPanel mounts it in App.svelte.
+            const wrapper = document.createElement('div');
+            wrapper.className = 'panel-wrapper';
+            document.body.appendChild(wrapper);
+            render(AnalysisPanel, { target: wrapper, props: { onClose } });
+            await flush();
+            const panel = /** @type {HTMLElement} */ (document.getElementById('analysisPanel'));
+            panel.focus();
+            expect(document.activeElement).toBe(panel);
+            return onClose;
+        }
+
+        test('sur le plateau : revient à la collection', async () => {
             openCollection();
             await subSearch('ss E>80', [20]);
             /** @type {HTMLElement} */ (document.activeElement)?.blur?.();
@@ -377,21 +432,45 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
             expectCollectionBack();
         });
 
-        test('focus dans un panneau : Échap appartient au panneau, on reste dans les résultats', async () => {
+        test('panneau Analyse focalisé, rien à y fermer : un seul Échap revient à la collection', async () => {
+            openCollection();
+            await subSearch('ss E>80', [20]);
+            const onClose = await mountAnalysisPanel();
+            await pressFromFocus();
+            expectCollectionBack();
+            expect(onClose).not.toHaveBeenCalled();
+        });
+
+        test('panneau Analyse avec un coup sélectionné : l’Échap désélectionne, on reste dans les résultats', async () => {
             openMatch();
             await subSearch('ss E>80', [102]);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'panel-wrapper';
-            const inner = document.createElement('section');
-            inner.className = 'analysis-panel';
-            inner.tabIndex = -1;
-            wrapper.appendChild(inner);
-            document.body.appendChild(wrapper);
-            inner.focus();
-            press();
-            await flush();
+            await mountAnalysisPanel();
+            selectedMoveStore.set(/** @type {any} */ ({ move: '8/5 6/5' }));
+            await pressFromFocus();
+            expect(get(selectedMoveStore)).toBeNull();
             expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
             expect(get(positionsStore).ids).toEqual([102]);
+        });
+
+        test('panneau Analyse hors sous-recherche : l’Échap le ferme, comme avant', async () => {
+            setLibrary();
+            const onClose = await mountAnalysisPanel();
+            await pressFromFocus();
+            expect(onClose).toHaveBeenCalledTimes(1);
+        });
+
+        test('focus dans un menu contextuel : l’Échap n’est pas un retour, on reste dans les résultats', async () => {
+            openCollection();
+            await subSearch('ss E>80', [20]);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'panel-wrapper';
+            document.body.appendChild(wrapper);
+            render(ContextMenu, { target: wrapper, props: { x: 0, y: 0, items: [{ label: 'Renommer', onClick: vi.fn() }], onClose: vi.fn() } });
+            await flush();
+            /** @type {HTMLElement} */ (document.querySelector('.context-menu-item')).focus();
+            await pressFromFocus();
+            expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+            expect(get(positionsStore).ids).toEqual([20]);
         });
     });
 });

@@ -50,6 +50,7 @@ export {
     handleOpenCollection,
     exitCollectionMode,
     leaveSubSearchResults,
+    canLeaveSubSearchResults,
     displayedPositionIDs
 } from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive

@@ -768,8 +768,13 @@ collection et en match, ``s`` est refusé : il chercherait dans toute la
 bibliothèque et remplacerait la liste affichée.
 
 Les résultats d'une recherche ``ss`` lancée depuis une collection ou un match
-se quittent avec *Esc*, le plateau ayant le focus : blunderDB revient à la
-collection entière, ou au match sur le coup étudié, et à la position quittée.
+se quittent avec *Esc*, en un seul appui dès que ni un champ ni le panneau qui a
+le focus n'a quelque chose à fermer (un coup sélectionné dans l'analyse, par
+exemple) : blunderDB revient à la collection entière, ou au match sur le coup
+étudié, et à la position quittée.
+Ce retour ne suit que ``ss`` : ``s``, lancé depuis le panneau de recherche
+ouvert sur une collection ou un match, cherche dans toute la bibliothèque, et
+*Esc* ne ramène plus à la liste quittée.
 
 Le panneau propose un contrôle explicite du **type de décision** recherché :
 *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*

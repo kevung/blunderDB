@@ -315,6 +315,18 @@ export function forgetSubSearchOrigin() {
 }
 
 /**
+ * Whether Escape has a list to return to right now: the results of an `ss` run
+ * from a collection or a match are on screen. A panel with nothing of its own
+ * to close asks this before closing itself, so that a single Escape leaves the
+ * results rather than the panel (#410).
+ *
+ * @returns {boolean}
+ */
+export function canLeaveSubSearchResults() {
+    return currentMode() === MODE.NORMAL && subSearchResultsOnScreen();
+}
+
+/**
  * NORMAL, on the results of an `ss` run from a collection or a match → back to
  * that collection, whole, or that match, on the move studied — and on the
  * position the user left (#410). Does nothing, and says so by returning false,
@@ -327,7 +339,7 @@ export function forgetSubSearchOrigin() {
  * @returns {Promise<boolean>} whether a list was returned to
  */
 export async function leaveSubSearchResults() {
-    if (currentMode() !== MODE.NORMAL || !subSearchResultsOnScreen()) return false;
+    if (!canLeaveSubSearchResults()) return false;
     const saved = savedContext.beforeSubSearch;
     savedContext.beforeSubSearch = null;
 
