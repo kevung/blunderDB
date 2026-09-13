@@ -804,6 +804,14 @@ jobs:
   # Blocking, as CLAUDE.md states: a known vulnerability in a dependency
   # fails the run. Bumping the offending module (or documenting a
   # verified non-reachability) is the way out, not a green-through-red job.
+  #
+  # govulncheck is pinned, and run without golang/govulncheck-action: the
+  # action hard-codes `go install golang.org/x/vuln/cmd/govulncheck@latest`
+  # under GOTOOLCHAIN=local, and x/vuln v1.8.0 requires go >= 1.26 — so from
+  # its release the job died in its install step, before scanning anything,
+  # on the GO_VERSION this repository builds with. Bump the pin when
+  # GO_VERSION moves to a release the next x/vuln accepts; the vulnerability
+  # database itself is fetched at run time and does not age with the pin.
   govulncheck:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -811,16 +819,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
       - name: Create frontend dist stub
         run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
         shell: bash
 
       - name: govulncheck
-        uses: golang/govulncheck-action@032d45514ae346b1db93c04b0c90b841c370344f # v1.1.0
-        with:
-          go-version-input: ${{ env.GO_VERSION }}
-          check-latest: true
-          repo-checkout: false
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+        shell: bash
 
   build:
     strategy:
