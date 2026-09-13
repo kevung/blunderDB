@@ -51,12 +51,13 @@
         const infos = annotated?.actions ?? [];
         const games = annotated?.games ?? [];
 
-        return games.map((game, gameIndex) => {
+        return games.map((/** @type {any} */ game, /** @type {number} */ gameIndex) => {
             /** @type {any[]} */
             const rows = [];
+            /** @type {any} */
             let row = null;
 
-            const open = (numbered) => {
+            const open = (/** @type {boolean} */ numbered) => {
                 row = { left: null, right: null, full: null, numbered };
                 rows.push(row);
                 return row;
@@ -138,7 +139,7 @@
     // What the user said about a game, when they said anything: a game with no
     // entry here follows the rule (the current one is open, the rest folded).
     const folds = new SvelteMap();
-    const isOpen = (number) => (folds.has(number) ? folds.get(number) : number === currentGame);
+    const isOpen = (/** @type {number} */ number) => (folds.has(number) ? folds.get(number) : number === currentGame);
 
     // Entering a game clears the fold the user had put on it — otherwise the
     // Cursor would walk into a game whose cells nobody can see. `seen` is a
@@ -152,6 +153,10 @@
         folds.delete(number);
     });
 
+    /**
+     * @param {number} number
+     * @param {boolean} open
+     */
     function toggleGame(number, open) {
         folds.set(number, open);
     }
@@ -163,7 +168,7 @@
     //
     // `block: 'nearest'` ne bouge rien quand la cellule est déjà visible, ce qui
     // évite de faire sauter la page à chaque touche pendant une saisie normale.
-    let scroller = $state(null);
+    let scroller = $state(/** @type {HTMLDivElement | null} */ (null));
     $effect(() => {
         void at;
         void layout;
@@ -171,6 +176,7 @@
         if (typeof cell?.scrollIntoView === 'function') cell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     });
 
+    /** @param {number} side */
     function playerName(side) {
         const given = players?.[side];
         if (given) return given;
@@ -182,6 +188,7 @@
     // (`'transcript.inconsistency.' + kind`) is invisible to the guard that
     // hunts orphaned translations, and the six Inconsistencies of
     // fonctionnel.md §1.4 are a closed list anyway.
+    /** @type {Record<string, string>} */
     const FLAW_KEY = {
         illegal_move: 'transcript.inconsistency.illegal_move',
         double_turn: 'transcript.inconsistency.double_turn',
@@ -190,9 +197,14 @@
         inconsistent_dice: 'transcript.inconsistency.inconsistent_dice',
         unrecorded_move: 'transcript.inconsistency.unrecorded_move'
     };
+    /** @type {Record<number, string>} */
     const RESIGN_KEY = { 1: 'transcript.resignSingle', 2: 'transcript.resignGammon', 3: 'transcript.resignBackgammon' };
 
-    /** "31: 8/5 6/5", "Doubles => 2", "Wins 2 points" — one cell's text. */
+    /**
+     * "31: 8/5 6/5", "Doubles => 2", "Wins 2 points" — one cell's text.
+     *
+     * @param {any} c
+     */
     function cellText(c) {
         if (!c) return '';
         if (c.kind === 'result') {
@@ -230,11 +242,17 @@
         }
     }
 
-    /** The Inconsistencies of a cell, NAMED — never a bare warning sign. */
+    /**
+     * The Inconsistencies of a cell, NAMED — never a bare warning sign.
+     *
+     * @param {any} c
+     * @returns {{kind: string}[]}
+     */
     function flawsOf(c) {
         return c?.kind === 'action' ? (c.info.inconsistencies ?? []) : [];
     }
 
+    /** @param {{kind: string}[]} flaws */
     function flawTitle(flaws) {
         return $t('transcript.flawed', { names: flaws.map((f) => (FLAW_KEY[f.kind] ? $t(FLAW_KEY[f.kind]) : f.kind)).join(' · ') });
     }
@@ -289,7 +307,7 @@
   One cell. It is a button when the caller listens, a span when it does not:
   a Transcript nobody can walk is still a Transcript.
 -->
-{#snippet cellBlock(c)}
+{#snippet cellBlock(/** @type {any} */ c)}
     {#if !c}
         <span class="cell empty-cell"></span>
     {:else}
@@ -302,7 +320,7 @@
                 class:cursor={framed}
                 class:flawed={flaws.length > 0}
                 data-index={c.index}
-                data-inconsistency={flaws.length ? flaws.map((f) => f.kind).join(' ') : undefined}
+                data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
                 title={flaws.length ? flawTitle(flaws) : undefined}
                 onclick={() => onSelect(c.index)}
@@ -321,7 +339,7 @@
                 class:flawed={flaws.length > 0}
                 class:result={c.kind === 'result'}
                 data-index={c.kind === 'action' ? c.index : undefined}
-                data-inconsistency={flaws.length ? flaws.map((f) => f.kind).join(' ') : undefined}
+                data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
                 title={flaws.length ? flawTitle(flaws) : undefined}
             >

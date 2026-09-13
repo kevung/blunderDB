@@ -52,7 +52,7 @@ async function mount(header = headerOf()) {
 
 /** Le même montage, mais qui rend aussi de quoi changer l'en-tête reçu. */
 async function mountRaw(header = headerOf()) {
-    const apply = vi.fn();
+    const apply = /** @type {any} */ (vi.fn());
     const { rerender } = render(TranscriptionMetadata, { props: { header, apply } });
     await tick();
     await tick();
@@ -61,8 +61,8 @@ async function mountRaw(header = headerOf()) {
 
 beforeEach(() => {
     vi.clearAllMocks();
-    GetAllPlayerNames.mockResolvedValue(['Alice', 'Bob', 'Charlie']);
-    GetAllTournaments.mockResolvedValue(TOURNAMENTS);
+    /** @type {any} */ (GetAllPlayerNames).mockResolvedValue(['Alice', 'Bob', 'Charlie']);
+    /** @type {any} */ (GetAllTournaments).mockResolvedValue(TOURNAMENTS);
 });
 
 afterEach(cleanup);
@@ -71,19 +71,19 @@ describe('le volet des métadonnées', () => {
     test('montre l’en-tête du brouillon', async () => {
         await mount(headerOf({ event: 'Open de Paris', location: 'Paris', round: '1/4' }));
 
-        expect(screen.getByLabelText('Player 1').value).toBe('Alice');
-        expect(screen.getByLabelText('Player 2').value).toBe('Bob');
-        expect(screen.getByLabelText('Event').value).toBe('Open de Paris');
-        expect(screen.getByLabelText('Location').value).toBe('Paris');
-        expect(screen.getByLabelText('Round').value).toBe('1/4');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Player 1')).value).toBe('Alice');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Player 2')).value).toBe('Bob');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Event')).value).toBe('Open de Paris');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Location')).value).toBe('Paris');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Round')).value).toBe('1/4');
         // Go sérialise un instant RFC 3339 ; le champ montre le jour.
-        expect(screen.getByLabelText('Date').value).toBe('2026-09-07');
-        expect(screen.getByLabelText('Transcriber').value).toBe('Kévin');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Date')).value).toBe('2026-09-07');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Transcriber')).value).toBe('Kévin');
     });
 
     test('une date vide reste vide plutôt que de montrer l’an 1', async () => {
         await mount(headerOf({ date: '0001-01-01T00:00:00Z' }));
-        expect(screen.getByLabelText('Date').value).toBe('');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Date')).value).toBe('');
     });
 
     test('écrit l’en-tête descriptif, et rien d’autre', async () => {
@@ -138,7 +138,7 @@ describe('le volet des métadonnées', () => {
 
     test('le tournoi voyage par son identifiant, un nom inconnu n’en pose aucun', async () => {
         const apply = await mount(headerOf({ tournament_id: 3 }));
-        const field = screen.getByLabelText('Tournament');
+        const field = /** @type {HTMLInputElement} */ (screen.getByLabelText('Tournament'));
         expect(field.value).toBe('Open de Paris');
 
         await fireEvent.input(field, { target: { value: 'Championnat de Lyon' } });
@@ -170,7 +170,7 @@ describe('le volet des métadonnées', () => {
 describe('le changement de longueur', () => {
     test('montre la longueur du brouillon et l’envoie changée', async () => {
         const apply = await mount(headerOf({ match_length: 5 }));
-        const field = screen.getByLabelText('Length');
+        const field = /** @type {HTMLInputElement} */ (screen.getByLabelText('Length'));
         expect(field.value).toBe('5');
 
         await fireEvent.input(field, { target: { value: '7' } });
@@ -188,7 +188,7 @@ describe('le changement de longueur', () => {
 
     test('une longueur illisible ne part pas et le champ revient à ce qu’il était', async () => {
         const apply = await mount(headerOf({ match_length: 5 }));
-        const field = screen.getByLabelText('Length');
+        const field = /** @type {HTMLInputElement} */ (screen.getByLabelText('Length'));
 
         await fireEvent.input(field, { target: { value: 'sept' } });
         await fireEvent.change(field);
@@ -209,7 +209,7 @@ describe('le changement de longueur', () => {
         await rerender({ header: headerOf({ match_length: 0, jacoby: true, beaver: false }) });
         expect(screen.getByText('Jacoby')).toBeTruthy();
         expect(screen.getByText('Beaver')).toBeTruthy();
-        expect(screen.getByLabelText('Length').value).toBe('0');
+        expect(/** @type {HTMLInputElement} */ (screen.getByLabelText('Length')).value).toBe('0');
     });
 
     test('cocher le beaver garde la longueur et l’autre règle', async () => {

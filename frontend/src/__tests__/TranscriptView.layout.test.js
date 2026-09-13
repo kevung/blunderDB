@@ -39,6 +39,9 @@ const POSITION = (dice = [0, 0], cubeValue = 0) => ({
 /**
  * Un document annoté : les Actions telles que le document les porte, les
  * ActionInfo telles que le Replay les rend, et les parties qu'il dérive.
+ *
+ * @param {any[]} rows
+ * @param {any[]} games
  */
 function annotatedOf(rows, games) {
     return {
@@ -79,9 +82,9 @@ const ORDINARY = annotatedOf(
     [GAME({ last: 6 })]
 );
 
-const cells = (container) => [...container.querySelectorAll('.cell')].filter((el) => !el.classList.contains('empty-cell'));
-const rowsOf = (container) => [...container.querySelectorAll('tbody tr')];
-const columnOf = (cell) => [...cell.closest('tr').children].indexOf(cell.closest('td'));
+const cells = (/** @type {any} */ container) => [...container.querySelectorAll('.cell')].filter((el) => !el.classList.contains('empty-cell'));
+const rowsOf = (/** @type {any} */ container) => [...container.querySelectorAll('tbody tr')];
+const columnOf = (/** @type {any} */ cell) => [...cell.closest('tr').children].indexOf(cell.closest('td'));
 
 beforeEach(() => vi.clearAllMocks());
 afterEach(() => cleanup());
@@ -93,7 +96,7 @@ describe('la disposition en deux colonnes', () => {
         // Sept Actions, sept cellules — l'ouverture comprise, plus rien.
         expect(cells(container).filter((c) => c.dataset.index !== undefined).length).toBe(7);
 
-        const byIndex = (i) => container.querySelector(`[data-index="${i}"]`);
+        const byIndex = (/** @type {number} */ i) => container.querySelector(`[data-index="${i}"]`);
         // Colonne 0 = le numéro de tour, 1 = joueur 1, 2 = joueur 2.
         expect(columnOf(byIndex(1))).toBe(1); // le coup de Kévin, à gauche
         expect(columnOf(byIndex(2))).toBe(2); // celui d'Alice, à droite
@@ -103,24 +106,24 @@ describe('la disposition en deux colonnes', () => {
 
     test('une ligne par tour : les deux camps du même tour partagent la ligne', () => {
         const { container } = render(TranscriptView, { props: { annotated: ORDINARY } });
-        const line = (i) => rowsOf(container).indexOf(container.querySelector(`[data-index="${i}"]`).closest('tr'));
+        const line = (/** @type {number} */ i) => rowsOf(container).indexOf(/** @type {Element} */ (container.querySelector(`[data-index="${i}"]`)).closest('tr'));
 
         expect(line(1)).toBe(line(2)); // 31: 8/5 6/5 | 52: 13/8 13/11
         expect(line(3)).toBe(line(4)); // 64: 24/14   | Double
         expect(line(3)).toBe(line(1) + 1);
         // L'ouverture appartient aux deux camps : elle prend sa ligne entière.
-        expect(container.querySelector('[data-index="0"]').closest('td').getAttribute('colspan')).toBe('2');
+        expect(/** @type {any} */ (container.querySelector('[data-index="0"]')).closest('td').getAttribute('colspan')).toBe('2');
     });
 
     test('les dés précèdent la notation, comme sur une feuille de match', () => {
         const { container } = render(TranscriptView, { props: { annotated: ORDINARY } });
-        expect(container.querySelector('[data-index="1"]').textContent.trim()).toBe('31: 8/5 6/5');
+        expect(/** @type {any} */ (container.querySelector('[data-index="1"]')).textContent.trim()).toBe('31: 8/5 6/5');
     });
 
     test('le videau porte la valeur atteinte, la prise et la passe leur mot', () => {
         const { container } = render(TranscriptView, { props: { annotated: ORDINARY } });
-        expect(container.querySelector('[data-index="4"]').textContent).toContain('2');
-        expect(container.querySelector('[data-index="5"]').textContent.trim()).not.toBe('');
+        expect(/** @type {Element} */ (container.querySelector('[data-index="4"]')).textContent).toContain('2');
+        expect(/** @type {any} */ (container.querySelector('[data-index="5"]')).textContent.trim()).not.toBe('');
     });
 
     test('la fin de partie est une cellule de la colonne du vainqueur', () => {
@@ -158,7 +161,7 @@ describe('la disposition en deux colonnes', () => {
 describe('le Cursor est une cellule encadrée', () => {
     test('la cellule visée porte la marque, et elle seule', () => {
         const { container } = render(TranscriptView, { props: { annotated: ORDINARY, cursor: 3 } });
-        const framed = [...container.querySelectorAll('.cell.cursor')];
+        const framed = /** @type {HTMLElement[]} */ ([...container.querySelectorAll('.cell.cursor')]);
         expect(framed.length).toBe(1);
         expect(framed[0].dataset.index).toBe('3');
         expect(framed[0].getAttribute('aria-current')).toBe('true');
@@ -167,12 +170,13 @@ describe('le Cursor est une cellule encadrée', () => {
     test('un clic sur une cellule rend son index à l’appelant', async () => {
         const onSelect = vi.fn();
         const { container } = render(TranscriptView, { props: { annotated: ORDINARY, cursor: 1, onSelect } });
-        await fireEvent.click(container.querySelector('[data-index="4"]'));
+        await fireEvent.click(/** @type {Element} */ (container.querySelector('[data-index="4"]')));
         expect(onSelect).toHaveBeenCalledWith(4);
     });
 });
 
 describe('les Incohérences sont décorées et nommées', () => {
+    /** @type {(keyof typeof en.transcript.inconsistency)[]} */
     const KINDS = ['illegal_move', 'double_turn', 'impossible_cube', 'past_end', 'inconsistent_dice'];
 
     test.each(KINDS)('%s a sa décoration et son info-bulle', (kind) => {
@@ -185,7 +189,7 @@ describe('les Incohérences sont décorées et nommées', () => {
         );
         const { container } = render(TranscriptView, { props: { annotated: flawed } });
 
-        const cell = container.querySelector('[data-index="1"]');
+        const cell = /** @type {HTMLElement} */ (container.querySelector('[data-index="1"]'));
         expect(cell.classList.contains('flawed')).toBe(true);
         expect(cell.dataset.inconsistency).toBe(kind);
         expect(cell.getAttribute('title')).toContain(en.transcript.inconsistency[kind]);
@@ -207,7 +211,7 @@ describe('les Incohérences sont décorées et nommées', () => {
             [GAME({ last: 1 })]
         );
         const { container } = render(TranscriptView, { props: { annotated: flawed } });
-        const title = container.querySelector('[data-index="1"]').getAttribute('title');
+        const title = /** @type {Element} */ (container.querySelector('[data-index="1"]')).getAttribute('title');
         expect(title).toContain(en.transcript.inconsistency.double_turn);
         expect(title).toContain(en.transcript.inconsistency.inconsistent_dice);
     });
@@ -226,32 +230,32 @@ describe('les parties sont repliables', () => {
 
     test('la partie du Cursor est ouverte, les autres repliées', () => {
         const { container } = render(TranscriptView, { props: { annotated: twoGames, cursor: 3 } });
-        const sections = [...container.querySelectorAll('details.game')];
+        const sections = /** @type {HTMLDetailsElement[]} */ ([...container.querySelectorAll('details.game')]);
         expect(sections.map((s) => s.open)).toEqual([false, true]);
     });
 
     test('replier une partie ne déplace pas le Cursor', async () => {
         const onSelect = vi.fn();
         const { container } = render(TranscriptView, { props: { annotated: twoGames, cursor: 3, onSelect } });
-        const second = [...container.querySelectorAll('details.game')][1];
+        const second = /** @type {HTMLDetailsElement} */ ([...container.querySelectorAll('details.game')][1]);
 
         second.open = false;
         await fireEvent(second, new Event('toggle'));
         for (let i = 0; i < 4; i++) await tick();
 
-        expect([...container.querySelectorAll('details.game')][1].open).toBe(false);
+        expect(/** @type {HTMLDetailsElement} */ ([...container.querySelectorAll('details.game')][1]).open).toBe(false);
         // Le repli est un geste d'affichage : rien n'a été demandé à l'appelant,
         // et la cellule encadrée reste celle qu'il a désignée.
         expect(onSelect).not.toHaveBeenCalled();
         const { container: reopened } = render(TranscriptView, { props: { annotated: twoGames, cursor: 3 } });
-        expect(reopened.querySelector('.cell.cursor').dataset.index).toBe('3');
+        expect(/** @type {HTMLElement} */ (reopened.querySelector('.cell.cursor')).dataset.index).toBe('3');
     });
 
     test('déplier une partie repliée montre ses cellules', async () => {
         const { container } = render(TranscriptView, { props: { annotated: twoGames, cursor: 3 } });
         expect(container.querySelector('[data-index="1"]')).toBeNull();
 
-        const first = [...container.querySelectorAll('details.game')][0];
+        const first = /** @type {HTMLDetailsElement} */ ([...container.querySelectorAll('details.game')][0]);
         first.open = true;
         await fireEvent(first, new Event('toggle'));
         for (let i = 0; i < 4; i++) await tick();

@@ -48,8 +48,8 @@
         busy = false
     } = $props();
 
-    let players = $state([]);
-    let tournaments = $state([]);
+    let players = $state(/** @type {any[]} */ ([]));
+    let tournaments = $state(/** @type {any[]} */ ([]));
 
     // Ce que les champs montrent. Une copie locale, et non l'en-tête lui-même :
     // un champ en cours de frappe ne doit pas être réécrit par le document que
@@ -67,23 +67,34 @@
      *
      * Go sérialise un `time.Time` en RFC 3339 et n'omet jamais un zéro
      * (`omitempty` ne dit rien d'une structure) : l'an 1 est la date vide.
+     *
+     * @param {unknown} value
      */
     function dateFieldOf(value) {
         if (typeof value !== 'string' || value.length < 10) return '';
         return value.startsWith('0001-01-01') ? '' : value.slice(0, 10);
     }
 
-    /** L'inverse : un jour saisi devient l'instant RFC 3339 que Go relit. */
+    /**
+     * L'inverse : un jour saisi devient l'instant RFC 3339 que Go relit.
+     *
+     * @param {string} day
+     */
     function dateHeaderOf(day) {
         return day ? `${day}T00:00:00Z` : undefined;
     }
 
+    /** @param {number | null | undefined} id */
     function tournamentNameOf(id) {
         if (!id) return '';
         return tournaments.find((row) => row.id === id)?.name ?? '';
     }
 
-    /** L'identifiant du tournoi dont le nom a été tapé, ou null. */
+    /**
+     * L'identifiant du tournoi dont le nom a été tapé, ou null.
+     *
+     * @param {string | null | undefined} name
+     */
     function tournamentIdOf(name) {
         const wanted = (name ?? '').trim().toLowerCase();
         if (!wanted) return null;
@@ -125,6 +136,7 @@
     // partie d'argent — est la seule réponse qu'un champ numérique lié à un
     // nombre rendrait indiscernable d'un champ vide.
     let lengthField = $state('');
+    /** @type {number | null} */
     let lengthSynced = null;
     let matchLength = $derived(header?.match_length ?? 0);
     let isMoney = $derived(matchLength === 0);
@@ -153,6 +165,7 @@
     /** Écrit l'en-tête descriptif ; la longueur et le `match_id` n'y sont pas. */
     function commit() {
         if (busy) return;
+        /** @type {{player1: string, player2: string, event: string, location: string, round: string, transcriber: string, date: string | undefined, tournament_id?: number}} */
         const next = {
             player1: form.player1.trim(),
             player2: form.player2.trim(),
@@ -186,12 +199,22 @@
         applyLength(length, header?.jacoby ?? false, header?.beaver ?? false);
     }
 
-    /** Les règles de la session : elles ne se posent qu'en argent (ADR-0028). */
+    /**
+     * Les règles de la session : elles ne se posent qu'en argent (ADR-0028).
+     *
+     * @param {boolean} jacoby
+     * @param {boolean} beaver
+     */
     function commitRules(jacoby, beaver) {
         if (busy) return;
         applyLength(matchLength, jacoby, beaver);
     }
 
+    /**
+     * @param {number} length
+     * @param {boolean} jacoby
+     * @param {boolean} beaver
+     */
     function applyLength(length, jacoby, beaver) {
         apply({ Kind: 'set_length', HasLength: true, MatchLength: length, HasRules: true, Jacoby: jacoby, Beaver: beaver });
     }
@@ -201,6 +224,9 @@
      * le nom dans le champ (`pick` appelle `onSelect` puis remplit `value`), si
      * bien qu'un commit branché tel quel sur `onSelect` enverrait le texte
      * d'avant le clic. Le volet écrit donc le nom lui-même, puis commet.
+     *
+     * @param {'player1' | 'player2' | 'tournament'} field
+     * @param {unknown} name
      */
     function pickInto(field, name) {
         form[field] = String(name ?? '');
@@ -220,10 +246,10 @@
             <EntityAutocomplete
                 bind:value={form.player1}
                 items={players}
-                label={(name) => String(name)}
+                label={(/** @type {unknown} */ name) => String(name)}
                 variant="field"
                 placeholder={$t('transcription.unnamed')}
-                onSelect={(name) => pickInto('player1', name)}
+                onSelect={(/** @type {unknown} */ name) => pickInto('player1', name)}
                 onSubmit={commit}
                 onDismiss={commit}
             />
@@ -233,10 +259,10 @@
             <EntityAutocomplete
                 bind:value={form.player2}
                 items={players}
-                label={(name) => String(name)}
+                label={(/** @type {unknown} */ name) => String(name)}
                 variant="field"
                 placeholder={$t('transcription.unnamed')}
-                onSelect={(name) => pickInto('player2', name)}
+                onSelect={(/** @type {unknown} */ name) => pickInto('player2', name)}
                 onSubmit={commit}
                 onDismiss={commit}
             />
@@ -277,7 +303,7 @@
                 items={tournaments}
                 variant="field"
                 placeholder={$t('transcription.tournamentNone')}
-                onSelect={(entry) => pickInto('tournament', entry?.name)}
+                onSelect={(/** @type {any} */ entry) => pickInto('tournament', entry?.name)}
                 onSubmit={commit}
                 onDismiss={commit}
             />

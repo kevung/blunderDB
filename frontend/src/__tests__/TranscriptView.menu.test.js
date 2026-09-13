@@ -22,6 +22,7 @@ const POSITION = (dice = [0, 0]) => ({
     decision_type: 0
 });
 
+/** @param {any[]} rows */
 function annotatedOf(rows) {
     return {
         document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice' }, actions: rows.map((r) => r.action), cursor: 0 },
@@ -51,7 +52,7 @@ const ORDINARY = annotatedOf([
     { action: { side: 1, kind: 'checker', dice: [5, 2] }, notation: '13/8 13/11' }
 ]);
 
-const rightClick = (el, at = { clientX: 120, clientY: 340 }) => fireEvent.contextMenu(el, at);
+const rightClick = (/** @type {any} */ el, at = { clientX: 120, clientY: 340 }) => fireEvent.contextMenu(el, at);
 
 afterEach(cleanup);
 
