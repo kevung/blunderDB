@@ -58,6 +58,12 @@ import { parseMoveNotation } from '../utils/boardGeometry.js';
 
 const WHITE = 1;
 
+/**
+ * Un coup légal de l'union, portant le jet qui le permet.
+ *
+ * @typedef {import('./quizPlay.js').Play & {roll: number[]}} BoardPlay
+ */
+
 /** Les vingt et un jets distincts, dé fort d'abord — l'ordre du triangle. */
 export const ROLLS = Object.freeze([1, 2, 3, 4, 5, 6].flatMap((high) => [1, 2, 3, 4, 5, 6].filter((low) => low <= high).map((low) => Object.freeze([high, low]))));
 
@@ -92,7 +98,11 @@ export function newBoardPlay(position, byRoll) {
     return { ...newPlay(position, plays), free: false, origin: position };
 }
 
-/** L'état de départ d'un déplacement LIBRE : aucun coup ne le contraint. */
+/**
+ * L'état de départ d'un déplacement LIBRE : aucun coup ne le contraint.
+ *
+ * @param {any} position
+ */
 export function newFreePlay(position) {
     return { ...newPlay(position, []), free: true, origin: position };
 }
@@ -113,7 +123,12 @@ export function resetBoardPlay(state, fallback) {
     return { ...resetPlay(state, base), free: state.free === true, origin: state.origin };
 }
 
-/** Le point porte-t-il un pion du camp qui joue ? */
+/**
+ * Le point porte-t-il un pion du camp qui joue ?
+ *
+ * @param {any} state
+ * @param {number} point
+ */
 function hasMoverChecker(state, point) {
     const p = state?.board?.points?.[point];
     return !!p && p.checkers > 0 && p.color === state.mover;
@@ -176,11 +191,15 @@ export function undoBoardStep(state) {
     return next;
 }
 
-/** Les jets encore compatibles avec ce qui a été joué, clés triées. */
+/**
+ * Les jets encore compatibles avec ce qui a été joué, clés triées.
+ *
+ * @param {any} state
+ */
 export function compatibleRolls(state) {
     if (!state || state.free) return [];
     const keys = new Set();
-    for (const play of alivePlays(state)) keys.add(rollKey(play.roll));
+    for (const play of /** @type {BoardPlay[]} */ (alivePlays(state))) keys.add(rollKey(play.roll));
     return [...keys].sort();
 }
 
@@ -192,7 +211,7 @@ export function compatibleRolls(state) {
 export function choosableRolls(state) {
     if (!state || state.free || state.steps.length === 0) return [];
     const keys = new Set();
-    for (const play of alivePlays(state)) {
+    for (const play of /** @type {BoardPlay[]} */ (alivePlays(state))) {
         if (play.steps.length === state.steps.length) keys.add(rollKey(play.roll));
     }
     return [...keys].sort();
@@ -210,7 +229,7 @@ export function choosableRolls(state) {
  */
 export function deducedDice(state) {
     if (!state || state.free || state.steps.length === 0) return null;
-    const alive = alivePlays(state);
+    const alive = /** @type {BoardPlay[]} */ (alivePlays(state));
     if (alive.length === 0) return null;
     const keys = new Set(alive.map((play) => rollKey(play.roll)));
     if (keys.size !== 1) return null;
@@ -225,6 +244,9 @@ export function deducedDice(state) {
  * La notation est mover-relative — 24 nomme toujours les pions arrière du camp
  * qui joue — et `domain.pointLabel` la produit en miroitant les points du camp
  * blanc. Ceci en est l'inverse exact, et rien d'autre.
+ *
+ * @param {number} relative
+ * @param {number} mover
  */
 function absolutePoint(relative, mover) {
     return mover === WHITE ? 25 - relative : relative;

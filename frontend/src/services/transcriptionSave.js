@@ -53,6 +53,8 @@ export function resetTranscriptionSave() {
  * La signature du document : son en-tête et ses Actions, rien de dérivé. Deux
  * documents de même signature produiraient le même Match, ce qui est
  * exactement la question que pose « modifié depuis l'enregistrement ».
+ *
+ * @param {any} annotated
  */
 export function documentSignature(annotated) {
     const doc = annotated?.document;
@@ -60,7 +62,12 @@ export function documentSignature(annotated) {
     return JSON.stringify([doc.header ?? null, doc.actions ?? []]);
 }
 
-/** Les sortes d'Incohérence que porte le document, sans doublon. */
+/**
+ * Les sortes d'Incohérence que porte le document, sans doublon.
+ *
+ * @param {any} annotated
+ * @returns {Set<string>}
+ */
 export function inconsistencyKinds(annotated) {
     const kinds = new Set();
     for (const info of annotated?.actions ?? []) {
@@ -71,6 +78,7 @@ export function inconsistencyKinds(annotated) {
     return kinds;
 }
 
+/** @param {any} annotated */
 export function hasInconsistency(annotated) {
     return inconsistencyKinds(annotated).size > 0;
 }
@@ -80,13 +88,20 @@ export function hasInconsistency(annotated) {
  * « Invalid move » à gnubg et à XG, et divergera ensuite. Un jet incohérent
  * avec le coup requalifie le coup en illégal (transcript.InconsistentDice) :
  * les deux valent avertissement à l'export.
+ *
+ * @param {any} annotated
  */
 export function hasIllegalMove(annotated) {
     const kinds = inconsistencyKinds(annotated);
     return kinds.has('illegal_move') || kinds.has('inconsistent_dice');
 }
 
-/** Le match que le brouillon possède déjà, 0 s'il n'a jamais été enregistré. */
+/**
+ * Le match que le brouillon possède déjà, 0 s'il n'a jamais été enregistré.
+ *
+ * @param {any} annotated
+ * @returns {number}
+ */
 export function savedMatchID(annotated) {
     return annotated?.document?.header?.match_id ?? 0;
 }
@@ -113,6 +128,10 @@ export function savedMatchID(annotated) {
  * que la phrase inspirait matérialisait le Match entier et lançait un lot
  * d'analyse 2-ply à chaque fois. Ces clés nomment donc l'objet qui existe ou
  * n'existe pas : le Match.
+ *
+ * @param {{id: number, annotated: any} | null | undefined} draft
+ * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
+ * @param {number} [now]
  */
 export function draftSaveState(draft, saved, now = Date.now()) {
     const annotated = draft?.annotated ?? null;
@@ -143,6 +162,7 @@ export function draftSaveState(draft, saved, now = Date.now()) {
  * est « enregistrer quand même ? », et son seul refus possible est celui de
  * l'utilisateur.
  *
+ * @param {any} draft
  * @returns le résultat du moteur, ou null si rien n'a été écrit.
  */
 export async function saveDraft(draft) {
@@ -151,8 +171,8 @@ export async function saveDraft(draft) {
     if (id == null || !annotated) return null;
 
     if (hasInconsistency(annotated)) {
-        const go = await confirmAction(translate('transcription.saveInconsistentWarning'), {
-            confirmLabel: translate('transcription.saveAnyway')
+        const go = await confirmAction(/** @type {string} */ (translate('transcription.saveInconsistentWarning')), {
+            confirmLabel: /** @type {string} */ (translate('transcription.saveAnyway'))
         });
         if (!go) return null;
     }
@@ -183,6 +203,8 @@ export async function saveDraft(draft) {
  * d'analyse. La profondeur est celle que la bibliothèque s'est donnée pour ses
  * analyses — la même que le rattrapage d'après import ; le panneau n'en a pas
  * une à lui.
+ *
+ * @param {any} result
  */
 async function startTargetedAnalysis(result) {
     if (!result?.match_id || !result?.to_analyze) return;
@@ -246,6 +268,7 @@ export function dismissTranscriptionResume() {
  * comme il a été joué, avec l'avertissement que gnubg et XG le signaleront et
  * divergeront ensuite ; l'export n'est jamais refusé (fonctionnel.md §5).
  *
+ * @param {any} draft
  * @returns true si un fichier a été écrit.
  */
 export async function exportDraftMat(draft) {
@@ -254,8 +277,8 @@ export async function exportDraftMat(draft) {
     if (id == null || !annotated) return false;
 
     if (hasIllegalMove(annotated)) {
-        const go = await confirmAction(translate('transcription.illegalExportWarning'), {
-            confirmLabel: translate('transcription.exportAnyway')
+        const go = await confirmAction(/** @type {string} */ (translate('transcription.illegalExportWarning')), {
+            confirmLabel: /** @type {string} */ (translate('transcription.exportAnyway'))
         });
         if (!go) return false;
     }
@@ -284,6 +307,7 @@ export async function exportDraftMat(draft) {
  * coup, puisque rien dans blunderDB n'édite les coups d'un Match. La phrase
  * dit laquelle des deux s'applique.
  *
+ * @param {any} draft
  * @returns true si le brouillon a été fermé.
  */
 export async function closeDraft(draft) {
@@ -291,8 +315,8 @@ export async function closeDraft(draft) {
     if (id == null) return false;
 
     const matchId = savedMatchID(draft.annotated);
-    const message = matchId ? translate('transcription.closeSavedConfirm', { id: matchId }) : translate('transcription.closeUnsavedConfirm');
-    const go = await confirmAction(message, { confirmLabel: translate('transcription.closeDraft') });
+    const message = /** @type {string} */ (matchId ? translate('transcription.closeSavedConfirm', { id: matchId }) : translate('transcription.closeUnsavedConfirm'));
+    const go = await confirmAction(message, { confirmLabel: /** @type {string} */ (translate('transcription.closeDraft')) });
     if (!go) return false;
 
     try {

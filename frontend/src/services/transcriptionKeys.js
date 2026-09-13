@@ -156,11 +156,31 @@ export const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
 const RESIGN_LEVELS = new Set([1, 2, 3]);
 
 /**
+ * L'état de la machine à touches.
+ *
+ * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, tie: boolean, resume: KeyState|null}} KeyState
+ */
+
+/**
+ * Un geste demandé au moteur.
+ *
+ * @typedef {{kind: string, value?: number, index?: number}} KeyCommand
+ */
+
+/**
+ * Ce que rend une touche : prise ou non, l'état suivant, les gestes.
+ *
+ * @typedef {{handled: boolean, state: KeyState, commands: KeyCommand[]}} KeyResult
+ */
+
+/**
  * L'état initial : dés attendus, rien de saisi.
  *
  * `tie` retient qu'une ouverture est tombée à égalité, ce que le panneau affiche
  * « relance » (fonctionnel.md §1.2 : l'égalité reste dans le document et ne
  * produit ni Move ni Position).
+ *
+ * @returns {KeyState}
  */
 export function initialKeyState() {
     return {
@@ -196,6 +216,9 @@ export function dieOf(event) {
  * camps : le déplacer d'une Action, c'est passer d'une cellule à l'autre, donc
  * d'un camp à l'autre. D'où l'axe horizontal, quand `j`/`k` gardent le vertical
  * pour la liste des candidats (ux.md §3).
+ *
+ * @param {KeyboardEvent} event
+ * @returns {number}
  */
 export function cursorDelta(event) {
     if (isBareLetter(event, 'h') || event.key === 'ArrowLeft') return -1;
@@ -219,30 +242,49 @@ export function cursorCommands(from, to) {
     return Array.from({ length: Math.abs(to - from) }, () => ({ kind }));
 }
 
-/** +1 (candidat suivant), −1 (précédent), 0 sinon : `j`/`k` et bas/haut. */
+/**
+ * +1 (candidat suivant), −1 (précédent), 0 sinon : `j`/`k` et bas/haut.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {number}
+ */
 export function selectionDelta(event) {
     if (isBareLetter(event, 'j') || event.key === 'ArrowDown') return 1;
     if (isBareLetter(event, 'k') || event.key === 'ArrowUp') return -1;
     return 0;
 }
 
-/** Un résultat « la touche ne me concerne pas » : elle remonte au répartiteur. */
+/**
+ * Un résultat « la touche ne me concerne pas » : elle remonte au répartiteur.
+ *
+ * @param {KeyState} state
+ * @returns {KeyResult}
+ */
 const ignored = (state) => ({ handled: false, state, commands: [] });
-/** Un résultat « la touche est à moi, mais il n'y a rien à faire ». */
+/**
+ * Un résultat « la touche est à moi, mais il n'y a rien à faire ».
+ *
+ * @param {KeyState} state
+ * @returns {KeyResult}
+ */
 const swallowed = (state) => ({ handled: true, state, commands: [] });
 
+/**
+ * @param {number} n
+ * @param {number} max
+ */
 const clamp = (n, max) => Math.min(Math.max(n, 0), max);
 
 /**
  * Applique une touche.
  *
- * @param {object} state - l'état rendu par `initialKeyState` ou par un appel précédent
+ * @param {KeyState} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
  * @param {{expects?: string, replacing?: boolean}} context - `expects` est
  *   `annotated.next.expects`, la sorte d'Action que le document attend ;
  *   `replacing` est `annotated.entry.replacing`, vrai quand le Cursor est sur
  *   une Action existante que la saisie remplacerait (ADR-0048 décision 1).
- * @returns {{handled: boolean, state: object, commands: {kind: string, value?: number, index?: number}[]}}
+ * @returns {KeyResult}
  */
 export function pressKey(state, event, { expects = 'checker', replacing = false } = {}) {
     // La résignation capte tout tant que son niveau n'est pas donné : ses
@@ -384,6 +426,10 @@ function editCommand(event) {
  * Le camp n'est pas dit ici. Il est celui au trait, et c'est le moteur qui le
  * sait (`transcript.cubeGesture`) : la machine à touches ne connaît pas le
  * document (fonctionnel.md §1.2).
+ *
+ * @param {KeyState} state
+ * @param {KeyboardEvent} event
+ * @returns {KeyResult}
  */
 function resignLevel(state, event) {
     if (event.key === 'Escape') return { handled: true, ...cancelResign(state) };
@@ -407,9 +453,9 @@ function resignLevel(state, event) {
  * bouton s'éteint là où son geste ne répond à rien, quand la touche, elle, ne
  * refuse jamais.
  *
- * @param {object} state
+ * @param {KeyState} state
  * @param {string} kind - COMMAND.DOUBLE, COMMAND.TAKE ou COMMAND.PASS
- * @returns {{state: object, commands: {kind: string}[]}}
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function cubeGesture(state, kind) {
     return { state: initialKeyState(), commands: [{ kind }] };
@@ -423,18 +469,32 @@ export function cubeGesture(state, kind) {
  * qu'`Échap` — ou le bouton « Annuler » qui le double — le rende intact. Le
  * niveau se donne ensuite d'un chiffre ou d'un clic, en un geste : la
  * résignation coûte deux gestes à la souris comme au clavier (ux.md §4.2).
+ *
+ * @param {KeyState} state
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function beginResign(state) {
     return { state: { ...initialKeyState(), phase: PHASE.RESIGN, resume: state }, commands: [] };
 }
 
-/** Le niveau donné : `1`/`2`/`3` au clavier, un des trois boutons à la souris. */
+/**
+ * Le niveau donné : `1`/`2`/`3` au clavier, un des trois boutons à la souris.
+ *
+ * @param {KeyState} state
+ * @param {number} level
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
+ */
 export function resignWithLevel(state, level) {
     if (!RESIGN_LEVELS.has(level)) return { state, commands: [] };
     return { state: initialKeyState(), commands: [{ kind: COMMAND.RESIGN, value: level }] };
 }
 
-/** La résignation abandonnée : `Échap`, ou le bouton qui le double. */
+/**
+ * La résignation abandonnée : `Échap`, ou le bouton qui le double.
+ *
+ * @param {KeyState} state
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
+ */
 export function cancelResign(state) {
     return { state: state.resume ?? initialKeyState(), commands: [] };
 }
@@ -473,6 +533,12 @@ export function menuCommands(from, to, kind) {
  * réécrit l'Action à l'identique et rend le Cursor à `doc.Return`. Un chiffre
  * égaré en relecture aurait donc mis fin à la relecture et renvoyé le Cursor en
  * bout de document, quand la règle retenue le garde local.
+ *
+ * @param {KeyState} state
+ * @param {number} die
+ * @param {string} expects
+ * @param {boolean} [replacing]
+ * @returns {KeyResult}
  */
 function enterDie(state, die, expects, replacing = false) {
     switch (state.phase) {
@@ -542,6 +608,10 @@ function enterDie(state, die, expects, replacing = false) {
  * La phase passe à CANDIDATE, ce qui ne change plus rien au sens du chiffre
  * depuis ADR-0048 — c'est le Cursor qui le décide — et sert seulement à dire
  * que la sélection vient de l'utilisateur.
+ *
+ * @param {KeyState} state
+ * @param {number} delta
+ * @returns {KeyResult}
  */
 function moveSelection(state, delta) {
     if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return ignored(state);
@@ -562,6 +632,10 @@ function moveSelection(state, delta) {
  * l'on reconnaît le coup vu sur la vidéo. C'est le double-clic qui valide
  * (ADR-0048 décision 11), seul chemin souris pour le dernier coup d'une partie,
  * qui n'a pas de jet suivant pour porter sa validation.
+ *
+ * @param {KeyState} state
+ * @param {number} index
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function selectCandidate(state, index) {
     if (state.candidateCount <= 0) return { state, commands: [] };
@@ -579,8 +653,9 @@ export function selectCandidate(state, index) {
  * passe à l'autre camp. Au moins un : le premier est présélectionné et ses
  * flèches partent sur le plateau.
  *
- * @param {object} state
+ * @param {KeyState} state
  * @param {number} count
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function applyCandidates(state, count) {
     if (!state.awaitingCandidates) {
@@ -609,11 +684,11 @@ export function applyCandidates(state, count) {
  * souris, jamais un remplacement du clavier — et R3 (ADR-0048) demande que
  * chaque geste soit ATTEIGNABLE à la souris, jamais qu'il y coûte le même temps.
  *
- * @param {object} state
+ * @param {KeyState} state
  * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
  * @param {number} d2
  * @param {{expects?: string, replacing?: boolean}} context
- * @returns {{state: object, commands: {kind: string, value?: number, index?: number}[]}}
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = false } = {}) {
     const first = enterDie(state, d1, expects, replacing);
@@ -625,9 +700,10 @@ export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = 
  * Un seul dé, au clic : la rangée des six dés de l'ouverture, où chaque camp
  * donne le sien (fonctionnel.md §1.2). Même chemin qu'une touche chiffrée.
  *
- * @param {object} state
+ * @param {KeyState} state
  * @param {number} die
  * @param {{expects?: string, replacing?: boolean}} context
+ * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function enterSingleDie(state, die, { expects = 'checker', replacing = false } = {}) {
     const result = enterDie(state, die, expects, replacing);

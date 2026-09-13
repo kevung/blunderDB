@@ -76,7 +76,11 @@ export const transcriptionCursorStore = derived(transcriptionStore, ($t) => {
     return actions[at] ?? null;
 });
 
-/** Puts a draft — the `TranscriptionState` a Go binding returned — in hand. */
+/**
+ * Puts a draft — the `TranscriptionState` a Go binding returned — in hand.
+ *
+ * @param {any} state
+ */
 export function setTranscription(state) {
     transcriptionStore.set(state ? { id: state.id, annotated: state.annotated } : null);
     // Both sides of the stack come back with every gesture: they are read off
@@ -146,9 +150,15 @@ export const transcriptionWheelStore = writable(null);
 /** Combien de temps une réponse transitoire reste à l'écran. */
 export const NOTICE_MS = 1500;
 
-let noticeTimer = null;
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let noticeTimer = undefined;
 
-/** Pose une réponse transitoire, en remplaçant celle qui traînait. */
+/**
+ * Pose une réponse transitoire, en remplaçant celle qui traînait.
+ *
+ * @param {string} key
+ * @param {object} [params]
+ */
 export function noticeTranscription(key, params = undefined) {
     clearTimeout(noticeTimer);
     transcriptionNoticeStore.set({ key, params });
@@ -158,7 +168,7 @@ export function noticeTranscription(key, params = undefined) {
 /** Efface la réponse transitoire et son minuteur (démontage, fermeture). */
 export function clearTranscriptionNotice() {
     clearTimeout(noticeTimer);
-    noticeTimer = null;
+    noticeTimer = undefined;
     transcriptionNoticeStore.set(null);
 }
 

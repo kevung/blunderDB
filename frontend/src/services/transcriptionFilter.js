@@ -20,7 +20,12 @@
  * un autre point la réduit encore » — sans quoi le second clic élargirait.
  */
 
-/** Les points d'où au moins un candidat fait partir un pas. */
+/**
+ * Les points d'où au moins un candidat fait partir un pas.
+ *
+ * @param {{steps?: {from: number}[]}[]} candidates
+ * @returns {Set<number>}
+ */
 export function sourcesOf(candidates) {
     const points = new Set();
     for (const candidate of candidates ?? []) {
