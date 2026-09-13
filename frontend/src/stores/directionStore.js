@@ -83,7 +83,7 @@ import { logger } from '../utils/logger.js';
  * @property {string} name
  * @property {PhaseConfig[]} phases
  * @property {number} [min_per_point]
- * @property {{ count?: number, unavailable?: number[], reserved?: TableRule[] }} [tables]
+ * @property {{ count?: number, unavailable?: number[], reserved?: TableRule[] }} tables
  * @property {{ entry_fee?: number, retention?: Retention, sections?: Record<string, PrizeScale> }} [prizes]
  * @property {{ start: string, end: string }[]} [breaks]
  */
