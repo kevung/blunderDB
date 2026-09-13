@@ -782,6 +782,10 @@ export function RepairAnalyses() {
   return window['go']['database']['Database']['RepairAnalyses']();
 }
 
+export function RepairCrawfordSentinel() {
+  return window['go']['database']['Database']['RepairCrawfordSentinel']();
+}
+
 export function RepairGamePhases() {
   return window['go']['database']['Database']['RepairGamePhases']();
 }
