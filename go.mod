@@ -1,6 +1,6 @@
 module github.com/kevung/blunderdb
 
-go 1.25.13
+go 1.26.0
 
 // frontend/node_modules ships a stray Go package (flatted/golang) that
 // `go test ./...` picks up as part of this module. Go 1.25's `ignore`
@@ -29,10 +29,10 @@ require (
 	github.com/testcontainers/testcontainers-go v0.42.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.42.0
 	github.com/wailsapp/wails/v2 v2.10.1
-	golang.org/x/crypto v0.52.0
-	golang.org/x/net v0.55.0
-	golang.org/x/sys v0.45.0
-	golang.org/x/text v0.39.0
+	golang.org/x/crypto v0.56.0
+	golang.org/x/net v0.57.0
+	golang.org/x/sys v0.47.0
+	golang.org/x/text v0.41.0
 	modernc.org/sqlite v1.49.1
 )
 
@@ -111,7 +111,7 @@ require (
 	go.opentelemetry.io/otel v1.41.0 // indirect
 	go.opentelemetry.io/otel/metric v1.41.0 // indirect
 	go.opentelemetry.io/otel/trace v1.41.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.72.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect

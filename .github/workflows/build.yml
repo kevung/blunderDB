@@ -18,9 +18,12 @@ env:
   # One statement of each toolchain version for the whole file (B.19, #187):
   # they were repeated 7 and 4 times, and a bump that missed one occurrence
   # built half the matrix on a different compiler without saying so.
-  # GO_VERSION tracks go.mod's `go` line; NODE_VERSION is an LTS line — 23 was
-  # an odd-numbered release, out of support since 2025.
-  GO_VERSION: "1.25.13"
+  # GO_VERSION is the toolchain, a supported patch release (#412: 1.26.8); it
+  # is deliberately ahead of go.mod's `go` line, which states the MINIMUM the
+  # dependencies require (1.26.0) because gammonGo embeds pkg/blunderdb/server
+  # and inherits it. NODE_VERSION is an LTS line — 23 was an odd-numbered
+  # release, out of support since 2025.
+  GO_VERSION: "1.26.8"
   NODE_VERSION: "22.21.1"
 
 # One in-flight run per branch/tag: a burst of 3 commits collapses to the
@@ -805,13 +808,17 @@ jobs:
   # fails the run. Bumping the offending module (or documenting a
   # verified non-reachability) is the way out, not a green-through-red job.
   #
-  # govulncheck is pinned, and run without golang/govulncheck-action: the
-  # action hard-codes `go install golang.org/x/vuln/cmd/govulncheck@latest`
-  # under GOTOOLCHAIN=local, and x/vuln v1.8.0 requires go >= 1.26 — so from
-  # its release the job died in its install step, before scanning anything,
-  # on the GO_VERSION this repository builds with. Bump the pin when
-  # GO_VERSION moves to a release the next x/vuln accepts; the vulnerability
-  # database itself is fetched at run time and does not age with the pin.
+  # govulncheck is pinned to an exact release, and run without
+  # golang/govulncheck-action: the action hard-codes `go install
+  # golang.org/x/vuln/cmd/govulncheck@latest` under GOTOOLCHAIN=local, so the
+  # day an x/vuln release requires a newer Go than GO_VERSION the job dies in
+  # its install step, before scanning anything — it happened with v1.8.0
+  # (go >= 1.26) while this repository was on 1.25.13, and v1.7.0 stayed
+  # pinned until #412 moved GO_VERSION to 1.26.8. The pin is the latest
+  # release, not a floor: Dependabot does not see a `go run ...@version`, so
+  # bump it by hand together with GO_VERSION (check the new release's go.mod
+  # `go` line first). The vulnerability database itself is fetched at run time
+  # and does not age with the pin.
   govulncheck:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -831,7 +838,7 @@ jobs:
         shell: bash
 
       - name: govulncheck
-        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.8.0 ./...
         shell: bash
 
   build:

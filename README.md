@@ -68,7 +68,7 @@ The full guide, per system and in nine languages: [Download and install](https:/
 
 ### Build from source
 
-Prerequisites: Go 1.25, Node.js 23, [Wails v2](https://wails.io/) CLI 2.10.
+Prerequisites: Go 1.26, Node.js 23, [Wails v2](https://wails.io/) CLI 2.10.
 
 ```bash
 go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2
