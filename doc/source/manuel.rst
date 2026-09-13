@@ -916,6 +916,12 @@ double-cliquer sur un filtre enregistré pour relancer la recherche
 correspondante (voir :ref:`annexe_filtres`). La commande ``history`` (alias
 ``hi``) ouvre le panneau de recherche.
 
+Une recherche relancée garde son classement : ``s like42`` classe contre la
+position 42, et ``s like`` contre le plateau enregistré avec la recherche —
+celui qu'on feuilletait ou qu'on avait dessiné. Une entrée qui n'a pas gardé
+de plateau n'est pas relancée contre celui de l'écran, et la barre d'état le
+dit.
+
 .. tip:: Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des filtres
    disponibles.
 

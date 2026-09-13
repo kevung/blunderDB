@@ -508,6 +508,16 @@
         const command = search.command;
         if (command.startsWith('s ') || command === 's') {
             const f = parseSearchCommand(command);
+            // Un `like` nu classe contre le plateau de l'entrée (#404) : celui
+            // qu'on feuilletait ou qu'on avait dessiné, que l'historique et la
+            // bibliothèque conservent et qui vient d'être reposé ci-dessus.
+            // Une entrée qui ne l'a pas gardé n'a plus de cible ; la relancer
+            // contre le plateau à l'écran répondrait à une autre question sans
+            // le dire, alors on refuse.
+            if (f.likeFilter && !f.likeTargetId && !search.position) {
+                statusBarTextStore.set(tMsg('similar.noPosition'));
+                return;
+            }
             onLoadPositionsByFilters({
                 filters: f.cmdFilters,
                 includeCube: f.ic,
@@ -541,7 +551,13 @@
                 gameTypeFilter: f.gt,
                 tagFilter: f.tags,
                 encounterFilter: f.encounterFilter,
-                commentOriginFilter: f.coOrigin
+                commentOriginFilter: f.coOrigin,
+                // Le classement (ADR-0043), perdu de la même façon (#404) :
+                // `s like42` rejoué partait en recherche non classée.
+                likeFilter: f.likeFilter,
+                likeTargetId: f.likeTargetId,
+                likeMaxDistance: f.likeMaxDistance,
+                likeWidened: f.likeWidened
             });
         }
     }
