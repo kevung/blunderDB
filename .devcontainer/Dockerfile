@@ -4,7 +4,7 @@
 # instead, since a devcontainer is meant to stay usable for a long time
 # without chasing a fast-moving non-LTS release. It is not used to produce
 # release binaries — do a real build (`make build`) or CI for that.
-FROM golang:1.25.13-bookworm
+FROM golang:1.26.8-bookworm
 
 # webkit2gtk-4.1 matches CLAUDE.md: it is the package `wails dev`/`wails build
 # -tags webkit2_41` link against on Arch and ubuntu-latest; CI's ubuntu-22.04

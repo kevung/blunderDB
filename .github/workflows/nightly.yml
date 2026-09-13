@@ -48,7 +48,7 @@ permissions:
 
 # Single statement of the Go version for this file (B.19, #187).
 env:
-  GO_VERSION: "1.25.13"
+  GO_VERSION: "1.26.8"
 
 jobs:
   test-os-full:
@@ -126,10 +126,12 @@ jobs:
   #
   # benchstat is pinned to an exact pseudo-version rather than @latest:
   # golang.org/x/perf carries no tagged releases, so @latest always resolves
-  # to HEAD, and HEAD's go.mod (2026-08) requires go >= 1.26 — installing it
-  # would silently pull in a second Go toolchain download on every run rather
-  # than build with the 1.25.13 this workflow already set up. This pseudo
-  # -version's go.mod asks for go 1.18 (verified locally against 1.25.13).
+  # to HEAD, and the tool this gate runs would then change under it on any
+  # night with no commit here to show for it. The pin was first chosen when
+  # HEAD's go.mod (2026-08) required go >= 1.26 and this workflow set up
+  # 1.25.13; that constraint is gone with 1.26.8 (#412), reproducibility is
+  # why it stays. This pseudo-version's go.mod asks for go 1.18 (verified
+  # locally against 1.26.8).
   benchstat:
     runs-on: ubuntu-latest
     timeout-minutes: 20

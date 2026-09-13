@@ -48,7 +48,7 @@ directory of each one).
 | [github.com/open-spaced-repetition/go-fsrs/v3](https://github.com/open-spaced-repetition/go-fsrs) | v3.3.1 | MIT | (c) 2022 open-spaced-repetition | FSRS scheduling of the Anki-style cards |
 | [github.com/adrg/xdg](https://github.com/adrg/xdg) | v0.5.3 | MIT | (c) 2014 Adrian-George Bostan | XDG config paths |
 | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto), `x/sys`, `x/text` | see `go.mod` | BSD-3-Clause | The Go Authors | Signed watermarks and encrypted export containers, OS calls, text collation |
-| Go standard library | 1.25 | BSD-3-Clause | The Go Authors | — |
+| Go standard library | 1.26 | BSD-3-Clause | The Go Authors | — |
 
 `github.com/testcontainers/testcontainers-go` is a test dependency; it is not
 linked into any distributed binary.
