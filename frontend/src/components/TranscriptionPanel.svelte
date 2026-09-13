@@ -132,7 +132,7 @@
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
-    import { saveDraft, exportDraftMat, closeDraft, draftSaveState, transcriptionSaveStore, resetTranscriptionSave } from '../services/transcriptionSave.js';
+    import { saveDraft, exportDraftMat, closeDraft, draftSaveState, savedMatchID, transcriptionSaveStore, resetTranscriptionSave } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
 
     // The length a first draft is offered when the library holds none. It is
@@ -327,7 +327,7 @@
     // (« jamais enregistré »), ce qui fait matérialiser le Match et lancer un lot
     // d'analyse 2-ply par prudence, contre un risque inexistant. L'info-bulle
     // disait déjà juste, à l'endroit que personne ne lit.
-    let savedMatchId = $derived(annotated?.document?.match_id || draft?.match_id || 0);
+    let savedMatchId = $derived(savedMatchID(annotated) || ($transcriptionSaveStore && $transcriptionSaveStore.id === draft?.id ? $transcriptionSaveStore.matchId : 0));
     let saveLabel = $derived(savedMatchId ? $t('transcription.updateMatch', { id: savedMatchId }) : $t('transcription.createMatch'));
 
     // ── the gestures ─────────────────────────────────────────────────────
