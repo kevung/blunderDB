@@ -99,7 +99,7 @@ export function setTranscription(state) {
  * plateau, qui est le bon moment pour « Kévin au trait, videau à 2 ». Le panneau
  * les POSE ici et ne les dessine plus ; la barre les lit.
  *
- * @type {import('svelte/store').Writable<null | {lengthKey: string, lengthParams: object, score: number[], crawford: boolean, gameNumber: number, cubeKey: string, cubeParams: object, onRoll: string}>}
+ * @type {import('svelte/store').Writable<null | {lengthKey: string, lengthParams: object, score: number[] | null, crawford: boolean, gameNumber: number, cubeKey: string, cubeParams: object, onRoll: string, player1?: string, player2?: string}>}
  */
 export const transcriptionInfoStore = writable(null);
 

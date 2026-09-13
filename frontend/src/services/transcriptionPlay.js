@@ -64,6 +64,13 @@ const WHITE = 1;
  * @typedef {import('./quizPlay.js').Play & {roll: number[]}} BoardPlay
  */
 
+/**
+ * L'état d'un coup joué au plateau : celui du réducteur, plus le mode libre et
+ * la position d'origine.
+ *
+ * @typedef {import('./quizPlay.js').PlayState & {free: boolean, origin: any}} BoardPlayState
+ */
+
 /** Les vingt et un jets distincts, dé fort d'abord — l'ordre du triangle. */
 export const ROLLS = Object.freeze([1, 2, 3, 4, 5, 6].flatMap((high) => [1, 2, 3, 4, 5, 6].filter((low) => low <= high).map((low) => Object.freeze([high, low]))));
 
@@ -86,7 +93,8 @@ export function rollKey(dice) {
  * rien, ce qui l'écarte de lui-même.
  *
  * @param {any} position la position d'où le coup part, camp au trait posé
- * @param {{dice: number[], plays: any[]}[]} byRoll
+ * @param {{dice: readonly number[], plays: any[]}[]} byRoll
+ * @returns {BoardPlayState}
  */
 export function newBoardPlay(position, byRoll) {
     const plays = [];
@@ -102,6 +110,7 @@ export function newBoardPlay(position, byRoll) {
  * L'état de départ d'un déplacement LIBRE : aucun coup ne le contraint.
  *
  * @param {any} position
+ * @returns {BoardPlayState}
  */
 export function newFreePlay(position) {
     return { ...newPlay(position, []), free: true, origin: position };

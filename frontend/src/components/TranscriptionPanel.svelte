@@ -138,6 +138,15 @@
     // The length a first draft is offered when the library holds none. It is
     // Go's transcript.DefaultMatchLength; stated here because the form has to
     // show a value before any call is made (fonctionnel.md §1.1).
+    /** @typedef {import('../services/transcriptionKeys.js').KeyState} KeyState */
+    /** @typedef {import('../services/transcriptionPlay.js').BoardPlayState} BoardPlayState */
+    /**
+     * Une commande de la machine à touches, ou celle d'un coup posé par ses pas.
+     *
+     * @typedef {import('../services/transcriptionKeys.js').KeyCommand & {steps?: {from: number, to: number}[], board?: any}} PanelCommand
+     */
+    /** @typedef {{move: any, gen: number, steps: any[]}} Candidate */
+
     const DEFAULT_MATCH_LENGTH = 7;
 
     let busy = $state(false);
@@ -150,7 +159,7 @@
     let formLength = $state('');
     let formJacoby = $state(true);
     let formBeaver = $state(false);
-    let panelEl = $state(null);
+    let panelEl = $state(/** @type {HTMLElement | null} */ (null));
     // Le volet des métadonnées (T3.1) : replié par défaut, ouvrable à tout
     // moment, et il survit au va-et-vient entre les onglets comme le reste du
     // brouillon puisqu'il ne tient rien — l'en-tête est dans le document.
@@ -214,11 +223,13 @@
         busy = true;
         const length = Number(formLength.trim());
         try {
-            const state = await CreateTranscription({
-                match_length: length,
-                jacoby: length === 0 ? formJacoby : false,
-                beaver: length === 0 ? formBeaver : false
-            });
+            const state = await CreateTranscription(
+                /** @type {any} */ ({
+                    match_length: length,
+                    jacoby: length === 0 ? formJacoby : false,
+                    beaver: length === 0 ? formBeaver : false
+                })
+            );
             setTranscription(state);
             resetTranscriptionKeys();
             showForm = false;
@@ -232,6 +243,7 @@
         }
     }
 
+    /** @param {any} row */
     async function openDraft(row) {
         if (busy || !row) return;
         busy = true;
@@ -333,7 +345,7 @@
     // `select_candidate` addresses: the engine ranks, the generator numbers, and
     // the two orders are joined here rather than in Go — LegalMoves deduplicates
     // by resulting board, so one notation is one play and the join is exact.
-    let ranked = $state([]);
+    let ranked = $state(/** @type {Candidate[]} */ ([]));
     // The evaluation could not rank this roll (a score beyond the MET's horizon,
     // a build without weights). The plays are still listed, in the generator's
     // order, because a transcription that cannot be typed is worse than one typed
@@ -343,6 +355,7 @@
     // its own, without a keystroke.
     let danced = $state(false);
 
+    /** @param {PanelCommand} command */
     function gestureOf(command) {
         switch (command.kind) {
             case COMMAND.DIE:
@@ -404,7 +417,7 @@
             case COMMAND.SELECT: {
                 // Le rang est celui de la liste MONTRÉE : filtrée, c'est elle
                 // que `j`/`k` et le clic parcourent (T2.2).
-                const entry = visible[command.index];
+                const entry = visible[/** @type {number} */ (command.index)];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
             }
             default:
@@ -415,11 +428,16 @@
     // The commands are turned into gestures HERE, synchronously, and not inside
     // the chain below: a `select` names a rank in the list as it stands at the
     // keystroke, and the list is replaced as soon as the next roll comes in.
+    /** @param {PanelCommand[]} commands */
     function run(commands) {
         return queue(commands.map(gestureOf).filter(Boolean));
     }
 
-    /** La file elle-même : les gestes partent dans l'ordre, un par aller-retour. */
+    /**
+     * La file elle-même : les gestes partent dans l'ordre, un par aller-retour.
+     *
+     * @param {any[]} gestures
+     */
     function queue(gestures) {
         if (!gestures.length) return pending;
         const id = draft?.id;
@@ -444,6 +462,8 @@
      * Il passe par la MÊME file que les touches, et pour la même raison : un
      * nom validé pendant qu'un jet part encore ne doit pas doubler le tour
      * d'aller-retour de ce jet.
+     *
+     * @param {any} gesture
      */
     function sendGesture(gesture) {
         return gesture ? queue([gesture]) : pending;
@@ -489,7 +509,12 @@
         return { ...pos, dice: [state.dice[0], state.dice[1]] };
     }
 
-    /** The plays of the roll, best first, each with its index in LegalMoves. */
+    /**
+     * The plays of the roll, best first, each with its index in LegalMoves.
+     *
+     * @param {any} pos
+     * @returns {Promise<{list: Candidate[], unranked: boolean}>}
+     */
     async function computeCandidates(pos) {
         const plays = (await LegalMoves(pos)) ?? [];
         if (!plays.length) return { list: [], unranked: false };
@@ -619,7 +644,11 @@
         });
     }
 
-    /** A click on a cell of the Transcript: the Cursor walks to that Action. */
+    /**
+     * A click on a cell of the Transcript: the Cursor walks to that Action.
+     *
+     * @param {number} index
+     */
     function selectAction(index) {
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
@@ -638,6 +667,7 @@
     // du nouveau jet sont demandés. Le focus revient au panneau : la souris
     // donne le jet, le clavier finit le tour, et rien ne se perd entre les deux.
 
+    /** @param {{state: KeyState, commands: PanelCommand[]}} next */
     function applyMouseDice(next) {
         resetTranscriptionPointFilter();
         ranked = [];
@@ -648,13 +678,18 @@
         panelEl?.focus({ preventScroll: true });
     }
 
-    /** Une case du triangle : le jet entier, dé fort d'abord. */
+    /**
+     * Une case du triangle : le jet entier, dé fort d'abord.
+     *
+     * @param {number} high
+     * @param {number} low
+     */
     function pickDice(high, low) {
         if (!draft) return;
         // Un coup est joué au plateau et plusieurs jets le produisent (T2.3) :
         // la case ne SAISIT alors pas un jet, elle dit lequel des jets encore
         // possibles a été lancé, et l'Action part avec les pas déjà joués.
-        const play = get(quizPlayStore);
+        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
         if (play && !play.free && play.steps.length) {
             sendPlay([high, low], play.steps, null);
             panelEl?.focus({ preventScroll: true });
@@ -663,12 +698,17 @@
         applyMouseDice(enterDicePair(get(transcriptionKeyStore), high, low, keyContext));
     }
 
-    /** Une case de la rangée des six : le dé d'un camp, à l'ouverture. */
+    /**
+     * Une case de la rangée des six : le dé d'un camp, à l'ouverture.
+     *
+     * @param {number} die
+     */
     function pickDie(die) {
         if (!draft) return;
         applyMouseDice(enterSingleDie(get(transcriptionKeyStore), die, keyContext));
     }
 
+    /** @param {number} index */
     function chooseCandidate(index) {
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
@@ -692,6 +732,8 @@
      * sur le plateau, les flèches du candidat défilent, et l'on reconnaît le
      * coup vu sur la vidéo par son IMAGE au lieu de traduire « 13/10 13/11 » de
      * tête. La liste suit la sélection ; elle ne défile pas d'elle-même.
+     *
+     * @param {number} delta
      */
     function stepCandidate(delta) {
         const state = get(transcriptionKeyStore);
@@ -715,6 +757,7 @@
         stepCandidate(wanted.delta);
     });
 
+    /** @param {WheelEvent} event */
     function wheelCandidates(event) {
         if (!draft || !visible.length) return;
         const delta = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
@@ -728,6 +771,8 @@
      * suivent, et c'est là que l'on reconnaît le coup. C'est le seul chemin
      * souris qui couvre le dernier coup d'une partie, qui n'a pas de jet suivant
      * pour porter sa validation ; au clavier, c'est `Entrée`.
+     *
+     * @param {number} index
      */
     function commitCandidate(index) {
         if (!draft) return;
@@ -763,7 +808,11 @@
     // double puis prise à la souris, 3,4 s — se lit donc en clics : deux, un
     // par Action, et rien entre les deux.
 
-    /** Un des trois gestes de videau : double, prise, passe. */
+    /**
+     * Un des trois gestes de videau : double, prise, passe.
+     *
+     * @param {string} kind
+     */
     function sendCube(kind) {
         if (!draft) return;
         applyResult(cubeGesture(get(transcriptionKeyStore), kind));
@@ -777,7 +826,11 @@
         panelEl?.focus({ preventScroll: true });
     }
 
-    /** Le niveau donné au clic — le second des deux gestes d'une résignation. */
+    /**
+     * Le niveau donné au clic — le second des deux gestes d'une résignation.
+     *
+     * @param {number} level
+     */
     function pickResignLevel(level) {
         if (!draft) return;
         applyResult(resignWithLevel(get(transcriptionKeyStore), level));
@@ -814,14 +867,23 @@
     // correction en place, qui n'a pas d'entrée au menu parce qu'elle n'est
     // pas un geste — c'est retaper.
 
-    let transcriptMenu = $state(null);
+    let transcriptMenu = $state(/** @type {{index: number, x: number, y: number} | null} */ (null));
 
+    /**
+     * @param {number} index
+     * @param {{x: number, y: number}} at
+     */
     function openTranscriptMenu(index, at) {
         if (!draft) return;
         transcriptMenu = { index, x: at.x, y: at.y };
     }
 
-    /** Une entrée du menu : le Cursor mené à la cellule, puis la correction. */
+    /**
+     * Une entrée du menu : le Cursor mené à la cellule, puis la correction.
+     *
+     * @param {number} index
+     * @param {string} kind
+     */
     function menuCommand(index, kind) {
         if (!draft) return;
         const ann = get(transcriptionStore)?.annotated;
@@ -853,6 +915,7 @@
     // panel, what a panel may never swallow — Ctrl combos, Space, '?', and
     // anything typed in a field.
 
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         if (!draft) return handleListKeyDown(event);
         // Ctrl+Entrée enregistre. Ctrl+S ne peut pas : le dispatcher global le
@@ -917,6 +980,7 @@
         if (listIndex >= rows.length) listIndex = 0;
     });
 
+    /** @param {KeyboardEvent} event */
     function handleListKeyDown(event) {
         if ($activeTabStore !== 'transcription') return;
         if (panelKeyGuard(event)) return;
@@ -955,7 +1019,7 @@
      * doit être le même, sans quoi un bouton et sa touche finiraient par
      * diverger sur un état que personne ne teste.
      *
-     * @param {{state: object, commands: {kind: string}[]}} result
+     * @param {{state: KeyState, commands: PanelCommand[]}} result
      */
     function applyResult(result) {
         // A roll that is starting again, or one that has just been validated,
@@ -987,12 +1051,14 @@
 
     // The commands that CHANGE the document without typing anything into it, and
     // which a button offers as well as a key — so both go through runCommand.
+    /** @type {Set<string>} */
     const EDITS = new Set([COMMAND.INSERT_BEFORE, COMMAND.INSERT_AFTER, COMMAND.DELETE, COMMAND.FLIP_SIDE, COMMAND.UNDO, COMMAND.REDO]);
     // The commands after which the panel re-reads the Cursor rather than the
     // roll being typed. Walking is one of them, and so is every edit: each
     // leaves the Cursor somewhere the ENGINE chose — on the first Inconsistency
     // when the gesture made one — and the candidates there have to be asked for
     // again, since an Evaluation is never stored (ADR-0045 rule 8).
+    /** @type {Set<string>} */
     const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, ...EDITS]);
 
     /**
@@ -1003,6 +1069,8 @@
      * The keystroke then does NOTHING, like `Ctrl+Z` on an empty stack: sending
      * the gesture anyway would answer the most ordinary `x` in the world with
      * the engine's English "the cursor is not on an action".
+     *
+     * @param {string} kind
      */
     function runCommand(kind) {
         if (!draft) return;
@@ -1135,6 +1203,11 @@
     // The dice of the roll being entered go on it as they come in — an opening's
     // two dice excepted, which belong to two different players and are shown in
     // the panel instead.
+    /**
+     * @param {any} ann
+     * @param {number[]} dice
+     * @param {boolean} opening
+     */
     function boardPosition(ann, dice, opening) {
         const actions = ann.actions ?? [];
         const at = ann.cursor ?? 0;
@@ -1174,10 +1247,12 @@
 
     // The backends store the timestamps as text ("2026-09-07 01:23:45"); the
     // seconds say nothing here.
+    /** @param {string | null | undefined} stamp */
     function shortStamp(stamp) {
         return stamp && stamp.length >= 16 ? stamp.slice(0, 16) : (stamp ?? '');
     }
 
+    /** @param {any} row */
     function playersOf(row) {
         if (row.label) return row.label;
         const pair = [row.player1, row.player2].filter(Boolean);
@@ -1187,6 +1262,7 @@
     // A length of 0 is a money session, and -1 is the sentinel summarize()
     // leaves on a draft whose document could not be read — the row still shows,
     // because a draft the panel cannot list is a draft nobody can delete.
+    /** @param {any} row */
     function lengthOf(row) {
         if (row.match_length < 0) return '—';
         return row.match_length === 0 ? $t('transcription.money') : $t('transcription.points', { n: row.match_length });
@@ -1196,6 +1272,7 @@
     let score = $derived(annotated?.score ?? [0, 0]);
     let sideOnRoll = $derived(annotated?.next?.side ?? 0);
 
+    /** @param {number} side */
     function playerName(side) {
         const header = annotated?.document?.header ?? {};
         const named = side === 0 ? header.player1 : header.player2;
@@ -1233,7 +1310,7 @@
     let lastFlags = $derived.by(() => {
         const actions = annotated?.actions ?? [];
         const last = actions[actions.length - 1];
-        return (last?.inconsistencies ?? []).map((i) => $t(`transcription.inconsistency.${i.kind}`));
+        return (last?.inconsistencies ?? []).map((/** @type {{kind: string}} */ i) => $t(`transcription.inconsistency.${i.kind}`));
     });
 
     // ── la correction ────────────────────────────────────────────────────
@@ -1366,7 +1443,12 @@
     // Le coup joué au plateau reste possible volet fermé : c'est le PLATEAU qui
     // le porte, pas ce volet, qui n'offre que la bascule libre et la notation.
 
-    /** L'union des coups légaux des 21 jets, demandée en une salve. */
+    /**
+     * L'union des coups légaux des 21 jets, demandée en une salve.
+     *
+     * @param {any} pos
+     * @param {number} generation
+     */
     async function loadBoardPlay(pos, generation) {
         const answers = await Promise.all(ROLLS.map(([high, low]) => LegalMoves({ ...pos, dice: [high, low] }).catch(() => [])));
         if (generation !== boardPlayGeneration) return;
@@ -1406,7 +1488,7 @@
      * jets, et le triangle prend alors le relais.
      */
     $effect(() => {
-        const play = $quizPlayStore;
+        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
         if (!play || play.free || recordingPlay) return;
         const dice = deducedDice(play);
         if (dice) sendPlay(dice, play.steps, null);
@@ -1414,7 +1496,7 @@
 
     /** Les jets que l'utilisateur peut encore désigner, ou `null` pour tous. */
     let rollsAllowed = $derived.by(() => {
-        const play = $quizPlayStore;
+        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
         if (!play || play.free || play.steps.length === 0) return null;
         return new Set(choosableRolls(play));
     });
@@ -1423,7 +1505,7 @@
     // en prose est déjà DIT par les deux objets concernés (ADR-0048 décision 8) :
     // les pions déplacés sur le plateau, et le triangle, qui n'allume que les
     // jets encore possibles (`rollsAllowed`). Deux phrases pour ce qu'on voit.
-    let freeSteps = $derived($quizPlayStore?.free ? $quizPlayStore.steps.length : 0);
+    let freeSteps = $derived(/** @type {BoardPlayState | null} */ ($quizPlayStore)?.free ? $quizPlayStore.steps.length : 0);
     let diceEntered = $derived(keys.dice[0] > 0 && keys.dice[1] > 0);
     // Les deux chemins du coup illégal ne s'ouvrent que là où un coup de pions
     // s'écrit : jamais devant une réponse au videau, une résignation ou un
@@ -1437,6 +1519,10 @@
      * une Entry pleine, `enter_die` recommence le jet, si bien que deux dés de
      * plus laissent exactement les deux mêmes (transcript.Apply). Un seul chemin
      * vaut mieux qu'une branche « les dés y sont-ils déjà ? ».
+     *
+     * @param {number[]} dice
+     * @param {{from: number, to: number}[]} steps
+     * @param {any} board
      */
     async function sendPlay(dice, steps, board) {
         if (recordingPlay || !draft) return;
@@ -1465,7 +1551,7 @@
      * ailleurs s'il ne rejouait que les pas.
      */
     function validateFreePlay() {
-        const play = get(quizPlayStore);
+        const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
         if (!play?.free || !play.steps.length || !diceEntered) return;
         sendPlay([keys.dice[0], keys.dice[1]], play.steps, play.board);
         panelEl?.focus({ preventScroll: true });
@@ -1516,7 +1602,8 @@
     let matOpen = $state(false);
     let matText = $state('');
     let matCopied = $state(false);
-    let matCopyTimer = null;
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let matCopyTimer = undefined;
 
     async function copyMat() {
         await writeTextToClipboard(matText);
@@ -1574,7 +1661,7 @@
                     </form>
                 {/if}
             {/snippet}
-            {#snippet cells(row)}
+            {#snippet cells(/** @type {any} */ row)}
                 <td class="stamp-cell">{shortStamp(row.updated_at || row.created_at)}</td>
                 <td>{playersOf(row)}</td>
                 <td class="narrow-col align-right">{lengthOf(row)}</td>
@@ -1664,8 +1751,8 @@
                                 <CandidateMovesTable
                                     moves={rankedMoves}
                                     selectedMove={$selectedMoveStore}
-                                    onRowClick={(move) => chooseCandidate(rankedMoves.indexOf(move))}
-                                    onRowDblClick={(move) => commitCandidate(rankedMoves.indexOf(move))}
+                                    onRowClick={(/** @type {any} */ move) => chooseCandidate(rankedMoves.indexOf(move))}
+                                    onRowDblClick={(/** @type {any} */ move) => commitCandidate(rankedMoves.indexOf(move))}
                                     showProvenance={false}
                                     baseline={null}
                                     projection="identify"

@@ -40,8 +40,10 @@ export function sourcesOf(candidates) {
  * Les candidats dont un pas part de chacun des `points`. Sans point, la liste
  * entière — le filtre vide est l'absence de filtre, et non une liste vide.
  *
- * @param {{steps?: {from: number}[]}[]} candidates
+ * @template {{steps?: {from: number}[]}} C
+ * @param {C[]} candidates
  * @param {number[]} points
+ * @returns {C[]}
  */
 export function filterByPoints(candidates, points) {
     const list = candidates ?? [];
