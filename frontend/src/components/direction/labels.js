@@ -11,11 +11,28 @@
  * manquante nomme elle-même ce qu'il faut traduire.
  */
 
-/** Rend un libellé structuré (`Label`) dans la langue de l'utilisateur. */
+/**
+ * La fonction de traduction : la valeur du store `$t`, ou son équivalent dans un test.
+ *
+ * @typedef {(key: string, params?: Record<string, unknown>) => any} Translate
+ */
+/** @typedef {import('../../stores/directionStore.js').DirectionLabel} DirectionLabel */
+/** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
+/** @typedef {(id: string | undefined) => string | undefined} PlayerName */
+
+/**
+ * Rend un libellé structuré (`Label`) dans la langue de l'utilisateur.
+ *
+ * @param {Translate} t
+ * @param {DirectionLabel | null | undefined} label
+ * @returns {string}
+ */
 export function renderLabel(t, label) {
     if (!label || !label.kind) return '';
+    /** @type {string} */
     const sub = label.sub ? renderLabel(t, label.sub) : '';
     const key = `direction.label.${label.kind}`;
+    /** @type {string} */
     const out = t(key, {
         n: label.n ?? 0,
         losses: label.losses ?? 0,
@@ -32,6 +49,10 @@ export function renderLabel(t, label) {
 /**
  * Rend le nom d'une section. Un nom de section est un IDENTIFIANT côté moteur — « main »,
  * « conso », « poule:A » — jamais un libellé ; c'est ici qu'il devient lisible.
+ *
+ * @param {Translate} t
+ * @param {string | null | undefined} name
+ * @returns {string}
  */
 export function renderSectionName(t, name) {
     if (!name) return '';
@@ -44,7 +65,13 @@ export function renderSectionName(t, name) {
     return out === key ? name : out;
 }
 
-/** Rend une note de classement (`Note`). */
+/**
+ * Rend une note de classement (`Note`).
+ *
+ * @param {Translate} t
+ * @param {{ kind?: string, wins?: number, losses?: number, lives?: number, section?: string, sub?: DirectionLabel } | null | undefined} note
+ * @returns {string}
+ */
 export function renderNote(t, note) {
     if (!note || !note.kind) return '';
     const key = `direction.note.${note.kind}`;
@@ -58,7 +85,14 @@ export function renderNote(t, note) {
     return out === key ? note.kind : out;
 }
 
-/** Rend un avertissement (`Warning`) : ce que le moteur signale sans jamais bloquer. */
+/**
+ * Rend un avertissement (`Warning`) : ce que le moteur signale sans jamais bloquer.
+ *
+ * @param {Translate} t
+ * @param {{ code?: string, match?: string, section?: string, label?: DirectionLabel, a?: string, b?: string, expected_a?: string, expected_b?: string, length?: number, score_a?: number, score_b?: number } | null | undefined} w
+ * @param {PlayerName} [playerName]
+ * @returns {string}
+ */
 export function renderWarning(t, w, playerName = (id) => id) {
     if (!w || !w.code) return '';
     const key = `direction.warning.${w.code}`;
@@ -81,6 +115,11 @@ export function renderWarning(t, w, playerName = (id) => id) {
  * Le texte d'une proposition, dans la langue de l'utilisateur : ce que le directeur lit avant
  * de cliquer. Le libellé du moteur (« quart de finale », « 1 défaite, match 3 ») situe le
  * match ; les deux noms disent qui joue.
+ *
+ * @param {Translate} t
+ * @param {{ kind: string, a?: string, b?: string, label?: DirectionLabel }} a
+ * @param {PlayerName} [playerName]
+ * @returns {string}
  */
 export function proposalLabel(t, a, playerName = (id) => id) {
     const where = renderLabel(t, a.label);
@@ -117,6 +156,8 @@ export function proposalLabel(t, a, playerName = (id) => id) {
  * Une clé stable pour une proposition, afin que Svelte réutilise la ligne plutôt que de la
  * recréer — et pour que « ignorer pour l'instant » désigne bien la même proposition au
  * prochain appel, puisque le moteur est déterministe.
+ *
+ * @param {ProposalAction} a
  */
 export function actionKey(a) {
     return [a.kind, a.phase, a.section || '', a.key || '', a.a || '', a.b || ''].join('|');
@@ -126,6 +167,11 @@ export function actionKey(a) {
  * Rend une VALEUR de configuration : un nombre reste un nombre, un booléen devient oui/non, un
  * type de phase passe par son nom de format. Une valeur vide se dit « aucune », sans quoi la
  * liste des changements comporterait des trous que personne ne sait lire.
+ *
+ * @param {Translate} t
+ * @param {string} code
+ * @param {string | null | undefined} value
+ * @returns {string}
  */
 function renderConfigValue(t, code, value) {
     if (value === undefined || value === null || value === '') return t('direction.change.none');
@@ -145,6 +191,10 @@ function renderConfigValue(t, code, value) {
  * Appliquer une configuration en cours de tournoi n'est pas l'enregistrement d'un formulaire,
  * c'est une décision : elle se montre avant d'être prise, réglage par réglage, avec la valeur
  * d'avant et celle d'après.
+ *
+ * @param {Translate} t
+ * @param {{ code?: string, phase?: number, from?: string, to?: string } | null | undefined} change
+ * @returns {string}
  */
 export function renderConfigChange(t, change) {
     if (!change || !change.code) return '';
@@ -157,7 +207,13 @@ export function renderConfigChange(t, change) {
     return out === key ? change.code : out;
 }
 
-/** Rend la raison pour laquelle le format d'une phase ne change plus. */
+/**
+ * Rend la raison pour laquelle le format d'une phase ne change plus.
+ *
+ * @param {Translate} t
+ * @param {string | null | undefined} reason
+ * @returns {string}
+ */
 export function renderLockReason(t, reason) {
     if (!reason) return '';
     const key = `direction.lock.${reason}`;
@@ -172,6 +228,8 @@ export function renderLockReason(t, reason) {
  * après qu'une correction a fait jouer un match par les mauvaises personnes. C'est le seul cas,
  * et c'est ce qui permet de distinguer ces lignes des propositions ordinaires sans inventer de
  * marqueur.
+ *
+ * @param {{ kind?: string } | null | undefined} a
  */
 export function isRepair(a) {
     return !!a && a.kind === 'cancel_match';

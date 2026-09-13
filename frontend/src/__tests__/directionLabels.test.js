@@ -10,10 +10,15 @@ import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabe
 import fr from '../i18n/locales/fr.json';
 import en from '../i18n/locales/en.json';
 
-/** Une fonction de traduction sur un catalogue, avec la même interpolation que l'application. */
+/**
+ * Une fonction de traduction sur un catalogue, avec la même interpolation que l'application.
+ *
+ * @param {Record<string, any>} catalog
+ * @returns {import('../components/direction/labels.js').Translate}
+ */
 function tFor(catalog) {
     return (key, params) => {
-        const raw = key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), catalog);
+        const raw = key.split('.').reduce((/** @type {any} */ o, k) => (o == null ? undefined : o[k]), catalog);
         if (raw === undefined) return key;
         if (typeof raw !== 'string' || !params) return raw;
         return raw.replace(/\{(\w+)\}/g, (m, k) => (k in params ? String(params[k]) : m));
@@ -59,8 +64,9 @@ describe('les codes du moteur deviennent des phrases', () => {
             expected_a: 'chloe',
             expected_b: 'dan'
         };
+        /** @type {Record<string, string>} */
         const names = { alice: 'Alice', bob: 'Bob', chloe: 'Chloé', dan: 'Dan' };
-        const out = renderWarning(t, w, (id) => names[id] || id);
+        const out = renderWarning(t, w, (/** @type {any} */ id) => names[id] || id);
         expect(out).toContain('Alice');
         expect(out).toContain('Chloé');
         expect(out).toContain('Demi-finale');
@@ -89,8 +95,9 @@ describe('les codes du moteur deviennent des phrases', () => {
 });
 
 describe('une proposition se lit avant de cliquer', () => {
+    /** @type {Record<string, string>} */
     const names = { alice: 'Alice', bob: 'Bob' };
-    const name = (id) => names[id] || id;
+    const name = (/** @type {any} */ id) => names[id] || id;
 
     test('un match nomme ses deux joueurs', () => {
         const out = proposalLabel(t, { kind: 'start_match', a: 'alice', b: 'bob', label: { kind: 'round', n: 2 } }, name);
@@ -160,7 +167,7 @@ describe('la liste de ce qui va changer (#385)', () => {
 });
 
 describe('la réparation d’un tableau (#389)', () => {
-    const name = (id) => ({ a1: 'Hugo', b2: 'Léa' })[id] || id;
+    const name = (/** @type {any} */ id) => /** @type {Record<string, string>} */ ({ a1: 'Hugo', b2: 'Léa' })[id] || id;
 
     test('une annulation se lit comme une réparation, avec ceux qui ont joué là', () => {
         const act = { kind: 'cancel_match', a: 'a1', b: 'b2', label: { kind: 'semi_final' } };
