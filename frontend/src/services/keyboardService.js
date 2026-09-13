@@ -175,10 +175,38 @@ export function toggleHelpModal() {
 // TAB_TOGGLES.search in positionService.js.
 export const focusSearchTab = toggleSearchPanel;
 
-/** @param {KeyboardEvent} event */
+/**
+ * The global dispatcher, listening on window in the bubble phase (App.svelte).
+ *
+ * ## Escape: one order of priority (#414)
+ *
+ * An Escape press goes, in this order, to the first of these that has something to close,
+ * and to nothing after it:
+ *
+ *   1. an open modal — Modal.svelte stops it on its overlay, and this dispatcher returns
+ *      while one is open;
+ *   2. the last opened overlay: context menu, result card, the Direction's correction —
+ *      registered with escapeService.closeOnEscape(), closed from a window CAPTURE listener,
+ *      so before any panel, any delegated handler and this dispatcher;
+ *   3. a panel's own tiers (deselect, cancel an edit, close) — the panel claims the press
+ *      with preventDefault(), or stops it before window;
+ *   4. here: leave the focused text field; otherwise leave the results of an `ss` run from
+ *      a collection or a match (#410).
+ *
+ * A new overlay registers itself (step 2); it must not listen to Escape through
+ * `<svelte:window onkeydown>`, which runs after this dispatcher when mounted after App.
+ *
+ * ## No stopPropagation here
+ *
+ * This dispatcher used to open with event.stopPropagation(). On window, in the bubble phase,
+ * that stops no native listener — but Svelte 5 wraps every declarative handler and skips it
+ * when event.cancelBubble is set, even on the same target. Every `<svelte:window onkeydown>`
+ * mounted after App (a context menu, the Direction page) was silenced for every key; the
+ * ones mounted before (ViewTabs) worked by mount order alone.
+ *
+ * @param {KeyboardEvent} event
+ */
 export function handleKeyDown(event) {
-    event.stopPropagation();
-
     // Match a letter shortcut by the character produced (event.key), not the
     // physical key position (event.code). This keeps letter shortcuts on the
     // labeled key across keyboard layouts (AZERTY, QWERTZ, Dvorak, …) instead of
@@ -284,15 +312,15 @@ export function handleKeyDown(event) {
 
     // Key dispatch
     if (event.key === 'Escape') {
-        // Read before this branch claims the event itself: a panel that had something
-        // of its own to close — a selected move, a result card, a draft — has already
-        // claimed it (preventDefault) or stopped it before it reached window.
+        // Steps 3 and 4 of the order above. An open overlay never gets here (step 2). Read
+        // before this branch claims the event itself: a panel that had something of its own
+        // to close — a selected move, a draft — has already claimed it (preventDefault) or
+        // stopped it before it reached window.
         const claimedByPanel = event.defaultPrevented;
         event.preventDefault();
-        event.stopPropagation();
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
-        } else if (!claimedByPanel && !document.activeElement?.closest('[role="menu"], [role="dialog"]')) {
+        } else if (!claimedByPanel) {
             // Nothing claimed the Escape — the board has the focus, or a panel with
             // nothing of its own to close: leave the results of an `ss` run from a
             // collection or a match, back to that list, in one press (#410).

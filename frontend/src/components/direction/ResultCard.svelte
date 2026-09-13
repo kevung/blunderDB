@@ -13,6 +13,7 @@
      * grille.
      */
     import { t } from '../../i18n';
+    import { closeOnEscape } from '../../services/escapeService.js';
 
     let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
 
@@ -51,11 +52,12 @@
         onClose();
     }
 
+    /* Échap ferme la fiche avant tout geste global, même quand le focus l'a quittée (#414). */
+    $effect(() => closeOnEscape(() => onClose()));
+
+    /** @param {KeyboardEvent} e */
     function onKey(e) {
-        if (e.key === 'Escape') {
-            e.stopPropagation();
-            onClose();
-        } else if (e.key === 'Enter' && !more) {
+        if (e.key === 'Enter' && !more) {
             e.stopPropagation();
             // Sans vainqueur choisi, Entrée ne fait rien : le vainqueur est la seule chose exigée.
         } else if (e.key === 'ArrowLeft') {
