@@ -20,7 +20,7 @@ go 1.26.0
 // dependency no released artefact contains.
 require (
 	github.com/adrg/xdg v0.5.3
-	github.com/jackc/pgx/v5 v5.9.2
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/kevung/bgfparser v1.2.0
 	github.com/kevung/gnubgparser v1.6.0
 	github.com/kevung/xgparser v1.4.0
