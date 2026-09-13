@@ -88,6 +88,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/domain_PositionAnalysis"
                 nullable: true
+  /v1/analyses.loadByIds:
+    post:
+      operationId: analyses.loadByIds
+      tags: [analyses]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_PositionAnalysis"
   /v1/analyses.repair:
     post:
       operationId: analyses.repair

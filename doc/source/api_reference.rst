@@ -16,6 +16,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    analyses
      POST /v1/analyses.delete                      JSON
      POST /v1/analyses.load                        JSON
+     POST /v1/analyses.loadByIds                   JSON
      POST /v1/analyses.repair                      JSON
      POST /v1/analyses.save                        JSON
    anki
