@@ -330,6 +330,59 @@
         "likeMaxDistance": 12,
         "likeWidened": true
       }
+    },
+    {
+      "command": "s gt:holding",
+      "expected": {
+        "gameTypeFilter": "holding"
+      }
+    },
+    {
+      "command": "s gt:holding gt:mutualholding",
+      "expected": {
+        "gameTypeFilter": "holding;mutualholding"
+      }
+    },
+    {
+      "command": "s gt:ace-point",
+      "expected": {
+        "gameTypeFilter": "ace-point"
+      }
+    },
+    {
+      "command": "s E>0.05 gt:holding ph:race",
+      "expected": {
+        "moveErrorFilter": "E>0.05",
+        "gameTypeFilter": "holding",
+        "gamePhaseFilter": "race"
+      }
+    },
+    {
+      "command": "s gt:backgame g>10",
+      "expected": {
+        "gameTypeFilter": "backgame",
+        "gammonRateFilter": "g>10"
+      }
+    },
+    {
+      "command": "s g5,20 G<15",
+      "expected": {
+        "gammonRateFilter": "g5,20",
+        "player2GammonRateFilter": "G<15"
+      }
+    },
+    {
+      "command": "s k2",
+      "expected": {
+        "player1BackCheckerFilter": "k2,2"
+      }
+    },
+    {
+      "command": "s O>3 Z1,4",
+      "expected": {
+        "player2CheckerOffFilter": "O>3",
+        "player2CheckerInZoneFilter": "Z1,4"
+      }
     }
   ]
 }

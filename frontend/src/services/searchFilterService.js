@@ -251,7 +251,9 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // and neither is a pipcount.
     const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
-    const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
+    // Exclude `gt:…` (game type), which starts with 'g' and is no gammon rate:
+    // it would otherwise shadow a real `g>10` placed after it (#405).
+    const gammonRateFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('gt:') && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
     const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
     const player2WinRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
     const player2GammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G')));

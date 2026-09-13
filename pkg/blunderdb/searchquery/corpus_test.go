@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"sort"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -45,6 +46,7 @@ var corpusField = map[string]string{
 	"individuallyImportedFilter":    "IndividuallyImportedFilter",
 	"flaggedFilter":                 "FlaggedFilter",
 	"gamePhaseFilter":               "GamePhaseFilter",
+	"gameTypeFilter":                "GameTypeFilter",
 	"encounterFilter":               "EncounterFilter",
 	"tagFilter":                     "TagFilter",
 	"commentOriginFilter":           "CommentOriginFilter",
@@ -249,3 +251,60 @@ func TestFormatRoundTripsCorpus(t *testing.T) {
 }
 
 var _ = domain.SearchFilters{}
+
+// TestCorpusCoversEveryToken is the gate the corpus lacked (#405): it walks
+// FieldTokens — the grammar's own field → token table, the one
+// TestEveryFilterFieldIsAccountedFor holds against domain.SearchFilters — and
+// fails for every token no corpus case exercises. `n` (#362) and `gt:` (#405)
+// both reached the Go grammar without a case, so nothing held the JS reader to
+// them and one of the two silently ignored `n`. A token enters the grammar with
+// its case, or this test says which one is missing.
+//
+// "Exercised" means two things at once, because each alone lets a gap through:
+// some case must NAME the field in `expected` (otherwise the JS side asserts
+// nothing about it), and Go's Parse of that case must move the field away from
+// what a bare `s` produces (otherwise the case pins only the default — a
+// `diceRollMode: "both"` says nothing about `D1`).
+func TestCorpusCoversEveryToken(t *testing.T) {
+	t.Parallel()
+	cases := loadCorpus(t)
+	neutral, _ := Parse("s")
+	neutralV := reflect.ValueOf(neutral)
+
+	keyOf := make(map[string]string, len(corpusField))
+	for key, field := range corpusField {
+		keyOf[field] = key
+	}
+
+	fields := make([]string, 0, len(FieldTokens))
+	for field := range FieldTokens {
+		fields = append(fields, field)
+	}
+	sort.Strings(fields)
+
+	for _, field := range fields {
+		tok := FieldTokens[field]
+		if tok == "" {
+			continue // no token yet (FieldTokens says why): nothing to type, nothing to pin
+		}
+		key, ok := keyOf[field]
+		if !ok {
+			t.Errorf("token %q (%s) has no corpus key: add it to corpusField here and to SHORT_TO_LONG in searchQueryCorpus.test.js, then give it a case in testdata/search_query_corpus.json", tok, field)
+			continue
+		}
+		covered := false
+		for _, tc := range cases {
+			if _, named := tc.Expected[key]; !named {
+				continue
+			}
+			got, _ := Parse(tc.Command)
+			if !reflect.DeepEqual(reflect.ValueOf(got).FieldByName(field).Interface(), neutralV.FieldByName(field).Interface()) {
+				covered = true
+				break
+			}
+		}
+		if !covered {
+			t.Errorf("token %q (%s, corpus key %q) is exercised by no case of testdata/search_query_corpus.json: add one that sets it, so both grammars are held to it", tok, field, key)
+		}
+	}
+}

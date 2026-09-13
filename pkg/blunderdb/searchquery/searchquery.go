@@ -251,7 +251,12 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") && !strings.HasPrefix(s, "ph")
 	})
 	f.WinRateFilter = first(prefix("w"))
-	f.GammonRateFilter = first(prefix("g"))
+	// `gt:holding` starts with `g` too, and `first` does not skip a claimed
+	// token: without the exclusion a type search also carried a gammon-rate
+	// filter `gt:holding` (#405), the collision `ph:`/`p` already had.
+	f.GammonRateFilter = first(func(s string) bool {
+		return strings.HasPrefix(s, "g") && !strings.HasPrefix(s, "gt:")
+	})
 	f.BackgammonRateFilter = first(func(s string) bool {
 		return strings.HasPrefix(s, "b") && !strings.HasPrefix(s, "bo") && !strings.HasPrefix(s, "bj")
 	})

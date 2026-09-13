@@ -90,6 +90,7 @@ const SHORT_TO_LONG = {
     xd: 'exceptDiceFilter',
     posIds: 'positionIDsFilter',
     ph: 'gamePhaseFilter',
+    gt: 'gameTypeFilter',
     coOrigin: 'commentOriginFilter',
     tags: 'tagFilter',
     encounterFilter: 'encounterFilter'
