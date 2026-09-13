@@ -1,0 +1,505 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foire aux questions &mdash; Documentation blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d0e80ae2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Mode headless (serveur)" href="mode_headless.html" />
+    <link rel="prev" title="Glossaire" href="glossaire.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <span class="current" lang="fr" aria-current="true">Français</span>
+  <a href="../en/faq.html" lang="en" hreflang="en">English</a>
+  <a href="../de/faq.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/faq.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/faq.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/faq.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/faq.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/faq.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/faq.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Prise en main</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guide utilisateur</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Référence</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossaire</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Foire aux questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-l-utilite-de-blunderdb">Quelle est l’utilité de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">Qu’est-ce qui a motivé la création de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">Comment sauvegarder la base de données courante?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">Dois-je créer différentes bases de données pour différentes catégories de positions?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">Comment fusionner plusieurs bases de données?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-formats-de-fichiers-de-match-sont-supportes">Quels formats de fichiers de match sont supportés?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mes-matchs-joues-en-ligne-sont-ils-importables">Mes matchs joués en ligne sont-ils importables ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-synchroniser-ma-base-entre-plusieurs-machines">Puis-je synchroniser ma base entre plusieurs machines ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">Ai-je besoin d’eXtreme Gammon pour utiliser blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#j-utilise-deja-extreme-gammon-a-quoi-me-sert-blunderdb">J’utilise déjà eXtreme Gammon : à quoi me sert blunderDB ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#les-rollouts-xg-sont-ils-importes-blunderdb-fait-il-des-rollouts">Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-a-t-on-mesure-de-l-evaluateur-integre-et-que-n-a-t-on-pas-mesure">Qu’a-t-on mesuré de l’évaluateur intégré, et que n’a-t-on pas mesuré ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qu-une-collection">Qu’est-ce qu’une collection?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-que-l-epc">Qu’est-ce que l’EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#que-vaut-l-evaluateur-integre-gammonnet">Que vaut l’évaluateur intégré (gammonNet) ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">Quelle est la différence entre le PR et le Snowie Error Rate?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">blunderDB dispose-t-il d’une interface en ligne de commande?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-propose-t-il-un-mode-serveur">blunderDB propose-t-il un mode serveur?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">Puis-je modifier, copier, partager blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ou-sont-stockees-mes-donnees">Où sont stockées mes données?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-partager-une-base-avec-un-autre-joueur">Puis-je partager une base avec un autre joueur?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">Quel format de données utilise blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-ont-ete-les-principes-de-conception-de-blunderdb">Quels ont été les principes de conception de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-l-architecture-logicielle-de-blunderdb">Quelle est l’architecture logicielle de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">Sur quelles plateformes blunderDB fonctionne-t-il?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">D’où vient l’icône de blunderDB?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrat d’API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annexes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Annexe Windows : que faire si Windows bloque le lancement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historique des versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">À propos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Foire aux questions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="foire-aux-questions">
+<span id="faq"></span><h1>Foire aux questions<a class="headerlink" href="#foire-aux-questions" title="Lien vers cette rubrique"></a></h1>
+<section id="quelle-est-l-utilite-de-blunderdb">
+<h2>Quelle est l’utilité de blunderDB?<a class="headerlink" href="#quelle-est-l-utilite-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB permet de constituer une base de données personnalisée de
+positions. Sa force est de ne présupposer aucune classification <em>a
+priori</em>. L’utilisateur a ainsi la liberté d’interroger les
+positions avec une grande flexibilité en combinant à sa guise
+différents critères (course, structure, cube, score, pions arriérés,
+pions dans la zone, chances de gain/gammon/backgammon, …).</p>
+<p>Une autre utilisation commode de blunderDB est la constitution de catalogues de
+positions de référence. Avec la possibilité d’étiqueter des positions,
+l’utilisateur peut rassembler l’ensemble de ses positions de référence de
+manière structurée à l’aide d’un unique fichier. Je souhaite que blunderDB
+facilite le partage de positions entre joueurs.</p>
+</section>
+<section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
+<h2>Qu’est-ce qui a motivé la création de blunderDB?<a class="headerlink" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>J’avais l’habitude de stocker dans différents dossiers des positions
+intéressantes ou des blunders. Toutefois, je rencontrais des difficultés à
+retrouver des positions selon des critères n’ayant pas été prévus initialement
+par mon choix de catégories de thématiques. Par exemple, si les positions ont
+été triées selon le type de jeu (course, holding game, blitz, backgame, …),
+comment récupérer toutes les positions à un certain score? ou à un niveau de
+cube donné? Enfin, certaines vieilles positions avaient tendance à tomber dans
+l’oubli. Je voulais un outil qui agrège toutes mes positions et qui ne
+présuppose pas <em>a priori</em> de catégories thématiques, et ensuite pouvoir poser
+des questions à la base de données. Avec cette approche souple, de nouveaux
+filtres peuvent être ajoutés sans casser l’organisation des positions. Ce type
+de logiciel est tout à fait courant aux échecs, comme ChessBase.</p>
+</section>
+<section id="comment-sauvegarder-la-base-de-donnees-courante">
+<h2>Comment sauvegarder la base de données courante?<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Lien vers cette rubrique"></a></h2>
+<p>La base de données est modifiée immédiatement après exécution des requêtes.
+Aucune opération de sauvegarde explicite est nécessaire.</p>
+</section>
+<section id="dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">
+<h2>Dois-je créer différentes bases de données pour différentes catégories de positions?<a class="headerlink" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions" title="Lien vers cette rubrique"></a></h2>
+<p>Sauf pour des raisons bien identifiées, il est essentiel de ne pas
+répartir les positions dans des bases de données séparées au risque
+de ne pas pouvoir les mettre en relation dans des recherches futures.
+La philosophie de blunderDB est de ne pas présupposer de catégories de
+positions <em>a priori</em> et de permettre à l’utilisateur de les interroger
+de manière flexible. Lorsque les positions ont été rencontrées dans des conditions
+particulières ou pour des raisons spécifiques, il peut être judicieux de les
+stocker dans des bases de données distinctes.
+On peut par exemple constituer des bases de données de positions distinctes
+pour :</p>
+<ul class="simple">
+<li><p>les positions de référence,</p></li>
+<li><p>les blunders en tournoi réel,</p></li>
+<li><p>les blunders en ligne.</p></li>
+</ul>
+</section>
+<section id="comment-fusionner-plusieurs-bases-de-donnees">
+<h2>Comment fusionner plusieurs bases de données?<a class="headerlink" href="#comment-fusionner-plusieurs-bases-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Si vous avez plusieurs bases de données blunderDB que vous souhaitez regrouper,
+utilisez le bouton <strong>Fusionner une base de données</strong> (<em>CTRL-MAJ-I</em>) :</p>
+<ol class="arabic simple">
+<li><p>Ouvrez la base principale (celle qui recevra les positions)</p></li>
+<li><p>Cliquez sur <strong>Fusionner une base de données</strong> dans la barre d’outils</p></li>
+<li><p>Sélectionnez la base à fusionner</p></li>
+<li><p>blunderDB fusionne les positions</p></li>
+</ol>
+<p>Lors de la fusion, blunderDB évite les doublons : une position déjà présente
+n’est pas dupliquée, et les analyses des différents moteurs cohabitent au lieu
+de s’écraser (voir <a class="reference internal" href="manuel.html#import-regles"><span class="std std-ref">Import : ce qui est écrit, ce qui ne l’est jamais</span></a>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Il est recommandé de faire une copie de sauvegarde de votre base de données
+principale avant d’importer une autre base de données.</p>
+</div>
+</section>
+<section id="quels-formats-de-fichiers-de-match-sont-supportes">
+<h2>Quels formats de fichiers de match sont supportés?<a class="headerlink" href="#quels-formats-de-fichiers-de-match-sont-supportes" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB supporte les formats de match suivants:</p>
+<ul class="simple">
+<li><p><strong>eXtreme Gammon (XG)</strong>: fichiers <em>.xg</em>, avec l’analyse complète des coups,
+décisions de cube, coups joués et support multi-moteurs. Fichiers <em>.xgp</em>
+pour l’import de positions individuelles avec analyse.</p></li>
+<li><p><strong>GNUbg</strong>: fichiers <em>.sgf</em> (Smart Game Format), avec l’analyse.</p></li>
+<li><p><strong>Jellyfish</strong>: fichiers <em>.mat</em> et <em>.txt</em>.</p></li>
+<li><p><strong>BGBlitz</strong>: fichiers <em>.bgf</em> et positions texte.</p></li>
+</ul>
+<p>L’import peut se faire par fichier unique, par sélection multiple, par dossier
+récursif, par collage depuis le presse-papier, ou par glisser-déposer.</p>
+<p>blunderDB détecte automatiquement les doublons et empêche l’import d’un match
+déjà présent dans la base de données.</p>
+</section>
+<section id="mes-matchs-joues-en-ligne-sont-ils-importables">
+<h2>Mes matchs joués en ligne sont-ils importables ?<a class="headerlink" href="#mes-matchs-joues-en-ligne-sont-ils-importables" title="Lien vers cette rubrique"></a></h2>
+<p>Oui, par un détour : <strong>Backgammon Studio (Heroes)</strong>, <strong>Backgammon Galaxy</strong> et
+<strong>GammonSpace</strong> produisent tous les trois des fichiers que eXtreme Gammon sait
+lire — Studio livre même un paquet d’intégration qui se dépose dans le dossier
+XG. Ces matchs arrivent donc dans blunderDB par le chemin <code class="docutils literal notranslate"><span class="pre">.xg</span></code> existant,
+sans qu’un lecteur dédié soit nécessaire.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ce que ce détour transporte exactement — analyses, chance du lancer, marques,
+commentaires — <strong>n’a pas été mesuré</strong> : il y faudrait un match exporté depuis
+chacune des trois plateformes. Si vous en avez un et que quelque chose se
+perd à l’import, ouvrez une issue avec le fichier : c’est la mesure qui
+décidera s’il faut un lecteur propre à ces plateformes, pas une supposition.</p>
+</div>
+<p>Les formats texte plus anciens que GNU Backgammon sait déjà lire — <code class="docutils literal notranslate"><span class="pre">.sgg</span></code>
+(GridGammon), <code class="docutils literal notranslate"><span class="pre">.tmg</span></code>, <code class="docutils literal notranslate"><span class="pre">.gam</span></code>, le <code class="docutils literal notranslate"><span class="pre">.txt</span></code> de Snowie — sont dans le même cas :
+passer par GNU Backgammon les rend importables aujourd’hui.</p>
+</section>
+<section id="puis-je-synchroniser-ma-base-entre-plusieurs-machines">
+<h2>Puis-je synchroniser ma base entre plusieurs machines ?<a class="headerlink" href="#puis-je-synchroniser-ma-base-entre-plusieurs-machines" title="Lien vers cette rubrique"></a></h2>
+<p>Une base blunderDB est <strong>un seul fichier</strong>. Cela rend la sauvegarde et la copie
+triviales, et cela décide de la réponse :</p>
+<ul class="simple">
+<li><p><strong>Dropbox, Syncthing, iCloud, OneDrive</strong> : cela fonctionne, à une condition —
+ne pas ouvrir la base <strong>des deux côtés en même temps</strong>. Ces outils
+synchronisent des fichiers, pas des écritures concurrentes : deux instances
+qui écrivent en parallèle produisent un conflit que le service résout en
+gardant une version et en renommant l’autre. blunderDB pose un verrou
+d’écriture sur le fichier ouvert, ce qui protège une même machine, mais aucun
+verrou ne traverse un service de synchronisation.</p></li>
+<li><p><strong>Plusieurs postes en même temps</strong> : c’est ce à quoi le mode <code class="docutils literal notranslate"><span class="pre">serve</span></code> répond
+(voir <a class="reference internal" href="mode_headless.html"><span class="doc">Mode headless (serveur)</span></a>). Un démon détient la base, les postes s’y
+connectent, et il n’y a plus qu’un seul écrivain.</p></li>
+<li><p><strong>Deux bases qui ont divergé</strong> : elles se <strong>fusionnent</strong> plutôt qu’elles ne se
+synchronisent — voir « Comment fusionner plusieurs bases de données ? »
+ci-dessus. La déduplication par empreinte Zobrist fait le travail : les
+positions communes ne sont pas dupliquées et leurs analyses et commentaires
+sont combinés. C’est une fusion, pas une réconciliation : rien n’est supprimé
+d’un côté parce que l’autre l’a supprimé.</p></li>
+</ul>
+</section>
+<section id="ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">
+<h2>Ai-je besoin d’eXtreme Gammon pour utiliser blunderDB?<a class="headerlink" href="#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>Non. blunderDB lit également les fichiers de GNUbg, BGBlitz et Jellyfish, et
+son évaluateur embarqué (gammonNet) analyse n’importe quelle position sans
+dépendre d’un logiciel tiers — voir « Que vaut l’évaluateur intégré ? »
+ci-dessous. Un import XG apporte cependant l’analyse la plus complète
+(coups, décisions de videau, marques, chance du lancer) : c’est le format le
+plus richement exploité par les statistiques.</p>
+</section>
+<section id="j-utilise-deja-extreme-gammon-a-quoi-me-sert-blunderdb">
+<h2>J’utilise déjà eXtreme Gammon : à quoi me sert blunderDB ?<a class="headerlink" href="#j-utilise-deja-extreme-gammon-a-quoi-me-sert-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB ne rejoue pas vos matchs, il les rassemble. Trois différences
+concrètes :</p>
+<ul class="simple">
+<li><p><strong>agréger</strong> dans un seul fichier des matchs venus d’XG, de GNUbg, de BGBlitz
+et de Jellyfish, dédoublonnés position par position ;</p></li>
+<li><p><strong>chercher</strong> par structure de pions et par erreur : « les prises à ce score
+où j’ai perdu plus de 50 millipoints » s’écrit en une ligne de commande
+(voir <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a>) ;</p></li>
+<li><p><strong>réviser</strong> les positions retenues par répétition espacée, en paquets Anki
+(voir <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Panneau Anki</span></a>).</p></li>
+</ul>
+<p>Vos analyses XG restent celles d’XG : blunderDB les importe telles quelles et
+ne les recalcule jamais (voir <a class="reference internal" href="manuel.html#import-regles"><span class="std std-ref">Import : ce qui est écrit, ce qui ne l’est jamais</span></a>).</p>
+</section>
+<section id="les-rollouts-xg-sont-ils-importes-blunderdb-fait-il-des-rollouts">
+<h2>Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?<a class="headerlink" href="#les-rollouts-xg-sont-ils-importes-blunderdb-fait-il-des-rollouts" title="Lien vers cette rubrique"></a></h2>
+<p>Non, dans les deux sens. D’une analyse XG, l’import conserve l’étiquette de
+niveau (« 3-ply », « XG Roller++ », « Book »), les équités, les erreurs et les
+probabilités ; il n’ouvre pas les données de rollout du fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> et n’en
+retient donc ni le nombre d’essais ni l’écart type. Une analyse XG collée en
+texte garde en revanche littéralement son étiquette, « Rollout » comprise.
+L’évaluateur embarqué, lui, ne fait pas de rollout : il répond par une
+recherche à 0 ou 2 lancers d’avance.</p>
+</section>
+<section id="qu-a-t-on-mesure-de-l-evaluateur-integre-et-que-n-a-t-on-pas-mesure">
+<h2>Qu’a-t-on mesuré de l’évaluateur intégré, et que n’a-t-on pas mesuré ?<a class="headerlink" href="#qu-a-t-on-mesure-de-l-evaluateur-integre-et-que-n-a-t-on-pas-mesure" title="Lien vers cette rubrique"></a></h2>
+<p>Une mesure est publiée, sur le régime <em>évalué</em> du panneau Eval : 4000 décisions
+money de course, comparées à la table de bearoff exacte — 93,4 % d’accord de
+verdict (3735/4000), mais 61,1 % seulement à moins de 1 % du point de prise
+contre 94,4 % au-delà de 20 % ; écart de probabilité de gain moyen 0,85 %,
+maximum 8,30 %. Ce qui n’est pas mesuré : le verdict de videau <strong>au score de
+match</strong> et les <strong>positions de contact</strong>, pour lesquels aucun chiffre n’est
+publié. Le détail des hypothèses est dans <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Eval</span></a>.</p>
+</section>
+<section id="qu-est-ce-qu-une-collection">
+<h2>Qu’est-ce qu’une collection?<a class="headerlink" href="#qu-est-ce-qu-une-collection" title="Lien vers cette rubrique"></a></h2>
+<p>Une collection est un regroupement personnalisé de positions. Contrairement
+à une recherche par filtres qui est dynamique, une collection est un ensemble
+fixe de positions choisies manuellement par l’utilisateur. Les collections
+permettent par exemple de regrouper des positions de référence pour une
+thématique particulière.</p>
+</section>
+<section id="qu-est-ce-que-l-epc">
+<h2>Qu’est-ce que l’EPC?<a class="headerlink" href="#qu-est-ce-que-l-epc" title="Lien vers cette rubrique"></a></h2>
+<p>L’EPC (Effective Pip Count) est une mesure plus précise que le simple pip count
+pour évaluer les positions de bearoff. Le panneau Eval de blunderDB utilise
+une table de bearoff à 6 points identique à celle de GNUbg, calculée sur la
+machine au premier lancement, et calcule en temps réel
+l’EPC, le nombre moyen de lancers, l’écart type, le pip count et le wastage.</p>
+<p>Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
+gain du joueur au trait et, lorsque la position est couverte par une base
+two-sided (table TS-06-06 calculée au premier lancement, ou table étendue
+TS-06-11 calculée depuis l’onglet <em>Bearoff</em> de la configuration), le verdict
+de videau money exact. Hors de ce domaine, la
+probabilité est estimée avec sa marge d’erreur et le verdict n’est
+volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
+panneau Eval » du manuel pour le détail des hypothèses.</p>
+</section>
+<section id="que-vaut-l-evaluateur-integre-gammonnet">
+<h2>Que vaut l’évaluateur intégré (gammonNet) ?<a class="headerlink" href="#que-vaut-l-evaluateur-integre-gammonnet" title="Lien vers cette rubrique"></a></h2>
+<p>gammonNet est un réseau de neurones entraîné par un tiers (voir Crédits),
+porté en Go et compilé dans blunderDB : aucun logiciel externe, aucune
+connexion réseau. Il joue le rôle d’XG ou de GNUbg pour les positions non
+importées — recherche à 0 ou 2 lancers d’avance, décision de videau selon
+Janowski et la table d’équité de match de blunderDB, honorant le score du
+match. Ce n’est ni le seul ni forcément le meilleur moteur du marché : c’est
+celui qui fonctionne hors ligne, sans compte ni abonnement, sur la position
+que vous regardez. Rien n’empêche par ailleurs d’importer les analyses d’XG
+ou de GNUbg quand elles existent — les deux sources cohabitent, une colonne
+indique l’origine de chaque analyse. Voir la section « Panneau Eval » et
+« Méthodologie et hypothèses du panneau Eval » du manuel.</p>
+<p><strong>Ce que cela vaut, en chiffres.</strong> Sur les positions de bearoff que la table
+exacte intégrée couvre — le seul endroit où un oracle existe — gammonNet à
+2 plis rend le <strong>même verdict de videau dans 93,4 % des cas</strong>, et le désaccord
+se concentre exactement au point de prise (61 % d’accord à moins de 1 % du
+point de prise, 94 % au-delà de 10 %) : c’est là que deux méthodes légitimes
+divergent le plus sur une décision serrée, pas une erreur diffuse. Le détail
+et la méthode sont dans « Méthodologie et hypothèses du panneau Eval ».</p>
+<p>Pour la même question posée de <strong>votre</strong> bibliothèque plutôt que d’un corpus
+de référence, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--compare</span></code> compare le moteur embarqué aux
+analyses venues de vos fichiers XG ou GNUbg — accord sur la meilleure réponse,
+coût des désaccords, ventilation par phase de partie — <strong>sans rien écrire</strong>.</p>
+</section>
+<section id="quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">
+<h2>Quelle est la différence entre le PR et le Snowie Error Rate?<a class="headerlink" href="#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate" title="Lien vers cette rubrique"></a></h2>
+<p>Le PR (<em>Performance Rating</em>) est l’erreur moyenne d’équité par décision
+comptée, multipliée par 500 comme le font eXtreme Gammon et GNUbg ; plus il
+est bas, mieux on joue. Le Snowie Error Rate rapporte cette même moyenne au
+nombre de <em>coups</em> plutôt qu’au nombre de <em>décisions</em> — un match plus long
+n’aggrave donc pas mécaniquement le SER. blunderDB affiche les deux dans le
+panneau Stats, alignés sur les conventions d’eXtreme Gammon et de GNUbg (voir
+<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</span></a> pour le détail des règles de comptage).</p>
+</section>
+<section id="blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">
+<h2>blunderDB dispose-t-il d’une interface en ligne de commande?<a class="headerlink" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande" title="Lien vers cette rubrique"></a></h2>
+<p>Oui, blunderDB dispose d’une interface en ligne de commande (CLI) permettant
+d’effectuer sans interface graphique des opérations telles que la création de
+bases de données, l’import de matchs, l’export, la recherche de positions,
+l’affichage de statistiques, etc. Consulter la documentation CLI pour plus
+de détails.</p>
+</section>
+<section id="blunderdb-propose-t-il-un-mode-serveur">
+<h2>blunderDB propose-t-il un mode serveur?<a class="headerlink" href="#blunderdb-propose-t-il-un-mode-serveur" title="Lien vers cette rubrique"></a></h2>
+<p>Oui, un mode « headless » facultatif : le même binaire, lancé avec
+<code class="docutils literal notranslate"><span class="pre">serve</span></code>, expose le moteur de blunderDB en HTTP + JSON derrière un
+reverse-proxy authentifiant (blunderDB lui-même ne fait aucune
+authentification). Il peut s’appuyer sur SQLite ou sur PostgreSQL en
+multi-tenant, et sert à piloter blunderDB depuis vos propres scripts ou une
+application maison, en HTTP + JSON — il n’y a pas d’interface web —, ou à
+mutualiser une base entre plusieurs joueurs. L’usage normal reste l’application de bureau ;
+voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a> pour le détail (y compris l’image Docker prête à
+l’emploi) et le tutoriel « Déployer le mode serveur derrière un proxy » du
+guide utilisateur.</p>
+</section>
+<section id="puis-je-modifier-copier-partager-blunderdb">
+<h2>Puis-je modifier, copier, partager blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>Oui, tout à fait (et c’est même encouragé!). blunderDB est sous licence MIT.</p>
+</section>
+<section id="ou-sont-stockees-mes-donnees">
+<h2>Où sont stockées mes données?<a class="headerlink" href="#ou-sont-stockees-mes-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Sur votre disque, dans le fichier <code class="docutils literal notranslate"><span class="pre">.db</span></code> que vous avez choisi en créant la
+base : aucun compte, aucun serveur, aucune synchronisation par défaut.
+L’application de bureau ouvre ce fichier directement ; seul le mode serveur
+facultatif (voir ci-dessous) fait tourner blunderDB à distance, et c’est
+alors vous qui hébergez ce serveur.</p>
+</section>
+<section id="puis-je-partager-une-base-avec-un-autre-joueur">
+<h2>Puis-je partager une base avec un autre joueur?<a class="headerlink" href="#puis-je-partager-une-base-avec-un-autre-joueur" title="Lien vers cette rubrique"></a></h2>
+<p>Oui : une base blunderDB est un simple fichier, il suffit de le copier ou de
+l’envoyer. Pour diffuser une base à un tiers, deux mécanismes facultatifs,
+choisis au moment de l’export, en font une diffusion <em>contrôlée</em> plutôt
+qu’une simple copie : un <strong>filigrane d’origine</strong> signe le fichier avec votre
+identité d’émetteur (infalsifiable, lisible dans le panneau Métadonnées ou
+via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, sans jamais rien consigner côté destinataire), et une
+<strong>protection par mot de passe</strong> produit un fichier <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> chiffré. Voir
+<a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a> dans le manuel.</p>
+</section>
+<section id="quel-format-de-donnees-utilise-blunderdb">
+<h2>Quel format de données utilise blunderDB?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>La base de données est un simple fichier Sqlite. En l’absence de
+blunderDB, elle peut ainsi s’ouvrir avec tout éditeur de fichier sqlite.</p>
+</section>
+<section id="quels-ont-ete-les-principes-de-conception-de-blunderdb">
+<h2>Quels ont été les principes de conception de blunderDB?<a class="headerlink" href="#quels-ont-ete-les-principes-de-conception-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>Je voulais une interface accessible, mais pensée pour un usage avancé et
+soutenu, où l’on enchaîne les positions et les recherches. La ligne de
+commande, ouverte d’un appui sur la barre d”<em>ESPACE</em>, et les raccourcis clavier
+servent cet usage, sans être un passage obligé.</p>
+<p>Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et
+disponible pour différentes plateformes,
+d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
+sérialisation de la base de données, le format de fichiers doit être
+multi-plateforme et adapté pour contenir une base de données. Le format de
+fichier sqlite semblait tout indiqué.</p>
+<p>Je tenais aussi à ce qu’une base reste un simple fichier, que l’on peut copier,
+sauvegarder ou envoyer à un autre joueur.</p>
+<p>Enfin, blunderDB ne se limite plus à l’application de bureau : le même binaire
+offre une interface en ligne de commande et un mode serveur facultatif, qui
+peut s’appuyer sur PostgreSQL pour les déploiements multi-utilisateurs. L’usage
+normal reste toutefois l’application de bureau. Voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a> et
+<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p>
+</section>
+<section id="quelle-est-l-architecture-logicielle-de-blunderdb">
+<h2>Quelle est l’architecture logicielle de blunderDB?<a class="headerlink" href="#quelle-est-l-architecture-logicielle-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<ul class="simple">
+<li><p>Le backend est codé en <a class="reference external" href="https://go.dev/">Go</a>. Il est en charge de
+l’ensemble des opérations sur la base de données SQLite qui stocke les
+positions.</p></li>
+<li><p>Le frontend est codé en <a class="reference external" href="https://svelte.dev/">Svelte</a>. Il est en charge du
+rendu de l’interface graphique et du board de Backgammon.</p></li>
+<li><p>L’application est encapsulée avec <a class="reference external" href="https://wails.io/">Wails</a>, permettant la
+production d’applications Desktop natives, déclinables sous Windows, Linux et
+macOS.</p></li>
+<li><p>La base de données est gérée par <a class="reference external" href="https://www.sqlite.org/">Sqlite</a>.</p></li>
+<li><p>Le mode serveur facultatif peut s’appuyer sur <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> à la place de Sqlite pour les déploiements
+multi-utilisateurs.</p></li>
+<li><p>L’évaluateur embarqué (<a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>,
+MIT) est un réseau de neurones porté en Go et compilé dans blunderDB : il
+évalue n’importe quelle position hors ligne, sans XG ni GNUbg. Voir « Que
+vaut l’évaluateur intégré ? » ci-dessous.</p></li>
+</ul>
+<p>Pour plus d’informations, voir le <a class="reference external" href="https://github.com/kevung/blunderDB">dépôt Github de blunderDB</a>.</p>
+</section>
+<section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
+<h2>Sur quelles plateformes blunderDB fonctionne-t-il?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB fonctionne sur Windows, Linux et Mac.</p>
+</section>
+<section id="d-ou-vient-l-icone-de-blunderdb">
+<h2>D’où vient l’icône de blunderDB?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>L’icône de blunderDB est l’émoticône « goggling » de la série <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="glossaire.html" class="btn btn-neutral float-left" title="Glossaire" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="mode_headless.html" class="btn btn-neutral float-right" title="Mode headless (serveur)" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

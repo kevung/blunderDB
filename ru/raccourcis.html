@@ -1,0 +1,869 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Горячие клавиши &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Интерфейс командной строки (CLI)" href="cli.html" />
+    <link rel="prev" title="Список команд" href="cmd_mode.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/raccourcis.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/raccourcis.html" lang="en" hreflang="en">English</a>
+  <a href="../de/raccourcis.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/raccourcis.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/raccourcis.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/raccourcis.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/raccourcis.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/raccourcis.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Горячие клавиши</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#base-de-donnees">База данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#position">Позиция</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation">Навигация</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#affichage">Отображение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#actions">Действия</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outils">Инструменты</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">Вкладки представлений</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ligne-de-commande">Командная строка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#historique-de-recherche">История поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">Библиотека фильтров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-d-analyse">Панель анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-eval">Панель Eval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-des-matchs">Панель матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki-repetition-espacee">Панель Anki (интервальное повторение)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-des-tournois">Панель турниров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-des-collections">Панель коллекций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-transcription">Панель транскрипции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-d-aide">Панель справки</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Горячие клавиши</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="raccourcis-clavier">
+<span id="raccourcis"></span><h1>Горячие клавиши<a class="headerlink" href="#raccourcis-clavier" title="Ссылка на этот заголовок"></a></h1>
+<section id="base-de-donnees">
+<span id="raccourcis-generaux"></span><h2>База данных<a class="headerlink" href="#base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-N</p></td>
+<td><p>Создать новую базу данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-O</p></td>
+<td><p>Открыть существующую базу данных.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-SHIFT-I</p></td>
+<td><p>Объединить базу данных с этой.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-SHIFT-S</p></td>
+<td><p>Экспортировать базу данных.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Q</p></td>
+<td><p>Закрыть blunderDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-M</p></td>
+<td><p>Редактировать метаданные базы данных.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="position">
+<span id="raccourcis-position"></span><h2>Позиция<a class="headerlink" href="#position" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-I</p></td>
+<td><p>Импортировать одну или несколько позиций/матчей из файла (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-SHIFT-F</p></td>
+<td><p>Рекурсивно импортировать папку с файлами матчей/позиций.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-C</p></td>
+<td><p>Скопировать позицию в буфер обмена.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-X</p></td>
+<td><p>Скопировать изображение доски в буфер обмена (PNG).</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-X CTRL-X</p></td>
+<td><p>Скопировать изображение доски с анализом в буфер обмена (PNG).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-V</p></td>
+<td><p>Вставить позицию из буфера обмена (автоматическое определение формата).</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-S</p></td>
+<td><p>Сохранить позицию.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-U</p></td>
+<td><p>Обновить позицию.</p></td>
+</tr>
+<tr class="row-even"><td><p>Del</p></td>
+<td><p>Удалить текущую позицию (требуется подтверждение).</p></td>
+</tr>
+<tr class="row-odd"><td><p>BACKSPACE</p></td>
+<td><p>Сбросить доску, куб, счёт и кости.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-G</p></td>
+<td><p>Показать метаданные позиции.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="navigation">
+<span id="raccourcis-navigation"></span><h2>Навигация<a class="headerlink" href="#navigation" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-R</p></td>
+<td><p>Перезагрузить все позиции из базы данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PageUp, h</p></td>
+<td><p>Первая позиция / Предыдущая партия (навигация по матчу).</p></td>
+</tr>
+<tr class="row-even"><td><p>LEFT, k</p></td>
+<td><p>Предыдущая позиция.</p></td>
+</tr>
+<tr class="row-odd"><td><p>RIGHT, j</p></td>
+<td><p>Следующая позиция.</p></td>
+</tr>
+<tr class="row-even"><td><p>UP, k</p></td>
+<td><p>Предыдущий ход (когда ход выбран в анализе).</p></td>
+</tr>
+<tr class="row-odd"><td><p>DOWN, j</p></td>
+<td><p>Следующий ход (когда ход выбран в анализе).</p></td>
+</tr>
+<tr class="row-even"><td><p>PageDown, l</p></td>
+<td><p>Последняя позиция / Следующая партия (навигация по матчу).</p></td>
+</tr>
+<tr class="row-odd"><td><p>r</p></td>
+<td><p>Загрузить случайную позицию.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="affichage">
+<span id="raccourcis-affichage"></span><h2>Отображение<a class="headerlink" href="#affichage" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-LEFT</p></td>
+<td><p>Ориентация доски влево.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-RIGHT</p></td>
+<td><p>Ориентация доски вправо.</p></td>
+</tr>
+<tr class="row-even"><td><p>p</p></td>
+<td><p>Показать/скрыть пипкаунт.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="actions">
+<span id="raccourcis-modes"></span><h2>Действия<a class="headerlink" href="#actions" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TAB</p></td>
+<td><p>Открыть панель поиска (редактор позиции).</p></td>
+</tr>
+<tr class="row-odd"><td><p>SPACE</p></td>
+<td><p>Открыть командную строку.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outils">
+<span id="raccourcis-outils"></span><h2>Инструменты<a class="headerlink" href="#outils" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-L</p></td>
+<td><p>Показать/скрыть анализ.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-SHIFT-L</p></td>
+<td><p>Упорядочить соседей текущей позиции.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-P</p></td>
+<td><p>Показать/скрыть комментарии.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-J</p></td>
+<td><p>Показать/скрыть панель Тренировка.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-K</p></td>
+<td><p>Показать/скрыть панель Anki (интервальное повторение).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-F</p></td>
+<td><p>Показать/скрыть панель поиска.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Tab</p></td>
+<td><p>Показать/скрыть панель матчей.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-B</p></td>
+<td><p>Показать/скрыть панель коллекций.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Y</p></td>
+<td><p>Показать/скрыть панель турниров.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-D</p></td>
+<td><p>Показать/скрыть панель статистики.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-E</p></td>
+<td><p>Показать/скрыть панель Eval.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-SHIFT-T</p></td>
+<td><p>Показать/скрыть панель записи (черновики матчей).</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-MAJ-D</p></td>
+<td><p>Показать/скрыть панель «Турниры» для проведения турнира.</p></td>
+</tr>
+<tr class="row-odd"><td><p>J / K</p></td>
+<td><p>В очереди предложений проводимого турнира: вниз, вверх.</p></td>
+</tr>
+<tr class="row-even"><td><p>ВВОД</p></td>
+<td><p>В очереди предложений: подтвердить выбранное предложение.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ВЛЕВО / ВПРАВО</p></td>
+<td><p>В карточке результата: побеждает игрок слева, побеждает игрок справа.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Z</p></td>
+<td><p>Вернуться к последнему решению проводимого турнира.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ESC</p></td>
+<td><p>Закрыть карточку результата или начатую правку.</p></td>
+</tr>
+<tr class="row-even"><td><p>?</p></td>
+<td><p>Показать/скрыть справку.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="onglets-de-vues">
+<span id="raccourcis-vues"></span><h2>Вкладки представлений<a class="headerlink" href="#onglets-de-vues" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-T</p></td>
+<td><p>Создать новое представление (копия текущего).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-W</p></td>
+<td><p>Закрыть текущее представление.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-PageUp, SHIFT-J</p></td>
+<td><p>Предыдущее представление.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-PageDown, SHIFT-K</p></td>
+<td><p>Следующее представление.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-1 … CTRL-9</p></td>
+<td><p>Перейти напрямую к n-му представлению.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Двойной клик по вкладке</p></td>
+<td><p>Переименовать представление.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ligne-de-commande">
+<span id="raccourcis-command"></span><h2>Командная строка<a class="headerlink" href="#ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>UP</p></td>
+<td><p>Просмотр истории команд вверх.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DOWN</p></td>
+<td><p>Просмотр истории команд вниз.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="historique-de-recherche">
+<span id="raccourcis-search-history"></span><h2>История поиска<a class="headerlink" href="#historique-de-recherche" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик</p></td>
+<td><p>Выбрать/отменить выбор поиска (показать позицию).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Двойной клик</p></td>
+<td><p>Выполнить поиск.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bibliotheque-de-filtres">
+<span id="raccourcis-filter-library"></span><h2>Библиотека фильтров<a class="headerlink" href="#bibliotheque-de-filtres" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик</p></td>
+<td><p>Выбрать/отменить выбор фильтра (показать позицию).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Двойной клик</p></td>
+<td><p>Выполнить поиск по фильтру.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-d-analyse">
+<span id="raccourcis-analysis"></span><h2>Панель анализа<a class="headerlink" href="#panneau-d-analyse" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик</p></td>
+<td><p>Выбрать/отменить выбор хода (показать/скрыть стрелки).</p></td>
+</tr>
+<tr class="row-odd"><td><p>UP, k</p></td>
+<td><p>Выбрать предыдущий ход (когда ход выбран).</p></td>
+</tr>
+<tr class="row-even"><td><p>DOWN, j</p></td>
+<td><p>Выбрать следующий ход (когда ход выбран).</p></td>
+</tr>
+<tr class="row-odd"><td><p>d</p></td>
+<td><p>Переключить между анализом ходов и куба (только при навигации по матчу).</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Отменить выбор хода. Если ход не выбран, закрыть панель.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-eval">
+<span id="raccourcis-eval-panel"></span><h2>Панель Eval<a class="headerlink" href="#panneau-eval" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик</p></td>
+<td><p>Выбрать/отменить выбор хода (показать/скрыть стрелки).</p></td>
+</tr>
+<tr class="row-odd"><td><p>UP, k</p></td>
+<td><p>Выбрать предыдущий ход (когда ход выбран).</p></td>
+</tr>
+<tr class="row-even"><td><p>DOWN, j</p></td>
+<td><p>Выбрать следующий ход (когда ход выбран).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Esc</p></td>
+<td><p>Отменить выбор хода.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-des-matchs">
+<span id="raccourcis-match-panel"></span><h2>Панель матчей<a class="headerlink" href="#panneau-des-matchs" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик</p></td>
+<td><p>Выбрать матч.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Двойной клик</p></td>
+<td><p>Навигация по матчу.</p></td>
+</tr>
+<tr class="row-even"><td><p>UP, k</p></td>
+<td><p>Выбрать предыдущий матч.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DOWN, j</p></td>
+<td><p>Выбрать следующий матч.</p></td>
+</tr>
+<tr class="row-even"><td><p>ENTER</p></td>
+<td><p>Загрузить выбранный матч.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Del</p></td>
+<td><p>Удалить выбранный матч.</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Отменить выбор/закрыть панель.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-anki-repetition-espacee">
+<span id="raccourcis-anki-panel"></span><h2>Панель Anki (интервальное повторение)<a class="headerlink" href="#panneau-anki-repetition-espacee" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SPACE, Клик</p></td>
+<td><p>Показать ответ (записанный анализ позиции).</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Оценить: Повторить (ошибка, повторить скоро).</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Оценить: Трудно.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Оценить: Хорошо.</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Оценить: Легко.</p></td>
+</tr>
+<tr class="row-odd"><td><p>p</p></td>
+<td><p>Показать/скрыть счёт пипсов (то же, что и общее сочетание, доступно во время повторения).</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Остановить повторение и вернуться к списку колод (можно продолжить позже).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-des-tournois">
+<span id="raccourcis-tournament-panel"></span><h2>Панель турниров<a class="headerlink" href="#panneau-des-tournois" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик, Двойной клик</p></td>
+<td><p>Выбрать турнир (показать его подробности).</p></td>
+</tr>
+<tr class="row-odd"><td><p>UP, k</p></td>
+<td><p>Выбрать предыдущий турнир.</p></td>
+</tr>
+<tr class="row-even"><td><p>DOWN, j</p></td>
+<td><p>Выбрать следующий турнир.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Двойной клик (по матчу турнира)</p></td>
+<td><p>Навигация по матчу.</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Отменить текущее редактирование, иначе очистить поиск добавления матча, иначе снять выбор турнира, иначе закрыть панель (по шагам).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-des-collections">
+<span id="raccourcis-collection-panel"></span><h2>Панель коллекций<a class="headerlink" href="#panneau-des-collections" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Клик</p></td>
+<td><p>Добавить текущую позицию в коллекцию под курсором или убрать её оттуда.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Двойной клик</p></td>
+<td><p>Открыть коллекцию.</p></td>
+</tr>
+<tr class="row-even"><td><p>Del</p></td>
+<td><p>Убрать текущую позицию (или отмеченные позиции) из открытой коллекции.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Esc</p></td>
+<td><p>Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть панель (по шагам).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-transcription">
+<span id="raccourcis-transcription-panel"></span><h2>Панель транскрипции<a class="headerlink" href="#panneau-transcription" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель принимает эти клавиши, пока у неё фокус. Перед списком черновиков она уже принимает несколько, чтобы возобновление вчерашней работы не требовало мыши.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ВНИЗ, j / ВВЕРХ, k (список черновиков)</p></td>
+<td><p>Проходить черновики. Первый подсвечен при открытии: это самый недавно изменённый.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ВВОД (список черновиков)</p></td>
+<td><p>Открыть подсвеченный черновик.</p></td>
+</tr>
+<tr class="row-even"><td><p>n (список черновиков)</p></td>
+<td><p>Открыть форму создания.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Клик</p></td>
+<td><p>Открыть черновик из списка.</p></td>
+</tr>
+<tr class="row-even"><td><p>1 … 6</p></td>
+<td><p>Ввести кость: кость игрока 1, затем игрока 2 для открытия (больший начинает и играет обе кости).</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 … 6 (бросок введён)</p></td>
+<td><p>Подтвердить выбранный ход и открыть следующий бросок. На пересматриваемом действии, где курсор стоит на уже записанном действии, цифра начинает бросок этого действия заново, а не подтверждает.</p></td>
+</tr>
+<tr class="row-even"><td><p>DOWN, j</p></td>
+<td><p>Выбрать следующий вариант (стрелки хода появляются на доске).</p></td>
+</tr>
+<tr class="row-odd"><td><p>UP, k</p></td>
+<td><p>Выбрать предыдущий вариант.</p></td>
+</tr>
+<tr class="row-even"><td><p>Колесо</p></td>
+<td><p>Выбрать следующего или предыдущего кандидата — как над списком, так и над доской: взгляд остаётся на доске, а стрелки прокручиваются.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Щелчок (по строке)</p></td>
+<td><p>Выбрать этот вариант.</p></td>
+</tr>
+<tr class="row-even"><td><p>Двойной щелчок (по строке)</p></td>
+<td><p>Подтвердить этого кандидата.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Щелчок (по треугольнику бросков)</p></td>
+<td><p>Ввод броска одним движением: клетка несёт обе кости, дубли — по диагонали. Во время розыгрыша первого хода треугольник уступает место ряду из шести костей, и один щелчок даёт кость одной стороны.</p></td>
+</tr>
+<tr class="row-even"><td><p>Щелчок (по пункту доски)</p></td>
+<td><p>Оставить только те варианты, в которых есть шаг из этого пункта; второй пункт сужает список ещё сильнее, щелчок по уже выбранному пункту снимает его, а щелчок вне доски снимает фильтр целиком.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Щелчок, перетаскивание (кости не введены)</p></td>
+<td><p>Сыграть ход прямо на доске: шашка идёт из выбранного пункта к своей цели в пределах законных ходов, а обе кости выводятся из сыгранных шагов.</p></td>
+</tr>
+<tr class="row-even"><td><p>BACKSPACE (ход разыгрывается на доске)</p></td>
+<td><p>Отменить последний шаг, сыгранный на доске.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ENTER</p></td>
+<td><p>Записать выбранный ход (последний ход партии).</p></td>
+</tr>
+<tr class="row-even"><td><p>BACKSPACE</p></td>
+<td><p>Стереть две введённые кости. Через это проходит переигрывание неверно прочитанного броска, поскольку цифра подтверждает.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Щелчок (по клеткам броска)</p></td>
+<td><p>Стереть две введённые кости, как BACKSPACE.</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Отменить текущий ввод.</p></td>
+</tr>
+<tr class="row-odd"><td><p>d</p></td>
+<td><p>Удвоить или переудвоить: выбранный ход подтверждается заодно, одной-единственной клавишей.</p></td>
+</tr>
+<tr class="row-even"><td><p>t</p></td>
+<td><p>Принять предложенный дабл: куб переходит к принявшему в удвоенном значении, а предложивший бросает снова.</p></td>
+</tr>
+<tr class="row-odd"><td><p>p</p></td>
+<td><p>Отклонить предложенный дабл: партия выиграна по значению куба до дабла.</p></td>
+</tr>
+<tr class="row-even"><td><p>r, затем 1, 2 или 3</p></td>
+<td><p>Сдать партию за сторону, чей ход: простая, гаммон или бэкгаммон. Esc между двумя клавишами отменяет, ничего не записав.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Щелчок (по кубу)</p></td>
+<td><p>Предложить удвоение за сторону, у которой ход, как клавиша d. На предложение куб не отвечает: принять и пас находятся в ряду кнопок.</p></td>
+</tr>
+<tr class="row-even"><td><p>LEFT, h</p></td>
+<td><p>Сдвинуть курсор на одно действие назад по записи.</p></td>
+</tr>
+<tr class="row-odd"><td><p>RIGHT, l</p></td>
+<td><p>Сдвинуть курсор на одно действие вперёд.</p></td>
+</tr>
+<tr class="row-even"><td><p>Щелчок (по ячейке)</p></td>
+<td><p>Поставить курсор на это действие.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Щелчок правой кнопкой (по ячейке)</p></td>
+<td><p>Открыть исправления этого действия: вставить до, вставить после, удалить, сменить сторону. Курсор при этом переводится на ячейку.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-ENTER</p></td>
+<td><p>Создать матч из черновика или обновить его, если он уже существует.</p></td>
+</tr>
+<tr class="row-odd"><td><p>i</p></td>
+<td><p>Вставить действие перед действием курсора (предлагается та сторона, при которой продолжение остаётся согласованным).</p></td>
+</tr>
+<tr class="row-even"><td><p>a</p></td>
+<td><p>Вставить действие после действия курсора.</p></td>
+</tr>
+<tr class="row-odd"><td><p>x, Del</p></td>
+<td><p>Удалить действие курсора; последующие сохраняют свою сторону.</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Передать действие курсора другой стороне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-Z</p></td>
+<td><p>Отменить последний жест над черновиком.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-SHIFT-Z</p></td>
+<td><p>Вернуть отменённый жест.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Бросок, не допускающий ни одного хода, записывает пропуск сам, без дополнительной клавиши.</p>
+<p>У цифры один-единственный смысл: <strong>она начинает бросок там, где курсор</strong>. В конце документа под курсором ничего нет, поэтому она подтверждает выбранный ход, прежде чем открыть следующий бросок, — лучший сыгранный ход стоит, таким образом, двух костей и не более, ибо его подтверждение несёт первая клавиша следующего хода. На уже записанном действии, к которому вернулись ради исправления, под курсором есть нечто: цифра начинает бросок этого действия заново, на месте. Разница видна на экране, поскольку указанная ячейка обведена в транскрипте.</p>
+<p>Жест, которому нечего делать, говорит об этом один раз в строке состояния: «нечего отменять» при пустом стеке, «под курсором нет действия» в конце документа. Фраза стирается сама и возвращает место ожидаемому действию.</p>
+<p>Если вернуть курсор на действие и ввести заново, оно исправляется <strong>на месте</strong>: подтверждение заменяет действие, а курсор возвращается туда, где он был. Если исправлены кости и записанный ход остаётся допустимым ходом нового броска, он сохраняется; иначе предлагается первый кандидат нового броска, а ход помечается «к проверке» до подтверждения. Перемещение курсора вперёд или назад после изменения записывает исправление попутно.</p>
+<p>Ничто не отвергается и не удаляется: вставка действия той же стороны, что и у соседнего, создаёт двойной ход, удаление действия может создать ещё один, смена стороны может сделать последующие ходы недопустимыми. Эти несоответствия отмечаются в транскрипте, никогда не исправляются самовольно, и курсор после каждого жеста встаёт на первое из них. Стек отмены живёт в памяти: он теряется при закрытии черновика.</p>
+<p>Сама панель — список черновиков, создание, ввод, запись и панель черновика — описана в <a class="reference internal" href="manuel.html#panneau-transcription"><span class="std std-ref">Панель записи</span></a>.</p>
+</section>
+<section id="panneau-d-aide">
+<span id="raccourcis-help-panel"></span><h2>Панель справки<a class="headerlink" href="#panneau-d-aide" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сочетание клавиш</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>LEFT, h</p></td>
+<td><p>Предыдущая вкладка.</p></td>
+</tr>
+<tr class="row-odd"><td><p>RIGHT, l</p></td>
+<td><p>Следующая вкладка.</p></td>
+</tr>
+<tr class="row-even"><td><p>UP, k</p></td>
+<td><p>Прокрутить вверх.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DOWN, j</p></td>
+<td><p>Прокрутить вниз.</p></td>
+</tr>
+<tr class="row-even"><td><p>SPACE</p></td>
+<td><p>Следующая страница.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PageUp</p></td>
+<td><p>В начало содержимого.</p></td>
+</tr>
+<tr class="row-even"><td><p>PageDown</p></td>
+<td><p>В конец содержимого.</p></td>
+</tr>
+<tr class="row-odd"><td><p>?, CTRL-F, Esc</p></td>
+<td><p>Закрыть справку.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="cmd_mode.html" class="btn btn-neutral float-left" title="Список команд" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cli.html" class="btn btn-neutral float-right" title="Интерфейс командной строки (CLI)" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Annexe: Utilisation avancée des filtres &mdash; Documentation blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d0e80ae2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Annexe Windows : que faire si Windows bloque le lancement" href="annexe_windows_securite.html" />
+    <link rel="prev" title="Contrat d’API" href="api_reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <span class="current" lang="fr" aria-current="true">Français</span>
+  <a href="../en/annexe_filtres.html" lang="en" hreflang="en">English</a>
+  <a href="../de/annexe_filtres.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/annexe_filtres.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/annexe_filtres.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/annexe_filtres.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/annexe_filtres.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/annexe_filtres.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/annexe_filtres.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Prise en main</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guide utilisateur</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Référence</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrat d’API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annexes</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Annexe: Utilisation avancée des filtres</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">Bibliothèque de filtres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">Exemples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Annexe Windows : que faire si Windows bloque le lancement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historique des versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">À propos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Annexe: Utilisation avancée des filtres</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-utilisation-avancee-des-filtres">
+<span id="annexe-filtres"></span><h1>Annexe: Utilisation avancée des filtres<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Lien vers cette rubrique"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Avertissement</p>
+<p>Cette section s’adresse aux utilisateurs avancés de blunderDB qui souhaitent
+exploiter pleinement les fonctionnalités de recherche de positions.</p>
+</div>
+<p>Les filtres sont au coeur de l’analyse des positions dans blunderDB.
+Leur utilisation permet de rechercher des positions spécifiques relativement
+précisément. Dans cette section, l’utilisation des filtres via la ligne de
+commande est détaillée. La ligne de commande est accessible en appuyant sur
+la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>. Elle permet de combiner avec l’habitude très rapidement
+des filtres et d’utiliser la bibliothèque de filtres.</p>
+<p>La grammaire de recherche — la commande <code class="docutils literal notranslate"><span class="pre">s</span></code>, ses jetons, la recherche
+dans les résultats courants avec <code class="docutils literal notranslate"><span class="pre">ss</span></code> — est décrite une seule fois, dans
+la section <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Filtres de recherche</span></a> de la liste des commandes ; le panneau de
+recherche lui-même est décrit dans le <a class="reference internal" href="manuel.html#panneau-recherche"><span class="std std-ref">manuel</span></a>.
+Cette annexe ne garde que la bibliothèque de filtres et des exemples.</p>
+<section id="bibliotheque-de-filtres">
+<h2>Bibliothèque de filtres<a class="headerlink" href="#bibliotheque-de-filtres" title="Lien vers cette rubrique"></a></h2>
+<p>La bibliothèque de filtres permet à l’utilisateur d’enregistrer des commandes de recherche
+afin de faciliter ses études thématiques.</p>
+<p>Pour ajouter un filtre à la bibliothèque,</p>
+<ol class="arabic simple">
+<li><p>Lancer la recherche à conserver (commande <code class="docutils literal notranslate"><span class="pre">s</span></code> suivie de filtres).</p></li>
+<li><p>Ouvrir le panneau de recherche (<code class="docutils literal notranslate"><span class="pre">TAB</span></code> ou <code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) et sélectionner
+l’onglet <em>Historique</em>.</p></li>
+<li><p>Cliquer sur l’icône signet de la recherche à enregistrer.</p></li>
+<li><p>Donner un nom au filtre et valider.</p></li>
+</ol>
+<p>Pour utiliser un filtre enregistré dans la bibliothèque,</p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau de recherche (<code class="docutils literal notranslate"><span class="pre">TAB</span></code> ou <code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) et sélectionner
+l’onglet <em>Enregistrés</em>.</p></li>
+<li><p>Rechercher le filtre souhaité.</p></li>
+<li><p>Double cliquer sur le filtre pour lancer la recherche.</p></li>
+</ol>
+</section>
+<section id="exemples">
+<h2>Exemples<a class="headerlink" href="#exemples" title="Lien vers cette rubrique"></a></h2>
+<p>Voici quelques exemples d’utilisation des filtres en ligne de commande:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type de position</p></th>
+<th class="head"><p>Structure de pions</p></th>
+<th class="head"><p>Commande</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Courses</p></td>
+<td></td>
+<td><p>s nc</p></td>
+</tr>
+<tr class="row-odd"><td><p>Courses petites</p></td>
+<td></td>
+<td><p>s nc P&lt;70</p></td>
+</tr>
+<tr class="row-even"><td><p>Frapper au point 1</p></td>
+<td></td>
+<td><p>s m&quot;6/1*&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Backgame 1-4</p></td>
+<td><p>portes 24, 21</p></td>
+<td><p>s p&gt;35</p></td>
+</tr>
+<tr class="row-even"><td><p>Décision de Take/Pass à -2 -4</p></td>
+<td><p>dés vides côté joueur du haut, score -2/-4</p></td>
+<td><p>s s d</p></td>
+</tr>
+<tr class="row-odd"><td><p>Envoi de too good</p></td>
+<td><p>dés vides côté joueur du bas</p></td>
+<td><p>s d e&gt;1000</p></td>
+</tr>
+<tr class="row-even"><td><p>Blitz avec au moins 20% de gammon</p></td>
+<td><p>portes dans le jan, hommes à la barre</p></td>
+<td><p>s g&gt;20</p></td>
+</tr>
+<tr class="row-odd"><td><p>Erreurs du joueur 1 de plus de 40 millipoints</p></td>
+<td></td>
+<td><p>s E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions dont un commentaire contient Aachen2024</p></td>
+<td></td>
+<td><p>s t&quot;Aachen2024&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Un pion arriéré à ramener</p></td>
+<td></td>
+<td><p>s k1,1</p></td>
+</tr>
+<tr class="row-even"><td><p>Quitter le point 20</p></td>
+<td><p>point 20</p></td>
+<td><p>s m&quot;20/&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Prime contre prime</p></td>
+<td><p>indiquer les primes</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Ace-point bear-off</p></td>
+<td><p>point 1 pour l’adversaire</p></td>
+<td><p>s P&lt;60</p></td>
+</tr>
+<tr class="row-odd"><td><p>Double avec au moins 20pip d’avance</p></td>
+<td><p>dés vides côté joueur du bas</p></td>
+<td><p>s d p&lt;-20</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions du match 5</p></td>
+<td></td>
+<td><p>s ma5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Positions des matchs 2 à 4</p></td>
+<td></td>
+<td><p>s ma2,4</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions des matchs 23 et 43</p></td>
+<td></td>
+<td><p>s ma23 ma43</p></td>
+</tr>
+<tr class="row-odd"><td><p>Positions du tournoi 1</p></td>
+<td></td>
+<td><p>s tn1</p></td>
+</tr>
+<tr class="row-even"><td><p>Erreurs dans le tournoi 2</p></td>
+<td></td>
+<td><p>s tn2 E&gt;40</p></td>
+</tr>
+</tbody>
+</table>
+<p>Exemples de recherche dans les résultats courants:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 42.9%" />
+<col style="width: 57.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scénario</p></th>
+<th class="head"><p>Commande</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Après <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">nc</span></code>, chercher les petites courses</p></td>
+<td><p>ss P&lt;70</p></td>
+</tr>
+<tr class="row-odd"><td><p>Après <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">g&gt;20</span></code>, ne garder que les erreurs</p></td>
+<td><p>ss E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>Après <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">tn1</span></code>, chercher les décisions de cube</p></td>
+<td><p>ss d</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="api_reference.html" class="btn btn-neutral float-left" title="Contrat d’API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="Annexe Windows : que faire si Windows bloque le lancement" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

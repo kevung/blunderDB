@@ -1,0 +1,565 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>バージョン履歴 &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="blunderDB について" href="a_propos.html" />
+    <link rel="prev" title="付録：統計モデル — XG / gnuBG / blunderDB の整合" href="stats_parity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/historique.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/historique.html" lang="en" hreflang="en">English</a>
+  <a href="../de/historique.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/historique.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/historique.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/historique.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/historique.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/historique.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">バージョン履歴</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#apres-une-mise-a-jour">更新のあとに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.36.0（2026-09-05）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.35.0 (2026-09-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">0.34.0 (2026-09-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.33.0 (2026-08-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.32.0 (2026-08-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">0.31.0 (2026-08-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.30.0 (2026-07-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">0.29.0 (2026-07-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">0.28.0 (2026-07-15)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">0.27.0 (2026-06-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">0.26.0 (2026-06-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">0.25.0 (2026-06-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">0.24.0 (2026-06-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">0.23.0 (2026-06-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">0.22.0 (2026-06-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">0.21.0 (2026-06-01)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">0.20.0 (2026-05-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">0.19.0 (2026-05-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">0.18.0 (2026-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">0.17.0 (2026-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">0.16.0 (2026-04-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">0.15.0 (2026-03-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">0.14.0 (2026-03-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">0.13.0 (2026-03-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id25">0.12.0 (2026-03-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id26">0.11.0 (2026-03-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">0.10.0 (2026-02-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id28">0.9.0 (2025-11-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">0.8.0 (2025-05-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id30">0.7.0 (2025-02-16)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">0.6.0 (2025-02-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id32">0.5.0 (2025-02-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id33">0.4.0 (2025-02-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id34">0.3.0 (2025-01-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id35">0.2.0 (2025-01-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id36">0.1.0 (2024-12-31)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">バージョン履歴</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="historique-des-versions">
+<span id="historique"></span><h1>バージョン履歴<a class="headerlink" href="#historique-des-versions" title="この見出しへのリンク"></a></h1>
+<p>バージョンは新しいものから古いものへと並べてあり、変更ごとに1つの項目が対応します。各バージョンの末尾には、そのバージョンがもたらしたものを詳しく説明するページへの参照が置かれています。のちのバージョンで取り消された項目には、それを置き換えたバージョンが併記されています。この一覧はソフトウェアの歴史を語るものであり、インストールされているバージョンを説明するものではありません。</p>
+<section id="apres-une-mise-a-jour">
+<h2>更新のあとに<a class="headerlink" href="#apres-une-mise-a-jour" title="この見出しへのリンク"></a></h2>
+<p>データベーススキーマの移行は、開いたときに<strong>自動的に</strong>行われ、<strong>元に戻せません</strong>。移行後のデータベースは blunderDB の以前のバージョンでは読めなくなるため、事前にバックアップを取っておきます（<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">付録: データベーススキーマ</span></a>）。それ以外は自動では行われません。以下のデータはいずれも遡及しないからです：</p>
+<ul class="simple">
+<li><p><strong>運を得るには元ファイルを再インポートする</strong>（0.33.0）。それ以前にインポートされたマッチは <em>運</em> の列にダッシュが入りますが、ダッシュはゼロではありません。運を運ばない形式（BGF、Jellyfish の <code class="docutils literal notranslate"><span class="pre">.mat</span></code>）が運をもたらすことは決してありません。</p></li>
+<li><p><strong>マークを得るには XG ファイルを再インポートする</strong>（0.30.0）。eXtreme Gammon で付けられたマークは、再インポート時にデータベースに反映されます。既存のコメントや分析に影響はありません。</p></li>
+<li><p><strong>gammonNet 分析の穴埋めを実行する</strong>（0.34.0）。インターフェースから、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code>で、あるいはサーバーモードで実行します。分析がまったくないポジションを埋めるだけで、インポートされた分析を上書きすることは決してありません。</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>0.36.0（2026-09-05）<a class="headerlink" href="#id1" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>実行ファイルが <strong>7.3 MB 小さく</strong>なりました。ベアオフテーブルはもう埋め込まれず、ダウンロードもされません。初回起動時に、背後で、静かに計算されます。gnubg のものとバイト単位で同一で、SHA-256 の指紋も検証されます。拡張テーブル TS-06-11 は 1.2 GB のダウンロードではなく <em>Bearoff</em> タブで計算します。</p></li>
+<li><p><strong>トーナメントはインポート時にひとりでに埋まります</strong>。マッチは、そのファイルが名指すトーナメントに分類され、必要ならトーナメントが作られます。すでに分類済みのマッチが動かされることはありません。</p></li>
+<li><p><strong>検索の文法はひとつだけ</strong>になり、アプリケーションからと同じように、コマンドライン（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>）からも読めるようになりました。</p></li>
+<li><p>コマンドラインには、9 つのコマンドでの<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>、<strong>bash・zsh・fish の補完</strong>、<code class="docutils literal notranslate"><span class="pre">repair</span></code> コマンド、<code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code> と <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code> のサブコマンドが加わりました。</p></li>
+<li><p>内蔵ヘルプの<strong>ショートカット</strong>タブと<strong>コマンド</strong>タブは、それらを説明するマニュアルのページから生成されます。もはやマニュアルに遅れることはなく、囲み記事のない表になりました。ヘルプの<strong>マニュアル</strong>タブは要約のままで、オンラインの完全なマニュアルとは別のものです。ガイドツアーが3つ増えました（Eval、Anki、統計）。</p></li>
+<li><p><strong>Linux arm64 バイナリ</strong>。tar アーカイブ、<code class="docutils literal notranslate"><span class="pre">.deb</span></code>、<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>、AUR パッケージで配布します。</p></li>
+<li><p><strong>Eval</strong> パネルは、離れたときの盤を取り戻し、<em>money</em> のエクイティと <em>match</em> のエクイティを区別し、キーボードでたどれます。</p></li>
+<li><p>サーバー側では、<strong>コードから生成される API 契約</strong>（<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> とその付録、135 ルート）、要求ごとの相関識別子、進行中の作業のゲージ、NDJSON ストリームの圧縮（元の 13.5 %）、そしてテナントを越える二つの呼び出し（vacuum と purge）の<code class="docutils literal notranslate"><span class="pre">/ops/</span></code>への移動が入りました。</p></li>
+<li><p><strong>スキーマ 2.18.0</strong>：Jacoby と beaver がポジションの同一性から外れ、同じマネーゲームのポジションが別々の入口から二度入ることはなくなりました。移行は開いたときに自動的に行われ、元に戻すことはできません（<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">付録: データベーススキーマ</span></a>）。</p></li>
+<li><p>主な修正：何も選択していないときにマッチパネルの詳細ペインが画面の半分を占めなくなり、棋譜の最初のゲームも他と同じようにたためるようになり、SHIFT-J と SHIFT-K がどのパネルからでもビューを切り替えるようになり、8 つの「表示／非表示」ショートカットがようやく隠すようになりました。</p></li>
+<li><p><a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>、<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>、<a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>0.35.0 (2026-09-02)<a class="headerlink" href="#id2" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>コマンドラインが2つのファミリーを獲得しました：<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span></code>（コレクションの一覧表示、表示、作成、名前変更、削除、エクスポート）と <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span></code>（デッキ、統計、復習予測、デッキの再同期）。</p></li>
+<li><p>サーバーモードは <strong>Docker イメージ</strong>（<code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>、amd64 と arm64）として公開され、<code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code> ルートを獲得し、サーバーの発行者アイデンティティ（<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>）で<strong>エクスポートに透かしを入れます</strong>。</p></li>
+<li><p>gammonNet 評価エンジンは<strong>キューブで葉ノードを評価します</strong>：マッチスコアにおいて、検索の判定は eXtreme Gammon のものに近づきます。</p></li>
+<li><p>各リリースは、Debian、RPM、AUR パッケージに加えて、<strong>winget と Homebrew のマニフェスト</strong>および Flatpak バンドルを提供するようになりました。</p></li>
+<li><p>インターフェースでは、ライブラリが<strong>ページ分割</strong>されるようになりました（5万ポジションのデータベースが、更新のたびにすべてをメモリに読み込むことがなくなりました）。モーダルウィンドウは共通の基盤（フォーカス、Escape、アクセシビリティ）を共有し、盤面は変化した部分のみを再描画し、埋め込まれた日本語フォントは必要な部分集合に縮小されました（5.5MB 削減）。</p></li>
+<li><p>主な修正：「データベースをインポート」でインポートしたデータベースは、フィルタに表示されないポジションや2回目のインポートで重複したポジションを保持していました（開いた際に修復されます）。プレイヤー統合ウィンドウの「統合」ボタンがグレーのままでした。サーバーのエクスポートが空でした。Windows では、ダウンロード済みのベアオフデータベースの削除と <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--force</span></code> が失敗していました。</p></li>
+<li><p><a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>、<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>、<a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>0.34.0 (2026-09-02)<a class="headerlink" href="#id3" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p><strong>内蔵の評価エンジン</strong>：gammonNet は Go に移植され blunderDB にコンパイルされており、XG も gnuBG も使わずにオフラインで任意のポジションを評価します——ニューラルネットワーク、枝刈りを伴う0〜2プライ探索、Janowski と blunderDB のマッチエクイティテーブルによるキューブの決定、そしてマッチスコアを尊重する探索。</p></li>
+<li><p>Bearoff パネルは <strong>Eval</strong> パネルになります：ポジションの事実（両サイドの勝ち・ギャモン・バックギャモンの確率、エクイティ）を提示し、続いて盤面が求める唯一の決定を、スクロールのない安定したグリッド上に表示します。マッチエクイティは<strong>正規化</strong>され、「ダブルするには良すぎる」という判定が再び見えるようになりました。</p></li>
+<li><p>評価は<strong>段階的</strong>です：操作の瞬間に即座の0プライ、静止時には2プライで、新たな操作があればいつでもキャンセルされ、深度ラベルは常にその数値を生成した深度を示します。</p></li>
+<li><p>盤面全体、ダイス、スコアはそこで編集可能で、クリックでもキーボードでも操作でき、ライブラリのポジションがパネルに出入りします。</p></li>
+<li><p>両面データベースを超えるレースでは、3つ目の<strong>評価済み</strong>レジームが、これまでパネルが与えていなかったスコアにおけるキューブの判定を提供します。</p></li>
+<li><p>設定の <strong>gammonNet</strong> タブが、表示深度と分析深度を分離します。</p></li>
+<li><p>インポート後、範囲が限定され、可視化され、キャンセル可能で再開可能な<strong>分析バッチ</strong>が、分析を一切持たないポジションを埋めます。インポート済みの分析を上書きすることは決してありません。既存の<strong>ライブラリの追いつき</strong>は、インターフェース、新しい <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> コマンド、またはサーバーモードから開始できます。</p></li>
+<li><p>主な修正：eXtreme Gammon からインポートされたキューブへの応答が、反転されずにダブラー側の分析を引き継いでいました。白の手とバーからの入着の記法が gnuBG と XG に準拠するようになりました。gnuBG 分析の深度が正しく読み取られるようになりました。サイドパネルのサイズが記憶されるようになりました。</p></li>
+<li><p><a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Eval パネル</span></a>、<a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a>、<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>0.33.0 (2026-08-26)<a class="headerlink" href="#id4" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>統計パネルに<strong>プレイヤー</strong>タブが加わりました。これまでの3つのタブが1人のプレイヤーを記述するのに対し、このタブは全員を比較し、データベース内のプレイヤーごとに1行を表示します。列は、対戦数、勝敗、集計された決定数、PR（全体／チェッカー／キューブ）、Snowie Error Rate、ブランダー数、そして運です。任意の列で並べ替えられ、通常のフィルタで大会の期間に絞り込め、行をクリックするとそのプレイヤーの詳細に切り替わります。ダッシュは一度も測定されていない値を示すもので、ゼロではありません。この表はコマンドライン（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code>、テキスト・JSON・CSV）とサーバーモードからも利用できます。</p></li>
+<li><p>各ロールの<strong>運</strong>がデータベースに保存され、表示されるようになりました。1ロールあたりの平均の運を、符号付きで千分の1ポイント単位で示します。インポート時に eXtreme Gammon のファイルからも gnuBG のファイルからも読み取られます。遡及はしません。以前にインポートした対戦はダッシュのままで、取り戻すには元ファイルを再インポートする必要があります。運を運ばない形式（BGF、Jellyfish の <code class="docutils literal notranslate"><span class="pre">.mat</span></code>）からは決して得られません。</p></li>
+<li><p><strong>エラー</strong>タブは、キューブの決定がどれだけ損をしたかだけでなく、どの<em>方向</em>に誤ったかを示すようになりました。行は<em>提示</em>（見送ったダブル、早すぎたダブル）と<em>応答</em>（誤ったパス、誤ったテイク）の2つで、意図的に分けてあります。同じ人が遅めにダブルしつつ緩めにテイクすることはありうるからです。各セルには件数、ツールチップには失ったエクイティが表示され、クリックすると該当するポジションが読み込まれます。</p></li>
+<li><p>新しい<strong>データベースの最適化</strong>コマンドが加わり、削除によって空いた領域を回収できます。設定画面のボタンと <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> サブコマンドから実行します。自動では決して実行されません。</p></li>
+<li><p>操作性の改善：破壊的な操作には確認を求め、検索中であることを表示し、未知のコマンドには沈黙ではなくメッセージを返します。タブ、ドッキングされたパネル、小さなダイアログはすべてキーボードで操作できます。検索も体感できるほど高速になりました。</p></li>
+<li><p>主な修正：gnuBG が「Double No」と記録するノーダブルがダブルとして数えられ、キューブの PR を歪めていました（既存のデータベースはサーバーモードで再インポートなしに修復できます）。プレイヤーフィルタが Snowie Error Rate の分母を不当に縮めていました。エクスポートが古いスキーマで書き出していました。<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> がデータベースを最適化せずグラフィカルインターフェースを開いていました。</p></li>
+<li><p><a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a> と <a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>0.32.0 (2026-08-09)<a class="headerlink" href="#id5" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>EPC パネルは <strong>Bearoff</strong> パネルになり、完全なレース分析を獲得します。<em>（0.34.0 で Eval パネルに改称。）</em></p></li>
+<li><p>純粋なベアオフポジションでは、EPC、ピップカウント、無駄（wastage）、各プレイヤーの平均ロール数（符号付きのΔ行を持つ表として提示されるようになりました）に加えて、両プレイヤーの勝率とマネーエクイティ（キューブレス、ノーダブル、ダブル／テイク、ダブル／パス、各決定の最善との差付き）、そして<strong>最善のキューブの決定</strong>を表示します。</p></li>
+<li><p>明確に区別された2つのレジーム：<em>厳密</em>（両面データベースからの読み取り。プレイヤーごとに最大6個のチェッカーをカバーする GNUbg の TS-06-06 データベースを内蔵）と <em>推定</em>（較正済みの畳み込み、誤差幅を表示——キューブの判定は決して推定されません）。</p></li>
+<li><p>拡張された TS-06-11 データベース（プレイヤーごとに最大11個のチェッカーまで厳密な判定、1.2 GB）は、設定の新しい <em>Bearoff</em> タブからダウンロードでき、整合性の検証と中断したダウンロードの再開に対応しています。gnubg の任意の両面 <code class="docutils literal notranslate"><span class="pre">.bd</span></code> ファイルを指定することもできます。<em>（0.36.0 で置き換え：テーブルはマシン上で計算され、ダウンロードは一切ありません。）</em></p></li>
+<li><p>トレーニング用の<strong>チャレンジモード</strong>：結果は変更のたびに隠され、クリック1つでゾーンごとに明らかになります。</p></li>
+<li><p>盤面上で完結する編集：両サイドのチェッカー、手番のプレイヤー（ベアオフ／スコアの長方形をクリック）、キューブの位置（キューブをクリック）。</p></li>
+<li><p>盤面のクリックは、インターフェースの拡大率にかかわらず正確になりました（ポイント1をクリックしたつもりがポイント2に当たることがありました）。</p></li>
+<li><p>新しいコマンドライン <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> と、サーバーモードの <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> オプション。</p></li>
+<li><p>マニュアルの新しいセクション「Bearoff パネルの方法論と前提」が、表示される各値の背後にある前提を網羅的に述べています。<em>（0.34.0 でパネルとともにセクションも改称。）</em></p></li>
+<li><p><a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Eval パネル</span></a> と <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Eval パネルの方法論と仮定</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>0.31.0 (2026-08-04)<a class="headerlink" href="#id6" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>第三者へのデータベースの配布：2つの独立した仕組みがあり、どちらも任意で、エクスポート時に選択できます。</p></li>
+<li><p><strong>発信元の透かし</strong>は、それが何であり、どこから来たかをファイルに記録します。初回使用時に自動的に作成される発行者アイデンティティによって署名され、そのマークは偽造不可能で、メタデータパネルの先頭（またはファイルに書き込むことなく <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> 経由）で読み取れます。受け取る側には何も記録されません——ログもトラッキングもありません。</p></li>
+<li><p><strong>パスワード保護</strong>は、暗号化された <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> ファイル（AES-256-GCM、Argon2id で導出した鍵）を生成し、開くたびに検証されますが、そのヘッダーは平文のまま読み取れます。アイデンティティは設定から単一のファイルとしてエクスポート・インポートできます。</p></li>
+<li><p>エクスポートウィンドウを再設計：4画面ではなく1画面に、実際に出ていくもの（表示されているポジション）を思い出させる表示、部分的な場合は赤で示される各コレクションのカバー率、対局とともにしかエクスポートできないトーナメント——そしてエクスポートは3倍高速になりました。</p></li>
+<li><p>設定ウィンドウを3つのタブ（インターフェース、盤面の色、発行者アイデンティティ）に再編成し、サイズと位置が安定するようになりました。</p></li>
+<li><p>メタデータパネルは1つのグリッドに再配置されました。</p></li>
+<li><p>コマンドのエコーしか受け取っていなかったログパネルは削除されました。</p></li>
+<li><p>主な修正：誤ったパスワードでは保護されたデータベースが開かなくなりました。モーダルウィンドウのフィールドがクリックでフォーカスを失わなくなりました。マネーゲームで PR/MWC 指標の計算がクラッシュしなくなりました。一時ファイル（<code class="docutils literal notranslate"><span class="pre">-wal</span></code>、<code class="docutils literal notranslate"><span class="pre">-shm</span></code>、ロック）は終了時にクリーンアップされます。</p></li>
+<li><p><a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a> と <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2>0.30.0 (2026-07-26)<a class="headerlink" href="#id7" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>コメントによる検索：「検索テキスト」フィルタが「コメント」フィルタになり、3つの排他的なモードを提供します——<em>テキストを含む</em>（従来の動作、トークン <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;word1;word2&quot;&quot;</span></code>）、<em>コメントがある</em>（トークン <code class="docutils literal notranslate"><span class="pre">co</span></code>）、<em>コメントがない</em>（トークン <code class="docutils literal notranslate"><span class="pre">xco</span></code>）——これにより、注釈の付いたポジション、あるいは逆にまだコメントが必要なポジションを一度の操作で見つけられます。</p></li>
+<li><p>eXtreme Gammon でマークされたポジション：XG の対局を分析する際に付けられたマーク（フラグ）は、インポート時に読み取られ、「マークされた」フィルタ（トークン <code class="docutils literal notranslate"><span class="pre">fl</span></code>）で検索できるようになりました。他の条件と組み合わせ可能です。マークされたキューブの決定は、ダブルとテイク／パスの2つのマークされたポジションを生みます。</p></li>
+<li><p>マーキングは遡及的ではないため、該当する <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルを再インポートするだけで、そのマークがデータベースに反映されます。既存のコメントや分析に影響はありません。</p></li>
+<li><p>主な修正：トーナメントのバッジに表示される PR は、両プレイヤーの合計ではなく、基準プレイヤーを基準にするようになりました。検索に基づく Anki デッキは、データベース全体を取り込むのではなく、再びその検索のフィルタを尊重するようになりました。特定のフィルタ（テキスト、日付、指された手のエラー）を組み合わせた際の検索のフリーズが修正されました。</p></li>
+<li><p><a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> と <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>0.29.0 (2026-07-18)<a class="headerlink" href="#id8" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>対局を Jellyfish/gnubg 形式（<code class="docutils literal notranslate"><span class="pre">.mat</span></code>）でエクスポートする機能を、インターフェース（対局パネル）とコマンドラインの両方に追加し、対応するサーバールートも用意しました——別のバックギャモンソフトで対局を再生するのに便利です。</p></li>
+<li><p>検索：「除外するダイス」の新しい判別子（トークン <code class="docutils literal notranslate"><span class="pre">xD65</span></code>、複数指定可）で、指定した目に一致するロールのポジションを除外します。</p></li>
+<li><p>安全な同時オープン：別の blunderDB ウィンドウですでに書き込み用に開かれているデータベースは、破損のリスクを冒す代わりに、読み取り専用で開かれるようになりました（閲覧、検索、分析は引き続き可能ですが、変更は無効になり、タイトルバーに「［読み取り専用］」と表示されます）。</p></li>
+<li><p>ポジションの由来：対局モード以外では、盤面上の情報バーに、検討中のポジションがどの対局（およびそのトーナメント）に由来するかが表示され、複数の対局に現れる場合は「+N」バッジが付きます。</p></li>
+<li><p>環境に対する堅牢性の向上：フォント、クリップボード、最後に開いたデータベースが利用できない場合の自動フォールバック。</p></li>
+<li><p>ライブラリの明示的な再読み込み（<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>、ツールバーのボタン、または <code class="docutils literal notranslate"><span class="pre">e</span></code> コマンド）により、表示中のポジションの分析パネルが再び開きます。</p></li>
+<li><p>主な修正：大規模なデータベースのエクスポート時のフリーズを解消。エクスポートの「なし」ボタンが実際には何も除外していなかった問題を修正。複数単語のコメントフィルタ。情報バーにおけるイベントとトーナメントの重複排除。その他表示上の各種調整。</p></li>
+<li><p><a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a>、<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">マッチパネル</span></a>、<a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id9">
+<h2>0.28.0 (2026-07-15)<a class="headerlink" href="#id9" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>検索パネル：識別子の入力欄を選択ウィンドウ（テキストでフィルタ可能なチェックリスト、<em>すべて</em>／<em>なし</em>ボタン、トーナメントをチェックするとそのメンバー対局もチェックされる）に置き換えた、統合された「対局とトーナメント」フィルタ——大規模なデータベースで高速化され、対局タブとトーナメントビューは表示されている対局に対してのみ PR/MWC 指標を再計算するようになりました。<code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> が対応するパリティのギャップを埋めます。</p></li>
+<li><p>新しい「個別にインポート」フィルタ（「その他」グループのチェックボックス、またはコマンドラインのトークン <code class="docutils literal notranslate"><span class="pre">i</span></code>、<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>。CLI では <code class="docutils literal notranslate"><span class="pre">--individual</span></code> でも利用可能）で、対局のインポートに埋もれることなく、単独で保存またはインポートされたポジションを見つけられます。</p></li>
+<li><p>データ損失を修正：対局を削除しても、その対局が含んでいた個別インポート済みのポジション、コレクションに配置されたポジション、Anki デッキに含まれたポジションは削除されなくなりました。</p></li>
+<li><p>サーバー（ヘッドレス）モード：間隔反復の Anki スケジューラ向けに6つの新しいメソッド——復習ログ（<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>）、期限が来るカードの予測（<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>）、カードの一時停止／保留／削除（<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>）、デッキの目標保持率を観測された成功率に向けて自動調整（<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>。0.36.0 で <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> に置き換えられ、こちらは観測された率を測るだけで目標値を書き込むことは決してありません）。マルチユーザー PostgreSQL 環境でテナントのデータを完全に削除する新しいメソッド <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>。新しいメソッド <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>（フィルタリング／ソート／ページネーション）と <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code>（対局リストに限定した PR/MWC 指標）。</p></li>
+<li><p>ネイティブな Linux 配布：生のバイナリをダウンロードした際に失われていた実行ビットを保持する <code class="docutils literal notranslate"><span class="pre">.deb</span></code>／<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> パッケージ。</p></li>
+<li><p>インポート：対局をインポートした後、対局タブが表示され、インポートされたポジションが即座に見えるようになりました。単一のポジション（XGP ファイル、BGBlitz ポジション、テキストポジションファイル、貼り付けたポジション、またはポジションの一括インポート）をインポートした後は、対局タブではなく分析タブがインポートされたポジションで直接開くようになりました。macOS からフランス語またはドイツ語の eXtreme Gammon 分析を貼り付けると空になっていた問題を修正しました（システムのクリップボードによりアクセント記号が分解されていました）。</p></li>
+<li><p><a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>、<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a>、<a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">ダウンロードとインストール</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id10">
+<h2>0.27.0 (2026-06-13)<a class="headerlink" href="#id10" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>Anki パネル：<em>Study</em> の隣の <em>Cram</em> ボタンから利用できる新しいフリー練習（<em>cram</em>）モード。間隔反復のスケジュールを変更せずにデッキからランダムなポジションを表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。</p></li>
+<li><p>検索：最悪のエラー（エクイティ/MWC）を分析ビューに直接読み込む新しいコマンド <code class="docutils literal notranslate"><span class="pre">blunders</span></code>（エイリアス <code class="docutils literal notranslate"><span class="pre">bl</span></code>）。オプションの数値で件数を選べます（<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>）。指定したプレイヤーが（どちらの席でも）参加した対局のすべてのポジションを見つける新しいプレイヤーフィルター <code class="docutils literal notranslate"><span class="pre">pl'名前'</span></code>。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。</p></li>
+<li><p>サーバー（ヘッドレス）モード：新しいメソッド <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code>（1回の呼び出しで対局のすべての手を取得）と <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code>（両プレイヤーの Effective Pip Count）。</p></li>
+<li><p><a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki パネル</span></a> と <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>0.26.0 (2026-06-09)<a class="headerlink" href="#id11" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大・縮小するスケールスライダーと、ワイド画面をより有効活用するためのパネル位置の選択（下、横、または自動）。</p></li>
+<li><p>盤面の上に、プレイヤーと対局の文脈（イベント、会場、ラウンド、日付、長さ）を示す情報バーを追加しました。</p></li>
+<li><p>データベースを開くと、対局パネルがすぐに表示されるようになり、レビューは最初のポジションから始まります。</p></li>
+<li><p>キーボードショートカットは、キーボード配列（AZERTY、QWERTY、QWERTZ……）に依存しなくなりました。</p></li>
+<li><p>XGID のデコードを修正（Jacoby/Beaver フラグとキューブの値）。</p></li>
+<li><p>複数ビューのタブを追加：複数の独立した作業スペース（ポジションリスト、現在のポジション、検索）を、ショートカット <em>CTRL-T</em>（新規ビュー）、<em>CTRL-W</em>（閉じる）、<em>CTRL-PageUp</em>／<em>CTRL-PageDown</em>（ビュー切り替え）、タブのダブルクリックによる名前変更とともに提供します。</p></li>
+<li><p><a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a> と <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">ビュータブ</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id12">
+<h2>0.25.0 (2026-06-07)<a class="headerlink" href="#id12" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>サーバー（ヘッドレス）モード：ポジションを保存せずに再構築する2つの新しいメソッド —— <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> は XGID 文字列をポジションにデコードし、<code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> は単一ポジションファイル <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> を読み込みます。</p></li>
+<li><p><a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id13">
+<h2>0.24.0 (2026-06-06)<a class="headerlink" href="#id13" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>ヘッドレスモード向けのコンテナイメージ（Docker）を追加しました。専用のエントリポイント <code class="docutils literal notranslate"><span class="pre">serve</span></code> と、グラフィカルインターフェースを持たない静的バイナリを生成する <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> を用意し、blunderDB エンジンをリバースプロキシの背後でサービスとしてデプロイできるようにしました。</p></li>
+<li><p><a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id14">
+<h2>0.23.0 (2026-06-05)<a class="headerlink" href="#id14" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>インターフェースのガイドツアー（全般ツアー、検索、対局、トーナメント）を追加し、ツールバーまたは <code class="docutils literal notranslate"><span class="pre">tour</span></code> コマンドから再生できます。また、自分の対局をインポートせずにツールを体験できる、<code class="docutils literal notranslate"><span class="pre">demo</span></code> コマンドで読み込めるサンプルデータベースを追加しました。</p></li>
+<li><p>設定ウィンドウからの盤面の色（背景、枠、矢印、チェッカー、ダイス、キューブ）のカスタマイズ。</p></li>
+<li><p>コマンドラインのオートコンプリート（<em>TAB</em> キー）。</p></li>
+<li><p>検索パネル：決定タイプ（駒／キューブ）の明示的な制御、キューブの決定にはダブル／ノーダブルまたはテイク／パスのサブタイプがあり、盤面と同期します。テイク／パスの決定では、提示されるキューブが盤面の中央に表示されます。</p></li>
+<li><p>識別子によるポジションの検索（<code class="docutils literal notranslate"><span class="pre">id</span></code> フィルタ）。</p></li>
+<li><p>キューブのエラーがプレイヤー1に帰属される問題を修正しました。</p></li>
+<li><p><a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">ガイドツアーとサンプルデータベース</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id15">
+<h2>0.22.0 (2026-06-02)<a class="headerlink" href="#id15" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>デスクトップアプリケーションを補完する、高度かつ任意のヘッドレスモード（サーバー）を追加：エンジンを HTTP + JSON で公開するデーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code>、テナントごとの分離（およびオプションの Row-Level Security）を備えたマルチユーザーの PostgreSQL バックエンド、SQLite データベースを PostgreSQL へ転送する <code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド、すべてのストレージ操作にコマンドラインからアクセスできる汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code>。</p></li>
+<li><p>新しい形式（eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>、BGBlitz テキスト、ネイティブライブラリ <code class="docutils literal notranslate"><span class="pre">.db</span></code>）からの単一ポジションのインポートと、形式間での重複の補完。</p></li>
+<li><p>修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。</p></li>
+<li><p><a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id16">
+<h2>0.21.0 (2026-06-01)<a class="headerlink" href="#id16" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>インターフェースの国際化：blunderDB 全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。</p></li>
+<li><p>ツールバーの歯車型ボタンからアクセスできる設定ウィンドウを追加し、言語を選択できるようにしました。</p></li>
+<li><p>言語の選択はセッション間で保持されます。</p></li>
+<li><p><a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id17">
+<h2>0.20.0 (2026-05-31)<a class="headerlink" href="#id17" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>検索パネルに除外構造 <em>Except</em> を追加：描画されたチェッカーのいずれかを含むポジションを除外し、「空でなければならない」マーカー（ダブルクリック）と、ポイントごとの無制限のチェッカー数（<code class="docutils literal notranslate"><span class="pre">x</span></code> コマンド）に対応します。</p></li>
+<li><p>ロールフィルタに「最初のダイスのみ」オプションを追加（D1 バリアント、CLI オプション <code class="docutils literal notranslate"><span class="pre">--dice</span></code>）。</p></li>
+<li><p>コメントパネル：開いたときに入力欄へ自動的にフォーカスし、編集／削除ボタンを常に表示します。</p></li>
+<li><p>すべてのコメントタグを検出できなかった「Search Text」フィルタを修正しました。</p></li>
+</ul>
+</section>
+<section id="id18">
+<h2>0.19.0 (2026-05-07)<a class="headerlink" href="#id18" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>統計パネルの追加：PR（Performance Rating）、Snowie Error Rate、MWC cost（Match Winning Chance cost）の各指標、フィルターバー（プレイヤー、トーナメント、日付、決定の種類、マッチ長）、レベルカード／移動平均 PR／トップブランダーを表示するダッシュボードタブ、トーナメントごとの推移曲線とマッチごとの散布図を表示する進捗タブ、キューブの決定ごとの内訳とエラーの大きさのヒストグラムを表示するエラータブ。</p></li>
+<li><p>すべての指標からポジション／対局／トーナメントへのインタラクティブなドリルダウン。</p></li>
+<li><p>PR／MWC の即時切り替え。</p></li>
+<li><p>CLI コマンド list --type stats。</p></li>
+<li><p>PR／Snowie ER／MWC 指標を eXtremeGammon および gnuBG に整合（僅差のキューブに対するエクイティしきい値 0.16）。</p></li>
+<li><p>Double/Pass 決定に対する cube_error の計算を修正しました。</p></li>
+<li><p>統計モデルのドキュメント化（<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a>）。</p></li>
+<li><p><a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+<section id="id19">
+<h2>0.18.0 (2026-04-20)<a class="headerlink" href="#id19" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>大規模なコードリファクタリング：db.go（1万行）を19の専門ファイルに分割、App.svelte から7つのサービスモジュールを抽出（4888→469行）、モーダル／パネルストアの統合。</p></li>
+<li><p>Svelte 5 runes への完全な移行。</p></li>
+<li><p>9個のテーブルモーダルを汎用の DataTableModal コンポーネントに置き換え。</p></li>
+<li><p>ESLint + Prettier + vitest（125件のフロントエンドテスト）を CI とともに追加。</p></li>
+<li><p>WCAG 2.1 AA 準拠（フォーカスの可視化、ARIA ロール、キーボードナビゲーション）。</p></li>
+<li><p>読み取りの並列性を高めるため、Database の mutex を RWMutex に変更。</p></li>
+<li><p>完全な CLI ドキュメント（CLI_USAGE.md + Sphinx FR/EN）。</p></li>
+<li><p>README の書き直し。</p></li>
+<li><p>すべての ESLint（46→0）および Vite（6→0）の警告を修正。</p></li>
+</ul>
+</section>
+<section id="id20">
+<h2>0.17.0 (2026-04-20)<a class="headerlink" href="#id20" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>ストレージの最適化：分析データの zlib 圧縮（約80%削減）、ポジションのコンパクトなエンコーディング（サイズを約90%削減）。</p></li>
+<li><p>検索性能を向上させるため、不足していた5つのインデックスを追加。</p></li>
+<li><p>キューブのエラーによる検索を修正。</p></li>
+<li><p>結果のない検索後の EDIT モードを修正。</p></li>
+<li><p>タブ切り替え時の検索パネルの状態の復元。</p></li>
+<li><p>クリティカルパスから62件のデバッグ命令を削除。</p></li>
+</ul>
+</section>
+<section id="id21">
+<h2>0.16.0 (2026-04-18)<a class="headerlink" href="#id21" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>データベーススキーマ v2.0.0：Zobrist ハッシュによるポジションの重複排除、非正規化されたフィルタリング列、ビットボードによるパターンの事前フィルター、WAL ジャーナリング（<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">付録: データベーススキーマ</span></a>）。</p></li>
+<li><p>一括インポートが3倍以上高速化し、1万件以上のポジションに対するフィルター検索が100ミリ秒以内に。</p></li>
+<li><p>注意：v0.16.0 で作成した DB ファイルは古いバージョンでは開けません。古い DB はその場で自動的にマイグレーションされます（先にバックアップを取ってください）。</p></li>
+</ul>
+</section>
+<section id="id22">
+<h2>0.15.0 (2026-03-31)<a class="headerlink" href="#id22" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>ポジションを PNG 画像としてクリップボードにエクスポート（Ctrl+X でボードのみ、Ctrl+X Ctrl+X で分析付きのボード）。</p></li>
+</ul>
+</section>
+<section id="id23">
+<h2>0.14.0 (2026-03-30)<a class="headerlink" href="#id23" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>間隔反復学習（FSRS アルゴリズム）のための専用 Anki パネル。</p></li>
+<li><p>XG ファイルからのコメントのインポート。</p></li>
+</ul>
+</section>
+<section id="id24">
+<h2>0.13.0 (2026-03-28)<a class="headerlink" href="#id24" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>インターフェースの簡素化：マッチおよびコレクション内のナビゲーションはパネルから直接行えるようになりました。</p></li>
+<li><p>ステータスバーに統合されたコマンドライン。</p></li>
+<li><p>コンソールパネルをログパネルに名称変更。<em>（パネルは 0.31.0 で削除。）</em></p></li>
+<li><p>下部パネルに専用のベアオフパネル。</p></li>
+<li><p>検索パネルでのポジションのコピー／貼り付け。</p></li>
+<li><p>ドラッグアンドドロップによる、コレクション、コレクション内のポジション、トーナメント内のマッチの並べ替え。</p></li>
+<li><p>マッチパネルへのトーナメント列の追加とインライン編集。</p></li>
+<li><p>検索後の分析パネルの自動表示。</p></li>
+</ul>
+</section>
+<section id="id25">
+<h2>0.12.0 (2026-03-19)<a class="headerlink" href="#id25" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>分析付きの eXtreme Gammon ポジションファイル（XGP）のインポート。</p></li>
+</ul>
+</section>
+<section id="id26">
+<h2>0.11.0 (2026-03-06)<a class="headerlink" href="#id26" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>現在のポジションに対する検索フィルター。</p></li>
+<li><p>マッチごと、トーナメントごとのフィルターの追加。</p></li>
+<li><p>検索パネルを開いた際のボードの自動クリア。</p></li>
+</ul>
+</section>
+<section id="id27">
+<h2>0.10.0 (2026-02-25)<a class="headerlink" href="#id27" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG/XGP)、GNUbg (SGF)、Jellyfish (MAT/TXT)、BGBlitz (BGF/TXT) からのマッチのインポート。</p></li>
+<li><p>マッチ内のナビゲーション：インポートしたマッチの着手をたどり、実際に打たれた着手を強調表示します。</p></li>
+<li><p>マッチパネル：一覧、ソート、インライン編集、プレイヤーの入れ替え、トーナメントの割り当て。</p></li>
+<li><p>フォルダーの再帰的インポートおよびドラッグアンドドロップによるインポート。</p></li>
+<li><p>EPC（実効ピップカウント）計算機。GNUbg のベアオフデータベースを内蔵しています。<em>（0.36.0 で置き換え：テーブルはマシン上で計算され、内蔵されるものはもうありません。）</em></p></li>
+<li><p>コレクション：ポジションのカスタムなグループ化。</p></li>
+<li><p>トーナメント：イベントごとのマッチのグループ化。</p></li>
+<li><p>セッション状態（最後の検索、現在のポジション）の保存と復元。</p></li>
+<li><p>データベーススキーマの自動マイグレーション。</p></li>
+<li><p>分析における複数エンジンの表示。</p></li>
+<li><p>検索におけるプレイヤー1のエラー／ブランダーのフィルター。</p></li>
+<li><p>きめ細かな選択によるデータベースのエクスポート（マッチ、コレクション、トーナメント、打たれた着手）。</p></li>
+<li><p>マッチ内ナビゲーション用ボタン。</p></li>
+<li><p>マッチナビゲーションにおけるピップカウントの表示。</p></li>
+<li><p>完全なコマンドラインインターフェース（CLI）。</p></li>
+<li><p>最後に開いたデータベースの自動再オープン。</p></li>
+<li><p>ツールバーとアイコンの改善。</p></li>
+</ul>
+</section>
+<section id="id28">
+<h2>0.9.0 (2025-11-02)<a class="headerlink" href="#id28" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>フィルターライブラリのバグ修正。</p></li>
+<li><p>データベースのインポート／エクスポート。</p></li>
+<li><p>選択した着手に対する矢印の表示。</p></li>
+<li><p>インポート／エクスポート用のキーボードショートカット。</p></li>
+</ul>
+</section>
+<section id="id29">
+<h2>0.8.0 (2025-05-03)<a class="headerlink" href="#id29" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>ピップカウントを非表示にする機能。</p></li>
+<li><p>ランダムなポジションの読み込み。</p></li>
+</ul>
+</section>
+<section id="id30">
+<h2>0.7.0 (2025-02-16)<a class="headerlink" href="#id30" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>XG エクスポートにおける日本語およびドイツ語のサポート。</p></li>
+</ul>
+</section>
+<section id="id31">
+<h2>0.6.0 (2025-02-13)<a class="headerlink" href="#id31" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>フィルターライブラリの追加。</p></li>
+<li><p>メタデータでのデータベースバージョンの表示。</p></li>
+</ul>
+</section>
+<section id="id32">
+<h2>0.5.0 (2025-02-04)<a class="headerlink" href="#id32" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>新しいフィルター（ミラー、ノンコンタクト、内野ブロット、外野ブロット）の追加。</p></li>
+</ul>
+</section>
+<section id="id33">
+<h2>0.4.0 (2025-02-03)<a class="headerlink" href="#id33" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>各種バグの修正。</p></li>
+<li><p>blunderDB のアイコンの追加。</p></li>
+<li><p>フィルターの修正。</p></li>
+<li><p>MacOS のサポートの追加。</p></li>
+</ul>
+</section>
+<section id="id34">
+<h2>0.3.0 (2025-01-27)<a class="headerlink" href="#id34" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>各種バグの修正。</p></li>
+<li><p>ウィンドウサイズの自動保存。</p></li>
+<li><p>XG からのコメントのインポート（存在する場合）。</p></li>
+</ul>
+</section>
+<section id="id35">
+<h2>0.2.0 (2025-01-06)<a class="headerlink" href="#id35" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>各種バグの修正。</p></li>
+<li><p>マッチ／TP／GV テーブルの追加。</p></li>
+<li><p>検索フィルター（着手、キューブの決定、日付）の追加。</p></li>
+<li><p>ポジションへのメタデータの追加。</p></li>
+<li><p>blunderDB インスタンス間のインポート／エクスポート機能。</p></li>
+<li><p>データベースへのメタデータ機能の追加。</p></li>
+<li><p>バージョン番号（データベースおよびアプリケーション）の導入。</p></li>
+</ul>
+</section>
+<section id="id36">
+<h2>0.1.0 (2024-12-31)<a class="headerlink" href="#id36" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p>ベータ版の作成。</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="stats_parity.html" class="btn btn-neutral float-left" title="付録：統計モデル — XG / gnuBG / blunderDB の整合" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="a_propos.html" class="btn btn-neutral float-right" title="blunderDB について" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

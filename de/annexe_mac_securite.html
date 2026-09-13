@@ -1,0 +1,174 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mac-Anhang: Mögliche Blockierung von blunderDB &mdash; blunderDB 0.36.0 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=251b3dea"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Anhang: Datenbankschema" href="annexe_db_scheme.html" />
+    <link rel="prev" title="Anhang Windows: Was tun, wenn Windows den Start blockiert" href="annexe_windows_securite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Sprachen">
+  <a href="../fr/annexe_mac_securite.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/annexe_mac_securite.html" lang="en" hreflang="en">English</a>
+  <span class="current" lang="de" aria-current="true">Deutsch</span>
+  <a href="../el/annexe_mac_securite.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/annexe_mac_securite.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/annexe_mac_securite.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/annexe_mac_securite.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/annexe_mac_securite.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/annexe_mac_securite.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Erste Schritte</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download und Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Benutzerhandbuch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referenz</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Handbuch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste der Befehle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Tastenkürzel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Befehlszeilenschnittstelle (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Häufig gestellte Fragen (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-Modus (Server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-Vertrag</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anhänge</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anhang: Fortgeschrittene Nutzung der Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anhang Windows: Was tun, wenn Windows den Start blockiert</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mac-Anhang: Mögliche Blockierung von blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-de-blunderdb">Installation von blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autorisation-de-l-execution-de-blunderdb">Erlauben der Ausführung von blunderDB</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anhang: Datenbankschema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versionsverlauf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Über blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Mac-Anhang: Mögliche Blockierung von blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-mac-blocage-eventuel-de-blunderdb">
+<span id="annexe-mac-malware"></span><h1>Mac-Anhang: Mögliche Blockierung von blunderDB<a class="headerlink" href="#annexe-mac-blocage-eventuel-de-blunderdb" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Das Folgende betrifft das Betriebssystem macOS.</p>
+</div>
+<p>Mac verlangt von Softwareverlagen oder unabhängigen Softwareentwicklern, ihre Anwendungen digital zu zertifizieren. Der Entwickler muss dem Apple Developer Program beitreten und einen jährlichen Mitgliedsbeitrag zahlen (<a class="reference external" href="https://developer.apple.com/support/compare-memberships/">https://developer.apple.com/support/compare-memberships/</a>).</p>
+<p>Da ich blunderDB kostenlos zur Verfügung stelle, möchte ich diese kostspieligen Möglichkeiten nicht in Anspruch nehmen. Daher ist es sehr wahrscheinlich, dass Mac Sie vor einer möglichen Gefahr warnt oder die Ausführung von blunderDB sogar vollständig blockiert. Die folgenden Abschnitte erklären die Schritte, mit denen Sie die Vorbehalte von Mac umgehen können.</p>
+<section id="installation-de-blunderdb">
+<h2>Installation von blunderDB<a class="headerlink" href="#installation-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Ziehen Sie nach dem Herunterladen von blunderDB die heruntergeladene Datei in den Bereich Programme Ihres Finders. Wenn Sie bereits versucht haben, blunderDB auszuführen, und Mac Sie vor einer möglichen Gefahr warnt, befolgen Sie die folgenden Schritte.</p>
+</section>
+<section id="autorisation-de-l-execution-de-blunderdb">
+<h2>Erlauben der Ausführung von blunderDB<a class="headerlink" href="#autorisation-de-l-execution-de-blunderdb" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Öffnen Sie den Finder und gehen Sie zum Bereich Programme.</p></li>
+<li><p>Suchen Sie blunderDB und klicken Sie mit der rechten Maustaste darauf.</p></li>
+<li><p>Wählen Sie Öffnen.</p></li>
+<li><p>Ein Warnfenster wird angezeigt. Klicken Sie auf Öffnen.</p></li>
+<li><p>blunderDB wird geöffnet und Sie können es verwenden.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Sie müssen diesen Vorgang nur einmal durchführen. Danach können Sie blunderDB öffnen, ohne diese Schritte durchlaufen zu müssen.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-left" title="Anhang Windows: Was tun, wenn Windows den Start blockiert" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-right" title="Anhang: Datenbankschema" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
