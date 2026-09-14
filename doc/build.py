@@ -106,12 +106,30 @@ def lang_env(language):
     # visible when conf.py executes, hence this env var.
     return dict(os.environ, BLUNDERDB_DOC_LANG=language)
 
+# Warning categories that mean a page renders wrongly rather than merely
+# imperfectly: broken inline markup (a translation that glued ``**`` to CJK
+# text shows the asterisks) and a cross-reference a translation dropped. The
+# HTML build is where they surface — nine languages, already built by the CI
+# `docs` job on every documentation change — so it is where they fail (#422).
+# Other warnings keep their old behaviour: printed, not fatal.
+BLOCKING_WARNINGS = ("[docutils]", "[i18n.inconsistent_references]")
+
+
+def blocking_warnings(text):
+    """Return the warning lines of a sphinx-build log that must fail the build."""
+    return [line for line in text.splitlines()
+            if "WARNING" in line and line.rstrip().endswith(BLOCKING_WARNINGS)]
+
+
 def build_sphinx_docs(path, language):
     os.chdir(path)
+    warning_file = os.path.join("build", f"warnings-{language}.txt")
     subprocess.run(["sphinx-build", "-b", "html", "-D",
-        "language=" + language, "source", "build/" + language],
+        "language=" + language, "-w", warning_file, "source", "build/" + language],
         check=True, env=lang_env(language))
     print(f"Documentation built for {language} language in {path}")
+    with open(warning_file, encoding="utf-8") as f:
+        return blocking_warnings(f.read())
 
 def build_latex_docs(path, language):
     os.chdir(path)
@@ -153,8 +171,20 @@ def main():
     print("create build folder")
     create_folder(build_dir)
 
+    blocking = {}
     for lang in LANG:
-        build_sphinx_docs(root_dir, lang)
+        found = build_sphinx_docs(root_dir, lang)
+        if found:
+            blocking[lang] = found
+    if blocking:
+        for lang, lines in blocking.items():
+            print(f"\n{lang}: {len(lines)} blocking warning(s)")
+            for line in lines:
+                print("  " + line)
+        raise SystemExit("broken inline markup or a lost cross-reference in the "
+                         "documentation (see above): fix the .rst or the .po msgstr "
+                         "— in Japanese, an escaped space `\\\\ ` between the markup "
+                         "and CJK text")
 
     if SKIP_PDF:
         print("BLUNDERDB_DOC_SKIP_PDF=1: skipping the LaTeX/PDF builds")
