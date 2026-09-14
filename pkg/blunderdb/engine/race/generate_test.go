@@ -290,6 +290,41 @@ func TestTheLibrarySourceKeepsThePositionAsItIs(t *testing.T) {
 	}
 }
 
+func TestPastItsDeadlineAQuestionFallsBackToAPoolSeedAtZeroPlies(t *testing.T) {
+	// Rule 5: « past a deadline the generator falls back to k = 0 on a pool
+	// seed rather than wait ». The clock below jumps an hour at every reading,
+	// so the deadline is behind the walk before its first ply — on the two
+	// sources that walk at all. The library source plays no ply, so it has
+	// nothing to fall back from.
+	late := time.Unix(0, 0)
+	clock := func() time.Time {
+		late = late.Add(time.Hour)
+		return late
+	}
+	seed := &domain.Position{Board: boardWith(sideBoard{3, 2, 3, 2, 3, 2}, sideBoard{2, 3, 2, 3, 2, 3})}
+	for _, request := range []BearoffRequest{{Source: SourcePool}, {Source: SourceBoard, Seed: seed}} {
+		t.Run(request.Source, func(t *testing.T) {
+			rng := seededRNG()
+			for i := 0; i < 50; i++ {
+				q := generateBearoffWithClock(request, rng, clock)
+				if !q.Generated {
+					t.Fatalf("draw %d refused (%q): a late walk still owes a question", i, q.Refusal)
+				}
+				if q.Plies != 0 {
+					t.Fatalf("draw %d played %d plies past its deadline, want 0", i, q.Plies)
+				}
+				if q.Source != SourcePool {
+					t.Fatalf("draw %d: source = %q, want %q — the fallback says where the seed came from", i, q.Source, SourcePool)
+				}
+				laid, _ := seedFromBoard(&q.Position.Board)
+				if laid.black.checkers() != maxDomainCheckers || laid.white.checkers() != maxDomainCheckers {
+					t.Fatalf("draw %d is not a pool shape at zero plies: %+v", i, q.Position.Board)
+				}
+			}
+		})
+	}
+}
+
 // ── The cost, measured ──────────────────────────────────────────────────────
 
 // budgetPerQuestion is the stated ceiling of ADR-0041 rule 5. It is generous on
@@ -309,14 +344,22 @@ func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
 	const draws = 500
 	rng := seededRNG()
 
+	// The walk is measured on a clock that never moves, so its deadline never
+	// falls. Otherwise the fallback of rule 5 would cap every question near
+	// questionDeadline and a change of approach — the very thing this budget
+	// is here to catch — would come back green, hidden behind pool shapes at
+	// zero plies.
+	frozen := time.Now()
+	stopped := func() time.Time { return frozen }
+
 	// Warm the table's first pages in, so the measurement is of the generator
 	// and not of the first lookup of the process.
-	generateBearoff(BearoffRequest{Source: SourcePool}, rng)
+	generateBearoffWithClock(BearoffRequest{Source: SourcePool}, rng, stopped)
 
 	start := time.Now()
 	distinct := make(map[domain.Board]bool, draws)
 	for i := 0; i < draws; i++ {
-		q := generateBearoff(BearoffRequest{Source: SourcePool}, rng)
+		q := generateBearoffWithClock(BearoffRequest{Source: SourcePool}, rng, stopped)
 		if !q.Generated {
 			t.Fatalf("draw %d refused: %q", i, q.Refusal)
 		}

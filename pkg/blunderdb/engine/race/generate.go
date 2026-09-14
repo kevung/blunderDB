@@ -3,6 +3,7 @@ package race
 import (
 	"math"
 	"math/rand/v2"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -93,6 +94,15 @@ const (
 	maxBoardPlies = 4
 )
 
+// questionDeadline is how long a walk may take before it gives up (ADR-0041
+// rule 5: « past a deadline the generator falls back to k = 0 on a pool seed
+// rather than wait »). Half the stated budget of generate_test.go's cost
+// test, so the fallback lands before the red does. A walk costs tens of
+// microseconds, so on a working machine this never fires; it is there for the
+// machine that is not — swapping, suspended mid-walk — where a question late
+// by a second is a clock the user watches stand still.
+const questionDeadline = 50 * time.Millisecond
+
 // The chequer bounds of the Bearoff domain (ADR-0041 rule 4). The floor is not
 // raised: nothing says a four-chequer EPC is trivial.
 const (
@@ -136,13 +146,20 @@ func GenerateBearoff(req BearoffRequest) BearoffQuestion {
 
 // generateBearoff is the seeded core, so a test can replay a walk exactly.
 func generateBearoff(req BearoffRequest, rng *rand.Rand) BearoffQuestion {
+	return generateBearoffWithClock(req, rng, time.Now)
+}
+
+// generateBearoffWithClock is generateBearoff with the clock the deadline is
+// read on, so a test can make a walk late without making it slow.
+func generateBearoffWithClock(req BearoffRequest, rng *rand.Rand, now func() time.Time) BearoffQuestion {
+	w := walk{rng: rng, now: now, deadline: now().Add(questionDeadline)}
 	if !engine.OneSidedReady() {
 		return BearoffQuestion{Source: req.Source, Refusal: RefusalNoTable}
 	}
 
 	switch req.Source {
 	case SourcePool:
-		return playOut(poolSeed(rng), rng.IntN(maxPoolPlies+1), rng, SourcePool, "")
+		return w.playOut(poolSeed(rng), rng.IntN(maxPoolPlies+1), SourcePool, "")
 
 	case SourceBoard, SourceLibrary:
 		if req.Seed == nil {
@@ -156,7 +173,7 @@ func generateBearoff(req BearoffRequest, rng *rand.Rand) BearoffQuestion {
 			// position. It falls back to the pool AND keeps the sentence —
 			// starting silently on something the user never put there would
 			// be the adaptation the rule forbids.
-			return playOut(poolSeed(rng), rng.IntN(maxPoolPlies+1), rng, SourcePool, RefusalEmptyBoard)
+			return w.playOut(poolSeed(rng), rng.IntN(maxPoolPlies+1), SourcePool, RefusalEmptyBoard)
 		case refusal != "":
 			return BearoffQuestion{Source: req.Source, Refusal: refusal}
 		}
@@ -164,7 +181,7 @@ func generateBearoff(req BearoffRequest, rng *rand.Rand) BearoffQuestion {
 		if req.Source == SourceBoard {
 			plies = 1 + rng.IntN(maxBoardPlies)
 		}
-		return playOut(seed, plies, rng, req.Source, "")
+		return w.playOut(seed, plies, req.Source, "")
 
 	default:
 		return BearoffQuestion{Source: req.Source, Refusal: RefusalUnknownSource}
@@ -306,20 +323,38 @@ func inDomain(b sideBoard) bool {
 	return n >= minDomainCheckers && n <= maxDomainCheckers
 }
 
+// walk is one question's making: its dice, and the clock its deadline is read on.
+type walk struct {
+	rng      *rand.Rand
+	now      func() time.Time
+	deadline time.Time
+}
+
 // playOut rolls `plies` times from the seed and turns the snapshot into a
 // question. It stops early rather than leave the domain, so what comes back is
 // always a position the exercise can ask about — and Plies reports what was
 // really played, not what was drawn.
-func playOut(seed bearoffSeed, plies int, rng *rand.Rand, source, refusal string) BearoffQuestion {
+//
+// Past the deadline it drops the walk and falls back to a fresh pool seed at
+// zero plies (rule 5), and Source says so: a question now beats a better one
+// later, and a pool shape at k = 0 is one table lookup.
+func (w walk) playOut(seed bearoffSeed, plies int, source, refusal string) BearoffQuestion {
 	played := 0
 	for ; played < plies; played++ {
-		next, ok := onePly(seed, rng)
+		if w.now().After(w.deadline) {
+			return question(poolSeed(w.rng), 0, SourcePool, refusal)
+		}
+		next, ok := onePly(seed, w.rng)
 		if !ok {
 			break
 		}
 		seed = next
 	}
+	return question(seed, played, source, refusal)
+}
 
+// question lays a walked seed out as the exercise's question, with its truth.
+func question(seed bearoffSeed, played int, source, refusal string) BearoffQuestion {
 	pos := domain.Position{
 		Board:        boardOf(seed),
 		Cube:         domain.Cube{Owner: domain.None, Value: 0},
