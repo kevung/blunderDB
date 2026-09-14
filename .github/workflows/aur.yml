@@ -150,3 +150,6 @@ jobs:
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: "Update to ${{ steps.v.outputs.version }}"
           updpkgsums: false
+          # deploy-aur v4 turned this default from true to false (#137): a re-run
+          # of the same release must keep publishing nothing instead of failing.
+          allow_empty_commits: true
