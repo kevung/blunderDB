@@ -421,8 +421,8 @@
     .status-bar {
         display: flex;
         align-items: center;
-        background: #f7f7f7;
-        border-top: 1px solid #e0e0e0;
+        background: var(--color-surface-alt);
+        border-top: 1px solid var(--color-border);
         padding: 2px 0;
         flex-shrink: 0;
         width: 100%;
@@ -439,7 +439,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: #555;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         line-height: 22px;
     }
@@ -451,9 +451,9 @@
         padding: 0 10px;
         flex-shrink: 0;
         font-variant-numeric: tabular-nums;
-        color: #555;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
-        border-left: 1px solid #e0e0e0;
+        border-left: 1px solid var(--color-border);
         line-height: 22px;
         white-space: nowrap;
     }
@@ -472,9 +472,9 @@
         padding: 0 10px;
         flex-shrink: 0;
         font-variant-numeric: tabular-nums;
-        color: #555;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
-        border-left: 1px solid #e0e0e0;
+        border-left: 1px solid var(--color-border);
         line-height: 22px;
     }
 
@@ -498,8 +498,8 @@
         min-width: 220px;
         max-height: 220px;
         overflow-y: auto;
-        background-color: white;
-        border: 1px solid rgba(0, 0, 0, 0.25);
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
         border-radius: 2px;
         box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
         z-index: 1100;
@@ -516,11 +516,11 @@
     }
 
     .command-suggestions li.selected {
-        background-color: #e8f0fe;
+        background-color: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     }
 
     .command-suggestions li:hover {
-        background-color: #f0f0f0;
+        background-color: var(--color-surface-alt);
     }
 
     .cmd-name {
@@ -558,6 +558,6 @@
     }
 
     .command-input::placeholder {
-        color: #aaa;
+        color: var(--color-text-muted);
     }
 </style>

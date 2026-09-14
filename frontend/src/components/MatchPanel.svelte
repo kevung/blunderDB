@@ -1071,7 +1071,7 @@
     .match-list-pane.has-detail {
         flex: 0 0 45%;
         max-width: 45%;
-        border-right: 1px solid #ddd;
+        border-right: 1px solid var(--color-border);
     }
 
     .match-list-toolbar {
@@ -1080,8 +1080,8 @@
         align-items: center;
         gap: 6px;
         padding: 4px 8px;
-        border-bottom: 1px solid #e0e0e0;
-        background: #fafafa;
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-surface-alt);
     }
 
     /* The drafts being transcribed, one line each, above the matches they are
@@ -1119,16 +1119,16 @@
         border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
         cursor: pointer;
         padding: 2px 8px;
         line-height: 1.6;
     }
 
     .toolbar-btn:hover:not(:disabled) {
-        background: #e3f2fd;
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
         border-color: var(--color-primary);
-        color: #1565c0;
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
     }
 
     .toolbar-btn:disabled {
@@ -1178,7 +1178,7 @@
     .detail-header {
         flex-shrink: 0;
         padding: 8px 12px 0 12px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--color-border);
         background: var(--color-surface-alt);
     }
 
@@ -1200,8 +1200,8 @@
 
     .match-length-badge {
         display: inline-block;
-        background: #e3f2fd;
-        color: #1565c0;
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         font-size: var(--font-size-small);
         font-weight: 600;
         padding: 1px 6px;
@@ -1223,7 +1223,7 @@
     }
 
     .meta-tournament {
-        color: var(--color-primary);
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         font-weight: 500;
     }
 
@@ -1252,18 +1252,18 @@
     }
 
     .detail-tab.active {
-        color: var(--color-primary);
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         border-bottom-color: var(--color-primary);
     }
 
     .enter-match-btn {
         margin-left: auto;
-        color: var(--color-primary);
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         font-weight: 600;
     }
 
     .enter-match-btn:hover {
-        color: #0d47a1;
+        color: color-mix(in srgb, var(--color-primary) 55%, var(--color-text));
     }
 
     /* --- Transcript --- */
@@ -1284,10 +1284,10 @@
         align-items: center;
         gap: 10px;
         padding: 4px 12px;
-        background: #f0f4f8;
+        background: var(--color-surface-alt);
         font-size: var(--font-size-small);
-        color: #555;
-        border-bottom: 1px solid #e0e0e0;
+        color: var(--color-text-muted);
+        border-bottom: 1px solid var(--color-border);
         z-index: 1;
         cursor: pointer;
         list-style: none;
@@ -1316,11 +1316,11 @@
     }
 
     .game-score {
-        color: #777;
+        color: var(--color-text-muted);
     }
 
     .game-result {
-        color: #2e7d32;
+        color: color-mix(in srgb, #2e7d32 60%, var(--color-text));
         font-style: italic;
     }
 
@@ -1336,13 +1336,13 @@
         font-weight: 600;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
-        border-bottom: 1px solid #eee;
-        background: #fafafa;
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-surface-alt);
     }
 
     .transcript-table tbody td {
         padding: 2px 8px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--color-border);
     }
 
     .transcript-row {
@@ -1351,13 +1351,13 @@
     }
 
     .transcript-row:hover {
-        background-color: #e8f4fd;
+        background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
     }
 
     .transcript-num {
         width: 28px;
         text-align: center;
-        color: #aaa;
+        color: var(--color-text-muted);
     }
 
     .transcript-player {
@@ -1391,15 +1391,15 @@
     }
 
     .cube-row {
-        background-color: #fff8e1;
+        background-color: color-mix(in srgb, #ffc107 12%, var(--color-surface));
     }
 
     .cube-row:hover {
-        background-color: #fff3cd;
+        background-color: color-mix(in srgb, #ffc107 20%, var(--color-surface));
     }
 
     .cube-action {
-        color: #e65100;
+        color: color-mix(in srgb, #e65100 65%, var(--color-text));
         font-weight: 500;
         font-family: inherit;
     }
@@ -1419,7 +1419,7 @@
 
     .metadata-table td {
         padding: 4px 8px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--color-border);
         vertical-align: top;
     }
 
@@ -1469,19 +1469,19 @@
         border-radius: 3px;
         min-width: 40px;
         display: inline-block;
-        color: #bbb;
+        color: var(--color-text-muted);
         font-style: italic;
     }
 
     .match-comment-display:hover {
-        background: #e8f0fe;
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     }
 
     .match-comment-input {
         width: 100%;
         padding: 1px 3px;
         font-size: var(--font-size-small);
-        border: 1px solid #4a90d9;
+        border: 1px solid var(--color-primary);
         border-radius: 3px;
         outline: none;
         box-sizing: border-box;
@@ -1503,8 +1503,8 @@
         text-align: left;
         padding: 4px 8px;
         font-size: var(--font-size-small);
-        color: #555;
-        border-bottom: 2px solid #ddd;
+        color: var(--color-text-muted);
+        border-bottom: 2px solid var(--color-border);
         font-weight: 600;
     }
 
@@ -1514,19 +1514,19 @@
     }
 
     .stats-section-header td {
-        background: #f0f4f8;
+        background: var(--color-surface-alt);
         padding: 5px 8px;
         font-size: var(--font-size-small);
         font-weight: 600;
-        color: #444;
+        color: var(--color-text);
         text-transform: uppercase;
         letter-spacing: 0.03em;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid var(--color-border);
     }
 
     .stats-label {
         padding: 3px 8px;
-        color: #555;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
     }
 
@@ -1540,7 +1540,7 @@
         text-align: right;
         padding: 3px 8px;
         font-variant-numeric: tabular-nums;
-        color: #222;
+        color: var(--color-text);
         min-width: 80px;
     }
 
@@ -1551,6 +1551,6 @@
 
     .pr-val {
         font-weight: 600;
-        color: #1565c0;
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
     }
 </style>

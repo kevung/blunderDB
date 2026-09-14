@@ -1077,7 +1077,7 @@
     .search-panel {
         display: flex;
         height: 100%;
-        background: white;
+        background: var(--color-surface);
         overflow: hidden;
         font-size: var(--font-size-base);
         user-select: none;
@@ -1092,8 +1092,8 @@
         flex-direction: column;
         width: 70px;
         flex-shrink: 0;
-        background: #f5f5f5;
-        border-right: 1px solid #ddd;
+        background: var(--color-surface-alt);
+        border-right: 1px solid var(--color-border);
     }
     .sub-tab-btn {
         border: none;
@@ -1109,13 +1109,13 @@
         -webkit-user-select: none;
     }
     .sub-tab-btn:hover {
-        background: #e8e8e8;
+        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
     .sub-tab-btn.active {
         color: var(--color-text);
         font-weight: 600;
-        background: #fff;
-        border-left-color: #555;
+        background: var(--color-surface);
+        border-left-color: var(--color-text-muted);
     }
     .sub-tab-content {
         flex: 1;
@@ -1133,33 +1133,33 @@
         align-items: center;
         gap: 4px;
         padding: 6px 8px;
-        border-bottom: 1px solid #ddd;
-        background: #fafafa;
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-surface-alt);
         position: sticky;
         top: 0;
         z-index: 3;
     }
     .structure-toggle.exclude-active {
-        background: #fdecea;
-        border-bottom-color: #e0b4b0;
+        background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+        border-bottom-color: color-mix(in srgb, var(--color-danger) 35%, var(--color-surface));
     }
     .structure-btn {
         font-size: var(--font-size-small);
         padding: 3px 10px;
         border: 1px solid var(--color-border);
-        background: #fff;
-        color: #555;
+        background: var(--color-surface);
+        color: var(--color-text-muted);
         border-radius: 3px;
         cursor: pointer;
     }
     .structure-btn:hover {
-        background: #f0f0f0;
+        background: var(--color-surface-alt);
     }
     .structure-btn.active {
         color: var(--color-text);
         font-weight: 600;
-        border-color: #555;
-        background: #fff;
+        border-color: var(--color-text-muted);
+        background: var(--color-surface);
     }
     .structure-btn.exclude.active {
         color: #fff;
@@ -1169,15 +1169,15 @@
     .structure-hint {
         margin-left: auto;
         font-size: var(--font-size-small);
-        color: #c0392b;
+        color: var(--color-danger);
         font-style: italic;
     }
     .top-action-bar {
         position: sticky;
         top: 0;
-        background: white;
+        background: var(--color-surface);
         z-index: 2;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--color-border);
         padding: 6px 8px;
     }
     .filter-groups {
@@ -1191,11 +1191,11 @@
     .group-header {
         font-size: var(--font-size-small);
         font-weight: 700;
-        color: #555;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding: 6px 0 2px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border);
         margin-bottom: 2px;
         user-select: none;
         -webkit-user-select: none;
@@ -1205,7 +1205,7 @@
         border-radius: 3px;
     }
     .filter-item.active {
-        background: #f0f7ff;
+        background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
     }
     .filter-checkbox {
         display: flex;
@@ -1226,7 +1226,7 @@
     }
     .filter-item.active .filter-label {
         font-weight: 500;
-        color: #1a1a1a;
+        color: var(--color-text);
     }
     .filter-params {
         margin: 2px 0 4px 22px;
@@ -1269,11 +1269,11 @@
         border-radius: 3px;
         cursor: pointer;
         font-size: var(--font-size-base);
-        background: #ccc;
+        background: var(--color-border);
         color: var(--color-text);
     }
     .btn-clear:hover {
-        background: #999;
+        background: color-mix(in srgb, var(--color-text) 15%, var(--color-border));
     }
     .decision-mode-controls {
         display: flex;
@@ -1288,19 +1288,19 @@
         font-size: var(--font-size-small);
         padding: 3px 10px;
         border: 1px solid var(--color-border);
-        background: #fff;
-        color: #555;
+        background: var(--color-surface);
+        color: var(--color-text-muted);
         border-radius: 3px;
         cursor: pointer;
     }
     .decision-btn:hover {
-        background: #f0f0f0;
+        background: var(--color-surface-alt);
     }
     .decision-btn.active {
         color: var(--color-text);
         font-weight: 600;
-        border-color: #555;
-        background: #fff;
+        border-color: var(--color-text-muted);
+        background: var(--color-surface);
     }
     .label-disabled {
         opacity: 0.45;
@@ -1344,11 +1344,11 @@
         border-radius: 3px;
         cursor: pointer;
         font-size: var(--font-size-small);
-        background: #ccc;
+        background: var(--color-border);
         color: var(--color-text);
     }
     .small-btn:hover {
-        background: #999;
+        background: color-mix(in srgb, var(--color-text) 15%, var(--color-border));
     }
 
     .history-section {
@@ -1375,7 +1375,7 @@
     .history-table thead {
         position: sticky;
         top: 0;
-        background: #f2f2f2;
+        background: var(--color-surface-alt);
         z-index: 1;
     }
     .history-table th {
@@ -1383,12 +1383,12 @@
         text-align: center;
         font-weight: bold;
         font-size: var(--font-size-small);
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         user-select: none;
     }
     .history-table td {
         padding: 2px 4px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         text-align: center;
         font-size: var(--font-size-small);
     }
@@ -1396,10 +1396,10 @@
         cursor: pointer;
     }
     .history-table tbody tr:hover {
-        background-color: #e6f2ff;
+        background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
     }
     .history-table tbody tr.selected {
-        background-color: #b3d9ff !important;
+        background-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface)) !important;
     }
     .date-cell {
         width: 140px;
@@ -1441,7 +1441,7 @@
         color: var(--color-text);
     }
     .delete-btn:hover {
-        color: #c00;
+        color: var(--color-danger);
     }
 
     .saved-section {
@@ -1460,13 +1460,13 @@
         gap: 8px;
         padding: 4px 8px;
         cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--color-border);
     }
     .saved-item:hover {
-        background: #e6f2ff;
+        background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
     }
     .saved-item.selected {
-        background: #b3d9ff;
+        background: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
     }
     .saved-name {
         font-weight: 600;
@@ -1477,7 +1477,7 @@
         flex: 1;
         font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

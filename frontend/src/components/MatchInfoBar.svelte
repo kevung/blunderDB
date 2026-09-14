@@ -192,11 +192,11 @@
         padding: 2px 10px;
         height: 22px;
         flex-shrink: 0;
-        background: #f7f7f7;
-        border-bottom: 1px solid #e0e0e0;
+        background: var(--color-surface-alt);
+        border-bottom: 1px solid var(--color-border);
         font-size: var(--font-size-base);
         font-family: var(--font-family-ui);
-        color: #555;
+        color: var(--color-text-muted);
         user-select: none;
         overflow: hidden;
         white-space: nowrap;
@@ -236,7 +236,7 @@
     }
 
     .sep {
-        color: #bbb;
+        color: var(--color-text-muted);
         flex-shrink: 0;
     }
 
@@ -249,8 +249,8 @@
         flex-shrink: 0;
         padding: 0 5px;
         border-radius: 8px;
-        background: #e0e0e0;
-        color: #555;
+        background: color-mix(in srgb, var(--color-text) 10%, var(--color-surface-alt));
+        color: var(--color-text);
         font-size: var(--font-size-small);
         font-weight: 600;
         cursor: default;

@@ -180,7 +180,7 @@
 
     th {
         font-size: var(--font-size-small);
-        color: #777;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.3px;
         font-weight: 600;
@@ -189,7 +189,7 @@
     /* Hairlines separate values from values, never a header from the block it
        heads — and the second block opens on a little air instead of a rule. */
     tbody tr + tr td {
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
     }
 
     .head-row + tr td {
@@ -233,12 +233,12 @@
     }
 
     tr.masked td:not(.row-label) {
-        color: #aaa;
+        color: var(--color-text-muted);
         letter-spacing: 2px;
     }
 
     tr.masked:hover td {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
     }
 
     .player-indicator {

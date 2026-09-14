@@ -468,14 +468,15 @@
         display: flex;
         align-items: center;
         padding: 4px;
-        background-color: #f0f0f0;
-        border-bottom: 1px solid #ccc;
+        background-color: var(--color-surface-alt);
+        border-bottom: 1px solid var(--color-border);
         height: 22px; /* Ensure toolbar height is sufficient */
         width: 100%; /* Ensure toolbar takes up full available width */
     }
 
     .toolbar button {
         background: none;
+        color: var(--color-text);
         border: none;
         padding: 4px;
         margin: 0;
@@ -500,7 +501,7 @@
     }
 
     .toolbar button:hover {
-        background-color: #e0e0e0;
+        background-color: color-mix(in srgb, var(--color-text) 10%, var(--color-surface-alt));
     }
 
     .toolbar button:disabled {
@@ -512,6 +513,6 @@
         width: 1px;
         margin: 0 8px; /* Add some space between the icon groups */
         height: 80%; /* Ensure separator height matches toolbar height */
-        border-left: 1px solid #d3d3d3; /* Use a lighter shade for the separator */
+        border-left: 1px solid var(--color-border); /* Use a lighter shade for the separator */
     }
 </style>

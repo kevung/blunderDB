@@ -119,8 +119,8 @@
     .view-tabs {
         display: flex;
         align-items: stretch;
-        background: #f0f0f0;
-        border-bottom: 1px solid #ddd;
+        background: var(--color-surface-alt);
+        border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
         height: 26px;
         overflow-x: auto;
@@ -154,7 +154,7 @@
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
         cursor: pointer;
-        border-right: 1px solid #e0e0e0;
+        border-right: 1px solid var(--color-border);
         white-space: nowrap;
         user-select: none;
         transition: background 0.1s;
@@ -162,14 +162,14 @@
     }
 
     .view-tab:hover {
-        background: #e8e8e8;
+        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
 
     .view-tab.active {
-        background: #fff;
+        background: var(--color-surface);
         color: var(--color-text);
         font-weight: 600;
-        border-bottom: 1px solid #fff;
+        border-bottom: 1px solid var(--color-surface);
         margin-bottom: -1px;
     }
 
@@ -181,10 +181,10 @@
     .rename-input {
         width: 60px;
         font-size: var(--font-size-small);
-        border: 1px solid #aaa;
+        border: 1px solid var(--color-border);
         padding: 1px 3px;
         outline: none;
-        background: #fff;
+        background: var(--color-surface);
     }
 
     .close-btn {
@@ -200,7 +200,7 @@
     }
 
     .close-btn:hover {
-        color: #c00;
+        color: var(--color-danger);
     }
 
     .add-btn {

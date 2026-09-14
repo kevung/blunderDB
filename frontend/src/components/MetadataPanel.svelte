@@ -128,7 +128,7 @@
         padding: 6px 10px;
         height: 100%;
         overflow-y: auto;
-        background: white;
+        background: var(--color-surface);
         box-sizing: border-box;
     }
 
@@ -166,7 +166,7 @@
     }
 
     input:read-only {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
         color: var(--color-text-muted);
     }
 
@@ -181,17 +181,17 @@
         width: 100%;
         margin: 3px 0;
         border: none;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--color-border);
     }
 
     .value {
-        color: #3c4043;
+        color: var(--color-text);
         overflow-wrap: anywhere;
     }
 
     .value.strong {
         font-weight: 600;
-        color: #202124;
+        color: var(--color-text);
     }
 
     .value.note {
@@ -204,20 +204,20 @@
     code {
         font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #5f6368;
+        color: var(--color-text-muted);
     }
 
     .sep {
-        color: #bdc1c6;
+        color: var(--color-text-muted);
     }
 
     /* The only colour in the panel: a watermark that does not verify must catch the eye. */
     .mark {
         font-weight: 600;
-        color: #1a7f37;
+        color: color-mix(in srgb, #1a7f37 70%, var(--color-text));
     }
 
     .mark.invalid {
-        color: #b3261e;
+        color: var(--color-danger);
     }
 </style>

@@ -188,8 +188,8 @@
     }
 
     .stat-card {
-        background: #f5f5f5;
-        border: 1px solid #e0e0e0;
+        background: var(--color-surface-alt);
+        border: 1px solid var(--color-border);
         border-radius: 6px;
         padding: 14px 12px;
         display: flex;
@@ -202,20 +202,20 @@
     }
 
     .stat-card:hover {
-        background: #ececec;
+        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
 
     .card-value {
         font-size: var(--font-size-stat-figure);
         font-variant-numeric: tabular-nums;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--color-text);
         line-height: 1.1;
     }
 
     .card-label {
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
@@ -228,7 +228,7 @@
     /* ── Totals line ── */
     .stats-totals {
         font-size: var(--font-size-base);
-        color: #777;
+        color: var(--color-text-muted);
         padding: 8px 16px 0;
         margin: 0;
     }
@@ -254,8 +254,8 @@
     }
 
     .rolling-cell {
-        background: #f5f5f5;
-        border: 1px solid #e0e0e0;
+        background: var(--color-surface-alt);
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         padding: 6px 10px;
         display: flex;
@@ -267,7 +267,7 @@
     }
 
     .rolling-cell:not(.unavailable):hover {
-        background: #ececec;
+        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
 
     .rolling-cell.unavailable {
@@ -284,7 +284,7 @@
         font-size: var(--font-size-base);
         font-variant-numeric: tabular-nums;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--color-text);
     }
 
     /* ── Blunders ── */
@@ -302,7 +302,7 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--color-border);
     }
 
     .blunder-item:last-child {
@@ -321,11 +321,11 @@
         cursor: pointer;
         border-radius: 4px;
         font-size: var(--font-size-base);
-        color: #1a1a1a;
+        color: var(--color-text);
     }
 
     .blunder-main:hover {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
     }
 
     .blunder-rank {
@@ -335,7 +335,7 @@
     }
 
     .blunder-type {
-        color: #555;
+        color: var(--color-text-muted);
         min-width: 48px;
         font-size: var(--font-size-small);
     }
@@ -344,12 +344,12 @@
         font-variant-numeric: tabular-nums;
         font-weight: 600;
         min-width: 52px;
-        color: #b71c1c;
+        color: var(--color-danger);
     }
 
     .blunder-match {
         flex: 1;
-        color: #444;
+        color: var(--color-text);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -374,7 +374,7 @@
 
     .blunder-open-match:hover {
         color: var(--color-primary);
-        background: #e3f2fd;
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     }
 
     @media (max-width: 600px) {

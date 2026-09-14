@@ -439,8 +439,8 @@
     .tab-bar {
         display: flex;
         align-items: center;
-        background: #f0f0f0;
-        border-bottom: 1px solid #ccc;
+        background: var(--color-surface-alt);
+        border-bottom: 1px solid var(--color-border);
         overflow-x: auto;
         flex-shrink: 0;
         height: 28px;
@@ -467,7 +467,7 @@
         background: transparent;
         cursor: pointer;
         font-size: var(--font-size-base);
-        color: #555;
+        color: var(--color-text-muted);
         white-space: nowrap;
         height: 100%;
         transition:
@@ -486,13 +486,13 @@
     }
 
     .tab-button:hover {
-        background: #e0e0e0;
+        background: color-mix(in srgb, var(--color-text) 10%, var(--color-surface-alt));
     }
 
     .tab-button.active {
         color: var(--color-primary);
         border-bottom-color: var(--color-primary);
-        background: #fff;
+        background: var(--color-surface);
     }
 
     .tab-icon {
@@ -515,7 +515,7 @@
     }
 
     .hidden-tabs-button:hover {
-        background: #e0e0e0;
+        background: color-mix(in srgb, var(--color-text) 10%, var(--color-surface-alt));
         color: var(--color-text);
     }
 

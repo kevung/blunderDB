@@ -681,7 +681,7 @@
     }
 
     .error-text {
-        color: #c62828;
+        color: var(--color-danger);
         font-size: var(--font-size-base);
     }
 
@@ -741,7 +741,7 @@
     }
 
     .decision-cube.masked:hover {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
     }
 
     .decision-cube-masked {
@@ -753,14 +753,14 @@
         justify-content: center;
         min-width: 180px;
         align-self: stretch;
-        color: #aaa;
+        color: var(--color-text-muted);
         letter-spacing: 2px;
         cursor: pointer;
         font-size: var(--font-size-base);
     }
 
     .decision-cube-masked:hover {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
     }
 
     /* The masked stand-in for the Baseline+list block (ADR-0018 rule 6):
@@ -837,9 +837,9 @@
        "estimated" (a played-out search, not a lookup and not a summary
        estimate). */
     .badge-evaluated {
-        background: #e8f0fe;
-        border: 1px solid #c4d8f5;
-        color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+        border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
     }
 
     /* ADR-0017 decision 4: exact's win probability, evaluated's equities and
@@ -862,7 +862,7 @@
         border: 1px solid var(--color-border);
         border-radius: 50%;
         background: transparent;
-        color: #aaa;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
         text-align: center;
         cursor: pointer;

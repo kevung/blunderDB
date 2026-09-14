@@ -382,7 +382,7 @@
         align-items: center;
         gap: 4px 8px;
         padding: 4px 8px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--color-border);
         font-size: var(--font-size-small);
         flex-shrink: 0;
         min-height: 28px;
@@ -391,7 +391,7 @@
 
     .empty-hint {
         font-style: italic;
-        color: #aaa;
+        color: var(--color-text-muted);
     }
 
     .fb-label {
@@ -411,7 +411,7 @@
     .fb-select,
     .fb-date {
         font-size: var(--font-size-small);
-        border: 1px solid #d0d0d0;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         padding: 1px 4px;
         background: var(--color-surface);
@@ -420,7 +420,7 @@
     }
 
     .fb-date.date-error {
-        border-color: #e05050;
+        border-color: var(--color-danger);
     }
 
     /* ── Tournament dropdown ── */
@@ -431,18 +431,18 @@
     .fb-tour-btn {
         font-size: var(--font-size-small);
         padding: 1px 6px;
-        border: 1px solid #d0d0d0;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
-        background: #fff;
+        background: var(--color-surface);
         cursor: pointer;
         white-space: nowrap;
         height: 22px;
-        color: #555;
+        color: var(--color-text-muted);
     }
 
     .fb-tour-btn.filtered {
-        border-color: #4a7ebb;
-        color: #1a5ca8;
+        border-color: var(--color-primary);
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         font-weight: 600;
     }
 
@@ -451,7 +451,7 @@
         top: calc(100% + 2px);
         left: 0;
         z-index: 100;
-        background: #fff;
+        background: var(--color-surface);
         border: 1px solid var(--color-border);
         border-radius: 4px;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
@@ -472,7 +472,7 @@
     }
 
     .fb-check-label:hover {
-        background: #f0f4ff;
+        background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
     }
 
     .fb-tour-all {
@@ -481,7 +481,7 @@
 
     .fb-tour-sep {
         border: none;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
         margin: 2px 0;
     }
 
@@ -516,30 +516,31 @@
         padding: 1px 5px;
         border: 1px solid var(--color-border);
         border-radius: 3px;
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
+        color: var(--color-text);
         cursor: pointer;
         line-height: 1.4;
     }
 
     .fb-ml-btn.active {
-        background: #4a7ebb;
-        color: #fff;
-        border-color: #3a6da0;
+        background: var(--color-primary);
+        color: var(--color-surface);
+        border-color: var(--color-primary);
     }
 
     .fb-ml-all {
         font-size: var(--font-size-small);
         padding: 1px 6px;
-        border: 1px solid #4a7ebb;
+        border: 1px solid var(--color-primary);
         border-radius: 3px;
-        background: #edf3ff;
-        color: #1a5ca8;
+        background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         cursor: pointer;
         line-height: 1.4;
     }
 
     .fb-ml-all:hover {
-        background: #d8e8ff;
+        background: color-mix(in srgb, var(--color-primary) 16%, var(--color-surface));
     }
 
     /* ── Reset ── */
@@ -549,12 +550,13 @@
         padding: 1px 6px;
         border: 1px solid var(--color-border);
         border-radius: 3px;
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
+        color: var(--color-text);
         cursor: pointer;
         white-space: nowrap;
     }
 
     .fb-reset:hover {
-        background: #e8e8e8;
+        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface-alt));
     }
 </style>

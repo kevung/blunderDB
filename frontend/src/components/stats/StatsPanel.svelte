@@ -119,7 +119,7 @@
         align-items: center;
         gap: 8px;
         padding: 4px 8px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
         background: var(--color-surface-alt);
     }
@@ -151,12 +151,12 @@
     }
 
     .metric-btn:hover {
-        background: #f0f0f0;
+        background: var(--color-surface-alt);
     }
 
     .metric-btn.active {
         background: var(--color-primary);
-        color: #fff;
+        color: var(--color-surface);
     }
 
     /* ── Close button ── */
@@ -177,15 +177,15 @@
 
     .close-btn:hover {
         color: var(--color-text);
-        background: #f0f0f0;
+        background: var(--color-surface-alt);
     }
 
     /* ── Tab bar ── */
     .tabs {
         display: flex;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
-        background: #fafafa;
+        background: var(--color-surface-alt);
     }
 
     .tab-btn {
@@ -195,19 +195,19 @@
         padding: 5px 12px;
         font-size: var(--font-size-small);
         cursor: pointer;
-        color: #555;
+        color: var(--color-text-muted);
         transition:
             border-color 0.1s,
             color 0.1s;
     }
 
     .tab-btn:hover {
-        color: var(--color-primary);
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
     }
 
     .tab-btn.active {
         border-bottom-color: var(--color-primary);
-        color: var(--color-primary);
+        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
         font-weight: 600;
     }
 

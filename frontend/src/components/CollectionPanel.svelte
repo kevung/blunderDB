@@ -790,7 +790,7 @@
     }
     .collection-panel :global(tr.current),
     .collection-panel :global(tr.multi-selected) {
-        background-color: #dce9f7;
+        background-color: color-mix(in srgb, var(--color-primary) 16%, var(--color-surface));
     }
 
     /* Cell styles */
@@ -813,7 +813,7 @@
         font-size: var(--font-size-small);
     }
     .desc-text:hover {
-        color: #555;
+        color: var(--color-text);
     }
     .idx-cell {
         text-align: right;
@@ -827,13 +827,13 @@
         width: 100%;
         font-size: var(--font-size-base);
         padding: 1px 4px;
-        border: 1px solid #999;
+        border: 1px solid var(--color-border);
         outline: none;
         box-sizing: border-box;
     }
 
     .collection-panel :global(th.toggle-header) {
-        color: #4a8;
+        color: color-mix(in srgb, #44aa88 50%, var(--color-text));
     }
     .toggle-cell {
         text-align: center;
@@ -849,8 +849,8 @@
     /* Add row */
     .add-row {
         padding: 4px 8px;
-        background: #fafafa;
-        border-top: 1px solid #e0e0e0;
+        background: var(--color-surface-alt);
+        border-top: 1px solid var(--color-border);
         flex-shrink: 0;
     }
     .add-row {
@@ -861,6 +861,8 @@
         flex: 1;
         padding: 3px 6px;
         border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text);
         border-radius: 3px;
         font-size: var(--font-size-base);
         outline: none;
@@ -906,7 +908,7 @@
     /* Description bar */
     .desc-bar {
         padding: 3px 8px 3px 32px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
     }
     /* A <button> (click-to-edit, reachable with Tab and Enter) drawn as the

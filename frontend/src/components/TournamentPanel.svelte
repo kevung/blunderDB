@@ -827,7 +827,7 @@
     .tournament-panel {
         width: 100%;
         height: 100%;
-        background: white;
+        background: var(--color-surface);
         box-sizing: border-box;
         outline: none;
         overflow: hidden;
@@ -920,7 +920,7 @@
     .tournament-comment-text {
         flex-shrink: 1;
         font-size: var(--font-size-small);
-        color: #bbb;
+        color: var(--color-text-muted);
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -937,10 +937,10 @@
 
     /* Add area */
     .add-area {
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
         padding: 3px 8px 4px;
         flex-shrink: 0;
-        background: #fafafa;
+        background: var(--color-surface-alt);
         display: flex;
         gap: 4px;
         align-items: center;
@@ -954,7 +954,7 @@
         box-sizing: border-box;
     }
     .add-input:focus {
-        border-color: #99c;
+        border-color: var(--color-primary);
     }
     .add-input.name {
         flex: 1;
@@ -991,7 +991,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: var(--font-size-small);
-        color: #aaa;
+        color: var(--color-text-muted);
         cursor: pointer;
         min-height: 16px;
     }

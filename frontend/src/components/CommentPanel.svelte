@@ -464,7 +464,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        background-color: white;
+        background-color: var(--color-surface);
         font-size: var(--font-size-base);
     }
 
@@ -474,12 +474,12 @@
         align-items: center;
         gap: 4px;
         padding: 3px 8px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
-        background: #fafafa;
+        background: var(--color-surface-alt);
     }
     .search-icon {
-        color: #aaa;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         flex-shrink: 0;
     }
@@ -515,17 +515,17 @@
     .msg {
         padding: 6px 10px;
         margin-bottom: 4px;
-        background: #f0f2f8;
+        background: var(--color-surface-alt);
         border-radius: 10px 10px 10px 2px;
         cursor: pointer;
         transition: background 0.1s;
         position: relative;
     }
     .msg:hover {
-        background: #e4e8f2;
+        background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface-alt));
     }
     .msg.editing {
-        background: #fefce8;
+        background: color-mix(in srgb, #ffc107 10%, var(--color-surface));
         cursor: default;
         border-radius: 6px;
     }
@@ -580,12 +580,12 @@
             color 0.1s;
     }
     .msg-edit:hover {
-        color: #4a90d9;
-        background: rgba(74, 144, 217, 0.12);
+        color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 12%, transparent);
     }
     .msg-delete:hover {
-        color: #c55;
-        background: rgba(204, 85, 85, 0.12);
+        color: var(--color-danger);
+        background: color-mix(in srgb, var(--color-danger) 12%, transparent);
     }
 
     .msg-edit-input {
@@ -601,12 +601,12 @@
         outline: none;
     }
     .msg-edit-input:focus {
-        border-color: #4a90d9;
+        border-color: var(--color-primary);
     }
 
     .empty-msg {
         text-align: center;
-        color: #bbb;
+        color: var(--color-text-muted);
         padding: 20px;
         font-size: var(--font-size-small);
         font-style: italic;
@@ -615,9 +615,9 @@
     /* Prompt */
     .prompt {
         flex-shrink: 0;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
         padding: 4px 8px;
-        background: #fafafa;
+        background: var(--color-surface-alt);
         /* La liste de suggestions se pose au-dessus de la saisie. */
         position: relative;
         display: flex;
@@ -628,16 +628,17 @@
         width: 100%;
         box-sizing: border-box;
         padding: 6px 8px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         border-radius: 6px;
         outline: none;
         resize: none;
-        background: white;
+        background: var(--color-surface);
+        color: inherit;
         font-size: var(--font-size-base);
         line-height: 1.35;
         font-family: inherit;
     }
     .prompt textarea:focus {
-        border-color: #aab;
+        border-color: var(--color-primary);
     }
 </style>
