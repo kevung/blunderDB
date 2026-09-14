@@ -710,7 +710,7 @@ export default {
 <p>Pysyvyyden muuttaminen <strong>ei vaikuta taannehtivasti</strong>: kukin kortti omaksuu uuden tahdin seuraavassa kertauksessaan, eivätkä jo asetetut eräpäivät siirry. Vaikutus on siis vähittäinen eikä näy samana päivänä.</p>
 <p><em>Enimmäisväli</em> rajaa välistyksen. Äskettäin luotu pakka lähtee vuodesta: asema, jonka algoritmi siirtäisi useiden vuosien päähän, on poistunut pakasta ilman että olet niin päättänyt, ja oma pelisi muuttuu sitä nopeammin. Vanhemmat pakat säilyttävät sen arvon, joka niillä oli.</p>
 <h3>Harjoittelu-paneeli</h3>
-<p><strong>Anki</strong>-paneeli kertaa sitä, mikä <strong>muistetaan</strong>; <strong>Harjoittelu</strong>-paneeli harjoittaa sitä, mikä <strong>lasketaan</strong>, kellon käydessä. Se avautuu näppäimillä <code>CTRL-J</code>, työkalupalkin painikkeesta heti kohdan « Position aléatoire » jälkeen tai komennolla <code>train</code>.</p>
+<p><strong>Anki</strong>-paneeli kertaa sitä, mikä <strong>muistetaan</strong>; <strong>Harjoittelu</strong>-paneeli harjoittaa sitä, mikä <strong>lasketaan</strong>, kellon käydessä. Se avautuu näppäimillä <code>CTRL-J</code>, työkalupalkin painikkeesta heti kohdan « Position aléatoire » jälkeen tai komennolla <code>train</code>. Tilannekortti kuuluu molempiin: se lasketaan täällä ja muistetaan tilannekorttien pakassa.</p>
 <p>Levossa paneeli näyttää aloittimen ja aiempien istuntojen yhteenvedon.</p>
 <h4>Aloitin</h4>
 <p>Kolme valintaa, sitten « Démarrer »:</p>

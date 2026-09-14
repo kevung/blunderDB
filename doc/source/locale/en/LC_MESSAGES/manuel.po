@@ -6009,7 +6009,9 @@ msgstr ""
 "The **Anki** panel reviews what is **retained**; the **Training** panel "
 "drills what is **calculated**, against the clock. It opens with "
 "``CTRL-J``, with the toolbar button placed right after « Position "
-"aléatoire », or with the ``train`` command."
+"aléatoire », or with the ``train`` command. The score sheet belongs to "
+"both: it is calculated here and retained in a :ref:`deck of score sheets "
+"<panneau_anki>`."
 
 #: ../../source/manuel.rst:2637
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."

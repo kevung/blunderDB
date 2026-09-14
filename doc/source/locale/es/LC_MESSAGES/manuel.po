@@ -6146,7 +6146,9 @@ msgstr ""
 "El panel **Anki** repasa lo que se **retiene**; el panel "
 "**Entrenamiento** ejercita lo que se **calcula**, contra el reloj. Se "
 "abre con ``CTRL-J``, con el botón de la barra de herramientas situado "
-"justo después de « Position aléatoire », o con la orden ``train``."
+"justo después de « Position aléatoire », o con la orden ``train``. La "
+"ficha de marcador pertenece a ambos: se calcula aquí y se retiene en un "
+":ref:`mazo de fichas de marcador <panneau_anki>`."
 
 #: ../../source/manuel.rst:2637
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."

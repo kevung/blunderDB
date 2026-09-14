@@ -710,7 +710,7 @@ export default {
 <p>Cambiar la retención <strong>no es retroactivo</strong>: cada carta adopta el nuevo ritmo en su próximo repaso, y los vencimientos ya fijados no se mueven. El efecto es, por tanto, progresivo e invisible el mismo día.</p>
 <p>El <em>intervalo máximo</em> acota el espaciado. Un mazo creado recientemente arranca en un año: una posición que el algoritmo aplazaría varios años ha abandonado el mazo sin que usted lo haya decidido, y su propio juego cambia más deprisa que eso. Los mazos más antiguos conservan el valor que tenían.</p>
 <h3>Panel Entrenamiento</h3>
-<p>El panel <strong>Anki</strong> repasa lo que se <strong>retiene</strong>; el panel <strong>Entrenamiento</strong> ejercita lo que se <strong>calcula</strong>, contra el reloj. Se abre con <code>CTRL-J</code>, con el botón de la barra de herramientas situado justo después de « Position aléatoire », o con la orden <code>train</code>.</p>
+<p>El panel <strong>Anki</strong> repasa lo que se <strong>retiene</strong>; el panel <strong>Entrenamiento</strong> ejercita lo que se <strong>calcula</strong>, contra el reloj. Se abre con <code>CTRL-J</code>, con el botón de la barra de herramientas situado justo después de « Position aléatoire », o con la orden <code>train</code>. La ficha de marcador pertenece a ambos: se calcula aquí y se retiene en un mazo de fichas de marcador.</p>
 <p>En reposo, el panel muestra el lanzador y el balance de las sesiones pasadas.</p>
 <h4>El lanzador</h4>
 <p>Tres opciones, y luego « Démarrer »:</p>

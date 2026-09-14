@@ -6166,7 +6166,9 @@ msgstr ""
 "Il pannello **Anki** fa ripassare ciò che si **ricorda**; il pannello "
 "**Allenamento** fa lavorare ciò che si **calcola**, sotto l'orologio. Si "
 "apre con ``CTRL-J``, con il pulsante della barra degli strumenti posto "
-"subito dopo « Position aléatoire », oppure con il comando ``train``."
+"subito dopo « Position aléatoire », oppure con il comando ``train``. La "
+"scheda di punteggio appartiene a entrambi: si calcola qui e si ricorda in"
+" un :ref:`mazzo di schede di punteggio <panneau_anki>`."
 
 #: ../../source/manuel.rst:2637
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."

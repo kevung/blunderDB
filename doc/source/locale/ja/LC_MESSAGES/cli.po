@@ -1408,7 +1408,7 @@ msgstr "``--tournament`` — 1つまたは複数のトーナメント ID に絞�
 msgid ""
 "``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
 "``text``)."
-msgstr "``--format`` — 出力形式：``text``、``json``、``csv``（既定：``text``）。"
+msgstr "``--format`` — 出力形式：``text``、``json``、``csv``\\ （既定：``text``）。"
 
 #: ../../source/cli.rst:757
 msgid ""
@@ -2227,7 +2227,7 @@ msgid ""
 "sous-commandes ne font que **lire**, et aucune n'attend de saisie."
 msgstr ""
 "GUI なしで運営済みの大会を読みます。対話的に大会を運営するのは Nicomaque "
-"エンジン自身のコンソールの役目です。これらのサブコマンドは**読むだけ**で、入力を待つものはありません。"
+"エンジン自身のコンソールの役目です。これらのサブコマンドは\\ **読むだけ**\\ で、入力を待つものはありません。"
 
 #: ../../source/cli.rst:1337
 msgid ""
@@ -2243,7 +2243,8 @@ msgid ""
 "d'une saison veut un code de retour, pas une ligne à filtrer."
 msgstr ""
 "``verify --id N [--format text|json]`` — "
-"運営を再生し、残っている警告をすべて報告します。警告が残っていれば**エラー終了**します。これは大会後の点検であり、シーズン分のデータベースにこれを流すスクリプトが欲しいのは終了コードであって、絞り込むための一行ではありません。"
+"運営を再生し、残っている警告をすべて報告します。警告が残っていれば\\ **エラー終了**\\ "
+"します。これは大会後の点検であり、シーズン分のデータベースにこれを流すスクリプトが欲しいのは終了コードであって、絞り込むための一行ではありません。"
 
 #: ../../source/cli.rst:1343
 msgid ""
@@ -2275,7 +2276,7 @@ msgstr ""
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf "
 "pour ``list``), ``--format``."
-msgstr "**共通オプション:** ``--db``（必須）、``--id``（``list`` 以外で必須）、``--format``。"
+msgstr "**共通オプション:** ``--db``\\ （必須）、``--id``\\ （``list`` 以外で必須）、``--format``\\ 。"
 
 #: ../../source/cli.rst:1367
 msgid "trash — La corbeille"

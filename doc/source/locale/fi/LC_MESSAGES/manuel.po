@@ -6060,7 +6060,9 @@ msgstr ""
 "**Anki**-paneeli kertaa sitä, mikä **muistetaan**; "
 "**Harjoittelu**-paneeli harjoittaa sitä, mikä **lasketaan**, kellon "
 "käydessä. Se avautuu näppäimillä ``CTRL-J``, työkalupalkin painikkeesta "
-"heti kohdan « Position aléatoire » jälkeen tai komennolla ``train``."
+"heti kohdan « Position aléatoire » jälkeen tai komennolla ``train``. "
+"Tilannekortti kuuluu molempiin: se lasketaan täällä ja muistetaan "
+":ref:`tilannekorttien pakassa <panneau_anki>`."
 
 #: ../../source/manuel.rst:2637
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."

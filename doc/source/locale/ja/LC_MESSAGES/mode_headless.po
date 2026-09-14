@@ -467,7 +467,7 @@ msgstr "アプリケーションのコマンドラインと同じトークン文
 
 #: ../../source/mode_headless.rst:203
 msgid "**réviser** un paquet Anki — réponse dévoilée et note donnée."
-msgstr "Anki のデッキを **復習する**（答えを開き、評価を付ける）。"
+msgstr "Anki のデッキを **復習する**\\ （答えを開き、評価を付ける）。"
 
 #: ../../source/mode_headless.rst:205
 msgid ""
@@ -660,9 +660,8 @@ msgid ""
 " le ``code`` (ce sur quoi un programme branche), le ``message`` (ce "
 "qu'une personne lit), le statut HTTP et les détails."
 msgstr ""
-"失敗は ``APIError`` "
-"を送出し、デーモンの封筒をそのまま運びます。``code``（プログラムが分岐する対象）、``message``（人が読むもの）、HTTP "
-"ステータス、詳細です。"
+"失敗は ``APIError`` を送出し、デーモンの封筒をそのまま運びます。\\ ``code``\\ "
+"（プログラムが分岐する対象）、``message``\\ （人が読むもの）、HTTP ステータス、詳細です。"
 
 #: ../../source/mode_headless.rst:321
 msgid "Embarquer le moteur dans un programme Go"

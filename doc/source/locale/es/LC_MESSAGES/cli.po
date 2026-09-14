@@ -1463,7 +1463,7 @@ msgstr ""
 
 #: ../../source/cli.rst:721
 msgid "**Options** (type ``stats`` uniquement) :"
-msgstr "**Opciones (solo para el tipo ``stats``):**"
+msgstr "**Opciones** (solo para el tipo ``stats``):"
 
 #: ../../source/cli.rst:723
 msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
@@ -2276,7 +2276,7 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
-"**El paralelismo (``--jobs``).** Las posiciones de un lote son "
+"**El paralelismo** (``--jobs``). Las posiciones de un lote son "
 "independientes — ninguna búsqueda informa a la siguiente —, así que se "
 "reparten entre ``--jobs`` hilos de ejecución, cada uno con su propio "
 "evaluador. Los análisis escritos son **idénticos sea cual sea el valor "

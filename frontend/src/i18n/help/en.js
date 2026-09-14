@@ -710,7 +710,7 @@ export default {
 <p>Changing the retention <strong>is not retroactive</strong>: each card takes up the new pace at its next review, and the due dates already set do not move. The effect is therefore gradual, and invisible on the day itself.</p>
 <p>The <em>maximum interval</em> bounds the spacing. A recently created deck starts at one year: a position the algorithm would push back by several years has left the deck without you deciding so, and your own game changes faster than that. Older decks keep the value they had.</p>
 <h3>Training Panel</h3>
-<p>The <strong>Anki</strong> panel reviews what is <strong>retained</strong>; the <strong>Training</strong> panel drills what is <strong>calculated</strong>, against the clock. It opens with <code>CTRL-J</code>, with the toolbar button placed right after « Position aléatoire », or with the <code>train</code> command.</p>
+<p>The <strong>Anki</strong> panel reviews what is <strong>retained</strong>; the <strong>Training</strong> panel drills what is <strong>calculated</strong>, against the clock. It opens with <code>CTRL-J</code>, with the toolbar button placed right after « Position aléatoire », or with the <code>train</code> command. The score sheet belongs to both: it is calculated here and retained in a deck of score sheets.</p>
 <p>At rest, the panel shows the launcher and the summary of past sessions.</p>
 <h4>The launcher</h4>
 <p>Three choices, then « Démarrer »:</p>

@@ -710,7 +710,7 @@ export default {
 <p>Cambiare la ritenzione <strong>non è retroattivo</strong>: ogni carta adotta il nuovo ritmo al ripasso successivo, e le scadenze già fissate non si spostano. L'effetto è quindi graduale, e invisibile il giorno stesso.</p>
 <p>L'<em>intervallo massimo</em> limita la spaziatura. Un mazzo creato di recente parte da un anno: una posizione che l'algoritmo rimanderebbe di diversi anni ha lasciato il mazzo senza che tu l'abbia deciso, e il tuo stesso gioco cambia più in fretta di così. I mazzi più vecchi conservano il valore che avevano.</p>
 <h3>Pannello Allenamento</h3>
-<p>Il pannello <strong>Anki</strong> fa ripassare ciò che si <strong>ricorda</strong>; il pannello <strong>Allenamento</strong> fa lavorare ciò che si <strong>calcola</strong>, sotto l'orologio. Si apre con <code>CTRL-J</code>, con il pulsante della barra degli strumenti posto subito dopo « Position aléatoire », oppure con il comando <code>train</code>.</p>
+<p>Il pannello <strong>Anki</strong> fa ripassare ciò che si <strong>ricorda</strong>; il pannello <strong>Allenamento</strong> fa lavorare ciò che si <strong>calcola</strong>, sotto l'orologio. Si apre con <code>CTRL-J</code>, con il pulsante della barra degli strumenti posto subito dopo « Position aléatoire », oppure con il comando <code>train</code>. La scheda di punteggio appartiene a entrambi: si calcola qui e si ricorda in un mazzo di schede di punteggio.</p>
 <p>A riposo, il pannello mostra l'avvio e il bilancio delle sessioni passate.</p>
 <h4>L'avvio</h4>
 <p>Tre scelte, poi « Démarrer »:</p>
