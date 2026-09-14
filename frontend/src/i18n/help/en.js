@@ -1323,11 +1323,11 @@ export default {
 </tr>
 <tr>
 <td>UP, k</td>
-<td>Select previous tournament.</td>
+<td>Select previous tournament, when the panel has the focus or no directed tournament is displayed.</td>
 </tr>
 <tr>
 <td>DOWN, j</td>
-<td>Select next tournament.</td>
+<td>Select next tournament, when the panel has the focus or no directed tournament is displayed.</td>
 </tr>
 <tr>
 <td>Double-click (on a match of the tournament)</td>

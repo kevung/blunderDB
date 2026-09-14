@@ -15,6 +15,8 @@
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
     import { proposalLabel, actionKey, renderWarning, isRepair } from './labels.js';
+    import { directionOwnsKey, somethingOpenAbove } from '../../services/directionKeys.js';
+    import { isBareLetter } from '../../utils/keys.js';
 
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
 
@@ -100,27 +102,33 @@
         manualOpen = false;
     }
 
-    /* Nues seulement : CTRL-J ouvre l'Entraînement et CTRL-ENTRÉE ne confirme rien. Tant que le
-       répartiteur appelait stopPropagation(), cet écouteur ne recevait aucune touche (#414) ; il
-       reçoit maintenant celles qui lui parviennent, et ce sont d'abord des combinaisons. */
+    /* J / ↓, K / ↑ et ENTRÉE, nus : tant que la page Direction est affichée, ils sont à la file,
+       sauf quand le focus est dans le panneau Tournois ou dans un champ — la règle et son
+       mécanisme sont écrits dans services/directionKeys.js (#415). Écouté en CAPTURE sur window :
+       le panneau Tournois et le répartiteur, montés avant la page, ne passent pas devant. Ce qui
+       est ouvert par-dessus (modale, surcouche, confirmation de « Tout lancer ») garde ses
+       touches, et l'appui continue alors son chemin. CTRL-J ouvre toujours l'Entraînement. */
     /** @param {KeyboardEvent} e */
     function onKey(e) {
-        if (e.ctrlKey || e.metaKey || e.altKey) return;
-        if (e.target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(/** @type {HTMLElement} */ (e.target).tagName)) return;
-        if (e.key === 'j' || e.key === 'ArrowDown') {
+        if (!directionOwnsKey(e) || somethingOpenAbove() || confirming) return;
+        if (isBareLetter(e, 'j') || e.key === 'ArrowDown') {
             selected = Math.min(selected + 1, shown.length - 1);
-            e.preventDefault();
-        } else if (e.key === 'k' || e.key === 'ArrowUp') {
+        } else if (isBareLetter(e, 'k') || e.key === 'ArrowUp') {
             selected = Math.max(selected - 1, 0);
-            e.preventDefault();
-        } else if (e.key === 'Enter' && shown[selected]) {
+        } else if (e.key === 'Enter' && shown[selected] && !busy) {
             onConfirm(shown[selected]);
-            e.preventDefault();
+        } else {
+            return;
         }
+        e.preventDefault();
+        e.stopImmediatePropagation();
     }
-</script>
 
-<svelte:window onkeydown={onKey} />
+    $effect(() => {
+        window.addEventListener('keydown', onKey, true);
+        return () => window.removeEventListener('keydown', onKey, true);
+    });
+</script>
 
 <section class="proposals">
     <header>

@@ -5,6 +5,7 @@ import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../sto
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
+import { directionOwnsKey } from './directionKeys.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
 import {
@@ -217,6 +218,11 @@ export function handleKeyDown(event) {
     const letter = (ch) => isLetter(event, ch);
 
     if (get(isAnyModalOpen)) return;
+
+    // Under the Direction page, bare J / K / ↓ / ↑ / Enter belong to the proposal queue (#415,
+    // services/directionKeys.js). The queue has claimed them already, or something open above it
+    // keeps them — either way they browse nothing on the board the page hides.
+    if (directionOwnsKey(event)) return;
 
     // During Anki review on the Anki tab, route review keys
     if (get(ankiViewModeStore) === 'review' && !event.ctrlKey && get(activeTabStore) === 'anki') {

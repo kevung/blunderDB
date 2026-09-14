@@ -67,6 +67,16 @@ export function handleEscapeCapture(event) {
 }
 
 /**
+ * Une surcouche est-elle ouverte ? Ce qui est ouvert garde aussi ses autres touches : la file des
+ * propositions ne les lui prend pas (directionKeys.js, #415).
+ *
+ * @returns {boolean}
+ */
+export function hasOpenOverlay() {
+    return stack.length > 0;
+}
+
+/**
  * Enregistre une chose ouverte que Échap ferme, par-dessus les précédentes.
  *
  * @param {() => void} close

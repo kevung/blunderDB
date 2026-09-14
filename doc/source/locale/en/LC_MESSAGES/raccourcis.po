@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:58+0200\n"
+"POT-Creation-Date: 2026-09-14 14:05+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -249,8 +249,8 @@ msgid "Charger une position aléatoire."
 msgstr "Load a random position."
 
 #: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
+msgid "ÉCHAP"
+msgstr "ESC"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -453,10 +453,6 @@ msgid "Reprendre la dernière décision d'un tournoi dirigé."
 msgstr "Take back the last decision of a directed tournament."
 
 #: ../../source/raccourcis.rst:1
-msgid "ÉCHAP"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
 msgid "Fermer la fiche de résultat ou la reprise en cours."
 msgstr "Close the result card or the take-back in progress."
 
@@ -599,6 +595,10 @@ msgid ""
 msgstr "Toggle between checker and cube analysis (match navigation only)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
@@ -715,12 +715,20 @@ msgid "Sélectionner un tournoi (afficher son détail)."
 msgstr "Select a tournament (show its detail)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi précédent."
-msgstr "Select previous tournament."
+msgid ""
+"Sélectionner le tournoi précédent, quand le panneau a le focus ou "
+"qu'aucune direction n'est affichée."
+msgstr ""
+"Select previous tournament, when the panel has the focus or no directed "
+"tournament is displayed."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi suivant."
-msgstr "Select next tournament."
+msgid ""
+"Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune"
+" direction n'est affichée."
+msgstr ""
+"Select next tournament, when the panel has the focus or no directed "
+"tournament is displayed."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur un match du tournoi)"
@@ -1415,3 +1423,9 @@ msgstr "Close the help."
 #~ " no candidate has been chosen; once"
 #~ " one is chosen, record the play "
 #~ "and open the next roll."
+
+#~ msgid "Sélectionner le tournoi précédent."
+#~ msgstr "Select previous tournament."
+
+#~ msgid "Sélectionner le tournoi suivant."
+#~ msgstr "Select next tournament."

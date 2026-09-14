@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:58+0200\n"
+"POT-Creation-Date: 2026-09-14 14:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -251,8 +251,8 @@ msgid "Charger une position aléatoire."
 msgstr "Загрузить случайную позицию."
 
 #: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
+msgid "ÉCHAP"
+msgstr "ESC"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -453,10 +453,6 @@ msgid "Reprendre la dernière décision d'un tournoi dirigé."
 msgstr "Вернуться к последнему решению проводимого турнира."
 
 #: ../../source/raccourcis.rst:1
-msgid "ÉCHAP"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
 msgid "Fermer la fiche de résultat ou la reprise en cours."
 msgstr "Закрыть карточку результата или начатую правку."
 
@@ -599,6 +595,10 @@ msgid ""
 msgstr "Переключить между анализом ходов и куба (только при навигации по матчу)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
@@ -715,12 +715,20 @@ msgid "Sélectionner un tournoi (afficher son détail)."
 msgstr "Выбрать турнир (показать его подробности)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi précédent."
-msgstr "Выбрать предыдущий турнир."
+msgid ""
+"Sélectionner le tournoi précédent, quand le panneau a le focus ou "
+"qu'aucune direction n'est affichée."
+msgstr ""
+"Выбрать предыдущий турнир, когда панель в фокусе или не отображается ни "
+"один проводимый турнир."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi suivant."
-msgstr "Выбрать следующий турнир."
+msgid ""
+"Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune"
+" direction n'est affichée."
+msgstr ""
+"Выбрать следующий турнир, когда панель в фокусе или не отображается ни "
+"один проводимый турнир."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur un match du tournoi)"
@@ -1398,3 +1406,9 @@ msgstr "Закрыть справку."
 #~ "Начать бросок заново, пока не выбран "
 #~ "ни один вариант; после выбора — "
 #~ "записать ход и открыть следующий бросок."
+
+#~ msgid "Sélectionner le tournoi précédent."
+#~ msgstr "Выбрать предыдущий турнир."
+
+#~ msgid "Sélectionner le tournoi suivant."
+#~ msgstr "Выбрать следующий турнир."

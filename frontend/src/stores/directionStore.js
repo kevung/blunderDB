@@ -158,6 +158,13 @@ export const directionWarningsStore = derived(directionStore, ($d) => ($d && $d.
 export const directionOpenStore = derived(openDirectionIdStore, ($id) => $id !== null);
 
 /**
+ * La page Direction remplace le plateau : l'onglet Tournois est actif ET une Direction est
+ * ouverte. Tout autre onglet ramène le plateau sans rien fermer (ADR-0047). App.svelte l'affiche
+ * sur ce seul signal, et le clavier le lit (services/directionKeys.js, #415).
+ */
+export const directionPageShownStore = derived([activeTabStore, directionOpenStore], ([$tab, $open]) => $tab === 'tournaments' && $open);
+
+/**
  * Les configurations nommées proposées à la création. Ce sont des points de départ, pas des
  * formats figés : chaque champ reste modifiable tant que la Direction est un brouillon.
  *

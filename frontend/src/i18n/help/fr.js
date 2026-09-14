@@ -1323,11 +1323,11 @@ export default {
 </tr>
 <tr>
 <td>HAUT, k</td>
-<td>Sélectionner le tournoi précédent.</td>
+<td>Sélectionner le tournoi précédent, quand le panneau a le focus ou qu'aucune direction n'est affichée.</td>
 </tr>
 <tr>
 <td>BAS, j</td>
-<td>Sélectionner le tournoi suivant.</td>
+<td>Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune direction n'est affichée.</td>
 </tr>
 <tr>
 <td>Double-clic (sur un match du tournoi)</td>

@@ -1323,11 +1323,11 @@ export default {
 </tr>
 <tr>
 <td>SU, k</td>
-<td>Seleziona il torneo precedente.</td>
+<td>Seleziona il torneo precedente, quando il pannello ha il focus o non è visualizzato alcun torneo diretto.</td>
 </tr>
 <tr>
 <td>GIÙ, j</td>
-<td>Seleziona il torneo successivo.</td>
+<td>Seleziona il torneo successivo, quando il pannello ha il focus o non è visualizzato alcun torneo diretto.</td>
 </tr>
 <tr>
 <td>Doppio clic (su un match del torneo)</td>

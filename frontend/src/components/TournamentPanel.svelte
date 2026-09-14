@@ -28,6 +28,7 @@
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
     import { directionSummariesStore, openDirectionIdStore, refreshDirectionSummaries, createDirection, openDirection, closeDirection, defaultConfig } from '../stores/directionStore';
+    import { directionOwnsKey, directionPageShown } from '../services/directionKeys.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
@@ -455,6 +456,11 @@
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
 
+        // Sous la page Direction, J / K / ↓ / ↑ / ENTRÉE sont à la file des propositions, sauf
+        // quand le focus est dans ce panneau (#415) — la règle et son mécanisme sont écrits dans
+        // services/directionKeys.js. Ni stopPropagation ni navigation : l'appui continue.
+        if (directionOwnsKey(event)) return;
+
         // Block all other non-Ctrl keys from propagating (prevents position browsing)
         event.stopPropagation();
 
@@ -496,7 +502,11 @@
     $effect(() => {
         if (!visible) return;
         // Deferred, so the user may be typing by then: never take their field (utils/panelFocus.js).
-        const timer = setTimeout(() => focusPanelUnlessTyping(document.getElementById('tournamentPanel')), 100);
+        // Nor from the Direction page, which takes the keyboard when it opens (#415,
+        // services/directionKeys.js): read when the timer fires, not when it is armed.
+        const timer = setTimeout(() => {
+            if (!directionPageShown()) focusPanelUnlessTyping(document.getElementById('tournamentPanel'));
+        }, 100);
         return () => clearTimeout(timer);
     });
     onMount(() => {

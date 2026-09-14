@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:58+0200\n"
+"POT-Creation-Date: 2026-09-14 14:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -248,8 +248,8 @@ msgid "Charger une position aléatoire."
 msgstr "ランダムなポジションを読み込む。"
 
 #: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
+msgid "ÉCHAP"
+msgstr "ESC"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -448,10 +448,6 @@ msgid "Reprendre la dernière décision d'un tournoi dirigé."
 msgstr "運営中の大会の直前の決定をやり直します。"
 
 #: ../../source/raccourcis.rst:1
-msgid "ÉCHAP"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
 msgid "Fermer la fiche de résultat ou la reprise en cours."
 msgstr "結果カード、または実行中のやり直しを閉じます。"
 
@@ -594,6 +590,10 @@ msgid ""
 msgstr "チェッカー分析とキューブ分析を切り替える（マッチナビゲーションのみ）。"
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
@@ -708,12 +708,16 @@ msgid "Sélectionner un tournoi (afficher son détail)."
 msgstr "トーナメントを選択する（詳細を表示）。"
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi précédent."
-msgstr "前のトーナメントを選択する。"
+msgid ""
+"Sélectionner le tournoi précédent, quand le panneau a le focus ou "
+"qu'aucune direction n'est affichée."
+msgstr "前のトーナメントを選択する（パネルにフォーカスがあるとき、または運営中の大会が表示されていないとき）。"
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi suivant."
-msgstr "次のトーナメントを選択する。"
+msgid ""
+"Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune"
+" direction n'est affichée."
+msgstr "次のトーナメントを選択する（パネルにフォーカスがあるとき、または運営中の大会が表示されていないとき）。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur un match du tournoi)"
@@ -1281,3 +1285,9 @@ msgstr "ヘルプを閉じる。"
 #~ " un candidat choisi, valider le coup"
 #~ " et ouvrir le jet suivant."
 #~ msgstr "候補を選ぶまでは出目を振り直す。候補を選んだあとは着手を記録し、次の出目に進む。"
+
+#~ msgid "Sélectionner le tournoi précédent."
+#~ msgstr "前のトーナメントを選択する。"
+
+#~ msgid "Sélectionner le tournoi suivant."
+#~ msgstr "次のトーナメントを選択する。"

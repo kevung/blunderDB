@@ -253,8 +253,8 @@ Panneau des tournois
    :align: center
 
    "Clic, Double-clic", "Sélectionner un tournoi (afficher son détail)."
-   "HAUT, k", "Sélectionner le tournoi précédent."
-   "BAS, j", "Sélectionner le tournoi suivant."
+   "HAUT, k", "Sélectionner le tournoi précédent, quand le panneau a le focus ou qu'aucune direction n'est affichée."
+   "BAS, j", "Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "Double-clic (sur un match du tournoi)", "Naviguer dans le match."
    "Esc", "Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 

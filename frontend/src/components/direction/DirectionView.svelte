@@ -15,6 +15,7 @@
     import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
+    import { focusPanelUnlessTyping } from '../../utils/panelFocus.js';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
     import DirectoryPanel from './DirectoryPanel.svelte';
@@ -109,6 +110,14 @@
        Le choix ne vaut QUE pour l'ouverture : les Réglages restent accessibles en cours de
        tournoi — c'est là qu'on baisse la bascule à 22 h (#385) — et un onglet qui se dérobe
        sous le curseur serait pire que pas d'onglet du tout. */
+    /* La page prend le clavier en s'ouvrant (#415, services/directionKeys.js) : on l'ouvre d'un
+       clic sur un bouton du panneau Tournois, et le focus y resterait — J / K iraient alors au
+       panneau au lieu de la file. Jamais au détriment d'un champ où l'on tape. */
+    let root = $state(/** @type {HTMLElement | null} */ (null));
+    $effect(() => {
+        if (root) focusPanelUnlessTyping(root);
+    });
+
     let tab = $state('settings');
     let tabChosen = false;
     $effect(() => {
@@ -422,7 +431,7 @@
     }
 </script>
 
-<div class="direction-view">
+<div class="direction-view" tabindex="-1" bind:this={root}>
     <header>
         <span class="name">{view?.config?.name || ''}</span>
         <span class="state">{$t(`direction.state.${directionState}`)}</span>
@@ -516,6 +525,10 @@
 </div>
 
 <style>
+    .direction-view:focus {
+        outline: none;
+    }
+
     .direction-view {
         position: relative;
         display: flex;

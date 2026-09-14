@@ -1323,11 +1323,11 @@ export default {
 </tr>
 <tr>
 <td>ARRIBA, k</td>
-<td>Seleccionar el torneo anterior.</td>
+<td>Seleccionar el torneo anterior, cuando el panel tiene el foco o no se muestra ningún torneo dirigido.</td>
 </tr>
 <tr>
 <td>ABAJO, j</td>
-<td>Seleccionar el torneo siguiente.</td>
+<td>Seleccionar el torneo siguiente, cuando el panel tiene el foco o no se muestra ningún torneo dirigido.</td>
 </tr>
 <tr>
 <td>Doble clic (sobre una partida del torneo)</td>

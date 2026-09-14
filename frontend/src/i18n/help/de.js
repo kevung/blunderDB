@@ -1323,11 +1323,11 @@ export default {
 </tr>
 <tr>
 <td>OBEN, k</td>
-<td>Vorheriges Turnier auswählen.</td>
+<td>Vorheriges Turnier auswählen, wenn das Panel den Fokus hat oder kein geleitetes Turnier angezeigt wird.</td>
 </tr>
 <tr>
 <td>UNTEN, j</td>
-<td>Nächstes Turnier auswählen.</td>
+<td>Nächstes Turnier auswählen, wenn das Panel den Fokus hat oder kein geleitetes Turnier angezeigt wird.</td>
 </tr>
 <tr>
 <td>Doppelklick (auf ein Match des Turniers)</td>

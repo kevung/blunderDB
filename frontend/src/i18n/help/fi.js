@@ -1323,11 +1323,11 @@ export default {
 </tr>
 <tr>
 <td>YLÖS, k</td>
-<td>Valitse edellinen turnaus.</td>
+<td>Valitse edellinen turnaus, kun paneelilla on kohdistus tai yhtään johdettua turnausta ei ole näkyvissä.</td>
 </tr>
 <tr>
 <td>ALAS, j</td>
-<td>Valitse seuraava turnaus.</td>
+<td>Valitse seuraava turnaus, kun paneelilla on kohdistus tai yhtään johdettua turnausta ei ole näkyvissä.</td>
 </tr>
 <tr>
 <td>Kaksoisnapsautus (turnauksen ottelun kohdalla)</td>

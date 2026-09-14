@@ -79,7 +79,7 @@
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
     import DirectionView from './components/direction/DirectionView.svelte';
-    import { directionOpenStore } from './stores/directionStore';
+    import { directionPageShownStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
@@ -524,7 +524,7 @@
             <!-- La seule chose qui remplace le plateau dans la zone principale (ADR-0047) :
                  l'onglet Tournoi actif ET une Direction ouverte. Tout autre onglet ramène le
                  plateau sans rien fermer — la Direction reste ouverte et continue de vivre. -->
-            {#if $activeTabStore === 'tournaments' && $directionOpenStore}
+            {#if $directionPageShownStore}
                 <DirectionView />
             {:else}
                 <Board />

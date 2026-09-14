@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:58+0200\n"
+"POT-Creation-Date: 2026-09-14 14:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -252,8 +252,8 @@ msgid "Charger une position aléatoire."
 msgstr "Eine zufällige Position laden."
 
 #: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
+msgid "ÉCHAP"
+msgstr "ESC"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -455,10 +455,6 @@ msgid "Reprendre la dernière décision d'un tournoi dirigé."
 msgstr "Die letzte Entscheidung eines geleiteten Turniers zurücknehmen."
 
 #: ../../source/raccourcis.rst:1
-msgid "ÉCHAP"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
 msgid "Fermer la fiche de résultat ou la reprise en cours."
 msgstr "Die Ergebniskarte oder die laufende Rücknahme schließen."
 
@@ -601,6 +597,10 @@ msgid ""
 msgstr "Zwischen Zug- und Dopplerwürfel-Analyse wechseln (nur Match-Navigation)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
 
@@ -719,12 +719,20 @@ msgid "Sélectionner un tournoi (afficher son détail)."
 msgstr "Ein Turnier auswählen (Details anzeigen)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi précédent."
-msgstr "Vorheriges Turnier auswählen."
+msgid ""
+"Sélectionner le tournoi précédent, quand le panneau a le focus ou "
+"qu'aucune direction n'est affichée."
+msgstr ""
+"Vorheriges Turnier auswählen, wenn das Panel den Fokus hat oder kein "
+"geleitetes Turnier angezeigt wird."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi suivant."
-msgstr "Nächstes Turnier auswählen."
+msgid ""
+"Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune"
+" direction n'est affichée."
+msgstr ""
+"Nächstes Turnier auswählen, wenn das Panel den Fokus hat oder kein "
+"geleitetes Turnier angezeigt wird."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur un match du tournoi)"
@@ -1438,3 +1446,9 @@ msgstr "Hilfe schließen."
 #~ "Kandidat gewählt wurde; sobald einer "
 #~ "gewählt ist, den Zug erfassen und "
 #~ "den nächsten Wurf öffnen."
+
+#~ msgid "Sélectionner le tournoi précédent."
+#~ msgstr "Vorheriges Turnier auswählen."
+
+#~ msgid "Sélectionner le tournoi suivant."
+#~ msgstr "Nächstes Turnier auswählen."

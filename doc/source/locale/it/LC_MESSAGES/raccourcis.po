@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:58+0200\n"
+"POT-Creation-Date: 2026-09-14 14:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -248,8 +248,8 @@ msgid "Charger une position aléatoire."
 msgstr "Carica una posizione casuale."
 
 #: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
+msgid "ÉCHAP"
+msgstr "ESC"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -452,10 +452,6 @@ msgid "Reprendre la dernière décision d'un tournoi dirigé."
 msgstr "Riprendere l'ultima decisione di un torneo diretto."
 
 #: ../../source/raccourcis.rst:1
-msgid "ÉCHAP"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
 msgid "Fermer la fiche de résultat ou la reprise en cours."
 msgstr "Chiudere la scheda del risultato o la ripresa in corso."
 
@@ -598,6 +594,10 @@ msgid ""
 msgstr "Alterna tra l'analisi delle mosse e del cubo (solo navigazione match)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
@@ -714,12 +714,20 @@ msgid "Sélectionner un tournoi (afficher son détail)."
 msgstr "Seleziona un torneo (mostrane il dettaglio)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi précédent."
-msgstr "Seleziona il torneo precedente."
+msgid ""
+"Sélectionner le tournoi précédent, quand le panneau a le focus ou "
+"qu'aucune direction n'est affichée."
+msgstr ""
+"Seleziona il torneo precedente, quando il pannello ha il focus o non è "
+"visualizzato alcun torneo diretto."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi suivant."
-msgstr "Seleziona il torneo successivo."
+msgid ""
+"Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune"
+" direction n'est affichée."
+msgstr ""
+"Seleziona il torneo successivo, quando il pannello ha il focus o non è "
+"visualizzato alcun torneo diretto."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur un match du tournoi)"
@@ -1421,3 +1429,9 @@ msgstr "Chiudi la guida."
 #~ "stato scelto alcun candidato; una volta"
 #~ " scelto, registrare la mossa e aprire"
 #~ " il tiro successivo."
+
+#~ msgid "Sélectionner le tournoi précédent."
+#~ msgstr "Seleziona il torneo precedente."
+
+#~ msgid "Sélectionner le tournoi suivant."
+#~ msgstr "Seleziona il torneo successivo."

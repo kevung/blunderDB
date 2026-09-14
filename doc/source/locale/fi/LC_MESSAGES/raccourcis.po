@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 16:58+0200\n"
+"POT-Creation-Date: 2026-09-14 14:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -250,8 +250,8 @@ msgid "Charger une position aléatoire."
 msgstr "Lataa satunnainen asema."
 
 #: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
+msgid "ÉCHAP"
+msgstr "ESC"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -452,10 +452,6 @@ msgid "Reprendre la dernière décision d'un tournoi dirigé."
 msgstr "Peru johdetun turnauksen viimeisin päätös."
 
 #: ../../source/raccourcis.rst:1
-msgid "ÉCHAP"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
 msgid "Fermer la fiche de résultat ou la reprise en cours."
 msgstr "Sulje tuloskortti tai käynnissä oleva peruutus."
 
@@ -600,6 +596,10 @@ msgstr ""
 "ottelunavigoinnissa)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
@@ -716,12 +716,20 @@ msgid "Sélectionner un tournoi (afficher son détail)."
 msgstr "Valitse turnaus (näytä sen tiedot)."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi précédent."
-msgstr "Valitse edellinen turnaus."
+msgid ""
+"Sélectionner le tournoi précédent, quand le panneau a le focus ou "
+"qu'aucune direction n'est affichée."
+msgstr ""
+"Valitse edellinen turnaus, kun paneelilla on kohdistus tai yhtään "
+"johdettua turnausta ei ole näkyvissä."
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner le tournoi suivant."
-msgstr "Valitse seuraava turnaus."
+msgid ""
+"Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune"
+" direction n'est affichée."
+msgstr ""
+"Valitse seuraava turnaus, kun paneelilla on kohdistus tai yhtään "
+"johdettua turnausta ei ole näkyvissä."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic (sur un match du tournoi)"
@@ -1409,3 +1417,9 @@ msgstr "Sulje ohje."
 #~ "ehdokasta ei ole valittu; kun sellainen"
 #~ " on valittu, kirjaa siirto ja avaa"
 #~ " seuraava heitto."
+
+#~ msgid "Sélectionner le tournoi précédent."
+#~ msgstr "Valitse edellinen turnaus."
+
+#~ msgid "Sélectionner le tournoi suivant."
+#~ msgstr "Valitse seuraava turnaus."
