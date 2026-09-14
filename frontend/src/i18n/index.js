@@ -66,7 +66,7 @@ function lookup(dict, key) {
 // Replace {placeholders} with values from params. Unknown placeholders are left intact.
 /**
  * @param {unknown} str
- * @param {Record<string, unknown> | undefined} params
+ * @param {Record<string, unknown> | null | undefined} params
  */
 function interpolate(str, params) {
     if (typeof str !== 'string' || !params) return str;
@@ -74,9 +74,20 @@ function interpolate(str, params) {
 }
 
 /**
+ * A translation function: the value of `$t`, the shape of `translate`.
+ *
+ * A key resolves to its message text; a key that is missing everywhere
+ * resolves to the key itself. Every call site names a leaf of the
+ * catalogue, so the result is a string.
+ *
+ * @typedef {(key: string, params?: Record<string, unknown> | null) => string} Translate
+ */
+
+/**
  * @param {string} lang
  * @param {string} key
- * @param {Record<string, unknown> | undefined} params
+ * @param {Record<string, unknown> | null | undefined} params
+ * @returns {string}
  */
 function translateFor(lang, key, params) {
     let raw = lookup(messages[lang], key);
@@ -84,7 +95,7 @@ function translateFor(lang, key, params) {
         raw = lookup(messages[FALLBACK_LOCALE], key);
     }
     if (raw === undefined) raw = key; // final fallback: surface the key for visibility
-    return interpolate(raw, params);
+    return /** @type {string} */ (interpolate(raw, params));
 }
 
 // Current locale. Initialized to the fallback; overwritten at startup by
@@ -92,7 +103,8 @@ function translateFor(lang, key, params) {
 export const language = writable(FALLBACK_LOCALE);
 
 // Reactive translation function. Components: `{$t('toolbar.newDatabase')}`.
-export const t = derived(language, ($lang) => (key, params) => translateFor($lang, key, params));
+/** @type {import('svelte/store').Readable<Translate>} */
+export const t = derived(language, ($lang) => (/** @type {string} */ key, /** @type {Record<string, unknown> | null | undefined} */ params) => translateFor($lang, key, params));
 
 /**
  * Un bloc entier de messages, dans la langue courante, replié sur l'anglais clé par clé.
@@ -109,7 +121,13 @@ export function messageBlock(section) {
     return mergeBlocks(base, own);
 }
 
-/** Repli profond : l'anglais dessous, la langue de l'utilisateur dessus. */
+/**
+ * Repli profond : l'anglais dessous, la langue de l'utilisateur dessus.
+ *
+ * @param {any} base
+ * @param {any} own
+ * @returns {any}
+ */
 function mergeBlocks(base, own) {
     if (own === undefined) return base === undefined ? {} : base;
     if (base === undefined || typeof base !== 'object' || typeof own !== 'object') return own;
@@ -119,6 +137,11 @@ function mergeBlocks(base, own) {
 }
 
 // Non-reactive translation for use outside Svelte components (.js modules).
+/**
+ * @param {string} key
+ * @param {Record<string, unknown> | null} [params]
+ * @returns {string}
+ */
 export function translate(key, params) {
     return translateFor(get(language), key, params);
 }
@@ -143,16 +166,23 @@ export function tMsg(key, params) {
 
 // Resolve a value that may be either a plain string or a tMsg() descriptor.
 // `tfn` is a translation function (e.g. the value of the `$t` store).
+/**
+ * @param {string | StatusMessage | null | undefined} value
+ * @param {Translate} tfn
+ * @returns {string | null | undefined}
+ */
 export function resolveStatusMessage(value, tfn) {
     if (value && typeof value === 'object' && value.i18nKey) {
         return tfn(value.i18nKey, value.i18nParams);
     }
-    return value;
+    // tMsg() always names a key, so what is left is a plain string or nothing.
+    return /** @type {string | null | undefined} */ (value);
 }
 
 // Change the active language and persist it to the Go config. The dictionary
 // is awaited before the store flips so `$t(...)` never renders raw keys
 // during the load.
+/** @param {string} lang */
 export async function setLanguage(lang) {
     const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;
     await ensureLocaleLoaded(next);
@@ -167,6 +197,7 @@ export async function setLanguage(lang) {
 }
 
 // Apply a persisted language at startup without re-persisting it.
+/** @param {string} lang */
 export async function initLanguage(lang) {
     const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;
     await ensureLocaleLoaded(next);

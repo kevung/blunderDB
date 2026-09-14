@@ -1008,7 +1008,7 @@
                                             <tr class="stats-section-header"><td colspan="3">{$t(row.section)}</td></tr>
                                         {:else}
                                             <tr>
-                                                <td class="stats-label{row.sub ? ' sub-label' : ''}">{row.bullet ? '• ' : ''}{$t(row.label)}</td>
+                                                <td class="stats-label{row.sub ? ' sub-label' : ''}">{row.bullet ? '• ' : ''}{$t(row.label ?? '')}</td>
                                                 <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}">{row.fmt(p1)}</td>
                                                 <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}">{row.fmt(p2)}</td>
                                             </tr>

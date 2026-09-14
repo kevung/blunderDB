@@ -181,6 +181,13 @@
     ]);
 
     const RATING_KEYS = ['', 'anki.again', 'anki.hard', 'anki.good', 'anki.easy'];
+    /** @type {[string, number][]} The four review buttons: i18n key, rating. */
+    const RATING_BUTTONS = [
+        ['anki.again', 1],
+        ['anki.hard', 2],
+        ['anki.good', 3],
+        ['anki.easy', 4]
+    ];
 
     let reviewLogRows = $derived(
         reviewLog.map((/** @type {any} */ e) => ({
@@ -536,7 +543,7 @@
                     </div>
                 {:else}
                     <div class="review-buttons">
-                        {#each [['anki.again', 1], ['anki.hard', 2], ['anki.good', 3], ['anki.easy', 4]] as [key, rating] (rating)}
+                        {#each RATING_BUTTONS as [key, rating] (rating)}
                             <button class="btn-rating" onclick={() => submitReview(rating)} title={$t(key) + ` (${rating})`}>
                                 <span class="rating-label">{$t(key)}</span>
                                 <span class="rating-key">{rating}</span>
