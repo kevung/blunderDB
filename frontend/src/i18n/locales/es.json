@@ -1966,6 +1966,7 @@
             "withdrawn": "{player} retirado",
             "started": "{a} – {b} iniciada · {where}",
             "result": "{winner} gana {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} gana",
             "forfeit": "{winner} gana por incomparecencia",
             "corrected": "Resultado corregido: gana {winner}",
             "cancelled": "Partida {match} anulada",

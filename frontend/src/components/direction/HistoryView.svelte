@@ -51,13 +51,16 @@
                     where: renderLabel($t, e.label)
                 });
             case 'result':
-                return e.forfeit
-                    ? $t('direction.history.forfeit', { winner: e.winnerName })
-                    : $t('direction.history.result', {
-                          winner: e.winnerName,
-                          scoreA: e.scoreA,
-                          scoreB: e.scoreB
-                      });
+                if (e.forfeit) return $t('direction.history.forfeit', { winner: e.winnerName });
+                /* Le moteur encode les scores avec `omitempty` : un côté absent est un zéro qu'il
+                   a omis (7–0), les deux absents disent qu'aucun score n'a été saisi — et alors
+                   la ligne n'en invente pas un. */
+                if (e.scoreA == null && e.scoreB == null) return $t('direction.history.resultNoScore', { winner: e.winnerName });
+                return $t('direction.history.result', {
+                    winner: e.winnerName,
+                    scoreA: e.scoreA ?? 0,
+                    scoreB: e.scoreB ?? 0
+                });
             case 'result_corrected':
                 return $t('direction.history.corrected', { winner: e.winnerName });
             case 'match_cancelled':

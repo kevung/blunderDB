@@ -1966,6 +1966,7 @@
             "withdrawn": "{player} снялся",
             "started": "{a} – {b} начат · {where}",
             "result": "{winner} побеждает {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} побеждает",
             "forfeit": "{winner} побеждает неявкой",
             "corrected": "Результат исправлен: побеждает {winner}",
             "cancelled": "Матч {match} отменён",

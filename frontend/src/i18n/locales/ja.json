@@ -1966,6 +1966,7 @@
             "withdrawn": "{player} が棄権",
             "started": "{a} – {b} 開始 · {where}",
             "result": "{winner} が {scoreA}–{scoreB} で勝利",
+            "resultNoScore": "{winner} が勝利",
             "forfeit": "{winner} が不戦勝",
             "corrected": "結果を訂正：{winner} の勝ち",
             "cancelled": "試合 {match} を取り消し",

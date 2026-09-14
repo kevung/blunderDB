@@ -1966,6 +1966,7 @@
             "withdrawn": "{player} poistui",
             "started": "{a} – {b} aloitettu · {where}",
             "result": "{winner} voittaa {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} voittaa",
             "forfeit": "{winner} voittaa luovutuksella",
             "corrected": "Tulos korjattu: {winner} voittaa",
             "cancelled": "Ottelu {match} peruttu",

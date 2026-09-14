@@ -1966,6 +1966,7 @@
             "withdrawn": "Ο/Η {player} αποσύρθηκε",
             "started": "{a} – {b} ξεκίνησε · {where}",
             "result": "Ο/Η {winner} νικά {scoreA}–{scoreB}",
+            "resultNoScore": "Ο/Η {winner} νικά",
             "forfeit": "Ο/Η {winner} νικά άνευ αγώνα",
             "corrected": "Διορθωμένο αποτέλεσμα: νικά ο/η {winner}",
             "cancelled": "Ο αγώνας {match} ακυρώθηκε",
