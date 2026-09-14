@@ -32,6 +32,14 @@
 # directory, so an absolute output path would produce absolute `#:` references
 # — harmless here (nothing is written back), but the same command is what
 # regenerates the committed catalogues, and there it must stay relative.
+#
+# It then runs scripts/doc-markup-check.py over the same templates and every
+# catalogue: inline markup that does not render (nested in the French source,
+# refused next to CJK text in a translation), literals or bold a translation
+# lost, links it dropped. None of that emits a Sphinx warning, and a stale
+# msgstr that never went fuzzy is invisible to the counts above (#427). Those
+# are broken pages, not gaps waiting for a release: the script fails on them
+# with or without --strict.
 
 set -euo pipefail
 
@@ -41,7 +49,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --strict) STRICT=1 ;;
     --langs) shift; LANGS="${1:-}" ;;
-    -h|--help) sed -n '2,36p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,45p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
   shift
@@ -61,6 +69,10 @@ if [ -z "$SPHINX_BUILD" ]; then
     exit 2
   fi
 fi
+# The markup check imports docutils and Babel, which come with Sphinx: use the
+# interpreter that sits next to sphinx-build. PYTHON overrides it.
+PYTHON="${PYTHON:-$(dirname "$(command -v "$SPHINX_BUILD")")/python3}"
+[ -x "$PYTHON" ] || PYTHON=python3
 for tool in msgmerge msgfmt msginit; do
   command -v "$tool" >/dev/null 2>&1 || { echo "$tool not found: install GNU gettext" >&2; exit 2; }
 done
@@ -122,10 +134,17 @@ for lang in $LANGS; do
   total_untranslated=$((total_untranslated + lang_untranslated))
 done
 
+echo
+markup=0
+"$PYTHON" scripts/doc-markup-check.py --pot-dir "$POT_DIR" --langs "$LANGS" || markup=1
+if [ "$markup" = 1 ] && [ -n "${GITHUB_ACTIONS:-}" ]; then
+  echo "::error::doc markup: broken inline markup or lost links in the documentation (see the log)"
+fi
+
 total=$((total_fuzzy + total_untranslated))
 if [ "$total" -eq 0 ]; then
   echo "doc i18n: all translations complete."
-  exit 0
+  exit "$markup"
 fi
 echo "doc i18n: $total_untranslated untranslated + $total_fuzzy fuzzy strings across $LANGS."
 if [ "$STRICT" = 1 ]; then
@@ -133,4 +152,4 @@ if [ "$STRICT" = 1 ]; then
   exit 1
 fi
 [ -n "${GITHUB_ACTIONS:-}" ] && echo "::warning::doc i18n: $total_untranslated untranslated + $total_fuzzy fuzzy strings (blocking on release tags)"
-exit 0
+exit "$markup"

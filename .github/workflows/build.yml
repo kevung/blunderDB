@@ -1485,10 +1485,13 @@ jobs:
               - 'doc/**'
               - '.github/workflows/build.yml'
               - 'scripts/doc-i18n-check.sh'
+              - 'scripts/doc-markup-check.py'
 
   # Are the eight translations complete against the French source? Runs
   # scripts/doc-i18n-check.sh (regenerates the .pot, merges each catalogue in a
-  # temp dir, counts untranslated + fuzzy). Same gate as `docs`: documentation
+  # temp dir, counts untranslated + fuzzy, then scripts/doc-markup-check.py:
+  # markup that does not render and links a translation lost — fatal on every
+  # event, since those are broken pages, #427). Same gate as `docs`: documentation
   # changes, tags and manual runs. On a pull request or a manual run a gap is
   # a ::warning:: annotation; on a push (main or a version tag) it is strict
   # and fails: a release cannot ship docs falling back to French, and the
