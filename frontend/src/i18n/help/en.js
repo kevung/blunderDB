@@ -715,13 +715,13 @@ export default {
 <h4>The launcher</h4>
 <p>Three choices, then « Démarrer »:</p>
 <ul>
-<li>the <strong>exercise</strong> — <em>Scores</em>, <em>Pions</em> (pips) or <em>Bearoff</em>;</li>
+<li>the <strong>exercise</strong> — <em>Scores</em>, <em>Pions</em> (pips), <em>Bearoff</em> or <em>Décision</em>;</li>
 <li>the <strong>source</strong> of the question, when the exercise has several — <em>Vivier</em> (canonical shapes of the exercise), <em>Plateau</em> (the position as it stands) or <em>Base</em> (a position of the browsed list);</li>
 <li>the <strong>limit per question</strong> — none, 15, 30 or 60 seconds.</li>
 </ul>
 <p>The chosen source is remembered for each exercise, from one session to the next.</p>
-<p><code>train scores</code>, <code>train pips</code> and <code>train bearoff</code> open the panel and start straight away; <code>train tp</code> and <code>train takepoint</code> are synonyms of <code>train scores</code>, <code>train epc</code> of <code>train bearoff</code>.</p>
-<h4>The three exercises</h4>
+<p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code> and <code>train decision</code> open the panel and start straight away; <code>train tp</code> and <code>train takepoint</code> are synonyms of <code>train scores</code>, <code>train epc</code> of <code>train bearoff</code>, <code>train quiz</code> of <code>train decision</code>.</p>
+<h4>The four exercises</h4>
 <p><strong>Scores</strong> draws one of the 36 unordered scores from 2 to 9 away and shows a <strong>score card</strong>: two columns — <em>Vous</em> (you) and <em>L'adversaire</em> (the opponent) — and seven rows — the take point at cube 2 then at cube 4, each for a long race and for the last roll, then the gammon value at cubes 1, 2 and 4.</p>
 <p>Each column carries only the cells the reference tables — those the <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> and <code>gv4</code> commands display — define for its face: three numbers at 2a-2a, fourteen at most, and a single column at a level score. A row neither face defines does not appear on the card — so there is no « n/a » cell to guess. Both faces are there because a cube decision at a score needs both: the corrected take point combines both players' gammon values, and it is the opponent's take point that says whether your double passes.</p>
 <p><strong>Pions</strong> (pips) asks for the pip count of <strong>both</strong> sides. The board's pip count is hidden while the question is open; « Révéler » shows it — <strong>even if you had hidden the pip count</strong> with <code>p</code>, since the answer would otherwise stay invisible and the exercise unverifiable. It is a mask and not a setting: your own choice is not changed, and it takes over again at the next question. The <em>Plateau</em> source asks one question about the position shown, and only one; the <em>Base</em> source draws a new position for every question and brings it onto the board.</p>
@@ -729,28 +729,21 @@ export default {
 <p>Every question is <strong>generated</strong>: the engine starts from a seed and plays a few rolls, and it is the snapshot that is put to you. A random placement would not have the gaps, the low stacks and the asymmetries of a real bear-off. The seed comes from the <em>Vivier</em> (a completed bear-in, then zero to ten plies), from the <em>Plateau</em> (the position on screen, then one to four plies — never zero, since you have just seen it) or from the <em>Base</em> (a position of the browsed list, as it is: it is already real).</p>
 <p>The exercise's domain: <strong>both sides entirely in their home board</strong>, <strong>4 to 15 chequers</strong> a side and the rest borne off, cube centred, money play. A seed that does not fit is <strong>refused by name</strong>, and nothing starts — no silent adaptation: playing on until contact breaks would hand you a position you did not choose. An empty board is the exception: the question then comes from the pool, and the panel says why.</p>
 <p>The exercise needs the one-sided bear-off table; while it is still being generated in the background (see Configuration), it says so rather than asking a question with no answer.</p>
+<p><strong>Décision</strong> asks a decision that is <strong>already analysed</strong>: a position of the browsed list — its only source — with the decision it carries, a checker play or a cube action, and the stored analysis is the judge. A position without an analysis asks no question, and a position once asked does not come back in the session; when the list is exhausted, the panel says so. With no database open, or with no analysed position in the list, the exercise <strong>refuses and says why</strong>, and nothing starts.</p>
+<p>While the question awaits its answer, the Analysis panel is masked: it carries the answer.</p>
 <h4>Answering</h4>
 <p>The answer mode is a property of the exercise, never a setting: what is <strong>counted or recalled</strong> is declared, what is <strong>estimated</strong> is entered — because there, the size of the error is the lesson.</p>
 <p><em>Scores</em> and <em>Pions</em> are <strong>declared</strong>: you work it out in your head, you click « Révéler », and the truth appears. Every number is then <strong>right by default</strong> — you click the one you got wrong to mark it a <strong>fault</strong> (<em>Tab</em> then <em>Space</em> does the same from the keyboard), and a second click clears the mark. Nothing is typed: a pip count or a table cell is right or wrong, and writing it teaches nothing reading it does not.</p>
 <p><em>Bearoff</em> is <strong>entered</strong>: you write the two EPCs, « Valider » grades them to within half a pip — the granularity at which the EPC changes a race decision — and the truth appears next to what you wrote. The application judges, there is nothing to tick. The deviation is recorded <strong>with its sign</strong>: overestimating is not underestimating, and it is the summary that makes an average of it.</p>
-<p>The clock starts when the question appears and stops at « Révéler » or « Valider »; the next question is prepared while you answer, so it is never timed with yours. Ticking faults is not timed either. With a limit, a question still unanswered at the deadline reveals itself and counts <strong>out of time</strong>: every one of its numbers is wrong, and its time does not enter the median — one does not measure an answer that was not given.</p>
+<p><em>Décision</em> is <strong>chosen</strong>. On a checker decision, <strong>play the move on the board</strong>: click the source point then the destination, or drag the checker, once per die. The board offers only what can be played — a click no legal move allows moves nothing. In the panel, « Annuler le pas » goes back one die, « Recommencer » restores the position as the question poses it (a double-click outside the board does the same), and « Valider », enabled once the move is complete, has it graded. On a cube decision, click <em>No double</em>, <em>Double, take</em> or <em>Double, pass</em>: the click is the answer.</p>
+<p>The correction keeps three outcomes apart, and collapsing them would lie. An <strong>illegal move</strong> is not a badly chosen move — it is a rules mistake. A <strong>legal move the engine never ranked</strong> is not an error of judgement: it simply has no price, and costs nothing. A ranked move costs what the analysis says it costs, in millipoints. Only a ranked move with no cost is right; the best move is shown in every case.</p>
+<p>The clock starts when the question appears and stops at « Révéler », at « Valider » or at the click of a cube action; the next question is prepared while you answer, so it is never timed with yours. Ticking faults is not timed either. With a limit, a question still unanswered at the deadline reveals itself and counts <strong>out of time</strong>: every one of its numbers is wrong, and its time does not enter the median — one does not measure an answer that was not given. A decision out of time shows the best move, and does not enter the session's PR.</p>
 <p>« Suivante » records the question and asks another. The session has no fixed length: it runs until « Terminer », which writes it to the journal, or « Quitter », which discards it. Every button is in the panel; the board shows the question and its answer, it carries no control.</p>
+<p>While a question is set on the board, revealed or not, the keys that browse the list do not scroll it: the question keeps the board until « Suivante », « Terminer » or « Quitter ».</p>
 <h4>The journal and the summary</h4>
 <p>Finished sessions are kept in the library itself — so they travel with the file — and without any cap. At rest, the panel shows one line per exercise: the number of sessions, the fault rate, the median time and, from ten sessions on, the <strong>trend</strong>, that is the gap between the fault rate of the last ten sessions and that of all of them — negative, you are improving.</p>
+<p>For <em>Décision</em>, the line also gives the <strong>PR</strong> of the last session, computed by the formula the statistics apply to real play — 500 × mean error in normalised equity, over the graded decisions. A training PR of 6 and a match PR of 6 measure the same thing on the same scale.</p>
 <p>Clicking the exercise's name unfolds the detail <strong>by number type</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». That detail is what makes the journal worth keeping, and it counts by type and not by face: the same cell of the same table, seen from either side, is one single weakness.</p>
-<h3>Micro-training: the quiz</h3>
-<p>One exercise is still answered from the keyboard, in a bar shown above the board: <code>train quiz</code> starts a session of five questions. The question IS the position on screen — the board is the application's own, and the bar carries only the question, the answer and the correction. <em>Enter</em> checks then moves on, <em>Esc</em> leaves the session.</p>
-<p>Only the session summary is kept, in the database metadata: it keeps no question-by-question trace, and nothing is written until it is finished. Leaving halfway therefore records nothing.</p>
-<p>The Anki panel makes you memorise; the quiz <strong>tests</strong>. Five already analysed positions are drawn from the browsed list, and a decision has to be made:</p>
-<ul>
-<li>on a checker decision, <strong>play the move on the board</strong> — click the source point, then the destination, once per die; or type the move at the keyboard, in notation (<code>13/7 8/7</code>);</li>
-<li>on a cube decision, click <em>No double</em>, <em>Double, take</em> or <em>Double, pass</em>.</li>
-</ul>
-<p>The board offers only what can be played: a click no legal move allows moves nothing. <em>Undo step</em> goes back one die, <em>Start over</em> restores the position as the question poses it — a double-click outside the board does the same. The question itself does not change: the dice, the cube and the score stay those of the position.</p>
-<p>When a move has been played on the board, <em>Check</em> grades that one; typing stays available as long as no checker has moved. Both paths go through the same grading.</p>
-<p>The Analysis panel is masked until the question has an answer: it carries the answer, and a question whose answer is displayed beside it is not a question.</p>
-<p>The correction keeps three outcomes apart, and collapsing them would lie. An <strong>illegal move</strong> is not a badly chosen move — it is a rules mistake. A <strong>legal move the engine never ranked</strong> is not a mistake at all: it simply has no price, and so costs the session nothing. A ranked move costs what the analysis says it costs, in millipoints.</p>
-<p>At the end, the session shows a <strong>quiz PR</strong> computed by the formula the statistics apply to real play — 500 × mean error in normalised equity. That is what makes the two numbers comparable: a quiz PR of 6 and a match PR of 6 measure the same thing on the same scale.</p>
 <h3>Metadata Panel</h3>
 <p>The <strong>Metadata</strong> panel displays general information about the current database: name, description, number of positions, matches and games, schema version. Accessible via the <code>meta</code> command.</p>
 <p>It also shows the database's origin <strong>when there is one</strong> — see Handing out a database: origin and password. An ordinary database does not show that section.</p>
@@ -952,6 +945,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>While a question of the Training panel is set on the board, the keys that browse the list do not scroll it: the question keeps the board.</p>
 <h3>Display</h3>
 <table>
 <thead>
@@ -1646,7 +1640,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Opens the Training panel. With an argument, it opens and starts: <code>train scores</code> (the score card of a randomly drawn score; <code>train tp</code> and <code>train takepoint</code> are synonyms), <code>train pips</code> (the pip count of both sides), <code>train bearoff</code> (the EPC of both sides on a generated position; <code>train epc</code> is a synonym). <code>train quiz</code> starts the micro-training of the bar.</td>
+<td>Opens the Training panel. With an argument, it opens and starts: <code>train scores</code> (the score card of a randomly drawn score; <code>train tp</code> and <code>train takepoint</code> are synonyms), <code>train pips</code> (the pip count of both sides), <code>train bearoff</code> (the EPC of both sides on a generated position; <code>train epc</code> is a synonym), <code>train decision</code> (an analysed decision from the browsed list: the move is played on the board, the cube action is chosen in the panel; <code>train quiz</code> is a synonym).</td>
 </tr>
 <tr>
 <td>tp2</td>

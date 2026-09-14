@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 14:05+0200\n"
+"POT-Creation-Date: 2026-09-14 21:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -264,7 +264,18 @@ msgstr ""
 "``ss``-Suche verlassen: zurück zur Sammlung oder zum Match auf dem "
 "betrachteten Zug."
 
-#: ../../source/raccourcis.rst:68
+#: ../../source/raccourcis.rst:65
+msgid ""
+"Tant qu'une question du :ref:`panneau Entraînement "
+"<panneau_entrainement>` est posée sur le plateau, les touches qui "
+"parcourent la liste ne la font pas défiler : la question garde le "
+"plateau."
+msgstr ""
+"Solange eine Frage des :ref:`Trainings-Panels <panneau_entrainement>` auf"
+" dem Brett steht, blättern die Tasten, die die Liste durchlaufen, sie "
+"nicht weiter: Die Frage behält das Brett."
+
+#: ../../source/raccourcis.rst:72
 msgid "Affichage"
 msgstr "Anzeige"
 
@@ -292,7 +303,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Pipcount ein-/ausblenden."
 
-#: ../../source/raccourcis.rst:82
+#: ../../source/raccourcis.rst:86
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -312,7 +323,7 @@ msgstr "LEERTASTE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Die Befehlszeile öffnen."
 
-#: ../../source/raccourcis.rst:95
+#: ../../source/raccourcis.rst:99
 msgid "Outils"
 msgstr "Werkzeuge"
 
@@ -466,7 +477,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Die Hilfe ein-/ausblenden."
 
-#: ../../source/raccourcis.rst:125
+#: ../../source/raccourcis.rst:129
 msgid "Onglets de vues"
 msgstr "Ansichts-Reiter"
 
@@ -518,7 +529,7 @@ msgstr "Doppelklick auf den Reiter"
 msgid "Renommer la vue."
 msgstr "Die Ansicht umbenennen."
 
-#: ../../source/raccourcis.rst:142
+#: ../../source/raccourcis.rst:146
 msgid "Ligne de commande"
 msgstr "Befehlszeile"
 
@@ -538,7 +549,7 @@ msgstr "UNTEN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Im Befehlsverlauf nach unten blättern."
 
-#: ../../source/raccourcis.rst:155
+#: ../../source/raccourcis.rst:159
 msgid "Historique de recherche"
 msgstr "Suchverlauf"
 
@@ -558,7 +569,7 @@ msgstr "Doppelklick"
 msgid "Exécuter la recherche."
 msgstr "Die Suche ausführen."
 
-#: ../../source/raccourcis.rst:168
+#: ../../source/raccourcis.rst:172
 msgid "Bibliothèque de filtres"
 msgstr "Filterbibliothek"
 
@@ -570,7 +581,7 @@ msgstr "Einen Filter auswählen/abwählen (Position anzeigen)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Die Suche des Filters ausführen."
 
-#: ../../source/raccourcis.rst:181
+#: ../../source/raccourcis.rst:185
 msgid "Panneau d'analyse"
 msgstr "Analyse-Fenster"
 
@@ -604,7 +615,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
 
-#: ../../source/raccourcis.rst:197
+#: ../../source/raccourcis.rst:201
 msgid "Panneau Eval"
 msgstr "Eval-Fenster"
 
@@ -612,7 +623,7 @@ msgstr "Eval-Fenster"
 msgid "Désélectionner le coup."
 msgstr "Den Zug abwählen."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:216
 msgid "Panneau des matchs"
 msgstr "Match-Fenster"
 
@@ -648,7 +659,7 @@ msgstr "Das ausgewählte Match löschen."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Abwählen/Fenster schließen."
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:234
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-Fenster (verteiltes Wiederholen)"
 
@@ -706,7 +717,7 @@ msgstr ""
 "Die Wiederholung beenden und zur Stapelliste zurückkehren (später "
 "fortsetzbar)."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:252
 msgid "Panneau des tournois"
 msgstr "Turnier-Fenster"
 
@@ -747,7 +758,7 @@ msgstr ""
 "Matches leeren, sonst die Turnierauswahl aufheben, sonst das Fenster "
 "schließen (schrittweise)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:268
 msgid "Panneau des collections"
 msgstr "Sammlungs-Fenster"
 
@@ -777,11 +788,11 @@ msgstr ""
 "Zur Liste der Sammlungen zurückkehren, sonst die Sammlungsauswahl "
 "aufheben, sonst das Fenster schließen (schrittweise)."
 
-#: ../../source/raccourcis.rst:279
+#: ../../source/raccourcis.rst:283
 msgid "Panneau Transcription"
 msgstr "Transkriptions-Fenster"
 
-#: ../../source/raccourcis.rst:281
+#: ../../source/raccourcis.rst:285
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1120,7 +1131,7 @@ msgstr "STRG-UMSCHALT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Die rückgängig gemachte Geste wiederherstellen."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:330
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1128,7 +1139,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:329
+#: ../../source/raccourcis.rst:333
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1149,7 +1160,7 @@ msgstr ""
 "Wurf dieser Aktion an Ort und Stelle neu. Der Unterschied ist auf dem "
 "Bildschirm zu sehen, denn die angezielte Zelle ist im Transkript umrahmt."
 
-#: ../../source/raccourcis.rst:338
+#: ../../source/raccourcis.rst:342
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1161,7 +1172,7 @@ msgstr ""
 "Cursor“ am Ende des Dokuments. Der Satz verschwindet von selbst und gibt "
 "den Platz an die erwartete Aktion zurück."
 
-#: ../../source/raccourcis.rst:343
+#: ../../source/raccourcis.rst:347
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1180,7 +1191,7 @@ msgstr ""
 "gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
 "zurückbewegt, so wird die Korrektur dabei übernommen."
 
-#: ../../source/raccourcis.rst:350
+#: ../../source/raccourcis.rst:354
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1198,7 +1209,7 @@ msgstr ""
 "nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im "
 "Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:357
+#: ../../source/raccourcis.rst:361
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1208,7 +1219,7 @@ msgstr ""
 "Transkript und die Entwurfsleiste — wird in :ref:`panneau_transcription` "
 "beschrieben."
 
-#: ../../source/raccourcis.rst:364
+#: ../../source/raccourcis.rst:368
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

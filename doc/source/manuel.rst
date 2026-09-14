@@ -2641,7 +2641,7 @@ Le lanceur
 
 Trois choix, puis « Démarrer » :
 
-* l'**exercice** — *Scores*, *Pions* ou *Bearoff* ;
+* l'**exercice** — *Scores*, *Pions*, *Bearoff* ou *Décision* ;
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
   (des formes canoniques de l'exercice), *Plateau* (la position telle qu'elle
   est) ou *Base* (une position de la liste parcourue) ;
@@ -2649,12 +2649,13 @@ Trois choix, puis « Démarrer » :
 
 La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
 
-``train scores``, ``train pips`` et ``train bearoff`` ouvrent le panneau et
-démarrent directement ; ``train tp`` et ``train takepoint`` sont des synonymes
-de ``train scores``, ``train epc`` de ``train bearoff``.
+``train scores``, ``train pips``, ``train bearoff`` et ``train decision``
+ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``
+sont des synonymes de ``train scores``, ``train epc`` de ``train bearoff``,
+``train quiz`` de ``train decision``.
 
-Les trois exercices
-~~~~~~~~~~~~~~~~~~~
+Les quatre exercices
+~~~~~~~~~~~~~~~~~~~~
 
 **Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et
 affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — et
@@ -2705,6 +2706,17 @@ L'exercice a besoin de la table de bearoff à un camp ; tant qu'elle s'engendre
 en arrière-plan (voir :ref:`configuration`), il le dit plutôt que de poser une
 question sans réponse.
 
+**Décision** pose une décision **déjà analysée** : une position de la liste
+parcourue — sa seule source —, avec la décision qu'elle porte, coup de pions ou
+action de videau, et c'est l'analyse enregistrée qui juge. Une position sans
+analyse ne pose pas de question, et une position posée ne revient pas dans la
+session ; quand la liste est épuisée, le panneau le dit. Sans base ouverte, ou
+sans position analysée dans la liste, l'exercice **refuse en le disant** et rien
+ne démarre.
+
+Tant que la question attend sa réponse, le panneau Analyse est masqué : il
+porte la réponse.
+
 Répondre
 ~~~~~~~~
 
@@ -2725,19 +2737,41 @@ demi-pion près — la granularité à laquelle l'EPC change une décision de co
 qui juge, il n'y a rien à cocher. L'écart est enregistré **avec son signe** :
 surestimer n'est pas sous-estimer, et c'est le bilan qui en fait une moyenne.
 
-Le chronomètre part à l'affichage de la question et s'arrête à « Révéler » ou
-« Valider » ; la question suivante se prépare pendant que vous répondez, elle
+*Décision* se **choisit**. Sur une décision de pions, **jouez le coup sur le
+damier** : cliquez le point de départ puis la destination, ou glissez le pion,
+autant de fois qu'il y a de dés. Le damier n'offre que ce qui est jouable — un
+clic qu'aucun coup légal n'autorise ne déplace rien. Dans le panneau,
+« Annuler le pas » revient d'un dé, « Recommencer » remet la position telle que
+la question la pose (un double-clic hors du damier fait de même), et
+« Valider », actif une fois le coup complet, le fait juger. Sur une décision de
+videau, cliquez *Pas de double*, *Double, prend* ou *Double, passe* : le clic
+est la réponse.
+
+La correction distingue trois issues, et les confondre mentirait. Un **coup
+illégal** n'est pas un coup mal choisi — c'est une faute de règle. Un **coup
+légal que le moteur n'a pas classé** n'est pas une erreur de jugement : il n'a
+simplement pas de prix, et il ne coûte rien. Un coup classé coûte ce que
+l'analyse dit qu'il coûte, en millipoints. Seul un coup classé et sans coût est
+juste ; le meilleur coup s'affiche dans tous les cas.
+
+Le chronomètre part à l'affichage de la question et s'arrête à « Révéler », à
+« Valider » ou au clic d'une action de videau ; la question suivante se prépare pendant que vous répondez, elle
 n'est donc jamais chronométrée avec la vôtre. Cocher ses fautes n'est pas
 chronométré non plus.
 Avec une limite, une question restée
 sans réponse à l'échéance se révèle seule et compte **hors délai** : tous ses
 nombres sont faux, et son temps n'entre pas dans la médiane — on ne mesure pas
-une réponse qui n'a pas été donnée.
+une réponse qui n'a pas été donnée. Une décision hors délai affiche le meilleur
+coup, et n'entre pas dans le PR de la session.
 
 « Suivante » enregistre la question et en pose une autre. La session n'a pas de
 longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, ou
 « Quitter », qui la jette. Tous les boutons sont dans le panneau ; le plateau
 montre la question et sa réponse, il ne porte aucune commande.
+
+Tant qu'une question est posée sur le plateau, révélée ou non, les touches qui
+parcourent la liste ne la font pas défiler : la question garde le plateau
+jusqu'à « Suivante », « Terminer » ou « Quitter ».
 
 Le journal et le bilan
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -2749,59 +2783,16 @@ partir de dix sessions, la **tendance**, c'est-à-dire l'écart entre le taux de
 fautes des dix dernières sessions et celui de toutes — négatif, vous
 progressez.
 
+Pour *Décision*, la ligne donne aussi le **PR** de la dernière session, calculé
+par la formule que les statistiques appliquent au jeu réel — 500 × erreur
+moyenne en équité normalisée, sur les décisions jugées. Un PR de 6 à
+l'entraînement et un PR de 6 en match mesurent la même chose sur la même
+échelle.
+
 Cliquer le nom de l'exercice déplie le détail **par type de nombre** :
 « Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait
 l'intérêt du journal, et il compte par type et non par face : la même case de
 la même table, vue d'un côté ou de l'autre, est une seule faiblesse.
-
-.. _micro_entrainements:
-
-Micro-entraînement : le quiz
-----------------------------
-
-Un exercice se répond encore au clavier, dans une bande affichée au-dessus du
-plateau : ``train quiz`` lance une session de cinq questions. La question EST
-la position affichée — le plateau est celui de l'application, et la bande ne
-porte que la question, la saisie et la correction. *Entrée* vérifie puis passe
-à la suivante, *Échap* quitte la session.
-
-Seul le résumé de la session est conservé, dans les métadonnées de la base :
-elle ne garde pas la trace question par question, et rien n'est écrit tant
-qu'elle n'est pas terminée. Quitter en cours de route n'enregistre donc rien.
-
-Le panneau Anki fait mémoriser ; le quiz **teste**. Cinq positions déjà
-analysées sont tirées de la liste parcourue, et il faut décider :
-
-* sur une décision de pions, **jouer le coup sur le damier** — cliquer le point
-  de départ, puis la destination, autant de fois qu'il y a de dés ; ou écrire
-  le coup au clavier, en notation (``13/7 8/7``) ;
-* sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou
-  *Double, passe*.
-
-Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal
-n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, *Recommencer*
-remet la position telle que la question la pose — un double-clic hors du
-damier fait la même chose. La question, elle, ne change pas : les dés, le
-videau et le score restent ceux de la position.
-
-Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie au
-clavier reste disponible tant qu'aucun pion n'a bougé. Les deux chemins
-passent par la même correction.
-
-Le panneau Analyse est masqué tant que la question n'a pas reçu de réponse :
-il porte la réponse, et une question dont la réponse est affichée à côté n'est
-pas une question.
-
-La correction distingue trois issues, et les confondre mentirait. Un **coup
-illégal** n'est pas un coup mal choisi — c'est une faute de règle. Un **coup
-légal que le moteur n'a pas classé** n'est pas une faute du tout : il n'a
-simplement pas de prix, et il ne coûte donc rien à la session. Un coup classé
-coûte ce que l'analyse dit qu'il coûte, en millipoints.
-
-À la fin, la session affiche un **PR de quiz** calculé par la formule que les
-statistiques appliquent au jeu réel — 500 × erreur moyenne en équité
-normalisée. C'est ce qui rend les deux nombres comparables : un PR de quiz de
-6 et un PR de match de 6 mesurent la même chose sur la même échelle.
 
 .. _panneau_metadata:
 

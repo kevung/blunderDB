@@ -62,6 +62,10 @@ Navigation
    "r", "Charger une position aléatoire."
    "ÉCHAP", "Quitter les résultats d'une recherche ``ss`` lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié."
 
+Tant qu'une question du :ref:`panneau Entraînement <panneau_entrainement>` est
+posée sur le plateau, les touches qui parcourent la liste ne la font pas
+défiler : la question garde le plateau.
+
 .. _raccourcis_affichage:
 
 Affichage
