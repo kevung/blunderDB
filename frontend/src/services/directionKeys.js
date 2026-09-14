@@ -11,6 +11,15 @@
  * lorsque le focus est DANS le panneau — un clic dans sa liste. Jamais dans un champ de saisie.
  * Échap n'en fait pas partie : il suit la règle d'`escapeService` (#414).
  *
+ * ENTRÉE a une condition de plus : elle active le bouton, le lien ou l'onglet qui a le focus
+ * (`INTERACTIVE` ci-dessous), et ne confirme la proposition choisie que si le focus est sur la
+ * page elle-même ou sur la file. Un directeur arrivé au clavier sur « Tout lancer », « Apparier à
+ * la main » ou un onglet ne doit pas lancer un match qu'il n'a pas demandé — ce geste ne se défait
+ * que par la reprise. Un bouton « Lancer » d'une ligne garde aussi son ENTRÉE : il lance SA
+ * ligne, qui n'est pas forcément la choisie. Pour que « clic sur l'onglet, J, ENTRÉE » confirme
+ * bien, J / K / ↓ / ↑ placent le focus sur la file (ProposalList) quand ils changent la
+ * proposition choisie.
+ *
  * ## Le mécanisme : une règle, trois lecteurs
  *
  * - La file écoute en phase de CAPTURE sur `window`, comme `escapeService` : elle passe avant
@@ -41,6 +50,9 @@ export function directionPageShown() {
     return get(directionPageShownStore);
 }
 
+/** Ce qui fait son propre geste sur ENTRÉE. La file elle-même (un conteneur) n'en est pas. */
+const INTERACTIVE = 'button, a[href], [role="button"], [role="tab"], summary, input, select, textarea, [contenteditable]';
+
 /**
  * La règle : l'appui appartient-il à la page Direction ?
  *
@@ -53,6 +65,7 @@ export function directionOwnsKey(event) {
     if (!pageKey || !directionPageShown()) return false;
     const active = document.activeElement;
     if (active?.closest('.tournament-panel')) return false;
+    if (event.key === 'Enter' && active?.matches(INTERACTIVE)) return false;
     return !isTypingTarget(active) && !isTypingTarget(/** @type {Element | null} */ (event.target));
 }
 

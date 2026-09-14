@@ -43,6 +43,26 @@ test('J choisit la proposition suivante, ENTRÉE la confirme', async ({ page }) 
     await expect(page.locator(`${proposal} .what`, { hasText: second ?? '' })).toHaveCount(0);
 });
 
+test('Tab jusqu’à un bouton : ENTRÉE active le bouton et ne confirme aucune proposition', async ({ page }) => {
+    await openDirection(page);
+    const before = await page.locator(proposal).count();
+    expect(before).toBeGreaterThan(1);
+
+    // Au clavier seul, depuis l'onglet cliqué, jusqu'à « Tout lancer ».
+    let reached = false;
+    for (let i = 0; i < 40 && !reached; i++) {
+        await page.keyboard.press('Tab');
+        reached = await page.evaluate(() => !!document.activeElement?.matches('.proposals .all'));
+    }
+    expect(reached, '« Tout lancer » atteint par Tab').toBe(true);
+
+    await page.keyboard.press('Enter');
+    // Le bouton a fait son geste — la confirmation de « Tout lancer » s'ouvre —, et aucun match
+    // n'est parti.
+    await expect(page.locator('.proposals .confirm')).toBeVisible();
+    await expect(page.locator(proposal)).toHaveCount(before);
+});
+
 test('ouvrir la direction depuis le panneau lui donne le clavier', async ({ page }) => {
     await installWailsMock(page, openLibraryMock());
     await installDirectionEngine(page);

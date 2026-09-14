@@ -153,6 +153,47 @@ describe('page Direction affichée : la file des propositions a J / K / ENTRÉE'
         expect(onConfirm).toHaveBeenCalledWith(PROPOSALS[1]);
     });
 
+    test('ENTRÉE sur un bouton de la page (« Tout lancer ») active le bouton et ne confirme rien', async () => {
+        await openTournamentPanel();
+        await showDirectionQueue();
+        const all = /** @type {HTMLElement} */ (document.querySelector('.proposals .all'));
+        all.focus();
+
+        const event = await press(all, 'Enter');
+
+        expect(onConfirm).not.toHaveBeenCalled();
+        // Rien n'empêche le navigateur d'activer le bouton qui a le focus.
+        expect(event.defaultPrevented).toBe(false);
+    });
+
+    test('ENTRÉE sur le bouton « Lancer » d’une autre ligne ne confirme pas la proposition choisie', async () => {
+        await openTournamentPanel();
+        await showDirectionQueue();
+        const third = /** @type {HTMLElement} */ (document.querySelectorAll('.proposals .queue li .go')[2]);
+        third.focus();
+
+        const event = await press(third, 'Enter');
+
+        expect(onConfirm).not.toHaveBeenCalled();
+        expect(event.defaultPrevented).toBe(false);
+    });
+
+    test('focus sur l’onglet cliqué, J place le focus dans la file, et ENTRÉE confirme la 2ᵉ proposition', async () => {
+        await openTournamentPanel();
+        await showDirectionQueue();
+        const tab = document.createElement('button');
+        tab.setAttribute('role', 'tab');
+        document.body.appendChild(tab);
+        tab.focus();
+
+        await press(tab, 'j');
+        expect(document.activeElement?.closest('.proposals .queue')).not.toBeNull();
+        await press(document.activeElement, 'Enter');
+
+        expect(onConfirm).toHaveBeenCalledTimes(1);
+        expect(onConfirm).toHaveBeenCalledWith(PROPOSALS[1]);
+    });
+
     test('la prise de focus différée du panneau ne vole pas les touches de la file', async () => {
         await showDirectionQueue();
         await openTournamentPanel();

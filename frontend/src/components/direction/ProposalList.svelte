@@ -107,14 +107,25 @@
        mécanisme sont écrits dans services/directionKeys.js (#415). Écouté en CAPTURE sur window :
        le panneau Tournois et le répartiteur, montés avant la page, ne passent pas devant. Ce qui
        est ouvert par-dessus (modale, surcouche, confirmation de « Tout lancer ») garde ses
-       touches, et l'appui continue alors son chemin. CTRL-J ouvre toujours l'Entraînement. */
+       touches, et l'appui continue alors son chemin. CTRL-J ouvre toujours l'Entraînement.
+       ENTRÉE laisse son geste au bouton qui a le focus ; J / K placent donc le focus sur la file,
+       pour que l'ENTRÉE suivante confirme la proposition qu'ils viennent de choisir. */
+    /** @type {HTMLElement | null} */
+    let queueEl = $state(null);
+
+    function focusQueue() {
+        if (queueEl && document.activeElement !== queueEl) queueEl.focus({ preventScroll: true });
+    }
+
     /** @param {KeyboardEvent} e */
     function onKey(e) {
         if (!directionOwnsKey(e) || somethingOpenAbove() || confirming) return;
         if (isBareLetter(e, 'j') || e.key === 'ArrowDown') {
             selected = Math.min(selected + 1, shown.length - 1);
+            focusQueue();
         } else if (isBareLetter(e, 'k') || e.key === 'ArrowUp') {
             selected = Math.max(selected - 1, 0);
+            focusQueue();
         } else if (e.key === 'Enter' && shown[selected] && !busy) {
             onConfirm(shown[selected]);
         } else {
@@ -158,9 +169,11 @@
         </div>
     {/if}
 
-    <ul class="queue">
+    <!-- Focalisable par le script seul (J / K) : c'est là qu'ENTRÉE confirme la proposition
+         choisie. Pas de listbox / option — chaque ligne porte ses propres boutons. -->
+    <ul class="queue" tabindex="-1" aria-label={$t('direction.proposals.title', { n: shown.length })} bind:this={queueEl}>
         {#each shown as a, i (actionKey(a))}
-            <li class:selected={i === selected} class:repair={isRepair(a)} onmouseenter={() => (selected = i)}>
+            <li class:selected={i === selected} class:repair={isRepair(a)} aria-current={i === selected ? 'true' : undefined} onmouseenter={() => (selected = i)}>
                 {#if isRepair(a)}
                     <span class="tag">{$t('direction.proposals.repairTag')}</span>
                 {/if}
@@ -252,6 +265,16 @@
         display: flex;
         flex-direction: column;
         gap: 2px;
+    }
+
+    /* Le focus du clavier se voit sur la file entière ; la ligne choisie garde sa bordure. */
+    .queue:focus {
+        outline: none;
+    }
+
+    .queue:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
     }
 
     .queue li {
