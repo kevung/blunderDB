@@ -29,7 +29,7 @@
 # this image runs the whole Go suite, so the compiler it carries must be the
 # one CI builds with (GO_VERSION in the workflows) rather than whatever the
 # 1.26 tag points at today.
-FROM golang:1.26.8-bookworm
+FROM golang:1.27.1-bookworm
 
 # Fail the build if the base image ever starts shipping the optional tools we
 # rely on being ABSENT — the whole point is a hostile, stripped host. Then
