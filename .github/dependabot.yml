@@ -22,6 +22,12 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    # Wails is bumped by hand, with the application run on each OS (#409):
+    # 2.15 needs go-webview2 v1.0.22 against our v1.0.16 `replace`, and a
+    # grouped bump only turns every x/ update red on windows-latest (#419).
+    ignore:
+      - dependency-name: "github.com/wailsapp/wails/v2"
+        versions: [">= 2.11.0"]
     groups:
       go-minor-patch:
         update-types:
@@ -64,6 +70,12 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 3
+    # The toolchain stays on Go 1.26 until #409: under 1.27 the Wails CLI
+    # v2.10.2 no longer loads the standard library and golangci-lint v2.11.4
+    # crashes (#412). Lift this rule in the branch that moves to 1.27.
+    ignore:
+      - dependency-name: "golang"
+        versions: [">= 1.27"]
     groups:
       docker-minor-patch:
         update-types:
