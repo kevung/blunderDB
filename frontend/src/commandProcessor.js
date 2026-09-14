@@ -248,7 +248,7 @@ function handleSearchCommand(command, { isSubSearch }) {
  *
  * @param {string[]} filters - filter tokens, already split and quote-stripped by the caller.
  * @param {string} command - the raw command, used to recover quoted values (`t"…"`, `m"…"`, `pl"…"`).
- * @returns {object} the parsed filter values, under their long (backend) field names.
+ * @returns the parsed filter values, under their long (backend) field names.
  */
 export function parseFilters(filters, command) {
     return parseSearchTokens(filters, command);

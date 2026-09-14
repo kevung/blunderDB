@@ -22,8 +22,10 @@ import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear, toS
 import { buildFilterTokens, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
 import { parseFilters } from '../commandProcessor.js';
 
+/** @type {(keyof import('../services/filterModel.js').FilterEntry)[]} */
 const FIELDS = ['option', 'min', 'max', 'rangeMin', 'rangeMax'];
 
+/** @param {unknown[]} values */
 function unique(values) {
     return new Set(values).size === values.length;
 }
@@ -147,8 +149,8 @@ describe('tokens', () => {
     test.each(NUMERIC_FILTERS.map((f) => [f.label, f]))('%s — token round-trips through the three parsers', (_label, f) => {
         const entry = { option: 'range', min: 1, max: 9, rangeMin: 2, rangeMax: 7 };
         const tok = numericToken(f, entry);
-        expect(parseFilterTokens([tok])[`${f.short}Filter`]).toBe(tok);
-        expect(parseSearchCommand(`s ${tok}`)[f.short]).toBe(tok);
-        expect(parseFilters([tok], `s ${tok}`)[`${f.key}Filter`]).toBe(tok);
+        expect(/** @type {Record<string, unknown>} */ (parseFilterTokens([tok]))[`${f.short}Filter`]).toBe(tok);
+        expect(/** @type {Record<string, unknown>} */ (parseSearchCommand(`s ${tok}`))[f.short]).toBe(tok);
+        expect(/** @type {Record<string, unknown>} */ (parseFilters([tok], `s ${tok}`))[`${f.key}Filter`]).toBe(tok);
     });
 });

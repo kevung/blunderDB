@@ -36,7 +36,7 @@ import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, numericToken, readFlat } from
 /**
  * Map a list of active filter labels to their backend command tokens.
  * @param {string[]} activeFilters - the selected filter labels, in order.
- * @param {object} options - the option/min/max/range state fields.
+ * @param {Record<string, any>} options - the option/min/max/range state fields.
  * @returns {string[]} one token per filter (empty string for unknown labels).
  */
 export function buildFilterTokens(activeFilters, options) {
@@ -85,7 +85,7 @@ export function buildFilterTokens(activeFilters, options) {
             case 'Best Move or Cube Decision':
                 return `m"${movePattern}"`;
             case 'Creation Date': {
-                const formatDate = (date) => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
+                const formatDate = (/** @type {string} */ date) => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
                 return creationDateOption === 'min'
                     ? `T>${formatDate(creationDateMin)}`
                     : creationDateOption === 'max'
@@ -127,6 +127,7 @@ export function buildSearchCommand(tokens) {
 // retour paths. Both quote styles are supported. Moved here (from
 // `commandProcessor.js`, which re-exports it) so `parseSearchTokens` below can
 // tokenize a raw command the same way regardless of caller.
+/** @param {string} str */
 export function stripQuotedTokens(str) {
     return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
 }
@@ -149,10 +150,12 @@ export function stripQuotedTokens(str) {
  * @param {string[]|string} filtersOrCommand - filter tokens (no leading `s`), or the full command.
  * @param {string} [command] - the raw command, used to recover quoted values; required when
  *        `filtersOrCommand` is already a token array, derived automatically otherwise.
- * @returns {object} the parsed filter values, under their long (backend) field names.
+ * @returns the parsed filter values, under their long (backend) field names.
  */
 export function parseSearchTokens(filtersOrCommand, command) {
+    /** @type {string[]} */
     let filters;
+    /** @type {string} */
     let cmd;
     if (Array.isArray(filtersOrCommand)) {
         filters = filtersOrCommand;
@@ -383,7 +386,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
  * abbreviated keys this call site (and its tests) have always used.
  *
  * @param {string[]} tokens - the output of {@link buildFilterTokens}.
- * @returns {object} the named filter arguments consumed by onLoadPositionsByFilters.
+ * @returns the named filter arguments consumed by onLoadPositionsByFilters.
  */
 export function parseFilterTokens(tokens) {
     // Quoted values (pl"…"/m"…"/t"…") are recovered by parseSearchTokens from the
@@ -454,7 +457,7 @@ export function parseFilterTokens(tokens) {
  * of sharing `parseFilters`' (commandProcessor.js) grammar.
  *
  * @param {string} command - a command starting with `s ` (or the bare `s`).
- * @returns {object} the parsed filter values, keyed by short name.
+ * @returns the parsed filter values, keyed by short name.
  */
 export function parseSearchCommand(command) {
     const p = parseSearchTokens(command);
@@ -528,6 +531,7 @@ export function parseSearchCommand(command) {
 //   text  — quoted free text: t"…"
 //   date  — T>YYYY/MM/DD …
 //   dice  — D (both rolls) / D1 (first roll only)
+/** @type {Record<string, { token: string, type: string }>} */
 const FILTER_TOKENS = {
     'Include Cube': { token: 'cube', type: 'flag' },
     'Include Score': { token: 'score', type: 'flag' },
@@ -590,9 +594,9 @@ export function filterTokenHint(label) {
  * time would flip an already-mirrored board.
  *
  * @param {object} position - the search board, already normalised.
- * @param {object} [pf] - parsed filter flags, as returned by `parseFilters`.
+ * @param {Record<string, any>} [pf] - parsed filter flags, as returned by `parseFilters`.
  * @param {string[]} [filters] - raw filter tokens, for the token-derived fields.
- * @returns {object} the SearchFilters payload.
+ * @returns the SearchFilters payload.
  */
 export function buildSearchFilterPayload(position, pf = {}, filters = []) {
     const tokens = Array.isArray(filters) ? filters : [];
@@ -680,7 +684,11 @@ export function describeCommandTokens(command) {
     return tokens.map((token) => ({ token, label: describeToken(token) }));
 }
 
-/** Le libellé lisible d'un jeton, ou le jeton lui-même s'il n'est pas reconnu. */
+/**
+ * Le libellé lisible d'un jeton, ou le jeton lui-même s'il n'est pas reconnu.
+ *
+ * @param {string} token
+ */
 function describeToken(token) {
     for (const [label, entry] of Object.entries(FILTER_TOKENS)) {
         if (matchesToken(token, entry.token, entry.type)) return label;
@@ -691,6 +699,11 @@ function describeToken(token) {
     return token;
 }
 
+/**
+ * @param {string} token
+ * @param {string} base
+ * @param {string} type
+ */
 function matchesToken(token, base, type) {
     if (type === 'flag') return token === base;
     if (type === 'dice') return token === base || token === base + '1';

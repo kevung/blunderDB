@@ -33,11 +33,13 @@ import { parseFilters, stripQuotedTokens } from '../commandProcessor.js';
 import { parseSearchTokens, parseSearchCommand } from '../services/searchFilterService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+/** @type {{ cases: { command: string, expected: Record<string, unknown> }[] }} */
 const corpus = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../testdata/search_query_corpus.json'), 'utf8'));
 
 // Mirrors handleSearchCommand's own tokenizing of a typed `s …` command
 // (commandProcessor.js), so the "aller" check below exercises parseFilters
 // exactly the way the app really calls it.
+/** @param {string} command */
 function tokenizeAller(command) {
     if (command === 's') return [];
     return stripQuotedTokens(command.slice(1).trim())
@@ -47,6 +49,7 @@ function tokenizeAller(command) {
 
 // Short-key (parseSearchCommand) → long-key (parseSearchTokens/parseFilters)
 // field name, so the same `expected` object can check both.
+/** @type {Record<string, string>} */
 const SHORT_TO_LONG = {
     ic: 'includeCube',
     is: 'includeScore',
@@ -103,22 +106,22 @@ describe('search_query_corpus — grammar cross-check', () => {
         expect(corpus.cases.length).toBeGreaterThan(10);
     });
 
-    test.each(corpus.cases.map((c) => [c.command, c]))('parseSearchTokens("%s") matches its expected fields', (command, { expected }) => {
-        const result = parseSearchTokens(command);
+    test.each(corpus.cases.map((c) => /** @type {[string, typeof c]} */ ([c.command, c])))('parseSearchTokens("%s") matches its expected fields', (command, { expected }) => {
+        const result = /** @type {Record<string, unknown>} */ (parseSearchTokens(command));
         for (const [field, value] of Object.entries(expected)) {
             expect(result[field], `${command} → ${field}`).toBe(value);
         }
     });
 
-    test.each(corpus.cases.map((c) => [c.command, c]))('aller (parseFilters) matches parseSearchTokens for "%s"', (command, { expected }) => {
-        const result = parseFilters(tokenizeAller(command), command);
+    test.each(corpus.cases.map((c) => /** @type {[string, typeof c]} */ ([c.command, c])))('aller (parseFilters) matches parseSearchTokens for "%s"', (command, { expected }) => {
+        const result = /** @type {Record<string, unknown>} */ (parseFilters(tokenizeAller(command), command));
         for (const [field, value] of Object.entries(expected)) {
             expect(result[field], `${command} → ${field}`).toBe(value);
         }
     });
 
-    test.each(corpus.cases.map((c) => [c.command, c]))('retour (parseSearchCommand) matches, under its short keys, for "%s"', (command, { expected }) => {
-        const result = parseSearchCommand(command);
+    test.each(corpus.cases.map((c) => /** @type {[string, typeof c]} */ ([c.command, c])))('retour (parseSearchCommand) matches, under its short keys, for "%s"', (command, { expected }) => {
+        const result = /** @type {Record<string, unknown>} */ (parseSearchCommand(command));
         for (const [field, value] of Object.entries(expected)) {
             // `commentFilter` ('' / 'has' / 'none') restores under parseSearchCommand's
             // `commentMode` ('contains' / 'has' / 'none') — different empty spelling,

@@ -29,9 +29,25 @@
 //              which backend parser (`ParseIntFilterExpr` /
 //              `ParseFloatFilterExpr`) reads the token.
 
+/**
+ * One numeric filter of the table below.
+ *
+ * @typedef {{ key: string, short: string, label: string, token: string, defaults: { option: string, min: number, max: number }, bounds: { min?: number, max?: number }, kind: string }} NumericFilter
+ */
+
+/**
+ * One filter's five fields. Values come from number inputs and persisted
+ * stores, so they are left untyped.
+ *
+ * @typedef {{ option: any, min: any, max: any, rangeMin: any, rangeMax: any }} FilterEntry
+ */
+
+/** @typedef {Record<string, FilterEntry>} FilterState */
+
 const RATE = { defaults: { option: 'min', min: 0, max: 100 }, bounds: { min: 0, max: 100 }, kind: 'float' };
 const COUNT = { defaults: { option: 'min', min: 0, max: 15 }, bounds: { min: 0, max: 15 }, kind: 'int' };
 
+/** @type {readonly NumericFilter[]} */
 export const NUMERIC_FILTERS = Object.freeze([
     { key: 'pipCount', short: 'pc', label: 'Pipcount Difference', token: 'p', defaults: { option: 'min', min: -375, max: 375 }, bounds: {}, kind: 'int' },
     { key: 'player1AbsolutePipCount', short: 'p1apc', label: 'Player Absolute Pipcount', token: 'P', defaults: { option: 'min', min: 0, max: 375 }, bounds: { min: 0, max: 375 }, kind: 'int' },
@@ -55,17 +71,31 @@ export const NUMERIC_FILTERS = Object.freeze([
     { key: 'player2JanBlot', short: 'p2jb', label: 'Opponent Jan Blot', token: 'BJ', ...COUNT }
 ]);
 
-/** Filter descriptor by canonical label (undefined for non-numeric labels). */
+/**
+ * Filter descriptor by canonical label (undefined for non-numeric labels).
+ *
+ * @type {Readonly<Record<string, NumericFilter>>}
+ */
 export const NUMERIC_FILTER_BY_LABEL = Object.freeze(Object.fromEntries(NUMERIC_FILTERS.map((f) => [f.label, f])));
 
 /** The five per-filter fields, in the order the flat store names them. */
+/** @type {(keyof FilterEntry)[]} */
 const FIELDS = ['option', 'min', 'max', 'rangeMin', 'rangeMax'];
 
-/** Flat field name in the searchParamsStore / buildFilterTokens options. */
+/**
+ * Flat field name in the searchParamsStore / buildFilterTokens options.
+ *
+ * @param {string} key
+ * @param {string} field
+ */
 export function flatName(key, field) {
     return key + field[0].toUpperCase() + field.slice(1);
 }
 
+/**
+ * @param {NumericFilter} filter
+ * @returns {FilterEntry}
+ */
 function defaultEntry(filter) {
     const { option, min, max } = filter.defaults;
     return { option, min, max, rangeMin: min, rangeMax: max };
@@ -75,12 +105,20 @@ function defaultEntry(filter) {
  * Fresh per-filter state, keyed by filter key:
  * `{ option, min, max, rangeMin, rangeMax }` at the declared defaults. The
  * component wraps the result in `$state(...)` so the rows can bind into it.
+ *
+ * @param {readonly NumericFilter[]} [model]
+ * @returns {FilterState}
  */
 export function createFilterState(model = NUMERIC_FILTERS) {
     return Object.fromEntries(model.map((f) => [f.key, defaultEntry(f)]));
 }
 
-/** Reset every filter to its defaults, in place (keeps the reactive proxy). */
+/**
+ * Reset every filter to its defaults, in place (keeps the reactive proxy).
+ *
+ * @param {FilterState} state
+ * @param {readonly NumericFilter[]} [model]
+ */
 export function clear(state, model = NUMERIC_FILTERS) {
     for (const f of model) {
         Object.assign(state[f.key], defaultEntry(f));
@@ -91,8 +129,12 @@ export function clear(state, model = NUMERIC_FILTERS) {
 /**
  * Flatten the state into the `${key}Option/Min/Max/RangeMin/RangeMax` fields —
  * the shape searchParamsStore persists and buildFilterTokens reads.
+ *
+ * @param {FilterState} state
+ * @param {readonly NumericFilter[]} [model]
  */
 export function toStore(state, model = NUMERIC_FILTERS) {
+    /** @type {Record<string, any>} */
     const out = {};
     for (const f of model) {
         const entry = state[f.key];
@@ -105,6 +147,10 @@ export function toStore(state, model = NUMERIC_FILTERS) {
  * Restore the state from a flat store object, in place. A field the saved
  * object lacks falls back to the filter's default rather than becoming
  * `undefined` (the hand-written restore did not guard against that).
+ *
+ * @param {FilterState} state
+ * @param {Record<string, any> | null | undefined} saved
+ * @param {readonly NumericFilter[]} [model]
  */
 export function fromStore(state, saved, model = NUMERIC_FILTERS) {
     for (const f of model) {
@@ -118,15 +164,24 @@ export function fromStore(state, saved, model = NUMERIC_FILTERS) {
     return state;
 }
 
-/** Read one filter's five fields from a flat store / options object. */
+/**
+ * Read one filter's five fields from a flat store / options object.
+ *
+ * @param {NumericFilter} filter
+ * @param {Record<string, any> | null | undefined} flat
+ * @returns {FilterEntry}
+ */
 export function readFlat(filter, flat) {
-    return Object.fromEntries(FIELDS.map((field) => [field, flat?.[flatName(filter.key, field)]]));
+    return /** @type {FilterEntry} */ (Object.fromEntries(FIELDS.map((field) => [field, flat?.[flatName(filter.key, field)]])));
 }
 
 /**
  * Command token for one filter: `X>min`, `X<max` or `Xrmin,rmax` depending on
  * `option`. Values are interpolated as-is (an undefined value prints as
  * `undefined`, exactly as the original inline switch did).
+ *
+ * @param {NumericFilter} filter
+ * @param {Partial<FilterEntry> | null | undefined} entry
  */
 export function numericToken(filter, entry) {
     const { option, min, max, rangeMin, rangeMax } = entry ?? {};
@@ -134,7 +189,12 @@ export function numericToken(filter, entry) {
     return option === 'min' ? `${t}>${min}` : option === 'max' ? `${t}<${max}` : `${t}${rangeMin},${rangeMax}`;
 }
 
-/** Token per filter key for the whole state (all filters, active or not). */
+/**
+ * Token per filter key for the whole state (all filters, active or not).
+ *
+ * @param {FilterState} state
+ * @param {readonly NumericFilter[]} [model]
+ */
 export function toTokens(state, model = NUMERIC_FILTERS) {
     return Object.fromEntries(model.map((f) => [f.key, numericToken(f, state[f.key])]));
 }

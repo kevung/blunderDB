@@ -131,6 +131,10 @@ function baseOptions(overrides = {}) {
     };
 }
 
+/**
+ * @param {string} label
+ * @param {Record<string, unknown>} [opts]
+ */
 const token = (label, opts) => buildFilterTokens([label], baseOptions(opts))[0];
 
 describe('buildFilterTokens — flag filters', () => {
@@ -181,7 +185,7 @@ describe('buildFilterTokens — range filters', () => {
     ];
 
     test.each(RANGE)('%s (%s) — min/max/range', (label, prefix, name) => {
-        const o = baseOptions();
+        const o = /** @type {Record<string, unknown>} */ (baseOptions());
         const min = o[`${name}Min`];
         const max = o[`${name}Max`];
         const rmin = o[`${name}RangeMin`];
@@ -503,8 +507,8 @@ describe('shared token classification (parseFilterTokens ↔ parseSearchCommand)
         // Canonical tokens (operator/range form, so no comma-expansion divergence)
         // covering all 20 filters classified by the shared FILTER_TOKEN_MATCHERS.
         const toks = ['p<60', 'w>5', 'g3,8', 'b2,4', 'W>10', 'G1,5', 'B1,3', 'o3,4', 'O2,5', 'k1,2', 'K2,3', 'z2,3', 'Z1,4', 'P12', 'e10,20', 'T>2026/01/01', 'bo1,2', 'BO2,3', 'bj1,2', 'BJ1,2'];
-        const ft = parseFilterTokens(toks);
-        const sc = parseSearchCommand('s ' + toks.join(' '));
+        const ft = /** @type {Record<string, unknown>} */ (parseFilterTokens(toks));
+        const sc = /** @type {Record<string, unknown>} */ (parseSearchCommand('s ' + toks.join(' ')));
         const pairs = [
             ['pcFilter', 'pc'],
             ['wrFilter', 'wr'],
