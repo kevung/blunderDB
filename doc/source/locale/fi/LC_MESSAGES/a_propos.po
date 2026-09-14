@@ -56,7 +56,7 @@ msgstr "Tässä useita tapoja keskustella:"
 
 #: ../../source/a_propos.rst:23
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
-msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
+msgstr "liity blunderDB\\:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
 #: ../../source/a_propos.rst:25
 msgid "m'écrire un mail à blunderdb@proton.me,"

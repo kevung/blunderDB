@@ -348,9 +348,7 @@ msgid ""
 msgstr ""
 "El veredicto que dice que la posición es tan favorable que doblar "
 "llevaría al adversario a pasar, mientras que jugar sin doblar reporta más"
-" — un cubo que más vale conservar.El veredicto que dice que la posición "
-"es tan favorable que doblar induciría al oponente a pasar, mientras que "
-"seguir jugando sin doblar rinde más — un cubo mejor conservado."
+" — un cubo que más vale conservar."
 
 #: ../../source/glossaire.rst:130
 msgid "Chance (*luck*)"

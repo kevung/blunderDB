@@ -2305,8 +2305,8 @@ msgstr ""
 " posizioni senza analisi » vengono ricalcolate a ogni avvio."
 
 #: ../../source/cli.rst:1221
-msgid "**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**"
-msgstr "**``--compare``: quanto vale gammonNet sulla *tua* base?**"
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``: **quanto vale gammonNet sulla tua base?**"
 
 #: ../../source/cli.rst:1223
 msgid ""
@@ -2971,8 +2971,11 @@ msgid ""
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
 "le nombre de lignes réellement changées."
 msgstr ""
-"``--format`` — Formato di output: ``text`` (predefinito) o ``json`` "
-"(``{\"changes\": [...]}``)."
+"``--format`` — Formato di output: ``text`` (predefinito) o ``json`` — un "
+"contatore per passata: ``repaired`` (colonne di analisi), ``phases`` "
+"(posizioni riclassificate) e ``crawford`` (posizioni con hash "
+"ricalcolato). Ciascuno indica il numero di righe effettivamente "
+"modificate."
 
 #: ../../source/cli.rst:1715
 msgid ""

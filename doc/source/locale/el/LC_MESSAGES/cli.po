@@ -2320,8 +2320,8 @@ msgstr ""
 "επανυπολογίζονται σε κάθε εκκίνηση."
 
 #: ../../source/cli.rst:1221
-msgid "**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**"
-msgstr "**``--compare``: τι αξίζει το gammonNet στη *δική σας* βάση;**"
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``: **τι αξίζει το gammonNet στη δική σας βάση;**"
 
 #: ../../source/cli.rst:1223
 msgid ""
@@ -3001,8 +3001,10 @@ msgid ""
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
 "le nombre de lignes réellement changées."
 msgstr ""
-"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
-"(``{\"changes\": [...]}``)."
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` — ένας "
+"μετρητής ανά πέρασμα: ``repaired`` (στήλες ανάλυσης), ``phases`` (θέσεις "
+"που αναταξινομήθηκαν) και ``crawford`` (θέσεις με νέο hash). Ο καθένας "
+"δίνει τον αριθμό των γραμμών που άλλαξαν πραγματικά."
 
 #: ../../source/cli.rst:1715
 msgid ""

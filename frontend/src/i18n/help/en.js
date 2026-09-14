@@ -1743,7 +1743,7 @@ export default {
 </tr>
 <tr>
 <td>blunders, bl [n]</td>
-<td>Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter. An optional number chooses how many to load (<code>bl 50</code>); 10 by default.Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter.</td>
+<td>Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter. An optional number chooses how many to load (<code>bl 50</code>); 10 by default.</td>
 </tr>
 <tr>
 <td>m</td>

@@ -443,8 +443,7 @@ msgid ""
 msgstr ""
 "Lädt die größten Fehler (Equity/MWC) in die Analyseansicht, gemäß dem "
 "aktuellen Statistikfilter. Eine optionale Zahl wählt, wie viele geladen "
-"werden (``bl 50``); standardmäßig 10.Lädt die größten Fehler (Equity/MWC)"
-" in die Analyseansicht, gemäß dem aktuellen Statistikfilter."
+"werden (``bl 50``); standardmäßig 10."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"

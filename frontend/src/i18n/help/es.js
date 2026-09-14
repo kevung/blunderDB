@@ -1743,7 +1743,7 @@ export default {
 </tr>
 <tr>
 <td>blunders, bl [n]</td>
-<td>Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual. Un número opcional elige cuántos cargar (<code>bl 50</code>); 10 por defecto.Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual.</td>
+<td>Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual. Un número opcional elige cuántos cargar (<code>bl 50</code>); 10 por defecto.</td>
 </tr>
 <tr>
 <td>m</td>

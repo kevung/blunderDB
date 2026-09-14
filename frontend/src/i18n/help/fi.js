@@ -1743,7 +1743,7 @@ export default {
 </tr>
 <tr>
 <td>blunders, bl [n]</td>
-<td>Lataa pahimmat virheet (equity/MWC) analyysinäkymään nykyisen tilastosuodattimen mukaisesti. Valinnainen luku valitsee, kuinka monta ladataan (<code>bl 50</code>); oletuksena 10.Lataa pahimmat virheet (equity/MWC) analyysinäkymään nykyisen tilastosuodattimen mukaisesti.</td>
+<td>Lataa pahimmat virheet (equity/MWC) analyysinäkymään nykyisen tilastosuodattimen mukaisesti. Valinnainen luku valitsee, kuinka monta ladataan (<code>bl 50</code>); oletuksena 10.</td>
 </tr>
 <tr>
 <td>m</td>

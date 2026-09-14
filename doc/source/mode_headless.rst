@@ -265,7 +265,7 @@ trois lignes, et elle est plus utile écrite que devinée :
   requête, un champ nouveau dans une réponse : un client qui les ignore
   continue de marcher, c'est la définition retenue de « compatible ». Un client
   doit donc ignorer les champs qu'il ne connaît pas plutôt que de les refuser.
-* **Le reste, c'est ``/v2``.** Rendre obligatoire un champ qui ne l'était pas,
+* **Le reste, c'est** ``/v2``. Rendre obligatoire un champ qui ne l'était pas,
   changer une unité, changer le sens d'un code d'erreur : ce sont des ruptures,
   et elles vivent sous un autre préfixe, à côté de ``/v1``, le temps que les
   clients traversent.

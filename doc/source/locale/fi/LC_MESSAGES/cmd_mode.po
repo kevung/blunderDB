@@ -435,8 +435,7 @@ msgid ""
 msgstr ""
 "Lataa pahimmat virheet (equity/MWC) analyysinäkymään nykyisen "
 "tilastosuodattimen mukaisesti. Valinnainen luku valitsee, kuinka monta "
-"ladataan (``bl 50``); oletuksena 10.Lataa pahimmat virheet (equity/MWC) "
-"analyysinäkymään nykyisen tilastosuodattimen mukaisesti."
+"ladataan (``bl 50``); oletuksena 10."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"

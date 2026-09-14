@@ -2294,8 +2294,8 @@ msgstr ""
 "käynnistyksellä."
 
 #: ../../source/cli.rst:1221
-msgid "**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**"
-msgstr "**``--compare``: mitä gammonNet on arvoltaan *sinun* kirjastossasi?**"
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``: **mitä gammonNet on arvoltaan sinun kirjastossasi?**"
 
 #: ../../source/cli.rst:1223
 msgid ""
@@ -2962,8 +2962,10 @@ msgid ""
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
 "le nombre de lignes réellement changées."
 msgstr ""
-"``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` "
-"(``{\"changes\": [...]}``)."
+"``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` — yksi "
+"laskuri kierrosta kohden: ``repaired`` (analyysisarakkeet), ``phases`` "
+"(uudelleen luokitellut asemat) ja ``crawford`` (uudelleen tiivistetyt "
+"asemat). Kukin kertoo todella muuttuneiden rivien määrän."
 
 #: ../../source/cli.rst:1715
 msgid ""

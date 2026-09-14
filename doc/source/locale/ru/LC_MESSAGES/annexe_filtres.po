@@ -153,11 +153,11 @@ msgstr "s nc"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Courses petites"
-msgstr "Гонка"
+msgstr "Короткая гонка"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s nc P<70"
-msgstr "s nc"
+msgstr "s nc P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Frapper au point 1"
@@ -270,63 +270,63 @@ msgstr "Ace-point bear-off"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "point 1 pour l'adversaire"
-msgstr "s"
+msgstr "закрытый пункт 1 у противника"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s P<60"
-msgstr "s"
+msgstr "s P<60"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Double avec au moins 20pip d'avance"
-msgstr "s"
+msgstr "Удвоение при преимуществе не менее 20 пипсов"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s d p<-20"
-msgstr "s"
+msgstr "s d p<-20"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions du match 5"
-msgstr "s"
+msgstr "Позиции из матча 5"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s ma5"
-msgstr "s"
+msgstr "s ma5"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions des matchs 2 à 4"
-msgstr "s"
+msgstr "Позиции из матчей 2–4"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s ma2,4"
-msgstr "s"
+msgstr "s ma2,4"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions des matchs 23 et 43"
-msgstr "s"
+msgstr "Позиции из матчей 23 и 43"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s ma23 ma43"
-msgstr "s"
+msgstr "s ma23 ma43"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions du tournoi 1"
-msgstr "s"
+msgstr "Позиции из турнира 1"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s tn1"
-msgstr "s"
+msgstr "s tn1"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Erreurs dans le tournoi 2"
-msgstr "s"
+msgstr "Ошибки в турнире 2"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s tn2 E>40"
-msgstr "s"
+msgstr "s tn2 E>40"
 
 #: ../../source/annexe_filtres.rst:75
 msgid "Exemples de recherche dans les résultats courants:"
-msgstr "Примеры"
+msgstr "Примеры поиска в текущих результатах:"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Scénario"
@@ -334,25 +334,25 @@ msgstr "Сценарий"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s nc``, chercher les petites courses"
-msgstr "s nc"
+msgstr "После ``s nc`` искать короткие гонки"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss P<70"
-msgstr "s"
+msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s g>20``, ne garder que les erreurs"
-msgstr "s g>20"
+msgstr "После ``s g>20`` оставить только ошибки"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss E>40"
-msgstr "s E>40"
+msgstr "ss E>40"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s tn1``, chercher les décisions de cube"
-msgstr "s"
+msgstr "После ``s tn1`` искать решения по кубу"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
-msgstr "s"
+msgstr "ss d"
 

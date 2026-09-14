@@ -1218,7 +1218,7 @@ positions sans analyse » est recalculé à chaque lancement.
 
 .. _analyze_compare:
 
-**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**
+``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**
 
 La précision du moteur est mesurée ailleurs contre des corpus de référence et
 contre la table de bearoff exacte. Aucune de ces mesures ne répond à la

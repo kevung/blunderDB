@@ -2312,8 +2312,8 @@ msgstr ""
 " lanzamiento."
 
 #: ../../source/cli.rst:1221
-msgid "**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**"
-msgstr "**``--compare``: ¿cuánto vale gammonNet sobre *su* base?**"
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``: **¿cuánto vale gammonNet sobre su base?**"
 
 #: ../../source/cli.rst:1223
 msgid ""
@@ -2983,8 +2983,10 @@ msgid ""
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
 "le nombre de lignes réellement changées."
 msgstr ""
-"``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
-"(``{\"changes\": [...]}``)."
+"``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` — un "
+"contador por pasada: ``repaired`` (columnas de análisis), ``phases`` "
+"(posiciones reclasificadas) y ``crawford`` (posiciones con hash "
+"recalculado). Cada uno indica el número de filas realmente modificadas."
 
 #: ../../source/cli.rst:1715
 msgid ""

@@ -2054,8 +2054,8 @@ msgstr ""
 "は書き込み済みの内容を一切失わずに中止し、次回の実行は前回が止まった正確にその場所から再開します——「分析のないポジション」は起動のたびに再計算されるため、ジャーナルは一切不要です。"
 
 #: ../../source/cli.rst:1221
-msgid "**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**"
-msgstr "**``--compare``\\ ：\\ *あなたの*\\ ライブラリで gammonNet はどれだけのものか**"
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``\\ ：\\ **あなたのライブラリで gammonNet はどれだけのものか**"
 
 #: ../../source/cli.rst:1223
 msgid ""
@@ -2638,8 +2638,9 @@ msgid ""
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
 "le nombre de lignes réellement changées."
 msgstr ""
-"``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ （\\ "
-"``{\"changes\": [...]}``\\ ）。"
+"``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ 。パスごとに 1 "
+"つのカウンター：\\ ``repaired``\\ （分析列）、\\ ``phases``\\ （再分類された局面）、\\ "
+"``crawford``\\ （ハッシュを再計算した局面）。それぞれが実際に変更された行数を示します。"
 
 #: ../../source/cli.rst:1715
 msgid ""

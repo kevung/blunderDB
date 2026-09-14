@@ -589,14 +589,14 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:268
 msgid ""
-"**Le reste, c'est ``/v2``.** Rendre obligatoire un champ qui ne l'était "
+"**Le reste, c'est** ``/v2``. Rendre obligatoire un champ qui ne l'était "
 "pas, changer une unité, changer le sens d'un code d'erreur : ce sont des "
 "ruptures, et elles vivent sous un autre préfixe, à côté de ``/v1``, le "
 "temps que les clients traversent."
 msgstr ""
-"**それ以外は ``/v2`` です。**\\ "
-"任意だったフィールドを必須にする、単位を変える、エラーコードの意味を変える。これらは破壊的変更であり、クライアントが移行しきるまで ``/v1``"
-" の隣で別の接頭辞のもとに置かれます。"
+"**それ以外は** ``/v2`` "
+"です。任意だったフィールドを必須にする、単位を変える、エラーコードの意味を変える。これらは破壊的変更であり、クライアントが移行しきるまで "
+"``/v1`` の隣で別の接頭辞のもとに置かれます。"
 
 #: ../../source/mode_headless.rst:273
 msgid ""
@@ -836,7 +836,7 @@ msgid ""
 " la limite de débit et les jauges de travail en vol qui le bornent, pas "
 "une frontière de confiance."
 msgstr ""
-"``/ops/``\\ に移さなかったもの：``/v1/gammonnet.sweepStale`` "
+"``/ops/``\\ に\\ **移さなかった**\\ もの：``/v1/gammonnet.sweepStale`` "
 "です。追いつき処理は重いものの、呼び出したテナントの範囲に限られます。これを抑えるのはレート制限と進行中の作業のゲージであって、信頼境界ではありません。"
 
 #: ../../source/mode_headless.rst:427

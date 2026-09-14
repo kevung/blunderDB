@@ -566,7 +566,7 @@ msgstr "Основная причина"
 
 #: ../../source/stats_parity.rst:247
 msgid "PR (checker)"
-msgstr "PR"
+msgstr "PR (ходы шашками)"
 
 #: ../../source/stats_parity.rst:247
 msgid "≤ 0.20"
@@ -602,7 +602,11 @@ msgid ""
 "forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups"
 " forcés à l'import SGF. Cela crée un écart structurel sur le Snowie ER "
 "(dénominateur légèrement différent)."
-msgstr "Snowie ER"
+msgstr ""
+"Файлы SGF (gnuBG) не содержат альтернатив для вынужденных ходов, поэтому "
+"blunderDB не может распознать все вынужденные ходы при импорте SGF. Это "
+"создаёт структурное расхождение по Snowie ER (немного другой "
+"знаменатель)."
 
 #: ../../source/stats_parity.rst:263
 msgid "Valider vos propres chiffres"
@@ -612,7 +616,9 @@ msgstr "Проверка собственных данных"
 msgid ""
 "Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
 "suivants :"
-msgstr "PR"
+msgstr ""
+"Если ваши значения PR или MWC расходятся с числами XG, проверьте "
+"следующее:"
 
 #: ../../source/stats_parity.rst:268
 #, no-python-brace-format
@@ -620,7 +626,10 @@ msgid ""
 "**Analyses complètes** — Le PR ne peut être calculé que sur les positions"
 " disposant d'une analyse. Des positions sans analyse sont comptées comme "
 "erreur zéro mais n'entrent pas dans :math:`N_\\text{compté}`."
-msgstr "PR"
+msgstr ""
+"**Полные анализы** — PR можно вычислить только по позициям, у которых "
+"есть анализ. Позиции без анализа засчитываются как нулевая ошибка, но не "
+"входят в :math:`N_\\text{compté}`."
 
 #: ../../source/stats_parity.rst:272
 msgid ""
@@ -662,11 +671,11 @@ msgstr "Формулы проверены в следующих исходных
 
 #: ../../source/stats_parity.rst:289
 msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
-msgstr "PR"
+msgstr "``gnubg/formatgs.c:399–409`` — PR («Error rate per decision»)."
 
 #: ../../source/stats_parity.rst:290
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
-msgstr "Snowie Error Rate"
+msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 
 #: ../../source/stats_parity.rst:291
 msgid ""
@@ -686,13 +695,12 @@ msgstr ""
 msgid ""
 "``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC "
 "(``eq2mwc``)."
-msgstr "Источник: ``gnubg/analysis.c:1449–1464``."
+msgstr "``gnubg/analysis.c:1449–1464`` — Накопление потери MWC (``eq2mwc``)."
 
 #: ../../source/stats_parity.rst:294
 msgid ""
 "``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil "
 "0.16)."
 msgstr ""
-"Решение по кубу является **близким**, если оно находится в окне эквити "
-"``[-0.16, +0.16]`` вокруг точки удвоения (предикат "
-"``isCloseCubedecision`` в ``gnubg/eval.c:5088–5100``)."
+"``gnubg/eval.c:5088–5100`` — Предикат ``isCloseCubedecision`` (порог "
+"0.16)."

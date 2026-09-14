@@ -442,9 +442,7 @@ msgid ""
 msgstr ""
 "Carica gli errori peggiori (equity/MWC) nella vista di analisi, secondo "
 "il filtro statistico corrente. Un numero opzionale sceglie quanti "
-"caricarne (``bl 50``); 10 per impostazione predefinita.Carica gli errori "
-"peggiori (equity/MWC) nella vista di analisi, secondo il filtro "
-"statistico corrente."
+"caricarne (``bl 50``); 10 per impostazione predefinita."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"

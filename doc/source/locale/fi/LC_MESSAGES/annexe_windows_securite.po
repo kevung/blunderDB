@@ -181,7 +181,7 @@ msgid ""
 msgstr ""
 "Windows Defenderin tiedetään aiheuttavan vääriä positiivisia "
 "tunnistuksia. Tämä ongelma mainitaan nimenomaisesti Golangin virallisen "
-"sivuston UKK:ssa ( https://go.dev/doc/faq#virus ) tai joidenkin Go-"
+"sivuston UKK\\:ssa ( https://go.dev/doc/faq#virus ) tai joidenkin Go-"
 "kielellä ohjelmoitujen projektien GitHub-tiketeissä ( "
 "https://github.com/golang/vscode-go/issues/3182 )."
 
