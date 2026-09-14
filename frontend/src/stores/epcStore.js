@@ -11,6 +11,10 @@ import { writable } from 'svelte/store';
 //                                  //               double_take, double_pass, verdict } }
 //   error:     string | null
 // }
+// What the Eval panel last computed. The fields are typed loosely on purpose: the
+// EPC results come from the generated Wails models (engine.EPCResult), and the
+// panel adds its own (bottomPoints, topPoints, …) beside them.
+/** @type {import('svelte/store').Writable<{bottomEPC: any, topEPC: any, race: any, error: any, [field: string]: any}>} */
 export const epcDataStore = writable({
     bottomEPC: null,
     topEPC: null,

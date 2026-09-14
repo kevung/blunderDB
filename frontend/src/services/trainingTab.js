@@ -34,6 +34,16 @@
  * GRAINE que le moteur joue sur un à quatre plis (ADR-0041 règle 2), donc
  * chaque question diffère et l'enchaînement a un sens.
  */
+/**
+ * @typedef {object} TrainingExercise
+ * @property {string} id
+ * @property {'declared'|'entered'} mode
+ * @property {string[]} sources
+ * @property {string} defaultSource
+ * @property {boolean} [boardIsTheQuestion]
+ */
+
+/** @type {ReadonlyArray<Readonly<TrainingExercise>>} */
 export const TRAINING_EXERCISES = Object.freeze([
     Object.freeze({ id: 'scores', mode: 'declared', sources: [], defaultSource: 'pool' }),
     Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board', boardIsTheQuestion: true }),
@@ -71,6 +81,10 @@ export const TREND_WINDOW = 10;
  * @typedef {object} TrainingQuestion
  * @property {string} key de quoi la question est faite (un score, un id)
  * @property {TrainingNumber[]} numbers
+ * @property {string} [kind] l'exercice qui l'a fabriquée — `scores`, `pips`, `bearoff`
+ * @property {any} [card] la fiche de score, pour Scores
+ * @property {number|null} [positionId] la position de la base dont elle est tirée, s'il y en a une
+ * @property {any} [position] la position à montrer sur le plateau, s'il y en a une
  *
  * @typedef {object} TrainingSessionState
  * @property {string} exercise
@@ -121,6 +135,7 @@ export function newSession({ exercise, seedSource = '', limitSeconds = 0 }) {
  * fabrication de la question se cache derrière le temps de réflexion de la
  * précédente, elle ne se facture pas à celle-ci).
  * @param {TrainingSessionState} session @param {TrainingQuestion} question @param {number} now
+ * @returns {TrainingSessionState}
  */
 export function askQuestion(session, question, now) {
     return {
@@ -142,6 +157,7 @@ export function askQuestion(session, question, now) {
  * « Valider », une seule fois, et un champ qui se juge en cours de frappe
  * annoncerait la réponse avant qu'on ait fini de la donner.
  * @param {TrainingSessionState} session @param {number} index @param {string} text
+ * @returns {TrainingSessionState}
  */
 export function setAnswer(session, index, text) {
     if (!session.question || session.revealed) return session;
@@ -158,6 +174,7 @@ export function setAnswer(session, index, text) {
  * session ne se perd jamais sans que l'utilisateur l'ait décidé, et un écran
  * qui rebascule tout seul sur le lanceur est une perte, pas une information.
  * @param {TrainingSessionState} session @param {string} reason
+ * @returns {TrainingSessionState}
  */
 export function failNextQuestion(session, reason) {
     return { ...session, question: null, revealed: false, outOfTime: false, faults: [], answers: [], deviations: [], questionError: reason };
@@ -170,6 +187,7 @@ export function failNextQuestion(session, reason) {
  * déclaration.
  * @param {TrainingSessionState} session @param {number} now
  * @param {{outOfTime?: boolean}} [opts]
+ * @returns {TrainingSessionState}
  */
 export function reveal(session, now, { outOfTime = false } = {}) {
     if (!session.question || session.revealed) return session;
@@ -209,6 +227,7 @@ function judgeNumber(number, text) {
  * n'est pas révélée (elle est encore ouverte) et sur une question hors délai
  * (son verdict est déjà rendu).
  * @param {TrainingSessionState} session @param {number} index
+ * @returns {TrainingSessionState}
  */
 export function toggleFault(session, index) {
     if (!session.revealed || session.outOfTime) return session;
@@ -227,6 +246,7 @@ export function toggleFault(session, index) {
  * Rien n'est écrit en base ici : la session entière l'est à « Terminer », et
  * « Quitter » la jette.
  * @param {TrainingSessionState} session
+ * @returns {TrainingSessionState}
  */
 export function recordQuestion(session) {
     if (!session.question || !session.revealed) return session;

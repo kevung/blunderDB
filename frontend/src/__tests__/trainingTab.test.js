@@ -34,7 +34,8 @@ function bearoffQuestion(bottom = 87.4, top = 91.2) {
     };
 }
 
-/** Une session de Bearoff avec les deux champs remplis. */
+/** Une session de Bearoff avec les deux champs remplis.
+ *  @param {string} bottom @param {string} top */
 function answered(bottom, top) {
     let s = askQuestion(newSession({ exercise: 'bearoff', seedSource: 'pool' }), bearoffQuestion(), 1000);
     s = setAnswer(s, 0, bottom);
@@ -54,7 +55,7 @@ describe('le catalogue servi à ce jour', () => {
     });
 
     test('Bearoff accepte les trois sources, et démarre sur le vivier', () => {
-        const bearoff = TRAINING_EXERCISES.find((e) => e.id === 'bearoff');
+        const bearoff = /** @type {import('../services/trainingTab.js').TrainingExercise} */ (TRAINING_EXERCISES.find((e) => e.id === 'bearoff'));
         expect(bearoff.sources).toEqual(['pool', 'board', 'library']);
         expect(bearoff.defaultSource).toBe('pool');
     });

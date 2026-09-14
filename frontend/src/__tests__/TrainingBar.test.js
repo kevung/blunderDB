@@ -72,7 +72,7 @@ describe('la bande sert le quiz', () => {
     test('la notation tapée part au juge du quiz, et à lui seul', async () => {
         openSession();
         const bar = render(TrainingBar);
-        const field = bar.getByLabelText(label.answer);
+        const field = /** @type {HTMLInputElement} */ (bar.getByLabelText(label.answer));
         field.value = '13/7 8/7';
         field.dispatchEvent(new Event('input', { bubbles: true }));
         bar.getByText(label.check).click();

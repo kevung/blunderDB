@@ -162,7 +162,7 @@ async function buildBearoffQuestion(seedSource, seed) {
             if (id == null) continue;
             const loaded = await LoadPosition(id);
             if (!loaded) continue;
-            const generated = await GenerateBearoffQuestion({ source: 'library', seed: loaded });
+            const generated = await GenerateBearoffQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
             if (!generated?.generated) {
                 last = generated?.refusal || last;
                 continue;
@@ -173,7 +173,7 @@ async function buildBearoffQuestion(seedSource, seed) {
     }
 
     const request = seedSource === 'board' ? { source: 'board', seed } : { source: 'pool' };
-    const generated = await GenerateBearoffQuestion(request);
+    const generated = await GenerateBearoffQuestion(/** @type {any} */ (request));
     if (!generated?.generated) return { question: null, refusal: generated?.refusal || 'noQuestion' };
     return { question: bearoffQuestion(generated, ''), refusal: generated.refusal || '' };
 }
@@ -484,7 +484,7 @@ export async function finishTrainingSession() {
     const row = finishedSession(closed);
     if (row.numbersAsked === 0) return row;
     try {
-        await SaveTrainingSession(row);
+        await SaveTrainingSession(/** @type {any} */ (row));
     } catch (error) {
         logger.error('could not record the training session:', error);
         setStatusBarMessage(tMsg('training.journalFailed'));

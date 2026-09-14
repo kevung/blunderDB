@@ -26,7 +26,7 @@ vi.mock('../services/trainingTabService.js', () => ({
     finishTrainingSession: vi.fn(),
     quitTrainingSession: vi.fn(),
     refreshTrainingJournal: vi.fn(() => Promise.resolve()),
-    refusalMessageKey: (code) => (code && code !== 'noQuestion' ? `training.refusal.${code}` : 'training.noQuestion')
+    refusalMessageKey: (/** @type {string} */ code) => (code && code !== 'noQuestion' ? `training.refusal.${code}` : 'training.noQuestion')
 }));
 
 import TrainingPanel from '../components/TrainingPanel.svelte';
@@ -115,14 +115,14 @@ describe('la source « base » (ADR-0041 règle 2)', () => {
         const closed = render(TrainingPanel);
         closed.getByTestId('training-exercise-bearoff').click();
         await Promise.resolve();
-        expect(closed.getByTestId('training-source-library').disabled).toBe(true);
-        expect(closed.getByTestId('training-source-pool').disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement} */ (closed.getByTestId('training-source-library')).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (closed.getByTestId('training-source-pool')).disabled).toBe(false);
         cleanup();
 
         databasePathStore.set('/tmp/some.db');
         const open = render(TrainingPanel);
         open.getByTestId('training-exercise-bearoff').click();
         await Promise.resolve();
-        expect(open.getByTestId('training-source-library').disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement} */ (open.getByTestId('training-source-library')).disabled).toBe(false);
     });
 });
