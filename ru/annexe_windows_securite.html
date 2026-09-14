@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Приложение Windows: что делать, если Windows блокирует запуск &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Приложение Mac: возможная блокировка blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="Приложение: Расширенное использование фильтров" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/annexe_windows_securite.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/annexe_windows_securite.html" lang="en" hreflang="en">English</a>
+  <a href="../de/annexe_windows_securite.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/annexe_windows_securite.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/annexe_windows_securite.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/annexe_windows_securite.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/annexe_windows_securite.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/annexe_windows_securite.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Приложение Windows: что делать, если Windows блокирует запуск</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">Предупреждение Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">Блокировка Windows Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-l-integrite-du-telechargement-sha256">Проверка целостности загрузки (SHA256)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Приложение Windows: что делать, если Windows блокирует запуск</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-que-faire-si-windows-bloque-le-lancement">
+<span id="annexe-windows-malware"></span><h1>Приложение Windows: что делать, если Windows блокирует запуск<a class="headerlink" href="#annexe-windows-que-faire-si-windows-bloque-le-lancement" title="Ссылка на этот заголовок"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Следующее относится к операционным системам Windows 10 и 11.</p>
+</div>
+<p>В настоящее время Windows требует от компаний-разработчиков или независимых разработчиков программного обеспечения цифровой сертификации своих приложений либо их распространения через Windows Store. В связи с этим рекомендуется обращаться к сторонним компаниям для получения цифрового сертификата стоимостью несколько сотен евро (см., например, <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a>).</p>
+<p>Поскольку я распространяю blunderDB бесплатно, я не хочу прибегать к этим дорогостоящим возможностям. Был изучен <strong>бесплатный</strong> путь, предназначенный для программного обеспечения с открытым исходным кодом (<em>SignPath Foundation</em>, <a class="reference external" href="https://signpath.org/">https://signpath.org/</a>), но заявка не была одобрена; поэтому двоичные файлы Windows не имеют цифровой подписи. Поэтому весьма вероятно, что Windows предупредит вас о потенциальной угрозе или даже полностью заблокирует запуск blunderDB. В следующих разделах описаны действия для обхода предупреждений Windows, а также как проверить целостность загруженного двоичного файла.</p>
+<section id="avertissement-windows-smartscreen">
+<h2>Предупреждение Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Ссылка на этот заголовок"></a></h2>
+<p>После загрузки blunderDB при его запуске Windows может отобразить предупреждение вида</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Этот снимок экрана сделан в англоязычной Windows. В русской версии Windows тот же экран называется <em>Система Windows защитила ваш компьютер</em>; ссылка, на которую надо нажать, называется <em>Подробнее</em>, а появляющаяся затем кнопка — <em>Выполнить в любом случае</em>.</p>
+</div>
+<p><strong>В подавляющем большинстве случаев достаточно двух щелчков</strong> — <em>Подробнее</em>, затем <em>Выполнить в любом случае</em>, — и больше ничего делать не нужно: ни исключений в антивирусе, ни изменений настроек. Следующий раздел касается только тех редких случаев, когда блокировка исходила не от SmartScreen.</p>
+<p>Если вы хотите разрешить запуск конкретного исполняемого файла, заблокированного SmartScreen:</p>
+<ol class="arabic simple">
+<li><p><strong>Попробуйте запустить исполняемый файл</strong>:</p>
+<ul class="simple">
+<li><p>При попытке запустить исполняемый файл SmartScreen может заблокировать его и отобразить предупреждение.</p></li>
+</ul>
+</li>
+<li><p><strong>Нажмите «Подробнее»</strong>:</p>
+<ul class="simple">
+<li><p>В окне предупреждения SmartScreen нажмите <strong>Подробнее</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Выберите «Выполнить в любом случае»</strong>:</p>
+<ul class="simple">
+<li><p>Если вы доверяете исполняемому файлу, нажмите <strong>Выполнить в любом случае</strong>, чтобы обойти предупреждение SmartScreen для данного случая.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2>Блокировка Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Ссылка на этот заголовок"></a></h2>
+<p>Этот раздел — <strong>крайнее средство</strong>, к нему следует прибегать, только если блокировка исходила не от SmartScreen. При некоторых настройках безопасности бывает, что даже после описанной выше разблокировки Windows Defender не даёт запустить blunderDB, выдавая сообщения вида</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>или</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>или даже поместить его в карантин.</p>
+<p>Windows Defender известен случаями ложноположительных срабатываний. Эта проблема явно упоминается в FAQ на официальном сайте Golang (<a class="reference external" href="https://go.dev/doc/faq#virus">https://go.dev/doc/faq#virus</a>) или в тикетах GitHub некоторых проектов на Go (<a class="reference external" href="https://github.com/golang/vscode-go/issues/3182">https://github.com/golang/vscode-go/issues/3182</a>).</p>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Исключить файл из антивирусной проверки — не безобидное действие: исключение распространяется на путь, и любой файл, помещённый затем в это место, тоже не будет проверяться. Сначала проверьте отпечаток SHA-256 загруженного файла (следующий раздел): именно он, а не исключение, подтверждает, что вы запускаете действительно опубликованный двоичный файл.</p>
+</div>
+<p>Если вы всё же хотите запретить Безопасности Windows анализировать blunderDB:</p>
+<ol class="arabic simple">
+<li><p><strong>Откройте Безопасность Windows</strong>:</p>
+<ul class="simple">
+<li><p>Нажмите <strong>Пуск</strong> и введите <strong>Безопасность Windows</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>Перейдите в «Защита от вирусов и угроз»</strong>:</p>
+<ul class="simple">
+<li><p>Нажмите <strong>Защита от вирусов и угроз</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>Управление параметрами</strong>:</p>
+<ul class="simple">
+<li><p>Прокрутите вниз и нажмите <strong>Управление параметрами</strong> в разделе «Параметры защиты от вирусов и угроз».</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>Добавьте или удалите исключения</strong>:</p>
+<ul class="simple">
+<li><p>Прокрутите до раздела <strong>Исключения</strong> и нажмите <strong>Добавить или удалить исключения</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>Добавьте исключение</strong>:</p>
+<ul class="simple">
+<li><p>Нажмите <strong>Добавить исключение</strong> и выберите <strong>Файл</strong>. Затем перейдите к исполняемому файлу, который вы хотите исключить, и выберите его.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+<section id="verifier-l-integrite-du-telechargement-sha256">
+<h2>Проверка целостности загрузки (SHA256)<a class="headerlink" href="#verifier-l-integrite-du-telechargement-sha256" title="Ссылка на этот заголовок"></a></h2>
+<p>Каждый бинарный файл, опубликованный на странице <em>releases</em>, сопровождается файлом <code class="docutils literal notranslate"><span class="pre">.sha256</span></code>, содержащим его криптографический отпечаток. Проверка этого отпечатка позволяет убедиться, что загруженный файл подлинный и не был изменён, что является полезной гарантией при отсутствии подписи кода.</p>
+<p>В Windows (PowerShell), в папке загрузок:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows</span><span class="p">-&lt;</span><span class="n">version</span><span class="p">&gt;.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</pre></div>
+</div>
+<p>Сравните отображаемое значение со значением из файла <code class="docutils literal notranslate"><span class="pre">blunderDB-windows-&lt;version&gt;.exe.sha256</span></code>. Они должны быть идентичны.</p>
+<p>В Linux или macOS:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderDB-linux-&lt;version&gt;.sha256<span class="w">      </span><span class="c1"># Linux</span>
+shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-&lt;version&gt;.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="Приложение: Расширенное использование фильтров" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="Приложение Mac: возможная блокировка blunderDB" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

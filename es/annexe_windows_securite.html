@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anexo Windows: qué hacer si Windows bloquea el inicio &mdash; documentación de blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e3f67aac"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Anexo Mac: posible bloqueo de blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="Anexo: Uso avanzado de los filtros" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/annexe_windows_securite.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/annexe_windows_securite.html" lang="en" hreflang="en">English</a>
+  <a href="../de/annexe_windows_securite.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/annexe_windows_securite.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/annexe_windows_securite.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/annexe_windows_securite.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/annexe_windows_securite.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/annexe_windows_securite.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Anexo Windows: qué hacer si Windows bloquea el inicio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">Advertencia de Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">Bloqueo de Windows Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-l-integrite-du-telechargement-sha256">Verificar la integridad de la descarga (SHA256)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Anexo Windows: qué hacer si Windows bloquea el inicio</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-que-faire-si-windows-bloque-le-lancement">
+<span id="annexe-windows-malware"></span><h1>Anexo Windows: qué hacer si Windows bloquea el inicio<a class="headerlink" href="#annexe-windows-que-faire-si-windows-bloque-le-lancement" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Lo siguiente se aplica a los sistemas operativos Windows 10 y 11.</p>
+</div>
+<p>Hoy en día, Windows exige a las empresas editoras de software o a los desarrolladores de software independientes que certifiquen digitalmente sus aplicaciones, o incluso que las distribuyan a través de la Windows Store. Por ello se recomienda recurrir a empresas externas para obtener un certificado digital, a un coste de varios cientos de euros (véase, por ejemplo, <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> ).</p>
+<p>Como comparto blunderDB de forma gratuita, no deseo recurrir a estas opciones costosas. Se exploró una vía <strong>gratuita</strong> reservada al software libre (la <em>SignPath Foundation</em>, <a class="reference external" href="https://signpath.org/">https://signpath.org/</a>), pero la candidatura no prosperó; por lo tanto, los binarios de Windows no están firmados digitalmente. En consecuencia, es muy probable que Windows le advierta de un posible peligro, o incluso que bloquee por completo la ejecución de blunderDB. Las siguientes secciones explican los pasos a seguir para superar las reticencias de Windows, y cómo verificar la integridad del binario descargado.</p>
+<section id="avertissement-windows-smartscreen">
+<h2>Advertencia de Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<p>Después de descargar blunderDB, al ejecutarlo, es posible que Windows muestre una advertencia como:</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Esta captura de pantalla procede de un Windows en inglés. En un Windows en español, la misma pantalla se titula <em>Windows protegió su equipo</em>; el enlace en el que hay que hacer clic es <em>Más información</em>, y el botón que aparece a continuación es <em>Ejecutar de todas formas</em>.</p>
+</div>
+<p><strong>Dos clics bastan en casi todos los casos</strong> — <em>Más información</em>, luego <em>Ejecutar de todas formas</em> — y no hay nada más que hacer: ni exclusión antivirus, ni ajuste que modificar. La sección siguiente solo concierne a los raros casos en los que el bloqueo no venía de SmartScreen.</p>
+<p>Si desea permitir un ejecutable específico bloqueado por SmartScreen:</p>
+<ol class="arabic simple">
+<li><p><strong>Intentar ejecutar el ejecutable</strong>:</p>
+<ul class="simple">
+<li><p>Cuando intente lanzar el ejecutable, SmartScreen puede bloquearlo y mostrar una advertencia.</p></li>
+</ul>
+</li>
+<li><p><strong>Hacer clic en «Más información»</strong>:</p>
+<ul class="simple">
+<li><p>En la ventana de advertencia de SmartScreen, haga clic en <strong>Más información</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Seleccionar «Ejecutar de todas formas»</strong>:</p>
+<ul class="simple">
+<li><p>Si confía en el ejecutable, haga clic en <strong>Ejecutar de todas formas</strong> para omitir la advertencia de SmartScreen en esta ocasión.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2>Bloqueo de Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<p>Esta sección es un <strong>último recurso</strong>, que solo debe seguirse si el bloqueo no venía de SmartScreen. En efecto, con ciertas configuraciones de seguridad, ocurre que, a pesar del desbloqueo descrito más arriba, Windows Defender impide la ejecución de blunderDB con mensajes como:</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>o bien:</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>o incluso ponerlo en cuarentena.</p>
+<p>Windows Defender es conocido por generar falsos positivos. Este problema se menciona explícitamente en las preguntas frecuentes del sitio oficial de Golang ( <a class="reference external" href="https://go.dev/doc/faq#virus">https://go.dev/doc/faq#virus</a> ) o en tickets de GitHub de algunos proyectos programados en Go ( <a class="reference external" href="https://github.com/golang/vscode-go/issues/3182">https://github.com/golang/vscode-go/issues/3182</a> ).</p>
+<div class="admonition warning">
+<p class="admonition-title">Advertencia</p>
+<p>Excluir un archivo del análisis antivirus no es un gesto trivial: la exclusión se aplica a una ruta, y cualquier archivo colocado después en ese lugar también escapará al análisis. Verifique primero la huella SHA-256 del archivo descargado (sección siguiente): es ella, y no la exclusión, la que certifica que está ejecutando realmente el binario publicado.</p>
+</div>
+<p>Si aun así desea impedir que la Seguridad de Windows analice blunderDB:</p>
+<ol class="arabic simple">
+<li><p><strong>Abrir la Seguridad de Windows</strong>:</p>
+<ul class="simple">
+<li><p>Vaya a <strong>Inicio</strong> y escriba <strong>Seguridad de Windows</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>Ir a «Protección contra virus y amenazas»</strong>:</p>
+<ul class="simple">
+<li><p>Haga clic en <strong>Protección contra virus y amenazas</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>Administrar la configuración</strong>:</p>
+<ul class="simple">
+<li><p>Desplácese hacia abajo y haga clic en <strong>Administrar la configuración</strong> en Configuración de protección contra virus y amenazas.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>Agregar o quitar exclusiones</strong>:</p>
+<ul class="simple">
+<li><p>Desplácese hasta la sección <strong>Exclusiones</strong> y haga clic en <strong>Agregar o quitar exclusiones</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>Agregar una exclusión</strong>:</p>
+<ul class="simple">
+<li><p>Haga clic en <strong>Agregar una exclusión</strong> y seleccione <strong>Archivo</strong>. A continuación, navegue hasta el ejecutable que desea excluir y selecciónelo.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+<section id="verifier-l-integrite-du-telechargement-sha256">
+<h2>Verificar la integridad de la descarga (SHA256)<a class="headerlink" href="#verifier-l-integrite-du-telechargement-sha256" title="Link to this heading"></a></h2>
+<p>Cada binario publicado en la página de <em>releases</em> va acompañado de un archivo <code class="docutils literal notranslate"><span class="pre">.sha256</span></code> que contiene su huella criptográfica. Verificar esta huella permite asegurarse de que el archivo descargado es auténtico y no ha sido alterado, lo que constituye una garantía útil en ausencia de firma de código.</p>
+<p>En Windows (PowerShell), en la carpeta de descargas:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows</span><span class="p">-&lt;</span><span class="n">version</span><span class="p">&gt;.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</pre></div>
+</div>
+<p>Compare el valor mostrado con el del archivo <code class="docutils literal notranslate"><span class="pre">blunderDB-windows-&lt;version&gt;.exe.sha256</span></code>. Ambos deben ser idénticos.</p>
+<p>En Linux o macOS:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderDB-linux-&lt;version&gt;.sha256<span class="w">      </span><span class="c1"># Linux</span>
+shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-&lt;version&gt;.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="Anexo: Uso avanzado de los filtros" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="Anexo Mac: posible bloqueo de blunderDB" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
