@@ -356,7 +356,7 @@ export default {
 <p>The <strong>Stats</strong> panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays <strong>PR</strong> (Performance Rating) and <strong>MWC cost</strong> (Match Winning Chance cost) for all positions or a filtered subset.</p>
 <p>The Stats panel is especially useful for:</p>
 <ul>
-<li><strong>gauging your level</strong> against the level bands (<em>World Class</em>, <em>Expert</em>, *Advanced*…) using the global PR;</li>
+<li><strong>gauging your level</strong> against the level bands (<em>World Class</em>, <em>Expert</em>, <em>Advanced</em>…) using the global PR;</li>
 <li><strong>tracking your progress</strong> tournament by tournament or match by match using the Progression tab charts;</li>
 <li><strong>identifying your weak spots</strong>: the Errors tab shows the breakdown between checker plays and cube decisions, and the distribution of error magnitudes;</li>
 <li><strong>compare the players in the database</strong> with one another, one row per player, through the Players tab — useful for following an entire competition;</li>

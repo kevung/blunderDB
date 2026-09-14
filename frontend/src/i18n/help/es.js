@@ -356,7 +356,7 @@ export default {
 <p>El panel <strong>Stats</strong> permite analizar el nivel de juego y seguir la progresión a lo largo del tiempo a partir de las posiciones importadas en la base de datos. Calcula y muestra los indicadores <strong>PR</strong> (<em>Performance Rating</em>) y <strong>MWC cost</strong> (Match Winning Chance cost) para el conjunto de las posiciones o para un subconjunto filtrado.</p>
 <p>El panel Stats resulta especialmente útil para:</p>
 <ul>
-<li><strong>situar su nivel</strong> respecto a las bandas de nivel (<em>Clase mundial</em>, <em>Experto</em>, *Avanzado*…) gracias al PR global;</li>
+<li><strong>situar su nivel</strong> respecto a las bandas de nivel (<em>Clase mundial</em>, <em>Experto</em>, <em>Avanzado</em>…) gracias al PR global;</li>
 <li><strong>seguir su progresión</strong> torneo a torneo o partida a partida gracias a los gráficos de la pestaña Progresión;</li>
 <li><strong>identificar sus puntos débiles</strong>: la pestaña Errores para ver el reparto entre jugadas de fichas y decisiones de cubo, y la distribución de las magnitudes de error;</li>
 <li><strong>comparar entre sí a los jugadores de la base</strong>, una fila por jugador, gracias a la pestaña Jugadores — útil para seguir una competición entera;</li>

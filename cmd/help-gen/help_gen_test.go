@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -72,6 +73,14 @@ func TestInlineEscapesBeforeApplyingMarkup(t *testing.T) {
 		{"`D` ou `D1`", "<code>D</code> ou <code>D1</code>"},
 		// docutils' delimiter rules: emphasis may abut a hyphen on either side.
 		{"die *TAB*-Taste", "die <em>TAB</em>-Taste"},
+		// ...and any Unicode dash or punctuation mark, as docutils reads them:
+		// each of these rendered as literal asterisks in a bundle (#422).
+		{"näppäimet *1*–*4* pysyvät", "näppäimet <em>1</em>–<em>4</em> pysyvät"},
+		{"(*Expert*, *Advanced*…)", "(<em>Expert</em>, <em>Advanced</em>…)"},
+		{"ή *Décision*·", "ή <em>Décision</em>·"},
+		{"局面）、*Plateau*\\ （現在", "局面）、<em>Plateau</em>（現在"},
+		// A product is still not emphasis.
+		{"2*3*4", "2*3*4"},
 		// A reStructuredText backslash escape disappears...
 		{`m'a,b,...\'`, `m'a,b,...'`},
 		// ...including the escaped space Japanese uses to separate markup from
@@ -87,6 +96,77 @@ func TestInlineEscapesBeforeApplyingMarkup(t *testing.T) {
 			t.Errorf("inline(%q) = %q, want %q", c.in, got, c.want)
 		}
 	}
+}
+
+// TestEscapedSpaceLeavesNoBackslash holds the rule #422 found broken in ja.js:
+// the escaped space Japanese puts between inline markup and CJK text vanishes
+// without a trace, and the one written with an escape too many — `\\ ` in the
+// reStructuredText, `\\\\ ` in the .po — is refused rather than rendered. Docutils
+// reads that second form as a literal backslash followed by a space, so both
+// the online documentation and the help would show a `\`; no sentence of the
+// three documents the help is generated from wants one.
+func TestEscapedSpaceLeavesNoBackslash(t *testing.T) {
+	g := &generator{refs: map[string]refTarget{}, cats: map[string]catalogue{}}
+	consumed := []string{
+		"バーの\\ **メタデータ**\\ ボタン",
+		"長さが\\ ``0``\\ ならマネーゲーム",
+		"\\ *Jacoby*\\ と\\ *Beaver*\\ のチェックボックス",
+		"を\\ **時計の下で**\\ 思い出させ",
+	}
+	for _, in := range consumed {
+		got, err := g.inline(in, translator{lang: sourceLang})
+		if err != nil {
+			t.Fatalf("inline(%q): %v", in, err)
+		}
+		if strings.Contains(got, `\`) {
+			t.Errorf("inline(%q) = %q: the escaped space left a backslash", in, got)
+		}
+	}
+	overEscaped := []string{
+		"バーの\\\\ **メタデータ**\\\\ ボタン",
+		"（\\\\ *CTRL-K*\\\\ ）",
+	}
+	for _, in := range overEscaped {
+		if got, err := g.inline(in, translator{lang: sourceLang}); err == nil {
+			t.Errorf("inline(%q) = %q, want an error: an escaped backslash renders as a visible `\\`", in, got)
+		}
+	}
+	// A backslash inside an inline literal is data, not an escape.
+	if _, err := g.inline("``C:\\\\Users``", translator{lang: sourceLang}); err != nil {
+		t.Errorf("a backslash inside a literal must stay allowed: %v", err)
+	}
+}
+
+// TestNoBundleShowsABackslash is the same rule over the real catalogues, in
+// every language: outside the verbatim formula (<pre class="math">, where LaTeX
+// is made of backslashes) and inline code, no rendered help text carries one.
+func TestNoBundleShowsABackslash(t *testing.T) {
+	g, err := newGenerator(repoRoot(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	verbatim := regexp.MustCompile(`(?s)<pre[^>]*>.*?</pre>|<code>.*?</code>`)
+	for _, lang := range languages {
+		js, err := g.bundle(lang)
+		if err != nil {
+			t.Errorf("%s: %v", lang, err)
+			continue
+		}
+		text := verbatim.ReplaceAllString(js, "")
+		// The bundle is a JS template literal, where a backslash is written `\\`.
+		for _, line := range strings.Split(text, "\n") {
+			if strings.Contains(line, `\\`) {
+				t.Errorf("%s: visible backslash in %q", lang, truncate(line, 160))
+			}
+		}
+	}
+}
+
+func truncate(s string, n int) string {
+	if r := []rune(s); len(r) > n {
+		return string(r[:n]) + "…"
+	}
+	return s
 }
 
 func TestInlineQuoteEscaping(t *testing.T) {

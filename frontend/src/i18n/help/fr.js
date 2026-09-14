@@ -356,7 +356,7 @@ export default {
 <p>Le panneau <strong>Stats</strong> permet d'analyser son niveau de jeu et de suivre sa progression dans le temps à partir des positions importées dans la base de données. Il calcule et affiche les indicateurs <strong>PR</strong> (<em>Performance Rating</em>) et <strong>MWC cost</strong> (Match Winning Chance cost) pour l'ensemble des positions ou un sous-ensemble filtré.</p>
 <p>Le panneau Stats est particulièrement utile pour :</p>
 <ul>
-<li><strong>situer son niveau</strong> par rapport aux bandes de niveau (<em>Classe mondiale</em>, <em>Expert</em>, *Avancé*…) grâce au PR global ;</li>
+<li><strong>situer son niveau</strong> par rapport aux bandes de niveau (<em>Classe mondiale</em>, <em>Expert</em>, <em>Avancé</em>…) grâce au PR global ;</li>
 <li><strong>suivre sa progression</strong> tournoi après tournoi ou match après match grâce aux graphiques de l'onglet Progression ;</li>
 <li><strong>identifier ses points faibles</strong> : onglet Erreurs pour voir la répartition entre coups joués et décisions de videau, et la distribution des magnitudes d'erreur ;</li>
 <li><strong>comparer les joueurs de la base</strong> entre eux, une ligne par joueur, grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;</li>

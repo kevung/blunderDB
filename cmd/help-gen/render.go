@@ -56,7 +56,15 @@ var (
 	// what makes the German `*TAB*-Taste` and the Finnish `*Historique*-välilehti`
 	// emphasis rather than literal asterisks. The private-use boundary rune
 	// (an escaped space, see above) counts on both sides.
-	emRe = regexp.MustCompile(`(^|[\s\-:/'"<(\[{\x{00AB}\x{FF08}\x{2018}\x{201C}\x{E000}])\*([^*\s][^*]*)\*($|[\s\-.,;:!?\\/'")\]}>\x{00BB}\x{FF09}\x{3001}\x{3002}\x{2019}\x{201D}\x{E000}])`)
+	//
+	// Docutils' "punctuation" is Unicode's, not a hand-picked list: openers are
+	// Ps/Pi/Pf, closers Pe/Pi/Pf, delimiters Pd/Po on both sides. A short list
+	// here left `*1*–*4*`, `*Advanced*…`, `、*着手の誤り*` and `*Décision*·` as
+	// literal asterisks in the help while the online documentation rendered
+	// them (#422). The classes are slightly wider than docutils' own tables
+	// (which drop a few ASCII Po such as `#` or `@`); being more lenient here
+	// only renders what Sphinx would reject — and the Sphinx build reports that.
+	emRe = regexp.MustCompile(`(^|[\s<\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\x{E000}])\*([^*\s][^*]*)\*($|[\s>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\x{E000}])`)
 	// :ref:`text <label>` and :ref:`label`. inline() escapes before it
 	// substitutes, so by the time these run the angle brackets of the
 	// explicit-title form are already `&lt;`/`&gt;` — matching the raw `<`
@@ -79,6 +87,22 @@ func rstUnescape(s string) string {
 		}
 		return string([]rune(m)[1:])
 	})
+}
+
+// refuseEscapedBackslash rejects `\\` outside an inline literal. Docutils reads
+// it as a backslash to print, so `\\ ` — an escaped space written with one
+// escape too many, `\\\\ ` in a .po — shows a `\` in the online documentation
+// and would show one in the help (#422: six in ja.js). Nothing the help is
+// generated from wants a visible backslash in prose; the formula that does is a
+// .. math:: block, which never comes through here. An error, not a repair: the
+// fix belongs in the catalogue, where Sphinx renders the same string.
+func refuseEscapedBackslash(s string) error {
+	for _, m := range escapeRe.FindAllStringSubmatch(literalRe.ReplaceAllString(s, ""), -1) {
+		if m[1] == `\` {
+			return fmt.Errorf("escaped backslash renders as a visible \"\\\" in %q: an escaped space is written `\\\\ ` in a .po, not `\\\\\\\\ `", s)
+		}
+	}
+	return nil
 }
 
 // inline renders reStructuredText inline markup as the small HTML vocabulary
@@ -112,6 +136,9 @@ func (g *generator) inline(text string, tr translator) (string, error) {
 	// renders as its own text rather than as unreadable markup.
 	s = roleRe.ReplaceAllString(s, "$1")
 
+	if err := refuseEscapedBackslash(s); err != nil {
+		return "", err
+	}
 	s = rstUnescape(s)
 	s = literalRe.ReplaceAllString(s, "<code>$1</code>")
 	s = strongRe.ReplaceAllString(s, "<strong>$1</strong>")

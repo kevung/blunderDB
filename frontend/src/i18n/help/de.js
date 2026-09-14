@@ -356,7 +356,7 @@ export default {
 <p>Das Panel <strong>Stats</strong> ermöglicht es, das eigene Spielniveau zu analysieren und den Fortschritt im Zeitverlauf anhand der in die Datenbank importierten Stellungen zu verfolgen. Es berechnet und zeigt die Kennzahlen <strong>PR</strong> (Performance Rating) und <strong>MWC cost</strong> (Match Winning Chance cost) für alle Stellungen oder eine gefilterte Teilmenge an.</p>
 <p>Das Stats-Panel ist besonders nützlich, um:</p>
 <ul>
-<li><strong>das eigene Niveau einzuordnen</strong> im Verhältnis zu den Niveaubändern (<em>Weltklasse</em>, <em>Experte</em>, *Fortgeschritten*…) anhand des globalen PR;</li>
+<li><strong>das eigene Niveau einzuordnen</strong> im Verhältnis zu den Niveaubändern (<em>Weltklasse</em>, <em>Experte</em>, <em>Fortgeschritten</em>…) anhand des globalen PR;</li>
 <li><strong>den eigenen Fortschritt zu verfolgen</strong> Turnier für Turnier oder Match für Match anhand der Diagramme im Tab Progression;</li>
 <li><strong>die eigenen Schwachstellen zu erkennen</strong>: der Tab Fehler zeigt die Aufteilung zwischen Steinzügen und Doppler-Entscheidungen sowie die Verteilung der Fehlergrößen;</li>
 <li><strong>die Spieler der Datenbank untereinander vergleichen</strong>, eine Zeile je Spieler, über den Reiter Spieler — nützlich, um ein ganzes Turnier zu verfolgen;</li>
