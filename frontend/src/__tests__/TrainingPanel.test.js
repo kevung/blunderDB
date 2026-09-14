@@ -11,6 +11,7 @@
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
+import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetTrainingSeedSources: vi.fn(() => Promise.resolve({})),
@@ -26,13 +27,23 @@ vi.mock('../services/trainingTabService.js', () => ({
     finishTrainingSession: vi.fn(),
     quitTrainingSession: vi.fn(),
     refreshTrainingJournal: vi.fn(() => Promise.resolve()),
+    answerDecisionBoard: vi.fn(),
+    answerDecisionCube: vi.fn(),
+    undoDecisionStep: vi.fn(),
+    resetDecisionPlay: vi.fn(),
     refusalMessageKey: (/** @type {string} */ code) => (code && code !== 'noQuestion' ? `training.refusal.${code}` : 'training.noQuestion')
 }));
 
 import TrainingPanel from '../components/TrainingPanel.svelte';
 import { trainingSessionStore, trainingJournalStore } from '../stores/trainingTabStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { newSession, askQuestion, reveal, recordQuestion, failNextQuestion } from '../services/trainingTab.js';
+import { newSession, askQuestion, reveal, recordQuestion, failNextQuestion, answerChosen, attachCorrection, setAnswer } from '../services/trainingTab.js';
+import * as serviceModule from '../services/trainingTabService.js';
+import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { newPlay, playHop } from '../services/quizPlay.js';
+import en from '../i18n/locales/en.json';
+
+const service = vi.mocked(serviceModule);
 
 function pipsQuestion() {
     return {
@@ -61,6 +72,7 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     trainingSessionStore.set(null);
+    quizPlayStore.set(null);
 });
 
 describe('au repos', () => {
@@ -124,5 +136,171 @@ describe('la source « base » (ADR-0041 règle 2)', () => {
         open.getByTestId('training-exercise-bearoff').click();
         await Promise.resolve();
         expect(/** @type {HTMLButtonElement} */ (open.getByTestId('training-source-library')).disabled).toBe(false);
+    });
+});
+
+// ── Décision (#323) ──────────────────────────────────────────────────────────
+
+/** @param {'checker'|'cube'} prompt */
+function decisionSession(prompt = 'checker') {
+    const question = { kind: 'decision', key: '7', positionId: 7, prompt, numbers: [{ type: prompt === 'cube' ? 'decision.cube' : 'decision.checker', value: 0 }] };
+    return askQuestion(newSession({ exercise: 'decision', seedSource: 'library' }), question, 0);
+}
+
+/** @param {any} extra */
+function verdict(extra = {}) {
+    return { legal: true, matched: true, notation: '6/4 6/3', best: '6/4 6/3', errorMp: 0, ...extra };
+}
+
+const POSITION = {
+    player_on_roll: 0,
+    board: { points: Array.from({ length: 26 }, (_, i) => (i === 6 ? { checkers: 2, color: 0 } : { checkers: 0, color: -1 })), bearoff: [0, 0] }
+};
+const PLAY = {
+    notation: '6/4 6/3',
+    steps: [
+        { from: 6, to: 4, hit: false },
+        { from: 6, to: 3, hit: false }
+    ],
+    result: { board: {} }
+};
+
+describe('une décision de pions', () => {
+    beforeEach(() => vi.clearAllMocks());
+
+    test('se joue sur le plateau, et « Valider » attend un coup complet', async () => {
+        trainingSessionStore.set(decisionSession('checker'));
+        quizPlayStore.set(newPlay(POSITION, [PLAY]));
+        const panel = render(TrainingPanel);
+        expect(panel.container.textContent).toContain(en.training.playOnBoard);
+        const validate = /** @type {HTMLButtonElement} */ (panel.getByTestId('training-validate-move'));
+        expect(validate.disabled).toBe(true);
+
+        quizPlayStore.update((s) => (s ? playHop(playHop(s, 6, 4), 6, 3) : s));
+        await tick();
+        expect(validate.disabled).toBe(false);
+        validate.click();
+        expect(service.answerDecisionBoard).toHaveBeenCalled();
+    });
+
+    test('« Annuler le pas » et « Recommencer » sont des boutons du panneau', async () => {
+        trainingSessionStore.set(decisionSession('checker'));
+        quizPlayStore.set(newPlay(POSITION, [PLAY]));
+        const panel = render(TrainingPanel);
+        const undo = /** @type {HTMLButtonElement} */ (panel.getByTestId('training-undo-step'));
+        const reset = /** @type {HTMLButtonElement} */ (panel.getByTestId('training-reset-play'));
+        expect(undo.disabled, 'rien à annuler avant le premier pas').toBe(true);
+        expect(reset.disabled).toBe(true);
+
+        quizPlayStore.update((s) => (s ? playHop(s, 6, 4) : s));
+        await tick();
+        undo.click();
+        reset.click();
+        expect(service.undoDecisionStep).toHaveBeenCalled();
+        expect(service.resetDecisionPlay).toHaveBeenCalled();
+    });
+
+    test('ni « Révéler » ni case à cocher : c’est le juge qui répond', () => {
+        trainingSessionStore.set(answerChosen(decisionSession('checker'), verdict({ errorMp: 42 }), 1000));
+        const panel = render(TrainingPanel);
+        expect(panel.queryByTestId('training-reveal')).toBeNull();
+        expect(panel.container.querySelector('.hint')).toBeNull();
+        expect(panel.queryByTestId('training-validate-move'), 'la question est jugée').toBeNull();
+    });
+});
+
+describe('une action de videau', () => {
+    beforeEach(() => vi.clearAllMocks());
+
+    test('trois boutons dans le panneau, chacun est la réponse', () => {
+        trainingSessionStore.set(decisionSession('cube'));
+        const panel = render(TrainingPanel);
+        expect(panel.queryByTestId('training-reveal')).toBeNull();
+        panel.getByTestId('training-cube-dt').click();
+        expect(service.answerDecisionCube).toHaveBeenCalledWith('dt');
+        expect(panel.getByTestId('training-cube-nd').textContent).toContain(en.training.noDouble);
+        expect(panel.getByTestId('training-cube-dp').textContent).toContain(en.training.doublePass);
+    });
+
+    test('une fois jugée, les trois boutons ne répondent plus', () => {
+        trainingSessionStore.set(answerChosen(decisionSession('cube'), verdict({ notation: 'nd' }), 1000));
+        const panel = render(TrainingPanel);
+        expect(/** @type {HTMLButtonElement} */ (panel.getByTestId('training-cube-nd')).disabled).toBe(true);
+    });
+});
+
+describe('les trois issues restent distinguées', () => {
+    /** @param {any} v */
+    function verdictText(v) {
+        trainingSessionStore.set(answerChosen(decisionSession('checker'), v, 1000));
+        const panel = render(TrainingPanel);
+        const text = panel.getByTestId('training-verdict').textContent ?? '';
+        cleanup();
+        return text;
+    }
+
+    test('illégal, non évalué, coût en mMWC — et juste', () => {
+        expect(verdictText(verdict({ legal: false, matched: false }))).toContain(en.training.illegal);
+        expect(verdictText(verdict({ matched: false }))).toContain(en.training.unranked);
+        const cost = verdictText(verdict({ errorMp: 42, best: '24/18 13/11' }));
+        expect(cost).toContain(en.training.cost.replace('{mp}', '42'));
+        expect(cost).toContain('24/18 13/11');
+        expect(verdictText(verdict())).toContain(en.training.right);
+    });
+
+    test('hors délai, la correction se montre sans issue inventée', () => {
+        const late = reveal(decisionSession('checker'), 15000, { outOfTime: true });
+        trainingSessionStore.set(attachCorrection(late, '7', verdict({ legal: false, matched: false, notation: '', best: '24/18 13/11' })));
+        const panel = render(TrainingPanel);
+        const text = panel.getByTestId('training-verdict').textContent ?? '';
+        expect(text).toContain('24/18 13/11');
+        expect(text).not.toContain(en.training.illegal);
+    });
+});
+
+describe('le lanceur et le bilan de Décision', () => {
+    test('une seule source possible : aucun choix de source à faire', async () => {
+        databasePathStore.set('/tmp/some.db');
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-exercise-decision').click();
+        await tick();
+        expect(panel.queryByTestId('training-source-library')).toBeNull();
+    });
+
+    test('le bilan dit le PR de la dernière session', () => {
+        trainingJournalStore.set({ decision: { sessions: [{ exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 3000, pr: 6.5 }], numbers: [] } });
+        const panel = render(TrainingPanel);
+        expect(panel.getByTestId('training-summary-decision').textContent).toContain(en.training.lastPr.replace('{value}', '6.50'));
+    });
+});
+
+describe('le focus après la réponse (défaut hérité de #321)', () => {
+    // Le bouton cliqué disparaît avec la question ouverte : le focus retombait
+    // sur la page, et J / K parcouraient la liste sous la question.
+    test('après « Valider », le focus est sur « Suivante »', async () => {
+        const question = {
+            kind: 'bearoff',
+            key: 'pool:1',
+            numbers: [
+                { type: 'epc.bottom', value: 20, tolerance: 0.5, precision: 1 },
+                { type: 'epc.top', value: 30, tolerance: 0.5, precision: 1 }
+            ]
+        };
+        const asked = setAnswer(askQuestion(newSession({ exercise: 'bearoff', seedSource: 'pool' }), question, 0), 0, '20');
+        trainingSessionStore.set(asked);
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-reveal').focus();
+        trainingSessionStore.set(reveal(asked, 1000));
+        await tick();
+        expect(document.activeElement).toBe(panel.getByTestId('training-next'));
+    });
+
+    test('après le verdict d’une décision, aussi', async () => {
+        trainingSessionStore.set(decisionSession('cube'));
+        const panel = render(TrainingPanel);
+        panel.getByTestId('training-cube-nd').focus();
+        trainingSessionStore.set(answerChosen(decisionSession('cube'), verdict({ notation: 'nd' }), 1000));
+        await tick();
+        expect(document.activeElement).toBe(panel.getByTestId('training-next'));
     });
 });

@@ -27,7 +27,12 @@ const LABEL_KEYS = Object.freeze({
     // JOUEUR. Le même camp ne peut pas s'appeler « bas » ici et « joueur 1 »
     // là — un concept, un terme.
     'epc.bottom': 'board.player1',
-    'epc.top': 'board.player2'
+    'epc.top': 'board.player2',
+    // Décision (#323) : un seul nombre par question, la décision que la
+    // position porte. Deux types et non un, parce que le journal les compte à
+    // part — on peut bien jouer les pions et mal lire le videau.
+    'decision.checker': 'training.numbers.decisionChecker',
+    'decision.cube': 'training.numbers.decisionCube'
 });
 
 /**

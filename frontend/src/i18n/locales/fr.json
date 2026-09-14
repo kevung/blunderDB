@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "Entraînement",
-        "progress": "Question {i}/{n}",
-        "answer": "Réponse",
-        "check": "Vérifier",
         "next": "Suivante",
         "finish": "Terminer",
         "leave": "Quitter",
         "right": "Juste",
         "usage": "Utilisation : train <exercice> ({drills}).",
-        "drillQuiz": "Quiz",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "Pas de double",
         "doubleTake": "Double, prend",
         "doublePass": "Double, passe",
@@ -1584,13 +1579,16 @@
         "cost": "Coûte {mp} mMWC",
         "best": "meilleur : {move}",
         "gradeFailed": "La réponse n'a pas pu être jugée.",
-        "finishedQuiz": "Quiz terminé : {correct}/{n}, PR de session {pr}.",
+        "finishedDecision": "Décision terminée : {correct}/{n}, PR de session {pr}.",
         "undoHop": "Annuler le pas",
         "resetPlay": "Recommencer",
+        "playOnBoard": "Jouez le coup sur le plateau, puis validez.",
+        "cubePrompt": "Choisissez l'action de videau.",
         "exercise": {
             "scores": "Scores",
             "pips": "Pions",
-            "bearoff": "Bearoff"
+            "bearoff": "Bearoff",
+            "decision": "Décision"
         },
         "sources": {
             "board": "Plateau",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "Écart moyen {value}",
         "medianTime": "Médiane {n} s",
         "trend": "Tendance {value} pt",
+        "lastPr": "Dernier PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Exercice inconnu : {exercise}.",
         "noQuestion": "Aucune question ne peut être posée : cette base ou cette source n'en fournit pas.",
@@ -1630,7 +1629,9 @@
             "tp4Last": "Point de prise 4 · dernier lancer",
             "gv1": "Valeur du gammon 1",
             "gv2": "Valeur du gammon 2",
-            "gv4": "Valeur du gammon 4"
+            "gv4": "Valeur du gammon 4",
+            "decisionChecker": "Coup de pions",
+            "decisionCube": "Action de videau"
         },
         "retry": "Réessayer",
         "validate": "Valider",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "Cet exercice demande de 4 à 15 pions par camp, le reste sorti.",
             "emptyBoard": "Le plateau est vide : la question vient du vivier.",
             "noTable": "La table de bearoff n'est pas encore engendrée : sans elle, l'EPC n'a pas de vérité.",
-            "unknownSource": "Cette source n'existe pas pour cet exercice."
+            "unknownSource": "Cette source n'existe pas pour cet exercice.",
+            "noLibrary": "Cet exercice demande une bibliothèque : ouvrez une base de positions analysées.",
+            "noAnalysis": "Cet exercice demande une position analysée : aucune n'a été trouvée dans la liste parcourue.",
+            "decisionsExhausted": "Toutes les positions analysées de la liste parcourue ont été posées."
         }
     },
     "explain": {

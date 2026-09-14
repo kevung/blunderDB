@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "Training",
-        "progress": "Question {i}/{n}",
-        "answer": "Answer",
-        "check": "Check",
         "next": "Next",
         "finish": "Finish",
         "leave": "Leave",
         "right": "Right",
         "usage": "Usage: train <drill> ({drills}).",
-        "drillQuiz": "Quiz",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "No double",
         "doubleTake": "Double, take",
         "doublePass": "Double, pass",
@@ -1584,13 +1579,16 @@
         "cost": "Costs {mp} mMWC",
         "best": "best: {move}",
         "gradeFailed": "The answer could not be graded.",
-        "finishedQuiz": "Quiz done: {correct}/{n}, session PR {pr}.",
+        "finishedDecision": "Decision done: {correct}/{n}, session PR {pr}.",
         "undoHop": "Undo step",
         "resetPlay": "Start over",
+        "playOnBoard": "Play the move on the board, then check it.",
+        "cubePrompt": "Choose the cube action.",
         "exercise": {
             "scores": "Scores",
             "pips": "Pips",
-            "bearoff": "Bearoff"
+            "bearoff": "Bearoff",
+            "decision": "Decision"
         },
         "sources": {
             "board": "Board",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "Mean deviation {value}",
         "medianTime": "Median {n} s",
         "trend": "Trend {value} pt",
+        "lastPr": "Last PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Unknown exercise: {exercise}.",
         "noQuestion": "No question can be asked: this library or this source provides none.",
@@ -1630,7 +1629,9 @@
             "tp4Last": "Take point 4 · last roll",
             "gv1": "Gammon value 1",
             "gv2": "Gammon value 2",
-            "gv4": "Gammon value 4"
+            "gv4": "Gammon value 4",
+            "decisionChecker": "Checker play",
+            "decisionCube": "Cube action"
         },
         "retry": "Retry",
         "validate": "Check",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "This exercise needs 4 to 15 chequers a side, the rest borne off.",
             "emptyBoard": "The board is empty: the question comes from the pool.",
             "noTable": "The bear-off table has not been generated yet: without it the EPC has no truth.",
-            "unknownSource": "This exercise does not offer that source."
+            "unknownSource": "This exercise does not offer that source.",
+            "noLibrary": "This exercise needs a library: open a database of analysed positions.",
+            "noAnalysis": "This exercise needs an analysed position: none was found in the browsed list.",
+            "decisionsExhausted": "Every analysed position of the browsed list has been asked."
         }
     },
     "explain": {

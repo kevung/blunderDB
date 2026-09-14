@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "Entrenamiento",
-        "progress": "Pregunta {i}/{n}",
-        "answer": "Respuesta",
-        "check": "Comprobar",
         "next": "Siguiente",
         "finish": "Terminar",
         "leave": "Salir",
         "right": "Correcto",
         "usage": "Uso: train <ejercicio> ({drills}).",
-        "drillQuiz": "Cuestionario",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "Sin doblar",
         "doubleTake": "Doblar, aceptar",
         "doublePass": "Doblar, pasar",
@@ -1584,13 +1579,16 @@
         "cost": "Cuesta {mp} mMWC",
         "best": "mejor: {move}",
         "gradeFailed": "No se ha podido evaluar la respuesta.",
-        "finishedQuiz": "Cuestionario terminado: {correct}/{n}, PR de sesión {pr}.",
+        "finishedDecision": "Decisión terminada: {correct}/{n}, PR de sesión {pr}.",
         "undoHop": "Deshacer paso",
         "resetPlay": "Empezar de nuevo",
+        "playOnBoard": "Juegue la jugada en el tablero y luego compruébela.",
+        "cubePrompt": "Elija la acción de cubo.",
         "exercise": {
             "scores": "Marcadores",
             "pips": "Pips",
-            "bearoff": "Bearoff"
+            "bearoff": "Bearoff",
+            "decision": "Decisión"
         },
         "sources": {
             "board": "Tablero",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "Desviación media {value}",
         "medianTime": "Mediana {n} s",
         "trend": "Tendencia {value} pt",
+        "lastPr": "Último PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Ejercicio desconocido: {exercise}.",
         "noQuestion": "No se puede plantear ninguna pregunta: esta base o esta fuente no proporciona ninguna.",
@@ -1630,7 +1629,9 @@
             "tp4Last": "Punto de aceptación 4 · última tirada",
             "gv1": "Valor del gammon 1",
             "gv2": "Valor del gammon 2",
-            "gv4": "Valor del gammon 4"
+            "gv4": "Valor del gammon 4",
+            "decisionChecker": "Jugada de fichas",
+            "decisionCube": "Acción de cubo"
         },
         "retry": "Reintentar",
         "validate": "Comprobar",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "Este ejercicio necesita de 4 a 15 fichas por bando, el resto retiradas.",
             "emptyBoard": "El tablero está vacío: la pregunta viene del vivero.",
             "noTable": "La tabla de bearoff aún no se ha generado: sin ella el EPC no tiene verdad.",
-            "unknownSource": "Este ejercicio no ofrece esa fuente."
+            "unknownSource": "Este ejercicio no ofrece esa fuente.",
+            "noLibrary": "Este ejercicio necesita una biblioteca: abra una base de posiciones analizadas.",
+            "noAnalysis": "Este ejercicio necesita una posición analizada: no se ha encontrado ninguna en la lista recorrida.",
+            "decisionsExhausted": "Todas las posiciones analizadas de la lista recorrida ya se han planteado."
         }
     },
     "explain": {

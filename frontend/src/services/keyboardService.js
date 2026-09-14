@@ -6,6 +6,7 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
 import { directionOwnsKey } from './directionKeys.js';
+import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
 import {
@@ -223,6 +224,12 @@ export function handleKeyDown(event) {
     // services/directionKeys.js). The queue has claimed them already, or something open above it
     // keeps them — either way they browse nothing on the board the page hides.
     if (directionOwnsKey(event)) return;
+
+    // A training question whose surface is the board holds it (#323): browsing the list under
+    // an open question — or a revealed one whose truth the panel still shows — would put another
+    // position under the answer, and for a Decision under the move armed on the board. Focus
+    // plays no part: the button just clicked has left the DOM, so focus sits on <body>.
+    if (isBoardNavigationKey(event) && get(trainingHoldsBoardStore)) return;
 
     // During Anki review on the Anki tab, route review keys
     if (get(ankiViewModeStore) === 'review' && !event.ctrlKey && get(activeTabStore) === 'anki') {

@@ -82,3 +82,18 @@ describe('commandVocabulary ↔ commandProcessor sync', () => {
         expect(forms.length).toBe(new Set(forms).size);
     });
 });
+
+// `train <exercice>` passe le mot tel quel à l'application, qui le lit par
+// `exerciseForCommand` (#323). `train decision` et `train quiz` doivent donc
+// arriver jusqu'au rappel ET désigner le même exercice : l'ancien quiz de la
+// bande est devenu Décision, dans l'onglet.
+describe('train decision / train quiz', () => {
+    test.each([['decision'], ['quiz']])('`train %s` démarre Décision', async (word) => {
+        const { exerciseForCommand } = await import('../services/trainingTab.js');
+        const onTraining = vi.fn();
+        initCommandProcessor(/** @type {any} */ ({ onTraining }));
+        await processCommand(`train ${word}`);
+        expect(onTraining).toHaveBeenCalledWith(word);
+        expect(exerciseForCommand(word)).toBe('decision');
+    });
+});

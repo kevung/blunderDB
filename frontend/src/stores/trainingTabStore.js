@@ -1,4 +1,5 @@
 import { writable, derived } from 'svelte/store';
+import { questionOnBoard } from '../services/trainingTab.js';
 
 // L'onglet Entraînement (#320, ADR-0040).
 //
@@ -59,3 +60,27 @@ export const trainingPipOverrideStore = derived(trainingSessionStore, ($session)
  * @type {import('svelte/store').Writable<string>}
  */
 export const trainingRefusalStore = writable('');
+
+/**
+ * Le panneau Analyse doit-il être masqué ? Vrai pendant qu'une question de
+ * Décision attend sa réponse (#323) : le panneau PORTE la réponse, et une
+ * question dont la réponse est affichée à côté n'est pas une question. Le
+ * verdict rendu, l'analyse redevient visible — c'est la correction.
+ *
+ * Un masque, comme celui du pipcount : rien n'est touché, tout revient quand
+ * la question est jugée ou la session finie. L'onglet et le panneau Analyse ne
+ * sont jamais visibles ensemble ; le masque tient pour qui va regarder
+ * l'onglet Analyse au milieu d'une question.
+ *
+ * @type {import('svelte/store').Readable<boolean>}
+ */
+export const trainingAnalysisHiddenStore = derived(trainingSessionStore, ($session) => !!$session && $session.exercise === 'decision' && !!$session.question && !$session.revealed);
+
+/**
+ * Le plateau appartient-il à une question en ce moment ? Lu par le
+ * répartiteur clavier, qui ne fait pas défiler la liste sous une question
+ * ouverte (#323, défaut hérité de #321) — voir `questionOnBoard`.
+ *
+ * @type {import('svelte/store').Readable<boolean>}
+ */
+export const trainingHoldsBoardStore = derived(trainingSessionStore, ($session) => questionOnBoard($session));

@@ -15,8 +15,7 @@
  */
 
 /**
- * Les exercices servis à ce jour. Évaluation et Décision viennent ensuite
- * (#322, #323).
+ * Les exercices servis à ce jour. Évaluation vient ensuite (#322).
  *
  * `sources` est la liste des sources de graine que l'exercice accepte, dans
  * l'ordre où le lanceur les propose ; une liste vide veut dire que la question
@@ -33,26 +32,109 @@
  * poser, et « Suivante » reposerait la même. Pour Bearoff, le plateau est une
  * GRAINE que le moteur joue sur un à quatre plis (ADR-0041 règle 2), donc
  * chaque question diffère et l'enchaînement a un sens.
+ *
+ * `surface` est ce qui, hors de l'onglet, montre la question (ADR-0040 règle
+ * 2) : le plateau, ou rien. Tant qu'une question à surface `board` est à
+ * l'écran, le plateau lui APPARTIENT — le répartiteur ne le fait pas défiler
+ * sous elle (`questionOnBoard`).
+ *
+ * Décision (#323) se répond en mode CHOISI : le coup se joue sur le plateau
+ * (`quizPlay.js`) ou l'action de videau se clique, et le juge du moteur rend
+ * le verdict contre l'analyse enregistrée. Sa seule source est la
+ * bibliothèque : une question demande une analyse, et seule une position de la
+ * base en porte une.
  */
 /**
  * @typedef {object} TrainingExercise
  * @property {string} id
- * @property {'declared'|'entered'} mode
+ * @property {'declared'|'entered'|'chosen'} mode
  * @property {string[]} sources
  * @property {string} defaultSource
+ * @property {'board'|'none'} surface
  * @property {boolean} [boardIsTheQuestion]
  */
 
 /** @type {ReadonlyArray<Readonly<TrainingExercise>>} */
 export const TRAINING_EXERCISES = Object.freeze([
-    Object.freeze({ id: 'scores', mode: 'declared', sources: [], defaultSource: 'pool' }),
-    Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board', boardIsTheQuestion: true }),
-    Object.freeze({ id: 'bearoff', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool' })
+    Object.freeze({ id: 'scores', mode: 'declared', sources: [], defaultSource: 'pool', surface: 'none' }),
+    Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board', surface: 'board', boardIsTheQuestion: true }),
+    Object.freeze({ id: 'bearoff', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
+    Object.freeze({ id: 'decision', mode: 'chosen', sources: ['library'], defaultSource: 'library', surface: 'board' })
 ]);
 
 /** @param {string} exercise */
+function modeOf(exercise) {
+    return TRAINING_EXERCISES.find((e) => e.id === exercise)?.mode ?? 'declared';
+}
+
+/** @param {string} exercise */
 export function isEnteredExercise(exercise) {
-    return TRAINING_EXERCISES.some((e) => e.id === exercise && e.mode === 'entered');
+    return modeOf(exercise) === 'entered';
+}
+
+/** @param {string} exercise */
+export function isChosenExercise(exercise) {
+    return modeOf(exercise) === 'chosen';
+}
+
+/**
+ * Le plateau appartient-il à la question en ce moment ? Oui tant qu'une
+ * question d'un exercice à surface `board` est à l'écran, révélée ou non :
+ * révélée, sa vérité est encore affichée dans le panneau, et elle ne décrirait
+ * plus rien si la liste avait défilé dessous (#323, défaut hérité de #321).
+ * @param {TrainingSessionState|null|undefined} session
+ */
+export function questionOnBoard(session) {
+    if (!session?.question) return false;
+    return TRAINING_EXERCISES.find((e) => e.id === session.exercise)?.surface === 'board';
+}
+
+/**
+ * Les mots que `train <exercice>` accepte. Les alias sont ceux que les doigts
+ * ont appris : `tp` et `takepoint` pour la fiche de score, comme les tables du
+ * même nom ; `epc` pour Bearoff, qui s'appelait ainsi dans la bande ; `quiz`
+ * pour Décision, qui en est la suite dans l'onglet (#323). Une commande qu'on
+ * tapait hier ne doit pas répondre « exercice inconnu » aujourd'hui.
+ */
+const EXERCISE_WORDS = Object.freeze({
+    scores: 'scores',
+    tp: 'scores',
+    takepoint: 'scores',
+    pips: 'pips',
+    pip: 'pips',
+    bearoff: 'bearoff',
+    epc: 'bearoff',
+    decision: 'decision',
+    quiz: 'decision'
+});
+
+/**
+ * L'exercice qu'un mot de la commande `train` désigne, ou `null`.
+ * @param {string} word
+ * @returns {string|null}
+ */
+export function exerciseForCommand(word) {
+    const key = String(word ?? '')
+        .trim()
+        .toLowerCase();
+    return Object.prototype.hasOwnProperty.call(EXERCISE_WORDS, key) ? /** @type {Record<string, string>} */ (EXERCISE_WORDS)[key] : null;
+}
+
+/**
+ * Le PR d'une session de Décision, sur la MÊME échelle que celui que les
+ * statistiques calculent pour le jeu réel : 500 × erreur moyenne en équité
+ * normalisée. C'est ce qui rend les deux nombres comparables — sans quoi
+ * l'exercice aurait inventé une échelle de plus.
+ *
+ * Cette fonction double `engine.QuizPR` côté Go, et le double est assumé : le
+ * nombre est calculé ici sur des verdicts déjà rendus, sans aller-retour. La
+ * formule, elle, est celle de `storage.pr` et n'a pas d'autre variante.
+ *
+ * @param {number} sumErrorMp @param {number} decisions
+ */
+export function quizPR(sumErrorMp, decisions) {
+    if (!decisions) return 0;
+    return (500 * sumErrorMp) / 1000 / decisions;
 }
 
 /**
@@ -85,6 +167,15 @@ export const TREND_WINDOW = 10;
  * @property {any} [card] la fiche de score, pour Scores
  * @property {number|null} [positionId] la position de la base dont elle est tirée, s'il y en a une
  * @property {any} [position] la position à montrer sur le plateau, s'il y en a une
+ * @property {'checker'|'cube'} [prompt] pour Décision, la forme de la décision que la position porte
+ * @property {any[]} [plays] pour une décision de pions, les coups légaux que le moteur a rendus
+ *
+ * @typedef {object} QuizVerdict le jugement du moteur (`engine.QuizVerdict`)
+ * @property {boolean} legal
+ * @property {boolean} matched
+ * @property {string} notation
+ * @property {string} best
+ * @property {number} errorMp
  *
  * @typedef {object} TrainingSessionState
  * @property {string} exercise
@@ -101,6 +192,9 @@ export const TREND_WINDOW = 10;
  * @property {number} elapsedMs
  * @property {number} askedQuestions
  * @property {number[]} times les temps des questions ENREGISTRÉES, hors délai exclu
+ * @property {QuizVerdict|null} verdict en mode CHOISI, le jugement de la question à l'écran — ou, hors délai, sa seule correction
+ * @property {number} decisions en mode CHOISI, les décisions jugées et enregistrées — le dénominateur du PR
+ * @property {number} sumErrorMp leur coût cumulé, en millipoints d'équité normalisée
  * @property {{numberType: string, wrong: boolean, hasDeviation: boolean, deviation: number}[]} items
  */
 
@@ -126,7 +220,10 @@ export function newSession({ exercise, seedSource = '', limitSeconds = 0 }) {
         elapsedMs: 0,
         askedQuestions: 0,
         times: [],
-        items: []
+        items: [],
+        verdict: null,
+        decisions: 0,
+        sumErrorMp: 0
     };
 }
 
@@ -147,6 +244,7 @@ export function askQuestion(session, question, now) {
         answers: question.numbers.map(() => ''),
         deviations: question.numbers.map(() => null),
         questionError: '',
+        verdict: null,
         startedAt: now,
         elapsedMs: 0
     };
@@ -177,7 +275,7 @@ export function setAnswer(session, index, text) {
  * @returns {TrainingSessionState}
  */
 export function failNextQuestion(session, reason) {
-    return { ...session, question: null, revealed: false, outOfTime: false, faults: [], answers: [], deviations: [], questionError: reason };
+    return { ...session, question: null, revealed: false, outOfTime: false, faults: [], answers: [], deviations: [], verdict: null, questionError: reason };
 }
 
 /**
@@ -191,6 +289,9 @@ export function failNextQuestion(session, reason) {
  */
 export function reveal(session, now, { outOfTime = false } = {}) {
     if (!session.question || session.revealed) return session;
+    // En mode CHOISI, rien ne se révèle sans réponse : c'est le verdict du juge
+    // qui arrête le chrono (`answerChosen`). Seule l'échéance révèle à sa place.
+    if (isChosenExercise(session.exercise) && !outOfTime) return session;
     const judged = isEnteredExercise(session.exercise) && !outOfTime;
     const verdicts = session.question.numbers.map((number, i) => (judged ? judgeNumber(number, session.answers[i]) : { wrong: outOfTime, deviation: null }));
     return {
@@ -201,6 +302,45 @@ export function reveal(session, now, { outOfTime = false } = {}) {
         faults: verdicts.map((v) => v.wrong),
         deviations: verdicts.map((v) => v.deviation)
     };
+}
+
+/**
+ * Le verdict du juge sur une question en mode CHOISI (Décision, #323). Il
+ * arrête le chrono comme « Révéler », et il est seul à décider de la faute :
+ * n'est juste qu'un coup — ou une action — classé et sans coût. Un coup
+ * illégal ou légal mais non évalué est une faute qui ne coûte rien ; le
+ * verdict garde les trois issues distinctes pour le panneau.
+ *
+ * Un second verdict ne remplace pas le premier : la réponse est donnée.
+ *
+ * @param {TrainingSessionState} session @param {QuizVerdict} verdict @param {number} now
+ * @returns {TrainingSessionState}
+ */
+export function answerChosen(session, verdict, now) {
+    if (!session.question || session.revealed || !verdict) return session;
+    const correct = !!verdict.matched && verdict.errorMp === 0;
+    return {
+        ...session,
+        revealed: true,
+        outOfTime: false,
+        elapsedMs: Math.max(0, now - session.startedAt),
+        faults: session.question.numbers.map(() => !correct),
+        deviations: session.question.numbers.map(() => null),
+        verdict
+    };
+}
+
+/**
+ * La correction d'une question CHOISIE restée sans réponse : le meilleur coup,
+ * demandé au juge après l'échéance. Elle n'arrive qu'après un aller-retour,
+ * donc elle ne s'attache qu'à la question qui l'a demandée (`key`), et jamais
+ * par-dessus un verdict.
+ * @param {TrainingSessionState} session @param {string} key @param {QuizVerdict} correction
+ * @returns {TrainingSessionState}
+ */
+export function attachCorrection(session, key, correction) {
+    if (!session.question || session.question.key !== key || !session.outOfTime || session.verdict || !correction) return session;
+    return { ...session, verdict: correction };
 }
 
 /**
@@ -231,10 +371,10 @@ function judgeNumber(number, text) {
  */
 export function toggleFault(session, index) {
     if (!session.revealed || session.outOfTime) return session;
-    // En mode SAISI, c'est l'application qui juge : cocher reviendrait à se
-    // donner raison contre la tolérance, et l'écart enregistré ne
-    // correspondrait plus à la faute comptée.
-    if (isEnteredExercise(session.exercise)) return session;
+    // En mode SAISI ou CHOISI, c'est l'application qui juge : cocher
+    // reviendrait à se donner raison contre la tolérance ou contre l'analyse,
+    // et ce qui est enregistré ne correspondrait plus à la faute comptée.
+    if (isEnteredExercise(session.exercise) || isChosenExercise(session.exercise)) return session;
     if (index < 0 || index >= session.faults.length) return session;
     const faults = session.faults.slice();
     faults[index] = !faults[index];
@@ -263,6 +403,11 @@ export function recordQuestion(session) {
             deviation: deviation ?? 0
         };
     });
+    // Le PR ne compte que les décisions JUGÉES : une question hors délai n'a
+    // pas de réponse, donc ni coût ni décision — on ne mesure pas une réponse
+    // qui n'a pas été donnée. Un coup illégal, lui, a été joué : il compte, et
+    // ne coûte rien.
+    const judged = isChosenExercise(session.exercise) && !session.outOfTime && !!session.verdict;
     return {
         ...session,
         question: null,
@@ -271,6 +416,9 @@ export function recordQuestion(session) {
         faults: [],
         answers: [],
         deviations: [],
+        verdict: null,
+        decisions: session.decisions + (judged ? 1 : 0),
+        sumErrorMp: session.sumErrorMp + (judged ? session.verdict?.errorMp || 0 : 0),
         questionError: '',
         askedQuestions: session.askedQuestions + 1,
         times: session.outOfTime ? session.times : [...session.times, session.elapsedMs],
@@ -292,7 +440,9 @@ export function finishedSession(session) {
         deviations: session.items.filter((item) => item.hasDeviation).length,
         meanDeviation: meanOf(session.items.filter((item) => item.hasDeviation).map((item) => Math.abs(item.deviation))),
         medianMs: Math.round(medianOf(session.times) ?? 0),
-        pr: 0,
+        // Le PR n'existe que pour Décision : ailleurs aucune erreur d'équité
+        // n'est mesurée, et un zéro dirait « sans faute » (storage.TrainingSession).
+        pr: session.exercise === 'decision' ? quizPR(session.sumErrorMp, session.decisions) : 0,
         items: session.items
     };
 }
@@ -310,7 +460,11 @@ export function finishedSession(session) {
  * vaut structurellement zéro, et afficher ce zéro dirait « vous stagnez » là où
  * il n'y a rien à comparer.
  *
- * @param {{numbersAsked: number, faults: number, deviations: number, meanDeviation: number, medianMs: number}[]} sessions
+ * Le PR, pour Décision, est celui de la DERNIÈRE session, tel qu'enregistré :
+ * une moyenne de PR de sessions de longueurs différentes serait une échelle de
+ * plus, et le journal n'a pas de quoi la pondérer juste.
+ *
+ * @param {{exercise?: string, numbersAsked: number, faults: number, deviations: number, meanDeviation: number, medianMs: number, pr?: number}[]} sessions
  */
 export function summarizeExercise(sessions) {
     const rows = Array.isArray(sessions) ? sessions : [];
@@ -332,7 +486,8 @@ export function summarizeExercise(sessions) {
         meanDeviation: deviations > 0 ? deviationTotal / deviations : null,
         medianMs: medianOf(rows.map((r) => r.medianMs || 0)),
         recentFaultRate,
-        trend: rows.length > TREND_WINDOW && faultRate !== null && recentFaultRate !== null ? recentFaultRate - faultRate : null
+        trend: rows.length > TREND_WINDOW && faultRate !== null && recentFaultRate !== null ? recentFaultRate - faultRate : null,
+        lastPr: rows.length > 0 ? (rows[0].pr ?? 0) : null
     };
 }
 

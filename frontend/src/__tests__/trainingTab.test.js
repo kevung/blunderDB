@@ -20,7 +20,12 @@ import {
     failNextQuestion,
     finishedSession,
     summarizeExercise,
-    canAskAnother
+    canAskAnother,
+    answerChosen,
+    attachCorrection,
+    questionOnBoard,
+    exerciseForCommand,
+    quizPR
 } from '../services/trainingTab.js';
 
 /** Une question de Bearoff : deux EPC, tolérance un demi-pion. */
@@ -49,9 +54,23 @@ function question(types) {
 }
 
 describe('le catalogue servi à ce jour', () => {
-    test('trois exercices, et le mode de réponse est une propriété de chacun', () => {
-        expect(TRAINING_EXERCISES.map((e) => e.id)).toEqual(['scores', 'pips', 'bearoff']);
-        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.mode]))).toEqual({ scores: 'declared', pips: 'declared', bearoff: 'entered' });
+    test('quatre exercices, et le mode de réponse est une propriété de chacun', () => {
+        expect(TRAINING_EXERCISES.map((e) => e.id)).toEqual(['scores', 'pips', 'bearoff', 'decision']);
+        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.mode]))).toEqual({ scores: 'declared', pips: 'declared', bearoff: 'entered', decision: 'chosen' });
+    });
+
+    // ADR-0040 règle 3 : une question de Décision demande une analyse, que
+    // seule la bibliothèque porte.
+    test('Décision ne connaît qu’une source : la bibliothèque', () => {
+        const decision = /** @type {import('../services/trainingTab.js').TrainingExercise} */ (TRAINING_EXERCISES.find((e) => e.id === 'decision'));
+        expect(decision.sources).toEqual(['library']);
+        expect(decision.defaultSource).toBe('library');
+    });
+
+    // La surface (ADR-0040 règle 2) : ce qui, hors de l'onglet, montre la
+    // question. C'est elle qui dit si le plateau appartient à la question.
+    test('seule la fiche de score n’a pas le plateau pour surface', () => {
+        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.surface]))).toEqual({ scores: 'none', pips: 'board', bearoff: 'board', decision: 'board' });
     });
 
     test('Bearoff accepte les trois sources, et démarre sur le vivier', () => {
@@ -304,5 +323,163 @@ describe('le journal d’un exercice saisi', () => {
         // moyenne des valeurs absolues ; les signes vivent dans les items.
         expect(row.meanDeviation).toBe(3);
         expect(row.items.map((i) => i.deviation)).toEqual([3, -3]);
+    });
+});
+
+describe('les mots de la commande `train`', () => {
+    // `train quiz` démarrait l'ancien exercice de la bande ; il démarre
+    // désormais Décision, qui en est la suite dans l'onglet (#323). Les doigts
+    // n'ont rien à réapprendre.
+    test('`decision` et `quiz` démarrent le même exercice', () => {
+        expect(exerciseForCommand('decision')).toBe('decision');
+        expect(exerciseForCommand('quiz')).toBe('decision');
+    });
+
+    test('les alias des autres exercices sont intacts, et la casse ne compte pas', () => {
+        expect(exerciseForCommand('tp')).toBe('scores');
+        expect(exerciseForCommand('takepoint')).toBe('scores');
+        expect(exerciseForCommand('pip')).toBe('pips');
+        expect(exerciseForCommand('epc')).toBe('bearoff');
+        expect(exerciseForCommand('  Quiz ')).toBe('decision');
+    });
+
+    test('un mot inconnu ne démarre rien', () => {
+        expect(exerciseForCommand('chess')).toBeNull();
+        expect(exerciseForCommand('')).toBeNull();
+    });
+});
+
+/** Une question de Décision, telle que le service la fabrique.
+ *  @param {'checker'|'cube'} prompt */
+function decisionQuestion(prompt = 'checker', id = 7) {
+    return { kind: 'decision', key: String(id), positionId: id, prompt, numbers: [{ type: prompt === 'cube' ? 'decision.cube' : 'decision.checker', value: 0 }] };
+}
+
+/** Un verdict du juge (engine.QuizVerdict). */
+function verdict(extra = {}) {
+    return { legal: true, matched: true, notation: '13/7 8/7', best: '13/7 8/7', errorMp: 0, ...extra };
+}
+
+describe('le geste choisi (Décision)', () => {
+    test('« Révéler » ne s’applique pas : c’est le verdict du juge qui révèle', () => {
+        const s = askQuestion(newSession({ exercise: 'decision', seedSource: 'library' }), decisionQuestion(), 0);
+        expect(reveal(s, 3000).revealed).toBe(false);
+    });
+
+    test('le verdict arrête le chrono, et un coup exact n’est pas une faute', () => {
+        let s = askQuestion(newSession({ exercise: 'decision', seedSource: 'library' }), decisionQuestion(), 1000);
+        s = answerChosen(s, verdict(), 4000);
+        expect(s.revealed).toBe(true);
+        expect(s.elapsedMs).toBe(3000);
+        expect(s.faults).toEqual([false]);
+        expect(s.verdict?.errorMp).toBe(0);
+    });
+
+    // Les trois issues restent distinctes (#294) : aucune n'est « juste ».
+    test('un coup coûteux, illégal ou non évalué est une faute', () => {
+        const asked = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
+        expect(answerChosen(asked, verdict({ errorMp: 42, best: '24/18 13/11' }), 1).faults).toEqual([true]);
+        expect(answerChosen(asked, verdict({ legal: false, matched: false }), 1).faults).toEqual([true]);
+        expect(answerChosen(asked, verdict({ matched: false }), 1).faults).toEqual([true]);
+    });
+
+    test('un second verdict ne remplace pas le premier', () => {
+        let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
+        s = answerChosen(s, verdict({ errorMp: 42 }), 1000);
+        s = answerChosen(s, verdict(), 2000);
+        expect(s.verdict?.errorMp).toBe(42);
+        expect(s.elapsedMs).toBe(1000);
+    });
+
+    test('rien ne se coche : c’est l’application qui juge', () => {
+        let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
+        s = toggleFault(answerChosen(s, verdict({ errorMp: 42 }), 1000), 0);
+        expect(s.faults).toEqual([true]);
+    });
+
+    test('la question suivante efface le verdict', () => {
+        let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
+        s = recordQuestion(answerChosen(s, verdict({ errorMp: 42 }), 1000));
+        s = askQuestion(s, decisionQuestion('cube', 8), 2000);
+        expect(s.verdict).toBeNull();
+    });
+
+    test('hors délai, la question est fausse, et la correction s’y attache sans rien coûter', () => {
+        let s = askQuestion(newSession({ exercise: 'decision', limitSeconds: 15 }), decisionQuestion(), 0);
+        s = reveal(s, 15000, { outOfTime: true });
+        expect(s.revealed).toBe(true);
+        expect(s.faults).toEqual([true]);
+        s = attachCorrection(s, '7', verdict({ legal: false, matched: false, notation: '', best: '24/18 13/11' }));
+        expect(s.verdict?.best).toBe('24/18 13/11');
+        // La correction d'une AUTRE question arrive trop tard : elle est ignorée.
+        const other = attachCorrection(s, '8', verdict({ best: 'autre' }));
+        expect(other.verdict?.best).toBe('24/18 13/11');
+    });
+
+    test('une correction ne s’attache pas à une question répondue', () => {
+        let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
+        s = answerChosen(s, verdict({ errorMp: 42, best: 'vrai' }), 1000);
+        expect(attachCorrection(s, '7', verdict({ best: 'autre' })).verdict?.best).toBe('vrai');
+    });
+});
+
+describe('le PR de session (#294)', () => {
+    test('vaut 500 × erreur moyenne en équité normalisée, comme celui du jeu réel', () => {
+        // 30 + 10 millipoints sur deux décisions : 0,020 d'erreur moyenne → PR 10.
+        expect(quizPR(40, 2)).toBeCloseTo(10);
+    });
+
+    test('sans décision, vaut 0 — à lire avec le compte, pas comme un sans-faute', () => {
+        expect(quizPR(0, 0)).toBe(0);
+    });
+
+    test('la session finie l’écrit au journal, sur les décisions jugées', () => {
+        let s = newSession({ exercise: 'decision', seedSource: 'library', limitSeconds: 15 });
+        s = recordQuestion(answerChosen(askQuestion(s, decisionQuestion('checker', 1), 0), verdict({ errorMp: 30 }), 1000));
+        s = recordQuestion(answerChosen(askQuestion(s, decisionQuestion('cube', 2), 0), verdict({ errorMp: 10 }), 1000));
+        // Un coup illégal ne coûte rien, mais c'est une décision jugée.
+        s = recordQuestion(answerChosen(askQuestion(s, decisionQuestion('checker', 3), 0), verdict({ legal: false, matched: false, errorMp: 0 }), 1000));
+        // Hors délai : aucune réponse, donc rien à mesurer — ni coût, ni décision.
+        s = recordQuestion(reveal(askQuestion(s, decisionQuestion('checker', 4), 0), 15000, { outOfTime: true }));
+
+        const row = finishedSession(s);
+        expect(row.pr).toBeCloseTo(quizPR(40, 3));
+        expect(row.numbersAsked).toBe(4);
+        expect(row.faults).toBe(4);
+        expect(row.deviations, 'un coût n’est pas un écart d’estimation').toBe(0);
+        expect(row.items.map((i) => i.numberType)).toEqual(['decision.checker', 'decision.cube', 'decision.checker', 'decision.checker']);
+    });
+
+    test('les autres exercices n’ont pas de PR', () => {
+        let s = newSession({ exercise: 'scores' });
+        s = recordQuestion(reveal(askQuestion(s, question(['gv1']), 0), 1000));
+        expect(finishedSession(s).pr).toBe(0);
+    });
+
+    test('le bilan dit le PR de la dernière session', () => {
+        expect(
+            summarizeExercise([
+                { exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 1000, pr: 6.5 },
+                { exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 1000, pr: 9 }
+            ]).lastPr
+        ).toBe(6.5);
+        expect(summarizeExercise([]).lastPr).toBeNull();
+    });
+});
+
+describe('le plateau appartient-il à la question ?', () => {
+    // Le défaut hérité de #321 : après « Valider », J / K faisaient défiler la
+    // liste sous une question ouverte. La réponse à cette question est ce que
+    // le répartiteur lit.
+    test('oui tant qu’une question à surface plateau est à l’écran, révélée ou non', () => {
+        const asked = askQuestion(newSession({ exercise: 'bearoff', seedSource: 'pool' }), bearoffQuestion(), 0);
+        expect(questionOnBoard(asked)).toBe(true);
+        expect(questionOnBoard(reveal(asked, 1000))).toBe(true);
+        expect(questionOnBoard(recordQuestion(reveal(asked, 1000)))).toBe(false);
+    });
+
+    test('non pour une fiche de score, ni hors session', () => {
+        expect(questionOnBoard(askQuestion(newSession({ exercise: 'scores' }), question(['gv1']), 0))).toBe(false);
+        expect(questionOnBoard(null)).toBe(false);
     });
 });

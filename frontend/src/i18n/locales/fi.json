@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "Harjoittelu",
-        "progress": "Kysymys {i}/{n}",
-        "answer": "Vastaus",
-        "check": "Tarkista",
         "next": "Seuraava",
         "finish": "Lopeta",
         "leave": "Poistu",
         "right": "Oikein",
         "usage": "Käyttö: train <harjoitus> ({drills}).",
-        "drillQuiz": "Tietovisa",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "Ei tuplausta",
         "doubleTake": "Tuplaus, hyväksy",
         "doublePass": "Tuplaus, luovuta",
@@ -1584,13 +1579,16 @@
         "cost": "Maksaa {mp} mMWC",
         "best": "paras: {move}",
         "gradeFailed": "Vastausta ei voitu arvioida.",
-        "finishedQuiz": "Tietovisa valmis: {correct}/{n}, istunnon PR {pr}.",
+        "finishedDecision": "Päätös valmis: {correct}/{n}, istunnon PR {pr}.",
         "undoHop": "Kumoa siirto",
         "resetPlay": "Aloita alusta",
+        "playOnBoard": "Pelaa siirto laudalla ja tarkista se sitten.",
+        "cubePrompt": "Valitse kuutiopäätös.",
         "exercise": {
             "scores": "Tilanteet",
             "pips": "Pipit",
-            "bearoff": "Bearoff"
+            "bearoff": "Bearoff",
+            "decision": "Päätös"
         },
         "sources": {
             "board": "Lauta",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "Keskipoikkeama {value}",
         "medianTime": "Mediaani {n} s",
         "trend": "Suuntaus {value} pt",
+        "lastPr": "Viimeisin PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Tuntematon harjoitus: {exercise}.",
         "noQuestion": "Kysymystä ei voi esittää: tämä tietokanta tai tämä lähde ei tarjoa yhtään.",
@@ -1630,7 +1629,9 @@
             "tp4Last": "Hyväksymispiste 4 · viimeinen heitto",
             "gv1": "Gammonin arvo 1",
             "gv2": "Gammonin arvo 2",
-            "gv4": "Gammonin arvo 4"
+            "gv4": "Gammonin arvo 4",
+            "decisionChecker": "Nappulasiirto",
+            "decisionCube": "Kuutiopäätös"
         },
         "retry": "Yritä uudelleen",
         "validate": "Tarkista",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "Tämä harjoitus vaatii 4–15 nappulaa puolta kohden, loput ulos vietyinä.",
             "emptyBoard": "Lauta on tyhjä: kysymys tulee varannosta.",
             "noTable": "Bearoff-taulukkoa ei ole vielä luotu: ilman sitä EPC:llä ei ole totuutta.",
-            "unknownSource": "Tämä harjoitus ei tarjoa tuota lähdettä."
+            "unknownSource": "Tämä harjoitus ei tarjoa tuota lähdettä.",
+            "noLibrary": "Tämä harjoitus vaatii kirjaston: avaa tietokanta, jossa on analysoituja asemia.",
+            "noAnalysis": "Tämä harjoitus vaatii analysoidun aseman: selattavasta luettelosta ei löytynyt yhtään.",
+            "decisionsExhausted": "Kaikki selattavan luettelon analysoidut asemat on jo kysytty."
         }
     },
     "explain": {

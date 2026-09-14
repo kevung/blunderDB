@@ -5,7 +5,9 @@
     // fautes, passer à la suivante, terminer, quitter. Le plateau montre la
     // question de Pions et sa réponse une fois révélée — il ne porte aucun
     // bouton. C'est l'objection qui a supprimé la barre d'entraînement : les
-    // saisies de l'application vivent dans ses panneaux.
+    // saisies de l'application vivent dans ses panneaux. Décision (#323) se
+    // JOUE sur le plateau, contrainte aux coups légaux, mais annuler un pas,
+    // tout reprendre et valider sont ici.
     //
     // Au repos, le panneau montre le lanceur ET le bilan par exercice, que l'on
     // déplie en détail par type de nombre. Pas de graphique : une tendance en
@@ -15,7 +17,8 @@
     import { GetTrainingSeedSources, SaveTrainingSeedSource } from '../../wailsjs/go/main/Config.js';
     import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
-    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise } from '../services/trainingTab.js';
+    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise, isChosenExercise } from '../services/trainingTab.js';
+    import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import {
         startTrainingSession,
         revealQuestion,
@@ -26,7 +29,11 @@
         finishTrainingSession,
         quitTrainingSession,
         refreshTrainingJournal,
-        refusalMessageKey
+        refusalMessageKey,
+        answerDecisionBoard,
+        answerDecisionCube,
+        undoDecisionStep,
+        resetDecisionPlay
     } from '../services/trainingTabService.js';
     import { logger } from '../utils/logger.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
@@ -59,6 +66,32 @@
     }
 
     let entered = $derived(!!session && isEnteredExercise(session.exercise));
+    // Mode CHOISI (Décision) : c'est le juge du moteur qui répond, il n'y a ni
+    // « Révéler » ni case à cocher.
+    let judgedByEngine = $derived(!!session && isChosenExercise(session.exercise));
+    let hasSteps = $derived(($quizPlayStore?.steps.length ?? 0) > 0);
+    let verdict = $derived(session?.verdict ?? null);
+
+    /** Les trois actions de videau, dans l'ordre où la décision se lit. */
+    const CUBE_ACTIONS = [
+        { id: 'nd', labelKey: 'training.noDouble' },
+        { id: 'dt', labelKey: 'training.doubleTake' },
+        { id: 'dp', labelKey: 'training.doublePass' }
+    ];
+
+    // Le focus suit la réponse. Le bouton qu'on vient d'actionner — « Révéler »,
+    // « Valider », une action de videau — disparaît ou se désactive avec la
+    // question ouverte : sans cela le focus retombait sur la page, et le geste
+    // suivant (ENTRÉE) n'allait nulle part (#323, défaut hérité de #321). Il
+    // va au geste suivant : « Suivante », ou « Terminer » quand il n'y a pas de
+    // suivante.
+    let nextButton = $state(/** @type {HTMLButtonElement | undefined} */ (undefined));
+    let finishButton = $state(/** @type {HTMLButtonElement | undefined} */ (undefined));
+    let revealedAt = $derived(session?.question && session.revealed ? session.askedQuestions + 1 : 0);
+    $effect(() => {
+        if (!revealedAt) return;
+        (nextButton ?? finishButton)?.focus();
+    });
     let another = $derived(!!session && canAskAnother(session.exercise, session.seedSource));
 
     let elapsedSeconds = $derived(Math.floor($trainingElapsedStore / 1000));
@@ -138,6 +171,58 @@
                          reste ouverte : ce qui a été répondu est encore là, et
                          « Terminer » l'enregistre. -->
                     <p class="refusal" data-testid="training-question-failed">{$t(refusalMessageKey(session.questionError))}</p>
+                {:else if question.kind === 'decision'}
+                    <div class="decision">
+                        {#if question.prompt === 'cube'}
+                            <p class="prompt">{$t('training.cubePrompt')}</p>
+                            <div class="choices" role="group" aria-label={$t('training.numbers.decisionCube')}>
+                                {#each CUBE_ACTIONS as action (action.id)}
+                                    <button
+                                        type="button"
+                                        class:selected={session.revealed && verdict?.notation === action.id}
+                                        disabled={session.revealed}
+                                        data-testid="training-cube-{action.id}"
+                                        onclick={() => answerDecisionCube(action.id)}
+                                    >
+                                        {$t(action.labelKey)}
+                                    </button>
+                                {/each}
+                            </div>
+                        {:else}
+                            <p class="prompt">{$t('training.playOnBoard')}</p>
+                            {#if !session.revealed}
+                                <div class="choices">
+                                    <button type="button" disabled={!hasSteps} data-testid="training-undo-step" onclick={() => undoDecisionStep()}>{$t('training.undoHop')}</button>
+                                    <button type="button" disabled={!hasSteps} data-testid="training-reset-play" onclick={() => resetDecisionPlay()}>{$t('training.resetPlay')}</button>
+                                </div>
+                            {/if}
+                        {/if}
+                        {#if session.revealed && verdict}
+                            <!-- Trois issues à distinguer, et les confondre mentirait : un
+                                 coup impossible n'est pas un coup mal noté, et un coup légal
+                                 que le moteur n'a pas classé n'est pas une faute de jugement
+                                 — il n'a simplement pas de prix. Hors délai, il n'y a pas
+                                 d'issue : seulement la correction. -->
+                            <p class="verdict" class:correct={!session.outOfTime && verdict.matched && verdict.errorMp === 0} data-testid="training-verdict">
+                                {#if !session.outOfTime}
+                                    <span class="outcome">
+                                        {#if !verdict.legal}
+                                            {$t('training.illegal')}
+                                        {:else if !verdict.matched}
+                                            {$t('training.unranked')}
+                                        {:else if verdict.errorMp === 0}
+                                            {$t('training.right')}
+                                        {:else}
+                                            {$t('training.cost', { mp: verdict.errorMp })}
+                                        {/if}
+                                    </span>
+                                {/if}
+                                {#if verdict.best}
+                                    <span class="best">{$t('training.best', { move: verdict.best })}</span>
+                                {/if}
+                            </p>
+                        {/if}
+                    </div>
                 {:else if question.kind === 'scores'}
                     <ScoreCard card={question.card} numbers={question.numbers} revealed={session.revealed} faults={session.faults} locked={session.outOfTime} onToggle={markFault} />
                 {:else if entered}
@@ -206,7 +291,7 @@
                 {/if}
             </div>
 
-            {#if question && session.revealed && !session.outOfTime && !entered}
+            {#if question && session.revealed && !session.outOfTime && !entered && !judgedByEngine}
                 <!-- Le geste ne se devine pas, et une infobulle ne se lit ni au
                      clavier ni au doigt : la consigne est à l'écran. En mode
                      SAISI il n'y a rien à cocher : c'est l'application qui
@@ -227,11 +312,15 @@
                 {#if !question}
                     <button type="button" data-testid="training-retry" onclick={() => retryTrainingQuestion()}>{$t('training.retry')}</button>
                 {:else if !session.revealed}
-                    <button type="button" data-testid="training-reveal" onclick={() => revealQuestion()}>{entered ? $t('training.validate') : $t('training.reveal')}</button>
+                    {#if !judgedByEngine}
+                        <button type="button" data-testid="training-reveal" onclick={() => revealQuestion()}>{entered ? $t('training.validate') : $t('training.reveal')}</button>
+                    {:else if question.prompt === 'checker'}
+                        <button type="button" data-testid="training-validate-move" disabled={!$quizPlayCompleteStore} onclick={() => answerDecisionBoard()}>{$t('training.validate')}</button>
+                    {/if}
                 {:else if another}
-                    <button type="button" data-testid="training-next" onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
+                    <button type="button" data-testid="training-next" bind:this={nextButton} onclick={() => nextTrainingQuestion()}>{$t('training.next')}</button>
                 {/if}
-                <button type="button" data-testid="training-finish" onclick={() => finishTrainingSession()}>{$t('training.finish')}</button>
+                <button type="button" data-testid="training-finish" bind:this={finishButton} onclick={() => finishTrainingSession()}>{$t('training.finish')}</button>
                 <button type="button" data-testid="training-quit" onclick={() => quitTrainingSession()}>{$t('training.leave')}</button>
             </div>
         </div>
@@ -248,7 +337,9 @@
                 </div>
             </div>
 
-            {#if chosen.sources.length > 0}
+            <!-- Une seule source n'est pas un choix : Décision ne connaît que la
+                 bibliothèque, et la refuse en le nommant quand elle manque. -->
+            {#if chosen.sources.length > 1}
                 <div class="row">
                     <span class="field-label" id="training-source-label">{$t('training.source')}</span>
                     <div class="choices" role="group" aria-labelledby="training-source-label">
@@ -310,6 +401,9 @@
                         <span class="figure">{$t('training.medianTime', { n: seconds(summary.medianMs) })}</span>
                         {#if summary.trend !== null}
                             <span class="figure">{$t('training.trend', { value: signedPoints(summary.trend) })}</span>
+                        {/if}
+                        {#if item.id === 'decision' && summary.lastPr !== null}
+                            <span class="figure">{$t('training.lastPr', { value: summary.lastPr.toFixed(2) })}</span>
                         {/if}
                     {/if}
                 </div>
@@ -393,8 +487,33 @@
     }
 
     .refusal,
-    .hint {
+    .hint,
+    .prompt,
+    .verdict {
         margin: 0;
+    }
+
+    .decision {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4em;
+    }
+
+    .verdict {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        color: var(--color-danger);
+    }
+
+    /* Pas de jeton « succès » dans la palette (ADR-0031) : l'accent unique dit
+       « juste » aussi bien qu'un vert de plus. */
+    .verdict.correct {
+        color: var(--color-primary);
+    }
+
+    .verdict .best {
+        color: var(--color-text-muted);
     }
 
     .hint {

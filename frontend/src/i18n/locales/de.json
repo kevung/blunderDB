@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "Training",
-        "progress": "Frage {i}/{n}",
-        "answer": "Antwort",
-        "check": "Prüfen",
         "next": "Weiter",
         "finish": "Beenden",
         "leave": "Verlassen",
         "right": "Richtig",
         "usage": "Verwendung: train <Übung> ({drills}).",
-        "drillQuiz": "Quiz",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "Kein Doppel",
         "doubleTake": "Doppel, Annahme",
         "doublePass": "Doppel, Aufgabe",
@@ -1584,13 +1579,16 @@
         "cost": "Kostet {mp} mMWC",
         "best": "bester: {move}",
         "gradeFailed": "Die Antwort konnte nicht bewertet werden.",
-        "finishedQuiz": "Quiz beendet: {correct}/{n}, Sitzungs-PR {pr}.",
+        "finishedDecision": "Entscheidung beendet: {correct}/{n}, Sitzungs-PR {pr}.",
         "undoHop": "Schritt zurück",
         "resetPlay": "Neu beginnen",
+        "playOnBoard": "Spielen Sie den Zug auf dem Brett und prüfen Sie ihn dann.",
+        "cubePrompt": "Wählen Sie die Doppelentscheidung.",
         "exercise": {
             "scores": "Stände",
             "pips": "Pips",
-            "bearoff": "Bearoff"
+            "bearoff": "Bearoff",
+            "decision": "Entscheidung"
         },
         "sources": {
             "board": "Brett",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "Mittlere Abweichung {value}",
         "medianTime": "Median {n} s",
         "trend": "Tendenz {value} Pkt",
+        "lastPr": "Letzter PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Unbekannte Übung: {exercise}.",
         "noQuestion": "Es kann keine Frage gestellt werden: diese Datenbank oder diese Quelle liefert keine.",
@@ -1630,7 +1629,9 @@
             "tp4Last": "Annahmepunkt 4 · letzter Wurf",
             "gv1": "Gammonwert 1",
             "gv2": "Gammonwert 2",
-            "gv4": "Gammonwert 4"
+            "gv4": "Gammonwert 4",
+            "decisionChecker": "Zug",
+            "decisionCube": "Doppelentscheidung"
         },
         "retry": "Erneut versuchen",
         "validate": "Prüfen",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "Diese Übung braucht 4 bis 15 Steine je Seite, der Rest ausgewürfelt.",
             "emptyBoard": "Das Brett ist leer: die Frage kommt aus dem Vorrat.",
             "noTable": "Die Bearoff-Tabelle ist noch nicht erzeugt: ohne sie hat der EPC keine Wahrheit.",
-            "unknownSource": "Diese Übung kennt diese Quelle nicht."
+            "unknownSource": "Diese Übung kennt diese Quelle nicht.",
+            "noLibrary": "Diese Übung braucht eine Datenbank: öffnen Sie eine Datenbank mit analysierten Positionen.",
+            "noAnalysis": "Diese Übung braucht eine analysierte Position: in der durchsuchten Liste wurde keine gefunden.",
+            "decisionsExhausted": "Alle analysierten Positionen der durchsuchten Liste wurden gestellt."
         }
     },
     "explain": {

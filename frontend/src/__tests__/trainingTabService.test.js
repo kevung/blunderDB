@@ -16,9 +16,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveTrainingSession: vi.fn(() => Promise.resolve(1)),
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
     LoadTrainingNumberStats: vi.fn(() => Promise.resolve([])),
-    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
+    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
+    LoadAnalysis: vi.fn(() => Promise.resolve(null)),
+    GradeQuizChecker: vi.fn(),
+    GradeQuizCheckerMove: vi.fn(),
+    GradeQuizCube: vi.fn()
 }));
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ GenerateBearoffQuestion: vi.fn() }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ GenerateBearoffQuestion: vi.fn(), LegalMoves: vi.fn(() => Promise.resolve([])) }));
 // Le simulacre fait ce que fait le vrai : il bascule sur l'onglet Analyse. Sans
 // cet effet, un appel à `showImportedPosition` depuis une session ne se verrait
 // pas — et c'est lui qui cachait l'onglet Entraînement sous la question posée.
@@ -36,10 +40,13 @@ vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), log: vi.fn() } 
 import * as dbModule from '../../wailsjs/go/database/Database.js';
 import * as appModule from '../../wailsjs/go/gui/App.js';
 import * as importServiceModule from '../services/importService.js';
+import * as databaseServiceModule from '../services/databaseService.js';
+import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { playHop } from '../services/quizPlay.js';
 import fr from '../i18n/locales/fr.json';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { trainingSessionStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
+import { trainingSessionStore, trainingRefusalStore, trainingAnalysisHiddenStore } from '../stores/trainingTabStore.js';
 import { pipcountVisibleStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { subscribeBoardRedrawTriggers } from '../services/boardRedraw.js';
 import {
@@ -50,7 +57,11 @@ import {
     nextTrainingQuestion,
     retryTrainingQuestion,
     finishTrainingSession,
-    quitTrainingSession
+    quitTrainingSession,
+    answerDecisionBoard,
+    answerDecisionCube,
+    undoDecisionStep,
+    resetDecisionPlay
 } from '../services/trainingTabService.js';
 
 // Les modules simulés, typés comme tels : `vi.mocked` dit au vérificateur que
@@ -58,6 +69,7 @@ import {
 const db = vi.mocked(dbModule);
 const app = vi.mocked(appModule);
 const importService = vi.mocked(importServiceModule);
+const statusBar = vi.mocked(databaseServiceModule);
 
 /** La session en cours — le test l'a démarrée, elle n'est pas nulle.
  *  @returns {any} */
@@ -561,5 +573,223 @@ describe('la tolérance dite en toutes lettres', () => {
         const [first] = current().question.numbers;
         expect(first.tolerance, 'la phrase dit « un demi-pion »').toBe(0.5);
         expect(fr.training.tolerance).toContain('demi-pion');
+    });
+});
+
+describe('une session de Décision (#323)', () => {
+    // Le plateau que le MOTEUR rend avec le coup : c'est lui, et non le damier
+    // reconstruit pas à pas par l'interface, qui part au juge.
+    const RESULT = { points: [], bearoff: [0, 0], marker: 'rendu par le moteur' };
+    const PLAY = {
+        notation: '6/4 6/3',
+        steps: [
+            { from: 6, to: 4, hit: false },
+            { from: 6, to: 3, hit: false }
+        ],
+        result: { board: RESULT }
+    };
+    const CHECKER = { checkerAnalysis: { moves: [{ move: '6/4 6/3', equityError: 0 }] } };
+    const CUBE = { doublingCubeAnalysis: { bestCubeAction: 'No double' } };
+
+    /** @param {Record<number, any>} analyses l'analyse de chaque position de la liste, `null` sans analyse */
+    function library(analyses) {
+        positionsStore.setIds(Object.keys(analyses).map(Number));
+        db.LoadAnalysis.mockImplementation((/** @type {any} */ id) => Promise.resolve(analyses[id] ?? null));
+        db.LoadPosition.mockImplementation((/** @type {any} */ id) => Promise.resolve({ ...board(), id }));
+        app.LegalMoves.mockResolvedValue(/** @type {any} */ ([PLAY]));
+    }
+
+    function playOnBoard() {
+        quizPlayStore.update((s) => (s ? playHop(playHop(s, 6, 4), 6, 3) : s));
+    }
+
+    /** @param {any} extra */
+    function verdict(extra = {}) {
+        return { legal: true, matched: true, notation: '6/4 6/3', best: '6/4 6/3', errorMp: 0, ...extra };
+    }
+
+    /** Répond à la question courante, quelle que soit sa forme, pour un coût donné. @param {number} errorMp */
+    async function answerCurrent(errorMp) {
+        if (current().question.prompt === 'cube') {
+            db.GradeQuizCube.mockResolvedValueOnce(/** @type {any} */ (verdict({ notation: 'nd', errorMp })));
+            await answerDecisionCube('nd');
+        } else {
+            playOnBoard();
+            db.GradeQuizChecker.mockResolvedValueOnce(/** @type {any} */ (verdict({ errorMp })));
+            await answerDecisionBoard();
+        }
+    }
+
+    beforeEach(() => {
+        db.LoadAnalysis.mockReset();
+        db.LoadAnalysis.mockResolvedValue(/** @type {any} */ (null));
+        db.GradeQuizChecker.mockReset();
+        db.GradeQuizCheckerMove.mockReset();
+        db.GradeQuizCube.mockReset();
+        app.LegalMoves.mockReset();
+        app.LegalMoves.mockResolvedValue([]);
+        quizPlayStore.set(null);
+    });
+
+    describe('refuse en le nommant', () => {
+        test('sans bibliothèque ouverte, rien ne démarre', async () => {
+            databasePathStore.set('');
+            library({ 7: CHECKER });
+            expect(await startTrainingSession({ exercise: 'decision', seedSource: 'library' })).toBe(false);
+            expect(get(trainingRefusalStore)).toBe('noLibrary');
+            expect(get(trainingSessionStore)).toBeNull();
+            expect(statusBar.setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'training.refusal.noLibrary', i18nParams: null });
+        });
+
+        test('sans position analysée dans la liste parcourue, rien ne démarre', async () => {
+            library({ 7: null, 8: null });
+            expect(await startTrainingSession({ exercise: 'decision', seedSource: 'library' })).toBe(false);
+            expect(get(trainingRefusalStore)).toBe('noAnalysis');
+            expect(get(trainingSessionStore)).toBeNull();
+            expect(statusBar.setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'training.refusal.noAnalysis', i18nParams: null });
+        });
+    });
+
+    describe('une décision de pions', () => {
+        // Le simulacre d'import bascule d'onglet comme le vrai : si la question
+        // passait par lui, l'onglet où l'on répond disparaîtrait (#321).
+        test('se pose dans l’onglet, sur le plateau armé des coups légaux', async () => {
+            library({ 7: CHECKER });
+            expect(await startTrainingSession({ exercise: 'decision', seedSource: 'library' })).toBe(true);
+            expect(get(activeTabStore)).toBe('training');
+            expect(importService.showImportedPosition).not.toHaveBeenCalled();
+            expect(get(currentPositionIndexStore)).toBe(0);
+            expect(current().question.prompt).toBe('checker');
+            expect(current().question.numbers.map((/** @type {any} */ n) => n.type)).toEqual(['decision.checker']);
+            expect(get(quizPlayStore), 'le coup se joue sur le plateau').not.toBeNull();
+            expect(app.LegalMoves).toHaveBeenCalledWith({ ...board(), id: 7 });
+        });
+
+        test('le panneau Analyse, qui porte la réponse, est masqué jusqu’au verdict', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(get(trainingAnalysisHiddenStore)).toBe(true);
+            await answerCurrent(0);
+            expect(get(trainingAnalysisHiddenStore)).toBe(false);
+        });
+
+        test('« Valider » juge le plateau que le moteur a rendu avec ce coup', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            playOnBoard();
+            db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
+            await answerDecisionBoard();
+            expect(db.GradeQuizChecker).toHaveBeenCalledWith(7, RESULT);
+            expect(current().revealed).toBe(true);
+            expect(current().faults).toEqual([false]);
+            expect(current().verdict.notation).toBe('6/4 6/3');
+        });
+
+        test('sans coup complet, « Valider » ne juge rien', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            quizPlayStore.update((s) => (s ? playHop(s, 6, 4) : s));
+            await answerDecisionBoard();
+            expect(db.GradeQuizChecker).not.toHaveBeenCalled();
+            expect(current().revealed).toBe(false);
+        });
+
+        test('annuler un pas, puis tout reprendre', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            playOnBoard();
+            undoDecisionStep();
+            expect(get(quizPlayStore)?.steps).toHaveLength(1);
+            resetDecisionPlay();
+            expect(get(quizPlayStore)?.steps).toHaveLength(0);
+            expect(get(quizPlayStore)?.board.points[6]).toEqual({ checkers: 2, color: 0 });
+        });
+
+        test('un juge en échec laisse la question ouverte, et le dit', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            playOnBoard();
+            db.GradeQuizChecker.mockRejectedValue(new Error('base fermée'));
+            await answerDecisionBoard();
+            expect(current().revealed).toBe(false);
+            expect(statusBar.setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'training.gradeFailed', i18nParams: null });
+        });
+
+        test('hors délai, la correction est demandée au juge et s’affiche sans rien coûter', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library', limitSeconds: 15 });
+            db.GradeQuizCheckerMove.mockResolvedValue(/** @type {any} */ (verdict({ legal: false, matched: false, notation: '', best: '6/4 6/3' })));
+            revealQuestion({ outOfTime: true });
+            await flush();
+            expect(db.GradeQuizCheckerMove).toHaveBeenCalledWith(7, '');
+            expect(current().faults).toEqual([true]);
+            expect(current().verdict.best).toBe('6/4 6/3');
+        });
+    });
+
+    describe('une action de videau', () => {
+        test('se choisit, sans plateau à jouer', async () => {
+            library({ 7: CUBE });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(current().question.prompt).toBe('cube');
+            expect(get(quizPlayStore)).toBeNull();
+            db.GradeQuizCube.mockResolvedValue(/** @type {any} */ (verdict({ notation: 'dt', best: 'No double', errorMp: 25 })));
+            await answerDecisionCube('dt');
+            expect(db.GradeQuizCube).toHaveBeenCalledWith(7, 'dt');
+            expect(current().faults).toEqual([true]);
+            expect(current().verdict.errorMp).toBe(25);
+        });
+    });
+
+    describe('la session', () => {
+        test('« Terminer » écrit le PR de session, sur l’échelle des statistiques', async () => {
+            library({ 7: CHECKER, 8: CUBE });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            await answerCurrent(30);
+            await nextTrainingQuestion();
+            await answerCurrent(10);
+            await finishTrainingSession();
+
+            expect(db.SaveTrainingSession).toHaveBeenCalledTimes(1);
+            const row = db.SaveTrainingSession.mock.calls[0][0];
+            expect(row.exercise).toBe('decision');
+            expect(row.seedSource).toBe('library');
+            expect(row.numbersAsked).toBe(2);
+            // 500 × (30 + 10) / 1000 / 2
+            expect(row.pr).toBeCloseTo(10);
+            expect(get(quizPlayStore), 'le plateau redevient celui de l’application').toBeNull();
+        });
+
+        test('une position posée ne revient pas, et la liste épuisée le dit', async () => {
+            library({ 7: CHECKER, 8: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            const first = current().question.positionId;
+            await answerCurrent(0);
+            await nextTrainingQuestion();
+            expect(current().question.positionId).not.toBe(first);
+            await answerCurrent(0);
+            await nextTrainingQuestion();
+            expect(current().question).toBeNull();
+            expect(current().questionError).toBe('decisionsExhausted');
+            expect(get(quizPlayStore)).toBeNull();
+            expect(current().items, 'les deux décisions répondues restent').toHaveLength(2);
+        });
+
+        test('« Quitter » n’écrit rien et désarme le plateau', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            quitTrainingSession();
+            expect(get(quizPlayStore)).toBeNull();
+            expect(db.SaveTrainingSession).not.toHaveBeenCalled();
+        });
+
+        test('une autre session ne touche pas au coup joué au plateau par une transcription', async () => {
+            const transcription = /** @type {any} */ ({ steps: [], board: board().board, plays: [], selected: null });
+            quizPlayStore.set(transcription);
+            await startTrainingSession({ exercise: 'scores' });
+            quitTrainingSession();
+            expect(get(quizPlayStore)).toBe(transcription);
+            quizPlayStore.set(null);
+        });
     });
 });

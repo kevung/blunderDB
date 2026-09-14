@@ -1,19 +1,44 @@
 import { get } from 'svelte/store';
-import { LoadPosition, LoadPositionIDsByFilters, SaveTrainingSession, LoadTrainingSessions, LoadTrainingNumberStats } from '../../wailsjs/go/database/Database.js';
-import { GenerateBearoffQuestion } from '../../wailsjs/go/gui/App.js';
+import {
+    LoadPosition,
+    LoadPositionIDsByFilters,
+    SaveTrainingSession,
+    LoadTrainingSessions,
+    LoadTrainingNumberStats,
+    LoadAnalysis,
+    GradeQuizChecker,
+    GradeQuizCheckerMove,
+    GradeQuizCube
+} from '../../wailsjs/go/database/Database.js';
+import { GenerateBearoffQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
-import { TRAINING_EXERCISES, newSession, askQuestion, reveal, toggleFault, setAnswer, recordQuestion, failNextQuestion, finishedSession, canAskAnother } from './trainingTab.js';
+import {
+    TRAINING_EXERCISES,
+    newSession,
+    askQuestion,
+    reveal,
+    toggleFault,
+    setAnswer,
+    recordQuestion,
+    failNextQuestion,
+    finishedSession,
+    canAskAnother,
+    answerChosen,
+    attachCorrection
+} from './trainingTab.js';
+import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { newPlay, completedPlay, undoLast, resetPlay } from './quizPlay.js';
 import { UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from './scoreCard.js';
 import { computePipCount } from '../utils/boardGeometry.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-// L'onglet Entraînement, côté application (#320 puis #321, ADR-0040/0041).
+// L'onglet Entraînement, côté application (#320, #321 puis #323, ADR-0040/0041).
 //
 // Le service fabrique les questions, tient le chronomètre et écrit au journal.
 // Les RÈGLES — ce qu'une révélation produit, ce qu'une échéance produit à sa
@@ -22,7 +47,10 @@ import { tMsg } from '../i18n';
 //
 // Tout le geste d'une session est dans le panneau : le plateau montre la
 // question de Pions et, une fois révélée, sa réponse, mais il ne porte aucun
-// bouton. C'est l'objection qui a supprimé la barre d'entraînement.
+// bouton. C'est l'objection qui a supprimé la barre d'entraînement — et Décision
+// (#323), son dernier locataire, se répond ici aussi : le coup se JOUE sur le
+// plateau, mais annuler un pas, tout reprendre et valider sont des boutons du
+// panneau.
 
 /** Le battement du chronomètre : assez fin pour qu'une limite de 15 s se voie
  *  arriver, assez lâche pour ne rien coûter. */
@@ -230,6 +258,84 @@ function bearoffIndices() {
     return bearoffPhaseIndices;
 }
 
+/** Le nombre d'analyses lues avant de renoncer, pour UNE question de Décision.
+ *  Borné, parce qu'une liste sans analyse en ferait sinon une lecture de toute
+ *  la base : au bout, on refuse en le nommant, et « Réessayer » regarde les
+ *  positions pas encore lues. */
+const MAX_DECISION_DRAWS = 60;
+
+/**
+ * Les positions déjà lues par cette session de Décision — posées, ou sans
+ * analyse. La bibliothèque borne l'exercice par elle-même (ADR-0040 règle 5) :
+ * une position posée ne revient pas, et une position sans analyse n'est pas
+ * relue à chaque question.
+ * @type {Set<number>}
+ */
+let decisionSeen = new Set();
+
+/** Les questions de Décision fabriquées par cette session, préchargée comprise. */
+let decisionsBuilt = 0;
+
+/**
+ * Une question de l'exercice Décision (#323, ADR-0040 règle 3) — l'ancien
+ * `train quiz` (#294), inchangé dans ce qu'il juge.
+ *
+ * Une question demande une position ANALYSÉE : l'erreur se mesure contre
+ * l'analyse enregistrée, et une position sans analyse ne pose pas de question.
+ * La décision est celle que la position porte — coup de pions ou action de
+ * videau — jamais une décision inventée pour l'exercice.
+ *
+ * Les coups légaux sont demandés au moteur ICI, à la fabrication : la question
+ * suivante se fabrique pendant qu'on répond à celle-ci, et c'est le moment où
+ * l'attente ne se voit pas. Une position où le moteur n'offre aucun coup n'a
+ * rien à jouer sur le plateau : elle est passée.
+ *
+ * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ */
+async function buildDecisionQuestion() {
+    if (!get(databasePathStore)) return { question: null, refusal: 'noLibrary' };
+    const { length } = get(positionsStore);
+    /** @type {number[]} */
+    const candidates = [];
+    for (let index = 0; index < length; index++) {
+        const id = positionsStore.idAt(index);
+        if (id != null && !decisionSeen.has(id)) candidates.push(id);
+    }
+    if (candidates.length === 0) return { question: null, refusal: decisionsBuilt > 0 ? 'decisionsExhausted' : 'noAnalysis' };
+    for (const id of drawDistinct(candidates, MAX_DECISION_DRAWS)) {
+        // Marquée AVANT la lecture : le préchargement ne doit pas tirer la
+        // position que la question courante est en train de lire.
+        decisionSeen.add(id);
+        let analysis;
+        try {
+            analysis = await LoadAnalysis(id);
+        } catch {
+            continue;
+        }
+        const isCube = !!analysis?.doublingCubeAnalysis;
+        const hasMoves = (analysis?.checkerAnalysis?.moves || []).length > 0;
+        if (!isCube && !hasMoves) continue;
+        const position = await LoadPosition(id);
+        if (!position) continue;
+        const key = String(id);
+        if (isCube) {
+            decisionsBuilt++;
+            return { question: { kind: 'decision', key, positionId: id, position, prompt: 'cube', numbers: [{ type: 'decision.cube', value: 0 }] }, refusal: '' };
+        }
+        let plays;
+        try {
+            plays = await LegalMoves(position);
+        } catch (error) {
+            logger.error('could not load the legal moves for a decision question:', error);
+            continue;
+        }
+        if (!plays?.length) continue;
+        decisionsBuilt++;
+        return { question: { kind: 'decision', key, positionId: id, position, plays, prompt: 'checker', numbers: [{ type: 'decision.checker', value: 0 }] }, refusal: '' };
+    }
+    return { question: null, refusal: 'noAnalysis' };
+}
+
 // ── Fabriquer n'est pas montrer ──────────────────────────────────────────────
 //
 // `buildQuestion` calcule une question — la position et sa vérité — et ne
@@ -251,6 +357,7 @@ function bearoffIndices() {
 async function buildQuestion(exercise, seedSource, seed) {
     if (exercise === 'scores') return { question: buildScoresQuestion(), refusal: '' };
     if (exercise === 'bearoff') return buildBearoffQuestion(seedSource, seed);
+    if (exercise === 'decision') return buildDecisionQuestion();
     return buildPipsQuestion(seedSource, seed);
 }
 
@@ -279,6 +386,25 @@ async function showQuestion(question) {
         return;
     }
     if (question?.position) positionStore.set({ ...question.position, id: 0 });
+}
+
+/**
+ * Arme le plateau pour une question de Décision : une décision de pions s'y
+ * joue, contrainte aux coups légaux que le moteur a rendus ; une action de
+ * videau ne s'y joue pas, et le plateau redevient celui de l'application.
+ * Les autres exercices ne touchent pas au coup joué au plateau — une
+ * transcription s'en sert aussi.
+ * @param {any} question
+ */
+function armBoard(question) {
+    if (question?.kind !== 'decision') return;
+    quizPlayStore.set(question.prompt === 'checker' && question.plays?.length ? newPlay(question.position, question.plays) : null);
+}
+
+/** Désarme le plateau à la fin d'une session de Décision, et seulement d'elle.
+ *  @param {import('./trainingTab.js').TrainingSessionState|null} session */
+function disarmBoard(session) {
+    if (session?.exercise === 'decision') quizPlayStore.set(null);
 }
 
 // ── La session ───────────────────────────────────────────────────────────────
@@ -361,8 +487,11 @@ export async function startTrainingSession({ exercise, seedSource = '', limitSec
         return false;
     }
     const source = declared.sources.includes(seedSource) ? seedSource : declared.defaultSource;
+    disarmBoard(get(trainingSessionStore));
     prefetched = null;
     bearoffPhaseIndices = null;
+    decisionSeen = new Set();
+    decisionsBuilt = 0;
     // La graine « plateau » se prend ici, et ne se relit jamais.
     boardSeed = get(positionStore);
     let built;
@@ -378,6 +507,7 @@ export async function startTrainingSession({ exercise, seedSource = '', limitSec
         return false;
     }
     await showQuestion(built.question);
+    armBoard(built.question);
     trainingSessionStore.set(askQuestion(newSession({ exercise, seedSource: source, limitSeconds }), built.question, Date.now()));
     trainingElapsedStore.set(0);
     startTicker();
@@ -406,6 +536,107 @@ export function revealQuestion({ outOfTime = false } = {}) {
     const next = reveal(session, Date.now(), { outOfTime });
     trainingSessionStore.set(next);
     trainingElapsedStore.set(next.elapsedMs);
+    if (next.revealed && next.question?.kind === 'decision') fetchCorrection(next.question);
+}
+
+// ── Décision : répondre ──────────────────────────────────────────────────────
+//
+// Le jugement est fait par le BACKEND — engine, le même code que le démon
+// appelle — pas ici : la note d'une décision doit valoir la même chose d'un
+// client à l'autre, et une seconde implémentation en JavaScript aurait été une
+// seconde note. Les deux façons de répondre diffèrent par l'appel au juge et
+// par rien d'autre : même chronomètre, même verdict, même PR.
+
+/**
+ * Juge le coup construit SUR LE PLATEAU.
+ *
+ * Ce qui part au juge est la position résultante que le MOTEUR a rendue avec
+ * ce coup, pas le damier reconstruit pas à pas par l'interface pour montrer le
+ * coup en cours : une erreur d'affichage ne doit pas pouvoir devenir une
+ * mauvaise note. Sans coup complet, rien n'est jugé.
+ */
+export async function answerDecisionBoard() {
+    const session = get(trainingSessionStore);
+    const question = session?.question;
+    if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'checker') return;
+    const state = get(quizPlayStore);
+    const play = state ? completedPlay(state) : null;
+    if (!play) return;
+    await gradeDecision(question, () => GradeQuizChecker(/** @type {number} */ (question.positionId), play.result.board));
+}
+
+/**
+ * Juge une action de videau : `nd`, `dt` ou `dp`.
+ * @param {string} action
+ */
+export async function answerDecisionCube(action) {
+    const session = get(trainingSessionStore);
+    const question = session?.question;
+    if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'cube') return;
+    await gradeDecision(question, () => GradeQuizCube(/** @type {number} */ (question.positionId), action));
+}
+
+/**
+ * Le tronc commun des deux réponses. Le chrono s'arrête au GESTE, pas au
+ * retour du juge : l'aller-retour n'est pas du temps de réflexion.
+ *
+ * Un juge en échec laisse la question ouverte et le dit : une réponse qu'on
+ * n'a pas pu noter n'est ni juste ni fausse, et la compter serait inventer.
+ * @param {any} question @param {() => Promise<any>} judge
+ */
+async function gradeDecision(question, judge) {
+    const answeredAt = Date.now();
+    let verdict;
+    try {
+        verdict = await judge();
+    } catch (error) {
+        logger.error('could not grade the decision answer:', error);
+        setStatusBarMessage(tMsg('training.gradeFailed'));
+        return;
+    }
+    const session = get(trainingSessionStore);
+    // La session a pu passer à autre chose pendant l'aller-retour.
+    if (!session || session.question !== question) return;
+    const next = answerChosen(session, verdict, answeredAt);
+    trainingSessionStore.set(next);
+    trainingElapsedStore.set(next.elapsedMs);
+}
+
+/**
+ * La correction d'une décision restée sans réponse à l'échéance : le meilleur
+ * coup, que le juge rend pour une réponse vide sans rien compter. Une
+ * question dont on ne peut pas relire la bonne réponse n'apprend rien.
+ * @param {any} question
+ */
+function fetchCorrection(question) {
+    const id = /** @type {number} */ (question.positionId);
+    const ask = question.prompt === 'cube' ? GradeQuizCube(id, '') : GradeQuizCheckerMove(id, '');
+    Promise.resolve(ask)
+        .then((correction) => {
+            const session = get(trainingSessionStore);
+            if (session) trainingSessionStore.set(attachCorrection(session, question.key, correction));
+        })
+        .catch((error) => logger.error('could not read the correction of the decision:', error));
+}
+
+/** Annule le dernier pas du coup joué au plateau. */
+export function undoDecisionStep() {
+    const question = openCheckerQuestion();
+    if (question) quizPlayStore.update((state) => (state ? undoLast(state, question.position) : state));
+}
+
+/** Remet la position telle que la question la pose : le coup reprend de zéro. */
+export function resetDecisionPlay() {
+    const question = openCheckerQuestion();
+    if (question) quizPlayStore.update((state) => (state ? resetPlay(state, question.position) : state));
+}
+
+/** La question de Décision de pions ouverte, s'il y en a une. */
+function openCheckerQuestion() {
+    const session = get(trainingSessionStore);
+    const question = session?.question;
+    if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'checker' || !question.position) return null;
+    return question;
 }
 
 /** Coche — ou décoche — le nombre qu'on a raté. @param {number} index */
@@ -456,12 +687,14 @@ export async function retryTrainingQuestion() {
 async function askNextQuestion(session) {
     const built = await takeNextQuestion(session.exercise, session.seedSource);
     if (!built.question) {
+        disarmBoard(session);
         trainingSessionStore.set(failNextQuestion(session, built.refusal || 'noQuestion'));
         trainingElapsedStore.set(0);
         setStatusBarMessage(tMsg(refusalMessageKey(built.refusal)));
         return;
     }
     await showQuestion(built.question);
+    armBoard(built.question);
     trainingSessionStore.set(askQuestion(session, built.question, Date.now()));
     trainingElapsedStore.set(0);
     prefetchNextQuestion(session.exercise, session.seedSource);
@@ -476,9 +709,12 @@ export async function finishTrainingSession() {
     if (!session) return null;
     const closed = session.revealed ? recordQuestion(session) : session;
     stopTicker();
+    disarmBoard(session);
     prefetched = null;
     boardSeed = null;
     bearoffPhaseIndices = null;
+    decisionSeen = new Set();
+    decisionsBuilt = 0;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
     const row = finishedSession(closed);
@@ -491,15 +727,22 @@ export async function finishTrainingSession() {
         return row;
     }
     await refreshTrainingJournal();
+    if (row.exercise === 'decision') {
+        const correct = row.numbersAsked - row.faults;
+        setStatusBarMessage(tMsg('training.finishedDecision', { correct, n: row.numbersAsked, pr: row.pr.toFixed(2) }));
+    }
     return row;
 }
 
 /** Quitte la session sans rien enregistrer. */
 export function quitTrainingSession() {
     stopTicker();
+    disarmBoard(get(trainingSessionStore));
     prefetched = null;
     boardSeed = null;
     bearoffPhaseIndices = null;
+    decisionSeen = new Set();
+    decisionsBuilt = 0;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
 }

@@ -9,7 +9,7 @@
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
-    import { trainingMaskStore } from '../stores/trainingStore.js';
+    import { trainingAnalysisHiddenStore } from '../stores/trainingTabStore.js';
     import ExplanationLine from './ExplanationLine.svelte';
     import { canLeaveSubSearchResults } from '../services/positionService.js';
 
@@ -370,8 +370,8 @@
              Eval : l'ADR-0017 y réserve UNE décision, celle du moteur
              embarqué. Elle ne s'affiche que lorsqu'il y a effectivement
              plusieurs moteurs à comparer. -->
-        {#if $trainingMaskStore}
-            <!-- Une question de quiz est ouverte (#294). Le panneau porte la
+        {#if $trainingAnalysisHiddenStore}
+            <!-- Une question de Décision est ouverte (#323). Le panneau porte la
                  réponse : l'afficher pendant qu'on la demande ferait un
                  exercice qui se résout en regardant à côté. Le remplaçant est
                  celui de l'ADR-0018 règle 6, déjà utilisé par le panneau

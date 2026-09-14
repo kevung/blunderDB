@@ -89,11 +89,8 @@
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import { maybeRunFirstRunTour } from './services/tourService.js';
     import StudyQueueBar from './components/StudyQueueBar.svelte';
-    import TrainingBar from './components/TrainingBar.svelte';
-    import { startTraining } from './services/trainingSessionService.js';
-    import { DRILLS } from './services/trainingService.js';
     import { startTrainingSession } from './services/trainingTabService.js';
-    import { TRAINING_EXERCISES } from './services/trainingTab.js';
+    import { TRAINING_EXERCISES, exerciseForCommand } from './services/trainingTab.js';
     import { showTab, showTrainingPanel } from './services/tabToggles.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
@@ -317,53 +314,38 @@
         }
     }
 
-    // `train` et `train <exercice>` (#273, #320).
+    // `train` et `train <exercice>` (#273, #320, #323).
     //
     // Nu, il ouvre l'onglet Entraînement. Avec un exercice de l'onglet, il
     // l'ouvre ET démarre : on tape `train scores` pour s'entraîner, pas pour
-    // arriver devant un lanceur. Les alias sont ceux que les doigts ont
-    // appris — `tp` et `takepoint` pour la fiche de score, comme les tables du
-    // même nom. `quiz` reste servi par la bande, le temps que #323 le déplace.
-    //
-    // `epc` mène à `bearoff` : l'exercice n'a pas disparu de la bande, il a
-    // changé de nom en changeant de lieu — on regarde un bearoff, on répond un
-    // EPC (ADR-0040 règle 3). Une commande qu'on tapait hier ne doit pas
-    // répondre « exercice inconnu » aujourd'hui.
+    // arriver devant un lanceur. Les mots acceptés, alias compris (`tp`,
+    // `epc`, `quiz`…), sont écrits une fois, dans `exerciseForCommand`.
     //
     // La commande lit la MÊME source mémorisée que le lanceur (ADR-0041
     // règle 2). Deux entrées du même exercice qui donnent deux sources ne sont
     // pas deux entrées du même exercice, et le manuel promet la mémoire sans
     // réserve.
-    const TAB_EXERCISE_ALIASES = { scores: 'scores', tp: 'scores', takepoint: 'scores', pips: 'pips', pip: 'pips', bearoff: 'bearoff', epc: 'bearoff' };
-
     async function startTrainingCommand(drill) {
-        const wanted = String(drill || '')
-            .trim()
-            .toLowerCase();
+        const wanted = String(drill || '').trim();
         if (!wanted) {
             // Ouvrir, jamais refermer : `cmd_mode.rst` dit « Ouvre », et taper
             // `train` depuis l'onglet fermait la session sous les doigts.
             showTrainingPanel();
             return;
         }
-        const exercise = TAB_EXERCISE_ALIASES[wanted];
-        if (exercise) {
-            if (!showTab('training')) return;
-            let seedSource = '';
-            try {
-                seedSource = (await GetTrainingSeedSources())?.[exercise] || '';
-            } catch (error) {
-                logger.error('could not read the remembered training source:', error);
-            }
-            await startTrainingSession({ exercise, seedSource });
+        const exercise = exerciseForCommand(wanted);
+        if (!exercise) {
+            setStatusBarMessage(tMsg('training.usage', { drills: TRAINING_EXERCISES.map((e) => e.id).join(', ') }));
             return;
         }
-        if (DRILLS.includes(wanted)) {
-            await startTraining(wanted);
-            return;
+        if (!showTab('training')) return;
+        let seedSource = '';
+        try {
+            seedSource = (await GetTrainingSeedSources())?.[exercise] || '';
+        } catch (error) {
+            logger.error('could not read the remembered training source:', error);
         }
-        const known = [...TRAINING_EXERCISES.map((e) => e.id), ...DRILLS];
-        setStatusBarMessage(tMsg('training.usage', { drills: known.join(', ') }));
+        await startTrainingSession({ exercise, seedSource });
     }
 
     onMount(async () => {
@@ -529,7 +511,6 @@
          reste de l'application doit rester utilisable pendant le parcours,
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
     <StudyQueueBar />
-    <TrainingBar />
 
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>

@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "Allenamento",
-        "progress": "Domanda {i}/{n}",
-        "answer": "Risposta",
-        "check": "Verifica",
         "next": "Successiva",
         "finish": "Termina",
         "leave": "Esci",
         "right": "Giusto",
         "usage": "Uso: train <esercizio> ({drills}).",
-        "drillQuiz": "Quiz",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "Nessun raddoppio",
         "doubleTake": "Raddoppio, presa",
         "doublePass": "Raddoppio, passo",
@@ -1584,13 +1579,16 @@
         "cost": "Costa {mp} mMWC",
         "best": "migliore: {move}",
         "gradeFailed": "Non è stato possibile valutare la risposta.",
-        "finishedQuiz": "Quiz terminato: {correct}/{n}, PR di sessione {pr}.",
+        "finishedDecision": "Decisione terminata: {correct}/{n}, PR di sessione {pr}.",
         "undoHop": "Annulla passo",
         "resetPlay": "Ricomincia",
+        "playOnBoard": "Gioca la mossa sulla tavola, poi verificala.",
+        "cubePrompt": "Scegli l'azione di cubo.",
         "exercise": {
             "scores": "Punteggi",
             "pips": "Pip",
-            "bearoff": "Bearoff"
+            "bearoff": "Bearoff",
+            "decision": "Decisione"
         },
         "sources": {
             "board": "Tavoliere",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "Scarto medio {value}",
         "medianTime": "Mediana {n} s",
         "trend": "Tendenza {value} pt",
+        "lastPr": "Ultimo PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Esercizio sconosciuto: {exercise}.",
         "noQuestion": "Nessuna domanda può essere posta: questa base o questa fonte non ne fornisce.",
@@ -1630,7 +1629,9 @@
             "tp4Last": "Punto di presa 4 · ultimo lancio",
             "gv1": "Valore del gammon 1",
             "gv2": "Valore del gammon 2",
-            "gv4": "Valore del gammon 4"
+            "gv4": "Valore del gammon 4",
+            "decisionChecker": "Mossa di pedine",
+            "decisionCube": "Azione di cubo"
         },
         "retry": "Riprovare",
         "validate": "Verifica",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "Questo esercizio richiede da 4 a 15 pedine per lato, le altre uscite.",
             "emptyBoard": "La tavola è vuota: la domanda viene dal vivaio.",
             "noTable": "La tabella di bearoff non è ancora generata: senza di essa l’EPC non ha verità.",
-            "unknownSource": "Questo esercizio non offre quella fonte."
+            "unknownSource": "Questo esercizio non offre quella fonte.",
+            "noLibrary": "Questo esercizio richiede una libreria: apri una base di posizioni analizzate.",
+            "noAnalysis": "Questo esercizio richiede una posizione analizzata: nessuna è stata trovata nella lista sfogliata.",
+            "decisionsExhausted": "Tutte le posizioni analizzate della lista sfogliata sono state proposte."
         }
     },
     "explain": {

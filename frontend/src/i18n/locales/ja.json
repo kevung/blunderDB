@@ -1566,16 +1566,11 @@
     },
     "training": {
         "title": "トレーニング",
-        "progress": "問題 {i}/{n}",
-        "answer": "回答",
-        "check": "判定",
         "next": "次へ",
         "finish": "終了",
         "leave": "やめる",
         "right": "正解",
         "usage": "使い方：train <練習>（{drills}）。",
-        "drillQuiz": "クイズ",
-        "movePlaceholder": "13/7 8/7",
         "noDouble": "ノーダブル",
         "doubleTake": "ダブル、テイク",
         "doublePass": "ダブル、パス",
@@ -1584,13 +1579,16 @@
         "cost": "{mp} mMWC の損",
         "best": "最善：{move}",
         "gradeFailed": "回答を採点できませんでした。",
-        "finishedQuiz": "クイズ終了：{correct}/{n}、セッション PR {pr}。",
+        "finishedDecision": "判断終了：{correct}/{n}、セッション PR {pr}。",
         "undoHop": "1手戻す",
         "resetPlay": "やり直す",
+        "playOnBoard": "盤上で手を指してから判定してください。",
+        "cubePrompt": "キューブアクションを選んでください。",
         "exercise": {
             "scores": "スコア",
             "pips": "ピップ",
-            "bearoff": "ベアオフ"
+            "bearoff": "ベアオフ",
+            "decision": "判断"
         },
         "sources": {
             "board": "盤面",
@@ -1619,6 +1617,7 @@
         "meanDeviation": "平均誤差 {value}",
         "medianTime": "中央値 {n} 秒",
         "trend": "傾向 {value} pt",
+        "lastPr": "前回の PR {value}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "不明なエクササイズ: {exercise}。",
         "noQuestion": "問題を出せません: このデータベースまたはこのソースには出題できるものがありません。",
@@ -1630,7 +1629,9 @@
             "tp4Last": "テイクポイント 4 · ラストロール",
             "gv1": "ギャモン価値 1",
             "gv2": "ギャモン価値 2",
-            "gv4": "ギャモン価値 4"
+            "gv4": "ギャモン価値 4",
+            "decisionChecker": "チェッカープレイ",
+            "decisionCube": "キューブアクション"
         },
         "retry": "再試行",
         "validate": "判定",
@@ -1640,7 +1641,10 @@
             "tooFewCheckers": "この練習には各side 4〜15 個の駒が必要です。残りは上がっていること。",
             "emptyBoard": "盤が空です。問題は定型から作ります。",
             "noTable": "ベアオフ表がまだ生成されていません。表がなければ EPC に正解はありません。",
-            "unknownSource": "この練習にそのソースはありません。"
+            "unknownSource": "この練習にそのソースはありません。",
+            "noLibrary": "この練習にはライブラリが必要です。解析済み局面のデータベースを開いてください。",
+            "noAnalysis": "この練習には解析済みの局面が必要です。表示中のリストには見つかりませんでした。",
+            "decisionsExhausted": "表示中のリストの解析済み局面はすべて出題しました。"
         }
     },
     "explain": {

@@ -121,8 +121,9 @@ export function processCommand(command) {
     } else if (command === 'log') {
         openModal(MODAL.LOG);
     } else if (command.startsWith('train ')) {
-        // `train <exercice>` : pips, epc, tp. Testé AVANT la forme exacte, que
-        // la ligne suivante capte pour ouvrir le choix (#273).
+        // `train <exercice>` : scores, pips, bearoff, decision et leurs alias
+        // (`exerciseForCommand`). Testé AVANT la forme exacte, que la ligne
+        // suivante capte pour ouvrir l'onglet (#273, #323).
         callbacks.onTraining?.(command.slice('train '.length).trim());
     } else if (command === 'train') {
         callbacks.onTraining?.('');
