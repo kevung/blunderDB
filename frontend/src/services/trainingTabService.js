@@ -10,7 +10,7 @@ import {
     GradeQuizCheckerMove,
     GradeQuizCube
 } from '../../wailsjs/go/database/Database.js';
-import { GenerateBearoffQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
+import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
@@ -38,7 +38,7 @@ import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-// L'onglet Entraînement, côté application (#320, #321 puis #323, ADR-0040/0041).
+// L'onglet Entraînement, côté application (#320, #321, #322 et #323, ADR-0040/0041).
 //
 // Le service fabrique les questions, tient le chronomètre et écrit au journal.
 // Les RÈGLES — ce qu'une révélation produit, ce qu'une échéance produit à sa
@@ -258,6 +258,83 @@ function bearoffIndices() {
     return bearoffPhaseIndices;
 }
 
+/** La tolérance des chances de gain d'Évaluation : cinq points de pourcentage.
+ *  Assez fin pour qu'une position à 70 % ne se confonde pas avec une à 80 % —
+ *  l'écart entre une prise facile et un passe —, assez large pour qu'on
+ *  estime plutôt qu'on ne récite une décimale que le moteur lui-même ne tient
+ *  pas d'une profondeur à l'autre. */
+const WIN_TOLERANCE = 5;
+
+/**
+ * Une question de l'exercice Évaluation (#322, ADR-0040 règle 3).
+ *
+ * Comme Bearoff, TOUT se fait en un seul appel : le moteur joue les plis,
+ * cadre la position en argent, et rend la vérité — chances de gain, verdict de
+ * videau, bouton juste, EPC quand il est exact. L'interface ne compare aucune
+ * équité : le verdict est celui du moteur, et c'est lui qui dit quel bouton il
+ * rend juste.
+ *
+ * La source `base` tire dans la liste parcourue et laisse le moteur juger
+ * chaque candidate : une position au score, ou qui porte des dés, n'est pas une
+ * décision de videau d'argent, et le domaine n'est écrit qu'en Go.
+ *
+ * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ *
+ * @param {string} seedSource @param {any} seed la graine « plateau », capturée au démarrage
+ */
+async function buildEvaluationQuestion(seedSource, seed) {
+    if (seedSource === 'library') {
+        const { length } = get(positionsStore);
+        let last = 'notMoneyCubeDecision';
+        for (const index of drawDistinct(
+            Array.from({ length }, (_, i) => i),
+            MAX_LIBRARY_DRAWS
+        )) {
+            const id = positionsStore.idAt(index);
+            if (id == null) continue;
+            const loaded = await LoadPosition(id);
+            if (!loaded) continue;
+            const generated = await GenerateEvaluationQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
+            if (!generated?.generated) {
+                last = generated?.refusal || last;
+                continue;
+            }
+            return { question: evaluationQuestion(generated, String(id), id, loaded), refusal: '' };
+        }
+        return { question: null, refusal: length === 0 ? 'noQuestion' : last };
+    }
+
+    const request = seedSource === 'board' ? { source: 'board', seed } : { source: 'pool' };
+    const generated = await GenerateEvaluationQuestion(/** @type {any} */ (request));
+    if (!generated?.generated) return { question: null, refusal: generated?.refusal || 'noQuestion' };
+    return { question: evaluationQuestion(generated, ''), refusal: generated.refusal || '' };
+}
+
+/**
+ * Les deux nombres d'une question d'Évaluation, dans UNE question : les chances
+ * de gain se saisissent, l'action de videau se choisit (`mode: 'chosen'`) et
+ * se juge contre le bouton que le moteur a rendu juste.
+ *
+ * @param {any} generated @param {string} key @param {number|null} positionId
+ * @param {any} [loaded] la position de la base, telle que chargée, quand la question en vient
+ */
+function evaluationQuestion(generated, key, positionId = null, loaded = null) {
+    return {
+        kind: 'evaluation',
+        key: key || `pool:${generated.plies}:${JSON.stringify(generated.position?.board?.points?.map((/** @type {any} */ p) => p.checkers * (p.color === 1 ? -1 : 1)))}`,
+        positionId,
+        position: positionId == null ? generated.position : loaded,
+        cubeVerdict: generated.cubeVerdict,
+        regime: generated.regime,
+        depth: generated.depth || '',
+        epc: generated.epc ?? null,
+        numbers: [
+            { type: 'eval.win', value: generated.winChance, tolerance: WIN_TOLERANCE, precision: 1 },
+            { type: 'eval.cube', value: 0, mode: 'chosen', answer: generated.cubeAnswer }
+        ]
+    };
+}
+
 /** Le nombre d'analyses lues avant de renoncer, pour UNE question de Décision.
  *  Borné, parce qu'une liste sans analyse en ferait sinon une lecture de toute
  *  la base : au bout, on refuse en le nommant, et « Réessayer » regarde les
@@ -357,6 +434,7 @@ async function buildDecisionQuestion() {
 async function buildQuestion(exercise, seedSource, seed) {
     if (exercise === 'scores') return { question: buildScoresQuestion(), refusal: '' };
     if (exercise === 'bearoff') return buildBearoffQuestion(seedSource, seed);
+    if (exercise === 'evaluation') return buildEvaluationQuestion(seedSource, seed);
     if (exercise === 'decision') return buildDecisionQuestion();
     return buildPipsQuestion(seedSource, seed);
 }

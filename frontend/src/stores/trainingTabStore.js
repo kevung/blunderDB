@@ -61,10 +61,15 @@ export const trainingPipOverrideStore = derived(trainingSessionStore, ($session)
  */
 export const trainingRefusalStore = writable('');
 
+/** Les exercices dont la réponse s'affiche dans le panneau Analyse. */
+const ANSWER_BEARING = new Set(['decision', 'evaluation']);
+
 /**
  * Le panneau Analyse doit-il être masqué ? Vrai pendant qu'une question de
- * Décision attend sa réponse (#323) : le panneau PORTE la réponse, et une
- * question dont la réponse est affichée à côté n'est pas une question. Le
+ * Décision (#323) ou d'Évaluation (#322) attend sa réponse : le panneau PORTE
+ * la réponse — l'analyse enregistrée d'une position tirée de la base dit ses
+ * chances de gain et son action de videau —, et une question dont la réponse
+ * est affichée à côté n'est pas une question. Le
  * verdict rendu, l'analyse redevient visible — c'est la correction.
  *
  * Un masque, comme celui du pipcount : rien n'est touché, tout revient quand
@@ -74,7 +79,7 @@ export const trainingRefusalStore = writable('');
  *
  * @type {import('svelte/store').Readable<boolean>}
  */
-export const trainingAnalysisHiddenStore = derived(trainingSessionStore, ($session) => !!$session && $session.exercise === 'decision' && !!$session.question && !$session.revealed);
+export const trainingAnalysisHiddenStore = derived(trainingSessionStore, ($session) => !!$session && ANSWER_BEARING.has($session.exercise) && !!$session.question && !$session.revealed);
 
 /**
  * Le plateau appartient-il à une question en ce moment ? Lu par le

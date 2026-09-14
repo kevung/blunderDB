@@ -1588,6 +1588,7 @@
             "scores": "スコア",
             "pips": "ピップ",
             "bearoff": "ベアオフ",
+            "evaluation": "評価",
             "decision": "判断"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "ギャモン価値 2",
             "gv4": "ギャモン価値 4",
             "decisionChecker": "チェッカープレイ",
-            "decisionCube": "キューブアクション"
+            "decisionCube": "キューブアクション",
+            "evalWin": "手番側の勝率 (%)"
         },
         "retry": "再試行",
         "validate": "判定",
         "tolerance": "許容誤差は半ピップです。",
+        "toleranceEvaluation": "許容誤差: 勝率は 5 ポイント。キューブアクションは完全一致で判定します。",
         "refusal": {
             "notBearoff": "この練習にはベアオフが必要です。両者ともすべての駒が自陣内にある局面です。",
             "tooFewCheckers": "この練習には各side 4〜15 個の駒が必要です。残りは上がっていること。",
@@ -1644,8 +1647,14 @@
             "unknownSource": "この練習にそのソースはありません。",
             "noLibrary": "この練習にはライブラリが必要です。解析済み局面のデータベースを開いてください。",
             "noAnalysis": "この練習には解析済みの局面が必要です。表示中のリストには見つかりませんでした。",
-            "decisionsExhausted": "表示中のリストの解析済み局面はすべて出題しました。"
-        }
+            "decisionsExhausted": "表示中のリストの解析済み局面はすべて出題しました。",
+            "notAGame": "この練習には対局中の局面が必要です。各サイド 15 個の駒があり、どちらも全駒を上がっていないこと。",
+            "notMoneyCubeDecision": "この練習にはマネーゲームのキューブ判断が必要です。ダイスなしで、キューブが中央か手番側にある局面です。表示中のリストには見つかりませんでした。",
+            "notEvaluable": "エンジンがこの局面を評価できませんでした。推定する代わりに出題しません。"
+        },
+        "truthExact": "正解: 両者のベアオフデータベース (厳密)。",
+        "truthEvaluated": "正解: gammonNet、{depth}。",
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

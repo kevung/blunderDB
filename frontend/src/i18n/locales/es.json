@@ -1588,6 +1588,7 @@
             "scores": "Marcadores",
             "pips": "Pips",
             "bearoff": "Bearoff",
+            "evaluation": "Evaluación",
             "decision": "Decisión"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "Valor del gammon 2",
             "gv4": "Valor del gammon 4",
             "decisionChecker": "Jugada de fichas",
-            "decisionCube": "Acción de cubo"
+            "decisionCube": "Acción de cubo",
+            "evalWin": "Probabilidad de ganar del jugador en turno (%)"
         },
         "retry": "Reintentar",
         "validate": "Comprobar",
         "tolerance": "Tolerancia: medio pip.",
+        "toleranceEvaluation": "Tolerancia: cinco puntos en la probabilidad de ganar; la acción de cubo se juzga exactamente.",
         "refusal": {
             "notBearoff": "Este ejercicio necesita un bearoff: ambos bandos enteramente en su casa.",
             "tooFewCheckers": "Este ejercicio necesita de 4 a 15 fichas por bando, el resto retiradas.",
@@ -1644,8 +1647,14 @@
             "unknownSource": "Este ejercicio no ofrece esa fuente.",
             "noLibrary": "Este ejercicio necesita una biblioteca: abra una base de posiciones analizadas.",
             "noAnalysis": "Este ejercicio necesita una posición analizada: no se ha encontrado ninguna en la lista recorrida.",
-            "decisionsExhausted": "Todas las posiciones analizadas de la lista recorrida ya se han planteado."
-        }
+            "decisionsExhausted": "Todas las posiciones analizadas de la lista recorrida ya se han planteado.",
+            "notAGame": "Este ejercicio necesita una posición de partida: quince fichas por bando, y ningún bando con todas sus fichas sacadas.",
+            "notMoneyCubeDecision": "Este ejercicio necesita una decisión de cubo en partida por dinero, sin dados y con el cubo en el centro o en manos del jugador en turno: no se encontró ninguna en la lista recorrida.",
+            "notEvaluable": "El motor no pudo evaluar esta posición: no se plantea en lugar de estimarse."
+        },
+        "truthExact": "Verdad: la base de bearoff de dos bandos, exacta.",
+        "truthEvaluated": "Verdad: gammonNet, {depth}.",
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

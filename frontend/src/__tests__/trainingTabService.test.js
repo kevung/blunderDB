@@ -22,7 +22,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GradeQuizCheckerMove: vi.fn(),
     GradeQuizCube: vi.fn()
 }));
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ GenerateBearoffQuestion: vi.fn(), LegalMoves: vi.fn(() => Promise.resolve([])) }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ GenerateBearoffQuestion: vi.fn(), GenerateEvaluationQuestion: vi.fn(), LegalMoves: vi.fn(() => Promise.resolve([])) }));
 // Le simulacre fait ce que fait le vrai : il bascule sur l'onglet Analyse. Sans
 // cet effet, un appel à `showImportedPosition` depuis une session ne se verrait
 // pas — et c'est lui qui cachait l'onglet Entraînement sous la question posée.
@@ -131,6 +131,7 @@ beforeEach(() => {
     db.LoadPosition.mockReset();
     db.LoadPosition.mockResolvedValue(null);
     app.GenerateBearoffQuestion.mockReset();
+    app.GenerateEvaluationQuestion.mockReset();
     db.LoadPositionIDsByFilters.mockReset();
     db.LoadPositionIDsByFilters.mockResolvedValue([]);
     vi.clearAllMocks();
@@ -573,6 +574,137 @@ describe('la tolérance dite en toutes lettres', () => {
         const [first] = current().question.numbers;
         expect(first.tolerance, 'la phrase dit « un demi-pion »').toBe(0.5);
         expect(fr.training.tolerance).toContain('demi-pion');
+    });
+});
+
+describe('une session d’Évaluation (#322)', () => {
+    /** Une question d'Évaluation telle que le moteur la rend.
+     *  @returns {any} */
+    function evaluation(extra = {}) {
+        return {
+            generated: true,
+            refusal: '',
+            source: 'pool',
+            plies: 4,
+            position: board(),
+            winChance: 71.3,
+            cubeVerdict: 'double_take',
+            cubeAnswer: 'dt',
+            regime: 'evaluated',
+            depth: '2-ply',
+            ...extra
+        };
+    }
+
+    test('une seule question porte les deux nombres : les chances saisies, le videau choisi', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation());
+        expect(await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' })).toBe(true);
+        expect(app.GenerateEvaluationQuestion.mock.calls[0][0]).toEqual({ source: 'pool' });
+        expect(app.GenerateBearoffQuestion, 'Évaluation a son propre générateur').not.toHaveBeenCalled();
+
+        const question = current().question;
+        expect(question.numbers).toEqual([
+            { type: 'eval.win', value: 71.3, tolerance: 5, precision: 1 },
+            { type: 'eval.cube', value: 0, mode: 'chosen', answer: 'dt' }
+        ]);
+        expect(question.cubeVerdict).toBe('double_take');
+    });
+
+    test('la source « plateau » envoie la position telle qu’elle est comme graine', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation());
+        await startTrainingSession({ exercise: 'evaluation', seedSource: 'board' });
+        const request = app.GenerateEvaluationQuestion.mock.calls[0][0];
+        expect(request.source).toBe('board');
+        expect(request.seed).toEqual(board());
+    });
+
+    test('la position engendrée arrive sur le plateau, sans identifiant, et l’onglet reste ouvert', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation());
+        positionStore.set(/** @type {any} */ ({ id: 42 }));
+        await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' });
+        expect(get(positionStore).board).toEqual(board().board);
+        expect(get(positionStore).id).toBe(0);
+        expect(get(activeTabStore)).toBe('training');
+        expect(importService.showImportedPosition).not.toHaveBeenCalled();
+    });
+
+    test('« Valider » juge les deux, et le journal les distingue par type', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation());
+        await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' });
+        setTrainingAnswer(0, '64');
+        setTrainingAnswer(1, 'dp');
+        revealQuestion();
+        expect(current().faults, '7,3 points de trop peu : hors tolérance ; « passe » au lieu de « prend »').toEqual([true, true]);
+        await finishTrainingSession();
+
+        const row = db.SaveTrainingSession.mock.calls[0][0];
+        const items = /** @type {any[]} */ (row.items);
+        expect(row.exercise).toBe('evaluation');
+        expect(items.map((i) => i.numberType)).toEqual(['eval.win', 'eval.cube']);
+        expect(items[0].hasDeviation).toBe(true);
+        expect(items[0].deviation).toBeCloseTo(-7.3, 9);
+        expect(items[1].hasDeviation, 'une action de videau est juste ou fausse, sans écart').toBe(false);
+        expect(row.deviations).toBe(1);
+    });
+
+    // Le verdict vient du moteur : l'interface ne compare aucune équité. À 95 %
+    // de chances, un « trop bon » rend « pas de double » juste — et c'est le
+    // bouton que le moteur a nommé, pas une règle de l'interface, qui le dit.
+    test('le bouton juste est celui que le moteur a nommé, pas un calcul de l’interface', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation({ winChance: 95, cubeVerdict: 'too_good', cubeAnswer: 'nd' }));
+        await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' });
+        setTrainingAnswer(0, '95');
+        setTrainingAnswer(1, 'nd');
+        revealQuestion();
+        expect(current().faults).toEqual([false, false]);
+    });
+
+    test('rien de choisi est une faute, et le panneau Analyse reste masqué jusqu’à la réponse', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation());
+        await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' });
+        expect(get(trainingAnalysisHiddenStore)).toBe(true);
+        setTrainingAnswer(0, '71');
+        revealQuestion();
+        expect(current().faults).toEqual([false, true]);
+        expect(get(trainingAnalysisHiddenStore)).toBe(false);
+    });
+
+    test('la source « base » tire jusqu’à une décision de videau d’argent, et laisse le moteur juger', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        db.LoadPosition.mockImplementation((/** @type {any} */ id) => Promise.resolve({ ...board(), id }));
+        app.GenerateEvaluationQuestion.mockResolvedValueOnce(/** @type {any} */ ({ generated: false, refusal: 'notMoneyCubeDecision' }))
+            .mockResolvedValueOnce(/** @type {any} */ ({ generated: false, refusal: 'notMoneyCubeDecision' }))
+            .mockResolvedValue(evaluation({ source: 'library' }));
+        const moves = recordIndexMoves();
+        expect(await startTrainingSession({ exercise: 'evaluation', seedSource: 'library' })).toBe(true);
+        moves.unsubscribe();
+        expect(app.GenerateEvaluationQuestion.mock.calls[0][0].source).toBe('library');
+        expect(app.GenerateEvaluationQuestion.mock.calls.length).toBeGreaterThanOrEqual(3);
+        // Tirée de la base : montrée par son index, jamais par l'import.
+        expect(moves.moves).toHaveLength(1);
+        expect(positionsStore.idAt(moves.moves[0])).toBe(current().question.positionId);
+    });
+
+    test('une base sans décision de videau d’argent refuse en le nommant, et rien ne démarre', async () => {
+        positionsStore.setIds([7, 8, 9]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateEvaluationQuestion.mockResolvedValue(/** @type {any} */ ({ generated: false, refusal: 'notMoneyCubeDecision' }));
+        expect(await startTrainingSession({ exercise: 'evaluation', seedSource: 'library' })).toBe(false);
+        expect(get(trainingSessionStore)).toBeNull();
+        expect(get(trainingRefusalStore)).toBe('notMoneyCubeDecision');
+    });
+
+    test('un plateau vide démarre sur le vivier ET dit pourquoi', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation({ refusal: 'emptyBoard' }));
+        expect(await startTrainingSession({ exercise: 'evaluation', seedSource: 'board' })).toBe(true);
+        expect(get(trainingRefusalStore)).toBe('emptyBoard');
+    });
+
+    test('la tolérance dite en toutes lettres est celle que l’on juge', async () => {
+        app.GenerateEvaluationQuestion.mockResolvedValue(evaluation());
+        await startTrainingSession({ exercise: 'evaluation', seedSource: 'pool' });
+        expect(current().question.numbers[0].tolerance, 'la phrase dit « cinq points »').toBe(5);
+        expect(fr.training.toleranceEvaluation).toContain('cinq points');
     });
 });
 

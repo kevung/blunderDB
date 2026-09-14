@@ -1588,6 +1588,7 @@
             "scores": "Scores",
             "pips": "Pions",
             "bearoff": "Bearoff",
+            "evaluation": "Évaluation",
             "decision": "Décision"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "Valeur du gammon 2",
             "gv4": "Valeur du gammon 4",
             "decisionChecker": "Coup de pions",
-            "decisionCube": "Action de videau"
+            "decisionCube": "Action de videau",
+            "evalWin": "Gain du joueur au trait (%)"
         },
         "retry": "Réessayer",
         "validate": "Valider",
         "tolerance": "Tolérance : un demi-pion.",
+        "toleranceEvaluation": "Tolérance : cinq points sur les chances de gain ; l'action de videau se juge exactement.",
         "refusal": {
             "notBearoff": "Cet exercice demande un bearoff : les deux camps entièrement dans leur jan.",
             "tooFewCheckers": "Cet exercice demande de 4 à 15 pions par camp, le reste sorti.",
@@ -1644,8 +1647,14 @@
             "unknownSource": "Cette source n'existe pas pour cet exercice.",
             "noLibrary": "Cet exercice demande une bibliothèque : ouvrez une base de positions analysées.",
             "noAnalysis": "Cet exercice demande une position analysée : aucune n'a été trouvée dans la liste parcourue.",
-            "decisionsExhausted": "Toutes les positions analysées de la liste parcourue ont été posées."
-        }
+            "decisionsExhausted": "Toutes les positions analysées de la liste parcourue ont été posées.",
+            "notAGame": "Cet exercice demande une position de partie : quinze pions par camp, et aucun camp sorti en entier.",
+            "notMoneyCubeDecision": "Cet exercice demande une décision de videau en partie d'argent, sans dés et videau au centre ou au joueur au trait : aucune n'a été trouvée dans la liste parcourue.",
+            "notEvaluable": "Le moteur n'a pas pu évaluer cette position : elle n'est pas posée plutôt qu'estimée."
+        },
+        "truthExact": "Vérité : la base de bearoff à deux camps, exacte.",
+        "truthEvaluated": "Vérité : gammonNet, {depth}.",
+        "epcShown": "EPC — {p1} : {a} · {p2} : {b}"
     },
     "explain": {
         "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",

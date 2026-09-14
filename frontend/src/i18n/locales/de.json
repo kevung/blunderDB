@@ -1588,6 +1588,7 @@
             "scores": "Stände",
             "pips": "Pips",
             "bearoff": "Bearoff",
+            "evaluation": "Bewertung",
             "decision": "Entscheidung"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "Gammonwert 2",
             "gv4": "Gammonwert 4",
             "decisionChecker": "Zug",
-            "decisionCube": "Doppelentscheidung"
+            "decisionCube": "Doppelentscheidung",
+            "evalWin": "Gewinnchance des Spielers am Zug (%)"
         },
         "retry": "Erneut versuchen",
         "validate": "Prüfen",
         "tolerance": "Toleranz: ein halber Punkt.",
+        "toleranceEvaluation": "Toleranz: fünf Punkte bei der Gewinnchance; die Doppelentscheidung wird exakt bewertet.",
         "refusal": {
             "notBearoff": "Diese Übung braucht ein Auswürfeln: beide Seiten vollständig im Heimfeld.",
             "tooFewCheckers": "Diese Übung braucht 4 bis 15 Steine je Seite, der Rest ausgewürfelt.",
@@ -1644,8 +1647,14 @@
             "unknownSource": "Diese Übung kennt diese Quelle nicht.",
             "noLibrary": "Diese Übung braucht eine Datenbank: öffnen Sie eine Datenbank mit analysierten Positionen.",
             "noAnalysis": "Diese Übung braucht eine analysierte Position: in der durchsuchten Liste wurde keine gefunden.",
-            "decisionsExhausted": "Alle analysierten Positionen der durchsuchten Liste wurden gestellt."
-        }
+            "decisionsExhausted": "Alle analysierten Positionen der durchsuchten Liste wurden gestellt.",
+            "notAGame": "Diese Übung braucht eine Spielposition: fünfzehn Steine je Seite, und keine Seite ganz abgetragen.",
+            "notMoneyCubeDecision": "Diese Übung braucht eine Doppelentscheidung im Geldspiel, ohne Würfel und mit dem Doppler in der Mitte oder beim Spieler am Zug: in der durchsuchten Liste wurde keine gefunden.",
+            "notEvaluable": "Die Engine konnte diese Position nicht bewerten: sie wird nicht gestellt statt geschätzt."
+        },
+        "truthExact": "Wahrheit: die zweiseitige Bearoff-Datenbank, exakt.",
+        "truthEvaluated": "Wahrheit: gammonNet, {depth}.",
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

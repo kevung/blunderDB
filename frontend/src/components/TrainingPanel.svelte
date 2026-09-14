@@ -9,6 +9,11 @@
     // JOUE sur le plateau, contrainte aux coups légaux, mais annuler un pas,
     // tout reprendre et valider sont ici.
     //
+    // Évaluation (#322) mêle les deux gestes dans une question : on tape les
+    // chances de gain, on choisit l'action de videau, et « Valider » juge les
+    // deux en une fois. Après la réponse, le panneau montre le verdict du
+    // moteur, d'où vient la vérité, et l'EPC quand la position en a un exact.
+    //
     // Au repos, le panneau montre le lanceur ET le bilan par exercice, que l'on
     // déplie en détail par type de nombre. Pas de graphique : une tendance en
     // chiffres suffit (règle 6).
@@ -17,7 +22,7 @@
     import { GetTrainingSeedSources, SaveTrainingSeedSource } from '../../wailsjs/go/main/Config.js';
     import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
-    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise, isChosenExercise } from '../services/trainingTab.js';
+    import { TRAINING_EXERCISES, TIME_LIMITS, summarizeExercise, canAskAnother, isEnteredExercise, isChosenExercise, isChosenNumber } from '../services/trainingTab.js';
     import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import {
         startTrainingSession,
@@ -96,6 +101,38 @@
 
     let elapsedSeconds = $derived(Math.floor($trainingElapsedStore / 1000));
 
+    // « Valider » ou « Révéler », pour y porter le focus une fois l'action de
+    // videau choisie : le geste suivant est de valider, et ENTRÉE doit y aller.
+    let revealButton = $state(/** @type {HTMLButtonElement | undefined} */ (undefined));
+    let questionBox = $state(/** @type {HTMLDivElement | undefined} */ (undefined));
+
+    /** Choisit une option d'un nombre choisi, sans rien juger.
+     *  @param {number} index @param {string} option */
+    function choose(index, option) {
+        setTrainingAnswer(index, option);
+        revealButton?.focus();
+    }
+
+    /**
+     * ENTRÉE dans un champ : valide, sauf s'il reste une option à choisir — le
+     * focus y va alors, plutôt que de juger une action de videau qu'on n'a pas
+     * encore donnée.
+     */
+    function validateFromField() {
+        const numbers = session?.question?.numbers ?? [];
+        const pending = numbers.findIndex((number, i) => isChosenNumber(number) && !session?.answers[i]);
+        if (pending >= 0) {
+            /** @type {HTMLButtonElement | null | undefined} */ (questionBox?.querySelector(`[data-testid="training-choice-${pending}-nd"]`))?.focus();
+            return;
+        }
+        revealQuestion();
+    }
+
+    /** L'EPC d'un camp, lu dans la forme que le moteur rend. @param {any} side */
+    function epcOf(side) {
+        return (side?.epc?.epc ?? 0).toFixed(1);
+    }
+
     onMount(() => {
         refreshTrainingJournal();
         GetTrainingSeedSources()
@@ -165,7 +202,7 @@
                 {/if}
             </div>
 
-            <div class="question">
+            <div class="question" bind:this={questionBox}>
                 {#if !question}
                     <!-- La question suivante n'a pas pu être bâtie. La session
                          reste ouverte : ce qui a été répondu est encore là, et
@@ -236,37 +273,84 @@
                         <tbody>
                             {#each question.numbers as number, i (number.type)}
                                 <tr>
-                                    <th scope="row"><label for="training-answer-{i}">{$t(numberTypeLabelKey(number.type))}</label></th>
-                                    <td>
-                                        <input
-                                            id="training-answer-{i}"
-                                            data-testid="training-answer-{i}"
-                                            type="text"
-                                            inputmode="decimal"
-                                            autocomplete="off"
-                                            class:fault={session.revealed && session.faults[i]}
-                                            disabled={session.revealed}
-                                            value={session.answers[i] ?? ''}
-                                            oninput={(event) => setTrainingAnswer(i, event.currentTarget.value)}
-                                            onkeydown={(event) => {
-                                                if (event.key === 'Enter') {
-                                                    event.preventDefault();
-                                                    revealQuestion();
-                                                }
-                                            }}
-                                        />
-                                    </td>
-                                    <td class="truth" data-testid="training-truth-{i}">
-                                        {#if session.revealed}
-                                            <span class="mark" aria-hidden="true">{session.faults[i] ? '×' : ''}</span><span class:fault={session.faults[i]}
-                                                >{number.value.toFixed(number.precision ?? 0)}</span
-                                            >
-                                        {/if}
-                                    </td>
+                                    {#if isChosenNumber(number)}
+                                        <!-- Un nombre CHOISI (l'action de videau d'Évaluation) :
+                                             trois boutons, qui retiennent le choix sans le juger.
+                                             « Valider » juge tout en une fois. -->
+                                        <th scope="row"><span id="training-answer-label-{i}">{$t(numberTypeLabelKey(number.type))}</span></th>
+                                        <td colspan="2">
+                                            <div class="choices" role="group" aria-labelledby="training-answer-label-{i}">
+                                                {#each CUBE_ACTIONS as action (action.id)}
+                                                    <button
+                                                        type="button"
+                                                        class:selected={session.answers[i] === action.id}
+                                                        class:fault={session.revealed && session.faults[i] && session.answers[i] === action.id}
+                                                        aria-pressed={session.answers[i] === action.id}
+                                                        disabled={session.revealed}
+                                                        data-testid="training-choice-{i}-{action.id}"
+                                                        onclick={() => choose(i, action.id)}
+                                                    >
+                                                        {$t(action.labelKey)}
+                                                    </button>
+                                                {/each}
+                                            </div>
+                                            {#if session.revealed}
+                                                <!-- La vérité est le verdict du MOTEUR, à quatre issues :
+                                                     « trop bon » se dit, même si le bouton juste est
+                                                     « pas de double ». -->
+                                                <p class="truth" data-testid="training-truth-{i}">
+                                                    <span class="mark" aria-hidden="true">{session.faults[i] ? '×' : ''}</span><span class:fault={session.faults[i]}
+                                                        >{$t(`cube.verdicts.${question.cubeVerdict}`)}</span
+                                                    >
+                                                </p>
+                                            {/if}
+                                        </td>
+                                    {:else}
+                                        <th scope="row"><label for="training-answer-{i}">{$t(numberTypeLabelKey(number.type))}</label></th>
+                                        <td>
+                                            <input
+                                                id="training-answer-{i}"
+                                                data-testid="training-answer-{i}"
+                                                type="text"
+                                                inputmode="decimal"
+                                                autocomplete="off"
+                                                class:fault={session.revealed && session.faults[i]}
+                                                disabled={session.revealed}
+                                                value={session.answers[i] ?? ''}
+                                                oninput={(event) => setTrainingAnswer(i, event.currentTarget.value)}
+                                                onkeydown={(event) => {
+                                                    if (event.key === 'Enter') {
+                                                        event.preventDefault();
+                                                        validateFromField();
+                                                    }
+                                                }}
+                                            />
+                                        </td>
+                                        <td class="truth" data-testid="training-truth-{i}">
+                                            {#if session.revealed}
+                                                <span class="mark" aria-hidden="true">{session.faults[i] ? '×' : ''}</span><span class:fault={session.faults[i]}
+                                                    >{number.value.toFixed(number.precision ?? 0)}</span
+                                                >
+                                            {/if}
+                                        </td>
+                                    {/if}
                                 </tr>
                             {/each}
                         </tbody>
                     </table>
+                    {#if session.revealed && question.kind === 'evaluation'}
+                        <!-- Montré après la réponse, jamais demandé : l'EPC a son
+                             propre exercice, et il n'existe ici que quand la position
+                             en a un exact (ADR-0027). -->
+                        {#if question.epc}
+                            <p class="hint" data-testid="training-epc">
+                                {$t('training.epcShown', { p1: $t('board.player1'), a: epcOf(question.epc.bottom), p2: $t('board.player2'), b: epcOf(question.epc.top) })}
+                            </p>
+                        {/if}
+                        <p class="hint" data-testid="training-truth-source">
+                            {question.regime === 'exact' ? $t('training.truthExact') : $t('training.truthEvaluated', { depth: question.depth })}
+                        </p>
+                    {/if}
                 {:else}
                     <table class="pips">
                         <tbody>
@@ -305,7 +389,7 @@
                      une phrase française n'est pas un demi-pion, c'est un
                      séparateur décimal anglais. `trainingTab.test.js` tient
                      la prose et `EPC_TOLERANCE` ensemble. -->
-                <p class="hint">{$t('training.tolerance')}</p>
+                <p class="hint">{$t(session.exercise === 'evaluation' ? 'training.toleranceEvaluation' : 'training.tolerance')}</p>
             {/if}
 
             <div class="actions">
@@ -313,7 +397,9 @@
                     <button type="button" data-testid="training-retry" onclick={() => retryTrainingQuestion()}>{$t('training.retry')}</button>
                 {:else if !session.revealed}
                     {#if !judgedByEngine}
-                        <button type="button" data-testid="training-reveal" onclick={() => revealQuestion()}>{entered ? $t('training.validate') : $t('training.reveal')}</button>
+                        <button type="button" data-testid="training-reveal" bind:this={revealButton} onclick={() => revealQuestion()}
+                            >{entered ? $t('training.validate') : $t('training.reveal')}</button
+                        >
                     {:else if question.prompt === 'checker'}
                         <button type="button" data-testid="training-validate-move" disabled={!$quizPlayCompleteStore} onclick={() => answerDecisionBoard()}>{$t('training.validate')}</button>
                     {/if}
@@ -551,6 +637,15 @@
     .entered .truth {
         padding-left: 0.6em;
         font-variant-numeric: tabular-nums;
+    }
+
+    .entered p.truth {
+        margin: 0.25em 0 0;
+        padding-left: 0;
+    }
+
+    .choices button.fault {
+        border-color: var(--color-danger);
     }
 
     /* La faute se dit par un glyphe que la couleur redouble, jamais par la

@@ -97,3 +97,14 @@ describe('train decision / train quiz', () => {
         expect(exerciseForCommand(word)).toBe('decision');
     });
 });
+
+// `train evaluation` démarre Évaluation (#322) : le mot traverse la ligne de
+// commande tel quel, et c'est `exerciseForCommand` qui le lit.
+test('`train evaluation` démarre Évaluation', async () => {
+    const { exerciseForCommand } = await import('../services/trainingTab.js');
+    const onTraining = vi.fn();
+    initCommandProcessor(/** @type {any} */ ({ onTraining }));
+    await processCommand('train evaluation');
+    expect(onTraining).toHaveBeenCalledWith('evaluation');
+    expect(exerciseForCommand('evaluation')).toBe('evaluation');
+});

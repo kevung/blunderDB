@@ -1588,6 +1588,7 @@
             "scores": "Scores",
             "pips": "Pips",
             "bearoff": "Bearoff",
+            "evaluation": "Evaluation",
             "decision": "Decision"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "Gammon value 2",
             "gv4": "Gammon value 4",
             "decisionChecker": "Checker play",
-            "decisionCube": "Cube action"
+            "decisionCube": "Cube action",
+            "evalWin": "Win chance of the player on roll (%)"
         },
         "retry": "Retry",
         "validate": "Check",
         "tolerance": "Tolerance: half a pip.",
+        "toleranceEvaluation": "Tolerance: five points on the win chance; the cube action is graded exactly.",
         "refusal": {
             "notBearoff": "This exercise needs a bear-off: both sides entirely in their home board.",
             "tooFewCheckers": "This exercise needs 4 to 15 chequers a side, the rest borne off.",
@@ -1644,8 +1647,14 @@
             "unknownSource": "This exercise does not offer that source.",
             "noLibrary": "This exercise needs a library: open a database of analysed positions.",
             "noAnalysis": "This exercise needs an analysed position: none was found in the browsed list.",
-            "decisionsExhausted": "Every analysed position of the browsed list has been asked."
-        }
+            "decisionsExhausted": "Every analysed position of the browsed list has been asked.",
+            "notAGame": "This exercise needs a game position: fifteen chequers a side, and neither side fully borne off.",
+            "notMoneyCubeDecision": "This exercise needs a money-game cube decision, with no dice and the cube centred or held by the player on roll: none was found in the browsed list.",
+            "notEvaluable": "The engine could not evaluate this position: it is not asked rather than estimated."
+        },
+        "truthExact": "Truth: the two-sided bear-off database, exact.",
+        "truthEvaluated": "Truth: gammonNet, {depth}.",
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

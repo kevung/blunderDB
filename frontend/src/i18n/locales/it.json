@@ -1588,6 +1588,7 @@
             "scores": "Punteggi",
             "pips": "Pip",
             "bearoff": "Bearoff",
+            "evaluation": "Valutazione",
             "decision": "Decisione"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "Valore del gammon 2",
             "gv4": "Valore del gammon 4",
             "decisionChecker": "Mossa di pedine",
-            "decisionCube": "Azione di cubo"
+            "decisionCube": "Azione di cubo",
+            "evalWin": "Probabilità di vittoria del giocatore di turno (%)"
         },
         "retry": "Riprovare",
         "validate": "Verifica",
         "tolerance": "Tolleranza: mezzo pip.",
+        "toleranceEvaluation": "Tolleranza: cinque punti sulla probabilità di vittoria; l'azione di cubo si giudica esattamente.",
         "refusal": {
             "notBearoff": "Questo esercizio richiede un bearoff: entrambi i lati interamente nella loro casa.",
             "tooFewCheckers": "Questo esercizio richiede da 4 a 15 pedine per lato, le altre uscite.",
@@ -1644,8 +1647,14 @@
             "unknownSource": "Questo esercizio non offre quella fonte.",
             "noLibrary": "Questo esercizio richiede una libreria: apri una base di posizioni analizzate.",
             "noAnalysis": "Questo esercizio richiede una posizione analizzata: nessuna è stata trovata nella lista sfogliata.",
-            "decisionsExhausted": "Tutte le posizioni analizzate della lista sfogliata sono state proposte."
-        }
+            "decisionsExhausted": "Tutte le posizioni analizzate della lista sfogliata sono state proposte.",
+            "notAGame": "Questo esercizio richiede una posizione di partita: quindici pedine per parte, e nessuna parte con tutte le pedine uscite.",
+            "notMoneyCubeDecision": "Questo esercizio richiede una decisione di cubo in partita a soldi, senza dadi e con il cubo al centro o al giocatore di turno: nessuna è stata trovata nell'elenco sfogliato.",
+            "notEvaluable": "Il motore non ha potuto valutare questa posizione: non viene proposta anziché stimata."
+        },
+        "truthExact": "Verità: la base di bearoff a due parti, esatta.",
+        "truthEvaluated": "Verità: gammonNet, {depth}.",
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
     },
     "explain": {
         "blots": "Perdi {cost} mMWC: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

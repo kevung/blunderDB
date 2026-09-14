@@ -54,9 +54,17 @@ function question(types) {
 }
 
 describe('le catalogue servi à ce jour', () => {
-    test('quatre exercices, et le mode de réponse est une propriété de chacun', () => {
-        expect(TRAINING_EXERCISES.map((e) => e.id)).toEqual(['scores', 'pips', 'bearoff', 'decision']);
-        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.mode]))).toEqual({ scores: 'declared', pips: 'declared', bearoff: 'entered', decision: 'chosen' });
+    test('cinq exercices, et le mode de réponse est une propriété de chacun', () => {
+        expect(TRAINING_EXERCISES.map((e) => e.id)).toEqual(['scores', 'pips', 'bearoff', 'evaluation', 'decision']);
+        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.mode]))).toEqual({ scores: 'declared', pips: 'declared', bearoff: 'entered', evaluation: 'entered', decision: 'chosen' });
+    });
+
+    test('Évaluation accepte les trois sources, démarre sur le vivier, et occupe le plateau', () => {
+        const evaluation = TRAINING_EXERCISES.find((e) => e.id === 'evaluation');
+        expect(evaluation?.sources).toEqual(['pool', 'board', 'library']);
+        expect(evaluation?.defaultSource).toBe('pool');
+        expect(evaluation?.surface).toBe('board');
+        expect(canAskAnother('evaluation', 'board'), 'le plateau est une graine, pas la question').toBe(true);
     });
 
     // ADR-0040 règle 3 : une question de Décision demande une analyse, que
@@ -70,7 +78,7 @@ describe('le catalogue servi à ce jour', () => {
     // La surface (ADR-0040 règle 2) : ce qui, hors de l'onglet, montre la
     // question. C'est elle qui dit si le plateau appartient à la question.
     test('seule la fiche de score n’a pas le plateau pour surface', () => {
-        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.surface]))).toEqual({ scores: 'none', pips: 'board', bearoff: 'board', decision: 'board' });
+        expect(Object.fromEntries(TRAINING_EXERCISES.map((e) => [e.id, e.surface]))).toEqual({ scores: 'none', pips: 'board', bearoff: 'board', evaluation: 'board', decision: 'board' });
     });
 
     test('Bearoff accepte les trois sources, et démarre sur le vivier', () => {
@@ -420,6 +428,79 @@ describe('le geste choisi (Décision)', () => {
         let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
         s = answerChosen(s, verdict({ errorMp: 42, best: 'vrai' }), 1000);
         expect(attachCorrection(s, '7', verdict({ best: 'autre' })).verdict?.best).toBe('vrai');
+    });
+});
+
+describe('une question mêlée : saisi et choisi (Évaluation, #322)', () => {
+    /** Les chances de gain, tolérance cinq points, et l'action de videau choisie. */
+    function evaluationQuestion(win = 62.4, answer = 'dt') {
+        return {
+            key: 'pool:4',
+            numbers: [
+                { type: 'eval.win', value: win, tolerance: 5, precision: 1 },
+                { type: 'eval.cube', value: 0, mode: /** @type {'chosen'} */ ('chosen'), answer }
+            ]
+        };
+    }
+
+    /** @param {string} win @param {string} cube */
+    function answeredEvaluation(win, cube) {
+        let s = askQuestion(newSession({ exercise: 'evaluation', seedSource: 'pool' }), evaluationQuestion(), 1000);
+        s = setAnswer(s, 0, win);
+        s = setAnswer(s, 1, cube);
+        return s;
+    }
+
+    test('« Valider » juge les deux en une fois : l’un contre la tolérance, l’autre exactement', () => {
+        const s = reveal(answeredEvaluation('66', 'dt'), 4000);
+        expect(s.revealed).toBe(true);
+        expect(s.elapsedMs).toBe(3000);
+        expect(s.faults).toEqual([false, false]);
+        expect(s.deviations[0]).toBeCloseTo(3.6, 9);
+        expect(s.deviations[1], 'une action de videau n’a pas d’écart').toBeNull();
+    });
+
+    test('le mauvais bouton est une faute, même quand les chances sont justes', () => {
+        expect(reveal(answeredEvaluation('62', 'dp'), 2000).faults).toEqual([false, true]);
+    });
+
+    test('rien de choisi est une faute, sans écart', () => {
+        const s = reveal(answeredEvaluation('62', ''), 2000);
+        expect(s.faults).toEqual([false, true]);
+        expect(s.deviations[1]).toBeNull();
+    });
+
+    test('rien ne se coche : c’est l’application qui juge les deux', () => {
+        const s = reveal(answeredEvaluation('90', 'nd'), 2000);
+        expect(toggleFault(s, 0).faults).toEqual(s.faults);
+        expect(toggleFault(s, 1).faults).toEqual(s.faults);
+    });
+
+    test('hors délai, les deux nombres sont faux et aucun écart n’entre dans la moyenne', () => {
+        const s = reveal(answeredEvaluation('62', 'dt'), 60000, { outOfTime: true });
+        expect(s.faults).toEqual([true, true]);
+        expect(s.deviations).toEqual([null, null]);
+    });
+
+    test('le journal compte les deux types à part, et l’écart seulement sur les chances', () => {
+        const row = finishedSession(recordQuestion(reveal(answeredEvaluation('58', 'dt'), 2000)));
+        expect(row.items).toEqual([
+            { numberType: 'eval.win', wrong: false, hasDeviation: true, deviation: expect.closeTo(-4.4, 9) },
+            { numberType: 'eval.cube', wrong: false, hasDeviation: false, deviation: 0 }
+        ]);
+        expect(row.deviations).toBe(1);
+        expect(row.pr, 'le PR n’existe que pour Décision').toBe(0);
+    });
+
+    test('la question occupe le plateau, et `train evaluation` la démarre', () => {
+        const s = askQuestion(newSession({ exercise: 'evaluation', seedSource: 'pool' }), evaluationQuestion(), 0);
+        expect(questionOnBoard(s)).toBe(true);
+        expect(exerciseForCommand('evaluation')).toBe('evaluation');
+        expect(exerciseForCommand('Evaluation')).toBe('evaluation');
+    });
+
+    test('Bearoff, lui, ne connaît pas de nombre choisi : un champ reste un champ', () => {
+        expect(bearoffQuestion().numbers.some((n) => 'mode' in n)).toBe(false);
     });
 });
 

@@ -15,7 +15,7 @@
  */
 
 /**
- * Les exercices servis à ce jour. Évaluation vient ensuite (#322).
+ * Les cinq exercices de l'ADR-0040 règle 3.
  *
  * `sources` est la liste des sources de graine que l'exercice accepte, dans
  * l'ordre où le lanceur les propose ; une liste vide veut dire que la question
@@ -43,6 +43,14 @@
  * le verdict contre l'analyse enregistrée. Sa seule source est la
  * bibliothèque : une question demande une analyse, et seule une position de la
  * base en porte une.
+ *
+ * Évaluation (#322) mêle les deux modes dans UNE question : les chances de
+ * gain se SAISISSENT (l'écart signé est la leçon), l'action de videau se
+ * CHOISIT (trois boutons, juste ou faux). Son `mode` est donc `entered` — c'est
+ * « Valider » qui juge, en une fois — et le nombre choisi le déclare lui-même
+ * (`TrainingNumber.mode`). Le mode reste une propriété de l'exercice : c'est
+ * lui qui dit lequel de ses nombres se tape et lequel se clique, jamais la
+ * session.
  */
 /**
  * @typedef {object} TrainingExercise
@@ -59,6 +67,7 @@ export const TRAINING_EXERCISES = Object.freeze([
     Object.freeze({ id: 'scores', mode: 'declared', sources: [], defaultSource: 'pool', surface: 'none' }),
     Object.freeze({ id: 'pips', mode: 'declared', sources: ['board', 'library'], defaultSource: 'board', surface: 'board', boardIsTheQuestion: true }),
     Object.freeze({ id: 'bearoff', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
+    Object.freeze({ id: 'evaluation', mode: 'entered', sources: ['pool', 'board', 'library'], defaultSource: 'pool', surface: 'board' }),
     Object.freeze({ id: 'decision', mode: 'chosen', sources: ['library'], defaultSource: 'library', surface: 'board' })
 ]);
 
@@ -104,6 +113,7 @@ const EXERCISE_WORDS = Object.freeze({
     pip: 'pips',
     bearoff: 'bearoff',
     epc: 'bearoff',
+    evaluation: 'evaluation',
     decision: 'decision',
     quiz: 'decision'
 });
@@ -159,6 +169,11 @@ export const TREND_WINDOW = 10;
  * @property {number} value la vérité
  * @property {number} [tolerance] en mode SAISI, l'écart toléré ; 0 sinon
  * @property {number} [precision] les décimales à l'affichage
+ * @property {'chosen'} [mode] dans un exercice SAISI, un nombre qui se CHOISIT
+ *   parmi quelques options et se juge exactement (l'action de videau
+ *   d'Évaluation) ; absent, il se saisit
+ * @property {string} [answer] pour un nombre choisi, l'option juste — rendue par
+ *   le moteur, jamais recalculée ici
  *
  * @typedef {object} TrainingQuestion
  * @property {string} key de quoi la question est faite (un score, un id)
@@ -169,6 +184,10 @@ export const TREND_WINDOW = 10;
  * @property {any} [position] la position à montrer sur le plateau, s'il y en a une
  * @property {'checker'|'cube'} [prompt] pour Décision, la forme de la décision que la position porte
  * @property {any[]} [plays] pour une décision de pions, les coups légaux que le moteur a rendus
+ * @property {string} [cubeVerdict] pour Évaluation, le verdict du moteur à quatre issues (`too_good` compris)
+ * @property {string} [regime] pour Évaluation, d'où vient la vérité : `exact` ou `evaluated`
+ * @property {string} [depth] pour Évaluation évaluée, la profondeur qui l'a produite
+ * @property {any} [epc] pour Évaluation, l'EPC des deux camps quand la position en a un exact — montré, jamais demandé
  *
  * @typedef {object} QuizVerdict le jugement du moteur (`engine.QuizVerdict`)
  * @property {boolean} legal
@@ -185,7 +204,7 @@ export const TREND_WINDOW = 10;
  * @property {boolean} revealed
  * @property {boolean} outOfTime
  * @property {boolean[]} faults
- * @property {string[]} answers en mode SAISI, ce qui a été tapé, nombre par nombre
+ * @property {string[]} answers en mode SAISI, ce qui a été tapé — ou l'option choisie — nombre par nombre
  * @property {(number|null)[]} deviations l'écart SIGNÉ de chaque nombre saisi, `null` quand il n'y en a pas
  * @property {string} questionError la raison pour laquelle aucune question n'est posée, ou ''
  * @property {number} startedAt
@@ -353,13 +372,26 @@ export function attachCorrection(session, key, correction) {
  * réponse qui n'a pas été donnée, et la compter zéro tirerait la moyenne vers
  * une justesse qui n'a pas eu lieu.
  *
+ * Un nombre CHOISI (l'action de videau d'Évaluation) se juge exactement contre
+ * l'option que le moteur a rendue juste : ni tolérance ni écart — une action
+ * de videau n'est pas « presque » prise. Rien de choisi est une faute.
+ *
  * @param {TrainingNumber} number @param {string} text
  */
 function judgeNumber(number, text) {
+    if (isChosenNumber(number)) return { wrong: !text || text !== number.answer, deviation: null };
     const value = parseFloat(String(text ?? '').replace(',', '.'));
     if (!Number.isFinite(value)) return { wrong: true, deviation: null };
     const deviation = value - number.value;
     return { wrong: Math.abs(deviation) > (number.tolerance ?? 0), deviation };
+}
+
+/**
+ * Ce nombre se choisit-il parmi des options, plutôt que se taper ?
+ * @param {TrainingNumber|null|undefined} number
+ */
+export function isChosenNumber(number) {
+    return number?.mode === 'chosen';
 }
 
 /**

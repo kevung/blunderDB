@@ -10,7 +10,7 @@
  * boutons de la session, pas la valeur d'un store.
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, cleanup } from '@testing-library/svelte';
+import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
@@ -302,5 +302,103 @@ describe('le focus après la réponse (défaut hérité de #321)', () => {
         trainingSessionStore.set(answerChosen(decisionSession('cube'), verdict({ notation: 'nd' }), 1000));
         await tick();
         expect(document.activeElement).toBe(panel.getByTestId('training-next'));
+    });
+});
+
+describe('une question d’Évaluation (#322)', () => {
+    /** @param {any} [extra] */
+    function evaluationQuestion(extra = {}) {
+        return {
+            kind: 'evaluation',
+            key: 'pool:4',
+            cubeVerdict: 'too_good',
+            regime: 'evaluated',
+            depth: '2-ply',
+            epc: null,
+            numbers: [
+                { type: 'eval.win', value: 93.4, tolerance: 5, precision: 1 },
+                { type: 'eval.cube', value: 0, mode: 'chosen', answer: 'nd' }
+            ],
+            ...extra
+        };
+    }
+
+    /** @param {any} [extra] */
+    function evaluationSession(extra) {
+        return askQuestion(newSession({ exercise: 'evaluation', seedSource: 'pool' }), /** @type {any} */ (evaluationQuestion(extra)), 0);
+    }
+
+    beforeEach(() => vi.clearAllMocks());
+
+    test('un champ pour les chances de gain et trois boutons pour le videau, dans la même question', () => {
+        trainingSessionStore.set(evaluationSession());
+        const panel = render(TrainingPanel);
+        expect(panel.getByLabelText(en.training.numbers.evalWin)).toBeTruthy();
+        for (const id of ['nd', 'dt', 'dp']) expect(panel.getByTestId(`training-choice-1-${id}`)).toBeTruthy();
+        expect(panel.queryByTestId('training-answer-1'), 'le videau ne se tape pas').toBeNull();
+        expect(panel.getByText(en.training.toleranceEvaluation)).toBeTruthy();
+        expect(panel.getByTestId('training-reveal').textContent).toContain(en.training.validate);
+    });
+
+    test('choisir retient l’option sans juger, et porte le focus sur « Valider »', async () => {
+        trainingSessionStore.set(evaluationSession());
+        const panel = render(TrainingPanel);
+        await fireEvent.click(panel.getByTestId('training-choice-1-dt'));
+        expect(service.setTrainingAnswer).toHaveBeenCalledWith(1, 'dt');
+        expect(service.revealQuestion).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(panel.getByTestId('training-reveal'));
+
+        trainingSessionStore.set(setAnswer(evaluationSession(), 1, 'dt'));
+        await tick();
+        expect(panel.getByTestId('training-choice-1-dt').getAttribute('aria-pressed')).toBe('true');
+        expect(panel.getByTestId('training-choice-1-nd').getAttribute('aria-pressed')).toBe('false');
+    });
+
+    test('ENTRÉE dans le champ va au videau tant qu’il n’est pas choisi, puis valide', async () => {
+        trainingSessionStore.set(setAnswer(evaluationSession(), 0, '90'));
+        const panel = render(TrainingPanel);
+        await fireEvent.keyDown(panel.getByTestId('training-answer-0'), { key: 'Enter' });
+        expect(service.revealQuestion, 'une action de videau pas encore donnée ne se juge pas').not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(panel.getByTestId('training-choice-1-nd'));
+
+        trainingSessionStore.set(setAnswer(setAnswer(evaluationSession(), 0, '90'), 1, 'nd'));
+        await tick();
+        await fireEvent.keyDown(panel.getByTestId('training-answer-0'), { key: 'Enter' });
+        expect(service.revealQuestion).toHaveBeenCalledTimes(1);
+    });
+
+    test('après « Valider » : le verdict du moteur à quatre issues, la faute marquée, d’où vient la vérité', () => {
+        let s = setAnswer(setAnswer(evaluationSession(), 0, '80'), 1, 'dp');
+        trainingSessionStore.set(reveal(s, 3000));
+        const panel = render(TrainingPanel);
+        const truth = panel.getByTestId('training-truth-1');
+        expect(truth.textContent).toContain(en.cube.verdicts.too_good);
+        expect(truth.textContent, 'la faute se dit par un glyphe').toContain('×');
+        expect(panel.getByTestId('training-truth-0').textContent).toContain('93.4');
+        expect(panel.getByTestId('training-choice-1-dp').hasAttribute('disabled')).toBe(true);
+        expect(panel.getByTestId('training-truth-source').textContent).toContain(en.training.truthEvaluated.replace('{depth}', '2-ply'));
+        expect(panel.queryByTestId('training-epc'), 'pas d’EPC exact, rien à montrer').toBeNull();
+    });
+
+    test('l’EPC n’apparaît qu’après la réponse, et seulement quand la position en a un exact', async () => {
+        const epc = { bottom: { epc: { epc: 12.34 } }, top: { epc: { epc: 9.87 } } };
+        const open = evaluationSession({ epc, regime: 'exact', depth: '' });
+        trainingSessionStore.set(open);
+        const panel = render(TrainingPanel);
+        expect(panel.queryByTestId('training-epc'), 'jamais demandé, jamais montré avant la réponse').toBeNull();
+
+        trainingSessionStore.set(reveal(setAnswer(setAnswer(open, 0, '93'), 1, 'nd'), 1000));
+        await tick();
+        const shown = panel.getByTestId('training-epc').textContent ?? '';
+        expect(shown).toContain('12.3');
+        expect(shown).toContain('9.9');
+        expect(panel.getByTestId('training-truth-source').textContent).toContain(en.training.truthExact);
+        expect(panel.getByTestId('training-truth-1').textContent).not.toContain('×');
+    });
+
+    test('le lanceur propose Évaluation et ses trois sources', async () => {
+        const panel = render(TrainingPanel);
+        await fireEvent.click(panel.getByTestId('training-exercise-evaluation'));
+        for (const source of ['pool', 'board', 'library']) expect(panel.getByTestId(`training-source-${source}`)).toBeTruthy();
     });
 });

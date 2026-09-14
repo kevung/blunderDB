@@ -1588,6 +1588,7 @@
             "scores": "Tilanteet",
             "pips": "Pipit",
             "bearoff": "Bearoff",
+            "evaluation": "Arviointi",
             "decision": "Päätös"
         },
         "sources": {
@@ -1631,11 +1632,13 @@
             "gv2": "Gammonin arvo 2",
             "gv4": "Gammonin arvo 4",
             "decisionChecker": "Nappulasiirto",
-            "decisionCube": "Kuutiopäätös"
+            "decisionCube": "Kuutiopäätös",
+            "evalWin": "Vuorossa olevan pelaajan voittomahdollisuus (%)"
         },
         "retry": "Yritä uudelleen",
         "validate": "Tarkista",
         "tolerance": "Toleranssi: puoli pippiä.",
+        "toleranceEvaluation": "Toleranssi: viisi prosenttiyksikköä voittomahdollisuudessa; kuutiopäätös arvioidaan tarkasti.",
         "refusal": {
             "notBearoff": "Tämä harjoitus vaatii ulosvientiaseman: molemmat osapuolet kokonaan omalla kotialueellaan.",
             "tooFewCheckers": "Tämä harjoitus vaatii 4–15 nappulaa puolta kohden, loput ulos vietyinä.",
@@ -1644,8 +1647,14 @@
             "unknownSource": "Tämä harjoitus ei tarjoa tuota lähdettä.",
             "noLibrary": "Tämä harjoitus vaatii kirjaston: avaa tietokanta, jossa on analysoituja asemia.",
             "noAnalysis": "Tämä harjoitus vaatii analysoidun aseman: selattavasta luettelosta ei löytynyt yhtään.",
-            "decisionsExhausted": "Kaikki selattavan luettelon analysoidut asemat on jo kysytty."
-        }
+            "decisionsExhausted": "Kaikki selattavan luettelon analysoidut asemat on jo kysytty.",
+            "notAGame": "Tämä harjoitus vaatii pelitilanteen: viisitoista nappulaa kummallakin puolella, eikä kumpikaan puoli ole pelannut kaikkia nappuloitaan pois.",
+            "notMoneyCubeDecision": "Tämä harjoitus vaatii rahapelin kuutiopäätöksen ilman noppia, kuutio keskellä tai vuorossa olevalla pelaajalla: selattavasta luettelosta ei löytynyt yhtään.",
+            "notEvaluable": "Moottori ei pystynyt arvioimaan tätä asemaa: sitä ei kysytä sen sijaan, että se arvioitaisiin karkeasti."
+        },
+        "truthExact": "Totuus: kaksipuolinen bearoff-tietokanta, tarkka.",
+        "truthEvaluated": "Totuus: gammonNet, {depth}.",
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

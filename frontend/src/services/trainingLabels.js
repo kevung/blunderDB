@@ -32,7 +32,13 @@ const LABEL_KEYS = Object.freeze({
     // position porte. Deux types et non un, parce que le journal les compte à
     // part — on peut bien jouer les pions et mal lire le videau.
     'decision.checker': 'training.numbers.decisionChecker',
-    'decision.cube': 'training.numbers.decisionCube'
+    'decision.cube': 'training.numbers.decisionCube',
+    // Évaluation (#322) : les chances de gain du joueur au trait, et l'action
+    // de videau. Celle-ci s'appelle comme celle de Décision — un concept, un
+    // terme — mais le journal la compte à part : lire le videau d'une position
+    // qu'on estime n'est pas juger celui d'une position analysée.
+    'eval.win': 'training.numbers.evalWin',
+    'eval.cube': 'training.numbers.decisionCube'
 });
 
 /**
