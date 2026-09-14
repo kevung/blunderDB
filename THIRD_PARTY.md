@@ -42,9 +42,9 @@ directory of each one).
 | [github.com/kevung/xgparser](https://github.com/kevung/xgparser) | v1.4.0 | MIT | (c) 2025 Kévin Unger; the `.xg` format was first documented publicly by Michael Petch in `xgdatatools` | eXtreme Gammon `.xg` / `.xgp` import |
 | [github.com/kevung/gnubgparser](https://github.com/kevung/gnubgparser) | v1.6.0 | MIT | (c) 2025 Kévin Unger | GNU Backgammon `.sgf` and Jellyfish `.mat` import |
 | [github.com/kevung/bgfparser](https://github.com/kevung/bgfparser) | v1.2.0 | MIT | (c) 2025 bgfparser contributors | BGBlitz `.bgf` import |
-| [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | v1.49.1 | BSD-3-Clause | (c) 2017 The Sqlite Authors | Pure-Go SQLite driver (desktop, CLI, `serve` with the SQLite backend); pulls in `modernc.org/libc`, `mathutil`, `memory` (BSD-3-Clause) |
-| [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | v5.9.2 | MIT | (c) 2013-2021 Jack Christensen | PostgreSQL driver of the `serve` daemon (with `pgpassfile`, `pgservicefile`, `puddle`, MIT) |
-| [github.com/wailsapp/wails/v2](https://github.com/wailsapp/wails) | v2.10.1 | MIT | (c) 2018-Present Lea Anthony | Desktop window and Go↔JS bridge (not linked into `cmd/serve`) |
+| [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | v1.58.0 | BSD-3-Clause | (c) 2017 The Sqlite Authors | Pure-Go SQLite driver (desktop, CLI, `serve` with the SQLite backend); pulls in `modernc.org/libc`, `mathutil`, `memory` (BSD-3-Clause) |
+| [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | v5.11.0 | MIT | (c) 2013-2021 Jack Christensen | PostgreSQL driver of the `serve` daemon (with `pgpassfile`, `pgservicefile`, `puddle`, MIT) |
+| [github.com/wailsapp/wails/v2](https://github.com/wailsapp/wails) | v2.10.2 | MIT | (c) 2018-Present Lea Anthony | Desktop window and Go↔JS bridge (not linked into `cmd/serve`) |
 | [github.com/open-spaced-repetition/go-fsrs/v3](https://github.com/open-spaced-repetition/go-fsrs) | v3.3.1 | MIT | (c) 2022 open-spaced-repetition | FSRS scheduling of the Anki-style cards |
 | [github.com/adrg/xdg](https://github.com/adrg/xdg) | v0.5.3 | MIT | (c) 2014 Adrian-George Bostan | XDG config paths |
 | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto), `x/sys`, `x/text` | see `go.mod` | BSD-3-Clause | The Go Authors | Signed watermarks and encrypted export containers, OS calls, text collation |
@@ -62,7 +62,7 @@ From `frontend/package.json`; the built bundle is embedded in the binary.
 | [Svelte](https://svelte.dev) | 5 | MIT | (c) 2016-2025 Svelte Contributors | UI framework (compiled in; the compiler itself does not ship) |
 | [two.js](https://two.js.org) | 0.8 | MIT | (c) 2012-2025 @jonobr1 | Board rendering |
 | [Chart.js](https://www.chartjs.org) | 4 | MIT | (c) 2014-2024 Chart.js Contributors | Statistics charts |
-| [driver.js](https://driverjs.com) | 1.4 | MIT (`license` field of its `package.json`; text in [its repository](https://github.com/kamranahmedse/driver.js)) | Kamran Ahmed | Guided tour |
+| [driver.js](https://driverjs.com) | 1.8 | MIT (`license` field of its `package.json`; text in [its repository](https://github.com/kamranahmedse/driver.js)) | Kamran Ahmed | Guided tour |
 | [Vite](https://vite.dev) | 7 | MIT | VoidZero Inc. and Vite contributors | Build tool only; nothing of it ships |
 
 ## 4. Fonts
