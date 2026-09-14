@@ -2641,7 +2641,7 @@ Le lanceur
 
 Trois choix, puis « Démarrer » :
 
-* l'**exercice** — *Scores*, *Pions*, *Bearoff* ou *Décision* ;
+* l'**exercice** — *Scores*, *Pions*, *Bearoff*, *Évaluation* ou *Décision* ;
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
   (des formes canoniques de l'exercice), *Plateau* (la position telle qu'elle
   est) ou *Base* (une position de la liste parcourue) ;
@@ -2649,13 +2649,13 @@ Trois choix, puis « Démarrer » :
 
 La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
 
-``train scores``, ``train pips``, ``train bearoff`` et ``train decision``
-ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``
+``train scores``, ``train pips``, ``train bearoff``, ``train evaluation`` et
+``train decision`` ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``
 sont des synonymes de ``train scores``, ``train epc`` de ``train bearoff``,
 ``train quiz`` de ``train decision``.
 
-Les quatre exercices
-~~~~~~~~~~~~~~~~~~~~
+Les cinq exercices
+~~~~~~~~~~~~~~~~~~
 
 **Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et
 affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — et
@@ -2706,6 +2706,29 @@ L'exercice a besoin de la table de bearoff à un camp ; tant qu'elle s'engendre
 en arrière-plan (voir :ref:`configuration`), il le dit plutôt que de poser une
 question sans réponse.
 
+**Évaluation** demande ce que vaut une position : les **chances de gain du
+joueur au trait**, en pourcentage, et l'**action de videau** — *Pas de double*,
+*Double, prend* ou *Double, passe*. Ce sont les deux nombres que montre le
+panneau Eval, demandés avant d'être montrés. Le domaine est **toute position** :
+une course comme une position de contact, en **partie d'argent**.
+
+Comme pour Bearoff, la question est **engendrée** : la graine vient du *Vivier*
+(une position où le contact vient de se rompre, puis zéro à dix plis joués par
+le moteur), du *Plateau* (la position affichée, puis un à quatre plis ; la
+question se pose en partie d'argent, videau au centre, quel que soit le score de
+la graine) ou de la *Base* (une position de la liste parcourue, telle quelle).
+Une position de la base ne convient que si elle est une décision de videau en
+partie d'argent — sans dés, le videau au centre ou au joueur au trait — ; le
+tirage passe sinon à la suivante, et quand aucune ne convient, l'exercice le
+dit. Un plateau qui n'est pas une position de partie — pas quinze pions par
+camp, ou une partie finie — est **refusé en le disant** ; un plateau vide fait
+venir la question du vivier.
+
+La vérité est celle du moteur : la base de bearoff à deux camps quand la
+position y figure, gammonNet à sa profondeur canonique partout ailleurs, et le
+panneau dit laquelle a répondu. Rien n'est estimé : une position que le moteur
+n'évalue pas n'est pas posée.
+
 **Décision** pose une décision **déjà analysée** : une position de la liste
 parcourue — sa seule source —, avec la décision qu'elle porte, coup de pions ou
 action de videau, et c'est l'analyse enregistrée qui juge. Une position sans
@@ -2714,8 +2737,8 @@ session ; quand la liste est épuisée, le panneau le dit. Sans base ouverte, ou
 sans position analysée dans la liste, l'exercice **refuse en le disant** et rien
 ne démarre.
 
-Tant que la question attend sa réponse, le panneau Analyse est masqué : il
-porte la réponse.
+Tant qu'une question d'*Évaluation* ou de *Décision* attend sa réponse, le
+panneau Analyse est masqué : il porte la réponse.
 
 Répondre
 ~~~~~~~~
@@ -2737,6 +2760,18 @@ demi-pion près — la granularité à laquelle l'EPC change une décision de co
 qui juge, il n'y a rien à cocher. L'écart est enregistré **avec son signe** :
 surestimer n'est pas sous-estimer, et c'est le bilan qui en fait une moyenne.
 
+*Évaluation* mêle les deux gestes dans une même question. Les chances de gain
+se **saisissent** et se jugent à cinq points près, écart signé compris ;
+l'action de videau se **choisit** — le clic retient le bouton sans rien juger,
+et « Valider » juge les deux en une fois. Le videau n'a pas de tolérance : seul
+le bouton que le verdict du moteur rend juste est juste, et une position *trop
+bonne pour doubler* se répond *Pas de double*. *Entrée* dans le champ mène à
+l'action de videau tant qu'elle n'est pas choisie, puis valide. Après la
+réponse, le panneau affiche la vérité — le verdict en quatre issues —, sa
+source, et l'**EPC des deux camps** quand la position en a un exact ; l'EPC
+n'est jamais demandé ici, il a son propre exercice. Le journal compte les deux
+nombres à part : on peut bien estimer une position et mal lire son videau.
+
 *Décision* se **choisit**. Sur une décision de pions, **jouez le coup sur le
 damier** : cliquez le point de départ puis la destination, ou glissez le pion,
 autant de fois qu'il y a de dés. Le damier n'offre que ce qui est jouable — un
@@ -2755,7 +2790,7 @@ l'analyse dit qu'il coûte, en millipoints. Seul un coup classé et sans coût e
 juste ; le meilleur coup s'affiche dans tous les cas.
 
 Le chronomètre part à l'affichage de la question et s'arrête à « Révéler », à
-« Valider » ou au clic d'une action de videau ; la question suivante se prépare pendant que vous répondez, elle
+« Valider » ou au clic d'une action de videau de *Décision* ; la question suivante se prépare pendant que vous répondez, elle
 n'est donc jamais chronométrée avec la vôtre. Cocher ses fautes n'est pas
 chronométré non plus.
 Avec une limite, une question restée
