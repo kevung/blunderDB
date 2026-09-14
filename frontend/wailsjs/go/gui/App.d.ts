@@ -4,6 +4,7 @@ import {gui} from '../models';
 import {domain} from '../models';
 import {gammonnet} from '../models';
 import {race} from '../models';
+import {training} from '../models';
 
 export function BearoffPlan(arg1:number,arg2:number):Promise<gui.BearoffPlan>;
 
@@ -42,6 +43,8 @@ export function FolderWatchStatus():Promise<gui.WatchStatus>;
 export function GenerateBearoffQuestion(arg1:race.BearoffRequest):Promise<race.BearoffQuestion>;
 
 export function GenerateBearoffTable(arg1:string,arg2:number,arg3:number,arg4:number):Promise<void>;
+
+export function GenerateEvaluationQuestion(arg1:training.EvaluationRequest):Promise<training.EvaluationQuestion>;
 
 export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
 

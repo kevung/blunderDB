@@ -39,6 +39,12 @@
 //
 // # The two subpackages are the two evaluators
 //
+// (Three more stand beside them and evaluate nothing of their own:
+// engine/bearoffgen generates the tables race reads, ADR-0027; engine/training
+// makes the Training questions that need gammonNet — a seed played out by the
+// engine, and its truth — and lives above both evaluators because race may not
+// import gammonnet, ADR-0041.)
+//
 //	engine/race/      exact and estimated race analysis: the two-sided
 //	                  bearoff reader, the calibrated win-probability
 //	                  correction outside the table, and money cube verdicts

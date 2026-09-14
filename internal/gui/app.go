@@ -30,6 +30,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/applog"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/training"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
@@ -78,6 +79,15 @@ type App struct {
 	// drains what is in flight on purpose), so shutdown, which closes the
 	// database next, has to wait for this rather than merely ask.
 	gnBatchDone chan struct{}
+
+	// trainingGen makes the Evaluation exercise's questions
+	// (training_generate.go, #322): two searchers built once, on the first
+	// question, and reused — building one costs megabytes. trainingErr keeps
+	// why it could not be built, so every later question refuses by name
+	// instead of retrying the same failure.
+	trainingOnce sync.Once
+	trainingGen  *training.Generator
+	trainingErr  error
 
 	// startupFilePath is the database file the OS handed this process on the
 	// command line — a .desktop's Exec=blunderDB %f, a Windows/macOS file

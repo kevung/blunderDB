@@ -78,6 +78,10 @@ export function GenerateBearoffTable(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['GenerateBearoffTable'](arg1, arg2, arg3, arg4);
 }
 
+export function GenerateEvaluationQuestion(arg1) {
+  return window['go']['gui']['App']['GenerateEvaluationQuestion'](arg1);
+}
+
 export function GetIssuerIdentity() {
   return window['go']['gui']['App']['GetIssuerIdentity']();
 }

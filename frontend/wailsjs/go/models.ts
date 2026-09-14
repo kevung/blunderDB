@@ -4796,6 +4796,93 @@ export namespace tournoi {
 
 }
 
+export namespace training {
+	
+	export class EvaluationQuestion {
+	    generated: boolean;
+	    refusal?: string;
+	    source: string;
+	    plies: number;
+	    position: domain.Position;
+	    winChance: number;
+	    cubeVerdict: string;
+	    cubeAnswer: string;
+	    regime: string;
+	    depth?: string;
+	    epc?: race.EPC;
+	
+	    static createFrom(source: any = {}) {
+	        return new EvaluationQuestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.generated = source["generated"];
+	        this.refusal = source["refusal"];
+	        this.source = source["source"];
+	        this.plies = source["plies"];
+	        this.position = this.convertValues(source["position"], domain.Position);
+	        this.winChance = source["winChance"];
+	        this.cubeVerdict = source["cubeVerdict"];
+	        this.cubeAnswer = source["cubeAnswer"];
+	        this.regime = source["regime"];
+	        this.depth = source["depth"];
+	        this.epc = this.convertValues(source["epc"], race.EPC);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class EvaluationRequest {
+	    source: string;
+	    seed?: domain.Position;
+	
+	    static createFrom(source: any = {}) {
+	        return new EvaluationRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.source = source["source"];
+	        this.seed = this.convertValues(source["seed"], domain.Position);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace transcript {
 	
 	export class Action {

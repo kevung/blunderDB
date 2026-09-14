@@ -30,6 +30,7 @@ var boundAppMethods = []string{
 	"DeleteFile",
 	"EnsureBearoffTables",
 	"GenerateBearoffQuestion",
+	"GenerateEvaluationQuestion",
 	"GenerateBearoffTable",
 	"CancelBearoffGeneration",
 	"PauseBearoffGeneration",
