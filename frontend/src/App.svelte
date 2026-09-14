@@ -323,8 +323,8 @@
     // l'ouvre ET démarre : on tape `train scores` pour s'entraîner, pas pour
     // arriver devant un lanceur. Les alias sont ceux que les doigts ont
     // appris — `tp` et `takepoint` pour la fiche de score, comme les tables du
-    // même nom ; `epc` et `quiz` restent servis par la bande, le temps que les
-    // tranches suivantes les déplacent.
+    // même nom. `quiz` reste servi par la bande, le temps que #323 le déplace.
+    //
     // `epc` mène à `bearoff` : l'exercice n'a pas disparu de la bande, il a
     // changé de nom en changeant de lieu — on regarde un bearoff, on répond un
     // EPC (ADR-0040 règle 3). Une commande qu'on tapait hier ne doit pas

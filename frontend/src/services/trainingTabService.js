@@ -1,13 +1,14 @@
 import { get } from 'svelte/store';
-import { LoadPosition, SaveTrainingSession, LoadTrainingSessions, LoadTrainingNumberStats } from '../../wailsjs/go/database/Database.js';
+import { LoadPosition, LoadPositionIDsByFilters, SaveTrainingSession, LoadTrainingSessions, LoadTrainingNumberStats } from '../../wailsjs/go/database/Database.js';
 import { GenerateBearoffQuestion } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
+import { currentPositionIndexStore } from '../stores/uiStore.js';
+import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
 import { TRAINING_EXERCISES, newSession, askQuestion, reveal, toggleFault, setAnswer, recordQuestion, failNextQuestion, finishedSession, canAskAnother } from './trainingTab.js';
 import { UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from './scoreCard.js';
 import { computePipCount } from '../utils/boardGeometry.js';
-import { showImportedPosition } from './importService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
@@ -96,7 +97,7 @@ async function buildPipsQuestion(seedSource, seed) {
         if (id == null) return { question: null, refusal: 'noQuestion' };
         const position = await LoadPosition(id);
         if (!position) return { question: null, refusal: 'noQuestion' };
-        return { question: { kind: 'pips', key: String(id), positionId: id, numbers: pipNumbers(position) }, refusal: '' };
+        return { question: { kind: 'pips', key: String(id), positionId: id, position, numbers: pipNumbers(position) }, refusal: '' };
     }
     if (!seed?.board?.points) return { question: null, refusal: 'noQuestion' };
     return { question: { kind: 'pips', key: 'board', positionId: null, numbers: pipNumbers(seed) }, refusal: '' };
@@ -112,13 +113,13 @@ const EPC_TOLERANCE = 0.5;
 const MAX_LIBRARY_DRAWS = 30;
 
 /**
- * Tire `count` index DISTINCTS dans [0, length[. Sans remise : retomber deux
+ * Tire `count` éléments DISTINCTS de `candidates`. Sans remise : retomber deux
  * fois sur la même position ferait passer le budget de tirages sans avoir
  * regardé de candidate de plus.
- * @param {number} length @param {number} count
+ * @param {number[]} candidates @param {number} count
  */
-function drawDistinctIndices(length, count) {
-    const pool = Array.from({ length }, (_, i) => i);
+function drawDistinct(candidates, count) {
+    const pool = candidates.slice();
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -153,18 +154,20 @@ function epcNumbers(epc) {
 async function buildBearoffQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
+        const phased = await bearoffIndices();
+        const candidates = phased.length > 0 ? phased : Array.from({ length }, (_, i) => i);
         let last = 'notBearoff';
-        for (const index of drawDistinctIndices(length, MAX_LIBRARY_DRAWS)) {
+        for (const index of drawDistinct(candidates, MAX_LIBRARY_DRAWS)) {
             const id = positionsStore.idAt(index);
             if (id == null) continue;
-            const seed = await LoadPosition(id);
-            if (!seed) continue;
-            const generated = await GenerateBearoffQuestion({ source: 'library', seed });
+            const loaded = await LoadPosition(id);
+            if (!loaded) continue;
+            const generated = await GenerateBearoffQuestion({ source: 'library', seed: loaded });
             if (!generated?.generated) {
                 last = generated?.refusal || last;
                 continue;
             }
-            return { question: bearoffQuestion(generated, String(id), id), refusal: '' };
+            return { question: bearoffQuestion(generated, String(id), id, loaded), refusal: '' };
         }
         return { question: null, refusal: length === 0 ? 'noQuestion' : last };
     }
@@ -177,20 +180,54 @@ async function buildBearoffQuestion(seedSource, seed) {
 
 /**
  * @param {any} generated @param {string} key @param {number|null} positionId
+ * @param {any} [loaded] la position de la base, telle que chargée, quand la question en vient
  */
-function bearoffQuestion(generated, key, positionId = null) {
+function bearoffQuestion(generated, key, positionId = null, loaded = null) {
     return {
         kind: 'bearoff',
         key: key || `pool:${generated.plies}:${JSON.stringify(generated.position.board.bearoff)}`,
         positionId,
         // La position engendrée n'est dans aucune base : elle est portée par la
         // question. Une question TIRÉE de la base, elle, en a une — et c'est
-        // celle-là qu'on montre, par son identifiant : deux écrivains sur le
-        // plateau, l'un asynchrone et l'autre non, laisseraient l'identifiant
-        // final dépendre de l'ordre d'arrivée.
-        position: positionId == null ? generated.position : null,
+        // celle-là qu'on montre, par son identifiant (voir `showQuestion`) ; sa
+        // copie chargée ne sert que si la liste parcourue ne la contient plus.
+        position: positionId == null ? generated.position : loaded,
         numbers: epcNumbers(generated.epc)
     };
+}
+
+/**
+ * Les index, dans la liste parcourue, des positions que la base classe en
+ * phase `bearoff` — calculés UNE fois par session (voir `bearoffPhaseIndices`).
+ *
+ * Un tirage à l'aveugle dans la liste refusait une base qui a des bearoffs :
+ * sur la base de démonstration, 30 positions du domaine sur 757, et trente
+ * tirages sans remise n'en trouvent aucune une fois sur trois. La phase est
+ * une étiquette DÉRIVÉE que la base a déjà (ADR-0035) ; elle restreint le
+ * tirage, elle ne juge pas : le domaine de l'exercice — 4 à 15 pions — reste
+ * écrit à un seul endroit, en Go, et c'est le moteur qui refuse.
+ *
+ * Une liste vide veut dire « rien de classé » — une base aux phases jamais
+ * calculées, ou une liste parcourue sans bearoff — et le tirage retombe alors
+ * sur la liste entière, comme avant.
+ *
+ * @returns {Promise<number[]>}
+ */
+function bearoffIndices() {
+    if (!bearoffPhaseIndices) {
+        bearoffPhaseIndices = (async () => {
+            /** @type {number[]} */
+            let ids = [];
+            try {
+                const filters = /** @type {any} */ ({ filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' });
+                ids = (await LoadPositionIDsByFilters(filters)) || [];
+            } catch (error) {
+                logger.error('could not narrow the training draw to bear-offs:', error);
+            }
+            return ids.map((id) => positionsStore.indexOf(id)).filter((index) => index >= 0);
+        })();
+    }
+    return bearoffPhaseIndices;
 }
 
 // ── Fabriquer n'est pas montrer ──────────────────────────────────────────────
@@ -221,11 +258,24 @@ async function buildQuestion(exercise, seedSource, seed) {
  * Amène la question sur le plateau. Une question tirée de la base y va par son
  * identifiant ; une position engendrée n'en a pas, et rien d'autre ne peut
  * l'y mettre. Une question de Scores ne touche pas au plateau du tout.
+ *
+ * Par l'INDEX de la liste parcourue, et jamais par `showImportedPosition` : ce
+ * geste-là est celui d'un import, il bascule sur l'onglet Analyse pour montrer
+ * ce qu'on vient d'apporter — et sous une session, il cachait l'onglet où l'on
+ * répond (ADR-0040 règle 1). La position a été tirée de la liste, elle y est
+ * donc ; si la liste a changé entre-temps, sa copie chargée prend le relais.
  * @param {any} question
  */
 async function showQuestion(question) {
     if (question?.positionId != null) {
-        await showImportedPosition(question.positionId);
+        const index = positionsStore.indexOf(question.positionId);
+        if (index >= 0) {
+            // -1 d'abord : pointer l'index déjà courant ne rechargerait rien.
+            currentPositionIndexStore.set(-1);
+            currentPositionIndexStore.set(index);
+            return;
+        }
+        if (question.position) positionStore.set({ ...question.position });
         return;
     }
     if (question?.position) positionStore.set({ ...question.position, id: 0 });
@@ -257,6 +307,16 @@ let prefetched = null;
  * @type {any}
  */
 let boardSeed = null;
+
+/**
+ * La restriction du tirage « base » de Bearoff aux positions en phase bearoff,
+ * en cours de calcul ou calculée. Par session : la liste parcourue est celle du
+ * démarrage, et relire la base à chaque question paierait une recherche par
+ * question pour la même réponse.
+ *
+ * @type {Promise<number[]>|null}
+ */
+let bearoffPhaseIndices = null;
 
 /** Lance la fabrication de la question suivante, sans l'attendre.
  *  @param {string} exercise @param {string} seedSource */
@@ -302,6 +362,7 @@ export async function startTrainingSession({ exercise, seedSource = '', limitSec
     }
     const source = declared.sources.includes(seedSource) ? seedSource : declared.defaultSource;
     prefetched = null;
+    bearoffPhaseIndices = null;
     // La graine « plateau » se prend ici, et ne se relit jamais.
     boardSeed = get(positionStore);
     let built;
@@ -417,6 +478,7 @@ export async function finishTrainingSession() {
     stopTicker();
     prefetched = null;
     boardSeed = null;
+    bearoffPhaseIndices = null;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
     const row = finishedSession(closed);
@@ -437,6 +499,7 @@ export function quitTrainingSession() {
     stopTicker();
     prefetched = null;
     boardSeed = null;
+    bearoffPhaseIndices = null;
     trainingSessionStore.set(null);
     trainingElapsedStore.set(0);
 }

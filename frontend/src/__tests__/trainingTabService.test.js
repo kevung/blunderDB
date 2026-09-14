@@ -15,10 +15,21 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadPosition: vi.fn(() => Promise.resolve(null)),
     SaveTrainingSession: vi.fn(() => Promise.resolve(1)),
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
-    LoadTrainingNumberStats: vi.fn(() => Promise.resolve([]))
+    LoadTrainingNumberStats: vi.fn(() => Promise.resolve([])),
+    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({ GenerateBearoffQuestion: vi.fn() }));
-vi.mock('../services/importService.js', () => ({ showImportedPosition: vi.fn(() => Promise.resolve()) }));
+// Le simulacre fait ce que fait le vrai : il bascule sur l'onglet Analyse. Sans
+// cet effet, un appel à `showImportedPosition` depuis une session ne se verrait
+// pas — et c'est lui qui cachait l'onglet Entraînement sous la question posée.
+vi.mock('../services/importService.js', async () => {
+    const { activeTabStore } = await import('../stores/uiStore.js');
+    return {
+        showImportedPosition: vi.fn(async () => {
+            activeTabStore.set('analysis');
+        })
+    };
+});
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), log: vi.fn() } }));
 
@@ -29,7 +40,7 @@ import fr from '../i18n/locales/fr.json';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { trainingSessionStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
-import { pipcountVisibleStore } from '../stores/uiStore.js';
+import { pipcountVisibleStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { subscribeBoardRedrawTriggers } from '../services/boardRedraw.js';
 import {
     startTrainingSession,
@@ -55,6 +66,17 @@ function board() {
             bearoff: [0, 0]
         }
     };
+}
+
+/** Les index où la liste parcourue a été pointée, dans l'ordre. -1 (« aucun ») ne
+ *  compte pas : c'est le cran qui force le rechargement d'un même index. */
+function recordIndexMoves() {
+    /** @type {number[]} */
+    const moves = [];
+    const unsubscribe = currentPositionIndexStore.subscribe((value) => {
+        if (value >= 0) moves.push(value);
+    });
+    return { moves, unsubscribe };
 }
 
 /** Laisse tourner les micro-tâches en attente, sans horloge simulée. */
@@ -83,7 +105,11 @@ beforeEach(() => {
     db.LoadPosition.mockReset();
     db.LoadPosition.mockResolvedValue(null);
     app.GenerateBearoffQuestion.mockReset();
+    db.LoadPositionIDsByFilters.mockReset();
+    db.LoadPositionIDsByFilters.mockResolvedValue([]);
     vi.clearAllMocks();
+    activeTabStore.set('training');
+    currentPositionIndexStore.set(-1);
     quitTrainingSession();
     databasePathStore.set('/tmp/some.db');
     positionStore.set(board());
@@ -263,22 +289,26 @@ describe('fabriquer n’est pas montrer', () => {
     test('Pions / base : deux questions fabriquées, une seule montrée', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
         db.LoadPosition.mockResolvedValue(board());
+        const { moves, unsubscribe } = recordIndexMoves();
         expect(await startTrainingSession({ exercise: 'pips', seedSource: 'library' })).toBe(true);
         await flush();
+        unsubscribe();
 
         expect(db.LoadPosition, 'la question suivante se prépare bien').toHaveBeenCalledTimes(2);
-        expect(importService.showImportedPosition, 'une seule question est à l’écran').toHaveBeenCalledTimes(1);
+        expect(moves, 'une seule question est à l’écran').toHaveLength(1);
     });
 
     test('Bearoff / base : le préchargement ne touche pas au plateau', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
+        const { moves, unsubscribe } = recordIndexMoves();
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
         await flush();
+        unsubscribe();
 
         expect(app.GenerateBearoffQuestion).toHaveBeenCalledTimes(2);
-        expect(importService.showImportedPosition).toHaveBeenCalledTimes(1);
+        expect(moves).toHaveLength(1);
     });
 
     test('Bearoff / vivier : le plateau garde la question posée, pas la suivante', async () => {
@@ -305,8 +335,91 @@ describe('fabriquer n’est pas montrer', () => {
         positionStore.set({ id: 42 });
         await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' });
 
-        expect(importService.showImportedPosition).toHaveBeenCalledWith(7);
+        expect(get(currentPositionIndexStore), 'la liste parcourue pointe la position tirée').toBe(positionsStore.indexOf(7));
         expect(get(positionStore).id, 'la copie engendrée a écrasé la position de la base').toBe(42);
+    });
+});
+
+describe('une question tirée de la base laisse l’onglet ouvert (ADR-0040 règle 1)', () => {
+    // Le défaut : la question tirée de la base arrivait par `showImportedPosition`,
+    // qui bascule sur l'onglet Analyse — le geste d'un IMPORT, qui veut montrer
+    // l'analyse de ce qu'on vient d'apporter. Sous une session, il cachait
+    // l'onglet où l'on répond : les champs, « Révéler », « Terminer ». La
+    // position est déjà dans la liste parcourue, puisqu'elle y a été tirée ; il
+    // suffit de la pointer.
+    test.each([
+        ['pips', () => db.LoadPosition.mockResolvedValue(board())],
+        [
+            'bearoff',
+            () => {
+                db.LoadPosition.mockResolvedValue(board());
+                app.GenerateBearoffQuestion.mockResolvedValue(generated());
+            }
+        ]
+    ])('%s / base : la question est sur le plateau, et l’onglet Entraînement reste celui qu’on voit', async (exercise, arrange) => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        arrange();
+        expect(await startTrainingSession({ exercise, seedSource: 'library' })).toBe(true);
+        await flush();
+
+        expect(get(activeTabStore), 'la session a fermé son propre onglet').toBe('training');
+        const { positionId } = get(trainingSessionStore).question;
+        expect(get(currentPositionIndexStore)).toBe(positionsStore.indexOf(positionId));
+        expect(importService.showImportedPosition).not.toHaveBeenCalled();
+
+        revealQuestion();
+        await nextTrainingQuestion();
+        expect(get(activeTabStore), '« Suivante » aussi').toBe('training');
+    });
+});
+
+describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (ADR-0041 règle 2)', () => {
+    // Un tirage à l'aveugle dans la liste parcourue refusait une base qui a des
+    // bearoffs : sur la base de démonstration, 30 positions du domaine sur 757,
+    // et trente tirages sans remise n'en trouvent aucune une fois sur trois —
+    // l'utilisateur lisait alors « cet exercice demande un bearoff » devant une
+    // base qui en a. La liste est d'abord restreinte à la phase `bearoff` que la
+    // base a déjà calculée ; le moteur reste seul juge du domaine (4 à 15 pions).
+    test('le tirage ne regarde que les positions de la liste en phase bearoff', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        // 99 est un bearoff de la base, mais pas de la liste parcourue.
+        db.LoadPositionIDsByFilters.mockResolvedValue([99, 9]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
+        expect(db.LoadPositionIDsByFilters.mock.calls[0][0].gamePhaseFilter).toBe('bearoff');
+        // Le préchargement tire aussi : toutes les positions chargées sont la seule candidate.
+        expect(new Set(db.LoadPosition.mock.calls.map((call) => call[0]))).toEqual(new Set([9]));
+        expect(get(trainingSessionStore).question.positionId).toBe(9);
+    });
+
+    test('la restriction se calcule une fois par session, pas à chaque question', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        db.LoadPositionIDsByFilters.mockResolvedValue([8, 9]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+
+        await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' });
+        await flush();
+        revealQuestion();
+        await nextTrainingQuestion();
+        await flush();
+        expect(db.LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
+    });
+
+    // Une base dont les phases n'ont jamais été calculées (lignes d'avant 2.19.0,
+    // jamais passées par `blunderdb repair`) ne répond rien à la phase : le
+    // tirage retombe alors sur toute la liste, comme avant, plutôt que de
+    // refuser une base qui a peut-être des bearoffs.
+    test('sans aucune position classée bearoff dans la liste, le tirage retombe sur la liste entière', async () => {
+        positionsStore.setIds([7, 8, 9, 10]);
+        db.LoadPositionIDsByFilters.mockResolvedValue([]);
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
+        expect([7, 8, 9, 10]).toContain(db.LoadPosition.mock.calls[0][0]);
     });
 });
 
