@@ -171,13 +171,21 @@ describe('les mêmes gestes à la souris', () => {
         expect(gestures()).toEqual([]);
     });
 
-    test('x et s en bout de document répondent, et n’envoient rien', async () => {
+    test('s en bout de document répond, et n’envoie rien', async () => {
         await openedPanel(annotated({ cursor: 3 }));
-        await press('KeyX');
-        expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.noAction');
         await press('KeyS');
         await tick();
+        expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.noAction');
         expect(gestures()).toEqual([]);
+    });
+
+    // ADR-0050 : Suppr retire la décision en cours d'édition. En bout de
+    // document, c'est la cellule vide — le geste part, et le moteur recule sur
+    // la dernière Action.
+    test('Suppr en bout de document part vers le moteur', async () => {
+        await openedPanel(annotated({ cursor: 3 }));
+        await press('Delete');
+        await vi.waitFor(() => expect(gestures().at(-1)).toEqual({ Kind: 'delete' }));
     });
 });
 

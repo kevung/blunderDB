@@ -45,9 +45,11 @@ const (
 	// Cursor, proposing the side that keeps the sequence coherent.
 	GestureInsertBefore GestureKind = "insert_before"
 	GestureInsertAfter  GestureKind = "insert_after"
-	// GestureDelete removes the Action under the Cursor. The ones after it keep their
-	// side, which is how a deletion shows up as one local double turn instead of
-	// rewriting the rest of the match (ADR-0045 rule 4).
+	// GestureDelete removes the decision being edited — the Action under the
+	// Cursor, or the one being typed where none is written yet — and steps back to
+	// the previous one, loaded for correction (ADR-0050). The Actions after it keep
+	// their side, which is how a deletion shows up as one local double turn instead
+	// of rewriting the rest of the match (ADR-0045 rule 4).
 	GestureDelete GestureKind = "delete"
 	// GestureFlipSide gives the Action under the Cursor to the other camp.
 	GestureFlipSide GestureKind = "flip_side"
@@ -130,7 +132,7 @@ func Apply(doc Document, g Gesture) (Document, error) {
 	// Touched describes the LAST gesture and nothing else: it is cleared here and
 	// set again only by the paths that write an Action, so that walking the
 	// Cursor never leaves a stale index behind for the next Replay to start from.
-	out.HasTouched = false
+	out.HasTouched, out.HoldCursor = false, false
 	switch g.Kind {
 	case GestureCreate:
 		// A new draft inherits the length of the one it follows, and 7 when there is
@@ -267,20 +269,7 @@ func Apply(doc Document, g Gesture) (Document, error) {
 		return out, nil
 
 	case GestureDelete:
-		if out.Cursor < 0 || out.Cursor >= len(out.Actions) {
-			return doc, ErrNoAction
-		}
-		out.Actions = append(out.Actions[:out.Cursor], out.Actions[out.Cursor+1:]...)
-		if out.Cursor > len(out.Actions) {
-			out.Cursor = len(out.Actions)
-		}
-		// The Cursor stays put, which after the removal is the FOLLOWING Action —
-		// fonctionnel.md §2, "supprimer … Replay depuis la suivante" — and that
-		// slot is what the Replay is asked to look at, since the double turn a
-		// deletion leaves behind lands exactly there.
-		out.Touched, out.HasTouched = out.Cursor, true
-		out.Entry, out.HasReturn = nil, false
-		return out, nil
+		return deleteDecision(doc, out)
 
 	case GestureFlipSide:
 		if out.Cursor < 0 || out.Cursor >= len(out.Actions) {
@@ -402,6 +391,92 @@ func proposedEntry(doc Document) Entry {
 		}
 	}
 	return e
+}
+
+// deleteDecision is GestureDelete: it removes the decision being edited and steps
+// back to the one before (ADR-0050). doc is the document as it was, returned
+// unchanged with the error; out is its working copy.
+func deleteDecision(doc, out Document) (Document, error) {
+	// The decision being edited is not always a written Action. An insertion
+	// opened by `i`/`a`, the slot a continued game offers, the roll typed at
+	// the end of the document: each is a decision the user is editing, and
+	// deleting it abandons it — nothing written is touched.
+	if e := out.Entry; e != nil && e.Mode == EntryNew {
+		out.Cursor = clampSlot(e.At, len(out.Actions))
+		out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
+		stepBack(&out)
+		return out, nil
+	}
+	if out.Cursor >= len(out.Actions) {
+		// The end of the document with nothing typed: the empty slot is
+		// the decision, and deleting it is stepping back onto the last
+		// Action — so that Del, pressed again, deletes THAT one, the way
+		// a key held down walks back through what was typed.
+		if len(out.Actions) == 0 {
+			return doc, ErrNoAction
+		}
+		out.Cursor = len(out.Actions)
+		out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
+		stepBack(&out)
+		return out, nil
+	}
+	if out.Cursor < 0 {
+		return doc, ErrNoAction
+	}
+	at := out.Cursor
+	out.Actions = append(out.Actions[:at], out.Actions[at+1:]...)
+	out.Touched, out.HasTouched = at, true
+	out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
+	stepBack(&out)
+	return out, nil
+}
+
+// stepBack puts the Cursor on the decision before the one a deletion removed, and
+// loads it for correction: that is where the user goes on editing (ADR-0050). On
+// the first slot there is nothing before, and the Cursor stays on what now
+// follows. The double turn a deletion usually leaves is ahead of the Cursor, where
+// the Transcript marks it; HoldCursor keeps the Replay from pulling the Cursor
+// onto it, which would undo the very step back the user asked for.
+func stepBack(doc *Document) {
+	if doc.Cursor > 0 {
+		doc.Cursor--
+	}
+	loadEntry(doc)
+	doc.HoldCursor = true
+}
+
+// gameEndsAt reports whether the Action at `at` closes its game — or the match —
+// in the document as it now stands: what the Replay of the Actions up to it
+// expects next is a new opening. An opening never closes a game, a tie included
+// (the game goes on with another opening).
+//
+// It pays a Replay of that prefix, as [expectsOpening] pays one of the whole
+// document, and it is asked only when an Action is written INSIDE the document —
+// never on the append a match is typed with.
+func gameEndsAt(doc Document, at int) bool {
+	if at < 0 || at >= len(doc.Actions) || doc.Actions[at].Kind == KindOpening {
+		return false
+	}
+	prefix := Document{FormatVersion: doc.FormatVersion, Header: doc.Header, Actions: doc.Actions[:at+1]}
+	next := Replay(prefix, 0).Next
+	return next.MatchOver || next.Expects == KindOpening
+}
+
+// continueGame opens the slot right after `at` for the rest of its game, when
+// the Action just written there leaves the game running and the document jumps
+// straight to the next game's opening. The pass that was a take is the case
+// (ADR-0050): the game it closed goes on, and what follows it in the record is
+// already the next game — so the next roll is INSERTED there, and goes on being
+// inserted until the game ends, instead of overwriting the next opening or
+// sending the Cursor off to where the correction started.
+func continueGame(doc *Document, at int) bool {
+	if at+1 >= len(doc.Actions) || doc.Actions[at+1].Kind != KindOpening || gameEndsAt(*doc, at) {
+		return false
+	}
+	doc.Cursor, doc.HasReturn = at+1, false
+	doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(*doc, at+1), Mode: EntryNew, At: at + 1}, nil
+	doc.HoldCursor = true
+	return true
 }
 
 // loadEntry puts the Action under the Cursor into the entry, so the dice and the play
@@ -640,6 +715,9 @@ func record(doc Document, a Action) Document {
 		replaced := doc.Actions[at]
 		doc.Actions[at] = a
 		followOpening(doc, at, replaced, a)
+		if continueGame(&doc, at) {
+			return doc
+		}
 		doc.Cursor = at + 1
 		if doc.HasReturn {
 			doc.Cursor, doc.HasReturn = doc.Return, false
@@ -649,7 +727,10 @@ func record(doc Document, a Action) Document {
 		copy(doc.Actions[at+1:], doc.Actions[at:])
 		doc.Actions[at] = a
 		doc.Cursor = at + 1
-		if doc.Cursor < len(doc.Actions) {
+		// …until the game it fills ends: past that, the next Action is the next
+		// game's opening, and the Cursor rests on it rather than slipping a
+		// roll of this game in front of it (ADR-0050).
+		if doc.Cursor < len(doc.Actions) && !gameEndsAt(doc, at) {
 			// An insertion in the MIDDLE goes on inserting. What the user is
 			// doing there is filling a passage the record skipped — half a game
 			// after a pass that should have been a take — and the Action after
@@ -659,6 +740,10 @@ func record(doc Document, a Action) Document {
 			// mode: the alternative was an `i` per Action, and the alternative
 			// to that was overwriting the rest of the match one cell at a time.
 			doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(doc, doc.Cursor), Mode: EntryNew, At: doc.Cursor}, nil
+			// Like an append, the slot is where the user goes on typing: the
+			// Action just inserted may carry a mark, and pulling the Cursor
+			// back onto it would make the next roll correct it.
+			doc.HoldCursor = true
 			return doc
 		}
 	}
@@ -854,7 +939,13 @@ func (e *Editor) Replay(from int) Annotated { return e.replayer.Replay(e.Doc, fr
 // that gesture wrote, and the Cursor when it wrote none. The two differ exactly
 // where it matters — a correction in place sends the Cursor back to where the
 // user came from, and the Inconsistency it just created is behind that.
+//
+// A gesture that holds the Cursor (Document.HoldCursor) answers the end of the
+// document: nothing lies past it, so the Cursor stays where the gesture put it.
 func (e *Editor) From() int {
+	if e.Doc.HoldCursor {
+		return len(e.Doc.Actions)
+	}
 	if e.Doc.HasTouched {
 		return e.Doc.Touched
 	}

@@ -184,6 +184,13 @@ type Document struct {
 	Touched    int  `json:"-"`
 	HasTouched bool `json:"-"`
 
+	// HoldCursor says the last gesture put the Cursor where the user goes on
+	// WORKING, and the Replay must not pull it onto an Inconsistency: the
+	// previous decision a deletion steps back to, and the slot that continues a
+	// game a correction or an insertion reopened (ADR-0050). The marks are
+	// shown all the same; what is held is only where the next keystroke lands.
+	HoldCursor bool `json:"-"`
+
 	// pendingBoard is the board a hand-entered play left, held until validation
 	// decides whether the play was legal — a legal play's board is derived, and only
 	// an illegal one is written on the Action.

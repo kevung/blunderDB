@@ -1267,8 +1267,10 @@ Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une
 action, un chiffre en recommence le jet sur place, et les quatre gestes de
 videau valent eux aussi comme corrections : sur une passe, *t* — ou le bouton
 **Prendre** — écrit une prise **à la place** de la passe, sans qu'il faille la
-supprimer puis insérer. La partie reprend alors son cours et la suite du
-brouillon est rejouée. Les mêmes touches remplissent la cellule qu'une
+supprimer puis insérer. La partie reprend alors son cours : une cellule s'ouvre
+juste après la prise, au camp du doubleur, et la suite de la partie s'y tape
+comme d'habitude, insérée devant l'ouverture de la partie suivante, jusqu'à ce
+que la partie se termine. Les mêmes touches remplissent la cellule qu'une
 insertion vient d'ouvrir : *i* puis *d* insère un double devant l'action visée.
 
 Ressaisir les deux dés sur la cellule d'**ouverture** d'une partie décide à
@@ -1286,7 +1288,16 @@ Une **insertion au milieu du document continue d'insérer** : la validation
 ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au
 lieu d'écraser celle d'après. C'est ce qui permet de rattraper toute la fin
 d'une partie — une passe qui aurait dû être une prise — sans perdre ce qui a
-déjà été tapé de la partie suivante. Déplacer le curseur met fin à l'insertion.
+déjà été tapé de la partie suivante. La fin de la partie, ou un déplacement du
+curseur, met fin à l'insertion : le curseur se pose alors sur l'ouverture
+suivante.
+
+**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la
+précédente, prête à être corrigée : sur une cellule écrite, l'action disparaît ;
+sur une insertion ouverte ou un jet tapé en bout de document, c'est la saisie
+qui est abandonnée. Suppr pressée à répétition remonte ainsi le transcript en
+effaçant. Les actions suivantes gardent leur camp, et le double trait qu'une
+suppression laisse est marqué sans que le curseur y soit ramené.
 
 Un clic droit sur une cellule ouvre les corrections de cette action — insérer
 avant, insérer après, supprimer, changer de camp — et amène le curseur dessus au

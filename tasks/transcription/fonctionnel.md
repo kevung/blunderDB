@@ -113,7 +113,7 @@ annoté`. Les touches sont dans [ux.md](ux.md) ; ici, l'effet.
 | reculer / avancer le Cursor | — | le Cursor change ; les dés et le candidat de l'Action visée sont chargés | — |
 | corriger en place | Cursor sur une Action | la nouvelle saisie remplace l'Action ; le Cursor **revient** à sa place antérieure après validation | l'Action |
 | insérer avant / après | Cursor sur une Action | une Action nouvelle est attendue à cet endroit ; `side` proposé = celui qui rend la suite cohérente | l'Action insérée |
-| supprimer | Cursor sur une Action | l'Action disparaît ; les suivantes gardent leur `side` | la suivante |
+| supprimer | Cursor sur une Action, ou une saisie en cours | l'Action (ou la saisie non écrite) disparaît ; les suivantes gardent leur `side` ; le Cursor recule sur la précédente, chargée pour correction (ADR-0050) | la suivante (Cursor tenu) |
 | changer de camp | Cursor sur une Action | `side` inversé | l'Action |
 | changer la longueur | — | `match_length` ; en argent ↔ match, drapeaux de session réévalués | la première Action |
 | inverser les joueurs | — | noms échangés ; tous les `side` inversés ; plateau retourné | la première Action |
@@ -212,7 +212,7 @@ repart. Aucun état n'est stocké pour cela.
 13. **Insertion** : Cursor sur l'Action n → insérer avant → Action attendue de camp proposé →
     validation → Replay ; un double trait apparaît si le camp est le même que le voisin.
 14. **Suppression** : Cursor sur n → supprimer → Replay depuis n ; double trait probable à n,
-    marqué.
+    marqué ; le Cursor reste sur n−1 (ADR-0050).
 15. **Changement de camp** : Cursor sur n → changer → Replay ; les coups suivants peuvent
     devenir illégaux (pions de l'autre camp) : marqués, jamais supprimés.
 16. **Coup illégal** : jet saisi, coup joué au plateau en déplacement libre ou en texte → pas

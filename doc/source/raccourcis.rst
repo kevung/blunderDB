@@ -312,7 +312,7 @@ veille ne demande pas la souris.
    "Clic (sur les cases du jet)", "Effacer les deux dés saisis, comme RETOUR ARRIERE."
    "Esc", "Abandonner la saisie en cours."
    "d", "Doubler ou redoubler : le coup sélectionné est validé au passage, en une seule touche."
-   "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la prise à la place de l'action visée."
+   "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la prise à la place de l'action visée ; une passe devenue prise rouvre sa partie, et la suite s'y tape à la place."
    "p", "Passer le double proposé : la partie est gagnée à la valeur d'avant le double. Le curseur posé sur une cellule, écrit la passe à la place de l'action visée."
    "r puis 1, 2 ou 3", "Abandonner la partie pour le camp au trait : simple, gammon ou backgammon. Esc entre les deux touches annule sans rien enregistrer."
    "Clic (sur le videau)", "Proposer un double pour le camp au trait, comme la touche d. Devant une offre, le videau ne répond pas : la prise et la passe sont dans la rangée de boutons."
@@ -323,7 +323,7 @@ veille ne demande pas la souris.
    "CTRL-ENTREE", "Créer le match à partir du brouillon, ou le mettre à jour s'il existe déjà."
    "i", "Insérer une action devant celle du curseur (camp proposé pour que la suite reste cohérente)."
    "a", "Insérer une action derrière celle du curseur."
-   "x, Del", "Supprimer l'action du curseur ; les suivantes gardent leur camp."
+   "x, Del", "Supprimer la décision en cours d'édition — l'action du curseur, ou la saisie pas encore écrite — et reculer sur la précédente, prête à être corrigée ; les suivantes gardent leur camp. En bout de document, recule sur la dernière action."
    "s", "Donner l'action du curseur à l'autre camp."
    "CTRL-Z", "Annuler le dernier geste sur le brouillon."
    "CTRL-MAJ-Z", "Rétablir le geste annulé."
@@ -347,7 +347,8 @@ colonne. Rien n'est enregistré avant la validation.
 
 Une insertion au milieu du document continue d'insérer : la validation ouvre une
 cellule vide à la suite, et l'action suivante s'insère à son tour au lieu
-d'écraser celle d'après. Déplacer le curseur y met fin.
+d'écraser celle d'après. La fin de la partie ou un déplacement du curseur y met
+fin.
 
 Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état :
 « rien à annuler » sur une pile vide, « aucune action sous le curseur » en bout
@@ -365,7 +366,8 @@ Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisi
 crée un double trait, supprimer une action peut en créer un autre, changer un
 camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées
 dans le transcript, jamais corrigées d'office, et le curseur se place sur la
-première d'entre elles après chaque geste. La pile d'annulation vit en mémoire :
+première d'entre elles après chaque geste — sauf là où l'on continue : après une
+suppression, une insertion ou une partie rouverte, il reste où l'on tape. La pile d'annulation vit en mémoire :
 elle est perdue à la fermeture du brouillon.
 
 Le panneau lui-même — la liste des brouillons, la création, la saisie, le

@@ -1110,11 +1110,14 @@
     /**
      * Runs one command from a key, a button or the global dispatcher.
      *
-     * Deleting and changing a camp need an Action to act on, and at the end of
-     * the document — where the Cursor spends most of its time — there is none.
-     * The keystroke then does NOTHING, like `Ctrl+Z` on an empty stack: sending
-     * the gesture anyway would answer the most ordinary `x` in the world with
-     * the engine's English "the cursor is not on an action".
+     * Changing a camp needs an Action to act on, and at the end of the
+     * document — where the Cursor spends most of its time — there is none. The
+     * keystroke then does NOTHING, like `Ctrl+Z` on an empty stack: sending the
+     * gesture anyway would answer the most ordinary `s` in the world with the
+     * engine's English "the cursor is not on an action". Deleting is wider: it
+     * removes the decision being EDITED, and at the end that is the empty slot
+     * or the roll half typed there, so it steps back onto the last Action
+     * (ADR-0050). Only an empty draft leaves it nothing to do.
      *
      * @param {string} kind
      */
@@ -1123,7 +1126,8 @@
         // ADR-0048 décision 9 : un geste sans effet RÉPOND, une fois, dans la
         // barre d'état. Il se taisait, et le seul de la famille qui disait
         // quelque chose était un bouton grisé — celui que la décision 3 retire.
-        if ((kind === COMMAND.DELETE || kind === COMMAND.FLIP_SIDE) && !onAction) {
+        const nothingToDelete = kind === COMMAND.DELETE && !(annotated?.actions?.length ?? 0) && !annotated?.entry;
+        if ((kind === COMMAND.FLIP_SIDE && !onAction) || nothingToDelete) {
             noticeTranscription('transcription.notice.noAction');
             return;
         }

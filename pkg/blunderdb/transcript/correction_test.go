@@ -239,7 +239,7 @@ func TestInsertionAndDeletionAreMarkedNotRefused(t *testing.T) {
 		}
 	})
 
-	t.Run("a deletion leaves the cursor on the action that follows", func(t *testing.T) {
+	t.Run("a deletion steps back to the previous decision", func(t *testing.T) {
 		doc := typedMatch(t, 4)
 		at := 2
 		doc = seek(t, doc, at)
@@ -247,11 +247,17 @@ func TestInsertionAndDeletionAreMarkedNotRefused(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if after.Cursor != at {
-			t.Errorf("cursor = %d, want %d — the action that follows (fonctionnel.md §2)", after.Cursor, at)
+		if after.Cursor != at-1 {
+			t.Errorf("cursor = %d, want %d — the decision before the deleted one (ADR-0050)", after.Cursor, at-1)
+		}
+		if after.Entry == nil || after.Entry.Mode != EntryReplace || after.Entry.At != at-1 {
+			t.Errorf("entry = %+v, want the previous action loaded for correction", after.Entry)
 		}
 		if !after.HasTouched || after.Touched != at {
 			t.Errorf("touched = %d/%v, want %d", after.Touched, after.HasTouched, at)
+		}
+		if !after.HoldCursor {
+			t.Error("the step back is not held: the Replay would pull the Cursor onto the double turn")
 		}
 	})
 }
