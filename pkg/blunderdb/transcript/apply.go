@@ -719,7 +719,14 @@ func record(doc Document, a Action) Document {
 			return doc
 		}
 		doc.Cursor = at + 1
-		if doc.HasReturn {
+		if at+1 == len(doc.Actions) {
+			// The LAST Action, re-edited or validated again: the user is back
+			// where a transcription is written, and the next roll is appended
+			// as it was the first time (ADR-0051). The Cursor goes to the end
+			// whatever Return says, and is held there — pulling it back onto
+			// a mark the Action carries would make the next roll correct it.
+			doc.HasReturn, doc.HoldCursor = false, true
+		} else if doc.HasReturn {
 			doc.Cursor, doc.HasReturn = doc.Return, false
 		}
 	} else {

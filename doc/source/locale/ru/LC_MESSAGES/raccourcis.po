@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:14+0200\n"
+"POT-Creation-Date: 2026-09-24 01:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1159,7 +1159,10 @@ msgid ""
 "première touche du tour d'après. Sur une action déjà écrite, où l'on est "
 "revenu pour la corriger, il y a quelque chose sous le curseur : le "
 "chiffre recommence le jet de cette action, sur place. La différence se "
-"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+"voit à l'écran, la cellule visée étant encadrée dans le transcript. La "
+"**dernière** action du document fait exception : une fois son jet retapé,"
+" le chiffre suivant la valide et ouvre la décision d'après, comme en bout"
+" de document, et ENTREE y mène aussi."
 msgstr ""
 "У цифры один-единственный смысл: **она начинает бросок там, где курсор**."
 " В конце документа под курсором ничего нет, поэтому она подтверждает "
@@ -1168,9 +1171,12 @@ msgstr ""
 "несёт первая клавиша следующего хода. На уже записанном действии, к "
 "которому вернулись ради исправления, под курсором есть нечто: цифра "
 "начинает бросок этого действия заново, на месте. Разница видна на экране,"
-" поскольку указанная ячейка обведена в транскрипте."
+" поскольку указанная ячейка обведена в транскрипте. **Последнее** "
+"действие документа — исключение: как только его бросок набран заново, "
+"следующая цифра подтверждает его и открывает следующее решение, как в "
+"конце документа, и ENTER тоже ведёт туда."
 
-#: ../../source/raccourcis.rst:343
+#: ../../source/raccourcis.rst:345
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1183,7 +1189,7 @@ msgstr ""
 "открывает ячейку между двумя соседними, а сторона читается по столбцу. До"
 " подтверждения ничего не записывается."
 
-#: ../../source/raccourcis.rst:348
+#: ../../source/raccourcis.rst:350
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1195,7 +1201,7 @@ msgstr ""
 " не затирает идущее за ним. Конец партии или перемещение курсора это "
 "прекращает."
 
-#: ../../source/raccourcis.rst:353
+#: ../../source/raccourcis.rst:355
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1207,24 +1213,27 @@ msgstr ""
 "действия» в конце документа. Фраза стирается сама и возвращает место "
 "ожидаемому действию."
 
-#: ../../source/raccourcis.rst:358
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
-": la validation remplace l'action et le curseur revient là où il était. "
-"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
-" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
-"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
-"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
-" la correction au passage."
+": la validation remplace l'action et le curseur revient là où il était — "
+"ou, sur la dernière action, passe au bout du document, où la "
+"transcription continue. Si les dés sont corrigés et que le coup "
+"enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le"
+" premier candidat du nouveau jet est proposé et le coup est signalé « à "
+"revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir"
+" changé quelque chose enregistre la correction au passage."
 msgstr ""
 "Если вернуть курсор на действие и ввести заново, оно исправляется **на "
 "месте**: подтверждение заменяет действие, а курсор возвращается туда, где"
-" он был. Если исправлены кости и записанный ход остаётся допустимым ходом"
-" нового броска, он сохраняется; иначе предлагается первый кандидат нового"
-" броска, а ход помечается «к проверке» до подтверждения. Перемещение "
-"курсора вперёд или назад после изменения записывает исправление попутно."
+" он был, — или, на последнем действии, переходит в конец документа, где "
+"запись продолжается. Если исправлены кости и записанный ход остаётся "
+"допустимым ходом нового броска, он сохраняется; иначе предлагается первый"
+" кандидат нового броска, а ход помечается «к проверке» до подтверждения. "
+"Перемещение курсора вперёд или назад после изменения записывает "
+"исправление попутно."
 
-#: ../../source/raccourcis.rst:365
+#: ../../source/raccourcis.rst:368
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1244,7 +1253,7 @@ msgstr ""
 "открытой партии он остаётся там, где идёт набор. Стек отмены живёт в "
 "памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:373
+#: ../../source/raccourcis.rst:376
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1253,7 +1262,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:380
+#: ../../source/raccourcis.rst:383
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

@@ -219,3 +219,36 @@ describe('CTRL-Z reste au répartiteur global', () => {
         expect(pressKey(initialKeyState(), key('KeyZ', { ctrlKey: true, shiftKey: true }), CHECKER).handled).toBe(false);
     });
 });
+
+// ADR-0051 : revenu sur la DERNIÈRE Action, on est revenu là où la transcription
+// s'écrit. Son jet retapé, le chiffre suivant valide et ouvre le jet d'après,
+// comme en bout de document — mais le premier chiffre tapé sur la cellule telle
+// qu'elle a été chargée la corrige toujours sur place.
+describe('ADR-0051 — la dernière Action se tape comme le bout du document', () => {
+    const lastCell = { expects: 'checker', replacing: true, last: true };
+    /** La cellule relue, telle que le panneau la charge (settleCursor). */
+    const loaded = () => ({ ...initialKeyState(), phase: PHASE.ROLL, dice: [6, 3], candidateCount: 4 });
+
+    test('le premier chiffre sur la cellule chargée recommence son jet', () => {
+        const { commands } = press(['Digit4'], { state: loaded(), context: lastCell });
+        expect(kinds(commands)).toEqual([COMMAND.DIE]);
+    });
+
+    test('le jet retapé, le chiffre suivant valide puis ouvre la décision suivante', () => {
+        const retyped = applyCandidates(press(['Digit4', 'Digit1'], { state: loaded(), context: lastCell }).state, 4).state;
+        const { commands } = press(['Digit5'], { state: retyped, context: lastCell });
+        expect(kinds(commands)).toEqual([COMMAND.VALIDATE, COMMAND.DIE]);
+    });
+
+    test('ailleurs qu’en dernière Action, le jet retapé se recommence encore sur place', () => {
+        const middle = { expects: 'checker', replacing: true };
+        const retyped = applyCandidates(press(['Digit4', 'Digit1'], { state: loaded(), context: middle }).state, 4).state;
+        const { commands } = press(['Digit5'], { state: retyped, context: middle });
+        expect(kinds(commands)).toEqual([COMMAND.DIE]);
+    });
+
+    test('Entrée valide la dernière Action chargée', () => {
+        const { commands } = press(['Enter'], { state: loaded(), context: lastCell });
+        expect(kinds(commands)).toEqual([COMMAND.VALIDATE]);
+    });
+});

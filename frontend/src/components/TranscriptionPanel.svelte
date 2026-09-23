@@ -195,7 +195,11 @@
     // d'être des réponses, et `p` redevient le compte de pips du répartiteur
     // global.
     let editingSlot = $derived(!!annotated?.entry && !(annotated.entry.dice?.[0] > 0) && !(annotated.entry.dice?.[1] > 0));
-    let keyContext = $derived({ expects, replacing, editing: editingSlot });
+    // La DERNIÈRE Action relue : un jet retapé dessus se valide au chiffre
+    // suivant, qui ouvre la décision d'après comme en bout de document
+    // (ADR-0051). La machine à touches en décide ; le panneau lui dit où l'on est.
+    let onLast = $derived(replacing && annotated?.entry?.at === (annotated?.actions?.length ?? 0) - 1);
+    let keyContext = $derived({ expects, replacing, editing: editingSlot, last: onLast });
 
     // A length of 0 is a money session, and money is the only case where the
     // session's rules are asked for (ADR-0028: rules of the session, posted on

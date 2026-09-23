@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:14+0200\n"
+"POT-Creation-Date: 2026-09-24 01:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1168,7 +1168,10 @@ msgid ""
 "première touche du tour d'après. Sur une action déjà écrite, où l'on est "
 "revenu pour la corriger, il y a quelque chose sous le curseur : le "
 "chiffre recommence le jet de cette action, sur place. La différence se "
-"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+"voit à l'écran, la cellule visée étant encadrée dans le transcript. La "
+"**dernière** action du document fait exception : une fois son jet retapé,"
+" le chiffre suivant la valide et ouvre la décision d'après, comme en bout"
+" de document, et ENTREE y mène aussi."
 msgstr ""
 "La cifra ha un solo senso: **comincia un lancio là dove si trova il "
 "cursore**. In fondo al documento non c'è nulla sotto il cursore, quindi "
@@ -1178,9 +1181,12 @@ msgstr ""
 "scritta, alla quale si è tornati per correggerla, c'è qualcosa sotto il "
 "cursore: la cifra ricomincia il lancio di quell'azione, sul posto. La "
 "differenza si vede sullo schermo, perché la cella mirata è incorniciata "
-"nella trascrizione."
+"nella trascrizione. L'**ultima** azione del documento fa eccezione: una "
+"volta ridigitato il suo lancio, la cifra successiva la convalida e apre "
+"la decisione seguente, come in fondo al documento, e anche INVIO porta "
+"lì."
 
-#: ../../source/raccourcis.rst:343
+#: ../../source/raccourcis.rst:345
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1193,7 +1199,7 @@ msgstr ""
 "sostituisce, un inserimento apre una cella tra le sue due vicine, e il "
 "campo si legge dalla colonna. Nulla è registrato prima della convalida."
 
-#: ../../source/raccourcis.rst:348
+#: ../../source/raccourcis.rst:350
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1205,7 +1211,7 @@ msgstr ""
 " volta invece di sovrascrivere quella dopo. La fine della partita o lo "
 "spostamento del cursore vi mette fine."
 
-#: ../../source/raccourcis.rst:353
+#: ../../source/raccourcis.rst:355
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1217,25 +1223,27 @@ msgstr ""
 "cursore» in fondo al documento. La frase si cancella da sola e rende il "
 "posto all'azione attesa."
 
-#: ../../source/raccourcis.rst:358
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
-": la validation remplace l'action et le curseur revient là où il était. "
-"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
-" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
-"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
-"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
-" la correction au passage."
+": la validation remplace l'action et le curseur revient là où il était — "
+"ou, sur la dernière action, passe au bout du document, où la "
+"transcription continue. Si les dés sont corrigés et que le coup "
+"enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le"
+" premier candidat du nouveau jet est proposé et le coup est signalé « à "
+"revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir"
+" changé quelque chose enregistre la correction au passage."
 msgstr ""
 "Riportare il cursore su un'azione e ridigitare la corregge **sul posto**:"
-" la convalida sostituisce l'azione e il cursore torna dov'era. Se i dadi "
-"sono corretti e la mossa registrata resta una mossa legale del nuovo "
-"lancio, viene conservata; altrimenti viene proposto il primo candidato "
-"del nuovo lancio e la mossa è segnalata «da rivedere» fino alla "
-"convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa "
-"registra la correzione al passaggio."
+" la convalida sostituisce l'azione e il cursore torna dov'era — oppure, "
+"sull'ultima azione, passa in fondo al documento, dove la trascrizione "
+"continua. Se i dadi sono corretti e la mossa registrata resta una mossa "
+"legale del nuovo lancio, viene conservata; altrimenti viene proposto il "
+"primo candidato del nuovo lancio e la mossa è segnalata «da rivedere» "
+"fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato "
+"qualcosa registra la correzione al passaggio."
 
-#: ../../source/raccourcis.rst:365
+#: ../../source/raccourcis.rst:368
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1255,7 +1263,7 @@ msgstr ""
 "riaperta, resta dove si digita. La pila di annullamento vive in memoria: "
 "va persa alla chiusura della bozza."
 
-#: ../../source/raccourcis.rst:373
+#: ../../source/raccourcis.rst:376
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1265,7 +1273,7 @@ msgstr ""
 "la trascrizione e la barra della bozza — è descritto in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:380
+#: ../../source/raccourcis.rst:383
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

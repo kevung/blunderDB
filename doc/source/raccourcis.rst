@@ -338,7 +338,9 @@ et rien de plus, sa validation étant portée par la première touche du tour
 d'après. Sur une action déjà écrite, où l'on est revenu pour la corriger, il y a
 quelque chose sous le curseur : le chiffre recommence le jet de cette action,
 sur place. La différence se voit à l'écran, la cellule visée étant encadrée dans
-le transcript.
+le transcript. La **dernière** action du document fait exception : une fois son
+jet retapé, le chiffre suivant la valide et ouvre la décision d'après, comme en
+bout de document, et ENTREE y mène aussi.
 
 Ce qui est en train d'être tapé se dessine dans le transcript, en pointillés, à
 la place où il sera écrit : une correction recouvre la cellule qu'elle remplace,
@@ -356,7 +358,8 @@ de document. La phrase s'efface d'elle-même et rend la place à l'action
 attendue.
 
 Reculer le curseur sur une action puis ressaisir la corrige **en place** : la
-validation remplace l'action et le curseur revient là où il était. Si les dés
+validation remplace l'action et le curseur revient là où il était — ou, sur la
+dernière action, passe au bout du document, où la transcription continue. Si les dés
 sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il
 est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup
 est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur

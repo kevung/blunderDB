@@ -158,7 +158,7 @@ const RESIGN_LEVELS = new Set([1, 2, 3]);
 /**
  * L'état de la machine à touches.
  *
- * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, tie: boolean, resume: KeyState|null}} KeyState
+ * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, tie: boolean, retyped: boolean, resume: KeyState|null}} KeyState
  */
 
 /**
@@ -190,6 +190,10 @@ export function initialKeyState() {
         candidateCount: 0,
         awaitingCandidates: false,
         tie: false,
+        // Le jet en cours a été TAPÉ dans cette saisie, et non chargé d'une
+        // Action relue : c'est ce qui sépare, sur la dernière Action, le
+        // chiffre qui corrige son jet de celui qui ouvre le suivant (ADR-0051).
+        retyped: false,
         // L'état à rendre si la résignation est abandonnée par Échap. Nul
         // partout ailleurs : seule la phase RESIGN en pose un.
         resume: null
@@ -280,16 +284,17 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  *
  * @param {KeyState} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
- * @param {{expects?: string, replacing?: boolean, editing?: boolean}} context -
+ * @param {{expects?: string, replacing?: boolean, editing?: boolean, last?: boolean}} context -
  *   `expects` est la sorte d'Action attendue LÀ OÙ LE CURSOR EST (le moteur la
  *   nomme : `annotated.entry.kind`, et à défaut `annotated.next.expects`) ;
  *   `replacing` est `annotated.entry.replacing`, vrai quand le Cursor est sur
  *   une Action existante que la saisie remplacerait (ADR-0048 décision 1) ;
  *   `editing` dit que le Cursor tient une cellule sans qu'un dé y soit tapé —
- *   une Action relue, ou le trou qu'une insertion vient d'ouvrir.
+ *   une Action relue, ou le trou qu'une insertion vient d'ouvrir ; `last` dit
+ *   que l'Action remplacée est la dernière du document (ADR-0051).
  * @returns {KeyResult}
  */
-export function pressKey(state, event, { expects = 'checker', replacing = false, editing = false } = {}) {
+export function pressKey(state, event, { expects = 'checker', replacing = false, editing = false, last = false } = {}) {
     // La résignation capte tout tant que son niveau n'est pas donné : ses
     // chiffres SONT des niveaux et non des dés, et rien d'autre ne doit passer
     // entre `r` et la touche qui la termine.
@@ -363,7 +368,7 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);
-    if (die > 0) return enterDie(state, die, expects, replacing);
+    if (die > 0) return enterDie(state, die, expects, replacing, last);
 
     const delta = selectionDelta(event);
     if (delta !== 0) return moveSelection(state, delta);
@@ -534,6 +539,13 @@ export function menuCommands(from, to, kind) {
  * Action relue (`replacing`) il recommence le jet sur place, ce qui est la
  * raison même d'y être revenu.
  *
+ * Sauf sur la DERNIÈRE Action, une fois son jet retapé (ADR-0051) : il n'y a
+ * rien derrière elle à protéger, et l'utilisateur est revenu là où une
+ * transcription s'écrit. Le chiffre valide alors et ouvre le jet suivant, comme
+ * en bout de document. Le premier chiffre tapé sur la cellule telle qu'elle a
+ * été chargée la corrige toujours sur place : sans cela, son jet ne se
+ * corrigerait plus.
+ *
  * Pourquoi pas « valider partout » : `GestureValidate` passe par `validate`,
  * qui — contrairement à `commitCorrection` — n'est pas gardé par `entryDiffers`,
  * réécrit l'Action à l'identique et rend le Cursor à `doc.Return`. Un chiffre
@@ -544,9 +556,10 @@ export function menuCommands(from, to, kind) {
  * @param {number} die
  * @param {string} expects
  * @param {boolean} [replacing]
+ * @param {boolean} [last] - l'Action remplacée est la dernière du document
  * @returns {KeyResult}
  */
-function enterDie(state, die, expects, replacing = false) {
+function enterDie(state, die, expects, replacing = false, last = false) {
     switch (state.phase) {
         case PHASE.DICE:
             return {
@@ -569,7 +582,7 @@ function enterDie(state, die, expects, replacing = false) {
                 // la relecture l'avait pris. Enchaîner sur le premier coup de
                 // pions demanderait les candidats d'une position que l'on ne
                 // regarde plus.
-                if (replacing) {
+                if (replacing && !last) {
                     return { handled: true, state: initialKeyState(), commands };
                 }
                 // Le gagnant du jet joue les DEUX dés comme premier coup de pions :
@@ -579,13 +592,13 @@ function enterDie(state, die, expects, replacing = false) {
                 const roll = dice[0] >= dice[1] ? [dice[0], dice[1]] : [dice[1], dice[0]];
                 return {
                     handled: true,
-                    state: { ...initialKeyState(), phase: PHASE.ROLL, dice: roll, awaitingCandidates: true },
+                    state: { ...initialKeyState(), phase: PHASE.ROLL, dice: roll, awaitingCandidates: true, retyped: true },
                     commands
                 };
             }
             return {
                 handled: true,
-                state: { ...initialKeyState(), phase: PHASE.ROLL, dice, awaitingCandidates: true },
+                state: { ...initialKeyState(), phase: PHASE.ROLL, dice, awaitingCandidates: true, retyped: true },
                 commands: [{ kind: COMMAND.DIE, value: die }]
             };
         }
@@ -602,7 +615,8 @@ function enterDie(state, die, expects, replacing = false) {
             //
             // En bout de document, il valide d'abord : la validation du tour
             // est portée par la première touche du tour d'après.
-            const commands = replacing ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
+            const inPlace = replacing && !(last && state.retyped);
+            const commands = inPlace ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
             return {
                 handled: true,
                 state: { ...initialKeyState(), phase: PHASE.DIE1, dice: [die, 0] },
@@ -701,12 +715,12 @@ export function applyCandidates(state, count) {
  * @param {KeyState} state
  * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
  * @param {number} d2
- * @param {{expects?: string, replacing?: boolean}} context
+ * @param {{expects?: string, replacing?: boolean, last?: boolean}} context
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
-export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = false } = {}) {
-    const first = enterDie(state, d1, expects, replacing);
-    const second = enterDie(first.state, d2, expects, replacing);
+export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = false, last = false } = {}) {
+    const first = enterDie(state, d1, expects, replacing, last);
+    const second = enterDie(first.state, d2, expects, replacing, last);
     return { state: second.state, commands: [...first.commands, ...second.commands] };
 }
 
@@ -716,10 +730,10 @@ export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = 
  *
  * @param {KeyState} state
  * @param {number} die
- * @param {{expects?: string, replacing?: boolean}} context
+ * @param {{expects?: string, replacing?: boolean, last?: boolean}} context
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
-export function enterSingleDie(state, die, { expects = 'checker', replacing = false } = {}) {
-    const result = enterDie(state, die, expects, replacing);
+export function enterSingleDie(state, die, { expects = 'checker', replacing = false, last = false } = {}) {
+    const result = enterDie(state, die, expects, replacing, last);
     return { state: result.state, commands: result.commands };
 }

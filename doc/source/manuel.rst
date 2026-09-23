@@ -1273,6 +1273,12 @@ comme d'habitude, insérée devant l'ouverture de la partie suivante, jusqu'à c
 que la partie se termine. Les mêmes touches remplissent la cellule qu'une
 insertion vient d'ouvrir : *i* puis *d* insère un double devant l'action visée.
 
+Revenir sur la **dernière** action, c'est revenir là où la transcription
+s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois ce jet
+retapé, le chiffre suivant la valide et ouvre la décision d'après ; ENTREE la
+valide de même. Les décisions suivantes s'ajoutent alors à la suite, comme la
+première fois.
+
 Ressaisir les deux dés sur la cellule d'**ouverture** d'une partie décide à
 nouveau qui commence : le dé du joueur 1 se tape en premier, celui du joueur 2
 ensuite, et c'est le plus fort qui l'emporte — gros dé d'abord, le trait revient

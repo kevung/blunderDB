@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:14+0200\n"
+"POT-Creation-Date: 2026-09-24 01:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1097,12 +1097,17 @@ msgid ""
 "première touche du tour d'après. Sur une action déjà écrite, où l'on est "
 "revenu pour la corriger, il y a quelque chose sous le curseur : le "
 "chiffre recommence le jet de cette action, sur place. La différence se "
-"voit à l'écran, la cellule visée étant encadrée dans le transcript."
+"voit à l'écran, la cellule visée étant encadrée dans le transcript. La "
+"**dernière** action du document fait exception : une fois son jet retapé,"
+" le chiffre suivant la valide et ouvre la décision d'après, comme en bout"
+" de document, et ENTREE y mène aussi."
 msgstr ""
 "数字の意味はただ一つ、\\ **カーソルのある場所で出目を始める**\\ "
-"ことです。文書の末尾ではカーソルの下に何もないので、次の出目を開く前に選択された手を確定します——最善手を打った場合の費用はこうして二つのダイスだけとなり、その確定は次の手番の最初の打鍵が担います。訂正のために戻ったすでに書かれたアクションの上では、カーソルの下に何かがあります。数字はそのアクションの出目をその場でやり直します。違いは画面に見えます。指されたセルがトランスクリプトで枠に囲まれているからです。"
+"ことです。文書の末尾ではカーソルの下に何もないので、次の出目を開く前に選択された手を確定します——最善手を打った場合の費用はこうして二つのダイスだけとなり、その確定は次の手番の最初の打鍵が担います。訂正のために戻ったすでに書かれたアクションの上では、カーソルの下に何かがあります。数字はそのアクションの出目をその場でやり直します。違いは画面に見えます。指されたセルがトランスクリプトで枠に囲まれているからです。ただし文書の\\"
+" **最後の**\\ アクションは例外です。その出目を打ち直すと、次の数字がそれを確定して次の決定を開きます。文書の末尾と同じく、ENTER "
+"でもそこへ進みます。"
 
-#: ../../source/raccourcis.rst:343
+#: ../../source/raccourcis.rst:345
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1111,7 +1116,7 @@ msgid ""
 "validation."
 msgstr "入力中の内容は、書き込まれる位置に破線でトランスクリプトに描かれる。訂正は置き換えるセルを覆い、挿入は両隣のあいだにセルを開き、手番は列で読み取れる。確定前には何も記録されない。"
 
-#: ../../source/raccourcis.rst:348
+#: ../../source/raccourcis.rst:350
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1119,7 +1124,7 @@ msgid ""
 "déplacement du curseur y met fin."
 msgstr "文書の途中への挿入は挿入を続ける。確定すると続きに空のセルが開き、次のアクションもまた挿入され、後続のアクションを上書きしない。ゲームが終わるか、カーソルを動かすと終わる。"
 
-#: ../../source/raccourcis.rst:353
+#: ../../source/raccourcis.rst:355
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1127,20 +1132,21 @@ msgid ""
 "l'action attendue."
 msgstr "何もすることのない操作は、ステータスバーで一度そう告げます。積みが空なら「取り消すものがありません」、文書の末尾なら「カーソルの下にアクションがありません」。この文はひとりでに消え、期待される行動に場所を返します。"
 
-#: ../../source/raccourcis.rst:358
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
-": la validation remplace l'action et le curseur revient là où il était. "
-"Si les dés sont corrigés et que le coup enregistré reste un coup légal du"
-" nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet "
-"est proposé et le coup est signalé « à revoir » jusqu'à la validation. "
-"Avancer ou reculer le curseur après avoir changé quelque chose enregistre"
-" la correction au passage."
+": la validation remplace l'action et le curseur revient là où il était — "
+"ou, sur la dernière action, passe au bout du document, où la "
+"transcription continue. Si les dés sont corrigés et que le coup "
+"enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le"
+" premier candidat du nouveau jet est proposé et le coup est signalé « à "
+"revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir"
+" changé quelque chose enregistre la correction au passage."
 msgstr ""
 "カーソルをあるアクションまで戻して入力し直すと、そのアクションを\\ **その場で**\\ "
-"修正できます。確定するとアクションが置き換えられ、カーソルは元の位置に戻ります。ダイスを修正しても記録済みの手が新しいロールの合法手のままであれば、その手は保たれます。そうでない場合は新しいロールの最初の候補が提示され、その手は確定するまで「要確認」と表示されます。何かを変更したあとでカーソルを前後に動かすと、その際に修正が記録されます。"
+"修正できます。確定するとアクションが置き換えられ、カーソルは元の位置に戻ります——最後のアクションの場合は文書の末尾へ移り、そこで記譜が続きます。ダイスを修正しても記録済みの手が新しいロールの合法手のままであれば、その手は保たれます。そうでない場合は新しいロールの最初の候補が提示され、その手は確定するまで「要確認」と表示されます。何かを変更したあとでカーソルを前後に動かすと、その際に修正が記録されます。"
 
-#: ../../source/raccourcis.rst:365
+#: ../../source/raccourcis.rst:368
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1152,7 +1158,7 @@ msgid ""
 "mémoire : elle est perdue à la fermeture du brouillon."
 msgstr "拒否されるものも削除されるものもありません。隣と同じ手番のアクションを挿入すれば二重手番になり、アクションを削除すれば別の二重手番が生じることがあり、手番を変えれば以降の手が不正になることがあります。これらの不整合はトランスクリプトに印が付き、勝手に修正されることはありません。カーソルは操作のたびにその最初の不整合へ移動します。ただし続けて入力している場合は別で、削除、挿入、再び開いたゲームのあとでは、入力している場所にとどまります。取り消し履歴はメモリ上にあり、下書きを閉じると失われます。"
 
-#: ../../source/raccourcis.rst:373
+#: ../../source/raccourcis.rst:376
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1161,7 +1167,7 @@ msgstr ""
 "パネルそのもの — 下書き一覧、作成、入力、棋譜、下書きのバー — は :ref:`panneau_transcription` "
 "で説明されています。"
 
-#: ../../source/raccourcis.rst:380
+#: ../../source/raccourcis.rst:383
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 

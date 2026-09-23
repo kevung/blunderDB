@@ -194,3 +194,63 @@ func TestCorrectionThatStillEndsTheGameReturns(t *testing.T) {
 		t.Errorf("cursor = %d (hold %v), want the end of the document", after.Cursor, after.HoldCursor)
 	}
 }
+
+// TestLastActionValidatedAppendsNext holds ADR-0051: the LAST Action, walked back
+// to and validated again — re-edited or not — sends the Cursor to the end of the
+// document, whatever Return says, and holds it there, so the next roll is appended
+// as it was the first time.
+func TestLastActionValidatedAppendsNext(t *testing.T) {
+	t.Run("walked back and forward again, Enter goes to the end", func(t *testing.T) {
+		doc := typedMatch(t, 7)
+		n := len(doc.Actions)
+		doc = seek(t, doc, 1)
+		for doc.Cursor < n-1 {
+			next, err := Apply(doc, Gesture{Kind: GestureCursorForward})
+			if err != nil {
+				t.Fatal(err)
+			}
+			doc = next
+		}
+		// A stale place to come back to, behind the last Action — the jump
+		// to an Inconsistency leaves one.
+		doc.Return, doc.HasReturn = 1, true
+		after, err := Apply(doc, confirm())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if after.Cursor != n || after.Entry != nil {
+			t.Fatalf("cursor = %d, entry = %+v; want the end of the document, nothing typed", after.Cursor, after.Entry)
+		}
+		if !after.HoldCursor {
+			t.Error("the end is not held: a mark on the last Action would pull the Cursor back")
+		}
+		// And the next roll is a NEW Action.
+		next := runSteps(t, after, []step{{"a roll", die(3), nil}, {"its second die", die(1), nil}, {"a play", candidate(0), nil}, {"validate", confirm(), nil}})
+		if len(next.Actions) != n+1 {
+			t.Errorf("actions = %d, want %d — the roll was not appended", len(next.Actions), n+1)
+		}
+	})
+
+	t.Run("a mark on the last Action does not pull the Cursor back", func(t *testing.T) {
+		e := NewEditor(typedMatch(t, 7))
+		n := len(e.Doc.Actions)
+		e.SeekCursor(n - 1)
+		// Given to the wrong camp, the last play makes a double turn.
+		if err := e.Apply(Gesture{Kind: GestureFlipSide}); err != nil {
+			t.Fatal(err)
+		}
+		e.SeekCursor(n - 1)
+		for _, g := range []Gesture{die(3), die(1), candidate(0), confirm()} {
+			if err := e.Apply(g); err != nil {
+				t.Fatalf("%s: %v", g.Kind, err)
+			}
+		}
+		ann := e.Replay(e.From())
+		if !ann.Inconsistent() {
+			t.Fatal("the fixture lost its double turn; the test proves nothing")
+		}
+		if ann.Cursor != n {
+			t.Errorf("cursor = %d, want %d — the end of the document", ann.Cursor, n)
+		}
+	})
+}
