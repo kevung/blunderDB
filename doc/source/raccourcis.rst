@@ -297,7 +297,7 @@ veille ne demande pas la souris.
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés)."
    "1 … 6 (jet saisi)", "Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider."
-   "1 … 6 (curseur sur l'ouverture d'une partie)", "Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut."
+   "1 … 6 (curseur sur l'ouverture d'une partie)", "Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut. Le premier coup de pions de la partie suit le nouveau vainqueur."
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
    "Molette", "Sélectionner le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent."

@@ -1276,9 +1276,11 @@ nouveau qui commence : le dé du joueur 1 se tape en premier, celui du joueur 2
 ensuite, et c'est le plus fort qui l'emporte — gros dé d'abord, le trait revient
 au joueur 1, en bas du plateau ; petit dé d'abord, il revient au joueur 2, en
 haut. La validation est immédiate au second dé, comme pour une ouverture neuve.
-Le premier coup de pions de la partie, lui, garde le camp qu'il avait : s'il
-revient désormais à l'autre joueur, le transcript le marque et le curseur s'y
-pose, où *s* le donne au bon camp.
+**Le premier coup de pions de la partie suit le nouveau vainqueur** et change de
+colonne avec lui : son camp n'avait pas été choisi, il était proposé par
+l'ouverture — le gagnant du jet joue les deux dés sans les ressaisir. C'est la
+seule action que corriger une ouverture déplace : la suite de la partie garde
+ses camps, et un coup déjà donné à l'autre joueur par *s* n'est pas repris.
 
 Une **insertion au milieu du document continue d'insérer** : la validation
 ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au

@@ -637,7 +637,9 @@ func record(doc Document, a Action) Document {
 		doc.Touched, doc.HasTouched = at, true
 	}
 	if mode == EntryReplace && at < len(doc.Actions) {
+		replaced := doc.Actions[at]
 		doc.Actions[at] = a
+		followOpening(doc, at, replaced, a)
 		doc.Cursor = at + 1
 		if doc.HasReturn {
 			doc.Cursor, doc.HasReturn = doc.Return, false
@@ -662,6 +664,48 @@ func record(doc Document, a Action) Document {
 	}
 	doc.Entry, doc.pendingBoard = nil, nil
 	return doc
+}
+
+// followOpening gives the Action a game STARTS with to the camp a replaced opening
+// now names. It is the one exception to "the side belongs to the Action" (ADR-0045
+// §4), and it is a narrow one: that camp was never chosen by the user.
+//
+// Why it has to exist. After an opening, "le camp du gagnant du jet joue un checker
+// avec les deux dés de l'ouverture — l'utilisateur ne les ressaisit pas"
+// (fonctionnel.md §1.2): the panel proposes the side and carries the roll over, and
+// the user only picks the play. Correcting the opening — the one place where "the big
+// die first is player 1" is said — therefore has to carry that first Action with it,
+// or the document says two things at once: player 2 starts, player 1 plays first.
+//
+// And nothing would say so. Measured on 2026-09-24: the play stays LEGAL for either
+// camp from the starting board, and an opening bears no turn ([bearsTurn]), so the
+// Replay finds neither an illegal move nor a double turn. The document would be
+// silently wrong — the one outcome ADR-0044's "mark, never refuse" does not cover,
+// since there is nothing to mark.
+//
+// What it deliberately does not do: touch anything else. The rest of the game keeps
+// its sides, and a first Action the user has already given to the other camp is left
+// alone — its side is then no longer the old winner's, which is exactly the test.
+func followOpening(doc Document, at int, replaced, written Action) {
+	if replaced.Kind != KindOpening || written.Kind != KindOpening {
+		return
+	}
+	// A tie names no winner: it is followed by another opening, not by a play.
+	if replaced.Dice[0] == replaced.Dice[1] || written.Dice[0] == written.Dice[1] {
+		return
+	}
+	if replaced.Side == written.Side {
+		return
+	}
+	next := at + 1
+	if next >= len(doc.Actions) {
+		return
+	}
+	a := &doc.Actions[next]
+	if !bearsTurn(a.Kind) || a.Side != replaced.Side {
+		return
+	}
+	a.Side = written.Side
 }
 
 // cubeGesture records a double, its answer or a resignation. Each of them first

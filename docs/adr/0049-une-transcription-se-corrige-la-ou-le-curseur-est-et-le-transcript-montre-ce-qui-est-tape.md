@@ -83,6 +83,24 @@ l'Action (ADR-0045 §4) : corriger l'ouverture ne réécrit pas le camp du coup 
 Le transcript le marque, le curseur s'y pose de lui-même — c'est la règle « après un Replay,
 le curseur va à la première Incohérence » — et `s` le donne au bon camp, d'une touche.
 
+**Amendé le 2026-09-24, le jour même, par la mesure.** Le paragraphe ci-dessus était faux
+sur son fait central : **rien ne le marque**. Le premier coup reste LÉGAL pour l'un comme
+pour l'autre depuis le damier de départ, et une ouverture ne porte pas le trait
+(`bearsTurn`), si bien que le Replay ne trouve ni coup illégal ni double trait et que le
+curseur ne saute nulle part. Le document était donc silencieusement faux — le seul cas que
+« marquer, jamais refuser » (ADR-0044) ne couvre pas, puisqu'il n'y a rien à marquer.
+
+**Le premier coup de pions suit donc l'ouverture corrigée**, et c'est la seule entorse à
+« le `side` appartient à l'Action ». Elle est étroite, et c'est ce qui la rend acceptable :
+ce camp-là n'a jamais été choisi par l'utilisateur. Après une ouverture, « le camp du
+gagnant du jet joue un `checker` avec les deux dés de l'ouverture — l'utilisateur ne les
+ressaisit pas » (`fonctionnel.md` §1.2) : le panneau propose le camp et reporte le jet,
+l'utilisateur ne désigne que le coup. Corriger l'ouverture emporte donc cette Action, faute
+de quoi le document dit deux choses à la fois — le joueur 2 commence, le joueur 1 joue le
+premier. Rien d'autre ne bouge : la suite de la partie garde ses camps, et un premier coup
+déjà donné à l'autre camp par `s` est laissé tel quel — son camp n'est alors plus celui de
+l'ancien vainqueur, ce qui est exactement le test (`followOpening`).
+
 ## Les conséquences
 
 - `transcript.EntryInfo` grossit de deux champs dérivés ; `entryExpects` est écrit une fois

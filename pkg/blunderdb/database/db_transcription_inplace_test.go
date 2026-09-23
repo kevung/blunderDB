@@ -156,6 +156,11 @@ func TestTranscriptionOpeningRetypedDecidesWhoStarts(t *testing.T) {
 	if opening.Side != 1 {
 		t.Errorf("side = %d, want player 2 — the small die first gives the turn to the top", opening.Side)
 	}
+	// And the play made with that roll follows it: its camp was proposed by the
+	// opening, never chosen by the user (fonctionnel.md §1.2).
+	if got := state.Annotated.Document.Actions[1].Side; got != 1 {
+		t.Errorf("the first play stayed with player %d; it must follow the opening", got+1)
+	}
 	if len(state.Annotated.Document.Actions) != 2 {
 		t.Errorf("actions = %d, want 2 — the opening was replaced, not inserted", len(state.Annotated.Document.Actions))
 	}
