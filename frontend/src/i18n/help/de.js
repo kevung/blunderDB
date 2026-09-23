@@ -299,9 +299,11 @@ export default {
 <p>Sobald der zweite Würfel fällt, werden alle <strong>legalen Züge</strong> des Wurfs aufgelistet, von der eingebauten Engine bewertet, der erste vorausgewählt und seine Pfeile auf das Brett gelegt. Die Liste nennt den Zug, seine Equity und den Abstand zum besten: Transkribieren heißt, den gesehenen Zug wiederzuerkennen, nicht ihn zu beurteilen — dafür ist das Panel <strong>Auswertung</strong> da. Diese Rangfolge ist eine Auswertung: sie wird angezeigt, nie in die Datenbank geschrieben. Steht die Engine nicht zur Verfügung, werden die Züge ohne Rangfolge aufgelistet, und die Liste sagt es an ihrem Kopf.</p>
 <p>Das <strong>Mausrad</strong> wählt den nächsten oder vorherigen Kandidaten, über der Liste ebenso wie über dem Brett: der Blick bleibt auf dem Brett und die Pfeile ziehen vorbei, was einen Zug schneller erkennt als das Lesen seiner Notation. Ein Klick auf eine Zeile wählt sie aus, ein Doppelklick bestätigt sie.</p>
 <p>Das Dreieck der einundzwanzig Würfe liegt unter den beiden Wurffeldern, neben der Tastatur und nicht an ihrer Stelle: zwei Ziffern bleiben doppelt so schnell wie ein Klick, und das Dreieck ist für den da, der mit der Hand an der Maus transkribiert. Ein Feld je Wurf, nie zwei: 3-1 und 1-3 sind derselbe Wurf.</p>
-<p>Ein Klick auf einen Punkt des Bretts lässt nur die Züge übrig, die von dort ausgehen. Das ist die Geste für den weit entfernten Zug: bis zum zwölften Kandidaten hinabzugehen kostet dreizehn Tasten, wo der Filter nur zwei oder drei übrig lässt. Der Filter ändert nichts am Entwurf, er verkürzt die Liste auf dem Bildschirm; ein Chip am Kopf der Liste erinnert daran und hebt ihn auf, und der nächste Wurf hebt ihn ebenfalls auf.</p>
 <p>Ein auf dem Brett gespielter Zug erspart das Ablesen der Würfel. Solange kein Würfel eingegeben ist, spielt ein Klick auf einen Stein und dann auf sein Ziel — oder ein Ziehen vom einen zum anderen — den Zug auf dem Brett, auf die legalen Züge beschränkt; die Ziele, die der gewählte Stein anbietet, leuchten auf. Die beiden Würfel ergeben sich aus den Schritten: 13/7 und dann 8/7 zu spielen sagt 6-1, ohne dass eine Ziffer getippt wurde, und die Aktion wird erfasst, sobald der Zug vollständig ist. Die Rücktaste nimmt den letzten Schritt zurück, eine Ziffer bricht den Zug ab und kehrt zur Würfeleingabe zurück, und ein Doppelklick außerhalb des Bretts beginnt ihn von vorn. Wenn mehrere Würfe denselben Zug ergeben — ein Auswürfeln, das mehrere Würfel decken, ein nicht spielbarer Würfel — wird nichts erfasst, und das Dreieck lässt nur diese Würfe anklickbar: Der Wurf wird nie anstelle dessen erraten, der die Partie betrachtet.</p>
-<p>Ein illegaler Zug wird so transkribiert, wie er gespielt wurde. Die Schaltfläche <strong>✎</strong> der Palette klappt die beiden Wege dazu auf, anstelle des Dreiecks: sie dienen einmal pro Match, wo das Dreieck jeden Zug dient. Die Schaltfläche „Freie Bewegung“ gibt das Brett frei: die Steine bewegen sich ohne jede Prüfung, und „Dieses Brett ist der gespielte Zug“ hält das erreichte Brett fest. Das Notationsfeld daneben tut dasselbe über die Tastatur: <code>13/7 8/7*</code>, <code>bar/22</code> oder <code>6/off</code> werden geschrieben und mit EINGABE festgehalten. Beide verlangen, dass die Würfel des Wurfs zuerst eingegeben werden, denn ein illegaler Zug sagt nicht, welcher Wurf ihn erzeugt hat. Ein über einen dieser beiden Wege eingegebener Zug, der sich als legal erweist, bleibt ein gewöhnlicher Zug — verglichen wird das erreichte Brett, nie die Herkunft der Geste; andernfalls wird er im Transkript als „illegaler Zug“ markiert, und der <code>.mat</code>-Export warnt, bevor er die Datei schreibt, ohne je zu verweigern.</p>
+<p>Sind beide Würfel eingegeben, spielt das Brett ebenfalls, auf die legalen Züge dieses Wurfs beschränkt — am Ende des Dokuments wie bei einer erneut betrachteten Aktion, deren Würfel der Cursor geladen hat. Jeder gespielte Schritt behält in der Liste nur die Kandidaten, die ihn enthalten, der erste davon vorausgewählt: Das ist die Geste für den weit entfernten Zug, wo der Weg hinunter zum zwölften Kandidaten dreizehn Tasten kostet. Ein vollständiger legaler Zug wird sofort erfasst, mit den Würfeln, wie sie getippt wurden; bei einer erneut betrachteten Aktion ersetzt er diese.</p>
+<p>Ein illegaler Zug wird so transkribiert, wie er gespielt wurde, ohne Schaltfläche und ohne Moduswechsel. Sind die Würfel eingegeben, setzt ein Ziehen, das kein legaler Zug anbietet, den Stein dort ab, wo er losgelassen wird — auch von einem Punkt aus, von dem kein legaler Zug ausgeht, sofern er einen Stein der Seite am Zug trägt. Der Zug verlässt dann die Regeln: Der Rest wird frei gespielt, per Klick wie per Ziehen, die Kandidatenliste weicht einer Zeile, die daran erinnert, und nichts wird vor EINGABE erfasst, die die eingegebenen Würfel, die Schritte und das erreichte Brett schreibt. Die Rücktaste nimmt den letzten Schritt zurück; wird der einzige Schritt außerhalb der Regeln zurückgenommen, kehrt die Liste zurück. Ohne eingegebene Würfel bleibt das Ziehen beschränkt: Ein illegaler Zug sagt nicht, welcher Wurf ihn erzeugt hat.</p>
+<p>Der Zug lässt sich auch über die Tastatur tippen, im Transkript. Ein Doppelklick auf die Zelle eines Zugs — oder eines Tanzes, eines nicht festgehaltenen Zugs — verwandelt sie in ein Feld, mit ihrer Notation vorbelegt. Getippt wird dort nur der Zug, <code>13/7 8/7*</code>, <code>bar/22</code> oder <code>6/off</code>: Die Würfel sind die der Zelle. EINGABE erfasst ihn anstelle des geschriebenen Zugs, ESC schließt die Zelle, ohne etwas zu schreiben, und ein Text, der keinen Zug angibt, lässt das Feld offen. Die gestrichelte Zelle der laufenden Eingabe öffnet sich ebenso, sobald ihre beiden Würfel eingegeben sind.</p>
+<p>Ein über das freie Ziehen oder die Notation eingegebener Zug, der sich als legal erweist, bleibt ein gewöhnlicher Zug — verglichen wird das erreichte Brett, nie die Herkunft der Geste; andernfalls wird er im Transkript als „illegaler Zug“ markiert, und der <code>.mat</code>-Export warnt, bevor er die Datei schreibt, ohne je zu verweigern.</p>
 <p>In der Würfelzeile nimmt die Reihe <strong>Doppeln</strong>, <strong>Annehmen</strong>, <strong>Passen</strong>, <strong>Aufgeben</strong> die vier Dopplergesten für die Maus auf: sie sind, zusammen mit den beiden Würfeln, die fünf möglichen Antworten auf eine einzige Frage — was hat die Seite am Zug getan? Sie sagt, wer an der Reihe ist: die Seite am Zug kündigt an — doppeln, aufgeben — oder die Gegenseite antwortet — annehmen, passen; nie alle vier zugleich, und eine Schaltfläche, deren Geste auf nichts antworten würde, bleibt aus. Die Tastatur dagegen verweigert nie etwas: eine ausgeschaltete Schaltfläche ist ein Ziel, das man nicht anbietet, keine verbotene Geste. „Aufgeben“ hält noch nichts fest: die Reihe wird zu den drei Stufen — einfach, Gammon, Backgammon — und „Abbrechen“, das die ESC-Taste verdoppelt. Der auf dem Brett gezeichnete Doppler ist das zweite Ziel dieser Gesten: ein Klick darauf bietet ein Doppel an. Vor einem Angebot antwortet er nicht — Annehmen und Passen sind zwei symmetrische Antworten und wohnen zusammen in der Reihe, je ein Klick.</p>
 <p>Die <strong>Statusleiste</strong> sagt in einem Wort, was der Entwurf erwartet: der von selbst festgehaltene Tanz, der neu zu würfelnde Gleichstand, die erwartete Antwort auf ein Doppel, die nach einer Aufgabe erwartete Stufe, die Korrektur an Ort und Stelle, der Zug „zu prüfen“, dessen Wurf sich geändert hat. Sie antwortet dort auch den Gesten, die nichts zu tun haben — „nichts rückgängig zu machen“, „keine Aktion unter dem Cursor“ — für anderthalb Sekunden. Die Ungereimtheit, die eine Aktion hinterlassen hat, wird dagegen am Kopf des Transkripts gemeldet, dort, wo die fehlerhafte Zelle steht.</p>
 <p>Eine Partie endet mit einem Passen, mit einer Aufgabe oder mit dem Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit dem Wert des Dopplers). Punktestand, Crawford-Partie und Matchende erscheinen dann in der Matchleiste, und die Eröffnung der nächsten Partie wird erwartet.</p>
@@ -1434,16 +1436,24 @@ export default {
 <td>Den Wurf mit einer einzigen Geste eingeben: das Feld trägt beide Würfel, Pasch auf der Diagonalen. Während der Eröffnung weicht das Dreieck einer Reihe von sechs Würfeln, ein Klick gibt den Würfel einer Seite.</td>
 </tr>
 <tr>
-<td>Klick (auf einen Punkt des Bretts)</td>
-<td>Nur die Kandidaten behalten, bei denen ein Schritt von diesem Punkt ausgeht; ein zweiter Punkt engt weiter ein, ein Klick auf den bereits gefilterten Punkt entfernt ihn, und ein Klick neben das Brett hebt den Filter auf.</td>
-</tr>
-<tr>
 <td>Klick, Ziehen (kein Würfel eingegeben)</td>
 <td>Den Zug direkt auf dem Brett spielen: Der Stein geht vom angeklickten Punkt zu seinem Ziel, auf die legalen Züge beschränkt, und die beiden Würfel ergeben sich aus den gespielten Schritten.</td>
 </tr>
 <tr>
+<td>Klick, Ziehen (Wurf eingegeben)</td>
+<td>Den Zug auf dem Brett spielen, auf die legalen Züge dieses Wurfs beschränkt: Jeder gespielte Schritt behält in der Liste nur die Kandidaten, die ihn enthalten, und ein vollständiger legaler Zug wird sofort erfasst. Bei einer erneut betrachteten Aktion ersetzt er diese.</td>
+</tr>
+<tr>
+<td>Ziehen außerhalb der Regeln (Wurf eingegeben)</td>
+<td>Den Stein dort absetzen, wo er losgelassen wird, auch von einem Punkt aus, von dem kein legaler Zug ausgeht, um einen illegalen Zug zu transkribieren. Der Rest des Zugs wird frei gespielt, per Klick wie per Ziehen, und die Kandidatenliste weicht einer Zeile, die daran erinnert.</td>
+</tr>
+<tr>
+<td>EINGABE (Zug außerhalb der Regeln)</td>
+<td>Den Zug mit den eingegebenen Würfeln und dem erreichten Brett erfassen, als illegaler Zug markiert, wenn kein legaler Zug dieses Brett erreicht. Ein Zug außerhalb der Regeln wird nie von selbst erfasst.</td>
+</tr>
+<tr>
 <td>RÜCKTASTE (Zug wird gerade auf dem Brett gespielt)</td>
-<td>Den letzten auf dem Brett gespielten Schritt zurücknehmen.</td>
+<td>Den letzten auf dem Brett gespielten Schritt zurücknehmen. Die verbleibenden Schritte werden beschränkt nachgespielt, solange ein legaler Zug sie enthält: Wird der einzige Schritt außerhalb der Regeln zurückgenommen, kehrt die Liste zurück.</td>
 </tr>
 <tr>
 <td>EINGABE</td>
@@ -1492,6 +1502,10 @@ export default {
 <tr>
 <td>Klick (auf eine Zelle)</td>
 <td>Den Cursor auf diese Aktion setzen.</td>
+</tr>
+<tr>
+<td>Doppelklick (auf eine Zelle)</td>
+<td>Den Zug dieser Aktion über die Tastatur in die Zelle tippen: 13/7 8/7*, bar/22, 6/off. Nur der Zug wird getippt, die Würfel sind die der Zelle; EINGABE erfasst ihn, auch illegal, und Esc schließt die Zelle, ohne etwas zu schreiben. Gilt für einen Zug, einen Tanz, einen nicht festgehaltenen Zug und für die gestrichelte Zelle der laufenden Eingabe, sobald ihre beiden Würfel eingegeben sind.</td>
 </tr>
 <tr>
 <td>Rechtsklick (auf eine Zelle)</td>

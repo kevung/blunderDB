@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:26+0200\n"
+"POT-Creation-Date: 2026-09-24 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -921,20 +921,6 @@ msgstr ""
 "ряду из шести костей, и один щелчок даёт кость одной стороны."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic (sur un point du damier)"
-msgstr "Щелчок (по пункту доски)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Ne garder que les candidats dont un pas part de ce point ; un second "
-"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
-"clic hors du damier lève le filtre."
-msgstr ""
-"Оставить только те варианты, в которых есть шаг из этого пункта; второй "
-"пункт сужает список ещё сильнее, щелчок по уже выбранному пункту снимает "
-"его, а щелчок вне доски снимает фильтр целиком."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (aucun dé saisi)"
 msgstr "Щелчок, перетаскивание (кости не введены)"
 
@@ -948,12 +934,64 @@ msgstr ""
 "в пределах законных ходов, а обе кости выводятся из сыгранных шагов."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic, glisser (jet saisi)"
+msgstr "Щелчок, перетаскивание (бросок введён)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
+"chaque pas joué ne garde dans la liste que les candidats qui le "
+"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
+"action relue, il la remplace."
+msgstr ""
+"Сыграть ход на доске в пределах законных ходов этого броска: каждый "
+"сыгранный шаг оставляет в списке только варианты, которые его содержат, а"
+" завершённый законный ход записывается сразу. На пересматриваемом "
+"действии он заменяет это действие."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser hors des règles (jet saisi)"
+msgstr "Перетаскивание вне правил (бросок введён)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Poser le pion là où il est lâché, même depuis un point d'où aucun coup "
+"légal ne part, pour transcrire un coup illégal. La suite du coup se joue "
+"librement, au clic comme au glissé, et la liste des candidats cède la "
+"place à une ligne qui le rappelle."
+msgstr ""
+"Поставить шашку туда, где её отпустили, даже из пункта, откуда не идёт ни"
+" один законный ход, чтобы транскрибировать недопустимый ход. Остаток хода"
+" играется свободно, щелчком или перетаскиванием, а список вариантов "
+"уступает место строке, которая об этом напоминает."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (coup hors des règles)"
+msgstr "ENTER (ход вне правил)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
+" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
+"règles n'est jamais enregistré de lui-même."
+msgstr ""
+"Записать ход с введёнными костями и полученной доской, с пометкой "
+"«недопустимый ход», если ни один законный ход не приводит к этой доске. "
+"Ход вне правил никогда не записывается сам."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
 msgstr "BACKSPACE (ход разыгрывается на доске)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Défaire le dernier pas joué au plateau."
-msgstr "Отменить последний шаг, сыгранный на доске."
+msgid ""
+"Défaire le dernier pas joué au plateau. Les pas restants sont rejoués "
+"contraints tant qu'un coup légal les contient : défaire le seul pas hors "
+"des règles rend la liste."
+msgstr ""
+"Отменить последний шаг, сыгранный на доске. Оставшиеся шаги "
+"переигрываются с ограничениями, пока их содержит законный ход: отмена "
+"единственного шага вне правил возвращает список."
 
 #: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
@@ -1064,6 +1102,25 @@ msgid "Placer le curseur sur cette action."
 msgstr "Поставить курсор на это действие."
 
 #: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une cellule)"
+msgstr "Двойной щелчок (по ячейке)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, "
+"bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; "
+"ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien "
+"écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la "
+"cellule en pointillés de la saisie en cours dès que ses deux dés sont "
+"saisis."
+msgstr ""
+"Набрать ход этого действия с клавиатуры прямо в ячейке: 13/7 8/7*, "
+"bar/22, 6/off. Набирается только ход, кости — те, что в ячейке; ENTER "
+"записывает его, даже недопустимый, а Esc закрывает ячейку, ничего не "
+"записав. Действует для хода, танца, незаписанного хода и для пунктирной "
+"ячейки текущего ввода, как только обе её кости введены."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic droit (sur une cellule)"
 msgstr "Щелчок правой кнопкой (по ячейке)"
 
@@ -1142,7 +1199,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:331
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1150,7 +1207,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:337
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1176,7 +1233,7 @@ msgstr ""
 "следующая цифра подтверждает его и открывает следующее решение, как в "
 "конце документа, и ENTER тоже ведёт туда."
 
-#: ../../source/raccourcis.rst:345
+#: ../../source/raccourcis.rst:348
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1189,7 +1246,7 @@ msgstr ""
 "открывает ячейку между двумя соседними, а сторона читается по столбцу. До"
 " подтверждения ничего не записывается."
 
-#: ../../source/raccourcis.rst:350
+#: ../../source/raccourcis.rst:353
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1201,7 +1258,7 @@ msgstr ""
 " не затирает идущее за ним. Конец партии или перемещение курсора это "
 "прекращает."
 
-#: ../../source/raccourcis.rst:355
+#: ../../source/raccourcis.rst:358
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1213,7 +1270,7 @@ msgstr ""
 "действия» в конце документа. Фраза стирается сама и возвращает место "
 "ожидаемому действию."
 
-#: ../../source/raccourcis.rst:360
+#: ../../source/raccourcis.rst:363
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1233,7 +1290,7 @@ msgstr ""
 "Перемещение курсора вперёд или назад после изменения записывает "
 "исправление попутно."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1253,7 +1310,7 @@ msgstr ""
 "открытой партии он остаётся там, где идёт набор. Стек отмены живёт в "
 "памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:376
+#: ../../source/raccourcis.rst:379
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1262,7 +1319,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:383
+#: ../../source/raccourcis.rst:386
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -1496,3 +1553,24 @@ msgstr "Закрыть справку."
 
 #~ msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
 #~ msgstr "Удалить действие курсора; последующие сохраняют свою сторону."
+
+#~ msgid "Clic (sur un point du damier)"
+#~ msgstr "Щелчок (по пункту доски)"
+
+#~ msgid ""
+#~ "Ne garder que les candidats dont "
+#~ "un pas part de ce point ; un"
+#~ " second point réduit encore, un clic"
+#~ " sur le point déjà filtré l'enlève,"
+#~ " et un clic hors du damier lève"
+#~ " le filtre."
+#~ msgstr ""
+#~ "Оставить только те варианты, в которых"
+#~ " есть шаг из этого пункта; второй "
+#~ "пункт сужает список ещё сильнее, щелчок"
+#~ " по уже выбранному пункту снимает "
+#~ "его, а щелчок вне доски снимает "
+#~ "фильтр целиком."
+
+#~ msgid "Défaire le dernier pas joué au plateau."
+#~ msgstr "Отменить последний шаг, сыгранный на доске."

@@ -113,6 +113,21 @@ export function alivePlays(state) {
 }
 
 /**
+ * Les pas `steps` d'un coup contiennent-ils ceux qui ont été joués,
+ * multiplicités comprises et dans n'importe quel ordre ?
+ *
+ * C'est la règle d'`alivePlays`, offerte à qui tient une liste de coups sans
+ * tenir d'état du réducteur — la liste des candidats d'une transcription, que
+ * les pas joués au plateau réduisent (ADR-0052).
+ *
+ * @param {Step[]} steps
+ * @param {Step[]} played
+ */
+export function containsSteps(steps, played) {
+    return contains(tally(steps ?? []), tally(played ?? []));
+}
+
+/**
  * Le coup achevé, s'il y en a un : tous ses pas sont joués.
  *
  * Rend le coup du moteur, et non le plateau reconstruit ici — c'est SA

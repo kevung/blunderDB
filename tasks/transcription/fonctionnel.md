@@ -126,8 +126,10 @@ annoté`. Les touches sont dans [ux.md](ux.md) ; ici, l'effet.
 sont gardés ; sinon le premier candidat du nouveau jet est présélectionné et l'Action est
 marquée « à revoir » jusqu'à validation.
 
-**Saisie manuelle d'un coup** : une notation (`13/7 8/7*`, `bar/22`, `6/off`) ou un plateau
-déplacé librement (lot 2). Si le plateau résultant est celui d'un coup légal, l'Action est
+**Saisie manuelle d'un coup** (ADR-0052) : une notation (`13/7 8/7*`, `bar/22`, `6/off`)
+tapée dans la cellule du Transcript ouverte par un double-clic — les dés sont ceux de la
+cellule —, ou, le jet saisi, un glissé au plateau qu'aucun coup légal n'offre, qui rend le
+coup libre jusqu'à Entrée. Si le plateau résultant est celui d'un coup légal, l'Action est
 un coup ordinaire ; sinon un coup illégal avec `board_after`.
 
 ## 3. Écriture et reprise
@@ -215,8 +217,9 @@ repart. Aucun état n'est stocké pour cela.
     marqué ; le Cursor reste sur n−1 (ADR-0050).
 15. **Changement de camp** : Cursor sur n → changer → Replay ; les coups suivants peuvent
     devenir illégaux (pions de l'autre camp) : marqués, jamais supprimés.
-16. **Coup illégal** : jet saisi, coup joué au plateau en déplacement libre ou en texte → pas
-    de candidat correspondant → Action `checker` avec `board_after`, marquée.
+16. **Coup illégal** : jet saisi, coup glissé au plateau hors des règles puis Entrée, ou tapé
+    dans sa cellule → pas de candidat correspondant → Action `checker` avec `board_after`,
+    marquée.
 17. **Changement de longueur** : `match_length` modifié → Replay complet ; score away, Crawford,
     référentiel recalculés ; Actions au-delà de la fin marquées.
 18. **Enregistrement** : « Enregistrer » → §4 ; le Match apparaît dans le panneau Match ; le

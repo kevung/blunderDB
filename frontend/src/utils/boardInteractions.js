@@ -18,8 +18,7 @@ import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF, playHop, selectSource } from '../services/quizPlay.js';
-import { freeClick, freeStep } from '../services/transcriptionPlay.js';
-import { nextFilter, sourcesOf } from '../services/transcriptionFilter.js';
+import { canPlayFree, dragStep, freeClick, hasMoverChecker } from '../services/transcriptionPlay.js';
 
 // A second click on the same Except point within this delay blocks it.
 // Detected by hand because native 'dblclick' is unreliable here: each click
@@ -214,8 +213,7 @@ function stepDie(value, button) {
  *   cfg                  Board.svelte's boardCfg (orientation, widthFactor read live)
  *   getCubeBox()         { x, y, size } where the cube was last drawn
  *   stores               { position, structureMode, activeTab, offeredCube, anyModalOpen,
- *                          quizPlay, transcriptionFilter, transcriptionCandidates,
- *                          transcriptionCube }
+ *                          quizPlay, transcriptionCube }
  *   getPreviousDice()    dice saved when a player rectangle cleared them
  *   setPreviousDice(d)
  *   reset()              blank the board (double-click outside, mode-specific)
@@ -362,51 +360,6 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
-     * Le clic qui réduit la liste des candidats d'une transcription (T2.2).
-     *
-     * Un clic sur un point d'où part au moins un candidat ne garde que les
-     * coups qui en partent ; un second point réduit encore ; un clic sur le
-     * point déjà filtré l'enlève, et un clic hors du damier lève tout. C'est le
-     * geste du coup lointain : le rang douze coûte treize touches au clavier.
-     *
-     * Rien de tout cela ne touche au document : le filtre est un état
-     * d'AFFICHAGE (services/transcriptionFilter.js), le moteur n'est pas
-     * rappelé, aucune Action n'est créée.
-     *
-     * Rend `true` quand le geste est pris — sur le modèle de `quizClick`, pour
-     * que l'édition, et le déplacement libre de pions qui viendra, ne voient
-     * pas ce clic.
-     * @param {MouseEvent} event
-     * @param {number} x
-     * @param {number} y
-     */
-    function transcriptionClick(event, x, y) {
-        if (!stores.transcriptionFilter || !stores.transcriptionCandidates) return false;
-        const candidates = get(stores.transcriptionCandidates);
-        if (!candidates?.length) return false;
-        // Le bouton droit ouvre le menu de la position, ici comme ailleurs.
-        if (event.button !== 0) return false;
-
-        const points = get(stores.transcriptionFilter);
-        if (isOutsideBoard(x, y, metrics())) {
-            if (!points.length) return false;
-            stores.transcriptionFilter.set([]);
-            return true;
-        }
-
-        const point = pointAt(x, y);
-        if (point === null) return false;
-        // Un point d'où ne part aucun candidat ne fait RIEN : le geste reste
-        // disponible pour le déplacement libre de pions, qui a son propre état.
-        if (!points.includes(point) && !sourcesOf(candidates).has(point)) return false;
-
-        const next = nextFilter(points, point, candidates);
-        if (next === null) return false;
-        stores.transcriptionFilter.set(next);
-        return true;
-    }
-
-    /**
      * Joue le clic sur le coup en cours, s'il y en a un. Rend `true` quand le
      * quiz a pris la main — l'édition ne doit alors pas voir ce clic.
      *
@@ -424,9 +377,9 @@ export function attachBoardInteractions(canvas, deps) {
         const target = quizTargetAt(x, y);
         if (target === null) return true;
         stores.quizPlay.update((/** @type {any} */ s) => {
-            // Le déplacement LIBRE d'une transcription (T2.4) : aucun coup légal
-            // ne le contraint, et c'est la seule différence — le geste, lui, est
-            // le même, source puis destination.
+            // Le coup d'une transcription SORTI DES RÈGLES (ADR-0052) : aucun
+            // coup légal ne le contraint plus, et c'est la seule différence — le
+            // geste, lui, est le même, source puis destination.
             if (s.free) return freeClick(s, target);
             if (s.selected === null) return selectSource(s, target);
             const played = playHop(s, s.selected, target);
@@ -440,6 +393,13 @@ export function attachBoardInteractions(canvas, deps) {
         // par pas). Deux clics restent possibles et donnent le même état.
         const after = get(stores.quizPlay);
         boardPress = state.selected === null && after?.selected === target ? target : null;
+        // Le jet connu, une pression sur un pion du camp au trait ouvre AUSSI
+        // un glissé quand aucun coup légal n'en part : lâché ailleurs, le pion
+        // y est posé et le coup sort des règles (ADR-0052). La pression seule
+        // ne choisit rien — un clic sur ce pion ne fait toujours rien.
+        if (boardPress === null && after && canPlayFree(after) && after.steps.length === state.steps.length && hasMoverChecker(after, target)) {
+            boardPress = target;
+        }
         return true;
     }
 
@@ -447,6 +407,9 @@ export function attachBoardInteractions(canvas, deps) {
      * La fin d'un glissé : le pion lâché sur `to`. Rend `true` quand le geste
      * était bien un glissé du coup en cours — l'édition ne doit alors pas voir
      * ce relâchement.
+     *
+     * Un pas légal est joué ; un autre, le jet connu, pose le pion là où il est
+     * lâché (`dragStep`, ADR-0052). Sans jet saisi il ne fait rien.
      * @param {MouseEvent} event
      */
     function boardPlayDrop(event) {
@@ -456,10 +419,7 @@ export function attachBoardInteractions(canvas, deps) {
         const { x, y } = toDrawing(event);
         const target = quizTargetAt(x, y);
         if (target === null || target === from) return true;
-        stores.quizPlay.update((/** @type {any} */ s) => {
-            if (!s || s.selected !== from) return s;
-            return s.free ? freeStep(s, from, target) : playHop(s, from, target);
-        });
+        stores.quizPlay.update((/** @type {any} */ s) => (s ? dragStep(s, from, target) : s));
         return true;
     }
 
@@ -471,11 +431,10 @@ export function attachBoardInteractions(canvas, deps) {
         }
         {
             const { x, y } = toDrawing(event);
-            // Le videau d'abord : il est hors du damier, donc aucun des deux
-            // gestes qui suivent ne le vise, et tous deux avalent le clic.
+            // Le videau d'abord : il est hors du damier, donc le coup joué au
+            // plateau ne le vise pas, et il avale le clic.
             if (transcriptionCubeClick(event, x, y)) return;
             if (quizClick(event, x, y)) return;
-            if (transcriptionClick(event, x, y)) return;
         }
         if (!editable()) return;
         const { x, y } = toDrawing(event);

@@ -20,7 +20,10 @@
   Cursor gesture — so that the Match panel can mount it one day on a stored
   match (tasks/transcription/integration.md §4): it takes an index to frame and
   calls back with the index that was clicked — or right-clicked, `onMenu` —, and
-  what those indices mean is the caller's business.
+  what those indices mean is the caller's business. The one field it owns is the
+  move typed into a cell on a double-click (ADR-0052): a text box and its
+  Enter/Escape, handed back as `onEditMove(index, text, pending)` — what the
+  text means, and whether it is accepted, is the caller's business too.
 
   That promise used to be false in one place: a `.mat` pane lived here, with a
   clipboard call, an acknowledgement timer and a fold state that belong to a
@@ -75,7 +78,7 @@
             at,
             gameIndex,
             replacing,
-            cell: { kind: 'pending', index: at, entry: e, side: e.side ?? 0, opening: e.kind === 'opening' }
+            cell: { kind: 'pending', index: at, entry: e, side: e.side ?? 0, opening: e.kind === 'opening', replacing }
         };
     }
 
@@ -160,6 +163,7 @@
 <script>
     import { SvelteMap } from 'svelte/reactivity';
     import { t } from '../i18n';
+    import { closeOnEscape } from '../services/escapeService.js';
 
     let {
         /** A `transcript.Annotated`, verbatim. */
@@ -180,7 +184,15 @@
          * and a Transcript that swallowed it everywhere would take away the
          * browser's own menu from the panel around it (fiche T2.5).
          */
-        onMenu = null
+        onMenu = null,
+        /**
+         * Told when the move typed into a cell is validated with Enter:
+         * `(index, text, pending) => boolean` — `pending` for the dashed cell
+         * of the Action being typed. A `true` answer closes the field; `false`
+         * (a text that says no move) leaves it open. Without it, a double-click
+         * edits nothing (ADR-0052).
+         */
+        onEditMove = null
     } = $props();
 
     let header = $derived(annotated?.document?.header ?? {});
@@ -200,6 +212,79 @@
         }
         return -1;
     });
+
+    // ── le coup tapé dans sa cellule (ADR-0052) ──────────────────────────
+    //
+    // Un double-clic sur une cellule de coup la change en champ, pré-rempli de
+    // sa notation. On n'y tape QUE le coup : les dés sont ceux de la cellule, et
+    // le champ ne les montre pas. Entrée le rend à l'appelant, Échap le ferme
+    // sans rien écrire, et le quitter aussi — un champ abandonné n'est pas une
+    // validation.
+    //
+    // Échap passe par escapeService, écouté en capture : c'est le seul moyen
+    // qu'il ferme le champ et RIEN d'autre, ni la saisie du panneau, ni le
+    // répartiteur global. Les autres touches restent au champ : le panneau et
+    // le répartiteur laissent passer tout ce qui est tapé dans un champ
+    // (panelKeyGuard, keyboardService).
+
+    /** @type {{index: number, pending: boolean, text: string} | null} */
+    let editing = $state(null);
+
+    $effect(() => {
+        if (editing) return closeOnEscape(() => (editing = null));
+    });
+
+    /**
+     * La cellule se tape-t-elle ? Un coup de pions, une danse, un coup non
+     * consigné — et la saisie en cours quand ses deux dés sont là.
+     *
+     * @param {any} c
+     */
+    function typable(c) {
+        if (!onEditMove || !c) return false;
+        if (c.kind === 'pending') return !c.opening && (c.entry?.dice?.[0] ?? 0) > 0 && (c.entry?.dice?.[1] ?? 0) > 0;
+        return c.kind === 'action' && (c.info?.kind === 'checker' || c.info?.kind === 'dance' || c.info?.kind === 'unrecorded');
+    }
+
+    /**
+     * Le champ ouvert est-il celui de cette cellule ? Une correction en place
+     * TIENT la place de l'Action (voir [pendingOf]) : le champ ouvert sur la
+     * cellule reste donc le sien quand le moteur y dessine la saisie.
+     *
+     * @param {any} c
+     */
+    function editsCell(c) {
+        if (!editing || !c || c.index !== editing.index) return false;
+        if (c.kind === 'pending') return editing.pending || c.replacing === true;
+        return c.kind === 'action' && !editing.pending;
+    }
+
+    /** @param {any} c */
+    function startEdit(c) {
+        if (!typable(c)) return;
+        const text = c.kind === 'pending' ? (c.entry?.notation ?? '') : c.info?.kind === 'checker' ? (c.info.notation ?? '') : '';
+        editing = { index: c.index, pending: c.kind === 'pending', text };
+    }
+
+    /** @param {KeyboardEvent} event */
+    function editKeyDown(event) {
+        if (event.key !== 'Enter' || !editing) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const { index, pending, text } = editing;
+        if (onEditMove?.(index, text, pending)) editing = null;
+    }
+
+    /**
+     * Le champ prend la main à son ouverture, texte sélectionné : on retape
+     * par-dessus, ou l'on corrige au bout.
+     *
+     * @param {HTMLInputElement} node
+     */
+    function focusField(node) {
+        node.focus();
+        node.select();
+    }
 
     // The dice live on the document's Action (the Replay does not copy them
     // onto its ActionInfo), so the two are read side by side, by index.
@@ -406,6 +491,18 @@
 {#snippet cellBlock(/** @type {any} */ c)}
     {#if !c}
         <span class="cell empty-cell"></span>
+    {:else if editing && editsCell(c)}
+        <input
+            class="cell move-field"
+            type="text"
+            data-index={c.index}
+            aria-label={$t('transcript.moveField')}
+            placeholder={$t('transcript.moveFieldPlaceholder')}
+            bind:value={editing.text}
+            onkeydown={editKeyDown}
+            onblur={() => (editing = null)}
+            use:focusField
+        />
     {:else}
         {@const flaws = flawsOf(c)}
         {@const framed = c.kind === 'pending' || (c.kind === 'action' && c.index === at && pendingIndex !== c.index)}
@@ -422,6 +519,7 @@
                 aria-current={framed ? 'true' : undefined}
                 title={flaws.length ? flawTitle(flaws) : undefined}
                 onclick={() => onSelect(c.index)}
+                ondblclick={() => startEdit(c)}
                 oncontextmenu={(event) => {
                     if (!onMenu) return;
                     event.preventDefault();
@@ -597,5 +695,11 @@
 
     .empty-cell {
         border-color: transparent;
+    }
+
+    /* Le coup tapé dans sa cellule : la cellule encadrée, devenue champ. */
+    .move-field {
+        border-color: var(--color-primary);
+        background: var(--color-surface);
     }
 </style>

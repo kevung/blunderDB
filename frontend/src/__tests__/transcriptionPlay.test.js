@@ -17,8 +17,10 @@ import {
     ROLLS,
     rollKey,
     newBoardPlay,
-    newFreePlay,
     freeClick,
+    dragStep,
+    canPlayFree,
+    resetBoardPlay,
     undoBoardStep,
     compatibleRolls,
     choosableRolls,
@@ -196,23 +198,94 @@ describe('le budget d’ux.md §4.1 : quatre pas à la souris ≤ 6 s', () => {
     });
 });
 
-describe('le déplacement libre et la notation (T2.4)', () => {
-    test('un pion se déplace là où aucun coup légal ne le mène', () => {
-        let state = newFreePlay(POSITION);
+describe('le jet saisi : ses coups, et le glissé hors des règles (ADR-0052)', () => {
+    // Le jet 6-1 tapé : la liste de départ n'est plus l'union des 21 jets.
+    const rolled = () => newBoardPlay(POSITION, [BY_ROLL[0]], { rolled: [1, 6] });
+
+    test('le jet saisi est porté tel qu’il a été tapé, et ouvre le glissé libre', () => {
+        const state = rolled();
+        expect(state.rolled).toEqual([1, 6]);
+        expect(canPlayFree(state)).toBe(true);
+        // Sans jet saisi, rien ne sort des règles : il n'y a pas de dés à écrire.
+        expect(canPlayFree(newBoardPlay(POSITION, BY_ROLL))).toBe(false);
+    });
+
+    test('un glissé légal reste un pas légal, et le coup achevé se déduit', () => {
+        let state = dragStep(rolled(), 13, 7);
+        expect(state.free).toBe(false);
+        state = dragStep(state, 8, 7);
+        expect(state.free).toBe(false);
+        expect(deducedDice(state)).toEqual([6, 1]);
+    });
+
+    test('un glissé qu’aucun coup n’offre pose le pion, et le coup devient libre', () => {
         // 13/3 n'est un coup d'aucun jet : il se transcrit tout de même.
-        state = freeClick(state, 13);
-        state = freeClick(state, 3);
+        const state = dragStep(rolled(), 13, 3);
+        expect(state.free).toBe(true);
         expect(state.steps).toEqual([{ from: 13, to: 3 }]);
         expect(state.board.points[3]).toEqual({ checkers: 1, color: BLACK });
         expect(state.board.points[13].checkers).toBe(4);
+        // Un coup libre ne se déduit jamais : c'est Entrée qui l'enregistre.
+        expect(deducedDice(state)).toBeNull();
     });
 
-    test('un point sans pion du camp au trait ne se choisit pas', () => {
-        const state = freeClick(newFreePlay(POSITION), 5);
-        expect(state.selected).toBeNull();
+    test('depuis un point qui n’est pas une source légale, pourvu qu’il porte un pion du camp', () => {
+        // Aucun coup de 6-1 ne part de 6.
+        const state = dragStep(rolled(), 6, 2);
+        expect(state.free).toBe(true);
+        expect(state.board.points[2]).toEqual({ checkers: 1, color: BLACK });
+        // Un point sans pion du camp au trait n'a rien à donner.
+        expect(dragStep(rolled(), 5, 2).steps).toEqual([]);
+    });
+
+    test('sans jet saisi, un glissé hors des règles ne fait rien', () => {
+        const state = dragStep(newBoardPlay(POSITION, BY_ROLL), 13, 3);
         expect(state.steps).toEqual([]);
+        expect(state.free).toBe(false);
     });
 
+    test('une fois libre, le clic déplace aussi sans rien vérifier', () => {
+        let state = dragStep(rolled(), 13, 3);
+        state = freeClick(freeClick(state, 8), 4);
+        expect(state.steps).toEqual([
+            { from: 13, to: 3 },
+            { from: 8, to: 4 }
+        ]);
+        // Un point sans pion du camp au trait ne se choisit pas.
+        expect(freeClick(state, 5).selected).toBeNull();
+    });
+
+    test('défaire le pas hors des règles rend un coup contraint', () => {
+        let state = dragStep(rolled(), 13, 7);
+        state = dragStep(state, 6, 2);
+        expect(state.free).toBe(true);
+        const back = undoBoardStep(state);
+        expect(back.free).toBe(false);
+        expect(back.steps).toEqual([{ from: 13, to: 7 }]);
+        expect(back.rolled).toEqual([1, 6]);
+    });
+
+    test('le rejeu est libre dès le premier pas qui l’était', () => {
+        let state = dragStep(rolled(), 6, 2);
+        state = dragStep(state, 13, 7);
+        state = dragStep(state, 8, 7);
+        const back = undoBoardStep(state);
+        expect(back.free).toBe(true);
+        expect(back.steps).toEqual([
+            { from: 6, to: 2 },
+            { from: 13, to: 7 }
+        ]);
+    });
+
+    test('remettre le plateau rend le coup contraint, jet gardé', () => {
+        const state = resetBoardPlay(dragStep(rolled(), 13, 3), null);
+        expect(state.free).toBe(false);
+        expect(state.steps).toEqual([]);
+        expect(state.rolled).toEqual([1, 6]);
+    });
+});
+
+describe('la notation (ADR-0052)', () => {
     test('la notation se lit dans le repère du camp qui joue', () => {
         // Noir : la notation EST le numéro du modèle.
         expect(stepsFromNotation('13/7 8/7*', BLACK)).toEqual([

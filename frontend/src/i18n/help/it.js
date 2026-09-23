@@ -299,9 +299,11 @@ export default {
 <p>Non appena cade il secondo dado, tutte le <strong>mosse legali</strong> del lancio vengono elencate, classificate dal motore incorporato, la prima preselezionata e le sue frecce poste sulla tavola. La lista dà la mossa, la sua equità e il suo scarto dalla migliore: trascrivere significa riconoscere la mossa che si è vista giocare, non giudicarla — per questo c'è il pannello <strong>Valutazione</strong>. Questa classifica è una valutazione: viene mostrata, non viene mai scritta nel database. Quando il motore non è disponibile, le mosse sono elencate senza classifica e la lista lo dice in testa.</p>
 <p>La <strong>rotellina</strong> seleziona la candidata successiva o precedente, sia sopra la lista sia sopra la tavola: lo sguardo resta sulla tavola e le frecce scorrono, il che riconosce una mossa più in fretta della lettura della sua notazione. Un clic su una riga la seleziona, un doppio clic la convalida.</p>
 <p>Il triangolo dei ventuno tiri sta sotto le due caselle del tiro, accanto alla tastiera e non al suo posto: due cifre restano due volte più rapide di un clic, e il triangolo è lì per chi trascrive con la mano sul mouse. Una casella per tiro, mai due: 3-1 e 1-3 sono lo stesso tiro.</p>
-<p>Un clic su un punto della tavola lascia solo le mosse che ne partono. È il gesto della mossa lontana: scendere alla dodicesima candidata costa tredici tasti, mentre il filtro ne lascia solo due o tre. Il filtro non cambia nulla nella bozza, accorcia la lista sullo schermo; un'etichetta in testa alla lista lo ricorda e permette di toglierlo, e anche il lancio successivo lo toglie.</p>
 <p>Una mossa giocata sul tavoliere risparmia la lettura dei dadi. Finché nessun dado è stato inserito, un clic su una pedina e poi sulla sua destinazione — o un trascinamento dall'una all'altra — gioca la mossa sul tavoliere, vincolata alle mosse legali; le destinazioni offerte dalla pedina scelta si illuminano. I due dadi si deducono dai passi: giocare 13/7 e poi 8/7 dice 6-1 senza che sia stata digitata una cifra, e l'azione viene registrata non appena la mossa è completa. Backspace annulla l'ultimo passo, una cifra abbandona la mossa e torna all'inserimento dei dadi, e un doppio clic fuori dal tavoliere la ricomincia. Quando più lanci producono la stessa mossa — un'uscita che più dadi coprono, un dado non giocabile — nulla viene registrato e il triangolo lascia cliccabili solo quei lanci: il lancio non viene mai indovinato al posto di chi guarda la partita.</p>
-<p>Una mossa illegale si trascrive così come è stata giocata. Il pulsante <strong>✎</strong> della tavolozza apre le due vie che lo consentono, al posto del triangolo: servono una volta per partita, mentre il triangolo serve a ogni turno. Il pulsante «Movimento libero» libera la tavola: le pedine si spostano senza alcuna verifica, e «Questa tavola è la mossa giocata» registra la tavola ottenuta. Il campo di notazione, accanto, fa lo stesso da tastiera: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> si scrivono e si registrano con INVIO. Entrambi richiedono che i dadi del lancio siano immessi prima, poiché una mossa illegale non dice quale lancio l'abbia prodotta. Una mossa immessa per una di queste due vie che risulti legale resta una mossa ordinaria — il confronto si fa sulla tavola ottenuta, mai sulla provenienza del gesto; altrimenti viene marcata «mossa illegale» nella trascrizione, e l'esportazione <code>.mat</code> avverte prima di scrivere il file, senza mai rifiutare.</p>
+<p>Con i due dadi inseriti, anche il tavoliere gioca, vincolato alle mosse legali di quel lancio — alla fine del documento come su un'azione rivista, di cui il cursore ha caricato i dadi. Ogni passo giocato lascia nella lista solo i candidati che lo contengono, il primo dei quali preselezionato: è il gesto della mossa lontana, là dove scendere al dodicesimo candidato costa tredici tasti. Una mossa legale completa viene registrata subito, con i dadi così come sono stati digitati; su un'azione rivista, la sostituisce.</p>
+<p>Una mossa illegale si trascrive così come è stata giocata, senza pulsanti né cambio di modalità. Con i dadi inseriti, un trascinamento che nessuna mossa legale offre posa la pedina dove viene rilasciata — anche da un punto da cui non parte alcuna mossa legale, purché porti una pedina del giocatore di turno. La mossa esce allora dalle regole: il resto si gioca liberamente, con il clic come con il trascinamento, la lista dei candidati lascia il posto a una riga che lo ricorda, e nulla viene registrato prima di INVIO, che scrive i dadi inseriti, i passi e il tavoliere ottenuto. Backspace annulla l'ultimo passo; annullare l'unico passo fuori dalle regole restituisce la lista. Senza dadi inseriti, il trascinamento resta vincolato: una mossa illegale non dice quale lancio l'abbia prodotta.</p>
+<p>La mossa si digita anche da tastiera, nella trascrizione. Un doppio clic sulla cella di una mossa — o di una danza, di una mossa non registrata — la trasforma in un campo, precompilato con la sua notazione. Lì si digita solo la mossa, <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code>: i dadi sono quelli della cella. INVIO la registra al posto della mossa scritta, ESC richiude la cella senza scrivere nulla, e un testo che non indica alcuna mossa lascia il campo aperto. La cella tratteggiata dell'inserimento in corso si apre allo stesso modo, non appena i suoi due dadi sono inseriti.</p>
+<p>Una mossa immessa con il trascinamento libero o con la notazione che risulti legale resta una mossa ordinaria — il confronto si fa sulla tavola ottenuta, mai sulla provenienza del gesto; altrimenti viene marcata «mossa illegale» nella trascrizione, e l'esportazione <code>.mat</code> avverte prima di scrivere il file, senza mai rifiutare.</p>
 <p>Sulla riga dei dadi, la fila <strong>Raddoppiare</strong>, <strong>Accettare</strong>, <strong>Passare</strong>, <strong>Abbandonare</strong> porta al mouse i quattro gesti del cubo: sono, insieme ai due dadi, le cinque risposte possibili a una sola domanda — che cosa ha fatto il campo di turno? Dice a chi tocca: il campo di turno annuncia — raddoppiare, abbandonare — oppure il campo avverso risponde — accettare, passare; mai tutti e quattro insieme, e un pulsante il cui gesto non risponderebbe a nulla resta spento. La tastiera, invece, non rifiuta mai nulla: un pulsante spento è un bersaglio che non si offre, non un gesto vietato. «Abbandonare» non registra ancora nulla: la fila diventa i tre livelli — semplice, gammon, backgammon — e «Annulla», che raddoppia il tasto ESC. Il cubo disegnato sulla tavola è il secondo bersaglio di questi gesti: un clic su di esso propone un raddoppio. Davanti a un'offerta non risponde — accettare e passare sono due risposte simmetriche e vivono insieme nella fila, un clic ciascuna.</p>
 <p>La <strong>barra di stato</strong> dice in una parola che cosa la bozza attende: la danza registrata d'ufficio, la parità da rilanciare, la risposta attesa a un raddoppio, il livello atteso dopo un abbandono, la correzione sul posto, la mossa «da rivedere» il cui lancio è cambiato. Vi risponde anche ai gesti che non hanno nulla da fare — «niente da annullare», «nessuna azione sotto il cursore» — per un secondo e mezzo. L'incoerenza che un'azione ha lasciato dietro di sé è invece segnalata in testa alla trascrizione, là dove si trova la cella difettosa.</p>
 <p>Una partita finisce con un passo, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicato per il valore del cubo). Il punteggio, la partita Crawford e la fine dell'incontro compaiono allora nella barra della partita, e si attende l'apertura della partita successiva.</p>
@@ -1434,16 +1436,24 @@ export default {
 <td>Inserire il tiro con un solo gesto: la casella porta entrambi i dadi, i doppi sulla diagonale. Durante l'apertura il triangolo lascia il posto a una fila di sei dadi, e un clic dà il dado di un campo.</td>
 </tr>
 <tr>
-<td>Clic (su un punto del tavoliere)</td>
-<td>Tenere solo i candidati con un passo che parte da quel punto; un secondo punto riduce ancora, un clic sul punto già filtrato lo toglie, e un clic fuori dal tavoliere elimina il filtro.</td>
-</tr>
-<tr>
 <td>Clic, trascinamento (nessun dado inserito)</td>
 <td>Giocare la mossa direttamente sul tavoliere: la pedina va dal punto cliccato alla sua destinazione, vincolata alle mosse legali, e i due dadi si deducono dai passi giocati.</td>
 </tr>
 <tr>
+<td>Clic, trascinamento (lancio inserito)</td>
+<td>Giocare la mossa sul tavoliere, vincolata alle mosse legali di quel lancio: ogni passo giocato lascia nella lista solo i candidati che lo contengono, e una mossa legale completa viene registrata subito. Su un'azione rivista, la sostituisce.</td>
+</tr>
+<tr>
+<td>Trascinamento fuori dalle regole (lancio inserito)</td>
+<td>Posare la pedina dove viene rilasciata, anche da un punto da cui non parte alcuna mossa legale, per trascrivere una mossa illegale. Il resto della mossa si gioca liberamente, con il clic come con il trascinamento, e la lista dei candidati lascia il posto a una riga che lo ricorda.</td>
+</tr>
+<tr>
+<td>INVIO (mossa fuori dalle regole)</td>
+<td>Registrare la mossa con i dadi inseriti e il tavoliere ottenuto, marcata mossa illegale se nessuna mossa legale raggiunge quel tavoliere. Una mossa fuori dalle regole non viene mai registrata da sola.</td>
+</tr>
+<tr>
 <td>BACKSPACE (mossa in corso sul tavoliere)</td>
-<td>Annullare l'ultimo passo giocato sul tavoliere.</td>
+<td>Annullare l'ultimo passo giocato sul tavoliere. I passi rimanenti vengono rigiocati vincolati finché una mossa legale li contiene: annullare l'unico passo fuori dalle regole restituisce la lista.</td>
 </tr>
 <tr>
 <td>INVIO</td>
@@ -1492,6 +1502,10 @@ export default {
 <tr>
 <td>Clic (su una cella)</td>
 <td>Portare il cursore su questa azione.</td>
+</tr>
+<tr>
+<td>Doppio clic (su una cella)</td>
+<td>Digitare la mossa di quell'azione da tastiera, nella cella: 13/7 8/7*, bar/22, 6/off. Si digita solo la mossa, i dadi sono quelli della cella; INVIO la registra, anche illegale, ed Esc richiude la cella senza scrivere nulla. Vale per una mossa, una danza, una mossa non registrata, e per la cella tratteggiata dell'inserimento in corso non appena i suoi due dadi sono inseriti.</td>
 </tr>
 <tr>
 <td>Clic destro (su una cella)</td>

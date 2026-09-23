@@ -299,9 +299,11 @@ export default {
 <p>En cuanto cae el segundo dado, se listan todos los <strong>movimientos legales</strong> de la tirada, clasificados por el motor incorporado, el primero preseleccionado y sus flechas puestas sobre el tablero. La lista da el movimiento, su equidad y su diferencia con el mejor: transcribir es reconocer el movimiento que se ha visto jugar, no juzgarlo — para eso está el panel <strong>Evaluación</strong>. Esta clasificación es una evaluación: se muestra, nunca se escribe en la base. Cuando el motor no está disponible, los movimientos se listan sin clasificar y la lista lo dice en su cabecera.</p>
 <p>La <strong>rueda</strong> selecciona el candidato siguiente o anterior, tanto sobre la lista como sobre el tablero: la mirada permanece en el tablero y las flechas desfilan, lo que reconoce un movimiento más rápido que leer su notación. Un clic en una fila la selecciona, un doble clic la valida.</p>
 <p>El triángulo de las veintiuna tiradas se sitúa bajo las dos casillas de la tirada, junto al teclado y no en su lugar: dos dígitos siguen siendo el doble de rápidos que un clic, y el triángulo está ahí para quien transcribe con la mano en el ratón. Una casilla por tirada, nunca dos: 3-1 y 1-3 son la misma tirada.</p>
-<p>Un clic en un punto del tablero deja solo los movimientos que parten de él. Es el gesto del movimiento lejano: bajar hasta el duodécimo candidato cuesta trece teclas, mientras que el filtro deja solo dos o tres. El filtro no cambia nada del borrador, acorta la lista en pantalla; una etiqueta en la cabecera de la lista lo recuerda y permite quitarlo, y la tirada siguiente también lo quita.</p>
 <p>Una jugada realizada en el tablero ahorra leer los dados. Mientras no se haya introducido ningún dado, un clic en una ficha y luego en su destino — o un arrastre de una a otro — juega la jugada en el tablero, limitada a las jugadas legales; los destinos que ofrece la ficha elegida se iluminan. Los dos dados se deducen de los pasos: jugar 13/7 y luego 8/7 dice 6-1 sin que se haya tecleado una cifra, y la acción se registra en cuanto la jugada está completa. Retroceso deshace el último paso, una cifra abandona la jugada y vuelve a la entrada de dados, y un doble clic fuera del tablero la reinicia. Cuando varias tiradas producen la misma jugada — una salida que varios dados cubren, un dado que no se puede jugar — no se registra nada y el triángulo solo deja pulsables esas tiradas: la tirada nunca se adivina en lugar de quien mira la partida.</p>
-<p>Un movimiento ilegal se transcribe tal como se jugó. El botón <strong>✎</strong> de la paleta despliega los dos caminos que lo permiten, en lugar del triángulo: sirven una vez por partido, mientras que el triángulo sirve en cada turno. El botón «Movimiento libre» libera el tablero: las fichas se mueven sin comprobación alguna, y «Este tablero es el movimiento jugado» registra el tablero obtenido. El campo de notación, al lado, hace lo mismo con el teclado: <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code> se escriben y se registran con INTRO. Ambos exigen que los dados de la tirada se introduzcan antes, pues un movimiento ilegal no dice qué tirada lo produjo. Un movimiento introducido por cualquiera de estos dos caminos que resulte ser legal sigue siendo un movimiento ordinario — la comparación se hace sobre el tablero obtenido, nunca sobre la procedencia del gesto; si no, se marca «movimiento ilegal» en la transcripción, y la exportación <code>.mat</code> advierte antes de escribir el archivo, sin negarse nunca.</p>
+<p>Con los dos dados introducidos, el tablero también juega, limitado a las jugadas legales de esa tirada — al final del documento como en una acción releída, cuyos dados ha cargado el cursor. Cada paso jugado solo deja en la lista los candidatos que lo contienen, con el primero preseleccionado: es el gesto de la jugada lejana, allí donde bajar hasta el duodécimo candidato cuesta trece teclas. Una jugada legal completa se registra en el acto, con los dados tal como se teclearon; en una acción releída, la sustituye.</p>
+<p>Un movimiento ilegal se transcribe tal como se jugó, sin botón ni cambio de modo. Con los dados introducidos, un arrastre que ninguna jugada legal ofrece deja la ficha donde se suelta — incluso desde un punto del que no sale ninguna jugada legal, siempre que tenga una ficha del bando que tiene el turno. La jugada sale entonces de las reglas: el resto se juega libremente, con clic o con arrastre, la lista de candidatos cede su lugar a una línea que lo recuerda, y nada se registra antes de INTRO, que escribe los dados introducidos, los pasos y el tablero obtenido. Retroceso deshace el último paso; deshacer el único paso fuera de las reglas devuelve la lista. Sin dados introducidos, el arrastre sigue limitado: un movimiento ilegal no dice qué tirada lo produjo.</p>
+<p>La jugada también se teclea, en la transcripción. Un doble clic en la celda de una jugada — o de un baile, de una jugada no consignada — la convierte en un campo, rellenado con su notación. Allí solo se teclea la jugada, <code>13/7 8/7*</code>, <code>bar/22</code> o <code>6/off</code>: los dados son los de la celda. INTRO la registra en lugar de la jugada escrita, ESCAPE cierra la celda sin escribir nada, y un texto que no indica ninguna jugada deja el campo abierto. La celda punteada de la entrada en curso se abre igual, en cuanto sus dos dados están introducidos.</p>
+<p>Un movimiento introducido por el arrastre libre o por la notación que resulte ser legal sigue siendo un movimiento ordinario — la comparación se hace sobre el tablero obtenido, nunca sobre la procedencia del gesto; si no, se marca «movimiento ilegal» en la transcripción, y la exportación <code>.mat</code> advierte antes de escribir el archivo, sin negarse nunca.</p>
 <p>En la línea de los dados, la fila <strong>Doblar</strong>, <strong>Aceptar</strong>, <strong>Pasar</strong>, <strong>Abandonar</strong> lleva al ratón los cuatro gestos de cubo: son, junto con los dos dados, las cinco respuestas posibles a una sola pregunta — ¿qué hizo el bando en turno? Dice a quién le toca: el bando en turno anuncia — doblar, abandonar — o el bando contrario responde — aceptar, pasar; nunca los cuatro a la vez, y un botón cuyo gesto no respondería a nada permanece apagado. El teclado, en cambio, nunca rechaza nada: un botón apagado es un objetivo que no se ofrece, no un gesto prohibido. «Abandonar» todavía no registra nada: la fila se convierte en los tres niveles — simple, gammon, backgammon — y «Cancelar», que duplica la tecla ESCAPE. El cubo dibujado en el tablero es el segundo objetivo de estos gestos: un clic en él propone un doble. Ante una oferta no responde — aceptar y pasar son dos respuestas simétricas y viven juntas en la fila, un clic cada una.</p>
 <p>La <strong>barra de estado</strong> dice en una palabra lo que el borrador espera: el baile registrado de oficio, el empate que hay que repetir, la respuesta esperada a un doble, el nivel esperado tras un abandono, la corrección en su sitio, el movimiento «a revisar» cuya tirada ha cambiado. También responde ahí a los gestos que no tienen nada que hacer — «nada que deshacer», «ninguna acción bajo el cursor» — durante un segundo y medio. La incoherencia que una acción ha dejado tras de sí se señala, en cambio, en la cabecera de la transcripción, allí donde está la celda defectuosa.</p>
 <p>Una partida termina con un paso, con un abandono o con la salida de la decimoquinta ficha (simple, gammon o backgammon, multiplicado por el valor del cubo). El marcador, la partida Crawford y el final del partido aparecen entonces en la barra de partido, y se espera la apertura de la partida siguiente.</p>
@@ -1434,16 +1436,24 @@ export default {
 <td>Introducir la tirada con un solo gesto: la casilla lleva ambos dados, los dobles en la diagonal. Durante la apertura el triángulo deja paso a una fila de seis dados, y un clic da el dado de un bando.</td>
 </tr>
 <tr>
-<td>Clic (en un punto del tablero)</td>
-<td>Conservar solo los candidatos con un paso que sale de ese punto; un segundo punto reduce aún más, un clic en el punto ya filtrado lo quita, y un clic fuera del tablero levanta el filtro.</td>
-</tr>
-<tr>
 <td>Clic, arrastrar (ningún dado introducido)</td>
 <td>Jugar la jugada directamente en el tablero: la ficha va del punto pulsado a su destino, limitada a las jugadas legales, y los dos dados se deducen de los pasos jugados.</td>
 </tr>
 <tr>
+<td>Clic, arrastrar (tirada introducida)</td>
+<td>Jugar la jugada en el tablero, limitada a las jugadas legales de esa tirada: cada paso jugado solo deja en la lista los candidatos que lo contienen, y una jugada legal completa se registra en el acto. En una acción releída, la sustituye.</td>
+</tr>
+<tr>
+<td>Arrastrar fuera de las reglas (tirada introducida)</td>
+<td>Dejar la ficha donde se suelta, incluso desde un punto del que no sale ninguna jugada legal, para transcribir un movimiento ilegal. El resto de la jugada se juega libremente, con clic o con arrastre, y la lista de candidatos cede su lugar a una línea que lo recuerda.</td>
+</tr>
+<tr>
+<td>INTRO (jugada fuera de las reglas)</td>
+<td>Registrar la jugada con los dados introducidos y el tablero obtenido, marcada como movimiento ilegal si ninguna jugada legal alcanza ese tablero. Una jugada fuera de las reglas nunca se registra sola.</td>
+</tr>
+<tr>
 <td>RETROCESO (jugada en curso en el tablero)</td>
-<td>Deshacer el último paso jugado en el tablero.</td>
+<td>Deshacer el último paso jugado en el tablero. Los pasos restantes se vuelven a jugar limitados mientras una jugada legal los contenga: deshacer el único paso fuera de las reglas devuelve la lista.</td>
 </tr>
 <tr>
 <td>INTRO</td>
@@ -1492,6 +1502,10 @@ export default {
 <tr>
 <td>Clic (en una celda)</td>
 <td>Situar el cursor en esa acción.</td>
+</tr>
+<tr>
+<td>Doble clic (en una celda)</td>
+<td>Teclear la jugada de esa acción, dentro de la celda: 13/7 8/7*, bar/22, 6/off. Solo se teclea la jugada, los dados son los de la celda; INTRO la registra, aunque sea ilegal, y Esc cierra la celda sin escribir nada. Vale para una jugada, un baile, una jugada no consignada, y para la celda punteada de la entrada en curso en cuanto sus dos dados están introducidos.</td>
 </tr>
 <tr>
 <td>Clic derecho (en una celda)</td>

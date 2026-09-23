@@ -1182,12 +1182,6 @@ clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un
 clic, et le triangle est là pour qui transcrit la souris à la main. Une case par
 jet, jamais deux : 3-1 et 1-3 sont le même jet.
 
-Un clic sur un point du plateau ne laisse que les coups qui en partent. C'est le
-geste du coup lointain : descendre au douzième candidat coûte treize touches, là
-où le filtre n'en laisse que deux ou trois. Le filtre ne change rien au
-brouillon, il réduit la liste à l'écran ; une puce en tête de la liste le
-rappelle et permet de le lever, et le jet suivant le lève aussi.
-
 Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi,
 un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre —
 joue le coup sur le damier, contraint aux coups légaux ; les destinations
@@ -1200,15 +1194,33 @@ même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas joua
 rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
 jet n'est jamais deviné à la place de celui qui regarde la partie.
 
-Un coup illégal se transcrit tel qu'il a été joué. Le bouton **✎** de la
-palette déplie les deux chemins qui le permettent, à la place du triangle : ils
-servent une fois par match quand le triangle sert à chaque tour. Le bouton
-« Déplacement libre » libère le damier : les pions se déplacent sans aucune vérification, et
-« Ce plateau est le coup joué » enregistre le plateau obtenu. Le champ de
-notation, à côté, fait la même chose au clavier : ``13/7 8/7*``, ``bar/22`` ou
-``6/off`` s'écrivent et s'enregistrent par ENTREE. Les deux demandent que les
-dés du jet soient saisis d'abord, un coup illégal ne disant pas quel jet l'a
-produit. Un coup saisi par l'un de ces deux chemins qui se trouve être légal
+Les deux dés saisis, le plateau joue aussi, contraint aux coups légaux de ce
+jet — en bout de document comme sur une action relue, dont le curseur a chargé
+les dés. Chaque pas joué ne garde dans la liste que les candidats qui le
+contiennent, le premier d'entre eux présélectionné : c'est le geste du coup
+lointain, là où descendre au douzième candidat coûte treize touches. Un coup
+légal achevé est enregistré aussitôt, avec les dés tels qu'ils ont été tapés ;
+sur une action relue, il la remplace.
+
+Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni changement de
+mode. Les dés saisis, un glissé qu'aucun coup légal n'offre pose le pion là où
+il est lâché — y compris depuis un point d'où aucun coup légal ne part, pourvu
+qu'il porte un pion du camp au trait. Le coup sort alors des règles : la suite
+se joue librement, au clic comme au glissé, la liste des candidats cède la place
+à une ligne qui le rappelle, et rien n'est enregistré avant ENTREE, qui écrit
+les dés saisis, les pas et le plateau obtenu. Retour arrière défait le dernier
+pas ; défaire le seul pas hors des règles rend la liste. Sans dés saisis, le
+glissé reste contraint : un coup illégal ne dit pas quel jet l'a produit.
+
+Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur la
+cellule d'un coup — ou d'une danse, d'un coup non consigné — la change en champ,
+pré-rempli de sa notation. On n'y tape que le coup, ``13/7 8/7*``, ``bar/22`` ou
+``6/off`` : les dés sont ceux de la cellule. ENTREE l'enregistre à la place du
+coup écrit, ÉCHAP referme la cellule sans rien écrire, et un texte qui ne dit
+aucun coup laisse le champ ouvert. La cellule en pointillés de la saisie en
+cours s'ouvre de même, dès que ses deux dés sont saisis.
+
+Un coup saisi par le glissé libre ou par la notation qui se trouve être légal
 reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais
 sur la provenance du geste ; sinon il est marqué « coup illégal » dans le
 transcript, et l'export ``.mat`` avertit avant d'écrire le fichier, sans jamais

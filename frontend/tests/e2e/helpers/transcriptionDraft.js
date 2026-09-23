@@ -33,10 +33,16 @@
  *
  * ## Le jet fixé, et pourquoi ce jet-là
  *
- * Les dix-sept coups légaux du 3-1 sont ceux de
- * `src/__tests__/transcriptionFilter.test.js`, dans le même ordre : le douzième,
- * `8/5 8/7`, est celui d'ux.md §4.1 « coup loin dans la liste ». Les deux
- * mesures parlent ainsi du même jet et du même rang.
+ * Les dix-sept coups légaux du 3-1, dans l'ordre du classement : le douzième,
+ * `8/5 8/7`, est celui d'ux.md §4.1 « coup loin dans la liste », que le budget
+ * mesure au clavier seul puis joué au plateau (ADR-0052). Leurs pas sortent de
+ * leur notation, parce que le plateau les joue : la liste réduite par les pas
+ * et le coup achevé qui part seul en dépendent.
+ *
+ * La liste garde les doublons d'ordre (`8/5 8/7` et `8/7 8/5`) que le vrai
+ * générateur déduplique : elle était écrite ainsi, et le coup joué au plateau
+ * s'en accommode — deux candidats achevés du même jet, c'est encore un seul
+ * jet, donc un coup qui part.
  */
 
 /** Un tableau de 26 points vides. */
@@ -98,9 +104,12 @@ const PLAYS = [
 ];
 
 /** Ce que `LegalMoves` rend : les pas et la notation, dans l'ordre du générateur. */
-const legalPlays = PLAYS.map(([notation, froms]) => ({
+const legalPlays = PLAYS.map(([notation]) => ({
     notation,
-    steps: froms.map((from) => ({ from, to: from - 1, hit: false }))
+    steps: notation.split(' ').map((hop) => {
+        const [from, to] = hop.split('/').map(Number);
+        return { from, to, hit: false };
+    })
 }));
 
 /** Ce que `EvaluatePositionImmediate` rend : le même ordre, avec une équité. */

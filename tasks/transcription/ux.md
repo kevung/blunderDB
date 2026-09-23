@@ -44,7 +44,7 @@ des mots, donc sa propre ligne) :
 │  ← Liste          [aucun match] [Créer le match] [Texte .mat] [Exporter] [Fermer]  ↶ ↷        │
 ├──────────────┼────────────────────────────────┼───────────────────────────────────────────────┤
 │ palette      │ candidats (identify)           │ Transcript                                    │
-│ [3][1] ✎     │  1  8/5 6/5     +0,000  ——     │ Partie 3   3–2                                │
+│ [3][1]       │  1  8/5 6/5     +0,000  ——     │ Partie 3   3–2                                │
 │ [Doubler][Prendre][Passer][Abandonner]         │                                               │
 │ ┌ 21 jets ─┐ │  2  13/10 6/5   −0,041 −0,041 │  Kévin              │ Alice                   │
 │ │11        │ │  3  24/21 13/12 −0,103 −0,103 │  31: 8/5 6/5        │ 52: 13/8 13/11          │
@@ -60,8 +60,10 @@ des mots, donc sa propre ligne) :
 Trois colonnes, largeurs indicatives 220 / 280 / le reste. L'invariant qui gouverne la
 verticale (ADR-0048) : **rien ne s'intercale entre les deux cases du jet et la première ligne
 de candidats**, et cinq lignes de candidats sont visibles sans défiler. Les cibles souris — le
-triangle, la rangée `[D][T][P][R]`, le secours de saisie à la main derrière `✎` — forment la
-**palette**, à gauche quand la boîte est large, sous la liste quand elle est étroite.
+triangle et la rangée `[D][T][P][R]` — forment la **palette**, à gauche quand la boîte est
+large, sous la liste quand elle est étroite. Le secours de saisie à la main qui s'y dépliait
+derrière `✎` n'existe plus (ADR-0052) : le coup hors des règles se glisse au plateau, et la
+notation se tape dans la cellule du Transcript.
 
 Dock latéral (420 px) : une colonne, palette **sous** la liste, Transcript en dessous.
 
@@ -76,6 +78,9 @@ globales (`Ctrl+*`, Espace, `?`, `Maj+J`/`Maj+K`) restent globales.
 | dés attendus (un dé) | `1`–`6` | second dé ; liste 0-ply, premier présélectionné, flèches | **jet saisi** |
 | jet saisi | `j`/`k`, ↓/↑, **molette** | déplace la sélection | jet saisi |
 | jet saisi | Retour arrière | efface les deux dés | dés attendus |
+| jet saisi, **pas joués au plateau** | Retour arrière | défait le dernier pas (rejoué contraint tant qu'un coup légal le contient) | jet saisi |
+| jet saisi, **coup hors des règles** | Entrée | enregistre dés, pas et plateau obtenu (`BoardAfter`) | dés attendus (camp suivant) |
+| tout | **double-clic** sur une cellule de coup | champ pré-rempli de la notation ; Entrée écrit le coup (dés de la cellule), `Échap` ferme sans rien écrire | inchangé / dés attendus |
 | jet saisi | Entrée, **double-clic** sur la ligne | valide | dés attendus (camp suivant) |
 | jet saisi, **en bout de document** | `1`–`6` | **valide**, puis premier dé du tour suivant | dés attendus (un dé) |
 | jet saisi, **sur une Action relue** | `1`–`6` | **recommence le jet, sur place** | dés attendus (un dé) |
@@ -152,8 +157,8 @@ M compté une fois par flux, hors comparaison. K = 0,28 s.
 | meilleur coup, dernier de la partie | `3` `1` Entrée | 3 K = 0,84 s | ≤ 0,9 s |
 | n-ième coup, n ≤ 5 | `3` `1` `j`×(n−1) puis le jet suivant | (n+1) K ; n = 3 → 1,12 s | ≤ 1,2 s |
 | n-ième coup à la molette | `3` `1` puis n−1 crans, double-clic ou jet suivant | 2 K + (n−1) crans | souris de plein droit (R3) |
-| coup loin dans la liste (rang 12) | `3` `1` `j`×11 | 13 K = 3,6 s | → filtre du lot 2 |
-| idem, lot 2, filtre par clic sur le point de départ | `3` `1` H P B B H `j`×≤2 | 2 K + 2 H + P + 0,2 + ≤ 2 K ≈ 2,9 s | ≤ 3 s |
+| coup loin dans la liste (rang 12) | `3` `1` `j`×11 | 13 K = 3,6 s | clavier seul |
+| idem, joué au plateau, jet saisi (ADR-0052) | `3` `1` H 2 × (P B B) H | 2 K + 2 H + 2 (P + 0,2) ≈ 4,0 s — **mesuré** : 2 touches, 2 glissés, rien d'autre | sans validation |
 | coup joué au plateau, dés déduits (lot 2) | H, 2 × (P B B) hops, H | 2 H + 2 P + 0,4 ≈ 3,4 s ; 4 pas (double) ≈ 5,9 s | souris seule ≤ 6 s |
 | dés à la souris, triangle 21 (lot 2) | H P(28 px) B B | 0,4 + 0,61 + 0,2 = **1,21 s** (mesuré) | vs grille 36 : P(20 px) = 0,66 s → 1,26 s, et 36 cibles à lire |
 | dés au clavier | 2 K | 0,56 s | référence |
@@ -163,6 +168,16 @@ M compté une fois par flux, hors comparaison. K = 0,28 s.
 validation étant portée par la première touche du tour d'après — l'annonce d'origine de ce
 document, que l'arbitrage du 2026-09-07 avait fait passer à trois et que son renversement
 rétablit. `Entrée` reste la sortie du dernier coup d'une partie, qui n'a pas de tour suivant.
+
+**Mesuré le 2026-09-24 (ADR-0052)**, sur le vrai damier par `transcription-budgets.spec.js` :
+le rang douze joué au plateau, le jet saisi, coûte **deux touches et deux glissés** — le
+premier pas réduit la liste de 17 à 4 candidats, le second achève le coup, qui part seul. Au
+modèle, 4,0 s : plus que le filtre par point qu'il remplace (≈ 2,9 s, qui laissait encore
+`j` et la validation à faire) et que les treize touches du clavier seul. Le filtre est retiré
+pour une raison qui n'est pas le temps : le même clic sur un point jouait le coup sans dés
+et filtrait avec dés, deux sens selon un état que l'œil ne relit pas ; le pas joué, lui,
+réduit la liste ET avance le coup. Pour un coup reconnu dans la liste, le clavier reste le
+plus court ; sans dés tapés, le plateau déduit le jet en 3,4 s.
 
 Le clavier bat la souris d'un facteur deux sur les dés ; le triangle bat la grille 6×6 de
 0,05 s par jet et supprime l'ambiguïté 3-1/1-3 (36 → 21 cibles à balayer du regard). Le coup
@@ -260,8 +275,9 @@ message ; le panneau ne porte plus de prose.
   retard sur le brouillon ». Elle ne dit **rien** de la sûreté du brouillon : il est écrit
   après chaque Action, il n'y a rien à signaler, et l'absence d'alarme est le message juste.
 - **Liste des candidats** : projection `identify` — rang, notation, équité, écart au meilleur
-  (Évaluation 0-ply, jamais stockée). Une **puce** sur l'en-tête quand un filtre par point est
-  posé, qui donne aussi le moyen de le lever.
+  (Évaluation 0-ply, jamais stockée). Réduite aux coups qui contiennent les pas joués au
+  plateau ; un coup hors des règles la remplace par une ligne, « Coup hors des règles —
+  Entrée l'enregistre » (ADR-0052).
 - **Transcript** : cellule du Cursor encadrée ; Incohérences en décoration de cellule avec
   info-bulle nommant laquelle, plus un **bandeau** en tête de la colonne quand le document en
   porte ; partie courante ouverte, autres repliées ; en-tête de partie = score initial +
@@ -297,11 +313,11 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
   superflues font rougir « meilleur coup joué »). Le moteur Go y est remplacé par un
   document figé (`helpers/transcriptionDraft.js`) qui ne dérive que deux faits, le Cursor et
   la réponse attendue après un double ; ce que la suite de gestes produit comme DOCUMENT est
-  tenu en Go, Action par Action. Deux lignes de §4.1 ne sont pas là et ne le seront pas
-  ainsi : « filtré par clic sur le point de départ » et « coup joué au plateau » passent par
-  un point du damier, dessiné par two.js et sans cible DOM — les viser à la coordonnée
-  donnerait une spec instable pour une mesure que `transcriptionFilter.test.js` fait déjà en
-  comptant clics et touches. La ligne « videau à la souris » de §4.2 est mesurée par
+  tenu en Go, Action par Action. Le coup joué au plateau, le jet saisi (ADR-0052), y est
+  compté sur le vrai damier : ses points sont visés par les fonctions mêmes qui le dessinent
+  (`boardMetrics`, `stackSlotCenter`), ce qui ne dépend pas de la taille de la fenêtre, et
+  `countGestures` compte un glissé pour un geste de souris. La déduction des dés sans jet
+  saisi reste comptée par `transcriptionPlay.test.js`. La ligne « videau à la souris » de §4.2 est mesurée par
   `transcriptionKeys.cubeMouse.test.js`, livré avec le videau à la souris (#353) : deux
   clics, `H + 2×(P+2B) + H = 3,4 s`. Le conflit
   de port avec gammonGo est paré par `BLUNDERDB_E2E_PORT`

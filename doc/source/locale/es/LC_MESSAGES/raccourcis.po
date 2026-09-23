@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:26+0200\n"
+"POT-Creation-Date: 2026-09-24 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -937,20 +937,6 @@ msgstr ""
 "fila de seis dados, y un clic da el dado de un bando."
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic (sur un point du damier)"
-msgstr "Clic (en un punto del tablero)"
-
-#: ../../source/raccourcis.rst:1
-msgid ""
-"Ne garder que les candidats dont un pas part de ce point ; un second "
-"point réduit encore, un clic sur le point déjà filtré l'enlève, et un "
-"clic hors du damier lève le filtre."
-msgstr ""
-"Conservar solo los candidatos con un paso que sale de ese punto; un "
-"segundo punto reduce aún más, un clic en el punto ya filtrado lo quita, y"
-" un clic fuera del tablero levanta el filtro."
-
-#: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (aucun dé saisi)"
 msgstr "Clic, arrastrar (ningún dado introducido)"
 
@@ -965,12 +951,64 @@ msgstr ""
 " de los pasos jugados."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic, glisser (jet saisi)"
+msgstr "Clic, arrastrar (tirada introducida)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Jouer le coup sur le damier, contraint aux coups légaux de ce jet : "
+"chaque pas joué ne garde dans la liste que les candidats qui le "
+"contiennent, et un coup légal achevé est enregistré aussitôt. Sur une "
+"action relue, il la remplace."
+msgstr ""
+"Jugar la jugada en el tablero, limitada a las jugadas legales de esa "
+"tirada: cada paso jugado solo deja en la lista los candidatos que lo "
+"contienen, y una jugada legal completa se registra en el acto. En una "
+"acción releída, la sustituye."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser hors des règles (jet saisi)"
+msgstr "Arrastrar fuera de las reglas (tirada introducida)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Poser le pion là où il est lâché, même depuis un point d'où aucun coup "
+"légal ne part, pour transcrire un coup illégal. La suite du coup se joue "
+"librement, au clic comme au glissé, et la liste des candidats cède la "
+"place à une ligne qui le rappelle."
+msgstr ""
+"Dejar la ficha donde se suelta, incluso desde un punto del que no sale "
+"ninguna jugada legal, para transcribir un movimiento ilegal. El resto de "
+"la jugada se juega libremente, con clic o con arrastre, y la lista de "
+"candidatos cede su lugar a una línea que lo recuerda."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE (coup hors des règles)"
+msgstr "INTRO (jugada fuera de las reglas)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Enregistrer le coup avec les dés saisis et le plateau obtenu, marqué coup"
+" illégal si aucun coup légal n'atteint ce plateau. Un coup hors des "
+"règles n'est jamais enregistré de lui-même."
+msgstr ""
+"Registrar la jugada con los dados introducidos y el tablero obtenido, "
+"marcada como movimiento ilegal si ninguna jugada legal alcanza ese "
+"tablero. Una jugada fuera de las reglas nunca se registra sola."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE (coup en cours au plateau)"
 msgstr "RETROCESO (jugada en curso en el tablero)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Défaire le dernier pas joué au plateau."
-msgstr "Deshacer el último paso jugado en el tablero."
+msgid ""
+"Défaire le dernier pas joué au plateau. Les pas restants sont rejoués "
+"contraints tant qu'un coup légal les contient : défaire le seul pas hors "
+"des règles rend la liste."
+msgstr ""
+"Deshacer el último paso jugado en el tablero. Los pasos restantes se "
+"vuelven a jugar limitados mientras una jugada legal los contenga: "
+"deshacer el único paso fuera de las reglas devuelve la lista."
 
 #: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
@@ -1081,6 +1119,26 @@ msgid "Placer le curseur sur cette action."
 msgstr "Situar el cursor en esa acción."
 
 #: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur une cellule)"
+msgstr "Doble clic (en una celda)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, "
+"bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; "
+"ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien "
+"écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la "
+"cellule en pointillés de la saisie en cours dès que ses deux dés sont "
+"saisis."
+msgstr ""
+"Teclear la jugada de esa acción, dentro de la celda: 13/7 8/7*, bar/22, "
+"6/off. Solo se teclea la jugada, los dados son los de la celda; INTRO la "
+"registra, aunque sea ilegal, y Esc cierra la celda sin escribir nada. "
+"Vale para una jugada, un baile, una jugada no consignada, y para la celda"
+" punteada de la entrada en curso en cuanto sus dos dados están "
+"introducidos."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic droit (sur une cellule)"
 msgstr "Clic derecho (en una celda)"
 
@@ -1159,7 +1217,7 @@ msgstr "CTRL-MAYÚS-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Rehacer el gesto deshecho."
 
-#: ../../source/raccourcis.rst:331
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1167,7 +1225,7 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:337
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1194,7 +1252,7 @@ msgstr ""
 "decisión siguiente, como al final del documento, e INTRO lleva allí "
 "también."
 
-#: ../../source/raccourcis.rst:345
+#: ../../source/raccourcis.rst:348
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1207,7 +1265,7 @@ msgstr ""
 "celda que reemplaza, una inserción abre una celda entre sus dos vecinas, "
 "y el bando se lee en la columna. Nada se registra antes de la validación."
 
-#: ../../source/raccourcis.rst:350
+#: ../../source/raccourcis.rst:353
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1219,7 +1277,7 @@ msgstr ""
 "vez en lugar de sobrescribir la de después. El final de la partida o "
 "mover el cursor le pone fin."
 
-#: ../../source/raccourcis.rst:355
+#: ../../source/raccourcis.rst:358
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1231,7 +1289,7 @@ msgstr ""
 "cursor» al final del documento. La frase se borra sola y devuelve el "
 "sitio a la acción esperada."
 
-#: ../../source/raccourcis.rst:360
+#: ../../source/raccourcis.rst:363
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1251,7 +1309,7 @@ msgstr ""
 " «por revisar» hasta la validación. Avanzar o retroceder el cursor "
 "después de haber cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1271,7 +1329,7 @@ msgstr ""
 "partida reabierta, se queda donde se teclea. La pila de deshacer vive en "
 "memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:376
+#: ../../source/raccourcis.rst:379
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1281,7 +1339,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:383
+#: ../../source/raccourcis.rst:386
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 
@@ -1529,3 +1587,24 @@ msgstr "Cerrar la ayuda."
 
 #~ msgid "Supprimer l'action du curseur ; les suivantes gardent leur camp."
 #~ msgstr "Eliminar la acción del cursor; las siguientes conservan su bando."
+
+#~ msgid "Clic (sur un point du damier)"
+#~ msgstr "Clic (en un punto del tablero)"
+
+#~ msgid ""
+#~ "Ne garder que les candidats dont "
+#~ "un pas part de ce point ; un"
+#~ " second point réduit encore, un clic"
+#~ " sur le point déjà filtré l'enlève,"
+#~ " et un clic hors du damier lève"
+#~ " le filtre."
+#~ msgstr ""
+#~ "Conservar solo los candidatos con un "
+#~ "paso que sale de ese punto; un "
+#~ "segundo punto reduce aún más, un "
+#~ "clic en el punto ya filtrado lo"
+#~ " quita, y un clic fuera del "
+#~ "tablero levanta el filtro."
+
+#~ msgid "Défaire le dernier pas joué au plateau."
+#~ msgstr "Deshacer el último paso jugado en el tablero."

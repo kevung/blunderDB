@@ -1,6 +1,7 @@
 /**
  * transcriptionPlay.js — le coup joué SUR LE PLATEAU pendant une transcription,
- * et les dés qu'il déduit (T2.3, puis le déplacement libre de T2.4).
+ * et les dés qu'il déduit (T2.3), puis le coup hors des règles posé d'un glissé
+ * (ADR-0052).
  *
  * # Ce qui n'est pas écrit ici
  *
@@ -43,14 +44,27 @@
  * Deviner à la place de l'utilisateur aurait écrit dans le match un jet que
  * personne n'a vu ; demander à chaque coup aurait coûté le budget d'ux.md §4.1.
  *
- * # Le déplacement libre (T2.4)
+ * # Le jet connu (ADR-0052)
  *
- * Un coup illégal a tenu à la table : il se transcrit. L'état porte alors
- * `free`, aucune liste de coups ne le contraint, et un pas est appliqué tel
+ * Quand les deux dés sont saisis, le plateau joue AUSSI : la liste de départ
+ * est alors celle de ce seul jet, et l'état porte `rolled`, le jet tapé. Tout
+ * ce qui précède vaut tel quel — un seul jet reste compatible, donc un coup
+ * achevé se déduit, et part.
+ *
+ * # Le coup hors des règles (ADR-0052)
+ *
+ * Un coup illégal a tenu à la table : il se transcrit. Il n'a pas de bouton :
+ * une fois le jet connu, et seulement alors, un glissé qu'aucun coup légal
+ * n'offre pose le pion là où il est lâché ([dragStep]). L'état passe `free`,
+ * plus aucune liste de coups ne le contraint, et chaque pas est appliqué tel
  * quel — par `applyStep` de quizPlay, encore lui, qui sait déjà retirer un
  * pion, frapper un blot et sortir. Le plateau obtenu est ce qui s'est passé :
  * c'est lui qui devient `board_after` sur l'Action, et le moteur le garde
  * seulement si aucun coup légal ne l'atteint (transcript.validate).
+ *
+ * Sans jet saisi, rien de tout cela : un coup hors des règles n'a aucun jet à
+ * déduire, et deviner celui qu'on écrirait dans le match serait pire que de le
+ * demander.
  */
 
 import { newPlay, alivePlays, applyStep, barOf, playHop, resetPlay, OFF } from './quizPlay.js';
@@ -65,10 +79,10 @@ const WHITE = 1;
  */
 
 /**
- * L'état d'un coup joué au plateau : celui du réducteur, plus le mode libre et
- * la position d'origine.
+ * L'état d'un coup joué au plateau : celui du réducteur, plus le mode libre, le
+ * jet saisi (`null` tant qu'il ne l'est pas) et la position d'origine.
  *
- * @typedef {import('./quizPlay.js').PlayState & {free: boolean, origin: any}} BoardPlayState
+ * @typedef {import('./quizPlay.js').PlayState & {free: boolean, rolled: number[]|null, origin: any}} BoardPlayState
  */
 
 /** Les vingt et un jets distincts, dé fort d'abord — l'ordre du triangle. */
@@ -92,33 +106,28 @@ export function rollKey(dice) {
  * `{ dice, plays }` — et un jet sans aucun coup légal (une danse) n'y apporte
  * rien, ce qui l'écarte de lui-même.
  *
+ * `rolled` est le jet SAISI, quand il l'est : `byRoll` n'a alors qu'une
+ * entrée, et c'est ce qui ouvre le glissé hors des règles ([dragStep]).
+ *
  * @param {any} position la position d'où le coup part, camp au trait posé
  * @param {{dice: readonly number[], plays: any[]}[]} byRoll
+ * @param {{rolled?: number[]|null}} [options]
  * @returns {BoardPlayState}
  */
-export function newBoardPlay(position, byRoll) {
+export function newBoardPlay(position, byRoll, { rolled = null } = {}) {
     const plays = [];
     for (const entry of byRoll ?? []) {
         const [a, b] = entry?.dice ?? [0, 0];
         const roll = a >= b ? [a, b] : [b, a];
         for (const play of entry?.plays ?? []) plays.push({ ...play, roll });
     }
-    return { ...newPlay(position, plays), free: false, origin: position };
-}
-
-/**
- * L'état de départ d'un déplacement LIBRE : aucun coup ne le contraint.
- *
- * @param {any} position
- * @returns {BoardPlayState}
- */
-export function newFreePlay(position) {
-    return { ...newPlay(position, []), free: true, origin: position };
+    return { ...newPlay(position, plays), free: false, rolled: rolled ? [rolled[0], rolled[1]] : null, origin: position };
 }
 
 /**
  * Remet le plateau tel que le tour le pose, en gardant ce qui n'appartient pas
- * au réducteur — le mode libre et la position d'origine.
+ * au réducteur — le jet saisi et la position d'origine. Le coup redevient
+ * CONTRAINT : aucun pas n'est joué, donc aucun pas hors des règles non plus.
  *
  * `resetPlay` rend un état NEUF de quizPlay, donc sans eux : c'est ici qu'ils
  * lui sont rendus, plutôt que dans le réducteur, qui ne les connaît pas.
@@ -129,22 +138,33 @@ export function newFreePlay(position) {
 export function resetBoardPlay(state, fallback) {
     if (!state) return state;
     const base = state.origin ?? fallback;
-    return { ...resetPlay(state, base), free: state.free === true, origin: state.origin };
+    return { ...resetPlay(state, base), free: false, rolled: state.rolled ?? null, origin: state.origin };
 }
 
 /**
- * Le point porte-t-il un pion du camp qui joue ?
+ * Le coup peut-il sortir des règles ? Seulement le jet connu (ADR-0052) — ou
+ * s'il en est déjà sorti.
+ *
+ * @param {any} state
+ */
+export function canPlayFree(state) {
+    return !!state && (state.free === true || Array.isArray(state.rolled));
+}
+
+/**
+ * Le point porte-t-il un pion du camp qui joue ? C'est ce qu'un glissé hors
+ * des règles demande à sa source, et rien d'autre.
  *
  * @param {any} state
  * @param {number} point
  */
-function hasMoverChecker(state, point) {
+export function hasMoverChecker(state, point) {
     const p = state?.board?.points?.[point];
     return !!p && p.checkers > 0 && p.color === state.mover;
 }
 
 /**
- * Choisir le pion à déplacer, en mode libre : n'importe quel point qui porte un
+ * Choisir le pion à déplacer, une fois le coup sorti des règles : n'importe quel point qui porte un
  * pion du camp au trait, la barre comprise. Un second clic sur le même point le
  * déselectionne.
  * @param {any} state
@@ -159,7 +179,7 @@ export function freeSelect(state, point) {
 /**
  * Déplacer un pion sans rien vérifier : c'est le coup qui a été joué à la
  * table, et il n'est pas jugé (ADR-0044). Seule condition, physique : il faut
- * un pion à prendre.
+ * un pion à prendre. Le coup est libre dès ce pas, et le reste jusqu'au bout.
  * @param {any} state
  * @param {number} from
  * @param {number} to
@@ -167,11 +187,33 @@ export function freeSelect(state, point) {
 export function freeStep(state, from, to) {
     if (from === to || !hasMoverChecker(state, from)) return state;
     const board = applyStep(state.board, { from, to }, state.mover);
-    return { ...state, board, steps: [...state.steps, { from, to }], selected: null };
+    return { ...state, board, steps: [...state.steps, { from, to }], selected: null, free: true };
 }
 
 /**
- * Le clic du mode libre : il choisit une source, ou déplace le pion choisi.
+ * Le pion lâché sur `to` au bout d'un glissé parti de `from` (ADR-0052).
+ *
+ * Un pas légal est joué comme un pas légal : le coup reste contraint et ses
+ * dés se déduisent. Sinon, et seulement le jet connu ([canPlayFree]), le pion
+ * est posé là où il a été lâché et le coup devient libre. Sans jet saisi, un
+ * glissé hors des règles ne fait rien, comme aujourd'hui un clic.
+ *
+ * @param {any} state
+ * @param {number} from
+ * @param {number} to
+ */
+export function dragStep(state, from, to) {
+    if (!state || from === to) return state;
+    if (!state.free) {
+        const played = playHop(state, from, to);
+        if (played !== state || !canPlayFree(state)) return played;
+    }
+    return freeStep(state, from, to);
+}
+
+/**
+ * Le clic d'un coup sorti des règles : il choisit une source, ou déplace le
+ * pion choisi.
  * Même forme que le clic du quiz, pour que le plateau n'ait qu'une branche.
  * @param {any} state
  * @param {number} point
@@ -187,8 +229,11 @@ export function freeClick(state, point) {
  * manqué, sans reprendre le coup au début.
  *
  * `undoLast` de quizPlay ferait la même chose, mais par `newPlay`, qui rend un
- * état neuf du réducteur — donc sans le mode libre ni la position d'origine.
- * Le rejeu passe ici par le même chemin que le clic, libre ou contraint.
+ * état neuf du réducteur — donc sans le jet saisi ni la position d'origine.
+ * Le rejeu passe ici par le même chemin que le glissé : chaque pas est rejoué
+ * contraint quand un coup légal l'offre encore, libre sinon — si bien que
+ * défaire le seul pas hors des règles rend un coup contraint, sa liste et sa
+ * déduction.
  *
  * @param {any} state
  */
@@ -196,7 +241,7 @@ export function undoBoardStep(state) {
     if (!state || state.steps.length === 0) return state;
     const kept = state.steps.slice(0, -1);
     let next = resetBoardPlay(state, state.origin);
-    for (const s of kept) next = state.free ? freeStep(next, s.from, s.to) : playHop(next, s.from, s.to);
+    for (const s of kept) next = dragStep(next, s.from, s.to);
     return next;
 }
 

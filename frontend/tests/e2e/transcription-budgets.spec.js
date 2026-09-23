@@ -7,9 +7,8 @@
  * La machine à touches est pure et elle est déjà tenue ligne à ligne, au niveau
  * unitaire : `transcriptionKeys.turn.test.js` compte les touches d'un tour de
  * pions, `.cube.test.js` celles du videau (§4.2), `.correction.test.js` celles
- * des sept lignes de §4.3, `.mouse.test.js` le clic du triangle,
- * `transcriptionFilter.test.js` le rang douze filtré. Rien de tout cela n'est
- * refait ici.
+ * des sept lignes de §4.3, `.mouse.test.js` le clic du triangle. Rien de tout
+ * cela n'est refait ici.
  *
  * Ce que ces tests-là ne peuvent pas voir, et qui est le sujet de ce fichier :
  * entre la touche et le geste il y a une application — un onglet, un panneau
@@ -30,13 +29,11 @@
  *
  * ## Les lignes des tableaux qui ne sont pas ici
  *
- * - §4.1 « coup loin dans la liste, filtré par clic sur le point de départ » et
- *   « coup joué au plateau » : les deux passent par un clic sur un point du
- *   damier, qui est dessiné par two.js et n'a pas de cible DOM — il faudrait
- *   viser une coordonnée dans un canvas, ce qui donne une spec instable pour
- *   une mesure que `transcriptionFilter.test.js` fait déjà exactement (elle
- *   compte les clics et les touches, et vérifie le budget de trois secondes).
- *   Mieux vaut ne pas la livrer instable.
+ * - §4.1 « coup joué au plateau, dés déduits » : la déduction des dés est
+ *   tenue par `transcriptionPlay.test.js`, qui compte les pas. Le damier, lui,
+ *   est ici : le rang douze joué au plateau (ADR-0052) vise ses points par les
+ *   fonctions mêmes qui le dessinent (`pointAt`, comme training-decision.spec.js),
+ *   ce qui ne dépend pas de la taille de la fenêtre.
  * - §4.2 « videau à la souris » : la cible souris du videau est T2.5, en cours
  *   d'écriture au moment où ce fichier est posé. La ligne sera à ajouter ici
  *   quand elle existera ; le reste du tableau est couvert.
@@ -61,6 +58,31 @@ async function openDraft(page, opts = {}) {
 
 const panel = '#transcriptionPanel';
 const candidates = `${panel} table.checker-table tbody tr`;
+
+/**
+ * Le centre du premier pion du point `point` du modèle, en pixels de la page.
+ * Les coordonnées sortent des fonctions mêmes qui dessinent le plateau et qui
+ * lisent le clic (boardMetrics, stackSlotCenter) ; le joueur 1 est au trait et
+ * en bas, donc aucun miroir.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {number} point
+ */
+async function pointAt(page, point) {
+    return page.evaluate(async (p) => {
+        const { boardMetrics } = await import('/src/utils/boardGeometry.js');
+        const { stackSlotCenter } = await import('/src/utils/boardScene.js');
+        const { defaultBoardConfig } = await import('/src/utils/boardConfig.js');
+        const host = /** @type {HTMLElement} */ (document.getElementById('backgammon-board'));
+        const drawing = /** @type {Element} */ (host.firstElementChild);
+        const width = Number(drawing.getAttribute('width'));
+        const height = Number(drawing.getAttribute('height'));
+        const rect = host.getBoundingClientRect();
+        const cfg = defaultBoardConfig();
+        const { x, y } = stackSlotCenter(boardMetrics(width, height, cfg.widthFactor), cfg, p, 0);
+        return { x: rect.left + (x * rect.width) / width, y: rect.top + (y * rect.height) / height };
+    }, point);
+}
 
 /** Les dix-sept candidats sont là : le moteur a répondu au jet. */
 async function candidatesListed(page) {
@@ -142,8 +164,8 @@ test.describe('ux.md §4.1 — un tour de pions', () => {
     });
 
     // « coup loin dans la liste (rang 12) | 3 1 j×11 | 13 K = 3,6 s ». C'est la
-    // ligne qui a motivé le filtre du lot 2 : elle est ici pour que le chiffre
-    // reste vrai, pas parce qu'il est bon.
+    // ligne qui a motivé le coup joué au plateau le jet saisi (ADR-0052) : elle
+    // est ici pour que le chiffre reste vrai, pas parce qu'il est bon.
     test('le rang douze coûte treize touches au clavier seul', async ({ page }) => {
         const count = await countGestures(page, async (g) => {
             await g.press('Digit3');
@@ -154,6 +176,34 @@ test.describe('ux.md §4.1 — un tour de pions', () => {
         expect(count.total).toBe(13);
         expect(count.clicks).toBe(0);
         expect(await selectedRank(page)).toBe(12);
+    });
+
+    // « coup loin dans la liste, joué au plateau | 3 1 H 2 × (P B B) H | 2 K +
+    // 2 H + 2 (P + 0,2) ≈ 4,0 s » (ADR-0052). Deux touches, deux glissés, et
+    // rien d'autre : chaque pas réduit la liste, le second achève le coup et
+    // l'Action part seule — ni `j`, ni validation.
+    test('le rang douze se joue au plateau en deux touches et deux glissés', async ({ page }) => {
+        const count = await countGestures(page, async (g) => {
+            await g.press('Digit3');
+            await g.press('Digit1');
+            await candidatesListed(page);
+            await g.drag(await pointAt(page, 8), await pointAt(page, 5));
+            // Le premier pas a réduit la liste aux coups qui le contiennent.
+            await expect(page.locator(candidates)).toHaveCount(4);
+            await g.drag(await pointAt(page, 8), await pointAt(page, 7));
+            await expect.poll(() => sentKinds(page)).toContain('validate');
+        });
+        expect(count.keys).toBe(2);
+        expect(count.clicks).toBe(2);
+        const gestures = await sentGestures(page);
+        const played = gestures.find((x) => x.Kind === 'enter_play');
+        expect(played.Steps.map((s) => [s.from, s.to])).toEqual([
+            [8, 5],
+            [8, 7]
+        ]);
+        // Un coup légal : aucun plateau à dire.
+        expect(played.BoardAfter).toBeNull();
+        expect(gestures.slice(-4).map((x) => x.Kind)).toEqual(['enter_die', 'enter_die', 'enter_play', 'validate']);
     });
 
     // « dés au clavier | 2 K | référence ».

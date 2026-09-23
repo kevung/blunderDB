@@ -299,9 +299,11 @@ export default {
 <p>As soon as the second die falls, every <strong>legal play</strong> of the roll is listed, ranked by the built-in engine, the first preselected and its arrows drawn on the board. The list gives the play, its equity and its error against the best one: transcribing means recognising the play one saw, not judging it — the <strong>Evaluation</strong> panel is there for that. This ranking is an evaluation: it is shown, it is never written to the library. When the engine is unavailable the plays are listed unranked and the list says so at its head.</p>
 <p>The <strong>wheel</strong> selects the next or previous candidate, over the list as well as over the board: the eye stays on the board and the arrows scroll past, which recognises a play faster than reading its notation. A click on a row selects it, a double-click validates it.</p>
 <p>The triangle of the twenty-one rolls sits under the two roll cells, beside the keyboard and not in its place: two digits remain twice as fast as a click, and the triangle is there for whoever transcribes with a hand on the mouse. One cell per roll, never two: 3-1 and 1-3 are the same roll.</p>
-<p>A click on a point of the board keeps only the plays that start from it. This is the gesture for the distant play: walking down to the twelfth candidate costs thirteen keys, where the filter leaves only two or three. The filter changes nothing in the draft, it shortens the list on screen; a chip at the head of the list recalls it and clears it, and the next roll clears it too.</p>
 <p>A move played on the board spares you reading the dice. As long as no die has been entered, a click on a checker then on its destination — or a drag from one to the other — plays the move on the board, constrained to the legal plays; the destinations the chosen checker offers light up. The two dice follow from the steps: playing 13/7 then 8/7 says 6-1 without a digit having been typed, and the action is recorded as soon as the move is complete. Backspace undoes the last step, a digit abandons the move and goes back to entering the dice, and a double-click off the board starts it again. When several rolls make the same move — a bear-off several dice cover, a die that cannot be played — nothing is recorded and the triangle leaves only those rolls clickable: the roll is never guessed in place of the person watching the game.</p>
-<p>An illegal move is transcribed as it was played. The <strong>✎</strong> button of the palette unfolds the two ways of doing it, in place of the triangle: they serve once per match where the triangle serves every turn. The "Free movement" button releases the board: checkers move without any check, and "This board is the move played" records the board reached. The notation field beside it does the same from the keyboard: <code>13/7 8/7*</code>, <code>bar/22</code> or <code>6/off</code> are typed and recorded with ENTER. Both require the dice of the roll to be entered first, since an illegal move does not say which roll produced it. A move entered through either of these two paths that happens to be legal stays an ordinary move — the comparison is made on the board reached, never on where the gesture came from; otherwise it is marked "illegal move" in the transcript, and the <code>.mat</code> export warns before writing the file, without ever refusing.</p>
+<p>With both dice entered, the board plays too, constrained to the legal plays of that roll — at the end of the document as on an action being reviewed, whose dice the cursor has loaded. Each step played keeps in the list only the candidates that contain it, the first of them preselected: this is the gesture for a move far down the list, where walking down to the twelfth candidate costs thirteen keys. A complete legal move is recorded at once, with the dice as they were typed; on an action being reviewed, it replaces it.</p>
+<p>An illegal move is transcribed as it was played, with no button and no change of mode. With the dice entered, a drag that no legal play offers puts the checker down where it is released — even from a point no legal play leaves from, provided it holds a checker of the side on roll. The move then leaves the rules: the rest is played freely, by click as by drag, the candidate list gives way to a line that says so, and nothing is recorded before ENTER, which writes the dice entered, the steps and the board reached. Backspace undoes the last step; undoing the only step outside the rules brings the list back. Without dice entered, the drag stays constrained: an illegal move does not say which roll produced it.</p>
+<p>The move can also be typed on the keyboard, in the transcript. A double-click on the cell of a move — or of a dance, of an unrecorded move — turns it into a field, prefilled with its notation. Only the move is typed there, <code>13/7 8/7*</code>, <code>bar/22</code> or <code>6/off</code>: the dice are those of the cell. ENTER records it in place of the move written, ESCAPE closes the cell without writing anything, and a text that names no move leaves the field open. The dashed cell of the entry in progress opens the same way, as soon as both its dice are entered.</p>
+<p>A move entered by the free drag or by notation that happens to be legal stays an ordinary move — the comparison is made on the board reached, never on where the gesture came from; otherwise it is marked "illegal move" in the transcript, and the <code>.mat</code> export warns before writing the file, without ever refusing.</p>
 <p>On the dice line, the <strong>Double</strong>, <strong>Take</strong>, <strong>Pass</strong>, <strong>Resign</strong> row takes the four cube gestures to the mouse: they are, with the two dice, the five possible answers to a single question — what did the side on roll do? It says whose turn it is: the side on roll announces — double, resign — or the other side answers — take, pass; never all four at once, and a button whose gesture would answer nothing stays off. The keyboard, for its part, never refuses anything: a button that is off is a target one does not offer, not a forbidden gesture. "Resign" records nothing yet: the row becomes the three levels — single, gammon, backgammon — and "Cancel", which doubles the ESCAPE key. The cube drawn on the board is the second target of these gestures: a click on it offers a double. Facing an offer it does not answer — take and pass are two symmetric answers and live together in the row, one click each.</p>
 <p>The <strong>status bar</strong> says what the draft expects, in a word: the dance recorded on its own, the tie to roll again, the answer expected to a double, the level expected after a resignation, the correction in place, the move "to review" whose roll has changed. It also answers there the gestures that have nothing to do — "nothing to undo", "no action under the cursor" — for a second and a half. The inconsistency an action left behind it is flagged at the head of the transcript instead, where the offending cell is.</p>
 <p>A game ends with a pass, with a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, multiplied by the value of the cube). The score, the Crawford game and the end of the match then appear in the match bar, and the opening of the next game is expected.</p>
@@ -1434,16 +1436,24 @@ export default {
 <td>Enter the roll in a single gesture: the cell carries both dice, doubles on the diagonal. During the opening the triangle gives way to a row of six dice, one click giving one side's die.</td>
 </tr>
 <tr>
-<td>Click (on a point of the board)</td>
-<td>Keep only the candidates with a step leaving that point; a second point narrows further, a click on the point already filtered removes it, and a click off the board lifts the filter.</td>
-</tr>
-<tr>
 <td>Click, drag (no die entered)</td>
 <td>Play the move straight on the board: the checker goes from the clicked point to its destination, constrained to the legal plays, and the two dice follow from the steps played.</td>
 </tr>
 <tr>
+<td>Click, drag (roll entered)</td>
+<td>Play the move on the board, constrained to the legal plays of that roll: each step played keeps in the list only the candidates that contain it, and a complete legal move is recorded at once. On an action being reviewed, it replaces it.</td>
+</tr>
+<tr>
+<td>Drag outside the rules (roll entered)</td>
+<td>Put the checker down where it is released, even from a point no legal play leaves from, to transcribe an illegal move. The rest of the move is played freely, by click as by drag, and the candidate list gives way to a line that says so.</td>
+</tr>
+<tr>
+<td>ENTER (move outside the rules)</td>
+<td>Record the move with the dice entered and the board reached, marked an illegal move if no legal play reaches that board. A move outside the rules is never recorded on its own.</td>
+</tr>
+<tr>
 <td>BACKSPACE (move being played on the board)</td>
-<td>Undo the last step played on the board.</td>
+<td>Undo the last step played on the board. The remaining steps are replayed constrained as long as a legal play contains them: undoing the only step outside the rules brings the list back.</td>
 </tr>
 <tr>
 <td>ENTER</td>
@@ -1492,6 +1502,10 @@ export default {
 <tr>
 <td>Click (on a cell)</td>
 <td>Put the cursor on that action.</td>
+</tr>
+<tr>
+<td>Double-click (on a cell)</td>
+<td>Type the move of that action on the keyboard, in the cell: 13/7 8/7*, bar/22, 6/off. Only the move is typed, the dice are those of the cell; ENTER records it, even illegal, and Esc closes the cell without writing anything. Works for a move, a dance, an unrecorded move, and for the dashed cell of the entry in progress as soon as both its dice are entered.</td>
 </tr>
 <tr>
 <td>Right-click (on a cell)</td>

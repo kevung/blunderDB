@@ -34,6 +34,9 @@
  * @typedef {Object} GestureDriver
  * @property {(key: string) => Promise<void>} press        une touche
  * @property {(target: any) => Promise<void>} click        un clic sur un locator
+ * @property {(from: {x: number, y: number}, to: {x: number, y: number}) => Promise<void>} drag
+ *           un glissé, appuyer ici et lâcher là — UN geste de souris, le
+ *           P B B d'un pas joué au plateau (ux.md §4.1)
  * @property {() => {keys: number, clicks: number, total: number}} count  le compte courant
  */
 
@@ -68,6 +71,13 @@ export async function countGestures(page, run) {
         click: async (target) => {
             tally.clicks += 1;
             await (typeof target === 'string' ? page.locator(target) : target).click();
+        },
+        drag: async (from, to) => {
+            tally.clicks += 1;
+            await mouse.move(from.x, from.y);
+            await mouse.down();
+            await mouse.move(to.x, to.y, { steps: 4 });
+            await mouse.up();
         },
         count: snapshot
     };

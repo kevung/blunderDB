@@ -69,7 +69,7 @@
   derives no score, no Crawford and no side on roll of its own.
 -->
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import PanelTable from './panels/PanelTable.svelte';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
@@ -110,8 +110,6 @@
         transcriptionKeyStore,
         transcriptionHistoryStore,
         transcriptionHistoryActionStore,
-        transcriptionPointFilterStore,
-        transcriptionCandidateStepsStore,
         transcriptionCubeRequestStore,
         transcriptionWheelStore,
         transcriptionInfoStore,
@@ -120,15 +118,14 @@
         setTranscription,
         clearTranscription,
         resetTranscriptionKeys,
-        resetTranscriptionPointFilter,
         noticeTranscription,
         clearTranscriptionNotice
     } from '../stores/transcriptionStore.js';
     import Modal from './Modal.svelte';
-    import { filterByPoints } from '../services/transcriptionFilter.js';
     import { writeTextToClipboard } from '../services/clipboardService.js';
     import { quizPlayStore } from '../stores/quizPlayStore.js';
-    import { ROLLS, newBoardPlay, newFreePlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
+    import { ROLLS, newBoardPlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
+    import { containsSteps } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -392,9 +389,10 @@
                 return { Kind: 'validate' };
             case COMMAND.DANCE:
                 return { Kind: 'dance' };
-            // Le coup posé par ses PAS (T2.3, T2.4). `BoardAfter` n'est envoyé
+            // Le coup posé par ses PAS (T2.3, ADR-0052). `BoardAfter` n'est envoyé
             // que par les deux chemins qui peuvent produire un coup illégal —
-            // le déplacement libre et la notation tapée — et le moteur le jette
+            // le glissé hors des règles et la notation tapée dans une cellule
+            // du Transcript — et le moteur le jette
             // de lui-même dès qu'un coup légal atteint ce plateau
             // (transcript.validate) : rien ne se marque illégal par accident.
             case COMMAND.ENTER_PLAY:
@@ -441,8 +439,9 @@
             case COMMAND.REDO:
                 return { Kind: 'redo' };
             case COMMAND.SELECT: {
-                // Le rang est celui de la liste MONTRÉE : filtrée, c'est elle
-                // que `j`/`k` et le clic parcourent (T2.2).
+                // Le rang est celui de la liste MONTRÉE : réduite par les pas
+                // joués au plateau, c'est elle que `j`/`k` et le clic
+                // parcourent (ADR-0052).
                 const entry = visible[/** @type {number} */ (command.index)];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
             }
@@ -579,7 +578,8 @@
             const list = moves
                 .map((move) => ({ move, gen: byNotation[move.move] }))
                 .filter((row) => row.gen !== undefined)
-                // Les pas du coup, que le filtre par point de départ lit (T2.2).
+                // Les pas du coup, que les pas joués au plateau réduisent
+                // (ADR-0052).
                 .map((row) => ({ ...row, steps: plays[row.gen]?.steps ?? [] }));
             if (list.length) return { list, unranked: false };
         } catch (err) {
@@ -596,10 +596,6 @@
      */
     async function settleCandidates() {
         if (!get(transcriptionKeyStore).awaitingCandidates) return;
-        // Un NOUVEAU jet : le filtre par point appartenait au précédent. Il est
-        // levé ici et non à chaque frappe — `j`/`k` doivent parcourir la liste
-        // réduite, c'est de là que vient le gain d'ux.md §4.1.
-        resetTranscriptionPointFilter();
         const pos = rollPosition();
         if (!pos) return;
 
@@ -641,7 +637,6 @@
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
         const info = (ann.actions ?? [])[ann.cursor ?? 0];
-        resetTranscriptionPointFilter();
         ranked = [];
         unranked = false;
         danced = false;
@@ -699,10 +694,21 @@
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
         const from = ann.cursor ?? 0;
-        if (index === from) return;
-        run(cursorCommands(from, index)).then(settleCursor);
+        // Le second clic d'un double-clic (ADR-0052) tombe souvent avant que le
+        // premier soit revenu du moteur : relancer le même chemin depuis le
+        // Cursor d'avant le ferait parcourir deux fois.
+        if (index === from || index === walkingTo) return;
+        walkingTo = index;
+        run(cursorCommands(from, index))
+            .then(settleCursor)
+            .finally(() => {
+                if (walkingTo === index) walkingTo = null;
+            });
         panelEl?.focus({ preventScroll: true });
     }
+
+    /** @type {number | null} La cellule vers laquelle le Cursor est en chemin. */
+    let walkingTo = null;
 
     // ── le triangle des jets (T2.1) ──────────────────────────────────────
     //
@@ -715,7 +721,6 @@
 
     /** @param {{state: KeyState, commands: PanelCommand[]}} next */
     function applyMouseDice(next) {
-        resetTranscriptionPointFilter();
         ranked = [];
         unranked = false;
         danced = false;
@@ -827,7 +832,6 @@
         ranked = [];
         unranked = false;
         danced = false;
-        resetTranscriptionPointFilter();
         run([...next.commands, { kind: COMMAND.VALIDATE }]).then(settleCandidates);
         panelEl?.focus({ preventScroll: true });
     }
@@ -988,6 +992,14 @@
             undoBoardPlayStep();
             return;
         }
+        // Un coup sorti des règles ne part pas seul : Entrée l'enregistre, avec
+        // le plateau obtenu (ADR-0052). C'est la seule touche qu'il ajoute.
+        if (event.key === 'Enter' && $quizPlayStore?.free && $quizPlayStore.steps.length) {
+            event.preventDefault();
+            event.stopPropagation();
+            commitFreePlay();
+            return;
+        }
 
         const result = pressKey(keys, event, keyContext);
         // Retour arrière sur un jet vide est PRIS (le plateau appartient au
@@ -1072,7 +1084,6 @@
         // leaves a list that belongs to nobody: it goes before the gestures do,
         // so no `select` can address it any more.
         if (result.state.phase === PHASE.DICE || result.state.phase === PHASE.DIE1) {
-            resetTranscriptionPointFilter();
             ranked = [];
             unranked = false;
         }
@@ -1171,10 +1182,6 @@
         clearTimeout(matCopyTimer);
         clearTranscriptionNotice();
         selectedMoveStore.set(null);
-        // Le plateau lit ces deux magasins pour décider si un clic le concerne :
-        // un panneau démonté ne doit plus rien filtrer.
-        transcriptionCandidateStepsStore.set([]);
-        resetTranscriptionPointFilter();
         // Le coup joué au plateau appartient au panneau : démonté, il ne doit
         // plus se dessiner ni prendre les clics du damier.
         quizPlayStore.set(null);
@@ -1189,9 +1196,16 @@
     // typed without ever reaching for the mouse, and a first keystroke that
     // landed nowhere would break the count before it starts. Until ADR-0048 the
     // list was exactly such a keystroke (decision 10).
+    //
+    // Sauf un champ du panneau qui a déjà la main — le coup tapé dans une
+    // cellule du Transcript (ADR-0052) : le document revient du moteur pendant
+    // qu'on y tape, et le lui reprendre le fermerait sous les doigts.
     $effect(() => {
         void draft;
-        if ($activeTabStore === 'transcription') panelEl?.focus({ preventScroll: true });
+        if ($activeTabStore !== 'transcription') return;
+        const active = document.activeElement;
+        if (active && panelEl?.contains(active) && active.matches('input, textarea, select')) return;
+        panelEl?.focus({ preventScroll: true });
     });
 
     // ── ce que les DEUX BARRES disent (ADR-0048 décision 2) ──────────────
@@ -1422,39 +1436,46 @@
     // à la supprimer puis à insérer.
     let canCubeAnswer = $derived(cubeRowOpen && (awaitingAnswer || editingSlot) && !resigning);
 
-    // ── le filtre par point de départ (T2.2) ─────────────────────────────
+    // ── la liste réduite par les pas joués (ADR-0052) ────────────────────
     //
-    // Le plateau POSE le filtre (utils/boardInteractions.js), le panneau montre
-    // la liste réduite : c'est un état d'affichage, il ne crée aucune Action et
-    // ne rappelle pas le moteur. `ranked` reste le classement complet — c'est
-    // lui qu'on retrouve quand le filtre tombe — et `visible` est ce qui est
-    // montré, donc ce que tout rang désigne : `j`/`k`, le clic sur une ligne,
-    // les flèches du plateau.
-    let visible = $derived(filterByPoints(ranked, $transcriptionPointFilterStore));
-
-    // Ce que le plateau a besoin de savoir des candidats, et rien de plus : les
-    // pas, pour reconnaître un point de départ.
-    $effect(() => {
-        transcriptionCandidateStepsStore.set(ranked.map((row) => ({ steps: row.steps ?? [] })));
+    // Le jet connu, le plateau joue aussi, et chaque pas joué ne garde que les
+    // candidats qui le contiennent — multiplicités comprises, dans n'importe
+    // quel ordre : la règle d'`alivePlays`, celle qui décide déjà quels pas le
+    // plateau accepte. C'est ce qui remplace le filtre par point de départ
+    // (T2.2) : le clic qui filtrait était un geste à part, que le pas joué rend
+    // inutile en réduisant la liste ET en avançant le coup.
+    //
+    // `ranked` reste le classement complet — on le retrouve quand les pas sont
+    // défaits — et `visible` est ce qui est montré, donc ce que tout rang
+    // désigne : `j`/`k`, le clic sur une ligne, les flèches du plateau. Un coup
+    // sorti des règles n'a plus aucun candidat.
+    let visible = $derived.by(() => {
+        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
+        if (!play?.rolled) return ranked;
+        if (play.free) return [];
+        if (!play.steps.length) return ranked;
+        return ranked.filter((row) => containsSteps(row.steps ?? [], play.steps));
     });
+    let playFree = $derived(/** @type {BoardPlayState | null} */ ($quizPlayStore)?.free === true);
 
-    // Le filtre a changé : la liste montrée n'a plus la même longueur, et le
-    // premier de la liste réduite est présélectionné — sans quoi `j` partirait
-    // d'un rang qui ne veut plus rien dire. Gardé par la clé du filtre : la
-    // même liste ne doit pas se re-sélectionner à chaque changement de `ranked`.
-    let lastFilterKey = '';
+    // Les pas ont changé : la liste montrée n'a plus la même longueur, et le
+    // premier candidat restant est présélectionné — sans quoi `j` partirait d'un
+    // rang qui ne veut plus rien dire. Gardé par la clé des pas, qu'un
+    // réarmement remet à vide (`loadBoardPlay`) : un coup neuf ne doit pas
+    // écraser la présélection du coup enregistré que `settleCursor` a posée.
+    let stepsKey = '';
     $effect(() => {
-        const points = $transcriptionPointFilterStore;
-        const filterKey = points.join(',');
-        if (filterKey === lastFilterKey) return;
-        lastFilterKey = filterKey;
+        const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
+        const list = visible;
+        const key = !play?.rolled ? '' : play.free ? 'free' : play.steps.map((s) => `${s.from}>${s.to}`).join(' ');
+        if (key === stepsKey) return;
+        stepsKey = key;
+        if (!play?.rolled) return;
 
         const state = get(transcriptionKeyStore);
         if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return;
-        const list = filterByPoints(ranked, points);
-        if (!list.length) return;
         transcriptionKeyStore.set({ ...state, candidateCount: list.length, selected: 0 });
-        run([{ kind: COMMAND.SELECT, index: 0 }]);
+        if (list.length) run([{ kind: COMMAND.SELECT, index: 0 }]);
     });
 
     let rankedMoves = $derived(visible.map((row) => row.move));
@@ -1462,42 +1483,28 @@
     // ADR-0019): money points at money play, normalised match equity at a score.
     let isMoney = $derived(isMoneyPosition(annotated?.next?.position));
 
-    // ── le coup joué au plateau (T2.3), le coup illégal (T2.4) ───────────
+    // ── le coup joué au plateau (T2.3, ADR-0052) ─────────────────────────
     //
-    // Trois entrées pour un même endroit du document, et une seule règle pour
-    // savoir laquelle est active : **ce que les dés valent**.
+    // Le plateau joue dès qu'un coup de pions est attendu, et une seule chose
+    // change avec les dés : la liste de départ.
     //
-    //   dés non saisis  → le plateau JOUE (T2.3). Le clic contraint le pion aux
-    //                     coups légaux, et les dés se déduisent des pas.
-    //   dés saisis      → la liste des candidats existe, et le clic sur un point
-    //                     la FILTRE (T2.2, déjà en place).
-    //   mode libre      → le clic déplace le pion sans rien vérifier (T2.4), et
-    //                     le plateau obtenu devient `board_after`.
+    //   dés non saisis → l'union des coups légaux des 21 jets (T2.3) ; les dés
+    //                    se déduisent des pas.
+    //   dés saisis     → les coups légaux de CE jet (ADR-0052) : chaque pas
+    //                    réduit la liste des candidats, un coup légal achevé
+    //                    part seul, et un glissé qu'aucun coup légal n'offre
+    //                    pose le pion là où il est lâché — le coup sort des
+    //                    règles, et c'est Entrée qui l'enregistre.
     //
-    // Les deux premiers ne se chevauchent donc jamais, et cela ne coûte aucun
-    // geste d'armement : le budget d'ux.md §4.1 (quatre pas à la souris ≤ 6 s)
-    // ne paie que les pas. Taper un chiffre pendant un coup au plateau abandonne
-    // le coup et rend la main à la saisie par les dés — c'est la sortie, et elle
-    // est dite dans raccourcis.rst.
+    // Aucun geste d'armement dans un cas comme dans l'autre : le budget
+    // d'ux.md §4.1 ne paie que les pas. Taper un chiffre pendant un coup au
+    // plateau recommence le jet, et le plateau se réarme sur le nouveau.
     //
     // Le coup lui-même n'est pas joué ici : `quizPlayStore` le porte, le
     // réducteur de `services/quizPlay.js` le fait avancer et `boardInteractions`
-    // lui passe les clics. Ce qui est ici est l'armement (l'union des coups
-    // légaux des 21 jets), la déduction lue sur l'état, et l'envoi de l'Action.
+    // lui passe les clics. Ce qui est ici est l'armement, la déduction lue sur
+    // l'état, et l'envoi de l'Action.
 
-    let freeMode = $state(false);
-    let notationText = $state('');
-    // Le secours de saisie à la main est REPLIÉ par défaut (ADR-0048 décision 7).
-    // `handEntryOpen` était vrai à chaque tour de pions — 250 fois par match pour
-    // un usage attendu d'une fois — et ses 29 px de haut faisaient partie des
-    // 49 px qui empêchaient la palette de tenir dans un dock de 280 px.
-    let handOpen = $state(false);
-
-    // Replier le secours rend le plateau à son mode contraint : laisser le
-    // déplacement libre armé derrière un volet fermé serait un piège.
-    $effect(() => {
-        if (!handOpen && freeMode) freeMode = false;
-    });
     // Verrou d'enregistrement : il désarme le plateau pendant les quatre gestes
     // qui partent au moteur, sinon chaque réponse ré-armerait le coup — 21
     // appels à LegalMoves par geste, et un plateau qui se rejoue sous la souris.
@@ -1505,33 +1512,50 @@
     let boardPlayArmed = false;
     let boardPlayGeneration = 0;
 
-    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && !freeMode && keys.phase === PHASE.DICE && expects === 'checker');
-    // Le coup joué au plateau reste possible volet fermé : c'est le PLATEAU qui
-    // le porte, pas ce volet, qui n'offre que la bascule libre et la notation.
+    let diceEntered = $derived(keys.dice[0] > 0 && keys.dice[1] > 0);
+    // Le jet que le plateau joue quand il est saisi — en bout de document comme
+    // sur une Action relue, dont `settleCursor` a chargé les dés.
+    let boardRoll = $derived(diceEntered && (keys.phase === PHASE.ROLL || keys.phase === PHASE.CANDIDATE) ? [keys.dice[0], keys.dice[1]] : null);
+    let boardPlayOpen = $derived(!!draft && !matchOver && !awaitingAnswer && !recordingPlay && expects === 'checker' && (keys.phase === PHASE.DICE || boardRoll !== null));
+
+    // Ce qui décide d'un nouvel armement, et rien d'autre : la place de
+    // l'Action jouée, son camp, sa position de départ et le jet. Le jet connu,
+    // chaque pas joué envoie `select_candidate` et fait revenir un document
+    // neuf : un armement qui suivrait le document rejouerait le coup sous la
+    // souris à chaque pas.
+    let boardPlayKey = $derived.by(() => {
+        if (!boardPlayOpen || !annotated) return '';
+        const at = annotated.entry?.at ?? annotated.cursor ?? 0;
+        const side = annotated.entry ? annotated.entry.side : annotated.next?.side;
+        return JSON.stringify([at, side, boardRoll, annotated.actions?.length ?? 0, positionAt(annotated, at)?.board ?? null]);
+    });
 
     /**
-     * L'union des coups légaux des 21 jets, demandée en une salve.
+     * Les coups légaux que le plateau offre : ceux du jet saisi, ou l'union de
+     * ceux des 21 jets, demandée en une salve.
      *
      * @param {any} pos
      * @param {number} generation
+     * @param {number[] | null} rolled
      */
-    async function loadBoardPlay(pos, generation) {
-        const answers = await Promise.all(ROLLS.map(([high, low]) => LegalMoves({ ...pos, dice: [high, low] }).catch(() => [])));
+    async function loadBoardPlay(pos, generation, rolled) {
+        const rolls = rolled ? [rolled] : ROLLS;
+        const answers = await Promise.all(rolls.map(([high, low]) => LegalMoves({ ...pos, dice: [high, low] }).catch(() => [])));
         if (generation !== boardPlayGeneration) return;
-        const byRoll = ROLLS.map((dice, index) => ({ dice, plays: answers[index] ?? [] })).filter((entry) => entry.plays.length);
-        quizPlayStore.set(newBoardPlay(pos, byRoll));
+        const byRoll = rolls.map((dice, index) => ({ dice, plays: answers[index] ?? [] })).filter((entry) => entry.plays.length);
+        stepsKey = '';
+        quizPlayStore.set(newBoardPlay(pos, byRoll, { rolled }));
         boardPlayArmed = true;
     }
 
-    // Un tour nouveau, un coup neuf. L'effet dépend d'`annotated` : chaque
-    // Action enregistrée change la position de départ, donc l'union des coups.
+    // Un tour nouveau, un jet nouveau, un coup neuf.
     $effect(() => {
-        const open = boardPlayOpen;
-        const free = freeMode;
-        void annotated;
+        const key = boardPlayKey;
+        const rolled = untrack(() => boardRoll);
         const generation = ++boardPlayGeneration;
-        if (!open && !free) {
+        if (!key) {
             if (boardPlayArmed) {
+                stepsKey = '';
                 quizPlayStore.set(null);
                 boardPlayArmed = false;
             }
@@ -1539,44 +1563,30 @@
         }
         const pos = entryPosition();
         if (!pos) return;
-        if (free) {
-            quizPlayStore.set(newFreePlay(pos));
-            boardPlayArmed = true;
-            return;
-        }
-        loadBoardPlay(pos, generation);
+        loadBoardPlay(pos, generation, rolled);
     });
 
     /**
      * Le coup est achevé et un seul jet le produit : l'Action part sans qu'un
      * chiffre ait été tapé. C'est la promesse de T2.3, et elle ne se tient que
      * si personne ne devine — `deducedDice` rend `null` dès qu'il reste deux
-     * jets, et le triangle prend alors le relais.
+     * jets, et le triangle prend alors le relais. Le jet saisi, il n'en reste
+     * qu'un par construction : le coup légal achevé part seul, avec les dés
+     * dans l'ordre où ils ont été tapés.
      */
     $effect(() => {
         const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
         if (!play || play.free || recordingPlay) return;
         const dice = deducedDice(play);
-        if (dice) sendPlay(dice, play.steps, null);
+        if (dice) sendPlay(play.rolled ?? dice, play.steps, null);
     });
 
     /** Les jets que l'utilisateur peut encore désigner, ou `null` pour tous. */
     let rollsAllowed = $derived.by(() => {
         const play = /** @type {BoardPlayState | null} */ ($quizPlayStore);
-        if (!play || play.free || play.steps.length === 0) return null;
+        if (!play || play.free || play.rolled || play.steps.length === 0) return null;
         return new Set(choosableRolls(play));
     });
-
-    // Ce que « n pas joués » et « plusieurs jets produisent ce coup » disaient
-    // en prose est déjà DIT par les deux objets concernés (ADR-0048 décision 8) :
-    // les pions déplacés sur le plateau, et le triangle, qui n'allume que les
-    // jets encore possibles (`rollsAllowed`). Deux phrases pour ce qu'on voit.
-    let freeSteps = $derived(/** @type {BoardPlayState | null} */ ($quizPlayStore)?.free ? $quizPlayStore.steps.length : 0);
-    let diceEntered = $derived(keys.dice[0] > 0 && keys.dice[1] > 0);
-    // Les deux chemins du coup illégal ne s'ouvrent que là où un coup de pions
-    // s'écrit : jamais devant une réponse au videau, une résignation ou un
-    // match fini, où il n'y aurait pas d'Action à porter le plateau.
-    let handEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && expects === 'checker');
 
     /**
      * L'Action : les deux dés, les pas, et le plateau quand il faut le dire.
@@ -1586,23 +1596,25 @@
      * plus laissent exactement les deux mêmes (transcript.Apply). Un seul chemin
      * vaut mieux qu'une branche « les dés y sont-ils déjà ? ».
      *
+     * `lead` précède le tout : le Cursor mené jusqu'à la cellule dont le coup a
+     * été tapé, quand il n'y est pas encore.
+     *
      * @param {number[]} dice
      * @param {{from: number, to: number}[]} steps
      * @param {any} board
+     * @param {PanelCommand[]} [lead]
      */
-    async function sendPlay(dice, steps, board) {
+    async function sendPlay(dice, steps, board, lead = []) {
         if (recordingPlay || !draft) return;
         recordingPlay = true;
         quizPlayStore.set(null);
         boardPlayArmed = false;
-        freeMode = false;
-        notationText = '';
+        stepsKey = '';
         ranked = [];
         unranked = false;
         danced = false;
-        resetTranscriptionPointFilter();
         try {
-            await run([{ kind: COMMAND.DIE, value: dice[0] }, { kind: COMMAND.DIE, value: dice[1] }, { kind: COMMAND.ENTER_PLAY, steps, board }, { kind: COMMAND.VALIDATE }]);
+            await run([...lead, { kind: COMMAND.DIE, value: dice[0] }, { kind: COMMAND.DIE, value: dice[1] }, { kind: COMMAND.ENTER_PLAY, steps, board }, { kind: COMMAND.VALIDATE }]);
         } finally {
             recordingPlay = false;
         }
@@ -1610,38 +1622,70 @@
     }
 
     /**
-     * « Ce plateau est le coup joué » (T2.4). Le plateau part avec les pas :
-     * les deux disent la même chose tant que les pas suffisent à la décrire,
-     * et le plateau tranche quand ils n'y suffisent pas — un pion posé sur un
-     * point tenu par l'adversaire, par exemple, que le moteur laisserait
-     * ailleurs s'il ne rejouait que les pas.
+     * Entrée sur un coup sorti des règles (ADR-0052) : le jet saisi, les pas
+     * joués, et le plateau obtenu. Le plateau part avec les pas : les deux
+     * disent la même chose tant que les pas suffisent à la décrire, et le
+     * plateau tranche quand ils n'y suffisent pas — un pion posé sur un point
+     * tenu par l'adversaire, par exemple, que le moteur laisserait ailleurs
+     * s'il ne rejouait que les pas.
+     *
+     * Il ne part jamais seul, à la différence d'un coup légal : rien ne dit
+     * qu'un coup hors des règles est fini.
      */
-    function validateFreePlay() {
+    function commitFreePlay() {
         const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
-        if (!play?.free || !play.steps.length || !diceEntered) return;
-        sendPlay([keys.dice[0], keys.dice[1]], play.steps, play.board);
-        panelEl?.focus({ preventScroll: true });
+        if (!play?.free || !play.steps.length || !play.rolled) return;
+        sendPlay(play.rolled, play.steps, play.board);
     }
+
+    // Les cellules dont le COUP se tape au clavier (ADR-0052) : un coup de
+    // pions, une danse, un coup non consigné. Ce sont celles que `settleCursor`
+    // sait rejouer.
+    const TYPABLE_KINDS = new Set(['checker', 'dance', 'unrecorded']);
 
     /**
-     * La notation tapée (T2.4) : `13/7 8/7*`, `bar/22`, `6/off`. Le parseur est
-     * celui des flèches du plateau (`parseMoveNotation`), et rien n'est jugé —
-     * un coup légal saisi par ce chemin reste un coup ordinaire, parce que le
-     * moteur compare par PLATEAU RÉSULTANT et non par la provenance du geste.
+     * Le coup tapé dans une cellule du Transcript (ADR-0052) : `13/7 8/7*`,
+     * `bar/22`, `6/off(2)`. Seul le coup s'y tape — les dés sont ceux de la
+     * cellule —, et rien n'est jugé : un coup illégal est enregistré, marqué
+     * par le moteur (ADR-0044). Le parseur est celui des flèches du plateau
+     * (`parseMoveNotation`), et un coup légal saisi par ce chemin reste un coup
+     * ordinaire, parce que le moteur compare par PLATEAU RÉSULTANT et non par la
+     * provenance du geste.
+     *
+     * @param {number} index l'Action de la cellule
+     * @param {string} text
+     * @param {boolean} pending la cellule en pointillés de la saisie en cours
+     * @returns {boolean} vrai quand le coup part — le champ se ferme alors
      */
-    function validateNotation() {
-        const pos = entryPosition();
-        if (!draft || !pos || !diceEntered) return;
-        const steps = stepsFromNotation(notationText, pos.player_on_roll);
-        if (!steps.length) return;
-        sendPlay([keys.dice[0], keys.dice[1]], steps, boardAfterSteps(pos.board, steps, pos.player_on_roll));
+    function commitNotation(index, text, pending) {
+        const ann = get(transcriptionStore)?.annotated;
+        if (!draft || !ann || recordingPlay) return false;
+        /** @type {any} */
+        let pos;
+        /** @type {number[]} */
+        let dice;
+        /** @type {PanelCommand[]} */
+        let lead = [];
+        if (pending) {
+            if (!ann.entry || ann.entry.kind === 'opening') return false;
+            pos = entryPosition();
+            dice = ann.entry.dice ?? [0, 0];
+        } else {
+            const info = (ann.actions ?? [])[index];
+            if (!info?.before || !TYPABLE_KINDS.has(info.kind)) return false;
+            pos = { ...structuredClone(info.before), player_on_roll: typeof info.side === 'number' ? info.side : info.before.player_on_roll };
+            dice = info.before.dice ?? [0, 0];
+            // Le premier clic du double-clic y a déjà mené le Cursor ; s'il n'y
+            // est pas encore, le chemin part devant le coup, dans la même file.
+            lead = cursorCommands(ann.cursor ?? 0, index);
+        }
+        if (!pos || !(dice[0] > 0) || !(dice[1] > 0)) return false;
+        const mover = pos.player_on_roll;
+        const steps = stepsFromNotation(text, mover);
+        if (!steps.length) return false;
+        sendPlay([dice[0], dice[1]], steps, boardAfterSteps(pos.board, steps, mover), lead);
         panelEl?.focus({ preventScroll: true });
-    }
-
-    /** Le mode libre, et le retour au plateau contraint. */
-    function toggleFreeMode() {
-        freeMode = !freeMode;
-        panelEl?.focus({ preventScroll: true });
+        return true;
     }
 
     /** Retour arrière pendant un coup au plateau : le dernier pas est défait. */
@@ -1789,15 +1833,11 @@
                             <span class="list-note">{$t('transcription.unranked')}</span>
                         </div>
                     {/if}
-                    {#if $transcriptionPointFilterStore.length}
-                        <!-- Le filtre est un état d'AFFICHAGE (T2.2), jamais écrit
-                             dans le document. En PUCE et non en phrase : elle
-                             annonçait le filtre sans dire comment en sortir. -->
-                        <div class="list-head">
-                            <button class="chip" onclick={resetTranscriptionPointFilter} title={$t('transcription.pointFilterClear')}>
-                                {$transcriptionPointFilterStore.join(', ')} · {visible.length} ✕
-                            </button>
-                        </div>
+                    {#if playFree}
+                        <!-- Un coup sorti des règles n'a plus de candidat : la
+                             liste cède la place à la seule chose à savoir, la
+                             touche qui l'enregistre (ADR-0052). -->
+                        <p class="list-note" data-testid="transcription-free-hint">{$t('transcription.freePlayHint')}</p>
                     {/if}
                     {#if visible.length}
                         {#if unranked}
@@ -1844,51 +1884,13 @@
                                 >{dieCells[1]}</button
                             >
                         {/if}
-                        {#if handEntryOpen}
-                            <button
-                                class="icon-btn"
-                                class:active={handOpen}
-                                onclick={() => (handOpen = !handOpen)}
-                                title={$t('transcription.handEntryTooltip')}
-                                aria-label={$t('transcription.handEntry')}>✎</button
-                            >
-                        {/if}
                     </div>
 
                     {#if cubeRowOpen}
                         <CubeActionRow canAct={canCubeAct} canAnswer={canCubeAnswer} {resigning} onGesture={sendCube} onResign={startResign} onLevel={pickResignLevel} onCancelResign={abortResign} />
                     {/if}
 
-                    {#if handOpen && handEntryOpen}
-                        <!-- Le secours (T2.4) : il prend la PLACE du triangle, les
-                             deux ne servant jamais en même temps. Il était visible
-                             250 fois par match pour un usage attendu d'une fois. -->
-                        <div class="hand-entry">
-                            <button class="edit-btn" class:active={freeMode} onclick={toggleFreeMode} title={$t('transcription.freeMoveTooltip')}>{$t('transcription.freeMove')}</button>
-                            {#if freeMode}
-                                <button class="edit-btn" onclick={validateFreePlay} disabled={!diceEntered || freeSteps === 0} title={$t('transcription.boardIsPlayTooltip')}
-                                    >{$t('transcription.boardIsPlay')}</button
-                                >
-                            {/if}
-                            <input
-                                class="notation-input"
-                                type="text"
-                                bind:value={notationText}
-                                placeholder={$t('transcription.notationPlaceholder')}
-                                aria-label={$t('transcription.notationLabel')}
-                                onkeydown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        validateNotation();
-                                    }
-                                }}
-                            />
-                            <button class="edit-btn" onclick={validateNotation} disabled={!diceEntered || !notationText.trim()} title={$t('transcription.notationTooltip')}
-                                >{$t('transcription.notationApply')}</button
-                            >
-                        </div>
-                    {:else if diceEntryOpen}
+                    {#if diceEntryOpen}
                         <!-- La cible souris des dés (T2.1), sous les deux cases du
                              jet et jamais à leur place : le clavier reste deux fois
                              plus rapide (0,56 s contre 1,21 s) et les deux entrées
@@ -1905,7 +1907,14 @@
                              dans une colonne. -->
                         <p class="flag">{$t('transcription.inconsistencyPrefix')} {lastFlags.join(' · ')}</p>
                     {/if}
-                    <TranscriptView {annotated} cursor={annotated?.cursor ?? 0} players={[playerName(0), playerName(1)]} onSelect={selectAction} onMenu={openTranscriptMenu} />
+                    <TranscriptView
+                        {annotated}
+                        cursor={annotated?.cursor ?? 0}
+                        players={[playerName(0), playerName(1)]}
+                        onSelect={selectAction}
+                        onMenu={openTranscriptMenu}
+                        onEditMove={commitNotation}
+                    />
                 </div>
             </div>
         </div>
@@ -2003,25 +2012,6 @@
         border-color: var(--color-primary);
         color: var(--color-primary);
         font-weight: 600;
-    }
-
-    .hand-entry {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--space-1);
-    }
-
-    /* Ni taille ni famille ici : la règle globale de style.css met déjà
-       `font: inherit` sur les contrôles de formulaire (ADR-0008). */
-    .notation-input {
-        flex: 1 1 8rem;
-        min-width: 6rem;
-        padding: var(--space-1);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        background: var(--color-surface);
-        color: var(--color-text);
     }
 
     .create-form {
@@ -2173,8 +2163,10 @@
     }
 
     /* Les cinq réponses possibles à « qu'a fait le camp au trait ? » sur une
-       ligne : les deux dés, les quatre gestes de videau, et le volet de secours
-       (ADR-0048 décision 7). */
+       ligne : les deux dés et les quatre gestes de videau. Le volet de secours
+       qui s'y ajoutait (ADR-0048 décision 7) n'existe plus : le coup hors des
+       règles se glisse au plateau, et la notation se tape dans sa cellule
+       (ADR-0052). */
     .entry-row {
         display: flex;
         flex-wrap: wrap;
@@ -2214,24 +2206,12 @@
         flex: 0 0 auto;
     }
 
-    /* Le filtre par point : une PUCE et non une phrase. Elle disait qu'il était
-       posé sans dire comment en sortir ; le ✕ est le geste (décision 8). */
+    /* Une note sur LA LISTE : l'ordre du générateur, ou un coup sorti des
+       règles qui n'a plus de candidat. */
     .list-note {
+        margin: 0;
         color: var(--color-text-muted);
         font-size: var(--font-size-small);
-    }
-
-    .chip {
-        padding: 0 var(--space-2);
-        border: 1px solid var(--color-primary);
-        border-radius: 999px;
-        background: var(--color-surface);
-        color: var(--color-primary);
-        cursor: pointer;
-    }
-
-    .chip:hover {
-        background: var(--color-surface-alt);
     }
 
     /* C'est ICI que le défilement a lieu, et nulle part ailleurs. */
@@ -2259,32 +2239,6 @@
     }
 
     .plain-candidate.selected {
-        font-weight: 600;
-    }
-
-    .edit-btn {
-        padding: var(--space-1) var(--space-2);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        background: var(--color-surface);
-        color: var(--color-text);
-        cursor: pointer;
-    }
-
-    .edit-btn:hover:not(:disabled) {
-        background: var(--color-surface-alt);
-    }
-
-    .edit-btn:disabled {
-        color: var(--color-text-muted);
-        cursor: default;
-    }
-
-    /* La bascule enfoncée : le plateau ne joue plus les coups légaux, il
-       déplace librement, et cela doit se lire sans ouvrir la documentation. */
-    .edit-btn.active {
-        border-color: var(--color-primary);
-        color: var(--color-primary);
         font-weight: 600;
     }
 

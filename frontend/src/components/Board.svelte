@@ -24,7 +24,7 @@
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore, quizPlaySourcesStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
-    import { transcriptionPointFilterStore, transcriptionCandidateStepsStore, transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+    import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
 
@@ -293,11 +293,6 @@
                 offeredCube: searchOfferedCubeStore,
                 anyModalOpen: isAnyModalOpen,
                 quizPlay: quizPlayStore,
-                // Le filtre des candidats d'une transcription (T2.2) : le
-                // plateau le POSE au clic, le panneau le lit. Aucune des deux
-                // n'appelle l'autre.
-                transcriptionFilter: transcriptionPointFilterStore,
-                transcriptionCandidates: transcriptionCandidateStepsStore,
                 // Le videau cliqué pendant une transcription (T2.5) : le
                 // plateau pose la demande, le panneau en fait un double.
                 transcriptionCube: transcriptionCubeRequestStore
@@ -520,7 +515,7 @@
         if (!play) return {};
         const shown = (point) => screenOfModelPoint(point, mirrored);
         // Le point CHOISI est toujours marqué, même quand aucune liste ne
-        // l'offre : en déplacement libre (T2.4) il n'y a pas de coup légal pour
+        // l'offre : dans un coup sorti des règles (ADR-0052) il n'y a pas de coup légal pour
         // le proposer, et le pion pris en main doit se voir quand même.
         const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
         // Les points de DÉPART ne s'allument qu'une fois le coup engagé — un

@@ -15,7 +15,7 @@ import { boardMetrics } from '../utils/boardGeometry.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick } from '../utils/boardInteractions.js';
 import { newPlay } from '../services/quizPlay.js';
-import { newBoardPlay, newFreePlay, deducedDice } from '../services/transcriptionPlay.js';
+import { newBoardPlay, deducedDice } from '../services/transcriptionPlay.js';
 
 const W = 1000;
 const H = 720;
@@ -53,10 +53,6 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         // Armé par les tests du quiz (#294) ; null partout ailleurs, donc le
         // clic retombe sur l'édition comme avant.
         quizPlay: writable(/** @type {any} */ (null)),
-        // Le filtre des candidats d'une transcription (T2.2) : vide partout
-        // ailleurs, et le clic ne concerne alors pas le panneau.
-        transcriptionFilter: writable(/** @type {number[]} */ ([])),
-        transcriptionCandidates: writable(/** @type {any[]} */ ([])),
         // Le videau cliqué pendant une transcription (T2.5) : null tant que
         // rien n'a été demandé, et le panneau le remet à null en servant.
         transcriptionCube: writable(/** @type {string|null} */ (null))
@@ -557,7 +553,7 @@ describe('the quiz move is played on the board', () => {
     });
 });
 
-describe('le coup joué au plateau d’une transcription (T2.3, T2.4)', () => {
+describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () => {
     /**
      * @param {Record<number, [number, number]>} stacks
      */
@@ -578,10 +574,13 @@ describe('le coup joué au plateau d’une transcription (T2.3, T2.4)', () => {
         { dice: [6, 6], plays: [play(step(13, 7), step(13, 7), step(8, 2), step(8, 2))] }
     ];
 
-    /** Un plateau monté sur un coup de transcription, contraint ou libre. */
-    function mountPlay({ free = false } = {}) {
+    /**
+     * Un plateau monté sur un coup de transcription : l'union des jets, ou le
+     * seul jet saisi (ADR-0052).
+     */
+    function mountPlay({ rolled = false } = {}) {
         const b = mount({ mode: 'TRANSCRIBE', position: POSITION });
-        b.stores.quizPlay.set(free ? newFreePlay(POSITION) : newBoardPlay(POSITION, BY_ROLL));
+        b.stores.quizPlay.set(rolled ? newBoardPlay(POSITION, [BY_ROLL[0]], { rolled: [6, 1] }) : newBoardPlay(POSITION, BY_ROLL));
         return b;
     }
 
@@ -637,14 +636,57 @@ describe('le coup joué au plateau d’une transcription (T2.3, T2.4)', () => {
         b.detach();
     });
 
-    // T2.4 : le même geste, sans aucune contrainte. C'est le coup qui a tenu à
-    // la table, et il n'est pas jugé (ADR-0044).
-    test('en déplacement libre, le pion va où le coup illégal l’a mis', () => {
-        const b = mountPlay({ free: true });
+    // ADR-0052 : le jet saisi, le même geste pose le pion là où il est lâché.
+    // C'est le coup qui a tenu à la table, et il n'est pas jugé (ADR-0044).
+    test('le jet saisi, un glissé hors des règles pose le pion là où il est lâché', () => {
+        const b = mountPlay({ rolled: true });
         b.drag(b.slot(13, 0), b.slot(3, 0));
         const state = get(b.stores.quizPlay);
+        expect(state.free).toBe(true);
         expect(state.steps).toEqual([{ from: 13, to: 3 }]);
         expect(state.board.points[3]).toEqual({ checkers: 1, color: 0 });
+        b.detach();
+    });
+
+    // Aucun coup de 6-1 ne part de 6 : la pression n'y choisit rien, mais elle
+    // ouvre le glissé.
+    test('le glissé libre part aussi d’un point qui n’est pas une source légale', () => {
+        const b = mountPlay({ rolled: true });
+        b.drag(b.slot(6, 0), b.slot(2, 0));
+        const state = get(b.stores.quizPlay);
+        expect(state.free).toBe(true);
+        expect(state.steps).toEqual([{ from: 6, to: 2 }]);
+        b.detach();
+    });
+
+    test('un clic sur ce point-là ne choisit toujours rien', () => {
+        const b = mountPlay({ rolled: true });
+        b.click(b.slot(6, 0));
+        const state = get(b.stores.quizPlay);
+        expect(state.selected).toBeNull();
+        expect(state.steps).toEqual([]);
+        b.detach();
+    });
+
+    test('le jet saisi, un glissé légal reste un pas légal', () => {
+        const b = mountPlay({ rolled: true });
+        b.drag(b.slot(13, 0), b.slot(7, 0));
+        b.drag(b.slot(8, 0), b.slot(7, 1));
+        const state = get(b.stores.quizPlay);
+        expect(state.free).toBe(false);
+        expect(deducedDice(state)).toEqual([6, 1]);
+        b.detach();
+    });
+
+    test('une fois libre, deux clics déplacent sans rien vérifier', () => {
+        const b = mountPlay({ rolled: true });
+        b.drag(b.slot(13, 0), b.slot(3, 0));
+        b.click(b.slot(8, 0));
+        b.click(b.slot(4, 0));
+        expect(get(b.stores.quizPlay).steps).toEqual([
+            { from: 13, to: 3 },
+            { from: 8, to: 4 }
+        ]);
         b.detach();
     });
 
@@ -652,94 +694,6 @@ describe('le coup joué au plateau d’une transcription (T2.3, T2.4)', () => {
         const b = mountPlay();
         b.drag(b.slot(13, 0), b.slot(7, 0));
         expect(b.pos().board.points[13].checkers).toBe(5);
-        b.detach();
-    });
-});
-
-describe('le filtre des candidats par point de départ (T2.2)', () => {
-    /**
-     * Un plateau monté avec les candidats d'un jet en cours de transcription.
-     * @param {{mirrored?: boolean, candidates: any[]}} opts
-     */
-    function mountTranscription({ mirrored = false, candidates }) {
-        const b = mount({ mode: 'NORMAL', mirrored });
-        b.stores.transcriptionCandidates.set(candidates);
-        return b;
-    }
-
-    const step = (from) => ({ from, to: from - 1, hit: false });
-    const CANDIDATES = [{ steps: [step(13), step(8)] }, { steps: [step(13), step(13)] }, { steps: [step(24), step(6)] }];
-    const filter = (b) => get(b.stores.transcriptionFilter);
-
-    test('un clic sur un point de départ réduit la liste', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        b.click(b.slot(13, 0));
-        expect(filter(b)).toEqual([13]);
-        b.detach();
-    });
-
-    test('un second point réduit encore', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        b.click(b.slot(13, 0));
-        b.click(b.slot(8, 0));
-        expect(filter(b)).toEqual([13, 8]);
-        b.detach();
-    });
-
-    test('le point déjà filtré s’enlève : l’annulation sur la cible même', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        b.click(b.slot(13, 0));
-        b.click(b.slot(13, 0));
-        expect(filter(b)).toEqual([]);
-        b.detach();
-    });
-
-    test('un clic hors du damier lève le filtre', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        b.click(b.slot(13, 0));
-        b.click({ x: 4, y: 4 });
-        expect(filter(b)).toEqual([]);
-        b.detach();
-    });
-
-    // Le geste doit rester disponible pour le déplacement libre de pions
-    // (T2.4), qui a son propre état : un point d'où ne part aucun candidat ne
-    // fait rien du tout.
-    test('un point d’où ne part aucun candidat ne fait rien', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        b.click(b.slot(17, 0));
-        expect(filter(b)).toEqual([]);
-        b.detach();
-    });
-
-    test('sans candidats, le clic ne concerne pas la transcription', () => {
-        const b = mountTranscription({ candidates: [] });
-        b.click(b.slot(13, 0));
-        expect(filter(b)).toEqual([]);
-        b.detach();
-    });
-
-    test('un plateau en miroir ramène le point cliqué au modèle', () => {
-        const b = mountTranscription({ mirrored: true, candidates: CANDIDATES });
-        // En miroir, le point 13 du modèle est dessiné là où le 12 le serait.
-        b.click(b.slot(12, 0));
-        expect(filter(b)).toEqual([13]);
-        b.detach();
-    });
-
-    // Le filtre est un état d'AFFICHAGE : il ne touche pas à la position.
-    test('la position ne bouge pas', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        const before = JSON.stringify(b.pos());
-        b.click(b.slot(13, 0));
-        expect(JSON.stringify(b.pos())).toBe(before);
-        b.detach();
-    });
-
-    test('le bouton droit reste au menu de la position', () => {
-        const b = mountTranscription({ candidates: CANDIDATES });
-        b.click(b.slot(13, 0), 2);
-        expect(filter(b)).toEqual([]);
         b.detach();
     });
 });
@@ -802,7 +756,7 @@ describe('le clic sur le videau, en transcription', () => {
     // pendant tout un tour de pions.
     test('un coup en cours au plateau n’avale pas le clic du videau', () => {
         const b = mount({ mode: 'TRANSCRIBE' });
-        b.stores.quizPlay.set(newFreePlay(b.pos()));
+        b.stores.quizPlay.set(newBoardPlay(b.pos(), [], { rolled: [3, 1] }));
         b.click(b.state.cubeBox, 0);
         expect(cubeOf(b)).toBe('double');
         b.detach();
