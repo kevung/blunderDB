@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 21:49+0200\n"
+"POT-Creation-Date: 2026-09-24 00:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -857,6 +857,21 @@ msgstr ""
 "sijaan."
 
 #: ../../source/raccourcis.rst:1
+msgid "1 … 6 (curseur sur l'ouverture d'une partie)"
+msgstr "1 … 6 (kohdistin pelin avauksessa)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, "
+"validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait "
+"revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut."
+msgstr ""
+"Syötä avausheitto uudelleen: pelaajan 1 noppa ja sitten pelaajan 2, "
+"kirjataan toisen nopan kohdalla. Suurempi voittaa — iso noppa ensin, "
+"vuoro menee alhaalla olevalle pelaajalle 1; pieni ensin, ylhäällä "
+"olevalle pelaajalle 2."
+
+#: ../../source/raccourcis.rst:1
 msgid ""
 "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
 " plateau)."
@@ -984,18 +999,22 @@ msgstr "t"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Prendre le double proposé : le videau passe au preneur à la valeur "
-"doublée et le doubleur rejoue."
+"doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la "
+"prise à la place de l'action visée."
 msgstr ""
 "Ota tarjottu tuplaus: kuutio siirtyy ottajalle kaksinkertaiseen arvoon ja"
-" tuplaaja heittää uudelleen."
+" tuplaaja heittää uudelleen. Kun kohdistin on solussa, kirjoittaa oton "
+"kohdennetun toiminnon tilalle."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer le double proposé : la partie est gagnée à la valeur d'avant le "
-"double."
+"double. Le curseur posé sur une cellule, écrit la passe à la place de "
+"l'action visée."
 msgstr ""
 "Luovuta tarjotun tuplauksen edessä: peli voitetaan sillä arvolla, joka "
-"kuutiolla oli ennen tuplausta."
+"kuutiolla oli ennen tuplausta. Kun kohdistin on solussa, kirjoittaa "
+"luovutuksen kohdennetun toiminnon tilalle."
 
 #: ../../source/raccourcis.rst:1
 msgid "r puis 1, 2 ou 3"
@@ -1117,7 +1136,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:330
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1125,7 +1144,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1146,7 +1165,30 @@ msgstr ""
 "paikallaan. Ero näkyy näytöllä, sillä kohdennettu solu on kehystetty "
 "transkriptissä."
 
-#: ../../source/raccourcis.rst:342
+#: ../../source/raccourcis.rst:343
+msgid ""
+"Ce qui est en train d'être tapé se dessine dans le transcript, en "
+"pointillés, à la place où il sera écrit : une correction recouvre la "
+"cellule qu'elle remplace, une insertion ouvre une cellule entre ses deux "
+"voisines, et le camp se lit à la colonne. Rien n'est enregistré avant la "
+"validation."
+msgstr ""
+"Se mitä parhaillaan kirjoitetaan piirtyy transkriptiin katkoviivalla "
+"siihen paikkaan, johon se kirjataan: korjaus peittää solun, jonka se "
+"korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan "
+"sarakkeesta. Mitään ei kirjata ennen vahvistusta."
+
+#: ../../source/raccourcis.rst:348
+msgid ""
+"Une insertion au milieu du document continue d'insérer : la validation "
+"ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
+"tour au lieu d'écraser celle d'après. Déplacer le curseur y met fin."
+msgstr ""
+"Keskelle asiakirjaa tehty lisäys jatkaa lisäämistä: vahvistus avaa tyhjän"
+" solun sen perään, ja seuraava toiminto lisätään vuorostaan sen sijaan "
+"että se korvaisi jälkimmäisen. Kohdistimen siirtäminen päättää sen."
+
+#: ../../source/raccourcis.rst:352
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1158,7 +1200,7 @@ msgstr ""
 "asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin "
 "odotetulle toiminnolle."
 
-#: ../../source/raccourcis.rst:347
+#: ../../source/raccourcis.rst:357
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1176,7 +1218,7 @@ msgstr ""
 "”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai "
 "taaksepäin muutoksen jälkeen tallentaa korjauksen samalla."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:364
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1194,7 +1236,7 @@ msgstr ""
 " jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun "
 "luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:361
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1203,7 +1245,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:378
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

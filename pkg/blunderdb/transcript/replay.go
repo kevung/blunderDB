@@ -128,6 +128,22 @@ type EntryInfo struct {
 	Selected bool   `json:"selected"`
 	// Review marks a play the user has to look at again — see [Entry].
 	Review bool `json:"review"`
+
+	// Kind is what validating the entry would write: KindOpening on a game's
+	// first slot, KindChecker everywhere else. It is [entryExpects], stated once
+	// here so that the panel does not read the slot a second time.
+	Kind Kind `json:"kind"`
+
+	// Notation is the play picked so far, written as a Transcript writes it, and
+	// "" while none is.
+	//
+	// It is here so that the Transcript can DRAW the Action being typed where it
+	// will land — over the cell a correction replaces, in the slot an insertion
+	// opens — instead of leaving the neighbour it is about to become. Nothing is
+	// written to the document before validation; what changes is that the user
+	// sees what they are typing, and a correction no longer looks like it did
+	// nothing at all.
+	Notation string `json:"notation,omitempty"`
 }
 
 // Annotated is a document and everything a Replay derives from it.
@@ -248,6 +264,14 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 			Dice:      e.Dice,
 			Selected:  e.Selected,
 			Review:    e.Review,
+			Kind:      entryExpects(doc, *e, out.Next.Expects),
+		}
+		// The notation of the play being typed, from the board the entry's slot
+		// is reached with — states[i] is the state BEFORE Action i, which is
+		// exactly what the cache holds, so drawing the entry costs no replay.
+		if at := clampSlot(e.At, len(doc.Actions)); len(e.Steps) > 0 && out.Entry.Kind != KindOpening {
+			resolved, _ := resolveSteps(r.states[at].board, e.Side, e.Steps)
+			out.Entry.Notation = domain.Notation(resolved, e.Side)
 		}
 	}
 	if from < 0 {

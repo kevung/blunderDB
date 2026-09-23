@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 21:49+0200\n"
+"POT-Creation-Date: 2026-09-24 00:20+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -854,6 +854,20 @@ msgstr ""
 "restarts the roll of that action instead of validating."
 
 #: ../../source/raccourcis.rst:1
+msgid "1 … 6 (curseur sur l'ouverture d'une partie)"
+msgstr "1 … 6 (cursor on a game's opening)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, "
+"validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait "
+"revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut."
+msgstr ""
+"Type the opening roll again: player 1's die then player 2's, recorded on "
+"the second die. The higher one wins — the big die first, the turn goes to"
+" player 1 at the bottom; the small die first, to player 2 at the top."
+
+#: ../../source/raccourcis.rst:1
 msgid ""
 "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
 " plateau)."
@@ -981,18 +995,22 @@ msgstr "t"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Prendre le double proposé : le videau passe au preneur à la valeur "
-"doublée et le doubleur rejoue."
+"doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la "
+"prise à la place de l'action visée."
 msgstr ""
 "Take the double offered: the cube goes to the taker at the doubled value "
-"and the doubler rolls again."
+"and the doubler rolls again. With the cursor on a cell, writes the take "
+"in place of the action aimed at."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer le double proposé : la partie est gagnée à la valeur d'avant le "
-"double."
+"double. Le curseur posé sur une cellule, écrit la passe à la place de "
+"l'action visée."
 msgstr ""
 "Pass the double offered: the game is won at the value the cube had before"
-" the double."
+" the double. With the cursor on a cell, writes the pass in place of the "
+"action aimed at."
 
 #: ../../source/raccourcis.rst:1
 msgid "r puis 1, 2 ou 3"
@@ -1114,7 +1132,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Redo the undone gesture."
 
-#: ../../source/raccourcis.rst:330
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1122,7 +1140,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1143,7 +1161,31 @@ msgstr ""
 "difference is visible on screen, the cell aimed at being framed in the "
 "transcript."
 
-#: ../../source/raccourcis.rst:342
+#: ../../source/raccourcis.rst:343
+msgid ""
+"Ce qui est en train d'être tapé se dessine dans le transcript, en "
+"pointillés, à la place où il sera écrit : une correction recouvre la "
+"cellule qu'elle remplace, une insertion ouvre une cellule entre ses deux "
+"voisines, et le camp se lit à la colonne. Rien n'est enregistré avant la "
+"validation."
+msgstr ""
+"What is being typed is drawn in the transcript, in dashes, in the place "
+"where it will be written: a correction covers the cell it replaces, an "
+"insertion opens a cell between its two neighbours, and the side is read "
+"from the column. Nothing is recorded before the validation."
+
+#: ../../source/raccourcis.rst:348
+msgid ""
+"Une insertion au milieu du document continue d'insérer : la validation "
+"ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
+"tour au lieu d'écraser celle d'après. Déplacer le curseur y met fin."
+msgstr ""
+"An insertion in the middle of the document goes on inserting: the "
+"validation opens an empty cell after it, and the next action is inserted "
+"in its turn instead of overwriting the one that follows. Moving the "
+"cursor puts an end to it."
+
+#: ../../source/raccourcis.rst:352
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1155,7 +1197,7 @@ msgstr ""
 " the document. The sentence clears itself and gives the place back to the"
 " expected action."
 
-#: ../../source/raccourcis.rst:347
+#: ../../source/raccourcis.rst:357
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1173,7 +1215,7 @@ msgstr ""
 "validated. Moving the cursor forward or back after changing something "
 "records the correction on the way."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:364
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1191,7 +1233,7 @@ msgstr ""
 " every gesture. The undo stack lives in memory: it is lost when the draft"
 " is closed."
 
-#: ../../source/raccourcis.rst:361
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1201,7 +1243,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:378
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 

@@ -168,12 +168,34 @@
     let draft = $derived($transcriptionStore);
     let annotated = $derived(draft?.annotated ?? null);
     let keys = $derived($transcriptionKeyStore);
-    let expects = $derived(annotated?.next?.expects ?? '');
+    // Ce que le document attend APRÈS sa dernière Action, et ce qu'attend la
+    // CELLULE sous le curseur. Les deux diffèrent dès qu'on relit : le moteur
+    // nomme la seconde (`entry.kind`), et sans Entry ouverte il n'y a rien sous
+    // le curseur — c'est alors la suite du match qui gouverne.
+    //
+    // Sans cette distinction, revenir sur l'ouverture d'une partie pour la
+    // ressaisir tapait deux dés de COUP DE PIONS : aucune validation au second
+    // dé, une liste de candidats demandée pour un camp que l'ouverture n'avait
+    // pas encore désigné, et la convention qui décide qui commence — gros dé
+    // d'abord, c'est le joueur 1 du bas ; petit dé d'abord, le joueur 2 d'en
+    // haut — hors d'atteinte sur la seule Action où elle s'applique.
+    let awaits = $derived(annotated?.next?.expects ?? '');
+    let expects = $derived(annotated?.entry?.kind || awaits);
     // Le Cursor est-il sur une Action existante que la saisie remplacerait ?
     // C'est le discriminant de la touche chiffrée (ADR-0048 décision 1) : en
     // bout de document elle valide, ici elle recommence le jet sur place.
     let replacing = $derived(annotated?.entry?.replacing === true);
-    let keyContext = $derived({ expects, replacing });
+    // Une cellule TENUE par le curseur, rien de tapé dessus : la correction
+    // d'une Action déjà écrite, ou le trou qu'une insertion vient d'ouvrir.
+    // C'est là que les gestes de videau CORRIGENT au lieu d'ajouter en bout de
+    // document — le moteur écrit au rang de l'Entry —, et c'est ce qui permet
+    // de remplacer une passe par une prise d'une touche.
+    //
+    // Dès qu'un dé est tapé, l'utilisateur saisit un jet : `t` et `p` cessent
+    // d'être des réponses, et `p` redevient le compte de pips du répartiteur
+    // global.
+    let editingSlot = $derived(!!annotated?.entry && !(annotated.entry.dice?.[0] > 0) && !(annotated.entry.dice?.[1] > 0));
+    let keyContext = $derived({ expects, replacing, editing: editingSlot });
 
     // A length of 0 is a money session, and money is the only case where the
     // session's rules are asked for (ADR-0028: rules of the session, posted on
@@ -495,11 +517,31 @@
         if (!ann) return null;
         const entry = ann.entry;
         const at = entry?.at ?? ann.cursor ?? 0;
-        const info = (ann.actions ?? [])[at];
-        const base = info?.has_position ? info.before : ann.next?.position;
+        const base = positionAt(ann, at);
         const side = entry ? entry.side : ann.next?.side;
         if (!base) return null;
         return { ...structuredClone(base), id: 0, dice: [0, 0], player_on_roll: side, decision_type: 0 };
+    }
+
+    /**
+     * La Position d'où part l'Action de rang `at`, et celle que le match a
+     * atteinte en bout de document.
+     *
+     * `has_position` ne dit PAS « il n'y a rien à montrer » : il dit que
+     * l'Action ne produit ni Move ni Position dans le Match enregistré — une
+     * ouverture, un abandon — et le Replay remplit `before` pour toutes, « for
+     * the panel only » (transcript/replay.go). Le lire comme une absence
+     * renvoyait le plateau à la FIN du document dès qu'on cliquait sur la
+     * première cellule d'une partie ou sur un abandon : la position affichée
+     * n'était alors plus celle de la cellule encadrée.
+     *
+     * @param {any} ann
+     * @param {number} at
+     */
+    function positionAt(ann, at) {
+        const actions = ann?.actions ?? [];
+        const info = at >= 0 && at < actions.length ? actions[at] : null;
+        return info?.before ?? ann?.next?.position ?? null;
     }
 
     function rollPosition() {
@@ -610,7 +652,7 @@
         // renseigner. Les candidats de ce jet sont donc listés comme pour tout
         // autre coup ; aucun n'est présélectionné puisque rien n'a été consigné.
         const playable = info?.kind === 'checker' || info?.kind === 'dance' || info?.kind === 'unrecorded';
-        if (inserting || !info?.has_position || !playable) {
+        if (inserting || !info?.before || !playable) {
             resetTranscriptionKeys();
             return;
         }
@@ -1058,8 +1100,12 @@
     // leaves the Cursor somewhere the ENGINE chose — on the first Inconsistency
     // when the gesture made one — and the candidates there have to be asked for
     // again, since an Evaluation is never stored (ADR-0045 rule 8).
+    // Les quatre gestes de videau en sont aussi : depuis qu'ils écrivent au rang
+    // de l'Entry, ils peuvent CORRIGER une cellule relue, et le Cursor revient
+    // alors là où la relecture l'avait pris. Le panneau doit se réarmer sur ce
+    // que le moteur a rendu, comme après toute correction.
     /** @type {Set<string>} */
-    const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, ...EDITS]);
+    const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, ...EDITS]);
 
     /**
      * Runs one command from a key, a button or the global dispatcher.
@@ -1212,10 +1258,15 @@
         const actions = ann.actions ?? [];
         const at = ann.cursor ?? 0;
         const current = at >= 0 && at < actions.length ? actions[at] : null;
-        const base = current?.has_position ? current.before : ann.next?.position;
+        const base = positionAt(ann, at);
         if (!base) return null;
         const rolled = (!opening || current) && dice[0] > 0 && dice[1] > 0 ? [dice[0], dice[1]] : [0, 0];
-        return { ...structuredClone(base), id: 0, dice: rolled };
+        const pos = { ...structuredClone(base), id: 0, dice: rolled };
+        // Les dés se dessinent du côté du camp qui les joue : celui de l'Action
+        // en cours de saisie quand il y en a une, sans quoi une insertion les
+        // montrerait du côté du voisin qu'elle repousse.
+        if (ann.entry && ann.entry.at === at && typeof ann.entry.side === 'number') pos.player_on_roll = ann.entry.side;
+        return pos;
     }
 
     $effect(() => {
@@ -1289,7 +1340,10 @@
     let cube = $derived(annotated?.next?.position?.cube ?? { owner: -1, value: 0 });
     // While a double waits for its answer, next.position carries the cube AT THE
     // LEVEL OFFERED, which is the one the answerer weighs (fonctionnel.md §1.2).
-    let awaitingAnswer = $derived(expects === 'take');
+    // Une offre en attente est un fait du MATCH, pas de la cellule relue : elle
+    // se lit sur ce que le document attend en bout, sans quoi poser le curseur
+    // sur une Action retirerait le videau offert de la barre de match.
+    let awaitingAnswer = $derived(awaits === 'take');
     // La CLÉ et ses paramètres, non la phrase : c'est la barre de match qui la
     // traduit, et deux traductions du même fait finiraient par diverger.
     let cubeLabelKey = $derived.by(() => {
@@ -1354,7 +1408,11 @@
     let resigning = $derived(keys.phase === PHASE.RESIGN);
     let cubeRowOpen = $derived(!!draft && !matchOver);
     let canCubeAct = $derived(cubeRowOpen && !awaitingAnswer && !resigning);
-    let canCubeAnswer = $derived(cubeRowOpen && awaitingAnswer);
+    // [T] et [P] répondent à une offre — et corrigent la cellule tenue par le
+    // curseur, qui est l'autre endroit où une prise et une passe s'écrivent :
+    // une passe qui aurait dû être une prise se remplace d'un clic, sans avoir
+    // à la supprimer puis à insérer.
+    let canCubeAnswer = $derived(cubeRowOpen && (awaitingAnswer || editingSlot) && !resigning);
 
     // ── le filtre par point de départ (T2.2) ─────────────────────────────
     //

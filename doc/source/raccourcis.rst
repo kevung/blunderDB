@@ -297,6 +297,7 @@ veille ne demande pas la souris.
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le plus fort commence et joue les deux dés)."
    "1 … 6 (jet saisi)", "Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider."
+   "1 … 6 (curseur sur l'ouverture d'une partie)", "Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut."
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
    "Molette", "Sélectionner le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent."
@@ -311,8 +312,8 @@ veille ne demande pas la souris.
    "Clic (sur les cases du jet)", "Effacer les deux dés saisis, comme RETOUR ARRIERE."
    "Esc", "Abandonner la saisie en cours."
    "d", "Doubler ou redoubler : le coup sélectionné est validé au passage, en une seule touche."
-   "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue."
-   "p", "Passer le double proposé : la partie est gagnée à la valeur d'avant le double."
+   "t", "Prendre le double proposé : le videau passe au preneur à la valeur doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la prise à la place de l'action visée."
+   "p", "Passer le double proposé : la partie est gagnée à la valeur d'avant le double. Le curseur posé sur une cellule, écrit la passe à la place de l'action visée."
    "r puis 1, 2 ou 3", "Abandonner la partie pour le camp au trait : simple, gammon ou backgammon. Esc entre les deux touches annule sans rien enregistrer."
    "Clic (sur le videau)", "Proposer un double pour le camp au trait, comme la touche d. Devant une offre, le videau ne répond pas : la prise et la passe sont dans la rangée de boutons."
    "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
@@ -338,6 +339,15 @@ d'après. Sur une action déjà écrite, où l'on est revenu pour la corriger, i
 quelque chose sous le curseur : le chiffre recommence le jet de cette action,
 sur place. La différence se voit à l'écran, la cellule visée étant encadrée dans
 le transcript.
+
+Ce qui est en train d'être tapé se dessine dans le transcript, en pointillés, à
+la place où il sera écrit : une correction recouvre la cellule qu'elle remplace,
+une insertion ouvre une cellule entre ses deux voisines, et le camp se lit à la
+colonne. Rien n'est enregistré avant la validation.
+
+Une insertion au milieu du document continue d'insérer : la validation ouvre une
+cellule vide à la suite, et l'action suivante s'insère à son tour au lieu
+d'écraser celle d'après. Déplacer le curseur y met fin.
 
 Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état :
 « rien à annuler » sur une pile vide, « aucune action sous le curseur » en bout

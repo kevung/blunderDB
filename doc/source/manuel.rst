@@ -1254,6 +1254,38 @@ joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette
 cellule propose les coups de ce jet pour le renseigner. Les parties se replient ; celle du curseur est
 ouverte.
 
+**Ce qui est en train d'être tapé se dessine dans le transcript**, en
+pointillés, à la place exacte où il sera écrit : les dés au fur et à mesure
+qu'ils tombent, la notation du coup dès qu'il est sélectionné, et dans la
+colonne du camp à qui l'action revient. Une correction recouvre la cellule
+qu'elle remplace, une insertion ouvre une cellule entre ses deux voisines, une
+saisie neuve paraît au bas de la partie en cours. Rien n'est écrit dans le
+brouillon avant la validation ; ce que l'on lit et ce que le document dira ne
+divergent jamais.
+
+Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une
+action, un chiffre en recommence le jet sur place, et les quatre gestes de
+videau valent eux aussi comme corrections : sur une passe, *t* — ou le bouton
+**Prendre** — écrit une prise **à la place** de la passe, sans qu'il faille la
+supprimer puis insérer. La partie reprend alors son cours et la suite du
+brouillon est rejouée. Les mêmes touches remplissent la cellule qu'une
+insertion vient d'ouvrir : *i* puis *d* insère un double devant l'action visée.
+
+Ressaisir les deux dés sur la cellule d'**ouverture** d'une partie décide à
+nouveau qui commence : le dé du joueur 1 se tape en premier, celui du joueur 2
+ensuite, et c'est le plus fort qui l'emporte — gros dé d'abord, le trait revient
+au joueur 1, en bas du plateau ; petit dé d'abord, il revient au joueur 2, en
+haut. La validation est immédiate au second dé, comme pour une ouverture neuve.
+Le premier coup de pions de la partie, lui, garde le camp qu'il avait : s'il
+revient désormais à l'autre joueur, le transcript le marque et le curseur s'y
+pose, où *s* le donne au bon camp.
+
+Une **insertion au milieu du document continue d'insérer** : la validation
+ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au
+lieu d'écraser celle d'après. C'est ce qui permet de rattraper toute la fin
+d'une partie — une passe qui aurait dû être une prise — sans perdre ce qui a
+déjà été tapé de la partie suivante. Déplacer le curseur met fin à l'insertion.
+
 Un clic droit sur une cellule ouvre les corrections de cette action — insérer
 avant, insérer après, supprimer, changer de camp — et amène le curseur dessus au
 passage ; ce sont les mêmes gestes que les touches *i*, *a*, *x* et *s*, et le

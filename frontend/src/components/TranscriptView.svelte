@@ -10,7 +10,9 @@
   It is presentational and it holds NO store. Everything it shows is handed to
   it as one `annotated` object and read from it — the side of an Action, its
   notation, the score a game started on, the Crawford mention, the
-  Inconsistencies a Replay found. Nothing here recomputes a derived fact: the
+  Inconsistencies a Replay found, and the Action being TYPED, which is drawn in
+  dashes in the slot it will fill so that what is read and what is recorded
+  never say two different things. Nothing here recomputes a derived fact: the
   Go Replay (pkg/blunderdb/transcript) is the only thing that derives, and a
   second opinion written in JavaScript would be a second, drifting one.
 
@@ -34,6 +36,50 @@
 -->
 <script module>
     /**
+     * L'Action en cours de SAISIE, là où elle atterrira, ou `null`.
+     *
+     * Pourquoi elle est dessinée. Le Transcript ne montrait que le document, et
+     * l'Entry n'en fait pas partie : une correction laissait donc la cellule
+     * afficher l'Action enregistrée jusqu'à la validation, et une insertion
+     * n'apparaissait nulle part avant elle. L'utilisateur lisait une chose
+     * pendant qu'il en tapait une autre — l'écart entre ce qu'on voit et ce qui
+     * est enregistré, que le Transcript existe précisément pour fermer.
+     *
+     * Rien n'est dérivé ici : le moteur dit où l'Entry tombe (`at`), si elle
+     * remplace, son camp, ses dés, la notation du coup choisi et la sorte
+     * d'Action que sa validation écrirait (`transcript.EntryInfo`).
+     *
+     * @param {any} annotated
+     * @param {any[]} infos
+     * @param {any[]} games
+     */
+    function pendingOf(annotated, infos, games) {
+        const e = annotated?.entry;
+        if (!e) return null;
+        const at = Math.max(0, Math.min(e.at ?? 0, infos.length));
+        const replacing = e.replacing === true;
+        const typed = (e.dice?.[0] ?? 0) > 0 || (e.dice?.[1] ?? 0) > 0 || !!e.notation;
+        // Une correction ne se dessine que lorsqu'elle DIT quelque chose : le
+        // Cursor posé sur une Action sans rien taper dessus montre l'Action, et
+        // non un fantôme d'elle-même.
+        if (replacing && (!typed || at >= infos.length)) return null;
+
+        const gameIndex = at < infos.length ? infos[at].game_index : infos.length ? infos[infos.length - 1].game_index : -1;
+        if (gameIndex < 0 || gameIndex >= games.length) return null;
+        // Une partie finie n'accueille pas la suite : l'Action tapée ouvrira la
+        // partie suivante, qui n'existe pas encore et n'a donc aucun tableau où
+        // la poser. Elle s'y dessinera dès que son ouverture sera enregistrée.
+        if (!replacing && at >= infos.length && games[gameIndex]?.finished) return null;
+
+        return {
+            at,
+            gameIndex,
+            replacing,
+            cell: { kind: 'pending', index: at, entry: e, side: e.side ?? 0, opening: e.kind === 'opening' }
+        };
+    }
+
+    /**
      * The rows of each game: player 1's cell on the left, player 2's on the
      * right, one row per turn.
      *
@@ -44,12 +90,17 @@
      * player's each — so it takes a row of its own across both. The end of the
      * game is a cell like any other and belongs to the WINNER's column.
      *
+     * The Action being typed follows the same rule, in the slot it will fill:
+     * over the cell it replaces, between the two it is inserted between (see
+     * [pendingOf]).
+     *
      * @param {any} annotated - a `transcript.Annotated` as the Go side returns it
      * @returns {{game: any, rows: {left: any, right: any, full: any, numbered: boolean}[]}[]}
      */
     export function transcriptRows(annotated) {
         const infos = annotated?.actions ?? [];
         const games = annotated?.games ?? [];
+        const pending = pendingOf(annotated, infos, games);
 
         return games.map((/** @type {any} */ game, /** @type {number} */ gameIndex) => {
             /** @type {any[]} */
@@ -63,21 +114,34 @@
                 return row;
             };
 
-            for (const info of infos) {
-                if (info.game_index !== gameIndex) continue;
-                const cell = { kind: 'action', index: info.index, info };
-
-                if (info.kind === 'opening') {
+            /** Une cellule à sa place — la règle du `.mat`, pour les deux sortes. */
+            const place = (/** @type {any} */ cell, /** @type {boolean} */ opening, /** @type {number} */ camp) => {
+                if (opening) {
                     open(true).full = cell;
                     row = null;
-                    continue;
+                    return;
                 }
-
-                const side = info.side === 1 ? 'right' : 'left';
+                const side = camp === 1 ? 'right' : 'left';
                 // A new row when there is none, when the cell is taken, or
                 // when player 1 acts after player 2 answered on this one.
                 if (!row || row[side] || (side === 'left' && row.right)) open(true);
                 row[side] = cell;
+            };
+
+            for (const info of infos) {
+                if (info.game_index !== gameIndex) continue;
+                if (pending && pending.gameIndex === gameIndex && pending.at === info.index) {
+                    place(pending.cell, pending.cell.opening, pending.cell.side);
+                    // Une correction TIENT LA PLACE de l'Action : les deux ne se
+                    // montrent pas côte à côte, sans quoi le même coup se lirait
+                    // deux fois, une fois comme il était et une fois comme il
+                    // devient.
+                    if (pending.replacing) continue;
+                }
+                place({ kind: 'action', index: info.index, info }, info.kind === 'opening', info.side);
+            }
+            if (pending && pending.gameIndex === gameIndex && pending.at >= infos.length) {
+                place(pending.cell, pending.cell.opening, pending.cell.side);
             }
 
             // " Wins N points": the result of a finished game, in the winner's
@@ -122,6 +186,20 @@
     let header = $derived(annotated?.document?.header ?? {});
     let at = $derived(cursor ?? annotated?.cursor ?? -1);
     let layout = $derived(transcriptRows(annotated));
+
+    // L'index de la cellule PROVISOIRE effectivement dessinée, ou −1. Elle porte
+    // le cadre du Cursor — c'est elle que l'on tape —, et l'Action qu'elle
+    // recouvre ne le porte donc pas une seconde fois.
+    let pendingIndex = $derived.by(() => {
+        for (const group of layout) {
+            for (const row of group.rows) {
+                for (const c of [row.full, row.left, row.right]) {
+                    if (c?.kind === 'pending') return c.index;
+                }
+            }
+        }
+        return -1;
+    });
 
     // The dice live on the document's Action (the Replay does not copy them
     // onto its ActionInfo), so the two are read side by side, by index.
@@ -210,6 +288,7 @@
         if (c.kind === 'result') {
             return c.points === 1 ? $t('transcript.winsOne') : $t('transcript.wins', { n: c.points });
         }
+        if (c.kind === 'pending') return pendingText(c.entry);
         const info = c.info;
         const action = actions[c.index] ?? {};
         const dice = action.dice ?? [0, 0];
@@ -240,6 +319,23 @@
             default:
                 return info.notation ?? '';
         }
+    }
+
+    /**
+     * L'Action en cours de saisie, telle qu'on la tape : les dés au fur et à
+     * mesure qu'ils tombent, « · » pour celui qui manque encore, et la notation
+     * du coup choisi dès qu'il y en a un.
+     *
+     * C'est un ÉTAT DE SAISIE et il se voit comme tel (la cellule est en
+     * pointillés) : rien n'est écrit dans le document avant la validation.
+     *
+     * @param {any} e - `transcript.EntryInfo`
+     */
+    function pendingText(e) {
+        const a = e.dice?.[0] || '·';
+        const b = e.dice?.[1] || '·';
+        if (e.kind === 'opening') return $t('transcript.opening', { a, b });
+        return e.notation ? `${a}${b}: ${e.notation}` : `${a}${b}`;
     }
 
     /**
@@ -312,14 +408,16 @@
         <span class="cell empty-cell"></span>
     {:else}
         {@const flaws = flawsOf(c)}
-        {@const framed = c.kind === 'action' && c.index === at}
-        {#if onSelect && c.kind === 'action'}
+        {@const framed = c.kind === 'pending' || (c.kind === 'action' && c.index === at && pendingIndex !== c.index)}
+        {#if onSelect && c.kind !== 'result'}
             <button
                 type="button"
                 class="cell"
                 class:cursor={framed}
+                class:pending={c.kind === 'pending'}
                 class:flawed={flaws.length > 0}
                 data-index={c.index}
+                data-pending={c.kind === 'pending' ? 'true' : undefined}
                 data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
                 title={flaws.length ? flawTitle(flaws) : undefined}
@@ -336,9 +434,11 @@
             <span
                 class="cell"
                 class:cursor={framed}
+                class:pending={c.kind === 'pending'}
                 class:flawed={flaws.length > 0}
                 class:result={c.kind === 'result'}
-                data-index={c.kind === 'action' ? c.index : undefined}
+                data-index={c.kind === 'result' ? undefined : c.index}
+                data-pending={c.kind === 'pending' ? 'true' : undefined}
                 data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
                 title={flaws.length ? flawTitle(flaws) : undefined}
@@ -470,6 +570,16 @@
     .cell.cursor {
         border-color: var(--color-primary);
         font-weight: 600;
+    }
+
+    /* L'Action en cours de saisie : dessinée à sa place, mais en pointillés —
+       rien n'est écrit dans le document avant la validation, et la cellule le
+       dit d'elle-même plutôt que par une phrase ailleurs. */
+    .cell.pending {
+        border-style: dashed;
+        border-color: var(--color-primary);
+        color: var(--color-text-muted);
+        font-style: italic;
     }
 
     .cell.flawed {

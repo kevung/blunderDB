@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 21:49+0200\n"
+"POT-Creation-Date: 2026-09-24 00:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -864,6 +864,21 @@ msgstr ""
 "επικυρώσει."
 
 #: ../../source/raccourcis.rst:1
+msgid "1 … 6 (curseur sur l'ouverture d'une partie)"
+msgstr "1 … 6 (δρομέας στο άνοιγμα μιας παρτίδας)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, "
+"validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait "
+"revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut."
+msgstr ""
+"Επανεισαγωγή της ριξιάς ανοίγματος: ζάρι του παίκτη 1 και έπειτα του "
+"παίκτη 2, με καταγραφή στο δεύτερο ζάρι. Κερδίζει το μεγαλύτερο — το "
+"μεγάλο ζάρι πρώτο, η σειρά πηγαίνει στον παίκτη 1 κάτω· το μικρό πρώτο, "
+"στον παίκτη 2 επάνω."
+
+#: ../../source/raccourcis.rst:1
 msgid ""
 "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
 " plateau)."
@@ -994,18 +1009,22 @@ msgstr "t"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Prendre le double proposé : le videau passe au preneur à la valeur "
-"doublée et le doubleur rejoue."
+"doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la "
+"prise à la place de l'action visée."
 msgstr ""
 "Αποδοχή του διπλασιασμού: ο κύβος περνά σε αυτόν που δέχεται στη διπλάσια"
-" τιμή και παίζει ξανά αυτός που διπλασίασε."
+" τιμή και παίζει ξανά αυτός που διπλασίασε. Με τον δρομέα σε ένα κελί, "
+"γράφει την αποδοχή στη θέση της στοχευμένης ενέργειας."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer le double proposé : la partie est gagnée à la valeur d'avant le "
-"double."
+"double. Le curseur posé sur une cellule, écrit la passe à la place de "
+"l'action visée."
 msgstr ""
 "Απόρριψη του διπλασιασμού: η παρτίδα κερδίζεται στην τιμή που είχε ο "
-"κύβος πριν τον διπλασιασμό."
+"κύβος πριν τον διπλασιασμό. Με τον δρομέα σε ένα κελί, γράφει το πάσο στη"
+" θέση της στοχευμένης ενέργειας."
 
 #: ../../source/raccourcis.rst:1
 msgid "r puis 1, 2 ou 3"
@@ -1129,7 +1148,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Επανάληψη της κίνησης που αναιρέθηκε."
 
-#: ../../source/raccourcis.rst:330
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1137,7 +1156,7 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1158,7 +1177,32 @@ msgstr ""
 "ριξιά αυτής της ενέργειας, επί τόπου. Η διαφορά φαίνεται στην οθόνη, "
 "καθώς το στοχευμένο κελί είναι πλαισιωμένο στο μεταγραφικό."
 
-#: ../../source/raccourcis.rst:342
+#: ../../source/raccourcis.rst:343
+msgid ""
+"Ce qui est en train d'être tapé se dessine dans le transcript, en "
+"pointillés, à la place où il sera écrit : une correction recouvre la "
+"cellule qu'elle remplace, une insertion ouvre une cellule entre ses deux "
+"voisines, et le camp se lit à la colonne. Rien n'est enregistré avant la "
+"validation."
+msgstr ""
+"Ό,τι πληκτρολογείται σχεδιάζεται στο μεταγραφικό, με διακεκομμένο "
+"περίγραμμα, στη θέση όπου θα γραφτεί: μια διόρθωση καλύπτει το κελί που "
+"αντικαθιστά, μια εισαγωγή ανοίγει ένα κελί ανάμεσα στους δύο γείτονές "
+"της, και η πλευρά διαβάζεται από τη στήλη. Τίποτα δεν καταγράφεται πριν "
+"από την επικύρωση."
+
+#: ../../source/raccourcis.rst:348
+msgid ""
+"Une insertion au milieu du document continue d'insérer : la validation "
+"ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
+"tour au lieu d'écraser celle d'après. Déplacer le curseur y met fin."
+msgstr ""
+"Μια εισαγωγή στη μέση του εγγράφου συνεχίζει να εισάγει: η επικύρωση "
+"ανοίγει ένα κενό κελί στη συνέχεια, και η επόμενη ενέργεια εισάγεται με "
+"τη σειρά της αντί να αντικαταστήσει την επόμενη. Η μετακίνηση του δρομέα "
+"το τερματίζει."
+
+#: ../../source/raccourcis.rst:352
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1170,7 +1214,7 @@ msgstr ""
 " από τον δρομέα» στο τέλος του εγγράφου. Η φράση σβήνεται μόνη της και "
 "δίνει τη θέση της στην αναμενόμενη ενέργεια."
 
-#: ../../source/raccourcis.rst:347
+#: ../../source/raccourcis.rst:357
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1189,7 +1233,7 @@ msgstr ""
 "μετακίνηση του δρομέα εμπρός ή πίσω μετά από κάποια αλλαγή καταγράφει τη "
 "διόρθωση στο πέρασμα."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:364
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1207,7 +1251,7 @@ msgstr ""
 "δρομέας τοποθετείται στην πρώτη από αυτές μετά από κάθε κίνηση. Η στοίβα "
 "αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο του πρόχειρου."
 
-#: ../../source/raccourcis.rst:361
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1217,7 +1261,7 @@ msgstr ""
 "καταγραφή και η γραμμή του προσχεδίου — περιγράφεται στο "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:378
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 

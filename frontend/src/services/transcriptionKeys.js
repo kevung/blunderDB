@@ -280,13 +280,16 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  *
  * @param {KeyState} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
- * @param {{expects?: string, replacing?: boolean}} context - `expects` est
- *   `annotated.next.expects`, la sorte d'Action que le document attend ;
+ * @param {{expects?: string, replacing?: boolean, editing?: boolean}} context -
+ *   `expects` est la sorte d'Action attendue LÀ OÙ LE CURSOR EST (le moteur la
+ *   nomme : `annotated.entry.kind`, et à défaut `annotated.next.expects`) ;
  *   `replacing` est `annotated.entry.replacing`, vrai quand le Cursor est sur
- *   une Action existante que la saisie remplacerait (ADR-0048 décision 1).
+ *   une Action existante que la saisie remplacerait (ADR-0048 décision 1) ;
+ *   `editing` dit que le Cursor tient une cellule sans qu'un dé y soit tapé —
+ *   une Action relue, ou le trou qu'une insertion vient d'ouvrir.
  * @returns {KeyResult}
  */
-export function pressKey(state, event, { expects = 'checker', replacing = false } = {}) {
+export function pressKey(state, event, { expects = 'checker', replacing = false, editing = false } = {}) {
     // La résignation capte tout tant que son niveau n'est pas donné : ses
     // chiffres SONT des niveaux et non des dés, et rien d'autre ne doit passer
     // entre `r` et la touche qui la termine.
@@ -343,11 +346,14 @@ export function pressKey(state, event, { expects = 'checker', replacing = false 
         return { handled: true, ...cubeGesture(state, COMMAND.DOUBLE) };
     }
 
-    // `t`/`p` ne répondent qu'à une offre. Ce n'est pas un refus : sans double
-    // qui précède il n'y a pas de réponse à transcrire, et la touche reste
-    // disponible pour le répartiteur global (ux.md §3 : « réponse attendue |
-    // t / p »).
-    if (expects === 'take') {
+    // `t`/`p` répondent à une offre — et CORRIGENT la cellule tenue par le
+    // Cursor, qui est l'autre endroit où une prise et une passe s'écrivent : le
+    // moteur écrit au rang de l'Entry, si bien qu'une passe qui aurait dû être
+    // une prise se remplace d'une touche, sans la supprimer ni insérer devant
+    // elle. Hors de ces deux cas ce n'est pas un refus : il n'y a rien à quoi
+    // répondre, et la touche reste disponible pour le répartiteur global, où
+    // `p` est le compte de pips (ux.md §3 : « réponse attendue | t / p »).
+    if (expects === 'take' || editing) {
         if (isBareLetter(event, 't')) return { handled: true, ...cubeGesture(state, COMMAND.TAKE) };
         if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
     }
@@ -557,6 +563,14 @@ function enterDie(state, die, expects, replacing = false) {
                     // Égalité : l'Action `opening` est enregistrée telle quelle et
                     // une autre ouverture est attendue. Rien n'est refusé.
                     return { handled: true, state: { ...initialKeyState(), tie: true }, commands };
+                }
+                // Une ouverture RESSAISIE ne relance pas la partie : elle décide
+                // à nouveau qui commence, et la validation rend le Cursor là où
+                // la relecture l'avait pris. Enchaîner sur le premier coup de
+                // pions demanderait les candidats d'une position que l'on ne
+                // regarde plus.
+                if (replacing) {
+                    return { handled: true, state: initialKeyState(), commands };
                 }
                 // Le gagnant du jet joue les DEUX dés comme premier coup de pions :
                 // il ne les ressaisit pas (fonctionnel.md §1.2). Le moteur les

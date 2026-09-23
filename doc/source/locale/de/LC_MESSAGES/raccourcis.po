@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 21:49+0200\n"
+"POT-Creation-Date: 2026-09-24 00:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -862,6 +862,21 @@ msgstr ""
 "bestätigen."
 
 #: ../../source/raccourcis.rst:1
+msgid "1 … 6 (curseur sur l'ouverture d'une partie)"
+msgstr "1 … 6 (Cursor auf der Eröffnung einer Partie)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, "
+"validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait "
+"revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut."
+msgstr ""
+"Den Eröffnungswurf erneut eingeben: Würfel von Spieler 1, dann von "
+"Spieler 2, mit dem zweiten Würfel festgehalten. Der höhere gewinnt — der "
+"große Würfel zuerst, der Zug geht an Spieler 1 unten; der kleine zuerst, "
+"an Spieler 2 oben."
+
+#: ../../source/raccourcis.rst:1
 msgid ""
 "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le"
 " plateau)."
@@ -993,19 +1008,23 @@ msgstr "t"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Prendre le double proposé : le videau passe au preneur à la valeur "
-"doublée et le doubleur rejoue."
+"doublée et le doubleur rejoue. Le curseur posé sur une cellule, écrit la "
+"prise à la place de l'action visée."
 msgstr ""
 "Die angebotene Verdopplung annehmen: der Dopplerwürfel geht zum "
 "verdoppelten Wert an den Annehmenden, und der Verdoppelnde würfelt "
-"erneut."
+"erneut. Steht der Cursor auf einer Zelle, wird die Annahme anstelle der "
+"angezielten Aktion geschrieben."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer le double proposé : la partie est gagnée à la valeur d'avant le "
-"double."
+"double. Le curseur posé sur une cellule, écrit la passe à la place de "
+"l'action visée."
 msgstr ""
 "Die angebotene Verdopplung aufgeben: die Partie wird zum Wert vor der "
-"Verdopplung gewonnen."
+"Verdopplung gewonnen. Steht der Cursor auf einer Zelle, wird die Aufgabe "
+"anstelle der angezielten Aktion geschrieben."
 
 #: ../../source/raccourcis.rst:1
 msgid "r puis 1, 2 ou 3"
@@ -1131,7 +1150,7 @@ msgstr "STRG-UMSCHALT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Die rückgängig gemachte Geste wiederherstellen."
 
-#: ../../source/raccourcis.rst:330
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1139,7 +1158,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1160,7 +1179,32 @@ msgstr ""
 "Wurf dieser Aktion an Ort und Stelle neu. Der Unterschied ist auf dem "
 "Bildschirm zu sehen, denn die angezielte Zelle ist im Transkript umrahmt."
 
-#: ../../source/raccourcis.rst:342
+#: ../../source/raccourcis.rst:343
+msgid ""
+"Ce qui est en train d'être tapé se dessine dans le transcript, en "
+"pointillés, à la place où il sera écrit : une correction recouvre la "
+"cellule qu'elle remplace, une insertion ouvre une cellule entre ses deux "
+"voisines, et le camp se lit à la colonne. Rien n'est enregistré avant la "
+"validation."
+msgstr ""
+"Was gerade eingegeben wird, erscheint im Transkript gestrichelt an der "
+"Stelle, an der es geschrieben wird: eine Korrektur überdeckt die Zelle, "
+"die sie ersetzt, eine Einfügung öffnet eine Zelle zwischen ihren beiden "
+"Nachbarn, und die Seite liest sich an der Spalte ab. Vor der Bestätigung "
+"wird nichts festgehalten."
+
+#: ../../source/raccourcis.rst:348
+msgid ""
+"Une insertion au milieu du document continue d'insérer : la validation "
+"ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
+"tour au lieu d'écraser celle d'après. Déplacer le curseur y met fin."
+msgstr ""
+"Eine Einfügung mitten im Dokument fügt weiter ein: die Bestätigung öffnet"
+" dahinter eine leere Zelle, und die nächste Aktion wird ihrerseits "
+"eingefügt, statt die folgende zu überschreiben. Den Cursor zu bewegen "
+"beendet das."
+
+#: ../../source/raccourcis.rst:352
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1172,7 +1216,7 @@ msgstr ""
 "Cursor“ am Ende des Dokuments. Der Satz verschwindet von selbst und gibt "
 "den Platz an die erwartete Aktion zurück."
 
-#: ../../source/raccourcis.rst:347
+#: ../../source/raccourcis.rst:357
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -1191,7 +1235,7 @@ msgstr ""
 "gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
 "zurückbewegt, so wird die Korrektur dabei übernommen."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:364
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1209,7 +1253,7 @@ msgstr ""
 "nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im "
 "Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:361
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1219,7 +1263,7 @@ msgstr ""
 "Transkript und die Entwurfsleiste — wird in :ref:`panneau_transcription` "
 "beschrieben."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:378
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

@@ -573,13 +573,42 @@ func validate(doc Document) (Document, error) {
 
 // expectsOpening reports whether the slot the entry lands on is a game's first Action.
 func expectsOpening(doc Document, e Entry) bool {
+	return entryExpects(doc, e, Replay(doc, 0).Next.Expects) == KindOpening
+}
+
+// entryExpects is the Kind validating the entry would write, given what the
+// document expects PAST ITS END (`atEnd`, a Replay's Next.Expects).
+//
+// It is stated once and read twice — by [expectsOpening], which pays a Replay
+// for the end of the document, and by [Replayer.Replay], which has it in hand —
+// so that the rule cannot come apart: only the LAST slot can hold an opening the
+// document is waiting for, and a slot already occupied is whatever it holds.
+func entryExpects(doc Document, e Entry, atEnd Kind) Kind {
 	if e.Mode == EntryReplace && e.At < len(doc.Actions) {
-		return doc.Actions[e.At].Kind == KindOpening
+		if doc.Actions[e.At].Kind == KindOpening {
+			return KindOpening
+		}
+		return KindChecker
 	}
 	if e.At < len(doc.Actions) {
-		return false
+		return KindChecker
 	}
-	return Replay(doc, 0).Next.Expects == KindOpening
+	if atEnd == KindOpening {
+		return KindOpening
+	}
+	return KindChecker
+}
+
+// clampSlot holds an index inside [0, n] — the slots of a document of n Actions,
+// the last one being the end.
+func clampSlot(at, n int) int {
+	if at < 0 {
+		return 0
+	}
+	if at > n {
+		return n
+	}
+	return at
 }
 
 // record writes the Action at the place the entry names and moves the Cursor on. A
@@ -618,6 +647,18 @@ func record(doc Document, a Action) Document {
 		copy(doc.Actions[at+1:], doc.Actions[at:])
 		doc.Actions[at] = a
 		doc.Cursor = at + 1
+		if doc.Cursor < len(doc.Actions) {
+			// An insertion in the MIDDLE goes on inserting. What the user is
+			// doing there is filling a passage the record skipped — half a game
+			// after a pass that should have been a take — and the Action after
+			// the one just written is not the one they mean to type over. The
+			// slot they will land in is DRAWN in the Transcript (EntryInfo), so
+			// this is a state one can see and leave (move the Cursor), not a
+			// mode: the alternative was an `i` per Action, and the alternative
+			// to that was overwriting the rest of the match one cell at a time.
+			doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(doc, doc.Cursor), Mode: EntryNew, At: doc.Cursor}, nil
+			return doc
+		}
 	}
 	doc.Entry, doc.pendingBoard = nil, nil
 	return doc
@@ -626,18 +667,47 @@ func record(doc Document, a Action) Document {
 // cubeGesture records a double, its answer or a resignation. Each of them first
 // validates a play left selected but not recorded, which is what "double" means when
 // the user has already picked the play they were looking at.
+//
+// Where it writes is the ENTRY'S SLOT, exactly as a roll's is. On a cell walked back
+// to, `t` therefore replaces the pass that should have been a take, rather than
+// inserting a take in front of it — the same rule as the digit key, which restarts
+// the roll of the Action under the Cursor (ADR-0048 decision 1). Beside an insertion
+// opened by `i` or `a`, it fills that slot. And at the end of the document, where
+// there is nothing under the Cursor, it appends as it always did.
 func cubeGesture(doc Document, g Gesture) (Document, error) {
+	mode, at, slotSide := EntryNew, doc.Cursor, -1
+	if e := doc.Entry; e != nil {
+		mode, at = e.Mode, e.At
+		if at < len(doc.Actions) {
+			// Inside the document the camp is the SLOT's: the Action being
+			// replaced owns its side, an insertion was given the one that keeps
+			// the sequence coherent, and Next.Side speaks of the end of the match.
+			slotSide = e.Side
+		}
+	}
 	if doc.Entry != nil && doc.Entry.Selected && doc.Entry.Dice[0] != 0 && doc.Entry.Dice[1] != 0 {
 		v, err := validate(doc)
 		if err != nil {
 			return doc, err
 		}
 		doc = v
+		// The play just recorded took that slot: the cube Action FOLLOWS it,
+		// wherever the validation left the Cursor — a correction in place sends
+		// it back where the user came from, and a double typed after a play is
+		// not a double at the other end of the match.
+		mode, at = EntryNew, clampSlot(at+1, len(doc.Actions))
+		slotSide = -1
+		if at < len(doc.Actions) {
+			slotSide = proposedSide(doc, at)
+		}
 	} else {
 		doc.Entry = nil
 	}
 	ann := Replay(doc, 0)
 	side := ann.Next.Side
+	if slotSide == domain.Black || slotSide == domain.White {
+		side = slotSide
+	}
 	switch g.Kind {
 	case GestureTake, GesturePass:
 		if last := lastActionOfKind(doc, KindDouble); last >= 0 {
@@ -661,7 +731,7 @@ func cubeGesture(doc Document, g Gesture) (Document, error) {
 			a.Level = 1
 		}
 	}
-	doc.Entry = &Entry{Side: side, Mode: EntryNew, At: doc.Cursor}
+	doc.Entry = &Entry{Side: side, Mode: mode, At: at}
 	return record(doc, a), nil
 }
 
