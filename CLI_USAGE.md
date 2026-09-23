@@ -2579,11 +2579,16 @@ Usage: blunderdb repair [options]
 
 Recompute what the database derives from what it stores:
 the scalar columns of every analysis, from the JSON they are
-a projection of, and the phase of every position, from its
-board. The analyses and the positions themselves are left
-untouched: this repairs what was derived from them, and is
-useful after a fix to how an imported analysis is read, or
-after a change to how a phase is decided.
+a projection of, the phase of every position, from its board,
+and the Crawford sentinel of every away score, from the match
+the position came from or the XGID it came in with from
+another program. Useful after a fix to how an imported
+analysis is read, after a change to how a phase is decided,
+and once, for the databases imported before the importers
+wrote the sentinel: a post-Crawford position stored as a
+Crawford one is read cube-dead. Correcting it changes the
+position's Zobrist hash, so such a position is rehashed and
+merged with its correct twin when the database holds one.
 Nothing runs it automatically.
 
 Options:

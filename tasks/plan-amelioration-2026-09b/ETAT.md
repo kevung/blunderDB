@@ -1,12 +1,35 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-06, soir** (septième session — les vagues 4 et
-5 poussées, quatre défauts réels trouvés en réparant la CI, `main` verte). Ce fichier est le point
+Dernière mise à jour : **2026-09-24** (relevé : le plan n'a pas bougé depuis
+le 2026-09-06 ; le travail est passé à trois chantiers hors plan, résumés
+ci-dessous, et `main` porte 453 commits non publiés depuis 0.36.0). Ce fichier est le point
 de reprise : il dit ce qui est fusionné, ce qui attend dans une branche, et ce
 qui reste. Le plan lui-même est dans [README.md](README.md) ; les fiches sont
 dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
 
-## Où en est-on
+## Depuis le 2026-09-06 — hors plan
+
+Aucune des quatorze issues restantes du plan n'a été touchée. Le travail est
+allé à trois chantiers, chacun cadré par sa propre spécification, tous
+fusionnés sur `main`, **aucun encore publié** (dernière version : 0.36.0 du
+2026-09-05) :
+
+| Chantier | Issues | ADR | Schéma |
+|---|---|---|---|
+| Entraînement : onglet, exercices par graine, carte Anki = un score | #320-#324 | 0040, 0041, 0042 | 2.22.0 (journal), 2.23.0 (carte-score) |
+| `like` : le jeton de la grammaire, la classe d'équivalence | #325-#331 | 0043 | — |
+| **Transcription de matchs** | #332-#358, puis l'ergonomie | 0044, 0045, 0048, 0049 | 2.21.0 |
+| **Direction de tournois** (Nicomaque) | #364-#397 ; reste #380 | 0047 | 2.24.0 |
+| Seuils erreur/blunder par base | — | 0046 | — (`metadata`) |
+
+Défauts corrigés en chemin : #359, #360, #362, #363, #399-#406, #408, #410,
+#411, #414-#416, #422, #427 ; montées Go 1.26.8 (#412) et dépendances (#413).
+
+Restent ouverts hors plan : #380 (diriger un vrai tournoi de club — un jalon,
+pas du code), #361 (gnubgparser, en amont), #402 (contrôles natifs en thème
+sombre), #409 (Wails 2.10.2 → 2.15.0), #433 (gzip 7 avec Go 1.27).
+
+## Où en est-on — le plan
 
 **131 des 145 issues du plan sont fermées** (relevé du 2026-09-06). Restent
 quatorze issues ouvertes : **six moitiés livrées** dont la seconde part est
@@ -57,8 +80,8 @@ accepte déjà un plateau, il manque l'interaction).
 concept dans CONTEXT.md, donc ADR avant code).
 
 **Ce qui ne se ferme pas par du code** : #296 (mode club/coach — nouvelle
-notion, à griller avant tout code), #299 (Ollama — `ask` couvre désormais une
-part du besoin à 0 Mo, ce qui change l'équation), #292 (rollouts tronqués —
+notion, à griller avant tout code), #299 (Ollama — `ask`, qui en couvrait une
+part, a été retiré le 2026-09-07 ; le besoin revient entier ici), #292 (rollouts tronqués —
 Configuration amont), #297 (réseau distillé — amont ; le cache persistant est
 mesuré et écarté), #151 (NEON arm64 — pas de machine), #102 (vidéo de démo),
 #200 (registre livré, rien à coder ici).

@@ -21,7 +21,7 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `analyze|anki|bearoff|collection|completion|create|cubematrix|delete|edit|epc|export|healthcheck|help|identity|import|info|list|match|open|repair|search|trash|vacuum|verify|version` →
+- `analyze|anki|bearoff|collection|completion|create|cubematrix|delete|edit|epc|export|healthcheck|help|identity|import|info|list|match|open|repair|search|tournament|transcribe|trash|vacuum|verify|version` →
   **CLI**. The names live in one place — `handlers()` in `internal/cli/cli.go`
   (`cli.CommandNames()` is the exported, sorted view `cmd/cli-doc-gen` walks);
   `main.go` asks `cli.IsCommand`. Never re-introduce a second list there.
@@ -224,7 +224,7 @@ the `doc/source/historique.rst` changelog) and creates a commit + tag. Pushing t
 triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
 the `release-blunderdb` skill to drive the whole thing, including the doc audit.
 
-The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.18.0**) is
+The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.24.0**) is
 independent of the app version — bump it only when the SQLite schema changes.
 
 ## Architecture in one screen
@@ -268,6 +268,16 @@ Backend packages, thinnest description that lets you find things:
   `pkg/blunderdb/parser/` — position-text parsing shared by GUI/CLI/server;
   `pkg/blunderdb/migrate/` — SQLite→PostgreSQL copy; `pkg/blunderdb/server/` —
   `Bootstrap()` for in-process embedding by a trusted parent (gammonGo).
+- Feature packages, each pure of SQL unless stated, each with a package doc
+  to read first: `searchquery/` — the one search grammar (`s cube p>30 …` ↔
+  `SearchFilters`), locked to the frontend parser by a shared corpus;
+  `transcript/` — the engine of a Transcription, a draft that owns its match
+  (ADR-0044, ADR-0045, ADR-0048, ADR-0049); `direction/` — directing a
+  tournament, the only package that knows the Nicomaque engine (ADR-0047);
+  `anki/` — FSRS scheduling every backend runs on review (ADR-0042 for score
+  cards); `trash/` — the thirty-day undo of a delete (ADR-0036); `watch/` —
+  importable files appearing in a folder; `engine/training/` — the Training
+  questions that need the neural evaluator (ADR-0040, ADR-0041).
 - `pkg/blunderdb/issuance/` — marking a database with its origin (signed
   watermark + issuer identity) and wrapping an export in an encrypted container.
   **Pure**: no SQL, no schema; its glue is `database/db_issuance.go` and it
@@ -281,9 +291,13 @@ Backend packages, thinnest description that lets you find things:
   `/v1/*` endpoints with a configurable scenario mix), `extract_gnubg_stats`
   (parses GS tags from a gnuBG SGF file), `calibrace` (fits `engine/race`'s
   correction against a TS-06-11 oracle), `train-analysis-dict` (regenerates
-  the embedded zstd dictionary, ADR-0030) and `help-gen` (renders the in-app
-  help bundles from the Sphinx sources, ADR-0034). Each carries its own package
-  doc.
+  the embedded zstd dictionary, ADR-0030), `help-gen` (renders the in-app
+  help bundles from the Sphinx sources, ADR-0034), `cli-doc-gen` (captures
+  every subcommand's `--help` into `CLI_USAGE.md` — rerun it after changing a
+  command's help text, nothing fails while it is stale), `openapi-gen`
+  (regenerates `openapi.yaml`, its Sphinx annex and the Python client) and
+  `likecorpus` (the human-judged corpus for `like`, ADR-0043). Each carries
+  its own package doc.
 
 Match/position parsers for external formats are separate modules
 (`github.com/kevung/xgparser`, `gnubgparser`, `bgfparser`); Jellyfish `.mat`
