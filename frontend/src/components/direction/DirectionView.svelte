@@ -478,27 +478,34 @@
                         {/each}
                     </ul>
                 {/if}
-                {#if rounds > 0}
-                    <div class="sheet">
-                        {#if rounds > 1}
-                            <label title={$t('direction.sheet.roundHint')}>
-                                {$t('direction.sheet.round')}
-                                <select bind:value={sheetRound}>
-                                    <option value={0}>{$t('direction.sheet.latest')}</option>
-                                    {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
-                                        <option value={n}>{n}</option>
-                                    {/each}
-                                </select>
-                            </label>
+                <!-- La grille AVANT la file (#440) : la file grandit avec les inscrits, la
+                     grille non. À 768 px de haut, dock ouvert, 24 propositions poussaient les
+                     14 tables sous l'écran ; dans cet ordre, les tables, la dernière décision et
+                     « Tout lancer » tiennent sans défiler. -->
+                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
+                    {#snippet actions()}
+                        {#if rounds > 0}
+                            <div class="sheet">
+                                {#if rounds > 1}
+                                    <label title={$t('direction.sheet.roundHint')}>
+                                        {$t('direction.sheet.round')}
+                                        <select bind:value={sheetRound}>
+                                            <option value={0}>{$t('direction.sheet.latest')}</option>
+                                            {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
+                                                <option value={n}>{n}</option>
+                                            {/each}
+                                        </select>
+                                    </label>
+                                {/if}
+                                <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
+                                    {$t('direction.sheet.print')}
+                                </button>
+                            </div>
                         {/if}
-                        <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
-                            {$t('direction.sheet.print')}
-                        </button>
-                    </div>
-                {/if}
-                <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
-                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} />
+                    {/snippet}
+                </TableGrid>
                 <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
+                <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
                 <section class="waiting">
                     <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
                     <p>{free.map((p) => p.name).join(' · ')}</p>
@@ -598,13 +605,13 @@
         min-height: 0;
     }
 
-    /* La feuille d'appariements se demande d'une ligne discrète : c'est un geste de quelques
-       fois par tournoi, pas de toutes les minutes. */
+    /* La feuille d'appariements se demande dans l'en-tête de la grille, sans barre à elle :
+       c'est un geste de quelques fois par tournoi, et une ligne de plus au-dessus des tables
+       coûtait 33 px sur les ~390 qu'a la page à 768 px de haut (issue 440). */
     .sheet {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        padding: var(--space-1) var(--space-2);
     }
 
     .sheet label {
@@ -617,7 +624,8 @@
 
     .sheet button,
     .sheet select {
-        padding: 0.2rem 0.6rem;
+        padding: 0.1rem 0.6rem;
+        font-size: var(--font-size-small);
         border: 1px solid var(--color-border);
         border-radius: var(--radius);
         background: var(--color-surface);
