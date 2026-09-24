@@ -794,7 +794,7 @@
         -webkit-user-select: text;
     }
 
-    /* --- Buttons: one outlined family, one filled --- */
+    /* --- Buttons: one outlined family; the primary one carries the accent border, as in the other panels --- */
     .btn-outline {
         display: flex;
         align-items: center;
@@ -816,19 +816,19 @@
         align-items: center;
         gap: 4px;
         padding: 4px 12px;
-        border: none;
+        border: 1px solid var(--color-primary);
         border-radius: 3px;
-        background: #6c757d;
-        color: #fff;
+        background: var(--color-surface);
+        color: var(--color-text);
         cursor: pointer;
         font-size: var(--font-size-base);
     }
-    .btn-primary:hover {
-        background: #5a6268;
+    .btn-primary:hover:not(:disabled) {
+        background: var(--color-surface-alt);
     }
     .btn-primary:disabled {
-        background: #ccc;
-        cursor: default;
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     .wide {
