@@ -254,10 +254,6 @@
         font-size: var(--font-size-small);
     }
 
-    .warnings input {
-        font: inherit;
-    }
-
     button {
         padding: 0.2rem 0.6rem;
         border: 1px solid var(--color-border);
