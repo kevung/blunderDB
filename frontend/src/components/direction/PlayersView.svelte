@@ -108,6 +108,7 @@
 <div class="players">
     <form
         class="entry"
+        data-testid="direction-player-entry"
         onsubmit={(e) => {
             e.preventDefault();
             add();
@@ -120,7 +121,7 @@
             <!-- Ce que le directeur voit AVANT de valider : où ce joueur va entrer. -->
             <label class="slot" title={$t('direction.players.slotHint')}>
                 {$t('direction.players.entersAt')}
-                <select bind:value={slotKey}>
+                <select data-testid="direction-player-slot" bind:value={slotKey}>
                     {#each slots as s (s.key)}
                         <option value={s.key}>{slotLabel(s)}</option>
                     {/each}
@@ -169,7 +170,7 @@
     {/if}
 
     <div class="head">
-        <input bind:value={filter} type="text" placeholder={$t('direction.players.filter')} class="filter" />
+        <input bind:value={filter} type="text" placeholder={$t('direction.players.filter')} class="filter" data-testid="direction-player-filter" />
         <span class="count">{$t('direction.players.count', { n: rows.length })}</span>
     </div>
 
@@ -190,7 +191,7 @@
         </thead>
         <tbody>
             {#each shown as r (r.id)}
-                <tr>
+                <tr data-testid="direction-player-{r.id}">
                     {#if editing && editing.id === r.id}
                         <td><input bind:value={editing.name} type="text" /></td>
                         <td><input bind:value={editing.club} type="text" /></td>
@@ -219,14 +220,22 @@
                             {/if}
                         </td>
                         <td class="actions">
-                            <button type="button" disabled={busy} onclick={() => startEdit(r)}>{$t('direction.players.correct')}</button>
+                            <button type="button" data-testid="direction-player-correct" disabled={busy} onclick={() => startEdit(r)}>{$t('direction.players.correct')}</button>
                             {#if r.state !== 'withdrawn'}
-                                <button type="button" disabled={busy} onclick={() => onWithdraw(r.id, false)} title={$t('direction.players.withdrawNowHint')}
-                                    >{$t('direction.players.withdrawNow')}</button
+                                <button
+                                    type="button"
+                                    data-testid="direction-player-withdraw-now"
+                                    disabled={busy}
+                                    onclick={() => onWithdraw(r.id, false)}
+                                    title={$t('direction.players.withdrawNowHint')}>{$t('direction.players.withdrawNow')}</button
                                 >
                                 {#if r.state === 'playing'}
-                                    <button type="button" disabled={busy} onclick={() => onWithdraw(r.id, true)} title={$t('direction.players.withdrawLaterHint')}
-                                        >{$t('direction.players.withdrawLater')}</button
+                                    <button
+                                        type="button"
+                                        data-testid="direction-player-withdraw-later"
+                                        disabled={busy}
+                                        onclick={() => onWithdraw(r.id, true)}
+                                        title={$t('direction.players.withdrawLaterHint')}>{$t('direction.players.withdrawLater')}</button
                                     >
                                 {/if}
                             {/if}

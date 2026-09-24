@@ -68,6 +68,7 @@
                 <button
                     type="button"
                     class="cell"
+                    data-testid="direction-table-{c.table}"
                     class:busy={c.matchId}
                     class:slow={c.slow}
                     class:idle={!c.matchId}

@@ -678,6 +678,7 @@
                             </span>
                             <button
                                 class="direction-btn"
+                                data-testid="tournament-direction-toggle"
                                 onclick={(e) => {
                                     e.stopPropagation();
                                     toggleDirection(selectedTournament);
@@ -686,6 +687,7 @@
                         {:else}
                             <button
                                 class="direction-btn"
+                                data-testid="tournament-direct"
                                 onclick={(e) => {
                                     e.stopPropagation();
                                     startDirecting(selectedTournament);

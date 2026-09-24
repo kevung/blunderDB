@@ -91,7 +91,7 @@
 
 <div class="history">
     <header>
-        <input bind:value={filter} type="text" placeholder={$t('direction.history.filter')} class="filter" />
+        <input bind:value={filter} type="text" placeholder={$t('direction.history.filter')} class="filter" data-testid="direction-history-filter" />
         <span class="count">{$t('direction.history.count', { n: shown.length })}</span>
     </header>
 
@@ -111,7 +111,7 @@
 
     <ol>
         {#each shown as e (e.seq)}
-            <li class:note-line={e.kind === 'note'}>
+            <li data-testid="direction-history-{e.seq}" class:note-line={e.kind === 'note'}>
                 <span class="time">{when(e.time)}</span>
                 <span class="what">{what(e)}</span>
                 {#if e.text && e.kind !== 'note'}
@@ -119,7 +119,7 @@
                 {/if}
                 <span class="grow"></span>
                 {#if e.correctable}
-                    <button type="button" disabled={busy} onclick={() => onCorrect(e)}>{$t('direction.last.correct')}</button>
+                    <button type="button" data-testid="direction-history-correct" disabled={busy} onclick={() => onCorrect(e)}>{$t('direction.last.correct')}</button>
                 {:else if e.cancellable}
                     <button type="button" disabled={busy} onclick={() => onCancel(e.matchId)}>{$t('direction.last.cancel')}</button>
                 {/if}

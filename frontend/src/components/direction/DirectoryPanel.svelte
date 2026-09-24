@@ -44,8 +44,8 @@
     }
 </script>
 
-<section class="directory">
-    <button type="button" class="head" onclick={() => (open = !open)} title={$t('direction.directory.hint')}>
+<section class="directory" data-testid="direction-directory">
+    <button type="button" class="head" data-testid="direction-directory-toggle" onclick={() => (open = !open)} title={$t('direction.directory.hint')}>
         <span class="chevron">{open ? '▾' : '▸'}</span>
         {$t('direction.directory.title', { n: entries.length })}
     </button>
@@ -63,7 +63,7 @@
                                 {$t('direction.directory.entrants', { n: s.entrants })}
                             </span>
                             <span class="grow"></span>
-                            <button type="button" disabled={busy || s.entrants === 0} onclick={() => onTake(s.tournamentId)}>
+                            <button type="button" data-testid="direction-directory-take-{s.tournamentId}" disabled={busy || s.entrants === 0} onclick={() => onTake(s.tournamentId)}>
                                 {$t('direction.directory.take')}
                             </button>
                         </li>
@@ -74,19 +74,19 @@
             {/if}
 
             <div class="csv">
-                <button type="button" onclick={onExport} title={$t('direction.directory.exportHint')}>
+                <button type="button" data-testid="direction-directory-export" onclick={onExport} title={$t('direction.directory.exportHint')}>
                     {$t('direction.directory.export')}
                 </button>
                 <span class="muted">{$t('direction.directory.importHint')}</span>
             </div>
-            <textarea bind:value={pasted} rows="3" placeholder={$t('direction.directory.paste')}></textarea>
+            <textarea data-testid="direction-directory-paste" bind:value={pasted} rows="3" placeholder={$t('direction.directory.paste')}></textarea>
             <div class="csv">
-                <button type="button" disabled={!pasted.trim()} onclick={read}>{$t('direction.directory.read')}</button>
+                <button type="button" data-testid="direction-directory-read" disabled={!pasted.trim()} onclick={read}>{$t('direction.directory.read')}</button>
             </div>
 
             {#if preview}
                 <!-- L'aperçu, avant que quoi que ce soit n'entre : lire n'écrit rien du tout. -->
-                <div class="preview">
+                <div class="preview" data-testid="direction-directory-preview">
                     <p>{$t('direction.directory.willEnter', { n: preview.rows.length })}</p>
                     {#if (preview.skipped || []).length}
                         <p class="muted">
@@ -103,7 +103,7 @@
                         </ul>
                     {/if}
                     <div class="csv">
-                        <button type="button" class="primary" disabled={busy || preview.rows.length === 0} onclick={confirmImport}>
+                        <button type="button" class="primary" disabled={busy || preview.rows.length === 0} data-testid="direction-directory-confirm" onclick={confirmImport}>
                             {$t('direction.directory.confirm')}
                         </button>
                         <button type="button" onclick={() => (preview = null)}>{$t('common.cancel')}</button>

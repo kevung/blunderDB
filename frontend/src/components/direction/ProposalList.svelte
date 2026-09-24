@@ -145,12 +145,14 @@
     <header>
         <h3>{$t('direction.proposals.title', { n: shown.length })}</h3>
         {#if shown.length > 1}
-            <button type="button" class="all" disabled={busy} title={$t('direction.proposals.allHint')} onclick={askConfirmAll}>{$t('direction.proposals.all')}</button>
+            <button type="button" class="all" data-testid="direction-proposals-all" disabled={busy} title={$t('direction.proposals.allHint')} onclick={askConfirmAll}
+                >{$t('direction.proposals.all')}</button
+            >
         {/if}
     </header>
 
     {#if confirming}
-        <div class="confirm">
+        <div class="confirm" data-testid="direction-proposals-confirm">
             <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
             <ul>
                 {#each shown as a (actionKey(a))}
@@ -163,7 +165,7 @@
                 {/each}
             </ul>
             <div class="confirm-actions">
-                <button type="button" class="primary" onclick={doConfirmAll}>{$t('direction.proposals.confirm')}</button>
+                <button type="button" class="primary" data-testid="direction-proposals-confirm-all" onclick={doConfirmAll}>{$t('direction.proposals.confirm')}</button>
                 <button type="button" onclick={() => (confirming = false)}>{$t('common.cancel')}</button>
             </div>
         </div>
@@ -195,7 +197,7 @@
                 <button type="button" class="go" disabled={busy} title={isRepair(a) ? $t('direction.proposals.repairHint') : $t('direction.proposals.launchHint')} onclick={() => onConfirm(a)}>
                     {isRepair(a) ? $t('direction.proposals.cancelMatch') : $t('direction.proposals.launch')}
                 </button>
-                <button type="button" class="more" title={$t('direction.proposals.ignore')} onclick={() => ignore(a)}>⋯</button>
+                <button type="button" class="more" data-testid="direction-proposal-ignore" title={$t('direction.proposals.ignore')} onclick={() => ignore(a)}>⋯</button>
             </li>
         {/each}
         {#if shown.length === 0}
@@ -231,7 +233,7 @@
             <button type="button" class="primary" disabled={busy} onclick={startManual}>{$t('direction.proposals.launch')}</button>
             <button type="button" onclick={() => (manualOpen = false)}>{$t('common.cancel')}</button>
         {:else}
-            <button type="button" class="link" onclick={() => (manualOpen = true)}>{$t('direction.proposals.manual')}</button>
+            <button type="button" class="link" data-testid="direction-manual-open" onclick={() => (manualOpen = true)}>{$t('direction.proposals.manual')}</button>
         {/if}
     </div>
 </section>
