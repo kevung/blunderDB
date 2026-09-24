@@ -1173,7 +1173,8 @@
             "impossible_cube": "mahdoton kuutiotoiminto",
             "past_end": "ottelun päättymisen jälkeen",
             "inconsistent_dice": "siirto ei vastaa heittoa",
-            "unrecorded_move": "kirjaamaton siirto"
+            "unrecorded_move": "kirjaamaton siirto",
+            "score_mismatch": "epäjohdonmukainen ilmoitettu tilanne"
         },
         "stateNoMatch": "no match",
         "stateMatchUpToDate": "match #{id}",
@@ -1221,13 +1222,18 @@
         "flawed": "Epäjohdonmukaisuus: {names}",
         "moveField": "Pelattu siirto",
         "moveFieldPlaceholder": "13/7 8/7*",
+        "scoreField": "Pelin tilanne",
+        "scoreFieldPlaceholder": "3-2",
+        "derivedScore": "Aiemmat pelit antavat {a}–{b}",
+        "editScore": "Kaksoisnapsautus: korjaa ilmoitettu tilanne",
         "inconsistency": {
             "illegal_move": "laiton siirto",
             "double_turn": "kaksoisvuoro",
             "impossible_cube": "mahdoton tuplaus",
             "past_end": "ottelun päättymisen jälkeen",
             "inconsistent_dice": "epäjohdonmukaiset nopat",
-            "unrecorded_move": "kirjaamaton siirto"
+            "unrecorded_move": "kirjaamaton siirto",
+            "score_mismatch": "epäjohdonmukainen tilanne"
         }
     },
     "status": {

@@ -54,7 +54,16 @@ import (
 // FormatVersion is the version of the Document's shape. It travels in the document
 // itself: a change to the form of a Transcription is a version of the document, never
 // a DatabaseVersion migration (ADR-0045 rule 1).
-const FormatVersion = 1
+//
+// Version 2 adds the declared score an opening may carry ([Action.Score], ADR-0053).
+// A version-1 document is a version-2 document without any, so it reads unchanged;
+// the version is raised on an older document the moment a score is written on it
+// ([GestureSetScore]), so that a binary which reads only version 1 refuses the draft
+// instead of dropping the score in silence at its next save.
+const FormatVersion = 2
+
+// formatVersionScore is the first version that carries a declared score.
+const formatVersionScore = 2
 
 // DefaultMatchLength is the length a first draft is offered, when no previous draft
 // says otherwise (fonctionnel.md §1.1).
@@ -122,6 +131,14 @@ type Action struct {
 
 	// Level is the resignation's value in games: 1, 2 or 3.
 	Level int `json:"level,omitempty"`
+
+	// Score is the score the players DECLARED at the start of the game this opening
+	// opens — points of player 1 and of player 2 —, nil when nobody wrote one down and
+	// the score is the one the previous games give (ADR-0053). It is read on the
+	// opening that starts a game, never on the re-roll after a tie. A declared score
+	// is what the game was played at: the Replay plays from it, and when it is not
+	// the derived one the opening is marked (ScoreMismatch), never corrected.
+	Score *[2]int `json:"score,omitempty"`
 }
 
 // Header is the head of the document (fonctionnel.md §1.1). Only MatchLength is asked
@@ -266,6 +283,10 @@ func (a Action) clone() Action {
 	if a.BoardAfter != nil {
 		b := *a.BoardAfter
 		out.BoardAfter = &b
+	}
+	if a.Score != nil {
+		sc := *a.Score
+		out.Score = &sc
 	}
 	return out
 }

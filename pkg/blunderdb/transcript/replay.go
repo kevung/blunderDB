@@ -6,7 +6,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// InconsistencyKind names one of the six facts a Replay can find (fonctionnel.md §1.4).
+// InconsistencyKind names one of the seven facts a Replay can find (fonctionnel.md §1.4).
 // Every one of them is derived at each Replay, shown, and kept: none is stored on an
 // Action, none is written into the saved Match, and none is ever a refusal.
 type InconsistencyKind string
@@ -32,6 +32,12 @@ const (
 	// which a .mat writes "???". Nothing is wrong with the match; the RECORD is
 	// incomplete, and everything after it stands on a board nobody can check.
 	UnrecordedMove InconsistencyKind = "unrecorded_move"
+	// ScoreMismatch: the score declared on a game's opening is not the one the
+	// previous games give — a score error made at the table, or a game the record
+	// skipped (ADR-0053). The game is played at the declared score all the same, and
+	// the detail names the derived one. It also marks a declared score the Replay
+	// cannot use: on a re-roll, in a money session, or below zero.
+	ScoreMismatch InconsistencyKind = "score_mismatch"
 )
 
 // Inconsistency is one derived fact about one Action, with the sentence the panel shows.
@@ -80,8 +86,15 @@ func (i *ActionInfo) add(kind InconsistencyKind, detail string) {
 
 // GameInfo is what a Replay derives about one game of the transcription.
 type GameInfo struct {
-	Number       int    `json:"number"`
+	Number int `json:"number"`
+	// InitialScore is the score the game was PLAYED at: the declared one when its
+	// opening carries one (ADR-0053), the one the previous games give otherwise.
 	InitialScore [2]int `json:"initial_score"`
+	// Declared says the opening declared InitialScore; DerivedScore is what the
+	// previous games give, equal to InitialScore when nothing was declared. The
+	// two differ exactly where the opening carries a ScoreMismatch.
+	Declared     bool   `json:"declared"`
+	DerivedScore [2]int `json:"derived_score"`
 	// Winner is the gnubg encoding the domain uses: 0 = player 1, 1 = player 2,
 	// -1 = the game is unfinished.
 	Winner    int  `json:"winner"`
@@ -309,10 +322,13 @@ func sameReplayRules(a, b Header) bool {
 		a.Beaver == b.Beaver && a.MaxCube == b.MaxCube
 }
 
-// sameAction compares two Actions by value, following the two references an Action
-// carries: its steps and the board an illegal play left.
+// sameAction compares two Actions by value, following the three references an Action
+// carries: its steps, the board an illegal play left, and a declared score.
 func sameAction(a, b Action) bool {
 	if a.Side != b.Side || a.Kind != b.Kind || a.Dice != b.Dice || a.Level != b.Level {
+		return false
+	}
+	if (a.Score == nil) != (b.Score == nil) || (a.Score != nil && *a.Score != *b.Score) {
 		return false
 	}
 	if len(a.Steps) != len(b.Steps) {
@@ -441,6 +457,7 @@ func (s *state) ensureGame() {
 	s.games = append(s.games, GameInfo{
 		Number:       len(s.games) + 1,
 		InitialScore: s.points,
+		DerivedScore: s.points,
 		Winner:       -1,
 		Crawford:     crawford,
 		First:        -1,
@@ -539,10 +556,19 @@ func (s *state) step(i int, a Action) ActionInfo {
 	case KindOpening:
 		// A tie is followed by another opening in the SAME game; any other opening
 		// while a game is running closes that game unfinished and starts the next.
+		opens := !s.gameActive || !s.prevTie
 		if s.gameActive && !s.prevTie {
 			s.endGame(-1, 0)
 		}
+		// A declared score is posted BEFORE the game opens, so that the Crawford
+		// mention of the game is decided on the score it is played at.
+		derived := s.points
+		declared := a.Score != nil && s.declare(&info, *a.Score, opens)
 		s.ensureGame()
+		if declared {
+			g := &s.games[len(s.games)-1]
+			g.Declared, g.DerivedScore = true, derived
+		}
 		// An opening produces neither Move nor Position; Before still describes the
 		// board it is rolled from, because that is what the panel shows.
 		info.Before = s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
@@ -680,6 +706,33 @@ func (s *state) step(i int, a Action) ActionInfo {
 
 	s.prevKind, s.prevSide, s.prevTie, s.hasPrev = a.Kind, a.Side, tie, true
 	return info
+}
+
+// declare posts the score an opening declares as the score of play, and reports
+// whether it did. A score it cannot use is marked and left aside: on the re-roll
+// after a tie (the game was opened, at its score, by the opening before), in a money
+// session (which has no score), and below zero. A score it uses is marked when it is
+// not the one the previous games give — and played from all the same (ADR-0053).
+// A score that reaches the match length is used too: what follows it is then past
+// the end, and the Replay says so there.
+func (s *state) declare(info *ActionInfo, score [2]int, opens bool) bool {
+	switch {
+	case !opens:
+		info.add(ScoreMismatch, "a score is declared on a re-roll, not on the opening of the game")
+		return false
+	case s.header.MatchLength <= 0:
+		info.add(ScoreMismatch, "a money session has no score")
+		return false
+	case score[0] < 0 || score[1] < 0:
+		info.add(ScoreMismatch, fmt.Sprintf("the declared score %d-%d is negative", score[0], score[1]))
+		return false
+	}
+	if score != s.points {
+		info.add(ScoreMismatch, fmt.Sprintf("the declared score is %d-%d, the previous games give %d-%d",
+			score[0], score[1], s.points[0], s.points[1]))
+	}
+	s.points = score
+	return true
 }
 
 // next describes the Action the document is waiting for, on a projection of the state:

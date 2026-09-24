@@ -1173,7 +1173,8 @@
             "impossible_cube": "action de videau impossible",
             "past_end": "au-delà de la fin du match",
             "inconsistent_dice": "coup incohérent avec le jet",
-            "unrecorded_move": "coup non consigné"
+            "unrecorded_move": "coup non consigné",
+            "score_mismatch": "score annoncé incohérent"
         },
         "stateNoMatch": "aucun match",
         "stateMatchUpToDate": "match #{id}",
@@ -1221,13 +1222,18 @@
         "flawed": "Incohérence : {names}",
         "moveField": "Coup joué",
         "moveFieldPlaceholder": "13/7 8/7*",
+        "scoreField": "Score de la partie",
+        "scoreFieldPlaceholder": "3-2",
+        "derivedScore": "Les parties précédentes donnent {a}–{b}",
+        "editScore": "Double-clic : corriger le score annoncé",
         "inconsistency": {
             "illegal_move": "coup illégal",
             "double_turn": "double trait",
             "impossible_cube": "videau impossible",
             "past_end": "au-delà de la fin",
             "inconsistent_dice": "dés incohérents",
-            "unrecorded_move": "coup non consigné"
+            "unrecorded_move": "coup non consigné",
+            "score_mismatch": "score incohérent"
         }
     },
     "status": {

@@ -88,6 +88,44 @@ func TestTranscribeCheck_NamesAnIllegalPlayAndStillSucceeds(t *testing.T) {
 	}
 }
 
+// TestTranscribeCheck_NamesAScoreTheGamesDoNotGive: a .mat whose score line is
+// not the one the previous games give carries a score error made at the table.
+// It is read as the score the game was played at, reported, and not refused
+// (ADR-0053).
+func TestTranscribeCheck_NamesAScoreTheGamesDoNotGive(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	const line = " charlot1 : 0                   charlot2 : 2\n"
+	if !strings.Contains(string(data), line) {
+		t.Fatal("the fixture no longer opens game 2 at 0-2")
+	}
+	path := filepath.Join(t.TempDir(), "score.mat")
+	tampered := strings.Replace(string(data), line, " charlot1 : 1                   charlot2 : 2\n", 1)
+	if err := os.WriteFile(path, []byte(tampered), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := runTranscribeText(t, "--mat", path, "--check", "--format", "json")
+	if err != nil {
+		t.Fatalf("a score error made the command fail: %v", err)
+	}
+	var result transcribeResult
+	if err := json.Unmarshal([]byte(out), &result); err != nil {
+		t.Fatalf("decoding the json report: %v\n%s", err, out)
+	}
+	found := false
+	for _, bad := range result.Inconsistencies {
+		if bad.Type == string(transcript.ScoreMismatch) && bad.Game == 2 && bad.Kind == string(transcript.KindOpening) {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("the score error of game 2 is not reported: %+v", result.Inconsistencies)
+	}
+}
+
 func TestTranscribeRender_ReplaysBackIntoTheSameTranscription(t *testing.T) {
 	src := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
 	out := filepath.Join(t.TempDir(), "round-trip.mat")

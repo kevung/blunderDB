@@ -1299,7 +1299,9 @@ contiendrait.
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
 de videau impossible, action au-delà de la fin du match, coup dont les pas
 n'utilisent pas ses propres dés, coup non consigné — la cellule ``???`` que
-gnubg écrit quand il n'a pas gardé le coup joué, et qui n'est pas une danse.
+gnubg écrit quand il n'a pas gardé le coup joué, et qui n'est pas une danse —,
+score annoncé incohérent — une partie dont la ligne de score n'est pas celle
+que donnent les parties précédentes, rejouée au score écrit.
 
 Une incohérence est **rapportée, jamais opposée** : rien n'est refusé pour elle
 et le code de sortie reste 0 quoi que la relecture trouve. Un code non nul

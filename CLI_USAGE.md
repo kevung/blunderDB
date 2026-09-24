@@ -2836,7 +2836,8 @@ is replayed is what an export of it would contain.
 turns in a row for the same player, an impossible cube
 action, an action past the end of the match, a play that
 does not use its own roll, a play the record does not
-carry (gnubg writes it "???"). Each is named with the
+carry (gnubg writes it "???"), a game score the games
+before it do not give. Each is named with the
 action number and the game it belongs to.
 
 An inconsistency is REPORTED, never held against the

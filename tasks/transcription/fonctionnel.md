@@ -35,7 +35,7 @@ change ensuite que par le geste « changer de camp ».
 
 | `kind` | Champs propres | Ce que la sauvegarde en fait |
 |---|---|---|
-| `opening` | `dice[2]` : dé du J1, dé du J2 | rien de propre ; fixe le `side` et le jet de la première Action `checker` ; une égalité reste dans le document (affichée « relance ») et ne produit ni Move ni Position |
+| `opening` | `dice[2]` : dé du J1, dé du J2 ; `score[2]` **facultatif** : le score annoncé de la partie qu'elle ouvre (ADR-0053) | rien de propre ; fixe le `side` et le jet de la première Action `checker` ; une égalité reste dans le document (affichée « relance ») et ne produit ni Move ni Position ; un score annoncé devient l'`InitialScore` du Game |
 | `checker` | `dice[2]`, `steps[]` (`from`, `to`, `hit`) ; `board_after` **seulement** si le coup est illégal | un Move `checker` avec sa notation et la Position d'avant le coup |
 | `dance` | `dice[2]` | un Move `checker` « Cannot Move », sa Position |
 | `unrecorded` | `dice[2]` | un Move `checker` de notation `???`, sa Position ; le coup a été joué, le fichier ne dit pas lequel |
@@ -66,6 +66,13 @@ adverse ou à la barre, × valeur du videau), après un `pass` (valeur du videau
 double), après un `resign` (`level` × valeur du videau). Le score de la partie suivante
 en découle ; l'`opening` suivante est attendue.
 
+**Score annoncé** (ADR-0053) : **sauf** quand l'ouverture qui commence une partie porte un
+`score`. La partie est alors jouée à ce score — `initial_score`, scores away de ses
+positions, mention Crawford, et tout ce qui suit en découle —, et s'il n'est pas celui que
+donnent les parties précédentes, l'ouverture porte l'Incohérence « score annoncé
+incohérent ». Un score annoncé sur une relance, en argent ou négatif est marqué de même et
+ignoré.
+
 **Crawford** : la première partie où un joueur atteint `match_length − 1` est la partie
 Crawford (positions à sentinelle away `1`) ; les parties suivantes sont post-Crawford
 (sentinelle `0`). Dans la partie Crawford, un `double` est une Incohérence « action de
@@ -84,6 +91,7 @@ l'Incohérence « au-delà de la fin ».
 | au-delà de la fin | Action après que le match est gagné | oui |
 | dés incohérents | `checker` dont les `steps` n'utilisent pas les dés de l'Action (cas produit par une correction de jet) | oui, requalifie le coup en illégal |
 | coup non consigné | Action `unrecorded` : le jet est connu, le coup ne l'est pas (`???` dans un `.mat` de gnubg) | oui, le plateau d'avant est reconduit et tout ce qui suit est invérifiable |
+| score annoncé incohérent | l'ouverture d'une partie annonce un score que les parties précédentes ne donnent pas (ADR-0053) ; ou un score qui ne peut servir : sur une relance, en argent, négatif | oui, la partie est jouée au score annoncé, le détail cite le score dérivé |
 
 Le **coup non consigné** n'est pas une danse. Une cellule qui ne porte que ses dés dit que
 le joueur n'a **pas pu** jouer ; une cellule `???` dit que gnubg n'a **pas consigné** ce
@@ -116,7 +124,8 @@ annoté`. Les touches sont dans [ux.md](ux.md) ; ici, l'effet.
 | supprimer | Cursor sur une Action, ou une saisie en cours | l'Action (ou la saisie non écrite) disparaît ; les suivantes gardent leur `side` ; le Cursor recule sur la précédente, chargée pour correction (ADR-0050) | la suivante (Cursor tenu) |
 | changer de camp | Cursor sur une Action | `side` inversé | l'Action |
 | changer la longueur | — | `match_length` ; en argent ↔ match, drapeaux de session réévalués | la première Action |
-| inverser les joueurs | — | noms échangés ; tous les `side` inversés ; plateau retourné | la première Action |
+| inverser les joueurs | — | noms échangés ; tous les `side` inversés ; plateau retourné ; scores annoncés inversés | la première Action |
+| annoncer le score d'une partie | partie qui commence par une `opening`, match (pas d'argent), score ≥ 0 ; un score ≥ `match_length` est accepté et marqué | `score` posé sur l'ouverture de la partie (geste `set_score`, `At` = l'index de l'ouverture) ; sans score, il est effacé et la partie revient au score dérivé ; le Cursor ne bouge pas (ADR-0053) | l'ouverture (Cursor tenu) |
 | annuler / rétablir | pile non vide | document précédent / suivant (pile en mémoire) | tout |
 | enregistrer | au moins une Action | Match créé ou remplacé (§4) | — |
 | exporter `.mat` | — | fichier rendu depuis le document ; avertissement si coup illégal | — |
@@ -146,9 +155,9 @@ est perdue.
 1. Le document est rejoué en entier ; s'il contient des Incohérences, l'utilisateur en est
    averti et peut enregistrer quand même (ADR-0044 : rien n'est refusé).
 2. Le paquet produit le match, ses parties et ses coups (types du domaine ; l'appelant en
-   fait un `ingest.MatchGraph`) : un `Game` par partie avec `InitialScore`, `Winner`,
-   `PointsWon` ; un `Move` par Action `checker`/`dance`/`double`/`take`/`pass`, numéroté,
-   avec sa `Position` (sentinelle Crawford écrite, drapeaux de session posés) ; aucune
+   fait un `ingest.MatchGraph`) : un `Game` par partie avec `InitialScore` (le score joué,
+   l'annoncé s'il y en a un), `Winner`, `PointsWon` ; un `Move` par Action
+   `checker`/`dance`/`double`/`take`/`pass`, numéroté, avec sa `Position` (sentinelle Crawford écrite, drapeaux de session posés) ; aucune
    analyse, aucun commentaire. `MatchHash` et `CanonicalHash` sont calculés sur ce graphe
    et changent à chaque enregistrement — ils servent la déduplication des *imports*, pas
    l'identité du Match transcrit, qui est son `id`.
@@ -178,6 +187,9 @@ repart. Aucun état n'est stocké pour cela.
   la résignation comme telle, les coups illégaux comme tels, l'analyse, les commentaires.
 - **Coup illégal** : exporté tel que joué ; le dialogue avertit que gnubg et XG signaleront
   « Invalid move » et divergeront ensuite ; l'export n'est jamais refusé.
+- **Score annoncé** : la ligne de score d'une partie est son `InitialScore`, donc le score
+  annoncé quand il y en a un (ADR-0053). À la lecture, une ligne de score que les parties
+  précédentes ne donnent pas redevient un score annoncé sur l'ouverture de la partie.
 - **Coup non consigné** : lu `???`, rendu `???`. L'aller-retour d'un `.mat` de gnubg qui en
   porte redonne le même nombre de cellules `???`, jamais des danses.
 - **Aller-retour** : `gnubgparser.ParseMAT(ingest.RenderMAT(transcript.MatchParts(doc)))`

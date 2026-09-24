@@ -1173,7 +1173,8 @@
             "impossible_cube": "acción de cubo imposible",
             "past_end": "más allá del final del partido",
             "inconsistent_dice": "jugada incoherente con la tirada",
-            "unrecorded_move": "jugada no registrada"
+            "unrecorded_move": "jugada no registrada",
+            "score_mismatch": "marcador anunciado incoherente"
         },
         "stateNoMatch": "no match",
         "stateMatchUpToDate": "match #{id}",
@@ -1221,13 +1222,18 @@
         "flawed": "Incoherencia: {names}",
         "moveField": "Jugada realizada",
         "moveFieldPlaceholder": "13/7 8/7*",
+        "scoreField": "Marcador de la partida",
+        "scoreFieldPlaceholder": "3-2",
+        "derivedScore": "Las partidas anteriores dan {a}–{b}",
+        "editScore": "Doble clic: corregir el marcador anunciado",
         "inconsistency": {
             "illegal_move": "jugada ilegal",
             "double_turn": "turno doble",
             "impossible_cube": "doblaje imposible",
             "past_end": "más allá del final",
             "inconsistent_dice": "dados incoherentes",
-            "unrecorded_move": "jugada no registrada"
+            "unrecorded_move": "jugada no registrada",
+            "score_mismatch": "marcador incoherente"
         }
     },
     "status": {

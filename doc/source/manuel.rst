@@ -1254,12 +1254,25 @@ quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du
 videau). Le score, la partie Crawford et la fin du match paraissent alors dans
 la barre de match, et l'ouverture de la partie suivante est attendue.
 
+Le score d'une partie est celui que donnent les parties précédentes, sauf s'il
+a été annoncé autrement à la table. Un double-clic sur le score de l'en-tête
+d'une partie, dans le transcript, le change en champ pré-rempli : on y tape le
+score auquel la partie a été jouée — ``3-2``, ``3–2`` ou ``3 2`` —, ENTREE
+l'enregistre, ÉCHAP referme le champ sans rien écrire, et un champ vidé puis
+validé revient au score dérivé. La partie est jouée à ce score : la partie
+Crawford, la fin du match et les parties suivantes en découlent, et le match
+enregistré comme le fichier ``.mat`` le portent. Un score qui diffère du score
+dérivé est marqué, l'info-bulle donne celui-ci, et l'ouverture de la partie
+porte l'incohérence « score annoncé incohérent ». En argent, il n'y a pas de
+score à annoncer.
+
 Le transcript occupe la moitié droite du panneau : une colonne par joueur, une
 ligne par tour, l'action de videau et la fin de partie dans la colonne de celui
 qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le
 plateau à la position de l'action visée et affiche ses candidats, le coup joué
 sélectionné. Une incohérence (coup illégal, double trait, videau impossible,
-action au-delà de la fin du match, dés incohérents, coup non consigné) décore sa
+action au-delà de la fin du match, dés incohérents, coup non consigné, score
+annoncé incohérent) décore sa
 cellule et se nomme dans une info-bulle. Le coup non consigné est le cas d'un
 fichier ``.mat`` relu : gnubg y écrit ``???`` quand il n'a pas gardé le coup
 joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette

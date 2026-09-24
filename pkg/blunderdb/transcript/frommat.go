@@ -17,6 +17,10 @@ import (
 // two reasons: it makes the round trip testable on real files, and it is what lets a
 // .mat be REPLAYED to have its Inconsistencies pointed out rather than merely imported.
 //
+// A game's score line is kept when it is not the score the previous games give: it is
+// then a declared score on the game's opening (ADR-0053), so that a .mat written from a
+// transcription that declared one reads back as the same document.
+//
 // Two things the format does not carry are reconstructed rather than invented:
 //
 //   - The opening roll. A .mat starts a game at the first play, so the opening is
@@ -55,7 +59,17 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 	for gi := range parsed.Games {
 		game := &parsed.Games[gi]
 		if rec := firstCheckerRecord(game.Moves); rec != nil {
-			push(openingAction(rec))
+			opening := openingAction(rec)
+			// The score line of the game is what the file says it was played at.
+			// When the games before it do not give that score, the file carries
+			// a score error, and it is read back as the score it declares
+			// (ADR-0053) — never corrected into the derived one, which would lose
+			// what was written, nor refused.
+			if score := game.Score; doc.Header.MatchLength > 0 && score != st.points {
+				opening.Score = &score
+				doc.FormatVersion = max(doc.FormatVersion, formatVersionScore)
+			}
+			push(opening)
 		} else {
 			// Nothing to rebuild an opening from: close the running game by hand so
 			// this one starts on a fresh board all the same.

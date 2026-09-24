@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:54+0200\n"
+"POT-Creation-Date: 2026-09-24 02:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1127,6 +1127,24 @@ msgstr ""
 "katkoviivasolua heti kun sen molemmat nopat on syötetty."
 
 #: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur le score d'une partie)"
+msgstr "Kaksoisnapsautus (pelin tilannetta)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Taper le score auquel cette partie a été jouée, dans l'en-tête : 3-2, 3–2"
+" ou 3 2. ENTREE l'enregistre, un champ vidé revient au score que donnent "
+"les parties précédentes, et Esc referme le champ sans rien écrire. Un "
+"score qui diffère de celui-ci est marqué comme une incohérence. Pas de "
+"score en argent."
+msgstr ""
+"Kirjoita tilanne, jolla tämä peli pelattiin, sen otsikkoon: 3-2, 3–2 tai "
+"3 2. ENTER kirjaa sen, tyhjennetty kenttä palaa tilanteeseen, jonka "
+"aiemmat pelit antavat, ja Esc sulkee kentän kirjoittamatta mitään. Siitä "
+"poikkeava tilanne merkitään epäjohdonmukaisuudeksi. Rahapelissä ei "
+"tilannetta."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic droit (sur une cellule)"
 msgstr "Napsautus hiiren oikealla (solua)"
 
@@ -1205,7 +1223,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:335
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1213,7 +1231,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:337
+#: ../../source/raccourcis.rst:338
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1239,7 +1257,7 @@ msgstr ""
 "heitto on kirjoitettu uudelleen, seuraava numero vahvistaa sen ja avaa "
 "seuraavan päätöksen, kuten asiakirjan lopussa, ja ENTER vie myös sinne."
 
-#: ../../source/raccourcis.rst:348
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1252,7 +1270,7 @@ msgstr ""
 "korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan "
 "sarakkeesta. Mitään ei kirjata ennen vahvistusta."
 
-#: ../../source/raccourcis.rst:353
+#: ../../source/raccourcis.rst:354
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1264,7 +1282,7 @@ msgstr ""
 "että se korvaisi jälkimmäisen. Pelin loppu tai kohdistimen siirtäminen "
 "päättää sen."
 
-#: ../../source/raccourcis.rst:358
+#: ../../source/raccourcis.rst:359
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1276,7 +1294,7 @@ msgstr ""
 "asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin "
 "odotetulle toiminnolle."
 
-#: ../../source/raccourcis.rst:363
+#: ../../source/raccourcis.rst:364
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1297,7 +1315,7 @@ msgstr ""
 "siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen "
 "samalla."
 
-#: ../../source/raccourcis.rst:371
+#: ../../source/raccourcis.rst:372
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1318,7 +1336,7 @@ msgstr ""
 "kirjoitetaan. Kumoamispino elää muistissa: se menetetään, kun luonnos "
 "suljetaan."
 
-#: ../../source/raccourcis.rst:379
+#: ../../source/raccourcis.rst:380
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1327,7 +1345,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:386
+#: ../../source/raccourcis.rst:387
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

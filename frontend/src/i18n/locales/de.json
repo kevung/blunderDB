@@ -1173,7 +1173,8 @@
             "impossible_cube": "unmögliche Dopplerwürfel-Aktion",
             "past_end": "nach dem Ende des Matches",
             "inconsistent_dice": "Zug passt nicht zum Wurf",
-            "unrecorded_move": "nicht aufgezeichneter Zug"
+            "unrecorded_move": "nicht aufgezeichneter Zug",
+            "score_mismatch": "inkonsistenter angesagter Spielstand"
         },
         "stateNoMatch": "no match",
         "stateMatchUpToDate": "match #{id}",
@@ -1221,13 +1222,18 @@
         "flawed": "Unstimmigkeit: {names}",
         "moveField": "Gespielter Zug",
         "moveFieldPlaceholder": "13/7 8/7*",
+        "scoreField": "Spielstand der Partie",
+        "scoreFieldPlaceholder": "3-2",
+        "derivedScore": "Die vorherigen Partien ergeben {a}–{b}",
+        "editScore": "Doppelklick: angesagten Spielstand korrigieren",
         "inconsistency": {
             "illegal_move": "unerlaubter Zug",
             "double_turn": "doppelter Zug",
             "impossible_cube": "unmögliche Dopplerabgabe",
             "past_end": "nach dem Matchende",
             "inconsistent_dice": "unstimmige Würfel",
-            "unrecorded_move": "nicht aufgezeichneter Zug"
+            "unrecorded_move": "nicht aufgezeichneter Zug",
+            "score_mismatch": "inkonsistenter Spielstand"
         }
     },
     "status": {

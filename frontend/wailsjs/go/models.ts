@@ -4892,6 +4892,7 @@ export namespace transcript {
 	    steps?: domain.CheckerStep[];
 	    board_after?: domain.Board;
 	    level?: number;
+	    score?: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Action(source);
@@ -4905,6 +4906,7 @@ export namespace transcript {
 	        this.steps = this.convertValues(source["steps"], domain.CheckerStep);
 	        this.board_after = this.convertValues(source["board_after"], domain.Board);
 	        this.level = source["level"];
+	        this.score = source["score"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4998,6 +5000,8 @@ export namespace transcript {
 	    dice: number[];
 	    selected: boolean;
 	    review: boolean;
+	    kind: string;
+	    notation?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new EntryInfo(source);
@@ -5011,6 +5015,8 @@ export namespace transcript {
 	        this.dice = source["dice"];
 	        this.selected = source["selected"];
 	        this.review = source["review"];
+	        this.kind = source["kind"];
+	        this.notation = source["notation"];
 	    }
 	}
 	export class Next {
@@ -5056,6 +5062,8 @@ export namespace transcript {
 	export class GameInfo {
 	    number: number;
 	    initial_score: number[];
+	    declared: boolean;
+	    derived_score: number[];
 	    winner: number;
 	    points_won: number;
 	    crawford: boolean;
@@ -5071,6 +5079,8 @@ export namespace transcript {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.number = source["number"];
 	        this.initial_score = source["initial_score"];
+	        this.declared = source["declared"];
+	        this.derived_score = source["derived_score"];
 	        this.winner = source["winner"];
 	        this.points_won = source["points_won"];
 	        this.crawford = source["crawford"];
@@ -5276,6 +5286,8 @@ export namespace transcript {
 	    Jacoby: boolean;
 	    Beaver: boolean;
 	    Header: Header;
+	    At: number;
+	    Score?: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Gesture(source);
@@ -5297,6 +5309,8 @@ export namespace transcript {
 	        this.Jacoby = source["Jacoby"];
 	        this.Beaver = source["Beaver"];
 	        this.Header = this.convertValues(source["Header"], Header);
+	        this.At = source["At"];
+	        this.Score = source["Score"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

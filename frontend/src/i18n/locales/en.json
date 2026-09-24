@@ -1173,7 +1173,8 @@
             "impossible_cube": "impossible cube action",
             "past_end": "past the end of the match",
             "inconsistent_dice": "play inconsistent with the roll",
-            "unrecorded_move": "unrecorded play"
+            "unrecorded_move": "unrecorded play",
+            "score_mismatch": "inconsistent declared score"
         },
         "stateNoMatch": "no match",
         "stateMatchUpToDate": "match #{id}",
@@ -1221,13 +1222,18 @@
         "flawed": "Inconsistency: {names}",
         "moveField": "Move played",
         "moveFieldPlaceholder": "13/7 8/7*",
+        "scoreField": "Game score",
+        "scoreFieldPlaceholder": "3-2",
+        "derivedScore": "The previous games give {a}–{b}",
+        "editScore": "Double-click: correct the declared score",
         "inconsistency": {
             "illegal_move": "illegal move",
             "double_turn": "double turn",
             "impossible_cube": "impossible cube action",
             "past_end": "past the end",
             "inconsistent_dice": "inconsistent dice",
-            "unrecorded_move": "unrecorded play"
+            "unrecorded_move": "unrecorded play",
+            "score_mismatch": "inconsistent score"
         }
     },
     "status": {

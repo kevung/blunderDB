@@ -1700,6 +1700,22 @@
         return true;
     }
 
+    /**
+     * Le score annoncé d'une partie, tapé dans son en-tête du Transcript
+     * (ADR-0053) : `score` est `[p1, p2]`, ou `null` pour revenir au score que
+     * donnent les parties précédentes. Il passe par la même file que les
+     * touches, et le moteur le refuse seulement là où il n'a pas de sens.
+     *
+     * @param {number} opening
+     * @param {[number, number] | null} score
+     */
+    function declareScore(opening, score) {
+        if (!draft) return false;
+        sendGesture({ Kind: 'set_score', At: opening, Score: score });
+        panelEl?.focus({ preventScroll: true });
+        return true;
+    }
+
     /** Retour arrière pendant un coup au plateau : le dernier pas est défait. */
     function undoBoardPlayStep() {
         quizPlayStore.update((play) => undoBoardStep(play));
@@ -1926,6 +1942,7 @@
                         onSelect={selectAction}
                         onMenu={openTranscriptMenu}
                         onEditMove={commitNotation}
+                        onEditScore={declareScore}
                     />
                 </div>
             </div>

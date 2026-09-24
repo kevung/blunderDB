@@ -322,6 +322,7 @@ veille ne demande pas la souris.
    "DROITE, l", "Avancer le curseur d'une action."
    "Clic (sur une cellule)", "Placer le curseur sur cette action."
    "Double-clic (sur une cellule)", "Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis."
+   "Double-clic (sur le score d'une partie)", "Taper le score auquel cette partie a été jouée, dans l'en-tête : 3-2, 3–2 ou 3 2. ENTREE l'enregistre, un champ vidé revient au score que donnent les parties précédentes, et Esc referme le champ sans rien écrire. Un score qui diffère de celui-ci est marqué comme une incohérence. Pas de score en argent."
    "Clic droit (sur une cellule)", "Ouvrir les corrections de cette action : insérer avant, insérer après, supprimer, changer de camp. Le curseur est amené sur la cellule au passage."
    "CTRL-ENTREE", "Créer le match à partir du brouillon, ou le mettre à jour s'il existe déjà."
    "i", "Insérer une action devant celle du curseur (camp proposé pour que la suite reste cohérente)."

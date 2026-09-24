@@ -23,7 +23,9 @@
   what those indices mean is the caller's business. The one field it owns is the
   move typed into a cell on a double-click (ADR-0052): a text box and its
   Enter/Escape, handed back as `onEditMove(index, text, pending)` — what the
-  text means, and whether it is accepted, is the caller's business too.
+  text means, and whether it is accepted, is the caller's business too. The
+  other is the score of a game, typed in its header on a double-click
+  (ADR-0053) and handed back as `onEditScore(opening, score)`.
 
   That promise used to be false in one place: a `.mat` pane lived here, with a
   clipboard call, an acknowledgement timer and a fold state that belong to a
@@ -38,6 +40,21 @@
   `layoutRows`, written once here and exported so a test can read it straight.
 -->
 <script module>
+    /**
+     * Le score tapé dans l'en-tête d'une partie : « 3-2 », « 3–2 », « 3 2 ».
+     * Rend `[3, 2]`, `null` pour un champ vide — effacer le score annoncé —, et
+     * `undefined` pour un texte qui ne dit pas de score.
+     *
+     * @param {string} text
+     * @returns {[number, number] | null | undefined}
+     */
+    export function parseScore(text) {
+        const s = (text ?? '').trim();
+        if (!s) return null;
+        const m = /^(\d{1,3})\s*(?:[-–—:]|\s)\s*(\d{1,3})$/.exec(s);
+        return m ? [Number(m[1]), Number(m[2])] : undefined;
+    }
+
     /**
      * L'Action en cours de SAISIE, là où elle atterrira, ou `null`.
      *
@@ -192,7 +209,15 @@
          * (a text that says no move) leaves it open. Without it, a double-click
          * edits nothing (ADR-0052).
          */
-        onEditMove = null
+        onEditMove = null,
+        /**
+         * Told when the score typed into a game's header is validated with
+         * Enter: `(opening, score) => boolean` — `opening` is the index of the
+         * game's opening, `score` is `[p1, p2]`, or `null` when the field was
+         * emptied (the declared score is cleared, ADR-0053). A `true` answer
+         * closes the field. Without it, the score is not editable.
+         */
+        onEditScore = null
     } = $props();
 
     let header = $derived(annotated?.document?.header ?? {});
@@ -257,6 +282,67 @@
         if (!editing || !c || c.index !== editing.index) return false;
         if (c.kind === 'pending') return editing.pending || c.replacing === true;
         return c.kind === 'action' && !editing.pending;
+    }
+
+    // ── le score annoncé d'une partie (ADR-0053) ─────────────────────────
+    //
+    // Même mécanique que le coup tapé dans sa cellule : un double-clic sur le
+    // score de l'en-tête le change en champ, pré-rempli du score affiché ;
+    // Entrée le rend à l'appelant, Échap (escapeService) et la perte du focus
+    // le ferment sans rien écrire. Un champ vidé puis validé efface le score
+    // annoncé : la partie revient au score que donnent les précédentes.
+
+    /** @type {{opening: number, number: number, text: string} | null} */
+    let scoring = $state(null);
+
+    $effect(() => {
+        if (scoring) return closeOnEscape(() => (scoring = null));
+    });
+
+    /**
+     * L'index de l'ouverture qui commence la partie, ou −1 quand son score ne
+     * se tape pas : en session d'argent (pas de score), ou quand la partie ne
+     * commence pas par une ouverture.
+     *
+     * @param {any} game
+     */
+    function scoreOpening(game) {
+        if (!onEditScore || !((header.match_length ?? 0) > 0)) return -1;
+        const first = game?.first ?? -1;
+        return first >= 0 && annotated?.actions?.[first]?.kind === 'opening' ? first : -1;
+    }
+
+    /** @param {any} game */
+    function startScore(game) {
+        const opening = scoreOpening(game);
+        if (opening < 0) return;
+        const [a, b] = game.initial_score ?? [0, 0];
+        scoring = { opening, number: game.number, text: `${a}-${b}` };
+    }
+
+    /** @param {KeyboardEvent} event */
+    function scoreKeyDown(event) {
+        // Rien de ce qui est tapé ici n'atteint la machine à touches du
+        // panneau ni le répartiteur global, ni le <summary> qui plierait la
+        // partie sur une espace.
+        event.stopPropagation();
+        if (event.key !== 'Enter' || !scoring) return;
+        event.preventDefault();
+        const score = parseScore(scoring.text);
+        if (score === undefined) return;
+        if (onEditScore?.(scoring.opening, score)) scoring = null;
+    }
+
+    /**
+     * Le score diffère-t-il de celui que donnent les parties précédentes ?
+     * C'est le moteur qui le dit (GameInfo.declared/derived_score).
+     *
+     * @param {any} game
+     */
+    function scoreDiffers(game) {
+        const d = game?.derived_score;
+        const s = game?.initial_score;
+        return game?.declared === true && !!d && !!s && (d[0] !== s[0] || d[1] !== s[1]);
     }
 
     /** @param {any} c */
@@ -349,7 +435,7 @@
 
     // The keys are written out rather than assembled: a key built at runtime
     // (`'transcript.inconsistency.' + kind`) is invisible to the guard that
-    // hunts orphaned translations, and the six Inconsistencies of
+    // hunts orphaned translations, and the seven Inconsistencies of
     // fonctionnel.md §1.4 are a closed list anyway.
     /** @type {Record<string, string>} */
     const FLAW_KEY = {
@@ -358,7 +444,8 @@
         impossible_cube: 'transcript.inconsistency.impossible_cube',
         past_end: 'transcript.inconsistency.past_end',
         inconsistent_dice: 'transcript.inconsistency.inconsistent_dice',
-        unrecorded_move: 'transcript.inconsistency.unrecorded_move'
+        unrecorded_move: 'transcript.inconsistency.unrecorded_move',
+        score_mismatch: 'transcript.inconsistency.score_mismatch'
     };
     /** @type {Record<number, string>} */
     const RESIGN_KEY = { 1: 'transcript.resignSingle', 2: 'transcript.resignGammon', 3: 'transcript.resignBackgammon' };
@@ -449,7 +536,39 @@
                 <details class="game" {open} ontoggle={(e) => toggleGame(group.game.number, e.currentTarget.open)}>
                     <summary class="game-header">
                         <span class="game-title">{$t('transcript.game', { n: group.game.number })}</span>
-                        <span class="game-score">{group.game.initial_score[0]}–{group.game.initial_score[1]}</span>
+                        {#if scoring && scoring.number === group.game.number}
+                            <input
+                                class="score-field"
+                                type="text"
+                                size="7"
+                                aria-label={$t('transcript.scoreField')}
+                                placeholder={$t('transcript.scoreFieldPlaceholder')}
+                                bind:value={scoring.text}
+                                onkeydown={scoreKeyDown}
+                                onkeyup={(e) => e.stopPropagation()}
+                                onclick={(e) => e.preventDefault()}
+                                onblur={() => (scoring = null)}
+                                use:focusField
+                            />
+                        {:else}
+                            {@const editable = scoreOpening(group.game) >= 0}
+                            {@const differs = scoreDiffers(group.game)}
+                            <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+                            <span
+                                class="game-score"
+                                class:editable
+                                class:flawed={differs}
+                                data-declared={group.game.declared ? 'true' : undefined}
+                                title={differs ? $t('transcript.derivedScore', { a: group.game.derived_score[0], b: group.game.derived_score[1] }) : editable ? $t('transcript.editScore') : undefined}
+                                onclick={(e) => {
+                                    // Le score qui se tape ne plie pas la partie :
+                                    // le premier clic du double-clic la replierait.
+                                    if (editable) e.preventDefault();
+                                }}
+                                ondblclick={() => startScore(group.game)}
+                                >{group.game.initial_score[0]}–{group.game.initial_score[1]}{#if differs}<span class="flaw-mark" aria-hidden="true">⚠</span>{/if}</span
+                            >
+                        {/if}
                         {#if group.game.crawford}
                             <span class="tag">{$t('transcript.crawford')}</span>
                         {/if}
@@ -607,6 +726,24 @@
     .game-score,
     .tag {
         color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
+
+    .game-score.editable {
+        cursor: text;
+    }
+
+    .game-score.flawed {
+        color: var(--color-danger);
+    }
+
+    /* Le score tapé dans l'en-tête : le score, devenu champ. */
+    .score-field {
+        padding: 0 var(--space-1);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
         font-size: var(--font-size-small);
     }
 

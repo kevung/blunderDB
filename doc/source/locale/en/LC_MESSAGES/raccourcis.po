@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 01:54+0200\n"
+"POT-Creation-Date: 2026-09-24 02:24+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1124,6 +1124,24 @@ msgstr ""
 "entered."
 
 #: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur le score d'une partie)"
+msgstr "Double-click (on a game's score)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Taper le score auquel cette partie a été jouée, dans l'en-tête : 3-2, 3–2"
+" ou 3 2. ENTREE l'enregistre, un champ vidé revient au score que donnent "
+"les parties précédentes, et Esc referme le champ sans rien écrire. Un "
+"score qui diffère de celui-ci est marqué comme une incohérence. Pas de "
+"score en argent."
+msgstr ""
+"Type the score this game was played at, in its header: 3-2, 3–2 or 3 2. "
+"ENTER records it, an emptied field goes back to the score the previous "
+"games give, and Esc closes the field without writing anything. A score "
+"that differs from that one is marked as an inconsistency. No score in "
+"money play."
+
+#: ../../source/raccourcis.rst:1
 msgid "Clic droit (sur une cellule)"
 msgstr "Right-click (on a cell)"
 
@@ -1202,7 +1220,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Redo the undone gesture."
 
-#: ../../source/raccourcis.rst:334
+#: ../../source/raccourcis.rst:335
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1210,7 +1228,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:337
+#: ../../source/raccourcis.rst:338
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1237,7 +1255,7 @@ msgstr ""
 "following decision, as at the end of the document, and ENTER leads there "
 "too."
 
-#: ../../source/raccourcis.rst:348
+#: ../../source/raccourcis.rst:349
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1250,7 +1268,7 @@ msgstr ""
 "insertion opens a cell between its two neighbours, and the side is read "
 "from the column. Nothing is recorded before the validation."
 
-#: ../../source/raccourcis.rst:353
+#: ../../source/raccourcis.rst:354
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1262,7 +1280,7 @@ msgstr ""
 "in its turn instead of overwriting the one that follows. The end of the "
 "game or moving the cursor puts an end to it."
 
-#: ../../source/raccourcis.rst:358
+#: ../../source/raccourcis.rst:359
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1274,7 +1292,7 @@ msgstr ""
 " the document. The sentence clears itself and gives the place back to the"
 " expected action."
 
-#: ../../source/raccourcis.rst:363
+#: ../../source/raccourcis.rst:364
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1294,7 +1312,7 @@ msgstr ""
 "review” until it is validated. Moving the cursor forward or back after "
 "changing something records the correction on the way."
 
-#: ../../source/raccourcis.rst:371
+#: ../../source/raccourcis.rst:372
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1314,7 +1332,7 @@ msgstr ""
 "insertion or a reopened game, it stays where you are typing. The undo "
 "stack lives in memory: it is lost when the draft is closed."
 
-#: ../../source/raccourcis.rst:379
+#: ../../source/raccourcis.rst:380
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1324,7 +1342,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:386
+#: ../../source/raccourcis.rst:387
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 

@@ -69,6 +69,12 @@ const (
 	// first save posts. A metadata form that forgot one field would otherwise turn
 	// a match into a money session, or make a saved draft file a second Match.
 	GestureSetHeader GestureKind = "set_header"
+	// GestureSetScore declares the score a game was played at, or clears the
+	// declaration (ADR-0053). It names the game by the opening it starts with
+	// (Gesture.At) and carries the score in Gesture.Score, nil to clear it. The
+	// Replay then plays the game — and every one after it — from that score, and
+	// marks the opening when it is not the one the previous games give.
+	GestureSetScore GestureKind = "set_score"
 	// GestureUndo and GestureRedo walk the editing session's stack. They are
 	// NAMED here, so that a caller has one spelling of them, and they are the two
 	// [Apply] refuses: a stack is state, and it lives in [Editor]. The session
@@ -108,6 +114,12 @@ type Gesture struct {
 	Beaver   bool
 	// Header is what GestureSetHeader writes.
 	Header Header
+	// At is the index of the Action a gesture about one written Action names —
+	// the opening of the game for GestureSetScore.
+	At int
+	// Score is the score GestureSetScore declares, points of player 1 then of
+	// player 2; nil clears the declaration.
+	Score *[2]int
 }
 
 var (
@@ -309,6 +321,9 @@ func Apply(doc Document, g Gesture) (Document, error) {
 			if a.Kind == KindOpening {
 				a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
 			}
+			if a.Score != nil {
+				a.Score[0], a.Score[1] = a.Score[1], a.Score[0]
+			}
 			for j := range a.Steps {
 				a.Steps[j].From = mirrorIndex(a.Steps[j].From)
 				a.Steps[j].To = mirrorIndex(a.Steps[j].To)
@@ -325,10 +340,49 @@ func Apply(doc Document, g Gesture) (Document, error) {
 		out.Header = mergeHeader(out.Header, g.Header)
 		return out, nil
 
+	case GestureSetScore:
+		return setScore(doc, out, g)
+
 	case GestureUndo, GestureRedo:
 		return doc, ErrNotPure
 	}
 	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)
+}
+
+// setScore is GestureSetScore. What it refuses is only what has no meaning: an
+// index that is not the opening of a game, a score in a money session, a negative
+// score. A score past the match length is NOT refused — it is what was declared,
+// and the Replay marks what follows it (ADR-0044).
+//
+// It moves neither the Cursor nor the entry: declaring the score of a game is not
+// an edit of the decision the user is typing, and the Cursor is held where it is
+// rather than pulled onto the mark the declaration may raise.
+func setScore(doc, out Document, g Gesture) (Document, error) {
+	at := g.At
+	if at < 0 || at >= len(out.Actions) || out.Actions[at].Kind != KindOpening {
+		return doc, fmt.Errorf("transcript: action %d is not the opening of a game", at)
+	}
+	if at > 0 {
+		if prev := out.Actions[at-1]; prev.Kind == KindOpening && prev.Dice[0] == prev.Dice[1] {
+			return doc, fmt.Errorf("transcript: action %d is the re-roll of a tie, not the opening of a game", at)
+		}
+	}
+	if g.Score == nil {
+		out.Actions[at].Score = nil
+		out.HoldCursor = true
+		return out, nil
+	}
+	if out.Header.MatchLength <= 0 {
+		return doc, errors.New("transcript: a money session has no score")
+	}
+	if g.Score[0] < 0 || g.Score[1] < 0 {
+		return doc, fmt.Errorf("transcript: %d-%d is not a score", g.Score[0], g.Score[1])
+	}
+	sc := *g.Score
+	out.Actions[at].Score = &sc
+	out.FormatVersion = max(out.FormatVersion, formatVersionScore)
+	out.HoldCursor = true
+	return out, nil
 }
 
 // mergeHeader writes the descriptive fields of `in` over `cur` and keeps the rest.
@@ -424,6 +478,12 @@ func deleteDecision(doc, out Document) (Document, error) {
 		return doc, ErrNoAction
 	}
 	at := out.Cursor
+	// A tie that carried the game's declared score hands it to the re-roll after
+	// it, which now opens the game: deleting a roll is not undeclaring a score.
+	if gone := out.Actions[at]; gone.Kind == KindOpening && gone.Score != nil && gone.Dice[0] == gone.Dice[1] &&
+		at+1 < len(out.Actions) && out.Actions[at+1].Kind == KindOpening && out.Actions[at+1].Score == nil {
+		out.Actions[at+1].Score = gone.Score
+	}
 	out.Actions = append(out.Actions[:at], out.Actions[at+1:]...)
 	out.Touched, out.HasTouched = at, true
 	out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
@@ -713,6 +773,11 @@ func record(doc Document, a Action) Document {
 	}
 	if mode == EntryReplace && at < len(doc.Actions) {
 		replaced := doc.Actions[at]
+		// A corrected opening keeps the score declared on it: the entry retypes
+		// the roll, and the roll is all it knows about.
+		if replaced.Kind == KindOpening && a.Kind == KindOpening && a.Score == nil {
+			a.Score = replaced.Score
+		}
 		doc.Actions[at] = a
 		followOpening(doc, at, replaced, a)
 		if continueGame(&doc, at) {

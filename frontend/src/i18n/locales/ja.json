@@ -1173,7 +1173,8 @@
             "impossible_cube": "不可能なキューブアクション",
             "past_end": "マッチ終了後",
             "inconsistent_dice": "出目と矛盾するムーブ",
-            "unrecorded_move": "記録されていないムーブ"
+            "unrecorded_move": "記録されていないムーブ",
+            "score_mismatch": "申告スコアの不一致"
         },
         "stateNoMatch": "no match",
         "stateMatchUpToDate": "match #{id}",
@@ -1221,13 +1222,18 @@
         "flawed": "不整合：{names}",
         "moveField": "指した手",
         "moveFieldPlaceholder": "13/7 8/7*",
+        "scoreField": "ゲームのスコア",
+        "scoreFieldPlaceholder": "3-2",
+        "derivedScore": "前のゲームからは {a}–{b}",
+        "editScore": "ダブルクリック：申告スコアを修正",
         "inconsistency": {
             "illegal_move": "不正な手",
             "double_turn": "手番の重複",
             "impossible_cube": "不可能なキューブ操作",
             "past_end": "試合終了後",
             "inconsistent_dice": "ダイスの不一致",
-            "unrecorded_move": "記録のない手"
+            "unrecorded_move": "記録のない手",
+            "score_mismatch": "スコアの不一致"
         }
     },
     "status": {

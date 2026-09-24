@@ -281,6 +281,12 @@ func TestReplayIncrementalCostsOneAction(t *testing.T) {
 	}
 }
 
+// declared puts a declared score on an opening.
+func declared(a Action, p1, p2 int) Action {
+	a.Score = &[2]int{p1, p2}
+	return a
+}
+
 // kitchenSinkDoc is a document that goes through every Kind and raises every
 // InconsistencyKind, unknown kinds included — the widest state machine a Replay can be
 // asked to walk, and the one an incremental replay has to agree with.
@@ -305,7 +311,7 @@ func kitchenSinkDoc(t *testing.T) Document {
 			Steps: []domain.CheckerStep{{From: 13, To: 8}}}, // the play does not use the roll
 		Action{Side: domain.White, Kind: KindPass},                           // nothing to answer: the game ends here
 		Action{Side: domain.Black, Kind: KindUnrecorded, Dice: [2]int{4, 2}}, // the record does not say what was played
-		opening(domain.Black, 5, 2),                                          // past the end from now on
+		declared(opening(domain.Black, 5, 2), 0, 0),                          // a score the games before do not give
 		Action{Side: domain.Black, Kind: KindResign, Level: 2},
 		Action{Side: domain.White, Kind: "no such kind"},
 	)
@@ -324,7 +330,7 @@ func kitchenSinkDoc(t *testing.T) Document {
 			t.Fatalf("the fixture no longer covers kind %q", k)
 		}
 	}
-	for _, k := range []InconsistencyKind{IllegalMove, DoubleTurn, ImpossibleCube, PastEnd, InconsistentDice, UnrecordedMove} {
+	for _, k := range []InconsistencyKind{IllegalMove, DoubleTurn, ImpossibleCube, PastEnd, InconsistentDice, UnrecordedMove, ScoreMismatch} {
 		if !found[k] {
 			t.Fatalf("the fixture no longer raises %q", k)
 		}
@@ -364,6 +370,21 @@ func TestReplayIncrementalMatchesFull(t *testing.T) {
 		// And back, so the next round starts from the document the cache describes.
 		if got, want := r.Replay(doc, 0), Replay(doc, 0); !reflect.DeepEqual(got, want) {
 			t.Fatalf("incremental replay after undoing the correction at %d differs from a full one", n)
+		}
+		// A declared score is part of the Action: declaring, changing or clearing
+		// one on any opening must replay from there (ADR-0053).
+		if doc.Actions[n].Kind != KindOpening {
+			continue
+		}
+		for _, score := range []*[2]int{nil, {1, 0}, {0, 0}} {
+			scored := doc.clone()
+			scored.Actions[n].Score = score
+			if got, want := r.Replay(scored, 0), Replay(scored, 0); !reflect.DeepEqual(got, want) {
+				t.Fatalf("incremental replay after declaring %v on Action %d differs from a full one", score, n)
+			}
+		}
+		if got, want := r.Replay(doc, 0), Replay(doc, 0); !reflect.DeepEqual(got, want) {
+			t.Fatalf("incremental replay after restoring the score at %d differs from a full one", n)
 		}
 	}
 
