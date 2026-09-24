@@ -2177,7 +2177,12 @@
             "failed": "Impossible de reprendre ces inscrits.",
             "errors": {
                 "noName": "Ligne {line} : pas de nom.",
-                "badRating": "Ligne {line} : « {text} » n'est pas une cote."
+                "badRating": "Ligne {line} : « {text} » n'est pas une cote.",
+                "noSeparator": "Ligne {line} : pas de séparateur (« {text} ») — les autres lignes en ont."
+            },
+            "warnings": {
+                "duplicate": "Ligne {line} : « {text} » figure déjà ligne {first}. Cocher pour l'inscrire quand même.",
+                "entered": "Ligne {line} : « {text} » est déjà inscrit. Cocher pour l'inscrire quand même."
             }
         }
     },

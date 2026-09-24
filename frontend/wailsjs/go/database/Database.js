@@ -714,8 +714,8 @@ export function OpenTranscription(arg1) {
   return window['go']['database']['Database']['OpenTranscription'](arg1);
 }
 
-export function ParseDirectoryCSV(arg1) {
-  return window['go']['database']['Database']['ParseDirectoryCSV'](arg1);
+export function ParseDirectoryCSV(arg1, arg2) {
+  return window['go']['database']['Database']['ParseDirectoryCSV'](arg1, arg2);
 }
 
 export function ParsePositionText(arg1) {

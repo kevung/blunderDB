@@ -8,6 +8,10 @@
      *
      * Le bloc est replié par défaut. Un directeur qui inscrit son premier tournoi n'a rien à
      * reprendre, et l'écran des joueurs doit rester ce qu'il est — un champ, une liste.
+     *
+     * L'aperçu montre, AVANT « Inscrire », les lignes illisibles et les doublons (#442) : un
+     * doublon — deux fois dans le collage, ou déjà inscrit — n'entre pas par défaut ; une case à
+     * cocher le fait entrer quand même, parce que deux homonymes existent.
      */
     import { t } from '../../i18n';
 
@@ -30,13 +34,24 @@
     let open = $state(false);
     let pasted = $state('');
     let preview = $state(/** @type {DirectoryImport | null} */ (null));
+    /** Les lignes des doublons que le directeur a cochées pour les inscrire quand même. */
+    let forced = $state(/** @type {number[]} */ ([]));
+
+    let warnings = $derived(preview?.warnings || []);
+    let toEnter = $derived([...(preview?.rows || []), ...warnings.filter((w) => forced.includes(w.line)).map((w) => w.row)]);
 
     async function read() {
+        forced = [];
         preview = await onParse(pasted);
     }
 
+    /** @param {number} line @param {boolean} on */
+    function force(line, on) {
+        forced = on ? [...forced, line] : forced.filter((l) => l !== line);
+    }
+
     function confirmImport() {
-        const rows = preview?.rows || [];
+        const rows = toEnter;
         preview = null;
         pasted = '';
         open = true;
@@ -87,7 +102,7 @@
             {#if preview}
                 <!-- L'aperçu, avant que quoi que ce soit n'entre : lire n'écrit rien du tout. -->
                 <div class="preview" data-testid="direction-directory-preview">
-                    <p>{$t('direction.directory.willEnter', { n: preview.rows.length })}</p>
+                    <p>{$t('direction.directory.willEnter', { n: toEnter.length })}</p>
                     {#if (preview.skipped || []).length}
                         <p class="muted">
                             {#each preview.skipped as s (s.line)}
@@ -102,8 +117,25 @@
                             {/each}
                         </ul>
                     {/if}
+                    {#if warnings.length}
+                        <ul class="warnings" data-testid="direction-directory-warnings">
+                            {#each warnings as w (w.line)}
+                                <li>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            data-testid="direction-directory-force-{w.line}"
+                                            checked={forced.includes(w.line)}
+                                            onchange={(e) => force(w.line, e.currentTarget.checked)}
+                                        />
+                                        {$t(`direction.directory.warnings.${w.code}`, { line: w.line, text: w.row.name, first: w.firstLine || 0 })}
+                                    </label>
+                                </li>
+                            {/each}
+                        </ul>
+                    {/if}
                     <div class="csv">
-                        <button type="button" class="primary" disabled={busy || preview.rows.length === 0} data-testid="direction-directory-confirm" onclick={confirmImport}>
+                        <button type="button" class="primary" disabled={busy || toEnter.length === 0} data-testid="direction-directory-confirm" onclick={confirmImport}>
                             {$t('direction.directory.confirm')}
                         </button>
                         <button type="button" onclick={() => (preview = null)}>{$t('common.cancel')}</button>
@@ -212,6 +244,18 @@
         padding-left: 1.1rem;
         color: var(--color-danger);
         font-size: var(--font-size-small);
+    }
+
+    /* Un doublon n'est pas une faute : il se lit en texte courant, avec sa case à cocher. */
+    .warnings {
+        list-style: none;
+        margin: 0 0 0.4rem;
+        padding: 0;
+        font-size: var(--font-size-small);
+    }
+
+    .warnings input {
+        font: inherit;
     }
 
     button {
