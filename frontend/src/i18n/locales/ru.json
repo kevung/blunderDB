@@ -1226,6 +1226,7 @@
         "scoreFieldPlaceholder": "3-2",
         "derivedScore": "Предыдущие партии дают {a}–{b}",
         "editScore": "Двойной щелчок: исправить заявленный счёт",
+        "hole": "Пропущенный ход — нажмите, чтобы ввести его",
         "inconsistency": {
             "illegal_move": "недопустимый ход",
             "double_turn": "двойной ход",

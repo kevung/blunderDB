@@ -1285,7 +1285,10 @@ annoncé incohérent) décore sa
 cellule et se nomme dans une info-bulle. Le coup non consigné est le cas d'un
 fichier ``.mat`` relu : gnubg y écrit ``???`` quand il n'a pas gardé le coup
 joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette
-cellule propose les coups de ce jet pour le renseigner. Les parties se replient ; celle du curseur est
+cellule propose les coups de ce jet pour le renseigner. Un double trait laisse
+une case vide, encadrée de pointillés, dans la colonne du camp dont le tour
+manque : le curseur s'y arrête, un clic l'y mène, et c'est là que se tape le
+tour manquant — une décision supprimée, par exemple. Les parties se replient ; celle du curseur est
 ouverte.
 
 **Ce qui est en train d'être tapé se dessine dans le transcript**, en

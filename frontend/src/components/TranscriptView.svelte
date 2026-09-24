@@ -100,6 +100,14 @@
     }
 
     /**
+     * @param {any} info
+     * @param {string} kind
+     */
+    function hasFlaw(info, kind) {
+        return !!info?.inconsistencies?.some((/** @type {{kind: string}} */ f) => f.kind === kind);
+    }
+
+    /**
      * The rows of each game: player 1's cell on the left, player 2's on the
      * right, one row per turn.
      *
@@ -150,6 +158,13 @@
 
             for (const info of infos) {
                 if (info.game_index !== gameIndex) continue;
+                const filling = pending && !pending.replacing && pending.gameIndex === gameIndex && pending.at === info.index;
+                // The turn a double turn is missing is a cell of its own, in the
+                // other column, where the Cursor stops (ADR-0054) — unless the
+                // insertion being typed is already filling it.
+                if (!filling && info.kind !== 'opening' && hasFlaw(info, 'double_turn')) {
+                    place({ kind: 'hole', index: info.index, side: info.side === 1 ? 0 : 1 }, false, info.side === 1 ? 0 : 1);
+                }
                 if (pending && pending.gameIndex === gameIndex && pending.at === info.index) {
                     place(pending.cell, pending.cell.opening, pending.cell.side);
                     // Une correction TIENT LA PLACE de l'Action : les deux ne se
@@ -191,6 +206,11 @@
         players = null,
         /** Told when a cell is clicked: `(index) => void`. */
         onSelect = null,
+        /**
+         * Told when the hole of a double turn is clicked: `(index) => void`,
+         * `index` being the Action the hole stands before (ADR-0054).
+         */
+        onHole = null,
         /**
          * Told when a cell is RIGHT-clicked: `(index, {x, y}) => void`, in
          * client pixels. The caller opens whatever menu it wants there; this
@@ -610,6 +630,12 @@
 {#snippet cellBlock(/** @type {any} */ c)}
     {#if !c}
         <span class="cell empty-cell"></span>
+    {:else if c.kind === 'hole'}
+        {#if onHole}
+            <button type="button" class="cell hole" data-hole={c.index} title={$t('transcript.hole')} aria-label={$t('transcript.hole')} onclick={() => onHole(c.index)}>&nbsp;</button>
+        {:else}
+            <span class="cell hole" data-hole={c.index}>&nbsp;</span>
+        {/if}
     {:else if editing && editsCell(c)}
         <input
             class="cell move-field"
@@ -832,6 +858,13 @@
 
     .empty-cell {
         border-color: transparent;
+    }
+
+    /* Le tour qu'un double trait a perdu (ADR-0054) : une case vide, marquée
+       comme l'Incohérence qu'elle est, où le Cursor s'arrête. */
+    .cell.hole {
+        border-style: dashed;
+        border-color: var(--color-danger);
     }
 
     /* Le coup tapé dans sa cellule : la cellule encadrée, devenue champ. */

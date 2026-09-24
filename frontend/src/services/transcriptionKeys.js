@@ -231,8 +231,10 @@ export function cursorDelta(event) {
 }
 
 /**
- * Les gestes qui mènent le Cursor de `from` à `to` — ce qu'un clic sur une
- * cellule du Transcript demande. Le moteur ne connaît que « recule » et
+ * Les gestes qui mènent le Cursor de l'arrêt `from` à l'arrêt `to` — ce qu'un
+ * clic sur une cellule du Transcript demande. Les deux sont des rangs
+ * d'arrêts ([cursorStop]), qui ne sont les index des Actions que tant
+ * qu'aucun trou ne les sépare. Le moteur ne connaît que « recule » et
  * « avance » (`cursor_back`/`cursor_forward` d'apply.go), qui rechargent
  * l'Action visée : un saut est donc la répétition du pas, et non un geste de
  * plus à écrire côté Go pour la souris seule.
@@ -244,6 +246,49 @@ export function cursorDelta(event) {
 export function cursorCommands(from, to) {
     const kind = to < from ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD;
     return Array.from({ length: Math.abs(to - from) }, () => ({ kind }));
+}
+
+/**
+ * L'Action `index` suit-elle un TROU : un double trait, dont le tour manquant
+ * est une case du Transcript où le Cursor s'arrête (ADR-0054) ? C'est
+ * l'Incohérence `double_turn` que le moteur marque, lue telle quelle.
+ *
+ * @param {any} annotated
+ * @param {number} index
+ */
+export function holeBefore(annotated, index) {
+    const info = (annotated?.actions ?? [])[index];
+    return !!info?.inconsistencies?.some((/** @type {{kind: string}} */ f) => f.kind === 'double_turn');
+}
+
+/**
+ * Le rang d'un arrêt du Cursor, dans l'ordre où `h`/`l` les parcourent :
+ * chaque Action, précédée de son trou quand elle en a un, puis le bout du
+ * document. C'est ce rang, et non l'index de l'Action, que compte le chemin
+ * d'un clic — un trou traversé est un pas de plus (ADR-0054).
+ *
+ * @param {any} annotated
+ * @param {number} index - l'Action visée, ou celle devant laquelle est le trou
+ * @param {boolean} [hole] - le trou devant l'Action plutôt qu'elle
+ */
+export function cursorStop(annotated, index, hole = false) {
+    let rank = index;
+    for (let i = 0; i < index; i++) if (holeBefore(annotated, i)) rank++;
+    if (!hole && holeBefore(annotated, index)) rank++;
+    return rank;
+}
+
+/**
+ * Le rang de l'arrêt où le Cursor EST : sur le trou quand une insertion y est
+ * ouverte, sur l'Action sinon.
+ *
+ * @param {any} annotated
+ */
+export function currentStop(annotated) {
+    const at = annotated?.cursor ?? 0;
+    const e = annotated?.entry;
+    const onHole = !!e && e.replacing === false && e.at === at && holeBefore(annotated, at);
+    return cursorStop(annotated, at, onHole);
 }
 
 /**

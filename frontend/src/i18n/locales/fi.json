@@ -1226,6 +1226,7 @@
         "scoreFieldPlaceholder": "3-2",
         "derivedScore": "Aiemmat pelit antavat {a}–{b}",
         "editScore": "Kaksoisnapsautus: korjaa ilmoitettu tilanne",
+        "hole": "Puuttuva vuoro — syötä se napsauttamalla",
         "inconsistency": {
             "illegal_move": "laiton siirto",
             "double_turn": "kaksoisvuoro",

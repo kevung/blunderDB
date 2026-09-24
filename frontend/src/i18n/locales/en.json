@@ -1226,6 +1226,7 @@
         "scoreFieldPlaceholder": "3-2",
         "derivedScore": "The previous games give {a}–{b}",
         "editScore": "Double-click: correct the declared score",
+        "hole": "Missing turn — click to enter it",
         "inconsistency": {
             "illegal_move": "illegal move",
             "double_turn": "double turn",
