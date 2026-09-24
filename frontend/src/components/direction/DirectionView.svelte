@@ -266,11 +266,8 @@
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
     /* Rouvrir est un geste explicite : le classement final cesse d'être final, et le journal
-       en gardera la trace. Une confirmation, pas davantage. */
-    const onReopen = () => {
-        if (!window.confirm($t('direction.standings.reopenConfirm'))) return;
-        return act(() => reopenTournament(), 'direction.standings.error');
-    };
+       en gardera la trace. La confirmation est sur place, dans le Classement (#441). */
+    const onReopen = () => act(() => reopenTournament(), 'direction.standings.error');
     const onNote = (/** @type {string} */ text) => act(() => addNote(text), 'direction.history.error');
 
     /* L'affichage de la salle : un dossier choisi une fois, puis plus rien à faire. La page
@@ -517,7 +514,7 @@
         {:else if tab === 'slots'}
             <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
         {:else if tab === 'standings'}
-            <StandingsView view={ranking} {busy} {onClose} {onReopen} {onCSV} />
+            <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} />
         {:else if tab === 'history'}
             <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}

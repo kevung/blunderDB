@@ -174,6 +174,50 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         await expect(page.locator('[data-testid="direction-table-14"]')).toBeVisible();
     });
 
+    // « clore le tournoi » (#441) : avec des matchs en cours, la confirmation est sur place, en
+    // deux clics, et dit combien ; sans match en cours, un clic. « Rouvrir » se confirme de la
+    // même façon. Aucun dialogue natif : Playwright en échouerait.
+    test('clore avec des matchs en cours tient en deux clics, sans dialogue natif', async ({ page }) => {
+        page.on('dialog', (d) => {
+            throw new Error(`dialogue natif inattendu : ${d.message()}`);
+        });
+        await openDirection(page);
+        await page.locator('.proposals .all').click();
+        await page.locator('.proposals .confirm .primary').click();
+        await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-tab-standings"]'));
+            await g.click(page.locator('[data-testid="direction-standings-close"]'));
+            await expect(page.locator('[data-testid="direction-standings-confirm"]')).toContainText('2');
+            await g.click(page.locator('[data-testid="direction-standings-confirm-go"]'));
+            await expect(page.locator('[data-testid="direction-standings-reopen"]')).toBeVisible();
+        });
+        // L'onglet n'est pas le geste mesuré : clore, c'est deux clics une fois dans le Classement.
+        budget('clore avec des matchs en cours', { ...counted, total: counted.total - 1 }, 2);
+
+        const reopened = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-standings-reopen"]'));
+            await g.click(page.locator('[data-testid="direction-standings-confirm-go"]'));
+            await expect(page.locator('[data-testid="direction-standings-close"]')).toBeVisible();
+        });
+        budget('rouvrir le tournoi', reopened, 2);
+    });
+
+    test('clore sans match en cours tient en un clic', async ({ page }) => {
+        page.on('dialog', (d) => {
+            throw new Error(`dialogue natif inattendu : ${d.message()}`);
+        });
+        await openDirection(page);
+        await page.locator('[data-testid="direction-tab-standings"]').click();
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-standings-close"]'));
+            await expect(page.locator('[data-testid="direction-standings-reopen"]')).toBeVisible();
+        });
+        budget('clore sans match en cours', counted, 1);
+    });
+
     // « apparier à la main | ≤ 7 clics ». Un `select` natif se déplie puis se choisit : deux
     // gestes pour l'utilisateur, un seul appel pour le pilote (`selectOption` n'émet rien). Le
     // second geste de chaque liste est donc ajouté à la main, sans quoi le budget serait tenu

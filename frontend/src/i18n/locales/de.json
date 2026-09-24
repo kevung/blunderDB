@@ -1993,6 +1993,7 @@
             "prize": "Preis",
             "csv": "Export (CSV)",
             "close": "Turnier abschließen",
+            "closeConfirm": "Laufende Matches: {n}. Das Abschließen friert die Rangliste ohne sie ein: ihr Ergebnis lässt sich nicht mehr eintragen, es sei denn, das Turnier wird wieder geöffnet.",
             "reopen": "Wieder öffnen",
             "tiedHint": "Gleichstand: Platz und Preis werden geteilt.",
             "pool": "Pool {pool} · auszuzahlen {payable} · einbehalten {retained}",

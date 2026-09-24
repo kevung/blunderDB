@@ -1993,6 +1993,7 @@
             "prize": "Prize",
             "csv": "Export (CSV)",
             "close": "Close the tournament",
+            "closeConfirm": "Matches under way: {n}. Closing freezes the standings without them: their result can no longer be entered, unless the tournament is reopened.",
             "reopen": "Reopen",
             "tiedHint": "Tied: the place and the prize are shared.",
             "pool": "Pool {pool} · payable {payable} · retained {retained}",

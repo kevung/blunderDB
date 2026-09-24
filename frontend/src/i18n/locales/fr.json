@@ -1993,6 +1993,7 @@
             "prize": "Prix",
             "csv": "Exporter (CSV)",
             "close": "Clore le tournoi",
+            "closeConfirm": "Matchs en cours : {n}. Clore fige le classement sans eux : leur résultat ne pourra plus être saisi, sauf à rouvrir le tournoi.",
             "reopen": "Rouvrir",
             "tiedHint": "Ex æquo : la place et le prix sont partagés.",
             "pool": "Pool {pool} · à distribuer {payable} · retenue {retained}",

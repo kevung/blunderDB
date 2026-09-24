@@ -1579,6 +1579,12 @@ les prix lorsqu'une dotation est réglée. Deux ex æquo partagent la place et l
 prix. **Clore le tournoi** fige le classement final ; le classement s'exporte en
 CSV, dans la langue de l'interface.
 
+Clore sans match en cours est un clic. Avec des matchs en cours, le Classement
+dit combien et attend un second clic sur place : clore fige le classement sans
+eux, et leur résultat ne se saisit plus. **Rouvrir** se confirme de la même
+façon ; le classement final cesse alors d'être final, et la réouverture reste
+dans le journal.
+
 .. _direction_historique:
 
 L'onglet **Historique** est le journal en clair : une ligne par décision, dans
