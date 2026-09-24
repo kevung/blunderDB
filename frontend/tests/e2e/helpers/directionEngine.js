@@ -54,21 +54,23 @@ export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number}} [opts]
+ * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number, phases?: Object[], locks?: Object[]}} [opts]
  *   `directed: false` part d'un tournoi non dirigé, pour mesurer le coût d'entrée depuis rien.
  *   `entrants`, `tables` et `running` changent la taille de la salle (défaut : les quatre
- *   inscrits, quatre tables, aucun match) ; `running` matchs sont lancés d'avance.
+ *   inscrits, quatre tables, aucun match) ; `running` matchs sont lancés d'avance. `rounds`
+ *   donne le nombre de rondes déjà lancées, `phases` le format, `locks` les verrous que
+ *   l'aperçu de configuration renvoie (une phase dont le tirage est fait).
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart }) => {
+        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, phases, lockedPhases }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
             let CONFIG = {
                 name: 'Open de Lyon',
                 tables: { count: tableCount },
-                phases: [{ kind: 'swiss_lives', length: 7, lives: 2, mode: 'continuous', target: 0 }]
+                phases: phases || [{ kind: 'swiss_lives', length: 7, lives: 2, mode: 'continuous', target: 0 }]
             };
 
             let exists = directed;
@@ -175,7 +177,13 @@ export async function installDirectionEngine(page, opts = {}) {
                 const next = JSON.parse(blob || '{}');
                 const list = (c) => (c?.tables?.unavailable || []).join(', ');
                 const changes = list(CONFIG) === list(next) ? [] : [{ code: 'tablesUnavailable', phase: 0, from: list(CONFIG), to: list(next) }];
-                return Promise.resolve({ changes, refusals: [], locks: [], opened: 0, current: -1, started: false });
+                // La consolante d'une phase (#455), comparée comme le fait diffConfig en Go.
+                (next.phases || []).forEach((ph, i) => {
+                    const was = !!CONFIG.phases?.[i]?.consolation;
+                    if (was !== !!ph.consolation) changes.push({ code: 'consolation', phase: i + 1, from: String(was), to: String(!!ph.consolation) });
+                });
+                // Les verrous posés par l'état (#455) : une phase dont le tirage est fait.
+                return Promise.resolve({ changes, refusals: [], locks: lockedPhases, opened: 0, current: -1, started: false });
             };
             db.SetDirectionStrings = () => Promise.resolve(null);
             db.WriteDirectionPage = () => Promise.resolve('');
@@ -418,6 +426,14 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.GetMatchesByTournament = () => Promise.resolve([]);
         },
-        { entrants: opts.entrants || ENTRANTS, directed: opts.directed !== false, tableCount: opts.tables || 4, runningAtStart: opts.running || 0, roundsAtStart: opts.rounds || 0 }
+        {
+            entrants: opts.entrants || ENTRANTS,
+            directed: opts.directed !== false,
+            tableCount: opts.tables || 4,
+            runningAtStart: opts.running || 0,
+            roundsAtStart: opts.rounds || 0,
+            phases: opts.phases || null,
+            lockedPhases: opts.locks || []
+        }
     );
 }

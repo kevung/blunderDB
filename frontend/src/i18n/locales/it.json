@@ -1801,7 +1801,21 @@
             "percent": "%",
             "percentHint": "Spuntato: percentuali del distribuibile. Non spuntato: importi fissi.",
             "seeding": "Teste di serie",
-            "seedingHint": "Disattivato per impostazione predefinita: lo studio del motore conclude «nessuna testa di serie protetta», che è la cultura attuale del backgammon. Attivato, i giocatori sono piazzati per punteggio — il migliore e il secondo in metà opposte. Il pulsante ⓘ porta allo studio."
+            "seedingHint": "Disattivato per impostazione predefinita: lo studio del motore conclude «nessuna testa di serie protetta», che è la cultura attuale del backgammon. Attivato, i giocatori sono piazzati per punteggio — il migliore e il secondo in metà opposte. Il pulsante ⓘ porta allo studio.",
+            "consolation": "Consolazione",
+            "consolationHint": "Gli sconfitti del tabellone giocano un secondo tabellone, una sezione a parte in classifica.",
+            "reconciliation": "Riconciliazione",
+            "reconciliationHint": "Il vincitore della consolazione affronta il vincitore del tabellone principale (doppia eliminazione).",
+            "recharge": "Ricarica",
+            "rechargeHint": "In doppia eliminazione, il vincitore del tabellone principale deve essere battuto due volte.",
+            "bracketFrozen": "Bloccato: {reason}.",
+            "consoScaleHint": "La consolazione ha una classifica propria solo con un montepremi: compila «Consolazione» sotto Montepremi.",
+            "groupSize": "Gironi da",
+            "groupSizeHint": "Giocatori per girone. Vuoto: 4.",
+            "qualifiers": "Qualificati",
+            "qualifiersHint": "Giocatori per girone che passano alla fase successiva. Vuoto: 2.",
+            "minPerPoint": "Ritmo (min/pt)",
+            "minPerPointHint": "Durata prevista di un punto, in minuti: la barra dell'orologio vi confronta il ritmo osservato, e la fine stimata parte da essa. Vuoto: 8."
         },
         "tabs": {
             "direction": "Direzione",

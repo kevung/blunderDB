@@ -1801,7 +1801,21 @@
             "percent": "%",
             "percentHint": "Ticked: percentages of the payable pool. Unticked: fixed amounts.",
             "seeding": "Seeding",
-            "seedingHint": "Off by default: the engine's study concludes “no protected seeds”, which is the current culture of backgammon. On, players are placed by rating — the best and the second in opposite halves. The ⓘ button leads to the study."
+            "seedingHint": "Off by default: the engine's study concludes “no protected seeds”, which is the current culture of backgammon. On, players are placed by rating — the best and the second in opposite halves. The ⓘ button leads to the study.",
+            "consolation": "Consolation",
+            "consolationHint": "The losers of the bracket play a second bracket, a separate section in the standings.",
+            "reconciliation": "Reconciliation",
+            "reconciliationHint": "The consolation winner plays the main bracket winner (double elimination).",
+            "recharge": "Recharge",
+            "rechargeHint": "In double elimination, the main bracket winner must be beaten twice.",
+            "bracketFrozen": "Frozen: {reason}.",
+            "consoScaleHint": "The consolation has standings of its own only with a prize scale: fill in “Consolation” under Prize fund.",
+            "groupSize": "Pools of",
+            "groupSizeHint": "Players per pool. Empty: 4.",
+            "qualifiers": "Qualifiers",
+            "qualifiersHint": "Players per pool who go through to the next phase. Empty: 2.",
+            "minPerPoint": "Pace (min/pt)",
+            "minPerPointHint": "Planned duration of a point, in minutes: the clock strip compares the observed pace with it, and the estimated end starts from it. Empty: 8."
         },
         "tabs": {
             "direction": "Direction",

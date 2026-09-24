@@ -1801,7 +1801,21 @@
             "percent": "%",
             "percentHint": "Angehakt: Prozente des auszuschüttenden Pools. Nicht angehakt: feste Beträge.",
             "seeding": "Setzliste",
-            "seedingHint": "Standardmäßig aus: Die Studie der Engine kommt zu „keine geschützten Setzplätze“, was der heutigen Backgammon-Kultur entspricht. Eingeschaltet werden die Spieler nach Wertung gesetzt — der Beste und der Zweite in gegenüberliegenden Hälften. Die Schaltfläche ⓘ führt zur Studie."
+            "seedingHint": "Standardmäßig aus: Die Studie der Engine kommt zu „keine geschützten Setzplätze“, was der heutigen Backgammon-Kultur entspricht. Eingeschaltet werden die Spieler nach Wertung gesetzt — der Beste und der Zweite in gegenüberliegenden Hälften. Die Schaltfläche ⓘ führt zur Studie.",
+            "consolation": "Trostrunde",
+            "consolationHint": "Die Verlierer des Tableaus spielen ein zweites Tableau, ein eigener Abschnitt in der Wertung.",
+            "reconciliation": "Versöhnung",
+            "reconciliationHint": "Der Sieger der Trostrunde spielt gegen den Sieger des Haupttableaus (Doppel-K.-o.).",
+            "recharge": "Nachladen",
+            "rechargeHint": "Im Doppel-K.-o. muss der Sieger des Haupttableaus zweimal geschlagen werden.",
+            "bracketFrozen": "Fixiert: {reason}.",
+            "consoScaleHint": "Die Trostrunde hat nur mit einer Preisstaffel eine eigene Wertung: Füllen Sie „Trostrunde“ unter Preisgeld aus.",
+            "groupSize": "Gruppen zu",
+            "groupSizeHint": "Spieler pro Gruppe. Leer: 4.",
+            "qualifiers": "Qualifizierte",
+            "qualifiersHint": "Spieler pro Gruppe, die in die nächste Phase kommen. Leer: 2.",
+            "minPerPoint": "Tempo (Min./Pkt.)",
+            "minPerPointHint": "Geplante Dauer eines Punkts in Minuten: Die Uhrleiste vergleicht das beobachtete Tempo damit, und das voraussichtliche Ende geht davon aus. Leer: 8."
         },
         "tabs": {
             "direction": "Leitung",
