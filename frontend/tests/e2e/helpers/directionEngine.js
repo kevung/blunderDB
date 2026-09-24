@@ -45,17 +45,23 @@ export function crowd(n) {
 export const S2_HALL = { entrants: crowd(76), tables: 14, running: 14 };
 
 /**
+ * L'état S4 du vendredi (#451, rapport/S4.md O6) : 25 inscrits, rondes 1 et 2 jouées, la
+ * ronde 3 proposée et rien en cours.
+ */
+export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2 };
+
+/**
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number}} [opts]
+ * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number}} [opts]
  *   `directed: false` part d'un tournoi non dirigé, pour mesurer le coût d'entrée depuis rien.
  *   `entrants`, `tables` et `running` changent la taille de la salle (défaut : les quatre
  *   inscrits, quatre tables, aucun match) ; `running` matchs sont lancés d'avance.
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed, tableCount, runningAtStart }) => {
+        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
@@ -173,7 +179,16 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.SetDirectionStrings = () => Promise.resolve(null);
             db.WriteDirectionPage = () => Promise.resolve('');
-            db.DirectionRounds = () => Promise.resolve(running.length ? 1 : 0);
+            // Les rondes déjà lancées (#451) : l'état S4 en a deux, sans aucun match en cours.
+            db.DirectionRounds = () => Promise.resolve(roundsAtStart || (running.length ? 1 : 0));
+            // La feuille d'une ronde annoncée : rien n'est lancé, rien n'est écrit au journal ;
+            // le spec relit ce qui a été demandé dans window.__announcedSheets.
+            window.__announcedSheets = [];
+            db.WriteDirectionUpcomingSheet = (_id, announced) => {
+                window.__announcedSheets.push({ announced, proposals: proposals.length, events });
+                return Promise.resolve('/tmp/appariements-annonce.html');
+            };
+            db.WriteDirectionPairingSheet = () => Promise.resolve('/tmp/appariements.html');
 
             db.EnterParticipants = (_id, blob) => {
                 // Le backend attribue un identifiant à qui n'en a pas (`participantID`) : sans
@@ -403,6 +418,6 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.GetMatchesByTournament = () => Promise.resolve([]);
         },
-        { entrants: opts.entrants || ENTRANTS, directed: opts.directed !== false, tableCount: opts.tables || 4, runningAtStart: opts.running || 0 }
+        { entrants: opts.entrants || ENTRANTS, directed: opts.directed !== false, tableCount: opts.tables || 4, runningAtStart: opts.running || 0, roundsAtStart: opts.rounds || 0 }
     );
 }

@@ -2157,7 +2157,8 @@
             "in_progress": "läuft",
             "no_match": "kein Match",
             "versus": "gegen",
-            "cancel": "Abbrechen"
+            "cancel": "Abbrechen",
+            "announced": "Angekündigt: {at}"
         },
         "display": {
             "title": "Saalanzeige",
@@ -2174,7 +2175,12 @@
             "round": "Runde",
             "roundHint": "Welche Runde gedruckt wird. Standardmäßig die jüngste.",
             "latest": "jüngste",
-            "error": "Das Paarungsblatt konnte nicht geschrieben werden."
+            "error": "Das Paarungsblatt konnte nicht geschrieben werden.",
+            "upcoming": "Kommende Runde…",
+            "upcomingHint": "Druckt die Paarungen der Warteschlange mit Datum, ohne etwas zu starten: Nichts wird ins Protokoll geschrieben.",
+            "announcedFor": "Angekündigt für",
+            "announcedPlaceholder": "Montag 21.09., 20 Uhr",
+            "announcedHint": "Datum und Uhrzeit, die auf dem Blatt stehen, so wie Sie sie eingeben."
         },
         "directory": {
             "title": "Verzeichnis ({n})",

@@ -1491,6 +1491,13 @@ jamais rien ; la **grille des tables**, dont l'en-tête porte le bouton
 des propositions** ; et les joueurs libres. La grille précède la file : une file
 longue ne la pousse jamais hors de l'écran.
 
+Une ronde proposée s'annonce avant d'être lancée : **Ronde à venir…**, à côté de
+*Imprimer la feuille*, demande la date et l'heure à imprimer (« lundi 21/09,
+20 h ») et imprime la feuille des appariements de la file, marquée « annoncée ».
+Rien n'est lancé ni écrit au journal : la ronde se lance le jour venu, à son
+heure. Un appariement qui attend une table libre porte un tiret à la place du
+numéro de table.
+
 En tête de la vue tournoi, la **bande d'horloge** tient en une ligne : l'heure,
 le temps écoulé depuis le premier match lancé, les matchs joués et en cours, le
 rythme observé en minutes par point face au rythme prévu, les matchs lents, la

@@ -2157,7 +2157,8 @@
             "in_progress": "進行中",
             "no_match": "マッチなし",
             "versus": "対",
-            "cancel": "取消"
+            "cancel": "取消",
+            "announced": "予定：{at}"
         },
         "display": {
             "title": "会場ディスプレイ",
@@ -2174,7 +2175,12 @@
             "round": "ラウンド",
             "roundHint": "印刷するラウンド。既定では最新のもの。",
             "latest": "最新",
-            "error": "組み合わせ表を書き出せませんでした。"
+            "error": "組み合わせ表を書き出せませんでした。",
+            "upcoming": "次のラウンド…",
+            "upcomingHint": "待ち行列の組み合わせを日付付きで印刷します。何も開始せず、ログにも何も書きません。",
+            "announcedFor": "予定日時",
+            "announcedPlaceholder": "9/21（月）20時",
+            "announcedHint": "シートに印刷される日付と時刻です。入力したとおりに印刷されます。"
         },
         "directory": {
             "title": "名簿（{n}）",

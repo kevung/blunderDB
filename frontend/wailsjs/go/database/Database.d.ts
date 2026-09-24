@@ -155,6 +155,8 @@ export function DirectionRounds(arg1:number):Promise<number>;
 
 export function DirectionStore():Promise<direction.Store>;
 
+export function DirectionUpcomingSheetHTML(arg1:number,arg2:string):Promise<string>;
+
 export function Directory():Promise<Array<database.DirectoryEntry>>;
 
 export function DirectoryCSV():Promise<string>;
@@ -538,3 +540,5 @@ export function WithdrawParticipant(arg1:number,arg2:string,arg3:boolean):Promis
 export function WriteDirectionPage(arg1:number):Promise<string>;
 
 export function WriteDirectionPairingSheet(arg1:number,arg2:number):Promise<string>;
+
+export function WriteDirectionUpcomingSheet(arg1:number,arg2:string):Promise<string>;

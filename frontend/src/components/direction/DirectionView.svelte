@@ -70,6 +70,7 @@
         chooseDirectionOutputDir,
         forgetDirectionOutputDir,
         writePairingSheet,
+        writeUpcomingSheet,
         directionRounds,
         directory,
         directorySources,
@@ -176,6 +177,11 @@
     let dirSources = $state(/** @type {DirectorySource[]} */ ([]));
     let openSlots = $state(/** @type {FreeSlot[]} */ ([]));
     let sheetRound = $state(0);
+    /* La feuille d'une ronde à venir (#451) : les appariements de la file, datés par le
+       directeur, imprimés sans rien lancer. */
+    let announcing = $state(false);
+    let announced = $state('');
+    const upcoming = $derived((view?.proposals || []).filter((a) => a.kind === 'start_match').length);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -283,6 +289,15 @@
             statusBarTextStore.set(tMsg('direction.sheet.error'));
             return;
         }
+        BrowserOpenURL('file://' + path);
+    }
+    async function onPrintUpcoming() {
+        const path = await writeUpcomingSheet(announced);
+        if (!path) {
+            statusBarTextStore.set(tMsg('direction.sheet.error'));
+            return;
+        }
+        announcing = false;
         BrowserOpenURL('file://' + path);
     }
 
@@ -504,9 +519,27 @@
                      « Tout lancer » tiennent sans défiler. -->
                 <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
                     {#snippet actions()}
-                        {#if rounds > 0}
+                        {#if rounds > 0 || upcoming > 0}
                             <div class="sheet">
-                                {#if rounds > 1}
+                                {#if announcing}
+                                    <label title={$t('direction.sheet.announcedHint')}>
+                                        {$t('direction.sheet.announcedFor')}
+                                        <input type="text" data-testid="direction-sheet-announced" bind:value={announced} placeholder={$t('direction.sheet.announcedPlaceholder')} />
+                                    </label>
+                                    <button type="button" data-testid="direction-sheet-upcoming-print" onclick={onPrintUpcoming}>
+                                        {$t('direction.sheet.print')}
+                                    </button>
+                                    <button type="button" data-testid="direction-sheet-upcoming-cancel" onclick={() => (announcing = false)}>
+                                        {$t('common.cancel')}
+                                    </button>
+                                {:else}
+                                    {#if upcoming > 0}
+                                        <button type="button" data-testid="direction-sheet-upcoming" title={$t('direction.sheet.upcomingHint')} onclick={() => (announcing = true)}>
+                                            {$t('direction.sheet.upcoming')}
+                                        </button>
+                                    {/if}
+                                {/if}
+                                {#if rounds > 1 && !announcing}
                                     <label title={$t('direction.sheet.roundHint')}>
                                         {$t('direction.sheet.round')}
                                         <select bind:value={sheetRound}>
@@ -517,9 +550,11 @@
                                         </select>
                                     </label>
                                 {/if}
-                                <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
-                                    {$t('direction.sheet.print')}
-                                </button>
+                                {#if rounds > 0 && !announcing}
+                                    <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
+                                        {$t('direction.sheet.print')}
+                                    </button>
+                                {/if}
                             </div>
                         {/if}
                     {/snippet}
@@ -650,7 +685,8 @@
     }
 
     .sheet button,
-    .sheet select {
+    .sheet select,
+    .sheet input {
         padding: 0.1rem 0.6rem;
         font-size: var(--font-size-small);
         border: 1px solid var(--color-border);

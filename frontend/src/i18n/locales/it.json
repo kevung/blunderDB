@@ -2157,7 +2157,8 @@
             "in_progress": "in corso",
             "no_match": "nessuna partita",
             "versus": "contro",
-            "cancel": "Annulla"
+            "cancel": "Annulla",
+            "announced": "Annunciato: {at}"
         },
         "display": {
             "title": "Display della sala",
@@ -2174,7 +2175,12 @@
             "round": "Turno",
             "roundHint": "Quale turno stampare. Il più recente per impostazione predefinita.",
             "latest": "il più recente",
-            "error": "Impossibile scrivere il foglio degli abbinamenti."
+            "error": "Impossibile scrivere il foglio degli abbinamenti.",
+            "upcoming": "Prossimo turno…",
+            "upcomingHint": "Stampa gli abbinamenti della coda, datati, senza avviare nulla: nel registro non viene scritto nulla.",
+            "announcedFor": "Annunciato per",
+            "announcedPlaceholder": "lunedì 21/09, ore 20",
+            "announcedHint": "La data e l'ora stampate sul foglio, così come le scrivi."
         },
         "directory": {
             "title": "Rubrica ({n})",

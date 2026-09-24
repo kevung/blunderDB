@@ -2157,7 +2157,8 @@
             "in_progress": "käynnissä",
             "no_match": "ei ottelua",
             "versus": "vastaan",
-            "cancel": "Peruuta"
+            "cancel": "Peruuta",
+            "announced": "Ilmoitettu: {at}"
         },
         "display": {
             "title": "Salin näyttö",
@@ -2174,7 +2175,12 @@
             "round": "Kierros",
             "roundHint": "Mikä kierros tulostetaan. Oletuksena viimeisin.",
             "latest": "viimeisin",
-            "error": "Parituslomakkeen kirjoittaminen epäonnistui."
+            "error": "Parituslomakkeen kirjoittaminen epäonnistui.",
+            "upcoming": "Tuleva kierros…",
+            "upcomingHint": "Tulostaa jonon parit päivättyinä käynnistämättä mitään: lokiin ei kirjoiteta mitään.",
+            "announcedFor": "Ilmoitettu ajalle",
+            "announcedPlaceholder": "maanantai 21.9. klo 20",
+            "announcedHint": "Arkille tulostettava päivä ja kellonaika sellaisina kuin kirjoitat ne."
         },
         "directory": {
             "title": "Hakemisto ({n})",
