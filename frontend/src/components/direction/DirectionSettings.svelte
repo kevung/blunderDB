@@ -186,6 +186,28 @@
         phase.lengths = parsed.length ? parsed : undefined;
     }
 
+    /* Les tables hors service (#438) : un plateau cassé, une table retirée. Le moteur les saute
+       à l'attribution ; baisser le nombre de tables, lui, retirerait la dernière et non la
+       cassée. La liste s'écrit comme les longueurs par tour, des numéros séparés par des
+       virgules, et reste éditable en cours de tournoi. */
+    function unavailableText() {
+        return (config?.tables?.unavailable || []).join(', ');
+    }
+
+    /** @param {string} text */
+    function setUnavailable(text) {
+        if (!config) return;
+        const parsed = [
+            ...new Set(
+                String(text)
+                    .split(/[,;\s]+/)
+                    .map((x) => parseInt(x.trim(), 10))
+                    .filter((n) => Number.isFinite(n) && n > 0)
+            )
+        ].sort((a, b) => a - b);
+        config.tables.unavailable = parsed.length ? parsed : undefined;
+    }
+
     /*
      * La dotation (issue #393).
      *
@@ -398,6 +420,17 @@
             <label title={$t('direction.settings.tableCountHint')}>
                 {$t('direction.settings.tableCount')}
                 <input type="number" data-testid="direction-settings-tables" min="0" max="200" bind:value={config.tables.count} />
+            </label>
+            <label title={$t('direction.settings.unavailableHint')}>
+                {$t('direction.settings.unavailable')}
+                <input
+                    type="text"
+                    class="lengths"
+                    data-testid="direction-settings-unavailable"
+                    value={unavailableText()}
+                    placeholder={$t('direction.settings.unavailablePlaceholder')}
+                    onchange={(e) => setUnavailable(e.currentTarget.value)}
+                />
             </label>
             {#if entrantCount > 0}
                 <p class="facts">

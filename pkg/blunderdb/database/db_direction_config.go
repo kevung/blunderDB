@@ -1,9 +1,13 @@
 package database
 
 import (
+	"cmp"
 	"context"
+	"encoding/json"
 	"fmt"
+	"slices"
 	"strconv"
+	"strings"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -83,7 +87,7 @@ func (d *Database) PreviewDirectionConfig(tournamentID int64, configJSON string)
 		return nil, direction.ErrNoDirection
 	}
 	p := &ConfigPreview{Opened: len(st.Phases), Current: st.Current, Started: dir.Started()}
-	p.Changes = diffConfig(cur, next)
+	p.Changes = append(diffConfig(cur, next), displacedMatches(st, cur, next)...)
 	p.Locks = phaseLocks(st, next)
 	p.Refusals = configRefusals(st, next)
 	return p, nil
@@ -162,6 +166,12 @@ func diffConfig(cur, next tournoi.Config) []ConfigChange {
 
 	add("name", 0, cur.Name, next.Name)
 	num("tableCount", 0, cur.Tables.Count, next.Tables.Count)
+	add("tablesUnavailable", 0, joinInts(sortedInts(cur.Tables.Unavailable)), joinInts(sortedInts(next.Tables.Unavailable)))
+	if reservedKey(cur.Tables.Reserved) != reservedKey(next.Tables.Reserved) {
+		// The numbers alone may be equal while the purpose changed (the final's table becomes
+		// the consolation's): the change is still one, and still shown.
+		out = append(out, ConfigChange{Code: "tablesReserved", From: reservedTables(cur.Tables.Reserved), To: reservedTables(next.Tables.Reserved)})
+	}
 	add("minPerPoint", 0, fmt.Sprintf("%g", cur.MinPerPoint), fmt.Sprintf("%g", next.MinPerPoint))
 	num("breaks", 0, len(cur.Breaks), len(next.Breaks))
 	num("prizes", 0, len(cur.Prizes.Sections), len(next.Prizes.Sections))
@@ -204,6 +214,74 @@ func diffConfig(cur, next tournoi.Config) []ConfigChange {
 }
 
 func itoa(n int) string { return strconv.Itoa(n) }
+
+// displacedMatches names each running match whose table the new configuration takes out of
+// service (#438), with the free table it could move to — "unavailableBusy", From the table,
+// To the proposal — or "unavailableBusyFull" when the hall has none left. The engine does not
+// move a running match on its own, and the director should not have to count free tables.
+func displacedMatches(st *tournoi.State, cur, next tournoi.Config) []ConfigChange {
+	var out []ConfigChange
+	running := st.Running()
+	used := map[int]bool{}
+	for _, m := range running {
+		if m.Table > 0 {
+			used[m.Table] = true
+		}
+	}
+	for _, m := range running {
+		if m.Table <= 0 || !slices.Contains(next.Tables.Unavailable, m.Table) || slices.Contains(cur.Tables.Unavailable, m.Table) {
+			continue
+		}
+		free := freeTable(next.Tables, used, m)
+		if free == 0 {
+			out = append(out, ConfigChange{Code: "unavailableBusyFull", From: itoa(m.Table)})
+			continue
+		}
+		used[free] = true
+		out = append(out, ConfigChange{Code: "unavailableBusy", From: itoa(m.Table), To: itoa(free)})
+	}
+	return out
+}
+
+// freeTable is the smallest table a running match could move to: in service, not reserved for
+// something else, not taken. The same rule as the engine's assignTables; 0 when there is none.
+func freeTable(t tournoi.Tables, used map[int]bool, m *tournoi.Match) int {
+	limit := t.Count
+	if limit == 0 {
+		limit = len(used) + len(t.Unavailable) + len(t.Reserved) + 1
+	}
+	for n := 1; n <= limit; n++ {
+		if !used[n] && t.AvailableFor(n, m.Section, m.Phase) {
+			return n
+		}
+	}
+	return 0
+}
+
+func sortedInts(v []int) []int {
+	out := slices.Clone(v)
+	slices.Sort(out)
+	return out
+}
+
+// reservedTables renders the reserved tables' numbers, in order.
+func reservedTables(rules []tournoi.TableRule) string {
+	var n []int
+	for _, r := range rules {
+		n = append(n, r.Table)
+	}
+	return joinInts(sortedInts(n))
+}
+
+// reservedKey is a canonical form of the reservations, so their order in the file is no change.
+func reservedKey(rules []tournoi.TableRule) string {
+	c := slices.Clone(rules)
+	slices.SortFunc(c, func(a, b tournoi.TableRule) int {
+		return cmp.Or(cmp.Compare(a.Table, b.Table), strings.Compare(a.Section, b.Section), cmp.Compare(a.Phase, b.Phase))
+	})
+	b, _ := json.Marshal(c)
+	return string(b)
+}
 
 // joinInts renders a length-per-round list as the organiser announces it: "15, 13, 11".
 func joinInts(v []int) string {

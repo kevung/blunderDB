@@ -293,3 +293,114 @@ func TestDirectionConfig_ReopenCorrectReclose(t *testing.T) {
 		t.Errorf("the final standings ignored the correction: %s still first", winner)
 	}
 }
+
+// A table out of service (#438): the engine has had `tables.unavailable` since v0.2.0, and the
+// preview said nothing about it — `changes: null` for a broken board, so "save" looked like a
+// no-op. Adding it and taking it back are both changes, and both are named.
+func TestDirectionConfig_PreviewNamesAnUnavailableTable(t *testing.T) {
+	d := newTestDB(t)
+	tID := preparedDirection(t, d)
+
+	cfg := configOf(t, d, tID)
+	cfg.Tables.Unavailable = []int{7, 5}
+	p, err := d.PreviewDirectionConfig(tID, mustJSON(t, cfg))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changeCodes(p.Changes) != "tablesUnavailable" {
+		t.Fatalf("expected the unavailable tables, got %s", changeCodes(p.Changes))
+	}
+	if c := p.Changes[0]; c.From != "" || c.To != "5, 7" {
+		t.Errorf("the change reads the tables in order, got %+v", c)
+	}
+	if err := d.SetDirectionConfig(tID, mustJSON(t, cfg)); err != nil {
+		t.Fatal(err)
+	}
+
+	back := configOf(t, d, tID)
+	back.Tables.Unavailable = []int{5}
+	p, err = d.PreviewDirectionConfig(tID, mustJSON(t, back))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changeCodes(p.Changes) != "tablesUnavailable" || p.Changes[0].From != "5, 7" || p.Changes[0].To != "5" {
+		t.Errorf("taking a table back into service reads %+v", p.Changes)
+	}
+}
+
+// A reserved table is a change too, including when only what it is reserved FOR changes.
+func TestDirectionConfig_PreviewNamesAReservedTable(t *testing.T) {
+	d := newTestDB(t)
+	tID := preparedDirection(t, d)
+
+	cfg := configOf(t, d, tID)
+	cfg.Tables.Reserved = []tournoi.TableRule{{Table: 8, Section: "main", Phase: 2}}
+	p, err := d.PreviewDirectionConfig(tID, mustJSON(t, cfg))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changeCodes(p.Changes) != "tablesReserved" || p.Changes[0].To != "8" {
+		t.Fatalf("expected the reserved table, got %+v", p.Changes)
+	}
+	if err := d.SetDirectionConfig(tID, mustJSON(t, cfg)); err != nil {
+		t.Fatal(err)
+	}
+
+	other := configOf(t, d, tID)
+	other.Tables.Reserved = []tournoi.TableRule{{Table: 8, Section: "conso"}}
+	p, err = d.PreviewDirectionConfig(tID, mustJSON(t, other))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changeCodes(p.Changes) != "tablesReserved" {
+		t.Errorf("a reservation that changes its purpose is a change, got %s", changeCodes(p.Changes))
+	}
+}
+
+// The board breaks under a match being played: the list says so, and names a free table to
+// move it to — the director should not have to go and count them.
+func TestDirectionConfig_UnavailableTableUnderARunningMatch(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 12)
+	runningMatch(t, d, tID)
+
+	cfg := configOf(t, d, tID)
+	busy := map[int]bool{}
+	v, err := d.GetDirection(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range v.Running {
+		busy[m.Table] = true
+	}
+	if !busy[3] || busy[7] {
+		t.Fatalf("the fixture expects tables 1-6 busy, got %v", busy)
+	}
+	cfg.Tables.Unavailable = []int{3}
+	p, err := d.PreviewDirectionConfig(tID, mustJSON(t, cfg))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changeCodes(p.Changes) != "tablesUnavailable,unavailableBusy" {
+		t.Fatalf("expected the table and its match, got %s", changeCodes(p.Changes))
+	}
+	if c := p.Changes[1]; c.From != "3" || c.To != "7" {
+		t.Errorf("the match on table 3 should be offered table 7, got %+v", c)
+	}
+
+	// The whole hall is busy: the list still says it, without inventing a table.
+	cfg.Tables.Count = 6
+	p, err = d.PreviewDirectionConfig(tID, mustJSON(t, cfg))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(changeCodes(p.Changes), "unavailableBusyFull") {
+		t.Errorf("no free table left must be said, got %s", changeCodes(p.Changes))
+	}
+
+	// And the engine takes the table out of service mid-tournament.
+	cfg.Tables.Count = 8
+	if err := d.SetDirectionConfig(tID, mustJSON(t, cfg)); err != nil {
+		t.Fatalf("declaring a table out of service mid-tournament: %v", err)
+	}
+}

@@ -33,18 +33,19 @@ export const ENTRANTS = [
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{directed?: boolean}} [opts] `directed: false` part d'un tournoi non dirigé, pour
- *   mesurer le coût d'entrée depuis rien.
+ * @param {{directed?: boolean, tables?: number}} [opts] `directed: false` part d'un tournoi non
+ *   dirigé, pour mesurer le coût d'entrée depuis rien ; `tables` règle la taille de la salle
+ *   (4 par défaut).
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed }) => {
+        ({ entrants, directed, tableCount }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
-            const CONFIG = {
+            let CONFIG = {
                 name: 'Open de Lyon',
-                tables: { count: 4 },
+                tables: { count: tableCount },
                 phases: [{ kind: 'swiss_lives', length: 7, lives: 2, mode: 'continuous', target: 0 }]
             };
 
@@ -135,8 +136,20 @@ export async function installDirectionEngine(page, opts = {}) {
                 return Promise.resolve(null);
             };
             db.GetDirection = () => Promise.resolve(exists ? view() : null);
-            db.SetDirectionConfig = () => Promise.resolve(null);
-            db.PreviewDirectionConfig = () => Promise.resolve({ changes: [], refusals: [], locks: [], opened: 0, current: -1, started: false });
+            // La configuration enregistrée est gardée, et l'aperçu nomme ce qui sépare la
+            // candidate de celle en vigueur — pour les tables hors service seulement (#438) : le
+            // reste de la comparaison est tenu en Go.
+            db.SetDirectionConfig = (_id, blob) => {
+                CONFIG = JSON.parse(blob || '{}');
+                events += 1;
+                return Promise.resolve(null);
+            };
+            db.PreviewDirectionConfig = (_id, blob) => {
+                const next = JSON.parse(blob || '{}');
+                const list = (c) => (c?.tables?.unavailable || []).join(', ');
+                const changes = list(CONFIG) === list(next) ? [] : [{ code: 'tablesUnavailable', phase: 0, from: list(CONFIG), to: list(next) }];
+                return Promise.resolve({ changes, refusals: [], locks: [], opened: 0, current: -1, started: false });
+            };
             db.SetDirectionStrings = () => Promise.resolve(null);
             db.WriteDirectionPage = () => Promise.resolve('');
             db.DirectionRounds = () => Promise.resolve(running.length ? 1 : 0);
@@ -248,10 +261,10 @@ export async function installDirectionEngine(page, opts = {}) {
 
             db.TableGrid = () =>
                 Promise.resolve(
-                    Array.from({ length: 4 }, (_, i) => {
+                    Array.from({ length: CONFIG.tables.count }, (_, i) => {
                         const t = i + 1;
                         const m = running.find((x) => x.Table === t);
-                        if (!m) return { table: t, free: true };
+                        if (!m) return (CONFIG.tables.unavailable || []).includes(t) ? { table: t, free: false, unavailable: true } : { table: t, free: true };
                         return {
                             table: t,
                             free: false,
@@ -330,6 +343,6 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.GetMatchesByTournament = () => Promise.resolve([]);
         },
-        { entrants: ENTRANTS, directed: opts.directed !== false }
+        { entrants: ENTRANTS, directed: opts.directed !== false, tableCount: opts.tables || 4 }
     );
 }

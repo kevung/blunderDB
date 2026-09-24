@@ -1597,6 +1597,13 @@ qu'elle a distribué — et elles sont grisées avec leur raison. Enregistrer en
 cours de tournoi montre d'abord la liste de ce qui va changer, et demande
 confirmation.
 
+Une table au plateau cassé se déclare dans **Tables hors service** : ses numéros,
+séparés par des virgules (« 7, 12 »). Le moteur ne l'attribue plus, et la grille
+la montre indisponible ; baisser le nombre de tables retirerait la dernière, pas
+la cassée. Si un match est en cours sur une table mise hors service, la liste de
+ce qui va changer le dit et nomme une table libre où le déplacer, depuis la fiche
+du match.
+
 Les **têtes de série** sont une option, éteinte par défaut : l'étude du moteur
 conclut « pas de têtes de série protégées », qui est la culture actuelle du
 backgammon. Activées, les joueurs sont placés par cote.

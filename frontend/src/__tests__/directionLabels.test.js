@@ -152,6 +152,23 @@ describe('la liste de ce qui va changer (#385)', () => {
         expect(renderConfigChange(t, { code: 'name', phase: 0, from: '', to: 'Open de Lyon' })).toBe('Nom : aucun → Open de Lyon');
     });
 
+    test('les tables hors service et réservées se lisent (#438)', () => {
+        expect(renderConfigChange(t, { code: 'tablesUnavailable', phase: 0, from: '', to: '5, 7' })).toBe('Tables hors service : aucun → 5, 7');
+        expect(renderConfigChange(t, { code: 'tablesReserved', phase: 0, from: '8', to: '8' })).toBe('Tables réservées : 8 → 8');
+        expect(renderConfigChange(t, { code: 'unavailableBusy', phase: 0, from: '3', to: '7' })).toBe('Un match est en cours sur la table 3 : le déplacer sur la table 7 (fiche du match, ⋯).');
+        expect(renderConfigChange(t, { code: 'unavailableBusyFull', phase: 0, from: '3' })).toBe("Un match est en cours sur la table 3, et aucune table n'est libre pour l'accueillir.");
+    });
+
+    test('chaque code des tables a sa phrase dans les neuf langues', async () => {
+        for (const lang of ['fr', 'en', 'de', 'el', 'es', 'fi', 'it', 'ja', 'ru']) {
+            const catalog = (await import(`../i18n/locales/${lang}.json`)).default;
+            const tl = tFor(catalog);
+            for (const code of ['tablesUnavailable', 'tablesReserved', 'unavailableBusy', 'unavailableBusyFull']) {
+                expect(renderConfigChange(tl, { code, phase: 0, from: '3', to: '7' }), `${lang}: ${code}`).not.toBe(code);
+            }
+        }
+    });
+
     test('un code inconnu s’affiche tel quel plutôt que de laisser un blanc', () => {
         expect(renderConfigChange(t, { code: 'somethingNew', phase: 1 })).toBe('somethingNew');
         expect(renderConfigChange(t, null)).toBe('');
