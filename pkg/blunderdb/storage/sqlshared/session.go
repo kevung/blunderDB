@@ -113,10 +113,14 @@ func (s *SessionStore) Load(ctx context.Context, scope string) (*storage.Session
 	return state, nil
 }
 
-// Clear removes the persisted session state for the scope.
+// Clear removes the persisted session state for the scope: the six rows Save
+// writes, and only them. The table also holds the pinned filters
+// (FilterStore), which forgetting where one was reading must not unpin.
 func (s *SessionStore) Clear(ctx context.Context, scope string) error {
 	if _, err := s.DB.Exec(ctx,
-		`DELETE FROM session_state WHERE `+s.DB.ScopeColumn()+` = ?`, s.DB.ScopeArg(scope)); err != nil {
+		`DELETE FROM session_state WHERE `+s.DB.ScopeColumn()+` = ? AND key IN (?,?,?,?,?,?)`, s.DB.ScopeArg(scope),
+		sessionKeySearchCommand, sessionKeySearchPosition, sessionKeyPositionIndex,
+		sessionKeyPositionIDs, sessionKeyActiveSearch, sessionKeyViews); err != nil {
 		return errf(s.DB, "clear session", err)
 	}
 	return nil

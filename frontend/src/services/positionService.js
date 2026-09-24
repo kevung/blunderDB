@@ -402,7 +402,12 @@ export async function loadPositionsByFilters({
     gameTypeFilter = '',
     encounterFilter = '',
     commentOriginFilter = '',
-    tagFilter = ''
+    tagFilter = '',
+    // The board a saved filter was stored with (filterLibraryService.js):
+    // the structure — or the `like` target — the question was asked with,
+    // taken as it is whatever the mode. Without it the query board is the
+    // one on screen, a structure only in EDIT (#410).
+    queryBoard = null
 } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
@@ -417,7 +422,7 @@ export async function loadPositionsByFilters({
 
     try {
         // The structure comes from the board only in EDIT, the query board (#410).
-        let currentPosition = searchQueryBoard(get(positionStore));
+        let currentPosition = queryBoard ?? searchQueryBoard(get(positionStore));
 
         // The exclude ("Sauf") structure must use the same mirror orientation as
         // the include structure so its points/colors stay aligned with stored
@@ -481,7 +486,7 @@ export async function loadPositionsByFilters({
         // répond, là où la recherche par structure ne pardonne pas le dessin
         // approximatif.
         let likeTarget = likeTargetId;
-        if (likeFilter && !likeTarget && get(statusBarModeStore) !== 'EDIT') {
+        if (likeFilter && !likeTarget && !queryBoard && get(statusBarModeStore) !== 'EDIT') {
             likeTarget = positionsStore.idAt(get(currentPositionIndexStore)) || 0;
             if (!likeTarget) {
                 setStatusBarMessage(tMsg('similar.noPosition'));

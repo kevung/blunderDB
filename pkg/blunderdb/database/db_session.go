@@ -187,8 +187,20 @@ func (d *Database) DeleteFilter(id int64) error {
 	return d.store.Filters().Delete(context.Background(), "", id)
 }
 
-// LoadFilters returns the filter library, oldest first, as the id/name/command
-// maps the frontend's filter picker consumes.
+// SetFilterPinned pins or unpins a filter of the library, or reports
+// storage.ErrNotFound. The pinned filters are the ones the interface keeps
+// within one gesture.
+func (d *Database) SetFilterPinned(id int64, pinned bool) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.db == nil {
+		return errNotOpened
+	}
+	return d.store.Filters().SetPinned(context.Background(), "", id, pinned)
+}
+
+// LoadFilters returns the filter library, oldest first, as the
+// id/name/command/pinned maps the frontend's filter picker consumes.
 func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -204,6 +216,7 @@ func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 			"id":      f.ID,
 			"name":    f.Name,
 			"command": f.Command,
+			"pinned":  f.Pinned,
 		})
 	}
 	return filters, nil

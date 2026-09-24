@@ -245,6 +245,7 @@ export default {
 </div>
 <p>Der Filter <strong>Matches &amp; Turniere</strong> stützt sich auf einen gemeinsamen Auswahldialog (modales Fenster) anstelle der Eingabe numerischer Kennungen: zwei Kontrollkästchen-Listen, eine für Matches und eine für Turniere, jeweils per Text filterbar (Spieler, Datum, Ereignis für Matches; Name, Datum, Ort für Turniere), mit den Schaltflächen <em>Alle</em> / <em>Keine</em>, die nur auf die aktuell gefilterte Teilmenge wirken. Das Ankreuzen eines Turniers kreuzt automatisch dessen zugehörige Matches in der Matchliste an (und graut sie aus), wodurch sichtbar wird, dass ein Turnier der Gesamtheit seiner Matches entspricht.</p>
 <p>Das Suchpanel enthält an seinem linken Rand drei Reiter: <em>Suche</em> (die Filter), <em>Verlauf</em> und <em>Gespeichert</em>. Der Reiter <strong>Verlauf</strong> listet die vergangenen Suchen mit ihrem Datum und ihrem Befehl auf: Ein Klick wählt eine Suche aus und zeigt die zugehörige Position auf dem Brett an, ein Doppelklick führt sie erneut aus. Jeder Eintrag kann in der Filterbibliothek gespeichert (Lesezeichen-Symbol, durch Angabe eines Filternamens) oder gelöscht werden. Der Reiter <strong>Gespeichert</strong> enthält die <strong>Filterbibliothek</strong>: Doppelklicken Sie auf einen gespeicherten Filter, um die entsprechende Suche erneut zu starten (siehe Anhang: Fortgeschrittene Nutzung der Filter). Der Befehl <code>history</code> (Alias <code>hi</code>) öffnet das Suchpanel.</p>
+<p>Der Stern eines Filters der Bibliothek <strong>heftet</strong> ihn <strong>an</strong>. Angeheftete Filter erscheinen als Chips oben im Bereich, welcher Reiter auch offen ist, nummeriert in der Reihenfolge der Bibliothek: Ein Klick auf einen Chip startet den Filter, und <code>ALT-1</code> … <code>ALT-9</code> starten den angehefteten Filter dieses Rangs von jedem Bildschirm im Modus NORMAL oder EDIT aus, ohne den Bereich zu öffnen. Der Filter stellt dann dieselbe Frage wie beim Doppelklick, Steinstruktur eingeschlossen. Die Anheftung gehört zur Datenbank: Sie folgt einem umbenannten Filter, verschwindet mit einem gelöschten und reist nicht mit dem Export der Bibliothek mit.</p>
 <p>Eine erneut ausgeführte Suche behält ihre Rangfolge: <code>s like42</code> ordnet nach der Nähe zu Position 42, <code>s like</code> nach der Nähe zu dem mit der Suche gespeicherten Brett — dem durchgesehenen oder gezeichneten. Ein Eintrag ohne gespeichertes Brett wird nicht gegen das Brett auf dem Bildschirm ausgeführt, und die Statusleiste meldet es.</p>
 <div class="admonition tip">
 <p>Siehe Liste der Befehle für die Liste der verfügbaren Filter.</p>
@@ -1003,6 +1004,10 @@ export default {
 <td>LEERTASTE</td>
 <td>Die Befehlszeile öffnen.</td>
 </tr>
+<tr>
+<td>ALT-1 … ALT-9</td>
+<td>Den angehefteten Filter dieses Rangs der Filterbibliothek starten.</td>
+</tr>
 </tbody>
 </table>
 <h3>Werkzeuge</h3>
@@ -1181,6 +1186,14 @@ export default {
 <tr>
 <td>Doppelklick</td>
 <td>Die Suche des Filters ausführen.</td>
+</tr>
+<tr>
+<td>Klick (auf den Stern)</td>
+<td>Den Filter anheften oder lösen.</td>
+</tr>
+<tr>
+<td>Klick (auf einen angehefteten Chip)</td>
+<td>Die Suche des angehefteten Filters ausführen.</td>
 </tr>
 </tbody>
 </table>

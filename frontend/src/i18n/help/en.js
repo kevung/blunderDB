@@ -245,6 +245,7 @@ export default {
 </div>
 <p>The <strong>Matches &amp; Tournaments</strong> filter is backed by a shared picker (a modal window) instead of typed numeric IDs: two checkbox lists, one for matches and one for tournaments, each text-filterable (player, date, event for matches; name, date, location for tournaments), with <em>All</em> / <em>None</em> buttons that act only on the currently filtered subset. Checking a tournament automatically checks (and greys out) its member matches in the match list, making visible the fact that a tournament is equivalent to the set of its matches.</p>
 <p>The search panel has three tabs along its left edge: <em>Search</em> (the filters), <em>History</em> and <em>Saved</em>. The <strong>History</strong> tab lists past searches with their date and command: a click selects a search and displays the associated position on the board, a double-click re-runs it. Each entry can be saved to the filter library (bookmark icon, by giving the filter a name) or deleted. The <strong>Saved</strong> tab contains the <strong>filter library</strong>: double-click a saved filter to re-run the corresponding search (see Annex: Advanced Filter Usage). The <code>history</code> command (alias <code>hi</code>) opens the search panel.</p>
+<p>The star of a library filter <strong>pins</strong> it. Pinned filters show as chips at the top of the panel, whichever tab is open, numbered in library order: a click on a chip runs the filter, and <code>ALT-1</code> … <code>ALT-9</code> run the pinned filter of that rank from any screen in NORMAL or EDIT mode, without opening the panel. The filter then asks the same question as the double-click, checker structure included. The pin belongs to the database: it follows a renamed filter, disappears with a deleted one and does not travel with an export of the library.</p>
 <p>A replayed search keeps its ranking: <code>s like42</code> ranks against position 42, and <code>s like</code> against the board saved with the search — the one being browsed or drawn. An entry that kept no board is not replayed against the one on screen, and the status bar says so.</p>
 <div class="admonition tip">
 <p>Refer to list of commands for the list of available filters.</p>
@@ -1003,6 +1004,10 @@ export default {
 <td>SPACE</td>
 <td>Open the command line.</td>
 </tr>
+<tr>
+<td>ALT-1 … ALT-9</td>
+<td>Run the pinned filter of that rank in the filter library.</td>
+</tr>
 </tbody>
 </table>
 <h3>Tools</h3>
@@ -1181,6 +1186,14 @@ export default {
 <tr>
 <td>Double-click</td>
 <td>Execute the filter search.</td>
+</tr>
+<tr>
+<td>Click (on the star)</td>
+<td>Pin or unpin the filter.</td>
+</tr>
+<tr>
+<td>Click (on a pinned chip)</td>
+<td>Run the pinned filter's search.</td>
 </tr>
 </tbody>
 </table>

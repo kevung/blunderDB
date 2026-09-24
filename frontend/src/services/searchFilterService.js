@@ -550,6 +550,63 @@ const FILTER_TOKENS = {
 };
 
 /**
+ * The arguments of loadPositionsByFilters for a stored `s …` command — the
+ * replay of a search history entry or of a saved filter. The search panel and
+ * the pinned filters (filterLibraryService.js, Alt+1…9) both go through here,
+ * so a filter run from anywhere asks the question it asks from the panel.
+ *
+ * @param {string} command - the stored command, `s` or `s …`.
+ * @returns {{ args: object, f: ReturnType<typeof parseSearchCommand> } | null}
+ *   null when the command is not a search.
+ */
+export function replaySearchArgs(command) {
+    if (!(command.startsWith('s ') || command === 's')) return null;
+    const f = parseSearchCommand(command);
+    const args = {
+        filters: f.cmdFilters,
+        includeCube: f.ic,
+        includeScore: f.is,
+        ...Object.fromEntries(NUMERIC_FILTERS.map((n) => [`${n.key}Filter`, f[n.short]])),
+        searchText: f.st,
+        decisionTypeFilter: f.dt,
+        diceRollFilter: f.dr,
+        movePatternFilter: f.mpf,
+        dateFilter: f.cd,
+        noContactFilter: f.nc,
+        mirrorPositionFilter: f.mp,
+        individuallyImportedFilter: f.ii,
+        flaggedFilter: f.fl,
+        searchCommand: command,
+        matchIDsFilter: f.matchIDs,
+        tournamentIDsFilter: f.tournamentIDs,
+        diceRollMode: f.drMode,
+        playerFilter: f.plf,
+        // Command-line-only tokens with no panel checkbox (#203): unlike
+        // commentFilter/cubeResponseFilter, positionService does not
+        // re-derive these from `filters`, so they must be forwarded
+        // explicitly or a replayed `s D xD65`/`s id5,10` silently loses
+        // the exclusion/restriction on double-click.
+        exceptDiceFilter: f.xd,
+        positionIDsFilter: f.posIds,
+        gamePhaseFilter: f.ph,
+        // `gt:`, `#tag` et `n>3` étaient lus par parseSearchCommand et
+        // jamais transmis (#362) : le rejeu d'un historique ou d'un
+        // filtre de la bibliothèque rendait la recherche sans eux.
+        gameTypeFilter: f.gt,
+        tagFilter: f.tags,
+        encounterFilter: f.encounterFilter,
+        commentOriginFilter: f.coOrigin,
+        // Le classement (ADR-0043), perdu de la même façon (#404) :
+        // `s like42` rejoué partait en recherche non classée.
+        likeFilter: f.likeFilter,
+        likeTargetId: f.likeTargetId,
+        likeMaxDistance: f.likeMaxDistance,
+        likeWidened: f.likeWidened
+    };
+    return { args, f };
+}
+
+/**
  * The command-line token hint for a filter label, shown as the filter's `title`
  * (hover tooltip) in SearchPanel so the cryptic `s` tokens are discoverable
  * without leaving the UI. Returns '' for unknown labels. The string is

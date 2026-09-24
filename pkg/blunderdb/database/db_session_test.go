@@ -26,11 +26,26 @@ func TestFilterLibraryErrorsAreStorageSentinels(t *testing.T) {
 	if err := db.DeleteFilter(9999); !errors.Is(err, storage.ErrNotFound) {
 		t.Fatalf("DeleteFilter(unknown id): got %v, want ErrNotFound", err)
 	}
+	if err := db.SetFilterPinned(9999, true); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("SetFilterPinned(unknown id): got %v, want ErrNotFound", err)
+	}
 	if err := db.SaveEditPosition("nope", "{}"); !errors.Is(err, storage.ErrNotFound) {
 		t.Fatalf("SaveEditPosition(unknown name): got %v, want ErrNotFound", err)
 	}
 	if err := db.SaveExcludePosition("nope", "{}"); !errors.Is(err, storage.ErrNotFound) {
 		t.Fatalf("SaveExcludePosition(unknown name): got %v, want ErrNotFound", err)
+	}
+
+	// The pin travels to the frontend with the filter it marks.
+	filters, err := db.LoadFilters()
+	if err != nil || len(filters) != 1 || filters[0]["pinned"] != false {
+		t.Fatalf("LoadFilters before pinning: %v err %v, want one unpinned filter", filters, err)
+	}
+	if err := db.SetFilterPinned(filters[0]["id"].(int64), true); err != nil {
+		t.Fatalf("SetFilterPinned: %v", err)
+	}
+	if filters, err = db.LoadFilters(); err != nil || filters[0]["pinned"] != true {
+		t.Fatalf("LoadFilters after pinning: %v err %v, want it pinned", filters, err)
 	}
 
 	// A filter saved without an edit position carries a NULL column: that is
@@ -62,6 +77,7 @@ func TestSessionFamilyRefusesWhenNotOpened(t *testing.T) {
 		"UpdateFilter":             func() error { return db.UpdateFilter(1, "f", "s") },
 		"DeleteFilter":             func() error { return db.DeleteFilter(1) },
 		"LoadFilters":              func() error { _, err := db.LoadFilters(); return err },
+		"SetFilterPinned":          func() error { return db.SetFilterPinned(1, true) },
 		"SaveEditPosition":         func() error { return db.SaveEditPosition("f", "{}") },
 		"LoadEditPosition":         func() error { _, err := db.LoadEditPosition("f"); return err },
 		"SaveExcludePosition":      func() error { return db.SaveExcludePosition("f", "{}") },

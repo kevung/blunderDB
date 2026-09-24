@@ -42,6 +42,10 @@ Pour utiliser un filtre enregistré dans la bibliothèque,
 2. Rechercher le filtre souhaité.
 3. Double cliquer sur le filtre pour lancer la recherche.
 
+Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il se
+lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir
+:ref:`panneau_recherche`).
+
 Exemples
 --------
 

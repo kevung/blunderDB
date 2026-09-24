@@ -890,6 +890,10 @@ export function SetDirectionStrings(arg1, arg2) {
   return window['go']['database']['Database']['SetDirectionStrings'](arg1, arg2);
 }
 
+export function SetFilterPinned(arg1, arg2) {
+  return window['go']['database']['Database']['SetFilterPinned'](arg1, arg2);
+}
+
 export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['database']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }

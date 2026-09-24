@@ -18,6 +18,11 @@ type filterUpdateReq struct {
 	Command string `json:"command"`
 }
 
+type filterPinReq struct {
+	ID     int64 `json:"id"`
+	Pinned bool  `json:"pinned"`
+}
+
 type editPositionSaveReq struct {
 	FilterName   string `json:"filterName"`
 	EditPosition string `json:"editPosition"`
@@ -44,6 +49,9 @@ func (s *Server) filterRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/filters.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return fs().Delete(ctx, scope, req.ID)
+		})},
+		{http.MethodPost, "/v1/filters.setPinned", rpcVoid(func(ctx context.Context, scope string, req filterPinReq) error {
+			return fs().SetPinned(ctx, scope, req.ID, req.Pinned)
 		})},
 		{http.MethodPost, "/v1/filters.list", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterFilters {
 			return fs().List(ctx, scope)

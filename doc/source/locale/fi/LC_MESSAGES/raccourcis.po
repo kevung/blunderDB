@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 02:58+0200\n"
+"POT-Creation-Date: 2026-09-24 03:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -320,7 +320,15 @@ msgstr "VÄLILYÖNTI"
 msgid "Ouvrir la ligne de commande."
 msgstr "Avaa komentorivi."
 
-#: ../../source/raccourcis.rst:99
+#: ../../source/raccourcis.rst:1
+msgid "ALT-1 … ALT-9"
+msgstr "ALT-1 … ALT-9"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
+msgstr "Käynnistä suodatinkirjaston kyseisen sijan kiinnitetty suodatin."
+
+#: ../../source/raccourcis.rst:100
 msgid "Outils"
 msgstr "Työkalut"
 
@@ -474,7 +482,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
-#: ../../source/raccourcis.rst:129
+#: ../../source/raccourcis.rst:130
 msgid "Onglets de vues"
 msgstr "Näkymävälilehdet"
 
@@ -526,7 +534,7 @@ msgstr "Välilehden kaksoisnapsautus"
 msgid "Renommer la vue."
 msgstr "Nimeä näkymä uudelleen."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:147
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -546,7 +554,7 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:160
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
@@ -566,7 +574,7 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:173
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
@@ -578,7 +586,23 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:185
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur l'étoile)"
+msgstr "Napsautus (tähteen)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Épingler ou désépingler le filtre."
+msgstr "Kiinnitä suodatin tai irrota se."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une pastille épinglée)"
+msgstr "Napsautus (kiinnitettyyn merkkiin)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche du filtre épinglé."
+msgstr "Suorita kiinnitetyn suodattimen haku."
+
+#: ../../source/raccourcis.rst:188
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -614,7 +638,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:201
+#: ../../source/raccourcis.rst:204
 msgid "Panneau Eval"
 msgstr "Eval-paneeli"
 
@@ -622,7 +646,7 @@ msgstr "Eval-paneeli"
 msgid "Désélectionner le coup."
 msgstr "Poista siirron valinta."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:219
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -658,7 +682,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:234
+#: ../../source/raccourcis.rst:237
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -714,7 +738,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 
-#: ../../source/raccourcis.rst:252
+#: ../../source/raccourcis.rst:255
 msgid "Panneau des tournois"
 msgstr "Turnauspaneeli"
 
@@ -755,7 +779,7 @@ msgstr ""
 "muuten poista turnauksen valinta, muuten sulje paneeli (askel "
 "kerrallaan)."
 
-#: ../../source/raccourcis.rst:268
+#: ../../source/raccourcis.rst:271
 msgid "Panneau des collections"
 msgstr "Kokoelmapaneeli"
 
@@ -783,11 +807,11 @@ msgstr ""
 "Palaa kokoelmalistaan, muuten poista kokoelman valinta, muuten sulje "
 "paneeli (askel kerrallaan)."
 
-#: ../../source/raccourcis.rst:283
+#: ../../source/raccourcis.rst:286
 msgid "Panneau Transcription"
 msgstr "Litterointipaneeli"
 
-#: ../../source/raccourcis.rst:285
+#: ../../source/raccourcis.rst:288
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1225,7 +1249,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:335
+#: ../../source/raccourcis.rst:338
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1233,7 +1257,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:338
+#: ../../source/raccourcis.rst:341
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1259,7 +1283,7 @@ msgstr ""
 "heitto on kirjoitettu uudelleen, seuraava numero vahvistaa sen ja avaa "
 "seuraavan päätöksen, kuten asiakirjan lopussa, ja ENTER vie myös sinne."
 
-#: ../../source/raccourcis.rst:349
+#: ../../source/raccourcis.rst:352
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1272,7 +1296,7 @@ msgstr ""
 "korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan "
 "sarakkeesta. Mitään ei kirjata ennen vahvistusta."
 
-#: ../../source/raccourcis.rst:354
+#: ../../source/raccourcis.rst:357
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1284,7 +1308,7 @@ msgstr ""
 "että se korvaisi jälkimmäisen. Pelin loppu tai kohdistimen siirtäminen "
 "päättää sen."
 
-#: ../../source/raccourcis.rst:359
+#: ../../source/raccourcis.rst:362
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1296,7 +1320,7 @@ msgstr ""
 "asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin "
 "odotetulle toiminnolle."
 
-#: ../../source/raccourcis.rst:364
+#: ../../source/raccourcis.rst:367
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1317,7 +1341,7 @@ msgstr ""
 "siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen "
 "samalla."
 
-#: ../../source/raccourcis.rst:372
+#: ../../source/raccourcis.rst:375
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1344,7 +1368,7 @@ msgstr ""
 "sille puolelle, jolta se puuttui. Kumoamispino elää muistissa: se "
 "menetetään, kun luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:383
+#: ../../source/raccourcis.rst:386
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1353,7 +1377,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:390
+#: ../../source/raccourcis.rst:393
 msgid "Planche-contact"
 msgstr "Vedosarkki"
 
@@ -1401,7 +1425,7 @@ msgstr "Avaa asema laudalle ja sulje sarkki."
 msgid "Refermer la planche."
 msgstr "Sulje sarkki."
 
-#: ../../source/raccourcis.rst:407
+#: ../../source/raccourcis.rst:410
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

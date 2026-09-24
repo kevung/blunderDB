@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -59,11 +59,11 @@ msgid ""
 "<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
 "filtres et des exemples."
 msgstr ""
-"Грамматика поиска — команда ``s``, её токены, поиск в текущих результатах с "
-"помощью ``ss`` — описана лишь в одном месте, в разделе :ref:`cmd_filter` "
-"списка команд; сама панель поиска описана в :ref:`руководстве "
-"<panneau_recherche>`. В этом приложении остаются только библиотека фильтров "
-"и примеры."
+"Грамматика поиска — команда ``s``, её токены, поиск в текущих результатах"
+" с помощью ``ss`` — описана лишь в одном месте, в разделе "
+":ref:`cmd_filter` списка команд; сама панель поиска описана в "
+":ref:`руководстве <panneau_recherche>`. В этом приложении остаются только"
+" библиотека фильтров и примеры."
 
 #: ../../source/annexe_filtres.rst:25
 msgid "Bibliothèque de filtres"
@@ -123,11 +123,21 @@ msgstr "Найдите нужный фильтр."
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Дважды щёлкните на фильтре, чтобы запустить поиск."
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"Фильтр, которым пользуются каждый день, закрепляется одним щелчком по его"
+" звёздочке: после этого он запускается клавишами ``ALT-1`` … ``ALT-9`` "
+"без открытия панели (см. :ref:`panneau_recherche`)."
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "Примеры"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ниже приведены примеры использования фильтров в командной строке:"
 
@@ -324,7 +334,7 @@ msgstr "Ошибки в турнире 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Примеры поиска в текущих результатах:"
 
@@ -355,4 +365,3 @@ msgstr "После ``s tn1`` искать решения по кубу"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

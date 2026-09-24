@@ -80,6 +80,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Anki/RandomCardIgnoresSchedule", testAnkiRandomCardIgnoresSchedule},
 		{"Anki/DrawOrderInterleavesTies", testAnkiDrawOrderInterleavesTies},
 		{"Filter/SaveAndList", testFilterSaveAndList},
+		{"Filter/Pins", testFilterPins},
 		{"History/SaveLoadClear", testCommandHistory},
 		{"SearchHistory/SaveListDelete", testSearchHistory},
 		{"Scope/HistoryAndFilterIsolation", testScopeIsolation},

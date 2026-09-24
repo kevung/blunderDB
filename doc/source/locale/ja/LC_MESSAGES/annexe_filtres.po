@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -54,11 +54,9 @@ msgid ""
 "<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
 "filtres et des exemples."
 msgstr ""
-"検索の文法（\\ ``s`` コマンド、そのトークン、\\ ``ss`` による現在の検索結"
-"果内での再検索）は、コマンド一覧の\\ :ref:`cmd_filter` の節に一度だけ記述"
-"されています。検索パネル自体は\\ :ref:`マニュアル <panneau_recherche>` "
-"で説明しています。この付録には、フィルターのライブラリと例だけを残していま"
-"す。"
+"検索の文法（\\ ``s`` コマンド、そのトークン、\\ ``ss`` による現在の検索結果内での再検索）は、コマンド一覧の\\ "
+":ref:`cmd_filter` の節に一度だけ記述されています。検索パネル自体は\\ :ref:`マニュアル "
+"<panneau_recherche>` で説明しています。この付録には、フィルターのライブラリと例だけを残しています。"
 
 #: ../../source/annexe_filtres.rst:25
 msgid "Bibliothèque de filtres"
@@ -110,11 +108,20 @@ msgstr "目的のフィルターを検索します。"
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "フィルターをダブルクリックして検索を開始します。"
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"毎日使うフィルターは星をクリックしてピン留めできます。以後はパネルを開かずに ``ALT-1`` … ``ALT-9`` で実行できます（ "
+":ref:`panneau_recherche` を参照）。"
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "例"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "コマンドラインでのフィルターの使用例をいくつか紹介します："
 
@@ -311,7 +318,7 @@ msgstr "トーナメント2でのエラー"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "現在の結果内での検索例："
 
@@ -342,4 +349,3 @@ msgstr "``s tn1`` の後、キューブの決定を検索する"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

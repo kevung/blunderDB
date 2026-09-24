@@ -245,6 +245,7 @@ export default {
 </div>
 <p><strong>Ottelut ja turnaukset</strong> -suodatin perustuu yhteiseen valitsimeen (modaali-ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä <em>Kaikki</em> / <em>Ei mitään</em> -painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.</p>
 <p>Hakupaneelissa on vasemmassa reunassaan kolme välilehteä: <em>Recherche</em> (suodattimet), <em>Historique</em> ja <em>Enregistrés</em>. <strong>Historique</strong>-välilehti luettelee aiemmat haut päivämäärineen ja komentoineen: napsautus valitsee haun ja näyttää siihen liittyvän aseman laudalla, kaksoisnapsautus suorittaa sen uudelleen. Kunkin merkinnän voi tallentaa suodatinkirjastoon (kirjanmerkkikuvake, antamalla suodattimelle nimen) tai poistaa. <strong>Enregistrés</strong>-välilehti sisältää <strong>suodatinkirjaston</strong>: kaksoisnapsauta tallennettua suodatinta suorittaaksesi vastaavan haun uudelleen (katso Liite: Suodattimien edistynyt käyttö). Komento <code>history</code> (alias <code>hi</code>) avaa hakupaneelin.</p>
+<p>Kirjaston suodattimen tähti <strong>kiinnittää</strong> sen. Kiinnitetyt suodattimet näkyvät merkkeinä paneelin yläreunassa, mikä tahansa välilehti on auki, numeroituina kirjaston järjestyksessä: merkin napsautus käynnistää suodattimen, ja <code>ALT-1</code> … <code>ALT-9</code> käynnistävät kyseisen sijan kiinnitetyn suodattimen miltä tahansa näytöltä tilassa NORMAL tai EDIT avaamatta paneelia. Suodatin esittää silloin saman kysymyksen kuin kaksoisnapsautuksella, nappularakenne mukaan lukien. Kiinnitys kuuluu tietokantaan: se seuraa uudelleennimettyä suodatinta, katoaa poistetun suodattimen mukana eikä kulje kirjaston viennin mukana.</p>
 <p>Uudelleen ajettu haku säilyttää järjestyksensä: <code>s like42</code> järjestää suhteessa asemaan 42 ja <code>s like</code> suhteessa haun mukana tallennettuun lautaan — siihen, jota selattiin tai joka piirrettiin. Merkintää, johon lautaa ei tallennettu, ei ajeta näytöllä olevaa lautaa vastaan, ja tilarivi kertoo sen.</p>
 <div class="admonition tip">
 <p>Katso saatavilla olevien suodattimien luettelo kohdasta komentoluettelo.</p>
@@ -1003,6 +1004,10 @@ export default {
 <td>VÄLILYÖNTI</td>
 <td>Avaa komentorivi.</td>
 </tr>
+<tr>
+<td>ALT-1 … ALT-9</td>
+<td>Käynnistä suodatinkirjaston kyseisen sijan kiinnitetty suodatin.</td>
+</tr>
 </tbody>
 </table>
 <h3>Työkalut</h3>
@@ -1181,6 +1186,14 @@ export default {
 <tr>
 <td>Kaksoisnapsautus</td>
 <td>Suorita suodattimen haku.</td>
+</tr>
+<tr>
+<td>Napsautus (tähteen)</td>
+<td>Kiinnitä suodatin tai irrota se.</td>
+</tr>
+<tr>
+<td>Napsautus (kiinnitettyyn merkkiin)</td>
+<td>Suorita kiinnitetyn suodattimen haku.</td>
 </tr>
 </tbody>
 </table>

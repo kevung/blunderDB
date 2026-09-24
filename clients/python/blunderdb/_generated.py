@@ -266,6 +266,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/filters.saveExcludePosition — JSON."
         return self._call("/v1/filters.saveExcludePosition", payload)
 
+    def filters_set_pinned(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/filters.setPinned — JSON."
+        return self._call("/v1/filters.setPinned", payload)
+
     def filters_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/filters.update — JSON."
         return self._call("/v1/filters.update", payload)

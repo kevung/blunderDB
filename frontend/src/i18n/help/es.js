@@ -245,6 +245,7 @@ export default {
 </div>
 <p>El filtro <strong>Partidas y Torneos</strong> se apoya en un selector común (ventana modal) en lugar de la introducción de identificadores numéricos: dos listas de casillas, una para las partidas y otra para los torneos, cada una filtrable por texto (jugador, fecha, evento para las partidas; nombre, fecha, lugar para los torneos), con botones <em>Todo</em> / <em>Ninguno</em> que solo actúan sobre el subconjunto actualmente filtrado. Marcar un torneo marca automáticamente (y atenúa) sus partidas miembro en la lista de partidas, dejando patente que un torneo equivale al conjunto de sus partidas.</p>
 <p>El panel de búsqueda cuenta con tres pestañas en su borde izquierdo: <em>Búsqueda</em> (los filtros), <em>Historial</em> y <em>Guardados</em>. La pestaña <strong>Historial</strong> enumera las búsquedas anteriores con su fecha y su comando: un clic selecciona una búsqueda y muestra la posición asociada en el tablero, un doble clic la vuelve a ejecutar. Cada entrada puede guardarse en la biblioteca de filtros (icono de marcador, dándole un nombre al filtro) o eliminarse. La pestaña <strong>Guardados</strong> contiene la <strong>biblioteca de filtros</strong>: hacer doble clic en un filtro guardado para relanzar la búsqueda correspondiente (véase Anexo: Uso avanzado de los filtros). El comando <code>history</code> (alias <code>hi</code>) abre el panel de búsqueda.</p>
+<p>La estrella de un filtro de la biblioteca lo <strong>fija</strong>. Los filtros fijados aparecen como etiquetas en la parte superior del panel, sea cual sea la pestaña abierta, numeradas en el orden de la biblioteca: un clic en una etiqueta lanza el filtro, y <code>ALT-1</code> … <code>ALT-9</code> lanzan el filtro fijado de ese rango desde cualquier pantalla en modo NORMAL o EDIT, sin abrir el panel. El filtro plantea entonces la misma pregunta que con el doble clic, estructura de fichas incluida. La fijación pertenece a la base: sigue al filtro renombrado, desaparece con el filtro eliminado y no viaja con la exportación de la biblioteca.</p>
 <p>Una búsqueda relanzada conserva su clasificación: <code>s like42</code> clasifica respecto a la posición 42, y <code>s like</code> respecto al tablero guardado con la búsqueda — el que se estaba consultando o dibujando. Una entrada que no guardó tablero no se relanza contra el de la pantalla, y la barra de estado lo indica.</p>
 <div class="admonition tip">
 <p>Consulte la lista de comandos para ver la lista de filtros disponibles.</p>
@@ -1003,6 +1004,10 @@ export default {
 <td>ESPACIO</td>
 <td>Abrir la línea de comandos.</td>
 </tr>
+<tr>
+<td>ALT-1 … ALT-9</td>
+<td>Lanzar el filtro fijado de ese rango en la biblioteca de filtros.</td>
+</tr>
 </tbody>
 </table>
 <h3>Herramientas</h3>
@@ -1181,6 +1186,14 @@ export default {
 <tr>
 <td>Doble clic</td>
 <td>Ejecutar la búsqueda del filtro.</td>
+</tr>
+<tr>
+<td>Clic (en la estrella)</td>
+<td>Fijar o desfijar el filtro.</td>
+</tr>
+<tr>
+<td>Clic (en una etiqueta fijada)</td>
+<td>Ejecutar la búsqueda del filtro fijado.</td>
 </tr>
 </tbody>
 </table>

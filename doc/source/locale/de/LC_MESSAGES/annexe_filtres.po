@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -120,11 +120,21 @@ msgstr "Den gewünschten Filter suchen."
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Auf den Filter doppelklicken, um die Suche zu starten."
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"Ein täglich genutzter Filter wird mit einem Klick auf seinen Stern "
+"angeheftet: Danach startet er mit ``ALT-1`` … ``ALT-9``, ohne den Bereich"
+" zu öffnen (siehe :ref:`panneau_recherche`)."
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "Beispiele"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Hier sind einige Beispiele für die Nutzung der Filter in der Befehlszeile:"
 
@@ -321,7 +331,7 @@ msgstr "Fehler in Turnier 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Beispiele für die Suche in den aktuellen Ergebnissen:"
 
@@ -352,4 +362,3 @@ msgstr "Nach ``s tn1`` die Cube-Entscheidungen suchen"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

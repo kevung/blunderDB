@@ -939,6 +939,15 @@ double-cliquer sur un filtre enregistré pour relancer la recherche
 correspondante (voir :ref:`annexe_filtres`). La commande ``history`` (alias
 ``hi``) ouvre le panneau de recherche.
 
+L'étoile d'un filtre de la bibliothèque l'**épingle**. Les filtres épinglés
+s'affichent en pastilles en haut du panneau, quel que soit l'onglet ouvert,
+numérotées dans l'ordre de la bibliothèque : un clic sur une pastille lance le
+filtre, et ``ALT-1`` … ``ALT-9`` lancent le filtre épinglé de ce rang depuis
+n'importe quel écran en mode NORMAL ou EDIT, sans ouvrir le panneau. Le filtre
+pose alors la même question qu'au double-clic, structure de pions comprise.
+L'épingle appartient à la base : elle suit le filtre renommé, disparaît avec le
+filtre supprimé et ne voyage pas avec l'export de la bibliothèque.
+
 Une recherche relancée garde son classement : ``s like42`` classe contre la
 position 42, et ``s like`` contre le plateau enregistré avec la recherche —
 celui qu'on feuilletait ou qu'on avait dessiné. Une entrée qui n'a pas gardé

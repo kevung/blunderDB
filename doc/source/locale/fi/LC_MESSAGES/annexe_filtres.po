@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -59,9 +59,9 @@ msgid ""
 msgstr ""
 "Hakukielioppi — komento ``s``, sen tunnukset ja haku nykyisistä "
 "tuloksista komennolla ``ss`` — kuvataan vain kerran, komentoluettelon "
-"osassa :ref:`cmd_filter`; itse hakupaneeli kuvataan "
-":ref:`käyttöoppaassa <panneau_recherche>`. Tähän liitteeseen jää vain "
-"suodatinkirjasto ja esimerkkejä."
+"osassa :ref:`cmd_filter`; itse hakupaneeli kuvataan :ref:`käyttöoppaassa "
+"<panneau_recherche>`. Tähän liitteeseen jää vain suodatinkirjasto ja "
+"esimerkkejä."
 
 #: ../../source/annexe_filtres.rst:25
 msgid "Bibliothèque de filtres"
@@ -119,11 +119,21 @@ msgstr "Etsi haluamasi suodatin."
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Käynnistä haku kaksoisnapsauttamalla suodatinta."
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"Päivittäin käytetty suodatin kiinnitetään yhdellä napsautuksella sen "
+"tähteen: sen jälkeen se käynnistyy näppäimillä ``ALT-1`` … ``ALT-9`` "
+"avaamatta paneelia (katso :ref:`panneau_recherche`)."
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "Esimerkkejä"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Tässä muutamia esimerkkejä suodattimien käytöstä komentorivillä:"
 
@@ -320,7 +330,7 @@ msgstr "Virheet turnauksessa 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Esimerkkejä hausta nykyisistä tuloksista:"
 
@@ -351,4 +361,3 @@ msgstr "Komennon ``s tn1`` jälkeen hae tuplauskuution päätöksiä"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

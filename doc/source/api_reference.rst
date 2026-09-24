@@ -79,6 +79,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/filters.save                         JSON
      POST /v1/filters.saveEditPosition             JSON
      POST /v1/filters.saveExcludePosition          JSON
+     POST /v1/filters.setPinned                    JSON
      POST /v1/filters.update                       JSON
    gammonnet
      POST /v1/gammonnet.analyzeMissing             custom

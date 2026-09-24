@@ -172,6 +172,95 @@ func testSearchHistory(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testFilterPins: a pin survives a rename and a session clear, goes with a
+// deleted filter, stays in its scope, and an unknown id reports ErrNotFound.
+func testFilterPins(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	fs := s.Filters()
+
+	pinned := func(scope string) []string {
+		t.Helper()
+		var names []string
+		for f, err := range fs.List(ctx, scope) {
+			if err != nil {
+				t.Fatalf("List: %v", err)
+			}
+			if f.Pinned {
+				names = append(names, f.Name)
+			}
+		}
+		return names
+	}
+
+	a, err := fs.Save(ctx, "1", "a", "s E>100")
+	if err != nil {
+		t.Fatalf("Save a: %v", err)
+	}
+	b, err := fs.Save(ctx, "1", "b", "s cube")
+	if err != nil {
+		t.Fatalf("Save b: %v", err)
+	}
+	c, err := fs.Save(ctx, "1", "c", "s nc")
+	if err != nil {
+		t.Fatalf("Save c: %v", err)
+	}
+	if got := pinned("1"); len(got) != 0 {
+		t.Fatalf("fresh library has pins: %v", got)
+	}
+
+	// Pinned in reverse order, listed in library order; pinning twice is a no-op.
+	for _, id := range []int64{c, a, a} {
+		if err := fs.SetPinned(ctx, "1", id, true); err != nil {
+			t.Fatalf("SetPinned(%d): %v", id, err)
+		}
+	}
+	if got := pinned("1"); strings.Join(got, ",") != "a,c" {
+		t.Fatalf("pins = %v, want [a c]", got)
+	}
+
+	// Another scope neither sees these pins nor can pin these filters.
+	if got := pinned("2"); len(got) != 0 {
+		t.Fatalf("scope 2 sees pins: %v", got)
+	}
+	if err := fs.SetPinned(ctx, "2", a, true); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("SetPinned across scopes: got %v, want ErrNotFound", err)
+	}
+	if err := fs.SetPinned(ctx, "1", c+1000, true); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("SetPinned(unknown): got %v, want ErrNotFound", err)
+	}
+
+	// A rename keeps the pin; clearing the session does not touch it.
+	if err := fs.Update(ctx, "1", a, "a2", "s E>120"); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if err := s.Session().Save(ctx, "1", storage.SessionState{LastSearchCommand: "s"}); err != nil {
+		t.Fatalf("Session.Save: %v", err)
+	}
+	if err := s.Session().Clear(ctx, "1"); err != nil {
+		t.Fatalf("Session.Clear: %v", err)
+	}
+	if got := pinned("1"); strings.Join(got, ",") != "a2,c" {
+		t.Fatalf("pins after rename and session clear = %v, want [a2 c]", got)
+	}
+
+	// Unpinning, and deleting a pinned filter, both drop the pin.
+	if err := fs.SetPinned(ctx, "1", a, false); err != nil {
+		t.Fatalf("unpin: %v", err)
+	}
+	if err := fs.SetPinned(ctx, "1", b, false); err != nil {
+		t.Fatalf("unpin a filter that is not pinned: %v", err)
+	}
+	if err := fs.Delete(ctx, "1", c); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if got := pinned("1"); len(got) != 0 {
+		t.Fatalf("pins after unpin and delete = %v, want none", got)
+	}
+	if err := fs.Delete(ctx, "1", c); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("Delete twice: got %v, want ErrNotFound", err)
+	}
+}
+
 func testSessionSaveLoad(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ss := s.Session()

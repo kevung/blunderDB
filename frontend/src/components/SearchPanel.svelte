@@ -10,13 +10,14 @@
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore, MAX_SEARCH_HISTORY } from '../stores/searchHistoryStore';
-    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, describeCommandTokens } from '../services/searchFilterService.js';
+    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, filterTokenHint, describeCommandTokens, replaySearchArgs } from '../services/searchFilterService.js';
     import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear as clearNumeric, toStore as numericToStore, fromStore as numericFromStore } from '../services/filterModel.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
+    import { loadFilterLibrary, pinnedFilters, setFilterPinned } from '../services/filterLibraryService.js';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { displayedPositionIDs } from '../services/positionService.js';
-    import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
+    import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
@@ -72,6 +73,8 @@
 
     // Saved (filter library) state
     let savedFilters = $derived($filterLibraryStore || []);
+    // The pinned ones, in library order: the n-th answers ALT-n.
+    let pinned = $derived(pinnedFilters(savedFilters));
     /** @type {{ id: number, name: string, command: string } | null} */
     let selectedSavedFilter = $state(null);
 
@@ -198,6 +201,14 @@
     // Declared before restoreSearchState() below, which assigns structureMode.
     let structureMode = $state('include');
     let includeBoardStash = $state(null);
+    // A pinned filter run with ALT-n while the panel is open goes back to the
+    // included structure through the store (filterLibraryService.js): follow.
+    $effect(() => {
+        if ($searchStructureModeStore === 'include' && untrack(() => structureMode) === 'exclude') {
+            structureMode = 'include';
+            includeBoardStash = null;
+        }
+    });
 
     // Initialize all filters as disabled, then restore previous search state if available.
     // Both keys are set through the same forEach (rather than a lone top-level
@@ -362,12 +373,7 @@
     }
 
     async function loadSavedFilters() {
-        try {
-            const lib = await LoadFilters();
-            filterLibraryStore.set(lib || []);
-        } catch (_error) {
-            filterLibraryStore.set([]);
-        }
+        await loadFilterLibrary();
     }
 
     function isInFilterLibrary(search) {
@@ -515,60 +521,19 @@
             positionStore.set(JSON.parse(search.position));
         }
         restoreExcludeStructure(search.excludePosition);
-        const command = search.command;
-        if (command.startsWith('s ') || command === 's') {
-            const f = parseSearchCommand(command);
+        const replay = replaySearchArgs(search.command);
+        if (replay) {
             // Un `like` nu classe contre le plateau de l'entrée (#404) : celui
             // qu'on feuilletait ou qu'on avait dessiné, que l'historique et la
             // bibliothèque conservent et qui vient d'être reposé ci-dessus.
             // Une entrée qui ne l'a pas gardé n'a plus de cible ; la relancer
             // contre le plateau à l'écran répondrait à une autre question sans
             // le dire, alors on refuse.
-            if (f.likeFilter && !f.likeTargetId && !search.position) {
+            if (replay.f.likeFilter && !replay.f.likeTargetId && !search.position) {
                 statusBarTextStore.set(tMsg('similar.noPosition'));
                 return;
             }
-            onLoadPositionsByFilters({
-                filters: f.cmdFilters,
-                includeCube: f.ic,
-                includeScore: f.is,
-                ...numericArgs((short) => f[short]),
-                searchText: f.st,
-                decisionTypeFilter: f.dt,
-                diceRollFilter: f.dr,
-                movePatternFilter: f.mpf,
-                dateFilter: f.cd,
-                noContactFilter: f.nc,
-                mirrorPositionFilter: f.mp,
-                individuallyImportedFilter: f.ii,
-                flaggedFilter: f.fl,
-                searchCommand: command,
-                matchIDsFilter: f.matchIDs,
-                tournamentIDsFilter: f.tournamentIDs,
-                diceRollMode: f.drMode,
-                playerFilter: f.plf,
-                // Command-line-only tokens with no panel checkbox (#203): unlike
-                // commentFilter/cubeResponseFilter, positionService does not
-                // re-derive these from `filters`, so they must be forwarded
-                // explicitly or a replayed `s D xD65`/`s id5,10` silently loses
-                // the exclusion/restriction on double-click.
-                exceptDiceFilter: f.xd,
-                positionIDsFilter: f.posIds,
-                gamePhaseFilter: f.ph,
-                // `gt:`, `#tag` et `n>3` étaient lus par parseSearchCommand et
-                // jamais transmis (#362) : le rejeu d'un historique ou d'un
-                // filtre de la bibliothèque rendait la recherche sans eux.
-                gameTypeFilter: f.gt,
-                tagFilter: f.tags,
-                encounterFilter: f.encounterFilter,
-                commentOriginFilter: f.coOrigin,
-                // Le classement (ADR-0043), perdu de la même façon (#404) :
-                // `s like42` rejoué partait en recherche non classée.
-                likeFilter: f.likeFilter,
-                likeTargetId: f.likeTargetId,
-                likeMaxDistance: f.likeMaxDistance,
-                likeWidened: f.likeWidened
-            });
+            onLoadPositionsByFilters(replay.args);
         }
     }
 
@@ -789,262 +754,299 @@
 
     <!-- Content area -->
     <div class="sub-tab-content">
-        {#if activeSubTab === 'search'}
-            <!-- Filter Builder with checkboxes -->
-            <div class="filter-section">
-                <div class="structure-toggle" class:exclude-active={structureMode === 'exclude'}>
-                    <button class="structure-btn" class:active={structureMode === 'include'} onclick={() => switchStructureMode('include')} title={$t('search.atLeastTooltip')}
-                        >{$t('search.atLeast')}</button
-                    >
-                    <button class="structure-btn exclude" class:active={structureMode === 'exclude'} onclick={() => switchStructureMode('exclude')} title={$t('search.exceptTooltip')}
-                        >{$t('search.except')}</button
-                    >
-                    {#if boardHasCheckers($searchExcludePositionStore) || structureMode === 'exclude'}
-                        <span class="structure-hint">{structureMode === 'exclude' ? $t('search.editingExcluded') : $t('search.exclusionSet')}</span>
-                    {/if}
-                </div>
-                <div class="action-bar top-action-bar">
-                    <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> {$t('search.inResults')}</label>
-                    <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> {$t('search.newTab')}</label>
-                    <span class="active-count">{$t('search.activeCount', { n: activeFilterCount })}</span>
-                    <button class="btn-search" onclick={handleSearch}>{$t('common.search')}</button>
-                    <button class="btn-clear" onclick={clearFilters}>{$t('common.clear')}</button>
-                </div>
-                <div class="filter-groups">
-                    {#each filterGroups as group (group.name)}
-                        <div class="filter-group">
-                            <div class="group-header">{groupLabel(group.name)}</div>
-                            {#each group.filters as filter (filter)}
-                                <div class="filter-item" class:active={filterEnabled[filter]}>
-                                    <label class="filter-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            bind:checked={filterEnabled[filter]}
-                                            disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
-                                        />
-                                        <span
-                                            class="filter-label"
-                                            class:label-disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
-                                            title={filterTokenHint(filter)}>{filterLabel(filter)}</span
-                                        >
-                                    </label>
-                                    {#if filterEnabled[filter]}
-                                        <div class="filter-params">
-                                            {#if filter === 'Include Decision Type'}
-                                                <div class="decision-mode-controls">
-                                                    <div class="decision-segment">
-                                                        <button type="button" class="decision-btn" class:active={decisionMode === 'checker'} onclick={() => selectDecisionMode('checker')}
-                                                            >{$t('search.decision.checker')}</button
-                                                        >
-                                                        <button type="button" class="decision-btn" class:active={decisionMode === 'cube'} onclick={() => selectDecisionMode('cube')}
-                                                            >{$t('search.decision.cube')}</button
-                                                        >
-                                                    </div>
-                                                    {#if decisionMode === 'cube'}
-                                                        <div class="minmax-controls">
-                                                            <label
-                                                                ><input type="radio" name="cubeSubType" value="all" checked={cubeSubType === 'all'} onchange={() => selectCubeSubType('all')} />
-                                                                {$t('search.decision.cubeAll')}</label
+        {#if pinned.length > 0}
+            <div class="pinned-bar" role="toolbar" aria-label={$t('search.pinnedBar')} data-testid="pinned-bar">
+                {#each pinned as pf, i (pf.id)}
+                    <button class="pinned-chip" onclick={() => executeSavedFilter(pf)} title={i < 9 ? $t('search.pinnedChipTitle', { command: pf.command, n: i + 1 }) : pf.command}>
+                        {#if i < 9}<span class="pinned-rank">{i + 1}</span>{/if}{pf.name}
+                    </button>
+                {/each}
+            </div>
+        {/if}
+        <div class="sub-tab-body">
+            {#if activeSubTab === 'search'}
+                <!-- Filter Builder with checkboxes -->
+                <div class="filter-section">
+                    <div class="structure-toggle" class:exclude-active={structureMode === 'exclude'}>
+                        <button class="structure-btn" class:active={structureMode === 'include'} onclick={() => switchStructureMode('include')} title={$t('search.atLeastTooltip')}
+                            >{$t('search.atLeast')}</button
+                        >
+                        <button class="structure-btn exclude" class:active={structureMode === 'exclude'} onclick={() => switchStructureMode('exclude')} title={$t('search.exceptTooltip')}
+                            >{$t('search.except')}</button
+                        >
+                        {#if boardHasCheckers($searchExcludePositionStore) || structureMode === 'exclude'}
+                            <span class="structure-hint">{structureMode === 'exclude' ? $t('search.editingExcluded') : $t('search.exclusionSet')}</span>
+                        {/if}
+                    </div>
+                    <div class="action-bar top-action-bar">
+                        <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> {$t('search.inResults')}</label>
+                        <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> {$t('search.newTab')}</label>
+                        <span class="active-count">{$t('search.activeCount', { n: activeFilterCount })}</span>
+                        <button class="btn-search" onclick={handleSearch}>{$t('common.search')}</button>
+                        <button class="btn-clear" onclick={clearFilters}>{$t('common.clear')}</button>
+                    </div>
+                    <div class="filter-groups">
+                        {#each filterGroups as group (group.name)}
+                            <div class="filter-group">
+                                <div class="group-header">{groupLabel(group.name)}</div>
+                                {#each group.filters as filter (filter)}
+                                    <div class="filter-item" class:active={filterEnabled[filter]}>
+                                        <label class="filter-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                bind:checked={filterEnabled[filter]}
+                                                disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
+                                            />
+                                            <span
+                                                class="filter-label"
+                                                class:label-disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
+                                                title={filterTokenHint(filter)}>{filterLabel(filter)}</span
+                                            >
+                                        </label>
+                                        {#if filterEnabled[filter]}
+                                            <div class="filter-params">
+                                                {#if filter === 'Include Decision Type'}
+                                                    <div class="decision-mode-controls">
+                                                        <div class="decision-segment">
+                                                            <button type="button" class="decision-btn" class:active={decisionMode === 'checker'} onclick={() => selectDecisionMode('checker')}
+                                                                >{$t('search.decision.checker')}</button
                                                             >
-                                                            <label
-                                                                ><input
-                                                                    type="radio"
-                                                                    name="cubeSubType"
-                                                                    value="double"
-                                                                    checked={cubeSubType === 'double'}
-                                                                    onchange={() => selectCubeSubType('double')}
-                                                                />
-                                                                {$t('search.decision.cubeDouble')}</label
-                                                            >
-                                                            <label
-                                                                ><input
-                                                                    type="radio"
-                                                                    name="cubeSubType"
-                                                                    value="takepass"
-                                                                    checked={cubeSubType === 'takepass'}
-                                                                    onchange={() => selectCubeSubType('takepass')}
-                                                                />
-                                                                {$t('search.decision.cubeTakePass')}</label
+                                                            <button type="button" class="decision-btn" class:active={decisionMode === 'cube'} onclick={() => selectDecisionMode('cube')}
+                                                                >{$t('search.decision.cube')}</button
                                                             >
                                                         </div>
+                                                        {#if decisionMode === 'cube'}
+                                                            <div class="minmax-controls">
+                                                                <label
+                                                                    ><input type="radio" name="cubeSubType" value="all" checked={cubeSubType === 'all'} onchange={() => selectCubeSubType('all')} />
+                                                                    {$t('search.decision.cubeAll')}</label
+                                                                >
+                                                                <label
+                                                                    ><input
+                                                                        type="radio"
+                                                                        name="cubeSubType"
+                                                                        value="double"
+                                                                        checked={cubeSubType === 'double'}
+                                                                        onchange={() => selectCubeSubType('double')}
+                                                                    />
+                                                                    {$t('search.decision.cubeDouble')}</label
+                                                                >
+                                                                <label
+                                                                    ><input
+                                                                        type="radio"
+                                                                        name="cubeSubType"
+                                                                        value="takepass"
+                                                                        checked={cubeSubType === 'takepass'}
+                                                                        onchange={() => selectCubeSubType('takepass')}
+                                                                    />
+                                                                    {$t('search.decision.cubeTakePass')}</label
+                                                                >
+                                                            </div>
+                                                        {/if}
+                                                    </div>
+                                                {:else if filter === 'Include Dice Roll'}
+                                                    <div class="minmax-controls">
+                                                        <label><input type="radio" bind:group={diceRollOption} value="both" /> {$t('search.bothDice')}</label>
+                                                        <label><input type="radio" bind:group={diceRollOption} value="first" /> {$t('search.firstDieOnly')}</label>
+                                                    </div>
+                                                {:else if NUMERIC_FILTER_BY_LABEL[filter]}
+                                                    {@const nf = NUMERIC_FILTER_BY_LABEL[filter]}
+                                                    <MinMaxFilterRow
+                                                        bind:option={numeric[nf.key].option}
+                                                        bind:minVal={numeric[nf.key].min}
+                                                        bind:maxVal={numeric[nf.key].max}
+                                                        bind:rangeMin={numeric[nf.key].rangeMin}
+                                                        bind:rangeMax={numeric[nf.key].rangeMax}
+                                                        min={nf.bounds.min}
+                                                        max={nf.bounds.max}
+                                                    />
+                                                {:else if filter === 'Comment'}
+                                                    <div class="minmax-controls">
+                                                        <label
+                                                            ><input type="radio" name="commentMode" value="contains" checked={commentMode === 'contains'} onchange={() => (commentMode = 'contains')} />
+                                                            {$t('search.comment.contains')}</label
+                                                        ><label
+                                                            ><input type="radio" name="commentMode" value="has" checked={commentMode === 'has'} onchange={() => (commentMode = 'has')} />
+                                                            {$t('search.comment.has')}</label
+                                                        ><label
+                                                            ><input type="radio" name="commentMode" value="none" checked={commentMode === 'none'} onchange={() => (commentMode = 'none')} />
+                                                            {$t('search.comment.none')}</label
+                                                        >
+                                                    </div>
+                                                    {#if commentMode === 'contains'}
+                                                        <div class="text-control">
+                                                            <span class="hint">{$t('search.searchTextHint')}</span><input type="text" bind:value={searchText} class="text-input" />
+                                                        </div>
                                                     {/if}
-                                                </div>
-                                            {:else if filter === 'Include Dice Roll'}
-                                                <div class="minmax-controls">
-                                                    <label><input type="radio" bind:group={diceRollOption} value="both" /> {$t('search.bothDice')}</label>
-                                                    <label><input type="radio" bind:group={diceRollOption} value="first" /> {$t('search.firstDieOnly')}</label>
-                                                </div>
-                                            {:else if NUMERIC_FILTER_BY_LABEL[filter]}
-                                                {@const nf = NUMERIC_FILTER_BY_LABEL[filter]}
-                                                <MinMaxFilterRow
-                                                    bind:option={numeric[nf.key].option}
-                                                    bind:minVal={numeric[nf.key].min}
-                                                    bind:maxVal={numeric[nf.key].max}
-                                                    bind:rangeMin={numeric[nf.key].rangeMin}
-                                                    bind:rangeMax={numeric[nf.key].rangeMax}
-                                                    min={nf.bounds.min}
-                                                    max={nf.bounds.max}
-                                                />
-                                            {:else if filter === 'Comment'}
-                                                <div class="minmax-controls">
-                                                    <label
-                                                        ><input type="radio" name="commentMode" value="contains" checked={commentMode === 'contains'} onchange={() => (commentMode = 'contains')} />
-                                                        {$t('search.comment.contains')}</label
-                                                    ><label
-                                                        ><input type="radio" name="commentMode" value="has" checked={commentMode === 'has'} onchange={() => (commentMode = 'has')} />
-                                                        {$t('search.comment.has')}</label
-                                                    ><label
-                                                        ><input type="radio" name="commentMode" value="none" checked={commentMode === 'none'} onchange={() => (commentMode = 'none')} />
-                                                        {$t('search.comment.none')}</label
-                                                    >
-                                                </div>
-                                                {#if commentMode === 'contains'}
+                                                {:else if filter === 'Best Move or Cube Decision'}
                                                     <div class="text-control">
-                                                        <span class="hint">{$t('search.searchTextHint')}</span><input type="text" bind:value={searchText} class="text-input" />
+                                                        <span class="hint">{$t('search.movePatternHint')}</span><input type="text" bind:value={movePattern} class="text-input" />
+                                                    </div>
+                                                {:else if filter === 'Creation Date'}
+                                                    <div class="minmax-controls">
+                                                        <label
+                                                            ><input type="radio" bind:group={creationDateOption} value="min" />
+                                                            {$t('common.min')} <input type="date" bind:value={creationDateMin} class="date-input" disabled={creationDateOption !== 'min'} /></label
+                                                        ><label
+                                                            ><input type="radio" bind:group={creationDateOption} value="max" />
+                                                            {$t('common.max')} <input type="date" bind:value={creationDateMax} class="date-input" disabled={creationDateOption !== 'max'} /></label
+                                                        ><label
+                                                            ><input type="radio" bind:group={creationDateOption} value="range" />
+                                                            {$t('common.range')} <input type="date" bind:value={creationDateRangeMin} class="date-input" disabled={creationDateOption !== 'range'} />
+                                                            <input type="date" bind:value={creationDateRangeMax} class="date-input" disabled={creationDateOption !== 'range'} /></label
+                                                        >
+                                                    </div>
+                                                {:else if filter === 'Matches & Tournaments'}
+                                                    <div class="text-control">
+                                                        <span class="hint">
+                                                            {$t('search.matchesTournamentsCount', { matches: matchIDsSelected.length, tournaments: tournamentIDsSelected.length })}
+                                                        </span>
+                                                        <button type="button" class="small-btn" onclick={() => (showPickerModal = true)}>{$t('search.openPicker')}</button>
+                                                    </div>
+                                                {:else if filter === 'Player'}
+                                                    <div class="text-control">
+                                                        <span class="hint">{$t('search.playerHint')}</span><input type="text" bind:value={playerName} class="text-input" />
                                                     </div>
                                                 {/if}
-                                            {:else if filter === 'Best Move or Cube Decision'}
-                                                <div class="text-control">
-                                                    <span class="hint">{$t('search.movePatternHint')}</span><input type="text" bind:value={movePattern} class="text-input" />
-                                                </div>
-                                            {:else if filter === 'Creation Date'}
-                                                <div class="minmax-controls">
-                                                    <label
-                                                        ><input type="radio" bind:group={creationDateOption} value="min" />
-                                                        {$t('common.min')} <input type="date" bind:value={creationDateMin} class="date-input" disabled={creationDateOption !== 'min'} /></label
-                                                    ><label
-                                                        ><input type="radio" bind:group={creationDateOption} value="max" />
-                                                        {$t('common.max')} <input type="date" bind:value={creationDateMax} class="date-input" disabled={creationDateOption !== 'max'} /></label
-                                                    ><label
-                                                        ><input type="radio" bind:group={creationDateOption} value="range" />
-                                                        {$t('common.range')} <input type="date" bind:value={creationDateRangeMin} class="date-input" disabled={creationDateOption !== 'range'} />
-                                                        <input type="date" bind:value={creationDateRangeMax} class="date-input" disabled={creationDateOption !== 'range'} /></label
-                                                    >
-                                                </div>
-                                            {:else if filter === 'Matches & Tournaments'}
-                                                <div class="text-control">
-                                                    <span class="hint">
-                                                        {$t('search.matchesTournamentsCount', { matches: matchIDsSelected.length, tournaments: tournamentIDsSelected.length })}
-                                                    </span>
-                                                    <button type="button" class="small-btn" onclick={() => (showPickerModal = true)}>{$t('search.openPicker')}</button>
-                                                </div>
-                                            {:else if filter === 'Player'}
-                                                <div class="text-control">
-                                                    <span class="hint">{$t('search.playerHint')}</span><input type="text" bind:value={playerName} class="text-input" />
-                                                </div>
-                                            {/if}
-                                        </div>
-                                    {/if}
-                                </div>
-                            {/each}
-                        </div>
-                    {/each}
-                </div>
-            </div>
-        {:else if activeSubTab === 'history'}
-            <div class="history-section">
-                {#if searchHistory.length === 0}
-                    <p class="empty-message">{$t('search.noHistory')}</p>
-                {:else}
-                    <div class="history-table-container">
-                        <table class="history-table">
-                            <thead><tr><th>{$t('search.date')}</th><th>{$t('search.command')}</th><th>{$t('search.actions')}</th></tr></thead>
-                            <tbody>
-                                {#each searchHistory as search (search.timestamp)}
-                                    <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
-                                        <td class="date-cell">{formatTimestamp(search.timestamp)}</td>
-                                        <!-- Chaque jeton devient une pastille lisible (#287) ;
-                                             la commande exacte reste en infobulle, parce que
-                                             c'est elle qu'on relance. -->
-                                        <td class="command-cell" title={search.command}>
-                                            {#each describeCommandTokens(search.command) as part (part.token)}
-                                                <span class="token-chip" title={part.token}>{part.label}</span>
-                                            {/each}
-                                        </td>
-                                        <td class="actions-cell">
-                                            <button
-                                                class="action-btn"
-                                                class:in-library={isInFilterLibrary(search)}
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    (() => showAddToLibraryDialog(search))();
-                                                }}
-                                                title={$t('search.saveToBookmarks')}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
-                                                    ><path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                                                    /></svg
-                                                >
-                                            </button>
-                                            <button
-                                                class="action-btn delete-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    ((e) => deleteSearch(search, e))(e);
-                                                }}
-                                                title={$t('common.delete')}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
-                                                    ><path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                                    /></svg
-                                                >
-                                            </button>
-                                        </td>
-                                    </tr>
+                                            </div>
+                                        {/if}
+                                    </div>
                                 {/each}
-                            </tbody>
-                        </table>
-                    </div>
-                {/if}
-            </div>
-        {:else if activeSubTab === 'saved'}
-            <div class="saved-section">
-                {#if savedFilters.length === 0}
-                    <p class="empty-message">{$t('search.noSaved')}</p>
-                {:else}
-                    <div class="saved-list" role="listbox" aria-label={$t('search.savedTab')}>
-                        {#each savedFilters as sf (sf.id)}
-                            <div
-                                class="saved-item"
-                                class:selected={selectedSavedFilter && selectedSavedFilter.id === sf.id}
-                                role="option"
-                                aria-selected={!!(selectedSavedFilter && selectedSavedFilter.id === sf.id)}
-                                tabindex="0"
-                                onclick={() => selectSavedFilter(sf)}
-                                ondblclick={() => executeSavedFilter(sf)}
-                                onkeydown={(e) => handleSavedItemKeyDown(e, sf)}
-                            >
-                                <span class="saved-name">{sf.name}</span>
-                                <span class="saved-cmd">{sf.command}</span>
-                                <button
-                                    class="action-btn delete-btn"
-                                    onclick={(e) => {
-                                        e.stopPropagation();
-                                        selectedSavedFilter = sf;
-                                        deleteSavedFilter();
-                                    }}
-                                    title={$t('search.remove')}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
-                                        ><path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                        /></svg
-                                    >
-                                </button>
                             </div>
                         {/each}
                     </div>
-                {/if}
-            </div>
-        {/if}
+                </div>
+            {:else if activeSubTab === 'history'}
+                <div class="history-section">
+                    {#if searchHistory.length === 0}
+                        <p class="empty-message">{$t('search.noHistory')}</p>
+                    {:else}
+                        <div class="history-table-container">
+                            <table class="history-table">
+                                <thead><tr><th>{$t('search.date')}</th><th>{$t('search.command')}</th><th>{$t('search.actions')}</th></tr></thead>
+                                <tbody>
+                                    {#each searchHistory as search (search.timestamp)}
+                                        <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
+                                            <td class="date-cell">{formatTimestamp(search.timestamp)}</td>
+                                            <!-- Chaque jeton devient une pastille lisible (#287) ;
+                                             la commande exacte reste en infobulle, parce que
+                                             c'est elle qu'on relance. -->
+                                            <td class="command-cell" title={search.command}>
+                                                {#each describeCommandTokens(search.command) as part (part.token)}
+                                                    <span class="token-chip" title={part.token}>{part.label}</span>
+                                                {/each}
+                                            </td>
+                                            <td class="actions-cell">
+                                                <button
+                                                    class="action-btn"
+                                                    class:in-library={isInFilterLibrary(search)}
+                                                    onclick={(e) => {
+                                                        e.stopPropagation();
+                                                        (() => showAddToLibraryDialog(search))();
+                                                    }}
+                                                    title={$t('search.saveToBookmarks')}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
+                                                        ><path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                                        /></svg
+                                                    >
+                                                </button>
+                                                <button
+                                                    class="action-btn delete-btn"
+                                                    onclick={(e) => {
+                                                        e.stopPropagation();
+                                                        ((e) => deleteSearch(search, e))(e);
+                                                    }}
+                                                    title={$t('common.delete')}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
+                                                        ><path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                                        /></svg
+                                                    >
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                </tbody>
+                            </table>
+                        </div>
+                    {/if}
+                </div>
+            {:else if activeSubTab === 'saved'}
+                <div class="saved-section">
+                    {#if savedFilters.length === 0}
+                        <p class="empty-message">{$t('search.noSaved')}</p>
+                    {:else}
+                        <div class="saved-list" role="listbox" aria-label={$t('search.savedTab')}>
+                            {#each savedFilters as sf (sf.id)}
+                                <div
+                                    class="saved-item"
+                                    class:selected={selectedSavedFilter && selectedSavedFilter.id === sf.id}
+                                    role="option"
+                                    aria-selected={!!(selectedSavedFilter && selectedSavedFilter.id === sf.id)}
+                                    tabindex="0"
+                                    onclick={() => selectSavedFilter(sf)}
+                                    ondblclick={() => executeSavedFilter(sf)}
+                                    onkeydown={(e) => handleSavedItemKeyDown(e, sf)}
+                                >
+                                    <span class="saved-name">{sf.name}</span>
+                                    <span class="saved-cmd">{sf.command}</span>
+                                    <button
+                                        class="action-btn pin-btn"
+                                        class:pinned={sf.pinned}
+                                        aria-pressed={!!sf.pinned}
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            setFilterPinned(sf, !sf.pinned);
+                                        }}
+                                        title={sf.pinned ? $t('search.unpin') : $t('search.pin')}
+                                        aria-label={sf.pinned ? $t('search.unpin') : $t('search.pin')}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill={sf.pinned ? 'currentColor' : 'none'}
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            width="14"
+                                            height="14"
+                                            ><path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321 1.001l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-1.001l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                                            /></svg
+                                        >
+                                    </button>
+                                    <button
+                                        class="action-btn delete-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            selectedSavedFilter = sf;
+                                            deleteSavedFilter();
+                                        }}
+                                        title={$t('search.remove')}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
+                                            ><path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                            /></svg
+                                        >
+                                    </button>
+                                </div>
+                            {/each}
+                        </div>
+                    {/if}
+                </div>
+            {/if}
+        </div>
     </div>
 </div>
 
@@ -1120,8 +1122,53 @@
     .sub-tab-content {
         flex: 1;
         min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .sub-tab-body {
+        flex: 1;
+        min-height: 0;
         overflow-y: auto;
         overflow-x: hidden;
+    }
+    .pinned-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 4px 8px;
+        flex-shrink: 0;
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-surface-alt);
+    }
+    .pinned-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        max-width: 16em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 2px 8px;
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        background: var(--color-surface);
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+        cursor: pointer;
+    }
+    .pinned-chip:hover {
+        background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface));
+    }
+    .pinned-rank {
+        color: var(--color-text-muted);
+        font-weight: 600;
+    }
+    .pin-btn {
+        color: var(--color-text-muted);
+    }
+    .pin-btn.pinned {
+        color: var(--color-text);
     }
     .filter-section {
         display: flex;

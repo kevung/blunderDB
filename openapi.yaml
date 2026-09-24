@@ -1114,6 +1114,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/filters.setPinned:
+    post:
+      operationId: filters.setPinned
+      tags: [filters]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/filterPinReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/filters.update:
     post:
       operationId: filters.update
@@ -3155,6 +3172,14 @@ components:
       properties:
         filterName:
           type: string
+    filterPinReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        pinned:
+          type: boolean
     filterSaveReq:
       type: object
       properties:

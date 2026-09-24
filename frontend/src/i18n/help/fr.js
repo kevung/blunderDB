@@ -245,6 +245,7 @@ export default {
 </div>
 <p>Le filtre <strong>Matchs &amp; Tournois</strong> s'appuie sur un sélecteur commun (fenêtre modale) plutôt que sur la saisie d'identifiants numériques : deux listes à cocher, une pour les matchs et une pour les tournois, chacune filtrable par texte (joueur, date, événement pour les matchs ; nom, date, lieu pour les tournois), avec des boutons <em>Tout</em> / <em>Aucun</em> qui n'agissent que sur le sous-ensemble actuellement filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à l'ensemble de ses matchs.</p>
 <p>Le panneau de recherche comporte trois onglets sur son bord gauche : <em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L'onglet <strong>Historique</strong> liste les recherches passées avec leur date et leur commande : un clic sélectionne une recherche et affiche la position associée sur le plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou supprimée. L'onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> : double-cliquer sur un filtre enregistré pour relancer la recherche correspondante (voir Annexe: Utilisation avancée des filtres). La commande <code>history</code> (alias <code>hi</code>) ouvre le panneau de recherche.</p>
+<p>L'étoile d'un filtre de la bibliothèque l'<strong>épingle</strong>. Les filtres épinglés s'affichent en pastilles en haut du panneau, quel que soit l'onglet ouvert, numérotées dans l'ordre de la bibliothèque : un clic sur une pastille lance le filtre, et <code>ALT-1</code> … <code>ALT-9</code> lancent le filtre épinglé de ce rang depuis n'importe quel écran en mode NORMAL ou EDIT, sans ouvrir le panneau. Le filtre pose alors la même question qu'au double-clic, structure de pions comprise. L'épingle appartient à la base : elle suit le filtre renommé, disparaît avec le filtre supprimé et ne voyage pas avec l'export de la bibliothèque.</p>
 <p>Une recherche relancée garde son classement : <code>s like42</code> classe contre la position 42, et <code>s like</code> contre le plateau enregistré avec la recherche — celui qu'on feuilletait ou qu'on avait dessiné. Une entrée qui n'a pas gardé de plateau n'est pas relancée contre celui de l'écran, et la barre d'état le dit.</p>
 <div class="admonition tip">
 <p>Se référer à la liste des commandes pour la liste des filtres disponibles.</p>
@@ -1003,6 +1004,10 @@ export default {
 <td>ESPACE</td>
 <td>Ouvrir la ligne de commande.</td>
 </tr>
+<tr>
+<td>ALT-1 … ALT-9</td>
+<td>Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres.</td>
+</tr>
 </tbody>
 </table>
 <h3>Outils</h3>
@@ -1181,6 +1186,14 @@ export default {
 <tr>
 <td>Double-clic</td>
 <td>Exécuter la recherche du filtre.</td>
+</tr>
+<tr>
+<td>Clic (sur l'étoile)</td>
+<td>Épingler ou désépingler le filtre.</td>
+</tr>
+<tr>
+<td>Clic (sur une pastille épinglée)</td>
+<td>Exécuter la recherche du filtre épinglé.</td>
 </tr>
 </tbody>
 </table>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: 2025-02-13 02:21+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -57,9 +57,9 @@ msgid ""
 "filtres et des exemples."
 msgstr ""
 "The search grammar — the ``s`` command, its tokens, searching within the "
-"current results with ``ss`` — is described once, in the :ref:`cmd_filter` "
-"section of the command list; the search panel itself is described in the "
-":ref:`manual <panneau_recherche>`. This annex keeps only the filter "
+"current results with ``ss`` — is described once, in the :ref:`cmd_filter`"
+" section of the command list; the search panel itself is described in the"
+" :ref:`manual <panneau_recherche>`. This annex keeps only the filter "
 "library and examples."
 
 #: ../../source/annexe_filtres.rst:25
@@ -116,11 +116,21 @@ msgstr "Search for the desired filter."
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Double-click on the filter to start the search."
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"A filter used every day is pinned with one click on its star: it then "
+"runs with ``ALT-1`` … ``ALT-9`` without opening the panel (see "
+":ref:`panneau_recherche`)."
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "Examples"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Here are some examples of using filters in the command line:"
 
@@ -317,7 +327,7 @@ msgstr "Errors in tournament 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Examples of searching within current results:"
 
@@ -348,4 +358,3 @@ msgstr "After ``s tn1``, search for cube decisions"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

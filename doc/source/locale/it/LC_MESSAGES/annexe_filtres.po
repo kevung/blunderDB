@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -58,11 +58,11 @@ msgid ""
 "<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
 "filtres et des exemples."
 msgstr ""
-"La grammatica di ricerca — il comando ``s``, i suoi token, la ricerca "
-"nei risultati correnti con ``ss`` — è descritta una sola volta, nella "
-"sezione :ref:`cmd_filter` dell'elenco dei comandi; il pannello di "
-"ricerca in sé è descritto nel :ref:`manuale <panneau_recherche>`. "
-"Questa appendice conserva solo la libreria dei filtri e gli esempi."
+"La grammatica di ricerca — il comando ``s``, i suoi token, la ricerca nei"
+" risultati correnti con ``ss`` — è descritta una sola volta, nella "
+"sezione :ref:`cmd_filter` dell'elenco dei comandi; il pannello di ricerca"
+" in sé è descritto nel :ref:`manuale <panneau_recherche>`. Questa "
+"appendice conserva solo la libreria dei filtri e gli esempi."
 
 #: ../../source/annexe_filtres.rst:25
 msgid "Bibliothèque de filtres"
@@ -120,11 +120,21 @@ msgstr "Cercare il filtro desiderato."
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Fare doppio clic sul filtro per avviare la ricerca."
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"Un filtro usato ogni giorno si fissa con un clic sulla sua stella: poi si"
+" lancia con ``ALT-1`` … ``ALT-9`` senza aprire il pannello (vedere "
+":ref:`panneau_recherche`)."
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "Esempi"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ecco alcuni esempi di utilizzo dei filtri da riga di comando:"
 
@@ -321,7 +331,7 @@ msgstr "Errori nel torneo 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Esempi di ricerca nei risultati correnti:"
 
@@ -352,4 +362,3 @@ msgstr "Dopo ``s tn1``, cercare le decisioni di cube"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

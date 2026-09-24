@@ -92,6 +92,7 @@ Actions
 
    "TAB", "Ouvrir le panneau de recherche (éditeur de position)."
    "ESPACE", "Ouvrir la ligne de commande."
+   "ALT-1 … ALT-9", "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 
 .. _raccourcis_outils:
 
@@ -178,6 +179,8 @@ Bibliothèque de filtres
 
    "Clic", "Sélectionner/désélectionner un filtre (afficher la position)."
    "Double-clic", "Exécuter la recherche du filtre."
+   "Clic (sur l'étoile)", "Épingler ou désépingler le filtre."
+   "Clic (sur une pastille épinglée)", "Exécuter la recherche du filtre épinglé."
 
 .. _raccourcis_analysis:
 

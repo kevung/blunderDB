@@ -457,6 +457,8 @@ export function SetDirectionOutputDir(arg1:number,arg2:string):Promise<void>;
 
 export function SetDirectionStrings(arg1:string,arg2:string):Promise<void>;
 
+export function SetFilterPinned(arg1:number,arg2:boolean):Promise<void>;
+
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;

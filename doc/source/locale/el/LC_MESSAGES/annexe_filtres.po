@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:58+0200\n"
+"POT-Creation-Date: 2026-09-24 02:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -125,11 +125,21 @@ msgstr "Αναζητήστε το επιθυμητό φίλτρο."
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Κάντε διπλό κλικ στο φίλτρο για να ξεκινήσετε την αναζήτηση."
 
-#: ../../source/annexe_filtres.rst:46
+#: ../../source/annexe_filtres.rst:45
+msgid ""
+"Un filtre qui sert tous les jours s'épingle d'un clic sur son étoile : il"
+" se lance ensuite par ``ALT-1`` … ``ALT-9`` sans ouvrir le panneau (voir "
+":ref:`panneau_recherche`)."
+msgstr ""
+"Ένα φίλτρο που χρησιμοποιείται κάθε μέρα καρφιτσώνεται με ένα κλικ στο "
+"αστέρι του: στη συνέχεια εκτελείται με ``ALT-1`` … ``ALT-9`` χωρίς να "
+"ανοίξει το πλαίσιο (βλ. :ref:`panneau_recherche`)."
+
+#: ../../source/annexe_filtres.rst:50
 msgid "Exemples"
 msgstr "Παραδείγματα"
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:52
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ακολουθούν μερικά παραδείγματα χρήσης των φίλτρων στη γραμμή εντολών:"
 
@@ -326,7 +336,7 @@ msgstr "Λάθη στο τουρνουά 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:75
+#: ../../source/annexe_filtres.rst:79
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Παραδείγματα αναζήτησης μέσα στα τρέχοντα αποτελέσματα:"
 
@@ -357,4 +367,3 @@ msgstr "Μετά το ``s tn1``, αναζητήστε τις αποφάσεις 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

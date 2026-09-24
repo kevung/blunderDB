@@ -40,6 +40,7 @@ import { importDatabase, importPosition, importFolder, pastePosition } from './i
 import { undoTranscription } from './transcriptionService.js';
 import { exportDatabase } from './exportService.js';
 import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './clipboardService.js';
+import { runPinnedFilter } from './filterLibraryService.js';
 
 let lastCtrlXTime = 0;
 
@@ -133,7 +134,24 @@ export function isAlwaysGlobal(event) {
     // Ctrl-PageUp / Ctrl-PageDown, and must reach the dispatcher from
     // anywhere, exactly as the Ctrl form does. No panel binds Shift+letter.
     if (isShiftLetter(event, 'j') || isShiftLetter(event, 'k')) return true;
+    // Running a pinned filter: ALT-1 … ALT-9, one gesture from anywhere.
+    if (pinnedFilterDigit(event)) return true;
     return false;
+}
+
+/**
+ * ALT-1 … ALT-9 run the pinned filters of the library (filterLibraryService.js).
+ * Positional, like every digit shortcut (event.code): on AZERTY the unshifted
+ * top row produces "&é\"'(", not digits. The numeric keypad is left out —
+ * Alt+keypad types a character by its code on Windows.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {number} the pin's rank, 1 to 9, or 0.
+ */
+export function pinnedFilterDigit(event) {
+    if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return 0;
+    const m = /^Digit([1-9])$/.exec(event.code ?? '');
+    return m ? Number(m[1]) : 0;
 }
 
 // Bare Tab only opens the search panel (#204) while focus sits on the board:
@@ -233,6 +251,9 @@ export function handleKeyDown(event) {
 
     // During Anki review on the Anki tab, route review keys
     if (get(ankiViewModeStore) === 'review' && !event.ctrlKey && get(activeTabStore) === 'anki') {
+        // A review keeps the board: ALT-1 must neither grade the card nor
+        // run a pinned filter under it.
+        if (event.altKey) return;
         if (event.code === 'Digit1' || event.code === 'Numpad1') {
             event.preventDefault();
             ankiReviewActionStore.set(1);
@@ -339,6 +360,9 @@ export function handleKeyDown(event) {
             // collection or a match, back to that list, in one press (#410).
             leaveSubSearchResults();
         }
+    } else if (pinnedFilterDigit(event)) {
+        event.preventDefault();
+        runPinnedFilter(pinnedFilterDigit(event));
     } else if (event.ctrlKey && letter('n')) {
         newDatabase();
     } else if (event.ctrlKey && letter('o')) {
