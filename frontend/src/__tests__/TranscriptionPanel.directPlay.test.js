@@ -286,6 +286,23 @@ describe('le glissé hors des règles, puis Entrée', () => {
         expect(validate).toEqual({ Kind: 'validate' });
     });
 
+    // Le chiffre du jet suivant porte la validation du tour : il enregistre le
+    // coup libre d'abord, puis commence le jet — jamais le candidat que le
+    // moteur tenait sélectionné.
+    test('le chiffre du jet suivant enregistre le coup libre, puis commence le jet', async () => {
+        await rolled();
+        drag(13, 3);
+        await tick();
+        await press('Digit4');
+        await vi.waitFor(() => expect(gestures().filter((/** @type {any} */ g) => g.Kind === 'enter_die' && g.Die === 4)).toHaveLength(1));
+        const kinds = gestures().map((/** @type {any} */ g) => g.Kind);
+        const play = gestures().find((/** @type {any} */ g) => g.Kind === 'enter_play');
+        expect(play.Steps).toEqual([step(13, 3)]);
+        expect(play.BoardAfter).toBeTruthy();
+        // Dans l'ordre : le coup libre validé, puis le dé du jet d'après.
+        expect(kinds.lastIndexOf('validate')).toBeLessThan(kinds.lastIndexOf('enter_die'));
+    });
+
     test('Retour arrière défait le pas hors des règles et rend la liste', async () => {
         await rolled();
         drag(13, 3);

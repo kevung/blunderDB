@@ -96,6 +96,7 @@
         resignWithLevel,
         cancelResign,
         menuCommands,
+        dieOf,
         DICE_KINDS
     } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
@@ -1000,6 +1001,17 @@
             commitFreePlay();
             return;
         }
+        // Le chiffre du jet suivant porte la validation du tour, et un coup
+        // libre n'y fait pas exception : il est enregistré d'abord, puis le
+        // chiffre commence le jet d'après, sur l'état que la validation laisse.
+        // Sans cela, le chiffre validait le candidat que le moteur tenait
+        // sélectionné, et le coup joué au plateau était perdu.
+        if (dieOf(event) > 0 && $quizPlayStore?.free && $quizPlayStore.steps.length) {
+            event.preventDefault();
+            event.stopPropagation();
+            commitFreePlay()?.then(() => applyResult(pressKey(get(transcriptionKeyStore), event, keyContext)));
+            return;
+        }
 
         const result = pressKey(keys, event, keyContext);
         // Retour arrière sur un jet vide est PRIS (le plateau appartient au
@@ -1634,8 +1646,8 @@
      */
     function commitFreePlay() {
         const play = /** @type {BoardPlayState | null} */ (get(quizPlayStore));
-        if (!play?.free || !play.steps.length || !play.rolled) return;
-        sendPlay(play.rolled, play.steps, play.board);
+        if (!play?.free || !play.steps.length || !play.rolled) return null;
+        return sendPlay(play.rolled, play.steps, play.board);
     }
 
     // Les cellules dont le COUP se tape au clavier (ADR-0052) : un coup de

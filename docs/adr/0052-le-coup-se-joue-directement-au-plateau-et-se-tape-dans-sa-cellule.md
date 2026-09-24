@@ -46,7 +46,8 @@ Le coup se joue **directement**, sans changer de vue, avec le moins de gestes po
    légal n'offre pose le pion là où il est lâché (`dragStep`), y compris depuis un point qui
    n'est pas une source légale mais porte un pion du camp au trait. Dès ce pas, le coup est
    libre (`free`), et la suite l'est aussi, au clic comme au glissé. Un coup libre ne part
-   jamais seul : **Entrée** l'enregistre avec les dés saisis, les pas et le plateau obtenu
+   jamais seul : **Entrée** l'enregistre — ou le chiffre du jet suivant, qui porte la
+   validation du tour ici comme partout — avec les dés saisis, les pas et le plateau obtenu
    (`BoardAfter`). Retour arrière défait le dernier pas ; le rejeu est contraint tant qu'un
    coup légal contient les pas, libre dès le premier qui ne l'était pas — défaire le seul
    pas hors des règles rend donc la liste. La liste d'un coup libre est vide, et une ligne
