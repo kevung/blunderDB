@@ -1343,3 +1343,75 @@ func TestImportXGComments(t *testing.T) {
 		}
 	}
 }
+
+// TestImportMATGameResults holds the winner and points_won stored for every game of a
+// .mat to the score line of the game after it (#361). Two readings of the file used to
+// go wrong there: a "Wins" line standing on its own was credited to whoever acted last
+// — the loser, when he rolled and resigned (test.mat game 2, and the whole of
+// gnubg_roll_then_resign_1p.mat) — and a game ended by a drop was stored as worth 0.
+// The two gnubg_* fixtures were written by gnubg itself.
+func TestImportMATGameResults(t *testing.T) {
+	t.Parallel()
+	// The last game has no score line after it: its winner is the column of its
+	// "Wins" line, which a 1-point match cannot check by arithmetic.
+	for name, lastWinner := range map[string]int{
+		"test.mat":                      0,
+		"gnubg_selfplay_drops_7p.mat":   1,
+		"gnubg_roll_then_resign_1p.mat": 0,
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			db := newTestDB(t)
+			matchID, err := db.ImportGnuBGMatch(filepath.Join("testdata", name))
+			if err != nil {
+				t.Fatalf("ImportGnuBGMatch: %v", err)
+			}
+			var matchLength int
+			if err := db.db.QueryRow(`SELECT match_length FROM match WHERE id = ?`, matchID).
+				Scan(&matchLength); err != nil {
+				t.Fatal(err)
+			}
+			rows, err := db.db.Query(`SELECT game_number, initial_score_1, initial_score_2, winner, points_won
+				FROM game WHERE match_id = ? ORDER BY game_number`, matchID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer rows.Close()
+			type game struct {
+				number, winner, points int
+				score                  [2]int
+			}
+			var games []game
+			for rows.Next() {
+				var g game
+				if err := rows.Scan(&g.number, &g.score[0], &g.score[1], &g.winner, &g.points); err != nil {
+					t.Fatal(err)
+				}
+				games = append(games, g)
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
+			}
+			if len(games) == 0 {
+				t.Fatal("no game imported")
+			}
+			for i, g := range games {
+				if g.winner != 0 && g.winner != 1 {
+					t.Errorf("game %d: winner %d", g.number, g.winner)
+					continue
+				}
+				end := g.score
+				end[g.winner] += g.points
+				if i+1 < len(games) {
+					if next := games[i+1].score; end != next {
+						t.Errorf("game %d: player %d wins %d from %v, but the next game starts at %v",
+							g.number, g.winner+1, g.points, g.score, next)
+					}
+				} else if g.winner != lastWinner || end[g.winner] < matchLength {
+					t.Errorf("last game %d: player %d wins %d from %v; want player %d to win the %d-point match",
+						g.number, g.winner+1, g.points, g.score, lastWinner+1, matchLength)
+				}
+			}
+		})
+	}
+}

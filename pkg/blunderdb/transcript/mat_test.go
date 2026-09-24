@@ -11,13 +11,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
-// matFixtures are the two real .mat files of the repository. One is a gnuBG export of
+// matFixtures are the real .mat files of the repository. One is a gnuBG export of
 // a club match (illegal-looking cells included: a "???" play, a game ended by a
 // resignation), the other a plain seven-point match — between them they exercise the
 // cube, the Crawford game and both ways a game can end.
 var matFixtures = []string{
 	"../../../testdata/test.mat",
 	"../../../testdata/charlot1-charlot2_7p_2025-11-08-2305.mat",
+	// Written by gnubg 1.08.003 playing itself (gnubgparser's test/*.gnubg script):
+	// three of its games end on a drop, in both columns.
+	"../../../testdata/gnubg_selfplay_drops_7p.mat",
 }
 
 // TestFromMATReplayDerivesResults reads each fixture and checks that what the Replay
@@ -26,11 +29,10 @@ var matFixtures = []string{
 // the file gives the plays, the package recomputes the outcome of every game from
 // them alone.
 //
-// The oracle is the SCORE LINE of each game, never the parser's Winner/Points: a
-// "Wins N points" line standing on its own is credited by gnubgparser to whoever acted
-// last (wrong for the two games here that ended on a resignation) and a game ended by
-// a drop leaves it no points at all. The score lines carry no such defect, and they
-// are what a reader of the .mat sees.
+// The oracle is the SCORE LINE of the next game, which is what a reader of the .mat
+// sees. The parser's own Winner/Points are held to it too: before gnubgparser v1.7.0 a
+// "Wins N points" line standing on its own went to whoever acted last (wrong for the
+// games here that ended on a resignation) and a drop scored no points at all (#361).
 func TestFromMATReplayDerivesResults(t *testing.T) {
 	for _, path := range matFixtures {
 		t.Run(path, func(t *testing.T) {
@@ -68,6 +70,10 @@ func TestFromMATReplayDerivesResults(t *testing.T) {
 					continue
 				}
 				winner, points := scoredResult(orig.Games[i].Score, orig.Games[i+1].Score)
+				if og.Winner != winner || og.Points != points {
+					t.Errorf("game %d: the parser says player %d wins %d, the score lines say player %d wins %d",
+						i+1, og.Winner+1, og.Points, winner+1, points)
+				}
 				if g.Winner != winner || g.PointsWon != points {
 					t.Errorf("game %d: replay says player %d wins %d, the score lines say player %d wins %d",
 						i+1, g.Winner+1, g.PointsWon, winner+1, points)
@@ -116,11 +122,11 @@ func TestFromMATRenderRoundTrip(t *testing.T) {
 				if rg.Score != og.Score {
 					t.Errorf("game %d score: rendered %v, original %v", i+1, rg.Score, og.Score)
 				}
-				// og.Points is 0 for a game the file ended with a drop — the parser
-				// stops before the "Wins" line there. Where it did read one, the
-				// rendered file must announce the same.
-				if og.Points > 0 && rg.Points != og.Points {
-					t.Errorf("game %d points: rendered %d, original %d", i+1, rg.Points, og.Points)
+				// The result the file announces — a drop and a resignation included
+				// — comes back from the rendered file, to the same player.
+				if rg.Winner != og.Winner || rg.Points != og.Points {
+					t.Errorf("game %d result: rendered player %d wins %d, original player %d wins %d",
+						i+1, rg.Winner+1, rg.Points, og.Winner+1, og.Points)
 				}
 				compareRecords(t, i+1, og.Moves, rg.Moves)
 			}
@@ -175,7 +181,7 @@ func compareRecords(t *testing.T, game int, want, got []gnubgparser.MoveRecord) 
 		// record, so the pairs above say nothing about them: the mark is the only
 		// difference, and the round trip has to keep it. A "???" that came back as
 		// a dance would put a blank cell in the file where gnubg wrote a question.
-		if isUnrecorded(w.MoveString) != isUnrecorded(g.MoveString) {
+		if w.Unrecorded != g.Unrecorded {
 			t.Errorf("game %d record %d: %q rendered as %q — an unrecorded play and a dance are not the same cell",
 				game, i+1, w.MoveString, g.MoveString)
 		}

@@ -135,11 +135,10 @@ func openingAction(rec *gnubgparser.MoveRecord) Action {
 }
 
 // statedResult is what the FILE says a game was worth. The score line of the next game
-// is the reliable statement of it: a "Wins N points" line standing on its own is
-// attributed by the parser to whoever acted last, which is not the winner when a game
-// ended on a resignation, and a game ended by a drop leaves it no points at all. The
-// score lines never lie, and they are what the transcription must reproduce. The last
-// game of a file has no successor and falls back to what the parser made of it.
+// is the statement of it a reader sees, and what the transcription must reproduce; the
+// "Wins N points" line says the same (gnubgparser v1.7.0 reads it by its column and
+// scores a drop), and is what the last game of a file, which has no successor, falls
+// back to.
 func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points int) {
 	if i+1 < len(games) {
 		gained0 := games[i+1].Score[0] - games[i].Score[0]
@@ -154,7 +153,8 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 	winner, points = games[i].Winner, games[i].Points
 	// The last game has no successor to state its result. What it does have, when it
 	// is the game that ended the match, is one player it CAN belong to: the file's
-	// "and the match" says so, the parser drops it, and the arithmetic recovers it.
+	// "and the match" says so, the parser drops it, and the arithmetic checks the
+	// winner it read against it.
 	if matchLength > 0 && points > 0 {
 		ends0 := games[i].Score[0]+points >= matchLength
 		ends1 := games[i].Score[1]+points >= matchLength
@@ -176,12 +176,12 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 // this function. A cell holding nothing but its dice (or the "Cannot Move" some writers
 // put there) says the player could not play: a dance. A cell holding "???" says gnubg
 // did not write down what was played — the player moved, and the record is silent. The
-// parser's decoded Move is all -1 in both cases, so the raw MoveString is what separates
-// them, and it is the only thing that does.
+// parser's decoded Move is all -1 in both cases; its Unrecorded flag (gnubgparser
+// v1.7.0) is what separates them.
 func checkerAction(rec *gnubgparser.MoveRecord) Action {
 	side := rec.Player
 	dice := [2]int{rec.Dice[0], rec.Dice[1]}
-	if isUnrecorded(rec.MoveString) {
+	if rec.Unrecorded {
 		return Action{Side: side, Kind: KindUnrecorded, Dice: dice}
 	}
 	steps := absoluteSteps(rec.Move, side)
@@ -189,14 +189,6 @@ func checkerAction(rec *gnubgparser.MoveRecord) Action {
 		return Action{Side: side, Kind: KindDance, Dice: dice}
 	}
 	return Action{Side: side, Kind: KindChecker, Dice: dice, Steps: steps}
-}
-
-// isUnrecorded recognises gnubg's mark for a play it did not record: a cell made of
-// question marks and nothing else. The count is not fixed at three on purpose — the
-// mark is what it means, not how long it is — but an empty cell is a dance, never this.
-func isUnrecorded(moveString string) bool {
-	s := strings.TrimSpace(moveString)
-	return s != "" && strings.Trim(s, "?") == ""
 }
 
 // absoluteSteps converts the parser's player-relative points (0..23 for points 1..24,
