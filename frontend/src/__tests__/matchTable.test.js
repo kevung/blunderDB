@@ -1,5 +1,21 @@
 import { describe, test, expect } from 'vitest';
-import { compareValues, getSortValue, sortMatches, toDateInputValue, formatDate, formatDiceShort, fmtPR, fmtEquityError, fmtMwcLoss, fmtErrorsBlunders, MATCH_STAT_ROWS } from '../utils/matchTable.js';
+import {
+    compareValues,
+    getSortValue,
+    sortMatches,
+    toDateInputValue,
+    formatDate,
+    formatDiceShort,
+    fmtPR,
+    fmtEquityError,
+    fmtMwcLoss,
+    fmtErrorsBlunders,
+    MATCH_STAT_ROWS,
+    GRADE_MARKS,
+    indexMoveGrades,
+    countGrades,
+    fmtGradeCost
+} from '../utils/matchTable.js';
 
 describe('compareValues', () => {
     test('nulls sort last regardless of order', () => {
@@ -196,5 +212,32 @@ describe('MATCH_STAT_ROWS', () => {
         expect(overall.fmt(sample)).toBe('4.50');
         expect(overall.valClass).toBe('pr-val');
         expect(overall.bullet).toBe(true);
+    });
+});
+
+describe('Transcript marks (#287)', () => {
+    test('only graded moves are indexed, by move id', () => {
+        const byMove = indexMoveGrades([
+            { move_id: 1, error_mp: 0, grade: '' },
+            { move_id: 2, error_mp: 60, grade: 'error' },
+            { move_id: 3, error_mp: 150, grade: 'blunder' },
+            { move_id: 4, error_mp: 5, grade: 'something else' }
+        ]);
+        expect([...byMove.keys()]).toEqual([2, 3]);
+        expect(GRADE_MARKS[byMove.get(2).grade]).toBe('?');
+        expect(GRADE_MARKS[byMove.get(3).grade]).toBe('??');
+    });
+
+    test('a missing list indexes nothing', () => {
+        expect(indexMoveGrades(null).size).toBe(0);
+    });
+
+    test('a game counts each mark once: a blunder is not also counted as a ?', () => {
+        const moves = [{ grade: { grade: 'blunder' } }, { grade: { grade: 'error' } }, { grade: { grade: 'error' } }, { grade: undefined }];
+        expect(countGrades(moves)).toEqual({ errors: 2, blunders: 1 });
+    });
+
+    test('the cost is shown in equity', () => {
+        expect(fmtGradeCost(150)).toBe('0.150');
     });
 });

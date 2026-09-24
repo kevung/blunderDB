@@ -301,18 +301,9 @@ func player1MaxMoveError(analysis *domain.PositionAnalysis, checkerMoves, cubeAc
 	switch {
 	case analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0:
 		for _, played := range checkerMoves {
-			normPlayed := engine.NormalizeMove(played)
-			for i, m := range analysis.CheckerAnalysis.Moves {
-				if !strings.EqualFold(engine.NormalizeMove(m.Move), normPlayed) {
-					continue
-				}
-				var e float64
-				if i > 0 && m.EquityError != nil {
-					e = math.Abs(*m.EquityError)
-				}
+			if e, ok := checkerPlayError(analysis.CheckerAnalysis, played); ok {
 				maxError = math.Max(maxError, e)
 				found = true
-				break
 			}
 		}
 	case analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil:

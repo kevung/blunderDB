@@ -124,3 +124,33 @@ export const MATCH_STAT_ROWS = [
     { label: 'match.mwcLoss', sub: true, fmt: (p) => fmtMwcLoss(p.take_mwc_loss) },
     { label: 'match.takeDecisions', sub: true, fmt: (p) => String(p.take_decisions) }
 ];
+
+// The marks of the Transcript (#287): a Move's grade, as the library's own
+// thresholds draw it (ADR-0046), written the way the analysis tools annotate
+// a play — `?` for an Error, `??` for a Blunder. The grade itself comes from
+// the backend (GetMatchMoveGrades); nothing here compares a cost to a
+// threshold, so the Transcript cannot draw a line the statistics do not.
+export const GRADE_MARKS = { error: '?', blunder: '??' };
+
+/** Index a match's MoveGrade list by move id, keeping only graded Moves. */
+export function indexMoveGrades(grades) {
+    const byMove = new Map();
+    for (const g of grades || []) {
+        if (g && GRADE_MARKS[g.grade]) byMove.set(g.move_id, g);
+    }
+    return byMove;
+}
+
+/** Count the marks of one game's moves, as they appear in its rows. */
+export function countGrades(moves) {
+    let errors = 0;
+    let blunders = 0;
+    for (const { grade } of moves) {
+        if (grade?.grade === 'blunder') blunders++;
+        else if (grade?.grade === 'error') errors++;
+    }
+    return { errors, blunders };
+}
+
+/** A play's cost in equity, the unit every table shows (millipoints stored). */
+export const fmtGradeCost = (mp) => (Number(mp) / 1000).toFixed(3);

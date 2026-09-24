@@ -168,6 +168,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.dateRange                      JSON
      POST /v1/stats.matchBadges                    JSON
      POST /v1/stats.matchDetail                    JSON
+     POST /v1/stats.matchMoveGrades                JSON
      POST /v1/stats.playerNames                    JSON
      POST /v1/stats.playerTable                    JSON
      POST /v1/stats.positionIdsByMatch             JSON

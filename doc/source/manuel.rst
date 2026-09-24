@@ -278,8 +278,9 @@ gnubg (0,040 / 0,080). Par défaut, une bibliothèque lit 0,050 et 0,100.
 
 Ce qu'ils changent, à l'écran : le nombre de blunders du compteur de la barre
 d'état et la recherche que son lien prépare, les colonnes « Erreurs » et
-« Blunders » des statistiques et du tableau des joueurs, et la liste des
-positions que blunderDB propose de revoir après un import.
+« Blunders » des statistiques et du tableau des joueurs, les marques des
+coups dans la fiche d'un match (:ref:`panneau_matchs`), et la liste des positions que
+blunderDB propose de revoir après un import.
 
 Le même onglet propose aussi le bouton **Compacter la base**, qui récupère
 l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
@@ -1054,6 +1055,18 @@ qui suit dit lequel des deux a eu lieu — « enrichis : 1 » plutôt que
 
 Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
 bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du match.
+
+Un clic sur un match ouvre sa fiche. Son onglet **Transcription** liste les
+coups partie par partie, et un clic sur un coup y amène la revue. Chaque coup y porte
+sa **gravité** : ``?`` pour une erreur, ``??`` pour un blunder, un filet de
+couleur en marge de la ligne, et le coût du coup en équité au survol de la
+marque. Les seuils sont ceux de la base (:ref:`configuration`), ceux que
+comptent les statistiques. Le coup est jugé tel qu'il a été joué : une même
+position jouée deux fois dans le match reçoit deux jugements. Un coup que
+l'analyse ne note pas ne porte aucune marque.
+
+L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
+on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de

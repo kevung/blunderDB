@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // StatsDateRange holds the earliest and latest match dates in the database.
@@ -458,6 +460,16 @@ type MatchDetailStats struct {
 	MatchID int64                  `json:"match_id"`
 	Player1 MatchPlayerDetailStats `json:"player1"`
 	Player2 MatchPlayerDetailStats `json:"player2"`
+}
+
+// GetMatchMoveGrades scores every Move of a match by its own play and grades
+// it at the library's error and blunder thresholds (ADR-0046) — the marks the
+// Match panel's Transcript carries (#287). It delegates to the storage
+// StatsStore, the one statement both backends run.
+func (d *Database) GetMatchMoveGrades(matchID int64) ([]storage.MoveGrade, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().MatchMoveGrades(context.Background(), "", matchID)
 }
 
 // GetMatchDetailStats computes per-player statistics for the given match.

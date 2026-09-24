@@ -192,6 +192,7 @@ var databaseParity = map[string]parityEntry{
 	"GetLastVisitedMatch":               {Server: "/v1/matches.lastVisited", Why: whyGUIState},
 	"GetMatchByID":                      {CLI: "match", Server: "/v1/matches.get"},
 	"GetMatchDetailStats":               {Server: "/v1/stats.matchDetail", Why: "per-match badges of the GUI's Matches tab; `list --type stats --match` is not a filter the CLI offers, `list --type players` and `--tournament` are"},
+	"GetMatchMoveGrades":                {Server: "/v1/stats.matchMoveGrades", Why: "the marks of the GUI's Transcript; the CLI reaches the same plays with `search ma<id> E>x`, whose `E` filter scores a play by the same rule (checkerPlayError, engine.CubeActionError)"},
 	"GetMatchMovePositions":             {CLI: "match", Server: "/v1/matches.movePositions"},
 	"GetMatchTournament":                {Server: "/v1/tournaments.tournamentOf", Why: "`list --type tournaments` lists tournaments with their matches; the reverse lookup is a GUI label"},
 	"GetMovesByGame":                    {Server: "/v1/matches.moves", Why: "`match` prints a match position by position; the game/move split is the GUI navigator's and the daemon's"},

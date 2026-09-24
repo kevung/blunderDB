@@ -2380,6 +2380,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_MatchDetailStats"
                 nullable: true
+  /v1/stats.matchMoveGrades:
+    post:
+      operationId: stats.matchMoveGrades
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_MoveGrade"
   /v1/stats.playerNames:
     post:
       operationId: stats.playerNames
@@ -3612,6 +3631,9 @@ components:
     storage_MatchDetailStats:
       type: object
       description: "Opaque: see the Go type storage.MatchDetailStats (defined outside internal/server, not expanded here)."
+    storage_MoveGrade:
+      type: object
+      description: "Opaque: see the Go type storage.MoveGrade (defined outside internal/server, not expanded here)."
     storage_PlayerFrequency:
       type: object
       description: "Opaque: see the Go type storage.PlayerFrequency (defined outside internal/server, not expanded here)."

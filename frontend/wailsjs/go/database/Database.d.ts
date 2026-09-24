@@ -243,6 +243,8 @@ export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
 
+export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>>;
+
 export function GetMatchMovePositions(arg1:number):Promise<Array<domain.MatchMovePosition>>;
 
 export function GetMatchTournament(arg1:number):Promise<domain.Tournament>;

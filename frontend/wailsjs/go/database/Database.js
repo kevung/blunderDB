@@ -462,6 +462,10 @@ export function GetMatchDetailStats(arg1) {
   return window['go']['database']['Database']['GetMatchDetailStats'](arg1);
 }
 
+export function GetMatchMoveGrades(arg1) {
+  return window['go']['database']['Database']['GetMatchMoveGrades'](arg1);
+}
+
 export function GetMatchMovePositions(arg1) {
   return window['go']['database']['Database']['GetMatchMovePositions'](arg1);
 }

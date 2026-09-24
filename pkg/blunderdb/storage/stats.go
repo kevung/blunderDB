@@ -302,6 +302,27 @@ type MatchDetailStats struct {
 	Player2 MatchPlayerDetailStats `json:"player2"`
 }
 
+// The two grades a Move of a match can carry in its Transcript (#287). They are
+// the library's two words — an Error, and the Blunder an Error becomes — drawn
+// at the library's own thresholds (ADR-0046), the same lines the statistics
+// count at. A play under the error threshold carries no grade.
+const (
+	MoveGradeError   = "error"
+	MoveGradeBlunder = "blunder"
+)
+
+// MoveGrade is one Move of a match scored by its Position's analysis: the
+// cost of THAT play, in millipoints, and the grade the library's thresholds
+// give it. A Position deduplicated across a match (an opening reached twice)
+// is scored once per Move, each by its own play — not by the denormalised
+// column, which holds only the first. A Move whose play the analysis does not
+// score (no analysis, a move absent from the candidates) has no MoveGrade.
+type MoveGrade struct {
+	MoveID  int64  `json:"move_id"`
+	ErrorMP int    `json:"error_mp"`
+	Grade   string `json:"grade"` // "", MoveGradeError or MoveGradeBlunder
+}
+
 // MatchBadge is the per-player PR/MWC summary shown on each match-list row.
 // PR/MWCLoss are player 1's, PR2/MWCLoss2 player 2's. It is the list-row
 // projection of MatchDetailStats (badge.PR == detail.Player1.PR for a match).
@@ -413,6 +434,12 @@ type StatsStore interface {
 
 	// MatchDetail computes per-player statistics for a single match.
 	MatchDetail(ctx context.Context, scope string, matchID int64) (*MatchDetailStats, error)
+
+	// MatchMoveGrades scores every Move of a match by its own play and grades
+	// it at the library's thresholds — what the Match panel's Transcript
+	// colours its rows with (#287). Moves come back in Transcript order; a
+	// Move the analysis does not score is absent.
+	MatchMoveGrades(ctx context.Context, scope string, matchID int64) ([]MoveGrade, error)
 
 	// MatchBadges returns the per-player PR/MWC badge for the given matches,
 	// keyed by match id. A nil/empty matchIDs computes badges for every match in

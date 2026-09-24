@@ -1,7 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
-    import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
+    import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy, untrack } from 'svelte';
@@ -19,7 +19,8 @@
         SetMatchTournamentByName,
         SwapMatchPlayers,
         SaveLastVisitedPosition,
-        GetMatchDetailStats
+        GetMatchDetailStats,
+        GetMatchMoveGrades
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -44,6 +45,7 @@
     import { commentTextStore, isAnyModalOpen } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
+    import { libraryCountsStore } from '../stores/libraryCountsStore.js';
     import { transcriptionListStore } from '../stores/transcriptionStore.js';
     import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
@@ -58,6 +60,7 @@
     let detailMatch = $state(null); // Match currently shown in detail pane
     let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
     let detailGames = $state([]); // Game[] for the detail match
+    let detailGrades = $state([]); // MoveGrade[] for the detail match (#287)
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     let detailStats = $state(null); // MatchDetailStats for the detail match
@@ -241,6 +244,7 @@
             detailMatch = null;
             detailMovePositions = [];
             detailGames = [];
+            detailGrades = [];
             detailStats = null;
         } else {
             selectedMatch = match;
@@ -254,16 +258,44 @@
         detailMatch = match;
         detailStats = null; // reset stats when switching match
         try {
-            const [movePositions, games] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id)]);
+            const [movePositions, games, grades] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id), loadMoveGrades(match.id)]);
             detailMovePositions = movePositions || [];
             detailGames = games || [];
+            detailGrades = grades;
         } catch (error) {
             logger.error('Error loading match detail:', error);
             detailMovePositions = [];
             detailGames = [];
+            detailGrades = [];
         }
         loadingDetail = false;
     }
+
+    // The marks are a comfort on top of the transcript: if they cannot be
+    // read, the transcript still shows, unmarked, rather than not at all.
+    async function loadMoveGrades(matchID) {
+        try {
+            return (await GetMatchMoveGrades(matchID)) || [];
+        } catch (error) {
+            logger.error('Error loading move grades:', error);
+            return [];
+        }
+    }
+
+    // The grades are drawn at the library's thresholds, which the settings can
+    // move; the library counter is refreshed when they do (and after every
+    // import), so its change is the moment to re-read the marks of the match
+    // on screen.
+    $effect(() => {
+        void $libraryCountsStore; // tracked dep: re-grade on a threshold change or an import
+        untrack(() => {
+            const match = detailMatch;
+            if (!match) return;
+            loadMoveGrades(match.id).then((grades) => {
+                if (detailMatch && detailMatch.id === match.id) detailGrades = grades;
+            });
+        });
+    });
 
     async function loadMatchStats(match) {
         if (!match || loadingStats) return;
@@ -291,19 +323,22 @@
     // match cost ~250 000 comparisons per render (D.8, #208).
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
+        // Each move carries its grade (#287), looked up once here rather than
+        // per row in the template.
+        const gradeByMove = indexMoveGrades(detailGrades);
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
         detailMovePositions.forEach((mp, globalIdx) => {
             if (!gameMap.has(mp.game_number)) {
                 gameMap.set(mp.game_number, []);
             }
-            gameMap.get(mp.game_number).push({ mp, globalIdx });
+            gameMap.get(mp.game_number).push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id) });
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
             // Find corresponding game info
             const gameInfo = detailGames.find((g) => g.game_number === gameNum);
-            result.push({ gameNumber: gameNum, moves, gameInfo });
+            result.push({ gameNumber: gameNum, moves, gameInfo, marks: countGrades(moves) });
         }
         return result;
     });
@@ -874,6 +909,12 @@
                                                 >
                                             {/if}
                                         {/if}
+                                        {#if game.marks.blunders > 0}
+                                            <span class="game-marks grade-blunder" title={$t('match.gameBlunderCount', { n: game.marks.blunders })}>{game.marks.blunders} {GRADE_MARKS.blunder}</span>
+                                        {/if}
+                                        {#if game.marks.errors > 0}
+                                            <span class="game-marks grade-error" title={$t('match.gameErrorCount', { n: game.marks.errors })}>{game.marks.errors} {GRADE_MARKS.error}</span>
+                                        {/if}
                                     </summary>
                                     {#if isOpen}
                                         <table class="transcript-table">
@@ -886,8 +927,15 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {#each game.moves as { mp, globalIdx }, mi (globalIdx)}
-                                                    <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title={$t('match.clickToReview')}>
+                                                {#each game.moves as { mp, globalIdx, grade }, mi (globalIdx)}
+                                                    <tr
+                                                        class="transcript-row"
+                                                        class:cube-row={mp.move_type === 'cube'}
+                                                        class:graded-error={grade?.grade === 'error'}
+                                                        class:graded-blunder={grade?.grade === 'blunder'}
+                                                        onclick={() => navigateToMove(globalIdx)}
+                                                        title={$t('match.clickToReview')}
+                                                    >
                                                         <td class="transcript-num">{mi + 1}</td>
                                                         <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
                                                             {getPlayerName(mp)}
@@ -902,6 +950,13 @@
                                                                 <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
                                                             {:else}
                                                                 {mp.checker_move || '—'}
+                                                            {/if}
+                                                            {#if grade}
+                                                                <span
+                                                                    class="grade-mark grade-{grade.grade}"
+                                                                    title={$t(grade.grade === 'blunder' ? 'match.gradeBlunder' : 'match.gradeError', { cost: fmtGradeCost(grade.error_mp) })}
+                                                                    >{GRADE_MARKS[grade.grade]}</span
+                                                                >
                                                             {/if}
                                                         </td>
                                                     </tr>
@@ -1268,6 +1323,9 @@
 
     /* --- Transcript --- */
     .transcript-container {
+        /* An Error is the Blunder's red, faded: one hue whose strength is the
+           gravity, from the palette's own danger token (ADR-0031). */
+        --grade-error-color: color-mix(in srgb, var(--color-danger) 45%, var(--color-surface));
         flex: 1;
         overflow-y: auto;
         padding: 0;
@@ -1396,6 +1454,43 @@
 
     .cube-row:hover {
         background-color: color-mix(in srgb, #ffc107 20%, var(--color-surface));
+    }
+
+    /* The marks of the Transcript (issue 287): a left rule in the row and the mark
+       after the play, so the grade reads without colour too. A Blunder takes the
+       danger token and tints its row, an Error the same red faded. */
+    .transcript-row.graded-error > td:first-child {
+        box-shadow: inset 3px 0 0 var(--grade-error-color);
+    }
+
+    .transcript-row.graded-blunder > td:first-child {
+        box-shadow: inset 3px 0 0 var(--color-danger);
+    }
+
+    .transcript-row.graded-blunder {
+        background-color: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
+    }
+
+    .transcript-row.graded-blunder:hover {
+        background-color: color-mix(in srgb, var(--color-danger) 14%, var(--color-surface));
+    }
+
+    .grade-mark,
+    .game-marks {
+        font-weight: 700;
+        font-family: var(--font-family-ui);
+    }
+
+    .grade-mark {
+        margin-left: 6px;
+    }
+
+    .grade-error {
+        color: color-mix(in srgb, var(--color-danger) 70%, var(--color-text-muted));
+    }
+
+    .grade-blunder {
+        color: var(--color-danger);
     }
 
     .cube-action {

@@ -4052,6 +4052,22 @@ export namespace storage {
 	        this.Offset = source["Offset"];
 	    }
 	}
+	export class MoveGrade {
+	    move_id: number;
+	    error_mp: number;
+	    grade: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new MoveGrade(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move_id = source["move_id"];
+	        this.error_mp = source["error_mp"];
+	        this.grade = source["grade"];
+	    }
+	}
 	export class SimilarPosition {
 	    position: domain.Position;
 	    distance: number;

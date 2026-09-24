@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // decodeMatchList collects the NDJSON match stream from /v1/matches.list.
@@ -126,6 +127,34 @@ func TestStatsTournamentBadgesHTTP(t *testing.T) {
 	// — the route existing and answering 200 is what this test guards.
 	if len(body.Badges) != 0 {
 		t.Errorf("fresh DB: got %d tournament badges, want 0", len(body.Badges))
+	}
+}
+
+// TestStatsMatchMoveGradesHTTP — the Transcript's marks (#287) are served to
+// the daemon's clients too, not only to the desktop: a match with no analysed
+// Move answers 200 and an empty list. The grading itself is held by the
+// storage contract (Stats/MatchMoveGrades) on both backends.
+func TestStatsMatchMoveGradesHTTP(t *testing.T) {
+	ts := newTestServer(t)
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+	saveResp := post(t, ts, "/v1/matches.save", matchSaveReq{Match: &m})
+	var saved idResp
+	if err := json.NewDecoder(saveResp.Body).Decode(&saved); err != nil {
+		t.Fatal(err)
+	}
+	saveResp.Body.Close()
+
+	resp := post(t, ts, "/v1/stats.matchMoveGrades", matchIDReq{MatchID: saved.ID})
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("matchMoveGrades status = %d, want 200", resp.StatusCode)
+	}
+	var body []storage.MoveGrade
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if len(body) != 0 {
+		t.Errorf("unanalysed match: got %+v, want no grade", body)
 	}
 }
 
