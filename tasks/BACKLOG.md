@@ -123,6 +123,14 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   passant ».
 ## Ouvert — Produit / docs
 
+- **Direction, simulation 2026-09** ([rapport](nicomaque/simulation-2026-09/rapport/README.md)) —
+  cinq lots mesurés, #380 reste ouverte :
+  - D5 l'échelle, bugs compris : #434-#443 ;
+  - D6 la Rencontre (ADR d'abord, #444) : #444-#449 ;
+  - D7 le championnat : #450-#453 ;
+  - D8 les sorties : #454-#456 ;
+  - D9 cadrage de l'écran joueur, bloqué par #380 : #457 ;
+  - moteur : PileOfCells/backgammon-tournoi#15-#22 (N15-N22).
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
   (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
   10 (ADR-0017/0018/0021). → fiche H.7 (#249).
