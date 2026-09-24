@@ -509,7 +509,8 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('y')) {
         event.preventDefault();
         toggleTournamentPanel();
-    } else if (event.ctrlKey && letter('d')) {
+    } else if (event.ctrlKey && !event.shiftKey && letter('d')) {
+        // Sans MAJ : CTRL-MAJ-D, retiré avec #443, ne doit pas retomber sur Stats.
         event.preventDefault();
         toggleStatsPanel();
     } else if (event.ctrlKey && letter('e')) {
