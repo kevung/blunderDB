@@ -9,6 +9,12 @@
      *
      * Un clic sur une case ouvre la fiche de résultat EN SURIMPRESSION SUR LA CASE, pas au
      * centre de l'écran : le regard ne quitte pas la grille.
+     *
+     * La grille vient AVANT la file des propositions (#440) : à 768 px de haut, dock ouvert, la
+     * page n'a que ~390 px, et 24 propositions poussaient les 14 tables entièrement sous
+     * l'écran (y 1036 → 1230). La grille a une hauteur bornée par le nombre de tables ; la file,
+     * non. Ce qui porte sur les tables (la feuille d'appariements) se range dans son en-tête
+     * (`actions`), plutôt que dans une barre de plus au-dessus.
      */
     import { t } from '../../i18n';
     import ResultCard from './ResultCard.svelte';
@@ -22,10 +28,11 @@
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
      *     onForfeit?: (matchId: string, winner: string, note: string) => void,
      *     onMove?: (matchId: string, table: number) => void,
-     *     onCancel?: (matchId: string) => void
+     *     onCancel?: (matchId: string) => void,
+     *     actions?: import('svelte').Snippet
      * }}
      */
-    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
+    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, actions } = $props();
 
     let openTable = $state(0);
 
@@ -61,7 +68,10 @@
 </script>
 
 <section class="grid-wrap">
-    <h3>{$t('direction.table.title', { n: cells.length })}</h3>
+    <header>
+        <h3>{$t('direction.table.title', { n: cells.length })}</h3>
+        {#if actions}{@render actions()}{/if}
+    </header>
     <div class="grid">
         {#each cells as c (c.table)}
             <div class="cell-wrap">
@@ -107,8 +117,16 @@
         min-width: 0;
     }
 
-    h3 {
+    header {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-2);
         margin: 0 0 var(--space-1);
+    }
+
+    h3 {
+        margin: 0;
         font-size: var(--font-size-base);
         font-weight: 600;
         color: var(--color-text);

@@ -113,8 +113,13 @@
     /** @type {HTMLElement | null} */
     let queueEl = $state(null);
 
+    /* La file vient sous la grille (#440) : à 768 px de haut, les propositions au-delà de la
+       troisième sont sous la ligne de flottaison. J / K amènent donc la ligne choisie à l'écran,
+       au plus court — sans quoi ENTRÉE confirmerait une proposition qu'on ne voit pas. */
     function focusQueue() {
-        if (queueEl && document.activeElement !== queueEl) queueEl.focus({ preventScroll: true });
+        if (!queueEl) return;
+        if (document.activeElement !== queueEl) queueEl.focus({ preventScroll: true });
+        queueEl.children[selected]?.scrollIntoView({ block: 'nearest' });
     }
 
     /** @param {KeyboardEvent} e */
@@ -152,8 +157,17 @@
     </header>
 
     {#if confirming}
+        <!-- « Confirmer » EN TÊTE de la liste de contrôle, pas au pied (#440) : sous une liste
+             de dix lignes, il passait sous la ligne de flottaison à 768 px de haut. La liste
+             se lit après, pour qui veut la lire ; le geste, lui, est déjà à portée. -->
         <div class="confirm" data-testid="direction-proposals-confirm">
-            <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
+            <div class="confirm-head">
+                <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
+                <div class="confirm-actions">
+                    <button type="button" class="primary" data-testid="direction-proposals-confirm-all" onclick={doConfirmAll}>{$t('direction.proposals.confirm')}</button>
+                    <button type="button" onclick={() => (confirming = false)}>{$t('common.cancel')}</button>
+                </div>
+            </div>
             <ul>
                 {#each shown as a (actionKey(a))}
                     <li class:repair={isRepair(a)}>
@@ -164,10 +178,6 @@
                     </li>
                 {/each}
             </ul>
-            <div class="confirm-actions">
-                <button type="button" class="primary" data-testid="direction-proposals-confirm-all" onclick={doConfirmAll}>{$t('direction.proposals.confirm')}</button>
-                <button type="button" onclick={() => (confirming = false)}>{$t('common.cancel')}</button>
-            </div>
         </div>
     {/if}
 
@@ -356,13 +366,21 @@
         background: var(--color-surface-alt);
     }
 
-    .confirm p {
+    .confirm-head {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-2);
         margin: 0 0 var(--space-1);
+    }
+
+    .confirm p {
+        margin: 0;
         font-size: var(--font-size-small);
     }
 
     .confirm ul {
-        margin: 0 0 var(--space-2);
+        margin: 0;
         padding-left: var(--space-4);
         font-size: var(--font-size-small);
         max-height: 12rem;

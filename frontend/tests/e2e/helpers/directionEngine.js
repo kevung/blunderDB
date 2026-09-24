@@ -30,21 +30,38 @@ export const ENTRANTS = [
 ];
 
 /**
+ * Une salle pleine, l'état S2 samedi 14 h de la simulation (#440,
+ * tasks/nicomaque/simulation-2026-09/rapport/S2.md) : 76 inscrits, 14 tables toutes occupées,
+ * et les 48 joueurs restants en 24 propositions. C'est la hauteur de la file qui poussait la
+ * grille sous la ligne de flottaison ; quatre joueurs sur quatre tables ne le montrent jamais.
+ *
+ * @param {number} n
+ */
+export function crowd(n) {
+    return Array.from({ length: n }, (_, i) => ({ id: `s${i + 1}`, name: `Joueur ${String(i + 1).padStart(2, '0')}`, club: i % 2 ? 'Lyon' : 'Paris', rating: 3 + (i % 5) }));
+}
+
+/** Les options de l'état S2 : `installDirectionEngine(page, S2_HALL)`. */
+export const S2_HALL = { entrants: crowd(76), tables: 14, running: 14 };
+
+/**
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{directed?: boolean}} [opts] `directed: false` part d'un tournoi non dirigé, pour
- *   mesurer le coût d'entrée depuis rien.
+ * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number}} [opts]
+ *   `directed: false` part d'un tournoi non dirigé, pour mesurer le coût d'entrée depuis rien.
+ *   `entrants`, `tables` et `running` changent la taille de la salle (défaut : les quatre
+ *   inscrits, quatre tables, aucun match) ; `running` matchs sont lancés d'avance.
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed }) => {
+        ({ entrants, directed, tableCount, runningAtStart }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
             const CONFIG = {
                 name: 'Open de Lyon',
-                tables: { count: 4 },
+                tables: { count: tableCount },
                 phases: [{ kind: 'swiss_lives', length: 7, lives: 2, mode: 'continuous', target: 0 }]
             };
 
@@ -119,6 +136,9 @@ export async function installDirectionEngine(page, opts = {}) {
             // Un tournoi déjà dirigé arrive avec sa file : c'est l'état dans lequel un directeur
             // ouvre sa Direction, et les budgets se comptent à partir de là.
             if (directed) proposals = pair();
+            if (directed) {
+                for (let i = 0; i < runningAtStart && proposals.length; i++) start(proposals[0].a, proposals[0].b, 7, 0);
+            }
 
             db.ListDirections = () => Promise.resolve(exists ? [{ tournamentId: TOURNAMENT_ID, state: view().state, engineVersion: 'v0.2.1', outputDir: '', updatedAt: '' }] : []);
             db.HasDirection = () => Promise.resolve(exists);
@@ -239,7 +259,7 @@ export async function installDirectionEngine(page, opts = {}) {
 
             db.TableGrid = () =>
                 Promise.resolve(
-                    Array.from({ length: 4 }, (_, i) => {
+                    Array.from({ length: tableCount }, (_, i) => {
                         const t = i + 1;
                         const m = running.find((x) => x.Table === t);
                         if (!m) return { table: t, free: true };
@@ -297,6 +317,6 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.GetMatchesByTournament = () => Promise.resolve([]);
         },
-        { entrants: ENTRANTS, directed: opts.directed !== false }
+        { entrants: opts.entrants || ENTRANTS, directed: opts.directed !== false, tableCount: opts.tables || 4, runningAtStart: opts.running || 0 }
     );
 }
