@@ -1914,7 +1914,8 @@
             "unavailable": "fuera de servicio",
             "reserved": "reservada",
             "slow": "lenta",
-            "none": "Ninguna mesa declarada."
+            "none": "Ninguna mesa declarada.",
+            "noTable": "sin mesa"
         },
         "result": {
             "title": "Resultado",

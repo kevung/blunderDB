@@ -9,6 +9,10 @@
      *
      * Un clic sur une case ouvre la fiche de résultat EN SURIMPRESSION SUR LA CASE, pas au
      * centre de l'écran : le regard ne quitte pas la grille.
+     *
+     * Un match en cours SANS table (apparié à la main dans une salle pleine, #437) a sa case
+     * après celles de la salle, « sans table » : il est dans la salle, il doit se voir. Plusieurs
+     * cases peuvent donc porter la table 0, d'où une clé par match plutôt que par table.
      */
     import { t } from '../../i18n';
     import ResultCard from './ResultCard.svelte';
@@ -27,7 +31,15 @@
      */
     let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
 
-    let openTable = $state(0);
+    let openKey = $state('');
+
+    /** @param {TableCell} c */
+    function key(c) {
+        return c.noTable ? `m:${c.matchId}` : `t:${c.table}`;
+    }
+
+    /** Le titre compte les tables de la salle, pas les matchs qui n'en ont pas. */
+    let tableCount = $derived(cells.filter((c) => !c.noTable).length);
 
     /**
      * Le temps écoulé d'un match. Zéro seconde est omis par le backend (`omitempty`) : un match
@@ -61,21 +73,22 @@
 </script>
 
 <section class="grid-wrap">
-    <h3>{$t('direction.table.title', { n: cells.length })}</h3>
+    <h3>{$t('direction.table.title', { n: tableCount })}</h3>
     <div class="grid">
-        {#each cells as c (c.table)}
+        {#each cells as c (key(c))}
             <div class="cell-wrap">
                 <button
                     type="button"
                     class="cell"
-                    data-testid="direction-table-{c.table}"
+                    data-testid={c.noTable ? `direction-table-none-${c.matchId}` : `direction-table-${c.table}`}
                     class:busy={c.matchId}
                     class:slow={c.slow}
                     class:idle={!c.matchId}
+                    class:no-table={c.noTable}
                     disabled={!c.matchId}
-                    onclick={() => (openTable = openTable === c.table ? 0 : c.table)}
+                    onclick={() => (openKey = openKey === key(c) ? '' : key(c))}
                 >
-                    <span class="num">{c.table}</span>
+                    <span class="num">{c.noTable ? $t('direction.table.noTable') : c.table}</span>
                     {#if c.matchId}
                         <span class="players">{c.aName} – {c.bName}</span>
                         <span class="meta">
@@ -90,8 +103,8 @@
                     {/if}
                 </button>
 
-                {#if openTable === c.table && c.matchId}
-                    <ResultCard cell={runningCell(c)} {busy} onClose={() => (openTable = 0)} {onResult} {onForfeit} {onMove} {onCancel} />
+                {#if openKey === key(c) && c.matchId}
+                    <ResultCard cell={runningCell(c)} {busy} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
                 {/if}
             </div>
         {/each}
@@ -155,6 +168,12 @@
 
     .cell.busy {
         border-color: var(--color-primary);
+    }
+
+    /* Sans table, le match reste une case pleine ; seul le cadre en pointillé dit qu'il attend
+       qu'on lui en donne une (« Changer de table » dans sa fiche). */
+    .cell.no-table {
+        border-style: dashed;
     }
 
     /* Un match lent se voit sans qu'on le cherche, et sans clignoter : la couleur d'alerte et

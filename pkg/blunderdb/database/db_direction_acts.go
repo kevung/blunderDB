@@ -116,6 +116,12 @@ func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, t
 	if length <= 0 {
 		length = st.Phases[st.Current].Length
 	}
+	if table <= 0 {
+		// No number typed: the first free table, as a proposal would get (#437). With none
+		// left the match still starts — the director decided — and the grid shows it under
+		// its "no table" cell.
+		table = firstFreeTable(st, "", st.Current)
+	}
 	act := tournoi.Action{
 		Kind: tournoi.ActStartMatch, Phase: st.Current,
 		A: tournoi.PlayerID(a), B: tournoi.PlayerID(b),
@@ -125,6 +131,32 @@ func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, t
 		return nil, err
 	}
 	return d.GetDirection(tournamentID)
+}
+
+// firstFreeTable is the table the engine would give a proposal of this section and phase: the
+// smallest one that is not in use, not out of service and not reserved for something else; 0
+// when there is none.
+//
+// It restates the engine's assignTables (Nicomaque engine.go) because that one is unexported
+// and runs only on proposals: the rule is the engine's, read from the same state and through
+// its exported AvailableFor, and this copy must follow it if it ever changes.
+func firstFreeTable(st *tournoi.State, section string, phase int) int {
+	used := map[int]bool{}
+	for _, m := range st.Running() {
+		if m.Table > 0 {
+			used[m.Table] = true
+		}
+	}
+	tables := st.Config.Tables
+	for t := 1; tables.Count == 0 || t <= tables.Count; t++ {
+		if tables.Count == 0 && t > len(used)+len(tables.Unavailable)+len(tables.Reserved)+1 {
+			break // an unlimited room: nothing to find beyond this
+		}
+		if !used[t] && tables.AvailableFor(t, section, phase) {
+			return t
+		}
+	}
+	return 0
 }
 
 // FreeParticipants names the Participants of the current phase who are not playing: who the

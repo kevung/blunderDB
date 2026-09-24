@@ -216,3 +216,87 @@ func TestFreeParticipantsShrinksAsMatchesStart(t *testing.T) {
 		t.Errorf("%d free after %d matches started, want %d", len(after), len(v.Running), 24-2*len(v.Running))
 	}
 }
+
+// TestManualPairingTakesAFreeTable (#437): a match paired by hand with no table number takes
+// the first free table — the one a proposal would get, unavailable tables skipped — and, when
+// none is left, still shows in the grid, under a "no table" cell rather than nowhere.
+func TestManualPairingTakesAFreeTable(t *testing.T) {
+	d := newTestDB(t)
+	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Open de Lyon","tables":{"count":3,"unavailable":[1]},"phases":[
+		{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":4}]}`
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for _, id := range []string{"p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7"} {
+		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
+	}
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
+		t.Fatal(err)
+	}
+
+	tableOf := func(v *DirectionView, a string) int {
+		t.Helper()
+		for _, m := range v.Running {
+			if string(m.A) == a || string(m.B) == a {
+				return m.Table
+			}
+		}
+		t.Fatalf("%s is not playing", a)
+		return 0
+	}
+
+	v, err := d.StartMatchManually(tID, "p0", "p1", 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := tableOf(v, "p0"); got != 2 {
+		t.Errorf("first manual match: table %d, want 2 (table 1 is unavailable)", got)
+	}
+	v, err = d.StartMatchManually(tID, "p2", "p3", 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := tableOf(v, "p2"); got != 3 {
+		t.Errorf("second manual match: table %d, want 3", got)
+	}
+
+	// The room is full: the match is still launched — the director decided — with no table.
+	v, err = d.StartMatchManually(tID, "p4", "p5", 0, 0)
+	if err != nil {
+		t.Fatalf("a manual match in a full room must still be launched: %v", err)
+	}
+	if got := tableOf(v, "p4"); got != 0 {
+		t.Errorf("third manual match: table %d, want none", got)
+	}
+	cells, err := d.TableGrid(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var noTable []TableCell
+	for _, c := range cells {
+		if c.NoTable {
+			noTable = append(noTable, c)
+		}
+	}
+	if len(noTable) != 1 || noTable[0].MatchID == "" || noTable[0].Table != 0 ||
+		(noTable[0].A != "p4" && noTable[0].B != "p4") {
+		t.Fatalf("the match with no table must show in the grid under a no-table cell: %+v", cells)
+	}
+	if len(cells) != 4 {
+		t.Errorf("grid: %d cells, want the 3 tables plus the no-table one", len(cells))
+	}
+
+	// A table the director typed is still theirs, even one the engine would skip.
+	v, err = d.StartMatchManually(tID, "p6", "p7", 0, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := tableOf(v, "p6"); got != 1 {
+		t.Errorf("typed table: %d, want 1", got)
+	}
+}

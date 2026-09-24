@@ -1914,7 +1914,8 @@
             "unavailable": "poissa käytöstä",
             "reserved": "varattu",
             "slow": "hidas",
-            "none": "Pöytiä ei ole ilmoitettu."
+            "none": "Pöytiä ei ole ilmoitettu.",
+            "noTable": "ei pöytää"
         },
         "result": {
             "title": "Tulos",

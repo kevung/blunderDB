@@ -1496,6 +1496,10 @@ l'instant » n'écrit rien : le moteur est déterministe, et la proposition revi
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.
 
+Un match apparié à la main sans numéro de table prend la première table libre.
+Si la salle est pleine, il est lancé quand même et sa case apparaît au bout de
+la grille, « sans table », jusqu'à ce qu'on le déplace sur une table.
+
 Une proposition peut porter une remarque du moteur : aucune table libre, ou une
 fin de match attendue pendant une pause. Elle reste lançable dans les deux cas.
 Lorsqu'une phase fonctionne par **micro-rondes**, la file montre le temps qui

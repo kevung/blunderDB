@@ -1914,7 +1914,8 @@
             "unavailable": "außer Betrieb",
             "reserved": "reserviert",
             "slow": "langsam",
-            "none": "Kein Tisch angegeben."
+            "none": "Kein Tisch angegeben.",
+            "noTable": "ohne Tisch"
         },
         "result": {
             "title": "Ergebnis",
