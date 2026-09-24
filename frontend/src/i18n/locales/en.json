@@ -2035,7 +2035,11 @@
             "pace": "{observed} min/pt (planned {planned})",
             "slow": "{n} slow",
             "break": "break at {at}",
-            "warnings": "{n}"
+            "warnings": "{n}",
+            "day": "day {n}",
+            "playing": "{d} of play",
+            "end": "estimated end: {at}",
+            "endHint": "The engine's forecast at the planned pace, after the declared breaks. A night not declared as a break counts as play."
         },
         "pending": "{n} proposals waiting",
         "credit": {

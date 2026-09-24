@@ -2035,7 +2035,11 @@
             "pace": "{observed} Min/Pkt (geplant {planned})",
             "slow": "{n} langsam",
             "break": "Pause um {at}",
-            "warnings": "{n}"
+            "warnings": "{n}",
+            "day": "Tag {n}",
+            "playing": "{d} Spielzeit",
+            "end": "voraussichtliches Ende: {at}",
+            "endHint": "Die Prognose der Engine im geplanten Tempo, nach den eingetragenen Pausen. Eine Nacht, die nicht als Pause eingetragen ist, zählt als Spielzeit."
         },
         "pending": "{n} Vorschläge warten",
         "credit": {

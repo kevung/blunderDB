@@ -49,8 +49,12 @@ type Database struct {
 	// repair rebuilds anki_card to make position_id nullable, which no schema
 	// pass can do — SQLite relaxes no constraint through ALTER TABLE.
 	pendingAnkiCardKinds bool
-	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
-	readOnly             bool      // opened read-only because another instance holds the write lock
+	// forecasts memoises the estimated end of each Direction's clock (#456,
+	// db_direction_clock.go); forecastMu guards it and is never held with mu.
+	forecastMu sync.Mutex
+	forecasts  map[int64]forecastMemo
+	lock       *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
+	readOnly   bool      // opened read-only because another instance holds the write lock
 	// transcriptSessions holds the open transcription drafts, keyed by row id
 	// (db_transcription.go). They cache what the stored JSON cannot hold — the
 	// Action being typed and the undo stack, both in memory by design
