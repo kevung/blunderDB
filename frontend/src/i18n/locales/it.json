@@ -1990,7 +1990,7 @@
             "overall": "Classifica generale",
             "note": "Nota",
             "prize": "Premio",
-            "csv": "Esporta (CSV)",
+            "csv": "Copia (CSV)",
             "close": "Chiudi il torneo",
             "closeConfirm": "Match in corso: {n}. Chiudere congela la classifica senza di loro: il loro risultato non potrà più essere inserito, salvo riaprire il torneo.",
             "reopen": "Riapri",
@@ -1998,7 +1998,12 @@
             "pool": "Monte {pool} · da distribuire {payable} · trattenuto {retained}",
             "error": "Impossibile chiudere il torneo.",
             "copied": "Classifica copiata negli appunti.",
-            "reopenConfirm": "Riaprire questo torneo? La classifica finale cessa di essere definitiva, e la riapertura resta nel registro."
+            "reopenConfirm": "Riaprire questo torneo? La classifica finale cessa di essere definitiva, e la riapertura resta nel registro.",
+            "save": "Salva…",
+            "saveHint": "Salva la classifica in un file CSV, identico alla copia.",
+            "saved": "Classifica salvata: {path}",
+            "saveFailed": "Impossibile salvare la classifica.",
+            "fileWord": "classifica"
         },
         "history": {
             "filter": "Filtra per giocatore o partita",
@@ -2192,7 +2197,12 @@
             "warnings": {
                 "duplicate": "Riga {line}: «{text}» compare già alla riga {first}. Spuntare per iscriverlo comunque.",
                 "entered": "Riga {line}: «{text}» è già iscritto. Spuntare per iscriverlo comunque."
-            }
+            },
+            "save": "Salva…",
+            "saveHint": "Salva la rubrica in un file CSV, identico alla copia.",
+            "saved": "Rubrica salvata: {path}",
+            "saveFailed": "Impossibile salvare la rubrica.",
+            "fileWord": "rubrica"
         }
     },
     "palette": {

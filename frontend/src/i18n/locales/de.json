@@ -1990,7 +1990,7 @@
             "overall": "Gesamtrangliste",
             "note": "Anmerkung",
             "prize": "Preis",
-            "csv": "Export (CSV)",
+            "csv": "Kopieren (CSV)",
             "close": "Turnier abschließen",
             "closeConfirm": "Laufende Matches: {n}. Das Abschließen friert die Rangliste ohne sie ein: ihr Ergebnis lässt sich nicht mehr eintragen, es sei denn, das Turnier wird wieder geöffnet.",
             "reopen": "Wieder öffnen",
@@ -1998,7 +1998,12 @@
             "pool": "Pool {pool} · auszuzahlen {payable} · einbehalten {retained}",
             "error": "Das Turnier konnte nicht abgeschlossen werden.",
             "copied": "Rangliste in die Zwischenablage kopiert.",
-            "reopenConfirm": "Dieses Turnier wieder öffnen? Die Endwertung ist dann nicht mehr endgültig, und die Wiedereröffnung bleibt im Journal."
+            "reopenConfirm": "Dieses Turnier wieder öffnen? Die Endwertung ist dann nicht mehr endgültig, und die Wiedereröffnung bleibt im Journal.",
+            "save": "Speichern…",
+            "saveHint": "Speichert die Rangliste als CSV-Datei, identisch mit der Kopie.",
+            "saved": "Rangliste gespeichert: {path}",
+            "saveFailed": "Die Rangliste konnte nicht gespeichert werden.",
+            "fileWord": "rangliste"
         },
         "history": {
             "filter": "Nach Spieler oder Partie filtern",
@@ -2192,7 +2197,12 @@
             "warnings": {
                 "duplicate": "Zeile {line}: „{text}“ steht bereits in Zeile {first}. Ankreuzen, um trotzdem anzumelden.",
                 "entered": "Zeile {line}: „{text}“ ist bereits angemeldet. Ankreuzen, um trotzdem anzumelden."
-            }
+            },
+            "save": "Speichern…",
+            "saveHint": "Speichert das Verzeichnis als CSV-Datei, identisch mit der Kopie.",
+            "saved": "Verzeichnis gespeichert: {path}",
+            "saveFailed": "Das Verzeichnis konnte nicht gespeichert werden.",
+            "fileWord": "verzeichnis"
         }
     },
     "palette": {

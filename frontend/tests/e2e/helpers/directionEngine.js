@@ -329,6 +329,27 @@ export async function installDirectionEngine(page, opts = {}) {
                     .map((p, i) => ({ id: p.id, name: p.name, club: p.club, rank: i + 1, shared: false, note: { kind: 'record', wins: p.w, losses: 0 } }));
                 return Promise.resolve({ finished, pool: 0, retained: 0, payable: 0, entrants: players.length, sections: results.length ? [{ name: '', rows }] : [] });
             };
+            // Le CSV du classement (#454) : le texte que « Copier » et « Enregistrer… » reçoivent
+            // tous deux. Un texte qui dépend des résultats, pour qu'une copie périmée se voie.
+            db.StandingsCSV = () => Promise.resolve('Phase;Rang;id;Joueur\r\n' + results.map((r, i) => `;${i + 1};${r.winner};${nameOf(r.winner)}\r\n`).join(''));
+            // Le dialogue natif d'enregistrement : il rend le chemin choisi, et le spec relit ce
+            // qui a été « écrit » dans window.__savedCSV.
+            window.__savedCSV = [];
+            window.go.gui.App.SaveCSV = (name, body) => {
+                window.__savedCSV.push({ name, body });
+                return Promise.resolve('/home/nadia/' + name);
+            };
+            // Le presse-papier, relu de même : Playwright n'y donne pas accès sans permission.
+            window.__copied = [];
+            try {
+                Object.defineProperty(navigator, 'clipboard', {
+                    configurable: true,
+                    value: { writeText: (s) => (window.__copied.push(s), Promise.resolve()), readText: () => Promise.resolve(window.__copied.at(-1) || '') }
+                });
+            } catch {
+                /* un navigateur qui refuse : les specs qui lisent __copied échoueront en le disant */
+            }
+
             db.History = () =>
                 Promise.resolve(
                     results.map((r) => ({
@@ -365,7 +386,7 @@ export async function installDirectionEngine(page, opts = {}) {
             db.DirectorySources = () => Promise.resolve([{ tournamentId: PREVIOUS_ID, name: 'Open de Lyon, mars', date: '2026-03-14', entrants: entrants.length }]);
             db.DirectoryEntrants = () => Promise.resolve(entrants.map((p) => ({ name: p.name, club: p.club, rating: p.rating, entries: 1 })));
             db.Directory = () => Promise.resolve(entrants.map((p) => ({ name: p.name, club: p.club, rating: p.rating, entries: 1 })));
-            db.DirectoryCSV = () => Promise.resolve('name,club,rating\n');
+            db.DirectoryCSV = () => Promise.resolve('name,club,rating\n' + entrants.map((p) => `${p.name},${p.club},${p.rating}\n`).join(''));
             db.ParseDirectoryCSV = () => Promise.resolve({ rows: [], errors: [], skipped: [] });
 
             // Une place d'exemption libre (#392). Le faux moteur ne tire aucun tableau : il

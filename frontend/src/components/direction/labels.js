@@ -234,3 +234,23 @@ export function renderLockReason(t, reason) {
 export function isRepair(a) {
     return !!a && a.kind === 'cancel_match';
 }
+
+/**
+ * Le nom proposé pour un CSV enregistré (#454) : `<tournoi>-<mot>-<AAAA-MM-JJ>.csv`, le mot dans
+ * la langue de l'interface (« classement », « annuaire »). Ce qu'un système de fichiers refuse
+ * — et les espaces — devient un tiret ; les accents restent, ce sont des lettres.
+ *
+ * @param {string} tournament
+ * @param {string} word
+ * @param {Date} [date]
+ */
+export function csvFilename(tournament, word, date = new Date()) {
+    const pad = (/** @type {number} */ n) => String(n).padStart(2, '0');
+    const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    const slug = (/** @type {string} */ s) =>
+        (s || '')
+            .replace(/[\s\\/:*?"<>|]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    return [slug(tournament), slug(word), day].filter(Boolean).join('-') + '.csv';
+}

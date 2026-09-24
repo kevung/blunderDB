@@ -1537,7 +1537,8 @@ L'**annuaire** regroupe les inscrits de tous les tournois dirigés de la base,
 dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il
 n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre
 les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ;
-l'annuaire s'exporte en CSV et se relit collé.
+l'annuaire se copie en CSV ou s'enregistre dans un fichier (**Enregistrer…**),
+et se relit collé.
 
 Avant **Inscrire**, l'aperçu d'un CSV collé liste les lignes illisibles — sans
 nom, sans séparateur quand les autres lignes en ont, cote qui n'est pas un
@@ -1576,8 +1577,12 @@ sans être résolu — pendant un tournoi, la parole du directeur fait foi.
 
 L'onglet **Classement** montre le classement courant, section par section, avec
 les prix lorsqu'une dotation est réglée. Deux ex æquo partagent la place et le
-prix. **Clore le tournoi** fige le classement final ; le classement s'exporte en
-CSV, dans la langue de l'interface.
+prix. **Clore le tournoi** fige le classement final. Le classement se copie en
+CSV, dans la langue de l'interface, ou s'enregistre dans un fichier :
+**Enregistrer…** ouvre le dialogue du système sur un nom proposé, le tournoi
+suivi du mot « classement » et de la date du jour, et le fichier contient
+exactement le CSV copié. En ligne de commande, ``blunderdb tournament
+standings`` écrit le même CSV.
 
 Clore sans match en cours est un clic. Avec des matchs en cours, le Classement
 dit combien et attend un second clic sur place : clore fige le classement sans

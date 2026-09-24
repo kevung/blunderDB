@@ -1990,7 +1990,7 @@
             "overall": "Overall standings",
             "note": "Note",
             "prize": "Prize",
-            "csv": "Export (CSV)",
+            "csv": "Copy (CSV)",
             "close": "Close the tournament",
             "closeConfirm": "Matches under way: {n}. Closing freezes the standings without them: their result can no longer be entered, unless the tournament is reopened.",
             "reopen": "Reopen",
@@ -1998,7 +1998,12 @@
             "pool": "Pool {pool} · payable {payable} · retained {retained}",
             "error": "Could not close the tournament.",
             "copied": "Standings copied to the clipboard.",
-            "reopenConfirm": "Reopen this tournament? The final standings stop being final, and the reopening stays in the log."
+            "reopenConfirm": "Reopen this tournament? The final standings stop being final, and the reopening stays in the log.",
+            "save": "Save…",
+            "saveHint": "Saves the standings to a CSV file, the same as the copy.",
+            "saved": "Standings saved: {path}",
+            "saveFailed": "Could not save the standings.",
+            "fileWord": "standings"
         },
         "history": {
             "filter": "Filter by player or match",
@@ -2192,7 +2197,12 @@
             "warnings": {
                 "duplicate": "Line {line}: “{text}” already appears on line {first}. Tick to enter it anyway.",
                 "entered": "Line {line}: “{text}” is already entered. Tick to enter it anyway."
-            }
+            },
+            "save": "Save…",
+            "saveHint": "Saves the directory to a CSV file, the same as the copy.",
+            "saved": "Directory saved: {path}",
+            "saveFailed": "Could not save the directory.",
+            "fileWord": "directory"
         }
     },
     "palette": {

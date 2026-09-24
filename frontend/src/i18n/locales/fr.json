@@ -1990,7 +1990,7 @@
             "overall": "Classement général",
             "note": "Note",
             "prize": "Prix",
-            "csv": "Exporter (CSV)",
+            "csv": "Copier (CSV)",
             "close": "Clore le tournoi",
             "closeConfirm": "Matchs en cours : {n}. Clore fige le classement sans eux : leur résultat ne pourra plus être saisi, sauf à rouvrir le tournoi.",
             "reopen": "Rouvrir",
@@ -1998,7 +1998,12 @@
             "pool": "Pool {pool} · à distribuer {payable} · retenue {retained}",
             "error": "Impossible de clore le tournoi.",
             "copied": "Classement copié dans le presse-papier.",
-            "reopenConfirm": "Rouvrir ce tournoi ? Le classement final cesse d'être final, et la réouverture reste dans le journal."
+            "reopenConfirm": "Rouvrir ce tournoi ? Le classement final cesse d'être final, et la réouverture reste dans le journal.",
+            "save": "Enregistrer…",
+            "saveHint": "Enregistre le classement dans un fichier CSV, le même que la copie.",
+            "saved": "Classement enregistré : {path}",
+            "saveFailed": "Impossible d'enregistrer le classement.",
+            "fileWord": "classement"
         },
         "history": {
             "filter": "Filtrer par joueur ou match",
@@ -2192,7 +2197,12 @@
             "warnings": {
                 "duplicate": "Ligne {line} : « {text} » figure déjà ligne {first}. Cocher pour l'inscrire quand même.",
                 "entered": "Ligne {line} : « {text} » est déjà inscrit. Cocher pour l'inscrire quand même."
-            }
+            },
+            "save": "Enregistrer…",
+            "saveHint": "Enregistre l'annuaire dans un fichier CSV, le même que la copie.",
+            "saved": "Annuaire enregistré : {path}",
+            "saveFailed": "Impossible d'enregistrer l'annuaire.",
+            "fileWord": "annuaire"
         }
     },
     "palette": {

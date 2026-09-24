@@ -1990,7 +1990,7 @@
             "overall": "Kokonaissijoitus",
             "note": "Huomautus",
             "prize": "Palkinto",
-            "csv": "Vie (CSV)",
+            "csv": "Kopioi (CSV)",
             "close": "Päätä turnaus",
             "closeConfirm": "Käynnissä olevia otteluita: {n}. Päättäminen jäädyttää sarjataulukon ilman niitä: niiden tulosta ei voi enää kirjata, ellei turnausta avata uudelleen.",
             "reopen": "Avaa uudelleen",
@@ -1998,7 +1998,12 @@
             "pool": "Potti {pool} · jaettavaa {payable} · pidätetty {retained}",
             "error": "Turnausta ei voitu päättää.",
             "copied": "Sarjataulukko kopioitu leikepöydälle.",
-            "reopenConfirm": "Avataanko turnaus uudelleen? Loppusijoitus lakkaa olemasta lopullinen, ja uudelleenavaus jää lokiin."
+            "reopenConfirm": "Avataanko turnaus uudelleen? Loppusijoitus lakkaa olemasta lopullinen, ja uudelleenavaus jää lokiin.",
+            "save": "Tallenna…",
+            "saveHint": "Tallentaa sijoitukset CSV-tiedostoon, samana kuin kopion.",
+            "saved": "Sijoitukset tallennettu: {path}",
+            "saveFailed": "Sijoituksia ei voitu tallentaa.",
+            "fileWord": "sijoitukset"
         },
         "history": {
             "filter": "Suodata pelaajan tai ottelun mukaan",
@@ -2192,7 +2197,12 @@
             "warnings": {
                 "duplicate": "Rivi {line}: ”{text}” on jo rivillä {first}. Valitse ilmoittaaksesi silti.",
                 "entered": "Rivi {line}: ”{text}” on jo ilmoitettu. Valitse ilmoittaaksesi silti."
-            }
+            },
+            "save": "Tallenna…",
+            "saveHint": "Tallentaa hakemiston CSV-tiedostoon, samana kuin kopion.",
+            "saved": "Hakemisto tallennettu: {path}",
+            "saveFailed": "Hakemistoa ei voitu tallentaa.",
+            "fileWord": "hakemisto"
         }
     },
     "palette": {

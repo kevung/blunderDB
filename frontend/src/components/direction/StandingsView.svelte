@@ -22,10 +22,11 @@
      *     running?: number,
      *     onClose?: () => void,
      *     onReopen?: () => void,
-     *     onCSV?: () => void
+     *     onCSV?: () => void,
+     *     onSave?: () => void
      * }}
      */
-    let { view = null, busy = false, running = 0, onClose = () => {}, onReopen = () => {}, onCSV = () => {} } = $props();
+    let { view = null, busy = false, running = 0, onClose = () => {}, onReopen = () => {}, onCSV = () => {}, onSave = () => {} } = $props();
 
     /* Clore et rouvrir se confirment SUR PLACE, comme « Tout lancer » (#441) : clore avec des
        matchs en cours fige le classement sans eux, et rouvrir fait cesser un classement final.
@@ -65,6 +66,7 @@
             {/if}
             <span class="grow"></span>
             <button type="button" data-testid="direction-standings-csv" onclick={onCSV}>{$t('direction.standings.csv')}</button>
+            <button type="button" data-testid="direction-standings-save" onclick={onSave} title={$t('direction.standings.saveHint')}>{$t('direction.standings.save')}</button>
             {#if view.finished}
                 <button type="button" data-testid="direction-standings-reopen" disabled={busy} onclick={() => (asking = 'reopen')}>{$t('direction.standings.reopen')}</button>
             {:else}

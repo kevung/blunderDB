@@ -178,6 +178,10 @@ export function SaveBoardSVG(arg1, arg2) {
   return window['go']['gui']['App']['SaveBoardSVG'](arg1, arg2);
 }
 
+export function SaveCSV(arg1, arg2) {
+  return window['go']['gui']['App']['SaveCSV'](arg1, arg2);
+}
+
 export function SaveDatabaseDialog() {
   return window['go']['gui']['App']['SaveDatabaseDialog']();
 }

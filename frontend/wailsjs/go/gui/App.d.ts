@@ -94,6 +94,8 @@ export function SaveBoardPNG(arg1:string,arg2:string):Promise<void>;
 
 export function SaveBoardSVG(arg1:string,arg2:string):Promise<void>;
 
+export function SaveCSV(arg1:string,arg2:string):Promise<string>;
+
 export function SaveDatabaseDialog():Promise<string>;
 
 export function SetIssuerName(arg1:string):Promise<domain.IssuerIdentityInfo>;
