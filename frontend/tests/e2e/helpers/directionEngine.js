@@ -54,6 +54,8 @@ export async function installDirectionEngine(page, opts = {}) {
             let proposals = [];
             let running = [];
             let last = null;
+            /** Les résultats saisis, dans l'ordre : ce que l'Historique relit et que le classement compte. */
+            const results = [];
             let events = directed ? 1 : 0;
             let seq = 0;
 
@@ -213,6 +215,7 @@ export async function installDirectionEngine(page, opts = {}) {
                     correctable: true,
                     cancellable: false
                 };
+                results.push({ seq: events, matchId: m.ID, a: m.a, b: m.b, winner });
                 proposals = pair();
             }
 
@@ -224,11 +227,17 @@ export async function installDirectionEngine(page, opts = {}) {
                 finish(matchId, winner);
                 return Promise.resolve(view());
             };
-            db.CorrectResult = (_id, _matchId, winner) => {
-                if (last) {
+            // Corriger vise UN match, pas forcément le dernier : c'est tout le sens de corriger
+            // depuis l'Historique (#436).
+            db.CorrectResult = (_id, matchId, winner) => {
+                const r = results.find((x) => x.matchId === matchId);
+                if (r) {
+                    r.winner = winner;
+                    events += 1;
+                }
+                if (last && last.matchId === matchId) {
                     last.winner = winner;
                     last.winnerName = nameOf(winner);
-                    events += 1;
                 }
                 return Promise.resolve(view());
             };
@@ -258,8 +267,32 @@ export async function installDirectionEngine(page, opts = {}) {
                 );
 
             db.Brackets = () => Promise.resolve([]);
-            db.Standings = () => Promise.resolve({ finished: false, pool: 0, retained: 0, payable: 0, entrants: players.length, sections: [] });
-            db.History = () => Promise.resolve([]);
+            // Le classement compte les victoires, rien de plus : assez pour qu'une correction le
+            // fasse bouger à l'écran. Le vrai, sans départage, est tenu en Go.
+            db.Standings = () => {
+                const wins = (id) => results.filter((r) => r.winner === id).length;
+                const rows = players
+                    .map((p) => ({ id: p.id, name: p.name, club: p.club || '', w: wins(p.id) }))
+                    .sort((x, y) => y.w - x.w || x.name.localeCompare(y.name))
+                    .map((p, i) => ({ id: p.id, name: p.name, club: p.club, rank: i + 1, shared: false, note: { kind: 'record', wins: p.w, losses: 0 } }));
+                return Promise.resolve({ finished: false, pool: 0, retained: 0, payable: 0, entrants: players.length, sections: results.length ? [{ name: '', rows }] : [] });
+            };
+            db.History = () =>
+                Promise.resolve(
+                    results.map((r) => ({
+                        seq: r.seq,
+                        kind: 'result',
+                        time: '',
+                        matchId: r.matchId,
+                        a: r.a,
+                        b: r.b,
+                        aName: nameOf(r.a),
+                        bName: nameOf(r.b),
+                        winner: r.winner,
+                        winnerName: nameOf(r.winner),
+                        correctable: true
+                    }))
+                );
             db.Clock = () => Promise.resolve({ elapsedSeconds: 600, played: 0, running: running.length, minutesPerPoint: 8, plannedPerPoint: 8, slowMatches: 0, warnings: 0 });
             db.Slots = () => Promise.resolve([]);
             db.UnattachedMatches = () => Promise.resolve([]);

@@ -12,12 +12,11 @@
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
     import { isLetter } from '../../utils/keys.js';
+    import CorrectionPanel from './CorrectionPanel.svelte';
 
     let { last = null, busy = false, onCorrect = () => {}, onCancelMatch = () => {} } = $props();
 
     let open = $state(false);
-    let scoreA = $state('');
-    let scoreB = $state('');
 
     /* Ctrl+Z ouvre la reprise du dernier geste. Il n'annule rien tout seul : ce serait défaire
        sans montrer quoi, et le directeur doit voir ce qu'il reprend. */
@@ -35,18 +34,10 @@
         if (open) return closeOnEscape(() => (open = false));
     });
 
-    /** @param {string} v */
-    function num(v) {
-        const n = parseInt(v, 10);
-        return Number.isFinite(n) && n >= 0 ? n : 0;
-    }
-
-    /** @param {string} winner */
-    function correct(winner) {
-        onCorrect(last.matchId, winner, num(scoreA), num(scoreB));
+    /** @type {(winner: string, scoreA: number, scoreB: number) => void} */
+    function correct(winner, scoreA, scoreB) {
+        onCorrect(last.matchId, winner, scoreA, scoreB);
         open = false;
-        scoreA = '';
-        scoreB = '';
     }
 </script>
 
@@ -73,30 +64,18 @@
     </div>
 
     {#if open && last.correctable}
-        <div class="correct">
-            <span class="hint">{$t('direction.last.whoWon')}</span>
-            <button type="button" class="winner" data-testid="direction-last-winner-a" disabled={busy} onclick={() => correct(last.a)}>{last.aName}</button>
-            <button type="button" class="winner" data-testid="direction-last-winner-b" disabled={busy} onclick={() => correct(last.b)}>{last.bName}</button>
-            <input type="number" min="0" max="99" bind:value={scoreA} />
-            <span>–</span>
-            <input type="number" min="0" max="99" bind:value={scoreB} />
-        </div>
+        <CorrectionPanel a={last.a} b={last.b} aName={last.aName} bName={last.bName} {busy} testid="direction-last" onPick={correct} />
     {/if}
 {/if}
 
 <style>
-    .last,
-    .correct {
+    .last {
         display: flex;
         align-items: center;
         gap: var(--space-1);
         padding: var(--space-1) var(--space-2);
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
-    }
-
-    .correct {
-        border-top: 1px solid var(--color-border);
     }
 
     .grow {
@@ -113,12 +92,6 @@
         font-size: var(--font-size-small);
     }
 
-    button.winner {
-        border-color: var(--color-primary);
-        font-weight: 600;
-        min-height: 30px;
-    }
-
     button.danger {
         border-color: var(--color-danger);
         color: var(--color-danger);
@@ -127,14 +100,5 @@
     button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-    }
-
-    input {
-        width: 3.2rem;
-        padding: 0.1rem 0.3rem;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        background: var(--color-surface-alt);
-        color: var(--color-text);
     }
 </style>
