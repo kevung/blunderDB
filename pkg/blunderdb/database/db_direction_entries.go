@@ -161,8 +161,50 @@ func (d *Database) UpdateParticipant(tournamentID int64, id, name, club string, 
 	}
 	// Re-adding under the same identifier is how the engine records a correction: the entry
 	// keeps its place, its matches and its Slots.
+	//
+	// It also CLEARS a withdrawal — the engine (v0.2.1) has no event that corrects an entry
+	// without re-entering it. Correcting the club of someone who left must not bring them back
+	// (#439): their withdrawal is written again straight after, at the same instant. They are
+	// playing nothing, so the second event forfeits nothing; coming back is
+	// ReinstateParticipant, a gesture of its own.
+	withdrawn := st.Withdrawn[tournoi.PlayerID(id)]
+	now := time.Now()
 	p := tournoi.Player{ID: tournoi.PlayerID(id), Name: name, Club: club, Rating: rating}
-	if err := dir.Apply(ctx, tournoi.PlayerAddedEvent(p, time.Now())); err != nil {
+	if err := dir.Apply(ctx, tournoi.PlayerAddedEvent(p, now)); err != nil {
+		return nil, err
+	}
+	if withdrawn {
+		if err := dir.Apply(ctx, tournoi.PlayerWithdrawnEvent(p.ID, now)); err != nil {
+			return nil, err
+		}
+	}
+	return d.GetDirection(tournamentID)
+}
+
+// ReinstateParticipant brings a withdrawn player back into the tournament (#439): they are
+// paired again, with the results and lives they had when they left; the matches their
+// withdrawal lost by forfeit stay lost. It is refused for someone who has not withdrawn, so a
+// mistaken click cannot re-enter a player twice.
+func (d *Database) ReinstateParticipant(tournamentID int64, id string) (*DirectionView, error) {
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	st := dir.State()
+	if st == nil {
+		return nil, direction.ErrNoDirection
+	}
+	p, ok := st.Players[tournoi.PlayerID(id)]
+	if !ok {
+		return nil, fmt.Errorf("direction: no entry %q", id)
+	}
+	if !st.Withdrawn[p.ID] {
+		return nil, fmt.Errorf("direction: %q has not withdrawn", id)
+	}
+	// Re-entering under the same identifier is the engine's only way back: it clears the
+	// withdrawal and keeps everything else.
+	if err := dir.Apply(ctx, tournoi.PlayerAddedEvent(*p, time.Now())); err != nil {
 		return nil, err
 	}
 	return d.GetDirection(tournamentID)

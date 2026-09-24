@@ -1959,6 +1959,8 @@
             "withdrawNowHint": "Withdraw now: their running matches are lost by forfeit.",
             "withdrawLater": "After their match",
             "withdrawLaterHint": "No longer paired, but finishes the match they are at.",
+            "reinstate": "Reinstate",
+            "reinstateHint": "Reinstate them: they are paired again, with the results and lives they had when they left; matches lost by forfeit at their withdrawal stay lost.",
             "none": "Nobody entered.",
             "states": {
                 "free": "free",

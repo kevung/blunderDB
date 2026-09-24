@@ -22,6 +22,8 @@
         onAdd = () => {},
         onUpdate = () => {},
         onWithdraw = () => {},
+        // Le retour d'un retiré est un geste nommé (#439) : corriger sa fiche ne le réinscrit plus.
+        onReinstate = (/** @type {string} */ _id) => {},
         // Les places d'exemption encore libres et les inscrits qui n'ont pas encore de place
         // (issue #392). Vides en préparation : il n'y a pas de retardataire avant le tirage.
         slots = [],
@@ -238,6 +240,10 @@
                                         title={$t('direction.players.withdrawLaterHint')}>{$t('direction.players.withdrawLater')}</button
                                     >
                                 {/if}
+                            {:else}
+                                <button type="button" data-testid="direction-player-reinstate" disabled={busy} onclick={() => onReinstate(r.id)} title={$t('direction.players.reinstateHint')}
+                                    >{$t('direction.players.reinstate')}</button
+                                >
                             {/if}
                         </td>
                     {/if}

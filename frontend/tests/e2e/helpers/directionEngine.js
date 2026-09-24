@@ -195,6 +195,14 @@ export async function installDirectionEngine(page, opts = {}) {
                 events += 1;
                 return Promise.resolve(view());
             };
+            db.ReinstateParticipant = (_id, participantId) => {
+                const p = players.find((x) => x.id === participantId);
+                if (!p || p.state !== 'withdrawn') return Promise.reject(new Error('not withdrawn'));
+                delete p.state;
+                proposals = pair();
+                events += 1;
+                return Promise.resolve(view());
+            };
             db.Participants = () =>
                 Promise.resolve(
                     players.map((p) => ({

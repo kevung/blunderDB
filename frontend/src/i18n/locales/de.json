@@ -1959,6 +1959,8 @@
             "withdrawNowHint": "Sofort zurückziehen: laufende Partien gehen als Aufgabe verloren.",
             "withdrawLater": "Nach der Partie",
             "withdrawLaterHint": "Wird nicht mehr gepaart, beendet aber die laufende Partie.",
+            "reinstate": "Wieder aufnehmen",
+            "reinstateHint": "Wieder aufnehmen: er wird wieder gepaart, mit den Ergebnissen und Leben, die er beim Rückzug hatte; beim Rückzug durch Forfait verlorene Matches bleiben verloren.",
             "none": "Niemand eingetragen.",
             "states": {
                 "free": "frei",

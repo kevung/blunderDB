@@ -387,6 +387,8 @@ export function RecommendedTags():Promise<Array<string>>;
 
 export function RefreshSearchStatistics():Promise<void>;
 
+export function ReinstateParticipant(arg1:number,arg2:string):Promise<database.DirectionView>;
+
 export function RemoveAnkiCard(arg1:number):Promise<void>;
 
 export function RemoveMatchFromTournament(arg1:number):Promise<void>;

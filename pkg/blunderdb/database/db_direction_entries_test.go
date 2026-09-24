@@ -226,3 +226,69 @@ func TestOpponentsAreNames(t *testing.T) {
 		}
 	}
 }
+
+// participantState reads a participant's state code from the Players view.
+func participantState(t *testing.T, d *Database, tID int64, id string) string {
+	t.Helper()
+	rows, err := d.Participants(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, r := range rows {
+		if r.ID == id {
+			return r.State
+		}
+	}
+	t.Fatalf("no participant %q", id)
+	return ""
+}
+
+// TestUpdateWithdrawnKeepsWithdrawal (#439): the engine records a correction as the entry added
+// again under the same identifier, and adding a player clears their withdrawal. Correcting the
+// club of someone who left at 22 h put them back "in play", ranked, and paired — silently.
+func TestUpdateWithdrawnKeepsWithdrawal(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 8)
+	if _, err := d.WithdrawParticipant(tID, "aa", false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.UpdateParticipant(tID, "aa", "Joueur aa", "Lyon", 5); err != nil {
+		t.Fatal(err)
+	}
+	if got := participantState(t, d, tID, "aa"); got != "withdrawn" {
+		t.Fatalf("a corrected entry must stay withdrawn, got %q", got)
+	}
+	rows, _ := d.Participants(tID)
+	for _, r := range rows {
+		if r.ID == "aa" && r.Club != "Lyon" {
+			t.Errorf("the correction itself must take, got club %q", r.Club)
+		}
+	}
+	v, err := d.GetDirection(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, a := range v.Proposals {
+		if a.A == "aa" || a.B == "aa" {
+			t.Errorf("a withdrawn player is proposed again after a correction: %+v", a)
+		}
+	}
+}
+
+// TestReinstateParticipant (#439): coming back is a named gesture, not a side effect.
+func TestReinstateParticipant(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 8)
+	if _, err := d.ReinstateParticipant(tID, "aa"); err == nil {
+		t.Error("reinstating someone who never left must be refused")
+	}
+	if _, err := d.WithdrawParticipant(tID, "aa", false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.ReinstateParticipant(tID, "aa"); err != nil {
+		t.Fatal(err)
+	}
+	if got := participantState(t, d, tID, "aa"); got == "withdrawn" {
+		t.Fatalf("a reinstated player is back in play, got %q", got)
+	}
+}

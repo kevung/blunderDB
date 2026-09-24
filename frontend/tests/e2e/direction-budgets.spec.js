@@ -208,6 +208,22 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('retirer un joueur', counted, 6);
     });
 
+    // « réinscrire un retiré | 1 clic » (#439). Le retour est un geste nommé, sur la ligne du
+    // retiré : corriger sa fiche ne le réinscrit plus en silence.
+    test('réinscrire un retiré tient en un clic', async ({ page }) => {
+        await openDirection(page);
+        await page.locator('[data-testid="direction-tab-players"]').click();
+        const row = page.locator('.players tbody tr').first();
+        await row.locator('[data-testid="direction-player-withdraw-now"]').click();
+        await expect(row).toContainText(/retiré|withdrawn/i);
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(row.locator('[data-testid="direction-player-reinstate"]'));
+            await expect(row).not.toContainText(/retiré|withdrawn/i);
+        });
+        budget('réinscrire un retiré', counted, 1);
+    });
+
     // « inscrire un retardataire | ≤ 5 clics », hors saisie du nom : le formulaire d'inscription
     // est en haut de l'onglet Joueurs, toujours prêt.
     test('inscrire un retardataire tient dans son budget', async ({ page }) => {

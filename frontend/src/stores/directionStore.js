@@ -23,6 +23,7 @@ import {
     AddParticipant,
     UpdateParticipant,
     WithdrawParticipant,
+    ReinstateParticipant,
     EnterParticipants,
     Brackets,
     Standings,
@@ -679,6 +680,19 @@ export async function updateParticipant(participantId, name, club, rating) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
     const view = await UpdateParticipant(id, participantId, name, club, rating);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Réinscrit un joueur retiré (#439) : il est de nouveau apparié, avec ses résultats et ses vies.
+ *
+ * @param {string} participantId
+ */
+export async function reinstateParticipant(participantId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await ReinstateParticipant(id, participantId);
     directionStore.set(view);
     return view;
 }

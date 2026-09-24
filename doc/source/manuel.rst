@@ -1552,6 +1552,11 @@ quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
 joueur part tout de suite ou finit ce qu'il joue.
 
+Corriger la fiche d'un joueur retiré — son nom, son club, sa cote — le laisse
+retiré. Son retour est un geste à part : **Réinscrire**, sur sa ligne. Il est de
+nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les
+matchs perdus par forfait à son retrait le restent.
+
 Arbres, emplacements, classement, historique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
