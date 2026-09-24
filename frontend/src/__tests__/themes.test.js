@@ -14,6 +14,7 @@ import { BOARD_COLOR_KEYS } from '../stores/boardColorsStore.js';
 afterEach(() => {
     const root = document.documentElement;
     for (const token of UI_COLOR_TOKENS) root.style.removeProperty(token);
+    root.style.removeProperty('color-scheme');
     delete root.dataset.theme;
 });
 
@@ -54,6 +55,28 @@ describe('les thèmes nommés', () => {
         for (const token of UI_COLOR_TOKENS) {
             expect(document.documentElement.style.getPropertyValue(token)).toBe(theme.ui[token]);
         }
+    });
+
+    // #402 : le schéma déclaré dit au moteur comment peindre ses contrôles
+    // natifs. Un thème à surface sombre déclaré `light` garderait des boutons
+    // et des cases blancs sur sa surface sombre ; l'inverse, des contrôles
+    // sombres sur une surface claire. La clarté de la surface tranche.
+    test('le schéma de chaque thème suit la clarté de sa surface', () => {
+        const luminance = (hex) => {
+            const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        for (const [name, theme] of Object.entries(THEMES)) {
+            const expected = luminance(theme.ui['--color-surface']) < 0.5 ? 'dark' : 'light';
+            expect(theme.scheme, `${name}`).toBe(expected);
+        }
+    });
+
+    test('appliquer un thème déclare son schéma de couleur sur la racine', () => {
+        applyThemeTokens('dark');
+        expect(document.documentElement.style.colorScheme).toBe('dark');
+        applyThemeTokens('print');
+        expect(document.documentElement.style.colorScheme).toBe('light');
     });
 
     test('`system` résout vers un thème réel', () => {

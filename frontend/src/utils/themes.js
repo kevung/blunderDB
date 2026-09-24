@@ -28,7 +28,13 @@ export const THEME_SYSTEM = 'system';
 export const UI_COLOR_TOKENS = ['--color-text', '--color-text-muted', '--color-border', '--color-surface', '--color-surface-alt', '--color-primary', '--color-danger'];
 
 /**
- * @typedef {{ui: Record<string, string>, board: Record<string, string>}} Theme
+ * `scheme` est le `color-scheme` que la racine déclare sous ce thème (#402) :
+ * c'est lui, et non les jetons, qui dit au moteur de peindre ses contrôles
+ * natifs — boutons, listes, champs, cases, barres de défilement — en clair ou en
+ * sombre. Sans lui, un thème sombre garde des contrôles clairs sur sa surface
+ * sombre. Il suit la clarté de `--color-surface`, ce que themes.test.js vérifie.
+ *
+ * @typedef {{scheme: 'light' | 'dark', ui: Record<string, string>, board: Record<string, string>}} Theme
  */
 
 /** @type {Record<string, Theme>} */
@@ -37,6 +43,7 @@ export const THEMES = {
     // qu'aucun thème ne soit un cas particulier, et pour qu'on puisse y
     // revenir explicitement.
     light: {
+        scheme: 'light',
         ui: {
             '--color-text': '#333333',
             '--color-text-muted': '#666666',
@@ -63,6 +70,7 @@ export const THEMES = {
     // l'ADR-0031 l'exige du thème clair : un thème sombre n'est pas une
     // dispense.
     dark: {
+        scheme: 'dark',
         ui: {
             '--color-text': '#e6e6e6',
             '--color-text-muted': '#a8a8a8',
@@ -89,6 +97,7 @@ export const THEMES = {
     // frontières qui se voient. Ce n'est pas un thème « clair en plus dur » :
     // c'est celui qu'on choisit quand la nuance ne passe pas.
     contrast: {
+        scheme: 'light',
         ui: {
             '--color-text': '#000000',
             '--color-text-muted': '#000000',
@@ -115,6 +124,7 @@ export const THEMES = {
     // noir et blanc, et ce qui ne gaspille pas d'encre. Le fond est blanc,
     // les aplats sont clairs, et l'accent est sombre plutôt que coloré.
     print: {
+        scheme: 'light',
         ui: {
             '--color-text': '#111111',
             '--color-text-muted': '#444444',
@@ -155,8 +165,10 @@ export function resolveTheme(name) {
 }
 
 /**
- * Écrit les jetons d'un thème sur l'élément racine, et pose `data-theme` pour
- * qu'une règle CSS puisse s'y accrocher si un jour l'une en a besoin.
+ * Écrit les jetons d'un thème sur l'élément racine, déclare son schéma de
+ * couleur (`color-scheme`, pour les contrôles natifs — #402), et pose
+ * `data-theme` pour qu'une règle CSS puisse s'y accrocher si un jour l'une en a
+ * besoin.
  * @param {string} name
  * @returns {Theme} le thème résolu, pour que l'appelant en tire la palette.
  */
@@ -167,6 +179,7 @@ export function applyThemeTokens(name) {
     for (const token of UI_COLOR_TOKENS) {
         root.style.setProperty(token, theme.ui[token]);
     }
+    root.style.colorScheme = theme.scheme;
     root.dataset.theme = resolved;
     return theme;
 }

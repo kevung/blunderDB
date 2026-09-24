@@ -51,6 +51,13 @@
                                   (#1976d2, #1a56c4, #1a73e8) */
     --color-danger: #b3261e; /* destructive actions and validation errors */
 
+    /* The palette above is a light one, so the engine is told so: `color-scheme` is what
+       paints the NATIVE controls (buttons, selects, fields, checkboxes, scrollbars) light
+       or dark — the tokens cannot reach them (#402). themes.js rewrites it on :root with
+       the tokens, from each theme's `scheme`; this is the value before any script runs,
+       and the only one the daemon's web page ever has. */
+    color-scheme: light;
+
     /* Two font families, not one per component: the UI's own type (an alias for the
        stack `body` sets below — components can depend on the token without repeating
        the eleven-name fallback list), and monospace, for XGIDs, PIP counts and other

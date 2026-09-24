@@ -1483,8 +1483,12 @@
         white-space: nowrap;
     }
 
+    /* 15 % of the ink over the surface: #e0e0e0 in the light theme, as before, and a
+       grey that stays below the ink in the dark one — a literal light grey left a
+       disabled field light on a dark panel, its text in the scheme's grey (#402). */
     input:disabled {
-        background-color: #e0e0e0;
+        background-color: color-mix(in srgb, var(--color-text) 15%, var(--color-surface));
+        color: var(--color-text-muted);
     }
     .dialog-title {
         margin: 0 0 12px;

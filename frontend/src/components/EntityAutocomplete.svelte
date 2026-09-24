@@ -216,7 +216,8 @@
 
     .dropdown {
         overflow-y: auto;
-        background: white;
+        background: var(--color-surface);
+        color: var(--color-text);
         border: 1px solid var(--color-border);
         border-radius: 3px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
@@ -231,6 +232,6 @@
 
     .option:hover,
     .option.active {
-        background: #e3f2fd;
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     }
 </style>

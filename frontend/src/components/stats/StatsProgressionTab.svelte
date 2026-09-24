@@ -346,8 +346,8 @@
         flex-direction: column;
         gap: 4px;
         padding: 12px 16px;
-        background: #fafafa;
-        border: 1px solid #e8e8e8;
+        background: var(--color-surface-alt);
+        border: 1px solid var(--color-border);
         border-radius: 4px;
     }
 
@@ -370,7 +370,7 @@
 
     .single-grade {
         font-size: var(--font-size-small);
-        color: #555;
+        color: var(--color-text-muted);
         font-style: italic;
     }
 
@@ -391,7 +391,7 @@
     }
 
     .single-actions button:hover {
-        background: #f0f4ff;
+        background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
     }
 
     /* ── Grade legend ── */

@@ -332,14 +332,15 @@
         align-items: center;
         gap: 2px;
         padding: 6px 4px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         background: transparent;
+        color: var(--color-text);
         cursor: pointer;
     }
 
     .direction-cell:hover:not(:disabled) {
-        background: #f0f0f0;
+        background: var(--color-surface-alt);
     }
 
     .direction-cell.is-empty {

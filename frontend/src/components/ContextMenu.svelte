@@ -69,8 +69,8 @@
 <style>
     .context-menu {
         position: fixed;
-        background: #fff;
-        border: 1px solid #ddd;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
         z-index: 1000;
@@ -93,7 +93,7 @@
 
     .context-menu-item:hover,
     .context-menu-item:focus {
-        background: #f0f4ff;
+        background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
         outline: none;
     }
 
