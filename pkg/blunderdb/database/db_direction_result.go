@@ -34,6 +34,9 @@ type TableCell struct {
 	// comes to complain.
 	ElapsedSeconds int  `json:"elapsedSeconds,omitempty"`
 	Slow           bool `json:"slow,omitempty"`
+	// NoTable marks a running match that has no table — paired by hand in a full room (#437).
+	// Its Table is 0; such cells come after the room's tables, one per match.
+	NoTable bool `json:"noTable,omitempty"`
 }
 
 // TableGrid returns one cell per table of the room, in order. A room with no declared table
@@ -49,13 +52,16 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 	}
 	now := time.Now()
 	running := map[int]*tournoi.Match{}
+	var tableless []*tournoi.Match
 	highest := 0
 	for _, m := range st.Running() {
-		if m.Table > 0 {
-			running[m.Table] = m
-			if m.Table > highest {
-				highest = m.Table
-			}
+		if m.Table <= 0 {
+			tableless = append(tableless, m)
+			continue
+		}
+		running[m.Table] = m
+		if m.Table > highest {
+			highest = m.Table
 		}
 	}
 	count := st.Config.Tables.Count
@@ -70,16 +76,20 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		slow[m.ID] = true
 	}
 
-	out := make([]TableCell, 0, count)
+	fill := func(c *TableCell, m *tournoi.Match) {
+		c.MatchID = string(m.ID)
+		c.A, c.B = string(m.A), string(m.B)
+		c.AName, c.BName = playerNameIn(st, m.A), playerNameIn(st, m.B)
+		c.Length = m.Length
+		c.ElapsedSeconds = int(now.Sub(m.Start).Seconds())
+		c.Slow = slow[m.ID]
+	}
+
+	out := make([]TableCell, 0, count+len(tableless))
 	for n := 1; n <= count; n++ {
 		c := TableCell{Table: n}
 		if m := running[n]; m != nil {
-			c.MatchID = string(m.ID)
-			c.A, c.B = string(m.A), string(m.B)
-			c.AName, c.BName = playerNameIn(st, m.A), playerNameIn(st, m.B)
-			c.Length = m.Length
-			c.ElapsedSeconds = int(now.Sub(m.Start).Seconds())
-			c.Slow = slow[m.ID]
+			fill(&c, m)
 			out = append(out, c)
 			continue
 		}
@@ -91,6 +101,13 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		default:
 			c.Free = true
 		}
+		out = append(out, c)
+	}
+	// A match with no table is still a match in the room: leaving it out of the grid is how a
+	// manual pairing came to be launched and seen nowhere (#437).
+	for _, m := range tableless {
+		c := TableCell{NoTable: true}
+		fill(&c, m)
 		out = append(out, c)
 	}
 	return out, nil

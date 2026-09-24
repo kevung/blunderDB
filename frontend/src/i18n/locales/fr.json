@@ -1914,7 +1914,8 @@
             "unavailable": "indisponible",
             "reserved": "réservée",
             "slow": "lent",
-            "none": "Aucune table déclarée."
+            "none": "Aucune table déclarée.",
+            "noTable": "sans table"
         },
         "result": {
             "title": "Résultat",

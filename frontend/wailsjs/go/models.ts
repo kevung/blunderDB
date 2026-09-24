@@ -1661,6 +1661,7 @@ export namespace database {
 	    length?: number;
 	    elapsedSeconds?: number;
 	    slow?: boolean;
+	    noTable?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new TableCell(source);
@@ -1680,6 +1681,7 @@ export namespace database {
 	        this.length = source["length"];
 	        this.elapsedSeconds = source["elapsedSeconds"];
 	        this.slow = source["slow"];
+	        this.noTable = source["noTable"];
 	    }
 	}
 	
