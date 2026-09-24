@@ -1993,6 +1993,7 @@
             "prize": "Palkinto",
             "csv": "Vie (CSV)",
             "close": "Päätä turnaus",
+            "closeConfirm": "Käynnissä olevia otteluita: {n}. Päättäminen jäädyttää sarjataulukon ilman niitä: niiden tulosta ei voi enää kirjata, ellei turnausta avata uudelleen.",
             "reopen": "Avaa uudelleen",
             "tiedHint": "Tasapisteissä: sija ja palkinto jaetaan.",
             "pool": "Potti {pool} · jaettavaa {payable} · pidätetty {retained}",

@@ -74,6 +74,8 @@ export async function installDirectionEngine(page, opts = {}) {
             /** Les résultats saisis, dans l'ordre : ce que l'Historique relit et que le classement compte. */
             const results = [];
             let events = directed ? 1 : 0;
+            /** Clos ou non (#441) : ce que « Clore » et « Rouvrir » font bouger à l'écran. */
+            let finished = false;
             let seq = 0;
 
             /** Les propositions que le moteur ferait à partir des joueurs libres, deux à deux. */
@@ -113,7 +115,7 @@ export async function installDirectionEngine(page, opts = {}) {
                     players: players.map((p) => ({ id: p.id, name: p.name, club: p.club, rating: p.rating })),
                     running,
                     phase: 0,
-                    finished: false,
+                    finished,
                     eventCount: events
                 };
             }
@@ -285,6 +287,16 @@ export async function installDirectionEngine(page, opts = {}) {
             db.MoveMatchToTable = () => Promise.resolve(view());
             db.LastDecision = () => Promise.resolve(last);
             db.FinishedMatches = () => Promise.resolve([]);
+            db.CloseDirection = () => {
+                finished = true;
+                events += 1;
+                return Promise.resolve(view());
+            };
+            db.ReopenDirection = () => {
+                finished = false;
+                events += 1;
+                return Promise.resolve(view());
+            };
 
             db.TableGrid = () =>
                 Promise.resolve(
@@ -315,7 +327,7 @@ export async function installDirectionEngine(page, opts = {}) {
                     .map((p) => ({ id: p.id, name: p.name, club: p.club || '', w: wins(p.id) }))
                     .sort((x, y) => y.w - x.w || x.name.localeCompare(y.name))
                     .map((p, i) => ({ id: p.id, name: p.name, club: p.club, rank: i + 1, shared: false, note: { kind: 'record', wins: p.w, losses: 0 } }));
-                return Promise.resolve({ finished: false, pool: 0, retained: 0, payable: 0, entrants: players.length, sections: results.length ? [{ name: '', rows }] : [] });
+                return Promise.resolve({ finished, pool: 0, retained: 0, payable: 0, entrants: players.length, sections: results.length ? [{ name: '', rows }] : [] });
             };
             db.History = () =>
                 Promise.resolve(

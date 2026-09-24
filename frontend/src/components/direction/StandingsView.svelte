@@ -19,12 +19,30 @@
      * @type {{
      *     view?: import('../../../wailsjs/go/models').database.StandingsView | null,
      *     busy?: boolean,
+     *     running?: number,
      *     onClose?: () => void,
      *     onReopen?: () => void,
      *     onCSV?: () => void
      * }}
      */
-    let { view = null, busy = false, onClose = () => {}, onReopen = () => {}, onCSV = () => {} } = $props();
+    let { view = null, busy = false, running = 0, onClose = () => {}, onReopen = () => {}, onCSV = () => {} } = $props();
+
+    /* Clore et rouvrir se confirment SUR PLACE, comme « Tout lancer » (#441) : clore avec des
+       matchs en cours fige le classement sans eux, et rouvrir fait cesser un classement final.
+       Clore sans match en cours reste un clic — il n'y a alors rien à perdre. */
+    let asking = $state(/** @type {'close' | 'reopen' | null} */ (null));
+
+    function askClose() {
+        if (running > 0) asking = 'close';
+        else onClose();
+    }
+
+    function go() {
+        const what = asking;
+        asking = null;
+        if (what === 'close') onClose();
+        else if (what === 'reopen') onReopen();
+    }
 
     /** @param {number | undefined} v */
     function money(v) {
@@ -48,11 +66,21 @@
             <span class="grow"></span>
             <button type="button" data-testid="direction-standings-csv" onclick={onCSV}>{$t('direction.standings.csv')}</button>
             {#if view.finished}
-                <button type="button" data-testid="direction-standings-reopen" disabled={busy} onclick={onReopen}>{$t('direction.standings.reopen')}</button>
+                <button type="button" data-testid="direction-standings-reopen" disabled={busy} onclick={() => (asking = 'reopen')}>{$t('direction.standings.reopen')}</button>
             {:else}
-                <button type="button" class="primary" data-testid="direction-standings-close" disabled={busy} onclick={onClose}>{$t('direction.standings.close')}</button>
+                <button type="button" class="primary" data-testid="direction-standings-close" disabled={busy} onclick={askClose}>{$t('direction.standings.close')}</button>
             {/if}
         </header>
+
+        {#if asking}
+            <div class="confirm" data-testid="direction-standings-confirm">
+                <p>{asking === 'close' ? $t('direction.standings.closeConfirm', { n: running }) : $t('direction.standings.reopenConfirm')}</p>
+                <button type="button" class="primary" data-testid="direction-standings-confirm-go" disabled={busy} onclick={go}>
+                    {asking === 'close' ? $t('direction.standings.close') : $t('direction.standings.reopen')}
+                </button>
+                <button type="button" data-testid="direction-standings-confirm-cancel" onclick={() => (asking = null)}>{$t('common.cancel')}</button>
+            </div>
+        {/if}
 
         {#each view.sections as s, si (s.name || si)}
             <section>
@@ -162,6 +190,23 @@
     .prize {
         text-align: right;
         white-space: nowrap;
+    }
+
+    .confirm {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-1);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        padding: var(--space-2);
+        background: var(--color-surface-alt);
+    }
+
+    .confirm p {
+        margin: 0;
+        flex: 1 1 20rem;
+        font-size: var(--font-size-small);
     }
 
     button {

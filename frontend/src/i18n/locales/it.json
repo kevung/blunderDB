@@ -1993,6 +1993,7 @@
             "prize": "Premio",
             "csv": "Esporta (CSV)",
             "close": "Chiudi il torneo",
+            "closeConfirm": "Match in corso: {n}. Chiudere congela la classifica senza di loro: il loro risultato non potrà più essere inserito, salvo riaprire il torneo.",
             "reopen": "Riapri",
             "tiedHint": "Pari merito: posto e premio sono divisi.",
             "pool": "Monte {pool} · da distribuire {payable} · trattenuto {retained}",
