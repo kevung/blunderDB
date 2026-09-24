@@ -45,8 +45,8 @@ async function openTournaments(page, opts = {}) {
 }
 
 /** Le décor des flux de direction : un tournoi dirigé, ouvert, la page Direction devant soi. */
-async function openDirection(page) {
-    await openTournaments(page);
+async function openDirection(page, opts = {}) {
+    await openTournaments(page, opts);
     await page.locator('#tournamentPanel tbody tr').first().click();
     await page.locator('#tournamentPanel .direction-btn').click();
     await expect(page.locator('.direction-view')).toBeVisible();
@@ -145,6 +145,33 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await expect(page.locator('.standings tbody tr').first()).toContainText(ENTRANTS[1].name);
         });
         budget('corriger un résultat ancien', counted, 5);
+    });
+
+    // « déclarer une table hors service | ≤ 4 gestes hors saisie, à 14 tables » (#438). Le
+    // plateau de la table 7 casse en plein tournoi : Réglages, le numéro, Enregistrer, et la
+    // liste de ce qui va changer le dit avant de confirmer. Baisser le nombre de tables aurait
+    // retiré la 14, pas la 7.
+    test('déclarer une table hors service tient dans son budget', async ({ page }) => {
+        await openDirection(page, { tables: 14 });
+        await page.locator('.proposals .all').click();
+        await page.locator('.proposals .confirm .primary').click();
+        await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-tab-settings"]'));
+            const field = page.locator('[data-testid="direction-settings-unavailable"]');
+            await g.click(field);
+            await field.fill('7'); // saisie du numéro : hors budget
+            await g.click(page.locator('[data-testid="direction-settings-apply"]'));
+            await expect(page.locator('[data-testid="direction-settings-changes"]')).toContainText(/hors service|out of service/i);
+            await g.click(page.locator('[data-testid="direction-settings-confirm"]'));
+            await expect(page.locator('[data-testid="direction-settings-changes"]')).toHaveCount(0);
+        });
+        budget('déclarer une table hors service', counted, 4);
+
+        await page.locator('[data-testid="direction-tab-direction"]').click();
+        await expect(page.locator('[data-testid="direction-table-7"]')).toContainText(/indisponible|out of service/i);
+        await expect(page.locator('[data-testid="direction-table-14"]')).toBeVisible();
     });
 
     // « apparier à la main | ≤ 7 clics ». Un `select` natif se déplie puis se choisit : deux
