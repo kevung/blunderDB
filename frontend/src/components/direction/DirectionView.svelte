@@ -441,8 +441,10 @@
             {/each}
         </nav>
         <span class="spacer"></span>
-        <button type="button" class="credit-btn" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}>ⓘ</button>
-        <button type="button" class="close" onclick={closeDirection}>{$t('direction.close')}</button>
+        <button type="button" class="credit-btn" data-testid="direction-credit" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}
+            >ⓘ</button
+        >
+        <button type="button" class="close" data-testid="direction-close" onclick={closeDirection}>{$t('direction.close')}</button>
     </header>
 
     {#if creditOpen}
@@ -475,7 +477,7 @@
                 {#if (view?.warnings || []).length}
                     <!-- Un avertissement est visible EN PERMANENCE et ne bloque rien : il
                          disparaît quand sa cause disparaît, jamais parce qu'on l'a lu. -->
-                    <ul class="warnings">
+                    <ul class="warnings" data-testid="direction-warnings">
                         {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
                             <li>{renderWarning($t, w, playerName)}</li>
                         {/each}
@@ -494,7 +496,7 @@
                                 </select>
                             </label>
                         {/if}
-                        <button type="button" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
+                        <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
                             {$t('direction.sheet.print')}
                         </button>
                     </div>

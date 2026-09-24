@@ -46,11 +46,11 @@
                 </span>
             {/if}
             <span class="grow"></span>
-            <button type="button" onclick={onCSV}>{$t('direction.standings.csv')}</button>
+            <button type="button" data-testid="direction-standings-csv" onclick={onCSV}>{$t('direction.standings.csv')}</button>
             {#if view.finished}
-                <button type="button" disabled={busy} onclick={onReopen}>{$t('direction.standings.reopen')}</button>
+                <button type="button" data-testid="direction-standings-reopen" disabled={busy} onclick={onReopen}>{$t('direction.standings.reopen')}</button>
             {:else}
-                <button type="button" class="primary" disabled={busy} onclick={onClose}>{$t('direction.standings.close')}</button>
+                <button type="button" class="primary" data-testid="direction-standings-close" disabled={busy} onclick={onClose}>{$t('direction.standings.close')}</button>
             {/if}
         </header>
 

@@ -298,7 +298,7 @@
             <h3>{$t('direction.settings.format')}</h3>
             <div class="cards">
                 {#each namedConfigs as named (named.id)}
-                    <button type="button" class="card" class:recommended={named.recommended} onclick={() => pickNamed(named)}>
+                    <button type="button" class="card" data-testid="direction-format-{named.id}" class:recommended={named.recommended} onclick={() => pickNamed(named)}>
                         <span class="card-name">{$t(`direction.named.${named.id}`)}</span>
                         <span class="card-hint">{$t(`direction.named.${named.id}Hint`)}</span>
                         {#if named.recommended}
@@ -388,7 +388,7 @@
                     </li>
                 {/each}
             </ul>
-            <button type="button" class="link" onclick={addPhase} title={$t('direction.settings.addPhaseHint')}>
+            <button type="button" class="link" data-testid="direction-settings-add-phase" onclick={addPhase} title={$t('direction.settings.addPhaseHint')}>
                 {$t('direction.settings.addPhase')}
             </button>
         </section>
@@ -397,7 +397,7 @@
             <h3>{$t('direction.settings.tables')}</h3>
             <label title={$t('direction.settings.tableCountHint')}>
                 {$t('direction.settings.tableCount')}
-                <input type="number" min="0" max="200" bind:value={config.tables.count} />
+                <input type="number" data-testid="direction-settings-tables" min="0" max="200" bind:value={config.tables.count} />
             </label>
             {#if entrantCount > 0}
                 <p class="facts">
@@ -483,7 +483,7 @@
                     </li>
                 {/each}
             </ul>
-            <button type="button" class="link" onclick={addBreak}>{$t('direction.settings.addBreak')}</button>
+            <button type="button" class="link" data-testid="direction-settings-add-break" onclick={addBreak}>{$t('direction.settings.addBreak')}</button>
         </section>
 
         <section>
@@ -494,7 +494,7 @@
             {/if}
             <div class="actions">
                 {#if onChooseOutput}
-                    <button type="button" onclick={onChooseOutput}>
+                    <button type="button" data-testid="direction-settings-output" onclick={onChooseOutput}>
                         {outputDir ? $t('direction.display.changeFolder') : $t('direction.display.chooseFolder')}
                     </button>
                 {/if}
@@ -508,7 +508,7 @@
         </section>
 
         <div class="actions">
-            <button type="button" class="primary" onclick={askApply}>
+            <button type="button" class="primary" data-testid="direction-settings-apply" onclick={askApply}>
                 {$t('direction.settings.apply')}
             </button>
             {#if onDelete}
@@ -522,7 +522,7 @@
         {/if}
 
         {#if pending}
-            <section class="confirm">
+            <section class="confirm" data-testid="direction-settings-changes">
                 <h3>{$t('direction.change.title')}</h3>
                 {#if nothing}
                     <p class="facts">{$t('direction.change.nothing')}</p>
@@ -544,7 +544,7 @@
                 {/if}
                 <div class="actions">
                     {#if !nothing && !blocked}
-                        <button type="button" class="primary" onclick={confirmApply}>
+                        <button type="button" class="primary" data-testid="direction-settings-confirm" onclick={confirmApply}>
                             {$t('direction.change.confirm')}
                         </button>
                     {/if}

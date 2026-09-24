@@ -88,31 +88,31 @@
     }
 </script>
 
-<div class="card" role="dialog" aria-label={$t('direction.result.title')} tabindex="-1" onkeydown={onKey}>
+<div class="card" data-testid="direction-result-card" role="dialog" aria-label={$t('direction.result.title')} tabindex="-1" onkeydown={onKey}>
     <header>
         <span class="where"
             >{$t('direction.proposals.table', { n: cell.table })} &middot;
             {$t('direction.proposals.points', { n: cell.length })}</span
         >
         <span class="grow"></span>
-        <button type="button" class="more-btn" onclick={() => (more = !more)} title={$t('direction.result.more')}>⋯</button>
+        <button type="button" class="more-btn" data-testid="direction-result-more" onclick={() => (more = !more)} title={$t('direction.result.more')}>⋯</button>
         <button type="button" class="close" onclick={onClose} title={$t('common.close')}>×</button>
     </header>
 
     <!-- Deux grosses cibles aux noms des joueurs : on clique dessus en se penchant, d'où
          l'exception typographique nommée dans l'ADR-0008. -->
     <div class="winners">
-        <button type="button" class="winner" disabled={busy} onclick={() => win(cell.a)}>{cell.aName}</button>
-        <button type="button" class="winner" disabled={busy} onclick={() => win(cell.b)}>{cell.bName}</button>
+        <button type="button" class="winner" data-testid="direction-result-winner-a" disabled={busy} onclick={() => win(cell.a)}>{cell.aName}</button>
+        <button type="button" class="winner" data-testid="direction-result-winner-b" disabled={busy} onclick={() => win(cell.b)}>{cell.bName}</button>
     </div>
 
     <div class="score">
         <label>
             {$t('direction.result.score')}
-            <input type="number" min="0" max="99" bind:value={scoreA} />
+            <input type="number" data-testid="direction-result-score-a" min="0" max="99" bind:value={scoreA} />
         </label>
         <span>–</span>
-        <input type="number" min="0" max="99" bind:value={scoreB} />
+        <input type="number" data-testid="direction-result-score-b" min="0" max="99" bind:value={scoreB} />
         <span class="optional">{$t('direction.result.optional')}</span>
     </div>
 
@@ -120,8 +120,8 @@
         <div class="more">
             <div class="row">
                 <span class="row-label">{$t('direction.result.forfeit')}</span>
-                <button type="button" disabled={busy} onclick={() => forfeit(cell.b)}>{cell.aName}</button>
-                <button type="button" disabled={busy} onclick={() => forfeit(cell.a)}>{cell.bName}</button>
+                <button type="button" data-testid="direction-result-forfeit-a" disabled={busy} onclick={() => forfeit(cell.b)}>{cell.aName}</button>
+                <button type="button" data-testid="direction-result-forfeit-b" disabled={busy} onclick={() => forfeit(cell.a)}>{cell.bName}</button>
             </div>
             <label class="row">
                 <span class="row-label">{$t('direction.result.note')}</span>
@@ -129,11 +129,11 @@
             </label>
             <div class="row">
                 <span class="row-label">{$t('direction.result.move')}</span>
-                <input type="number" min="1" max="200" bind:value={moveTo} />
-                <button type="button" disabled={busy} onclick={move}>{$t('direction.result.apply')}</button>
+                <input type="number" data-testid="direction-result-move-table" min="1" max="200" bind:value={moveTo} />
+                <button type="button" data-testid="direction-result-move" disabled={busy} onclick={move}>{$t('direction.result.apply')}</button>
             </div>
             <div class="row">
-                <button type="button" class="danger" disabled={busy} onclick={cancel}>{$t('direction.result.cancelMatch')}</button>
+                <button type="button" class="danger" data-testid="direction-result-cancel" disabled={busy} onclick={cancel}>{$t('direction.result.cancelMatch')}</button>
             </div>
         </div>
     {/if}

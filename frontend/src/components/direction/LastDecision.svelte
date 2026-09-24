@@ -53,7 +53,7 @@
 <svelte:window onkeydown={onKey} />
 
 {#if last}
-    <div class="last">
+    <div class="last" data-testid="direction-last">
         <span class="what">
             {#if last.correctable}
                 {$t('direction.last.result', {
@@ -66,17 +66,17 @@
         </span>
         <span class="grow"></span>
         {#if last.correctable}
-            <button type="button" disabled={busy} onclick={() => (open = !open)}>{$t('direction.last.correct')}</button>
+            <button type="button" data-testid="direction-last-correct" disabled={busy} onclick={() => (open = !open)}>{$t('direction.last.correct')}</button>
         {:else if last.cancellable}
-            <button type="button" class="danger" disabled={busy} onclick={() => onCancelMatch(last.matchId)}>{$t('direction.last.cancel')}</button>
+            <button type="button" class="danger" data-testid="direction-last-cancel" disabled={busy} onclick={() => onCancelMatch(last.matchId)}>{$t('direction.last.cancel')}</button>
         {/if}
     </div>
 
     {#if open && last.correctable}
         <div class="correct">
             <span class="hint">{$t('direction.last.whoWon')}</span>
-            <button type="button" class="winner" disabled={busy} onclick={() => correct(last.a)}>{last.aName}</button>
-            <button type="button" class="winner" disabled={busy} onclick={() => correct(last.b)}>{last.bName}</button>
+            <button type="button" class="winner" data-testid="direction-last-winner-a" disabled={busy} onclick={() => correct(last.a)}>{last.aName}</button>
+            <button type="button" class="winner" data-testid="direction-last-winner-b" disabled={busy} onclick={() => correct(last.b)}>{last.bName}</button>
             <input type="number" min="0" max="99" bind:value={scoreA} />
             <span>–</span>
             <input type="number" min="0" max="99" bind:value={scoreB} />
