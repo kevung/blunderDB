@@ -283,6 +283,27 @@
         border-color: color-mix(in srgb, var(--color-text) 80%, var(--color-surface));
     }
 
+    /* Sous un schéma sombre, l'inversion ci-dessus donnait le seul aplat clair de la
+       fenêtre, posé sur la surface sombre : une tache plus qu'une action (suite de
+       l'issue 402). Le bouton principal y reste sombre, et c'est l'accent qui le distingue du
+       bouton neutre voisin — un fond teinté d'accent, un filet d'accent, l'encre du
+       thème. Survol et appui renforcent la teinte ; l'encre y tient au-dessus de
+       4,5:1, ce que primary-button-theme.spec.js mesure dans chaque thème. */
+    :global(:root[data-scheme='dark']) .modal-footer :global(button.primary) {
+        background-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
+        border-color: var(--color-primary);
+        color: var(--color-text);
+    }
+
+    :global(:root[data-scheme='dark']) .modal-footer :global(button.primary:hover:not(:disabled)) {
+        background-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-surface));
+        border-color: var(--color-primary);
+    }
+
+    :global(:root[data-scheme='dark']) .modal-footer :global(button.primary:active:not(:disabled)) {
+        background-color: color-mix(in srgb, var(--color-primary) 44%, var(--color-surface));
+    }
+
     .modal-footer :global(button.danger) {
         background-color: #b3261e;
         border-color: #b3261e;

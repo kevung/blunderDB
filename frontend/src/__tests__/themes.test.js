@@ -16,6 +16,7 @@ afterEach(() => {
     for (const token of UI_COLOR_TOKENS) root.style.removeProperty(token);
     root.style.removeProperty('color-scheme');
     delete root.dataset.theme;
+    delete root.dataset.scheme;
 });
 
 describe('les thèmes nommés', () => {
@@ -75,8 +76,10 @@ describe('les thèmes nommés', () => {
     test('appliquer un thème déclare son schéma de couleur sur la racine', () => {
         applyThemeTokens('dark');
         expect(document.documentElement.style.colorScheme).toBe('dark');
+        expect(document.documentElement.dataset.scheme).toBe('dark');
         applyThemeTokens('print');
         expect(document.documentElement.style.colorScheme).toBe('light');
+        expect(document.documentElement.dataset.scheme).toBe('light');
     });
 
     test('`system` résout vers un thème réel', () => {

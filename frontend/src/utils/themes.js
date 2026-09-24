@@ -168,7 +168,10 @@ export function resolveTheme(name) {
  * Écrit les jetons d'un thème sur l'élément racine, déclare son schéma de
  * couleur (`color-scheme`, pour les contrôles natifs — #402), et pose
  * `data-theme` pour qu'une règle CSS puisse s'y accrocher si un jour l'une en a
- * besoin.
+ * besoin. Pose aussi `data-scheme` : une règle qui dépend de la clarté du thème
+ * et non de son nom — le bouton principal des fenêtres, encre sur fond d'encre
+ * en clair, qui serait un aplat clair sur une surface sombre (suite de #402) —
+ * s'y accroche, et un thème sombre ajouté un jour en hérite sans y penser.
  * @param {string} name
  * @returns {Theme} le thème résolu, pour que l'appelant en tire la palette.
  */
@@ -181,5 +184,6 @@ export function applyThemeTokens(name) {
     }
     root.style.colorScheme = theme.scheme;
     root.dataset.theme = resolved;
+    root.dataset.scheme = theme.scheme;
     return theme;
 }
