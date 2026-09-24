@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 22:32+0200\n"
+"POT-Creation-Date: 2026-09-24 02:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -211,12 +211,12 @@ msgid ""
 " de la liste parcourue : le coup se joue sur le plateau, l'action de "
 "videau se choisit dans le panneau ; ``train quiz`` est un synonyme)."
 msgstr ""
-"トレーニングパネルを開きます。引数を付けると開いて開始します：``train scores``\\ （無作為に引いたスコアのスコアカード。``train"
-" tp`` と ``train takepoint`` は別名）、``train pips``\\ （両者のピップ数）、``train "
-"bearoff``\\ （生成した局面での両者の EPC。``train epc`` は別名）、``train "
-"evaluation``\\ （生成した局面の勝率とキューブアクション。マネーゲーム）、``train "
-"decision``\\ （表示中のリストから出題する解析済みの判断。手は盤上で打ち、キューブアクションはパネルで選びます。``train quiz``"
-" は別名）。"
+"トレーニングパネルを開きます。引数を付けると開いて開始します：``train scores``\\ "
+"（無作為に引いたスコアのスコアカード。``train tp`` と ``train takepoint`` は別名）、``train "
+"pips``\\ （両者のピップ数）、``train bearoff``\\ （生成した局面での両者の EPC。``train epc`` "
+"は別名）、``train evaluation``\\ （生成した局面の勝率とキューブアクション。マネーゲーム）、``train "
+"decision``\\ （表示中のリストから出題する解析済みの判断。手は盤上で打ち、キューブアクションはパネルで選びます。``train "
+"quiz`` は別名）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2"
@@ -336,6 +336,17 @@ msgid "Aller à la position d'indice indiqué."
 msgstr "指定したインデックスの局面に移動します。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "grid, gr"
+msgstr "grid, gr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux,"
+" une page de vingt-quatre à la fois ; choisir une vignette ouvre sa "
+"position."
+msgstr "コンタクトシートを開きます。閲覧中のリストをミニ盤面のグリッドとして、1ページ24局面ずつ表示します。サムネイルを選ぶとその局面が開きます。"
+
+#: ../../source/cmd_mode.rst:1
 msgid "list, l"
 msgstr "list, l"
 
@@ -422,7 +433,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:79
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -460,11 +471,11 @@ msgid ""
 "ouverte ou match en cours de revue."
 msgstr "表示中のポジションの中を検索：現在の結果、開いているコレクション、またはレビュー中のマッチ。"
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -478,7 +489,7 @@ msgstr ""
 "のフラグが存在する場合にそれを示します（\\ :ref:`cli`\\ "
 "を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。"
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:104
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -495,7 +506,7 @@ msgstr ""
 "は存在せず、数字を持つのは除外の形（\\ ``xD65``\\ "
 "）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。"
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -504,7 +515,7 @@ msgstr ""
 "トークンのうち ``like`` だけは、絞り込むのではなく\\ **並べ替え**\\ "
 "ます。目標局面からの距離の昇順に結果を並べ、ほかのトークンはすべて、そうして並んだ集合を絞り込みます。"
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -513,18 +524,18 @@ msgstr ""
 "エラーとエクイティは\\ **エクイティの千分の1**\\ 単位で数えます——下の表でいう *ミリポイント* です。\\ ``E>100`` "
 "は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。"
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid "Deux recherches complètes :"
 msgstr "完全な検索の例を二つ："
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
 "chances de gain, aucun commentaire."
 msgstr "``s p>30 w40,60 xco`` — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。"
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1457,7 +1468,7 @@ msgstr ""
 "は番号42の局面を取り、\\ ``like<12`` は十二チェッカーピップを超えるものを除き、\\ ``like42*`` "
 "は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ :ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:230
+#: ../../source/cmd_mode.rst:231
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

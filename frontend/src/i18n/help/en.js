@@ -77,6 +77,7 @@ export default {
 </div>
 <p>The <strong>Anki</strong> tab carries a <strong>badge</strong> when cards are due, across every deck. That figure is the reason to open the tab; it has no business behind it. Zero shows nothing: a badge saying “0” is noise.</p>
 <p>The <code>log</code> command opens the <strong>activity log</strong>: the last two hundred lines of the log file, a button to copy them — what it takes to attach a report to a bug — and another to open the folder holding them. The log is neither filtered nor reformatted: a log you tidy up is a log you can no longer quote.</p>
+<p>The <code>grid</code> command opens the <strong>contact sheet</strong>: the browsed list — search results, library, collection — as a grid of mini-boards, drawn like the board, in pages of twenty-four. It opens on the page of the current position, whose thumbnail is outlined; a click or <em>ENTER</em> on a thumbnail opens its position on the board and closes the sheet, and it can be browsed entirely from the keyboard (see Contact sheet). It does not open in edit mode or in a match, which is browsed by its moves.</p>
 <p>In the <strong>search history</strong> of the Search panel, each token of a saved command shows as a named chip — <em>No Contact</em>, <em>Move Error</em> — rather than a bare token. The exact command stays in the tooltip, since that is what gets re-run; and a token blunderDB does not recognise shows <strong>as it is</strong> rather than translated to the nearest thing.</p>
 <h3>View Tabs</h3>
 <p>Below the toolbar, a tab bar lets you work with several <strong>views</strong> in parallel. Each view is an independent workspace that keeps its own position list, the index of the current position, the displayed position, the analysis and the selected move, the active panel, the comment being edited, as well as the navigation context within a match. This makes it possible, for example, to keep a search open in one view while browsing a match in another.</p>
@@ -1554,6 +1555,41 @@ export default {
 <p>Moving the cursor back onto an action and typing again corrects it <strong>in place</strong>: validating replaces the action, and the cursor returns where it was — or, on the last action, moves on to the end of the document, where the transcription continues. If the dice are corrected and the recorded play is still a legal play of the new roll, it is kept; otherwise the first candidate of the new roll is offered and the play is flagged “to review” until it is validated. Moving the cursor forward or back after changing something records the correction on the way.</p>
 <p>Nothing is refused and nothing is deleted: inserting an action of the same side as its neighbour creates a double turn, deleting an action may create another one, changing a side may make the plays that follow illegal. These inconsistencies are marked in the transcript, never corrected on your behalf, and the cursor lands on the first of them after every gesture — except where you carry on: after a deletion, an insertion or a reopened game, it stays where you are typing. The undo stack lives in memory: it is lost when the draft is closed.</p>
 <p>The panel itself — the list of drafts, the creation, the entry, the transcript and the draft bar — is described in Transcription Panel.</p>
+<h3>Contact sheet</h3>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LEFT, RIGHT, UP, DOWN</td>
+<td>Move within the grid.</td>
+</tr>
+<tr>
+<td>j, k</td>
+<td>Next thumbnail, previous thumbnail.</td>
+</tr>
+<tr>
+<td>Home, End</td>
+<td>First, last thumbnail of the page.</td>
+</tr>
+<tr>
+<td>PageUp, PageDown</td>
+<td>Previous page, next page.</td>
+</tr>
+<tr>
+<td>ENTER, Click</td>
+<td>Open the position on the board and close the sheet.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Close the sheet.</td>
+</tr>
+</tbody>
+</table>
 <h3>Help Panel</h3>
 <table>
 <thead>
@@ -1739,6 +1775,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Go to the specified index position.</td>
+</tr>
+<tr>
+<td>grid, gr</td>
+<td>Opens the contact sheet: the browsed list as a grid of mini-boards, one page of twenty-four at a time; choosing a thumbnail opens its position.</td>
 </tr>
 <tr>
 <td>list, l</td>

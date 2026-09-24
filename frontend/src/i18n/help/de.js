@@ -77,6 +77,7 @@ export default {
 </div>
 <p>Der Reiter <strong>Anki</strong> trägt ein <strong>Abzeichen</strong>, wenn Karten fällig sind, über alle Stapel hinweg. Diese Zahl ist der Grund, den Reiter zu öffnen; sie hat nichts dahinter verloren. Null zeigt nichts: Ein Abzeichen mit „0“ ist Rauschen.</p>
 <p>Der Befehl <code>log</code> öffnet das <strong>Aktivitätsprotokoll</strong>: die letzten zweihundert Zeilen der Protokolldatei, eine Schaltfläche zum Kopieren — das Nötige, um einer Meldung einen Bericht beizulegen — und eine weitere, um den Ordner zu öffnen. Das Protokoll wird weder gefiltert noch umformatiert: Ein aufgeräumtes Protokoll lässt sich nicht mehr zitieren.</p>
+<p>Der Befehl <code>grid</code> öffnet den <strong>Kontaktbogen</strong>: die durchsuchte Liste — Suchergebnisse, Bibliothek, Sammlung — als Raster aus Mini-Brettern, gezeichnet wie das Brett, in Seiten zu vierundzwanzig. Er öffnet sich auf der Seite der aktuellen Position, deren Vorschaubild umrandet ist; ein Klick oder <em>EINGABE</em> auf ein Vorschaubild öffnet dessen Position auf dem Brett und schließt den Bogen, und er lässt sich vollständig mit der Tastatur durchlaufen (siehe Kontaktbogen). Er öffnet sich weder im Bearbeitungsmodus noch in einem Match, das man über seine Züge durchläuft.</p>
 <p>In der <strong>Suchhistorie</strong> des Suchpanels erscheint jedes Token eines gespeicherten Befehls als benannter Chip — <em>Kein Kontakt</em>, <em>Zugfehler</em> — statt als nacktes Token. Der genaue Befehl bleibt im Tooltip, denn er ist es, der erneut ausgeführt wird; und ein Token, das blunderDB nicht kennt, erscheint <strong>so wie es ist</strong>, statt zum Nächstliegenden übersetzt zu werden.</p>
 <h3>Ansichts-Reiter</h3>
 <p>Unter der Werkzeugleiste ermöglicht eine Reiterleiste, mit mehreren <strong>Ansichten</strong> parallel zu arbeiten. Jede Ansicht ist ein unabhängiger Arbeitsbereich, der seine eigene Positionsliste, den Index der aktuellen Position, die angezeigte Position, die Analyse und den ausgewählten Zug, das aktive Panel, den aktuellen Kommentar sowie den Navigationskontext in einem Match behält. So ist es zum Beispiel möglich, eine Suche in einer Ansicht offen zu halten, während man in einer anderen ein Match durchgeht.</p>
@@ -1554,6 +1555,41 @@ export default {
 <p>Den Cursor auf eine Aktion zurücksetzen und erneut eingeben korrigiert sie <strong>an Ort und Stelle</strong>: Das Bestätigen ersetzt die Aktion, und der Cursor kehrt dorthin zurück, wo er war — oder geht, bei der letzten Aktion, ans Ende des Dokuments, wo die Transkription weitergeht. Werden die Würfel korrigiert und bleibt der erfasste Zug ein gültiger Zug des neuen Wurfs, wird er beibehalten; andernfalls wird der erste Kandidat des neuen Wurfs vorgeschlagen und der Zug bis zur Bestätigung als „zu prüfen“ gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder zurückbewegt, so wird die Korrektur dabei übernommen.</p>
 <p>Nichts wird abgelehnt und nichts gelöscht: Eine Aktion derselben Seite wie ihre Nachbarin einzufügen erzeugt einen doppelten Zug, eine Aktion zu löschen kann einen weiteren erzeugen, eine Seite zu ändern kann die folgenden Züge ungültig machen. Diese Unstimmigkeiten werden im Transkript markiert, niemals von selbst behoben, und der Cursor springt nach jeder Geste auf die erste von ihnen — außer dort, wo man weitermacht: nach einem Löschen, einer Einfügung oder einer wieder geöffneten Partie bleibt er, wo man tippt. Der Rückgängig-Stapel liegt im Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird.</p>
 <p>Das Panel selbst — die Liste der Entwürfe, das Anlegen, die Eingabe, das Transkript und die Entwurfsleiste — wird in Transkriptions-Panel beschrieben.</p>
+<h3>Kontaktbogen</h3>
+<table>
+<thead>
+<tr>
+<th>Tastenkürzel</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LINKS, RECHTS, OBEN, UNTEN</td>
+<td>Im Raster bewegen.</td>
+</tr>
+<tr>
+<td>j, k</td>
+<td>Nächstes Vorschaubild, vorheriges Vorschaubild.</td>
+</tr>
+<tr>
+<td>Pos1, Ende</td>
+<td>Erstes, letztes Vorschaubild der Seite.</td>
+</tr>
+<tr>
+<td>Bild-auf, Bild-ab</td>
+<td>Vorherige Seite, nächste Seite.</td>
+</tr>
+<tr>
+<td>EINGABE, Klick</td>
+<td>Die Position auf dem Brett öffnen und den Bogen schließen.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Den Bogen schließen.</td>
+</tr>
+</tbody>
+</table>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>
@@ -1739,6 +1775,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Springt zur Position mit dem angegebenen Index.</td>
+</tr>
+<tr>
+<td>grid, gr</td>
+<td>Öffnet den Kontaktbogen: die durchsuchte Liste als Raster aus Mini-Brettern, jeweils eine Seite mit vierundzwanzig; die Wahl eines Vorschaubilds öffnet seine Position.</td>
 </tr>
 <tr>
 <td>list, l</td>

@@ -77,6 +77,7 @@ export default {
 </div>
 <p>La pestaña <strong>Anki</strong> lleva una <strong>insignia</strong> cuando hay tarjetas por repasar, en todos los mazos. Esa cifra es la razón de abrir la pestaña; no tiene nada que hacer detrás de ella. Cero no muestra nada: una insignia que dice «0» es ruido.</p>
 <p>El comando <code>log</code> abre el <strong>registro de actividad</strong>: las últimas doscientas líneas del archivo de registro, un botón para copiarlas — lo necesario para adjuntar un informe a un aviso — y otro para abrir la carpeta que las contiene. El registro no se filtra ni se reformatea: un registro que se embellece es un registro que ya no se puede citar.</p>
+<p>El comando <code>grid</code> abre la <strong>hoja de contactos</strong>: la lista recorrida — resultados de una búsqueda, biblioteca, colección — como una cuadrícula de minitableros, dibujados como el tablero, en páginas de veinticuatro. Se abre en la página de la posición actual, cuya miniatura aparece enmarcada; un clic o <em>INTRO</em> sobre una miniatura abre su posición en el tablero y cierra la hoja, y se recorre por completo con el teclado (véase Hoja de contactos). No se abre ni en modo edición ni en un match, que se recorre por sus jugadas.</p>
 <p>En el <strong>historial de búsquedas</strong> del panel Búsqueda, cada token de un comando guardado se muestra como una etiqueta con nombre — <em>Sin contacto</em>, <em>Error de jugada</em> — en vez de un token pelado. El comando exacto queda en la ayuda emergente, porque es el que se relanza; y un token que blunderDB no reconoce se muestra <strong>tal cual</strong> en vez de traducido a lo más parecido.</p>
 <h3>Pestañas de vistas</h3>
 <p>Bajo la barra de herramientas, una barra de pestañas permite trabajar con varias <strong>vistas</strong> en paralelo. Cada vista es un espacio de trabajo independiente que conserva su propia lista de posiciones, el índice de la posición actual, la posición mostrada, el análisis y la jugada seleccionada, el panel activo, el comentario en curso, así como el contexto de navegación en una partida. Así es posible, por ejemplo, mantener una búsqueda abierta en una vista mientras se recorre una partida en otra.</p>
@@ -1554,6 +1555,41 @@ export default {
 <p>Retroceder el cursor hasta una acción y volver a escribir la corrige <strong>en el sitio</strong>: la validación reemplaza la acción y el cursor vuelve donde estaba — o, en la última acción, pasa al final del documento, donde la transcripción continúa. Si se corrigen los dados y la jugada registrada sigue siendo una jugada legal de la nueva tirada, se conserva; si no, se propone el primer candidato de la nueva tirada y la jugada queda señalada «por revisar» hasta la validación. Avanzar o retroceder el cursor después de haber cambiado algo registra la corrección de paso.</p>
 <p>Nada se rechaza ni se elimina: insertar una acción del mismo bando que su vecina crea un doble turno, eliminar una acción puede crear otro, cambiar un bando puede volver ilegales las jugadas siguientes. Estas incoherencias se señalan en el transcript, nunca se corrigen de oficio, y el cursor se coloca sobre la primera de ellas después de cada gesto — salvo donde se continúa: tras una eliminación, una inserción o una partida reabierta, se queda donde se teclea. La pila de deshacer vive en memoria: se pierde al cerrar el borrador.</p>
 <p>El panel en sí — la lista de borradores, la creación, la entrada, la transcripción y la barra del borrador — se describe en Panel de Transcripción.</p>
+<h3>Hoja de contactos</h3>
+<table>
+<thead>
+<tr>
+<th>Atajo</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IZQUIERDA, DERECHA, ARRIBA, ABAJO</td>
+<td>Moverse por la cuadrícula.</td>
+</tr>
+<tr>
+<td>j, k</td>
+<td>Miniatura siguiente, miniatura anterior.</td>
+</tr>
+<tr>
+<td>Inicio, Fin</td>
+<td>Primera, última miniatura de la página.</td>
+</tr>
+<tr>
+<td>RePág, AvPág</td>
+<td>Página anterior, página siguiente.</td>
+</tr>
+<tr>
+<td>INTRO, Clic</td>
+<td>Abrir la posición en el tablero y cerrar la hoja.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Cerrar la hoja.</td>
+</tr>
+</tbody>
+</table>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>
@@ -1739,6 +1775,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Ir a la posición del índice indicado.</td>
+</tr>
+<tr>
+<td>grid, gr</td>
+<td>Abre la hoja de contactos: la lista recorrida como una cuadrícula de minitableros, una página de veinticuatro cada vez; elegir una miniatura abre su posición.</td>
 </tr>
 <tr>
 <td>list, l</td>

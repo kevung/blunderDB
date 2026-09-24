@@ -165,6 +165,15 @@ rapport à un signalement — et un autre pour ouvrir le dossier qui les
 contient. Le journal n'est ni filtré ni reformaté : un journal qu'on embellit
 est un journal qu'on ne peut plus citer.
 
+La commande ``grid`` ouvre la **planche-contact** : la liste parcourue —
+résultats d'une recherche, bibliothèque, collection — en grille de
+mini-plateaux, dessinés comme le plateau, par pages de vingt-quatre. Elle
+s'ouvre sur la page de la position courante, dont la vignette est encadrée ;
+un clic ou *ENTREE* sur une vignette ouvre sa position sur le plateau et
+referme la planche, et elle se parcourt entièrement au clavier (voir
+:ref:`raccourcis_contact_sheet`). Elle ne s'ouvre ni en mode édition ni dans
+un match, qui se parcourt par ses coups.
+
 Dans l'**historique de recherche** du panneau Recherche, chaque jeton d'une
 commande enregistrée s'affiche en pastille nommée — *Sans contact*, *Erreur de
 coup* — plutôt qu'en jeton nu. La commande exacte reste en infobulle, car

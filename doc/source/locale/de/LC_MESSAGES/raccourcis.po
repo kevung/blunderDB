@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 02:24+0200\n"
+"POT-Creation-Date: 2026-09-24 02:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1365,6 +1365,54 @@ msgstr ""
 "beschrieben."
 
 #: ../../source/raccourcis.rst:387
+msgid "Planche-contact"
+msgstr "Kontaktbogen"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, DROITE, HAUT, BAS"
+msgstr "LINKS, RECHTS, OBEN, UNTEN"
+
+#: ../../source/raccourcis.rst:1
+msgid "Se déplacer dans la grille."
+msgstr "Im Raster bewegen."
+
+#: ../../source/raccourcis.rst:1
+msgid "j, k"
+msgstr "j, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Vignette suivante, vignette précédente."
+msgstr "Nächstes Vorschaubild, vorheriges Vorschaubild."
+
+#: ../../source/raccourcis.rst:1
+msgid "Home, End"
+msgstr "Pos1, Ende"
+
+#: ../../source/raccourcis.rst:1
+msgid "Première, dernière vignette de la page."
+msgstr "Erstes, letztes Vorschaubild der Seite."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp, PageDown"
+msgstr "Bild-auf, Bild-ab"
+
+#: ../../source/raccourcis.rst:1
+msgid "Page précédente, page suivante."
+msgstr "Vorherige Seite, nächste Seite."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE, Clic"
+msgstr "EINGABE, Klick"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la position sur le plateau et refermer la planche."
+msgstr "Die Position auf dem Brett öffnen und den Bogen schließen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Refermer la planche."
+msgstr "Den Bogen schließen."
+
+#: ../../source/raccourcis.rst:404
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

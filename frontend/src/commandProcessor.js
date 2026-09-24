@@ -12,6 +12,7 @@ import { logger } from './utils/logger.js';
 // re-translate them live when the language changes.
 import { tMsg } from './i18n';
 import { displayedPositionIDs, searchQueryBoard } from './services/positionService.js';
+import { openContactSheet } from './services/contactSheet.js';
 // The search-token grammar (parseSearchTokens) and its quote-stripping helper
 // live in searchFilterService.js, shared with the "retour" replay path
 // (parseSearchCommand) — see that module's doc comment and #203. Re-exported
@@ -120,6 +121,8 @@ export function processCommand(command) {
         openModal(MODAL.TAGS);
     } else if (command === 'log') {
         openModal(MODAL.LOG);
+    } else if (command === 'grid' || command === 'gr') {
+        openContactSheet();
     } else if (command.startsWith('train ')) {
         // `train <exercice>` : scores, pips, bearoff, decision et leurs alias
         // (`exerciseForCommand`). Testé AVANT la forme exacte, que la ligne

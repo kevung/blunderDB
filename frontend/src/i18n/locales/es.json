@@ -1680,6 +1680,17 @@
         "copied": "{n} líneas copiadas al portapapeles.",
         "copyFailed": "No se ha podido copiar el registro."
     },
+    "contactSheet": {
+        "title": "Hoja de contactos",
+        "count": "{n} posiciones",
+        "previous": "Página anterior",
+        "next": "Página siguiente",
+        "page": "Página {page} / {pages}",
+        "hint": "Flechas, J y K: moverse · Inicio, Fin: extremos de la página · Re Pág, Av Pág: cambiar de página · Intro: abrir la posición",
+        "tile": "Posición {n} de {total}",
+        "missing": "Posición no encontrada",
+        "notInMatch": "La hoja de contactos muestra la lista recorrida, no un match: salga primero del match."
+    },
     "direction": {
         "title": "Dirección",
         "direct": "Dirigir este torneo",

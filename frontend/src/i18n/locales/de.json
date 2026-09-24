@@ -1680,6 +1680,17 @@
         "copied": "{n} Zeilen in die Zwischenablage kopiert.",
         "copyFailed": "Das Protokoll konnte nicht kopiert werden."
     },
+    "contactSheet": {
+        "title": "Kontaktbogen",
+        "count": "{n} Positionen",
+        "previous": "Vorherige Seite",
+        "next": "Nächste Seite",
+        "page": "Seite {page} / {pages}",
+        "hint": "Pfeiltasten, J und K: bewegen · Pos1, Ende: Anfang und Ende der Seite · Bild auf, Bild ab: Seite wechseln · Eingabe: Position öffnen",
+        "tile": "Position {n} von {total}",
+        "missing": "Position nicht gefunden",
+        "notInMatch": "Der Kontaktbogen zeigt die durchsuchte Liste, kein Match: Verlassen Sie zuerst das Match."
+    },
     "direction": {
         "title": "Leitung",
         "direct": "Dieses Turnier leiten",

@@ -77,6 +77,7 @@ export default {
 </div>
 <p>La scheda <strong>Anki</strong> porta un <strong>contrassegno</strong> quando ci sono carte da ripassare, in tutti i mazzi. Quella cifra è la ragione per aprire la scheda; non ha nulla da fare dietro di essa. Zero non mostra nulla: un contrassegno che dice «0» è rumore.</p>
 <p>Il comando <code>log</code> apre il <strong>registro attività</strong>: le ultime duecento righe del file di log, un pulsante per copiarle — quanto serve per allegare un rapporto a una segnalazione — e un altro per aprire la cartella che le contiene. Il registro non è né filtrato né riformattato: un registro che si abbellisce è un registro che non si può più citare.</p>
+<p>Il comando <code>grid</code> apre il <strong>provino</strong>: l'elenco sfogliato — risultati di una ricerca, libreria, collezione — come griglia di mini-tavolieri, disegnati come il tavoliere, in pagine da ventiquattro. Si apre sulla pagina della posizione corrente, la cui miniatura è incorniciata; un clic o <em>INVIO</em> su una miniatura ne apre la posizione sul tavoliere e chiude il provino, e si sfoglia interamente da tastiera (vedi Provino). Non si apre né in modalità modifica né in un match, che si sfoglia per mosse.</p>
 <p>Nella <strong>cronologia delle ricerche</strong> del pannello Ricerca, ogni token di un comando salvato appare come un'etichetta con nome — <em>Senza contatto</em>, <em>Errore di mossa</em> — anziché come token nudo. Il comando esatto resta nel suggerimento, perché è quello che si rilancia; e un token che blunderDB non riconosce appare <strong>così com'è</strong>, non tradotto al più vicino.</p>
 <h3>Schede delle viste</h3>
 <p>Sotto la barra degli strumenti, una barra delle schede consente di lavorare con più <strong>viste</strong> in parallelo. Ogni vista è uno spazio di lavoro indipendente che conserva il proprio elenco di posizioni, l'indice della posizione corrente, la posizione visualizzata, l'analisi e la mossa selezionata, il pannello attivo, il commento in corso nonché il contesto di navigazione in un match. È così possibile, ad esempio, tenere aperta una ricerca in una vista mentre si scorre un match in un'altra.</p>
@@ -1554,6 +1555,41 @@ export default {
 <p>Riportare il cursore su un'azione e ridigitare la corregge <strong>sul posto</strong>: la convalida sostituisce l'azione e il cursore torna dov'era — oppure, sull'ultima azione, passa in fondo al documento, dove la trascrizione continua. Se i dadi sono corretti e la mossa registrata resta una mossa legale del nuovo lancio, viene conservata; altrimenti viene proposto il primo candidato del nuovo lancio e la mossa è segnalata «da rivedere» fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa registra la correzione al passaggio.</p>
 <p>Nulla viene rifiutato né eliminato: inserire un'azione dello stesso campo della vicina crea un doppio turno, eliminare un'azione può crearne un altro, cambiare un campo può rendere illegali le mosse che seguono. Queste incoerenze sono segnalate nel transcript, mai corrette d'ufficio, e il cursore si posiziona sulla prima di esse dopo ogni gesto — tranne dove si continua: dopo un'eliminazione, un inserimento o una partita riaperta, resta dove si digita. La pila di annullamento vive in memoria: va persa alla chiusura della bozza.</p>
 <p>Il pannello stesso — l'elenco delle bozze, la creazione, l'inserimento, la trascrizione e la barra della bozza — è descritto in Pannello Trascrizione.</p>
+<h3>Provino</h3>
+<table>
+<thead>
+<tr>
+<th>Scorciatoia</th>
+<th>Azione</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SINISTRA, DESTRA, SU, GIÙ</td>
+<td>Spostarsi nella griglia.</td>
+</tr>
+<tr>
+<td>j, k</td>
+<td>Miniatura successiva, miniatura precedente.</td>
+</tr>
+<tr>
+<td>Home, Fine</td>
+<td>Prima, ultima miniatura della pagina.</td>
+</tr>
+<tr>
+<td>PageUp, PageDown</td>
+<td>Pagina precedente, pagina successiva.</td>
+</tr>
+<tr>
+<td>INVIO, Clic</td>
+<td>Aprire la posizione sul tavoliere e chiudere il provino.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Chiudere il provino.</td>
+</tr>
+</tbody>
+</table>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>
@@ -1739,6 +1775,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Vai alla posizione con l'indice indicato.</td>
+</tr>
+<tr>
+<td>grid, gr</td>
+<td>Apre il provino: l'elenco sfogliato come griglia di mini-tavolieri, una pagina di ventiquattro alla volta; scegliere una miniatura ne apre la posizione.</td>
 </tr>
 <tr>
 <td>list, l</td>

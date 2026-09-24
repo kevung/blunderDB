@@ -77,6 +77,7 @@ export default {
 </div>
 <p>L'onglet <strong>Anki</strong> porte un <strong>badge</strong> quand des cartes sont à réviser, tous paquets confondus. Ce chiffre est la raison d'ouvrir l'onglet ; il n'a donc rien à faire derrière lui. Zéro n'affiche rien : un badge qui dit « 0 » est du bruit.</p>
 <p>La commande <code>log</code> ouvre le <strong>journal d'activité</strong> : les deux cents dernières lignes du fichier de journal, un bouton pour les copier — de quoi joindre un rapport à un signalement — et un autre pour ouvrir le dossier qui les contient. Le journal n'est ni filtré ni reformaté : un journal qu'on embellit est un journal qu'on ne peut plus citer.</p>
+<p>La commande <code>grid</code> ouvre la <strong>planche-contact</strong> : la liste parcourue — résultats d'une recherche, bibliothèque, collection — en grille de mini-plateaux, dessinés comme le plateau, par pages de vingt-quatre. Elle s'ouvre sur la page de la position courante, dont la vignette est encadrée ; un clic ou <em>ENTREE</em> sur une vignette ouvre sa position sur le plateau et referme la planche, et elle se parcourt entièrement au clavier (voir Planche-contact). Elle ne s'ouvre ni en mode édition ni dans un match, qui se parcourt par ses coups.</p>
 <p>Dans l'<strong>historique de recherche</strong> du panneau Recherche, chaque jeton d'une commande enregistrée s'affiche en pastille nommée — <em>Sans contact</em>, <em>Erreur de coup</em> — plutôt qu'en jeton nu. La commande exacte reste en infobulle, car c'est elle qu'on relance ; et un jeton que blunderDB ne reconnaît pas s'affiche <strong>tel quel</strong> plutôt que traduit au plus proche.</p>
 <h3>Onglets de vues</h3>
 <p>Sous la barre d'outils, une barre d'onglets permet de travailler avec plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail indépendant qui conserve sa propre liste de positions, l'index de la position courante, la position affichée, l'analyse et le coup sélectionné, le panneau actif, le commentaire en cours ainsi que le contexte de navigation dans un match. Il est ainsi possible, par exemple, de garder une recherche ouverte dans une vue tout en parcourant un match dans une autre.</p>
@@ -1554,6 +1555,41 @@ export default {
 <p>Reculer le curseur sur une action puis ressaisir la corrige <strong>en place</strong> : la validation remplace l'action et le curseur revient là où il était — ou, sur la dernière action, passe au bout du document, où la transcription continue. Si les dés sont corrigés et que le coup enregistré reste un coup légal du nouveau jet, il est conservé ; sinon le premier candidat du nouveau jet est proposé et le coup est signalé « à revoir » jusqu'à la validation. Avancer ou reculer le curseur après avoir changé quelque chose enregistre la correction au passage.</p>
 <p>Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine crée un double trait, supprimer une action peut en créer un autre, changer un camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées dans le transcript, jamais corrigées d'office, et le curseur se place sur la première d'entre elles après chaque geste — sauf là où l'on continue : après une suppression, une insertion ou une partie rouverte, il reste où l'on tape. La pile d'annulation vit en mémoire : elle est perdue à la fermeture du brouillon.</p>
 <p>Le panneau lui-même — la liste des brouillons, la création, la saisie, le transcript et la barre du brouillon — est décrit dans Panneau Transcription.</p>
+<h3>Planche-contact</h3>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GAUCHE, DROITE, HAUT, BAS</td>
+<td>Se déplacer dans la grille.</td>
+</tr>
+<tr>
+<td>j, k</td>
+<td>Vignette suivante, vignette précédente.</td>
+</tr>
+<tr>
+<td>Home, End</td>
+<td>Première, dernière vignette de la page.</td>
+</tr>
+<tr>
+<td>PageUp, PageDown</td>
+<td>Page précédente, page suivante.</td>
+</tr>
+<tr>
+<td>ENTREE, Clic</td>
+<td>Ouvrir la position sur le plateau et refermer la planche.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Refermer la planche.</td>
+</tr>
+</tbody>
+</table>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>
@@ -1739,6 +1775,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Aller à la position d'indice indiqué.</td>
+</tr>
+<tr>
+<td>grid, gr</td>
+<td>Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux, une page de vingt-quatre à la fois ; choisir une vignette ouvre sa position.</td>
 </tr>
 <tr>
 <td>list, l</td>

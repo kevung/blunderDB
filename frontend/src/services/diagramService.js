@@ -51,6 +51,10 @@ export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DI
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svg.setAttribute('width', String(width));
     svg.setAttribute('height', String(height));
+    // Le viewBox rend le diagramme redimensionnable : la planche-contact
+    // (#287) le montre en vignette, et sans lui un SVG réduit se ROGNE au lieu
+    // de rétrécir. À sa taille nominale, il ne change rien.
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
     // Le fond dans le document, pour la même raison qu'à l'export d'image : un
     // SVG lu ailleurs n'a pas de fond à lui prêter.

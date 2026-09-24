@@ -77,6 +77,7 @@ export default {
 </div>
 <p><strong>Anki</strong>-välilehti kantaa <strong>merkkiä</strong>, kun kortteja on kerrattavana, kaikki pakat mukaan lukien. Tuo luku on syy avata välilehti; sillä ei ole asiaa sen taakse. Nolla ei näytä mitään: ”0”:aa näyttävä merkki on kohinaa.</p>
 <p>Komento <code>log</code> avaa <strong>toimintalokin</strong>: lokitiedoston kaksisataa viimeistä riviä, painikkeen niiden kopioimiseen — juuri sen mitä raportin liittäminen ilmoitukseen vaatii — ja toisen kansion avaamiseen. Lokia ei suodateta eikä muotoilla uudelleen: siistitty loki ei enää kelpaa lainaukseksi.</p>
+<p>Komento <code>grid</code> avaa <strong>vedosarkin</strong>: selattavan luettelon — haun tulokset, kirjasto, kokoelma — pienoislautojen ruudukkona, piirrettyinä kuten lauta, kahdenkymmenenneljän sivuina. Se avautuu nykyisen aseman sivulle, ja aseman pienoiskuva on kehystetty; napsautus tai <em>ENTER</em> pienoiskuvan kohdalla avaa sen aseman laudalle ja sulkee sarkin, ja sitä voi selata kokonaan näppäimistöllä (katso Vedosarkki). Se ei avaudu muokkaustilassa eikä ottelussa, jota selataan sen siirtojen mukaan.</p>
 <p>Hakupaneelin <strong>hakuhistoriassa</strong> tallennetun komennon jokainen tunnus näkyy nimettynä merkkinä — <em>Ei kontaktia</em>, <em>Siirtovirhe</em> — paljaan tunnuksen sijaan. Tarkka komento jää työkaluvihjeeseen, sillä juuri se ajetaan uudelleen; ja tunnus jota blunderDB ei tunnista näkyy <strong>sellaisenaan</strong> eikä lähimmäksi käännettynä.</p>
 <h3>Näkymävälilehdet</h3>
 <p>Työkalupalkin alla oleva välilehtipalkki mahdollistaa työskentelyn useiden <strong>näkymien</strong> kanssa rinnakkain. Jokainen näkymä on itsenäinen työtila, joka säilyttää oman asemaluettelonsa, nykyisen aseman indeksin, näytetyn aseman, analyysin ja valitun siirron, aktiivisen paneelin, käynnissä olevan kommentin sekä ottelun navigointikontekstin. Näin voi esimerkiksi pitää haun auki yhdessä näkymässä ja selata samalla ottelua toisessa.</p>
@@ -1554,6 +1555,41 @@ export default {
 <p>Kohdistimen siirtäminen takaisin toiminnon kohdalle ja uudelleen kirjoittaminen korjaa sen <strong>paikallaan</strong>: hyväksyntä korvaa toiminnon ja kohdistin palaa sinne, missä se oli — tai viimeisen toiminnon kohdalla siirtyy asiakirjan loppuun, jossa litterointi jatkuu. Jos nopat korjataan ja tallennettu siirto on yhä uuden heiton laillinen siirto, se säilytetään; muuten tarjotaan uuden heiton ensimmäistä ehdokasta ja siirto merkitään ”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen samalla.</p>
 <p>Mitään ei hylätä eikä poisteta: naapurinsa kanssa samalle puolelle lisätty toiminto luo kaksoisvuoron, toiminnon poistaminen voi luoda toisen, puolen vaihtaminen voi tehdä seuraavista siirroista laittomia. Nämä epäjohdonmukaisuudet merkitään transkriptiin, niitä ei koskaan korjata automaattisesti, ja kohdistin asettuu ensimmäisen niistä kohdalle jokaisen eleen jälkeen — paitsi siellä, missä jatketaan: poiston, lisäyksen tai uudelleen avatun pelin jälkeen se pysyy siinä, mihin kirjoitetaan. Kumoamispino elää muistissa: se menetetään, kun luonnos suljetaan.</p>
 <p>Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja luonnospalkki — kuvataan kohdassa Litterointipaneeli.</p>
+<h3>Vedosarkki</h3>
+<table>
+<thead>
+<tr>
+<th>Oikotie</th>
+<th>Toiminto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VASEN, OIKEA, YLÖS, ALAS</td>
+<td>Liiku ruudukossa.</td>
+</tr>
+<tr>
+<td>j, k</td>
+<td>Seuraava pienoiskuva, edellinen pienoiskuva.</td>
+</tr>
+<tr>
+<td>Home, End</td>
+<td>Sivun ensimmäinen, viimeinen pienoiskuva.</td>
+</tr>
+<tr>
+<td>PageUp, PageDown</td>
+<td>Edellinen sivu, seuraava sivu.</td>
+</tr>
+<tr>
+<td>ENTER, Napsautus</td>
+<td>Avaa asema laudalle ja sulje sarkki.</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>Sulje sarkki.</td>
+</tr>
+</tbody>
+</table>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>
@@ -1739,6 +1775,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Siirry annetun indeksin asemaan.</td>
+</tr>
+<tr>
+<td>grid, gr</td>
+<td>Avaa vedosarkin: selattava luettelo pienoislautojen ruudukkona, kaksikymmentäneljä kerrallaan sivulla; pienoiskuvan valitseminen avaa sen aseman.</td>
 </tr>
 <tr>
 <td>list, l</td>

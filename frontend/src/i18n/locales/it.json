@@ -1680,6 +1680,17 @@
         "copied": "{n} righe copiate negli appunti.",
         "copyFailed": "Non è stato possibile copiare il registro."
     },
+    "contactSheet": {
+        "title": "Provino",
+        "count": "{n} posizioni",
+        "previous": "Pagina precedente",
+        "next": "Pagina successiva",
+        "page": "Pagina {page} / {pages}",
+        "hint": "Frecce, J e K: spostarsi · Home, Fine: estremi della pagina · Pag su, Pag giù: cambiare pagina · Invio: aprire la posizione",
+        "tile": "Posizione {n} di {total}",
+        "missing": "Posizione non trovata",
+        "notInMatch": "Il provino mostra l'elenco sfogliato, non un match: esci prima dal match."
+    },
     "direction": {
         "title": "Direzione",
         "direct": "Dirigi questo torneo",

@@ -8,6 +8,7 @@
 <script>
     import { activeModal, MODAL, closeModal } from '../stores/uiStore.js';
     import LogModal from './LogModal.svelte';
+    import ContactSheetModal from './ContactSheetModal.svelte';
     import {
         showImportProgressModalStore,
         importModalModeStore,
@@ -65,6 +66,7 @@
 <TagsModal visible={$activeModal === MODAL.TAGS} onClose={() => closeModal()} />
 
 <LogModal visible={$activeModal === MODAL.LOG} onClose={() => closeModal()} />
+<ContactSheetModal visible={$activeModal === MODAL.CONTACT_SHEET} onClose={() => closeModal()} />
 {#each Object.entries(MODAL_TABLES) as [modal, tables] (modal)}
     <DataTableModal visible={$activeModal === modal} onClose={() => closeModal()} {tables} />
 {/each}

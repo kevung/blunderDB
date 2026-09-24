@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 22:32+0200\n"
+"POT-Creation-Date: 2026-09-24 02:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -363,6 +363,20 @@ msgid "Aller à la position d'indice indiqué."
 msgstr "Vai alla posizione con l'indice indicato."
 
 #: ../../source/cmd_mode.rst:1
+msgid "grid, gr"
+msgstr "grid, gr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux,"
+" une page de vingt-quatre à la fois ; choisir une vignette ouvre sa "
+"position."
+msgstr ""
+"Apre il provino: l'elenco sfogliato come griglia di mini-tavolieri, una "
+"pagina di ventiquattro alla volta; scegliere una miniatura ne apre la "
+"posizione."
+
+#: ../../source/cmd_mode.rst:1
 msgid "list, l"
 msgstr "list, l"
 
@@ -452,7 +466,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Naviga nell'ultima partita visitata."
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:79
 msgid "Édition et recherche"
 msgstr "Modifica e ricerca"
 
@@ -492,11 +506,11 @@ msgstr ""
 "Cercare tra le posizioni visualizzate: risultati correnti, collezione "
 "aperta o match in revisione."
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "Filtres de recherche"
 msgstr "Filtri di ricerca"
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -512,7 +526,7 @@ msgstr ""
 ":ref:`cli`); un trattino segnala un filtro che solo la grammatica "
 "esprime."
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:104
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -532,7 +546,7 @@ msgstr ""
 "questi token si confrontano con un tavoliere vuoto; sono le opzioni della"
 " terza colonna che occorre impiegare al loro posto."
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -542,7 +556,7 @@ msgstr ""
 "risultato per distanza crescente da una posizione bersaglio, e tutti gli "
 "altri token restringono l'insieme così ordinato."
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -552,11 +566,11 @@ msgstr ""
 "*millipoints* della tabella qui sotto: ``E>100`` mantiene le mosse che "
 "sono costate almeno un decimo di punto, un punto valendo 1000 millesimi."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid "Deux recherches complètes :"
 msgstr "Due ricerche complete:"
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -565,7 +579,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — più di 30 pip di ritardo, tra il 40 % e il 60 % "
 "di probabilità di vittoria, nessun commento."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1526,7 +1540,7 @@ msgstr ""
 "decisione e a entrambi i regimi, soldi e incontro. Vedere "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:230
+#: ../../source/cmd_mode.rst:231
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 

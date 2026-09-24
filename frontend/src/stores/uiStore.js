@@ -47,7 +47,8 @@ export const MODAL = {
     CONFIG: 'config',
     TOUR: 'tour',
     TRASH: 'trash',
-    LOG: 'log'
+    LOG: 'log',
+    CONTACT_SHEET: 'contactSheet'
 };
 
 // ── Panel identifiers (can be open simultaneously) ──

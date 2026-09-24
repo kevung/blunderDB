@@ -1680,6 +1680,17 @@
         "copied": "{n} 行をクリップボードにコピーしました。",
         "copyFailed": "ログをコピーできませんでした。"
     },
+    "contactSheet": {
+        "title": "コンタクトシート",
+        "count": "{n} 局面",
+        "previous": "前のページ",
+        "next": "次のページ",
+        "page": "ページ {page} / {pages}",
+        "hint": "矢印キー、J、K：移動 · Home、End：ページの先頭と末尾 · Page Up、Page Down：ページ切り替え · Enter：局面を開く",
+        "tile": "局面 {n} / {total}",
+        "missing": "局面が見つかりません",
+        "notInMatch": "コンタクトシートは閲覧中のリストを表示します。マッチは表示しません。先にマッチを終了してください。"
+    },
     "direction": {
         "title": "進行",
         "direct": "この大会を進行する",

@@ -57,4 +57,10 @@ describe('le diagramme hors écran', () => {
         expect(svg).toContain('width="300"');
         expect(svg).toContain('height="220"');
     });
+
+    // La planche-contact (#287) réduit le diagramme en vignette : sans
+    // viewBox, un SVG réduit se rogne au lieu de rétrécir.
+    test('se redimensionne sans se rogner', () => {
+        expect(renderPositionSVG(startingPosition(), { width: 300, height: 220 })).toContain('viewBox="0 0 300 220"');
+    });
 });

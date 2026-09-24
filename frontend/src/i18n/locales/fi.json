@@ -1680,6 +1680,17 @@
         "copied": "{n} riviä kopioitu leikepöydälle.",
         "copyFailed": "Lokia ei voitu kopioida."
     },
+    "contactSheet": {
+        "title": "Vedosarkki",
+        "count": "{n} asemaa",
+        "previous": "Edellinen sivu",
+        "next": "Seuraava sivu",
+        "page": "Sivu {page} / {pages}",
+        "hint": "Nuolet, J ja K: siirry · Home, End: sivun alku ja loppu · Page Up, Page Down: vaihda sivua · Enter: avaa asema",
+        "tile": "Asema {n} / {total}",
+        "missing": "Asemaa ei löytynyt",
+        "notInMatch": "Vedosarkki näyttää selattavan luettelon, ei ottelua: poistu ensin ottelusta."
+    },
     "direction": {
         "title": "Johtaminen",
         "direct": "Johda tätä turnausta",

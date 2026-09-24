@@ -61,6 +61,7 @@ Positions et navigation
    "delete, del, d", "Supprime la position courante (confirmation demandée) ; la suppression passe par la corbeille et reste annulable trente jours."
    "trash", "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."
    "[number]", "Aller à la position d'indice indiqué."
+   "grid, gr", "Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux, une page de vingt-quatre à la fois ; choisir une vignette ouvre sa position."
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
    "history, hi", "Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son onglet *Historique*)."

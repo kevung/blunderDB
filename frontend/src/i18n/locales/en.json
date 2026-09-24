@@ -1680,6 +1680,17 @@
         "copied": "{n} lines copied to the clipboard.",
         "copyFailed": "The log could not be copied."
     },
+    "contactSheet": {
+        "title": "Contact sheet",
+        "count": "{n} positions",
+        "previous": "Previous page",
+        "next": "Next page",
+        "page": "Page {page} / {pages}",
+        "hint": "Arrows, J and K: move · Home, End: ends of the page · Page Up, Page Down: change page · Enter: open the position",
+        "tile": "Position {n} of {total}",
+        "missing": "Position not found",
+        "notInMatch": "The contact sheet shows the browsed list, not a match: leave the match first."
+    },
     "direction": {
         "title": "Direction",
         "direct": "Direct this tournament",

@@ -1680,6 +1680,17 @@
         "copied": "{n} lignes copiées dans le presse-papier.",
         "copyFailed": "Le journal n'a pas pu être copié."
     },
+    "contactSheet": {
+        "title": "Planche-contact",
+        "count": "{n} positions",
+        "previous": "Page précédente",
+        "next": "Page suivante",
+        "page": "Page {page} / {pages}",
+        "hint": "Flèches, J et K : se déplacer · Début, Fin : bouts de la page · Page préc., Page suiv. : changer de page · Entrée : ouvrir la position",
+        "tile": "Position {n} sur {total}",
+        "missing": "Position introuvable",
+        "notInMatch": "La planche-contact montre la liste parcourue, pas un match : quittez d'abord le match."
+    },
     "direction": {
         "title": "Direction",
         "direct": "Diriger ce tournoi",

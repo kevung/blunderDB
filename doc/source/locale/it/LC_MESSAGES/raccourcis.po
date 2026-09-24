@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 02:24+0200\n"
+"POT-Creation-Date: 2026-09-24 02:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1350,6 +1350,54 @@ msgstr ""
 ":ref:`panneau_transcription`."
 
 #: ../../source/raccourcis.rst:387
+msgid "Planche-contact"
+msgstr "Provino"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, DROITE, HAUT, BAS"
+msgstr "SINISTRA, DESTRA, SU, GIÙ"
+
+#: ../../source/raccourcis.rst:1
+msgid "Se déplacer dans la grille."
+msgstr "Spostarsi nella griglia."
+
+#: ../../source/raccourcis.rst:1
+msgid "j, k"
+msgstr "j, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Vignette suivante, vignette précédente."
+msgstr "Miniatura successiva, miniatura precedente."
+
+#: ../../source/raccourcis.rst:1
+msgid "Home, End"
+msgstr "Home, Fine"
+
+#: ../../source/raccourcis.rst:1
+msgid "Première, dernière vignette de la page."
+msgstr "Prima, ultima miniatura della pagina."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp, PageDown"
+msgstr "PageUp, PageDown"
+
+#: ../../source/raccourcis.rst:1
+msgid "Page précédente, page suivante."
+msgstr "Pagina precedente, pagina successiva."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE, Clic"
+msgstr "INVIO, Clic"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la position sur le plateau et refermer la planche."
+msgstr "Aprire la posizione sul tavoliere e chiudere il provino."
+
+#: ../../source/raccourcis.rst:1
+msgid "Refermer la planche."
+msgstr "Chiudere il provino."
+
+#: ../../source/raccourcis.rst:404
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

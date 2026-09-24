@@ -381,6 +381,23 @@ Le panneau lui-même — la liste des brouillons, la création, la saisie, le
 transcript et la barre du brouillon — est décrit dans
 :ref:`panneau_transcription`.
 
+.. _raccourcis_contact_sheet:
+
+Planche-contact
+---------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "GAUCHE, DROITE, HAUT, BAS", "Se déplacer dans la grille."
+   "j, k", "Vignette suivante, vignette précédente."
+   "Home, End", "Première, dernière vignette de la page."
+   "PageUp, PageDown", "Page précédente, page suivante."
+   "ENTREE, Clic", "Ouvrir la position sur le plateau et refermer la planche."
+   "Esc", "Refermer la planche."
+
 .. _raccourcis_help_panel:
 
 Panneau d'aide
