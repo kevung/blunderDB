@@ -44,7 +44,7 @@ function boundLabels() {
         const code = line.replace(/\/\/.*$/, '');
         for (const m of code.matchAll(/letter\('([a-z])'\)/g)) {
             const ctrl = /event\.ctrlKey\s*&&/.test(code) && !/!event\.ctrlKey/.test(code);
-            const shift = /event\.shiftKey\s*&&/.test(code);
+            const shift = /event\.shiftKey\s*&&/.test(code) && !/!event\.shiftKey/.test(code);
             const key = m[1].toUpperCase();
             const label = ctrl && shift ? `CTRL-MAJ-${key}` : ctrl ? `CTRL-${key}` : key;
             if (!labels.has(label)) labels.set(label, i + 1);
