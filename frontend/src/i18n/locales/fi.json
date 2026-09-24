@@ -2177,7 +2177,12 @@
             "failed": "Näitä osallistujia ei voitu ottaa.",
             "errors": {
                 "noName": "Rivi {line}: ei nimeä.",
-                "badRating": "Rivi {line}: ”{text}” ei ole luokitus."
+                "badRating": "Rivi {line}: ”{text}” ei ole luokitus.",
+                "noSeparator": "Rivi {line}: ei erotinta (”{text}”) – muilla riveillä on."
+            },
+            "warnings": {
+                "duplicate": "Rivi {line}: ”{text}” on jo rivillä {first}. Valitse ilmoittaaksesi silti.",
+                "entered": "Rivi {line}: ”{text}” on jo ilmoitettu. Valitse ilmoittaaksesi silti."
             }
         }
     },

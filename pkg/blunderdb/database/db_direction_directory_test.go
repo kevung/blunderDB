@@ -171,7 +171,7 @@ func TestDirectory_CSVRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	back, err := d.ParseDirectoryCSV(body)
+	back, err := d.ParseDirectoryCSV(0, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -199,7 +199,7 @@ func TestDirectory_AMalformedCSVWritesNothing(t *testing.T) {
 	tID := preparedDirection(t, d)
 
 	body := "name,club,rating\nHugo Andrieu,Lyon,5\n,Lyon,4\nLéa Bonnet,Lyon,beaucoup\nMarc Colin,Paris,6\n"
-	got, err := d.ParseDirectoryCSV(body)
+	got, err := d.ParseDirectoryCSV(tID, body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -232,7 +232,7 @@ func TestDirectory_AMalformedCSVWritesNothing(t *testing.T) {
 // a file the director stops using.
 func TestDirectory_ASpreadsheetsCSVAlsoReads(t *testing.T) {
 	d := newTestDB(t)
-	got, err := d.ParseDirectoryCSV("nom;club;cote\nHugo Andrieu;Lyon;4,5\n")
+	got, err := d.ParseDirectoryCSV(0, "nom;club;cote\nHugo Andrieu;Lyon;4,5\n")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -246,5 +246,64 @@ func TestDirectory_ASpreadsheetsCSVAlsoReads(t *testing.T) {
 	}
 	if len(got.Rows) != 1 || got.Rows[0].Name != "Hugo Andrieu" || got.Rows[0].Rating != 4.5 {
 		t.Fatalf("the line read as %+v", got.Rows)
+	}
+}
+
+// A line with no separator, among lines that have one, is an error and not a player (#442): it
+// is what a stray note pasted with the list looks like, and it was entered as a name.
+func TestDirectory_ALineWithNoSeparatorIsAnError(t *testing.T) {
+	d := newTestDB(t)
+	body := "Hugo Andrieu,Lyon,5\n\nligne sans séparateur\nLéa Bonnet,Lyon,4\n"
+	got, err := d.ParseDirectoryCSV(0, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Rows) != 2 {
+		t.Errorf("%d lines ready, expected 2: %+v", len(got.Rows), got.Rows)
+	}
+	if len(got.Errors) != 1 || got.Errors[0].Code != "noSeparator" || got.Errors[0].Line != 3 ||
+		got.Errors[0].Text != "ligne sans séparateur" {
+		t.Fatalf("the line with no separator reads %+v", got.Errors)
+	}
+
+	// A plain list of names — one per line, no separator anywhere — is still a list of names.
+	got, err = d.ParseDirectoryCSV(0, "Hugo Andrieu\nLéa Bonnet\n")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Errors) != 0 || len(got.Rows) != 2 {
+		t.Errorf("a list of bare names: rows %+v, errors %+v", got.Rows, got.Errors)
+	}
+}
+
+// A duplicate — twice in the paste, or already entered — is a warning, and it is NOT among the
+// rows ready to enter: entering the same player twice is what a director does not mean (#442).
+func TestDirectory_DuplicatesAreWarnedAndHeldBack(t *testing.T) {
+	d := newTestDB(t)
+	tID := preparedDirection(t, d)
+	if err := d.EnterParticipants(tID, `[{"id":"a","name":"Marc Colin","club":"Paris","rating":6}]`); err != nil {
+		t.Fatal(err)
+	}
+	body := "Hugo Andrieu,Lyon,5\nLéa Bonnet,Lyon,4\n hugo andrieu ,Lyon,5\nMarc Colin,Paris,6\n"
+	got, err := d.ParseDirectoryCSV(tID, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Errors) != 0 {
+		t.Errorf("a duplicate is not an error: %+v", got.Errors)
+	}
+	if len(got.Rows) != 2 || got.Rows[0].Name != "Hugo Andrieu" || got.Rows[1].Name != "Léa Bonnet" {
+		t.Errorf("rows ready: %+v, expected the two first-seen names", got.Rows)
+	}
+	if len(got.Warnings) != 2 {
+		t.Fatalf("%d warnings, expected 2: %+v", len(got.Warnings), got.Warnings)
+	}
+	w := got.Warnings[0]
+	if w.Code != "duplicate" || w.Line != 3 || w.FirstLine != 1 || w.Row.Name != "hugo andrieu" {
+		t.Errorf("the duplicate in the paste reads %+v", w)
+	}
+	w = got.Warnings[1]
+	if w.Code != "entered" || w.Line != 4 || w.Row.Name != "Marc Colin" || w.Row.Rating != 6 {
+		t.Errorf("the already-entered player reads %+v", w)
 	}
 }
