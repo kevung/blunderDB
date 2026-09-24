@@ -358,11 +358,6 @@
         }
     }
 
-    /* Corriger depuis l'historique : la fiche vit sur la grille des tables, donc on y ramène. */
-    function correctFromHistory() {
-        tab = 'direction';
-    }
-
     /* Cliquer une place de l'arbre ramène à la page Direction, où le match se saisit : la
        fiche de résultat vit sur la grille des tables, et il n'y en a qu'une. */
     /** @param {{ matchId?: string }} m */
@@ -514,7 +509,7 @@
         {:else if tab === 'standings'}
             <StandingsView view={ranking} {busy} {onClose} {onReopen} {onCSV} />
         {:else if tab === 'history'}
-            <HistoryView {entries} {busy} onCorrect={correctFromHistory} {onCancel} {onNote} />
+            <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}

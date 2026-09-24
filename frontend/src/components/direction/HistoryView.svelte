@@ -7,15 +7,46 @@
      * sa table.
      *
      * Filtrer par joueur répond à « qu'est-il arrivé à Hugo ? » sans lire tout le journal. Et
-     * une correction s'offre ICI, sur la ligne, plutôt que d'envoyer chercher le match ailleurs.
+     * une correction s'offre ICI, sur la ligne, plutôt que d'envoyer chercher le match ailleurs :
+     * le match est fini, il n'est plus sur la grille des tables, et le bouton qui y renvoyait
+     * n'ouvrait rien (#436). Le panneau est celui de la dernière décision, pour CE match.
      */
     import { t } from '../../i18n';
+    import { closeOnEscape } from '../../services/escapeService.js';
     import { renderLabel } from './labels.js';
+    import CorrectionPanel from './CorrectionPanel.svelte';
 
+    /**
+     * @type {{
+     *     entries?: import('../../../wailsjs/go/models').database.HistoryEntry[],
+     *     busy?: boolean,
+     *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void,
+     *     onCancel?: (matchId: string) => void,
+     *     onNote?: (text: string) => void
+     * }}
+     */
     let { entries = [], busy = false, onCorrect = () => {}, onCancel = () => {}, onNote = () => {} } = $props();
 
     let filter = $state('');
     let note = $state('');
+    /* La ligne dont la correction est ouverte : une seule à la fois, comme la fiche d'une table. */
+    let correcting = $state(/** @type {number | null} */ (null));
+
+    /* Échap referme la correction avant tout geste global (#414). */
+    $effect(() => {
+        if (correcting !== null) return closeOnEscape(() => (correcting = null));
+    });
+
+    /**
+     * @param {import('../../../wailsjs/go/models').database.HistoryEntry} e
+     * @param {string} winner
+     * @param {number} scoreA
+     * @param {number} scoreB
+     */
+    function correct(e, winner, scoreA, scoreB) {
+        onCorrect(e.matchId || '', winner, scoreA, scoreB);
+        correcting = null;
+    }
 
     const shown = $derived(
         filter.trim()
@@ -119,11 +150,18 @@
                 {/if}
                 <span class="grow"></span>
                 {#if e.correctable}
-                    <button type="button" data-testid="direction-history-correct" disabled={busy} onclick={() => onCorrect(e)}>{$t('direction.last.correct')}</button>
+                    <button type="button" data-testid="direction-history-correct" disabled={busy} onclick={() => (correcting = correcting === e.seq ? null : e.seq)}
+                        >{$t('direction.last.correct')}</button
+                    >
                 {:else if e.cancellable}
                     <button type="button" disabled={busy} onclick={() => onCancel(e.matchId)}>{$t('direction.last.cancel')}</button>
                 {/if}
             </li>
+            {#if correcting === e.seq && e.correctable}
+                <li class="correcting">
+                    <CorrectionPanel a={e.a || ''} b={e.b || ''} aName={e.aName || ''} bName={e.bName || ''} {busy} testid="direction-history" onPick={(w, a, b) => correct(e, w, a, b)} />
+                </li>
+            {/if}
         {/each}
         {#if shown.length === 0}
             <li class="empty">{$t('direction.history.none')}</li>
@@ -203,6 +241,11 @@
 
     .grow {
         flex: 1;
+    }
+
+    li.correcting {
+        display: block;
+        padding: 0;
     }
 
     .empty {

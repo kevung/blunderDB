@@ -120,6 +120,33 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('corriger la dernière saisie', counted, 2);
     });
 
+    // « corriger un résultat ancien | 4-5 gestes » (F8, #436). Le match est fini, il n'est plus
+    // sur la grille : c'est depuis sa ligne de l'Historique qu'on le reprend, sur place. Le
+    // premier des deux résultats est celui qu'on corrige — la dernière décision, elle, a déjà
+    // son propre chemin en deux clics.
+    test('corriger un résultat ancien depuis l’Historique tient dans son budget', async ({ page }) => {
+        await openDirection(page);
+        await page.locator('.proposals .all').click();
+        await page.locator('.proposals .confirm .primary').click();
+        for (let i = 0; i < 2; i++) {
+            const busy = await page.locator('.grid .cell.busy').count();
+            await page.locator('.grid .cell.busy').first().click();
+            await page.locator('.card .winner').first().click();
+            await expect(page.locator('.grid .cell.busy')).toHaveCount(busy - 1);
+        }
+        await page.locator('[data-testid="direction-tab-standings"]').click();
+        await expect(page.locator('.standings tbody tr').first()).toContainText(ENTRANTS[0].name);
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-tab-history"]'));
+            await g.click(page.locator('.history li').first().locator('[data-testid="direction-history-correct"]'));
+            await g.click(page.locator('[data-testid="direction-history-winner-b"]'));
+            await g.click(page.locator('[data-testid="direction-tab-standings"]'));
+            await expect(page.locator('.standings tbody tr').first()).toContainText(ENTRANTS[1].name);
+        });
+        budget('corriger un résultat ancien', counted, 5);
+    });
+
     // « apparier à la main | ≤ 7 clics ». Un `select` natif se déplie puis se choisit : deux
     // gestes pour l'utilisateur, un seul appel pour le pilote (`selectOption` n'émet rien). Le
     // second geste de chaque liste est donc ajouté à la main, sans quoi le budget serait tenu

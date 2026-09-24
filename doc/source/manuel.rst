@@ -1573,6 +1573,11 @@ L'onglet **Historique** est le journal en clair : une ligne par décision, dans
 l'ordre, filtrable par joueur ou par match. C'est ce qu'un directeur relit après
 une contestation, et c'est là qu'une décision ancienne se corrige ou s'annote.
 
+**Corriger**, sur la ligne d'un résultat, ouvre sous elle la même reprise que la
+dernière décision : cliquer le bon vainqueur, avec le score s'il faut. Le
+résultat d'origine reste à sa place dans le journal, la correction s'y ajoute,
+et le classement en tient compte aussitôt.
+
 Les réglages
 ~~~~~~~~~~~~
 
