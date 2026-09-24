@@ -20,6 +20,7 @@ Cadrage : entretien du 2026-09-07, dix-neuf décisions ; décision durable dans
 | [integration.md](integration.md) | schéma 2.23.0, paquet `direction`, Wails, frontend, CLI, documentation, risques |
 | [nicomaque.md](nicomaque.md) | les quatorze demandes au moteur, à ouvrir dans son dépôt |
 | [plan.md](plan.md) | cinq lots, quarante-huit issues, ordre et parallélisme |
+| [simulation-2026-09/](simulation-2026-09/README.md) | plan d'exécution (2026-09-24) : cinq tournois simulés sur le vrai moteur, six personas, mesure des gestes à l'échelle, lots D5+ ; à exécuter par une autre session |
 
 ## Les deux contraintes de premier rang
 
