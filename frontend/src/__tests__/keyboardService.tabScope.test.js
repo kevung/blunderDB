@@ -95,6 +95,17 @@ describe('bare Tab only opens the search panel while focus is on the board (#204
         expect(event.defaultPrevented).toBe(true);
     });
 
+    // #435 : la page Direction remplace le plateau DANS .scrollable-content ; Tab y passait
+    // du score A au score B en ouvrant la Recherche, et la page disparaissait.
+    test('focus in a field of the Direction page — Tab moves focus normally', () => {
+        activeTabStore.set('tournaments');
+        document.body.innerHTML = '<div class="scrollable-content"><div class="direction-view"><input id="score-a" /><input id="score-b" /></div></div>';
+        document.getElementById('score-a').focus();
+        const event = tab();
+        expect(get(activeTabStore)).toBe('tournaments');
+        expect(event.defaultPrevented).toBe(false);
+    });
+
     test('focus on an unrelated button — Tab is left alone for native focus navigation', () => {
         document.body.innerHTML = '<button id="toolbar-btn">Toolbar</button>';
         document.getElementById('toolbar-btn').focus();

@@ -6,6 +6,7 @@
 
     // Wails runtime
     import { WindowGetSize } from '../wailsjs/runtime/runtime.js';
+    import { isOnBoard } from './services/boardArea.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists, StartupFilePath, CheckForUpdate } from '../wailsjs/go/gui/App.js';
     import { GetCheckForUpdates, GetTrainingSeedSources } from '../wailsjs/go/main/Config.js';
@@ -258,8 +259,8 @@
     let lastWheelNavTime = 0;
     function handleWheel(event) {
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL') return;
-        const boardArea = mainArea?.querySelector('.scrollable-content');
-        if (!boardArea || !boardArea.contains(event.target)) return;
+        // La page Direction remplace le plateau dans la même zone : la molette y défile (#434).
+        if (!isOnBoard(event.target)) return;
         // En TRANSCRIBE, la molette au-dessus du plateau fait un pas dans la
         // liste des candidats (ADR-0048 décision 11) : l'œil reste sur le
         // plateau, les flèches du candidat défilent, et l'on reconnaît le coup
