@@ -1959,6 +1959,8 @@
             "withdrawNowHint": "Retirar ahora: sus partidas en curso se pierden por incomparecencia.",
             "withdrawLater": "Tras su partida",
             "withdrawLaterHint": "Ya no se le empareja, pero termina la partida que juega.",
+            "reinstate": "Reinscribir",
+            "reinstateHint": "Reinscribirlo: vuelve a emparejarse, con los resultados y las vidas que tenía al irse; los matches perdidos por incomparecencia al retirarse siguen perdidos.",
             "none": "Nadie inscrito.",
             "states": {
                 "free": "libre",

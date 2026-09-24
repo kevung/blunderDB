@@ -52,6 +52,7 @@
         addParticipant,
         updateParticipant,
         withdrawParticipant,
+        reinstateParticipant,
         brackets,
         standings,
         standingsCSV,
@@ -260,6 +261,8 @@
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
     /** @type {(i: string, after: boolean) => Promise<void>} */
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
+    /** @type {(i: string) => Promise<void>} */
+    const onReinstate = (i) => act(() => reinstateParticipant(i), 'direction.players.error');
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
     /* Rouvrir est un geste explicite : le classement final cesse d'être final, et le journal
@@ -521,7 +524,7 @@
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
             <DirectoryPanel sources={dirSources} entries={dirEntries} {busy} onTake={onTakeEntrants} onExport={onExportDirectory} onParse={parseDirectoryCSV} onImport={onImportEntrants} />
-            <PlayersView {rows} {suggestions} {busy} started={directionState !== 'draft'} {onAdd} {onUpdate} {onWithdraw} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
+            <PlayersView {rows} {suggestions} {busy} started={directionState !== 'draft'} {onAdd} {onUpdate} {onWithdraw} {onReinstate} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
         {:else}
             <p class="placeholder">{$t('direction.tabs.notYet')}</p>
         {/if}

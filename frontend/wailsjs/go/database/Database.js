@@ -750,6 +750,10 @@ export function RefreshSearchStatistics() {
   return window['go']['database']['Database']['RefreshSearchStatistics']();
 }
 
+export function ReinstateParticipant(arg1, arg2) {
+  return window['go']['database']['Database']['ReinstateParticipant'](arg1, arg2);
+}
+
 export function RemoveAnkiCard(arg1) {
   return window['go']['database']['Database']['RemoveAnkiCard'](arg1);
 }

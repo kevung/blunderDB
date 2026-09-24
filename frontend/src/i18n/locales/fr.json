@@ -1959,6 +1959,8 @@
             "withdrawNowHint": "Retirer maintenant : ses matchs en cours sont perdus par forfait.",
             "withdrawLater": "Après son match",
             "withdrawLaterHint": "Il n’est plus apparié mais finit le match qu’il joue.",
+            "reinstate": "Réinscrire",
+            "reinstateHint": "Le réinscrire : il est de nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les matchs perdus par forfait à son retrait le restent.",
             "none": "Personne d’inscrit.",
             "states": {
                 "free": "libre",

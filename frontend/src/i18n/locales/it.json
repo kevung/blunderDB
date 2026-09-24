@@ -1959,6 +1959,8 @@
             "withdrawNowHint": "Ritira subito: le partite in corso sono perse per forfait.",
             "withdrawLater": "Dopo la sua partita",
             "withdrawLaterHint": "Non viene più abbinato, ma finisce la partita in corso.",
+            "reinstate": "Reiscrivi",
+            "reinstateHint": "Reiscriverlo: torna a essere abbinato, con i risultati e le vite che aveva quando si è ritirato; i match persi a tavolino al ritiro restano persi.",
             "none": "Nessun iscritto.",
             "states": {
                 "free": "libero",

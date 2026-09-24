@@ -1959,6 +1959,8 @@
             "withdrawNowHint": "Poista heti: käynnissä olevat ottelut häviävät luovutuksella.",
             "withdrawLater": "Ottelun jälkeen",
             "withdrawLaterHint": "Ei enää pareja, mutta pelaa ottelunsa loppuun.",
+            "reinstate": "Palauta",
+            "reinstateHint": "Palauta pelaaja: hänet paritetaan taas, niillä tuloksilla ja elämillä jotka hänellä oli lähtiessään; vetäytymisessä luovutuksella hävityt ottelut pysyvät hävittyinä.",
             "none": "Ei ilmoittautuneita.",
             "states": {
                 "free": "vapaa",
