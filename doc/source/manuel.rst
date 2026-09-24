@@ -2336,6 +2336,9 @@ Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La position
 arrive donc sans analyse, exactement comme un XGID nu, et l'évaluateur intégré
 peut la combler ensuite.
 
+Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du match
+(``7C``) : sans lui, un joueur à un point du but est après la Crawford.
+
 Le plateau du panneau Eval est un brouillon : la position y arrive sans son
 identifiant de base, de sorte qu'aucune modification faite ici ne peut
 réécrire l'enregistrement dont elle provient. Toutes les éditions habituelles

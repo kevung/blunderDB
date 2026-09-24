@@ -783,11 +783,11 @@ Day         Due
 
 Print the cube verdict for one position at **every score** of a 5-, 7- or
 9-point match, so a decision can be read against the score rather than at money
-play alone. The position comes in as an XGID; nothing is written to a database,
+play alone. The position comes in as an XGID or an OGID; nothing is written to a database,
 and the command works without one.
 
 ```bash
-./blunderDB cubematrix [options] <XGID>
+./blunderDB cubematrix [options] <XGID|OGID>
 ```
 
 **Options:**
@@ -806,11 +806,11 @@ cube), the one scale that leaves the engine at a match score — see ADR-0019.
 ## EPC Command
 
 Compute the Effective Pip Count, the win probability and the money cube
-verdict for a bearoff position given as an XGID. Pure computation: no
+verdict for a bearoff position given as an XGID or an OGID. Pure computation: no
 database file is involved.
 
 ```bash
-./blunderDB epc [options] '<XGID>'
+./blunderDB epc [options] '<XGID|OGID>'
 ```
 
 **Options:**
@@ -2106,7 +2106,7 @@ Examples:
 ### `blunderdb cubematrix`
 
 ```
-Usage: blunderdb cubematrix [options] <XGID>
+Usage: blunderdb cubematrix [options] <XGID|OGID>
 
 Show the cube verdict at every score of a match: for each away × away
 cell, whether this position is a double and whether it is a take.
@@ -2132,6 +2132,7 @@ Options:
 Examples:
   blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
   blunderdb cubematrix --match-length 5 --format json '<XGID>'
+  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::B::0:0:7:'  # an OGID
 ```
 
 ### `blunderdb delete`
@@ -2203,7 +2204,7 @@ Examples:
 ### `blunderdb epc`
 
 ```
-Usage: blunderdb epc [options] <XGID>
+Usage: blunderdb epc [options] <XGID|OGID>
 
 Compute EPC, win probability and money cube verdict for a position.
 Win probability is exact inside the two-sided database domain and
@@ -2219,6 +2220,9 @@ Options:
 Examples:
   # EPC and race analysis of a bearoff position
   blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'
+
+  # The same position given by its OGID (OpenGammon)
+  blunderdb epc 'llmmnnoo:11223344:N0N::B::0:0::'
 
   # With the downloaded/wider database
   blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'

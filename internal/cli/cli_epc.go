@@ -24,7 +24,7 @@ func (cli *CLI) runEpc(args []string) error {
 		"Optional two-sided bearoff database (.bd) widening the embedded TS-06-06")
 
 	epcCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb epc [options] <XGID>")
+		fmt.Println("Usage: blunderdb epc [options] <XGID|OGID>")
 		fmt.Println()
 		fmt.Println("Compute EPC, win probability and money cube verdict for a position.")
 		fmt.Println("Win probability is exact inside the two-sided database domain and")
@@ -38,6 +38,9 @@ func (cli *CLI) runEpc(args []string) error {
 		fmt.Println("  # EPC and race analysis of a bearoff position")
 		fmt.Println("  blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'")
 		fmt.Println()
+		fmt.Println("  # The same position given by its OGID (OpenGammon)")
+		fmt.Println("  blunderdb epc 'llmmnnoo:11223344:N0N::B::0:0::'")
+		fmt.Println()
 		fmt.Println("  # With the downloaded/wider database")
 		fmt.Println("  blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'")
 	}
@@ -47,12 +50,12 @@ func (cli *CLI) runEpc(args []string) error {
 	}
 	if epcCmd.NArg() != 1 {
 		epcCmd.Usage()
-		return fmt.Errorf("expected exactly one XGID argument")
+		return fmt.Errorf("expected exactly one XGID or OGID argument")
 	}
 
-	pos, err := domain.DecodeXGID(epcCmd.Arg(0))
+	pos, err := domain.DecodePositionID(epcCmd.Arg(0))
 	if err != nil {
-		return fmt.Errorf("invalid XGID: %w", err)
+		return fmt.Errorf("invalid XGID or OGID: %w", err)
 	}
 	if *tsPath != "" {
 		race.SetExternalPath(*tsPath)

@@ -29,7 +29,7 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 	jobs := cmd.Int("jobs", 0, "Parallel searches (0 = one per core)")
 
 	cmd.Usage = func() {
-		fmt.Println("Usage: blunderdb cubematrix [options] <XGID>")
+		fmt.Println("Usage: blunderdb cubematrix [options] <XGID|OGID>")
 		fmt.Println()
 		fmt.Println("Show the cube verdict at every score of a match: for each away × away")
 		fmt.Println("cell, whether this position is a double and whether it is a take.")
@@ -46,6 +46,7 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'")
 		fmt.Println("  blunderdb cubematrix --match-length 5 --format json '<XGID>'")
+		fmt.Println("  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::B::0:0:7:'  # an OGID")
 	}
 
 	if err := cmd.Parse(args); err != nil {
@@ -53,15 +54,15 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 	}
 	if cmd.NArg() != 1 {
 		cmd.Usage()
-		return fmt.Errorf("expected exactly one XGID argument")
+		return fmt.Errorf("expected exactly one XGID or OGID argument")
 	}
 	if *length < 1 || *length > 25 {
 		return fmt.Errorf("match length must be between 1 and 25")
 	}
 
-	pos, err := domain.DecodeXGID(cmd.Arg(0))
+	pos, err := domain.DecodePositionID(cmd.Arg(0))
 	if err != nil {
-		return fmt.Errorf("invalid XGID: %w", err)
+		return fmt.Errorf("invalid XGID or OGID: %w", err)
 	}
 
 	matrix, err := gammonnet.ComputeCubeMatrix(context.Background(), pos, *length, *ply, *pruneK, *jobs)

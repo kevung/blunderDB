@@ -83,7 +83,7 @@ Commandes disponibles
    "match", "Affiche les positions et analyses d'un match."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
-   "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID)."
+   "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
    "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
    "info", "Affiche les métadonnées de la base."
@@ -974,11 +974,11 @@ cubematrix — Matrice du videau
 Donne le verdict de videau d'une position à **tous les scores** d'un match :
 pour chaque case *away × away*, si la position se double et si elle se prend.
 Calcul pur : aucune base de données n'est ouverte, la position arrive par son
-XGID.
+XGID ou son OGID (OpenGammon).
 
 .. code-block:: bash
 
-   ./blunderdb cubematrix [options] '<XGID>'
+   ./blunderdb cubematrix [options] '<XGID|OGID>'
 
 **Options:**
 
@@ -1018,12 +1018,12 @@ epc — Calculatrice EPC
 ------------------------
 
 Calcule l'Effective Pip Count, la probabilité de gain et le verdict de videau
-money d'une position de sortie donnée par XGID. Calcul pur : aucun fichier de
-base de données n'est impliqué.
+money d'une position de sortie donnée par XGID ou par OGID (OpenGammon). Calcul
+pur : aucun fichier de base de données n'est impliqué.
 
 .. code-block:: bash
 
-   ./blunderdb epc [options] '<XGID>'
+   ./blunderdb epc [options] '<XGID|OGID>'
 
 **Options:**
 

@@ -125,3 +125,75 @@ func TestPositionsFromXGIDWritesTheCrawfordSentinel(t *testing.T) {
 		})
 	}
 }
+
+// TestPositionsFromOGID pins #260 on the two routes an HTTP client hands an
+// OGID to: /v1/positions.fromOGID, and /v1/positions.parseText, which reads
+// an OGID like a pasted XGID. Both must return the position the XGID of the
+// same position returns — Crawford sentinel included, which an OGID spells as
+// a "C" after the match length.
+func TestPositionsFromOGID(t *testing.T) {
+	ctx := context.Background()
+	s, err := sqlite.Open(ctx, ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+	srv, err := New(Options{Storage: s})
+	if err != nil {
+		t.Fatal(err)
+	}
+	post := func(route string, body any) *httptest.ResponseRecorder {
+		raw, err := json.Marshal(body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := httptest.NewRequest(http.MethodPost, route, strings.NewReader(string(raw)))
+		req.Header.Set(middleware.TenantHeader, "1")
+		rec := httptest.NewRecorder()
+		srv.Handler().ServeHTTP(rec, req)
+		return rec
+	}
+
+	const start = "11jjjjjhhhccccc:ooddddd88866666:N0N:65:W::6:5:"
+	for _, c := range []struct {
+		name, ogid string
+		want       [2]int
+	}{
+		{"in the Crawford game", start + "7C:", [2]int{2, domain.Crawford}},
+		{"after the Crawford game", start + "7:", [2]int{2, domain.PostCrawford}},
+		{"the canonical example", "cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15", [2]int{4, 3}},
+	} {
+		t.Run(c.name+"/fromOGID", func(t *testing.T) {
+			rec := post("/v1/positions.fromOGID", map[string]string{"ogid": c.ogid})
+			if rec.Code != http.StatusOK {
+				t.Fatalf("got %d (%s)", rec.Code, rec.Body)
+			}
+			var pos domain.Position
+			if err := json.Unmarshal(rec.Body.Bytes(), &pos); err != nil {
+				t.Fatalf("decode response: %v", err)
+			}
+			if pos.Score != c.want || pos.PlayerOnRoll != domain.White {
+				t.Errorf("away score = %v, on roll %d; want %v, White", pos.Score, pos.PlayerOnRoll, c.want)
+			}
+		})
+		t.Run(c.name+"/parseText", func(t *testing.T) {
+			rec := post("/v1/positions.parseText", map[string]string{"text": "OGID=" + c.ogid})
+			if rec.Code != http.StatusOK {
+				t.Fatalf("got %d (%s)", rec.Code, rec.Body)
+			}
+			var res struct {
+				Position domain.Position `json:"position"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &res); err != nil {
+				t.Fatalf("decode response: %v", err)
+			}
+			if res.Position.Score != c.want {
+				t.Errorf("away score = %v, want %v", res.Position.Score, c.want)
+			}
+		})
+	}
+
+	if bad := post("/v1/positions.fromOGID", map[string]string{"ogid": "11ccc!c:66666:N0N"}); bad.Code != http.StatusBadRequest {
+		t.Fatalf("invalid OGID: got %d (%s), want 400", bad.Code, bad.Body)
+	}
+}
