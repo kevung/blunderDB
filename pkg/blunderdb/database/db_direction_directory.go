@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"sort"
 	"strconv"
 	"strings"
@@ -213,6 +214,17 @@ type DirectoryCSVError struct {
 	Text string `json:"text,omitempty"`
 }
 
+// DirectoryCSVWarning is a line that reads fine but is held back: the same name twice in the
+// paste, or a name already entered in this tournament (#442). Its row travels with it, so the
+// director can still enter it — deliberately, with a tick — and the frontend never re-parses.
+type DirectoryCSVWarning struct {
+	Line int    `json:"line"`
+	Code string `json:"code"`
+	// FirstLine is where the paste first gave that name, for a "duplicate".
+	FirstLine int            `json:"firstLine,omitempty"`
+	Row       DirectoryEntry `json:"row"`
+}
+
 // DirectoryImport is what a pasted CSV would give, WITHOUT writing anything.
 //
 // Parsing and entering are two gestures on purpose: the director sees the lines that are wrong
@@ -224,9 +236,11 @@ type DirectoryImport struct {
 	// silent: a line that disappears without a word is a player who does not show up on the
 	// day, and nobody knows why.
 	Skipped []DirectoryCSVError `json:"skipped"`
+	// Warnings are the duplicates, NOT among Rows: entering one is a choice, not a default.
+	Warnings []DirectoryCSVWarning `json:"warnings"`
 }
 
-// ParseDirectoryCSV reads a CSV of entries. It writes nothing, ever.
+// ParseDirectoryCSV reads a CSV of entries for a tournament. It writes nothing, ever.
 //
 // The header is recognised by a RULE and not by a list of words: a first line whose rating
 // column is present and is not a number cannot be data, whatever language it is written in.
@@ -234,12 +248,28 @@ type DirectoryImport struct {
 // synonyms that was taken out of the `ask` command. What is skipped is reported.
 //
 // A semicolon-separated file is read too — it is what a French spreadsheet produces — and a
-// decimal comma with it. A line with no name is an error, not an empty entry.
-func (d *Database) ParseDirectoryCSV(body string) (*DirectoryImport, error) {
-	out := &DirectoryImport{Rows: []DirectoryEntry{}, Errors: []DirectoryCSVError{}, Skipped: []DirectoryCSVError{}}
+// decimal comma with it. A line with no name is an error, not an empty entry; so is a line
+// with no separator when the other lines have one — a stray note pasted with the list, which
+// used to be entered as a player (#442). A plain list of bare names stays a list of names.
+//
+// A name that comes twice in the paste, or that is already entered in tournamentID (0: none),
+// is a warning and is held back from Rows. Names match as the directory matches them: case
+// and surrounding space only.
+func (d *Database) ParseDirectoryCSV(tournamentID int64, body string) (*DirectoryImport, error) {
+	out := &DirectoryImport{Rows: []DirectoryEntry{}, Errors: []DirectoryCSVError{}, Skipped: []DirectoryCSVError{}, Warnings: []DirectoryCSVWarning{}}
 	body = strings.TrimPrefix(body, "\ufeff")
 	if strings.TrimSpace(body) == "" {
 		return out, nil
+	}
+	entered := map[string]bool{}
+	if tournamentID > 0 {
+		players, err := d.entrantsOf(context.Background(), tournamentID)
+		if err != nil {
+			return nil, err
+		}
+		for _, p := range players {
+			entered[directoryKey(p.Name)] = true
+		}
 	}
 	r := csv.NewReader(strings.NewReader(body))
 	r.FieldsPerRecord = -1
@@ -247,18 +277,41 @@ func (d *Database) ParseDirectoryCSV(body string) (*DirectoryImport, error) {
 	if separatorIsSemicolon(body) {
 		r.Comma = ';'
 	}
-	records, err := r.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("directory: %w", err)
+	// Records with their REAL line numbers: the reader skips blank lines, so a record's index
+	// is not its line, and "line 7" must be the line the director sees in the paste.
+	type record struct {
+		fields []string
+		line   int
 	}
-	for i, rec := range records {
-		line := i + 1
+	var records []record
+	separated := false
+	for {
+		rec, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("directory: %w", err)
+		}
+		line, _ := r.FieldPos(0)
+		records = append(records, record{rec, line})
+		if len(rec) > 1 {
+			separated = true
+		}
+	}
+	firstSeen := map[string]int{}
+	for i, rr := range records {
+		rec, line := rr.fields, rr.line
 		if len(rec) == 0 || strings.TrimSpace(strings.Join(rec, "")) == "" {
 			continue
 		}
 		name := strings.TrimSpace(rec[0])
 		if i == 0 && looksLikeHeader(rec) {
 			out.Skipped = append(out.Skipped, DirectoryCSVError{Line: line, Code: "header", Text: name})
+			continue
+		}
+		if separated && len(rec) == 1 {
+			out.Errors = append(out.Errors, DirectoryCSVError{Line: line, Code: "noSeparator", Text: name})
 			continue
 		}
 		if name == "" {
@@ -280,7 +333,16 @@ func (d *Database) ParseDirectoryCSV(body string) (*DirectoryImport, error) {
 				e.Rating = v
 			}
 		}
-		out.Rows = append(out.Rows, e)
+		key := directoryKey(name)
+		switch {
+		case entered[key]:
+			out.Warnings = append(out.Warnings, DirectoryCSVWarning{Line: line, Code: "entered", Row: e})
+		case firstSeen[key] > 0:
+			out.Warnings = append(out.Warnings, DirectoryCSVWarning{Line: line, Code: "duplicate", FirstLine: firstSeen[key], Row: e})
+		default:
+			firstSeen[key] = line
+			out.Rows = append(out.Rows, e)
+		}
 	}
 	return out, nil
 }

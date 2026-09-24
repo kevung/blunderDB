@@ -2184,7 +2184,12 @@
             "failed": "No se han podido retomar esos inscritos.",
             "errors": {
                 "noName": "Línea {line}: sin nombre.",
-                "badRating": "Línea {line}: «{text}» no es una valoración."
+                "badRating": "Línea {line}: «{text}» no es una valoración.",
+                "noSeparator": "Línea {line}: sin separador («{text}»); las demás líneas lo tienen."
+            },
+            "warnings": {
+                "duplicate": "Línea {line}: «{text}» ya figura en la línea {first}. Marque para inscribirlo igualmente.",
+                "entered": "Línea {line}: «{text}» ya está inscrito. Marque para inscribirlo igualmente."
             }
         }
     },

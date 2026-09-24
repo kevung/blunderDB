@@ -2184,7 +2184,12 @@
             "failed": "Diese Teilnehmer konnten nicht übernommen werden.",
             "errors": {
                 "noName": "Zeile {line}: kein Name.",
-                "badRating": "Zeile {line}: „{text}“ ist keine Wertung."
+                "badRating": "Zeile {line}: „{text}“ ist keine Wertung.",
+                "noSeparator": "Zeile {line}: kein Trennzeichen („{text}“) – die anderen Zeilen haben eines."
+            },
+            "warnings": {
+                "duplicate": "Zeile {line}: „{text}“ steht bereits in Zeile {first}. Ankreuzen, um trotzdem anzumelden.",
+                "entered": "Zeile {line}: „{text}“ ist bereits angemeldet. Ankreuzen, um trotzdem anzumelden."
             }
         }
     },

@@ -1537,6 +1537,11 @@ n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre
 les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ;
 l'annuaire s'exporte en CSV et se relit collé.
 
+Avant **Inscrire**, l'aperçu d'un CSV collé liste les lignes illisibles — sans
+nom, sans séparateur quand les autres lignes en ont, cote qui n'est pas un
+nombre — et les doublons, dans le collage ou avec un joueur déjà inscrit. Un
+doublon n'est pas inscrit, sauf si on coche sa case.
+
 Un **retardataire** arrivé après le tirage prend une place d'exemption libre si
 le tableau en offre une, et l'interface écrit à côté du champ où il entrera avant
 qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans

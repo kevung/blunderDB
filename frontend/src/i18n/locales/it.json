@@ -2184,7 +2184,12 @@
             "failed": "Impossibile riprendere questi iscritti.",
             "errors": {
                 "noName": "Riga {line}: nessun nome.",
-                "badRating": "Riga {line}: «{text}» non è un punteggio."
+                "badRating": "Riga {line}: «{text}» non è un punteggio.",
+                "noSeparator": "Riga {line}: nessun separatore («{text}») — le altre righe ne hanno uno."
+            },
+            "warnings": {
+                "duplicate": "Riga {line}: «{text}» compare già alla riga {first}. Spuntare per iscriverlo comunque.",
+                "entered": "Riga {line}: «{text}» è già iscritto. Spuntare per iscriverlo comunque."
             }
         }
     },

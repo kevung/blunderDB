@@ -538,7 +538,8 @@ export async function directoryCSV() {
  * @param {string} body
  */
 export async function parseDirectoryCSV(body) {
-    return await ParseDirectoryCSV(body || '');
+    // La Direction ouverte : un nom qu'elle a déjà inscrit revient en avertissement (#442).
+    return await ParseDirectoryCSV(get(openDirectionIdStore) ?? 0, body || '');
 }
 
 /**

@@ -2184,7 +2184,12 @@
             "failed": "Those entrants could not be taken.",
             "errors": {
                 "noName": "Line {line}: no name.",
-                "badRating": "Line {line}: “{text}” is not a rating."
+                "badRating": "Line {line}: “{text}” is not a rating.",
+                "noSeparator": "Line {line}: no separator (“{text}”) — the other lines have one."
+            },
+            "warnings": {
+                "duplicate": "Line {line}: “{text}” already appears on line {first}. Tick to enter it anyway.",
+                "entered": "Line {line}: “{text}” is already entered. Tick to enter it anyway."
             }
         }
     },
