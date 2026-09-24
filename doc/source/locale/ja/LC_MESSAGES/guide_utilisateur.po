@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-13 01:02+0200\n"
+"POT-Creation-Date: 2026-09-24 07:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -366,12 +366,12 @@ msgstr "クラブの日曜日、32人、第1試合の2時間前。このチュ�
 
 #: ../../source/guide_utilisateur.rst:189
 msgid ""
-"**Créer le tournoi.** Panneau Tournois (*CTRL-MAJ-D*), taper le nom du "
+"**Créer le tournoi.** Panneau Tournois (*CTRL-Y*), taper le nom du "
 "tournoi dans le champ du bas, *Entrée*. Ouvrir la ligne créée, puis "
 "**Diriger ce tournoi** : le tournoi remplace le plateau au centre de la "
 "fenêtre."
 msgstr ""
-"**大会を作る。** 「大会」パネル（*CTRL-SHIFT-D*）で、下部の欄に大会名を入力し "
+"**大会を作る。** 「大会」パネル（*CTRL-Y*）で、下部の欄に大会名を入力し "
 "*Enter*。作成された行を開き、**この大会を運営する** を押すと、大会がウィンドウ中央の盤面に代わって表示されます。"
 
 #: ../../source/guide_utilisateur.rst:194

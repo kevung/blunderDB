@@ -337,7 +337,7 @@ export default {
 <p>Kunkin turnauksen <strong>PR</strong>-sarake näyttää <strong>viitepelaajan</strong> PR-arvon — eli sen pelaajan, joka esiintyy turnauksen useimmissa otteluissa (tasatilanteessa se, joka teki eniten päätöksiä). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: omissa turnauksissasi se kuvastaa yksin sinun suoritustasi. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.</p>
 <h3>Turnauksen johtaminen</h3>
 <p>blunderDB osaa <strong>johtaa</strong> turnauksen, ei vain arkistoida sitä. Johtamisen kantaa <strong>Nicomaque</strong>-moottori, tekijänään Nicolas Harmand: se pitää muodon, paritukset, kaaviot ja sijoitukset; blunderDB antaa sille käyttöliittymän ja säilyttää sen ottelut. Paneelin palkin <strong>ⓘ</strong>-painike muistuttaa tästä ja johtaa moottorin repositorioon ja dokumentaatioon.</p>
-<p>Johdettava turnaus valitaan Turnauspaneeli -paneelista (<em>CTRL-VAIHTO-D</em>, komento <code>direct</code>): avaa turnaus ja valitse <strong>Johda tätä turnausta</strong>. Jo johdettu turnaus näyttää tilansa nimensä vieressä ja painike muuttuu muotoon <strong>Avaa</strong>. Niin kauan kuin johtaminen on auki, pääalue näyttää turnauksen <strong>laudan sijasta</strong> — blunderDB:n ainoa poikkeus tästä säännöstä; mille tahansa muulle välilehdelle siirtyminen tuo laudan takaisin.</p>
+<p>Johdettava turnaus valitaan Turnauspaneeli -paneelista (<em>CTRL-Y</em>, komento <code>direct</code>): avaa turnaus ja valitse <strong>Johda tätä turnausta</strong>. Jo johdettu turnaus näyttää tilansa nimensä vieressä ja painike muuttuu muotoon <strong>Avaa</strong>. Niin kauan kuin johtaminen on auki, pääalue näyttää turnauksen <strong>laudan sijasta</strong> — blunderDB:n ainoa poikkeus tästä säännöstä; mille tahansa muulle välilehdelle siirtyminen tuo laudan takaisin.</p>
 <p>Johtamisella on kolme tilaa: <strong>valmistelussa</strong>, kunnes yhtään ottelua ei ole aloitettu, sitten <strong>käynnissä</strong>, ja <strong>päätetty</strong>, kun sijoitukset on lukittu. Päätetyn turnauksen voi avata uudelleen, ja se kysyy vahvistusta: loppusijoitus lakkaa olemasta lopullinen.</p>
 <p>Kaikki päätetty kirjoitetaan <strong>lokiin</strong>, eikä mitään muuta kirjoiteta. Sijoitukset, kaaviot, ehdotukset ja varoitukset toistetaan tästä lokista joka avauksella: sähkökatko ei maksa mitään, eikä korjaus koskaan pyyhi tapahtunutta — se lisätään siihen.</p>
 <h4>Johtamissivu</h4>
@@ -1079,10 +1079,6 @@ export default {
 <tr>
 <td>CTRL-SHIFT-T</td>
 <td>Näytä/piilota Litterointi-paneeli (otteluluonnokset).</td>
-</tr>
-<tr>
-<td>CTRL-MAJ-D</td>
-<td>Näytä/piilota Turnaukset-paneeli turnauksen johtamista varten.</td>
 </tr>
 <tr>
 <td>J / K</td>

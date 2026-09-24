@@ -337,7 +337,7 @@ export default {
 <p>Die Spalte <strong>PR</strong> jedes Turniers zeigt den PR des <strong>Referenzspielers</strong> — also des Spielers, der in den meisten Partien des Turniers vorkommt (bei Gleichstand derjenige mit den meisten Entscheidungen). Der PR vermischt Ihr Spiel also nicht mit dem Ihrer Gegner: Bei Ihren eigenen Turnieren spiegelt er allein Ihre Leistung wider. Der Name des Referenzspielers erscheint als Tooltip, wenn Sie den Wert überfahren.</p>
 <h3>Ein Turnier leiten</h3>
 <p>blunderDB kann ein Turnier <strong>leiten</strong> und nicht nur ablegen. Die Leitung trägt die Engine <strong>Nicomaque</strong> von Nicolas Harmand: Sie hält das Format, die Paarungen, die Tableaus und die Wertung; blunderDB gibt ihr eine Oberfläche und bewahrt ihre Matches. Die Schaltfläche <strong>ⓘ</strong> in der Leiste des Panels erinnert an diesen Dank und führt zum Repository und zur Dokumentation der Engine.</p>
-<p>Ein geleitetes Turnier wird im Panel Turnier-Panel gewählt (<em>STRG-UMSCHALT-D</em>, Befehl <code>direct</code>): ein Turnier öffnen, dann <strong>Dieses Turnier leiten</strong>. Ein bereits geleitetes Turnier zeigt seinen Zustand neben dem Namen, und die Schaltfläche heißt dann <strong>Öffnen</strong>. Solange eine Leitung offen ist, zeigt der Hauptbereich das Turnier <strong>anstelle des Bretts</strong> — die einzige Ausnahme von dieser Regel in blunderDB; jeder andere Reiter holt das Brett zurück.</p>
+<p>Ein geleitetes Turnier wird im Panel Turnier-Panel gewählt (<em>STRG-Y</em>, Befehl <code>direct</code>): ein Turnier öffnen, dann <strong>Dieses Turnier leiten</strong>. Ein bereits geleitetes Turnier zeigt seinen Zustand neben dem Namen, und die Schaltfläche heißt dann <strong>Öffnen</strong>. Solange eine Leitung offen ist, zeigt der Hauptbereich das Turnier <strong>anstelle des Bretts</strong> — die einzige Ausnahme von dieser Regel in blunderDB; jeder andere Reiter holt das Brett zurück.</p>
 <p>Eine Leitung hat drei Zustände: <strong>in Vorbereitung</strong>, solange kein Match gestartet wurde, danach <strong>laufend</strong>, und <strong>abgeschlossen</strong>, sobald die Wertung fixiert ist. Ein abgeschlossenes Turnier lässt sich wieder öffnen, mit Rückfrage: Die Endwertung ist dann nicht mehr endgültig.</p>
 <p>Alles Entschiedene wird in ein <strong>Journal</strong> geschrieben, und sonst nichts. Wertung, Tableaus, Vorschläge und Warnungen werden bei jedem Öffnen aus diesem Journal abgespielt: Ein Stromausfall kostet nichts, und eine Korrektur löscht nie, was geschehen ist — sie kommt hinzu.</p>
 <h4>Die Leitungsseite</h4>
@@ -1079,10 +1079,6 @@ export default {
 <tr>
 <td>STRG-UMSCHALT-T</td>
 <td>Das Transkriptions-Panel ein-/ausblenden (Match-Entwürfe).</td>
-</tr>
-<tr>
-<td>CTRL-MAJ-D</td>
-<td>Turnier-Panel zum Leiten eines Turniers ein-/ausblenden.</td>
 </tr>
 <tr>
 <td>J / K</td>

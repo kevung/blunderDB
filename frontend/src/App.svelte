@@ -56,7 +56,7 @@
         toggleMatchMode,
         toggleStatsPanel,
         toggleTranscriptionPanel,
-        toggleDirectionPanel,
+        toggleTournamentPanel,
         enterEditMode,
         exitEditMode,
         enterEvalMode,
@@ -377,7 +377,7 @@
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEvalMode,
             toggleTranscriptionPanel,
-            toggleDirectionPanel,
+            toggleTournamentPanel,
             toggleMatchMode,
             onToggleStats: () => toggleStatsPanel(),
             onLoadBlunders: loadWorstBlunders

@@ -495,6 +495,16 @@ describe('processCommand', () => {
         commandHistoryStore.set([]);
     });
 
+    // -- direct (#443) -------------------------------------------------------
+    // Un geste, un nom : `direct` et CTRL-Y ouvrent le même panneau Tournois ; le raccourci
+    // CTRL-MAJ-D, qui faisait exactement la même chose, a été retiré.
+    test('direct bascule le panneau Tournois', () => {
+        callbacks.toggleTournamentPanel = vi.fn();
+        initCommandProcessor(callbacks);
+        processCommand('direct');
+        expect(callbacks.toggleTournamentPanel).toHaveBeenCalledTimes(1);
+    });
+
     // -- numeric navigation --------------------------------------------------
     test('numeric input navigates to position', () => {
         positionsStore.set([{ id: 1 }, { id: 2 }, { id: 3 }]);

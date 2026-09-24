@@ -28,7 +28,6 @@ import {
     toggleTournamentPanel,
     toggleStatsPanel,
     toggleTranscriptionPanel,
-    toggleDirectionPanel,
     toggleSearchPanel,
     toggleEvalMode,
     togglePipcount,
@@ -510,12 +509,6 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('y')) {
         event.preventDefault();
         toggleTournamentPanel();
-    } else if (event.ctrlKey && event.shiftKey && letter('d')) {
-        // BEFORE the Ctrl-D branch below, which does not exclude Shift — the same reason
-        // Ctrl-Maj-T sits before Ctrl-T. Reversed, directing a tournament would open the
-        // statistics instead.
-        event.preventDefault();
-        toggleDirectionPanel();
     } else if (event.ctrlKey && letter('d')) {
         event.preventDefault();
         toggleStatsPanel();

@@ -119,15 +119,15 @@ export const toggleTrainingPanel = () => toggleTab('training');
 export const showTrainingPanel = () => showTab('training');
 export const toggleMatchPanel = () => toggleTab('matches');
 export const toggleCollectionPanelAction = () => toggleTab('collections');
+// Bound to Ctrl+Y and to the `direct` command: ONE gesture, the round trip between the room and
+// the board. The tournament view takes over the main area only when this tab is active AND a
+// Direction is open (ADR-0047). A second shortcut, Ctrl+Maj+D, did exactly the same and was
+// removed (#443).
 export const toggleTournamentPanel = () => toggleTab('tournaments');
 export const toggleStatsPanel = () => toggleTab('stats');
 export const toggleSearchPanel = () => toggleTab('search');
 // Bound to the `transcribe`/`tr` command and Ctrl+Maj+T.
 export const toggleTranscriptionPanel = () => toggleTab('transcription');
-// Bound to the `direct` command and Ctrl+Maj+D. The tournament view takes over the main area
-// only when this tab is active AND a Direction is open (ADR-0047), so the shortcut is the
-// round trip between the room and the board.
-export const toggleDirectionPanel = () => toggleTab('tournaments');
 
 export function togglePipcount() {
     logger.log('togglePipcount');

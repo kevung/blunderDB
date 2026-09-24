@@ -337,7 +337,7 @@ export default {
 <p>The <strong>PR</strong> column of each tournament shows the PR of the <strong>reference player</strong> — that is, the player appearing in the greatest number of the tournament's matches (in case of a tie, the one who made the most decisions). The PR therefore does not mix your play with your opponents': for your own tournaments, it reflects your performance alone. The reference player's name appears in a tooltip when hovering over the value.</p>
 <h3>Directing a tournament</h3>
 <p>blunderDB can <strong>direct</strong> a tournament, not merely file it away. The directing is carried by the <strong>Nicomaque</strong> engine, by Nicolas Harmand: it holds the format, the pairings, the brackets and the standings; blunderDB gives it an interface and keeps its matches. The <strong>ⓘ</strong> button on the panel's bar recalls that credit and leads to the engine's repository and documentation.</p>
-<p>A directed tournament is chosen in the Tournaments Panel panel (<em>CTRL-SHIFT-D</em>, <code>direct</code> command): open a tournament, then <strong>Direct this tournament</strong>. A tournament already directed shows its state beside its name and the button becomes <strong>Open</strong>. While a direction is open, the main area shows the tournament <strong>in place of the board</strong> — blunderDB's only exception to that rule; switching to any other tab brings the board back.</p>
+<p>A directed tournament is chosen in the Tournaments Panel panel (<em>CTRL-Y</em>, <code>direct</code> command): open a tournament, then <strong>Direct this tournament</strong>. A tournament already directed shows its state beside its name and the button becomes <strong>Open</strong>. While a direction is open, the main area shows the tournament <strong>in place of the board</strong> — blunderDB's only exception to that rule; switching to any other tab brings the board back.</p>
 <p>A direction has three states: <strong>in preparation</strong> while no match has been launched, <strong>under way</strong> afterwards, <strong>closed</strong> once the standings are frozen. Reopening a closed tournament is possible, and asks for confirmation: the final standings stop being final.</p>
 <p>Everything decided is written into a <strong>journal</strong>, and nothing else is. The standings, the brackets, the proposals and the warnings are replayed from that journal at every open: a power cut costs nothing, and a correction never erases what happened — it is added to it.</p>
 <h4>The Directing page</h4>
@@ -1079,10 +1079,6 @@ export default {
 <tr>
 <td>CTRL-SHIFT-T</td>
 <td>Show/hide the Transcription panel (match drafts).</td>
-</tr>
-<tr>
-<td>CTRL-MAJ-D</td>
-<td>Show/hide the Tournaments panel to direct a tournament.</td>
 </tr>
 <tr>
 <td>J / K</td>

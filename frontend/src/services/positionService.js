@@ -863,7 +863,6 @@ export {
     toggleStatsPanel,
     toggleSearchPanel,
     toggleTranscriptionPanel,
-    toggleDirectionPanel,
     togglePipcount
 } from './tabToggles.js';
 
