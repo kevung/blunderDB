@@ -140,6 +140,32 @@ var (
 // modified, and the same pair always gives the same result. Undo and redo are not
 // here — a stack is state, and it lives in [Editor].
 func Apply(doc Document, g Gesture) (Document, error) {
+	out, err := apply(doc, g)
+	if err == nil && movesOnly(g.Kind) && !out.HasTouched {
+		// A gesture that wrote nothing leaves the Cursor where it put it. The
+		// jump to the first Inconsistency answers a Replay (fonctionnel.md
+		// §1.4), and nothing was replayed: pulling the Cursor there would make
+		// every Inconsistency a wall — a step back from the Action after a
+		// double turn landing on it again, a die typed on the decision before
+		// it carried off onto it (ADR-0054).
+		out.HoldCursor = true
+	}
+	return out, err
+}
+
+// movesOnly reports whether a gesture moves the Cursor or edits the entry, and
+// writes an Action only through the correction a step commits.
+func movesOnly(k GestureKind) bool {
+	switch k {
+	case GestureEnterDie, GestureClearDice, GestureSelectCandidate, GestureEnterPlay,
+		GestureCursorBack, GestureCursorForward, GestureCorrect,
+		GestureInsertBefore, GestureInsertAfter:
+		return true
+	}
+	return false
+}
+
+func apply(doc Document, g Gesture) (Document, error) {
 	out := doc.clone()
 	// Touched describes the LAST gesture and nothing else: it is cleared here and
 	// set again only by the paths that write an Action, so that walking the
@@ -232,23 +258,10 @@ func Apply(doc Document, g Gesture) (Document, error) {
 		return cubeGesture(out, g)
 
 	case GestureCursorBack:
-		out = commitCorrection(out)
-		if out.Cursor > 0 {
-			if !out.HasReturn {
-				out.Return, out.HasReturn = out.Cursor, true
-			}
-			out.Cursor--
-		}
-		loadEntry(&out)
-		return out, nil
+		return cursorBack(commitCorrection(out)), nil
 
 	case GestureCursorForward:
-		out = commitCorrection(out)
-		if out.Cursor < len(out.Actions) {
-			out.Cursor++
-		}
-		loadEntry(&out)
-		return out, nil
+		return cursorForward(commitCorrection(out)), nil
 
 	case GestureCorrect:
 		if out.Cursor < 0 || out.Cursor >= len(out.Actions) {
@@ -503,6 +516,67 @@ func stepBack(doc *Document) {
 	}
 	loadEntry(doc)
 	doc.HoldCursor = true
+}
+
+// cursorBack is GestureCursorBack once the correction it walks away from is
+// committed. The hole of a double turn is a stop of its own, between the two
+// Actions it separates (ADR-0054).
+func cursorBack(out Document) Document {
+	if out.Cursor > 0 {
+		if !out.HasReturn {
+			out.Return, out.HasReturn = out.Cursor, true
+		}
+		if !onHole(out) && holeBefore(out, out.Cursor) {
+			openHole(&out, out.Cursor)
+			return out
+		}
+		out.Cursor--
+	}
+	loadEntry(&out)
+	return out
+}
+
+// cursorForward is GestureCursorForward once the correction it walks away from
+// is committed. Past a hole is the Action it stands before, at the same index.
+func cursorForward(out Document) Document {
+	if !onHole(out) && out.Cursor < len(out.Actions) {
+		out.Cursor++
+		if holeBefore(out, out.Cursor) {
+			openHole(&out, out.Cursor)
+			return out
+		}
+	}
+	loadEntry(&out)
+	return out
+}
+
+// holeBefore reports whether a double turn leaves a hole in front of the Action
+// at `at`: it and the Action before it both bear a turn, and are the same side's
+// — the Replay's DoubleTurn, read on the two Actions alone. The missing turn is
+// the other side's, and it is where a deletion leaves the user something to
+// retype (ADR-0054).
+func holeBefore(doc Document, at int) bool {
+	if at <= 0 || at >= len(doc.Actions) {
+		return false
+	}
+	prev, a := doc.Actions[at-1], doc.Actions[at]
+	return bearsTurn(prev.Kind) && bearsTurn(a.Kind) && prev.Side == a.Side
+}
+
+// onHole reports whether the Cursor stands on the hole in front of the Action it
+// names: an insertion open at the Cursor, where a double turn leaves one.
+func onHole(doc Document) bool {
+	e := doc.Entry
+	return e != nil && e.Mode == EntryNew && e.At == doc.Cursor && holeBefore(doc, doc.Cursor)
+}
+
+// openHole puts the Cursor on the hole in front of the Action at `at` and opens
+// the insertion that fills it, for the side whose turn is missing. Nothing is
+// written: walking off the hole abandons the slot, as it does any insertion.
+func openHole(doc *Document, at int) {
+	doc.Cursor = at
+	doc.Entry = &Entry{Side: proposedSide(*doc, at), Mode: EntryNew, At: at}
+	doc.pendingBoard = nil
 }
 
 // gameEndsAt reports whether the Action at `at` closes its game — or the match —

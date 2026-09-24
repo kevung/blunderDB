@@ -1226,6 +1226,7 @@
         "scoreFieldPlaceholder": "3-2",
         "derivedScore": "前のゲームからは {a}–{b}",
         "editScore": "ダブルクリック：申告スコアを修正",
+        "hole": "抜けている手番 — クリックして入力",
         "inconsistency": {
             "illegal_move": "不正な手",
             "double_turn": "手番の重複",

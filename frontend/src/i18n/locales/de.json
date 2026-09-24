@@ -1226,6 +1226,7 @@
         "scoreFieldPlaceholder": "3-2",
         "derivedScore": "Die vorherigen Partien ergeben {a}–{b}",
         "editScore": "Doppelklick: angesagten Spielstand korrigieren",
+        "hole": "Fehlender Zug — zum Eingeben klicken",
         "inconsistency": {
             "illegal_move": "unerlaubter Zug",
             "double_turn": "doppelter Zug",

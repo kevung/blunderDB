@@ -87,6 +87,8 @@
         applyCandidates,
         selectCandidate,
         cursorCommands,
+        cursorStop,
+        currentStop,
         initialKeyState,
         enterDicePair,
         enterSingleDie,
@@ -691,24 +693,35 @@
      *
      * @param {number} index
      */
-    function selectAction(index) {
+    function selectAction(index, hole = false) {
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
-        const from = ann.cursor ?? 0;
+        const from = currentStop(ann);
+        const to = cursorStop(ann, index, hole);
         // Le second clic d'un double-clic (ADR-0052) tombe souvent avant que le
         // premier soit revenu du moteur : relancer le même chemin depuis le
         // Cursor d'avant le ferait parcourir deux fois.
-        if (index === from || index === walkingTo) return;
-        walkingTo = index;
-        run(cursorCommands(from, index))
+        if (to === from || to === walkingTo) return;
+        walkingTo = to;
+        run(cursorCommands(from, to))
             .then(settleCursor)
             .finally(() => {
-                if (walkingTo === index) walkingTo = null;
+                if (walkingTo === to) walkingTo = null;
             });
         panelEl?.focus({ preventScroll: true });
     }
 
-    /** @type {number | null} La cellule vers laquelle le Cursor est en chemin. */
+    /**
+     * A click on the hole of a double turn: the Cursor walks onto it, where the
+     * missing turn is typed (ADR-0054).
+     *
+     * @param {number} index - the Action the hole stands before
+     */
+    function selectHole(index) {
+        selectAction(index, true);
+    }
+
+    /** @type {number | null} L'arrêt ([cursorStop]) vers lequel le Cursor est en chemin. */
     let walkingTo = null;
 
     // ── le triangle des jets (T2.1) ──────────────────────────────────────
@@ -943,7 +956,7 @@
         ranked = [];
         unranked = false;
         danced = false;
-        run(menuCommands(ann.cursor ?? 0, index, kind)).then(settleCursor);
+        run(menuCommands(currentStop(ann), cursorStop(ann, index), kind)).then(settleCursor);
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1689,7 +1702,7 @@
             dice = info.before.dice ?? [0, 0];
             // Le premier clic du double-clic y a déjà mené le Cursor ; s'il n'y
             // est pas encore, le chemin part devant le coup, dans la même file.
-            lead = cursorCommands(ann.cursor ?? 0, index);
+            lead = cursorCommands(currentStop(ann), cursorStop(ann, index));
         }
         if (!pos || !(dice[0] > 0) || !(dice[1] > 0)) return false;
         const mover = pos.player_on_roll;
@@ -1940,6 +1953,7 @@
                         cursor={annotated?.cursor ?? 0}
                         players={[playerName(0), playerName(1)]}
                         onSelect={selectAction}
+                        onHole={selectHole}
                         onMenu={openTranscriptMenu}
                         onEditMove={commitNotation}
                         onEditScore={declareScore}

@@ -320,7 +320,7 @@ veille ne demande pas la souris.
    "Clic (sur le videau)", "Proposer un double pour le camp au trait, comme la touche d. Devant une offre, le videau ne répond pas : la prise et la passe sont dans la rangée de boutons."
    "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
    "DROITE, l", "Avancer le curseur d'une action."
-   "Clic (sur une cellule)", "Placer le curseur sur cette action."
+   "Clic (sur une cellule)", "Placer le curseur sur cette action, ou sur le tour manquant d'un double trait."
    "Double-clic (sur une cellule)", "Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis."
    "Double-clic (sur le score d'une partie)", "Taper le score auquel cette partie a été jouée, dans l'en-tête : 3-2, 3–2 ou 3 2. ENTREE l'enregistre, un champ vidé revient au score que donnent les parties précédentes, et Esc referme le champ sans rien écrire. Un score qui diffère de celui-ci est marqué comme une incohérence. Pas de score en argent."
    "Clic droit (sur une cellule)", "Ouvrir les corrections de cette action : insérer avant, insérer après, supprimer, changer de camp. Le curseur est amené sur la cellule au passage."
@@ -373,8 +373,11 @@ Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisi
 crée un double trait, supprimer une action peut en créer un autre, changer un
 camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées
 dans le transcript, jamais corrigées d'office, et le curseur se place sur la
-première d'entre elles après chaque geste — sauf là où l'on continue : après une
-suppression, une insertion ou une partie rouverte, il reste où l'on tape. La pile d'annulation vit en mémoire :
+première d'entre elles après chaque geste qui écrit — sauf là où l'on continue : après une
+suppression, une insertion ou une partie rouverte, il reste où l'on tape. Se
+déplacer ou taper un dé ne le déplace jamais. Le tour qu'un double trait a perdu
+est une case du transcript : h et l s'y arrêtent, et un jet tapé là s'insère
+pour le camp à qui il manquait. La pile d'annulation vit en mémoire :
 elle est perdue à la fermeture du brouillon.
 
 Le panneau lui-même — la liste des brouillons, la création, la saisie, le

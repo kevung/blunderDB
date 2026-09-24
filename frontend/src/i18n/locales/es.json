@@ -1226,6 +1226,7 @@
         "scoreFieldPlaceholder": "3-2",
         "derivedScore": "Las partidas anteriores dan {a}–{b}",
         "editScore": "Doble clic: corregir el marcador anunciado",
+        "hole": "Turno que falta — haga clic para introducirlo",
         "inconsistency": {
             "illegal_move": "jugada ilegal",
             "double_turn": "turno doble",
