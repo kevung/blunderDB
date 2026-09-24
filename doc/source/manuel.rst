@@ -1486,12 +1486,14 @@ La page Direction
 
 C'est là que le directeur passe l'essentiel de son temps. Elle porte, de haut en
 bas : les **avertissements** du moteur, qui restent visibles et ne bloquent
-jamais rien ; le bouton **Imprimer la feuille** d'appariements ; la **file des
-propositions** ; la **grille des tables** ; la **dernière décision** ; et les
-joueurs libres.
+jamais rien ; la **grille des tables**, dont l'en-tête porte le bouton
+**Imprimer la feuille** d'appariements ; la **dernière décision** ; la **file
+des propositions** ; et les joueurs libres. La grille précède la file : une file
+longue ne la pousse jamais hors de l'écran.
 
 Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** confirme
-la file entière en deux clics, après en avoir montré la liste. « Ignorer pour
+la file entière en deux clics, après en avoir montré la liste ; *Confirmer* est
+en tête de cette liste. « Ignorer pour
 l'instant » n'écrit rien : le moteur est déterministe, et la proposition revient
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.
