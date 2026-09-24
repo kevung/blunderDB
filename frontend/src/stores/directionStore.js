@@ -51,7 +51,7 @@ import {
     DirectionFreeSlots,
     AddParticipantAtSlot
 } from '../../wailsjs/go/database/Database.js';
-import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
+import { OpenDirectionOutputDialog, SaveCSV } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock, tMsg } from '../i18n';
 import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
@@ -530,6 +530,19 @@ export async function takeEntrantsFrom(sourceTournamentId) {
 /** L'annuaire en CSV, tel qu'un directeur le garde d'une saison sur l'autre. */
 export async function directoryCSV() {
     return (await DirectoryCSV()) || '';
+}
+
+/**
+ * Enregistre un CSV dans un fichier choisi par le directeur (#454) et rend le chemin écrit, ou
+ * '' s'il a annulé. Le texte est celui que la copie met au presse-papier : l'appelant le
+ * demande une fois et le passe tel quel, si bien que le fichier et la copie ne peuvent pas
+ * différer.
+ *
+ * @param {string} defaultName
+ * @param {string} body
+ */
+export async function saveCSV(defaultName, body) {
+    return (await SaveCSV(defaultName, body)) || '';
 }
 
 /**

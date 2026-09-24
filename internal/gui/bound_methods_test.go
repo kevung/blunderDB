@@ -63,6 +63,7 @@ var boundAppMethods = []string{
 	"SaveBoardImageDialog",
 	"SaveBoardPNG",
 	"SaveBoardSVG",
+	"SaveCSV",
 	"SaveDatabaseDialog",
 	"SetIssuerName",
 	"ShowAlert",

@@ -1990,7 +1990,7 @@
             "overall": "Clasificación general",
             "note": "Nota",
             "prize": "Premio",
-            "csv": "Exportar (CSV)",
+            "csv": "Copiar (CSV)",
             "close": "Cerrar el torneo",
             "closeConfirm": "Matches en curso: {n}. Cerrar congela la clasificación sin ellos: su resultado ya no podrá anotarse, salvo reabriendo el torneo.",
             "reopen": "Reabrir",
@@ -1998,7 +1998,12 @@
             "pool": "Bote {pool} · a repartir {payable} · retenido {retained}",
             "error": "No se ha podido cerrar el torneo.",
             "copied": "Clasificación copiada al portapapeles.",
-            "reopenConfirm": "¿Reabrir este torneo? La clasificación final deja de ser final, y la reapertura queda en el registro."
+            "reopenConfirm": "¿Reabrir este torneo? La clasificación final deja de ser final, y la reapertura queda en el registro.",
+            "save": "Guardar…",
+            "saveHint": "Guarda la clasificación en un archivo CSV, igual que la copia.",
+            "saved": "Clasificación guardada: {path}",
+            "saveFailed": "No se pudo guardar la clasificación.",
+            "fileWord": "clasificacion"
         },
         "history": {
             "filter": "Filtrar por jugador o partida",
@@ -2192,7 +2197,12 @@
             "warnings": {
                 "duplicate": "Línea {line}: «{text}» ya figura en la línea {first}. Marque para inscribirlo igualmente.",
                 "entered": "Línea {line}: «{text}» ya está inscrito. Marque para inscribirlo igualmente."
-            }
+            },
+            "save": "Guardar…",
+            "saveHint": "Guarda el directorio en un archivo CSV, igual que la copia.",
+            "saved": "Directorio guardado: {path}",
+            "saveFailed": "No se pudo guardar el directorio.",
+            "fileWord": "directorio"
         }
     },
     "palette": {

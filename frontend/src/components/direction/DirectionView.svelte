@@ -28,7 +28,7 @@
     import ClockBar from './ClockBar.svelte';
     import CreditModal from './CreditModal.svelte';
     import SlotsView from './SlotsView.svelte';
-    import { renderWarning } from './labels.js';
+    import { renderWarning, csvFilename } from './labels.js';
     import {
         directionStore,
         openDirectionIdStore,
@@ -75,6 +75,7 @@
         directorySources,
         takeEntrantsFrom,
         directoryCSV,
+        saveCSV,
         parseDirectoryCSV,
         enterParticipants,
         freeSlots,
@@ -299,6 +300,26 @@
         }
     }
 
+    /* Enregistrer le CSV dans un fichier (#454) : le même texte que la copie, demandé une fois
+       et passé tel quel au dialogue natif ; annuler le dialogue ne dit rien. */
+    /**
+     * @param {() => Promise<string>} body
+     * @param {string} word
+     * @param {string} savedKey
+     * @param {string} failedKey
+     */
+    async function saveAsFile(body, word, savedKey, failedKey) {
+        try {
+            const path = await saveCSV(csvFilename(view?.config?.name || '', word), await body());
+            if (path) statusBarTextStore.set(tMsg(savedKey, { path }));
+        } catch (e) {
+            logger.error('direction: saving a csv failed', e);
+            statusBarTextStore.set(tMsg(failedKey));
+        }
+    }
+    const onSaveDirectory = () => saveAsFile(directoryCSV, $t('direction.directory.fileWord'), 'direction.directory.saved', 'direction.directory.saveFailed');
+    const onSaveStandings = () => saveAsFile(standingsCSV, $t('direction.standings.fileWord'), 'direction.standings.saved', 'direction.standings.saveFailed');
+
     async function onOpenPage() {
         const path = await writeDirectionPage();
         if (!path) {
@@ -344,8 +365,8 @@
         activeTabStore.set('matches');
     }
 
-    /* Le CSV part dans le presse-papier : il n'y a pas de dialogue d'enregistrement ici, et
-       coller dans un tableur est le geste qu'un directeur fait de toute façon. */
+    /* Copier le CSV au presse-papier : coller dans un tableur est le geste le plus court ;
+       « Enregistrer… » (onSaveStandings) en fait un fichier. */
     async function onCSV() {
         try {
             const csv = await standingsCSV();
@@ -513,13 +534,22 @@
         {:else if tab === 'slots'}
             <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
         {:else if tab === 'standings'}
-            <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} />
+            <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
         {:else if tab === 'history'}
             <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
-            <DirectoryPanel sources={dirSources} entries={dirEntries} {busy} onTake={onTakeEntrants} onExport={onExportDirectory} onParse={parseDirectoryCSV} onImport={onImportEntrants} />
+            <DirectoryPanel
+                sources={dirSources}
+                entries={dirEntries}
+                {busy}
+                onTake={onTakeEntrants}
+                onExport={onExportDirectory}
+                onSave={onSaveDirectory}
+                onParse={parseDirectoryCSV}
+                onImport={onImportEntrants}
+            />
             <PlayersView {rows} {suggestions} {busy} started={directionState !== 'draft'} {onAdd} {onUpdate} {onWithdraw} {onReinstate} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
         {/if}
     </div>

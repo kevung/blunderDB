@@ -25,11 +25,12 @@
      *     busy?: boolean,
      *     onTake?: (tournamentId: number) => void,
      *     onExport?: () => void,
+     *     onSave?: () => void,
      *     onParse?: (body: string) => Promise<DirectoryImport | null>,
      *     onImport?: (rows: DirectoryEntry[]) => void
      * }}
      */
-    let { sources = [], entries = [], busy = false, onTake = () => {}, onExport = () => {}, onParse = async () => null, onImport = () => {} } = $props();
+    let { sources = [], entries = [], busy = false, onTake = () => {}, onExport = () => {}, onSave = () => {}, onParse = async () => null, onImport = () => {} } = $props();
 
     let open = $state(false);
     let pasted = $state('');
@@ -91,6 +92,9 @@
             <div class="csv">
                 <button type="button" data-testid="direction-directory-export" onclick={onExport} title={$t('direction.directory.exportHint')}>
                     {$t('direction.directory.export')}
+                </button>
+                <button type="button" data-testid="direction-directory-save" onclick={onSave} title={$t('direction.directory.saveHint')}>
+                    {$t('direction.directory.save')}
                 </button>
                 <span class="muted">{$t('direction.directory.importHint')}</span>
             </div>
