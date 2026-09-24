@@ -2157,7 +2157,8 @@
             "in_progress": "en cours",
             "no_match": "aucun match",
             "versus": "contre",
-            "cancel": "Annuler"
+            "cancel": "Annuler",
+            "announced": "Annoncée : {at}"
         },
         "display": {
             "title": "Affichage de la salle",
@@ -2174,7 +2175,12 @@
             "round": "Ronde",
             "roundHint": "Quelle ronde imprimer. Par défaut, la plus récente.",
             "latest": "la plus récente",
-            "error": "Impossible d'écrire la feuille d'appariements."
+            "error": "Impossible d'écrire la feuille d'appariements.",
+            "upcoming": "Ronde à venir…",
+            "upcomingHint": "Imprime les appariements de la file, datés, sans rien lancer : rien n'est écrit au journal.",
+            "announcedFor": "Annoncée pour",
+            "announcedPlaceholder": "lundi 21/09, 20 h",
+            "announcedHint": "La date et l'heure imprimées sur la feuille, telles que vous les tapez."
         },
         "directory": {
             "title": "Annuaire ({n})",

@@ -2157,7 +2157,8 @@
             "in_progress": "en curso",
             "no_match": "ningún partido",
             "versus": "contra",
-            "cancel": "Cancelar"
+            "cancel": "Cancelar",
+            "announced": "Anunciada: {at}"
         },
         "display": {
             "title": "Pantalla de la sala",
@@ -2174,7 +2175,12 @@
             "round": "Ronda",
             "roundHint": "Qué ronda imprimir. La más reciente por defecto.",
             "latest": "la más reciente",
-            "error": "No se ha podido escribir la hoja de emparejamientos."
+            "error": "No se ha podido escribir la hoja de emparejamientos.",
+            "upcoming": "Próxima ronda…",
+            "upcomingHint": "Imprime los emparejamientos de la cola, fechados, sin lanzar nada: no se escribe nada en el diario.",
+            "announcedFor": "Anunciada para",
+            "announcedPlaceholder": "lunes 21/09, 20 h",
+            "announcedHint": "La fecha y la hora impresas en la hoja, tal como las escribe."
         },
         "directory": {
             "title": "Directorio ({n})",

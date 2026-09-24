@@ -120,6 +120,35 @@ func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (st
 	return direction.WriteFileAtomically(out, direction.SheetName, sheet)
 }
 
+// DirectionUpcomingSheetHTML renders the sheet of the round the queue proposes, before it is
+// launched, headed by the date the director typed (#451). Nothing is written to the log.
+func (d *Database) DirectionUpcomingSheetHTML(tournamentID int64, announced string) (string, error) {
+	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err != nil {
+		return "", err
+	}
+	cat, lang := d.directionStrings()
+	return dir.UpcomingSheet(cat, lang, announced, time.Now())
+}
+
+// WriteDirectionUpcomingSheet writes the announced sheet where the pairing sheet goes, under a
+// name of its own, and returns the file to open.
+func (d *Database) WriteDirectionUpcomingSheet(tournamentID int64, announced string) (string, error) {
+	sheet, err := d.DirectionUpcomingSheetHTML(tournamentID, announced)
+	if err != nil {
+		return "", err
+	}
+	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	if err != nil {
+		return "", err
+	}
+	out := dir.Record().OutputDir
+	if out == "" {
+		out = os.TempDir()
+	}
+	return direction.WriteFileAtomically(out, direction.UpcomingSheetName, sheet)
+}
+
 // DirectionRounds counts the batches of the current phase: how many sheets there are to choose
 // from. A batch is what a director calls a round in a Swiss by rounds, a block in a GSL, a
 // round in a bracket — the engine has no word for it, and needs none.

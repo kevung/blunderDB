@@ -2157,7 +2157,8 @@
             "in_progress": "under way",
             "no_match": "no match",
             "versus": "versus",
-            "cancel": "Cancel"
+            "cancel": "Cancel",
+            "announced": "Announced: {at}"
         },
         "display": {
             "title": "Hall display",
@@ -2174,7 +2175,12 @@
             "round": "Round",
             "roundHint": "Which round to print. The most recent by default.",
             "latest": "most recent",
-            "error": "The pairing sheet could not be written."
+            "error": "The pairing sheet could not be written.",
+            "upcoming": "Upcoming round…",
+            "upcomingHint": "Prints the pairings in the queue, dated, without launching anything: nothing is written to the log.",
+            "announcedFor": "Announced for",
+            "announcedPlaceholder": "Monday 21/09, 8 pm",
+            "announcedHint": "The date and time printed on the sheet, as you type them."
         },
         "directory": {
             "title": "Directory ({n})",

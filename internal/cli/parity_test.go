@@ -293,6 +293,8 @@ var databaseParity = map[string]parityEntry{
 	"DirectionPageHTML":                 {Why: whyDirection},
 	"DirectionPairingSheetHTML":         {Why: whyDirection},
 	"WriteDirectionPairingSheet":        {Why: whyDirection},
+	"DirectionUpcomingSheetHTML":        {Why: whyDirection},
+	"WriteDirectionUpcomingSheet":       {Why: whyDirection},
 	"DirectionRounds":                   {Why: whyDirection},
 	"Directory":                         {Why: whyDirection},
 	"DirectorySources":                  {Why: whyDirection},

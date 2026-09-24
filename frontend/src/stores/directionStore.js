@@ -42,6 +42,7 @@ import {
     SetDirectionStrings,
     WriteDirectionPage,
     WriteDirectionPairingSheet,
+    WriteDirectionUpcomingSheet,
     DirectionRounds,
     Directory,
     DirectorySources,
@@ -433,6 +434,23 @@ export async function writePairingSheet(round = 0) {
         return await WriteDirectionPairingSheet(id, round);
     } catch (e) {
         logger.error('direction: writing the pairing sheet failed', e);
+        return null;
+    }
+}
+
+/**
+ * Écrit la feuille de la ronde que la file propose, AVANT de la lancer, datée par le directeur
+ * (#451), et rend le fichier à ouvrir. Rien n'est lancé, rien n'est écrit au journal.
+ *
+ * @param {string} announced  la date et l'heure annoncées, telles que tapées
+ */
+export async function writeUpcomingSheet(announced) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    try {
+        return await WriteDirectionUpcomingSheet(id, announced || '');
+    } catch (e) {
+        logger.error('direction: writing the announced sheet failed', e);
         return null;
     }
 }

@@ -286,6 +286,10 @@ export function DirectionStore() {
   return window['go']['database']['Database']['DirectionStore']();
 }
 
+export function DirectionUpcomingSheetHTML(arg1, arg2) {
+  return window['go']['database']['Database']['DirectionUpcomingSheetHTML'](arg1, arg2);
+}
+
 export function Directory() {
   return window['go']['database']['Database']['Directory']();
 }
@@ -1052,4 +1056,8 @@ export function WriteDirectionPage(arg1) {
 
 export function WriteDirectionPairingSheet(arg1, arg2) {
   return window['go']['database']['Database']['WriteDirectionPairingSheet'](arg1, arg2);
+}
+
+export function WriteDirectionUpcomingSheet(arg1, arg2) {
+  return window['go']['database']['Database']['WriteDirectionUpcomingSheet'](arg1, arg2);
 }
