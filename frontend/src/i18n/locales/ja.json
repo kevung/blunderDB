@@ -1914,7 +1914,8 @@
             "unavailable": "使用不可",
             "reserved": "予約済み",
             "slow": "長引き",
-            "none": "卓が登録されていません。"
+            "none": "卓が登録されていません。",
+            "noTable": "卓なし"
         },
         "result": {
             "title": "結果",

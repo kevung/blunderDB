@@ -119,7 +119,7 @@
     function focusQueue() {
         if (!queueEl) return;
         if (document.activeElement !== queueEl) queueEl.focus({ preventScroll: true });
-        queueEl.children[selected]?.scrollIntoView({ block: 'nearest' });
+        queueEl.children[selected]?.scrollIntoView?.({ block: 'nearest' });
     }
 
     /** @param {KeyboardEvent} e */

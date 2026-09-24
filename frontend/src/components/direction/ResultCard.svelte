@@ -18,7 +18,7 @@
     /**
      * La case d'une table où un match est en cours : la fiche ne s'ouvre que sur celle-là.
      *
-     * @typedef {{ table?: number, length?: number, matchId: string, a: string, b: string, aName?: string, bName?: string }} ResultCell
+     * @typedef {{ table?: number, noTable?: boolean, length?: number, matchId: string, a: string, b: string, aName?: string, bName?: string }} ResultCell
      */
 
     /**
@@ -91,7 +91,7 @@
 <div class="card" data-testid="direction-result-card" role="dialog" aria-label={$t('direction.result.title')} tabindex="-1" onkeydown={onKey}>
     <header>
         <span class="where"
-            >{$t('direction.proposals.table', { n: cell.table })} &middot;
+            >{cell.noTable ? $t('direction.table.noTable') : $t('direction.proposals.table', { n: cell.table })} &middot;
             {$t('direction.proposals.points', { n: cell.length })}</span
         >
         <span class="grow"></span>

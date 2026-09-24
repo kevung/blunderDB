@@ -1914,7 +1914,8 @@
             "unavailable": "out of service",
             "reserved": "reserved",
             "slow": "slow",
-            "none": "No table declared."
+            "none": "No table declared.",
+            "noTable": "no table"
         },
         "result": {
             "title": "Result",

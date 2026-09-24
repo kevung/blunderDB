@@ -1498,6 +1498,10 @@ l'instant » n'écrit rien : le moteur est déterministe, et la proposition revi
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.
 
+Un match apparié à la main sans numéro de table prend la première table libre.
+Si la salle est pleine, il est lancé quand même et sa case apparaît au bout de
+la grille, « sans table », jusqu'à ce qu'on le déplace sur une table.
+
 Une proposition peut porter une remarque du moteur : aucune table libre, ou une
 fin de match attendue pendant une pause. Elle reste lançable dans les deux cas.
 Lorsqu'une phase fonctionne par **micro-rondes**, la file montre le temps qui
@@ -1570,6 +1574,11 @@ CSV, dans la langue de l'interface.
 L'onglet **Historique** est le journal en clair : une ligne par décision, dans
 l'ordre, filtrable par joueur ou par match. C'est ce qu'un directeur relit après
 une contestation, et c'est là qu'une décision ancienne se corrige ou s'annote.
+
+**Corriger**, sur la ligne d'un résultat, ouvre sous elle la même reprise que la
+dernière décision : cliquer le bon vainqueur, avec le score s'il faut. Le
+résultat d'origine reste à sa place dans le journal, la correction s'y ajoute,
+et le classement en tient compte aussitôt.
 
 Les réglages
 ~~~~~~~~~~~~

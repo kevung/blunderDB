@@ -1,3 +1,4 @@
+import { isOnBoard } from './boardArea.js';
 import { get } from 'svelte/store';
 import { rankNeighboursOfCurrentPosition } from './rankService.js';
 import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
@@ -169,7 +170,7 @@ export function pinnedFilterDigit(event) {
 function isFocusOnBoard() {
     const active = document.activeElement;
     if (!active || active === document.body) return true;
-    return !!active.closest('.scrollable-content');
+    return isOnBoard(active);
 }
 
 export function toggleHelpModal() {

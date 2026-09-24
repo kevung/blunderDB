@@ -358,11 +358,6 @@
         }
     }
 
-    /* Corriger depuis l'historique : la fiche vit sur la grille des tables, donc on y ramène. */
-    function correctFromHistory() {
-        tab = 'direction';
-    }
-
     /* Cliquer une place de l'arbre ramène à la page Direction, où le match se saisit : la
        fiche de résultat vit sur la grille des tables, et il n'y en a qu'une. */
     /** @param {{ matchId?: string }} m */
@@ -521,7 +516,7 @@
         {:else if tab === 'standings'}
             <StandingsView view={ranking} {busy} {onClose} {onReopen} {onCSV} />
         {:else if tab === 'history'}
-            <HistoryView {entries} {busy} onCorrect={correctFromHistory} {onCancel} {onNote} />
+            <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
@@ -612,7 +607,7 @@
 
     /* La feuille d'appariements se demande dans l'en-tête de la grille, sans barre à elle :
        c'est un geste de quelques fois par tournoi, et une ligne de plus au-dessus des tables
-       coûtait 33 px sur les ~390 qu'a la page à 768 px de haut (#440). */
+       coûtait 33 px sur les ~390 qu'a la page à 768 px de haut (issue 440). */
     .sheet {
         display: flex;
         align-items: center;
