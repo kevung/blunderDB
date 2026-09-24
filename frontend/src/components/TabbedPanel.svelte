@@ -19,6 +19,7 @@
     import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
     import { logger } from '../utils/logger.js';
     import { applyTabOrder, normalizeTabId } from '../services/tabOrder.js';
+    import { TABS } from '../services/tabCatalog.js';
     import ContextMenu from './ContextMenu.svelte';
 
     import AnalysisPanel from './AnalysisPanel.svelte';
@@ -37,27 +38,12 @@
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
-    // Canonical tab list: ids, labels, icons, shortcuts. `tabs` below is this
+    // Canonical tab list: ids, labels, icons, shortcuts — stated once in
+    // tabCatalog.js, which the command palette reads too. `tabs` below is this
     // same set of objects, only ever reordered (never mutated per-field) —
     // GetTabOrder()/dragging reshuffle it, GetHiddenTabs() doesn't touch it at
     // all (hiddenIds is the filter applied at render time, see visibleTabs).
-    const DEFAULT_TABS = [
-        { id: 'matches', labelKey: 'tabbedPanel.matches', icon: 'matches', shortcut: 'Ctrl+Tab' },
-        { id: 'tournaments', labelKey: 'tabbedPanel.tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
-        { id: 'collections', labelKey: 'tabbedPanel.collections', icon: 'collections', shortcut: 'Ctrl+B' },
-        { id: 'search', labelKey: 'tabbedPanel.search', icon: 'search', shortcut: 'Ctrl+F' },
-        { id: 'analysis', labelKey: 'tabbedPanel.analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
-        { id: 'comments', labelKey: 'tabbedPanel.comments', icon: 'comments', shortcut: 'Ctrl+P' },
-        { id: 'eval', labelKey: 'tabbedPanel.eval', icon: 'eval', shortcut: 'Ctrl+E' },
-        // Entraînement entre Eval et Anki : l'ordre est celui de « calculer /
-        // retenir » (ADR-0040 règle 1). Anki fait réviser ce qui se RETIENT,
-        // l'Entraînement fait travailler ce qui se CALCULE.
-        { id: 'training', labelKey: 'tabbedPanel.training', icon: 'training', shortcut: 'Ctrl+J' },
-        { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
-        { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
-        { id: 'transcription', labelKey: 'tabbedPanel.transcription', icon: 'transcription', shortcut: 'Ctrl+Maj+T' },
-        { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }
-    ];
+    const DEFAULT_TABS = TABS;
 
     let tabs = $state([...DEFAULT_TABS]);
     // A SvelteSet is reactive on its own (add/delete/clear notify, like a

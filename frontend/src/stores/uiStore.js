@@ -22,6 +22,14 @@ export const activeTabStore = writable('matches');
 // Whether the command input is active in the status bar
 export const showCommandInputStore = writable(false);
 
+// Whether the command palette (Ctrl+Maj+P, #287) is open — CommandPalette.svelte.
+export const commandPaletteOpenStore = writable(false);
+
+// A match someone asked to open from outside the match panel (the command
+// palette): its id, until MatchPanel has loaded its list and opened it.
+/** @type {import('svelte/store').Writable<number | null>} */
+export const matchOpenRequestStore = writable(null);
+
 export const currentPositionIndexStore = writable(0);
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──

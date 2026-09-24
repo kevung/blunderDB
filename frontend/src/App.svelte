@@ -77,6 +77,7 @@
 
     // Components
     import Toolbar from './components/Toolbar.svelte';
+    import CommandPalette from './components/CommandPalette.svelte';
     import Board from './components/Board.svelte';
     import DirectionView from './components/direction/DirectionView.svelte';
     import { directionPageShownStore } from './stores/directionStore';
@@ -541,6 +542,8 @@
     </div>
 
     <ModalHost />
+
+    <CommandPalette />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 </main>

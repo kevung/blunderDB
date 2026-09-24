@@ -177,6 +177,9 @@ export default {
 <div class="admonition tip">
 <p>Consulte la lista de comandos para ver la lista de comandos disponibles en la línea de comandos.</p>
 </div>
+<h3>La paleta de comandos</h3>
+<p>La paleta de comandos (<em>CTRL-MAYÚS-P</em>) encuentra por un nombre aproximado lo que ya no se sabe dónde buscar: un comando de la línea de comandos, una pestaña, un filtro de la biblioteca o un match. Las letras tecleadas deben aparecer en orden, no necesariamente juntas, sin distinguir mayúsculas ni acentos: «mtzcb» encuentra la matriz del cubo, «lyon» los matches de un torneo de Lyon.</p>
+<p>Las flechas eligen, <em>INTRO</em> ejecuta, <em>ESC</em> cierra. Un comando se ejecuta como si se hubiera tecleado; <code>s</code> y <code>ss</code> abren la línea de comandos para escribir en ella los filtros; un filtro se ejecuta como con un doble clic en la biblioteca; un match se abre como con un doble clic en el panel de matches.</p>
 <h3>Panel de Análisis</h3>
 <p>El panel <strong>Análisis</strong> (<em>CTRL-L</em>) muestra los datos de análisis de la posición actual importados desde eXtreme Gammon (XG), GNUbg o BGBlitz. Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) con sus valores de equidad y los errores correspondientes. La tecla <em>d</em> alterna entre el análisis de las jugadas de fichas y el análisis del cubo. Durante la navegación por una partida, la jugada realmente jugada se resalta en la lista de alternativas. Pulse <em>CTRL-L</em> o ejecute el comando <code>list</code> para mostrar u ocultar el panel.</p>
 <p>Bajo las tablas, una <strong>frase</strong> dice a veces lo que costó la decisión jugada y por qué: «Pierde 120 mMWC: la jugada realizada deja tres fichas sueltas donde 13/7 8/7 solo deja una.» Procede de seis reglas medibles — la exposición, un punto de la casa hecho o perdido, las posibilidades de gammon abandonadas, una seguridad que cuesta más de lo que aporta, y los dos sentidos de un error de cubo (doblar demasiado tarde o demasiado pronto, aceptar demasiado amplio o pasar demasiado estricto).</p>
@@ -1030,6 +1033,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Mostrar/ocultar los comentarios.</td>
+</tr>
+<tr>
+<td>CTRL-MAYÚS-P</td>
+<td>Abrir/cerrar la paleta de comandos: comandos, pestañas, filtros y matches, encontrados por un nombre aproximado.</td>
 </tr>
 <tr>
 <td>CTRL-J</td>

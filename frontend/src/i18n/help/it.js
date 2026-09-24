@@ -177,6 +177,9 @@ export default {
 <div class="admonition tip">
 <p>Fare riferimento a elenco dei comandi per l'elenco dei comandi disponibili nella riga di comando.</p>
 </div>
+<h3>La tavolozza dei comandi</h3>
+<p>La tavolozza dei comandi (<em>CTRL-MAIUSC-P</em>) ritrova con un nome approssimativo ciò che non si sa più dove cercare: un comando della riga di comando, una scheda, un filtro della libreria o un match. Le lettere digitate devono comparire nell'ordine, non necessariamente attaccate, senza badare a maiuscole e accenti: «mtrcb» trova la matrice del cubo, «lyon» i match di un torneo di Lione.</p>
+<p>Le frecce scelgono, <em>INVIO</em> esegue, <em>ESC</em> chiude. Un comando si esegue come se fosse stato digitato; <code>s</code> e <code>ss</code> aprono la riga di comando per scriverci i filtri; un filtro si esegue come con un doppio clic nella libreria; un match si apre come con un doppio clic nel pannello Match.</p>
 <h3>Pannello Analisi</h3>
 <p>Il pannello <strong>Analisi</strong> (<em>CTRL-L</em>) visualizza i dati di analisi della posizione corrente importati da eXtreme Gammon (XG), GNUbg o BGBlitz. Mostra le migliori alternative (mosse di pedine o decisioni di cubo) con i relativi valori di equity e gli errori corrispondenti. Il tasto <em>d</em> alterna tra l'analisi delle mosse di pedine e l'analisi del cubo. Durante la navigazione in un match, la mossa effettivamente giocata viene evidenziata nell'elenco delle alternative. Premere <em>CTRL-L</em> o eseguire il comando <code>list</code> per mostrare o nascondere il pannello.</p>
 <p>Sotto le tabelle, una <strong>frase</strong> dice a volte quanto è costata la decisione giocata e perché: «Perdi 120 mMWC: la mossa giocata lascia tre pedine scoperte dove 13/7 8/7 ne lascia solo una.» Viene da sei regole misurabili — l'esposizione, un punto di casa fatto o mancato, le probabilità di gammon abbandonate, una sicurezza che costa più di quanto renda, e i due sensi di un errore di cubo (raddoppiare troppo tardi o troppo presto, prendere troppo largo o passare troppo stretto).</p>
@@ -1030,6 +1033,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Mostra/nascondi i commenti.</td>
+</tr>
+<tr>
+<td>CTRL-MAIUSC-P</td>
+<td>Aprire/chiudere la tavolozza dei comandi: comandi, schede, filtri e match, ritrovati con un nome approssimativo.</td>
 </tr>
 <tr>
 <td>CTRL-J</td>

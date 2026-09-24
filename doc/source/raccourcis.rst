@@ -107,6 +107,7 @@ Outils
    "CTRL-L", "Afficher/cacher l'analyse."
    "CTRL-MAJ-L", "Classer les positions voisines de la position courante."
    "CTRL-P", "Afficher/cacher les commentaires."
+   "CTRL-MAJ-P", "Ouvrir/fermer la palette de commandes : commandes, onglets, filtres et matchs, retrouvés par un nom approché."
    "CTRL-J", "Afficher/cacher le panneau Entraînement."
    "CTRL-K", "Afficher/cacher le panneau Anki (répétition espacée)."
    "CTRL-F", "Afficher/cacher le panneau de recherche."

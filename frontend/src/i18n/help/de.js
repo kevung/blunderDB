@@ -177,6 +177,9 @@ export default {
 <div class="admonition tip">
 <p>Siehe Liste der Befehle für die Liste der in der Befehlszeile verfügbaren Befehle.</p>
 </div>
+<h3>Die Befehlspalette</h3>
+<p>Die Befehlspalette (<em>STRG-UMSCHALT-P</em>) findet über einen ungefähren Namen, wonach man nicht mehr zu suchen weiß: einen Befehl der Befehlszeile, einen Reiter, einen Filter der Bibliothek oder ein Match. Die getippten Buchstaben müssen in der richtigen Reihenfolge vorkommen, nicht unbedingt nebeneinander, ohne Rücksicht auf Groß- und Kleinschreibung oder Akzente: „dpmtx“ findet die Doppelwürfel-Matrix, „lyon“ die Matches eines Turniers in Lyon.</p>
+<p>Die Pfeiltasten wählen, <em>EINGABE</em> führt aus, <em>ESC</em> schließt. Ein Befehl läuft, als wäre er getippt worden; <code>s</code> und <code>ss</code> öffnen die Befehlszeile, um die Filter dort einzugeben; ein Filter läuft wie nach einem Doppelklick in der Bibliothek; ein Match öffnet sich wie nach einem Doppelklick im Match-Bereich.</p>
 <h3>Analyse-Panel</h3>
 <p>Das Panel <strong>Analyse</strong> (<em>CTRL-L</em>) zeigt die Analysedaten der aktuellen Stellung an, importiert aus eXtreme Gammon (XG), GNUbg oder BGBlitz. Es stellt die besten Alternativen (Steinzüge oder Doppler-Entscheidungen) mit ihren Equity-Werten und den entsprechenden Fehlern dar. Die Taste <em>d</em> schaltet zwischen der Analyse der Steinzüge und der Analyse des Dopplers um. Beim Navigieren in einem Match wird der tatsächlich gespielte Zug in der Liste der Alternativen hervorgehoben. Drücken Sie <em>CTRL-L</em> oder führen Sie den Befehl <code>list</code> aus, um das Panel ein- oder auszublenden.</p>
 <p>Unter den Tabellen sagt manchmal ein <strong>Satz</strong>, was die gespielte Entscheidung gekostet hat und warum: „Sie verlieren 120 mMWC: Der gespielte Zug lässt drei Blots stehen, 13/7 8/7 nur einen.“ Er stammt aus sechs messbaren Regeln — Blößen, ein gemachter oder verpasster Heimfeldpunkt, aufgegebene Gammon-Chancen, eine Sicherheit, die mehr kostet als sie bringt, und die beiden Richtungen eines Verdopplungsfehlers (zu spät oder zu früh doppeln, zu locker annehmen oder zu eng aufgeben).</p>
@@ -1030,6 +1033,10 @@ export default {
 <tr>
 <td>STRG-P</td>
 <td>Die Kommentare ein-/ausblenden.</td>
+</tr>
+<tr>
+<td>STRG-UMSCHALT-P</td>
+<td>Befehlspalette öffnen/schließen: Befehle, Reiter, Filter und Matches, über einen ungefähren Namen gefunden.</td>
 </tr>
 <tr>
 <td>CTRL-J</td>

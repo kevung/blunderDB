@@ -47,6 +47,9 @@ const DYNAMIC_PREFIXES = [
     'stats.gameType_',
     'training.exercise.',
     'training.sources.',
+    // La palette de commandes décrit chaque commande du vocabulaire par
+    // `palette.cmd.<nom>` (commandPalette.js, commandLabelKey).
+    'palette.cmd.',
     // Le panneau Transcription nomme une Incohérence par sa sorte, telle que le
     // moteur la rend : `$t(`transcription.inconsistency.${i.kind}`)`.
     'transcription.inconsistency.',

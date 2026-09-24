@@ -177,6 +177,9 @@ export default {
 <div class="admonition tip">
 <p>Refer to list of commands for the list of available commands in the command line.</p>
 </div>
+<h3>The command palette</h3>
+<p>The command palette (<em>CTRL-SHIFT-P</em>) finds, by an approximate name, what you no longer know where to look for: a command of the command line, a tab, a filter of the library or a match. The letters typed must appear in order, not necessarily next to each other, regardless of case and accents: “cbmtx” finds the cube matrix, “lyon” the matches of a tournament in Lyon.</p>
+<p>The arrows choose, <em>ENTER</em> runs, <em>ESC</em> closes. A command runs as if it had been typed; <code>s</code> and <code>ss</code> open the command line to write the filters in it; a filter runs as from a double-click in the library; a match opens as from a double-click in the Matches panel.</p>
 <h3>Analysis Panel</h3>
 <p>The <strong>Analysis</strong> panel (<em>CTRL-L</em>) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, or BGBlitz. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The <em>d</em> key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press <em>CTRL-L</em> or run the <code>list</code> command to show or hide the panel.</p>
 <p>Under the tables, a <strong>sentence</strong> sometimes says what the played decision cost and why: “You lose 120 mMWC: the move played leaves three blots where 13/7 8/7 leaves only one.” It comes from six measurable rules — exposure, a home point made or missed, gammon chances given up, a safety that costs more than it earns, and the two directions of a cube error (doubling too late or too early, taking too loose or passing too tight).</p>
@@ -1030,6 +1033,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Show/hide the comments.</td>
+</tr>
+<tr>
+<td>CTRL-SHIFT-P</td>
+<td>Open/close the command palette: commands, tabs, filters and matches, found by an approximate name.</td>
 </tr>
 <tr>
 <td>CTRL-J</td>

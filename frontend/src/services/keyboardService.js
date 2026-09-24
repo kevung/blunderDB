@@ -41,6 +41,7 @@ import { undoTranscription } from './transcriptionService.js';
 import { exportDatabase } from './exportService.js';
 import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './clipboardService.js';
 import { runPinnedFilter } from './filterLibraryService.js';
+import { toggleCommandPalette } from './commandPalette.js';
 
 let lastCtrlXTime = 0;
 
@@ -454,6 +455,14 @@ export function handleKeyDown(event) {
         event.preventDefault();
         if (showComment) toggleCommentPanel();
         toggleAnalysisPanel();
+    } else if (event.ctrlKey && event.shiftKey && letter('p')) {
+        // Ctrl+Maj+P : la palette de commandes (#287). Testé AVANT Ctrl+P, qui
+        // n'exclut pas Maj — sans quoi elle ouvrirait les commentaires.
+        // Ctrl+K, la convention d'autres outils, est le panneau Anki ici ; la
+        // palette prend celle de VS Code et de Sublime Text, libre dans
+        // blunderDB comme dans WebKitGTK et WebView2.
+        event.preventDefault();
+        toggleCommandPalette();
     } else if (event.ctrlKey && letter('p')) {
         event.preventDefault();
         toggleCommentPanel();

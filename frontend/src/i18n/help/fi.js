@@ -177,6 +177,9 @@ export default {
 <div class="admonition tip">
 <p>Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta komentoluettelo.</p>
 </div>
+<h3>Komentopaletti</h3>
+<p>Komentopaletti (<em>CTRL-SHIFT-P</em>) löytää likimääräisellä nimellä sen, mitä ei enää tiedä mistä etsiä: komentorivin komennon, välilehden, kirjaston suodattimen tai ottelun. Kirjoitettujen kirjainten on esiinnyttävä järjestyksessä, ei välttämättä vierekkäin, isoista kirjaimista ja aksenteista välittämättä: ”kmtrs” löytää kuutiomatriisin, ”lyon” Lyonin turnauksen ottelut.</p>
+<p>Nuolinäppäimet valitsevat, <em>ENTER</em> suorittaa, <em>ESC</em> sulkee. Komento suoritetaan kuin se olisi kirjoitettu; <code>s</code> ja <code>ss</code> avaavat komentorivin suodattimien kirjoittamista varten; suodatin suoritetaan kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin kaksoisnapsautuksella Otteluiden paneelissa.</p>
 <h3>Analyysipaneeli</h3>
 <p><strong>Analyysipaneeli</strong> (<em>CTRL-L</em>) näyttää nykyisen aseman analyysitiedot, jotka on tuotu lähteistä eXtreme Gammon (XG), GNUbg tai BGBlitz. Se esittää parhaat vaihtoehdot (pelinappulasiirrot tai kuutiopäätökset) niiden ekviteettiarvoineen ja vastaavine virheineen. <em>d</em>-näppäin vaihtaa pelinappulasiirtojen analyysin ja kuutioanalyysin välillä. Ottelussa navigoitaessa todella pelattu siirto korostetaan vaihtoehtojen luettelossa. Näytä tai piilota paneeli painamalla <em>CTRL-L</em> tai suorittamalla komento <code>list</code>.</p>
 <p>Taulukoiden alla <strong>lause</strong> kertoo joskus, mitä pelattu päätös maksoi ja miksi: ”Menetät 120 mMWC: pelattu siirto jättää kolme yksinäistä nappulaa, kun 13/7 8/7 jättää vain yhden.” Se syntyy kuudesta mitattavasta säännöstä — alttiudesta, tehdystä tai menetetystä kotipisteestä, luovutetuista gammon-mahdollisuuksista, turvallisuudesta joka maksaa enemmän kuin tuottaa, ja kuutiovirheen kahdesta suunnasta (tuplaus liian myöhään tai liian aikaisin, liian löysä hyväksyntä tai liian tiukka luovutus).</p>
@@ -1030,6 +1033,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Näytä/piilota kommentit.</td>
+</tr>
+<tr>
+<td>CTRL-SHIFT-P</td>
+<td>Avaa/sulje komentopaletti: komennot, välilehdet, suodattimet ja ottelut likimääräisellä nimellä.</td>
 </tr>
 <tr>
 <td>CTRL-J</td>

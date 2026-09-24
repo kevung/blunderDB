@@ -604,6 +604,23 @@ de l'utilisateur.
 .. tip:: Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de commandes
    disponible en ligne de commande.
 
+.. _palette_commandes:
+
+La palette de commandes
+-----------------------
+
+La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce que
+l'on ne sait plus où chercher : une commande de la ligne de commande, un
+onglet, un filtre de la bibliothèque ou un match. Les lettres tapées doivent
+apparaître dans l'ordre, pas forcément côte à côte, et sans égard aux
+majuscules ni aux accents : « mtrc » trouve la matrice du videau, « lyon » les
+matchs d'un tournoi de Lyon.
+
+Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se lance
+comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne de commande
+pour y écrire les filtres ; un filtre se lance comme d'un double-clic dans la
+bibliothèque ; un match s'ouvre comme d'un double-clic dans le panneau Matchs.
+
 .. _panneau_analyse:
 
 Panneau Analyse

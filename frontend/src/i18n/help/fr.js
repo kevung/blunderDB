@@ -177,6 +177,9 @@ export default {
 <div class="admonition tip">
 <p>Se référer à la liste des commandes pour la liste de commandes disponible en ligne de commande.</p>
 </div>
+<h3>La palette de commandes</h3>
+<p>La palette de commandes (<em>CTRL-MAJ-P</em>) retrouve par un nom approché ce que l'on ne sait plus où chercher : une commande de la ligne de commande, un onglet, un filtre de la bibliothèque ou un match. Les lettres tapées doivent apparaître dans l'ordre, pas forcément côte à côte, et sans égard aux majuscules ni aux accents : « mtrc » trouve la matrice du videau, « lyon » les matchs d'un tournoi de Lyon.</p>
+<p>Les flèches choisissent, <em>ENTREE</em> lance, <em>ECHAP</em> referme. Une commande se lance comme si elle avait été tapée ; <code>s</code> et <code>ss</code> ouvrent la ligne de commande pour y écrire les filtres ; un filtre se lance comme d'un double-clic dans la bibliothèque ; un match s'ouvre comme d'un double-clic dans le panneau Matchs.</p>
 <h3>Panneau Analyse</h3>
 <p>Le panneau <strong>Analyse</strong> (<em>CTRL-L</em>) affiche les données d'analyse de la position courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente les meilleures alternatives (coups de pions ou décisions de videau) avec leurs valeurs d'équité et les erreurs correspondantes. La touche <em>d</em> bascule entre l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste des alternatives. Appuyer sur <em>CTRL-L</em> ou exécuter la commande <code>list</code> pour afficher ou masquer le panneau.</p>
 <p>Sous les tableaux, une <strong>phrase</strong> dit parfois ce que la décision jouée a coûté et pourquoi : « Vous perdez 120 mMWC : le coup joué laisse trois blots là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles mesurables — l'exposition, un point du jan fait ou manqué, les chances de gammon abandonnées, une sécurité qui coûte plus qu'elle ne rapporte, et les deux sens d'une erreur de videau (doubler trop tard ou trop tôt, prendre trop large ou passer trop serré).</p>
@@ -1030,6 +1033,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Afficher/cacher les commentaires.</td>
+</tr>
+<tr>
+<td>CTRL-MAJ-P</td>
+<td>Ouvrir/fermer la palette de commandes : commandes, onglets, filtres et matchs, retrouvés par un nom approché.</td>
 </tr>
 <tr>
 <td>CTRL-J</td>

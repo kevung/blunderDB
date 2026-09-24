@@ -39,7 +39,8 @@
         dbMutationCounterStore,
         positionReloadTriggerStore,
         statusBarTextStore,
-        activeTabStore
+        activeTabStore,
+        matchOpenRequestStore
     } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore, isAnyModalOpen } from '../stores/uiStore';
@@ -51,6 +52,8 @@
 
     let matches = $state([]);
     let selectedMatch = $state(null);
+    // A match requested from the command palette is being opened (#287).
+    let openingRequested = false;
     const visible = $derived($openPanels.has(PANEL.MATCH));
     const databaseLoaded = $derived($databaseLoadedStore);
     let lastVisitedMatch = $derived($lastVisitedMatchStore);
@@ -127,6 +130,7 @@
         if (untrack(() => !visible || !databaseLoaded)) return;
         loadMatches().then(() => {
             const lvm = lastVisitedMatch;
+            if (openingRequested) return; // the command palette's match wins (#287)
             if (lvm && lvm.matchID) {
                 const m = matches.find((mm) => mm.id === lvm.matchID);
                 if (m) {
@@ -149,6 +153,7 @@
                 if (opened && databaseLoaded) {
                     loadMatches().then(() => {
                         const lvm = lastVisitedMatch;
+                        if (openingRequested) return; // the command palette's match wins (#287)
                         if (lvm && lvm.matchID) {
                             const m = matches.find((mm) => mm.id === lvm.matchID);
                             if (m) {
@@ -510,6 +515,32 @@
     function handleDoubleClick(match) {
         enterMatchMode(match);
     }
+
+    // A match asked for from outside the panel — the command palette (#287) —
+    // opens as a double-click on its row would, once the list holding it is
+    // loaded. The request is consumed either way: a match deleted since the
+    // palette listed it is said so, not retried.
+    $effect(() => {
+        const requested = $matchOpenRequestStore;
+        if (requested == null || !visible || matches.length === 0) return;
+        untrack(() => {
+            matchOpenRequestStore.set(null);
+            const match = matches.find((m) => m.id === requested);
+            if (!match) {
+                statusBarTextStore.set(tMsg('palette.matchGone'));
+                return;
+            }
+            selectedMatch = match;
+            // The detail of another match may be the one loaded: load this
+            // one's before entering it, never reuse the previous moves. The
+            // flag keeps the list's own "reselect the last visited match"
+            // from loading another detail over this one meanwhile.
+            openingRequested = true;
+            loadMatchDetail(match)
+                .then(() => enterMatchMode(match))
+                .finally(() => (openingRequested = false));
+        });
+    });
 
     async function deleteMatchEntry(match, event) {
         event.stopPropagation();
