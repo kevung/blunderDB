@@ -209,6 +209,10 @@ export namespace database {
 	
 	export class ClockView {
 	    elapsedSeconds: number;
+	    playingSeconds: number;
+	    day: number;
+	    estimatedEnd?: string;
+	    finished: boolean;
 	    played: number;
 	    running: number;
 	    minutesPerPoint: number;
@@ -224,6 +228,10 @@ export namespace database {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.elapsedSeconds = source["elapsedSeconds"];
+	        this.playingSeconds = source["playingSeconds"];
+	        this.day = source["day"];
+	        this.estimatedEnd = source["estimatedEnd"];
+	        this.finished = source["finished"];
 	        this.played = source["played"];
 	        this.running = source["running"];
 	        this.minutesPerPoint = source["minutesPerPoint"];

@@ -8,8 +8,14 @@
      * C'est une LIGNE DE TEXTE, pas un tableau de bord. Rien ne clignote, il n'y a pas de son,
      * et les avertissements sont un compteur cliquable qui amène à l'objet concerné plutôt
      * qu'une fenêtre qui interrompt.
+     *
+     * Ce qu'elle affiche sur plusieurs jours (#456) : le JOUR de jeu et le TEMPS DE JEU — le
+     * temps pendant lequel au moins un match tournait (direction.PlayingTime) — au lieu du
+     * temps écoulé, qui comptait les nuits comme du jeu. La fin estimée est celle du moteur
+     * (sim.Forecast), et une heure qui n'est pas d'aujourd'hui porte son jour. Une Direction
+     * close n'a plus rien à annoncer : la bande disparaît.
      */
-    import { t } from '../../i18n';
+    import { t, language } from '../../i18n';
 
     /**
      * @type {{
@@ -28,7 +34,7 @@
         return () => clearInterval(timer);
     });
 
-    const hhmm = $derived(now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
+    const hhmm = $derived(now.toLocaleTimeString($language, { hour: '2-digit', minute: '2-digit' }));
 
     /** @param {number | undefined} seconds */
     function duration(seconds) {
@@ -38,18 +44,28 @@
         return h > 0 ? `${h} h ${String(m).padStart(2, '0')}` : `${m} min`;
     }
 
-    /** @param {string | undefined} iso */
+    /**
+     * Une heure, précédée de son jour quand ce n'est pas aujourd'hui : « pause à 12:30 »,
+     * « fin estimée : ven. 02:00 ».
+     *
+     * @param {string | undefined} iso
+     */
     function at(iso) {
         if (!iso) return '';
         const d = new Date(iso);
-        return Number.isNaN(d.getTime()) ? '' : d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+        if (Number.isNaN(d.getTime())) return '';
+        const time = d.toLocaleTimeString($language, { hour: '2-digit', minute: '2-digit' });
+        if (d.toDateString() === now.toDateString()) return time;
+        return `${d.toLocaleDateString($language, { weekday: 'short' })} ${time}`;
     }
 </script>
 
-{#if clock}
+{#if clock && !clock.finished}
     <div class="clock">
         <span class="time">{hhmm}</span>
-        {#if clock.elapsedSeconds}
+        {#if clock.day > 1}
+            <span data-testid="direction-clock-played">&middot; {$t('direction.clock.day', { n: clock.day })} &middot; {$t('direction.clock.playing', { d: duration(clock.playingSeconds) })}</span>
+        {:else if clock.elapsedSeconds}
             <span>&middot; {duration(clock.elapsedSeconds)}</span>
         {/if}
         <span
@@ -70,7 +86,10 @@
             <span class="warn">&middot; {$t('direction.clock.slow', { n: clock.slowMatches })}</span>
         {/if}
         {#if clock.nextBreak}
-            <span>&middot; {$t('direction.clock.break', { at: at(clock.nextBreak) })}</span>
+            <span data-testid="direction-clock-break">&middot; {$t('direction.clock.break', { at: at(clock.nextBreak) })}</span>
+        {/if}
+        {#if clock.estimatedEnd}
+            <span data-testid="direction-clock-end" title={$t('direction.clock.endHint')}>&middot; {$t('direction.clock.end', { at: at(clock.estimatedEnd) })}</span>
         {/if}
         <span class="grow"></span>
         {#if warnings > 0}

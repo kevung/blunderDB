@@ -2035,7 +2035,11 @@
             "pace": "{observed} min/piste (arvio {planned})",
             "slow": "{n} hidasta",
             "break": "tauko klo {at}",
-            "warnings": "{n}"
+            "warnings": "{n}",
+            "day": "päivä {n}",
+            "playing": "{d} peliä",
+            "end": "arvioitu loppu: {at}",
+            "endHint": "Moottorin ennuste suunnitellulla tahdilla, ilmoitettujen taukojen jälkeen. Yö, jota ei ole ilmoitettu tauoksi, lasketaan peliajaksi."
         },
         "pending": "{n} ehdotusta odottaa",
         "credit": {

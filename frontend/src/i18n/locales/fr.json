@@ -2035,7 +2035,11 @@
             "pace": "{observed} min/pt (prévu {planned})",
             "slow": "{n} lent(s)",
             "break": "pause à {at}",
-            "warnings": "{n}"
+            "warnings": "{n}",
+            "day": "jour {n}",
+            "playing": "{d} de jeu",
+            "end": "fin estimée : {at}",
+            "endHint": "La prévision du moteur au rythme prévu, après les pauses déclarées. Une nuit qui n'est pas déclarée comme pause compte comme du jeu."
         },
         "pending": "{n} propositions en attente",
         "credit": {

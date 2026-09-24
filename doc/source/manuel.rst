@@ -1491,6 +1491,21 @@ jamais rien ; la **grille des tables**, dont l'en-tête porte le bouton
 des propositions** ; et les joueurs libres. La grille précède la file : une file
 longue ne la pousse jamais hors de l'écran.
 
+En tête de la vue tournoi, la **bande d'horloge** tient en une ligne : l'heure,
+le temps écoulé depuis le premier match lancé, les matchs joués et en cours, le
+rythme observé en minutes par point face au rythme prévu, les matchs lents, la
+prochaine pause et la **fin estimée**. La fin estimée est la prévision du
+moteur : il rejoue le journal, termine le tournoi quinze fois au rythme prévu,
+et la bande en donne la médiane, repoussée après les pauses déclarées. Une nuit
+qui n'est pas déclarée comme pause compte donc comme du jeu. Une heure qui
+n'est pas celle du jour porte son jour.
+
+À partir du deuxième jour, le temps écoulé laisse la place au **jour de jeu**
+(le jour du premier match lancé est le jour 1) et au **temps de jeu** : le
+temps pendant lequel au moins un match était en cours, sans les nuits ni les
+intervalles où aucune table ne jouait. Un tournoi clos n'a plus de bande
+d'horloge.
+
 Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** confirme
 la file entière en deux clics, après en avoir montré la liste ; *Confirmer* est
 en tête de cette liste. « Ignorer pour
