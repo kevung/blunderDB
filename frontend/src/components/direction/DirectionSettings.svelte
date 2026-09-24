@@ -98,6 +98,25 @@
     const isOpen = (/** @type {number} */ i) => i < opened;
     const openTitle = $derived($t('direction.settings.phaseOpened'));
 
+    /** @param {number} i */
+    function bracketFrozenTitle(i) {
+        return $t('direction.settings.bracketFrozen', { reason: renderLockReason($t, lockOf(i)?.reason) });
+    }
+
+    /* Décocher la consolante décoche ce qui n'existe que par elle : la réconciliation (le
+       vainqueur de la consolante rejoue celui du principal), et la recharge de celle-ci. */
+    /** @param {PhaseConfig} phase @param {boolean} on */
+    function setConsolation(phase, on) {
+        phase.consolation = on;
+        if (!on) setReconciliation(phase, false);
+    }
+
+    /** @param {PhaseConfig} phase @param {boolean} on */
+    function setReconciliation(phase, on) {
+        phase.reconciliation = on;
+        if (!on) phase.recharge = false;
+    }
+
     /** @param {(typeof namedConfigs)[number]} named */
     function pickNamed(named) {
         config = named.build(tournamentName || config?.name || '');
@@ -402,6 +421,57 @@
                                 />
                             </label>
                         {/if}
+                        {#if phase.kind === 'bracket'}
+                            <!-- La consolante et ce qui en dépend (#455). Elles comptent au
+                                 TIRAGE : après lui, elles sont grisées avec leur raison. Le
+                                 moteur accepte encore la consolante après le tirage sans rien
+                                 créer (PileOfCells/backgammon-tournoi#16) — l'interface ne la
+                                 propose donc plus, faute que le moteur la refuse. -->
+                            <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.consolationHint')}>
+                                <input
+                                    type="checkbox"
+                                    data-testid="direction-settings-consolation-{i + 1}"
+                                    checked={!!phase.consolation}
+                                    disabled={kindLocked(i)}
+                                    onchange={(e) => setConsolation(phase, e.currentTarget.checked)}
+                                />
+                                {$t('direction.settings.consolation')}
+                            </label>
+                            {#if phase.consolation}
+                                <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.reconciliationHint')}>
+                                    <input
+                                        type="checkbox"
+                                        data-testid="direction-settings-reconciliation-{i + 1}"
+                                        checked={!!phase.reconciliation}
+                                        disabled={kindLocked(i)}
+                                        onchange={(e) => setReconciliation(phase, e.currentTarget.checked)}
+                                    />
+                                    {$t('direction.settings.reconciliation')}
+                                </label>
+                                {#if phase.reconciliation}
+                                    <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.rechargeHint')}>
+                                        <input type="checkbox" data-testid="direction-settings-recharge-{i + 1}" bind:checked={phase.recharge} disabled={kindLocked(i)} />
+                                        {$t('direction.settings.recharge')}
+                                    </label>
+                                {/if}
+                            {/if}
+                            {#if kindLocked(i)}
+                                <span class="reason" data-testid="direction-settings-consolation-{i + 1}-frozen">{bracketFrozenTitle(i)}</span>
+                            {/if}
+                            {#if phase.consolation && !scaleText('conso')}
+                                <p class="facts wide" data-testid="direction-settings-conso-scale-hint">{$t('direction.settings.consoScaleHint')}</p>
+                            {/if}
+                        {/if}
+                        {#if phase.kind === 'round_robin'}
+                            <label title={kindLocked(i) ? kindTitle(i) : $t('direction.settings.groupSizeHint')}>
+                                {$t('direction.settings.groupSize')}
+                                <input type="number" min="2" max="16" data-testid="direction-settings-group-size-{i + 1}" bind:value={phase.group_size} disabled={kindLocked(i)} />
+                            </label>
+                            <label title={kindLocked(i) ? kindTitle(i) : $t('direction.settings.qualifiersHint')}>
+                                {$t('direction.settings.qualifiers')}
+                                <input type="number" min="1" max="16" data-testid="direction-settings-qualifiers-{i + 1}" bind:value={phase.qualifiers} disabled={kindLocked(i)} />
+                            </label>
+                        {/if}
                         {#if !isOpen(i) && (config.phases || []).length > 1}
                             <button type="button" class="link" onclick={() => removePhase(i)} title={$t('direction.settings.removePhaseHint')}>
                                 {$t('direction.settings.removePhase')}
@@ -420,6 +490,10 @@
             <label title={$t('direction.settings.tableCountHint')}>
                 {$t('direction.settings.tableCount')}
                 <input type="number" data-testid="direction-settings-tables" min="0" max="200" bind:value={config.tables.count} />
+            </label>
+            <label title={$t('direction.settings.minPerPointHint')}>
+                {$t('direction.settings.minPerPoint')}
+                <input type="number" min="1" max="30" step="0.5" data-testid="direction-settings-min-per-point" placeholder="8" bind:value={config.min_per_point} />
             </label>
             <label title={$t('direction.settings.unavailableHint')}>
                 {$t('direction.settings.unavailable')}

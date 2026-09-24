@@ -1632,15 +1632,27 @@ commencer ; les champs restent modifiables ensuite.
 
 Se règlent ici : les phases et leur longueur de match, les longueurs tour par
 tour d'un tableau (« 15, 13, 11 » se lit du dernier tour vers le premier), le
-nombre de tables, les pauses de la journée, la dotation (droit d'entrée, retenue
-du club, barème par section) et le dossier d'affichage.
+nombre de tables, le rythme prévu en minutes par point (8 par défaut ; la bande
+d'horloge et la fin estimée en partent), les pauses de la journée, la dotation
+(droit d'entrée, retenue du club, barème par section) et le dossier d'affichage.
+
+Un **tableau** a trois cases : **Consolante** (ses perdants jouent un second
+tableau, section à part au classement), **Réconciliation** (le vainqueur de la
+consolante joue celui du tableau principal ; la case n'apparaît qu'avec la
+consolante) et **Recharge** (en double élimination, le vainqueur du tableau
+principal doit être battu deux fois ; la case n'apparaît qu'avec la
+réconciliation). Une consolante n'a de classement à elle qu'avec un barème :
+tant que celui de la section *Consolante* est vide, les Réglages le rappellent.
+Une phase en **Poules** se règle par la taille des poules (4 par défaut) et le
+nombre de qualifiés par poule (2 par défaut).
 
 Les réglages restent accessibles **en cours de tournoi** : baisser la bascule à
-22 h pour finir plus tôt, ajouter une consolante le samedi soir. Deux choses
-seulement sont alors figées — le format d'une phase ouverte et le nombre de vies
-qu'elle a distribué — et elles sont grisées avec leur raison. Enregistrer en
-cours de tournoi montre d'abord la liste de ce qui va changer, et demande
-confirmation.
+22 h pour finir plus tôt, ajouter une consolante le samedi soir, tant que le
+tirage du tableau n'est pas fait. Ce qui est alors figé est grisé avec sa
+raison : le format d'une phase ouverte, le nombre de vies qu'elle a distribué
+et, dès le tirage d'une phase, sa consolante, sa réconciliation, sa recharge,
+la taille de ses poules et son nombre de qualifiés. Enregistrer en cours de
+tournoi montre d'abord la liste de ce qui va changer, et demande confirmation.
 
 Une table au plateau cassé se déclare dans **Tables hors service** : ses numéros,
 séparés par des virgules (« 7, 12 »). Le moteur ne l'attribue plus, et la grille

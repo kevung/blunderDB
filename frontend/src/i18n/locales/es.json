@@ -1801,7 +1801,21 @@
             "percent": "%",
             "percentHint": "Marcado: porcentajes del bote repartible. Sin marcar: importes fijos.",
             "seeding": "Cabezas de serie",
-            "seedingHint": "Desactivado por defecto: el estudio del motor concluye «sin cabezas de serie protegidas», que es la cultura actual del backgammon. Activado, los jugadores se colocan por valoración — el mejor y el segundo en mitades opuestas. El botón ⓘ lleva al estudio."
+            "seedingHint": "Desactivado por defecto: el estudio del motor concluye «sin cabezas de serie protegidas», que es la cultura actual del backgammon. Activado, los jugadores se colocan por valoración — el mejor y el segundo en mitades opuestas. El botón ⓘ lleva al estudio.",
+            "consolation": "Consolación",
+            "consolationHint": "Los perdedores del cuadro juegan un segundo cuadro, una sección aparte en la clasificación.",
+            "reconciliation": "Reconciliación",
+            "reconciliationHint": "El ganador de la consolación juega contra el ganador del cuadro principal (doble eliminación).",
+            "recharge": "Recarga",
+            "rechargeHint": "En doble eliminación, al ganador del cuadro principal hay que ganarle dos veces.",
+            "bracketFrozen": "Fijado: {reason}.",
+            "consoScaleHint": "La consolación solo tiene clasificación propia con un baremo: rellene «Consolación» en Premios.",
+            "groupSize": "Grupos de",
+            "groupSizeHint": "Jugadores por grupo. Vacío: 4.",
+            "qualifiers": "Clasificados",
+            "qualifiersHint": "Jugadores por grupo que pasan a la fase siguiente. Vacío: 2.",
+            "minPerPoint": "Ritmo (min/pto)",
+            "minPerPointHint": "Duración prevista de un punto, en minutos: la banda del reloj compara con ella el ritmo observado, y el fin estimado parte de ella. Vacío: 8."
         },
         "tabs": {
             "direction": "Dirección",

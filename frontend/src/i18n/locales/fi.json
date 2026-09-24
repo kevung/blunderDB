@@ -1801,7 +1801,21 @@
             "percent": "%",
             "percentHint": "Valittuna: prosentteja jaettavasta potista. Valitsematta: kiinteitä summia.",
             "seeding": "Sijoitukset",
-            "seedingHint": "Oletuksena pois: moottorin tutkimus päätyy siihen, ettei suojattuja sijoituksia käytetä, mikä on backgammonin nykyinen tapa. Päällä pelaajat sijoitetaan luokituksen mukaan — paras ja toiseksi paras vastakkaisiin puoliskoihin. ⓘ-painike vie tutkimukseen."
+            "seedingHint": "Oletuksena pois: moottorin tutkimus päätyy siihen, ettei suojattuja sijoituksia käytetä, mikä on backgammonin nykyinen tapa. Päällä pelaajat sijoitetaan luokituksen mukaan — paras ja toiseksi paras vastakkaisiin puoliskoihin. ⓘ-painike vie tutkimukseen.",
+            "consolation": "Lohdutuskaavio",
+            "consolationHint": "Kaavion hävinneet pelaavat toisen kaavion, oma osionsa sijoituksissa.",
+            "reconciliation": "Sovittelu",
+            "reconciliationHint": "Lohdutuskaavion voittaja pelaa pääkaavion voittajaa vastaan (tuplapudotus).",
+            "recharge": "Lataus",
+            "rechargeHint": "Tuplapudotuksessa pääkaavion voittaja on voitettava kahdesti.",
+            "bracketFrozen": "Lukittu: {reason}.",
+            "consoScaleHint": "Lohdutuskaaviolla on omat sijoituksensa vain palkintoasteikon kanssa: täytä ”Lohdutuskaavio” kohdassa Palkintopotti.",
+            "groupSize": "Lohkoissa",
+            "groupSizeHint": "Pelaajia lohkoa kohden. Tyhjä: 4.",
+            "qualifiers": "Jatkoon",
+            "qualifiersHint": "Pelaajat lohkoa kohden, jotka jatkavat seuraavaan vaiheeseen. Tyhjä: 2.",
+            "minPerPoint": "Tahti (min/piste)",
+            "minPerPointHint": "Pisteen suunniteltu kesto minuutteina: kellopalkki vertaa havaittua tahtia siihen, ja arvioitu loppu lähtee siitä. Tyhjä: 8."
         },
         "tabs": {
             "direction": "Johtaminen",

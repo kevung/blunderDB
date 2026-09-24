@@ -1801,7 +1801,21 @@
             "percent": "%",
             "percentHint": "Coché : des pourcentages du distribuable. Décoché : des montants fixes.",
             "seeding": "Têtes de série",
-            "seedingHint": "Éteint par défaut : l'étude du moteur conclut « pas de têtes de série protégées », qui est la culture actuelle du backgammon. Activé, les joueurs sont placés par cote — le meilleur et le deuxième dans des moitiés opposées. Le bouton ⓘ mène à l'étude."
+            "seedingHint": "Éteint par défaut : l'étude du moteur conclut « pas de têtes de série protégées », qui est la culture actuelle du backgammon. Activé, les joueurs sont placés par cote — le meilleur et le deuxième dans des moitiés opposées. Le bouton ⓘ mène à l'étude.",
+            "consolation": "Consolante",
+            "consolationHint": "Les perdants du tableau jouent un second tableau, section à part au classement.",
+            "reconciliation": "Réconciliation",
+            "reconciliationHint": "Le vainqueur de la consolante joue le vainqueur du tableau principal (double élimination).",
+            "recharge": "Recharge",
+            "rechargeHint": "En double élimination, le vainqueur du tableau principal doit être battu deux fois.",
+            "bracketFrozen": "Figé : {reason}.",
+            "consoScaleHint": "La consolante n'a de classement à elle qu'avec un barème : remplissez « Consolante » sous Dotation.",
+            "groupSize": "Poules de",
+            "groupSizeHint": "Nombre de joueurs par poule. Vide : 4.",
+            "qualifiers": "Qualifiés",
+            "qualifiersHint": "Nombre de qualifiés par poule pour la phase suivante. Vide : 2.",
+            "minPerPoint": "Rythme (min/pt)",
+            "minPerPointHint": "Durée prévue d'un point, en minutes : la bande d'horloge compare le rythme observé à celui-ci, et la fin estimée en part. Vide : 8."
         },
         "tabs": {
             "direction": "Direction",
