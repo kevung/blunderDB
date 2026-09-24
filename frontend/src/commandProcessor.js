@@ -110,7 +110,7 @@ export function processCommand(command) {
     } else if (command === 'direct') {
         // L'aller-retour entre la salle et le plateau (ADR-0047) : la vue tournoi occupe la
         // zone principale seulement quand cet onglet est actif ET qu'une Direction est ouverte.
-        callbacks.toggleDirectionPanel?.();
+        callbacks.toggleTournamentPanel?.();
     } else if (command === 'm') {
         callbacks.toggleMatchMode?.();
     } else if (command === 'met') {

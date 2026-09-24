@@ -337,7 +337,7 @@ export default {
 <p>La colonna <strong>PR</strong> di ogni torneo mostra il PR del <strong>giocatore di riferimento</strong> — vale a dire il giocatore presente nel maggior numero di partite del torneo (in caso di parità, quello che ha preso più decisioni). Il PR non mescola quindi il vostro gioco con quello dei vostri avversari: per i vostri tornei, riflette la vostra sola prestazione. Il nome del giocatore di riferimento appare in un suggerimento passando sopra il valore.</p>
 <h3>Dirigere un torneo</h3>
 <p>blunderDB sa <strong>dirigere</strong> un torneo, non soltanto archiviarlo. La direzione è retta dal motore <strong>Nicomaque</strong>, di Nicolas Harmand: è lui che tiene il formato, gli abbinamenti, i tabelloni e la classifica; blunderDB gli dà la sua interfaccia e conserva le sue partite. Il pulsante <strong>ⓘ</strong> della barra del pannello ricorda questo credito e porta al repository e alla documentazione del motore.</p>
-<p>Un torneo diretto si sceglie nel pannello Pannello Tornei (<em>CTRL-MAIUSC-D</em>, comando <code>direct</code>): aprire un torneo, poi <strong>Dirigi questo torneo</strong>. Un torneo già diretto mostra il suo stato accanto al nome e il pulsante diventa <strong>Apri</strong>. Finché una direzione è aperta, l'area principale mostra il torneo <strong>al posto del tavoliere</strong> — l'unica eccezione di blunderDB a questa regola; passare a qualsiasi altra scheda riporta il tavoliere.</p>
+<p>Un torneo diretto si sceglie nel pannello Pannello Tornei (<em>CTRL-Y</em>, comando <code>direct</code>): aprire un torneo, poi <strong>Dirigi questo torneo</strong>. Un torneo già diretto mostra il suo stato accanto al nome e il pulsante diventa <strong>Apri</strong>. Finché una direzione è aperta, l'area principale mostra il torneo <strong>al posto del tavoliere</strong> — l'unica eccezione di blunderDB a questa regola; passare a qualsiasi altra scheda riporta il tavoliere.</p>
 <p>Una direzione ha tre stati: <strong>in preparazione</strong> finché nessuna partita è stata lanciata, <strong>in corso</strong> poi, <strong>chiusa</strong> una volta congelata la classifica. Riaprire un torneo chiuso è possibile, e richiede una conferma: la classifica finale cessa di essere definitiva.</p>
 <p>Tutto ciò che viene deciso è scritto in un <strong>registro</strong>, e nient'altro lo è. La classifica, i tabelloni, le proposte e gli avvisi sono riprodotti da questo registro a ogni apertura: un'interruzione di corrente non costa nulla, e una correzione non cancella mai ciò che è accaduto — si aggiunge.</p>
 <h4>La pagina Direzione</h4>
@@ -1079,10 +1079,6 @@ export default {
 <tr>
 <td>CTRL-MAIUSC-T</td>
 <td>Mostra/nascondi il pannello Trascrizione (bozze di partite).</td>
-</tr>
-<tr>
-<td>CTRL-MAJ-D</td>
-<td>Mostra/nasconde il pannello Tornei per dirigere un torneo.</td>
 </tr>
 <tr>
 <td>J / K</td>

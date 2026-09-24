@@ -337,7 +337,7 @@ export default {
 <p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> — c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi (en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il reflète votre performance seule. Le nom du joueur de référence apparaît en infobulle au survol de la valeur.</p>
 <h3>Diriger un tournoi</h3>
 <p>blunderDB sait <strong>diriger</strong> un tournoi, et pas seulement le ranger. La direction est portée par le moteur <strong>Nicomaque</strong>, de Nicolas Harmand : c'est lui qui tient le format, les appariements, les tableaux et le classement ; blunderDB lui donne son interface et garde ses matchs. Le bouton <strong>ⓘ</strong> de la barre du panneau rappelle ce crédit et mène au dépôt et à la documentation du moteur.</p>
-<p>Un tournoi dirigé se choisit dans le panneau Panneau Tournois (<em>CTRL-MAJ-D</em>, commande <code>direct</code>) : ouvrir un tournoi, puis <strong>Diriger ce tournoi</strong>. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton devient <strong>Ouvrir</strong>. Tant qu'une direction est ouverte, la zone principale montre le tournoi <strong>à la place du plateau</strong> — c'est la seule exception de blunderDB à cette règle ; passer sur n'importe quel autre onglet ramène le plateau.</p>
+<p>Un tournoi dirigé se choisit dans le panneau Panneau Tournois (<em>CTRL-Y</em>, commande <code>direct</code>) : ouvrir un tournoi, puis <strong>Diriger ce tournoi</strong>. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton devient <strong>Ouvrir</strong>. Tant qu'une direction est ouverte, la zone principale montre le tournoi <strong>à la place du plateau</strong> — c'est la seule exception de blunderDB à cette règle ; passer sur n'importe quel autre onglet ramène le plateau.</p>
 <p>Une direction a trois états : <strong>en préparation</strong> tant qu'aucun match n'a été lancé, <strong>en cours</strong> ensuite, <strong>clos</strong> une fois le classement figé. Rouvrir un tournoi clos est possible, et demande une confirmation : le classement final cesse d'être final.</p>
 <p>Tout ce qui est décidé est écrit dans un <strong>journal</strong>, et rien d'autre ne l'est. Le classement, les arbres, les propositions et les avertissements sont rejoués depuis ce journal à chaque ouverture : une coupure de courant ne coûte rien, et une correction n'efface jamais ce qui s'est passé — elle s'ajoute.</p>
 <h4>La page Direction</h4>
@@ -1079,10 +1079,6 @@ export default {
 <tr>
 <td>CTRL-MAJ-T</td>
 <td>Afficher/cacher le panneau Transcription (brouillons de matchs).</td>
-</tr>
-<tr>
-<td>CTRL-MAJ-D</td>
-<td>Afficher/cacher le panneau Tournois pour diriger un tournoi.</td>
 </tr>
 <tr>
 <td>J / K</td>

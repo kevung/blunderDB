@@ -6,10 +6,9 @@
      * C'est la première fois de l'application que la zone principale montre autre chose que le
      * plateau, et cela n'arrive QUE là : tout autre onglet ramène le plateau sans rien fermer.
      *
-     * Ce lot pose le squelette et l'écran des réglages. La page « Direction » elle-même — file
-     * des propositions, grille des tables, fiche de résultat — arrive avec les issues qui la
-     * mesurent (#370, #371), et les autres vues avec les leurs. Les onglets absents ne sont pas
-     * un oubli : ils sont vides tant que leur issue n'a pas livré, et le disent.
+     * Sept onglets, tous rendus : la page Direction (file, grille, dernière décision), Joueurs,
+     * Arbres, Emplacements, Classement, Historique et Réglages. Il n'y a plus d'onglet « à
+     * venir », ni de branche pour en afficher un (#443).
      */
     import { t } from '../../i18n';
     import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
@@ -522,8 +521,6 @@
         {:else if tab === 'players'}
             <DirectoryPanel sources={dirSources} entries={dirEntries} {busy} onTake={onTakeEntrants} onExport={onExportDirectory} onParse={parseDirectoryCSV} onImport={onImportEntrants} />
             <PlayersView {rows} {suggestions} {busy} started={directionState !== 'draft'} {onAdd} {onUpdate} {onWithdraw} {onReinstate} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
-        {:else}
-            <p class="placeholder">{$t('direction.tabs.notYet')}</p>
         {/if}
     </div>
 </div>
@@ -678,11 +675,5 @@
         cursor: pointer;
         font-size: var(--font-size-base);
         padding: 0 0.3rem;
-    }
-
-    .placeholder {
-        margin: var(--space-4);
-        color: var(--color-text-muted);
-        font-size: var(--font-size-small);
     }
 </style>

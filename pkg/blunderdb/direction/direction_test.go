@@ -523,3 +523,28 @@ func TestLaVersionDuMoteurEstEnregistree(t *testing.T) {
 		t.Errorf("journal format %d, want %d", d.Record().FormatVersion, tournoi.JournalVersion)
 	}
 }
+
+// TestSetConfigAt (#443): a configuration change carries the instant it is given, like Enter,
+// Finish and Reopen — a scenario replayed at a chosen time must be able to go through it, and
+// SetConfig is SetConfigAt at the wall clock.
+func TestSetConfigAt(t *testing.T) {
+	ctx := context.Background()
+	d := newDraft(t, newMemStore(), clubConfig())
+	at := time.Date(2026, 9, 12, 22, 0, 0, 0, time.UTC)
+	cfg := clubConfig()
+	cfg.Phases[0].Lives = 3
+	cfg.Phases[0].Target = 0
+	if err := d.SetConfigAt(ctx, cfg, at); err != nil {
+		t.Fatal(err)
+	}
+	j := d.Journal()
+	last := j[len(j)-1]
+	if last.Kind != tournoi.EvConfigChanged || !last.Time.Equal(at) {
+		t.Fatalf("the change is recorded at the instant given, got %s at %s", last.Kind, last.Time)
+	}
+	bad := clubConfig()
+	bad.Phases = nil
+	if err := d.SetConfigAt(ctx, bad, at); err == nil {
+		t.Error("an invalid configuration is refused, as by SetConfig")
+	}
+}

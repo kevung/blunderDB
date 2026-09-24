@@ -73,11 +73,14 @@ func BenchmarkOpen(b *testing.B) {
 			break
 		}
 	}
-	b.ReportMetric(float64(len(d.Journal())), "events")
+	events := len(d.Journal())
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if _, err := Open(ctx, store, 1); err != nil {
 			b.Fatal(err)
 		}
 	}
+	// AFTER the loop: ResetTimer deletes the metrics reported before it, and the "events"
+	// column never showed (#443).
+	b.ReportMetric(float64(events), "events")
 }

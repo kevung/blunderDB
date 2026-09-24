@@ -1465,7 +1465,7 @@ son interface et garde ses matchs. Le bouton **ⓘ** de la barre du panneau
 rappelle ce crédit et mène au dépôt et à la documentation du moteur.
 
 Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois`
-(*CTRL-MAJ-D*, commande ``direct``) : ouvrir un tournoi, puis **Diriger ce
+(*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis **Diriger ce
 tournoi**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
 devient **Ouvrir**. Tant qu'une direction est ouverte, la zone principale montre
 le tournoi **à la place du plateau** — c'est la seule exception de blunderDB à

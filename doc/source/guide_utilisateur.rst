@@ -186,7 +186,7 @@ Diriger son premier tournoi
 Un dimanche de club, trente-deux joueurs, deux heures avant le premier match.
 Ce tutoriel va de la salle vide à la première ronde lancée.
 
-#. **Créer le tournoi.** Panneau Tournois (*CTRL-MAJ-D*), taper le nom du
+#. **Créer le tournoi.** Panneau Tournois (*CTRL-Y*), taper le nom du
    tournoi dans le champ du bas, *Entrée*. Ouvrir la ligne créée, puis
    **Diriger ce tournoi** : le tournoi remplace le plateau au centre de la
    fenêtre.

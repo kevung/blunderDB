@@ -337,7 +337,7 @@ export default {
 <p>La columna <strong>PR</strong> de cada torneo muestra el PR del <strong>jugador de referencia</strong> — es decir, el jugador presente en el mayor número de partidas del torneo (en caso de empate, el que haya tomado más decisiones). El PR no mezcla por tanto su juego con el de sus adversarios: para sus propios torneos, refleja únicamente su rendimiento. El nombre del jugador de referencia aparece en un cuadro emergente al pasar por encima del valor.</p>
 <h3>Dirigir un torneo</h3>
 <p>blunderDB sabe <strong>dirigir</strong> un torneo, y no solo archivarlo. La dirección la lleva el motor <strong>Nicomaque</strong>, de Nicolas Harmand: él sostiene el formato, los emparejamientos, los cuadros y la clasificación; blunderDB le da su interfaz y guarda sus partidos. El botón <strong>ⓘ</strong> de la barra del panel recuerda ese crédito y lleva al repositorio y a la documentación del motor.</p>
-<p>Un torneo dirigido se elige en el panel Panel de Torneos (<em>CTRL-MAYÚS-D</em>, comando <code>direct</code>): abrir un torneo y luego <strong>Dirigir este torneo</strong>. Un torneo ya dirigido muestra su estado junto a su nombre y el botón pasa a ser <strong>Abrir</strong>. Mientras una dirección está abierta, la zona principal muestra el torneo <strong>en lugar del tablero</strong> — la única excepción de blunderDB a esa regla; pasar a cualquier otra pestaña devuelve el tablero.</p>
+<p>Un torneo dirigido se elige en el panel Panel de Torneos (<em>CTRL-Y</em>, comando <code>direct</code>): abrir un torneo y luego <strong>Dirigir este torneo</strong>. Un torneo ya dirigido muestra su estado junto a su nombre y el botón pasa a ser <strong>Abrir</strong>. Mientras una dirección está abierta, la zona principal muestra el torneo <strong>en lugar del tablero</strong> — la única excepción de blunderDB a esa regla; pasar a cualquier otra pestaña devuelve el tablero.</p>
 <p>Una dirección tiene tres estados: <strong>en preparación</strong> mientras no se ha lanzado ningún partido, <strong>en curso</strong> después, y <strong>cerrada</strong> una vez fijada la clasificación. Reabrir un torneo cerrado es posible, y pide confirmación: la clasificación final deja de ser final.</p>
 <p>Todo lo que se decide se escribe en un <strong>registro</strong>, y nada más. La clasificación, los cuadros, las propuestas y los avisos se reproducen desde ese registro en cada apertura: un corte de luz no cuesta nada, y una corrección nunca borra lo ocurrido — se añade.</p>
 <h4>La página Dirección</h4>
@@ -1079,10 +1079,6 @@ export default {
 <tr>
 <td>CTRL-MAYÚS-T</td>
 <td>Mostrar/ocultar el panel Transcripción (borradores de partidas).</td>
-</tr>
-<tr>
-<td>CTRL-MAJ-D</td>
-<td>Mostrar/ocultar el panel Torneos para dirigir un torneo.</td>
 </tr>
 <tr>
 <td>J / K</td>

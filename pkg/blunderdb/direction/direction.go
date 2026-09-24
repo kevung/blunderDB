@@ -176,13 +176,19 @@ func (d *Direction) Config() (tournoi.Config, error) {
 // what the director decided stays readable in order (ADR-0047 §3.5). The engine validates it
 // and refuses what would change the kind of a phase already begun.
 func (d *Direction) SetConfig(ctx context.Context, cfg tournoi.Config) error {
+	return d.SetConfigAt(ctx, cfg, time.Now())
+}
+
+// SetConfigAt is SetConfig at a given instant, like Enter, Finish and Reopen: a scenario
+// replayed at chosen times goes through it (#443).
+func (d *Direction) SetConfigAt(ctx context.Context, cfg tournoi.Config, now time.Time) error {
 	if d.st == nil {
 		return ErrNoDirection
 	}
 	if err := cfg.Validate(); err != nil {
 		return err
 	}
-	return d.Apply(ctx, tournoi.ConfigChangedEvent(cfg, time.Now()))
+	return d.Apply(ctx, tournoi.ConfigChangedEvent(cfg, now))
 }
 
 // SetOutputDir remembers where the standalone display page is written.
