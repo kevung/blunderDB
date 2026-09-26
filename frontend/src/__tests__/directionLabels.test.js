@@ -6,7 +6,7 @@
  * aucune, et ce fichier est le pivot de cette traduction — d'où ce test.
  */
 import { describe, test, expect } from 'vitest';
-import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabel, actionKey, renderConfigChange, renderLockReason, isRepair } from '../components/direction/labels.js';
+import { renderLabel, renderNote, renderWarning, renderSectionName, proposalLabel, actionKey, renderConfigChange, renderLockReason, isRepair, seatLabel } from '../components/direction/labels.js';
 import fr from '../i18n/locales/fr.json';
 import en from '../i18n/locales/en.json';
 
@@ -215,5 +215,21 @@ describe('la réparation d’un tableau (#389)', () => {
         expect(isRepair({ kind: 'start_match' })).toBe(false);
         expect(isRepair({ kind: 'wait' })).toBe(false);
         expect(isRepair(null)).toBe(false);
+    });
+});
+
+describe('seatLabel', () => {
+    test('dit où joue un Participant dans une épreuve sœur', () => {
+        expect(seatLabel(t, { event: 'principal', table: 4 })).toBe('joue au principal, table 4');
+        expect(seatLabel(tEn, { event: 'main', table: 4 })).toBe('playing in main, table 4');
+    });
+    test('sans table : apparié à la main dans une salle pleine', () => {
+        expect(seatLabel(t, { event: 'principal', table: 0 })).toBe('joue au principal');
+    });
+    test('rien quand il ne joue nulle part ailleurs', () => {
+        expect(seatLabel(t, null)).toBe('');
+    });
+    test('la raison du moteur a son libellé', () => {
+        expect(t('direction.reason.player_busy')).toBe('joue dans une autre épreuve');
     });
 });

@@ -76,6 +76,80 @@ func BusyTables(others ...*Direction) []int {
 	return sortedUnique(busy)
 }
 
+// Seat is where a person plays right now in a sister event of the room.
+type Seat struct {
+	Event string `json:"event"`
+	Table int    `json:"table"`
+}
+
+// Sister is a sister event as the room sees it: its name, its replayed Direction and, for a
+// doubles event, the persons behind each Participant (by Participant id).
+type Sister struct {
+	Name    string
+	Dir     *Direction
+	Members map[string][]string
+}
+
+// persons are the people a Participant stands for: its two members for a pair, its own name
+// otherwise. The name is the link between events (ADR-0056 §3), compared exactly.
+func persons(st *tournoi.State, id tournoi.PlayerID, members map[string][]string) []string {
+	if m := members[string(id)]; len(m) > 0 {
+		return m
+	}
+	if p := st.Players[id]; p != nil && p.Name != "" {
+		return []string{p.Name}
+	}
+	return nil
+}
+
+// PlayingElsewhere maps every person at a running match of the sister events to where they
+// play. Replayed from the sisters' logs at each call, never stored.
+func PlayingElsewhere(sisters ...Sister) map[string]Seat {
+	out := map[string]Seat{}
+	for _, s := range sisters {
+		if s.Dir == nil || s.Dir.st == nil {
+			continue
+		}
+		for _, m := range s.Dir.st.Running() {
+			for _, id := range []tournoi.PlayerID{m.A, m.B} {
+				for _, name := range persons(s.Dir.st, id, s.Members) {
+					out[name] = Seat{Event: s.Name, Table: m.Table}
+				}
+			}
+		}
+	}
+	return out
+}
+
+// BusyIn names the Participants of d that someone in elsewhere stands for — a pair as soon as
+// one of its members plays next door — with the seat that holds them. These are the
+// BusyPlayers the engine must not pair, and what the waiting list says about each.
+func (d *Direction) BusyIn(elsewhere map[string]Seat, members map[string][]string) map[tournoi.PlayerID]Seat {
+	out := map[tournoi.PlayerID]Seat{}
+	if d.st == nil || len(elsewhere) == 0 {
+		return out
+	}
+	for _, id := range d.st.Order {
+		for _, name := range persons(d.st, id, members) {
+			if seat, ok := elsewhere[name]; ok {
+				out[id] = seat
+				break
+			}
+		}
+	}
+	return out
+}
+
+// BusyPlayers is the sorted list of the ids in busy, as tournoi.External carries them.
+func BusyPlayers(busy map[tournoi.PlayerID]Seat) []tournoi.PlayerID {
+	out := make([]tournoi.PlayerID, 0, len(busy))
+	for id := range busy {
+		out = append(out, id)
+	}
+	slices.Sort(out)
+	return out
+}
+
 // ProposeWith asks the engine what to do at a given instant, knowing what the room outside this
 // tournament looks like. A proposal that finds no table left waits (ReasonWaitingTable) instead
 // of landing on a table a sister event is playing on.

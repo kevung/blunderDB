@@ -509,6 +509,7 @@ export namespace database {
 	    eventCount: number;
 	    rencontreId: number;
 	    busyTables: number[];
+	    elsewhere?: Record<string, direction.Seat>;
 	    pairs?: Record<string, Array<PairMember>>;
 	
 	    static createFrom(source: any = {}) {
@@ -533,6 +534,7 @@ export namespace database {
 	        this.eventCount = source["eventCount"];
 	        this.rencontreId = source["rencontreId"];
 	        this.busyTables = source["busyTables"];
+	        this.elsewhere = this.convertValues(source["elsewhere"], direction.Seat, true);
 	        this.pairs = this.convertValues(source["pairs"], Array<PairMember>, true);
 	    }
 	
@@ -1808,6 +1810,8 @@ export namespace database {
 	    slow?: boolean;
 	    noTable?: boolean;
 	    elsewhere?: string;
+	    aElsewhere?: direction.Seat;
+	    bElsewhere?: direction.Seat;
 	
 	    static createFrom(source: any = {}) {
 	        return new TableCell(source);
@@ -1829,7 +1833,27 @@ export namespace database {
 	        this.slow = source["slow"];
 	        this.noTable = source["noTable"];
 	        this.elsewhere = source["elsewhere"];
+	        this.aElsewhere = this.convertValues(source["aElsewhere"], direction.Seat);
+	        this.bElsewhere = this.convertValues(source["bElsewhere"], direction.Seat);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	
 	
@@ -1995,6 +2019,20 @@ export namespace direction {
 		    }
 		    return a;
 		}
+	}
+	export class Seat {
+	    event: string;
+	    table: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Seat(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.event = source["event"];
+	        this.table = source["table"];
+	    }
 	}
 
 }

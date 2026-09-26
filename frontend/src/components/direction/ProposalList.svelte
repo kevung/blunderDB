@@ -7,7 +7,7 @@
      */
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
-    import { proposalLabel, actionKey, renderWarning, isRepair } from './labels.js';
+    import { proposalLabel, actionKey, renderWarning, isRepair, seatLabel } from './labels.js';
     import { directionOwnsKey, somethingOpenAbove } from '../../services/directionKeys.js';
     import { isBareLetter } from '../../utils/keys.js';
 
@@ -17,13 +17,14 @@
      * @type {{
      *     proposals?: ProposalAction[],
      *     players?: { id: string, name: string }[],
+     *     elsewhere?: Record<string, { event: string, table: number }>,
      *     busy?: boolean,
      *     onConfirm?: (action: ProposalAction) => void,
      *     onConfirmAll?: () => void | Promise<void>,
      *     onManual?: (a: string, b: string, length: number, table: number) => void | Promise<void>
      * }}
      */
-    let { proposals = [], players = [], busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
+    let { proposals = [], players = [], elsewhere = {}, busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
 
     /* Compte à rebours d'une micro-ronde : un battement de seconde, sans événement. */
     let tick = $state(Date.now());
@@ -180,6 +181,8 @@
                 {/if}
                 {#if a.table}
                     <span class="meta">{$t('direction.proposals.table', { n: a.table })}</span>
+                {:else if a.reason === 'player_busy' && (elsewhere[a.a ?? ''] || elsewhere[a.b ?? ''])}
+                    <span class="meta warn">{seatLabel($t, elsewhere[a.a ?? ''] || elsewhere[a.b ?? ''])}</span>
                 {:else if a.reason}
                     <span class="meta warn">{$t(`direction.reason.${a.reason}`)}</span>
                 {/if}
@@ -214,13 +217,15 @@
             <select bind:value={manualA}>
                 <option value="">{$t('direction.proposals.playerA')}</option>
                 {#each players as p (p.id)}
-                    <option value={p.id}>{p.name}</option>
+                    <!-- Apparier à la main un joueur occupé ailleurs reste permis : on le dit. -->
+                    <option value={p.id}>{p.name}{elsewhere[p.id] ? ` (${seatLabel($t, elsewhere[p.id])})` : ''}</option>
                 {/each}
             </select>
             <select bind:value={manualB}>
                 <option value="">{$t('direction.proposals.playerB')}</option>
                 {#each players as p (p.id)}
-                    <option value={p.id}>{p.name}</option>
+                    <!-- Apparier à la main un joueur occupé ailleurs reste permis : on le dit. -->
+                    <option value={p.id}>{p.name}{elsewhere[p.id] ? ` (${seatLabel($t, elsewhere[p.id])})` : ''}</option>
                 {/each}
             </select>
             <input type="number" min="0" max="99" bind:value={manualLength} title={$t('direction.proposals.lengthHint')} />

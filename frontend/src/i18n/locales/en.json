@@ -1894,7 +1894,8 @@
             "no_pairing": "No pairing possible right now.",
             "waiting_batch": "Pairing at the next batch.",
             "waiting_table": "no free table",
-            "player_unavailable": "player unavailable"
+            "player_unavailable": "player unavailable",
+            "player_busy": "playing in another event"
         },
         "proposals": {
             "title": "Proposals ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Cancel"
         },
         "waiting": {
-            "title": "Waiting ({n})"
+            "title": "Waiting ({n})",
+            "elsewhere": "playing in {event}, table {table}",
+            "elsewhereNoTable": "playing in {event}"
         },
         "table": {
             "title": "Tables ({n})",

@@ -194,6 +194,19 @@ export function renderConfigChange(t, change) {
 }
 
 /**
+ * Dit où joue en ce moment, dans une épreuve sœur de la Rencontre, un Participant de celle-ci :
+ * « joue au principal, table 4 ». Vide quand il ne joue nulle part ailleurs.
+ *
+ * @param {Translate} t
+ * @param {{ event: string, table: number } | null | undefined} seat
+ * @returns {string}
+ */
+export function seatLabel(t, seat) {
+    if (!seat) return '';
+    return seat.table > 0 ? t('direction.waiting.elsewhere', { event: seat.event, table: seat.table }) : t('direction.waiting.elsewhereNoTable', { event: seat.event });
+}
+
+/**
  * Rend la raison pour laquelle le format d'une phase ne change plus.
  *
  * @param {Translate} t

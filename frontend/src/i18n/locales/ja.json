@@ -1894,7 +1894,8 @@
             "no_pairing": "今は組み合わせられません。",
             "waiting_batch": "次の組み合わせ時に決めます。",
             "waiting_table": "空き卓なし",
-            "player_unavailable": "プレイヤー不在"
+            "player_unavailable": "プレイヤー不在",
+            "player_busy": "別の大会で対局中"
         },
         "proposals": {
             "title": "提案（{n}件）",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "取り消す"
         },
         "waiting": {
-            "title": "待機中（{n}人）"
+            "title": "待機中（{n}人）",
+            "elsewhere": "{event}で対局中（{table}番テーブル）",
+            "elsewhereNoTable": "{event}で対局中"
         },
         "table": {
             "title": "卓（{n}）",

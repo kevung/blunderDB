@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"slices"
 	"testing"
+
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
 func eventCount(t *testing.T, d *Database, tID int64) int {
@@ -129,6 +131,76 @@ func TestRencontreProposalsAvoidTheSistersTables(t *testing.T) {
 	}
 }
 
+// A player at a match of a sister event is not proposed in this one, and the panel says where
+// they play; paired by hand anyway, the match is accepted and the seat shown on its table.
+func TestRencontreBusyPlayersAreNotProposed(t *testing.T) {
+	d := newTestDB(t)
+	_, a := directedTournament(t, d, 16)
+	_, b := directedTournament(t, d, 16) // the same sixteen names: the same persons
+	r, err := d.CreateRencontre("Festival", "", "", 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tID := range []int64{a, b} {
+		if _, err := d.AttachToRencontre(tID, r.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	va, err := d.ConfirmAllProposals(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	seatOf := map[string]int{}
+	for _, m := range va.Running {
+		seatOf[string(m.A)], seatOf[string(m.B)] = m.Table, m.Table
+	}
+	if len(seatOf) != 16 {
+		t.Fatalf("A seats %d players, want all 16", len(seatOf))
+	}
+	vb, err := d.GetDirection(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(vb.Elsewhere) != 16 {
+		t.Fatalf("B sees %d players busy next door, want 16", len(vb.Elsewhere))
+	}
+	for id, seat := range vb.Elsewhere {
+		if seat.Event != "Open de Lyon" || seat.Table != seatOf[id] {
+			t.Errorf("%s: seen at %+v, plays at table %d", id, seat, seatOf[id])
+		}
+	}
+	for _, p := range vb.Proposals {
+		if p.Kind == tournoi.ActStartMatch && p.Table > 0 {
+			t.Errorf("B proposes %s-%s at table %d while both play in A", p.A, p.B, p.Table)
+		}
+	}
+	if vb, err = d.ConfirmAllProposals(b); err != nil || len(vb.Running) != 0 {
+		t.Fatalf("B launched %d match(es) of busy players (%v)", len(vb.Running), err)
+	}
+
+	// The director pairs two of them by hand: accepted, and the grid says where they also sit.
+	if _, err := d.StartMatchManually(b, "a", "b", 0, 0); err != nil {
+		t.Fatalf("a manual pairing of busy players is refused: %v", err)
+	}
+	cells, err := d.TableGrid(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, c := range cells {
+		if c.MatchID == "" {
+			continue
+		}
+		found = true
+		if c.AElsewhere == nil || c.BElsewhere == nil || c.AElsewhere.Table != seatOf[c.A] {
+			t.Errorf("manual match %s: seats %v / %v, want A's tables", c.MatchID, c.AElsewhere, c.BElsewhere)
+		}
+	}
+	if !found {
+		t.Error("the manual match is on no cell of the grid")
+	}
+}
+
 // Deleting a Rencontre goes through the trash and detaches its events without touching them.
 func TestRencontreTrashDetaches(t *testing.T) {
 	d := newTestDB(t)
@@ -153,6 +225,52 @@ func TestRencontreTrashDetaches(t *testing.T) {
 	}
 	if n, _ := d.CountTrash(); n != 1 {
 		t.Errorf("trash holds %d entries, want the Rencontre", n)
+	}
+}
+
+// Restoring a Rencontre from the trash attaches its events again on the room's tables, as
+// attaching does: detached, an event may have changed its own.
+func TestRencontreRestoreRealignsTables(t *testing.T) {
+	d := newTestDB(t)
+	_, a := directedTournament(t, d, 8)
+	r, err := d.CreateRencontre("Festival", "", "", 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.AttachToRencontre(a, r.ID); err != nil {
+		t.Fatal(err)
+	}
+	trashID, err := d.TrashRencontre(r.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v, err := d.GetDirection(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := v.Config
+	cfg.Tables.Count = 6
+	raw, err := json.Marshal(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := d.SetDirectionConfig(a, string(raw)); err != nil {
+		t.Fatal(err)
+	}
+	before := eventCount(t, d, a)
+
+	rid, err := d.RestoreFromTrash(trashID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v, err = d.GetDirection(a); err != nil {
+		t.Fatal(err)
+	}
+	if v.RencontreID != rid || v.Config.Tables.Count != 10 {
+		t.Errorf("restored: rencontre %d (want %d), %d tables (want the room's 10)", v.RencontreID, rid, v.Config.Tables.Count)
+	}
+	if got := eventCount(t, d, a); got != before+1 {
+		t.Errorf("the alignment wrote %d event(s), want one configuration change", got-before)
 	}
 }
 

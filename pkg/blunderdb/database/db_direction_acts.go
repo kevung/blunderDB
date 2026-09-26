@@ -48,7 +48,7 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 	// Proposed at the SAME instant the events will carry, or the queue and its confirmation
 	// disagree about a micro-round's deadline.
 	// The sister events of the Rencontre, if any, hold tables the engine must not give out.
-	for _, a := range dir.ProposeWith(now, d.outside(ctx, tournamentID)) {
+	for _, a := range dir.ProposeWith(now, d.outside(ctx, tournamentID, dir)) {
 		if a.Kind == tournoi.ActWait {
 			continue
 		}
@@ -58,7 +58,8 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 			// (found by the standings test, which closed the tournament without meaning to).
 			continue
 		}
-		if a.Reason == tournoi.ReasonWaitingTable || a.Reason == tournoi.ReasonPlayerUnavailable {
+		if a.Reason == tournoi.ReasonWaitingTable || a.Reason == tournoi.ReasonPlayerUnavailable ||
+			a.Reason == tournoi.ReasonPlayerBusy {
 			// A proposal with no table stays in the queue: launching it here would put two
 			// matches on one table, or none, without the director ever choosing. In rounds
 			// mode the round stays open until all its players are engaged, so the rest of it

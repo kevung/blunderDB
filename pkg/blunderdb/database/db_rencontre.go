@@ -157,18 +157,8 @@ func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*Rencontr
 		} else if of != 0 && of != rencontreID {
 			return fmt.Errorf("rencontre: tournament %d already plays in another Rencontre", tournamentID)
 		}
-		dir, err := direction.Open(ctx, store, tournamentID)
-		if err != nil {
+		if err := alignTables(ctx, store, tournamentID, room); err != nil {
 			return err
-		}
-		cfg, err := dir.Config()
-		if err != nil {
-			return err
-		}
-		if next := direction.WithTables(cfg, room); !sameTables(cfg, next) {
-			if err := dir.SetConfigAt(ctx, next, time.Now()); err != nil {
-				return err
-			}
 		}
 		return tx.Rencontres().Attach(ctx, "", tournamentID, rencontreID)
 	})
@@ -176,6 +166,36 @@ func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*Rencontr
 		return nil, err
 	}
 	return d.GetRencontre(rencontreID)
+}
+
+// alignTables puts one Tournament on the room's tables by a configuration change, and writes
+// nothing when it already sits on them.
+func alignTables(ctx context.Context, store direction.Store, tournamentID int64, room direction.Room) error {
+	dir, err := direction.Open(ctx, store, tournamentID)
+	if err != nil {
+		return err
+	}
+	cfg, err := dir.Config()
+	if err != nil {
+		return err
+	}
+	if next := direction.WithTables(cfg, room); !sameTables(cfg, next) {
+		return dir.SetConfigAt(ctx, next, time.Now())
+	}
+	return nil
+}
+
+// realignRencontre puts every member of a Rencontre back on the room's tables, as attaching
+// them does. A restored Rencontre needs it: its events kept their own tables while detached.
+func (d *Database) realignRencontre(id int64) error {
+	return d.inRoom(id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+		for _, tid := range r.TournamentIDs {
+			if err := alignTables(ctx, store, tid, room); err != nil {
+				return fmt.Errorf("rencontre: tournament %d: %w", tid, err)
+			}
+		}
+		return nil
+	})
 }
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
@@ -317,22 +337,36 @@ func sameTables(a, b tournoi.Config) bool {
 	return a.Tables.Count == b.Tables.Count && slices.Equal(a.Tables.Unavailable, b.Tables.Unavailable)
 }
 
-// outside is what the room looks like from one Tournament: the tables its sister events play on
-// right now, replayed from their logs, never stored. A Tournament outside any Rencontre sees an
-// empty room and proposes exactly as before.
-func (d *Database) outside(ctx context.Context, tournamentID int64) tournoi.External {
-	occupied := d.occupiedElsewhere(ctx, tournamentID)
-	busy := make([]int, 0, len(occupied))
-	for n := range occupied {
+// sisterRoom is what the room looks like from one Tournament: the tables its sister events play
+// on right now and, among its own Participants, those sat at one of their matches. Replayed from
+// the sisters' logs at each call, never stored. A Tournament outside any Rencontre sees an empty
+// room and proposes exactly as before.
+type sisterRoom struct {
+	// tables maps each table a sister event plays on to that event's name.
+	tables map[int]string
+	// players maps each Participant of this Tournament who plays next door to that seat.
+	players map[tournoi.PlayerID]direction.Seat
+}
+
+// external is the room as the engine takes it.
+func (r sisterRoom) external() tournoi.External {
+	busy := make([]int, 0, len(r.tables))
+	for n := range r.tables {
 		busy = append(busy, n)
 	}
 	slices.Sort(busy)
-	return tournoi.External{BusyTables: busy}
+	return tournoi.External{BusyTables: busy, BusyPlayers: direction.BusyPlayers(r.players)}
 }
 
-// occupiedElsewhere maps each table a sister event plays on to that event's name.
-func (d *Database) occupiedElsewhere(ctx context.Context, tournamentID int64) map[int]string {
-	out := map[int]string{}
+// outside is the room as the engine takes it, for one Tournament.
+func (d *Database) outside(ctx context.Context, tournamentID int64, me *direction.Direction) tournoi.External {
+	return d.roomAround(ctx, tournamentID, me).external()
+}
+
+// roomAround replays the sister events of a Tournament. me is its own replayed Direction, to
+// find which of its Participants play next door; nil when only the tables are wanted.
+func (d *Database) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) sisterRoom {
+	out := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
 	rid, err := d.store.Rencontres().Of(ctx, "", tournamentID)
 	if err != nil || rid == 0 {
 		return out
@@ -341,6 +375,7 @@ func (d *Database) occupiedElsewhere(ctx context.Context, tournamentID int64) ma
 	if err != nil {
 		return out
 	}
+	var sisters []direction.Sister
 	for _, tid := range r.TournamentIDs {
 		if tid == tournamentID {
 			continue
@@ -354,7 +389,27 @@ func (d *Database) occupiedElsewhere(ctx context.Context, tournamentID int64) ma
 			name = t.Name
 		}
 		for _, n := range direction.BusyTables(o) {
-			out[n] = name
+			out.tables[n] = name
+		}
+		sisters = append(sisters, direction.Sister{Name: name, Dir: o, Members: d.memberNames(tid)})
+	}
+	if me != nil {
+		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), d.memberNames(tournamentID))
+	}
+	return out
+}
+
+// memberNames gives the two persons behind each doubles Participant, by Participant id; empty
+// for a singles event.
+func (d *Database) memberNames(tournamentID int64) map[string][]string {
+	pairs, err := d.Pairs(tournamentID)
+	if err != nil || len(pairs) == 0 {
+		return nil
+	}
+	out := make(map[string][]string, len(pairs))
+	for id, ms := range pairs {
+		for _, m := range ms {
+			out[id] = append(out[id], m.Name)
 		}
 	}
 	return out

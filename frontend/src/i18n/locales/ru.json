@@ -1894,7 +1894,8 @@
             "no_pairing": "Сейчас пару составить нельзя.",
             "waiting_batch": "Пары — в следующей партии.",
             "waiting_table": "нет свободного стола",
-            "player_unavailable": "игрок недоступен"
+            "player_unavailable": "игрок недоступен",
+            "player_busy": "играет в другом турнире"
         },
         "proposals": {
             "title": "Предложения ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Отменить"
         },
         "waiting": {
-            "title": "Ожидают ({n})"
+            "title": "Ожидают ({n})",
+            "elsewhere": "играет в {event}, стол {table}",
+            "elsewhereNoTable": "играет в {event}"
         },
         "table": {
             "title": "Столы ({n})",

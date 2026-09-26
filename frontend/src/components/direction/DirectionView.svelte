@@ -22,7 +22,7 @@
     import ClockBar from './ClockBar.svelte';
     import CreditModal from './CreditModal.svelte';
     import SlotsView from './SlotsView.svelte';
-    import { renderWarning, csvFilename } from './labels.js';
+    import { renderWarning, csvFilename, seatLabel } from './labels.js';
     import {
         directionStore,
         openDirectionIdStore,
@@ -565,10 +565,17 @@
                     {/snippet}
                 </TableGrid>
                 <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
-                <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
                 <section class="waiting">
                     <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
-                    <p>{free.map((p) => p.name).join(' · ')}</p>
+                    <p data-testid="direction-waiting">
+                        {#each free as p (p.id)}
+                            <span class="who"
+                                >{p.name}{#if view?.elsewhere?.[p.id]}
+                                    <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
+                            >
+                        {/each}
+                    </p>
                 </section>
             </div>
         {:else if tab === 'slots'}
@@ -769,6 +776,14 @@
         margin: 0;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
+    }
+
+    .waiting .who + .who::before {
+        content: '· ';
+    }
+
+    .waiting .elsewhere {
+        color: var(--color-danger);
     }
 
     /* Le crédit s'ouvre sous l'en-tête, sans interrompre. */

@@ -1711,6 +1711,13 @@ d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée n
 se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
 hors Rencontre n'a qu'une épreuve : pas d'onglet à montrer.
 
+Une même personne peut jouer plusieurs épreuves de la Rencontre : deux
+Participants du même nom sont la même personne, et pour une paire de doubles
+chacun des deux membres compte. Tant qu'elle joue dans une épreuve, les autres ne
+la proposent pas, et leur liste *En attente* dit où elle joue : « joue au
+principal, table 4 ». L'appariement à la main reste permis : le match démarre, et
+sa case de la grille porte la même mention.
+
 L'affichage de la salle
 ~~~~~~~~~~~~~~~~~~~~~~~
 
