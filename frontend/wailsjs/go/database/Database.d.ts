@@ -39,6 +39,8 @@ export function ApplyTranscriptionGesture(arg1:number,arg2:transcript.Gesture):P
 
 export function AttachMatchToSlot(arg1:number,arg2:string,arg3:number):Promise<void>;
 
+export function AttachToRencontre(arg1:number,arg2:number):Promise<database.RencontreView>;
+
 export function BeginImportBatch(arg1:string,arg2:string):Promise<number>;
 
 export function Brackets(arg1:number):Promise<Array<database.BracketPhase>>;
@@ -113,6 +115,8 @@ export function CreateCollection(arg1:string,arg2:string):Promise<number>;
 
 export function CreateDirection(arg1:number,arg2:string,arg3:number):Promise<void>;
 
+export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<database.RencontreView>;
+
 export function CreateTournament(arg1:string,arg2:string,arg3:string):Promise<number>;
 
 export function CreateTranscription(arg1:transcript.Header):Promise<database.TranscriptionState>;
@@ -140,6 +144,8 @@ export function DeleteProtectedCopyPath(arg1:string):Promise<void>;
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function DeleteTournament(arg1:number):Promise<void>;
+
+export function DetachFromRencontre(arg1:number):Promise<void>;
 
 export function DetachMatchFromSlot(arg1:number,arg2:string):Promise<void>;
 
@@ -271,6 +277,8 @@ export function GetPositionProvenance(arg1:number):Promise<Array<domain.Match>>;
 
 export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
+export function GetRencontre(arg1:number):Promise<database.RencontreView>;
+
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
@@ -316,6 +324,8 @@ export function ListDirections():Promise<Array<database.DirectionSummary>>;
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 
 export function ListPositionIDs():Promise<Array<number>>;
+
+export function ListRencontres():Promise<Array<database.RencontreView>>;
 
 export function ListTranscriptions():Promise<Array<database.TranscriptionSummary>>;
 
@@ -379,6 +389,8 @@ export function Participants(arg1:number):Promise<Array<database.ParticipantRow>
 
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
+export function PreviewAttachToRencontre(arg1:number,arg2:number):Promise<database.ConfigPreview>;
+
 export function PreviewDirectionConfig(arg1:number,arg2:string):Promise<database.ConfigPreview>;
 
 export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
@@ -398,6 +410,8 @@ export function RemoveMatchFromTournament(arg1:number):Promise<void>;
 export function RemovePositionFromCollection(arg1:number,arg2:number):Promise<void>;
 
 export function RemovePositionsFromCollection(arg1:number,arg2:Array<number>):Promise<void>;
+
+export function RencontreOf(arg1:number):Promise<number>;
 
 export function ReopenDirection(arg1:number):Promise<database.DirectionView>;
 
@@ -467,6 +481,10 @@ export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
 
+export function SetRencontreBreaks(arg1:number,arg2:string):Promise<database.RencontreView>;
+
+export function SetRencontreTableOutOfService(arg1:number,arg2:number,arg3:boolean):Promise<database.RencontreView>;
+
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
@@ -509,6 +527,8 @@ export function TrashCommentEntry(arg1:number):Promise<number>;
 
 export function TrashPosition(arg1:number):Promise<number>;
 
+export function TrashRencontre(arg1:number):Promise<number>;
+
 export function UnattachedMatches(arg1:number):Promise<Array<database.SlotSuggestion>>;
 
 export function UpdateAnkiDeck(arg1:number,arg2:string,arg3:string):Promise<void>;
@@ -528,6 +548,8 @@ export function UpdateMatchComment(arg1:number,arg2:string):Promise<void>;
 export function UpdateParticipant(arg1:number,arg2:string,arg3:string,arg4:string,arg5:number):Promise<database.DirectionView>;
 
 export function UpdatePosition(arg1:domain.Position):Promise<void>;
+
+export function UpdateRencontre(arg1:number,arg2:string,arg3:string,arg4:string,arg5:number):Promise<database.RencontreView>;
 
 export function UpdateTournament(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
 

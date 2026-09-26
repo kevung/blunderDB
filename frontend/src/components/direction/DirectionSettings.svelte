@@ -18,7 +18,7 @@
     /**
      * Ce que rend l'aperçu d'une configuration : les changements, et ceux que le moteur refuse.
      *
-     * @typedef {{ changes?: ConfigChange[], refusals?: ConfigChange[] }} ConfigCheck
+     * @typedef {{ changes?: ConfigChange[], refusals?: ConfigChange[], alsoFor?: string[] }} ConfigCheck
      */
 
     /**
@@ -593,6 +593,10 @@
                             </li>
                         {/each}
                     </ul>
+                {/if}
+                {#if (pending.alsoFor || []).length}
+                    <!-- Un réglage de la salle vaut pour toutes les épreuves de la Rencontre. -->
+                    <p class="facts" data-testid="direction-settings-also-for">{$t('direction.change.alsoFor', { names: (pending.alsoFor || []).join(', ') })}</p>
                 {/if}
                 {#if blocked}
                     <p class="facts">{$t('direction.change.blocked')}</p>

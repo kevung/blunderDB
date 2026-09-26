@@ -47,7 +47,8 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 	now := time.Now()
 	// Proposed at the SAME instant the events will carry, or the queue and its confirmation
 	// disagree about a micro-round's deadline.
-	for _, a := range dir.ProposeAt(now) {
+	// The sister events of the Rencontre, if any, hold tables the engine must not give out.
+	for _, a := range dir.ProposeWith(now, d.outside(ctx, tournamentID)) {
 		if a.Kind == tournoi.ActWait {
 			continue
 		}

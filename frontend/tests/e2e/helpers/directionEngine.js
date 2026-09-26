@@ -39,6 +39,17 @@ export const S2_HALL = { entrants: crowd(76), tables: 14, running: 14 };
 export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2, seats: true };
 
 /**
+ * L'état S3 du samedi, 20 h : le speed (32 inscrits) s'ouvre dans la salle de 14 tables où le
+ * principal joue encore sur les tables 1 à 7. Les deux épreuves sont dans une Rencontre.
+ */
+export const S3_SATURDAY_20H = {
+    entrants: crowd(32),
+    tables: 14,
+    seats: true,
+    room: { id: 5, name: 'Festival de Lyon', sister: 'Principal', busy: [1, 2, 3, 4, 5, 6, 7] }
+};
+
+/**
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
@@ -53,7 +64,7 @@ export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, seats, phases, lockedPhases }) => {
+        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, seats, phases, lockedPhases, room }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
@@ -80,7 +91,8 @@ export async function installDirectionEngine(page, opts = {}) {
             function pair() {
                 const free = players.filter((p) => p.state !== 'withdrawn' && !running.some((m) => m.a === p.id || m.b === p.id));
                 const out = [];
-                const busy = new Set(running.map((m) => m.Table));
+                // Les tables de l'épreuve sœur et celles hors service ne sont pas à donner.
+                const busy = new Set([...running.map((m) => m.Table), ...(room ? room.busy : []), ...(CONFIG.tables.unavailable || [])]);
                 const freeTables = Array.from({ length: tableCount }, (_, i) => i + 1).filter((t) => !busy.has(t));
                 for (let i = 0; i + 1 < free.length; i += 2) {
                     const table = seats ? freeTables.shift() || 0 : 0;
@@ -118,7 +130,9 @@ export async function installDirectionEngine(page, opts = {}) {
                     running,
                     phase: 0,
                     finished,
-                    eventCount: events
+                    eventCount: events,
+                    rencontreId: room ? room.id : 0,
+                    busyTables: room ? room.busy.slice() : []
                 };
             }
 
@@ -321,12 +335,40 @@ export async function installDirectionEngine(page, opts = {}) {
                 return Promise.resolve(view());
             };
 
+            // La Rencontre : un geste de salle est compté, pour qu'une spec vérifie qu'il ne se
+            // déclare qu'une fois.
+            window.__roomGestures = [];
+            function rencontre() {
+                return {
+                    id: room.id,
+                    name: room.name,
+                    tables: tableCount,
+                    tournamentIds: [TOURNAMENT_ID, 2],
+                    room: { tables: tableCount, unavailable: (CONFIG.tables.unavailable || []).slice(), breaks: [] },
+                    members: [
+                        { tournamentId: 2, name: room.sister, state: 'running' },
+                        { tournamentId: TOURNAMENT_ID, name: 'Speed', state: 'draft' }
+                    ]
+                };
+            }
+            db.ListRencontres = () => Promise.resolve(room ? [rencontre()] : []);
+            db.SetRencontreTableOutOfService = (_id, table, out) => {
+                window.__roomGestures.push({ table, out });
+                const rest = (CONFIG.tables.unavailable || []).filter((x) => x !== table);
+                CONFIG = { ...CONFIG, tables: { ...CONFIG.tables, unavailable: out ? [...rest, table] : rest } };
+                events += 1;
+                proposals = pair();
+                return Promise.resolve(rencontre());
+            };
+
             db.TableGrid = () =>
                 Promise.resolve(
                     Array.from({ length: CONFIG.tables.count }, (_, i) => {
                         const t = i + 1;
                         const m = running.find((x) => x.Table === t);
-                        if (!m) return (CONFIG.tables.unavailable || []).includes(t) ? { table: t, free: false, unavailable: true } : { table: t, free: true };
+                        if (!m && (CONFIG.tables.unavailable || []).includes(t)) return { table: t, free: false, unavailable: true };
+                        if (!m && room && room.busy.includes(t)) return { table: t, free: false, elsewhere: room.sister };
+                        if (!m) return { table: t, free: true };
                         return {
                             table: t,
                             free: false,
@@ -434,7 +476,8 @@ export async function installDirectionEngine(page, opts = {}) {
             roundsAtStart: opts.rounds || 0,
             seats: !!opts.seats,
             phases: opts.phases || null,
-            lockedPhases: opts.locks || []
+            lockedPhases: opts.locks || [],
+            room: opts.room || null
         }
     );
 }

@@ -1936,7 +1936,8 @@
             "reserved": "予約済み",
             "slow": "長引き",
             "none": "卓が登録されていません。",
-            "noTable": "卓なし"
+            "noTable": "卓なし",
+            "elsewhere": "使用中：{event}"
         },
         "result": {
             "title": "結果",
@@ -2132,7 +2133,8 @@
             "consolation": "フェーズ{phase} — 敗者戦：{from} → {to}",
             "lastChance": "フェーズ{phase} — ラストチャンス：{from} → {to}",
             "reconciliation": "フェーズ{phase} — 再挑戦戦：{from} → {to}",
-            "recharge": "フェーズ{phase} — リチャージ：{from} → {to}"
+            "recharge": "フェーズ{phase} — リチャージ：{from} → {to}",
+            "alsoFor": "{names} にも適用されます（同じ会場）。"
         },
         "lock": {
             "drawn": "抽選済み",
@@ -2234,6 +2236,25 @@
             "saved": "名簿を保存しました：{path}",
             "saveFailed": "名簿を保存できませんでした。",
             "fileWord": "名簿"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "同じ会場の複数の大会：テーブル、使用不可のテーブル、休憩は共通で、他の大会が使っているテーブルは提案されません。",
+            "tableCount": "{n} テーブル",
+            "members": "大会：{names}",
+            "outOfService": "使用不可のテーブル",
+            "outOfServiceHint": "一度の宣言で会場のすべての大会に適用されます。",
+            "detach": "Rencontre から外す",
+            "trash": "Rencontre を削除",
+            "attach": "追加…",
+            "name": "Rencontre の名前",
+            "tables": "テーブル",
+            "startsOn": "開始",
+            "endsOn": "終了",
+            "create": "作成して追加…",
+            "confirmTitle": "この大会で変わること：",
+            "noChange": "なし：テーブルはすでに会場のものです。",
+            "confirm": "追加"
         }
     },
     "palette": {

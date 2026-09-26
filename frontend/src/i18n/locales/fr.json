@@ -1936,7 +1936,8 @@
             "reserved": "réservée",
             "slow": "lent",
             "none": "Aucune table déclarée.",
-            "noTable": "sans table"
+            "noTable": "sans table",
+            "elsewhere": "Occupée : {event}"
         },
         "result": {
             "title": "Résultat",
@@ -2132,7 +2133,8 @@
             "consolation": "Phase {phase} — consolante : {from} → {to}",
             "lastChance": "Phase {phase} — dernière chance : {from} → {to}",
             "reconciliation": "Phase {phase} — réconciliation : {from} → {to}",
-            "recharge": "Phase {phase} — recharge : {from} → {to}"
+            "recharge": "Phase {phase} — recharge : {from} → {to}",
+            "alsoFor": "Vaut aussi pour : {names} (même salle)."
         },
         "lock": {
             "drawn": "tirage fait",
@@ -2234,6 +2236,25 @@
             "saved": "Annuaire enregistré : {path}",
             "saveFailed": "Impossible d'enregistrer l'annuaire.",
             "fileWord": "annuaire"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "Plusieurs épreuves dans la même salle : leurs tables, leurs tables hors service et leurs pauses sont communes, et aucune ne propose une table où joue une autre.",
+            "tableCount": "{n} tables",
+            "members": "épreuves : {names}",
+            "outOfService": "Tables hors service",
+            "outOfServiceHint": "Déclarée une fois, pour toutes les épreuves de la salle.",
+            "detach": "Détacher de la rencontre",
+            "trash": "Supprimer la rencontre",
+            "attach": "Rattacher…",
+            "name": "Nom de la rencontre",
+            "tables": "Tables",
+            "startsOn": "Début",
+            "endsOn": "Fin",
+            "create": "Créer et rattacher…",
+            "confirmTitle": "Ce qui va changer dans cette épreuve :",
+            "noChange": "Rien : ses tables sont déjà celles de la salle.",
+            "confirm": "Rattacher"
         }
     },
     "palette": {

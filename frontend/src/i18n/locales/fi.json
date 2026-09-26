@@ -1936,7 +1936,8 @@
             "reserved": "varattu",
             "slow": "hidas",
             "none": "Pöytiä ei ole ilmoitettu.",
-            "noTable": "ei pöytää"
+            "noTable": "ei pöytää",
+            "elsewhere": "Varattu: {event}"
         },
         "result": {
             "title": "Tulos",
@@ -2132,7 +2133,8 @@
             "consolation": "Vaihe {phase} — lohdutus: {from} → {to}",
             "lastChance": "Vaihe {phase} — viimeinen mahdollisuus: {from} → {to}",
             "reconciliation": "Vaihe {phase} — sovitteluottelu: {from} → {to}",
-            "recharge": "Vaihe {phase} — lataus: {from} → {to}"
+            "recharge": "Vaihe {phase} — lataus: {from} → {to}",
+            "alsoFor": "Koskee myös: {names} (sama sali)."
         },
         "lock": {
             "drawn": "arvonta tehty",
@@ -2234,6 +2236,25 @@
             "saved": "Hakemisto tallennettu: {path}",
             "saveFailed": "Hakemistoa ei voitu tallentaa.",
             "fileWord": "hakemisto"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "Useita turnauksia samassa salissa: pöydät, käytöstä poistetut pöydät ja tauot ovat yhteisiä, eikä mikään ehdota pöytää, jossa toinen pelaa.",
+            "tableCount": "{n} pöytää",
+            "members": "turnaukset: {names}",
+            "outOfService": "Käytöstä poistetut pöydät",
+            "outOfServiceHint": "Ilmoitetaan kerran, kaikille salin turnauksille.",
+            "detach": "Irrota rencontresta",
+            "trash": "Poista rencontre",
+            "attach": "Liitä…",
+            "name": "Rencontren nimi",
+            "tables": "Pöydät",
+            "startsOn": "Alku",
+            "endsOn": "Loppu",
+            "create": "Luo ja liitä…",
+            "confirmTitle": "Mitä tässä turnauksessa muuttuu:",
+            "noChange": "Ei mitään: sen pöydät ovat jo salin pöydät.",
+            "confirm": "Liitä"
         }
     },
     "palette": {

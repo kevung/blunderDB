@@ -34,6 +34,9 @@ type TableCell struct {
 	// NoTable marks a running match that has no table — paired by hand in a full room.
 	// Its Table is 0; such cells come after the room's tables, one per match.
 	NoTable bool `json:"noTable,omitempty"`
+	// Elsewhere names the sister event of the Rencontre playing on this table right now: the
+	// table is not free for this one (ADR-0056).
+	Elsewhere string `json:"elsewhere,omitempty"`
 }
 
 // TableGrid returns one cell per table of the room, in order. A room with no declared table
@@ -82,6 +85,7 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		c.Slow = slow[m.ID]
 	}
 
+	elsewhere := d.occupiedElsewhere(context.Background(), tournamentID)
 	out := make([]TableCell, 0, count+len(tableless))
 	for n := 1; n <= count; n++ {
 		c := TableCell{Table: n}
@@ -91,6 +95,8 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 			continue
 		}
 		switch {
+		case elsewhere[n] != "" && !contains(st.Config.Tables.Unavailable, n):
+			c.Elsewhere = elsewhere[n]
 		case !st.Config.Tables.AvailableFor(n, "", st.Current) && contains(st.Config.Tables.Unavailable, n):
 			c.Unavailable = true
 		case !st.Config.Tables.AvailableFor(n, "", st.Current):

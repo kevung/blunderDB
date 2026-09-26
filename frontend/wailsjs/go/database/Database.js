@@ -54,6 +54,10 @@ export function AttachMatchToSlot(arg1, arg2, arg3) {
   return window['go']['database']['Database']['AttachMatchToSlot'](arg1, arg2, arg3);
 }
 
+export function AttachToRencontre(arg1, arg2) {
+  return window['go']['database']['Database']['AttachToRencontre'](arg1, arg2);
+}
+
 export function BeginImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['BeginImportBatch'](arg1, arg2);
 }
@@ -202,6 +206,10 @@ export function CreateDirection(arg1, arg2, arg3) {
   return window['go']['database']['Database']['CreateDirection'](arg1, arg2, arg3);
 }
 
+export function CreateRencontre(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['CreateRencontre'](arg1, arg2, arg3, arg4);
+}
+
 export function CreateTournament(arg1, arg2, arg3) {
   return window['go']['database']['Database']['CreateTournament'](arg1, arg2, arg3);
 }
@@ -256,6 +264,10 @@ export function DeleteSearchHistoryEntry(arg1) {
 
 export function DeleteTournament(arg1) {
   return window['go']['database']['Database']['DeleteTournament'](arg1);
+}
+
+export function DetachFromRencontre(arg1) {
+  return window['go']['database']['Database']['DetachFromRencontre'](arg1);
 }
 
 export function DetachMatchFromSlot(arg1, arg2) {
@@ -518,6 +530,10 @@ export function GetRandomAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['GetRandomAnkiCard'](arg1, arg2);
 }
 
+export function GetRencontre(arg1) {
+  return window['go']['database']['Database']['GetRencontre'](arg1);
+}
+
 export function GetStatsDateRange() {
   return window['go']['database']['Database']['GetStatsDateRange']();
 }
@@ -608,6 +624,10 @@ export function ListImportBatches(arg1, arg2) {
 
 export function ListPositionIDs() {
   return window['go']['database']['Database']['ListPositionIDs']();
+}
+
+export function ListRencontres() {
+  return window['go']['database']['Database']['ListRencontres']();
 }
 
 export function ListTranscriptions() {
@@ -734,6 +754,10 @@ export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
 
+export function PreviewAttachToRencontre(arg1, arg2) {
+  return window['go']['database']['Database']['PreviewAttachToRencontre'](arg1, arg2);
+}
+
 export function PreviewDirectionConfig(arg1, arg2) {
   return window['go']['database']['Database']['PreviewDirectionConfig'](arg1, arg2);
 }
@@ -772,6 +796,10 @@ export function RemovePositionFromCollection(arg1, arg2) {
 
 export function RemovePositionsFromCollection(arg1, arg2) {
   return window['go']['database']['Database']['RemovePositionsFromCollection'](arg1, arg2);
+}
+
+export function RencontreOf(arg1) {
+  return window['go']['database']['Database']['RencontreOf'](arg1);
 }
 
 export function ReopenDirection(arg1) {
@@ -910,6 +938,14 @@ export function SetMigrationProgress(arg1) {
   return window['go']['database']['Database']['SetMigrationProgress'](arg1);
 }
 
+export function SetRencontreBreaks(arg1, arg2) {
+  return window['go']['database']['Database']['SetRencontreBreaks'](arg1, arg2);
+}
+
+export function SetRencontreTableOutOfService(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SetRencontreTableOutOfService'](arg1, arg2, arg3);
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['database']['Database']['SetupDatabase'](arg1);
 }
@@ -994,6 +1030,10 @@ export function TrashPosition(arg1) {
   return window['go']['database']['Database']['TrashPosition'](arg1);
 }
 
+export function TrashRencontre(arg1) {
+  return window['go']['database']['Database']['TrashRencontre'](arg1);
+}
+
 export function UnattachedMatches(arg1) {
   return window['go']['database']['Database']['UnattachedMatches'](arg1);
 }
@@ -1032,6 +1072,10 @@ export function UpdateParticipant(arg1, arg2, arg3, arg4, arg5) {
 
 export function UpdatePosition(arg1) {
   return window['go']['database']['Database']['UpdatePosition'](arg1);
+}
+
+export function UpdateRencontre(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['UpdateRencontre'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function UpdateTournament(arg1, arg2, arg3, arg4) {

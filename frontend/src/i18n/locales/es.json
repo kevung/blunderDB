@@ -1936,7 +1936,8 @@
             "reserved": "reservada",
             "slow": "lenta",
             "none": "Ninguna mesa declarada.",
-            "noTable": "sin mesa"
+            "noTable": "sin mesa",
+            "elsewhere": "Ocupada: {event}"
         },
         "result": {
             "title": "Resultado",
@@ -2132,7 +2133,8 @@
             "consolation": "Fase {phase} — consolación: {from} → {to}",
             "lastChance": "Fase {phase} — última oportunidad: {from} → {to}",
             "reconciliation": "Fase {phase} — reconciliación: {from} → {to}",
-            "recharge": "Fase {phase} — recarga: {from} → {to}"
+            "recharge": "Fase {phase} — recarga: {from} → {to}",
+            "alsoFor": "También se aplica a: {names} (misma sala)."
         },
         "lock": {
             "drawn": "sorteo hecho",
@@ -2234,6 +2236,25 @@
             "saved": "Directorio guardado: {path}",
             "saveFailed": "No se pudo guardar el directorio.",
             "fileWord": "directorio"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "Varios torneos en la misma sala: sus mesas, mesas fuera de servicio y pausas son comunes, y ninguno propone una mesa donde juega otro.",
+            "tableCount": "{n} mesas",
+            "members": "torneos: {names}",
+            "outOfService": "Mesas fuera de servicio",
+            "outOfServiceHint": "Se declara una vez, para todos los torneos de la sala.",
+            "detach": "Separar de la rencontre",
+            "trash": "Eliminar la rencontre",
+            "attach": "Vincular…",
+            "name": "Nombre de la rencontre",
+            "tables": "Mesas",
+            "startsOn": "Inicio",
+            "endsOn": "Fin",
+            "create": "Crear y vincular…",
+            "confirmTitle": "Lo que cambiará en este torneo:",
+            "noChange": "Nada: sus mesas ya son las de la sala.",
+            "confirm": "Vincular"
         }
     },
     "palette": {

@@ -10,6 +10,7 @@
     import { focusPanelUnlessTyping } from '../../utils/panelFocus.js';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
+    import RencontrePanel from './RencontrePanel.svelte';
     import DirectoryPanel from './DirectoryPanel.svelte';
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
@@ -472,6 +473,9 @@
                 {onForgetOutput}
                 {onOpenPage}
             />
+            {#if view}
+                <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
+            {/if}
         {:else if tab === 'direction'}
             <div class="direction-page">
                 {#if (view?.warnings || []).length}

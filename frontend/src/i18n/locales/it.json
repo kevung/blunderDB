@@ -1936,7 +1936,8 @@
             "reserved": "riservato",
             "slow": "lento",
             "none": "Nessun tavolo dichiarato.",
-            "noTable": "senza tavolo"
+            "noTable": "senza tavolo",
+            "elsewhere": "Occupato: {event}"
         },
         "result": {
             "title": "Risultato",
@@ -2132,7 +2133,8 @@
             "consolation": "Fase {phase} — consolazione: {from} → {to}",
             "lastChance": "Fase {phase} — ultima chance: {from} → {to}",
             "reconciliation": "Fase {phase} — riconciliazione: {from} → {to}",
-            "recharge": "Fase {phase} — ricarica: {from} → {to}"
+            "recharge": "Fase {phase} — ricarica: {from} → {to}",
+            "alsoFor": "Vale anche per: {names} (stessa sala)."
         },
         "lock": {
             "drawn": "sorteggio effettuato",
@@ -2234,6 +2236,25 @@
             "saved": "Rubrica salvata: {path}",
             "saveFailed": "Impossibile salvare la rubrica.",
             "fileWord": "rubrica"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "Più tornei nella stessa sala: tavoli, tavoli fuori servizio e pause sono comuni, e nessuno propone un tavolo dove gioca un altro.",
+            "tableCount": "{n} tavoli",
+            "members": "tornei: {names}",
+            "outOfService": "Tavoli fuori servizio",
+            "outOfServiceHint": "Dichiarato una volta, per tutti i tornei della sala.",
+            "detach": "Stacca dalla rencontre",
+            "trash": "Elimina la rencontre",
+            "attach": "Collega…",
+            "name": "Nome della rencontre",
+            "tables": "Tavoli",
+            "startsOn": "Inizio",
+            "endsOn": "Fine",
+            "create": "Crea e collega…",
+            "confirmTitle": "Cosa cambierà in questo torneo:",
+            "noChange": "Niente: i suoi tavoli sono già quelli della sala.",
+            "confirm": "Collega"
         }
     },
     "palette": {

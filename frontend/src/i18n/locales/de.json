@@ -1936,7 +1936,8 @@
             "reserved": "reserviert",
             "slow": "langsam",
             "none": "Kein Tisch angegeben.",
-            "noTable": "ohne Tisch"
+            "noTable": "ohne Tisch",
+            "elsewhere": "Belegt: {event}"
         },
         "result": {
             "title": "Ergebnis",
@@ -2132,7 +2133,8 @@
             "consolation": "Phase {phase} — Trostrunde: {from} → {to}",
             "lastChance": "Phase {phase} — Letzte Chance: {from} → {to}",
             "reconciliation": "Phase {phase} — Versöhnungsspiel: {from} → {to}",
-            "recharge": "Phase {phase} — Aufladung: {from} → {to}"
+            "recharge": "Phase {phase} — Aufladung: {from} → {to}",
+            "alsoFor": "Gilt auch für: {names} (gleicher Saal)."
         },
         "lock": {
             "drawn": "Auslosung erfolgt",
@@ -2234,6 +2236,25 @@
             "saved": "Verzeichnis gespeichert: {path}",
             "saveFailed": "Das Verzeichnis konnte nicht gespeichert werden.",
             "fileWord": "verzeichnis"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "Mehrere Turniere im selben Saal: Tische, gesperrte Tische und Pausen sind gemeinsam, und keines schlägt einen Tisch vor, an dem ein anderes spielt.",
+            "tableCount": "{n} Tische",
+            "members": "Turniere: {names}",
+            "outOfService": "Gesperrte Tische",
+            "outOfServiceHint": "Einmal gemeldet, für alle Turniere im Saal.",
+            "detach": "Von der Rencontre lösen",
+            "trash": "Rencontre löschen",
+            "attach": "Zuordnen…",
+            "name": "Name der Rencontre",
+            "tables": "Tische",
+            "startsOn": "Beginn",
+            "endsOn": "Ende",
+            "create": "Anlegen und zuordnen…",
+            "confirmTitle": "Was sich in diesem Turnier ändert:",
+            "noChange": "Nichts: seine Tische sind bereits die des Saals.",
+            "confirm": "Zuordnen"
         }
     },
     "palette": {

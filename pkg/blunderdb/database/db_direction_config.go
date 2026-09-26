@@ -55,6 +55,9 @@ type ConfigPreview struct {
 	Opened  int  `json:"opened"`
 	Current int  `json:"current"`
 	Started bool `json:"started"`
+	// AlsoFor names the sister events of the Rencontre that the same change reaches, because it
+	// touches the room they share: tables, tables out of service, breaks (ADR-0056 §2).
+	AlsoFor []string `json:"alsoFor,omitempty"`
 }
 
 // PreviewDirectionConfig compares a candidate configuration with the one in force, without
@@ -85,6 +88,7 @@ func (d *Database) PreviewDirectionConfig(tournamentID int64, configJSON string)
 	if p.Refusals, err = configRefusal(st, next, p.Changes); err != nil {
 		return nil, err
 	}
+	p.AlsoFor = d.roomAlsoFor(context.Background(), tournamentID, cur, next)
 	return p, nil
 }
 

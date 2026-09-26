@@ -1936,7 +1936,8 @@
             "reserved": "reserved",
             "slow": "slow",
             "none": "No table declared.",
-            "noTable": "no table"
+            "noTable": "no table",
+            "elsewhere": "In use: {event}"
         },
         "result": {
             "title": "Result",
@@ -2132,7 +2133,8 @@
             "consolation": "Phase {phase} — consolation: {from} → {to}",
             "lastChance": "Phase {phase} — last chance: {from} → {to}",
             "reconciliation": "Phase {phase} — reconciliation: {from} → {to}",
-            "recharge": "Phase {phase} — recharge: {from} → {to}"
+            "recharge": "Phase {phase} — recharge: {from} → {to}",
+            "alsoFor": "Also applies to: {names} (same room)."
         },
         "lock": {
             "drawn": "draw made",
@@ -2234,6 +2236,25 @@
             "saved": "Directory saved: {path}",
             "saveFailed": "Could not save the directory.",
             "fileWord": "directory"
+        },
+        "rencontre": {
+            "title": "Rencontre",
+            "hint": "Several events in the same room: their tables, tables out of service and breaks are shared, and none proposes a table where another is playing.",
+            "tableCount": "{n} tables",
+            "members": "events: {names}",
+            "outOfService": "Tables out of service",
+            "outOfServiceHint": "Declared once, for every event in the room.",
+            "detach": "Detach from the rencontre",
+            "trash": "Delete the rencontre",
+            "attach": "Attach…",
+            "name": "Rencontre name",
+            "tables": "Tables",
+            "startsOn": "Start",
+            "endsOn": "End",
+            "create": "Create and attach…",
+            "confirmTitle": "What will change in this event:",
+            "noChange": "Nothing: its tables are already the room's.",
+            "confirm": "Attach"
         }
     },
     "palette": {

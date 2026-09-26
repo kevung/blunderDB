@@ -17,13 +17,47 @@ import (
 // instead of replacing a decision.
 
 // DirectionStore returns the Store the direction package runs on.
-func (d *Database) DirectionStore() direction.Store { return directionStore{d} }
+func (d *Database) DirectionStore() direction.Store { return directionStore{d: d} }
 
-type directionStore struct{ d *Database }
+// directionStore runs on the database handle, or inside tx when a gesture must write several
+// Directions at once. Inside tx the CALLER holds d.mu for the whole transaction, so the store
+// takes no lock of its own.
+type directionStore struct {
+	d  *Database
+	tx *sql.Tx
+}
+
+type directionQuerier interface {
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
+}
+
+func (s directionStore) q() directionQuerier {
+	if s.tx != nil {
+		return s.tx
+	}
+	return s.d.db
+}
+
+func (s directionStore) rlock() func() {
+	if s.tx != nil {
+		return func() {}
+	}
+	s.d.mu.RLock()
+	return s.d.mu.RUnlock
+}
+
+func (s directionStore) lock() func() {
+	if s.tx != nil {
+		return func() {}
+	}
+	s.d.mu.Lock()
+	return s.d.mu.Unlock
+}
 
 func (s directionStore) GetDirection(ctx context.Context, tournamentID int64) (direction.Record, error) {
-	s.d.mu.RLock()
-	defer s.d.mu.RUnlock()
+	defer s.rlock()()
 	return s.get(ctx, tournamentID)
 }
 
@@ -33,7 +67,7 @@ func (s directionStore) get(ctx context.Context, tournamentID int64) (direction.
 		state            string
 		created, updated sql.NullString
 	)
-	err := s.d.db.QueryRowContext(ctx, `
+	err := s.q().QueryRowContext(ctx, `
 		SELECT tournament_id, format_version, engine_version, state, config, output_dir, created_at, updated_at
 		  FROM direction WHERE tournament_id = ?`, tournamentID).
 		Scan(&rec.TournamentID, &rec.FormatVersion, &rec.EngineVersion, &state, &rec.Config, &rec.OutputDir, &created, &updated)
@@ -50,9 +84,8 @@ func (s directionStore) get(ctx context.Context, tournamentID int64) (direction.
 }
 
 func (s directionStore) ListDirections(ctx context.Context) ([]direction.Record, error) {
-	s.d.mu.RLock()
-	defer s.d.mu.RUnlock()
-	rows, err := s.d.db.QueryContext(ctx, `
+	defer s.rlock()()
+	rows, err := s.q().QueryContext(ctx, `
 		SELECT tournament_id, format_version, engine_version, state, config, output_dir, created_at, updated_at
 		  FROM direction ORDER BY tournament_id`)
 	if err != nil {
@@ -79,9 +112,8 @@ func (s directionStore) ListDirections(ctx context.Context) ([]direction.Record,
 }
 
 func (s directionStore) CreateDirection(ctx context.Context, rec direction.Record) error {
-	s.d.mu.Lock()
-	defer s.d.mu.Unlock()
-	_, err := s.d.db.ExecContext(ctx, `
+	defer s.lock()()
+	_, err := s.q().ExecContext(ctx, `
 		INSERT INTO direction (tournament_id, format_version, engine_version, state, config, output_dir)
 		VALUES (?, ?, ?, ?, ?, ?)`,
 		rec.TournamentID, rec.FormatVersion, rec.EngineVersion, string(rec.State), rec.Config, rec.OutputDir)
@@ -92,9 +124,8 @@ func (s directionStore) CreateDirection(ctx context.Context, rec direction.Recor
 }
 
 func (s directionStore) UpdateDirection(ctx context.Context, rec direction.Record) error {
-	s.d.mu.Lock()
-	defer s.d.mu.Unlock()
-	res, err := s.d.db.ExecContext(ctx, `
+	defer s.lock()()
+	res, err := s.q().ExecContext(ctx, `
 		UPDATE direction SET format_version = ?, engine_version = ?, state = ?, config = ?,
 		       output_dir = ?, updated_at = CURRENT_TIMESTAMP
 		 WHERE tournament_id = ?`,
@@ -109,8 +140,7 @@ func (s directionStore) UpdateDirection(ctx context.Context, rec direction.Recor
 }
 
 func (s directionStore) DeleteDirection(ctx context.Context, tournamentID int64) error {
-	s.d.mu.Lock()
-	defer s.d.mu.Unlock()
+	defer s.lock()()
 	tx, err := s.d.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -131,18 +161,17 @@ func (s directionStore) DeleteDirection(ctx context.Context, tournamentID int64)
 }
 
 func (s directionStore) AppendEvent(ctx context.Context, tournamentID int64, ev direction.StoredEvent) error {
-	s.d.mu.Lock()
-	defer s.d.mu.Unlock()
+	defer s.lock()()
 	// No UPSERT and no OR REPLACE: a second write at this sequence number must fail. The log is
 	// append-only, and silently overwriting would lose a decision.
-	_, err := s.d.db.ExecContext(ctx, `
+	_, err := s.q().ExecContext(ctx, `
 		INSERT INTO direction_event (tournament_id, seq, kind, time, payload)
 		VALUES (?, ?, ?, ?, ?)`,
 		tournamentID, ev.Seq, ev.Kind, ev.Time.UTC().Format(time.RFC3339Nano), string(ev.Payload))
 	if err != nil {
 		return fmt.Errorf("appending event %d to direction %d: %w", ev.Seq, tournamentID, err)
 	}
-	if _, err := s.d.db.ExecContext(ctx,
+	if _, err := s.q().ExecContext(ctx,
 		`UPDATE direction SET updated_at = CURRENT_TIMESTAMP WHERE tournament_id = ?`, tournamentID); err != nil {
 		return fmt.Errorf("touching direction %d: %w", tournamentID, err)
 	}
@@ -150,9 +179,8 @@ func (s directionStore) AppendEvent(ctx context.Context, tournamentID int64, ev 
 }
 
 func (s directionStore) LoadEvents(ctx context.Context, tournamentID int64) ([]direction.StoredEvent, error) {
-	s.d.mu.RLock()
-	defer s.d.mu.RUnlock()
-	rows, err := s.d.db.QueryContext(ctx, `
+	defer s.rlock()()
+	rows, err := s.q().QueryContext(ctx, `
 		SELECT seq, kind, time, payload FROM direction_event
 		 WHERE tournament_id = ? ORDER BY seq`, tournamentID)
 	if err != nil {

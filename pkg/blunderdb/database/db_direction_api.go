@@ -43,6 +43,11 @@ type DirectionView struct {
 	Phase      int              `json:"phase"`
 	Finished   bool             `json:"finished"`
 	EventCount int              `json:"eventCount"`
+	// RencontreID is the room this Tournament plays in, 0 when none (ADR-0056).
+	RencontreID int64 `json:"rencontreId"`
+	// BusyTables are the tables the sister events of the Rencontre play on right now: the
+	// proposals above already avoid them. Replayed, never stored.
+	BusyTables []int `json:"busyTables"`
 }
 
 // ListDirections names the directed tournaments of this database.
@@ -90,10 +95,13 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 		EngineVersion: rec.EngineVersion, OutputDir: rec.OutputDir,
 		Config: cfg, EventCount: len(dir.Journal()),
 	}
+	v.RencontreID, _ = d.RencontreOf(tournamentID)
 	if st := dir.State(); st != nil {
 		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
 		// deadline and a break's warning depend on the current time, not on the last result.
-		v.Proposals = dir.ProposeAt(time.Now())
+		ext := d.outside(context.Background(), tournamentID)
+		v.BusyTables = ext.BusyTables
+		v.Proposals = dir.ProposeWith(time.Now(), ext)
 		v.Warnings = dir.Warnings()
 		v.Ranking = dir.Ranking()
 		v.Running = st.Running()
@@ -129,6 +137,14 @@ func (d *Database) SetDirectionConfig(tournamentID int64, configJSON string) err
 	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
 	if err != nil {
 		return err
+	}
+	if rid, _ := d.RencontreOf(tournamentID); rid != 0 {
+		if cur, err := dir.Config(); err == nil && !direction.SameRoom(cur, direction.RoomOf(cfg)) {
+			if err := cfg.Validate(); err != nil {
+				return err
+			}
+			return d.setMemberConfig(rid, tournamentID, cfg)
+		}
 	}
 	return dir.SetConfig(context.Background(), cfg)
 }

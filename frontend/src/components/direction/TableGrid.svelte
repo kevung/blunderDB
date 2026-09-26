@@ -59,6 +59,7 @@
     /** @param {TableCell} c */
     function label(c) {
         if (c.unavailable) return $t('direction.table.unavailable');
+        if (c.elsewhere) return $t('direction.table.elsewhere', { event: c.elsewhere });
         if (c.reserved) return $t('direction.table.reserved');
         return $t('direction.table.free');
     }
@@ -79,6 +80,7 @@
                     class:busy={c.matchId}
                     class:slow={c.slow}
                     class:idle={!c.matchId}
+                    class:elsewhere={!!c.elsewhere}
                     class:no-table={c.noTable}
                     disabled={!c.matchId}
                     onclick={() => (openKey = openKey === key(c) ? '' : key(c))}
@@ -171,6 +173,12 @@
 
     .cell.busy {
         border-color: var(--color-primary);
+    }
+
+    /* Occupée par une épreuve sœur de la Rencontre : pas libre ici, sans être à nous. */
+    .cell.elsewhere {
+        border-style: dashed;
+        color: var(--color-text-muted, inherit);
     }
 
     /* Sans table, le match reste une case pleine ; seul le cadre en pointillé dit qu'il attend
