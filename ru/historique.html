@@ -1,0 +1,565 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>История версий &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="О программе" href="a_propos.html" />
+    <link rel="prev" title="Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB" href="stats_parity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/historique.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/historique.html" lang="en" hreflang="en">English</a>
+  <a href="../de/historique.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/historique.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/historique.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/historique.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/historique.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/historique.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">История версий</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#apres-une-mise-a-jour">После обновления</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.36.0 (05.09.2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.35.0 (2026-09-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">0.34.0 (2026-09-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.33.0 (2026-08-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.32.0 (2026-08-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">0.31.0 (2026-08-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.30.0 (2026-07-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">0.29.0 (2026-07-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">0.28.0 (2026-07-15)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">0.27.0 (2026-06-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">0.26.0 (2026-06-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">0.25.0 (2026-06-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">0.24.0 (2026-06-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">0.23.0 (2026-06-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">0.22.0 (2026-06-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">0.21.0 (2026-06-01)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">0.20.0 (2026-05-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">0.19.0 (2026-05-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">0.18.0 (2026-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">0.17.0 (2026-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">0.16.0 (2026-04-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">0.15.0 (2026-03-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">0.14.0 (2026-03-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">0.13.0 (2026-03-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id25">0.12.0 (2026-03-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id26">0.11.0 (2026-03-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">0.10.0 (2026-02-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id28">0.9.0 (2025-11-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">0.8.0 (2025-05-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id30">0.7.0 (2025-02-16)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">0.6.0 (2025-02-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id32">0.5.0 (2025-02-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id33">0.4.0 (2025-02-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id34">0.3.0 (2025-01-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id35">0.2.0 (2025-01-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id36">0.1.0 (2024-12-31)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">История версий</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="historique-des-versions">
+<span id="historique"></span><h1>История версий<a class="headerlink" href="#historique-des-versions" title="Ссылка на этот заголовок"></a></h1>
+<p>Версии перечислены от самой новой к самой старой, по одному пункту на изменение, и каждая версия заканчивается ссылками на страницы, подробно описывающие то, что она принесла. Пункт, отменённый более поздней версией, несёт упоминание той версии, что его заменила: он рассказывает историю программы, а не описывает установленную версию.</p>
+<section id="apres-une-mise-a-jour">
+<h2>После обновления<a class="headerlink" href="#apres-une-mise-a-jour" title="Ссылка на этот заголовок"></a></h2>
+<p>Миграция схемы базы <strong>выполняется автоматически</strong> при открытии и <strong>необратима</strong>: мигрированная база больше не читается предыдущей версией blunderDB — отсюда и предварительная резервная копия (<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Приложение: Схема базы данных</span></a>). Остальное само собой не делается, потому что ничто из этих данных не появляется задним числом:</p>
+<ul class="simple">
+<li><p><strong>Переимпортировать исходные файлы, чтобы получить удачу</strong> (0.33.0). Матчи, импортированные раньше, несут тире в столбце <em>Удача</em>, а тире — это не ноль. Форматы, которые удачу не переносят (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>), не дадут её никогда.</p></li>
+<li><p><strong>Переимпортировать файлы XG, чтобы получить метки</strong> (0.30.0). Метки, поставленные в eXtreme Gammon, попадают в базу при переимпорте, не затрагивая существующие комментарии и анализы.</p></li>
+<li><p><strong>Запустить догоняющий анализ gammonNet</strong> (0.34.0) — из интерфейса, командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> или в серверном режиме: он заполняет позиции, у которых нет ни одного анализа, никогда не затирая импортированный анализ.</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>0.36.0 (05.09.2026)<a class="headerlink" href="#id1" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Исполняемый файл <strong>на 7,3 МБ меньше</strong>: таблицы выбрасывания больше не встроены и не загружаются, а вычисляются при первом запуске, в фоне и молча — побайтово идентичные таблицам gnubg, с проверкой отпечатка SHA-256. Расширенная таблица TS-06-11 вычисляется во вкладке <em>Bearoff</em>, а не скачивается на 1,2 ГБ.</p></li>
+<li><p><strong>Турниры заполняются сами при импорте</strong>: матч относится к турниру, который назван в его файле, и турнир создаётся при необходимости; уже размещённый матч никогда не переносится.</p></li>
+<li><p><strong>Единая грамматика поиска</strong>, теперь читаемая из командной строки (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>) так же, как из приложения.</p></li>
+<li><p>Командная строка получает <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> в девяти командах, <strong>автодополнение для bash, zsh и fish</strong>, команду <code class="docutils literal notranslate"><span class="pre">repair</span></code> и подкоманды <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code> и <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code>.</p></li>
+<li><p>Вкладки <strong>Сочетания клавиш</strong> и <strong>Команды</strong> встроенной справки порождаются из страниц руководства, которые их описывают: они больше не могут от них отстать и становятся таблицами, без врезок. Вкладка <strong>Руководство</strong> справки остаётся кратким изложением, отличным от полного руководства в сети. Ещё три обзорных тура (Eval, Anki, Stats).</p></li>
+<li><p><strong>Двоичный файл Linux arm64</strong>, поставляемый архивом, <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code> и пакетом AUR.</p></li>
+<li><p>Панель <strong>Eval</strong> снова находит доску, на которой её оставили, различает <em>money</em>-эквити и <em>match</em>-эквити и просматривается с клавиатуры.</p></li>
+<li><p>На стороне сервера: <strong>контракт API, порождённый из кода</strong> (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> и его приложение, 135 маршрутов), идентификатор корреляции для каждого запроса, показатели выполняемой работы, сжатие потоков NDJSON (13,5 % размера), и два вызова, выходящих за пределы тенанта — vacuum и purge — переходят под <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>.</p></li>
+<li><p><strong>Схема 2.18.0</strong>: Jacoby и beaver покидают идентичность позиции, так что одна и та же позиция в money-игре больше не попадает внутрь дважды через разные двери. Миграция выполняется автоматически при открытии и необратима (<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Приложение: Схема базы данных</span></a>).</p></li>
+<li><p>Заметные исправления: панель подробностей панели «Матчи» больше не занимает половину экрана, когда ничего не выбрано; первая партия записи сворачивается, как и остальные; SHIFT-J и SHIFT-K переключают вид из любой панели; восемь сочетаний «показать/скрыть» наконец скрывают.</p></li>
+<li><p>См. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>0.35.0 (2026-09-02)<a class="headerlink" href="#id2" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Командная строка получает два семейства команд: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span></code> (список, показ, создание, переименование, удаление, экспорт коллекции) и <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span></code> (колоды, статистика, прогноз повторений, ресинхронизация колоды).</p></li>
+<li><p>Серверный режим публикуется в виде <strong>образа Docker</strong> (<code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>, amd64 и arm64), получает маршрут <code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code> и <strong>ставит водяной знак на свои экспорты</strong> с идентичностью издателя сервера (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>).</p></li>
+<li><p>Оценщик gammonNet <strong>оценивает свои листья с учётом куба</strong>: при матчевом счёте вердикты поиска приближаются к вердиктам eXtreme Gammon.</p></li>
+<li><p>Каждый релиз теперь поставляет <strong>манифесты winget и Homebrew</strong> и пакет Flatpak, в дополнение к пакетам Debian, RPM и AUR.</p></li>
+<li><p>В интерфейсе библиотека теперь <strong>постраничная</strong> (база из 50 000 позиций больше не загружает всё в память при каждом обновлении), модальные окна используют общую основу (фокус, Escape, доступность), доска перерисовывает только то, что меняется, а встроенный японский шрифт сокращён до своего полезного подмножества (на 5,5 МБ меньше).</p></li>
+<li><p>Заметные исправления: база, импортированная через «Импортировать базу», сохраняла позиции, невидимые для фильтров и дублирующиеся при повторном импорте (исправляется при открытии); кнопка «Объединить» в окне слияния игроков оставалась серой; экспорт сервера был пустым; а в Windows удаление скачанной базы bearoff и <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--force</span></code> завершались ошибкой.</p></li>
+<li><p>См. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>0.34.0 (2026-09-02)<a class="headerlink" href="#id3" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p><strong>Встроенный оценщик</strong>: gammonNet, портированный на Go и скомпилированный в blunderDB, оценивает любую позицию офлайн, без XG или gnuBG — нейросеть, поиск от 0 до 2-ply с отсечением, решение по кубу по Яновскому и таблице матчевого эквити blunderDB, и поиск, учитывающий счёт матча.</p></li>
+<li><p>Панель Bearoff становится панелью <strong>Eval</strong>: она показывает факты позиции (шансы на выигрыш, гаммон и бэкгаммон для обеих сторон, эквити), а затем единственное решение, которое требует доска, на стабильной сетке без прокрутки; матчевые эквити <strong>нормализованы</strong>, и вердикт «слишком хорошо для удвоения» снова виден.</p></li>
+<li><p>Оценка <strong>прогрессивная</strong>: 0-ply сразу же при жесте, затем 2-ply в покое, отменяемая любым новым жестом, с меткой глубины, всегда называющей ту, что дала это число.</p></li>
+<li><p>Вся доска, кости и счёт редактируются прямо там, кликом или клавиатурой, и позиция из библиотеки входит в панель и выходит из неё.</p></li>
+<li><p>В гонке за пределами двусторонней базы третий, <strong>вычисленный</strong> режим предоставляет вердикт по кубу при данном счёте, который панель раньше не давала.</p></li>
+<li><p>Вкладка <strong>gammonNet</strong> в настройках отделяет глубину отображения от глубины анализа.</p></li>
+<li><p>После импорта ограниченная, видимая, отменяемая и возобновляемая <strong>партия анализа</strong> заполняет позиции, вовсе не имеющие анализа, никогда не перезаписывая импортированный анализ; <strong>догоняющий анализ существующей библиотеки</strong> запускается из интерфейса, новой командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> или в серверном режиме.</p></li>
+<li><p>Заметные исправления: ответ на удвоение, импортированный из eXtreme Gammon, наследовал анализ удваивающего игрока без переворота; нотация ходов Белых и входов с бара теперь следует gnuBG и XG; глубина анализа gnuBG считывается корректно; размер боковой панели запоминается.</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Панель Eval</span></a>, <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a> и <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>0.33.0 (2026-08-26)<a class="headerlink" href="#id4" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>В панели статистики появилась вкладка <strong>Игроки</strong>: три прежние вкладки описывают одного игрока, а эта сравнивает всех — по строке на каждого игрока базы: матчи, победы/поражения, учтённые решения, PR общий / шашки / куб, Snowie Error Rate, бландеры и удача. Таблицу можно сортировать по любому столбцу, ограничивать датами турнира обычными фильтрами, а щелчок по строке переключает на подробности этого игрока. Прочерк означает величину, которая никогда не измерялась, но не ноль. Таблица доступна и в командной строке (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> — текст, JSON или CSV), и в режиме сервера.</p></li>
+<li><p><strong>Удача</strong> каждого броска теперь сохраняется в базе и отображается: средняя удача за бросок в тысячных долях очка, со знаком. Она считывается при импорте как из файлов eXtreme Gammon, так и из gnuBG. Задним числом она не появляется — у ранее импортированных матчей стоит прочерк, и чтобы её получить, исходные файлы нужно импортировать заново; форматы, которые её не переносят (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>), не дадут её никогда.</p></li>
+<li><p>Вкладка <strong>Ошибки</strong> теперь показывает не только цену ошибок в решениях по кубу, но и их <em>направление</em>: строка <em>Предложить</em> (упущенные даблы, преждевременные даблы) и строка <em>Ответить</em> (ошибочные пассы, ошибочные тейки). Они намеренно разделены: один и тот же игрок может доблить поздно и брать широко. В каждой ячейке — количество, во всплывающей подсказке — потерянная эквити, а щелчок загружает соответствующие позиции.</p></li>
+<li><p>Новая команда <strong>Сжать базу</strong>, возвращающая место, оставшееся после удалений: кнопка в настройках и подкоманда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code>. Сама по себе она не запускается никогда.</p></li>
+<li><p>Эргономика: разрушительные действия запрашивают подтверждение, идущий поиск обозначается, на неизвестную команду приходит сообщение вместо молчания, а вкладки, закреплённые панели и небольшие диалоги полностью управляются с клавиатуры. Поиск к тому же заметно быстрее.</p></li>
+<li><p>Заметные исправления: недаблы, помеченные gnuBG как «Double No», считались даблами и искажали PR по кубу (уже накопленную базу можно починить без повторного импорта, в режиме сервера); фильтр по игроку ошибочно сужал знаменатель Snowie Error Rate; экспорт записывал устаревшую схему; а <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> открывал графический интерфейс вместо сжатия базы.</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a> и <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>0.32.0 (2026-08-09)<a class="headerlink" href="#id5" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Панель EPC становится панелью <strong>Bearoff</strong> и получает полный анализ гонки. <em>(Переименована в панель Eval в 0.34.0.)</em></p></li>
+<li><p>На чистой позиции bearoff отображаются — помимо EPC, подсчёта пипсов, потерь и среднего числа бросков каждого игрока, теперь представленных в таблице со знаковой строкой Δ — вероятности выигрыша обоих игроков и денежные эквити (cubeless, без удвоения, удвоение/принятие, удвоение/отказ, с разрывом каждого решения от лучшего), а также <strong>лучшее решение по кубу</strong>.</p></li>
+<li><p>Два чётко различаемых режима: <em>точный</em> (чтение из двусторонней базы; встроенная база TS-06-06 GNUbg, покрывающая до 6 шашек на игрока) и <em>оценённый</em> (калиброванная свёртка, показывается погрешность — вердикт по кубу никогда не оценивается).</p></li>
+<li><p>Расширенная база TS-06-11 (точный вердикт до 11 шашек на игрока, 1,2 ГБ) загружается с новой вкладки <em>Bearoff</em> в настройках, с проверкой целостности и возобновлением прерванных загрузок; можно также указать любой двусторонний файл <code class="docutils literal notranslate"><span class="pre">.bd</span></code> от gnubg. <em>(Заменено в 0.36.0: таблица вычисляется на самой машине, никаких загрузок.)</em></p></li>
+<li><p><strong>Режим вызова</strong> для тренировки: результаты скрываются при каждом изменении и раскрываются зона за зоной по клику.</p></li>
+<li><p>Полное редактирование на доске: шашки обеих сторон, игрок на ходу (клик по прямоугольнику снятия/счёта) и позиция куба (клик по кубу).</p></li>
+<li><p>Клик по доске теперь точен при любом масштабе интерфейса (клик по пункту 1 мог попадать на пункт 2).</p></li>
+<li><p>Новая команда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> в командной строке и опция <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> серверного режима.</p></li>
+<li><p>Новый раздел руководства, «Методология и допущения панели Bearoff», исчерпывающе излагает допущения, стоящие за каждым отображаемым значением. <em>(Раздел переименован вместе с панелью в 0.34.0.)</em></p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Панель Eval</span></a> и <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Методология и допущения панели Eval</span></a>.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>0.31.0 (2026-08-04)<a class="headerlink" href="#id6" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Распространение базы среди третьих лиц: два независимых механизма, оба необязательны и выбираются при экспорте.</p></li>
+<li><p><strong>Водяной знак происхождения</strong> записывает в файл, что это такое и откуда оно взялось, подписанный идентичностью издателя, создаваемой самой собой при первом использовании; отметка не поддаётся подделке, читается вверху панели Метаданных (или через <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, никогда не записываясь в файл) и ничего не фиксирует на стороне получателя — ни журнала, ни отслеживания.</p></li>
+<li><p><strong>Защита паролем</strong> создаёт зашифрованный файл <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (AES-256-GCM, ключ, выведенный через Argon2id), проверяемый при каждом открытии, заголовок которого остаётся читаемым в открытом виде; идентичность экспортируется и импортируется как единый файл из настроек.</p></li>
+<li><p>Окно экспорта переработано: один экран вместо четырёх, напоминание о том, что действительно уходит (отображаемые позиции), покрытая доля каждой коллекции, отмеченная красным при частичном охвате, турниры экспортируются только вместе со своими матчами — и экспорт в три раза быстрее.</p></li>
+<li><p>Окно настроек реорганизовано в три вкладки (Интерфейс, Цвета доски, Идентичность издателя), со стабильным размером и позицией.</p></li>
+<li><p>Панель Метаданных перекомпонована в единую сетку.</p></li>
+<li><p>Панель Журнал, которая получала лишь эхо команд, удалена.</p></li>
+<li><p>Заметные исправления: неверный пароль больше не открывает защищённую базу; поля модальных окон больше не теряют фокус при клике; вычисление показателей PR/MWC больше не падает на денежной партии; временные файлы (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, блокировка) очищаются при закрытии.</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2>0.30.0 (2026-07-26)<a class="headerlink" href="#id7" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Поиск по комментарию: фильтр «Текст поиска» становится фильтром «Комментарий» и предлагает три взаимоисключающих режима — <em>содержит текст</em> (прежнее поведение, токен <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;слово1;слово2&quot;&quot;</span></code>), <em>есть комментарий</em> (токен <code class="docutils literal notranslate"><span class="pre">co</span></code>) и <em>без комментария</em> (токен <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — чтобы одним движением находить прокомментированные позиции или, наоборот, те, что ещё предстоит прокомментировать.</p></li>
+<li><p>Позиции, помеченные в eXtreme Gammon: метки (<em>flags</em>), проставленные при анализе матча XG, теперь считываются при импорте и находятся через фильтр «Помеченная» (токен <code class="docutils literal notranslate"><span class="pre">fl</span></code>), сочетаемый с любым другим критерием; помеченное решение по кубу даёт две помеченные позиции — удвоение и принятие/отказ.</p></li>
+<li><p>Поскольку разметка не является ретроактивной, достаточно повторно импортировать соответствующий файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code>, чтобы его метки попали в базу, не затрагивая существующие комментарии или анализы.</p></li>
+<li><p>Заметные исправления: PR, отображаемый на значке турнира, теперь относится к эталонному игроку, а не к сумме обоих игроков; колоды Anki, построенные на основе поиска, снова учитывают фильтры этого поиска, а не всю базу; исправлено зависание поиска при сочетании определённых фильтров (текст, дата, ошибка сыгранного хода).</p></li>
+<li><p>См. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>0.29.0 (2026-07-18)<a class="headerlink" href="#id8" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Экспорт матча в формате Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) из интерфейса (панель Матчи), а также из командной строки, с соответствующим серверным маршрутом — удобно для повторного проигрывания матча в другой программе для нард.</p></li>
+<li><p>Поиск: новый различитель «исключённые кости» (токен <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, допускается несколько), который отбрасывает позиции, чей бросок совпадает с заданным.</p></li>
+<li><p>Безопасное параллельное открытие: база, уже открытая для записи в другом окне blunderDB, теперь открывается только для чтения (навигация, поиск и анализ по-прежнему возможны, изменения отключены, отметка «[только чтение]» в заголовке окна) вместо риска повреждения.</p></li>
+<li><p>Происхождение позиций: вне режима матча информационная панель над доской показывает матч — и его турнир — из которого происходит изучаемая позиция, со значком «+N», если она встречается в нескольких матчах.</p></li>
+<li><p>Повышенная устойчивость к окружению: автоматический откат при недоступности шрифта, буфера обмена или последней открытой базы.</p></li>
+<li><p>Явная перезагрузка библиотеки (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, кнопка панели инструментов или команда <code class="docutils literal notranslate"><span class="pre">e</span></code>) заново открывает панель анализа на отображаемой позиции.</p></li>
+<li><p>Заметные исправления: устранено зависание при экспорте больших баз; кнопка «Нет» экспорта, которая на самом деле не исключала ни одного матча; фильтрация комментариев по нескольким словам; устранение дублирования события и турнира в информационной панели; различные визуальные доработки.</p></li>
+<li><p>См. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Панель матчей</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h2>0.28.0 (2026-07-15)<a class="headerlink" href="#id9" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Панель поиска: единый фильтр «Матчи и турниры», заменяющий текстовые поля идентификаторов окном выбора (списки с фильтрацией по тексту, кнопки <em>Все</em>/<em>Ничего</em>, отметка турнира отмечает его матчи-участники) — быстрее на больших базах, вкладка Матчи и вид Турниры теперь пересчитывают показатели PR/MWC только для отображаемых матчей; <code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> закрывает соответствующий пробел паритета.</p></li>
+<li><p>Новый фильтр «Импортирована индивидуально» (флажок группы «Прочее» или токен <code class="docutils literal notranslate"><span class="pre">i</span></code> в командной строке, <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>; также доступен в CLI через <code class="docutils literal notranslate"><span class="pre">--individual</span></code>) для поиска позиции, сохранённой или импортированной отдельно, а не затерянной внутри импорта матча.</p></li>
+<li><p>Исправлена потеря данных: удаление матча больше не удаляет индивидуально импортированные позиции, позиции, помещённые в коллекцию, или позиции, включённые в колоду Anki, которые этот матч также содержал.</p></li>
+<li><p>Серверный режим (headless): шесть новых методов для планировщика интервального повторения Anki — журнал повторений (<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>), прогноз карточек, подлежащих повторению (<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>), приостановка/откладывание/удаление карточки (<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>) и автоматическая настройка целевого удержания колоды к наблюдаемому проценту успеха (<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>, заменён в 0.36.0 на <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code>, который измеряет наблюдаемый процент, никогда не записывая цель); новый метод <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code> для окончательного удаления данных тенанта в многопользовательском развёртывании PostgreSQL; новые методы <code class="docutils literal notranslate"><span class="pre">matches.list</span></code> (фильтрация/сортировка/пагинация) и <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code> (показатели PR/MWC, ограниченные списком матчей).</p></li>
+<li><p>Нативное распространение для Linux: пакеты <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, сохраняющие бит исполнения, теряемый при скачивании сырого бинарника.</p></li>
+<li><p>Импорт: после импорта матча теперь отображается вкладка Матчи, и импортированные позиции сразу видны; после импорта отдельной позиции (файл XGP, позиция BGBlitz, текстовый файл позиции, вставленная позиция или пакет позиций) вкладка Анализ теперь открывается сразу на импортированной позиции, а не вкладка Матчи; исправлена вставка анализа eXtreme Gammon на французском или немецком языке с macOS, которая оставалась пустой (акценты разбирались буфером обмена системы на составляющие).</p></li>
+<li><p>См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>, <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a> и <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Загрузка и установка</span></a>.</p></li>
+</ul>
+</section>
+<section id="id10">
+<h2>0.27.0 (2026-06-13)<a class="headerlink" href="#id10" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Панель Anki: новый режим свободной тренировки (<em>cram</em>), доступный по кнопке <em>Cram</em> рядом с <em>Study</em>, который показывает случайные позиции из колоды, не изменяя график интервального повторения — идеально для разминки перед турниром или интенсивного повторения колоды без нарушения её порядка.</p></li>
+<li><p>Поиск: новая команда <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">bl</span></code>), загружающая худшие ошибки (equity/MWC) прямо в представление анализа, с необязательным числом для выбора количества (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); новый фильтр по игроку <code class="docutils literal notranslate"><span class="pre">pl'имя'</span></code>, находящий все позиции из матча с участием заданного игрока на любой стороне; и всплывающие подсказки, показывающие при наведении на каждый фильтр панели поиска соответствующий командный токен.</p></li>
+<li><p>Серверный режим (headless): новые методы <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (все ходы матча за один вызов) и <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count для обоих игроков).</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Панель Anki</span></a> и <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a>.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>0.26.0 (2026-06-09)<a class="headerlink" href="#id11" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Настройки отображения интерфейса в окне настроек: ползунок масштаба для увеличения или уменьшения всего интерфейса, и выбор положения панелей (внизу, сбоку или автоматически) для лучшего использования широких экранов.</p></li>
+<li><p>Добавлена информационная панель над доской, напоминающая игроков и контекст матча (событие, место, раунд, дата, длина).</p></li>
+<li><p>При открытии базы панель матчей теперь сразу отображается, и просмотр начинается с первой позиции.</p></li>
+<li><p>Клавиатурные сочетания теперь не зависят от раскладки клавиатуры (AZERTY, QWERTY, QWERTZ…).</p></li>
+<li><p>Исправлено декодирование XGID (флаги Jacoby/Beaver и значение куба).</p></li>
+<li><p>Добавлены вкладки множественных представлений: несколько независимых рабочих пространств (список позиций, текущая позиция, поиск) с сочетаниями <em>CTRL-T</em> (новое представление), <em>CTRL-W</em> (закрыть), <em>CTRL-PageUp</em>/<em>CTRL-PageDown</em> (переключение представления) и переименование двойным щелчком по вкладке.</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Конфигурация</span></a> и <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Вкладки представлений</span></a>.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h2>0.25.0 (2026-06-07)<a class="headerlink" href="#id12" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Серверный режим (headless): два новых метода для восстановления позиции без её сохранения — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> декодирует строку XGID в позицию, а <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> читает файл одиночной позиции <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p></li>
+<li><p>См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id13">
+<h2>0.24.0 (2026-06-06)<a class="headerlink" href="#id13" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавлен образ контейнера (Docker) для headless-режима: выделенная точка входа <code class="docutils literal notranslate"><span class="pre">serve</span></code> и <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, создающий статический бинарный файл без графического интерфейса, для развёртывания движка blunderDB как службы за обратным прокси-сервером.</p></li>
+<li><p>См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h2>0.23.0 (2026-06-05)<a class="headerlink" href="#id14" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавлены управляемые обзорные туры по интерфейсу (общий тур, поиск, матчи, турниры), воспроизводимые с панели инструментов или командой <code class="docutils literal notranslate"><span class="pre">tour</span></code>, а также демонстрационная база, загружаемая командой <code class="docutils literal notranslate"><span class="pre">demo</span></code>, чтобы познакомиться с инструментом без импорта собственных партий.</p></li>
+<li><p>Настройка цветов доски (фон, рамка, стрелки, шашки, кости, куб) из окна настроек.</p></li>
+<li><p>Автодополнение командной строки (клавиша <em>TAB</em>).</p></li>
+<li><p>Панель поиска: явный выбор типа решения (Шашки / Куб), с подтипом Удвоение / Без удвоения или Принятие / Отказ для решений по кубу, синхронизированный с доской; предлагаемый куб отображается в центре доски для решений о принятии/отказе.</p></li>
+<li><p>Поиск позиции по её идентификатору (фильтр <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p></li>
+<li><p>Исправлено отнесение ошибки по кубу к игроку 1.</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Обучающие туры и образец базы данных</span></a>.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h2>0.22.0 (2026-06-02)<a class="headerlink" href="#id15" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавлен безголовый (серверный) режим, продвинутый и необязательный, дополняющий настольное приложение: демон <code class="docutils literal notranslate"><span class="pre">serve</span></code>, предоставляющий движок по HTTP + JSON, многопользовательский бэкенд PostgreSQL с разделением по тенантам (и Row-Level Security по выбору), команда <code class="docutils literal notranslate"><span class="pre">migrate</span></code> для переноса базы SQLite в PostgreSQL и универсальный диспетчер <code class="docutils literal notranslate"><span class="pre">call</span></code>, дающий доступ из командной строки ко всем операциям хранения.</p></li>
+<li><p>Импорт отдельных позиций из новых форматов (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, текст BGBlitz, нативная библиотека <code class="docutils literal notranslate"><span class="pre">.db</span></code>) с обогащением дубликатов между форматами.</p></li>
+<li><p>Исправления: панели больше не вызывают ошибку, когда ни одна база не открыта, а панель Комментарии больше не зацикливается при открытии.</p></li>
+<li><p>См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id16">
+<h2>0.21.0 (2026-06-01)<a class="headerlink" href="#id16" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Интернационализация интерфейса: весь интерфейс blunderDB (панель инструментов, панели, сообщения, справка) теперь может отображаться по выбору на английском, французском, немецком, итальянском, испанском, финском, японском, греческом или русском языке.</p></li>
+<li><p>Добавлено окно настроек, доступное через кнопку в виде шестерёнки на панели инструментов, позволяющее выбрать язык.</p></li>
+<li><p>Выбор языка сохраняется от сеанса к сеансу.</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Конфигурация</span></a>.</p></li>
+</ul>
+</section>
+<section id="id17">
+<h2>0.20.0 (2026-05-31)<a class="headerlink" href="#id17" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавлена структура исключения <em>Except</em> на панели поиска: исключает позиции, содержащие одну из нарисованных шашек, с маркером «должно быть пусто» (двойной щелчок) и неограниченным числом шашек на пункт (команда <code class="docutils literal notranslate"><span class="pre">x</span></code>).</p></li>
+<li><p>Добавлена опция «только первая кость» в фильтр броска (вариант D1, опция CLI <code class="docutils literal notranslate"><span class="pre">--dice</span></code>).</p></li>
+<li><p>Панель Комментарии: автоматический фокус на поле ввода при открытии, кнопки редактирования/удаления всегда видны.</p></li>
+<li><p>Исправлен фильтр «Search Text», который находил не все теги комментариев.</p></li>
+</ul>
+</section>
+<section id="id18">
+<h2>0.19.0 (2026-05-07)<a class="headerlink" href="#id18" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавление панели Статистика: показатели PR (Performance Rating), Snowie Error Rate и MWC cost (стоимость шанса выиграть матч), панель фильтров (игрок, турнир, даты, тип решения, длина матча), вкладка Dashboard с карточками уровня / скользящим PR / топом бландеров, вкладка Прогресс с кривой по турнирам и диаграммой рассеяния по матчам, вкладка Ошибки с распределением по действиям с кубом и гистограммой величин.</p></li>
+<li><p>Интерактивный drill-down к позициям / матчам / турнирам из всех показателей.</p></li>
+<li><p>Мгновенное переключение PR / MWC.</p></li>
+<li><p>Команда CLI list –type stats.</p></li>
+<li><p>Согласование показателей PR / Snowie ER / MWC с eXtremeGammon и gnuBG (порог эквити 0.16 для близких кубов).</p></li>
+<li><p>Исправлено вычисление cube_error для решений Double/Pass.</p></li>
+<li><p>Документация модели статистики (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>).</p></li>
+<li><p>См. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>.</p></li>
+</ul>
+</section>
+<section id="id19">
+<h2>0.18.0 (2026-04-20)<a class="headerlink" href="#id19" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Крупный рефакторинг кода: разделение db.go (10 тыс. строк) на 19 специализированных файлов, извлечение 7 сервисных модулей из App.svelte (4888→469 строк), консолидация модальных/панельных сторов.</p></li>
+<li><p>Полная миграция на руны Svelte 5.</p></li>
+<li><p>Замена 9 табличных модальных окон общим компонентом DataTableModal.</p></li>
+<li><p>Добавлены ESLint + Prettier + vitest (125 фронтенд-тестов) с CI.</p></li>
+<li><p>Соответствие WCAG 2.1 AA (видимый фокус, роли ARIA, навигация с клавиатуры).</p></li>
+<li><p>Переход мьютекса Database на RWMutex для лучшего параллелизма чтения.</p></li>
+<li><p>Полная документация CLI (CLI_USAGE.md + Sphinx FR/EN).</p></li>
+<li><p>Переписан README.</p></li>
+<li><p>Исправлены все предупреждения ESLint (46→0) и Vite (6→0).</p></li>
+</ul>
+</section>
+<section id="id20">
+<h2>0.17.0 (2026-04-20)<a class="headerlink" href="#id20" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Оптимизация хранения: сжатие zlib данных анализа (~80% сокращение), компактное кодирование позиций (~90% уменьшение размера).</p></li>
+<li><p>Добавлены 5 недостающих индексов для повышения производительности поиска.</p></li>
+<li><p>Исправлен поиск по ошибке куба.</p></li>
+<li><p>Исправлен режим EDIT после поиска без результатов.</p></li>
+<li><p>Восстановление состояния панели поиска при переключении вкладок.</p></li>
+<li><p>Удалены 62 отладочные инструкции из критических путей.</p></li>
+</ul>
+</section>
+<section id="id21">
+<h2>0.16.0 (2026-04-18)<a class="headerlink" href="#id21" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Схема базы данных v2.0.0: дедупликация позиций через хеш Зобриста, денормализованные столбцы фильтрации, предфильтр шаблонов на битбордах, журналирование WAL (<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Приложение: Схема базы данных</span></a>).</p></li>
+<li><p>Пакетный импорт в &gt;=3 раза быстрее, фильтрованный поиск &lt;=100 мс на 10k+ позициях.</p></li>
+<li><p>ПРИМЕЧАНИЕ: файлы DB, созданные с v0.16.0, не могут быть открыты более старыми версиями; старые DB автоматически мигрируются на месте (сначала сделайте резервную копию).</p></li>
+</ul>
+</section>
+<section id="id22">
+<h2>0.15.0 (2026-03-31)<a class="headerlink" href="#id22" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Экспорт позиции в PNG-изображение в буфер обмена (только доска через Ctrl+X, или доска с анализом через Ctrl+X Ctrl+X).</p></li>
+</ul>
+</section>
+<section id="id23">
+<h2>0.14.0 (2026-03-30)<a class="headerlink" href="#id23" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Выделенная панель Anki для изучения методом интервального повторения (алгоритм FSRS).</p></li>
+<li><p>Импорт комментариев из файлов XG.</p></li>
+</ul>
+</section>
+<section id="id24">
+<h2>0.13.0 (2026-03-28)<a class="headerlink" href="#id24" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Упрощение интерфейса: навигация по матчам и коллекциям теперь выполняется непосредственно через панели.</p></li>
+<li><p>Командная строка, интегрированная в строку состояния.</p></li>
+<li><p>Панель Консоль переименована в панель Log. <em>(Панель удалена в 0.31.0.)</em></p></li>
+<li><p>Выделенная панель Bearoff в нижней панели.</p></li>
+<li><p>Копирование/вставка позиции в панели поиска.</p></li>
+<li><p>Перетаскивание для изменения порядка коллекций, позиций в коллекциях и матчей в турнирах.</p></li>
+<li><p>Столбец турнира в панели матчей со встроенным редактированием.</p></li>
+<li><p>Автоматическое отображение панели анализа после поиска.</p></li>
+</ul>
+</section>
+<section id="id25">
+<h2>0.12.0 (2026-03-19)<a class="headerlink" href="#id25" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Импорт файлов позиций eXtreme Gammon (XGP) с анализом.</p></li>
+</ul>
+</section>
+<section id="id26">
+<h2>0.11.0 (2026-03-06)<a class="headerlink" href="#id26" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Фильтр для поиска среди текущих позиций.</p></li>
+<li><p>Добавление фильтров по матчу и по турниру.</p></li>
+<li><p>Автоматическая очистка доски при открытии панели поиска.</p></li>
+</ul>
+</section>
+<section id="id27">
+<h2>0.10.0 (2026-02-25)<a class="headerlink" href="#id27" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Импорт матчей из eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) и BGBlitz (BGF/TXT).</p></li>
+<li><p>Навигация по матчам: просмотр ходов импортированного матча с подсветкой сыгранного хода.</p></li>
+<li><p>Панель матчей: список, сортировка, встроенное редактирование, смена игроков, назначение турнира.</p></li>
+<li><p>Рекурсивный импорт из папки и импорт перетаскиванием.</p></li>
+<li><p>Калькулятор EPC (Effective Pip Count) со встроенной базой данных bearoff GNUbg. <em>(Заменено в 0.36.0: таблица вычисляется на самой машине, ни одна больше не встраивается.)</em></p></li>
+<li><p>Коллекции: пользовательская группировка позиций.</p></li>
+<li><p>Турниры: группировка матчей по событию.</p></li>
+<li><p>Сохранение и восстановление состояния сессии (последний поиск, текущая позиция).</p></li>
+<li><p>Автоматическая миграция схемы базы данных.</p></li>
+<li><p>Отображение нескольких движков в анализе.</p></li>
+<li><p>Фильтр ошибок/бландеров игрока 1 при поиске.</p></li>
+<li><p>Экспорт базы данных с детальным выбором (матчи, коллекции, турниры, сыгранные ходы).</p></li>
+<li><p>Кнопка навигации по матчам.</p></li>
+<li><p>Отображение подсчёта шашек (pipcount) в навигации по матчам.</p></li>
+<li><p>Полный интерфейс командной строки (CLI).</p></li>
+<li><p>Автоматическое открытие последней базы данных.</p></li>
+<li><p>Улучшение панели инструментов и иконок.</p></li>
+</ul>
+</section>
+<section id="id28">
+<h2>0.9.0 (2025-11-02)<a class="headerlink" href="#id28" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Исправление ошибки в библиотеке фильтров.</p></li>
+<li><p>Импорт/экспорт базы данных.</p></li>
+<li><p>Отображение стрелок для выбранных ходов.</p></li>
+<li><p>Горячие клавиши для импорта/экспорта.</p></li>
+</ul>
+</section>
+<section id="id29">
+<h2>0.8.0 (2025-05-03)<a class="headerlink" href="#id29" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Новая кнопка для скрытия подсчёта шашек.</p></li>
+<li><p>Кнопка загрузки случайной позиции.</p></li>
+</ul>
+</section>
+<section id="id30">
+<h2>0.7.0 (2025-02-16)<a class="headerlink" href="#id30" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Поддержка японского и немецкого языков в экспорте XG.</p></li>
+</ul>
+</section>
+<section id="id31">
+<h2>0.6.0 (2025-02-13)<a class="headerlink" href="#id31" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавление библиотеки фильтров.</p></li>
+<li><p>Отображение версии базы данных в метаданных.</p></li>
+</ul>
+</section>
+<section id="id32">
+<h2>0.5.0 (2025-02-04)<a class="headerlink" href="#id32" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Добавление новых фильтров (зеркало, нет контакта, блот в яне, блот в аутфилде).</p></li>
+</ul>
+</section>
+<section id="id33">
+<h2>0.4.0 (2025-02-03)<a class="headerlink" href="#id33" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Исправление различных ошибок.</p></li>
+<li><p>Добавление иконки для blunderDB.</p></li>
+<li><p>Исправление фильтров.</p></li>
+<li><p>Добавление поддержки macOS.</p></li>
+</ul>
+</section>
+<section id="id34">
+<h2>0.3.0 (2025-01-27)<a class="headerlink" href="#id34" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Исправление различных ошибок.</p></li>
+<li><p>Автоматическое сохранение размера окна.</p></li>
+<li><p>Импорт комментариев из XG.</p></li>
+</ul>
+</section>
+<section id="id35">
+<h2>0.2.0 (2025-01-06)<a class="headerlink" href="#id35" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Исправление различных ошибок.</p></li>
+<li><p>Добавление таблиц матчей/TP/GV.</p></li>
+<li><p>Добавление фильтров поиска (ходы, решение видо, дата).</p></li>
+<li><p>Добавление метаданных для позиций.</p></li>
+<li><p>Функция импорта/экспорта между экземплярами blunderDB.</p></li>
+<li><p>Добавление функции метаданных для баз данных.</p></li>
+<li><p>Введение номеров версий (база данных и приложение).</p></li>
+</ul>
+</section>
+<section id="id36">
+<h2>0.1.0 (2024-12-31)<a class="headerlink" href="#id36" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Создание бета-версии.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="stats_parity.html" class="btn btn-neutral float-left" title="Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="a_propos.html" class="btn btn-neutral float-right" title="О программе" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

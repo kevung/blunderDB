@@ -1,0 +1,565 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ιστορικό εκδόσεων &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Σχετικά" href="a_propos.html" />
+    <link rel="prev" title="Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" href="stats_parity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/historique.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/historique.html" lang="en" hreflang="en">English</a>
+  <a href="../de/historique.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/historique.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/historique.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/historique.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/historique.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/historique.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ιστορικό εκδόσεων</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#apres-une-mise-a-jour">Μετά από μια ενημέρωση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.36.0 (05/09/2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.35.0 (2026-09-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">0.34.0 (2026-09-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.33.0 (2026-08-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.32.0 (2026-08-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">0.31.0 (2026-08-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.30.0 (2026-07-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">0.29.0 (2026-07-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">0.28.0 (2026-07-15)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">0.27.0 (2026-06-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">0.26.0 (2026-06-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">0.25.0 (2026-06-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">0.24.0 (2026-06-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">0.23.0 (2026-06-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">0.22.0 (2026-06-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">0.21.0 (2026-06-01)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">0.20.0 (2026-05-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">0.19.0 (2026-05-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">0.18.0 (2026-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">0.17.0 (2026-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">0.16.0 (2026-04-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">0.15.0 (2026-03-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">0.14.0 (2026-03-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">0.13.0 (2026-03-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id25">0.12.0 (2026-03-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id26">0.11.0 (2026-03-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id27">0.10.0 (2026-02-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id28">0.9.0 (2025-11-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id29">0.8.0 (2025-05-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id30">0.7.0 (2025-02-16)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">0.6.0 (2025-02-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id32">0.5.0 (2025-02-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id33">0.4.0 (2025-02-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id34">0.3.0 (2025-01-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id35">0.2.0 (2025-01-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id36">0.1.0 (2024-12-31)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ιστορικό εκδόσεων</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="historique-des-versions">
+<span id="historique"></span><h1>Ιστορικό εκδόσεων<a class="headerlink" href="#historique-des-versions" title="Link to this heading"></a></h1>
+<p>Οι εκδόσεις παρατίθενται από την πιο πρόσφατη προς την παλαιότερη, μία κουκκίδα ανά αλλαγή, και κάθε έκδοση τελειώνει με τις παραπομπές στις σελίδες που περιγράφουν αναλυτικά τι έφερε. Μια κουκκίδα που την ανέτρεψε μια μεταγενέστερη έκδοση φέρει την αναφορά εκείνης που την αντικατέστησε: αφηγείται την ιστορία του λογισμικού, δεν περιγράφει την εγκατεστημένη έκδοση.</p>
+<section id="apres-une-mise-a-jour">
+<h2>Μετά από μια ενημέρωση<a class="headerlink" href="#apres-une-mise-a-jour" title="Link to this heading"></a></h2>
+<p>Η μετάβαση του σχήματος της βάσης είναι <strong>αυτόματη</strong> κατά το άνοιγμα, και <strong>χωρίς επιστροφή</strong>: μια βάση που έχει μεταβεί δεν είναι πια αναγνώσιμη από παλαιότερη έκδοση του blunderDB, εξ ου και το προηγούμενο αντίγραφο ασφαλείας (<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Παράρτημα: Σχήμα της βάσης δεδομένων</span></a>). Τα υπόλοιπα δεν γίνονται από μόνα τους, επειδή κανένα από αυτά τα δεδομένα δεν είναι αναδρομικό:</p>
+<ul class="simple">
+<li><p><strong>Επανεισαγωγή των αρχείων πηγής για να αποκτηθεί η τύχη</strong> (0.33.0). Οι αγώνες που εισήχθησαν νωρίτερα φέρουν μια παύλα στη στήλη <em>Τύχη</em>, και μια παύλα δεν είναι μηδέν. Οι μορφές που δεν μεταφέρουν την τύχη (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) δεν θα την παρέχουν ποτέ.</p></li>
+<li><p><strong>Επανεισαγωγή των αρχείων XG για να αποκτηθούν οι σημάνσεις</strong> (0.30.0). Οι σημάνσεις που τέθηκαν στο eXtreme Gammon προστίθενται στη βάση κατά την επανεισαγωγή, χωρίς να θίγονται τα υπάρχοντα σχόλια ή οι αναλύσεις.</p></li>
+<li><p><strong>Εκτέλεση της ανάκτησης ανάλυσης gammonNet</strong> (0.34.0), από τη διεπαφή, με <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> ή σε λειτουργία διακομιστή: συμπληρώνει τις θέσεις που δεν έχουν καμία ανάλυση, χωρίς ποτέ να αντικαθιστά μια εισαγόμενη ανάλυση.</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>0.36.0 (05/09/2026)<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Το εκτελέσιμο είναι <strong>7,3 MB μικρότερο</strong>: οι πίνακες μαζέματος δεν είναι πια ενσωματωμένοι ούτε μεταφορτώνονται, αλλά υπολογίζονται στην πρώτη εκκίνηση, στο παρασκήνιο και σιωπηλά — πανομοιότυποι byte προς byte με του gnubg, με έλεγχο του αποτυπώματος SHA-256. Ο εκτεταμένος πίνακας TS-06-11 υπολογίζεται στην καρτέλα <em>Bearoff</em> αντί για μεταφόρτωση 1,2 GB.</p></li>
+<li><p><strong>Τα τουρνουά γεμίζουν μόνα τους κατά την εισαγωγή</strong>: ένας αγώνας κατατάσσεται στο τουρνουά που ονομάζει το αρχείο του, το οποίο δημιουργείται αν χρειαστεί· ένας αγώνας ήδη καταταγμένος δεν μετακινείται ποτέ.</p></li>
+<li><p><strong>Μία μόνο γραμματική αναζήτησης</strong>, τώρα αναγνώσιμη από τη γραμμή εντολών (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>) όσο και από την εφαρμογή.</p></li>
+<li><p>Η γραμμή εντολών αποκτά <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> σε εννέα εντολές, <strong>συμπλήρωση για bash, zsh και fish</strong>, την εντολή <code class="docutils literal notranslate"><span class="pre">repair</span></code> και τις υποεντολές <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code> και <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code>.</p></li>
+<li><p>Οι καρτέλες <strong>Συντομεύσεις</strong> και <strong>Εντολές</strong> της ενσωματωμένης βοήθειας παράγονται από τις σελίδες του εγχειριδίου που τις περιγράφουν: δεν μπορούν πια να μείνουν πίσω από αυτές, και γίνονται πίνακες, χωρίς πλαίσια. Η καρτέλα <strong>Εγχειρίδιο</strong> της βοήθειας παραμένει μια σύνοψη, διακριτή από το πλήρες εγχειρίδιο στο διαδίκτυο. Τρεις ξεναγήσεις επιπλέον (Eval, Anki, Stats).</p></li>
+<li><p>Ένα <strong>εκτελέσιμο Linux arm64</strong>, σε μορφή αρχείου tar, <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code> και πακέτου AUR.</p></li>
+<li><p>Ο πίνακας <strong>Eval</strong> ξαναβρίσκει το ταμπλό στο οποίο τον άφησαν, ξεχωρίζει την equity <em>money</em> από την equity <em>match</em> και περιηγείται με το πληκτρολόγιο.</p></li>
+<li><p>Από την πλευρά του διακομιστή: <strong>συμβόλαιο API παραγόμενο από τον κώδικα</strong> (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> και το παράρτημά του, 135 διαδρομές), αναγνωριστικό συσχέτισης ανά αίτημα, δείκτες για την εργασία εν εξελίξει, συμπίεση των ροών NDJSON (13,5 % του μεγέθους), και οι δύο κλήσεις που ξεπερνούν τον tenant — vacuum και purge — περνούν κάτω από το <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>.</p></li>
+<li><p><strong>Σχήμα 2.18.0</strong>: το Jacoby και το beaver φεύγουν από την ταυτότητα της θέσης, ώστε η ίδια θέση χρημάτων να μην μπαίνει πια δύο φορές από διαφορετικές πόρτες. Η μετάβαση είναι αυτόματη κατά το άνοιγμα και χωρίς δυνατότητα επιστροφής (<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Παράρτημα: Σχήμα της βάσης δεδομένων</span></a>).</p></li>
+<li><p>Αξιοσημείωτες διορθώσεις: το πλαίσιο λεπτομερειών του πίνακα Αγώνες δεν καταλαμβάνει πια τη μισή οθόνη όταν δεν υπάρχει επιλογή, η πρώτη παρτίδα μιας καταγραφής διπλώνει όπως οι άλλες, τα SHIFT-J και SHIFT-K αλλάζουν προβολή από οποιονδήποτε πίνακα, και οκτώ συντομεύσεις «εμφάνιση/απόκρυψη» επιτέλους κρύβουν.</p></li>
+<li><p>Βλ. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>0.35.0 (2026-09-02)<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Η γραμμή εντολών κερδίζει δύο οικογένειες: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span></code> (λίστα, εμφάνιση, δημιουργία, μετονομασία, διαγραφή, εξαγωγή μιας συλλογής) και <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span></code> (τράπουλες, στατιστικά, πρόβλεψη επαναλήψεων, επανασυγχρονισμός μιας τράπουλας).</p></li>
+<li><p>Η λειτουργία διακομιστή δημοσιεύεται ως <strong>εικόνα Docker</strong> (<code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>, amd64 και arm64), κερδίζει τη διαδρομή <code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code> και <strong>υδατογραφεί τις εξαγωγές της</strong> με την ταυτότητα εκδότη του διακομιστή (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>).</p></li>
+<li><p>Ο αξιολογητής gammonNet <strong>τιμολογεί τα φύλλα του με τον κύβο</strong>: σε σκορ αγώνα, οι ετυμηγορίες της αναζήτησης πλησιάζουν αυτές του eXtreme Gammon.</p></li>
+<li><p>Κάθε έκδοση διανέμει πλέον <strong>δηλώσεις winget και Homebrew</strong> και ένα πακέτο Flatpak, εκτός από τα πακέτα Debian, RPM και AUR.</p></li>
+<li><p>Στη διεπαφή, η βιβλιοθήκη είναι πλέον <strong>σελιδοποιημένη</strong> (μια βάση 50.000 θέσεων δεν φορτώνει πια τα πάντα στη μνήμη σε κάθε ανανέωση), τα παράθυρα modal μοιράζονται μια κοινή βάση (εστίαση, Escape, προσβασιμότητα), το ταμπλό επανασχεδιάζει μόνο ό,τι αλλάζει, και η ενσωματωμένη ιαπωνική γραμματοσειρά περιορίζεται στο χρήσιμο υποσύνολό της (5,5 MB λιγότερα).</p></li>
+<li><p>Σημαντικές διορθώσεις: μια βάση εισαγμένη μέσω «Εισαγωγή βάσης» κρατούσε θέσεις αόρατες στα φίλτρα και διπλότυπες σε δεύτερη εισαγωγή (επιδιορθώνεται κατά το άνοιγμα), το κουμπί Συγχώνευση στο παράθυρο συγχώνευσης παικτών παρέμενε γκριζαρισμένο, η εξαγωγή του διακομιστή ήταν κενή, και στα Windows η αφαίρεση της κατεβασμένης βάσης bearoff και το <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--force</span></code> απέτυχαν.</p></li>
+<li><p>Βλ. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>0.34.0 (2026-09-02)<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ένας <strong>ενσωματωμένος αξιολογητής</strong>: το gammonNet, μεταφερμένο σε Go και μεταγλωττισμένο μέσα στο blunderDB, αξιολογεί οποιαδήποτε θέση εκτός σύνδεσης, χωρίς XG ή gnuBG — νευρωνικό δίκτυο, αναζήτηση 0 έως 2-ply με κλάδεμα, απόφαση κύβου κατά Janowski και τον πίνακα ισοδυναμίας αγώνα του blunderDB, και μια αναζήτηση που σέβεται το σκορ του αγώνα.</p></li>
+<li><p>Ο πίνακας Bearoff γίνεται ο πίνακας <strong>Eval</strong>: παρουσιάζει τα δεδομένα της θέσης (πιθανότητες νίκης, γκάμον και μπάκγκαμον και για τις δύο πλευρές, equity) και έπειτα τη μία απόφαση που ζητά το ταμπλό, σε ένα σταθερό πλέγμα χωρίς κύλιση· οι ισοδυναμίες αγώνα είναι <strong>κανονικοποιημένες</strong> και η ετυμηγορία «πολύ καλό για διπλασιασμό» είναι και πάλι ορατή.</p></li>
+<li><p>Η αξιολόγηση είναι <strong>προοδευτική</strong>: 0-ply άμεσα στη χειρονομία, έπειτα 2-ply σε ηρεμία, ακυρώσιμη από κάθε νέα χειρονομία, με την ετικέτα βάθους να ονομάζει πάντα εκείνη που παρήγαγε τον αριθμό.</p></li>
+<li><p>Ολόκληρο το ταμπλό, τα ζάρια και το σκορ επεξεργάζονται εκεί, με κλικ όπως και με πληκτρολόγιο, και μια θέση της βιβλιοθήκης μπαίνει και βγαίνει από τον πίνακα.</p></li>
+<li><p>Σε μια κούρσα πέρα από την αμφίπλευρη βάση, ένα τρίτο, <strong>αξιολογημένο</strong> καθεστώς παρέχει την ετυμηγορία κύβου στο σκορ που ο πίνακας δεν έδινε.</p></li>
+<li><p>Μια καρτέλα <strong>gammonNet</strong> στις ρυθμίσεις διαχωρίζει το βάθος εμφάνισης από το βάθος ανάλυσης.</p></li>
+<li><p>Μετά από μια εισαγωγή, μια περιορισμένη, ορατή, ακυρώσιμη, επαναλήψιμη <strong>δέσμη ανάλυσης</strong> συμπληρώνει θέσεις χωρίς καμία ανάλυση, χωρίς ποτέ να αντικαθιστά μια εισαγμένη ανάλυση· η <strong>συμπλήρωση μιας υπάρχουσας βιβλιοθήκης</strong> ξεκινά από τη διεπαφή, τη νέα εντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> ή τη λειτουργία διακομιστή.</p></li>
+<li><p>Σημαντικές διορθώσεις: μια απάντηση κύβου εισαγμένη από το eXtreme Gammon κληρονομούσε την ανάλυση του διπλασιαστή χωρίς να αντιστρέφεται, η σημειογραφία των κινήσεων των Λευκών και των εισόδων από τη μπάρα ακολουθεί πλέον το gnuBG και το XG, το βάθος μιας ανάλυσης gnuBG διαβάζεται σωστά, και το μέγεθος του πλευρικού πίνακα διατηρείται.</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Πίνακας Eval</span></a>, <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a> και <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>0.33.0 (2026-08-26)<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ο πίνακας Στατιστικών αποκτά καρτέλα <strong>Παίκτες</strong>: οι τρεις προηγούμενες καρτέλες περιγράφουν έναν παίκτη, αυτή τους συγκρίνει όλους, μία γραμμή ανά παίκτη της βάσης — αγώνες, νίκες/ήττες, μετρημένες αποφάσεις, PR συνολικό / πούλια / ζάρι διπλασιασμού, Snowie Error Rate, σοβαρά λάθη και τύχη. Ο πίνακας ταξινομείται από οποιαδήποτε στήλη, περιορίζεται στις ημερομηνίες μιας διοργάνωσης με τα συνήθη φίλτρα, και ένα κλικ σε γραμμή μεταβαίνει στη λεπτομέρεια του παίκτη. Μια παύλα σημαίνει τιμή που δεν μετρήθηκε ποτέ, ποτέ μηδέν. Ο πίνακας είναι διαθέσιμος και από τη γραμμή εντολών (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code>, σε κείμενο, JSON ή CSV) και σε λειτουργία διακομιστή.</p></li>
+<li><p>Η <strong>τύχη</strong> κάθε ζαριάς αποθηκεύεται πλέον στη βάση και εμφανίζεται: μέση τύχη ανά ζαριά, σε χιλιοστά του πόντου, με πρόσημο. Διαβάζεται κατά την εισαγωγή τόσο από αρχεία eXtreme Gammon όσο και από gnuBG. Δεν ισχύει αναδρομικά — οι αγώνες που εισήχθησαν νωρίτερα δείχνουν παύλα και τα αρχεία προέλευσης πρέπει να εισαχθούν ξανά· οι μορφές που δεν τη μεταφέρουν (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) δεν θα τη δώσουν ποτέ.</p></li>
+<li><p>Η καρτέλα <strong>Λάθη</strong> δείχνει τώρα προς ποια <em>κατεύθυνση</em> σφάλλουν οι αποφάσεις του κύβου, όχι μόνο πόσο κοστίζουν: μια γραμμή <em>Προσφορά</em> (χαμένα διπλασιάσματα, πρόωρα διπλασιάσματα) και μια γραμμή <em>Απάντηση</em> (λανθασμένα πάσα, λανθασμένες αποδοχές), σκόπιμα χωριστά, αφού ο ίδιος παίκτης μπορεί να διπλασιάζει αργά και να δέχεται χαλαρά. Κάθε κελί φέρει το πλήθος του, το tooltip τη χαμένη ισοδυναμία, και το κλικ φορτώνει τις αντίστοιχες θέσεις.</p></li>
+<li><p>Νέα εντολή <strong>Συμπύκνωση βάσης</strong>, που ανακτά τον χώρο που άφησαν οι διαγραφές: κουμπί στις ρυθμίσεις και υποεντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code>. Δεν εκτελείται ποτέ από μόνη της.</p></li>
+<li><p>Εργονομία: οι καταστροφικές ενέργειες ζητούν επιβεβαίωση, η αναζήτηση σε εξέλιξη επισημαίνεται, μια άγνωστη εντολή λαμβάνει μήνυμα αντί για σιωπή, και οι καρτέλες, οι αγκυρωμένοι πίνακες και τα μικρά παράθυρα χειρίζονται πλήρως από το πληκτρολόγιο. Η αναζήτηση είναι επίσης αισθητά ταχύτερη.</p></li>
+<li><p>Σημαντικές διορθώσεις: τα μη-διπλασιάσματα που το gnuBG χαρακτηρίζει «Double No» μετρούνταν ως διπλασιάσματα, νοθεύοντας το PR του κύβου (μια ήδη υπάρχουσα βάση επιδιορθώνεται χωρίς νέα εισαγωγή, σε λειτουργία διακομιστή)· το φίλτρο παίκτη μίκραινε εσφαλμένα τον παρονομαστή του Snowie Error Rate· οι εξαγωγές έγραφαν παρωχημένο σχήμα· και το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> άνοιγε το γραφικό περιβάλλον αντί να συμπυκνώσει τη βάση.</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a> και <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>0.32.0 (2026-08-09)<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ο πίνακας EPC γίνεται ο πίνακας <strong>Bearoff</strong> και κερδίζει την πλήρη ανάλυση κούρσας. <em>(Μετονομάστηκε σε πίνακα Eval στην 0.34.0.)</em></p></li>
+<li><p>Σε μια καθαρή θέση bearoff, εμφανίζει — εκτός από το EPC, το pip count, τη σπατάλη και τον μέσο αριθμό ζαριών κάθε παίκτη, πλέον παρουσιασμένα σε πίνακα με προσημασμένη γραμμή Δ — τις πιθανότητες νίκης και των δύο παικτών και τις equities money (cubeless, χωρίς διπλασιασμό, διπλασιασμός/πάρε, διπλασιασμός/πέρασε, με το κενό κάθε απόφασης από την καλύτερη) καθώς και την <strong>καλύτερη απόφαση κύβου</strong>.</p></li>
+<li><p>Δύο σαφώς διακριτά καθεστώτα: <em>ακριβές</em> (ανάγνωση από αμφίπλευρη βάση· η βάση TS-06-06 του GNUbg είναι ενσωματωμένη, καλύπτοντας έως 6 πούλια ανά παίκτη) και <em>εκτιμημένο</em> (βαθμονομημένη συνέλιξη, εμφανιζόμενο περιθώριο σφάλματος — η ετυμηγορία κύβου δεν εκτιμάται ποτέ).</p></li>
+<li><p>Η εκτεταμένη βάση TS-06-11 (ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη, 1,2 GB) κατεβαίνει από τη νέα καρτέλα <em>Bearoff</em> των ρυθμίσεων, με έλεγχο ακεραιότητας και συνεχιζόμενες λήψεις· μπορεί επίσης να οριστεί οποιοδήποτε αμφίπλευρο αρχείο <code class="docutils literal notranslate"><span class="pre">.bd</span></code> του gnubg. <em>(Αντικαταστάθηκε στην 0.36.0: ο πίνακας υπολογίζεται στον υπολογιστή, καμία λήψη πια.)</em></p></li>
+<li><p><strong>Λειτουργία πρόκλησης</strong> για εξάσκηση: τα αποτελέσματα κρύβονται σε κάθε τροποποίηση και αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ.</p></li>
+<li><p>Πλήρης επεξεργασία στο ταμπλό: πούλια και των δύο πλευρών, παίκτης στη βολή (κλικ στο ορθογώνιο bearoff/σκορ) και θέση του κύβου (κλικ στον κύβο).</p></li>
+<li><p>Το κλικ στο ταμπλό είναι πλέον ακριβές σε οποιαδήποτε κλίμακα διεπαφής (ένα κλικ στο σημείο 1 μπορούσε να καταλήξει στο σημείο 2).</p></li>
+<li><p>Νέα εντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> στη γραμμή εντολών και επιλογή <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> της λειτουργίας διακομιστή.</p></li>
+<li><p>Μια νέα ενότητα του εγχειριδίου, «Μεθοδολογία και υποθέσεις του πίνακα Bearoff», αναφέρει εξαντλητικά τις υποθέσεις πίσω από κάθε εμφανιζόμενη τιμή. <em>(Η ενότητα μετονομάστηκε μαζί με τον πίνακα στην 0.34.0.)</em></p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Πίνακας Eval</span></a> και <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Μεθοδολογία και υποθέσεις του πίνακα Eval</span></a>.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>0.31.0 (2026-08-04)<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Διάχυση μιας βάσης σε τρίτους: δύο ανεξάρτητοι μηχανισμοί, και οι δύο προαιρετικοί και επιλέξιμοι κατά την εξαγωγή.</p></li>
+<li><p>Το <strong>υδατογράφημα προέλευσης</strong> καταγράφει στο αρχείο τι είναι και από πού προέρχεται, υπογεγραμμένο από μια ταυτότητα εκδότη που δημιουργείται μόνη της κατά την πρώτη χρήση· η σήμανση είναι μη παραποιήσιμη, εμφανίζεται στην κορυφή του πίνακα Μεταδεδομένων (ή μέσω <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, χωρίς ποτέ να γράφει στο αρχείο) και δεν καταγράφει τίποτα στην πλευρά του παραλήπτη — κανένα αρχείο καταγραφής, καμία παρακολούθηση.</p></li>
+<li><p>Η <strong>προστασία με κωδικό</strong> παράγει ένα κρυπτογραφημένο αρχείο <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (AES-256-GCM, κλειδί που προέρχεται με Argon2id), ελεγμένο σε κάθε άνοιγμα, του οποίου η κεφαλίδα παραμένει αναγνώσιμη σε καθαρό κείμενο· η ταυτότητα εξάγεται και εισάγεται ως ένα ενιαίο αρχείο από τις προτιμήσεις.</p></li>
+<li><p>Το παράθυρο εξαγωγής ανασχεδιάστηκε: μία μόνο οθόνη αντί για τέσσερις, υπενθύμιση του τι πραγματικά φεύγει (οι εμφανιζόμενες θέσεις), το καλυπτόμενο μερίδιο κάθε συλλογής σημειωμένο με κόκκινο όταν είναι μερικό, τα τουρνουά εξαγώγιμα μόνο με τους αγώνες τους — και μια εξαγωγή τρεις φορές ταχύτερη.</p></li>
+<li><p>Το παράθυρο ρυθμίσεων αναδιοργανώθηκε σε τρεις καρτέλες (Διεπαφή, Χρώματα ταμπλό, Ταυτότητα εκδότη), με σταθερό μέγεθος και θέση.</p></li>
+<li><p>Ο πίνακας Μεταδεδομένων αναδιατάχθηκε σε ένα ενιαίο πλέγμα.</p></li>
+<li><p>Ο πίνακας Ημερολόγιο, που λάμβανε μόνο την ηχώ των εντολών, αφαιρείται.</p></li>
+<li><p>Σημαντικές διορθώσεις: ένας λανθασμένος κωδικός δεν ανοίγει πλέον μια προστατευμένη βάση, τα πεδία των παραθύρων modal δεν χάνουν πλέον την εστίαση στο κλικ, ο υπολογισμός των δεικτών PR/MWC δεν καταρρέει πλέον σε ένα money game, και τα προσωρινά αρχεία (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, κλείδωμα) καθαρίζονται κατά το κλείσιμο.</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2>0.30.0 (2026-07-26)<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Αναζήτηση κατά σχόλιο: το φίλτρο «Κείμενο αναζήτησης» γίνεται το φίλτρο «Σχόλιο» και προσφέρει τρεις αποκλειστικές λειτουργίες — <em>περιέχει το κείμενο</em> (προηγούμενη συμπεριφορά, διακριτικό <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;λέξη1;λέξη2&quot;&quot;</span></code>), <em>έχει σχόλιο</em> (διακριτικό <code class="docutils literal notranslate"><span class="pre">co</span></code>) και <em>χωρίς σχόλιο</em> (διακριτικό <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — για να βρεθούν με μία κίνηση οι σχολιασμένες θέσεις, ή αντίθετα εκείνες που μένουν να σχολιαστούν.</p></li>
+<li><p>Θέσεις σημειωμένες στο eXtreme Gammon: οι σημάνσεις (<em>flags</em>) που τοποθετήθηκαν κατά την ανάλυση ενός αγώνα XG διαβάζονται πλέον κατά την εισαγωγή και ανακτώνται μέσω του φίλτρου «Σημειωμένη» (διακριτικό <code class="docutils literal notranslate"><span class="pre">fl</span></code>), συνδυάσιμου με κάθε άλλο κριτήριο· μια σημειωμένη απόφαση κύβου δίνει δύο σημειωμένες θέσεις, τον διπλασιασμό και το πάρε/πέρασε.</p></li>
+<li><p>Καθώς η σήμανση δεν είναι αναδρομική, αρκεί να επανεισαχθεί το σχετικό αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code> για να προστεθούν οι σημάνσεις του στη βάση, χωρίς να θιγούν υπάρχοντα σχόλια ή αναλύσεις.</p></li>
+<li><p>Σημαντικές διορθώσεις: το PR που εμφανίζεται στο σήμα ενός τουρνουά αναφέρεται πλέον στον παίκτη αναφοράς και όχι στο άθροισμα και των δύο παικτών, οι τράπουλες Anki που βασίζονται σε μια αναζήτηση σέβονται και πάλι τα φίλτρα αυτής της αναζήτησης αντί να παίρνουν όλη τη βάση, και διορθώνεται ένα μπλοκάρισμα της αναζήτησης όταν συνδυάζονται ορισμένα φίλτρα (κείμενο, ημερομηνία, σφάλμα της κίνησης που παίχτηκε).</p></li>
+<li><p>Βλ. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Λίστα εντολών</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>0.29.0 (2026-07-18)<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Εξαγωγή ενός αγώνα σε μορφή Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) από τη διεπαφή (πίνακας Αγώνων) όπως και από τη γραμμή εντολών, με την αντίστοιχη διαδρομή διακομιστή — χρήσιμο για την επανάληψη ενός αγώνα σε άλλο λογισμικό τάβλι.</p></li>
+<li><p>Αναζήτηση: ένας νέος διαχωριστής «εξαιρούμενα ζάρια» (διακριτικό <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, επιτρέπονται περισσότερα) που αποκλείει θέσεις των οποίων η ζαριά αντιστοιχεί σε δεδομένη ζαριά.</p></li>
+<li><p>Ασφαλές ταυτόχρονο άνοιγμα: μια βάση ήδη ανοιχτή για εγγραφή σε άλλο παράθυρο blunderDB ανοίγει πλέον μόνο για ανάγνωση (πλοήγηση, αναζήτηση και ανάλυση παραμένουν δυνατές, οι τροποποιήσεις απενεργοποιούνται, ένδειξη «[μόνο για ανάγνωση]» στη γραμμή τίτλου) αντί να διακινδυνεύει αλλοίωση.</p></li>
+<li><p>Προέλευση των θέσεων: εκτός λειτουργίας αγώνα, η γραμμή πληροφοριών πάνω από το ταμπλό δείχνει τον αγώνα — και το τουρνουά του — από τον οποίο προέρχεται η υπό μελέτη θέση, με σήμα «+N» όταν εμφανίζεται σε πολλούς αγώνες.</p></li>
+<li><p>Αυξημένη ανθεκτικότητα απέναντι στο περιβάλλον: αυτόματη υποχώρηση όταν μια γραμματοσειρά, το πρόχειρο ή η τελευταία ανοιγμένη βάση δεν είναι διαθέσιμα.</p></li>
+<li><p>Μια ρητή επαναφόρτωση της βιβλιοθήκης (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, κουμπί εργαλειοθήκης ή εντολή <code class="docutils literal notranslate"><span class="pre">e</span></code>) ανοίγει ξανά τον πίνακα ανάλυσης στην εμφανιζόμενη θέση.</p></li>
+<li><p>Σημαντικές διορθώσεις: αφαίρεση ενός μπλοκαρίσματος στην εξαγωγή μεγάλων βάσεων, το κουμπί «Κανένα» της εξαγωγής που στην πραγματικότητα δεν εξήγαγε τίποτα, φιλτράρισμα σχολίων πολλαπλών λέξεων, αποδιπλασιασμός γεγονότος και τουρνουά στη γραμμή πληροφοριών, και διάφορες ρυθμίσεις εμφάνισης.</p></li>
+<li><p>Βλ. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Λίστα εντολών</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Πίνακας Αγώνων</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h2>0.28.0 (2026-07-15)<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Πίνακας αναζήτησης: ένα ενοποιημένο φίλτρο «Αγώνες &amp; Τουρνουά» που αντικαθιστά τα πεδία κειμένου αναγνωριστικών με ένα παράθυρο επιλογής (λίστες ελέγχου φιλτραρισμένες κατά κείμενο, κουμπιά <em>Όλα</em>/<em>Κανένα</em>, το τσεκάρισμα ενός τουρνουά τσεκάρει τους αγώνες-μέλη του) — ταχύτερο σε μεγάλες βάσεις, η καρτέλα Αγώνες και η προβολή Τουρνουά επανυπολογίζουν πλέον τους δείκτες PR/MWC μόνο για τους εμφανιζόμενους αγώνες· η <code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> κλείνει το αντίστοιχο κενό ισοτιμίας.</p></li>
+<li><p>Νέο φίλτρο «Ξεχωριστά εισαγόμενη» (πλαίσιο ελέγχου στην ομάδα Άλλα, ή διακριτικό <code class="docutils literal notranslate"><span class="pre">i</span></code> στη γραμμή εντολών, <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>· διαθέσιμο επίσης στη CLI μέσω <code class="docutils literal notranslate"><span class="pre">--individual</span></code>) για να βρεθεί μια θέση αποθηκευμένη ή εισαγμένη μόνη της αντί να χαθεί μέσα σε μια εισαγωγή αγώνα.</p></li>
+<li><p>Διόρθωση απώλειας δεδομένων: η διαγραφή ενός αγώνα δεν αφαιρεί πλέον θέσεις ξεχωριστά εισαγόμενες, τοποθετημένες σε συλλογή, ή ενταγμένες σε τράπουλα Anki που ο αγώνας περιείχε επίσης.</p></li>
+<li><p>Λειτουργία διακομιστή (headless): έξι νέες μέθοδοι για τον προγραμματιστή Anki κατανεμημένης επανάληψης — ημερολόγιο επαναλήψεων (<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>), πρόβλεψη επερχόμενων καρτών (<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>), αναστολή/αναβολή/αφαίρεση κάρτας (<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>) και αυτόματη προσαρμογή της στοχευόμενης διατήρησης μιας τράπουλας προς το παρατηρούμενο ποσοστό επιτυχίας της (<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>, που αντικαταστάθηκε στην 0.36.0 από το <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code>, το οποίο μετρά το παρατηρούμενο ποσοστό χωρίς ποτέ να γράφει τον στόχο)· μια νέα μέθοδος <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code> για οριστική διαγραφή των δεδομένων ενός tenant σε ανάπτυξη PostgreSQL πολλαπλών χρηστών· νέες μέθοδοι <code class="docutils literal notranslate"><span class="pre">matches.list</span></code> (φιλτράρισμα/ταξινόμηση/σελιδοποίηση) και <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code> (δείκτες PR/MWC περιορισμένοι σε μια λίστα αγώνων).</p></li>
+<li><p>Εγγενής διανομή Linux: πακέτα <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, που διατηρούν το bit εκτέλεσης που χανόταν κατά τη λήψη του ακατέργαστου εκτελέσιμου.</p></li>
+<li><p>Εισαγωγή: μετά την εισαγωγή ενός αγώνα, η καρτέλα Αγώνες εμφανίζεται πλέον και οι εισαγμένες θέσεις είναι αμέσως ορατές· μετά την εισαγωγή μιας μεμονωμένης θέσης (αρχείο XGP, θέση BGBlitz, αρχείο θέσης κειμένου, επικολλημένη θέση ή δέσμη θέσεων), η καρτέλα Ανάλυση ανοίγει πλέον απευθείας στην εισαγμένη θέση, αντί για την καρτέλα Αγώνες· διόρθωση της επικόλλησης μιας ανάλυσης eXtreme Gammon στα γαλλικά ή γερμανικά από macOS, που παρέμενε κενή (τόνοι αποσυντεθειμένοι από το πρόχειρο του συστήματος).</p></li>
+<li><p>Βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>, <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Λίστα εντολών</span></a> και <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Λήψη και εγκατάσταση</span></a>.</p></li>
+</ul>
+</section>
+<section id="id10">
+<h2>0.27.0 (2026-06-13)<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Πίνακας Anki: μια νέα λειτουργία ελεύθερης εξάσκησης (<em>cram</em>), προσβάσιμη από το κουμπί <em>Cram</em> δίπλα στο <em>Study</em>, που εμφανίζει τυχαίες θέσεις από την τράπουλα χωρίς να τροποποιεί το πρόγραμμα επαναλαμβανόμενης μελέτης — ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη μιας τράπουλας χωρίς να διαταράσσεται η σειρά της.</p></li>
+<li><p>Αναζήτηση: μια νέα εντολή <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (ψευδώνυμο <code class="docutils literal notranslate"><span class="pre">bl</span></code>) που φορτώνει απευθείας τα χειρότερα λάθη (equity/MWC) στην προβολή ανάλυσης, με προαιρετικό αριθμό για την επιλογή του πλήθους (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>)· ένα νέο φίλτρο παίκτη <code class="docutils literal notranslate"><span class="pre">pl'όνομα'</span></code> που βρίσκει όλες τις θέσεις από έναν αγώνα στον οποίο συμμετείχε ένας συγκεκριμένος παίκτης, σε οποιαδήποτε πλευρά· και επεξηγήσεις που, καθώς ο δείκτης περνά πάνω από κάθε φίλτρο του πίνακα αναζήτησης, εμφανίζουν το αντίστοιχο διακριτικό εντολής.</p></li>
+<li><p>Λειτουργία διακομιστή (headless): νέες μέθοδοι <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (όλες οι κινήσεις ενός αγώνα σε μία κλήση) και <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count και για τους δύο παίκτες).</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Πίνακας Anki</span></a> και <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Λίστα εντολών</span></a>.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>0.26.0 (2026-06-09)<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ρυθμίσεις εμφάνισης της διεπαφής στο παράθυρο ρυθμίσεων: ένας ολισθητής κλίμακας για μεγέθυνση ή σμίκρυνση ολόκληρης της διεπαφής, και μια επιλογή θέσης των πινάκων (κάτω, στο πλάι ή αυτόματα) για καλύτερη αξιοποίηση των ευρέων οθονών.</p></li>
+<li><p>Προσθήκη γραμμής πληροφοριών πάνω από το ταμπλό που υπενθυμίζει τους παίκτες και το πλαίσιο του αγώνα (γεγονός, τόπος, γύρος, ημερομηνία, διάρκεια).</p></li>
+<li><p>Κατά το άνοιγμα μιας βάσης, ο πίνακας των αγώνων εμφανίζεται πλέον αμέσως και η επισκόπηση ξεκινά από την πρώτη θέση.</p></li>
+<li><p>Οι συντομεύσεις πληκτρολογίου είναι πλέον ανεξάρτητες από τη διάταξη πληκτρολογίου (AZERTY, QWERTY, QWERTZ…).</p></li>
+<li><p>Διόρθωση της αποκωδικοποίησης XGID (δείκτες Jacoby/Beaver και τιμή του κύβου).</p></li>
+<li><p>Προσθήκη καρτελών πολλαπλών προβολών: πολλοί ανεξάρτητοι χώροι εργασίας (λίστα θέσεων, τρέχουσα θέση, αναζήτηση) με τις συντομεύσεις <em>CTRL-T</em> (νέα προβολή), <em>CTRL-W</em> (κλείσιμο), <em>CTRL-PageUp</em>/<em>CTRL-PageDown</em> (αλλαγή προβολής) και μετονομασία με διπλό κλικ στην καρτέλα.</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Ρυθμίσεις</span></a> και <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Καρτέλες προβολών</span></a>.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h2>0.25.0 (2026-06-07)<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Λειτουργία διακομιστή (headless): δύο νέες μέθοδοι για την ανακατασκευή μιας θέσης χωρίς αποθήκευση — η <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> αποκωδικοποιεί μια συμβολοσειρά XGID σε θέση και η <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> διαβάζει ένα αρχείο μεμονωμένης θέσης <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p></li>
+<li><p>Βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id13">
+<h2>0.24.0 (2026-06-06)<a class="headerlink" href="#id13" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προστέθηκε εικόνα κοντέινερ (Docker) για τη λειτουργία headless: ένα αποκλειστικό σημείο εισόδου <code class="docutils literal notranslate"><span class="pre">serve</span></code> και ένα <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> που παράγει ένα στατικό δυαδικό αρχείο χωρίς γραφικό περιβάλλον, για την ανάπτυξη της μηχανής του blunderDB ως υπηρεσία πίσω από έναν αντίστροφο διακομιστή μεσολάβησης (reverse proxy).</p></li>
+<li><p>Βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h2>0.23.0 (2026-06-05)<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προσθήκη καθοδηγούμενων περιηγήσεων της διεπαφής (γενική περιήγηση, αναζήτηση, αγώνες, τουρνουά), επαναλήψιμων από τη γραμμή εργαλείων ή την εντολή <code class="docutils literal notranslate"><span class="pre">tour</span></code>, και μιας δείγματος βάσης φορτώσιμης με την εντολή <code class="docutils literal notranslate"><span class="pre">demo</span></code> για να ανακαλύψει κανείς το εργαλείο χωρίς να εισάγει τις δικές του παρτίδες.</p></li>
+<li><p>Προσαρμογή των χρωμάτων του ταμπλό (φόντο, περίγραμμα, βέλη, πούλια, ζάρια, κύβος) από το παράθυρο ρυθμίσεων.</p></li>
+<li><p>Αυτόματη συμπλήρωση της γραμμής εντολών (πλήκτρο <em>TAB</em>).</p></li>
+<li><p>Πίνακας αναζήτησης: ρητός έλεγχος του τύπου απόφασης (Πούλια / Κύβος), με έναν υπότυπο Διπλασιασμός / Χωρίς διπλασιασμό ή Πάρε / Πέρασε για τις αποφάσεις κύβου, συγχρονισμένος με το ταμπλό· ο προσφερόμενος κύβος εμφανίζεται στο κέντρο του ταμπλό για τις αποφάσεις πάρε/πέρασε.</p></li>
+<li><p>Αναζήτηση μιας θέσης βάσει του αναγνωριστικού της (φίλτρο <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p></li>
+<li><p>Διόρθωση της απόδοσης του σφάλματος κύβου στον παίκτη 1.</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Ξεναγήσεις και βάση δείγματος</span></a>.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h2>0.22.0 (2026-06-02)<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προσθήκη μιας λειτουργίας χωρίς γραφικό περιβάλλον (διακομιστής), προηγμένης και προαιρετικής, που συμπληρώνει την εφαρμογή γραφείου: ένας δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code> που εκθέτει τη μηχανή σε HTTP + JSON, ένα backend PostgreSQL πολλαπλών χρηστών με διαχωρισμό ανά tenant (και Row-Level Security προαιρετικά), μια εντολή <code class="docutils literal notranslate"><span class="pre">migrate</span></code> για τη μεταφορά μιας βάσης SQLite προς PostgreSQL, και ένας γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code> που παρέχει πρόσβαση μέσω γραμμής εντολών σε όλες τις λειτουργίες αποθήκευσης.</p></li>
+<li><p>Εισαγωγή μεμονωμένων θέσεων από νέες μορφές (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, κείμενο BGBlitz, εγγενής βιβλιοθήκη <code class="docutils literal notranslate"><span class="pre">.db</span></code>) με εμπλουτισμό των διπλότυπων μεταξύ μορφών.</p></li>
+<li><p>Διορθώσεις: οι πίνακες δεν προκαλούν πλέον σφάλμα όταν δεν είναι ανοιχτή καμία βάση, και ο πίνακας Σχόλια δεν δημιουργεί πλέον βρόχο κατά το άνοιγμα.</p></li>
+<li><p>Βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id16">
+<h2>0.21.0 (2026-06-01)<a class="headerlink" href="#id16" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Διεθνοποίηση της διεπαφής: το σύνολο του blunderDB (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μπορεί πλέον να εμφανιστεί κατ” επιλογήν στα αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, ελληνικά ή ρωσικά.</p></li>
+<li><p>Προσθήκη παραθύρου ρυθμίσεων, προσβάσιμου μέσω ενός κουμπιού σε σχήμα γραναζιού στη γραμμή εργαλείων, που επιτρέπει την επιλογή της γλώσσας.</p></li>
+<li><p>Η επιλογή της γλώσσας διατηρείται από τη μία συνεδρία στην άλλη.</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Ρυθμίσεις</span></a>.</p></li>
+</ul>
+</section>
+<section id="id17">
+<h2>0.20.0 (2026-05-31)<a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προσθήκη της δομής αποκλεισμού <em>Except</em> στον πίνακα αναζήτησης: αποκλείει θέσεις που περιέχουν ένα από τα σχεδιασμένα πούλια, με δείκτη «πρέπει να είναι κενό» (διπλό κλικ) και απεριόριστο αριθμό πουλιών ανά σημείο (εντολή <code class="docutils literal notranslate"><span class="pre">x</span></code>).</p></li>
+<li><p>Προσθήκη της επιλογής «μόνο πρώτο ζάρι» στο φίλτρο ζαριάς (παραλλαγή D1, επιλογή CLI <code class="docutils literal notranslate"><span class="pre">--dice</span></code>).</p></li>
+<li><p>Πίνακας Σχόλια: αυτόματη εστίαση του πεδίου εισαγωγής κατά το άνοιγμα, και κουμπιά επεξεργασίας/διαγραφής πάντα ορατά.</p></li>
+<li><p>Διόρθωση του φίλτρου «Search Text» που δεν έβρισκε όλες τις ετικέτες σχολίων.</p></li>
+</ul>
+</section>
+<section id="id18">
+<h2>0.19.0 (2026-05-07)<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προσθήκη του πίνακα Stats: δείκτες PR (Performance Rating), Snowie Error Rate και MWC cost (Match Winning Chance cost), γραμμή φίλτρου (παίκτης, τουρνουά, ημερομηνίες, τύπος απόφασης, μήκος αγώνα), καρτέλα Dashboard με κάρτες επιπέδου / κυλιόμενο PR / κορυφαία blunders, καρτέλα Progression με καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με κατανομή ανά ενέργεια κύβου και ιστόγραμμα των μεγεθών.</p></li>
+<li><p>Διαδραστική εμβάθυνση προς τις θέσεις / αγώνες / τουρνουά από όλους τους δείκτες.</p></li>
+<li><p>Στιγμιαία εναλλαγή PR / MWC.</p></li>
+<li><p>Εντολή CLI list –type stats.</p></li>
+<li><p>Ευθυγράμμιση των δεικτών PR / Snowie ER / MWC με το eXtremeGammon και το gnuBG (κατώφλι equity 0.16 για κοντινούς κύβους).</p></li>
+<li><p>Διόρθωση του υπολογισμού του cube_error για τις αποφάσεις Double/Pass.</p></li>
+<li><p>Τεκμηρίωση του στατιστικού μοντέλου (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>).</p></li>
+<li><p>Βλ. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>.</p></li>
+</ul>
+</section>
+<section id="id19">
+<h2>0.18.0 (2026-04-20)<a class="headerlink" href="#id19" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Μεγάλη αναδιάρθρωση κώδικα: διαχωρισμός του db.go (10 χιλ. γραμμές) σε 19 εξειδικευμένα αρχεία, εξαγωγή 7 μονάδων υπηρεσίας από το App.svelte (4888→469 γραμμές), ενοποίηση των stores modal/πίνακα.</p></li>
+<li><p>Πλήρης μετάβαση στα Svelte 5 runes.</p></li>
+<li><p>Αντικατάσταση 9 modal πίνακα με ένα γενικό στοιχείο DataTableModal.</p></li>
+<li><p>Προσθήκη ESLint + Prettier + vitest (125 δοκιμές frontend) με CI.</p></li>
+<li><p>Συμμόρφωση WCAG 2.1 AA (ορατή εστίαση, ρόλοι ARIA, πλοήγηση με πληκτρολόγιο).</p></li>
+<li><p>Μετάβαση του mutex της Database σε RWMutex για καλύτερη παραλληλία στην ανάγνωση.</p></li>
+<li><p>Πλήρης τεκμηρίωση CLI (CLI_USAGE.md + Sphinx FR/EN).</p></li>
+<li><p>Επανεγγραφή του README.</p></li>
+<li><p>Διόρθωση όλων των προειδοποιήσεων ESLint (46→0) και Vite (6→0).</p></li>
+</ul>
+</section>
+<section id="id20">
+<h2>0.17.0 (2026-04-20)<a class="headerlink" href="#id20" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Βελτιστοποίηση αποθήκευσης: συμπίεση zlib των δεδομένων ανάλυσης (~80% μείωση), συμπαγής κωδικοποίηση θέσεων (~90% μείωση μεγέθους).</p></li>
+<li><p>Προσθήκη 5 ελλειπόντων ευρετηρίων για βελτίωση των επιδόσεων αναζήτησης.</p></li>
+<li><p>Διόρθωση της αναζήτησης κατά σφάλμα κύβου.</p></li>
+<li><p>Διόρθωση της λειτουργίας EDIT μετά από αναζήτηση χωρίς αποτελέσματα.</p></li>
+<li><p>Επαναφορά της κατάστασης του πίνακα αναζήτησης κατά την αλλαγή καρτελών.</p></li>
+<li><p>Αφαίρεση 62 εντολών αποσφαλμάτωσης από κρίσιμες διαδρομές.</p></li>
+</ul>
+</section>
+<section id="id21">
+<h2>0.16.0 (2026-04-18)<a class="headerlink" href="#id21" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Σχήμα βάσης δεδομένων v2.0.0: αποδιπλασιασμός θέσεων μέσω hash Zobrist, αποκανονικοποιημένες στήλες φιλτραρίσματος, προ-φίλτρο μοτίβων bitboard, καταγραφή WAL (<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Παράρτημα: Σχήμα της βάσης δεδομένων</span></a>).</p></li>
+<li><p>Μαζική εισαγωγή &gt;=3x ταχύτερη, φιλτραρισμένη αναζήτηση &lt;=100 ms σε 10 χιλ.+ θέσεις.</p></li>
+<li><p>ΣΗΜΕΙΩΣΗ: τα αρχεία DB που δημιουργήθηκαν με την v0.16.0 δεν μπορούν να ανοιχτούν από παλαιότερες εκδόσεις· οι παλιές DB μεταβαίνουν αυτόματα επιτόπου (κάντε πρώτα ένα αντίγραφο ασφαλείας).</p></li>
+</ul>
+</section>
+<section id="id22">
+<h2>0.15.0 (2026-03-31)<a class="headerlink" href="#id22" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή το ταμπλό με ανάλυση με Ctrl+X Ctrl+X).</p></li>
+</ul>
+</section>
+<section id="id23">
+<h2>0.14.0 (2026-03-30)<a class="headerlink" href="#id23" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Αποκλειστικός πίνακας Anki για μελέτη με επαναλαμβανόμενα διαστήματα (αλγόριθμος FSRS).</p></li>
+<li><p>Εισαγωγή σχολίων από τα αρχεία XG.</p></li>
+</ul>
+</section>
+<section id="id24">
+<h2>0.13.0 (2026-03-28)<a class="headerlink" href="#id24" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται πλέον απευθείας μέσω των πινάκων.</p></li>
+<li><p>Γραμμή εντολών ενσωματωμένη στη γραμμή κατάστασης.</p></li>
+<li><p>Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log. <em>(Ο πίνακας αφαιρέθηκε στην 0.31.0.)</em></p></li>
+<li><p>Αποκλειστικός πίνακας Bearoff στον κάτω πίνακα.</p></li>
+<li><p>Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης.</p></li>
+<li><p>Μεταφορά και απόθεση για την αναδιάταξη συλλογών, θέσεων μέσα στις συλλογές, και αγώνων μέσα στα τουρνουά.</p></li>
+<li><p>Στήλη τουρνουά στον πίνακα αγώνων με εσωτερική επεξεργασία.</p></li>
+<li><p>Αυτόματη εμφάνιση του πίνακα ανάλυσης μετά από μια αναζήτηση.</p></li>
+</ul>
+</section>
+<section id="id25">
+<h2>0.12.0 (2026-03-19)<a class="headerlink" href="#id25" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Εισαγωγή αρχείων θέσεων eXtreme Gammon (XGP) με ανάλυση.</p></li>
+</ul>
+</section>
+<section id="id26">
+<h2>0.11.0 (2026-03-06)<a class="headerlink" href="#id26" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Φίλτρο αναζήτησης μέσα στις τρέχουσες φιλτραρισμένες θέσεις.</p></li>
+<li><p>Προσθήκη φίλτρων ανά αγώνα και ανά τουρνουά.</p></li>
+<li><p>Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης.</p></li>
+</ul>
+</section>
+<section id="id27">
+<h2>0.10.0 (2026-02-25)<a class="headerlink" href="#id27" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Εισαγωγή αγώνων από eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) και BGBlitz (BGF/TXT).</p></li>
+<li><p>Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με επισήμανση της κίνησης που παίχτηκε.</p></li>
+<li><p>Πίνακας αγώνων: λίστα, ταξινόμηση, εσωτερική επεξεργασία, εναλλαγή παικτών, ανάθεση τουρνουά.</p></li>
+<li><p>Εισαγωγή με αναδρομικό φάκελο και εισαγωγή με μεταφορά και απόθεση.</p></li>
+<li><p>Υπολογιστής EPC (Effective Pip Count) με ενσωματωμένη βάση δεδομένων bearoff του GNUbg. <em>(Αντικαταστάθηκε στην 0.36.0: ο πίνακας υπολογίζεται στον υπολογιστή, κανένας δεν είναι πια ενσωματωμένος.)</em></p></li>
+<li><p>Συλλογές: προσαρμοσμένη ομαδοποίηση θέσεων.</p></li>
+<li><p>Τουρνουά: ομαδοποίηση αγώνων ανά εκδήλωση.</p></li>
+<li><p>Αποθήκευση και επαναφορά της κατάστασης συνεδρίας (τελευταία αναζήτηση, τρέχουσα θέση).</p></li>
+<li><p>Αυτόματη μετάβαση του σχήματος της βάσης δεδομένων.</p></li>
+<li><p>Εμφάνιση πολλαπλών μηχανών στην ανάλυση.</p></li>
+<li><p>Φίλτρο σφαλμάτων/blunders του παίκτη 1 στις αναζητήσεις.</p></li>
+<li><p>Εξαγωγή της βάσης δεδομένων με λεπτομερή επιλογή (αγώνες, συλλογές, τουρνουά, κινήσεις που παίχτηκαν).</p></li>
+<li><p>Κουμπί πλοήγησης στους αγώνες.</p></li>
+<li><p>Εμφάνιση pip count στην πλοήγηση των αγώνων.</p></li>
+<li><p>Πλήρης διεπαφή γραμμής εντολών (CLI).</p></li>
+<li><p>Αυτόματο άνοιγμα ξανά της τελευταίας βάσης δεδομένων.</p></li>
+<li><p>Βελτίωση της γραμμής εργαλείων και των εικονιδίων.</p></li>
+</ul>
+</section>
+<section id="id28">
+<h2>0.9.0 (2025-11-02)<a class="headerlink" href="#id28" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Διόρθωση σφάλματος της βιβλιοθήκης φίλτρων.</p></li>
+<li><p>Εισαγωγή/εξαγωγή βάσης δεδομένων.</p></li>
+<li><p>Εμφάνιση βελών για τις επιλεγμένες κινήσεις.</p></li>
+<li><p>Συντομεύσεις πληκτρολογίου για την εισαγωγή/εξαγωγή.</p></li>
+</ul>
+</section>
+<section id="id29">
+<h2>0.8.0 (2025-05-03)<a class="headerlink" href="#id29" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Δυνατότητα απόκρυψης του pip count.</p></li>
+<li><p>Φόρτωση τυχαίας θέσης.</p></li>
+</ul>
+</section>
+<section id="id30">
+<h2>0.7.0 (2025-02-16)<a class="headerlink" href="#id30" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Υποστήριξη ιαπωνικών και γερμανικών εξαγωγών XG.</p></li>
+</ul>
+</section>
+<section id="id31">
+<h2>0.6.0 (2025-02-13)<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προσθήκη βιβλιοθήκης φίλτρων.</p></li>
+<li><p>Εμφάνιση της έκδοσης της βάσης δεδομένων στα μεταδεδομένα.</p></li>
+</ul>
+</section>
+<section id="id32">
+<h2>0.5.0 (2025-02-04)<a class="headerlink" href="#id32" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Προσθήκη νέων φίλτρων (καθρέφτης, μη επαφή, jan blot, outfield blot).</p></li>
+</ul>
+</section>
+<section id="id33">
+<h2>0.4.0 (2025-02-03)<a class="headerlink" href="#id33" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Διάφορες διορθώσεις σφαλμάτων.</p></li>
+<li><p>Προσθήκη εικονιδίου για το blunderDB.</p></li>
+<li><p>Διορθώσεις φίλτρων.</p></li>
+<li><p>Προσθήκη υποστήριξης MacOS.</p></li>
+</ul>
+</section>
+<section id="id34">
+<h2>0.3.0 (2025-01-27)<a class="headerlink" href="#id34" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Διάφορες διορθώσεις σφαλμάτων.</p></li>
+<li><p>Αυτόματη αποθήκευση του μεγέθους του παραθύρου.</p></li>
+<li><p>Εισαγωγή τυχόν σχολίων από το XG.</p></li>
+</ul>
+</section>
+<section id="id35">
+<h2>0.2.0 (2025-01-06)<a class="headerlink" href="#id35" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Διάφορες διορθώσεις σφαλμάτων.</p></li>
+<li><p>Προσθήκη πινάκων αγώνων/TP/GV.</p></li>
+<li><p>Προσθήκη φίλτρων αναζήτησης (κινήσεις, αποφάσεις ντουμπλέ, ημερομηνία).</p></li>
+<li><p>Προσθήκη μεταδεδομένων στις θέσεις.</p></li>
+<li><p>Λειτουργία εισαγωγής/εξαγωγής μεταξύ στιγμιότυπων του blunderDB.</p></li>
+<li><p>Προσθήκη λειτουργίας μεταδεδομένων στις βάσεις δεδομένων.</p></li>
+<li><p>Εισαγωγή αριθμών εκδόσεων (βάσης δεδομένων και εφαρμογής).</p></li>
+</ul>
+</section>
+<section id="id36">
+<h2>0.1.0 (2024-12-31)<a class="headerlink" href="#id36" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Έκδοση beta.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stats_parity.html" class="btn btn-neutral float-left" title="Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="a_propos.html" class="btn btn-neutral float-right" title="Σχετικά" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

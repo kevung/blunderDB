@@ -1,0 +1,333 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usein kysytyt kysymykset (UKK) &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Headless-tila (palvelin)" href="mode_headless.html" />
+    <link rel="prev" title="Sanasto" href="glossaire.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/faq.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/faq.html" lang="en" hreflang="en">English</a>
+  <a href="../de/faq.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/faq.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/faq.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/faq.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/faq.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/faq.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usein kysytyt kysymykset (UKK)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-l-utilite-de-blunderdb">Mihin blunderDB:tä käytetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">Mikä motivoi blunderDB:n luomiseen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">Miten nykyisen tietokannan tila tallennetaan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">Pitäisikö minun luoda eri tietokantoja eri asemaluokille?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">Miten useita tietokantoja yhdistetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-formats-de-fichiers-de-match-sont-supportes">Mitä ottelutiedostomuotoja tuetaan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mes-matchs-joues-en-ligne-sont-ils-importables">Voinko tuoda verkossa pelaamani ottelut?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-synchroniser-ma-base-entre-plusieurs-machines">Voinko synkronoida tietokantani useiden koneiden välillä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">Tarvitsenko eXtreme Gammonia käyttääkseni blunderDB:tä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#j-utilise-deja-extreme-gammon-a-quoi-me-sert-blunderdb">Käytän jo eXtreme Gammonia: mihin tarvitsen blunderDB:tä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#les-rollouts-xg-sont-ils-importes-blunderdb-fait-il-des-rollouts">Tuodaanko XG:n rollout-analyysit? Tekeekö blunderDB rollouteja?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-a-t-on-mesure-de-l-evaluateur-integre-et-que-n-a-t-on-pas-mesure">Mitä sisäänrakennetusta evaluaattorista on mitattu ja mitä ei ole?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qu-une-collection">Mikä on kokoelma?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-que-l-epc">Mikä on EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#que-vaut-l-evaluateur-integre-gammonnet">Mitä sisäänrakennettu arviointimoottori (gammonNet) on arvoinen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">Mikä on ero PR:n ja Snowie Error Raten välillä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">Onko blunderDB:ssä komentorivikäyttöliittymä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-propose-t-il-un-mode-serveur">Tarjoaako blunderDB palvelintilan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">Voinko muokata, kopioida ja jakaa blunderDB:tä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ou-sont-stockees-mes-donnees">Missä tietoni säilytetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-partager-une-base-avec-un-autre-joueur">Voinko jakaa tietokannan toisen pelaajan kanssa?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">Mitä tietomuotoa blunderDB käyttää?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-ont-ete-les-principes-de-conception-de-blunderdb">Mitkä olivat blunderDB:n suunnitteluperiaatteet?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-l-architecture-logicielle-de-blunderdb">Mikä on blunderDB:n ohjelmistoarkkitehtuuri?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">Millä alustoilla blunderDB toimii?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">Mistä blunderDB:n kuvake on peräisin?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usein kysytyt kysymykset (UKK)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="foire-aux-questions">
+<span id="faq"></span><h1>Usein kysytyt kysymykset (UKK)<a class="headerlink" href="#foire-aux-questions" title="Link to this heading"></a></h1>
+<section id="quelle-est-l-utilite-de-blunderdb">
+<h2>Mihin blunderDB:tä käytetään?<a class="headerlink" href="#quelle-est-l-utilite-de-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB mahdollistaa henkilökohtaisen asematietokannan rakentamisen. Sen vahvuus on, ettei se oleta mitään luokittelua <em>a priori</em>. Käyttäjä voi siten vapaasti kysellä asemia yhdistelemällä haluamiaan kriteerejä (juoksu, rakenne, kuutio, tulos, jälkeenjääneet pelinappulat, alueella olevat pelinappulat, voitto-/gammon-/backgammon-mahdollisuudet, …).</p>
+<p>Toinen kätevä blunderDB:n käyttötapa on viiteasemien luetteloiden laatiminen. Mahdollisuus merkitä asemia tunnisteilla antaa käyttäjän koota kaikki viiteasemansa jäsennellysti yhteen tiedostoon. Toivon, että blunderDB helpottaa asemien jakamista pelaajien välillä.</p>
+</section>
+<section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
+<h2>Mikä motivoi blunderDB:n luomiseen?<a class="headerlink" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Minulla oli tapana säilyttää eri kansioissa kiinnostavia asemia tai virheitä. Minulla oli kuitenkin vaikeuksia löytää asemia kriteereillä, joita alkuperäinen aihepiirivalintani ei ollut ennakoinut. Jos asemat oli esimerkiksi lajiteltu pelityypin mukaan (juoksu, holding game, blitz, backgame, …), miten löytää kaikki asemat tietyllä tuloksella? tai tietyllä kuutiotasolla? Lopulta jotkin vanhat asemat unohtuivat helposti. Halusin työkalun, joka kokoaa kaikki asemani eikä oleta <em>a priori</em> aihepiiriluokkia, ja jolle voin sitten esittää kysymyksiä. Tällä joustavalla lähestymistavalla uusia suotimia voidaan lisätä rikkomatta asemien järjestystä. Tällainen ohjelmisto on varsin yleinen shakissa, kuten ChessBase.</p>
+</section>
+<section id="comment-sauvegarder-la-base-de-donnees-courante">
+<h2>Miten nykyisen tietokannan tila tallennetaan?<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Link to this heading"></a></h2>
+<p>Tietokanta päivittyy välittömästi pyynnön vahvistamisen jälkeen. Erillistä tallennustoimintoa ei tarvita.</p>
+</section>
+<section id="dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">
+<h2>Pitäisikö minun luoda eri tietokantoja eri asemaluokille?<a class="headerlink" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions" title="Link to this heading"></a></h2>
+<p>Ellei ole hyvin perusteltuja syitä, on olennaista olla jakamatta asemia erillisiin tietokantoihin, koska muuten niitä ei voi yhdistää tulevissa hauissa. blunderDB:n filosofia on olla olettamatta asemaluokkia <em>a priori</em> ja antaa käyttäjän kysellä niitä joustavasti. Kun asemat on kohdattu erityisissä olosuhteissa tai tietyistä syistä, voi olla järkevää säilyttää ne erillisissä tietokannoissa. Voidaan esimerkiksi koota erillisiä asematietokantoja:</p>
+<ul class="simple">
+<li><p>viiteasemat,</p></li>
+<li><p>blunderit live-turnauksista,</p></li>
+<li><p>blunderit verkkopelistä.</p></li>
+</ul>
+</section>
+<section id="comment-fusionner-plusieurs-bases-de-donnees">
+<h2>Miten useita tietokantoja yhdistetään?<a class="headerlink" href="#comment-fusionner-plusieurs-bases-de-donnees" title="Link to this heading"></a></h2>
+<p>Jos sinulla on useita blunderDB-tietokantoja, jotka haluat koota yhteen, käytä painiketta <strong>Yhdistä tietokanta</strong> (<em>CTRL-VAIHTO-I</em>):</p>
+<ol class="arabic simple">
+<li><p>Avaa päätietokanta (se, joka vastaanottaa asemat)</p></li>
+<li><p>Napsauta työkalupalkin <strong>Yhdistä tietokanta</strong> -painiketta</p></li>
+<li><p>Valitse yhdistettävä tietokanta</p></li>
+<li><p>blunderDB yhdistää asemat</p></li>
+</ol>
+<p>Yhdistämisen aikana blunderDB välttää kaksoiskappaleet: jo olemassa olevaa asemaa ei monisteta, ja eri moottorien analyysit elävät rinnakkain sen sijaan että korvaisivat toisensa (ks. <a class="reference internal" href="manuel.html#import-regles"><span class="std std-ref">Tuonti: mitä kirjoitetaan ja mitä ei koskaan</span></a>).</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>On suositeltavaa tehdä varmuuskopio päätietokannastasi ennen toisen tietokannan tuomista.</p>
+</div>
+</section>
+<section id="quels-formats-de-fichiers-de-match-sont-supportes">
+<h2>Mitä ottelutiedostomuotoja tuetaan?<a class="headerlink" href="#quels-formats-de-fichiers-de-match-sont-supportes" title="Link to this heading"></a></h2>
+<p>blunderDB tukee seuraavia otteluformaatteja:</p>
+<ul class="simple">
+<li><p><strong>eXtreme Gammon (XG)</strong>: <em>.xg</em>-tiedostot, joissa on täydellinen siirtoanalyysi, kuutiopäätökset, pelatut siirrot ja usean moottorin tuki. <em>.xgp</em>-tiedostot yksittäisten asemien tuontiin analyyseineen.</p></li>
+<li><p><strong>GNUbg</strong>: <em>.sgf</em>-tiedostot (Smart Game Format) analyyseineen.</p></li>
+<li><p><strong>Jellyfish</strong>: <em>.mat</em>- ja <em>.txt</em>-tiedostot.</p></li>
+<li><p><strong>BGBlitz</strong>: <em>.bgf</em>-tiedostot ja tekstiasemat.</p></li>
+</ul>
+<p>Tuonti voidaan tehdä yksittäisellä tiedostolla, monivalinnalla, rekursiivisella kansiolla, leikepöydältä liittämällä tai vetämällä ja pudottamalla.</p>
+<p>blunderDB tunnistaa kaksoiskappaleet automaattisesti ja estää tietokannassa jo olevan ottelun tuonnin.</p>
+</section>
+<section id="mes-matchs-joues-en-ligne-sont-ils-importables">
+<h2>Voinko tuoda verkossa pelaamani ottelut?<a class="headerlink" href="#mes-matchs-joues-en-ligne-sont-ils-importables" title="Link to this heading"></a></h2>
+<p>Kyllä, kiertotietä: <strong>Backgammon Studio (Heroes)</strong>, <strong>Backgammon Galaxy</strong> ja <strong>GammonSpace</strong> tuottavat kaikki kolme tiedostoja, joita eXtreme Gammon osaa lukea — Studio toimittaa jopa integraatiopaketin, joka asettuu XG:n kansioon. Nämä ottelut päätyvät siis blunderDB:hen olemassa olevaa <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-reittiä pitkin, ilman omaa lukijaa.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Mitä tämä kiertotie täsmälleen kuljettaa — analyysit, heiton onnen, merkinnät, kommentit — <strong>ei ole mitattu</strong>: siihen tarvittaisiin yksi vietu ottelu kustakin kolmesta alustasta. Jos sinulla on sellainen ja jotain katoaa tuonnissa, avaa issue tiedoston kanssa: mittaus ratkaisee, tarvitaanko oma lukija, ei arvaus.</p>
+</div>
+<p>Vanhemmat tekstimuodot, joita GNU Backgammon jo lukee — <code class="docutils literal notranslate"><span class="pre">.sgg</span></code> (GridGammon), <code class="docutils literal notranslate"><span class="pre">.tmg</span></code>, <code class="docutils literal notranslate"><span class="pre">.gam</span></code>, Snowien <code class="docutils literal notranslate"><span class="pre">.txt</span></code> — ovat samassa asemassa: GNU Backgammonin kautta ne ovat tuotavissa jo tänään.</p>
+</section>
+<section id="puis-je-synchroniser-ma-base-entre-plusieurs-machines">
+<h2>Voinko synkronoida tietokantani useiden koneiden välillä?<a class="headerlink" href="#puis-je-synchroniser-ma-base-entre-plusieurs-machines" title="Link to this heading"></a></h2>
+<p>blunderDB-tietokanta on <strong>yksi ainoa tiedosto</strong>. Se tekee varmuuskopioinnista ja kopioinnista triviaalia, ja se ratkaisee vastauksen:</p>
+<ul class="simple">
+<li><p><strong>Dropbox, Syncthing, iCloud, OneDrive</strong>: ne toimivat yhdellä ehdolla — älä avaa tietokantaa <strong>molemmilta puolilta yhtä aikaa</strong>. Ne synkronoivat tiedostoja, eivät samanaikaisia kirjoituksia: kaksi rinnakkain kirjoittavaa instanssia tuottaa ristiriidan, jonka palvelu ratkaisee säilyttämällä yhden version ja nimeämällä toisen uudelleen. blunderDB asettaa kirjoituslukon avoimeen tiedostoon, mikä suojaa yhtä konetta, mutta mikään lukko ei ylitä synkronointipalvelua.</p></li>
+<li><p><strong>Useita koneita samaan aikaan</strong>: tähän vastaa <code class="docutils literal notranslate"><span class="pre">serve</span></code>-tila (katso <a class="reference internal" href="mode_headless.html"><span class="doc">Headless-tila (palvelin)</span></a>). Palvelin pitää tietokantaa hallussaan, koneet yhdistävät siihen, eikä kirjoittajia ole kuin yksi.</p></li>
+<li><p><strong>Kaksi eriytynyttä tietokantaa</strong>: ne <strong>yhdistetään</strong> eikä synkronoida — katso «Kuinka yhdistän useita tietokantoja?» yllä. Deduplikointi Zobrist-tiivisteellä tekee työn: yhteisiä asemia ei kahdenneta ja niiden analyysit ja kommentit yhdistetään. Se on yhdistäminen, ei sovittaminen: mitään ei poisteta toiselta puolelta siksi, että toinen poisti sen.</p></li>
+</ul>
+</section>
+<section id="ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">
+<h2>Tarvitsenko eXtreme Gammonia käyttääkseni blunderDB:tä?<a class="headerlink" href="#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb" title="Link to this heading"></a></h2>
+<p>Ei. blunderDB lukee myös GNUbg:n, BGBlitzin ja Jellyfishin tiedostoja, ja sen sisäänrakennettu arviointimoottori (gammonNet) analysoi minkä tahansa aseman ilman riippuvuutta kolmannen osapuolen ohjelmistosta — katso ”Mitä sisäänrakennettu arviointimoottori on arvoinen?” alempana. XG-tuonti tuo kuitenkin täydellisimmän analyysin (siirrot, kuutiopäätökset, merkinnät, heiton onni): se on muoto, jota tilastot hyödyntävät rikkaimmin.</p>
+</section>
+<section id="j-utilise-deja-extreme-gammon-a-quoi-me-sert-blunderdb">
+<h2>Käytän jo eXtreme Gammonia: mihin tarvitsen blunderDB:tä?<a class="headerlink" href="#j-utilise-deja-extreme-gammon-a-quoi-me-sert-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB ei pelaa ottelujasi uudelleen, se kokoaa ne yhteen. Kolme konkreettista eroa:</p>
+<ul class="simple">
+<li><p><strong>koota</strong> yhteen tiedostoon otteluita XG:stä, GNUbg:stä, BGBlitzistä ja Jellyfishistä, kaksoiskappaleet karsittuina asema asemalta;</p></li>
+<li><p><strong>hakea</strong> nappularakenteen ja virheen mukaan: ”tämän tuloksen otot, joissa hävisin yli 50 millipistettä” kirjoitetaan yhtenä komentorivinä (ks. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a>);</p></li>
+<li><p><strong>kerrata</strong> poimitut asemat välitoistolla, Anki-pakkoina (ks. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki-paneeli</span></a>).</p></li>
+</ul>
+<p>XG-analyysisi pysyvät XG:n analyyseina: blunderDB tuo ne sellaisinaan eikä koskaan laske niitä uudelleen (ks. <a class="reference internal" href="manuel.html#import-regles"><span class="std std-ref">Tuonti: mitä kirjoitetaan ja mitä ei koskaan</span></a>).</p>
+</section>
+<section id="les-rollouts-xg-sont-ils-importes-blunderdb-fait-il-des-rollouts">
+<h2>Tuodaanko XG:n rollout-analyysit? Tekeekö blunderDB rollouteja?<a class="headerlink" href="#les-rollouts-xg-sont-ils-importes-blunderdb-fait-il-des-rollouts" title="Link to this heading"></a></h2>
+<p>Ei, kumpaankaan suuntaan. XG-analyysistä tuonti säilyttää tason merkinnän (”3-ply”, ”XG Roller++”, ”Book”), equityt, virheet ja todennäköisyydet; se ei avaa <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedoston rollout-tietoja eikä siis ota talteen kokeiden lukumäärää eikä keskihajontaa. Tekstinä liitetty XG-analyysi sen sijaan säilyttää merkintänsä kirjaimellisesti, ”Rollout” mukaan lukien. Sisäänrakennettu evaluaattori puolestaan ei tee rollouteja: se vastaa haulla, joka katsoo 0 tai 2 heittoa eteenpäin.</p>
+</section>
+<section id="qu-a-t-on-mesure-de-l-evaluateur-integre-et-que-n-a-t-on-pas-mesure">
+<h2>Mitä sisäänrakennetusta evaluaattorista on mitattu ja mitä ei ole?<a class="headerlink" href="#qu-a-t-on-mesure-de-l-evaluateur-integre-et-que-n-a-t-on-pas-mesure" title="Link to this heading"></a></h2>
+<p>Yksi mittaus on julkaistu, Eval-paneelin <em>arvioidusta</em> toimintatavasta: 4000 juoksuvaiheen money-päätöstä verrattuna tarkkaan bearoff-taulukkoon — tuomioista täsmää 93,4 % (3735/4000), mutta alle 1 %:n päässä ottopisteestä vain 61,1 %, kun yli 20 %:n päässä osuus on 94,4 %; voittotodennäköisyyden keskimääräinen poikkeama 0,85 %, suurin 8,30 %. Mitä ei ole mitattu: kuutiotuomio <strong>ottelun tuloksessa</strong> ja <strong>kontaktiasemat</strong>, joista ei ole julkaistu yhtään lukua. Oletusten yksityiskohdat ovat kohdassa <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Eval-paneelin metodologia ja oletukset</span></a>.</p>
+</section>
+<section id="qu-est-ce-qu-une-collection">
+<h2>Mikä on kokoelma?<a class="headerlink" href="#qu-est-ce-qu-une-collection" title="Link to this heading"></a></h2>
+<p>Kokoelma on asemien mukautettu ryhmittely. Toisin kuin dynaaminen suodatinhaku, kokoelma on kiinteä joukko asemia, jotka käyttäjä on valinnut manuaalisesti. Kokoelmien avulla voi esimerkiksi ryhmitellä viiteasemia tietyn aiheen mukaan.</p>
+</section>
+<section id="qu-est-ce-que-l-epc">
+<h2>Mikä on EPC?<a class="headerlink" href="#qu-est-ce-que-l-epc" title="Link to this heading"></a></h2>
+<p>EPC (Effective Pip Count) on tarkempi mittari kuin pelkkä pip count bearoff-asemien arviointiin. blunderDB:n Eval-paneeli käyttää GNUbg:n taulukon kanssa identtistä 6-pisteen bearoff-taulukkoa, joka lasketaan koneella ensimmäisellä käynnistyksellä, ja laskee reaaliajassa EPC:n, heittojen keskimääräisen määrän, keskihajonnan, pip countin ja wastagen.</p>
+<p>Puhtaissa bearoff-asemissa paneeli näyttää myös vuorossa olevan pelaajan voittotodennäköisyyden ja, kun asema kuuluu two-sided-tietokannan piiriin (TS-06-06-taulukko lasketaan ensimmäisellä käynnistyksellä, laajennettu TS-06-11-taulukko lasketaan asetusten <em>Bearoff</em>-välilehdeltä), tarkan money-kuutiopäätöksen. Tämän alueen ulkopuolella todennäköisyys arvioidaan virhemarginaaleineen, eikä kuutiopäätöstä tarkoituksella näytetä. Katso oletusten yksityiskohdat käsikirjan osiosta « Eval-paneelin metodologia ja oletukset ».</p>
+</section>
+<section id="que-vaut-l-evaluateur-integre-gammonnet">
+<h2>Mitä sisäänrakennettu arviointimoottori (gammonNet) on arvoinen?<a class="headerlink" href="#que-vaut-l-evaluateur-integre-gammonnet" title="Link to this heading"></a></h2>
+<p>gammonNet on kolmannen osapuolen kouluttama neuroverkko (katso Kiitokset), siirretty Go-kielelle ja käännetty osaksi blunderDB:tä: ei ulkoista ohjelmistoa, ei verkkoyhteyttä. Se toimii XG:n tai GNUbg:n roolissa tuomattomille asemille — haku 0–2 heiton syvyydelle, kuutiopäätös Janowskin mukaan ja blunderDB:n ottelutasapainotaulukon mukaan, tulos huomioiden. Se ei ole ainoa eikä välttämättä paras moottori markkinoilla: se on se, joka toimii ilman verkkoyhteyttä, ilman tiliä tai tilausta, tarkastelemallesi asemalle. Mikään ei estä myös tuomasta XG:n tai GNUbg:n analyyseja silloin kun niitä on olemassa — molemmat lähteet elävät rinnakkain, ja sarake ilmaisee kunkin analyysin alkuperän. Katso käsikirjan osiot ”Eval-paneeli” ja ”Eval-paneelin menetelmät ja oletukset”.</p>
+<p><strong>Mitä se on arvoltaan, lukuina.</strong> Niissä poistoasemissa, jotka sisäänrakennettu tarkka taulu kattaa — ainoa paikka, jossa oraakkeli on olemassa — gammonNet 2 plylla antaa <strong>saman kuutiotuomion 93,4 %:ssa tapauksista</strong>, ja erimielisyys keskittyy täsmälleen vastaanottopisteeseen (61 % yksimielisyyttä alle 1 %:n päässä vastaanottopisteestä, 94 % yli 10 %:n): siellä kaksi legitiimiä menetelmää eroavat eniten tiukassa päätöksessä, ei hajanaisena virheenä. Yksityiskohdat ja menetelmä ovat kohdassa ”Eval-paneelin menetelmä ja oletukset”.</p>
+<p>Samaan kysymykseen <strong>sinun</strong> kirjastostasi vertailukorpuksen sijaan vastaa <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--compare</span></code>: se vertaa sisäänrakennettua moottoria XG- tai GNUbg-tiedostoistasi tulleisiin analyyseihin — yksimielisyys parhaasta vastauksesta, erimielisyyksien hinta, erittely pelin vaiheen mukaan — <strong>kirjoittamatta mitään</strong>.</p>
+</section>
+<section id="quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">
+<h2>Mikä on ero PR:n ja Snowie Error Raten välillä?<a class="headerlink" href="#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate" title="Link to this heading"></a></h2>
+<p>PR (<em>Performance Rating</em>) on keskimääräinen equity-virhe laskettua päätöstä kohti kerrottuna 500:lla, kuten eXtreme Gammon ja GNUbg tekevät; mitä alempi, sitä paremmin pelaa. Snowie Error Rate suhteuttaa saman keskiarvon <em>siirtojen</em> eikä <em>päätösten</em> määrään — pidempi ottelu ei siis mekaanisesti huononna SER:iä. blunderDB näyttää molemmat Stats-paneelissa, yhdenmukaistettuna eXtreme Gammonin ja GNUbg:n käytäntöjen kanssa (katso <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a> laskentasääntöjen yksityiskohdista).</p>
+</section>
+<section id="blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">
+<h2>Onko blunderDB:ssä komentorivikäyttöliittymä?<a class="headerlink" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Kyllä, blunderDB:ssä on komentorivikäyttöliittymä (CLI), jonka avulla voidaan suorittaa ilman graafista käyttöliittymää toimintoja kuten tietokantojen luonti, otteluiden tuonti, vienti, asemien haku, tilastojen näyttö jne. Katso lisätietoja CLI-dokumentaatiosta.</p>
+</section>
+<section id="blunderdb-propose-t-il-un-mode-serveur">
+<h2>Tarjoaako blunderDB palvelintilan?<a class="headerlink" href="#blunderdb-propose-t-il-un-mode-serveur" title="Link to this heading"></a></h2>
+<p>Kyllä, valinnaisen ”headless”-tilan: sama binääri, käynnistettynä <code class="docutils literal notranslate"><span class="pre">serve</span></code>-komennolla, tuo blunderDB:n moottorin saataville HTTP + JSON -muodossa todentavan reverse-proxyn takana (blunderDB itse ei tee mitään todennusta). Se voi käyttää SQLitea tai monitenanttia PostgreSQL:ää, ja sillä ohjataan blunderDB:tä omista skripteistä tai itse tehdystä sovelluksesta HTTP + JSON -muodossa — verkkokäyttöliittymää ei ole — tai jaetaan tietokanta useiden pelaajien kesken. Normaali käyttö on edelleen työpöytäsovellus; katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a> yksityiskohtia varten (mukaan lukien valmis Docker-image) ja käyttöoppaan opastus ”Palvelintilan käyttöönotto proxyn takana”.</p>
+</section>
+<section id="puis-je-modifier-copier-partager-blunderdb">
+<h2>Voinko muokata, kopioida ja jakaa blunderDB:tä?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
+<p>Kyllä, ehdottomasti. blunderDB on lisensoitu MIT-lisenssillä.</p>
+</section>
+<section id="ou-sont-stockees-mes-donnees">
+<h2>Missä tietoni säilytetään?<a class="headerlink" href="#ou-sont-stockees-mes-donnees" title="Link to this heading"></a></h2>
+<p>Levylläsi, <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedostossa, jonka valitsit tietokantaa luodessasi: ei tiliä, ei palvelinta, ei synkronointia oletuksena. Työpöytäsovellus avaa tämän tiedoston suoraan; vain valinnainen palvelintila (katso yllä) ajaa blunderDB:tä etänä, ja silloin sinä isännöit tuota palvelinta.</p>
+</section>
+<section id="puis-je-partager-une-base-avec-un-autre-joueur">
+<h2>Voinko jakaa tietokannan toisen pelaajan kanssa?<a class="headerlink" href="#puis-je-partager-une-base-avec-un-autre-joueur" title="Link to this heading"></a></h2>
+<p>Kyllä: blunderDB-tietokanta on tavallinen tiedosto, joten sen kopiointi tai lähettäminen riittää. Tietokannan levittämiseen kolmannelle osapuolelle kaksi valinnaista mekanismia, valitaan viennin yhteydessä, tekevät siitä <em>hallitun</em> jakelun tavallisen kopion sijaan: <strong>alkuperävesileima</strong> allekirjoittaa tiedoston lähettäjätunnisteellasi (väärentämätön, luettavissa Metatiedot-paneelissa tai komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, kirjaamatta koskaan mitään vastaanottajan puolella), ja <strong>salasanasuojaus</strong> tuottaa salatun <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedoston. Katso <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a> käsikirjasta.</p>
+</section>
+<section id="quel-format-de-donnees-utilise-blunderdb">
+<h2>Mitä tietomuotoa blunderDB käyttää?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
+<p>Tietokanta on yksinkertainen SQLite-tiedosto. Ilman blunderDB:tä se voidaan siis avata millä tahansa SQLite-tiedostoeditorilla.</p>
+</section>
+<section id="quels-ont-ete-les-principes-de-conception-de-blunderdb">
+<h2>Mitkä olivat blunderDB:n suunnitteluperiaatteet?<a class="headerlink" href="#quels-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Halusin käyttöliittymän, joka on helposti lähestyttävä mutta ennen kaikkea suunniteltu edistyneeseen ja pitkäkestoiseen käyttöön, jossa asemat ja haut seuraavat toisiaan. Komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä, ja pikanäppäimet palvelevat tätä käyttöä, ilman että ne ovat pakollisia.</p>
+<p>Halusin blunderDB:stä myös kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mistä johtui Go-ohjelmointikielen ja Svelte-kirjaston valintani. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite-tiedostomuoto vaikutti täydelliseltä valinnalta.</p>
+<p>Minulle oli myös tärkeää, että tietokanta pysyy yksinkertaisena tiedostona, jonka voi kopioida, varmuuskopioida tai lähettää toiselle pelaajalle.</p>
+<p>Lopuksi, blunderDB ei rajoitu enää työpöytäsovellukseen: sama binääri tarjoaa komentorivikäyttöliittymän ja valinnaisen palvelintilan, joka voi käyttää PostgreSQL:ää monen käyttäjän asennuksissa. Tavanomainen käyttötapa on kuitenkin edelleen työpöytäsovellus. Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a> ja <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p>
+</section>
+<section id="quelle-est-l-architecture-logicielle-de-blunderdb">
+<h2>Mikä on blunderDB:n ohjelmistoarkkitehtuuri?<a class="headerlink" href="#quelle-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Taustajärjestelmä on koodattu <a class="reference external" href="https://go.dev/">Go</a>-kielellä. Se vastaa kaikista asemia tallentavan SQLite-tietokannan toiminnoista.</p></li>
+<li><p>Käyttöliittymä on koodattu <a class="reference external" href="https://svelte.dev/">Svelte</a>-kielellä. Se vastaa graafisen käyttöliittymän ja backgammon-laudan piirtämisestä.</p></li>
+<li><p>Sovellus paketoidaan <a class="reference external" href="https://wails.io/">Wails</a>-kirjastolla, mikä mahdollistaa natiivien työpöytäsovellusten tuottamisen Windowsille, Linuxille ja macOS:lle.</p></li>
+<li><p>Tietokantaa hallitsee <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
+<li><p>Valinnainen palvelintila voi käyttää <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a>-tietokantaa SQLiten sijaan monen käyttäjän asennuksissa.</p></li>
+<li><p>Sisäänrakennettu arviointimoottori (<a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>, MIT) on Go-kielelle siirretty ja blunderDB:hen käännetty neuroverkko: se arvioi minkä tahansa aseman ilman verkkoyhteyttä, ilman XG:tä tai GNUbg:tä. Katso ”Mitä sisäänrakennettu arviointimoottori on arvoinen?” alempana.</p></li>
+</ul>
+<p>Lisätietoja löytyy <a class="reference external" href="https://github.com/kevung/blunderDB">blunderDB:n GitHub-arkistosta</a>.</p>
+</section>
+<section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
+<h2>Millä alustoilla blunderDB toimii?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
+<p>blunderDB toimii Windowsissa, Linuxissa ja Macissa.</p>
+</section>
+<section id="d-ou-vient-l-icone-de-blunderdb">
+<h2>Mistä blunderDB:n kuvake on peräisin?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB:n kuvake on ”goggling”-hymiö <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC-sarjasta</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="glossaire.html" class="btn btn-neutral float-left" title="Sanasto" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mode_headless.html" class="btn btn-neutral float-right" title="Headless-tila (palvelin)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
