@@ -115,13 +115,11 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	}
 }
 
-// TestAnalyzeMissingWithGammonNetRefusesBeyondMET (#191): a position
+// TestAnalyzeMissingWithGammonNetRefusesBeyondMET: a position
 // gammonnet.ErrNotEvaluable declines to answer — here, a match score past
 // the MET's away-score horizon (engine.MaxScore = 64) — is counted as
-// Refused, never Failed. Before this fix ErrNotEvaluable came back as a
-// plain error and was indistinguishable from a genuine failure: it was
-// retried on every single pass, forever, for no reason, since the same
-// score is refused every time.
+// Refused, never Failed: the same score is refused every time, so retrying
+// it as a failure would loop forever.
 func TestAnalyzeMissingWithGammonNetRefusesBeyondMET(t *testing.T) {
 	t.Parallel()
 	d := newBatchTestDB(t)
@@ -152,14 +150,12 @@ func TestAnalyzeMissingWithGammonNetRefusesBeyondMET(t *testing.T) {
 	}
 }
 
-// TestAnalyzeStaleGammonNetRerunsDepthOnlyChange (#191) is the batch-level
+// TestAnalyzeStaleGammonNetRerunsDepthOnlyChange is the batch-level
 // twin of gammonnet.TestIsStaleAnalysisDifferentDepthIsStale: a position
 // analysed once at 0-ply is neither missing (AnalyzeMissingWithGammonNet
 // leaves it alone) nor stale AT THE SAME DEPTH, but IS reported and
 // re-analysed by AnalyzeStaleGammonNet once the caller asks for a different
-// depth — before #191, moving the canonical depth up left every
-// already-analysed position looking perfectly current, because
-// EngineVersion alone never changed just because the requested depth did.
+// depth; EngineVersion alone does not change with the requested depth.
 func TestAnalyzeStaleGammonNetRerunsDepthOnlyChange(t *testing.T) {
 	t.Parallel()
 	d := newBatchTestDB(t)
@@ -267,13 +263,10 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 	}
 }
 
-// TestAnalyzeMissingWithGammonNetYieldGatesEachPosition is the other half of
-// #129's preemption criterion (internal/gui's TestWaitForInteractiveEvaluation*
-// covers the actual signal the GUI wires in): a yield that blocks must
-// genuinely stall the loop before the next position, not just be called and
-// ignored — "un lot qui ne cède pas est exactement la panne qu'on prétend
-// éviter". Run at jobs=1, where the gate is "one position"; the parallel
-// form ("at most jobs positions") is TestAnalyzeGammonNetParallelYieldGates.
+// TestAnalyzeMissingWithGammonNetYieldGatesEachPosition: a blocking yield
+// must genuinely stall the loop before the next position (internal/gui's
+// TestWaitForInteractiveEvaluation* covers the GUI's signal). jobs=1 here;
+// the parallel form is TestAnalyzeGammonNetParallelYieldGates.
 func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 	t.Parallel()
 	d := newBatchTestDB(t)
@@ -288,8 +281,8 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 	release := make(chan struct{})
 	var processedBeforeRelease int
 	done := make(chan error, 1)
-	// `blocked` dit que le second yield est ENTRÉ ; l'attendre remplace un
-	// time.Sleep qui pariait sur la vitesse de la machine (E.3, #219).
+	// `blocked` dit que le second yield est ENTRÉ : on l'attend plutôt que de
+	// parier sur la vitesse de la machine.
 	blocked := make(chan struct{}, 1)
 
 	go func() {
@@ -311,9 +304,8 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 	// further position; but the WRITE is done by the goroutine draining
 	// `results`, not by the worker, so the first analysis may still be in
 	// flight at that instant. Hence: wait for the count to reach 1, bounded.
-	// Once the yield is held, 1 is where the count stays — nothing else can
-	// be computed — so this waits for a state that is reached or never will
-	// be, rather than sleeping for a duration and hoping (E.3, #219).
+	// Once the yield is held, 1 is where the count stays, so this waits for a
+	// state rather than sleeping.
 	<-blocked
 	deadline := time.Now().Add(10 * time.Second)
 	var n int

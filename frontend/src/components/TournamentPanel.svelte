@@ -43,15 +43,12 @@
     let tournamentMatches = $derived($tournamentMatchesStore || []);
     let visible = $derived($openPanels.has(PANEL.TOURNAMENT));
 
-    /* Les tournois dirigés, par identifiant. Une ligne de la liste doit dire si un tournoi
-       porte une Direction sans qu'on ait à la rejouer : la liste s'ouvre souvent, une Direction
-       ne se rejoue que quand on l'ouvre vraiment. */
+    /* Tournois dirigés, par identifiant : la liste le dit sans rejouer la Direction. */
     const directedById = $derived(new Map(($directionSummariesStore || []).map((d) => [d.tournamentId, d])));
     const selectedDirection = $derived(selectedTournament ? directedById.get(selectedTournament.id) || null : null);
 
-    /* Diriger un tournoi qui ne l'était pas : la configuration recommandée par l'étude est le
-       point de départ, et tout reste modifiable tant que rien n'est lancé. Le coût d'entrée
-       est une contrainte du cadrage — de « Nouveau » à la première ronde en moins de 90 s. */
+    /* Diriger un tournoi : part de la configuration recommandée, modifiable tant que rien
+       n'est lancé. */
     async function startDirecting(tournament) {
         try {
             await createDirection(tournament.id, defaultConfig(tournament.name));
@@ -427,8 +424,7 @@
             commentTextStore.set('');
             selectedMoveStore.set(null);
             statusBarModeStore.set('MATCH');
-            // Player names are shown in the match-info header bar above the
-            // board (MatchInfoBar.svelte); no longer echoed in the status bar.
+            // Player names are in MatchInfoBar.svelte, not the status bar.
             lastVisitedMatchStore.set({
                 matchID: match.id,
                 currentIndex: startIndex,
@@ -456,9 +452,8 @@
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
 
-        // Sous la page Direction, J / K / ↓ / ↑ / ENTRÉE sont à la file des propositions, sauf
-        // quand le focus est dans ce panneau (#415) — la règle et son mécanisme sont écrits dans
-        // services/directionKeys.js. Ni stopPropagation ni navigation : l'appui continue.
+        // Sous la page Direction, ces touches vont à la file (services/directionKeys.js) :
+        // ni stopPropagation ni navigation ici.
         if (directionOwnsKey(event)) return;
 
         // Block all other non-Ctrl keys from propagating (prevents position browsing)
@@ -492,18 +487,13 @@
         }
     }
 
-    // The focus is deferred so it lands after the panel has been laid out, and
-    // the timer is cleared when the effect re-runs or the component goes away.
-    // Without that, the callback fires into a torn-down document: in the test
-    // run it throws "document is not defined" a hundred milliseconds after the
-    // suite has moved on (vitest reports it as an unhandled error and exits
-    // non-zero even though every test passed), and in the application it
-    // focuses a panel the user has already closed.
+    // Deferred focus, its timer cleared on re-run and teardown, or it fires into a
+    // torn-down document (vitest fails on it) or focuses a closed panel.
     $effect(() => {
         if (!visible) return;
         // Deferred, so the user may be typing by then: never take their field (utils/panelFocus.js).
-        // Nor from the Direction page, which takes the keyboard when it opens (#415,
-        // services/directionKeys.js): read when the timer fires, not when it is armed.
+        // Nor from the Direction page, which takes the keyboard when it opens
+        // (services/directionKeys.js): read when the timer fires, not when it is armed.
         const timer = setTimeout(() => {
             if (!directionPageShown()) focusPanelUnlessTyping(document.getElementById('tournamentPanel'));
         }, 100);
@@ -657,11 +647,7 @@
                             class="icon-btn edit-header-btn"
                             onclick={(e) => {
                                 e.stopPropagation();
-                                // Return to the tournament list first: the inline-editable
-                                // row is only rendered in the list view ({#if !selectedTournament}).
-                                // Clicking edit here used to set editingTournament while the
-                                // detail view stayed visible, so nothing looked editable until
-                                // the user manually pressed the back arrow.
+                                // Back to the list first: the editable row only renders there.
                                 const t = selectedTournament;
                                 selectedTournamentStore.set(null);
                                 tournamentMatchesStore.set([]);

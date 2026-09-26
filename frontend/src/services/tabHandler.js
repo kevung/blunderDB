@@ -1,21 +1,14 @@
 /**
- * tabHandler.js
- *
- * Pure panel-management logic for the TabbedPanel tab handler in App.svelte.
- * Extracted here so it can be unit-tested independently of the Svelte component.
- *
- * Rule: for each "exclusive" tab (matches, stats, tournaments, collections) the
- * corresponding PANEL is opened when that tab is active and closed for every
- * other tab. The if/else structure mirrors the App.svelte $effect so that
- * changes here are automatically reflected in both production code and tests.
+ * tabHandler.js — the App.svelte tab effect's panel logic, testable apart:
+ * each "exclusive" tab (matches, stats, tournaments, collections) opens its
+ * PANEL when active and closes it otherwise.
  */
 
 import { PANEL, openPanel, closePanel } from '../stores/uiStore.js';
 
 /**
- * Open the panel that corresponds to `tab` and close the panels of all other
- * "exclusive" tabs. Tabs that have no associated PANEL (analysis, comments,
- * search, eval, anki, metadata) leave those panels untouched.
+ * Open `tab`'s panel and close the other exclusive tabs' panels; tabs without
+ * a PANEL leave them untouched.
  *
  * @param {string} tab - The newly active tab id.
  */

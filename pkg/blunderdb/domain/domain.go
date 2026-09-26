@@ -49,10 +49,9 @@ const (
 const (
 	AnkiSourceCollection = "collection"
 	AnkiSourceSearch     = "search"
-	// AnkiSourceScores is the deck of score cards (ADR-0042 rule 2): the
-	// application fills it with the 36 unordered scores of 2-9 away, and the
-	// user enters none of them. It is never created on its own — a deck that
-	// appears with 36 cards due on day one is a review debt nobody contracted.
+	// AnkiSourceScores is the deck of score cards (ADR-0042 rule 2), filled by
+	// the application with the 36 unordered scores of 2-9 away. Never created
+	// on its own: 36 cards due on day one is a debt nobody contracted.
 	AnkiSourceScores = "scores"
 )
 
@@ -75,14 +74,9 @@ type AnkiDeck struct {
 	MaximumInterval  float64 `json:"maximumInterval"`  // max days between reviews
 	EnableFuzz       bool    `json:"enableFuzz"`       // add randomness to intervals
 	// SessionLimit caps how many cards one sitting serves (ADR-0026 rule 2).
-	// Nil is no limit — the default, and what every deck that predates the
-	// column has. Zero is NOT the same thing: it serves no card at all, which
-	// is a real use (freezing a deck while preparing for a tournament) and the
-	// conflation Anki is known for.
-	//
-	// A session, never a day: a deck is a finite corpus, so a daily cap would
-	// either never bite or manufacture a backlog on a deck that fitted in one
-	// sitting. Nothing here needs to know what a "day" is.
+	// Nil is no limit (the default); zero serves no card at all, which freezes
+	// a deck. Per session, never per day: a deck is a finite corpus, and a
+	// daily cap would either never bite or manufacture a backlog.
 	SessionLimit *int   `json:"sessionLimit"`
 	CardCount    int    `json:"cardCount"` // total cards
 	DueCount     int    `json:"dueCount"`  // cards due for review
@@ -157,14 +151,9 @@ type AnkiForecastDay struct {
 // AnkiRetention is what a deck's review log says about retention: the pass rate
 // actually measured, read against the target the user chose.
 //
-// It is an observation and never a control (ADR-0026 rule 5). Desired retention
-// is a CHOICE on the work/knowledge trade-off; observed retention is its
-// OUTCOME, and the documented way to close a gap between them is to re-fit the
-// model weights — which the embedded scheduler cannot do, since go-fsrs ships
-// no weight trainer. Steering the target to chase the outcome is the one
-// mechanism FSRS's authors reject, and this type used to do exactly that: it
-// suggested a retention and, on request, wrote it back. The suggestion and the
-// write-back are gone; the measurement stays, under a name that says so.
+// It is an observation and never a control (ADR-0026 rule 5): steering the
+// target to chase the outcome is the one mechanism FSRS's authors reject, and
+// go-fsrs ships no weight trainer to close the gap the documented way.
 type AnkiRetention struct {
 	SampleSize        int     `json:"sampleSize"`        // review-state reviews considered
 	ObservedRetention float64 `json:"observedRetention"` // measured pass rate (rating >= Hard)
@@ -180,12 +169,9 @@ const AnkiRetentionMinSample = 20
 // AnkiDefaultMaximumInterval is the maximum interval, in days, a newly created
 // deck starts with (ADR-0026 rule 7).
 //
-// One year, not Anki's 36500 days: that value is meant for vocabulary one never
-// wants to see again, whereas a position the scheduler defers by eleven years
-// has not been learned — it has left the deck without anyone deciding so, and a
-// player's own game changes faster than that. The schema keeps 36500 as its
-// column default so existing decks are untouched; this is the value a new deck
-// is written with.
+// One year, not Anki's 36500 days: a position deferred by a decade has left the
+// deck without anyone deciding so. The schema keeps 36500 as its column default
+// so existing decks are untouched.
 const AnkiDefaultMaximumInterval = 365
 
 // AnkiDeckStats holds review statistics
@@ -222,10 +208,8 @@ type CommentEntry struct {
 	Text       string `json:"text"`
 	CreatedAt  string `json:"createdAt"`
 	ModifiedAt string `json:"modifiedAt"`
-	// Origin says who wrote this comment (2.19.0, issue #263). Until then a
-	// comment carried no provenance, so a note the user had typed and a
-	// per-move remark that came in with an .xg file were the same thing —
-	// which is why deleting a match discarded both.
+	// Origin says who wrote this comment; it lets a match deletion spare the
+	// user's notes while discarding the source file's remarks.
 	Origin CommentOrigin `json:"origin"`
 }
 
@@ -245,9 +229,7 @@ const (
 	// CommentOriginBGF — carried by a Backgammon Files (.bgf) file.
 	CommentOriginBGF CommentOrigin = "bgf"
 	// CommentOriginUnknown — a comment from before 2.19.0, or from a source
-	// that does not say. It is NOT treated as the user's: the purge that
-	// spares user comments (positionIsHeldSQL) leaves these behind, which is
-	// the behaviour every database had before the column existed.
+	// that does not say. NOT treated as the user's by positionIsHeldSQL.
 	CommentOriginUnknown CommentOrigin = "unknown"
 )
 
@@ -294,26 +276,18 @@ type Position struct {
 	Score        [2]int `json:"score"`
 	PlayerOnRoll int    `json:"player_on_roll"`
 	DecisionType int    `json:"decision_type"`
-	HasJacoby    int    `json:"has_jacoby"` // Add HasJacoby field
-	// HasBeaver is stored and hashed alongside HasJacoby, but is read by
-	// nothing else in the engine: gammonnet.Decide has no beaver parameter,
-	// deliberately, not by omission — see its own doc comment (#193/C.6).
-	HasBeaver int `json:"has_beaver"` // Add HasBeaver field
+	HasJacoby    int    `json:"has_jacoby"`
+	// HasBeaver is stored beside HasJacoby (neither is hashed, ADR-0028) but
+	// read by nothing in the engine: gammonnet.Decide deliberately has no
+	// beaver parameter — see its doc comment.
+	HasBeaver int `json:"has_beaver"`
 
 	// MaxCube is the session's cube ceiling, as the log2 exponent the XGID's
-	// tenth field carries (3 → the cube may not pass 8). Zero means the source
-	// stated no ceiling — blunderDB's own encoder writes 0, and so does every
-	// identifier that predates this column.
-	//
-	// It sits beside HasJacoby and HasBeaver and shares their two properties.
-	// It is NOT part of the Zobrist hash: only an XGID ever sets it, so hashing
-	// it would split one money position across two rows depending on which
-	// identifier happened to reach the database first (ADR-0028 reached that
-	// conclusion for the other two). And the built-in evaluator does not model
-	// a cube ceiling: this field is REPORTED next to the verdict, it does not
-	// change it — which is precisely why showing it matters, since it is the
-	// one visible reason blunderDB and eXtreme Gammon can differ on a capped
-	// cube (issue #271).
+	// tenth field carries (3 → the cube may not pass 8); zero means none stated.
+	// Not part of the Zobrist hash, for the reason ADR-0028 gives for
+	// HasJacoby. The evaluator does not model a ceiling: the field is reported
+	// next to the verdict, as the visible reason blunderDB and eXtreme Gammon
+	// can differ on a capped cube.
 	MaxCube int `json:"max_cube"`
 
 	// IndividuallyImported records that the position entered the database on
@@ -323,26 +297,20 @@ type Position struct {
 	// never clear it. See CONTEXT.md.
 	IndividuallyImported bool `json:"individually_imported"`
 
-	// Flagged records that the user marked this position as worth studying in
-	// the tool the match came from — today only eXtreme Gammon, which stores the
-	// mark per move. Like IndividuallyImported it is a fact of the source file
-	// and NOT part of the position's identity: never folded into the Zobrist
-	// hash, and ORed into the stored value by PositionStore.Save, so a later
-	// import of the same position unmarked can never clear it. Nothing in
-	// blunderDB sets or clears it. See CONTEXT.md and docs/adr/0006.
+	// Flagged records that the user marked this position in the source tool
+	// (eXtreme Gammon stores the mark per move). Like IndividuallyImported it
+	// is not hashed and is ORed in by PositionStore.Save, so a later unmarked
+	// import cannot clear it; nothing in blunderDB sets or clears it. See
+	// CONTEXT.md and ADR-0006.
 	Flagged bool `json:"flagged"`
 }
 
 // IsMoney reports whether the position is played for money rather than at a
 // match score: both away scores sit at the -1 sentinel CONTEXT.md describes.
 //
-// This is THE form of the question, and it lives here so there is only one.
-// It had two independent, silently divergent spellings before #190/C.3 —
-// `Score[0] < 0 && Score[1] < 0` in one place, `Score[0] != -1 ||
-// Score[1] != -1` in another — which agreed on a clean score and disagreed on
-// a malformed one. Anything asking "money or match" reads this method:
-// gammonnet.IsMoneyPosition delegates to it, and so does the equivalence
-// class a similarity ranking is taken inside (ADR-0043).
+// This is the one spelling of the question: gammonnet.IsMoneyPosition and the
+// similarity equivalence class (ADR-0043) delegate to it, so a malformed score
+// cannot get two answers.
 func (p *Position) IsMoney() bool {
 	return p.Score[0] < 0 && p.Score[1] < 0
 }
@@ -368,114 +336,71 @@ type SearchFilters struct {
 	Player2CheckerInZoneFilter  string   `json:"player2CheckerInZoneFilter"`
 	SearchText                  string   `json:"searchText"`
 
-	// CommentFilter keeps only positions that carry a comment ("has") or that
-	// carry none ("none"); "" applies no comment filter. It asks about the mere
-	// *presence* of a comment, where SearchText asks about its content — and the
-	// two are independent AND clauses here, even though the GUI offers them as
-	// mutually exclusive modes of one filter. So `xco t"blot"` legitimately
-	// yields nothing rather than being rejected as contradictory.
-	//
-	// "Carries a comment" means any non-empty row in the comment table,
-	// whatever its provenance — CommentOriginFilter is what narrows that.
-	// Match and tournament comments annotate the match or the tournament, not
-	// its positions, and are never consulted. See CONTEXT.md.
+	// CommentFilter keeps only positions that carry a comment ("has") or none
+	// ("none"); "" applies no filter. Presence only, of any origin; it is an
+	// independent AND clause with SearchText, so `xco t"blot"` yields nothing
+	// rather than being rejected. Match and tournament comments are never
+	// consulted. See CONTEXT.md.
 	CommentFilter string `json:"commentFilter"`
 
 	// CommentOriginFilter keeps only positions carrying a comment written by
 	// one of the named origins: a ";"-separated list of domain.CommentOrigin
-	// values, e.g. "user" or "xg;gnubg" (the co:user token, issue #263).
-	// Empty applies no origin filter.
-	//
-	// It implies presence, so it never needs `co` alongside it, and it is
-	// independent of CommentFilter: `xco co:user` asks for a position with no
-	// comment that carries a user comment, and honestly returns nothing.
+	// values, e.g. "user" or "xg;gnubg" (the co:user token). Empty applies no
+	// origin filter. It implies presence and is independent of CommentFilter,
+	// so `xco co:user` returns nothing.
 	CommentOriginFilter string `json:"commentOriginFilter"`
 
 	// TagFilter keeps only positions whose comments carry EVERY tag named: a
 	// ";"-separated list, e.g. "#prime" or "#prime;#backgame" (the #prime
-	// token, issue #265). Empty applies no tag filter.
+	// token). Empty applies no tag filter.
 	//
-	// AND, where CommentOriginFilter and GamePhaseFilter are OR, and the
-	// difference is in the subject rather than in the grammar: a position has
-	// ONE phase and ONE set of comment origins to choose from, so naming two
-	// can only mean "either"; a position has MANY tags, so naming two means
-	// "both" — which is what "montre-moi mes erreurs en #holding #crunch"
-	// asks. The search grammar writes one token per tag and they compose the
-	// way every other pair of tokens does.
-	//
-	// Matching is DELIMITED: the comment's tags are extracted and compared
-	// whole, so #prime does not match #priming. That is the whole reason this
-	// is its own filter rather than a spelling of SearchText, which is a
-	// substring search and cannot tell the two apart.
+	// AND, where the phase and origin filters are OR: a position has one phase
+	// but many tags, so naming two tags means "both". Matching is delimited
+	// (#prime does not match #priming), which is why this is not a spelling of
+	// the substring SearchText.
 	TagFilter string `json:"tagFilter"`
 
 	// GamePhaseFilter keeps only positions in one of the named phases: a
 	// ";"-separated list of domain.GamePhase tokens, e.g. "race" or
-	// "race;bearoff" (the ph:race token, issue #264). Empty applies no phase
-	// filter.
+	// "race;bearoff" (the ph:race token). Empty applies no phase filter.
 	//
-	// It reads the stored, DERIVED game_phase column (ADR-0035) rather than
-	// reclassifying each board, which is what makes it indexable. On a
-	// database whose phases have never been computed every row is "unknown",
-	// so a phase search returns nothing until `blunderdb repair` has run —
-	// nothing, rather than something wrong.
+	// It reads the stored, derived game_phase column (ADR-0035) so it is
+	// indexable; until `blunderdb repair` has computed it every row is
+	// "unknown" and a phase search returns nothing.
 	GamePhaseFilter string `json:"gamePhaseFilter"`
 
 	// GameTypeFilter keeps only positions whose derived plan of play is one of
 	// the named types: a ";"-separated list of domain.GameType tokens, e.g.
-	// "holding" or "holding;mutualholding" (the gt:holding token, issue #291).
-	// Empty applies no type filter.
-	//
-	// This is the filter the whole classifier exists for — "montre-moi mes
-	// erreurs en holding game" is one token, not a bundle of saved ranges. It
-	// reads the stored, DERIVED game_type column, which is what makes it
-	// indexable; on a database whose types have never been computed every row
-	// is "unknown", so it returns nothing until `blunderdb repair` has run.
+	// "holding" or "holding;mutualholding" (the gt:holding token). Empty
+	// applies no type filter. Like GamePhaseFilter it reads a stored, derived
+	// column and returns nothing until `blunderdb repair` has computed it.
 	GameTypeFilter string `json:"gameTypeFilter"`
 
 	// EncounterFilter keeps only positions met a given number of times: a
 	// range expression on the number of MOVES that reached this position,
-	// across every match in the library (the n>3 token, issue #282).
-	//
-	// It answers "what do I keep running into", which is a different question
-	// from "what did I get wrong": a position met twenty times and played
-	// correctly nineteen is still the position worth knowing cold. The count
-	// is the move rows, not the matches — the same position twice in one match
-	// is two encounters, because it was two decisions.
+	// across every match in the library (the n>3 token). It counts move rows,
+	// not matches: twice in one match is two decisions.
 	EncounterFilter string `json:"encounterFilter"`
 
 	// LikeFilter marks the query as RANKED instead of merely filtered: the
 	// positions come back nearest first, by the transport distance in
 	// checker-pips that engine.SimilarityDistance defines (ADR-0043).
 	//
-	// It is the one token that orders rather than narrows, and the two compose
-	// without ambiguity: every other token says WHICH positions are candidates,
-	// this one says in what order they come back and how many. That is what
-	// makes `like42 E>80` — "the neighbours of 42 that I blundered" — a
-	// question the grammar can ask at all.
-	//
-	// The set it ranks is the target's equivalence class, which the storage
-	// layer adds on top of the tokens: same kind of decision, same regime for
-	// a cube decision, another match. See storage.ClassOf.
+	// It is the one token that orders rather than narrows, so it composes with
+	// the others (`like42 E>80`). The storage layer restricts the ranked set to
+	// the target's equivalence class; see storage.ClassOf.
 	LikeFilter bool `json:"likeFilter"`
 
 	// LikeTargetID is the position the ranking is taken against — the `42` of
-	// `like42`. Zero means the token was written bare, and then the CALLER
-	// resolves it to whatever "this position" means where the query was typed:
-	// the position being browsed, or the board being drawn. The storage layer
-	// never guesses it; a bare token that reached it unresolved is an error,
-	// not an empty result.
+	// `like42`. Zero means the token was written bare and the CALLER resolves
+	// it (the position browsed, or the board drawn); an unresolved bare token
+	// reaching storage is an error, not an empty result.
 	LikeTargetID int64 `json:"likeTargetId"`
 
 	// LikeTargetBoard is the board a ranking compares against when no id names
-	// one: the position the user has DRAWN. It is a field of its own and not
-	// Filter, which the same drawing would otherwise serve twice — as the
-	// target AND as the structure pattern every candidate must contain, which
-	// is the opposite of forgiving an approximate drawing.
-	//
-	// Read as a POSITION, not as a pattern: a point left empty is checkers
-	// borne off, which is right for a real position and is what the manual
-	// warns about for a half-drawn one.
+	// one: the position the user has DRAWN. Not Filter, which would also make
+	// the drawing a pattern every candidate must contain. Read as a position,
+	// not a pattern: a point left empty means checkers borne off.
 	LikeTargetBoard Position `json:"likeTargetBoard"`
 
 	// LikeMaxDistance drops neighbours beyond this many checker-pips (0 = no
@@ -503,10 +428,9 @@ type SearchFilters struct {
 	MirrorFilter                  bool   `json:"mirrorFilter"`
 
 	// IndividuallyImportedFilter keeps only positions the user brought into the
-	// database on their own rather than inside a match (ADR-0001) — the answer
-	// to "where did the position I saved go?" after a match import buried it
-	// among thousands. Unlike every other filter here it is a property of the
-	// stored row, not of the board, so mirror search does not re-evaluate it.
+	// database on their own rather than inside a match (ADR-0001). A property
+	// of the stored row, not of the board, so mirror search does not
+	// re-evaluate it.
 	IndividuallyImportedFilter bool `json:"individuallyImportedFilter"`
 
 	// FlaggedFilter keeps only positions the user marked in the source tool.
@@ -571,22 +495,14 @@ func MatchOrderByClause(sort string) string {
 type ExportOptions struct {
 	ExportPath string     `json:"exportPath"`
 	Positions  []Position `json:"positions"`
-	// PositionIDs is the preferred way for a caller to say *which* positions to export:
-	// the exporter reads them straight from the source database, in the order given.
-	//
-	// The GUI used to ship every Position through the IPC instead. For a real database that
-	// is 73 MB of JSON for 88 000 positions — several seconds of JSON.stringify on the
-	// browser's only thread (which is why the progress dialog stayed blank), a message of
-	// that size across the bridge, and the same work again to decode it. The identifiers
-	// are two orders of magnitude smaller and the exporter already has the database open.
-	//
-	// Positions still wins when it is set, so callers holding positions that are not in the
-	// database keep working.
+	// PositionIDs is the preferred way to say *which* positions to export: the exporter
+	// reads them from the source database, in the order given, instead of the GUI
+	// shipping every Position as JSON across the IPC. Positions wins when set, for
+	// callers holding positions that are not in the database.
 	PositionIDs []int64 `json:"positionIDs"`
 	// AllPositions exports every position of the database without listing
-	// them — what the CLI's `export --type database` means, and what used to
-	// cost it loading the whole library into memory first. Positions and
-	// PositionIDs win over it when set.
+	// them (the CLI's `export --type database`). Positions and PositionIDs win
+	// over it when set.
 	AllPositions         bool              `json:"allPositions"`
 	Metadata             map[string]string `json:"metadata"`
 	IncludeAnalysis      bool              `json:"includeAnalysis"`
@@ -815,17 +731,14 @@ type Match struct {
 	MatchHash     string `json:"match_hash,omitempty"`
 	CanonicalHash string `json:"canonical_hash,omitempty"`
 
-	// ImportBatchID names the import this match came in with (issue #257),
-	// zero for a match stored before batches existed or written outside an
-	// import. Set by the importer, never by a user gesture; deleting the batch
+	// ImportBatchID names the import this match came in with, zero when
+	// written outside an import. Set by the importer only; deleting the batch
 	// clears it (ON DELETE SET NULL) and leaves the match alone.
 	ImportBatchID int64 `json:"import_batch_id,omitempty"`
 
-	// Transcriber is who typed the match in, and it lives in memory only:
-	// there is no match.transcriber column and this field is never read back
-	// from the database. A match that arrives from a file has no transcriber —
-	// only a graph built by the transcription engine (ADR-0045) sets it, on its
-	// way to RenderMAT, which writes it as the .mat's [Transcriber] header.
+	// Transcriber is who typed the match in, in memory only (no column): the
+	// transcription engine (ADR-0045) sets it for RenderMAT's [Transcriber]
+	// header.
 	Transcriber string `json:"transcriber,omitempty"`
 }
 
@@ -852,18 +765,13 @@ type Move struct {
 
 	// LuckMP is the luck of this roll, in signed millipoints of equity
 	// (positive = lucky): the equity of the best play with the dice actually
-	// rolled, minus its expectation over all 36 rolls. blunderDB never computes
-	// it — it has no evaluation engine — it carries the value the analysing
-	// tool wrote in the source file.
+	// rolled, minus its expectation over all 36 rolls, as written by the
+	// analysing tool in the source file.
 	//
-	// nil means unknown, and is not the same as zero: zero is a genuinely
-	// neutral roll. Rolls imported before the column existed, formats that
-	// carry no luck (BGF, Jellyfish .mat) and unanalysed rolls are all nil,
-	// and every luck average must leave them out of its denominator.
-	//
-	// It belongs to the Move, not to the Position: Positions are deduplicated
-	// across matches, and the luck of a roll is a fact of one occurrence of it.
-	// See ADR-0010.
+	// nil means unknown, not zero (a neutral roll): formats without luck (BGF,
+	// .mat) and unanalysed rolls are nil, and every luck average must leave
+	// them out of its denominator. It belongs to the Move because Positions
+	// are deduplicated across matches. See ADR-0010.
 	LuckMP *int32 `json:"luck_mp,omitempty"`
 }
 
@@ -919,13 +827,11 @@ type IdentityFilePick struct {
 // computed from the board by engine.ClassifyGamePhase, stored in an indexed
 // column, recomputed on import and by `blunderdb repair`, and never editable
 // by the user. See engine/gamephase.go for the rules and their sourcing.
-//
-// The zero value is PhaseUnknown, which is what a row written before 2.19.0
-// carries until a repair pass reaches it.
+// The zero value is PhaseUnknown, until a repair pass reaches the row.
 type GamePhase int
 
 const (
-	// PhaseUnknown — not classified yet (a row from before 2.19.0).
+	// PhaseUnknown — not classified yet.
 	PhaseUnknown GamePhase = iota
 	// PhaseOpening — contact, nothing borne off, nothing on the bar, and
 	// neither side has moved more than engine.OpeningDisplacementMax checkers
@@ -946,29 +852,18 @@ const (
 // beside GamePhase, computed by engine.ClassifyGameType, stored in an indexed
 // column, recomputed by `blunderdb repair`, and never editable.
 //
-// It answers the question blunderDB could not answer and every one of its
-// users asks: "show me my errors in a holding game". A bundle of saved filters
-// does not answer it; a classifier does (issue #291, fiche J.1a).
+// It is NOT gnubg's position class, whose single CONTACT class covers blitz,
+// holding, backgame and prime-vs-prime
+// (docs/recherche/P5-classification-type-de-jeu.md, §A). The boundaries shared
+// with gnubg (race, crunched) are marked below; the rest is convention, with
+// every unsourced threshold a named parameter.
 //
-// It is NOT gnubg's position class. gnubg has three classes and they exist to
-// route a position to the network trained on it — blitz, holding, backgame and
-// prime-vs-prime all fall into its single CONTACT class
-// (docs/recherche/P5-classification-type-de-jeu.md, §A). The two boundaries
-// this type shares with gnubg (race, crunched) are marked as such below; the
-// rest is a stated convention, and P5's own recommendation is that every
-// unsourced threshold be a named parameter rather than a literal.
-//
-// ONE label is stored, and it is the label of the PLAYER ON ROLL. P5 suggests
-// keeping one per side. The stored column answers "what plan was I in when I
-// made this decision", and the decision belongs to the player on roll — two
-// columns would double the search surface to answer a question nobody asked.
-//
-// The zero value is TypeUnknown, which is what a row written before 2.20.0
-// carries until a repair pass reaches it.
+// One label is stored: the PLAYER ON ROLL's, since the decision is theirs.
+// The zero value is TypeUnknown, until a repair pass reaches the row.
 type GameType int
 
 const (
-	// TypeUnknown — not classified yet (a row from before 2.20.0).
+	// TypeUnknown — not classified yet.
 	TypeUnknown GameType = iota
 	// TypeOver — one side has borne every checker off. gnubg's CLASS_OVER.
 	TypeOver
@@ -997,9 +892,8 @@ const (
 	TypeMutualHolding
 	// TypeHolding — the mover holds one high anchor, waiting for a shot.
 	TypeHolding
-	// TypeContact — contact, and none of the plans above fits. The early game
-	// lands here, and so does anything the rules cannot name; calling it a
-	// plan it is not would be worse than calling it contact.
+	// TypeContact — contact, and none of the plans above fits (the early game
+	// included): better than naming a plan it is not.
 	TypeContact
 )
 

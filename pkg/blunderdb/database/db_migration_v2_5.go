@@ -149,16 +149,10 @@ func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
 	return nil
 }
 
-// migrate_2_6_0_to_2_7_0 fixes Zobrist hashes that were computed with the wrong
-// cube-value convention. The ZobristHash function received Cube.Value as an EXPONENT
-// (0=cube@1, 1=cube@2, 2=cube@4, …) but passed it to cubeValueIndex() which expects
-// the ACTUAL cube value (1, 2, 4, 8, …). For exponent=0 both functions return index 0,
-// so those hashes are correct. For exponent >= 1 the old index was floor(log2(exp))
-// instead of exp, producing wrong (and sometimes colliding) hashes.
-//
-// Fix: recompute the ZobristHash from the stored position state for every position
-// with cube_value >= 1. This is idempotent: already-correct hashes are unchanged
-// (recomputing with the fixed function returns the same correct value).
+// migrate_2_6_0_to_2_7_0 recomputes the Zobrist hash of every position with
+// cube_value >= 1: those were hashed with Cube.Value (a log2 exponent) passed
+// where cubeValueIndex expects the actual cube value, giving wrong and
+// sometimes colliding hashes. Exponent 0 was unaffected. Idempotent.
 func (d *Database) migrate_2_6_0_to_2_7_0(ctx context.Context) error {
 	// If the position table doesn't yet have a zobrist_hash column (possible when
 	// migrating from a very old schema that was never at 2.0.0), skip the
@@ -258,10 +252,8 @@ func (d *Database) cubeHashFixes() ([]hashFix, error) {
 	return fixes, nil
 }
 
-// migrate_2_7_0_to_2_8_0 adds an exclude_position column to search_history and
-// filter_library so the "Sauf" (exclusion structure) of a search can be persisted
-// and restored on replay. The column is nullable; existing rows keep NULL (no
-// exclusion structure).
+// migrate_2_7_0_to_2_8_0 adds a nullable exclude_position column to
+// search_history and filter_library, persisting a search's "Sauf" structure.
 func (d *Database) migrate_2_7_0_to_2_8_0(_ context.Context) error {
 	for _, stmt := range []struct{ table, col string }{
 		{"search_history", "exclude_position"},
@@ -282,11 +274,8 @@ func (d *Database) migrate_2_7_0_to_2_8_0(_ context.Context) error {
 }
 
 // migrate_2_8_0_to_2_9_0 adds a scope column to command_history, search_history
-// and filter_library. SQLite previously ignored the scope argument on these
-// stores (the GUI/CLI always uses the empty scope); the column lets a
-// multi-tenant SQLite-server isolate each tenant's command/search history and
-// saved filters, mirroring the tenant_id scoping the PostgreSQL backend already
-// has. Existing rows default to the empty scope so GUI/CLI data is unchanged.
+// and filter_library so a multi-tenant SQLite daemon isolates each tenant, as
+// tenant_id does on PostgreSQL. Existing rows get the empty scope the GUI/CLI use.
 func (d *Database) migrate_2_8_0_to_2_9_0(_ context.Context) error {
 	for _, table := range []string{"command_history", "search_history", "filter_library"} {
 		if _, err := d.db.Exec(fmt.Sprintf(
@@ -317,11 +306,9 @@ func (d *Database) migrate_2_8_0_to_2_9_0(_ context.Context) error {
 	return nil
 }
 
-// migrate_2_9_0_to_2_10_0 adds the is_cube_response column to position and
-// backfills it: a cube position (decision_type = 1) is flagged 1 when any of its
-// recorded played cube actions is a take/pass response (engine.IsResponseCubeAction),
-// as opposed to a doubling decision (Double / No Double / Redouble). This lets the
-// search filter distinguish "double/no-double" from "take/pass" cube decisions.
+// migrate_2_9_0_to_2_10_0 adds position.is_cube_response and backfills it: a
+// cube position is flagged when any played cube action is a take/pass
+// (engine.IsResponseCubeAction) rather than a doubling decision.
 func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
 	if err := d.addColumn("position", "is_cube_response INTEGER NOT NULL DEFAULT 0"); err != nil {
 		return fmt.Errorf("migrate 2.10.0 add column: %w", err)
@@ -425,11 +412,9 @@ func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
 	return nil
 }
 
-// playedCubeResponse reports whether ANY of the played cube actions recorded
-// for a position is a take/pass (OR semantics across matches for a deduped
-// position). lookupActions selects the non-empty cube actions of a position
-// id; a lookup that fails to run counts as no response, an iteration error is
-// returned.
+// playedCubeResponse reports whether ANY played cube action of a position is a
+// take/pass (OR across matches of a deduped position). A lookup that fails to
+// run counts as no response; an iteration error is returned.
 func playedCubeResponse(lookupActions *sql.Stmt, positionID int64) (bool, error) {
 	actRows, err := lookupActions.Query(positionID)
 	if err != nil {
@@ -446,12 +431,9 @@ func playedCubeResponse(lookupActions *sql.Stmt, positionID int64) (bool, error)
 	return isResp, actRows.Err()
 }
 
-// migrate_2_10_0_to_2_11_0 adds the anki_review_log table, an append-only
-// journal of every spaced-repetition review (rating + FSRS outcome). It powers
-// retention/streak statistics, the review heatmap and a faithful undo of the
-// last review. The table is also (re)created by ensureAllTablesExist, so a
-// missing table here is not fatal; this step exists so the chain records the
-// version bump on an existing user database.
+// migrate_2_10_0_to_2_11_0 adds anki_review_log, the append-only journal of
+// every review (rating + FSRS outcome). ensureAllTablesExist also creates it;
+// this step keeps the chain continuous.
 func (d *Database) migrate_2_10_0_to_2_11_0(_ context.Context) error {
 	if _, err := d.db.Exec(`
 		CREATE TABLE IF NOT EXISTS anki_review_log (
@@ -475,12 +457,9 @@ func (d *Database) migrate_2_10_0_to_2_11_0(_ context.Context) error {
 	return nil
 }
 
-// migrate_2_11_0_to_2_12_0 extends anki_card with suspend/bury state. A
-// suspended card is excluded from review indefinitely; a buried card is hidden
-// until buried_until passes (typically the next day). The columns are also
-// (re)added by ensureAllTablesExist, so a column that already exists here is
-// not fatal; this step exists so the chain records the version bump on an
-// existing user database.
+// migrate_2_11_0_to_2_12_0 adds anki_card's suspend/bury state (a buried card
+// is hidden until buried_until). ensureAllTablesExist also adds the columns, so
+// one that already exists is not fatal.
 func (d *Database) migrate_2_11_0_to_2_12_0(_ context.Context) error {
 	for _, stmt := range []string{
 		`ALTER TABLE anki_card ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0`,
@@ -496,17 +475,11 @@ func (d *Database) migrate_2_11_0_to_2_12_0(_ context.Context) error {
 // backfills it from the only signal an existing database carries: a position
 // reachable from no move never came from a match.
 //
-// The backfill is a one-shot reconstruction of history, not a definition. It
-// has two known error classes, both accepted deliberately:
-//   - False positives: positions created by a cross-format "enrich" import
-//     (ingest.WriteMatch skips move creation when enriching) are match-sourced
-//     yet have no move row, so they are marked individual here.
-//   - False negatives: a position that was individually imported *before* a
-//     match that also contained it is indistinguishable from a plain match
-//     position. That information does not exist in the database and cannot be
-//     recovered.
-//
-// From here on the flag is written at import time and is exact.
+// The backfill is a one-shot reconstruction with two accepted error classes:
+// false positives (an "enrich" import creates no move row, so its positions
+// look individual) and false negatives (an individual import that preceded a
+// match holding the same position is unrecoverable). From here on the flag is
+// written at import time and is exact.
 func (d *Database) migrate_2_12_0_to_2_13_0(_ context.Context) error {
 	_, _ = d.db.Exec(`ALTER TABLE position ADD COLUMN individually_imported INTEGER NOT NULL DEFAULT 0`) // may already exist
 
@@ -524,16 +497,10 @@ func (d *Database) migrate_2_12_0_to_2_13_0(_ context.Context) error {
 	return nil
 }
 
-// migrate_2_13_0_to_2_14_0 adds position.flagged (docs/adr/0006): the mark the
-// user put on a position in the tool the match came from — today only eXtreme
-// Gammon, which records it per move.
-//
-// There is deliberately NO backfill. Unlike individually_imported, which could
-// be reconstructed from the move graph, nothing in an existing database records
-// a source-file flag: the information only exists in the .xg files themselves.
-// Existing positions therefore start unflagged and gain the mark when their
-// match is imported again — which is why ingest applies flags even to an exact
-// duplicate that is otherwise skipped.
+// migrate_2_13_0_to_2_14_0 adds position.flagged (ADR-0006): the mark set in
+// the source tool (only eXtreme Gammon records one). No backfill: the flag
+// exists only in the .xg files, so positions gain it on re-import — which is
+// why ingest applies flags even to an otherwise skipped exact duplicate.
 func (d *Database) migrate_2_13_0_to_2_14_0(_ context.Context) error {
 	_, _ = d.db.Exec(`ALTER TABLE position ADD COLUMN flagged INTEGER NOT NULL DEFAULT 0`) // may already exist
 
@@ -545,52 +512,30 @@ func (d *Database) migrate_2_13_0_to_2_14_0(_ context.Context) error {
 	return nil
 }
 
-// migrate_2_14_0_to_2_15_0 adds move.luck_mp (docs/adr/0010): the luck of a
-// roll, in signed millipoints of equity, as the analysing tool computed it.
-//
-// The column is NULLable and there is deliberately NO backfill or default:
-// zero is a real value (a neutral roll), so an existing row must read "unknown"
-// rather than "neutral". blunderDB cannot recompute luck either — it has no
-// evaluation engine — and unlike the denormalised analysis columns repaired in
-// #115, nothing on disk holds it: the stored analysis JSON never carried luck.
-// Existing rolls therefore stay unknown until their match is imported again
-// from the source file.
-//
-// It lands on move rather than position because a Position is deduplicated
-// across matches while the luck of a roll belongs to one occurrence of it.
+// migrate_2_14_0_to_2_15_0 adds move.luck_mp (ADR-0010): a roll's luck in
+// signed millipoints, as the analysing tool computed it. NULLable, no default,
+// no backfill: zero means a neutral roll, so old rows must read "unknown", and
+// nothing on disk holds the value. It lives on move because a Position is
+// deduplicated while luck belongs to one occurrence of the roll.
 func (d *Database) migrate_2_14_0_to_2_15_0(_ context.Context) error {
 	_, _ = d.db.Exec(`ALTER TABLE move ADD COLUMN luck_mp INTEGER`) // may already exist
 
 	return nil
 }
 
-// migrate_2_15_0_to_2_16_0 adds anki_deck.session_limit (ADR-0026 rule 2).
-//
-// Nullable with no default, so every existing deck comes out of the migration
-// with NO limit and behaves exactly as before: a setting that is introduced
-// must never change how existing data behaves.
+// migrate_2_15_0_to_2_16_0 adds anki_deck.session_limit (ADR-0026 rule 2),
+// nullable with no default so existing decks keep behaving as before.
 func (d *Database) migrate_2_15_0_to_2_16_0(_ context.Context) error {
 	_, _ = d.db.Exec(`ALTER TABLE anki_deck ADD COLUMN session_limit INTEGER`) // may already exist
 
 	return nil
 }
 
-// migrate_2_16_0_to_2_17_0 moves the UI session state out of metadata and
-// into its own table, session_state(scope, key, value) (issue #156).
-//
-// Until 2.16.0 the session (last search, last position, open views) was six
-// metadata rows — `session_*` for the desktop's empty scope, `<scope>:session_*`
-// for a tenant of a multi-tenant SQLite daemon. metadata is database
-// infrastructure (schema version, issuance) and is global by design; keeping a
-// tenant's rows there meant the daemon's metadata.load handed every tenant
-// the session of every other one, so the route is gone and the rows move to a
-// table that carries the scope as a column, the way command_history,
-// search_history and filter_library already do.
-//
-// The move is a copy-then-delete inside one transaction, re-runnable: the
-// table is created IF NOT EXISTS and the copy is an INSERT OR REPLACE. The
-// desktop's rows keep the empty scope, so a database migrated on the desktop
-// reopens on the same search and the same views.
+// migrate_2_16_0_to_2_17_0 moves the UI session state from six metadata rows
+// (`session_*`, `<scope>:session_*`) into session_state(scope, key, value).
+// metadata is global by design, so a daemon reading it leaked every tenant's
+// session to the others. Copy-then-delete in one transaction, re-runnable; the
+// desktop's rows keep the empty scope.
 func (d *Database) migrate_2_16_0_to_2_17_0(_ context.Context) error {
 	// The six keys as 2.16.0's sqlshared.SessionStore wrote them. Listed here
 	// rather than imported: a migration describes the past, and matching the
@@ -647,14 +592,8 @@ func (d *Database) migrate_2_16_0_to_2_17_0(_ context.Context) error {
 	return nil
 }
 
-// migrate_2_17_0_to_2_18_0 is the 2.18.0 wave: one schema version for the
-// three repairs of lot B that all needed a bump, applied in one open rather
-// than in three successive upgrades of the same file.
-//
-//   - retireRuleFlagsFromZobrist — Jacoby and beaver leave the position
-//     identity (ADR-0028, issue #171).
-//   - enforceOneAnalysisPerPosition — analysis(position_id) becomes UNIQUE
-//     (issue #173).
+// migrate_2_17_0_to_2_18_0 retires Jacoby/beaver from the position identity
+// (ADR-0028) and makes analysis(position_id) UNIQUE.
 func (d *Database) migrate_2_17_0_to_2_18_0(ctx context.Context) error {
 	if err := d.retireRuleFlagsFromZobrist(ctx); err != nil {
 		return err
@@ -663,24 +602,11 @@ func (d *Database) migrate_2_17_0_to_2_18_0(ctx context.Context) error {
 }
 
 // enforceOneAnalysisPerPosition prepares the UNIQUE index on
-// analysis(position_id) the fresh schema now declares (issue #173).
-//
-// analysisStore.Save used to SELECT an existing row and then INSERT or UPDATE.
-// Two saves racing on the same position both read "no row" and both inserted;
-// Load then read `SELECT data FROM analysis WHERE position_id = ?` and took
-// whichever row the planner reached first, so a position could show an
-// analysis that had been superseded — with no way to tell from the outside.
-// Save is a single upsert now, which needs the index to exist: an ON CONFLICT
-// target must name a UNIQUE constraint.
-//
-// The rows already there are deduplicated first, keeping the HIGHEST id per
-// position — the last one written, which is the one Save meant to leave. Then
-// the old non-unique index of the same name is dropped, and EnsureSchema (which
-// runs right after the chain) builds the UNIQUE one in its place: an index is
-// not retyped by `CREATE ... IF NOT EXISTS` under a name that already exists.
-//
-// Idempotent, unlike its sibling above: on a second pass there is nothing left
-// to delete and no index left to drop.
+// analysis(position_id) that Save's upsert needs as its ON CONFLICT target;
+// racing saves could otherwise leave two rows and Load read either. Duplicates
+// are removed keeping the HIGHEST id (the last written), then the old
+// non-unique index is dropped so EnsureSchema can recreate it UNIQUE —
+// `CREATE ... IF NOT EXISTS` never retypes an existing name. Idempotent.
 func (d *Database) enforceOneAnalysisPerPosition(ctx context.Context) error {
 	switch ok, err := d.columnExists("analysis", "position_id"); {
 	case err != nil:
@@ -705,40 +631,20 @@ func (d *Database) enforceOneAnalysisPerPosition(ctx context.Context) error {
 	return nil
 }
 
-// retireRuleFlagsFromZobrist takes the Jacoby and beaver flags out of the
-// position identity (ADR-0028, issue #171).
+// retireRuleFlagsFromZobrist takes has_jacoby/has_beaver out of the position
+// identity (ADR-0028): session rules that only an XGID sets split one position
+// across two rows.
 //
-// Until 2.18.0 engine.ZobristHash folded has_jacoby and has_beaver into the
-// hash. They are rules of the *session*, not facts of the board, and no import
-// format but an XGID carries them — every file importer leaves both at 0. The
-// same money position pasted from an XGID (Jacoby set) and imported from a .xg
-// file (Jacoby clear) therefore hashed differently and landed on two rows, with
-// the analyses, comments and collection memberships of one position split
-// across both. That is invariant no. 1 broken; this step repairs the databases
-// that lived through it.
+// Undoing a XOR fold is XORing the key back (engine.RetiredFlagDelta), from the
+// flag columns alone; rows with neither flag are untouched. Rows that collide
+// after rehashing were always one position and are merged, keeping the lowest
+// id (as mergePositionInto does). Candidates first release their hash (NULL)
+// and take the new one in id order, so a collision is judged against the other
+// row's FINAL hash.
 //
-// A Zobrist hash is a XOR of keys, so undoing a fold is XORing the same key
-// back in (engine.RetiredFlagDelta): no board is decoded and no state is read,
-// only the two flag columns the row already carries. The rows that carry
-// neither flag — nearly all of them — keep the hash they were stored under and
-// are not touched at all.
-//
-// Rehashing can bring two rows onto one hash: those two rows were always the
-// same position and are merged, the OLDER row (lowest id) kept, exactly as
-// mergePositionInto folds the duplicates repairPositionsWithoutScalars finds.
-// The candidates release their hash first (set to NULL, which the UNIQUE index
-// tolerates any number of) and take their new one in id order, so a collision
-// is always judged against the hash the other row will END with, never against
-// the one it is about to leave.
-//
-// One transaction, and — uniquely in this chain — a step that is NOT
-// idempotent: XOR is its own inverse, so running it twice would put the flag
-// keys back. What makes that safe is atomicity, not re-runnability. The
-// conversion either commits whole or rolls back whole, and runMigrationChain
-// stamps 2.18.0 only after it returns nil; an interrupted upgrade therefore
-// leaves a file that is still entirely at 2.17.0 and is replayed from the
-// start. Nothing here reads the file to decide whether it applies — the
-// recorded version alone says so, as every step in this chain does.
+// NOT idempotent (XOR is its own inverse): safety comes from atomicity. One
+// transaction, and runMigrationChain stamps 2.18.0 only on success, so an
+// interrupted upgrade is replayed from 2.17.0.
 func (d *Database) retireRuleFlagsFromZobrist(ctx context.Context) error {
 	// A real 2.17.0 file has all three columns; the migration-chain fixtures
 	// stamp a 2.x version onto a 1.x table and leave the scalar columns to
@@ -851,98 +757,45 @@ func (d *Database) retireRuleFlagsFromZobrist(ctx context.Context) error {
 	return nil
 }
 
-// migrate_2_18_0_to_2_19_0 is the 2.19.0 wave: the four schema changes the
-// product lot asks for, applied in one open rather than in four successive
-// upgrades of the same file (tasks/plan-amelioration-2026-09b, lot I).
-//
-//   - position.game_phase — the derived phase label (issue #264, ADR-0035).
-//   - comment.origin — who wrote a comment (issue #263).
-//   - import_batch + match.import_batch_id — the end-of-import report's
-//     unit of account (issue #257).
-//   - trash — the snapshot table undo restores from (issue #285, ADR-0036).
-//
-// The columns and tables themselves are added by EnsureSchema, which derives
-// what is missing from schemaStatements and runs right AFTER the chain. So
-// this step has nothing to create — and cannot do the one thing that does need
-// writing, the game_phase backfill, because the column it would write does not
-// exist yet. It records the request instead; runMigrationChain honours it once
-// EnsureSchema has been through.
-//
-// The backfill cannot be an UPDATE ... SET game_phase = <expression> either:
-// the classification reads the board out of the compact `state` encoding.
+// migrate_2_18_0_to_2_19_0 covers position.game_phase (ADR-0035),
+// comment.origin, import_batch + match.import_batch_id, and trash (ADR-0036).
+// EnsureSchema creates them AFTER the chain, so the game_phase backfill (which
+// must decode the compact `state`, not a SQL expression) is only requested
+// here; runMigrationChain runs it after EnsureSchema.
 func (d *Database) migrate_2_18_0_to_2_19_0(context.Context) error {
 	d.pendingPhaseBackfill = true
 	return nil
 }
 
-// migrate_2_19_0_to_2_20_0 is the 2.20.0 wave.
-//
-//   - position.max_cube — the session's cube ceiling, as the log2 exponent the
-//     XGID's tenth field carries (issue #271).
-//
-// Like the 2.19.0 step, this one has nothing to execute: EnsureSchema derives
-// the missing column from schemaStatements and runs right after the chain. The
-// step exists so the chain stays unbroken from 1.0.0 to DatabaseVersion, which
-// is what TestMigrationSteps_ContinuousChain requires.
-//
-// There is no backfill either, and that is a statement rather than an omission:
-// 0 means "no ceiling stated", which is the truth about every row written
-// before the column existed.
+// migrate_2_19_0_to_2_20_0 covers position.max_cube, the cube ceiling as the
+// log2 exponent of the XGID's tenth field. EnsureSchema adds the column; the
+// step keeps the chain continuous (TestMigrationSteps_ContinuousChain). No
+// backfill: 0 means "no ceiling stated", true of every older row.
 func (d *Database) migrate_2_19_0_to_2_20_0(context.Context) error {
 	return nil
 }
 
-// migrate_2_20_0_to_2_21_0 is the 2.21.0 wave.
-//
-//   - transcription — the draft a match is typed into (issue #334, ADR-0045):
-//     one opaque JSON document carrying its OWN format_version, plus the
-//     columns the library list needs to show a draft without parsing it.
-//
-// Like the two steps before it, this one has nothing to execute: EnsureSchema
-// derives the missing table from schemaStatements and runs right after the
-// chain. The step exists so the chain stays unbroken from 1.0.0 to
-// DatabaseVersion, which is what TestMigrationSteps_ContinuousChain requires.
-//
-// There is nothing to backfill: no database written before 2.21.0 holds a
-// draft, and a draft is not derivable from a saved match — a transcription is
-// the typing, the Match is its result (ADR-0045 §2).
+// migrate_2_20_0_to_2_21_0 covers the transcription table (ADR-0045): an
+// opaque JSON draft with its OWN format_version. EnsureSchema creates it; the
+// step keeps the chain continuous. Nothing to backfill: a draft is not
+// derivable from a saved match (ADR-0045 §2).
 func (d *Database) migrate_2_20_0_to_2_21_0(context.Context) error {
 	return nil
 }
 
-// migrate_2_21_0_to_2_22_0 is the 2.22.0 wave.
-//
-//   - training_session / training_item — the Training journal (issue #320,
-//     ADR-0040 rule 6): what the user asked themselves, kept in the library so
-//     it travels with the file.
-//
-// Nothing to execute here either: both tables are declared in
-// schemaStatements, and EnsureSchema creates what an existing database is
-// missing right after the chain. The step exists so the chain stays unbroken
-// from 1.0.0 to DatabaseVersion (TestMigrationSteps_ContinuousChain).
-//
-// No backfill, and none is conceivable: the journal records sessions that were
-// run, and a database opened for the first time under 2.22.0 has run none. The
-// fifty-session JSON key the training BAR used to write in `metadata` is not
-// imported either — it held a per-session summary with no per-number detail,
-// which is the one thing the journal exists for, and no view ever read it.
+// migrate_2_21_0_to_2_22_0 covers training_session / training_item, the
+// Training journal (ADR-0040 rule 6). EnsureSchema creates them; the step keeps
+// the chain continuous. The old per-session summary in `metadata` is not
+// imported: it lacks the per-number detail the journal exists for.
 func (d *Database) migrate_2_21_0_to_2_22_0(context.Context) error {
 	return nil
 }
 
-// migrate_2_22_0_to_2_23_0 is the 2.23.0 wave.
-//
-//   - anki_card.kind / anki_card.key, and the same pair on anki_review_log —
-//     an Anki card can be a score (issue #324, ADR-0042). A position card is
-//     `position` with its id as key; a score card is `score` with the
-//     unordered score ("3:5"), and its position_id is NULL.
-//
-// The two columns are declared in schemaStatements, so EnsureSchema adds them
-// to an existing database right after this chain. What it cannot do is the
-// rest: fill the key of the cards that already exist, and relax
-// position_id's NOT NULL — SQLite adds columns through ALTER TABLE and
-// relaxes nothing. Both are therefore deferred to repairAnkiCardKinds, which
-// runMigrationChain calls once the schema pass has been through.
+// migrate_2_22_0_to_2_23_0 covers anki_card/anki_review_log kind + key
+// (ADR-0042): a `position` card keyed by id, or a `score` card keyed by the
+// unordered score ("3:5") with a NULL position_id. EnsureSchema adds the
+// columns; filling old keys and relaxing position_id's NOT NULL (which ALTER
+// TABLE cannot do) are deferred to repairAnkiCardKinds after the schema pass.
 func (d *Database) migrate_2_22_0_to_2_23_0(context.Context) error {
 	d.pendingAnkiCardKinds = true
 	return nil
@@ -954,9 +807,8 @@ func (d *Database) migrate_2_22_0_to_2_23_0(context.Context) error {
 // becomes nullable so a score card can hold nothing there rather than a 0
 // pointing at no row.
 //
-// It is idempotent: the backfill only touches the rows the schema pass left
-// with an empty key, and each table is rebuilt only while its position_id is
-// still NOT NULL.
+// Idempotent: only empty keys are filled, and a table is rebuilt only while
+// its position_id is still NOT NULL.
 func (d *Database) repairAnkiCardKinds(ctx context.Context) error {
 	for _, table := range []string{"anki_card", "anki_review_log"} {
 		if _, err := d.db.ExecContext(ctx,
@@ -1007,18 +859,11 @@ func columnIsNotNull(ctx context.Context, db *sql.DB, table, column string) (boo
 // twelve-step ALTER (create, copy, drop, rename), and it is the only way to
 // relax a constraint on a table that already exists.
 //
-// Two precautions the procedure requires and this code takes. Foreign keys are
-// turned OFF for the duration, on a connection PINNED for the purpose: dropping
-// the old table with them on would cascade its children away — the review log
-// is exactly such a child — and a PRAGMA reaches one pooled connection only.
-// And the copy names its columns rather than doing SELECT *, so a column added
-// since (kind, key) is simply left to its default instead of shifting the copy
-// by one.
-//
-// It is used on the anki tables, which hold cards and review events — thousands
-// of rows, not the hundreds of thousands the position table holds. That is what
-// makes a rebuild affordable here and not there (see schemaStatements, which
-// declines to rebuild `position` for its CHECK constraints).
+// Foreign keys are OFF for the duration, on a PINNED connection (a PRAGMA
+// reaches one pooled connection only): dropping the old table with them on
+// would cascade its children away. The copy names its columns, so a newer
+// column takes its default instead of shifting the copy. Affordable on the
+// small anki tables, not on `position` (see schemaStatements).
 func rebuildTable(ctx context.Context, db *sql.DB, table string) error {
 	createSQL, err := sqlite.CreateTableSQL(table)
 	if err != nil {
@@ -1116,25 +961,11 @@ func sharedColumns(ctx context.Context, conn *sql.Conn, src, dst string) ([]stri
 	return shared, nil
 }
 
-// migrate_2_23_0_to_2_24_0 is the 2.24.0 wave.
-//
-//   - direction / direction_event — the Direction of a Tournament (issue #365,
-//     ADR-0047): everything the tournament director decided while running it,
-//     append-only, one row per event. The derived state is never stored.
-//   - match.direction_match_id — the Slot a Match fills, with a unique partial
-//     index per tournament.
-//
-// Nothing to execute: the tables, the column and the index are declared in
-// schemaStatements, and EnsureSchema creates what an existing database is
-// missing right after the chain runs. The step exists so the chain stays
-// unbroken from 1.0.0 to DatabaseVersion (TestMigrationSteps_ContinuousChain).
-//
-// No backfill, and none is possible: a Direction records decisions that were
-// made, and a Tournament assembled from imported files has none — that is
-// precisely the difference ADR-0047 draws between a Tournament that was
-// directed here and one that was merely labelled afterwards. Matches keep an
-// empty slot until someone attaches them, which is a deliberate gesture and
-// never an inference.
+// migrate_2_23_0_to_2_24_0 covers direction / direction_event (ADR-0047: the
+// director's decisions, append-only, derived state never stored) and
+// match.direction_match_id, the Slot a Match fills. EnsureSchema creates them;
+// the step keeps the chain continuous. No backfill is possible: an imported
+// Tournament was never directed, and attaching a match is always deliberate.
 func (d *Database) migrate_2_23_0_to_2_24_0(context.Context) error {
 	return nil
 }

@@ -122,12 +122,8 @@ func RunCall(args []string) error {
 	}
 	req.Header.Set(middleware.TenantHeader, *scope)
 
-	// A minimal ResponseWriter that streams straight to stdout, rather than
-	// httptest.NewRecorder buffering the entire response in memory before a
-	// single copy at the end: list-style routes and exports stream NDJSON
-	// through http.Flusher (see ndjson.go, handlers_imports.go), and a large
-	// export or a long-running list previously had to finish (and sit fully
-	// in RAM) before the caller saw a single byte.
+	// Stream to stdout instead of buffering in a recorder: NDJSON routes and
+	// exports would otherwise sit whole in RAM before the first byte.
 	w := newStdoutResponseWriter()
 	srv.Handler().ServeHTTP(w, req)
 
@@ -139,11 +135,8 @@ func RunCall(args []string) error {
 	return nil
 }
 
-// stdoutResponseWriter is a minimal http.ResponseWriter/http.Flusher that
-// writes response bytes straight to os.Stdout as the handler produces them,
-// tracking only the status code (needed to decide the process exit code) —
-// everything else in the response the handler wrote is already on stdout by
-// the time ServeHTTP returns, so there is nothing left to copy.
+// stdoutResponseWriter is an http.ResponseWriter/http.Flusher writing straight
+// to os.Stdout, tracking only the status (it sets the exit code).
 type stdoutResponseWriter struct {
 	header    http.Header
 	status    int
@@ -171,9 +164,6 @@ func (w *stdoutResponseWriter) Write(b []byte) (int, error) {
 	return os.Stdout.Write(b)
 }
 
-// Flush satisfies http.Flusher. Every Write already lands on os.Stdout
-// immediately (no intermediate buffer in this type), so there is nothing to
-// flush; it exists so handlers that type-assert w.(http.Flusher) before
-// streaming NDJSON (ndjson.go, handlers_imports.go) find one, same as
-// httptest.ResponseRecorder did.
+// Flush is a no-op (writes are unbuffered); it exists so streaming handlers
+// that type-assert http.Flusher find one.
 func (w *stdoutResponseWriter) Flush() {}

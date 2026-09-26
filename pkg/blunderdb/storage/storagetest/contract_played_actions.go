@@ -12,20 +12,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// testAnalysisTakesPlayedActionsFromTheMatch pins issue #268: a match imported
-// WITHOUT an analysis, then analysed here, must get a Performance Rating.
-//
-// The failure this replaces was silent and looked like success. gammonNet is
-// handed a position, and a position does not remember what anybody did with
-// it, so an analysis computed here carries no played move. best_move_equity_error
-// — the column PR is a sum of — was therefore left at zero on every decision,
-// and the whole match scored a flawless 0.00. Nothing errored; the number was
-// simply the number for "nobody ever said which move was played".
-//
-// The `move` table is the other half, written at import whether or not any
-// analysis came with the file. The store now reads it when the analysis is
-// silent (engine.PlayedActionsFor), and this case is the contract both
-// backends answer to: same fixture, same PR.
+// testAnalysisTakesPlayedActionsFromTheMatch: a match imported WITHOUT an
+// analysis, then analysed here, must get a Performance Rating. An analysis
+// computed here carries no played move (a position does not remember it), so
+// the store reads the `move` table when the analysis is silent
+// (engine.PlayedActionsFor); otherwise every error is zero and the PR a silent
+// 0.00. Same fixture, same PR, on both backends.
 func testAnalysisTakesPlayedActionsFromTheMatch(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {

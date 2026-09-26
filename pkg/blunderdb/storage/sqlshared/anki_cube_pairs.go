@@ -9,33 +9,19 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Les cartes de videau chaînées (#276, fiche I.20).
+// Les cartes de videau chaînées.
 //
-// Une décision de videau est DEUX questions : « double ? », puis « prend ? ».
-// blunderDB les enregistre déjà comme deux positions — l'import les sépare, et
-// c'est la bonne granularité (ADR-0025 : une carte, une question, une note).
-// Ce qui manquait était le lien : les deux moitiés d'une même décision doivent
-// se réviser ensemble, sans devenir une carte à deux temps qui recevrait une
-// note pour deux réponses.
+// Une décision de videau est DEUX questions, « double ? » puis « prend ? »,
+// enregistrées comme deux positions (ADR-0025 : une carte, une question, une
+// note). Les deux moitiés se révisent ensemble sans devenir une carte à deux
+// notes.
 //
-// # Le lien est DÉRIVÉ, pas stocké
+// Le lien est DÉRIVÉ, pas stocké : deux lignes de `move` du même jeu, au même
+// numéro de coup, de type "cube". Une colonne `linked_card_id` serait une
+// seconde vérité qui se périme au réimport ou à la suppression d'un match.
 //
-// Les deux positions sont reconnaissables à un fait des données de match :
-// deux lignes de `move` du même jeu, au même numéro de coup, de type "cube".
-// C'est ce fait qui les apparie, et le recopier dans une colonne
-// `linked_card_id` en aurait fait une seconde vérité — qui se périme au
-// réimport, à la suppression d'un match, à la fusion de deux bases. La
-// dérivation coûte une jointure sur un index qui existe déjà ; la colonne
-// aurait coûté une migration et une maintenance.
-//
-// # Ce que le chaînage fait, et ce qu'il ne fait pas
-//
-// Il ORDONNE : après « double ? », si « prend ? » est dans le même paquet et
-// due, elle vient tout de suite. Il n'avance AUCUNE échéance : chaque carte
-// garde son propre état FSRS, et forcer la seconde hors de son tour
-// fausserait l'algorithme pour un effet de mise en scène. Les deux cartes
-// naissent ensemble, donc elles sont dues ensemble la première fois — c'est
-// là que le chaînage sert, et il sert honnêtement.
+// Le chaînage ORDONNE et n'avance AUCUNE échéance : chaque carte garde son
+// état FSRS, que forcer une carte hors de son tour fausserait.
 
 // cubeCounterparts returns the position ids that complete a cube decision
 // whose other half is in positionIDs, and that are not already there.
@@ -150,10 +136,8 @@ func (s *AnkiStore) LinkedCard(ctx context.Context, scope string, deckID, cardID
 // completeCubePairs extends positionIDs with the counterparts of the cube
 // decisions it contains.
 //
-// Adding them is COMPLETING what the source selected, not adding something
-// else: the two halves are one decision, and a deck that asks "double?" and
-// never "take?" teaches half a skill. The insert is idempotent
-// (ON CONFLICT DO NOTHING) and Sync never deletes, so re-syncing is stable.
+// This COMPLETES what the source selected: the two halves are one decision.
+// The insert is idempotent and Sync never deletes, so re-syncing is stable.
 func completeCubePairs(ctx context.Context, db Execer, scope string, positionIDs []int64) []int64 {
 	extra, err := cubeCounterparts(ctx, db, scope, positionIDs)
 	if err != nil {

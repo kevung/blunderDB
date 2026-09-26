@@ -63,30 +63,20 @@
 
     let { visible = false, onClose } = $props();
 
-    // The issuer identity signs watermarks. It is created on the first watermarked export,
-    // so this section reports "not yet" rather than minting a key just because someone
-    // opened the settings. See ADR-0007.
+    // Created on the first watermarked export, never by opening settings (ADR-0007).
     let identity = $state(null);
     let identityPassphrase = $state('');
     let identityMessage = $state('');
     let identityError = $state('');
-    // Regenerating is a two-step gesture: the first click only reveals what it does and,
-    // more to the point, what it does not do. See RegenerateIssuerIdentity.
+    // Two-step: the first click explains what regenerating does and does not do.
     let confirmingRegenerate = $state(false);
 
-    // Compacting the database file (Database.Vacuum) can take a while on a large
-    // database and needs headroom on disk, so it is confirmed like a destructive
-    // action even though nothing is deleted; the result (or a failure) is reported
-    // through the status bar rather than inline, since the modal is usually closed
-    // by the time a big VACUUM finishes.
+    // VACUUM is slow and needs disk headroom: confirmed like a destructive action,
+    // reported in the status bar (the modal is usually closed by then).
     let vacuumBusy = $state(false);
     let repairBusy = $state(false);
 
-    // Three concerns, and the third is not a preference at all: language, scale and colours
-    // are settings one adjusts, whereas the identity is an object one manages, with its own
-    // verbs. Keeping them in one column meant eighteen rows and up to seven buttons at
-    // different heights; tabs give each concern its own action area and leave a single
-    // primary button, always in the same place.
+    // One tab per concern, each with its own action area and one primary button in place.
     const TABS = [
         { id: 'interface', labelKey: 'config.interface' },
         { id: 'colors', labelKey: 'config.colors' },
@@ -171,11 +161,8 @@
         }
     }
 
-    // Les deux réglages du classement `like` (ADR-0043). Le plafond vaut zéro
-    // par défaut, et c'est une décision : l'échelle dépend de la phase — dix
-    // pions-pas ne sont rien en course et une autre position à l'ouverture —
-    // et personne ne l'a mesurée. Un nombre inventé ici se lirait comme une
-    // mesure.
+    // Réglages de `like` (ADR-0043). Plafond à zéro par défaut : l'échelle dépend
+    // de la phase et n'a pas été mesurée.
     const MAX_LIKE_LIMIT = 500;
     let likeLimit = $state(30);
     let likeMaxDistance = $state(0);
@@ -215,7 +202,7 @@
         setBoardColor(key, event.currentTarget.value);
     }
 
-    // Live, lightweight preview while dragging (CSS zoom only)...
+    // CSS-zoom preview while dragging...
     function onUIScaleInput(event) {
         previewUIScale(Number(event.currentTarget.value));
     }
@@ -235,17 +222,13 @@
         setPanelPosition(event.currentTarget.value);
     }
 
-    // The Bearoff tab (ADR-0027, #308). Nothing is downloaded and nothing is
-    // embedded: every table is generated here, and this tab is where the user
-    // sees what that costs before asking for it.
+    // Bearoff tab (ADR-0027): tables are generated here, their cost shown first.
     /** @type {any} */
     let bearoff = $state(null);
     /** @type {any} */
     let bearoffPlan = $state(null);
     let bearoffExternal = $state('');
-    // The domain to generate, named by its label ("TS-06-11", "OS-08"): one
-    // picker for both axes, because each row already says which it is and two
-    // blocks would only ask the user to know the difference first.
+    // Domain label ("TS-06-11", "OS-08"): one picker for both kinds.
     let bearoffDomain = $state('TS-06-11');
     let bearoffCores = $state(0);
     let bearoffRate = $state(0);
@@ -273,16 +256,12 @@
         }
     });
 
-    // The selected domain, which is what the size / memory / time line and the
-    // Generate button both speak about.
     let bearoffSelected = $derived(bearoffPlan?.candidates?.find((/** @type {any} */ c) => c.domain === bearoffDomain) ?? null);
 
-    // Anything paused, whatever the domain: the "TS-06-09 interrompue à 43 %"
-    // line at launch.
+    // Any paused run, whatever the domain.
     let bearoffInterrupted = $derived(bearoffPlan?.candidates?.filter((/** @type {any} */ c) => c.interrupted) ?? []);
 
-    // The measured remaining time, recomputed on a ticking clock so it counts
-    // down between two progress reports rather than freezing.
+    // Remaining time on a ticking clock, so it counts down between reports.
     let bearoffNow = $state(Date.now());
     $effect(() => {
         if (!$bearoffProgress) return;
@@ -320,8 +299,7 @@
         }
     }
 
-    // Pause keeps the checkpoint, Cancel does not — the two buttons are two
-    // different promises and must not share a handler.
+    // Pause keeps the checkpoint, Cancel does not: separate handlers.
     async function pauseBearoffGeneration() {
         try {
             await PauseBearoffGeneration();
@@ -361,8 +339,7 @@
         }
     }
 
-    // Opt-in update check (#241): off by default, loaded/saved the same way
-    // every other plain-boolean setting on this modal is.
+    // Opt-in update check, off by default.
     let checkForUpdates = $state(false);
 
     async function refreshCheckForUpdates() {
@@ -397,9 +374,7 @@
     const unsubBearoff = [
         EventsOn('bearoff:progress', (p) => {
             bearoffProgressStore.update((cur) => {
-                // Time the run from its FIRST progress report: the successor
-                // lists are built before any of them, and counting that
-                // set-up would inflate every remaining time that follows.
+                // Time from the first report, excluding the successor-list set-up.
                 if (!cur || cur.domain !== p.domain) {
                     return { ...p, startedAt: Date.now(), firstDone: p.done };
                 }
@@ -409,8 +384,7 @@
         EventsOn('bearoff:done', (d) => {
             bearoffProgressStore.set(null);
             bearoffErrorStore.set('');
-            // The rate this machine just measured, so the next estimate is
-            // about it rather than about the machine the constant came from.
+            // Keep this machine's measured rate for the next estimate.
             if (d?.rate > 0) {
                 SaveBearoffRate(d.rate).catch((error) => logger.error('Error saving the bearoff rate:', error));
             }
@@ -424,17 +398,9 @@
     ];
     onDestroy(() => unsubBearoff.forEach((off) => off && off()));
 
-    // Compacts the currently open database file. Goes through the same
-    // Database.Vacuum() the CLI's `blunderdb vacuum` uses (CLI/GUI parity) —
-    // WAL checkpoint, free-space guard, VACUUM, ANALYZE all happen there.
-    // Les seuils de la bibliothèque (ADR-0046). Ils sont saisis en équité —
-    // « 0,080 », l'unité de toutes les tables de l'application — et stockés en
-    // millipoints, l'unité que parle la ligne de commande. La conversion est
-    // dans le service, faite une fois.
-    //
-    // La saisie est libre pendant la frappe et validée à la sortie du champ :
-    // un seuil d'erreur au-dessus du seuil de blunder est refusé par le
-    // stockage, qui valide la paire, et le message vient de lui.
+    // Seuils de la bibliothèque (ADR-0046) : saisis en équité, stockés en
+    // millipoints (conversion dans le service). Validés à la sortie du champ ;
+    // le stockage refuse une paire incohérente et fournit le message.
     let librarySettings = $state({ ...DEFAULT_SETTINGS });
     let libraryError = $state('');
 
@@ -464,9 +430,7 @@
         try {
             librarySettings = await saveLibrarySettings(next);
             libraryError = '';
-            // Le compteur de la barre d'état compte des blunders : il ne dit
-            // plus la vérité tant qu'il n'a pas relu le seuil qui vient de
-            // changer.
+            // Le compteur de blunders de la barre d'état doit relire le seuil.
             await refreshLibraryCounts();
         } catch (error) {
             librarySettings = previous;
@@ -492,13 +456,8 @@
         }
     }
 
-    // Recomputes the scalar columns of every analysis from its stored JSON.
-    // Same Database.RepairAnalyses the CLI's `blunderdb repair` and the
-    // daemon's analyses.repair go through (CLI/GUI parity, G.14 #242): it was
-    // reachable over HTTP since the daemon existed and from nowhere else.
-    //
-    // Confirmed like the vacuum: it rewrites a column of every analysis in the
-    // database, which is not something to start by brushing a button.
+    // Database.RepairAnalyses, as `blunderdb repair` (CLI/GUI parity): rewrites
+    // every analysis's scalar columns, so it is confirmed.
     async function repairAnalyses() {
         if (!(await confirmAction(get(t)('config.repairConfirm'), { confirmLabel: get(t)('config.repairConfirmButton') }))) return;
         repairBusy = true;
@@ -516,10 +475,8 @@
         }
     }
 
-    // Opens the folder holding blunderDB's GUI log file
-    // ($XDG_STATE_HOME/blunderDB, see internal/applog) in the platform's
-    // file manager — logging.go writes only to stderr otherwise, invisible
-    // once the app is launched by a double-click with no attached terminal.
+    // Opens the GUI log folder ($XDG_STATE_HOME/blunderDB, internal/applog):
+    // stderr is invisible when launched without a terminal.
     async function openLogsFolder() {
         try {
             await OpenLogsFolder();
@@ -550,35 +507,25 @@
         }
     }
 
-    // gammonNet settings (ADR-0011, ADR-0013). Two depths, named separately:
-    // displayPly is interactive comfort (the live evaluation panel, #125);
-    // analysisPly is what the batch job (#129) writes into a Position's
-    // Analysis row. Loaded once when the tab becomes visible, like bearoff.
+    // gammonNet (ADR-0011, ADR-0013): displayPly for the live panel, analysisPly
+    // for what the batch writes. Loaded when the tab becomes visible.
     let gnDisplayPly = $state(2);
     let gnAnalysisPly = $state(2);
     let gnPruneK = $state(12);
     let gnCandidates = $state(10);
     let gnAutoAnalyze = $state(false);
-    // Catch-up (#130, ADR-0015): the same batch #129 wires after import, run
-    // on demand for a library built before gammonNet existed. The count is
-    // informational only — StartGammonNetBatch re-derives its own list.
+    // Catch-up (ADR-0015): the after-import batch on demand; the count is
+    // informational (StartGammonNetBatch re-derives its list).
     let gnMissingCount = $state(null);
     let gnCatchUpStarting = $state(false);
-    // Re-analysis of stale positions (#191): a position whose gammonNet
-    // analysis is entirely its own but was written at an older EngineVersion
-    // or a different depth than gnAnalysisPly now asks for. The count is
-    // informational only — StartGammonNetStaleBatch re-derives its own list
-    // — and depends on gnAnalysisPly, so it is refreshed whenever that
-    // changes, not just when the tab opens.
+    // Stale gammonNet analyses (older EngineVersion or another depth). The count
+    // is informational and depends on gnAnalysisPly, so it refreshes with it.
     let gnStaleCount = $state(null);
     let gnStaleStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
 
-    // Le dossier surveillé (#258, fiche I.2). Rien n'est deviné : tant que
-    // l'utilisateur n'a pas désigné un dossier, il n'y a pas de surveillance,
-    // et le bouton « proposer » ne propose un chemin que si ce chemin existe
-    // vraiment sur cette machine.
+    // Dossier surveillé : rien n'est deviné ; « proposer » n'offre qu'un chemin existant.
     let watchOn = $state(false);
     let watchFolder = $state('');
     let watchInterval = $state(0);
@@ -604,9 +551,7 @@
             watchFolder = folder;
             watchInterval = seconds;
         } catch (error) {
-            // Un dossier qui n'existe plus, un partage démonté : la case
-            // revient à « non » plutôt que d'afficher une surveillance qui ne
-            // tourne pas.
+            // Dossier disparu : la case revient à « non ».
             watchError = String(error).replace(/^Error:\s*/, '');
             watchOn = false;
         }
@@ -664,11 +609,7 @@
         }
     }
 
-    // StatusBar.svelte owns the live progress chip/cancel button for every
-    // gammonNet batch run, whichever of the three triggers started it
-    // (auto-after-import #129, this button, or a future CLI/serve run has no
-    // GUI to show). Starting it here is fire-and-forget: no local progress
-    // state to duplicate.
+    // Fire-and-forget: StatusBar.svelte shows every batch's progress and cancel.
     async function startGammonNetCatchUp() {
         gnCatchUpStarting = true;
         try {
@@ -678,9 +619,7 @@
         }
     }
 
-    // Re-analysis (#191): same fire-and-forget shape as the catch-up above —
-    // StartGammonNetStaleBatch shares gnBatchCancel with StartGammonNetBatch
-    // on the Go side, so only one of the two ever runs at a time.
+    // Same shape; shares gnBatchCancel with the catch-up, so only one runs at a time.
     async function startGammonNetStaleRerun() {
         gnStaleStarting = true;
         try {
@@ -750,9 +689,7 @@
 
     <div class="tab-body">
         {#if activeTab === 'interface'}
-            <!-- Les thèmes nommés (#286). `system` par défaut : un outil
-                 n'impose pas son clair ou son sombre à un bureau qui a déjà
-                 tranché. -->
+            <!-- `system` par défaut : le bureau a déjà choisi clair ou sombre. -->
             <div class="setting-row">
                 <label for="config-theme">{$t('config.theme')}</label>
                 <select id="config-theme" class="setting-select" value={$themeStore} onchange={(e) => setTheme(e.currentTarget.value)}>
@@ -824,11 +761,7 @@
                 <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
             </div>
         {:else if activeTab === 'library'}
-            <!-- L'onglet Bibliothèque (ADR-0046) : ce qui suit le fichier, et
-                 non la machine. Les deux seuils y sont, et les deux actions
-                 qui portent sur la base ouverte — compacter et réparer —
-                 qui vivaient jusque-là parmi des réglages de machine sans le
-                 dire. -->
+            <!-- Onglet Bibliothèque (ADR-0046) : ce qui suit le fichier, non la machine. -->
             {#if !$databasePathStore}
                 <p class="setting-note">{$t('config.libraryNoDatabase')}</p>
             {:else}
@@ -918,9 +851,7 @@
                     </ul>
                 {/if}
 
-                <!-- A run that was paused, offered by name and percentage. It
-                     is never restarted on its own: the user asked for it to
-                     stop. -->
+                <!-- A paused run is never restarted on its own. -->
                 {#each bearoffInterrupted as paused (paused.domain)}
                     <div class="setting-row">
                         <span class="setting-label">{$t('config.bearoffInterrupted', { domain: paused.domain, percent: paused.percent.toFixed(0) })}</span>
@@ -1294,19 +1225,15 @@
         font-weight: 600;
     }
 
-    /* A fixed height, not a floor: a minimum still let the dialog grow with the tallest tab
-       — Interface has three rows, Colours has nine, and Identity changes again when the
-       regeneration warning unfolds. The box then resized and, since the overlay centres it,
-       moved under the pointer at every tab change. The content scrolls inside instead.
-       `min()` keeps it from overflowing a short window. */
+    /* A fixed height, not a floor: a centred box resizing per tab moved under the
+       pointer. Content scrolls inside; `min()` fits a short window. */
     .tab-body {
         height: min(300px, 46vh);
         overflow-y: auto;
         text-align: left;
     }
 
-    /* One action area per tab, aligned the same way, so no button ever appears in the
-       middle of a list. */
+    /* One action area per tab, aligned the same way. */
     .tab-actions {
         display: flex;
         flex-wrap: wrap;

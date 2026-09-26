@@ -9,7 +9,7 @@ import (
 
 // plantOrphans inserts one orphan of each kind through db with foreign keys
 // switched off — the only way to create rows the schema's ON DELETE CASCADE
-// would otherwise forbid, and exactly how the pre-#157 pool produced them.
+// would otherwise forbid.
 // db must be pinned to a single connection so the PRAGMA toggles apply to
 // the connection the inserts run on.
 func plantOrphans(t *testing.T, db *sql.DB) {
@@ -60,7 +60,7 @@ func TestCountOrphans(t *testing.T) {
 	}
 }
 
-// TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd (issue #177): EnsureSchema
+// TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd: EnsureSchema
 // degrades to a warning when an index cannot be built; the drift it leaves
 // is what CheckSchema reports after the open. Two matches sharing a
 // canonical hash keep idx_match_canonical (UNIQUE) from being rebuilt.
@@ -108,7 +108,7 @@ func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
 	}
 }
 
-// TestCheckConstraints_ReportsWhatSQLiteCannotEnforce (issue #173): the fresh
+// TestCheckConstraints_ReportsWhatSQLiteCannotEnforce: the fresh
 // DDL states range constraints SQLite cannot add to a table that already
 // exists, so an upgraded database can hold rows a new one would refuse. That
 // gap is not a silence — `blunderdb verify` reads it here.
@@ -177,7 +177,7 @@ func TestCheckConstraints_ReportsWhatSQLiteCannotEnforce(t *testing.T) {
 	}
 }
 
-// TestCheckCounters_RecomputesTheDenormalisedFigures (issue #185):
+// TestCheckCounters_RecomputesTheDenormalisedFigures:
 // match.game_count and game.move_count are written once, at import, from what
 // the source file held, and are what the match list displays. Nothing else in
 // the database says the figure and the rows disagree.

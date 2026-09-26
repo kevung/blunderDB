@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// The file is the CSV the clipboard receives, byte for byte (#454): no BOM, no
-// line-ending rewrite, nothing a spreadsheet would read differently.
+// The file is the CSV the clipboard receives, byte for byte: no BOM, no
+// line-ending rewrite.
 func TestWriteCSVIsTheCopiedText(t *testing.T) {
 	body := "Phase;Rang;id;Joueur\r\nGénérale;1;ha;Hugo Andrieu\r\n"
 	path := filepath.Join(t.TempDir(), "open-classement-2026-09-24.csv")

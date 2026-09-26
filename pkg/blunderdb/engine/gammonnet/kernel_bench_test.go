@@ -8,14 +8,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// BenchmarkEvaluateBatchKernel is the figure #133 is judged on: the cost of one
-// position when EvalBatchWidth of them go through the kernel together.
-//
-// It is deliberately the sibling of BenchmarkEvaluateBatch, which measures the
-// same batch of DISTINCT positions through the scalar path — the two print
-// ns/position and divide by each other. The reference to beat is the upstream
-// C at 41 µs per position (gcc -O3, batch width 32); the plan's target is
-// ≤ 60 µs.
+// BenchmarkEvaluateBatchKernel is the cost of one position when
+// EvalBatchWidth of them go through the kernel together; it divides by
+// BenchmarkEvaluateBatch (the scalar path, same distinct positions).
 //
 // Run the pure-Go twin with BLUNDERDB_GAMMONNET_KERNEL=go to separate what the
 // batched LAYOUT buys from what the vector instructions buy.
@@ -23,11 +18,8 @@ func BenchmarkEvaluateBatchKernel(b *testing.B) {
 	benchmarkBatchKernel(b, EvalBatchWidth)
 }
 
-// BenchmarkEvaluateBatchKernelPartial measures the tail the search will hand
-// over: one real position, the other seven lanes duplicating it. The per-lane
-// figure is the same work, so this reports the cost of a batch that is 1/8
-// useful — the price of a poorly filled batch, which decision D4 sized at
-// 84.3 % filled in practice.
+// BenchmarkEvaluateBatchKernelPartial measures a batch that is 1/8 useful:
+// one real position, the other seven lanes duplicating it.
 func BenchmarkEvaluateBatchKernelPartial(b *testing.B) {
 	benchmarkBatchKernel(b, 1)
 }
@@ -71,11 +63,8 @@ func benchmarkBatchKernel(b *testing.B, n int) {
 // BenchmarkEvaluateBatchKernelSiblings is the same measurement over the batch
 // the SEARCH actually assembles: eight plays of one roll from one position.
 //
-// The distinction is not cosmetic. Siblings share most of their board, so the
-// union of their non-zero features is ~32 of 196; eight unrelated bearoff
-// boards union to 64. The first-layer shortcut is therefore worth about twice
-// as much here as it is in the benchmark above — measuring it on unrelated
-// boards made it look like a regression.
+// Siblings union to ~32 non-zero features of 196, unrelated boards to 64, so
+// the first-layer shortcut is worth about twice as much here.
 func BenchmarkEvaluateBatchKernelSiblings(b *testing.B) {
 	net, err := embeddedNetwork()
 	if err != nil {

@@ -11,38 +11,24 @@ import (
 )
 
 // schemaStatements is the full DDL for a fresh database at the current
-// domain.DatabaseVersion, in dependency order. It is the ONLY schema DDL in
-// the code base: Bootstrap runs it on a fresh database (the Database
-// wrapper's SetupDatabase delegates to it, and so does every export file),
-// and EnsureSchema derives from it — by introspecting a reference database
-// built with it — what an existing database is missing on open (the Database
-// wrapper's ensureAllTablesExist). The version-by-version migrations in
-// database/db_migration*.go keep their own historical DDL: they describe what
-// each past version looked like, not what the current one is. The parity test
-// in database/schema_parity_test.go diffs the paths.
+// domain.DatabaseVersion, in dependency order, and the ONLY current-schema
+// DDL: Bootstrap runs it on a fresh database, EnsureSchema diffs an existing
+// one against a reference built from it. The migrations in
+// database/db_migration*.go keep their own historical DDL;
+// database/schema_parity_test.go diffs the paths.
 var schemaStatements = []string{
-	// The CHECK constraints below are stated by a FRESH database only: SQLite
-	// adds no constraint through ALTER TABLE, and rebuilding a table holding
-	// hundreds of thousands of positions on upgrade would be a long,
-	// disk-hungry operation to enforce what the writing code already
-	// guarantees. An existing database is judged against them by
-	// `blunderdb verify` instead (database/db_verify.go, CheckConstraints).
-	// A NULL passes a CHECK — unknown, not violated — which is what the
-	// nullable scalar columns need.
+	// The CHECK constraints below bind a FRESH database only: SQLite adds no
+	// constraint through ALTER TABLE, and rebuilding large tables on upgrade
+	// is not worth it. Existing databases are judged by `blunderdb verify`
+	// (database/db_verify.go, CheckConstraints). A NULL passes a CHECK, which
+	// the nullable scalar columns need.
 	//
-	// zobrist_hash is deliberately NOT declared NOT NULL, though a row without
-	// a hash is precisely the defect issue #173 set out to close (a nullable
-	// column under a UNIQUE index tolerates any number of NULLs, which is how
-	// the native-.db importer once slipped duplicates past idx_position_zobrist).
-	// Three things stand in the way of the constraint. EnsureSchema adds a
-	// missing column by ALTER TABLE, and SQLite refuses a NOT NULL column with
-	// no default — so an old file that lacks the column entirely would never
-	// receive it and could no longer be opened at all. repairPositionsWithoutScalars
-	// (db_schema.go) exists to FIND rows with a NULL hash and fix them, and runs
-	// on every open. And the constraint would hold only in files created after
-	// 2.18.0, since it cannot reach the others. The rule is therefore stated
-	// where it can be told the truth about every database — CheckConstraints,
-	// reported by `blunderdb verify` — and the repair pass remains the remedy.
+	// zobrist_hash is deliberately NOT NOT NULL, though a NULL hash is a
+	// defect (a UNIQUE index tolerates any number of NULLs): EnsureSchema
+	// could not ALTER such a column into an old file (no default),
+	// repairPositionsWithoutScalars (db_schema.go) must be able to find and
+	// fix NULL rows on open, and the constraint would bind new files only.
+	// CheckConstraints states the rule for every database instead.
 	`CREATE TABLE IF NOT EXISTS position (
 		id                INTEGER PRIMARY KEY AUTOINCREMENT,
 		zobrist_hash      INTEGER,
@@ -157,20 +143,17 @@ var schemaStatements = []string{
 		scope TEXT NOT NULL DEFAULT ''
 	)`,
 	// UI session state (last search, last position, open views), one row per
-	// key and per scope. It lived in metadata as '<scope>:session_*' rows
-	// until 2.16.0; metadata is database infrastructure (schema version,
-	// issuance) and holds no per-tenant data since 2.17.0 (issue #156).
+	// key and per scope. metadata is database infrastructure (schema version,
+	// issuance) and holds no per-tenant data.
 	`CREATE TABLE IF NOT EXISTS session_state (
 		scope TEXT NOT NULL DEFAULT '',
 		key   TEXT NOT NULL,
 		value TEXT,
 		PRIMARY KEY (scope, key)
 	)`,
-	// One row per import the user launched (2.19.0, issue #257). It is what
-	// lets the end-of-import report say "this file", rather than "the
-	// database": the matches an import wrote point back at their batch, and
-	// the batch holds the counts the report shows. Deleting a batch never
-	// deletes its matches — hence ON DELETE SET NULL on the match side.
+	// One row per import the user launched: the matches it wrote point back
+	// at it, and it holds the counts the end-of-import report shows. Deleting
+	// a batch never deletes its matches — hence ON DELETE SET NULL there.
 	`CREATE TABLE IF NOT EXISTS import_batch (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		started_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -237,17 +220,11 @@ var schemaStatements = []string{
 		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 	)`,
-	// A transcription is a DRAFT (ADR-0045): the match a user is typing in,
-	// before it is worth a row in match/game/move. It is one opaque JSON
-	// document plus the handful of columns the library list needs to show it
-	// without parsing anything. The document carries its OWN format_version,
-	// so a change to its shape is a version of the document and never a
-	// DatabaseVersion migration (#334).
-	//
-	// match_id is the Match the draft has already produced, NULL while it has
-	// produced none. ON DELETE SET NULL rather than CASCADE: deleting the
-	// saved match must not destroy the typing that produced it — the draft
-	// simply becomes one that was never saved.
+	// A transcription is a DRAFT (ADR-0045): one opaque JSON document, plus
+	// the columns the library list shows. The document carries its OWN
+	// format_version, so its shape changes never need a DatabaseVersion
+	// migration. match_id is the Match it produced, if any; ON DELETE SET NULL
+	// so deleting the match never destroys the typing behind it.
 	`CREATE TABLE IF NOT EXISTS transcription (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -297,11 +274,9 @@ var schemaStatements = []string{
 		UNIQUE(collection_id, position_id)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`,
-	// The trash (2.19.0, issue #285): a SNAPSHOT of what was deleted, not a
-	// deleted_at column on each table. See docs/adr/0036. A row here is dead
-	// weight the live queries never see, which is the whole point: none of the
-	// fifty search filters, none of the statistics, and neither backend's
-	// retention predicate had to learn about it.
+	// The trash: a SNAPSHOT of what was deleted, not a deleted_at column, so
+	// no live query, statistic or retention predicate has to know about it
+	// (ADR-0036).
 	`CREATE TABLE IF NOT EXISTS trash (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		-- position | collection | comment | anki_card
@@ -317,12 +292,8 @@ var schemaStatements = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_trash_deleted_at ON trash(deleted_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_trash_kind ON trash(kind, deleted_at)`,
-	// The Training journal (2.22.0, issue #320): two tables, not a JSON key of
-	// `metadata`, because the per-number detail is the whole point — « tp4
-	// dernier lancer : 6 fautes sur 9 » — and a blob that grows by one entry
-	// per revealed number is a register a table settles (ADR-0040 rule 6). No
-	// cap: the fifty-session bound the old key carried existed to keep a
-	// metadata VALUE small.
+	// The Training journal: two tables rather than a metadata JSON key,
+	// because the per-number detail grows without bound (ADR-0040 rule 6).
 	`CREATE TABLE IF NOT EXISTS training_session (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		-- scores | pips | bearoff | evaluation | decision
@@ -420,14 +391,11 @@ var schemaStatements = []string{
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`,
-	// A card asks about a position OR a score (2.23.0, issue #324, ADR-0042):
-	// `kind` says which, `key` names it — the position's id as text, or the
-	// unordered score "3:5". position_id is therefore NULLABLE: it is the
-	// foreign key of a position card and nothing at all for a score card, and
-	// a 0 pointing at no row would be exactly the lie the ADR rejects. An
-	// existing database is rebuilt into this shape by the 2.23.0 migration
-	// step, which is the one thing EnsureSchema cannot do (it adds columns,
-	// it does not relax a constraint).
+	// A card asks about a position OR a score (ADR-0042): `kind` says which,
+	// `key` names it (the position id as text, or the unordered score "3:5").
+	// position_id is NULLABLE, NULL for a score card rather than a dangling 0.
+	// Older databases are rebuilt by the 2.23.0 migration: EnsureSchema cannot
+	// relax a constraint.
 	`CREATE TABLE IF NOT EXISTS anki_card (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		deck_id INTEGER NOT NULL,
@@ -448,9 +416,8 @@ var schemaStatements = []string{
 		FOREIGN KEY(deck_id) REFERENCES anki_deck(id) ON DELETE CASCADE,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
-	// kind/key and a nullable position_id, for the same reason as anki_card
-	// above: the journal records what was reviewed, and since 2.23.0 that can
-	// be a score.
+	// kind/key and a nullable position_id, as anki_card: a review can be of
+	// a score.
 	`CREATE TABLE IF NOT EXISTS anki_review_log (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		card_id INTEGER NOT NULL,
@@ -484,8 +451,7 @@ var schemaStatements = []string{
 	// constraint on purpose: EnsureSchema builds indexes on an existing
 	// database and cannot add a constraint, and this is the index the sync's
 	// "ON CONFLICT (deck_id, kind, key)" needs in order to be a no-op rather
-	// than a duplicate. It replaces UNIQUE(deck_id, position_id), which said
-	// the same thing about the only kind of card that existed before 2.23.0.
+	// than a duplicate.
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_card_identity ON anki_card(deck_id, kind, key)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_card_due ON anki_card(deck_id, due)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`,
@@ -499,37 +465,18 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
-	// idx_position_score (match_length, score_1, score_2) is a strict column
-	// prefix of idx_position_score_cube below and is dropped here (E3, index
-	// redundancy pass): any seek idx_position_score could serve, the wider
-	// index serves identically. ensureAllTablesExist (db_schema.go) drops it
-	// from existing databases on open.
+	// No idx_position_score: it was a strict prefix of this one;
+	// ensureAllTablesExist (db_schema.go) drops it from existing databases.
 	`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
-	// One analysis per position, enforced rather than assumed: Save used to
-	// SELECT then INSERT-or-UPDATE, so two concurrent saves inserted two rows
-	// and Load took whichever the planner reached first. The index is what
-	// makes the upsert in analyses_sqlite.go possible at all — an ON CONFLICT
-	// target must name a UNIQUE constraint. It replaces a non-unique index of
-	// the same name; the 2.18.0 migration deduplicates and drops the old one
-	// so EnsureSchema builds this one in its place.
+	// One analysis per position, enforced: the upsert in analyses_sqlite.go
+	// needs a UNIQUE target for ON CONFLICT, and concurrent saves must not
+	// insert two rows. The 2.18.0 migration deduplicates older databases.
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
-	// Covering index for the win/gammon combo search (fiche-05 T3): the query
-	// narrows via `p.id IN (SELECT position_id FROM analysis WHERE
-	// player1_win_rate … AND player1_gammon_rate …)`, and with position_id as
-	// the index's third column that subquery is answered from the index alone
-	// (no analysis-table row lookup). Supersedes the old 2-column
-	// idx_analysis_win_gammon — a new name because a 3rd-column addition to an
-	// existing index does not retroactively appear in already-created SQLite
-	// indexes; EnsureSchema (re)creates this index by name on every open of an
-	// existing database, so no VACUUM/migration is needed to pick it up.
-	// idx_analysis_win_gammon is simply no longer created here, and
-	// ensureAllTablesExist (db_schema.go) drops it from existing databases on
-	// open. idx_analysis_win1 (player1_win_rate alone), a strict prefix of
-	// this covering index, is dropped here too (E3): any WinRateFilter-only
-	// search plans identically against the wider index (verified by EXPLAIN
-	// QUERY PLAN — same `SEARCH analysis USING COVERING INDEX
-	// idx_analysis_win_gammon_covering (player1_win_rate>?)` with or without
-	// idx_analysis_win1 present).
+	// Covering index for the win/gammon search's `p.id IN (SELECT position_id
+	// FROM analysis WHERE …)`: with position_id third, the subquery never
+	// touches the table. A new name because EnsureSchema builds indexes by
+	// name; ensureAllTablesExist (db_schema.go) drops the superseded
+	// idx_analysis_win_gammon and idx_analysis_win1 (a strict prefix).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
@@ -538,7 +485,7 @@ var schemaStatements = []string{
 	// The comment-presence filter (`co`/`xco`) probes this table once per search
 	// with an EXISTS subquery; without the index that is a full comment scan.
 	`CREATE        INDEX IF NOT EXISTS idx_comment_position        ON comment(position_id, origin)`,
-	// Range filters that previously had no supporting index (full scans).
+	// Range filters that would otherwise scan the table.
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_1 ON position(back_checkers_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position(back_checkers_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_1          ON position(pip_1)`,
@@ -591,28 +538,16 @@ func isFreshDB(ctx context.Context, db *sql.DB) (bool, error) {
 	return false, nil
 }
 
-// EnsureSchema brings an existing database up to the current schema without
-// touching what it already has: tables it lacks are created, columns it lacks
-// are added, indexes it lacks are built. Nothing is dropped, renamed or
-// retyped. It is idempotent and cheap on a database that is already current,
-// and it is what the Database wrapper runs on every open, after the migration
-// chain — the chain describes the past, this describes the present.
+// EnsureSchema adds to an existing database the tables, columns and indexes
+// it lacks; nothing is dropped, renamed or retyped. Idempotent; the Database
+// wrapper runs it on every open, after the migration chain.
 //
-// There is deliberately no second list of columns to keep in step with the
-// CREATE TABLE statements above: the columns an existing database is missing
-// are found by comparing it against a reference database built, in memory,
-// from schemaStatements. That is what makes the DDL single-sourced — a column
-// added to a CREATE TABLE above reaches existing databases without anyone
-// remembering to write its ALTER TABLE twin.
+// What is missing is found against a reference database built in memory
+// from schemaStatements, so there is no second column list to keep in step.
 //
-// Tables are created strictly (a failure is returned). Columns and indexes
-// are best-effort and logged: SQLite cannot add a column whose default is not
-// a constant, and a UNIQUE index cannot be built over rows that violate it
-// (idx_position_zobrist before the 2.1.0 dedup, idx_match_canonical before
-// the empty hashes are normalised — the caller does that and calls again).
-// A database in that state must still open; it worked before the index
-// existed. What was logged and left out is what CheckSchema reports, so
-// `blunderdb verify` shows it where a log line would go unread.
+// Tables are created strictly. Columns and indexes are best-effort and
+// logged (a non-constant default, a UNIQUE index over violating rows): such a
+// database must still open, and CheckSchema reports what was left out.
 func EnsureSchema(ctx context.Context, db *sql.DB) error {
 	ref, err := referenceSchema(ctx)
 	if err != nil {

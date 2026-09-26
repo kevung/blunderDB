@@ -45,12 +45,9 @@ import { toggleCommandPalette } from './commandPalette.js';
 
 let lastCtrlXTime = 0;
 
-// Ctrl-combos the WebView implements on an editable field: clipboard, select
-// all, undo/redo, and word-wise navigation or deletion. blunderDB binds some of
-// the same combos to board actions (Ctrl-C copies the position, Ctrl-Delete
-// would delete it), so while a field has focus these have to go to the field.
-// Letters are matched by the character produced, like every other letter
-// shortcut here, so the rule holds on AZERTY and QWERTZ too.
+// Ctrl-combos the WebView implements in an editable field (clipboard, select
+// all, undo/redo, word navigation). Some are also board actions (Ctrl-C copies
+// the position), so a focused field must win. Letters by event.key (AZERTY).
 const TEXT_EDITING_LETTERS = new Set(['a', 'c', 'v', 'x', 'y', 'z']);
 const TEXT_EDITING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Backspace', 'Delete', 'Insert']);
 
@@ -66,10 +63,8 @@ const EDITABLE_FIELD_SELECTOR = 'input, textarea, [contenteditable]';
 // for their own list navigation (see the allowNavKeys option below).
 const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown']);
 
-// The keys that browse positions on the board: bare h/j/k/l (Shift-J/K switch
-// views instead — see the dispatch below), arrows and PageUp/PageDown. Docked
-// panels that hold a selection keep these for their own list.
-/** @param {KeyboardEvent} event */
+// Position-browsing keys: bare h/j/k/l (Shift-J/K switch views), arrows,
+// PageUp/PageDown. Panels holding a selection keep them for their own list.
 function isBoardNavigationKey(event) {
     return (
         isBareLetter(event, 'j') ||
@@ -84,16 +79,9 @@ function isBoardNavigationKey(event) {
 }
 
 /**
- * Docked panels (MatchPanel, TournamentPanel, CollectionPanel, …) install
- * their own document-level keydown handler for list navigation (j/k, Esc by
- * levels, Delete…) and must stop that handler from swallowing a fixed set of
- * keys the rest of the app always needs, no matter which panel has focus:
- * Ctrl/Meta combos, Space (opens the command line), '?' (opens help), and
- * any keystroke while the user is typing in an editable field.
- *
- * This centralizes that "always let it through" test — it used to be
- * reimplemented ad hoc per panel and had drifted (see fiche-09): some panels
- * forgot the editable-field check, others forgot Space/'?'.
+ * Called first by a docked panel's own keydown handler: whether it must let
+ * the event through untouched — isAlwaysGlobal() keys, or any key typed in an
+ * editable field.
  *
  * @param {KeyboardEvent} event
  * @param {{allowNavKeys?: boolean}} [options] - also let position-browsing
@@ -109,20 +97,9 @@ export function panelKeyGuard(event, { allowNavKeys = false } = {}) {
 }
 
 /**
- * The keys no panel may ever swallow, stated once.
- *
- * There are two layers of filtering between a keystroke and its action, and
- * they used to disagree. A docked panel's own document-level listener asks
- * panelKeyGuard() what to let through; the global dispatcher then asks *again*,
- * per focused panel, in a handful of hand-written branches (.comment-panel,
- * .analysis-panel, .match-panel, …). Each branch had its own copy of "Ctrl
- * combos, Space, '?' " — so a shortcut added to one list stayed dead behind the
- * others. SHIFT-J/SHIFT-K were exactly that: added to panelKeyGuard, still
- * dropped by the dispatcher's branches, hence "they work or not depending on
- * which panel is open".
- *
- * One predicate, used by both layers. Adding a global shortcut means adding it
- * here, once.
+ * The keys no panel may ever swallow, stated once: both panelKeyGuard() and the
+ * dispatcher's per-panel branches read it, so a global shortcut added here
+ * works whichever panel is open.
  *
  * @param {KeyboardEvent} event
  * @returns {boolean}
@@ -141,10 +118,9 @@ export function isAlwaysGlobal(event) {
 }
 
 /**
- * ALT-1 … ALT-9 run the pinned filters of the library (filterLibraryService.js).
- * Positional, like every digit shortcut (event.code): on AZERTY the unshifted
- * top row produces "&é\"'(", not digits. The numeric keypad is left out —
- * Alt+keypad types a character by its code on Windows.
+ * ALT-1 … ALT-9 run the library's pinned filters. Positional (event.code): on
+ * AZERTY the top row produces "&é\"'(". Keypad excluded: Alt+keypad types a
+ * character code on Windows.
  *
  * @param {KeyboardEvent} event
  * @returns {number} the pin's rank, 1 to 9, or 0.
@@ -155,17 +131,9 @@ export function pinnedFilterDigit(event) {
     return m ? Number(m[1]) : 0;
 }
 
-// Bare Tab only opens the search panel (#204) while focus sits on the board:
-// nothing inside `.scrollable-content` (App.svelte) is itself a focus target
-// (Board.svelte sets no tabindex), so this is effectively "focus is on
-// <body>, or on the board's container" — the default browsing state right
-// after startup, or after a click on the board/background. Before this
-// guard, plain Tab was hijacked everywhere, unconditionally: standard
-// keyboard focus navigation (buttons, links, form fields outside the one
-// SearchPanel field a document-level stopPropagation happened to protect —
-// see its handleKeyDown) did not exist anywhere in the app. Once focus has
-// genuinely moved to a real element, Tab must behave like it does in any
-// other application.
+// Bare Tab opens the search panel only while focus is on the board (<body> or
+// the board's container — Board.svelte sets no tabindex). Once focus is on a
+// real element, Tab must do standard focus navigation.
 function isFocusOnBoard() {
     const active = document.activeElement;
     if (!active || active === document.body) return true;
@@ -190,64 +158,45 @@ export function toggleHelpModal() {
     }
 }
 
-// A toggle, not a plain "show" (#202, raccourcis.rst's Ctrl-F "Afficher/
-// cacher"): pressing it again while the search tab is already active
-// switches back to whatever was showing before, via toggleSearchPanel /
-// TAB_TOGGLES.search in positionService.js.
+// A toggle (raccourcis.rst: Ctrl-F "Afficher/cacher"): pressed again on the
+// search tab, it returns to what was showing before.
 export const focusSearchTab = toggleSearchPanel;
 
 /**
- * The global dispatcher, listening on window in the bubble phase (App.svelte).
+ * The global dispatcher, on window in the bubble phase (App.svelte).
  *
- * ## Escape: one order of priority (#414)
+ * Escape goes to the first of these with something to close, and no further:
+ *   1. an open modal (Modal.svelte stops it; this dispatcher returns);
+ *   2. the last opened overlay registered with escapeService.closeOnEscape()
+ *      (window CAPTURE listener, so before everything below);
+ *   3. a panel's own tiers — it claims the press with preventDefault() or stops
+ *      it before window;
+ *   4. here: leave the focused text field, else leave `ss` results.
+ * A new overlay registers itself (step 2), never via `<svelte:window
+ * onkeydown>`, which runs after this dispatcher.
  *
- * An Escape press goes, in this order, to the first of these that has something to close,
- * and to nothing after it:
- *
- *   1. an open modal — Modal.svelte stops it on its overlay, and this dispatcher returns
- *      while one is open;
- *   2. the last opened overlay: context menu, result card, the Direction's correction —
- *      registered with escapeService.closeOnEscape(), closed from a window CAPTURE listener,
- *      so before any panel, any delegated handler and this dispatcher;
- *   3. a panel's own tiers (deselect, cancel an edit, close) — the panel claims the press
- *      with preventDefault(), or stops it before window;
- *   4. here: leave the focused text field; otherwise leave the results of an `ss` run from
- *      a collection or a match (#410).
- *
- * A new overlay registers itself (step 2); it must not listen to Escape through
- * `<svelte:window onkeydown>`, which runs after this dispatcher when mounted after App.
- *
- * ## No stopPropagation here
- *
- * This dispatcher used to open with event.stopPropagation(). On window, in the bubble phase,
- * that stops no native listener — but Svelte 5 wraps every declarative handler and skips it
- * when event.cancelBubble is set, even on the same target. Every `<svelte:window onkeydown>`
- * mounted after App (a context menu, the Direction page) was silenced for every key; the
- * ones mounted before (ViewTabs) worked by mount order alone.
+ * Never call event.stopPropagation() here: Svelte 5 skips every declarative
+ * handler once cancelBubble is set, silencing each `<svelte:window onkeydown>`
+ * mounted after App.
  *
  * @param {KeyboardEvent} event
  */
 export function handleKeyDown(event) {
-    // Match a letter shortcut by the character produced (event.key), not the
-    // physical key position (event.code). This keeps letter shortcuts on the
-    // labeled key across keyboard layouts (AZERTY, QWERTZ, Dvorak, …) instead of
-    // mapping to the US-QWERTY physical position. Non-letter keys (Space, Tab,
-    // Delete, arrows, digits) stay positional below. `letter` is the shared
-    // helper from utils/keys.js, bound to this event for the Ctrl-combos.
+    // Letters by event.key, so shortcuts follow the key label on any layout;
+    // non-letter keys stay positional (event.code).
     /** @param {string} ch */
     const letter = (ch) => isLetter(event, ch);
 
     if (get(isAnyModalOpen)) return;
 
-    // Under the Direction page, bare J / K / ↓ / ↑ / Enter belong to the proposal queue (#415,
-    // services/directionKeys.js). The queue has claimed them already, or something open above it
+    // Under the Direction page, bare J / K / ↓ / ↑ / Enter belong to the proposal queue
+    // (services/directionKeys.js). The queue has claimed them already, or something open above it
     // keeps them — either way they browse nothing on the board the page hides.
     if (directionOwnsKey(event)) return;
 
-    // A training question whose surface is the board holds it (#323): browsing the list under
-    // an open question — or a revealed one whose truth the panel still shows — would put another
-    // position under the answer, and for a Decision under the move armed on the board. Focus
-    // plays no part: the button just clicked has left the DOM, so focus sits on <body>.
+    // A board-surface training question holds the board, revealed or not:
+    // browsing would put another position under the answer. Focus is
+    // irrelevant (the clicked button has left the DOM).
     if (isBoardNavigationKey(event) && get(trainingHoldsBoardStore)) return;
 
     // During Anki review on the Anki tab, route review keys
@@ -268,12 +217,9 @@ export function handleKeyDown(event) {
             event.preventDefault();
             ankiReviewActionStore.set(4);
         } else if (event.code === 'Space') {
-            // Show the answer (ADR-0025 rule 3). Space is free in this branch —
-            // it opens the command line everywhere else, and this guard returns
-            // before that. It deliberately gets no second meaning once the
-            // answer is shown, unlike real Anki where Space then grades "Good":
-            // a double tap would enter a grade the user never meant, and a
-            // false grade durably pollutes the schedule.
+            // Show the answer (ADR-0025 rule 3). Unlike Anki, Space gets no
+            // second meaning once shown: a double tap would record an
+            // unintended grade and pollute the schedule.
             event.preventDefault();
             showAnkiAnswer();
         } else if (event.code === 'Escape') {
@@ -287,12 +233,8 @@ export function handleKeyDown(event) {
 
     const inTextField = document.activeElement.matches('input, textarea, [contenteditable]');
 
-    // Text editing wins over the board shortcuts. While focus sits in an
-    // editable field, the clipboard/selection/undo combos belong to the field:
-    // Ctrl-C there copies the selected text, not the position on the board.
-    // Returning without preventDefault() is the point — the WebView performs its
-    // own copy/cut/paste/select-all/undo, which the panel guard further down
-    // used to suppress for every Ctrl combo it saw.
+    // In an editable field the clipboard/selection/undo combos belong to the
+    // field: return without preventDefault() so the WebView performs them.
     if (inTextField && event.ctrlKey && !event.altKey && isTextEditingCombo(event)) {
         return;
     }
@@ -302,17 +244,14 @@ export function handleKeyDown(event) {
         return;
     }
 
-    // Comment panel: while focus is anywhere inside the panel, suppress single-key
-    // shortcuts (navigation h/j/k/l, p, space, …) so they never conflict with
-    // typing or editing comments. Ctrl-combos, Escape (blur) and Tab still pass.
+    // Comment panel: suppress single-key shortcuts while focused inside it;
+    // Ctrl-combos, Escape (blur) and Tab still pass.
     if (document.activeElement.closest('.comment-panel') && !isAlwaysGlobal(event) && event.key !== 'Escape' && event.key !== 'Tab') {
         return;
     }
 
-    // Analysis panel focus handling. The panel focuses itself when it opens, so
-    // this branch is what the user hits first: it must let through the same
-    // app-wide escape hatches every other panel guarantees via panelKeyGuard()
-    // — Ctrl/Meta combos, Space (opens the command line) and '?' (opens help).
+    // The analysis panel focuses itself on open, so this branch must pass the
+    // same isAlwaysGlobal() keys as panelKeyGuard().
     if (document.activeElement.closest('.analysis-panel')) {
         if (isAlwaysGlobal(event) || event.key === 'Escape' || event.key === 'Tab') {
             // Let shortcut through
@@ -325,9 +264,8 @@ export function handleKeyDown(event) {
         }
     }
 
-    // Panel focus handling. There is no PANEL entry for the comment tab (see
-    // uiStore.js's PANEL comment) — the active tab is the only live signal that
-    // CommentPanel is the one TabbedPanel currently has mounted.
+    // The comment tab has no PANEL entry: the active tab is the only signal
+    // that CommentPanel is mounted.
     const showComment = get(activeTabStore) === 'comments';
     if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
@@ -347,18 +285,15 @@ export function handleKeyDown(event) {
 
     // Key dispatch
     if (event.key === 'Escape') {
-        // Steps 3 and 4 of the order above. An open overlay never gets here (step 2). Read
-        // before this branch claims the event itself: a panel that had something of its own
-        // to close — a selected move, a draft — has already claimed it (preventDefault) or
-        // stopped it before it reached window.
+        // Steps 3 and 4 above. Read before claiming the event: a panel with
+        // something to close has already called preventDefault().
         const claimedByPanel = event.defaultPrevented;
         event.preventDefault();
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
         } else if (!claimedByPanel) {
-            // Nothing claimed the Escape — the board has the focus, or a panel with
-            // nothing of its own to close: leave the results of an `ss` run from a
-            // collection or a match, back to that list, in one press (#410).
+            // Nothing claimed the Escape: leave `ss` results for their
+            // collection or match.
             leaveSubSearchResults();
         }
     } else if (pinnedFilterDigit(event)) {
@@ -432,11 +367,8 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('r')) {
         reloadAllPositions();
     } else if (event.ctrlKey && event.code === 'Tab') {
-        // Ctrl-Tab is not a focus-navigation combo (unlike bare Tab below) and
-        // is documented as "Afficher/cacher" like the other seven Ctrl+letter
-        // panel toggles (raccourcis.rst) — toggleMatchPanel() is the same
-        // toggle-back-if-already-showing behaviour #202 gave the other seven;
-        // this one used to still call the pre-#202 plain `.set()`.
+        // Ctrl-Tab is a panel toggle like the other Ctrl+letter ones
+        // (raccourcis.rst), unlike bare Tab below.
         event.preventDefault();
         toggleMatchPanel();
     } else if (!event.ctrlKey && event.code === 'Tab' && isFocusOnBoard()) {
@@ -456,11 +388,8 @@ export function handleKeyDown(event) {
         if (showComment) toggleCommentPanel();
         toggleAnalysisPanel();
     } else if (event.ctrlKey && event.shiftKey && letter('p')) {
-        // Ctrl+Maj+P : la palette de commandes (#287). Testé AVANT Ctrl+P, qui
-        // n'exclut pas Maj — sans quoi elle ouvrirait les commentaires.
-        // Ctrl+K, la convention d'autres outils, est le panneau Anki ici ; la
-        // palette prend celle de VS Code et de Sublime Text, libre dans
-        // blunderDB comme dans WebKitGTK et WebView2.
+        // Ctrl+Maj+P : la palette (convention VS Code ; Ctrl+K est Anki ici).
+        // Testé avant Ctrl+P, qui n'exclut pas Maj.
         event.preventDefault();
         toggleCommandPalette();
     } else if (event.ctrlKey && letter('p')) {
@@ -478,26 +407,18 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('k')) {
         toggleAnkiPanel();
     } else if (event.ctrlKey && event.shiftKey && letter('z')) {
-        // BEFORE the Ctrl-Z branch, which does not exclude Shift — the same
-        // ordering Ctrl-Maj-I/Ctrl-I and Ctrl-Maj-S/Ctrl-S already follow.
+        // Before the Ctrl-Z branch, which does not exclude Shift.
         event.preventDefault();
         undoTranscription(true);
     } else if (event.ctrlKey && letter('z')) {
-        // Undo and redo of the open transcription draft (ux.md §3). They live
-        // here and not in TranscriptionPanel's own listener because a Ctrl combo
-        // is always global (isAlwaysGlobal above), and the panel is told through
-        // a store — the pattern the Anki review keys already follow. With no
-        // draft open they do nothing, silently.
-        //
-        // A text field never reaches this point: the isTextEditingCombo guard
-        // near the top of this function returns first, so Ctrl-Z in an input
-        // stays the WebView's own undo.
+        // Transcription undo/redo (ux.md §3): a Ctrl combo is always global, so
+        // it lives here and reaches the panel through a store. No-op without a
+        // draft; in a text field the isTextEditingCombo guard returned first.
         event.preventDefault();
         undoTranscription(false);
     } else if (event.ctrlKey && event.shiftKey && letter('t')) {
-        // BEFORE the Ctrl-T branch below, which does not exclude Shift: the
-        // same reason Ctrl-Maj-I sits before Ctrl-I and Ctrl-Maj-S before
-        // Ctrl-S. Reversed, every transcription would open a new view instead.
+        // Before the Ctrl-T branch, which does not exclude Shift (else a new
+        // view would open).
         event.preventDefault();
         toggleTranscriptionPanel();
     } else if (event.ctrlKey && letter('t')) {
@@ -510,7 +431,7 @@ export function handleKeyDown(event) {
         event.preventDefault();
         toggleTournamentPanel();
     } else if (event.ctrlKey && !event.shiftKey && letter('d')) {
-        // Sans MAJ : CTRL-MAJ-D, retiré avec #443, ne doit pas retomber sur Stats.
+        // Sans MAJ seulement : CTRL-MAJ-D ne doit pas retomber sur Stats.
         event.preventDefault();
         toggleStatsPanel();
     } else if (event.ctrlKey && letter('e')) {

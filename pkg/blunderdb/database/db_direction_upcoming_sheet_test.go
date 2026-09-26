@@ -21,9 +21,8 @@ func journalOf(t *testing.T, d *Database, tID int64) tournoi.Journal {
 	return dir.Journal()
 }
 
-// S4, the Friday before the third Monday (#451, D7.2;
-// tasks/nicomaque/simulation-2026-09/rapport/S4.md O6): two rounds played, the third proposed
-// and not launched. Its sheet prints, dated by the director, and NOTHING is written to the log:
+// S4, the Friday before the third Monday: two rounds played, the third proposed and not
+// launched. Its sheet prints, dated by the director, and NOTHING is written to the log:
 // launching the round to print it would have stamped it Friday.
 func s4Friday(t *testing.T) (*Database, int64) {
 	t.Helper()

@@ -1,18 +1,12 @@
 // filterLibraryService — the saved-filter library outside the search panel:
-// loading it, pinning a filter, and running a saved filter from anywhere.
+// loading, pinning, running a saved filter from anywhere.
 //
-// A pinned filter is a favourite kept within one gesture: a chip at the top of
-// the search panel, and Alt+1…9 from anywhere else (keyboardService.js). The
-// pin is stored with the library, per database (Database.SetFilterPinned);
-// the pinned filters are taken in library order, so Alt+1 is the oldest one.
+// Pinned filters: chips in the search panel and Alt+1…9 elsewhere, stored per
+// database (Database.SetFilterPinned), in library order (Alt+1 = oldest).
 //
-// Running a saved filter here asks exactly the question the panel's
-// double-click asks: the same replay arguments (searchFilterService's
-// replaySearchArgs), the same stored board, the same "Sauf" structure. What
-// the panel gets for free — being in EDIT mode, where the board on screen is
-// the structure — is passed explicitly instead (loadPositionsByFilters'
-// queryBoard), so a filter run while browsing does not silently drop the
-// structure it was saved with.
+// A run asks exactly what the panel's double-click asks (replaySearchArgs,
+// stored board, "Sauf" structure). The structure the panel gets from EDIT mode
+// is passed explicitly (queryBoard), so a run while browsing keeps it.
 
 import { get } from 'svelte/store';
 import { LoadFilters, SetFilterPinned, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
@@ -84,7 +78,7 @@ export async function runSavedFilter(filter) {
     const excludePosition = await LoadExcludePosition(filter.name);
     const board = editPosition ? JSON.parse(editPosition) : null;
 
-    // A bare `like` ranks against the board it was saved with (#404); a filter
+    // A bare `like` ranks against the board it was saved with; a filter
     // that did not keep one has no target left.
     if (replay.f.likeFilter && !replay.f.likeTargetId && !board) {
         statusBarTextStore.set(tMsg('similar.noPosition'));
@@ -115,9 +109,8 @@ export async function runSavedFilter(filter) {
 }
 
 /**
- * Alt+n: run the n-th pinned filter (1-based) of the open database. The
- * library is read fresh, so a pin made in another view — or before the
- * database was reopened — is the one that runs.
+ * Alt+n: run the n-th pinned filter (1-based). The library is read fresh, so
+ * the latest pin wins.
  * @param {number} n
  */
 export async function runPinnedFilter(n) {

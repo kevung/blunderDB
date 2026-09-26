@@ -12,12 +12,9 @@ import (
 // user database opened headless (serve / migrate / call) without importing
 // database (which would be an import cycle).
 //
-// progress, when non-nil (Options.MigrationProgress was set at Open), is
-// invoked as the chain runs — see database.Database.SetMigrationProgress,
-// which the registered migrator forwards it to. It reports on the same v2.0.0
-// backfill phases ("position", "analysis", …) the GUI's progress bar already
-// uses; a headless caller with a large pre-2.0.0 database gets the same
-// visibility instead of an opaque hang.
+// progress, when non-nil (Options.MigrationProgress), is invoked as the chain
+// runs (see database.Database.SetMigrationProgress) with the same backfill
+// phases ("position", "analysis", …) the GUI's progress bar shows.
 type Migrator func(ctx context.Context, db *sql.DB, progress func(phase string, done, total int)) error
 
 // registeredMigrator is set by package database's init via RegisterMigrator. It

@@ -353,17 +353,9 @@ func testRepairDenormalisedColumns(t *testing.T, s storage.Storage) {
 	// justement ce qui rend le compteur lisible.
 }
 
-// testAnalysisSaveIsAnUpsert pins the fix for issue #173: a position has ONE
-// analysis, and saving twice replaces it rather than adding a second row.
-//
-// Save used to SELECT an existing row and then INSERT or UPDATE. Two saves
-// racing on the same position both read "no row" and both inserted, and Load —
-// a plain `WHERE position_id = ?` — then returned whichever the planner reached
-// first, so a position could keep showing an analysis that had been superseded.
-// Save is a single upsert now, over a UNIQUE index on analysis(position_id).
-//
-// The check that matters is the SECOND save: what Load returns afterwards must
-// be the second analysis, every time, on any backend.
+// testAnalysisSaveIsAnUpsert: a position has ONE analysis, and saving twice
+// replaces it (a single upsert over UNIQUE analysis(position_id)). What Load
+// returns after the SECOND save must be the second analysis, on any backend.
 func testAnalysisSaveIsAnUpsert(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p := checkerPos()
@@ -407,17 +399,10 @@ func testAnalysisSaveIsAnUpsert(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testRepairCrawfordSentinel pins the repair of issue #338 on both backends.
-//
-// The importers wrote away `1` on every 1-away position, Crawford game or not,
-// so a post-Crawford position already stored reads as cube-dead (CONTEXT.md,
-// « Away score »). Correcting it changes the Zobrist hash — the away score is
-// part of the identity — so the row is rehashed, which is why this cannot be
-// an UPDATE and be done with it: when the corrected position is ALREADY
-// stored, the two must become one row rather than collide.
-//
-// Both halves are checked, plus what must not move: the Crawford game's own
-// position, and a position no game points at.
+// testRepairCrawfordSentinel pins the Crawford sentinel repair on both
+// backends: the rehash in place, the merge into an already-stored corrected
+// twin, and what must not move (the Crawford game's own position, and a
+// position no game points at).
 func testRepairCrawfordSentinel(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps, ms := s.Positions(), s.Matches()
@@ -534,7 +519,7 @@ func testRepairCrawfordSentinel(t *testing.T, s storage.Storage) {
 // merge carries when a stale row folds into its correct twin: everything that
 // hangs off a position today, on both backends.
 //
-// The list is the schema's, not the September one: moves and comments,
+// Moves and comments,
 // collection memberships (one kept where both rows were members), Anki cards
 // with the KEY that names the position inside its deck (ADR-0042), the review
 // journal — including the reviews of a card dropped because the deck already

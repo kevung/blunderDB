@@ -15,11 +15,9 @@
 //
 // Nothing here tracks a recipient, a machine, or a share. **The recipient's side writes
 // nothing**: opening a watermarked database is exactly like opening any other, and no
-// register, log or counter grows anywhere. Earlier iterations of this package carried a
-// per-recipient watermark, a holder registry and an import lineage; they were removed
-// deliberately. In practice an author does not litigate over a position database, and a
-// mechanism that quietly records who opened what costs far more — in trust, in privacy
-// obligations, in code — than the disputes it would settle.
+// register, log or counter grows anywhere. Per-recipient watermarks, a holder registry and an
+// import lineage were deliberately removed: recording who opened what costs more in trust and
+// privacy than the disputes it would settle.
 //
 // A Watermark therefore says *where this came from*, not *who leaked it*. It is
 // tamper-evident and unforgeable; it is not unremovable, and it prevents nothing. See
@@ -29,11 +27,9 @@
 //
 // The Watermark is stored as canonical JSON in a `metadata` key/value row, never in a table
 // of its own. That keeps a file-level concern out of the schema (no DatabaseVersion bump, no
-// PostgreSQL migration, nothing for the serve daemon), and — the decisive reason — it means
-// the signature is always checked against the exact bytes that were signed. Rebuilding a
-// byte-identical document from normalised columns is the classic source of signature bugs
-// that surfaces months later on an accent or an empty field; storing the signed bytes
-// verbatim removes the class entirely.
+// PostgreSQL migration), and — decisively — the signature is always checked against the
+// exact bytes that were signed. Rebuilding them from normalised columns is a classic source of
+// signature bugs (an accent, an empty field); storing them verbatim removes the class.
 //
 // # The container, and what its cleartext header is worth
 //
@@ -46,20 +42,16 @@
 // Clear is not the same as unprotected. Container version 2 passes the whole prefix, byte for
 // byte, as the AEAD's additional data, so relabelling a file — swapping its Watermark for
 // someone else's — fails to open exactly as a wrong passphrase does. Version 1 did not bind
-// the header; files of that version are still read, with a logged warning, because copies
-// already handed out cannot be recalled, and nothing writes version 1 any more.
+// the header; it is still read, with a logged warning, and never written.
 //
 // Every read is bounded before it allocates: the header by maxContainerHeader, the payload by
 // maxContainerPayload (2 GiB) checked against the file's size. AES-GCM authenticates a whole
-// message before releasing a byte of plaintext, so a container is necessarily opened in one
-// piece; it is decrypted in place so the peak is one copy of the file, not two. Streaming
-// past that would mean a chunked AEAD, a third format version, and is not worth it under the
-// cap.
+// message before releasing plaintext, so a container is opened in one piece, decrypted in
+// place (peak: one copy of the file). Streaming would need a chunked AEAD and a format v3.
 //
 // Argon2id's cost parameters are written into every protected file and identity export. A
-// file recording parameters this build never used is refused by name rather than tried:
-// a derivation that "succeeds" with the wrong cost only reports a wrong passphrase, and the
-// user would blame their memory.
+// file recording parameters this build never used is refused by name rather than tried: a
+// wrong cost would only report a wrong passphrase.
 //
 // This package is pure: no SQL, and no filesystem beyond the identity file and the
 // container. The database glue lives in pkg/blunderdb/database/db_issuance.go.
@@ -82,9 +74,8 @@ const KeyWatermark = "watermark"
 // CarriedMetadataKeys is the allow-list of ordinary metadata copied into an exported file.
 // The export path copies these and nothing else, then writes the Watermark itself.
 //
-// An allow-list rather than a deny-list is deliberate: an exported file is handed to someone
-// else, and a document added to `metadata` in six months must not travel by default just
-// because nobody remembered to exclude it.
+// An allow-list, not a deny-list: a document added to `metadata` later must not travel by
+// default because nobody remembered to exclude it.
 var CarriedMetadataKeys = []string{"user", "description", "dateOfCreation"}
 
 // Carried returns the subset of md that may travel inside an exported file.

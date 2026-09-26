@@ -6,8 +6,7 @@ import "testing"
 // "Equity Error:" line of the best move: its EquityError is nil by design (the
 // best move has no error — see ingest.sortCheckerMovesByEquity) and the field is
 // `omitempty`. Pasting such a block into another blunderDB must still yield the
-// best move; the round-trip used to drop it, so the analysis panel of the pasted
-// position started at the second move.
+// best move.
 func TestParseInternalCheckerKeepsBestMoveWithoutEquityError(t *testing.T) {
 	input := `XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10
 

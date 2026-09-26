@@ -1,10 +1,7 @@
 package sqlite
 
-// Unit coverage for the SQLITE_BUSY retry path used by positionStore.Save
-// (P5, Windows retest): busy_timeout alone is not always enough under a
-// heavy burst of concurrent writers, so Save also retries a bounded number
-// of times with a short backoff. This file is `package sqlite` (not
-// `_test`) because retryOnBusy and isBusyErr are unexported.
+// Unit coverage for the SQLITE_BUSY retry path used by positionStore.Save.
+// `package sqlite` because retryOnBusy and isBusyErr are unexported.
 
 import (
 	"context"
@@ -90,16 +87,8 @@ func TestRetryOnBusy_RecoversOnceTheLockClears(t *testing.T) {
 	}
 
 	// The lock is released BETWEEN two attempts, and the attempt count is what
-	// says when — not a clock.
-	//
-	// This used to hold the lock in a goroutine for 60 ms while retryOnBusy
-	// spent a 310 ms budget of backoff around it, and read as "the release
-	// wins the race". It is a race all the same, and the hostile image lost it
-	// on 2026-09-07: the failure took 0.50 s, the budget exhausted to its last
-	// attempt, because `tx.Commit()` fsyncs and an overlay filesystem can take
-	// longer over that than every backoff put together. Nothing about the
-	// behaviour under test needs a clock: what it must prove is that a busy
-	// error stops being retried the moment the write succeeds.
+	// says when — not a clock: a timed release races the backoff budget
+	// (Commit's fsync can outlast it on an overlay filesystem).
 	contender := openBusyDB(t, path)
 	attempts := 0
 	err = retryOnBusy(func() error {

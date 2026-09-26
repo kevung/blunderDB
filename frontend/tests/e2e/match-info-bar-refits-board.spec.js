@@ -1,11 +1,8 @@
 /**
- * match-info-bar-refits-board.spec.js — #201 (D.1)
- *
- * La barre d'information du match s'insère au-dessus du plateau à l'entrée
- * en revue et disparaît à la sortie. Le plateau (two.js) ne se mesure que sur
- * un événement 'resize' : sans lui, il restait 22 px trop grand pendant toute
- * la revue, puis trop petit après. La spec mesure le SVG contre son conteneur
- * dans les deux sens.
+ * La barre d'information du match s'insère au-dessus du plateau à l'entrée en revue et
+ * disparaît à la sortie. Le plateau (two.js) ne se mesure que sur un événement 'resize' : sans
+ * lui, sa taille reste fausse après l'un ou l'autre changement. La spec mesure le SVG contre
+ * son conteneur dans les deux sens.
  */
 
 import { test, expect } from '@playwright/test';

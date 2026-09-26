@@ -1,17 +1,6 @@
 <script>
-    // La comparaison inter-moteurs (#269, fiche I.13).
-    //
-    // Plusieurs moteurs coexistent depuis longtemps dans une même Analyse —
-    // chaque coup candidat porte le sien, et les analyses de videau sont
-    // gardées une par moteur. Rien ne les montrait CÔTE À CÔTE : les blocs de
-    // videau s'empilent, et la liste des coups mélange les rangs de deux
-    // moteurs dans un seul classement trié par équité. Il fallait lire deux
-    // tableaux en diagonale pour répondre à « sont-ils d'accord ? ».
-    //
-    // Cette bande y répond en une ligne par moteur, et dit surtout quand ils
-    // ne le sont pas. Elle vit dans le panneau Analyse et nulle part ailleurs :
-    // l'ADR-0017 réserve au panneau Eval UNE décision, celle du moteur
-    // embarqué, et une comparaison n'y a pas sa place.
+    // La comparaison inter-moteurs d'une Analyse : une ligne par moteur, qui dit
+    // surtout leurs désaccords. Dans le panneau Analyse seulement (ADR-0017).
     import { t } from '../i18n';
 
     let { analysis = null, kind = 'checker' } = $props();
@@ -30,9 +19,7 @@
     });
 
     /**
-     * Une ligne par moteur ayant classé les coups, avec SON meilleur coup —
-     * celui d'équité maximale parmi ceux qu'il a produits, et non le premier de
-     * la liste commune, qui est triée tous moteurs confondus.
+     * Une ligne par moteur, avec son meilleur coup (la liste commune mêle les moteurs).
      */
     let checkerRows = $derived.by(() => {
         const moves = analysis?.checkerAnalysis?.moves ?? [];

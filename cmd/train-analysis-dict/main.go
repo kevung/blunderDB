@@ -1,33 +1,17 @@
-// train-analysis-dict (re)generates the shared zstd dictionary embedded at
-// pkg/blunderdb/engine/analysis_dict.bin, used to compress the analysis JSON
-// blob (see pkg/blunderdb/engine/analysiscodec.go and ADR-0030 / #180). It is
-// a dev-time asset generator, the same role scripts/build-demo-db.sh plays
-// for the demo database — not part of the shipped binary, not a CLI
-// subcommand.
+// train-analysis-dict regenerates the zstd dictionary embedded at
+// pkg/blunderdb/engine/analysis_dict.bin (ADR-0030); a dev-time tool.
 //
-// The corpus is real analysis data already in this repository: every match
-// fixture under testdata/ (re-imported into a scratch database so their
-// analyses get encoded exactly like production data) plus the positions in
-// the embedded demo database (internal/gui/demo.db.gz). No user data ever
-// leaves the machine; nothing here talks to the network.
-//
-// Method (see docs/recherche/P11-compression-blobs.md, "Protocole de mesure
-// reproductible"): the corpus is split 80/train 20/test by a deterministic
-// hash of a synthetic per-blob id, the dictionary is trained on the train
-// split only with the reference `zstd --train` CLI (offline; nothing at
-// runtime depends on the presence of a zstd binary — the shipped codec reads
-// the trained bytes with the pure-Go github.com/klauspost/compress/zstd),
-// and the reported compression ratio is measured on the held-out test split
-// only, so the number printed is not inflated by measuring a dictionary on
-// the very data it memorised.
+// The corpus is the repository's own fixtures under testdata/ plus the demo
+// database. It is split 80/20 deterministically; the dictionary is trained on
+// the train split with `zstd --train`, and the ratio reported is measured on
+// the held-out split only (docs/recherche/P11-compression-blobs.md).
 //
 // Usage:
 //
 //	go run ./cmd/train-analysis-dict [--dict-size 32768] [--out pkg/blunderdb/engine/analysis_dict.bin]
 //
-// Requires the `zstd` CLI (Debian/Ubuntu/Arch package `zstd`) on PATH.
-// Regenerate only when the corpus changes meaningfully (new large fixtures,
-// a PositionAnalysis field change) — not on every commit.
+// Requires the `zstd` CLI on PATH. Regenerate only when the corpus changes
+// meaningfully (new large fixtures, a PositionAnalysis field change).
 package main
 
 import (
@@ -158,11 +142,8 @@ func collectCorpus(testdataDir, demoGz string) ([][]byte, error) {
 	return blobs, nil
 }
 
-// importMatchFixtures walks dir and imports every recognised match file
-// (mirrors internal/cli's importMatch file-type dispatch) into d. A file that
-// fails to import (e.g. testdata/bgf_positions/*.txt, which are excerpt
-// snippets rather than full match files) is skipped: this tool wants volume
-// of real analysis data, not a strict import audit.
+// importMatchFixtures imports every recognised match file under dir into d,
+// skipping those that fail: the tool wants volume, not an import audit.
 func importMatchFixtures(d *database.Database, dir string) error {
 	return filepath.WalkDir(dir, func(path string, entry os.DirEntry, err error) error {
 		if err != nil || entry.IsDir() {
@@ -206,10 +187,8 @@ func decompressDemoDB(gzPath, dir string) (path string, cleanup func(), err erro
 	return out, func() {}, nil
 }
 
-// extractAnalysisBlobs reads every analysis.data row from the sqlite file at
-// path and decompresses it (auto-detecting whichever codec produced it —
-// raw JSON or zlib, at the time this tool runs there is no pre-existing
-// zstd data) to recover the original PositionAnalysis JSON.
+// extractAnalysisBlobs reads and decompresses every analysis.data row of the
+// sqlite file at path back to PositionAnalysis JSON.
 func extractAnalysisBlobs(path string) ([][]byte, error) {
 	db, err := sql.Open("sqlite", path)
 	if err != nil {
@@ -241,10 +220,8 @@ func extractAnalysisBlobs(path string) ([][]byte, error) {
 	return out, rows.Err()
 }
 
-// splitCorpus splits blobs 80/20 by a deterministic hash of each blob's own
-// content (stable across runs and independent of slice order — no seeded
-// PRNG, no reliance on map/slice iteration order), so a rerun of this tool
-// with an unchanged corpus reproduces the exact same split every time.
+// splitCorpus splits blobs 80/20 by a hash of their content, so an unchanged
+// corpus always yields the same split.
 func splitCorpus(blobs [][]byte) (train, test [][]byte) {
 	for _, b := range blobs {
 		sum := sha256.Sum256(b)
@@ -276,12 +253,8 @@ func writeCorpusFiles(dir string, blobs [][]byte) error {
 	return nil
 }
 
-// trainDictionary shells out to the reference `zstd --train` (fastCover,
-// the default — see P11 §"Coût CPU de la formation" for the fastCover vs
-// trainFromBuffer trade-off). This is the one place in the whole feature
-// that is not pure Go, and it only ever runs on a developer's machine at
-// dictionary-generation time; the shipped codec loads the resulting bytes
-// with klauspost/compress/zstd, no cgo, no external process.
+// trainDictionary shells out to `zstd --train` (fastCover). Only this dev
+// tool needs the binary; the shipped codec is pure Go.
 func trainDictionary(trainDir, dictPath string, dictSize int) error {
 	entries, err := os.ReadDir(trainDir)
 	if err != nil {
@@ -302,10 +275,8 @@ func trainDictionary(trainDir, dictPath string, dictSize int) error {
 	return nil
 }
 
-// measure reports, on the held-out test split only, the compression ratio
-// and per-blob latency the shipped codec (klauspost/compress/zstd, the given
-// level, this dictionary) would actually achieve — the number that matters,
-// not the ratio zstd --train prints for its own diagnostics.
+// measure reports the shipped codec's ratio and per-blob latency on the
+// held-out split.
 func measure(dict []byte, test [][]byte, level int) error {
 	enc, err := zstd.NewWriter(nil,
 		zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(level)),

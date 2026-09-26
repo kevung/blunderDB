@@ -306,7 +306,7 @@ func (cli *CLI) runCollectionCreate(args []string) error {
 }
 
 // runCollectionFilter makes a collection LIVING, or turns it back into a
-// hand-made list (#282).
+// hand-made list.
 func (cli *CLI) runCollectionFilter(args []string) error {
 	fs, dbPath := collectionFlagSet("filter", "Make a collection living: its content becomes the result of a search query, re-evaluated every time it is opened. An empty query turns it back into a hand-made list, keeping the positions it already held.",
 		"blunderdb collection filter --db database.db --id 3 --query \"E>80 gt:holding\"")
@@ -480,7 +480,7 @@ func (cli *CLI) runCollectionExport(args []string) error {
 // xgidOf renders a Position as an XGID when no imported analysis carries one:
 // domain.EncodeXGID, the Go twin of the GUI clipboard's generateXGID, which
 // the XGID corpus holds to the same string — the post-Crawford sentinel read
-// as one point away, not as a match already won (#360).
+// as one point away, not as a match already won.
 func xgidOf(pos *Position) string {
 	return domain.EncodeXGID(pos)
 }

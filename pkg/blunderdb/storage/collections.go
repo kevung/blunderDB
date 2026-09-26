@@ -16,7 +16,7 @@ type Collection struct {
 	CreatedAt     string `json:"createdAt"`
 	UpdatedAt     string `json:"updatedAt"`
 	PositionCount int    `json:"positionCount"`
-	// FilterQuery makes the collection LIVING (#282): its membership is the
+	// FilterQuery makes the collection LIVING: its membership is the
 	// result of this query, in the grammar the command bar speaks,
 	// re-evaluated every time it is opened. Empty is the ordinary case — a
 	// hand-made list whose membership is the stored rows.
@@ -45,9 +45,8 @@ type CollectionStore interface {
 	Update(ctx context.Context, scope string, id int64, name, description string) error
 
 	// SetFilterQuery makes a collection living, or (with an empty query) turns
-	// it back into a hand-made list. It is a method of its own rather than a
-	// parameter of Update because the two are different gestures: renaming a
-	// collection is not the same act as changing what it contains.
+	// it back into a hand-made list. Not a parameter of Update: renaming and
+	// changing what it contains are different gestures.
 	SetFilterQuery(ctx context.Context, scope string, id int64, query string) error
 	Delete(ctx context.Context, scope string, id int64) error
 	Reorder(ctx context.Context, scope string, collectionIDs []int64) error

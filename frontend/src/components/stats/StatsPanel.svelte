@@ -60,7 +60,7 @@
             <button class="metric-btn" class:active={$statsMetricStore === 'mwc'} onclick={() => statsMetricStore.set('mwc')} aria-pressed={$statsMetricStore === 'mwc'}>{$t('stats.metricMWC')}</button
             >
         </div>
-        <!-- Le rapport (#279) porte le filtre courant, donc il vit là où le
+        <!-- Le rapport porte le filtre courant, donc il vit là où le
              filtre se règle. -->
         <button class="report-btn" onclick={() => exportHTMLReport()}>{$t('report.action')}</button>
         <button class="close-btn" onclick={handleClose} aria-label={$t('stats.closePanel')}>✕</button>

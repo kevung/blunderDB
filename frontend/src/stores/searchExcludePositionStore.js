@@ -1,8 +1,7 @@
 import { writable, get } from 'svelte/store';
 
-// emptySearchBoardPosition returns a fresh, empty position usable as a checker
-// structure template (all points empty). Each call builds a new points array so
-// callers never share point references.
+// A fresh, empty position (all points empty) as a checker-structure template; new points array
+// on each call.
 export function emptySearchBoardPosition() {
     return {
         id: 0,
@@ -28,9 +27,8 @@ export const searchExcludePositionStore = writable(emptySearchBoardPosition());
 // Read by the board container to show a red cue while editing the exclude structure.
 export const searchStructureModeStore = writable('include');
 
-// True while the Search panel is building a take/pass (cube response) query: the
-// board then renders and edits the cube as a centered "offered" cube (owner -1)
-// instead of an owned one, matching how take/pass positions are stored.
+// True while the Search panel builds a take/pass query: the board edits the cube as a centred
+// "offered" cube (owner -1), as take/pass positions are stored.
 export const searchOfferedCubeStore = writable(false);
 
 // boardHasCheckers reports whether a position/board template has any checker set.
@@ -41,8 +39,7 @@ export function boardHasCheckers(position) {
     return points.some((p) => p != null && p.checkers > 0 && p.color >= 0);
 }
 
-// excludePositionHistoryJSON returns the current exclude board as JSON for storing
-// in search history, or '' when no exclusion structure is set.
+// The exclude board as JSON for search history, or '' without an exclusion structure.
 export function excludePositionHistoryJSON() {
     const p = get(searchExcludePositionStore);
     return boardHasCheckers(p) ? JSON.stringify(p) : '';

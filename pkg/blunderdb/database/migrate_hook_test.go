@@ -1,7 +1,6 @@
 package database
 
-// Verifies P2 PR6: a pre-existing (older-version) database opened through the
-// storage backend (sqlite.Open + Storage.Migrate) is upgraded to the current
+// An older database opened through the storage backend (sqlite.Open + Storage.Migrate) is upgraded to the current
 // schema by the migration chain registered via the storage hook — the same
 // chain the GUI/CLI wrapper runs in OpenDatabase. This is the headless path
 // used by `serve` / `migrate` / `call`.
@@ -18,11 +17,9 @@ func TestStorageMigratesLegacyDatabase(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
 	// Start versions the synthetic createOldDatabase fixture builds faithfully.
-	// "1.0.0" already traverses every step of the chain (1.0→2.8), so the
-	// intermediate 2.x steps are covered transitively; the later start points
-	// exercise the tail directly. (The fixture cannot represent an exact 2.0.0
-	// schema — it omits columns the real 1.9→2.0 backfill adds — so 2.0.0 is
-	// not a valid synthetic start point.)
+	// "1.0.0" traverses every step; later start points exercise the tail
+	// directly. 2.0.0 is not a valid start: the fixture omits columns the
+	// 1.9→2.0 backfill adds.
 	for _, version := range []string{"1.0.0", "1.6.0", "2.5.0", "2.7.0"} {
 		t.Run(version, func(t *testing.T) {
 			path := filepath.Join(t.TempDir(), "old.db")

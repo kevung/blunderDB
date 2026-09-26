@@ -16,10 +16,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// TestCallRouteCoverage asserts every domain route the dispatcher can reach is
-// actually registered (never the catch-all 404). Posting an empty body may
-// yield a 400 error envelope for methods that need fields — that is fine; what
-// matters is that the route exists and the handler runs.
+// TestCallRouteCoverage asserts every route the dispatcher reaches is
+// registered (never the catch-all 404); a 400 for an empty body is fine.
 func TestCallRouteCoverage(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)
@@ -116,11 +114,8 @@ func TestRunCallEndToEnd(t *testing.T) {
 	}
 }
 
-// TestStdoutResponseWriter_ImplicitStatus covers the writer RunCall now feeds
-// to ServeHTTP instead of httptest.NewRecorder: a handler that never calls
-// WriteHeader still reports 200 (matching net/http's own ResponseWriter
-// convention), and bytes reach stdout the instant Write is called rather than
-// being held until some later flush the type doesn't have.
+// TestStdoutResponseWriter_ImplicitStatus: without WriteHeader the status is
+// 200, and bytes reach stdout on Write.
 func TestStdoutResponseWriter_ImplicitStatus(t *testing.T) {
 	out, err := captureStdout(t, func() error {
 		w := newStdoutResponseWriter()
@@ -140,11 +135,8 @@ func TestStdoutResponseWriter_ImplicitStatus(t *testing.T) {
 	}
 }
 
-// TestStdoutResponseWriter_ExplicitStatus covers a handler that does call
-// WriteHeader (e.g. an error envelope) before writing its body: the writer
-// must keep that status rather than defaulting to 200, and a second
-// WriteHeader call (some handlers call it defensively) must not override it —
-// mirroring net/http's own ResponseWriter contract.
+// TestStdoutResponseWriter_ExplicitStatus: an explicit status is kept, and a
+// second WriteHeader does not override it (net/http's contract).
 func TestStdoutResponseWriter_ExplicitStatus(t *testing.T) {
 	w := newStdoutResponseWriter()
 	w.WriteHeader(http.StatusNotFound)
@@ -168,10 +160,8 @@ func TestRunCallErrorExit(t *testing.T) {
 	}
 }
 
-// TestRunCallRejectsNamedScope pins that `call --scope alice` fails before
-// anything is opened, naming the flag and the expected format: it used to be
-// forwarded as X-Tenant-ID and land on tenant 0 (ADR-0005, amendment
-// 2026-09-03).
+// TestRunCallRejectsNamedScope: `call --scope alice` fails before anything is
+// opened, naming the flag and the expected format (ADR-0005).
 func TestRunCallRejectsNamedScope(t *testing.T) {
 	for _, scope := range []string{"alice", "default", "0"} {
 		err := RunCall([]string{"metadata.counts", "--db", "/nonexistent/x.db", "--scope", scope})

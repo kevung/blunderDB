@@ -11,30 +11,19 @@ import (
 	"time"
 )
 
-// updateCheckTimeout bounds the GitHub API call: this must never hang the
-// frontend's startup path waiting on a slow or unreachable network.
+// updateCheckTimeout keeps a slow network from hanging startup.
 const updateCheckTimeout = 5 * time.Second
 
-// githubLatestReleaseURL is blunderDB's own repository — no configurability,
-// there is only one upstream to check against.
 const githubLatestReleaseURL = "https://api.github.com/repos/kevung/blunderDB/releases/latest"
 
-// UpdateCheckResult is what CheckForUpdate returns. The frontend (which
-// already knows the running version — frontend/src/stores/metaStore.js,
-// one of the four places scripts/release.sh bumps) does the actual
-// comparison and decides whether to show a notice; this side only fetches
-// and reports whether the check ran at all.
+// UpdateCheckResult is what CheckForUpdate returns; the frontend, which knows
+// the running version, compares and decides on a notice.
 type UpdateCheckResult struct {
-	// PackageManaged is true when this install is detected as coming from a
-	// package manager (Flatpak, a distro package, a Homebrew/winget/AUR
-	// install — see isPackageManaged): the check is not performed at all,
-	// LatestVersion/HTMLURL are empty, and the frontend must not show
-	// anything — that channel is the update mechanism, not blunderDB
-	// itself.
+	// PackageManaged: the check did not run (isPackageManaged) and the
+	// frontend shows nothing.
 	PackageManaged bool `json:"packageManaged"`
-	// LatestVersion is the latest GitHub release's tag, with any leading
-	// "v" stripped (e.g. "0.36.0"). Empty if the check did not run or the
-	// request failed.
+	// LatestVersion is the latest release tag without "v"; empty if the
+	// check did not run or failed.
 	LatestVersion string `json:"latestVersion,omitempty"`
 	// HTMLURL links to the release page, for the notice to point at.
 	HTMLURL string `json:"htmlUrl,omitempty"`
@@ -46,13 +35,9 @@ type githubRelease struct {
 	HTMLURL string `json:"html_url"`
 }
 
-// CheckForUpdate queries the GitHub Releases API for blunderDB's latest
-// published release — opt-in (Config.GetCheckForUpdates), and a no-op that
-// reports PackageManaged rather than performing the request at all when this
-// install looks package-managed (#241). It is the frontend's job to call
-// this only when the opt-in is set, compare LatestVersion against its own
-// known running version, and show a non-blocking notice — never a dialog
-// that blocks the interface.
+// CheckForUpdate queries the GitHub Releases API for the latest release, or
+// reports PackageManaged without a request. Opt-in (Config.GetCheckForUpdates),
+// enforced by the frontend, which shows a non-blocking notice.
 func (a *App) CheckForUpdate() (*UpdateCheckResult, error) {
 	if isPackageManaged() {
 		return &UpdateCheckResult{PackageManaged: true}, nil
@@ -89,22 +74,10 @@ func (a *App) CheckForUpdate() (*UpdateCheckResult, error) {
 	}, nil
 }
 
-// isPackageManaged reports whether this process looks like it was installed
-// through a package manager rather than a manual download of the official
-// binary/installer — ADR-0004's "optional host capability" posture: detect,
-// then behave differently, rather than assume. A distro package, a
-// Homebrew/winget/AUR install and a Flatpak sandbox each already have their
-// own update mechanism, and blunderDB nagging about a GitHub release the
-// distro has not packaged yet (or never will, on its own schedule) would
-// only confuse a user who is not meant to bypass their package manager.
-//
-// Detection is intentionally two-layered, per #241's spec: an environment
-// variable a packaging channel sets (FLATPAK_ID is set automatically by
-// Flatpak for every sandboxed app; BLUNDERDB_PACKAGE_CHANNEL is one this
-// project's own AUR/Homebrew/winget packaging can set, though none of them
-// do yet — this is the hook for whoever wires that up), and a fallback
-// heuristic on the running binary's own install path for the common
-// system-package locations this project actually ships to.
+// isPackageManaged reports whether this install came from a package manager,
+// which owns updates (ADR-0004: detect, don't assume). It checks FLATPAK_ID
+// and BLUNDERDB_PACKAGE_CHANNEL (a hook for packagers), then the binary's
+// install path.
 func isPackageManaged() bool {
 	if os.Getenv("FLATPAK_ID") != "" {
 		return true
@@ -135,10 +108,7 @@ func isPackageManaged() bool {
 			}
 		}
 	case "windows":
-		// winget/the Microsoft Store install packages land under
-		// WindowsApps or a per-user WinGet Links/Packages directory; a
-		// manual download is run from wherever the user put it, never
-		// there.
+		// winget and the Microsoft Store install under WindowsApps or WinGet.
 		if strings.Contains(strings.ToLower(exe), "windowsapps") || strings.Contains(strings.ToLower(exe), "winget") {
 			return true
 		}

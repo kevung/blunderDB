@@ -68,20 +68,9 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			analysis.CheckerAnalysis = existingAnalysis.CheckerAnalysis
 		}
 
-		// Merge doubling cube analysis, keeping EVERY engine's (#269).
-		//
-		// This used to keep only the incoming one whenever it was non-nil,
-		// which silently dropped an imported cube analysis — and ADR-0013's
-		// own text says the opposite ("SaveAnalysis keeps one row per Position
-		// and merges engines inside it, every entry tagged with its own
-		// AnalysisEngine"). ingest/merge.go, the path an import takes, has
-		// always accumulated them; this is the same rule on the wrapper the
-		// desktop and the CLI write through, so the two cannot disagree about
-		// what a second engine costs.
-		//
-		// DoublingCubeAnalysis stays the PRIMARY one — the derived scalar
-		// columns read it, and every reader that predates AllCubeAnalyses sees
-		// it — while AllCubeAnalyses carries the whole set.
+		// Merge doubling cube analysis, keeping EVERY engine's (ADR-0013), as
+		// ingest/merge.go does. DoublingCubeAnalysis stays the PRIMARY one the
+		// scalar columns read; AllCubeAnalyses carries the whole set.
 		analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses = mergeCubeAnalyses(
 			existingAnalysis.DoublingCubeAnalysis, existingAnalysis.AllCubeAnalyses,
 			analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses)
@@ -294,15 +283,9 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 // RepairAnalyses recomputes the scalar columns of every analysis from its
 // stored JSON and returns how many rows actually changed.
 //
-// The columns are a projection of `data`, which stays intact, so a bug in the
-// projection is repairable without re-importing anything — see the contract's
-// own doc comment (storage/analyses.go) for the case that has already needed
-// it. It is deliberate and explicit, never automatic: rewriting every user's
-// analysis columns on the mere act of opening a database is not something a
-// tool should do behind their back.
-//
-// Reachable over HTTP since the daemon existed, and from nowhere else until
-// the reverse parity check went looking (G.14, #242).
+// The columns are a projection of `data`, so a projection bug is repairable
+// without re-importing (see storage/analyses.go). Explicit, never automatic
+// on open.
 func (d *Database) RepairAnalyses() (int, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -314,17 +297,12 @@ func (d *Database) RepairAnalyses() (int, error) {
 }
 
 // mergeCubeAnalyses folds an incoming cube analysis into what a position
-// already carries, keeping one entry per ENGINE (#269).
+// already carries, keeping one entry per ENGINE.
 //
-// The primary returned is the incoming one when there is one, the existing one
-// otherwise: an engine that has just spoken about this position is the one the
-// derived columns should read, and a caller that says nothing about the cube
-// must not blank what was there.
-//
-// The set is deduplicated by engine name, incoming first for a given engine —
-// re-importing the same file with a newer XG updates XG's entry rather than
-// adding a second one — and sorted so the display order does not depend on the
-// order the imports happened in.
+// The primary is the incoming one when present, else the existing one: a
+// caller silent about the cube must not blank it. The set is deduplicated by
+// engine, incoming first (a newer XG replaces XG's entry), and sorted so the
+// display does not depend on import order.
 func mergeCubeAnalyses(existing *DoublingCubeAnalysis, existingAll []DoublingCubeAnalysis,
 	incoming *DoublingCubeAnalysis, incomingAll []DoublingCubeAnalysis) (*DoublingCubeAnalysis, []DoublingCubeAnalysis) {
 

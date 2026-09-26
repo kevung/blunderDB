@@ -11,11 +11,9 @@ import (
 // session, the Replay that moves the Cursor onto the first Inconsistency — and
 // not only through the pure gestures of pkg/blunderdb/transcript.
 //
-// The scenario: a pass is typed for what was a take, the next game is started,
-// and the mistake is seen. Walking back onto the pass and pressing `t` must
-// replace it — the game it closed goes on — while everything typed of the
-// following game stays where it is. Before this, `t` inserted a take in FRONT
-// of the pass and left the pass standing.
+// A pass is typed for a take and the next game started; walking back onto the
+// pass and pressing `t` must REPLACE it (not insert before it), the game goes
+// on, and the following game's typing stays where it is.
 func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7, Player1: "Kévin", Player2: "Alice"})

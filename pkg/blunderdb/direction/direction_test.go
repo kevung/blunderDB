@@ -344,10 +344,8 @@ func TestAucunTexteTraduitNeSortDuPaquet(t *testing.T) {
 // TestPreparationPuisDemarrage : en préparation, les inscriptions et la configuration vont et
 // viennent ; le premier MATCH lancé fait passer en cours.
 //
-// La frontière est le match, pas l'événement de création ni les inscriptions (ADR-0047 §2). Le
-// journal, lui, commence dès la création : un directeur qui a tapé vingt noms et fermé son
-// portable doit les retrouver, et un brouillon qui n'écrirait rien devrait les garder ailleurs,
-// c'est-à-dire dans un second endroit pour la même vérité.
+// La frontière est le match, pas l'événement de création ni les inscriptions (tasks/nicomaque/fonctionnel.md §2) ;
+// le journal, lui, commence dès la création (voir Create).
 func TestPreparationPuisDemarrage(t *testing.T) {
 	ctx := context.Background()
 	store := newMemStore()
@@ -426,9 +424,7 @@ func TestPreparationPuisDemarrage(t *testing.T) {
 
 // TestPreparationRelueGardeSesInscriptions : rouvrir une Direction en préparation rend les
 // inscriptions et la configuration que le directeur composait.
-//
-// C'est le défaut que le premier modèle avait : un brouillon qui n'écrit rien perd ce qu'on lui
-// a donné dès qu'on change d'onglet.
+
 func TestPreparationRelueGardeSesInscriptions(t *testing.T) {
 	ctx := context.Background()
 	store := newMemStore()
@@ -524,7 +520,7 @@ func TestLaVersionDuMoteurEstEnregistree(t *testing.T) {
 	}
 }
 
-// TestSetConfigAt (#443): a configuration change carries the instant it is given, like Enter,
+// TestSetConfigAt: a configuration change carries the instant it is given, like Enter,
 // Finish and Reopen — a scenario replayed at a chosen time must be able to go through it, and
 // SetConfig is SetConfigAt at the wall clock.
 func TestSetConfigAt(t *testing.T) {

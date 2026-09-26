@@ -2,7 +2,7 @@
     import { t, tMsg } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
-    import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
+    import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { isResponseCubeAction } from '../utils/cubeAction.js';
     import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
@@ -32,24 +32,17 @@
     let mode = $derived($statusBarModeStore);
     let showTakePoint2Modal = $derived($activeModal === MODAL.TAKE_POINT_2);
     let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
-    // There is no PANEL entry for the comment tab (see uiStore.js's PANEL comment).
-    // The comment panel is the CommentPanel instance TabbedPanel mounts, one-to-one
-    // with the active tab (see that file's {#if} — same fix as AnalysisPanel's stuck
-    // selectedMoveStore).
+    // No PANEL entry for the comment tab: CommentPanel is mounted by TabbedPanel per active tab.
     let showComment = $derived($activeTabStore === 'comments');
-    // La préférence de l'utilisateur, sauf pendant une question de Pions, qui
-    // la surcharge (uiStore.pipcountVisibleStore, #320). La valeur est LUE ici
-    // et redessinée par l'abonnement de boardRedraw.js : sans lui, elle
-    // changerait sans que l'écran bouge.
+    // Préférence, surchargée pendant une question de Pions (uiStore.pipcountVisibleStore) ;
+    // le redessin vient de boardRedraw.js.
     let showPipcount = $derived($pipcountVisibleStore);
 
     let canvasCfg = {
         aspectFactor: 0.72
     };
 
-    // La configuration de dessin vit dans utils/boardConfig.js depuis que les
-    // diagrammes du rapport (#279) en ont besoin eux aussi : deux littéraux de
-    // palette, ce sont deux palettes qui divergent.
+    // Partagée avec les diagrammes du rapport (utils/boardConfig.js) : une seule palette.
     let boardCfg = defaultBoardConfig();
 
     let two;
@@ -61,34 +54,21 @@
     let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
     let previousDice = get(positionStore).dice; // Save previous dice values
 
-    // enterEvalMode() (positionService.js) always starts the Eval panel's
-    // position with dice = [0, 0]; without this, the first die click of an
-    // Eval session would restore whatever previousDice was left over from an
-    // unrelated position seen earlier, instead of starting from a clean roll.
+    // enterEvalMode() starts with dice [0, 0]; reset so the first die click
+    // does not restore a stale previousDice.
     $effect(() => {
         if (mode === 'EVAL') {
             previousDice = [0, 0];
         }
     });
 
-    // selectedMove is read inside drawBoard() via this derived; the actual
-    // redraw is triggered (coalesced) by scheduleRedraw() — see
-    // subscribeBoardRedrawTriggers() below.
+    // Read by drawBoard(); redraw is triggered by scheduleRedraw().
     let selectedMove = $derived($selectedMoveStore);
 
-    // ── Redraw coalescing ──────────────────────────────────────────────────
-    // Several independent triggers can each ask for a board redraw within the
-    // same tick (a position navigation touches positionStore, resets
-    // selectedMoveStore, and often analysisStore reloads right after). Before
-    // this, each trigger called drawBoard() directly and a single navigation
-    // could rebuild the whole two.js scene (two.clear() + ~100 SVG nodes
-    // destroyed/recreated) 3-4 times. scheduleRedraw() sets a dirty flag and
-    // asks for a single requestAnimationFrame; by the time it fires, every
-    // store involved has already settled its final value (Svelte's reactive
-    // updates and the .subscribe() callbacks below all run synchronously,
-    // long before the next animation frame), so drawBoard() — which always
-    // re-reads every store itself — paints the fully-settled state exactly
-    // once per frame.
+    // Redraw coalescing: several stores can dirty the board in one tick.
+    // scheduleRedraw() sets a flag and requests one animation frame; by then
+    // every store has settled, and drawBoard() (which re-reads them all)
+    // paints once per frame.
     let redrawScheduled = false;
     let redrawFrameId = null;
     function scheduleRedraw() {
@@ -101,29 +81,16 @@
         });
     }
 
-    // Svelte 5 invariant exception (CLAUDE.md): plusieurs stores salissent le
-    // plateau pour des raisons sans rapport (navigation, coup choisi dans le
-    // panneau Analyse, analyse rechargée, bascule « videau offert », coup de
-    // quiz joué, visibilité du pipcount) et drawBoard() les relit tous quel
-    // que soit celui qui a changé — un $effect par store n'achèterait rien
-    // qu'un abonnement groupé n'achète, il multiplierait seulement les
-    // endroits qui portent cette exception.
-    // positionStore's callback additionally carries a business rule that must
-    // run before scheduleRedraw() fires: reset the selected move only on a
-    // *real* navigation (position id change), not on every store tick (board
-    // edits, analysis refresh). That rule stays inside the subscription
-    // rather than becoming its own $effect — Board.svelte has no rendering
-    // test, and the ordering between "reset selectedMoveStore" and "read
-    // selectedMoveStore at draw time" is exactly the kind of thing a render
-    // regression would hide; the synchronous .subscribe() ordering here is
-    // unambiguous, an $effect's ordering relative to this one would not be
-    // obviously so.
+    // Svelte 5 store-rule exception (CLAUDE.md): drawBoard() re-reads every
+    // store whichever changed, so one grouped subscription beats an $effect
+    // per store. positionStore's callback also resets the selected move on a
+    // real navigation (id change) BEFORE the redraw; synchronous .subscribe()
+    // makes that ordering unambiguous, an $effect's would not be.
     function subscribeBoardRedrawTriggers() {
         let previousPositionId = null;
         const unsubPosition = positionStore.subscribe(() => {
             const position = get(positionStore);
-            // Only clear selected move when position ID actually changes (real navigation)
-            // Don't clear it on board redraws or analysis updates
+            // Only on a real navigation (id change), not on edits or analysis refresh.
             if (position.id !== previousPositionId) {
                 selectedMoveStore.set(null);
                 previousPositionId = position.id;
@@ -131,11 +98,7 @@
             scheduleRedraw();
         });
 
-        // Les autres déclencheurs sont déclarés dans services/boardRedraw.js —
-        // une liste nommée, hors du composant, parce qu'un store oublié ici ne
-        // se voyait nulle part : Board.svelte n'a pas de test de rendu, et
-        // c'est ainsi que le masque du pipcount de #320 se calculait sans que
-        // l'écran bouge.
+        // Les autres déclencheurs : liste nommée et testée dans services/boardRedraw.js.
         const unsubShared = subscribeSharedRedrawTriggers(scheduleRedraw);
 
         return () => {
@@ -144,10 +107,7 @@
         };
     }
 
-    // Apply the user-customisable palette to boardCfg and redraw. boardCfg is a
-    // plain object read imperatively by the draw functions, so we mutate it in
-    // place and trigger a redraw whenever the colours change (and once the
-    // two.js canvas exists).
+    // boardCfg is a plain object read imperatively: mutate in place, then redraw.
     $effect(() => {
         applyPalette(boardCfg, $boardColorsStore);
         invalidateStaticLayer(); // triangles, bar and frame carry the palette
@@ -170,7 +130,6 @@
         const container = canvas.parentElement;
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
-        // Fit board within both width and height, maintaining aspect ratio
         const heightFromWidth = containerWidth * canvasCfg.aspectFactor;
         if (heightFromWidth <= containerHeight) {
             width = containerWidth;
@@ -183,10 +142,7 @@
         two.height = height;
         two.renderer.setSize(width, height);
         invalidateStaticLayer(); // every coordinate depends on the size
-        // The measurement above must stay synchronous (it reads the live
-        // container box), but the actual repaint is coalesced: a burst of
-        // 'resize' events (window drag, panel toggle) must repaint at most
-        // once per animation frame, not once per event.
+        // Measure synchronously, repaint coalesced (a resize burst paints once per frame).
         scheduleRedraw();
     }
 
@@ -204,12 +160,8 @@
         });
     }
 
-    // Eval's own "clear" target: a blank board the user can build up from
-    // scratch, but with the defaults enterEvalMode() itself uses — money
-    // score (not a 7-away match), no dice in progress — rather than EDIT's
-    // search-flavoured 7-7/3-1. See the grilling session that settled this:
-    // reusing resetBoard() verbatim would inject an arbitrary match score
-    // into a panel whose race table otherwise reads as money by default.
+    // Eval's "clear": blank board with enterEvalMode()'s defaults (money, no
+    // dice), not resetBoard()'s 7-away score, which the race table would read.
     function resetEvalBoard() {
         positionStore.update((pos) => {
             pos.board.points.forEach((point) => (point.checkers = 0));
@@ -262,7 +214,6 @@
         const params = { width: window.innerWidth, height: window.innerHeight };
         two = new Two(params).appendTo(canvas);
 
-        // Set the width and height based on the actual container dimensions
         const container = canvas.parentElement;
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
@@ -278,9 +229,7 @@
         two.height = height;
         two.renderer.setSize(width, height);
 
-        // Mouse handling lives in boardInteractions.js; it reads the live
-        // mode/size/config through these getters so a redraw or a mode
-        // change needs no re-attach.
+        // boardInteractions.js reads live state through getters: no re-attach on redraw.
         detachInteractions = attachBoardInteractions(canvas, {
             getMode: () => mode,
             getSize: () => ({ width, height }),
@@ -293,19 +242,13 @@
                 offeredCube: searchOfferedCubeStore,
                 anyModalOpen: isAnyModalOpen,
                 quizPlay: quizPlayStore,
-                // Le videau cliqué pendant une transcription (T2.5) : le
-                // plateau pose la demande, le panneau en fait un double.
+                // Transcription : le plateau pose la demande, le panneau décide.
                 transcriptionCube: transcriptionCubeRequestStore
             },
-            // Le miroir de l'affichage (#294) : quand le plateau est montré
-            // retourné, le point CLIQUÉ n'est pas le point du modèle, et la
-            // conversion est celle de mirrorPosition — 25 - p.
+            // Plateau retourné : point cliqué → point du modèle, 25 - p.
             quizDisplayMirrored: () => displayMirrored(),
-            // De quel CÔTÉ de l'écran se trouve le plateau de sortie du camp au
-            // trait : 0 en bas, 1 en haut. Il était tenu pour toujours en bas,
-            // ce qui n'est vrai que d'un affichage où le camp au trait descend
-            // — en transcription le joueur 1 reste en bas et un pion sorti par
-            // le joueur 2 quitte le plateau par le HAUT.
+            // Côté de sortie du camp au trait : 0 en bas, 1 en haut (en
+            // transcription le joueur 2 sort par le haut).
             quizBearoffSide: () => getDisplayPosition().player_on_roll,
             resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
@@ -314,11 +257,8 @@
             openContextMenu,
             logger
         });
-        // No direct drawBoard() here: subscribeBoardRedrawTriggers() below
-        // fires each subscription once on the spot (svelte/store calls the
-        // callback synchronously), which schedules the first paint on the
-        // next animation frame — before the browser paints the mounted DOM.
-        // A synchronous draw on top of it built the whole scene twice.
+        // No direct drawBoard(): the subscriptions fire synchronously and
+        // schedule the first paint; drawing here too would build it twice.
         window.addEventListener('resize', resizeBoard);
         window.addEventListener('keydown', handleOrientationChange);
         window.addEventListener('keydown', handleKeyDown);
@@ -336,27 +276,18 @@
         window.removeEventListener('keydown', handleOrientationChange);
         window.removeEventListener('keydown', handleKeyDown);
         if (unsubscribeBoardRedrawTriggers) unsubscribeBoardRedrawTriggers();
-        // A redraw can be pending (rAF already requested) at the moment the
-        // component is torn down; cancel it so drawBoard() never runs against
-        // a detached two.js instance.
+        // Cancel a pending rAF so drawBoard() never hits a detached two.js.
         if (redrawFrameId !== null) cancelAnimationFrame(redrawFrameId);
     });
 
-    // ── Board context menu ─────────────────────────────────────────────────
-    // Right-clicking the board opens actions on the position it shows. The
-    // gating (never in EDIT/EVAL where the right button places checkers,
-    // never over a modal) is boardInteractions.js's; this only builds the
-    // menu at the spot it asks for.
+    // Board context menu; gating (not in EDIT/EVAL, not over a modal) is boardInteractions.js's.
     let boardMenu = $state(null);
 
     function openContextMenu({ x, y }) {
         const items = [
             {
                 label: $t('board.menu.evaluate'),
-                // The position AS DISPLAYED, not the stored record: in a
-                // match with player 2 on roll the board is mirrored, and
-                // the Eval panel must open on the board the user is
-                // actually looking at.
+                // The position as displayed (possibly mirrored), not the stored record.
                 onClick: () => sendPositionToEval(getDisplayPosition())
             },
             {
@@ -367,9 +298,7 @@
                 label: $t('board.menu.copyImageWithAnalysis'),
                 onClick: () => copyBoardWithAnalysisImage()
             },
-            // Enregistrer plutôt que copier (#278) : l'illustration d'un
-            // article, d'un message de forum ou d'une leçon veut un fichier,
-            // et souvent le vectoriel — que le plateau est déjà.
+            // Un fichier (souvent vectoriel) plutôt qu'une copie.
             {
                 label: $t('board.menu.saveImageSVG'),
                 onClick: () => exportBoardImage('svg')
@@ -384,18 +313,11 @@
             }
         ];
 
-        // "Add to Anki deck" only makes sense for a position that already has
-        // a database row (SyncAnkiDeckWithPositions inserts a card by
-        // position id) — a scratch board (Eval/Search panel, id 0) has
-        // nothing to add.
+        // Anki cards are keyed by position id: nothing to add for a scratch board (id 0).
         const position = get(positionStore);
         if (position?.id) {
             items.push(...ankiDeckMenuItems(position.id));
-            // « Positions voisines » (ADR-0043) : le geste est « je regarde
-            // une position et je me demande si je l'ai déjà vue ». Il part
-            // donc d'ici, du plateau, et pas seulement de la ligne de
-            // commande. Un plateau brouillon (id 0) n'a pas de voisines à
-            // demander : il n'est dans aucune bibliothèque.
+            // « Positions voisines » (ADR-0043) ; pas pour un plateau brouillon (id 0).
             items.push({
                 label: $t('board.menu.neighbours'),
                 onClick: () => rankNeighboursOfCurrentPosition()
@@ -404,11 +326,8 @@
 
         boardMenu = { x, y, items };
 
-        // Decks are only loaded once the Anki panel has been visited (see
-        // ankiService.loadDecks callers); refresh them here so the menu can
-        // still offer them on a session that never opened that tab. Best
-        // effort and non-blocking: the static items above show immediately,
-        // the deck items are appended once the fetch resolves.
+        // Decks load only once the Anki tab is visited: fetch here, non-blocking,
+        // and append the deck items when it resolves.
         if (position?.id && get(ankiDecksStore).length === 0) {
             anki.loadDecks()
                 .then(() => {
@@ -437,12 +356,8 @@
         }
     }
 
-    // Le sens du plateau est décidé UNE fois, dans services/boardOrientation.js,
-    // et trois choses y lisent la même réponse : les pions dessinés, les
-    // coordonnées d'un clic et celles des flèches. Elles la déduisaient chacune
-    // de leur côté — du miroir pour les unes, de la NUMÉROTATION des points pour
-    // les autres —, deux questions qui coïncidaient tant que le camp au trait
-    // était toujours en bas, et qui divergent dès qu'il ne l'est plus.
+    // Le sens du plateau est décidé une fois (services/boardOrientation.js) pour
+    // les pions, les clics et les flèches.
     function displayIsMirrored(position) {
         return boardIsMirrored({
             mode,
@@ -455,42 +370,26 @@
     // La position telle qu'elle est DESSINÉE.
     function getDisplayPosition() {
         const stored = get(positionStore);
-        // Pendant une question de quiz, ce qu'on montre est le plateau du coup
-        // EN COURS (#294) : le pion suit le clic. Le reste — dés, videau,
-        // score, et le miroir ci-dessous — vient de la position, inchangée :
-        // la question ne bouge pas parce qu'on déplace un pion.
+        // Quiz : seul le damier suit le coup en cours ; le reste vient de la position.
         const play = get(quizPlayStore);
         const position = play ? { ...stored, board: play.board } : stored;
         return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
-    // Le miroir en vigueur, sans reconstruire la position : c'est la question
-    // que se posent le clic et les flèches, et elle a la même réponse. Le coup
-    // en cours n'y entre pas — il ne remplace que le damier, jamais le camp au
-    // trait dont la réponse se lit.
+    // Le miroir en vigueur ; le coup en cours n'y entre pas.
     function displayMirrored() {
         return displayIsMirrored(get(positionStore));
     }
 
-    // Les points sont-ils NUMÉROTÉS depuis le camp du joueur 2 ?
-    //
-    // Ce n'est pas la question du miroir (displayIsMirrored) : les points se
-    // comptent depuis le jan du camp au trait, et le jan dessiné en bas à droite
-    // est celui de la couleur 0 de la position AFFICHÉE. Les deux questions
-    // coïncidaient tant que le camp au trait était toujours en bas ; en
-    // transcription le joueur 1 y reste, et il faut alors renuméroter sans rien
-    // retourner.
+    // Points numérotés depuis le camp du joueur 2 ? Distinct du miroir : en
+    // transcription le joueur 1 reste en bas, on renumérote sans retourner.
     function isPlayer2Perspective(displayPosition) {
         return labelsFlipped(displayPosition);
     }
 
-    // A take/pass (response) decision: the cube has been offered to the
-    // player on roll and is drawn in the middle of the board rather than at
-    // its owner spot. The signal is the played cube action — in match mode
-    // the current move's action, otherwise the analysis' recorded played
-    // actions. While editing, the offered cube is shown only when the user is
-    // explicitly building a take/pass search — never from stale analysis of
-    // a previously viewed position.
+    // Take/pass decision: the offered cube is drawn mid-board. Signalled by the
+    // played cube action (match move, else analysis); in EDIT only for an
+    // explicit take/pass search, never from stale analysis.
     function isOfferedCube(position) {
         if (position.decision_type !== 1) return false;
         if (mode === 'EDIT') return get(searchOfferedCubeStore) === true;
@@ -504,25 +403,15 @@
         return acts.some(isResponseCubeAction);
     }
 
-    // Les points que le coup en cours offre (#294 pour le quiz, T2.3 pour la
-    // transcription), dans les numéros de la position AFFICHÉE. Ils viennent des
-    // pas de `LegalMoves`, en numérotation ABSOLUE : un anneau posé sur le point
-    // 24 du modèle se dessine sur le point 1 de l'écran quand le plateau est
-    // retourné — exactement la conversion que le clic fait dans l'autre sens,
-    // d'où le MÊME `mirrored` des deux côtés.
+    // Points offerts par le coup en cours, en numéros affichés : les pas de
+    // `LegalMoves` sont absolus, convertis par le même `mirrored` que le clic.
     function playHighlights(mirrored) {
         const play = get(quizPlayStore);
         if (!play) return {};
         const shown = (point) => screenOfModelPoint(point, mirrored);
-        // Le point CHOISI est toujours marqué, même quand aucune liste ne
-        // l'offre : dans un coup sorti des règles (ADR-0052) il n'y a pas de coup légal pour
-        // le proposer, et le pion pris en main doit se voir quand même.
+        // Le point choisi est toujours marqué, même hors des règles (ADR-0052).
         const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
-        // Les points de DÉPART ne s'allument qu'une fois le coup engagé — un
-        // pion pris en main, ou un pas déjà joué. Au départ ils sont presque
-        // tous jouables (vingt et un jets possibles pendant une transcription,
-        // T2.3), et un damier constellé d'anneaux à chaque tour serait du bruit
-        // posé sur le chemin du clavier, qui est le chemin ordinaire.
+        // Départs allumés seulement coup engagé : sinon presque tous le sont (21 jets).
         const engaged = play.steps.length > 0 || picked.length > 0;
         return {
             sources: engaged ? [...new Set([...$quizPlaySourcesStore, ...picked])].map(shown) : [],
@@ -531,31 +420,18 @@
         };
     }
 
-    // Les flèches du coup choisi. Elles sortent d'une NOTATION, qui est écrite
-    // dans la numérotation du camp au trait et non dans celle du damier : la
-    // question n'est donc pas de savoir si le plateau est retourné, mais si
-    // celui qui joue est dessiné en haut — `flip`, celui-là même qui renumérote
-    // les étiquettes sous les flèches. Les deux conversions coïncident partout
-    // sauf en transcription, la bibliothèque n'enregistrant que des positions
-    // normalisées ; les employer l'une pour l'autre y dessinait le coup du
-    // joueur 2 sur les pions du joueur 1, deux tours de suite.
+    // Flèches : la notation est dans la numérotation du camp au trait, donc
+    // `flip` (joueur dessiné en haut), pas `mirrored` — ils divergent en transcription.
     function selectedMoveArrows(flipped) {
         const moves = parseMoveNotation(selectedMove);
         if (moves.length === 0 || !flipped) return moves;
         return moves.map((m) => ({ ...m, from: screenOfNotationPoint(m.from, true), to: screenOfNotationPoint(m.to, true) }));
     }
 
-    // ── Static / dynamic layers ────────────────────────────────────────────
-    // A redraw used to two.clear() the whole scene and recreate ~120 SVG
-    // nodes, half of which never change from one position to the next: the
-    // 24 triangles, the 24 point labels, the bar and the outline. They now
-    // live in their own two.js groups, rebuilt only when what they depend on
-    // changes — the drawing size (resize), the orientation (Ctrl-arrows), the
-    // palette (boardColorsStore) or the side the labels are numbered from
-    // (player 2's perspective) — while scheduleRedraw() only empties and
-    // refills the dynamic group (checkers, cube, dice, scores, arrows).
-    // Board.redraw.test.js counts two.clear() as "static layer rebuilt" and
-    // two.update() as "painted".
+    // Static layer (triangles, labels, bar, outline) is rebuilt only on size,
+    // orientation, palette or numbering change; scheduleRedraw() refills only
+    // the dynamic group. Board.redraw.test.js counts two.clear() as a static
+    // rebuild and two.update() as a paint.
     let staticLayer = null; // triangles, labels, bar — null = must be rebuilt
     let dynamicLayer = null; // emptied and refilled on every redraw
     let staticFlip = null; // the label side staticLayer was built for
@@ -579,9 +455,7 @@
 
         const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
-        // Deux questions distinctes, et c'est exprès — voir boardOrientation.js :
-        // `mirrored` convertit un point ABSOLU, `flip` un point de NOTATION (et
-        // numérote les étiquettes, qui sont la même question).
+        // `mirrored` convertit un point absolu, `flip` un point de notation (boardOrientation.js).
         const flip = isPlayer2Perspective(position);
         const mirrored = displayMirrored();
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);

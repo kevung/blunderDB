@@ -179,7 +179,7 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 - **Job `test-os`** : `continue-on-error: true` retiré, le job est bloquant. Fiche E.1 (#217), fusionnée le 2026-09-03.
 
-- **2026-09-02 — `use_cube` à la recherche** (ADR-0016, point 4) : fait le
+- **2026-09-02 — `use_cube` à la recherche** (ADR-0016, point 7) : fait le
   2026-09-02 (3657ea1a, ADR-0023) : chaque feuille de la recherche est valuée
   par le modèle de videau à l'état de videau de la position ; gammonNet v1.2.1
   épinglé par `EngineVersion`.

@@ -23,7 +23,7 @@ import (
 // the two client-side filters the query can't express — errorMin and
 // hasAnalysis need the analysis payload the query already returns) and the
 // output options (--format, --limit/--offset, --export). Splitting parsing
-// from querying and rendering (B.8, #176) makes each independently testable:
+// from querying and rendering makes each independently testable:
 // parseSearchFlags never touches a database, and renderResults never touches
 // a flag.
 type searchParams struct {
@@ -59,7 +59,6 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		return &searchParams{queryHelp: true}, "", nil
 	}
 
-	// Validate required flags
 	if *f.dbPath == "" {
 		searchCmd.Usage()
 		return nil, "", fmt.Errorf("missing required flag: --db")
@@ -211,17 +210,17 @@ func (cli *CLI) runSearch(args []string) error {
 	// --error-min/--has-analysis are applied client-side below, on the
 	// analysis payload the query already returns (no extra round trip), and
 	// can reject a result the SQL scan matched — so --limit/--offset are only
-	// pushed into the SQL scan itself (real pagination, B.10 #178) when
-	// neither is set; otherwise the scan stays unbounded and --limit/--offset
-	// apply after filtering, exactly as before, so a page is never short just
-	// because the SQL page it was drawn from happened to filter out rows.
+	// pushed into the SQL scan when neither is set. Otherwise the scan stays
+	// unbounded and --limit/--offset apply after filtering, so a page is
+	// never short just because the SQL page it was drawn from filtered out
+	// rows.
 	opts := storage.ListOpts{}
 	if params.errorMin <= 0 && !params.hasAnalysis {
 		opts = storage.ListOpts{Limit: params.limit, Offset: params.offset}
 	}
 
-	// Ctrl-C cancels the scan in flight instead of waiting it out (B.13,
-	// #181), the same contract `analyze` already gives a long batch.
+	// Ctrl-C cancels the scan in flight instead of waiting it out, the same
+	// contract `analyze` already gives a long batch.
 	textOutput := strings.ToLower(params.format) != "json"
 	var positions []Position
 	var analysisMap map[int64]*PositionAnalysis
@@ -343,11 +342,9 @@ type searchPositionResult struct {
 
 // renderResults writes already-filtered, already-limited search results to w
 // in the requested format (table, json, or xgid — anything else falls back
-// to table, matching the flag's own default). It is the second half of the
-// split runSearch used to be (B.8, #176): everything here is pure formatting
-// over positions already in hand, plus one LoadAnalysis call per position to
-// fill in best-move/equity/XGID — the same lookup both the table and json
-// paths always made.
+// to table, matching the flag's own default): pure formatting over positions
+// already in hand, plus one LoadAnalysis call per position to fill in
+// best-move/equity/XGID.
 func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) error {
 	switch format {
 	case "json":

@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-// ankiStore is sqlshared.AnkiStore (B.14, #182) plus the one method that
+// ankiStore is sqlshared.AnkiStore plus the one method that
 // stays backend-specific: Forecast's day-offset bucketing needs SQLite's
 // julianday()/date() functions, which have no PostgreSQL equivalent (see
 // sqlshared.AnkiStore's doc, and stats_sqlite.go's DateRange for the same

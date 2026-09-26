@@ -1,15 +1,6 @@
 <script>
-    // Le journal d'activité (#287, fiche I.31).
-    //
-    // L'interface attrape des erreurs à quelque soixante-quinze endroits, et
-    // jusqu'ici chacune finissait sur une ligne de barre d'état qui
-    // disparaissait. Le détail était dans le journal depuis toujours ; ce qui
-    // manquait était de pouvoir le lire sans quitter l'application, et de
-    // pouvoir le COPIER pour le joindre à un rapport.
-    //
-    // Le journal n'est pas filtré ni reformaté ici : ce qui est montré est ce
-    // que le fichier contient. Un journal qu'on embellit est un journal qu'on
-    // ne peut plus citer.
+    // Le journal d'activité, lisible et copiable dans l'application ; montré tel
+    // que le fichier le contient, pour rester citable.
     import Modal from './Modal.svelte';
     import { ReadLogTail, OpenLogsFolder } from '../../wailsjs/go/gui/App.js';
     import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';

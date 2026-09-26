@@ -24,14 +24,9 @@ type LibrarySettings struct {
 	BlunderThresholdMP int `json:"blunderThresholdMP"`
 }
 
-// The defaults are the two values the code already drew before they became
-// settings: 100 is what the statistics have always called a blunder, and 50 is
-// what the study queue of an import already retained ("half of what the
-// statistics call a blunder, because the decisions worth revisiting start well
-// below the ones worth being ashamed of"). Choosing them means the queue does
-// not move and the blunder counts do not move; only the "Errors" columns,
-// which used to count every non-zero cost, stop counting three-millipoint
-// misses.
+// The defaults: 100 mp is the statistics' blunder, 50 mp the error line
+// ("decisions worth revisiting start well below the ones worth being ashamed
+// of").
 const (
 	DefaultErrorThresholdMP   = 50
 	DefaultBlunderThresholdMP = 100

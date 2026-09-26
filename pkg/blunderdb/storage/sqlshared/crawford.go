@@ -15,24 +15,17 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// La sentinelle Crawford, réparée après coup (T0.7, ADR-0045 §7).
+// La sentinelle Crawford, réparée après coup (ADR-0045 §7).
 //
 // L'away score porte la règle de Crawford DANS le nombre (CONTEXT.md,
-// « Away score ») : `1` veut dire « un point à faire, et cette partie EST la
-// Crawford », `0` « un point à faire, la Crawford est derrière ». Les trois
-// importeurs ont longtemps écrit `1` dans les deux cas — ils ne calculaient que
-// matchLength − score — si bien que toute partie post-Crawford déjà importée
-// est lue videau mort, là où le poursuivant double en réalité à la première
-// occasion.
+// « Away score ») : `1` = « un point à faire, cette partie EST la Crawford »,
+// `0` = « la Crawford est derrière ». Des bases importées portent `1` pour
+// des parties post-Crawford.
 //
-// Corriger la valeur change le hash Zobrist, puisque l'away score en fait
-// partie (contrairement à has_jacoby/has_beaver, ADR-0028). La ligne est donc
-// REHACHÉE, et la question que pose le rehachage — « une position correcte
-// existe-t-elle déjà pour ce plateau ? » — est la décision de dédup que prend
-// Save. Elle est ici posée explicitement parce que sa réponse change ce qu'on
-// fait de l'ancienne ligne : fusionner dans la jumelle correcte, ou rehacher la
-// ligne sur place, ce qui garde l'id et donc l'analyse, les commentaires, les
-// cartes et les coups déjà accrochés, sans rien recopier.
+// L'away score entre dans le hash Zobrist (ADR-0028) : corriger la valeur
+// REHACHE la ligne, donc repose la question de dédup de Save — fusionner dans
+// une jumelle correcte, ou rehacher sur place en gardant l'id et tout ce qui
+// y est accroché.
 
 // batchSize bounds the IN list of the move lookup: a database can hold tens of
 // thousands of 1-away positions and SQLite refuses a statement with more than
@@ -59,23 +52,17 @@ type gameFacts struct {
 //   - a position that belongs to no game at all is corrected only when the
 //     XGID its analysis keeps was written by another program and says, in
 //     field 7, that the game is not the Crawford one — and describes this very
-//     position (see sourceXGIDSaysPostCrawford). Everything else that no game
-//     points at — typed on the board, saved from blunderDB's own XGID, a file
-//     without one — is left alone: away `1` is then its author's word, and
-//     nothing contradicts it;
+//     position (see sourceXGIDSaysPostCrawford). Any other gameless position
+//     keeps its away `1`: nothing contradicts its author;
 //   - a position that belongs to a Crawford game AND to a post-Crawford one is
-//     left alone too. Today they are one row (the away score being the same),
-//     and the row is legitimately the Crawford one for one of its games;
-//     splitting it would hand the copy an analysis that was computed for the
-//     other score.
+//     left alone: it is legitimately the Crawford one for one game, and
+//     splitting it would give the copy an analysis made for the other score.
 //
 // Into the Crawford game, `0` → `1`, and only for a position no game points
 // at, stored at [0, 0], whose analysis keeps an XGID of a 1-point match that
-// describes it (#411, see sourceXGIDSaysOnePointMatch). A 1-point match's only
-// game starts one point from the match, so it is the Crawford game — the
-// importers' rule — yet a pasted one used to come in at [0, 0] when its field 7
-// was 0. The DMP after the Crawford game of a longer match is [0, 0] by every
-// path, and its XGID states that longer match: it is never touched.
+// describes it (see sourceXGIDSaysOnePointMatch): a 1-point match's only game
+// is the Crawford game. The DMP after the Crawford game of a longer match
+// states that longer match and is never touched.
 //
 // Nothing runs it automatically: like ReclassifyDerived it is a repair of data,
 // explicitly asked for (`blunderdb repair`, /v1/positions.repairCrawford).
@@ -138,7 +125,7 @@ func repairOutOfCrawford(ctx context.Context, db Execer, scope string, positions
 	return repaired, nil
 }
 
-// repairIntoCrawford is the `0` → `1` pass of RepairCrawfordSentinel (#411):
+// repairIntoCrawford is the `0` → `1` pass of RepairCrawfordSentinel:
 // a position stored at [0, 0] that no game points at, whose source XGID is a
 // 1-point match describing it. A [0, 0] position of a game is the match's to
 // decide, and the importers have always written a 1-point match at [1, 1].
@@ -188,25 +175,16 @@ func onlyPostCrawfordGames(games []int64, crawfordGames map[int64]bool) bool {
 }
 
 // sourceXGIDSaysPostCrawford decides a position no game points at from the XGID
-// its analysis keeps (#360). It says yes only on proof, and each condition is
-// what stands between a fact and a supposition:
+// its analysis keeps. It says yes only on proof:
 //
-//   - the XGID states the rule: a match length, and field 7 present. That field
-//     is the Crawford flag (eXtreme Gammon 2 Help, « XGID », part 8), and 0
-//     means the game is not the Crawford one;
-//   - field 7 is 0 NEXT TO a stored away 1. blunderDB's own encoders — the
-//     GUI's generateXGID, which rewrites the analysis XGID whenever a board is
-//     saved or a position edited, and the CLI's domain.EncodeXGID — write field
-//     7 FROM the stored sentinel, so at an away 1 they have always written 1.
-//     An XGID with 0 there was therefore written by another program: XG,
-//     BGBlitz, a client of /v1/positions.fromXGID. A regenerated XGID only
-//     echoes the stored 1 and proves nothing, and it is excluded by this very
-//     condition rather than by a guess about where it came from;
-//   - the XGID describes THIS position: the same board, cube, player on roll,
-//     dice and distances, compared through the Zobrist hash the dedup uses, the
-//     away score taken as the XGID states it. An analysis left over from
-//     another position — a stale row, a client that updated the position and
-//     not its analysis — is not this position's source.
+//   - the XGID states a match length and field 7, the Crawford flag (eXtreme
+//     Gammon 2 Help, « XGID », part 8), at 0;
+//   - that 0 sits next to a stored away 1. blunderDB's own encoders
+//     (generateXGID, domain.EncodeXGID) write field 7 FROM the stored
+//     sentinel, so such an XGID came from another program; a regenerated one
+//     only echoes the stored 1;
+//   - the XGID describes THIS position (same Zobrist hash, away score as the
+//     XGID states it), not a stale analysis of another one.
 //
 // A position whose analysis is missing or unreadable, or whose XGID does not
 // decode, keeps its score: nothing then states anything.
@@ -215,7 +193,7 @@ func sourceXGIDSaysPostCrawford(ctx context.Context, db Execer, scope string, po
 	if err != nil || xgid == "" {
 		return false, err
 	}
-	// A 1-point match states Crawford by its length alone (#411): stated and
+	// A 1-point match states Crawford by its length alone: stated and
 	// crawford, so it never reaches the hash below.
 	if crawford, stated := domain.XGIDCrawfordGame(xgid); !stated || crawford {
 		return false, nil
@@ -235,19 +213,12 @@ func sourceXGIDSaysPostCrawford(ctx context.Context, db Execer, scope string, po
 }
 
 // sourceXGIDSaysOnePointMatch decides a [0, 0] position no game points at from
-// the XGID its analysis keeps (#411). It says yes only on proof:
+// the XGID its analysis keeps. It says yes only on proof:
 //
-//   - the XGID states a 1-point match in field 8. Such a match is the Crawford
-//     game whatever field 7 says, and DecodeXGID reads it at [1, 1]; the DMP
-//     after the Crawford game of a longer match states that longer match;
-//   - the XGID is not the one blunderDB's own encoders wrote for this very row.
-//     Between #338 and #411 the GUI's generateXGID — rewriting the analysis XGID
-//     whenever a board is saved or a position edited — encoded a stored [0, 0]
-//     as the smallest match holding it: a 1-point match at 0-0, field 7 at 0,
-//     the ceiling as stored (see blunderDBOnePointEncoding). Such an XGID only
-//     echoes the stored [0, 0], a genuine DMP included, and proves nothing.
-//     Before #338 that encoder wrote a match length of 0, and since #411 a
-//     2-point match at 1-1: neither states a 1-point match;
+//   - the XGID states a 1-point match in field 8, which is the Crawford game
+//     whatever field 7 says (DecodeXGID reads it at [1, 1]);
+//   - the XGID is not the one an older blunderDB encoder wrote for this very
+//     row (blunderDBOnePointEncoding), which only echoes the stored [0, 0];
 //   - the XGID describes THIS position once corrected to [1, 1], compared
 //     through the Zobrist hash, as for the post-Crawford half.
 func sourceXGIDSaysOnePointMatch(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64) (bool, error) {
@@ -275,10 +246,10 @@ func sourceXGIDSaysOnePointMatch(ctx context.Context, db Execer, scope string, p
 	return sourceDescribes(source, pos, domain.PostCrawford, domain.Crawford), nil
 }
 
-// blunderDBOnePointEncoding is the XGID blunderDB's encoders wrote for a stored
-// [0, 0] between #338 and #411: domain.EncodeXGID's string — pinned to the
-// GUI's generateXGID by testdata/xgid_corpus.json — with the 2-point match at
-// 1-1 it writes today put back to the 1-point match at 0-0 it wrote then.
+// blunderDBOnePointEncoding is the XGID an older blunderDB encoder wrote for a
+// stored [0, 0]: domain.EncodeXGID's string (pinned to generateXGID by
+// testdata/xgid_corpus.json) with today's 2-point match at 1-1 put back to the
+// 1-point match at 0-0 it wrote then.
 func blunderDBOnePointEncoding(pos *domain.Position) string {
 	fields := strings.Split(domain.EncodeXGID(pos), ":")
 	if len(fields) != 10 {
@@ -453,12 +424,9 @@ func gamesOfPositions(ctx context.Context, db Execer, scope string, positionIDs 
 // Crawford `1` into the post-Crawford `0`, or back — and rehashes it,
 // reporting whether anything changed.
 //
-// The rehash asks the dedup question first: a position already stored with the
-// corrected score is the row to keep, and this one is merged into it — that is
-// the whole reason this is not an UPDATE and be done with it. When no such row
-// exists the id is kept and the row rewritten in place, which is the same final
-// state a re-save would reach without moving a single analysis, comment, card
-// or move to a new id.
+// Not a plain UPDATE: a position already stored with the corrected score is
+// kept and this one merged into it. Otherwise the row is rewritten in place,
+// keeping its id and everything attached.
 func rehashSentinel(ctx context.Context, db Execer, scope string, positions storage.PositionStore, id int64, from, to int) (bool, error) {
 	pos, err := positions.Load(ctx, scope, id)
 	if err != nil {
@@ -506,22 +474,18 @@ func rehashSentinel(ctx context.Context, db Execer, scope string, positions stor
 //     already in, where the duplicate membership goes with dupID;
 //   - Anki cards follow it, and so does the key that names the position inside
 //     its deck (ADR-0042: a position card's key is its position id as text).
-//     In a deck keepID already has a card in, dupID's card goes, but its
-//     review journal is handed to keepID's card first — the reviews happened,
-//     and the journal is what the retention figures are read from;
+//     In a deck keepID already has a card in, dupID's card goes, its review
+//     journal handed to keepID's card first (retention figures read it);
 //   - the review journal follows it, key included;
 //   - an analysis follows only when keepID has none (there is one per
 //     position, and the held row's own wins);
 //   - the sticky marks (individually_imported, flagged — ADR-0001, ADR-0006)
 //     are raised on keepID when dupID carried them, and never lowered;
-//   - the trash entries that name dupID by id — a deleted comment, a deleted
-//     collection's member list — are rewritten to name keepID, so restoring
-//     them later lands on the survivor instead of on a row that no longer
-//     exists.
+//   - trash entries naming dupID by id are rewritten to name keepID, so a
+//     restore lands on the survivor.
 //
-// Written with an explicit DELETE of the conflicting rows rather than SQLite's
-// `UPDATE OR IGNORE`, which PostgreSQL has no equivalent of: the final state is
-// the same, and the statement is one both backends run.
+// Conflicting rows are DELETEd explicitly rather than via SQLite's
+// `UPDATE OR IGNORE`, which PostgreSQL lacks.
 func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dupID int64) error {
 	fail := func(err error) error {
 		return fmt.Errorf("merging position %d into %d: %w", dupID, keepID, err)
@@ -621,9 +585,8 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 // repointTrash rewrites the trash entries that name dupID by id so they name
 // keepID. Two kinds do: a deleted comment (restored onto its position id) and a
 // deleted collection (restored with its member ids). A deleted POSITION names
-// no id worth rewriting — it is restored by re-Saving its board, which the
-// Zobrist dedup already sends to the survivor. The trash holds thirty days at
-// most, so reading its two kinds whole is cheap.
+// no id worth rewriting: re-Saving its board dedups onto the survivor. The
+// trash holds thirty days at most, so reading its two kinds whole is cheap.
 func repointTrash(ctx context.Context, tx Execer, scope string, keepID, dupID int64) error {
 	tenant, targs := tx.TenantFilter("", scope)
 	rows, err := tx.Query(ctx,

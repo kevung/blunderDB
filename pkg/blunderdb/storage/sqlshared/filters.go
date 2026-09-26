@@ -16,10 +16,9 @@ import (
 //
 // The pins (storage.Filter.Pinned) are not a column of filter_library: they
 // are one session_state row of the scope, key filterPinsKey, holding the
-// pinned ids as a JSON array. A pin is a reading habit of the scope, like the
-// open views next to it, and keeping it there spared a schema change on three
-// backends for one boolean. Deleting a filter drops its id from the row in the
-// same transaction; Session().Clear leaves the row alone.
+// pinned ids as a JSON array: a reading habit of the scope, like the open
+// views. Deleting a filter drops its id from the row in the same transaction;
+// Session().Clear leaves the row alone.
 type FilterStore struct{ DB Execer }
 
 // filterPinsKey is the session_state key of the pinned filter ids.

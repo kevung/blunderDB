@@ -15,10 +15,8 @@ import (
 // here verbatim — recomputing both sides from a seed would establish nothing if
 // the two implementations had drifted apart.
 //
-// The tolerance is gammonNet's own published criterion, 1e-6. The often-quoted
-// 4.77e-07 is the worst deviation it MEASURED across seven platforms, not the
-// threshold it set; using a measurement as a threshold would make the gate fail
-// on a machine that is merely different rather than wrong.
+// The tolerance is gammonNet's published criterion, 1e-6 — not the 4.77e-07
+// it measured across platforms, which would fail a machine merely different.
 const parityTolerance = 1e-6
 
 // referenceMagic is 'GNRF' little-endian.

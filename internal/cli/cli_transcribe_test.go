@@ -10,9 +10,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// The recipe of T3.4. Two properties and nothing else: --check says what the
-// replay found and NEVER refuses the file for it (ADR-0044), and --render
-// writes a .mat that replays back into the same transcription.
+// --check reports what the replay found and never refuses the file for it
+// (ADR-0044); --render writes a .mat that replays into the same transcription.
 
 // illegalMat is a two-move .mat whose second play moves a checker off a point
 // its owner does not hold — the injected illegal play. The rest is a plain

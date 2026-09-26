@@ -1,18 +1,8 @@
-// Mouse handling of the board, extracted from Board.svelte: hit-testing of
-// the drawn scene (checkers, cube, dice, player rectangles, scores) and the
-// position edits each click performs in EDIT and EVAL mode, plus the
-// double-click reset and the right-click menu gate.
-//
-// attachBoardInteractions(canvas, deps) wires the DOM listeners and returns
-// the function that removes them. It reads nothing global: the current mode,
-// drawing size, board config, cube box and stores all come through `deps`,
-// so the whole flow runs in jsdom against plain writable stores.
-//
-// Every hit test starts from boardMetrics() and the same layout helpers the
-// scene is drawn with (boardScene.js), then normalises the click through
-// boardMouseToDrawing(): the canvas may be CSS-scaled (interface zoom, side
-// layout) and raw client pixels drift — at 90 % scale a click on point 1
-// used to land on point 2.
+// Mouse handling of the board: hit-testing of the drawn scene and the position edits each click
+// performs in EDIT and EVAL mode, plus double-click reset and the right-click menu gate.
+// Everything comes through `deps` (no globals), so the flow runs in jsdom on plain stores.
+// Every hit test goes through boardMouseToDrawing(): the canvas may be CSS-scaled (interface
+// zoom, side layout) and raw client pixels drift.
 
 import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
@@ -20,10 +10,8 @@ import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
 import { OFF, playHop, selectSource } from '../services/quizPlay.js';
 import { canPlayFree, dragStep, freeClick, hasMoverChecker } from '../services/transcriptionPlay.js';
 
-// A second click on the same Except point within this delay blocks it.
-// Detected by hand because native 'dblclick' is unreliable here: each click
-// redraws (recreates) the two.js shapes, so the two clicks land on different
-// DOM nodes.
+// A second click on the same Except point within this delay blocks it. Detected by hand: each
+// click recreates the two.js shapes, so native 'dblclick' sees two different DOM nodes.
 const EXCEPT_DOUBLE_CLICK_MS = 450;
 
 const MAX_CUBE_VALUE = 6; // log2 exponent: 64
@@ -38,11 +26,8 @@ function hasRoll(dice) {
 }
 
 /**
- * Le clic tombe-t-il sur le plateau de sortie du joueur `player` ?
- *
- * C'est la destination d'un pion sorti, et la seule qui ne soit pas un point :
- * la boîte est celle du « (n OFF) » que drawBearoff dessine, élargie de moitié
- * pour qu'on n'ait pas à viser le texte au pixel.
+ * Le clic tombe-t-il sur le plateau de sortie de `player` ? Boîte du « (n OFF) » de drawBearoff,
+ * élargie de moitié pour ne pas viser le texte au pixel.
  *
  * @param {number} x
  * @param {number} y
@@ -59,10 +44,8 @@ export function hitTestBearoffTray(x, y, geom, cfg, playerOnRoll, player) {
 }
 
 /**
- * Which side control (if any) a drawing-space point falls on:
- *   { die: 0|1|null, playerRect: 0|1|null, score: 0|1|null }
- * Player 0 is the bottom player, player 1 the top one. A die wins over the
- * rectangle it overlaps; a score box is carved out of its rectangle.
+ * Which side control a drawing-space point falls on: { die, playerRect, score }, each 0|1|null
+ * (0 = bottom player). A die wins over its rectangle; a score box is carved out of it.
  */
 export function hitTestSideControls(x, y, geom, cfg, playerOnRoll) {
     const side = sideLayout(geom, cfg, playerOnRoll);
@@ -102,11 +85,9 @@ export function isOutsideBoard(x, y, geom) {
 }
 
 /**
- * Put `count` checkers of the clicking button's colour on `point` (left →
- * colour 0, right → colour 1; the bars are colour-fixed). Clicking the fifth
- * checker of a stack of five or more adds one instead. A blocked Except point
- * is unblocked. Bearoff counts follow. `isSearchStructure` lifts the
- * 15-per-colour cap: a pattern may ask for e.g. 3 checkers on each of 1-6.
+ * Put `count` checkers of the clicking button's colour on `point` (left → colour 0, right →
+ * colour 1; bars are colour-fixed). Clicking the fifth checker of a stack of five or more adds
+ * one. A blocked Except point is unblocked. `isSearchStructure` lifts the 15-per-colour cap.
  */
 export function applyCheckerEdit(pos, point, count, button, isSearchStructure) {
     if (pos.board.points[point]?.color === EXCLUDE_EMPTY) {
@@ -128,20 +109,17 @@ export function applyCheckerEdit(pos, point, count, button, isSearchStructure) {
     });
     pos.board.points = pos.board.points.map((p) => (p.checkers === 0 ? { ...p, color: -1 } : p));
 
-    // A search structure can exceed 15 checkers per colour; clamp bearoff at 0
-    // (it is irrelevant to structure search anyway).
+    // A search structure may exceed 15 per colour: clamp bearoff at 0 (irrelevant there).
     const onBoard = [0, 1].map((c) => pos.board.points.reduce((acc, p) => acc + (p.color === c ? p.checkers : 0), 0));
     pos.board.bearoff = [Math.max(0, 15 - onBoard[0]), Math.max(0, 15 - onBoard[1])];
     return pos;
 }
 
 /**
- * Cube click. EVAL: only the owner matters (money equities are in units of
- * the current cube), so clicks cycle centred → bottom owns → top owns →
- * centred (right-click backwards) and pin the value. Offered cube (take/pass
- * search): edit the value while keeping it centred, at least a double. EDIT:
- * a centred cube is taken by the clicking side; the owner's own button
- * raises it, the other lowers it, back to centred at 1.
+ * Cube click. EVAL: only the owner matters (money equities are in cube units), so clicks cycle
+ * centred → bottom → top owns (right-click backwards). Offered cube (take/pass search): edit the
+ * value, centred, at least a double. EDIT: a centred cube is taken by the clicking side; the
+ * owner's button raises it, the other lowers it, back to centred at 1.
  */
 export function applyCubeClick(pos, button, { evalMode = false, offeredTakePass = false } = {}) {
     const up = (v) => Math.min(v + 1, MAX_CUBE_VALUE);
@@ -175,12 +153,9 @@ export function applyCubeClick(pos, button, { evalMode = false, offeredTakePass 
 }
 
 /**
- * Score click: left lowers the away count (down to money, -1), right raises
- * it (up to 99). Money is symmetric — reaching -1 on one side sets the
- * other, and leaving money by editing one side alone copies the score to
- * the other: an away score with no opponent away score is not a valid
- * match state (the Eval panel's own money default is [-1, -1], the only state where a
- * lone -1 is meaningful).
+ * Score click: left lowers the away count (down to money, -1), right raises it (up to 99).
+ * Money is symmetric: an away score facing a lone -1 is not a valid match state, so reaching or
+ * leaving money on one side copies it to the other.
  */
 export function applyScoreClick(pos, player, button) {
     const other = 1 - player;
@@ -192,10 +167,8 @@ export function applyScoreClick(pos, player, button) {
 }
 
 /**
- * Roll a die: left click up (6 wraps to 1), right click down (1 wraps to 6).
- * A cleared die (0) is a valid starting point — a board asking a cube
- * question has no dice — so stepping down from it wraps to 6 rather than
- * walking into negatives, which read as "no dice" forever after.
+ * Roll a die: left up (6 → 1), right down (1 → 6). A cleared die (0) steps down to 6, not into
+ * negatives that would read as "no dice" forever.
  */
 function stepDie(value, button) {
     const v = value >= 1 && value <= 6 ? value : 0;
@@ -249,12 +222,8 @@ export function attachBoardInteractions(canvas, deps) {
         stores.position.update((pos) => applyCubeClick(pos, event.button, { evalMode: mode === 'EVAL', offeredTakePass: get(stores.offeredCube) && pos.decision_type === 1 }));
     }
 
-    // EVAL mode shares this whole flow with EDIT mode: the Eval panel's
-    // evaluation volet needs real dice to show candidate moves (no dice
-    // means a cube verdict instead, EvalPanel.svelte) — a player's rectangle
-    // clearing the dice to show the cube decision, then a die click
-    // restoring/bumping them for a move decision, is exactly EDIT mode's
-    // own toggle.
+    // EVAL shares this flow with EDIT: the Eval panel needs real dice for candidate moves and
+    // none for a cube verdict, which is exactly EDIT's rectangle/die toggle.
     function sideControlsClick(event, x, y) {
         const hit = hitTestSideControls(x, y, metrics(), cfg, get(stores.position).player_on_roll);
         if (hit.die === null && hit.playerRect === null && hit.score === null) return;
@@ -262,22 +231,13 @@ export function attachBoardInteractions(canvas, deps) {
         stores.position.update((pos) => {
             if (hit.die !== null) {
                 pos.decision_type = 0;
-                // Restore the dice the rectangle cleared — but ONLY when they
-                // are actually cleared. With a roll already on the board (a
-                // position loaded, pasted into the Eval panel, or just built
-                // by hand) a die click steps THAT die; reinstating an older
-                // roll used to overwrite both dice with a stale [0, 0], and
-                // the click then left [n, 0] — half a roll, which every
-                // reader of the position (EvalPanel's hasDiceSet, the engine's
-                // own hasDice) takes for "no dice", i.e. a cube decision on a
-                // board plainly asking a checker question.
+                // Restore the cleared dice ONLY when they are cleared: with a roll on the board a
+                // die click steps that die. Reinstating a stale [0, 0] would leave [n, 0], a half
+                // roll every reader takes for "no dice", i.e. a cube decision.
                 const base = hasRoll(pos.dice) ? pos.dice : deps.getPreviousDice();
                 pos.dice = [base[0], base[1]]; // never alias previousDice
                 pos.dice[hit.die] = stepDie(pos.dice[hit.die], event.button);
-                // The two dice are set together or not at all (CONTEXT.md:
-                // dice set → checker decision, no dice → cube decision).
-                // Stepping one die of a cleared pair means "make this a
-                // checker decision", so the other one comes along.
+                // Both dice are set together or not at all (CONTEXT.md: dice → checker decision).
                 const other = 1 - hit.die;
                 if (pos.dice[other] < 1 || pos.dice[other] > 6) pos.dice[other] = 1;
             } else if (hit.playerRect !== null) {
@@ -293,26 +253,21 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
-     * Le point (ou le plateau de sortie) visé par un clic, pendant une
-     * question de quiz. Rend null hors du damier.
+     * Le point (ou le plateau de sortie) visé pendant une question de quiz, null hors du damier.
      * @param {number} x
      * @param {number} y
      */
     function quizTargetAt(x, y) {
-        // Le plateau de sortie visé est celui du camp au trait, en bas ou en
-        // haut selon l'affichage : il n'est en bas que là où le camp au trait
-        // descend. En transcription le joueur 1 reste en bas quel que soit le
-        // trait, et le joueur 2 sort donc ses pions par le haut.
+        // Le plateau de sortie du camp au trait, en bas ou en haut selon l'affichage (en
+        // transcription le joueur 1 reste en bas, le joueur 2 sort donc par le haut).
         const bearoffSide = deps.quizBearoffSide?.() ?? 0;
         if (hitTestBearoffTray(x, y, metrics(), cfg, get(stores.position).player_on_roll, bearoffSide)) return OFF;
         return pointAt(x, y);
     }
 
     /**
-     * Le point du MODÈLE visé par un clic, ou null hors du damier. Une position
-     * dont le joueur 2 est au trait est montrée retournée (#294) : le point
-     * cliqué n'est alors pas le point du modèle, et la conversion est celle de
-     * mirrorPosition — 25 - p, qui échange aussi les deux barres.
+     * Le point du MODÈLE visé, null hors du damier. Joueur 2 au trait, le plateau est montré
+     * retourné : conversion de mirrorPosition, 25 - p, qui échange aussi les barres.
      * @param {number} x
      * @param {number} y
      */
@@ -323,27 +278,13 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
-     * Le clic sur le VIDEAU pendant une transcription (T2.5) : le camp au trait
-     * propose un double, exactement comme la touche `d`.
-     *
-     * Le plateau ne fait que POSER la demande dans un magasin que le panneau
-     * lit (`transcriptionCubeRequestStore`) : c'est lui qui tient le brouillon
-     * et l'aller-retour Wails, et lui seul sait ce que le document attend. Le
-     * plateau ne juge donc pas davantage que la touche — un double sans le
-     * videau, en partie Crawford ou au plafond reste transcriptible, et
-     * l'Incohérence est marquée (ADR-0044).
-     *
-     * Ce que le clic ne fait PAS : répondre. Devant une offre, la cible unique
-     * qu'est le videau porterait celle des deux réponses qu'on aurait choisie —
-     * la prise, la passe restant sans cible — et la même cible créerait alors
-     * deux Actions différentes selon un état que l'œil, occupé par la vidéo,
-     * ne relit pas. Les deux réponses sont symétriques et vivent ensemble dans
-     * la rangée `[T] [P]`, un clic chacune : le budget d'ux.md §4.2 est le même
-     * (deux clics), et un clic tombé à contretemps n'y écrit rien.
-     *
-     * Rend `true` quand le geste est pris, sur le modèle de `quizClick` — et il
-     * est essayé le PREMIER, parce qu'un coup joué au plateau arme `quizPlay`,
-     * qui avale sinon tous les clics du damier.
+     * Clic sur le videau en transcription : le camp au trait propose un double, comme la touche
+     * `d`. Le plateau pose seulement la demande (`transcriptionCubeRequestStore`) ; le panneau,
+     * qui tient le brouillon, décide, et ne refuse rien (Incohérence marquée, ADR-0044).
+     * Le clic ne RÉPOND jamais : une cible unique porterait une seule des deux réponses selon un
+     * état que l'œil ne relit pas ; prise et passe vivent dans la rangée `[T] [P]`.
+     * Rend `true` quand le geste est pris. Essayé en PREMIER : un coup joué arme `quizPlay`, qui
+     * avale sinon tous les clics du damier.
      * @param {MouseEvent} event
      * @param {number} x
      * @param {number} y
@@ -360,12 +301,8 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
-     * Joue le clic sur le coup en cours, s'il y en a un. Rend `true` quand le
-     * quiz a pris la main — l'édition ne doit alors pas voir ce clic.
-     *
-     * Un clic qu'aucun coup légal n'autorise ne fait RIEN : ni pion déplacé,
-     * ni message. Le plateau n'a pas à expliquer pourquoi un pion ne peut pas
-     * aller là ; il le montre en n'offrant que ce qui est jouable.
+     * Joue le clic sur le coup en cours. Rend `true` quand le quiz a pris la main (l'édition ne
+     * doit pas voir ce clic). Un clic qu'aucun coup légal n'autorise ne fait rien, sans message.
      * @param {MouseEvent} event
      * @param {number} x
      * @param {number} y
@@ -377,26 +314,19 @@ export function attachBoardInteractions(canvas, deps) {
         const target = quizTargetAt(x, y);
         if (target === null) return true;
         stores.quizPlay.update((/** @type {any} */ s) => {
-            // Le coup d'une transcription SORTI DES RÈGLES (ADR-0052) : aucun
-            // coup légal ne le contraint plus, et c'est la seule différence — le
-            // geste, lui, est le même, source puis destination.
+            // Coup SORTI DES RÈGLES (ADR-0052) : même geste, sans coup légal pour le contraindre.
             if (s.free) return freeClick(s, target);
             if (s.selected === null) return selectSource(s, target);
             const played = playHop(s, s.selected, target);
-            // Le clic qui ne joue rien re-choisit une source : on change d'avis
-            // sur le pion à bouger sans avoir à déselectionner d'abord.
+            // Un clic qui ne joue rien re-choisit une source, sans déselection préalable.
             return played === s ? selectSource(s, target) : played;
         });
-        // Une pression qui vient de CHOISIR une source ouvre un glissé : si le
-        // bouton se relâche ailleurs, le pas est joué et le pion aura suivi la
-        // souris en un seul geste au lieu de deux clics (ux.md §4.1, un P B B
-        // par pas). Deux clics restent possibles et donnent le même état.
+        // Une pression qui vient de choisir une source ouvre un glissé : relâché ailleurs, le pas
+        // est joué en un geste (ux.md §4.1). Deux clics donnent le même état.
         const after = get(stores.quizPlay);
         boardPress = state.selected === null && after?.selected === target ? target : null;
-        // Le jet connu, une pression sur un pion du camp au trait ouvre AUSSI
-        // un glissé quand aucun coup légal n'en part : lâché ailleurs, le pion
-        // y est posé et le coup sort des règles (ADR-0052). La pression seule
-        // ne choisit rien — un clic sur ce pion ne fait toujours rien.
+        // Jet connu : une pression sur un pion du camp au trait sans coup légal ouvre aussi un
+        // glissé, qui pose le pion hors règles (ADR-0052). La pression seule ne choisit rien.
         if (boardPress === null && after && canPlayFree(after) && after.steps.length === state.steps.length && hasMoverChecker(after, target)) {
             boardPress = target;
         }
@@ -404,12 +334,8 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     /**
-     * La fin d'un glissé : le pion lâché sur `to`. Rend `true` quand le geste
-     * était bien un glissé du coup en cours — l'édition ne doit alors pas voir
-     * ce relâchement.
-     *
-     * Un pas légal est joué ; un autre, le jet connu, pose le pion là où il est
-     * lâché (`dragStep`, ADR-0052). Sans jet saisi il ne fait rien.
+     * Fin d'un glissé sur `to`. Rend `true` si c'était un glissé du coup en cours. Un pas légal
+     * est joué ; sinon, jet connu, le pion est posé où il est lâché (`dragStep`, ADR-0052).
      * @param {MouseEvent} event
      */
     function boardPlayDrop(event) {
@@ -425,7 +351,6 @@ export function attachBoardInteractions(canvas, deps) {
 
     function onMouseDown(event) {
         event.preventDefault(); // no text or element selection
-        // Blur any focused text field when clicking the board
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
         }
@@ -449,14 +374,13 @@ export function attachBoardInteractions(canvas, deps) {
 
     function onMouseUp(event) {
         event.preventDefault();
-        // Avant la garde d'édition : le glissé du coup joué au plateau vit dans
-        // un mode qui n'édite pas la position (TRANSCRIBE, et le quiz).
+        // Avant la garde d'édition : le coup joué au plateau vit dans des modes qui n'éditent pas
+        // la position (TRANSCRIBE, quiz).
         if (boardPlayDrop(event)) return;
         if (!editable() || !startMousePos) return;
         const end = { ...toDrawing(event), button: event.button };
 
-        // In the Except structure, a quick second click on the same point
-        // blocks it (must be empty).
+        // Except structure: a quick second click on the same (empty) point blocks it.
         if (deps.getMode() === 'EDIT' && get(stores.structureMode) === 'exclude') {
             const { checkerPoint } = checkerAt(end.x, end.y);
             if (checkerPoint >= 1 && checkerPoint <= 24) {
@@ -470,8 +394,7 @@ export function attachBoardInteractions(canvas, deps) {
                     });
                     return;
                 }
-                // A click on a blocked point unblocks it (applyCheckerEdit); don't
-                // let it seed a double-click that would immediately re-block.
+                // A click that unblocks (applyCheckerEdit) must not seed a re-blocking double-click.
                 lastExceptClick = isMarker ? null : { point: checkerPoint, time: now };
             } else {
                 lastExceptClick = null;
@@ -481,8 +404,7 @@ export function attachBoardInteractions(canvas, deps) {
         fillCheckersBetween(startMousePos, end);
     }
 
-    // A press-and-release across several points fills them all with the
-    // taller of the two clicked counts (a drag along the home board).
+    // A press-and-release across several points fills them with the taller clicked count.
     function fillCheckersBetween(startPos, endPos) {
         const start = checkerAt(startPos.x, startPos.y);
         const end = checkerAt(endPos.x, endPos.y);
@@ -499,9 +421,7 @@ export function attachBoardInteractions(canvas, deps) {
     function onDoubleClick(event) {
         const { x, y } = toDrawing(event);
         if (stores.quizPlay && get(stores.quizPlay)) {
-            // Même geste qu'ailleurs — double-clic hors damier = remise à
-            // zéro — mais ce qui est remis est le coup, pas la position : la
-            // question, elle, ne change pas parce qu'on s'est trompé de pion.
+            // Double-clic hors damier : remet le coup à zéro, pas la position.
             if (isOutsideBoard(x, y, metrics())) deps.resetQuizPlay?.();
             return;
         }
@@ -509,10 +429,8 @@ export function attachBoardInteractions(canvas, deps) {
         if (isOutsideBoard(x, y, metrics())) deps.reset();
     }
 
-    // Right-clicking the board opens actions on the position it shows, but
-    // ONLY in the modes where the right button is otherwise idle. In EDIT
-    // and EVAL the right button already means "place the other colour's
-    // checker", so the menu stays out of their way.
+    // Right-click menu only where the right button is otherwise idle: in EDIT and EVAL it
+    // places the other colour's checker.
     function onContextMenu(event) {
         event.preventDefault(); // no native menu, in every mode
         if (editable()) return;

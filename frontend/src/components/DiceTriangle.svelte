@@ -1,57 +1,20 @@
 <!--
-  DiceTriangle — les 21 jets distincts, une case chacun, et la rangée des six
-  dés de l'ouverture (T2.1, ux.md §4.1).
+  DiceTriangle — les 21 jets distincts, et la rangée des six dés de
+  l'ouverture (ux.md §4.1). Une cible pour qui transcrit la souris en main, pas
+  un substitut du clavier (deux chiffres 0,56 s, un clic ~1,2 s).
 
-  C'est une CIBLE, pas un clavier de remplacement. Deux chiffres coûtent 2 K =
-  0,56 s ; un clic coûte H + P + B + B, mesuré de 1,15 à 1,21 s sur une
-  fenêtre de 1024 px (voir ci-dessous). La souris ne rattrapera jamais le clavier sur les
-  dés, et le triangle ne cherche pas à le faire : il donne une entrée à qui
-  transcrit d'une main, la souris posée, et laisse le clavier intact à côté.
-
-  Pourquoi 21 cases et non la grille de 36. Un jet est une PAIRE NON ORDONNÉE :
-  3-1 et 1-3 sont le même jet, et une grille complète offre deux cibles pour la
-  même réponse — 36 cibles à balayer, dont quinze doublons, avec l'hésitation
-  que fabrique tout choix sans différence. Le triangle n'en montre qu'une, les
-  doubles sur la diagonale.
-
-  Taille de case, MESURÉE le 2026-09-07 sur un prototype jetable posé dans une
-  fenêtre de 1024 px (trois variantes, Playwright, loi de Fitts de ux.md §1,
-  b = 0,15 s/bit, D pris du centre du plateau au centre de la case) :
-
-    case 28 px fixes, bloc de 178 px : P de 0,55 à 0,61 s → clic 1,15 à 1,21 s
-    case élastique (37,6 px), bloc de 236 px : P 0,50 à 0,58 s → clic 1,10 à 1,18 s
-    grille de 36 à 20 px, bloc de 130 px : P 0,57 à 0,66 s → clic 1,17 à 1,26 s
-
-  La case de 28 px est retenue. L'élastique gagne 0,03 s — sous la résolution du
-  modèle — pour 60 px de largeur en plus et une cible dont la taille change avec
-  le panneau, ce qui défait la position apprise, seul vrai gain d'une cible
-  répétée deux cents fois dans un match. La prédiction d'ux.md §4.1 (1,14 s)
-  était optimiste de 0,07 s : la distance réelle du plateau au triangle dépasse
-  les 300 px supposés. Le classement, lui, tient : le triangle bat la grille de
-  36 de 0,05 s ET de quinze cibles à lire.
-
-  L'ouverture ne prend PAS le triangle. Elle demande un dé par camp, deux
-  réponses séparées, et lire une paire dans une case pour la partager entre deux
-  joueurs donnerait à la case (3,1) un second sens — « J1 fait 3, J2 fait 1 » —
-  quand elle en a déjà un, « le jet 3-1 ». Une même cible à deux sens est
-  exactement l'ambiguïté que le triangle existe pour supprimer. L'ouverture
-  reçoit donc une rangée de six dés (`single`), un clic = un dé = une touche.
+  21 cases et non 36 : un jet est une paire non ordonnée, et 3-1/1-3 en double
+  cible ne ferait que de l'hésitation. Case fixe de 28 px (mesuré à 1024 px,
+  Fitts, ux.md §1) : l'élastique ne gagnait que 0,03 s et déplaçait la position
+  apprise. L'ouverture a sa rangée de six (`single`), un clic = un dé : lire
+  (3,1) comme « J1 fait 3, J2 fait 1 » donnerait deux sens à une case.
 -->
 <script>
     import { t } from '../i18n';
 
-    // `single` : la rangée des six dés (l'ouverture, un dé par camp).
-    // Sinon le triangle des 21 jets.
-    //
-    // `onPick(high, low)` rend le jet, dé fort d'abord — l'ordre de la
-    // notation, celui que porte l'étiquette de la case.
-    // `onDie(die)` rend le dé unique de la rangée.
-    //
-    // `allowed` : les seules cases encore possibles, en clés « 31 », dé fort
-    // d'abord. `null` veut dire « toutes », l'état ordinaire. Le coup joué au
-    // plateau (T2.3) s'en sert pour montrer les jets que les pas déjà joués
-    // laissent vivants, et pour n'offrir que ceux-là quand plusieurs restent :
-    // une case éteinte enregistrerait un jet que les pions démentent.
+    // `single` : la rangée des six dés, sinon le triangle. `onPick(high, low)`,
+    // dé fort d'abord ; `onDie(die)` pour la rangée. `allowed` : clés « 31 »
+    // encore possibles (celles que les pas joués laissent), `null` = toutes.
     let { single = false, allowed = null, onPick = () => {}, onDie = () => {} } = $props();
 
     const enabled = (high, low) => allowed === null || allowed.has(`${high}${low}`);

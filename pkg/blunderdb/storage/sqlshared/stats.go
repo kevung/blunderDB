@@ -11,9 +11,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// StatsStore implements storage.StatsStore. The SQL is the aggregate logic
-// that historically lived on the Database wrapper (database/db_stats.go),
-// written once for both backends with the dialect differences woven in:
+// StatsStore implements storage.StatsStore, written once for both backends
+// with the dialect differences woven in:
 //   - tenant scoping: every query is confined to the scope's tenant through
 //     Dialect.TenantFilter on the position root (joins are by global primary
 //     key, so scoping the root confines the whole join graph) — a no-op
@@ -33,12 +32,10 @@ type StatsStore struct{ DB Execer }
 // shared with the search store's move-error filter.
 const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
 
-// The two thresholds this file draws its lines at — an Error, and the Blunder
-// an Error becomes — are no longer constants: they are the library's own
-// settings (storage.LibrarySettings, ADR-0046), read once per entry point and
-// carried down. A library that never set them reads 50 and 100, which is what
-// the constants said. The comparison stays inclusive everywhere — a cost of
-// exactly the threshold is on the wrong side of the line.
+// The Error and Blunder thresholds are the library's settings
+// (storage.LibrarySettings, ADR-0046, defaults 50 and 100), read once per
+// entry point and carried down. Comparisons are inclusive: a cost of exactly
+// the threshold is on the wrong side of the line.
 
 // countedExpr renders the SQL predicate selecting the decisions that count
 // toward PR and decision tallies (XG semantics):
@@ -46,19 +43,15 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 //   - Cube: a position is counted when either (a) it is a "close" decision per
 //     gnuBG isCloseCubedecision (a.is_close_cube is true) with the exclusion
 //     below, OR (b) the player took an active cube action other than NoDouble
-//     (Double, Take, Pass). The OR ensures premature doublings — wrong doubles
-//     with a large equity gap that are technically "not close" — are still
-//     counted.
+//     (Double, Take, Pass), so premature doubles "not close" still count.
 //
-// Exclusion for close NoDoubles: XG's stored EMG equities at extreme match
-// scores (mover's away ≤ 2 with centered cube) are amplified by a factor of
-// ~3–4× beyond the normal [-1, 1] range, so gnuBG's 0.16 threshold falsely
-// marks these positions as "close". We exclude correctly-played (cube_error=0)
-// NoDouble positions where the cube is still centered (cube_value=0) and the
-// mover needs ≤ 2 points to win, mirroring XG's actual decision counting.
+// Close NoDoubles are excluded when correctly played (cube_error=0), cube
+// centred (cube_value=0) and mover's away ≤ 2: XG's EMG equities there are
+// amplified ~3–4×, so gnuBG's 0.16 threshold falsely marks them close. This
+// mirrors XG's counting.
 //
-// The two flags are the only dialect-dependent part (INTEGER 0/1 on SQLite,
-// BOOLEAN on PostgreSQL), hence a function of the dialect rather than a const.
+// A function of the dialect because the two flags are INTEGER 0/1 on SQLite,
+// BOOLEAN on PostgreSQL.
 func countedExpr(d Dialect) string {
 	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + ") OR (p.decision_type = 1 AND (COALESCE(mv.cube_action, '') NOT IN ('', 'No Double', 'NoDouble') OR (" + d.Bool("a.is_close_cube", true) + " AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
 }
@@ -246,8 +239,6 @@ func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orde
 	return whereAdd, orderLimit, args
 }
 
-// scanPositionIDs scans a single-int64-column result set into a slice, closing
-// rows and propagating any iteration error.
 // scanCubeDirectionIDs keeps the ids whose (ruling, action) pair falls in cell.
 // An empty cell name keeps nothing: a drill-down that names no cell is a caller
 // bug, and returning "everything" would look like a working feature.
@@ -280,9 +271,6 @@ func scanPositionIDs(rows Rows) ([]int64, error) {
 	return ids, rows.Err()
 }
 
-// Compute aggregates performance metrics for the given filter, scoped to the
-// tenant.
-
 // PositionIDsBySelection resolves a user selection made in the Stats panel into
 // a deduplicated list of position IDs, scoped to the tenant. The StatsFilter is
 // always applied so the IDs correspond exactly to what is displayed in the
@@ -290,11 +278,8 @@ func scanPositionIDs(rows Rows) ([]int64, error) {
 func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, filter storage.StatsFilter, sel storage.SelectionSpec) ([]int64, error) {
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
 
-	// A cube-direction cell cannot be expressed in SQL: which cell a decision
-	// belongs to depends on reading two free-form labels, and that reading is
-	// stated once, in Go (storage.ClassifyCubeDirection). So the rows come back
-	// with their labels and are filtered here — the scope is one player's cube
-	// decisions, not the whole database.
+	// A cube-direction cell is decided by reading two free-form labels, stated
+	// once in Go (storage.ClassifyCubeDirection), so it is filtered here.
 	if sel.Kind == "cube_direction" {
 		rows, err := s.DB.Query(ctx,
 			"SELECT DISTINCT p.id, COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,'') "+
@@ -743,10 +728,8 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 	return out, nil
 }
 
-// playerTableFilter strips the parts of the filter the players table ignores by
-// design: the player selection (the table is about all of them) and the
-// decision type (the table splits checker from cube in its own columns, so a
-// global filter would only make them inconsistent with one another).
+// playerTableFilter strips the player selection and decision type, which the
+// players table ignores by design (see storage.StatsStore.PlayerTable).
 func playerTableFilter(filter storage.StatsFilter) storage.StatsFilter {
 	f := filter
 	f.PlayerName = ""

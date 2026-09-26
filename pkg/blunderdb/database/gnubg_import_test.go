@@ -1345,11 +1345,10 @@ func TestImportXGComments(t *testing.T) {
 }
 
 // TestImportMATGameResults holds the winner and points_won stored for every game of a
-// .mat to the score line of the game after it (#361). Two readings of the file used to
-// go wrong there: a "Wins" line standing on its own was credited to whoever acted last
-// — the loser, when he rolled and resigned (test.mat game 2, and the whole of
-// gnubg_roll_then_resign_1p.mat) — and a game ended by a drop was stored as worth 0.
-// The two gnubg_* fixtures were written by gnubg itself.
+// .mat to the score line of the game after it. A lone "Wins" line must not be
+// credited to whoever acted last (the loser who rolled then resigned: test.mat game 2,
+// gnubg_roll_then_resign_1p.mat), and a game ended by a drop is not worth 0. The
+// gnubg_* fixtures were written by gnubg itself.
 func TestImportMATGameResults(t *testing.T) {
 	t.Parallel()
 	// The last game has no score line after it: its winner is the column of its

@@ -1,42 +1,18 @@
 /**
- * transcription-budgets.spec.js — les budgets de gestes d'ux.md §§ 4.1–4.3,
- * comptés sur l'application réelle (T3.5).
+ * Compte, sur l'application réelle (`countGestures`), les gestes des budgets
+ * ux.md §§4.1–4.3 — la friction qu'une machine à touches pure ne voit pas :
+ * focus de panneau, `panelKeyGuard`, dispatcher global, aller-retours. Les
+ * touches elles-mêmes sont déjà testées unitairement
+ * (`transcriptionKeys.turn/.cube/.correction/.mouse.test.js`).
  *
- * ## Ce que ces specs ajoutent à ce qui existe déjà
+ * Le moteur Go est remplacé par le document figé de
+ * `helpers/transcriptionDraft.js` : seul le NOMBRE et la NATURE des gestes
+ * émis est vérifié ici, jamais le contenu du document.
  *
- * La machine à touches est pure et elle est déjà tenue ligne à ligne, au niveau
- * unitaire : `transcriptionKeys.turn.test.js` compte les touches d'un tour de
- * pions, `.cube.test.js` celles du videau (§4.2), `.correction.test.js` celles
- * des sept lignes de §4.3, `.mouse.test.js` le clic du triangle. Rien de tout
- * cela n'est refait ici.
- *
- * Ce que ces tests-là ne peuvent pas voir, et qui est le sujet de ce fichier :
- * entre la touche et le geste il y a une application — un onglet, un panneau
- * qui doit avoir le focus sans qu'on le lui donne, une garde de clavier
- * (`panelKeyGuard`), un dispatcher global qui pourrait prendre la touche
- * d'abord, une liste de candidats qui arrive après un aller-retour. Un budget
- * de trois touches se perd très bien en un clic d'armement que la machine pure
- * ne verra jamais. C'est ce clic-là que ces specs comptent, sur le vrai
- * navigateur, avec `countGestures`.
- *
- * ## Ce qui est faux ici, et assumé
- *
- * Le moteur Go, remplacé par le document figé de `helpers/transcriptionDraft.js`
- * (voir son en-tête : deux faits seulement y sont dérivés, le Cursor et la
- * réponse attendue après un double). Ce que la suite de gestes produit comme
- * document est tenu en Go, Action par Action ; ce qui est tenu ici est
- * COMBIEN de gestes l'utilisateur fait pour l'émettre, et LAQUELLE part.
- *
- * ## Les lignes des tableaux qui ne sont pas ici
- *
- * - §4.1 « coup joué au plateau, dés déduits » : la déduction des dés est
- *   tenue par `transcriptionPlay.test.js`, qui compte les pas. Le damier, lui,
- *   est ici : le rang douze joué au plateau (ADR-0052) vise ses points par les
- *   fonctions mêmes qui le dessinent (`pointAt`, comme training-decision.spec.js),
- *   ce qui ne dépend pas de la taille de la fenêtre.
- * - §4.2 « videau à la souris » : la cible souris du videau est T2.5, en cours
- *   d'écriture au moment où ce fichier est posé. La ligne sera à ajouter ici
- *   quand elle existera ; le reste du tableau est couvert.
+ * Non couvert ici : la déduction des dés (§4.1) est dans
+ * `transcriptionPlay.test.js` ; le rang joué au plateau (ADR-0052) vise ses
+ * points via les fonctions qui le dessinent (`pointAt`), indépendant de la
+ * taille de fenêtre ; la cible souris du videau (§4.2) attend T2.5.
  */
 
 import { test, expect } from '@playwright/test';
@@ -367,14 +343,10 @@ test.describe('ux.md §4.3 — la correction', () => {
     });
 
     // « coup oublié | h×k, i, 3 1 (j…), Entrée, l×k | (2k + 4 + m) K ».
-    //
-    // MESURÉ le 2026-09-07, et le document portait 2k + 3 : une insertion n'est
-    // PAS validée par le déplacement du Cursor. `commitCorrection`
-    // (transcript/apply.go) ne commet qu'une Entry de mode `EntryReplace` — une
-    // correction en place, pas une insertion — et vérification faite sur le
-    // moteur lui-même, `cursor_forward` laisse le document à sept Actions là où
-    // `validate` le porte à huit. La touche qui manquait est Entrée ; ux.md
-    // §4.3 la porte depuis.
+    // Une insertion n'est pas validée par le déplacement du Cursor :
+    // `commitCorrection` (transcript/apply.go) ne commet qu'une Entry
+    // `EntryReplace` (correction en place), jamais une insertion — d'où le
+    // geste Entrée en plus.
     test('un coup oublié coûte 2k + 4 touches, Entrée comprise', async ({ page }) => {
         const k = 3;
         const count = await countGestures(page, async (g) => {

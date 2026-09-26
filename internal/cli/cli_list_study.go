@@ -9,15 +9,9 @@ import (
 	"text/tabwriter"
 )
 
-// listStudy prints, plan of play by plan of play, what was revised over a
-// window and the Performance Rating on either side of it (issue #275, fiche
-// I.19).
-//
-// It prints THREE NUMBERS SIDE BY SIDE and no fourth. There is no "gain"
-// column and no arrow, because nothing here controls anything: the player may
-// have met stronger opponents, changed format, or simply played more races
-// this month. The rapprochement is the reader's, and a column claiming an
-// effect would be a claim these data cannot carry.
+// listStudy prints, per plan of play, what was revised over a window and the
+// Performance Rating on either side of it. Deliberately no "gain" column:
+// nothing is controlled, so an effect is not something these data can claim.
 func (cli *CLI) listStudy(days int, format string) error {
 	rows, err := cli.db.StudyImpact(days)
 	if err != nil {
@@ -74,10 +68,8 @@ func (cli *CLI) listStudy(days int, format string) error {
 	return nil
 }
 
-// prCell renders a PR, or a dash when there are too few decisions behind it to
-// read. The COUNT is still printed beside it — hiding the sample would make
-// the figure unauditable, which is the same rule storage.MinCellDecisions
-// follows.
+// prCell renders a PR, or a dash when too few decisions back it; the count is
+// still printed beside it (same rule as storage.MinCellDecisions).
 func prCell(pr float64, decisions int) string {
 	if decisions < 10 {
 		return "—"

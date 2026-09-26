@@ -1,5 +1,5 @@
 /**
- * training-decision.spec.js — l'exercice Décision, dans l'application réelle (#323).
+ * training-decision.spec.js — l'exercice Décision, dans l'application réelle.
  *
  * Le parcours est celui de l'utilisateur : taper `train decision`, trouver la
  * question dans l'onglet Entraînement, JOUER le coup sur le plateau — deux

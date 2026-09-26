@@ -1,20 +1,9 @@
 const focusableSelector = 'a[href], button:not([disabled]), textarea, input:not([disabled]), select, [tabindex]:not([tabindex="-1"])';
 
-// A hidden match (an input inside a collapsed section, a `hidden` panel a
-// dialog keeps mounted rather than tearing down) still satisfies
-// focusableSelector — without this filter Tab could wrap onto, or away from,
-// an element nobody can see or reach (#204). `display` does not inherit, so
-// an ancestor's `display: none` does not by itself change a descendant's own
-// *computed* display — the collapse only shows up by walking up and checking
-// every ancestor's own value, which is what this does (stopping at `node`:
-// the dialog itself may sit inside further DOM the trap has no business
-// judging the visibility of). `offsetParent === null` is the usual one-line
-// shortcut for this same question, but it also flips for reasons that do not
-// mean "hidden" (an element that is itself `position: fixed`, as `Modal.svelte`'s
-// overlay is — though none of its *descendants* are) and, in this project's
-// test environment, jsdom does not implement layout and always reports it as
-// null, which would make this filter untestable and silently drop every
-// element in every trapFocus test.
+// A hidden match (an input in a collapsed section, a `hidden` panel kept mounted) still satisfies
+// focusableSelector. `display` does not inherit, so every ancestor up to `node` is checked.
+// Not `offsetParent === null`: it also flips for `position: fixed` elements, and jsdom always
+// reports null, which would drop every element in the tests.
 function isVisible(el) {
     for (let node = el; node instanceof Element; node = node.parentElement) {
         const style = getComputedStyle(node);

@@ -1,19 +1,11 @@
-// fuzzy.js — approximate matching for the command palette (#287).
-//
-// A query matches a text when its characters appear in it IN ORDER, not
-// necessarily side by side: "trsc" finds "Transcription", "kaz" finds
-// "Table d'équité Kazaross". Case and accents are folded first, so "equite"
-// finds "équité" and a Russian or Greek label folds the same way.
-//
-// The score rewards what a reader means by "close": a run of consecutive
-// characters, a character at the start of a word, a match at the very start of
-// the text, and a short text. It is a ranking, not a probability — only the
-// order between two scores for the same query means anything.
+// fuzzy.js — approximate matching for the command palette: the query's characters appear IN
+// ORDER ("trsc" finds "Transcription"), case and accents folded. The score rewards consecutive
+// runs, word starts, a match at the start and a short text; only the order between two scores
+// for the same query means anything.
 
 /**
- * Lower-case and strip diacritics (NFD, then drop the combining marks). One
- * code unit in, one code unit out for every Latin, Greek and Cyrillic letter,
- * so an index into the folded text is an index into the original.
+ * Lower-case and strip diacritics (NFD, drop combining marks). One code unit in, one out for
+ * Latin, Greek and Cyrillic, so indices into the folded text are indices into the original.
  *
  * @param {string} text
  * @returns {string}
@@ -55,12 +47,8 @@ function fitsAfter(q, qi, t, ti) {
 }
 
 /**
- * Match `query` against `text`.
- *
- * Greedy left to right, but a later occurrence at a word start is preferred to
- * an earlier one in the middle of a word — "ta" in "Table d'équité" takes the
- * T of "Table", and "de" in "Nouvelle base de données" takes the "de" word
- * rather than the "e" inside "Nouvelle".
+ * Match `query` against `text`: greedy, but a later occurrence at a word start beats an earlier
+ * one mid-word ("ta" in "Table d'équité" takes the T of "Table").
  *
  * @param {string} query
  * @param {string} text

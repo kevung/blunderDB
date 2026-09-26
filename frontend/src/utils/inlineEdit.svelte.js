@@ -1,27 +1,14 @@
-// Inline "click a cell, type, Enter/Escape/blur" editing, factored out of the
-// eight start/save/cancel triplets the list panels had each hand-written
-// (MatchPanel ×3, TournamentPanel ×3, CollectionPanel, AnkiPanel). Every copy
-// held the same three pieces of state — which row is being edited, the draft
-// value, and a keydown dispatcher — and the copies had drifted on details
-// (Escape with or without preventDefault, whether blur saved or cancelled,
-// whether a second save could fire while the first was still awaiting).
-//
-// This module is a `.svelte.js` file so the factory can hold its state in
-// runes: a component reads `edit.editingId` / binds `edit.draft` and Svelte
-// tracks them like any other `$state`. A plain `.js` module cannot do that.
-//
-// Usage in a component:
+// Inline "click a cell, type, Enter/Escape/blur" editing shared by the list panels, so Escape,
+// blur-saves and single-flight saves behave the same everywhere. A `.svelte.js` module, so the
+// factory holds its state in runes that components track like any `$state`:
 //
 //     const nameEdit = createInlineEdit({ onSave: (id, draft) => rename(id, draft) });
-//     …
 //     {#if nameEdit.editingId === row.id}
 //         <input bind:value={nameEdit.draft} onkeydown={nameEdit.onKeyDown} onblur={nameEdit.onBlur} />
 //     {/if}
 //
-// `draft` is whatever `start(id, value)` was given: a string for a single
-// field, or an object for a multi-field row (`bind:value={edit.draft.name}`).
-// `onSave` receives a plain snapshot of it; returning `false` keeps the row in
-// edit mode (validation failed), anything else ends the edit.
+// `draft` is what `start(id, value)` was given (a string, or an object for a multi-field row).
+// `onSave` receives a plain snapshot; returning `false` keeps the row in edit mode.
 
 import { untrack } from 'svelte';
 

@@ -130,13 +130,10 @@ func busyBackoff(attempt int) time.Duration {
 }
 
 // retryOnBusy runs fn, retrying up to busyRetryAttempts times with
-// busyBackoff between attempts whenever fn fails with SQLITE_BUSY. Even at a
-// 10s busy_timeout (perConnPragmas) a pooled connection can occasionally
-// still lose the race for the write lock under a heavy burst of concurrent
-// writers — more often on Windows, where file locking is measurably slower
-// than POSIX advisory locks. fn must be safe to call more than once: it is
-// not wrapped in a transaction retryOnBusy could roll back, so every
-// statement it runs needs to already be idempotent on its own.
+// busyBackoff between attempts whenever fn fails with SQLITE_BUSY, which a
+// burst of concurrent writers can still produce past busy_timeout (more often
+// on Windows). fn must be idempotent: retryOnBusy has no transaction to roll
+// back.
 func retryOnBusy(fn func() error) error {
 	var err error
 	for attempt := 0; attempt < busyRetryAttempts; attempt++ {

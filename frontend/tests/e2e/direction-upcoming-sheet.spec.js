@@ -1,10 +1,9 @@
 /**
  * direction-upcoming-sheet.spec.js — imprimer la feuille d'une ronde proposée, datée, avant de
- * la lancer (#451, D7.2).
+ * la lancer.
  *
- * S4, le vendredi (rapport/S4.md O6) : les rondes 1 et 2 sont jouées, la ronde 3 est dans la
- * file. Le sélecteur de la feuille ne proposait que les rondes lancées, et les lancer pour les
- * imprimer les aurait horodatées au vendredi. Budget : ≤ 3 gestes hors saisie de la date, et
+ * Le sélecteur de la feuille doit proposer une ronde encore dans la file, sans la lancer pour
+ * l'imprimer (ce qui l'horodaterait à tort). Budget : ≤ 3 gestes hors saisie de la date, et
  * rien de lancé. Le faux moteur (helpers/directionEngine.js) garde ce qui a été demandé.
  */
 import { test, expect } from '@playwright/test';

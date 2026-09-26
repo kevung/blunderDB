@@ -10,10 +10,7 @@ import (
 // belongs to the Action": the play a game starts with follows the opening that
 // names its camp, because the user never chose that camp — the panel proposed it
 // and carried the roll over (fonctionnel.md §1.2).
-//
-// Nothing else would say it: measured, the play stays legal for either camp from
-// the starting board and an opening bears no turn, so the Replay marks neither an
-// illegal move nor a double turn.
+// See followOpening.
 func TestOpeningCorrectedCarriesTheFirstPlay(t *testing.T) {
 	// The opening is 6-3 for player 1, who then plays it.
 	opened := func(t *testing.T) Document {
@@ -89,14 +86,9 @@ func TestOpeningCorrectedCarriesTheFirstPlay(t *testing.T) {
 	})
 }
 
-// TestCubeGestureWritesAtTheCursorsSlot holds the half of fonctionnel.md §2 that
-// the four cube gestures had been left out of: they act WHERE THE CURSOR IS, like
-// the digit key and like every other gesture of the panel.
-//
-// The case it comes from is the one a transcriber makes twice an evening: a pass
-// typed for a take. Until this, walking back onto the pass and pressing `t` put a
-// take IN FRONT of it and left the pass standing — two Actions to correct, a game
-// that still ended, and no way at all to go on typing the rest of that game.
+// TestCubeGestureWritesAtTheCursorsSlot: the cube gestures act WHERE THE CURSOR IS
+// (fonctionnel.md §2) — `t` on a walked-back pass replaces it rather than inserting
+// a take in front of it.
 func TestCubeGestureWritesAtTheCursorsSlot(t *testing.T) {
 	t.Run("a take replaces the pass under the cursor", func(t *testing.T) {
 		doc := doubledMatch(t)
@@ -234,11 +226,8 @@ func TestInsertionGoesOnInserting(t *testing.T) {
 	}
 }
 
-// TestEntryInfoDrawsTheActionBeingTyped holds what the Transcript needs to show a
-// correction AS IT IS TYPED. Without it the cell went on showing the Action that
-// was recorded until the validation, so the user read one thing and the document
-// said another — the gap ADR-0048 calls a cognitive one, and the reason a
-// correction looked like it had done nothing.
+// TestEntryInfoDrawsTheActionBeingTyped: the Transcript shows a correction AS IT IS
+// TYPED, not the recorded Action until validation (ADR-0048).
 func TestEntryInfoDrawsTheActionBeingTyped(t *testing.T) {
 	t.Run("a roll retyped in place is reported with its play", func(t *testing.T) {
 		doc := typedMatch(t, 7)

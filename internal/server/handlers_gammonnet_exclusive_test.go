@@ -7,21 +7,14 @@ import (
 	"testing"
 )
 
-// One gammonNet sweep per tenant (G.11, #239).
-//
-// Two of them do not go twice as fast: each asks for NumCPU goroutines, so
-// they halve each other, and both write analyses into the rows the other is
-// reading as missing. The second caller is told so — with an ordinary 409,
-// BEFORE the NDJSON stream opens, because an error event inside a 200 is a
-// failure a client has to parse a stream to discover.
+// One gammonNet sweep per tenant: two would halve each other (NumCPU each)
+// and write into rows the other reads as missing. The second gets a plain
+// 409 before the NDJSON stream opens, not an error event inside a 200.
 func TestGammonNetSweep_OnePerTenant(t *testing.T) {
 	ts, srv := newTestServerAndHandler(t)
 
-	// A sweep of an empty database finishes before a second request could
-	// possibly race it, so the conflict is staged rather than raced: a job is
-	// registered for the tenant, exactly as an in-flight sweep would, and the
-	// route is then asked for another. A timing-dependent version of this test
-	// would pass on a fast machine and say nothing.
+	// Staged, not raced: an empty sweep ends too fast, and a timing-dependent
+	// test would prove nothing.
 	held, err := srv.gammonnetJobs.startExclusive(testTenant, func() {})
 	if err != nil {
 		t.Fatal(err)
@@ -40,10 +33,8 @@ func TestGammonNetSweep_OnePerTenant(t *testing.T) {
 		t.Errorf("the refusal does not say why: %s", raw)
 	}
 
-	// That the exclusion is per TENANT and not global is asserted on the
-	// registry below, not here: this server is backed by SQLite, which has
-	// exactly one tenant (ADR-0005's SingleTenant guard refuses any other), so
-	// "another tenant" is not something this handler can be shown.
+	// Per-tenant exclusion is asserted on the registry: SQLite has only one
+	// tenant (ADR-0005).
 
 	// Finishing releases it.
 	srv.gammonnetJobs.finish(held)

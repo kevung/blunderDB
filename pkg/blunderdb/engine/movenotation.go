@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Comparing a move between two engines (#270).
+// Comparing a move between two engines.
 //
 // The same checker play is written differently by different engines, and the
 // differences are notation, not disagreement:
@@ -17,13 +17,10 @@ import (
 //   - repetition: "4/2 4/2" and "4/2(2)" are the same move; which form appears
 //     depends on which side collapsed it.
 //   - chained hops: XG writes one checker's two dice as one step, "13/7";
-//     gammonNet writes both, "13/8 8/7". They leave the SAME board — moving
-//     one checker 13→8→7 and moving one checker 13→8 while another goes 8→7
-//     are indistinguishable once the dust settles — so a comparison that told
-//     them apart would report a disagreement nobody has.
+//     gammonNet writes both, "13/8 8/7". They leave the SAME board.
 //
-// CanonicalMove folds all three. It is what lets a comparison between two
-// engines count actual disagreements rather than dialects.
+// CanonicalMove folds all three, so a comparison counts disagreements, not
+// dialects.
 
 // CanonicalMove renders a checker play in a form two engines can be compared
 // on: hit markers dropped, "(n)" expanded, chained hops merged, steps sorted.

@@ -7,7 +7,7 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
-// Latecomers and lengths per round (issue #392).
+// Latecomers and lengths per round.
 //
 // The rule these tests hold is the one the engine states and blunderDB must not soften: a draw
 // already made is NEVER redrawn. The latecomer takes an empty place or enters later, and the

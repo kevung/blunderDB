@@ -8,13 +8,9 @@
 // Scope: it covers the core user data — positions, their analyses and comments,
 // matches (games + moves), tournaments (+ match links) and collections (+
 // membership). App-state families (anki decks/cards, filter library, search and
-// command history, session state) are intentionally NOT migrated yet: they
-// are lower-value for a data migration. The library's own settings — the error
-// and blunder thresholds of ADR-0046 — ARE carried: they are not app state but
-// the reading habit the counts depend on, and a tenant that counted differently
-// from its source file would make the migration a silent change of meaning. Their per-tenant scoping is in place
-// (each has a tenant-scoped table, session_state since schema 2.17.0). See
-// tasks/headless/10-sqlite-to-postgres-tool.md.
+// command history, session state) are intentionally NOT migrated, and reported
+// as such in NotMigrated. The library's error and blunder thresholds
+// (ADR-0046) ARE carried: they decide what the counts mean.
 package migrate
 
 import (
@@ -42,10 +38,8 @@ type Options struct {
 }
 
 // NotMigrated counts what the source holds and the migration deliberately
-// leaves behind (see the package doc). A migration that says "done" while a
-// user's Anki decks stayed on the old machine is a migration that lied by
-// omission; Run fills this in from the source's own counts so the caller can
-// name the numbers rather than a category.
+// leaves behind (see the package doc), so the caller can name the numbers
+// rather than claim "done".
 type NotMigrated struct {
 	AnkiCards int `json:"anki_cards"`
 }
@@ -74,18 +68,17 @@ type Report struct {
 func Run(ctx context.Context, src, dst storage.Storage, scope string, opts Options) (Report, error) {
 	var rep Report
 
-	// A tenant is a positive decimal integer (ADR-0005, amendment
-	// 2026-09-03); the PostgreSQL backend panics on anything else rather than
-	// collapsing it onto tenant 0, so validate up front and fail cleanly.
+	// A tenant is a positive decimal integer (ADR-0005); the PostgreSQL
+	// backend panics on anything else rather than collapsing it onto tenant 0,
+	// so validate up front and fail cleanly.
 	if _, err := storage.ParseTenant(scope); err != nil {
 		return rep, fmt.Errorf("migrate: %w", err)
 	}
 
 	if !opts.DryRun && opts.OnConflict != "skip" {
 		// Ask for the headline counts rather than listing one position: a
-		// destination holding matches but no position — a partial run, or a
-		// tenant used for something else — used to read as empty and be
-		// written into (#240).
+		// destination holding matches but no position (a partial run) is not
+		// empty.
 		counts, err := dst.Metadata().Counts(ctx, scope)
 		if err != nil {
 			return rep, fmt.Errorf("migrate: probe destination: %w", err)
@@ -168,11 +161,8 @@ func (m *mover) run(rep *Report) error {
 }
 
 // copyLibrarySettings carries the library's own thresholds across (ADR-0046).
-// They are two integers, not a family — nothing counts them in the Report —
-// but leaving them behind would make the migrated tenant count different
-// blunders from the file it came from, which is the one thing the setting
-// exists to prevent. A source that never set them yields the defaults, and
-// writing the defaults is the same as not writing them.
+// Two integers, not a family, so the Report does not count them. Defaults are
+// not written.
 func (m *mover) copyLibrarySettings() error {
 	settings, err := m.src.LibrarySettings().Load(m.ctx, "")
 	if err != nil {

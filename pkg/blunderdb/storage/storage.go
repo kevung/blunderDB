@@ -7,7 +7,7 @@
 // held to the same shared contract suite in storage/storagetest. The
 // Database wrapper kept for the Wails GUI delegates to a Storage value.
 //
-// Design notes (see tasks/headless/02-storage-interface.md):
+// Design notes:
 //   - Every method takes a context.Context for cancellation/deadlines.
 //   - Every data method takes a scope string: the tenant identifier
 //     (domain term: Tenant, see CONTEXT.md). The desktop app and CLI pass
@@ -27,12 +27,12 @@
 //
 // A Storage value is safe for concurrent use by multiple goroutines: the
 // backends rely on the connection pool (SQLite: *sql.DB with busy_timeout and
-// per-DSN PRAGMAs; PostgreSQL: pgxpool), not a process-wide lock (P5). There
-// is no global serialization — only the per-operation atomicity each backend's
+// per-DSN PRAGMAs; PostgreSQL: pgxpool), not a process-wide lock. There is no
+// global serialization — only the per-operation atomicity each backend's
 // statements/transactions provide.
 //
 // Reads observe committed data with READ COMMITTED semantics: a long-running
-// scan (e.g. stats or a full search) no longer blocks writers and may not see
+// scan (e.g. stats or a full search) does not block writers and may not see
 // writes committed after it began. Operations that must be atomic across
 // several statements run inside BeginTx. SQLite remains a single writer at a
 // time; concurrent writers wait up to busy_timeout for the write lock rather
@@ -119,9 +119,8 @@ type ListOpts struct {
 // bound as parameters.
 //
 // They are Go ints, so there is nothing to inject, and inlining keeps the
-// clause independent of each backend's placeholder numbering — the stores that
-// write their own SQL number theirs `$1`, `$2` while the shared ones use `?`,
-// and a bound that has to be appended to both cannot use either.
+// clause independent of the placeholder style (`$N` or `?`) of the query it is
+// appended to.
 //
 // `unboundedLimit` is what the dialect writes for "no limit, but an offset":
 // SQLite's grammar requires a LIMIT before OFFSET and documents -1 as

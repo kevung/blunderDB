@@ -174,11 +174,9 @@ func TestAnalysisTenantIsolation(t *testing.T) {
 	}
 }
 
-// TestTenantIsolationNamedScope pins the storage-level half of ADR-0005's
-// 2026-09-03 amendment: a scope that is not a positive decimal integer never
-// reaches tenant 0's rows. PurgeTenant, the one method that used to be
-// reachable with such a scope from the daemon, returns ErrInvalidTenant and
-// deletes nothing — `tenant.purge "alice"` used to wipe every named tenant.
+// TestTenantIsolationNamedScope pins the storage-level half of ADR-0005: a
+// scope that is not a positive decimal integer never reaches tenant 0's rows,
+// and PurgeTenant returns ErrInvalidTenant and deletes nothing.
 func TestTenantIsolationNamedScope(t *testing.T) {
 	ctx := context.Background()
 	dsn := startPostgres(t)
@@ -189,8 +187,7 @@ func TestTenantIsolationNamedScope(t *testing.T) {
 	}
 	defer s.Close()
 
-	// Rows under the implicit tenant 0 (the empty scope), which named scopes
-	// used to collapse onto.
+	// Rows under the implicit tenant 0 (the empty scope).
 	p := domain.InitializePosition()
 	id, err := s.Positions().Save(ctx, "", &p)
 	if err != nil {
@@ -207,13 +204,9 @@ func TestTenantIsolationNamedScope(t *testing.T) {
 	}
 }
 
-// TestTenantIsolation_AllFamilies (#235) runs storagetest's per-family
-// isolation loop — one fresh database per family, tenant a writes a row,
-// tenant b must see none of it — against a real PostgreSQL database. It
-// widens isolation coverage from the three hand-rolled tests above
-// (positions, collections, analyses) to eight families; see
-// storagetest/tenant_isolation.go for the full list and why this loop is
-// PostgreSQL-only.
+// TestTenantIsolation_AllFamilies runs storagetest's per-family isolation loop
+// — tenant a writes a row, tenant b must see none of it — against a real
+// PostgreSQL database; see storagetest/tenant_isolation.go.
 func TestTenantIsolation_AllFamilies(t *testing.T) {
 	dsn := startPostgres(t)
 	storagetest.RunTenantIsolationTests(t, func() storage.Storage {
@@ -226,15 +219,11 @@ func TestTenantIsolation_AllFamilies(t *testing.T) {
 	}, "101", "102")
 }
 
-// TestCompositeForeignKeyRejectsCrossTenant (#235) is the database-level
-// promise behind the composite (tenant_id, parent_id) foreign keys
-// (014_composite_tenant_fk.sql / 001_initial_v2_7_0.sql): a raw INSERT that
-// gets its tenant_id right but points at another tenant's row via the
-// single id column must fail at the constraint, not merely go unnoticed —
-// the exact mistake the old single-column `parent_id REFERENCES
-// parent(id)` form could never catch. comment.position_id is one of twelve
-// such foreign keys; it stands in for the rest, which all follow the same
-// shape.
+// TestCompositeForeignKeyRejectsCrossTenant is the database-level promise
+// behind the composite (tenant_id, parent_id) foreign keys
+// (014_composite_tenant_fk.sql): a raw INSERT pointing at another tenant's row
+// must fail at the constraint. comment.position_id stands in for the twelve
+// such keys.
 func TestCompositeForeignKeyRejectsCrossTenant(t *testing.T) {
 	ctx := context.Background()
 	dsn := startPostgres(t)

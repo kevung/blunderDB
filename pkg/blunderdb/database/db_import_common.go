@@ -18,10 +18,8 @@ import (
 )
 
 // openExistingSQLite opens a database file that is only being read from —
-// an import source, a file being inspected. sql.Open on a path that does not
-// exist creates an empty SQLite file there, so a typo in an import path used
-// to leave a 0-byte .db on the user's disk and then fail on the missing
-// metadata table; the path is checked first, and a directory is refused too.
+// an import source, a file being inspected. The path is checked first (a
+// directory is refused): sql.Open would create an empty file at a mistyped one.
 func openExistingSQLite(path string) (*sql.DB, error) {
 	info, err := os.Stat(path)
 	if err != nil {
@@ -40,9 +38,7 @@ func openExistingSQLite(path string) (*sql.DB, error) {
 // skip), while a cross-format canonical duplicate is enriched in place and
 // returns the existing match id without error. Callers must hold d.mu.
 func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGraph) (int64, error) {
-	// Stamp the match with the batch the user's import opened, if any (#257).
-	// Set here rather than by each format's Import* method: this is the single
-	// point every one of them passes through, so no format can forget.
+	// Stamp the import batch here, the one point every format passes through.
 	graph.ImportBatchID = d.importBatchID
 	tx, err := d.store.BeginTx(ctx)
 	if err != nil {
@@ -61,9 +57,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
-	// Only the writing path knows which of the three things just happened, so
-	// it is what counts them (#257). A caller sees an id and no error whether
-	// the match was written or an existing one was enriched in place.
+	// Only the writing path knows written vs enriched; callers see an id either way.
 	if res.Enriched {
 		d.importBatchCounts.MatchesEnriched++
 	} else {
@@ -77,9 +71,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 // (XGP / BGF text) through the storage backend and returns the id of the first
 // stored position. Positions dedup by Zobrist hash, so re-importing the same
 // position returns its existing id. Callers must hold d.mu and pass the
-// context from their own beginCancellableImport (B.13, #181: this used to
-// hardcode context.Background(), the one write path CancelImport could not
-// reach even though every caller already opens one).
+// context from their own beginCancellableImport, so CancelImport reaches it.
 func (d *Database) writeImportedPosition(ctx context.Context, graphs []ingest.PositionGraph) (int64, error) {
 	if len(graphs) == 0 {
 		return 0, fmt.Errorf("no position to import")

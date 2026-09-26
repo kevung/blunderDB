@@ -26,13 +26,9 @@ func realServerPaths(t *testing.T) []string {
 	return srv.Paths()
 }
 
-// TestParse_MatchesRealServerRoutes is openapigen's own non-drift guard,
-// independent of the committed openapi.yaml/api_reference.rst: it compares
-// the AST-derived route set directly against the real, running Server's
-// Paths() — the same table the CLI's `call --list` walks. A route this
-// static parser cannot recognise (a new hand-written shape, a route table
-// built a fourth way) fails HERE, not silently producing a stale-but-still-
-// "successful" generation.
+// TestParse_MatchesRealServerRoutes compares the AST-derived route set with
+// the running Server's Paths(), so a route shape the parser cannot recognise
+// fails here instead of yielding a stale "successful" generation.
 func TestParse_MatchesRealServerRoutes(t *testing.T) {
 	want := realServerPaths(t)
 

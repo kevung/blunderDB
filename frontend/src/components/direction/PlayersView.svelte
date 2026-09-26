@@ -1,15 +1,8 @@
 <script>
     /*
-     * La vue Joueurs (issue #369, fonctionnel.md §4, ux.md §4.1 et §4.2).
-     *
-     * Le budget commande le dessin : inscrire vingt joueurs à la suite doit se faire au clavier
-     * seul — nom, Entrée, nom, Entrée — sans jamais toucher la souris. D'où un champ qui garde
-     * le focus et se vide après chaque inscription.
-     *
-     * L'autocomplétion propose les Players de la base. En choisir un fixe l'orthographe EXACTE
-     * que portent ses matchs et pré-remplit la cote avec son PR : c'est le seul lien entre un
-     * Participant et un Player, une égalité de nom décidée par le directeur, jamais une
-     * inférence, et jamais une fiche « personne » — l'identité que le glossaire refuse.
+     * La vue Joueurs (fonctionnel.md §4, ux.md §4.1, §4.2) : inscription au clavier seul, le
+     * champ garde le focus. Choisir un Player fixe l'orthographe et pré-remplit la cote : le
+     * seul lien Participant–Player, une égalité de nom décidée par le directeur.
      */
     import { t } from '../../i18n';
     import { renderLabel, renderSectionName } from './labels.js';
@@ -22,10 +15,10 @@
         onAdd = () => {},
         onUpdate = () => {},
         onWithdraw = () => {},
-        // Le retour d'un retiré est un geste nommé (#439) : corriger sa fiche ne le réinscrit plus.
+        // Le retour d'un retiré est un geste nommé : corriger sa fiche ne le réinscrit plus.
         onReinstate = (/** @type {string} */ _id) => {},
-        // Les places d'exemption encore libres et les inscrits qui n'ont pas encore de place
-        // (issue #392). Vides en préparation : il n'y a pas de retardataire avant le tirage.
+        // Les places d'exemption encore libres et les inscrits qui n'ont pas encore de place.
+        // Vides en préparation : il n'y a pas de retardataire avant le tirage.
         slots = [],
         infos = [],
         onAddAtSlot = null
@@ -55,9 +48,7 @@
         return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
-    /* Où le retardataire entrera. Par défaut la première place libre : c'est le cas de très
-       loin le plus fréquent, et la destination est écrite à côté du champ avant de valider.
-       « plus tard » reste à un geste, et le moteur ne refait jamais un tirage. */
+    /* Place du retardataire : la première libre par défaut, affichée avant de valider. */
     let slotKey = $state('');
     $effect(() => {
         const keys = slots.map((s) => s.key);

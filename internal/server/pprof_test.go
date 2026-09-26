@@ -10,11 +10,9 @@ import (
 	"time"
 )
 
-// TestStartPprofServer_ServesAndStopsIndependently guards #238: --pprof-addr
-// runs on its own listener, separate from the domain server, and its stop
-// func actually shuts it down (a caller must be able to tear it down inside
-// a test, or as part of ctx cancellation, without leaking a goroutine or a
-// listening socket).
+// TestStartPprofServer_ServesAndStopsIndependently: --pprof-addr runs on its
+// own listener and its stop func shuts it down without leaking a goroutine or
+// socket.
 func TestStartPprofServer_ServesAndStopsIndependently(t *testing.T) {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {

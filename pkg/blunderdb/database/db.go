@@ -28,29 +28,22 @@ type Database struct {
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
-	// importBatchID is the batch every match written by the in-flight import is
-	// stamped with, 0 when no import is running (issue #257). One at a time,
-	// like importCancel above: the wrapper has always assumed a single
-	// in-flight import.
+	// importBatchID stamps every match the in-flight import writes, 0 when none
+	// runs. One at a time, like importCancel.
 	importBatchID int64
-	// importBatchCounts accumulates what only the writing path sees — matches
-	// written, skipped as an exact duplicate, enriched in place, positions
-	// saved. The caller that opened the batch adds what only IT sees (the
-	// files that could not be read at all) when it finishes the batch.
+	// importBatchCounts accumulates what only the writing path sees; the caller
+	// that opened the batch adds the unreadable files when it finishes it.
 	importBatchCounts domain.ImportReport
 	// pendingPhaseBackfill is raised by the 2.19.0 migration step and cleared
 	// by runMigrationChain once EnsureSchema has added position.game_phase.
 	// A migration step cannot write a column the schema pass has not created
 	// yet, and the phase backfill is the only 2.19.0 change that writes at all.
 	pendingPhaseBackfill bool
-	// pendingAnkiCardKinds is raised by the 2.23.0 migration step and cleared
-	// by runMigrationChain once EnsureSchema has added anki_card.kind/key.
-	// Same reason as pendingPhaseBackfill above, plus one of its own: the
-	// repair rebuilds anki_card to make position_id nullable, which no schema
-	// pass can do — SQLite relaxes no constraint through ALTER TABLE.
+	// pendingAnkiCardKinds is the same deferral for the 2.23.0 step, whose
+	// repair also rebuilds anki_card: ALTER TABLE relaxes no constraint.
 	pendingAnkiCardKinds bool
-	// forecasts memoises the estimated end of each Direction's clock (#456,
-	// db_direction_clock.go); forecastMu guards it and is never held with mu.
+	// forecasts memoises the estimated end of each Direction's clock
+	// (db_direction_clock.go); forecastMu guards it and is never held with mu.
 	forecastMu sync.Mutex
 	forecasts  map[int64]forecastMemo
 	lock       *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
@@ -62,39 +55,21 @@ type Database struct {
 	// transcriptMu -> mu, never the reverse.
 	transcriptMu       sync.Mutex
 	transcriptSessions map[int64]*transcript.Editor
-	// directionCatalog and directionLang are the translations the frontend handed over, so
-	// the pages blunderDB writes for a tournament — the hall display, the pairing sheet, the
-	// standings CSV — speak the user's language (ADR-0047, issue #386). They belong to the
-	// interface and not to the file, which is why nothing about them is persisted; they live
-	// on the Database rather than in a package variable so two open databases, and two tests,
-	// never share one language.
+	// directionCatalog and directionLang translate the pages written for a
+	// tournament (ADR-0047). They belong to the interface, so nothing is
+	// persisted; per Database, not package-level, so two open databases never
+	// share one language.
 	directionMu      sync.RWMutex
 	directionCatalog *direction.Catalog
 	directionLang    string
 }
 
-// acquireFileLock takes the single-writer advisory lock for a file-backed
-// database before it is opened. On success d.lock holds it and d.readOnly is
-// false. If another instance already holds it, d.readOnly is set true and the
-// caller must open the file read-only (ADR-0004: multiple instances are allowed,
-// but a database may not be opened read-write twice). A lock-infrastructure
-// failure (e.g. a read-only directory) is NON-fatal: single-instance is an
-// optional capability that must never block opening, so d.readOnly stays false
-// and the open proceeds unguarded. :memory: and the empty path are never locked.
-// lockPathFor returns the file whose advisory lock guards a database against a second
-// writer.
-//
-// It lives in the cache directory rather than beside the database. Two reasons, and the
-// second is the one that matters: a stray `cours.db.lock` next to someone's database reads
-// as debris, and it cannot simply be deleted when the lock is released — another instance
-// may already hold a descriptor to that inode, so unlinking it would let a third instance
-// create a fresh file and take a lock that excludes nobody. Keeping the marker out of sight
-// avoids the clutter without touching the correctness of the lock.
-//
-// The name is derived from the database's absolute path, so the same database always maps
-// to the same lock wherever it is opened from. If the cache directory cannot be created —
-// single-instance locking is an optional capability (ADR-0004) — it falls back beside the
-// database, which is where it always used to be.
+// lockPathFor returns the file whose advisory lock guards a database against a
+// second writer. It lives in the cache directory: a lock file beside the
+// database reads as debris yet can never be unlinked on release (another
+// instance may hold its inode, letting a third lock a fresh file). Named from
+// the absolute path; falls back beside the database if the cache directory
+// cannot be created (ADR-0004).
 func lockPathFor(dbPath string) string {
 	abs, err := filepath.Abs(dbPath)
 	if err != nil {
@@ -109,6 +84,11 @@ func lockPathFor(dbPath string) string {
 	return filepath.Join(dir, hex.EncodeToString(sum[:16])+".lock")
 }
 
+// acquireFileLock takes the single-writer advisory lock before a file-backed
+// database is opened. If another instance holds it, d.readOnly is set and the
+// caller must open read-only (ADR-0004: never read-write twice). A lock
+// infrastructure failure is NON-fatal — the open proceeds unguarded.
+// :memory: and the empty path are never locked.
 func (d *Database) acquireFileLock(path string) {
 	d.releaseFileLock()
 	d.readOnly = false
@@ -187,39 +167,26 @@ func NewDatabase() *Database {
 	return &Database{}
 }
 
-// conn returns the underlying *sql.DB handle. It is deliberately unexported:
-// *Database is bound wholesale to the Wails frontend (main.go passes it in
-// extraBinds), so an exported method here becomes a JS-callable binding that
-// hands the raw handle straight to the frontend — never a mode's feature
-// (B.8, #176). Code within this package calls it directly; a caller outside
-// the package (scripts/demodb, tests in other packages) goes through RawConn.
-// It may be nil before Setup/Open.
+// conn returns the underlying *sql.DB handle, nil before Setup/Open.
+// Unexported on purpose: *Database is bound wholesale to Wails, so an exported
+// method would hand the raw handle to the frontend. Outside callers use RawConn.
 func (d *Database) conn() *sql.DB {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	return d.db
 }
 
-// RawConn returns d's underlying *sql.DB handle, for maintenance scripts and
-// tests that need direct SQL access outside the Storage contract (e.g.
-// scripts/demodb, which builds the embedded demo database with queries
-// Database has no method for). It is a package-level function rather than a
-// method so that binding *Database to the Wails frontend never exposes it to
-// the GUI — see the unexported conn() above. Never call this from
-// GUI-reachable code; add a named Database method instead (see Checkpoint).
+// RawConn returns d's underlying *sql.DB handle for maintenance scripts and
+// tests (e.g. scripts/demodb). A function, not a method, so the Wails binding
+// never exposes it. Never call it from GUI-reachable code; add a named method.
 func RawConn(d *Database) *sql.DB {
 	return d.conn()
 }
 
-// Checkpoint truncates the write-ahead log into the main database file
-// (PRAGMA wal_checkpoint(TRUNCATE)). The CLI's batch importer calls this
-// after every successfully imported match to keep the WAL file bounded
-// during a long run, rather than reaching for Conn().Exec directly at the
-// call site (which also read d.db without going through the lock every other
-// writer takes). Best-effort: a checkpoint that cannot complete (e.g. a
-// concurrent reader holding an older snapshot open) is not a reason to fail
-// the import, so the error is returned for the caller to log rather than
-// treated as fatal.
+// Checkpoint truncates the WAL into the main file (wal_checkpoint(TRUNCATE)),
+// keeping it bounded during a long batch import. Best-effort: a checkpoint
+// blocked by a reader is no reason to fail the import, so the caller logs the
+// error.
 func (d *Database) Checkpoint() error {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -242,13 +209,9 @@ func (d *Database) Close() error {
 	if d.db == nil {
 		return nil
 	}
-	// PRAGMA optimize (SQLite docs: run before closing every long-lived
-	// connection) mirrors the standalone Storage backend's Close (storage/
-	// sqlite/sqlite.go, D9/fiche-05 T7) — this wrapper opens its own *sql.DB
-	// rather than going through Storage.Close, so it needs its own call.
-	// Best-effort and skipped on a read-only handle (query_only=ON rejects the
-	// write ANALYZE may attempt internally; nothing useful to optimize there
-	// anyway).
+	// PRAGMA optimize before closing, as storage/sqlite's Close does (this
+	// wrapper owns its own *sql.DB). Skipped read-only: query_only rejects the
+	// write ANALYZE may attempt.
 	if !wasReadOnly {
 		_, _ = d.db.Exec(`PRAGMA optimize`)
 	}
@@ -262,11 +225,8 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	// Close the currently opened database, if any. Best-effort like the
-	// analogous close in Close() itself: the handle is discarded and replaced
-	// right below regardless, but a failure here (e.g. a pooled connection
-	// that would not release) is worth a log line rather than silence (B.13,
-	// #181 — this used to swallow the error outright).
+	// Close the currently opened database, if any. Best-effort: the handle is
+	// replaced below regardless, but a failure deserves a log line.
 	if d.db != nil {
 		if err := d.db.Close(); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
@@ -282,13 +242,9 @@ func (d *Database) SetupDatabase(path string) (err error) {
 		return fmt.Errorf("database %q is open in another instance; close it before creating/replacing it", path)
 	}
 
-	// From here on, neither the file lock nor an opened *sql.DB handle may
-	// leak on a mid-setup failure: any pragma/table-creation error below used
-	// to return with the lock still held and d.db still set, wedging the
-	// wrapper (a later Setup/Open could never re-acquire the lock, and the
-	// leaked handle was never closed). Roll back to a clean "never opened"
-	// state on any error, named-return style so every existing `return err`
-	// below is covered without threading cleanup through each one.
+	// On any error below, roll back to a clean "never opened" state: a leaked
+	// lock or handle would wedge every later Setup/Open. Named return, so each
+	// `return err` is covered.
 	defer func() {
 		if err != nil {
 			if d.db != nil {
@@ -302,10 +258,8 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
 	// so the driver replays them on EVERY pooled connection. A PRAGMA run
 	// after sql.Open configures only the one connection it lands on; with a
-	// ten-connection pool the other nine ran with foreign_keys=OFF, so a
-	// DeleteMatch served by one of them skipped ON DELETE CASCADE and left
-	// game/move/move_analysis orphans (issue #157; blunderdb verify counts
-	// them).
+	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
+	// DELETE CASCADE, leaving orphans.
 	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
 	if err != nil {
 		return err
@@ -348,30 +302,21 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	// Close the currently opened database, if any. Best-effort like the
-	// analogous close in Close() itself: the handle is discarded and replaced
-	// right below regardless, but a failure here (e.g. a pooled connection
-	// that would not release) is worth a log line rather than silence (B.13,
-	// #181 — this used to swallow the error outright).
+	// Close the currently opened database, if any. Best-effort: the handle is
+	// replaced below regardless, but a failure deserves a log line.
 	if d.db != nil {
 		if err := d.db.Close(); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
 	}
 
-	// Take the single-writer lock before opening. If another instance holds it
-	// this sets d.readOnly and we open read-only instead of racing a second
-	// writer against the same file (the probable cause of the transient
-	// "last database not reopened" failure — ADR-0004).
+	// Take the single-writer lock first; if another instance holds it, open
+	// read-only rather than race a second writer (ADR-0004).
 	d.acquireFileLock(path)
 
-	// Neither the file lock nor an opened *sql.DB handle may leak on a
-	// mid-open failure (pragmas, migration): any error below used to return
-	// with the lock still held and (outside the read-only branch, which
-	// already cleans up by hand) d.db still set, wedging the wrapper for any
-	// later Setup/Open. Named-return style so every existing `return err`
-	// below is covered without threading cleanup through each one; a no-op
-	// when the read-only branch already closed d.db / never took the lock.
+	// On any error below, release the lock and handle so a later Setup/Open is
+	// not wedged. Named return covers each `return err`; a no-op when the
+	// read-only branch already cleaned up.
 	defer func() {
 		if err != nil {
 			if d.db != nil {
@@ -385,10 +330,8 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
 	// so the driver replays them on EVERY pooled connection. A PRAGMA run
 	// after sql.Open configures only the one connection it lands on; with a
-	// ten-connection pool the other nine ran with foreign_keys=OFF, so a
-	// DeleteMatch served by one of them skipped ON DELETE CASCADE and left
-	// game/move/move_analysis orphans (issue #157; blunderdb verify counts
-	// them).
+	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
+	// DELETE CASCADE, leaving orphans.
 	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
 	if err != nil {
 		return err
@@ -401,14 +344,9 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// single connection; file-backed DBs are allowed to grow.
 	sqlite.ConfigurePool(d.db, path)
 
-	// Read-only fallback: pin to a single connection so PRAGMA query_only (a
-	// per-connection setting) reliably blocks writes on every query, then
-	// forbid writes. The migration chain and ANALYZE both write, so they are
-	// skipped — the writer instance that holds the lock owns them; it opened
-	// with the same app version, so the schema is already current. The DSN
-	// PRAGMAs (WAL included) run when the connection opens: the file is
-	// writable here — only the single-writer lock is taken, by the other
-	// instance, which has already put the file in WAL mode.
+	// Read-only fallback: one connection, so the per-connection query_only
+	// blocks every write. Migration and ANALYZE are left to the writer instance
+	// holding the lock, which already brought the schema current.
 	if d.readOnly {
 		d.db.SetMaxOpenConns(1)
 		if _, err = d.db.Exec(`PRAGMA query_only = ON`); err != nil {
@@ -430,15 +368,10 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	return nil
 }
 
-// ensureSearchStats runs a one-time ANALYZE when the opened database has no
-// query-planner statistics yet (sqlite_stat1 absent or empty). Without stats
-// SQLite mis-estimates selectivity for non-selective search filters — e.g. a
-// "win rate > 55% AND gammon > 20%" search that matches most rows is planned as
-// a single-column analysis-index scan followed by a TEMP B-TREE sort on p.id,
-// instead of scanning position in primary-key order (no sort). A full ANALYZE
-// fixes the plan (~4x on that case in the tournois benchmark); the stats persist
-// in the file, so later opens — and migrated databases, which already ANALYZE —
-// skip this. Non-fatal: search still works with stale/absent stats.
+// ensureSearchStats runs a one-time ANALYZE when sqlite_stat1 is absent or
+// empty. Without stats SQLite plans a non-selective search filter as an index
+// scan plus a TEMP B-TREE sort instead of a primary-key scan (~4x slower).
+// The stats persist in the file. Non-fatal.
 func (d *Database) ensureSearchStats() {
 	if d.db == nil {
 		return
@@ -453,24 +386,10 @@ func (d *Database) ensureSearchStats() {
 	}
 }
 
-// RefreshSearchStatistics runs a full ANALYZE, updating query-planner
-// statistics for every table. Unlike ensureSearchStats (run automatically on
-// open, but only when sqlite_stat1 is entirely empty), this always re-scans:
-// after importing a batch of matches into an already-analysed database, the
-// existing stats are stale rather than absent, so ensureSearchStats would
-// skip them, silently leaving the planner working off pre-import row/value
-// distributions. The CLI's batch importer has always run a plain `ANALYZE`
-// after its file loop (cli_import.go, importBatch); this is the Wails-bound
-// equivalent so the GUI's own batch import path
-// (frontend/src/services/importService.js, importMultipleFiles) can do the
-// same (fiche-05 T7). Best-effort and non-fatal, like ensureSearchStats: a
-// search still works correctly, just possibly less optimally planned,
-// without it.
-//
-// Takes the exclusive lock, like every other statement that writes to the
-// database (ANALYZE rewrites sqlite_stat1/sqlite_stat4) — mirrors
-// OpenDatabase, which holds d.mu.Lock() for the whole call including its own
-// ensureSearchStats.
+// RefreshSearchStatistics always runs a full ANALYZE: after a batch import
+// the stats are stale rather than absent, which ensureSearchStats would skip.
+// The GUI's batch import calls it as the CLI runs ANALYZE. Best-effort.
+// Takes d.mu exclusively: ANALYZE writes sqlite_stat1/sqlite_stat4.
 func (d *Database) RefreshSearchStatistics() {
 	d.mu.Lock()
 	defer d.mu.Unlock()

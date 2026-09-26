@@ -2,15 +2,10 @@ package race
 
 import "testing"
 
-// TestVerdictFromEquities_TooGoodIsReachable proves the whole point of #193
-// (ADR-0020's "one shape", C.6): a synthetic no-double equity above the cash
-// value (DoublePass, always 1.0 in this scale) must come back as
-// VerdictTooGood, never silently folded into VerdictNoDouble the way
-// MoneyFromEntry's old inline 3-way rule used to fold it — see
-// TestMoneyFromEntry_RealBearoffDomainNeverProducesTooGood below for why the
-// embedded exact table itself never exercises this branch (its domain is
-// gammonless by construction), which is exactly why the old rule's gap went
-// unnoticed.
+// TestVerdictFromEquities_TooGoodIsReachable: a synthetic no-double equity
+// above the cash value (DoublePass, 1.0 in this scale) must come back as
+// VerdictTooGood, never folded into VerdictNoDouble (ADR-0020). The exact
+// table never exercises this branch — its domain is gammonless.
 func TestVerdictFromEquities_TooGoodIsReachable(t *testing.T) {
 	// nd beats both the cash value (dp) and the double branch (min(dt,dp)).
 	got := VerdictFromEquities(1.5, 1.8, 1.0, 0)
@@ -61,21 +56,13 @@ func TestMoneyFromEntry_TooGoodSynthetic(t *testing.T) {
 }
 
 // TestMoneyFromEntry_RealBearoffDomainNeverProducesTooGood sweeps every
-// (us, them) pair the embedded TS-06-06 database covers — the actual data
-// #193/C.6 asked to be checked against real bearoff positions — and pins two
-// facts down as a regression:
+// (us, them) pair of the TS-06-06 table and pins two facts:
 //
-//  1. MoneyFromEntry's verdict, now routed through the shared
-//     VerdictFromEquities (#193), is IDENTICAL to what the old inline 3-way
-//     rule produced, for every entry in the domain. The rename is a no-op on
-//     real data today.
-//  2. VerdictTooGood never fires here, because the no-double continuation
-//     equity never exceeds the cash value (1.0) anywhere in this table —
-//     which is exactly what "gammonless domain" (this file's own type doc
-//     comment) means: there is no gammon upside a double-and-pass could
-//     waste, so nothing is ever "too good to double" in this exact regime.
-//     A future gammon-aware money table would exercise the branch that was
-//     silently unreachable before this fiche.
+//  1. MoneyFromEntry's verdict equals the plain 3-way ND/DT/DP rule on every
+//     entry of the domain.
+//  2. VerdictTooGood never fires: the no-double equity never exceeds the cash
+//     value (1.0) in this gammonless domain.
+
 func TestMoneyFromEntry_RealBearoffDomainNeverProducesTooGood(t *testing.T) {
 	ts := testTwoSided(t)
 	n := ts.Checkers()

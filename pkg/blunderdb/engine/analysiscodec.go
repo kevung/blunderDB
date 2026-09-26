@@ -25,58 +25,35 @@ import (
 // derivation of the denormalised scalar columns, and float rounding for
 // compact storage. They perform no database I/O.
 //
-// # Blob codec and format compatibility (#180, ADR-0030)
+// # Blob codec and format compatibility (ADR-0030)
 //
-// analysis.data has carried three formats over the project's life, and a
-// blob always names which one it is instead of the reader assuming: raw JSON
-// (first byte '{', from databases old enough to predate compression), zlib
-// level 9 (a valid zlib stream — CMF/FLG header — written by every 2.x
-// release before this one), and now zstd level 19 with the shared dictionary
-// embedded below (a valid zstd frame — magic number 0x28 0xB5 0x2F 0xFD).
-// These three signatures cannot collide, so DecompressAnalysisData tells them
-// apart by content, not by a schema version or a side channel: a database
-// exported years ago, or one produced by an older binary, still opens and
-// decodes correctly with today's code. The dictionary's own Dictionary_ID is
-// embedded in every zstd frame that used it, so klauspost's decoder always
-// picks the matching one automatically — introducing a second dictionary
-// later (a bigger corpus, a schema change to PositionAnalysis) needs no
-// migration of existing rows, only registering the new bytes alongside this
-// one in zstdDecoder's dict set.
+// analysis.data holds one of three formats, told apart by content and never
+// by a schema version: raw JSON (first byte '{'), zlib level 9 (CMF/FLG
+// header), or zstd level 19 with the embedded dictionary (magic 0x28 0xB5
+// 0x2F 0xFD). The signatures cannot collide, so any database, however old,
+// still decodes. Each zstd frame carries its Dictionary_ID, so a second
+// dictionary later needs no row migration — only registering its bytes in
+// zstdDecoder's dict set.
 //
-// Every new write goes out as zstd (CompressAnalysisData); nothing new is
-// ever written as zlib or raw JSON again. Existing zlib/raw rows are read
-// forever, and are upgraded to zstd opportunistically — RecompressAnalysisData
-// on the native-.db import path, and a background pass over the whole table
-// triggered by `vacuum` (sqlite.Storage.Vacuum) — never in a schema
-// migration: there is no DatabaseVersion bump for this change; the blob
-// itself carries enough information for any past or future reader to make
-// sense of it, per the invariant that a schema bump is for DDL, not for the
-// bytes inside an unchanged BLOB column.
+// Every write is zstd. zlib/raw rows are read forever and upgraded
+// opportunistically (RecompressAnalysisData on native-.db import, and
+// sqlite.Storage.Vacuum) — never in a schema migration: a schema bump is for
+// DDL, not for the bytes inside an unchanged BLOB column.
 //
-// The dictionary (analysis_dict.bin) was trained offline with the reference
-// `zstd --train` CLI on real analysis blobs already in this repository
-// (testdata/ match fixtures, the demo database) — see
-// cmd/train-analysis-dict and docs/recherche/P11-compression-blobs.md.
-// Nothing at runtime needs zstd itself or cgo: the trained bytes are read by
-// the pure-Go github.com/klauspost/compress/zstd, the same way
-// gnubg_os6.bd is read by the bearoff engine.
+// analysis_dict.bin is trained offline by cmd/train-analysis-dict; at runtime
+// the pure-Go klauspost decoder reads it, no zstd binary or cgo needed.
 
 //go:embed analysis_dict.bin
 var analysisZstdDict []byte
 
 // zstdMagic is the four-byte signature every zstd frame starts with (RFC 8878
-// §3.1.1). Checked before the "raw JSON vs zlib" fallback so a blob need not
-// pay for a failed zlib-header parse on the common (post-migration) case.
+// §3.1.1). Checked first so the common case skips a failed zlib-header parse.
 var zstdMagic = []byte{0x28, 0xB5, 0x2F, 0xFD}
 
-// zstdEncoder and zstdDecoder are created once and reused for every call:
-// klauspost/compress/zstd documents EncodeAll and DecodeAll as safe to call
-// concurrently on a shared instance (each call runs on its own goroutine
-// internally), and creating one per call is the memory blow-up the upstream
-// maintainers warn against under many concurrent decodes. Concurrency is
-// pinned to 1 inside each instance (no internal fan-out per call) rather than
-// left at GOMAXPROCS, trading a little single-call latency for bounded
-// memory — the right trade for blobs that are a few kilobytes, not streams.
+// zstdEncoder and zstdDecoder are shared: klauspost documents EncodeAll and
+// DecodeAll as concurrency-safe, and one instance per call is the memory
+// blow-up upstream warns against. Internal concurrency is pinned to 1 —
+// bounded memory over single-call latency, right for few-kilobyte blobs.
 var (
 	zstdEncoder *zstd.Encoder
 	zstdDecoder *zstd.Decoder
@@ -89,22 +66,16 @@ func init() {
 		zstd.WithEncoderConcurrency(1),
 	)
 	if err != nil {
-		// The embedded dictionary is a build-time asset, not user input: a
-		// failure here means the binary itself is broken, not that some
-		// database has a problem. Fail loudly rather than silently falling
-		// back to an un-dictionaried (much worse) codec — see CLAUDE.md's
-		// "requested-but-unavailable kernel is an error at load" rule.
+		// The dictionary is a build-time asset: failure means a broken
+		// binary. Fail loudly rather than fall back to an un-dictionaried codec.
 		panic(fmt.Sprintf("engine: zstd encoder init: %v", err))
 	}
 	zstdEncoder = enc
 
 	dec, err := zstd.NewReader(nil,
 		zstd.WithDecoderDicts(analysisZstdDict),
-		// Bounded to the same cap the zlib path enforces below, and far
-		// below klauspost's 64 GiB default: a real analysis blob is a few
-		// kilobytes, so nothing legitimate ever approaches this, while a
-		// crafted frame claiming gigabytes is refused before it is decoded
-		// (see MaxAnalysisBytes and the decompression-bomb tests).
+		// Same cap as the zlib path, far below klauspost's 64 GiB default:
+		// a crafted frame claiming gigabytes is refused before decoding.
 		zstd.WithDecoderMaxMemory(MaxAnalysisBytes),
 		zstd.WithDecoderConcurrency(1),
 		zstd.WithDecoderLowmem(true),
@@ -116,20 +87,14 @@ func init() {
 }
 
 // CompressAnalysisData compresses raw JSON bytes with zstd level 19 and the
-// shared dictionary embedded in this package (analysis_dict.bin). This is the
-// only format ever written from here on; DecompressAnalysisData still reads
-// the two formats every prior release wrote (see the package-level doc
-// comment above).
+// embedded dictionary — the only format ever written.
 func CompressAnalysisData(jsonData []byte) ([]byte, error) {
 	return zstdEncoder.EncodeAll(jsonData, nil), nil
 }
 
 // MaxAnalysisBytes bounds what one analysis blob may inflate to. A real one is
-// a few kilobytes of JSON — the largest rollout ever stored is well under a
-// megabyte — while both zlib and zstd can inflate a few kilobytes into
-// gigabytes. The blob comes from the `analysis.data` column of a database
-// that may have been imported from a third party, so a crafted row must be
-// refused rather than allowed to exhaust memory.
+// a few kilobytes (a rollout well under a megabyte); the blob may come from a
+// third-party database, so a crafted decompression bomb must be refused.
 const MaxAnalysisBytes = 16 << 20
 
 // ErrAnalysisTooLarge is returned when a compressed analysis inflates past
@@ -141,11 +106,8 @@ func isZstdFrame(data []byte) bool {
 	return len(data) >= len(zstdMagic) && bytes.Equal(data[:len(zstdMagic)], zstdMagic)
 }
 
-// DecompressAnalysisData auto-detects which of the three formats a blob is
-// in (raw JSON, zlib, zstd — see the package doc comment) from its own
-// content, never from a version elsewhere. Inflation stops at
-// MaxAnalysisBytes: a blob claiming more is an error, not a bigger
-// allocation.
+// DecompressAnalysisData detects the blob's format (raw JSON, zlib, zstd)
+// from its content. Inflation past MaxAnalysisBytes is an error.
 func DecompressAnalysisData(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
@@ -180,22 +142,17 @@ func DecompressAnalysisData(data []byte) ([]byte, error) {
 	return out, nil
 }
 
-// NeedsRecompression reports whether data is NOT already in the current zstd
-// format (i.e. it is raw JSON or legacy zlib) — a cheap, allocation-free
-// check on the first bytes, so a full-table pass (sqlite.Storage's vacuum
-// recompression step) can skip every row that is already current without
-// decompressing it first.
+// NeedsRecompression reports whether data is raw JSON or legacy zlib rather
+// than zstd — an allocation-free check so a full-table pass skips current rows
+// without decompressing them.
 func NeedsRecompression(data []byte) bool {
 	return len(data) > 0 && !isZstdFrame(data)
 }
 
-// RecompressAnalysisData ensures data is in the current codec's compressed
-// form: raw JSON and legacy zlib data are both (re)compressed to zstd;
-// already-zstd data is returned unchanged. This is the opportunistic upgrade
-// path — called on the native-.db import merge (db_import_db.go) and by the
-// background pass sqlite.Storage.Vacuum runs before compacting the file — so
-// a database migrates to the smaller format gradually, through the writes
-// and vacuums it already does, without a dedicated migration step.
+// RecompressAnalysisData recompresses raw JSON or zlib data to zstd and
+// returns zstd data unchanged. It is the opportunistic upgrade path (native-.db
+// import, sqlite.Storage.Vacuum), so no migration step is needed.
+
 func RecompressAnalysisData(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
@@ -230,12 +187,9 @@ func DecodeAnalysisFromStorage(data []byte) (domain.PositionAnalysis, error) {
 	return a, err
 }
 
-// DecodeAnalysesConcurrently decodes a batch of stored analyses in parallel.
-//
-// Decoding is decompression followed by a JSON unmarshal — pure computation,
-// independent from one position to the next, and the largest cost of reading
-// a library once the queries are batched (38% of an export's time when it was
-// measured). Spreading a batch across the machine's cores is the whole point.
+// DecodeAnalysesConcurrently decodes a batch of stored analyses across all
+// cores: decoding is pure computation and the largest cost of reading a
+// library once queries are batched.
 //
 // A payload that cannot be decoded is reported in failed under its position
 // id and absent from decoded, so a caller can tell "no analysis" from "an
@@ -348,20 +302,15 @@ func ComputeIsCloseCube(dca *domain.DoublingCubeAnalysis, playedCubeAction strin
 	return 0
 }
 
-// CubeActionError returns the equity error (in equity points, signed) of the
-// given played cube action relative to the best action, and ok=false when the
-// action is empty or unrecognized. This is the single source of truth for
-// cube-error attribution, shared by PopulateAnalysisColumns (which feeds the
-// denormalized analysis.cube_error column and the stats/SQL pre-filter) and by
-// the search move-error filters, so they cannot drift apart.
+// CubeActionError returns the signed equity error of the played cube action
+// relative to the best one, ok=false when the action is empty or unrecognised.
+// It is the single source of cube-error attribution, shared by
+// PopulateAnalysisColumns (analysis.cube_error) and the search move-error
+// filters so they cannot drift apart.
 //
-// A doubling decision (Double / Double/Take / Double/Pass / Redouble) is scored
-// by how much worse doubling is than the best action, i.e. the worse of the two
-// opponent responses: min(DoubleTakeError, DoublePassError). A pure response
-// (Take / Pass) is scored from the responder's perspective: how much worse the
-// chosen response is than the optimal one. Matching is case-insensitive and
-// tolerates the abbreviations (nd/dt/dp/drop) that appear in move.cube_action
-// and in filter input.
+// A doubling decision is scored as min(DoubleTakeError, DoublePassError); a
+// pure Take/Pass is scored from the responder's side against the optimal
+// response.
 func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) (float64, bool) {
 	if dca == nil {
 		return 0, false
@@ -381,9 +330,8 @@ func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) 
 
 // normaliseCubeLabel folds a cube label to lowercase and drops the separators
 // its producers disagree about, so that "Double, Take", "Double/Take" and
-// "double take" all reduce to the same string. Shared by every reader of these
-// labels: the whole point of #115 is that there is exactly one place where a
-// spelling becomes a meaning.
+// "double take" all reduce to the same string: the one place where a spelling
+// becomes a meaning.
 func normaliseCubeLabel(label string) string {
 	return strings.Map(func(r rune) rune {
 		switch r {
@@ -446,14 +394,9 @@ const (
 // CanonicalCubeAction maps every spelling of a cube action met in the wild onto
 // one of the four constants above, or CubeUnknown.
 //
-// It exists because matching these labels with a chain of strings.Contains is a
-// trap: the labels are written by several producers and no two agree. The XG
-// importer alone writes BOTH "No Double" and "Double No" for a no-double — and
-// the latter, once spaces are stripped, does not contain "nodouble" but does
-// contain "double". Every Contains-based test therefore classified it as a
-// DOUBLE and scored it with the error of the double that never happened
-// (kevung/blunderDB#115). Adding one more Contains would have closed that case
-// and left the next one open, so the recognition is stated once, here.
+// Producers disagree on spelling: XG writes both "No Double" and "Double No",
+// and the latter contains "double" but not "nodouble", so an ad-hoc Contains
+// chain reads it as a DOUBLE. Recognition is therefore stated once, here.
 //
 // The doubler's combined labels ("Double/Take", "Double/Pass") are DOUBLES: they
 // name what the doubler did, the response being the opponent's. The bare
@@ -480,9 +423,9 @@ func CanonicalCubeAction(action string) string {
 
 // IsResponseCubeAction reports whether a cube action is a pure take/pass
 // response (the cube was offered to this player), as opposed to a doubling
-// decision such as Double / Double/Take / No Double. The doubler's combined
-// actions ("Double/Take", "Double/Pass") are NOT responses. Used for board
-// orientation and to decide whether to render the offered cube on the board.
+// decision; the doubler's combined "Double/Take", "Double/Pass" are NOT
+// responses.
+
 func IsResponseCubeAction(action string) bool {
 	switch CanonicalCubeAction(action) {
 	case CubeTake, CubePass:
@@ -609,35 +552,15 @@ func NormalizeMove(move string) string {
 }
 
 // PlayedActionsFor decides which checker move and which cube action a
-// position's derived columns are computed against (issue #268, fiche I.12).
+// position's derived columns are computed against: what the analysis states
+// (XG/GnuBG files carry it), else what the match's `move` table recorded.
+// An analysis blunderDB computed itself carries no played action, and without
+// the fallback every error would be zero — a Performance Rating of 0.00.
 //
-// # Why this needs a rule at all
-//
-// best_move_equity_error is the error of the move that WAS PLAYED, and it is
-// what the Performance Rating is a sum of. The analysis blob carries the
-// played actions when they came with the analysis — an XG or GnuBG file
-// states both at once — but an analysis blunderDB computed itself carries
-// none: gammonNet is handed a position, and a position does not remember what
-// anybody did with it. Before this rule, a match imported without an analysis
-// and then swept by `analyze` produced a full set of ranked candidates, an
-// error of zero on every decision, and therefore a Performance Rating of
-// exactly 0.00 — a number that looks like world class and means "nobody ever
-// said which move was played".
-//
-// The `move` table is the other half, written at import whether or not any
-// analysis came with the file. So: prefer what the analysis states, and fall
-// back to what the match recorded.
-//
-// # The ambiguity this inherits and does not fix
-//
-// Positions are deduplicated by Zobrist hash, so one position may have been
-// played several times — well once and badly once. The derived columns are
-// one row per position, so one of those occurrences supplies the number and
-// the Performance Rating counts it for every occurrence. That is not new
-// here: firstOf(a.PlayedMoves) has always picked the first of several, and an
-// XG library has exactly the same shape. What is new is only that the
-// fallback must pick as deterministically as the primary does — hence
-// "earliest recorded move" rather than "whatever the query returned first".
+// A position deduplicated by Zobrist hash may have been played several times;
+// its one row of derived columns takes the first occurrence, so the fallback
+// must be as deterministic as the primary: the earliest recorded move.
+
 func PlayedActionsFor(analysisMoves, analysisCubeActions, matchMoves, matchCubeActions []string) (playedMove, playedCubeAction string) {
 	first := func(ss []string) string {
 		for _, s := range ss {

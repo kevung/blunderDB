@@ -11,13 +11,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Shared test helpers for the import tests. These used to live in xg_test.go
-// alongside the legacy↔ingest parity tests; once those parity tests were
-// retired (the ingest path is now the single implementation, exercised end to
-// end by the database package's absolute-value import tests), the helpers moved
-// here so the surviving native-.db importer tests in db_test.go keep working.
-// Nothing here imports the database package, which is what lets the database
-// package import ingest for the GUI/CLI import delegation.
+// Shared test helpers for the import tests. Nothing here imports the database
+// package, which imports ingest.
 
 // positionKey is a stable, id-independent identity for a position, used to
 // match positions across two stores.

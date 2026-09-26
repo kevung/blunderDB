@@ -51,8 +51,8 @@ type scanner interface{ Scan(dest ...any) error }
 // every entry point (the HTTP tenant middleware, `migrate --tenant-id`,
 // `call --scope`, PurgeTenant) validates the scope before it reaches a Store
 // method, so this function panics rather than threading an error through the
-// hundred call sites below. It used to map "alice" to 0 silently, which made
-// every named tenant share one set of rows (ADR-0005, amendment 2026-09-03).
+// hundred call sites below; mapping a bad scope to 0 would merge tenants
+// (ADR-0005).
 func tenantID(scope string) int64 {
 	n, err := storage.ParseTenant(scope)
 	if err != nil {
@@ -142,11 +142,7 @@ const markFlaggedSQL = `UPDATE position SET flagged = TRUE
 // board and the resulting id.
 //
 // p.IndividuallyImported and p.Flagged are ORed into the stored value rather
-// than assigned
-// (docs/adr/0001): a match import (which never sets it) cannot clear the flag on
-// a position the user had already imported on its own, and an individual import
-// of a position a match had already brought in still marks it. The flag is
-// therefore independent of the order the user imports their files in.
+// than assigned (ADR-0001), so they do not depend on import order.
 func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Position) (int64, error) {
 	tenant := tenantID(scope)
 	norm := p.NormalizeForStorage()
@@ -337,11 +333,9 @@ func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.
 }
 
 // loadByIDsChunk bounds how many ids one `= ANY($2)` query carries.
-// PostgreSQL has no bound-parameter limit forcing this the way SQLite's
-// forEachIn chunking does, but an unbounded id list still lets one query
-// hold a multi-million-element array (the server's own request-body cap
-// admits roughly that many int64 ids) and scan proportionally, with no
-// chance to notice a caller's cancelled context between rounds (#232).
+// PostgreSQL has no bound-parameter limit, but an unbounded list would let one
+// query carry millions of ids with no chance to notice a cancelled context
+// between rounds.
 const loadByIDsChunk = 1000
 
 // LoadByIDs returns the listed positions in the caller's order, skipping

@@ -6,11 +6,8 @@ import (
 	"strings"
 )
 
-// Schema is a minimal JSON-schema-shaped node — just enough of OpenAPI 3's
-// vocabulary to describe every Req/Resp/streamed-item shape this codebase's
-// Req/Resp structs actually use (named structs, pointers, slices, maps, and
-// the handful of Go builtin scalar types), not a general-purpose OpenAPI
-// schema builder.
+// Schema is a minimal JSON-schema node: just the OpenAPI 3 vocabulary this
+// codebase's Req/Resp structs use, not a general-purpose builder.
 type Schema struct {
 	Ref                  string // "#/components/schemas/X"; when set, every other field is ignored by the renderer
 	Type                 string // "object" | "array" | "string" | "integer" | "number" | "boolean"
@@ -23,11 +20,9 @@ type Schema struct {
 	Description          string
 }
 
-// Components accumulates every named schema referenced by at least one
-// route, keyed by its OpenAPI component name — sanitized from the Go type
-// name (a foreign qualified name like "domain.Position" becomes
-// "domain_Position", since "." is not legal in a component name/JSON
-// pointer segment the way OpenAPI tooling expects it).
+// Components accumulates every named schema referenced by a route, keyed by
+// component name ("domain.Position" → "domain_Position": "." is not legal in
+// a component name).
 type Components struct {
 	schemas map[string]*Schema
 }
@@ -55,11 +50,9 @@ func componentName(goName string) string {
 	return strings.ReplaceAll(goName, ".", "_")
 }
 
-// resolveSchema converts a Go type's source text (as exprText renders it —
-// "*domain.Position", "[]int64", "map[int64]int", "struct{}", "okResp", …)
-// into a Schema, registering any named struct it (transitively) references
-// into comps. typeText == "" (no request/response at all — a body-less
-// call, or a route this parser could not classify) returns nil.
+// resolveSchema converts a Go type's source text (as exprText renders it)
+// into a Schema, registering every named struct it references into comps.
+// An empty typeText (body-less or unclassified route) returns nil.
 func resolveSchema(typeText string, types map[string]typeInfo, comps *Components) *Schema {
 	t := strings.TrimSpace(typeText)
 	if t == "" {
@@ -71,10 +64,8 @@ func resolveSchema(typeText string, types map[string]typeInfo, comps *Components
 		if inner == nil {
 			return nil
 		}
-		// A $ref cannot carry sibling keywords in strict JSON Schema, but
-		// OpenAPI tooling commonly tolerates "nullable" alongside "$ref";
-		// simplicity here over strict spec purity — this is a generated
-		// reference document, not a schema a validator gates a build on.
+		// Strict JSON Schema forbids siblings of $ref, but OpenAPI tooling
+		// tolerates "nullable"; this is a reference document, not a gate.
 		cp := *inner
 		cp.Nullable = true
 		return &cp
@@ -173,10 +164,8 @@ func primitiveSchema(t string) (*Schema, bool) {
 	return nil, false
 }
 
-// quoteYAML renders a Go string as a YAML double-quoted scalar — used by
-// the openapi.yaml renderer for every free-text value (descriptions can
-// legitimately contain ':', '#', newlines, …, all of which are unsafe in
-// YAML's unquoted plain scalar style).
+// quoteYAML renders s as a YAML double-quoted scalar: descriptions may hold
+// ':', '#' or newlines, unsafe in plain style.
 func quoteYAML(s string) string {
 	return strconv.Quote(s)
 }

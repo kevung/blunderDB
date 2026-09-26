@@ -7,21 +7,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// This file is the GUI-facing adapter for four small families of per-database
-// UI state — the command-line history, the search history, the saved-filter
-// library and the last-session state. Every method takes the wrapper's lock,
-// then delegates to the SQLite Storage backend under the single implicit
-// tenant ("" scope); the SQL lives there (storage/sqlite/{history,search_history,
-// filters,session}_sqlite.go) and is held to the shared contract suite.
-//
-// The public signatures are what Wails binds and the CLI calls; they stay as
-// they were. Errors come back as the backend reports them, wrapped around
-// storage.ErrConflict (a duplicate filter name) or storage.ErrNotFound (an
-// unknown filter id or name), so callers can test with errors.Is.
+// Adapter for per-database UI state (command history, search history, saved
+// filters, session): each method takes d.mu and delegates to storage with the
+// "" scope. Errors wrap storage.ErrConflict (duplicate filter name) or
+// storage.ErrNotFound, for errors.Is.
 
-// errNotOpened is returned by every method here when no database is open. The
-// wrapper's other families say "no database is currently open"; this wording is
-// the one these methods have always used.
+// errNotOpened is returned by every method here when no database is open.
 var errNotOpened = errors.New("database is not opened")
 
 // SaveCommand appends a command to the command-line history. The backend keeps

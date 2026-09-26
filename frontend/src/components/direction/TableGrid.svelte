@@ -1,24 +1,9 @@
 <script>
     /*
-     * La grille des tables (issue #371, tasks/nicomaque/ux.md §2.2).
-     *
-     * C'est ce que le directeur regarde le plus souvent dans une salle, et la contrainte de
-     * dessin vient de là : une case se lit de deux mètres. D'où des cases larges, les deux noms
-     * en évidence, et le temps écoulé en petit — sauf quand le match traîne, où il passe en
-     * alerte avant qu'un joueur vienne se plaindre.
-     *
-     * Un clic sur une case ouvre la fiche de résultat EN SURIMPRESSION SUR LA CASE, pas au
-     * centre de l'écran : le regard ne quitte pas la grille.
-     *
-     * La grille vient AVANT la file des propositions (#440) : à 768 px de haut, dock ouvert, la
-     * page n'a que ~390 px, et 24 propositions poussaient les 14 tables entièrement sous
-     * l'écran (y 1036 → 1230). La grille a une hauteur bornée par le nombre de tables ; la file,
-     * non. Ce qui porte sur les tables (la feuille d'appariements) se range dans son en-tête
-     * (`actions`), plutôt que dans une barre de plus au-dessus.
-     *
-     * Un match en cours SANS table (apparié à la main dans une salle pleine, #437) a sa case
-     * après celles de la salle, « sans table » : il est dans la salle, il doit se voir. Plusieurs
-     * cases peuvent donc porter la table 0, d'où une clé par match plutôt que par table.
+     * La grille des tables (tasks/nicomaque/ux.md §2.2), lisible à deux mètres ; le temps
+     * écoulé passe en alerte quand un match traîne. La fiche de résultat s'ouvre sur la case.
+     * Un match sans table a sa case après la salle : plusieurs cases portent la table 0, d'où
+     * une clé par match.
      */
     import { t } from '../../i18n';
     import ResultCard from './ResultCard.svelte';

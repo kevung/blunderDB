@@ -88,11 +88,8 @@ func TestReady_StorageDown(t *testing.T) {
 	}
 }
 
-// TestLive_NeverTouchesStorage pins the liveness contract (#166): /healthz
-// answers 200 whatever the storage is doing — a nil Storage would panic on
-// the first call, an erroring one used to turn the answer into a 503 and
-// restart a healthy daemon in a loop. Readiness is where the database is
-// probed.
+// TestLive_NeverTouchesStorage: /healthz answers 200 whatever the storage
+// does (nil or erroring); readiness is where the database is probed.
 func TestLive_NeverTouchesStorage(t *testing.T) {
 	for name, h := range map[string]*Health{
 		"nil storage":  {},

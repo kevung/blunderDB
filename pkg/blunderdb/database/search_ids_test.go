@@ -1,10 +1,7 @@
 package database
 
-// search_ids_test.go — LoadPositionIDsByFilters (D.8, #208) must return
-// exactly the ids of what LoadPositionsByFilters returns, in the same order:
-// it is the GUI-facing shortcut that lets the frontend keep a search result
-// as an id list (positionsStore / positionList.js) instead of shipping every
-// matching position whole across the Wails bridge.
+// search_ids_test.go — LoadPositionIDsByFilters must return exactly the ids
+// of what LoadPositionsByFilters returns, in the same order.
 
 import (
 	"fmt"

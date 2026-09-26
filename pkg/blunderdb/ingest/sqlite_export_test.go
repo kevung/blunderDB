@@ -13,8 +13,7 @@ import (
 
 // TestSQLiteExportRoundTrip populates a source store, exports it to a real
 // SQLite file, reopens that file as a SQLite storage, and verifies the families
-// round-trip. This is the core M4-T07 guarantee: the export is a valid,
-// Desktop-openable blunderDB database.
+// round-trip: the export is a valid, Desktop-openable blunderDB database.
 func TestSQLiteExportRoundTrip(t *testing.T) {
 	ctx := context.Background()
 
@@ -181,11 +180,8 @@ func TestSQLiteExportEmptyTenant(t *testing.T) {
 	}
 }
 
-// TestSQLiteExportTranscriptions pins the rule the transcription step was
-// added under (#334): a draft travels with a WHOLE export and with nothing
-// else. No Selection flag addresses drafts, so an export that filters
-// anything carries none — the recipient's file holds the empty table
-// sqlite.Bootstrap created, not a silent subset.
+// TestSQLiteExportTranscriptions: a draft travels with a WHOLE export and with
+// nothing else — a filtered export carries none, not a silent subset.
 func TestSQLiteExportTranscriptions(t *testing.T) {
 	ctx := context.Background()
 

@@ -1,21 +1,17 @@
 // Package parser turns the human-readable position text that blunderDB accepts
-// on the clipboard / via file import into a domain.Position (+ analysis). It is
-// the single backend home for what used to live only in the frontend
-// (frontend/src/services/importService.js `parsePosition`); the GUI now calls it
-// over Wails, and the server/CLI reuse it too, so the two implementations can no
-// longer drift (see testdata/parse_corpus.json and the dual contract tests).
+// on the clipboard / via file import into a domain.Position (+ analysis). The
+// GUI (over Wails), the server and the CLI all call it; testdata/
+// parse_corpus.json holds it.
 //
-// It handles: a bare XGID line; an OGID line (OpenGammon, #260); the XG
+// It handles: a bare XGID line; an OGID line (OpenGammon); the XG
 // human-readable export with either a doubling-cube or a checker-move analysis
 // block (French / English / Japanese / German); blunderDB's own internal export
 // format; and a trailing comment.
 //
-// The logic is a port of the JS parser. Go's regexp uses Perl-style
-// leftmost-first submatching, so the greedy/lazy/fixed-width captures behave
-// like the original JS regexes. One quirk of the original was dropped: it
-// rewrote every comma of the text into a dot to read "0,491" in a German or
-// French export, comments included; the numeric captures now accept either
-// separator and pf() reads both, so a comment keeps its commas.
+// Go's regexp uses Perl-style leftmost-first submatching, so the
+// greedy/lazy/fixed-width captures behave like the JS regexes they were ported
+// from. The numeric captures accept either decimal separator ("0,491") and pf()
+// reads both, so a comment keeps its commas.
 package parser
 
 import (
@@ -53,13 +49,9 @@ func ParsePosition(text string) (Result, error) {
 		return Result{}, errEmpty
 	}
 
-	// Normalize accented characters to NFC (precomposed). macOS's pasteboard
-	// hands us NFD (decomposed, e.g. "e"+combining-acute) for text copied from
-	// some sources (observed with XG run under Sikarugir/Wine on Mac); every
-	// accent-bearing literal below (e.g. "éq:", "Equités") is written in NFC,
-	// so decomposed input silently fails every match and the analysis comes
-	// back empty. Linux/Windows clipboards don't exhibit this, which is why it
-	// doesn't reproduce there.
+	// Normalize to NFC: the macOS pasteboard can hand over NFD text (XG under
+	// Wine), and every accented literal below ("éq:", "Equités") is NFC, so
+	// decomposed input would silently match nothing.
 	text = norm.NFC.String(text)
 
 	// Normalize newlines + trim, exactly like the JS (importService.js:822-823).
@@ -89,15 +81,10 @@ func ParsePosition(text string) (Result, error) {
 		}
 	}
 	if xgid == "" {
-		// OGID is read here, in the shared parser, rather than through an entry
-		// point of its own: everything that already accepts a pasted position —
-		// the clipboard, `blunderdb import <file>`, /v1/positions.parseText —
-		// then accepts one without a second code path to keep in step (#260).
-		//
-		// An OGID carries a position and nothing else, so the analysis comes
-		// back empty, exactly as a bare XGID line produces. Its Analysis.XGID
-		// stays empty too: an XGID needs an absolute score and a match length,
-		// and neither a Position nor an OGID retains them.
+		// OGID is read in the shared parser so every paste route accepts it
+		// without a second code path. It carries a position only: the analysis
+		// comes back empty, Analysis.XGID included (no absolute score or match
+		// length to write one from).
 		if pos, ok := parseOGIDLine(lines); ok {
 			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}}, nil
 		}
@@ -179,10 +166,8 @@ func checkerChancesRead(moves []domain.CheckerMove) bool {
 }
 
 // ── Position metadata ─────────────────────────────────────────────
-// Reuse domain.DecodeXGID for the board/cube/dice/score/jacoby/beaver decode
-// (shared with the server path) — the Crawford sentinel included, which this
-// parser used to write on its own and DecodeXGID now reads once for every
-// caller (#360) — then apply the one GUI-specific patch DecodeXGID does not:
+// Reuse domain.DecodeXGID for the board/cube/dice/score/jacoby/beaver decode,
+// Crawford sentinel included, then apply the one patch DecodeXGID does not:
 // decision_type from the analysis TEXT.
 func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman, isInternalChecker bool) domain.Position {
 	pos, err := domain.DecodeXGID(xgid)
@@ -269,12 +254,11 @@ func parseInternalDoubling(content, engineName string, a *domain.PositionAnalysi
 const internalNumber = `[-+]?[\d.]+(?:[eE][-+]?\d+)?`
 
 // parseInternalChecker reads the checker block blunderDB itself writes to the
-// clipboard. Two of its lines are optional, and treating them as mandatory used
-// to silently drop the move they belong to:
+// clipboard. Two of its lines are optional; requiring them would drop the move
+// they belong to:
 //   - "Equity Error:" is absent for the best move — its EquityError is nil by
 //     design (see ingest.sortCheckerMovesByEquity) and the JSON field is
-//     omitempty, so the writer skips the line. Requiring it cost the best move
-//     on every copy/paste from one database to another.
+//     omitempty.
 //   - the depth may be empty (`Analysis Depth: ""`) for analyses whose import
 //     route left it blank.
 func parseInternalChecker(content, engineName string, a *domain.PositionAnalysis) {

@@ -15,29 +15,27 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// gammonNet's catch-up sweep (#129/#130, ADR-0013, ADR-0015): "blunderdb
-// serve operates on a library. gammonnet serve evaluates a position." This is
-// the library operation — analyse every position of the caller's tenant that
-// has no analysis at all — never a stateless eval(xgid) endpoint. The same
-// gap rule and the same conversion (gammonnet.EvaluatePosition) the GUI
+// gammonNet's catch-up sweep (ADR-0013, ADR-0015): "blunderdb serve operates
+// on a library. gammonnet serve evaluates a position." This is the library
+// operation — analyse every position of the caller's tenant that has no
+// analysis at all — never a stateless eval(xgid) endpoint. The same gap rule
+// and conversion (gammonnet.EvaluatePosition) the GUI
 // (internal/gui/gammonnet_batch.go) and the CLI (blunderdb analyze) use;
 // composed here from the Storage contract's existing accessors
 // (Positions().List, Analyses().Load/Save) rather than a new contract method,
-// since those three calls are all this needs and both backends already
-// satisfy them identically (storagetest/contract.go).
+// since both backends already satisfy them identically
+// (storagetest/contract.go).
 //
-// /v1/gammonnet.sweepStale (#191) is the same shell run against a different
-// gather: every position whose stored analysis is entirely gammonNet's own
-// but stale at the requested ply — gammonnet.IsStaleAnalysis is the single
-// predicate the GUI/CLI batch (database/db_gammonnet_batch.go) and this
-// route both call, never a second copy (CLI/GUI/server parity).
+// /v1/gammonnet.sweepStale is the same shell run against a different gather:
+// every position whose stored analysis is entirely gammonNet's own but stale
+// at the requested ply — gammonnet.IsStaleAnalysis is the single predicate
+// the GUI/CLI batch (database/db_gammonnet_batch.go) and this route both
+// call, never a second copy (CLI/GUI/server parity).
 //
 // gammonNetJobs reuses importRegistry's cancel-by-id bookkeeping under a
 // separate instance, so cancelling an analysis run can never be confused with
-// cancelling an import — the same separation #129 kept between
-// Database.importCancel and its own dedicated batch context. The same
-// registry, and the same /v1/gammonnet.analyzeMissing.cancel route, cancels
-// either sweep by job id.
+// cancelling an import. The same registry, and the same
+// /v1/gammonnet.analyzeMissing.cancel route, cancels either sweep by job id.
 
 type gammonnetAnalyzeReq struct {
 	Ply        int `json:"ply"`
@@ -69,8 +67,8 @@ func (s *Server) handleGammonNetAnalyzeMissing(w http.ResponseWriter, r *http.Re
 	})
 }
 
-// handleGammonNetSweepStale is analyzeMissing's twin for re-analysis (#191):
-// same NDJSON shape, same worker pool, the only difference is which
+// handleGammonNetSweepStale is analyzeMissing's twin for re-analysis: same
+// NDJSON shape, same worker pool, the only difference is which
 // positions get gathered — every one whose analysis is entirely gammonNet's
 // own but stale at the requested ply, instead of every one with no analysis
 // at all.
@@ -83,12 +81,11 @@ func (s *Server) handleGammonNetSweepStale(w http.ResponseWriter, r *http.Reques
 // runGammonNetSweep is the shell both gammonNet sweeps share: decode the
 // request, register a cancellable job, gather the positions to process
 // (the only thing that differs between the two routes), evaluate them on
-// NumCPU goroutines, and stream NDJSON progress. Evaluated/refused/failed
-// (#191) are counted and reported in the final event — a nil analysis with a
-// nil error (a dance, or gammonnet.ErrNotEvaluable — a match score beyond
-// the MET's horizon) is "refused", not "failed": before this a refused
-// position and a genuinely broken one both just failed to advance done,
-// indistinguishable from each other or from a stall.
+// NumCPU goroutines, and stream NDJSON progress. Evaluated/refused/failed are
+// counted and reported in the final event — a nil analysis with a nil error
+// (a dance, or gammonnet.ErrNotEvaluable — a match score beyond the MET's
+// horizon) is "refused", not "failed": the two, and a genuine stall, must
+// stay distinguishable from each other.
 func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gather gammonnetGather) {
 	var req gammonnetAnalyzeReq
 	if r.ContentLength != 0 {
@@ -110,11 +107,11 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	ctx, cancel := context.WithCancel(r.Context())
 	defer cancel()
 	scope := scopeOf(r)
-	// One sweep per tenant (G.11, #239). Two of them do not go twice as fast:
-	// they halve each other's cores while both writing analyses into the rows
-	// the other is reading as missing. The refusal comes BEFORE the NDJSON
-	// stream opens, so the caller gets an ordinary 409 rather than an error
-	// event inside a 200.
+	// One sweep per tenant: two do not go twice as fast, they halve each
+	// other's cores while both write analyses into the rows the other is
+	// reading as missing. The refusal comes BEFORE the NDJSON stream opens,
+	// so the caller gets an ordinary 409 rather than an error event inside a
+	// 200.
 	jobID, err := s.gammonnetJobs.startExclusive(scope, cancel)
 	if err != nil {
 		writeStorageError(w, err)
@@ -142,7 +139,7 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	total := len(positions)
 
 	// The positions of a sweep are independent, so they are evaluated on
-	// NumCPU goroutines (#147), each owning one reused Searcher. Nothing is
+	// NumCPU goroutines, each owning one reused Searcher. Nothing is
 	// exposed in the request body: the daemon owns its machine, and a
 	// per-caller core budget is a scheduling decision that belongs to
 	// whoever runs it, not to the protocol. Known and accepted: two tenants
@@ -226,10 +223,8 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		case outcomeFailed:
 			failed++
 		}
-		// Monotone over positions PROCESSED, refused and failed included
-		// (#191) — a refused or failed position used to report no progress
-		// at all, so a sweep with any unevaluable positions in it never
-		// visibly reached total.
+		// Monotone over positions PROCESSED, refused and failed included: a
+		// sweep with unevaluable positions must still visibly reach total.
 		done++
 		emit(map[string]any{"event": "progress", "done": done, "total": total})
 	}
@@ -266,11 +261,10 @@ func (s *Server) handleGammonNetAnalyzeCancel(w http.ResponseWriter, r *http.Req
 // no analysis row at all (ADR-0013's gap rule: not "no gammonNet analysis" —
 // a Position already analysed by XG/GNUbg/BGBlitz is never touched).
 //
-// One query, not one per position. It used to list every position and then ask
-// Analyses().Load about each one, keeping the ErrNotFound ones: a round trip
-// per row to learn something the database states in a join, and the whole
-// library materialised first because the SQLite pool is a single connection
-// and Load could not run while List still held its rows (G.11, #239).
+// One query, not one per position: with the SQLite backend's single
+// connection, Load cannot run while List still holds its rows, so listing
+// then probing each one would serialize a round trip per row instead of
+// letting the database state the gap in one join.
 //
 // Still a snapshot rather than a live cursor, and deliberately so: the sweep
 // writes the analyses it computes, so a position it has just filled must not
@@ -293,7 +287,7 @@ func gammonnetPositionsWithoutAnalysis(ctx context.Context, s storage.Storage, s
 
 // gammonnetPositionsWithStaleAnalysis snapshots every position in scope
 // whose stored analysis is entirely gammonNet's own but stale at
-// targetDepth (#191) — the server-side twin of
+// targetDepth — the server-side twin of
 // database.positionIDsWithStaleGammonNet, sharing its predicate
 // (gammonnet.IsStaleAnalysis) rather than a second copy. A position with no
 // analysis at all is left to analyzeMissing, not this sweep; one analysed by
@@ -345,9 +339,6 @@ func drainPositions(ctx context.Context, s storage.Storage, scope string) ([]dom
 // position"). A nil analysis with a nil error means "nothing to write, and
 // that is not a failure": a dance (no legal move) or gammonnet.ErrNotEvaluable
 // (a match score beyond the MET's horizon, a cube state the model declines).
-// Before #191 ErrNotEvaluable came back as a plain non-nil error here, so a
-// position this build can never answer was reported "failed" and left out of
-// "done" forever, on every sweep run.
 func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
 	result, err := gammonnet.EvaluatePositionWith(searcher, pos, ply, pruneK, candidates)
 	if err != nil {

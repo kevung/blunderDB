@@ -1,15 +1,12 @@
 //go:build postgres
 
-// TestTenantPurgeEndpoint provisions a real PostgreSQL via testcontainers-go
-// and therefore needs Docker, exactly like every other postgres-tagged test
-// in this module (see pkg/blunderdb/storage/postgres/purge_postgres_test.go):
+// TestTenantPurgeEndpoint needs Docker (testcontainers-go), like every
+// postgres-tagged test:
 //
 //	go test -tags postgres ./internal/server/... -run TestTenantPurge -v
 //
-// The SQLite "not supported" counterpart, TestTenantPurgeSQLiteNotSupported,
-// never touches Postgres and lives in its own untagged file
-// (handlers_tenant_sqlite_test.go) so it still runs on the default,
-// no-Docker `go test ./...` path.
+// The SQLite counterpart lives untagged in handlers_tenant_sqlite_test.go so
+// it runs on the default `go test ./...`.
 package server
 
 import (
@@ -70,10 +67,7 @@ func newPostgresTestServer(t *testing.T) *httptest.Server {
 	return ts
 }
 
-// postTenant issues a POST to the daemon with the given tenant header and an
-// optional JSON body (nil for none), mirroring the package-level post helper
-// (handlers_domain_test.go) but letting the caller pick the tenant scope
-// instead of the fixed testTenant constant.
+// postTenant POSTs body (nil for none) under the given tenant header.
 func postTenant(t *testing.T, ts *httptest.Server, tenant, path string, body any) *http.Response {
 	t.Helper()
 	var reader *strings.Reader
@@ -136,11 +130,8 @@ func TestTenantPurgeEndpoint(t *testing.T) {
 	}
 }
 
-// TestTenantIsolationNamed is the PostgreSQL half of issue #155's recipe:
-// tenant 1 writes a position, tenant 2 reads it and gets 404; and a named
-// tenant ("alice") is refused at the door with 400 code=invalid. Before
-// ADR-0005's 2026-09-03 amendment "alice" and "bob" both landed on tenant 0
-// and read each other's rows.
+// TestTenantIsolationNamed: tenant 2 gets 404 on tenant 1's position, and a
+// named tenant ("alice") is refused with 400 code=invalid (ADR-0005).
 func TestTenantIsolationNamed(t *testing.T) {
 	ts := newPostgresTestServer(t)
 
@@ -181,12 +172,8 @@ func TestTenantIsolationNamed(t *testing.T) {
 	}
 }
 
-// TestSessionIsolationPostgres is the PostgreSQL half of issue #156's recipe:
-// the session state lives in session_state, keyed by tenant_id like every
-// other domain table, so tenant 2 loads nothing of tenant 1's session and a
-// clear by one tenant leaves the other's alone. Until schema 2.16.0 it was
-// six rows of the global metadata table, readable whole through
-// metadata.load by any tenant.
+// TestSessionIsolationPostgres: session_state is keyed by tenant_id, so one
+// tenant neither loads nor clears another's session.
 func TestSessionIsolationPostgres(t *testing.T) {
 	ts := newPostgresTestServer(t)
 	assertSessionIsolated(t, ts)

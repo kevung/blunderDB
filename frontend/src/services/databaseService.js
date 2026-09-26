@@ -76,10 +76,8 @@ export async function newDatabase() {
             WindowSetTitle(`blunderDB - ${filename}`);
             logger.log(`New database created at ${filePath}`);
 
-            // The Matches panel may already be visible (it is the default tab),
-            // so its own open-transition load won't fire against the new DB.
-            // Bump the refresh trigger so it reloads the (now empty) match list
-            // — same mechanism used after open/import. See openDatabaseByPath.
+            // The Matches panel may already be visible (default tab): bump its
+            // refresh trigger so it reloads against the new DB.
             matchPanelRefreshTriggerStore.update((n) => n + 1);
 
             const { loadAllPositions } = await import('./positionService.js');
@@ -139,10 +137,9 @@ export async function openDatabaseByPath(filePath) {
         return;
     }
 
-    // Reset mode synchronously before any await so it can't race with the
-    // Svelte effect microtask that restoreSessionState schedules later.
-    // A finally block would run AFTER those microtasks and overwrite the
-    // EVAL/EDIT mode that the tab handler correctly re-enters on session restore.
+    // Reset the mode synchronously before any await: a finally block would run
+    // after restoreSessionState's microtasks and overwrite the EVAL/EDIT mode
+    // it re-enters.
     statusBarModeStore.set('NORMAL');
     try {
         resetAnalysisAndCommentStores();
@@ -165,10 +162,8 @@ export async function openDatabaseByPath(filePath) {
             openModal(MODAL.WARNING);
         }
 
-        // Read-only fallback: another blunderDB instance holds the write lock, so
-        // the backend opened this database read-only (per the single-writer guard).
-        // Surface it non-blockingly — a title suffix (persistent) plus a status
-        // message — rather than a modal, so browsing/searching still works.
+        // Another instance holds the write lock, so the database opened
+        // read-only: say so non-blockingly (title suffix + status message).
         const readOnly = await IsReadOnly().catch(() => false);
         const filename = getFilenameFromPath(filePath);
         if (readOnly) {
@@ -179,13 +174,9 @@ export async function openDatabaseByPath(filePath) {
             WindowSetTitle(`blunderDB - ${filename}`);
         }
 
-        // The Matches panel may already be visible (it is the default tab,
-        // opened at mount before the DB finished loading), so its own
-        // open-transition load won't have fired against the now-open DB. Bump
-        // the refresh trigger so it loads the match list — same mechanism used
-        // after an import. Do this BEFORE restoreSessionState (which loads all
-        // positions and can be slow) so the match list appears promptly, in
-        // parallel with the restore rather than serialised after it.
+        // Bump the Matches panel's refresh trigger (it may have mounted before
+        // the DB opened), before the slower restoreSessionState, so the match
+        // list loads in parallel.
         matchPanelRefreshTriggerStore.update((n) => n + 1);
 
         const { restoreSessionState } = await import('./sessionService.js');
@@ -209,13 +200,11 @@ export function closeWarningModal() {
 
 export { setStatusBarMessage };
 
-// unlockProtectedCopy turns the protected copy into an ordinary database and opens it. A
-// wrong password comes back as an error on the prompt rather than closing it: the recipient
-// gets to try again.
-// The backend's errors cross the bridge as plain strings, so they are matched by text. Both
-// come from constants this project owns (issuance.ErrWrongPassphrase and
-// ErrPassphraseRequired), which is what makes the match safe; anything else is shown as-is
-// rather than swallowed.
+// unlockProtectedCopy turns the protected copy into an ordinary database and
+// opens it; a wrong password errors on the prompt so the recipient can retry.
+// Errors cross the bridge as strings and are matched on this project's own
+// constants (issuance.ErrWrongPassphrase, ErrPassphraseRequired); anything
+// else is shown as-is.
 function protectedCopyMessage(error) {
     const text = String(error);
     if (text.includes('wrong passphrase')) return translate('issuance.wrongPassword');

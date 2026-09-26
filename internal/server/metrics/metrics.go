@@ -36,18 +36,18 @@ type Registry struct {
 	rlRejected uint64 // cumulative requests rejected by the rate limiter
 	rlBuckets  uint64 // current number of live per-tenant token buckets
 
-	// PostgreSQL connection-pool gauges (#235), also atomics: polled
-	// periodically from a value the pgxpool backend itself owns (Server
-	// never holds the pool), so a plain snapshot store fits better than the
-	// request-scoped counters/hists above.
+	// PostgreSQL connection-pool gauges, also atomics: polled periodically
+	// from a value the pgxpool backend itself owns (Server never holds the
+	// pool), so a plain snapshot store fits better than the request-scoped
+	// counters/hists above.
 	pgHasPool   uint32 // 1 once SetPoolStats has been called at least once (SQLite backend: never)
 	pgAcquired  int64
 	pgIdle      int64
 	pgMax       int64
 	pgWaitCount int64
 
-	// Business gauges (#238): in-flight work and database footprint, none of
-	// which the request-count/latency metrics above say anything about — a
+	// Business gauges: in-flight work and database footprint, none of which
+	// the request-count/latency metrics above say anything about — a
 	// stuck import or a runaway gammonNet sweep is invisible to
 	// blunderdb_http_requests_total (it is one long-lived request, not many).
 	importsInFlight   int64

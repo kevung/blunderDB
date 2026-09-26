@@ -21,7 +21,7 @@ type Counts struct {
 	// (LibrarySettings, ADR-0046). It is the number the status bar's library
 	// counter shows, and it is deliberately the set the search behind that
 	// counter returns — a Position played several ways is scored by the
-	// largest of its plays (#167), not by the denormalised first one.
+	// largest of its plays, not by the denormalised first one.
 	Blunders int `json:"blunders"`
 }
 

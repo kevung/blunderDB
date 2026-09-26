@@ -61,10 +61,8 @@ import { logger } from '../utils/logger.js';
 let pendingImportPath = null;
 let fileImportCancelled = false;
 
-// Reload the whole position table from the backend. This is the expensive
-// step of any import — every row crosses the Wails IPC — so an import path
-// performs it once, after its last write, never per file: a batch of N files
-// reloads at the end of the loop, not N times inside it.
+// Reload the whole position table — the expensive step of an import (every
+// row crosses the IPC), so each import path runs it once, after its last write.
 async function reloadPositions() {
     const { loadAllPositions } = await import('./positionService.js');
     await loadAllPositions();
@@ -86,14 +84,9 @@ async function leaveMatchModeIfStillIn() {
     await reloadPositions();
 }
 
-// gammonNet auto-analyze after import (#129, ADR-0013): a config toggle, not
-// a per-import-type special case — any import completion checks whether
-// there is a backlog of positions with no analysis at all, and if the
-// setting is on, hands the batch off to the goroutine+cancel+events shell in
-// gui.App (gammonnet_batch.go). Uniform across import shapes (.mat/.txt with
-// no analysis, .xg/.sgf/.bgf that already carry one, a whole-database merge)
-// on purpose: the batch itself is a no-op when the count is zero, so there is
-// nothing to special-case by import type.
+// gammonNet auto-analyze after import (ADR-0013): any import completion hands
+// the unanalysed backlog to gui.App's batch when the setting is on. No
+// per-import-type case: the batch is a no-op when the count is zero.
 export async function maybeAutoAnalyzeAfterImport() {
     try {
         const auto = await GetGammonNetAutoAnalyze();
@@ -185,12 +178,8 @@ async function handleImportCommitCore() {
 
         await reloadPositions();
     } catch (error) {
-        // The user hitting Cancel mid-commit surfaces here as a rejected
-        // promise too (CommitImportDatabase's context is what CancelImport
-        // actually cancels) — Go wraps that case in ErrImportCancelled
-        // (pkg/blunderdb/database/db_import_db.go), whose message always
-        // starts with "import cancelled by user". Treat it as the
-        // successful cancellation it is, not a failure: no error alert (#241).
+        // Cancel mid-commit also rejects, with ErrImportCancelled
+        // ("import cancelled by user…"): a success, not an error alert.
         if (String(error).includes('import cancelled by user')) {
             logger.log('Import commit cancelled by user');
             showImportProgressModalStore.set(false);
@@ -269,10 +258,9 @@ export async function importDatabaseByPath(importFilePath) {
     }
 }
 
-// Show a freshly imported position on the board with its analysis tab open.
-// (Match imports keep opening the match list instead — that is where a match is
-// read.) loadAllPositions() always selects the matches tab, so this has to run
-// after every reload an import performs, not before.
+// Show a freshly imported position with its analysis tab open (match imports
+// open the match list instead). Must run after every reload, since
+// loadAllPositions() selects the matches tab.
 export async function showImportedPosition(positionID) {
     if (positionID) {
         let index = positionsStore.indexOf(positionID);
@@ -292,22 +280,16 @@ export async function showImportedPosition(positionID) {
 
 // Returns the ID of the saved (or merged) position, or null on failure.
 //
-// `successMessage` is the status-bar text for a new position, or a function
-// `({ id, existed }) => text` that words both outcomes (a known position
-// otherwise says status.positionMerged).
+// `successMessage`: status text for a new position, or `({ id, existed }) =>
+// text` wording both outcomes (else status.positionMerged).
 //
-// `reload` (default true) refreshes the position table after a brand-new row
-// is written, and points the index at a known position. Passing false leaves
-// the list, the index and the comment panel as they are: a batch import
-// reloads once itself, after its last file, instead of paying one full reload
-// per position (see importMultipleFilesCore), and a scratch board is saved
-// without leaving it (scratchBoard.js).
+// `reload` (default true) refreshes the table after a new row and points the
+// index at a known position. False leaves list, index and comment as they
+// are: a batch reloads once at the end, a scratch board is saved in place.
 //
-// `mergeIntoExisting` (default true) merges the analysis and comment into a
-// position that is already stored. A scratch board passes false: it carries
-// no analysis, and an empty one sent over a stored one blanks its players and
-// engine (SaveAnalysis replaces every field it does not merge). The provenance
-// flag is recorded either way.
+// `mergeIntoExisting` (default true) merges analysis and comment into a stored
+// position. A scratch board passes false: its empty analysis would blank the
+// stored players and engine. Provenance is recorded either way.
 export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage, { reload = true, mergeIntoExisting = true } = {}) {
     const announce = (id, existed, fallback) => (typeof successMessage === 'function' ? successMessage({ id, existed }) : fallback);
 
@@ -318,16 +300,9 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
     delete parsedAnalysis.creationDate;
     delete parsedAnalysis.lastModifiedDate;
 
-    // One backend call decides existence AND writes: SaveIndividualPosition
-    // deduplicates on the Zobrist hash (the same notion of "same position" the
-    // rest of the app uses) and records that the user brought this position in
-    // on its own rather than inside a match — see docs/adr/0002.
-    //
-    // The previous code called PositionExists first and, when the position was
-    // already stored, skipped the write entirely. That skipped the provenance
-    // flag in exactly the case it exists for: importing a match, then saving one
-    // of its positions from the board. It also compared marshalled JSON in an
-    // O(n) scan of the whole table, a second, divergent notion of identity.
+    // One call checks existence AND writes: SaveIndividualPosition dedups on
+    // the Zobrist hash and records individual provenance even for a known
+    // position (ADR-0002).
     let saveResult;
     try {
         saveResult = await SaveIndividualPosition(positionData);
@@ -460,10 +435,8 @@ export async function importFolder() {
 
 // Returns { type: 'position' | 'match', id } on success, null on failure.
 export async function importSingleFile(filePath) {
-    // One file the user dropped or picked is one import, and it gets the same
-    // end-of-import report a folder does (#257) — but only when it produced a
-    // MATCH. Importing a single position is a two-second gesture that lands on
-    // the board; interrupting it with a report of one line would be noise.
+    // A single dropped file gets the end-of-import report only when it
+    // produced a MATCH; a lone position just lands on the board.
     const batchID = await beginImportBatch(filePath, extensionOf(filePath));
     let outcome = null;
     try {
@@ -743,13 +716,8 @@ export async function importMultipleFiles(files) {
 }
 
 /**
- * Importe les fichiers qu'un dossier surveillé a vus arriver (#258, fiche
- * I.2) — le même import, sans fenêtre modale.
- *
- * L'utilisateur était en train d'étudier une position quand ses matchs sont
- * arrivés : lui reprendre l'écran serait le pire moment. Rien d'autre ne
- * change — mêmes doublons détectés, même lot d'import, même compte rendu,
- * même analyse automatique — et la barre de statut porte la notification.
+ * Importe les fichiers vus par un dossier surveillé : le même import, sans
+ * modale qui prendrait l'écran de l'utilisateur ; la barre de statut notifie.
  *
  * @param {string[]} files
  * @returns {Promise<{succeeded: number, skipped: number, failed: number} | null>}
@@ -764,8 +732,8 @@ export async function importWatchedFiles(files) {
     return { succeeded: r.succeeded, skipped: r.skipped, failed: r.failed };
 }
 
-// beginImportBatch opens the batch the end-of-import report will be about
-// (#257), returning 0 when one cannot be opened. Never fatal: the report is a
+// beginImportBatch opens the batch the end-of-import report will be about,
+// returning 0 when one cannot be opened. Never fatal: the report is a
 // convenience, and losing it must not cost the user the import.
 async function beginImportBatch(source, format) {
     try {
@@ -838,13 +806,9 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
     await finishImportBatch(batchID);
     fileImportModeStore.set('completed');
 
-    // Mirrors the CLI batch importer (cli_import.go), which runs a plain
-    // ANALYZE once after its own file loop: a GUI drag-drop/folder import can
-    // add as many rows as a CLI batch, but until now only the CLI path
-    // refreshed query-planner statistics afterwards — the GUI relied entirely
-    // on ensureSearchStats' one-time backfill at file open, which never fires
-    // again once a database has any stats at all, however stale (fiche-05
-    // T7). Best-effort and skipped when nothing actually got imported.
+    // Refresh planner statistics once, as the CLI batch importer does:
+    // ensureSearchStats only backfills at open when no stats exist at all.
+    // Best-effort, skipped when nothing was imported.
     if (get(fileImportResultsStore).succeeded > 0) {
         RefreshSearchStatistics();
     }
@@ -901,10 +865,8 @@ async function pastePositionCore() {
     }
     logger.log('pastePosition');
 
-    // EDIT (the search board) and EVAL (the Eval panel) are the two modes whose
-    // board is an editable scratch pad rather than a database record: there,
-    // Ctrl-V drops the position ONTO the board instead of importing it into
-    // the database — the paste side of the Ctrl-C that copied it.
+    // In EDIT and EVAL the board is a scratch pad: Ctrl-V drops the position
+    // onto it instead of importing into the database.
     const mode = get(statusBarModeStore);
     if (mode === 'EDIT' || mode === 'EVAL') {
         await pastePositionToBoard();
@@ -955,7 +917,7 @@ async function pastePositionCore() {
     } else {
         // An OGID needs no branch here: parser.ParsePosition reads it like it
         // reads an XGID, so a pasted OpenGammon identifier lands in the
-        // database through exactly this call (#260).
+        // database through exactly this call.
         const { positionData, parsedAnalysis } = await parsePositionText(result);
         const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.pastedPositionSaved'));
         if (posID) await showImportedPosition(posID);
@@ -1008,10 +970,8 @@ async function pastePositionToBoard() {
     }
 }
 
-// parsePositionOnly parses text when only the board is wanted. When the
-// backend refuses the analysis block (an XG language it does not know), the
-// bare XGID line is parsed instead: the board is in the XGID, and pasting it
-// onto the board must not depend on the language the analysis was written in.
+// Parses text when only the board is wanted. If the backend refuses the
+// analysis block (unknown XG language), the bare XGID line is parsed instead.
 async function parsePositionOnly(text) {
     try {
         return await parsePositionText(text);
@@ -1135,14 +1095,10 @@ export async function handleFileDrop(x, y, paths) {
     }
 }
 // ── Position text parser ────────────────────────────────────────
-//
-// Parsing lives in the Go backend now (pkg/blunderdb/parser, exposed as
-// ParsePositionText over Wails) so the GUI, CLI and server share one
-// implementation and can't drift — see testdata/parse_corpus.json and its
-// dual contract tests. parsePositionText() calls the backend and reshapes the
-// result into the legacy { positionData, parsedAnalysis } shape the callers
-// already consume (parsedAnalysis.checkerAnalysis as a bare array,
-// doublingCubeAnalysis as an object, comment inline).
+// Parsing is in Go (pkg/blunderdb/parser, ParsePositionText), shared by
+// GUI, CLI and server (testdata/parse_corpus.json). This reshapes the result
+// into the { positionData, parsedAnalysis } shape callers consume
+// (checkerAnalysis as an array, doublingCubeAnalysis as an object).
 export async function parsePositionText(content) {
     const result = await ParsePositionText(content);
     const a = result.analysis || {};
@@ -1168,13 +1124,9 @@ export async function openImportedPosition(positionID) {
     await showImportedPosition(positionID);
 }
 
-// analyzeRemainingAfterImport starts the evaluator on what the import brought
-// in without an analysis. It is the report's one action: the panel says "12
-// positions with no analysis" and this is what the user does about it.
-//
-// The batch is the whole database's unanalysed set, not the import's alone —
-// StartGammonNetBatch has no narrowing — which is honest rather than
-// surprising: a user who asks to analyse after an import wants the gaps gone.
+// The report's one action: analyse what came in without analysis. The batch
+// covers the whole database's unanalysed set (StartGammonNetBatch has no
+// narrowing).
 export async function analyzeRemainingAfterImport() {
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
@@ -1188,22 +1140,11 @@ export async function analyzeRemainingAfterImport() {
 }
 
 /**
- * Importe une position depuis un identifiant TAPÉ, plutôt que collé (#262,
- * fiche I.6).
- *
- * Le presse-papier marche déjà, et c'est le geste courant. Il ne marche pas
- * quand l'identifiant arrive d'ailleurs : d'un message, d'un forum lu dans un
- * terminal, d'un script. La commande `import XGID=…` couvre ce cas-là, avec
- * exactement le même chemin — même analyse du texte, même déduplication, même
- * ouverture de la position importée.
- *
- * OGID est reconnu depuis que sa grammaire a été relevée sur des positions
- * réelles (#260), et par le même lecteur : parser.ParsePosition lit un OGID
- * comme il lit un XGID. Il ne reste ici qu'un aiguillage — savoir si le texte
- * EST un identifiant, un OGID n'ayant pas de préfixe obligatoire. Un OGID ne
- * porte qu'une position, jamais d'évaluation : la fiche d'analyse arrive vide,
- * comme pour un XGID nu. Ce qui n'est ni l'un ni l'autre est refusé en le
- * disant, plutôt que deviné.
+ * Importe une position depuis un identifiant tapé (`import XGID=…`), par le
+ * même chemin que le presse-papier. parser.ParsePosition lit aussi un OGID ;
+ * seul l'aiguillage « est-ce un identifiant ? » vit ici, un OGID n'ayant pas
+ * de préfixe. Sans évaluation, la fiche d'analyse arrive vide ; le reste est
+ * refusé en le disant.
  *
  * @param {string} text
  */
@@ -1236,17 +1177,10 @@ export async function importIdentifier(text) {
 }
 
 /**
- * Enrichit un match depuis un fichier (#262, fiche I.6).
- *
- * Il n'y a rien de nouveau sous ce bouton, et c'est le propos : réimporter le
- * même match dans un autre format l'enrichit déjà en place — la déduplication
- * par empreinte canonique reconnaît qu'il s'agit du même match et fusionne les
- * analyses et les commentaires du second fichier dans le premier. Ce que le
- * bouton apporte, c'est de le rendre trouvable : personne ne devine qu'un
- * import est aussi un enrichissement.
- *
- * Le compte rendu qui suit dit lequel des deux a eu lieu — « enrichis : 1 »
- * plutôt que « importés : 1 ».
+ * Enrichit un match depuis un fichier. Simple import : la déduplication par
+ * empreinte canonique fusionne analyses et commentaires dans le match
+ * existant ; le bouton rend ce geste trouvable, et le compte rendu dit
+ * « enrichis » plutôt qu'« importés ».
  */
 export async function enrichMatchFromFile() {
     if (!get(databasePathStore)) {

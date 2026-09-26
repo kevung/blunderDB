@@ -16,19 +16,15 @@ import (
 // The gold corpus: a fixed list of (position, dice, ply) decisions that both
 // this port and the C reference must answer identically.
 //
-// The file is versioned so the two sides provably start from the same
-// positions. Regenerating it is a deliberate act — run this test with
-// -run TestWriteGoldCorpus and BLUNDERDB_WRITE_CORPUS set — because a corpus
-// that drifts silently would turn the gold file into a comparison of two
-// different questions.
+// The file is versioned so both sides provably start from the same
+// positions. Regenerating it is deliberate: -run TestWriteGoldCorpus with
+// BLUNDERDB_WRITE_CORPUS set.
 const (
 	corpusMagic = "GNCP"
 	corpusPath  = "testdata/search_corpus.bin"
 
-	// The second corpus (ADR-0023): the same kind of decisions, each with a
-	// full search configuration — match state and cube — so the gold covers
-	// use_match and use_cube, which the first corpus (money, cubeless, 32
-	// bytes a case) cannot express. Record = the 32 bytes above, then
+	// The second corpus (ADR-0023) adds match state and cube to each case, to
+	// cover use_match and use_cube. Record = the 32 bytes above, then
 	// use_match, away_on_roll, away_opponent, cube, crawford, use_cube,
 	// owner, one pad byte, then x as a little-endian float64: 48 bytes.
 	searchCubeCorpusMagic = "GNC2"
@@ -208,12 +204,10 @@ func buildSearchCubeCorpus() []goldCase {
 		added++
 	}
 
-	// The terminal valuation (#188): three boards where one legal play ends
-	// the game — a single game, a gammon, a backgammon (terminal_test.go's
-	// terminalBoards) — at a score, cubeful, one per ply. Nothing else in
-	// either corpus ends a game, so without these the C and the port were
-	// never compared on terminal_value at all. Appended last so the gold
-	// entries before them are byte-for-byte what they were.
+	// The terminal valuation: terminal_test.go's three game-ending boards,
+	// at a score, cubeful, one per ply — the only cases that compare
+	// terminal_value with the C. Appended last so earlier gold entries stay
+	// byte-for-byte.
 	terminal := ctx{useMatch: true, away: int8(terminalState.AwayOnRoll), opp: int8(terminalState.AwayOpponent), cube: int8(terminalState.Cube), owner: CubeCentred}
 	for i, board := range terminalBoards() {
 		cases = append(cases, mk(board, terminalD1, terminalD2, int8(i), terminal, true))

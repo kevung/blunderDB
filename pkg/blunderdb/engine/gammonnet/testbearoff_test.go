@@ -7,10 +7,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// raceTestTwoSided opens the TS-06-06 table these measurements compare against.
-// Generated and cached by bearofftest since ADR-0027 took the file out of the
-// binary; it is the same bytes gnubg produces, so the measurements are
-// comparable with the ones recorded before the change.
+// raceTestTwoSided opens the TS-06-06 table these measurements compare against,
+// generated and cached by bearofftest (ADR-0027), byte-identical to gnubg's.
 func raceTestTwoSided(t *testing.T) *race.TwoSided {
 	t.Helper()
 	ts, err := race.OpenTwoSided(bearofftest.TwoSidedPath(t))

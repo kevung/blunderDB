@@ -3,14 +3,9 @@
 // the indexes the two declare — by name, by uniqueness and by the columns each
 // one covers.
 //
-// Why: the eight search-range indexes fiche-05 added to schema_sqlite.go
-// (back_checkers_1/2, pip_1, no_contact, the four remaining rate columns) went
-// missing from the PostgreSQL chain for whole releases, because nothing tied
-// the two lists together. Names alone caught that; they did not catch an index
-// that exists on both sides over different columns, which is the same bug one
-// step further in (fiche-05's own covering index gained a trailing position_id
-// on one side only, and only a comment said so). So the columns are compared
-// too — as a SET, deliberately:
+// Nothing else ties the two index lists together, and a name match misses an
+// index over different columns, so the columns are compared too — as a SET,
+// deliberately:
 //
 //   - `tenant_id` leads every composite index here and exists nowhere in
 //     SQLite, so it is dropped before comparing;

@@ -7,17 +7,10 @@ import (
 	"testing"
 )
 
-// TestCLIPageDocumentsEveryCommand locks doc/source/cli.rst to handlers():
-// every subcommand the binary dispatches has a section "<name> — …" in the
-// French CLI page, and every such section names a command that still exists.
-// `blunderdb version` shipped undocumented for two releases because nothing
-// compared the two lists (tasks/critique-doc-2026-09, persona 7, #5) — this
-// is the comparison. The CLI page is the source of the eight translated
-// renderings, so locking the French source is enough.
-//
-// Three commands are documented on another page, and one is the page's own
-// syntax note; they are exempted by name, with the page that carries them, so
-// the exemption cannot silently widen.
+// TestCLIPageDocumentsEveryCommand locks doc/source/cli.rst (the French
+// source of the translations) to handlers(): every subcommand has a section
+// "<name> — …", and every such section names an existing command. Commands
+// documented elsewhere are exempted by name, with their page.
 func TestCLIPageDocumentsEveryCommand(t *testing.T) {
 	src, err := os.ReadFile("doc/source/cli.rst")
 	if err != nil {

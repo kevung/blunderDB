@@ -14,41 +14,24 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// ErrImportCancelled is returned by CommitImportDatabase when the user
-// cancels an in-flight import via CancelImport (beginCancellableImport's
-// context is what actually gets cancelled) — an outcome the user asked for,
-// not a failure. It wraps the context's own error (context.Canceled or
-// context.DeadlineExceeded) alongside itself, so a caller can check either
-// errors.Is(err, ErrImportCancelled) or errors.Is(err, context.Canceled)
-// (#241). The GUI import flow (frontend/src/services/importService.js) used
-// to show "Error committing import: import cancelled by user" for exactly
-// this case — indistinguishable from a real failure — because the previous
-// error carried no way to tell the two apart at all, wrapped or not.
+// ErrImportCancelled is returned by CommitImportDatabase when the user cancels
+// via CancelImport — an outcome asked for, not a failure. The returned error
+// also wraps the context's own, so errors.Is matches either.
 var ErrImportCancelled = errors.New("import cancelled by user")
 
 // wrapImportCancelled builds the error CommitImportDatabase returns once
-// ctx.Err() is non-nil: wraps both ErrImportCancelled and the context's own
-// error, so either is visible to errors.Is. Kept as its own function so the
-// wrapping itself is unit-testable without racing a real CancelImport call
-// against a real commit (#241).
+// ctx.Err() is non-nil, wrapping both errors. Separate so it is testable
+// without racing a real CancelImport against a commit.
 func wrapImportCancelled(ctxErr error) error {
 	return fmt.Errorf("%w: %w", ErrImportCancelled, ctxErr)
 }
 
 // sourcePositionScalarColumns is the SELECT-list fragment for the scalar
 // columns a compact-state row needs (decision type, dice, cube, score,
-// jacoby, beaver), qualified with alias (e.g. "p." or ""). Selecting them
-// alongside id/state — in both sourcePositionQuery and
-// AnalyzeImportDatabase's own query — means decodeSourcePosition never
-// issues its own follow-up query per compact row (B.11, #179: this used to
-// run once per compact-state position, played twice across the analyze and
-// commit passes, on top of the per-row analysis/comment lookups already
-// there).
-//
-// A database that predates these columns (pre-2.2.0) can never hold a
-// compact-state row in the first place — see decodeSourcePosition — so the
-// NULL stand-ins below are never actually read; they exist only so the SELECT
-// itself does not fail with "no such column" against that old a schema.
+// jacoby, beaver), qualified with alias (e.g. "p." or ""), selected alongside
+// id/state so decodeSourcePosition needs no query per compact row. A pre-2.2.0
+// database holds no compact row, so its NULL stand-ins are never read; they
+// only keep the SELECT valid.
 func sourcePositionScalarColumns(importDB *sql.DB, alias string) string {
 	if !queryable(importDB, `SELECT decision_type FROM position LIMIT 1`) {
 		return "NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL"
@@ -66,12 +49,9 @@ func sourcePositionScalarColumns(importDB *sql.DB, alias string) string {
 // sourcePositionScalarColumns lists, individually_imported) from the
 // database being imported.
 //
-// Databases older than 2.13.0 have no individually_imported column, so the flag
-// is derived there the same way the 2.12.0→2.13.0 migration derives it: a
-// position reachable from no move never came from a match. Using the same rule
-// in both places is what keeps the two routes consistent — migrating a database
-// in place and importing it into another must not disagree about which of its
-// positions were individually imported.
+// Before 2.13.0 the flag is derived exactly as the 2.12.0→2.13.0 migration
+// derives it (no move reaches the position), so migrating in place and
+// importing elsewhere agree on provenance.
 func sourcePositionQuery(importDB *sql.DB) string {
 	if queryable(importDB, `SELECT individually_imported FROM position LIMIT 1`) {
 		return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, individually_imported FROM position`
@@ -100,9 +80,7 @@ func queryable(db *sql.DB, q string) bool {
 // checkImportableVersion allows a database to be imported into another when
 // its schema major version is the same or older: the importer reads the source
 // with the current code, which knows every past major and none of the future
-// ones. The comparison is numeric (parseVersion, the same reader the migration
-// chain uses): compared as strings, "10" sorts before "2" and a 10.x.x source
-// would have slipped into a 2.x.x database as if it were older.
+// ones. Compared numerically (parseVersion): as strings, "10" sorts before "2".
 func checkImportableVersion(importVersion, currentVersion string) error {
 	iv, err := parseVersion(importVersion)
 	if err != nil {
@@ -118,32 +96,13 @@ func checkImportableVersion(importVersion, currentVersion string) error {
 	return nil
 }
 
-// decodeSourcePosition reconstructs a Position from a row of the database
-// being imported. Full-JSON state (every pre-2.2.0 database, and every export
-// before fiche-04) is self-describing: json.Unmarshal is enough. Compact state
-// is not — it holds only the board — so the scalar columns that carry
-// everything else (dice, score, cube, decision type) have to come from the
-// same row: dt, por, d1, d2, cv, co, s1, s2, hj, hb, selected alongside id and
-// state by every query that calls this (sourcePositionScalarColumns) instead
-// of a follow-up query per compact row (B.11, #179 — this used to run once
-// per compact-state position, played twice across the analyze and commit
-// passes).
-//
-// Compact state is only ever produced by a database on the 2.2.0+ schema,
-// which always has those columns (storage/sqlite.Bootstrap creates them
-// unconditionally), so a genuine compact export or an ordinary user database
-// always has real values here, never the NULL sourcePositionScalarColumns
-// substitutes for a database that predates them (which, by the same fact,
-// can never hold a compact row to read them for). A hand-built or corrupted
-// fixture that manages both at once degrades to a board-only Position —
-// losing dice/score identity, so it can be merged as "new" rather than
-// aborting the whole import.
-//
-// Without this, importing one current-schema database into another (the
-// "Import database" GUI feature, and fiche-04's own exports once they started
-// writing compact state) silently duplicated every position: the decode used
-// to zero every field but the board, so positionIdentityJSON never matched an
-// existing row.
+// decodeSourcePosition reconstructs a Position from a source row. Full-JSON
+// state is self-describing; compact state holds only the board, so dice,
+// score, cube and decision type come from the row's scalar columns (dt … hb,
+// see sourcePositionScalarColumns). Zeroing them would make
+// positionIdentityJSON miss the existing row and duplicate every position.
+// A corrupt row with compact state but NULL columns degrades to a board-only
+// Position rather than aborting the import.
 func decodeSourcePosition(state string, dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64) (Position, error) {
 	var pos Position
 	if !isCompactState(state) {
@@ -171,19 +130,10 @@ type queryer interface {
 	Query(query string, args ...any) (*sql.Rows, error)
 }
 
-// loadJoinedCommentText returns a position's full comment text: every row in
-// the comment table, in a stable order, joined the same way
-// storage/sqlshared's loadCommentText joins them for search and the GUI. A
-// position can carry more than one comment row (AddComment), and comparing
-// only an arbitrary single one — the previous `QueryRow` here had no
-// ORDER BY, so which row came back was undefined — could both miss a
-// genuinely new comment and wrongly flag one already present under a
-// different row as "new" (B.6, #174). CommitImportDatabase's own merge used
-// to have this exact bug independently — a raw single-row `QueryRow` of its
-// own, never switched over to this helper when #174 fixed the preview pass —
-// which on top of misjudging "already present" could rewrite every one of a
-// multi-row position's comment rows to the same merged text (B.11, #179:
-// found while folding both passes' comment merge onto the same helper).
+// loadJoinedCommentText returns a position's full comment text: every row, in
+// a stable order, joined as storage/sqlshared's loadCommentText joins them. A
+// position can carry several comment rows; comparing one arbitrary row
+// misjudges what is "already present".
 func loadJoinedCommentText(db queryer, positionID int64) (string, error) {
 	rows, err := db.Query(`SELECT text FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`, positionID)
 	if err != nil {
@@ -255,11 +205,8 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 	slog.Debug("built position index", "count", len(currentPositionsMap))
 
-	// Analyze what would happen. The scalar columns are selected alongside
-	// state so decodeSourcePosition never issues its own follow-up query per
-	// compact row (B.11, #179) — this pass has no use for
-	// individually_imported, so it is left out of its own query rather than
-	// reusing sourcePositionQuery (CommitImportDatabase's, which needs it).
+	// Analyze what would happen. Unlike sourcePositionQuery, no
+	// individually_imported: this pass does not need it.
 	rows, err := importDB.Query(`SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + ` FROM position`)
 	if err != nil {
 		return nil, err
@@ -326,10 +273,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 				}
 			}
 
-			// Check for comments to merge. Both sides join every comment row
-			// the position carries (loadJoinedCommentText) rather than
-			// reading one arbitrary row, matching what loadCommentText
-			// already does for search and what the GUI displays.
+			// Check for comments to merge, joining every row on both sides.
 			importComment, err := loadJoinedCommentText(importDB, id)
 			if err != nil {
 				return nil, err
@@ -561,16 +505,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				}
 			}
 
-			// Merge comments. Both sides join every comment row the position
-			// carries (loadJoinedCommentText) rather than reading one
-			// arbitrary row: this merge used to have its own raw
-			// single-row QueryRow, never switched over when #174 fixed
-			// AnalyzeImportDatabase's identical bug, and its UPDATE
-			// rewrote every one of a multi-row position's comment rows to
-			// the same merged text (B.11, #179). A new row is appended
-			// for the imported text when it is not already contained,
-			// matching ingest.DBImporter's merge: existing rows are never
-			// rewritten.
+			// Merge comments, joining every row on both sides. The imported
+			// text is appended as a new row when not already contained, as
+			// ingest.DBImporter does: existing rows are never rewritten.
 			importComment, err := loadJoinedCommentText(importDB, id)
 			if err != nil {
 				slog.Warn("reading import comment", "positionID", id, "err", err)
@@ -593,15 +530,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				positionsSkipped++
 			}
 		} else {
-			// Position doesn't exist: add it through the canonical write path,
-			// inside the transaction. Save is what computes the Zobrist hash and
-			// the scalar search columns (pip counts, back checkers, no-contact,
-			// dice, score, cube…); a raw INSERT of the state used to leave them
-			// all NULL, which hid the row from every SQL filter and — because
-			// ReconstructPosition trusts the columns over the state — made it
-			// fail to match itself on the next import of the same database.
-			// Provenance rides along: Save ORs IndividuallyImported into the
-			// stored flag (ADR-0001).
+			// New position: write through Save, which computes the Zobrist
+			// hash and scalar search columns — a raw INSERT leaves them NULL,
+			// hiding the row from filters and from its own next import. Save
+			// ORs IndividuallyImported into the stored flag (ADR-0001).
 			importPosition.IndividuallyImported = sourceIndividual
 			newPositionID, err := stx.Positions().Save(ctx, "", &importPosition)
 			if err != nil {
@@ -674,14 +606,10 @@ func (d *Database) ImportDatabase(importPath string) (map[string]interface{}, er
 	return d.CommitImportDatabase(importPath)
 }
 
-// heldByZobrist reports whether the target already stores pos, judged the way
-// the store itself judges it — by Zobrist hash. It backs up the JSON identity
-// map the importer keys its lookup on: that map compares marshalled Positions
-// byte for byte, so a source position that is the same position but was
-// stored un-normalised (a hand-built fixture, a database written before
-// NormalizeForStorage existed) would slip past it and be inserted again, only
-// for Save's unique index to hand back the existing id. Asking the index first
-// keeps the merge branch (analysis, comment, provenance) on that path too.
+// heldByZobrist reports whether the target already stores pos, by Zobrist
+// hash as the store judges it. It backs up the byte-for-byte JSON identity map,
+// which misses an un-normalised source position, so such a position still
+// takes the merge branch (analysis, comment, provenance).
 func heldByZobrist(positions storage.PositionStore, pos *Position) (int64, bool, error) {
 	id, held, err := positions.Exists(context.Background(), "", engine.ZobristHash(pos))
 	if err != nil {

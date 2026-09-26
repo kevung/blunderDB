@@ -34,9 +34,8 @@ import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin } f
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
 
-// The mode automaton (NORMAL / MATCH / COLLECTION / EDIT / EVAL) lives in
-// modeMachine.js; its transitions stay reachable from here so that callers
-// keep one import for everything position-related.
+// The mode automaton lives in modeMachine.js; its transitions are re-exported
+// here so callers keep one import.
 export {
     enterEditMode,
     exitEditMode,
@@ -103,8 +102,7 @@ export function setSearchState(cmdOrObj, pos, active) {
     }
 }
 
-// generateXGID lives in xgid.js — re-exported so existing callers keep one import,
-// and imported here too since this module still calls it directly.
+// Re-exported for existing callers; also used directly below.
 export { generateXGID } from './xgid.js';
 import { generateXGID } from './xgid.js';
 
@@ -123,20 +121,15 @@ export function isValidPosition(position) {
 }
 
 /**
- * The board a search sends as its "at least" checker structure (#410).
+ * The board a search sends as its "at least" checker structure.
  *
- * The backend reads any board carrying a checker as a structure the results
- * must contain (sqlshared/search.go, HasBoardFilter). In EDIT mode the board is
- * the query the user drew, and that is what they ask. Anywhere else it is the
- * position on screen — thirty checkers — and sending it answered `s E>80` or
- * `ss E>80` with that one position: measured on a real database, 40 positions
- * without a board, 1 with (TestSearch_DisplayedBoardOutsideEdit).
- *
- * So outside EDIT the checkers are dropped, and only them: dice, cube, score,
- * the side on roll and the decision type still travel, because the `D`, `cube`,
- * `score` and `d` tokens read them from the position on screen on purpose.
- * The history and the last search record this board, not the screen's, so
- * replaying the entry asks the same question.
+ * The backend reads any board with a checker as a structure results must
+ * contain (HasBoardFilter). In EDIT that is the drawn query; elsewhere it is
+ * the full position on screen, which would narrow `s E>80` to that one
+ * position (TestSearch_DisplayedBoardOutsideEdit). So outside EDIT only the
+ * checkers are dropped: dice, cube, score, side on roll and decision type
+ * still travel for the `D`, `cube`, `score` and `d` tokens. History records
+ * this board, so a replay asks the same question.
  *
  * @param {any} [position] defaults to the board on screen
  * @returns {any} a copy outside EDIT; the position itself in EDIT
@@ -177,23 +170,13 @@ export async function showPosition(position) {
         return;
     }
 
-    // JSON round-trip, not structuredClone: a position reaching here in MATCH
-    // mode comes out of a Svelte 5 reactive proxy, and structuredClone throws
-    // DataCloneError on a Proxy ("#<Object> could not be cloned"). The throw
-    // landed BEFORE the LoadAnalysis below, so browsing a match advanced the
-    // status bar — its move counter reads the match context, updated by the
-    // caller — while the board and the analysis stayed on the previous move
-    // (D.8, #208, fixed 2026-09-04; e2e match-navigation caught it). A
-    // position is plain JSON off the Wails bridge, so the round trip is exact.
+    // JSON round-trip, not structuredClone: in MATCH mode the position is a
+    // Svelte 5 proxy, on which structuredClone throws DataCloneError.
     const positionCopy = JSON.parse(JSON.stringify(position));
     positionStore.set(positionCopy);
 
-    // The analysis and the comment are two independent round trips over the
-    // Wails bridge; running them concurrently instead of one after the other
-    // halves the latency a browsing step pays for them (D.8, #208). Each call
-    // is deferred into a .then() so a binding that throws synchronously (as
-    // an unmocked one does in a few tests) becomes a rejection allSettled
-    // catches, rather than an exception that skips the settle entirely.
+    // Analysis and comment fetched concurrently. Each call is deferred into
+    // .then() so a synchronous throw becomes a rejection allSettled catches.
     const [analysisResult, commentResult] = await Promise.allSettled([Promise.resolve().then(() => LoadAnalysis(position.id)), Promise.resolve().then(() => LoadComment(position.id))]);
     const analysis = analysisResult.status === 'fulfilled' ? analysisResult.value : null;
     const comment = commentResult.status === 'fulfilled' ? commentResult.value : '';
@@ -273,9 +256,8 @@ export async function loadAnalysisForPosition(position) {
 
 /**
  * Reload the whole library and leave every other mode. Lands on `focusId`
- * when the library holds it — the position the user is leaving, so that
- * exiting a match keeps the studied position on the board (#201) — and on
- * the last position otherwise, the historical default of a fresh list.
+ * when the library holds it (so exiting a match keeps the studied position),
+ * else on the last position.
  *
  * @param {{ focusId?: number | null }} [options]
  */
@@ -332,11 +314,9 @@ export async function loadAllPositions({ focusId = null } = {}) {
     }
 }
 
-// Explicit user reload of the whole library (Ctrl+R, the toolbar reload button,
-// the `e` command). loadAllPositions on its own lands on the Matches tab; an
-// explicit reload is a "study" action, so surface the analysis panel for the
-// shown position instead. Guard on an open DB with positions so an empty reload
-// stays on the neutral state.
+// Explicit user reload (Ctrl+R, toolbar, `e`): a study action, so show the
+// analysis panel rather than the Matches tab loadAllPositions lands on — only
+// with an open, non-empty database.
 export async function reloadAllPositions() {
     await loadAllPositions();
     if (get(databasePathStore) && get(positionsStore).length > 0) {
@@ -344,11 +324,8 @@ export async function reloadAllPositions() {
     }
 }
 
-// loadPositionsByFilters takes one options object rather than the ~38 positional
-// arguments it used to. The list had grown long enough that adding a filter meant
-// inserting an argument at the same index in six call sites, and getting an index
-// wrong shifts every later filter silently: the search still runs, it just answers
-// a different question.
+// One options object, not positional arguments: a wrong index would silently
+// shift every later filter and answer a different question.
 export async function loadPositionsByFilters({
     filters = [],
     // Le classement par similarité (ADR-0043). `likeFilter` dit que la requête
@@ -403,10 +380,9 @@ export async function loadPositionsByFilters({
     encounterFilter = '',
     commentOriginFilter = '',
     tagFilter = '',
-    // The board a saved filter was stored with (filterLibraryService.js):
-    // the structure — or the `like` target — the question was asked with,
-    // taken as it is whatever the mode. Without it the query board is the
-    // one on screen, a structure only in EDIT (#410).
+    // The board a saved filter was stored with: its structure or `like`
+    // target, used whatever the mode. Otherwise the board on screen, a
+    // structure only in EDIT.
     queryBoard = null
 } = {}) {
     if (!get(databasePathStore)) {
@@ -421,12 +397,11 @@ export async function loadPositionsByFilters({
     document.body.style.cursor = 'wait';
 
     try {
-        // The structure comes from the board only in EDIT, the query board (#410).
+        // The structure comes from the board only in EDIT, the query board.
         let currentPosition = queryBoard ?? searchQueryBoard(get(positionStore));
 
-        // The exclude ("Sauf") structure must use the same mirror orientation as
-        // the include structure so its points/colors stay aligned with stored
-        // positions. The mirror decision is driven by the include board.
+        // The exclude ("Sauf") structure follows the include board's mirror
+        // decision, so both stay aligned with stored positions.
         const applyMirror = currentPosition.player_on_roll === 1;
 
         if (applyMirror) {
@@ -459,32 +434,18 @@ export async function loadPositionsByFilters({
 
         const searchFilterPositionJSON = JSON.stringify(currentPosition);
 
-        // Cube sub-type (only meaningful when the decision-type filter is a cube
-        // decision): `dr` = take/pass responses, `dd` = double/no-double. Derived
-        // from the filter tokens so both the panel and the command line share it.
+        // Cube sub-type (cube decisions only): `dr` = take/pass, `dd` =
+        // double/no-double, derived from tokens for panel and command line alike.
         const cubeResponseFilter = Array.isArray(filters) ? (filters.includes('dr') ? 'takepass' : filters.includes('dd') ? 'double' : '') : '';
 
-        // Comment presence: `co` = has a comment, `xco` = has none. Derived from
-        // the tokens like cubeResponseFilter above, so the panel, the command
-        // line and replayed history entries all go through one code path.
+        // `co` = has a comment, `xco` = has none; same token path as above.
         const commentFilter = Array.isArray(filters) ? (filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '') : '';
 
-        // Only ids travel the Wails bridge here (D.8, #208): a search
-        // returning thousands of rows used to ship every one of them whole
-        // (megabytes of JSON) before the board ever showed more than one at a
-        // time. positionsStore (positionList.js) keeps the id list and
-        // fetches the window it is about to show through LoadPositionsByIDs —
-        // the same lazy path the library already uses.
-        // La cible d'un `like` nu est résolue ICI, là où la requête a été
-        // tapée : « cette position » veut dire celle qu'on feuillette, et rien
-        // en aval ne peut le deviner.
-        //
-        // En mode ÉDITION, en revanche, elle ne se résout pas : le plateau
-        // DESSINÉ est la cible, et c'est la question que la recherche exacte
-        // par structure croyait poser — « je me souviens vaguement d'une
-        // position comme ça ». On dessine à peu près, on lance, la base
-        // répond, là où la recherche par structure ne pardonne pas le dessin
-        // approximatif.
+        // Only ids cross the Wails bridge; positionsStore fetches the window
+        // it shows through LoadPositionsByIDs.
+        // La cible d'un `like` nu se résout ici : « cette position » est celle
+        // qu'on feuillette. En mode ÉDITION, le plateau DESSINÉ est la cible —
+        // un dessin approximatif que `like` pardonne.
         let likeTarget = likeTargetId;
         if (likeFilter && !likeTarget && !queryBoard && get(statusBarModeStore) !== 'EDIT') {
             likeTarget = positionsStore.idAt(get(currentPositionIndexStore)) || 0;
@@ -494,14 +455,9 @@ export async function loadPositionsByFilters({
             }
         }
 
-        // Dans un classement, le plateau est la CIBLE et jamais un motif.
-        //
-        // Une recherche ordinaire prend le plateau affiché comme structure à
-        // contenir ; `like` lui donne l'autre rôle. Garder les deux vidait le
-        // classement — la recherche exigeait de chaque candidate qu'elle
-        // contienne exactement la structure de la cible, ce que seule la cible
-        // fait, et elle est exclue. `filter` part donc vide, et le plateau
-        // dessiné voyage comme cible quand aucun indice ne la nomme.
+        // Dans un classement, le plateau est la CIBLE, jamais un motif : comme
+        // motif il exigerait de chaque candidate la structure exacte de la
+        // cible, qui est exclue, et viderait le résultat. `filter` part vide.
         const rankAgainstDrawnBoard = likeFilter && !likeTarget;
         const payload = {
             filter: likeFilter ? emptySearchBoardPosition() : currentPosition,
@@ -558,10 +514,8 @@ export async function loadPositionsByFilters({
             likeWidened
         };
 
-        // Une requête classée passe par son propre appel, parce que la
-        // DISTANCE fait partie de la réponse : une voisine sans sa distance est
-        // illisible, c'est la seule chose qui dise si l'on regarde une voisine
-        // ou une coïncidence.
+        // Appel propre au classement : la distance fait partie de la réponse,
+        // sans elle une voisine ne se distingue pas d'une coïncidence.
         let ids;
         let rankedSummary = null;
         if (likeFilter) {
@@ -600,7 +554,7 @@ export async function loadPositionsByFilters({
             }
 
             // Before any store moves: a sub-search run from a collection or a
-            // match remembers it, so that leaving the results returns there (#410).
+            // match remembers it, so that leaving the results returns there.
             const subSearchOrigin = noteSubSearchOrigin(Boolean(restrictToPositionIDs), Array.isArray(ids) ? ids : []);
 
             statusBarModeStore.set('NORMAL');
@@ -631,9 +585,8 @@ export async function loadPositionsByFilters({
             const { saveSessionState } = await import('./sessionService.js');
             saveSessionState();
 
-            // La fourchette des distances est dite après coup, une fois la
-            // liste posée : c'est ce qui permet de juger d'un coup d'œil si le
-            // classement a trouvé des voisines ou des inconnues.
+            // La fourchette des distances, dite une fois la liste posée, montre
+            // si le classement a trouvé des voisines ou des inconnues.
             if (rankedSummary) {
                 setStatusBarMessage(rankedSummary);
             } else if (subSearchOrigin) {
@@ -642,10 +595,8 @@ export async function loadPositionsByFilters({
                 setStatusBarMessage(tMsg(subSearchOrigin === 'MATCH' ? 'status.subSearchInMatch' : 'status.subSearchInCollection'));
             }
         } else {
-            // Un classement qui ne trouve rien le dit autrement qu'une
-            // recherche vide : la question n'était pas « lesquelles
-            // correspondent » mais « laquelle est proche », et la réponse est
-            // qu'aucune ne l'est (ADR-0043).
+            // Un classement vide dit « aucune n'est proche », pas « aucune ne
+            // correspond » (ADR-0043).
             setStatusBarMessage(tMsg(likeFilter ? 'similar.none' : 'status.noMatchingPositions'));
             if (get(activeTabStore) === 'search') {
                 statusBarModeStore.set('EDIT');
@@ -659,9 +610,8 @@ export async function loadPositionsByFilters({
         }
     } finally {
         document.body.style.cursor = '';
-        // The success path above sets no message of its own (the position count updates
-        // separately); restore whatever was shown before the search only if nothing else
-        // — the no-match or error branch — has already replaced the "searching" placeholder.
+        // Restore the pre-search message unless a no-match or error branch
+        // already replaced the "searching" placeholder.
         const current = get(statusBarTextStore);
         if (current && typeof current === 'object' && current.i18nKey === 'status.searching') {
             statusBarTextStore.set(previousStatusMessage);
@@ -690,7 +640,7 @@ export async function deletePosition() {
 
     try {
         const positionID = positionsStore.idAt(get(currentPositionIndexStore));
-        // Through the trash (#285): the delete really happens, but a snapshot
+        // Through the trash: the delete really happens, but a snapshot
         // is written first, so `trash` can put it back for thirty days.
         await TrashPosition(positionID);
         logger.log('Position and associated analysis deleted with ID:', positionID);
@@ -761,9 +711,8 @@ export async function updatePosition() {
         const positionJSON = JSON.stringify(position);
         const originalPositionJSON = JSON.stringify(originalPosition);
 
-        // The position row goes first: if the edit is refused (it has become
-        // a position that already exists), nothing else must have changed —
-        // deleting the analysis before a refused update lost it for good.
+        // The position row goes first: if the edit is refused (now a
+        // duplicate), the analysis must not have been deleted yet.
         analysis.xgid = generateXGID(position);
         await UpdatePosition(position);
         logger.log('Position updated with ID:', positionID);
@@ -793,7 +742,7 @@ export async function updatePosition() {
 }
 
 // Ctrl-S, the toolbar button and `w`. The board that can be saved is a
-// scratch board, and scratchBoard.js is its one write path (#400).
+// scratch board, and scratchBoard.js is its one write path.
 export async function saveCurrentPosition() {
     const { saveScratchBoard } = await import('./scratchBoard.js');
     await saveScratchBoard();
@@ -808,10 +757,8 @@ export async function updateEPC(position) {
         const bottomEPC = result?.bottom?.epc || null;
         const topEPC = result?.top?.epc || null;
         const race = result?.race || null;
-        // The width of the one-sided table each side was answered from
-        // (ADR-0027 §9). It is only worth showing when it is not the ordinary
-        // six: a side answered from OS-08 has a chequer outside its home
-        // board, and the reader would otherwise assume it could not have.
+        // Width of the one-sided table each side was answered from (ADR-0027
+        // §9); shown only when not six, i.e. a checker outside home board.
         const bottomPoints = result?.bottom?.points ?? 0;
         const topPoints = result?.top?.points ?? 0;
         // Any recomputation re-masks the challenge overlays: this runs on the
@@ -831,10 +778,8 @@ export async function updateEPC(position) {
             // status-bar copy would leak the answers.
             statusBarTextStore.set('');
         } else {
-            // No race data (the checkers are not all in the home board) is the
-            // ordinary case for the Eval panel, which evaluates any position:
-            // the race block simply stays hidden. Announcing "EPC: N/A" in the
-            // status bar was noise on the majority of positions.
+            // No race data is the ordinary case in the Eval panel: the race
+            // block stays hidden, no status message.
             epcDataStore.set({ bottomEPC: null, topEPC: null, bottomPoints: 0, topPoints: 0, race: null, error: null });
             statusBarTextStore.set('');
         }
@@ -845,9 +790,7 @@ export async function updateEPC(position) {
     }
 }
 
-// Tab toggles ("Afficher/cacher", #202) live in tabToggles.js — re-exported so
-// existing callers (keyboardService, commandProcessor, App.svelte, Toolbar.svelte)
-// keep one import.
+// Tab toggles live in tabToggles.js, re-exported for one import.
 export {
     toggleTab,
     showTab,

@@ -1,10 +1,9 @@
 /**
- * escape-closes-overlays.spec.js — #414
+ * escape-closes-overlays.spec.js
  *
- * Échap ferme ce qui est ouvert, dans l'application réelle, répartiteur global actif. Le menu
- * contextuel des onglets et la reprise de la direction écoutaient Échap par
- * `<svelte:window onkeydown>` ; montés après App.svelte, ils ne recevaient aucune touche — le
- * `stopPropagation()` du répartiteur suffisait à Svelte 5 pour ne pas les appeler.
+ * Échap ferme ce qui est ouvert, répartiteur global actif : un
+ * `<svelte:window onkeydown>` monté après App.svelte ne reçoit rien, Svelte 5
+ * sautant le handler après le `stopPropagation()` du répartiteur.
  */
 
 import { test, expect } from '@playwright/test';

@@ -6,9 +6,9 @@
  * vérifie les résultats et leur parcours (j/k, flèches), puis réinitialise.
  *
  * Le backend est mocké : LoadPositionIDsByFilters renvoie deux ids quelle que
- * soit la requête (depuis D.8/#208 une recherche ne rapporte que des ids, le
- * plateau charge ensuite la fenêtre affichée) ; c'est la requête elle-même que
- * la spec vérifie, via le journal d'appels du mock.
+ * soit la requête (une recherche ne rapporte que des ids, le plateau charge
+ * ensuite la fenêtre affichée) ; c'est la requête elle-même que la spec
+ * vérifie, via le journal d'appels du mock.
  */
 
 import { test, expect } from '@playwright/test';

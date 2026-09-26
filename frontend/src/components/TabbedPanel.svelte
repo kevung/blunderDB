@@ -1,11 +1,7 @@
 <!--
-  TabbedPanel utilise un pattern {#if} : les panneaux enfants sont démontés quand
-  on quitte leur onglet et remontés au retour. Contrainte pour les composants
-  enfants : tout état local ($state) est réinitialisé à chaque visite — stocker
-  dans un store Svelte tout état devant survivre aux changements d'onglet.
-  Éviter de faire dépendre un $effect d'une valeur de store « active en
-  arrière-plan » : l'effet sera de toute façon inactif hors onglet.
-  Voir tasks/ui-reactivity/ pour la règle générale.
+  TabbedPanel démonte le panneau d'un onglet quitté ({#if}) : son $state repart
+  à zéro à chaque visite, et ses $effect sont inactifs hors onglet. Ce qui doit
+  survivre va dans un store (tasks/ui-reactivity/).
 -->
 <script>
     import { onMount } from 'svelte';
@@ -38,17 +34,12 @@
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
-    // Canonical tab list: ids, labels, icons, shortcuts — stated once in
-    // tabCatalog.js, which the command palette reads too. `tabs` below is this
-    // same set of objects, only ever reordered (never mutated per-field) —
-    // GetTabOrder()/dragging reshuffle it, GetHiddenTabs() doesn't touch it at
-    // all (hiddenIds is the filter applied at render time, see visibleTabs).
+    // Tabs are stated once in tabCatalog.js; `tabs` only ever reorders those
+    // objects, and hidden tabs are filtered at render (visibleTabs).
     const DEFAULT_TABS = TABS;
 
     let tabs = $state([...DEFAULT_TABS]);
-    // A SvelteSet is reactive on its own (add/delete/clear notify, like a
-    // deep-reactive $state object) — mutated in place rather than reassigned,
-    // as CollectionPanel/MergePlayersModal already do for the same pattern.
+    // A SvelteSet, mutated in place.
     const hiddenIds = new SvelteSet();
     let visibleTabs = $derived(tabs.filter((tab) => !hiddenIds.has(tab.id)));
 
@@ -68,10 +59,7 @@
                 const id = normalizeTabId(saved);
                 if (DEFAULT_TABS.some((tab) => tab.id === id)) hiddenIds.add(id);
             }
-            // A tab hidden in a previous session can still be the active one
-            // (e.g. restored from sessionState) — fall back to the first
-            // visible tab rather than render an empty tab bar with no tab
-            // marked active.
+            // A restored active tab may be hidden: fall back to the first visible one.
             if (hiddenIds.has(get(activeTabStore)) && visibleTabs.length > 0) {
                 activeTabStore.set(visibleTabs[0].id);
             }
@@ -88,13 +76,8 @@
     let tabMenu = $state(null);
     let hiddenMenu = $state(null);
 
-    // Roving tabindex: only one tab button is in the Tab order at a time (the
-    // ARIA "manual activation" tabs pattern — fits this component especially
-    // well since selecting a tab remounts the panel below, see the file-top
-    // comment, so arrow keys should move focus without forcing a remount).
-    // Kept in sync with the selected tab; local arrow-key navigation updates
-    // it without touching activeTabStore until the user actually activates
-    // the focused tab (Enter/Space).
+    // Roving tabindex, ARIA manual activation: arrows move focus without
+    // remounting a panel; Enter/Space activates.
     let rovingIndex = $state(0);
     $effect(() => {
         const idx = visibleTabs.findIndex((tab) => tab.id === $activeTabStore);
@@ -138,9 +121,7 @@
         }
     }
 
-    // The native horizontal scrollbar is hidden (see CSS) so it doesn't eat
-    // into the tab height; translate vertical wheel into horizontal scroll so
-    // overflowing tabs stay reachable without it.
+    // Scrollbar hidden: vertical wheel scrolls the tabs horizontally.
     function handleTabBarWheel(e) {
         if (!tabBarEl) return;
         if (tabBarEl.scrollWidth <= tabBarEl.clientWidth) return;
@@ -182,11 +163,8 @@
             window.removeEventListener('mouseup', onMouseUp);
 
             if (isDragging && draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
-                // draggedIndex/dragOverIndex are positions in visibleTabs (the
-                // rendered buttons); reorder the full `tabs` array — hidden
-                // tabs included — by moving the dragged id to just before the
-                // drop target's id, so a later "afficher" restores a hidden
-                // tab next to where it visually was, not always at the end.
+                // Indices are in visibleTabs; reorder the full `tabs` by id so a
+                // hidden tab, once shown again, keeps its place.
                 const draggedId = visibleTabs[draggedIndex]?.id;
                 const overId = visibleTabs[dragOverIndex]?.id;
                 if (draggedId && overId) {
@@ -339,16 +317,11 @@
                     {/if}
                 </svg>
                 <span class="tab-label">{$t(tab.labelKey)}</span>
-                <!-- Le badge de cartes dues (#287) : ce chiffre est la RAISON
-                     d'ouvrir l'onglet Anki, il n'a donc rien à faire derrière
-                     lui. Zéro n'affiche rien — un badge qui dit « 0 » est du
-                     bruit. -->
+                <!-- Cartes dues, la raison d'ouvrir l'onglet ; rien à zéro. -->
                 {#if tab.id === 'anki' && $ankiDueStore > 0}
                     <span class="tab-badge" aria-label={$t('tabbedPanel.ankiDue', { n: $ankiDueStore })}>{$ankiDueStore}</span>
                 {/if}
-                <!-- Le badge des propositions en attente (ADR-0047 §8) : pendant que le
-                     directeur est ailleurs, la Direction vit. C'est la même raison que pour
-                     Anki — ce chiffre est la RAISON de revenir à l'onglet. -->
+                <!-- Propositions en attente (tasks/nicomaque/fonctionnel.md §8), la raison d'y revenir. -->
                 {#if tab.id === 'tournaments' && $pendingProposalsStore > 0}
                     <span class="tab-badge" aria-label={$t('direction.pending', { n: $pendingProposalsStore })}>{$pendingProposalsStore}</span>
                 {/if}
@@ -432,9 +405,7 @@
         height: 28px;
         user-select: none;
         -webkit-user-select: none;
-        /* Hide the native horizontal scrollbar so it doesn't eat into the
-           28px tab height and overlap the tabs (esp. when the panel is docked
-           on the right or is narrow). Tabs stay scrollable via wheel/drag. */
+        /* No native scrollbar over the 28px tabs; wheel and drag still scroll. */
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* legacy Edge/IE */
     }

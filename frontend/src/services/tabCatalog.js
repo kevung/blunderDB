@@ -1,9 +1,6 @@
-// tabCatalog.js — the tabs of the tabbed panel, stated once.
-//
-// TabbedPanel renders them (in the order the user dragged them to, minus the
-// ones hidden), and the command palette offers them (#287): two readers, one
-// list. `labelKey` is an i18n key, `shortcut` the key shown in the tab's
-// tooltip — both are data, never a second copy of raccourcis.rst.
+// tabCatalog.js — the tabs of the tabbed panel, stated once for TabbedPanel
+// and the command palette. `labelKey` is an i18n key, `shortcut` the key shown
+// in the tooltip.
 
 /** @typedef {{ id: string, labelKey: string, icon: string, shortcut: string }} TabEntry */
 

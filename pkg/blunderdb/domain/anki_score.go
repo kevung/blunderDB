@@ -12,10 +12,8 @@ import (
 // close enough to money play that a table adds nothing.
 //
 // The Training exercise draws from the same range, in
-// frontend/src/services/scoreCard.js. The two lists are written twice because
-// they are read on two sides of the Wails boundary — but only ONE of them
-// creates cards: a deck is filled here, and the review view renders whatever
-// key it is handed. A drift would therefore change what is drilled under the
+// frontend/src/services/scoreCard.js, written twice across the Wails boundary.
+// Only this one creates cards, so a drift changes what is drilled under the
 // clock, never what a deck holds.
 const (
 	ScoreAwayMin = 2
@@ -54,8 +52,7 @@ func ParseScoreKey(key string) (int, int, error) {
 
 // UnorderedScoreKeys is the content of a score deck (ADR-0042 rule 2): the 36
 // unordered scores of ScoreAwayMin to ScoreAwayMax away, in reading order.
-// The user picks none of them — the one choice at "New deck > Score sheets"
-// is to want the deck or not.
+// The user picks none of them.
 func UnorderedScoreKeys() []string {
 	keys := make([]string, 0, 36)
 	for a := ScoreAwayMin; a <= ScoreAwayMax; a++ {

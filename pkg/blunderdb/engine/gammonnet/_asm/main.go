@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-// Générateur avo du noyau dense AVX2 (fiche F1, ADR-0024).
+// Générateur avo du noyau dense AVX2 (ADR-0024).
 //
 // Il vit dans un module à part (`_asm/go.mod`) et sous un répertoire que l'outil
 // Go ignore : avo n'entre donc pas dans les dépendances de blunderDB, et
@@ -20,12 +20,11 @@
 //	acc[n]     += w[i*in+j] * act[j*8+n]          j croissant
 //	out[i*8+n]  = relu(acc[n])  ou  acc[n]
 //
-// Une voie = une position. La vectorisation porte donc sur la dimension du LOT
-// et jamais sur la réduction : chaque voie somme sur j dans l'ordre croissant,
-// en partant du biais, en float32, avec `VMULPS` puis `VADDPS` **séparés**.
-// Aucune instruction FMA n'est émise ici, et c'est une propriété du fichier, pas
-// une préférence : `VFMADD*` garderait plus de précision que la boucle scalaire
-// de network.go et mettrait l'accord inter-machines hors de portée (ADR-0024).
+// Une voie = une position : la vectorisation porte sur le LOT, jamais sur la
+// réduction. Chaque voie somme sur j croissant, depuis le biais, en float32,
+// avec `VMULPS` puis `VADDPS` **séparés**. Aucune FMA n'est émise : `VFMADD*`
+// garderait plus de précision que network.go et casserait l'identité
+// (ADR-0024).
 package main
 
 import (
@@ -42,38 +41,21 @@ const lanes = 8
 // est chargée une fois et sert aux `tile` lignes de poids, et les `tile`
 // accumulateurs donnent autant de chaînes de dépendance indépendantes.
 //
-// Six, et pas quatre. Sur Zen 3/4 `VADDPS` a une latence de 3 cycles pour deux
-// pipes d'addition disjointes (FP2/FP3, cf. la note de recherche P2) : il faut
-// 3 × 2 = 6 chaînes indépendantes pour les saturer. Quatre laissait un tiers du
-// débit — mesuré à −12 % sur le lot complet.
-//
-// Huit ne passe pas : l'allocateur d'avo n'a plus assez de registres généraux,
-// déborde sur la pile et attrape BP, le pointeur de trame dont le runtime Go se
-// sert pour dérouler la pile sur un signal. Pour y revenir il faudrait d'abord
-// remplacer les `tile` pointeurs de ligne par un pointeur et des index
-// d'échelle. kernel_avx2_amd64_test.go refuse un `.s` qui mentionne BP.
+// Six : sur Zen 3/4 `VADDPS` a 3 cycles de latence sur deux pipes (FP2/FP3),
+// il faut 3 × 2 chaînes pour les saturer. Huit manque de registres généraux
+// et fait prendre BP, le pointeur de trame du runtime ;
+// kernel_avx2_amd64_test.go refuse un `.s` qui mentionne BP.
 const tile = 6
 
-// Assertions de compilation — les deux hypothèses que ce générateur fait, dites
-// au compilateur plutôt qu'au lecteur (ADR-0003, reprise de `gn_tile.h`).
+// Assertions de compilation (reprise de `gn_tile.h`) : une constante uint
+// négative arrête la compilation.
 //
-// Une constante négative de type uint arrête la compilation sur
-// « constant -N overflows uint ». Un commentaire disant « lanes doit être une
-// puissance de deux » n'est pas un garde-fou ; une compilation qui s'arrête en
-// est un.
+//  1. lanes est une puissance de deux <= 8 : elle sert d'ÉCHELLE d'adressage
+//     x86 dans `Mem{Base: actp, Index: jb, Scale: lanes}`.
+//  2. tile > 0, sinon la boucle tuilée ne finit pas.
 //
-//  1. lanes est une puissance de deux ET ne dépasse pas 8, parce qu'elle sert
-//     d'ÉCHELLE dans `Mem{Base: actp, Index: jb, Scale: lanes}` et qu'une
-//     échelle d'adressage x86 ne peut valoir que 1, 2, 4 ou 8.
-//  2. tile est strictement positive : la boucle tuilée compare `remaining` à
-//     `tile` et soustrait `tile` à chaque tour ; une tuile nulle ou négative
-//     est une boucle qui ne finit pas.
-//
-// Ce que ces assertions ne disent PAS, et qui n'a plus besoin d'être dit :
-// rien ici n'exige que `outDim` soit un multiple de `tile`. Le compteur
-// décroissant + la queue une-sortie-à-la-fois traitent n'importe quel reste.
-// C'est ce qui a remplacé `outDim & ^(tile-1)`, l'arrondi qui n'en était pas
-// un et qui lisait hors matrice à tuile 6 (#133).
+// outDim n'a pas à être un multiple de tile : le compteur décroissant et la
+// queue une-sortie-à-la-fois traitent tout reste.
 const (
 	_ uint = 0 - (lanes & (lanes - 1))
 	_ uint = 8 - lanes
@@ -123,16 +105,9 @@ func dense(name string, relu bool) {
 	MOVQ(in, rowBytes)
 	SHLQ(U8(2), rowBytes)
 
-	// remaining : combien de sorties restent à produire. Un compteur qui
-	// décroît remplace le trio (indice courant, borne tuilée, outDim), ce qui
-	// vaut deux registres généraux de moins — à `tile` = 6 c'est la différence
-	// entre un noyau qui tient dans les quatorze registres utilisables et un
-	// noyau qui déborde sur la pile.
-	//
-	// Il remplace surtout un arrondi qui n'en était pas un : `outDim & ^(tile-1)`
-	// n'arrondit au multiple inférieur que pour une puissance de deux. À tile = 6
-	// il laissait passer une tuile de trop et le noyau lisait six lignes de
-	// poids au-delà de la matrice, une fois sur trois selon l'allocation.
+	// remaining : sorties restant à produire. Un compteur décroissant économise
+	// deux registres généraux (le noyau tient sans déborder à tile = 6), et
+	// évite `outDim & ^(tile-1)`, qui n'arrondit que pour une puissance de deux.
 	remaining := outDim
 
 	// Le zéro de ReLU : +0.0 dans les huit voies. VMAXPS(zero, acc, acc) rend

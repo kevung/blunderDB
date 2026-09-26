@@ -1,11 +1,8 @@
 package searchquery
 
-// parity_test.go — the fiche's fourth bullet (#186): every field of
-// domain.SearchFilters must be reachable from a query, or be listed as
-// unreachable with a reason. The point is not the count; it is that adding a
-// filter to the domain forces a decision, in writing, about how a user is
-// supposed to ask for it. Before this, twenty-one of the forty-five fields
-// existed only in the frontend's command bar.
+// parity_test.go — every field of domain.SearchFilters must be reachable from
+// a query, or be listed as unreachable with a reason, so adding a filter forces
+// a decision about how a user asks for it.
 
 import (
 	"math/rand"

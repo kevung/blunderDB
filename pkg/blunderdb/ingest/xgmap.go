@@ -10,11 +10,7 @@ import (
 	"github.com/kevung/xgparser/xgparser"
 )
 
-// This file holds the pure XG → domain mapping helpers. They are lifted
-// verbatim (modulo dropping the *Database receiver and using domain types
-// directly) from pkg/blunderdb/database/db_import_xg.go so the daemon can build
-// a MatchGraph without the SQLite-only Database wrapper. The legacy code path
-// is intentionally left untouched; the xg parity test gates this against it.
+// Pure XG → domain mapping helpers, free of any storage.
 
 // parseMatchDate tries the date formats XG emits and returns the parsed time,
 // falling back to time.Now() when the string is empty or unrecognised.
@@ -61,10 +57,8 @@ func xgAbs(x int8) int {
 // Unlike the gnuBG and BGF files, an XG match states nothing per game —
 // xgparser.Game carries a game number, the score it started on, its winner and
 // its moves, and no rule flag — so the fact is DERIVED from the sequence of
-// initial scores, which is the same derivation the engine's own gate test
-// makes (gammonnet/integration_gate_test.go). A match has at most one Crawford
-// game, hence the "first": every later game starting at match point is a
-// post-Crawford one.
+// initial scores. A match has at most one Crawford game, hence the "first":
+// every later game starting at match point is post-Crawford.
 //
 // Money play (no match length) has no Crawford game at all.
 func isCrawfordGame(matchLength int32, gameIdx int, games []xgparser.Game) bool {
@@ -814,13 +808,10 @@ func buildCubeAnalysisFromText(analysis *xgparser.CubeAnalysis, playedCubeAction
 // buildCubeAnalysisFromText always attributes analysis.Player1WinRate (and
 // its gammon/backgammon siblings) to "Player" — correct for the doubler's
 // own decision node. mapDoubleTakeMove and mapSingleCubeMove reuse that same
-// analysis, unchanged, for the SYNTHESIZED companion position recording the
-// responder's take/pass, whose PlayerOnRoll they DO flip to the opponent —
-// so without this the chances stayed attributed to whichever side actually
-// held them, mislabelled as the other side's the moment PlayerOnRoll
-// changed. Same correction xg/text import already applies the other way
-// (parser.go's playerOnRoll == 1 swap). BestCubeAction and the cube's
-// equities are not player-attributed and need no change.
+// analysis for the SYNTHESIZED take/pass position, whose PlayerOnRoll they
+// flip to the opponent, so the chances must flip with it (the text parser's
+// playerOnRoll == 1 swap is the same correction). BestCubeAction and the
+// cube's equities are not player-attributed.
 func swapCubeChancesPerspective(pa *domain.PositionAnalysis) {
 	if pa == nil || pa.DoublingCubeAnalysis == nil {
 		return

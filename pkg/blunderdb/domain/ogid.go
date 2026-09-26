@@ -7,27 +7,17 @@ import (
 	"strings"
 )
 
-// OGID (OpenGammon Position ID) codec — issue #260, fiche I.4.
-//
-// # Why this codec exists and OGXM does not
-//
-// The fiche originally asked for an "OGXM" parser. The research report P9
-// found that format has no publicly verifiable existence: no specification, no
-// repository, no trace. It was not written. OGID is the opposite case: it is
-// attested, implemented, and its implementation is readable.
+// OGID (OpenGammon Position ID) codec.
 //
 // # Source, and attribution
 //
 // OpenGammon publishes no specification. The reference is AnkiGammon's codec,
 // ankigammon/utils/ogid.py (github.com/Deinonychus999/AnkiGammon, MIT
-// License, Copyright (c) 2025 AnkiGammon; file last changed in 70bb1aa, read
-// at c5e71c3 on 2026-09-24). Every field below is read as parse_ogid reads it
-// and written as encode_ogid writes it; nothing here is a guess of ours. Its
-// encoder produced the OGIDs of the corpus's "cases" (testdata/
-// ogid_corpus.json), and its decoder produced the "reference" section — the
-// board, cube, dice and match fields it reads from its own README and test
-// examples and from strings chosen to cover what those do not — which
-// ogid_contract_test.go holds this codec to.
+// License, Copyright (c) 2025 AnkiGammon; read at c5e71c3). Every field below
+// is read as parse_ogid reads it and written as encode_ogid writes it. Its
+// encoder produced the corpus's "cases" (testdata/ogid_corpus.json) and its
+// decoder the "reference" section, which ogid_contract_test.go holds this
+// codec to.
 //
 // # The format
 //
@@ -50,44 +40,28 @@ import (
 //     could use. Empty is money play.
 //   - MID, N   move id, checkers per side. Neither is part of a position.
 //
-// # The two conventions line up, and that was checked rather than assumed
+// # Colour convention
 //
-// OGID's White is blunderDB's White (O) and its Black is our Black (X); its
-// point 0 is White's bar and its 25 is Black's, exactly where blunderDB puts
-// them. The mapping is therefore the identity — but it is stated here because
-// it is not obvious: the reference's docstring says "White = Player.X", and
-// its X is the TOP player, which is blunderDB's White, not its X. What
-// settled it is the corpus, where DecodeOGID must agree with DecodeXGID on
-// every case and with the reference decoder's own board on every reference.
-//
-// The reference's XGID side is NOT the check: its encode_xgid mirrors the
-// board and swaps the case when the top player is on roll, which DecodeXGID
-// does not. The two agree whenever Black is on roll; with White on roll they
-// read two different positions. That is a question about XGID, not about
-// OGID, so the OGID↔XGID pairs in the corpus are written in blunderDB's
-// XGID convention (the board absolute), never by the reference's encode_xgid.
+// The mapping is the identity: OGID's White is blunderDB's White (O), its
+// Black our Black (X), point 0 White's bar and 25 Black's. Not obvious, since
+// the reference's docstring says "White = Player.X" (its X is the TOP player);
+// the corpus settles it. The reference's encode_xgid mirrors the board when
+// the top player is on roll, which DecodeXGID does not, so the corpus's
+// OGID↔XGID pairs use blunderDB's absolute XGID convention.
 //
 // # The Crawford rule
 //
 // blunderDB keeps the Crawford rule inside the away score (CONTEXT.md,
-// « Away score »). The reference reads the game as Crawford exactly when the
-// match length carries the "C" modifier, and as not Crawford otherwise — so a
-// player one point away without "C" is past the Crawford game (away 0), as
-// XGID's field 7 at 0 says. A 1-point match is the one exception, as it is
-// for XGID (#411): its only game starts at match point, so it is the Crawford
-// game whatever the modifier says, and the same position pasted or imported
-// hashes to one row.
+// « Away score »). The game is Crawford exactly when the match length carries
+// "C"; one point away without it is post-Crawford (away 0), as XGID field 7
+// at 0. A 1-point match is always the Crawford game, as for XGID, so the same
+// position pasted or imported hashes to one row.
 //
 // # What is dropped, deliberately
 //
-// The game state, the move id and the checker count describe a GAME, not a
-// position, and blunderDB's Position is a position (CONTEXT.md). The cube
-// ACTION is dropped for the same reason: whether the cube has been offered is
-// a fact of a move, and the position's own decision type already comes from
-// whether dice are set. Nothing here invents Jacoby or beaver either — OGID
-// does not carry them, and defaulting them would put two different money
-// positions under one Zobrist hash (ADR-0028 arrived at that from the other
-// direction). The cube ceiling is not carried either (MaxCube stays 0).
+// The game state, move id, checker count and cube ACTION describe a game or a
+// move, not a position (CONTEXT.md). Jacoby and beaver are not carried and not
+// defaulted (ADR-0028); MaxCube stays 0.
 
 // ErrInvalidOGID is returned for malformed OGID strings. Callers map it to a
 // 4xx response, exactly as they do ErrInvalidXGID.
@@ -186,10 +160,8 @@ func DecodeOGID(ogid string) (Position, error) {
 	return pos, nil
 }
 
-// placeOGIDCheckers reads one checker-per-character run into the board. OGID
-// writes one character per CHECKER, so a point holding five appears five
-// times — a shape worth naming, because it is the one difference from XGID's
-// board string that a reader is likely to mis-transcribe.
+// placeOGIDCheckers reads one checker-per-character run into the board: one
+// character per CHECKER, unlike XGID's per-point board string.
 func placeOGIDCheckers(pos *Position, run string, color int) error {
 	for i := 0; i < len(run); i++ {
 		point, err := ogidPointIndex(run[i])
@@ -297,11 +269,9 @@ func LooksLikeOGID(text string) bool {
 // length nor the points scored, so a match score goes out as the smallest
 // match consistent with its distances (away [2, 4] is a 4-point match at
 // 2-0), which decodes back to the same away scores. The Crawford game is the
-// "C" modifier; after it, a player one point away carries none. Two
-// post-Crawford sentinels cannot go out as a 1-point match, which is always
-// the Crawford game, so they go out as a 2-point match at 1-1 — EncodeXGID's
-// rule, for the same reason (#411). Money play writes 0-0 and no length, as
-// the reference does.
+// "C" modifier. Two post-Crawford sentinels go out as a 2-point match at 1-1,
+// since a 1-point match is always Crawford (EncodeXGID's rule). Money play
+// writes 0-0 and no length, as the reference does.
 //
 // The cube's exponent is one character, so a cube past 512 has no OGID
 // spelling; no source blunderDB reads produces one.
@@ -374,8 +344,6 @@ func ogidPointChar(point int) byte {
 // LooksLikeOGID says so, an XGID otherwise. It is for the places that take an
 // identifier ALONE as an argument (the CLI's `epc` and `cubematrix`); pasted
 // text, which may also be an analysis, goes through parser.ParsePosition.
-// The two formats cannot be confused — an XGID's third field is a lone
-// number, an OGID's a three-character cube — so there is nothing to ask.
 func DecodePositionID(id string) (Position, error) {
 	if LooksLikeOGID(id) {
 		return DecodeOGID(id)

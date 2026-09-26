@@ -77,10 +77,7 @@
     });
     let inlineNewName = $state('');
 
-    // Collection vivante (#282). Le titre dit ce que le clic fera, parce que
-    // le glyphe seul ne le dirait pas : rendre vivante, ou rendre la
-    // collection à sa liste faite à la main — laquelle est toujours là, rien
-    // n'ayant été détruit en la rendant vivante.
+    // Collection vivante : le titre dit ce que fera le clic ; la liste manuelle est conservée.
     let livingTitle = $derived(activeCollection?.filterQuery ? $t('collection.livingOff', { query: activeCollection.filterQuery }) : $t('collection.livingOn'));
 
     async function toggleLiving() {
@@ -102,9 +99,7 @@
         }
     }
 
-    // Multi-select for positions: indices into collectionPositions. A SvelteSet
-    // mutated in place — the template tracks this one instance, so there is
-    // no clone-and-reassign to keep it reactive.
+    // Indices into collectionPositions; a SvelteSet mutated in place.
     const selectedPositionIndices = new SvelteSet();
 
     // Position index map (position_id -> 1-based index in DB)
@@ -288,7 +283,7 @@
     async function deleteCollection(collection, event) {
         event.stopPropagation();
         try {
-            // Through the trash (#285): restorable from the `trash` command.
+            // Through the trash: restorable from the `trash` command.
             await TrashCollection(collection.id);
             if (selectedCollection && selectedCollection.id === collection.id) {
                 selectedCollectionStore.set(null);
@@ -362,11 +357,8 @@
             if (!wasOnlySelection) selectedPositionIndices.add(index);
         }
 
-        // A Shift/Ctrl click builds a multi-selection for a batch action — it
-        // must not move the single "current position" cursor: doing so sets
-        // currentPositionIndexStore, and the mode-sync effect above reacts to
-        // ANY change of that store by collapsing selectedPositionIndices back
-        // to that one index, silently undoing the multi-selection just built.
+        // Shift/Ctrl click must not touch currentPositionIndexStore: the sync
+        // effect above would collapse the multi-selection to one index.
         if (isMultiSelectClick) return;
 
         const position = collectionPositions[index];
@@ -468,9 +460,7 @@
     function handleKeyDown(event) {
         if (!visible) return;
 
-        // Let Ctrl/Meta combos, Space, '?', typing in an editable field, and
-        // position-browsing keys (this panel has no in-panel list navigation of
-        // its own) pass through to the global handler — see keyboardService.panelKeyGuard.
+        // No in-panel list navigation: browsing keys also go to the global handler (panelKeyGuard).
         if (panelKeyGuard(event, { allowNavKeys: true })) return;
 
         // Stop other keyboard events from propagating to global handlers
@@ -685,11 +675,7 @@
                             title={positionCollectionIds.includes(activeCollection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
                         />
                     {/if}
-                    <!-- Collection vivante (#282) : sa composition est le
-                         résultat d'une requête, réévaluée à chaque ouverture.
-                         Le bouton prend la DERNIÈRE recherche lancée — c'est
-                         le geste (« ça, garde-le ») et cela évite d'inventer
-                         un second endroit où écrire une requête. -->
+                    <!-- Collection vivante : la dernière recherche, réévaluée à chaque ouverture. -->
                     <button class="icon-btn" onclick={toggleLiving} title={livingTitle}>
                         {activeCollection.filterQuery ? '◈' : '◇'}
                     </button>

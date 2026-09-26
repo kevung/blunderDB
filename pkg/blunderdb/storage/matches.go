@@ -67,7 +67,7 @@ type MatchStore interface {
 
 	// DeleteCascade removes a match and all of its games, moves and analyses.
 	// The implementation runs the whole multi-table cascade atomically; when
-	// reached through a Tx it joins that transaction (D2).
+	// reached through a Tx it joins that transaction.
 	DeleteCascade(ctx context.Context, scope string, id int64) error
 
 	// DeleteGames removes every game of a match — and, by cascade, its moves
@@ -75,12 +75,9 @@ type MatchStore interface {
 	// ids of the positions those moves referenced, the candidates for the
 	// orphan purge.
 	//
-	// It does NOT purge them: the caller rewrites the match's games first, so
-	// that a position both versions share is still held when the predicate is
-	// finally asked. Purging here would delete every position of the match that
-	// nothing else holds — analysis included — and the rewrite would put it back
-	// under a new id, which is exactly what a replacement must not do.
-	// PurgeOrphanPositions is the second half.
+	// It does NOT purge them: the caller rewrites the match's games first, so a
+	// position both versions share is still held (and keeps its id and
+	// analysis). PurgeOrphanPositions is the second half.
 	DeleteGames(ctx context.Context, scope string, matchID int64) (positionIDs []int64, err error)
 
 	// PurgeOrphanPositions deletes each of the given positions that nothing
@@ -117,9 +114,7 @@ type MatchStore interface {
 	Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error]
 
 	// MovesByMatch streams every move of a match in one pass, ordered by game
-	// then move number. It lets a caller render a whole match detail without the
-	// 1+N round-trips of calling Moves once per game (each move carries GameID so
-	// the caller regroups by game). Mirrors MovePositions' match-scoped shape.
+	// then move number, in one query; callers regroup by Move.GameID.
 	MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error]
 
 	// MovePositions streams the positions of a match together with their

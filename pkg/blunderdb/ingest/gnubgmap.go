@@ -12,10 +12,8 @@ import (
 	"github.com/kevung/gnubgparser"
 )
 
-// Pure GnuBG (SGF/MAT/TXT) → domain mappers, lifted from
-// pkg/blunderdb/database/db_import_gnubg.go with the *Database receiver dropped.
-// The legacy path is left untouched; the gnubg parity test gates these against
-// it. See xgmap.go for the equivalent XG mappers and the rationale.
+// Pure GnuBG (SGF/MAT/TXT) → domain mappers. See xgmap.go for the XG
+// equivalents.
 
 // initStandardGnuBGPosition returns a gnubgparser.Position set to the standard
 // starting position, used when an SGF lacks an explicit setboard event.
@@ -243,10 +241,8 @@ func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) st
 // cannot be defaulted; labelling an unknown depth "0-ply" would relabel a
 // rollout as the shallowest search there is.
 //
-// An unknown depth therefore produces an empty label — the panel shows nothing
-// rather than something false. This is the same choice gnubgparser v1.5.0 made
-// upstream when it stopped inventing a depth out of the SGF format version
-// (kevung/gnubgparser#2): saying nothing beats saying something wrong.
+// An unknown depth therefore produces an empty label rather than something
+// false, as gnubgparser v1.5.0 does upstream.
 func translateGnuBGAnalysisDepth(depth int, known bool) string {
 	if !known {
 		return ""
@@ -375,17 +371,12 @@ func buildGnuBGCubeForChecker(analysis *gnubgparser.CubeAnalysis) *domain.Positi
 
 // convertGnuBGCubeMWCToEMG converts a cube analysis' cubeful equities from Match
 // Winning Chances to Equivalent Money Game equity, mirroring GNUbg's mwc2eq().
-// Copied from database.convertGnuBGCubeMWCToEMG (depends only on engine + parser).
 //
 // crawford is gnuBG's cubeinfo.fCrawford: true while the game being converted
-// IS the Crawford game (SGF RU[Crawford:CrawfordGame], gnubgparser.Game.CrawfordGame).
-// It used to be hard-wired to false (issue #170). The flag is passed through
-// faithfully, but it has no numerical reach: gnuBG's getME takes its
-// post-Crawford branch whenever a player is 1-away, which the score of a
-// Crawford game always says on its own, and gnuBG records no cube analysis in
-// the Crawford game anyway (the cube is dead). gnubg_crawford_test.go pins
-// both facts, so a database imported before this change carries no wrong
-// equity from it.
+// IS the Crawford game (SGF RU[Crawford:CrawfordGame]). Passed through
+// faithfully, it has no numerical reach: getME takes its post-Crawford branch
+// whenever a player is 1-away, and gnuBG records no cube analysis in the
+// Crawford game (gnubg_crawford_test.go pins both).
 func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1, fMove, cubeValue, matchLength int, crawford bool) {
 	if matchLength <= 0 || analysis == nil {
 		return

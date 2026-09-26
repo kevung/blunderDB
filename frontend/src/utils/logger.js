@@ -23,9 +23,8 @@ export const logger = {
 };
 
 /**
- * Mesure la durée d'exécution de `fn` avec `performance.measure`.
- * Logge uniquement si la durée dépasse VITE_PERF_THRESHOLD_MS (défaut : 16 ms).
- * Sans effet en prod ou si le seuil est négatif.
+ * Mesure la durée de `fn` (`performance.measure`), loggée au-delà de VITE_PERF_THRESHOLD_MS
+ * (16 ms par défaut). Sans effet en prod ou seuil négatif.
  *
  * @template T
  * @param {string} label

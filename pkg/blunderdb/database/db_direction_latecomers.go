@@ -10,13 +10,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Latecomers, and where they enter (issue #392, fonctionnel.md §4.4).
-//
-// One turns up at every tournament, almost always while a free bye is still open in the first
-// round. The engine NEVER redraws a draw already made — a draw is an event of the journal, and
-// redrawing it would move players who have already read their name on the wall. So the
-// latecomer takes an empty place, or they enter later; and blunderDB's job is to SAY WHICH,
-// before the director validates the entry, rather than leaving someone entered nowhere.
+// Latecomers, and where they enter. The engine NEVER redraws a draw (it is a journal event), so
+// a latecomer takes an empty bye or enters later; blunderDB says which before the entry is
+// validated.
 
 // FreeSlot is an empty bye a latecomer can still take.
 type FreeSlot struct {
@@ -47,9 +43,8 @@ func (d *Database) DirectionFreeSlots(tournamentID int64) ([]FreeSlot, error) {
 
 // AddParticipantAtSlot enters a latecomer on a named free bye.
 //
-// Separate from AddParticipant on purpose: taking a place is a decision of the director's, and
-// the engine refuses one that is no longer free rather than picking another. Nothing is
-// inferred, and nothing is redrawn.
+// Separate from AddParticipant on purpose: the place is the director's decision, and one no
+// longer free is refused rather than replaced.
 func (d *Database) AddParticipantAtSlot(tournamentID int64, name, club string, rating float64, section, key string) (*DirectionView, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {

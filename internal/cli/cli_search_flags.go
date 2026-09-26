@@ -2,13 +2,10 @@ package cli
 
 // cli_search_flags.go — the flags of `blunderdb search`, and what they mean.
 //
-// parseSearchFlags was 280 lines and 180 statements, the tallest function left
-// in the tree after B.15 split find and Compute, and the one that set
-// .golangci.yml's statement ceiling. Three of its four parts were not logic at
-// all: thirty flag declarations, fifty lines of help text, and the construction
-// of a SearchFilters from what was parsed. They are here; what stays in
-// cli_search.go is the decision-making — which of --query and the filter flags
-// the user chose, and what to refuse (B.15, #183).
+// Holds the non-logic parts of parsing: flag declarations, help text, and the
+// construction of a SearchFilters from what was parsed. What stays in
+// cli_search.go is the decision-making — which of --query and the filter
+// flags the user chose, and what to refuse.
 
 import (
 	"flag"

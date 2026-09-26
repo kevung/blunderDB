@@ -3,10 +3,8 @@ import { writable, derived } from 'svelte/store';
 import { trainingPipOverrideStore } from './trainingTabStore.js';
 
 /**
- * Le texte de la barre d'état : soit une chaîne déjà traduite, soit un
- * descripteur rendu par `tMsg()`, que la barre retraduit à chaque
- * changement de langue. Les deux formes circulent depuis toujours ;
- * seul le type manquait.
+ * Le texte de la barre d'état : une chaîne traduite ou un descripteur `tMsg()`, retraduit à
+ * chaque changement de langue.
  * @type {import('svelte/store').Writable<string | import('../i18n').StatusMessage>}
  */
 export const statusBarTextStore = writable('');
@@ -22,7 +20,7 @@ export const activeTabStore = writable('matches');
 // Whether the command input is active in the status bar
 export const showCommandInputStore = writable(false);
 
-// Whether the command palette (Ctrl+Maj+P, #287) is open — CommandPalette.svelte.
+// Whether the command palette (Ctrl+Maj+P) is open — CommandPalette.svelte.
 export const commandPaletteOpenStore = writable(false);
 
 // A match someone asked to open from outside the match panel (the command
@@ -60,14 +58,8 @@ export const MODAL = {
 };
 
 // ── Panel identifiers (can be open simultaneously) ──
-//
-// There is no ANALYSIS or COMMENT entry: those two tabs have never driven a PANEL since
-// the tabHandler.js refactor (applyTabPanels only wires matches/stats/tournaments/
-// collections here) — AnalysisPanel and CommentPanel instead read `$activeTabStore`
-// directly, because TabbedPanel mounts/destroys each tab's component on every switch
-// (see that file's header comment), which is the actual "opens"/"closes" signal for a
-// component that is never kept alive off-tab. Fiche D.10 (#210) removed the two dead
-// entries and the closePanel() calls that always followed them as guaranteed no-ops.
+// No ANALYSIS or COMMENT entry: those tabs read `$activeTabStore` directly, TabbedPanel's
+// mount/destroy on every switch being their open/close signal.
 export const PANEL = {
     MATCH: 'match',
     COLLECTION: 'collection',
@@ -142,14 +134,8 @@ export const positionReloadTriggerStore = writable(0);
 export const showPipcountStore = writable(true);
 
 /**
- * Le pipcount est-il visible sur le plateau ? La préférence de l'utilisateur
- * (`showPipcountStore`, la touche `p`), sauf pendant une question de Pions
- * (#320), qui la surcharge le temps de sa question.
- *
- * Le plateau lit CE store et rien d'autre, et s'y abonne pour repeindre :
- * écrire un store ne peint pas — `drawBoard()` lit sa valeur impérativement
- * dans une frame, donc une visibilité qui change sans déclencher de repaint ne
- * change rien à l'écran. C'est le défaut que `togglePipcount` contournait en
- * poussant `positionStore` ; l'abonnement le règle à la source.
+ * Le pipcount est-il visible ? La préférence (`showPipcountStore`, touche `p`), sauf pendant une
+ * question de Pions qui la surcharge. Le plateau s'y abonne pour repeindre : `drawBoard()` lit
+ * sa valeur impérativement, et une visibilité changée sans repaint ne changerait rien à l'écran.
  */
 export const pipcountVisibleStore = derived([showPipcountStore, trainingPipOverrideStore], ([$preference, $override]) => ($override === null ? $preference : $override));

@@ -13,16 +13,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// Slots: where a directed Tournament meets the library (ADR-0047, issues #381-#384).
+// Slots: where a directed Tournament meets the library (ADR-0047). Every launched match is a
+// Slot that a Transcription or an imported file then fills.
 //
-// This is the whole point of the decision. A tournament directed here creates its Matches
-// before they are played: every launched match is a Slot that a Transcription or an imported
-// file then fills. A club tournament where nothing is recorded leaves its Slots empty; a
-// BMAB-style tournament fills them all, and the director gets what nobody has today — the
-// matches of one tournament, ranged by round and by player, analysed and searchable.
-//
-// One rule shapes every function here: NOTHING IS ATTACHED BY INFERENCE. A coincidence of names
-// is a suggestion the director accepts; it is never a decision the software makes.
+// NOTHING IS ATTACHED BY INFERENCE: a coincidence of names is a suggestion the director
+// accepts, never a decision the software makes.
 
 // SlotRow is one match of the Direction seen as a place a Match can fill.
 type SlotRow struct {
@@ -36,7 +31,7 @@ type SlotRow struct {
 	Length int           `json:"length"`
 	Table  int           `json:"table,omitempty"`
 	// Winner and the scores are what the DIRECTOR said, which during a tournament is what
-	// stands (ADR-0047 §5.3).
+	// stands (tasks/nicomaque/fonctionnel.md §5.3).
 	Winner     string `json:"winner,omitempty"`
 	WinnerName string `json:"winnerName,omitempty"`
 	ScoreA     int    `json:"scoreA,omitempty"`
@@ -212,7 +207,7 @@ func disagreement(m *tournoi.Match, f filledMatch) string {
 	}
 	if !f.hasScore || (m.ScoreA == 0 && m.ScoreB == 0) {
 		// The director entered no score, or the file has none: there is nothing to disagree
-		// about. A result with no score is an ordinary result (ADR-0047 §5.3).
+		// about. A result with no score is an ordinary result (tasks/nicomaque/fonctionnel.md §5.3).
 		return ""
 	}
 	// The Match's player1 is not necessarily the Slot's A.
@@ -227,7 +222,7 @@ func disagreement(m *tournoi.Match, f filledMatch) string {
 }
 
 // AttachMatchToSlot fills a Slot with a Match of the library. It is always an explicit gesture:
-// a coincidence of names is a suggestion, never a decision (ADR-0047 §7.1).
+// a coincidence of names is a suggestion, never a decision (tasks/nicomaque/fonctionnel.md §7.1).
 //
 // Attaching also puts the Match in the Tournament if it was not there, since a Match filling a
 // Slot of that tournament is a match OF that tournament.
@@ -285,8 +280,7 @@ type SlotSuggestion struct {
 // UnattachedMatches lists the Matches of a Tournament that fill no Slot, each with the Slot
 // whose two names coincide — when one does.
 //
-// The suggestion requires BOTH names and the same Tournament. A partial match is not suggested:
-// half a coincidence is not evidence, and the director would have to check it anyway.
+// The suggestion requires BOTH names and the same Tournament: half a coincidence is not evidence.
 func (d *Database) UnattachedMatches(tournamentID int64) ([]SlotSuggestion, error) {
 	ctx := context.Background()
 	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
@@ -370,7 +364,7 @@ func namesMatch(p1, p2, a, b string) bool {
 // StartTranscriptionFromSlot opens a draft with its header already filled from the Slot: both
 // names, the length, the tournament, the round or the bracket label, and the date.
 //
-// The Slot is reserved FROM THE DRAFT, not only from the save (ADR-0047 §7.1): a director who
+// The Slot is reserved FROM THE DRAFT, not only from the save (tasks/nicomaque/fonctionnel.md §7.1): a director who
 // starts typing a match must see the Slot taken, or two people will type the same match.
 func (d *Database) StartTranscriptionFromSlot(tournamentID int64, slotID string) (*TranscriptionState, error) {
 	ctx := context.Background()

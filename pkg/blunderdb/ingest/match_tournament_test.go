@@ -21,10 +21,7 @@ func tournamentNames(t *testing.T, s storage.Storage) map[string]int {
 	return got
 }
 
-// Every importer reads the file's event name into match.event, but nothing
-// used to turn it into a tournament: a library imported entirely from files
-// that name their event showed an empty Tournaments panel. WriteMatch now
-// files a match it creates under its event.
+// WriteMatch files a match it creates under the event its file names.
 func TestWriteMatch_FilesTheMatchUnderItsEvent(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)

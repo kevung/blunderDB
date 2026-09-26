@@ -8,19 +8,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
-// /v1/gammonnet.cubeMatrix — the cube verdict at every score of a match
-// (issue #267, fiche I.11).
-//
-// The daemon's half is thin on purpose: the grid is a property of a POSITION,
-// not of a library, so there is nothing to gather, nothing to store and no
-// tenant to scope. The route exists so a client that has no desktop — the very
-// case ADR-0005's deployment describes — can ask the same question the Eval
-// panel's tab asks, and get the same numbers, because both call the same
-// gammonnet.ComputeCubeMatrix.
-//
-// It takes a position rather than an id for the same reason: the grid answers
-// "at what score would I double this", and "this" is very often a board the
-// user is editing and has never saved.
+// /v1/gammonnet.cubeMatrix — the cube verdict at every score of a match. The
+// grid is a property of a position, not a library: nothing to gather, store
+// or scope. It takes a position rather than an id because the board is often
+// unsaved, and shares gammonnet.ComputeCubeMatrix with the Eval panel.
 
 // cubeMatrixReq asks for one grid. Exactly one of Position or XGID is
 // expected; XGID is the form a script or a paste has to hand.

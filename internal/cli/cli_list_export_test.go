@@ -6,13 +6,9 @@ import (
 	"testing"
 )
 
-// The CSV columns are a CONTRACT (#280, fiche I.24): a notebook or a script
-// written against these names must keep working. These tests pin the header of
-// each export exactly, so a rename or a reorder fails here rather than in
-// somebody's notebook six months later.
-//
-// A column ADDED at the end is a deliberate change and updates the list below;
-// a column renamed or moved should have to argue for itself in a diff.
+// The CSV columns are a contract scripts rely on: these tests pin each
+// export's header exactly. A column appended at the end updates the list
+// below; a rename or reorder must argue for itself in a diff.
 
 func TestExportPositionsCSV(t *testing.T) {
 	cli := setupCLI(t)
@@ -78,9 +74,8 @@ func TestExportAnalysesCSV(t *testing.T) {
 	}
 }
 
-// A limit the caller passes is honoured; the export is otherwise whole. The
-// "otherwise whole" half is what `list`'s own default of 10 would have broken
-// silently — see exportLimit.
+// A limit the caller passes is honoured; the export is otherwise whole, not
+// cut at `list`'s default of 10 — see exportLimit.
 func TestExportRespectsAnExplicitLimit(t *testing.T) {
 	cli := setupCLI(t)
 	if _, err := cli.db.ImportXGMatch(testdataPath("test.xg")); err != nil {

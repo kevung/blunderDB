@@ -1,16 +1,9 @@
 package domain
 
-// Import batches and their report (issue #257, fiche I.1).
-//
-// An import used to end on nothing: the progress bar reached the end and the
-// window went back to what it was. The user had no way to tell what had just
-// entered the database, what had been skipped as a duplicate, or which of the
-// positions that came in were worth looking at.
-//
-// The unit of account is the BATCH — one import the user launched, whatever it
-// read: one file, a folder, a paste. Matches point back at their batch, which
-// is what lets the report speak about *this import* rather than about the
-// database.
+// Import batches and their report. The unit of account is the BATCH — one
+// import the user launched, whatever it read (a file, a folder, a paste).
+// Matches point back at their batch, so the report speaks about *this import*
+// rather than about the database.
 
 // ImportBatch is one import the user launched.
 type ImportBatch struct {
@@ -112,15 +105,11 @@ const MaxImportBlunders = 5
 // unreadable files must not produce a thousand-line report.
 const MaxImportFailures = 10
 
-// The post-import study queue (issue #259, fiche I.3).
-//
-// The end-of-import report answers "what just happened". The queue answers the
-// question that follows it — "what do I look at now?" — and answers it ONCE:
-// an ordered list of the batch's positions worth a second look, walked
-// through, with a decision taken on each. It is not a saved object and nothing
-// records that a position was seen: what the user does with a position (a
-// comment, a collection, an Anki card) is the record, and nothing else needs
-// keeping. That is the same restraint ADR-0006 states about flags.
+// The post-import study queue: an ordered list of the batch's positions worth
+// a second look, walked through once. It is not a saved object and nothing
+// records that a position was seen — what the user does with it (a comment, a
+// collection, an Anki card) is the record, the restraint ADR-0006 states about
+// flags.
 
 // StudyQueueReason says why a position is in the queue. Three reasons, in the
 // order they are offered.
@@ -131,8 +120,6 @@ const (
 	// this is what the user came for.
 	StudyBlunder StudyQueueReason = "blunder"
 	// StudyFlagged is a position the SOURCE TOOL marked for study (ADR-0006).
-	// The user already said this one was interesting, in another program, and
-	// blunderDB carried the mark across.
 	StudyFlagged StudyQueueReason = "flagged"
 	// StudyClose is a cube decision the engine judged close — one where the
 	// right answer was not obvious even though nothing was lost.
@@ -153,15 +140,9 @@ type StudyQueueEntry struct {
 	IsCube bool `json:"isCube"`
 }
 
-// MaxStudyQueue bounds the queue. Fifty: a queue nobody finishes is a queue
-// nobody starts, and an import of thirty matches would otherwise offer several
-// hundred positions.
+// MaxStudyQueue bounds the queue: a queue nobody finishes is a queue nobody
+// starts.
 const MaxStudyQueue = 50
 
-// The error, in millipoints, at or above which a decision earns its place in
-// the queue is no longer stated here. It is the library's own error threshold
-// (storage.LibrarySettings, ADR-0046) — the queue asks "what is worth
-// revisiting", which is what an Error is, so it reads the same line every
-// other count reads. Its default is the 50 this constant held: half of what
-// the statistics call a blunder, because the queue is a study list and not a
-// hall of shame.
+// The queue's error threshold is the library's own (storage.LibrarySettings,
+// ADR-0046).

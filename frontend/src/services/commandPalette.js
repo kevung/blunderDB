@@ -1,21 +1,12 @@
 // commandPalette.js — what the command palette offers, how it ranks it, and
-// what choosing an entry does (#287).
-//
-// The palette owns no list of its own. It reads four that already exist:
-//
-//   - the commands of the command line, from commandVocabulary.js — the list
-//     autocompletion and commandVocabulary.sync.test.js already hold to
-//     commandProcessor.js, so a new command reaches the palette by being added
-//     there, and a palette entry runs through processCommand exactly as if it
-//     had been typed;
-//   - the tabs of the tabbed panel, from tabCatalog.js;
-//   - the saved filters, from filterLibraryStore (the search panel's library);
-//   - the matches, from GetAllMatches — the call the match panel makes.
-//
-// Only the short description of each command is the palette's own: a command
-// name alone ("cm", "gv2") says nothing to someone looking for "cube matrix".
-// Those live in the nine locales under palette.cmd.<name>, and a test requires
-// one for every command of the vocabulary.
+// what choosing an entry does. It owns no list; it reads:
+//   - the command-line commands (commandVocabulary.js, locked to
+//     commandProcessor.js); an entry runs through processCommand as if typed;
+//   - the tabs (tabCatalog.js);
+//   - the saved filters (filterLibraryStore);
+//   - the matches (GetAllMatches).
+// Its own data is each command's description, palette.cmd.<name> in the nine
+// locales — a test requires one per command.
 
 import { get } from 'svelte/store';
 import { COMMANDS } from '../commandVocabulary.js';
@@ -45,9 +36,8 @@ import { logger } from '../utils/logger.js';
  */
 
 /**
- * Commands that only make sense with an argument typed after them: choosing
- * them opens the command line with the command already written, cursor after
- * the space, rather than running them bare.
+ * Commands needing an argument: choosing one opens the command line with it
+ * written, cursor after the space.
  */
 export const ARGUMENT_COMMANDS = new Set(['s', 'ss']);
 

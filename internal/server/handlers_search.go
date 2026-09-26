@@ -13,8 +13,7 @@ import (
 )
 
 // searchFindReq mirrors storage.ListOpts over the wire (see handlers_positions.go's
-// positionListReq): an all-zero Limit/Offset keeps the unbounded scan every
-// caller got before pagination was pushed to SQL (B.10, #178).
+// positionListReq): an all-zero Limit/Offset keeps the scan unbounded.
 type searchFindReq struct {
 	Filters domain.SearchFilters `json:"filters"`
 	Limit   int                  `json:"limit"`
@@ -22,9 +21,9 @@ type searchFindReq struct {
 }
 
 // searchQueryReq is search.find's other door: the query language the
-// application's command bar speaks, rather than a hand-assembled filter struct
-// (B.18, #186). A client that wants `s cube p>30 E>50` no longer has to know
-// which of the forty-five fields those four tokens set.
+// application's command bar speaks, rather than a hand-assembled filter
+// struct. A client that wants `s cube p>30 E>50` need not know which of the
+// forty-five fields those four tokens set.
 type searchQueryReq struct {
 	Query  string `json:"query"`
 	Limit  int    `json:"limit"`

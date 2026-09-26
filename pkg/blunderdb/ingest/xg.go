@@ -15,17 +15,9 @@ import (
 )
 
 // MapXG parses an eXtreme Gammon .xg file at path into a backend-independent
-// MatchGraph (positions + analyses + comments + move list). It re-implements
-// the mapping half of database.ImportXGMatch — the half that turns parsed XG
-// records into domain objects — without touching SQLite. WriteMatch persists
-// the result through any Storage backend.
-//
-// Note: MapXG always produces the full match graph. Cross-format de-duplication
-// (importing the analysis of an XG match whose canonical hash already exists
-// from a GnuBG/MAT import into the existing positions) is NOT reproduced here;
-// WriteMatch skips a whole match on a hash hit. That legacy enrichment path is
-// a follow-up; for a fresh import the two paths are field-for-field identical,
-// which the parity test enforces.
+// MatchGraph (positions + analyses + comments + move list), without touching
+// storage. It always produces the full graph; duplicate detection and
+// cross-format enrichment are WriteMatch's.
 func MapXG(path string) (*MatchGraph, error) {
 	imp := xgparser.NewImport(path)
 	segments, err := imp.GetFileSegments()
@@ -135,9 +127,7 @@ type flagKey struct {
 // game-file segments because the lightweight xgparser.Match drops them on
 // conversion: the user's study flags, and the luck of each roll.
 //
-// Both are keyed the same way, and that is the point of collecting them in one
-// pass: the index rule below is what makes a mark land on the right decision,
-// and stating it twice is how the two copies drift apart.
+// Both are collected in one pass so the index rule below is stated once.
 type rawMoveMarks struct {
 	flagged map[flagKey]bool
 	// luckMP holds the luck of each roll in signed millipoints, positive =
@@ -155,14 +145,7 @@ type rawMoveMarks struct {
 // convention as gnuBG's LU property (positive = lucky) — checked by importing
 // the same match from both an .xg and a gnuBG .sgf and comparing roll by roll.
 // Only a checker MoveEntry carries it: a cube decision has no dice of its own.
-//
-// XG writes 0 both for a genuinely neutral roll and for a match whose luck was
-// never computed, and nothing else in the record distinguishes them (AnalyzeL
-// is the evaluation level, and luck is computed at 0-ply, so it reads 0 on
-// perfectly analysed matches). A match where EVERY roll reads exactly zero is
-// therefore treated as carrying no luck data at all — rather than as a match
-// played entirely on neutral dice, which does not happen — and its rolls stay
-// unknown instead of being stored as a fabricated zero.
+// An all-zero match carries no luck at all (see luckOrNothing).
 //
 // The keys mirror ParseXG's own record→Move mapping so they line up with
 // Game.Moves index-for-index: it appends one Move per MoveEntry and one per
@@ -220,17 +203,10 @@ func parseRawMoveMarks(segments []*xgparser.Segment) rawMoveMarks {
 // luckOrNothing returns luck unchanged, or nil when every roll in it reads
 // exactly zero.
 //
-// XG writes 0 both for a genuinely neutral roll and for a match whose luck was
-// never computed, and nothing else in the record separates the two (AnalyzeL is
-// the evaluation level, and luck is evaluated at 0-ply, so it reads 0 on
-// perfectly analysed matches). Taken one roll at a time the two are
-// indistinguishable; taken together they are not, because a match played
-// entirely on neutral dice does not happen.
-//
-// So an all-zero match is read as carrying no luck data, and its rolls stay
-// unknown. The alternative — storing the zeroes — would hand a player a
-// perfectly average luck that nobody measured, which is exactly what the NULL
-// in this column exists to avoid (ADR-0010).
+// XG writes 0 both for a neutral roll and for a match whose luck was never
+// computed (AnalyzeL is the evaluation level, not a luck flag). A match played
+// entirely on neutral dice does not happen, so an all-zero match is read as
+// unknown rather than as a luck nobody measured (ADR-0010).
 func luckOrNothing(luck map[flagKey]int32) map[flagKey]int32 {
 	for _, mp := range luck {
 		if mp != 0 {
@@ -240,8 +216,7 @@ func luckOrNothing(luck map[flagKey]int32) map[flagKey]int32 {
 	return nil
 }
 
-// mapGameMoves replicates database.importXGGamesAndMoves' per-move loop:
-// associating raw cube records with moves, carrying a skipped "No Double"
+// mapGameMoves is the per-move loop: associating raw cube records with moves, carrying a skipped "No Double"
 // comment forward to the next checker move, and flattening each XG move into
 // the one or two MoveGraphs it produces.
 func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, crawford bool, rawCubeInfo map[string]*rawCubeAction, marks rawMoveMarks) ([]MoveGraph, error) {
@@ -316,9 +291,8 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, crawford 
 	return out, nil
 }
 
-// mapMove maps a single XG move into MoveGraphs, mirroring
-// database.importMoveWithCacheAndRawCube. A checker move yields one MoveGraph; a
-// Double/Take or Double/Pass yields two; a skipped/irrelevant cube decision
+// mapMove maps a single XG move into MoveGraphs. A checker move yields one
+// MoveGraph; a Double/Take or Double/Pass yields two; a skipped/irrelevant cube decision
 // yields none.
 func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	switch {
@@ -333,8 +307,7 @@ func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLe
 
 // mapCheckerMove builds the MoveGraph for a checker decision, combining the
 // checker analysis with the preceding cube decision (attached to the checker
-// position so it can be inspected) exactly as the legacy two saveAnalysis calls
-// would merge.
+// position so it can be inspected).
 func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, crawford bool, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cm := move.CheckerMove
 	pos, err := createPositionFromXG(cm.Position, game, matchLength, cm.ActivePlayer, crawford)
@@ -345,10 +318,8 @@ func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, 
 	pos.DecisionType = domain.CheckerAction
 	pos.Dice = [2]int{int(cm.Dice[0]), int(cm.Dice[1])}
 
-	// The legacy importer saves the checker analysis first, then (if a cube
-	// decision preceded this move) merges the cube analysis onto the same
-	// position. Emitting them as ordered fragments reproduces that — including
-	// the round-then-recompute of equity errors on the second merge.
+	// Checker fragment first, then the preceding cube decision's: the order
+	// fixes the round-then-recompute of equity errors on the second merge.
 	var analyses []*domain.PositionAnalysis
 	if len(cm.Analysis) > 0 {
 		if a := buildCheckerAnalysis(cm.Analysis, &cm.Position, &cm.PlayedMove); a != nil {

@@ -1,16 +1,7 @@
 <script>
     /*
-     * La vue Classement (issue #374, fonctionnel.md §5.6 et §3.6).
-     *
-     * La dernière chose que fait un directeur, et la seule que les joueurs emportent.
-     *
-     * Deux règles du moteur tiennent ici et ne sont pas à cette couche de les adoucir : il n'y a
-     * PAS de départage, donc les ex æquo restent ex æquo et se partagent les prix des places
-     * qu'ils occupent ; et une note de classement est un code, rendu par l'interface.
-     *
-     * Une section qui a ses propres prix a son propre classement : le vainqueur de la consolante
-     * n'est pas le finaliste du tournoi, et le payer sur le classement général le laisserait
-     * entendre.
+     * La vue Classement (fonctionnel.md §5.6, §3.6). Pas de départage : les ex æquo
+     * partagent les prix de leurs places. Une section à prix propres a son classement propre.
      */
     import { t } from '../../i18n';
     import { renderNote, renderSectionName } from './labels.js';
@@ -28,7 +19,7 @@
      */
     let { view = null, busy = false, running = 0, onClose = () => {}, onReopen = () => {}, onCSV = () => {}, onSave = () => {} } = $props();
 
-    /* Clore et rouvrir se confirment SUR PLACE, comme « Tout lancer » (#441) : clore avec des
+    /* Clore et rouvrir se confirment SUR PLACE, comme « Tout lancer » : clore avec des
        matchs en cours fige le classement sans eux, et rouvrir fait cesser un classement final.
        Clore sans match en cours reste un clic — il n'y a alors rien à perdre. */
     let asking = $state(/** @type {'close' | 'reopen' | null} */ (null));

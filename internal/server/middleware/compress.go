@@ -8,7 +8,7 @@ import (
 )
 
 // Compress gzips a response when the client asked for it and the payload is
-// worth compressing (G.9, #237).
+// worth compressing.
 //
 // The NDJSON listings are the reason: they are long, extremely repetitive —
 // the same field names on every line — and typically read over a network the

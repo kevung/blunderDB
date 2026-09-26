@@ -1,6 +1,6 @@
 // Package storagetest provides a backend-agnostic contract test suite for
-// implementations of storage.Storage. Each backend (SQLite now, PostgreSQL
-// later) runs the same suite against a fresh instance:
+// implementations of storage.Storage. Each backend runs the same suite
+// against a fresh instance:
 //
 //	func TestContract_SQLite(t *testing.T) {
 //	    storagetest.RunContractTests(t, func() storage.Storage {
@@ -9,14 +9,10 @@
 //	    })
 //	}
 //
-// It lives in a regular (non-_test.go) file so it can be imported by the
-// backend packages' test binaries — an exported helper in a _test.go file
-// would not be visible across packages.
+// It lives in non-_test.go files so the backend packages' tests can import it.
 //
-// This file holds the case table and the fixtures several families share;
-// the cases themselves live in one contract_<family>.go per family
-// (positions, match, match_delete, tournament, search, collections,
-// comments, anki, stats, stats_detail, misc). A new case is registered here and written in
+// This file holds the case table and shared fixtures; each family's cases live
+// in its contract_<family>.go. A new case is registered here and written in
 // its family's file.
 package storagetest
 
@@ -180,6 +176,9 @@ func provenancePos(n int) domain.Position {
 	return p
 }
 
+// statsDecisionPos returns a position unique to slot via its dice rather than
+// its score: the stats fixtures need a realistic score so the MWC-loss
+// computation hits no edge case.
 func statsDecisionPos(t *testing.T, slot int) domain.Position {
 	t.Helper()
 	if slot < 0 || slot >= len(statsDicePairs) {
@@ -208,7 +207,7 @@ func statsFixtureMatch(t *testing.T, s storage.Storage, slotBase int, p1, p2 str
 }
 
 // statsFixtureMatchInBatch is statsFixtureMatch with the match stamped as
-// having come in with a given import batch (#257). Zero means no batch, which
+// having come in with a given import batch. Zero means no batch, which
 // is what a match written outside an import carries.
 func statsFixtureMatchInBatch(t *testing.T, s storage.Storage, slotBase int, p1, p2 string, batchID int64) (matchID int64, posIDs [2]int64) {
 	t.Helper()

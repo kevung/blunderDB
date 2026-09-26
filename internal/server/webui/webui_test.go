@@ -8,7 +8,7 @@ import (
 )
 
 // TestHandlerServesThePage pins what a stale or broken build would break
-// first: the page is there, and its assets are reachable from it (#295).
+// first: the page is there, and its assets are reachable from it.
 func TestHandlerServesThePage(t *testing.T) {
 	h := Handler()
 

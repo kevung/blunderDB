@@ -450,9 +450,7 @@ func TestSearch_PaginationStable(t *testing.T) {
 		t.Fatalf("full query: %v", err)
 	}
 
-	// Two pages of ListOpts.Limit/Offset, pushed into the SQL scan itself
-	// (B.10, #178 — this used to be simulated via RestrictToPositionIDs
-	// because Find had no real LIMIT/OFFSET).
+	// Two pages of ListOpts.Limit/Offset, pushed into the SQL scan itself.
 	n := 10
 	if len(full) < n {
 		n = len(full)

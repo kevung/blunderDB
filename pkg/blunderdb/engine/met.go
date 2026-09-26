@@ -26,51 +26,24 @@ import (
 //	https://bkgm.com/articles/Keith/KazarossXG2MET/index.html
 //
 // GNU Backgammon ships that table as met/Kazaross-XG2.xml and loads it as its
-// default. But GNUbg is NEITHER the source NOR the first publisher — only one
-// more vehicle of distribution. This table is not a GNUbg derivative. The
-// header of this file used to claim it was ("GNUbg Match Equity Table"), and
-// the identifiers used to say so too; both were wrong, and both were corrected
-// on 2026-08-12 (gammonGo#490, after the mirror-image error was corrected in
-// gammonGo#380).
+// default, but GNUbg is neither its source nor its first publisher: this table
+// is not a GNUbg derivative, and the gnuBG* identifiers below name only the
+// Zadeh machinery. The in-app help credits it the same way. Unlike a bearoff
+// database (an exact computation, a fact), rollouts are stochastic and carry
+// their author's trace — hence the attribution.
 //
-// blunderDB's in-app help already gets this right — "The Kazaross-XG2 Match
-// Equity Table (MET) is credited to Neil Kazaross", in the Acknowledgements of
-// frontend/src/i18n/help/*.js, where it sits next to a SEPARATE credit to GNUbg
-// for the one-sided bearoff database. The help is the reference this file now
-// conforms to, not the other way round.
+// SOURCE OF THE NUMBERS. The 625 pre-Crawford and 25 post-Crawford entries are
+// read at init from met_kazaross_xg2.json, a byte-identical copy of gammonNet's
+// canonical export (data/met_kazaross_xg2.json, from Kazaross-XG2.xml, float64).
+// Per gammonNet's ADR-0003 a table shared by blunderDB, gammonNet and gammonGo
+// is exported once upstream and never retranscribed; metKazarossXG2SHA256 pins
+// the bytes and a mismatch panics at init.
 //
-// A note for anyone tempted to reuse the bearoff-database argument — "an exact
-// computation, two correct implementations produce identical files, therefore a
-// fact and not a work" — it does NOT transpose to this table. Rollouts are
-// stochastic: two campaigns do not yield the same numbers. The table carries a
-// trace of its author that a bearoff database does not, and that is why
-// attribution is due here.
-//
-// SOURCE OF THE NUMBERS (#24). The 625 pre-Crawford entries and 25
-// post-Crawford entries below no longer come from a hand transcription in
-// this file: they are read at init time from met_kazaross_xg2.json, an
-// embedded byte-identical copy of gammonNet's canonical export
-// (data/met_kazaross_xg2.json, produced by gammonNet's tools/extract_met.py
-// from Kazaross-XG2.xml — GNU Backgammon's own authoritative rendering,
-// cross-checked against this file's previous transcription). gammonNet's
-// ADR-0003 is why: a table shared by blunderDB, gammonNet and gammonGo is
-// decided and measured once, upstream, and every consumer reads the same
-// export instead of retranscribing it. metKazarossXG2SHA256 pins the exact
-// bytes expected; TestMETExportChecksumMatchesGammonNet keeps that pin
-// honest, and a checksum mismatch panics at init rather than silently
-// serving a table nobody chose. This closes two gaps the old hand
-// transcription had: it stopped at 24 post-Crawford entries where the
-// export carries 25, and it stored everything in float32 where the export
-// is float64 — see kazarossXG2PreCrawford/kazarossXG2PostCrawford below.
-//
-// WHAT DOES COME FROM GNUBG: the fallback. Beyond the explicit 25×25 table
-// (matches longer than 25 points) we compute the **Zadeh** model (N. Zadeh,
-// Management Science 23, 986, 1977) the way GNUbg does — this file's
-// gnuBGInitPreCrawfordMET/gnuBGInitPostCrawfordMET are a faithful translation of
-// initMETZadeh() from matchequity.c, full 64×64, float32 throughout to match its
-// C `float` precision — and then overlay the Kazaross-XG2 explicit values for
-// indices 0-24. The gnuBG* identifiers left in this file name that machinery and
-// the getME/GET_MET lookups it mirrors. None of them names the table.
+// WHAT DOES COME FROM GNUBG: the fallback beyond 25 points, the **Zadeh** model
+// (N. Zadeh, Management Science 23, 986, 1977). gnuBGInitPreCrawfordMET /
+// gnuBGInitPostCrawfordMET translate initMETZadeh() from matchequity.c, full
+// 64×64, float32 to match its C `float`; the Kazaross-XG2 values are then
+// overlaid for indices 0-24.
 //
 // preCrawfordMET[i][j] = player 0's MWC when player 0 needs i+1 pts, player 1 needs j+1 pts.
 // postCrawfordMET[n] = trailer's MWC when trailer needs n+1 pts and leader needs 1 pt.
@@ -78,8 +51,6 @@ import (
 // Antisymmetry: preCrawfordMET[i][j] + preCrawfordMET[j][i] = 1.0
 // This means MET[myAway-1][theirAway-1] gives "my" MWC for either player.
 //
-// This MET machinery lives in package engine (rather than database) so both the
-// SQLite Storage backend and the Database wrapper can convert equities to MWC.
 // ============================================================================
 
 const (
@@ -89,10 +60,8 @@ const (
 
 // MaxScore is the away-score horizon of this MET: GnuBGGetME clamps any away
 // score past this many points to the table's last row/column rather than
-// refusing it (see the comment inside GnuBGGetME). Exported so a caller
-// building its own multi-level cube model on top of this MET (gammonnet's
-// Janowski-at-score redouble recursion) shares this one boundary instead of
-// hardcoding a second copy of it.
+// refusing it. Exported so gammonnet's redouble recursion shares this boundary
+// instead of hardcoding a second copy.
 const MaxScore = gnuBGMaxScore
 
 // d3Array is a 3D array type used during Zadeh MET computation.
@@ -104,13 +73,9 @@ type d3Array [gnuBGMaxScore][gnuBGMaxScore][gnuBGMaxCubeLevel]float32
 // values for indices 0-24, the Zadeh fallback beyond. They deliberately carry no
 // author in their name, because they hold both.
 //
-// MET tables use float32 internally to match GNUbg's C `float` type exactly.
-// The accumulated precision of float32 arithmetic in the Zadeh iteration
-// produces MET values that match GNUbg's, ensuring correct equity conversions.
-// The explicit Kazaross-XG2 cells are ALSO overlaid here at float32 (see
-// overlayKazarossXG2) so every existing reader of these two arrays keeps
-// seeing what it always has; GnuBGGetME itself no longer reads them for
-// in-range indices — see metPre/metPost below.
+// float32 throughout, so the Zadeh iteration matches GNUbg's C `float` bit for
+// bit. The Kazaross-XG2 cells are overlaid here at float32 for direct readers
+// of these arrays; GnuBGGetME reads in-range indices from metPre/metPost.
 var (
 	preCrawfordMET  [gnuBGMaxScore][gnuBGMaxScore]float32
 	postCrawfordMET [gnuBGMaxScore]float32
@@ -120,10 +85,8 @@ var (
 var metKazarossXG2Export []byte
 
 // metKazarossXG2SHA256 pins the exact bytes of met_kazaross_xg2.json expected
-// here: the value gammonNet's tools/extract_met.py recorded in
-// data/met_kazaross_xg2.sha256 when this copy was vendored. A hand-edit of
-// the embedded file that forgets to update this constant fails loudly, at
-// init, instead of quietly serving numbers nobody chose.
+// here, as recorded in gammonNet's data/met_kazaross_xg2.sha256. A hand-edit
+// of the embedded file fails loudly at init.
 const metKazarossXG2SHA256 = "753bdd7f901e713ba30ed6afa11d41b1ac2860d3fbf628a959c0ccabb9861d2b"
 
 // metKazarossXG2Entry mirrors one row of the "pre" array in
@@ -141,26 +104,20 @@ type metKazarossXG2PostEntry struct {
 	MWC  float64 `json:"mwc"`
 }
 
-// metKazarossXG2Doc is the JSON shape gammonNet's tools/extract_met.py
-// writes to data/met_kazaross_xg2.json — see that file's own docstring for
-// the full field-by-field description.
+// metKazarossXG2Doc is the JSON shape of gammonNet's data/met_kazaross_xg2.json
+// (see tools/extract_met.py upstream).
 type metKazarossXG2Doc struct {
 	Pre  []metKazarossXG2Entry     `json:"pre"`
 	Post []metKazarossXG2PostEntry `json:"post"`
 }
 
 // kazarossXG2PreCrawford is the Kazaross-XG2 pre-Crawford Match Equity Table
-// (25×25), the work of Neil Kazaross (see the file header for provenance).
-// Populated at init from the embedded export, in float64 — the export's own
-// precision, which is what closes the float32-vs-double gap gammonNet's gold
-// harness measured (README.md in
-// pkg/blunderdb/engine/gammonnet/testdata/gold, "max|Δ| = 2.463e-06").
+// (25×25), the work of Neil Kazaross, in float64 — the export's precision,
+// which gammonNet's gold harness requires.
 // Index [i][j] = player 0's MWC when player 0 needs i+1 pts, player 1 needs j+1 pts.
 var kazarossXG2PreCrawford [25][25]float64
 
-// kazarossXG2PostCrawford is the Kazaross-XG2 post-Crawford MET, all 25
-// entries (indices 0-24) that gammonNet's export carries — including the
-// 25-away trailer that this file used to leave to the Zadeh fallback.
+// kazarossXG2PostCrawford is the Kazaross-XG2 post-Crawford MET, 25 entries.
 // Index i = trailer's MWC when trailer needs i+1 pts and leader needs 1 pt.
 // Entry for 1-away (index 0) = 0.5 (the leader wins with probability 1 minus this).
 var kazarossXG2PostCrawford [25]float64
@@ -169,19 +126,13 @@ func init() {
 	loadKazarossXG2FromExport()
 	gnuBGInitPostCrawfordMET()
 	gnuBGInitPreCrawfordMET()
-	// Overlay the Kazaross-XG2 table onto the Zadeh-computed arrays: exact
-	// Kazaross-XG2 values for matches ≤ 25 points, Zadeh as the fallback beyond.
 	overlayKazarossXG2()
 }
 
 // loadKazarossXG2FromExport parses the embedded gammonNet export into
-// kazarossXG2PreCrawford/kazarossXG2PostCrawford. It panics on anything that
-// would otherwise serve silently wrong equities: a checksum mismatch against
-// metKazarossXG2SHA256, malformed JSON, or an entry count that does not
-// match the 625+25 horizon gammonNet's tools/extract_met.py guarantees.
-// This is init-time, not user-input validation — the embedded file ships
-// inside the binary, so a failure here is a build/vendoring defect, not
-// something a caller can trigger.
+// kazarossXG2PreCrawford/kazarossXG2PostCrawford. It panics on a checksum
+// mismatch, malformed JSON or a wrong entry count: the file ships inside the
+// binary, so any failure is a vendoring defect, never user input.
 func loadKazarossXG2FromExport() {
 	sum := sha256.Sum256(metKazarossXG2Export)
 	if got := hex.EncodeToString(sum[:]); got != metKazarossXG2SHA256 {
@@ -215,32 +166,24 @@ func loadKazarossXG2FromExport() {
 	}
 }
 
-// overlayKazarossXG2 overlays the Kazaross-XG2 explicit table values onto
-// the Zadeh-computed MET arrays. The explicit table covers matches up to
-// 25 points; beyond that, the Zadeh values remain as a reasonable fallback.
-// This overlay is float32 (a rounding of the float64 source, ulp-level),
-// kept for the readers that consult preCrawfordMET/postCrawfordMET directly
-// (the Zadeh recursion's own seam tests, e.g.); GnuBGGetME's actual lookups
-// go through metPre/metPost instead, at the export's full precision.
+// overlayKazarossXG2 overlays the 25-point Kazaross-XG2 values, rounded to
+// float32, onto the Zadeh arrays for their direct readers; GnuBGGetME reads
+// full precision through metPre/metPost.
 func overlayKazarossXG2() {
-	// Pre-Crawford: copy 25×25 explicit values
 	for i := 0; i < 25; i++ {
 		for j := 0; j < 25; j++ {
 			preCrawfordMET[i][j] = float32(kazarossXG2PreCrawford[i][j])
 		}
 	}
 
-	// Post-Crawford: copy all 25 explicit entries.
 	for i := 0; i < 25; i++ {
 		postCrawfordMET[i] = float32(kazarossXG2PostCrawford[i])
 	}
 }
 
 // metPre returns preCrawfordMET[i][j] at the highest precision available:
-// gammonNet's float64 export for i,j inside the explicit 25×25 Kazaross-XG2
-// table, the float32 Zadeh fallback beyond it. Negative indices are the
-// caller's responsibility (gnuBGGetMETEntry handles those during Zadeh
-// construction; GnuBGGetME's own boundary checks run before this is called).
+// the float64 Kazaross-XG2 export inside 25×25, the float32 Zadeh fallback
+// beyond. Negative indices are the caller's responsibility.
 func metPre(i, j int) float64 {
 	if i >= 0 && i < 25 && j >= 0 && j < 25 {
 		return kazarossXG2PreCrawford[i][j]
@@ -249,9 +192,8 @@ func metPre(i, j int) float64 {
 }
 
 // metPost returns postCrawfordMET[n] at the highest precision available:
-// gammonNet's float64 export for n inside the explicit 25-entry table
-// (indices 0-24, i.e. trailer up to 25-away — the entry this file used to
-// leave to the Zadeh fallback), the float32 Zadeh fallback beyond it.
+// the float64 export for n < 25, the float32 Zadeh fallback beyond.
+
 func metPost(n int) float64 {
 	if n >= 0 && n < 25 {
 		return kazarossXG2PostCrawford[n]
@@ -453,11 +395,8 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 	n0 := matchTo - (score0 + notWhoWins*nPoints) - 1
 	n1 := matchTo - (score1 + fWhoWins*nPoints) - 1
 
-	// The MET only covers matches up to gnuBGMaxScore points, so an away score beyond the
-	// table has no entry. Callers are expected to filter those out — ConvertEMGLossToMWCLoss
-	// does — but this lookup must not be able to panic on data it is handed: blunderDB
-	// stores 99999 as the match length of a money game, and one such row reaching here used
-	// to take down every call that computed match badges.
+	// Clamp rather than panic: callers should filter away scores past the table,
+	// but a money game's 99999 match length must never index out of range.
 	if n0 >= gnuBGMaxScore {
 		n0 = gnuBGMaxScore - 1
 	}
@@ -465,26 +404,19 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 		n1 = gnuBGMaxScore - 1
 	}
 
-	// Check if either player has won the match
 	if n0 < 0 {
-		// Player 0 has won
 		if fPlayer != 0 {
 			return 0.0
 		}
 		return 1.0
 	}
 	if n1 < 0 {
-		// Player 1 has won
 		if fPlayer != 0 {
 			return 1.0
 		}
 		return 0.0
 	}
 
-	// Crawford / post-Crawford handling. metPost reads gammonNet's float64
-	// export for n < 25 (trailer up to 25-away, now including the entry this
-	// file used to leave to the Zadeh fallback) and the float32 Zadeh table
-	// beyond — see metPost's doc comment.
 	if fCrawford || matchTo-score0 == 1 || matchTo-score1 == 1 {
 		if n0 == 0 {
 			// Player 0 at 1-away after game
@@ -500,9 +432,6 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 		return metPost(n0)
 	}
 
-	// Normal pre-Crawford lookup. metPre reads gammonNet's float64 export
-	// for the explicit 25×25 Kazaross-XG2 table, the float32 Zadeh fallback
-	// beyond it — see metPre's doc comment.
 	if fPlayer != 0 {
 		return 1.0 - metPre(n0, n1)
 	}
@@ -522,13 +451,10 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 // NEMG mapping is simply a change of unit.
 //
 // Returns math.NaN() for money-game positions or when the cube/score makes the
-// denominator degenerate (e.g. dead cube).
-//
-// A money game has no match equity table, so there is no MWC to lose. blunderDB spells
-// "money game" two ways on disk — a match length of 0 (or negative), and the sentinel 99999
-// that the importers write — so anything the MET cannot represent is treated as money.
-// Without that second case the sentinel reached GnuBGGetME and indexed a 64-entry table at
-// ~99997, panicking inside GetAllMatches and hanging the caller.
+// denominator degenerate (e.g. dead cube). Money is spelt two ways on disk — a
+// match length ≤ 0 and the importers' sentinel 99999 — so any length the MET
+// cannot represent counts as money.
+
 func ConvertEMGLossToMWCLoss(emgMillipoints, score0, score1, fMove, cubeValue, matchLength int) float64 {
 	if matchLength <= 0 || matchLength > gnuBGMaxScore {
 		return math.NaN()

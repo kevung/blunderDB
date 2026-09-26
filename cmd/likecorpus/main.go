@@ -1,30 +1,19 @@
-// Command likecorpus produces the corpus the J.3 sheet asked for and never
-// got: N targets drawn from a real library, their k nearest neighbours, and a
-// column for a player to write "same problem: yes / no" in.
+// Command likecorpus produces the human-judged corpus for `like`: N targets
+// drawn from a real library, their k nearest neighbours, and a column for a
+// player to write "same problem: yes / no" in.
 //
-// # Why a tool rather than a test
-//
-// The check J.3 wanted cannot be automated, and that is the point of it. The
-// metric was chosen from a report (P7) and the equivalence class from an
-// interview (ADR-0043); both are reasoning, and reasoning about similarity is
-// exactly what a player's eye is there to contradict. So this produces the
-// material and stops: it never scores itself, and it has no pass/fail.
-//
-// The threshold is stated before the measurement, in the issue and in the note
-// this fills: if fewer than two thirds of the FIRST neighbours are judged "same
-// problem", the class rules are revised before the token's documentation is
-// trusted. Writing the bar down first is what keeps the exercise honest.
+// A tool, not a test: the metric and class (ADR-0043) are reasoning a
+// player's eye must check, so it never scores itself. If fewer than two thirds
+// of the first neighbours are judged "same problem", the class rules are
+// revised.
 //
 // # Usage
 //
 //	go run ./cmd/likecorpus -db library.db -targets 30 -k 5 > corpus.md
 //
-// The output is Markdown: one section per target, each row a neighbour with
-// its distance, its compact board and an empty verdict cell. The judging is
-// done WITH the application open — every row names a position id, and typing
-// that id in the command bar puts the board on screen — because two positions
-// cannot be told apart from two strings, which is the whole reason the check
-// needs a player rather than a test.
+// The output is Markdown, one section per target, each row a neighbour with
+// its distance, compact board, position id (to open in the application) and
+// an empty verdict cell.
 package main
 
 import (
@@ -96,8 +85,7 @@ func main() {
 		fmt.Printf("## Cible %d — %s\n\n", id, describe(target))
 		fmt.Printf("Plateau cible : `%s`\n\n", domain.EncodeXGIDBoard(target))
 		if len(neighbours) == 0 {
-			// An empty ranking is a result too: it says the class left nothing
-			// in this library, which is worth counting rather than skipping.
+			// An empty ranking is counted, not skipped.
 			fmt.Printf("*Aucune voisine dans sa classe.*\n\n")
 			empty++
 			continue

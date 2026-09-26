@@ -1,5 +1,5 @@
 <!--
-  CommandPalette — one field that finds anything by approximate name (#287):
+  CommandPalette — one field that finds anything by approximate name:
   a command of the command line, a tab, a saved filter, a match. Ctrl+Maj+P
   opens and closes it (keyboardService.js); Ctrl+K stays the Anki tab's.
 

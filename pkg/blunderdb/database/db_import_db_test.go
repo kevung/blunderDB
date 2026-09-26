@@ -10,22 +10,12 @@ import (
 	"testing"
 )
 
-// TestImport_OldFormatExportFixture is fiche-04's "compat lecture" guard:
-// blunderDB must go on reading exports produced by every version already in
-// the wild, even after the export producer changes (fiche-04 switched the
-// three export paths from a hand-rolled two-column position table with full
-// JSON state to the current compact-state schema). This file is the format
-// EVERY export produced before fiche-04: position(id, state,
-// individually_imported) only — no zobrist_hash, no scalar columns — state
-// holding the full position JSON, and metadata claiming the CURRENT
-// database_version (which is what made the bug so quiet: the migration chain
-// never runs its ALTER TABLE steps for a database that already claims to be
-// current).
-//
-// Built by hand here rather than via ExportDatabase: fiche-04's whole point is
-// that the producer no longer writes this shape, so there is nothing left in
-// the codebase to generate it from — this literal DDL is the only remaining
-// source of it, and it must stay frozen to what shipped.
+// buildOldFormatExportFixture builds the legacy export format blunderDB must
+// keep reading: position(id, state, individually_imported) only — no
+// zobrist_hash, no scalar columns, full JSON state — with metadata claiming
+// the CURRENT database_version, so the migration chain never repairs it.
+// Hand-written DDL because no producer writes this shape any more; it must
+// stay frozen to what shipped.
 func buildOldFormatExportFixture(t *testing.T, path string, positions []Position) {
 	t.Helper()
 	fixtureDB, err := sql.Open("sqlite", path)
@@ -183,11 +173,9 @@ func countPositionsMissingScalars(t *testing.T, d *Database) int {
 }
 
 // TestImport_CommitFillsScalarColumns guards the "Import database" merge path
-// (AnalyzeImportDatabase + CommitImportDatabase) against the bug BACKLOG.md
-// recorded after fiche-04: a position the target did not hold yet was inserted
-// with its state alone — no Zobrist hash, no scalar columns — so the row was
-// invisible to every SQL filter and, because ReconstructPosition trusts the
-// columns over the state, it no longer matched itself on the next import.
+// (AnalyzeImportDatabase + CommitImportDatabase): a new position must get its
+// Zobrist hash and scalar columns, or it is invisible to SQL filters and fails
+// to match itself on the next import.
 func TestImport_CommitFillsScalarColumns(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
@@ -284,10 +272,9 @@ func TestImport_CommitFillsScalarColumns(t *testing.T) {
 	}
 }
 
-// TestImport_MajorVersionComparedNumerically (issue #169): a source database
+// TestImport_MajorVersionComparedNumerically: a source database
 // whose schema major version is newer than the target's is refused, whatever
-// the digits. The check used to compare the major components as strings, so
-// "10" sorted before "2" and a 10.x.x source passed as older than 2.15.0.
+// the digits ("10" must not sort before "2").
 func TestImport_MajorVersionComparedNumerically(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
@@ -346,14 +333,9 @@ func TestImport_MajorVersionComparedNumerically(t *testing.T) {
 	}
 }
 
-// TestImport_AnalyzeComparesAllCommentRows (B.6, #174): AnalyzeImportDatabase
-// used to read a single, arbitrarily-chosen comment row per position (a bare
-// `QueryRow` with no ORDER BY) and compare only that one against the
-// target's own single row — a position commented on more than once could
-// report "nothing to merge" while a second comment sat unmerged, exactly the
-// gap loadCommentText (storage/sqlshared) already closed for search. The fix
-// joins every comment row on both sides (loadJoinedCommentText) before
-// comparing.
+// TestImport_AnalyzeComparesAllCommentRows: AnalyzeImportDatabase must join
+// every comment row on both sides, or a position commented on more than once
+// reports "nothing to merge" while a second comment sits unmerged.
 func TestImport_AnalyzeComparesAllCommentRows(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
@@ -408,11 +390,8 @@ func TestImport_AnalyzeComparesAllCommentRows(t *testing.T) {
 }
 
 // TestImport_CommitMergesAllCommentRows is TestImport_AnalyzeComparesAllCommentRows's
-// counterpart for the actual write: CommitImportDatabase's own comment merge
-// used to read a single arbitrary comment row (no ORDER BY) instead of
-// joining every row the position carries, and its UPDATE rewrote every one of
-// a multi-row position's comment rows to the same merged text (B.11, #179).
-// A target position with an unrelated existing comment must end up holding
+// counterpart for the actual write. A target position with an unrelated
+// existing comment must end up holding
 // both after the merge: its own comment, untouched, and a new row for the
 // source's comment that was missing.
 func TestImport_CommitMergesAllCommentRows(t *testing.T) {
@@ -472,16 +451,9 @@ func TestImport_CommitMergesAllCommentRows(t *testing.T) {
 	}
 }
 
-// TestWrapImportCancelled guards #241: a user hitting Cancel mid-commit
-// (CancelImport, wired to the GUI's Cancel button) used to surface as a
-// fresh, unwrapped "import cancelled by user" error — indistinguishable from
-// a real failure to anything checking errors.Is, and the GUI showed it in an
-// "Error committing import" alert (frontend/src/services/importService.js).
-// CommitImportDatabase's two ctx.Err() checks both build their error through
-// wrapImportCancelled, tested directly here rather than by racing a real
-// CancelImport call against a real commit (that race is real but not
-// deterministic enough for a unit test — see the doc comment on
-// wrapImportCancelled).
+// TestWrapImportCancelled: a Cancel mid-commit must be recognisable through
+// errors.Is as both ErrImportCancelled and the context error, not reported as
+// a failure. Tested directly rather than by racing a real CancelImport.
 func TestWrapImportCancelled(t *testing.T) {
 	err := wrapImportCancelled(context.Canceled)
 	if !errors.Is(err, ErrImportCancelled) {

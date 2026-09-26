@@ -47,10 +47,7 @@ func TestUndisputedOpeningPlays(t *testing.T) {
 		{"6-5 runs one back checker", 6, 5, map[int]int8{23: 1, 12: 6}},
 	}
 
-	// 0-ply is the cheap gate and runs always. 2-ply costs seconds per decision
-	// — measured, not guessed — so it stays out of the short cycle; a package
-	// whose tests cannot finish inside `go test`'s ten minutes is a package
-	// nobody runs.
+	// 0-ply always; 2-ply costs seconds per decision, so not under -short.
 	plies := []int{0}
 	if !testing.Short() {
 		plies = append(plies, 2)
@@ -86,11 +83,8 @@ func nameWithPly(name string, ply int) string {
 // A deeper search must not change what the engine is looking at: the candidate
 // list holds the same plays, whatever the depth.
 //
-// Pruning is off here, so that every legal play is returned rather than the
-// twelve survivors — which is the point of the assertion. That makes depth
-// expensive: with no filter and no pruning, a 2-ply decision is the
-// 760 000-evaluation case, minutes of CPU for an invariant that 0 and 1 ply
-// establish just as well. It stops at one.
+// Pruning is off so every legal play is returned; that makes 2-ply cost
+// minutes, so it stops at one ply.
 func TestSameCandidatesAtEveryDepth(t *testing.T) {
 	if testing.Short() {
 		t.Skip("includes a 1-ply search")
@@ -297,11 +291,9 @@ func TestParallelSearchIsBitIdentical(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Le nombre d'ouvriers ne doit changer QUE qui calcule chaque terme. Un,
-	// deux, la machine, et un chiffre plus grand que le niveau ne porte de
-	// tâches (WithWorkers borne à Filter[depth] × 21 : la file se vide alors
-	// avant que les derniers ouvriers n'aient pioché quoi que ce soit, ce qui
-	// est précisément le cas limite à couvrir).
+	// Le nombre d'ouvriers ne change QUE qui calcule chaque terme. 64 dépasse
+	// les tâches de la file : des ouvriers ne piochent rien, cas limite à
+	// couvrir.
 	for _, nw := range []int{1, 2, runtime.NumCPU(), 64} {
 		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
 			par, err := NewSearcher(DefaultConfig(2))
@@ -332,11 +324,8 @@ func TestParallelSearchIsBitIdentical(t *testing.T) {
 	}
 }
 
-// TestParallelSearchIsBitIdenticalOnePly is TestParallelSearchIsBitIdentical's
-// cheap sibling: same property, one ply instead of two (~20 ms total), so it
-// is NOT skipped under -short and runs on every push through the `gammonnet`
-// shard of build.yml — the 2-ply test above only runs on a version tag or in
-// the race-targeted job that also matches this file by name (C.2, #189).
+// TestParallelSearchIsBitIdenticalOnePly is the cheap sibling (~20 ms), not
+// skipped under -short, so the property runs on every push.
 func TestParallelSearchIsBitIdenticalOnePly(t *testing.T) {
 	p := openingPosition(t)
 
@@ -382,9 +371,8 @@ func TestParallelSearchIsBitIdenticalOnePly(t *testing.T) {
 }
 
 // BenchmarkSortByEquity measures the ranking sort on the two list lengths a
-// 2-ply search actually produces: the dozen survivors the big network scores,
-// and the pruning pass on a double. It is the per-poste figure behind the
-// typed sort (#150); the whole-decision figure is BenchmarkDecision2Ply.
+// 2-ply search produces: the dozen survivors, and the pruning pass on a
+// double.
 func BenchmarkSortByEquity(b *testing.B) {
 	for _, n := range []int{12, 30, 240} {
 		b.Run(fmt.Sprintf("n=%d", n), func(b *testing.B) {
@@ -409,7 +397,7 @@ func BenchmarkSortByEquity(b *testing.B) {
 // levels and hundreds of distinct intermediate positions.
 const busyXGID = "XGID=---BBaB-BbA-bC-b--BdAca---:0:0:1:00:0:5:0:9:10"
 
-// BenchmarkLegalPlays is the per-poste figure for play generation (#150):
+// BenchmarkLegalPlays is the per-poste figure for play generation:
 // a non-double and a double, from the opening and from a busy middle game.
 // The whole-decision figure is BenchmarkDecision2Ply.
 func BenchmarkLegalPlays(b *testing.B) {

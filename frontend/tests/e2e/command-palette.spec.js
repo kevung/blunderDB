@@ -1,5 +1,5 @@
 /**
- * command-palette.spec.js — #287
+ * command-palette.spec.js
  *
  * La palette de commandes s'ouvre sur CTRL-MAJ-P, se peint dans la surface et
  * l'encre du thème (clair comme sombre), se parcourt au clavier et se referme

@@ -28,11 +28,8 @@ const analysisInsertSQL = `INSERT INTO analysis (
 ) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
-// same statement. It replaced a SELECT followed by an INSERT or an UPDATE:
-// two concurrent saves both read "no row" and both inserted, and Load — a
-// plain `WHERE position_id = ?` — then returned whichever row came first.
-// The conflict target names the UNIQUE index idx_analysis_position, which the
-// fresh schema declares and the 2.18.0 migration installs on existing files.
+// same statement, so concurrent saves cannot insert two rows. The target is
+// the UNIQUE index idx_analysis_position.
 const analysisUpsertSQL = analysisInsertSQL + `
 ON CONFLICT(position_id) DO UPDATE SET
 	data=excluded.data,
@@ -55,7 +52,7 @@ ON CONFLICT(position_id) DO UPDATE SET
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
 	a.PositionID = int(positionID)
 	// The played actions come from the analysis when it states them, and from
-	// the match when it does not — see engine.PlayedActionsFor (#268). The
+	// the match when it does not — see engine.PlayedActionsFor. The
 	// lookup is skipped entirely when the blob already answers, so an import
 	// carrying its own analysis pays nothing for it.
 	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
@@ -188,7 +185,7 @@ func firstOf(s []string) string {
 
 // playedActionsFromMatch reads the earliest recorded checker move and cube
 // action for a position from the `move` table — the actions an analysis
-// computed here cannot know (#268). Earliest by move id, so the answer is
+// computed here cannot know. Earliest by move id, so the answer is
 // stable across runs when a deduplicated position was played more than once.
 func (s *analysisStore) playedActionsFromMatch(ctx context.Context, positionID int64) (checkerMove, cubeAction string, err error) {
 	var mv, ca sql.NullString
@@ -219,12 +216,8 @@ const repairPageSize = 500
 // RepairDenormalisedColumns — see storage.AnalysisStore.
 //
 // Rows are read, decoded and rewritten a page at a time (repairPageSize),
-// never loaded whole: a real database holds tens of thousands of analyses,
-// and the point of a repair is to run on the biggest ones (B.11, #179 — this
-// used to buffer every row's blob before decoding any of them, against this
-// very comment). Only rows whose columns actually change are written, so a
-// second run reports 0 and touches nothing — the count is the answer to
-// "was anything wrong?", not merely to "did it run?".
+// never loaded whole. Only rows whose columns actually change are written, so
+// a second run reports 0: the count answers "was anything wrong?".
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string) (int, error) {
 	type row struct {
 		id                                     int64
@@ -232,8 +225,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		bestCube                               sql.NullString
 		cubeErr, bestMoveErr, forced, closeCub sql.NullInt64
 		// The match's own record of what was played, joined in here rather
-		// than looked up row by row: a repair walks every analysis in the
-		// database (#268).
+		// than looked up row by row: a repair walks every analysis.
 		mvMove, mvCube sql.NullString
 	}
 	repaired := 0

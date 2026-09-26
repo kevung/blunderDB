@@ -1,5 +1,5 @@
 <script>
-    // Deux joueurs côte à côte (#282, fiche I.26).
+    // Deux joueurs côte à côte.
     //
     // Le bloc ne calcule rien : `playerComparison.js` décide de ce qui se
     // compare, et lui seul. Ici il n'y a que la mise en page et le repère

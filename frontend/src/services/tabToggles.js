@@ -1,11 +1,6 @@
-// tabToggles.js — the "Afficher/cacher" shortcuts (raccourcis.rst, #202).
-//
-// Extracted from positionService.js (fiche D.10, #210): one of that module's six
-// responsibilities, self-contained around one table and one function. The
-// `toggleXPanel` names date from when each panel was a floating window; today every
-// one of them selects a tab of the tabbed panel (App.svelte's tab effect opens the
-// matching PANEL). Re-exported from positionService.js so existing callers
-// (keyboardService, commandProcessor, App.svelte, Toolbar.svelte) keep one import.
+// tabToggles.js — the "Afficher/cacher" shortcuts (raccourcis.rst). Each
+// `toggleXPanel` selects a tab of the tabbed panel. Re-exported from
+// positionService.js.
 import { get } from 'svelte/store';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore, positionStore } from '../stores/positionStore.js';
@@ -46,22 +41,14 @@ const TAB_TOGGLES = Object.freeze({
 // same tab activeTabStore itself starts on.
 const DEFAULT_TAB = 'matches';
 
-// The tab that was active right before the last toggleTab() actually
-// switched INTO a different one — module-level, on purpose: the eight
-// shortcuts below (raccourcis.rst's "Afficher/cacher", #202) share one
-// "previous tab" memory rather than one per shortcut, so Ctrl-L then Ctrl-P
-// then Ctrl-L again returns to "comments", not to whatever was active before
-// Ctrl-L's first press. Read fresh from activeTabStore on every call, so it
-// stays correct even when the active tab changed by some other means
-// (clicking a tab directly, a match/search/import flow selecting one, …).
+// The tab active before the last toggleTab() switched away: one memory shared
+// by all shortcuts, so Ctrl-L, Ctrl-P, Ctrl-L returns to "comments". The
+// current tab is read fresh from activeTabStore, whatever changed it.
 let previousTab = null;
 
 /**
- * Select the tab of `id` (a TAB_TOGGLES key) if a database is open — and,
- * unlike a plain "show" action, toggle BACK to whichever tab was active
- * before if `id`'s tab is already the one showing. Every one of these
- * shortcuts is documented as "Afficher/cacher" (show/hide); before this,
- * pressing one a second time was a no-op (#202).
+ * Select the tab of `id` (a TAB_TOGGLES key) if a database is open, or toggle
+ * BACK to the previous tab if it is already showing ("Afficher/cacher").
  */
 export function toggleTab(id) {
     const entry = TAB_TOGGLES[id];
@@ -91,11 +78,9 @@ export function toggleTab(id) {
 }
 
 /**
- * Sélectionne l'onglet de `id` sans le refermer s'il est déjà celui qui
- * s'affiche — ce que veut une commande qui DÉMARRE quelque chose dans
- * l'onglet (`train scores`), par opposition aux raccourcis « Afficher/cacher ».
- * Rend `true` quand l'onglet est bien affiché à la sortie, `false` quand un
- * refus (pas de base ouverte) l'a empêché.
+ * Sélectionne l'onglet de `id` sans jamais le refermer, pour une commande qui
+ * démarre quelque chose dans l'onglet (`train scores`). Rend `false` si un
+ * refus (pas de base) l'a empêché.
  * @param {string} id
  */
 export function showTab(id) {
@@ -112,17 +97,14 @@ export const toggleCommentPanel = () => toggleTab('comments');
 export const toggleMetadataPanel = () => toggleTab('metadata');
 export const toggleAnkiPanel = () => toggleTab('anki');
 export const toggleTrainingPanel = () => toggleTab('training');
-// Ouvrir, et non basculer : `cmd_mode.rst` dit « Ouvre le panneau
-// Entraînement », et le bouton de barre d'outils l'ouvre lui aussi (#320).
-// Refermer l'onglet sous une session en cours laissait le chronomètre courir
-// hors écran. Ctrl+J reste la bascule que `raccourcis.rst` documente.
+// Ouvrir, non basculer (cmd_mode.rst) : refermer l'onglet sous une session
+// laisserait le chronomètre courir hors écran. Ctrl+J reste la bascule.
 export const showTrainingPanel = () => showTab('training');
 export const toggleMatchPanel = () => toggleTab('matches');
 export const toggleCollectionPanelAction = () => toggleTab('collections');
-// Bound to Ctrl+Y and to the `direct` command: ONE gesture, the round trip between the room and
-// the board. The tournament view takes over the main area only when this tab is active AND a
-// Direction is open (ADR-0047). A second shortcut, Ctrl+Maj+D, did exactly the same and was
-// removed (#443).
+// Ctrl+Y and `direct`: the round trip between the room and the board. The
+// tournament view takes the main area only with this tab active AND a
+// Direction open (ADR-0047).
 export const toggleTournamentPanel = () => toggleTab('tournaments');
 export const toggleStatsPanel = () => toggleTab('stats');
 export const toggleSearchPanel = () => toggleTab('search');

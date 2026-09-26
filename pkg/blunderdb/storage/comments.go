@@ -15,7 +15,7 @@ type CommentStore interface {
 	// is what almost every caller means.
 	Add(ctx context.Context, scope string, positionID int64, text string) (int64, error)
 
-	// AddFrom appends a comment entry carrying its provenance (issue #263).
+	// AddFrom appends a comment entry carrying its provenance.
 	// Importers call it with the origin of the file the note came out of, so a
 	// per-move remark that arrived with a match can be told apart from a note
 	// the user typed — which is what lets deleting the match spare the second
@@ -59,12 +59,7 @@ type CommentStore interface {
 
 	// Tags returns the tag vocabulary of the tenant: every `#word` written in
 	// a comment, with the number of POSITIONS carrying it, most used first and
-	// alphabetically within a count (issue #265).
-	//
-	// It lives here, on the comments, because that is where a tag lives: a tag
-	// is not a table and nothing declares one. The counts are over positions
-	// and not comments — a tag written twice on the same position is one
-	// position tagged, and the number shown beside a tag has to be the number
-	// of positions clicking it will yield.
+	// alphabetically within a count. Counts are over positions, not comments:
+	// the number shown is what clicking the tag will yield.
 	Tags(ctx context.Context, scope string) ([]domain.TagCount, error)
 }

@@ -42,9 +42,7 @@ var _ storage.Storage = (*Storage)(nil)
 // that owns the connection. dsn ":memory:" yields an in-memory database.
 func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, error) {
 	// Encode the PRAGMAs into the DSN so the driver applies them to *every*
-	// connection the pool opens. A post-Open `PRAGMA` only configures the one
-	// connection it runs on; the others would keep busy_timeout=0 and fail
-	// concurrent writers with SQLITE_BUSY (P5).
+	// connection the pool opens; a post-Open `PRAGMA` configures only one.
 	db, err := sql.Open("sqlite", DSN(dsn))
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: open %q: %w", dsn, err)
@@ -76,18 +74,13 @@ func New(db *sql.DB) *Storage {
 }
 
 // perConnPragmas are the connection-scoped PRAGMAs every SQLite connection
-// must carry. A PRAGMA only affects the connection it runs on, so they are
-// encoded into the DSN (see DSN) and replayed by the driver on every
-// connection the pool opens; there is deliberately no "apply to an open
-// handle" helper any more — the one that existed configured a single pooled
-// connection and left the others with foreign_keys=OFF (issue #157).
+// must carry, encoded into the DSN (see DSN) so the driver replays them on
+// every pooled connection; deliberately no "apply to an open handle" helper,
+// which would configure one connection only.
 // busy_timeout makes a contending writer wait up to 10 s for the write lock
-// rather than failing immediately with SQLITE_BUSY — essential now that the
-// global Database mutex no longer serializes writers (P5). 10 s (not gnubg's
-// usual 5 s) because Windows file locking is measurably slower under the
-// heavy concurrent-writer load the storagetest suite exercises; positionStore
-// Save additionally retries a handful of times with a short backoff, which
-// busy_timeout alone cannot cover — see its doc comment.
+// instead of failing with SQLITE_BUSY: no global lock serializes writers.
+// 10 s because Windows file locking is slower under concurrent writers;
+// positionStore Save also retries with backoff (see its doc comment).
 var perConnPragmas = [][2]string{
 	{"busy_timeout", "10000"},
 	{"foreign_keys", "ON"},
@@ -99,11 +92,8 @@ var perConnPragmas = [][2]string{
 
 // DSN augments a SQLite path/DSN with the per-connection PRAGMAs (and, for a
 // file-backed database, WAL journal mode) encoded as `_pragma` query params.
-// The modernc driver runs these on every connection it opens, so the whole
-// pool is configured identically — unlike a one-shot post-Open PRAGMA, which
-// only configures a single connection. WAL is omitted for ":memory:" (it
-// needs a real filesystem). Every sql.Open("sqlite", …) in blunderDB goes
-// through here: the desktop/CLI Database wrapper as well as Open above.
+// The driver runs these on every connection it opens. WAL is omitted for
+// ":memory:". Every sql.Open("sqlite", …) in blunderDB goes through here.
 //
 // The driver splits its DSN at the first '?' and hands the left part to
 // SQLite verbatim — no percent-decoding — so a plain path (spaces, accents,
@@ -182,13 +172,9 @@ func (s *Storage) Close() error {
 	if !s.ownsDB || s.sqlDB == nil {
 		return nil
 	}
-	// PRAGMA optimize (SQLite docs: run before closing every long-lived
-	// connection) is a cheap, targeted ANALYZE: it only touches tables whose
-	// content has changed enough since the last full ANALYZE to plausibly have
-	// stale sqlite_stat1 rows, so it is a no-op on a connection that did
-	// little writing and inexpensive even after a heavy import (fiche-05 T7).
-	// Best-effort: a failed optimize must not turn a normal shutdown into an
-	// error the caller has no useful way to react to.
+	// PRAGMA optimize (SQLite docs: run before closing a long-lived
+	// connection) is a cheap targeted ANALYZE. Best-effort: a failure must
+	// not turn a normal shutdown into an error.
 	_, _ = s.sqlDB.Exec(`PRAGMA optimize`)
 	return s.sqlDB.Close()
 }
@@ -202,21 +188,16 @@ func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
 	return &txImpl{binder: binder{db: tx}, tx: tx}, nil
 }
 
-// Version reports the schema version recorded in the metadata table. It
-// delegates to MetadataStore.Version (D6).
+// Version reports the schema version recorded in the metadata table.
 func (s *Storage) Version(ctx context.Context) (string, error) {
 	return s.Metadata().Version(ctx, "")
 }
 
 // Migrate brings the database up to the current schema version. A fresh
 // database is bootstrapped to the current schema; a pre-existing database is
-// upgraded in place through the registered legacy migration chain (P2 PR6).
-// When no migrator is registered, a non-fresh database can only be opened if
-// it is already current: Migrate compares its recorded version against
-// domain.DatabaseVersion and errors out rather than silently leaving an older
-// database un-migrated (a pure-library consumer that never imports package
-// database, such as cmd/serve without the blank import, must not pretend to
-// have upgraded a database it cannot actually migrate).
+// upgraded in place through the registered legacy migration chain. With no
+// migrator registered (a consumer that never imports package database), a
+// database that is not current is an error, never silently left un-migrated.
 func (s *Storage) Migrate(ctx context.Context) error {
 	fresh, err := isFreshDB(ctx, s.sqlDB)
 	if err != nil {

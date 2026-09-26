@@ -2,8 +2,7 @@
   A titled list of tick boxes with All/None, for picking a subset of matches, tournaments
   or collections (or anything else with an `id`). Extracted from ExportDatabaseModal, which
   used to declare this same markup as a local snippet — MatchTournamentPickerModal grew a
-  second, slightly different copy of it independently (fiche D.9, #209). One component now,
-  shared by both.
+  second, slightly different copy of it independently. One component now, shared by both.
 
   `describe(item)` names an item and gives its trailing detail text; return
   `{ name, count, partial }` — `count` is rendered as-is (the caller writes its own

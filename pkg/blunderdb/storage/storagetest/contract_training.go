@@ -7,14 +7,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The Training journal's contract (ADR-0040 rule 6, issue #320).
-//
-// Three things are worth holding both backends to, and they are the three
-// this file checks: a session and its items are written as one thing, the
-// per-number aggregate counts by TYPE and not by session, and a number that
-// carries no deviation stays out of the mean instead of entering it as a zero
-// error — which is what separates "no answer was given" from "the answer was
-// exactly right".
+// The Training journal's contract (ADR-0040 rule 6): a session and its items
+// are written as one thing, the per-number aggregate counts by TYPE and not by
+// session, and a number with no deviation stays out of the mean instead of
+// entering it as a zero error.
 
 func testTrainingSaveAndRead(t *testing.T, s storage.Storage) {
 	ctx := context.Background()

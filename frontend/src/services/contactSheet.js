@@ -1,17 +1,8 @@
-// La planche-contact de la liste parcourue (#287, fiche I.31).
-//
-// Une recherche rend une LISTE, et le plateau n'en montre qu'une position à
-// la fois : pour voir ce qu'une recherche a ramené, il fallait la parcourir
-// d'un bout à l'autre. La planche-contact montre la liste en grille de
-// mini-plateaux, et une vignette choisie ouvre sa position sur le plateau.
-//
-// Le dessin est celui de diagramService.renderPositionSVG (#278/#279) : les
-// mêmes fonctions de scène que le plateau, donc la même image, palette de
-// l'utilisateur comprise. Aucun second dessinateur.
-//
-// Ce module ne tient que ce qui se teste sans composant : le découpage en
-// pages, le déplacement au clavier dans la grille, et la garde d'ouverture.
-// Le rendu, qui coûte, est dans ContactSheetModal.svelte.
+// La planche-contact : la liste parcourue en grille de mini-plateaux ; une
+// vignette ouvre sa position sur le plateau. Dessin par
+// diagramService.renderPositionSVG, les mêmes fonctions de scène que le
+// plateau. Ici, ce qui se teste sans composant (pages, clavier, garde
+// d'ouverture) ; le rendu est dans ContactSheetModal.svelte.
 
 import { get } from 'svelte/store';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -21,10 +12,8 @@ import { setStatusBarMessage } from './databaseService.js';
 import { tMsg } from '../i18n';
 
 /**
- * Les vignettes d'une page. Vingt-quatre : un nombre qui se range en 2, 3, 4,
- * 6 ou 8 colonnes sans ligne boiteuse, et qu'on dessine sans attente
- * perceptible. Une liste de cinquante mille positions ne dessine jamais que
- * sa page — c'est toute la raison de la pagination.
+ * Vignettes par page : se range en 2, 3, 4, 6 ou 8 colonnes sans ligne
+ * boiteuse, et borne le dessin quelle que soit la taille de la liste.
  */
 export const PAGE_SIZE = 24;
 
@@ -49,8 +38,7 @@ export function pageBounds(page, total) {
 }
 
 /**
- * Le nombre de colonnes qui tiennent dans une largeur. Une largeur inconnue
- * (zéro : pas encore mesurée, ou un test sans mise en page) donne quatre.
+ * Les colonnes qui tiennent dans une largeur ; quatre si elle est inconnue (0).
  * @param {number} width
  * @param {number} tileMin largeur minimale d'une vignette
  * @param {number} gap espace entre deux vignettes
@@ -61,14 +49,10 @@ export function columnsFor(width, tileMin, gap) {
 }
 
 /**
- * La vignette que vise une touche, à partir de `index`, ou null quand la
- * touche n'est pas une touche de la grille. Les flèches se déplacent dans la
- * grille ; J et K sont « suivante » et « précédente », comme sur le plateau ;
- * Début et Fin vont aux bouts de la page ; Page préc./suiv. changent de page.
- * Le résultat est toujours dans la liste : une flèche au bord ne fait rien.
- *
- * Les lettres passent par event.key (la convention du clavier : J est la
- * touche marquée J, en AZERTY comme en QWERTY).
+ * La vignette visée par une touche depuis `index`, ou null si ce n'est pas une
+ * touche de la grille : flèches dans la grille, J / K suivante / précédente
+ * (event.key), Début / Fin aux bouts de la page, Page préc. / suiv. Toujours
+ * dans la liste : une flèche au bord ne fait rien.
  *
  * @param {number} index
  * @param {{key: string, ctrlKey?: boolean, metaKey?: boolean, altKey?: boolean, shiftKey?: boolean}} event
@@ -106,11 +90,9 @@ export function targetIndex(index, event, { columns, total }) {
 }
 
 /**
- * Ouvre la planche-contact, ou dit pourquoi elle ne s'ouvre pas. Elle montre
- * la liste parcourue — résultats d'une recherche, bibliothèque, collection —
- * et ouvrir une vignette déplace le curseur de cette liste : rien de cela n'a
- * de sens en mode édition (on quitterait la position en cours d'édition) ni
- * dans un match, qui se parcourt par ses coups.
+ * Ouvre la planche-contact, ou dit pourquoi pas. Ouvrir une vignette déplace le
+ * curseur de la liste : sans objet en mode édition ni dans un match, qui se
+ * parcourt par ses coups.
  * @returns {boolean} vrai quand la planche s'est ouverte.
  */
 export function openContactSheet() {

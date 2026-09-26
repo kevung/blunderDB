@@ -90,10 +90,8 @@ func TestPublicMethods_ReturnUnderLock(t *testing.T) {
 		}
 	}
 
-	// Both fixtures are built once and copied per method: under -race a
-	// SetupDatabase (bootstrap, VACUUM, integrity check) costs ~0.1 s, an
-	// OpenDatabase of a copied file a third of that, and there are 2 × 139
-	// of them.
+	// Both fixtures are built once and copied per method: a SetupDatabase
+	// per call is too slow under -race.
 	variants := []struct {
 		name    string
 		fixture []byte

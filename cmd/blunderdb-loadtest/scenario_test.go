@@ -35,10 +35,8 @@ func newDaemon(t *testing.T) *httptest.Server {
 	return ts
 }
 
-// TestScenarioTenantExpectations pins what each scenario counts as success:
-// a numeric tenant is served, a named tenant is refused with 400 (ADR-0005,
-// amendment 2026-09-03) — and only the named-tenants scenario treats that
-// refusal as the expected outcome.
+// TestScenarioTenantExpectations: only named-tenants expects the 400 refusal
+// (ADR-0005).
 func TestScenarioTenantExpectations(t *testing.T) {
 	ts := newDaemon(t)
 	rng := rand.New(rand.NewSource(1))

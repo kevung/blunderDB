@@ -54,22 +54,18 @@ type AnkiStore interface {
 	Forecast(ctx context.Context, scope string, deckID int64, days int) ([]domain.AnkiForecastDay, error)
 
 	// ReviewsByGameType counts the POSITIONS reviewed since `since` (an ISO
-	// date), grouped by the position's derived plan of play (#275, #291).
-	//
-	// Positions, not reviews: a card revised four times in a month is one
-	// position studied, and counting the repetitions would make a month of
-	// cramming look like a month of coverage.
+	// date), grouped by the position's derived plan of play. Positions, not
+	// reviews: repetitions of one card must not look like coverage.
 	ReviewsByGameType(ctx context.Context, scope string, since string) (map[string]int, error)
 
 	// LinkedCard returns the card of the same deck holding the OTHER HALF of
 	// a cube decision — "take?" after "double?" — when that half is due and
-	// available, or ErrNotFound when there is nothing to chain (#276).
+	// available, or ErrNotFound when there is nothing to chain.
 	//
 	// The pairing is derived from the match data (two move rows of the same
-	// game at the same move number), never stored: a column would be a second
-	// copy of a fact that a re-import can change. Chaining ORDERS the due set;
-	// it advances no schedule, because forcing a card out of its turn would
-	// falsify FSRS for a staging effect.
+	// game at the same move number), never stored, since a re-import can
+	// change it. Chaining ORDERS the due set and advances no schedule: forcing
+	// a card out of its turn would falsify FSRS.
 	LinkedCard(ctx context.Context, scope string, deckID, cardID int64) (*domain.AnkiReviewCard, error)
 
 	// NextCard returns the next card due for review in a deck, or ErrNotFound.

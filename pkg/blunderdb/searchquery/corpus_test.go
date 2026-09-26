@@ -3,9 +3,7 @@ package searchquery
 // corpus_test.go — the shared-corpus gate. testdata/search_query_corpus.json is
 // written once and read twice: by this package and by
 // frontend/src/__tests__/searchQueryCorpus.test.js. A case added on either side
-// fails the other until both grammars agree, which is the whole point (#186,
-// #203) — the JS grammar and this one were meant to be one, and only a shared
-// fixture keeps them so.
+// fails the other until both grammars agree.
 
 import (
 	"encoding/json"
@@ -252,13 +250,9 @@ func TestFormatRoundTripsCorpus(t *testing.T) {
 
 var _ = domain.SearchFilters{}
 
-// TestCorpusCoversEveryToken is the gate the corpus lacked (#405): it walks
-// FieldTokens — the grammar's own field → token table, the one
-// TestEveryFilterFieldIsAccountedFor holds against domain.SearchFilters — and
-// fails for every token no corpus case exercises. `n` (#362) and `gt:` (#405)
-// both reached the Go grammar without a case, so nothing held the JS reader to
-// them and one of the two silently ignored `n`. A token enters the grammar with
-// its case, or this test says which one is missing.
+// TestCorpusCoversEveryToken walks FieldTokens and fails for every token no
+// corpus case exercises: a token enters the grammar with its case, or the JS
+// reader is held to nothing on it.
 //
 // "Exercised" means two things at once, because each alone lets a gap through:
 // some case must NAME the field in `expected` (otherwise the JS side asserts

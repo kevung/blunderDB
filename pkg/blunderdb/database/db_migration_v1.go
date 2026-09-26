@@ -3,13 +3,9 @@ package database
 // Migration steps 1.0.0 → 2.0.0. See db_migration.go for the registry that
 // runs them and the rules a step follows (no version stamp, re-runnable).
 //
-// The 1.0.0 → 1.6.0 steps each create tables, with CREATE TABLE IF NOT
-// EXISTS, so a database that already holds one goes through the step
-// unchanged and the chain carries on to the version it records. (They used
-// to stop the chain on a table already present, which left such a file
-// stamped 1.x for good — every later step, the 2.0.0 backfill included,
-// was then skipped.) The tables are also (re)created by ensureAllTablesExist
-// after the chain.
+// The 1.0.0 → 1.6.0 steps create tables with IF NOT EXISTS, so a table
+// already present never stops the chain. ensureAllTablesExist also
+// (re)creates them after the chain.
 
 import (
 	"context"
@@ -258,10 +254,7 @@ func (d *Database) migrate_1_8_0_to_1_9_0(_ context.Context) error {
 //  5. CREATE INDEX IF NOT EXISTS for every v2.0.0 index.
 //  6. ANALYZE to refresh query-planner statistics.
 //
-// The chain stamps "2.0.0" once the step returns. If the process is
-// interrupted before that, the version string remains "1.9.0" and the
-// migration is retried on the next open; addColumn skips the columns already
-// there, so repeated runs are safe.
+// An interrupted run stays at "1.9.0" and is retried; addColumn makes that safe.
 //
 // The caller must hold d.mu.
 func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {

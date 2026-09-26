@@ -9,9 +9,7 @@ import (
 )
 
 // Error codes. This is a near-closed set — external clients depend on it.
-// Adding a code is an additive API change (bump the API minor version). See
-// tasks/headless/06-serve-http.md ("Error envelope (frozen)") and
-// tasks/headless/11-tenant-rate-limit.md (which added rate_limited).
+// Adding a code is an additive API change (bump the API minor version).
 const (
 	CodeNotFound    = "not_found"
 	CodeConflict    = "conflict"
@@ -159,7 +157,7 @@ func writeBodyTooLarge(w http.ResponseWriter, limit int64) {
 // method, Allow naming the one it accepts. Another envelope whose status is
 // not statusForCode's, like writeBodyTooLarge's 413 — the error-code set
 // stays near-closed (CodeInvalid) while the HTTP status carries the
-// distinction (#232).
+// distinction.
 func writeMethodNotAllowed(w http.ResponseWriter, allow string) {
 	w.Header().Set("Allow", allow)
 	w.Header().Set("Content-Type", "application/json")

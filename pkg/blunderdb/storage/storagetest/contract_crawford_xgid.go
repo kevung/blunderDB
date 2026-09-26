@@ -11,22 +11,10 @@ import (
 )
 
 // testRepairCrawfordSentinelFromPastedXGID pins the half of the Crawford repair
-// that has no match to ask (#360).
-//
-// A position no game points at carries no match to contradict its away score,
-// so the match-driven pass leaves it alone. But a position that came in through
-// an XGID someone else wrote — pasted before domain.DecodeXGID read field 7
-// through /v1/positions.fromXGID, or a BGBlitz position file — still holds that
-// XGID in its analysis, and the XGID states the rule: field 7 is 0 after the
-// Crawford game. That is a fact of the source, which the repair may act on.
-//
-// What it may NOT act on is an XGID blunderDB wrote itself: generateXGID (the
-// board saved, the position edited) and the CLI's encoder write field 7 from
-// the stored sentinel, so at a stored away 1 they always write 1, and such an
-// XGID proves nothing. That is also why only field 7 = 0 next to a stored 1
-// counts: it is the one combination no blunderDB encoder ever produced. And the
-// XGID must describe the row — same board, cube, turn, dice and distance —
-// before its word is taken for it.
+// that has no match to ask: the repair acts on an XGID another program wrote
+// (field 7 = 0 next to a stored away 1, a combination no blunderDB encoder
+// produces), and only when that XGID describes the row. See
+// sqlshared.sourceXGIDSaysPostCrawford.
 func testRepairCrawfordSentinelFromPastedXGID(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps, as := s.Positions(), s.Analyses()
@@ -148,20 +136,13 @@ func testRepairCrawfordSentinelFromPastedXGID(t *testing.T, s storage.Storage) {
 }
 
 // testRepairCrawfordSentinelOnePointMatch pins the other direction of the
-// Crawford repair of a position no game points at (#411).
-//
-// A 1-point match's only game starts one point from the match, so it is the
-// Crawford game — the importers' rule — and domain.DecodeXGID now reads such
-// an XGID as away [1, 1] whatever its field 7 says. Before that, a 1-point
-// match pasted with field 7 at 0 was stored at the post-Crawford [0, 0], and
-// the same position imported from a match file at [1, 1]: two rows for one
-// position. The XGID the pasted row keeps states the match length, which is
-// what the repair may act on — once it describes the row.
+// Crawford repair of a position no game points at: a pasted 1-point match
+// stored at [0, 0] moves to [1, 1] (a 1-point match's only game is the
+// Crawford game), once its XGID describes the row.
 //
 // What must not move: the DMP after the Crawford game of a longer match, which
-// IS [0, 0] by every path; an XGID blunderDB wrote itself at a stored [0, 0]
-// between #338 and #411 (a 1-point match at 0-0, field 7 at 0, the ceiling as
-// stored), which says only what the row says; an XGID of another position;
+// IS [0, 0] by every path; an XGID an older blunderDB encoder wrote at a
+// stored [0, 0] (blunderDBOnePointEncoding); an XGID of another position;
 // a stored [1, 1] whose pasted 1-point XGID has field 7 at 0, which the
 // post-Crawford half of the repair must not read as post-Crawford; and a
 // position with no analysis.

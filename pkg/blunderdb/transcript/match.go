@@ -5,9 +5,7 @@ import (
 )
 
 // Parts is what a Transcription becomes once it leaves this package: a match, its
-// games, its moves, and the Position each move was played from. Nothing here is
-// stored yet — it is the caller, on the database side, that turns it into an ingest
-// graph and writes it, and the .mat renderer that takes the first three as they are.
+// games, its moves, and the Position each move was played from, unstored.
 //
 // Moves and Positions are keyed by game id and are index-aligned: Positions[g][i] is
 // the position of Moves[g][i].
@@ -17,11 +15,8 @@ type Parts struct {
 	Moves     map[int64][]*domain.Move
 	Positions map[int64][]domain.Position
 
-	// Inconsistent says whether the document these parts were built from carries at
-	// least one Inconsistency — what a save warns about before writing the Match all
-	// the same (ADR-0044: nothing is refused). It is [Annotated.Inconsistent] of the
-	// very Replay this build already ran, kept here so a caller does not pay for a
-	// second one.
+	// Inconsistent is [Annotated.Inconsistent] of the Replay this build ran, kept so
+	// a save can warn (ADR-0044) without a second Replay.
 	Inconsistent bool
 }
 
@@ -33,10 +28,8 @@ type Parts struct {
 // leaves winner and points on the Game and adds no row to `move` (ADR-0045 §6), and an
 // opening produces nothing at all.
 //
-// The Position of each Move is not in the triplet — domain.Move carries an id, not a
-// position — so a caller that needs them takes [Build] instead, or reads them off the
-// Replay: ActionInfo.GameIndex and ActionInfo.MoveNumber name the Move an Action
-// became, and ActionInfo.Before is its Position.
+// Positions are not in the triplet; take [Build], or read ActionInfo.Before at
+// ActionInfo.GameIndex/MoveNumber.
 func MatchParts(doc Document) (*domain.Match, []*domain.Game, map[int64][]*domain.Move) {
 	p := Build(doc)
 	return p.Match, p.Games, p.Moves

@@ -16,11 +16,9 @@ import (
 // # The perspective rule, which is where this goes wrong silently
 //
 // Evaluate answers from the position's own Turn, and Play.Result already has
-// the turn switched to the opponent. So the value of a play, TO THE PLAYER WHO
-// MADE IT, is the NEGATION of the network's answer on the resulting position.
-// Get that backwards and the engine plays its opponent's best move with total
-// confidence — no crash, no warning, a perfectly plausible output. Every
-// negation below is there for that reason.
+// the turn switched. So the value of a play TO THE PLAYER WHO MADE IT is the
+// NEGATION of the network's answer on the result. Backwards, the engine
+// confidently plays its opponent's best move. Every negation below is this.
 //
 // # The recursion
 //
@@ -29,33 +27,24 @@ import (
 //	                w(roll) * max over plays of ( -V(play.Result, k-1) )
 //
 // A decision with known dice at depth k scores each play at -V(play.Result, k)
-// — depth k, NOT k-1: the play itself is not one of the opponent rolls to
-// enumerate. The reference carries a comment saying that mistake was made once.
+// — depth k, NOT k-1: the play itself is not one of the opponent rolls.
 //
 // # What the leaves are worth
 //
-// V(pos, 0) above is the cubeless money equity only in the simplest
-// configuration. With UseMatch every node is valued through the match equity
-// table (2×MWC−1, the state swapped at every ply — ADR-0016), and with
-// UseCube every LEAF goes through the cube model at the cube state that
-// node's mover sees, mirrored at every ply alongside the state (ADR-0023).
-// Both keep the one property the negations rely on: the value negates
-// between sides. Valuing a gammonish move at 4-away/2-away correctly needs
-// both — the table for the score, the cube for the double that makes the
-// gammon worth the match — and no money test will ever say otherwise.
+// With UseMatch every node is valued through the match equity table
+// (2×MWC−1, state swapped at every ply — ADR-0016); with UseCube every leaf
+// goes through the cube model at the cube its mover sees, mirrored at every
+// ply alongside the state (ADR-0023). Both keep the value negating between
+// sides.
 const (
-	// MaxPly is the deepest search this engine will build. It is not a claim
-	// that four plies are useful: upstream measured a whole extra ply at
-	// +0.00022 equity per decision, inside the noise.
+	// MaxPly is the deepest search this engine will build — not a claim that
+	// four plies are useful (upstream: +0.00022 equity per extra ply).
 	MaxPly = 4
 )
 
 // DefaultPly, DefaultPruneK, DefaultPruneEquityLoss and its CI are the
-// canonical "normal" level's own fields (search_levels.go, issue #25) — read
-// from the embedded export instead of retyped as a literal, so this package
-// cannot drift from what gammonNet's `gn_search_level` publishes without the
-// embed itself changing. ×3.9 cheaper than unpruned, for an equity loss the
-// CI keeps honest rather than rounding to "in the noise".
+// canonical "normal" level's fields (search_levels.go), read from the
+// embedded export so they cannot drift from gammonNet's `gn_search_level`.
 var (
 	DefaultPly                   = mustLevel("normal").Ply
 	DefaultPruneK                = mustLevel("normal").PruneK
@@ -73,9 +62,9 @@ var (
 	pruneErr  error
 )
 
-// embeddedPruneNetwork returns the pruning network: 196→32→5, distilled from
-// the big one and measured 92.5× cheaper per evaluation. It sorts the
-// candidates so the big network only ever scores the survivors.
+// embeddedPruneNetwork returns the pruning network (196→32→5, distilled from
+// the big one), which sorts candidates so the big network scores only the
+// survivors.
 func embeddedPruneNetwork() (*Network, error) {
 	pruneOnce.Do(func() { pruneNet, pruneErr = Load(embeddedPruneWeights) })
 	return pruneNet, pruneErr
@@ -93,60 +82,31 @@ type SearchConfig struct {
 	Filter [MaxPly + 1]int
 
 	// PruneK is how many candidates the small network lets through, 0 turning
-	// the mechanism off entirely. It is raised to Filter[depth] where that is
-	// larger — pruning below the filter would silently search fewer candidates
-	// than asked, and no test would see it.
+	// it off. It is raised to Filter[depth] where that is larger: pruning
+	// below the filter would silently search fewer candidates than asked.
 	PruneK int
 
 	// UseMatch and Match select the referential every node is valued in
-	// (ADR-0016, gn_search.c's use_match/match): cubeless money equity when
-	// UseMatch is false, 2×MWC−1 through Match otherwise. Match is the state
-	// AS THE SEARCHER'S OWN CALLER SEES IT — Plays/BestPlay/Probs swap it at
-	// every ply themselves, exactly as gn_search.c's swap_sides does; a
-	// caller building SearchConfig never has to.
-	//
-	// A Searcher is already bound to one Ply for its whole life (NewSearcher
-	// takes SearchConfig once); binding it to one Match is the same contract,
-	// not a new one — a caller evaluating many different scores builds one
-	// Searcher per score, exactly as it already builds one per Ply.
+	// (ADR-0016, gn_search.c's use_match/match): cubeless money equity, or
+	// 2×MWC−1 through Match. Match is the state as the caller sees it; the
+	// search swaps it at every ply itself (swap_sides). One Searcher per
+	// score, as per Ply (or Reconfigure).
 	UseMatch bool
 	Match    MatchState
 
 	// UseCube, CubeOwner and CubeX value every LEAF through the cube model
-	// instead of cubeless (gn_search.c's use_cube, t34-videau-spec §8 step 2,
-	// ADR-0023): Value at efficiency CubeX — the money model, or the match
-	// redouble recursion when UseMatch is also set. CubeOwner is the cube AS
-	// THE SEARCHER'S OWN CALLER SEES IT (the player on roll at the root); the
-	// search mirrors it (Owned <-> Opponent) at every ply exactly where it
-	// swaps the match state, and nowhere else. Two sign conventions in one
-	// recursion is the failure mode this file's header warns about, which is
-	// why state and owner travel together, in the same calls, always.
+	// (gn_search.c's use_cube, t34-videau-spec §8 step 2, ADR-0023): Value at
+	// efficiency CubeX, money or match recursion. CubeOwner is the cube as the
+	// caller sees it; the search mirrors it at every ply exactly where it
+	// swaps the match state — state and owner always travel together. No
+	// double/take/pass branches in the tree; terminalValue ignores the cube,
+	// as in the C.
 	//
-	// No double/take/pass branches in the tree: the cube-aware value is
-	// applied at the leaves and rides the same expectiminimax, which is what
-	// the reference engines do (§8 records why). A finished game is worth its
-	// stake whatever the cube — terminalValue is untouched, as in the C.
-	//
-	// What this buys is not a bolder or more sober search in the abstract; at
-	// a match score it is the WHOLE gammon-go / gammon-save effect. Cubeless,
-	// the trailer at 4-away/2-away prices their own gammons below the
-	// leader's and plays 24/18 13/9 with the opening 6-4; with the cube they
-	// double early, at 2 their gammon wins the match, and 8/2 6/2 comes first
-	// — exactly gnubg's cubeful choice (docs/adr/0023).
-	//
-	// CUBEX IS FIXED AT THE ROOT WHILE CUBEOWNER IS MIRRORED, AND THAT IS A
-	// KNOWN DIVERGENCE, NOT AN OVERSIGHT (#192/C.5, ADR-0029).
-	// DefaultEfficiency returns a coefficient PER CUBE STATE, each fitted
-	// against a different column of gammonNet's exact two-sided table, so a
-	// leaf whose owner has been mirrored is priced with the coefficient
-	// fitted for the OTHER branch — one leaf in two, whenever the root cube
-	// is not centred. gn_search.c does exactly the same (`config->cube_x` at
-	// :299 and :740, passed beside the mirrored owner), so correcting it HERE
-	// would manufacture the port divergence cube.go's header forbids and turn
-	// the cube gold red. The correction is gammonNet's to write (cube_x
-	// indexed by the local owner; spec §4 and §8 step 2). Measured meanwhile
-	// on 669 real analysed decisions: 0.005 normalised equity per leaf, and
-	// 0 of 60 best moves changed. Read ADR-0029 before touching this.
+	// CubeX is fixed at the root while CubeOwner is mirrored: a known
+	// divergence (ADR-0029). A mirrored leaf is priced with the other
+	// branch's coefficient, exactly as gn_search.c:299/:740 do; correcting it
+	// here would turn the cube gold red. The fix is gammonNet's to write
+	// (spec §4, §8 step 2).
 	UseCube   bool
 	CubeOwner CubeOwner
 	CubeX     float64
@@ -159,18 +119,11 @@ var defaultFilterPrefix = mustLevel("normal").Filter
 // DefaultConfig returns the canonical configuration for a given depth: pruning
 // at DefaultPruneK and the published move filter (defaultFilterPrefix).
 //
-// The filter is not an optimisation, it is what makes the depth reachable at
-// all. Measured on this build, a 2-ply decision from the opening costs 13 400
-// big-network evaluations WITH the filter; without one it costs upwards of
-// 760 000, because every one of the twelve survivors at every node is searched
-// deeper. A config with a zero filter at ply 2 is not a slower search, it is an
-// unusable one.
+// The filter is what makes the depth reachable at all: a 2-ply opening
+// decision costs ~13 400 evaluations with it, over 760 000 without.
 //
-// Depths beyond what defaultFilterPrefix covers (3 and 4 ply, at MaxPly=4)
-// get 5 — this repository's OWN extension, published nowhere upstream: T3A
-// only measured the 2-ply shape (0,1,3), so a caller relying on the filter
-// staying reasonable at 3-ply or 4-ply is trusting a guess, not a
-// measurement, same as it always was.
+// Depths beyond defaultFilterPrefix (3 and 4 ply) get 5 — this repository's
+// own unmeasured extension; upstream only measured the 2-ply shape (0,1,3).
 func DefaultConfig(ply int) SearchConfig {
 	if ply < 0 {
 		ply = 0
@@ -191,12 +144,9 @@ func DefaultConfig(ply int) SearchConfig {
 }
 
 // DepthLabel is the exact AnalysisDepth string a search at ply produces,
-// after the same clamp to [0, MaxPly] DefaultConfig applies. A caller that
-// decides whether a stored analysis is stale at some target depth (the
-// gammonNet batch's staleness predicate, database/db_gammonnet_batch.go)
-// must compare against this, not against the raw ply it was asked for —
-// asking for ply 9 and getting a MaxPly search back must not read as
-// "stale forever" against a target that was silently clamped the same way.
+// after DefaultConfig's clamp to [0, MaxPly]. Staleness checks
+// (database/db_gammonnet_batch.go) must compare against this, not the raw
+// ply, or a clamped request reads as stale forever.
 func DepthLabel(ply int) string {
 	if ply < 0 {
 		ply = 0
@@ -233,23 +183,16 @@ type Searcher struct {
 	pruneEvals uint64 // small-network evaluations
 	cacheHits  uint64
 
-	// batchFilled and batchSlotted measure what a batched kernel would carry:
-	// the positions a fill pass actually had to evaluate, against the lanes
-	// those positions would occupy at EvalBatchWidth. Their ratio is the fill,
-	// and the fill is what decides whether the twenty-one rolls need grouping
-	// (#145, #146). Counted whether or not a batched kernel exists yet — the
-	// figure has to be comparable across that change.
+	// batchFilled and batchSlotted: positions a fill pass evaluated, against
+	// the lanes they occupy at EvalBatchWidth. Their ratio is the batch fill.
 	batchFilled  uint64
 	batchSlotted uint64
 
-	// cubeValuations est le dénominateur COMPTÉ du poste videau : le nombre
-	// de distributions réellement valuées par le modèle de videau, incrémenté
-	// là où nodeValue appelle Value — donc jamais sur un nœud terminal, et
-	// jamais sous UseCube éteint. gammonNet a ajouté le même compteur
-	// (gn_search_cube_valuations) en découvrant que sa mesure d'entrée
-	// supposait « un nœud évalué porte une valuation », ce qui est faux dans
-	// les deux sens. Une mesure en ns par valuation qui divise par un nombre
-	// supposé mesure la supposition.
+	// cubeValuations compte les distributions réellement valuées par le
+	// modèle de videau (là où nodeValue appelle Value : jamais un nœud
+	// terminal, jamais sous UseCube éteint) — le pendant de
+	// gn_search_cube_valuations. Un nœud évalué ne porte pas toujours une
+	// valuation : le dénominateur se compte, il ne se suppose pas.
 	cubeValuations uint64
 
 	// workers are independent searchers the root farms its roll loop out to.
@@ -257,45 +200,29 @@ type Searcher struct {
 	// the read-only networks.
 	workers []*Searcher
 
-	// La file d'un ou plusieurs groupes aplatis et ses résultats
-	// (deepenGroups). Elles vivent avec le chercheur, comme le reste du
-	// brouillon : la racine les remplit une fois par décision, et une
-	// allocation par décision suffirait à faire travailler le ramasse-miettes
-	// pendant que les ouvriers calculent. frontierBest[(groupOffset+i)*NumRolls+r]
-	// est la valeur du lancer r pour le candidat i d'un groupe — un
-	// emplacement par tâche, fixé avant que la file ne démarre, jamais
-	// partagé entre deux ouvriers ni entre deux groupes.
+	// La file aplatie de deepenGroups et ses résultats, gardées avec le
+	// brouillon pour ne pas allouer par décision.
+	// frontierBest[(groupOffset+i)*NumRolls+r] est la valeur du lancer r pour
+	// le candidat i d'un groupe : un emplacement par tâche, fixé avant que la
+	// file ne démarre, jamais partagé.
 	frontier     []rollTask
 	frontierBest []float64
 
-	// probeCands, probePassed et probeDanced sont le brouillon PROPRE de
-	// probsAt's own root loop (search_probs.go, #195/C.8) : un groupe de
-	// candidats par lancer RACINE (les siens, pas ceux d'un candidat), tenu
-	// vivant assez longtemps pour que les 21 lancers passent ENSEMBLE par
-	// deepenGroups au lieu d'ouvrir chacun sa propre barrière. probeGroups est
-	// la sous-tranche de probeCands effectivement soumise à deepenGroups,
-	// reconstruite à chaque appel ; probePassed et probeDanced tiennent la
-	// position après passage pour un lancer qui danse (aucun coup légal), qui
-	// ne rentre dans aucun groupe et se résout directement.
+	// Brouillon de la racine de probsAt (search_probs.go) : un groupe de
+	// candidats par lancer racine, pour que les 21 lancers passent ensemble
+	// par deepenGroups. probeGroups est la sous-tranche soumise ;
+	// probePassed/probeDanced tiennent la position d'un lancer qui danse,
+	// résolu hors groupe.
 	probeCands  [NumRolls][]Candidate
 	probeGroups [][]Candidate
 	probePassed [NumRolls]Position
 	probeDanced [NumRolls]bool
 
-	// matchStates[i] is the ONLY two match-state values a single decision's
-	// entire recursion ever needs (#197/C.10): level 0 (and every even
-	// level) sees matchStates[0], every odd level matchStates[1] —
-	// MatchState.Swap() only exchanges the two away scores, Cube and
-	// Crawford stay constant for the whole decision, so the value repeats
-	// with period 2 no matter how deep the recursion goes. seedMatchState
-	// fixes both, once, wherever a chain BEGINS at level 0
-	// (rankPlaysShallow/positionEquity/probsAt, each guarded on level == 0);
-	// every deeper level only ever indexes these two slots (childMatchState)
-	// instead of allocating a fresh swapped copy — swapMatchState used to
-	// heap-allocate one at EVERY recursive step, measured at 1 472
-	// allocations for one canonical scored 2-ply decision. hasMatchState is
-	// false for a money decision (state nil at level 0); each worker owns
-	// its own pair, exactly like the rest of its scratch.
+	// matchStates holds the only two match states a decision's recursion
+	// needs: even levels see [0], odd levels [1] (Swap only exchanges the
+	// away scores). seedMatchState fixes both at level 0; deeper levels index
+	// them (childMatchState) instead of allocating a swapped copy per step.
+	// hasMatchState is false for money; each worker owns its own pair.
 	matchStates   [2]MatchState
 	hasMatchState bool
 
@@ -304,33 +231,23 @@ type Searcher struct {
 	cands [MaxPly + 2][]Candidate
 	feat  [NumFeatures]float32
 
-	// best is the candidate buffer the two entry points that do not take
-	// one rank into: BestPlay, and evaluateMoves at the domain edge. A
-	// Candidate is 80 octets and MaxPlays is 2048, so allocating one per
-	// call meant 164 Ko allocated and zeroed for every decision — for a
-	// caller that then reads the first entry and, in the batch job, a
-	// handful more. It belongs with the rest of the searcher's scratch,
-	// which already holds six buffers of exactly this size — but allocated
-	// on first use, not at construction: a worker built by WithWorkers only
-	// ever ranks into its caller's buffer and would never touch this one.
+	// best is the candidate buffer (164 Ko) for the entry points that do not
+	// take one: BestPlay and evaluateMoves. Allocated on first use, since a
+	// worker never touches it.
 	best []Candidate
 
-	// Le brouillon du lot que shallowFill remplit. Il vit ici, dimensionné
-	// une fois avec le Searcher, parce que shallowFill est le chemin le plus
-	// chaud du moteur : un lot alloué par nœud coûterait 6 Ko à chacun des
-	// milliers de nœuds d'une décision. batchOf[l] dit à quel candidat la
-	// voie l appartient — le lot ne contient que les survivants, pas les
-	// positions terminales ni les hits de cache, donc les voies ne suivent
-	// pas les indices des candidats.
+	// Le brouillon du lot de shallowFill, le chemin le plus chaud du moteur,
+	// alloué une fois. batchOf[l] est le candidat de la voie l : le lot ne
+	// contient que les survivants (ni terminaux ni hits de cache), donc les
+	// voies ne suivent pas les indices des candidats.
 	batchFeat  [EvalBatchWidth][NumFeatures]float32
 	batchProbs [EvalBatchWidth][NumOutputs]float32
 	batchOf    [EvalBatchWidth]int
 }
 
-// NewSearcher builds a searcher over the embedded networks. Refused, never
-// degraded (ADR-0016): an UseMatch config with a Match that IsValid() rejects
-// is an error here, not a silent fall-back to money — gn_search_config_match's
-// own comment names exactly this trap.
+// NewSearcher builds a searcher over the embedded networks. A UseMatch config
+// whose Match is not IsValid() is an error, never a silent fall-back to money
+// (ADR-0016).
 func NewSearcher(cfg SearchConfig) (*Searcher, error) {
 	if cfg.UseMatch && !cfg.Match.IsValid() {
 		return nil, fmt.Errorf("%w: match state %+v", ErrNotEvaluable, cfg.Match)
@@ -354,12 +271,9 @@ func newSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
 	return newSearcherWithCache(cfg, net, prune, defaultCacheLog2)
 }
 
-// newSearcherWithCache is newSearcherWith with the cache size broken out —
-// WithWorkers uses it to size a WORKER's cache smaller than the root's
-// (#196/C.9): only the root ever revisits a position across the whole tree
-// (the recursion folds transpositions back to it), so a worker's cache exists
-// to catch repeats WITHIN the one flattened deepenGroups queue it drains, a
-// much smaller working set than the root's.
+// newSearcherWithCache is newSearcherWith with the cache size broken out, so
+// WithWorkers can give a worker a smaller cache: it only catches repeats
+// within the queue it drains, a much smaller working set than the root's.
 func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint) *Searcher {
 	if cfg.Ply < 0 {
 		cfg.Ply = 0
@@ -382,13 +296,9 @@ func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint)
 }
 
 // playsAt et candsAt sont les brouillons du niveau level, alloués au premier
-// usage. Les six niveaux étaient alloués d'avance, ce qui coûtait 1,6 Mo par
-// chercheur ; depuis que la recherche de fond se donne un ouvrier par cœur,
-// ce sont dix-sept chercheurs à construire par décision, et une décision à
-// 2 ply n'en descend que trois. Le reste était payé et jamais lu.
-//
-// Aucun verrou : un Searcher appartient à une goroutine, comme tout le reste
-// de son brouillon.
+// usage : un ouvrier par cœur les multiplie, et une décision à 2 ply ne
+// descend que trois niveaux sur six. Aucun verrou : un Searcher appartient à
+// une goroutine.
 func (s *Searcher) playsAt(level int) []Play {
 	if s.plays[level] == nil {
 		s.plays[level] = make([]Play, MaxPlays)
@@ -403,11 +313,8 @@ func (s *Searcher) candsAt(level int) []Candidate {
 	return s.cands[level]
 }
 
-// genAt est le générateur de coups du niveau level, lui aussi alloué au
-// premier usage. Un Generator pèse 166 Ko à lui seul (ses deux demi-niveaux
-// de 2 048 entrées), soit près d'un mégaoctet par chercheur pour les six
-// niveaux — la moitié du coût de construction d'un chercheur, et le seul
-// poste qui comptait vraiment une fois le pool d'ouvriers branché.
+// genAt est le générateur de coups du niveau level, alloué au premier usage
+// (166 Ko chacun, la moitié du coût de construction d'un chercheur).
 func (s *Searcher) genAt(level int) *Generator {
 	if s.gen[level] == nil {
 		s.gen[level] = &Generator{}
@@ -427,9 +334,7 @@ func (s *Searcher) pruneKeep(depth int) int {
 	return keep
 }
 
-// matchState is s.cfg.Match as a pointer, or nil under money valuation — the
-// form every recursive entry point below threads instead of re-reading
-// s.cfg.UseMatch at each node.
+// matchState is s.cfg.Match as a pointer, or nil under money valuation.
 func (s *Searcher) matchState() *MatchState {
 	if !s.cfg.UseMatch {
 		return nil
@@ -455,11 +360,8 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 }
 
 // rankPlaysShallow fait les phases une et deux de rankPlays — générer,
-// élaguer, valoriser et trier — sans approfondir aucun survivant. C'est cette
-// séparation qui permet à un appelant d'assembler PLUSIEURS racines de
-// candidats avant que le premier ne soit approfondi (probsAt's own root,
-// #195/C.8) : rankPlays lui-même reste ce qu'il était, un simple appel à
-// rankPlaysShallow suivi de la phase trois.
+// élaguer, valoriser, trier — sans approfondir, pour que la racine de probsAt
+// assemble plusieurs groupes avant d'approfondir.
 func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
 	if level >= len(s.plays) {
 		return -1
@@ -516,15 +418,11 @@ func (s *Searcher) scratch() []Candidate {
 
 // rankPlays generates, scores and orders the plays at one node.
 //
-// level indexes the scratch buffers; it is the recursion's nesting, not the
-// search depth. state is the match state AS pos's OWN mover sees it, or nil
-// under money valuation — the same on every call here, since every play
-// generated shares pos's mover; owner is the cube as that same mover sees it
-// (read only under UseCube). theirs (state, swapped once) and theirOwner
-// (owner, mirrored once) are what value the results and what the deep pass
-// hands to the position on the other side of each play — gn_search.c's
-// rank_plays_finish/rank_plays_deepen both derive them exactly this way,
-// from the SAME unswapped pair, never from one another's swap.
+// level indexes the scratch buffers (the nesting, not the search depth).
+// state and owner are as pos's own mover sees them (nil state for money).
+// theirs and theirOwner (swapped/mirrored once) value the results and go to
+// the deep pass, both derived from the same unswapped pair, as in
+// gn_search.c's rank_plays_finish/rank_plays_deepen.
 func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
 	// Phases one et deux : générer, élaguer, valoriser, trier.
 	written := s.rankPlaysShallow(pos, d1, d2, depth, level, state, owner, out)
@@ -542,10 +440,9 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	if f := s.cfg.Filter[depth]; f > 0 && f < searched {
 		searched = f
 	}
-	// À la racine, tous les candidats à approfondir partent dans une seule
-	// file (deepenGroups) : une barrière par décision au lieu d'une par
-	// candidat, et trois fois plus de tâches à répartir. Ailleurs — et sans
-	// ouvriers — la boucle sérielle, terme pour terme identique.
+	// À la racine, tous les candidats partent dans une seule file
+	// (deepenGroups) : une barrière par décision. Ailleurs, la boucle
+	// sérielle, terme pour terme identique.
 	if level == 0 && len(s.workers) > 0 {
 		if !s.deepenGroups([][]Candidate{out[:searched]}, depth, theirs, theirOwner) {
 			return -1
@@ -566,14 +463,8 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	return written
 }
 
-// seedMatchState fixes matchStates[0]/[1] — the only two values this
-// decision's whole recursion will ever need (matchStates' own doc comment,
-// #197/C.10) — given state as pos's own mover sees it at level 0. Called
-// once per chain, wherever level == 0: rankPlaysShallow, positionEquity,
-// probsAt. A later call with the SAME state (probsAtRootParallel drives
-// rankPlaysShallow at level 0 once per root roll, all sharing one state)
-// just overwrites both slots with identical values — idempotent, never a
-// bug, only ever redundant.
+// seedMatchState fixes matchStates[0]/[1] from state as pos's mover sees it
+// at level 0. Called wherever a chain begins at level 0; idempotent.
 func (s *Searcher) seedMatchState(state *MatchState) {
 	if state == nil {
 		s.hasMatchState = false
@@ -584,14 +475,8 @@ func (s *Searcher) seedMatchState(state *MatchState) {
 	s.matchStates[1] = state.Swap()
 }
 
-// childMatchState is state seen from the other side of the table at level+1
-// — gn_search.c's swap_sides, computed once per decision by seedMatchState
-// rather than allocated fresh at every recursive step: state at level+1 is
-// always exactly one of the two values seedMatchState already fixed for
-// this whole chain (matchStates' own doc comment), so this is a plain array
-// index, never a heap allocation. nil when the decision has no match state
-// at all (a money game) — the same nil swapMatchState used to return for a
-// nil input.
+// childMatchState is the state seen from the other side at level+1 —
+// gn_search.c's swap_sides, as an index into matchStates. nil for money.
 func (s *Searcher) childMatchState(level int) *MatchState {
 	if !s.hasMatchState {
 		return nil
@@ -600,32 +485,16 @@ func (s *Searcher) childMatchState(level int) *MatchState {
 }
 
 // shallowFill writes each candidate's resulting distribution. useCache is false
-// for the pruning pass: letting the small network read or write the cache would
-// make its ordering depend on evaluation history, which is the one way a cache
-// could start changing results.
+// for the pruning pass: the small network's ordering must not depend on
+// evaluation history.
 //
-// C'est ici que la recherche alimente le noyau groupé (#146, ADR-0024). Les
-// candidats d'un même appel sont les coups d'un même lancer depuis une même
-// position — des frères, dont l'union des entrées actives est petite (~32 sur
-// 196), soit exactement le lot sur lequel le noyau est au mieux : 16,9 µs par
-// position contre 39 µs sur des plateaux sans rapport, et 505 µs en scalaire.
-//
-// La passe se fait en deux temps. D'abord le tri : les positions terminales,
-// les hits de cache et les encodages refusés n'ont pas besoin du réseau et
-// sortent du lot — leur traitement est inchangé. Ensuite les survivants
-// partent par tranches de EvalBatchWidth ; la convention du lot partiel
-// appartient au noyau (les voies au-delà de n dupliquent la position n-1), et
-// l'appelant ne raisonne donc jamais sur la queue.
-//
-// Une nuance sur le cache, qui ne change aucun résultat : la version position
-// par position rangeait le candidat i avant de chercher le candidat i+1, si
-// bien qu'un rangement pouvait évincer, dans cette table à adressage direct,
-// une entrée que le candidat suivant aurait trouvée. Le lot cherche les huit
-// avant de ranger les huit, donc il peut rendre quelques hits de plus. Un hit
-// rend les bits qu'un calcul aurait rendus (cache.go) : seuls les compteurs
-// bougent, jamais l'évaluation. Deux candidats d'un même appel ne peuvent pas
-// être la même position — moves_gen déduplique par plateau résultant — donc
-// aucun doublon ne s'évalue deux fois dans un même lot.
+// Elle alimente le noyau groupé (ADR-0024) : les candidats d'un appel sont
+// des frères, dont l'union des entrées actives est petite, le lot où le noyau
+// est au mieux. Terminaux, hits de cache et encodages refusés sortent du lot ;
+// les survivants partent par tranches de EvalBatchWidth (la queue partielle
+// est l'affaire du noyau). Le lot cherche en cache avant de ranger, ce qui
+// peut rendre quelques hits de plus : seuls les compteurs bougent, un hit
+// rend les bits d'un calcul (cache.go).
 func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) {
 	filled, lanes := 0, 0
 	for i := range cands {
@@ -638,10 +507,8 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 			s.cacheHits++
 			continue
 		}
-		// encodeLegal plutôt qu'Encode : une position produite par la
-		// génération est légale par construction, et la validation était la
-		// moitié du coût de l'encodage (#150). Elle n'a donc plus de branche
-		// d'échec — les points d'entrée publics valident une fois, à l'entrée.
+		// encodeLegal : une position générée est légale par construction, et
+		// les points d'entrée publics valident une fois, à l'entrée.
 		encodeLegal(res, &s.batchFeat[lanes])
 		s.batchOf[lanes] = i
 		lanes++
@@ -655,27 +522,19 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 		s.flushBatch(ev, cands, lanes, useCache)
 		filled += lanes
 	}
-	// Les mêmes deux compteurs qu'avant, et la même mesure : les positions
-	// qu'il a fallu évaluer, contre les voies qu'elles occupent. La différence
-	// est qu'ils ne simulent plus le lot, ils le décrivent — les tranches
-	// envoyées ci-dessus sont pleines sauf la dernière, donc leur total de
-	// voies est exactement batchSlots(filled).
+	// Les tranches sont pleines sauf la dernière : les voies occupées sont
+	// exactement batchSlots(filled).
 	s.batchFilled += uint64(filled)
 	s.batchSlotted += uint64(batchSlots(filled))
 }
 
 // flushBatch évalue les n premières voies du brouillon et redistribue les
-// résultats dans les candidats que batchOf désigne, en tenant à jour les
-// mêmes compteurs qu'une évaluation unitaire : evals et le rangement en cache
-// pour la passe grand réseau, pruneEvals pour l'élagage. Le petit réseau passe
-// par ce chemin comme le grand, et n'a toujours ni lecture ni écriture du
-// cache (cache.go) : son ordre ne doit dépendre d'aucun historique.
+// résultats aux candidats de batchOf, avec les mêmes compteurs qu'une
+// évaluation unitaire. Le petit réseau ne touche jamais le cache.
 //
-// Le repli scalaire est là par prudence, et inatteignable en pratique :
-// EvaluateBatch ne refuse que ce qu'Evaluate refuse aussi (une largeur d'entrée
-// qui n'est pas celle du réseau), et un sélecteur de noyau invalide a déjà fait
-// échouer Load. S'il se déclenche, il reproduit exactement l'ancien
-// comportement plutôt que d'inventer une valeur.
+// Le repli scalaire est inatteignable en pratique (EvaluateBatch ne refuse
+// que ce qu'Evaluate refuse) ; il reproduit l'évaluation unitaire plutôt que
+// d'inventer une valeur.
 func (s *Searcher) flushBatch(ev *Evaluator, cands []Candidate, n int, useCache bool) {
 	err := ev.EvaluateBatch(&s.batchFeat, n, &s.batchProbs)
 	for l := 0; l < n; l++ {
@@ -695,10 +554,8 @@ func (s *Searcher) flushBatch(ev *Evaluator, cands []Candidate, n int, useCache 
 }
 
 // valueSweep turns each candidate's distribution into its value to the player
-// who made the play — hence the negation. state and owner are theirs: the
-// match state and the cube as the RESULTING position's own mover sees them
-// (rankPlays already swapped and mirrored them), or nil/unused under money
-// cubeless valuation.
+// who made the play — hence the negation. state and owner are as the
+// RESULTING position's mover sees them.
 func (s *Searcher) valueSweep(cands []Candidate, state *MatchState, owner CubeOwner) {
 	for i := range cands {
 		res := &cands[i].Play.Result
@@ -710,18 +567,13 @@ func (s *Searcher) valueSweep(cands []Candidate, state *MatchState, owner CubeOw
 	}
 }
 
-// nodeValue is the value of one evaluated node from its own mover's point of
-// view: valueFromProbs (cubeless money, or 2×MWC−1) unless UseCube, in which
-// case Value at owner — the cube as THAT node's mover sees it — on the very
-// same scale, which is what lets the two valuations share one recursion. A
-// failure (only reachable with a state NewSearcher already refuses) values
-// the node as 0, the same choice valueFromProbs makes for its own.
+// nodeValue is the value of one evaluated node from its own mover's view:
+// valueFromProbs, or under UseCube Value at owner, on the same scale. A
+// failure values as 0.
 //
 // gn_search.c's node_value also reads the exact two-sided table for money
-// leaves inside its domain; this port never does — blunderDB carries no such
-// table in this package (engine/race has its own, for its own regime) — and
-// the search gold is produced with no shared table loaded, so the two agree
-// on the model path and the divergence is a documented one, not a drift.
+// leaves; this port never does, and the search gold is produced with no
+// table loaded — a documented divergence.
 func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owner CubeOwner) float64 {
 	if !s.cfg.UseCube {
 		return valueFromProbs(probs, state)
@@ -738,14 +590,8 @@ func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owne
 // state is the match state as pos's OWN mover sees it, or nil under money
 // valuation; owner the cube as that mover sees it.
 //
-// Always serial — the only two callers of this function are already BELOW
-// the search's root (rankPlays' phase three serial branch, and oneRoll's
-// pass branch), where level is never 0 and s.workers is therefore never
-// consulted anyway (#195/C.8 removed the constant `parallel` parameter this
-// used to carry: the one call site that ever passed true was a test
-// exercising rollsInParallel, itself replaced by deepenGroups, which is what
-// the search's actual roots — rankPlays' phase three AND, since #195,
-// probsAt's own root loop — farm out to workers instead).
+// Always serial: its callers are below the root, where the workers are never
+// consulted (the roots farm out through deepenGroups).
 func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchState, owner CubeOwner) (float64, bool) {
 	if level == 0 {
 		s.seedMatchState(state) // #197/C.10: only a direct test entry point takes this in production
@@ -789,9 +635,7 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 	if n > 0 {
 		return cands[0].Equity, true
 	}
-	// No legal play: the turn passes. Not an error. The passed position's own
-	// mover is the opponent, so its state is state, swapped, and its cube
-	// owner, mirrored.
+	// No legal play: the turn passes, so state is swapped and owner mirrored.
 	passed := *pos
 	passed.swapTurn()
 	v, ok := s.positionEquity(&passed, depth-1, level+1, s.childMatchState(level), owner.Mirror())
@@ -801,10 +645,9 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 	return -v, true
 }
 
-// rollTask est un lancer à évaluer depuis une position, et l'emplacement où
-// en ranger la valeur. L'emplacement est FIXE, calculé avant que la file ne
-// démarre : c'est ce qui rend l'ordonnancement libre de choisir qui calcule
-// quoi sans jamais toucher à l'ordre dans lequel les termes seront additionnés.
+// rollTask est un lancer à évaluer et l'emplacement où ranger sa valeur,
+// fixé avant que la file ne démarre : l'ordonnancement choisit qui calcule,
+// jamais l'ordre d'addition.
 type rollTask struct {
 	pos  *Position
 	roll int // index du lancer dans s.rolls, 0..20
@@ -815,10 +658,8 @@ type rollTask struct {
 // coût décroissant, ce qui borne le makespan à 4/3 − 1/(3m) de l'optimum
 // (Graham 1969) au lieu de laisser la tâche la plus longue tomber en dernier.
 //
-// Le coût est mesuré, pas supposé, et la mesure contredit le proxy « les
-// doubles d'abord » que la littérature suggère. TestProbeRollCost, sur 24
-// positions du corpus à 2 ply, donne le nombre d'évaluations que déclenche le
-// sous-arbre de chaque lancer :
+// Le coût est mesuré (TestProbeRollCost, évaluations par sous-arbre, 24
+// positions à 2 ply) et contredit le proxy « les doubles d'abord » :
 //
 //	2-6 17 256   3-6 17 256   2-3 17 184   3-4 17 160   1-4 16 920
 //	2-5 16 896   4-5 16 704   5-6 16 584   1-5 16 536   1-2 14 928
@@ -826,58 +667,22 @@ type rollTask struct {
 //	1-6 12 456   3-5 12 120   5-5 11 976   3-3 11 928   1-1 11 736
 //	6-6 11 232
 //
-// Les doubles sont parmi les MOINS chers, à l'inverse de ce qu'on attend de
-// leurs 4 demi-coups : ils génèrent bien plus de coups légaux (1 800 pour 2-2
-// contre 168 pour 5-6), mais l'élagage n'en garde que douze, et la position
-// qu'ils laissent est plus contrainte, donc son sous-arbre est plus étroit.
-// Seule la passe du petit réseau paie la largeur, et elle est bon marché.
-// L'écart total n'est que de 1,54× en évaluations et 1,30× en temps — ce qui
-// dit aussi que l'ordre LPT ne peut pas rendre grand-chose ici, et la mesure
-// le confirme : l'essentiel du gain vient de l'aplatissement du niveau, pas
-// du tri.
-//
-// Le nombre d'évaluations est retenu plutôt que le temps : il est déterministe
-// et indépendant de la machine, là où le classement par temps sur un portable
-// à budget thermique change d'un tour à l'autre. Les deux classements se
-// recoupent d'ailleurs largement.
+// Les doubles sont parmi les moins chers : l'élagage ne garde que douze de
+// leurs nombreux coups, et leur sous-arbre est plus étroit. Les évaluations
+// sont retenues plutôt que le temps parce qu'elles sont déterministes.
 var rollsByCost = [NumRolls]int{10, 14, 7, 12, 3, 9, 16, 19, 4, 1, 6, 8, 15, 17, 2, 5, 13, 18, 11, 0, 20}
 
-// deepenGroups approfondit d'un coup TOUS les candidats d'UN OU PLUSIEURS
-// groupes à la fois, au lieu d'approfondir un groupe, d'attendre, puis de
-// passer au suivant.
+// deepenGroups approfondit tous les candidats d'un ou plusieurs groupes (un
+// niveau de rankPlays, ou un lancer racine de probsAt) dans une seule file et
+// derrière une seule barrière : une file de 63 tâches se répartit bien mieux
+// sur les ouvriers que trois de 21.
 //
-// C'était le point trois de la fiche F4, pour UN groupe : avant, chaque
-// candidat approfondi ouvrait sa propre file de 21 lancers et sa propre
-// barrière — à 2 ply, trois barrières de 21 tâches pour 8 ouvriers, soit
-// trois fois ⌈21/8⌉ = 9 tours pour 7,875 tours de travail, 14 % perdus en
-// quantification, avant même de compter le déséquilibre entre lancers. En
-// une seule file de 3 × 21 = 63 tâches, ⌈63/8⌉ = 8 tours : 1,6 % de
-// quantification, et une seule barrière par décision — c'est ce que
-// rankPlays continue de demander, un seul groupe (deepenLevel documentait
-// exactement ce cas).
+// Le résultat ne bouge pas d'un bit : la somme pondérée reste sérielle, par
+// candidat, en index de lancer croissant, en float64 (l'équivalent aplati de
+// positionEquity) ; un groupe n'écrit jamais l'emplacement d'un autre.
 //
-// #195/C.8 généralise à PLUSIEURS groupes pour probsAt's own root loop
-// (search_probs.go) : ses 21 lancers PROPRES produisaient chacun son propre
-// (petit) ensemble de candidats à approfondir, et appelaient ce qui était
-// alors deepenLevel 21 FOIS — 21 barrières là où celle-ci n'en pose qu'une,
-// même perte de quantification que ci-dessus mais RÉPÉTÉE 21 fois plutôt que
-// fondue en une seule file plus large. Ici, groups[g] est l'ensemble de
-// candidats du groupe g (un niveau de rankPlays, un lancer racine de
-// probsAt…) ; les groupes sont indépendants, mais partagent la même file et
-// la même barrière.
-//
-// Le résultat ne bouge pas d'un bit, groupe par groupe. La somme pondérée
-// reste sérielle, par candidat, en index de lancer croissant, en float64
-// (voir positionEquity, dont ceci est l'exact équivalent aplati) ; le
-// parallélisme choisit qui calcule chaque terme, jamais l'ordre où ils
-// s'ajoutent, et un groupe ne lit ni n'écrit jamais l'emplacement d'un autre.
-//
-// state et owner sont ceux de la position RÉSULTANTE — l'appelant les a déjà
-// échangés et miroités —, les mêmes pour tous les candidats de tous les
-// groupes : rankPlays' seul groupe naît d'un même coup de dés depuis une même
-// position ; probsAt's own root, elle, partage le MÊME état/propriétaire de
-// videau à travers ses 21 lancers propres, puisque ceux-ci ne changent que
-// les dés, jamais le joueur au trait ni le score.
+// state et owner sont ceux de la position résultante, déjà échangés et
+// miroités, les mêmes pour tous les groupes.
 func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchState, owner CubeOwner) bool {
 	need := 0
 	for _, g := range groups {
@@ -893,11 +698,9 @@ func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchSta
 	best := s.frontierBest[:need]
 	tasks := s.frontier[:0]
 
-	// groupOffset[g] est le nombre total de candidats des groupes AVANT g :
-	// avec les groupes mis bout à bout, le candidat i du groupe g occupe donc
-	// l'emplacement (groupOffset[g]+i)*NumRolls+r, jamais celui d'un candidat
-	// d'un autre groupe. len(groups) ne dépasse jamais NumRolls (un groupe par
-	// niveau de rankPlays, ou un par lancer racine de probsAt).
+	// groupOffset[g] est le nombre de candidats des groupes avant g : le
+	// candidat i du groupe g occupe (groupOffset[g]+i)*NumRolls+r.
+	// len(groups) <= NumRolls.
 	var groupOffset [NumRolls]int
 	off := 0
 	for g, cands := range groups {
@@ -905,10 +708,7 @@ func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchSta
 		off += len(cands)
 	}
 
-	// Ordre LPT : lancer par lancer, du plus cher au moins cher, tous groupes
-	// et tous candidats confondus. Les copies du lancer le plus lourd partent
-	// donc en premier, ce qui est exactement ce que la borne de Graham demande
-	// — sur la file entière, pas groupe par groupe.
+	// Ordre LPT sur la file entière, tous groupes confondus.
 	for _, r := range rollsByCost {
 		for g, cands := range groups {
 			base := groupOffset[g] * NumRolls
@@ -942,17 +742,10 @@ func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchSta
 	return true
 }
 
-// runRollTasks vide la file sur les ouvriers. Chaque ouvrier pioche la tâche
-// suivante par un compteur atomique — l'équivalent du schedule(dynamic,1)
-// d'OpenMP, deux ou trois ordres de grandeur moins cher qu'un canal — au lieu
-// du tourniquet statique r += nw d'avant, qui figeait la répartition avant de
-// savoir ce que chaque tâche coûterait.
-//
-// Chaque ouvrier travaille sur son propre brouillon, son propre générateur et
-// son propre cache : rien n'est partagé que les réseaux, en lecture seule, et
-// state (MatchState est une valeur, Swap ne mute jamais sur place). Les
-// résultats vont dans des emplacements dédiés que la file a fixés d'avance,
-// donc aucun accès concurrent à un même mot.
+// runRollTasks vide la file sur les ouvriers, qui piochent la tâche suivante
+// par un compteur atomique (le schedule(dynamic,1) d'OpenMP, bien moins cher
+// qu'un canal). Rien n'est partagé que les réseaux en lecture seule et state
+// (une valeur) ; chaque résultat va dans son emplacement fixé d'avance.
 func (s *Searcher) runRollTasks(tasks []rollTask, depth int, state *MatchState, owner CubeOwner, out []float64) bool {
 	nw := len(s.workers)
 	if nw > len(tasks) {
@@ -1012,26 +805,13 @@ func (s *Searcher) leafValue(pos *Position, state *MatchState, owner CubeOwner) 
 
 // sortByEquity orders candidates best first.
 //
-// The reference uses qsort, which is NOT stable and whose implementation has
-// changed across libc versions — on an exact tie the play it picks depends on
-// the C library. A stable sort here is deterministic, which is what a gold file
-// needs; where two equities tie exactly, the two engines may legitimately pick
-// different plays, and the comparison has to allow for that rather than pretend
-// the tie is a disagreement.
+// Stable: on an exact tie generation order is kept, the rule gammonNet also
+// follows since v1.3.0.
 //
-// Typed, because the reflective one was not free: sort.SliceStable builds a
-// reflect swapper and two closures per call, and moves 80-octet candidates
-// through them. Three sorts per node, ~1 400 nodes, and the allocation
-// counter of a single 2-ply decision read 7 432 — nearly all of them here.
-//
-// Two shapes, one order. Under sortInsertionMax the insertion sort below is
-// stable by construction (it only ever swaps a strictly better candidate
-// past a worse one, never past an equal one) and is what a real node runs:
-// a search node ranks a few dozen plays. Above it — the pruning pass on a
-// double, which can face hundreds — the standard library's typed stable sort
-// takes over, so the cost stays O(n log² n) rather than quadratic on
-// 80-octet moves. A stable sort's output permutation is unique, so which of
-// the two ran can never change the order.
+// Typed (sort.SliceStable allocates per call). Under sortInsertionMax a
+// stable insertion sort; above it (a pruning pass on a double) the typed
+// stable sort. A stable permutation is unique, so which ran never changes
+// the order.
 func sortByEquity(c []Candidate) {
 	if len(c) < 2 {
 		return
@@ -1056,21 +836,16 @@ func sortByEquity(c []Candidate) {
 	})
 }
 
-// sortInsertionMax is where sortByEquity stops inserting and starts merging.
-// Measured on the candidate lists a 2-ply search actually produces: the vast
-// majority hold fewer than thirty plays, and an insertion sort beats a merge
-// there by a wide margin on 80-octet elements.
+// sortInsertionMax is where sortByEquity stops inserting and starts merging;
+// most real candidate lists hold fewer than thirty plays.
 const sortInsertionMax = 48
 
 // Counters reports what the last searches cost: big-network evaluations that
 // actually ran, small-network (pruning) evaluations, and cache hits. A cache
 // hit is an evaluation that did not happen.
 //
-// The workers are counted in. They are where a parallel search does most of
-// its work, so a root-only figure would report a fraction of the cost and
-// shrink as cores are added — the opposite of what a cost probe is for. It is
-// safe to read them here because Counters is called between searches, never
-// during one.
+// Workers are counted in (a root-only figure would shrink as cores are
+// added). Call between searches, never during one.
 func (s *Searcher) Counters() (evals, pruneEvals, cacheHits uint64) {
 	evals, pruneEvals, cacheHits = s.evals, s.pruneEvals, s.cacheHits
 	for _, w := range s.workers {
@@ -1094,8 +869,7 @@ func (s *Searcher) BatchFill() (filled, slotted uint64) {
 }
 
 // CubeValuations reports how many distributions the cube model actually
-// valued — the counted denominator of the cube post, workers counted in for
-// the same reason Counters counts them.
+// valued, workers counted in.
 func (s *Searcher) CubeValuations() uint64 {
 	n := s.cubeValuations
 	for _, w := range s.workers {
@@ -1118,9 +892,8 @@ func (s *Searcher) ResetCounters() {
 // Each worker is an independent Searcher over the same read-only networks: its
 // own scratch, its own generator, its own cache.
 //
-// The answer is unchanged, bit for bit. Parallelism decides who computes each
-// of the twenty-one terms, never the order they are summed in — a parallel
-// reduction would change the last bit, and this deliberately is not one.
+// The answer is unchanged, bit for bit: parallelism decides who computes each
+// of the 21 terms, never the order they are summed in (no parallel reduction).
 func (s *Searcher) WithWorkers(n int) *Searcher {
 	if n <= 1 {
 		s.workers = nil
@@ -1136,23 +909,10 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	return s
 }
 
-// maxUsefulWorkers est le nombre de tâches que la plus grosse file de cette
-// configuration peut offrir : au-delà, un ouvrier de plus ne fait qu'ajouter
-// sa table d'évaluation (3,7 Mo) et une goroutine qui ne pioche jamais rien.
-//
-// Le plafond était NumRolls, ce qui était juste tant qu'un candidat
-// approfondi ouvrait sa propre file de 21 lancers. Depuis l'aplatissement
-// (deepenGroups), un niveau de rankPlays porte Filter[depth] × 21 tâches —
-// 63 à la configuration canonique 2 ply —, et brider à 21 laisserait les
-// machines à plus de vingt cœurs sur la table.
-//
-// probsAt's own root loop (search_probs.go, #195/C.8) fond ses 21 lancers
-// PROPRES en une file plus large encore : jusqu'à 21 groupes, chacun
-// jusqu'à Filter[Ply-1] candidats, chacun 21 tâches — NumRolls² ×
-// Filter[Ply-1] au pire, qui dépasse la file de rankPlays dès que
-// Filter[Ply-1] dépasse widest/NumRolls (déjà le cas à la configuration
-// canonique : 1 contre 3/21). Ignorer cette file laisserait, elle,
-// des machines à plus de 63 cœurs sur la table pour un appel à Probs.
+// maxUsefulWorkers est le nombre de tâches de la plus grosse file de cette
+// configuration : au-delà, un ouvrier n'ajoute que sa table (3,7 Mo). Deux
+// files comptent : un niveau de rankPlays (Filter[depth] × 21) et la racine
+// de probsAt (jusqu'à NumRolls² × Filter[Ply-1]).
 func (s *Searcher) maxUsefulWorkers() int {
 	widest := 1
 	for depth := 1; depth <= s.cfg.Ply && depth < len(s.cfg.Filter); depth++ {
@@ -1174,19 +934,10 @@ func (s *Searcher) maxUsefulWorkers() int {
 	return tasks
 }
 
-// LiveWorkers is how many goroutines a FOREGROUND search — one the user is
-// waiting on, and the only search running — should spread its roll queue
-// over: every core the machine has, or one when the depth is too shallow for
-// the pool to pay for itself.
-//
-// ADR-0011 calls intra-search parallelism a requirement rather than an
-// optimisation ("without it the interactive promise does not hold"), and yet
-// nothing in production called WithWorkers until #148: the panel ran a
-// 2-ply decision on one core. This is the function that closes that gap, and
-// the ply floor is the whole of its policy.
-//
-// The 2-ply floor is measured, not assumed. Building the pool costs about
-// 6 ms (eight searchers to allocate), and that is the whole of the argument:
+// LiveWorkers is how many goroutines a FOREGROUND search (the only one
+// running, with the user waiting) should spread its roll queue over: every
+// core, or one when the depth is too shallow for the pool (~6 ms to build)
+// to pay for itself (ADR-0011). The 2-ply floor is measured:
 //
 //	0 ply  286 µs serial, 352 µs with eight workers — there is no roll queue
 //	       to spread at all, only barriers to pay for. This is the tier the
@@ -1196,11 +947,9 @@ func (s *Searcher) maxUsefulWorkers() int {
 //	       for.
 //	2 ply  250 ms serial, 55 ms with eight workers. Nothing to weigh.
 //
-// It is deliberately NOT what a batch job should use. There, the parallelism
-// is across positions (#147): a pool per position on top of that would
-// oversubscribe the cores and multiply the scratch by the number of workers
-// for nothing. That path keeps its own serial searcher per goroutine
-// (NewBatchSearcher, EvaluatePositionWith) and never comes through here.
+// Never for a batch job: its parallelism is across positions, one serial
+// searcher per goroutine (NewBatchSearcher); a pool on top would ask for
+// NumCPU² goroutines.
 func LiveWorkers(ply int) int {
 	if ply < 2 {
 		return 1
@@ -1208,24 +957,14 @@ func LiveWorkers(ply int) int {
 	return runtime.NumCPU()
 }
 
-// Reconfigure points an existing searcher at a new configuration — the same
-// networks, the same scratch buffers, the same cache, a different question.
-// It is what makes a Searcher reusable across positions: a batch job builds
-// one per goroutine (NewBatchSearcher) and re-aims it at each position's own
-// referential and cube state instead of allocating a fresh 5.5 MB searcher
-// per position.
+// Reconfigure points an existing searcher at a new configuration — same
+// networks, scratch and cache — so a batch job reuses one searcher per
+// goroutine instead of allocating 5.5 MB per position.
 //
-// The cache is DELIBERATELY kept across the change. Its key is the whole
-// position and its value is the network's own output for that position; a hit
-// returns exactly what a miss would have computed, whatever the score, the
-// cube or the depth the search arrived with (cache.go's own contract). So
-// carrying it from one position to the next is free and licit — only the hit
-// rate moves, never a bit of the answer.
-//
-// The networks are never swapped: pruning stays on exactly when the searcher
-// was built with a prune network, whatever the new PruneK says — the same
-// rule newSearcherWith states. Refused, never degraded, on an invalid match
-// state, exactly like NewSearcher.
+// The cache is deliberately kept: a hit returns exactly what a miss would
+// compute, whatever the score, cube or depth (cache.go). The networks are
+// never swapped: pruning stays on iff the searcher was built with a prune
+// network. An invalid match state is refused, like NewSearcher.
 func (s *Searcher) Reconfigure(cfg SearchConfig) error {
 	if cfg.UseMatch && !cfg.Match.IsValid() {
 		return fmt.Errorf("%w: match state %+v", ErrNotEvaluable, cfg.Match)

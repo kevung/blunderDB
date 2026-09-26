@@ -34,19 +34,12 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 			if id, ok := RequestIDFromContext(r.Context()); ok {
 				args = append(args, "request_id", id)
 			}
-			// traceparent is relayed verbatim (see TraceparentHeader's doc
-			// comment) so a request that also went through an upstream
-			// tracing pipeline can still be found in this daemon's logs by
-			// grep, without this daemon parsing the W3C format itself.
+			// Relayed verbatim, unparsed, so the request can be grepped.
 			if tp, ok := TraceparentFromContext(r.Context()); ok {
 				args = append(args, "traceparent", tp)
 			}
-			// A masked "internal error" response is otherwise a dead end for
-			// diagnosing what actually failed: the client only ever sees the
-			// generic message (backend internals must not leak), so the real
-			// cause — stashed via SetErr — has to surface somewhere. Error
-			// level (rather than Info) so it is not lost in request-volume
-			// noise.
+			// A masked "internal error" hides its cause from the client; the
+			// SetErr cause surfaces here, at Error level to stand out.
 			if rec.err != nil {
 				args = append(args, "err", rec.err.Error())
 				logger.Error("http request", args...)
@@ -57,16 +50,12 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 	}
 }
 
-// maxLoggedTenantLen bounds how much of the raw X-Tenant-ID header value
-// reaches the log line. This middleware logs it before Tenant validates the
-// header (deliberately — a rejected request must still be traceable), so an
-// oversized or adversarial header value must not blow up a log line; a valid
-// tenant is a short decimal integer (A.1) and is never truncated by this.
+// maxLoggedTenantLen bounds the raw X-Tenant-ID logged before Tenant
+// validates it; a valid tenant is a short integer and is never cut.
 const maxLoggedTenantLen = 64
 
 // truncateForLog bounds v to maxLoggedTenantLen runes, marking a cut with a
-// trailing ellipsis so a truncated value is never mistaken for a complete
-// one (#232).
+// trailing ellipsis so it is never mistaken for a complete value.
 func truncateForLog(v string) string {
 	r := []rune(v)
 	if len(r) <= maxLoggedTenantLen {

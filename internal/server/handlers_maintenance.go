@@ -8,10 +8,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// vacuumer is satisfied only by the SQLite backend (sqlite.Storage.Vacuum):
-// PostgreSQL has no file to compact, and autovacuum is the operator's
-// business. Duck-typed the same way tenantPurger is, so the PostgreSQL
-// backend needs no stub method.
+// vacuumer is satisfied only by SQLite (PostgreSQL has no file to compact);
+// duck-typed like tenantPurger so PostgreSQL needs no stub.
 type vacuumer interface {
 	Vacuum(ctx context.Context) (storage.VacuumResult, error)
 }
@@ -29,9 +27,8 @@ func (s *Server) maintenanceRoutes() []route {
 			}
 			res, err := v.Vacuum(r.Context())
 			if err != nil {
-				// Never err.Error() to the client: the backend's message
-				// names the database file (#160). writeStorageError masks
-				// it and stashes the cause for the server-side log line.
+				// Never err.Error() to the client: it names the database file.
+				// writeStorageError masks and logs it.
 				writeStorageError(w, fmt.Errorf("vacuum: %w", err))
 				return
 			}

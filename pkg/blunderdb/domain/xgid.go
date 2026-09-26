@@ -28,9 +28,6 @@ import (
 // Jacoby"): at a match score, "1 means the current game is Crawford, 0 means
 // the current game is not played with the Crawford rule"; in money play, the
 // Jacoby + 2×Beaver bitmask.
-//
-// This is the inverse of the encoder used by XG/GNU exports; it is generic and
-// useful to the Desktop app too (paste an XGID → position).
 
 // ErrInvalidXGID is returned for malformed XGID strings. Callers (the server)
 // map it to a 4xx response.
@@ -86,10 +83,8 @@ func DecodeXGID(xgid string) (Position, error) {
 	pos.Board.Bearoff[White] = 15 - onBoard[White]
 
 	// --- Cube (field 1: log2 value; field 2: owner) ---
-	// The XGID cube field is already the exponent (0→1, 1→2, 2→4, …), which is
-	// exactly blunderDB's storage convention (Cube.Value is the exponent; see
-	// engine/zobrist.go and ingest/xgmap.go). Store it verbatim — do NOT expand
-	// to the actual value, or the Zobrist hash and cube rendering break.
+	// The field is already the exponent, blunderDB's Cube.Value convention:
+	// store it verbatim — expanding it breaks the Zobrist hash and rendering.
 	if v, ok := xgidInt(fields, 1); ok && v >= 0 && v <= 10 {
 		pos.Cube.Value = v
 	} else {
@@ -126,14 +121,11 @@ func DecodeXGID(xgid string) (Position, error) {
 	// --- Score (fields 5,6) + match length (field 8) + Crawford (field 7) → away score ---
 	// The away score carries the Crawford rule INSIDE the number (CONTEXT.md,
 	// « Away score »): a player one point away is 1 in the Crawford game and 0
-	// after it. matchLen − score says 1 for both, so field 7 decides, exactly as
-	// the match importers decide from their own per-game flag (#338). This is
-	// the one reading of it: the shared text parser, /v1/positions.fromXGID and
-	// the BGBlitz position import all go through it (#360). An XGID whose field
-	// 7 is empty states nothing, and the ambiguous 1 stays. A 1-point match is
-	// the one score where field 7 is not needed: its only game starts one point
-	// from the match, so it is the Crawford game — the importers' rule — and
-	// both players are at 1 whatever the flag says (#411).
+	// after it. matchLen − score says 1 for both, so field 7 decides, as the
+	// match importers decide from their per-game flag. This is the one reading
+	// of it (text parser, /v1/positions.fromXGID, BGBlitz import). An empty
+	// field 7 states nothing and the ambiguous 1 stays. A 1-point match is
+	// always the Crawford game, whatever the flag says.
 	score1, ok1 := xgidInt(fields, 5)
 	score2, ok2 := xgidInt(fields, 6)
 	matchLen, okM := xgidInt(fields, 8)
@@ -176,12 +168,9 @@ func DecodeXGID(xgid string) (Position, error) {
 // current game is the Crawford game — which is what DecodeXGID writes into the
 // away score. The "XGID=" prefix is optional.
 //
-// A 1-point match is stated by its length alone: the Crawford game is the
-// first game of a match started one point from the goal, which the match
-// importers derive from the scores (ingest's isCrawfordGame, the transcript
-// replay), and a 1-point match's only game starts there. So it is the Crawford
-// game whatever field 7 says (#411) — the same position pasted or imported
-// hashes to one row.
+// A 1-point match is the Crawford game whatever field 7 says, as the match
+// importers derive it (ingest's isCrawfordGame), so the same position pasted
+// or imported hashes to one row.
 func XGIDCrawfordGame(xgid string) (crawford, stated bool) {
 	s := strings.TrimPrefix(strings.TrimSpace(xgid), "XGID=")
 	return xgidCrawfordGame(strings.Split(s, ":"))
@@ -225,10 +214,9 @@ func xgidCrawfordGame(fields []string) (crawford, stated bool) {
 // its distances (away [2, 4] becomes a 4-point match at 2-0), which decodes back
 // to the same away scores. The distances are read through PointsAway, so the
 // post-Crawford 0 is one point away and not a match already won; field 7 is
-// read from the sentinel itself: 1 is the Crawford game, 0 is not (#338, #360).
-// The one pair the smallest match cannot carry is two post-Crawford sentinels:
-// a 1-point match is the Crawford game (#411), so away [0, 0] goes out as a
-// 2-point match at 1-1, which is post-Crawford and decodes back to [0, 0].
+// read from the sentinel itself: 1 is the Crawford game, 0 is not.
+// Two post-Crawford sentinels cannot be a 1-point match (always Crawford), so
+// away [0, 0] goes out as a 2-point match at 1-1, which decodes back to [0, 0].
 // In money play field 7 is the Jacoby/Beaver bitmask instead. A cube decision
 // writes dice 00, and the cube ceiling goes back out as the source stated it.
 func EncodeXGID(pos *Position) string {

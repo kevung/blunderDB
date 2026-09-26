@@ -8,12 +8,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Undoing a mistyped result (ADR-0047 §5.4, issue #372).
-//
-// A director is interrupted every two minutes: they will click the wrong name, and they will
-// notice within the second. What makes that survivable is that the mistake undoes itself IN
-// PLACE — and that undoing is never erasing. The log is append-only, so a correction is one
-// more event, and the first result stays in the history where it happened.
+// Undoing a mistyped result (tasks/nicomaque/fonctionnel.md §5.4): in place, and never erasing — the log is
+// append-only, so a correction is one more event and the first result stays in the history.
 
 // LastDecision is what the panel shows under the queue: the last thing the director did, with
 // enough to take it back in two clicks.
@@ -42,9 +38,8 @@ type LastDecision struct {
 
 // LastDecision returns the director's last decision, or nil if they have made none.
 //
-// It reads the log backwards past the events nobody takes back — entries, notes — so that
-// "undo" lands on the gesture the director is actually thinking of, which is the last RESULT
-// or the last match launched, not the note they typed in between.
+// It reads the log backwards past entries and notes, so "undo" lands on the last RESULT or the
+// last match launched.
 func (d *Database) LastDecision(tournamentID int64) (*LastDecision, error) {
 	ctx := context.Background()
 	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
@@ -91,10 +86,8 @@ func (d *Database) LastDecision(tournamentID int64) (*LastDecision, error) {
 // CorrectResult replaces the result of a match that is already finished. The first result stays
 // in the log where it happened; this is one more event, and the state is recomputed from both.
 //
-// It is what the director reaches for when they clicked the wrong name — and what they reach
-// for three rounds later when a score sheet turns up. The engine raises whatever the correction
-// breaks (a bracket match now played by the wrong players); nothing is repaired behind their
-// back, which is issue #389's job.
+// The engine raises whatever the correction breaks (a bracket match now played by the wrong
+// players); nothing is repaired behind the director's back.
 func (d *Database) CorrectResult(tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
 	ctx := context.Background()
 	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)

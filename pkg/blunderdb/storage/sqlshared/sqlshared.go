@@ -2,24 +2,14 @@
 // both backends, written once against a small adapter instead of twice against
 // *sql.DB and pgx.
 //
-// The two backends (storage/sqlite, storage/postgres) had grown sixteen pairs
-// of files that were identical modulo the driver's method names
-// (QueryRowContext vs QueryRow), the placeholder style ('?' vs '$N'), a few
-// type casts and the tenant column. Each pair drifted a little with every
-// change — a comment shortened on one side, a COALESCE added on the other. The
-// families where the SQL is genuinely the same now live here, and each backend
-// keeps only what really differs: how to reach the database (Execer) and the
-// handful of dialect facts the shared SQL has to ask about (Dialect).
+// Each backend keeps only what really differs: how to reach the database
+// (Execer) and the dialect facts the shared SQL asks about (Dialect).
 //
 // What stays in the backends: the families whose statements differ in shape
 // (RETURNING, ON CONFLICT targets, tenant_id on every insert — positions,
-// analyses, matches, collections, tournaments) and the one-off methods noted
-// on each shared store. anki (B.14, #182) is the shared AnkiStore here save
-// for Forecast — its day-offset bucketing is genuine date-arithmetic
-// divergence (SQLite has no DATE type and computes it through julianday(),
-// PostgreSQL natively) — which each backend still writes itself, embedding
-// AnkiStore and shadowing that one method (the stats_sqlite.go/
-// stats_postgres.go precedent for DateRange).
+// analyses, matches, collections, tournaments) and the one-off methods a
+// backend shadows on an embedded shared store (AnkiStore.Forecast,
+// StatsStore.DateRange).
 //
 // Every query in this package is written with '?' placeholders; the PostgreSQL
 // adapter rebinds them to '$N' before execution. No query here contains a
@@ -93,11 +83,9 @@ type Dialect interface {
 
 	// LibrarySettingsTable names the table holding the library's own
 	// settings (ADR-0046) and says whether it is confined by ScopeColumn.
-	// The two backends genuinely differ here rather than incidentally: the
-	// SQLite file keeps them in its metadata table, which it already has and
-	// which is the library; PostgreSQL's metadata is database infrastructure
-	// shared by every tenant and read-only since #156, so the settings get a
-	// tenant-scoped table of their own.
+	// SQLite keeps them in its metadata table (the file is the library);
+	// PostgreSQL's metadata is shared by every tenant and read-only, so the
+	// settings get a tenant-scoped table of their own.
 	LibrarySettingsTable() (table string, scoped bool)
 
 	// TenantFilter renders the predicate that confines a domain table

@@ -7,14 +7,8 @@ import (
 	"time"
 )
 
-// TestWaitForInteractiveEvaluationBlocksWhileBusy is #129's non-negotiable
-// preemption criterion made concrete: "un lot qui ne cède pas est exactement
-// la panne qu'on prétend éviter". a.gnEvalCancel is the exact App field
-// StartEvaluationAtRest sets while a live 2-ply search is in flight
-// (gammonnet_eval.go); this test drives it directly rather than through a
-// real Wails app, since nothing here needs event emission. gnEvalMu/
-// gnEvalCancel moved from package vars onto App (#196/C.9), so each test
-// now gets its own instance instead of sharing global state.
+// TestWaitForInteractiveEvaluationBlocksWhileBusy: the batch yields while a
+// live search is in flight, driven through a.gnEvalCancel directly.
 func TestWaitForInteractiveEvaluationBlocksWhileBusy(t *testing.T) {
 	a := NewApp(nil)
 
@@ -70,10 +64,8 @@ func TestWaitForInteractiveEvaluationReturnsImmediatelyWhenIdle(t *testing.T) {
 	}
 }
 
-// TestEffectiveBatchJobsReducedWhileInteractiveBusy is #196/C.9's own
-// criterion: a batch starting while the panel already has an "at rest"
-// search in flight asks for fewer goroutines, not a full NumCPU on top of
-// the panel's own WithWorkers(NumCPU) pool.
+// TestEffectiveBatchJobsReducedWhileInteractiveBusy: a batch starting during
+// a live search asks for fewer than NumCPU goroutines.
 func TestEffectiveBatchJobsReducedWhileInteractiveBusy(t *testing.T) {
 	if goruntime.NumCPU() < 2 {
 		t.Skip("needs at least two cores to have any reduction to measure")
@@ -100,9 +92,7 @@ func TestEffectiveBatchJobsReducedWhileInteractiveBusy(t *testing.T) {
 	}
 }
 
-// TestStartGammonNetBatchNoopWithoutDatabase guards the nil-db escape hatch
-// tests without a real Database rely on (NewApp(nil) elsewhere in this
-// package) — it must never panic.
+// TestStartGammonNetBatchNoopWithoutDatabase: NewApp(nil) must never panic.
 func TestStartGammonNetBatchNoopWithoutDatabase(t *testing.T) {
 	a := NewApp(nil)
 	a.ctx = context.Background()

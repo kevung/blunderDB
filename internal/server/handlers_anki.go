@@ -60,10 +60,8 @@ type forecastReq struct {
 	Days   int   `json:"days"`
 }
 
-// retentionReq carries no `apply`: the route reads (ADR-0026 rule 5). The old
-// anki.optimizeParams, which wrote a tuned target back, is gone rather than
-// deprecated — left in place, the verb invites someone to rebuild the
-// write-back.
+// retentionReq carries no `apply`: the route only reads (ADR-0026 rule 5).
+// The write-back verb is removed, not deprecated, so nobody rebuilds it.
 type retentionReq struct {
 	DeckID int64 `json:"deckId"`
 }
@@ -77,13 +75,13 @@ type suspendCardReq struct {
 	Suspended bool  `json:"suspended"`
 }
 
-// linkedCardReq asks for the other half of a cube decision (#276).
+// linkedCardReq asks for the other half of a cube decision.
 type linkedCardReq struct {
 	DeckID int64 `json:"deckId"`
 	CardID int64 `json:"cardId"`
 }
 
-// reviewsByGameTypeReq asks how much was studied since an ISO date (#275).
+// reviewsByGameTypeReq asks how much was studied since an ISO date.
 type reviewsByGameTypeReq struct {
 	Since string `json:"since"`
 }
@@ -125,29 +123,21 @@ func (s *Server) ankiRoutes() []route {
 		{http.MethodPost, "/v1/anki.nextCard", rpc(func(ctx context.Context, scope string, req deckIDReq) (*domain.AnkiReviewCard, error) {
 			return as().NextCard(ctx, scope, req.DeckID)
 		})},
-		// Wrapped with withIdempotency (#236): ReviewCard applies a spaced-
-		// repetition rating and advances scheduling state on every call —
-		// unlike positions.save, calling it twice is not a no-op, it grades
-		// the same review twice. A client retrying a dropped response with
-		// the same Idempotency-Key gets the first attempt's result replayed
-		// instead of a second, phantom review.
+		// Idempotent: a replayed review would grade the same card twice.
 		{http.MethodPost, "/v1/anki.reviewCard", s.withIdempotency(rpc(func(ctx context.Context, scope string, req reviewCardReq) (*domain.AnkiReviewCard, error) {
 			return as().ReviewCard(ctx, scope, req.CardID, req.Rating)
 		}))},
 		{http.MethodPost, "/v1/anki.reviewLog", rpcStream(func(ctx context.Context, scope string, req reviewLogReq) iterReviewLog {
 			return as().ReviewLog(ctx, scope, req.DeckID, req.Limit)
 		})},
-		// Combien de POSITIONS ont été révisées depuis une date, par plan de
-		// jeu (#275). Des positions et non des révisions : une carte revue
-		// quatre fois est une position étudiée, et compter les répétitions
-		// ferait passer un mois de bachotage pour un mois de couverture.
-		// L'autre moitié d'une décision de videau (#276), quand elle est dans
-		// le même paquet et due. Le lien est dérivé des données de match, pas
-		// stocké : une colonne serait une seconde copie d'un fait qu'un
-		// réimport peut changer.
+		// L'autre moitié d'une décision de videau, quand elle est dans le même
+		// paquet et due. Lien dérivé des données de match, pas stocké : une
+		// colonne serait une copie qu'un réimport peut démentir.
 		{http.MethodPost, "/v1/anki.linkedCard", rpc(func(ctx context.Context, scope string, req linkedCardReq) (*domain.AnkiReviewCard, error) {
 			return as().LinkedCard(ctx, scope, req.DeckID, req.CardID)
 		})},
+		// Compte des POSITIONS révisées depuis une date, par plan de jeu, pas
+		// des révisions : le bachotage d'une carte n'est pas de la couverture.
 		{http.MethodPost, "/v1/anki.reviewsByGameType", rpc(func(ctx context.Context, scope string, req reviewsByGameTypeReq) (map[string]int, error) {
 			return as().ReviewsByGameType(ctx, scope, req.Since)
 		})},

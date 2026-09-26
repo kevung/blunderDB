@@ -11,7 +11,7 @@ import (
 // The cases in this file pin the *kind* of error a backend reports for a
 // client mistake, because the HTTP daemon maps kinds to status codes: an
 // unmapped driver error is ErrInternal and becomes a 500 for what the
-// caller can fix by themselves. Found by the server's route smoke test.
+// caller can fix by themselves.
 
 // testDanglingReferenceIsNotFound: pointing at a row that does not exist (a
 // position or collection id nobody created) is ErrNotFound, exactly as Get

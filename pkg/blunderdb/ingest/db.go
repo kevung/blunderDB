@@ -14,11 +14,9 @@ import (
 // DBImporter imports a native blunderDB .db file's position library —
 // positions plus their analysis and comments — into the target Storage. It is
 // the backend-agnostic counterpart of database.CommitImportDatabase: a
-// Storage→Storage merge rather than a parser→MatchGraph map. (The legacy native
-// import is position-library only; it does not copy match/game/move rows, and
-// neither does this.)
+// Storage→Storage merge of the position library only, no match/game/move rows.
 //
-// Merge semantics mirror the legacy importer:
+// Merge semantics:
 //   - positions dedup by content (PositionStore.Save's Zobrist index);
 //   - an imported analysis is written only when the target has none, or when
 //     the target's analysis is empty-typed and the import's is not;
@@ -59,10 +57,8 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		ids = append(ids, p.ID)
 	}
 
-	// Source analyses and comments, batched (B.11, #179): one round trip per
-	// family instead of one Analyses().Load and one Comments().ByPosition per
-	// position — a source library of tens of thousands of positions used to
-	// mean as many source-side queries again on top of the position list.
+	// Source analyses and comments, batched: one round trip per family, not
+	// one per position.
 	srcAnalyses, err := source.Analyses().LoadMany(ctx, scope, ids)
 	if err != nil {
 		return Summary{}, fmt.Errorf("ingest: load source analyses: %w", err)
@@ -165,10 +161,8 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 }
 
 // mergeDBAnalysisPreloaded writes an imported analysis for positionID
-// following the legacy "prefer existing non-empty analysis" rule. existing is
-// the target's current analysis for positionID, already loaded in Import's
-// batched pass (AnalysisStore.LoadMany) — this is the batched counterpart of
-// what used to be its own Analyses().Load per position (B.11, #179).
+// following the "prefer existing non-empty analysis" rule. existing is the
+// target's current analysis, already loaded in Import's batched pass.
 func mergeDBAnalysisPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existing, imported *domain.PositionAnalysis) error {
 	if existing == nil || (existing.AnalysisType == "" && imported.AnalysisType != "") {
 		return tx.Analyses().Save(ctx, scope, positionID, imported)
@@ -178,9 +172,7 @@ func mergeDBAnalysisPreloaded(ctx context.Context, tx storage.Tx, scope string, 
 
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless
 // the position's existing comment text already contains it. existing is the
-// target's current comment entries for positionID, already loaded in
-// Import's batched pass (CommentStore.ByPositions) — the batched counterpart
-// of what used to be its own Comments().Text per position (B.11, #179).
+// target's current comment entries, already loaded in Import's batched pass.
 func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existingEntries []*domain.CommentEntry, comments []string) error {
 	if len(comments) == 0 {
 		return nil

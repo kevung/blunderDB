@@ -32,12 +32,9 @@ func openingAt(t *testing.T, d1, d2, awayMover, awayOpponent int) domain.Positio
 // opening 6-4 at 4-away/2-away the trailer plays 8/2 6/2 — the gammon-go
 // play, gnubg's cubeful choice (+0.350, 24/18 13/9 at +0.307) — and only
 // because the leaves are priced with the cube. Cubeless, the very same search
-// prefers 24/18 13/9 (gnubg cubeless: −0.088 against −0.094 for 8/2 6/2),
-// because without the double the trailer's gammons are worth less than the
-// leader's. Both sides of the contrast are pinned, and so is the sign of the
-// equity: the old cubeless number was −0.09, the cubeful one sits around
-// +0.3 (upstream use_cube +0.294, gnubg +0.350), and a port that mixed the two
-// scales would land somewhere no engine does.
+// prefers 24/18 13/9 (gnubg cubeless: −0.088 against −0.094 for 8/2 6/2).
+// Both sides of the contrast are pinned, and so is the equity's sign: cubeful
+// sits around +0.3 (upstream +0.294, gnubg +0.350), cubeless around −0.09.
 func TestTheCubeMakesTheTrailerPlayForTheGammon(t *testing.T) {
 	pos := openingAt(t, 6, 4, 4, 2)
 
@@ -128,9 +125,8 @@ func TestCrawfordSearchWithCubeIsTheCubelessSearch(t *testing.T) {
 // The linearity identity at a MATCH score and at depth: the match valuation
 // is linear in the distribution, so matchEquity(Probs(pos)) must equal the
 // equity the scalar recursion assigns to pos — with the state swapped at
-// every ply on both walks. Before ADR-0023 probsAt reused the ROOT's state at
-// every level, which this identity misses at 1 ply (the inner call is a leaf)
-// and at any symmetric score, and catches at 2 ply at 4-away/2-away.
+// every ply on both walks. Reusing the root's state at every level shows only
+// at 2 ply at an asymmetric score, hence 4-away/2-away.
 func TestProbsMatchEquityMatchesPositionEquity(t *testing.T) {
 	state := MatchState{AwayOnRoll: 4, AwayOpponent: 2, Cube: 1}
 	cfg := DefaultConfig(2)

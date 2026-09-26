@@ -22,11 +22,8 @@ func TestOptions_applyDefaults_IdleTimeout(t *testing.T) {
 	}
 }
 
-// TestServer_HTTPServerCarriesIdleTimeout guards the actual fix: an
-// http.Server with no IdleTimeout (and no Read/WriteTimeout — see
-// Options.IdleTimeout's doc comment) lets a keep-alive connection sit open
-// indefinitely. New() must wire Options.IdleTimeout through to the
-// http.Server it builds, not just carry it in Options.
+// TestServer_HTTPServerCarriesIdleTimeout: New() wires Options.IdleTimeout
+// into the http.Server, else keep-alive connections stay open forever.
 func TestServer_HTTPServerCarriesIdleTimeout(t *testing.T) {
 	st, err := sqlite.Open(context.Background(), ":memory:", nil)
 	if err != nil {

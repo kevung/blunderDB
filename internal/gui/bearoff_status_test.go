@@ -14,16 +14,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// The bearoff sources after ADR-0027: nothing embedded, nothing downloaded.
-// What the status has to report is therefore new — whether this machine has
-// its tables yet, and which one is being made — and the empty case is a real
-// state rather than an impossible one.
+// Bearoff status after ADR-0027: whether this machine has its tables yet, and
+// which is being made; having none is a real state.
 
 func isolate(t *testing.T) string {
 	t.Helper()
-	// Capture the shared cache path and table now: the cleanup below runs
-	// after the test has finished, and a helper that calls t.Fatalf then would
-	// panic rather than report.
+	// Captured now: a t.Fatalf inside the cleanup would panic.
 	shared := bearofftest.DataDir(t)
 	oneSided := bearofftest.OneSidedPath(t)
 	dir := t.TempDir()
@@ -34,8 +30,7 @@ func isolate(t *testing.T) string {
 		race.SetDataDir(shared)
 		race.SetExternalPath("")
 		race.Invalidate()
-		// Put the package-wide table back: TestMain loaded it for every test
-		// here, and leaving it unloaded would break whatever runs next.
+		// Restore the table TestMain loaded for every test.
 		_ = engine.LoadOneSided(oneSided)
 	})
 	return dir
@@ -158,9 +153,8 @@ func sleepMillis(n int) {
 	time.Sleep(time.Duration(n) * time.Millisecond)
 }
 
-// The plan is what the Bearoff tab renders. It must name every domain the user
-// may ask for, price each one, and say which the machine cannot hold — an
-// absent row answers nothing.
+// The plan names and prices every domain, and greys what the machine cannot
+// hold.
 func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 	dir := isolate(t)
 	for _, d := range bearoffgen.DefaultDomains() {
@@ -173,10 +167,7 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 		}
 	}
 
-	// The core count asked for is capped at what the machine has: a CI runner
-	// with three cores must not be told it has four. Asking for four and
-	// expecting four fails there and nowhere else, which is the worst kind of
-	// red — the code is right and the test is about the runner.
+	// The core count is capped at the machine's, so expect no more than it has.
 	asked := 4
 	if n := runtime.NumCPU(); asked > n {
 		asked = n
@@ -196,9 +187,7 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 		t.Fatalf("%d candidates, want %d", len(plan.Candidates), want)
 	}
 
-	// Each axis is priced and ordered on its own: a one-sided table widens how
-	// far from home the EPC answers, a two-sided one widens the exact cube
-	// verdict, and their sizes have no reason to interleave.
+	// One-sided and two-sided are each ordered on their own.
 	last := map[string]struct {
 		size    int64
 		seconds float64
@@ -235,8 +224,7 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 		t.Error("TS-06-06 is not among the candidates")
 	}
 
-	// The widest two-sided domain is 22 GB of table: no machine this test runs
-	// on has that available, so it must be greyed rather than offered.
+	// The widest two-sided domain (22 GB) fits on no test machine.
 	widest := plan.Candidates[len(bearoffgen.Candidates())-1]
 	if plan.RAMAvailable > 0 && widest.Fits {
 		t.Errorf("%s (%d bytes of RAM) is offered on a machine with %d available", widest.Domain, widest.RAMNeeded, plan.RAMAvailable)
@@ -298,8 +286,7 @@ func TestBearoffPlan_ReportsAPausedRun(t *testing.T) {
 	}
 }
 
-// A measured rate is what makes the estimate about this machine. A slower rate
-// must predict a longer run.
+// A slower measured rate must predict a longer run.
 func TestBearoffPlan_TheMeasuredRateMovesTheEstimate(t *testing.T) {
 	isolate(t)
 	fast := (&App{}).BearoffPlan(3e-10, 4)

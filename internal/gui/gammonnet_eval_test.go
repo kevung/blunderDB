@@ -78,12 +78,8 @@ func TestEvaluateGammonNetCubeDecisionMoneyNoDice(t *testing.T) {
 func TestEvaluateGammonNetDepthLabelReflectsWhatRan(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{6, 5}, domain.White)
 
-	// A ply far past MaxPly must clamp — the label must say what actually
-	// ran (DefaultConfig's own clamp), never the requested value: #125's
-	// non-negotiable rule.
-	// pruneK=1, candidates=1: the label rule is about the clamp, not the
-	// search — a full 2-ply on a race position costs five minutes under the
-	// race detector and proves nothing more.
+	// A ply past MaxPly clamps and the label names what ran. pruneK=1,
+	// candidates=1 keep it cheap under the race detector.
 	result, err := (&App{}).evaluateGammonNet(pos, 99, 1, 1)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
@@ -95,15 +91,9 @@ func TestEvaluateGammonNetDepthLabelReflectsWhatRan(t *testing.T) {
 	}
 }
 
-// isolateRaceSources points the race resolver at the generated default table
-// and nothing else, so the regime a test sees is decided by TS-06-06 and not
-// by whatever wider table the developer happens to have.
-//
-// It used to point at an *empty* directory and rely on the embedded TS-06-06
-// as a floor. There is no floor since ADR-0027: an empty directory now means
-// no table at all, and every regime would come out estimated. It also restores
-// the package's shared directory rather than the developer's own — clearing it
-// to "" left the tests that follow reading whatever is in $XDG_DATA_HOME.
+// isolateRaceSources points the race resolver at the generated TS-06-06 only,
+// not the developer's wider tables (an empty directory would mean no table,
+// ADR-0027), and restores the package's shared directory afterwards.
 func isolateRaceSources(t *testing.T) {
 	t.Helper()
 	shared := bearofftest.DataDir(t)
@@ -117,12 +107,9 @@ func isolateRaceSources(t *testing.T) {
 	})
 }
 
-// The three race regimes, as the panel receives them (#188, ADR-0012,
-// ADR-0017 decision 4). race.Evaluate is the fast path that decides the
-// regime on its own; evaluateGammonNet then either leaves it alone (exact
-// and money: Race nil, the panel keeps the exact row) or replaces it with
-// the evaluated regime — over an estimate, always, and over an exact lookup
-// only when a score puts the money table in the wrong referential.
+// The three race regimes as the panel receives them (ADR-0012, ADR-0017
+// decision 4): exact at money leaves Race nil; an estimate, or exact at a
+// match score, is replaced by the evaluated regime.
 func TestEvaluateGammonNetRaceRegimes(t *testing.T) {
 	isolateRaceSources(t)
 
@@ -191,9 +178,7 @@ func TestEvaluateGammonNetRaceRegimes(t *testing.T) {
 			if result.Race.Depth != "0-ply" {
 				t.Errorf("Depth %q, want the depth that ran", result.Race.Depth)
 			}
-			// The win probability is the same question answered twice —
-			// exact table or convolution, then the network: the player on
-			// roll in a symmetric bear-off is the favourite either way.
+			// In a symmetric bear-off both agree the roller is favourite.
 			if (fast.Race.WinProb > 0.5) != (result.Race.WinProb > 0.5) {
 				t.Errorf("WinProb %.3f (fast) and %.3f (evaluated) disagree on the favourite", fast.Race.WinProb, result.Race.WinProb)
 			}
@@ -201,9 +186,7 @@ func TestEvaluateGammonNetRaceRegimes(t *testing.T) {
 	}
 }
 
-// A score this build cannot judge — past the MET's 64-point horizon — comes
-// back as Refused, a value, with nothing else filled in: not an error the
-// panel would swallow, not a silent fall to money (ADR-0019 rule 4).
+// A score past the MET horizon comes back as Refused alone (ADR-0019 rule 4).
 func TestEvaluateGammonNetRefusesBeyondTheHorizon(t *testing.T) {
 	isolateRaceSources(t)
 	for _, dice := range [][2]int{{0, 0}, {6, 5}} {
@@ -223,18 +206,9 @@ func TestEvaluateGammonNetRefusesBeyondTheHorizon(t *testing.T) {
 	}
 }
 
-// TestEvaluateGammonNetRaceMatchesCubeAtMatchScore is #190/C.3 point 1's own
-// regression. Before the fix, evaluateRaceRegime built its own plain
-// gammonnet.DefaultConfig (money, cubeless) and only fed the match state and
-// cube owner to Decide at the very end — a verdict tariffed at the score,
-// read off a distribution that was never searched with the score, or the
-// cube, in view (ADR-0023 already has a name for that mismatch: "Open").
-// evaluateGammonNet's main Cube branch (evaluateMoves/evaluateCube in
-// package gammonnet) already went through gammonnet.ConfigForPosition; now
-// evaluateRaceRegime does too, on the SAME position, so the two must land on
-// bit-identical equities (the parallel search is bit-identical by
-// construction — CLAUDE.md's parallelism invariant — and at 0-ply here there
-// is no ply-order sum to even reorder).
+// TestEvaluateGammonNetRaceMatchesCubeAtMatchScore: the race regime and the
+// Cube branch both use gammonnet.ConfigForPosition (ADR-0023), so their
+// equities at a match score are bit-identical.
 func TestEvaluateGammonNetRaceMatchesCubeAtMatchScore(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
 	pos.Score = [2]int{5, 7} // White 5-away, Black 7-away — not Crawford, well within the MET horizon

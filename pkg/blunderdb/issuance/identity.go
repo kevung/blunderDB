@@ -51,11 +51,9 @@ type storedIdentity struct {
 	// access to their machine — and a passphrase there would put a forgotten secret
 	// between an ordinary user and a feature they never asked to configure.
 	KDF string `json:"kdf,omitempty"`
-	// Argon2 records the derivation's cost parameters next to its name. Files exported
-	// before it was recorded all used the defaults; a file naming any other set is refused
-	// (see resolveArgon2). Unlike the container, the clear fields here are only the seal's
-	// own parameters — nothing a third party would gain by rewriting — so the seed is
-	// sealed without additional data.
+	// Argon2 records the derivation's cost parameters (see resolveArgon2). The clear
+	// fields here are only the seal's own parameters — nothing worth rewriting — so the
+	// seed is sealed without additional data.
 	Argon2 *Argon2Params `json:"argon2,omitempty"`
 	Salt   string        `json:"salt,omitempty"`
 	Nonce  string        `json:"nonce,omitempty"`

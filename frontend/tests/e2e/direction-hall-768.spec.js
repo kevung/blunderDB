@@ -1,20 +1,13 @@
 /**
- * direction-hall-768.spec.js — la grille des tables reste à portée à 768 px de haut (#440).
+ * La grille des tables reste à portée à 768 px de haut : à 1024×768, dock ouvert à 250 px, la
+ * page Direction n'a que ~370 px utiles, et une file de propositions assez longue pousse la
+ * grille des tables entièrement sous l'écran.
  *
- * ## Ce que la mesure avait montré
- *
- * S2 samedi 14 h (tasks/nicomaque/simulation-2026-09/rapport/S2.md) : à 1024×768, dock ouvert
- * à 250 px, la page Direction n'a que ~370 px utiles. La file de 24 propositions (y 189 → 997)
- * poussait la grille des 14 tables entièrement sous l'écran (y 1059 → 1253) : un résultat sur
- * la table 12 coûtait 3 à 4 crans.
- *
- * ## Comment un cran se compte ici
- *
- * Pas par un clic : Playwright fait défiler tout seul jusqu'à sa cible, y compris un conteneur
- * `overflow: hidden` qu'un utilisateur ne peut pas faire défiler. Une cible « à 0 cran » est une
- * cible dont la boîte est ENTIÈREMENT dans la zone visible de `.direction-view .body` et de la
- * fenêtre, lue par getBoundingClientRect avant le clic, sans que rien n'ait défilé
- * (`scrollTop` de chaque ancêtre relevé avant et après le geste).
+ * Un cran ne se compte pas par un clic : Playwright fait défiler tout seul jusqu'à sa cible, y
+ * compris un conteneur `overflow: hidden` qu'un utilisateur ne peut pas faire défiler. Une
+ * cible « à 0 cran » est une cible dont la boîte est ENTIÈREMENT dans la zone visible de
+ * `.direction-view .body` et de la fenêtre, lue par getBoundingClientRect avant le clic, sans
+ * que rien n'ait défilé (`scrollTop` de chaque ancêtre relevé avant et après le geste).
  */
 
 import { test, expect } from '@playwright/test';

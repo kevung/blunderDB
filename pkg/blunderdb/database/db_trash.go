@@ -9,12 +9,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
-// The trash, as the desktop and the CLI reach it (issue #285, ADR-0036).
-//
-// Everything these methods do lives in package trash, written once against
-// storage.Stores: the trash is entirely made of Storage calls, so there is no
-// half of it that is genuinely this mode's. What is this mode's is the lock —
-// Database.mu, which the daemon does not have and does not need.
+// The trash, as the desktop and the CLI reach it (ADR-0036): package trash
+// does the work over storage.Stores; this layer only adds Database.mu.
 
 // TrashPosition deletes a position after snapshotting it, its analysis and its
 // comments, and returns the trash entry's id.

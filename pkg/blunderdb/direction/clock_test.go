@@ -19,7 +19,7 @@ func stateOf(ms ...*tournoi.Match) *tournoi.State {
 }
 
 // The playing time is the union of the running intervals: two overlapping matches count once,
-// and the night between Monday and Tuesday counts not at all (#456, S5 « 48 h 45 »).
+// and the night between Monday and Tuesday counts not at all.
 func TestPlayingTimeSkipsTheNight(t *testing.T) {
 	st := stateOf(
 		&tournoi.Match{ID: "m1", Status: tournoi.Finished, Start: at(21, 9, 0), End: at(21, 10, 0)},

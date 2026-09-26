@@ -15,10 +15,9 @@ import (
 // domain table: every statement is confined to the scope's tenant through
 // Dialect.TenantFilter / TenantColumns.
 //
-// The SQL is the same on both backends, which is why it is here: the report's
-// aggregates reuse the statistics' own predicates (countedExpr, statsErrExpr,
-// statsBaseJoin) rather than restating what counts as a decision — a second
-// definition of "a decision that counts" would be a second PR.
+// The report's aggregates reuse the statistics' own predicates (countedExpr,
+// statsErrExpr, statsBaseJoin): a second definition of "a decision that
+// counts" would be a second PR.
 type ImportBatchStore struct{ DB Execer }
 
 var _ storage.ImportBatchStore = (*ImportBatchStore)(nil)
@@ -209,10 +208,8 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 
 // measureWorst lists the batch's most expensive decisions, worst first.
 //
-// It reads the SAME error column the statistics read (statsErrExpr) and the
-// same counted predicate, so the worst decision of an import is the worst
-// decision of the statistics restricted to it — and not a fifth definition of
-// "expensive".
+// It reads the SAME error column (statsErrExpr) and counted predicate as the
+// statistics.
 func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	playerClause, playerArgs := batchPlayerClause(players)
@@ -304,10 +301,8 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	// to it. Wrapping also settles a dialect divergence for free — SQLite
 	// sorts NULLs last in DESC, PostgreSQL first — though this pass never
 	// sees one, its WHERE excluding them.
-	// The line is the library's error threshold (ADR-0046), not a constant of
-	// its own: this queue asks "what is worth revisiting", which is precisely
-	// what an Error is. Its default is the 50 millipoints the constant said,
-	// so a library that sets nothing gets exactly the queue it got before.
+	// The line is the library's error threshold (ADR-0046): "worth
+	// revisiting" is precisely what an Error is.
 	blunders, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyBlunder,
 		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`, []any{settings.ErrorThresholdMP},
 		` ORDER BY COALESCE(`+statsErrExpr+`, 0) DESC, p.id ASC`)

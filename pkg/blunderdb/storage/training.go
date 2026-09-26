@@ -5,10 +5,8 @@ import "context"
 // The Training journal (ADR-0040 rule 6): what the user asked themselves,
 // kept in the library's own tables so it travels with the file.
 //
-// Two tables and not a JSON key of `metadata`, because the per-number detail
-// is the whole point — "tp4 last roll: 6 faults in 9" — and a blob that grows
-// by one entry per revealed number is a register a table settles. No cap: the
-// old fifty-session bound existed to keep a metadata value small.
+// Two tables rather than a metadata JSON key: the per-number detail grows
+// without bound.
 //
 // A session is written once, at « Terminer », with its items; nothing is
 // written by « Quitter ». There is no update and no delete: the journal is a

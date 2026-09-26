@@ -6,10 +6,8 @@ import { logger } from '../utils/logger.js';
 
 export { TOURS };
 
-// Build driver.js steps from a tour definition, resolving i18n at start time
-// (a tour is short-lived, the language won't change mid-tour). Steps whose
-// target element is not in the DOM are skipped so the tour never points at
-// nothing.
+// driver.js steps, i18n resolved at start. Steps whose target is absent from
+// the DOM are skipped.
 function buildSteps(tour) {
     return tour.steps
         .filter((s) => !s.element || s.activateTab || document.querySelector(s.element))
@@ -28,10 +26,8 @@ function buildSteps(tour) {
 }
 
 /**
- * Start a guided tour by id. Closes any open modal first.
- *
- * driver.js (~104 kB) is fetched on demand rather than bundled statically
- * (#207): tours are a first-run/help feature most sessions never trigger.
+ * Start a guided tour by id, closing any open modal. driver.js (~104 kB) is
+ * loaded on demand: most sessions never run a tour.
  */
 export async function startTour(tourId) {
     const tour = getTourById(tourId);
@@ -64,9 +60,8 @@ export async function startTour(tourId) {
 }
 
 /**
- * On first launch, show the tour catalog once and remember it so it never
- * auto-opens again. Failures (e.g. config read) are swallowed — the tour is
- * non-essential and must never block startup.
+ * On first launch, show the tour catalog once. Failures are swallowed: the
+ * tour must never block startup.
  */
 export async function maybeRunFirstRunTour() {
     try {

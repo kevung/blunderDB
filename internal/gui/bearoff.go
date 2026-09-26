@@ -18,18 +18,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// Bearoff tables are generated here, not downloaded and not embedded
-// (ADR-0027). What used to be a 1.2 GB release asset and 8.2 MB compiled into
-// every binary is now a few seconds of arithmetic on the machine that wants
-// the answer, and the result is verified against gnubg's own fingerprint.
-//
-// Two default tables are made on first launch, in the background and in
-// silence: the user did not ask for them and has nothing to decide. The Eval
-// panel only speaks up when a position actually needs a table that is not
-// ready yet — that is the moment the absence means something.
-//
-// Progress reaches the frontend through the same Wails events the download
-// used, so the Bearoff tab did not have to learn a new vocabulary:
+// Bearoff tables are generated on this machine, verified against gnubg's
+// fingerprint (ADR-0027). The two defaults are made silently on first launch;
+// only the Eval panel mentions a table that is not ready. Events:
 //
 //	bearoff:progress {done, total, domain}   (throttled)
 //	bearoff:done     {domain}
@@ -64,10 +55,8 @@ type BearoffFile struct {
 	Verdict string `json:"verdict"` // verified | unverified | corrupt
 }
 
-// BearoffCandidate is a domain the user may generate, with everything needed
-// to decide before committing: what it will weigh, what it needs to be held in
-// memory while it is made, how long it should take here, and whether this
-// machine can do it at all.
+// BearoffCandidate is a domain the user may generate, with its size, memory
+// need, estimated time here, and whether this machine can make it.
 type BearoffCandidate struct {
 	Domain string `json:"domain"`
 	// Kind is "two-sided" or "one-sided": the first widens the exact cube
@@ -136,13 +125,8 @@ func (a *App) BearoffStatus() BearoffStatus {
 	return st
 }
 
-// EnsureBearoffTables generates whatever default table is missing, in the
-// background, and returns at once. Called on start-up: a first launch spends
-// about six seconds of one core making the two tables while the user does
-// whatever they opened the application to do.
-//
-// A second call while one is running is a no-op — not an error: start-up and a
-// manual retry from the configuration dialog both go through here.
+// EnsureBearoffTables generates any missing default table in the background
+// and returns at once. A call while one runs is a no-op.
 func (a *App) EnsureBearoffTables() {
 	bearoffMu.Lock()
 	if bearoffCancel != nil {
@@ -251,11 +235,8 @@ func (a *App) emitBearoff(name string, payload any) {
 	wailsruntime.EventsEmit(a.ctx, name, payload)
 }
 
-// CancelBearoffGeneration stops an in-flight generation and keeps nothing: no
-// checkpoint, so the next run starts clean. Pausing is the other button.
-//
-// The partial `.part` file is left where it is: it is the trace of an
-// interrupted run, and never a candidate for Resolve.
+// CancelBearoffGeneration stops a generation without a checkpoint (pausing
+// keeps one). The `.part` file stays; Resolve never picks it.
 func (a *App) CancelBearoffGeneration() {
 	bearoffMu.Lock()
 	bearoffPause = false
@@ -265,19 +246,15 @@ func (a *App) CancelBearoffGeneration() {
 	bearoffMu.Unlock()
 }
 
-// DiscardBearoffCheckpoint drops a paused run's state — the "Supprimer" of the
-// "TS-06-09 interrompue à 43 %" line.
+// DiscardBearoffCheckpoint drops a paused run's state.
 func (a *App) DiscardBearoffCheckpoint(points, checkers int) error {
 	d := bearoffgen.Domain{Kind: bearoffgen.TwoSidedKind, Points: points, Checkers: checkers}
 	return bearoffgen.RemoveCheckpoint(race.DataDir(), d)
 }
 
-// GenerateBearoffTable makes one table on demand, named by its domain — the
-// Bearoff tab's own button, for a domain wider than the defaults. `cores` is
-// how many to use, 0 for the default (every core but one, so the machine stays
-// usable while a domain that takes minutes is made). A run started here is
-// pausable: it picks up a checkpoint if there is one, and leaves one behind if
-// it is paused.
+// GenerateBearoffTable makes one table on demand. cores 0 means every core but
+// one, so the machine stays usable. It resumes from a checkpoint and leaves
+// one when paused.
 func (a *App) GenerateBearoffTable(kind string, points, checkers, cores int) error {
 	d := bearoffgen.Domain{Kind: bearoffgen.TwoSidedKind, Points: points, Checkers: checkers}
 	if kind == "one-sided" {
@@ -336,10 +313,8 @@ func DefaultBearoffCores(cores int) int {
 	return 1
 }
 
-// BearoffPlan is everything the Bearoff tab needs to render itself: what is on
-// disk, what can be generated, what it costs here. `rate` is the sweep rate
-// measured on this machine (Config.GetBearoffRate, 0 when none), `cores` the
-// user's choice.
+// BearoffPlan is what the Bearoff tab renders. rate is Config.GetBearoffRate
+// (0 when none), cores the user's choice.
 func (a *App) BearoffPlan(rate float64, cores int) BearoffPlan {
 	dir := race.DataDir()
 	workers := DefaultBearoffCores(cores)

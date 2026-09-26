@@ -2,12 +2,9 @@ package server
 
 import "testing"
 
-// TestParseServeArgs_RejectsPositionalArgument guards #230: flag.FlagSet
-// stops parsing at the first non-flag argument, so a flag placed after a
-// stray positional one used to be silently dropped instead of rejected —
-// `docker run image serve --addr :9090` (the ENTRYPOINT is already the bare
-// binary, so "serve" itself is the first argument) started on the default
-// :8080 without a word of complaint.
+// TestParseServeArgs_RejectsPositionalArgument: flag.FlagSet stops at the
+// first non-flag, so flags after a stray positional would be silently
+// dropped; it must be rejected instead.
 func TestParseServeArgs_RejectsPositionalArgument(t *testing.T) {
 	if _, err := parseServeArgs([]string{"--addr", ":9090", "extra"}); err == nil {
 		t.Fatal("expected an error for a trailing positional argument, got nil")
@@ -17,10 +14,9 @@ func TestParseServeArgs_RejectsPositionalArgument(t *testing.T) {
 	}
 }
 
-// TestParseServeArgs_TreatsLeadingServeAsFlags is the flip side: the one
-// tolerated positional token is a literal leading "serve" (what an ENTRYPOINT
-// ["blunderdb"] + CMD ["serve"] passes through), and flags after it are still
-// honoured rather than discarded.
+// TestParseServeArgs_TreatsLeadingServeAsFlags: a leading literal "serve"
+// (ENTRYPOINT ["blunderdb"] + CMD ["serve"]) is the one tolerated positional,
+// and flags after it are honoured.
 func TestParseServeArgs_TreatsLeadingServeAsFlags(t *testing.T) {
 	cfg, err := parseServeArgs([]string{"serve", "--addr", ":9090"})
 	if err != nil {
@@ -31,11 +27,9 @@ func TestParseServeArgs_TreatsLeadingServeAsFlags(t *testing.T) {
 	}
 }
 
-// TestParseServeArgs_EnvFallbacks pins the four BLUNDERDB_* environment
-// variables that --metrics, --cors-allow-origin, --rate-limit-rps and
-// --rate-limit-burst were missing (#230) — every other serve flag already
-// had one, and the asymmetry invites forgetting the rate limit in a compose
-// file that only sets environment variables.
+// TestParseServeArgs_EnvFallbacks pins the BLUNDERDB_* variables for
+// --metrics, --cors-allow-origin and --rate-limit-*, so a compose file that
+// only sets environment variables cannot forget the rate limit.
 func TestParseServeArgs_EnvFallbacks(t *testing.T) {
 	t.Setenv("BLUNDERDB_METRICS", "false")
 	t.Setenv("BLUNDERDB_CORS_ALLOW_ORIGIN", "https://example.test")
@@ -69,10 +63,8 @@ func TestParseServeArgs_EnvFallbacks(t *testing.T) {
 	}
 }
 
-// TestParseServeArgs_RateLimitDefaultsOn guards the third fix in #230: the
-// rate limiter used to default to disabled (opt-in); it is now on by
-// default at a generous rate, so a bare compose file that only points at a
-// database no longer ships with no throttling at all.
+// TestParseServeArgs_RateLimitDefaultsOn: the rate limiter is on by default,
+// at a generous rate.
 func TestParseServeArgs_RateLimitDefaultsOn(t *testing.T) {
 	cfg, err := parseServeArgs(nil)
 	if err != nil {
@@ -86,10 +78,9 @@ func TestParseServeArgs_RateLimitDefaultsOn(t *testing.T) {
 	}
 }
 
-// TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv guards #238:
-// --pprof-addr must default to empty (no pprof listener at all — it exposes
-// heap/CPU profiling with no tenant scoping, see startPprofServer's doc
-// comment), while both the flag and BLUNDERDB_PPROF_ADDR can turn it on.
+// TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv: pprof is off
+// by default (it exposes profiling with no tenant scoping); the flag or
+// BLUNDERDB_PPROF_ADDR turns it on.
 func TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv(t *testing.T) {
 	cfg, err := parseServeArgs(nil)
 	if err != nil {

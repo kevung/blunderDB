@@ -40,10 +40,9 @@ func (s side) highest() int {
 //   - A HOLDING break: one side kept an anchor deep in the opponent's board
 //     while the other was already bearing off, and has just left it — so one
 //     side has chequers off and the other a straggler on its 17- or 18-point.
-//     Leaving these out made every generated side a fifteen-chequer one, where
-//     a third of the sides of the ten real matches' just-broken races stand
-//     under thirty pips (evaluation_histogram_test.go).
-//
+//     A third of real just-broken sides stand under thirty pips
+//     (evaluation_histogram_test.go).
+
 // The plies do the rest. They are DATA OF THE EXERCISE, not a setting: adding
 // one is a code change with its histogram check.
 var pool = [...]side{
@@ -160,8 +159,7 @@ func (w walk) onePly(pos gammonnet.Position) (gammonnet.Position, bool) {
 }
 
 // framed is a walked position in the exercise's own frame: money play, cube
-// centred, no dice, pre-roll (#322: « argent seulement » — the source makes no
-// other kind of position).
+// centred, no dice, pre-roll — the source makes no other kind of position.
 func framed(gp gammonnet.Position, played int, source, refusal string) EvaluationQuestion {
 	return EvaluationQuestion{
 		Generated: true,

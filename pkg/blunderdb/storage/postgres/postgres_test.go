@@ -66,9 +66,6 @@ var wantTables = []string{
 }
 
 // wantIndexes is the full set of named idx_* indexes, sorted.
-// idx_analysis_win1 and idx_position_score (E3, index redundancy pass) are
-// not listed: both were strict column prefixes of an index still here
-// (idx_analysis_win_gammon_covering, idx_position_score_cube respectively).
 var wantIndexes = []string{
 	"idx_analysis_backgammon1", "idx_analysis_backgammon2",
 	"idx_analysis_cube_error", "idx_analysis_gammon2",
@@ -236,7 +233,7 @@ func queryNames(t *testing.T, conn *pgx.Conn, sql string) []string {
 // integer-named tenant's rows into session_state under its tenant_id, keeps
 // the empty scope on tenant 0, drops the rows of a named tenant the daemon no
 // longer accepts (ADR-0005), leaves metadata with no session row, installs
-// the tenant_isolation policy on the new table, and is idempotent (#156).
+// the tenant_isolation policy on the new table, and is idempotent.
 func TestMigrate_013_SessionOutOfMetadata(t *testing.T) {
 	ctx := context.Background()
 	dsn := startPostgres(t)
@@ -275,13 +272,9 @@ func TestMigrate_013_SessionOutOfMetadata(t *testing.T) {
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("Migrate: %v", err)
 	}
-	// Migrate writes database_version from domain.DatabaseVersion exactly
-	// once, after bootstrap and every forward migration have succeeded
-	// (#231) — never a migration's own intermediate stamp, so replaying 013
-	// ALONE (it deletes that one row from schema_migrations, so the later
-	// migrations stay recorded as applied and Migrate does not re-run them)
-	// still leaves Version reporting the current constant, not "whatever
-	// 013 used to write".
+	// Migrate writes database_version from domain.DatabaseVersion once, after
+	// every forward migration, never a migration's own stamp: replaying 013
+	// alone still leaves Version at the current constant.
 	if v, _ := s.Version(ctx); v != domain.DatabaseVersion {
 		t.Errorf("Version after 013: got %q, want %q", v, domain.DatabaseVersion)
 	}

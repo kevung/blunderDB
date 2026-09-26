@@ -1,13 +1,7 @@
-// Canonical list of command-mode commands and their aliases, used to power
-// command-line autocompletion (see CommandLine.svelte). Keep this in sync with
-// the command branches in commandProcessor.js / CommandLine.svelte —
-// commandVocabulary.sync.test.js enforces it, since processCommand's if/else
-// chain has no trailing else and an unhandled command is a silent no-op.
-//
-// `name` is the canonical form inserted on completion; `aliases` are the
-// accepted shorthands. Search filter tokens (p, w, ma, id, …) are intentionally
-// excluded — they only apply after the `s ` search prefix and are documented in
-// the manual.
+// Canonical command-mode commands and aliases for command-line autocompletion. Kept in sync with
+// commandProcessor.js / CommandLine.svelte by commandVocabulary.sync.test.js: processCommand has
+// no trailing else, so an unhandled command is a silent no-op. `name` is inserted on completion.
+// Search filter tokens (p, w, ma, …) are excluded: they only follow the `s ` prefix.
 
 export const COMMANDS = [
     { name: 'new', aliases: ['ne', 'n'] },
@@ -57,10 +51,8 @@ export const COMMANDS = [
 ];
 
 /**
- * Returns the command entries whose canonical name or one of its aliases starts
- * with the typed text. Suggestions are only offered for the command word — i.e.
- * the first token, before any space — and never for position-number navigation
- * (`12`) or tag insertion (`#blunder`).
+ * The entries whose name or an alias starts with the typed text. Only the first token is
+ * completed, never position numbers (`12`) or tags (`#blunder`).
  *
  * @param {string} text the current command-line input
  * @returns {Array<{name: string, aliases: string[]}>}

@@ -239,11 +239,8 @@ func (s *CommentStore) ByPositions(ctx context.Context, scope string, positionID
 // ListAll streams every non-empty comment entry, most recent first, bounded by
 // opts.
 //
-// The bound is the caller's, and there is no default: a stream is not held in
-// memory, so an unbounded one costs time and bandwidth but never the server's
-// footing. A silent default limit would be worse than a slow answer — the
-// client would read a truncated list believing it complete. What opts buys is
-// the ability to PAGE, for a client that wants to (issue #237).
+// The bound is the caller's, with no default: a stream is not held in memory,
+// and a silent default limit would hand back a truncated list as complete.
 func (s *CommentStore) ListAll(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.CommentEntry, error] {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	limit, largs := s.DB.LimitOffset(opts.Limit, opts.Offset)
@@ -264,15 +261,9 @@ func (s *CommentStore) Search(ctx context.Context, scope string, query string) i
 
 // Tags — see storage.CommentStore.
 //
-// One query, tallied in Go. A tag cannot be found by a GROUP BY: it is a
-// `#word` inside prose, nothing declares it, and no column holds it. So the
-// comment text of the tenant is read once and domain.ExtractTags does the
-// rest — the same extraction the per-tag statistics use, so the vocabulary
-// panel and the statistics can never disagree about what a tag is.
-//
-// Only rows carrying a '#' at all are read: a library where nobody uses tags
-// costs one index-less scan of a column, and one where everybody does reads
-// only the comments that can possibly contribute.
+// One query, tallied in Go: a tag is a `#word` inside prose, which no GROUP BY
+// can find. domain.ExtractTags is the same extraction the per-tag statistics
+// use, so the two never disagree. Only rows carrying a '#' are read.
 func (s *CommentStore) Tags(ctx context.Context, scope string) ([]domain.TagCount, error) {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	rows, err := s.DB.Query(ctx,

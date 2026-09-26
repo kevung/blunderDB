@@ -77,13 +77,9 @@ func TestDSN_CallerURIKeepsItsQuery(t *testing.T) {
 // percent-encoded file: URI. The test opens the database for real and checks
 // the file lands at the exact path asked for.
 //
-// Unix-only, and deliberately so rather than by accident: Windows forbids '?'
-// in a file name, so the scenario this guards cannot arise there — DSN's own
-// doc comment says as much. Creating the file is what fails on Windows, not
-// DSN, which is why the skip is here and not a t.Fatal (E.4 banned SILENT
-// skips; this one names the reason). The half that DOES arise on every
-// platform — accents, spaces and '%' — is covered by the test below, which
-// runs on Windows too.
+// Unix-only on purpose: Windows forbids '?' in a file name, so the scenario
+// cannot arise there; the skip names that reason. Accents, spaces and '%' are
+// covered on every platform by the test below.
 func TestDSN_PathWithQuestionMarkOpensTheRightFile(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("Windows forbids '?' in a file name: the split-at-'?' scenario cannot arise")

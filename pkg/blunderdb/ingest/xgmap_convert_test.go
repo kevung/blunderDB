@@ -75,14 +75,12 @@ func TestConvertXGMoveToString(t *testing.T) {
 	}
 }
 
-// TestXGCrawfordSentinelIsDerivedFromTheScores pins the XG half of issue #338.
-//
-// An XG match states no rule per game — xgparser.Game carries a game number, an
+// TestXGCrawfordSentinelIsDerivedFromTheScores: an XG match states no rule
+// per game — xgparser.Game carries a game number, an
 // initial score, a winner and its moves — so which game is the Crawford one is
 // DERIVED from the sequence of initial scores, and the away score then says so:
 // `1` in the Crawford game, `0` in every game after it (CONTEXT.md, « Away
-// score »). Before the fix both said `1`, and the engine read a dead cube in
-// the post-Crawford games, where the trailer doubles at the first opportunity.
+// score »).
 func TestXGCrawfordSentinelIsDerivedFromTheScores(t *testing.T) {
 	// A 7-point match: 2-2, then 6-2 (the Crawford game), then 6-3 and 6-5,
 	// both post-Crawford with the same player still one point away.

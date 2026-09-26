@@ -1,7 +1,5 @@
-// Pure board geometry/parsing helpers extracted from Board.svelte so they can
-// be unit-tested without two.js or a mounted component. Everything that touches
-// two.js lives in boardScene.js (drawing) and boardInteractions.js (mouse);
-// only side-effect-free transforms live here.
+// Pure board geometry/parsing helpers, testable without two.js (drawing: boardScene.js; mouse:
+// boardInteractions.js).
 
 /**
  * Parse a move string (e.g. "24/23 13/11(2)", "bar/23", "6/off(4)") into a flat
@@ -25,7 +23,6 @@ export function parseMoveNotation(moveString) {
             const to = match[2].toLowerCase() === 'off' ? -1 : parseInt(match[2]);
             const count = match[3] ? parseInt(match[3]) : 1;
 
-            // Add multiple moves if count > 1
             for (let i = 0; i < count; i++) {
                 moves.push({ from, to, index: i });
             }
@@ -36,15 +33,12 @@ export function parseMoveNotation(moveString) {
 }
 
 /**
- * Mirror a position so the other player is brought to the bottom: points are
- * reversed (i ↔ 25-i) with colours swapped, bearoff/scores swapped, the
- * on-roll player flipped, and the cube owner flipped when owned. Returns a deep
- * copy; the input is not mutated. `mirrorPosition(mirrorPosition(p))` ≈ `p`.
+ * Mirror a position to bring the other player to the bottom: points i ↔ 25-i with colours
+ * swapped, bearoff/scores swapped, on-roll and cube owner flipped. Returns a deep copy.
  */
 export function mirrorPosition(pos) {
     const mirrored = JSON.parse(JSON.stringify(pos)); // Deep copy
 
-    // Mirror the board points
     const tempPoints = [...mirrored.board.points];
     for (let i = 0; i < 26; i++) {
         mirrored.board.points[25 - i] = {
@@ -53,16 +47,12 @@ export function mirrorPosition(pos) {
         };
     }
 
-    // Swap bearoff
     [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] = [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
 
-    // Swap player on roll
     mirrored.player_on_roll = 1 - mirrored.player_on_roll;
 
-    // Swap scores
     [mirrored.score[0], mirrored.score[1]] = [mirrored.score[1], mirrored.score[0]];
 
-    // Swap cube owner if owned
     if (mirrored.cube.owner !== -1) {
         mirrored.cube.owner = 1 - mirrored.cube.owner;
     }
@@ -90,13 +80,9 @@ export function computePipCount(position) {
 }
 
 /**
- * The board's fixed measurements for a drawing surface of `width` × `height`
- * pixels. Every drawing function (boardScene.js) and every hit test
- * (boardInteractions.js) derives its coordinates from this one object, so the
- * two can never disagree on where a point, a die or the cube sits.
- *
- * The board is 13 checker widths wide (6 + bar + 6) and 11 tall, centred on
- * the surface; a triangle is 5 checkers tall.
+ * The board's fixed measurements for a `width` × `height` surface: every drawing function and hit
+ * test derives from this one object, so they cannot disagree. 13 checkers wide (6 + bar + 6),
+ * 11 tall, centred; a triangle is 5 checkers tall.
  */
 export function boardMetrics(width, height, widthFactor) {
     const boardWidth = widthFactor * width;
@@ -115,12 +101,9 @@ export function boardMetrics(width, height, widthFactor) {
 }
 
 /**
- * Convert a mouse event position into board-drawing coordinates. The canvas
- * may be CSS-scaled (interface zoom, side-panel layout, responsive width), so
- * client pixels are normalised by the ratio between the drawing size
- * (width/height, the two.js coordinate space) and the element's rendered box.
- * Without this, clicks drift proportionally to the scale — worst at the board
- * edges (clicking point 1 lands on point 2 at 90 % interface scale).
+ * Convert a mouse event position into drawing coordinates. The canvas may be CSS-scaled
+ * (interface zoom, side layout), so client pixels are normalised by drawing size / rendered box;
+ * otherwise clicks drift with the scale.
  */
 export function boardMouseToDrawing(clientX, clientY, rect, width, height) {
     const scaleX = rect.width > 0 ? width / rect.width : 1;
@@ -132,11 +115,8 @@ export function boardMouseToDrawing(clientX, clientY, rect, width, height) {
 }
 
 /**
- * Map a position in board-drawing coordinates to the clicked point and
- * checker slot. Pure extraction of Board.svelte's click mapping so it can be
- * asserted against the drawing formulas (drawCheckers) in unit tests.
- * Returns { checkerPoint, checkerCount }; checkerPoint is -1 outside the
- * board, 0/25 for the bars.
+ * Map drawing coordinates to the clicked point and checker slot, matching drawCheckers.
+ * Returns { checkerPoint, checkerCount }; checkerPoint is -1 outside the board, 0/25 the bars.
  */
 export function checkerPointAndCountAt(x_mouse, y_mouse, width, height, widthFactor, orientation) {
     const boardAspectFactor = 11 / 13;

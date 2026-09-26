@@ -3,11 +3,8 @@
  *
  *   <div class="resize-handle" use:resizable={{ side, size, onResize, onCommit }}></div>
  *
- * The panel sits to the right of the board (side mode: drag horizontally,
- * dragging left grows it) or below it (bottom mode: drag vertically, dragging
- * up grows it). The mode and the starting size are read at mousedown, so a
- * layout flip mid-drag cannot mix axes; both callbacks receive the mode the
- * drag started in.
+ * Side mode drags horizontally (left grows), bottom mode vertically (up grows). Mode and starting
+ * size are read at mousedown, so a layout flip mid-drag cannot mix axes.
  *
  * @param {HTMLElement} node
  * @param {Object} params

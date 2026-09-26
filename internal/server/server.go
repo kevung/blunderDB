@@ -4,7 +4,7 @@
 //
 // Security: this daemon performs NO authentication. It trusts the
 // X-Tenant-ID header injected by an upstream reverse-proxy and MUST NOT be
-// exposed directly to the public internet. See tasks/headless/06-serve-http.md.
+// exposed directly to the public internet. See ADR-0005.
 package server
 
 import (
@@ -39,22 +39,22 @@ type Server struct {
 	// allowedMethod maps every registered pattern to the one HTTP method it
 	// accepts, so a request to a known path with the wrong method gets the
 	// API's own JSON error envelope (405 + Allow) instead of net/http's
-	// automatic text/plain response — see methodNotAllowed (#232).
+	// automatic text/plain response — see methodNotAllowed.
 	allowedMethod map[string]string
 
 	imports *importRegistry
-	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps (#130), kept
-	// separate from imports so cancelling one can never be confused with the
-	// other — reuses importRegistry's scope-keyed cancel bookkeeping under
-	// its own instance rather than a new type for the same three methods.
+	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps, kept separate
+	// from imports so cancelling one can never be confused with the other —
+	// reuses importRegistry's scope-keyed cancel bookkeeping under its own
+	// instance rather than a new type for the same three methods.
 	gammonnetJobs *importRegistry
 	rl            *middleware.RateLimiter // nil when rate limiting is disabled
 	// spool bounds the total bytes concurrently in-flight imports may hold
-	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes (#234).
+	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes.
 	spool *spoolQuota
 	// idempotency backs withIdempotency: at most one cached response per
-	// (tenant, route, Idempotency-Key) triple, for the handful of routes
-	// with no natural dedup key (#236) — see idempotency.go.
+	// (tenant, route, Idempotency-Key) triple, for the handful of routes with
+	// no natural dedup key — see idempotency.go.
 	idempotency *idempotencyStore
 }
 
@@ -126,10 +126,10 @@ func New(opts Options) (*Server, error) {
 // withDeadlines sets a per-request read/write deadline via
 // http.ResponseController before dispatching to next: RequestTimeout for an
 // ordinary call, the far more generous StreamTimeout for a route
-// streamingPaths names (#234). Errors from SetReadDeadline/SetWriteDeadline
-// are ignored — they fail only when the underlying connection genuinely
-// cannot support a deadline (e.g. it has been hijacked already), in which
-// case there is nothing more useful to do than proceed without one.
+// streamingPaths names. Errors from SetReadDeadline/SetWriteDeadline are
+// ignored — they fail only when the underlying connection genuinely cannot
+// support a deadline (e.g. already hijacked), leaving nothing more useful to
+// do than proceed without one.
 func (s *Server) withDeadlines(next http.Handler) http.Handler {
 	streaming := s.streamingPaths()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -188,14 +188,11 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 // /metrics. Derived rather than listed so a new probe is public the day it
 // lands, and a new domain route can never be.
 //
-// /ops/ is NOT public, and the exclusion is explicit. This used to read
-// "everything outside /v1", which was the same set as long as the only
-// non-/v1 routes were the probes — moving vacuum and purge under /ops/ (G.5,
-// #233) silently made the two most dangerous calls in the daemon the only
-// ones needing no tenant at all. A purge names the tenant it destroys in the
+// /ops/ is NOT public, and the exclusion is explicit rather than "everything
+// outside /v1": vacuum and purge live under /ops/ and are the two most
+// dangerous calls in the daemon. A purge names the tenant it destroys in the
 // header it is given; it needs that header more than any other route, not
-// less. routes_smoke_test.go's TestRoutesSmoke_TenantRequired is what caught
-// it, and still covers both prefixes.
+// less. TestRoutesSmoke_TenantRequired covers both prefixes.
 func (s *Server) publicPaths() map[string]bool {
 	public := make(map[string]bool)
 	for _, rt := range s.routes() {
@@ -209,11 +206,11 @@ func (s *Server) publicPaths() map[string]bool {
 
 // limitBody caps request bodies to guard against OOM from a malicious client.
 // The upload endpoints — exactly uploadPaths, not a "/v1/imports." prefix
-// that would also cover imports.cancel (#160) — are exempt from the small
-// default cap: they carry uploaded match files and apply their own (larger)
-// limit while spooling. A declared Content-Length over the cap is refused
-// 413 before a byte of it is read; an undeclared one is cut off by
-// MaxBytesReader and the handler's decoder reports it (writeDecodeError).
+// that would also cover imports.cancel — are exempt from the small default
+// cap: they carry uploaded match files and apply their own (larger) limit
+// while spooling. A declared Content-Length over the cap is refused 413
+// before a byte of it is read; an undeclared one is cut off by MaxBytesReader
+// and the handler's decoder reports it (writeDecodeError).
 func (s *Server) limitBody(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Body != nil && !s.uploadPaths[r.URL.Path] {
@@ -265,7 +262,7 @@ type poolStatsProvider interface {
 }
 
 // sweepPoolStats periodically publishes the PostgreSQL connection pool's
-// state to the metrics registry (#235), until ctx is cancelled.
+// state to the metrics registry, until ctx is cancelled.
 func (s *Server) sweepPoolStats(ctx context.Context, pool poolStatsProvider) {
 	t := time.NewTicker(poolStatsSweepInterval)
 	defer t.Stop()
@@ -285,9 +282,9 @@ func (s *Server) sweepPoolStats(ctx context.Context, pool poolStatsProvider) {
 }
 
 // businessMetricsSweepInterval bounds how stale the imports/gammonNet/spool
-// gauges and blunderdb_database_size_bytes can be (#238). Cheap enough (an
-// in-memory map length, an atomic load, and one query against the already-
-// open backend) to run this often even though database size does not
+// gauges and blunderdb_database_size_bytes can be. Cheap enough (an
+// in-memory map length, an atomic load, and one query against the
+// already-open backend) to run this often even though database size does not
 // actually change every 15 seconds in practice.
 const businessMetricsSweepInterval = 15 * time.Second
 
@@ -295,13 +292,13 @@ const businessMetricsSweepInterval = 15 * time.Second
 // on-disk (or server-side) footprint — sqlite.Storage stats its main file,
 // postgres.Storage asks pg_database_size. Duck-typed like poolStatsProvider
 // above: a backend that doesn't implement it simply never has
-// blunderdb_database_size_bytes published (#238).
+// blunderdb_database_size_bytes published.
 type sizeProvider interface {
 	DatabaseSizeBytes(ctx context.Context) (int64, error)
 }
 
-// sweepBusinessMetrics periodically publishes in-flight-work and database-
-// size gauges to the metrics registry (#238), until ctx is cancelled.
+// sweepBusinessMetrics periodically publishes in-flight-work and
+// database-size gauges to the metrics registry, until ctx is cancelled.
 func (s *Server) sweepBusinessMetrics(ctx context.Context) {
 	t := time.NewTicker(businessMetricsSweepInterval)
 	defer t.Stop()
@@ -337,8 +334,7 @@ func (s *Server) Run(ctx context.Context) error {
 	if s.opts.MaxConnections > 0 {
 		// The (n+1)-th concurrent connection blocks in Accept until one of
 		// the first n closes, instead of every connection a client opens
-		// getting its own goroutine and file descriptor unconditionally
-		// (#234).
+		// getting its own goroutine and file descriptor unconditionally.
 		ln = netutil.LimitListener(ln, s.opts.MaxConnections)
 	}
 
@@ -381,12 +377,11 @@ func (s *Server) Run(ctx context.Context) error {
 		s.opts.Logger.Info("shutting down")
 		// Cancel every in-flight import/gammonNet job BEFORE Shutdown: each
 		// one's handler is watching its own context and, once cancelled,
-		// emits a trailing {"event":"cancelled"} and returns on its own —
-		// see runGammonNetSweep and handleImport. Left to Shutdown alone,
-		// a streaming handler is either waited on past ShutdownTimeout (an
+		// emits a trailing {"event":"cancelled"} and returns on its own — see
+		// runGammonNetSweep and handleImport. Left to Shutdown alone, a
+		// streaming handler is either waited on past ShutdownTimeout (an
 		// import mid a 512 MiB upload) or has its connection cut the moment
-		// the deadline passes, with no chance to tell the client why
-		// (#234).
+		// the deadline passes, with no chance to tell the client why.
 		s.imports.cancelAll()
 		s.gammonnetJobs.cancelAll()
 		shutCtx, cancel := context.WithTimeout(context.Background(), s.opts.ShutdownTimeout)

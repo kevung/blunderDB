@@ -7,20 +7,14 @@ import (
 	"time"
 )
 
-// DefaultMaxBuckets hard-caps the number of live per-tenant buckets a
-// RateLimiter built by NewRateLimiter will hold. Without a cap, a client that
-// sends many distinct X-Tenant-ID values — accidentally or as an attack —
-// grows the bucket map without bound between the periodic Sweep calls
-// (server.go runs one every 5 minutes); Allow instead evicts the
-// least-recently-used bucket the instant a new tenant would exceed the cap,
-// so the map's memory footprint is bounded on every single request, not just
-// eventually.
+// DefaultMaxBuckets caps the live per-tenant buckets. Without it, many
+// distinct X-Tenant-ID values grow the map without bound between Sweeps;
+// Allow evicts the least-recently-used bucket instead, bounding memory on
+// every request.
 const DefaultMaxBuckets = 10_000
 
-// RateLimiter is a per-tenant token-bucket limiter. Each tenant gets an
-// independent bucket that refills at rps tokens/second up to burst tokens.
-// It is dependency-free (no golang.org/x/time/rate) and safe for concurrent
-// use. The clock is injectable for deterministic tests.
+// RateLimiter is a per-tenant token-bucket limiter (rps refill, burst cap),
+// safe for concurrent use, with an injectable clock for tests.
 type RateLimiter struct {
 	rps        float64
 	burst      float64
@@ -140,11 +134,9 @@ func (rl *RateLimiter) Sweep(maxIdle time.Duration) int {
 	return len(rl.buckets)
 }
 
-// RateLimit rejects requests once a tenant exceeds its bucket. The tenant is
-// read from the context (set by Tenant, which must run first); requests without
-// a tenant are passed through untouched. onReject writes the response for a
-// throttled request (the server supplies the rate_limited error envelope);
-// Retry-After is set before it is called.
+// RateLimit rejects requests once a tenant exceeds its bucket. It reads the
+// tenant set by Tenant (which must run first) and passes tenant-less requests
+// through; onReject writes the throttled response after Retry-After is set.
 func RateLimit(rl *RateLimiter, onReject func(http.ResponseWriter, *http.Request)) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

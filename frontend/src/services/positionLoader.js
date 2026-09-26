@@ -1,17 +1,11 @@
 /**
- * positionLoader.js
+ * positionLoader.js — routes Stats panel drill-downs to the analysis, match
+ * and tournament views.
  *
- * Routes drill-down actions from the Stats panel to the existing
- * analysis/match/tournament UI infrastructure.
- *
- * loadPositionsFromSelection(ids, options)
- *   Loads a pre-resolved list of position IDs into the main analysis view.
- *   The IDs are passed as `RestrictToPositionIDs` to LoadPositionIDsByFilters
- *   (a comma-separated string), which confirms which of them still exist and
- *   returns just their ids — `positionsStore` (positionList.js) fetches the
- *   full positions lazily, by window, as the board browses them (D.8, #208).
- *   This is the same mechanism used by the search sub-filter (`ss` command)
- *   and session restore.
+ * loadPositionsFromSelection passes the ids as `RestrictToPositionIDs` to
+ * LoadPositionIDsByFilters, which returns those still existing;
+ * positionsStore fetches the positions lazily by window — the mechanism of
+ * `ss` and session restore.
  */
 
 import { get } from 'svelte/store';
@@ -72,13 +66,9 @@ export async function loadPositionsFromStatsSelection(filter, selection) {
 }
 
 /**
- * Load the worst blunders (the decisions with the largest equity/MWC error)
- * into the analysis view, newest-mistake-first review made one keystroke away.
- *
- * Reuses the Stats panel's "top_blunders" selection (worst by error magnitude)
- * under the current stats filter — which defaults to all decisions, but honours
- * any player/date/decision-type scope the user has set in the Stats panel. This
- * is the `blunders`/`bl` command's backing action.
+ * Load the worst blunders (largest error) into the analysis view, under the
+ * current stats filter (Stats panel's "top_blunders" selection). Backs the
+ * `blunders`/`bl` command.
  *
  * @param {number} [count] - how many to load (the `bl 50` argument). Omitted /
  *   non-positive falls back to the backend default of 10.

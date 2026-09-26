@@ -12,11 +12,9 @@ import "golang.org/x/sys/cpu"
 // fastest first. It never guesses: a path that is not detected is not offered,
 // and a caller that names it gets an error rather than a substitute.
 //
-// The generated assembly only uses AVX1 encodings (VBROADCASTSS, VMULPS,
-// VADDPS, VMAXPS on YMM), but the gate is HasAVX2 because "avx2" is the name
-// ADR-0024 and the selector give this path, and a name that promises more than
-// it checks is the kind of thing that goes wrong quietly. Every CPU shipped
-// since 2013 satisfies it.
+// The assembly only uses AVX1 encodings, but the gate is HasAVX2 because
+// "avx2" is the path's name (ADR-0024), and a name must not promise more than
+// it checks.
 func acceleratedKernels() []denseKernel {
 	if !cpu.X86.HasAVX2 {
 		return nil
@@ -29,10 +27,8 @@ func acceleratedKernels() []denseKernel {
 // loop carries no branch.
 func denseAVX2(w, bias, act, out []float32, in, outDim int, relu bool) {
 	if in == 0 {
-		// The assembly's inner loop is a do-while: with in == 0 it would read
-		// one weight that does not exist. A layer with no inputs is just its
-		// bias, and only the sparse first layer can produce one (a feature
-		// vector that is zero everywhere).
+		// The assembly's inner loop is a do-while and would read one weight
+		// past the end with in == 0 (an all-zero sparse first layer).
 		denseGo(w, bias, act, out, in, outDim, relu)
 		return
 	}

@@ -82,12 +82,7 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<!--
-  A single view has nothing to switch between and no close button (gated
-  below), so its tab is just a name nobody needs to read — collapse the bar
-  to the bare "+" affordance instead of the full 26px row (#215). It expands
-  back the moment a second view exists.
--->
+<!-- A single view collapses the bar to the bare "+"; it expands with a second view. -->
 <div class="view-tabs" class:collapsed={$views.length <= 1}>
     {#if $views.length > 1}
         <div class="view-tab-list" role="tablist">

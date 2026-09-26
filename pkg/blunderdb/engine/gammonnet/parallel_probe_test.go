@@ -13,10 +13,8 @@ import (
 	"time"
 )
 
-// coldCaches vide les tables d'évaluation du chercheur et de ses ouvriers.
-// Une mesure enchaînant plusieurs décisions sur une table chaude ne mesure
-// plus la décision mais le cache : 13 000 évaluations au premier tour, une
-// poignée aux suivants.
+// coldCaches vide les tables d'évaluation du chercheur et de ses ouvriers :
+// sur une table chaude, on mesurerait le cache, pas la décision.
 func coldCaches(s *Searcher) {
 	for i := range s.cache.entries {
 		s.cache.entries[i].occupied = false
@@ -181,18 +179,11 @@ func TestProbeRollCost(t *testing.T) {
 	fmt.Printf("ordre par évals décroissantes : %v\n", order)
 }
 
-// TestProbeMachineCeiling mesure le plafond de la MACHINE sur ce travail-ci,
-// sans aucune synchronisation : N décisions 2-ply indépendantes tournent en
-// boucle, une par goroutine, et l'on compare le DÉBIT à celui d'une seule.
-// C'est le parallélisme embarrassant — pas de barrière, pas de déséquilibre,
-// rien de partagé que les poids en lecture seule. Tout ce qui manque à ce
-// chiffre pour atteindre N est de la bande passante et de la FRÉQUENCE :
-// sur un portable à budget thermique, la fréquence tous-cœurs est bien plus
-// basse que le boost mono-cœur, et aucun ordonnancement ne récupère cela.
-//
-// La mesure est un débit en régime établi (chauffe puis fenêtre fixe), pas
-// une latence : c'est le seul protocole où la fréquence a fini de descendre
-// avant qu'on ne commence à compter.
+// TestProbeMachineCeiling mesure le plafond de la MACHINE : N décisions 2-ply
+// indépendantes, une par goroutine, sans synchronisation, comparées en DÉBIT
+// à une seule. Ce qui manque pour atteindre N est bande passante et fréquence
+// tous-cœurs, qu'aucun ordonnancement ne récupère. Débit en régime établi
+// (chauffe puis fenêtre fixe), pour que la fréquence ait fini de descendre.
 func TestProbeMachineCeiling(t *testing.T) {
 	if os.Getenv("BLUNDERDB_PROBE") == "" {
 		t.Skip("set BLUNDERDB_PROBE to measure; this test asserts nothing")
@@ -256,19 +247,11 @@ func TestProbeMachineCeiling(t *testing.T) {
 	}
 }
 
-// TestProbeCacheHitRate est la mesure sur laquelle se décide l'étape 4 de la
-// fiche F4 : faut-il un cache partagé entre ouvriers, ou le cache par ouvrier
-// suffit-il ?
-//
-// La règle de décision de P3 est « mesurer d'abord, et si le partage ne fait
-// pas monter le taux de hit d'au moins 5 points, garder le cache par ouvrier,
-// trivialement déterministe et plus simple ». La mesure ne demande aucun code
-// de production : une recherche SÉRIELLE consulte une seule table, et voit
-// donc exactement la suite de recherches qu'un cache partagé verrait ; une
-// recherche à N ouvriers en consulte N. La différence de taux de hit entre
-// les deux EST le gain que le partage rendrait, à ceci près qu'elle le
-// SURESTIME — la table sérielle a 65 536 entrées pour tout le travail, les
-// N tables en ont N fois plus au total.
+// TestProbeCacheHitRate : faut-il un cache partagé entre ouvriers ? Règle :
+// garder le cache par ouvrier sauf si le partage gagne au moins 5 points de
+// taux de hit. Une recherche SÉRIELLE voit exactement ce qu'un cache partagé
+// verrait ; l'écart avec N ouvriers est le gain du partage, surestimé (les N
+// tables ont N fois plus d'entrées au total).
 func TestProbeCacheHitRate(t *testing.T) {
 	if os.Getenv("BLUNDERDB_PROBE") == "" {
 		t.Skip("set BLUNDERDB_PROBE to measure; this test asserts nothing")

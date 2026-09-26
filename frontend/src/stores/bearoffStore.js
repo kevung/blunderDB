@@ -1,26 +1,15 @@
 import { writable } from 'svelte/store';
 
-// The state of a bearoff generation, kept outside the configuration modal so
-// closing the modal does not lose it (ADR-0027, issue #308). A run for a wide
-// domain is minutes long: the user is meant to close the dialog and carry on.
-//
-// { domain, done, total, startedAt, firstDone } while a run is in flight, null
-// when idle. `startedAt`/`firstDone` are what turn the progress into a
-// MEASURED remaining time rather than a second estimate: the first callback
-// arrives after the successor lists are built, so timing from it — not from
-// the click — is what makes the figure honest.
-//
-// Fed by ConfigModal.svelte's EventsOn listeners on
-// bearoff:progress/done/error; internal/gui/bearoff.go knows nothing of a
-// store, it only emits Wails events.
+// A bearoff generation in flight, outside the modal so closing it loses nothing (ADR-0027: runs
+// last minutes). { domain, done, total, startedAt, firstDone } or null. Remaining time is timed
+// from the first callback (after the successor lists are built), not from the click, to be
+// honest. Fed by ConfigModal's listeners on bearoff:progress/done/error.
 export const bearoffProgressStore = writable(null);
 
 // The last error a generation reported, cleared when a new one starts.
 export const bearoffErrorStore = writable('');
 
-// remainingSeconds is what the progress has measured so far, or null while
-// there is not enough of it to say anything. Exported rather than inlined so
-// the arithmetic is testable without a component.
+// Remaining seconds measured so far, or null while too early to say.
 /**
  * @param {any} progress
  * @param {number} [now]

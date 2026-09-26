@@ -7,21 +7,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// TestComputeCorruptedRowReturnsError is B.6's (#174) acceptance test on
-// StatsStore.Compute: "stats with a corrupted row → an error, not a false
-// PR." Compute runs nine Query calls in sequence (PR by decision_type, PR
-// per tournament, PR per match, cube action breakdown, cube direction
-// matrix, error histogram, top blunders, rolling PR, the MWC pass); before
-// B.6 every one of them wrapped its row loop in an immediately-invoked
-// closure whose `return` on a Scan error only exited the closure, and the
-// surrounding code went on to read rows.Err() — which a Scan error never
-// sets — and returned a result computed from whatever rows were scanned
-// before the bad one, with a nil error. A caller had no way to tell that
-// result apart from a database that genuinely only had that many rows.
-//
-// Each subtest fails exactly one of the nine Query calls' single row, and
-// every one of them must now make Compute return a non-nil error and a nil
-// result — never a partial StatsResult.
+// TestComputeCorruptedRowReturnsError: stats with a corrupted row give an
+// error, not a false PR. Each subtest fails the single row of one of
+// Compute's Query calls, which must yield a non-nil error and a nil result —
+// never a partial StatsResult.
 func TestComputeCorruptedRowReturnsError(t *testing.T) {
 	labels := []string{
 		"PR by decision_type",
@@ -53,10 +42,8 @@ func TestComputeCorruptedRowReturnsError(t *testing.T) {
 }
 
 // TestComputeSnowieGlobalQueryFailureReturnsError covers the two `_ =
-// s.DB.QueryRow(...).Scan(...)` sites (stats.go, Snowie ER global): a query
-// failure there used to be discarded outright (the `_ =`), leaving
-// SnowieGlobal computed from whatever zero value the Go variable already
-// held instead of surfacing the failure. QueryRow call 1 is the Totals
+// s.DB.QueryRow(...).Scan(...)` sites (Snowie ER global): a query failure
+// must surface, not leave a zero value. QueryRow call 1 is the Totals
 // query (which every subtest needs to succeed to get this far); calls 2 and
 // 3 are the Snowie numerator and denominator.
 func TestComputeSnowieGlobalQueryFailureReturnsError(t *testing.T) {
@@ -99,9 +86,8 @@ func TestMatchDetailCorruptedRowReturnsError(t *testing.T) {
 	}
 }
 
-// TestMatchBadgesCorruptedRowReturnsError: the scan error used to be a bare
-// `continue`, silently dropping one match's badge rather than reporting a
-// database that could not be trusted.
+// TestMatchBadgesCorruptedRowReturnsError: a scan error must be reported,
+// never silently drop one match's badge.
 func TestMatchBadgesCorruptedRowReturnsError(t *testing.T) {
 	f := &fakeExecer{queryCallToFail: 1}
 	store := &StatsStore{DB: f}

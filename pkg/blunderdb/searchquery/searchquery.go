@@ -1,16 +1,8 @@
 // Package searchquery is the Go side of blunderDB's search grammar: the one
 // that turns `s cube p>30 E>0.05` into a domain.SearchFilters, and back.
 //
-// # Why it exists
-//
-// The grammar was born in the frontend and lived there alone. `blunderdb
-// search` offered 24 flags against 45 filter fields, and `/v1` offered none of
-// the token forms at all: board patterns, mirror search, move patterns, dates,
-// equity, comment text, excluded dice, zones and blots were reachable from the
-// command bar and from nowhere else. Anything scripted had to rebuild the
-// struct by hand and hope it matched what the GUI would have produced.
-//
-// This package is the second reader of one grammar, not a second grammar.
+// It makes every token form of the command bar reachable from the CLI and
+// `/v1`. It is the second reader of one grammar, not a second grammar.
 // [Parse] is a line-for-line port of `parseSearchTokens` in
 // frontend/src/services/searchFilterService.js, and both are held to
 // testdata/search_query_corpus.json — the same arrangement testdata/
@@ -28,22 +20,11 @@
 //
 // # Why the frontend still has its own parser
 //
-// The fiche left the choice open: have the JS call into Go through a binding,
-// or keep a JS parser generated from the same corpus. Neither: the JS keeps the
-// hand-written parseSearchTokens it already had, and the corpus is the contract
-// between them.
-//
-// A binding was the tempting answer and is the wrong one. The command bar
-// parses on every keystroke to drive autocompletion, and a Wails round trip per
-// keystroke trades a working feature for an architectural preference. Worse,
-// the frontend's own test suites (vitest, Playwright) run with no Go process at
-// all — the grammar would become untestable exactly where it is used. Generating
-// the JS from the corpus fails for the same reason plus one: the corpus states
-// what the grammar must do on 32 cases, not what it does on everything else.
-//
-// So the two implementations stay, and the corpus keeps them honest. That is
-// the same arrangement testdata/xgid_corpus.json has held for the two XGID
-// decoders, and it has caught real drift.
+// Not a Wails binding: the command bar parses on every keystroke for
+// autocompletion, and the frontend's vitest/Playwright suites run with no Go
+// process. Not generated from the corpus either: the corpus states what the
+// grammar must do on its cases, not on everything else. Two hand-written
+// implementations, kept honest by the corpus.
 //
 // # What it cannot express
 //
@@ -120,7 +101,7 @@ var (
 	// n>3, n<10, n3,5 or a bare n4 ("exactly four").
 	encounterRe = regexp.MustCompile(`^n(?:[<>]\d+|\d+(?:,\d+)?)$`)
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
-	// claim it and it needs no place in the precedence above (#265). The
+	// claim it and it needs no place in the precedence above. The
 	// pattern is domain.tagPattern anchored — one '#', then anything that is
 	// neither whitespace nor another '#'.
 	tagRe     = regexp.MustCompile(`^#[^\s#]+$`)
@@ -252,8 +233,8 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	})
 	f.WinRateFilter = first(prefix("w"))
 	// `gt:holding` starts with `g` too, and `first` does not skip a claimed
-	// token: without the exclusion a type search also carried a gammon-rate
-	// filter `gt:holding` (#405), the collision `ph:`/`p` already had.
+	// token: without the exclusion a type search would also carry a
+	// gammon-rate filter `gt:holding`, as `ph:`/`p` would.
 	f.GammonRateFilter = first(func(s string) bool {
 		return strings.HasPrefix(s, "g") && !strings.HasPrefix(s, "gt:")
 	})
@@ -274,8 +255,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	f.Player1AbsolutePipCountFilter = first(prefix("P"))
 	// `n` is matched by SHAPE, not by prefix: `nc` (no contact) starts with the
 	// same letter, and so does any word a user mistypes. A prefix rule would
-	// have claimed `nonsense` and turned a typo into a silent filter — the
-	// collision `ph:`/`p` already taught this parser that lesson once.
+	// claim `nonsense` and turn a typo into a silent filter.
 	f.EncounterFilter = exact(first(func(s string) bool { return encounterRe.MatchString(s) }))
 	// `like` ranks; it is claimed here, among the shape-matched tokens, and
 	// BEFORE the prefix rules below would have had a chance at it.

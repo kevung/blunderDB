@@ -2,7 +2,7 @@ package engine
 
 import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
 
-// Game phase classification (issue #264, fiche I.8).
+// Game phase classification.
 //
 // The phase is a DERIVED label: it is computed from the board alone, stored in
 // an indexed column so a search can use it, recomputed on import and by
@@ -25,15 +25,10 @@ import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
 // have moved off its starting points for the position to still count as the
 // opening.
 //
-// It is a CONVENTION, not a sourced threshold: P5 found none published, and
-// recommends that every unsourced threshold be a named, versioned parameter
-// rather than a literal buried in a condition. Four is the count a side
-// reaches after two ordinary rolls, or after one doublet — the opening move
-// and its reply, which is what backgammon literature calls the opening.
-//
-// Raising or lowering it re-labels positions; it does not change any stored
-// analysis. `blunderdb repair` recomputes every phase, so a change of this
-// constant is a repair away from being applied to an existing database.
+// It is a CONVENTION (P5 found no published threshold). Four is the count a
+// side reaches after two ordinary rolls or one doublet — the opening move and
+// its reply. Changing it re-labels positions on the next `blunderdb repair`.
+
 const OpeningDisplacementMax = 4
 
 // ClassifyGamePhase returns the phase of a position. The position need not be

@@ -13,17 +13,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Changing the configuration of a tournament ALREADY UNDER WAY (issue #385, ADR-0047 §3).
-//
-// A director changes their mind: at 22 h they lower the switch to finish earlier, on the
-// Saturday evening they add a consolation they had not planned. The engine accepts all of it
-// and refuses exactly two things — removing a phase that is open, and changing the format of a
-// phase that has begun.
-//
-// What this file adds is the SENTENCE BEFORE THE ACT: applying a configuration mid-tournament
-// is not a form being saved, it is a decision, and a decision is shown before it is taken.
-// PreviewDirectionConfig answers "what exactly am I about to change?" — as codes and facts, so
-// the nine languages read it in their own.
+// Changing the configuration of a tournament ALREADY UNDER WAY (tasks/nicomaque/fonctionnel.md §3). The engine refuses
+// exactly two things: removing an open phase, and changing the format of a begun one. A
+// mid-tournament change is a decision, so PreviewDirectionConfig shows it first — as codes and
+// facts, for every language to phrase.
 
 // ConfigChange is one difference between the configuration in force and the one about to be
 // saved. Never a sentence: a code, the phase it concerns, and the two values.
@@ -42,8 +35,7 @@ type ConfigChange struct {
 
 // PhaseLock says whether a phase's FORMAT still changes, and why not.
 //
-// The field is greyed with its reason rather than hidden: a director who cannot find a control
-// assumes they looked badly, and looks again.
+// The field is greyed with its reason rather than hidden, so the director knows why.
 type PhaseLock struct {
 	Phase  int    `json:"phase"`
 	Kind   string `json:"kind"`
@@ -124,8 +116,8 @@ func lockReason(st *tournoi.State, i int) string {
 
 // configRefusals restates, as codes, what the engine's acceptConfig would refuse.
 //
-// It is stated twice on purpose: the engine refuses, and the panel must be able to SAY SO
-// BEFORE the director clicks — a refusal discovered after the fact reads as a bug.
+// Stated twice on purpose: the panel must say so BEFORE the click; a refusal after the fact
+// reads as a bug.
 func configRefusals(st *tournoi.State, next tournoi.Config) []ConfigChange {
 	var out []ConfigChange
 	if len(next.Phases) < len(st.Phases) {
@@ -216,7 +208,7 @@ func diffConfig(cur, next tournoi.Config) []ConfigChange {
 func itoa(n int) string { return strconv.Itoa(n) }
 
 // displacedMatches names each running match whose table the new configuration takes out of
-// service (#438), with the free table it could move to — "unavailableBusy", From the table,
+// service, with the free table it could move to — "unavailableBusy", From the table,
 // To the proposal — or "unavailableBusyFull" when the hall has none left. The engine does not
 // move a running match on its own, and the director should not have to count free tables.
 func displacedMatches(st *tournoi.State, cur, next tournoi.Config) []ConfigChange {

@@ -12,9 +12,8 @@ import (
 )
 
 // mat_export.go renders a stored match as a Jellyfish/gnubg .mat text — the
-// inverse of the .mat parser, and the format XG re-imports. It is the writer
-// blunderDB lacked (import was read-only). The output round-trips through
-// gnubgparser.ParseMAT; analysis is NOT part of .mat (a pure move transcript).
+// inverse of the .mat parser, and the format XG re-imports. The output
+// round-trips through gnubgparser.ParseMAT; analysis is NOT part of .mat.
 
 // Move.Player encoding is XG {1 = player 1, -1 = player 2}; Game.Winner is the
 // gnubg encoding {0 = player 1, 1 = player 2, -1 = unfinished}.
@@ -90,9 +89,8 @@ func RenderMAT(m *domain.Match, games []*domain.Game, movesByGame map[int64][]*d
 
 	// A money session has no match length. gnubg/Jellyfish (and gnubgparser,
 	// our round-trip gate) encode it as "0 point match" — 0 means money game.
-	// Normalise the Unlimited (-1) sentinel and any negative value to 0 so a
-	// money match renders a header that re-parses instead of "-1 point match",
-	// which the parser's `\d+` header regex rejects.
+	// Normalise the Unlimited (-1) sentinel to 0: the parser's `\d+` header
+	// regex rejects "-1 point match".
 	matchLen := m.MatchLength
 	if matchLen < 0 {
 		matchLen = 0
@@ -122,10 +120,8 @@ func renderMATGame(b *strings.Builder, m *domain.Match, p1, p2 string, g *domain
 	// The result is a cell like any other, and it belongs to the WINNER: gnubg
 	// writes " Wins N points" in the winner's column, appended to the running
 	// line when that column is still free there and otherwise on a line of its
-	// own — a line with no number, because no turn was played on it. Writing it
-	// at the margin instead, as this did, put it in player 1's column whatever
-	// the game had decided, so every game player 2 won came back from a
-	// round-trip credited to player 1.
+	// own — a line with no number, because no turn was played on it. At the
+	// margin it would read as player 1's win on a round-trip.
 	unnumbered := -1
 	if wins := winsLine(m, g); wins != "" {
 		winner := int32(1)

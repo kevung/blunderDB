@@ -6,19 +6,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// stats_convert.go bridges the database.* and storage.* stats DTOs so the
-// Database stats methods can delegate to the storage.StatsStore (the single
-// production implementation, shared with the headless server) while keeping
-// their long-standing database.* return types — so the Wails bindings and the
-// frontend see no change.
-//
-// The two DTO families are field-identical and share the same json tags (and,
-// where untagged, the same field names) — a property the stats parity tests pin
-// byte-for-byte. Converting through a JSON round-trip is therefore exact *by
-// construction*: it cannot silently mis-map a field the way hand-written
-// assignments could, and a future divergence between the two type sets would
-// surface as a parity-test failure. Stats are computed on demand, never on a
-// hot path, so the marshal/unmarshal cost is irrelevant.
+// Bridges the database.* and storage.* stats DTOs so the Wails bindings keep
+// their types. The two families are field-identical with the same json tags
+// (pinned by the parity tests), so a JSON round-trip is exact by construction;
+// stats are not a hot path.
 
 func jsonConvert(src, dst any) {
 	b, _ := json.Marshal(src)

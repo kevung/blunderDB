@@ -12,7 +12,7 @@ import (
 )
 
 // isolateXDGConfig points XDG_CONFIG_HOME at a throwaway directory so a test
-// run never touches (or reuses) the developer's real config.yaml.
+// run never touches the developer's real config.
 func isolateXDGConfig(t *testing.T) {
 	t.Helper()
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
@@ -20,16 +20,8 @@ func isolateXDGConfig(t *testing.T) {
 	t.Cleanup(xdg.Reload)
 }
 
-// TestLoadConfigPropagatesBearoffAndEpcChallenge is a regression test for a
-// bug found while writing the fuller round-trip test in
-// TestConfigRoundTripLoadSave: LoadConfig read BearoffTSPath and EpcChallenge
-// from disk into the *returned* Config, but never copied them onto the
-// receiver `c` (unlike every other field). Since the Wails binding exposes
-// methods on that receiver, GetBearoffTSPath()/GetEpcChallenge() — what the
-// frontend actually calls — silently reported the zero value after every
-// restart, even though the value was correctly persisted and even correctly
-// applied to the race engine once via the separate `config` return value in
-// main.go's runGUI(). See config.go LoadConfig.
+// TestLoadConfigPropagatesBearoffAndEpcChallenge guards LoadConfig copying
+// these fields onto the receiver, which the Wails-bound getters read.
 func TestLoadConfigPropagatesBearoffAndEpcChallenge(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -177,11 +169,8 @@ func TestClampPanelWidth(t *testing.T) {
 	}
 }
 
-// TestConfigRoundTripLoadSave writes a fully populated Config to a temporary
-// XDG_CONFIG_HOME, reloads it from scratch on a fresh receiver, and checks
-// every persisted field survives — including the two (BearoffTSPath,
-// EpcChallenge) that TestLoadConfigPropagatesBearoffAndEpcChallenge caught
-// missing from the receiver-side propagation.
+// TestConfigRoundTripLoadSave checks every persisted field survives a save
+// and a reload on a fresh receiver.
 func TestConfigRoundTripLoadSave(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -273,9 +262,8 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 	}
 }
 
-// TestConfigRoundTripEmptyFieldsKeepDefaults checks that a config saved with
-// only the required fields set (as an older config.yaml, before some field
-// existed, would look) still loads with every documented default.
+// TestConfigRoundTripEmptyFieldsKeepDefaults checks a config with only the
+// required fields loads with every default.
 func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -385,10 +373,8 @@ func TestClampGammonNetCandidates(t *testing.T) {
 	}
 }
 
-// TestGammonNetDisplayAndAnalysisPlyAreIndependent guards the point of the
-// ticket: lowering the display depth must never move the analysis depth, and
-// vice versa — ADR-0013's "conflating them is what turns a comfort knob into
-// silent damage to data".
+// TestGammonNetDisplayAndAnalysisPlyAreIndependent: neither depth moves the
+// other (ADR-0013).
 func TestGammonNetDisplayAndAnalysisPlyAreIndependent(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -404,12 +390,8 @@ func TestGammonNetDisplayAndAnalysisPlyAreIndependent(t *testing.T) {
 	}
 }
 
-// TestGammonNetZeroPlyExplicitlySavedSurvivesReload is a regression test for
-// a bug caught while writing this ticket: an early version mapped a zero
-// value to DefaultGammonNetPly unconditionally, which silently promoted a
-// deliberately-chosen 0-ply back to 2-ply on every reload. The *int fields
-// (nil = unset, non-nil zero = explicit 0-ply) are what make this
-// distinguishable — this test is what a plain int field would fail.
+// TestGammonNetZeroPlyExplicitlySavedSurvivesReload: an explicit 0-ply
+// reloads as 0, not DefaultGammonNetPly.
 func TestGammonNetZeroPlyExplicitlySavedSurvivesReload(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -432,11 +414,8 @@ func TestGammonNetZeroPlyExplicitlySavedSurvivesReload(t *testing.T) {
 
 func intPtr(v int) *int { return &v }
 
-// TestSaveConfig_WritesCurrentFileName guards #241's rename from
-// config.yaml to config.json: SaveConfig must create the file under
-// configFilePath (config.json), never the legacy name, and must leave no
-// temp file behind (the atomic write-then-rename's tmp file, created
-// alongside the real path).
+// TestSaveConfig_WritesCurrentFileName: SaveConfig writes configFilePath,
+// never the legacy name, and leaves no temp file behind.
 func TestSaveConfig_WritesCurrentFileName(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -464,12 +443,8 @@ func TestSaveConfig_WritesCurrentFileName(t *testing.T) {
 	}
 }
 
-// TestLoadConfig_MigratesLegacyFileName guards #241: a machine that only has
-// the pre-2026-09 config.yaml (content was always JSON despite the
-// extension) must still load correctly, and LoadConfig must migrate it to
-// config.json so every later run finds the current name directly — without
-// losing the legacy file, in case migration itself cannot write (e.g. a
-// read-only config directory).
+// TestLoadConfig_MigratesLegacyFileName: a legacy config.yaml loads and is
+// migrated to config.json, the legacy file kept.
 func TestLoadConfig_MigratesLegacyFileName(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -504,13 +479,8 @@ func TestLoadConfig_MigratesLegacyFileName(t *testing.T) {
 	}
 }
 
-// TestLoadConfig_CorruptFileResetsToDefaultsWithBackup guards #241: a
-// config.json that fails to parse as JSON (truncated write, hand edit,
-// corruption) used to fail LoadConfig outright, which main.go turned into
-// os.Exit(1) — the app refused to start at all until a user found and fixed
-// or deleted a file most never knew existed. It must instead back the bad
-// file up (so nothing is silently lost) and start from a fresh default
-// Config.
+// TestLoadConfig_CorruptFileResetsToDefaultsWithBackup: an unparseable file
+// is backed up and replaced by defaults, not a failure.
 func TestLoadConfig_CorruptFileResetsToDefaultsWithBackup(t *testing.T) {
 	isolateXDGConfig(t)
 
@@ -547,9 +517,8 @@ func TestLoadConfig_CorruptFileResetsToDefaultsWithBackup(t *testing.T) {
 	}
 }
 
-// TestConfig_ConfigVersionStamped guards #241's config_version field: both a
-// freshly created Config and one loaded from a pre-existing file that
-// predates the field must end up stamped with currentConfigVersion.
+// TestConfig_ConfigVersionStamped: new and pre-field configs both end up
+// stamped with currentConfigVersion.
 func TestConfig_ConfigVersionStamped(t *testing.T) {
 	isolateXDGConfig(t)
 

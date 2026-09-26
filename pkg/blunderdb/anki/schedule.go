@@ -4,9 +4,8 @@
 // calls ScheduleNext, and writes back what it returns — the advanced card
 // and the review-log entry — in one transaction.
 //
-// It lives beside domain rather than inside it because domain is
-// dependency-free (CLAUDE.md) and this package depends on go-fsrs. It does
-// not depend on storage: the backends wrap its errors with theirs.
+// It lives outside domain, which is dependency-free, because it depends on
+// go-fsrs. It does not depend on storage.
 package anki
 
 import (
@@ -32,9 +31,8 @@ var (
 	ErrInvalidRating = errors.New("anki: rating must be between 1 (Again) and 4 (Easy)")
 
 	// ErrUnreadableTimestamp is returned when a card's Due or LastReview is
-	// neither empty nor in TimeLayout. The card is refused rather than
-	// scheduled from a zero time: an unreadable row is corrupt and silently
-	// treating it as "never reviewed" would rewrite it as if it were sound.
+	// neither empty nor in TimeLayout: a corrupt row is refused rather than
+	// rewritten as "never reviewed".
 	ErrUnreadableTimestamp = errors.New("anki: unreadable card timestamp")
 )
 
@@ -58,9 +56,8 @@ type Params struct {
 // second precision, the precision of TimeLayout, so the strings on both
 // values round-trip exactly.
 //
-// An empty Due or LastReview means "never scheduled" / "never reviewed" and
-// is read as the zero time (a fresh card has neither); any other string
-// that does not parse is ErrUnreadableTimestamp.
+// An empty Due or LastReview is the zero time; any other unparseable string
+// is ErrUnreadableTimestamp.
 func ScheduleNext(card domain.AnkiCard, params Params, rating int, now time.Time) (domain.AnkiCard, domain.AnkiReviewLog, error) {
 	if rating < int(fsrs.Again) || rating > int(fsrs.Easy) {
 		return domain.AnkiCard{}, domain.AnkiReviewLog{}, fmt.Errorf("%w: got %d", ErrInvalidRating, rating)

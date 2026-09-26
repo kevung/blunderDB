@@ -1,12 +1,10 @@
 /**
- * direction-phase-settings.spec.js — les réglages de phase qui n'avaient pas de champ (#455,
- * D8.2).
+ * direction-phase-settings.spec.js — les réglages de phase.
  *
- * S2 samedi soir (rapport/S2.md § F15) : ajouter une consolante au tableau du dimanche était
- * sans chemin à l'écran. Budget : ≤ 4 gestes avant le tirage (Réglages, la case, Enregistrer,
- * Confirmer). Après le tirage la case est grisée, avec sa raison : le moteur accepte encore la
- * consolante et n'en fait rien (PileOfCells/backgammon-tournoi#16) — l'interface ne la
- * propose plus.
+ * Ajouter une consolante au tableau doit avoir un chemin à l'écran. Budget : ≤ 4 gestes avant
+ * le tirage (Réglages, la case, Enregistrer, Confirmer). Après le tirage la case est grisée,
+ * avec sa raison : le moteur Nicomaque accepte encore la consolante et n'en fait rien
+ * (PileOfCells/backgammon-tournoi#16), donc l'interface ne la propose plus.
  */
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';

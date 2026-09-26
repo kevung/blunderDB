@@ -12,36 +12,24 @@ import (
 // The kernel seam: which arithmetic path evaluates the network, and how wide a
 // batch it consumes.
 //
-// Two paths exist. Evaluate (network.go) is the scalar one, one position at a
-// time, and remains a valid entry point. EvaluateBatch below is the batched
-// one: EvalBatchWidth positions, one per SIMD lane, run through denseBatch —
-// either the generated AVX2 assembly or the pure-Go twin of the same layout.
+// Evaluate (network.go) is the scalar path; EvaluateBatch runs EvalBatchWidth
+// positions, one per SIMD lane, through the AVX2 assembly or its pure-Go twin.
 //
-// All of them are bound by ADR-0024: the batch vectorises over POSITIONS, not
-// over the reduction. Each lane accumulates over j in ascending order, in
-// float32, starting from the bias, with multiply and add kept separate. No
-// FMA, no reassociation, no float64 accumulation. Bit-identity with the scalar
-// path is the acceptance test, not the gold suites — those tolerate 1e-6 and
-// would let an FMA through. kernel_identity_test.go is where that is proved.
+// ADR-0024: the batch vectorises over POSITIONS, not over the reduction. Each
+// lane accumulates over j in ascending order, in float32, from the bias, with
+// multiply and add kept separate. No FMA, no reassociation, no float64
+// accumulation. Bit-identity with the scalar path (kernel_identity_test.go)
+// is the acceptance test; the gold suites tolerate 1e-6 and would let an FMA
+// through.
 
-// EvalBatchWidth is how many positions a batched evaluation consumes at once.
-// It is a property of the kernel, not a tuning knob a caller may vary: a lane
-// is a position, and a partial batch is filled by duplicating one, never with
-// zeros, so no caller ever reasons about the tail.
-//
-// Eight is the AVX2 float32 lane count and the starting point measured by
-// #145; NEON's four lanes make a group of eight two registers. The number is
-// deliberately here rather than in the search: the search asks how many
-// candidates it has, the kernel says how many it takes.
+// EvalBatchWidth is how many positions a batched evaluation consumes at once:
+// a property of the kernel (the AVX2 float32 lane count), not a tuning knob.
 const EvalBatchWidth = 8
 
-// KernelEnv names the environment variable that pins the arithmetic path.
-// Accepted values are "go" and, on amd64, "avx2". It is a diagnosis and test
-// knob, deliberately undocumented for users (decision D7 of the plan).
-//
-// A value that names a path this build or this CPU cannot provide is an error
-// at load time, never a silent fallback: an unverified fast path is exactly
-// how a silent wrong answer ships (acceptance criterion 4 of #133).
+// KernelEnv names the environment variable that pins the arithmetic path:
+// "go" or, on amd64, "avx2". A diagnosis knob, undocumented for users. A path
+// this build or CPU cannot provide is an error at load, never a silent
+// fallback (ADR-0024).
 const KernelEnv = "BLUNDERDB_GAMMONNET_KERNEL"
 
 // goKernelName is the pure-Go fallback, always available, and the reference
@@ -95,10 +83,9 @@ func resolveKernel(requested string, accelerated []denseKernel) (denseKernel, er
 		KernelEnv, requested, strings.Join(names, ", "))
 }
 
-// KernelName is the arithmetic path in use. The probe prints it beside every
-// timing so a measurement carries the code it measured. A misconfigured
-// selector reports "invalid" here and a real error where it can be returned —
-// Load and EvaluateBatch.
+// KernelName is the arithmetic path in use, printed beside every timing. A
+// misconfigured selector reports "invalid" here and errors in Load and
+// EvaluateBatch.
 func KernelName() string {
 	k, err := resolveKernelOnce()
 	if err != nil {
@@ -115,10 +102,7 @@ func kernelError() error {
 }
 
 // batchSlots is how many lanes a batch of n positions occupies — n rounded up
-// to a whole number of batches. The gap between n and batchSlots(n) is the
-// work a batched kernel would do and throw away, which is the number that
-// decides whether the twenty-one rolls need grouping (decision D4 of the plan,
-// and the open half of #146).
+// to a whole number of batches.
 func batchSlots(n int) int {
 	if n <= 0 {
 		return 0
@@ -129,16 +113,10 @@ func batchSlots(n int) int {
 // EvaluateBatch runs the forward pass over EvalBatchWidth positions at once and
 // writes each one's five post-processed probabilities into probs.
 //
-// features holds n encoded positions in its first n rows; n must be in
-// [1, EvalBatchWidth]. The lanes beyond n are filled by DUPLICATING row n-1 —
-// never with zeros. Two things follow, and both are deliberate: the caller
-// hands over what it has and reads back the first n results without reasoning
-// about the tail, and a duplicated lane is checkable against its twin, which
-// is a test the zero-filled alternative cannot offer.
-//
-// The result of every lane is bit-identical to what Evaluate returns for the
-// same features. That is the contract of ADR-0024 and the reason the kernel
-// vectorises over positions rather than over the sum.
+// features holds n encoded positions in its first n rows, n in
+// [1, EvalBatchWidth]. Lanes beyond n DUPLICATE row n-1, never zeros: the
+// caller never reasons about the tail, and a duplicated lane is checkable
+// against its twin. Every lane is bit-identical to Evaluate (ADR-0024).
 func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32, n int, probs *[EvalBatchWidth][NumOutputs]float32) error {
 	if n < 1 || n > EvalBatchWidth {
 		return fmt.Errorf("gammonnet: batch of %d positions, expected 1..%d", n, EvalBatchWidth)
@@ -153,13 +131,10 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	last := len(e.net.layers) - 1
 	lay0 := &e.net.layers[0]
 
-	// Dropping the features that are zero in every lane is exact in IEEE 754 —
-	// acc + w×0.0 == acc — with ONE exception: acc == -0.0, where the skipped
-	// +0.0 would have turned it into +0.0. The exception is neutralised by the
-	// ReLU that follows, which maps both zeros to +0.0, so the shortcut is
-	// taken only on a layer that has one. A single-layer network (its first
-	// layer is its output layer) keeps every column.
-	// kernel_identity_test.go proves both halves rather than assuming them.
+	// Skipping features zero in every lane is exact in IEEE 754 except when
+	// acc == -0.0 (the skipped +0.0 would make it +0.0); the following ReLU
+	// maps both zeros to +0.0, so the shortcut is taken only on a layer that
+	// has one. kernel_identity_test.go proves both halves.
 	skipZeros := last > 0 && !e.noSkipZeros
 
 	// Transpose to feature-major, and strip the dead columns in the same pass.
@@ -188,18 +163,11 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	}
 	e.nz = nz
 
-	// Compact the first layer's weights to the surviving columns. Indexing
-	// w[nz[t]] indirectly inside the inner loop measured SLOWER than the dense
-	// loop upstream (gn_infer_reference.c), and a vgatherdps is microcoded to
-	// ~40-52 µops on Zen 3, so the columns are gathered once per batch into a
-	// contiguous buffer and the same dense kernel runs over it with in = k.
-	//
-	// The gather is not free and the margin is thin: it moves out×k floats to
-	// save (in−k)/in of the first layer, which is 19 % of the big network. On
-	// the batch the search actually assembles — eight plays of one roll, union
-	// ~32 of 196 — this is worth ~6 % of a batch. On eight UNRELATED boards
-	// (union ~64) it is worth nothing and costs ~9 %. Measured 2026-09-02; if
-	// the shortcut is ever revisited, measure it on siblings.
+	// Gather the first layer's surviving columns once per batch into a
+	// contiguous buffer and run the same dense kernel with in = k: indirect
+	// indexing in the inner loop is slower (gn_infer_reference.c), and
+	// vgatherdps is microcoded. The margin is thin (~6 % on sibling plays,
+	// a loss on unrelated boards): measure on siblings if revisited.
 	cw := lay0.weight
 	if k != lay0.in {
 		cw = e.batchWeight[:lay0.out*k]
@@ -233,10 +201,8 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	return nil
 }
 
-// ensureBatchScratch allocates the batched scratch on first use. It is lazy on
-// purpose: the compacted first-layer weights are as large as the layer itself
-// (400 KB for the big network), and a caller that only ever evaluates one
-// position at a time should not pay for them.
+// ensureBatchScratch allocates the batched scratch (400 KB for the big
+// network) on first use, so a scalar-only caller never pays for it.
 func (e *Evaluator) ensureBatchScratch() error {
 	if e.batchA != nil {
 		return e.kernelErr

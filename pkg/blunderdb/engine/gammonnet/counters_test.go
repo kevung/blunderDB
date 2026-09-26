@@ -10,11 +10,9 @@ import (
 )
 
 // Les compteurs (Counters, BatchFill, CubeValuations, ResetCounters) et
-// KernelName sont la SURFACE DE SONDE : rien hors de ce paquet ne les appelle,
-// et #198 les garde pour cette raison — mais seuls les fichiers de mesure, tous
-// derrière une variable d'environnement, les touchaient, si bien qu'ils étaient
-// à 0 % sur chaque exécution ordinaire. Un compteur faux ne casse rien : il
-// rend une mesure fausse, ce qui est pire.
+// KernelName sont la surface de sonde, que seules les mesures sous variable
+// d'environnement exercent. Un compteur faux ne casse rien : il rend une
+// mesure fausse, ce qui est pire.
 //
 // Ce test tourne toujours et coûte une recherche 0-ply.
 
@@ -95,10 +93,8 @@ func TestSearcherCountersCountAndReset(t *testing.T) {
 	}
 }
 
-// TestSearcherCountersIncludeWorkers : un chercheur parallèle fait l'essentiel
-// de son travail dans ses ouvriers, donc un compteur qui ne les additionnait
-// pas rétrécirait à mesure qu'on ajoute des cœurs — l'inverse de ce qu'une
-// sonde de coût sert à mesurer.
+// TestSearcherCountersIncludeWorkers : sans les ouvriers, le compteur
+// rétrécirait à mesure qu'on ajoute des cœurs.
 func TestSearcherCountersIncludeWorkers(t *testing.T) {
 	s, p := countersTestSearcher(t, 4)
 	pos := p

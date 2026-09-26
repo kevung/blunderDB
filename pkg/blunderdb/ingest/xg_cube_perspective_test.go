@@ -5,13 +5,10 @@ import (
 	"testing"
 )
 
-// TestMapXGCubeResponseChancesAreFlipped pins the fix for a real bug found
-// while building gammonNet's integration gate (#123): mapDoubleTakeMove and
-// mapSingleCubeMove each synthesize a companion position for the
-// responder's Take/Pass, correctly flipping PlayerOnRoll to the opponent —
-// but were reattaching the doubler's own DoublingCubeAnalysis unchanged, so
-// the companion node's "Player" win/gammon/backgammon chances stayed the
-// doubler's, now mislabelled as the responder's.
+// TestMapXGCubeResponseChancesAreFlipped: mapDoubleTakeMove and
+// mapSingleCubeMove synthesize a companion position for the responder's
+// Take/Pass with PlayerOnRoll flipped, so its "Player" chances must be the
+// responder's, not the doubler's.
 //
 // Every doubler/responder pair in the fixture must have complementary win
 // chances (they describe the same game from opposite sides), and gammon

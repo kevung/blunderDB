@@ -12,11 +12,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// testStatsMatchDetail exercises MatchDetail on both backends: only the
-// PostgreSQL side had a dedicated test (via the fixture-driven parity gate in
-// stats_parity_postgres_test.go, which compares real XG imports against the
-// legacy Database — a different and heavier kind of coverage), so SQLite had
-// none in the storage layer itself.
+// testStatsMatchDetail exercises MatchDetail on both backends, at the storage
+// layer (stats_parity_postgres_test.go is the heavier fixture-driven gate).
 func testStatsMatchDetail(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	matchID, _ := statsFixtureMatch(t, s, 0, "Alice", "Bob")
@@ -193,10 +190,8 @@ func testStatsPositionIDsByMatch(t *testing.T, s storage.Storage) {
 	_ = matchB
 }
 
-// testStatsPositionIDsByTournament exercises PositionIDsByTournament, which
-// had no test at all on either backend before this (not even in the
-// PostgreSQL parity test): it aggregates by tournament, one level above
-// PositionIDsByMatch.
+// testStatsPositionIDsByTournament exercises PositionIDsByTournament, one
+// level above PositionIDsByMatch.
 func testStatsPositionIDsByTournament(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	matchA, posA := statsFixtureMatch(t, s, 0, "Alice", "Bob")

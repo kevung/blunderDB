@@ -297,11 +297,9 @@ func TestCLI_ListPositions(t *testing.T) {
 	}
 }
 
-// TestCLI_ListStats_TournamentIDsErrorUnwraps guards the %v→%w conversion
-// across internal/cli: "invalid --tournament" wraps parseIDList's error,
-// which itself wraps strconv.ParseInt's error. With %v (the old code) the
-// chain is opaque and errors.Is can never see the underlying
-// strconv.ErrSyntax; with %w (the fix) it does, at both wrapping levels.
+// TestCLI_ListStats_TournamentIDsErrorUnwraps requires %w, not %v, at both
+// levels of "invalid --tournament" wrapping parseIDList's error wrapping
+// strconv.ParseInt's error: only %w lets errors.Is see strconv.ErrSyntax.
 func TestCLI_ListStats_TournamentIDsErrorUnwraps(t *testing.T) {
 	t.Parallel()
 	cli := setupCLI(t)

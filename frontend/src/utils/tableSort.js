@@ -3,11 +3,8 @@
 // each reimplemented the same click-to-cycle behaviour.
 
 /**
- * Compute the next sort state when a sortable column header is clicked.
- *
- * Clicking the currently-sorted column cycles its direction: ascending →
- * descending, then (when `tristate`) back to unsorted (`column: null`), else
- * back to ascending. Clicking a different column selects it with `defaultDir`.
+ * Clicking the sorted column cycles asc → desc → (tristate) unsorted, else asc; another column
+ * starts at `defaultDir`.
  *
  * @param {string|null} curColumn   currently sorted column (null = unsorted)
  * @param {'asc'|'desc'} curDirection current direction

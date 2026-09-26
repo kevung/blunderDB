@@ -1,33 +1,14 @@
 /**
- * helpers/gestureCount.js — compter les gestes qu'une spec émet.
+ * helpers/gestureCount.js — compter les gestes qu'une spec émet, pour tenir
+ * les budgets d'ux.md §4. `countGestures` remplace `page.keyboard.press` et
+ * `page.mouse.click` le temps d'un bloc et rend `{ keys, clicks, total }`.
  *
- * `tasks/transcription/ux.md` §4 chiffre chaque flux en GESTES : trois touches
- * pour le meilleur coup joué, un clic pour un jet donné au triangle, `2k + 1`
- * touches pour un camp corrigé k Actions en arrière. Un budget qui n'est pas
- * compté n'est pas tenu : il suffit d'un clic d'armement de plus, ou d'un
- * aller-retour clavier ↔ souris oublié, pour qu'il se perde sans que rien ne
- * rougisse.
+ * `locator.click()` ne passe pas par `page.mouse.click` : un clic compté se
+ * fait par `g.click(locator)`. Le remplacement de `page.mouse.click` sert aux
+ * clics à la coordonnée (le damier).
  *
- * Playwright ne compte rien de tout cela — d'où ce fichier. `countGestures`
- * remplace `page.keyboard.press` et `page.mouse.click` le temps d'un bloc, et
- * rend `{ keys, clicks, total }`.
- *
- * ## Le clic passe par le compteur, jamais par le locator
- *
- * `locator.click()` ne descend PAS par `page.mouse.click` : il parle au pilote
- * directement, et aucun remplacement de `page.mouse` ne le verrait. Un clic
- * compté se fait donc par `g.click(locator)`, qui compte puis délègue. Le
- * remplacement de `page.mouse.click` reste, lui, pour les rares clics à la
- * coordonnée (le damier), et pour qu'un `page.keyboard.press` écrit
- * naturellement dans le bloc soit compté sans qu'on y pense.
- *
- * ## Ce qui n'est pas compté, et pourquoi
- *
- * Le temps. Le budget d'ux.md est en secondes (K = 0,28 s, P + 2 B pour un
- * clic), et un navigateur sans tête ne mesure pas le temps d'un utilisateur :
- * il mesure celui d'un pilote. Les secondes restent une vérification manuelle,
- * comme la fiche T2.1 le dit du triangle ; ce qui se tient ici est le NOMBRE
- * de gestes, dont les secondes se déduisent par les constantes de §1.
+ * Seul le NOMBRE de gestes est compté : un navigateur sans tête ne mesure pas
+ * le temps d'un utilisateur, les secondes se déduisent des constantes d'ux.md §1.
  */
 
 /**

@@ -132,11 +132,8 @@ func TestCollectionMembership(t *testing.T) {
 	}
 }
 
-// TestCollectionMoveCopy covers MovePosition. CopyPosition used to be
-// exercised here too, but only on PostgreSQL — it now has its own contract
-// case (storagetest.testCollectionCopyPosition, "Collection/CopyPosition")
-// that runs against both backends, so the CopyPosition-specific assertions
-// that used to live here were removed as a strict duplicate.
+// TestCollectionMoveCopy covers MovePosition; CopyPosition is the contract
+// case Collection/CopyPosition.
 func TestCollectionMoveCopy(t *testing.T) {
 	ctx := context.Background()
 	s, _ := openMatchStore(t)

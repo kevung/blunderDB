@@ -12,11 +12,8 @@ import (
 
 // Match import and management functions
 
-// Import XG match file using xgparser library
-// ImportXGMatch imports an eXtreme Gammon .xg match file. It delegates to the
-// shared ingest pipeline (ingest.MapXG → ingest.WriteMatch) — the same path the
-// headless server uses — persisting through the storage backend. The former
-// in-Database XG mapping it replaced now lives only inside the ingest package.
+// ImportXGMatch imports an eXtreme Gammon .xg match file through the shared
+// ingest pipeline (ingest.MapXG → ingest.WriteMatch).
 func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	ctx, done := d.beginCancellableImport()
 	defer done()

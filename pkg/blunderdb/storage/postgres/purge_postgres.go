@@ -18,9 +18,8 @@ import (
 // TestPurgeOrderMatchesRLSTables (purge_order_test.go) reads that set from the
 // embedded migrations, and TestPurgeTenant/TestTenantTablesSchemaGuards
 // (purge_postgres_test.go) from the live schema — row counts after a purge and
-// foreign-key order. Comparing the two lists with each other let trash and
-// import_batch (2.19.0) and direction/direction_event (2.24.0) go missing from
-// both at once (#363).
+// foreign-key order. Comparing the two lists only with each other would miss
+// a table both forget.
 var purgeOrder = []string{
 	"move_analysis", "anki_review_log", "collection_position", "training_item",
 	"training_session", "direction_event", "direction",
@@ -41,9 +40,7 @@ var purgeOrder = []string{
 // (X-Tenant-ID header value / storage.ParseTenant's input), not an
 // already-converted tenant_id — consistent with every other Store method in
 // this repo. PurgeTenant derives the numeric tenant_id internally. The
-// global metadata table is never touched: since schema 2.17.0 it holds no
-// per-tenant row (the session moved to session_state, #156, and the library
-// settings never lived there — ADR-0046).
+// global metadata table is never touched: it holds no per-tenant row.
 //
 // PostgreSQL-only, like ApplyRLS/DropRLS (rls_postgres.go) — there is no
 // SQLite equivalent (single-user desktop databases have no tenant to purge).
@@ -53,8 +50,8 @@ var purgeOrder = []string{
 func (s *Storage) PurgeTenant(ctx context.Context, scope string) error {
 	tenantID, err := storage.ParseTenant(scope)
 	if err != nil {
-		// Never fall through to tenant 0: before ADR-0005's 2026-09-03
-		// amendment `tenant.purge "alice"` purged every named tenant at once.
+		// Never fall through to tenant 0, which would purge the wrong tenant
+		// (ADR-0005).
 		return fmt.Errorf("postgres: purge tenant: %w", err)
 	}
 

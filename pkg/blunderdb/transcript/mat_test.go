@@ -25,14 +25,10 @@ var matFixtures = []string{
 
 // TestFromMATReplayDerivesResults reads each fixture and checks that what the Replay
 // DERIVES — the game boundaries, the initial scores, the winners and the points —
-// matches what the file states. It is the strongest statement of the state machine:
-// the file gives the plays, the package recomputes the outcome of every game from
-// them alone.
+// matches what the file states, recomputed from the plays alone.
 //
-// The oracle is the SCORE LINE of the next game, which is what a reader of the .mat
-// sees. The parser's own Winner/Points are held to it too: before gnubgparser v1.7.0 a
-// "Wins N points" line standing on its own went to whoever acted last (wrong for the
-// games here that ended on a resignation) and a drop scored no points at all (#361).
+// The oracle is the next game's SCORE LINE; the parser's Winner/Points are held to it
+// too (gnubgparser v1.7.0+ scores drops and resignations correctly).
 func TestFromMATReplayDerivesResults(t *testing.T) {
 	for _, path := range matFixtures {
 		t.Run(path, func(t *testing.T) {
@@ -177,10 +173,8 @@ func compareRecords(t *testing.T, game int, want, got []gnubgparser.MoveRecord) 
 			t.Errorf("game %d record %d: play %q (%s) rendered as %q (%s)",
 				game, i+1, w.MoveString, wp, g.MoveString, gp)
 		}
-		// The decoded Move is all -1 for BOTH a dance and a play the file did not
-		// record, so the pairs above say nothing about them: the mark is the only
-		// difference, and the round trip has to keep it. A "???" that came back as
-		// a dance would put a blank cell in the file where gnubg wrote a question.
+		// The decoded Move is all -1 for both a dance and "???": only the mark
+		// tells them apart, and the round trip must keep it.
 		if w.Unrecorded != g.Unrecorded {
 			t.Errorf("game %d record %d: %q rendered as %q — an unrecorded play and a dance are not the same cell",
 				game, i+1, w.MoveString, g.MoveString)
@@ -213,13 +207,8 @@ func summarise(records []gnubgparser.MoveRecord) string {
 // export of a club match where three plays were never written down.
 const unrecordedFixtureCount = 3
 
-// TestFromMATUnrecordedIsNotADance is the whole point of KindUnrecorded: a .mat cell
-// with no play in it means one of two things, and reading both as a dance was a
-// falsehood the round trip carried back into the file.
-//
-// A cell holding only its dice says the player COULD NOT play. A cell holding "???"
-// says gnubg did not record what they played. The parser decodes both to an empty
-// Move, so the two are told apart by the mark alone.
+// TestFromMATUnrecordedIsNotADance: dice alone is a dance, "???" an unrecorded play
+// (see checkerAction).
 func TestFromMATUnrecordedIsNotADance(t *testing.T) {
 	// A dance and an unrecorded play, side by side, on a board that allows plenty:
 	// the opening roll leaves both players everything to play, so a dance here would
@@ -273,7 +262,7 @@ func TestFromMATUnrecordedIsNotADance(t *testing.T) {
 
 // TestFromMATUnrecordedFixture holds the real file: the three "???" of test.mat are
 // read as unrecorded plays, each one reported, and no dance of the file is called
-// impossible any more.
+// impossible.
 func TestFromMATUnrecordedFixture(t *testing.T) {
 	doc, _ := loadFixture(t, "../../../testdata/test.mat")
 	ann := Replay(doc, 0)

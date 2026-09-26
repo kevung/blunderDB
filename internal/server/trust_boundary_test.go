@@ -20,9 +20,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// The three holes of #160: raw err.Error() on the wire, a body cap exempting
-// a whole prefix, and a prefix-matched import registry. Each test below is
-// the recette of one "À faire" line of task A.6.
+// Each test below closes one hole an import id or an error response could
+// leak through: raw err.Error() on the wire, a body cap exempting a whole
+// prefix, and a prefix-matched import registry.
 
 // secretCause is what a backend error looks like: it quotes a DSN, a path,
 // a statement. None of it may reach a client.
@@ -151,9 +151,8 @@ func TestInternalErrorMasked_MatchesExportMat(t *testing.T) {
 // failingBeginTx wraps a Storage whose BeginTx always fails with a
 // non-sentinel — hence internal — error, the way a genuinely broken backend
 // (a dropped connection, a full disk) would, independent of context
-// cancellation (see failingImportTx's doc comment: since #234 a cancelled
-// context is its own, distinct outcome for imports.json, not a stand-in for
-// this).
+// cancellation (see failingImportTx's doc comment: a cancelled context is its
+// own, distinct outcome for imports.json, not a stand-in for this).
 type failingBeginTx struct{ storage.Storage }
 
 func (failingBeginTx) BeginTx(context.Context) (storage.Tx, error) {
@@ -217,9 +216,9 @@ func lastErrorObject(t *testing.T, raw []byte) errorBody {
 // committed a 200 and can only append a trailing error — the streamed rows
 // (rpcStream/streamSeq2), an export's trailing envelope, and the gammonNet
 // sweep's error event — mask the same way. imports.json is covered
-// separately (TestInternalErrorMasked_ImportsJSON): since #234, a cancelled
-// context is no longer a stand-in for "an internal error" on that route — it
-// reports {"event":"cancelled"} instead (see
+// separately (TestInternalErrorMasked_ImportsJSON): a cancelled context is no
+// longer a stand-in for "an internal error" on that route — it reports
+// {"event":"cancelled"} instead (see
 // TestHandleImport_ContextCancelledEmitsCancelledEvent), so this table's
 // shared "cancel ctx up front" trigger can no longer exercise its masking.
 func TestInternalErrorMasked_NDJSONStreams(t *testing.T) {

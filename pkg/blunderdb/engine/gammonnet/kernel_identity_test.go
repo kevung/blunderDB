@@ -15,12 +15,9 @@ import (
 // allowed to exist at all: every arithmetic path must return the SAME BITS,
 // position by position, as the scalar loop in Evaluate.
 //
-// It is `==` and not a tolerance on purpose. parity_test.go and gold_test.go
-// tolerate 1e-6, which is above the ~3e-9 an FMA contraction moves an equity
-// by and above the 4.8e-7 a reassociation moves it by: they would let both
-// through. A gammonNet analysis stored in a .db has to be reproducible on
-// another machine, otherwise "stale" (AnalyzeStaleGammonNet) has no
-// definition — so the threshold here is zero.
+// `==`, not a tolerance: the gold suites' 1e-6 would let through both an FMA
+// (~3e-9) and a reassociation (4.8e-7). A stored analysis must be
+// reproducible on another machine, or "stale" has no definition.
 
 // batchKernels returns every arithmetic path this binary can run on this CPU,
 // so the test compares the ACTIVE kernel against the pure-Go twin on the same
@@ -113,12 +110,9 @@ func TestKernelIdentityOnReferenceVectors(t *testing.T) {
 	t.Logf("%d reference vectors, %d full batches, bit-identical", ref.count, full)
 }
 
-// TestKernelIdentityOnPartialBatches covers the tail the search will hand the
-// kernel: batches of 1 to EvalBatchWidth-1 real positions, with the rest of
-// the lanes filled by duplicating the last one. Two properties are checked at
-// once — the real lanes match the scalar path, and a duplicated lane returns
-// exactly what its twin returns, which is the check the zero-filled
-// alternative could not offer.
+// TestKernelIdentityOnPartialBatches covers partial batches (1 to
+// EvalBatchWidth-1 real positions, the rest duplicated): real lanes match the
+// scalar path, and a duplicated lane returns exactly its twin's result.
 func TestKernelIdentityOnPartialBatches(t *testing.T) {
 	ref := loadReference(t)
 	net, err := embeddedNetwork()
@@ -132,10 +126,8 @@ func TestKernelIdentityOnPartialBatches(t *testing.T) {
 	}
 	scalar := NewEvaluator(net)
 
-	// Every (n, offset) pair costs n scalar evaluations plus two batched ones;
-	// the full sweep is the tag build's job, and -short (what every push runs)
-	// takes a quarter of it. The property is not statistical — one differing
-	// bit anywhere fails it — so the shorter sweep still tests the thing.
+	// -short takes a quarter of the sweep; the property is not statistical,
+	// so one differing bit still fails it.
 	span := 200
 	if testing.Short() {
 		span = 48
@@ -172,10 +164,9 @@ func TestKernelIdentityOnPartialBatches(t *testing.T) {
 	}
 }
 
-// TestKernelIdentityOnSearchPositions is the second corpus #133 asks for: not
-// the C's synthetic vectors but the positions a real 1-ply search meets — the
-// root plays of the opening position and their children, which is exactly the
-// set a depth-1 search evaluates.
+// TestKernelIdentityOnSearchPositions checks the positions a real 1-ply
+// search meets (the opening's root plays and their children), not synthetic
+// vectors.
 func TestKernelIdentityOnSearchPositions(t *testing.T) {
 	positions := oneplyCorpus(t, 2000)
 	t.Logf("%d distinct positions from a 1-ply expansion of the opening", len(positions))
@@ -268,10 +259,9 @@ func oneplyCorpus(t *testing.T, want int) [][NumFeatures]float32 {
 	return out
 }
 
-// TestKernelPreservesSubnormals proves what the plan refuses to assume: Go sets
-// neither FTZ nor DAZ in MXCSR (nor FZ in FPCR on AArch64), so every path
-// follows IEEE 754 down into the subnormals. A kernel that flushed them would
-// return +0 here and still pass every gold suite.
+// TestKernelPreservesSubnormals: Go sets neither FTZ nor DAZ (nor FZ on
+// AArch64), so every path must follow IEEE 754 into the subnormals. A
+// flushing kernel would still pass every gold suite.
 func TestKernelPreservesSubnormals(t *testing.T) {
 	const tiny = 1e-30  // normal
 	const scale = 1e-15 // product 1e-45: subnormal, two ulps above zero
@@ -312,12 +302,9 @@ func TestKernelPreservesSubnormals(t *testing.T) {
 // TestKernelNegativeZeroIsNeutralisedByReLU is the exception that makes the
 // sparse first layer legitimate, stated as a test.
 //
-// Skipping a zero column is exact — acc + w×0.0 == acc — for every finite acc
-// EXCEPT acc == -0.0, where the addition of +0.0 yields +0.0 and the skip
-// leaves -0.0. The two differ in their sign bit. What makes the shortcut safe
-// is the ReLU that follows: it maps both zeros to +0.0. This test shows both
-// halves, so the day someone applies the shortcut to a layer without a ReLU
-// the reason it was safe is written down next to the reason it stops being.
+// Skipping a zero column is exact except at acc == -0.0, where the skip leaves
+// -0.0 instead of +0.0; the following ReLU maps both to +0.0. Both halves are
+// shown, for the day the shortcut meets a layer without a ReLU.
 func TestKernelNegativeZeroIsNeutralisedByReLU(t *testing.T) {
 	const in = 4
 	negZero := float32(math.Float32frombits(0x8000_0000))
@@ -352,9 +339,9 @@ func TestKernelNegativeZeroIsNeutralisedByReLU(t *testing.T) {
 }
 
 // TestDenseKernelsAgreeOnRandomLayers checks the kernels against each other one
-// LAYER at a time — the intermediate activations #133 asks for, not only the
-// five outputs — over shapes that exercise the tiling: output counts that are
-// and are not multiples of the tile, and input widths of one and of many.
+// LAYER at a time, intermediate activations included, over shapes that
+// exercise the tiling (output counts on and off the tile, input widths 1 and
+// many).
 func TestDenseKernelsAgreeOnRandomLayers(t *testing.T) {
 	kernels := batchKernels(t)
 	if len(kernels) < 2 {
@@ -399,7 +386,7 @@ func randFloats(rng *rand.Rand, n int) []float32 {
 
 // TestResolveKernelRefusesWhatItCannotProvide: a selector that names a path
 // this build or this CPU does not have is an error, never a quiet downgrade.
-// An unverified fast path is how a silent wrong answer ships (#133, criterion 4).
+// An unverified fast path is how a silent wrong answer ships.
 func TestResolveKernelRefusesWhatItCannotProvide(t *testing.T) {
 	fake := denseKernel{name: "avx2", dense: denseGo}
 

@@ -1,30 +1,17 @@
-// Package bearofftest hands tests a real bearoff table.
+// Package bearofftest hands tests a real bearoff table (the binary carries
+// none since ADR-0027).
 //
-// The tables left the binary with ADR-0027, and with them the guarantee that a
-// test could just ask the engine for one.
+// The two default tables are copied from the generator's reference fixtures
+// (bearoffgen/testdata); only a domain no fixture covers is generated.
+// Copying keeps the suite affordable: generating OS-06 under `-race` takes
+// minutes. Whatever is handed back passes the generator's fingerprint check,
+// so a truncated cache entry is replaced rather than read.
 //
-// The two default tables are already in the repository, as the fixtures the
-// generator is verified against (bearoffgen/testdata) — they are the reference
-// gnubg produced, and the identity tests would be meaningless without them.
-// This copies from there, and only generates when a test asks for a domain no
-// fixture covers.
-//
-// Copying rather than generating is what keeps the suite affordable: under
-// `-race`, generating OS-06 takes minutes, and the CI job that runs
-// internal/gui with the race detector timed out at twenty minutes because of
-// it. Reading 8 MB from disk takes milliseconds, race detector or not.
-//
-// Whatever it hands back is validated with the generator's own fingerprint
-// check, so a truncated file — a half-written cache entry from an interrupted
-// run — is replaced rather than read.
-//
-// The cache is shared by every package that asks, and `go test ./...` runs
-// those packages as CONCURRENT PROCESSES: the mutex below orders one process,
-// nothing orders two. So an entry is always written to a unique temporary file
-// and renamed into place, and a rename that loses the race is not an error —
-// the winner's file is read instead. Writing in place made internal/gui and
-// internal/server read each other's half-written table, and on Windows fail
-// outright on the sharing violation.
+// The cache is shared by packages that `go test ./...` runs as CONCURRENT
+// PROCESSES, which the mutex below cannot order: an entry is written to a
+// unique temporary file and renamed into place, and a lost rename race reads
+// the winner's file (writing in place made two packages read each other's
+// half-written table, and fail on Windows sharing violations).
 package bearofftest
 
 import (

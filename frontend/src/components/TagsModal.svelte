@@ -1,17 +1,6 @@
 <script>
-    // Le vocabulaire de tags (#265, fiche I.9).
-    //
-    // Un tag est un `#mot` dans un commentaire. Rien ne le déclare, aucune
-    // table ne le porte, et c'est voulu : le vocabulaire est la prose de
-    // l'utilisateur, et exiger une déclaration avant de pouvoir taguer
-    // transformerait une habitude en paperasse. Ce qui manquait, c'est
-    // l'autre moitié — VOIR le vocabulaire qu'on s'est construit, et cliquer
-    // un tag plutôt que se rappeler comment on l'écrivait.
-    //
-    // Une fenêtre plutôt qu'un onglet (la fiche disait « panneau ») : on
-    // consulte un vocabulaire puis on le referme, et cliquer un tag lance une
-    // recherche, qui bascule de toute façon sur les résultats. Une fenêtre
-    // qui se ferme au clic est exactement ce comportement-là.
+    // Le vocabulaire de tags (`#mot` des commentaires, jamais déclarés) : le voir
+    // et cliquer un tag pour le chercher. Une fenêtre, fermée par la recherche.
     import Modal from './Modal.svelte';
     import { Tags, RecommendedTags } from '../../wailsjs/go/database/Database.js';
     import { loadPositionsByFilters } from '../services/positionService.js';

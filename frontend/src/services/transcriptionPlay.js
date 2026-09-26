@@ -1,70 +1,30 @@
 /**
  * transcriptionPlay.js — le coup joué SUR LE PLATEAU pendant une transcription,
- * et les dés qu'il déduit (T2.3), puis le coup hors des règles posé d'un glissé
- * (ADR-0052).
+ * les dés qu'il déduit, et le coup hors des règles posé d'un glissé (ADR-0052).
  *
- * # Ce qui n'est pas écrit ici
+ * Le réducteur est celui de `quizPlay.js` (ADR-0040 : « rebound unchanged »),
+ * appelé et non recopié ; les coups légaux viennent de `App.LegalMoves`.
  *
- * Le réducteur. Il existe, il s'appelle `services/quizPlay.js`, il a été écrit
- * pour le quiz (#294) et l'ADR-0040 le dit « rebound unchanged » : ce fichier
- * l'appelle et n'en recopie pas une ligne. Aucune règle du backgammon n'est
- * donc écrite ici non plus — les coups légaux viennent de `App.LegalMoves`,
- * comme partout ailleurs.
+ * Le jet n'est pas connu : le transcripteur suit les pions sans taper de
+ * chiffre. La liste de départ est donc l'UNION des coups légaux des 21 jets,
+ * chacun portant le sien ; le filtre du réducteur la réduit comme une liste
+ * d'un seul jet, et les jets possibles se réduisent avec.
  *
- * # Ce qui est neuf : le jet n'est pas connu
+ * Les dés se déduisent des pips, sauf ambiguïté réelle (sortie « 2/off » jouée
+ * d'un 2 comme d'un 6, dé injouable). Règle, sans jamais deviner :
+ *   1. un seul jet compatible avec un coup achevé → dés déduits ([deducedDice]) ;
+ *   2. plusieurs jets avec un coup achevé → le triangle ne garde qu'eux et
+ *      attend un clic ([choosableRolls]) ;
+ *   3. aucun coup achevé → rien n'est enregistré.
+ * Deviner écrirait un jet que personne n'a vu ; demander à chaque coup
+ * coûterait le budget d'ux.md §4.1.
  *
- * Le quiz pose une question, donc un jet, donc une liste de coups légaux. Le
- * transcripteur qui regarde une vidéo, lui, suit les pions : il joue le coup et
- * ne tape jamais de chiffre. La liste de départ est donc l'UNION des coups
- * légaux des vingt et un jets, chaque coup portant le sien.
- *
- * Et c'est tout ce qu'il faut : le filtre du réducteur — un coup reste vivant
- * tant que les pas joués sont contenus dans les siens, multiplicités comprises —
- * réduit cette union exactement comme il réduit une liste d'un seul jet. Les
- * jets encore possibles sont ceux des coups encore vivants ; ils se réduisent
- * seuls, sans une ligne de code de plus.
- *
- * # Les dés déduits, et l'ambiguïté
- *
- * Un pas dit ses pips, donc son dé — sauf à la sortie, où « 2/off » se joue
- * avec un 2 comme avec un 6 quand les points hauts sont vides, et sauf quand un
- * dé n'est pas jouable et que le coup s'arrête plus tôt. L'ambiguïté est donc
- * RÉELLE, rare, et concentrée en fin de partie.
- *
- * La règle tient en trois cas et ne devine jamais :
- *
- *   1. un seul jet reste compatible et l'un de ses coups est achevé → les deux
- *      dés sont déduits, l'Action part sans une touche ([deducedDice]) ;
- *   2. plusieurs jets restent compatibles et au moins un d'entre eux a un coup
- *      achevé → le triangle des jets (T2.1) ne garde que ceux-là et attend un
- *      clic ([choosableRolls]). Un clic, seulement dans le cas où le plateau ne
- *      peut pas répondre à la place de l'utilisateur ;
- *   3. aucun coup achevé → il reste des pas à jouer, rien n'est enregistré.
- *
- * Deviner à la place de l'utilisateur aurait écrit dans le match un jet que
- * personne n'a vu ; demander à chaque coup aurait coûté le budget d'ux.md §4.1.
- *
- * # Le jet connu (ADR-0052)
- *
- * Quand les deux dés sont saisis, le plateau joue AUSSI : la liste de départ
- * est alors celle de ce seul jet, et l'état porte `rolled`, le jet tapé. Tout
- * ce qui précède vaut tel quel — un seul jet reste compatible, donc un coup
- * achevé se déduit, et part.
- *
- * # Le coup hors des règles (ADR-0052)
- *
- * Un coup illégal a tenu à la table : il se transcrit. Il n'a pas de bouton :
- * une fois le jet connu, et seulement alors, un glissé qu'aucun coup légal
- * n'offre pose le pion là où il est lâché ([dragStep]). L'état passe `free`,
- * plus aucune liste de coups ne le contraint, et chaque pas est appliqué tel
- * quel — par `applyStep` de quizPlay, encore lui, qui sait déjà retirer un
- * pion, frapper un blot et sortir. Le plateau obtenu est ce qui s'est passé :
- * c'est lui qui devient `board_after` sur l'Action, et le moteur le garde
- * seulement si aucun coup légal ne l'atteint (transcript.validate).
- *
- * Sans jet saisi, rien de tout cela : un coup hors des règles n'a aucun jet à
- * déduire, et deviner celui qu'on écrirait dans le match serait pire que de le
- * demander.
+ * Jet saisi (ADR-0052) : la liste de départ est ce seul jet (`rolled`), et un
+ * glissé qu'aucun coup légal n'offre pose le pion où il est lâché
+ * ([dragStep]) : l'état passe `free` et chaque pas s'applique tel quel
+ * (`applyStep`). Le plateau obtenu devient `board_after`, gardé par le moteur
+ * seulement si aucun coup légal ne l'atteint (transcript.validate). Sans jet
+ * saisi, pas de coup libre : il n'y aurait aucun jet à écrire.
  */
 
 import { newPlay, alivePlays, applyStep, barOf, playHop, resetPlay, OFF } from './quizPlay.js';
@@ -79,8 +39,8 @@ const WHITE = 1;
  */
 
 /**
- * L'état d'un coup joué au plateau : celui du réducteur, plus le mode libre, le
- * jet saisi (`null` tant qu'il ne l'est pas) et la position d'origine.
+ * L'état du réducteur, plus le mode libre, le jet saisi (`null` sinon) et la
+ * position d'origine.
  *
  * @typedef {import('./quizPlay.js').PlayState & {free: boolean, rolled: number[]|null, origin: any}} BoardPlayState
  */
@@ -89,8 +49,7 @@ const WHITE = 1;
 export const ROLLS = Object.freeze([1, 2, 3, 4, 5, 6].flatMap((high) => [1, 2, 3, 4, 5, 6].filter((low) => low <= high).map((low) => Object.freeze([high, low]))));
 
 /**
- * La clé d'un jet, dé fort d'abord : 3-1 et 1-3 sont le même jet, et c'est
- * l'étiquette que porte la case du triangle.
+ * La clé d'un jet, dé fort d'abord (3-1 = 1-3), étiquette de la case du triangle.
  * @param {number[]} dice
  */
 export function rollKey(dice) {
@@ -99,15 +58,9 @@ export function rollKey(dice) {
 }
 
 /**
- * L'état de départ d'un coup joué au plateau : l'union des coups légaux des
- * jets donnés, chacun portant le sien.
- *
- * `byRoll` est ce que le panneau a demandé au moteur — une entrée par jet,
- * `{ dice, plays }` — et un jet sans aucun coup légal (une danse) n'y apporte
- * rien, ce qui l'écarte de lui-même.
- *
- * `rolled` est le jet SAISI, quand il l'est : `byRoll` n'a alors qu'une
- * entrée, et c'est ce qui ouvre le glissé hors des règles ([dragStep]).
+ * L'état de départ : l'union des coups légaux des jets de `byRoll` (réponse du
+ * moteur, `{ dice, plays }` par jet ; une danse n'apporte rien). `rolled`, le
+ * jet saisi, ouvre le glissé hors des règles.
  *
  * @param {any} position la position d'où le coup part, camp au trait posé
  * @param {{dice: readonly number[], plays: any[]}[]} byRoll
@@ -125,12 +78,8 @@ export function newBoardPlay(position, byRoll, { rolled = null } = {}) {
 }
 
 /**
- * Remet le plateau tel que le tour le pose, en gardant ce qui n'appartient pas
- * au réducteur — le jet saisi et la position d'origine. Le coup redevient
- * CONTRAINT : aucun pas n'est joué, donc aucun pas hors des règles non plus.
- *
- * `resetPlay` rend un état NEUF de quizPlay, donc sans eux : c'est ici qu'ils
- * lui sont rendus, plutôt que dans le réducteur, qui ne les connaît pas.
+ * Remet le plateau au début du tour, coup de nouveau contraint. `resetPlay`
+ * rend un état neuf de quizPlay : le jet saisi et l'origine lui sont rendus ici.
  *
  * @param {any} state
  * @param {any} fallback la position à défaut d'origine (une question de quiz)
@@ -142,8 +91,8 @@ export function resetBoardPlay(state, fallback) {
 }
 
 /**
- * Le coup peut-il sortir des règles ? Seulement le jet connu (ADR-0052) — ou
- * s'il en est déjà sorti.
+ * Le coup peut-il sortir des règles ? Seulement jet connu (ADR-0052), ou déjà
+ * sorti.
  *
  * @param {any} state
  */
@@ -152,8 +101,7 @@ export function canPlayFree(state) {
 }
 
 /**
- * Le point porte-t-il un pion du camp qui joue ? C'est ce qu'un glissé hors
- * des règles demande à sa source, et rien d'autre.
+ * Le point porte-t-il un pion du camp qui joue ?
  *
  * @param {any} state
  * @param {number} point
@@ -164,9 +112,8 @@ export function hasMoverChecker(state, point) {
 }
 
 /**
- * Choisir le pion à déplacer, une fois le coup sorti des règles : n'importe quel point qui porte un
- * pion du camp au trait, la barre comprise. Un second clic sur le même point le
- * déselectionne.
+ * Choisir le pion à déplacer en coup libre (barre comprise) ; un second clic
+ * sur le même point le désélectionne.
  * @param {any} state
  * @param {number} point
  */
@@ -177,9 +124,8 @@ export function freeSelect(state, point) {
 }
 
 /**
- * Déplacer un pion sans rien vérifier : c'est le coup qui a été joué à la
- * table, et il n'est pas jugé (ADR-0044). Seule condition, physique : il faut
- * un pion à prendre. Le coup est libre dès ce pas, et le reste jusqu'au bout.
+ * Déplacer un pion sans rien vérifier (ADR-0044) ; seule condition, un pion à
+ * prendre. Le coup reste libre jusqu'au bout.
  * @param {any} state
  * @param {number} from
  * @param {number} to
@@ -191,12 +137,9 @@ export function freeStep(state, from, to) {
 }
 
 /**
- * Le pion lâché sur `to` au bout d'un glissé parti de `from` (ADR-0052).
- *
- * Un pas légal est joué comme un pas légal : le coup reste contraint et ses
- * dés se déduisent. Sinon, et seulement le jet connu ([canPlayFree]), le pion
- * est posé là où il a été lâché et le coup devient libre. Sans jet saisi, un
- * glissé hors des règles ne fait rien, comme aujourd'hui un clic.
+ * Le pion lâché sur `to` après un glissé depuis `from` (ADR-0052). Un pas légal
+ * reste contraint ; sinon, jet connu seulement ([canPlayFree]), le pion est
+ * posé et le coup devient libre. Sans jet saisi, rien.
  *
  * @param {any} state
  * @param {number} from
@@ -212,9 +155,8 @@ export function dragStep(state, from, to) {
 }
 
 /**
- * Le clic d'un coup sorti des règles : il choisit une source, ou déplace le
- * pion choisi.
- * Même forme que le clic du quiz, pour que le plateau n'ait qu'une branche.
+ * Le clic d'un coup libre : choisir une source, ou déplacer le pion choisi.
+ * Même forme que le clic du quiz, pour une seule branche au plateau.
  * @param {any} state
  * @param {number} point
  */
@@ -225,15 +167,10 @@ export function freeClick(state, point) {
 }
 
 /**
- * Annule le dernier pas, en rejouant les autres : la correction d'un clic
- * manqué, sans reprendre le coup au début.
- *
- * `undoLast` de quizPlay ferait la même chose, mais par `newPlay`, qui rend un
- * état neuf du réducteur — donc sans le jet saisi ni la position d'origine.
- * Le rejeu passe ici par le même chemin que le glissé : chaque pas est rejoué
- * contraint quand un coup légal l'offre encore, libre sinon — si bien que
- * défaire le seul pas hors des règles rend un coup contraint, sa liste et sa
- * déduction.
+ * Annule le dernier pas en rejouant les autres. Pas `undoLast` de quizPlay,
+ * qui perdrait le jet saisi et l'origine. Chaque pas est rejoué contraint si un
+ * coup légal l'offre encore, libre sinon : défaire le seul pas hors des règles
+ * rend un coup contraint.
  *
  * @param {any} state
  */
@@ -258,8 +195,8 @@ export function compatibleRolls(state) {
 }
 
 /**
- * Les jets dont un coup est ACHEVÉ par les pas joués — ceux que l'utilisateur
- * peut désigner quand le plateau ne peut plus trancher seul.
+ * Les jets dont un coup est ACHEVÉ par les pas joués, à désigner quand le
+ * plateau ne tranche pas.
  * @param {any} state
  */
 export function choosableRolls(state) {
@@ -272,11 +209,8 @@ export function choosableRolls(state) {
 }
 
 /**
- * Les deux dés que les pas joués déduisent, ou `null`.
- *
- * Un seul jet compatible, et un de ses coups achevé : il n'y a rien à demander.
- * Tout le reste — plusieurs jets, ou un coup en cours — rend `null`, et c'est
- * le panneau qui décide s'il attend un pas de plus ou un clic sur le triangle.
+ * Les deux dés déduits : un seul jet compatible avec un coup achevé. Sinon
+ * `null`, et le panneau attend un pas ou un clic sur le triangle.
  *
  * @param {any} state
  * @returns {number[]|null} le jet, dé fort d'abord
@@ -293,11 +227,8 @@ export function deducedDice(state) {
 }
 
 /**
- * Un point de la notation, rendu dans le repère ABSOLU du plateau.
- *
- * La notation est mover-relative — 24 nomme toujours les pions arrière du camp
- * qui joue — et `domain.pointLabel` la produit en miroitant les points du camp
- * blanc. Ceci en est l'inverse exact, et rien d'autre.
+ * Un point de notation (relatif au camp qui joue) dans le repère absolu :
+ * l'inverse exact de `domain.pointLabel`.
  *
  * @param {number} relative
  * @param {number} mover
@@ -307,12 +238,9 @@ function absolutePoint(relative, mover) {
 }
 
 /**
- * Les pas qu'un texte de notation décrit : `13/7 8/7*`, `bar/22`, `6/off(2)`.
- *
- * Le parseur n'est pas récrit : c'est `parseMoveNotation`, celui des flèches du
- * plateau, qui rend déjà `bar` → 0, `off` → −1 et développe les `(n)`. Ce qui
- * est ajouté ici est le passage au repère absolu, la seule chose que le
- * parseur ne pouvait pas savoir : il ne connaît pas le camp qui joue.
+ * Les pas d'une notation (`13/7 8/7*`, `bar/22`, `6/off(2)`), par
+ * `parseMoveNotation` (bar → 0, off → −1, `(n)` développés) puis passage au
+ * repère absolu, que le parseur ignore.
  *
  * @param {string} text
  * @param {number} mover
@@ -326,9 +254,8 @@ export function stepsFromNotation(text, mover) {
 }
 
 /**
- * Le plateau que ces pas laissent, appliqués l'un après l'autre au plateau
- * donné. Rien n'est jugé : un pas dont la source est vide ne prend simplement
- * aucun pion, et le Replay dira l'incohérence.
+ * Le plateau laissé par ces pas, sans jugement : un pas à source vide ne
+ * prend rien, et le Replay dira l'incohérence.
  *
  * @param {any} board
  * @param {{from: number, to: number}[]} steps

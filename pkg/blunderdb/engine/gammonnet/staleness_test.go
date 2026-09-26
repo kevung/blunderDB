@@ -43,11 +43,8 @@ func TestIsStaleAnalysisOlderEngineVersionIsStale(t *testing.T) {
 	}
 }
 
-// TestIsStaleAnalysisDifferentDepthIsStale is #191's actual fix: raising the
-// canonical depth (0-ply to 2-ply, say) must mark a same-EngineVersion row
-// stale on the depth mismatch alone — before this, EngineVersion never
-// changed just because the target depth did, so a depth-only bump left
-// every already-analysed position looking perfectly current.
+// TestIsStaleAnalysisDifferentDepthIsStale: raising the canonical depth must
+// mark a same-EngineVersion row stale on the depth mismatch alone.
 func TestIsStaleAnalysisDifferentDepthIsStale(t *testing.T) {
 	a := &domain.PositionAnalysis{
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
@@ -63,11 +60,9 @@ func TestIsStaleAnalysisDifferentDepthIsStale(t *testing.T) {
 	}
 }
 
-// TestIsStaleAnalysisForeignEngineIsNeverStale is ADR-0016's narrow
-// exception to ADR-0013: a position that carries any non-gammonNet entry
-// (XG, GNUbg, BGBlitz) is never reported stale by this predicate, whatever
-// its gammonNet entries look like — an imported analysis is protected
-// unconditionally, and a re-analysis sweep must never touch it.
+// TestIsStaleAnalysisForeignEngineIsNeverStale: a position carrying any
+// non-gammonNet entry is never stale, whatever its gammonNet entries say
+// (ADR-0013).
 func TestIsStaleAnalysisForeignEngineIsNeverStale(t *testing.T) {
 	a := &domain.PositionAnalysis{
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{

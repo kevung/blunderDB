@@ -22,19 +22,11 @@ func AwayScores(matchLength, score0, score1 int) [2]int {
 //
 // The away score carries the Crawford rule INSIDE the number (CONTEXT.md,
 // « Away score »): `1` means "one point to go, and this IS the Crawford game",
-// `0` means "one point to go, and Crawford is behind us". AwayScores only ever
-// computes matchLength − score, so it says `1` for both — and every reader that
-// decodes the sentinel (gammonnet.MatchStateFromPosition, the XGID the frontend
-// copies) then reads a Crawford game in every post-Crawford one, cube dead,
-// where the trailer in fact doubles at the first opportunity.
-//
-// So: outside the Crawford game a raw away of 1 becomes the post-Crawford
-// sentinel 0. Money play (AwayScores' [Unlimited, Unlimited]) and any away of
-// 2 or more are left alone — only the value that is ambiguous is rewritten.
-//
-// A 1-point match is its own Crawford game — its only game starts at match
-// point — which is what the derivations the callers use report, and the [1, 1]
-// it then yields is the cube-dead reading that match wants.
+// `0` means "one point to go, and Crawford is behind us". AwayScores says `1`
+// for both, which every sentinel reader would take as a cube-dead Crawford
+// game. So outside the Crawford game a raw away of 1 becomes 0; money play and
+// aways of 2 or more are left alone. A 1-point match is its own Crawford game,
+// and [1, 1] is the cube-dead reading it wants.
 func AwayScoresWithCrawford(matchLength, score0, score1 int, isCrawfordGame bool) [2]int {
 	away := AwayScores(matchLength, score0, score1)
 	if isCrawfordGame {
@@ -50,10 +42,9 @@ func AwayScoresWithCrawford(matchLength, score0, score1 int, isCrawfordGame bool
 
 // PointsAway decodes an away score into the DISTANCE to victory it means, and
 // is the reading every consumer of a stored score owes CONTEXT.md's « Away
-// score » entry: the two sentinels 0 and 1 describe the SAME distance — one
-// point — and differ only on whether the Crawford game has been played. Code
+// score » entry: the sentinels 0 and 1 are the SAME distance, one point. Code
 // that subtracts a stored 0 from the match length reads "has already won", and
-// a match-equity lookup then refuses the score and drops the row silently.
+// a match-equity lookup then silently drops the row.
 //
 // Money play (Unlimited) has no distance and is returned unchanged, for the
 // caller to recognise as it already must.
@@ -90,11 +81,9 @@ func (e *TooManyCheckersError) Error() string {
 
 // RecomputeBearoff sets Bearoff from what is on the board: each colour has
 // CheckersPerPlayer checkers, and those not on a point or the bar are off. It
-// is the one place the three match importers derive the borne-off count, and
-// the guard that used to be missing there: a corrupt file giving a player 16
-// checkers produced a bearoff of −1 that travelled into the Zobrist hash and
-// the EPC without anything noticing. Now the error names the colour, and the
-// Bearoff is left untouched.
+// is the one place the match importers derive the borne-off count; a corrupt
+// file with 16 checkers gets an error naming the colour, Bearoff untouched,
+// rather than a −1 travelling into the Zobrist hash.
 //
 // Only Black and White are counted; ExcludeEmpty markers of a search
 // structure are not checkers.

@@ -24,8 +24,8 @@ type route struct {
 // a hand-written handler. Two things read this classification: the routing
 // smoke test's Content-Type check (routes_smoke_test.go), and
 // streamingPaths (server.go), which gives a streaming-shaped route a longer
-// read/write deadline than an ordinary one (#234) — one classification, so
-// the two can never quietly drift apart.
+// read/write deadline than an ordinary one — one classification, so the two
+// can never quietly drift apart.
 type handlerKind int
 
 const (
@@ -67,7 +67,7 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/gammonnet.sweepStale":     true,
 	// search.query streams a whole result set, exactly like the rpcStream
 	// search.find it delegates to; it is hand-written only to refuse an
-	// unreadable query before the 200 is committed (B.18, #186).
+	// unreadable query before the 200 is committed.
 	"/v1/search.query": true,
 }
 
@@ -85,13 +85,12 @@ func (s *Server) routes() []route {
 		rs = append(rs, route{http.MethodGet, "/metrics", s.health.Expose})
 	}
 	if s.opts.EnableWebUI {
-		// Les fichiers statiques sont servis SANS tenant, et c'est délibéré :
-		// un navigateur doit pouvoir charger la page avant que le mandataire
-		// ne lui attribue quoi que ce soit, et une page ne contient aucune
-		// donnée. Dit ici parce que publicPaths est une liste écrite en
-		// négatif — « tout ce qui n'est ni /v1/ ni /ops/ » — et qu'une liste
-		// écrite en négatif change de sens quand l'ensemble change (G.5, #233
-		// l'a appris à ce démon une fois).
+		// Static files are served with NO tenant, deliberately: a browser must
+		// be able to load the page before the proxy assigns it anything, and
+		// the page itself carries no data. Stated here explicitly because
+		// publicPaths is defined by exclusion ("neither /v1/ nor /ops/"), and
+		// a set defined by exclusion changes meaning silently when the set
+		// changes.
 		rs = append(rs, route{http.MethodGet, webui.Prefix, webui.Handler().ServeHTTP})
 	}
 	rs = append(rs, s.domainRoutes()...)
@@ -114,11 +113,10 @@ func (s *Server) routes() []route {
 //     one named in the header the caller controls.
 //
 // Under /ops/ they are trivially excluded by a proxy (one prefix), and with
-// --ops-addr they are not even served on the public listener. What did NOT
-// move: gammonnet.sweepStale, which the fiche listed as "the whole file" but
-// which is scoped — gammonnetPositionsWithStaleAnalysis drains the caller's
-// scope, nothing else. It is expensive, not cross-tenant; the rate limiter and
-// the in-flight gauges are what bound it.
+// --ops-addr they are not even served on the public listener.
+// gammonnet.sweepStale stays outside /ops/: gammonnetPositionsWithStaleAnalysis
+// drains only the caller's scope, so it is expensive, not cross-tenant — the
+// rate limiter and the in-flight gauges are what bound it.
 func (s *Server) opsRoutes() []route {
 	var rs []route
 	rs = append(rs, s.maintenanceRoutes()...)
@@ -162,7 +160,7 @@ func (s *Server) domainRoutes() []route {
 // response or can otherwise run long: every rpcStream route, plus the
 // hand-written ones streamingCustomPaths names. server.go's methodDeadline
 // gives these a longer read/write deadline than an ordinary request/response
-// round-trip gets (#234).
+// round-trip gets.
 func (s *Server) streamingPaths() map[string]bool {
 	out := make(map[string]bool)
 	for _, rt := range s.routes() {
@@ -212,8 +210,7 @@ func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 // Allow header naming the one method the path accepts — instead of
 // net/http's built-in text/plain "405 method not allowed" (Go's 1.22+
 // method-aware ServeMux already produces that automatically; this only
-// changes its shape to match every other error response on this daemon)
-// (#232).
+// changes its shape to match every other error response on this daemon).
 func (s *Server) methodNotAllowed(mux http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if want, ok := s.allowedMethod[r.URL.Path]; ok && r.Method != want {

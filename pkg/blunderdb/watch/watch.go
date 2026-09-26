@@ -1,33 +1,18 @@
-// Package watch reports the importable files that APPEAR in a folder
-// (issue #258, fiche I.2).
+// Package watch reports the importable files that APPEAR in a folder, so a
+// session played in eXtreme Gammon lands in blunderDB without a manual import.
 //
-// The intent is the one thing every competition player asks for: play a
-// session in eXtreme Gammon, and find the matches already in blunderDB
-// without importing them by hand.
+// # Why this polls rather than using fsnotify
 //
-// # Why this polls rather than subscribing to the file system
-//
-// The fiche proposed fsnotify. This polls instead, and the reason is
-// measured against what the feature needs rather than against what is
-// fashionable:
-//
-//   - The fallback would have to exist anyway. An XG folder very often lives
-//     on a network share or a synchronised directory, where inotify and its
-//     equivalents report nothing (ADR-0004's whole posture: detect, and fall
-//     back). So fsnotify would buy a second code path, not a simpler one.
-//   - The latency requirement is loose. A match file appears when a session
-//     ends; nobody is watching the second hand. A ten-second poll of one
-//     directory costs a readdir.
-//   - It adds no dependency and no host capability to probe, on a tool that
-//     counts both.
+//   - The fallback would exist anyway: XG folders often live on network shares
+//     or synchronised directories where inotify reports nothing (ADR-0004).
+//   - Latency is loose: a ten-second poll of one directory costs a readdir.
+//   - No dependency and no host capability to probe.
 //
 // # What "new" and "stable" mean
 //
 // New means "not present when the watch started, and not reported since". A
-// watch does NOT import the folder it finds: someone starting a watch on a
-// folder holding four years of matches wants the next one, not all of them.
-// Importing what is already there is a separate, explicit gesture, and it
-// already exists.
+// watch does NOT import what the folder already holds: that is the separate,
+// explicit folder import.
 //
 // Stable means "seen twice with the same size and modification time". A file
 // being written by another program grows between two polls, and importing a
@@ -73,8 +58,7 @@ type Watcher struct {
 }
 
 // New starts a watch on dir. Everything already in the directory is recorded
-// as seen and will never be reported: a watch reports what appears, and the
-// caller who wants what is already there has a folder import for that.
+// as seen and will never be reported.
 //
 // An unreadable directory is an error here rather than on the first poll, so
 // a mistyped path is refused while the user is still looking at the setting.
@@ -157,10 +141,8 @@ func (w *Watcher) Poll() ([]string, error) {
 // scan lists the importable files directly inside the directory, with what
 // this moment says about each.
 //
-// It is deliberately NOT recursive. A watched folder is the place a tool
-// drops its matches, not a tree to crawl: recursing would make a watch on a
-// home directory a plausible mistake, and the cost of every poll would depend
-// on what the user happens to keep below it.
+// It is deliberately NOT recursive: a watched folder is where a tool drops its
+// matches, and recursing would make each poll's cost depend on the tree below.
 func (w *Watcher) scan() (map[string]fileState, error) {
 	entries, err := os.ReadDir(w.dir)
 	if err != nil {

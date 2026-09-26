@@ -33,18 +33,9 @@
         matches = []
     } = $props();
 
-    // Svelte 5 only tracks mutations made through a $state proxy. The parent hands this
-    // component a plain object taken out of a store, so a checkbox writing
-    // `exportOptions.includeCollections = true` updated the object but re-rendered nothing:
-    // every section gated on a checkbox stayed hidden. The options are therefore mirrored in
-    // local state — which the template and the handlers below use unchanged.
-    //
-    // The mirror is seeded ONLY when the dialog opens, and written back ONLY when the user
-    // confirms. An earlier version seeded it from a reactive read of the prop and wrote back
-    // from an $effect on every change; those two together can close a cycle through the
-    // parent's store binding, and a component that re-renders in a loop drops focus the
-    // instant you click into any of its fields. `untrack` keeps the seeding tied to
-    // `visible` alone, and the write-back happens once, on confirm.
+    // The prop is a plain object Svelte 5 cannot track, so options are mirrored in
+    // $state: seeded only on open (`untrack`, tied to `visible`) and written back
+    // only on confirm — a two-way sync loops through the parent's store and drops focus.
     let exportOptions = $state(untrack(() => ({ ...exportOptionsProp })));
     $effect(() => {
         if (visible) {
@@ -64,9 +55,7 @@
 
     let collections = $derived($collectionsStore || []);
 
-    // A ticked box with an empty field used to produce a file with no watermark and no
-    // warning — the export silently did nothing about the very thing the user asked for.
-    // Both mechanisms are now blocked until they are actually filled in.
+    // A ticked mechanism with an empty field blocks the export rather than silently doing nothing.
     let missingOrigin = $derived(exportOptions.watermarkEnabled && !(exportOptions.watermark || '').trim());
     let missingPassword = $derived(exportOptions.passwordEnabled && !(exportOptions.password || ''));
     let cannotExport = $derived(missingOrigin || missingPassword);
@@ -243,9 +232,7 @@
             <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
         </div>
 
-        <!-- These describe the file being produced, not the database being
-             exported from. They start from the source's values, which most
-             exports keep. -->
+        <!-- Describe the produced file; seeded from the source's values. -->
         <p class="group-title">{$t('export.metadataTitle')}</p>
 
         <div class="form-group">
@@ -299,9 +286,7 @@
             </div>
         </div>
 
-        <!-- Not content but working preferences: the producer's own saved searches,
-         which have no business in a recipient's database. Kept apart from the
-         options above for that reason, and off by default. -->
+        <!-- The producer's saved searches: working preferences, off by default. -->
         <div class="checkbox-group issuance-toggle">
             <div class="checkbox-item">
                 <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
@@ -310,10 +295,8 @@
             </div>
         </div>
 
-        <!-- Two independent, optional mechanisms, both the producer's choice and
-         both off by default: mark where the file comes from, and protect it
-         with a password. Neither makes the recipient's side record anything.
-         See ADR-0007. -->
+        <!-- Watermark and password, both optional and off by default; nothing is
+         recorded on the recipient's side (ADR-0007). -->
         <div class="checkbox-group issuance-toggle">
             <div class="checkbox-item">
                 <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
@@ -352,10 +335,7 @@
                     </label>
                     <div class="password-row">
                         <input id="export-password" type={passwordVisible ? 'text' : 'password'} bind:value={exportOptions.password} />
-                        <!-- Reveal while held, never toggled: the password goes back
-                         out of sight the moment the button is released, so it
-                         cannot be left showing by accident. Pointer and keyboard
-                         both work. -->
+                        <!-- Reveal while held, never toggled, so it cannot be left showing. -->
                         <button
                             type="button"
                             class="reveal"
@@ -406,9 +386,7 @@
         {/if}
 
         {#if exportOptions.includeCollections && collections.length > 0}
-            <!-- Covered / total. The export writes membership only for positions it
-                 exports, so a partial collection arrives truncated — said here rather
-                 than discovered by the recipient. -->
+            <!-- Covered / total: a partial collection arrives truncated. -->
             <PickList
                 header={$t('export.selectCollections')}
                 items={collections}
@@ -422,10 +400,8 @@
     {/if}
 
     {#if mode === 'exporting'}
-        <!-- Laid over the form rather than replacing it: the dialog keeps
-             exactly the same box, which is what stops WebKitGTK leaving a blank
-             white rectangle when the content changes. It also covers the
-             controls, so nothing can be edited while the export runs. -->
+        <!-- Overlaid, not replacing the form: WebKitGTK leaves a blank rectangle
+             when the box changes, and the controls stay covered during export. -->
         <div class="busy-overlay">
             <h2 class="modal-title">{$t('export.exportingTitle')} <span class="spinner"></span></h2>
             <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>

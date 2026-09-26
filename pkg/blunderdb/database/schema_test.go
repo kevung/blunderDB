@@ -55,12 +55,9 @@ func TestSchemaV200_PositionColumns(t *testing.T) {
 }
 
 // TestSchemaV200_Indexes verifies that all expected v2.0.0-and-later indexes
-// are created. idx_analysis_win_gammon_covering superseded the 2-column
-// idx_analysis_win_gammon (fiche-05 T3): the old name is no longer created on
-// a fresh database, so it is not in wantIndexes below. idx_position_score and
-// idx_analysis_win1 (E3, index redundancy pass) are likewise gone — both were
-// strict column prefixes of an index still in the list
-// (idx_position_score_cube, idx_analysis_win_gammon_covering respectively).
+// are created. idx_analysis_win_gammon, idx_position_score and
+// idx_analysis_win1 are not: each is a strict column prefix of an index still
+// in the list.
 func TestSchemaV200_Indexes(t *testing.T) {
 	t.Parallel()
 	d := NewDatabase()
@@ -165,9 +162,8 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 	}
 }
 
-// TestOpen_RepairsPositionsWithoutScalars covers the databases the bug above
-// already damaged: rows CommitImportDatabase inserted with their state alone.
-// Opening such a database must give those rows their hash and scalar columns
+// TestOpen_RepairsPositionsWithoutScalars: rows inserted with their state
+// alone. Opening such a database must give those rows their hash and scalar columns
 // back (from the full JSON state, the only faithful record) and fold the
 // duplicates the missing hash let through onto the row the index holds —
 // carrying the analysis, comment and collection membership across — without a

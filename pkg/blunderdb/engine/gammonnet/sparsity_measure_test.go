@@ -11,16 +11,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// La sparsité, SÉPARÉE PAR RÉSEAU — poste 4 de la verticale ADR-0003.
-//
-// Ce portage a mesuré la compaction des colonnes nulles à ~6 % globalement, et
-// −9 % sur des plateaux sans rapport (kernel.go, 2026-09-02). Il n'a jamais
-// séparé le grand réseau du petit. gammonNet l'a fait (T89) et a trouvé que le
-// petit représente 77 % des voies calculées mais 5 % du temps : l'optimiser
-// vaut le cinquième d'optimiser le grand, alors que son registre le classait en
-// priorité sur la foi du 78 %. Le chiffre a été retiré là-bas.
-//
-// Savoir ce qu'il vaut ICI demande le même banc séparé, et c'est ce fichier.
+// La sparsité, SÉPARÉE PAR RÉSEAU. gammonNet a trouvé que le petit réseau
+// fait 77 % des voies calculées mais 5 % du temps : ce fichier mesure ce que
+// la compaction des colonnes nulles vaut ici pour chacun.
 // Il n'assère rien.
 
 // sparsityCase est la décision canonique, au score, avec le videau — la
@@ -39,10 +32,8 @@ func sparsityConfig() SearchConfig {
 // configurations de compaction, entrelacées, et rapporte ce que chaque réseau
 // rend séparément.
 //
-// Les quatre configurations calculent exactement les mêmes bits — la
-// compaction est exacte en IEEE 754 (acc + w×0,0 == acc), ce que
-// kernel_identity_test.go prouve — donc l'arbre exploré est identique et l'A/B
-// est propre.
+// Les quatre configurations rendent les mêmes bits (kernel_identity_test.go) :
+// l'arbre exploré est identique.
 func TestMeasureSparsityByNetwork(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE") == "" {
 		t.Skip("poser BLUNDERDB_MEASURE pour mesurer ; ce test n'assère rien")
@@ -114,10 +105,8 @@ func TestMeasureSparsityByNetwork(t *testing.T) {
 }
 
 // TestMeasureNetworkCost chronomètre un lot plein à travers chaque réseau,
-// entrelacé, pour dire ce qu'une voie coûte de part et d'autre. Croisé avec les
-// évaluations COMPTÉES d'une décision, il donne la part de temps de chaque
-// réseau — le chiffre que gammonNet a mesuré à 77 % des voies pour 5 % du
-// temps, et que ce portage n'avait jamais séparé.
+// entrelacé ; croisé avec les évaluations comptées d'une décision, il donne
+// la part de temps de chaque réseau.
 func TestMeasureNetworkCost(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE") == "" {
 		t.Skip("poser BLUNDERDB_MEASURE pour mesurer ; ce test n'assère rien")
@@ -131,11 +120,8 @@ func TestMeasureNetworkCost(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Une fratrie réelle : les huit premiers coups légaux d'une ouverture,
-	// c'est-à-dire ce que la recherche assemble effectivement dans un lot. Un
-	// banc sur huit plateaux QUELCONQUES mesure autre chose — l'union de leurs
-	// entrées actives est deux fois plus large (leçon consignée dans kernel.go
-	// et dans l'ADR-0003 d'amont).
+	// Une fratrie réelle, comme la recherche en assemble : huit plateaux
+	// quelconques ont une union d'entrées actives deux fois plus large.
 	dp, err := domain.DecodeXGID(openingXGID)
 	if err != nil {
 		t.Fatal(err)

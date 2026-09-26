@@ -28,11 +28,7 @@
     let tournaments = $derived(result?.PerTournament ?? []);
     let matches = $derived(result?.PerMatch ?? []);
 
-    // ── L'objectif de progression (#274, fiche I.18) ──────────────────────────
-    //
-    // Une cible, une échéance, et une tendance qui dit où l'on va. Rien de
-    // plus : un objectif qui se mettrait à noter, à féliciter ou à rappeler
-    // serait une autre fonctionnalité.
+    // Objectif de progression : une cible, une échéance, une tendance — rien de plus.
     /** @type {{target: number, weeks: number, setAt: string} | null} */
     let goal = $state(null);
     let editingGoal = $state(false);
@@ -53,11 +49,8 @@
     let goalSeries = $derived(matches.map((m) => m.PR).filter((v) => Number.isFinite(v) && v > 0));
     let currentPR = $derived(goalSeries.length > 0 ? goalSeries[goalSeries.length - 1] : (result?.PRGlobal ?? 0));
 
-    // Un point de la série ≈ un match. Faute de savoir à quel rythme
-    // l'utilisateur joue, on projette sur autant de points qu'il en a joués
-    // dans les douze dernières semaines… ce qu'on ne sait pas non plus. On
-    // projette donc sur la MOITIÉ de la série, et on le dit : c'est une
-    // tendance, pas une prédiction.
+    // Rythme de jeu inconnu : projection sur la moitié de la série, affichée
+    // comme une tendance, pas une prédiction.
     let goalTrend = $derived(trend(goalSeries, Math.max(1, Math.round(goalSeries.length / 2))));
 
     let goalReached = $derived(goal && currentPR > 0 && currentPR <= goal.target);

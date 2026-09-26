@@ -9,11 +9,8 @@ import (
 	"testing"
 )
 
-// TestMetrics_PathLabelsAreBounded checks the cardinality guard end to end,
-// through the real route table: probing the daemon with arbitrary URLs must
-// leave /metrics with the declared routes and a single "unmatched" label —
-// never a series per probed URL (which is how a scanner would exhaust a
-// Prometheus server's memory).
+// TestMetrics_PathLabelsAreBounded: probing arbitrary URLs leaves /metrics
+// with the declared routes plus one "unmatched" label, never a series per URL.
 func TestMetrics_PathLabelsAreBounded(t *testing.T) {
 	ts := newTestServer(t)
 	get := func(path string) {

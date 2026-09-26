@@ -2,12 +2,9 @@
  * anki-answer-reveal.spec.js — la réponse masquée d'une carte de révision
  * (ADR-0025), dans l'application réelle et non dans un composant monté seul.
  *
- * Le parcours vérifié est celui de l'utilisateur : ouvrir l'onglet Anki,
- * lancer une session, constater que la réponse est masquée, la révéler, noter,
- * et retrouver la carte suivante masquée. Ce qu'un test de composant ne peut
- * pas voir et qui se joue ici : la touche Espace traverse le répartiteur
- * clavier global (elle ouvre la ligne de commande partout ailleurs), et
- * l'analyse affichée est bien celle que le backend a rendue POUR CETTE CARTE.
+ * Ce qu'un test de composant ne voit pas : Espace traverse le répartiteur
+ * clavier global (il ouvre la ligne de commande ailleurs), et l'analyse
+ * affichée est celle que le backend a rendue pour cette carte.
  */
 
 import { test, expect } from '@playwright/test';
@@ -176,11 +173,8 @@ test('une position sans analyse enregistrée le dit, sans zone masquée', async 
 });
 
 test('en colonne latérale, la réponse se pose sous la bande et défile au lieu d’être coupée', async ({ page }) => {
-    // Le panneau peut être une bande basse large ou une colonne étroite. Une
-    // colonne haute avait deux défauts que seule une mesure révèle : la réponse
-    // centrée flottait à une demi-hauteur des boutons qui la notent, et le
-    // tableau de coups, plus large que la colonne, était coupé au lieu de
-    // défiler — on masquait donc des colonnes au moment même de les révéler.
+    // En colonne étroite, la réponse doit rester près des boutons qui la
+    // notent, et le tableau de coups défiler plutôt qu'être coupé.
     await startReview(page, { side: true });
     await page.keyboard.press('Space');
     await expect(page.locator('.checker-table')).toBeVisible();

@@ -26,11 +26,8 @@ type errorEnvelope struct {
 // Bootstrap returns a working engine handler over an in-memory SQLite store:
 // a /healthz probe answers 2xx without an X-Tenant-ID header (public path),
 // and a real /v1 route still enforces the tenant header (middleware
-// unchanged) with a 400 the embedder can parse. The route under test used to
-// be the singular, non-existent "/v1/position.save": every request landed on
-// the catch-all mux and got its generic 404, so the assertion below
-// ("not 200") passed without ever exercising the embedding's actual
-// wiring — see issue #220.
+// unchanged) with a 400 the embedder can parse. The route must be a real one:
+// an unknown route hits the catch-all 404 and would pass "not 200" vacuously.
 func TestBootstrapServesHealthz(t *testing.T) {
 	h, closer, err := Bootstrap(context.Background(), Config{
 		Backend: "sqlite", DSN: ":memory:", EnableMetrics: true,
@@ -67,10 +64,8 @@ func TestBootstrapServesHealthz(t *testing.T) {
 	}
 }
 
-// TestBootstrapAppliesCORSAllowOrigin guards #236: Config.CORSAllowOrigin
-// used to have no way to reach internal/server.Options at all — an embedder
-// could never turn CORS on for its own front end. A request with a matching
-// Origin header must now get it echoed back.
+// TestBootstrapAppliesCORSAllowOrigin: Config.CORSAllowOrigin reaches
+// internal/server.Options — a matching Origin header is echoed back.
 func TestBootstrapAppliesCORSAllowOrigin(t *testing.T) {
 	h, closer, err := Bootstrap(context.Background(), Config{
 		Backend:         "sqlite",
@@ -91,11 +86,9 @@ func TestBootstrapAppliesCORSAllowOrigin(t *testing.T) {
 	}
 }
 
-// TestBootstrapAppliesMaxBodyBytes guards #236: Config.MaxBodyBytes used to
-// have no way to reach internal/server.Options — every embedder was stuck
-// with the internal daemon's own default cap, unable to tighten (or loosen)
-// it for its own deployment. A body over the configured cap must be refused
-// with 413, declared Content-Length or not.
+// TestBootstrapAppliesMaxBodyBytes: Config.MaxBodyBytes reaches
+// internal/server.Options — a body over the cap is refused with 413,
+// declared Content-Length or not.
 func TestBootstrapAppliesMaxBodyBytes(t *testing.T) {
 	h, closer, err := Bootstrap(context.Background(), Config{
 		Backend:      "sqlite",

@@ -199,7 +199,7 @@ func TestTheBoardSourceNeverAsksTheSeedItself(t *testing.T) {
 }
 
 func TestTheBoardSourceMakesAMoneyQuestionOfAScoredSeed(t *testing.T) {
-	// « la source n'en produit pas » (#322): the board gives its geometry,
+	// « la source n'en produit pas »: the board gives its geometry,
 	// the question is money at a centred cube.
 	seed := opening()
 	seed.Score = [2]int{3, 5}

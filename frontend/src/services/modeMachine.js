@@ -1,60 +1,47 @@
 /**
  * modeMachine.js — the board's mode automaton.
  *
- * The board is always in exactly one mode. The mode itself is published by
- * `statusBarModeStore` — every component reads it there, so that store *is*
- * the `mode` half of the machine's state and is never duplicated here:
+ * The mode lives in `statusBarModeStore` (never duplicated here):
  *
- *   NORMAL      browsing the library (positionsStore's ids + currentPositionIndexStore)
- *   MATCH       replaying a match (matchContextStore drives the navigation)
- *   COLLECTION  browsing a collection (positionsStore holds its ids)
- *   EDIT        the search tab: the board is a query being drawn
- *   EVAL        the Eval tab: the board is a scratch pad for the engine
- *   TRANSCRIBE  the Transcription tab: the board is the draft's Cursor
+ *   NORMAL      browsing the library
+ *   MATCH       replaying a match (matchContextStore drives navigation)
+ *   COLLECTION  browsing a collection
+ *   EDIT        search tab: the board is a query being drawn
+ *   EVAL        Eval tab: the board is a scratch pad for the engine
+ *   TRANSCRIBE  Transcription tab: the board is the draft's Cursor
  *
- * EDIT, EVAL and TRANSCRIBE are *scratch* modes: the board they show is not a
- * library record. Entering one snapshots what was being studied and leaving it
- * restores that snapshot — this is the `savedContext` half of the state. The
- * snapshot starts with the mode it was taken in, and every exit resumes that
- * mode through returnToStudiedMode(): a match or a collection is returned to,
- * never dropped to NORMAL (#406).
- * A snapshot holds positions only, never an analysis: on the way back the
- * analysis is fetched again through showPosition(), and while a scratch
- * mode is on, analysisStore still describes the position studied *before*
- * (see project memory « plateaux brouillons : analysisStore périmé »).
+ * EDIT, EVAL and TRANSCRIBE are scratch modes: entering snapshots what was
+ * studied (`savedContext`), and every exit resumes the snapshot's mode through
+ * returnToStudiedMode() — a match or collection is never dropped to NORMAL.
+ * A snapshot holds positions, never an analysis: showPosition() refetches it on
+ * the way back, and during a scratch mode analysisStore still describes the
+ * position studied before.
  *
- * Transitions (each is one exported function):
+ * Transitions (one exported function each):
  *
  *   enterEditMode       NORMAL | MATCH | COLLECTION | EVAL → EDIT
- *   exitEditMode        EDIT → the mode it was entered from (MATCH | COLLECTION | NORMAL)
+ *   exitEditMode        EDIT → the mode it was entered from
  *   enterEvalMode       NORMAL | MATCH | COLLECTION | EDIT → EVAL
- *   exitEvalMode        EVAL → the mode it was entered from (MATCH | COLLECTION | NORMAL)
+ *   exitEvalMode        EVAL → the mode it was entered from
  *   toggleEvalMode      EVAL → (exit + analysis tab) | * → Eval tab
  *   enterTranscribeMode NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE
- *   exitTranscribeMode  TRANSCRIBE → the mode it was entered from (MATCH | COLLECTION | NORMAL)
+ *   exitTranscribeMode  TRANSCRIBE → the mode it was entered from
  *   sendPositionToEval  * → EVAL on a given position (id cleared)
  *   toggleMatchMode     MATCH → NORMAL | * → MATCH
  *   handleOpenCollection * → COLLECTION
  *   exitCollectionMode  COLLECTION → NORMAL
- *   leaveSubSearchResults NORMAL (results of an `ss` run from a collection or a
- *                       match) → that COLLECTION | MATCH, on the position left
+ *   leaveSubSearchResults NORMAL (results of an `ss` run from a collection or
+ *                       match) → that COLLECTION | MATCH
  *
- * The machine also answers one question no other module may answer on its
- * own: which list is on screen — displayedPositionIDs(). `ss` and the Search
- * panel's "search in current results" box both search in it (#410).
+ * displayedPositionIDs() is the only answer to "which list is on screen".
  *
- * The scratch modes are reached from the tab bar: App.svelte's tab effect
- * calls enterEditMode/exitEditMode and enterEvalMode/exitEvalMode when the
- * active tab changes, and it runs the *exit* of the previous tab's mode
- * before the *entry* of the new one. The machine still copes with a direct
- * EDIT ↔ EVAL call by leaving the current scratch mode first, so that the
- * saved context of one scratch mode is never buried under the other's.
+ * App.svelte's tab effect runs the previous tab's exit before the new tab's
+ * entry; a direct EDIT ↔ EVAL call still leaves the current scratch mode first,
+ * so one snapshot is never buried under the other.
  *
- * positionService.js re-exports every transition, so callers keep importing
- * them from there; the two modules are a deliberate import cycle
- * (positionService owns the loaders — showPosition, loadAllPositions — and
- * the machine owns the transitions that call them). Nothing here runs at
- * module evaluation, which is what makes the cycle safe.
+ * positionService.js re-exports every transition: a deliberate import cycle
+ * (it owns the loaders, this module the transitions), safe because nothing
+ * here runs at module evaluation.
  */
 
 import { get } from 'svelte/store';
@@ -95,57 +82,30 @@ const NO_MATCH_CONTEXT = Object.freeze({
 
 /**
  * The `savedContext` half of the state. Each slot is written by one entry
- * transition and consumed (nulled) by the matching exit:
+ * transition and nulled by the matching exit:
  *
- *   beforeEval  { mode, matchContext, position, positionIndex, ids }
- *               written by enterEvalMode, consumed by exitEvalMode. `mode` and
- *               `matchContext` let the exit return to the studied match instead
- *               of dropping to NORMAL while matchContext still says a match is
- *               on (bug 2) — that left match navigation broken.
- *   beforeEdit  { mode, matchContext }: the mode EDIT was entered from. Written
- *               on *every* enterEditMode so a stale snapshot from an earlier
- *               match-entered EDIT can never be restored into a later
- *               NORMAL-entered one; consumed by exitEditMode (bug 2 again:
- *               leaving the search tab used to reload the whole library and
- *               bounce the user to the Matches tab). It holds no list: the one
- *               behind the query board — library, match, collection — stays in
- *               positionsStore.
- *   beforeTranscribe  the same photograph, taken by enterTranscribeMode and
- *               consumed by exitTranscribeMode. It is a slot of its own and not
- *               a second use of beforeEval: the two panels can be visited one
- *               after the other, and one snapshot buried under the other is the
- *               bug the EDIT/EVAL pair already had.
- *   evalSeed    the position the Eval panel must open on instead of its
- *               default bearoff. A hand-off between sendPositionToEval() and
- *               enterEvalMode(), which run one tick apart (the tab switch reaches
- *               enterEvalMode through App.svelte's tab effect, not a direct
- *               call) — hence a slot rather than a parameter.
- *   lastEvalBoard the board the Eval panel was last left on, photographed by
- *               exitEvalMode and reused by the next enterEvalMode. Unlike the
- *               slots above it is NOT consumed on use: leaving and returning
- *               to the panel used to hand back the default bearoff, throwing
- *               away whatever the user had built. It is a board, never a
- *               library record — id is forced to 0 and no analysis travels
- *               with it (the panel evaluates live, and a stale analysis
- *               describing another position is exactly the bug the scratch
- *               boards had). It outlives a library reload on purpose —
- *               forgetContextBeforeEval drops beforeEval, not this: a scratch
- *               board belongs to the session, not to the open database.
- *   beforeSubSearch the collection or the match an `ss` was run from, taken by
- *               noteSubSearchOrigin() when its results replace the list and
- *               consumed by leaveSubSearchResults() (#410):
+ *   beforeEval  { mode, matchContext, position, positionIndex, ids }, so the
+ *               exit returns to a studied match instead of NORMAL.
+ *   beforeEdit  { mode, matchContext }, rewritten on *every* enterEditMode so a
+ *               stale snapshot is never restored. No list: the one behind the
+ *               query board stays in positionsStore.
+ *   beforeTranscribe  the same photograph, in its own slot so that visiting
+ *               both panels never buries one snapshot under the other.
+ *   evalSeed    the position Eval must open on. A slot, not a parameter:
+ *               sendPositionToEval() and enterEvalMode() run a tick apart
+ *               (through App.svelte's tab effect).
+ *   lastEvalBoard the board Eval was last left on. NOT consumed on use, and
+ *               survives a library reload: a scratch board belongs to the
+ *               session. id forced to 0, no analysis (it would be stale).
+ *   beforeSubSearch the collection or match an `ss` was run from:
  *               { mode: COLLECTION, collection, ids, positionIndex, position, resultIds }
- *               or { mode: MATCH, matchContext, resultIds }. `resultIds` is the
- *               list the sub-search put on screen: the way back is offered only
- *               while that list is still the one shown, so a list another
- *               gesture put there (a deck, a blunder list, a view) is never
- *               swapped for a collection the user left long ago. A sub-search
- *               run inside those results keeps the origin; a search of the whole
- *               library, a library reload, a match or a collection opened drop it.
+ *               or { mode: MATCH, matchContext, resultIds }. The way back is
+ *               offered only while `resultIds` is still the list shown. A
+ *               sub-search inside those results keeps it; a library search,
+ *               reload, or opened match/collection drops it.
  */
 /**
- * The slots are all `null` at rest, so without this annotation the checker
- * infers the type `null` for each and rejects every assignment to them.
+ * Annotated because every slot starts `null`, which the checker would infer.
  *
  * @type {{beforeTranscribe: any, beforeEval: any, beforeEdit: any, beforeSubSearch: any, evalSeed: any, lastEvalBoard: any}}
  */
@@ -164,9 +124,8 @@ export function modeState() {
 }
 
 /**
- * Forget what enterEvalMode saved. loadAllPositions() calls this: reloading
- * the whole library redefines what "the position before EVAL" is, so a
- * later exitEvalMode reloads too instead of restoring a stale list.
+ * Forget what enterEvalMode saved: after a library reload, exitEvalMode must
+ * reload too rather than restore a stale list.
  */
 export function forgetContextBeforeEval() {
     savedContext.beforeEval = null;
@@ -177,26 +136,19 @@ function currentMode() {
 }
 
 /**
- * The mode half of a scratch mode's snapshot: the mode it was entered from,
- * and the match context that mode needs to be resumed. Every entry into a
- * scratch mode takes one (beforeEdit, beforeEval, beforeTranscribe) and every
- * exit hands it to returnToStudiedMode() — one rule for the three panels, so
- * that a list the user was studying cannot be resumed by one exit and dropped
- * by another (#406: Search left the collection on the way in, and Eval came
- * back to its ids in NORMAL mode).
+ * The mode a scratch mode was entered from, plus the match context needed to
+ * resume it. Every scratch entry takes one; every exit hands it to
+ * returnToStudiedMode() — one rule for the three panels.
  */
 function photographStudiedMode() {
     return { mode: currentMode(), matchContext: { ...get(matchContextStore) } };
 }
 
 /**
- * Put back the mode a scratch mode was entered from: the match (its context
- * restored), the collection, or the library. A collection is resumed only
- * while it is still the active one — a gesture that dropped it (a search, a
- * match opened) has already replaced the list behind the board.
- *
- * The caller restores the position; the mode comes first, so that no effect
- * sees the studied position under a scratch mode.
+ * Put back the mode a scratch mode was entered from. A collection is resumed
+ * only while still active (a search or opened match has replaced the list).
+ * The caller restores the position afterwards, so no effect sees it under a
+ * scratch mode.
  *
  * @param {{ mode: string, matchContext: any } | null | undefined} saved
  * @returns {string} the mode now on
@@ -215,22 +167,18 @@ function returnToStudiedMode(saved) {
     return MODE.NORMAL;
 }
 
-// ── The list on screen, and the way back from a sub-search (#410) ────────────
+// ── The list on screen, and the way back from a sub-search ───────────────────
 
 /**
- * The positions of the list on screen — the one `ss` and the Search panel's
- * "search in current results" box search in, stated once for both.
+ * The positions of the list on screen, searched by `ss` and the Search panel's
+ * "search in current results".
  *
- *   MATCH       the match's positions (matchContextStore.movePositions)
- *   EDIT        the list behind the query board: the match photographed on
- *               entry (enterEditMode empties matchContextStore, and the library
- *               list left in positionsStore is not what the user was looking
- *               at), otherwise positionsStore — a collection's ids stay there
- *               since #406
- *   otherwise   positionsStore: the library, a search's results, a collection
+ *   MATCH       matchContextStore.movePositions
+ *   EDIT        the match photographed on entry (enterEditMode empties
+ *               matchContextStore), otherwise positionsStore
+ *   otherwise   positionsStore: library, search results, collection
  *
- * A position met twice in a match is searched once: the backend receives a
- * set of ids, and order is not part of the question.
+ * The backend receives a set: a position met twice is searched once.
  *
  * @returns {number[]}
  */
@@ -243,11 +191,9 @@ export function displayedPositionIDs() {
 }
 
 /**
- * The collection or match being studied, as a sub-search must remember it —
- * read through the query board when the search was run from the Search tab.
- * On the query board the position on screen is a blank query, so the
- * collection's position is taken back from the list's cache, as exitEditMode
- * does.
+ * The collection or match being studied, seen through the query board when
+ * the search ran from the Search tab (there the collection's position comes
+ * from the list's cache, as in exitEditMode).
  */
 function subSearchOriginNow() {
     const mode = currentMode();
@@ -284,10 +230,9 @@ function subSearchResultsOnScreen() {
 }
 
 /**
- * Called by loadPositionsByFilters when a search's results are about to
- * replace the list, before any store moves. A sub-search run from a collection
- * or a match photographs it; one run inside the results of such a sub-search
- * keeps the origin it already has; any other search forgets it.
+ * Called before a search's results replace the list. A sub-search from a
+ * collection or match records it; one inside such results keeps the origin;
+ * any other search forgets it.
  *
  * @param {boolean} isSubSearch the search was restricted to the list on screen
  * @param {number[]} resultIds the list about to be shown
@@ -315,10 +260,8 @@ export function forgetSubSearchOrigin() {
 }
 
 /**
- * Whether Escape has a list to return to right now: the results of an `ss` run
- * from a collection or a match are on screen. A panel with nothing of its own
- * to close asks this before closing itself, so that a single Escape leaves the
- * results rather than the panel (#410).
+ * Whether sub-search results are on screen, so Escape leaves them before a
+ * panel with nothing to close closes itself.
  *
  * @returns {boolean}
  */
@@ -327,14 +270,9 @@ export function canLeaveSubSearchResults() {
 }
 
 /**
- * NORMAL, on the results of an `ss` run from a collection or a match → back to
- * that collection, whole, or that match, on the move studied — and on the
- * position the user left (#410). Does nothing, and says so by returning false,
- * when the list on screen is not those results any more.
- *
- * The mode comes first and the position after, through showPosition, exactly
- * as the scratch exits do: no effect sees the restored position under the
- * wrong mode, and the analysis panel is repopulated (bug 1, bug 2).
+ * Leave `ss` results for the collection or match they came from, on the
+ * position left. Mode first, then showPosition, as the scratch exits do.
+ * Returns false when the list on screen is no longer those results.
  *
  * @returns {Promise<boolean>} whether a list was returned to
  */
@@ -388,26 +326,17 @@ function blankEditBoard(pos) {
 // ── Saving a scratch board ───────────────────────────────────────────────────
 
 /**
- * A position just saved from a scratch board (scratchBoard.js) joins the list
- * the board's exit will put back — and only when that list is the whole
- * library. Any other list is what the user was studying (a match, a search
- * result, a collection, a deck, a statistics selection): leaving the panel
- * must find it exactly as it was, so it is left alone.
+ * A position just saved from a scratch board joins the list the exit will put
+ * back — only when that list is the whole library; any other studied list is
+ * left untouched.
  *
- * The list behind the board is the machine's to know. In EDIT it is still in
- * positionsStore (enterEditMode keeps it there, exitEditMode redraws from it);
- * in EVAL it is the id snapshot beforeEval holds. Both snapshots carry the
- * mode they were taken in, and only a board entered from NORMAL can have the
- * library behind it: a collection holding every position, in library order,
- * is still a collection (#406).
+ * In EDIT that list is positionsStore; in EVAL, beforeEval's ids. Only a board
+ * entered from NORMAL can have the library behind it, and "whole library" is
+ * checked on ids (list + id === ListPositionIDs), not inferred from flags: a
+ * deck or statistics selection is also NORMAL with no search. The id goes
+ * last; the index is untouched.
  *
- * "The whole library" is checked on the ids rather than inferred from flags:
- * a deck or a statistics selection is shown in NORMAL mode with no search
- * active. The list is the library when it plus the new id is exactly what
- * ListPositionIDs answers. The index is never touched: the id goes last.
- *
- * @param {number} id the position just written (a new one: a known position
- *   is already in the library)
+ * @param {number} id the position just written (a new one)
  * @returns {Promise<boolean>} whether the id was added
  */
 export async function joinLibraryBehindScratchBoard(id) {
@@ -460,11 +389,9 @@ export async function enterEditMode() {
     }
 
     if (currentMode() === MODE.EVAL) {
-        // Leave the scratch board of the Eval tab first — through the exit
-        // transition, not toggleEvalMode(): the toggle also flips the active tab
-        // to 'analysis', which bounced a user who had just clicked the search
-        // tab. The exit's synchronous prefix restores the mode (NORMAL or MATCH)
-        // and the studied position before we snapshot them below.
+        // Through the exit, not toggleEvalMode(), which would also flip the tab
+        // to 'analysis'. Its synchronous prefix restores mode and position
+        // before the snapshot below.
         exitEvalMode();
     }
 
@@ -476,32 +403,21 @@ export async function enterEditMode() {
         logger.log('Exiting MATCH mode to enter EDIT');
         await persistLastVisitedMatchPosition();
         matchContextStore.set({ ...NO_MATCH_CONTEXT });
-        // Deliberately NOT loadAllPositions() here (bug 2): it runs async without
-        // await and, on resolving, sets mode NORMAL and flips activeTab to
-        // 'matches' — racing this function and bouncing the user off the search
-        // tab (the studied match position was lost). EDIT clears the board below
-        // to build a query and positionsStore isn't consulted in EDIT, so there is
-        // nothing to load; exitEditMode restores the snapshot taken above.
+        // Not loadAllPositions(): unawaited, it would set NORMAL and flip the
+        // tab to 'matches' on resolving. EDIT does not read positionsStore, and
+        // exitEditMode restores the snapshot.
     }
 
-    // A collection is NOT left (#406). exitCollectionMode() here closed its
-    // panel, emptied its stores and reloaded the whole library, so the way out
-    // of the search tab could only return to the library. As for a match, what
-    // was studied stays behind the query board — the collection's ids in
-    // positionsStore — and exitEditMode resumes the mode from the snapshot.
+    // A collection is not left: its ids stay in positionsStore behind the
+    // query board and exitEditMode resumes it from the snapshot.
 
     if (currentMode() !== MODE.EDIT) {
         statusBarModeStore.set(MODE.EDIT);
-        // Clear the selected analysis move so its move arrows are erased when
-        // leaving a match/analysis position for the search tab. The board only
-        // auto-clears the selection on a position-ID change, and here the id is
-        // unchanged (the blank board keeps the studied position's id), so the
-        // arrows would otherwise persist over the empty EDIT board.
+        // Clear the selected move: the board only clears it on an id change,
+        // and the blank board keeps the studied id, so arrows would persist.
         selectedMoveStore.set(null);
-        // A copy is blanked, never the object on the board: handleOpenCollection
-        // puts the collection's own record there, which is also the list's
-        // cached entry, and blanking it in place emptied the very record
-        // exitEditMode puts back (#406) — what #201 was for the library.
+        // Blank a copy: the object on the board may be the list's cached
+        // record, which exitEditMode puts back.
         positionStore.update((pos) => blankEditBoard(JSON.parse(JSON.stringify(pos))));
     }
 }
@@ -513,7 +429,7 @@ export async function exitEditMode() {
     const saved = savedContext.beforeEdit;
     savedContext.beforeEdit = null;
     // Entered from a match: return to the studied move rather than dropping
-    // into the flat "all positions" list (bug 2).
+    // into the flat "all positions" list.
     if (returnToStudiedMode(saved) === MODE.MATCH) {
         const snap = saved.matchContext;
         const movePos = snap.movePositions?.[snap.currentIndex];
@@ -523,15 +439,10 @@ export async function exitEditMode() {
         }
         return;
     }
-    // NORMAL or COLLECTION: the list is the one positionsStore still holds.
-    // Put the studied position back on the board synchronously, from the
-    // window cache, before bumping the index. The redraw the bump triggers
-    // (App.svelte's nav effect) fetches asynchronously, and whoever runs right
-    // after this exit — App.svelte calls it without await and then
-    // enterEvalMode, which photographs the board — would otherwise see the
-    // blank query board under the library's id, and put it back on screen on
-    // the way out of Eval (#201). enterEditMode blanked a clone, so the cache
-    // still holds the record intact; on a miss the nav effect fetches it.
+    // Restore the studied position synchronously from the window cache before
+    // bumping the index: App.svelte calls this unawaited then enterEvalMode,
+    // which would otherwise photograph the blank query board. On a cache miss
+    // the nav effect fetches it.
     const currentIndex = get(currentPositionIndexStore);
     const cached = positionsStore.peek(currentIndex);
     if (cached) positionStore.set(JSON.parse(JSON.stringify(cached)));
@@ -579,16 +490,11 @@ function defaultEvalPosition() {
 }
 
 /**
- * Open the Eval panel on `position` instead of its default bearoff — the
- * "study THIS position" gesture, reached from the board's context menu or
- * from a Ctrl-C/Ctrl-V round trip.
+ * Open the Eval panel on `position` instead of its default bearoff.
  *
- * The copy is detached and its id cleared: the Eval board is a scratch pad,
- * and a position carrying a database id there would let a later Ctrl-U write
- * an edited board back over the record it came from. Everything else travels
- * as-is, including player_on_roll: the Eval panel reads the on-roll side for
- * its own facts table and gammonNet evaluates from it, so a mirrored match
- * position keeps both its orientation on screen and its meaning to the engine.
+ * The copy is detached and its id cleared, so a later Ctrl-U cannot write the
+ * edited board over the source record. player_on_roll travels as-is: the Eval
+ * facts and gammonNet both read it.
  *
  * @param {any} position
  */
@@ -607,19 +513,16 @@ export function sendPositionToEval(position) {
     }
 
     savedContext.evalSeed = seed;
-    // Normally the tab switch reaches enterEvalMode() through App.svelte's tab
-    // effect. If the Eval tab is somehow already selected without EVAL mode
-    // being on, that set() is a no-op and the effect never re-runs, so enter
-    // directly rather than leave the seed stranded.
+    // If the Eval tab is already active without EVAL mode, set() is a no-op
+    // and the tab effect never runs: enter directly.
     if (get(activeTabStore) === 'eval') enterEvalMode();
     else activeTabStore.set('eval');
 }
 
 /**
- * NORMAL | MATCH | COLLECTION | EDIT → EVAL. The mode is set to EVAL *before*
- * the scratch board lands in positionStore, in one synchronous run, or the
- * board's Eval effect (updateEPC in App.svelte) fires on the wrong position. The function is async only
- * for the way in from EDIT, and that await sits before the run, never inside.
+ * NORMAL | MATCH | COLLECTION | EDIT → EVAL. EVAL is set before the scratch
+ * board lands in positionStore, in one synchronous run, or updateEPC fires on
+ * the wrong position. The only await (leaving EDIT) sits before that run.
  */
 export async function enterEvalMode() {
     if (currentMode() === MODE.EVAL) return;
@@ -630,11 +533,8 @@ export async function enterEvalMode() {
     }
 
     if (currentMode() === MODE.EDIT) {
-        // Leave the search tab's scratch board first, so the snapshot below is
-        // the studied position (or match), not the blank query board. Awaited:
-        // enterEditMode blanks the board under the library's id, and only a
-        // completed exit guarantees the record is back (#201) — see
-        // exitEditMode for why its own restore is synchronous.
+        // Awaited: only a completed exit guarantees the studied record is back
+        // in place of the blank query board before the snapshot below.
         await exitEditMode();
         if (currentMode() === MODE.EVAL) return;
     }
@@ -660,9 +560,8 @@ export async function enterEvalMode() {
 }
 
 /**
- * EVAL → the mode it was entered from: MATCH | COLLECTION | NORMAL. The mode is restored
- * synchronously, before the studied position is put back, so the board's
- * Eval effect never sees the restored position under EVAL mode.
+ * EVAL → the mode it was entered from. Mode restored synchronously before the
+ * position, so the Eval effect never sees it under EVAL.
  */
 export async function exitEvalMode() {
     if (currentMode() !== MODE.EVAL) return;
@@ -690,11 +589,8 @@ export async function exitEvalMode() {
     positionsStore.setIds(saved.ids);
     if (saved.position) {
         currentPositionIndexStore.set(saved.positionIndex);
-        // Reload through showPosition (not a bare positionStore.set) so the
-        // analysis is fetched again and the analysis panel is repopulated on
-        // return. In MATCH mode the nav effect no longer redraws (bug 1
-        // guard), so without this the panel stayed empty after EVAL; in
-        // NORMAL mode this simply mirrors the index-driven redraw.
+        // showPosition, not positionStore.set: refetches the analysis (MATCH
+        // mode's nav effect does not redraw on its own).
         await showPosition(saved.position);
     }
 }
@@ -704,15 +600,9 @@ export async function exitEvalMode() {
 /**
  * NORMAL | MATCH | COLLECTION | EDIT | EVAL → TRANSCRIBE.
  *
- * The transcription panel takes the board over: it shows the Action the Cursor
- * is on, which is a draft's board and never a library record. So entering
- * photographs what was being studied, exactly as the Eval tab does, and
- * leaving puts it back — a user who steps into the panel to look at a draft
- * must come back to the position, or the match, they were on.
- *
- * The board itself is not replaced here. Until a draft is opened there is no
- * Cursor to show, and blanking the board would lose the studied position for
- * nothing; the panel puts the Cursor's position on it when one exists.
+ * Photographs what was studied, as Eval does, so leaving returns to it. The
+ * board is not replaced here: the panel puts the Cursor's position on it once
+ * a draft is open.
  */
 export async function enterTranscribeMode() {
     if (currentMode() === MODE.TRANSCRIBE) return;
@@ -778,7 +668,7 @@ export async function toggleMatchMode() {
     if (currentMode() === MODE.MATCH) {
         logger.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
         // The move being studied is a library position too: stay on it rather
-        // than land on the last position of the library (#201).
+        // than land on the last position of the library.
         const leavingId = get(positionStore)?.id ?? null;
         await persistLastVisitedMatchPosition();
         statusBarModeStore.set(MODE.NORMAL);
@@ -824,16 +714,14 @@ export async function toggleMatchMode() {
             player2Name: match.player2_name
         });
 
-        // Mode first, then the position through showPosition: with the match
-        // context and mode already set it reads the played move from the match
-        // and hides the cube analysis on a game's opening position, exactly as
-        // firstPosition/nextPosition do when navigating the match.
+        // Mode first, then showPosition: it then reads the played move from the
+        // match and hides the cube analysis on an opening position.
         statusBarModeStore.set(MODE.MATCH);
         const startMovePos = movePositions[startIndex];
         await showPosition(startMovePos.position);
         selectedMoveStore.set(null);
         // Player names are shown in the match-info header bar above the board
-        // (MatchInfoBar.svelte); no longer echoed in the status bar.
+        // (MatchInfoBar.svelte), not the status bar.
 
         lastVisitedMatchStore.set({
             matchID: match.id,
@@ -854,7 +742,7 @@ export async function toggleMatchMode() {
 // ── COLLECTION ───────────────────────────────────────────────────────────────
 
 /**
- * Any mode → COLLECTION, browsing `collectionPositions`.
+ * Any mode → COLLECTION.
  *
  * @param {any} collection
  * @param {any[]} collectionPositions

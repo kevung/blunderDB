@@ -2,53 +2,20 @@
     import { t } from '../i18n';
     import { cubeRows, cubeInfoRows } from '../utils/analysisRows.js';
 
-    // The cube Decision, in the one shape it has whatever regime produced it
-    // (ADR-0020): three named options in rows, canonical order, never sorted,
-    // plus the verdict. Mounted by EvalPanel (a live evaluation) and by
-    // AnalysisPanel (a stored record, possibly several engines side by side) —
-    // one rendering, two content rules, which is ADR-0017 rule 5.
+    // The cube Decision in its one shape (ADR-0020): three options in canonical
+    // order plus the verdict, for EvalPanel and AnalysisPanel (ADR-0017 rule 5).
+    // Position facts live in PositionFactsTable. `decision` comes from
+    // utils/cubeDecision.js, cells from utils/analysisRows.js; `cubeAnalysis`
+    // only feeds the depth/engine footer, which showInfo hides (ADR-0018 rule 4).
     //
-    // Win/gammon/backgammon chances and the cubeless equity are NOT here: they
-    // are position facts and live in PositionFactsTable (ADR-0017 rule 1).
-    // This component owns the decision and nothing else.
-    //
-    // `decision` comes from utils/cubeDecision.js — the single place the two
-    // source shapes (race.Money, domain.DoublingCubeAnalysis) become one
-    // object. `cubeAnalysis` is kept only to feed the depth/engine footer.
-    //
-    // The cells themselves — labels, formatted equities, the verdict text, the
-    // played/best marks — come from utils/analysisRows.js, the same rows the
-    // copied image paints: this component lays them out and nothing more.
-    //
-    // showInfo (ADR-0018 rule 4): EvalPanel hides that footer — depth and engine
-    // are named once in its own strip, since every row of a live evaluation
-    // shares them — while AnalysisPanel keeps it, a stored record's provenance
-    // being shown nowhere else.
-    //
-    // masked (Défi, ADR-0020 rule 7): the values are replaced in place and the
-    // structure stays. The best-row emphasis is suppressed with them — it is
-    // the verdict's only other carrier, so leaving it on would let the exercise
-    // be solved by looking for the bold line.
-    //
-    // isMoney (ADR-0016 point 6, #190/C.3): states the equity column's own
-    // referential — undefined (the caller has no position to read one from)
-    // keeps the plain, scale-silent header.
-    //
-    // jacoby / beaver (#190/C.3 point 5): the position's own two money-game
-    // rule flags (domain.Position.HasJacoby/HasBeaver) were stored and hashed
-    // but never shown next to the verdict they change the value of — a
-    // reader had no way to tell a "no double" reached under Jacoby from one
-    // reached without it. Undefined/false renders nothing, so a match-play
-    // position (where the same XGID field means Crawford, not these rules)
-    // is unaffected by a caller that simply never passes them.
-    //
-    // maxCube (#271) is the third of the same family and the one that needs
-    // saying most: it is the log2 exponent of the ceiling the SOURCE stated,
-    // and the built-in evaluator does not model a ceiling at all. So the badge
-    // reports a rule the verdict above it was computed WITHOUT — which is
-    // exactly why it is worth showing, since a capped cube is the one visible
-    // reason blunderDB and eXtreme Gammon can disagree here. 0 means the
-    // source stated none and renders nothing.
+    // masked (Défi, ADR-0020 rule 7): values replaced in place, best-row
+    // emphasis suppressed too, or the bold line would give the answer away.
+    // isMoney (ADR-0016 point 6): the equity header's referential; undefined
+    // keeps it plain. jacoby / beaver: the position's money rule flags, shown
+    // since they change the verdict; never passed at match play, where the XGID
+    // field means Crawford. maxCube: log2 exponent of the source's ceiling, which
+    // the built-in evaluator does not model — the one visible reason blunderDB
+    // and XG can disagree; 0 renders nothing.
     let {
         decision,
         cubeAnalysis = null,
@@ -111,9 +78,7 @@
 {/if}
 
 <style>
-    /* Jacoby/Beaver (#190/C.3 point 5): small, quiet badges next to the table
-       they change the value of — not a fourth column, since they apply to at
-       most a money position and most positions carry neither. */
+    /* Quiet badges, not a column: most positions carry neither flag. */
     .cube-rules {
         display: flex;
         gap: 6px;
@@ -130,10 +95,7 @@
         letter-spacing: 0.3px;
     }
 
-    /* ADR-0018 rule 5's idiom, which ADR-0020 finishes applying here: no cell
-       grid, hairline horizontal separators, small grey uppercase headers on a
-       transparent ground, tabular figures. Hierarchy comes from weight and
-       colour (ADR-0008). */
+    /* ADR-0018 rule 5 idiom (ADR-0020): hairlines, small grey headers, tabular figures. */
     .cube-table,
     .info-table {
         border-collapse: collapse;
@@ -170,9 +132,7 @@
         border-top: 1px solid #eee;
     }
 
-    /* Two orthogonal channels on one row: `played` is a background, `best` is
-       weight and colour, so a played action that is also the best reads as both
-       (ADR-0020). */
+    /* `played` = background, `best` = weight and colour: both can show (ADR-0020). */
     tbody tr.played td {
         background-color: color-mix(in srgb, #ffc107 20%, var(--color-surface));
     }
@@ -182,10 +142,7 @@
         color: var(--color-primary);
     }
 
-    /* The verdict is the one cell whose text can be a sentence rather than a
-       label — "Too good to double, take" (ADR-0019) is twice the width of
-       "Double, Take". Let it wrap instead of widening the whole table, which
-       the Eval panel has no room to absorb (ADR-0018: no scroll). */
+    /* The verdict may be a sentence: wrap rather than widen (ADR-0018: no scroll). */
     .verdict-row td {
         border-top: 2px solid #e0e0e0;
         font-weight: 600;

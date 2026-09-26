@@ -19,8 +19,8 @@ package gammonnet
 // occupies the same features. The network learns one function: P(the on-roll
 // player wins | board).
 //
-// The four cube inputs of the cubeful variants are deliberately absent: the
-// model this port retains is cubeless.
+// The four cube inputs of the cubeful variants are absent: the retained model
+// is cubeless.
 const (
 	// NumFeatures is the network's input width.
 	NumFeatures = 196
@@ -49,24 +49,11 @@ func Encode(p *Position, out *[NumFeatures]float32) bool {
 	return true
 }
 
-// encodeLegal is Encode on a position the caller already knows is legal.
-//
-// Valid() is not cheap — two passes over the twenty-four points plus two
-// checker counts — and it was HALF of Encode: 91 ns for the whole encoding,
-// 45 ns for the validation alone. A 2-ply decision encodes some fifty
-// thousand positions, so the search paid that half fifty thousand times to
-// re-establish something it had established by construction.
-//
-// By construction, precisely: a node's own position is validated by
-// Generator.LegalPlays before a single play is generated, and every play's
-// Result is that position with checkers moved — apply cannot invent or lose
-// one. The two entry points that take a position from outside (Searcher.Plays
-// and Searcher.Probs) validate it themselves, once, before the recursion
-// starts. Everything in between is internal.
-//
-// Encode keeps its validation. A caller outside this package hands in a
-// position this package did not build, and refusing it is the contract
-// (network.go's EvaluatePosition, and every test).
+// encodeLegal is Encode without Valid(), which is half its cost, for a
+// position legal by construction: LegalPlays validates a node before
+// generating, apply neither invents nor loses a checker, and the outside
+// entry points (Searcher.Plays, Searcher.Probs) validate once. Encode keeps
+// its validation for positions this package did not build.
 func encodeLegal(p *Position, out *[NumFeatures]float32) {
 	*out = [NumFeatures]float32{}
 
@@ -81,11 +68,9 @@ func encodeLegal(p *Position, out *[NumFeatures]float32) {
 		if n == 0 {
 			continue
 		}
-		// Where this physical point lands in the feature vector. White reads
-		// the board in index order; Black reads it mirrored, so that its home
-		// board occupies the same features as White's does. Get this backwards
-		// and nothing crashes — the evaluations simply stop meaning what they
-		// say.
+		// Black reads the board mirrored so its home board occupies the same
+		// features as White's. Backwards, nothing crashes; the evaluations
+		// just stop meaning anything.
 		slot := i
 		if me != White {
 			slot = NumPoints - 1 - i
@@ -102,10 +87,8 @@ func encodeLegal(p *Position, out *[NumFeatures]float32) {
 		}
 	}
 
-	// Computed in float64 and rounded once, as the C does: the scales are
-	// double literals there, so `off * (1.0/15.0)` is a double multiply
-	// followed by a single narrowing. Doing the division in float32 instead
-	// would round twice and diverge in the last bit.
+	// Computed in float64 and rounded once, as the C's double literals do;
+	// float32 would round twice and diverge in the last bit.
 	out[myBarIndex] = float32(float64(p.Bar[me]) * barScale)
 	out[myOffIndex] = float32(float64(p.Off[me]) * offScale)
 	out[oppBarIndex] = float32(float64(p.Bar[opponent]) * barScale)

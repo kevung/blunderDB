@@ -109,11 +109,8 @@ func TestUnknownMetadataIsNotCarriedIntoAnExport(t *testing.T) {
 
 // The design's central promise: the recipient's side records nothing. Opening a watermarked
 // database must leave every issuance row exactly as the producer wrote it, and must not
-// create any of the rows earlier iterations used to keep (holders, lineage, register).
-//
-// Note that opening a database is not a read-only act in general — blunderDB applies WAL
-// pragmas and may run ANALYZE to build query-planner statistics — so this asserts on the
-// metadata rows rather than on the file's bytes.
+// create any holder, lineage or register row (ADR-0007). Opening may still write WAL and
+// ANALYZE, so this asserts on the metadata rows, not the file's bytes.
 func TestOpeningAWatermarkedDatabaseRecordsNothing(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)

@@ -98,7 +98,7 @@ func testLibrarySettingsRejectsInverted(t *testing.T, s storage.Storage) {
 // library counter exists for: the number it shows is the number of Positions
 // the search behind its own link returns. A Position played two ways — well
 // once, badly once — is a Blunder, because `E>x` scores a deduplicated
-// Position by the largest of its recorded plays (#167) and the counter must
+// Position by the largest of its recorded plays and the counter must
 // not disagree with the list it opens.
 func testBlunderCountPromisesTheSearch(t *testing.T, s storage.Storage) {
 	ctx := context.Background()

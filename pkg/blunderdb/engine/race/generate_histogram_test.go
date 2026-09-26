@@ -13,26 +13,11 @@ import (
 
 // Is the generator REALISTIC? — measured, not asserted (ADR-0041 rule 5).
 //
-// The claim ADR-0041 rests on is that a played-out position carries the gaps,
-// low stacks and asymmetries of a real bear-off, and that a placement does not.
-// A claim of that shape is exactly the one nobody can check by eye, so this
-// file checks it by number: the wastage histogram of what the generator
-// produces, against the wastage histogram of every bear-off in the ten real
-// matches of testdata/, against — as a control — a uniform placement of the
-// same chequers.
-//
-// Wastage (EPC minus pip count) is the right axis because it IS what the
-// exercise trains: it is the whole difference between counting pips and
-// counting a bear-off, and it is the number a placement gets wrong. The pip
-// count alone would be nearly uninformative — any arrangement of n chequers on
-// six points has a pip count in a narrow band.
-//
-// The control is what gives the threshold teeth. A test that only said
-// "TVD ≤ 0.20" would pass for any distribution close enough by accident; this
-// one also requires the rejected alternative — the "weighted random placement"
-// of ADR-0041's considered options — to sit measurably further away. If the
-// generator ever degenerates into a placement, the second assertion falls
-// before the first.
+// The wastage histogram (EPC minus pip count — what the exercise trains, and
+// what a placement gets wrong) of generated positions is compared with that of
+// every bear-off in the ten real matches of testdata/, and with a control: the
+// uniform placement ADR-0041 rejected. The control gives the threshold teeth —
+// a generator degenerating into a placement fails it first.
 
 // wastageBinLow/High bound the histogram, in whole pips. A bear-off's wastage
 // runs from about seven (a tight bear-in) to the mid-twenties (chequers buried
@@ -44,39 +29,15 @@ const (
 
 // Two bars, and neither is chosen for comfort.
 //
-// # The ratchet
+// maxHistogramDistance is a RATCHET over deterministic inputs (fixtures, pinned
+// dice), measured at 0.135: lower it when the generator improves, never raise
+// it. The finite reference (157 positions) puts the noise ceiling at 0.118, so
+// about 0.017 is a real difference, left standing: tuning the pool would fit
+// this fixture set's noise, and widening the walk makes it worse (k ≤ 16:
+// 0.134, k ≤ 24: 0.165), so ADR-0041's 0..10 stands. Closing it wants a wider
+// reference.
 //
-// maxHistogramDistance records what the generator MEASURES today. Every input
-// is fixed — the ten match fixtures, a pinned dice stream — so the number is
-// deterministic, and this constant is a ratchet: it may be lowered when the
-// generator improves, never raised to let a regression through. Measured on
-// 2026-09-07: 0.135.
-//
-// # The noise ceiling, and what it says about that 0.135
-//
-// The reference is finite: 157 distinct bear-off positions, 314 sides. A
-// GENUINE sample of that size does not sit at zero from its own distribution,
-// and noiseCeiling() measures how far it does sit — 0.118 at the 95th
-// resample. So the generator's 0.135 is NOT within sampling noise: about 0.017
-// of it is a real difference from the bear-offs of ten real matches, and
-// saying otherwise would be the round threshold this file used to carry (0.20,
-// picked by hand, which any distribution between the noise floor and 0.3
-// passed).
-//
-// That difference is measured, small, and left standing rather than tuned
-// away: with 157 positions, moving the pool bin by bin until the number drops
-// would be fitting the noise of this fixture set, not making bear-offs more
-// real. Widening the walk was tried and REFUTED — k in 0..16 leaves it at
-// 0.134, 0..24 makes it 0.165 — so ADR-0041's 0..10 stands on measurement and
-// not on deference. Closing the last 0.017 wants a wider reference (more
-// imported matches), which is a ticket, not a constant.
-//
-// # What the control proves
-//
-// The placement ADR-0041 rejected sits at 0.282 — twice as far, and far past
-// the noise. That assertion is the one that would fall first if the generator
-// ever degenerated into a placement, and it is why the ratchet above is a
-// ratchet and not the whole test.
+// The rejected placement sits at 0.282, twice as far and past the noise.
 const (
 	maxHistogramDistance = 0.140
 	minControlRatio      = 1.5
@@ -167,11 +128,9 @@ func noiseCeiling(rng *rand.Rand, positions [][]bearoffSample, reference []float
 // ADR-0041 rule 5 compares against. Positions are kept only when they are in
 // the exercise's own domain, so both samples are filtered identically.
 //
-// A position is counted ONCE however many decisions it was recorded under. The
-// fixtures hold each of them about three times (the checker decision, the cube
-// decision, the raw entry), and letting that through would have weighted the
-// histogram by how a match file happens to be written and, worse, told the
-// bootstrap it had three times the sample it has.
+// A position is counted ONCE however many decisions it was recorded under
+// (about three per position), or the bootstrap would believe it had three
+// times the sample it has.
 func realBearoffPositions(t *testing.T) [][]bearoffSample {
 	t.Helper()
 	seen := make(map[domain.Board]bool)

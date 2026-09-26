@@ -9,12 +9,9 @@ import (
 // ndjsonContentType is the media type for newline-delimited JSON streams.
 const ndjsonContentType = "application/x-ndjson"
 
-// streamSeq2 writes an iter.Seq2[T, error] as an NDJSON stream, flushing after
-// each record so clients receive rows incrementally over HTTP/1.1 chunked
-// transfer. If an error is yielded before any record is written, it is turned
-// into a normal error envelope; once streaming has begun the status code is
-// already sent, so a mid-stream error is reported as a trailing
-// {"error":{...}} line instead.
+// streamSeq2 writes seq as NDJSON, flushing after each record. An error before
+// the first record becomes a normal error envelope; after it, the status is
+// already sent, so the error is a trailing {"error":{...}} line.
 func streamSeq2[T any](w http.ResponseWriter, seq iter.Seq2[T, error]) {
 	flusher, _ := w.(http.Flusher)
 	enc := json.NewEncoder(w)

@@ -8,11 +8,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
 )
 
-// The daemon serves the EPC, and the one-sided table it reads left the binary
-// with ADR-0027. In production `serve` generates or is pointed at one; here it
-// is taken from the repository fixture, and cached across packages, by
-// bearofftest. Failures panic: a TestMain has no *testing.T, and a zero-value
-// one turns any failure into an unreadable "main called runtime.Goexit".
+// TestMain provides the EPC's one-sided bearoff table (ADR-0027) from the
+// repository fixture via bearofftest. Failures panic: a TestMain has no
+// *testing.T, and a zero-value one hides errors behind runtime.Goexit.
 func TestMain(m *testing.M) {
 	path, err := bearofftest.EnsureOneSided()
 	if err != nil {

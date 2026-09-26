@@ -1,14 +1,7 @@
 <script>
-    // A text field with a dropdown of matching entities. MatchPanel's inline
-    // tournament picker and TournamentPanel's "add a match" field were the same
-    // widget written twice: a filtered list under (or above) the input, picked
-    // with the mouse, dismissed on blur, closed on Escape. Neither could be
-    // driven from the keyboard; this one can (arrows, Enter).
-    //
-    // The dropdown is position:fixed and measured from the input's rect, so it
-    // escapes the overflow:auto table containers the panels scroll in; it flips
-    // above the input when the space below is too short (`placement="auto"`) or
-    // always (`placement="above"`, for a field at the bottom of a pane).
+    // A text field with a filtered dropdown, mouse and keyboard (arrows, Enter).
+    // position:fixed from the input's rect to escape overflow:auto containers;
+    // flips above when short of room (`auto`) or always (`above`).
 
     import { tick } from 'svelte';
 
@@ -36,9 +29,7 @@
         onDismiss = undefined,
         /** Focus entered the field — a chance to (re)load `items`. */
         onFocus = undefined,
-        /** Picking an item writes its label into the field and closes the list
-         *  (an inline cell editor). `false` keeps the field and the list as they
-         *  are, for adding several entities in a row. */
+        /** Picking writes the label and closes the list; `false` keeps both, to add several in a row. */
         fillOnSelect = true,
         placement = 'auto',
         maxHeight = 120,

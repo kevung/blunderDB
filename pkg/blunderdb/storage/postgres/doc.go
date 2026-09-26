@@ -15,17 +15,11 @@
 // query. Per-tenant Zobrist dedup is enforced by the composite unique index
 // (tenant_id, zobrist_hash). See migrations/README.md and RLS.md.
 //
-// Schema. PostgreSQL starts fresh at the terminal SQLite schema (v2.7.0); the
-// historical SQLite migration chain is not ported. The schema DDL lives in
-// migrations/001_initial_v2_7_0.sql, embedded into the binary.
+// Schema. The baseline is migrations/001_initial_v2_7_0.sql (the SQLite
+// schema at v2.7.0; the older SQLite chain is not ported), followed by the
+// embedded forward migrations.
 //
 // Transaction isolation. Transactions use PostgreSQL's default READ COMMITTED
 // level. The aggregate stats queries tolerate this; nothing in the backend
 // relies on a stricter level.
-//
-// PR status. Open, Close, the pool, schema bootstrap and transactions work.
-// The positions, analyses, search, matches, tournaments and collections
-// families are implemented (P3 PRs 1-4); the remaining families are stubbed
-// and return storage.ErrInternal wrapped with a "not implemented" message
-// until their later P3 PR.
 package postgres

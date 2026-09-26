@@ -13,11 +13,9 @@ import (
 // TestParsePositionReadsOGID pins the claim the package doc makes: an OGID
 // reaches the database through the SAME entry point as an XGID, so the
 // clipboard, `blunderdb import` and /v1/positions.parseText all accept one
-// without a code path of their own (#260).
-//
-// The corpus pairs each OGID with the XGID of the same physical position, so
-// the assertion is that the two readers agree — a fact, not a transcription of
-// someone's reading of the format.
+// without a code path of their own. The corpus pairs each OGID with the XGID
+// of the same physical position, so the assertion is that the two readers
+// agree.
 func TestParsePositionReadsOGID(t *testing.T) {
 	path := filepath.Join("..", "..", "..", "testdata", "ogid_corpus.json")
 	raw, err := os.ReadFile(path)

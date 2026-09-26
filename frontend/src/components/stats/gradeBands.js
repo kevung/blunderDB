@@ -5,11 +5,8 @@
  * Colours are very low-alpha fills so they remain visible but non-invasive.
  */
 
-// `label` is the English name (and the test oracle); `key` is the i18n key
-// under `stats.grade.*`, which is what the panel renders — the manual
-// documents the same six bands in every language, so the interface must
-// not be the one place where they stay in English. The upper bound of a
-// band is excluded: a PR of exactly 4 is Advanced, not Expert.
+// `label` is the English name (test oracle); `key` the rendered i18n key
+// under `stats.grade.*`. Upper bounds are excluded: PR 4 is Advanced.
 export const GRADE_BANDS = [
     { key: 'worldClass', label: 'World Class', min: 0, max: 2, color: 'rgba(46, 125, 50,  0.10)' },
     { key: 'expert', label: 'Expert', min: 2, max: 4, color: 'rgba(100, 160, 50, 0.09)' },
@@ -41,11 +38,8 @@ export function gradeForPR(pr) {
 }
 
 /**
- * Build a Chart.js per-chart plugin that draws horizontal grade-band
- * backgrounds behind the dataset layer.
- *
- * In Chart.js a *per-chart* plugin is an object passed to the `plugins`
- * array in the chart config (not via `Chart.register`).
+ * Build a per-chart Chart.js plugin (passed in `plugins`, not registered)
+ * drawing grade-band backgrounds behind the datasets.
  *
  * @param {typeof GRADE_BANDS} bands
  * @returns {import('chart.js').Plugin}
@@ -68,10 +62,7 @@ export function makeGradeBandPlugin(bands) {
             ctx.clip();
 
             for (const band of bands) {
-                // In Chart.js linear scale (non-inverted):
-                //   large value → small pixel y  (visually near top)
-                //   small value → large pixel y  (visually near bottom)
-                // So band.max → pxTop (smaller y), band.min → pxBot (larger y)
+                // Pixel y grows downward: band.max → pxTop, band.min → pxBot.
                 const pxTop =
                     band.max === Infinity
                         ? top - 1 // extend past chart top to cover any high value
@@ -92,9 +83,6 @@ export function makeGradeBandPlugin(bands) {
     };
 }
 
-// MIN_CELL_DECISIONS mirrors storage.MinCellDecisions: the sample below which
-// a cell of the away × away matrix is not worth reading (#266). It is a
-// DISPLAY threshold — the backend returns every cell with its count, and this
-// is what greys the thin ones rather than hiding them, so the omission stays
-// auditable.
+// Mirrors storage.MinCellDecisions: a display threshold that greys thin
+// away × away cells rather than hiding them.
 export const MIN_CELL_DECISIONS = 10;

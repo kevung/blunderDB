@@ -1,15 +1,7 @@
 <script>
-    // La matrice du videau (#267, fiche I.11).
-    //
-    // Une décision de videau n'est pas une propriété du damier : les mêmes
-    // pions, à 2-away/4-away, se doublent, et à 4-away/2-away ne se doublent
-    // pas. blunderDB n'a jamais montré que la case que la position portait ;
-    // cette fenêtre montre la grille entière.
-    //
-    // Deux paliers, comme l'escalade du panneau Eval (#125) : 0-ply au geste
-    // — quelques millisecondes, la forme de la réponse est là tout de suite —
-    // puis la profondeur d'affichage configurée une fois la fenêtre au repos.
-    // Un balayage supplanté est annulé, jamais affiché.
+    // La matrice du videau : la décision sur toute la grille des scores. 0-ply au
+    // geste, puis la profondeur d'affichage au repos ; un balayage supplanté est
+    // annulé, jamais affiché.
     import Modal from './Modal.svelte';
     import { ComputeCubeMatrix, CancelCubeMatrix } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetDisplayPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -141,11 +133,8 @@
 
     let rows = $derived(Array.from({ length: matchLength }, (_, i) => i + 1));
 
-    /** La case du score que la position porte réellement, ou null quand il n'y
-     *  en a pas à désigner (money, Crawford, un away au-delà de la grille).
-     *  Une mise en évidence, pas une sélection : la case reste ce qu'elle est,
-     *  elle est seulement reconnaissable — un cadre et un sigle gras, pas une
-     *  couleur de plus, puisque les quatre fonds portent déjà le verdict. */
+    /** La case du score de la position, ou null (argent, Crawford, hors grille) ;
+     *  mise en évidence par un cadre, pas une couleur. */
     let current = $derived(currentScoreCell($positionStore, matchLength));
 
     /** @param {number} i @param {number} j */
@@ -264,10 +253,7 @@
         border: none;
     }
 
-    /* La couleur porte la même information que le sigle, jamais elle seule :
-       le sigle reste lisible sans distinguer les teintes. Les quatre fonds
-       sont mélangés à partir de la palette unique de style.css (ADR-0031),
-       pas de quatre teintes inventées ici. */
+    /* La couleur double le sigle, jamais seule ; fonds tirés de la palette (ADR-0031). */
     td.no_double {
         background-color: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
     }
@@ -289,14 +275,8 @@
         color: var(--color-text-muted);
     }
 
-    /* La case du score courant : un cadre à l'intérieur de la bordure (donc
-       sans décaler la grille d'un pixel), le sigle en gras, et les deux
-       en-têtes soulignés. Une forme, pas une teinte de plus — la couleur est
-       déjà prise par le verdict, et la case doit rester reconnaissable sans
-       distinguer les teintes. Le cadre est tracé dans l'encre de la case
-       (`currentColor`) plutôt que dans un jeton de couleur : il garde alors
-       exactement le contraste du sigle qu'il entoure, quel que soit le thème
-       et quelle que soit la surface sur laquelle la fenêtre est peinte. */
+    /* Case courante : cadre intérieur (la grille ne bouge pas) en `currentColor`,
+       pour garder le contraste du sigle quel que soit le thème. */
     td.current {
         outline: 2px solid currentColor;
         outline-offset: -2px;

@@ -9,7 +9,7 @@ import (
 )
 
 // TestMetadataVersion covers the bootstrapped version, SetVersion and the
-// Storage.Version delegation (D6).
+// Storage.Version delegation.
 func TestMetadataVersion(t *testing.T) {
 	ctx := context.Background()
 	s := openMem(t)
@@ -22,7 +22,7 @@ func TestMetadataVersion(t *testing.T) {
 		t.Errorf("bootstrapped version: got %q, want %q", v, domain.DatabaseVersion)
 	}
 
-	// Storage.Version delegates to MetadataStore.Version (D6).
+	// Storage.Version delegates to MetadataStore.Version.
 	sv, err := s.Version(ctx)
 	if err != nil {
 		t.Fatalf("Storage.Version: %v", err)

@@ -9,22 +9,17 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// The terminal valuation (#188). Before these tests no position in the whole
-// suite had a play that ended the game: terminalValue was at 0 % coverage,
-// valueSweep never took its isOver branch, and the one thing that stays
-// unexecuted by construction — the match-referential value of a finished
-// game, where a backgammon at 2-away is a match and a single game is not —
-// was the one thing a wrong port would get plausibly wrong.
+// The terminal valuation: the match value of a finished game (a backgammon at
+// 2-away is a match, a single game is not) is what a wrong port would get
+// plausibly wrong, and nothing else exercises it.
 //
 // Three boards, one per stake. White is on roll with two checkers left, on
 // the ace point (index 0) and the five point (index 4), thirteen borne off;
 // a 6-2 gives exactly two legal plays, 5/off 1/off which ends the game and
 // 5/3 3/off which does not — so every search below has one terminal and one
-// live candidate, in the same ranking. (A 4-2 would not do: 5/1 1/off and
-// 5/3 3/off both leave one checker on the ace point, and the generator
-// rightly keeps one play per resulting board.) Black differs in what the win is
-// worth: three checkers off (a plain game), none off (a gammon), none off
-// and one on the bar (a backgammon).
+// live candidate, in the same ranking (a 4-2 would collapse to one resulting
+// board). Black differs in what the win is worth: three checkers off (a plain
+// game), none off (a gammon), none off and one on the bar (a backgammon).
 //
 // The same three boards are the last three cases of the ADR-0023 gold
 // corpus (buildSearchCubeCorpus's terminalCases), so the C reference values
@@ -61,13 +56,9 @@ func terminalBoards() [3]Position {
 // terminalDice is the roll every terminal board is searched with.
 const terminalD1, terminalD2 = 6, 2
 
-// terminalState is the score the three boards are valued at in the gold
-// corpus and in the tests below, as White (the winner) sees it: 4-away
-// against 3-away, cube centred at 1. Chosen so the three stakes land on
-// three distinct rows of the MET — 3-away/3-away after a single game,
-// 2-away/3-away after a gammon, 1-away/3-away (Crawford) after a backgammon
-// — where 2-away/2-away, say, would price the gammon and the backgammon the
-// same.
+// terminalState is the score the three boards are valued at, as White (the
+// winner) sees it: 4-away against 3-away, cube centred at 1, so the three
+// stakes land on three distinct rows of the MET.
 var terminalState = MatchState{AwayOnRoll: 4, AwayOpponent: 3, Cube: 1}
 
 // finished plays the game-ending 5/off 1/off on a terminal board and returns
@@ -138,10 +129,9 @@ func TestTerminalValueAtScoreIsTheMETOfTheStake(t *testing.T) {
 			t.Errorf("stake %d: terminalValue(nil) = %v, want terminalEquity %v", stake, got, terminalEquity(&done))
 		}
 
-		// Match: the loser's MWC is one minus the winner's, read from the
-		// winner's row of the table. The MET is stored in float32 and the
-		// two readings (the loser's own cell, one minus the winner's) round
-		// independently, so they agree to float32 and not to the bit.
+		// The loser's MWC is one minus the winner's; the two float32 MET
+		// readings round independently, so they agree to float32, not to
+		// the bit.
 		want := 2*(1-metWin(terminalState, stake)) - 1
 		got := terminalValue(&done, &loserState)
 		if math.Abs(got-want) > 1e-6 {
@@ -214,10 +204,8 @@ func TestTerminalValueSaturatesWhereTheStakeWinsTheMatch(t *testing.T) {
 	}
 }
 
-// valueSweep values a game-ending play through terminalValue, in the state
-// the resulting position's own mover sees — the swapped one — and the
-// search hands that value out unchanged at every ply: a finished game has no
-// deeper ply to search.
+// valueSweep values a game-ending play through terminalValue in the swapped
+// state, and the search hands it out unchanged at every ply.
 func TestSearchValuesATerminalPlayByTheMET(t *testing.T) {
 	boards := terminalBoards()
 	out := make([]Candidate, MaxPlays)

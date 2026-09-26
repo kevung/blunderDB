@@ -11,20 +11,14 @@ import (
 	"github.com/PileOfCells/backgammon-tournoi/render"
 )
 
-// The standalone display page (issue #386, ADR-0047 §9).
+// The standalone display page (tasks/nicomaque/fonctionnel.md §9): ONE HTML FILE, no route, no
+// player screen — ADR-0039 keeps tournaments out of the web front, and a file opens offline.
 //
-// A tournament is watched: the players want to know who they play and at which table without
-// coming to ask the director. The answer is ONE HTML FILE — no consultation route, no player
-// screen. ADR-0039 closed the web front's perimeter to tournaments, and a file opens offline,
-// from a USB key, on the hall's computer, which is the only thing one can count on a Sunday
-// morning.
-//
-// PageName is the file's name inside the chosen folder. It never changes, so the browser tab
-// the director opened at 9 h is still the right one at 19 h: a refresh shows the new page.
+// PageName is the file's name inside the chosen folder. It never changes, so an open browser
+// tab stays right: a refresh shows the new page.
 const PageName = "tournoi.html"
 
-// SheetName is the printable pairing sheet's file name (issue #387). Paper is still the
-// director's tool: the sheet goes on the welcome desk and the players come and read it.
+// SheetName is the printable pairing sheet's file name.
 const SheetName = "appariements.html"
 
 // Page renders the display page in the host's language.
@@ -38,9 +32,7 @@ func (d *Direction) Page(cat *Catalog, lang string, now time.Time) (string, erro
 
 // renderer builds the engine's renderer for this Direction, in the host's language.
 //
-// The credit is taken from the SAME catalogue as everything else. The engine's default says it
-// in French, and a page written in Japanese would say one sentence in French — the credit is
-// owed to Nicolas Harmand in every language, not only in his own.
+// The credit comes from the host catalogue too: the engine's default is French only.
 func (d *Direction) renderer(cat *Catalog, lang string) *render.Renderer {
 	r := render.New(NewLabeler(cat, func(id tournoi.PlayerID) string { return d.playerName(id) }))
 	r.Lang = lang
@@ -66,8 +58,7 @@ func (d *Direction) playerName(id tournoi.PlayerID) string {
 // round, whatever the director calls it. round 0, or beyond the last, gives the most recent,
 // which is the one printed in practice.
 //
-// The page carries a print instruction, so the system dialog opens on its own: the director's
-// gesture is ONE click, and what they wanted was the paper, not a tab.
+// The page carries a print instruction, so the print dialog opens on its own.
 func (d *Direction) PairingSheet(cat *Catalog, lang string, round int) (string, error) {
 	if d.st == nil {
 		return "", ErrNoDirection

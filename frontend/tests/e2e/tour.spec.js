@@ -91,12 +91,12 @@ test('search tour activates the Search tab under the spotlight', async ({ page }
     await page.screenshot({ path: `${SHOT}-search-panel.png` });
 });
 
-// The three tours added by H.12 (#254) each exist only to bring the reader to
-// a panel they had no tour for. What can silently go wrong is not the text but
-// the wiring: an `activateTab` naming a tab id that does not exist leaves the
-// tour running on whatever panel was already open, and no unit test sees it —
-// tours.js only knows strings. So each is started for real and the tab it
-// claims to open is checked.
+// Each panel-specific tour exists only to bring the reader to a panel they had
+// no tour for. What can silently go wrong is not the text but the wiring: an
+// `activateTab` naming a tab id that does not exist leaves the tour running on
+// whatever panel was already open, and no unit test sees it — tours.js only
+// knows strings. So each is started for real and the tab it claims to open is
+// checked.
 for (const [id, tab] of [
     ['eval', 'eval'],
     ['anki', 'anki'],

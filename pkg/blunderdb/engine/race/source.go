@@ -14,12 +14,8 @@ import (
 // directory. The widest valid domain wins; an invalid candidate is skipped
 // with a log warning, never a fatal error.
 //
-// There is no floor any more. The TS-06-06 table used to be compiled into the
-// binary, so Resolve could promise a database; since ADR-0027 the tables are
-// generated on the machine that needs them, and there is a window — the first
-// launch, until the background generation finishes — where there is none.
-// Resolve returns nil for that, and callers say "not yet" rather than
-// pretending to an exact answer they do not have.
+// There is no floor: tables are generated on the machine (ADR-0027), so until
+// the first generation finishes Resolve returns nil and callers say "not yet".
 //
 // A `.part` file is never a candidate: it is an interrupted run, not a table.
 
@@ -118,7 +114,7 @@ func itoa64(n int64) string {
 // candidates from scratch. Call it before deleting or replacing the
 // downloaded or external file: on Windows a file held open by the cache
 // cannot be removed, and its stale directory entry would otherwise be what
-// the next Resolve finds. The embedded database is never closed.
+// the next Resolve finds.
 func Invalidate() {
 	srcMu.Lock()
 	defer srcMu.Unlock()
@@ -129,9 +125,9 @@ func Invalidate() {
 }
 
 // Resolve returns the widest available two-sided database, or nil when the
-// machine has none yet. Callers must handle nil: it is the first launch, or a
-// data directory somebody emptied, and the honest answer is that the exact
-// regime is unavailable rather than a guess dressed as a lookup.
+// machine has none yet (first launch, emptied data directory). Callers must
+// handle nil as "exact regime unavailable", never guess.
+
 func Resolve() *TwoSided {
 	srcMu.Lock()
 	defer srcMu.Unlock()

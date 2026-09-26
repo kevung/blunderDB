@@ -1,20 +1,11 @@
-// Letter shortcuts are matched by the character the key produced (event.key),
-// never by its physical position (event.code): that keeps "j" on the key
-// labelled J across AZERTY, QWERTZ, Dvorak… Digits and non-letter keys stay
-// positional (event.code) — see keyboardService.js and the keyboard-layout
-// convention it documents.
-//
-// Every helper below guards on `key.length === 1`. During an IME composition
-// event.key is 'Process', a dead key reports 'Dead', an unknown key
-// 'Unidentified': none of those is a letter, and a bare `event.key === 'j'`
-// written by hand does not need the guard — but a case-insensitive comparison
-// does, and hand-written copies drift (MatchPanel had 'j' but not 'J', the
-// service had both). Match through these helpers instead.
+// Letter shortcuts match the character produced (event.key), never the physical position, so "j"
+// stays on the key labelled J across AZERTY, QWERTZ…; digits stay positional (event.code), see
+// keyboardService.js. The helpers guard `key.length === 1` ('Process' during IME, 'Dead',
+// 'Unidentified') and fold case: use them rather than hand-written comparisons.
 
 /**
- * The key produced the letter `ch`, in either case. Modifiers are not
- * inspected: callers combine it with event.ctrlKey / event.shiftKey the same
- * way they would with any other key.
+ * The key produced the letter `ch`, in either case. Modifiers are not inspected.
+ *
  *
  * @param {KeyboardEvent} event
  * @param {string} ch - one ASCII letter, any case
@@ -26,9 +17,8 @@ export function isLetter(event, ch) {
 }
 
 /**
- * The letter `ch` with Shift held — the "MAJ-J" / "MAJ-K" of the shortcut
- * sheet. Tested on the modifier, not on the case of the character produced,
- * so CapsLock does not turn "j" into a view switch.
+ * The letter `ch` with Shift held ("MAJ-J"). Tested on the modifier, not the case, so CapsLock
+ * does not turn "j" into a view switch.
  *
  * @param {KeyboardEvent} event
  * @param {string} ch
@@ -39,9 +29,7 @@ export function isShiftLetter(event, ch) {
 }
 
 /**
- * The letter `ch` on its own: no Ctrl, Meta, Alt or Shift. This is what the
- * single-letter shortcuts (h/j/k/l navigation, p, r, …) mean, and it is what
- * keeps them apart from the Shift and Ctrl variants of the same letter.
+ * The letter `ch` alone, no Ctrl, Meta, Alt or Shift: the single-letter shortcuts.
  *
  * @param {KeyboardEvent} event
  * @param {string} ch

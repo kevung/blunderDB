@@ -1,22 +1,11 @@
 <script>
     /*
-     * Les réglages d'une Direction (ADR-0047 §3, tasks/nicomaque/ux.md §2.1, issue #385).
+     * Les réglages d'une Direction (tasks/nicomaque/fonctionnel.md §3, tasks/nicomaque/ux.md §2.1).
      *
-     * Deux contraintes commandent le dessin de cet écran, et elles viennent du cadrage :
-     * le coût d'entrée doit être bas — un directeur qui dirige un tournoi par an ne doit rien
-     * lire — et la souris est première. D'où : des cartes de format cliquables plutôt qu'un
-     * formulaire vide, un défaut qui tient pour un tournoi de club dans chaque champ, une
-     * phrase d'infobulle par réglage, et aucun assistant en plusieurs écrans.
-     *
-     * L'écran sert AUSSI en cours de tournoi : à 22 h un directeur baisse la bascule pour finir
-     * plus tôt, le samedi soir il ajoute une consolante qu'il n'avait pas prévue. Deux choses
-     * seulement sont alors figées — le format d'une phase ouverte, et le nombre de vies qu'elle
-     * a déjà distribué — et elles sont GRISÉES AVEC LEUR RAISON plutôt qu'absentes, pour que le
-     * directeur sache que ce n'est pas lui qui a mal cherché.
-     *
-     * En cours de tournoi, enregistrer n'est pas la sauvegarde d'un formulaire mais une
-     * décision : la liste de ce qui va changer s'affiche d'abord, et le directeur confirme.
-     * En préparation, rien n'est encore décidé, et la confirmation ne ferait que coûter un clic.
+     * Coût d'entrée bas, souris d'abord : cartes de format, un défaut de club par champ, une
+     * infobulle par réglage. Sert aussi en cours de tournoi, où seuls le format d'une phase
+     * ouverte et ses vies distribuées sont figés — grisés avec leur raison, pas absents — et
+     * où enregistrer montre d'abord la liste des changements à confirmer.
      */
     import { t } from '../../i18n';
     import { namedConfigs } from '../../stores/directionStore';
@@ -51,10 +40,7 @@
      */
     let {
         config = $bindable(),
-        // Le nom compte : une prop nommée `state` ferait lire la rune `$state` de ce fichier
-        // comme un abonnement au store `state` — Svelte 5 résout `$x` en abonnement dès qu'un
-        // `x` est en portée. L'écran des Réglages a planté ainsi pendant une journée, invisible
-        // aux tests unitaires, jusqu'à la première spec de bout en bout (#390).
+        // Pas `state` : Svelte 5 lirait la rune `$state` comme un abonnement au store `state`.
         directionState = 'draft',
         tournamentName = '',
         onApply = () => {},
@@ -71,8 +57,7 @@
 
     const isDraft = $derived(directionState === 'draft');
 
-    /* Les cinq formats de phase du moteur. Ce sont des IDENTIFIANTS : leur nom lisible passe
-       par direction.format.<kind>, comme partout ailleurs. */
+    /* Identifiants du moteur ; libellés via direction.format.<kind>. */
     const phaseKinds = ['swiss_lives', 'lives_bracket', 'gsl', 'bracket', 'round_robin'];
 
     /** @param {number} i */
@@ -93,8 +78,7 @@
         return $t('direction.settings.kindHint');
     }
 
-    /* Une phase OUVERTE a déjà distribué ses vies : changer le nombre ne rattraperait pas les
-       joueurs entrés. Le reste — longueurs, bascule, finale — porte sur les matchs à venir. */
+    /* Phase ouverte : ses vies sont distribuées, le nombre est figé ; le reste vaut pour la suite. */
     const isOpen = (/** @type {number} */ i) => i < opened;
     const openTitle = $derived($t('direction.settings.phaseOpened'));
 
@@ -103,8 +87,7 @@
         return $t('direction.settings.bracketFrozen', { reason: renderLockReason($t, lockOf(i)?.reason) });
     }
 
-    /* Décocher la consolante décoche ce qui n'existe que par elle : la réconciliation (le
-       vainqueur de la consolante rejoue celui du principal), et la recharge de celle-ci. */
+    /* Sans consolante, ni réconciliation ni recharge. */
     /** @param {PhaseConfig} phase @param {boolean} on */
     function setConsolation(phase, on) {
         phase.consolation = on;
@@ -128,8 +111,7 @@
         return $t(`direction.format.${kind}`);
     }
 
-    /* Ajouter une phase, c'est l'ajouter APRÈS toutes les autres : une consolante décidée le
-       samedi soir n'interrompt pas ce qui se joue. */
+    /* Ajoutée après toutes les autres : n'interrompt pas ce qui se joue. */
     function addPhase() {
         if (!config) return;
         const last = config.phases[config.phases.length - 1];
@@ -142,11 +124,10 @@
         config.phases = config.phases.filter((_, k) => k !== i);
     }
 
-    /* Les pauses de la journée. Rien n'est bloqué : un match qui finirait dedans porte un
-       avertissement, et le directeur décide. */
+    /* Pauses : rien n'est bloqué, un match qui y déborde porte un avertissement. */
     function addBreak() {
         if (!config) return;
-        // L'heure ronde qui vient de passer : un défaut qu'un directeur corrige d'un geste.
+        // Défaut : l'heure ronde qui vient de passer.
         const now = new Date();
         const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
         const end = new Date(start.getTime() + 3600000);
@@ -159,8 +140,7 @@
         config.breaks = (config.breaks || []).filter((_, k) => k !== i);
     }
 
-    /* Un `datetime-local` parle l'heure locale sans fuseau ; le moteur ne connaît que des
-       instants. La conversion se fait ici, aux deux bouts, et nulle part ailleurs. */
+    /* `datetime-local` (local, sans fuseau) ↔ instant du moteur : conversion ici seulement. */
     /** @param {string} iso */
     function toLocalInput(iso) {
         if (!iso) return '';
@@ -184,10 +164,8 @@
         config.breaks = next;
     }
 
-    /* Les longueurs tour par tour d'un tableau, DU DERNIER TOUR VERS LE PREMIER : « 15, 13, 11 »
-       veut dire finale en 15, demies en 13, quarts en 11. C'est l'ordre dans lequel un
-       organisateur annonce son tournoi, et il ne dépend pas de la taille du tableau — la même
-       liste sert un tableau de 16 et un de 64, où elle allonge les quatre derniers tours. */
+    /* Longueurs du dernier tour vers le premier (« 15, 13, 11 » = finale, demies, quarts),
+       indépendantes de la taille du tableau. */
     /** @param {PhaseConfig} phase */
     function lengthsText(phase) {
         return (phase.lengths || []).join(', ');
@@ -205,10 +183,8 @@
         phase.lengths = parsed.length ? parsed : undefined;
     }
 
-    /* Les tables hors service (#438) : un plateau cassé, une table retirée. Le moteur les saute
-       à l'attribution ; baisser le nombre de tables, lui, retirerait la dernière et non la
-       cassée. La liste s'écrit comme les longueurs par tour, des numéros séparés par des
-       virgules, et reste éditable en cours de tournoi. */
+    /* Tables hors service, sautées à l'attribution (baisser le nombre retirerait la
+       dernière, pas la cassée). Numéros séparés par des virgules. */
     function unavailableText() {
         return (config?.tables?.unavailable || []).join(', ');
     }
@@ -227,20 +203,12 @@
         config.tables.unavailable = parsed.length ? parsed : undefined;
     }
 
-    /*
-     * La dotation (issue #393).
-     *
-     * Un droit d'entrée, une retenue pour le club, et un barème PAR SECTION : le vainqueur de
-     * la consolante n'est pas le finaliste du tournoi, et le payer sur le classement général
-     * dirait le contraire.
-     *
-     * Aucune devise n'est supposée : les montants sont des nombres, écrits avec les séparateurs
-     * de la langue de l'utilisateur, et le directeur sait dans quelle monnaie il encaisse.
-     */
+    /* La dotation : barème par section (la consolante n'est pas le classement général),
+       sans devise supposée. */
     const prizeSections = ['all', 'main', 'conso', 'last'];
 
     function prizes() {
-        // Appelée seulement depuis le formulaire, qui n'existe que lorsqu'une configuration est là.
+        // Seul le formulaire l'appelle, et il n'existe que lorsqu'une configuration est là.
         const c = /** @type {DirectionConfig} */ (config);
         if (!c.prizes) c.prizes = {};
         if (!c.prizes.retention) c.prizes.retention = {};
@@ -255,8 +223,7 @@
         return (sc.percents || sc.amounts || []).join(', ');
     }
 
-    /* Un barème se saisit en une ligne : « 50, 30, 20 ». Le signe % dit lequel des deux champs
-       du moteur est rempli — des pourcentages du distribuable, ou des montants fixes. */
+    /* « 50, 30, 20 » ; avec % ce sont des pourcentages du distribuable, sinon des montants. */
     /**
      * @param {string} section
      * @param {string} text
@@ -283,8 +250,7 @@
         return !sc || !!sc.percents;
     }
 
-    /* Le pool, à côté de l'effectif : il se recalcule à chaque inscription et chaque retrait,
-       sans que personne ait à le demander. */
+    /* Le pool se recalcule avec l'effectif. */
     const pool = $derived((config?.prizes?.entry_fee || 0) * entrantCount);
     const retained = $derived.by(() => {
         const r = config?.prizes?.retention || {};
@@ -323,8 +289,7 @@
         onApply(config);
     }
 
-    /* Le nombre d'exemptions qu'un tableau devrait donner au premier tour avec cet effectif :
-       une information que le directeur regarde pour choisir son format, pas un réglage. */
+    /* Exemptions du premier tour avec cet effectif : une information, pas un réglage. */
     const byesAtFirstRound = $derived.by(() => {
         if (!entrantCount) return 0;
         let size = 1;
@@ -401,11 +366,7 @@
                                 {$t('direction.settings.finalLength')}
                                 <input type="number" min="0" max="99" bind:value={phase.final_length} />
                             </label>
-                            <!-- Les têtes de série sont ÉTEINTES PAR DÉFAUT, et c'est une
-                                 décision : l'étude du moteur conclut « pas de têtes de série
-                                 protégées », qui est la culture actuelle du backgammon. Certains
-                                 organisateurs en veulent quand même ; l'infobulle dit pourquoi
-                                 en une phrase, sans faire la leçon. -->
+                            <!-- Têtes de série éteintes par défaut, selon l'étude du moteur. -->
                             <label title={$t('direction.settings.seedingHint')}>
                                 <input type="checkbox" checked={phase.seeding === 'rating'} onchange={(e) => (phase.seeding = e.currentTarget.checked ? 'rating' : undefined)} />
                                 {$t('direction.settings.seeding')}
@@ -422,11 +383,8 @@
                             </label>
                         {/if}
                         {#if phase.kind === 'bracket'}
-                            <!-- La consolante et ce qui en dépend (#455). Elles comptent au
-                                 TIRAGE : après lui, elles sont grisées avec leur raison. Le
-                                 moteur accepte encore la consolante après le tirage sans rien
-                                 créer (PileOfCells/backgammon-tournoi#16) — l'interface ne la
-                                 propose donc plus, faute que le moteur la refuse. -->
+                            <!-- Consolante et dépendances : grisées après le tirage, que le
+                                 moteur accepte sans rien créer (PileOfCells/backgammon-tournoi#16). -->
                             <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.consolationHint')}>
                                 <input
                                     type="checkbox"
@@ -686,8 +644,7 @@
         gap: 0.5rem;
     }
 
-    /* Une carte est une cible large : le premier geste d'un directeur occasionnel ne doit pas
-       demander de viser. */
+    /* Une cible large. */
     .card {
         display: flex;
         flex-direction: column;
@@ -766,8 +723,7 @@
         color: var(--color-text-muted);
     }
 
-    /* Un contrôle n'hérite ni de la taille ni de la famille : sans `font: inherit` il
-       retomberait dans la police du navigateur (invariant « une seule échelle de type »). */
+    /* `font: inherit` : un contrôle n'hérite ni taille ni famille. */
     input {
         width: 4.5rem;
         padding: 0.15rem 0.3rem;
@@ -822,8 +778,7 @@
         color: var(--color-text);
     }
 
-    /* Un format figé reste À SA PLACE, grisé avec sa raison : un contrôle absent se lit comme
-       une erreur de recherche, un contrôle grisé se lit comme une règle. */
+    /* Un format figé reste en place, grisé : absent, il se lirait comme une erreur. */
     .phase-kind.frozen {
         display: inline-flex;
         align-items: baseline;
@@ -866,8 +821,7 @@
         width: auto;
     }
 
-    /* La liste de contrôle : elle s'ouvre sous les actions, là où le regard vient de cliquer,
-       plutôt que dans une fenêtre qui recouvrirait ce qu'elle décrit. */
+    /* Sous les actions, pas dans une fenêtre qui recouvrirait ce qu'elle décrit. */
     .confirm {
         border: 1px solid var(--color-primary);
         border-radius: var(--radius);
@@ -888,15 +842,13 @@
         color: var(--color-danger);
     }
 
-    /* Un chemin se lit d'un coup d'œil et se coupe où il veut : c'est une adresse, pas une
-       phrase. */
+    /* Un chemin se coupe n'importe où. */
     .path {
         word-break: break-all;
         font-family: ui-monospace, monospace;
     }
 
-    /* Une liste de longueurs est plus large qu'un nombre : « 15, 13, 11, 9 » doit se lire d'un
-       coup d'œil, sans défilement dans le champ. */
+    /* Assez large pour « 15, 13, 11, 9 » sans défiler. */
     input.lengths {
         width: 9rem;
     }

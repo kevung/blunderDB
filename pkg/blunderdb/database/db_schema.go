@@ -18,9 +18,8 @@ import (
 // on every open, after the migration chain has run. The schema itself —
 // tables, columns, indexes — lives in one place, storage/sqlite's
 // schemaStatements, and sqlite.EnsureSchema derives what this database is
-// missing from it; nothing here names a column. What remains here is history:
-// the data repairs and index drops that only a database which lived through
-// an earlier version can need.
+// missing from it; nothing here names a column. What remains are the data
+// repairs and index drops only an older database can need.
 func (d *Database) ensureAllTablesExist() error {
 	ctx := context.Background()
 
@@ -33,10 +32,9 @@ func (d *Database) ensureAllTablesExist() error {
 	// 1.7.0 there is no match table yet, and the statement fails harmlessly.
 	_, _ = d.db.ExecContext(ctx, `UPDATE match SET canonical_hash = NULL WHERE canonical_hash = ''`)
 
-	// Indexes the fresh schema no longer declares (E3 redundancy pass and the
-	// fiche-05 covering index): each is a strict column prefix of an index the
-	// schema still has, so nothing plans differently without it. Dropping is
-	// perf-only — no query names an index — hence no DatabaseVersion bump.
+	// Indexes the fresh schema no longer declares: each is a strict column
+	// prefix of one it keeps. Perf-only (no query names an index), hence no
+	// DatabaseVersion bump.
 	for _, stmt := range []string{
 		`DROP INDEX IF EXISTS idx_position_score`,
 		`DROP INDEX IF EXISTS idx_analysis_win_gammon`,
@@ -144,25 +142,15 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 // duplicates that omission let through back onto the row the hash index
 // already holds.
 //
-// It repairs the damage of one bug: until 2026-09 the native .db importer
-// (CommitImportDatabase) inserted a position the target did not hold yet with
-// its state alone — no hash, no pip counts, no dice/score/cube columns. Such a
-// row was invisible to every SQL filter (they read the columns, never the
-// state), never took part in hash deduplication, and — because
-// ReconstructPosition trusts the columns over the state — no longer matched
-// itself on the next import of the same database, which inserted it again.
-// The importer now writes through PositionStore.Save; this pass is for the
-// databases that already carry those rows.
+// Such rows came from a raw INSERT of the state alone by the native .db
+// importer: invisible to SQL filters, outside hash dedup, and unable to match
+// themselves on re-import.
 //
-// It runs on every open, after the migration chain, and needs no schema
-// version bump: nothing about the schema changes, the columns merely get the
-// values they were always meant to hold. It is idempotent and cheap when there
-// is nothing to do — a single probe on idx_position_zobrist finds no NULL
-// row. A row whose state cannot be decoded is left alone (and reported), so
-// a corrupted row cannot block the open; it will be reported again next time.
-//
-// Rows are repaired in one transaction: a crash mid-way leaves the database
-// exactly as it was, and the next open picks the whole batch up again.
+// Runs on every open after the migration chain; no version bump, as the
+// schema does not change. Idempotent and cheap (one probe on
+// idx_position_zobrist). An undecodable row is left alone and reported, so it
+// cannot block the open. One transaction: a crash leaves the database as it
+// was.
 //
 // The caller must hold d.mu.
 func (d *Database) repairPositionsWithoutScalars(ctx context.Context) error {
@@ -207,10 +195,8 @@ func (d *Database) repairPositionsWithoutScalars(ctx context.Context) error {
 			return err
 		}
 		pos := item.pos
-		// The bug wrote the full position as JSON, and the NULL columns say
-		// nothing; the state is the only faithful record of dice, score and
-		// cube, so it — not the zeroed columns — is what gets re-read. A compact
-		// state carries the board alone and has no better source to offer.
+		// The NULL columns say nothing: the JSON state is the only faithful
+		// record of dice, score and cube. A compact state carries the board alone.
 		if !isCompactState(item.state) {
 			var decoded Position
 			if err := json.Unmarshal([]byte(item.state), &decoded); err != nil {
@@ -306,12 +292,9 @@ func mergePositionInto(ctx context.Context, tx *sql.Tx, keepID, dupID int64) err
 			return fmt.Errorf("merging duplicate position %d into %d: %w", dupID, keepID, err)
 		}
 	}
-	// A position card names its position twice since 2.23.0 — in position_id
-	// and in the key that identifies it within its deck (ADR-0042) — so the
-	// key follows the merge. Best-effort on purpose: the 2.18.0 rehash calls
-	// this from inside the migration chain, ahead of the schema pass that
-	// creates the column, and there the key is written afterwards anyway by
-	// repairAnkiCardKinds.
+	// A position card's key also names its position (ADR-0042), so it follows
+	// the merge. Best-effort: the 2.18.0 rehash calls this before the column
+	// exists, and repairAnkiCardKinds writes the key afterwards.
 	for _, table := range []string{"anki_card", "anki_review_log"} {
 		_, _ = tx.ExecContext(ctx,
 			`UPDATE OR IGNORE `+table+` SET key = CAST(position_id AS TEXT)

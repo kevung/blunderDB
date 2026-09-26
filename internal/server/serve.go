@@ -80,7 +80,7 @@ type serveConfig struct {
 // hands us exactly that token as args[0]. Anything else positional is an
 // error — flag.FlagSet stops parsing at the first non-flag argument, so a
 // mistyped or misplaced flag after one would otherwise be silently ignored
-// rather than rejected (#230).
+// rather than rejected.
 func parseServeArgs(args []string) (*serveConfig, error) {
 	if len(args) > 0 && args[0] == "serve" {
 		args = args[1:]
@@ -201,7 +201,7 @@ func RunServe(args []string) error {
 		Addr:    cfg.addr,
 		OpsAddr: cfg.opsAddr,
 		// SQLite has no tenant column: serving several tenants from it would
-		// hand them all the same rows (#240).
+		// hand them all the same rows.
 		SingleTenant:    cfg.backend == "sqlite",
 		Storage:         st,
 		Logger:          logger,
@@ -229,7 +229,7 @@ func RunServe(args []string) error {
 // startPprofServer starts net/http/pprof on its own listener, entirely
 // separate from the domain server's Addr — never register these handlers on
 // the same mux as /v1/*, since they let a caller pull heap dumps and CPU
-// profiles with no tenant scoping at all (#238). It returns a function that
+// profiles with no tenant scoping at all. It returns a function that
 // shuts the pprof listener down; RunServe also stops it once ctx is
 // cancelled, so a caller that forgets to invoke the returned func still sees
 // it go away with the rest of the daemon.
@@ -319,8 +319,8 @@ func envOr(key, fallback string) string {
 
 // envBoolOr, envFloatOr and envIntOr give --metrics, --cors-allow-origin's
 // numeric siblings (--rate-limit-rps/-burst) the same BLUNDERDB_* fallback
-// every other serve flag already has (#230); an unset or unparsable value
-// keeps fallback rather than failing the whole command over one bad env var.
+// every other serve flag already has; an unset or unparsable value keeps
+// fallback rather than failing the whole command over one bad env var.
 func envBoolOr(key string, fallback bool) bool {
 	v := os.Getenv(key)
 	if v == "" {

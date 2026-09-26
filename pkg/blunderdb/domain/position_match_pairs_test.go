@@ -7,14 +7,7 @@ import "testing"
 // (Mirror() maps point i to 25-i and flips color). Any P1/P2 asymmetry —
 // e.g. an off-by-one in the point range, or a color check copy-pasted
 // without flipping — would show up as the two halves of a pair disagreeing
-// on mirror-equivalent boards, which is exactly the "copié-collé-inversé"
-// bug class flagged by the audit.
-//
-// Result: no asymmetry found in any of the five pairs — every P2 range is
-// the exact mirror (point range and color flipped) of its P1 counterpart.
-// See fiche-11 execution notes for the one real asymmetry found nearby
-// (Player1AbsolutePipCount has no Player2 counterpart at all — a deliberate
-// API gap, not a mirrored predicate, so out of scope for this file).
+// on mirror-equivalent boards.
 
 // --- CheckerOff (Bearoff count) ---------------------------------------------
 

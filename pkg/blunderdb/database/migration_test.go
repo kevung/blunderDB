@@ -2116,12 +2116,10 @@ func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
 	}
 }
 
-// TestMigration_TablesAheadOfVersion (issue #177): a database whose file
-// carries tables its recorded version does not yet know — one that an
-// earlier build's ensureAllTablesExist filled in without stamping, or a
-// hand-repaired one — must still be walked to DatabaseVersion. The 1.x
-// steps used to stop the chain on finding their table already there, which
-// left such a file at 1.0.0 for good and skipped every later step.
+// TestMigration_TablesAheadOfVersion: a file carrying tables its recorded
+// version does not know (filled in by ensureAllTablesExist without stamping,
+// or hand-repaired) must still be walked to DatabaseVersion — a step that
+// stops the chain on finding its table would strand the file at 1.0.0.
 func TestMigration_TablesAheadOfVersion(t *testing.T) {
 	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "ahead.db")
@@ -2153,13 +2151,10 @@ func TestMigration_TablesAheadOfVersion(t *testing.T) {
 	}
 }
 
-// TestMigrate_2_16_0_to_2_17_0_SessionState builds a 2.16.0 database the way
-// 2.16.0 wrote it — the current schema minus session_state, the session as
-// six metadata rows for the desktop's empty scope and six "<scope>:"-prefixed
-// rows for a tenant of a multi-tenant SQLite daemon — and checks that opening
-// it moves both sessions into session_state, that the desktop reopens on the
-// same search and views, that the tenant's session still belongs to that
-// tenant only, and that metadata keeps nothing but its infrastructure rows.
+// TestMigrate_2_16_0_to_2_17_0_SessionState builds a 2.16.0 file (session as
+// metadata rows, empty scope and one "<scope>:" tenant) and checks both
+// sessions move to session_state, each scope keeps its own, and metadata keeps
+// only its infrastructure rows.
 func TestMigrate_2_16_0_to_2_17_0_SessionState(t *testing.T) {
 	t.Parallel()
 	tmpDir := tempDir(t)
@@ -2298,8 +2293,8 @@ func planLegacyJacobyTwin(t *testing.T, db *sql.DB, sourceID int64, hash uint64)
 	return id
 }
 
-// TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity (issue #171,
-// ADR-0028): the rule flags come out of the Zobrist hash, every stored hash
+// TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity (ADR-0028):
+// the rule flags come out of the Zobrist hash, every stored hash
 // that carried one is converted, and the rows the conversion brings together —
 // which were one position all along — are merged onto the oldest of them.
 func TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity(t *testing.T) {
@@ -2484,10 +2479,9 @@ func TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity(t *testing.T) 
 	}
 }
 
-// TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition (issue #173): the second
-// half of the 2.18.0 wave. A position had no constraint saying it holds one
-// analysis, and Save's SELECT-then-INSERT let two rows through; the migration
-// keeps the last one written and the index makes the state unreachable.
+// TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition: racing
+// SELECT-then-INSERT saves could leave two analysis rows; the migration keeps
+// the last one written and the UNIQUE index makes the state unreachable.
 func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
 	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "test_v2170_analysis.db")
@@ -2575,11 +2569,9 @@ func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
 	}
 }
 
-// TestMigrate_2_19_0_to_2_20_0_MaxCube pins the 2.20.0 wave's one column and,
-// more importantly, what a missing value means. A row written before the
-// column existed comes from an identifier that stated no cube ceiling, so 0 is
-// the truth about it and the migration must not invent anything else — nor
-// rehash, since max_cube is not part of the position's identity (#271).
+// TestMigrate_2_19_0_to_2_20_0_MaxCube: an older row stated no cube ceiling,
+// so 0 is its truth; the migration must invent nothing, nor rehash — max_cube
+// is not part of the position's identity.
 func TestMigrate_2_19_0_to_2_20_0_MaxCube(t *testing.T) {
 	t.Parallel()
 	tmpDir := tempDir(t)
@@ -2766,7 +2758,7 @@ func TestMigrate_2_19_0_to_2_22_0_TrainingJournal(t *testing.T) {
 }
 
 // TestMigrate_2_22_0_to_2_23_0_AnkiCardKinds walks the step that lets an Anki
-// card be something other than a position (issue #324, ADR-0042) over a
+// card be something other than a position (ADR-0042) over a
 // database holding the two anki tables in their pre-2.23.0 shape — the shape
 // createOldDatabase does not build, because every other test gets them fresh
 // from EnsureSchema and would never see the rebuild at all.
@@ -2905,14 +2897,10 @@ func TestMigrate_2_22_0_to_2_23_0_AnkiCardKinds(t *testing.T) {
 	}
 }
 
-// TestDirectionSchema_2_24_0 covers the 2.24.0 wave: the Direction of a
-// Tournament and the Slot a Match fills (issue #365, ADR-0047).
-//
-// The append-only rule is the one worth a test. It is not a database
-// constraint — SQLite has no way to forbid an UPDATE on a table — so what the
-// test pins is the shape that makes the rule enforceable: a composite primary
-// key on (tournament_id, seq), so a second write at the same sequence number
-// collides instead of silently overwriting the first.
+// TestDirectionSchema_2_24_0 covers the Direction tables and the Slot column
+// (ADR-0047). SQLite cannot forbid an UPDATE, so the test pins what makes
+// append-only enforceable: the (tournament_id, seq) primary key, where a
+// second write at the same seq collides instead of overwriting.
 func TestDirectionSchema_2_24_0(t *testing.T) {
 	d := newTestDB(t)
 	ctx := context.Background()

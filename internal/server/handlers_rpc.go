@@ -62,7 +62,7 @@ func scopeOf(r *http.Request) string {
 // "multipart/form-data" from a form that posted here by mistake — is
 // rejected before a single byte is parsed as JSON, rather than surfacing as
 // a confusing "invalid character" message for bytes that were never JSON to
-// begin with (#232).
+// begin with.
 func acceptableContentType(ct string) bool {
 	if ct == "" {
 		return true
@@ -96,7 +96,7 @@ func decodeJSON(r *http.Request, dst any) error {
 // maxPageSize bounds a client-supplied page size (the family of "limit"
 // request fields backed by storage.ListOpts and its siblings): a request for
 // more than this many rows in one page is refused rather than honoured
-// unbounded (#232). 1000 comfortably covers every real UI page while
+// unbounded. 1000 comfortably covers every real UI page while
 // keeping a single query, and a single response, to a predictable size.
 const maxPageSize = 1000
 

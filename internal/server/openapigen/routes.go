@@ -139,8 +139,8 @@ func classifyHandler(e ast.Expr, types map[string]typeInfo) (kind, req, resp, it
 		kind, req, resp, item = classifyRPCCall(fn.Name, call, types)
 		return kind, req, resp, item, false
 	case *ast.SelectorExpr:
-		// s.withIdempotency(INNER) (#236): unwrap one level so the route's
-		// real shape is still recognised instead of being masked by the
+		// s.withIdempotency(INNER): unwrap one level so the route's real
+		// shape is still recognised instead of being masked by the
 		// wrapper — this is the only such wrapper in the codebase today.
 		if fn.Sel.Name == "withIdempotency" && len(call.Args) == 1 {
 			kind, req, resp, item, _ = classifyHandler(call.Args[0], types)
@@ -335,8 +335,8 @@ func extractLoopRoutes(f *ast.File, loopPatterns map[string][]string) []Route {
 }
 
 // isAPIPattern reports whether a registered pattern belongs to the documented
-// surface: the /v1 tenant routes and the /ops/ operator family (G.5, #233).
-// The probes (/healthz, /readyz, /metrics) are not — they answer plain text or
+// surface: the /v1 tenant routes and the /ops/ operator family. The probes
+// (/healthz, /readyz, /metrics) are not — they answer plain text or
 // the Prometheus exposition format, neither of which the contract describes.
 func isAPIPattern(pattern string) bool {
 	return strings.HasPrefix(pattern, "/v1/") || strings.HasPrefix(pattern, "/ops/")

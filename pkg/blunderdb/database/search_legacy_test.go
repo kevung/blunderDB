@@ -14,14 +14,8 @@ import (
 
 // search_legacy_test.go — the legacy full-table-scan search predicates.
 //
-// These are the reference implementation for the search-rewrite equivalence
-// tests (TestSearch_Equivalence_* in search_rewrite_test.go and the
-// MoveErrorFilter tests in move_error_cube_test.go): the new SQL-first search
-// lives in storage/{sqlite,postgres}, and these functions back the oracle that
-// proves the two agree. They are intentionally test-only — not part of the
-// production binary or the public `database` API surface — so this file carries
-// the _test.go suffix. Pure board-only predicates live as methods on
-// domain.Position in the domain package.
+// The test-only oracle that TestSearch_Equivalence_* and the MoveErrorFilter
+// tests hold the SQL-first search in storage/{sqlite,postgres} against.
 
 func MatchesSearchText(p *Position, searchText string, d *Database) bool {
 	keywords := parseSearchTextKeywords(searchText)

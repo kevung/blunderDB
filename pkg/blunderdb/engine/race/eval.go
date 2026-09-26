@@ -13,11 +13,9 @@ type Regime string
 const (
 	RegimeExact     Regime = "exact"
 	RegimeEstimated Regime = "estimated"
-	// RegimeEvaluated is gammonNet playing the cube decision out — available
-	// wherever the engine is, including at a match score, which
-	// RegimeEstimated's convolution never offered (ADR-0012 extends
-	// ADR-0009: what was refused was estimating a verdict from a snapshot,
-	// not an engine that plays the trajectory out). See EvaluateWithEngine.
+	// RegimeEvaluated is gammonNet playing the cube decision out, including at
+	// a match score (ADR-0012: ADR-0009 refuses estimating a verdict from a
+	// snapshot, not an engine playing the trajectory out). See EvaluateWithEngine.
 	RegimeEvaluated Regime = "evaluated"
 )
 
@@ -35,12 +33,10 @@ type Eval struct {
 	// Evaluated regime only: gammon and backgammon chances, from the same
 	// probability vector WinProb comes from — OnRoll's own (Win*) and the
 	// opponent's (Lose*: OnRoll loses a gammon/backgammon), mirroring
-	// domain.DoublingCubeAnalysis's Player*/Opponent* split. All four are
-	// zero in the exact and estimated regimes — not a missing value, a fact
-	// about the position: a two-sided database's domain (≤ 6 checkers a
-	// side) already has the opponent bearing off 9+ checkers, where a
-	// gammon is structurally impossible (ADR-0017), and the estimator
-	// never models gammons at all.
+	// domain.DoublingCubeAnalysis's Player*/Opponent* split. Zero in the
+	// exact and estimated regimes as a fact, not a gap: with ≤ 6 checkers a
+	// side a gammon is impossible (ADR-0017), and the estimator never models
+	// gammons.
 	WinGammon      float64 `json:"win_gammon,omitempty"`
 	WinBackgammon  float64 `json:"win_backgammon,omitempty"`
 	LoseGammon     float64 `json:"lose_gammon,omitempty"`
@@ -50,16 +46,13 @@ type Eval struct {
 	// checkers per side.
 	Sigma float64 `json:"sigma,omitempty"`
 	P99   float64 `json:"p99,omitempty"`
-	// Exact regime only. The field keeps its name from before the
-	// CubeVerdict rename (#190/C.3): "money" is still exactly right for
-	// this field specifically, since the exact-regime table it carries is
-	// always money-referential (MoneyFromEntry never reads a match score),
-	// unlike the type itself, which the evaluated regime also uses at a
-	// match score (internal/gui/gammonnet_eval.go's evaluateRaceRegime).
+	// Exact regime only, and always money-referential (MoneyFromEntry never
+	// reads a match score) — unlike CubeVerdict itself, which the evaluated
+	// regime also uses at a match score.
 	Money *CubeVerdict `json:"money,omitempty"`
 	// Evaluated regime only: the search depth that actually produced this
-	// number — never the one requested, same discipline as
-	// domain.CheckerMove/DoublingCubeAnalysis.AnalysisDepth (#125).
+	// number — never the one requested, as in
+	// domain.CheckerMove/DoublingCubeAnalysis.AnalysisDepth.
 	Depth string `json:"depth,omitempty"`
 }
 
@@ -79,10 +72,9 @@ func Evaluate(pos *domain.Position) Result {
 	top, topBoard := computeSide(&pos.Board, domain.White)
 	res := Result{EPC: EPC{Bottom: bottom, Top: top}}
 
-	// The race zone stays a pure-bearoff zone. A side whose farthest chequer is
-	// on the 8-point now has an EPC (ADR-0027 §9), but the two-sided table has
-	// no wider form and widening the zone is a display decision, not a data one
-	// — ADR-0017/0021, deliberately left out of this lot.
+	// The race zone stays a pure-bearoff zone: an 8-point side has an EPC
+	// (ADR-0027 §9), but the two-sided table has no wider form, and widening
+	// the zone is a display decision (ADR-0017/0021).
 	if !bottom.AllInHome || !top.AllInHome || bottom.CheckerCount == 0 || top.CheckerCount == 0 {
 		return res
 	}
@@ -93,11 +85,9 @@ func Evaluate(pos *domain.Position) Result {
 		us, them = homeBoardOf(topBoard), homeBoardOf(bottomBoard)
 	}
 
-	// Resolve returns nil while the machine has no table yet — the first
-	// launch, until the background generation finishes (ADR-0027). The exact
-	// regime is simply unavailable then, and the estimate below answers, with
-	// its own badge: the one thing that must not happen is an exact-looking
-	// verdict pulled from nowhere (ADR-0009).
+	// Resolve returns nil until the first background generation finishes
+	// (ADR-0027); the estimate then answers, with its own badge — never an
+	// exact-looking verdict from nowhere (ADR-0009).
 	src := Resolve()
 	if src != nil && src.Covers(us, them) {
 		entry, err := src.Lookup(us, them)
@@ -134,10 +124,8 @@ func Evaluate(pos *domain.Position) Result {
 }
 
 // CubeStateFor maps the position's cube to the on-roll player's viewpoint.
-// Exported (#197/C.10) so gui.evaluateRaceRegime (gammonnet_eval.go) can call
-// this instead of keeping its own 3-line duplicate in sync by inspection —
-// gammonnet's own internal tests import race, so race importing gammonnet
-// back would cycle; gui already imports both with no such constraint.
+// Exported so gui.evaluateRaceRegime shares it rather than duplicating it.
+
 func CubeStateFor(pos *domain.Position, onRoll int) CubeState {
 	switch pos.Cube.Owner {
 	case onRoll:

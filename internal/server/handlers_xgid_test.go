@@ -56,10 +56,9 @@ func TestPositionsFromXGID(t *testing.T) {
 	}
 }
 
-// TestPositionsFromXGIDWritesTheCrawfordSentinel pins #360 on the two routes an
-// HTTP client hands an XGID to: field 7 is the Crawford flag at a match score,
-// and a player one point away is away `0` after the Crawford game, `1` in it
-// (CONTEXT.md, « Away score »). fromXGID used to answer `1` for both.
+// TestPositionsFromXGIDWritesTheCrawfordSentinel: field 7 is the Crawford
+// flag; one point away is away `0` after the Crawford game, `1` in it
+// (CONTEXT.md, « Away score »).
 func TestPositionsFromXGIDWritesTheCrawfordSentinel(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)
@@ -90,8 +89,8 @@ func TestPositionsFromXGIDWritesTheCrawfordSentinel(t *testing.T) {
 	}{
 		{"after the Crawford game", "XGID=" + board + ":1:-1:1:21:3:6:0:7:10", [2]int{4, domain.PostCrawford}},
 		{"in the Crawford game", "XGID=" + board + ":1:-1:1:21:3:6:1:7:10", [2]int{4, domain.Crawford}},
-		// A 1-point match is its own Crawford game, field 7 or not (#411);
-		// the DMP after the Crawford game of a longer match is not.
+		// A 1-point match is its own Crawford game, field 7 or not; the DMP
+		// after the Crawford game of a longer match is not.
 		{"a 1-point match with field 7 = 0", "XGID=" + board + ":0:0:1:21:0:0:0:1:10", [2]int{domain.Crawford, domain.Crawford}},
 		{"DMP after the Crawford game of a 7-point match", "XGID=" + board + ":1:-1:1:21:6:6:0:7:10", [2]int{domain.PostCrawford, domain.PostCrawford}},
 	} {
@@ -126,11 +125,9 @@ func TestPositionsFromXGIDWritesTheCrawfordSentinel(t *testing.T) {
 	}
 }
 
-// TestPositionsFromOGID pins #260 on the two routes an HTTP client hands an
-// OGID to: /v1/positions.fromOGID, and /v1/positions.parseText, which reads
-// an OGID like a pasted XGID. Both must return the position the XGID of the
-// same position returns — Crawford sentinel included, which an OGID spells as
-// a "C" after the match length.
+// TestPositionsFromOGID: fromOGID and parseText (reading an OGID like a
+// pasted XGID) return what the same position's XGID returns, Crawford "C"
+// included.
 func TestPositionsFromOGID(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)

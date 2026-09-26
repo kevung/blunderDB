@@ -7,14 +7,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// Le mode quiz (#294, fiche J.4), côté base.
-//
-// Le jugement est dans engine (pur, testé sans base). Ce fichier ne fait que
-// deux choses : retrouver la position et son analyse, et appeler le juge. La
-// séparation est ce qui permet à l'interface, à la ligne de commande et au
-// démon de noter la même réponse de la même façon — l'invariant de parité de
-// CLAUDE.md, appliqué à une notion qui aurait très bien pu naître dans le
-// frontend et n'y aurait jamais été vérifiable.
+// Le mode quiz, côté base : le jugement est dans engine, pour que GUI, CLI et
+// démon notent une réponse de la même façon (parité, CLAUDE.md).
 
 // GradeQuizChecker judges a checker answer given by the board the user built.
 func (d *Database) GradeQuizChecker(positionID int, played domain.Board) (engine.QuizVerdict, error) {
@@ -46,9 +40,7 @@ func (d *Database) GradeQuizCube(positionID int, action string) (engine.QuizVerd
 }
 
 // quizSubject reads the position and its analysis. A missing analysis is NOT
-// an error: the verdict says "not matched", which is the honest answer for a
-// position nobody has evaluated, and lets a quiz keep running through a base
-// with gaps instead of stopping on one.
+// an error: the verdict says "not matched", and the quiz keeps running.
 func (d *Database) quizSubject(positionID int) (*domain.Position, *domain.PositionAnalysis, error) {
 	pos, err := d.LoadPosition(positionID)
 	if err != nil {

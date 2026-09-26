@@ -4,14 +4,9 @@ import (
 	"testing"
 )
 
-// A second engine's cube analysis must not push the first one out (#269).
-//
-// This used to happen: SaveAnalysis kept the incoming cube analysis whenever
-// it was non-nil, so importing a GNUbg file over an XG one silently dropped
-// XG's cube verdict — while the same position's CHECKER moves accumulated
-// from both. ADR-0013's own text describes the behaviour this test now
-// enforces ("merges engines inside it, every entry tagged with its own
-// AnalysisEngine"); ingest/merge.go had it, this wrapper did not.
+// A second engine's cube analysis must not push the first one out
+// (ADR-0013: engines merge inside one row, each entry tagged), as
+// ingest/merge.go already does.
 func TestSaveAnalysisKeepsEveryEnginesCubeAnalysis(t *testing.T) {
 	db := newTestDB(t)
 	pos := InitializePosition()

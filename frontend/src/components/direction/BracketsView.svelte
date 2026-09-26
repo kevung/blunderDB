@@ -1,18 +1,8 @@
 <script>
     /*
-     * La vue Arbres (issue #373, fonctionnel.md §5.6).
-     *
-     * Le moteur dessine aussi les arbres — son paquet `render` produit le SVG de la page
-     * d'affichage autonome — mais la vue DANS l'application est dessinée ici, et c'est un
-     * partage volontaire : à l'intérieur, un arbre est traduit en neuf langues et cliquable, et
-     * ces deux choses vivent au frontend.
-     *
-     * Ce qu'un directeur vient y chercher : où en est le tableau, et quel match cloche. Un
-     * avertissement du moteur se voit donc SUR la place concernée, pas seulement dans une liste
-     * loin de l'arbre.
-     *
-     * Une phase suisse n'a pas de graphe avant sa bascule : sa vue est le tableau des vies, avec
-     * les adversaires déjà rencontrés — ce qu'on regarde avant d'apparier deux joueurs à la main.
+     * La vue Arbres (fonctionnel.md §5.6), dessinée ici et non par le `render` du moteur :
+     * traduite et cliquable. Un avertissement se voit sur la place concernée. Une phase
+     * suisse avant bascule montre le tableau des vies et les adversaires rencontrés.
      */
     import { t } from '../../i18n';
     import { renderLabel, renderSectionName } from './labels.js';
@@ -28,7 +18,7 @@
     let openPhases = $state(/** @type {Record<number, boolean> | null} */ (null));
 
     // Pas `state` : svelte-check lirait alors la rune `$state` ci-dessus comme un abonnement au
-    // store `state` — le piège qui avait fait planter DirectionSettings (#390).
+    // store `state` — le piège qui avait fait planter DirectionSettings.
     const unfolded = $derived.by(() => {
         if (openPhases) return openPhases;
         /** @type {Record<number, boolean>} */
@@ -118,9 +108,7 @@
                             <div class="section">
                                 <h4>{renderSectionName($t, s.name)}</h4>
                                 {#if s.players && s.players.length}
-                                    <!-- Un barrage n'a pas de graphe : ses appariements se
-                                         tirent au fur et à mesure. Ce qui compte est qui reste
-                                         et pour combien de places. -->
+                                    <!-- Barrage sans graphe : qui reste, pour combien de places. -->
                                     <p class="muted">
                                         {$t('direction.bracket.playoff', {
                                             players: s.players.join(', '),

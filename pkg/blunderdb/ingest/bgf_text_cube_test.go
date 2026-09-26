@@ -12,18 +12,8 @@ import (
 // real BGBlitz text-position fixtures that carry cube-decision rows in both
 // languages the format exports: French ("Pas de double", "Double / Prendre",
 // "Double / Refuser") and English ("No Double", "Double / Pass",
-// "Double / Take"). Before this test, testdata/bgf_positions/02_NDT_FR.txt,
-// 04_DP_EN.txt and 06_RT_FR.txt were orphaned fixtures with 0 references
-// anywhere in the repo, and classifyBGFCubeAction had 0% coverage.
-//
-// Each fixture's three cube-decision rows classify into exactly one of
-// nodbl/take/pass; buildBGFTextCubeAnalysis reads the classified EMG value
-// into CubefulNoDoubleEquity/CubefulDoubleTakeEquity/CubefulDoublePassEquity.
-// A misclassification (e.g. a French "Prendre" row not recognised as "take")
-// would leave the corresponding field at its zero value instead of the
-// fixture's actual EMG number, so asserting the exact populated values proves
-// classifyBGFCubeAction actually ran and classified correctly — not just that
-// parsing didn't error.
+// "Double / Take"). Asserting the exact equities proves each row was
+// classified: a misclassified row leaves its field at zero.
 func TestClassifyBGFCubeAction(t *testing.T) {
 	cases := []struct {
 		fixture string

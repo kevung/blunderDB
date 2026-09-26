@@ -200,7 +200,7 @@ func TestStandingsCSV(t *testing.T) {
 		t.Fatalf("%d lines, want a header plus 24 players", len(lines))
 	}
 	// L'en-tête est dans la langue de l'utilisateur, pas dans celle du moteur : ce fichier est
-	// collé dans la comptabilité d'un directeur, et blunderDB parle neuf langues (#393).
+	// collé dans la comptabilité d'un directeur, et blunderDB parle neuf langues.
 	if !strings.Contains(lines[0], "Joueur") {
 		t.Errorf("the first line is a header in the user's language: %q", lines[0])
 	}

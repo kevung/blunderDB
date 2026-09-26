@@ -1,45 +1,17 @@
 <script>
     import { t } from '../i18n';
 
-    // The "position fact" half of ADR-0017's layout rule: quantities that
-    // belong to the board itself, never to a choice a player might make.
-    // Shared by EvalPanel (live evaluation) and AnalysisPanel (a stored
-    // record) — one rendering, two callers, so the two never drift on what
-    // a "position fact" looks like on screen (CONTEXT.md).
+    // Position facts (ADR-0017, CONTEXT.md), shared by EvalPanel and
+    // AnalysisPanel. Two blocks (ADR-0018): the race block, always per side,
+    // and the pre-roll vector, per side only when showProbabilities (otherwise
+    // it is CandidateMovesTable's Baseline row). ADR-0021 stacks them as two
+    // <tbody>s of ONE table so they share a column grid; side by side they
+    // pushed the cube block under the numbers at the default width.
     //
-    // Two kinds of fact live here, and ADR-0018 gives them different axes:
-    // - the race block (bottomEPC/topEPC) is per side by nature and always
-    //   read in bottom/top/Δ rows;
-    // - the pre-roll vector (bottom/top) is per side ONLY when there is no
-    //   list to read it against — showProbabilities is false whenever the
-    //   caller instead renders it as a Baseline row inside a candidate list
-    //   (CandidateMovesTable's own `baseline` prop). The two never show at
-    //   once for the same position.
-    //
-    // ADR-0021: those two kinds are two BLOCKS stacked in one table — two
-    // `<tbody>`s, each with its own header row — not ten columns on one line.
-    // Welded into one line, the facts plus the cube block needed 963 px (fr) to
-    // 1125 px (el) against the 996 px the panel has at blunderDB's default
-    // window, so in seven languages out of nine the cube block, last in the
-    // flex row, was pushed under the numbers it answers, and in the other two a
-    // turned cube's longer labels were enough to do it. Stacked, the facts plus
-    // the cube block need 674 px (en) to 824 px (el), and the height is free:
-    // a cube decision is only ever shown when there are no dice, hence no
-    // candidate list.
-    //
-    // One table rather than two stacked tables, because two tables size their
-    // columns independently: the blocks came out different widths with nothing
-    // lining up under anything. Sharing one column grid makes the two blocks
-    // read as one object — same left edge, same right edge, same column stops,
-    // the side markers in a single column.
-    //
-    // bottom/top: {win, gammon, backgammon, cubeless} | null — probabilities
-    // as fractions [0,1], cubeless as an equity. null renders a blank row
-    // (structure is never conditioned on whether a value has landed yet —
-    // ADR-0017 rule 3), not a hidden one.
-    // bottomEPC/topEPC: race.EPCResult-shaped {epc, pipCount, wastage,
-    // meanRolls, stdDev} | null — the race block appears only when at least
-    // one is present.
+    // bottom/top: {win, gammon, backgammon, cubeless} | null — fractions and an
+    // equity; null renders a blank row, never a hidden one (ADR-0017 rule 3).
+    // bottomEPC/topEPC: race.EPCResult-shaped | null; the race block shows when
+    // at least one is present.
     let {
         bottom = null,
         top = null,
@@ -57,20 +29,14 @@
     let showRace = $derived(!!(bottomEPC || topEPC));
     let bothShown = $derived(!maskedBottom && !maskedTop);
 
-    // The shared grid is as wide as the widest block: five value columns when
-    // the race block is there, four otherwise. The probability block then ends
-    // in one empty cell rather than in a column of its own width — that empty
-    // cell IS the alignment.
+    // Five value columns with the race block, four otherwise; the probability
+    // block ends in an empty cell that keeps the alignment.
     let dataCols = $derived(showRace ? 5 : 4);
     let probHeaders = $derived([$t('epc.facts.gain'), $t('epc.facts.gammon'), $t('epc.facts.backgammon'), $t('epc.facts.cubelessEquity')]);
     let raceHeaders = $derived([$t('epc.epc'), $t('epc.pipCount'), $t('epc.wastage'), $t('epc.avgRolls'), $t('epc.stdDev')]);
 
-    // The one-sided table these numbers came from, shown only when it is not
-    // the ordinary six points (ADR-0027 §9). At six the label would be noise;
-    // beyond it, it is the difference between "this side is home" and "this
-    // side has a chequer on the 8-point and was answered anyway", which the
-    // reader has no other way of knowing. It goes in the race block's empty
-    // corner cell, so no column moves (ADR-0021).
+    // The one-sided table used, shown only beyond six points (ADR-0027 §9), in
+    // the race block's empty corner cell so no column moves (ADR-0021).
     let raceDomain = $derived.by(() => {
         const width = Math.max(bottomPoints ?? 0, topPoints ?? 0);
         return width > 6 ? `OS-${String(width).padStart(2, '0')}` : '';
@@ -88,11 +54,8 @@
         return fmt(a - b);
     }
 
-    // Each block is three rows of the same shape — a side, the other side,
-    // their difference — so the cells are computed here and the markup is
-    // written once, in the snippet below. The Δ row of the race block ends in
-    // two dashes: averaging rolls or differencing standard deviations across
-    // sides means nothing.
+    // Three rows per block (side, side, Δ), rendered by one snippet. The race Δ
+    // row ends in dashes: differencing rolls or deviations means nothing.
     let probCells = $derived({
         bottom: [pct(bottom?.win), pct(bottom?.gammon), pct(bottom?.backgammon), eq(bottom?.cubeless)],
         top: [pct(top?.win), pct(top?.gammon), pct(top?.backgammon), eq(top?.cubeless)],
@@ -150,10 +113,7 @@
     </tbody>
 {/snippet}
 
-<!-- One table, one column grid, two blocks: the probability vector and the
-     race numbers share their column stops and their side-marker column, so the
-     pair reads as a single object rather than as two tables that happen to sit
-     one above the other (ADR-0021). -->
+<!-- One table, one column grid, two blocks (ADR-0021). -->
 <table class="facts-table">
     {#if showProbabilities}
         {@render block(probHeaders, probCells)}

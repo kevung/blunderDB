@@ -8,10 +8,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The comment family is an adapter over storage.CommentStore: the SQL lives
-// once, in storage/sqlite, under the contract suite both backends pass
-// (storagetest, Comment/*). Every method takes d.mu the way it always did
-// and passes the desktop's implicit tenant ("") as scope.
+// The comment family is an adapter over storage.CommentStore: every method
+// takes d.mu and passes the desktop's implicit scope ("").
 
 // commentStore returns the comment family of the open database, or the
 // error every wrapper method reports when no database is open. The caller

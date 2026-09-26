@@ -9,12 +9,8 @@ import (
 	"testing"
 )
 
-// The `tournament` sub-command (issue #395).
-//
-// What the software can do, it must be able to do without a graphical interface. What is held
-// here is that each sub-command works on a plain database file — no Wails, no interface — and
-// that `verify` EXITS IN ERROR when a warning remains, which is the whole point of an
-// after-the-fact check.
+// The `tournament` sub-command: each sub-command works on a plain database
+// file with no GUI, and `verify` exits in error while a warning remains.
 
 // directedTournamentCLI creates a directed tournament in the CLI's database and returns its id.
 func directedTournamentCLI(t *testing.T, cli *CLI, entrants int) int64 {

@@ -1,12 +1,5 @@
-// canvasTable.js — a generic {header?, rows} table rasterizer for a 2D canvas
-// context: column widths, cell borders, zebra striping, section rules.
-//
-// Extracted from clipboardService.js (fiche D.10, #210): "copy board with analysis"
-// embedded this canvas rasterizer alongside the backgammon-specific glue that decides
-// WHAT to paint (utils/analysisRows.js's rows). This module knows nothing about cube
-// decisions or checker moves — it only knows how to lay cells on a grid — so
-// clipboardService.js's paintAnalysisStrip is the only caller that still mixes the two,
-// and it does so by calling into this module rather than by containing it.
+// canvasTable.js — a generic {header?, rows} table rasterizer for a 2D canvas (widths, borders,
+// zebra, section rules); knows nothing of backgammon. Caller: clipboardService's paintAnalysisStrip.
 const STRIP = { rowHeight: 18, padding: 10, cellPad: 4, font: '12px monospace', headerFont: 'bold 12px monospace' };
 const INK = { border: '#ddd', section: '#ccc', header: '#f2f2f2', white: '#ffffff', even: '#fdfdfd', played: '#fff3cd' };
 
@@ -33,10 +26,8 @@ function paintCell(ctx, x, y, w, text, { bg = INK.white, bold = false, align = '
     ctx.fillText(text, align === 'left' ? x + STRIP.cellPad : x + w / 2, y + h / 2);
 }
 
-// paintTable lays a {header?, rows} block on the canvas. A row whose cells
-// stop short of the last column spans it with its last cell (the verdict,
-// a cubeless equity). `sections` names the columns after which a heavier
-// rule separates the groups, as the DOM table's borders do.
+// A row whose cells stop short of the last column spans it with its last cell. `sections` names
+// the columns followed by a heavier rule, as in the DOM table.
 function paintTable(ctx, x0, y0, widths, { header = null, rows }, { boldLabels = false, leftLabels = false, labelBg = INK.white, zebra = false, sections = [] } = {}) {
     const h = STRIP.rowHeight;
     const edges = widths.reduce((acc, w) => [...acc, acc[acc.length - 1] + w], [x0]);

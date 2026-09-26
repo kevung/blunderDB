@@ -9,14 +9,9 @@ import (
 	"testing"
 )
 
-// TestDocsNeverCiteAFutureVersion enforces one half of the documentation
-// rule in CLAUDE.md ("the documentation describes the published version, in
-// the present tense, and nothing else") that no phrase-level grep can catch:
-// a version NUMBER above the one conf.py declares. Two "depuis la 0.37.0"
-// shipped in a 0.36.0 site (tasks/critique-doc-2026-09, persona 7 #2) —
-// the release skill's grep looks for tell-tale words, and a number is not a
-// word. Only application versions (0.x.y) are compared: the schema version
-// (2.x.y) and third-party versions live on their own scales.
+// TestDocsNeverCiteAFutureVersion: no application version (0.x.y) above
+// conf.py's may appear in the docs (CLAUDE.md, Documentation); the release
+// skill's grep only looks for words.
 func TestDocsNeverCiteAFutureVersion(t *testing.T) {
 	root := repoRoot(t)
 

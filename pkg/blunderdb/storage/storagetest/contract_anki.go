@@ -248,13 +248,8 @@ func testAnkiRandomCardIgnoresSchedule(t *testing.T, s storage.Storage) {
 
 // testAnkiDrawOrderInterleavesTies pins ADR-0026 rule 9: cards tied on due date
 // are drawn at random, while the priority that IS meaningful — state first,
-// then an older due date — is untouched.
-//
-// The tie is not a corner case, it is the normal state of a fresh deck: every
-// new card is synced with the same due timestamp, so ordering by due date
-// separates none of them and the engine falls back on insertion order, which is
-// the order of the match the positions came from. A session then walked the
-// moves of one game in sequence.
+// then an older due date — is untouched. The tie is the normal state of a
+// fresh deck: every new card shares one due timestamp.
 func testAnkiDrawOrderInterleavesTies(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -304,12 +299,9 @@ func testAnkiDrawOrderInterleavesTies(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testAnkiCubePairsAreChained pins the two halves of #276.
-//
-// A cube decision is TWO questions, and blunderDB already stores them as two
-// positions. What the contract promises is that a deck built from one half
-// gets the other, and that reviewing the first offers the second — without
-// either becoming a card that takes one grade for two answers.
+// testAnkiCubePairsAreChained: a cube decision is TWO questions stored as two
+// positions. A deck built from one half gets the other, and reviewing the
+// first offers the second, each keeping its own grade.
 func testAnkiCubePairsAreChained(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -406,11 +398,8 @@ func testAnkiCubePairsAreChained(t *testing.T, s storage.Storage) {
 // testAnkiScoreDeckHoldsScores pins what a deck of score cards is (ADR-0042):
 // the application states its content, a card of it names a score and no
 // position, and it is reviewed and logged like any other card.
-//
-// The last part is the point of the case. Everything the review path does with
-// a card used to go through its position — loading it, excluding it from a
-// draw, writing it into the journal — and a card that has none must travel
-// that whole path without one, on both backends.
+// The point is that a card with no position travels the whole review path
+// (load, draw exclusion, journal) on both backends.
 func testAnkiScoreDeckHoldsScores(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 

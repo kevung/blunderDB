@@ -19,25 +19,14 @@ import (
 // two-sided database were NOT shipped, and the "evaluated" regime (gammonNet)
 // became the floor on its domain, what would the user lose?
 //
-// It differs from TestEvalMeasure (ADR-0012, 2026-08-29) on three points:
-//
-//   - the searcher is configured exactly as the live panel's
-//     evaluateRaceRegime does (ConfigForPosition: UseCube, CubeOwner, CubeX),
-//     so the leaves are valued with the cube (ADR-0023) — the 08-29 run used
-//     DefaultConfig, cubeless leaves;
-//   - it measures the COST of following gammonNet's verdict in EXACT equity
-//     (the table's own ND / min(DT, DP)), not only the agreement rate — a
-//     disagreement by 0.001 and one by 0.3 are not the same disagreement;
-//   - it reports 0, 1 and 2 ply side by side, so the reader sees what each
-//     ply buys on this domain.
-//
-// Sampling is the same as TestEvalMeasure (uniform over home-board
-// configurations with 1..6 checkers a side, seed 1), so the two are
-// comparable. Recipe step, not part of go test ./...:
+// Unlike TestEvalMeasure it configures the searcher as the live panel does
+// (ConfigForPosition, cubeful leaves), prices each verdict in EXACT equity,
+// and reports 0, 1 and 2 ply side by side; sampling is the same (seed 1).
+// Recipe step, not part of go test ./...:
 //
 //	BLUNDERDB_BEAROFF_FLOOR=1 go test -run TestBearoffFloorMeasure -v ./pkg/blunderdb/engine/gammonnet/
 //
-// # Measured on 2026-09-03 (embedded TS-06-06, N=4000 positions, seed 1, gammonNet v1.2.1 weights)
+// Measured (TS-06-06, N=4000, seed 1):
 //
 //	                         0-ply          1-ply          2-ply
 //	|dP win| mean / p95 / max   1.71 / 5.6 / 20.3 %   1.41 / 5.1 / 17.2 %   0.85 / 3.1 / 8.4 %
@@ -50,24 +39,12 @@ import (
 //	max cost                    0.500           0.336           0.446
 //	take/pass agreement         95-96 %         96 %            96 %
 //
-// The verdict is dominated by one structural error, not by the network:
-// gammonNet's cube model prices a LIVE cube (efficiency, recube vig), and
-// the TS-06-06 domain is exactly where the cube is dead — one or two rolls
-// from the end. The confusion is almost entirely DT->ND (2-ply centred:
-// 189 of 206 disagreements): the exact table says double/take and gammonNet
-// declines, undervaluing DT by 0.3-0.45 on last-roll positions where the
-// exact answer is p > 0.5 => double. The reader's ply does not fix it: the
-// distribution converges (2-ply pWin is 4x closer than 0-ply) but the cube
-// model is applied on top of it identically. For comparison, the
-// convolution ESTIMATOR of race.EstimatedWinProb is at sigma 0.05 % on the
-// win probability — thirty times closer than 2-ply on this domain.
-//
-// Conclusion recorded in tasks/taille-binaire-2026-09.md: gammonNet 2-ply
-// is NOT an acceptable floor for the money cube verdict on the TS-06-06
-// domain; the exact table stays (ADR-0009/ADR-0012 hold). The 6.8 MB can
-// still leave the binary another way: the table is derivable at runtime by
-// backward induction (byte-identical to gnubg's makebearoff, ~2 s on 4
-// cores), which keeps the "never estimated" invariant intact.
+// The error is structural: the cube model prices a LIVE cube where the
+// TS-06-06 domain's cube is dead, so the confusion is almost entirely DT->ND
+// on last-roll positions, and more plies do not fix it. gammonNet 2-ply is
+// therefore NOT an acceptable floor for the money cube verdict here; the
+// exact table stays (ADR-0009, ADR-0012), generated rather than shipped
+// (ADR-0027).
 func TestBearoffFloorMeasure(t *testing.T) {
 	if os.Getenv("BLUNDERDB_BEAROFF_FLOOR") == "" {
 		t.Skip("BLUNDERDB_BEAROFF_FLOOR not set")

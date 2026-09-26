@@ -14,21 +14,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// =====================================================================
-// Saving a draft, exporting it, and being done with it (T1.9)
-// =====================================================================
-//
-// fonctionnel.md §4 and §5, ADR-0045 §2, §3 and §8. Like db_transcription.go
-// this file is PLUMBING: the document is the transcript package's business,
-// the writing is ingest.WriteMatch's, the analysis is
-// db_gammonnet_batch.go's. What is here is the join, and the two decisions
-// the join has to take on its own — both stated below, where they are made.
+// Saving and exporting a draft (ADR-0045 §2, §3, §8). Plumbing between the
+// transcript package, ingest.WriteMatch and the gammonNet batch; the two
+// decisions of its own are stated where they are made.
 
-// TranscriptionSaveResult is what a save reports: the Match it produced, and
-// what the panel needs to say next. ToAnalyze is the count ADR-0045 §8 asks
-// the panel to derive rather than store — the positions of the saved match
-// that have no analysis at all, which is exactly what the targeted batch is
-// about to work through.
+// TranscriptionSaveResult is what a save reports. ToAnalyze is the derived,
+// never stored, count of the match's positions without analysis (ADR-0045 §8).
 type TranscriptionSaveResult struct {
 	MatchID int64 `json:"match_id"`
 	// Replaced is false on the first save (the Match was created) and true on
@@ -38,10 +29,8 @@ type TranscriptionSaveResult struct {
 	Moves     int  `json:"moves"`
 	Positions int  `json:"positions"`
 	ToAnalyze int  `json:"to_analyze"`
-	// Inconsistent restates what the panel already knows from the annotated
-	// document: the draft carries at least one Inconsistency. The save was
-	// made all the same — nothing is refused (ADR-0044) — and the field is
-	// here so a caller that did not warn (the CLI, a test) still can.
+	// Inconsistent: the draft carries an Inconsistency; saved all the same
+	// (ADR-0044), flagged for callers that did not warn.
 	Inconsistent bool `json:"inconsistent"`
 }
 
@@ -49,15 +38,8 @@ type TranscriptionSaveResult struct {
 // save creates it and posts its id on the document, every save after that
 // REPLACES the same Match, id and all (ADR-0045 §2).
 //
-// The draft stays open and stays the source of truth. Nothing is snapshotted:
-// a replacement is housekeeping, not a deletion, and replacing one match
-// twenty times during a review must not leave twenty copies in the trash
-// (ADR-0045 §3).
-//
-// It does NOT start the analysis batch — that is the caller's, because the
-// batch is a background job with a progress bar and a cancel button, and this
-// package has neither. The count it hands back is what the caller starts it
-// on.
+// The draft stays the source of truth. A replacement is not snapshotted to the
+// trash (ADR-0045 §3). The analysis batch is the caller's to start.
 func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult, error) {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
@@ -69,11 +51,8 @@ func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult,
 
 	parts := transcript.Build(ed.Doc)
 
-	// The one thing a save refuses, and it is not an Inconsistency: a document
-	// with no game at all. ADR-0044's "nothing is refused" is about what the
-	// user wrote down being kept as written — it is not a licence to file an
-	// empty Match in the library, which would then count in the statistics and
-	// answer searches with nothing at all.
+	// The one refusal: no game at all. ADR-0044 keeps what was written, it
+	// does not licence an empty Match polluting statistics and searches.
 	if len(parts.Games) == 0 {
 		return nil, fmt.Errorf("transcription %d: nothing to save yet", id)
 	}
@@ -122,17 +101,10 @@ func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult,
 // writeTranscribedMatch is the write itself: one transaction, ingest.WriteMatch,
 // and the content hashes stated afterwards.
 //
-// Afterwards, and that is the decision this function exists for. WriteMatch
-// reads MatchHash and CanonicalHash to answer "has this match arrived here
-// before?" — the right question for an IMPORT and the wrong one for a save: a
-// transcription of a match the library already holds from XG would be silently
-// enriched into it, the draft would come to own someone else's match, and the
-// next save would rewrite that match's games from the draft. So the graph
-// travels with the hashes empty (nothing to find, the match is created or
-// replaced as asked) and ReplaceHeader states them on the row a moment later,
-// inside the same transaction. They are then what fonctionnel.md §4.2 says
-// they are: the content identity a future IMPORT of this match deduplicates
-// against, never the identity of the transcribed Match, which is its id.
+// Afterwards on purpose: WriteMatch dedups on the hashes, which for a save
+// would enrich a match the library already holds from XG and hand it to the
+// draft. So the graph travels hash-less and ReplaceHeader stamps them in the
+// same transaction, for a future IMPORT to dedup against.
 func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.MatchGraph, header domain.Match) (ingest.WriteResult, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -169,13 +141,9 @@ func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.Matc
 // attachTournament is the header's tournament made true of the Match, in the
 // same transaction as the write.
 //
-// It is stated HERE and not in the graph because ReplaceHeader does not touch
-// `tournament_id`: the column belongs to the tournament's own ordering
-// (tournament_sort_order goes with it), and the store that owns both is the
-// one asked. A save with no tournament DETACHES, so that clearing the field in
-// the metadata pane is a change like any other rather than one the next save
-// silently ignores — the attachment is decided at the save (fonctionnel.md
-// §1.1), and the draft is what decides it.
+// Here, not in the graph: ReplaceHeader does not touch tournament_id, which
+// the tournament store owns with its sort order. A save with no tournament
+// DETACHES, so clearing the field is not silently ignored.
 func attachTournament(ctx context.Context, tx storage.Tx, matchID int64, tournamentID *int64) error {
 	if tournamentID != nil && *tournamentID != 0 {
 		return tx.Tournaments().AddMatch(ctx, "", *tournamentID, matchID)
@@ -188,10 +156,8 @@ func attachTournament(ctx context.Context, tx storage.Tx, matchID int64, tournam
 // analysis is the batch's job afterwards (ADR-0045 §8), and a transcription
 // has no notes to attach.
 //
-// The ids the transcript package numbers its games with are its own — they
-// index Moves and Positions, they are not database ids — so they are dropped
-// here; WriteMatch assigns the real ones. The hashes are dropped too, for the
-// reason writeTranscribedMatch states.
+// The transcript's own ids are not database ids and are dropped; so are the
+// hashes (see writeTranscribedMatch).
 func transcriptGraph(parts transcript.Parts) *ingest.MatchGraph {
 	g := &ingest.MatchGraph{Match: *parts.Match}
 	g.Match.MatchHash, g.Match.CanonicalHash = "", ""
@@ -219,18 +185,10 @@ func transcriptGraph(parts transcript.Parts) *ingest.MatchGraph {
 
 // transcriptMatchHashes are the two content hashes of a transcribed match.
 //
-// The canonical one is deliberately the SAME scheme the importers compute
-// (ingest/xg.go's computeCanonicalMatchHashFromXG and its twins): players
-// sorted and lower-cased, the length, the number of games, then the first ten
-// rolls of each game with each roll's dice sorted. A match transcribed here
-// and later imported from an XG or a GnuBG file therefore hashes the same,
-// and the import enriches instead of filing a second copy — which is what
-// "they serve the deduplication of imports" means (fonctionnel.md §4.2).
-//
-// The format-specific one is this format's own: the plays as a transcript
-// writes them, which no importer spells the same way. Its purpose is to
-// change whenever the document changes, which it does — it is recomputed and
-// rewritten at every save.
+// The canonical one is the SAME scheme as the importers
+// (computeCanonicalMatchHashFromXG and twins), so a later XG/GnuBG import of
+// the same match enriches instead of duplicating. The format-specific one
+// hashes the plays as typed and changes whenever the document does.
 func transcriptMatchHashes(parts transcript.Parts) (matchHash, canonicalHash string) {
 	m := parts.Match
 
@@ -301,15 +259,9 @@ func (d *Database) SuggestTranscriptionMatFilename(id int64) (string, error) {
 	return ingest.SuggestMATFilename(m), nil
 }
 
-// ExportTranscriptionMAT writes the open draft as a .mat file. It renders
-// first and writes second, like ExportMatchMAT, so a failure leaves no
-// truncated file behind.
-//
-// The draft is exported AS TYPED. An illegal play goes out as it was played —
-// gnubg and XG will flag it "Invalid move" and diverge from there, which is
-// what the caller warns about, and the export is never refused (ADR-0044,
-// fonctionnel.md §5). Nothing here is written to the library: an export is not
-// a save.
+// ExportTranscriptionMAT writes the open draft as a .mat file, rendering
+// first so a failure leaves no truncated file. Exported AS TYPED, illegal
+// plays included (ADR-0044); nothing is written to the library.
 func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
 	text, err := d.TranscriptionMAT(id)
 	if err != nil {
@@ -318,12 +270,9 @@ func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
 	return os.WriteFile(outputPath, []byte(text), 0o644)
 }
 
-// TranscriptionAnalysisResume is the fact ADR-0045 §8 refuses to store: the
-// last draft that produced a Match, and how many of that Match's positions
-// still carry no analysis. A batch cut short by a close leaves nothing behind
-// — no flag, no journal, no `.ckpt` — so "the analysis never finished" is not
-// a state to be read back but a count to be taken again, which is what this
-// is.
+// TranscriptionAnalysisResume is the fact ADR-0045 §8 refuses to store,
+// recounted instead: the last draft that produced a Match, and how many of
+// its positions still lack analysis.
 type TranscriptionAnalysisResume struct {
 	// TranscriptionID is the draft that produced the Match, and Label what the
 	// drafts list shows for it, so the offer can name what it is about.
@@ -340,21 +289,10 @@ type TranscriptionAnalysisResume struct {
 // has positions left to analyse, and returns nil when it has none — which is
 // also what a library with no saved draft at all answers.
 //
-// It is what the status bar asks when a database is opened (fonctionnel.md
-// §4, "Reprise de l'analyse"), and it is deliberately a QUESTION rather than a
-// reminder someone left: ignoring the offer stores nothing, so reopening the
-// database asks again for as long as positions are missing, and finishing the
-// batch makes the offer disappear on its own.
-//
-// The scope is one match on purpose. The library-wide catch-up already exists
-// in the settings, and it is not what is wanted here: a user who transcribed
-// one match must not be handed the thousands of imported positions he never
-// asked to have analysed.
-//
-// "The last saved draft" is the most recently updated draft that carries a
-// match id — ListTranscriptions is already ordered that way. A draft whose
-// Match was deleted has had its column set back to NULL by the schema, so it
-// is not a candidate, and no stale match id is ever counted.
+// Asked on open; ignoring the offer stores nothing. Scoped to one match on
+// purpose, not the library's imported positions. "Last saved" is the most
+// recently updated draft with a match id (ListTranscriptions' order); a
+// deleted Match has its column NULLed by the schema.
 func (d *Database) PendingTranscriptionAnalysis() (*TranscriptionAnalysisResume, error) {
 	drafts, err := d.ListTranscriptions()
 	if err != nil {

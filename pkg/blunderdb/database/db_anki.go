@@ -9,16 +9,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// =====================================================================
-// Anki / FSRS functions
-// =====================================================================
-//
-// Every method below is an adapter over the Storage backend
-// (d.store.Anki(), see storage.AnkiStore): it takes d.mu the way the GUI and
-// CLI expect, then delegates with the wrapper's implicit scope. The SQL and
-// the FSRS scheduling (go-fsrs, DefaultParam tuned by the deck's parameters)
-// live in storage/sqlite/anki_sqlite.go, held to the shared contract suite
-// alongside the PostgreSQL backend.
+// Anki / FSRS: every method takes d.mu and delegates to d.store.Anki() with
+// the wrapper's implicit scope; SQL and scheduling live in the storage backends.
 
 // CreateAnkiDeck creates a new spaced repetition deck
 func (d *Database) CreateAnkiDeck(name, description, sourceType string, sourceID int64, sourceCommand string) (int64, error) {
@@ -65,9 +57,8 @@ func (d *Database) UpdateAnkiDeck(id int64, name, description string) error {
 // UpdateAnkiDeckParams updates the scheduling settings of a deck.
 //
 // sessionLimit nil means the deck has no session limit; a pointer to 0 means a
-// limit that serves no card. The two are different states (ADR-0026 rule 3),
-// which is why this crosses the Wails boundary as a pointer and not as a
-// sentinel number.
+// limit that serves no card (ADR-0026 rule 3) — hence a pointer, not a
+// sentinel, across the Wails boundary.
 func (d *Database) UpdateAnkiDeckParams(id int64, requestRetention float64, maximumInterval float64, enableFuzz bool, sessionLimit *int) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -149,8 +140,7 @@ func (d *Database) GetAnkiDeckStats(deckID int64) (AnkiDeckStats, error) {
 
 // GetAnkiForecast projects how many cards of a deck come due over the next
 // days calendar days (offset 0 absorbing every overdue card); deckID 0 covers
-// every deck. It delegates to the Storage backend so the CLI's `anki forecast`
-// and the daemon's /v1/anki.forecast read the same projection.
+// every deck.
 func (d *Database) GetAnkiForecast(deckID int64, days int) ([]AnkiForecastDay, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -180,11 +170,7 @@ func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
 
 // GetLinkedAnkiCard returns the card holding the OTHER HALF of a cube
 // decision — "prend ?" after "double ?" — when it is in the same deck and due,
-// or nil when there is nothing to chain (#276).
-//
-// nil is the ordinary answer: a checker decision has no other half. The caller
-// asks after grading a card and falls back to GetNextAnkiCard, so a deck
-// without cube decisions never changes behaviour.
+// or nil (the ordinary answer; the caller falls back to GetNextAnkiCard).
 func (d *Database) GetLinkedAnkiCard(deckID int64, cardID int64) (*AnkiReviewCard, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -201,10 +187,7 @@ func (d *Database) GetLinkedAnkiCard(deckID int64, cardID int64) (*AnkiReviewCar
 }
 
 // GetRandomAnkiCard returns a random card from the deck for a "cram" (free
-// drill) session: it ignores the FSRS schedule — both the due date and the card
-// state — so the user can practise any position on demand (e.g. a warm-up
-// before a tournament). Unlike GetNextAnkiCard paired with ReviewAnkiCard, cram
-// never mutates scheduling, so it can't disturb the real review plan.
+// drill) session, ignoring the FSRS schedule and never mutating it.
 //
 // excludePositionID, when non-zero, is skipped so two consecutive draws don't
 // repeat the same position; for a single-card deck it falls back to the full
@@ -251,12 +234,8 @@ func (d *Database) ResetAnkiDeck(deckID int64) error {
 // GetAnkiDeckRetention reports what a deck's review log measures against the
 // target retention its owner chose.
 //
-// Read-only, and deliberately so (ADR-0026 rule 5): the target is a choice on
-// the work/knowledge trade-off, the measurement is its outcome, and steering
-// one by the other is the mechanism FSRS's authors reject. Exposed here because
-// the GUI must be able to show what the daemon and the CLI can already read —
-// this method is the parity that was missing while the same capability was
-// served over HTTP and reachable from nowhere else.
+// Read-only on purpose (ADR-0026 rule 5): steering the target by the
+// measurement is the mechanism FSRS's authors reject.
 func (d *Database) GetAnkiDeckRetention(deckID int64) (*domain.AnkiRetention, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -271,11 +250,6 @@ func (d *Database) GetAnkiDeckRetention(deckID int64) (*domain.AnkiRetention, er
 // in its deck and keeps its schedule, but never comes up in a session: it is
 // how a card that is wrong, or not worth studying yet, is set aside without
 // losing the history attached to it.
-//
-// The three card gestures below (suspend, bury, remove) were served over HTTP
-// and reachable from nowhere else — the same gap GetAnkiDeckRetention names,
-// found systematically this time by the reverse half of the parity check
-// (G.14, #242).
 func (d *Database) SetAnkiCardSuspended(cardID int64, suspended bool) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

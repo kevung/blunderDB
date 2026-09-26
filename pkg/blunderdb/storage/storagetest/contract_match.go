@@ -133,7 +133,7 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 	eq("combined", ids(storage.MatchListOpts{PlayerName: "Alice", Sort: "date_asc", Limit: 1}), []int64{oldID})
 }
 
-// testMatchSwapCopyOnWrite pins #107: swapping a match's players must not mutate
+// testMatchSwapCopyOnWrite: swapping a match's players must not mutate
 // a position shared with another match, and the swapped position must keep a
 // consistent Zobrist hash (score/cube are hashed). Two matches reference the same
 // position; after swapping match A, match B's position is untouched and A's is a
@@ -340,11 +340,8 @@ func testMatchCreateGameMove(t *testing.T, s storage.Storage) {
 
 // testMoveLuckRoundTrip pins the three states move.luck_mp has to keep apart on
 // both backends: a lucky roll, an unlucky one, and a roll whose luck is
-// unknown. The unknown case is the one worth a test — a backend that reads a
-// NULL column back as 0 would silently turn "we don't know" into "the dice were
-// exactly fair", which is what every luck average must not average over.
-// Negative values matter too: luck is signed, and a column or scan that lost
-// the sign would still look plausible on a lucky roll.
+// unknown. A NULL read back as 0 would turn "unknown" into "exactly fair";
+// a lost sign would still look plausible on a lucky roll.
 func testMoveLuckRoundTrip(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 

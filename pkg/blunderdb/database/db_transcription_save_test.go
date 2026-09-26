@@ -8,14 +8,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// The recipe of T1.9, in two tests: a real multi-game document is saved,
-// corrected and saved again — same Match, analyses kept where nothing moved,
-// nothing through the trash — and the .mat a draft exports is the .mat the
-// Match it produced exports.
-//
-// The document is a real .mat of the repository read back by transcript.FromMAT:
-// four games, a cube, a Crawford game, dances and a resignation, which no
-// hand-built fixture would cover at that price.
+// A real multi-game .mat (a cube, a Crawford game, dances, a resignation) is
+// saved, corrected and saved again — same Match, analyses kept where nothing
+// moved, nothing through the trash — and the draft's .mat equals the Match's.
 
 // matDraft reads a .mat fixture into a draft row and opens it, returning the
 // row id.
@@ -304,16 +299,10 @@ func TestSaveTranscriptionAsMatch_RefusesAnEmptyDraft(t *testing.T) {
 	}
 }
 
-// TestSetLength_RehashesEveryPosition is the warning T3.2 carries, made into a
-// test: the length of a match is part of the away score of every Position, and
-// the away score is part of its Zobrist identity. Changing the length after a
-// save therefore produces entirely NEW positions at the next save — not
-// corrected ones — and the ones the match no longer stands on are purged by the
-// ordinary retention rule, held by nothing.
-//
-// It is the expected behaviour and not a leak, but it is expensive (every
-// position of the match loses its analysis), which is why it is written down
-// here rather than discovered on a five-hour transcription.
+// TestSetLength_RehashesEveryPosition: the length is part of every away score,
+// hence of the Zobrist identity. Changing it after a save yields entirely NEW
+// positions and purges the old ones by the retention rule — expected, not a
+// leak, but every position loses its analysis.
 func TestSetLength_RehashesEveryPosition(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))

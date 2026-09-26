@@ -1,16 +1,8 @@
 <script>
     /*
-     * Les emplacements (issues #381-#384, ADR-0047 §7).
-     *
-     * C'est tout l'objet de la décision : un tournoi dirigé crée ses Matchs avant qu'ils soient
-     * joués, et chaque match lancé est un emplacement qu'une transcription ou un import vient
-     * remplir. Un tournoi de club sans enregistrement les laisse vides ; un tournoi à
-     * transcription obligatoire les remplit tous, et le directeur obtient ce que personne n'a
-     * aujourd'hui : les matchs d'un tournoi rangés par ronde et par joueur, analysés.
-     *
-     * Une règle commande tout l'écran : RIEN NE SE RATTACHE PAR DÉDUCTION. Une coïncidence de
-     * noms est une suggestion que le directeur accepte, jamais une décision du logiciel. D'où un
-     * bouton par ligne, et jamais de rattachement en masse automatique.
+     * Les emplacements (tasks/nicomaque/fonctionnel.md §7) : chaque match lancé est un
+     * emplacement qu'une transcription ou un import remplit. Rien ne se rattache par
+     * déduction : une coïncidence de noms est une suggestion, un bouton par ligne.
      */
     import { t } from '../../i18n';
     import { renderLabel } from './labels.js';

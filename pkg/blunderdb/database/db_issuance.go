@@ -11,20 +11,13 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// This file is the database glue for pkg/blunderdb/issuance: reading and writing the single
-// watermark document that lives in `metadata`, and opening a protected copy. All the
-// reasoning lives in the issuance package doc and in
-// docs/adr/0007-watermarks-mark-origin-and-nothing-else.md; what follows is plumbing.
-//
-// Note what is absent, and deliberately so: there is no write path on the recipient's side.
-// Opening a watermarked database records nothing, anywhere.
+// Database glue for pkg/blunderdb/issuance (see its package doc and ADR-0007). There is
+// deliberately no write path on the recipient's side: opening a watermarked database records
+// nothing, anywhere.
 
 // readMeta returns a metadata value, treating an absent row as empty. The watermark row is
-// absent from most databases, so absence is the normal case and not an error.
-//
-// It goes through the storage contract's Load, which reads the whole table: the contract has
-// no single-key read, and the table holds a dozen short rows, so adding one for this would be
-// an interface for nothing.
+// absent from most databases, so absence is the normal case. Load reads the whole (tiny)
+// table; the contract has no single-key read.
 func (d *Database) readMeta(key string) (string, error) {
 	return readMetaKey(context.Background(), d.store, key)
 }
@@ -121,16 +114,13 @@ func IsProtectedCopy(path string) bool { return issuance.IsContainer(path) }
 // This is the one time a password is ever asked for: from then on the recipient works with a
 // normal file, with no prompt and no re-encryption.
 //
-// The result lands beside the container with a `.db` extension. An existing file is returned
-// as-is rather than overwritten — a second open would otherwise silently discard the work
-// already done in the database from the first one.
+// The result lands beside the container with a `.db` extension. An existing file is never
+// overwritten: it may hold work done since the first open.
 func OpenProtectedCopy(path, password string) (string, error) {
 	target := issuance.DefaultUnwrapPath(path)
 	if _, err := os.Stat(target); err == nil {
-		// The copy was opened here before, so the database already exists and must not be
-		// overwritten — someone may have worked in it since. But it must NOT be handed back
-		// without checking the password first: doing so let any password through from the
-		// second open onwards, which is no protection at all.
+		// Already opened before: not overwritten, but still password-checked, or any
+		// password would pass from the second open on.
 		if err := issuance.VerifyPassword(path, password); err != nil {
 			return "", err
 		}
@@ -145,9 +135,8 @@ func OpenProtectedCopy(path, password string) (string, error) {
 // DeleteProtectedCopy removes a protected copy once it has been opened into an ordinary
 // database, so the recipient is not left with the same content twice under two names.
 //
-// It refuses anything that is not a container. That check is not politeness: this is called
-// from the frontend with a path, and without it the method would delete whatever file it was
-// handed.
+// It refuses anything that is not a container: called from the frontend with a path, it would
+// otherwise delete whatever file it was handed.
 func DeleteProtectedCopy(path string) error {
 	if !issuance.IsContainer(path) {
 		return fmt.Errorf("%s is not a protected file", path)

@@ -28,11 +28,8 @@ func repoRoot(t *testing.T) string {
 	}
 }
 
-// TestHelpBundlesAreCurrent is the reason the bundles can be committed at all:
-// it re-renders them from doc/source and fails if the committed files differ,
-// so documentation that moved without `make help` stops the build here instead
-// of shipping an in-app help two releases behind (fiche H.6 measured exactly
-// that: the whole of the 0.31.0 watermark work was missing from nine languages).
+// TestHelpBundlesAreCurrent re-renders the bundles and fails if the committed
+// files differ (documentation changed without `make help`).
 func TestHelpBundlesAreCurrent(t *testing.T) {
 	stale, err := run(repoRoot(t), true)
 	if err != nil {
@@ -43,10 +40,8 @@ func TestHelpBundlesAreCurrent(t *testing.T) {
 	}
 }
 
-// TestEveryLanguageIsFullyTranslated is implied by the one above (a missing
-// msgstr makes the generator error out rather than fall back to French), but it
-// is worth its own failure message: it is the check that used to have no
-// mechanical equivalent at all for the help.
+// TestEveryLanguageIsFullyTranslated is implied by the test above but gives
+// its own failure message.
 func TestEveryLanguageIsFullyTranslated(t *testing.T) {
 	root := repoRoot(t)
 	g, err := newGenerator(root)
@@ -73,8 +68,7 @@ func TestInlineEscapesBeforeApplyingMarkup(t *testing.T) {
 		{"`D` ou `D1`", "<code>D</code> ou <code>D1</code>"},
 		// docutils' delimiter rules: emphasis may abut a hyphen on either side.
 		{"die *TAB*-Taste", "die <em>TAB</em>-Taste"},
-		// ...and any Unicode dash or punctuation mark, as docutils reads them:
-		// each of these rendered as literal asterisks in a bundle (#422).
+		// ...and any Unicode dash or punctuation mark, as docutils reads them.
 		{"näppäimet *1*–*4* pysyvät", "näppäimet <em>1</em>–<em>4</em> pysyvät"},
 		{"(*Expert*, *Advanced*…)", "(<em>Expert</em>, <em>Advanced</em>…)"},
 		{"ή *Décision*·", "ή <em>Décision</em>·"},
@@ -98,13 +92,8 @@ func TestInlineEscapesBeforeApplyingMarkup(t *testing.T) {
 	}
 }
 
-// TestEscapedSpaceLeavesNoBackslash holds the rule #422 found broken in ja.js:
-// the escaped space Japanese puts between inline markup and CJK text vanishes
-// without a trace, and the one written with an escape too many — `\\ ` in the
-// reStructuredText, `\\\\ ` in the .po — is refused rather than rendered. Docutils
-// reads that second form as a literal backslash followed by a space, so both
-// the online documentation and the help would show a `\`; no sentence of the
-// three documents the help is generated from wants one.
+// TestEscapedSpaceLeavesNoBackslash: an escaped space written with one escape
+// too many (`\\ ` in RST) is refused, since docutils would print a `\`.
 func TestEscapedSpaceLeavesNoBackslash(t *testing.T) {
 	g := &generator{refs: map[string]refTarget{}, cats: map[string]catalogue{}}
 	consumed := []string{
@@ -170,9 +159,8 @@ func truncate(s string, n int) string {
 }
 
 func TestInlineQuoteEscaping(t *testing.T) {
-	// Quotes are not escaped: the renderer only ever emits text nodes and the
-	// fixed tags it writes itself, never an attribute built from a source
-	// string. If that ever changes, this test is where to notice.
+	// Quotes are not escaped: the renderer never builds an attribute from a
+	// source string.
 	g := &generator{refs: map[string]refTarget{}, cats: map[string]catalogue{}}
 	got, _ := g.inline(`il a dit "non"`, translator{lang: sourceLang})
 	if strings.Contains(got, "<") || strings.Contains(got, ">") {

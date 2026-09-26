@@ -82,15 +82,9 @@ func testImportBatchLifecycle(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testImportBatchReportIsMeasured is the point of the whole design: the half
-// of the report that can be measured is measured on every call, and therefore
-// tells the truth about the database as it is NOW — not as it was when the
-// import ended.
-//
-// The case walks that: a batch whose positions have no analysis reports them
-// as such; analysing one of them lowers the count without anything rewriting
-// the batch's stored counts. A report that had been frozen at the end of the
-// import would still claim the old figure.
+// testImportBatchReportIsMeasured: the measurable half of the report is
+// measured on every call, so analysing a position lowers the "without
+// analysis" count without rewriting the batch's stored counts.
 func testImportBatchReportIsMeasured(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	batches := s.ImportBatches()
@@ -184,8 +178,7 @@ func testImportBatchReportIsMeasured(t *testing.T, s storage.Storage) {
 
 // testImportBatchReportIgnoresOtherBatches pins the narrowing: a report is
 // about ONE import, and a second import into the same database must not appear
-// in it. Without the import_batch_id predicate every report would be a report
-// on the whole database, which is exactly the thing the panel replaced.
+// in it.
 func testImportBatchReportIgnoresOtherBatches(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	batches := s.ImportBatches()
@@ -222,14 +215,9 @@ func testImportBatchReportIgnoresOtherBatches(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testImportStudyQueue pins the queue that follows the report (#259): the
-// order it offers, the fact that a position appears once, and the narrowing to
-// one batch.
-//
-// The order is the whole feature. A queue that offered the close cube
-// decisions before the blunders would be a list of positions, not a study
-// list — and the reason attached to each entry is what lets the interface say
-// WHY it is showing this board rather than another.
+// testImportStudyQueue pins the queue that follows the report: the order it
+// offers (the whole feature), the reason attached to each entry, a position
+// appearing once, and the narrowing to one batch.
 func testImportStudyQueue(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	batches := s.ImportBatches()

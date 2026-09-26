@@ -8,9 +8,7 @@
 // tenant invisibility against it would either be vacuous or fail by
 // construction. RunTenantIsolationTests is for a real multi-tenant backend
 // (PostgreSQL), called from its own build-tag-gated test
-// (tenant_isolation_postgres_test.go) — see #235: before this, isolation was
-// checked for 3 of storage's ~16 tenant-scoped families, each in its own
-// hand-rolled test; this file gives every family the same loop.
+// (tenant_isolation_postgres_test.go).
 package storagetest
 
 import (

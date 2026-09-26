@@ -13,16 +13,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The directory (issue #391, fonctionnel.md §4.2).
-//
-// A club director runs the same thirty people every month. Retyping their names at every
-// tournament is the first place the software gets abandoned.
-//
-// The directory is EVERY Participant of EVERY Direction of this database, seen as one list
-// de-duplicated by name. It is a DERIVED VIEW and never a table: two spellings stay two lines,
-// and blunderDB keeps having no notion of a person — the identity CONTEXT.md has always
-// refused. Deleting a Direction takes its Participants out of the directory, because there was
-// never anywhere else they were written.
+// The directory: EVERY Participant of EVERY Direction, de-duplicated by name. A DERIVED VIEW,
+// never a table — blunderDB has no notion of a person (CONTEXT.md), two spellings stay two
+// lines, and deleting a Direction removes its Participants.
 
 // DirectoryEntry is one line of the directory: a name, and what the LAST entry under that name
 // said about the club and the rating.
@@ -215,8 +208,8 @@ type DirectoryCSVError struct {
 }
 
 // DirectoryCSVWarning is a line that reads fine but is held back: the same name twice in the
-// paste, or a name already entered in this tournament (#442). Its row travels with it, so the
-// director can still enter it — deliberately, with a tick — and the frontend never re-parses.
+// paste, or a name already entered in this tournament. Its row travels with it, so the
+// director can still enter it deliberately and the frontend never re-parses.
 type DirectoryCSVWarning struct {
 	Line int    `json:"line"`
 	Code string `json:"code"`
@@ -225,10 +218,8 @@ type DirectoryCSVWarning struct {
 	Row       DirectoryEntry `json:"row"`
 }
 
-// DirectoryImport is what a pasted CSV would give, WITHOUT writing anything.
-//
-// Parsing and entering are two gestures on purpose: the director sees the lines that are wrong
-// and the ones that are fine, and nothing is entered until they say so.
+// DirectoryImport is what a pasted CSV would give, WITHOUT writing anything: parsing and
+// entering are two gestures on purpose.
 type DirectoryImport struct {
 	Rows   []DirectoryEntry    `json:"rows"`
 	Errors []DirectoryCSVError `json:"errors"`
@@ -242,15 +233,12 @@ type DirectoryImport struct {
 
 // ParseDirectoryCSV reads a CSV of entries for a tournament. It writes nothing, ever.
 //
-// The header is recognised by a RULE and not by a list of words: a first line whose rating
-// column is present and is not a number cannot be data, whatever language it is written in.
-// blunderDB speaks nine, and a closed list of accepted headers would be the same closed list of
-// synonyms that was taken out of the `ask` command. What is skipped is reported.
+// The header is recognised by a RULE, not a word list, so it works in any language (see
+// looksLikeHeader). What is skipped is reported.
 //
-// A semicolon-separated file is read too — it is what a French spreadsheet produces — and a
-// decimal comma with it. A line with no name is an error, not an empty entry; so is a line
-// with no separator when the other lines have one — a stray note pasted with the list, which
-// used to be entered as a player (#442). A plain list of bare names stays a list of names.
+// Semicolons and a decimal comma (French spreadsheets) are read too. A line with no name is an
+// error; so is a line with no separator among lines that have one (a stray note). A plain list
+// of bare names stays a list of names.
 //
 // A name that comes twice in the paste, or that is already entered in tournamentID (0: none),
 // is a warning and is held back from Rows. Names match as the directory matches them: case
@@ -347,11 +335,8 @@ func (d *Database) ParseDirectoryCSV(tournamentID int64, body string) (*Director
 	return out, nil
 }
 
-// looksLikeHeader says whether a first line is a header rather than an entry.
-//
-// The rule is the rating column: a rating is a number or nothing. A first line that carries
-// something else there is a heading — "rating", "cote", "Wertung" — and no list of words is
-// needed to see it.
+// looksLikeHeader says whether a first line is a header: its rating column holds something
+// other than a number or nothing.
 func looksLikeHeader(rec []string) bool {
 	if len(rec) < 3 {
 		return false

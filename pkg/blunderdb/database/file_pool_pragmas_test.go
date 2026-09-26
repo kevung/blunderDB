@@ -8,14 +8,10 @@ import (
 	"testing"
 )
 
-// TestFilePoolEveryConnectionCarriesPragmas guards issue #157: a file-backed
-// database is served by a pool of up to ten connections, and a PRAGMA run
-// after sql.Open only configures the ONE connection it happens to run on.
-// The other connections used to run with foreign_keys=OFF and busy_timeout=0,
-// so a DeleteMatch landing on one of them skipped the ON DELETE CASCADE and
-// left game/move/move_analysis rows orphaned. The PRAGMAs must therefore be
-// carried by the DSN (sqlite.DSN), which the driver replays on every
-// connection it opens.
+// TestFilePoolEveryConnectionCarriesPragmas: a PRAGMA run after sql.Open
+// configures one pooled connection only, so the others would skip ON DELETE
+// CASCADE. The PRAGMAs must travel in the DSN (sqlite.DSN), replayed on every
+// connection.
 //
 // The test pins the pool to three connections, checks all three out at once
 // so that they cannot be the same underlying connection, and reads the two

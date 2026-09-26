@@ -11,12 +11,9 @@ import (
 )
 
 // runTrash is `blunderdb trash`: what was deleted, and how to put it back
-// (issue #285, ADR-0036).
-//
-// The CLI's own `delete` still deletes outright — a script that deletes a
-// position expects it gone, and quietly leaving a snapshot behind would grow a
-// file nobody asked to grow. Deleting THROUGH the trash is what
-// `trash delete` is for, and the difference is the point.
+// (ADR-0036). The CLI's `delete` deletes outright, since a script expects the
+// row gone without a snapshot growing the file; `trash delete` goes through
+// the trash.
 func (cli *CLI) runTrash(args []string) error {
 	if len(args) == 0 {
 		printTrashUsage()

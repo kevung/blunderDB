@@ -10,19 +10,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// Tabular export of a database's contents (issue #280, fiche I.24).
+// Tabular export of a database's contents.
 //
 // # Why CSV, and why not Parquet
 //
-// The fiche listed Parquet "as an option". It is not here, and the reason is
-// measured rather than principled: a columnar library is several megabytes of
-// dependency in a binary this project spends real effort keeping small (see
-// tasks/taille-binaire-2026-09.md), and everything the export is FOR reads CSV
-// in one line — `pd.read_csv`, `polars.read_csv`, R's `read.csv`, a
+// A columnar library is several megabytes of dependency in a binary this
+// project spends real effort keeping small, and everything the export is FOR
+// reads CSV in one line — `pd.read_csv`, `polars.read_csv`, R's `read.csv`, a
 // spreadsheet. Parquet earns its keep on tens of millions of rows; a
-// backgammon library that has been going for ten years holds a hundred
-// thousand positions. If somebody one day has a database where the difference
-// is measurable, that measurement is what should reopen this.
+// backgammon library holds a hundred thousand positions at most. A database
+// where the difference is measurable is what should reopen this.
 //
 // # What the columns are
 //

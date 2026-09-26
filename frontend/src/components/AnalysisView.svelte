@@ -1,26 +1,14 @@
 <script>
-    // The stored analysis of a position, rendered — and nothing else. This is
-    // what the Analysis panel shows, and what an Anki review reveals as the
-    // answer of a card (ADR-0025 rule 6).
-    //
-    // Presentational on purpose: it holds no state. Sorting, the cube/checker
-    // tabs of MATCH mode, keyboard handling and the reveal of a review card
-    // all live in the panel that owns them and arrive here as props. The two
-    // callers ask different questions of the same record — the Analysis panel
-    // lets the user sort and switch tabs, a review card takes the sort as it
-    // comes — so `kind` is decided by the caller rather than re-derived here
-    // from a mode this component would then have to know about.
+    // The stored analysis of a position, rendered, for the Analysis panel and
+    // an Anki answer (ADR-0025 rule 6). Stateless: sorting, tabs, keys and
+    // `kind` come from the caller, which knows about MATCH mode.
     import { moverFactsToSides } from '../utils/positionFacts.js';
     import { cubeDecision } from '../utils/cubeDecision.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
 
-    // isMoney/jacoby/beaver (ADR-0016 point 6, #190/C.3): the position's own
-    // referential and money-game rule flags, read by the caller off its own
-    // position (only it knows about MATCH mode / the current position, this
-    // component stays presentational) and passed straight down to the two
-    // tables that show them next to the equity column and the verdict.
+    // isMoney/jacoby/beaver (ADR-0016 point 6): read by the caller, passed down.
     let {
         analysis,
         kind,
@@ -41,17 +29,9 @@
         maxCube = 0
     } = $props();
 
-    // ADR-0017 rule 5: the facts table is shared with EvalPanel, fed here by
-    // the stored record instead of a live evaluation. cubelessNoDoubleEquity
-    // is the single cubeless figure this table shows (see CubeVerdictTable's
-    // own doc comment on why the pair it used to render collapsed to one
-    // column).
-    //
-    // DoublingCubeAnalysis's win/gammon/backgammon chances are stored as
-    // percentages [0,100] (the scale every importer and RoundToHundredthPercent
-    // use), but moverFactsToSides/PositionFactsTable's shared contract is
-    // fractions [0,1] — divide here, at this caller's boundary, rather than
-    // touch the stored scale.
+    // Facts table shared with EvalPanel (ADR-0017 rule 5), fed by the record.
+    // Stored chances are percentages [0,100]; the table takes fractions [0,1],
+    // so divide here rather than touch the stored scale.
     function cubeFacts(cubeAnalysis) {
         const frac = (x) => (x == null ? null : x / 100);
         return moverFactsToSides(
@@ -105,16 +85,8 @@
 {/if}
 
 <style>
-    /* Facts, decision and the depth/engine footer, side by side, each next to
-       the last. `justify-content: space-between` used to live here and pushed
-       the facts against the left edge and the decision against the right one,
-       manufacturing a band of white down the middle of the panel — the same
-       defect ADR-0020 rule 8 removed from the Eval panel's badge strip, and
-       what ADR-0021 states as a rule: blocks are laid out at a constant gap
-       and the leftover width is left over, never spread between them. The
-       query container is established by the panel that hosts this view, so
-       the layout follows the panel's own width — bottom band or side column,
-       Analysis tab or Anki answer. */
+    /* Blocks at a constant gap, leftover width left over, never spread (ADR-0021).
+       The query container is the host panel's. */
     .tables-container {
         display: flex;
         flex-wrap: wrap;

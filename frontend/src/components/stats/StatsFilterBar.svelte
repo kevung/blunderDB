@@ -8,10 +8,8 @@
     import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
 
     /**
-     * Whether the Players tab is the one on screen. That table is about every
-     * player at once and splits checker from cube into its own columns, so the
-     * two controls that would contradict it are disabled rather than left to
-     * silently do nothing: the player selection and the decision type.
+     * Players tab on screen: player selection and decision type are disabled,
+     * since that table covers every player and splits checker from cube.
      * @type {{ playersTab?: boolean }}
      */
     let { playersTab = false } = $props();
@@ -144,22 +142,16 @@
     );
 
     /**
-     * Load the lists this bar offers — players, tournaments, date bounds — from
-     * the database. They describe what the database currently holds, so they
-     * are read again whenever it changes rather than once at mount: a merge, an
-     * import or a deleted match would otherwise leave the dropdowns showing
-     * names and dates that are no longer there.
+     * Load players, tournaments and date bounds; re-read on every database
+     * change so the dropdowns never show what is gone.
      */
     async function loadLists() {
         const dbLoaded = get(databaseLoadedStore);
         const [players, tournaments, dateRange] = dbLoaded ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange()]) : [[], [], null];
 
-        // Derive from the local value, never by reading playerList back. With
-        // no database open this function runs to the end synchronously (there
-        // is no await on that branch), so a read of a $state it just wrote
-        // would make the caller effect depend on what it writes — the effect
-        // then re-runs forever and Svelte tears the whole UI down with
-        // effect_update_depth_exceeded.
+        // Derive from the local value, never playerList: without a database this
+        // runs synchronously, and reading back what it wrote loops the caller
+        // effect (effect_update_depth_exceeded).
         const loadedPlayers = players ?? [];
         playerList = loadedPlayers;
         tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
@@ -169,10 +161,8 @@
     }
 
     /**
-     * Drop a selected player who no longer exists — the usual way being a merge
-     * that folded the name into another one. Left in place, the filter would
-     * quietly match nothing and every tab would report empty statistics for a
-     * player the database no longer knows.
+     * Drop a selected player who no longer exists (e.g. merged), or the filter
+     * would silently match nothing.
      */
     function dropMissingPlayerSelection() {
         if (!localFilter.playerName) return;
@@ -181,11 +171,8 @@
         applyFilter();
     }
 
-    // Re-read the lists on every database mutation (import, delete, merge…).
-    // Reading the key here is what subscribes the effect to those changes — and
-    // it is the only thing this effect may depend on. Everything else runs
-    // untracked: the work below writes the very $state the reload produces, so
-    // any incidental read of it would close the loop.
+    // Re-read on every database mutation: the key is the effect's only
+    // dependency; everything else is untracked, as it writes the $state it reads.
     $effect(() => {
         void $statsInvalidationKeyStore;
         untrack(() => {

@@ -17,7 +17,7 @@ func commentedGraph(matchHash, comment string) *MatchGraph {
 	return g
 }
 
-// TestEnrichDoesNotDuplicateComments reproduces #108: importing the same match in
+// TestEnrichDoesNotDuplicateComments: importing the same match in
 // two formats (canonical duplicate → enrich) must not add the shared position's
 // comment twice.
 func TestEnrichDoesNotDuplicateComments(t *testing.T) {

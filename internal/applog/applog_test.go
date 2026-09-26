@@ -43,14 +43,9 @@ func TestRotatingWriter_WritesAppend(t *testing.T) {
 	}
 }
 
-// TestRotatingWriter_RotatesPastMaxBytes guards #241's size-based rotation:
-// once the current file would exceed maxFileBytes, the next write rotates
-// first — the old content ends up in path+".1" and the new write starts a
-// fresh file rather than growing the old one without bound. Rather than
-// writing 5 MiB of filler to reach the real threshold, this seeds w.size
-// directly to just under it — Write only ever consults that field (never
-// re-stats the file), so this exercises the exact "> maxFileBytes"
-// comparison production code runs, against the real package constant.
+// TestRotatingWriter_RotatesPastMaxBytes: past maxFileBytes the old content
+// moves to path+".1". It seeds w.size, the only thing Write consults, instead
+// of writing 5 MiB.
 func TestRotatingWriter_RotatesPastMaxBytes(t *testing.T) {
 	w, path := newTestWriter(t)
 	defer w.Close()
@@ -86,9 +81,7 @@ func TestRotatingWriter_RotatesPastMaxBytes(t *testing.T) {
 	}
 }
 
-// TestOpen_CreatesDirAndFile guards Open()'s directory-creation contract: a
-// fresh $XDG_STATE_HOME/blunderDB that does not exist yet must be created,
-// not treated as an error.
+// TestOpen_CreatesDirAndFile: Open creates a missing log directory.
 func TestOpen_CreatesDirAndFile(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("XDG_STATE_HOME", dir)
@@ -108,10 +101,8 @@ func TestOpen_CreatesDirAndFile(t *testing.T) {
 	}
 }
 
-// TestTailLines pins what the log panel depends on (#287): the LAST lines,
-// oldest first, and a missing file that answers "nothing" rather than an
-// error — a fresh install has logged nothing, and reporting that as a failure
-// would send a user looking for a problem that is not there.
+// TestTailLines: the last lines, oldest first; a missing file is empty, not an
+// error.
 func TestTailLines(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, fileName)

@@ -1,19 +1,12 @@
 /**
  * match-panel-detail-on-demand.spec.js
  *
- * Panneau Match : le volet de détail n'existe que pour un match sélectionné.
+ * Panneau Match : le volet de détail n'existe que pour un match sélectionné, plutôt que
+ * réservé en permanence (ce qui coûterait 55 % du panneau pour une invite, et laisserait la
+ * liste des matchs trop étroite pour être lue).
  *
- * #201 (D.1) avait réservé sa largeur — le volet toujours monté, une invite
- * l'occupant tant que rien n'était choisi — pour que la ligne cliquée ne se
- * dérobe pas sous le curseur avant le second clic d'un double-clic. Ce remède
- * coûtait 55 % du panneau pour afficher une phrase, et laissait la liste des
- * matchs trop étroite pour être lue. La réservation a donc disparu : la liste
- * occupe toute la largeur jusqu'à ce qu'une sélection donne au volet quelque
- * chose à montrer.
- *
- * Ce que ce test épingle est la paire : pas de volet et liste pleine largeur
- * avant sélection, volet et liste rétrécie après, retour en arrière à la
- * désélection.
+ * Ce que ce test épingle est la paire : pas de volet et liste pleine largeur avant sélection,
+ * volet et liste rétrécie après, retour en arrière à la désélection.
  */
 
 import { test, expect } from '@playwright/test';

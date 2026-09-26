@@ -1,26 +1,14 @@
-// Command cli-doc-gen captures the `--help` text of every CLI subcommand
-// (internal/cli, driven straight off each command's flag.FlagSet) and writes
-// it into CLI_USAGE.md between the generated markers, as a mechanical
-// skeleton that cannot drift from the flags a command actually accepts — the
-// hand-written prose and examples in the sections above it are untouched.
+// Command cli-doc-gen captures every CLI subcommand's `--help` into
+// CLI_USAGE.md between the generated markers; the hand-written prose above
+// is untouched.
 //
 // Usage — from the repo root:
 //
 //	go run ./cmd/cli-doc-gen
 //
-// It walks cli.CommandNames() (the exported, sorted view of the same
-// handlers() table main.go's mode dispatch trusts), plus the two composite
-// commands' own sub-command tables (cli.CollectionSubcommands(),
-// cli.AnkiSubcommands(), cli.TournamentSubcommands()), invoking each
-// in-process with a trailing --help
-// and capturing what its Usage() prints to stdout. `help` and `version` are
-// skipped: neither takes flags, so there is nothing here for them to drift
-// on.
-//
-// Run it after adding, renaming or re-flagging a CLI subcommand, review the
-// diff in CLI_USAGE.md, and commit both — the same discipline as `go
-// generate`, just not wired to it because the output lands inside a
-// hand-maintained file rather than a dedicated one.
+// It walks cli.CommandNames() and the composite commands' sub-command tables,
+// running each in-process with --help. Rerun it after changing a
+// subcommand's flags and commit the CLI_USAGE.md diff.
 package main
 
 import (
@@ -43,10 +31,8 @@ const (
 // --help would just repeat the general usage banner.
 var skip = map[string]bool{"help": true, "version": true}
 
-// composite maps a top-level command to the accessor for its own
-// sub-command names, for the commands whose flags live one level down
-// (`collection <sub>`, `anki <sub>`, `bearoff <sub>`, `tournament <sub>`) rather than on the
-// top-level command itself.
+// composite returns the sub-command names of a command whose flags live one
+// level down (`collection <sub>`, …).
 func composite(name string) []string {
 	switch name {
 	case "collection":
@@ -62,13 +48,9 @@ func composite(name string) []string {
 	}
 }
 
-// captureHelp runs args through a fresh CLI in-process and returns whatever
-// its Usage() printed. Every subcommand's Parse(args) sees --help before any
-// required flag is checked, so this never needs a database. Both stdout and
-// stderr are captured: the hand-written banner goes through fmt.Println
-// (stdout), but flag.FlagSet.PrintDefaults() writes to the FlagSet's default
-// Output(), which is os.Stderr unless a command explicitly redialed it —
-// none do, so the flag list itself only ever shows up on stderr.
+// captureHelp runs args in-process and returns what Usage() printed; --help
+// is parsed before any required flag, so no database is needed. Both streams
+// are captured: the banner goes to stdout, PrintDefaults to stderr.
 func captureHelp(args []string) string {
 	r, w, err := os.Pipe()
 	if err != nil {
@@ -84,9 +66,7 @@ func captureHelp(args []string) string {
 		done <- buf.String()
 	}()
 
-	// Errors are expected here: --help makes every Parse return flag.ErrHelp
-	// (or a missing --db error after printing Usage()); the text already
-	// reached stdout/stderr by the time Run returns.
+	// The error is expected (flag.ErrHelp); the text is already printed.
 	_ = cli.NewCLI().Run(args)
 
 	w.Close()

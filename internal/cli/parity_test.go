@@ -13,16 +13,10 @@ import (
 )
 
 // This file checks the CLI/GUI/server parity invariant (CLAUDE.md) by
-// reflection rather than by memory. Every exported method of
-// database.Database — the surface the GUI binds wholesale through Wails — is
-// looked up in databaseParity, which names the CLI command and the daemon
-// route that expose it, or states why one mode deliberately lacks it. A new
-// Database method that is neither covered nor allow-listed fails the test;
-// so does a table entry naming a method, command or route that no longer
-// exists, and so does a blank column with no reason. The reasons are the
-// point: an absence is a decision (ADR-0015: modes differ in the form they
-// expose because their roles differ, not because one was left half-built),
-// and this table is where the decision is written down.
+// reflection. Every exported database.Database method must appear in
+// databaseParity with its CLI command and daemon route, or a reason why a mode
+// lacks it; stale entries and blank columns without a reason fail too. An
+// absence is a decision (ADR-0015), and this table is where it is written.
 
 // parityEntry maps one Database method to its two headless faces.
 type parityEntry struct {
@@ -73,16 +67,9 @@ const (
 	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): the questions are drawn, timed and revealed in the tab, and a session exists only because someone answered it. The CLI and the daemon gain nothing in v1 — a script has no session to run, an HTTP client nothing to record — and the two tables live in the library, so a journal written on the desktop travels with the file"
 )
 
-// serverOnly is the other half of the parity check (G.14, #242).
-//
-// databaseParity walks Database → (CLI, route) and catches a capability the
-// desktop has and the headless modes lack. It says nothing about the other
-// direction: a route the daemon serves and the Database wrapper never grew
-// stayed invisible, and twenty-one of them had. Six were real gaps nobody had
-// decided on; the rest are deliberate, and now say so here.
-//
-// Every /v1 and /ops route must be reachable from databaseParity or named
-// below with a reason. Sorted by route.
+// serverOnly is the other direction of the parity check: every /v1 and /ops
+// route must be reachable from databaseParity or named below with a reason.
+// Sorted by route.
 var serverOnly = map[string]string{
 	// Storage primitives the desktop reaches through a coarser call. The GUI
 	// and the CLI never save a bare match row or ask whether a Zobrist hash is
@@ -387,11 +374,9 @@ var databaseParity = map[string]parityEntry{
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }
 
-// whyBatchIsTheImport: opening and closing an import batch is not a gesture of
-// its own in any mode — it is the beginning and the end of an import. The CLI
-// opens one around `import`, the daemon around each /v1/imports.* upload, and
-// neither exposes a route to open one by hand. What IS exposed everywhere is
-// reading a batch back: ImportReport / list --type imports / imports.report.
+// whyBatchIsTheImport: an import batch opens and closes with an import in
+// every mode, never by hand; reading one back is exposed everywhere
+// (ImportReport / list --type imports / imports.report).
 const whyBatchIsTheImport = "opened and closed by an import, never as a gesture of its own"
 
 // serverPaths returns the daemon's /v1 route set, built from the same
@@ -470,10 +455,8 @@ func TestDatabaseParity(t *testing.T) {
 		}
 	}
 
-	// The other direction (G.14, #242): every route the daemon serves is
-	// either reachable from a Database method above, or named in serverOnly
-	// with a reason. Without this, a capability could live on the daemon
-	// alone for months without anyone deciding it should.
+	// The other direction: every route the daemon serves is reachable from a
+	// Database method above, or named in serverOnly with a reason.
 	covered := map[string]bool{}
 	for _, e := range databaseParity {
 		if e.Server != "" {

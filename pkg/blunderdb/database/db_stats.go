@@ -13,9 +13,8 @@ type StatsDateRange struct {
 }
 
 // GetStatsDateRange returns the minimum and maximum match dates present in the
-// database. Both fields are empty when no matches with a date exist.
-// GetStatsDateRange delegates to the storage StatsStore. legacyGetStatsDateRange
-// keeps the original SQL as the parity-test reference.
+// database, both empty when no match has a date. legacyGetStatsDateRange is
+// the parity-test reference.
 func (d *Database) GetStatsDateRange() StatsDateRange {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -117,15 +116,12 @@ type StatsResult struct {
 	ErrorHistogram []ErrorBucket  `json:"ErrorHistogram"`
 	TopBlunders    []BlunderEntry `json:"TopBlunders"`
 
-	// The three breakdowns of #266 (fiche I.10), mirroring storage field for
-	// field (the conversion is by json tag): the SAME decisions the figures
-	// above count, sliced by the position's derived phase, by the tags in its
-	// comments, and by the away × away score.
+	// The same decisions as above, sliced by derived phase, comment tag and
+	// away × away score; mirrors storage field for field (converted by json tag).
 	PerPhase []PhaseStats     `json:"PerPhase"`
 	PerTag   []TagStats       `json:"PerTag"`
 	PerScore []ScoreCellStats `json:"PerScore"`
-	// PerGameType is the fourth breakdown (#291): the same decisions, sliced
-	// by the position's derived plan of play.
+	// PerGameType slices the same decisions by derived plan of play.
 	PerGameType []GameTypeStats `json:"PerGameType"`
 }
 
@@ -198,23 +194,15 @@ type CubeDirections struct {
 	Answer CubeAnswerCounts `json:"Answer"`
 }
 
-// ComputeStats aggregates performance metrics for the given filter.
-// ComputeStats delegates to the storage StatsStore (the single production
-// implementation, shared with the headless server). legacyComputeStats keeps
-// the original SQL as the parity-test reference.
-//
-// This is the context.Background() convenience for callers with no context of
-// their own (the GUI's stats panel); ComputeStatsCtx is the one to call when
-// the caller can offer a real deadline/cancellation (B.13, #181: the CLI's
-// `list --type stats` cancels a long aggregation on Ctrl-C through it).
+// ComputeStats aggregates performance metrics for the given filter through
+// the storage StatsStore, with context.Background(); prefer ComputeStatsCtx
+// when the caller can cancel. legacyComputeStats is the parity-test reference.
 func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 	return d.ComputeStatsCtx(context.Background(), filter)
 }
 
-// ComputeStatsCtx is ComputeStats with a caller-supplied context: ctx is
-// threaded into the aggregation query, so cancelling it aborts an in-flight
-// computation instead of running the full ~twelve-query aggregation (stats.go,
-// B.15) for a result nobody will read.
+// ComputeStatsCtx is ComputeStats with a caller-supplied context that aborts
+// the in-flight aggregation queries.
 func (d *Database) ComputeStatsCtx(ctx context.Context, filter StatsFilter) (*StatsResult, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -250,7 +238,6 @@ type SelectionSpec struct {
 // panel into a deduplicated list of position IDs. The StatsFilter is always
 // applied so that the IDs correspond exactly to what is displayed in the panel
 // (invariant: "ce qu'on clique = ce qu'on voit").
-// GetPositionIDsByStatsSelection delegates to the storage StatsStore.
 func (d *Database) GetPositionIDsByStatsSelection(filter StatsFilter, sel SelectionSpec) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -259,8 +246,7 @@ func (d *Database) GetPositionIDsByStatsSelection(filter StatsFilter, sel Select
 
 // GetPositionIDsByTournament returns all position IDs belonging to the given
 // tournament, regardless of any stats filter. Used when the user explicitly
-// reopens a tournament (Open tournament action).
-// GetPositionIDsByTournament delegates to the storage StatsStore.
+// reopens a tournament.
 func (d *Database) GetPositionIDsByTournament(tournamentID int64) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -353,8 +339,7 @@ func (d *Database) GetPlayerTable(filter StatsFilter) ([]PlayerRow, error) {
 
 // GetAllPlayerNames returns all player names found in the match table, ranked by
 // the total number of matches (player1 + player2 appearances) descending.
-// Names that are equal in frequency are sorted alphabetically.
-// GetAllPlayerNames delegates to the storage StatsStore.
+// Ties are sorted alphabetically.
 func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -366,10 +351,8 @@ func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
 }
 
 // applyMatchBadges fills the per-player PR/MWC badge fields of every match in
-// the slice from the storage backend. Callers already hold the read lock. It
-// scopes the badge computation to exactly the matches being decorated, so the
-// cost is proportional to the page shown rather than a scan of every decision
-// in the database.
+// the slice. Callers hold the read lock. Scoped to these matches, so the cost
+// follows the page shown, not the database.
 func (d *Database) applyMatchBadges(matches []Match) error {
 	if len(matches) == 0 {
 		return nil
@@ -463,9 +446,8 @@ type MatchDetailStats struct {
 }
 
 // GetMatchMoveGrades scores every Move of a match by its own play and grades
-// it at the library's error and blunder thresholds (ADR-0046) — the marks the
-// Match panel's Transcript carries (#287). It delegates to the storage
-// StatsStore, the one statement both backends run.
+// it at the library's error and blunder thresholds (ADR-0046), for the Match
+// panel's Transcript.
 func (d *Database) GetMatchMoveGrades(matchID int64) ([]storage.MoveGrade, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -473,9 +455,8 @@ func (d *Database) GetMatchMoveGrades(matchID int64) ([]storage.MoveGrade, error
 }
 
 // GetMatchDetailStats computes per-player statistics for the given match.
-// GetMatchDetailStats delegates to the storage StatsStore. legacyGetMatchDetailStats
-// keeps the original SQL as the parity-test reference (pinned against eXtreme
-// Gammon reference values in TestStatsParity).
+// legacyGetMatchDetailStats is the parity-test reference, pinned against
+// eXtreme Gammon values in TestStatsParity.
 func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

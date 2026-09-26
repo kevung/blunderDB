@@ -2,10 +2,8 @@ import { writable } from 'svelte/store';
 import { GetUIScale, SaveUIScale } from '../../wailsjs/go/main/Config.js';
 import { logger } from '../utils/logger.js';
 
-// Interface scale as a percentage. The whole UI (toolbar icons, fonts, panels,
-// modals and the SVG board) is rendered at UI_SCALE% of its native size via the
-// `--ui-scale` CSS custom property and `zoom` on the main container. Bounds and
-// default mirror config.go (MinUIScale/MaxUIScale/DefaultUIScale).
+// Interface scale in percent, applied through `--ui-scale` and `zoom` on the main container.
+// Bounds and default mirror config.go (MinUIScale/MaxUIScale/DefaultUIScale).
 export const MIN_UI_SCALE = 50;
 export const MAX_UI_SCALE = 200;
 export const DEFAULT_UI_SCALE = 100;

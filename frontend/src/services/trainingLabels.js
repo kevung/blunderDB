@@ -1,12 +1,8 @@
 /**
- * Le nom d'un type de nombre, en une clé de traduction.
- *
- * Les types (`tp4.last`, `gv2`, `pips.bottom`) portent un point : ce sont des
- * identifiants du journal, pas des chemins de traduction, et les faire passer
- * tels quels à `$t` les ferait lire comme des clés imbriquées. Cette table est
- * la seule traversée entre les deux, et elle sert aux deux lecteurs — la fiche
- * de score et le détail du bilan — donc un type ne peut pas s'appeler
- * autrement d'un endroit à l'autre.
+ * Le nom d'un type de nombre, en une clé de traduction. Les types (`tp4.last`,
+ * `pips.bottom`) portent un point que `$t` lirait comme une clé imbriquée ;
+ * cette table est la seule traversée, partagée par la fiche de score et le
+ * bilan.
  */
 const LABEL_KEYS = Object.freeze({
     'tp2.live': 'training.numbers.tp2Live',
@@ -16,11 +12,8 @@ const LABEL_KEYS = Object.freeze({
     gv1: 'training.numbers.gv1',
     gv2: 'training.numbers.gv2',
     gv4: 'training.numbers.gv4',
-    // Nommés par le JOUEUR et non par la géométrie ni par la couleur : le
-    // plateau se retourne à la perspective du joueur 2 (« bas » et « haut »
-    // s'échangent) et la palette est modifiable (« Noir » et « Blanc » ne
-    // valent que pour la palette par défaut). L'indice du joueur, lui, ne
-    // bouge pas — c'est déjà celui que la description du plateau annonce.
+    // Nommés par le JOUEUR, pas par la géométrie (le plateau se retourne) ni
+    // la couleur (la palette est modifiable).
     'pips.bottom': 'board.player1',
     'pips.top': 'board.player2',
     // L'EPC des deux camps, nommés comme les comptes de pions : par le
@@ -28,24 +21,21 @@ const LABEL_KEYS = Object.freeze({
     // là — un concept, un terme.
     'epc.bottom': 'board.player1',
     'epc.top': 'board.player2',
-    // Décision (#323) : un seul nombre par question, la décision que la
+    // Décision : un seul nombre par question, la décision que la
     // position porte. Deux types et non un, parce que le journal les compte à
     // part — on peut bien jouer les pions et mal lire le videau.
     'decision.checker': 'training.numbers.decisionChecker',
     'decision.cube': 'training.numbers.decisionCube',
-    // Évaluation (#322) : les chances de gain du joueur au trait, et l'action
-    // de videau. Celle-ci s'appelle comme celle de Décision — un concept, un
-    // terme — mais le journal la compte à part : lire le videau d'une position
-    // qu'on estime n'est pas juger celui d'une position analysée.
+    // Évaluation : chances de gain du joueur au trait, et action de videau —
+    // même terme qu'en Décision, compté à part au journal.
     'eval.win': 'training.numbers.evalWin',
     'eval.cube': 'training.numbers.decisionCube'
 });
 
 /**
  * @param {string} type
- * @returns {string} la clé de traduction, ou le type lui-même s'il est
- * inconnu — un journal peut porter le type d'un exercice que cette version ne
- * sert plus, et l'afficher brut vaut mieux que l'effacer.
+ * @returns {string} la clé de traduction, ou le type brut s'il est inconnu
+ * (exercice qu'une version ne sert plus).
  */
 export function numberTypeLabelKey(type) {
     return LABEL_KEYS[type] || type;

@@ -1,11 +1,6 @@
 <script>
-    // Le front web (#295, fiche J.5), dont le périmètre est verrouillé par
-    // l'ADR-0039 : consulter, chercher, réviser. Rien d'autre, jamais.
-    //
-    // Le plateau est dessiné par LE dessinateur — le même que le rapport HTML
-    // et l'export d'image, celui que #278 a extrait pour qu'il n'y en ait
-    // qu'un. Un second dessinateur en JavaScript nu aurait été plus léger à
-    // écrire et impossible à tenir en phase.
+    // Le front web, périmètre verrouillé par l'ADR-0039 : consulter, chercher, réviser. Le plateau
+    // est dessiné par le même dessinateur que le rapport HTML et l'export d'image.
     import { call } from './api.js';
     import { renderPositionSVG } from '../services/diagramService.js';
 
@@ -58,11 +53,8 @@
 
     async function loadDecks() {
         await run(async () => {
-            // Les paquets de fiches de score (ADR-0042) ne sont pas offerts
-            // ici : leur carte n'est pas une position, et la consultation web
-            // ne sait dessiner qu'un damier. Le périmètre est verrouillé
-            // (ADR-0039) — on ne propose donc pas un paquet dont la révision
-            // n'aurait rien à montrer, plutôt que d'afficher un damier vide.
+            // Pas de paquets de fiches de score (ADR-0042) : leur carte n'est pas une position,
+            // et le front web ne dessine qu'un damier (ADR-0039).
             decks = ((await call('anki.listDecks')) || []).filter((deck) => deck.sourceType !== 'scores');
             if (decks.length > 0 && !deckId) deckId = decks[0].id;
         });
@@ -79,7 +71,7 @@
         await run(async () => {
             await call('anki.reviewCard', { cardId: card.card.id, rating });
             // L'autre moitié d'une décision de videau vient tout de suite
-            // quand elle est due (#276) — la même règle que sur le bureau,
+            // quand elle est due — la même règle que sur le bureau,
             // parce que c'est la même route.
             const linked = await call('anki.linkedCard', { deckId, cardId: card.card.id }).catch(() => null);
             revealed = false;

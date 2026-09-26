@@ -6,19 +6,11 @@ import (
 	"testing"
 )
 
-// The OGID contract (issue #260, fiche I.4).
-//
-// Every case pairs an OGID with the XGID of the SAME physical position, and
-// this test asserts that the two decoders agree. Pinning the new reader
-// against the old one — rather than against a table of expectations somebody
-// typed out — is what makes the corpus a contract instead of a transcription
-// of one person's reading of a specification.
-//
-// The strings themselves come from the reference implementation (AnkiGammon
-// 1.8.1), over positions dumped from testdata/test.xg and testdata/test.mat.
-// That provenance is the point: the fiche forbade writing this reader before
-// real samples existed, because the format it originally named turned out not
-// to exist at all.
+// The OGID contract. Every case pairs an OGID with the XGID of the SAME
+// physical position and asserts the two decoders agree, which makes the corpus
+// a contract rather than one person's reading of a specification. The strings
+// come from the reference implementation (AnkiGammon 1.8.1), over positions
+// dumped from testdata/test.xg and testdata/test.mat.
 
 type ogidCorpus struct {
 	Cases []struct {
@@ -168,7 +160,7 @@ func TestDecodeOGIDMatchesReference(t *testing.T) {
 		}
 
 		// The reference reads Crawford exactly from the "C" modifier; the one
-		// departure is the 1-point match, always its own Crawford game (#411).
+		// departure is the 1-point match, always its own Crawford game.
 		wantScore := [2]int{Unlimited, Unlimited}
 		if r.MatchLength != nil && *r.MatchLength > 0 && r.ScoreWhite != nil && r.ScoreBlack != nil {
 			crawford := (r.MatchModifier != nil && *r.MatchModifier == "C") || *r.MatchLength == 1
@@ -225,7 +217,7 @@ func TestDecodeOGIDCrawfordModifier(t *testing.T) {
 			t.Errorf("match field %q: away %v, want %v", ml, pos.Score, want)
 		}
 	}
-	// A 1-point match is its own Crawford game whatever the modifier (#411).
+	// A 1-point match is its own Crawford game whatever the modifier.
 	pos, err := DecodeOGID("11jjjjjhhhccccc:ooddddd88866666:N0N::W::0:0:1:")
 	if err != nil {
 		t.Fatal(err)

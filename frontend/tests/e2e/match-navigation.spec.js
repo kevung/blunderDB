@@ -16,11 +16,9 @@ const infoBar = (page) => page.getByTestId('match-info-bar');
 
 // La barre d'état lit le contexte de match, que l'appelant met à jour AVANT
 // d'afficher la position : son compteur avance donc même quand l'affichage
-// échoue. C'est ce qui est arrivé le 2026-09-03 (structuredClone jetait sur un
-// proxy Svelte dans showPosition, et la seule assertion qui l'a vu était le
-// bilan des LoadAnalysis en fin de test). `expectsId` fait donc constater, coup
-// par coup, que le coup demandé a bien été chargé — l'échec nomme alors le
-// coup fautif au lieu d'un tableau final.
+// échoue. `expectsId` fait donc constater, coup par coup, que le coup demandé
+// a bien été chargé — l'échec nomme alors le coup fautif au lieu d'un tableau
+// final.
 async function expectMove(page, move, game, expectsId = null) {
     await expect(statusBar(page)).toContainText(`move ${move}/6`);
     await expect(statusBar(page)).toContainText(`game ${game}/2`);

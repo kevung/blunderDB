@@ -60,12 +60,10 @@ func loadRefMatch(t *testing.T, path string) refMatch {
 // ── Tolerances ───────────────────────────────────────────────────────────────
 
 // parityTolerances sets per-metric acceptance thresholds.
-// Phase 01 values are intentionally wide (blunderDB counts forced moves and
-// all No Double positions); they tighten after fiches 02–04.
 type parityTolerances struct {
 	TotalDecisions     int // all decisions combined
 	CheckerDecisions   int // checker move count
-	DoubleDecisions    int // cube doubling decisions (very wide pre-fiche 03)
+	DoubleDecisions    int // cube doubling decisions
 	TakeDecisions      int // take/pass count
 	CloseCubeDecisions int // is_close_cube=1 count vs XG/gnuBG close cube decisions
 	PR                 float64
@@ -74,29 +72,17 @@ type parityTolerances struct {
 	SnowieER           float64 // Snowie Error Rate; 0 means use hardcoded default
 }
 
-// tolPhase04 applies after fiche 04 (PR denominator fix). Both bDB and
-// XG/gnuBG now count the same decisions: unforced checker + close cube.
+// tolPhase04 applies to SGF→gnuBG comparisons, where structural gaps prevent
+// tighter bounds. Both sides count unforced checker + close cube decisions.
 //
-//	PR=0.2  — tight for XG→XG and SGF→gnuBG (same engine). For XG-import
-//	          vs gnuBG reference (different engines), call-site uses 1.0.
-//	CheckerDecisions=10 — bDB and XG may differ by ≤6 on forced-move boundary
-//	          classification; 10 leaves margin.
-//	MWCPct=3.5 — SGF incomplete close-cube classification (only 2–3/7 cubes
-//	          classified) and cross-engine equity differences cause ≥3.2 gaps.
-//	          XG-vs-XG comparisons use tolPhase04XG (tighter, 1.0 pp).
-//	Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
-//	          removing non-close cube equity increases the gap with gnuBG ref.
-//
-// tolPhase04 applies to SGF→gnuBG comparisons where structural gaps prevent tighter bounds.
-//
-//	MWCPct=3.5 — SGF incomplete close-cube classification (only 2–3/7 cubes
-//	          classified) and cross-engine equity differences produce gaps up to 3.33 pp.
-//	          Max observed: 3.33 pp (test.json SGF P1).
-//	Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
-//	          max observed: 0.44 EMG (test.json SGF P1).
-//	SnowieER=0.5 — two structural sources: (a) SGF forced moves without analysis excluded
-//	          from bDB denominator but counted in gnuBG anTotalMoves (gap ≈20 moves);
-//	          (b) cross-engine equity differences. Max observed: 0.34 (test.json P2).
+//	PR=0.2  — same engine; an XG import vs a gnuBG reference uses 1.0 at the call site.
+//	CheckerDecisions=10 — forced-move boundary classification differs by ≤6.
+//	MWCPct=3.5 — SGF classifies only 2–3/7 close cubes, plus cross-engine
+//	          equity; max observed 3.33 pp (test.json SGF P1).
+//	Equity=0.5 — same SGF close-cube gap; max observed 0.44 EMG.
+//	SnowieER=0.5 — SGF forced moves without analysis leave bDB's denominator
+//	          but stay in gnuBG's anTotalMoves (≈20 moves), plus cross-engine
+//	          equity; max observed 0.34 (test.json P2).
 var tolPhase04 = parityTolerances{
 	TotalDecisions:     5,   // aligned denominator
 	CheckerDecisions:   10,  // unforced checker; ≤6 boundary diff vs XG
@@ -110,8 +96,6 @@ var tolPhase04 = parityTolerances{
 }
 
 // tolPhaseFinal applies to XG-vs-XG comparisons (same analysis engine).
-// All values tightened to reflect the aligned denominator (fiches 02–04) and
-// the cube error formula fix (fiche 06). Used in production since fiche 07.
 //
 //	CheckerDecisions=7 — max observed: 6 (Aachen P2). Residual from forced-move
 //	          boundary classification at the 1-legal-move threshold.
@@ -119,17 +103,17 @@ var tolPhase04 = parityTolerances{
 //	MWCPct=1.0 — max observed: 0.984 pp (Aachen P1). Limit kept at 1.0 — one more
 //	          pp would require per-decision eq2mwc conversion (out of scope).
 //	Equity=0.05 — max observed: 0.015 EMG (Aachen P2). Analysis engine rounding only.
-//	SnowieER=0.3 — no XG Snowie ER reference available yet; tolerance kept from fiche 05.
+//	SnowieER=0.3 — no XG Snowie ER reference to tighten against.
 var tolPhaseFinal = parityTolerances{
 	TotalDecisions:     5,
-	CheckerDecisions:   7, // tightened from 10; max observed diff: 6
+	CheckerDecisions:   7, // max observed diff: 6
 	DoubleDecisions:    5,
 	TakeDecisions:      3,
 	CloseCubeDecisions: 5,
-	PR:                 0.1,  // tightened from 0.2; max observed diff: 0.086
-	MWCPct:             1.0,  // cube error fix (fiche 06); max observed: 0.984 pp
-	Equity:             0.05, // tightened from 0.5; max observed diff: 0.015
-	SnowieER:           0.3,  // no XG ref yet; maintained from fiche 05
+	PR:                 0.1,  // max observed diff: 0.086
+	MWCPct:             1.0,  // max observed: 0.984 pp
+	Equity:             0.05, // max observed diff: 0.015
+	SnowieER:           0.3,  // no XG reference
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -238,7 +222,7 @@ func countCloseCube(t testing.TB, db *Database, matchID int64, player int) int {
 // ── Comparison logic ─────────────────────────────────────────────────────────
 
 // compareXGRef compares blunderDB stats against an XG reference player.
-// After fiches 02–04: bDB counts the same decisions as XG (unforced checker + close cube).
+// Both count the same decisions (unforced checker + close cube).
 func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDetailStats, tol parityTolerances) {
 	t.Helper()
 	t.Logf("--- %s vs XG reference ---", prefix)
@@ -266,16 +250,12 @@ func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDe
 }
 
 // compareGnuBGRef compares blunderDB stats against a gnuBG reference player.
-// After fiche 04, bdb.CheckerDecisions = unforced only, so it aligns with
-// checker_unforced. checker_total (including forced) is no longer compared here.
+// bdb.CheckerDecisions counts unforced moves only, so it is compared with
+// checker_unforced; the forced count is cross-checked at the call site.
 func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDetailStats, tol parityTolerances) {
 	t.Helper()
 	t.Logf("--- %s vs gnuBG reference ---", prefix)
-	// After fiche 04: bDB.CheckerDecisions = unforced only → compare directly.
 	diffInt(t, prefix+" checker_unforced", ref.CheckerUnforced, bdb.CheckerDecisions, tol.CheckerDecisions)
-	// checker_total was compared here before fiche 04. After the fix, bDB counts
-	// only unforced moves, so checker_total (incl. forced) diverges by forced_count.
-	// The forced count cross-check is done at call-site via countForcedChecker.
 	diffFloat(t, prefix+" total_equity_emg", ref.TotalEquityErrorEMG, bdb.TotalEquityError, tol.Equity)
 	if ref.TotalMWCLossPct != nil {
 		mwcRef := *ref.TotalMWCLossPct
@@ -293,7 +273,7 @@ func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlaye
 	//   (a) SGF forced moves without analysis are excluded from blunderDB's denominator
 	//       but counted in gnuBG's anTotalMoves → denominator gap up to ~20 moves.
 	//   (b) Cross-engine equity differences (XG vs gnuBG) add up to ~0.3 per player.
-	//   Max observed: 0.34 (test.json P2). Structural; documented in fiche 05 findings.
+	//   Max observed: 0.34 (test.json P2).
 	snowieGnuTol := tol.SnowieER
 	if snowieGnuTol == 0 {
 		snowieGnuTol = 0.5 // fallback if not set
@@ -326,10 +306,8 @@ func TestStatsParity(t *testing.T) {
 
 	for _, jsonPath := range fixtures {
 		t.Run(filepath.Base(jsonPath), func(t *testing.T) {
-			// Une fixture par sous-test, chacune sa base : rien à partager, et
-			// c'est ce test qui fixait le chemin critique du paquet (112 s sur
-			// 157 s ; le parallélisme d'un paquet ne descend jamais sous son
-			// test le plus long — E.3, #219).
+			// One database per fixture, nothing shared: this test was the
+			// package's critical path.
 			t.Parallel()
 			ref := loadRefMatch(t, jsonPath)
 
@@ -340,7 +318,7 @@ func TestStatsParity(t *testing.T) {
 					t.Logf("XG import: %s  P1=%q", filepath.Base(ref.MatchFile), p1n)
 
 					if ref.XG != nil {
-						// XG-vs-XG: same engine, tightest tolerances (fiche 07 final).
+						// XG-vs-XG: same engine, tightest tolerances.
 						xgTol := tolPhaseFinal
 						if override, ok := xgPROverride[filepath.Base(jsonPath)]; ok {
 							xgTol.PR = override

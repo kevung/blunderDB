@@ -2,8 +2,7 @@
 // and the serve daemon. It is pure: no SQL, no storage, no Wails.
 //
 // This package is the single home for per-board race computations; the
-// Database wrapper and the server handlers delegate here instead of keeping
-// their own copies (ADR-0009, tasks/ts-bearoff). The underlying one-sided
+// Database wrapper and the server handlers delegate here (ADR-0009). The underlying one-sided
 // bearoff distribution lives in package engine (engine.ComputeEPC); this
 // package owns the board-level extraction and the typed result contract.
 package race
@@ -15,12 +14,11 @@ import (
 
 // Side holds the Effective Pip Count data for one player.
 //
-// EPC used to be defined only once every chequer was home, because the only
-// one-sided table there was covered six points. A table over p points answers
-// for a side whose farthest chequer stands on point ≤ p (ADR-0027 §9), so the
-// condition is now the table's width and not the home board. AllInHome stays
-// in the payload: the two-sided verdict, and the panel's race zone, still ask
-// for a pure bearoff and nothing else.
+// A table over p points answers for a side whose farthest chequer stands on
+// point ≤ p (ADR-0027 §9), so EPC depends on the table's width, not the home
+// board. AllInHome stays: the two-sided verdict and the race zone still ask
+// for a pure bearoff.
+
 type Side struct {
 	AllInHome    bool `json:"all_in_home"`
 	CheckerCount int  `json:"checker_count"`

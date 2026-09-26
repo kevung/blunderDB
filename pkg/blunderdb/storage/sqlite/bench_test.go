@@ -1,6 +1,6 @@
 package sqlite_test
 
-// Microbenchmarks for the SQLite backend (P9). They run on file-backed temp
+// Microbenchmarks for the SQLite backend. They run on file-backed temp
 // databases (busy_timeout + pool sizing applied by Open) so the numbers reflect
 // the real serve path, not a single in-memory connection.
 //
@@ -183,13 +183,9 @@ func runSearchFind(b *testing.B, s *sqlite.Storage, f domain.SearchFilters, want
 	}
 }
 
-// BenchmarkSearchText exercises the SearchText ("t\"…\"") N+1 B.10 (#178)
-// folds into a single batched preload (loadCommentTexts): every SQL-matched
-// candidate used to re-query its comment text on its own
-// (loadCommentText), one query per row — n positions all SQL-matched used to
-// mean n extra round trips on top of the search query itself. SearchText
-// alone needs no analysis decode (needAnalysis stays false), so this isolates
-// the comment-preload win from the cost of decoding the analysis blob.
+// BenchmarkSearchText measures the SearchText ("t\"…\"") batched comment
+// preload (loadCommentTexts). SearchText needs no analysis decode, so this
+// isolates the preload from blob decoding.
 func BenchmarkSearchText(b *testing.B) {
 	s := openTempDBB(b)
 	const n = 5000
@@ -197,16 +193,9 @@ func BenchmarkSearchText(b *testing.B) {
 	runSearchFind(b, s, domain.SearchFilters{SearchText: `t"blunder"`}, n)
 }
 
-// BenchmarkSearchMoveErrorMirror is BenchmarkSearchText's counterpart for the
-// move-error N+1 (B.10, #178): a MoveErrorFilter used to re-query every
-// row's recorded plays on its own (getPlayer1MovesForPosition), folded into
-// loadPlayer1Moves. A plain (non-mirror) MoveErrorFilter search is mostly
-// settled in SQL already (the equity-error column is pushed down for a
-// position player 1 played once — see the comment above the WHERE clause
-// that builds it) and only re-checks the rare multi-played position in Go,
-// so a mirror search (MirrorFilter, which routes every row through the
-// Go-side predicate regardless) is what actually exercises the row-by-row
-// query this fiche removes.
+// BenchmarkSearchMoveErrorMirror measures the batched plays preload
+// (loadPlayer1Moves). A mirror search is used because it routes every row
+// through the Go-side move-error predicate; a plain one is settled in SQL.
 func BenchmarkSearchMoveErrorMirror(b *testing.B) {
 	s := openTempDBB(b)
 	const n = 5000
@@ -217,11 +206,7 @@ func BenchmarkSearchMoveErrorMirror(b *testing.B) {
 // peakHeapAlloc starts a background sampler of runtime.MemStats.HeapAlloc and
 // returns a function that stops it and reports the maximum it observed. Used
 // by BenchmarkRepairDenormalisedColumnsMemory to see the *peak* memory a call
-// holds, not the total bytes it ever allocated (-benchmem's B/op sums
-// allocations over the call's whole lifetime — paging does not shrink that
-// sum, since every row's blob is still read and processed exactly once
-// either way; what paging bounds is how many of those blobs are alive in
-// memory *at once*, which only a live sample during the call can see).
+// holds: -benchmem's B/op sums allocations, which paging does not shrink.
 func peakHeapAlloc() (stop func() uint64) {
 	var peak atomic.Uint64
 	done := make(chan struct{})
@@ -258,12 +243,8 @@ func peakHeapAlloc() (stop func() uint64) {
 	}
 }
 
-// BenchmarkRepairDenormalisedColumnsMemory is B.11's (#179) memory bench:
-// RepairDenormalisedColumns used to read every analysis row's blob into one
-// slice (`var all []row`) before decoding any of them — a real database
-// holds tens of thousands, and the point of a repair is to run on the
-// biggest ones. Paged (repairPageSize, 500 rows at a time), peak HeapAlloc
-// should stay roughly flat as n grows instead of scaling with the table.
+// BenchmarkRepairDenormalisedColumnsMemory: RepairDenormalisedColumns is paged
+// (repairPageSize), so peak HeapAlloc should stay roughly flat as n grows.
 //
 // Run alone, once: go test -run=^$ -bench BenchmarkRepairDenormalisedColumnsMemory
 // -benchtime=1x ./pkg/blunderdb/storage/sqlite/
@@ -337,16 +318,9 @@ func BenchmarkStatsCompute(b *testing.B) {
 		b.Fatalf("SetupDatabase: %v", err)
 	}
 	xg := filepath.Join("..", "..", "..", "..", "testdata", "charlot1-charlot2_7p_2025-11-08-2305.xg")
-	// ImportXGMatch logs an INFO line ("imported match") through the package
-	// slog default, which is unconfigured in a test binary and so falls back
-	// to stdout — the same stream `go test -bench` prints the benchmark table
-	// on. That INFO line used to land mid-row, splitting "BenchmarkStatsCompute-16"
-	// from its iteration count onto the next line and making the whole
-	// benchmark unparsable by benchstat (E.9, #225: silently dropped from every
-	// benchstat comparison, with only a stderr warning nobody reads). Silencing
-	// the default logger for this setup call, then restoring it, keeps the
-	// import's own behaviour untouched while keeping the benchmark's stdout
-	// clean of anything but the `go test` table.
+	// ImportXGMatch logs INFO through the default slog, which goes to stdout
+	// in a test binary and would split the benchmark table benchstat parses.
+	// Silence it for this setup call only.
 	prevLogger := slog.Default()
 	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	_, err := d.ImportXGMatch(xg)

@@ -1,34 +1,21 @@
 /**
- * scratchBoard.js — writing a scratch board to the library (#400).
+ * scratchBoard.js — writing a scratch board (CONTEXT.md) to the library. The
+ * board has no identity: saving it individually imports a Position (ADR-0001,
+ * ADR-0002), and it stays a scratch board afterwards. Hence:
  *
- * A scratch board is a board the user composes rather than reads from the
- * library (CONTEXT.md, *Scratch board*). What stands on it has no identity,
- * and nothing known about the position it was copied from travels with it:
- * saving it is individually importing a Position (ADR-0001, ADR-0002), and the
- * board is still a scratch board afterwards.
+ *  - The analysis is emptyAnalysis() plus the board's xgid. analysisStore is
+ *    never read: it describes the position studied before, and SaveAnalysis
+ *    would merge its moves, cube analyses and players into this one.
+ *  - A position already stored receives only its provenance flag: an empty
+ *    analysis would blank its players and engine and promote an empty cube
+ *    block.
+ *  - Mode, tab and index do not move; the position joins the list behind the
+ *    board only when that list is the whole library
+ *    (modeMachine.joinLibraryBehindScratchBoard).
  *
- * Three consequences shape saveScratchBoard():
- *
- *  - The analysis starts from emptyAnalysis() with only the board's own xgid.
- *    analysisStore is never read: while a scratch mode is on it still
- *    describes the position studied before (modeMachine.js header), and
- *    SaveAnalysis MERGES played moves, cube analyses and player names — the
- *    old save carried another position's into the new one.
- *  - A position already stored receives nothing but its provenance flag. The
- *    board has no analysis to add, and an empty one sent over a stored
- *    analysis blanks its players and engine and makes an empty cube block
- *    the primary one (measured against database.SaveAnalysis).
- *  - Nothing the user is looking at moves: not the mode, not the tab, not the
- *    index. The position joins the list behind the board only when that list
- *    is the whole library (modeMachine.joinLibraryBehindScratchBoard), so that
- *    leaving the panel finds exactly what was being studied.
- *
- * The modes it serves are listed in SCRATCH_SAVE_MODES: Search's EDIT board
- * and the Eval panel's board (EVAL, #399). Every gesture reaches this one
- * function — CTRL-S, `w`, the toolbar button and the Eval panel's own button —
- * and the mode machine knows the list behind both boards. Elsewhere (NORMAL,
- * MATCH, COLLECTION, TRANSCRIBE) the board is a record or a draft's, and the
- * save is refused.
+ * SCRATCH_SAVE_MODES: EDIT and EVAL. Every gesture (CTRL-S, `w`, toolbar, Eval
+ * button) comes here; in other modes the board is a record or a draft's, and
+ * the save is refused.
  */
 
 import { get } from 'svelte/store';
@@ -48,10 +35,8 @@ import { tMsg } from '../i18n';
 export const SCRATCH_SAVE_MODES = Object.freeze(['EDIT', 'EVAL']);
 
 /**
- * Write the board on screen as an individually imported Position.
- *
- * Says the outcome in the status bar (the refusal, or the position's number)
- * and returns it, so that a caller has nothing to say itself.
+ * Write the board on screen as an individually imported Position, and report
+ * the outcome in the status bar.
  *
  * @returns {Promise<{ id: number, existed: boolean } | null>} the stored
  *   position, or null when nothing was written (no database, a mode without a

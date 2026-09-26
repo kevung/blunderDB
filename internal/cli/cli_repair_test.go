@@ -9,11 +9,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// TestCLIRepairReportsTheCrawfordCounter (#338): `repair` now has a third pass
-// — the Crawford sentinel — and the counter it reports must say how many
-// positions were actually rehashed, not merely that the pass ran. The fixture
-// is a 7-point match whose second game is the Crawford game and whose third is
-// post-Crawford, with one position wrongly stored at away 1 in each of the two.
+// TestCLIRepairReportsTheCrawfordCounter: the Crawford pass reports how many
+// positions it rehashed, not merely that it ran. Fixture: a 7-point match with
+// one position wrongly stored at away 1 in the Crawford and post-Crawford
+// games.
 func TestCLIRepairReportsTheCrawfordCounter(t *testing.T) {
 	dbPath := filepath.Join(t.TempDir(), "repair.db")
 

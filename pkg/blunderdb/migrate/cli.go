@@ -59,10 +59,8 @@ func RunCLI(args []string) error {
 	if *tenant == "" && !*dryRun {
 		return fmt.Errorf("migrate: --tenant-id is required (the destination tenant)")
 	}
-	// Refuse a named tenant here, before anything is opened: it used to be
-	// accepted and silently copied into tenant 0, where every other named
-	// tenant already lived (ADR-0005, amendment 2026-09-03). Run re-checks,
-	// but its error would only surface after the source was upgraded.
+	// Refuse a non-numeric tenant before anything is opened (ADR-0005): Run
+	// re-checks, but only after the source has been upgraded.
 	if _, err := storage.ParseTenant(*tenant); err != nil {
 		return fmt.Errorf("migrate: --tenant-id must be %s, got %q", storage.TenantFormat, *tenant)
 	}
@@ -70,11 +68,9 @@ func RunCLI(args []string) error {
 	ctx := context.Background()
 	emit := json.NewEncoder(os.Stdout)
 
-	// A source database old enough to still need the legacy in-place chain
-	// (schemaMigrationEvent below) can be large — surface its progress the
-	// same way the GUI's progress bar does (see
-	// storage/sqlite/migrate_hook.go), instead of an opaque hang before the
-	// row-copy phase even starts.
+	// A source old enough to need the legacy in-place chain can be large:
+	// surface its progress (schemaMigrationEvent) rather than hang before the
+	// row copy starts.
 	srcOpts := &storage.Options{
 		MigrationProgress: func(phase string, done, total int) {
 			_ = emit.Encode(schemaMigrationEvent{Event: "schema-migration", Phase: phase, Done: done, Total: total})
@@ -141,10 +137,8 @@ type schemaMigrationEvent struct {
 	Total int    `json:"total"`
 }
 
-// warnNotMigrated names, on stderr, what stayed behind. The scope of this tool
-// is written in the package doc, but a user reading "done" after a migration
-// has no reason to go and look: an omission has to be said at the moment it
-// happens, with its number, or it is not said at all (#240).
+// warnNotMigrated names, on stderr, what stayed behind, with its numbers, at
+// the moment it happens.
 //
 // stderr, not the NDJSON stream: the stream is a machine's, and the report it
 // carries already holds the same figures under `not_migrated`.

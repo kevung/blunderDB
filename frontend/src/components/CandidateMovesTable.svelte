@@ -2,36 +2,15 @@
     import { t } from '../i18n';
     import { checkerRows } from '../utils/analysisRows.js';
 
-    // Rendering component for a ranked list of checker-move candidates —
-    // mounted by AnalysisPanel (a stored record) and by EvalPanel (a live
-    // evaluation, wired in #125). It owns no data: sorting, selection and
-    // highlighting stay with the caller, which knows whether the moves come
-    // from a database row or a fresh computation. The cells themselves come
-    // from utils/analysisRows.js — the same rows the copied image paints —
-    // so this component lays them out and nothing more.
-    //
-    // showProvenance (ADR-0018 rule 4): depth/engine are constant across
-    // every row of a live evaluation (EvalPanel), so that caller hides the
-    // two columns and shows them once in its own badge strip instead.
-    // AnalysisPanel keeps them — sortedMoves there is genuinely sorted by
-    // engine, so the columns carry real information.
-    //
-    // baseline (ADR-0018 rule 2): the pre-roll vector, in the same
-    // player/opponent frame as a move row (domain.CheckerMove's own field
-    // names — see EvalPanel's baselineFacts), rendered as a row pinned right
-    // below the header. It is not a candidate: no selection, no play
-    // notation, no error figure (rule 3 — the gap to it is the luck of the
-    // roll, ADR-0010, never the merit of a play).
-    // isMoney (ADR-0016 point 6, #190/C.3): states the equity column's own
-    // referential (money points vs normalised match equity, ADR-0019);
-    // undefined keeps the plain, scale-silent header a caller with no
-    // position to read one from (a bare unit test) already relied on.
-    //
-    // projection (ADR-0048 decision 4): `judge` — the nine columns, what you
-    // weigh a play with — or `identify` — move, equity, error, what you
-    // RECOGNISE a play in while transcribing a match played elsewhere. The two
-    // are named in utils/analysisRows.js and nowhere else; this component does
-    // not choose, it is told.
+    // Lays out ranked checker-move candidates for AnalysisPanel and EvalPanel;
+    // sorting, selection and highlighting stay with the caller, cells come from
+    // utils/analysisRows.js.
+    // showProvenance (ADR-0018 rule 4): EvalPanel hides depth/engine columns.
+    // baseline (ADR-0018 rules 2, 3): the pre-roll vector as a pinned row in the
+    // move rows' frame — not a candidate, no error figure (ADR-0010).
+    // isMoney (ADR-0016 point 6): the equity header's referential; undefined keeps it plain.
+    // projection (ADR-0048 decision 4): `judge` (nine columns) or `identify`
+    // (move, equity, error), defined in utils/analysisRows.js.
     let {
         moves = [],
         sortColumn = 'equity',
@@ -40,11 +19,7 @@
         isPlayedMove = () => false,
         onSort = () => {},
         onRowClick = () => {},
-        // Double-clic : valider (ADR-0048 décision 11). Le simple clic
-        // sélectionne — les flèches du plateau suivent, et c'est là que l'on
-        // reconnaît le coup —, le double enregistre. C'est le seul chemin souris
-        // vers le dernier coup d'une partie, qui n'a pas de jet suivant pour
-        // porter sa validation.
+        // Double-clic : valider (ADR-0048 décision 11) ; le simple clic sélectionne.
         onRowDblClick = undefined,
         showProvenance = true,
         baseline = null,
@@ -146,9 +121,7 @@
         width: 60px;
     }
 
-    /* Projection `identify` : trois colonnes, et la notation prend tout ce que
-       les six colonnes de probabilités laissent. À 150 px fixes une notation de
-       double — « 24/18 18/14 13/9 9/5 » — se faisait tronquer. */
+    /* `identify` : la notation prend la place libre (un double se tronquait à 150 px). */
     .checker-table.identify th:nth-child(1) {
         width: auto;
         text-align: left;
@@ -192,12 +165,8 @@
         background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
     }
 
-    /* The pre-roll vector, in the axis of this list — a reference mark, not
-       a ranked candidate (ADR-0018 rules 2/3): italic, muted, no error
-       figure, closed by a heavy rule so the value of the roll it precedes
-       is never read as the merit of a play. Pinned right under the sticky
-       header (same fixed height as the header cells, so the two stack
-       exactly), so it never scrolls away either. */
+    /* Baseline row (ADR-0018 rules 2/3): a muted reference, closed by a heavy
+       rule, pinned under the sticky header at the header's height. */
     .baseline-row td {
         height: 24px;
         box-sizing: border-box;

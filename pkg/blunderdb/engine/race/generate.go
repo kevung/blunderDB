@@ -11,44 +11,22 @@ import (
 
 // The Training question generator, Bearoff half (ADR-0041).
 //
-// # What this is, and what it is not
-//
 // A question is a SEED plus k PLIES: the engine rolls k times from the seed,
-// plays each roll, and the snapshot is the question. It is the only place in
-// blunderDB where something resembling a game advances on its own, and
-// ADR-0037 is the record that says why that is still not a play mode: no dice
-// the user sees, no score that advances, no game to review, nothing kept. The
-// plies exist to MAKE a position, and are thrown away with it. A reader who
-// found "the engine playing" here and nowhere else was meant to find this
-// paragraph.
+// plays each roll, and the snapshot is the question. This is still not a play
+// mode (ADR-0037): no visible dice, no score, nothing kept — the plies only
+// make a position. A uniform placement would not do: the gaps, low stacks and
+// asymmetries of a real bear-off appear at their real frequency only if a
+// game produced them (measured by generate_histogram_test.go against real
+// matches).
 //
-// A uniform placement is not a position. « Fifteen chequers on the ace point »
-// is a placement nothing plays into, and the gaps, low stacks and asymmetries
-// a real bear-off has appear at their real frequency only if something like a
-// game produced them. That claim is measured, not asserted:
-// generate_histogram_test.go compares the chequer/wastage histograms of what
-// this file produces against the bear-offs of ten real matches.
+// It lives in engine/race because a bear-off has no contact and ADR-0041 rule
+// 1 says the exact table is enough to choose between its plays; race cannot
+// import gammonnet anyway.
 //
-// # Why it lives in engine/race and not next to gammonNet
-//
-// A bear-off has no contact — Black stands on points 1..6, White on 19..24 —
-// so its legal plays are a handful of one-sided moves, and ADR-0041 rule 1
-// says the exact table is enough to CHOOSE between them. Nothing here needs
-// the neural evaluator, and race cannot import it anyway (gammonnet imports
-// race, not the other way round). The Evaluation exercise, whose domain is any
-// position, will need gammonNet and therefore a different home; that is issue
-// #322's problem, not this file's.
-//
-// # Parity
-//
-// The desktop binds this on *gui.App (GenerateBearoffQuestion), the way it
-// binds ComputeCubeMatrix: a pure function of the engine over one position,
-// with no storage behind it, so there is nothing for the Database wrapper to
-// hold and databaseParity has nothing to say. The CLI and the daemon get no
-// face in v1 and the absence is a decision, not an oversight: a generated
-// question exists only because somebody is about to answer it under a clock,
-// and neither a script nor an HTTP client has one (ADR-0041 consequences,
-// « serve may expose it later, nothing in v1 requires it »).
+// Parity: bound on *gui.App (GenerateBearoffQuestion) as a pure engine
+// function with no storage behind it. The CLI and daemon deliberately get no
+// face: a generated question exists only to be answered under a clock
+// (ADR-0041 consequences).
 
 // Seed sources (ADR-0041 rule 2). The interface names these three and nothing
 // else; « seed » itself is internal vocabulary (CONTEXT.md § Training).
@@ -96,11 +74,9 @@ const (
 
 // questionDeadline is how long a walk may take before it gives up (ADR-0041
 // rule 5: « past a deadline the generator falls back to k = 0 on a pool seed
-// rather than wait »). Half the stated budget of generate_test.go's cost
-// test, so the fallback lands before the red does. A walk costs tens of
-// microseconds, so on a working machine this never fires; it is there for the
-// machine that is not — swapping, suspended mid-walk — where a question late
-// by a second is a clock the user watches stand still.
+// rather than wait »). Half the budget of generate_test.go's cost test, so the
+// fallback lands before the red does; a walk costs tens of microseconds, so it
+// fires only on a stalled machine.
 const questionDeadline = 50 * time.Millisecond
 
 // The chequer bounds of the Bearoff domain (ADR-0041 rule 4). The floor is not
@@ -221,13 +197,9 @@ type bearoffSeed struct {
 
 // pool holds this exercise's canonical bear-in shapes (ADR-0041 rule 2).
 //
-// They are DATA OF THE EXERCISE, not a setting: adding one is a code change
-// with its histogram check (generate_histogram_test.go), never a user-facing
-// option. Each is fifteen chequers home — a bear-in that has just completed —
-// and the plies do the rest. The ten cover the shapes a bear-off actually
-// starts in: even, back-loaded, front-loaded, gapped, thin on the ace point,
-// and — a fifth of them, which is what the real histogram asks for — buried
-// low on it.
+// They are data of the exercise, not a setting: adding one is a code change
+// checked by generate_histogram_test.go. Each is fifteen chequers home, a
+// just-completed bear-in; a fifth are buried low, as the real histogram asks.
 var pool = [10]sideBoard{
 	{0, 1, 2, 4, 4, 4}, // wastage 7.5 — the tightest bear-in there is
 	{1, 2, 2, 3, 3, 4}, // 8.3
@@ -243,16 +215,9 @@ var pool = [10]sideBoard{
 
 // rollerOf is who moves next in the question.
 //
-// A seed the user brought — from the board or from the library — carries a
-// side on roll, and that is the one to keep: at k = 0 the library source hands
-// the position back « as it is », and quietly turning every one of them over
-// to Black would be exactly the silent adaptation rule 3 forbids, on the one
-// field nobody would think to check.
-//
-// Only when the seed names nobody is the roller DRAWN (rule 4). That is the
-// pool's case, and the case of a board somebody edited without choosing a
-// side. Drawing is not a fallback here: it is what makes the pool's questions
-// come from both sides of the board.
+// A seed the user brought keeps its side on roll: forcing it to Black would be
+// the silent adaptation rule 3 forbids. Only a seed naming nobody (the pool, an
+// edited board without a side) has its roller drawn (rule 4).
 func rollerOf(seed *domain.Position, rng *rand.Rand) int {
 	if seed != nil && (seed.PlayerOnRoll == domain.Black || seed.PlayerOnRoll == domain.White) {
 		return seed.PlayerOnRoll
@@ -413,19 +378,11 @@ func onePly(seed bearoffSeed, rng *rand.Rand) (bearoffSeed, bool) {
 // legalPlays returns the distinct positions reachable from b with `dice`.
 // Doubles come in as four equal dice.
 //
-// No opponent appears: in a bear-off the two home boards are disjoint (1..6
-// against 19..24), so nothing blocks and nothing is hit. That is the whole
-// reason this generator does not need the contact move generator.
-//
-// Nor does it need the rule that forbids wasting a die. In THIS domain that
-// rule never binds: while a side has a chequer left, its highest occupied
-// point can always be played — it moves down when the die is smaller, bears
-// off when the die matches, and bears off when the die is bigger precisely
-// because it is the highest. So every line plays every die, or ends because
-// the side is out. The recursion below therefore keeps every leaf, and
-// TestEveryDieIsPlayableWhileCheckersRemain is what makes that a measured fact
-// rather than an assumption: widen the domain — a chequer on the bar, a
-// chequer outside the home board — and it goes red before this does.
+// No opponent appears: the two home boards are disjoint, so nothing blocks or
+// is hit. Nor does the must-use-both-dice rule bind: the highest occupied
+// point can always play any die, so every leaf of the recursion is legal.
+// TestEveryDieIsPlayableWhileCheckersRemain holds that; widening the domain
+// (bar, outside chequers) turns it red.
 func legalPlays(b sideBoard, dice []int) []sideBoard {
 	var out []sideBoard
 	seen := make(map[sideBoard]bool, 16)
@@ -492,10 +449,8 @@ func withDie(b sideBoard, die int) []sideBoard {
 }
 
 // bestPlay picks the play that minimises the expected number of rolls left,
-// read straight off the exact one-sided table (ADR-0027). That is the whole
-// move choice ADR-0041 rule 1 asks for in this domain: a bear-off has no
-// contact, so there is nothing an evaluator would weigh that the table does
-// not already answer exactly.
+// read straight off the exact one-sided table (ADR-0041 rule 1: without
+// contact, the table answers exactly).
 //
 // Ties keep the first candidate, and the candidates are produced in a fixed
 // order, so one seed and one dice stream always give the same walk.
@@ -528,10 +483,9 @@ func meanRolls(b sideBoard) float64 {
 // centred, money, the rest of each side borne off (rule 4).
 func boardOf(seed bearoffSeed) domain.Board {
 	var b domain.Board
-	// An empty point is colourless, as the parser writes it and as the
-	// frontend's own empty board does. The zero value would say "Black", which
-	// is true of nothing and reads as a colour to anyone who forgets to check
-	// the chequer count first.
+	// An empty point is colourless, as the parser and frontend write it; the
+	// zero value would say "Black".
+
 	for i := range b.Points {
 		b.Points[i] = domain.Point{Color: domain.None}
 	}

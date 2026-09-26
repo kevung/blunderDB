@@ -21,11 +21,9 @@ func openMemory(t *testing.T) *sql.DB {
 	return db
 }
 
-// TestSchemaStatements_CreateOnly (issue #177): the fresh DDL is made of
-// CREATE ... IF NOT EXISTS statements only, so Bootstrap is idempotent and
-// referenceSchema, which reads the statements back, sees every column where
-// it is declared. The six ALTER TABLE statements that used to trail the match
-// and tournament tables are folded into them.
+// TestSchemaStatements_CreateOnly: the fresh DDL is made of CREATE ... IF NOT
+// EXISTS statements only, so Bootstrap is idempotent and referenceSchema sees
+// every column where it is declared.
 func TestSchemaStatements_CreateOnly(t *testing.T) {
 	for _, stmt := range schemaStatements {
 		if !strings.HasPrefix(stmt, "CREATE ") {
@@ -62,7 +60,7 @@ func TestSchemaStatements_CreateOnly(t *testing.T) {
 	}
 }
 
-// TestCheckSchema (issue #177): CheckSchema names every table, column and
+// TestCheckSchema: CheckSchema names every table, column and
 // index the database lacks against the reference, and nothing on a database
 // that has them all. It reads only — the drift is still there afterwards.
 func TestCheckSchema(t *testing.T) {

@@ -4,15 +4,13 @@ import { applyThemeTokens, THEME_SYSTEM, THEME_NAMES } from '../utils/themes.js'
 import { applyBoardPalette } from './boardColorsStore.js';
 import { logger } from '../utils/logger.js';
 
-// Le thème nommé courant (#286, fiche I.30). `system` par défaut : un outil
+// Le thème nommé courant. `system` par défaut : un outil
 // n'impose pas son clair ou son sombre à un bureau qui a déjà tranché.
 export const themeStore = writable(THEME_SYSTEM);
 
 /**
- * Applique un thème : les jetons de l'interface, puis la palette du plateau.
- * `withBoard` à false n'applique que la chrome — c'est ce qu'on veut au
- * démarrage, où la palette persistée de l'utilisateur doit primer sur celle du
- * thème, et ce qu'on ne veut PAS quand il vient d'en choisir un.
+ * Applique un thème : jetons de l'interface, puis palette du plateau. `withBoard` à false (au
+ * démarrage) laisse primer la palette persistée de l'utilisateur.
  * @param {string} name
  * @param {{withBoard?: boolean}} [opts]
  */

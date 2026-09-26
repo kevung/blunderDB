@@ -1,12 +1,8 @@
 // Command serve is the headless entrypoint of the blunderDB engine.
 //
-// It builds WITHOUT the Wails GUI or the embedded frontend (unlike the root
-// main.go), so it compiles as a pure-Go static binary (CGO disabled) suitable
-// for a minimal container image. It is functionally identical to
-// `blunderdb serve …`: it forwards its arguments to server.RunServe. The one
-// other word it understands is `healthcheck`, the readiness probe the
-// container image's HEALTHCHECK runs (distroless ships no curl): it forwards
-// the rest to server.RunHealthcheck exactly as `blunderdb healthcheck` does.
+// It builds without Wails or the frontend, as a static CGO-free binary for
+// the container image, and behaves as `blunderdb serve …`. `healthcheck` is
+// the image's readiness probe (distroless ships no curl).
 //
 // SECURITY: the daemon performs NO authentication; it trusts the X-Tenant-ID
 // header and must run behind an authenticating reverse-proxy (gammonGo).
@@ -19,12 +15,8 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server"
 
-	// Blank-imported so its init() registers the legacy SQLite migration
-	// chain with storage/sqlite (see pkg/blunderdb/database/migrate_hook.go).
-	// Without it, storage/sqlite.Storage.Migrate refuses to touch a
-	// non-fresh database that isn't already current — see that comment.
-	// The database package is pure Go (no CGO, no Wails), so this keeps
-	// `serve` a static CGO_ENABLED=0 binary.
+	// Registers the legacy SQLite migration chain (migrate_hook.go),
+	// without which Storage.Migrate refuses a non-current database.
 	_ "github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 

@@ -1,42 +1,26 @@
 /**
- * directionKeys.js — à qui vont J / K / ↓ / ↑ / ENTRÉE quand la page Direction est affichée (#415).
+ * directionKeys.js — à qui vont J / K / ↓ / ↑ / ENTRÉE quand la page Direction est affichée.
  *
- * ## La règle
+ * Tant qu'elle remplace le plateau (onglet Tournois actif ET Direction ouverte), ces touches
+ * nues vont à la file des propositions (`ProposalList.svelte`) : J / ↓ suivante, K / ↑
+ * précédente, ENTRÉE confirme. Le panneau Tournois ne les reprend que si le focus est dans le
+ * panneau ; jamais dans un champ de saisie. Échap suit `escapeService`.
  *
- * Tant que la page Direction remplace le plateau (onglet Tournois actif ET une Direction
- * ouverte, App.svelte), ces touches nues appartiennent à la page : la file des propositions
- * (`components/direction/ProposalList.svelte`) les prend — J / ↓ proposition suivante, K / ↑
- * précédente, ENTRÉE confirme la proposition choisie. Le panneau Tournois, visible en même
- * temps, les laisse passer ; il ne les reprend (J / K = tournoi suivant / précédent) que
- * lorsque le focus est DANS le panneau — un clic dans sa liste. Jamais dans un champ de saisie.
- * Échap n'en fait pas partie : il suit la règle d'`escapeService` (#414).
+ * ENTRÉE active d'abord le bouton, lien ou onglet focalisé (`INTERACTIVE`) et ne confirme que
+ * si le focus est sur la page ou la file : arrivé au clavier sur « Tout lancer », on ne doit
+ * pas lancer un match non demandé (seule la reprise le défait). J / K / ↓ / ↑ placent le
+ * focus sur la file pour que « clic sur l'onglet, J, ENTRÉE » confirme.
  *
- * ENTRÉE a une condition de plus : elle active le bouton, le lien ou l'onglet qui a le focus
- * (`INTERACTIVE` ci-dessous), et ne confirme la proposition choisie que si le focus est sur la
- * page elle-même ou sur la file. Un directeur arrivé au clavier sur « Tout lancer », « Apparier à
- * la main » ou un onglet ne doit pas lancer un match qu'il n'a pas demandé — ce geste ne se défait
- * que par la reprise. Un bouton « Lancer » d'une ligne garde aussi son ENTRÉE : il lance SA
- * ligne, qui n'est pas forcément la choisie. Pour que « clic sur l'onglet, J, ENTRÉE » confirme
- * bien, J / K / ↓ / ↑ placent le focus sur la file (ProposalList) quand ils changent la
- * proposition choisie.
+ * Mécanisme — une règle, trois lecteurs :
+ * - la file écoute en CAPTURE sur `window` (comme `escapeService`), avant le panneau Tournois
+ *   et le répartiteur quel que soit l'ordre de montage ; quand elle agit, elle consomme
+ *   l'appui (`preventDefault` + `stopImmediatePropagation`) ;
+ * - quand elle n'agit pas (autre onglet, modale ou surcouche, confirmation de « Tout
+ *   lancer »), le panneau Tournois et le répartiteur lisent `directionOwnsKey` pour ne pas
+ *   changer de tournoi ni parcourir le plateau caché.
  *
- * ## Le mécanisme : une règle, trois lecteurs
- *
- * - La file écoute en phase de CAPTURE sur `window`, comme `escapeService` : elle passe avant
- *   l'écouteur `document` du panneau Tournois et avant le répartiteur global, quel que soit
- *   l'ordre de montage — la page s'ouvre après eux. Un `<svelte:window onkeydown>` ne suffisait
- *   pas : le panneau arrêtait toute touche nue (`stopPropagation`), et Svelte 5 n'appelle pas
- *   un gestionnaire déclaratif quand `event.cancelBubble` est vrai. Quand la file agit, elle
- *   consomme l'appui (`preventDefault` + `stopImmediatePropagation`).
- * - Quand elle n'agit pas — un autre onglet de la Direction, une modale ou une surcouche
- *   ouverte par-dessus, la confirmation de « Tout lancer » —, l'appui continue son chemin.
- *   C'est pourquoi le panneau Tournois et le répartiteur lisent eux aussi `directionOwnsKey` :
- *   le panneau pour ne pas changer de tournoi sous la page, le répartiteur pour ne pas
- *   parcourir le plateau qu'elle cache.
- *
- * La page prend le focus en s'ouvrant (DirectionView), et la prise de focus différée du panneau
- * Tournois s'abstient tant qu'elle est affichée : sans quoi le clic sur « Ouvrir la direction »,
- * qui est dans le panneau, y laisserait le clavier.
+ * La page prend le focus à l'ouverture et la prise de focus différée du panneau Tournois
+ * s'abstient tant qu'elle est affichée.
  */
 
 import { get } from 'svelte/store';
@@ -69,7 +53,7 @@ export function directionOwnsKey(event) {
     return !isTypingTarget(active) && !isTypingTarget(/** @type {Element | null} */ (event.target));
 }
 
-/** Ce qui est ouvert par-dessus la page garde ses touches : une modale, une surcouche (#414). */
+/** Ce qui est ouvert par-dessus la page garde ses touches : une modale, une surcouche. */
 export function somethingOpenAbove() {
     return hasOpenOverlay() || document.querySelector('[aria-modal="true"]') !== null;
 }

@@ -11,12 +11,8 @@ import (
 // SessionStore implements storage.SessionStore over the session_state table:
 // one row per key and per scope, confined to the scope by the per-scope
 // column both schemas carry (Dialect.ScopeColumn — `scope` on SQLite,
-// `tenant_id` on PostgreSQL, where Row-Level Security covers it too).
-//
-// Until schema 2.15.0 the six keys below were rows of the global metadata
-// table, prefixed "<scope>:" for a non-empty scope, and a tenant could read
-// every other tenant's session through metadata.load (issue #156). Session
-// state is per-tenant data; metadata is database infrastructure.
+// `tenant_id` on PostgreSQL, where Row-Level Security covers it too). Session
+// state is per-tenant data, never global metadata.
 type SessionStore struct{ DB Execer }
 
 var _ storage.SessionStore = (*SessionStore)(nil)

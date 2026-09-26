@@ -1,10 +1,7 @@
-// Package ingest holds the backend-agnostic import/export pipeline used by the
-// `blunderdb serve` daemon. Unlike the legacy import path in package database
-// (which is soldered to the SQLite-only *Database wrapper), everything here
-// writes through the storage.Storage / storage.Tx interfaces, so it works
+// Package ingest holds the backend-agnostic import/export pipeline: the daemon
+// calls it directly and the desktop Database wrapper delegates to it.
+// Everything writes through storage.Storage / storage.Tx, so it works
 // identically on SQLite and PostgreSQL.
-//
-// See tasks/headless/12-imports-exports-over-storage.md for the full design.
 package ingest
 
 import (
@@ -37,10 +34,9 @@ type Source struct {
 	Format Format
 	Reader io.Reader
 	Path   string
-	// BatchID stamps every match this import writes with the batch it came in
-	// with (issue #257), 0 for an import that opened none. Set by the caller
-	// that owns the batch — the daemon's handler, the CLI — because only it
-	// knows how many files the user meant as one import.
+	// BatchID stamps every match this import writes with its batch, 0 for
+	// none. Set by the caller, the only one that knows how many files the user
+	// meant as one import.
 	BatchID int64
 }
 
@@ -58,8 +54,7 @@ type Summary struct {
 	Matches           int   `json:"matches"`
 	MatchID           int64 `json:"matchId,omitempty"`
 	// Enriched counts the cross-format duplicates whose analyses and comments
-	// were merged into a match already stored — neither a new match nor a
-	// skipped one, and invisible in the summary until #257 needed to say so.
+	// were merged into a match already stored — neither new nor skipped.
 	Enriched int `json:"enriched,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
@@ -96,12 +91,9 @@ type ExportOptions struct {
 	// AfterWrite runs on the freshly written file, BEFORE it is sealed into a protected
 	// container and while it is still a plain SQLite database.
 	//
-	// It exists for what the storage contract deliberately does not carry: the Direction of a
-	// tournament (ADR-0047, issue #396). The direction tables live on the desktop wrapper —
-	// the daemon exposes nothing of them, on purpose — so `ingest` cannot copy them, and a
-	// post-pass on the finished file would arrive too late for a protected export, whose
-	// plain intermediate is removed. The caller that knows about directions writes them here;
-	// this package keeps knowing nothing about them.
+	// It carries what the storage contract deliberately does not: a tournament's Direction
+	// (ADR-0047), whose tables live on the desktop wrapper. A post-pass on the finished file
+	// would come too late for a protected export, whose plain intermediate is removed.
 	AfterWrite func(ctx context.Context, path string, report ExportReport) error
 }
 

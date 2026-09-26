@@ -12,25 +12,15 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/watch"
 )
 
-// The watched folder, desktop half (issue #258, fiche I.2).
-//
-// What this does is deliberately narrow: it LOOKS. When match files appear in
-// the folder the user named, it emits their paths to the frontend, and the
-// frontend imports them through exactly the path a drag-and-drop takes —
-// duplicate detection, import report, automatic analysis, all of it. Nothing
-// about importing is written twice, and a watched import is by construction
-// the same import as a manual one.
-//
-// It is off unless the user turns it on and names a folder. blunderDB does
-// not guess where somebody's matches live and start reading that directory.
+// The watched folder, desktop half. It only looks: new files' paths go to the
+// frontend, which imports them exactly as a drag-and-drop, so importing is
+// written once. Off unless the user names a folder.
 
 // watchFilesEvent is the event the frontend listens on. Its payload is a list
 // of absolute paths.
 const watchFilesEvent = "folder-watch:files"
 
-// folderWatch is the single running watch. One, not one per folder: watching
-// two folders is a setting nobody asked for, and the second would double
-// every question below (which import report? which database?).
+// folderWatch is the single running watch.
 type folderWatch struct {
 	mu       sync.Mutex
 	stop     chan struct{}
@@ -38,24 +28,17 @@ type folderWatch struct {
 	interval time.Duration
 }
 
-// WatchStatus is what the settings pane shows: whether a watch is running and
-// on what. Reported rather than inferred from the config, so a watch that
-// failed to start does not display as running.
+// WatchStatus is the running watch as reported, not inferred from the config,
+// so a failed start never shows as running.
 type WatchStatus struct {
 	Running         bool   `json:"running"`
 	Folder          string `json:"folder"`
 	IntervalSeconds int    `json:"intervalSeconds"`
 }
 
-// StartFolderWatch begins watching dir, replacing any watch already running.
-//
-// Files already in the folder are recorded and never imported: someone
-// pointing a watch at four years of matches wants the next one. Importing
-// what is there is the folder import, which is a separate gesture and stays
-// one.
-//
-// intervalSeconds 0 means the package default; anything below the floor is
-// raised (watch.ClampInterval).
+// StartFolderWatch begins watching dir, replacing any running watch. Files
+// already present are never imported (that is the folder import).
+// intervalSeconds is clamped by watch.ClampInterval, 0 = default.
 func (a *App) StartFolderWatch(dir string, intervalSeconds int) (WatchStatus, error) {
 	w, err := watch.New(dir)
 	if err != nil {
@@ -79,9 +62,7 @@ func (a *App) StartFolderWatch(dir string, intervalSeconds int) (WatchStatus, er
 	return WatchStatus{Running: true, Folder: w.Dir(), IntervalSeconds: int(interval / time.Second)}, nil
 }
 
-// StopFolderWatch stops the watch, if one is running. Idempotent: the
-// settings pane calls it whenever the user turns the option off, whatever the
-// state was.
+// StopFolderWatch stops the watch, if one is running. Idempotent.
 func (a *App) StopFolderWatch() {
 	a.folderWatch.mu.Lock()
 	defer a.folderWatch.mu.Unlock()
@@ -106,14 +87,8 @@ func (a *App) FolderWatchStatus() WatchStatus {
 	}
 }
 
-// SuggestWatchFolder returns a folder this machine actually has that is a
-// plausible place for match files, or "" when none of the candidates exists.
-//
-// A SUGGESTION, never a default. The fiche proposed defaulting to XG's own
-// folder; a path invented from what XG installs on somebody else's Windows is
-// exactly the kind of unverified claim this project refuses to ship. So the
-// candidates below are only offered when os.Stat says they are there, and the
-// user still has to accept one.
+// SuggestWatchFolder returns an existing plausible match folder, or "". A
+// suggestion the user must accept, never a default, and only if it exists.
 func (a *App) SuggestWatchFolder() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -134,16 +109,13 @@ func (a *App) SuggestWatchFolder() string {
 	return ""
 }
 
-// runFolderWatch is the loop. It emits paths and imports nothing: the
-// frontend owns importing, so a watched import and a dropped import are the
-// same code.
+// runFolderWatch is the loop; it emits paths and imports nothing.
 func (a *App) runFolderWatch(w *watch.Watcher, interval time.Duration, stop <-chan struct{}) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
-	// warned keeps an unreadable folder from filling the log once per tick:
-	// an unmounted share can stay unmounted for hours, and the watch is
-	// deliberately still running when it comes back.
+	// warned logs an unreadable folder once, not per tick; the watch keeps
+	// running for when it comes back.
 	warned := false
 	for {
 		select {

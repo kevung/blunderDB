@@ -11,10 +11,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The collection family is an adapter over storage.CollectionStore: the SQL
-// lives once, in storage/sqlite, under the contract suite both backends pass
-// (storagetest, Collection/*). Every method takes d.mu the way it always did
-// and passes the desktop's implicit tenant ("") as scope.
+// The collection family is an adapter over storage.CollectionStore: every
+// method takes d.mu and passes the desktop's implicit scope ("").
 
 // Collection represents a collection of positions. It mirrors
 // storage.Collection field for field: Wails binds it under the database
@@ -27,7 +25,7 @@ type Collection struct {
 	CreatedAt     string `json:"createdAt"`
 	UpdatedAt     string `json:"updatedAt"`
 	PositionCount int    `json:"positionCount"`
-	// FilterQuery makes the collection LIVING (#282). See
+	// FilterQuery makes the collection LIVING. See
 	// storage.Collection.FilterQuery.
 	FilterQuery string `json:"filterQuery"`
 }
@@ -203,10 +201,8 @@ func (d *Database) collectionFilterQuery(collectionID int64) (string, error) {
 }
 
 // SetCollectionFilter makes a collection LIVING: its membership becomes the
-// result of `query`, re-evaluated at every open (#282). An empty query turns
-// it back into a hand-made list, and the rows it kept before are still there —
-// nothing is destroyed by making a collection living, so the gesture is
-// reversible.
+// result of `query`, re-evaluated at every open. An empty query reverts it to
+// a hand-made list with its old rows intact: the gesture is reversible.
 func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -220,11 +216,8 @@ func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
 
 // GetCollectionPositions returns all positions in a collection.
 //
-// A LIVING collection (#282) is resolved here rather than in the storage
-// layer, and that is the whole design: the query is run through the SAME
-// search the command bar runs, so a living collection can never mean something
-// a typed query would not. Putting the resolution behind the collection store
-// would have meant a second search, or a store that knows about queries.
+// A LIVING collection is resolved here, through the SAME search the command
+// bar runs, so it can never mean something a typed query would not.
 func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error) {
 	query, err := d.collectionFilterQuery(collectionID)
 	if err != nil {
@@ -330,8 +323,7 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 // ExportCollections exports specific collections, and the positions they
 // hold, to a database file. watermark and watermarkNote mirror
 // ExportDatabase's Watermark/WatermarkNote: an empty watermark means the
-// export carries none. The work is ingest.ExportSQLite, the same exporter
-// ExportDatabase and ExportTournaments run.
+// export carries none.
 func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool, watermark string, watermarkNote string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -362,10 +354,8 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 // CollectionCoverage reports, for every collection, how many of its positions are part of
 // the given selection.
 //
-// The export writes a collection's membership only for positions it is actually exporting,
-// so a collection whose positions are not all in the selection arrives truncated. That used
-// to happen in silence: the recipient believed they had the collection and had a fragment of
-// it. This lets the export screen say so before anything is written.
+// The export writes membership only for exported positions, so a partially selected collection
+// arrives truncated; this lets the export screen say so beforehand.
 func (d *Database) CollectionCoverage(positionIDs []int64) (map[int64]int, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

@@ -7,38 +7,21 @@ import (
 	"testing"
 )
 
-// FuzzDecide drives the cube model (#188) — Decide and the leaf valuation
-// Value beside it — over arbitrary distributions and match states: any five
-// float32 in [0, 1] (nested probabilities that are not nested, exact 0 and
-// 1 — everything a sigmoid can emit), any owner, any away scores including
-// 0, negative and past the MET's horizon, any cube value including the
-// non-powers of two IsValid refuses, both Crawford flags, Jacoby, and any
-// efficiency in the blend's [0, 1].
+// FuzzDecide drives Decide and Value over arbitrary distributions and match
+// states: any five float32 in [0, 1] (nested or not), any owner, any away
+// scores (0, negative, past the MET's horizon), any cube value, both Crawford
+// flags, Jacoby, any efficiency in [0, 1].
 //
-// What is asserted is the contract, not a number: no panic; a valid state is
-// never refused (buildLevels' chain always reaches a dead level inside
-// maxCubeLevels — "count < 2" is unreachable for a state IsValid accepts);
-// an invalid one always is; every equity that comes back is finite; the
-// verdict is one of the four and the two cases where doubling is not on the
-// table (cube against, the Crawford game) report NoDouble with the double
-// branch priced at the no-double value. For a NESTED distribution (win ≥
-// gammon ≥ backgammon on each side, the shape the network is trained to
-// emit) the equities at a score are match winning chances in [0, 1] and
-// Value stays in [-1, 1]. For one that is not, they are only finite: the
-// T10 floor (probsExclusive) zeroes a negative mass but renormalises
-// nothing, so [1, 0.1, 1, 0, 0] carries 1.9 of winning mass and answers an
-// MWC of 1.32 at 2-away/2-away — the second thing this fuzzer found,
-// 2026-09-03, kept below as a seed. gn_probs_exclusive does exactly the
-// same, so this is the model's contract and not a drift of the port; a
-// real position violates the nesting by a few thousandths, not by 0.9.
+// It asserts the contract: no panic; a valid state is never refused and an
+// invalid one always is; every equity is finite; the verdict is one of the
+// four, and where doubling is off the table (cube against, Crawford game) it
+// is NoDouble with the double branch priced at the no-double value. For a
+// NESTED distribution the MWC lies in [0, 1] and Value in [-1, 1]. A
+// non-nested one is only finite: probsExclusive floors negative masses but
+// renormalises nothing, as gn_probs_exclusive does (seed below).
 //
-// The domain is the model's: NaN, infinities and values outside [0, 1] are
-// skipped, not judged — the network's sigmoid never emits them and the model
-// makes no promise about them. A NaN in is a NaN out, CubeInputsFromProbs'
-// floor cannot see it; and a "probability" of 92 is extrapolated along the
-// piecewise-linear curve into a match winning chance of 92 (the first thing
-// this fuzzer found, 2026-09-03, kept below as a seed) — the C does the same,
-// gn_cube.c clamps nothing either, so this is the contract and not a drift.
+// NaN, infinities and values outside [0, 1] are skipped: the sigmoid never
+// emits them, and like gn_cube.c the model clamps nothing (seed below).
 func FuzzDecide(f *testing.F) {
 	// The textbook shapes, then the edges the T10 floor exists for.
 	f.Add(float32(0.5), float32(0.1), float32(0.01), float32(0.1), float32(0.01), uint8(0), int16(5), int16(5), int32(1), false, 0.688, false, false)

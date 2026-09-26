@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <!-- The end-of-import report (#257): what just came in, rather than
+        <!-- The end-of-import report: what just came in, rather than
              how many files were read. Absent when the batch could not be
              recorded, which must look like nothing rather than like a
              failure. -->
@@ -97,7 +97,7 @@
                     </div>
                 {/if}
 
-                <!-- La question qui suit le compte rendu (#259) : « qu'est-ce
+                <!-- La question qui suit le compte rendu : « qu'est-ce
                      que je regarde maintenant ? ». Le bouton n'apparaît que
                      s'il y a une réponse — un lot sans rien à revoir ne doit
                      pas proposer un parcours vide. -->

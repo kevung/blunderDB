@@ -5,12 +5,10 @@ import (
 	"testing"
 )
 
-// The directory (issue #391).
+// The directory.
 //
-// It is a DERIVED VIEW and never a table: two spellings stay two lines, and deleting a
-// Direction takes its Participants out of it, because there was never anywhere else they were
-// written. That is the property these tests hold — not the CSV format, which is only how it
-// travels.
+// A DERIVED VIEW, never a table: two spellings stay two lines, and deleting a Direction removes
+// its Participants.
 
 func TestDirectory_IsDerivedFromTheDirections(t *testing.T) {
 	d := newTestDB(t)
@@ -249,8 +247,8 @@ func TestDirectory_ASpreadsheetsCSVAlsoReads(t *testing.T) {
 	}
 }
 
-// A line with no separator, among lines that have one, is an error and not a player (#442): it
-// is what a stray note pasted with the list looks like, and it was entered as a name.
+// A line with no separator, among lines that have one, is an error and not a player: it
+// is what a stray note pasted with the list looks like.
 func TestDirectory_ALineWithNoSeparatorIsAnError(t *testing.T) {
 	d := newTestDB(t)
 	body := "Hugo Andrieu,Lyon,5\n\nligne sans séparateur\nLéa Bonnet,Lyon,4\n"
@@ -277,7 +275,7 @@ func TestDirectory_ALineWithNoSeparatorIsAnError(t *testing.T) {
 }
 
 // A duplicate — twice in the paste, or already entered — is a warning, and it is NOT among the
-// rows ready to enter: entering the same player twice is what a director does not mean (#442).
+// rows ready to enter: entering the same player twice is what a director does not mean.
 func TestDirectory_DuplicatesAreWarnedAndHeldBack(t *testing.T) {
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)

@@ -14,9 +14,6 @@ import (
 // TrashStore implements storage.TrashStore. `trash` is a domain table: every
 // statement is confined to the scope's tenant through Dialect.TenantFilter /
 // TenantColumns.
-//
-// The SQL is the same on both backends — a snapshot table has no dialect —
-// which is why it is written once here.
 type TrashStore struct{ DB Execer }
 
 var _ storage.TrashStore = (*TrashStore)(nil)
@@ -113,10 +110,8 @@ func (s *TrashStore) Discard(ctx context.Context, scope string, id int64) error 
 // Purge drops the entries older than olderThanDays and returns how many.
 //
 // The cut-off is computed in SQL rather than in Go so the comparison is
-// against the same clock that wrote deleted_at. The two dialects spell "now
-// minus N days" differently and this is the ONE place the difference shows,
-// which is why it is a small switch rather than a Dialect method nobody else
-// would call.
+// against the same clock that wrote deleted_at. "Now minus N days" is spelled
+// per dialect here, the one place it shows, rather than as a Dialect method.
 func (s *TrashStore) Purge(ctx context.Context, scope string, olderThanDays int) (int, error) {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	where := tenant

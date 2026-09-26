@@ -1,11 +1,6 @@
 /**
- * Lazy loader for chart.js.
- *
- * chart.js only serves the Statistics panel, yet a static import would put it
- * in the single main chunk every user downloads at startup. The three chart
- * components share this loader so the library is fetched once, on first use,
- * as its own chunk; the registrables they need are registered here, once,
- * instead of in each component.
+ * Lazy loader for chart.js, kept out of the main chunk; registrables are
+ * registered here once for the three chart components.
  */
 import { logger } from '../../../utils/logger.js';
 
@@ -16,9 +11,8 @@ let pending = null;
  * Resolve the chart.js `Chart` class with every controller, element, scale
  * and plugin the stats charts use already registered.
  *
- * The promise is memoised and never rejects: a failed load is logged,
- * resolves to `null` (the caller leaves its canvas blank) and is forgotten,
- * so the next mount retries instead of staying broken for the session.
+ * Memoised, never rejects: a failed load logs, resolves to `null` and is
+ * forgotten so the next mount retries.
  *
  * @returns {Promise<typeof import('chart.js').Chart | null>}
  */

@@ -13,10 +13,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// MapBGF parses a BGBlitz .bgf file into a backend-independent MatchGraph,
-// re-implementing the mapping half of database.ImportBGFMatch without SQLite.
-// See MapXG for the model; like it, MapBGF always emits the full graph and
-// defers cross-format canonical-duplicate enrichment to a follow-up.
+// MapBGF parses a BGBlitz .bgf file into a backend-independent MatchGraph.
+// Like MapXG it always emits the full graph; duplicates and enrichment are
+// WriteMatch's.
 func MapBGF(path string) (*MatchGraph, error) {
 	match, err := bgfparser.ParseBGF(path)
 	if err != nil {
@@ -83,9 +82,8 @@ func MapBGF(path string) (*MatchGraph, error) {
 
 // mapBGFGameMoves replays one game's move list, tracking the board and cube
 // state and emitting a MoveGraph per checker move and per cube decision. It
-// mirrors the normal-import loop in database.ImportBGFMatch, including the two
-// ways BGBlitz encodes a cube double (a synthetic "amove" with from[0]==-1, and
-// an explicit "adouble").
+// handles both ways BGBlitz encodes a cube double (a synthetic "amove" with
+// from[0]==-1, and an explicit "adouble").
 func mapBGFGameMoves(gameData map[string]interface{}, movesData []interface{}, matchLen int, rules bgfRules) ([]MoveGraph, error) {
 	var out []MoveGraph
 
@@ -266,7 +264,7 @@ func bgfInferDice(moveData map[string]interface{}) (int, int) {
 }
 
 // mapBGFCheckerMove builds the MoveGraph for a checker decision, with ordered
-// [checker, cube-for-checker] analysis fragments matching the legacy two saves.
+// [checker, cube-for-checker] analysis fragments.
 func mapBGFCheckerMove(moveData, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue, cubeOwner int, rules bgfRules) (MoveGraph, error) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
@@ -340,8 +338,7 @@ func mapBGFCubeMove(moveData, gameData map[string]interface{}, matchLen int, boa
 
 // convertBlunderDBPlayerToXG converts a blunderDB player index (0/1) to XG
 // encoding (1/-1) for the move table's player column (CLI/GUI read it back via
-// the XG decoder uniformly). Same as blunderDBPlayerToXG; named to match the
-// legacy call sites in the GnuBG/BGF mappers.
+// the XG decoder uniformly). An alias of blunderDBPlayerToXG.
 func convertBlunderDBPlayerToXG(p int) int32 { return blunderDBPlayerToXG(p) }
 
 // computeBGFMatchHash is the format-specific content hash. Copied from

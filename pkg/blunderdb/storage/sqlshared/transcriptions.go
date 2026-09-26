@@ -13,11 +13,8 @@ import (
 // TranscriptionStore implements storage.TranscriptionStore over the
 // transcription table. transcription is a domain table — it points at match —
 // so every statement is confined to the scope's tenant through
-// Dialect.TenantFilter / TenantColumns, exactly like CommentStore.
-//
-// The SQL is the same on both backends: the document is one TEXT column and
-// the store never looks inside it, so there is nothing here for a dialect to
-// disagree about beyond the tenant and the timestamp rendering.
+// Dialect.TenantFilter / TenantColumns. The document is one TEXT column the
+// store never looks inside.
 type TranscriptionStore struct{ DB Execer }
 
 var _ storage.TranscriptionStore = (*TranscriptionStore)(nil)

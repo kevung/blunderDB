@@ -12,8 +12,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The Go side of the pivot (issue #386).
-//
 // The engine emits codes; the panel renders them in JavaScript, the display page in Go. The two
 // read the SAME catalogue, so what is tested here is not the strings but the RULE: the same
 // interpolation, the same fallbacks, and above all — no code, ever, reaches a reader raw when a

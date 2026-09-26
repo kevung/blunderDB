@@ -1,12 +1,8 @@
-// Shared helpers for interpreting cube action strings (as stored in
-// move.cube_action / analysis.playedCubeActions: "Double", "Double/Take",
-// "Double/Pass", "No Double", "Take", "Pass", …). Kept in one place so the
-// analysis panel and the board agree on what each action means.
+// Interpreting cube action strings ("Double", "Double/Take", "No Double", "Take", …) in one place,
+// so the analysis panel and the board agree.
 
-// normalizeCubeAction maps a cube action to the canonical analysis-row parts it
-// highlights: combinations of 'nodouble' | 'double' | 'take' | 'pass'. A
-// standalone Take/Pass (the opponent's response) maps onto the combined
-// Double/Take or Double/Pass row.
+// normalizeCubeAction maps an action to the analysis-row parts it highlights ('nodouble' |
+// 'double' | 'take' | 'pass'); a standalone Take/Pass maps onto the combined Double/… row.
 export function normalizeCubeAction(action) {
     const s = (action || '').toLowerCase().replace(/\s+/g, '');
     if (s === 'double/take' || s === 'doubletake') return ['double', 'take'];
@@ -18,11 +14,8 @@ export function normalizeCubeAction(action) {
     return [s]; // "double", etc.
 }
 
-// isResponseCubeAction is true for a pure take/pass response (the cube was
-// offered to this player), and false for a doubling decision — including the
-// doubler's combined actions "Double/Take"/"Double/Pass" and "No Double".
-// Mirrors Go engine.IsResponseCubeAction. Used to render the offered cube in
-// the middle of the board for take/pass decisions.
+// isResponseCubeAction: true for a pure take/pass response, false for any doubling decision
+// (including "Double/Take", "No Double"). Mirrors Go engine.IsResponseCubeAction.
 export function isResponseCubeAction(action) {
     const s = (action || '').toLowerCase().replace(/\s+/g, '');
     if (s.includes('double')) return false; // double, double/take, double/pass, nodouble, redouble

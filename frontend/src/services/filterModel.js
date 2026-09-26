@@ -1,33 +1,19 @@
-// filterModel — the declarative table of the search panel's numeric
-// min / max / range filters, and the pure functions that turn a filter state
-// into command tokens and back into the persisted search params.
-//
-// Before this module, each of the 20 numeric filters was five hand-written
-// `$state` variables (`xxxOption/Min/Max/RangeMin/RangeMax`) re-enumerated in
-// SearchPanel's handleSearch / clearFilters / saveSearchState /
-// restoreSearchState and once more in searchFilterService's 113-field
-// destructuring. Adding a filter meant editing six lists in lockstep; this
-// table is the one place a numeric filter is declared.
+// filterModel — the one declaration of the search panel's numeric min / max /
+// range filters, and the pure functions mapping a filter state to command
+// tokens and persisted search params. SearchPanel and searchFilterService
+// drive off it: adding a filter is one edit here.
 //
 // Each entry:
-//   key      — camelCase identifier; prefix of the flat field names the
-//              searchParamsStore and buildFilterTokens still use
-//              (`${key}Option`, `${key}Min`, …) and of the backend argument
-//              name (`${key}Filter`) in onLoadPositionsByFilters / parseFilters.
-//   short    — the abbreviated key searchFilterService's parseFilterTokens
-//              (`${short}Filter`) and parseSearchCommand (`${short}`) report
-//              the recovered token under.
-//   label    — canonical (English) filter label, the logic key SearchPanel's
-//              filterGroups / filterEnabled / i18n slugs are built on.
+//   key      — camelCase prefix of the flat fields (`${key}Option`, `${key}Min`,
+//              …) and of the backend argument (`${key}Filter`).
+//   short    — abbreviated key parseFilterTokens / parseSearchCommand report.
+//   label    — canonical (English) label, the key of filterGroups and i18n.
 //   token    — command-line prefix (`p>12`, `w45,55`), mirrored by
 //              commandVocabulary.js / commandProcessor.js.
 //   defaults — option/min/max applied on clear (range uses min/max too).
-//   bounds   — HTML `min`/`max` attributes of the number inputs (either may
-//              be undefined: the pipcount difference and equity are signed
-//              and unbounded in the UI).
-//   kind     — 'int' (counts, pips) or 'float' (rates, equities): mirrors
-//              which backend parser (`ParseIntFilterExpr` /
-//              `ParseFloatFilterExpr`) reads the token.
+//   bounds   — number inputs' `min`/`max` (undefined for signed, unbounded ones).
+//   kind     — 'int' or 'float': which backend parser reads the token
+//              (`ParseIntFilterExpr` / `ParseFloatFilterExpr`).
 
 /**
  * One numeric filter of the table below.
@@ -36,8 +22,7 @@
  */
 
 /**
- * One filter's five fields. Values come from number inputs and persisted
- * stores, so they are left untyped.
+ * One filter's five fields, untyped (number inputs and persisted stores).
  *
  * @typedef {{ option: any, min: any, max: any, rangeMin: any, rangeMax: any }} FilterEntry
  */
@@ -102,9 +87,8 @@ function defaultEntry(filter) {
 }
 
 /**
- * Fresh per-filter state, keyed by filter key:
- * `{ option, min, max, rangeMin, rangeMax }` at the declared defaults. The
- * component wraps the result in `$state(...)` so the rows can bind into it.
+ * Fresh per-filter state at the declared defaults, keyed by filter key; the
+ * component wraps it in `$state(...)`.
  *
  * @param {readonly NumericFilter[]} [model]
  * @returns {FilterState}
@@ -144,9 +128,8 @@ export function toStore(state, model = NUMERIC_FILTERS) {
 }
 
 /**
- * Restore the state from a flat store object, in place. A field the saved
- * object lacks falls back to the filter's default rather than becoming
- * `undefined` (the hand-written restore did not guard against that).
+ * Restore the state from a flat store object, in place; a missing field falls
+ * back to the default rather than `undefined`.
  *
  * @param {FilterState} state
  * @param {Record<string, any> | null | undefined} saved
@@ -178,7 +161,7 @@ export function readFlat(filter, flat) {
 /**
  * Command token for one filter: `X>min`, `X<max` or `Xrmin,rmax` depending on
  * `option`. Values are interpolated as-is (an undefined value prints as
- * `undefined`, exactly as the original inline switch did).
+ * `undefined`).
  *
  * @param {NumericFilter} filter
  * @param {Partial<FilterEntry> | null | undefined} entry

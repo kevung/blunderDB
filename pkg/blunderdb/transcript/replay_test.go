@@ -122,20 +122,10 @@ func TestPostCrawfordSentinel(t *testing.T) {
 	}
 }
 
-// TestReplayLatency measures a full Replay of a 300-Action document. The threshold is
-// a REGRESSION guard on this package, measured and not estimated.
-//
-// The T0.2 sheet asked for 20 ms, which was never what a full Replay costs: it is
-// domain.LegalMoves, called once per checker Action (175 µs for an ordinary roll from
-// the opening position, 3.6 ms for a double), and nothing in this package closes that
-// gap — it would take a faster legal-move generator, which is a change to domain with
-// its own differential test to answer to. Measured: 27 ms here, 101 ms on the machine
-// the sheet was written on, i.e. some 90 to 340 µs per Action. The ceiling below is
-// five times the slower of the two, and the figure the test logs is the one to argue
-// about.
-//
-// What the interactive budget rests on is NOT this number: typing replays one Action
-// through a [Replayer], which TestReplayIncrementalCostsOneAction measures.
+// TestReplayLatency is a REGRESSION guard on a full Replay of a 300-Action document.
+// The cost is domain.LegalMoves, once per checker Action (~90-340 µs each); the
+// ceiling is five times the slower measured machine. The interactive budget rests on
+// TestReplayIncrementalCostsOneAction, not on this.
 func TestReplayLatency(t *testing.T) {
 	const actions = 300
 	const ceiling = 500 * time.Millisecond
@@ -209,16 +199,9 @@ func TestPackageIsPure(t *testing.T) {
 // TestReplayIncrementalCostsOneAction is the measurement the entry loop needs: adding
 // an Action at the end of a long document must cost ONE Action, not the document.
 //
-// The ux.md §4.1 budget is 0.56 s for a whole turn, keystrokes included. A full Replay
-// of a 300-Action match spends most of that on its own, at every keystroke; one Action
-// costs some 340 µs at worst, two orders of magnitude under it.
-//
-// What is held is the number of Actions the Replayer steps through, not a duration: the
-// guard used to be a 5 ms wall-clock ceiling, and the hostile-smoke image, running the
-// whole suite in parallel, stretched a single correction to 9.4 ms with the replay still
-// incremental. A count cannot be stretched, and it fails on exactly the regression the
-// test is about — a Replayer that replays the document. The duration is logged, to argue
-// about, not asserted.
+// (ux.md §4.1: 0.56 s per turn.) It holds the number of Actions stepped through, not a
+// duration: a loaded CI machine stretches wall-clock time, a count cannot be stretched.
+// The duration is logged, not asserted.
 func TestReplayIncrementalCostsOneAction(t *testing.T) {
 	const actions = 300
 
@@ -342,9 +325,7 @@ func kitchenSinkDoc(t *testing.T) Document {
 // Action at a time, then corrected in the middle, returns exactly what a Replay from
 // scratch returns — on a document that covers every Kind and every Inconsistency.
 //
-// It is the property the whole optimisation rests on, and it is stated on the WHOLE
-// Annotated, not on a chosen field: the derivation of an Action depends on the state
-// left by the previous one and on nothing else, or this test goes red.
+// It is stated on the WHOLE Annotated, not on chosen fields.
 func TestReplayIncrementalMatchesFull(t *testing.T) {
 	doc := kitchenSinkDoc(t)
 

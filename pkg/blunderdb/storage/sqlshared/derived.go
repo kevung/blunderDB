@@ -11,23 +11,15 @@ import (
 
 // ReclassifyDerived rewrites the two DERIVED labels of every position whose
 // stored value disagrees with what the classifiers say today — game_phase
-// (issue #264, ADR-0035) and game_type (issue #291) — and returns how many
-// rows changed.
-//
-// This is what makes both a derived label rather than stored data: change a
-// classifier or one of its named thresholds, run this, and every row agrees
-// with the new rule. Nothing else in the database reads the old value, so it
-// can always be run and can always be run again.
+// (ADR-0035) and game_type — and returns how many rows changed. This is what
+// keeps them derived: change a classifier, run this, every row agrees.
+// Idempotent.
 //
 // The phase reads only the board. The TYPE also reads the side on roll, since
 // it names the plan of the player to move — hence the extra column in the
 // query. A row whose state cannot be decoded classifies as unknown and is
 // WRITTEN as such rather than skipped: "we do not know" is an answer, and it
 // can then be counted.
-//
-// Written once here because both backends need it and the classification is
-// the same in both; the dialect differences (the tenant filter, the
-// placeholders) are the Execer's.
 func ReclassifyDerived(ctx context.Context, db Execer, scope string) (int, error) {
 	tenant, targs := db.TenantFilter("", scope)
 

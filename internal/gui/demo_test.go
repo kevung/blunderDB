@@ -15,11 +15,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-// realNames are the people the embedded demo must never name again (issue
-// #162): the six players of the database shipped before 0.36.0, plus the
-// people the fixtures scripts/build-demo-db.sh now imports are named after.
-// Each token is matched as a whole word, case-insensitively, in every TEXT
-// column of every table.
+// realNames must never appear in the demo: each is matched as a whole word,
+// case-insensitively, in every TEXT column.
 var realNames = []string{
 	// the six names of the previous demo.db.gz
 	"unger", "harmand", "friebe", "jacobi", "huyck", "larsen",
@@ -56,18 +53,8 @@ func TestDemoDatabaseIsCurrent(t *testing.T) {
 	}
 }
 
-// TestDemoDatabaseHasTheCurrentSchema: the version stamp alone is not enough.
-// A schema change that does not move DatabaseVersion — or one made after the
-// last rebuild — leaves the embedded file stamped current and shaped like the
-// past, and the open path cannot always repair that: EnsureSchema creates
-// nothing under a name that already exists, so a non-unique index does not
-// become unique and a table keeps the foreign keys it was created with. The
-// demo is compared against the DDL a fresh database is bootstrapped from,
-// statement by statement.
-// TestDemoDatabaseShowsARoomRunning: the demonstration carries a DIRECTED tournament (issue
-// #397). The entry cost is a first-rank constraint of that work, and nothing reduces it like
-// seeing a room running before directing one's own — so opening the demo and the Tournament tab
-// must show one, with no setting to change first.
+// TestDemoDatabaseShowsARoomRunning: the demo carries a directed tournament
+// under way, visible with no setting to change.
 func TestDemoDatabaseShowsARoomRunning(t *testing.T) {
 	db := openDemoRaw(t)
 	var directions, events int
@@ -80,8 +67,7 @@ func TestDemoDatabaseShowsARoomRunning(t *testing.T) {
 	if err := db.QueryRow(`SELECT COUNT(*) FROM direction_event`).Scan(&events); err != nil {
 		t.Fatalf("counting direction events: %v", err)
 	}
-	// Thirty-two entries, a draw and three rounds played leave a journal of some length; the
-	// bound is loose on purpose — what matters is that it is a tournament and not a stub.
+	// A loose bound: a real tournament, not a stub.
 	if events < 100 {
 		t.Errorf("the demo direction has %d events: too few to show a room running", events)
 	}
@@ -94,6 +80,9 @@ func TestDemoDatabaseShowsARoomRunning(t *testing.T) {
 	}
 }
 
+// TestDemoDatabaseHasTheCurrentSchema compares the demo, statement by
+// statement, with the bootstrap DDL: a stale file may be stamped current, and
+// EnsureSchema never reshapes an existing index or table.
 func TestDemoDatabaseHasTheCurrentSchema(t *testing.T) {
 	demo := schemaStatementsOf(t, openDemoRaw(t))
 
@@ -208,9 +197,8 @@ func firstHit(t *testing.T, db *sql.DB, table, column string, pattern *regexp.Re
 	return "", ""
 }
 
-// textColumns lists the columns declared as text: the analysis blob is
-// declared JSON and holds compressed bytes that a word regexp could match by
-// accident.
+// textColumns lists the text columns (not the JSON-declared compressed
+// analysis blob a regexp could match by accident).
 func textColumns(t *testing.T, db *sql.DB, table string) []string {
 	t.Helper()
 	rows, err := db.Query(fmt.Sprintf(`PRAGMA table_info("%s")`, table))

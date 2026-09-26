@@ -34,9 +34,8 @@ const TenantFormat = "a positive decimal integer (1, 2, 42, …)"
 // other scope must be the canonical decimal spelling of a positive integer —
 // `strconv.FormatInt(n, 10)` for some n ≥ 1. Everything else ("alice",
 // "default", "0", "-1", "007", "1.0", " 7") is an error wrapping
-// ErrInvalidTenant. It used to be silently mapped to tenant 0, so every
-// named tenant shared one set of rows — see ADR-0005, amendment 2026-09-03.
-// A tenant is an integer; mapping a name to that integer is the proxy's job.
+// ErrInvalidTenant, never mapped to tenant 0 (ADR-0005). Mapping a name to an
+// integer is the proxy's job.
 func ParseTenant(scope string) (int64, error) {
 	if scope == "" {
 		return 0, nil

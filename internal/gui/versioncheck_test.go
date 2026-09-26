@@ -8,8 +8,7 @@ import (
 	"testing"
 )
 
-// TestIsPackageManaged_FlatpakEnvVar guards #241's env-var detection: a
-// Flatpak sandbox sets FLATPAK_ID automatically for every app it runs.
+// TestIsPackageManaged_FlatpakEnvVar: Flatpak sets FLATPAK_ID for every app.
 func TestIsPackageManaged_FlatpakEnvVar(t *testing.T) {
 	t.Setenv("FLATPAK_ID", "io.github.kevung.blunderDB")
 	if !isPackageManaged() {
@@ -17,9 +16,7 @@ func TestIsPackageManaged_FlatpakEnvVar(t *testing.T) {
 	}
 }
 
-// TestIsPackageManaged_ChannelEnvVar guards the project-controlled hook: a
-// packaging script can set BLUNDERDB_PACKAGE_CHANNEL to force this on,
-// regardless of the install path heuristic.
+// TestIsPackageManaged_ChannelEnvVar: BLUNDERDB_PACKAGE_CHANNEL forces it on.
 func TestIsPackageManaged_ChannelEnvVar(t *testing.T) {
 	t.Setenv("BLUNDERDB_PACKAGE_CHANNEL", "aur")
 	if !isPackageManaged() {
@@ -27,25 +24,18 @@ func TestIsPackageManaged_ChannelEnvVar(t *testing.T) {
 	}
 }
 
-// TestIsPackageManaged_NoEnvVarFallsBackToPathHeuristic: with neither env
-// var set, the result must come from the install-path heuristic, not panic
-// or always return true — this just guards it runs without those hooks.
+// TestIsPackageManaged_NoEnvVarFallsBackToPathHeuristic: without either env
+// var, the path heuristic runs.
 func TestIsPackageManaged_NoEnvVarFallsBackToPathHeuristic(t *testing.T) {
-	// Ensure a leftover from another test (or the real environment) does not
-	// make this test's result depend on ambient state.
 	t.Setenv("FLATPAK_ID", "")
 	t.Setenv("BLUNDERDB_PACKAGE_CHANNEL", "")
 
-	// Just must not panic; the actual answer depends on where `go test`'s
-	// test binary happens to live, which varies by machine/CI.
+	// Must not panic; the answer depends on where the test binary lives.
 	_ = isPackageManaged()
 }
 
-// TestCheckForUpdate_PackageManagedSkipsNetworkCall guards #241: a
-// package-managed install must not even attempt the GitHub API call — the
-// zero-value App (no ctx) proves it, since CheckForUpdate would otherwise
-// need a.ctx for nothing here, and more importantly this test would hang or
-// fail on a machine with no network if the request were actually attempted.
+// TestCheckForUpdate_PackageManagedSkipsNetworkCall: a package-managed
+// install never attempts the request.
 func TestCheckForUpdate_PackageManagedSkipsNetworkCall(t *testing.T) {
 	t.Setenv("FLATPAK_ID", "io.github.kevung.blunderDB")
 
@@ -62,11 +52,8 @@ func TestCheckForUpdate_PackageManagedSkipsNetworkCall(t *testing.T) {
 	}
 }
 
-// TestGithubRelease_TagNameVPrefixStripped guards the "v0.36.0" → "0.36.0"
-// normalisation CheckForUpdate applies, since GitHub release tags in this
-// project's own history are NOT prefixed with "v" (scripts/release.sh tags
-// bare "0.36.0") but a defensive strip costs nothing and protects against a
-// future convention change.
+// TestGithubRelease_TagNameVPrefixStripped: a defensive "v" strip, though
+// scripts/release.sh tags bare versions.
 func TestGithubRelease_TagNameVPrefixStripped(t *testing.T) {
 	for _, tc := range []struct{ tag, want string }{
 		{"v0.36.0", "0.36.0"},
@@ -79,11 +66,8 @@ func TestGithubRelease_TagNameVPrefixStripped(t *testing.T) {
 	}
 }
 
-// TestCheckForUpdate_ParsesGitHubResponse exercises the actual HTTP
-// round-trip and JSON decoding against a local httptest server standing in
-// for api.github.com, rather than only unit-testing the string trimming —
-// this is what would break if GitHub's response shape or this decoder's
-// field names ever drifted apart.
+// TestCheckForUpdate_ParsesGitHubResponse decodes a release JSON over HTTP
+// from a local stand-in for api.github.com.
 func TestCheckForUpdate_ParsesGitHubResponse(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("User-Agent") == "" {
@@ -97,9 +81,7 @@ func TestCheckForUpdate_ParsesGitHubResponse(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	// Exercise the same decode path CheckForUpdate uses, against the test
-	// server, without hardcoding githubLatestReleaseURL to a real network
-	// call in a unit test.
+	// CheckForUpdate's decode path, against the test server.
 	resp, err := http.Get(srv.URL)
 	if err != nil {
 		t.Fatalf("GET: %v", err)

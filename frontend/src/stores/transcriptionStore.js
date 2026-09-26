@@ -1,25 +1,11 @@
 /**
  * transcriptionStore.js — the open transcription draft, as the panel sees it.
  *
- * The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
- * to `ApplyTranscriptionGesture` and comes back as a whole annotated document —
- * the position of each Action, the scores, the Crawford games, the
- * Inconsistencies, where the Cursor landed. Nothing in this file derives any of
- * that; it holds what came back so the panel, the board and the status bar all
- * read one value.
- *
- * The undo stack is deliberately NOT here. It exists once, in Go, in
- * `transcript.Editor` — the same place the Action being typed lives, because
- * that Entry is not serialisable and a gesture is therefore applied against a
- * live document held on the Go side (see pkg/blunderdb/database/db_transcription.go).
- * What this store keeps of it is what the panel has to draw: whether there is
- * anything to undo or redo, filled in from what every gesture reports
- * (`can_undo`/`can_redo` on the TranscriptionState).
- *
- * Sizing: this store survives the panel, which TabbedPanel unmounts on every tab
- * change (see its header comment). A draft opened in the panel must still be
- * open when the user comes back from the Eval tab, so the state lives here and
- * not in the component.
+ * The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture comes back as a whole
+ * annotated document, held here verbatim so panel, board and status bar read one value.
+ * The undo stack lives once, in Go (`transcript.Editor`, beside the unserialisable Entry); only
+ * `can_undo`/`can_redo` are mirrored here. State lives in stores because TabbedPanel unmounts
+ * the panel on every tab change.
  */
 
 import { writable, derived } from 'svelte/store';
@@ -27,48 +13,33 @@ import { writable, derived } from 'svelte/store';
 import { initialKeyState } from '../services/transcriptionKeys.js';
 
 /**
- * The draft currently open, or null when none is.
- *
- * `id` is the transcription row; `annotated` is the last `transcript.Annotated`
- * the Go side returned, verbatim.
+ * The draft currently open, or null: `id` is the transcription row, `annotated` the last
+ * `transcript.Annotated` returned, verbatim.
  *
  * @type {import('svelte/store').Writable<{id: number, annotated: any} | null>}
  */
 export const transcriptionStore = writable(null);
 
 /**
- * The drafts of the open library, as `ListTranscriptions` returns them (most
- * recently updated first). The panel's list reads this; T1.2's creation form and
- * the Match panel's "draft in progress" line will read the same one.
+ * The drafts of the open library, as `ListTranscriptions` returns them (most recent first).
  *
  * @type {import('svelte/store').Writable<any[]>}
  */
 export const transcriptionListStore = writable([]);
 
-/**
- * What the panel needs to enable or disable its undo/redo buttons. Written from
- * what a gesture reports; false for an unopened draft, and false again after a
- * restart — the stack is in memory and nowhere else (ADR-0045 rule 1).
- */
+/** Undo/redo availability, from each gesture; false after a restart — the stack is in memory only (ADR-0045 rule 1). */
 export const transcriptionHistoryStore = writable({ canUndo: false, canRedo: false });
 
 /**
- * The undo or redo the global dispatcher asked for, `null` when it has been
- * served. `Ctrl+Z` is a Ctrl combo and Ctrl combos are always global
- * (keyboardService.js's `isAlwaysGlobal`, which exists so that a shortcut added
- * to one list does not die behind another): the dispatcher therefore posts the
- * gesture here and the panel, which owns the draft and the round trip, performs
- * it. Same shape as `ankiReviewActionStore`, and for the same reason.
+ * The undo or redo the global dispatcher asked for, `null` once served. Ctrl combos are always
+ * global (`isAlwaysGlobal`), so the dispatcher posts here and the panel, which owns the round
+ * trip, performs it — like `ankiReviewActionStore`.
  *
  * @type {import('svelte/store').Writable<'undo'|'redo'|null>}
  */
 export const transcriptionHistoryActionStore = writable(null);
 
-/**
- * The Action the Cursor is on, or null. Derived rather than stored: the Cursor
- * is a fact of the annotated document, and a second copy of it would be one
- * more thing to keep in step after every gesture.
- */
+/** The Action the Cursor is on, or null — derived, the Cursor being a fact of the document. */
 export const transcriptionCursorStore = derived(transcriptionStore, ($t) => {
     if (!$t?.annotated) return null;
     const actions = $t.annotated.actions ?? [];
@@ -76,11 +47,7 @@ export const transcriptionCursorStore = derived(transcriptionStore, ($t) => {
     return actions[at] ?? null;
 });
 
-/**
- * Puts a draft — the `TranscriptionState` a Go binding returned — in hand.
- *
- * @param {any} state
- */
+/** @param {any} state a `TranscriptionState` returned by a Go binding */
 export function setTranscription(state) {
     transcriptionStore.set(state ? { id: state.id, annotated: state.annotated } : null);
     // Both sides of the stack come back with every gesture: they are read off
@@ -90,58 +57,36 @@ export function setTranscription(state) {
 }
 
 /**
- * Ce que la BARRE DE MATCH dit du brouillon ouvert : longueur, score, Crawford,
- * numéro de partie, videau, camp au trait. `null` quand aucun brouillon ne l'est.
- *
- * Ces six faits étaient sept pastilles dans le panneau (ADR-0048 décision 2), ce
- * que `ux.md` §5 n'avait jamais demandé : il les plaçait dans `MatchInfoBar`,
- * qui est déjà au-dessus du plateau — donc lue au moment où l'œil est sur le
- * plateau, qui est le bon moment pour « Kévin au trait, videau à 2 ». Le panneau
- * les POSE ici et ne les dessine plus ; la barre les lit.
+ * Ce que la barre de match (`MatchInfoBar`, ux.md §5) dit du brouillon ouvert : longueur, score,
+ * Crawford, partie, videau, trait ; `null` sans brouillon. Le panneau les pose, la barre les lit
+ * (ADR-0048 décision 2).
  *
  * @type {import('svelte/store').Writable<null | {lengthKey: string, lengthParams: Record<string, any>, score: number[] | null, crawford: boolean, gameNumber: number, cubeKey: string, cubeParams: Record<string, any>, onRoll: string, player1?: string, player2?: string}>}
  */
 export const transcriptionInfoStore = writable(null);
 
 /**
- * L'Action attendue, en un mot, pour la BARRE D'ÉTAT (`ux.md` §5, jamais câblé
- * avant ADR-0048 décision 2). Une clé i18n et ses paramètres, ou `null`.
- *
- * C'est un ÉTAT : il y en a toujours exactement un tant qu'un brouillon est
- * ouvert, et il ne s'efface pas tout seul.
+ * L'Action attendue pour la barre d'état (ux.md §5, ADR-0048 décision 2) : une clé i18n et ses
+ * paramètres, ou `null`. Un état, toujours présent tant qu'un brouillon est ouvert.
  *
  * @type {import('svelte/store').Writable<null | {key: string, params?: Record<string, any>}>}
  */
 export const transcriptionPromptStore = writable(null);
 
 /**
- * La réponse TRANSITOIRE d'un geste sans effet (ADR-0048 décision 9) : « rien à
- * annuler », « aucune Action sous le curseur ». Elle cède la place à la phrase
- * de l'Action attendue au bout de [NOTICE_MS].
- *
- * Pourquoi elle existe. Quatre gestes n'ont rien à faire dans un état
- * parfaitement ordinaire et se taisaient tous les quatre : `Ctrl+Z` sur une pile
- * vide — vide PAR CONSTRUCTION sur un brouillon réouvert, la pile vivant dans le
- * `transcript.Editor` de la session (ADR-0045 règle 1) —, `x`/`Suppr`/`s` en
- * bout de document, `Retour arrière` sans dé saisi. Le seul de la famille qui
- * disait quelque chose était un bouton grisé, et c'est celui que la décision 3
- * supprime. Une promesse prise exprès qui ne se dit jamais est indiscernable
- * d'un bug.
+ * La réponse TRANSITOIRE d'un geste sans effet (ADR-0048 décision 9) — « rien à annuler »,
+ * « aucune Action sous le curseur » —, remplacée par l'Action attendue après [NOTICE_MS].
+ * Sans elle, `Ctrl+Z` sur une pile vide (vide par construction sur un brouillon réouvert),
+ * `x`/`Suppr`/`s` en bout de document ou `Retour arrière` sans dé se taisaient comme un bug.
  *
  * @type {import('svelte/store').Writable<null | {key: string, params?: Record<string, any>}>}
  */
 export const transcriptionNoticeStore = writable(null);
 
 /**
- * Un cran de molette donné AU-DESSUS DU PLATEAU (ADR-0048 décision 11).
- *
- * Le plateau ne connaît pas la liste des candidats, et le panneau ne reçoit pas
- * les événements du plateau : le dispatcher de `App.svelte` pose donc le cran
- * ici et le panneau, qui possède la sélection, le sert. Même forme que
- * `transcriptionCubeRequestStore` et que `Ctrl+Z`, pour la même raison.
- *
- * `at` distingue deux crans identiques qui se suivent : un magasin dédoublonne
- * les valeurs égales, et deux `{delta: 1}` de suite n'en feraient qu'un.
+ * Un cran de molette au-dessus du plateau (ADR-0048 décision 11), posé par `App.svelte` et servi
+ * par le panneau, qui possède la sélection. `at` distingue deux crans égaux successifs, qu'un
+ * magasin dédoublonnerait.
  *
  * @type {import('svelte/store').Writable<null | {delta: number, at: number}>}
  */
@@ -154,8 +99,7 @@ export const NOTICE_MS = 1500;
 let noticeTimer = undefined;
 
 /**
- * Pose une réponse transitoire, en remplaçant celle qui traînait.
- *
+ * Pose une réponse transitoire, en remplaçant la précédente.
  * @param {string} key
  * @param {object} [params]
  */
@@ -173,9 +117,8 @@ export function clearTranscriptionNotice() {
 }
 
 /**
- * Lets go of the open draft. Called when the draft is closed and when the
- * library changes — a draft belongs to the library it names two players of, and
- * a stale one would keep answering for a row id of another file.
+ * Lets go of the open draft, also on library change: a stale draft would answer for a row id of
+ * another file.
  */
 export function clearTranscription() {
     transcriptionStore.set(null);
@@ -191,22 +134,14 @@ export function clearTranscription() {
     // Un clic sur le videau resté sans réponse ne doit pas servir le brouillon
     // suivant (T2.5).
     transcriptionCubeRequestStore.set(null);
-    // Le sens du plateau appartient au brouillon regardé, pas à la session :
-    // « le joueur 1 » n'est pas la même personne d'un brouillon à l'autre, et
-    // une inversion retenue montrerait le suivant à l'envers sans qu'on l'ait
-    // demandé.
+    // Le sens du plateau appartient au brouillon : « le joueur 1 » change d'un brouillon à l'autre.
     transcriptionBoardSwapStore.set(false);
 }
 
 /**
- * L'état de la machine à touches (services/transcriptionKeys.js) : la phase, les
- * dés en cours de saisie, le candidat sélectionné.
- *
- * Il vit ici et pas dans le composant pour la même raison que le brouillon :
- * TabbedPanel démonte le panneau à chaque changement d'onglet, et un jet à
- * moitié tapé ne doit pas disparaître parce que l'utilisateur est allé voir
- * l'onglet Eval. Il n'est pas persisté non plus — c'est l'Entry, que le moteur
- * garde en mémoire et qu'un plantage a le droit de perdre (ADR-0045 règle 1).
+ * L'état de la machine à touches (services/transcriptionKeys.js) : phase, dés en saisie,
+ * candidat sélectionné. Ici pour survivre au démontage du panneau ; non persisté, comme l'Entry
+ * (ADR-0045 règle 1).
  */
 export const transcriptionKeyStore = writable(initialKeyState());
 
@@ -216,37 +151,18 @@ export function resetTranscriptionKeys() {
 }
 
 /**
- * Le videau cliqué sur le plateau (T2.5), `null` quand la demande a été servie.
- *
- * Le plateau POSE la demande, le panneau la sert : c'est le chemin de
- * `transcriptionHistoryActionStore` pour `Ctrl+Z`, et il est ici pour la même
- * raison — le geste naît sur une surface qui ne tient ni le brouillon ni
- * l'aller-retour Wails. Le plateau ne juge donc rien : il dit « le videau a été
- * cliqué », et c'est le panneau, qui sait ce que le document attend, qui en
- * fait un double ou qui laisse tomber la demande.
+ * Le videau cliqué sur le plateau, `null` une fois servi. Le plateau pose la demande sans juger ;
+ * le panneau, qui tient le brouillon, en fait un double ou l'ignore.
  *
  * @type {import('svelte/store').Writable<'double'|null>}
  */
 export const transcriptionCubeRequestStore = writable(null);
 
 /**
- * Le plateau du brouillon est-il montré RETOURNÉ, joueur 2 en bas ?
- *
- * Pourquoi il existe. Hors transcription, le plateau montre toujours le camp au
- * trait en bas : une position de la bibliothèque est enregistrée normalisée, le
- * camp au trait EST le joueur 0, et rien n'oscille. Un brouillon, lui, est une
- * partie qui se déroule : le trait change à chaque demi-coup, et la même règle y
- * faisait basculer le damier d'un tour sur l'autre — les pions de celui qu'on
- * vient de regarder passaient en haut, ceux d'en face descendaient, et l'œil
- * refaisait le trajet à chaque jet. Le panneau montre donc le JOUEUR 1 en bas,
- * comme le fait déjà le mode Match, et le trait se lit aux dés, qui changent de
- * côté.
- *
- * Ce que ce magasin n'est PAS : le geste `swap_players` de l'en-tête
- * (TranscriptionMetadata.svelte), qui échange les deux joueurs DANS le document
- * — les noms, les camps, les Actions. Ici rien n'est modifié : c'est une
- * préférence d'affichage, et le brouillon enregistré est le même dans les deux
- * sens.
+ * Le plateau du brouillon est-il montré RETOURNÉ, joueur 2 en bas ? Le panneau montre le joueur 1
+ * en bas, comme le mode Match : suivre le camp au trait ferait basculer le damier à chaque
+ * demi-coup. Préférence d'affichage seulement — à ne pas confondre avec `swap_players`
+ * (TranscriptionMetadata.svelte), qui échange les joueurs dans le document.
  *
  * @type {import('svelte/store').Writable<boolean>}
  */

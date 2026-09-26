@@ -8,7 +8,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Direct unit tests of buildWhere (B.15, #183): inputs in, SQL text and
+// Direct unit tests of buildWhere: inputs in, SQL text and
 // bound arguments out, with no database underneath — fakeDialect answers
 // every dialect question with SQLite-shaped text (fakeexecer_test.go) and
 // the two filters that would make buildWhere issue a real query

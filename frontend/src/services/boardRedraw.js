@@ -1,17 +1,11 @@
 /**
- * Ce qui demande au plateau de se repeindre.
+ * Ce qui demande au plateau de se repeindre. `drawBoard()` lit ses stores
+ * impérativement dans une frame d'animation : écrire un store ne peint rien
+ * sans repaint planifié. La liste vit hors de `Board.svelte`, sans test de
+ * rendu (canvas absent de jsdom), pour qu'un store oublié se voie en test.
  *
- * `drawBoard()` lit ses stores IMPÉRATIVEMENT, dans une frame d'animation :
- * écrire un store ne peint donc rien tant que personne n'a planifié un
- * repaint. La liste ci-dessous est cette demande, et elle vit hors de
- * `Board.svelte` pour une raison précise — le composant n'a pas de test de
- * rendu (two.js, un canvas que jsdom n'implémente pas), si bien qu'un store
- * oublié ici ne se voyait nulle part. Le pipcount de l'exercice Pions (#320)
- * est arrivé ainsi : le masque se calculait, et l'écran ne bougeait pas.
- *
- * `positionStore` n'y figure pas : son abonnement porte en plus une règle
- * métier (remettre à zéro le coup sélectionné sur une VRAIE navigation) qui
- * doit s'exécuter avant le repaint, et il reste donc écrit dans le composant.
+ * `positionStore` n'y figure pas : son abonnement remet à zéro le coup
+ * sélectionné sur une vraie navigation avant le repaint, dans le composant.
  */
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { searchOfferedCubeStore } from '../stores/searchExcludePositionStore.js';
@@ -31,10 +25,10 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     Object.freeze({ name: 'analysis', store: analysisStore }),
     // La bascule « videau offert » : le videau change de place.
     Object.freeze({ name: 'offeredCube', store: searchOfferedCubeStore }),
-    // Le coup du quiz, construit un pas à la fois (#294).
+    // Le coup du quiz, construit un pas à la fois.
     Object.freeze({ name: 'quizPlay', store: quizPlayStore }),
     // La visibilité du pipcount : la préférence de l'utilisateur, ou le masque
-    // d'une question de Pions (#320).
+    // d'une question de Pions.
     Object.freeze({ name: 'pipcountVisible', store: pipcountVisibleStore }),
     // Le sens du plateau pendant une transcription : le joueur 1 en bas, ou le
     // joueur 2. Rien d'autre ne change quand on la bascule — pas même la
@@ -43,8 +37,7 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
 ]);
 
 /**
- * Abonne `schedule` à chacun des déclencheurs et rend la fonction de
- * désabonnement.
+ * Abonne `schedule` à chaque déclencheur ; rend le désabonnement.
  * @param {() => void} schedule
  * @returns {() => void}
  */

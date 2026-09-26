@@ -9,9 +9,7 @@ import (
 )
 
 // isolateIdentityConfig points XDG_CONFIG_HOME at a throwaway directory, so a
-// test run never creates or reuses the identity of whoever runs the suite
-// (same idiom as database.isolateIdentity / config_test.go's
-// isolateXDGConfig).
+// test never touches the real identity.
 func isolateIdentityConfig(t *testing.T) {
 	t.Helper()
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
@@ -138,10 +136,8 @@ func TestRegenerateIssuerIdentityDefaultsBlankName(t *testing.T) {
 	}
 }
 
-// TestImportIssuerIdentityRoundTrip exercises export/import at the issuance
-// layer directly (issuance.Identity.ExportIdentity), so it stays clear of the
-// Wails dialog in App.ExportIssuerIdentity (which needs a live a.ctx), while
-// still exercising the App-level, dialog-free ImportIssuerIdentity.
+// TestImportIssuerIdentityRoundTrip exports through issuance (the App method
+// needs a dialog) and imports through the App.
 func TestImportIssuerIdentityRoundTrip(t *testing.T) {
 	isolateIdentityConfig(t)
 

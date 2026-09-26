@@ -10,17 +10,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/watch"
 )
 
-// importWatch keeps importing a folder as matches appear in it (issue #258,
-// fiche I.2) — the headless half of the watched folder the desktop offers in
-// its settings, and the form a server, a cron or a shell script can use.
-//
-// It reports what APPEARS, and never what was already there: pointing a watch
-// at a folder holding four years of matches must not import all of them. The
-// folder as it stands is `import --type batch`'s job, and the two compose
-// exactly as one would hope — batch first, then watch.
-//
-// Ctrl-C stops it between files, never inside one: the file being imported
-// finishes and its report is printed before the loop returns.
+// importWatch keeps importing a folder as matches appear in it — the
+// headless half of the desktop's watched folder. It imports only what
+// appears, never what was already there (that is `import --type batch`'s
+// job: batch first, then watch). Ctrl-C stops between files, never inside
+// one.
 func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, failOnError bool) error {
 	w, err := watch.New(dirPath)
 	if err != nil {
@@ -52,10 +46,8 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 
 		files, err := w.Poll()
 		if err != nil {
-			// A share that has gone away is not the end of the watch: it
-			// comes back, and the watcher's memory survives so its contents
-			// are not mistaken for new matches. Say so once per occurrence
-			// and keep looking.
+			// A vanished share usually comes back, and the watcher's memory
+			// survives so its files are not seen as new: warn and keep going.
 			if text {
 				fmt.Fprintf(os.Stderr, "warning: %v\n", err)
 			}
@@ -74,10 +66,8 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 	}
 }
 
-// importOneWatched imports a single file that appeared, through the same
-// `import --type match` path a user would have used by hand — including the
-// duplicate detection, so a file rewritten in place is recognised rather than
-// imported twice.
+// importOneWatched imports one file through the `import --type match` path,
+// whose duplicate detection recognises a file rewritten in place.
 func (cli *CLI) importOneWatched(path, format string) error {
 	if format != "json" {
 		fmt.Printf("── %s\n", path)

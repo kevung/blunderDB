@@ -1,13 +1,7 @@
 // Spaced-repetition decks: everything AnkiPanel does that is not drawing —
-// what a deck's stored search means, how a deck is (re)synced with its
-// source, how a review or cram session walks its cards, and the bookkeeping
-// of the stores the rest of the app reads (the board shows the card, the
-// status bar counts positions). The panel keeps the UI state (form fields,
-// session counter, cram flag) and the status-bar messages; it calls here and
-// catches.
-//
-// Pure helpers first (no I/O, unit-tested as such), then the functions that
-// call the Wails bindings and write the stores.
+// deck sources, (re)sync, walking review and cram sessions, and the stores the
+// rest of the app reads. The panel keeps UI state and status messages.
+// Pure helpers first, then the functions calling Wails and writing stores.
 
 import { get } from 'svelte/store';
 import {
@@ -46,9 +40,9 @@ import { logger } from '../utils/logger.js';
 // ---------------------------------------------------------------------------
 
 /**
- * What a search-backed deck stored as its source. Current decks store a JSON
- * document `{ command, position, ids }`; the first ones stored a plain
- * comma-separated list of position ids, which is read as ids only.
+ * What a search-backed deck stored as its source: a JSON document
+ * `{ command, position, ids }`, or (legacy) a comma-separated id list read as
+ * ids only.
  *
  * @param {string} sourceCommand
  * @returns {{ ids: number[], command: string | null, position: object }}
@@ -84,9 +78,9 @@ function parseLegacyIds(text) {
 }
 
 /**
- * The source document of a deck created from the current search: the command
- * and board that produced it, plus the ids it matched at creation time so a
- * card is never lost when the search stops matching its position.
+ * The source document of a deck created from the current search. The ids
+ * matched at creation are kept so a card survives the search no longer
+ * matching its position.
  *
  * @param {{ command?: string, position?: string } | null} lastSearch
  * @param {number[]} positionIds
@@ -139,10 +133,9 @@ export function sourceLabel(deck, collections = []) {
 }
 
 /**
- * A deck of score sheets (ADR-0042 rule 2). The application fills it with the
- * 36 unordered scores of 2 to 9 away — the user enters none of them, and the
- * cards hold no position, which is why so much of what follows asks the KIND
- * of a card rather than looking for its position.
+ * A deck of score sheets (ADR-0042 rule 2), filled with the 36 unordered
+ * scores of 2 to 9 away. Its cards hold no position, hence the checks on a
+ * card's KIND below.
  */
 export const SOURCE_SCORES = 'scores';
 
@@ -152,9 +145,8 @@ export function isScoreCard(card) {
 }
 
 /**
- * The two aways of a score card, smaller first, or null when the key is not
- * one. Read from the card's key rather than from a table: the deck states
- * which scores it holds, the review view only renders what it is handed.
+ * The two aways of a score card, smaller first, or null. Read from the key:
+ * the deck states its scores, the view only renders.
  */
 export function scoreCardAways(card) {
     const key = card?.card?.key ?? '';
@@ -164,22 +156,18 @@ export function scoreCardAways(card) {
 }
 
 /**
- * The count a session starts at: where a paused FSRS session on the same deck
- * left off, otherwise zero. Cram sessions never resume.
+ * Where a paused FSRS session on the same deck left off, else zero. Cram never
+ * resumes.
  */
 export function resumedSessionCount(pausedSession, deck, cram = false) {
     if (cram || !pausedSession || !deck || pausedSession.deckId !== deck.id) return 0;
     return pausedSession.sessionCount;
 }
 
-/** A study session needs due cards; a cram session only needs cards. */
 /**
- * Whether a study session can serve anything right now.
- *
- * A deck whose session limit is 0 has cards due and serves none of them
- * (ADR-0026 rule 3), so the button must be inactive: without this, the user
- * clicks and nothing happens, and discovers the limit by bumping into it.
- * A null/undefined limit is no limit.
+ * Whether a study session can serve anything: due cards, and a session limit
+ * other than 0 (ADR-0026 rule 3) — otherwise the button is inactive. A null
+ * limit is no limit.
  */
 export function canStudy(stats, deck) {
     if (!stats || stats.dueCount <= 0) return false;
@@ -187,8 +175,7 @@ export function canStudy(stats, deck) {
 }
 
 /**
- * A deck's session limit as a number, or null when the deck has none.
- * `0` is a limit — it is not "no limit" — so this must not use `||`.
+ * The session limit, or null for none. `0` is a limit, hence no `||`.
  */
 export function sessionLimitOf(deck) {
     const v = deck?.sessionLimit;
@@ -196,9 +183,8 @@ export function sessionLimitOf(deck) {
 }
 
 /**
- * Whether a session that has already served `count` cards has reached the
- * deck's limit. Cram is never bounded by it (ADR-0026 rule 2): free drill
- * schedules nothing, so there is nothing to pace.
+ * Whether `count` served cards reach the limit. Cram is never bounded
+ * (ADR-0026 rule 2): it schedules nothing.
  */
 export function sessionLimitReached(deck, count, { cram = false } = {}) {
     if (cram) return false;
@@ -224,10 +210,8 @@ export async function loadDecks() {
 }
 
 /**
- * Re-run a search-backed deck's stored search and return the position ids
- * its cards should cover: the current results plus every id stored with the
- * deck. Errors are logged and yield an empty list, which `syncDeckCards`
- * treats as "leave the deck alone".
+ * Re-run a search deck's stored search: the current results plus every stored
+ * id. On error, an empty list, which `syncDeckCards` reads as "leave it alone".
  */
 export async function resolveSearchDeckIds(sourceCommand) {
     try {
@@ -246,7 +230,7 @@ export async function resolveSearchDeckIds(sourceCommand) {
                 .map((f) => f.trim());
             payload = buildSearchFilterPayload(position, parseFilters(filters, command), filters);
         }
-        // Ids only (D.8, #208): this only ever reads .id off the results, so
+        // Ids only: this only ever reads .id off the results, so
         // there is no reason to ship every matching position whole.
         const ids = await LoadPositionIDsByFilters(payload);
         return mergeIds(ids || [], storedIds);
@@ -319,11 +303,8 @@ export async function refreshDeckStats(deckId) {
 }
 
 /**
- * Add one position's card to a deck (the board's context menu, #215) — every
- * other path grows a deck through its bound source (search/collection) via
- * syncDeckCards. SyncWithPositions is `INSERT OR IGNORE`, never a removal, so
- * this is safe to call on a deck of any sourceType: it only ever adds the one
- * card, never touches the rest of the deck.
+ * Add one position's card to a deck. SyncWithPositions is `INSERT OR IGNORE`,
+ * so this is safe on any sourceType and never touches the other cards.
  */
 export async function addPositionToDeck(deckId, positionId) {
     await SyncAnkiDeckWithPositions(deckId, [positionId]);
@@ -360,21 +341,14 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
 }
 
 /**
- * Put a card's position on the board and point the status bar at it.
- *
- * Goes through showPosition rather than setting positionStore directly: it is
- * the one function that knows what "display a position" means, and the only
- * one that loads the position's analysis and comment. Setting the store by
- * hand left analysisStore holding whatever position was browsed last, so the
- * Analysis tab — one Ctrl+L away, the review key guard lets Ctrl combos
- * through — showed another position's numbers during a review, and the
- * revealed answer of ADR-0025 rule 1 would have inherited that lie.
+ * Put a card's position on the board and point the status bar at it. Through
+ * showPosition, the only path that also loads analysis and comment: set by
+ * hand, the Analysis tab would show the previously browsed position's numbers
+ * during review (ADR-0025 rule 1).
  */
 export async function showCard(card) {
-    // A score card has no position: putting the previous card's board back on
-    // screen would be the very lie showPosition was introduced to stop (see
-    // the note above), so the board is left exactly as the user left it and
-    // the review view renders the score sheet instead.
+    // A score card has no position: leave the board as is; the review view
+    // renders the score sheet.
     if (isScoreCard(card)) return;
     await showPosition(card.position);
     const idx = positionsStore.indexOf(card.position.id);
@@ -382,12 +356,9 @@ export async function showCard(card) {
 }
 
 /**
- * A new question: hide its answer and drop the move picked on the previous one
- * (ADR-0025 rule 5). Deliberately NOT inside showCard — the panel re-shows the
- * current card every time the Anki tab regains focus, and going to look at the
- * Eval panel is not a new question.
- *
- * Left set, selectedMoveStore freezes j/k position browsing app-wide.
+ * A new question: hide the answer and drop the previously picked move
+ * (ADR-0025 rule 5). Not in showCard, which reruns whenever the Anki tab
+ * regains focus. A leftover selectedMoveStore freezes j/k browsing app-wide.
  */
 function newQuestion() {
     hideAnkiAnswer();
@@ -395,8 +366,8 @@ function newQuestion() {
 }
 
 /**
- * Start a session on a deck: resync it, load its positions, draw the first
- * card (the next due one, or a random one when cramming) and show it.
+ * Start a session: resync the deck, load its positions, draw and show the
+ * first card (next due, or random when cramming).
  * @returns {Promise<object | null>} the first card, or null when there is none
  */
 export async function startSession(deck, { cram = false } = {}) {
@@ -413,18 +384,10 @@ export async function startSession(deck, { cram = false } = {}) {
 /**
  * Grade the current card and move to the next one.
  *
- * Une décision de videau est DEUX questions — « double ? » puis « prend ? » —
- * et blunderDB les enregistre déjà comme deux positions. Quand la seconde est
- * dans le même paquet et due, elle vient tout de suite après la première
- * (#276) : c'est la seule façon d'enchaîner les deux sans en faire une carte
- * qui prendrait une note pour deux réponses (ADR-0025).
- *
- * Le chaînage n'avance AUCUNE échéance. Il ordonne l'ensemble des cartes dues,
- * rien de plus : forcer la seconde hors de son tour fausserait FSRS pour un
- * effet de mise en scène. Les deux cartes naissant ensemble, elles sont dues
- * ensemble la première fois — c'est là que le chaînage sert.
- *
- * En mode cram, rien de tout cela : le tirage est aléatoire par définition.
+ * Une décision de videau est deux positions (« double ? », « prend ? ») : si
+ * la seconde est due dans le même paquet, elle suit immédiatement (ADR-0025).
+ * Le chaînage ordonne les cartes dues sans avancer aucune échéance, pour ne
+ * pas fausser FSRS. Pas de chaînage en cram (tirage aléatoire).
  *
  * @returns {Promise<object | null>} the next card, or null when the session is over
  */
@@ -445,17 +408,9 @@ export async function reviewCard(card, rating, { cram = false } = {}) {
 }
 
 /**
- * The three gestures that take a card OUT of the session without grading it
- * (G.14, #242): suspend it, bury it until tomorrow, remove it from the deck.
- *
- * They were reachable over HTTP since the daemon existed and from nowhere
- * else. Each one ends the card's turn — the scheduler is never told anything
- * about it, which is the whole point: a card set aside must not also be
- * recorded as answered.
- *
- * Cramming draws at random and schedules nothing, so it advances the same way
- * it does after its own "next": with another random card, never the one just
- * seen.
+ * Suspend, bury or remove: take a card out of the session without grading it —
+ * the scheduler is told nothing. Cram advances with another random card,
+ * never the one just seen.
  *
  * @param {object} card the card under review
  * @param {object} deck the deck being reviewed
@@ -522,12 +477,9 @@ async function advance(next) {
 }
 
 /**
- * What a deck's review log measures, against the target its owner chose.
- *
- * A reading, never a control (ADR-0026 rule 5): nothing here writes the target
- * back. Below RETENTION_MIN_SAMPLE review-state reviews the measurement is not
- * reported at all — a pass rate over three reviews reads as a fact while being
- * noise — so callers show the absence rather than a number.
+ * Minimum review-state reviews before a deck's retention is reported; below
+ * it, callers show the absence rather than a noisy rate. Retention is a
+ * reading, never a control (ADR-0026 rule 5).
  */
 export const RETENTION_MIN_SAMPLE = 20;
 

@@ -14,36 +14,17 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// =====================================================================
-// Transcriptions — drafts of matches being typed in (ADR-0045)
-// =====================================================================
+// Transcriptions (ADR-0045): plumbing only. The rules live in
+// pkg/blunderdb/transcript, persistence in storage.TranscriptionStore; this
+// file reads the row, applies the gesture, writes the row back.
 //
-// This file is PLUMBING and nothing else. The rules of a transcription live
-// in pkg/blunderdb/transcript (a pure package: a Document, the Gestures that
-// change it, and the Replay that derives everything else); the persistence
-// lives in storage.TranscriptionStore. What is written here is the join: read
-// the row, hand the document to transcript, write the row back, return the
-// annotated document.
-//
-// # Why a session is held in memory
-//
-// transcript.Document carries an Entry — the Action being typed, the dice as
-// they come in one at a time — which is deliberately NOT serialised
-// (`json:"-"`, ADR-0045 rule 1: a crash is allowed to lose it). Applying a
-// gesture is therefore not a function of the stored row alone: two successive
-// "enter a die" gestures, each a Wails round trip, need the same live
-// Document. So an opened draft keeps a transcript.Editor in memory, which is
-// also where its undo stack lives — the one the ADR says stays in memory.
-//
-// The session is a cache, never the truth: the row is rewritten after every
-// gesture that changes the document, so losing every session (a crash, a
-// close) loses only what a crash is allowed to lose.
+// An opened draft keeps a transcript.Editor in memory because the Entry (the
+// Action being typed) and the undo stack are deliberately not serialised
+// (ADR-0045 rule 1), yet successive gestures need them. The session is a
+// cache, never the truth: the row is rewritten after every durable change.
 
-// TranscriptionSummary is one line of the drafts list: what the panel shows
-// without opening the draft. The header facts and the action count are read
-// out of the document — the row holds it as one opaque string, and paying a
-// JSON decode per draft is cheaper than a second, drifting copy of the same
-// facts in columns of their own.
+// TranscriptionSummary is one line of the drafts list. Its facts are decoded
+// from the document rather than duplicated in columns that could drift.
 type TranscriptionSummary struct {
 	ID            int64  `json:"id"`
 	CreatedAt     string `json:"created_at"`
@@ -62,9 +43,8 @@ type TranscriptionSummary struct {
 }
 
 // TranscriptionState is what every gesture binding hands back: the row's id
-// and the whole annotated document. The panel is a client of the engine
-// (ADR-0045 rule 9) — it never derives a score, a Crawford game or an
-// Inconsistency of its own, it displays the ones that come back here.
+// and the annotated document. The panel derives nothing itself (ADR-0045
+// rule 9).
 type TranscriptionState struct {
 	ID        int64                `json:"id"`
 	Annotated transcript.Annotated `json:"annotated"`
@@ -97,11 +77,8 @@ func (d *Database) ListTranscriptions() ([]TranscriptionSummary, error) {
 
 // CreateTranscription opens a new draft and returns it, ready to type into.
 //
-// The header is what the creation form (T1.2) collected; a zero header means
-// a match of transcript.DefaultMatchLength, which is what the panel's bare
-// "new transcription" button sends today. The draft is written immediately,
-// before a single Action: a draft that exists only in the panel would be lost
-// by the crash the whole table exists to survive.
+// A zero header means a match of transcript.DefaultMatchLength. The draft is
+// written immediately, before any Action, so a crash cannot lose it.
 func (d *Database) CreateTranscription(header transcript.Header) (*TranscriptionState, error) {
 	doc := transcript.New(header.MatchLength)
 	// Keep whatever else the form stated (players, event, rules), but never
@@ -113,10 +90,8 @@ func (d *Database) CreateTranscription(header transcript.Header) (*Transcription
 		// header is "unstated", not "Jacoby off".
 		doc.Header.Jacoby = true
 	}
-	// The two fields the user is not asked for and would have to type anyway
-	// (fonctionnel.md §1.1): today, and whoever this library says they are.
-	// Defaults only — the metadata pane overwrites both, and overwriting the
-	// transcriber there never touches the library's own `user` setting.
+	// Defaults only (today, the library's user); the metadata pane overwrites
+	// both without touching the library's `user` setting.
 	if doc.Header.Date.IsZero() {
 		doc.Header.Date = time.Now()
 	}
@@ -134,10 +109,8 @@ func (d *Database) CreateTranscription(header transcript.Header) (*Transcription
 	return opened(id, d.openTranscript(id, doc)), nil
 }
 
-// metadataUser is the library's `user` metadata, trimmed, and "" when the
-// library says nothing or is not open. It is the default transcriber of a new
-// draft and nothing else: a draft carries the name it was given at creation,
-// so renaming the user later does not rewrite the drafts already typed.
+// metadataUser is the library's `user` metadata, trimmed, "" when absent or
+// not open: only the default transcriber of a new draft.
 func (d *Database) metadataUser() string {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -172,16 +145,11 @@ func (d *Database) OpenTranscription(id int64) (*TranscriptionState, error) {
 	return opened(id, d.openTranscript(id, doc)), nil
 }
 
-// TranscriptionMAT renders the open draft as the .mat text a Jellyfish or a
-// gnubg reader would take. It is the SAME renderer the library's matches go
-// through — transcript.MatchParts builds the graph, ingest.RenderMAT writes
-// it — because the panel's ".mat text" pane is a view of the export and not a
-// second opinion about it: a transcript written twice drifts, and the one the
-// user reads must be the one the file will hold.
-//
-// Nothing is written: no row, no file, no Match. A draft with Inconsistencies
-// renders all the same (ADR-0044 — nothing is refused); an illegal play goes
-// out as played, which is what the export dialog warns about.
+// TranscriptionMAT renders the open draft as .mat text through the SAME
+// renderer as the library's matches (transcript.MatchParts + ingest.RenderMAT),
+// so the pane shows exactly what the export holds. Writes nothing. A draft
+// with Inconsistencies renders all the same (ADR-0044); an illegal play goes
+// out as played.
 func (d *Database) TranscriptionMAT(id int64) (string, error) {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
@@ -193,11 +161,8 @@ func (d *Database) TranscriptionMAT(id int64) (string, error) {
 	return ingest.RenderMAT(transcript.MatchParts(ed.Doc)), nil
 }
 
-// CloseTranscription ends a draft: the row is deleted and the session
-// dropped. Nothing is snapshotted — a draft that was never saved has nothing
-// saved to put back, and a draft that WAS saved leaves its Match behind
-// (ADR-0045 rule 3). Leaving the tab is not a close; only the panel's explicit
-// "close this draft", with its confirmation, calls this.
+// CloseTranscription deletes the row and drops the session. Nothing is
+// snapshotted: a saved draft leaves its Match behind (ADR-0045 rule 3).
 func (d *Database) CloseTranscription(id int64) error {
 	d.transcriptMu.Lock()
 	delete(d.transcriptSessions, id)
@@ -211,30 +176,18 @@ func (d *Database) CloseTranscription(id int64) error {
 	return d.store.Transcriptions().Delete(context.Background(), "", id)
 }
 
-// ApplyTranscriptionGesture records one gesture and returns the draft as it
-// became. The gesture itself is transcript's business; what happens here is
-// the write: the row is rewritten, in its own transaction, whenever the
-// durable part of the document changed — the header and the Actions.
+// ApplyTranscriptionGesture records one gesture and returns the draft. The row
+// is rewritten, in its own transaction, whenever the header or the Actions
+// changed; a gesture that only moves the Cursor, fills a die or picks a
+// candidate writes nothing (Entry is not serialised, durableJSON normalises
+// the Cursor).
 //
-// That is the whole of fonctionnel.md §3, read in both directions. A gesture
-// that changes an Action (validating one, correcting it, inserting, deleting,
-// changing a side, a length, the metadata) is on disk before the call
-// returns. A gesture that only moves the Cursor, only fills a die or only
-// picks a candidate writes nothing: the dice and the candidate live in the
-// Entry, which is not serialised, and the Cursor is normalised away by
-// durableJSON.
+// The Replay starts at the Action the gesture TOUCHED (Editor.From), not at
+// the Cursor: a correction in place returns the Cursor elsewhere, while the
+// Inconsistency it created lies behind.
 //
-// The Replay starts at the Action the gesture TOUCHED (transcript.Editor.From),
-// so the Cursor comes back on the first Inconsistency at or after it, which is
-// what a correction wants to show next. That is not the Cursor: a correction in
-// place sends the Cursor back where the user came from, and the Inconsistency it
-// just created sits several Actions behind it.
-//
-// Undo and redo are the two gestures that do NOT go through transcript.Apply —
-// a stack is state, and it lives in the Editor (transcript.ErrNotPure says so).
-// They are routed here, and they write like any other gesture: undoing a
-// validated Action must leave the row without it, or a crash would resurrect a
-// gesture the user took back.
+// Undo and redo bypass transcript.Apply (the stack lives in the Editor) but
+// write like any gesture, or a crash would resurrect an undone Action.
 func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*TranscriptionState, error) {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
@@ -273,12 +226,9 @@ func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*T
 	return stateOf(id, ed, ed.From()), nil
 }
 
-// ── the session map ──────────────────────────────────────────────────
-//
-// d.transcriptMu guards it, and the lock ORDER is transcriptMu → d.mu, never
-// the reverse: the storage helpers below take d.mu themselves, and they are
-// called with transcriptMu held so that "read, apply, write" is one gesture
-// and not three interleavable ones.
+// The session map: d.transcriptMu guards it, lock ORDER transcriptMu → d.mu,
+// never the reverse. The storage helpers take d.mu under transcriptMu so
+// "read, apply, write" is one gesture, not three interleavable ones.
 
 // openTranscript installs a session for id. Caller holds transcriptMu.
 func (d *Database) openTranscript(id int64, doc transcript.Document) *transcript.Editor {
@@ -290,24 +240,17 @@ func (d *Database) openTranscript(id int64, doc transcript.Document) *transcript
 	return ed
 }
 
-// stateOf annotates a session and hands back what every binding returns.
-//
-// It is where fonctionnel.md §1.4's last sentence is made true — "after a Replay
-// the Cursor jumps to the first Inconsistency". The Replay REPORTS where the
-// Cursor should land, at or after `from`; if that is not where the session's
-// document has it, the document is moved there and annotated again, so that the
-// next `h` counts from the cell the user is looking at and not from the one the
-// gesture happened to leave behind. The second Replay is the incremental one and
-// costs nothing: the Actions did not change, only the Cursor did.
-// opened is stateOf for a draft that has just been opened, which is the one
-// case where the Cursor does NOT jump to an Inconsistency. A resumed draft
-// continues after its last written Action (fonctionnel.md §3, and
-// loadTranscription's own comment), and an Inconsistency the user has read and
-// chosen to keep must not drag them back to it at every open.
+// opened is stateOf for a freshly opened draft, the one case where the Cursor
+// does NOT jump to an Inconsistency: a resumed draft continues after its last
+// Action, and a kept Inconsistency must not drag the user back at every open.
 func opened(id int64, ed *transcript.Editor) *TranscriptionState {
 	return stateOf(id, ed, len(ed.Doc.Actions))
 }
 
+// stateOf annotates a session and hands back what every binding returns. After
+// a Replay the Cursor jumps to the first Inconsistency at or after `from`; the
+// document is moved there and replayed again (incremental, free) so the next
+// `h` counts from the cell the user sees.
 func stateOf(id int64, ed *transcript.Editor, from int) *TranscriptionState {
 	ann := ed.Replay(from)
 	if ann.Cursor != ed.Doc.Cursor {
@@ -318,9 +261,7 @@ func stateOf(id int64, ed *transcript.Editor, from int) *TranscriptionState {
 }
 
 // session returns the live editor for id, loading the row when the draft was
-// never opened in this run of the application (a CLI call, or a gesture that
-// reaches a draft the GUI restored from a previous session). Caller holds
-// transcriptMu.
+// not opened in this run. Caller holds transcriptMu.
 func (d *Database) session(id int64) (*transcript.Editor, error) {
 	if e := d.transcriptSessions[id]; e != nil {
 		return e, nil
@@ -332,14 +273,10 @@ func (d *Database) session(id int64) (*transcript.Editor, error) {
 	return d.openTranscript(id, doc), nil
 }
 
-// loadTranscription reads one row and decodes its document — the resumption
-// of fonctionnel.md §3, whether it follows a crash or simply a tab the user
-// had left. The Cursor is put back at the END of the document rather than
-// wherever the row happens to say: the Action the user was in the middle of
-// correcting lived in the Entry, which is not persisted, so the only place a
-// resumed draft can honestly continue from is after its last written Action.
-// (durableJSON already writes it there; doing it again here is what makes the
-// rule true of any row, including one written by another build.)
+// loadTranscription reads one row and decodes its document, putting the
+// Cursor at the END: the Entry is not persisted, so a resumed draft continues
+// after its last Action. Redone here (durableJSON already does it) so the
+// rule holds for rows written by any build.
 func (d *Database) loadTranscription(id int64) (transcript.Document, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -360,21 +297,11 @@ func (d *Database) loadTranscription(id int64) (transcript.Document, error) {
 	return doc, nil
 }
 
-// durableJSON encodes the part of a document that a crash must not lose: the
-// header and the Actions. It is what the row holds and what "has the draft
-// changed?" is asked of.
-//
-// The Cursor is normalised to the end of the document rather than serialised
-// as it stands, and the two reasons are the same one. It is not a fact of the
-// match — moving it changes no Action — so a gesture that only walks the
-// Transcript must cost no write (fonctionnel.md §3); and a resumed draft
-// continues after its last written Action anyway, since the Entry a
-// correction was in the middle of is not persisted. The row therefore states
-// the Cursor a resumption will actually use.
-//
-// Entry, the correction's return position and the pending board are `json:"-"`
-// in transcript.Document: a crash is allowed to lose the dice half typed and
-// the undo stack, never a validated Action (ADR-0045 rule 1).
+// durableJSON encodes what a crash must not lose — header and Actions — and is
+// what "has the draft changed?" compares. The Cursor is normalised to the end:
+// it is not a fact of the match, so moving it must cost no write, and a
+// resumption starts there anyway. Entry and the undo stack are `json:"-"`
+// (ADR-0045 rule 1).
 func durableJSON(doc transcript.Document) ([]byte, error) {
 	doc.Cursor = len(doc.Actions)
 	blob, err := json.Marshal(doc)
@@ -394,20 +321,11 @@ func (d *Database) saveTranscription(id int64, doc transcript.Document) (int64, 
 	return d.writeTranscription(id, doc, blob)
 }
 
-// writeTranscription is the write itself: one statement, and therefore one
-// transaction of its own (ADR-0045 rule 1 — the store issues a single INSERT
-// or UPDATE in autocommit, so a gesture is committed or it is not, and the
-// next gesture cannot be riding in the same transaction as this one).
-//
-// What "committed" buys is a crash of the application: the row is in the
-// write-ahead log, and the next open recovers it. SQLite runs with
-// synchronous=NORMAL (storage/sqlite/sqlite.go), so a power cut in the same
-// instant may still cost the last commits — the trade the whole database
-// makes, not one this file may quietly change for itself.
-//
-// The format version travels in the document AND in its own column: the
-// column is what a future reader filters on without decoding every draft, the
-// document is what makes the string true when the row is copied elsewhere.
+// writeTranscription is one autocommit statement, so one gesture is one
+// transaction (ADR-0045 rule 1). It survives an application crash; under
+// synchronous=NORMAL a power cut may still cost the last commits, the trade
+// the whole database makes. The format version is in the document (true when
+// copied) AND a column (filterable without decoding).
 func (d *Database) writeTranscription(id int64, doc transcript.Document, blob []byte) (int64, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -426,10 +344,8 @@ func (d *Database) writeTranscription(id int64, doc transcript.Document, blob []
 	return d.store.Transcriptions().Save(context.Background(), "", row)
 }
 
-// decodeTranscription reads the JSON of a stored draft. A document whose
-// format version this build does not know is refused rather than half-read:
-// the version exists precisely so an older binary can say so instead of
-// silently dropping the Actions it cannot parse.
+// decodeTranscription reads a stored draft's JSON. An unknown format version
+// is refused rather than half-read, which would drop Actions silently.
 func decodeTranscription(row *storage.Transcription) (transcript.Document, error) {
 	var doc transcript.Document
 	if err := json.Unmarshal([]byte(row.Document), &doc); err != nil {
@@ -442,10 +358,9 @@ func decodeTranscription(row *storage.Transcription) (transcript.Document, error
 	return doc, nil
 }
 
-// summarize reads a row's document for the handful of facts the list shows. A
-// document that cannot be decoded still yields a line — with the label and
-// the dates the row itself carries — because a draft the panel cannot list is
-// a draft the user cannot delete either.
+// summarize reads a row's document for the list. An undecodable document
+// still yields a line from the row's own columns, or the user could not
+// delete it.
 func summarize(row *storage.Transcription) TranscriptionSummary {
 	s := TranscriptionSummary{
 		ID:            row.ID,
@@ -485,10 +400,9 @@ func labelOf(h transcript.Header) string {
 	}
 }
 
-// forgetTranscriptSessions drops every open draft. It is called when the
-// database handle is replaced or closed, BEFORE d.mu is taken — the lock
-// order is transcriptMu → mu, and a session keyed by a row id of the previous
-// library would otherwise answer for a row id of the next one.
+// forgetTranscriptSessions drops every open draft when the handle is replaced
+// or closed, BEFORE d.mu is taken (order transcriptMu → mu); otherwise a row
+// id of the previous library would answer for the next one.
 func (d *Database) forgetTranscriptSessions() {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()

@@ -12,10 +12,8 @@ import (
 )
 
 // testTagVocabulary pins what a tag is worth counting: POSITIONS, not
-// comments (#265). A tag written twice on one position is one position
-// tagged, and the number shown beside a tag in the panel has to be the number
-// of positions clicking it will yield — otherwise the panel promises more than
-// the search delivers.
+// comments: the number shown beside a tag must be the number of positions
+// clicking it will yield.
 func testTagVocabulary(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	cs := s.Comments()
@@ -70,7 +68,7 @@ func testTagVocabulary(t *testing.T, s storage.Storage) {
 // testTagSearchIsDelimited is the reason a tag filter exists at all: the
 // free-text comment search is a substring search, so `t"#prime"` cannot tell
 // #prime from #priming. The tag filter extracts the comment's tags and
-// compares them whole (#265).
+// compares them whole.
 func testTagSearchIsDelimited(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 

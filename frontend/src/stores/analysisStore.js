@@ -1,11 +1,6 @@
 import { writable } from 'svelte/store';
 
-/**
- * A fresh, empty analysis record — the shape every consumer of analysisStore
- * expects (AnalysisPanel, the Eval panel, session save). Returns a new object
- * on each call so callers can mutate their copy without touching the store's
- * previous value.
- */
+/** A fresh, empty analysis record (the shape every consumer expects), new on each call. */
 export function emptyAnalysis() {
     return {
         positionId: null,

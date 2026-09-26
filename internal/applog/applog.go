@@ -1,12 +1,6 @@
-// Package applog is the desktop GUI's on-disk log file: location, size-based
-// rotation, and the "open the log folder" affordance. It exists so the GUI
-// has somewhere durable to write diagnostics to — logging.go's stderr-only
-// setup (package main, repo root) is invisible once the app is launched by a
-// double-click or a desktop-file entry, which has no attached terminal
-// (#241). It has no dependency on package main or internal/gui so either can
-// import it without a cycle: main wires it into slog at startup, gui reads
-// Path()/Dir() for the "open logs folder" button and for pointing an
-// unexpected-error dialog at the right file.
+// Package applog is the desktop GUI's on-disk log file: location and
+// size-based rotation. A GUI launched without a terminal has no visible
+// stderr. It imports neither main nor gui, so both can use it.
 package applog
 
 import (
@@ -21,13 +15,10 @@ import (
 	"github.com/adrg/xdg"
 )
 
-// appDirName is the directory name under $XDG_STATE_HOME (or the platform
-// default when unset) blunderDB's log file lives in — the same "blunderDB"
-// name config.go's $XDG_CONFIG_HOME directory already uses.
+// appDirName is the log directory under $XDG_STATE_HOME.
 const appDirName = "blunderDB"
 
-// fileName is the current log file's name; rotation keeps at most one
-// previous generation alongside it, fileName+".1".
+// fileName is the current log file; rotation keeps one fileName+".1".
 const fileName = "blunderdb.log"
 
 // maxFileBytes rotates the log once the current file would exceed this size:
@@ -45,11 +36,7 @@ func Path() string {
 }
 
 // rotatingWriter is an io.WriteCloser over Path() that rotates to
-// Path()+".1" once the current file would exceed maxFileBytes. Every write
-// this process makes to it goes through one shared *slog.Logger, whose
-// Handler already serializes calls to Handle — so the mutex here guards
-// against nothing that shouldn't already be single-threaded in practice, but
-// costs nothing to keep honest rather than assumed.
+// Path()+".1" past maxFileBytes. The mutex does not rely on slog serialising.
 type rotatingWriter struct {
 	mu   sync.Mutex
 	path string
@@ -57,13 +44,8 @@ type rotatingWriter struct {
 	size int64
 }
 
-// Open returns an io.WriteCloser over the current log file, creating
-// Dir() if needed, ready to back a slog.Handler. Rotation is by size only
-// (#241); callers that also want output on stderr (a terminal launch, `wails
-// dev`) should combine it themselves, e.g. io.MultiWriter(os.Stderr, w) —
-// Open never assumes stderr is wanted, since a `serve`/CLI invocation
-// already has its own stderr-only logging and must not also start writing a
-// GUI log file it will never rotate or expose a "open folder" button for.
+// Open returns an io.WriteCloser over the current log file, creating Dir()
+// if needed. Callers wanting stderr too combine it (io.MultiWriter).
 func Open() (io.WriteCloser, error) {
 	dir := Dir()
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -87,9 +69,7 @@ func (w *rotatingWriter) Write(p []byte) (int, error) {
 	defer w.mu.Unlock()
 	if w.size > 0 && w.size+int64(len(p)) > maxFileBytes {
 		if err := w.rotateLocked(); err != nil {
-			// Losing the rotation must not lose the log line itself: keep
-			// writing to the still-open (now oversized) file and just note
-			// the failure where it can still be seen.
+			// A failed rotation must not lose the line: keep writing.
 			fmt.Fprintf(os.Stderr, "applog: rotate %s: %v\n", w.path, err)
 		}
 	}
@@ -107,8 +87,7 @@ func (w *rotatingWriter) rotateLocked() error {
 	backup := w.path + ".1"
 	_ = os.Remove(backup) // best-effort; a missing backup is not an error
 	if err := os.Rename(w.path, backup); err != nil {
-		// The old file is still there, just not renamed — reopen it in
-		// append mode rather than lose it, and try rotating again next time.
+		// Rename failed: reopen the old file in append mode, retry next time.
 		f, ferr := os.OpenFile(w.path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
 		if ferr != nil {
 			return fmt.Errorf("rename: %w (and reopen failed: %w)", err, ferr)
@@ -131,15 +110,8 @@ func (w *rotatingWriter) Close() error {
 	return w.f.Close()
 }
 
-// TailLines returns the last n lines of the current log file, oldest first.
-//
-// Reading the tail rather than the whole file is what makes this usable from
-// the interface: the log rotates at 5 MiB, and a panel that had to hold five
-// megabytes to show forty lines would be a panel nobody opens.
-//
-// A missing file is not an error — a fresh install has logged nothing — and
-// neither is a truncated read: the point of the panel is to show what there
-// is, not to prove the file is well formed.
+// TailLines returns the last n lines of the current log file, oldest first,
+// reading only the tail. A missing file or truncated read is not an error.
 func TailLines(n int) ([]string, error) {
 	return tailFile(Path(), n)
 }
@@ -179,8 +151,7 @@ func tailFile(path string, n int) ([]string, error) {
 		return nil, fmt.Errorf("applog: %w", err)
 	}
 	lines := strings.Split(strings.TrimRight(string(data), "\n"), "\n")
-	// The first line of a windowed read is almost certainly cut in half;
-	// dropping it is better than showing a fragment as if it were a record.
+	// The window's first line is likely cut in half: drop it.
 	if offset > 0 && len(lines) > 1 {
 		lines = lines[1:]
 	}

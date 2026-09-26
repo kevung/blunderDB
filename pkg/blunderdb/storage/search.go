@@ -21,30 +21,22 @@ type SearchHistory struct {
 // SearchStore runs position searches.
 type SearchStore interface {
 	// Find streams the positions matching the given filters. opts bounds the
-	// underlying SQL scan (LIMIT/OFFSET); a zero ListOpts means no limit, from
-	// the start — today's behaviour. Because filters that can only be
-	// evaluated in Go (mirror search, checker structure on a non-tight mask,
-	// date/equity/move-pattern) still run on the page opts.Limit bounded, a
-	// caller paging through a search using one of those may see short pages:
-	// opts caps how many SQL-matched candidates are considered, not how many
-	// of them survive.
+	// underlying SQL scan (LIMIT/OFFSET); a zero ListOpts means no limit. The
+	// Go-only filters (mirror, loose structure mask, date/equity/move pattern)
+	// run after, so a page may come back short: opts caps the SQL-matched
+	// candidates, not the survivors.
 	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
 
 	// Rank answers a query carrying the `like` token: the same filters as
 	// Find, but ORDERED by how far each survivor stands from the query's
 	// target, nearest first, with that distance attached (ADR-0043).
 	//
-	// It is a second entry point rather than a mode of Find for one reason:
-	// the distance is part of the answer. A neighbour without its distance is
-	// unreadable — it is the only thing that says whether one is looking at a
-	// neighbour or at a coincidence — and domain.Position has no business
-	// carrying a number that belongs to a comparison rather than to itself.
+	// A separate entry point because the distance is part of the answer, and
+	// domain.Position has no business carrying it.
 	//
 	// The set it ranks is the filters INTERSECTED with the target's
-	// equivalence class (ClassOf), so "the neighbours of 42 that I blundered"
-	// is one query. opts bounds the RANKING, not the scan: every candidate has
-	// to be seen before any can be called nearest, which is the exhaustive
-	// scan P7 recommends and ADR-0043 keeps.
+	// equivalence class (ClassOf). opts bounds the RANKING, not the scan:
+	// every candidate must be seen before any is called nearest (ADR-0043).
 	Rank(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]SimilarPosition, error)
 }
 

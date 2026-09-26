@@ -45,41 +45,29 @@ const (
 	// Cursor, proposing the side that keeps the sequence coherent.
 	GestureInsertBefore GestureKind = "insert_before"
 	GestureInsertAfter  GestureKind = "insert_after"
-	// GestureDelete removes the decision being edited — the Action under the
-	// Cursor, or the one being typed where none is written yet — and steps back to
-	// the previous one, loaded for correction (ADR-0050). The Actions after it keep
-	// their side, which is how a deletion shows up as one local double turn instead
-	// of rewriting the rest of the match (ADR-0045 rule 4).
+	// GestureDelete removes the decision being edited (written or being typed) and
+	// steps back to the previous one, loaded for correction (ADR-0050). Later
+	// Actions keep their side: one local double turn (ADR-0045 rule 4).
 	GestureDelete GestureKind = "delete"
 	// GestureFlipSide gives the Action under the Cursor to the other camp.
 	GestureFlipSide GestureKind = "flip_side"
-	// GestureSetLength changes the match length, money play included, and states
-	// the session's rules with it. It is the one gesture a length goes through: a
-	// Replay of the whole document follows, since every away score, the Crawford
-	// game, the referential and the end of the match are derived from it.
+	// GestureSetLength changes the match length (money included) and states the
+	// session's rules. It is the only path to a length; a full Replay follows.
 	GestureSetLength GestureKind = "set_length"
 	// GestureSwapPlayers exchanges the two players: names, every side, and the board,
 	// which is why every play's steps are mirrored with them.
 	GestureSwapPlayers GestureKind = "swap_players"
-	// GestureSetHeader writes the DESCRIPTIVE head of the document: the two names,
-	// the event, the place, the round, the date, who is typing it in, and the
-	// tournament the saved Match is to be attached to. Everything else the header
-	// carries has a gesture of its own and is kept as it stands — the length and
-	// the session's rules ([GestureSetLength]), and the match id, which only a
-	// first save posts. A metadata form that forgot one field would otherwise turn
-	// a match into a money session, or make a saved draft file a second Match.
+	// GestureSetHeader writes the DESCRIPTIVE head (names, event, place, round,
+	// date, transcriber, tournament). Length, rules ([GestureSetLength]) and match
+	// id are kept: a form that omitted one would otherwise turn a match into money
+	// play, or make a saved draft file a second Match.
 	GestureSetHeader GestureKind = "set_header"
-	// GestureSetScore declares the score a game was played at, or clears the
-	// declaration (ADR-0053). It names the game by the opening it starts with
-	// (Gesture.At) and carries the score in Gesture.Score, nil to clear it. The
-	// Replay then plays the game — and every one after it — from that score, and
-	// marks the opening when it is not the one the previous games give.
+	// GestureSetScore declares (or, with a nil Gesture.Score, clears) the score of
+	// the game opened at Gesture.At (ADR-0053).
 	GestureSetScore GestureKind = "set_score"
-	// GestureUndo and GestureRedo walk the editing session's stack. They are
-	// NAMED here, so that a caller has one spelling of them, and they are the two
-	// [Apply] refuses: a stack is state, and it lives in [Editor]. The session
-	// layer (database/db_transcription.go) routes them to [Editor.Undo] and
-	// [Editor.Redo] before ever reaching Apply.
+	// GestureUndo and GestureRedo are named here for one spelling, but [Apply]
+	// refuses them: the stack lives in [Editor], and the session layer routes them
+	// to [Editor.Undo] and [Editor.Redo].
 	GestureUndo GestureKind = "undo"
 	GestureRedo GestureKind = "redo"
 )
@@ -142,12 +130,9 @@ var (
 func Apply(doc Document, g Gesture) (Document, error) {
 	out, err := apply(doc, g)
 	if err == nil && movesOnly(g.Kind) && !out.HasTouched {
-		// A gesture that wrote nothing leaves the Cursor where it put it. The
-		// jump to the first Inconsistency answers a Replay (fonctionnel.md
-		// §1.4), and nothing was replayed: pulling the Cursor there would make
-		// every Inconsistency a wall — a step back from the Action after a
-		// double turn landing on it again, a die typed on the decision before
-		// it carried off onto it (ADR-0054).
+		// A gesture that wrote nothing leaves the Cursor where it put it:
+		// jumping to the first Inconsistency would make every one a wall
+		// (ADR-0054).
 		out.HoldCursor = true
 	}
 	return out, err
@@ -224,11 +209,8 @@ func apply(doc Document, g Gesture) (Document, error) {
 		}
 		out.Entry.Steps = append([]domain.CheckerStep(nil), cands[g.Candidate].Steps...)
 		out.Entry.Selected = true
-		// Review is NOT cleared here. fonctionnel.md §2 marks the Action "à
-		// revoir" *until validation*, and picking a candidate is the reviewing,
-		// not the end of it: the panel preselects its own 0-ply rank as soon as
-		// the roll comes back, so clearing the mark on a selection would clear
-		// it before the user has seen anything.
+		// Review is NOT cleared here but at validation (fonctionnel.md §2): the
+		// panel preselects a candidate itself, which would clear it unseen.
 		return out, nil
 
 	case GestureEnterPlay:
@@ -273,10 +255,8 @@ func apply(doc Document, g Gesture) (Document, error) {
 	case GestureInsertBefore, GestureInsertAfter:
 		at := out.Cursor
 		if g.Kind == GestureInsertAfter && at < len(out.Actions) {
-			// "After the last Action" and "at the end of the document" are the
-			// same slot: a Cursor already past the last Action is not moved on
-			// again, which would otherwise make `a` an error at the one place
-			// the user spends most of their time.
+			// "After the last Action" and "end of document" are one slot: not
+			// moving on again keeps `a` from erroring at the end.
 			at++
 		}
 		if at < 0 {
@@ -310,13 +290,9 @@ func apply(doc Document, g Gesture) (Document, error) {
 			return doc, fmt.Errorf("transcript: no match length given")
 		}
 		out.Header.MatchLength = g.MatchLength
-		// The session's rules SURVIVE a crossing: they stay in the document
-		// while the match is played to a length — where no Position carries
-		// them (see position()) — so that money → match → money gives back the
-		// flags the session had, and not the defaults of a draft that never
-		// stated any. The gesture re-states them when it says so, and a
-		// document reaching money without ever having stated one is Jacoby,
-		// like a new money draft (fonctionnel.md §1.1).
+		// The session's rules SURVIVE a crossing to match play (no Position
+		// carries them there), so money → match → money keeps them. A document
+		// reaching money without ever stating them is Jacoby (fonctionnel.md §1.1).
 		switch {
 		case g.HasRules:
 			out.Header.Jacoby, out.Header.Beaver = g.Jacoby, g.Beaver
@@ -362,14 +338,9 @@ func apply(doc Document, g Gesture) (Document, error) {
 	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)
 }
 
-// setScore is GestureSetScore. What it refuses is only what has no meaning: an
-// index that is not the opening of a game, a score in a money session, a negative
-// score. A score past the match length is NOT refused — it is what was declared,
-// and the Replay marks what follows it (ADR-0044).
-//
-// It moves neither the Cursor nor the entry: declaring the score of a game is not
-// an edit of the decision the user is typing, and the Cursor is held where it is
-// rather than pulled onto the mark the declaration may raise.
+// setScore is GestureSetScore. It refuses only the meaningless (not a game's
+// opening, money play, negative); a score past the length is declared and marked
+// (ADR-0044). It moves neither the Cursor nor the entry, and holds the Cursor.
 func setScore(doc, out Document, g Gesture) (Document, error) {
 	at := g.At
 	if at < 0 || at >= len(out.Actions) || out.Actions[at].Kind != KindOpening {
@@ -398,11 +369,8 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 	return out, nil
 }
 
-// mergeHeader writes the descriptive fields of `in` over `cur` and keeps the rest.
-//
-// What is kept is what a form has no business stating: the length and the session's
-// rules, which [GestureSetLength] alone re-states, and the match id, which a first
-// save posts and nothing else ever changes (fonctionnel.md §1.1 — "jamais" saisi).
+// mergeHeader writes the descriptive fields of `in` over `cur` and keeps length,
+// rules and match id (see GestureSetHeader; fonctionnel.md §1.1).
 func mergeHeader(cur, in Header) Header {
 	out := cur
 	out.Player1, out.Player2 = in.Player1, in.Player2
@@ -425,9 +393,8 @@ func ensureEntry(doc *Document) *Entry {
 // already recorded there, which a new entry corrects in place, or a new one at the end
 // of the document.
 //
-// A new entry after a decided opening starts with the opening's own roll: the winner
-// of the opening plays the two dice that were just rolled, and fonctionnel.md §1.2 is
-// explicit that the user does not type them again.
+// A new entry after a decided opening starts with the opening's roll, which the
+// user does not type again (fonctionnel.md §1.2).
 func proposedEntry(doc Document) Entry {
 	at := doc.Cursor
 	if at < 0 {
@@ -464,10 +431,8 @@ func proposedEntry(doc Document) Entry {
 // back to the one before (ADR-0050). doc is the document as it was, returned
 // unchanged with the error; out is its working copy.
 func deleteDecision(doc, out Document) (Document, error) {
-	// The decision being edited is not always a written Action. An insertion
-	// opened by `i`/`a`, the slot a continued game offers, the roll typed at
-	// the end of the document: each is a decision the user is editing, and
-	// deleting it abandons it — nothing written is touched.
+	// An unwritten decision (open insertion, continued-game slot, roll typed at
+	// the end) is abandoned; nothing written is touched.
 	if e := out.Entry; e != nil && e.Mode == EntryNew {
 		out.Cursor = clampSlot(e.At, len(out.Actions))
 		out.Entry, out.pendingBoard, out.HasReturn = nil, nil, false
@@ -475,10 +440,8 @@ func deleteDecision(doc, out Document) (Document, error) {
 		return out, nil
 	}
 	if out.Cursor >= len(out.Actions) {
-		// The end of the document with nothing typed: the empty slot is
-		// the decision, and deleting it is stepping back onto the last
-		// Action — so that Del, pressed again, deletes THAT one, the way
-		// a key held down walks back through what was typed.
+		// End of document, nothing typed: step back onto the last Action so
+		// that Del held down walks back through what was typed.
 		if len(out.Actions) == 0 {
 			return doc, ErrNoAction
 		}
@@ -504,12 +467,9 @@ func deleteDecision(doc, out Document) (Document, error) {
 	return out, nil
 }
 
-// stepBack puts the Cursor on the decision before the one a deletion removed, and
-// loads it for correction: that is where the user goes on editing (ADR-0050). On
-// the first slot there is nothing before, and the Cursor stays on what now
-// follows. The double turn a deletion usually leaves is ahead of the Cursor, where
-// the Transcript marks it; HoldCursor keeps the Replay from pulling the Cursor
-// onto it, which would undo the very step back the user asked for.
+// stepBack puts the Cursor on the decision before the deleted one and loads it for
+// correction (ADR-0050); on the first slot it stays on what follows. HoldCursor
+// keeps the Replay from pulling it onto the double turn ahead.
 func stepBack(doc *Document) {
 	if doc.Cursor > 0 {
 		doc.Cursor--
@@ -550,11 +510,9 @@ func cursorForward(out Document) Document {
 	return out
 }
 
-// holeBefore reports whether a double turn leaves a hole in front of the Action
-// at `at`: it and the Action before it both bear a turn, and are the same side's
-// — the Replay's DoubleTurn, read on the two Actions alone. The missing turn is
-// the other side's, and it is where a deletion leaves the user something to
-// retype (ADR-0054).
+// holeBefore reports whether the Action at `at` and the one before it are turns of
+// the same side — the Replay's DoubleTurn, read on two Actions — leaving the other
+// side's turn missing (ADR-0054).
 func holeBefore(doc Document, at int) bool {
 	if at <= 0 || at >= len(doc.Actions) {
 		return false
@@ -579,14 +537,9 @@ func openHole(doc *Document, at int) {
 	doc.pendingBoard = nil
 }
 
-// gameEndsAt reports whether the Action at `at` closes its game — or the match —
-// in the document as it now stands: what the Replay of the Actions up to it
-// expects next is a new opening. An opening never closes a game, a tie included
-// (the game goes on with another opening).
-//
-// It pays a Replay of that prefix, as [expectsOpening] pays one of the whole
-// document, and it is asked only when an Action is written INSIDE the document —
-// never on the append a match is typed with.
+// gameEndsAt reports whether the Action at `at` closes its game or the match: a
+// Replay of the prefix expects an opening next. An opening, tie included, never
+// does. It costs a prefix Replay, so it runs only on writes INSIDE the document.
 func gameEndsAt(doc Document, at int) bool {
 	if at < 0 || at >= len(doc.Actions) || doc.Actions[at].Kind == KindOpening {
 		return false
@@ -596,13 +549,10 @@ func gameEndsAt(doc Document, at int) bool {
 	return next.MatchOver || next.Expects == KindOpening
 }
 
-// continueGame opens the slot right after `at` for the rest of its game, when
-// the Action just written there leaves the game running and the document jumps
-// straight to the next game's opening. The pass that was a take is the case
-// (ADR-0050): the game it closed goes on, and what follows it in the record is
-// already the next game — so the next roll is INSERTED there, and goes on being
-// inserted until the game ends, instead of overwriting the next opening or
-// sending the Cursor off to where the correction started.
+// continueGame opens the slot right after `at` when the Action written there leaves
+// its game running but the next Action is already the next opening (a pass turned
+// take, ADR-0050): rolls are INSERTED until the game ends, rather than overwriting
+// that opening.
 func continueGame(doc *Document, at int) bool {
 	if at+1 >= len(doc.Actions) || doc.Actions[at+1].Kind != KindOpening || gameEndsAt(*doc, at) {
 		return false
@@ -627,18 +577,10 @@ func loadEntry(doc *Document) {
 // commitCorrection writes a pending correction back onto the Action it corrects,
 // and leaves the Cursor exactly where it was.
 //
-// It is what makes ux.md §4.3's budgets true. "Erreur vue k tours plus tard :
-// Retour, `h`×k, `j`, `l`×k" spends its last k keystrokes walking FORWARD, not
-// on a validation — so walking away from a correction has to keep it, or those
-// budgets would each be one keystroke short and, worse, a user who walked on
-// would silently lose the play they had just picked.
-//
-// Two things it deliberately does not do. It does not take the correction's
-// return jump: `l` is not a validation, it is a step, and the next `l` must
-// carry on from the Action just corrected rather than from the end of the
-// document. And it does nothing at all when the entry still says exactly what
-// the Action says — walking the Transcript to READ it must not rewrite every
-// cell it crosses, push an undo entry per cell, or touch the row on disk.
+// Walking away from a correction keeps it, or a user who walked on would silently
+// lose the play they picked (ux.md §4.3 budgets). It takes no return jump (`l` is a
+// step, not a validation), and does nothing when the entry equals the Action, so
+// reading the Transcript rewrites nothing and pushes no undo entry.
 func commitCorrection(doc Document) Document {
 	e := doc.Entry
 	if e == nil || e.Mode != EntryReplace || e.At < 0 || e.At >= len(doc.Actions) {
@@ -651,9 +593,7 @@ func commitCorrection(doc Document) Document {
 	doc.Cursor, doc.HasReturn = e.At, false
 	out, err := validate(doc)
 	if err != nil {
-		// A correction that is not ready to be recorded — a roll half retyped,
-		// no play picked — is simply left where it is. Nothing is refused and
-		// nothing is written: the Action keeps what it had.
+		// An unready correction is left as is; the Action keeps what it had.
 		doc.Cursor, doc.Return, doc.HasReturn = cursor, ret, hasReturn
 		return doc
 	}
@@ -677,17 +617,10 @@ func entryDiffers(a Action, e Entry) bool {
 // reroll decides what play stands under a roll that is being corrected in place
 // (fonctionnel.md §2, "corriger un jet").
 //
-// The rule has two halves and they are both about not making the user retype
-// what they already told the software. If the play RECORDED on the Action is
-// still one of the new roll's legal plays, it is kept — reading "53" where the
-// sheet said "63" must not cost the play as well as the dice. If it is not, the
-// first candidate of the new roll is preselected and the entry is marked for
-// review: something has to be chosen, and an empty list under a filled roll
-// would leave the user with nothing to press.
-//
-// Nothing is written here. The Action keeps the play it has until a validation
-// replaces it, which is what makes a half-finished correction losable and the
-// document on disk always a document the user validated.
+// The recorded play is kept if still legal for the new roll; otherwise the roll's
+// first candidate is preselected and the entry marked for review. Nothing is
+// written until validation, so the document on disk is always one the user
+// validated.
 func reroll(doc *Document) {
 	e := doc.Entry
 	if e == nil || e.Mode != EntryReplace || e.Dice[0] == 0 || e.Dice[1] == 0 {
@@ -705,16 +638,12 @@ func reroll(doc *Document) {
 	pos.Dice, pos.PlayerOnRoll, pos.DecisionType = e.Dice, e.Side, domain.CheckerAction
 	legal := domain.LegalMoves(&pos)
 	if len(legal) == 0 {
-		// The new roll allows nothing: it is a dance, and the panel's own
-		// candidate round trip records one. Keeping a play here would hand a
-		// validation a play the roll cannot make.
+		// The new roll allows nothing: a dance, which the panel records.
 		return
 	}
-	// Both tests are needed, and they are not the same one. The board reached
-	// says the play LANDS where a legal play lands; diceCoherent says its steps
-	// can be charged to the two dice — the very thing a corrected roll breaks,
-	// and what §1.4's "dés incohérents" is (a 6-1 played as 8/2 6/5 reaches a
-	// board a 6-1 reaches, and a corrected 5-4 does not make it a 5-4).
+	// Both tests are needed: the board says where the play LANDS, diceCoherent
+	// that its steps fit the dice (§1.4 "dés incohérents": a 6-1 played as
+	// 8/2 6/5 lands where a 6-1 lands, yet is no 5-4).
 	if _, reached := resolveSteps(pos.Board, e.Side, played.Steps); findPlay(legal, reached) != nil &&
 		diceCoherent(played.Steps, e.Dice, e.Side) {
 		e.Steps = append([]domain.CheckerStep(nil), played.Steps...)
@@ -835,13 +764,9 @@ func record(doc Document, a Action) Document {
 	if at > len(doc.Actions) {
 		at = len(doc.Actions)
 	}
-	// A gesture that EDITS what is already written names the Action it touched,
-	// so the Replay can land the Cursor on the Inconsistency it may have made
-	// behind the user's back. A plain append does NOT: there is nothing behind
-	// it, and pulling the Cursor back onto the Action just typed — a play the
-	// rules mark, an Action past the end of a won match — would make the next
-	// roll correct it instead of following it. The panel shows the last
-	// Action's marks where they belong, under the dice.
+	// Only an EDIT names the Action it touched, so the Replay can land on the
+	// Inconsistency it made behind the Cursor. An append does not (see
+	// Document.Touched).
 	if mode == EntryReplace || at < len(doc.Actions) {
 		doc.Touched, doc.HasTouched = at, true
 	}
@@ -859,11 +784,8 @@ func record(doc Document, a Action) Document {
 		}
 		doc.Cursor = at + 1
 		if at+1 == len(doc.Actions) {
-			// The LAST Action, re-edited or validated again: the user is back
-			// where a transcription is written, and the next roll is appended
-			// as it was the first time (ADR-0051). The Cursor goes to the end
-			// whatever Return says, and is held there — pulling it back onto
-			// a mark the Action carries would make the next roll correct it.
+			// The LAST Action re-edited: the next roll is appended (ADR-0051).
+			// The Cursor goes to the end whatever Return says, and is held.
 			doc.HasReturn, doc.HoldCursor = false, true
 		} else if doc.HasReturn {
 			doc.Cursor, doc.HasReturn = doc.Return, false
@@ -877,18 +799,11 @@ func record(doc Document, a Action) Document {
 		// game's opening, and the Cursor rests on it rather than slipping a
 		// roll of this game in front of it (ADR-0050).
 		if doc.Cursor < len(doc.Actions) && !gameEndsAt(doc, at) {
-			// An insertion in the MIDDLE goes on inserting. What the user is
-			// doing there is filling a passage the record skipped — half a game
-			// after a pass that should have been a take — and the Action after
-			// the one just written is not the one they mean to type over. The
-			// slot they will land in is DRAWN in the Transcript (EntryInfo), so
-			// this is a state one can see and leave (move the Cursor), not a
-			// mode: the alternative was an `i` per Action, and the alternative
-			// to that was overwriting the rest of the match one cell at a time.
+			// An insertion in the MIDDLE goes on inserting: the user is filling
+			// a skipped passage, not typing over what follows. The slot is drawn
+			// (EntryInfo), so it is a visible state, not a mode.
 			doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(doc, doc.Cursor), Mode: EntryNew, At: doc.Cursor}, nil
-			// Like an append, the slot is where the user goes on typing: the
-			// Action just inserted may carry a mark, and pulling the Cursor
-			// back onto it would make the next roll correct it.
+			// Held like an append: the inserted Action may carry a mark.
 			doc.HoldCursor = true
 			return doc
 		}
@@ -898,25 +813,13 @@ func record(doc Document, a Action) Document {
 }
 
 // followOpening gives the Action a game STARTS with to the camp a replaced opening
-// now names. It is the one exception to "the side belongs to the Action" (ADR-0045
-// §4), and it is a narrow one: that camp was never chosen by the user.
+// now names: the one exception to "the side belongs to the Action" (ADR-0045 §4),
+// since the user never chose that camp (fonctionnel.md §1.2).
 //
-// Why it has to exist. After an opening, "le camp du gagnant du jet joue un checker
-// avec les deux dés de l'ouverture — l'utilisateur ne les ressaisit pas"
-// (fonctionnel.md §1.2): the panel proposes the side and carries the roll over, and
-// the user only picks the play. Correcting the opening — the one place where "the big
-// die first is player 1" is said — therefore has to carry that first Action with it,
-// or the document says two things at once: player 2 starts, player 1 plays first.
-//
-// And nothing would say so. Measured on 2026-09-24: the play stays LEGAL for either
-// camp from the starting board, and an opening bears no turn ([bearsTurn]), so the
-// Replay finds neither an illegal move nor a double turn. The document would be
-// silently wrong — the one outcome ADR-0044's "mark, never refuse" does not cover,
-// since there is nothing to mark.
-//
-// What it deliberately does not do: touch anything else. The rest of the game keeps
-// its sides, and a first Action the user has already given to the other camp is left
-// alone — its side is then no longer the old winner's, which is exactly the test.
+// Without it the document would be silently wrong: the play stays legal for either
+// camp from the starting board and an opening bears no turn ([bearsTurn]), so the
+// Replay has nothing to mark. Only that first Action moves, and only if its side is
+// still the old winner's.
 func followOpening(doc Document, at int, replaced, written Action) {
 	if replaced.Kind != KindOpening || written.Kind != KindOpening {
 		return
@@ -943,20 +846,16 @@ func followOpening(doc Document, at int, replaced, written Action) {
 // validates a play left selected but not recorded, which is what "double" means when
 // the user has already picked the play they were looking at.
 //
-// Where it writes is the ENTRY'S SLOT, exactly as a roll's is. On a cell walked back
-// to, `t` therefore replaces the pass that should have been a take, rather than
-// inserting a take in front of it — the same rule as the digit key, which restarts
-// the roll of the Action under the Cursor (ADR-0048 decision 1). Beside an insertion
-// opened by `i` or `a`, it fills that slot. And at the end of the document, where
-// there is nothing under the Cursor, it appends as it always did.
+// It writes at the ENTRY'S SLOT, like a roll: on a walked-back cell `t` replaces
+// the pass rather than inserting a take (ADR-0048 decision 1); beside an insertion
+// it fills it; at the end it appends.
 func cubeGesture(doc Document, g Gesture) (Document, error) {
 	mode, at, slotSide := EntryNew, doc.Cursor, -1
 	if e := doc.Entry; e != nil {
 		mode, at = e.Mode, e.At
 		if at < len(doc.Actions) {
-			// Inside the document the camp is the SLOT's: the Action being
-			// replaced owns its side, an insertion was given the one that keeps
-			// the sequence coherent, and Next.Side speaks of the end of the match.
+			// Inside the document the camp is the SLOT's; Next.Side speaks of
+			// the end of the match.
 			slotSide = e.Side
 		}
 	}
@@ -966,10 +865,8 @@ func cubeGesture(doc Document, g Gesture) (Document, error) {
 			return doc, err
 		}
 		doc = v
-		// The play just recorded took that slot: the cube Action FOLLOWS it,
-		// wherever the validation left the Cursor — a correction in place sends
-		// it back where the user came from, and a double typed after a play is
-		// not a double at the other end of the match.
+		// The cube Action FOLLOWS the play just recorded, wherever the
+		// validation left the Cursor.
 		mode, at = EntryNew, clampSlot(at+1, len(doc.Actions))
 		slotSide = -1
 		if at < len(doc.Actions) {
@@ -1067,9 +964,8 @@ type Editor struct {
 	past   []Document
 	future []Document
 
-	// replayer is the session's incremental [Replayer]. It belongs here for the
-	// same reason the stack does: one editing session, one cache, and a gesture
-	// then costs the replay of what it changed instead of the whole match.
+	// replayer is the session's incremental [Replayer]: one session, one cache,
+	// so a gesture replays only what it changed.
 	replayer Replayer
 }
 
@@ -1082,12 +978,8 @@ func NewEditor(doc Document) *Editor { return &Editor{Doc: doc} }
 func (e *Editor) Replay(from int) Annotated { return e.replayer.Replay(e.Doc, from) }
 
 // From is where a Replay after the last gesture must start looking: the Action
-// that gesture wrote, and the Cursor when it wrote none. The two differ exactly
-// where it matters — a correction in place sends the Cursor back to where the
-// user came from, and the Inconsistency it just created is behind that.
-//
-// A gesture that holds the Cursor (Document.HoldCursor) answers the end of the
-// document: nothing lies past it, so the Cursor stays where the gesture put it.
+// that gesture wrote, else the Cursor (see Document.Touched). A held Cursor
+// (Document.HoldCursor) answers the end of the document, so it stays put.
 func (e *Editor) From() int {
 	if e.Doc.HoldCursor {
 		return len(e.Doc.Actions)
@@ -1098,12 +990,9 @@ func (e *Editor) From() int {
 	return e.Doc.Cursor
 }
 
-// SeekCursor puts the Cursor on an Action and loads it into the entry, exactly
-// as walking there with the Cursor gestures would. It is NOT a gesture: it
-// pushes nothing on the stack, because the Cursor is not a fact of the match
-// and undoing a jump the software made on its own would undo nothing the user
-// did. It is what makes the Replay's "jump to the first Inconsistency" real on
-// the session's document and not only in what was handed back.
+// SeekCursor puts the Cursor on an Action and loads it into the entry, as walking
+// there would. It is NOT a gesture and pushes nothing on the stack: the Cursor is
+// not a fact of the match. It applies the Replay's jump to the session's document.
 func (e *Editor) SeekCursor(at int) {
 	if at < 0 {
 		at = 0
@@ -1114,9 +1003,8 @@ func (e *Editor) SeekCursor(at int) {
 	if at == e.Doc.Cursor {
 		return
 	}
-	// Where the user was reading is remembered, exactly as walking back with the
-	// Cursor remembers it: a correction made on the Inconsistency they were sent
-	// to then gives them their place back (fonctionnel.md §2).
+	// Remember where the user was reading, so a correction there gives it back
+	// (fonctionnel.md §2).
 	if !e.Doc.HasReturn {
 		e.Doc.Return, e.Doc.HasReturn = e.Doc.Cursor, true
 	}
@@ -1124,8 +1012,7 @@ func (e *Editor) SeekCursor(at int) {
 	loadEntry(&e.Doc)
 }
 
-// CanUndo and CanRedo report what the panel has to draw: whether there is
-// anything on either side of the stack.
+// CanUndo reports whether there is a gesture to undo.
 func (e *Editor) CanUndo() bool { return len(e.past) > 0 }
 
 // CanRedo reports whether a gesture has been undone and not redone.

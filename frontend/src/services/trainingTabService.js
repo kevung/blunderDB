@@ -38,19 +38,12 @@ import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-// L'onglet Entraînement, côté application (#320, #321, #322 et #323, ADR-0040/0041).
+// L'onglet Entraînement, côté application (ADR-0040, ADR-0041) : fabrique les
+// questions, tient le chronomètre, écrit au journal. Les RÈGLES sont dans
+// trainingTab.js, testable sans Svelte ni Wails.
 //
-// Le service fabrique les questions, tient le chronomètre et écrit au journal.
-// Les RÈGLES — ce qu'une révélation produit, ce qu'une échéance produit à sa
-// place, ce qu'une session finie laisse — sont dans trainingTab.js, qui ne
-// connaît ni Svelte ni Wails et se vérifie donc sans eux.
-//
-// Tout le geste d'une session est dans le panneau : le plateau montre la
-// question de Pions et, une fois révélée, sa réponse, mais il ne porte aucun
-// bouton. C'est l'objection qui a supprimé la barre d'entraînement — et Décision
-// (#323), son dernier locataire, se répond ici aussi : le coup se JOUE sur le
-// plateau, mais annuler un pas, tout reprendre et valider sont des boutons du
-// panneau.
+// Le plateau montre la question mais ne porte aucun bouton : en Décision, le
+// coup se joue au plateau, mais annuler, reprendre et valider sont au panneau.
 
 /** Le battement du chronomètre : assez fin pour qu'une limite de 15 s se voie
  *  arriver, assez lâche pour ne rien coûter. */
@@ -65,10 +58,8 @@ export function exerciseById(id) {
 }
 
 // ── Le chronomètre ───────────────────────────────────────────────────────────
-//
-// Il vit dans le service et non dans le composant : le panneau est démonté dès
-// qu'on change d'onglet, et une limite qui cesse de courir parce qu'on a
-// regardé ailleurs ne serait plus une limite.
+// Dans le service et non le composant : le panneau est démonté au changement
+// d'onglet, et la limite doit continuer de courir.
 
 function stopTicker() {
     if (ticker !== null) {
@@ -112,9 +103,7 @@ function pipNumbers(position) {
 }
 
 /**
- * Une question de l'exercice Pions.
- *
- * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ * Une question de Pions. Ne montre rien (« Fabriquer n'est pas montrer »).
  * @param {string} seedSource @param {any} seed la graine « plateau », capturée au démarrage
  */
 async function buildPipsQuestion(seedSource, seed) {
@@ -141,9 +130,8 @@ const EPC_TOLERANCE = 0.5;
 const MAX_LIBRARY_DRAWS = 30;
 
 /**
- * Tire `count` éléments DISTINCTS de `candidates`. Sans remise : retomber deux
- * fois sur la même position ferait passer le budget de tirages sans avoir
- * regardé de candidate de plus.
+ * Tire `count` éléments distincts : sans remise, pour que chaque tirage du
+ * budget regarde une candidate de plus.
  * @param {number[]} candidates @param {number} count
  */
 function drawDistinct(candidates, count) {
@@ -165,17 +153,11 @@ function epcNumbers(epc) {
 }
 
 /**
- * Une question de l'exercice Bearoff (#321, ADR-0041).
+ * Une question de Bearoff (ADR-0041), en un seul appel : le moteur joue les
+ * plis, compose la position et rend les deux EPC, hors du chrono.
  *
- * TOUT se fait en un seul appel : le moteur joue les plis, compose la position
- * ET rend les deux EPC. Le chrono démarre à l'affichage et ne contient donc ni
- * la génération ni un second aller-retour pour la vérité.
- *
- * La source `base` tire dans la liste parcourue et laisse le moteur juger
- * chaque candidate : le domaine n'est écrit qu'à un endroit, en Go, et une
- * seconde définition ici finirait par diverger de celle qui refuse.
- *
- * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ * La source `base` laisse le moteur juger chaque candidate : le domaine n'est
+ * écrit qu'en Go. Ne montre rien (« Fabriquer n'est pas montrer »).
  *
  * @param {string} seedSource @param {any} seed la graine « plateau », capturée au démarrage
  */
@@ -215,29 +197,22 @@ function bearoffQuestion(generated, key, positionId = null, loaded = null) {
         kind: 'bearoff',
         key: key || `pool:${generated.plies}:${JSON.stringify(generated.position.board.bearoff)}`,
         positionId,
-        // La position engendrée n'est dans aucune base : elle est portée par la
-        // question. Une question TIRÉE de la base, elle, en a une — et c'est
-        // celle-là qu'on montre, par son identifiant (voir `showQuestion`) ; sa
-        // copie chargée ne sert que si la liste parcourue ne la contient plus.
+        // Engendrée : portée par la question. Tirée de la base : montrée par
+        // son id (`showQuestion`), la copie chargée ne servant que si la liste
+        // ne la contient plus.
         position: positionId == null ? generated.position : loaded,
         numbers: epcNumbers(generated.epc)
     };
 }
 
 /**
- * Les index, dans la liste parcourue, des positions que la base classe en
- * phase `bearoff` — calculés UNE fois par session (voir `bearoffPhaseIndices`).
+ * Les index, dans la liste parcourue, des positions en phase `bearoff`
+ * (ADR-0035), calculés une fois par session. Sans cette restriction, trente
+ * tirages à l'aveugle manquent souvent les rares bearoffs d'une base. Elle ne
+ * juge pas : le domaine (4 à 15 pions) reste en Go.
  *
- * Un tirage à l'aveugle dans la liste refusait une base qui a des bearoffs :
- * sur la base de démonstration, 30 positions du domaine sur 757, et trente
- * tirages sans remise n'en trouvent aucune une fois sur trois. La phase est
- * une étiquette DÉRIVÉE que la base a déjà (ADR-0035) ; elle restreint le
- * tirage, elle ne juge pas : le domaine de l'exercice — 4 à 15 pions — reste
- * écrit à un seul endroit, en Go, et c'est le moteur qui refuse.
- *
- * Une liste vide veut dire « rien de classé » — une base aux phases jamais
- * calculées, ou une liste parcourue sans bearoff — et le tirage retombe alors
- * sur la liste entière, comme avant.
+ * Liste vide (phases jamais calculées, ou aucun bearoff) : le tirage retombe
+ * sur la liste entière.
  *
  * @returns {Promise<number[]>}
  */
@@ -258,27 +233,19 @@ function bearoffIndices() {
     return bearoffPhaseIndices;
 }
 
-/** La tolérance des chances de gain d'Évaluation : cinq points de pourcentage.
- *  Assez fin pour qu'une position à 70 % ne se confonde pas avec une à 80 % —
- *  l'écart entre une prise facile et un passe —, assez large pour qu'on
- *  estime plutôt qu'on ne récite une décimale que le moteur lui-même ne tient
- *  pas d'une profondeur à l'autre. */
+/** Tolérance des chances de gain d'Évaluation, en points de pourcentage : sépare
+ *  70 % de 80 % (prise facile contre passe) sans exiger une décimale que le
+ *  moteur ne tient pas d'une profondeur à l'autre. */
 const WIN_TOLERANCE = 5;
 
 /**
- * Une question de l'exercice Évaluation (#322, ADR-0040 règle 3).
+ * Une question d'Évaluation (ADR-0040 règle 3), en un seul appel : le moteur
+ * joue les plis, cadre la position en argent et rend la vérité (chances,
+ * verdict de videau, bouton juste, EPC si exact). L'interface ne compare
+ * aucune équité.
  *
- * Comme Bearoff, TOUT se fait en un seul appel : le moteur joue les plis,
- * cadre la position en argent, et rend la vérité — chances de gain, verdict de
- * videau, bouton juste, EPC quand il est exact. L'interface ne compare aucune
- * équité : le verdict est celui du moteur, et c'est lui qui dit quel bouton il
- * rend juste.
- *
- * La source `base` tire dans la liste parcourue et laisse le moteur juger
- * chaque candidate : une position au score, ou qui porte des dés, n'est pas une
- * décision de videau d'argent, et le domaine n'est écrit qu'en Go.
- *
- * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ * La source `base` laisse le moteur juger chaque candidate (domaine écrit en
+ * Go). Ne montre rien (« Fabriquer n'est pas montrer »).
  *
  * @param {string} seedSource @param {any} seed la graine « plateau », capturée au démarrage
  */
@@ -311,9 +278,8 @@ async function buildEvaluationQuestion(seedSource, seed) {
 }
 
 /**
- * Les deux nombres d'une question d'Évaluation, dans UNE question : les chances
- * de gain se saisissent, l'action de videau se choisit (`mode: 'chosen'`) et
- * se juge contre le bouton que le moteur a rendu juste.
+ * Chances de gain saisies et action de videau choisie (`mode: 'chosen'`),
+ * jugée contre le bouton que le moteur rend juste.
  *
  * @param {any} generated @param {string} key @param {number|null} positionId
  * @param {any} [loaded] la position de la base, telle que chargée, quand la question en vient
@@ -335,17 +301,14 @@ function evaluationQuestion(generated, key, positionId = null, loaded = null) {
     };
 }
 
-/** Le nombre d'analyses lues avant de renoncer, pour UNE question de Décision.
- *  Borné, parce qu'une liste sans analyse en ferait sinon une lecture de toute
- *  la base : au bout, on refuse en le nommant, et « Réessayer » regarde les
- *  positions pas encore lues. */
+/** Analyses lues au plus pour une question de Décision, sans quoi une liste
+ *  sans analyse ferait lire toute la base. Au-delà, refus nommé ; « Réessayer »
+ *  reprend sur les positions non lues. */
 const MAX_DECISION_DRAWS = 60;
 
 /**
- * Les positions déjà lues par cette session de Décision — posées, ou sans
- * analyse. La bibliothèque borne l'exercice par elle-même (ADR-0040 règle 5) :
- * une position posée ne revient pas, et une position sans analyse n'est pas
- * relue à chaque question.
+ * Les positions déjà lues par la session de Décision (posées ou sans
+ * analyse) : ni reposées, ni relues (ADR-0040 règle 5).
  * @type {Set<number>}
  */
 let decisionSeen = new Set();
@@ -354,20 +317,12 @@ let decisionSeen = new Set();
 let decisionsBuilt = 0;
 
 /**
- * Une question de l'exercice Décision (#323, ADR-0040 règle 3) — l'ancien
- * `train quiz` (#294), inchangé dans ce qu'il juge.
+ * Une question de Décision (ADR-0040 règle 3). Elle exige une position
+ * analysée et pose la décision que la position porte, pion ou videau.
  *
- * Une question demande une position ANALYSÉE : l'erreur se mesure contre
- * l'analyse enregistrée, et une position sans analyse ne pose pas de question.
- * La décision est celle que la position porte — coup de pions ou action de
- * videau — jamais une décision inventée pour l'exercice.
- *
- * Les coups légaux sont demandés au moteur ICI, à la fabrication : la question
- * suivante se fabrique pendant qu'on répond à celle-ci, et c'est le moment où
- * l'attente ne se voit pas. Une position où le moteur n'offre aucun coup n'a
- * rien à jouer sur le plateau : elle est passée.
- *
- * Ne montre RIEN : voir la section « Fabriquer n'est pas montrer ».
+ * Les coups légaux sont demandés ici, pendant le préchargement, où l'attente
+ * ne se voit pas ; sans coup offert, la position est passée. Ne montre rien
+ * (« Fabriquer n'est pas montrer »).
  */
 async function buildDecisionQuestion() {
     if (!get(databasePathStore)) return { question: null, refusal: 'noLibrary' };
@@ -414,18 +369,10 @@ async function buildDecisionQuestion() {
 }
 
 // ── Fabriquer n'est pas montrer ──────────────────────────────────────────────
-//
-// `buildQuestion` calcule une question — la position et sa vérité — et ne
-// touche NI au plateau, NI à l'onglet actif, NI à l'index de position.
-// `showQuestion` fait l'autre moitié, et une seule fois : au moment où la
-// question est posée.
-//
-// Les deux étaient un seul geste, et le préchargement les a mis en défaut : la
-// question n+1 se fabriquant pendant qu'on répond à la n, le plateau sautait
-// sur la position suivante sous les doigts de l'utilisateur, et
-// `showImportedPosition` refermait l'onglet Entraînement au passage (il force
-// l'onglet Analyse). Un préchargement qui pilote l'écran n'est pas un
-// préchargement, c'est une question posée deux fois.
+// `buildQuestion` calcule la position et sa vérité sans toucher au plateau, à
+// l'onglet ni à l'index ; `showQuestion` le fait une fois, quand la question
+// est posée. Sinon le préchargement de n+1 fait sauter le plateau pendant
+// qu'on répond à n.
 
 /**
  * @param {string} exercise @param {string} seedSource @param {any} seed
@@ -440,15 +387,12 @@ async function buildQuestion(exercise, seedSource, seed) {
 }
 
 /**
- * Amène la question sur le plateau. Une question tirée de la base y va par son
- * identifiant ; une position engendrée n'en a pas, et rien d'autre ne peut
- * l'y mettre. Une question de Scores ne touche pas au plateau du tout.
+ * Amène la question au plateau : par son id si elle vient de la base (sinon la
+ * position engendrée elle-même) ; Scores n'y touche pas.
  *
- * Par l'INDEX de la liste parcourue, et jamais par `showImportedPosition` : ce
- * geste-là est celui d'un import, il bascule sur l'onglet Analyse pour montrer
- * ce qu'on vient d'apporter — et sous une session, il cachait l'onglet où l'on
- * répond (ADR-0040 règle 1). La position a été tirée de la liste, elle y est
- * donc ; si la liste a changé entre-temps, sa copie chargée prend le relais.
+ * Par l'index de la liste, jamais `showImportedPosition`, qui bascule sur
+ * l'onglet Analyse et cacherait l'onglet où l'on répond (ADR-0040 règle 1).
+ * Si la liste a changé, la copie chargée prend le relais.
  * @param {any} question
  */
 async function showQuestion(question) {
@@ -467,11 +411,9 @@ async function showQuestion(question) {
 }
 
 /**
- * Arme le plateau pour une question de Décision : une décision de pions s'y
- * joue, contrainte aux coups légaux que le moteur a rendus ; une action de
- * videau ne s'y joue pas, et le plateau redevient celui de l'application.
- * Les autres exercices ne touchent pas au coup joué au plateau — une
- * transcription s'en sert aussi.
+ * Arme le plateau pour une Décision : un coup de pions s'y joue, contraint aux
+ * coups légaux ; une action de videau rend le plateau à l'application. Les
+ * autres exercices n'y touchent pas (la transcription s'en sert aussi).
  * @param {any} question
  */
 function armBoard(question) {
@@ -488,35 +430,25 @@ function disarmBoard(session) {
 // ── La session ───────────────────────────────────────────────────────────────
 
 /**
- * La question SUIVANTE, en cours de fabrication (ADR-0041 règle 5).
- *
- * Elle se fabrique pendant qu'on répond à la précédente : la génération se
- * cache derrière le temps de réflexion, et le chrono — qui part à l'affichage
- * — ne la voit jamais. Sans ce préchargement, chaque « Suivante » aurait
- * facturé sa propre fabrication à la question qu'elle ouvre.
+ * La question suivante, fabriquée pendant qu'on répond (ADR-0041 règle 5), hors
+ * du chrono qui part à l'affichage.
  *
  * @type {Promise<{question: any, refusal: string}>|null}
  */
 let prefetched = null;
 
 /**
- * La graine de la source « plateau », capturée UNE FOIS au démarrage.
- *
- * « La position telle qu'elle est au démarrage » (ADR-0041 règle 2) : relire
- * le plateau à chaque question ferait de la QUESTION PRÉCÉDENTE la graine de
- * la suivante, et les questions dériveraient de proche en proche — jusqu'à ce
- * qu'un camp touche quatre pions, où `playOut` s'arrête à zéro pli et resert
- * indéfiniment la position qu'on vient de répondre.
+ * La graine « plateau », capturée une fois au démarrage (ADR-0041 règle 2).
+ * Relue à chaque question, elle dériverait de proche en proche jusqu'à
+ * quatre pions, où `playOut` resert indéfiniment la même position.
  *
  * @type {any}
  */
 let boardSeed = null;
 
 /**
- * La restriction du tirage « base » de Bearoff aux positions en phase bearoff,
- * en cours de calcul ou calculée. Par session : la liste parcourue est celle du
- * démarrage, et relire la base à chaque question paierait une recherche par
- * question pour la même réponse.
+ * Les index bearoff de la liste parcourue, calculés une fois par session (la
+ * liste est celle du démarrage).
  *
  * @type {Promise<number[]>|null}
  */
@@ -550,11 +482,9 @@ async function takeNextQuestion(exercise, seedSource) {
 }
 
 /**
- * Démarre une session. Refuse en le NOMMANT plutôt que d'ouvrir une session
- * vide : une graine hors du domaine de l'exercice ne démarre rien, et la
- * phrase dit lequel (ADR-0041 règle 3). Un plateau vide, lui, retombe sur le
- * vivier — et garde la phrase, sans quoi la géométrie aurait changé sans que
- * personne l'ait décidé.
+ * Démarre une session, ou refuse en nommant la raison (ADR-0041 règle 3) :
+ * une graine hors domaine ne démarre rien. Un plateau vide retombe sur le
+ * vivier en gardant la phrase.
  *
  * @param {{exercise: string, seedSource?: string, limitSeconds?: number}} opts
  */
@@ -601,11 +531,8 @@ export function refusalMessageKey(code) {
 }
 
 /**
- * Arrête le chrono et montre la vérité. En mode SAISI, c'est « Valider » : le
- * même geste, le même arrêt du chrono, et l'application juge.
- *
- * `outOfTime` n'est pas un argument que l'interface passe : c'est le
- * chronomètre lui-même qui l'apporte à l'échéance.
+ * Arrête le chrono et montre la vérité (« Valider » en mode SAISI).
+ * `outOfTime` n'est passé que par le chronomètre, à l'échéance.
  * @param {{outOfTime?: boolean}} [opts]
  */
 export function revealQuestion({ outOfTime = false } = {}) {
@@ -618,20 +545,14 @@ export function revealQuestion({ outOfTime = false } = {}) {
 }
 
 // ── Décision : répondre ──────────────────────────────────────────────────────
-//
-// Le jugement est fait par le BACKEND — engine, le même code que le démon
-// appelle — pas ici : la note d'une décision doit valoir la même chose d'un
-// client à l'autre, et une seconde implémentation en JavaScript aurait été une
-// seconde note. Les deux façons de répondre diffèrent par l'appel au juge et
-// par rien d'autre : même chronomètre, même verdict, même PR.
+// Le jugement est fait par le backend (le code que le démon appelle aussi),
+// pour qu'une note vaille la même chose d'un client à l'autre. Les deux façons
+// de répondre ne diffèrent que par l'appel au juge.
 
 /**
- * Juge le coup construit SUR LE PLATEAU.
- *
- * Ce qui part au juge est la position résultante que le MOTEUR a rendue avec
- * ce coup, pas le damier reconstruit pas à pas par l'interface pour montrer le
- * coup en cours : une erreur d'affichage ne doit pas pouvoir devenir une
- * mauvaise note. Sans coup complet, rien n'est jugé.
+ * Juge le coup construit au plateau, par la position résultante que le moteur
+ * a rendue — jamais le damier d'affichage, pour qu'une erreur d'affichage ne
+ * devienne pas une note. Sans coup complet, rien n'est jugé.
  */
 export async function answerDecisionBoard() {
     const session = get(trainingSessionStore);
@@ -655,11 +576,9 @@ export async function answerDecisionCube(action) {
 }
 
 /**
- * Le tronc commun des deux réponses. Le chrono s'arrête au GESTE, pas au
- * retour du juge : l'aller-retour n'est pas du temps de réflexion.
- *
- * Un juge en échec laisse la question ouverte et le dit : une réponse qu'on
- * n'a pas pu noter n'est ni juste ni fausse, et la compter serait inventer.
+ * Tronc commun des deux réponses. Le chrono s'arrête au geste, pas au retour du
+ * juge. Un juge en échec laisse la question ouverte : une réponse non notée
+ * n'est pas comptée.
  * @param {any} question @param {() => Promise<any>} judge
  */
 async function gradeDecision(question, judge) {
@@ -681,9 +600,8 @@ async function gradeDecision(question, judge) {
 }
 
 /**
- * La correction d'une décision restée sans réponse à l'échéance : le meilleur
- * coup, que le juge rend pour une réponse vide sans rien compter. Une
- * question dont on ne peut pas relire la bonne réponse n'apprend rien.
+ * La correction d'une décision sans réponse à l'échéance : le meilleur coup,
+ * que le juge rend pour une réponse vide sans rien compter.
  * @param {any} question
  */
 function fetchCorrection(question) {
@@ -725,8 +643,7 @@ export function markFault(index) {
 }
 
 /**
- * Ce qu'on tape dans un champ, en mode SAISI. Rien n'est jugé ici : le
- * jugement est à « Valider », une fois.
+ * Saisie d'un champ en mode SAISI ; le jugement est à « Valider ».
  * @param {number} index @param {string} text
  */
 export function setTrainingAnswer(index, text) {
@@ -736,13 +653,9 @@ export function setTrainingAnswer(index, text) {
 }
 
 /**
- * Enregistre la question révélée et en pose une nouvelle.
- *
- * Quand la suivante ne peut PAS être bâtie — la position tirée a été supprimée
- * entre-temps, la liste parcourue s'est vidée — la session reste ouverte et le
- * dit. Elle rebasculait sur le lanceur : « Terminer » disparaissait, les
- * nombres déjà répondus devenaient inatteignables, et « Démarrer » les
- * écrasait. Tout un journal de session partait sans un mot.
+ * Enregistre la question révélée et en pose une nouvelle. Si la suivante ne
+ * peut être bâtie, la session reste ouverte et le dit, pour que « Terminer »
+ * garde les réponses déjà données.
  */
 export async function nextTrainingQuestion() {
     const session = get(trainingSessionStore);
@@ -752,8 +665,7 @@ export async function nextTrainingQuestion() {
 }
 
 /**
- * Repose une question après un échec, sans rien enregistrer de plus : la
- * question précédente l'a déjà été.
+ * Repose une question après un échec, sans rien enregistrer de plus.
  */
 export async function retryTrainingQuestion() {
     const session = get(trainingSessionStore);
@@ -779,8 +691,8 @@ async function askNextQuestion(session) {
 }
 
 /**
- * Termine la session et l'écrit au journal. Une question révélée mais pas
- * enregistrée l'est d'abord : on vient de la lire, elle compte.
+ * Termine la session et l'écrit au journal, après la question révélée non
+ * encore enregistrée.
  */
 export async function finishTrainingSession() {
     const session = get(trainingSessionStore);
@@ -828,9 +740,8 @@ export function quitTrainingSession() {
 // ── Le journal ───────────────────────────────────────────────────────────────
 
 /**
- * Relit le journal : les sessions de chaque exercice et leur détail par type
- * de nombre. Appelé à l'ouverture de l'onglet et après chaque « Terminer » —
- * les deux seuls moments où il peut avoir changé.
+ * Relit le journal, à l'ouverture de l'onglet et après chaque « Terminer » (les
+ * seuls moments où il change).
  */
 export async function refreshTrainingJournal() {
     if (!get(databasePathStore)) {

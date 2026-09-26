@@ -1,15 +1,10 @@
 import { GetLibrarySettings, SaveLibrarySettings } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
-// Les réglages de la bibliothèque (ADR-0046) : les deux seuils qui décident de
-// ce qu'est une erreur et de ce qu'est un blunder.
-//
-// Ils vivent dans la bibliothèque, pas dans la configuration de la machine :
-// le même fichier compte les mêmes blunders où qu'on l'ouvre, la ligne de
-// commande les lit (`blunderdb info`), et un tenant du démon porte les siens.
-// Le stockage garde des millipoints — l'unité que parlent `E>x` et
-// `--move-error-min` — et l'interface montre l'équité, l'unité de toutes les
-// tables. La conversion tient en deux fonctions, ici, une seule fois.
+// Les réglages de la bibliothèque (ADR-0046) : les seuils d'erreur et de
+// blunder. Dans la bibliothèque, pas la machine : même compte partout, lu par
+// `blunderdb info` et par tenant du démon. Stockés en millipoints (l'unité de
+// `E>x`), montrés en équité ; la conversion tient ici.
 
 /** @typedef {{errorThresholdMP: number, blunderThresholdMP: number}} LibrarySettings */
 
@@ -31,9 +26,8 @@ export function mpToEquity(mp) {
 }
 
 /**
- * Équité → millipoints. Arrondi à l'entier : le stockage ne connaît pas le
- * dixième de millipoint, et une saisie à quatre décimales ne doit pas être
- * refusée, seulement arrondie.
+ * Équité → millipoints, arrondi à l'entier (une saisie plus fine est arrondie,
+ * pas refusée).
  */
 export function equityToMP(equity) {
     return Math.round((Number(equity) || 0) * 1000);
@@ -54,8 +48,8 @@ export async function loadLibrarySettings() {
 }
 
 /**
- * Écrit les seuils. Le refus d'une paire inversée vient du stockage, qui la
- * valide comme paire ; l'appelant le laisse remonter pour l'afficher.
+ * Écrit les seuils. Le stockage refuse une paire inversée ; l'erreur remonte
+ * à l'appelant pour affichage.
  * @param {LibrarySettings} settings
  */
 export async function saveLibrarySettings(settings) {

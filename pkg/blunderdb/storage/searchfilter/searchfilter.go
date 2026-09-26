@@ -183,16 +183,9 @@ func AnalysisMatchesEquityFilter(filter string, ana *domain.PositionAnalysis) bo
 	return true
 }
 
-// PlayerName unwraps the player filter the frontend sends. The command bar and
-// the search panel both build the token `pl"Name"` and hand it over whole, the
-// same way they do for t"…" (comment text) and m"…" (move pattern) — both of
-// which are unwrapped where they are read (ParseSearchTextKeywords,
-// AnalysisMatchesMovePattern). The player filter was not, so it reached the SQL
-// comparison with its wrapper still on and matched no player at all: searching
-// by player from the GUI silently returned nothing (B.18, #186).
-//
-// A bare name is returned unchanged, so the CLI and the server — which pass the
-// name on its own — are unaffected.
+// PlayerName unwraps the player filter the frontend sends whole (`pl"Name"`),
+// as t"…" and m"…" are unwrapped where read. A bare name, as the CLI and the
+// server pass it, is returned unchanged.
 func PlayerName(filter string) string {
 	s := strings.TrimSpace(filter)
 	if len(s) >= 4 && strings.HasPrefix(s, "pl") && (s[2] == '"' || s[2] == '\'') && s[len(s)-1] == s[2] {
@@ -282,8 +275,7 @@ func ParseFilterIDList(s string) ([]int64, error) {
 // ParseSearchTextKeywords extracts the lowercased, trimmed, non-empty keywords
 // from a t"tag1;tag2;..." search filter. It strips the frontend's t"..."
 // wrapper, splits on ';', trims whitespace around each tag, and drops empty
-// tags (so a stray trailing ';' or surrounding spaces no longer match every
-// comment or fail to match a valid tag).
+// tags (so a stray trailing ';' does not match every comment).
 func ParseSearchTextKeywords(searchText string) []string {
 	s := strings.TrimSpace(searchText)
 	// Strip the t"..." wrapper: a leading 't' immediately followed by a
@@ -301,7 +293,6 @@ func ParseSearchTextKeywords(searchText string) []string {
 	return keywords
 }
 
-// isPlayer1TakePassCubeAction reports whether player-1's recorded cube action
 // MatchesMoveError checks the equity error of a played move, already
 // expressed in millipoints and rounded, against an "E"-prefixed filter:
 // E>x, E<x, Ex,y (both bounds inclusive, in either order). The backends
@@ -343,8 +334,7 @@ func MatchesMoveError(moveErrorMillipoints float64, filter string) bool {
 
 // MatchesDateFilter filters positions by the analysis creation date: T>d, T<d,
 // Td1,d2. analysis is the position's already-decoded analysis (the backends
-// list DateFilter in needAnalysis), so this predicate needs no query or
-// decompression of its own; it previously ran one of each per candidate row.
+// list DateFilter in needAnalysis), so this predicate makes no query.
 func MatchesDateFilter(analysis *domain.PositionAnalysis, filter string) bool {
 	if analysis == nil {
 		return false

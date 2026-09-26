@@ -177,11 +177,9 @@ func countMissing(a, b map[boardKey]bool) int {
 // order, they give 1.0000000000000002. Both are correct; they are different
 // computations.
 //
-// The distinction is not pedantry, it is the requirement: the search
-// accumulates `sum += weight * best` over the rolls in ascending index order,
-// in float64. Reproducing the total means reproducing that order, so this test
-// pins the order and the type, and checks the total to within a few ulps rather
-// than asserting an equality that only one of the two groupings satisfies.
+// The search accumulates `sum += weight * best` in ascending roll order, in
+// float64: this test pins that order and type, and checks the total to a few
+// ulps rather than an equality only one grouping satisfies.
 func TestRollTableMatchesTheReference(t *testing.T) {
 	rolls := buildRolls()
 	if len(rolls) != 21 {

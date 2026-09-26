@@ -11,23 +11,15 @@ import (
 
 // ExportDatabase writes the selection described by opts into a new database
 // file. It is the GUI's export dialog and the CLI's `export`; the work is
-// ingest.ExportSQLite, the one exporter every mode runs — this method only
-// seals the watermark with this machine's identity and translates the
-// dialog's options into a Selection. The public signature is bound to Wails
-// and stays.
-//
-// This is the context.Background() convenience for callers with no context of
-// their own (the GUI); ExportDatabaseCtx is the one to call when the caller
-// can offer a real deadline/cancellation (B.13, #181: the CLI's `export`
-// cancels a large export on Ctrl-C through it).
+// ingest.ExportSQLite; this method only seals the watermark with this
+// machine's identity and maps the options to a Selection. Uses
+// context.Background(); prefer ExportDatabaseCtx when the caller can cancel.
 func (d *Database) ExportDatabase(opts ExportOptions) error {
 	return d.ExportDatabaseCtx(context.Background(), opts)
 }
 
-// ExportDatabaseCtx is ExportDatabase with a caller-supplied context: ctx is
-// threaded into ingest.ExportSQLite, so cancelling it aborts an in-flight
-// export — a large selection can run long enough to matter — instead of
-// writing a file nobody will read to completion.
+// ExportDatabaseCtx is ExportDatabase with a caller-supplied context that
+// aborts an in-flight export.
 func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -77,7 +69,7 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 		Metadata:      opts.Metadata,
 		Watermark:     watermarkDocument,
 		Password:      opts.Password,
-		// A Direction travels with its tournament (#396). The copy is ours and not ingest's:
+		// A Direction travels with its tournament. The copy is ours and not ingest's:
 		// the direction tables belong to the desktop wrapper, and the daemon exposes none of
 		// them.
 		AfterWrite: d.directionAfterWrite(),

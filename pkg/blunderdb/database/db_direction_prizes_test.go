@@ -5,11 +5,8 @@ import (
 	"testing"
 )
 
-// The prize fund (issue #393, fonctionnel.md §3.6).
-//
-// The engine computes it; what is held here is the arithmetic a director will be asked about at
-// the prize-giving, with the numbers of the acceptance criteria. A prize list that does not add
-// up is the one thing everyone in the room checks.
+// The prize fund (fonctionnel.md §3.6): the engine computes it; these tests hold the arithmetic
+// with the numbers of the acceptance criteria.
 
 // fundedDirection prepares a tournament with an entry fee, a retention and per-section scales.
 func fundedDirection(t *testing.T, d *Database, n int, prizes string) int64 {

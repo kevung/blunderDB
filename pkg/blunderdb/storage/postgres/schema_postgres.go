@@ -19,11 +19,8 @@ var schemaSQL string
 //
 // It deliberately does NOT record database_version: Migrate writes that once,
 // after bootstrap and every forward migration have run to completion (see
-// setDatabaseVersion in postgres.go, #231). Each forward migration used to
-// stamp its own intermediate version, so an interruption mid-chain left the
-// database at its true (newer) schema while metadata still named an older
-// one — a live window where a fresh probe of the true schema would find
-// columns database_version does not yet admit to.
+// setDatabaseVersion in postgres.go), so an interrupted chain never leaves a
+// version that disagrees with the schema.
 func bootstrap(ctx context.Context, db execer) error {
 	if _, err := db.Exec(ctx, schemaSQL); err != nil {
 		return fmt.Errorf("postgres: bootstrap schema: %w", err)

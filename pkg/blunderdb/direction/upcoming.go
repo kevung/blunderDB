@@ -11,17 +11,12 @@ import (
 	"github.com/PileOfCells/backgammon-tournoi/render"
 )
 
-// The sheet of a round announced before it is launched (issue #451, D7.2).
+// The sheet of a round announced before it is launched. Launching it for real would stamp the
+// matches with today's start time, from which the engine reads the rounds.
 //
-// A club championship plays one round a week. The director pairs round 3 on Friday and wants
-// the sheet on the club's board for Monday — but a sheet only existed for a LAUNCHED round,
-// and launching on Friday would stamp the matches Friday: the engine reads the rounds from the
-// start times.
-//
-// So the round is launched on a COPY: the log is replayed into a throwaway state, every match
-// the queue proposes is started there at one instant, and the engine's own renderer prints that
-// batch. The Direction's state and its log are not touched — nothing is written, not even a
-// note. The sheet carries the date the director typed, marked as announced.
+// So the round is launched on a COPY: the log is replayed into a throwaway state, every proposed
+// match is started there at one instant, and the engine's renderer prints that batch. Nothing
+// is written to the Direction. The sheet carries the typed date, marked as announced.
 
 // UpcomingSheetName is the announced sheet's file name. It is not SheetName: the sheet of the
 // round being played stays where the players read it.

@@ -9,17 +9,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// This file ports the analysis merge/normalisation semantics of the legacy
-// database.saveAnalysisInTx into the backend-agnostic ingest path. The legacy
-// helper loads the existing analysis for a position, merges the incoming one
-// into it (combining checker moves, keeping per-engine cube analyses, unioning
-// played moves/cube actions) and re-normalises move ordering before storage.
-//
-// AnalysisStore.Save only *replaces*, so WriteMatch performs the load+merge
-// here before calling Save. mergeAnalysis(nil, incoming) reproduces the
-// insert-path normalisation; mergeAnalysis(existing, incoming) reproduces the
-// update-path merge. Keeping this byte-faithful to the legacy code is what the
-// XG parity test verifies.
+// Analysis merge/normalisation: the incoming analysis is merged into the stored
+// one (combining checker moves, keeping per-engine cube analyses, unioning
+// played moves/cube actions) and move ordering re-normalised. AnalysisStore.Save
+// only *replaces*, so WriteMatch loads and merges here first;
+// mergeAnalysis(nil, incoming) is the insert-path normalisation. The XG parity
+// test holds it byte-faithful.
 
 // enginePriority returns a sort priority for analysis engines (XG first).
 func enginePriority(eng string) int {
@@ -108,8 +103,8 @@ func mergePlayedMoves(existing, incoming []string) []string {
 }
 
 // sortCheckerMovesByEquity sorts an analysis' checker moves by equity descending
-// and recomputes indices and equity errors (the final normalisation legacy
-// applies in both the insert and update paths).
+// and recomputes indices and equity errors (the final normalisation of both the
+// insert and update paths).
 func sortCheckerMovesByEquity(a *domain.PositionAnalysis) {
 	if a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) == 0 {
 		return
@@ -132,8 +127,7 @@ func sortCheckerMovesByEquity(a *domain.PositionAnalysis) {
 
 // mergeAnalysis combines incoming into existing (which may be nil when no
 // analysis is stored yet for the position) and returns the analysis to persist.
-// It mirrors database.saveAnalysisInTx exactly; AnalysisStore.Save then encodes
-// and derives the scalar columns.
+// AnalysisStore.Save then encodes and derives the scalar columns.
 func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAnalysis) domain.PositionAnalysis {
 	a := incoming
 	a.LastModifiedDate = time.Now()

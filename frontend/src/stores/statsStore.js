@@ -21,21 +21,15 @@ export const statsErrorStore = writable(null);
 // 'pr' | 'mwc'
 export const statsMetricStore = writable('pr');
 
-/**
- * Opaque key combining the open database path and the mutation counter.
- * Changes whenever a new database is opened or the data is mutated (import,
- * delete match, etc.). Used by refreshStats to detect stale cache.
- */
+/** Opaque key (database path + mutation counter) that refreshStats uses to detect a stale cache. */
 export const statsInvalidationKeyStore = derived([databasePathStore, dbMutationCounterStore], ([$path, $mutation]) => `${$path}::${$mutation}`);
 
 /** Cache key of the last successful fetch. */
 let _cachedKey = null;
 
 /**
- * Fetch stats from the backend for the current filter and invalidation key.
- * Skips the backend call when the result is already cached for the same
- * filter + database state — prevents redundant recalculation on every
- * tab activation.
+ * Fetch stats for the filter, skipping the backend when already cached for the same filter and
+ * database state (no recalculation on every tab activation).
  *
  * @param {object} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
@@ -68,13 +62,8 @@ export const playerTableErrorStore = writable(null);
 let _cachedPlayerKey = null;
 
 /**
- * Fetch the players table for the current filter and invalidation key.
- *
- * The table only varies with the parts of the filter the backend honours
- * (dates, tournaments, match lengths), so the cache key drops the rest: the
- * player selection and the decision type are ignored by PlayerTable, and
- * including them would refetch an identical table every time the user picks a
- * player in another tab.
+ * Fetch the players table. The cache key keeps only the filter parts the backend honours (dates,
+ * tournaments, match lengths): picking a player elsewhere must not refetch an identical table.
  *
  * @param {object} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore

@@ -27,7 +27,7 @@ var migrationsFS embed.FS
 // db is an execer rather than the pool directly: Migrate (postgres.go) calls
 // this over one connection held for the whole migration, the same connection
 // pg_advisory_lock was taken on, so schema changes and the lock live and die
-// together (#231).
+// together.
 func migrateForward(ctx context.Context, db execer) error {
 	if _, err := db.Exec(ctx,
 		`CREATE TABLE IF NOT EXISTS schema_migrations (

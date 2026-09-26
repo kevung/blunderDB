@@ -1,21 +1,11 @@
 /**
- * positionList.js
+ * positionList.js — the browsed list of positions (library, search result, collection, deck) as
+ * an id list plus a bounded cache. Holding full positions cost ~45 MB of JSON across the Wails
+ * bridge per reload on a 50 000-position library; ids are ~100 KB, and positions are fetched by
+ * window through `loader` (LoadPositionsByIDs, or a test stub).
  *
- * The browsed list of positions (the library, a search result, a collection,
- * a deck) as an id list plus a bounded cache of loaded positions.
- *
- * The board shows one position at a time, yet the list used to be the full
- * array of positions: on a 50 000-position library that is ~45 MB of JSON
- * across the Wails bridge on every reload. The store now keeps only the ids
- * (~100 KB) and fetches positions in windows around the index being shown,
- * through the `loader` it was built with (LoadPositionsByIDs in the app, a
- * stub in tests).
- *
- * Store value: `{ ids, length }`, frozen, replaced whenever the list changes.
- * Positions are reached through the async `getPosition(i)`, which loads the
- * window around `i` on a miss and prefetches ahead of the browsing
- * direction, or `peek(i)` for a synchronous cache lookup of a position that
- * is already shown.
+ * Store value: `{ ids, length }`, frozen. `getPosition(i)` loads the window around `i` on a miss
+ * and prefetches ahead of the browsing direction; `peek(i)` is a synchronous cache lookup.
  */
 import { writable } from 'svelte/store';
 
@@ -115,8 +105,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
     // ── Loading ──────────────────────────────────────────────────────────
 
     /**
-     * One loader call for the ids of `indices` that are neither cached nor
-     * already on their way. Returns null when nothing is missing.
+     * One loader call for the ids of `indices` neither cached nor in flight; null if none.
      * @param {number[]} indices
      */
     function fetchMissing(indices) {
@@ -133,8 +122,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
             .then(() => loadFn(batch))
             .then((rows) => {
                 for (const row of rows || []) remember(row);
-                // An id that did not come back no longer exists: remember it
-                // so browsing past it does not ask again at every step.
+                // A missing id no longer exists: remember it so browsing does not ask again.
                 for (const id of batch) if (!cache.has(id)) absent.add(id);
             })
             .finally(() => {
@@ -156,9 +144,8 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
     }
 
     /**
-     * The position at index `i`, loading the window around it on a miss.
-     * Resolves to null when `i` is out of bounds or the position no longer
-     * exists. Browsing sequentially costs one loader call per half-window.
+     * The position at index `i`, loading the window around it on a miss; null out of bounds or
+     * gone. Sequential browsing costs one loader call per half-window.
      * @param {number} i
      */
     async function getPosition(i) {
@@ -166,8 +153,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         const id = ids[i];
         if (id == null) return null;
         if (!cache.has(id)) {
-            // Already on its way (a neighbour's window): wait for that fetch
-            // rather than open another; a real miss loads the whole window.
+            // Already in flight (a neighbour's window): wait for it; a real miss loads the window.
             if (pending.has(id)) await pending.get(id);
             else if (!absent.has(id)) await fetchMissing(range(i - windowSize, i + windowSize));
         }
@@ -176,10 +162,8 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
     }
 
     /**
-     * The positions of indices [from, to), in list order, missing ones
-     * skipped. Bulk reads go through the loader in batches and do not touch
-     * the cache: an export of 50 000 positions must not evict the window
-     * being browsed.
+     * The positions of [from, to), in order, missing ones skipped. Bulk reads bypass the cache:
+     * an export of 50 000 positions must not evict the browsed window.
      * @param {number} from
      * @param {number} to
      */
@@ -217,8 +201,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         subscribe,
 
         /**
-         * Replace the list by ids. `reset` drops the cache too: use it when
-         * stored positions may have changed (a reload after an edit).
+         * Replace the list by ids. `reset` also drops the cache (stored positions may have changed).
          * @param {IdList} next
          * @param {{ reset?: boolean }} [options]
          */
@@ -231,16 +214,13 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         },
 
         /**
-         * Replace the list by full positions, which also seed the cache (the
-         * first `cacheSize` of them). Search results, collections and decks
-         * still arrive whole from the backend; this keeps their first window
-         * free of a round trip.
+         * Replace the list by full positions, which also seed the cache (first `cacheSize`) so
+         * search results, collections and decks, still returned whole, skip a round trip.
          * @param {Position[]} positions
          */
         set(positions) {
             const list = Array.isArray(positions) ? positions : [];
-            // Seeded back to front so index 0 — where a fresh list opens — is
-            // the most recently used and the last to be evicted.
+            // Seeded back to front, so index 0 (where a list opens) is evicted last.
             const seeded = list.slice(0, cacheSize);
             for (let i = seeded.length - 1; i >= 0; i--) remember(seeded[i]);
             replaceIds(list.map((p) => (p && p.id != null ? p.id : null)));

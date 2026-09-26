@@ -125,11 +125,8 @@ func TestRunRemapsIdentifiers(t *testing.T) {
 		t.Fatalf("Report = %+v, want %+v", rep, want)
 	}
 
-	// Find the two positions in dst by the dice that told them apart in src —
-	// their ids are necessarily different from the source's (a fresh
-	// destination starts its own autoincrement), which is exactly what a
-	// remap bug (an id blindly carried over, or the two swapped) would hide
-	// if this test compared old and new ids instead of content.
+	// Find the two positions in dst by content (their dice), not by id: an id
+	// comparison would hide a remap bug.
 	var idAnalysedDst, idCollectedDst int64
 	for p, err := range dst.Positions().List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
@@ -217,15 +214,9 @@ func TestRunRemapsIdentifiers(t *testing.T) {
 		t.Fatalf("dst game has %d moves, want 1", moveCount)
 	}
 
-	// Collect the collection's id from a fully-drained List() before issuing
-	// the nested Positions() query: the sqlite backend pins a :memory: DSN to
-	// a single pooled connection (storage/sqlite's ConfigurePool — see
-	// CLAUDE.md "Notes & Gotchas"), and List's iterator holds that connection
-	// open for as long as its range loop runs. Calling Positions() — a second
-	// query — from inside that loop would need a second connection that the
-	// pool can never hand out, deadlocking forever (storagetest's own helpers,
-	// e.g. contract_collections.go's collectionIDs/collectionPositionIDs,
-	// follow the same two-pass shape for the same reason).
+	// Drain List() before the nested Positions() query: a :memory: DSN is
+	// pinned to one pooled connection (sqlite.ConfigurePool), which List's
+	// iterator holds, so a second query inside the loop would deadlock.
 	var dstCollID, dstCollCount int64
 	var dstCollName string
 	for coll, err := range dst.Collections().List(ctx, "") {

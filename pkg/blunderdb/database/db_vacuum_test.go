@@ -7,8 +7,7 @@ import (
 	"testing"
 )
 
-// TestVacuum_ReclaimsSpaceAfterDeletes is the fiche's mandated scenario: a
-// database inflated by deletions shrinks back down after Vacuum, and the
+// TestVacuum_ReclaimsSpaceAfterDeletes: a database inflated by deletions shrinks back down after Vacuum, and the
 // rows that were not deleted survive intact.
 func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 	t.Parallel()

@@ -302,17 +302,9 @@ func (d *Database) migrate_2_2_0_to_2_3_0(ctx context.Context) error {
 // checker positions where it was stored as 0 because PlayedMoves was missing from
 // the analysis JSON blob at the time of earlier migrations.
 //
-// Root cause: older import code did not always set PositionAnalysis.PlayedMoves in
-// the JSON blob. All migration passes that recomputed best_move_equity_error relied
-// solely on the JSON's PlayedMoves/PlayedMove fields; they never fell back to
-// move.checker_move. As a result, best_move_equity_error stayed 0 even for
-// positions where the player made a sub-optimal checker move.
-//
-// This migration:
-//  1. Queries all analysis rows where best_move_equity_error = 0.
-//  2. For each, looks up the played checker move from move.checker_move.
-//  3. Decodes the analysis blob, matches the played move against CheckerAnalysis.Moves.
-//  4. If the played move is found at index > 0, updates best_move_equity_error.
+// Older imports did not always set PlayedMoves in the blob, and the earlier
+// recomputations never fell back to move.checker_move; this step matches
+// move.checker_move against CheckerAnalysis.Moves for every zero row.
 //
 // The caller must hold d.mu.
 func (d *Database) migrate_2_3_0_to_2_4_0(ctx context.Context) error {
