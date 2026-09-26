@@ -1,6 +1,6 @@
 # ADR-0047 — Diriger un tournoi, c'est créer ses Matchs avant qu'ils soient joués
 
-Statut : acceptée.
+Statut : acceptée ; §1 amendé par ADR-0056 (la Rencontre).
 Voir aussi : ADR-0037, ADR-0039, ADR-0044, ADR-0045, ADR-0005.
 
 ## Contexte

@@ -70,3 +70,4 @@ that come out of them.
 | [0053](0053-le-score-d-une-partie-peut-etre-annonce-et-la-partie-est-jouee-a-ce-score.md) | Le score d'une partie peut être annoncé, et la partie est jouée à ce score | announced score, `set_score` |
 | [0054](0054-le-trou-d-un-double-trait-est-une-case-et-seule-une-ecriture-deplace-le-curseur.md) | Le trou d'un double trait est une case, et seule une écriture déplace le curseur | double-turn hole, `HoldCursor` |
 | [0055](0055-le-contexte-d-un-agent-est-un-budget-borne.md) | Le contexte d'un agent est un budget borné | agent context budget, `.claude/` |
+| [0056](0056-une-rencontre-regroupe-des-tournois-dans-une-meme-salle.md) | Une Rencontre regroupe des Tournaments dirigés dans une même salle | Rencontre, shared hall, doubles, `pkg/blunderdb/direction` |

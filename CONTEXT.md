@@ -534,6 +534,9 @@ Direction alone. It is not a Player and not a person: the only link to a Player 
 the director chose to spell the same, so that the Matches that fill this Participant's slots
 carry that Player's literal name. Choosing an existing Player at entry time fixes the name
 and pre-fills the rating from that Player's PR; nothing is inferred afterwards.
+In a doubles event a Participant is a pair: two members, each with a name, a club and a
+rating; its label "A / B" is derived and its entry rating is the mean of the two. The Matches
+of a pair carry that label as the Player on its side (ADR-0056).
 _Avoid_: player (the literal name in a Match), entrant, competitor, member
 
 **Slot** (interface: *emplacement*):
@@ -551,7 +554,19 @@ The Participants of every Direction in the database, seen as one list deduplicat
 each with the club and rating of their latest entry. A *view*, never a table: it is
 recomputed from the Directions, exported and imported as CSV, and copied from one
 Tournament into the entries of the next. It is not an identity: two spellings are two rows.
+A doubles pair appears as its two members, never as a row "A / B".
 _Avoid_: player list, address book, roster (a roster is one Tournament's Participants)
+
+**Rencontre**:
+Several directed Tournaments played in the same hall, on the same dates, by the same director
+— a weekend festival with its main event, its speed and its doubles. It owns the hall: the
+number of tables, the output folder and the wall page that shows every table whatever the
+event. Each event stays a Tournament with its own Direction, Matches and standings; a hall
+gesture (a table out of service, a break) is written into every member Direction, so each
+one still replays alone. Two Participants spelled the same in two events of a Rencontre are
+one person for availability: the Rencontre knows they cannot sit at two tables. A Tournament
+belongs to at most one Rencontre and may be attached or detached at any time (ADR-0056).
+_Avoid_: festival (an event's name, not an object), meeting, réunion, event group
 
 ### Players
 
