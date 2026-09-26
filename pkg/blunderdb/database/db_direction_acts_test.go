@@ -11,6 +11,13 @@ import (
 // startedDirection creates a Tournament, directs it and starts it with n entrants.
 func startedDirection(t *testing.T, d *Database, n int) int64 {
 	t.Helper()
+	return startedDirectionNamed(t, d, n, "Joueur ")
+}
+
+// startedDirectionNamed is startedDirection with its own name prefix: two events of one Rencontre
+// entered with the same names are the same people, busy in one while they play in the other.
+func startedDirectionNamed(t *testing.T, d *Database, n int, prefix string) int64 {
+	t.Helper()
 	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
 	if err != nil {
 		t.Fatal(err)
@@ -26,7 +33,7 @@ func startedDirection(t *testing.T, d *Database, n int) int64 {
 		id := string(rune('a'+i%26)) + string(rune('a'+i/26))
 		// Le nom diffère de l'identifiant : c'est ainsi qu'un test voit qu'une vue montre
 		// bien un nom là où elle doit en montrer un.
-		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
+		players = append(players, `{"id":"`+id+`","name":"`+prefix+id+`"}`)
 	}
 	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)

@@ -17,7 +17,7 @@ func TestWallPage_OneLinePerTableWhicheverEvent(t *testing.T) {
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	a := startedDirection(t, d, 16)
-	b := startedDirection(t, d, 16)
+	b := startedDirectionNamed(t, d, 16, "Joueuse ")
 
 	r, err := d.CreateRencontre("Festival", "2026-10-03", "2026-10-04", 14)
 	if err != nil {
@@ -40,7 +40,7 @@ func TestWallPage_OneLinePerTableWhicheverEvent(t *testing.T) {
 	}
 	for _, m := range []struct{ id, a, b string }{
 		{string(ma.ID), "Joueur " + string(ma.A), "Joueur " + string(ma.B)},
-		{string(mb.ID), "Joueur " + string(mb.A), "Joueur " + string(mb.B)},
+		{string(mb.ID), "Joueuse " + string(mb.A), "Joueuse " + string(mb.B)},
 	} {
 		if !strings.Contains(page, m.a) || !strings.Contains(page, m.b) {
 			t.Errorf("wall page is missing the players of running match %s: %+v", m.id, m)
