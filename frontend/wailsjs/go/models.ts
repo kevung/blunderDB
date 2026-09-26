@@ -1103,6 +1103,8 @@ export namespace database {
 	    opponents?: string[];
 	    state: string;
 	    table?: number;
+	    absentUntil?: string;
+	    absentRound?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new ParticipantRow(source);
@@ -1121,6 +1123,8 @@ export namespace database {
 	        this.opponents = source["opponents"];
 	        this.state = source["state"];
 	        this.table = source["table"];
+	        this.absentUntil = source["absentUntil"];
+	        this.absentRound = source["absentRound"];
 	    }
 	}
 	
@@ -1396,6 +1400,8 @@ export namespace database {
 	    name: string;
 	    club?: string;
 	    note: tournoi.Note;
+	    wins: number;
+	    losses: number;
 	    prize?: number;
 	    shared?: boolean;
 	
@@ -1410,6 +1416,8 @@ export namespace database {
 	        this.name = source["name"];
 	        this.club = source["club"];
 	        this.note = this.convertValues(source["note"], tournoi.Note);
+	        this.wins = source["wins"];
+	        this.losses = source["losses"];
 	        this.prize = source["prize"];
 	        this.shared = source["shared"];
 	    }
@@ -4651,6 +4659,7 @@ export namespace tournoi {
 	    section?: string;
 	    label?: Label;
 	    key?: string;
+	    round?: number;
 	    a: string;
 	    b: string;
 	    length: number;
@@ -4676,6 +4685,7 @@ export namespace tournoi {
 	        this.section = source["section"];
 	        this.label = this.convertValues(source["label"], Label);
 	        this.key = source["key"];
+	        this.round = source["round"];
 	        this.a = source["a"];
 	        this.b = source["b"];
 	        this.length = source["length"];
@@ -4820,6 +4830,9 @@ export namespace tournoi {
 	    length?: number;
 	    score_a?: number;
 	    score_b?: number;
+	    player?: string;
+	    table?: number;
+	    other?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Warning(source);
@@ -4838,6 +4851,9 @@ export namespace tournoi {
 	        this.length = source["length"];
 	        this.score_a = source["score_a"];
 	        this.score_b = source["score_b"];
+	        this.player = source["player"];
+	        this.table = source["table"];
+	        this.other = source["other"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

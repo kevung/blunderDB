@@ -690,6 +690,14 @@ export function LoadTrainingSessions(arg1, arg2) {
   return window['go']['database']['Database']['LoadTrainingSessions'](arg1, arg2);
 }
 
+export function MakeParticipantAbsent(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['MakeParticipantAbsent'](arg1, arg2, arg3, arg4);
+}
+
+export function MakeParticipantAvailable(arg1, arg2) {
+  return window['go']['database']['Database']['MakeParticipantAvailable'](arg1, arg2);
+}
+
 export function MatchMAT(arg1) {
   return window['go']['database']['Database']['MatchMAT'](arg1);
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -332,5 +333,102 @@ func TestReinstateParticipant(t *testing.T) {
 	}
 	if got := participantState(t, d, tID, "aa"); got == "withdrawn" {
 		t.Fatalf("a reinstated player is back in play, got %q", got)
+	}
+}
+
+// TestMakeParticipantAbsentUntilTime: D7.1, an absence for a time keeps the standing it froze
+// and the return is one call away.
+func TestMakeParticipantAbsentUntilTime(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 8)
+	var before ParticipantRow
+	rowsBefore, err := d.Participants(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, r := range rowsBefore {
+		if r.ID == "aa" {
+			before = r
+		}
+	}
+
+	until := time.Now().Add(2 * time.Hour).UTC().Format(time.RFC3339)
+	if _, err := d.MakeParticipantAbsent(tID, "aa", until, 0); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := d.Participants(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var after ParticipantRow
+	for _, r := range rows {
+		if r.ID == "aa" {
+			after = r
+		}
+	}
+	if after.State != "absent" {
+		t.Fatalf("state = %q, want absent", after.State)
+	}
+	if after.AbsentUntil == "" {
+		t.Error("an absence until an hour must carry AbsentUntil")
+	}
+	if after.Wins != before.Wins || after.Lives != before.Lives {
+		t.Error("an absence must not change the standing it froze")
+	}
+
+	if _, err := d.MakeParticipantAvailable(tID, "aa"); err != nil {
+		t.Fatal(err)
+	}
+	if got := participantState(t, d, tID, "aa"); got != "free" {
+		t.Errorf("returning makes the row free again, got %q", got)
+	}
+}
+
+// TestMakeParticipantAbsentNeedsADeadline: neither an hour nor a round is not an absence.
+func TestMakeParticipantAbsentNeedsADeadline(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 8)
+	if _, err := d.MakeParticipantAbsent(tID, "aa", "", 0); err == nil {
+		t.Error("an absence needs either a time or a round")
+	}
+}
+
+// TestMakeParticipantAbsentUntilRoundNeedsARoundsPhase: a round deadline only means something
+// where rounds are counted.
+func TestMakeParticipantAbsentUntilRoundNeedsARoundsPhase(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 8) // continuous mode, no rounds
+	if _, err := d.MakeParticipantAbsent(tID, "aa", "", 3); err == nil {
+		t.Error("a round deadline outside a rounds phase must be refused")
+	}
+}
+
+// TestMakeParticipantAbsentUntilRound: in a swiss by rounds, "back at round N" is the other half
+// of D7.1.
+func TestMakeParticipantAbsentUntilRound(t *testing.T) {
+	d := newTestDB(t)
+	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Open de Lyon","tables":{"count":8},"phases":[
+		{"kind":"swiss_lives","length":7,"lives":2,"mode":"rounds","target":16}]}`
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for i := 0; i < 8; i++ {
+		id := string(rune('a'+i)) + "a"
+		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
+	}
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := d.MakeParticipantAbsent(tID, "aa", "", 2); err != nil {
+		t.Fatal(err)
+	}
+	if got := participantState(t, d, tID, "aa"); got != "absent" {
+		t.Fatalf("state = %q, want absent", got)
 	}
 }

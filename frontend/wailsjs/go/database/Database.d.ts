@@ -357,6 +357,10 @@ export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.Train
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
 
+export function MakeParticipantAbsent(arg1:number,arg2:string,arg3:string,arg4:number):Promise<database.DirectionView>;
+
+export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<database.DirectionView>;
+
 export function MatchMAT(arg1:number):Promise<string>;
 
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;

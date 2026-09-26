@@ -1979,12 +1979,22 @@
             "withdrawLaterHint": "No longer paired, but finishes the match they are at.",
             "reinstate": "Reinstate",
             "reinstateHint": "Reinstate them: they are paired again, with the results and lives they had when they left; matches lost by forfeit at their withdrawal stay lost.",
+            "absent": "Mark absent",
+            "absentHint": "Absent for a while: no longer paired, but keeps their rank, lives and place — without withdrawing.",
+            "absentUntilTime": "Until",
+            "absentUntilRound": "Until round",
+            "absentConfirm": "Confirm",
+            "absentUntilTimeLabel": "until {time}",
+            "absentUntilRoundLabel": "until round {n}",
+            "return": "Return",
+            "returnHint": "Lift the absence: they are paired again right away.",
             "none": "Nobody entered.",
             "states": {
                 "free": "free",
                 "playing": "playing",
                 "withdrawn": "withdrawn",
-                "leaving": "leaving after their match"
+                "leaving": "leaving after their match",
+                "absent": "absent"
             },
             "error": "Could not record this entry.",
             "entersAt": "enters",
