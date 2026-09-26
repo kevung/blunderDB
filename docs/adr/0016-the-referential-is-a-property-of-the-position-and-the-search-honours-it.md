@@ -1,165 +1,62 @@
 # The referential is a property of the position, and the search honours it
 
-## Status
-
-accepted — 2026-08-31. Points 1–4 and 7 implemented (`search.go`'s use_match port,
-`MatchStateFromPosition`/`MatchStateFromScores`, `EngineVersion` → v1.1.0, the batch job's
-narrow staleness exception, `use_cube` left for a follow-up ticket) and the integration gate's
-1-away exclusion removed. **Points 5 and 6 completed 2026-09-03 (#190/C.3):**
-`Searcher.Probs` is match-aware, `race.Money` is renamed `race.CubeVerdict`, and
-`evaluateRaceRegime` (`internal/gui/gammonnet_eval.go`) now builds its search through
-`gammonnet.ConfigForPosition` — the same configuration `EvaluatePosition` itself uses — instead
-of a plain `DefaultConfig` fed a separately-built match state only at the end, the exact
-distribution/verdict mismatch ADR-0023 named "Open". The equity column states its referential
-(`analysis.equityMoney`/`analysis.equityMatch`, all nine locales) in `CandidateMovesTable` and
-`CubeVerdictTable`, fed by `utils/cubeDecision.js`'s new `isMoneyPosition`, which also replaces
-the two independently-written money predicates this ADR's point 2 used to leave standing
-(`gammonnet_eval.go`'s `!= -1` vs `domaineval.go`'s `< 0`, and their frontend twins in
-`EPCPanel.svelte`'s `hasScore` vs `cubeDecision.js`'s own `isMoney`). The batch job's
-`AnalyzeStaleGammonNet` exists at the `Database` layer only; no GUI button or CLI subcommand
-triggers it yet (tracked separately, C.4).
-
-**Measured 2026-08-31** (`integration_gate_test.go`, full run, see its own header for the
-exact numbers): the 32 checker decisions the gate used to exclude wholesale at a 1-away score
-are now checked, and 30 of them clear the 0.05 cost block. The remaining 2 (one game, Black
-1-away/White 5-away) do not — the shape of a cubeless search disagreeing with XG's cubeful
-judge exactly where the cube matters most, i.e. the use_cube gap this ADR's point 7 already
-named as deferred, not a new defect. `TestIntegrationGate` is left failing on those 2 rather
-than the threshold loosened to hide them; re-measure once use_cube lands.
-
-**Amended by ADR-0019 (2026-08-31).** The referential decided here is right; the scale it was
-implemented on was not. "Normalised equity" below means gnubg's `mwc2eq`, anchored on the current
-cube — not the `2×MWC−1` the search and the cube model actually emitted, which is anchored on the
-whole match and coincides with it only at double match point.
+Status: accepted.
+See also: ADR-0011, ADR-0013, ADR-0019, ADR-0023
 
 ## Context
 
-blunderDB's gammonNet search values every node as **cubeless money equity**, at every score.
-`search.go` says so in its own header ("The search is CUBELESS and MONEY-only … it arrives
-with the MET work"), and the effect is not subtle. Measured on the opening 6-4 at 2-ply,
-across money, 7-away/7-away, 4-away/2-away, 2-away/4-away, 2-away/2-away and 1-away/1-away,
-the five candidates come back **bit for bit identical**:
-
-```
-13/9 24/18   eq=+0.01031   W=0.5045 G=0.1352
-6/2 8/2      eq=+0.00950   W=0.4993 G=0.1549
-18/14 24/18  eq=+0.00211   W=0.5071 G=0.1214
-```
-
-`6/2 8/2` is the gammonish play — two extra points of gammon chance over the leader. At
-2-away/4-away those points are most of what the game is about; at double match point they are
-worth precisely nothing. The engine prices them the same in both, because `pos.Score` never
-reaches the search. It reaches exactly one function, `evaluateCube`, and only to build a
-`MatchState` for the cube decision.
-
-This is a **porting gap, not an engine bug**. The C reference already implements the whole
-mechanism — `gn_search_config_match`, `use_match`, the match state swapped at every ply,
-`gn_match_equity`, a MET-valued `terminal_value` — and blunderDB's Go tranche deliberately
-deferred it. There is nothing to fix upstream and nothing to propagate: the work is to port
-what is already there.
-
-The gap is not hidden, either. `integration_gate_test.go` already excludes 32 decisions from
-its cost criterion, with the reason spelled out: our equities are money, XG's are match, "the
-two scales coincide away from match point but diverge sharply once either side is 1-away".
-ADR-0014 lists "a silently ignored score" among the botched-port symptoms the gate exists to
-catch — and the gate is currently looking away from the one it has.
-
-Two facts shaped the decision.
-
-**The two MET tables are the same table.** blunderDB routes match equity through
-`engine.GnuBGGetME` rather than a re-ported `gn_met.c` (ticket #122), which looks like it
-forecloses parity with the C. It does not. `gn_met_table.h` is Kazaross-XG2 read from
-`Kazaross-XG2.xml`; `engine/met.go` computes Zadeh and then **overlays** the same
-Kazaross-XG2 values (`overlayKazarossXG2`, 25×25 pre-Crawford, 24 post-Crawford). The C's own
-header records the cross-check: "the 625 pre-Crawford entries agree exactly". The two
-implementations differ only at post-Crawford 25-away, and beyond 25-away where the C refuses
-and blunderDB extends with Zadeh to 64. The C tables are `double` and blunderDB's are
-`float32`, so parity is ~1e-7 on the MWC rather than bit-exact — orders of magnitude below
-anything that changes a move choice.
-
-**blunderDB carries Crawford inside the away score.** `-1` is money, `0` is *1-away,
-post-Crawford*, `1` is *1-away, Crawford game*, `n ≥ 2` is n-away (`domain.go:22`,
-`Board.svelte:1530`, the remap at `parser.go:134`). No code decodes the `0` sentinel:
-`domaineval.go:180` passes `pos.Score[mover]` straight into `MatchState.AwayOnRoll`, and
-`MatchState.IsValid` rejects anything below 1. Every post-Crawford cube decision at match
-point is therefore **already refused today** — "cube decision not evaluable at this score" —
-and a match-aware search would inherit the same hole on every checker decision.
+A cubeless-money search ranks moves identically at every score: the opening 6-4 came back bit
+for bit the same at money, 2-away/4-away and double match point, although a gammon is worth
+most of the game in the first and nothing in the last. The C reference already implements the
+match-aware search (`use_match`); the gap was a porting gap. blunderDB's MET is the same
+Kazaross-XG2 table as the C's (float32 vs double: ~1e-7 on the MWC), and blunderDB carries
+Crawford inside the away score (`-1` money, `0` 1-away post-Crawford, `1` 1-away Crawford game).
 
 ## Decision
 
 **A referential (money or match) is a property of the position, selected by its away score,
 and every number blunderDB computes or stores about that position is in it.**
 
-1. **Port `use_match` into the Go search**, following `gn_search.c` structurally: the match
-   state travels in `SearchConfig`, is swapped at every ply exactly where the value is
-   negated, and terminal nodes are valued through the MET rather than by
-   `terminalEquity`. Nodes are valued as `2 × MWC − 1`, which is antisymmetric under the swap
-   and is why the C works on that scale rather than on raw MWC.
-
-2. **The oracle is the C for structure, blunderDB's MET for the numbers.** Parity is asserted
-   at 1e-6 on the equity and exactly on the chosen play (bar exact ties, cf. `sortByEquity`).
-
-3. **One translation from position to `MatchState`**, replacing the three near-copies at
-   `domaineval.go:175`, `gammonnet_eval.go:200` and `integration_gate_test.go:293`. It decodes
-   both sentinels (`0 → {Away: 1, Crawford: false}`, `1 → {Away: 1, Crawford: true}`), which
-   fixes post-Crawford cube decisions on the way past. Beyond the MET's horizon it **refuses**
-   — never a silent fallback to money, which is the very bug being closed.
-
-4. **`EngineVersion` becomes `gammonNet v1.1.0`.** ADR-0011 tied the label to a weights bump;
-   a change of valuation semantics is at least as structural, and the label is the only handle
-   for finding stale rows later. The batch job gains a narrow exception to ADR-0013: it may
-   rewrite an analysis **if and only if** that analysis carries an older gammonNet label. XG,
-   GNUbg and BGBlitz analyses stay untouchable — ADR-0013 protects the *imported* analysis, not
-   our own.
-
-5. **`Searcher.Probs` becomes match-aware too**, since it walks the tree with the same
-   valuation (the C says so explicitly). The race panel's `race.Money` therefore stops being
-   money: `Cubeless` follows the referential like its three neighbours, and the type is renamed
-   to something honest (`race.CubeVerdict`). It already mixed scales — `Cubeless` in points
-   next to `NoDouble`/`DoubleTake`/`DoublePass` in MWC — and this makes the mixture impossible
-   to keep.
-
-6. **The equity column states its referential** ("Équité (money)" / "Équité (match)"), with the
-   change documented in `doc/source/manuel.rst`. **No setting**: a referential is a property of
-   the position. A global toggle would make two analyses of the same position incomparable
-   depending on the state of a checkbox at the time the batch ran.
-
-7. **`use_cube` is out of scope**, and is the follow-up ticket. One tranche, one semantic
-   change: `use_cube` mirrors `cube_owner` at every ply on top of the match-state swap, and two
-   simultaneous sign conventions in one recursion is exactly the failure mode `search.go`'s
-   header warns about — plausible output, no crash, no warning.
-
-## Considered options
-
-**Re-port `gn_met.c` for bit-exact parity.** Rejected: it puts two MET implementations in
-blunderDB, or forces the cube decision back onto `gn_met.c` and reverses #122, changing cube
-verdicts already shipped. The tables coincide over the whole practical domain anyway, so
-bit-exactness buys ~1e-7.
-
-**Judge by XG alone, no C gold.** Rejected: a sign error on the match-state swap can pass a
-32-decision cost criterion by luck. A gold file sees it on the first row.
-
-**Bump the version but never recompute.** Rejected: it leaves a database silently mixing money
-and match analyses in one column, indefinitely.
-
-**Keep money in `Equity`, add a match column.** Rejected: a schema bump and a triple-sync for a
-field the default sort would still ignore — and the imported XG analyses sitting in the same
-column are already on the match scale.
+1. **The Go search ports `use_match`**, following `gn_search.c`: the match state travels in
+   `SearchConfig`, is swapped at every ply exactly where the value is negated, and terminal
+   nodes are valued through the MET. Inside the search nodes are on the antisymmetric
+   `2×MWC−1` scale; what leaves the engine is ADR-0019's.
+2. **The C is the oracle for structure, blunderDB's MET for the numbers.** Parity at 1e-6 on
+   the equity, exact on the chosen play (bar exact ties).
+3. **One translation from position to `MatchState`** (`MatchStateFromPosition` /
+   `MatchStateFromScores`). It decodes both Crawford sentinels (`0 → {Away 1, post-Crawford}`,
+   `1 → {Away 1, Crawford}`) and, beyond the MET's horizon, **refuses** — never a silent
+   fallback to money.
+4. **The batch job's one exception to ADR-0013**: it may rewrite an analysis if and only if
+   that analysis carries an older gammonNet label (ADR-0011 rule 8). XG, GNUbg and BGBlitz
+   analyses stay untouchable.
+5. **`Searcher.Probs` is match-aware too**, since it walks the tree with the same valuation.
+   The race panel's verdict type is `race.CubeVerdict`, all of its fields in the referential.
+   The race regime builds its search through `ConfigForPosition` (ADR-0023 rule 2).
+6. **The equity column states its referential** (`analysis.equityMoney` /
+   `analysis.equityMatch`), decided by one predicate, `isMoneyPosition`
+   (`frontend/src/utils/cubeDecision.js`), and documented in `doc/source/manuel.rst`. **No
+   setting**: a global toggle would make two analyses of one position incomparable depending
+   on a checkbox at batch time.
+7. **Leaves valued with the cube** — see ADR-0023 rule 1.
 
 ## Consequences
 
-- **Displayed numbers change at every match score.** They get smaller in absolute terms
-  (normalised equity spans [−1, +1], money spans [−3, +3]) and gammon-heavy plays move in the
-  ranking. This is the correct behaviour and matches XG and gnubg; it will still look like a
-  regression to anyone who does not read the column header, which is why the header changes.
-- **The gate's 1-away exclusion is deleted.** Those 32 decisions must clear the 0.05 cost
-  block. That is the acceptance criterion, and it is a test that fails today.
-- **Cube panel numbers move at match scores** even though `Decide` is untouched, because the
-  pre-roll distribution now comes from a match-aware tree. `cube_gold_test.go` feeds fixed
-  distributions to `Decide` and stays green — which is correct, not a gap.
-- **Cost is negligible.** `GnuBGGetME` is a table lookup; a match valuation is six of them
-  against a five-float dot product, both invisible next to a 196→512→512→256→128→5 forward
-  pass.
-- **Jacoby remains invisible to the search**, in Go as in C — it is a cube-decision rule in
-  both. Money play with Jacoby therefore keeps over-valuing gammons in move choice. Deliberate,
-  upstream's choice, and not this ADR's subject.
+- Displayed numbers at a match score are on a different scale from money and gammon-heavy plays
+  move in the ranking — correct, and why the header states the referential.
+- Cube-panel numbers move at match scores even with `Decide` untouched, because the pre-roll
+  distribution comes from a match-aware tree; `cube_gold_test.go` feeds fixed distributions
+  and is unaffected.
+- A match valuation is six MET lookups, invisible next to a forward pass.
+- Jacoby stays invisible to the search, as in the C: it is a cube-decision rule. Money play
+  with Jacoby keeps over-valuing gammons in move choice.
+- Rejected: **re-porting `gn_met.c`** (two METs, cube verdicts changed, for ~1e-7); **judging by
+  XG alone without C gold** (a sign error can pass a cost criterion by luck); **bumping the
+  version without recomputing** (a column silently mixing referentials); **a separate match
+  column** (schema bump, and imported XG analyses already sit on the match scale in the same
+  column).
+
+## Guard
+
+`search_test.go` / `gold_test.go` (C parity), `pkg/blunderdb/engine/gammonnet/integration_gate_test.go`,
+`frontend/src/__tests__/analysisRows.test.js`.

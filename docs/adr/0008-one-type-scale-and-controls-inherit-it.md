@@ -1,39 +1,18 @@
 # One type scale for the interface, and form controls inherit it
 
-## Status
-
-accepted — and applied: every component now uses the tokens. `input, select, textarea,
-button { font: inherit }` is declared globally in `style.css` since 2026-08-11 (it was
-declared per component until then — see *Consequences*). The absolute sizes that remain are
-the named exceptions below, each now behind its own token.
+Status: accepted.
 
 ## Context
 
-Users kept reporting the same thing about different screens: the panel "isn't pretty", the
-sizes "don't go together", the dialog is "biscornu". Each report was answered locally, and
-the defect reappeared on the next screen — including in the two components fixed most
-recently, which ended up with **two different base sizes** (12 px in the metadata panel,
-13 px in the settings dialog). Fixing it screen by screen was reproducing it.
-
-Measured across `frontend/src` when this was written:
-
-- **285 `font-size` declarations** in components, using **20 distinct values** — 9, 10, 11,
-  12, 13, 14, 15, 16, 18, 20, 28 px, `1.5rem`… About five per component.
-- `style.css` sets a font *family* on `body` and **no font size at all**. There is therefore
-  no reference: the root size is the browser's, and every component starts from scratch in
-  absolute pixels.
-- **Twelve components contain form controls whose font family is still the browser's.** A
-  control inherits neither size nor family. Several of them do set a *size* on their inputs
-  through class selectors, which hides the problem just enough that nobody notices the
-  family is wrong.
-
-The last point is the one that is felt rather than seen: a field shows its label in Nunito
-and its value in the platform's control font. Nothing looks broken; the screen just looks
-untidy.
+Components each declared their own absolute font sizes (285 declarations, 20 distinct values),
+`body` set no size, and form controls kept the browser's control font — a field showed its label
+in Nunito and its value in the platform font. Fixed screen by screen, the defect reappeared on
+the next screen. The scale values are the ones the densest panels already used (11 px and 12 px
+dominated), not a matter of taste.
 
 ## Decision
 
-**One scale, declared once, in `frontend/src/style.css`:**
+One scale, declared once in `frontend/src/style.css`:
 
 ```css
 :root {
@@ -41,147 +20,38 @@ untidy.
     --font-size-small: 11px;  /* dense lists, secondary notes and hints */
     --font-size-title: 15px;  /* panel and dialog titles */
 }
-```
-
-The values are taken from what the codebase already does, not from taste. Counting the
-panels that carry the most type — matches, Anki, search, tournaments — gives 55 declarations
-at 11 px and 28 at 12 px against a handful at every other value. Choosing anything else
-would have meant a visible change on every dense list for no reason. (An earlier draft of
-this decision proposed 13 px, inferred from a single settings dialog; the repository-wide
-count corrected it.)
-
-The tokens exist as of this decision. The companion rule —
-
-```css
 input, select, textarea, button { font: inherit; }
 ```
 
-— was deliberately **not** applied globally at first: it would have changed the appearance
-of every field in the application in one commit, and nothing tested that. Each component
-declared it for itself as it was migrated, nineteen times over. Once no component depended
-on the browser's control font any more, the per-component copies were removed and the line
-was moved into `style.css`, declared once (2026-08-11).
+1. **A component does not declare an absolute font size.** It uses the tokens, or nothing
+   (or `font-size: inherit`) and inherits.
+2. **Hierarchy is carried by weight and colour, not by size.** A label differs from a value by
+   being uppercase, semibold and grey — not smaller. Nothing goes below `--font-size-small`.
+3. **Form controls inherit** (`font: inherit`, declared globally). A component that genuinely
+   wants the platform control font overrides it explicitly.
+4. **Monospace next to proportional text takes `--font-size-small`**, since a monospaced face
+   reads a size larger at equal nominal size.
 
-Four rules follow from it, and they are what a reviewer should check:
+Named exceptions, each behind its own token:
 
-1. **A component does not declare an absolute font size.** It uses the tokens, or nothing at
-   all and inherits.
-2. **Hierarchy is carried by weight and colour, not by size.** A label differs from a value
-   by being uppercase, semibold and grey — no smaller.
-3. **Form controls inherit** (`font: inherit`). This single line is what fixes the twelve
-   components at once; setting only a size leaves the family wrong.
-4. **Monospace next to proportional text takes `--font-size-small`**, because a monospaced
-   face reads a size larger at equal nominal size. (Until 2026-09-02 the nudge was written
-   `0.92em` — 11.04 px against a 12 px base, i.e. the small token to within a rounding
-   error; it is now the token, so that the rule below has no arithmetic exception.)
-
-Named exceptions, because a rule with no exceptions gets broken silently instead of
-argued, each now behind its own token rather than a repeated magic number:
-
-- **Dialog titles** — `--font-size-dialog-title` (20 px). A modal's title is scanned before
-  its body is read, so it sits a size above a panel title. Two small utility dialogs,
-  `ConfigModal` and `ProtectedCopyModal`, keep `--font-size-title` (15 px) on their title
-  instead — a deliberate choice, not an oversight, made when the token was introduced
-  (2026-08-11): both are compact, low-ceremony dialogs where a panel-sized title reads right.
-- **Dialog close crosses** — `--font-size-dialog-close` (24 px).
-- **Figures meant to be read at a glance** — `--font-size-stat-figure` (28 px): the large
-  numbers in the statistics tabs, and the running counters in the import-progress dialogs
-  (`FileImportProgressModal`, `ImportProgressModal`). Both are numbers the screen exists to
-  show, not "text".
-- **Explicit `font-size: inherit`** (rule 1's "or nothing at all, and inherits" spelled out)
-  is not an exception to name — it already complies with the rule as written.
-
-**The rule is mechanically enforced** since 2026-09-02 by
-`frontend/src/__tests__/fontScale.sync.test.js`: every `font-size` in a `.svelte` file must
-be one of the tokens above or `inherit`, every `font` shorthand must be `inherit`, and the
-three chrome tokens are accepted only where this section places them — dialog title and
-close cross in modals (and `App.svelte`'s drop overlay), the figure token in the statistics
-tabs and the two import-progress dialogs. A new absolute value, or a chrome token in a
-panel, fails the frontend suite; adding an exception means adding it to the ADR *and* to the
-test's list, in that order.
-
-## Considered options
-
-- **Leave each component to its own scale**, the status quo. Rejected on evidence: it is what
-  produced 20 sizes and two conflicting bases within a fortnight, and every fix was a
-  reaction to a user noticing, never to a test.
-- **A rem-based scale** (`0.8rem`, `0.9rem`…). Rejected: the interface already has its own
-  zoom, applied as a CSS `zoom` on the root and persisted as a user setting. Adding a second,
-  independent scaling mechanism would make "small text" mean two different things depending
-  on which knob moved.
-- **Utility classes** (`.text-sm`, `.text-base`). Rejected: this codebase styles components
-  with scoped CSS and no utility layer; introducing one for typography alone would leave two
-  idioms side by side.
-- **Migrating every component at once.** Rejected as a *decision*, not as a goal — see below.
+- `--font-size-dialog-title` (20 px) — modal titles. `ConfigModal` and `ProtectedCopyModal`
+  deliberately keep `--font-size-title`: compact utility dialogs where a panel-sized title reads
+  right.
+- `--font-size-dialog-close` (24 px) — dialog close crosses (and `App.svelte`'s drop overlay).
+- `--font-size-stat-figure` (28 px) — figures read at a glance: the statistics tabs' large
+  numbers and the counters of `FileImportProgressModal` / `ImportProgressModal`.
 
 ## Consequences
 
-- **The migration was transversal and visual, and no test covered it.** It was therefore
-  done in two passes — the four heaviest panels first, checked on screen, then the remaining
-  twenty-seven components — rather than in one commit. `font: inherit` was declared by each
-  component that had controls (nineteen of them by the end) instead of once globally, so a
-  future component that deliberately wanted the platform's control font could still say so.
-- **The global line landed on 2026-08-11**, once the per-component count had grown to
-  nineteen with no exception among them: every component with form controls wanted the
-  inherited font, so the reason to keep the rule local (letting a future component opt out)
-  had never been exercised. `input, select, textarea, button { font: inherit; }` now lives
-  once in `style.css`; the nineteen local copies (and their repeated comment) are gone. A
-  component that genuinely wants the platform's control font can still override with its own
-  `font-family`/`font-size` — the global rule does not forbid that, it just stops it being the
-  silent default.
-- The four heaviest components — `MatchPanel` (33 declarations), `AnkiPanel` (29, seven
-  distinct sizes), `SearchPanel` (26), `TournamentPanel` (17) — held 37% of all declarations
-  and were migrated first, for that reason.
-- **Progress is measurable**, which is the point of writing the baseline down. The migration
-  took the codebase from 285 declarations over 20 distinct values to 263 using the tokens and
-  20 absolute ones, all of them named exceptions. What should stay near zero is the count of
-  *unexplained* absolute values:
+- Adding an exception means adding it here and to the guard's list, in that order.
+- 9 px and 10 px badges became 11 px and rely on colour — "shrink to demote" is rejected.
+- Rejected: per-component scales (produced 20 sizes and two conflicting bases). Rejected: a
+  rem-based scale (the interface already has its own CSS `zoom`; a second scaling knob would
+  make "small" mean two things). Rejected: utility classes (the codebase uses scoped CSS, no
+  utility layer).
 
-  ```bash
-  cd frontend/src && grep -rho 'font-size:[^;]*;' components/ *.svelte \
-      | grep -v 'var(--font-size' | sort | uniq -c | sort -rn
-  ```
+## Guard
 
-- Sizes below `--font-size-small` disappear: 9 px and 10 px were used to de-emphasise
-  counters and badges, which is exactly the "shrink to demote" habit rule 2 rejects. Those
-  become 11 px and lean on colour instead — a deliberate, visible change on a few badges.
-- A reviewer now has something to point at. "Why is this 11 px?" has an answer other than
-  taste.
-- **The exceptions themselves converged onto tokens on 2026-08-11** (fiche-08). The 20
-  absolute values counted above had, by then, fragmented into duplicates: dialog titles alone
-  spanned four values (a 15 px token use, 20 px, `1.25rem`, and a 12 px base-token misuse in
-  `MergePlayersModal`), close crosses spanned three (24 px, `1.5rem`, 18 px), and three
-  absolutes sat outside any named exception (`App.svelte`'s drop overlay at `1.3rem`, and the
-  28 px import counters, which had never been folded into the statistics-figure exception).
-  Two tokens fixed the first two: `--font-size-dialog-title` (20 px) and
-  `--font-size-dialog-close` (24 px). The statistics-figure exception grew a token too,
-  `--font-size-stat-figure` (28 px), reused by the import-progress counters since they are the
-  same kind of figure. Before:
-
-  ```
-        4 font-size: 28px;
-        4 font-size: 20px;
-        3 font-size: 1.5rem;
-        2 font-size: inherit;
-        2 font-size: 24px;
-        2 font-size: 18px;
-        2 font-size: 0.92em;
-        1 font-size: 1.3rem;
-        1 font-size: 1.25rem;
-  ```
-
-  After:
-
-  ```
-        2 font-size: inherit;
-        2 font-size: 0.92em;
-  ```
-
-  Both remaining lines already comply with rule 1 as written (`inherit` *is* "nothing at all,
-  and inherits") and rule 4 (the monospace nudge) — zero unexplained absolute values. The
-  two `0.92em` became `var(--font-size-small)` on 2026-09-02, when the guard test landed, so
-  that the guard could reject every non-token value without a special case.
-  `ConfigModal` and `ProtectedCopyModal` keep `--font-size-title` on their dialog title
-  instead of adopting the new `--font-size-dialog-title`: both are compact utility dialogs
-  where the smaller, panel-scale title was judged to read right, so they were left alone
-  rather than folded into the new token for uniformity's sake.
+`frontend/src/__tests__/fontScale.sync.test.js`: every `font-size` in a `.svelte` file is a token
+or `inherit`, every `font` shorthand is `inherit`, and the three chrome tokens are accepted only
+where this ADR places them.

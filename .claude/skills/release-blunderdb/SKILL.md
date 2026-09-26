@@ -151,17 +151,11 @@ Steps:
 
    **Also audit the developer docs** — they have no other forcing function and
    have drifted for whole release cycles before. Re-verify each factual claim
-   in `CLAUDE.md` against the code, minimally:
-
-   ```bash
-   grep -n "DatabaseVersion =" pkg/blunderdb/domain/domain.go   # vs CLAUDE.md
-   grep -n "2\.[0-9]*\.[0-9]" doc/source/annexe_db_scheme.rst        # the annex names the CURRENT schema once
-   grep -nE "go-version|node-version|version: v2" .github/workflows/build.yml
-   sed -n '20,45p' main.go                                      # mode dispatch list
-   ```
-
-   Check that `CLAUDE.md`'s toolchain versions, `DatabaseVersion`, mode list,
-   and any named files/symbols still exist (`grep` a few). Same for
+   in `CLAUDE.md` (and the directory `CLAUDE.md` files) against the code,
+   minimally: every named file, symbol, script and test still exists (`grep`
+   a few), and the annex names the current schema once
+   (`grep -n "2\.[0-9]*\.[0-9]" doc/source/annexe_db_scheme.rst`). `CLAUDE.md`
+   deliberately states no version number, so it has none to drift. Same for
    `CLI_USAGE.md` vs `internal/cli/` (every subcommand and flag), and the
    package doc of `pkg/blunderdb/storage/storage.go` (it is the architecture
    reference). Fix drift *now*, in this release's doc commit.
@@ -202,7 +196,7 @@ Steps:
    front of the user; there is no second place to also write it.
 
 4. **Factuality gate.** The documentation describes the published version, in
-   the present tense, and nothing else (CLAUDE.md, Documentation): no
+   the present tense, and nothing else (`doc/CLAUDE.md`): no
    announcement, no "not yet", no command that does not work today. The
    future lives on GitHub (milestones, Discussions) and the docs point there
    from `a_propos.rst` only. Grep the French sources for the tell-tale
@@ -237,7 +231,7 @@ Steps:
 5. Regenerate **all** translation catalogs so new/changed French strings get
    fresh `msgid` entries, then translate them. Use the repo script and nothing
    else — it keeps the gettext output path relative and repairs the
-   `python-format` flag msgmerge re-adds (CLAUDE.md, Documentation):
+   `python-format` flag msgmerge re-adds (`doc/CLAUDE.md`):
 
    ```bash
    source .venv/bin/activate

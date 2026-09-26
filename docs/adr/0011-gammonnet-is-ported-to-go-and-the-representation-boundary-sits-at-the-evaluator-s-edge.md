@@ -1,160 +1,61 @@
 # gammonNet is ported to Go, and the representation boundary sits at the evaluator's edge
 
-## Status
-
-accepted — decided 2026-08-28, tracked in the gammonNet integration issues
+Status: accepted.
 
 ## Context
 
-[gammonNet](https://github.com/kevung/gammonNet) v1.0.1 (MIT) is a measured backgammon
-evaluator: a `strehl-prob5-512-512-256-128` network, expectiminimax search to 4 ply with a
-pruning network, Kazaross-XG2 match equities, a Janowski cube model. Its published strength
-is *equivalent to GNU Backgammon at 2-ply, confirmed* — "superior" is explicitly not
-established, and eXtreme Gammon was not measured. Error rate against a gnubg 3-ply arbiter
-over 600 contact decisions: PR 1.088 at 0-ply, 0.375 at 2-ply with pruning `k=12` (the
-default, ×3.9 cheaper).
-
-blunderDB wants it embedded so a library position can be evaluated with no XG, no gnubg and
-no network. Four ways in were available, and the shape of the release decided against three
-of them:
-
-- **The published artifacts are WebAssembly only** — `gammonnet.wasm` (85 KB), its `.mjs`
-  glue, the `api/` worker and pool modules, and the weights. `libgammonnet.so` exists in the
-  source tree but is not a release artifact. Consuming the WASM inside the Wails webview
-  would cost nothing to build, but the evaluator would then exist **only in GUI mode** — no
-  `blunderdb` subcommand, no batch analysis of a library, nothing headless. That forks a
-  capability by mode, which is the one thing the CLI/GUI/server parity invariant forbids.
-- **cgo** would give parity, at the price of building a C library for four CI targets
-  including a macOS universal fat binary, breaking `CGO_ENABLED=0` for `cmd/serve`, and
-  putting a C crash inside the process.
-- **A `gammonnet serve` subprocess** does not exist yet upstream, and shipping a second
-  binary through AUR, flatpak, `.exe` and `.dmg` is heavy.
-
-What made a Go port small was measuring what blunderDB already has. Of gammonNet's eleven C
-modules, four are genuinely missing here: `gn_encoding` (the 196-feature perspective
-encoding), `gn_infer` (the MLP forward pass and the `BGNN` weight loader), `gn_search`, and
-`gn_cube`. The rest have counterparts: `domain.LegalMoves`, `engine/met.go` (**the same**
-Kazaross-XG2 table, 25-away, pre- and post-Crawford, with a Zadeh fallback beyond 25 where
-gammonNet refuses the state), `engine/race/` and the Zobrist/bitboard codecs. And
-`domain.Position.Score` is already an *away* score — the exact shape of `GnMatchState`.
-
-Reusing those counterparts wholesale, however, would have been a performance disaster in one
-place. `domain.LegalMoves` returns `[]LegalPlay`, where every play carries a `Steps` slice, a
-full `Result Position` (26 points of `{Checkers, Color}`), **and a `Notation string`** — and
-deduplication runs through `boardKey(p *Position) string`, a second string per play. Two
-string allocations per candidate, in a 2-ply `k=12` search that generates on the order of
-5000 plays per decision, is a factor of a hundred, not a detail. `race.Evaluate` is worse
-still as a leaf oracle: it takes a `*domain.Position` and runs EPC, convolution, a calibrated
-correction and a two-sided lookup.
+blunderDB embeds [gammonNet](https://github.com/kevung/gammonNet) (MIT) so a position can be
+evaluated with no XG, no gnubg and no network, in every mode. Upstream publishes only
+WebAssembly, which would exist in the GUI alone and break CLI/GUI/server parity. Four of its
+C modules are missing here (encoding, forward pass, search, cube); the others have blunderDB
+counterparts. Reusing those inside the search loop is a ×100 trap: `domain.LegalMoves`
+allocates two strings per candidate, ~5 000 candidates per 2-ply decision.
 
 ## Decision
 
-**gammonNet's network, encoding, search and cube model are ported to Go.** The port targets
-the Configuration upstream publishes, unchanged: the same network, the same search, the same
-match equities, and the same endgame behaviour — race leaves fall back to the network,
-because gammonNet's exact table (1.2 GiB) is not in the artifact either, and its absence
-costs a measured 0.00028 equity per bearoff decision. blunderDB's own two-sided table serves
-the *panel*, never the search's leaves. The Configuration is therefore upstream's, and the
-label `gammonNet v1.0.1` is honest — conditioned on the proof below.
-
-**The representation boundary sits at the evaluator's edge, never inside its loop.** A
-`domain.Position` is converted to the engine's representation **once**, on entry. Inside,
-everything stays in the engine's representation, allocation-free, using the ported routines.
-blunderDB's routines serve at the edge — presentation, notation, the panel — and on cold
-paths.
-
-**Two move generators therefore coexist, and a differential test keeps them one truth.**
-`domain.LegalMoves` remains the canonical generator for everything outside the search
-(it is exposed at `/v1/positions.legalMoves`); the ported generator serves the search. Over a
-corpus of positions × all 21 rolls, the two must produce the **same set of resulting
-positions**. Having two implementations is acceptable; having two answers is not.
-
-**Where blunderDB's counterpart is better and cold enough, it wins.** The MET stays
-blunderDB's — same table, plus a fallback beyond 25-away that gammonNet refuses — but the
-distribution→MWC conversion is precomputed once per search into six outcome values, since the
-score cannot change during one, leaving the leaf six multiply-adds. The Zobrist codec stays
-blunderDB's: it carries the deduplication invariant. The eval cache is ported, and improves
-in the crossing: upstream declares itself not thread-safe *on purpose* ("parallelism is by
-PROCESS ... never by thread"), a premise a per-search Go cache simply does not have.
-
-**The weights are embedded, in float32.** `go:embed` of the `.bin` artifact (2 113 592 bytes)
-next to the 1.4 MB and 6.8 MB bearoff tables already embedded. A desktop application
-transports nothing, so float16 — a *transport* format, halving a download for 0.015 % of
-decisions moved — answers a constraint that does not exist here. The reference artifact is
-what gets written into users' databases.
-
-**The port is proven, not asserted, at two levels.** Network parity: on the published
-`verify/reference.bin` — 2000 positions of pre-encoded features with their reference outputs —
-the five probabilities must reproduce the C reference to gammonNet's own published criterion,
-**1e-6**. (The often-quoted 4.77e-07 is the worst deviation gammonNet *measured* across seven
-platforms, not the threshold it set; a measurement used as a threshold fails on a machine that
-is merely different rather than wrong.) Measured on this port: **max|Δ| = 5.960e-08** — one ulp
-of float32 near 1, which is the signature of the hidden layers being bit-exact and the only
-divergence coming from the final sigmoid, where the reference calls `expf` and Go rounds a
-float64 `exp`. That exactness is not free: the accumulation must stay float32, ascending from
-the bias, and each product carries an explicit `float32(...)` conversion to forbid the compiler
-from contracting the multiply-add into an FMA on the architectures where Go fuses. Search parity: on a versioned gold file, the **chosen
-move** must match the C reference at each ply, with equities to 1e-6. The gold file is
-regenerated deliberately on an upstream bump, never silently, which means the C reference
-must be buildable outside CI and that procedure must be written down.
-
-## Considered options
-
-- **WASM in the webview.** Zero build cost, the same artifact as gammonGo, no cgo. Rejected:
-  the evaluator would exist in one mode only.
-- **cgo against `libgammonnet`.** Full parity. Rejected: four-target C builds including a
-  macOS universal fat binary, `CGO_ENABLED=0` broken for `cmd/serve`, and a C fault inside
-  the process — the same reasoning that removed cgo from gammonGo's server.
-- **A `gammonnet serve` subprocess.** Isolates faults, full parity. Rejected: the mode does
-  not exist upstream, and a second binary burdens every packaging target.
-- **A faithful replica**, porting `gn_rules`, `gn_met` and `gn_bearoff` too, for end-to-end
-  parity with the C reference. Rejected: two move generators *and* two METs in one binary,
-  an endgame that regresses against what blunderDB already does better, and every upstream
-  bump becoming a re-porting exercise.
+1. **gammonNet's network, encoding, search and cube model are ported to Go**, targeting the
+   Configuration upstream publishes, unchanged. Race leaves fall back to the network, as
+   upstream's artifact does; blunderDB's two-sided table serves the panel, never the search's
+   leaves.
+2. **The representation boundary sits at the evaluator's edge.** A `domain.Position` is
+   converted once, on entry; inside, everything stays in the engine's representation,
+   allocation-free. blunderDB's routines serve the edge (notation, panel) and cold paths.
+3. **Two move generators, one truth.** `domain.LegalMoves` stays canonical outside the search;
+   the ported generator serves the search; over a corpus × all 21 rolls both produce the same
+   set of resulting positions.
+4. **Where blunderDB's counterpart is better and cold, it wins**: the MET (`engine/met.go`,
+   the same Kazaross-XG2 table plus a Zadeh fallback beyond 25-away), precomputed per search
+   into six outcome values; the Zobrist codec. The eval cache is ported, per search.
+5. **The weights are embedded in float32** (`go:embed`), the reference artifact.
+6. **The port is proven at two levels.** Network parity on upstream's `verify/reference.bin`
+   at upstream's criterion, 1e-6 (measured 5.960e-08). Search parity on versioned gold files:
+   the same chosen move at each ply, equities to 1e-6.
+7. **The port follows the C.** A discrepancy from gammonNet is a bug, never an improvisation.
+   A conceptual change — one whose gain survives a change of language — is written in
+   gammonNet first, with its measurement, and the port follows; an implementation-only change
+   (e.g. the AVX2 kernel) stays here. The gold files are regenerated only from a fixed C
+   reference, never to accommodate a local change.
+8. **`EngineVersion` names a real upstream tag** (`gammonNet vX.Y.Z`). Any change to the
+   Configuration or to valuation semantics bumps it, and every stored analysis under an older
+   label is stale as a whole (`AnalyzeStaleGammonNet`). Depth lives in `AnalysisDepth`, never
+   in the label; other engines keep product names, since their version does not change a
+   stored analysis.
 
 ## Consequences
 
-- The evaluator is available to the GUI, to the CLI, and to `serve` — in the form each mode
-  warrants (see the library-operations boundary in the serve API).
-- `AnalysisEngineVersion` gains the value `gammonNet v1.0.1`, the only engine label carrying
-  a version. The others (`XG`, `GNU Backgammon`, `BGBlitz`) are product names, because their
-  version does not change a stored analysis; a weights bump does. It is the same string
-  gammonGo already writes, so one concept keeps one key across both products.
-- Depth belongs in `AnalysisDepth`, as it does for every other engine — never in the name.
-- The release ships `LICENSE`, `NOTICE` and `THIRD-PARTY.md`; the source tree carries an SPDX
-  MIT header per file, and the vendored network keeps Alexander Strehl's paternity. The port
-  carries the notice and the attribution alongside the weights, and repeats them in the
-  Acknowledgements.
-- Network parity covers the forward pass only — `verify/reference.bin` supplies features, not
-  positions. The **encoding** and the domain→engine conversion need their own proof, and the
-  strongest one available is internal: the opening position is symmetric, so it must encode
-  identically from both players' point of view (which catches a reversed mirroring and a
-  swapped colour identifier at once), and the geometry is pinned against `domain.LegalMoves`
-  — if domain point 24 really is White's ace point, a checker there bears off on a 1.
-- **The port pays a measured ×7 on the path the search actually uses, and that was not
-  foreseen when this decision was taken.** A single evaluation costs 376 µs in Go against
-  342 µs in C (`gcc -O2`) — 1.10×, which is what this ADR assumed the whole cost would be. But
-  the reference has a *batched* kernel (feature-major transpose, fixed width 32) that gcc
-  vectorises, and on the same machine it evaluates at **52.6 µs per position, ×7.38 faster
-  than its own single path**. Go gets none of that: measured in both plausible loop shapes,
-  batch-index outer and batch-index inner, it returns ×0.97 and ×0.85 — nothing. Go does not
-  auto-vectorise, and the reduction is latency-bound at about two cycles per multiply-add in
-  both languages.
+- The evaluator is available to GUI, CLI and `serve`; no cgo, `cmd/serve` stays
+  `CGO_ENABLED=0`.
+- The release ships gammonNet's `LICENSE`, `NOTICE` and attribution; the panel carries a
+  discreet link.
+- Network parity covers the forward pass only; the encoding is proved separately (the opening
+  position encodes identically from both sides; geometry pinned against `domain.LegalMoves`).
+- Performance of the Go kernel is ADR-0024's subject.
+- Rejected: **WASM in the webview** (one mode only); **cgo** (four-target C builds, broken
+  `CGO_ENABLED=0`, C faults in-process); **a subprocess** (does not exist upstream, second
+  binary to package); **a faithful replica** porting rules/MET/bearoff too (two generators
+  and two METs in one binary, every upstream bump a re-port).
 
-  The arithmetic then closes: a 2-ply decision with the published `(0,1,3)` filter costs 13 400
-  big-network evaluations, which is **0.70 s** in batched C — reproducing gammonNet's own
-  measurement of a 7-point match analysed at 0.86 s per decision in WebAssembly — and **5.0 s**
-  in Go.
+## Guard
 
-  The decision stands, for three reasons. Goroutine parallelism is **linear** (measured ×23.3
-  on 24 cores, zero allocations), which puts an interactive 2-ply decision at ~0.63 s on eight
-  cores, behind an immediate 0-ply display. The alternatives have not become cheaper, and the
-  WebAssembly one carries upstream's own ×1.18–1.29 penalty on top. And the gap is closable
-  **without giving up bit-exactness**: the kernel vectorises across the BATCH dimension, not
-  across the reduction, so every position keeps its own lane and accumulates over j in
-  ascending order — a hand-written SIMD kernel in Go would reproduce the 5.960e-08 already
-  proved. That is a bounded follow-up with a measured target, not a rewrite.
-- Intra-search parallelism over the 21 root rolls is therefore a **requirement** of the search,
-  not an optimisation: without it the interactive promise does not hold.
-- A visible, discreet attribution — one word and a link to the repository — accompanies the
-  panel.
+`pkg/blunderdb/engine/gammonnet/`: `parity_test.go`, `gold_test.go`, `moves_diff_test.go`,
+`encoding_test.go`, `staleness_test.go`.

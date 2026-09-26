@@ -287,7 +287,7 @@ jobs:
   # -short — so it can afford -race on every push without becoming the new
   # bottleneck shard: measured 2026-09, ~43s, dominated by
   # TestKernelIdentityOnPartialBatches (the batched evaluator's own
-  # concurrency-relevant path — CLAUDE.md's "the network kernel never fuses
+  # concurrency-relevant path — `engine/gammonnet/CLAUDE.md`'s "the network kernel never fuses
   # and never reassociates" invariant, exercised here under the race
   # detector rather than just for bit-identity).
   race-gammonnet:

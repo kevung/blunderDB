@@ -1,454 +1,122 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Working rules and invariants for this repository — not an architecture tour. This file is
+re-read at every turn of every agent: anything added here is paid everywhere, so a rule that
+concerns one subsystem goes in a `CLAUDE.md` of that directory (`frontend/`, `doc/`,
+`pkg/blunderdb/engine/gammonnet/`), loaded only when working there.
 
-It deliberately holds **working rules and invariants, not an architecture tour**. The
-architecture is documented where it lives: `ARCHITECTURE.md` (three diagrams —
-mode dispatch, the `database`/`storage`/backends layering, an import's path
-through parser/ingest/Zobrist), the package doc of
-`pkg/blunderdb/storage/storage.go` (persistence contract and backends), `CONTEXT.md`
-(domain glossary), `docs/adr/` (decisions), `doc/source/mode_headless.rst` (server
-mode, user-facing), and `CLI_USAGE.md` (CLI reference). Read those before changing
-the subsystem they describe.
+The architecture lives where it is documented: `ARCHITECTURE.md` (mode dispatch, layering, an
+import's path), the package doc of `pkg/blunderdb/storage/storage.go` (persistence contract),
+each package's `doc.go`, `CONTEXT.md` (domain glossary), `docs/adr/` (decisions),
+`doc/source/mode_headless.rst` (server mode), `CLI_USAGE.md` (CLI reference).
 
-## Project Overview
+## Project
 
-blunderDB is a backgammon blunder analysis tool: a **Wails v2 desktop application**
-(Go backend + Svelte 5 / Vite frontend) whose single binary also runs headless. One
-executable, five modes, dispatched on `os.Args[1]` in `main.go`:
+blunderDB is a backgammon blunder database: a **Wails v2 desktop app** (Go + Svelte 5 / Vite)
+whose single binary also runs headless, dispatched on `os.Args[1]` in `main.go`: no argument →
+GUI; `serve` → HTTP daemon (SQLite or multi-tenant PostgreSQL); `call` → in-process dispatcher
+over the same handlers; `migrate` → SQLite → PostgreSQL; anything in `handlers()` of
+`internal/cli/cli.go` → CLI. That table is the only list of commands (`cli.IsCommand`,
+`cli.CommandNames()`); never add a second one.
 
-- No args → **GUI** (Wails desktop app)
-- `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
-- `call` → generic in-process dispatcher over the same handlers (scripting/tests)
-- `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `analyze|anki|bearoff|collection|completion|create|cubematrix|delete|edit|epc|export|healthcheck|help|identity|import|info|list|match|open|repair|search|tournament|transcribe|trash|vacuum|verify|version` →
-  **CLI**. The names live in one place — `handlers()` in `internal/cli/cli.go`
-  (`cli.CommandNames()` is the exported, sorted view `cmd/cli-doc-gen` walks);
-  `main.go` asks `cli.IsCommand`. Never re-introduce a second list there.
-
-## Build & Run
-
-All commands run from the repo root unless stated.
+## Build, run, test
 
 ```bash
-make dev      # wails dev  -tags webkit2_41  (hot-reload frontend via Vite)
-make build    # wails build -tags webkit2_41 → build/bin/blunderDB
-```
-
-The `webkit2_41` tag matches webkit2gtk-4.1 (Arch, ubuntu-latest); plain
-`wails build` targets webkit2gtk-4.0 (ubuntu-22.04 in CI). CI
-(`.github/workflows/build.yml`) builds ubuntu-latest, ubuntu-22.04,
-windows-latest, macos-latest (`darwin/universal`). Toolchain: Go 1.26.8 (CI and
-both Dockerfiles; `go.mod` states `go 1.26.0`, the minimum `x/crypto` requires —
-gammonGo embeds `pkg/blunderdb/server` and inherits it, so never raise it without
-a dependency that demands it), Node 22 LTS, Wails CLI and library v2.10.2. The Go and Node
-versions are stated ONCE per workflow, as `env: GO_VERSION` / `NODE_VERSION`
-(B.19, #187) — bump them there, not at each `setup-go`/`setup-node`.
-
-`cmd/serve/` builds the daemon alone — pure Go, CGO disabled, no Wails — for the
-container image (`Dockerfile.serve`).
-
-## Tests
-
-```bash
-go test ./...                     # all Go tests
-go test -run TestNameRegex ./...  # single test
+make dev                          # wails dev -tags webkit2_41 (webkit2gtk-4.1)
+make build                        # → build/bin/blunderDB
+go test ./...                     # Go; -run TestNameRegex for one test
 cd frontend && npm test           # vitest
 ```
 
-CI enforces more than the bare suites — run these before pushing anything nontrivial:
-`go vet ./...`, `go test -race`, `golangci-lint` (v2.11.4, config `.golangci.yml`),
-`govulncheck`, and on the frontend `npm run lint`, `npm run format:check` (prettier
-**fails the build**), `npm run test:e2e` (Playwright).
+CI also enforces `go vet`, `go test -race`, `golangci-lint` (`.golangci.yml`), `govulncheck`,
+`npm run lint`, `npm run format:check` (prettier fails the build), `npm run test:e2e`.
+`cmd/serve/` builds the daemon alone (pure Go, no CGO, no Wails) for `Dockerfile.serve`.
 
-Most Go tests live beside the code (`pkg/blunderdb/database/`,
-`pkg/blunderdb/storage/…`, `internal/cli/`, `./tests/`). Fixtures live under
-`testdata/`; the EPC engine embeds `pkg/blunderdb/engine/gnubg_os6.bd`. The
-`database` and `cli` test packages `chdir` to the repo root via `TestMain` so
-repo-root-relative fixture paths resolve. Both storage backends must pass the shared
-contract suite in `pkg/blunderdb/storage/storagetest/`.
+Toolchain: Go and Node versions are stated once per workflow (`env: GO_VERSION` /
+`NODE_VERSION`). `go.mod` states `go 1.26.0`, the minimum a dependency requires — gammonGo
+embeds `pkg/blunderdb/server` and inherits it, so never raise it without a dependency that
+demands it. Wails CLI and library v2.10.2.
 
-## Claude Code setup
+Tests live beside the code; fixtures under `testdata/`. The `database` and `cli` test packages
+`chdir` to the repo root in `TestMain`. Both storage backends pass the contract suite in
+`pkg/blunderdb/storage/storagetest/`.
 
-`.claude/` is checked in so every machine working on this project gets the same
-tooling:
+## Workflow
 
-- `.claude/settings.json` — shared config. Registers the `mattpocock`
-  marketplace and enables the `mattpocock-skills` plugin (~22 engineering
-  skills, invoked as `/mattpocock-skills:<name>`). Claude Code offers to
-  install it once you trust the folder, so a fresh clone needs network access
-  the first time.
-- `.claude/skills/` — project skills committed directly (e.g.
-  `release-blunderdb`). No settings needed; they are auto-discovered.
-- `.claude/settings.local.json` — personal, per-machine overrides. Gitignored;
-  keep machine-specific preferences (model, theme, extra permissions) there and
-  out of `settings.json`.
-
-## Development Workflow
-
-For **every new modification**, work in an isolated git worktree to avoid conflicts — never edit directly on the shared checkout. The cycle is: create a worktree, do the work and commit there, merge the branch back, then remove the worktree to clean up.
-
-Give `git worktree add` an **absolute** path: a `../blunderDB-<feature>` relative
-to the wrong cwd silently creates the worktree *inside* the repo.
+Every change is made in its own worktree, with an **absolute** path (a relative one can land
+inside the repo), then merged back:
 
 ```bash
-# 0. Anchor on the repo root so the paths below cannot drift with the cwd
-ROOT=$(git rev-parse --show-toplevel)
-WT="$ROOT/../blunderDB-<feature>"
-
-# 1. Create a worktree on a fresh branch for the change
-git worktree add "$WT" -b feat/<feature>
-
-# 2. Work + commit inside that worktree
-cd "$WT"
-# … edit, test …
-git add -A && git commit -m "feat: <feature>"
-
-# 3. Merge the branch back into the base branch
-cd "$ROOT"
-git merge feat/<feature>
-
-# 4. Clean up the worktree (and the branch once merged)
-git worktree remove "$WT"
-git branch -d feat/<feature>
-
-# Sanity check: only the main checkout should remain
-git worktree list
+ROOT=$(git rev-parse --show-toplevel); WT="$ROOT/../blunderDB-<feature>"
+git worktree add "$WT" -b feat/<feature>          # work + commit in $WT
+cd "$ROOT" && git merge feat/<feature>
+git worktree remove "$WT" && git branch -d feat/<feature>
 ```
 
-**A fresh worktree does not build at the repo root.** `main.go` embeds the compiled
-frontend (`//go:embed all:frontend/dist`), and `frontend/dist/` is a build artefact that
-git ignores — so a worktree that has never had a frontend build fails immediately, and
-the error names the embed rather than the cause:
+A fresh worktree does not build: `main.go` embeds `frontend/dist`, which git ignores —
+`mkdir -p "$WT/frontend/dist" && touch "$WT/frontend/dist/index.html"` for backend work.
+Never `git reset --hard` on `main`: parallel sessions merge into it; undo with `git revert`.
 
-```
-main.go:20:12: pattern all:frontend/dist: no matching files found
-```
+**A user-visible feature ships with its documentation** in the same branch: the entries in
+`doc/source/raccourcis.rst` / `manuel.rst` / `cmd_mode.rst` and their eight `.po` (rules in
+`doc/CLAUDE.md`). A new CLI command also lands in `CLI_USAGE.md` (`go run ./cmd/cli-doc-gen`)
+and `cli.rst`; `scripts/doc-inventory.sh` reports a gap — fix it by writing the text, never by
+widening the script.
 
-Either run a real build, or drop a placeholder in for backend work:
+**Release**: the `release-blunderdb` skill (`scripts/release.sh <version>`). `DatabaseVersion`
+in `pkg/blunderdb/domain/` is independent of the app version.
 
-```bash
-mkdir -p "$WT/frontend/dist" && touch "$WT/frontend/dist/index.html"
-```
+## Context budget (ADR-0055)
 
-Nothing to clean up afterwards: the directory is gitignored.
-
-**A user-visible feature ships with its documentation.** Any new command, shortcut,
-panel, or filter must land in the same branch as its `doc/source/raccourcis.rst` /
-`doc/source/manuel.rst` / `doc/source/cmd_mode.rst` entries **and** their eight
-`.po` (see Documentation below — the online docs deploy from `main`). Undocumented
-features have gone undiscovered for whole release cycles; don't add to that pile.
-
-## Documentation
-
-Sphinx docs live under `doc/` in **nine languages**: French is the source,
-`doc/source/locale/` holds gettext translations (en, de, el, es, fi, it, ja, ru).
-Build with `cd doc && python build.py` (requires `doc/requirements.txt` and LaTeX
-for the PDF build). GitHub Pages publishes from `gh-pages` on tag pushes. Historical
-design notes live in `doc/archive/` — consult when touching the related subsystem,
-but they do not reflect current code.
-
-**A modified `.rst` ships with its eight `.po` in the same commit.** The online
-docs deploy from `main` and fall back to French for every untranslated string, so
-a translation gap is a user-visible regression on eight sites, not release
-polish. Refresh the catalogues, translate the empty `msgstr`, and check:
-
-```bash
-source .venv/bin/activate
-scripts/doc-po-update.sh       # regenerates the eight catalogues, then repairs
-scripts/doc-i18n-check.sh      # must end on "all translations complete"
-```
-
-Run `doc-po-update.sh` rather than sphinx-build/sphinx-intl by hand: it keeps
-the gettext output path **relative** (an absolute one rewrites every `#:`
-reference and buries the real diff), and it normalises the `python-format`
-flag that `msgmerge` re-adds behind an existing `no-python-format` at every
-update — gettext honours the last flag, so the false positive comes back each
-time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po`: `msgcat`, Babel and polib each
-disagree on line breaks, so one pass through any of them rewrites the whole
-file and buries the real change. To fill the empty `msgstr` after an update,
-use `scripts/po-fill.py <translations.json>` — it edits the catalogue as text
-and touches only the entries it is asked to fill.
-
-**The documentation describes the published version, in the present tense, and
-nothing else.** No announcement, no "not yet", no "coming soon", no command that
-does not work today. The future has exactly one home — the GitHub milestones and
-Discussions — and the docs point there from the *À propos* page only. The
-release skill's Phase 1 audit greps the French sources for the tell-tale
-phrases (« à venir », « en préparation », « pas encore publié », « prévu »,
-« une fois publié ») and blocks while one remains. A roadmap page was tried
-once (H.11, 2026-09) and removed four days later: a page titled "roadmap"
-invites the future back in at every release.
-
-**The guide shows a task, the manual describes a screen.** Eight panels were
-described twice, once in each register, and the two drifted (a "Delete
-Position" with and without a confirmation, k/j swapped). A screen description
-that appears in `guide_utilisateur.rst` becomes a `:ref:` to the manual's
-panel section; a task walk-through does not belong in `manuel.rst`. Apply it
-to any page you touch — it is not a refactor to schedule, it is the rule for
-the next edit.
-
-**A page is proposed with its price.** One French line costs about twenty
-lines of catalogue across the eight translations (measured 2026-09-06: 6 942
-lines of `.rst`, 138 272 of `.po`), half of them in four languages nobody here
-proofreads. A new page, or a section that is really a page, is put forward
-with its msgid count × 8 in the discussion that proposes it, and is not the
-first answer to a persona's "what is missing" — a sentence on an existing
-page, or a `:ref:` to where it is already said, usually is.
-
-**The in-app help is generated from these same sources.** `manuel.rst`,
-`raccourcis.rst` and `cmd_mode.rst` are the only statement of the manual, the
-keyboard shortcuts and the command line; `frontend/src/i18n/help/*.js` is a build
-artefact rendered from them and their eight catalogues (ADR-0034). After changing
-any of the three — or the About fragment under `frontend/src/i18n/help/prose/` —
-run `make help`; `go test ./cmd/help-gen` fails while a bundle is stale, and the
-bundles are never edited by hand.
-
-**A command is written down where a user looks for it, not only where it works.**
-`scripts/doc-inventory.sh` compares `handlers()` and the `<cmd>Handlers()` tables
-against `blunderdb help`, the hand-written sections of `CLI_USAGE.md` and the
-sub-command lists of `cli.rst`; the `release-blunderdb` skill blocks on it. It
-covers only what no test holds — `internal/cli/cli_doc_sync_test.go`, the three
-frontend `*.sync.test.js` and `go test ./cmd/help-gen` hold the rest, and its
-header names them so nobody adds a second copy. Fix a gap it reports by writing
-the missing text, never by widening the script.
-
-**Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
-Split long documents into a README index + per-topic files.
-
-## Release Process
-
-Use `scripts/release.sh <version>` — it updates the version in **four** places
-(`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, `wails.json`, optionally
-the `doc/source/historique.rst` changelog) and creates a commit + tag. Pushing the tag
-triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
-the `release-blunderdb` skill to drive the whole thing, including the doc audit.
-
-The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.24.0**) is
-independent of the app version — bump it only when the SQLite schema changes.
-
-## Architecture in one screen
-
-Backend packages, thinnest description that lets you find things:
-
-- `main.go` (repo root, `package main`) — mode dispatch + Wails `//go:embed`
-  (must stay at root: embed patterns can't use parent paths); `config.go`
-  (XDG-persisted window/last-DB config); `logging.go` (slog).
-- `pkg/blunderdb/domain/` — dependency-free domain types and constants
-  (`Position`, `Match`, FSRS cards, `DatabaseVersion`).
-- `pkg/blunderdb/engine/` — what is computed ABOUT a position: Zobrist hashing
-  (the identity positions dedup on), bitboards, EPC (reads a generated
-  `gnubg_os6.bd`, ADR-0027 — nothing is embedded any more), the
-  match equity table (`met.go` — Kazaross-XG2 + Zadeh, `GnuBGGetME` the single
-  entry point), and the two storage codecs (compact board, zstd analysis blob,
-  and every derived scalar column). Read its package doc (`doc.go`) for the
-  file-by-file map. Three subpackages — the two evaluators, and the generator
-  that feeds them:
-  `engine/race/` — bearoff race analysis: two-sided `.bd` reader (resolving a
-  generated table, an external one, or none), win-probability estimation,
-  money cube verdicts (ADR-0009);
-  `engine/bearoffgen/` — the tables themselves, generated rather than shipped
-  or downloaded (ADR-0027): a port of gnubg's `makebearoff`, byte-identical to
-  it and checked against a recorded SHA-256 per domain. The two-sided sweep is
-  parallel over each diagonal and resumable through a `.ckpt`; `bearofftest/`
-  hands tests a real table without paying for one;
-  `engine/gammonnet/` — the neural evaluator, ~5 000 lines and the largest thing
-  in the tree: a Go port of gammonNet's encoding, network (AVX2/pure-Go kernel),
-  expectiminimax search and Janowski cube model (ADR-0011, ADR-0022, ADR-0023,
-  ADR-0024, ADR-0029). Its arithmetic is a contract: read its package doc and
-  `cube.go`'s header first.
-- `pkg/blunderdb/storage/` — the persistence **contract**; backends
-  `storage/sqlite/` (desktop/CLI) and `storage/postgres/` (serve daemon, RLS,
-  tenant purge); shared contract tests in `storage/storagetest/`. Read this
-  package's doc comment first.
-- `pkg/blunderdb/database/` — the legacy SQLite-only `Database` wrapper the GUI
-  and CLI run; delegates to `storage/sqlite`. Schema DDL in `db_schema.go`,
-  migrations in `db_migration.go`, per-domain `db_*.go` files.
-- `pkg/blunderdb/ingest/` — backend-agnostic import/export used by the daemon;
-  `pkg/blunderdb/parser/` — position-text parsing shared by GUI/CLI/server;
-  `pkg/blunderdb/migrate/` — SQLite→PostgreSQL copy; `pkg/blunderdb/server/` —
-  `Bootstrap()` for in-process embedding by a trusted parent (gammonGo).
-- Feature packages, each pure of SQL unless stated, each with a package doc
-  to read first: `searchquery/` — the one search grammar (`s cube p>30 …` ↔
-  `SearchFilters`), locked to the frontend parser by a shared corpus;
-  `transcript/` — the engine of a Transcription, a draft that owns its match
-  (ADR-0044, ADR-0045, ADR-0048, ADR-0049); `direction/` — directing a
-  tournament, the only package that knows the Nicomaque engine (ADR-0047);
-  `anki/` — FSRS scheduling every backend runs on review (ADR-0042 for score
-  cards); `trash/` — the thirty-day undo of a delete (ADR-0036); `watch/` —
-  importable files appearing in a folder; `engine/training/` — the Training
-  questions that need the neural evaluator (ADR-0040, ADR-0041).
-- `pkg/blunderdb/issuance/` — marking a database with its origin (signed
-  watermark + issuer identity) and wrapping an export in an encrypted container.
-  **Pure**: no SQL, no schema; its glue is `database/db_issuance.go` and it
-  stores one canonical signed JSON document in a `metadata` row. Read its
-  package doc and ADR-0007 before touching it.
-- `internal/gui/` — Wails `App` (dialogs, clipboard, drag-drop) + bootstrap;
-  `internal/cli/` — one `cli_<cmd>.go` per subcommand; `internal/server/` — the
-  HTTP daemon (`routes.go`, `handlers_*.go`, middleware, metrics, `call.go`).
-- `cmd/` — `serve` (headless entrypoint) plus dev-time tools that never ship in
-  the binary and are not CLI subcommands: `blunderdb-loadtest` (drives the
-  `/v1/*` endpoints with a configurable scenario mix), `extract_gnubg_stats`
-  (parses GS tags from a gnuBG SGF file), `calibrace` (fits `engine/race`'s
-  correction against a TS-06-11 oracle), `train-analysis-dict` (regenerates
-  the embedded zstd dictionary, ADR-0030), `help-gen` (renders the in-app
-  help bundles from the Sphinx sources, ADR-0034), `cli-doc-gen` (captures
-  every subcommand's `--help` into `CLI_USAGE.md` — rerun it after changing a
-  command's help text, nothing fails while it is stale), `openapi-gen`
-  (regenerates `openapi.yaml`, its Sphinx annex and the Python client) and
-  `likecorpus` (the human-judged corpus for `like`, ADR-0043). Each carries
-  its own package doc.
-
-Match/position parsers for external formats are separate modules
-(`github.com/kevung/xgparser`, `gnubgparser`, `bgfparser`); Jellyfish `.mat`
-handling lives in this repo (`database/db_mat_export.go`, `ingest/mat_export.go`).
-
-Frontend: `frontend/src/App.svelte` stays thin; feature logic lives in
-`components/` panels and one store per feature area under `stores/`.
-`commandProcessor.js` parses the in-app command line;
-`commandVocabulary.js` powers autocomplete and is locked to the processor by
-`commandVocabulary.sync.test.js`. `Board.svelte` renders via two.js.
+- A batch of issues goes through `/traiter-lot`: one fresh `ouvrier` sub-agent per issue or
+  code zone; the orchestrator reads, decides, delegates and keeps verdicts only.
+- Read a range, not a file: `grep -n`, then `sed -n a,b` or `Read` with `offset`/`limit`.
+  A suite returns its failures, never its log. No `sleep`.
+- Every `Agent` call names its `model`: Sonnet when a mistake shows up red, Opus when it would
+  be silent (design, review, diagnosis, migrations, engine arithmetic).
+- A comment says why, never the history: no issue number, date or narrative in code.
+- `.claude/hooks/budget.py` holds these mechanically; `scripts/cout-tokens.py` measures them.
 
 ## Invariants
 
-Violating one of these is a bug even if all tests pass:
+A violation is a bug even when every test passes.
 
-- **Positions are identified by Zobrist hash** (per tenant) to dedup across
-  imports. Always write through `SavePosition`; use `SaveIndividualPosition` when
-  the user brings a position in on its own. Provenance
-  (`individually_imported`) is sticky and deliberately **not** part of the hash
-  — see ADR-0001 and `CONTEXT.md`. Neither are the session's optional rules
-  (`has_jacoby`, `has_beaver`): only an XGID ever sets them, so hashing them
-  split one money position across two rows — ADR-0028. Both keys are still
-  DRAWN in `engine.init` so every key after them keeps its value; a change to
-  that stream rehashes every database ever written.
-- **The retention predicate (`positionIsHeldSQL`) is stated in three places** —
-  `database/db_match.go` (the copy the GUI and CLI run),
-  `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`.
-  Keep the *predicate* identical in all three (placeholders and boolean syntax
-  differ by SQL dialect).
-- **Schema changes** require bumping `DatabaseVersion` in `pkg/blunderdb/domain/`
-  **and** a migration path (`CheckVersion` in `db_schema.go` — it only compares the major version — and
-  a `migrate_X_to_Y` step registered in `migrationSteps` in `db_migration.go` —
-  the registry `runMigrationChain` walks, which `TestMigrationSteps_ContinuousChain`
-  requires to run unbroken from 1.0.0 to `DatabaseVersion` — DDL in
-  `db_schema.go`, PostgreSQL side under `storage/postgres/migrations/`), covered by
-  a test in `migration_test.go`.
-- **The serve daemon performs NO authentication** — it trusts `X-Tenant-ID` and
-  must run behind an authenticating reverse proxy. Never "fix" this by adding
-  auth to the engine, and never weaken the warnings. See ADR-0005.
-- **Concurrency**: `Database.mu` is an RWMutex over the legacy wrapper; the
-  Storage backends have **no** global lock — they rely on pooled connections and
-  per-operation transactions. Import cancellation is context-based
-  (`beginCancellableImport`/`CancelImport` in `database/db.go`), not a flag.
-- **CLI/GUI/server parity**: put DB logic on `Database` (or the Storage contract)
-  and expose it to the frontend (auto-bound), the CLI, and the server handlers.
-  Don't fork logic into a mode-specific helper.
-- **Nothing is recorded on the recipient's side**: a watermark is written by the
-  producer, at export, on a file they are making. blunderDB must never write a
-  registry, log, counter or lineage into a database because someone opened,
-  read or imported it. Reviving any of that reopens a decision taken and
-  reversed once already — see ADR-0007 before proposing it.
-- **Exports carry an allow-list**: `ExportDatabase` copies metadata through
-  `issuance.Carried`, never by exclusion — a document added to `metadata` next
-  year must not travel to someone else's machine by default.
-- **One equity scale leaves the engine**: money points at money play,
-  **normalised equity** (gnubg's `mwc2eq`, ±1 = winning/losing the current
-  cube) at a match score — the scale imported XG/GNUbg analyses already sit
-  in, in the same columns, and the one the statistics read as EMG. gammonNet's
-  own internals are two OTHER scales (`Decide` returns MWC, `Value` returns
-  2×MWC−1); they stay inside the package, and `EquityScale`
-  (`gammonnet/referential.go`) converts once at the domain edge. Never print
-  or store either internal scale — at 5-away/5-away they are six times too
-  small and look perfectly plausible. See ADR-0019.
-- **The live cube curve has no plateau**: `janowskiEquity`/`levelLive` in
-  `engine/gammonnet/cube.go` run from `(0, −L)` to `(1, +W)`, bending only at
-  the breakpoints the cube state imposes. Clamping either tail to the cash
-  equivalent (`max(dead, 1)`, `min(dead, −1)`) prices the retained cube at
-  zero and makes `TooGood` unreachable unless the *cubeless* equity already
-  exceeds a point — the panel then says "double, passe" on every real
-  too-good position. That is a Jacoby rule, and Jacoby is already applied
-  where it belongs, in `Decide`'s no-double payoffs. See ADR-0022; and the
-  file is a port, so any change here lands in gammonNet's `gn_cube.c` and its
-  spec §2 first, then in `testdata/cube_gold.bin`.
-- **The cube efficiency is a branch coefficient, and the search reads the root's on
-  purpose**: `DefaultEfficiency` returns one value per cube state (owned 0.566, centred
-  0.688, opponent 0.687), each fitted against a different column of gammonNet's exact
-  two-sided table — a deliberate divergence from gnubg and XG, which index it by
-  position class. `SearchConfig.CubeX` is fixed at the root while `CubeOwner` is
-  mirrored, and `Decide` prices `eDT` at the current owner's coefficient: both match
-  `gn_search.c`/`gn_cube.c` line for line, so "fixing" either here manufactures a port
-  divergence and turns the cube gold red. Measured (669 real decisions): 0.005
-  normalised equity per leaf, no verdict flipped, no move changed. The correction is
-  gammonNet's to write. See ADR-0029.
-- **A shared optimisation is decided upstream, in gammonNet** (its ADR-0003). The criterion
-  is measurable, not a matter of taste: *an optimisation is conceptual if its gain survives a
-  change of language*. Conceptual ones — the shape of the algorithm — are written in
-  gammonNet first, with their measurement, and this port follows. Implementation ones stay
-  here without remorse: the AVX2 kernel is ours and has no business upstream. Measured on
-  2026-09-02, five of this port's six non-network wins turned out to be language artefacts
-  worth 0.007 % to 0.5 % in C — which is why the criterion is measured and not guessed.
-- **The network kernel never fuses and never reassociates**: the batched evaluator
-  vectorises over POSITIONS, one per SIMD lane, each lane accumulating over `j` in
-  ascending order in float32, with multiply and add kept as two operations. No FMA
-  (`vfmadd*`, `fmla`), no tree reduction, no float64 accumulation — the explicit
-  `float32(a*b)` is a fusion barrier guaranteed by the Go spec, and it is on arm64 that
-  it protects, since Go contracts there and never on amd64. Any new arithmetic path
-  (a NEON kernel, a wider tile) must pass `kernel_identity_test.go` against the pure-Go
-  fallback, `==` on every bit — the gold suites tolerate 1e-6 and would let an FMA
-  through. A requested-but-unavailable kernel is an error at load, never a silent
-  fallback. See ADR-0024.
-- **Parallelism is production behaviour, not a test tool**: the analysis batch runs
-  positions across `NumCPU` goroutines, each reusing one serial `Searcher`
-  (`NewBatchSearcher`/`EvaluatePositionWith`); the live panel runs ONE search with
-  `WithWorkers`. The two never stack — a batch path that also took the pool would ask for
-  `NumCPU²` goroutines. Both stay bit-identical because the weighted sum over the 21 rolls
-  is taken serially in ascending roll order: parallelism decides who computes each term,
-  never the order they are added in.
-- **One type scale**: components use the tokens in `frontend/src/style.css`
-  (`--font-size-base/-small/-title`), never an absolute `font-size`, and form
-  controls carry `font: inherit` — an input inherits neither size nor family, so
-  setting only a size leaves it in the browser's control font. Hierarchy comes
-  from weight and colour. Exceptions (chrome, statistics figures) are named in
-  ADR-0008; the migration of existing components is gradual, the rule is not.
-- **Svelte 5 store rule**: inside components, always `$store` or
-  `$effect(() => { const v = $store; … })` — **never** `.subscribe()` (stale
-  closures, invisible to the compiler's dependency tracking; caused the
-  post-migration reactivity bugs). Rare exceptions must be justified in the
-  commit message.
-- `frontend/wailsjs/` is **generated** (namespaced `gui`/`database`/`main`); never
-  hand-edit; restart `wails dev` after changing exported bound methods. So is
-  `frontend/src/i18n/help/*.js` — `make help`, see ADR-0034 and Documentation above.
-- `internal/server/webui/dist/` is the **built web front**, committed and
-  embedded in the binary (ADR-0039). Run `make web` after touching
-  `frontend/src/web/`: nothing detects a stale bundle, and the ADR says so.
+- **Positions are identified by their Zobrist hash** (per tenant). Write through
+  `SavePosition`; `SaveIndividualPosition` when the user brings a position on its own.
+  Provenance and the session rules (`has_jacoby`, `has_beaver`) are not part of the hash, but
+  their keys are still drawn in `engine.init`: changing that stream rehashes every database
+  (ADR-0001, ADR-0028).
+- **The retention predicate `positionIsHeldSQL` is written three times** — `database/db_match.go`
+  (run by GUI and CLI), `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`
+  — and stays identical up to SQL dialect. So does the orphan purge on match deletion.
+- **A schema change** bumps `DatabaseVersion` and adds a `migrate_X_to_Y` step to
+  `migrationSteps` (`db_migration.go`; `TestMigrationSteps_ContinuousChain` requires an unbroken
+  chain), DDL in `db_schema.go`, the PostgreSQL side under `storage/postgres/migrations/`, and a
+  test in `migration_test.go`. Then `scripts/build-demo-db.sh` (`TestDemoDatabaseIsCurrent`).
+- **The serve daemon performs no authentication**: it trusts `X-Tenant-ID` behind an
+  authenticating proxy. Never add auth to the engine, never weaken the warnings (ADR-0005).
+- **Concurrency**: `Database.mu` is an RWMutex over the legacy wrapper (not reentrant); the
+  storage backends have no global lock (pooled connections, one transaction per operation).
+  Import cancellation is context-based (`beginCancellableImport`/`CancelImport`).
+- **CLI/GUI/server parity**: logic goes on `Database` or the storage contract and is exposed to
+  all three; never a mode-specific fork.
+- **Nothing is recorded on the recipient's side**: a watermark is written by the producer at
+  export; opening, reading or importing a database writes nothing (ADR-0007). Exports copy
+  metadata through the `issuance.Carried` allow-list, never by exclusion.
+- **One equity scale leaves the engine**: money points at money play, normalised equity (±1 =
+  the current cube) at a match score. The engine's internal scales never reach storage or
+  display (ADR-0019; the engine's own invariants: `engine/gammonnet/CLAUDE.md`).
 
-## Notes & Gotchas
+## Gotchas
 
-- Wails drag-drop on Linux: `DisableWebViewDrop` must stay `false` (bug #4743 —
-  see comment in `internal/gui/run.go`); WebKit GPU policy is forced to `Never`.
-- The GUI opens the user's `.db` file directly; `:memory:` is test-only, which is
-  why `sqlite.ConfigurePool` pins it to a single connection (each pooled
-  connection would otherwise be a separate empty database). PRAGMAs (WAL,
-  `synchronous=NORMAL`, …) live in `storage/sqlite/sqlite.go`.
-- `internal/gui/demo.db.gz` is generated, never hand-built: run
-  `scripts/build-demo-db.sh` after every `DatabaseVersion` bump
-  (`TestDemoDatabaseIsCurrent` fails otherwise). Fictional names only — the
-  fixtures name real people and `scripts/demodb` disguises them (#162).
-- `tasks/` holds finished task sheets (v2.0.0 optimization, headless refactor,
-  stats parity…) kept as execution history; `tasks/FOLLOWUPS.md` is a redirect
-  note only — open follow-ups now live in `tasks/BACKLOG.md`, sorted by domain.
-- `Dockerfile.hostile` is the ADR-0004 backstop image: a deliberately minimal
-  environment (no clipboard tool, no CJK fonts, an exotic locale) that runs the
-  whole Go suite to catch code that inline-assumes a host capability instead of
-  going through the detect-and-fall-back policies; built and run by the
-  `hostile-smoke` job in `build.yml`.
-- **Three schedules, on purpose** (E.12, #228). `nightly.yml` (daily, 03:00 UTC)
-  runs what every push cannot afford: the full non-`-short` Go suite on macOS
-  and Windows, a full-package gammonNet run under `-race -short`, and
-  `benchstat` against the versioned baseline. `fuzz.yml` (Mondays) keeps the
-  continuous fuzzing, the `gammonnet-gold` search-parity file and the arm64
-  kernel-identity sweep. `build.yml` keeps everything a reviewer should see on
-  the PR itself, Trivy included. Nothing that already has a schedule was moved
-  to "have them in one file"; each workflow's header says why its checks live
-  there — read it before adding a fourth.
+- Wails drag-drop on Linux: `DisableWebViewDrop` stays `false` (see `internal/gui/run.go`).
+- `:memory:` is test-only; `sqlite.ConfigurePool` pins it to one connection. PRAGMAs live in
+  `storage/sqlite/sqlite.go`.
+- `internal/gui/demo.db.gz` is generated by `scripts/build-demo-db.sh`, with fictional names only.
+- Go tools write temporaries to `/tmp`, a tmpfs that can fill up and break every shell command:
+  set `GOTMPDIR` outside it for heavy builds.
+- `tasks/` holds finished task sheets as history; open follow-ups live in `tasks/BACKLOG.md`.
+- CI runs on three schedules (`build.yml`, `nightly.yml`, `fuzz.yml`); each header says why a
+  check lives there — read it before adding a fourth.
+- `.claude/settings.json` is shared (mattpocock skills plugin, context-budget hook);
+  `.claude/settings.local.json` is personal and gitignored.

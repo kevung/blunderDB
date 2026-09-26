@@ -49,7 +49,7 @@ make check-all   # the above PLUS Docker-backed PostgreSQL tests, Playwright e2e
 
 ## Invariants and decisions
 
-Some rules are violated silently by code that passes every test: positions are identified by their Zobrist hash, the retention predicate is written in three places that must stay identical, a schema change bumps `DatabaseVersion` and comes with a migration in three backends, the `serve` daemon performs no authentication by design, one equity scale leaves the engine, the network kernel never fuses a multiply-add. They are listed, with their reasons, in the *Invariants* section of [CLAUDE.md](CLAUDE.md) — read it before touching a subsystem, and read the [architecture decision records](docs/adr/README.md) that govern it.
+Some rules are violated silently by code that passes every test: positions are identified by their Zobrist hash, the retention predicate is written in three places that must stay identical, a schema change bumps `DatabaseVersion` and comes with a migration in three backends, the `serve` daemon performs no authentication by design, one equity scale leaves the engine, the network kernel never fuses a multiply-add. They are listed in the *Invariants* section of [CLAUDE.md](CLAUDE.md) — the engine's own in [pkg/blunderdb/engine/gammonnet/CLAUDE.md](pkg/blunderdb/engine/gammonnet/CLAUDE.md) — read it before touching a subsystem, and read the [architecture decision records](docs/adr/README.md) that govern it.
 
 A change that takes a new decision of that kind records it as a new ADR in `docs/adr/` (one file, numbered, never rewritten once accepted), and adds the invariant it creates to CLAUDE.md. Discuss it first, on Discord or in an issue: it is cheaper to argue about a page than about a pull request.
 

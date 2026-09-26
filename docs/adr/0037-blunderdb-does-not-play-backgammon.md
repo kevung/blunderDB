@@ -1,74 +1,34 @@
 # blunderDB does not play backgammon
 
-## Status
-
-accepted — 2026-09-06. Closes issue #300 (fiche J.10), which had been marked
-"écarté" in the plan since it was written and never had the one line that keeps
-the question from being reopened. Refined by 0041 (the engine playing a few
-plies out of sight to make a training position). Amended by 0044 (2026-09-07):
-*transcribing* a match played elsewhere lands on most of the surface listed
-below and is accepted — nobody decides, the rules check and never enforce, the
-output is an ordinary Match; the refusal of a play mode stands. Amended again by 0047
-(2026-09-07): *directing* a tournament is accepted for the same kind of reason — the
-tournament creates the Matches its own users then transcribe or import, so it feeds the
-loop this record describes rather than competing with it; no game is played inside the
-tool, and the refusal of a play mode still stands.
+Status: accepted.
+See also: ADR-0041 (engine plies behind a training position), ADR-0044 (transcription),
+ADR-0047 (tournament direction).
 
 ## Context
-
-blunderDB embeds a full evaluator. gammonNet plays a 2-ply search, judges the
-cube through a Janowski model, honours the match score, and answers in a few
-tens of milliseconds. Everything a program needs in order to *play* a game of
-backgammon is already in the binary.
-
-The question therefore comes back on its own, roughly once per person who
-notices: why can I not press a button and play against it?
-
-It is a reasonable question and it deserves a written answer rather than a
-shrug, because the honest reason is not technical difficulty.
+blunderDB embeds a full evaluator (gammonNet: 2-ply search, Janowski cube, match score, tens of
+milliseconds). Everything a program needs to *play* is in the binary, so the question "why can I
+not play against it?" returns on its own. The honest answer is not technical difficulty.
 
 ## Decision
-
 **blunderDB analyses positions. It does not play games.**
 
-A play mode is not the evaluator plus a button. It is the rules of backgammon
-end to end — legal-move enforcement at the interface, dice the user believes
-are fair, cube offers and answers, a match score that advances, a game history
-that can be reviewed and taken back, resignations, the Crawford rule, an
-undo — and every one of those is a surface that has to be right, documented in
-nine languages, and maintained. The evaluator is the part that already exists;
-it is also the small part.
-
-What makes that surface *not worth* building here is what blunderDB is for.
-Its user brings games they have already played, and asks what they got wrong.
-Nothing in that loop needs a game to be played inside the tool: the games come
-from XG, from GNU Backgammon, from an online platform, from a board. A play
-mode would be a second product sharing a binary with the first, competing for
-the same maintenance, and answering a need every backgammon program on the
-market already answers.
-
-**What the demand behind the question actually wants, blunderDB does build**:
-
-- *playing the move yourself instead of reading it* — that is the quiz mode
-  (J.4, issue #294), where a position is drawn from a filter, the move is
-  played on the board, and the error is measured against the stored analysis.
-  It is the input surface of a play mode without the rest of the game.
-- *asking the engine what it would do here* — that is the Eval panel, on the
-  position already in front of the user.
-
-**If the demand ever exceeds that**, the answer is a different program.
-gammonGo exists, embeds `pkg/blunderdb/server.Bootstrap`, and is where a
-playing engine belongs.
+1. A play mode is not the evaluator plus a button: it is the rules end to end — legal-move
+   enforcement, dice the user trusts, cube offers and answers, an advancing score, reviewable
+   and undoable history, resignations, Crawford — each a surface to get right, document in nine
+   languages and maintain. The evaluator is the small part.
+2. blunderDB's user brings games already played elsewhere (XG, GNU Backgammon, an online
+   platform, a board) and asks what they got wrong. Nothing in that loop needs a game played
+   inside the tool.
+3. What the demand actually wants is built: *playing the move yourself* is the quiz mode
+   (position drawn from a filter, move played on the board, error measured against the stored
+   analysis); *asking the engine what it would do* is the Eval panel.
+4. Features that feed that loop without playing a game inside the tool are compatible with this
+   refusal: transcribing a match played elsewhere (ADR-0044) and directing a tournament whose
+   Matches are then transcribed or imported (ADR-0047).
+5. A playing engine, if ever wanted, belongs in a different program: gammonGo, which embeds
+   `pkg/blunderdb/server.Bootstrap`.
 
 ## Consequences
-
-The question is closed, and this record is the answer to give when it comes
-back — not "no", but "here is what that would cost and here is where the useful
-half of it already lives".
-
-Nothing changes in the code. The evaluator stays exactly as capable as it was;
-what is refused is the surface around it.
-
-Reopening this would mean overturning the sentence at the top, not adding a
-feature — and would want a measurement of demand, not an argument that it is
-technically easy. It always was.
+- Nothing is refused in the evaluator; what is refused is the surface around it.
+- Reopening this means overturning the sentence above, and wants a measurement of demand, not an
+  argument that it is technically easy.

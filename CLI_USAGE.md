@@ -6,7 +6,7 @@ The blunderDB application supports both GUI and command-line interface (CLI) mod
 
 Build the blunderDB binary using Wails (the `webkit2_41` tag matches
 webkit2gtk-4.1 on Arch and ubuntu-latest; drop it for webkit2gtk-4.0 on
-ubuntu-22.04 — see `CLAUDE.md`):
+ubuntu-22.04, as CI does):
 
 ```bash
 wails build -tags webkit2_41
