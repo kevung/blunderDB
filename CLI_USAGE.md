@@ -2771,19 +2771,22 @@ Examples:
 ```
 Usage: blunderdb tournament page [options]
 
-Write the standalone display page of a direction.
+Write the standalone display page of a direction, or a Rencontre's wall page.
 
 Options:
   -db string
     	Path to the database file (required)
   -id int
-    	Tournament ID (required)
+    	Tournament ID
   -out string
     	Folder to write the page into (default: standard output)
+  -rencontre int
+    	Rencontre ID: write its wall page instead of one tournament's
 
 Examples:
   blunderdb tournament page --db base.db --id 3 > affichage.html
   blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
+  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
 ```
 
 ### `blunderdb tournament standings`

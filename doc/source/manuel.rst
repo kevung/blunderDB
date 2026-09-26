@@ -1732,9 +1732,19 @@ La **feuille d'appariements** se pose sur la table d'accueil : un clic sur
 match — les deux joueurs, la longueur, la table, deux cases vides pour le score —
 et une ronde de trente-deux joueurs tient sur une page A4.
 
+Une Rencontre a son propre dossier de sortie, choisi une fois dans son panneau de
+Réglages avec le même bouton *Choisir le dossier* : blunderDB y écrit
+``index.html``, la **page murale** de la salle — une ligne par table, quelle que
+soit l'épreuve qui l'occupe, avec les rondes annoncées de chaque épreuve et un
+lien vers sa propre page — et chaque épreuve rattachée écrit la sienne dans un
+sous-dossier. Un geste dans n'importe quelle épreuve de la Rencontre régénère la
+page murale ; le dossier propre d'une épreuve rattachée est gardé mais ignoré
+tant qu'elle reste dans la Rencontre.
+
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
-et ``export``. Voir :ref:`cli`.
+et ``export`` ; ``page --rencontre`` écrit la page murale d'une Rencontre au lieu
+de la page d'une seule épreuve. Voir :ref:`cli`.
 
 .. _stats:
 

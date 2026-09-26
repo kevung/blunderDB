@@ -1337,23 +1337,27 @@ sous-commandes ne font que **lire**, et aucune n'attend de saisie.
 **Sous-commandes:**
 
 * ``list [--format text|json]`` — Les tournois dirigés de la base, avec leur
-  état, la version du moteur et la date de la dernière décision.
+  état, la version du moteur, la Rencontre à laquelle chacun appartient (si
+  aucune, la colonne est vide) et la date de la dernière décision.
 * ``verify --id N [--format text|json]`` — Rejoue la direction et signale tout
   avertissement résiduel. **Sort en erreur** s'il en reste un : c'est la
   vérification d'après-tournoi, et un script qui la passe sur les bases d'une
   saison veut un code de retour, pas une ligne à filtrer.
 * ``standings --id N`` — Le classement en CSV, prix compris, dans la langue de
   l'interface.
-* ``page --id N [--out <dossier>]`` — La page HTML d'affichage. Sans
-  ``--out`` elle part sur la sortie standard ; avec, elle est écrite dans le
-  dossier, qui devient celui de la direction.
+* ``page --id N|--rencontre N [--out <dossier>]`` — La page HTML d'affichage
+  d'une épreuve (``--id``), ou la page murale d'une Rencontre (``--rencontre`` :
+  une ligne par table, quelle que soit l'épreuve qui l'occupe). Exactement l'un
+  des deux est requis. Sans ``--out`` elle part sur la sortie standard ; avec,
+  elle est écrite dans le dossier, qui devient celui de la direction ou de la
+  Rencontre.
 * ``export --id N`` — Le journal d'événements brut, rejouable par les outils du
   moteur. Le journal est toute la vérité d'une direction : le classement, les
   arbres et les avertissements en sont rejoués. Un outil qui lit cette sortie
   n'a besoin d'aucun blunderDB.
 
 **Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
-``list``), ``--format``.
+``list`` et ``page --rencontre``), ``--format``.
 
 **Exemples:**
 
@@ -1363,6 +1367,7 @@ sous-commandes ne font que **lire**, et aucune n'attend de saisie.
    ./blunderdb tournament verify --db base.db --id 3
    ./blunderdb tournament standings --db base.db --id 3 > classement.csv
    ./blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
+   ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
    ./blunderdb tournament export --db base.db --id 3 > journal.json
 
 trash — La corbeille

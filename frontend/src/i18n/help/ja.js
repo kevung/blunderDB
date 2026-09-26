@@ -383,7 +383,8 @@ export default {
 <h4>会場ディスプレイ</h4>
 <p>大会は見られるものです。設定で <strong>表示用フォルダー</strong> を一度選べば、それで済みます。blunderDB はイベントごとにそこへ自己完結した HTML ページを書き直し、ページは自動で再読み込みされます。オフラインでも開き、サブ画面でも投影でも使え、外部のリソースは一切読み込みません。<em>ブラウザーで開く</em> を押せばすぐ表示されます。</p>
 <p><strong>組み合わせ表</strong> は受付に置きます。<em>組み合わせ表を印刷</em> をクリックすればシステムの印刷ダイアログが開きます。1マッチ1行で、両プレイヤー、長さ、テーブル、スコア用の空欄2つが並び、32人のラウンドが A4 の1ページに収まります。</p>
-<p>画面の外では、<code>blunderdb tournament</code> サブコマンドが GUI なしで運営済みの大会を読みます。<code>list</code>、<code>verify</code>、<code>standings</code>、<code>page</code>、<code>export</code> があります。コマンドラインインターフェース（CLI） を参照してください。</p>
+<p>Rencontre は自分専用の出力フォルダーを持ち、その設定パネルで同じ <em>フォルダーを選ぶ</em> ボタンから一度選べば済みます。blunderDB はそこに <code>index.html</code>、つまり会場の <strong>壁面ページ</strong>（どの大会が使っていてもテーブルごとに1行、各大会の発表済みラウンドとその大会自身のページへのリンク付き）を書き込み、参加している各大会はサブフォルダーに自分のページを書き込みます。Rencontre 内のどの大会での操作でも壁面ページは再生成されます。参加大会が持つ自分のフォルダーは残りますが、Rencontre に属している間は無視されます。</p>
+<p>画面の外では、<code>blunderdb tournament</code> サブコマンドが GUI なしで運営済みの大会を読みます。<code>list</code>、<code>verify</code>、<code>standings</code>、<code>page</code>、<code>export</code> があります。<code>page --rencontre</code> は単一の大会のページの代わりに Rencontre の壁面ページを書き出します。コマンドラインインターフェース（CLI） を参照してください。</p>
 <h3>Stats パネル</h3>
 <h4>はじめに</h4>
 <p><strong>Stats</strong> パネルでは、データベースにインポートされたポジションをもとに、自分のプレイレベルを分析し、時間の経過に伴う上達を追跡できます。すべてのポジションまたはフィルターされた部分集合について、<strong>PR</strong>（<em>Performance Rating</em>）と<strong>MWC cost</strong>（Match Winning Chance cost）の指標を計算して表示します。</p>
