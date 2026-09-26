@@ -2272,7 +2272,10 @@
             "create": "Anlegen und zuordnen…",
             "confirmTitle": "Was sich in diesem Turnier ändert:",
             "noChange": "Nichts: seine Tische sind bereits die des Saals.",
-            "confirm": "Zuordnen"
+            "confirm": "Zuordnen",
+            "wall": {
+                "rounds": "{n} Runden angekündigt"
+            }
         },
         "epreuves": {
             "pending": "{n} ausstehend",

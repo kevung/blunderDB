@@ -7,7 +7,19 @@
      */
     import { t } from '../../i18n';
     import { renderConfigChange } from './labels.js';
-    import { listRencontres, createRencontre, previewAttach, attachToRencontre, detachFromRencontre, trashRencontre, setTableOutOfService } from '../../stores/rencontreStore.js';
+    import {
+        listRencontres,
+        createRencontre,
+        previewAttach,
+        attachToRencontre,
+        detachFromRencontre,
+        trashRencontre,
+        setTableOutOfService,
+        chooseRencontreOutputDir,
+        forgetRencontreOutputDir,
+        writeRencontrePage
+    } from '../../stores/rencontreStore.js';
+    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
 
     /** @typedef {import('../../../wailsjs/go/models').database.RencontreView} RencontreView */
     /** @typedef {import('../../../wailsjs/go/models').database.ConfigPreview} ConfigPreview */
@@ -107,6 +119,37 @@
         }
     }
 
+    /* Page murale : un dossier choisi une fois (D6.5) ; réécrite ensuite sans aucun geste. */
+    async function onChooseOutput() {
+        if (!current) return;
+        try {
+            await chooseRencontreOutputDir(current.id);
+            await reload();
+        } catch (e) {
+            fail(e);
+        }
+    }
+
+    async function onForgetOutput() {
+        if (!current) return;
+        try {
+            await forgetRencontreOutputDir(current.id);
+            await reload();
+        } catch (e) {
+            fail(e);
+        }
+    }
+
+    async function onOpenPage() {
+        if (!current) return;
+        try {
+            const path = await writeRencontrePage(current.id);
+            if (path) BrowserOpenURL('file://' + path);
+        } catch (e) {
+            fail(e);
+        }
+    }
+
     const tableNumbers = $derived(current ? Array.from({ length: current.room?.tables || current.tables }, (_, i) => i + 1) : []);
 </script>
 
@@ -126,6 +169,22 @@
                     {n}
                 </label>
             {/each}
+        </fieldset>
+        <fieldset class="display">
+            <legend>{$t('direction.display.title')}</legend>
+            <p class="facts">{$t('direction.display.hint')}</p>
+            {#if current.outputDir}
+                <p class="facts path">{current.outputDir}</p>
+            {/if}
+            <div class="row">
+                <button type="button" data-testid="rencontre-output" onclick={onChooseOutput}>
+                    {current.outputDir ? $t('direction.display.changeFolder') : $t('direction.display.chooseFolder')}
+                </button>
+                {#if current.outputDir}
+                    <button type="button" data-testid="rencontre-open-page" onclick={onOpenPage}>{$t('direction.display.open')}</button>
+                    <button type="button" class="link" data-testid="rencontre-forget-output" onclick={onForgetOutput}>{$t('direction.display.forget')}</button>
+                {/if}
+            </div>
         </fieldset>
         <div class="row">
             <button type="button" data-testid="rencontre-detach" onclick={detach}>{$t('direction.rencontre.detach')}</button>

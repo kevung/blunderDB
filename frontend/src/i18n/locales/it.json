@@ -2272,7 +2272,10 @@
             "create": "Crea e collega…",
             "confirmTitle": "Cosa cambierà in questo torneo:",
             "noChange": "Niente: i suoi tavoli sono già quelli della sala.",
-            "confirm": "Collega"
+            "confirm": "Collega",
+            "wall": {
+                "rounds": "{n} turni annunciati"
+            }
         },
         "epreuves": {
             "pending": "{n} in attesa",

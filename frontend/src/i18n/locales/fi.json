@@ -2272,7 +2272,10 @@
             "create": "Luo ja liitä…",
             "confirmTitle": "Mitä tässä turnauksessa muuttuu:",
             "noChange": "Ei mitään: sen pöydät ovat jo salin pöydät.",
-            "confirm": "Liitä"
+            "confirm": "Liitä",
+            "wall": {
+                "rounds": "{n} kierrosta ilmoitettu"
+            }
         },
         "epreuves": {
             "pending": "{n} odottaa",

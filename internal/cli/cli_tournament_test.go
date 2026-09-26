@@ -65,6 +65,89 @@ func TestCLI_TournamentList(t *testing.T) {
 	}
 }
 
+// `tournament list` names the Rencontre a directed tournament plays in (ADR-0056 §6).
+func TestCLI_TournamentListNamesTheRencontre(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	tID := directedTournamentCLI(t, cli, 8)
+
+	r, err := cli.db.CreateRencontre("Festival", "2026-10-03", "2026-10-04", 8)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.AttachToRencontre(tID, r.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	text := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "list", "--db", dbPath}); err != nil {
+			t.Fatalf("tournament list: %v", err)
+		}
+	})
+	if !strings.Contains(text, "Festival") {
+		t.Errorf("tournament list does not name the Rencontre:\n%s", text)
+	}
+
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "list", "--db", dbPath, "--format", "json"}); err != nil {
+			t.Fatalf("tournament list json: %v", err)
+		}
+	})
+	var rows []struct {
+		RencontreName string `json:"rencontreName"`
+	}
+	if err := json.Unmarshal([]byte(out), &rows); err != nil {
+		t.Fatalf("json: %v\n%s", err, out)
+	}
+	if len(rows) != 1 || rows[0].RencontreName != "Festival" {
+		t.Fatalf("json rows do not name the Rencontre: %+v", rows)
+	}
+}
+
+// `tournament page --rencontre` writes the room's wall page, mutually exclusive with --id
+// (ADR-0056 §6).
+func TestCLI_TournamentPageRencontre(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	a := directedTournamentCLI(t, cli, 8)
+
+	r, err := cli.db.CreateRencontre("Festival", "2026-10-03", "2026-10-04", 8)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.AttachToRencontre(a, r.ID); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cli.Run([]string{"tournament", "page", "--db", dbPath}); err == nil {
+		t.Error("neither --id nor --rencontre should be rejected")
+	}
+	if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--id", itoa64(a), "--rencontre", itoa64(r.ID)}); err == nil {
+		t.Error("both --id and --rencontre should be rejected")
+	}
+
+	page := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
+			t.Fatalf("page --rencontre: %v", err)
+		}
+	})
+	if !strings.Contains(page, "<html") || !strings.Contains(page, "Nicolas Harmand") || !strings.Contains(page, "Open de Lyon") {
+		t.Errorf("the wall page is missing its shell or its member event:\n%s", page[:min(300, len(page))])
+	}
+
+	dir := t.TempDir()
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--rencontre", itoa64(r.ID), "--out", dir}); err != nil {
+			t.Fatalf("page --rencontre --out: %v", err)
+		}
+	})
+	written := strings.TrimSpace(out)
+	if filepath.Base(written) != "index.html" || filepath.Dir(written) != dir {
+		t.Errorf("the wall page went to %q instead of %s/index.html", written, dir)
+	}
+	if _, err := os.Stat(written); err != nil {
+		t.Errorf("the wall page was not written: %v", err)
+	}
+}
+
 // verify says nothing and exits zero on a sound direction.
 func TestCLI_TournamentVerifyIsQuietWhenSound(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)

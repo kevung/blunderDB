@@ -130,7 +130,7 @@ func (d *Database) UpdateRencontre(id int64, name, startsOn, endsOn string, tabl
 	if err != nil {
 		return nil, err
 	}
-	return d.GetRencontre(id)
+	return d.afterRoomGesture(id)
 }
 
 // PreviewAttachToRencontre shows what attaching changes in the Tournament's configuration — its
@@ -165,7 +165,7 @@ func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*Rencontr
 	if err != nil {
 		return nil, err
 	}
-	return d.GetRencontre(rencontreID)
+	return d.afterRoomGesture(rencontreID)
 }
 
 // alignTables puts one Tournament on the room's tables by a configuration change, and writes
@@ -200,7 +200,15 @@ func (d *Database) realignRencontre(id int64) error {
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
 func (d *Database) DetachFromRencontre(tournamentID int64) error {
-	return d.store.Rencontres().Attach(context.Background(), "", tournamentID, 0)
+	ctx := context.Background()
+	rid, _ := d.store.Rencontres().Of(ctx, "", tournamentID)
+	if err := d.store.Rencontres().Attach(ctx, "", tournamentID, 0); err != nil {
+		return err
+	}
+	if rid != 0 {
+		_, _ = d.WriteRencontrePage(rid)
+	}
+	return nil
 }
 
 // TrashRencontre deletes a Rencontre through the trash (ADR-0036). Its Tournaments are detached,
@@ -227,7 +235,7 @@ func (d *Database) SetRencontreTableOutOfService(id int64, table int, out bool) 
 	if err != nil {
 		return nil, err
 	}
-	return d.GetRencontre(id)
+	return d.afterRoomGesture(id)
 }
 
 // SetRencontreBreaks replaces the room's breaks — a meal, the prize-giving — in every member
@@ -246,7 +254,7 @@ func (d *Database) SetRencontreBreaks(id int64, breaksJSON string) (*RencontreVi
 	if err != nil {
 		return nil, err
 	}
-	return d.GetRencontre(id)
+	return d.afterRoomGesture(id)
 }
 
 // inRoom runs fn inside one SQL transaction, under the write lock, with the Rencontre and its room

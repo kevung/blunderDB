@@ -11,8 +11,11 @@ import {
     PreviewAttachToRencontre,
     DetachFromRencontre,
     TrashRencontre,
-    SetRencontreTableOutOfService
+    SetRencontreTableOutOfService,
+    SetRencontreOutputDir,
+    WriteRencontrePage
 } from '../../wailsjs/go/database/Database.js';
+import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
 import { refreshDirection } from './directionStore.js';
 import { logger } from '../utils/logger.js';
 
@@ -63,4 +66,24 @@ export async function setTableOutOfService(rencontreId, table, out) {
     const r = await SetRencontreTableOutOfService(rencontreId, table, out);
     await refreshDirection();
     return r;
+}
+
+/**
+ * Choisit le dossier de sortie de la Rencontre — le geste unique de D6.5 : le dossier réglé, la
+ * page murale est déjà écrite, et chaque épreuve rattachée y écrit désormais les siennes.
+ */
+export async function chooseRencontreOutputDir(rencontreId) {
+    const dir = await OpenDirectionOutputDialog();
+    if (!dir) return null;
+    return SetRencontreOutputDir(rencontreId, dir);
+}
+
+/** Oublie le dossier de la Rencontre : la page murale cesse d'être réécrite, celle qui existe reste. */
+export async function forgetRencontreOutputDir(rencontreId) {
+    return SetRencontreOutputDir(rencontreId, '');
+}
+
+/** Réécrit la page murale et rend le fichier à ouvrir. */
+export async function writeRencontrePage(rencontreId) {
+    return (await WriteRencontrePage(rencontreId)) || '';
 }

@@ -22,6 +22,9 @@ type DirectionSummary struct {
 	EngineVersion string `json:"engineVersion"`
 	OutputDir     string `json:"outputDir"`
 	UpdatedAt     string `json:"updatedAt"`
+	// RencontreName is the room this Tournament plays in, empty when none (ADR-0056). Named, not
+	// just an id: `tournament list` is read without a GUI to cross-reference it against.
+	RencontreName string `json:"rencontreName,omitempty"`
 }
 
 // DirectionView is a replayed Direction as the panel needs it. The derived parts — proposals,
@@ -59,17 +62,28 @@ type DirectionView struct {
 
 // ListDirections names the directed tournaments of this database.
 func (d *Database) ListDirections() ([]DirectionSummary, error) {
-	recs, err := d.DirectionStore().ListDirections(context.Background())
+	ctx := context.Background()
+	recs, err := d.DirectionStore().ListDirections(ctx)
 	if err != nil {
 		return nil, err
 	}
+	names := map[int64]string{} // Rencontre id -> name, fetched once each
 	out := make([]DirectionSummary, 0, len(recs))
 	for _, r := range recs {
-		out = append(out, DirectionSummary{
+		s := DirectionSummary{
 			TournamentID: r.TournamentID, State: string(r.State),
 			EngineVersion: r.EngineVersion, OutputDir: r.OutputDir,
 			UpdatedAt: r.UpdatedAt.Format(time.RFC3339),
-		})
+		}
+		if rid, err := d.store.Rencontres().Of(ctx, "", r.TournamentID); err == nil && rid != 0 {
+			if name, ok := names[rid]; ok {
+				s.RencontreName = name
+			} else if rc, err := d.store.Rencontres().Get(ctx, "", rid); err == nil {
+				names[rid] = rc.Name
+				s.RencontreName = rc.Name
+			}
+		}
+		out = append(out, s)
 	}
 	return out, nil
 }

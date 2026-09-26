@@ -1,0 +1,198 @@
+package database
+
+import (
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"slices"
+	"strings"
+
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+)
+
+// The Rencontre's wall page (ADR-0056 §6): `<output_dir>/index.html` lists every table of the
+// room whichever event plays on it, and links to each attached Tournament's own page, which this
+// same gesture redirects into `<output_dir>/<slug>/` for as long as it stays attached. The
+// Tournament's own output folder (direction.Record().OutputDir) is kept untouched in the row —
+// detaching gives it back exactly, never asks the director to choose again.
+
+var rencontreSlugNonAlnum = regexp.MustCompile(`[^a-z0-9]+`)
+
+// rencontreSlugs names the subfolder each member Tournament writes into, in id order so two
+// members named alike get a stable, deterministic split (the second one's id appended).
+func rencontreSlugs(ctx context.Context, stores storage.Stores, ids []int64) map[int64]string {
+	sorted := slices.Clone(ids)
+	slices.Sort(sorted)
+	seen := map[string]bool{}
+	out := map[int64]string{}
+	for _, tid := range sorted {
+		name := ""
+		if t, err := stores.Tournaments().Get(ctx, "", tid); err == nil {
+			name = t.Name
+		}
+		slug := strings.Trim(rencontreSlugNonAlnum.ReplaceAllString(strings.ToLower(name), "-"), "-")
+		if slug == "" {
+			slug = fmt.Sprintf("epreuve-%d", tid)
+		}
+		if seen[slug] {
+			slug = fmt.Sprintf("%s-%d", slug, tid)
+		}
+		seen[slug] = true
+		out[tid] = slug
+	}
+	return out
+}
+
+// SetRencontreOutputDir remembers where the room's wall page is written, and writes it right
+// away: choosing the folder is the whole gesture (D6.5's acceptance criterion), not the first of
+// several.
+func (d *Database) SetRencontreOutputDir(id int64, dir string) (*RencontreView, error) {
+	ctx := context.Background()
+	r, err := d.store.Rencontres().Get(ctx, "", id)
+	if err != nil {
+		return nil, err
+	}
+	r.OutputDir = dir
+	if err := d.store.Rencontres().Update(ctx, "", *r); err != nil {
+		return nil, err
+	}
+	if dir != "" {
+		if _, err := d.WriteRencontrePage(id); err != nil {
+			// A write failure is reported and never blocks the setting itself (ADR-0004): the
+			// folder is remembered even when this first write fails (permissions, a removed
+			// drive), and the next gesture in any member tries again.
+			return d.GetRencontre(id)
+		}
+	}
+	return d.GetRencontre(id)
+}
+
+// effectiveOutputDir is where a Tournament's own pages actually land: its Rencontre's
+// `<output_dir>/<slug>/` while it is attached to one that has a folder, its own OutputDir
+// otherwise. The Direction's own column is never rewritten by this — attaching and detaching
+// change nothing there.
+//
+// A Rencontre folder that has gone away (an unplugged USB key) is left alone: the write that
+// follows fails and reports it, exactly as it would for a Tournament's own folder — this must
+// never paper over that by recreating the whole chain. Only the one subfolder an attached event
+// writes into is created, and only once its parent is confirmed still there.
+func (d *Database) effectiveOutputDir(ctx context.Context, tournamentID int64, ownDir string) string {
+	rid, err := d.store.Rencontres().Of(ctx, "", tournamentID)
+	if err != nil || rid == 0 {
+		return ownDir
+	}
+	r, err := d.store.Rencontres().Get(ctx, "", rid)
+	if err != nil || r.OutputDir == "" {
+		return ownDir
+	}
+	slugs := rencontreSlugs(ctx, d.store, r.TournamentIDs)
+	dir := filepath.Join(r.OutputDir, slugs[tournamentID])
+	if info, err := os.Stat(r.OutputDir); err == nil && info.IsDir() {
+		_ = os.Mkdir(dir, 0o755) // best effort; a failure here surfaces at the write that follows
+	}
+	return dir
+}
+
+// afterRoomGesture regenerates the room's wall page — a gesture on the room is a gesture on
+// every member too (ADR-0056 §6) — and returns the Rencontre as it now stands.
+func (d *Database) afterRoomGesture(id int64) (*RencontreView, error) {
+	_, _ = d.WriteRencontrePage(id)
+	return d.GetRencontre(id)
+}
+
+// regenerateRencontrePage rewrites the room's wall page when tournamentID plays in one, best
+// effort: a gesture in any member regenerates it (ADR-0056 §6), and a failure here must never be
+// reported as a failure of the gesture that triggered it.
+func (d *Database) regenerateRencontrePage(ctx context.Context, tournamentID int64) {
+	rid, err := d.store.Rencontres().Of(ctx, "", tournamentID)
+	if err != nil || rid == 0 {
+		return
+	}
+	_, _ = d.WriteRencontrePage(rid)
+}
+
+// wallPlayerName gives a player's name for the wall page, falling back to the identifier — a
+// page with a hole in it is worse than one with an identifier in it (the same rule the per-event
+// page follows).
+func wallPlayerName(st *tournoi.State, id tournoi.PlayerID) string {
+	if p := st.Players[id]; p != nil && p.Name != "" {
+		return p.Name
+	}
+	return string(id)
+}
+
+// RencontrePageHTML renders the room's wall page without writing it — what the CLI's
+// `tournament page --rencontre` needs.
+func (d *Database) RencontrePageHTML(id int64) (string, error) {
+	ctx := context.Background()
+	r, err := d.store.Rencontres().Get(ctx, "", id)
+	if err != nil {
+		return "", err
+	}
+	slugs := rencontreSlugs(ctx, d.store, r.TournamentIDs)
+	room := direction.Room{Tables: r.Tables}
+	roomRead := false
+	occupied := map[int]direction.WallTable{}
+	events := make([]direction.WallEvent, 0, len(r.TournamentIDs))
+	for _, tid := range r.TournamentIDs {
+		name := fmt.Sprintf("#%d", tid)
+		if t, err := d.store.Tournaments().Get(ctx, "", tid); err == nil && t.Name != "" {
+			name = t.Name
+		}
+		dir, err := direction.Open(ctx, d.DirectionStore(), tid)
+		if err != nil {
+			events = append(events, direction.WallEvent{Name: name, Slug: slugs[tid]})
+			continue
+		}
+		if cfg, err := dir.Config(); err == nil && !roomRead {
+			room = direction.RoomOf(cfg)
+			room.Tables = r.Tables
+			roomRead = true
+		}
+		events = append(events, direction.WallEvent{Name: name, Slug: slugs[tid], Rounds: dir.Rounds()})
+		if st := dir.State(); st != nil {
+			for _, m := range st.Running() {
+				if m.Table <= 0 {
+					continue
+				}
+				occupied[m.Table] = direction.WallTable{
+					Number: m.Table, Event: name,
+					A: wallPlayerName(st, m.A), B: wallPlayerName(st, m.B),
+				}
+			}
+		}
+	}
+	tables := make([]direction.WallTable, 0, room.Tables)
+	for t := 1; t <= room.Tables; t++ {
+		if w, ok := occupied[t]; ok {
+			tables = append(tables, w)
+			continue
+		}
+		tables = append(tables, direction.WallTable{Number: t, Unavailable: slices.Contains(room.Unavailable, t)})
+	}
+	cat, lang := d.directionStrings()
+	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events}, cat, lang), nil
+}
+
+// WriteRencontrePage rewrites the wall page and returns the file written. It writes nothing, and
+// returns no error, when the Rencontre has no folder chosen — the same posture as a Direction's
+// own display page.
+func (d *Database) WriteRencontrePage(id int64) (string, error) {
+	ctx := context.Background()
+	r, err := d.store.Rencontres().Get(ctx, "", id)
+	if err != nil {
+		return "", err
+	}
+	if r.OutputDir == "" {
+		return "", nil
+	}
+	page, err := d.RencontrePageHTML(id)
+	if err != nil {
+		return "", err
+	}
+	return direction.WriteWallPage(r.OutputDir, page)
+}

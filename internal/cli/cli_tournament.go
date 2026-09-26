@@ -74,7 +74,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  list       List the directed tournaments of the database")
 	fmt.Println("  verify     Replay a direction and report any remaining warning")
 	fmt.Println("  standings  Print the standings as CSV")
-	fmt.Println("  page       Write the standalone display page")
+	fmt.Println("  page       Write the standalone display page, or a Rencontre's wall page")
 	fmt.Println("  export     Print the raw event journal, replayable by the engine's tools")
 	fmt.Println()
 	fmt.Println("Examples:")
@@ -82,6 +82,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  blunderdb tournament verify --db base.db --id 3")
 	fmt.Println("  blunderdb tournament standings --db base.db --id 3 > classement.csv")
 	fmt.Println("  blunderdb tournament page --db base.db --id 3 --out /tmp/affichage")
+	fmt.Println("  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
 	fmt.Println("  blunderdb tournament export --db base.db --id 3 > journal.json")
 }
 
@@ -123,9 +124,9 @@ func (cli *CLI) runTournamentList(args []string) error {
 		return printJSON(rows)
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "ID\tSTATE\tENGINE\tUPDATED")
+	fmt.Fprintln(w, "ID\tSTATE\tENGINE\tRENCONTRE\tUPDATED")
 	for _, r := range rows {
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", r.TournamentID, r.State, r.EngineVersion, r.UpdatedAt)
+		fmt.Fprintf(w, "%d\t%s\t%s\t%s\t%s\n", r.TournamentID, r.State, r.EngineVersion, r.RencontreName, r.UpdatedAt)
 	}
 	return w.Flush()
 }
@@ -204,35 +205,60 @@ func (cli *CLI) runTournamentStandings(args []string) error {
 
 // runTournamentPage writes the standalone display page. With --out it writes there and
 // remembers the folder, which is what the panel does; without it, the page goes to stdout.
+//
+// --rencontre writes the room's wall page instead (ADR-0056 §6): --id and --rencontre name two
+// different rows, one Tournament and one Rencontre, and are mutually exclusive.
 func (cli *CLI) runTournamentPage(args []string) error {
-	fs, dbPath := tournamentFlagSet("page", "Write the standalone display page of a direction.",
+	fs, dbPath := tournamentFlagSet("page", "Write the standalone display page of a direction, or a Rencontre's wall page.",
 		"blunderdb tournament page --db base.db --id 3 > affichage.html",
-		"blunderdb tournament page --db base.db --id 3 --out /tmp/affichage")
-	id := fs.Int64("id", 0, "Tournament ID (required)")
+		"blunderdb tournament page --db base.db --id 3 --out /tmp/affichage",
+		"blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
+	id := fs.Int64("id", 0, "Tournament ID")
+	rencontre := fs.Int64("rencontre", 0, "Rencontre ID: write its wall page instead of one tournament's")
 	out := fs.String("out", "", "Folder to write the page into (default: standard output)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
 	}
-	if *id == 0 {
+	if (*id == 0) == (*rencontre == 0) {
 		fs.Usage()
-		return fmt.Errorf("missing required flag: --id")
+		return fmt.Errorf("give exactly one of --id or --rencontre")
 	}
-	if *out == "" {
-		body, err := cli.db.DirectionPageHTML(*id)
+	if *rencontre != 0 {
+		return cli.writeTournamentOrRencontrePage(*out, func() (string, error) { return cli.db.RencontrePageHTML(*rencontre) },
+			func(dir string) (*string, error) {
+				if _, err := cli.db.SetRencontreOutputDir(*rencontre, dir); err != nil {
+					return nil, err
+				}
+				path, err := cli.db.WriteRencontrePage(*rencontre)
+				return &path, err
+			})
+	}
+	return cli.writeTournamentOrRencontrePage(*out, func() (string, error) { return cli.db.DirectionPageHTML(*id) },
+		func(dir string) (*string, error) {
+			if err := cli.db.SetDirectionOutputDir(*id, dir); err != nil {
+				return nil, err
+			}
+			path, err := cli.db.WriteDirectionPage(*id)
+			return &path, err
+		})
+}
+
+// writeTournamentOrRencontrePage is the --out/stdout choice shared by a Tournament's own page and
+// the Rencontre's wall page: render to stdout, or set the folder and write it.
+func (cli *CLI) writeTournamentOrRencontrePage(out string, render func() (string, error), write func(dir string) (*string, error)) error {
+	if out == "" {
+		body, err := render()
 		if err != nil {
 			return err
 		}
 		_, err = os.Stdout.WriteString(body)
 		return err
 	}
-	if err := cli.db.SetDirectionOutputDir(*id, *out); err != nil {
-		return err
-	}
-	path, err := cli.db.WriteDirectionPage(*id)
+	path, err := write(out)
 	if err != nil {
 		return err
 	}
-	fmt.Println(path)
+	fmt.Println(*path)
 	return nil
 }
 

@@ -2272,7 +2272,10 @@
             "create": "Create and attach…",
             "confirmTitle": "What will change in this event:",
             "noChange": "Nothing: its tables are already the room's.",
-            "confirm": "Attach"
+            "confirm": "Attach",
+            "wall": {
+                "rounds": "{n} rounds announced"
+            }
         },
         "epreuves": {
             "pending": "{n} pending",

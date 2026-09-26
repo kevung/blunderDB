@@ -2272,7 +2272,10 @@
             "create": "作成して追加…",
             "confirmTitle": "この大会で変わること：",
             "noChange": "なし：テーブルはすでに会場のものです。",
-            "confirm": "追加"
+            "confirm": "追加",
+            "wall": {
+                "rounds": "{n} ラウンド発表済み"
+            }
         },
         "epreuves": {
             "pending": "{n}件 保留中",

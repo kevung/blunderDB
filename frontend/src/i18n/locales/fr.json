@@ -2272,7 +2272,10 @@
             "create": "Créer et rattacher…",
             "confirmTitle": "Ce qui va changer dans cette épreuve :",
             "noChange": "Rien : ses tables sont déjà celles de la salle.",
-            "confirm": "Rattacher"
+            "confirm": "Rattacher",
+            "wall": {
+                "rounds": "{n} rondes annoncées"
+            }
         },
         "epreuves": {
             "pending": "{n} en attente",

@@ -96,6 +96,11 @@ func WritePage(dir, page string) (string, error) {
 }
 
 // WriteFileAtomically writes one of the pages this package produces, atomically.
+//
+// dir must already exist: a folder that has gone away (an unplugged USB key) must be reported,
+// never silently recreated. Creating the one subfolder an attached Tournament writes into
+// (`<output_dir>/<slug>/`, ADR-0056 §6) is the caller's job, done once, only when the Rencontre's
+// own folder is confirmed still there.
 func WriteFileAtomically(dir, name, page string) (string, error) {
 	if dir == "" {
 		return "", fmt.Errorf("direction: no output folder chosen")

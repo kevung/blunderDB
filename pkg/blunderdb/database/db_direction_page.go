@@ -42,13 +42,18 @@ func (d *Database) directionStrings() (*direction.Catalog, string) {
 
 // WriteDirectionPage rewrites the display page of a Direction and returns the file written.
 //
-// It returns an empty path, and no error, when no folder has been chosen.
+// It returns an empty path, and no error, when no folder has been chosen. When the Direction
+// plays in a Rencontre with a folder of its own, this writes into that Rencontre's `<slug>/`
+// subfolder instead (ADR-0056 §6) and regenerates the room's wall page too — a gesture in any
+// member is a gesture on the whole room.
 func (d *Database) WriteDirectionPage(tournamentID int64) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	out := dir.Record().OutputDir
+	defer d.regenerateRencontrePage(ctx, tournamentID)
+	out := d.effectiveOutputDir(ctx, tournamentID, dir.Record().OutputDir)
 	if out == "" {
 		return "", nil
 	}
@@ -89,7 +94,8 @@ func (d *Database) DirectionPairingSheetHTML(tournamentID int64, round int) (str
 // It goes into the Direction's display folder when there is one, and into the system's
 // temporary folder otherwise: printing must not require choosing a folder first.
 func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +104,7 @@ func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (st
 	if err != nil {
 		return "", err
 	}
-	out := dir.Record().OutputDir
+	out := d.effectiveOutputDir(ctx, tournamentID, dir.Record().OutputDir)
 	if out == "" {
 		out = os.TempDir()
 	}
@@ -123,11 +129,12 @@ func (d *Database) WriteDirectionUpcomingSheet(tournamentID int64, announced str
 	if err != nil {
 		return "", err
 	}
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	out := dir.Record().OutputDir
+	out := d.effectiveOutputDir(ctx, tournamentID, dir.Record().OutputDir)
 	if out == "" {
 		out = os.TempDir()
 	}

@@ -2272,7 +2272,10 @@
             "create": "Crear y vincular…",
             "confirmTitle": "Lo que cambiará en este torneo:",
             "noChange": "Nada: sus mesas ya son las de la sala.",
-            "confirm": "Vincular"
+            "confirm": "Vincular",
+            "wall": {
+                "rounds": "{n} rondas anunciadas"
+            }
         },
         "epreuves": {
             "pending": "{n} pendientes",
