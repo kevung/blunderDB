@@ -1564,6 +1564,12 @@ les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ;
 l'annuaire se copie en CSV ou s'enregistre dans un fichier (**Enregistrer…**),
 et se relit collé.
 
+Une épreuve en doubles inscrit des paires : la case **Paire** ajoute le nom, le
+club et la cote du partenaire. La paire joue sous le nom « A / B », que portent
+aussi ses matchs ; sa cote est la moyenne des deux, et une valeur saisie dans
+**Cote de la paire** la remplace. L'annuaire garde les deux personnes, jamais la
+paire.
+
 Avant **Inscrire**, l'aperçu d'un CSV collé liste les lignes illisibles — sans
 nom, sans séparateur quand les autres lignes en ont, cote qui n'est pas un
 nombre — et les doublons, dans le collage ou avec un joueur déjà inscrit. Un
@@ -1670,6 +1676,25 @@ du match.
 Les **têtes de série** sont une option, éteinte par défaut : l'étude du moteur
 conclut « pas de têtes de série protégées », qui est la culture actuelle du
 backgammon. Activées, les joueurs sont placés par cote.
+
+La salle partagée
+~~~~~~~~~~~~~~~~~
+
+Plusieurs épreuves jouées dans la même salle — un principal, un speed, des
+doubles — se regroupent dans une **Rencontre**, en bas des Réglages : **Créer et
+rattacher…** ouvre la salle avec son nombre de tables, **Rattacher…** y ajoute
+une épreuve dirigée. Rattacher montre d'abord ce qui va changer : les tables de
+l'épreuve deviennent celles de la salle. **Détacher de la rencontre** rend
+l'épreuve à elle-même, avec son journal et ses tables ; **Supprimer la
+rencontre** la met à la corbeille et détache ses épreuves sans en supprimer
+aucune.
+
+Dans une Rencontre, aucune épreuve ne propose une table où joue une autre : la
+grille montre ces tables occupées, avec le nom de l'épreuve, et un appariement
+sans table libre attend. Une table hors service se coche une fois, dans la
+Rencontre, et vaut pour toutes les épreuves ; le nombre de tables, les tables
+hors service et les pauses modifiés dans les Réglages d'une épreuve valent aussi
+pour la salle, et la liste de ce qui va changer nomme les autres épreuves.
 
 L'affichage de la salle
 ~~~~~~~~~~~~~~~~~~~~~~~
