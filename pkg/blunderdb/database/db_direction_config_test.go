@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 
@@ -399,5 +400,34 @@ func TestDirectionConfig_UnavailableTableUnderARunningMatch(t *testing.T) {
 	cfg.Tables.Count = 8
 	if err := d.SetDirectionConfig(tID, mustJSON(t, cfg)); err != nil {
 		t.Fatalf("declaring a table out of service mid-tournament: %v", err)
+	}
+}
+
+// A drawn bracket's consolation is refused by the engine itself: the preview shows the refusal
+// before the click, and saving it anyway returns the same refusal.
+func TestDirectionConfig_ConsolationOfADrawnBracketIsRefused(t *testing.T) {
+	d := newTestDB(t)
+	tID := directedAt(t, d, 8, `{"name":"Court","tables":{"count":4},"phases":[{"kind":"bracket","length":3}]}`)
+	if _, err := d.ConfirmAllProposals(tID); err != nil {
+		t.Fatal(err)
+	}
+	cfg := configOf(t, d, tID)
+	cfg.Phases[0].Consolation = true
+	body := mustJSON(t, cfg)
+
+	p, err := d.PreviewDirectionConfig(tID, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(p.Refusals) != 1 || p.Refusals[0].Code != "consolation" || p.Refusals[0].Phase != 1 || p.Refusals[0].Reason != "drawn" {
+		t.Fatalf("the consolation of a drawn bracket is refused, got %+v", p.Refusals)
+	}
+	if p.Refusals[0].From == p.Refusals[0].To {
+		t.Errorf("the refusal names both values, got %+v", p.Refusals[0])
+	}
+	err = d.SetDirectionConfig(tID, body)
+	var r *tournoi.ConfigRefusal
+	if !errors.As(err, &r) || r.Field != "consolation" || r.Reason != tournoi.RefusalDrawn {
+		t.Fatalf("saving it returns the engine's refusal, got %v", err)
 	}
 }

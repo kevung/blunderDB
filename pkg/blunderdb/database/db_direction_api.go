@@ -120,7 +120,7 @@ func (d *Database) HasDirection(tournamentID int64) (bool, error) {
 
 // SetDirectionConfig installs a configuration, in preparation and in the middle of a tournament
 // alike. It is always an event, so decisions stay readable in order. PreviewDirectionConfig
-// shows the engine's two refusals BEFORE the click.
+// shows the engine's refusal BEFORE the click; the refusal returned here is the same *tournoi.ConfigRefusal.
 func (d *Database) SetDirectionConfig(tournamentID int64, configJSON string) error {
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {

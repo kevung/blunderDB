@@ -2,9 +2,8 @@
  * direction-phase-settings.spec.js — les réglages de phase.
  *
  * Ajouter une consolante au tableau doit avoir un chemin à l'écran. Budget : ≤ 4 gestes avant
- * le tirage (Réglages, la case, Enregistrer, Confirmer). Après le tirage la case est grisée,
- * avec sa raison : le moteur Nicomaque accepte encore la consolante et n'en fait rien
- * (PileOfCells/backgammon-tournoi#16), donc l'interface ne la propose plus.
+ * le tirage (Réglages, la case, Enregistrer, Confirmer). Après le tirage le moteur refuse la
+ * consolante : l'aperçu affiche son refus, avec sa raison, et n'offre pas de confirmer.
  */
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
@@ -43,10 +42,13 @@ test('ajouter une consolante avant le tirage tient en quatre gestes', async ({ p
     await expect(page.locator('[data-testid="direction-settings-conso-scale-hint"]')).toBeVisible();
 });
 
-test('après le tirage, la case est grisée et dit pourquoi', async ({ page }) => {
+test("après le tirage, l'aperçu affiche le refus du moteur et sa raison", async ({ page }) => {
     await openDirection(page, { locks: [{ phase: 2, kind: 'bracket', locked: true, reason: 'drawn' }] });
     await page.locator('[data-testid="direction-tab-settings"]').click();
-    const box = page.locator('[data-testid="direction-settings-consolation-2"]');
-    await expect(box).toBeDisabled();
-    await expect(page.locator('[data-testid="direction-settings-consolation-2-frozen"]')).toContainText(/draw|tirage/i);
+    await page.locator('[data-testid="direction-settings-consolation-2"]').click();
+    await page.locator('[data-testid="direction-settings-apply"]').click();
+    const refused = page.locator('[data-testid="direction-settings-changes"] .refused');
+    await expect(refused).toHaveCount(1);
+    await expect(refused).toContainText(/draw|tirage/i);
+    await expect(page.locator('[data-testid="direction-settings-confirm"]')).toHaveCount(0);
 });

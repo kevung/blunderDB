@@ -1650,9 +1650,11 @@ Les réglages restent accessibles **en cours de tournoi** : baisser la bascule �
 22 h pour finir plus tôt, ajouter une consolante le samedi soir, tant que le
 tirage du tableau n'est pas fait. Ce qui est alors figé est grisé avec sa
 raison : le format d'une phase ouverte, le nombre de vies qu'elle a distribué
-et, dès le tirage d'une phase, sa consolante, sa réconciliation, sa recharge,
-la taille de ses poules et son nombre de qualifiés. Enregistrer en cours de
-tournoi montre d'abord la liste de ce qui va changer, et demande confirmation.
+et, dès le tirage d'une phase, la taille de ses poules et son nombre de
+qualifiés. Enregistrer en cours de tournoi montre d'abord la liste de ce qui va
+changer, et demande confirmation. Ce que le moteur refuse y figure avec sa
+raison, et rien n'est alors enregistré : c'est le cas de la consolante, de la
+réconciliation ou de la recharge d'un tableau déjà tiré.
 
 Une table au plateau cassé se déclare dans **Tables hors service** : ses numéros,
 séparés par des virgules (« 7, 12 »). Le moteur ne l'attribue plus, et la grille

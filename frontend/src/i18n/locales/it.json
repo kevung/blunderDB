@@ -1808,7 +1808,6 @@
             "reconciliationHint": "Il vincitore della consolazione affronta il vincitore del tabellone principale (doppia eliminazione).",
             "recharge": "Ricarica",
             "rechargeHint": "In doppia eliminazione, il vincitore del tabellone principale deve essere battuto due volte.",
-            "bracketFrozen": "Bloccato: {reason}.",
             "consoScaleHint": "La consolazione ha una classifica propria solo con un montepremi: compila «Consolazione» sotto Montepremi.",
             "groupSize": "Gironi da",
             "groupSizeHint": "Giocatori per girone. Vuoto: 4.",

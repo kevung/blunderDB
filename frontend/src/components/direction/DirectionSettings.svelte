@@ -82,11 +82,6 @@
     const isOpen = (/** @type {number} */ i) => i < opened;
     const openTitle = $derived($t('direction.settings.phaseOpened'));
 
-    /** @param {number} i */
-    function bracketFrozenTitle(i) {
-        return $t('direction.settings.bracketFrozen', { reason: renderLockReason($t, lockOf(i)?.reason) });
-    }
-
     /* Sans consolante, ni réconciliation ni recharge. */
     /** @param {PhaseConfig} phase @param {boolean} on */
     function setConsolation(phase, on) {
@@ -383,38 +378,33 @@
                             </label>
                         {/if}
                         {#if phase.kind === 'bracket'}
-                            <!-- Consolante et dépendances : grisées après le tirage, que le
-                                 moteur accepte sans rien créer (PileOfCells/backgammon-tournoi#16). -->
-                            <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.consolationHint')}>
+                            <!-- Après le tirage, le moteur refuse de changer ces cases : l'aperçu
+                                 affiche son refus avant l'enregistrement. -->
+                            <label title={$t('direction.settings.consolationHint')}>
                                 <input
                                     type="checkbox"
                                     data-testid="direction-settings-consolation-{i + 1}"
                                     checked={!!phase.consolation}
-                                    disabled={kindLocked(i)}
                                     onchange={(e) => setConsolation(phase, e.currentTarget.checked)}
                                 />
                                 {$t('direction.settings.consolation')}
                             </label>
                             {#if phase.consolation}
-                                <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.reconciliationHint')}>
+                                <label title={$t('direction.settings.reconciliationHint')}>
                                     <input
                                         type="checkbox"
                                         data-testid="direction-settings-reconciliation-{i + 1}"
                                         checked={!!phase.reconciliation}
-                                        disabled={kindLocked(i)}
                                         onchange={(e) => setReconciliation(phase, e.currentTarget.checked)}
                                     />
                                     {$t('direction.settings.reconciliation')}
                                 </label>
                                 {#if phase.reconciliation}
-                                    <label title={kindLocked(i) ? bracketFrozenTitle(i) : $t('direction.settings.rechargeHint')}>
-                                        <input type="checkbox" data-testid="direction-settings-recharge-{i + 1}" bind:checked={phase.recharge} disabled={kindLocked(i)} />
+                                    <label title={$t('direction.settings.rechargeHint')}>
+                                        <input type="checkbox" data-testid="direction-settings-recharge-{i + 1}" bind:checked={phase.recharge} />
                                         {$t('direction.settings.recharge')}
                                     </label>
                                 {/if}
-                            {/if}
-                            {#if kindLocked(i)}
-                                <span class="reason" data-testid="direction-settings-consolation-{i + 1}-frozen">{bracketFrozenTitle(i)}</span>
                             {/if}
                             {#if phase.consolation && !scaleText('conso')}
                                 <p class="facts wide" data-testid="direction-settings-conso-scale-hint">{$t('direction.settings.consoScaleHint')}</p>

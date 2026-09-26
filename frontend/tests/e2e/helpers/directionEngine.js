@@ -165,13 +165,18 @@ export async function installDirectionEngine(page, opts = {}) {
                 const next = JSON.parse(blob || '{}');
                 const list = (c) => (c?.tables?.unavailable || []).join(', ');
                 const changes = list(CONFIG) === list(next) ? [] : [{ code: 'tablesUnavailable', phase: 0, from: list(CONFIG), to: list(next) }];
-                // La consolante d'une phase, comparée comme le fait diffConfig en Go.
+                const refusals = [];
+                // La consolante d'une phase, comparée comme le fait diffConfig en Go ; celle d'une
+                // phase tirée est refusée, comme le fait CheckConfig dans le moteur.
                 (next.phases || []).forEach((ph, i) => {
                     const was = !!CONFIG.phases?.[i]?.consolation;
-                    if (was !== !!ph.consolation) changes.push({ code: 'consolation', phase: i + 1, from: String(was), to: String(!!ph.consolation) });
+                    if (was === !!ph.consolation) return;
+                    const change = { code: 'consolation', phase: i + 1, from: String(was), to: String(!!ph.consolation) };
+                    changes.push(change);
+                    const lock = (lockedPhases || []).find((l) => l.phase === i + 1 && l.locked);
+                    if (lock && !refusals.length) refusals.push({ ...change, reason: lock.reason });
                 });
-                // Les verrous posés par l'état : une phase dont le tirage est fait.
-                return Promise.resolve({ changes, refusals: [], locks: lockedPhases, opened: 0, current: -1, started: false });
+                return Promise.resolve({ changes, refusals, locks: lockedPhases, opened: 0, current: -1, started: false });
             };
             db.SetDirectionStrings = () => Promise.resolve(null);
             db.WriteDirectionPage = () => Promise.resolve('');

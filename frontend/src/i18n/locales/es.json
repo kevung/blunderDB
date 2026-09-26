@@ -1808,7 +1808,6 @@
             "reconciliationHint": "El ganador de la consolación juega contra el ganador del cuadro principal (doble eliminación).",
             "recharge": "Recarga",
             "rechargeHint": "En doble eliminación, al ganador del cuadro principal hay que ganarle dos veces.",
-            "bracketFrozen": "Fijado: {reason}.",
             "consoScaleHint": "La consolación solo tiene clasificación propia con un baremo: rellene «Consolación» en Premios.",
             "groupSize": "Grupos de",
             "groupSizeHint": "Jugadores por grupo. Vacío: 4.",

@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"slices"
 	"strconv"
@@ -14,9 +15,9 @@ import (
 )
 
 // Changing the configuration of a tournament ALREADY UNDER WAY (tasks/nicomaque/fonctionnel.md §3). The engine refuses
-// exactly two things: removing an open phase, and changing the format of a begun one. A
-// mid-tournament change is a decision, so PreviewDirectionConfig shows it first — as codes and
-// facts, for every language to phrase.
+// removing an open phase, changing the format of a begun one, and changing what a drawn
+// bracket was built from. A mid-tournament change is a decision, so PreviewDirectionConfig
+// shows it first — as codes and facts, for every language to phrase.
 
 // ConfigChange is one difference between the configuration in force and the one about to be
 // saved. Never a sentence: a code, the phase it concerns, and the two values.
@@ -81,7 +82,9 @@ func (d *Database) PreviewDirectionConfig(tournamentID int64, configJSON string)
 	p := &ConfigPreview{Opened: len(st.Phases), Current: st.Current, Started: dir.Started()}
 	p.Changes = append(diffConfig(cur, next), displacedMatches(st, cur, next)...)
 	p.Locks = phaseLocks(st, next)
-	p.Refusals = configRefusals(st, next)
+	if p.Refusals, err = configRefusal(st, next, p.Changes); err != nil {
+		return nil, err
+	}
 	return p, nil
 }
 
@@ -114,32 +117,43 @@ func lockReason(st *tournoi.State, i int) string {
 	return ""
 }
 
-// configRefusals restates, as codes, what the engine's acceptConfig would refuse.
-//
-// Stated twice on purpose: the panel must say so BEFORE the click; a refusal after the fact
-// reads as a bug.
-func configRefusals(st *tournoi.State, next tournoi.Config) []ConfigChange {
-	var out []ConfigChange
-	if len(next.Phases) < len(st.Phases) {
-		out = append(out, ConfigChange{
-			Code: "phaseRemoved", Phase: len(next.Phases) + 1,
-			From: strconv.Itoa(len(st.Phases)), To: strconv.Itoa(len(next.Phases)),
-			Reason: "opened",
-		})
-		return out
+// refusalCodes maps the engine's refused field to the code the settings view renders.
+var refusalCodes = map[string]string{
+	"phases": "phaseRemoved", "kind": "kind", "consolation": "consolation",
+	"last_chance": "lastChance", "reconciliation": "reconciliation", "recharge": "recharge",
+	"seeding": "seeding",
+}
+
+// configRefusal asks the engine whether next may replace the configuration in force, and turns
+// its refusal into a ConfigChange. The rule is the engine's alone: the panel shows before the
+// click exactly what SetDirectionConfig would be refused.
+func configRefusal(st *tournoi.State, next tournoi.Config, changes []ConfigChange) ([]ConfigChange, error) {
+	err := st.CheckConfig(next)
+	if err == nil {
+		return nil, nil
 	}
-	for i := range st.Phases {
-		if next.Phases[i].Kind == st.Phases[i].Cfg.Kind {
-			continue
-		}
-		if reason := lockReason(st, i); reason != "" {
-			out = append(out, ConfigChange{
-				Code: "kind", Phase: i + 1,
-				From: st.Phases[i].Cfg.Kind, To: next.Phases[i].Kind, Reason: reason,
-			})
+	var r *tournoi.ConfigRefusal
+	if !errors.As(err, &r) {
+		return nil, err
+	}
+	c := ConfigChange{Code: refusalCodes[r.Field], Phase: r.Phase + 1, Reason: r.Reason}
+	if c.Code == "" {
+		c.Code = r.Field
+	}
+	switch {
+	case r.Reason == tournoi.RefusalRemoved:
+		c.Reason = "opened"
+		c.From, c.To = strconv.Itoa(len(st.Phases)), strconv.Itoa(len(next.Phases))
+	case r.Field == "kind":
+		c.From, c.To = r.From, r.To
+	default:
+		for _, ch := range changes {
+			if ch.Code == c.Code && ch.Phase == c.Phase {
+				c.From, c.To = ch.From, ch.To
+			}
 		}
 	}
-	return out
+	return []ConfigChange{c}, nil
 }
 
 // diffConfig lists what separates two configurations, in reading order: the tournament as a

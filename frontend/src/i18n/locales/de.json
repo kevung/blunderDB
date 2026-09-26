@@ -1808,7 +1808,6 @@
             "reconciliationHint": "Der Sieger der Trostrunde spielt gegen den Sieger des Haupttableaus (Doppel-K.-o.).",
             "recharge": "Nachladen",
             "rechargeHint": "Im Doppel-K.-o. muss der Sieger des Haupttableaus zweimal geschlagen werden.",
-            "bracketFrozen": "Fixiert: {reason}.",
             "consoScaleHint": "Die Trostrunde hat nur mit einer Preisstaffel eine eigene Wertung: Füllen Sie „Trostrunde“ unter Preisgeld aus.",
             "groupSize": "Gruppen zu",
             "groupSizeHint": "Spieler pro Gruppe. Leer: 4.",

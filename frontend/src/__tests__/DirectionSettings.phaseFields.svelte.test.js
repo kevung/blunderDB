@@ -43,14 +43,14 @@ describe('un tableau', () => {
         expect(config.phases[0]).toMatchObject({ consolation: false, reconciliation: false, recharge: false });
     });
 
-    test('après le tirage, les cases sont grisées avec leur raison', () => {
+    test("après le tirage, les cases restent ouvertes : le refus vient du moteur, dans l'aperçu", () => {
         const config = $state(configOf([{ kind: 'bracket', length: 9, consolation: true }]));
         const { container } = render(DirectionSettings, {
             props: { config, directionState: 'running', opened: 1, locks: [{ phase: 1, kind: 'bracket', locked: true, reason: 'drawn' }] }
         });
-        expect(q(container, 'direction-settings-consolation-1')?.disabled).toBe(true);
-        expect(q(container, 'direction-settings-reconciliation-1')?.disabled).toBe(true);
-        expect(q(container, 'direction-settings-consolation-1-frozen')?.textContent).toMatch(/draw/i);
+        expect(q(container, 'direction-settings-consolation-1')?.disabled).toBe(false);
+        expect(q(container, 'direction-settings-reconciliation-1')?.disabled).toBe(false);
+        expect(q(container, 'direction-settings-consolation-1-frozen')).toBeNull();
     });
 
     test('une consolante sans barème à elle le dit', async () => {

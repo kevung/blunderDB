@@ -1808,7 +1808,6 @@
             "reconciliationHint": "The consolation winner plays the main bracket winner (double elimination).",
             "recharge": "Recharge",
             "rechargeHint": "In double elimination, the main bracket winner must be beaten twice.",
-            "bracketFrozen": "Frozen: {reason}.",
             "consoScaleHint": "The consolation has standings of its own only with a prize scale: fill in “Consolation” under Prize fund.",
             "groupSize": "Pools of",
             "groupSizeHint": "Players per pool. Empty: 4.",

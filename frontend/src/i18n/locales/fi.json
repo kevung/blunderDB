@@ -1808,7 +1808,6 @@
             "reconciliationHint": "Lohdutuskaavion voittaja pelaa pääkaavion voittajaa vastaan (tuplapudotus).",
             "recharge": "Lataus",
             "rechargeHint": "Tuplapudotuksessa pääkaavion voittaja on voitettava kahdesti.",
-            "bracketFrozen": "Lukittu: {reason}.",
             "consoScaleHint": "Lohdutuskaaviolla on omat sijoituksensa vain palkintoasteikon kanssa: täytä ”Lohdutuskaavio” kohdassa Palkintopotti.",
             "groupSize": "Lohkoissa",
             "groupSizeHint": "Pelaajia lohkoa kohden. Tyhjä: 4.",
