@@ -533,6 +533,5 @@
         border-radius: var(--radius);
         background: var(--color-surface);
         color: var(--color-text);
-        font: inherit;
     }
 </style>
