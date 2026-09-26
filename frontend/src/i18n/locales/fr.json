@@ -1993,7 +1993,12 @@
             "later": "plus tard",
             "willEnter": "{player} entrera : {where}",
             "noEntry": "{player} est inscrit mais n'entre dans aucune phase.",
-            "phaseN": "phase {n}"
+            "phaseN": "phase {n}",
+            "pair": "Paire",
+            "pairHint": "Une épreuve en doubles : deux personnes, un seul inscrit « A / B ».",
+            "name2": "Nom du partenaire",
+            "pairRating": "Cote de la paire",
+            "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace."
         },
         "bracket": {
             "current": "en cours",

@@ -1993,7 +1993,12 @@
             "later": "あとで",
             "willEnter": "{player} の参加先：{where}",
             "noEntry": "{player} は登録済みですが、どのフェーズにも入りません。",
-            "phaseN": "フェーズ{n}"
+            "phaseN": "フェーズ{n}",
+            "pair": "ペア",
+            "pairHint": "ダブルス大会：2人で1組の参加者「A / B」。",
+            "name2": "パートナーの名前",
+            "pairRating": "ペアのレーティング",
+            "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。"
         },
         "bracket": {
             "current": "進行中",

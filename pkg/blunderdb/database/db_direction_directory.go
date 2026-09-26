@@ -57,7 +57,7 @@ func (d *Database) Directory() ([]DirectoryEntry, error) {
 	// Oldest first, so the LAST entry under a name is the one that wins.
 	sort.Slice(recs, func(i, j int) bool { return recs[i].UpdatedAt.Before(recs[j].UpdatedAt) })
 	for _, rec := range recs {
-		players, err := d.entrantsOf(ctx, rec.TournamentID)
+		players, err := d.personsOf(ctx, rec.TournamentID)
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +104,7 @@ func (d *Database) DirectorySources() ([]DirectorySource, error) {
 	}
 	out := make([]DirectorySource, 0, len(recs))
 	for _, rec := range recs {
-		players, err := d.entrantsOf(ctx, rec.TournamentID)
+		players, err := d.personsOf(ctx, rec.TournamentID)
 		if err != nil {
 			return nil, err
 		}
@@ -125,7 +125,7 @@ func (d *Database) DirectorySources() ([]DirectorySource, error) {
 
 // DirectoryEntrants gives one Direction's entrants, ready to be entered into another.
 func (d *Database) DirectoryEntrants(tournamentID int64) ([]DirectoryEntry, error) {
-	players, err := d.entrantsOf(context.Background(), tournamentID)
+	players, err := d.personsOf(context.Background(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +251,7 @@ func (d *Database) ParseDirectoryCSV(tournamentID int64, body string) (*Director
 	}
 	entered := map[string]bool{}
 	if tournamentID > 0 {
-		players, err := d.entrantsOf(context.Background(), tournamentID)
+		players, err := d.personsOf(context.Background(), tournamentID)
 		if err != nil {
 			return nil, err
 		}

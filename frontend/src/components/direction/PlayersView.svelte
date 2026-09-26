@@ -21,8 +21,27 @@
         // Vides en préparation : il n'y a pas de retardataire avant le tirage.
         slots = [],
         infos = [],
-        onAddAtSlot = null
+        onAddAtSlot = null,
+        // Les doubles : une paire est deux personnes, un seul Participant « A / B » (ADR-0056).
+        pairs = /** @type {Record<string, {name: string, club?: string, rating?: number}[]>} */ ({}),
+        onAddPair = (/** @type {{name: string, club: string, rating: number}[]} */ _m, /** @type {number} */ _r) => {},
+        onUpdatePair = (/** @type {string} */ _i, /** @type {{name: string, club: string, rating: number}[]} */ _m, /** @type {number} */ _r) => {}
     } = $props();
+
+    /* Une épreuve en doubles se reconnaît à ses paires ; la case reste libre pour la première. */
+    let pairMode = $state(false);
+    $effect(() => {
+        if (Object.keys(pairs).length) pairMode = true;
+    });
+    let name2 = $state('');
+    let club2 = $state('');
+    let rating2 = $state('');
+    let pairRating = $state('');
+    /* La cote d'entrée d'une paire : la moyenne des cotes connues, corrigeable. */
+    const meanRating = $derived.by(() => {
+        const known = [num(rating), num(rating2)].filter((x) => x > 0);
+        return known.length ? known.reduce((a, b) => a + b, 0) / known.length : 0;
+    });
 
     let name = $state('');
     let club = $state('');
@@ -67,6 +86,19 @@
     async function add() {
         const n = name.trim();
         if (!n) return;
+        if (pairMode) {
+            if (!name2.trim()) return;
+            await onAddPair(
+                [
+                    { name: n, club: club.trim(), rating: num(rating) },
+                    { name: name2.trim(), club: club2.trim(), rating: num(rating2) }
+                ],
+                num(pairRating)
+            );
+            name = name2 = rating = rating2 = pairRating = '';
+            nameInput?.focus();
+            return;
+        }
         if (chosenSlot && onAddAtSlot) {
             await onAddAtSlot(n, club.trim(), num(rating), chosenSlot.section, chosenSlot.key);
         } else {
@@ -93,6 +125,17 @@
 
     async function saveEdit() {
         if (!editing) return;
+        const members = pairs[editing.id];
+        if (members) {
+            // Une paire garde ses personnes ; seule sa cote d'entrée se corrige ici.
+            await onUpdatePair(
+                editing.id,
+                members.map((m) => ({ name: m.name, club: m.club || '', rating: m.rating || 0 })),
+                num(editing.rating)
+            );
+            editing = null;
+            return;
+        }
         await onUpdate(editing.id, editing.name.trim(), editing.club.trim(), num(editing.rating));
         editing = null;
     }
@@ -110,6 +153,24 @@
         <input bind:this={nameInput} bind:value={name} type="text" placeholder={$t('direction.players.name')} disabled={busy} autocomplete="off" />
         <input bind:value={club} type="text" placeholder={$t('direction.players.club')} disabled={busy} />
         <input bind:value={rating} type="text" inputmode="decimal" placeholder={$t('direction.players.rating')} title={$t('direction.players.ratingHint')} disabled={busy} />
+        <label class="pair-toggle" title={$t('direction.players.pairHint')}>
+            <input type="checkbox" data-testid="direction-player-pair" bind:checked={pairMode} disabled={busy} />
+            {$t('direction.players.pair')}
+        </label>
+        {#if pairMode}
+            <input bind:value={name2} data-testid="direction-player-name2" type="text" placeholder={$t('direction.players.name2')} disabled={busy} autocomplete="off" />
+            <input bind:value={club2} type="text" placeholder={$t('direction.players.club')} disabled={busy} />
+            <input bind:value={rating2} type="text" inputmode="decimal" placeholder={$t('direction.players.rating')} disabled={busy} />
+            <input
+                bind:value={pairRating}
+                data-testid="direction-player-pair-rating"
+                type="text"
+                inputmode="decimal"
+                placeholder={meanRating ? meanRating.toFixed(2) : $t('direction.players.pairRating')}
+                title={$t('direction.players.pairRatingHint')}
+                disabled={busy}
+            />
+        {/if}
         {#if slots.length}
             <!-- Ce que le directeur voit AVANT de valider : où ce joueur va entrer. -->
             <label class="slot" title={$t('direction.players.slotHint')}>
@@ -122,7 +183,7 @@
                 </select>
             </label>
         {/if}
-        <button type="submit" class="primary" disabled={busy || !name.trim()}>{$t('direction.players.add')}</button>
+        <button type="submit" class="primary" disabled={busy || !name.trim() || (pairMode && !name2.trim())}>{$t('direction.players.add')}</button>
     </form>
 
     {#if infos.length}
@@ -186,8 +247,13 @@
             {#each shown as r (r.id)}
                 <tr data-testid="direction-player-{r.id}">
                     {#if editing && editing.id === r.id}
-                        <td><input bind:value={editing.name} type="text" /></td>
-                        <td><input bind:value={editing.club} type="text" /></td>
+                        {#if pairs[editing.id]}
+                            <td>{editing.name}</td>
+                            <td>{editing.club}</td>
+                        {:else}
+                            <td><input bind:value={editing.name} type="text" /></td>
+                            <td><input bind:value={editing.club} type="text" /></td>
+                        {/if}
                         <td><input bind:value={editing.rating} type="text" inputmode="decimal" /></td>
                         {#if started}
                             <td colspan="3"></td>

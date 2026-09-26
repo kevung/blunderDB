@@ -1993,7 +1993,12 @@
             "later": "myöhemmin",
             "willEnter": "{player} tulee mukaan: {where}",
             "noEntry": "{player} on ilmoitettu mutta ei tule mihinkään vaiheeseen.",
-            "phaseN": "vaihe {n}"
+            "phaseN": "vaihe {n}",
+            "pair": "Pari",
+            "pairHint": "Nelinpeliturnaus: kaksi henkilöä, yksi osallistuja ”A / B”.",
+            "name2": "Parin toisen nimi",
+            "pairRating": "Parin luokitus",
+            "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen."
         },
         "bracket": {
             "current": "käynnissä",

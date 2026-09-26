@@ -48,6 +48,9 @@ type DirectionView struct {
 	// BusyTables are the tables the sister events of the Rencontre play on right now: the
 	// proposals above already avoid them. Replayed, never stored.
 	BusyTables []int `json:"busyTables"`
+	// Pairs gives the two persons behind each doubles Participant, by Participant id; empty for
+	// a singles event (ADR-0056 §4).
+	Pairs map[string][]PairMember `json:"pairs,omitempty"`
 }
 
 // ListDirections names the directed tournaments of this database.
@@ -96,6 +99,9 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 		Config: cfg, EventCount: len(dir.Journal()),
 	}
 	v.RencontreID, _ = d.RencontreOf(tournamentID)
+	if v.Pairs, err = d.Pairs(tournamentID); err != nil {
+		return nil, err
+	}
 	if st := dir.State(); st != nil {
 		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
 		// deadline and a break's warning depend on the current time, not on the last result.

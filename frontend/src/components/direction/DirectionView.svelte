@@ -44,6 +44,8 @@
         entrySuggestions,
         addParticipant,
         updateParticipant,
+        addPair,
+        updatePair,
         withdrawParticipant,
         reinstateParticipant,
         brackets,
@@ -245,6 +247,10 @@
     const onAddAtSlot = (n, c, r, section, key) => act(() => addParticipantAtSlot(n, c, r, section, key), 'direction.players.error');
     /** @type {(i: string, n: string, c: string, r: number) => Promise<void>} */
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
+    /** @type {(m: {name: string, club: string, rating: number}[], r: number) => Promise<void>} */
+    const onAddPair = (m, r) => act(() => addPair(m, r), 'direction.players.error');
+    /** @type {(i: string, m: {name: string, club: string, rating: number}[], r: number) => Promise<void>} */
+    const onUpdatePair = (i, m, r) => act(() => updatePair(i, m, r), 'direction.players.error');
     /** @type {(i: string, after: boolean) => Promise<void>} */
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
     /** @type {(i: string) => Promise<void>} */
@@ -556,7 +562,22 @@
                 onParse={parseDirectoryCSV}
                 onImport={onImportEntrants}
             />
-            <PlayersView {rows} {suggestions} {busy} started={directionState !== 'draft'} {onAdd} {onUpdate} {onWithdraw} {onReinstate} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
+            <PlayersView
+                {rows}
+                {suggestions}
+                {busy}
+                started={directionState !== 'draft'}
+                {onAdd}
+                {onUpdate}
+                {onAddPair}
+                {onUpdatePair}
+                pairs={view?.pairs || {}}
+                {onWithdraw}
+                {onReinstate}
+                slots={openSlots}
+                infos={view?.infos || []}
+                {onAddAtSlot}
+            />
         {/if}
     </div>
 </div>

@@ -21,6 +21,8 @@ import {
     Participants,
     EntrySuggestions,
     AddParticipant,
+    AddPair,
+    UpdatePair,
     UpdateParticipant,
     WithdrawParticipant,
     ReinstateParticipant,
@@ -623,6 +625,34 @@ export async function addParticipant(name, club, rating) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
     const view = await AddParticipant(id, name, club, rating);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Inscrit une paire : un Participant « A / B » pour le moteur, deux personnes pour l'annuaire.
+ * Une cote à 0 vaut « la moyenne des deux ».
+ * @param {{ name: string, club: string, rating: number }[]} members
+ * @param {number} rating
+ */
+export async function addPair(members, rating) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await AddPair(id, JSON.stringify(members), rating);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Corrige une paire (ses personnes, sa cote) sans changer son identifiant.
+ * @param {string} participantId
+ * @param {{ name: string, club: string, rating: number }[]} members
+ * @param {number} rating
+ */
+export async function updatePair(participantId, members, rating) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await UpdatePair(id, participantId, JSON.stringify(members), rating);
     directionStore.set(view);
     return view;
 }

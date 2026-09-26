@@ -509,6 +509,7 @@ export namespace database {
 	    eventCount: number;
 	    rencontreId: number;
 	    busyTables: number[];
+	    pairs?: Record<string, Array<PairMember>>;
 	
 	    static createFrom(source: any = {}) {
 	        return new DirectionView(source);
@@ -532,6 +533,7 @@ export namespace database {
 	        this.eventCount = source["eventCount"];
 	        this.rencontreId = source["rencontreId"];
 	        this.busyTables = source["busyTables"];
+	        this.pairs = this.convertValues(source["pairs"], Array<PairMember>, true);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1095,6 +1097,22 @@ export namespace database {
 	        this.reviews_without_deck = source["reviews_without_deck"];
 	        this.reviews_without_position = source["reviews_without_position"];
 	        this.training_items_without_session = source["training_items_without_session"];
+	    }
+	}
+	export class PairMember {
+	    name: string;
+	    club?: string;
+	    rating?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PairMember(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.club = source["club"];
+	        this.rating = source["rating"];
 	    }
 	}
 	export class ParticipantRow {

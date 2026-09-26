@@ -1993,7 +1993,12 @@
             "later": "später",
             "willEnter": "{player} steigt ein: {where}",
             "noEntry": "{player} ist gemeldet, steigt aber in keine Phase ein.",
-            "phaseN": "Phase {n}"
+            "phaseN": "Phase {n}",
+            "pair": "Paar",
+            "pairHint": "Ein Doppelturnier: zwei Personen, ein Teilnehmer „A / B\".",
+            "name2": "Name des Partners",
+            "pairRating": "Wertung des Paars",
+            "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn."
         },
         "bracket": {
             "current": "laufend",

@@ -19,6 +19,8 @@ export function AddDirectionNote(arg1:number,arg2:string):Promise<database.Direc
 
 export function AddMatchToTournament(arg1:number,arg2:number):Promise<void>;
 
+export function AddPair(arg1:number,arg2:string,arg3:number):Promise<database.DirectionView>;
+
 export function AddParticipant(arg1:number,arg2:string,arg3:string,arg4:number):Promise<database.DirectionView>;
 
 export function AddParticipantAtSlot(arg1:number,arg2:string,arg3:string,arg4:number,arg5:string,arg6:string):Promise<database.DirectionView>;
@@ -381,6 +383,8 @@ export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function OpenTranscription(arg1:number):Promise<database.TranscriptionState>;
 
+export function Pairs(arg1:number):Promise<Record<string, Array<database.PairMember>>>;
+
 export function ParseDirectoryCSV(arg1:number,arg2:string):Promise<database.DirectoryImport>;
 
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
@@ -544,6 +548,8 @@ export function UpdateFilter(arg1:number,arg2:string,arg3:string):Promise<void>;
 export function UpdateMatch(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
 
 export function UpdateMatchComment(arg1:number,arg2:string):Promise<void>;
+
+export function UpdatePair(arg1:number,arg2:string,arg3:string,arg4:number):Promise<database.DirectionView>;
 
 export function UpdateParticipant(arg1:number,arg2:string,arg3:string,arg4:string,arg5:number):Promise<database.DirectionView>;
 

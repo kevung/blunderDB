@@ -14,6 +14,10 @@ export function AddMatchToTournament(arg1, arg2) {
   return window['go']['database']['Database']['AddMatchToTournament'](arg1, arg2);
 }
 
+export function AddPair(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['AddPair'](arg1, arg2, arg3);
+}
+
 export function AddParticipant(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['AddParticipant'](arg1, arg2, arg3, arg4);
 }
@@ -738,6 +742,10 @@ export function OpenTranscription(arg1) {
   return window['go']['database']['Database']['OpenTranscription'](arg1);
 }
 
+export function Pairs(arg1) {
+  return window['go']['database']['Database']['Pairs'](arg1);
+}
+
 export function ParseDirectoryCSV(arg1, arg2) {
   return window['go']['database']['Database']['ParseDirectoryCSV'](arg1, arg2);
 }
@@ -1064,6 +1072,10 @@ export function UpdateMatch(arg1, arg2, arg3, arg4) {
 
 export function UpdateMatchComment(arg1, arg2) {
   return window['go']['database']['Database']['UpdateMatchComment'](arg1, arg2);
+}
+
+export function UpdatePair(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['UpdatePair'](arg1, arg2, arg3, arg4);
 }
 
 export function UpdateParticipant(arg1, arg2, arg3, arg4, arg5) {

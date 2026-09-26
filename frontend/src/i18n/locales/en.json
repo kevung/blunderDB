@@ -1993,7 +1993,12 @@
             "later": "later",
             "willEnter": "{player} will enter: {where}",
             "noEntry": "{player} is entered but enters no phase.",
-            "phaseN": "phase {n}"
+            "phaseN": "phase {n}",
+            "pair": "Pair",
+            "pairHint": "A doubles event: two persons, one entrant \"A / B\".",
+            "name2": "Partner's name",
+            "pairRating": "Pair rating",
+            "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it."
         },
         "bracket": {
             "current": "current",
