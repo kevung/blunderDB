@@ -217,7 +217,7 @@ func TestFreeParticipantsShrinksAsMatchesStart(t *testing.T) {
 	}
 }
 
-// TestManualPairingTakesAFreeTable (#437): a match paired by hand with no table number takes
+// TestManualPairingTakesAFreeTable: a match paired by hand with no table number takes
 // the first free table — the one a proposal would get, unavailable tables skipped — and, when
 // none is left, still shows in the grid, under a "no table" cell rather than nowhere.
 func TestManualPairingTakesAFreeTable(t *testing.T) {

@@ -8,11 +8,8 @@ import (
 
 // The regime is tested twice — once in Go by domain.Position.IsMoney, once in
 // SQL by Similar's WHERE clause — and this holds the two forms together.
-//
-// It is the same trap #190/C.3 named: two spellings of "money or match" that
-// agree on a clean score and part company on a malformed one. Here the cost of
-// parting company would be a class silently split in two, which is exactly the
-// failure the class was introduced to fix.
+// Two spellings of "money or match" can agree on a clean score and part on a
+// malformed one, silently splitting a class in two.
 func TestSimilarRegimePredicateMatchesIsMoney(t *testing.T) {
 	// The SQL is `score_1 < 0 AND score_2 < 0` for money, and its negation
 	// `score_1 >= 0 OR score_2 >= 0` for a match score. Evaluated here on the

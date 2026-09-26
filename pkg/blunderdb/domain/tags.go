@@ -6,22 +6,14 @@ import (
 	"strings"
 )
 
-// Tags (issue #265, #266).
-//
-// A tag is not a table. It is a `#word` inside a comment, which is how the
-// `#blitz #prime` command has always written one and how the search has always
-// found one — the tag vocabulary lives in the user's own prose, and nothing
-// forces them to declare a tag before using it.
-//
-// That has a consequence the statistics have to live with: a tag can only be
-// found by reading comment text, never by a GROUP BY. The per-tag breakdown
-// therefore reads the tags of the selected positions once and tallies in Go.
+// Tags. A tag is not a table: it is a `#word` inside a comment, undeclared.
+// So a tag is found by reading comment text, never by a GROUP BY; the per-tag
+// breakdown reads the selected positions' tags once and tallies in Go.
 
 // tagPattern is a '#' followed by at least one character that is not
 // whitespace and not another '#'. Deliberately permissive: a tag may carry
-// digits, accents, hyphens — "#back-game", "#2-away", "#préparation" — because
-// the vocabulary is the user's and refusing their spelling would be inventing
-// a rule they never agreed to.
+// digits, accents, hyphens — "#back-game", "#2-away", "#préparation" — since
+// the vocabulary is the user's.
 var tagPattern = regexp.MustCompile(`#[^\s#]+`)
 
 // ExtractTags returns the tags of a comment, lower-cased, deduplicated, in
@@ -50,29 +42,17 @@ func ExtractTags(text string) []string {
 }
 
 // TagCount is one entry of a database's tag vocabulary: the tag, and how many
-// POSITIONS carry it (issue #265). Positions, not comments: a tag written
-// twice on the same position is one position tagged, and the number a panel
-// shows next to a tag has to be the number of positions clicking it will
-// yield.
+// POSITIONS carry it — the number clicking the tag will yield, so a tag
+// written twice on one position counts once.
 type TagCount struct {
 	Tag   string `json:"tag"`
 	Count int    `json:"count"`
 }
 
 // RecommendedTags is the vocabulary blunderDB SUGGESTS while a comment is
-// being typed (issue #265). Suggests, and nothing more: a tag is a `#word`
-// in the user's own prose, nothing has to be declared, and a tag absent from
-// this list is as valid as one on it.
-//
-// The names come from the backgammon literature — they are the terms the
-// research report P5 collected for the game-type classifier, and the ones a
-// player reads in a book — rather than from anything blunderDB computes. A
-// vocabulary invented here would be a taxonomy nobody agreed to; a vocabulary
-// borrowed from the books is a spelling convention, which is all a suggestion
-// list should be.
-//
-// Kept short on purpose. Twenty suggestions in a dropdown is a menu to read;
-// a dozen is a habit to acquire.
+// being typed; a tag absent from it is as valid as one on it. The names are
+// the backgammon literature's (research report P5), a spelling convention
+// rather than a taxonomy, and the list is kept short on purpose.
 var RecommendedTags = []string{
 	"#ace-point",
 	"#backgame",
@@ -89,13 +69,9 @@ var RecommendedTags = []string{
 
 // MatchesAllTags reports whether text carries every tag in want.
 //
-// Delimited, not substring: the tags of the text are extracted first and
-// compared whole, so `#prime` does not match `#priming` — the difference the
-// free-text comment search (`t"#prime"`) cannot make, and the reason a tag
-// search is its own filter rather than a spelling of that one.
-//
-// An empty want matches everything, so a caller can pass its filter through
-// unconditionally.
+// Delimited, not substring: `#prime` does not match `#priming`, which the
+// free-text search (`t"#prime"`) cannot tell apart. An empty want matches
+// everything.
 func MatchesAllTags(text string, want []string) bool {
 	if len(want) == 0 {
 		return true

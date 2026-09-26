@@ -284,8 +284,8 @@ func TestImportBGFTextPositionEndToEnd(t *testing.T) {
 	}
 }
 
-// TestHandleImport_ContextCancelledEmitsCancelledEvent (#234): imports.cancel
-// and a graceful shutdown (Server.Run cancelling every in-flight job before
+// TestHandleImport_ContextCancelledEmitsCancelledEvent: imports.cancel and a
+// graceful shutdown (Server.Run cancelling every in-flight job before
 // Shutdown) both reach the importer through the same cancelled context —
 // this must read as {"event":"cancelled"}, not an "internal error" the
 // masking machinery has to hide the cause of (there is no secret cause here,
@@ -373,11 +373,9 @@ func TestExportSQLiteSuccess(t *testing.T) {
 	}
 }
 
-// TestExportSQLiteIncludesMatches covers the fix for a known gap: the
-// handler used to call Export with a zero-value ingest.Selection, so
-// exports.sqlite carried nothing at all — no positions, and certainly no
-// matches. It now runs ingest.WholeTenant, so a match imported through this
-// same server must come back out.
+// TestExportSQLiteIncludesMatches verifies exports.sqlite runs
+// ingest.WholeTenant, not a zero-value ingest.Selection: a match imported
+// through this same server must come back out.
 func TestExportSQLiteIncludesMatches(t *testing.T) {
 	ts := newTestServer(t)
 
@@ -515,14 +513,12 @@ func TestExportSQLiteWatermark(t *testing.T) {
 	}
 }
 
-// TestExportSQLiteErrorEnvelope covers the fix for the "200 on export
-// failure" bug: an already-cancelled request context makes
-// ingest.SQLiteExporter.Export fail (it opens its temp SQLite file with the
-// same context), before the handler has written anything to the real
-// ResponseWriter. The response must carry a proper error status and a JSON
-// envelope — not HTTP 200 with Content-Type: application/octet-stream and a
-// stray JSON body wearing a .sqlite Content-Disposition, which is what the
-// handler used to produce.
+// TestExportSQLiteErrorEnvelope verifies that an already-cancelled request
+// context — which makes ingest.SQLiteExporter.Export fail (it opens its temp
+// SQLite file with the same context) before the handler has written anything
+// to the real ResponseWriter — produces a proper error status and a JSON
+// envelope, never HTTP 200 with Content-Type: application/octet-stream and a
+// stray JSON body wearing a .sqlite Content-Disposition.
 func TestExportSQLiteErrorEnvelope(t *testing.T) {
 	st, err := sqlite.Open(context.Background(), ":memory:", nil)
 	if err != nil {

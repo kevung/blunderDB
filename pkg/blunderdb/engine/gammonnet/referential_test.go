@@ -10,8 +10,7 @@ import (
 // The scale's four defining properties (ADR-0019). Together they pin the map
 // down completely: money is untouched, the current cube's two dry outcomes
 // are ±1, the map negates with the point of view, and it degenerates to the
-// search's own 2×MWC−1 exactly at double match point — the one score where
-// the two scales that used to be printed interchangeably really do coincide.
+// search's own 2×MWC−1 exactly at double match point.
 
 func TestEquityScaleLeavesMoneyAlone(t *testing.T) {
 	scale, ok := NewEquityScale(nil)
@@ -32,10 +31,8 @@ func TestEquityScaleLeavesMoneyAlone(t *testing.T) {
 }
 
 func TestEquityScaleAnchorsTheCubeAtPlusMinusOne(t *testing.T) {
-	// Winning the cube's own value outright is +1 and losing it outright is
-	// −1 at EVERY score — that is what makes a match equity comparable to a
-	// money one, and what makes "double, pass" read +1.000 in the panel at a
-	// score just as it does in money play.
+	// Winning the cube's value outright is +1 and losing it −1 at EVERY
+	// score: what makes a match equity comparable to a money one.
 	for _, state := range []MatchState{
 		{AwayOnRoll: 5, AwayOpponent: 5, Cube: 1},
 		{AwayOnRoll: 3, AwayOpponent: 7, Cube: 1},
@@ -79,10 +76,7 @@ func TestEquityScaleNegatesWithThePointOfView(t *testing.T) {
 		for _, mwc := range []float64{0.1, 0.35, 0.5, 0.72, 0.99} {
 			got := theirs.FromDecision(1 - mwc)
 			want := -mine.FromDecision(mwc)
-			// Same margin as cubeGoldTolerance (#24: blunderDB's MET now
-			// reads gammonNet's float64 export instead of a float32 hand
-			// transcription, closing the gap this tolerance used to paper
-			// over — see engine/met.go and cube_gold_test.go).
+			// Same margin as cubeGoldTolerance.
 			if math.Abs(got-want) > 1e-6 {
 				t.Errorf("%+v at mwc=%v: opponent's equity %v, want %v", state, mwc, got, want)
 			}

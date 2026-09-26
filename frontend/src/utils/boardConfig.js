@@ -1,16 +1,10 @@
-// La configuration de dessin du plateau, en UN seul endroit (#279).
-//
-// Ce littéral vivait dans Board.svelte, où il était le seul à en avoir besoin.
-// Depuis que les diagrammes du rapport (#279) dessinent des positions hors de
-// l'écran avec les mêmes fonctions de scène, il en faut une seconde instance —
-// et deux littéraux de palette, c'est deux palettes qui finissent par
-// diverger, exactement ce que le rendu unique de #278 vient d'éviter.
+// La configuration de dessin du plateau, en UN seul endroit : Board.svelte et
+// les diagrammes du rapport (rendus hors écran avec les mêmes fonctions de
+// scène) partagent ce littéral pour ne jamais faire diverger deux palettes.
 
 /**
- * Une configuration NEUVE. Un objet frais à chaque appel, jamais une constante
- * partagée : les fonctions de dessin le lisent impérativement et l'appelant le
- * mute (applyPalette), donc deux plateaux partageant l'objet partageraient
- * aussi leurs couleurs.
+ * Une configuration NEUVE à chaque appel : l'appelant la mute (applyPalette), et deux plateaux
+ * partageant l'objet partageraient leurs couleurs.
  */
 export function defaultBoardConfig() {
     return {

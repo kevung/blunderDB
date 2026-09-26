@@ -94,9 +94,8 @@ func TestCompareVersions(t *testing.T) {
 	}
 }
 
-// TestRequireTables (issue #177): a required table that is missing is
-// reported by name. The lookup's sql.ErrNoRows used to be returned as is,
-// which made the "required table X does not exist" message unreachable.
+// TestRequireTables: a required table that is missing is
+// reported by name, not as a bare sql.ErrNoRows.
 func TestRequireTables(t *testing.T) {
 	t.Parallel()
 	db, err := sql.Open("sqlite", ":memory:")
@@ -125,7 +124,7 @@ func TestRequireTables(t *testing.T) {
 	}
 }
 
-// TestAddColumn (issue #177): addColumn decides from pragma_table_info
+// TestAddColumn: addColumn decides from pragma_table_info
 // whether the column is there, so a second run is a no-op and the driver's
 // wording of "duplicate column" is irrelevant. A genuine failure still
 // surfaces.

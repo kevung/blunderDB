@@ -8,13 +8,11 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
-// Micro-rounds and breaks (issue #388): the two rules of TIME the engine brings.
+// Micro-rounds and breaks: the two rules of TIME the engine brings.
 //
-// Both are read against the WALL CLOCK and against nothing else — a micro-round's deadline falls
-// while nobody writes anything, and a break's warning depends on when the match would end. So
-// what these tests hold is not the rules (they are the engine's, and it tests them) but the
-// thing blunderDB is responsible for: asking the engine at the right instant, and never letting
-// a rule of time launch anything by itself.
+// Both are read against the WALL CLOCK. The engine tests the rules; these tests hold
+// blunderDB's part: asking at the right instant, and never letting a rule of time launch
+// anything by itself.
 
 // batchDirection prepares a tournament whose pairings go out in micro-rounds.
 func batchDirection(t *testing.T, d *Database, n, minutes int) int64 {

@@ -6,11 +6,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// TestBGFRulesReachThePosition (issue #171): until ADR-0028 the BGF mapper
-// dropped the session's optional rules on the floor — the repository's only
-// TODO — and every imported position claimed Jacoby and beaver were off. They
-// now travel from the top of the file (useJacoby/useBeaver) to the position's
-// columns, and only in money play, where they mean something.
+// TestBGFRulesReachThePosition: the session's optional rules travel from the
+// top of the file (useJacoby/useBeaver) to the position's columns, and only in
+// money play, where they mean something (ADR-0028).
 func TestBGFRulesReachThePosition(t *testing.T) {
 	gameData := map[string]interface{}{"scoreGreen": 0, "scoreRed": 0}
 	var board [28]int
@@ -43,10 +41,8 @@ func TestBGFRulesReachThePosition(t *testing.T) {
 	}
 }
 
-// TestBGFCrawfordSentinelReachesTheAwayScore is issue #338 on the BGF side.
-//
-// BGBlitz states "isCrawford" per game and the mapper already read it into
-// bgfRules; what it never reached was the SCORE. The away score carries the
+// TestBGFCrawfordSentinelReachesTheAwayScore: BGBlitz states "isCrawford" per
+// game and it must reach the SCORE. The away score carries the
 // Crawford rule inside the number (CONTEXT.md, « Away score »), so the same
 // 6-2 gives `1` in the Crawford game and `0` after it — where the cube is live
 // again and the trailer doubles at the first opportunity.

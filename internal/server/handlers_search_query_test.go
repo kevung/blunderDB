@@ -1,9 +1,7 @@
 package server
 
 // handlers_search_query_test.go — /v1/search.parse and /v1/search.query, the
-// query-language door onto the search (B.18, #186). Before them, every /v1
-// client had to assemble domain.SearchFilters by hand, and twenty-odd filters
-// the command bar offers were reachable from nowhere else.
+// query-language door onto the search.
 
 import (
 	"bufio"

@@ -6,11 +6,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// These are the direct unit tests B.15 (#183) asks for on the table that
-// replaced the six near-identical win/gammon/backgammon-rate blocks inside
-// find's per-row Go filter — the six had no direct test of their own before
-// this refactor, only the integration-level search equivalence suite in
-// pkg/blunderdb/database.
+// Direct unit tests of rateFilterChecks, the six win/gammon/backgammon-rate
+// checks of find's per-row Go filter.
 
 func TestRateFilterChecksAllInactiveByDefault(t *testing.T) {
 	checks := rateFilterChecks(domain.SearchFilters{})
@@ -114,8 +111,7 @@ func TestRateFilterChecksFallBackToCheckerMove(t *testing.T) {
 
 // TestRateFilterChecksCubeAnalysisWinsOverCheckerMove: a position carrying
 // both (uncommon, but AllCubeAnalyses/CheckerAnalysis are independently
-// optional) reads the cube analysis, matching the six original blocks'
-// if/else-if precedence.
+// optional) reads the cube analysis first.
 func TestRateFilterChecksCubeAnalysisWinsOverCheckerMove(t *testing.T) {
 	ana := &domain.PositionAnalysis{
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{PlayerWinChances: 0.9},

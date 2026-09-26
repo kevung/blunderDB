@@ -29,7 +29,7 @@ type Options struct {
 	// every scope reads and writes the same rows. Serving it with the tenant
 	// header accepted but ignored means two tenants share one library while
 	// the protocol says otherwise — an isolation that exists in the caller's
-	// mind and nowhere else (#240). Refusing is the honest answer: a
+	// mind and nowhere else. Refusing is the honest answer: a
 	// deployment that genuinely needs tenants needs PostgreSQL.
 	//
 	// Set by `serve` for the SQLite backend; the default (false) leaves every
@@ -49,9 +49,9 @@ type Options struct {
 	// EnableMetrics toggles the /metrics endpoint and the metrics middleware.
 	EnableMetrics bool
 
-	// EnableWebUI serves the read-mostly web page under /app/ (#295,
-	// ADR-0039). OFF by default, and that default is the decision: the daemon
-	// authenticates nobody (ADR-0005), so a browser-reachable interface
+	// EnableWebUI serves the read-mostly web page under /app/ (ADR-0039). OFF
+	// by default, and that default is the decision: the daemon authenticates
+	// nobody (ADR-0005), so a browser-reachable interface
 	// switched on out of the box would invite exactly the deployment ADR-0005
 	// forbids — a daemon exposed with no proxy in front of it.
 	EnableWebUI bool
@@ -74,7 +74,7 @@ type Options struct {
 	// hold spooled to $TMPDIR at once, across every tenant — see spoolQuota
 	// (handlers_imports.go). Defaults to 4×ImportMaxBodyBytes when zero: N
 	// concurrent imports each up to ImportMaxBodyBytes would otherwise have
-	// no ceiling on disk usage (#234).
+	// no ceiling on disk usage.
 	MaxSpoolBytes int64
 
 	// ReadHeaderTimeout bounds the time to read request headers. Defaults to
@@ -89,9 +89,8 @@ type Options struct {
 	// imports/NDJSON list-style routes legitimately run far longer than an
 	// ordinary call (see streamSeq2 / handlers_imports.go). IdleTimeout only
 	// ever fires between requests, so it cannot cut a stream short.
-	// RequestTimeout/StreamTimeout below bound an individual request
-	// instead, at two different budgets by route shape — the per-request
-	// mechanism this comment used to say the daemon had none of (#234).
+	// RequestTimeout/StreamTimeout below bound an individual request instead,
+	// at two different budgets by route shape.
 	IdleTimeout time.Duration
 
 	// RequestTimeout bounds an ordinary (non-streaming) request's total

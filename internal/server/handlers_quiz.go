@@ -9,13 +9,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Le mode quiz (#294, fiche J.4), côté démon.
-//
-// Le jugement est celui d'engine — le même que le bureau appelle — parce que
-// le PR d'une session doit valoir la même chose d'un client à l'autre. Ce que
-// ces deux routes ajoutent est l'accès à la position et à son analyse, et rien
-// d'autre : elles n'écrivent pas, ne comptent pas les sessions, ne retiennent
-// pas qui a répondu quoi. Une session de quiz appartient à celui qui la fait.
+// Le mode quiz côté démon. Le jugement est celui d'engine, comme au bureau,
+// pour qu'un PR vaille la même chose d'un client à l'autre. Les routes
+// n'écrivent rien : une session de quiz appartient à celui qui la fait.
 
 type quizCheckerReq struct {
 	PositionID int64        `json:"positionId"`
@@ -41,10 +37,8 @@ func (s *Server) quizRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
 	as := func() storage.AnalysisStore { return s.opts.Storage.Analyses() }
 
-	// analysisOf reads the analysis, treating a missing one as "no analysis"
-	// rather than an error: a quiz must keep running through a library with
-	// gaps, and a verdict that says "not matched" is the honest answer for a
-	// position nobody has evaluated.
+	// analysisOf treats a missing analysis as "none", not an error: a quiz runs
+	// through a library with gaps, and "not matched" is the honest verdict.
 	analysisOf := func(ctx context.Context, scope string, id int64) *domain.PositionAnalysis {
 		ana, err := as().Load(ctx, scope, id)
 		if err != nil {
@@ -68,9 +62,8 @@ func (s *Server) quizRoutes() []route {
 			}
 			return engine.GradeCheckerAnswerNotation(pos, analysisOf(ctx, scope, req.PositionID), req.Move), nil
 		})},
-		// Expliquer un blunder (#298). La route rend un THÈME et ses écarts
-		// mesurés, jamais une phrase : la phrase se rédige dans la langue du
-		// client, à partir d'un gabarit.
+		// Rend un THÈME et ses écarts mesurés, jamais une phrase : le client
+		// la rédige dans sa langue à partir d'un gabarit.
 		{http.MethodPost, "/v1/positions.explain", rpc(func(ctx context.Context, scope string, req explainReq) (engine.Explanation, error) {
 			pos, err := ps().Load(ctx, scope, req.PositionID)
 			if err != nil {

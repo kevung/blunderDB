@@ -11,14 +11,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The entries of a Direction (ADR-0047 §4, issue #369).
-//
-// A Participant is an entry in ONE Direction: a name, a club, an entry rating. It is not a
-// Player and not a person. The only link to a Player is a name the director chose to spell the
-// same, so that the Matches filling this Participant's Slots carry that Player's literal name.
-// Choosing an existing Player at entry time fixes the spelling and pre-fills the rating from
-// their PR; nothing is inferred afterwards, and there is no reusable "person" record — which is
-// the identity CONTEXT.md has always refused.
+// The entries of a Direction (tasks/nicomaque/fonctionnel.md §4). A Participant is an entry in ONE Direction, not a
+// Player nor a person (CONTEXT.md). The only link to a Player is a name spelled the same;
+// choosing an existing Player at entry fixes the spelling and pre-fills the rating from their
+// PR, and nothing is inferred afterwards.
 
 // ParticipantRow is one line of the players view: the entry, plus what the replayed state knows
 // about them. Everything derived here is recomputed at every call.
@@ -162,11 +158,9 @@ func (d *Database) UpdateParticipant(tournamentID int64, id, name, club string, 
 	// Re-adding under the same identifier is how the engine records a correction: the entry
 	// keeps its place, its matches and its Slots.
 	//
-	// It also CLEARS a withdrawal — the engine (v0.2.1) has no event that corrects an entry
-	// without re-entering it. Correcting the club of someone who left must not bring them back
-	// (#439): their withdrawal is written again straight after, at the same instant. They are
-	// playing nothing, so the second event forfeits nothing; coming back is
-	// ReinstateParticipant, a gesture of its own.
+	// It also CLEARS a withdrawal (the engine has no correct-without-re-entering event), so a
+	// withdrawn player's withdrawal is written again at the same instant; it forfeits nothing.
+	// Coming back is ReinstateParticipant.
 	withdrawn := st.Withdrawn[tournoi.PlayerID(id)]
 	now := time.Now()
 	p := tournoi.Player{ID: tournoi.PlayerID(id), Name: name, Club: club, Rating: rating}
@@ -181,7 +175,7 @@ func (d *Database) UpdateParticipant(tournamentID int64, id, name, club string, 
 	return d.GetDirection(tournamentID)
 }
 
-// ReinstateParticipant brings a withdrawn player back into the tournament (#439): they are
+// ReinstateParticipant brings a withdrawn player back into the tournament: they are
 // paired again, with the results and lives they had when they left; the matches their
 // withdrawal lost by forfeit stay lost. It is refused for someone who has not withdrawn, so a
 // mistaken click cannot re-enter a player twice.

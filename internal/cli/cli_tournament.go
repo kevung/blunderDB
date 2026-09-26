@@ -13,7 +13,7 @@ import (
 )
 
 // runTournament handles the tournament command: the non-interactive side of directing a
-// tournament (ADR-0047, issue #395).
+// tournament (ADR-0047).
 //
 // What the software can do, it must be able to do without a graphical interface — that is the
 // project's parity invariant. What it must NOT do here is a second director's console: Nicomaque

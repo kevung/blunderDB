@@ -2,16 +2,9 @@
 // MigrationProgress, captured by sqlite.Open and forwarded by
 // (*sqlite.Storage).Migrate to the registered Migrator.
 //
-// It lives in its own directory/package for the same reason
-// storage/sqlite/nomigrator does: it calls sqlite.RegisterMigrator itself
-// (with a fake migrator that only records its progress calls, no real
-// schema work), and the sibling storage/sqlite_test package already
-// registers the real legacy chain via bench_test.go's import of package
-// database — whichever registration runs last wins for the whole test
-// binary (see migrate_hook.go's doc comment), so sharing a binary with that
-// import would make this test's own registration order-dependent and
-// fragile, and would clobber the real migrator for any other test in that
-// binary that came to depend on it.
+// Its own package, like storage/sqlite/nomigrator: it registers a fake
+// migrator, and the last registration wins for the whole test binary, which
+// the sibling sqlite_test package fills with the real chain.
 package migrateprogress_test
 
 import (

@@ -11,12 +11,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The Direction surface the frontend and the CLI both call (ADR-0047, CLAUDE.md CLI/GUI/server
-// parity). Everything here is a thin call into package direction: no rule lives in this file.
-//
-// One shape runs through all of it: NOTHING returned here is a translated string. Labels,
-// ranking notes, warnings and wait reasons are the engine's codes, and the frontend renders
-// them in the user's language. blunderDB speaks nine.
+// The Direction surface the frontend and the CLI both call (ADR-0047): thin calls into package
+// direction, no rule here. NOTHING returned is a translated string: the engine's codes are
+// rendered by the frontend.
 
 // DirectionSummary is what a list of directed tournaments shows without replaying any of them.
 type DirectionSummary struct {
@@ -40,9 +37,7 @@ type DirectionView struct {
 	Ranking       []tournoi.Rank    `json:"ranking"`
 	Players       []tournoi.Player  `json:"players"`
 	// Infos says, for every entrant engaged in no phase yet, where they will enter — a free
-	// bye of the phase under way, a later phase open to all, or nowhere. Derived at every
-	// call: a player the director finally gives a place to leaves the list at that instant
-	// (issue #392).
+	// bye of the phase under way, a later phase open to all, or nowhere. Derived at every call.
 	Infos      []tournoi.Info   `json:"infos,omitempty"`
 	Running    []*tournoi.Match `json:"running"`
 	Phase      int              `json:"phase"`
@@ -69,8 +64,7 @@ func (d *Database) ListDirections() ([]DirectionSummary, error) {
 
 // CreateDirection starts directing a Tournament that has none. The configuration arrives as the
 // engine's own JSON so the frontend composes it without this file knowing every format option.
-// A seed of 0 means "pick one": a draw must be reproducible, but nobody should have to invent
-// the number it is reproducible from.
+// A seed of 0 means "pick one" (and record it, so the draw stays reproducible).
 func (d *Database) CreateDirection(tournamentID int64, configJSON string, seed int64) error {
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
@@ -97,11 +91,8 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 		Config: cfg, EventCount: len(dir.Journal()),
 	}
 	if st := dir.State(); st != nil {
-		// Proposed at the WALL CLOCK, not at the journal's last timestamp (issue #388). Two of
-		// the engine's rules are read against the current time and against nothing else: a
-		// micro-round's deadline falls while nobody writes anything, and a break's warning
-		// depends on when the match would end. Proposing at the journal's time would leave the
-		// queue frozen on what was true at the last result.
+		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
+		// deadline and a break's warning depend on the current time, not on the last result.
 		v.Proposals = dir.ProposeAt(time.Now())
 		v.Warnings = dir.Warnings()
 		v.Ranking = dir.Ranking()
@@ -128,11 +119,8 @@ func (d *Database) HasDirection(tournamentID int64) (bool, error) {
 }
 
 // SetDirectionConfig installs a configuration, in preparation and in the middle of a tournament
-// alike (issue #385). It is always an event: a director who lowers the switch at 22 h leaves a
-// trace, and what they decided stays readable in order.
-//
-// The engine refuses exactly two things — removing a phase that is open, and changing the format
-// of a phase that has begun. PreviewDirectionConfig says so BEFORE the click.
+// alike. It is always an event, so decisions stay readable in order. PreviewDirectionConfig
+// shows the engine's two refusals BEFORE the click.
 func (d *Database) SetDirectionConfig(tournamentID int64, configJSON string) error {
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
@@ -211,12 +199,8 @@ func parseDirectionConfig(configJSON string) (tournoi.Config, error) {
 	return cfg, nil
 }
 
-// DirectionJournalJSON gives a Direction's raw event journal (issue #395).
-//
-// Raw and not derived: the journal is the whole truth of a Direction, and everything else —
-// standings, brackets, warnings — is replayed from it. A tool that reads this output needs no
-// blunderDB at all, only the engine, which is exactly what makes the format an exit and not a
-// lock-in.
+// DirectionJournalJSON gives a Direction's raw event journal: the whole truth, from which
+// everything else is replayed. Readable with the engine alone — an exit, not a lock-in.
 func (d *Database) DirectionJournalJSON(tournamentID int64) (string, error) {
 	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
 	if err != nil {

@@ -12,10 +12,9 @@ import (
 
 // The desktop wrapper's implementation of direction.Store (ADR-0047).
 //
-// It is deliberately thin: the package above it holds every rule, and this file holds every
-// statement. The one rule that must live HERE, because only SQL can enforce it, is that the log
-// is append-only — the composite primary key on (tournament_id, seq) makes a second write at
-// the same sequence number collide instead of silently replacing a decision the director made.
+// Thin: the package holds the rules, this file the statements. The one rule enforced HERE is
+// append-only: the (tournament_id, seq) primary key makes a second write at the same seq collide
+// instead of replacing a decision.
 
 // DirectionStore returns the Store the direction package runs on.
 func (d *Database) DirectionStore() direction.Store { return directionStore{d} }

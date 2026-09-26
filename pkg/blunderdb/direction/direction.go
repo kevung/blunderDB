@@ -15,7 +15,7 @@ import (
 // Keep it in step with the require line in go.mod.
 const EngineVersion = "v0.2.1"
 
-// State is where a Direction stands in its life (ADR-0047 § "Le cycle de vie").
+// State is where a Direction stands in its life (tasks/nicomaque/fonctionnel.md § "Le cycle de vie").
 type State string
 
 const (
@@ -51,9 +51,8 @@ type StoredEvent struct {
 	Payload []byte
 }
 
-// Store is everything this package needs from persistence. It is deliberately small, and it is
-// the whole reason the package does no SQL: the desktop wrapper and both storage backends
-// implement it, so the logic is written once (CLAUDE.md, CLI/GUI/server parity).
+// Store is everything this package needs from persistence. The desktop wrapper and both
+// storage backends implement it, so the logic is written once (CLI/GUI/server parity).
 //
 // AppendEvent must be atomic with respect to the caller's transaction and must REFUSE to
 // overwrite an existing sequence number — the log is append-only, and a silent overwrite would
@@ -116,12 +115,8 @@ func Open(ctx context.Context, store Store, tournamentID int64) (*Direction, err
 // Create starts a Direction on a Tournament that has none: it writes the created event at once,
 // with the seed the draw will be reproducible from.
 //
-// The log therefore begins immediately, and that is deliberate. Entries have to survive — a
-// director who typed twenty names and closed the laptop must find them again — and a draft that
-// wrote nothing would have to keep them somewhere else, which is a second place for the same
-// truth. "In preparation" is not "nothing is written": it is "no match has been launched yet",
-// which is exactly what ADR-0047 says, and while that holds the configuration still changes
-// freely (through an event, like everything else).
+// The log begins immediately so entries survive a closed laptop without a second store.
+// "In preparation" means "no match launched yet" (ADR-0047), not "nothing written".
 func Create(ctx context.Context, store Store, tournamentID int64, cfg tournoi.Config, seed int64, now time.Time) (*Direction, error) {
 	if _, err := store.GetDirection(ctx, tournamentID); err == nil {
 		return nil, fmt.Errorf("direction: tournament %d is already directed", tournamentID)
@@ -173,14 +168,14 @@ func (d *Direction) Config() (tournoi.Config, error) {
 }
 
 // SetConfig changes the configuration. It is an EVENT, in preparation as afterwards, so that
-// what the director decided stays readable in order (ADR-0047 §3.5). The engine validates it
+// what the director decided stays readable in order (tasks/nicomaque/fonctionnel.md §3.5). The engine validates it
 // and refuses what would change the kind of a phase already begun.
 func (d *Direction) SetConfig(ctx context.Context, cfg tournoi.Config) error {
 	return d.SetConfigAt(ctx, cfg, time.Now())
 }
 
 // SetConfigAt is SetConfig at a given instant, like Enter, Finish and Reopen: a scenario
-// replayed at chosen times goes through it (#443).
+// replayed at chosen times goes through it.
 func (d *Direction) SetConfigAt(ctx context.Context, cfg tournoi.Config, now time.Time) error {
 	if d.st == nil {
 		return ErrNoDirection
@@ -198,7 +193,7 @@ func (d *Direction) SetOutputDir(ctx context.Context, dir string) error {
 }
 
 // Enter records one entry. It works in preparation and afterwards: a late arrival is an entry
-// like any other, and the engine decides where they come in (ADR-0047 §4.4).
+// like any other, and the engine decides where they come in (tasks/nicomaque/fonctionnel.md §4.4).
 func (d *Direction) Enter(ctx context.Context, p tournoi.Player, now time.Time) error {
 	return d.Apply(ctx, tournoi.PlayerAddedEvent(p, now))
 }
@@ -235,10 +230,8 @@ func (d *Direction) Reopen(ctx context.Context, now time.Time) error {
 
 // Propose asks the engine what to do now — at the host's clock.
 //
-// The engine has no clock of its own and refuses to invent one, so it takes the instant as an
-// argument (Nicomaque v0.2.0). It matters: a micro-round's countdown and a break's warning are
-// both answers to "what time is it", and calling the clockless Propose() would freeze them at
-// the last recorded event. Returns nothing while the Direction is a draft.
+// The engine has no clock (Nicomaque v0.2.0+); the clockless Propose() would freeze
+// countdowns and break warnings at the last recorded event. Returns nothing while a draft.
 func (d *Direction) Propose() []tournoi.Action {
 	return d.ProposeAt(time.Now())
 }
@@ -263,9 +256,7 @@ func (d *Direction) Warnings() []tournoi.Warning {
 }
 
 // Apply records one decision: the engine judges the event first, and only an accepted event is
-// written. The order matters — the engine refuses (a result on a match that is not running, a
-// format change on a phase already drawn), and a log is a record of what happened, so a refused
-// decision must leave nothing behind.
+// written, so a refused decision leaves nothing in the log.
 func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 	if d.st == nil {
 		return fmt.Errorf("direction: the tournament has not started")

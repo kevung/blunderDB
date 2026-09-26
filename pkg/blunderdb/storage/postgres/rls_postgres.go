@@ -19,18 +19,12 @@ import (
 // acquired without a tenant in context is left with the GUC unset, which the
 // fail-closed policies treat as "no rows" — safe for the non-tenant operations
 // (the schema version) that touch only the unprotected metadata table.
-// Measured cost (G.11, #239, 2026-09-06): +73.8 % on LoadPosition — 101.8 µs
-// against 177.0 µs on the same container and rows, two pools differing only in
-// EnableRLS (BenchmarkLoadPosition / BenchmarkLoadPositionRLS). The plan
-// carried "≈ +100 %" as an unmeasured guess; the shape was right, the size
-// overstated.
+// Cost: about +74 % on LoadPosition (BenchmarkLoadPosition vs
+// BenchmarkLoadPositionRLS).
 //
-// Folding the set into the transaction with SET LOCAL would remove the RESET
-// and hide the set in a round trip that already happens — and would only take
-// effect inside a transaction, leaving the GUC unset for every single-statement
-// read. That turns a fail-closed mechanism into a fail-open one, which is the
-// one direction tenant isolation must not move in. See
-// tasks/headless/perf-baseline.md.
+// Not SET LOCAL: it only takes effect inside a transaction, leaving the GUC
+// unset for single-statement reads — turning fail-closed into fail-open, the
+// one direction tenant isolation must never move in.
 func configureRLSPool(cfg *pgxpool.Config) {
 	cfg.PrepareConn = func(ctx context.Context, conn *pgx.Conn) (bool, error) {
 		if tenant, ok := storage.TenantFromContext(ctx); ok {
@@ -53,13 +47,10 @@ func configureRLSPool(cfg *pgxpool.Config) {
 // rlsTables are the tenant-scoped tables that carry a tenant_id column —
 // every table but the two pieces of database infrastructure, `metadata`
 // (schema version, issuance) and `schema_migrations`, which hold no
-// per-tenant data. session_state joined the list with schema 2.17.0, when the
-// session left metadata (#156), and library_settings with ADR-0046, when the
-// library's own thresholds needed a per-tenant home for the same reason.
-// purgeOrder (purge_postgres.go) must stay a permutation of this list, and
-// both must match the tenant_id tables of the embedded migrations
-// (TestPurgeOrderMatchesRLSTables); TestTenantTablesSchemaGuards checks that
-// ApplyRLS polices every one of them on the live schema (#363).
+// per-tenant data. purgeOrder (purge_postgres.go) must stay a permutation of
+// this list, and both must match the tenant_id tables of the embedded
+// migrations (TestPurgeOrderMatchesRLSTables); TestTenantTablesSchemaGuards
+// checks that ApplyRLS polices every one of them on the live schema.
 var rlsTables = []string{
 	"position", "analysis", "comment", "match", "game", "move",
 	"move_analysis", "tournament", "collection", "collection_position",

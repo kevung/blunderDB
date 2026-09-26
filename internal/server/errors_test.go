@@ -13,14 +13,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// TestWriteStorageError_SurfacesInServerLog is the end-to-end counterpart of
-// middleware.TestLogging_SurfacesStashedErrorAtErrorLevel: a real handler
-// (exports.sqlite, chosen because an already-cancelled request context makes
-// ingest.SQLiteExporter.Export fail with a plain, non-sentinel error — see
-// TestExportSQLiteErrorEnvelope in handlers_imports_test.go) hits
-// writeStorageError's CodeInternal path, and the resulting server-side log
-// line must carry the real error even though the client only ever sees the
-// generic "internal error" body.
+// TestWriteStorageError_SurfacesInServerLog: exports.sqlite on a cancelled
+// context fails with a plain error; the client sees "internal error" while
+// the server log line carries the real cause.
 func TestWriteStorageError_SurfacesInServerLog(t *testing.T) {
 	st, err := sqlite.Open(context.Background(), ":memory:", nil)
 	if err != nil {

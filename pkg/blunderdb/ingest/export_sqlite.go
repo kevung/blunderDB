@@ -23,11 +23,8 @@ import (
 // This file is THE export of a blunderDB database to a file: the GUI's
 // export dialog, the CLI's `export`, and the daemon's exports.sqlite all
 // run ExportSQLite with a Selection that says what leaves and an
-// ExportOptions that says how. Before it existed there were four copies of
-// this walk (ExportDatabase, ExportCollections, ExportTournaments and the
-// daemon's own), each with its own gaps — the daemon's carried no matches, no
-// metadata and no watermark; the desktop's kept one comment per position and
-// wrote analyses with their search columns empty.
+// ExportOptions that says how. Keep it the only walk: separate copies drifted
+// apart in what they carried.
 //
 // It reads the source through storage.Storage, so a PostgreSQL tenant exports
 // exactly like a SQLite file, and writes a fresh SQLite database through the
@@ -84,11 +81,8 @@ type ExportReport struct {
 	Transcriptions                               int
 	Skipped                                      int
 	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
-	//
-	// It is here because a Direction travels with its tournament (ADR-0047, issue #396) and
-	// the direction tables live on the DESKTOP wrapper, not on the storage contract — the
-	// daemon exposes nothing of them, deliberately. The caller that knows about directions
-	// copies them itself, and this map is all it needs from the export it just ran.
+	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
+	// wrapper, not the storage contract, so the caller copies them itself with this map.
 	TournamentMap map[int64]int64
 }
 
@@ -186,7 +180,7 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 	report.Path = finalPath
 
 	// While the file is still plain: what the storage contract does not carry gets its turn
-	// here, and a protected export seals it in with the rest (#396).
+	// here, and a protected export seals it in with the rest.
 	if opts.AfterWrite != nil {
 		if err := opts.AfterWrite(ctx, path, report); err != nil {
 			return report, err
@@ -733,7 +727,7 @@ func (e *exporter) writeTournaments() error {
 	if len(e.tournamentIDs) > 0 {
 		slog.Info("exported tournaments", "count", e.report.Tournaments)
 	}
-	// Handed back so a caller that knows about Directions can carry them across (#396).
+	// Handed back so a caller that knows about Directions can carry them across.
 	e.report.TournamentMap = e.tourMap
 	return nil
 }
@@ -892,16 +886,10 @@ func (e *exporter) writeFilters() error {
 }
 
 // writeTranscriptions copies the drafts (ADR-0045) — but only when the export
-// is the WHOLE scope. A draft is the typing of a match, not a position, a
-// collection or a tournament: no Selection flag reaches it, so there is no
-// honest way to decide which drafts belong in "these three tournaments". An
-// export that filters anything therefore carries none, and the recipient's
-// file holds the empty table sqlite.Bootstrap created.
-//
-// The link to the produced match travels through matchMap, which a whole-scope
-// export fills for every match; a draft whose match somehow did not export
-// keeps its typing and loses the link, the same treatment a move gets when
-// its position stayed behind.
+// is the WHOLE scope: no Selection flag reaches a draft, so a filtered export
+// cannot tell which ones belong. The link to the produced match goes through
+// matchMap; a draft whose match did not export keeps its typing and loses the
+// link.
 func (e *exporter) writeTranscriptions() error {
 	if !e.wholeScope() {
 		return nil
@@ -972,10 +960,8 @@ func (e *exporter) writeAnkiDecks() error {
 				return fmt.Errorf("ingest: fill deck %q: %w", sd.d.Name, err)
 			}
 		}
-		// A deck of scores holds no position, so nothing above filled it. Its
-		// content does not travel either — it is not the exporter's to carry:
-		// the application states the 36 score cards, and Sync states them here
-		// exactly as it would on the user's own machine (ADR-0042 rule 2).
+		// A deck of scores holds no position and its cards do not travel:
+		// Sync states the 36 score cards here as on any machine (ADR-0042 rule 2).
 		if sd.d.SourceType == domain.AnkiSourceScores {
 			if err := e.dst.Anki().Sync(e.ctx, "", newID); err != nil {
 				return fmt.Errorf("ingest: fill deck %q: %w", sd.d.Name, err)

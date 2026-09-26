@@ -46,11 +46,10 @@ type Route struct {
 	RespType string
 	ItemType string
 
-	// IdempotencyKeySupported is true for the routes whose handler is
-	// wrapped with internal/server's withIdempotency (#236: collections.create,
-	// tournaments.create, anki.reviewCard, at the time of writing) — detected
-	// structurally (the wrapper call itself), not guessed, so this can never
-	// silently drift from the real code the way a hand-maintained list would.
+	// IdempotencyKeySupported is true for the routes whose handler is wrapped
+	// with internal/server's withIdempotency — detected structurally (the
+	// wrapper call itself), not guessed, so this can never silently drift
+	// from the real code the way a hand-maintained list would.
 	IdempotencyKeySupported bool
 }
 

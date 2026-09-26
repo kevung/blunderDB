@@ -1,11 +1,9 @@
 <script>
     /*
-     * La correction d'un résultat : « qui a gagné ? », les deux noms, le score (#372, #436).
+     * La correction d'un résultat : « qui a gagné ? », les deux noms, le score.
      *
-     * Un seul panneau, ouvert depuis deux endroits : sous la dernière décision (le geste vu
-     * aussitôt, F28) et sur une ligne de l'Historique (le résultat ancien, F8). Les deux
-     * corrigent de la même façon — un événement de plus, le premier résultat reste au journal —
-     * et doivent donc se présenter de la même façon.
+     * Ouvert sous la dernière décision (F28) et sur une ligne de l'Historique (F8) ; les deux
+     * corrigent par un événement de plus.
      */
     import { t } from '../../i18n';
 

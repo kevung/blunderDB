@@ -7,10 +7,8 @@ import (
 	"testing"
 )
 
-// chooseClipboardRung is the pure Fallback policy for the image-clipboard host
-// capability. Because it is pure (facts in, rung out, no I/O), every combination
-// of facts is exercised here without touching a real host — this is where the
-// risk of the capability lives, per docs/adr/0004.
+// chooseClipboardRung is pure, so every combination of facts is tested here
+// without a real host (ADR-0004).
 func TestChooseClipboardRung(t *testing.T) {
 	cases := []struct {
 		name string

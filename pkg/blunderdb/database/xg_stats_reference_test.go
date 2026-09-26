@@ -9,7 +9,7 @@ import (
 // per-player statistics for manual inspection.
 //
 // Numeric assertions have been moved to TestStatsParity (testdata/stats_reference/
-// aachen-double-7pt.json) which uses tighter tolerances (fiche 07 final).
+// aachen-double-7pt.json) which uses tighter tolerances.
 //
 // XG reference (Squire/Jørgensen vs Harmand/Unger, 7-pt match):
 //

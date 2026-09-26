@@ -10,11 +10,9 @@ import (
 	"github.com/kevung/xgparser/xgparser"
 )
 
-// The three match importers used to derive the borne-off count as 15 − (on
-// board) with no guard: a corrupt file giving a side 16 checkers produced a
-// bearoff of −1 that went through the Zobrist hash and into the database.
-// Each createPositionFrom* now refuses it through Board.RecomputeBearoff, and
-// the game loops name the game and the move so the user can find the record.
+// A corrupt file giving a side 16 checkers must be refused by each
+// createPositionFrom* (Board.RecomputeBearoff), and the game loops name the
+// game and the move so the user can find the record.
 
 func TestCreatePositionFromXGRefusesSixteenCheckers(t *testing.T) {
 	game := &xgparser.Game{InitialScore: [2]int32{0, 0}}

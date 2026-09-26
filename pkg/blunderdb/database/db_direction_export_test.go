@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// A Direction travels with its tournament (issue #396).
+// A Direction travels with its tournament.
 //
 // What these tests hold: an exported database, reopened elsewhere, finds its directed
 // tournaments in their exact state; an export of chosen tournaments carries only THEIR

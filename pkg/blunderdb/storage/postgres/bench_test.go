@@ -1,6 +1,6 @@
 //go:build postgres
 
-// Microbenchmarks for the PostgreSQL backend (P9). They need Docker and are
+// Microbenchmarks for the PostgreSQL backend. They need Docker and are
 // gated behind the `postgres` build tag:
 //
 //	go test -tags postgres -bench . -benchmem ./pkg/blunderdb/storage/postgres/
@@ -216,16 +216,10 @@ func BenchmarkConcurrentInsert(b *testing.B) {
 
 // What Row-Level Security costs per request, measured rather than asserted.
 //
-// The claim G.11 (#239) recorded was "RLS = 2 RTT per request, so about +100%
-// on a 89 µs LoadPosition, never measured". The cost is real and its shape is
-// visible in rls_postgres.go: PrepareConn issues a `set_config` when a
-// connection is handed out with a tenant in context, and AfterRelease issues a
-// `RESET` when it goes back. Two extra round trips — but only when the pool
-// hands out a connection, which under load is not once per request.
-//
-// This benchmark opens a SECOND pool on the same database with EnableRLS, and
-// runs the same Load against both. Everything else is equal: same container,
-// same rows, same query.
+// rls_postgres.go adds two round trips (set_config on acquire, RESET on
+// release) per connection handed out, which under load is not once per
+// request. This benchmark opens a SECOND pool with EnableRLS on the same
+// container and rows, and runs the same Load against both.
 //
 //	go test -tags postgres -run '^$' -bench 'LoadPositionRLS|BenchmarkLoadPosition$' \
 //	    ./pkg/blunderdb/storage/postgres/

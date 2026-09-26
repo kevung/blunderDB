@@ -1,15 +1,7 @@
 package sqlshared
 
-// stats_compute.go — StatsStore.Compute, one pass per section.
-//
-// Compute was a single 438-line function (the tallest in the tree, and the one
-// that set .golangci.yml's funlen ceiling). It was never one computation: it is
-// eleven SQL passes that each fill a different part of storage.StatsResult, laid
-// end to end and separated by comment banners. Splitting it along those banners
-// changes no SQL and no arithmetic — the passes run in the same order, against
-// the same WHERE clause — and gives each one a name, a doc comment and its own
-// local variables, where they used to share `rows`, `err` and `scanErr` across
-// four hundred lines (B.15, #183).
+// stats_compute.go — StatsStore.Compute: SQL passes, each filling one part of
+// storage.StatsResult against the same WHERE clause.
 //
 // The order is not incidental: computeMWCPass reads the per-tournament,
 // per-match, per-cube-action and top-blunder rows the passes before it
@@ -63,7 +55,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		s.computeTopBlunders,
 		s.computeRollingPR,
 		s.computeMWCPass,
-		// The three breakdowns of #266, last: each reuses the same counted
+		// The breakdowns, last: each reuses the same counted
 		// predicate and error column as the passes above, so none of them can
 		// disagree with the global figures they slice.
 		s.computePerPhase,
@@ -149,17 +141,8 @@ func (s *StatsStore) computePRByDecisionType(ctx context.Context, q statsQuery, 
 // and denominator cannot share a WHERE clause: the player filter must narrow
 // the errors to the decisions that player took, and must NOT narrow the move
 // count to that player's own seat — it only restricts the matches counted.
-// Reusing one clause for both halved the denominator and doubled every
-// filtered Snowie ER; MatchDetail already got this right.
 func (s *StatsStore) computeSnowieGlobal(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	d := s.DB
-	// The Snowie rate divides ONE player's errors by BOTH players' checker
-	// moves (gnuBG formatgs.c:415-424, anTotalMoves[0] + anTotalMoves[1]), so
-	// numerator and denominator cannot share a WHERE clause: the player q.filter
-	// must narrow the errors to the decisions that player took, and must NOT
-	// narrow the move count to that player's own seat — it only restricts the
-	// matches counted. Reusing one clause for both halved the denominator and
-	// doubled every filtered Snowie ER; MatchDetail already got this right.
 	{
 		snowieFilter := q.filter
 		snowieFilter.DecisionType = -1 // count all decision types
@@ -309,14 +292,9 @@ func (s *StatsStore) computeCubeActionBreakdown(ctx context.Context, q statsQuer
 // computeCubeDirections fills CubeDirections: the same scope as the breakdown above, crossed with
 // the action actually played. The labels are interpreted in Go
 // (storage.TallyCubeDirections), never in SQL: their spellings vary by
-// importer and the recognition is stated in exactly one place — see
-// kevung/blunderDB#115.
+// importer and the recognition is stated in exactly one place.
 func (s *StatsStore) computeCubeDirections(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	d := s.DB
-	// Same q.scope as 5, crossed with the action actually played. The labels are
-	// interpreted in Go (storage.TallyCubeDirections), never in SQL: their
-	// spellings vary by importer and the recognition is stated in exactly one
-	// place — see kevung/blunderDB#115.
 	{
 		cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 		rows, err := s.DB.Query(ctx,

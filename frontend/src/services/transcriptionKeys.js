@@ -1,93 +1,41 @@
 /**
- * transcriptionKeys.js — la machine à états du clavier de la Transcription.
+ * transcriptionKeys.js — la machine à états du clavier de la Transcription
+ * (ux.md §3), en fonction PURE : `pressKey(state, event, contexte)` rend
+ * l'état suivant et les gestes à envoyer au moteur Go ; le panneau ne porte
+ * aucune règle.
  *
- * C'est le tableau d'ux.md §3, écrit une fois, en fonction PURE : la frappe
- * n'est ni un `await`, ni un composant, ni un store. `pressKey(state, event,
- * contexte)` rend l'état suivant et la liste des gestes à envoyer au moteur Go ;
- * le panneau se charge des allers-retours Wails et n'a plus aucune règle à lui.
+ * Pure parce que le budget d'ux.md §4.1 est un compte de touches, mesurable
+ * seulement en appelant `pressKey` (`transcriptionKeys.turn.test.js`).
  *
- * Pourquoi cette séparation. Le budget d'ux.md §4.1 est un COMPTE DE TOUCHES —
- * meilleur coup joué en 2 K, n-ième coup en (n+1) K — et un compte ne se mesure
- * pas dans un composant : il se mesure en appelant `pressKey` autant de fois que
- * l'utilisateur presse une touche et en regardant ce qui en sort
- * (`transcriptionKeys.turn.test.js`). Une machine enfouie dans le `.svelte`
- * n'aurait laissé qu'un test de bout en bout, trop lent pour tenir une ligne par
- * transition.
+ * Deux règles portent le budget :
+ * - au second dé, les coups légaux sont classés en 0-ply et le premier est
+ *   présélectionné, sans confirmation ;
+ * - la touche chiffrée commence un jet là où le Cursor est (ADR-0048
+ *   décision 1) : en bout de document elle VALIDE le candidat puis ouvre le
+ *   jet suivant ; sur une Action relue elle RECOMMENCE le jet sur place. Le
+ *   dernier coup d'une partie se valide par Entrée.
+ * Le discriminant est `replacing` (`annotated.entry`, la cellule encadrée
+ * du Transcript) : un état visible, pas un mode (ux.md §1). La machine ne
+ * connaît pas le document (fonctionnel.md §1.2).
  *
- * # Les deux règles qui font le budget
+ * Les candidats viennent du moteur : la machine pose `awaitingCandidates`,
+ * le panneau répond par [applyCandidates]. Un jet sans coup légal crée
+ * l'Action `dance`.
  *
- * Le second dé n'est pas confirmé : dès qu'il tombe, la liste des coups légaux
- * est classée en 0-ply et le PREMIER est présélectionné.
+ * Videau : `d`, `t`, `p`, `r` coûtent une touche car le moteur valide seul le
+ * candidat en attente (`transcript.cubeGesture`, ux.md §4.2). `r` ouvre un
+ * état qui attend un niveau et rend l'état d'avant sur `Échap`. La souris
+ * passe par [cubeGesture], [beginResign], [resignWithLevel], même règle. Rien
+ * n'est refusé : une offre illégale est marquée en Incohérence (ADR-0044,
+ * fonctionnel.md §1.4). `t`/`p` exigent une offre en face, sinon la touche
+ * remonte au répartiteur (`p` = pips).
  *
- * Et **la touche chiffrée commence un jet là où le Cursor est** (ADR-0048
- * décision 1). En bout de document il n'y a rien sous le Cursor : elle VALIDE le
- * candidat sélectionné avant d'ouvrir le jet suivant, si bien que le meilleur
- * coup joué coûte les deux dés et rien de plus, la validation étant portée par
- * la première touche du tour d'après. Sur une Action relue il y a quelque chose :
- * elle en RECOMMENCE le jet, sur place, ce qui est la raison même d'y être
- * revenu. Ce que cette règle exclut a sa sortie : le dernier coup d'une partie,
- * qui n'a pas de tour suivant pour porter sa validation, se valide par Entrée.
+ * Correction : `h`/`l`, `i`/`a`, `x`/`Suppr`, `s` partent de TOUT état (ux.md
+ * §3, ligne « tout » ; §4.3). `Ctrl+Z`/`Ctrl+Maj+Z` sont liés par le
+ * répartiteur (`isAlwaysGlobal`) mais nommés ici (COMMAND.UNDO/REDO).
  *
- * C'est UN SEUL sens, et c'est ce qui la sépare de l'arbitrage du 2026-09-07
- * qu'elle renverse : celui-ci distinguait « jet corrigeable » de « candidat
- * choisi », donc un HISTORIQUE invisible — « avez-vous touché la liste ? » —,
- * quand le discriminant est ici un objet DESSINÉ, la cellule encadrée du
- * Transcript où l'utilisateur s'est rendu une frappe plus tôt. Un état que l'on
- * voit n'est pas un mode, et un mode est ce que le budget KLM ne savait pas
- * compter (ux.md §1, la réserve sur M).
- *
- * Le discriminant est `replacing`, que le moteur pose sur `annotated.entry` et
- * que le panneau passe en contexte. Pourquoi pas ici : cette machine ne connaît
- * pas le document (fonctionnel.md §1.2), elle en reçoit les deux faits dont elle
- * a besoin.
- *
- * # Ce que la machine ne décide pas
- *
- * La liste des candidats. Elle est calculée par le moteur (LegalMoves + une
- * évaluation 0-ply) APRÈS le second dé, donc après la frappe : la machine pose
- * `awaitingCandidates` et le panneau lui rend la réponse par [applyCandidates].
- * C'est de là que sort la danse — un jet sans aucun coup légal crée l'Action
- * `dance` aussitôt, zéro touche de plus (ux.md §3, dernière ligne).
- *
- * # Le videau et la résignation
- *
- * `d`, `t`, `p` et `r` ne coûtent chacune qu'une touche parce que le moteur
- * valide de lui-même le candidat resté en attente (`transcript.cubeGesture`) :
- * la machine n'émet donc PAS de `validate` avant elles, et « double + prise »
- * tient dans `d` `t` (ux.md §4.2). `r` est la seule touche qui ouvre un état :
- * elle attend un niveau, met l'état d'avant de côté et le rend tel quel si
- * `Échap` tombe entre les deux — « résignation gammon » coûte `r` `2`.
- *
- * Les quatre ont un second déclencheur, à la souris : la rangée `[D] [T] [P]
- * [R]` du panneau et le clic sur le videau dessiné (T2.5). Il ne double pas la
- * règle — [cubeGesture], [beginResign] et [resignWithLevel] sont le corps même
- * de ces touches, appelé par elles.
- *
- * Ce que ces touches ne font PAS : juger. Doubler sans posséder le videau, en
- * partie Crawford ou au-delà du plafond reste transcriptible — c'est une
- * Incohérence du Replay, marquée et jamais refusée (ADR-0044, fonctionnel.md
- * §1.4). Seules `t` et `p` demandent une offre en face, faute de quoi elles ne
- * répondent à rien.
- *
- * # La correction
- *
- * Les gestes de relecture — `h`/`l` pour le Cursor, `i`/`a` pour insérer, `x` et
- * `Suppr` pour supprimer, `s` pour changer de camp — partent de TOUT état, y
- * compris d'un jet à moitié tapé : c'est la ligne « tout » d'ux.md §3, et c'est
- * l'usage qui gouverne, puisque transcrire une vidéo, c'est se reprendre. Chacun
- * coûte une touche, ce qui donne les budgets d'ux.md §4.3 : coup oublié
- * `h`×k `i` jet `l`×k, coup en double `h`×k `x` `l`×k, camp faux `h`×k `s` `l`×k.
- *
- * `Ctrl+Z` et `Ctrl+Maj+Z` sont dans le même tableau mais pas dans [pressKey] :
- * une combinaison Ctrl est toujours globale (`isAlwaysGlobal`), elle est donc
- * liée par le répartiteur, qui pose le geste dans un store que le panneau lit.
- * COMMAND.UNDO et COMMAND.REDO restent nommés ici parce que ce sont des gestes
- * de la Transcription comme les autres, et que le panneau les traduit au même
- * endroit que les autres.
- *
- * Conventions de clavier (voir utils/keys.js) : les CHIFFRES sont positionnels
- * (`event.code`, pour que la rangée du haut d'un AZERTY marche sans Maj), les
- * LETTRES sont lues au caractère produit (`event.key`).
+ * Clavier (utils/keys.js) : chiffres par `event.code` (AZERTY), lettres par
+ * `event.key`.
  */
 
 import { isBareLetter } from '../utils/keys.js';
@@ -101,17 +49,13 @@ export const PHASE = Object.freeze({
     /** Jet saisi, premier candidat présélectionné. */
     ROLL: 'roll',
     /**
-     * Jet saisi, liste touchée. Depuis ADR-0048 les deux états répondent la
-     * même chose au chiffre — le Cursor décide, pas l'historique — et cette
-     * phase ne sert plus qu'à dire que la sélection vient de l'utilisateur, ce
-     * dont le panneau se sert pour ne pas la réécrire sous ses doigts.
+     * Liste touchée par l'utilisateur, pour que le panneau ne réécrive pas la
+     * sélection. Ne change pas le sens du chiffre (ADR-0048 décision 1).
      */
     CANDIDATE: 'candidate',
     /**
-     * Résignation annoncée, son niveau attendu : `1` simple, `2` gammon, `3`
-     * backgammon, `Échap` annule. C'est le seul état qui détourne les chiffres
-     * des dés, et c'est tout ce qui le distingue — d'où un état de la machine
-     * et non un drapeau du panneau.
+     * Résignation annoncée, niveau attendu (`1`/`2`/`3`, `Échap` annule). Seul
+     * état qui détourne les chiffres des dés, d'où un état et non un drapeau.
      */
     RESIGN: 'resign'
 });
@@ -123,11 +67,9 @@ export const COMMAND = Object.freeze({
     VALIDATE: 'validate',
     SELECT: 'select',
     /**
-     * Le coup posé PAR SES PAS et non par un rang dans la liste : celui joué au
-     * plateau, dont les dés se déduisent (T2.3), et celui qui n'est dans aucune
-     * liste parce qu'il est illégal (T2.4). Aucune touche ne le produit — il
-     * naît d'un geste de souris ou d'une notation tapée — mais il est nommé ici
-     * avec les autres, pour que le panneau les traduise tous au même endroit.
+     * Coup posé par ses pas plutôt que par un rang : joué au plateau, ou
+     * illégal. Aucune touche ne le produit ; nommé ici pour que le panneau
+     * traduise tous les gestes au même endroit.
      */
     ENTER_PLAY: 'enter_play',
     DANCE: 'dance',
@@ -146,9 +88,8 @@ export const COMMAND = Object.freeze({
 });
 
 /**
- * Les sortes d'Action dont la saisie passe par deux dés. Exporté parce que le
- * panneau y lit s'il doit offrir sa cible souris (T2.1) : deux listes des mêmes
- * sortes finiraient par diverger.
+ * Les sortes d'Action saisies par deux dés. Exporté pour que le panneau n'en
+ * tienne pas une seconde liste.
  */
 export const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
 
@@ -156,29 +97,20 @@ export const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
 const RESIGN_LEVELS = new Set([1, 2, 3]);
 
 /**
- * L'état de la machine à touches.
- *
  * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, tie: boolean, retyped: boolean, resume: KeyState|null}} KeyState
  */
 
 /**
- * Un geste demandé au moteur.
- *
  * @typedef {{kind: string, value?: number, index?: number}} KeyCommand
  */
 
 /**
- * Ce que rend une touche : prise ou non, l'état suivant, les gestes.
- *
  * @typedef {{handled: boolean, state: KeyState, commands: KeyCommand[]}} KeyResult
  */
 
 /**
- * L'état initial : dés attendus, rien de saisi.
- *
- * `tie` retient qu'une ouverture est tombée à égalité, ce que le panneau affiche
- * « relance » (fonctionnel.md §1.2 : l'égalité reste dans le document et ne
- * produit ni Move ni Position).
+ * L'état initial. `tie` retient une ouverture à égalité, affichée « relance »
+ * (elle reste au document sans Move ni Position, fonctionnel.md §1.2).
  *
  * @returns {KeyState}
  */
@@ -201,8 +133,7 @@ export function initialKeyState() {
 }
 
 /**
- * Le dé qu'une touche désigne, ou 0. Positionnel : `Digit3` et `Numpad3` valent
- * tous deux 3, quelle que soit la disposition du clavier.
+ * Le dé qu'une touche désigne (positionnel : `Digit3` = `Numpad3` = 3), ou 0.
  *
  * @param {KeyboardEvent} event
  * @returns {number} 1 à 6, ou 0
@@ -214,12 +145,8 @@ export function dieOf(event) {
 }
 
 /**
- * +1 (Action suivante), −1 (précédente), 0 sinon : `h`/`l` et gauche/droite.
- *
- * Le Cursor est une CELLULE du Transcript et les deux colonnes sont les deux
- * camps : le déplacer d'une Action, c'est passer d'une cellule à l'autre, donc
- * d'un camp à l'autre. D'où l'axe horizontal, quand `j`/`k` gardent le vertical
- * pour la liste des candidats (ux.md §3).
+ * +1 / −1 / 0 : `h`/`l` et gauche/droite. Horizontal parce que les deux
+ * colonnes du Transcript sont les deux camps ; `j`/`k` restent aux candidats.
  *
  * @param {KeyboardEvent} event
  * @returns {number}
@@ -231,13 +158,9 @@ export function cursorDelta(event) {
 }
 
 /**
- * Les gestes qui mènent le Cursor de l'arrêt `from` à l'arrêt `to` — ce qu'un
- * clic sur une cellule du Transcript demande. Les deux sont des rangs
- * d'arrêts ([cursorStop]), qui ne sont les index des Actions que tant
- * qu'aucun trou ne les sépare. Le moteur ne connaît que « recule » et
- * « avance » (`cursor_back`/`cursor_forward` d'apply.go), qui rechargent
- * l'Action visée : un saut est donc la répétition du pas, et non un geste de
- * plus à écrire côté Go pour la souris seule.
+ * Les gestes qui mènent le Cursor de l'arrêt `from` à `to` (rangs de
+ * [cursorStop]). Le moteur ne connaît que `cursor_back`/`cursor_forward` : un
+ * saut est la répétition du pas.
  *
  * @param {number} from
  * @param {number} to
@@ -249,9 +172,8 @@ export function cursorCommands(from, to) {
 }
 
 /**
- * L'Action `index` suit-elle un TROU : un double trait, dont le tour manquant
- * est une case du Transcript où le Cursor s'arrête (ADR-0054) ? C'est
- * l'Incohérence `double_turn` que le moteur marque, lue telle quelle.
+ * L'Action `index` suit-elle un trou (l'Incohérence `double_turn`), case où le
+ * Cursor s'arrête (ADR-0054) ?
  *
  * @param {any} annotated
  * @param {number} index
@@ -262,10 +184,9 @@ export function holeBefore(annotated, index) {
 }
 
 /**
- * Le rang d'un arrêt du Cursor, dans l'ordre où `h`/`l` les parcourent :
- * chaque Action, précédée de son trou quand elle en a un, puis le bout du
- * document. C'est ce rang, et non l'index de l'Action, que compte le chemin
- * d'un clic — un trou traversé est un pas de plus (ADR-0054).
+ * Le rang d'un arrêt du Cursor dans l'ordre de `h`/`l` : chaque Action,
+ * précédée de son trou s'il y en a un, puis le bout du document. Un trou
+ * traversé est un pas de plus (ADR-0054).
  *
  * @param {any} annotated
  * @param {number} index - l'Action visée, ou celle devant laquelle est le trou
@@ -279,8 +200,7 @@ export function cursorStop(annotated, index, hole = false) {
 }
 
 /**
- * Le rang de l'arrêt où le Cursor EST : sur le trou quand une insertion y est
- * ouverte, sur l'Action sinon.
+ * Le rang où le Cursor est : sur le trou si une insertion y est ouverte.
  *
  * @param {any} annotated
  */
@@ -292,7 +212,7 @@ export function currentStop(annotated) {
 }
 
 /**
- * +1 (candidat suivant), −1 (précédent), 0 sinon : `j`/`k` et bas/haut.
+ * +1 / −1 / 0 : `j`/`k` et bas/haut.
  *
  * @param {KeyboardEvent} event
  * @returns {number}
@@ -304,14 +224,14 @@ export function selectionDelta(event) {
 }
 
 /**
- * Un résultat « la touche ne me concerne pas » : elle remonte au répartiteur.
+ * La touche ne me concerne pas : elle remonte au répartiteur.
  *
  * @param {KeyState} state
  * @returns {KeyResult}
  */
 const ignored = (state) => ({ handled: false, state, commands: [] });
 /**
- * Un résultat « la touche est à moi, mais il n'y a rien à faire ».
+ * La touche est à moi, sans rien à faire.
  *
  * @param {KeyState} state
  * @returns {KeyResult}
@@ -325,33 +245,23 @@ const swallowed = (state) => ({ handled: true, state, commands: [] });
 const clamp = (n, max) => Math.min(Math.max(n, 0), max);
 
 /**
- * Applique une touche.
- *
  * @param {KeyState} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
  * @param {{expects?: string, replacing?: boolean, editing?: boolean, last?: boolean}} context -
- *   `expects` est la sorte d'Action attendue LÀ OÙ LE CURSOR EST (le moteur la
- *   nomme : `annotated.entry.kind`, et à défaut `annotated.next.expects`) ;
- *   `replacing` est `annotated.entry.replacing`, vrai quand le Cursor est sur
- *   une Action existante que la saisie remplacerait (ADR-0048 décision 1) ;
- *   `editing` dit que le Cursor tient une cellule sans qu'un dé y soit tapé —
- *   une Action relue, ou le trou qu'une insertion vient d'ouvrir ; `last` dit
- *   que l'Action remplacée est la dernière du document (ADR-0051).
+ *   `expects` : la sorte d'Action attendue au Cursor (`annotated.entry.kind`,
+ *   à défaut `annotated.next.expects`) ; `replacing` : le Cursor est sur une
+ *   Action existante (ADR-0048 décision 1) ; `editing` : le Cursor tient une
+ *   cellule sans dé tapé ; `last` : l'Action remplacée est la dernière
+ *   (ADR-0051).
  * @returns {KeyResult}
  */
 export function pressKey(state, event, { expects = 'checker', replacing = false, editing = false, last = false } = {}) {
-    // La résignation capte tout tant que son niveau n'est pas donné : ses
-    // chiffres SONT des niveaux et non des dés, et rien d'autre ne doit passer
-    // entre `r` et la touche qui la termine.
+    // PHASE.RESIGN capte tout jusqu'à son niveau : les chiffres y sont des
+    // niveaux, pas des dés.
     if (state.phase === PHASE.RESIGN) return resignLevel(state, event);
 
-    // Le Cursor se déplace depuis tout état de saisie ordinaire (ux.md §3,
-    // ligne « tout ») : c'est le geste de la relecture, et il doit marcher
-    // pendant une saisie de dés comme devant une réponse au videau. Il rend la
-    // machine à son état initial — le panneau la réarme sur l'Action visée.
-    //
-    // Il est lu APRÈS la phase de résignation : celle-ci est un état modal
-    // bref, entre `r` et le chiffre du niveau, où rien d'autre ne doit passer.
+    // Le Cursor se déplace depuis tout état (après RESIGN, modal) et réarme
+    // la machine ; le panneau la recharge sur l'Action visée.
     const step = cursorDelta(event);
     if (step !== 0) {
         return {
@@ -361,48 +271,30 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
         };
     }
 
-    // Les quatre gestes de correction, eux aussi depuis « tout état » (ux.md §3).
-    // Ils portent les budgets d'ux.md §4.3 : le coup oublié coûte `i` et rien de
-    // plus avant le jet, le coup en double `x`, le camp faux `s` — une touche
-    // chacun, quelle que soit la distance déjà parcourue par le Cursor.
-    //
-    // Ils sont lus AVANT les dés : `i`, `a`, `x` et `s` ne sont pas des chiffres,
-    // et une saisie de jet à moitié tapée n'est pas une raison de refuser la
-    // relecture, pas plus qu'elle ne l'est pour `h`/`l`. La machine repart à zéro
-    // et le panneau la réarme sur ce que le moteur a rendu.
+    // Les quatre gestes de correction, aussi depuis « tout état » (ux.md §3,
+    // budgets §4.3). Lus avant les dés : ce ne sont pas des chiffres, et une
+    // saisie de jet à moitié tapée n'empêche pas la relecture.
     const edit = editCommand(event);
     if (edit) {
         return { handled: true, state: initialKeyState(), commands: [{ kind: edit }] };
     }
 
-    // `r` ouvre l'attente du niveau depuis n'importe quel état, et l'état
-    // d'avant est mis de côté : `Échap` le rend intact, la résignation
-    // « annule sans effet » (ux.md §3, fiche T1.5).
+    // `r` ouvre l'attente du niveau depuis tout état ; `Échap` rend l'état
+    // d'avant intact (ux.md §3).
     if (isBareLetter(event, 'r')) {
         return { handled: true, ...beginResign(state) };
     }
 
-    // `d` double ou redouble depuis n'importe quel état de saisie. Une seule
-    // touche : le moteur valide d'abord le candidat en attente s'il y en a un
-    // (transcript.cubeGesture), donc « double + prise » coûte `d` `t` et rien
-    // de plus (ux.md §4.2).
-    //
-    // Elle n'est JAMAIS avalée au motif que le camp ne possède pas le videau,
-    // qu'on est en partie Crawford ou que le videau est au plafond : ce sont
-    // les trois « videau impossible » de fonctionnel.md §1.4, et une
-    // Incohérence est MARQUÉE, jamais refusée (ADR-0044). Le moteur la pose,
-    // le panneau l'affiche.
+    // `d` double depuis tout état (une touche : le moteur valide d'abord le
+    // candidat en attente). Jamais avalée pour videau impossible — Incohérence
+    // marquée, jamais refusée (ADR-0044, fonctionnel.md §1.4).
     if (isBareLetter(event, 'd')) {
         return { handled: true, ...cubeGesture(state, COMMAND.DOUBLE) };
     }
 
-    // `t`/`p` répondent à une offre — et CORRIGENT la cellule tenue par le
-    // Cursor, qui est l'autre endroit où une prise et une passe s'écrivent : le
-    // moteur écrit au rang de l'Entry, si bien qu'une passe qui aurait dû être
-    // une prise se remplace d'une touche, sans la supprimer ni insérer devant
-    // elle. Hors de ces deux cas ce n'est pas un refus : il n'y a rien à quoi
-    // répondre, et la touche reste disponible pour le répartiteur global, où
-    // `p` est le compte de pips (ux.md §3 : « réponse attendue | t / p »).
+    // `t`/`p` répondent à une offre et CORRIGENT la cellule au Cursor (le
+    // moteur écrit au rang de l'Entry, sans supprimer ni insérer). Hors de ces
+    // cas la touche reste disponible au répartiteur global (`p` = pips).
     if (expects === 'take' || editing) {
         if (isBareLetter(event, 't')) return { handled: true, ...cubeGesture(state, COMMAND.TAKE) };
         if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
@@ -419,18 +311,15 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
     if (delta !== 0) return moveSelection(state, delta);
 
     if (event.key === 'Enter') {
-        // Entrée valide seule. C'est la sortie que la règle « un chiffre
-        // valide » laisse ouverte : le dernier coup d'une partie n'a pas de
-        // tour suivant pour porter sa validation (ux.md §3).
+        // Entrée valide seule : le dernier coup d'une partie n'a pas de tour
+        // suivant pour porter sa validation (ux.md §3).
         if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return ignored(state);
         return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.VALIDATE }] };
     }
 
-    // Retour arrière efface les deux dés — l'Action n'existe pas encore, il n'y
-    // a rien à défaire (ux.md §3). La touche est PRISE même quand rien n'est
-    // saisi : ailleurs elle réinitialise le plateau, et le plateau appartient ici
-    // au brouillon. Échap, au contraire, n'est prise que s'il y a une saisie à
-    // abandonner : sans cela elle ferme le panneau, comme partout.
+    // Retour arrière efface les dés et reste prise même à vide (ailleurs elle
+    // réinitialise le plateau). Échap n'est prise que s'il y a une saisie à
+    // abandonner, sinon elle ferme le panneau.
     if (event.key === 'Backspace' || event.key === 'Escape') {
         if (state.phase === PHASE.DICE) {
             return event.key === 'Backspace' ? swallowed(state) : ignored(state);
@@ -446,17 +335,10 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
 }
 
 /**
- * Le geste de correction qu'une touche désigne, ou null : `i` insère devant,
- * `a` derrière, `x` et `Suppr` suppriment, `s` change le camp de l'Action au
- * Cursor (ux.md §3, lignes « tout »).
- *
- * Aucun de ces gestes ne juge quoi que ce soit. Insérer une Action du même camp
- * que sa voisine crée un double trait, supprimer en crée un autre, changer un
- * camp peut rendre illégaux les coups qui suivent : ce sont des Incohérences que
- * le Replay MARQUE, et rien ici ne les refuse ni ne les répare (ADR-0044,
- * fonctionnel.md §1.4). C'est aussi pourquoi la suppression ne demande pas de
- * confirmation : elle est annulable par `Ctrl+Z`, et une boîte de dialogue par
- * pion effacé rendrait la relecture impraticable.
+ * Le geste de correction d'une touche, ou null : `i` insère devant, `a`
+ * derrière, `x`/`Suppr` suppriment, `s` change le camp. Rien n'est refusé ni
+ * réparé (ADR-0044) ; la suppression est annulable par `Ctrl+Z`, sans
+ * confirmation.
  *
  * @param {KeyboardEvent} event
  * @returns {string|null}
@@ -471,17 +353,9 @@ function editCommand(event) {
 }
 
 /**
- * Le niveau d'une résignation. `1`/`2`/`3` la crée — deux touches en tout avec
- * le `r` qui l'a ouverte, le budget d'ux.md §4.2 — et `Échap` rend la main à
- * l'état d'avant sans avoir créé la moindre Action.
- *
- * Tout le reste est AVALÉ : entre `r` et son chiffre, une touche qui n'est ni
- * un niveau ni l'annulation ne doit pas retomber sur les dés, sinon `r` puis
- * `5` enregistrerait un dé au lieu de ne rien faire.
- *
- * Le camp n'est pas dit ici. Il est celui au trait, et c'est le moteur qui le
- * sait (`transcript.cubeGesture`) : la machine à touches ne connaît pas le
- * document (fonctionnel.md §1.2).
+ * Le niveau d'une résignation : `1`/`2`/`3` la crée, `Échap` rend l'état
+ * d'avant, tout le reste est avalé. Le camp est celui au trait, que seul le
+ * moteur connaît.
  *
  * @param {KeyState} state
  * @param {KeyboardEvent} event
@@ -495,19 +369,9 @@ function resignLevel(state, event) {
 }
 
 /**
- * Un geste de videau donné au CLIC : le bouton `[D]`, `[T]` ou `[P]` de la
- * rangée, et le clic sur le videau dessiné sur le plateau (T2.5).
- *
- * C'est le corps même des touches `d`, `t` et `p` — elles l'appellent — et non
- * un second chemin qui leur ressemblerait. Ce que la touche ne fait pas, le
- * bouton ne le fait donc pas non plus : aucun `validate` n'est émis devant le
- * geste, parce que le moteur valide de lui-même le candidat resté en attente
- * (`transcript.cubeGesture`), et rien n'est jugé — doubler sans posséder le
- * videau reste transcriptible, l'Incohérence est marquée (ADR-0044).
- *
- * Ce qui distingue le bouton de la touche est AILLEURS, dans le panneau : un
- * bouton s'éteint là où son geste ne répond à rien, quand la touche, elle, ne
- * refuse jamais.
+ * Un geste de videau au clic, même corps que `d`/`t`/`p` : pas de `validate`,
+ * le moteur valide seul, rien n'est jugé (ADR-0044). C'est le panneau qui
+ * éteint un bouton sans objet.
  *
  * @param {KeyState} state
  * @param {string} kind - COMMAND.DOUBLE, COMMAND.TAKE ou COMMAND.PASS
@@ -518,13 +382,8 @@ export function cubeGesture(state, kind) {
 }
 
 /**
- * La résignation annoncée, son niveau attendu : ce que fait `r`, et ce que fait
- * le bouton `[R]` de la rangée.
- *
- * Les deux mènent au même état modal, celui qui met l'état d'avant de côté pour
- * qu'`Échap` — ou le bouton « Annuler » qui le double — le rende intact. Le
- * niveau se donne ensuite d'un chiffre ou d'un clic, en un geste : la
- * résignation coûte deux gestes à la souris comme au clavier (ux.md §4.2).
+ * La résignation annoncée (`r` ou `[R]`) : l'état d'avant est mis de côté
+ * pour `Échap`.
  *
  * @param {KeyState} state
  * @returns {{state: KeyState, commands: KeyCommand[]}}
@@ -534,8 +393,6 @@ export function beginResign(state) {
 }
 
 /**
- * Le niveau donné : `1`/`2`/`3` au clavier, un des trois boutons à la souris.
- *
  * @param {KeyState} state
  * @param {number} level
  * @returns {{state: KeyState, commands: KeyCommand[]}}
@@ -546,8 +403,6 @@ export function resignWithLevel(state, level) {
 }
 
 /**
- * La résignation abandonnée : `Échap`, ou le bouton qui le double.
- *
  * @param {KeyState} state
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
@@ -556,15 +411,8 @@ export function cancelResign(state) {
 }
 
 /**
- * Les gestes d'une entrée du menu contextuel du Transcript (T2.5) : le Cursor
- * mené jusqu'à la cellule cliquée, puis la correction elle-même.
- *
- * C'est mot pour mot ce que coûte la relecture au clavier — `h`×k puis `x`, la
- * ligne « coup en double » d'ux.md §4.3 — et c'est voulu : `i`, `a`, `x` et `s`
- * agissent sur l'Action AU CURSOR, si bien qu'un clic droit sur une cellule
- * lointaine doit d'abord y amener le Cursor. Le moteur ne connaît que le pas
- * (`cursor_back`/`cursor_forward`), et un saut est la répétition du pas : rien
- * n'est ajouté côté Go pour la souris.
+ * Une entrée du menu contextuel : mener le Cursor à la cellule cliquée, puis
+ * la correction (qui agit sur l'Action au Cursor).
  *
  * @param {number} from - le Cursor actuel
  * @param {number} to - la cellule cliquée
@@ -575,27 +423,15 @@ export function menuCommands(from, to, kind) {
 }
 
 /**
- * Un chiffre. Premier dé, puis second ; sur une ouverture le second dé valide
- * aussitôt.
+ * Un chiffre : premier dé, puis second ; sur une ouverture le second valide.
  *
- * Sur un jet déjà saisi, il commence un jet LÀ OÙ LE CURSOR EST (ADR-0048
- * décision 1) : en bout de document il valide le candidat puis ouvre le jet
- * suivant — la règle qui ramène le meilleur coup joué à deux touches —, sur une
- * Action relue (`replacing`) il recommence le jet sur place, ce qui est la
- * raison même d'y être revenu.
+ * Sur un jet déjà saisi (ADR-0048 décision 1) : en bout de document il valide
+ * puis ouvre le jet suivant ; sur une Action relue il recommence sur place —
+ * sauf sur la dernière Action une fois son jet retapé (ADR-0051), où il valide.
  *
- * Sauf sur la DERNIÈRE Action, une fois son jet retapé (ADR-0051) : il n'y a
- * rien derrière elle à protéger, et l'utilisateur est revenu là où une
- * transcription s'écrit. Le chiffre valide alors et ouvre le jet suivant, comme
- * en bout de document. Le premier chiffre tapé sur la cellule telle qu'elle a
- * été chargée la corrige toujours sur place : sans cela, son jet ne se
- * corrigerait plus.
- *
- * Pourquoi pas « valider partout » : `GestureValidate` passe par `validate`,
- * qui — contrairement à `commitCorrection` — n'est pas gardé par `entryDiffers`,
- * réécrit l'Action à l'identique et rend le Cursor à `doc.Return`. Un chiffre
- * égaré en relecture aurait donc mis fin à la relecture et renvoyé le Cursor en
- * bout de document, quand la règle retenue le garde local.
+ * Pas « valider partout » : `validate` n'est pas gardé par `entryDiffers`
+ * comme `commitCorrection` ; il réécrirait l'Action et renverrait le Cursor à
+ * `doc.Return`, mettant fin à la relecture.
  *
  * @param {KeyState} state
  * @param {number} die
@@ -623,17 +459,13 @@ function enterDie(state, die, expects, replacing = false, last = false) {
                     return { handled: true, state: { ...initialKeyState(), tie: true }, commands };
                 }
                 // Une ouverture RESSAISIE ne relance pas la partie : elle décide
-                // à nouveau qui commence, et la validation rend le Cursor là où
-                // la relecture l'avait pris. Enchaîner sur le premier coup de
-                // pions demanderait les candidats d'une position que l'on ne
-                // regarde plus.
+                // à nouveau qui commence et rend le Cursor là où la relecture
+                // l'avait pris, sans enchaîner sur les candidats du premier coup.
                 if (replacing && !last) {
                     return { handled: true, state: initialKeyState(), commands };
                 }
-                // Le gagnant du jet joue les DEUX dés comme premier coup de pions :
-                // il ne les ressaisit pas (fonctionnel.md §1.2). Le moteur les
-                // repose sur l'Entry suivante ; la machine les garde pour les
-                // afficher et pour demander les candidats.
+                // Le gagnant joue les deux dés de l'ouverture sans les
+                // ressaisir ; le moteur les repose sur l'Entry suivante.
                 const roll = dice[0] >= dice[1] ? [dice[0], dice[1]] : [dice[1], dice[0]];
                 return {
                     handled: true,
@@ -650,16 +482,8 @@ function enterDie(state, die, expects, replacing = false, last = false) {
 
         case PHASE.ROLL:
         case PHASE.CANDIDATE: {
-            // Le Cursor décide, pas l'historique de la liste : les deux phases
-            // répondent la même chose.
-            //
-            // Sur une Action relue, le chiffre recommence le jet sur place. Le
-            // moteur fait de même — `enter_die` sur une Entry aux deux dés
-            // pleins repart de zéro — et rien n'est validé, donc le Cursor ne
-            // bouge pas.
-            //
-            // En bout de document, il valide d'abord : la validation du tour
-            // est portée par la première touche du tour d'après.
+            // Relue : recommencer sur place (le moteur repart de zéro, rien
+            // n'est validé). Bout de document : valider d'abord.
             const inPlace = replacing && !(last && state.retyped);
             const commands = inPlace ? [{ kind: COMMAND.DIE, value: die }] : [{ kind: COMMAND.VALIDATE }, { kind: COMMAND.DIE, value: die }];
             return {
@@ -675,12 +499,8 @@ function enterDie(state, die, expects, replacing = false, last = false) {
 }
 
 /**
- * `j`/`k`, bas/haut et la molette déplacent la sélection. Le déplacement est
- * borné, il ne boucle pas.
- *
- * La phase passe à CANDIDATE, ce qui ne change plus rien au sens du chiffre
- * depuis ADR-0048 — c'est le Cursor qui le décide — et sert seulement à dire
- * que la sélection vient de l'utilisateur.
+ * `j`/`k`, bas/haut et la molette déplacent la sélection, bornée, sans
+ * boucler. La phase passe à CANDIDATE.
  *
  * @param {KeyState} state
  * @param {number} delta
@@ -698,13 +518,8 @@ function moveSelection(state, delta) {
 }
 
 /**
- * Choisir un candidat au clic, dans la liste classée. Même effet qu'un `j`/`k`
- * qui tomberait juste.
- *
- * Le simple clic SÉLECTIONNE — les flèches du plateau suivent, et c'est là que
- * l'on reconnaît le coup vu sur la vidéo. C'est le double-clic qui valide
- * (ADR-0048 décision 11), seul chemin souris pour le dernier coup d'une partie,
- * qui n'a pas de jet suivant pour porter sa validation.
+ * Choisir un candidat au clic. Le simple clic sélectionne ; le double-clic
+ * valide (ADR-0048 décision 11), seul chemin souris pour le dernier coup.
  *
  * @param {KeyState} state
  * @param {number} index
@@ -720,11 +535,8 @@ export function selectCandidate(state, index) {
 }
 
 /**
- * La réponse du moteur au jet que la machine attendait : combien de coups légaux.
- *
- * Aucun : c'est une danse, l'Action est créée sans une touche de plus et le trait
- * passe à l'autre camp. Au moins un : le premier est présélectionné et ses
- * flèches partent sur le plateau.
+ * La réponse du moteur : combien de coups légaux. Aucun → danse créée sans
+ * touche de plus ; sinon le premier est présélectionné.
  *
  * @param {KeyState} state
  * @param {number} count
@@ -744,18 +556,10 @@ export function applyCandidates(state, count) {
 }
 
 /**
- * Le jet donné d'un seul geste — le clic sur une case du triangle (T2.1).
- *
- * C'est LA MÊME chose que les deux frappes, et pas une seconde règle : les deux
- * dés passent par `enterDie`, dans l'ordre, exactement comme deux touches. Ce
- * qu'un chiffre fait depuis « jet corrigeable » (recommencer) ou depuis
- * « candidat choisi » (valider, puis ouvrir le jet suivant) est donc fait aussi
- * par le clic, sans que rien de tout cela soit réécrit ici.
- *
- * Un clic n'est PAS moins cher qu'une frappe : ux.md §4.1 le mesure à 1,18 s
- * contre 0,56 s pour les deux touches. Le triangle est une entrée pour la
- * souris, jamais un remplacement du clavier — et R3 (ADR-0048) demande que
- * chaque geste soit ATTEIGNABLE à la souris, jamais qu'il y coûte le même temps.
+ * Le jet d'un seul clic sur une case du triangle : les deux dés passent par
+ * `enterDie`, exactement comme au clavier. Le clic reste plus lent qu'une
+ * frappe (ux.md §4.1) : ADR-0048 R3 demande que tout soit atteignable à la
+ * souris, pas au même prix.
  *
  * @param {KeyState} state
  * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
@@ -770,8 +574,7 @@ export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = 
 }
 
 /**
- * Un seul dé, au clic : la rangée des six dés de l'ouverture, où chaque camp
- * donne le sien (fonctionnel.md §1.2). Même chemin qu'une touche chiffrée.
+ * Un seul dé au clic (rangée de l'ouverture, où chaque camp donne le sien).
  *
  * @param {KeyState} state
  * @param {number} die

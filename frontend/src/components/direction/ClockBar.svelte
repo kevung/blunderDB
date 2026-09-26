@@ -1,19 +1,9 @@
 <script>
     /*
-     * La bande d'horloge (issue #377, fonctionnel.md §6, ux.md §2.4).
-     *
-     * Un directeur se demande toute la soirée s'il finira avant minuit, et regarde les tables
-     * qui traînent. Le moteur sait répondre ; ce qui manquait était l'endroit où le lire.
-     *
-     * C'est une LIGNE DE TEXTE, pas un tableau de bord. Rien ne clignote, il n'y a pas de son,
-     * et les avertissements sont un compteur cliquable qui amène à l'objet concerné plutôt
-     * qu'une fenêtre qui interrompt.
-     *
-     * Ce qu'elle affiche sur plusieurs jours (#456) : le JOUR de jeu et le TEMPS DE JEU — le
-     * temps pendant lequel au moins un match tournait (direction.PlayingTime) — au lieu du
-     * temps écoulé, qui comptait les nuits comme du jeu. La fin estimée est celle du moteur
-     * (sim.Forecast), et une heure qui n'est pas d'aujourd'hui porte son jour. Une Direction
-     * close n'a plus rien à annoncer : la bande disparaît.
+     * La bande d'horloge (fonctionnel.md §6, ux.md §2.4) : une ligne de texte, sans clignotement
+     * ni son ; les avertissements sont un compteur cliquable. Affiche le jour et le temps de jeu
+     * (direction.PlayingTime, les nuits exclues) et la fin estimée (sim.Forecast), datée si ce
+     * n'est pas aujourd'hui. Absente d'une Direction close.
      */
     import { t, language } from '../../i18n';
 

@@ -1,48 +1,23 @@
 /**
  * helpers/transcriptionDraft.js — un brouillon de transcription ouvert, pour
- * les specs de budget (T3.5, ux.md §4).
+ * les specs de budget (ux.md §4).
  *
- * ## Ce que ce faux moteur rend, et ce qu'il ne rend pas
+ * Le panneau est un client du moteur Go (ADR-0045 règle 9) ; le réécrire en JS
+ * en ferait une seconde version qui dériverait. Ce mock **fige** donc un
+ * document annoté (sept points, dix Actions, une position de contact) et le
+ * rend tel quel à chaque geste, après l'avoir noté. Trois faits seulement sont
+ * dérivés, faute de quoi les budgets seraient injouables : la position du
+ * Cursor (§4.3 se compte en pas de Cursor), l'Action attendue après un double
+ * (`t`/`p` n'y répondent que devant une offre), et `entry.replacing` (lu du
+ * Cursor, il donne son sens à la touche chiffrée, ADR-0048). Le reste
+ * appartient aux tests Go du paquet `transcript`.
  *
- * Le panneau est un CLIENT du moteur Go (ADR-0045 règle 9) : chaque geste part
- * dans `ApplyTranscriptionGesture` et revient en document annoté entier. Un
- * navigateur n'a pas ce moteur, et le réécrire en JavaScript en ferait une
- * seconde version qui dériverait — c'est exactement ce que l'en-tête de
- * `TranscriptView.svelte` refuse.
+ * Les specs mesurent donc le nombre de gestes pour que la suite qui consigne
+ * le coup parte au moteur, pas la justesse du document.
  *
- * Ce mock ne le réécrit donc pas. Il **fige** un document annoté — un brouillon
- * de sept points, dix Actions, une position de contact — et le rend tel quel à
- * chaque geste, après avoir noté le geste. TROIS faits seulement y sont dérivés,
- * et chacun parce qu'un tableau de budgets serait injouable sans lui : la
- * position du Cursor (`cursor_back` recule d'un, `cursor_forward` avance d'un),
- * parce que les corrections d'ux.md §4.3 se comptent en pas de Cursor et que le
- * panneau réarme sa liste sur l'Action visée ; l'Action attendue après un
- * double, parce que `t` et `p` ne sont des touches de réponse que devant une
- * offre ; et **`entry.replacing`**, depuis ADR-0048, parce que c'est lui qui
- * décide du sens de la touche chiffrée — elle valide en bout de document et
- * recommence le jet sur une Action relue —, donc de tout le budget §4.1. Il se
- * lit du Cursor : sur une Action existante on remplace, au bout on ajoute. Tout
- * le reste — score, Crawford, Incohérences, camp au trait — reste ce qu'il
- * était, et appartient aux tests Go du paquet `transcript`
- * (`gestures_test.go`, `replay_test.go`, `correction_test.go`).
- *
- * Ce que les specs de budget mesurent est donc exactement ceci : **combien de
- * gestes l'application réelle demande pour que la suite de gestes qui consigne
- * le coup parte au moteur**. Que cette suite produise le bon document est déjà
- * tenu, en Go, une Action par Kind.
- *
- * ## Le jet fixé, et pourquoi ce jet-là
- *
- * Les dix-sept coups légaux du 3-1, dans l'ordre du classement : le douzième,
- * `8/5 8/7`, est celui d'ux.md §4.1 « coup loin dans la liste », que le budget
- * mesure au clavier seul puis joué au plateau (ADR-0052). Leurs pas sortent de
- * leur notation, parce que le plateau les joue : la liste réduite par les pas
- * et le coup achevé qui part seul en dépendent.
- *
- * La liste garde les doublons d'ordre (`8/5 8/7` et `8/7 8/5`) que le vrai
- * générateur déduplique : elle était écrite ainsi, et le coup joué au plateau
- * s'en accommode — deux candidats achevés du même jet, c'est encore un seul
- * jet, donc un coup qui part.
+ * Le jet est 3-1 : son douzième coup, `8/5 8/7`, est le « coup loin dans la
+ * liste » d'ux.md §4.1 (ADR-0052). La liste garde les doublons d'ordre que le
+ * vrai générateur déduplique ; le coup joué au plateau s'en accommode.
  */
 
 /** Un tableau de 26 points vides. */
@@ -174,13 +149,9 @@ export const draftRow = {
 };
 
 /**
- * Installe le faux moteur. À appeler APRÈS `installWailsMock`, avant
- * `page.goto` : le script s'exécute après celui du mock, donc `window.go`
- * existe déjà et n'est que complété.
- *
- * `expects` permet de poser l'Action attendue — `'take'` pour la réponse à un
- * double d'ux.md §4.2, `'opening'` pour l'ouverture — et `cursor` où le Cursor
- * commence, la fin du document par défaut.
+ * Installe le faux moteur. À appeler après `installWailsMock` (il complète
+ * `window.go`), avant `page.goto`. `expects` pose l'Action attendue (`'take'`,
+ * `'opening'`) ; `cursor` où le Cursor commence (fin du document par défaut).
  *
  * @param {import('@playwright/test').Page} page
  * @param {{expects?: string, cursor?: number}} [opts]
@@ -198,9 +169,8 @@ export async function installTranscriptionEngine(page, opts = {}) {
                 annotated.cursor = at;
                 annotated.document.cursor = at;
                 annotated.next.expects = waiting;
-                // Le troisième fait dérivé : sur une Action existante la saisie
-                // REMPLACE, au bout du document elle ajoute. C'est le
-                // discriminant de la touche chiffrée (ADR-0048 décision 1).
+                // Sur une Action existante la saisie remplace, au bout elle
+                // ajoute (ADR-0048 décision 1).
                 const info = annotated.actions[at];
                 annotated.entry = info
                     ? { at, side: info.side, replacing: true, review: false, selected: true, dice: [3, 1] }
@@ -213,18 +183,8 @@ export async function installTranscriptionEngine(page, opts = {}) {
             db.CreateTranscription = () => Promise.resolve(state());
             db.TranscriptionMAT = () => Promise.resolve('');
             db.ApplyTranscriptionGesture = (_id, gesture) => {
-                // Les DEUX seules choses que ce faux moteur dérive.
-                //
-                // 1. Le Cursor : les budgets de correction d'ux.md §4.3 se
-                //    comptent en pas de Cursor (`h`×k … `l`×k), et le panneau
-                //    réarme sa liste sur l'Action visée.
-                // 2. L'Action attendue après un double : `t` et `p` ne sont
-                //    des touches de réponse que lorsque le moteur attend une
-                //    réponse (`expects === 'take'`, transcriptionKeys.js), donc
-                //    sans cela le tableau §4.2 ne serait pas jouable du tout.
-                //
-                // Tout le reste du document reste figé, et appartient aux tests
-                // Go du paquet transcript.
+                // Dérivés : le Cursor (budgets §4.3) et l'Action attendue
+                // après un double (`t`/`p`, §4.2). Le reste reste figé.
                 const kind = gesture ? gesture.Kind : '';
                 if (kind === 'cursor_back') at = Math.max(0, at - 1);
                 if (kind === 'cursor_forward') at = Math.min(doc.actions.length, at + 1);

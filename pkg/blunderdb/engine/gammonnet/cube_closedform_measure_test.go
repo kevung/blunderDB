@@ -15,40 +15,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
-// L'instrument de mesure de #194/C.7 — « la bissection de levelSolve
-// peut-elle devenir une forme close, et à quel prix ? »
+// Mesure : la bissection de levelSolve peut-elle devenir une forme close, et
+// à quel prix ?
 //
-// LA QUESTION. `levelSolve` (cube.go) inverse une fonction AFFINE PAR
-// MORCEAUX ET MONOTONE dont les deux ou trois segments sont connus d'avance
-// (`levelLive`) — et il l'inverse par soixante pas de bissection. Le rapport
-// docs/recherche/P6-videau-janowski.md le dit : l'inversion d'une telle
-// fonction est en forme close, O(nombre de segments), exacte. La bissection
-// n'est pas une approximation nécessaire, c'est une recherche numérique là où
-// une division suffit.
+// levelSolve (cube.go) inverse par soixante pas de bissection une fonction
+// affine par morceaux et monotone dont les segments sont connus : une forme
+// close, O(nombre de segments), suffit. À 2-ply au score 5-away/5-away,
+// levelSolve pèse ~35 % de la décision. Le gain survit au changement de
+// langage, donc il se décide en amont (gammonNet ADR-0003), et il n'est pas
+// bit-identique — c'est ce que ce fichier mesure.
 //
-// CE QUE ÇA PÈSE, remesuré le 2026-09-03 APRÈS C.8/C.9/C.10 (le profil de la
-// fiche datait d'avant) — Ryzen 7 PRO 6850U, 16 cœurs, Go 1.25.13, décision
-// 2-ply k=12 canonique au score 5-away/5-away :
-//
-//	BenchmarkDecision2Ply       (money) 193 ms
-//	BenchmarkDecision2PlyMatch  (score) 306 ms
-//
-// et le profil de la seconde : levelSolve 35,4 % cumulé (dont laneCurve.at
-// 9,3 %), buildLevels 38,7 %, Value 39,8 %, EvaluateBatch 52,6 %. Le videau
-// est donc bien le second poste, et la bissection est PRESQUE TOUT le videau
-// — l'écart money↔score, 113 ms, est du même ordre que les 35 % que la
-// bissection prend.
-//
-// POURQUOI RIEN N'EST RAPIÉCÉ ICI. Le gain survit au changement de langage
-// (soixante itérations d'une chaîne sérielle contre une division : c'est la
-// forme de l'algorithme, pas son écriture), donc l'ADR-0003 de gammonNet et
-// l'invariant de CLAUDE.md le rangent en amont. Et il n'est PAS bit-identique
-// — c'est ce que ce fichier mesure. Ce qui est livré ici est l'instrument,
-// le chiffre et le correctif proposé ; l'ADR « la forme close de l'inversion
-// du videau se décide en amont » porte la décision.
-//
-// TestClosedFormAgreesWithBisection tourne TOUJOURS : il est la garantie que
-// la forme close proposée en amont est la bonne fonction. Les mesures d'écart
+// TestClosedFormAgreesWithBisection tourne TOUJOURS : il garantit que la
+// forme close proposée à l'amont est la bonne fonction. Les mesures d'écart
 // et de gain sont derrière BLUNDERDB_MEASURE_CLOSEDFORM.
 
 // levelSegments écrit les segments de la courbe vive d'un niveau, dans
@@ -56,9 +34,7 @@ import (
 // bornes, mêmes ordonnées, même convention de segment dégénéré (`segment`
 // rend y1 quand x1 <= x0).
 //
-// Rend le nombre de segments écrits. C'est la seule chose que la forme close
-// a besoin de savoir de la courbe, et c'est aussi la seule chose qu'il faut
-// relire pour vérifier qu'elle décrit la même courbe.
+// Rend le nombre de segments écrits.
 func levelSegments(lv *matchLevel, owner CubeOwner, segs *[3][4]float64) int {
 	if lv.dead {
 		segs[0] = [4]float64{0.0, lv.loseAvg, 1.0, lv.winAvg}
@@ -122,13 +98,9 @@ func levelSolveClosed(lv *matchLevel, owner CubeOwner, blend, target float64) fl
 	return 1.0
 }
 
-// closedFormLevels rend un corpus de niveaux réels : la chaîne d'enjeux
-// complète de chaque état de match plausible, alimentée par des mélanges de
-// résultats couvrant la course sèche comme le jeu à fort gammon.
-//
-// Les ANCRES viennent de buildLevelAnchors (donc de la vraie MET) et les
-// points de rupture des niveaux profonds de resolveLevels, si bien que chaque
-// niveau comparé est un niveau que le moteur résout vraiment.
+// closedFormLevels rend un corpus de niveaux réels : la chaîne complète de
+// chaque état de match plausible, sur des mélanges de résultats de la course
+// sèche au jeu à fort gammon, résolue par buildLevelAnchors et resolveLevels.
 func closedFormLevels(t testing.TB) []struct {
 	lv    matchLevel
 	label string
@@ -187,13 +159,9 @@ func closedFormTargets(lv *matchLevel) []float64 {
 	return out
 }
 
-// TestClosedFormAgreesWithBisection est le dispositif d'exactitude de la
-// forme close : sur des niveaux réels, elle rend le même p que soixante pas
-// de bissection, à 1e-9 près en p — la tolérance est celle d'une bissection
-// qui converge, pas celle d'un modèle qui approxime.
-//
-// Il tourne toujours, parce que c'est lui qui dit à l'amont que le correctif
-// proposé décrit bien la même fonction ; il coûte quelques millisecondes.
+// TestClosedFormAgreesWithBisection : sur des niveaux réels, la forme close
+// rend le même p que soixante pas de bissection, à 1e-9 près (la tolérance
+// d'une bissection qui converge).
 func TestClosedFormAgreesWithBisection(t *testing.T) {
 	corpus := closedFormLevels(t)
 	if len(corpus) == 0 {
@@ -231,9 +199,8 @@ func TestClosedFormAgreesWithBisection(t *testing.T) {
 // TestMeasureClosedFormGap — MESURE 1 : de combien de bits la forme close
 // s'écarte-t-elle de la bissection, et qu'est-ce que ça fait à une équité ?
 //
-// C'est LA question qui décide si le portage peut suivre l'amont sans
-// périmer les bases : l'écart en p, en ULP, la part des inversions
-// rigoureusement bit-identiques, et l'écart propagé sur Value.
+// Elle décide si le portage peut suivre l'amont sans périmer les bases : écart
+// en p, en ULP, part d'inversions bit-identiques, écart propagé sur Value.
 func TestMeasureClosedFormGap(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE_CLOSEDFORM") == "" {
 		t.Skip("set BLUNDERDB_MEASURE_CLOSEDFORM to measure the closed-form gap")
@@ -260,11 +227,8 @@ func TestMeasureClosedFormGap(t *testing.T) {
 				if d := math.Abs(got - want); d > maxP {
 					maxP, maxPLabel = d, fmt.Sprintf("%s owner=%v", c.label, owner)
 				}
-				// La distance ULP n'a de sens qu'entre deux nombres du même
-				// ordre : quand la bissection converge vers 0 elle rend
-				// 2^-61 et non 0, ce qui est un écart de 4e18 ULP pour 4e-19
-				// de p. Restreinte aux inversions dont le résultat n'est pas
-				// collé à une borne, elle dit ce qu'elle prétend dire.
+				// Hors des bornes seulement : vers 0 la bissection rend 2^-61,
+				// un écart de 4e18 ULP pour 4e-19 de p.
 				if math.Min(got, want) > 1e-6 && math.Max(got, want) < 1-1e-6 {
 					if u := ulpDistance(got, want); u > maxULP {
 						maxULP, maxULPLabel = u, fmt.Sprintf("%s owner=%v (%.17g vs %.17g)", c.label, owner, got, want)
@@ -348,7 +312,7 @@ func ulpDistance(a, b float64) uint64 {
 	return ob - oa
 }
 
-// ── Les repères que la fiche C.7 réclamait AVANT toute modification ────────
+// ── Repères d'inversion ─────────────────────────────────────────────────────
 
 // benchLevel est le niveau d'enjeu que les repères d'inversion résolvent : la
 // chaîne 5-away/5-away, videau à 1, mélange de résultats ordinaire — le même
@@ -366,8 +330,7 @@ func benchLevel(b *testing.B) (matchLevel, matchLevel) {
 	return levels[0], levels[1]
 }
 
-// BenchmarkLevelSolveBisection est le poste que C.7 vise : une inversion,
-// soixante pas.
+// BenchmarkLevelSolveBisection est une inversion, soixante pas.
 func BenchmarkLevelSolveBisection(b *testing.B) {
 	cur, next := benchLevel(b)
 	b.ReportAllocs()
@@ -428,10 +391,8 @@ func BenchmarkBuildLevelAnchors(b *testing.B) {
 	}
 }
 
-// BenchmarkCubeDecisionAtScore est la décision de videau que le panneau
-// affiche : Decide au score, sur une distribution déjà calculée. C'est le
-// chemin où l'inversion apparaît DEUX fois de plus que dans la valuation
-// d'une feuille — la chaîne, puis le take point rapporté.
+// BenchmarkCubeDecisionAtScore est Decide au score sur une distribution déjà
+// calculée : la chaîne, puis le take point rapporté.
 func BenchmarkCubeDecisionAtScore(b *testing.B) {
 	probs := benchCubeProbs(b)
 	state := MatchState{AwayOnRoll: 5, AwayOpponent: 5, Cube: 1}
@@ -489,15 +450,9 @@ func benchCubeProbs(b *testing.B) [NumOutputs]float32 {
 // d'inversion, dont le résultat n'est autrement lu par personne.
 var runtimeSink float64
 
-// BenchmarkAnalysisBatchThroughput est le DÉBIT DU LOT que la fiche C.7
-// réclamait : des positions réelles au score, une goroutine par cœur, chacune
-// avec son propre chercheur réutilisé (le motif que le lot d'analyse fait
-// tourner, `db_gammonnet_batch.go`). La métrique utile est pos/s, pas ns/op :
-// c'est celle dans laquelle une base de 88 000 positions se compte.
-//
-// Le lot est LE consommateur de la valuation de videau — chaque position y
-// paye une chaîne d'enjeux par feuille — donc c'est ici qu'un gain sur
-// levelSolve se lit en heures de calcul plutôt qu'en nanosecondes.
+// BenchmarkAnalysisBatchThroughput est le débit du lot d'analyse : positions
+// réelles au score, une goroutine par cœur, chacune avec son chercheur
+// réutilisé (db_gammonnet_batch.go). La métrique est pos/s.
 func BenchmarkAnalysisBatchThroughput(b *testing.B) {
 	for _, ply := range []int{0, 2} {
 		b.Run(fmt.Sprintf("%d-ply", ply), func(b *testing.B) {
@@ -506,10 +461,8 @@ func BenchmarkAnalysisBatchThroughput(b *testing.B) {
 			}
 			positions := batchBenchPositions(b)
 			workers := runtime.NumCPU()
-			// Les chercheurs sont bâtis HORS du chrono : 5,5 Mo chacun, et
-			// le lot réel n'en construit qu'un par goroutine pour toute la
-			// passe (NewBatchSearcher, #147). Les chronométrer mesurerait
-			// l'allocation, pas le débit.
+			// Chercheurs bâtis hors chrono, un par goroutine comme le lot
+			// réel (NewBatchSearcher).
 			searchers := make([]*Searcher, workers)
 			for w := range searchers {
 				s, err := NewBatchSearcher(ply, 0)

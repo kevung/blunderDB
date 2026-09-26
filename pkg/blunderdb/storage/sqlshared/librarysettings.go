@@ -12,12 +12,11 @@ import (
 // backends; only the table and whether it is scoped differ, and the Dialect
 // answers that (LibrarySettingsTable):
 //
-//   - SQLite writes the rows to the metadata table, which the file already
-//     carries — no schema change, and the settings sit next to the Performance
+//   - SQLite writes the rows to the metadata table, next to the Performance
 //     Rating objective, where `blunderdb info` and `edit` find them.
 //   - PostgreSQL writes them to library_settings, its own tenant-scoped table:
-//     metadata there is database infrastructure, global to every tenant and
-//     outside Row-Level Security, and has been read-only since #156.
+//     metadata there is global to every tenant, outside Row-Level Security,
+//     and read-only.
 type LibrarySettingsStore struct{ DB Execer }
 
 var _ storage.LibrarySettingsStore = (*LibrarySettingsStore)(nil)

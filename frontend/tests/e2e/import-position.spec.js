@@ -7,8 +7,8 @@
  * 2. Importer un fichier (Ctrl+I) via le mock de dialogue.
  * 3. Dialogue annulé : rien ne change.
  *
- * Le mock simule la mutation du backend : dès que l'écriture est appelée,
- * ListPositionIDs renvoie la bibliothèque agrandie.
+ * Le mock simule l'écriture : ListPositionIDs renvoie ensuite la
+ * bibliothèque agrandie.
  */
 
 import { test, expect } from '@playwright/test';

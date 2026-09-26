@@ -1,15 +1,8 @@
 <script>
     /*
-     * La vue Historique (issue #375, fonctionnel.md §5.8).
-     *
-     * La Direction est la trace de tout ce que le directeur a décidé : elle doit être LISIBLE.
-     * C'est ce qu'on imprime après un litige, et ce qu'un directeur-joueur relit en revenant à
-     * sa table.
-     *
-     * Filtrer par joueur répond à « qu'est-il arrivé à Hugo ? » sans lire tout le journal. Et
-     * une correction s'offre ICI, sur la ligne, plutôt que d'envoyer chercher le match ailleurs :
-     * le match est fini, il n'est plus sur la grille des tables, et le bouton qui y renvoyait
-     * n'ouvrait rien (#436). Le panneau est celui de la dernière décision, pour CE match.
+     * La vue Historique (fonctionnel.md §5.8) : la trace lisible des décisions, filtrable par
+     * joueur. Une correction s'offre sur la ligne (le match fini n'est plus sur la grille),
+     * avec le panneau de la dernière décision.
      */
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
@@ -32,7 +25,7 @@
     /* La ligne dont la correction est ouverte : une seule à la fois, comme la fiche d'une table. */
     let correcting = $state(/** @type {number | null} */ (null));
 
-    /* Échap referme la correction avant tout geste global (#414). */
+    /* Échap referme la correction avant tout geste global. */
     $effect(() => {
         if (correcting !== null) return closeOnEscape(() => (correcting = null));
     });
@@ -83,9 +76,7 @@
                 });
             case 'result':
                 if (e.forfeit) return $t('direction.history.forfeit', { winner: e.winnerName });
-                /* Le moteur encode les scores avec `omitempty` : un côté absent est un zéro qu'il
-                   a omis (7–0), les deux absents disent qu'aucun score n'a été saisi — et alors
-                   la ligne n'en invente pas un. */
+                /* `omitempty` : un côté absent vaut zéro ; les deux absents = aucun score saisi. */
                 if (e.scoreA == null && e.scoreB == null) return $t('direction.history.resultNoScore', { winner: e.winnerName });
                 return $t('direction.history.result', {
                     winner: e.winnerName,

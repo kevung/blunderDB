@@ -1,36 +1,18 @@
 /**
- * escapeService.js — ce qui est ouvert se ferme sur Échap AVANT tout geste global (#414).
+ * escapeService.js — ce qui est ouvert se ferme sur Échap AVANT tout geste global.
  *
- * ## La règle
+ * Échap ferme d'abord la dernière surcouche ouverte (menu contextuel, fiche de résultat,
+ * reprise de la direction), et rien d'autre ne le voit. Sinon il continue : paliers des
+ * panneaux, puis répartiteur global. Les modales gardent leur Échap (Modal.svelte) ; une
+ * surcouche SOUS une modale n'est pas fermée à sa place.
  *
- * Un appui d'Échap ferme d'abord la dernière chose ouverte qui a quelque chose à fermer — un
- * menu contextuel, la fiche de résultat, la reprise de la direction —, et rien d'autre ne le
- * voit. Seulement quand rien de tel n'est ouvert, l'Échap continue son chemin : les paliers
- * des panneaux, puis le répartiteur global (sortie de champ, retour d'une sous-recherche #410).
- * Les modales gardent leur propre Échap (Modal.svelte) : une surcouche ouverte SOUS une modale
- * n'est pas fermée à sa place.
+ * Pourquoi la capture, et pas `<svelte:window onkeydown>` : celui-ci passerait après le
+ * répartiteur et les écouteurs `document` des panneaux, qui consomment Échap, et Svelte 5 le
+ * saute dès que `cancelBubble` est vrai. Aucun ordre d'enregistrement ne garantit la
+ * priorité ; la capture sur `window` passe avant tout. Un seul écouteur consulte une pile
+ * (dernière ouverte, première fermée) : un composant n'a qu'à s'enregistrer.
  *
- * ## Pourquoi un registre écouté en capture, et pas un `<svelte:window onkeydown>`
- *
- * Ces surcouches écoutaient Échap par `<svelte:window onkeydown>`, et aucune ne le recevait. Le
- * répartiteur (`keyboardService.handleKeyDown`), enregistré sur `window` dans `onMount`
- * d'App.svelte, appelait `event.stopPropagation()`. Sur `window`, en bulle, cela n'arrête aucun
- * écouteur natif — mais Svelte 5 enveloppe chaque gestionnaire déclaratif (`create_event`) et
- * ne l'appelle pas si `event.cancelBubble` est vrai, même sur la même cible. Tout
- * `<svelte:window onkeydown>` monté APRÈS App — un menu qui s'ouvre, la page Direction — était
- * donc muet, pour toutes les touches ; ceux montés avant (ViewTabs) marchaient, par l'ordre de
- * montage seul.
- *
- * Retirer ce `stopPropagation` ne suffisait pas : l'écouteur de la surcouche serait passé APRÈS
- * le répartiteur, qui aurait déjà quitté les résultats d'une sous-recherche, et après les
- * écouteurs `document` des panneaux, qui consomment Échap pour leurs propres paliers. Aucun
- * ordre d'enregistrement ne garantit la priorité ; la phase de capture sur `window`, si : elle
- * passe avant la cible, la délégation de Svelte, les écouteurs `document` et le répartiteur.
- * Un seul écouteur de capture, posé ici au premier enregistrement, consulte une pile : la
- * dernière surcouche ouverte est la première fermée, et un nouveau composant n'a qu'à
- * s'enregistrer — il n'a aucun ordre d'écouteurs à connaître.
- *
- * ## Usage, dans un composant
+ * Usage :
  *
  *     $effect(() => {
  *         if (open) return closeOnEscape(() => (open = false));
@@ -67,8 +49,7 @@ export function handleEscapeCapture(event) {
 }
 
 /**
- * Une surcouche est-elle ouverte ? Ce qui est ouvert garde aussi ses autres touches : la file des
- * propositions ne les lui prend pas (directionKeys.js, #415).
+ * Une surcouche est-elle ouverte ? Elle garde alors aussi ses autres touches (directionKeys.js).
  *
  * @returns {boolean}
  */

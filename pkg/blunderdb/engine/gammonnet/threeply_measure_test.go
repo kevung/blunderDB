@@ -16,53 +16,25 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
-// TestThreePlyMeasure is #272 (fiche I.16): MaxPly has been 4 since the port
-// landed and DefaultConfig has always carried a filter for depth 3, but no
-// measurement said what a 3-ply search buys — so nothing could decide whether
-// to offer it as a setting.
+// TestThreePlyMeasure decides whether a 3-ply setting is worth offering. It
+// replays the gate's corpus at 2-ply and 3-ply and reports how often the
+// deeper search picks a DIFFERENT move, and what that is worth priced by the
+// deeper search itself (asking 2-ply to grade 3-ply would grade the judge).
 //
-// This is a measurement, not an assertion. It replays the gate's own corpus of
-// real analysed decisions at 2-ply and at 3-ply and reports two things:
-//
-//  1. how often the deeper search picks a DIFFERENT move;
-//  2. what that difference is worth, priced by the deeper search itself — the
-//     equity 3-ply assigns to its own choice minus the equity it assigns to
-//     2-ply's. Pricing by the deeper judge is the only direction that means
-//     anything: asking 2-ply to grade 3-ply's choice would grade the judge.
-//
-// # Cost, measured on this build (TestProbeDecisionCost, AVX2, 16 logical cores)
-//
-//	2-ply canonical, one core      263 ms   13 438 evaluations
-//	3-ply canonical, one core     25.0 s  1 166 992 evaluations
-//	2-ply canonical, NumCPU         69 ms
-//	3-ply canonical, NumCPU        6.8 s
-//
-// Ninety-five times the cost per decision, single core; ninety-nine on
-// sixteen. That is one side of the scale; this test measures the other.
-//
-// # Result, measured on 2026-09-06 (40 checker decisions of the gate corpus, 16 workers)
+// Measured (40 checker decisions of the gate corpus, 16 workers):
 //
 //	move changed:      2/40 = 5.0%
 //	time per decision: 2-ply 99 ms   3-ply 8.425 s   (85x)
 //	equity gained where it changed: mean 0.0003  median 0.0005  max 0.0005
 //	equity gained per decision:     0.0000
 //
-// **The setting is not offered, and this is why.** Eighty-five times the cost
-// buys 0.0000 normalised equity per decision. On the two decisions where the
-// deeper search did change its mind, the gain IT claimed for its own choice
-// was at most 0.0005 — two orders of magnitude below 0.020, the threshold at
-// which XG calls a decision an error at all. Forty decisions is a small
-// sample and a larger one could turn up a rarer, bigger case; but the ratio is
-// lopsided by four orders of magnitude, and no plausible tail moves a
-// conclusion that far.
+// So the setting is not offered: 85 times the cost buys at most 0.0005, two
+// orders of magnitude below XG's 0.020 error threshold. That holds for THIS
+// network at the canonical filter; the measurement is one command away if
+// either changes.
 //
-// What this does NOT say is that 3-ply is worthless in general — only that on
-// THIS network, at the canonical filter, it does not pay for a user waiting on
-// a panel. If the network is ever distilled or the filter widened (J.7), the
-// measurement is one command away and the conclusion is re-decidable.
-//
-// Behind BLUNDERDB_THREE_PLY, like the other probes: it asserts nothing and
-// costs minutes. BLUNDERDB_THREE_PLY_N caps the sample (default below).
+// Behind BLUNDERDB_THREE_PLY; asserts nothing and costs minutes.
+// BLUNDERDB_THREE_PLY_N caps the sample (default below).
 const defaultThreePlyN = 60
 
 func TestThreePlyMeasure(t *testing.T) {

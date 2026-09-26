@@ -12,10 +12,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// analyses.loadByIds is the batch face of analyses.load, on the contract of
-// positions.loadByIds: the caller's order, ids that name nothing (an unknown
-// position, or a position without an analysis) skipped, a repeated id
-// answered each time it is asked, and an empty list for no id.
+// analyses.loadByIds follows positions.loadByIds: caller's order, ids naming
+// nothing skipped, a repeated id answered each time, empty list for no id.
 
 // saveAnalysedPosition stores a position distinct by its score and, when
 // analysed, an analysis whose XGID names it. It returns the position id.

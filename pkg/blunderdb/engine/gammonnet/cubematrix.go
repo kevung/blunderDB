@@ -10,25 +10,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// The cube matrix (issue #267, fiche I.11).
+// The cube matrix: the cube verdict of one position at every away × away
+// score of a match.
 //
-// A cube decision is not a property of the board. The same checkers, the same
-// pips, the same everything, are a clear double at 2-away/4-away and a clear
-// no-double at 4-away/2-away — and a player who has learnt the money answer
-// has learnt one cell of a grid. What blunderDB could always show was that one
-// cell, the one the position happened to carry.
-//
-// The matrix shows the whole grid: the verdict at every away × away score of a
-// match, on the position in front of the user.
-//
-// # Why this is a real sweep and not one search read many ways
-//
-// The search is MATCH-AWARE since ADR-0016: the distribution it returns
-// already depends on the score, because the score changes which continuations
-// are worth playing for. Reading one money search through a different match
-// equity table per cell would produce a grid that looks right and is wrong
-// exactly where the score matters most. So every cell is its own search, and
-// the cost is the honest one: matchLength² searches.
+// Every cell is its own search (matchLength² of them): the search is
+// match-aware (ADR-0016), so reading one money search through a different
+// MET per cell would be wrong exactly where the score matters most.
 
 // CubeMatrixCell is one score's verdict.
 type CubeMatrixCell struct {
@@ -47,10 +34,8 @@ type CubeMatrixCell struct {
 	DoubleTake float64 `json:"doubleTake"`
 	DoublePass float64 `json:"doublePass"`
 
-	// Refused says the engine declined this cell — a score beyond its match
-	// equity table, a cube state it will not judge. It is NOT an error and
-	// NOT a "no double": a cell nobody can evaluate must look different from
-	// a cell where the answer is "don't". Reason says why, for the tooltip.
+	// Refused says the engine declined this cell: neither an error nor a
+	// "no double". Reason says why, for the tooltip.
 	Refused bool   `json:"refused,omitempty"`
 	Reason  string `json:"reason,omitempty"`
 }
@@ -74,13 +59,10 @@ var CubeMatrixLengths = []int{5, 7, 9}
 // ComputeCubeMatrix evaluates pos's cube decision at every away × away score
 // of a matchLength-point match.
 //
-// The position's own score is ignored — the grid replaces it — but everything
-// else about the position is kept, cube included: the matrix answers "at what
-// score would I double THIS", not "what would a different position do".
-//
-// workers searches run at once, each with its own Searcher. Cells are
-// independent, so the grid is identical whatever workers says; only the time
-// changes. ctx cancels between cells, and a cancelled call returns what it had.
+// The position's own score is replaced by the grid; everything else, cube
+// included, is kept. workers searches run at once, each with its own
+// Searcher; the grid does not depend on workers. ctx cancels between cells,
+// and a cancelled call returns what it had.
 func ComputeCubeMatrix(ctx context.Context, pos domain.Position, matchLength, ply, pruneK, workers int) (CubeMatrix, error) {
 	if matchLength < 1 {
 		return CubeMatrix{}, fmt.Errorf("gammonnet: cube matrix needs a match length of at least 1")
@@ -194,10 +176,8 @@ func cubeMatrixCell(pos domain.Position, matchLength, awayOnRoll, awayOpponent i
 // on-roll, and a raw 1 is the Crawford sentinel while a raw 0 decodes back to
 // 1-away (parser.go's remap, MatchStateFromScores's decode).
 //
-// So a 1-away cell of the grid is stored as 0: the grid is the POST-Crawford
-// one throughout. That is the only reading that carries information — during
-// the Crawford game the cube is not in play at all, and a column of "you may
-// not double" would say nothing about the position.
+// So a 1-away cell is stored as 0: the grid is post-Crawford throughout,
+// since in the Crawford game the cube is not in play.
 func scoreForCell(playerOnRoll, awayOnRoll, awayOpponent int) [2]int {
 	crawfordSentinel := func(away int) int {
 		if away == 1 {

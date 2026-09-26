@@ -107,7 +107,7 @@ func TestDecodeXGIDContract(t *testing.T) {
 			// The round trip: `xgidCanonical` is what the GUI writes back out
 			// for this position, and it must decode to the very same position.
 			// A re-encoding that is lossy on the match length is fine; one that
-			// turns a post-Crawford game into a Crawford one is not (#360).
+			// turns a post-Crawford game into a Crawford one is not.
 			// EncodeXGID is the Go twin of the GUI's generateXGID: it must write
 			// the very string the GUI test pins, so the two encoders cannot drift.
 			if got := EncodeXGID(&want); got != c.XGIDCanonical {

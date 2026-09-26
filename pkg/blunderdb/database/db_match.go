@@ -86,12 +86,9 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 
 // GetPositionProvenance returns the matches that reference the given position
 // through their move graph (move → game → match) — the position's provenance.
-// Because positions are deduplicated across imports by canonical Zobrist hash,
-// one stored position can be reached from several matches, so this returns a
-// list; it is empty for a position no match references (e.g. one the user
-// imported on its own). Each match carries its tournament name (empty when
-// unassigned). Ordered most-recent match first. Backs the "display position
-// metadata" feature (MatchInfoBar shown outside match-review mode too).
+// Positions are deduplicated by Zobrist hash, so several matches can reach
+// one; the list is empty for an individually imported position. Each match
+// carries its tournament name; most recent first.
 func (d *Database) GetPositionProvenance(positionID int64) ([]Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -337,34 +334,19 @@ func deleteOrphanedPositions(tx *sql.Tx, ids []int64) error {
 // match that referenced it is gone. Deleting a match must not destroy work the
 // user did on a position that merely happened to occur in it.
 //
-// A position is held by: another match's move; membership in a collection; an
-// Anki card built from it; a comment the USER wrote on it (#263); having been
-// imported individually, which says the user brought it in deliberately
-// (ADR-0001); or the study mark the source tool carried, since deleting a
-// match must not delete the very positions the `fl` filter exists to surface
-// (docs/adr/0006).
+// A position is held by: another match's move; a collection; an Anki card; a
+// comment with origin = 'user'; individual import (ADR-0001); or the source
+// tool's study mark, which the `fl` filter surfaces (ADR-0006).
 //
-// Two things deliberately do NOT hold a position, because neither is evidence
-// the user did anything with it:
-//   - an analysis: it arrives with the match, and every match position has one,
-//     so counting it would mean never purging anything;
-//   - a comment that is not the user's: match importers attach the source
-//     file's per-move notes as comments (see ingest/xg.go), and until 2.19.0
-//     nothing told them apart from a note the user typed — so no comment held a
-//     position at all, and a note the user had written was lost with the match.
-//     A comment now carries its origin; only origin = 'user' holds. An imported
-//     note, or one written before the column existed ('unknown'), still does
-//     not, which leaves the rows of every older database judged as they always
-//     were.
+// Deliberately NOT held by an analysis (every match position has one, so
+// nothing would ever be purged) nor by an imported or 'unknown'-origin
+// comment (importers attach the source file's notes).
 //
-// Phrased as a WHERE-clause fragment correlated against the outer `position`
-// row rather than a standalone query — see deleteOrphanedPositions, which
-// embeds it directly into a set-based DELETE instead of running it once per
-// candidate position.
+// A WHERE fragment correlated with the outer `position` row, embedded in
+// deleteOrphanedPositions' set-based DELETE.
 //
-// This mirrors the identical predicate in the SQLite and Postgres stores. The
-// GUI and the CLI both delete matches through this wrapper rather than through
-// the store, so the rule has to be stated here too — the three must not drift.
+// Stated identically in three places — here (the copy the GUI and CLI run),
+// storage/sqlite and storage/postgres. They must not drift.
 const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
@@ -516,17 +498,10 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 		stats["move_count"] = moveCount
 	}
 
-	// Count blunders (#287): the Positions the library calls Blunders, at the
-	// threshold the library itself sets (ADR-0046) and by the same rule the
-	// search behind the status bar's link uses — a Position played several
-	// ways is scored by the largest of its plays (#167). The SQL is NOT
-	// restated here: this used to be a fourth hand-written copy of the
-	// statistics' predicate, and it read the denormalised first play, so the
-	// counter under-stated the list its own link opened.
-	//
-	// The count is of POSITIONS, not of decisions counted toward PR: the
-	// status bar answers "how much is there to look at", and a decision
-	// excluded from the PR denominator is still a position worth opening.
+	// Count blunders at the library's threshold (ADR-0046), by the store's
+	// rule — the same as the status bar link's search, a multi-played
+	// Position scored by its largest play. Not restated here, so it cannot
+	// drift. It counts POSITIONS, not PR decisions: "how much to look at".
 	counts, err := d.store.Metadata().Counts(context.Background(), "")
 	if err != nil {
 		stats["blunder_count"] = int64(0)
@@ -594,10 +569,8 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-	// Delegate to the storage layer, whose SwapPlayers swaps each position by
-	// copy-on-write with a recomputed Zobrist (#107). The raw SQL this replaced
-	// mutated positions in place — corrupting positions shared with other matches
-	// (dedup by Zobrist) and leaving a stale hash (score/cube are hashed).
+	// The store swaps each position copy-on-write with a recomputed Zobrist:
+	// positions are shared across matches, and score/cube are hashed.
 	return d.store.Matches().SwapPlayers(context.Background(), "", matchID)
 }
 

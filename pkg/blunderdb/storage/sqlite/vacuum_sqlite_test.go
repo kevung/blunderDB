@@ -92,9 +92,8 @@ func TestVacuum_InMemoryDatabase(t *testing.T) {
 	}
 }
 
-// TestVacuum_RecompressesLegacyAnalysisBlobs pins #180's migration path:
-// analysis rows written by every release before this one (raw JSON, or zlib
-// — never zstd) are upgraded the first time Vacuum runs over them, read back
+// TestVacuum_RecompressesLegacyAnalysisBlobs: analysis rows in a legacy codec
+// (raw JSON or zlib) are upgraded the first time Vacuum runs over them, read back
 // unchanged, and left alone (no rewrite, no wasted work) on a second Vacuum.
 func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 	ctx := context.Background()

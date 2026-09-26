@@ -11,9 +11,8 @@ import (
 // come from three sources with one shape each: "N-ply" (XG, gnuBG, BGF and
 // gammonNet), "Book" / "XG Roller" / "XG Roller++" (XG's codes 998–1002,
 // see ingest.translateAnalysisDepth), and a bare integer for a gnuBG depth
-// the parser did not recognise. Comparing the strings themselves put
-// "2-ply" above "10-ply" (tasks/critique-doc-2026-09, lot 2), which is what
-// this function replaces.
+// the parser did not recognise. Comparing the strings themselves would put
+// "2-ply" above "10-ply".
 //
 // The rank is monotonic in strength: plies first, then XG's book and
 // rollouts (which XG itself numbers above every ply), then an explicit

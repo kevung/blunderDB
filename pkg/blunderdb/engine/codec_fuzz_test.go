@@ -7,10 +7,8 @@ import (
 )
 
 // zlibCompressForFuzzSeed builds a legacy-format seed for
-// FuzzDecodeAnalysisFromStorage: every 2.x release before #180 wrote analysis
-// blobs this way (CompressAnalysisData used compress/zlib directly), and
-// that format must still decode, so the fuzz corpus needs a genuine example
-// of it independent of the current (zstd) CompressAnalysisData.
+// FuzzDecodeAnalysisFromStorage: legacy zlib blobs must still decode, so the
+// corpus needs a genuine one independent of the current zstd codec.
 func zlibCompressForFuzzSeed(jsonData []byte) []byte {
 	var buf bytes.Buffer
 	w := zlib.NewWriter(&buf)
@@ -57,7 +55,8 @@ func FuzzDecodeBoardCompact(f *testing.F) {
 // arbitrary bytes. The blob is read from the `analysis.data` column (raw
 // JSON, legacy zlib, or current zstd — see the format-detection doc comment
 // on DecompressAnalysisData); the auto-detection path must never panic on
-// garbage bytes, only return an error. One seed per format (#180): a real
+// garbage bytes, only return an error. One seed per format: a real
+
 // blob written by each codec this package has ever produced, plus a
 // decompression bomb for each of the two compressed formats.
 func FuzzDecodeAnalysisFromStorage(f *testing.F) {

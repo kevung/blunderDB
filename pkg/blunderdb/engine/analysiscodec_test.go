@@ -43,11 +43,10 @@ func TestCubeActionError_DoublingDecisions(t *testing.T) {
 // TestCubeActionError_NoDouble covers every spelling of "the cube stayed put".
 //
 // "Double No" is not a typo: it is what the XG importer writes into
-// PlayedCubeActions for a no-double, alongside "No Double" — 194 occurrences in
-// a 151-match tournament corpus. Normalised, it reads "doubleno", which does NOT
-// contain "nodouble"; it therefore used to fall through to the doubling branch
-// and be scored with min(DoubleTakeError, DoublePassError) — the error of the
-// double that never happened. See kevung/blunderDB#115.
+// PlayedCubeActions for a no-double, alongside "No Double". Normalised, it reads
+// "doubleno", which does NOT contain "nodouble" — a naive match scores it as a
+// double that never happened.
+
 func TestCubeActionError_NoDouble(t *testing.T) {
 	d := dca()
 	for _, action := range []string{"No Double", "NoDouble", "nd", "ND", "Double No", "double no"} {

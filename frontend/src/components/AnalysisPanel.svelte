@@ -23,22 +23,15 @@
     let analysisData = $derived($analysisStore);
     let cubeValue = $derived($positionStore.cube.value);
     let onRoll = $derived($positionStore.player_on_roll ?? 0);
-    // Whether the cube can be turned at all is a rule of the game read off the
-    // board, not something a stored record knows: with the cube on the
-    // opponent's side, or during the Crawford game, no option is available so
-    // no option carries an error (ADR-0020 rule 5). Applies to imported
-    // records exactly as it does to a live evaluation — the equities still
-    // inform, nothing advises.
+    // Cube availability is read off the board, imported records included: an
+    // unavailable cube carries no error (ADR-0020 rule 5).
     let turnability = $derived(cubeTurnability($positionStore));
-    // The equity column's referential and the two money-game rule flags
-    // (ADR-0016 point 6, #190/C.3): read off the SAME position the cube tab
-    // switches to (loadCubeAnalysisForCurrentPosition below), never a second
-    // copy of the score.
+    // Referential and money rule flags (ADR-0016 point 6), read off the position
+    // the cube tab switches to.
     let isMoney = $derived(isMoneyPosition($positionStore));
     let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
     let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
-    // The cube ceiling is not a money-only rule: a capped cube is stated by the
-    // identifier whatever the score, so it is read straight off the position.
+    // The cube ceiling applies at any score: read off the position.
     let maxCube = $derived($positionStore?.max_cube ?? 0);
     let matchCtx = $derived($matchContextStore);
 
@@ -68,11 +61,7 @@
         }
     });
 
-    // Side effects when the analysis panel opens or closes. TabbedPanel mounts
-    // and destroys this component on every tab switch (its {#if} pattern, see
-    // that file's header comment) — onMount/onDestroy are the events that
-    // actually fire "opens"/"closes" here (there is no PANEL entry for the
-    // analysis tab; see uiStore.js's PANEL comment).
+    // TabbedPanel mounts/destroys this per tab switch: onMount/onDestroy are open/close.
     onMount(() => {
         const ctx = matchCtx;
         if (ctx.isMatchMode) {
@@ -101,11 +90,8 @@
         setTimeout(() => focusPanelUnlessTyping(document.getElementById('analysisPanel')), 0);
     });
 
-    // A move selected here must not survive past this panel: keyboardService's
-    // global dispatch withholds j/k/ArrowLeft/ArrowRight (position browsing)
-    // everywhere in the app while selectedMoveStore is set, so a value left
-    // behind by a dead cleanup path silently froze navigation app-wide — the
-    // very bug this onDestroy replaces (dead code above never ran it).
+    // Clear the selection: while selectedMoveStore is set, keyboardService
+    // withholds position browsing app-wide.
     onDestroy(() => {
         selectedMoveStore.set(null);
     });
@@ -118,9 +104,7 @@
                 event.preventDefault();
                 selectedMoveStore.set(null);
             } else if (canLeaveSubSearchResults()) {
-                // Nothing of its own to close, and the results of an `ss` run from a
-                // collection or a match are on screen: the Escape goes on to the
-                // dispatcher, which returns to that list — one press, not two (#410).
+                // Nothing to close and `ss` results on screen: let Escape return to the list.
             } else {
                 event.preventDefault();
                 onClose();
@@ -217,9 +201,7 @@
         }
     }
 
-    // The played-move / played-cube-action rules live in utils/playedMarks.js
-    // so the Anki review can highlight them too (ADR-0025 rule 6). MATCH mode
-    // is the only caller that restricts them to the current match's own play.
+    // Shared with the Anki review (utils/playedMarks.js, ADR-0025 rule 6).
     let isPlayedMove = $derived(playedMovePredicate(analysisData, { matchMode: matchCtx.isMatchMode }));
     let isPlayedCubeAction = $derived(playedCubeActionPredicate(analysisData, { matchMode: matchCtx.isMatchMode }));
 
@@ -353,29 +335,17 @@
     // BUT not on the first position of a game (cube decision not possible)
     let showTabs = $derived(hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame);
 
-    // Which of the two blocks the shared view renders. With tabs, the tab
-    // decides; without them, the record's own type does — the panel answers
-    // this, not AnalysisView, because only the panel knows about MATCH mode.
+    // The tab decides, else the record's type; here because only the panel knows MATCH mode.
     let viewKind = $derived(showTabs ? activeTab : analysisData.analysisType === 'DoublingCube' ? 'cube' : 'checker');
 </script>
 
-<!-- The panel focuses itself and handles the keys bubbling up from its rows:
-     keyboard delegation on a focus container (tabindex="-1", no pointer
-     handler). No ARIA role is both a landmark and interactive, so the rule
-     has nothing better to offer here. -->
+<!-- Keyboard delegation on a focus container; no ARIA role fits, hence the ignore. -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section class="analysis-panel" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
-        <!-- La comparaison inter-moteurs (#269) vit ICI et pas dans le panneau
-             Eval : l'ADR-0017 y réserve UNE décision, celle du moteur
-             embarqué. Elle ne s'affiche que lorsqu'il y a effectivement
-             plusieurs moteurs à comparer. -->
+        <!-- Comparaison inter-moteurs ici, pas dans Eval (ADR-0017) ; seulement s'il y en a plusieurs. -->
         {#if $trainingAnalysisHiddenStore}
-            <!-- Une question de Décision est ouverte (#323). Le panneau porte la
-                 réponse : l'afficher pendant qu'on la demande ferait un
-                 exercice qui se résout en regardant à côté. Le remplaçant est
-                 celui de l'ADR-0018 règle 6, déjà utilisé par le panneau
-                 Eval en mode Défi. -->
+            <!-- Question de Décision ouverte : la réponse est masquée (ADR-0018 règle 6). -->
             <div class="quiz-masked">{HIDDEN}</div>
         {:else}
             <EngineComparison analysis={analysisData} kind={viewKind} />
@@ -398,16 +368,14 @@
                 {beaver}
                 {maxCube}
             />
-            <!-- Une ligne, et seulement quand une règle est confiante (#298). -->
+            <!-- Une ligne, et seulement quand une règle est confiante. -->
             <ExplanationLine analysis={analysisData} />
         {/if}
     </div>
 </section>
 
 <style>
-    /* Le remplaçant masqué : même idiome que le panneau Eval en mode Défi
-       (ADR-0018 règle 6) — une plage inerte de la taille du bloc, pas un
-       message. */
+    /* Plage inerte de la taille du bloc (ADR-0018 règle 6). */
     .quiz-masked {
         display: flex;
         align-items: center;
@@ -426,9 +394,7 @@
         box-sizing: border-box;
         outline: none;
         resize: none;
-        /* Establish a query container so the layout below can adapt to the
-           panel's own width — works whether the panel is a wide bottom band or
-           a narrow side column, independent of the global position mode. */
+        /* Query container: layout follows the panel's own width. */
         container-type: inline-size;
     }
 

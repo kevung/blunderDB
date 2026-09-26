@@ -9,21 +9,12 @@ import (
 )
 
 // The canonical search levels ("instant", "normal", "thorough"): ply,
-// filter, prune_k, and — the whole point of issue #25 — the QUALITY that
-// pruning costs, attached to the same value instead of living in a comment
-// three files away. Before this, ply=2/filter=(0,1,3)/prune_k=12 were
-// retyped by hand up to five times across this repo, gammonNet and gammonGo,
-// and downstream once shipped a `prune_k = 3` "fast" mode with none of the
-// measurement that would have shown it costs seventeen times as much.
+// filter, prune_k and the QUALITY pruning costs, attached to the same value.
 //
-// gammonNet is the source of truth (ADR-0003 there): `gn_search_level`
-// (its `src/gn_search.c`) is the ONE table these numbers are typed into, and
-// `data/search_levels.json` its export. `search_levels.json` in this
-// directory is a byte-identical copy — the same discipline `met.go`'s
-// canonical export already applies to the match equity table (issue #24) —
-// verified against `search_levels.sha256` by TestEmbeddedSearchLevelsJSON in
-// this package, so a hand-edited or stale copy fails loudly instead of
-// quietly disagreeing with what gammonNet ships.
+// gammonNet is the source of truth: `gn_search_level` (src/gn_search.c) is
+// the one table, `data/search_levels.json` its export. The copy here is
+// byte-identical, checked against `search_levels.sha256` by
+// TestEmbeddedSearchLevelsJSON, so a stale or hand-edited copy fails loudly.
 //
 //go:embed search_levels.json
 var embeddedSearchLevelsJSON []byte
@@ -33,11 +24,8 @@ var embeddedSearchLevelsSHA256 string
 
 // SearchLevel is one canonical named search shape, quality cost attached.
 //
-// PruneEquityLoss and its 95% CI are measured
-// (gammonNet's docs/mesures/2026-08-26-T3A-regroupement.md, 450 decisions —
-// 300 contact, 150 race — at 2-ply filter (0,1,3), pruned search against the
-// SAME search unpruned) and are exactly 0 wherever PruneK is 0: nothing is
-// lost by a mechanism that is off.
+// PruneEquityLoss and its 95% CI are measured upstream (pruned against the
+// same search unpruned, 450 decisions) and are exactly 0 where PruneK is 0.
 type SearchLevel struct {
 	Name                  string
 	Ply                   int
@@ -96,10 +84,8 @@ func Level(name string) (SearchLevel, bool) {
 	return level, ok
 }
 
-// mustLevel is Level for this package's own defaults below, where the name
-// is a literal this file controls, not caller input: a missing entry is a
-// broken embed, and DefaultPruneK failing to compile a value would be a
-// worse failure mode than panicking at package init with a name attached.
+// mustLevel is Level for this package's own defaults, where the name is a
+// literal: a missing entry is a broken embed, so it panics at init.
 func mustLevel(name string) SearchLevel {
 	level, ok := Level(name)
 	if !ok {

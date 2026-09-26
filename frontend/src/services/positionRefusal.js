@@ -1,14 +1,7 @@
 /**
- * positionRefusal.js — why a position cannot be written to the library.
- *
- * Pure: no store, no status bar, no backend. It answers with the i18n key of
- * the first rule the position breaks, or null when it breaks none, so that a
- * caller can say it (isValidPosition writes it in the status bar) or merely
- * act on it (a panel disabling its save button while the board is refused).
- *
- * The rules are checked in a fixed order and only the first broken one is
- * named: a board with sixteen checkers of one side is reported for that,
- * whatever else is wrong with it.
+ * positionRefusal.js — why a position cannot be written to the library. Pure:
+ * returns the i18n key of the first broken rule (fixed order), or null, for
+ * the caller to display or act on.
  */
 
 /**

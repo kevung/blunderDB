@@ -26,8 +26,8 @@ func crawfordGameOf(t *testing.T, g *MatchGraph) int {
 	return -1
 }
 
-// TestGnuBGCrawfordGameIsFlaggedAndConverted pins issue #170's fix at the
-// seam: the SGF parser reports the Crawford game (RU[Crawford:CrawfordGame])
+// TestGnuBGCrawfordGameIsFlaggedAndConverted pins, at the
+// seam, that the SGF parser reports the Crawford game (RU[Crawford:CrawfordGame])
 // and the conversion receives that flag rather than a hard-wired false. The
 // fixture is a 7-point match whose fourth game is the Crawford game (6-2).
 func TestGnuBGCrawfordGameIsFlaggedAndConverted(t *testing.T) {
@@ -58,8 +58,8 @@ func TestGnuBGCrawfordGameIsFlaggedAndConverted(t *testing.T) {
 		}
 	}
 
-	// The conversion at that score, with the flag the parser reports and with
-	// the value that used to be hard-wired, gives the same equities — and both
+	// The conversion at that score gives the same equities with the flag true
+	// or false — and both
 	// are the normalised scale: a double/pass cashes exactly one cube.
 	mk := func() *gnubgparser.CubeAnalysis {
 		return &gnubgparser.CubeAnalysis{CubefulNoDouble: 0.62, CubefulDoubleTake: 0.60, CubefulDoublePass: 0.7}
@@ -75,8 +75,7 @@ func TestGnuBGCrawfordGameIsFlaggedAndConverted(t *testing.T) {
 	}
 }
 
-// TestCrawfordFlagIsRedundantWithTheScoreInTheMET is the reason issue #170
-// produced no wrong equity. gnuBG's getME (engine.GnuBGGetME) switches to the
+// TestCrawfordFlagIsRedundantWithTheScoreInTheMET: gnuBG's getME (engine.GnuBGGetME) switches to the
 // post-Crawford table when fCrawford is set OR when either player is 1-away
 // before the game; in a Crawford game one player is 1-away by definition, so
 // the flag is implied by the score for every match length, both movers and
@@ -119,10 +118,8 @@ func TestCrawfordFlagIsRedundantWithTheScoreInTheMET(t *testing.T) {
 // the Crawford game of the same match seen through XG and gnuBG. What must
 // agree: which game is the Crawford game and the away score every position of
 // that game carries. On the gnuBG side no cube analysis may exist there at
-// all — the cube is dead and gnuBG does not evaluate it — which is the whole
-// reach of issue #170's flag: it had nothing to convert. (XG is different: it
-// records one degenerate cube line at the end of the game, so its side is not
-// asserted beyond the score.)
+// all, the cube being dead. (XG records one degenerate cube line at the end of
+// the game, so its side is not asserted beyond the score.)
 func TestCrawfordGameAgreesAcrossFormats(t *testing.T) {
 	xg, err := MapXG(xgLuckFixture())
 	if err != nil {
@@ -159,14 +156,10 @@ func TestCrawfordGameAgreesAcrossFormats(t *testing.T) {
 	}
 }
 
-// TestGnuBGCrawfordSentinelReachesTheAwayScore is issue #338 on the gnuBG side.
-//
-// The parser already reports CrawfordGame per game (issue #170 wired it to the
-// MWC→EMG conversion); what it never reached was the SCORE. The away score
-// carries the Crawford rule inside the number — `1` for the Crawford game, `0`
-// for the games after it (CONTEXT.md, « Away score ») — so the same 6-2 score
-// must map to two different away scores depending on which game it is, and
-// before the fix both said `1`, cube dead.
+// TestGnuBGCrawfordSentinelReachesTheAwayScore: the parser's per-game
+// CrawfordGame must reach the SCORE. The away score carries the Crawford rule
+// inside the number — `1` for the Crawford game, `0` after it (CONTEXT.md,
+// « Away score ») — so the same 6-2 score maps to two different away scores.
 func TestGnuBGCrawfordSentinelReachesTheAwayScore(t *testing.T) {
 	// A board the mapper accepts: one checker per side, the rest borne off.
 	var gnubgPos gnubgparser.Position

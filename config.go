@@ -14,22 +14,15 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// configFilePath is the current config file name. It was named
-// "config.yaml" from the first release through 2026-09, even though its
-// content was always JSON (encoding/json in, encoding/json out) — a
-// misnomer, not a format that ever changed (#241). legacyConfigFilePath is
-// read once, on a machine that still only has the old file: LoadConfig
-// migrates it to configFilePath and every subsequent run finds the new name
-// directly, so this fallback costs nothing once migrated.
+// The config is JSON under both names; legacyConfigFilePath is read only
+// until LoadConfig has migrated it to configFilePath.
 const (
 	configFilePath       = "blunderDB/config.json"
 	legacyConfigFilePath = "blunderDB/config.yaml"
 )
 
-// currentConfigVersion is bumped whenever a future change needs a real
-// migration step (a field renamed or reshaped, not just added) — the same
-// idea as domain.DatabaseVersion, at a much smaller scale: today there is
-// only version 1, and every config file this build writes carries it.
+// currentConfigVersion is bumped only when a field is renamed or reshaped
+// (an added field needs no migration).
 const currentConfigVersion = 1
 
 type StatsFilterPersisted struct {
@@ -42,9 +35,8 @@ type StatsFilterPersisted struct {
 	Metric        string  `json:"metric"` // "pr" | "mwc"
 }
 
-// BoardColors holds the user-customisable board palette. Empty fields fall back
-// to DefaultBoardColors() so older config files (and partial customisations)
-// keep rendering correctly.
+// BoardColors holds the user-customisable board palette; empty fields fall
+// back to DefaultBoardColors().
 type BoardColors struct {
 	Background string `json:"background"` // board background fill
 	Border     string `json:"border"`     // board border / point & piece stroke
@@ -57,7 +49,7 @@ type BoardColors struct {
 	Cube       string `json:"cube"`       // doubling cube face fill
 }
 
-// DefaultBoardColors returns the historical hard-coded palette from Board.svelte.
+// DefaultBoardColors returns Board.svelte's built-in palette.
 func DefaultBoardColors() BoardColors {
 	return BoardColors{
 		Background: "#f0f0f0",
@@ -116,17 +108,13 @@ const (
 
 // Bounds for the `like` ranking preferences (ADR-0043).
 const (
-	// DefaultLikeLimit is how many neighbours a ranking returns when nothing
-	// says otherwise. Thirty: a ranked list is browsed, not read at a glance.
+	// DefaultLikeLimit: a ranked list is browsed, not read at a glance.
 	DefaultLikeLimit = 30
-	// MaxLikeLimit bounds what the preference may be set to. A ranking is a
-	// reading list, not an export: past a few hundred it stops being one.
+	// MaxLikeLimit: a ranking is a reading list, not an export.
 	MaxLikeLimit = 500
 )
 
-// Panel position modes. The tabbed panel is either docked at the bottom (the
-// historical default), pinned as a vertical column on the side, or switched
-// automatically based on the window aspect ratio (handled frontend-side).
+// Panel position modes; "auto" follows the window aspect ratio (frontend-side).
 const (
 	PanelPositionBottom  = "bottom"
 	PanelPositionSide    = "side"
@@ -134,13 +122,8 @@ const (
 	DefaultPanelPosition = PanelPositionBottom
 )
 
-// Panel size, in pixels — the tabbed panel's height in bottom mode, its width
-// in side mode (the other dimension stretches to fill the window). ADR-0017
-// unified the Eval tab's stacked tables into a single flex-wrap row, so a
-// cube position fits in ~140px and only its moves list ever scrolls; these
-// defaults are the pre-existing ones, not sized around that panel. Once the
-// user drags the resize handle, their own size is persisted instead
-// (frontend saves on mouseup) and these defaults never apply again.
+// Panel size in pixels: height in bottom mode, width in side mode. The
+// defaults apply only until the user first drags the resize handle.
 const (
 	MinPanelHeight     = 80
 	MaxPanelHeight     = 4000
@@ -151,13 +134,8 @@ const (
 	DefaultPanelWidth = 420
 )
 
-// gammonNet settings (ADR-0011, ADR-0013). Two depths, named and clamped
-// separately on purpose: display depth is interactive comfort, analysis depth
-// is what the batch (#129) writes to a Position's Analysis row. Conflating
-// them would let a comfort adjustment silently degrade what gets persisted.
-// Both default to the canonical "normal" level (issue #25) —
-// gammonnet.DefaultPly / gammonnet.DefaultPruneK, read from gammonNet's own
-// export rather than retyped as literals here.
+// gammonNet settings (ADR-0011, ADR-0013). Display and analysis depths stay
+// separate so a comfort setting never degrades what the batch persists.
 const (
 	MinGammonNetPly = 0
 	MaxGammonNetPly = gammonnet.MaxPly
@@ -170,20 +148,16 @@ const (
 	DefaultGammonNetCandidates = 10
 )
 
-// DefaultGammonNetPly and DefaultGammonNetPruneK are vars, not consts: they
-// are read from gammonnet's embedded canonical export at init time, not
-// typed in by hand. See gammonnet.DefaultPly / gammonnet.DefaultPruneK
-// (search.go there, issue #25) for the source and its measured quality cost.
+// DefaultGammonNetPly and DefaultGammonNetPruneK are vars: they come from
+// gammonnet's embedded canonical export (gammonnet.DefaultPly/DefaultPruneK).
 var (
 	DefaultGammonNetPly    = gammonnet.DefaultPly
 	DefaultGammonNetPruneK = gammonnet.DefaultPruneK
 )
 
 type Config struct {
-	// ConfigVersion names the shape of this file, so a future field rename
-	// or reshape has something to branch a migration step on (#241). Always
-	// currentConfigVersion once loaded/saved by this build; 0 on a file
-	// written before this field existed.
+	// ConfigVersion is currentConfigVersion once loaded or saved; 0 on a
+	// file that predates the field.
 	ConfigVersion    int                  `json:"config_version"`
 	WindowWidth      int                  `json:"window_width"`
 	WindowHeight     int                  `json:"window_height"`
@@ -192,37 +166,26 @@ type Config struct {
 	Language         string               `json:"language,omitempty"`
 	BoardColors      BoardColors          `json:"board_colors,omitempty"`
 	UIScale          int                  `json:"ui_scale,omitempty"`
-	// LikeLimit is how many neighbours a `like` ranking returns, and
-	// LikeMaxDistance the ceiling in checker-pips beyond which a position
-	// stops being a neighbour (0 = no ceiling, the default).
-	//
-	// No ceiling ships as the default on purpose: the scale depends on the
-	// phase — ten checker-pips is nothing in a race and another position in
-	// the opening — and nobody has measured it. A number invented here would
-	// have been read as a measurement (ADR-0043 rule 4).
+	// LikeLimit is how many neighbours a `like` ranking returns;
+	// LikeMaxDistance the checker-pip ceiling, 0 = none. No default ceiling:
+	// its scale depends on the phase and is unmeasured (ADR-0043 rule 4).
 	LikeLimit       int    `json:"like_limit,omitempty"`
 	LikeMaxDistance int    `json:"like_max_distance,omitempty"`
 	PanelPosition   string `json:"panel_position,omitempty"`
 	PanelHeight     int    `json:"panel_height,omitempty"`
 	PanelWidth      int    `json:"panel_width,omitempty"`
 	TourSeen        bool   `json:"tour_seen,omitempty"`
-	// TabOrder is the tabbed panel's tab ids (TabbedPanel.svelte's `tabs`
-	// array), in the order the user last dragged them to. Empty means "use
-	// the built-in order" — the frontend owns the canonical id list and
-	// labels, this only ever reorders/filters it (#215).
+	// TabOrder is the user's order of TabbedPanel.svelte's tab ids; empty
+	// means the built-in order, which the frontend owns.
 	TabOrder []string `json:"tab_order,omitempty"`
-	// HiddenTabs is the subset of tab ids the user chose to hide from the
-	// tabbed panel's tab bar (#215). A tab hidden here can still be reached
-	// by its own keyboard shortcut; hiding only removes the tab button.
+	// HiddenTabs removes tab buttons only; their shortcuts still work.
 	HiddenTabs []string `json:"hidden_tabs,omitempty"`
 	// BearoffTSPath is an optional user-supplied two-sided bearoff database
 	// (.bd) widening the generated TS-06-06 (ADR-0009). Empty = none.
 	BearoffTSPath string `json:"bearoff_ts_path,omitempty"`
-	// BearoffRate is what one core of THIS machine measured on a finished
-	// two-sided run: seconds per n³ (bearoffgen's cost model). It is what
-	// turns "about 20 minutes" from a claim about the developer's laptop into
-	// one about the user's. 0 until a run wide enough to be representative
-	// has finished here.
+	// BearoffRate is seconds per n³ (bearoffgen's cost model) measured on
+	// one core of this machine, so time estimates are the user's own. 0
+	// until a representative run has finished here.
 	BearoffRate float64 `json:"bearoff_rate,omitempty"`
 	// BearoffCores is the core count the user last chose for a generation.
 	// 0 = the default, every core but one.
@@ -230,60 +193,35 @@ type Config struct {
 	// EpcChallenge persists the EPC panel's training mode ("défi"): results
 	// are masked after each edit until the user clicks a zone to reveal it.
 	EpcChallenge bool `json:"epc_challenge,omitempty"`
-	// TrainingSeedSources is the seed source each Training exercise was last
-	// started with — "pool", "board" or "library" (ADR-0041 rule 2: « chosen
-	// at launch and remembered »). Per exercise and not one value for all,
-	// because the exercises do not offer the same sources: Bearoff has three,
-	// Pips two, Scores none, and one remembered choice would keep resetting
-	// itself as the user moved between them.
-	//
-	// It lives here rather than in the library's metadata for the same reason
-	// the panel layout does: it is a habit of the person at this machine, not
-	// a property of the file they opened.
+	// TrainingSeedSources is each Training exercise's last seed source
+	// ("pool", "board", "library"; ADR-0041 rule 2). Per exercise because
+	// they offer different sources; here, not in library metadata, because
+	// it is a habit of the user, not a property of the file.
 	TrainingSeedSources map[string]string `json:"training_seed_sources,omitempty"`
-	// gammonNet settings (ADR-0011, ADR-0013). See the Min/Max/Default
-	// constants above for the meaning of each field. The two depths are
-	// pointers, like StatsFilterPersisted.DecisionType above: 0-ply is a
-	// legitimate, user-selectable value, so a plain int could not tell an
-	// explicit 0-ply apart from an old config file that predates this field —
-	// nil is "unset, use the canonical default", a non-nil zero is "0-ply,
-	// chosen".
+	// The depths are pointers because 0-ply is a valid choice: nil means
+	// unset (canonical default), a non-nil zero means 0-ply chosen.
 	GammonNetDisplayPly  *int `json:"gammonnet_display_ply,omitempty"`
 	GammonNetAnalysisPly *int `json:"gammonnet_analysis_ply,omitempty"`
 	GammonNetPruneK      int  `json:"gammonnet_prune_k,omitempty"`
 	GammonNetCandidates  int  `json:"gammonnet_candidates,omitempty"`
 	GammonNetAutoAnalyze bool `json:"gammonnet_auto_analyze,omitempty"`
-	// CheckForUpdates opts into gui.App.CheckForUpdate querying the GitHub
-	// Releases API at startup (#241) — off by default (a network call an
-	// offline-first tool must never make unasked) and forced off regardless
-	// of this setting on a package-managed install (see
-	// gui.isPackageManaged): the package manager is that channel's own
-	// update mechanism, and blunderDB pointing at a GitHub release the
-	// distro hasn't packaged yet would just confuse the user.
+	// CheckForUpdates opts into gui.App.CheckForUpdate at startup. Off by
+	// default (no unasked network call); forced off on a package-managed
+	// install (gui.isPackageManaged), whose package manager owns updates.
 	CheckForUpdates bool `json:"check_for_updates,omitempty"`
-	// Watched folder (#258, fiche I.2): a directory blunderDB looks at while
-	// it is running, importing each match file that APPEARS in it. Empty
-	// means no watch, and that is the default — a tool does not start
-	// reading a folder of yours because it guessed where your matches are.
-	//
-	// WatchFolderIntervalSeconds is what the user chose; 0 means the
-	// package's own default (watch.DefaultInterval). The clamping lives in
-	// watch.ClampInterval, so the floor is stated once.
-	// Theme is the named interface theme (#286): "system" (follow the
-	// desktop), "light", "dark", "contrast" or "print". Empty means system —
-	// a tool does not impose its light or its dark on a desktop that has
-	// already decided. The theme's VALUES live in the frontend
-	// (utils/themes.js): they are design tokens, and Go has no business
-	// holding a second copy of a palette it never reads.
+	// Theme is "system", "light", "dark", "contrast" or "print"; empty
+	// means system. The palettes live in frontend utils/themes.js only.
 	Theme string `json:"theme,omitempty"`
 
+	// Watched folder: files appearing in it are imported while blunderDB
+	// runs. Off by default. An interval of 0 means watch.DefaultInterval;
+	// watch.ClampInterval owns the bounds.
 	WatchFolder                bool   `json:"watch_folder,omitempty"`
 	WatchFolderPath            string `json:"watch_folder_path,omitempty"`
 	WatchFolderIntervalSeconds int    `json:"watch_folder_interval_seconds,omitempty"`
 }
 
-// clampUIScale coerces a persisted/incoming scale into the supported range,
-// mapping the zero value (missing in older config files) to the default.
+// clampUIScale clamps scale to the supported range, 0 meaning the default.
 func clampUIScale(scale int) int {
 	if scale == 0 {
 		return DefaultUIScale
@@ -297,9 +235,7 @@ func clampUIScale(scale int) int {
 	return scale
 }
 
-// sanitizePanelPosition coerces a persisted/incoming panel position into a
-// known value, mapping the zero value (missing in older config files) and any
-// unrecognised string to the default (bottom).
+// sanitizePanelPosition maps an empty or unknown position to bottom.
 func sanitizePanelPosition(pos string) string {
 	switch pos {
 	case PanelPositionBottom, PanelPositionSide, PanelPositionAuto:
@@ -309,9 +245,7 @@ func sanitizePanelPosition(pos string) string {
 	}
 }
 
-// clampPanelHeight coerces a persisted/incoming bottom-mode panel height into
-// the supported range, mapping the zero value (missing in older config files,
-// or never resized by the user) to the default.
+// clampPanelHeight clamps height to the supported range, 0 meaning the default.
 func clampPanelHeight(height int) int {
 	if height == 0 {
 		return DefaultPanelHeight
@@ -325,8 +259,7 @@ func clampPanelHeight(height int) int {
 	return height
 }
 
-// clampPanelWidth coerces a persisted/incoming side-mode panel width the same
-// way clampPanelHeight does for the height.
+// clampPanelWidth is clampPanelHeight for the side-mode width.
 func clampPanelWidth(width int) int {
 	if width == 0 {
 		return DefaultPanelWidth
@@ -340,9 +273,7 @@ func clampPanelWidth(width int) int {
 	return width
 }
 
-// clampGammonNetPly coerces an explicit search depth into the supported
-// range. It does not special-case 0: 0-ply is a legitimate depth, not a
-// missing-setting sentinel — see the *int fields on Config.
+// clampGammonNetPly clamps an explicit depth; 0 is a valid depth, not unset.
 func clampGammonNetPly(ply int) int {
 	if ply < MinGammonNetPly {
 		return MinGammonNetPly
@@ -353,8 +284,7 @@ func clampGammonNetPly(ply int) int {
 	return ply
 }
 
-// clampGammonNetPruneK coerces a persisted/incoming pruning width into the
-// supported range, mapping the zero value to the canonical default (k=12).
+// clampGammonNetPruneK clamps k, 0 meaning the canonical default.
 func clampGammonNetPruneK(k int) int {
 	if k == 0 {
 		return DefaultGammonNetPruneK
@@ -368,8 +298,7 @@ func clampGammonNetPruneK(k int) int {
 	return k
 }
 
-// clampGammonNetCandidates coerces a persisted/incoming candidate-move count
-// into the supported range, mapping the zero value to the default (10).
+// clampGammonNetCandidates clamps n, 0 meaning the default.
 func clampGammonNetCandidates(n int) int {
 	if n == 0 {
 		return DefaultGammonNetCandidates
@@ -414,23 +343,9 @@ func calculateInitialDimensions() (int, int) {
 	return initialWidth, initialHeight
 }
 
-// LoadConfig reads the persisted config, tolerating three situations that
-// used to either crash the GUI at startup or silently misbehave (#241):
-//
-//   - No file at all (first run, or a fresh XDG_CONFIG_HOME): a fresh
-//     default Config is created and saved under the current name.
-//   - Only the pre-2026-09 legacy name (config.yaml, holding the same JSON):
-//     read once, then immediately re-saved under the current name — every
-//     later run finds it directly and this branch never runs again.
-//   - A file that exists under the current name but fails to parse as JSON
-//     (truncated by a crash mid-write, hand-edited into invalid JSON, disk
-//     corruption): rather than propagating the error up to main.go, which
-//     used to os.Exit(1) and leave the user with an app that will not start
-//     until they find and fix or delete a file they likely do not know
-//     exists, the unreadable file is backed up next to itself
-//     (config.json.bak) and a fresh default Config takes its place. The
-//     backup means nothing is silently destroyed — a user who cares can
-//     recover their old settings from it — but the app starts either way.
+// LoadConfig reads the persisted config. No file: a default is created. Only
+// the legacy name: read, then re-saved under the current one. Unparseable:
+// backed up to config.json.bak and replaced by a default, so the app starts.
 func (c *Config) LoadConfig() (*Config, error) {
 	configPath, err := xdg.SearchConfigFile(configFilePath)
 	migrating := false
@@ -471,13 +386,11 @@ func (c *Config) LoadConfig() (*Config, error) {
 		return &config, nil
 	}
 	if config.ConfigVersion == 0 {
-		// A file written before this field existed: there is nothing to
-		// actually migrate yet (every field so far still reads the same
-		// way), so this only stamps the version going forward.
+		// Nothing to migrate yet: only stamp the version.
 		config.ConfigVersion = currentConfigVersion
 	}
 
-	// Update the receiver so the Wails-bound instance has the loaded values
+	// The Wails-bound getters read the receiver.
 	c.WindowWidth = config.WindowWidth
 	c.WindowHeight = config.WindowHeight
 	c.LastDatabasePath = config.LastDatabasePath
@@ -526,13 +439,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	return &config, nil
 }
 
-// SaveConfig writes config as indented JSON to the current config file,
-// atomically: it writes to a sibling temp file, fsyncs it, then renames it
-// over the real path (the same write-then-rename shape
-// resumableDownload/bearoff_download.go already uses for the bearoff
-// database download). A crash or power loss mid-write can therefore never
-// leave config.json truncated or half-written — the rename either lands
-// completely or the old file is untouched (#241).
+// SaveConfig writes config as indented JSON atomically (temp file, fsync,
+// rename), so a crash never leaves config.json half-written.
 func (c *Config) SaveConfig(config *Config) error {
 	configPath, err := xdg.ConfigFile(configFilePath)
 	if err != nil {
@@ -625,9 +533,8 @@ func (c *Config) GetUIScale() int {
 	return clampUIScale(c.UIScale)
 }
 
-// GetLikeLimit reports how many neighbours a ranking returns. Thirty by
-// default: a ranked list is browsed, not read at a glance, and ten was chosen
-// when the ranking still returned the plies of the match being looked at.
+// GetLikeLimit reports how many neighbours a ranking returns (DefaultLikeLimit
+// when unset).
 func (c *Config) GetLikeLimit() int {
 	if c.LikeLimit <= 0 {
 		return DefaultLikeLimit
@@ -839,7 +746,7 @@ func (c *Config) SaveGammonNetDisplayPly(ply int) error {
 }
 
 // GetGammonNetAnalysisPly returns the persisted batch-analysis search depth
-// (clamped; defaults to 2-ply when unset) — what the batch (#129) writes to
+// (clamped; defaults to 2-ply when unset) — what the batch writes to
 // Analysis.
 func (c *Config) GetGammonNetAnalysisPly() int {
 	if c.GammonNetAnalysisPly == nil {
@@ -880,7 +787,7 @@ func (c *Config) SaveGammonNetCandidates(n int) error {
 }
 
 // GetGammonNetAutoAnalyze returns whether an import that brought no analysis
-// triggers the batch job automatically (#129).
+// triggers the batch job automatically.
 func (c *Config) GetGammonNetAutoAnalyze() bool {
 	return c.GammonNetAutoAnalyze
 }
@@ -902,15 +809,9 @@ func (c *Config) SaveTheme(name string) error {
 	return c.SaveConfig(c)
 }
 
-// WatchFolderSettings is the watched folder as the frontend reads it: one
-// value rather than three, because a half-read setting — on with no path — is
-// the shape that produces a watch nobody asked for.
-//
-// A struct rather than three return values: Wails binds a method returning one
-// value, or a value and an error, and NOTHING else. A third return makes
-// BoundMethod.Call fall through its switch and resolve the promise with null,
-// with no error anywhere — which is how the watched folder shipped dead in
-// #258. GetBoardColors is the precedent; follow it for any compound reply.
+// WatchFolderSettings is the watched folder as one value, so the frontend
+// never half-reads it (on with no path). A struct because Wails binds only
+// (value) or (value, error): a third return silently resolves to null.
 type WatchFolderSettings struct {
 	On              bool   `json:"on"`
 	Path            string `json:"path"`
@@ -954,7 +855,7 @@ func (c *Config) SaveStatsFilter(filter StatsFilterPersisted) error {
 }
 
 // GetCheckForUpdates returns whether gui.App.CheckForUpdate is allowed to
-// query the GitHub Releases API. Off by default (#241).
+// query the GitHub Releases API. Off by default.
 func (c *Config) GetCheckForUpdates() bool {
 	return c.CheckForUpdates
 }

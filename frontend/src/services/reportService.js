@@ -8,18 +8,10 @@ import { renderPositionSVG } from './diagramService.js';
 import { logger } from '../utils/logger.js';
 import { t, tMsg } from '../i18n';
 
-// Le rapport HTML (#279, fiche I.23).
-//
-// Un document AUTONOME : un seul fichier, sans image externe, sans feuille de
-// style distante, sans script. Les diagrammes sont des SVG en ligne — le
-// rendu de #278/#279, donc le même plateau qu'à l'écran — et le style tient
-// dans une balise. Il s'ouvre dans n'importe quel navigateur, s'envoie par
-// courriel, s'imprime en PDF par le navigateur lui-même : c'est ce qui évite
-// d'embarquer un générateur de PDF pour produire ce que tout le monde a déjà.
-//
-// Il porte le filtre courant du panneau Stats, et le DIT en tête : un rapport
-// qui ne nomme pas son périmètre est un rapport dont les chiffres ne veulent
-// rien dire.
+// Le rapport HTML : un fichier AUTONOME (ni image externe, ni style distant,
+// ni script), diagrammes en SVG en ligne du même rendu qu'à l'écran. Le
+// navigateur l'imprime en PDF : pas de générateur à embarquer. Il nomme en
+// tête le filtre courant du panneau Stats, son périmètre.
 
 /** Combien de décisions le rapport détaille. Dix : de quoi voir un motif,
  *  assez peu pour tenir dans un document qu'on lit. */
@@ -164,9 +156,8 @@ function documentLanguage() {
 }
 
 /**
- * Le rapport contient du SVG, donc il ne peut pas être échappé en bloc : seuls
- * les fragments venant des données le sont, un par un. Les noms de joueurs, les
- * coups et les dates viennent d'un fichier importé — donc de l'extérieur.
+ * Pas d'échappement en bloc (le rapport contient du SVG) : chaque fragment
+ * venant des données importées est échappé un par un.
  */
 /** @param {unknown} s */
 function escapeHTML(s) {

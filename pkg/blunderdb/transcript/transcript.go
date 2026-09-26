@@ -55,11 +55,10 @@ import (
 // itself: a change to the form of a Transcription is a version of the document, never
 // a DatabaseVersion migration (ADR-0045 rule 1).
 //
-// Version 2 adds the declared score an opening may carry ([Action.Score], ADR-0053).
-// A version-1 document is a version-2 document without any, so it reads unchanged;
-// the version is raised on an older document the moment a score is written on it
-// ([GestureSetScore]), so that a binary which reads only version 1 refuses the draft
-// instead of dropping the score in silence at its next save.
+// Version 2 carries the declared score ([Action.Score], ADR-0053); a version-1
+// document reads unchanged. The version is raised when a score is written
+// ([GestureSetScore]), so an older binary refuses the draft instead of silently
+// dropping the score at its next save.
 const FormatVersion = 2
 
 // formatVersionScore is the first version that carries a declared score.
@@ -82,12 +81,10 @@ const (
 	KindChecker Kind = "checker"
 	// KindDance is a roll that allowed no play at all.
 	KindDance Kind = "dance"
-	// KindUnrecorded is a roll whose play was NOT WRITTEN DOWN. It is not a dance:
-	// the player did move, and the record simply does not say how. gnubg spells it
-	// "???" in a .mat cell, and a transcription that reads one must give it back
-	// unchanged — rendering it as a dance would put a play in the file that nobody
-	// made. The board it leaves is unknown, so the replay carries the previous one
-	// forward and marks the Action (fonctionnel.md §1.4, "coup non consigné").
+	// KindUnrecorded is a roll whose play was NOT WRITTEN DOWN (gnubg's "???").
+	// It is not a dance: rendering it as one would invent a play. Its board is
+	// unknown, so the replay carries the previous one forward and marks the Action
+	// (fonctionnel.md §1.4).
 	KindUnrecorded Kind = "unrecorded"
 	// KindDouble is a double or a redouble. Its answer is a separate Action.
 	KindDouble Kind = "double"
@@ -100,20 +97,16 @@ const (
 	KindResign Kind = "resign"
 )
 
-// UnrecordedNotation is how a play the record does not carry is written: the three
-// question marks gnubg puts in the cell. It is the notation a KindUnrecorded Action
-// takes, the CheckerMove the saved Move carries, and what ingest.RenderMAT writes
-// back — one spelling, so a "???" read from a .mat comes out of the round trip as
-// the same "???".
+// UnrecordedNotation is gnubg's "???": the one spelling a KindUnrecorded Action,
+// its saved Move and ingest.RenderMAT share, so a .mat round trip keeps it.
 const UnrecordedNotation = "???"
 
 // Action is one player's act. Side and Kind are common to all of them; the remaining
 // fields belong to one Kind each (fonctionnel.md §1.2).
 //
-// Side is OWNED by the Action: proposed at entry from whose turn it is, it changes
-// afterwards only by the "change side" gesture. Inserting or deleting an Action
-// therefore never flips the side of the ones after it — it creates one local
-// Inconsistency instead, which is the correction the user actually wants to see.
+// Side is OWNED by the Action: proposed at entry, changed only by the "change side"
+// gesture. Inserting or deleting an Action never flips the sides after it — it
+// creates one local Inconsistency instead.
 type Action struct {
 	Side int  `json:"side"`
 	Kind Kind `json:"kind"`
@@ -132,12 +125,10 @@ type Action struct {
 	// Level is the resignation's value in games: 1, 2 or 3.
 	Level int `json:"level,omitempty"`
 
-	// Score is the score the players DECLARED at the start of the game this opening
-	// opens — points of player 1 and of player 2 —, nil when nobody wrote one down and
-	// the score is the one the previous games give (ADR-0053). It is read on the
-	// opening that starts a game, never on the re-roll after a tie. A declared score
-	// is what the game was played at: the Replay plays from it, and when it is not
-	// the derived one the opening is marked (ScoreMismatch), never corrected.
+	// Score is the score (player 1, player 2) DECLARED at the start of the game this
+	// opening opens; nil means the derived one (ADR-0053). Read only on a game's
+	// first opening, not a re-roll. The Replay plays from it; a mismatch with the
+	// derived score is marked (ScoreMismatch), never corrected.
 	Score *[2]int `json:"score,omitempty"`
 }
 
@@ -186,26 +177,19 @@ type Document struct {
 	Return    int    `json:"-"`
 	HasReturn bool   `json:"-"`
 
-	// Touched is the index of the Action the last gesture EDITED — replaced,
-	// inserted between two others, deleted, given to the other camp — and
-	// HasTouched says a gesture edited one at all. It is what a Replay is asked
-	// to start looking for Inconsistencies from (fonctionnel.md §1.4 — after a
-	// Replay the Cursor jumps to the first one).
+	// Touched is the index of the Action the last gesture EDITED (replaced,
+	// inserted, deleted, side changed); HasTouched says one was. A Replay looks
+	// for Inconsistencies from there (fonctionnel.md §1.4).
 	//
-	// It is not the Cursor: a correction in place sends the Cursor back where
-	// the user came from, several Actions further on, and the Inconsistency the
-	// correction just created sits behind it. And a plain APPEND sets neither,
-	// deliberately: there is nothing behind the last Action, and pulling the
-	// Cursor onto the play just typed — one the rules happen to mark — would
-	// make the next roll correct it instead of following it.
+	// It is not the Cursor: a correction in place sends the Cursor back further
+	// on, past the Inconsistency it created. A plain append sets neither: pulling
+	// the Cursor onto a just-typed marked play would make the next roll correct
+	// it instead of following it.
 	Touched    int  `json:"-"`
 	HasTouched bool `json:"-"`
 
-	// HoldCursor says the last gesture put the Cursor where the user goes on
-	// WORKING, and the Replay must not pull it onto an Inconsistency: the
-	// previous decision a deletion steps back to, and the slot that continues a
-	// game a correction or an insertion reopened (ADR-0050). The marks are
-	// shown all the same; what is held is only where the next keystroke lands.
+	// HoldCursor says the Cursor is where the user goes on working, and the Replay
+	// must not pull it onto an Inconsistency (ADR-0050). Marks are still shown.
 	HoldCursor bool `json:"-"`
 
 	// pendingBoard is the board a hand-entered play left, held until validation
@@ -235,13 +219,9 @@ type Entry struct {
 	Mode     EntryMode
 	At       int
 
-	// Review marks a play the user has to look at again: correcting a roll
-	// under a recorded play, when the play is no longer legal for the new
-	// roll, preselects the first candidate of that roll rather than keeping a
-	// play the dice no longer allow (fonctionnel.md §2, "corriger un jet").
-	// The Action itself is NOT marked — nothing is written until validation,
-	// and a Replay of a document is the same whether an entry is under review
-	// or not.
+	// Review marks a play to look at again: a corrected roll the recorded play no
+	// longer fits preselects the roll's first candidate (fonctionnel.md §2). Only
+	// the Entry is marked, never the Action; a Replay ignores it.
 	Review bool
 }
 

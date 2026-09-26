@@ -7,16 +7,12 @@ import (
 )
 
 // ImportBatchStore persists the import batches — one row per import the user
-// launched — and measures what each of them brought in (issue #257).
+// launched — and measures what each of them brought in.
 //
-// The counts an import observes as it runs (matches imported, skipped,
-// enriched, files that failed) are written by the importer, because only it
-// sees them. Everything else in the report is MEASURED afterwards, over the
-// batch's matches: flagged positions, positions without analysis, the error
-// rate, the worst decisions. That split is deliberate — a report built from
-// measurement can be recomputed from a batch id alone, and does not have to be
-// trusted to have been written correctly at a moment when the import may have
-// been cancelled halfway.
+// The counts only the running import sees (imported, skipped, enriched,
+// failed) are written by the importer. Everything else is MEASURED afterwards
+// over the batch's matches, so it can be recomputed from a batch id and does
+// not depend on an import that may have been cancelled halfway.
 type ImportBatchStore interface {
 	// Begin opens a batch for an import that is starting and returns its id.
 	// source is shown to the user verbatim (a file path, a folder); format is
@@ -37,30 +33,21 @@ type ImportBatchStore interface {
 	// measured over its matches now: flagged positions, positions no engine
 	// has judged, the batch's own error rate, and its worst decisions.
 	//
-	// It is recomputed on every call rather than cached: a position the batch
-	// brought in can be analysed afterwards, and a report that still claimed
-	// "12 positions without analysis" once they had been analysed would be
-	// worse than no report.
+	// Recomputed on every call, not cached: positions can be analysed later.
 	//
-	// players names whose decisions the error rate is about — the reference
-	// player and their alternate spellings, as the statistics take them. Empty
-	// scores BOTH seats, which is the honest answer when nothing says who the
-	// user is: an error rate mixing two players is still a fact about the
-	// import, as long as the report says so (ImportReport.Player).
+	// players names whose decisions the error rate is about (the reference
+	// player and their alternate spellings). Empty scores BOTH seats, and the
+	// report says so (ImportReport.Player).
 	Report(ctx context.Context, scope string, batchID int64, players []string) (*domain.ImportBatch, error)
 
 	// StudyQueue returns the batch's positions worth a second look, in the
 	// order they should be walked: the decisions that cost something, worst
 	// first; then the positions the source tool had marked for study; then the
-	// close cube decisions (issue #259).
+	// close cube decisions.
 	//
-	// A position appears ONCE, under the first reason that claims it: a
-	// flagged blunder is a blunder, and offering it twice would make the queue
-	// lie about its own length.
+	// A position appears ONCE, under the first reason that claims it.
 	//
-	// It is measured, never stored. Nothing records that a position was seen —
-	// what the user does with one (a comment, a collection, a card) is the
-	// record, and running the same queue again is a legitimate thing to want.
+	// It is measured, never stored: nothing records that a position was seen.
 	//
 	// players is read as it is by Report: empty scores both seats.
 	StudyQueue(ctx context.Context, scope string, batchID int64, players []string, limit int) ([]domain.StudyQueueEntry, error)

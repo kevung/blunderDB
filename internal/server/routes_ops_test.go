@@ -10,9 +10,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// The operator surface (G.5, #233). What is pinned here is the frontier: which
-// calls sit behind /ops/, that they still demand a tenant, and that asking for
-// a separate listener takes them off the public one entirely.
+// The operator surface: which calls sit behind /ops/, that they still demand a
+// tenant, and that a separate listener takes them off the public one.
 
 func opsServer(t *testing.T, opsAddr string) *Server {
 	t.Helper()

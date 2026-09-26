@@ -9,12 +9,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The history of a Direction (ADR-0047 §5.8, issue #375).
-//
-// The Direction is the record of everything the director decided, so it has to be READABLE.
-// It is what a director prints after a dispute, and what a director-player re-reads on coming
-// back to their own table. Nothing here is a translated sentence: an entry is a kind and its
-// facts, and the frontend renders it.
+// The history of a Direction (tasks/nicomaque/fonctionnel.md §5.8). No translated sentence: an entry is a kind and
+// its facts, rendered by the frontend.
 
 // HistoryEntry is one decision, with enough to situate it.
 type HistoryEntry struct {
@@ -51,8 +47,7 @@ type HistoryEntry struct {
 
 // History returns the decisions of a Direction, oldest first.
 //
-// `player` and `match`, when given, filter it — which is how a director answers "what happened
-// to Hugo?" without reading the whole log.
+// `player` and `match`, when given, filter it.
 func (d *Database) History(tournamentID int64, player, match string) ([]HistoryEntry, error) {
 	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
 	if err != nil {
@@ -139,9 +134,6 @@ func (d *Database) AddDirectionNote(tournamentID int64, text string) (*Direction
 
 // SinceLastGesture returns the decisions recorded after a given sequence number: what happened
 // while the director was somewhere else.
-//
-// A director who also plays comes back to their laptop between two of their own matches, and
-// what they need first is "what changed", not the whole log.
 func (d *Database) SinceLastGesture(tournamentID int64, seq int) ([]HistoryEntry, error) {
 	all, err := d.History(tournamentID, "", "")
 	if err != nil {

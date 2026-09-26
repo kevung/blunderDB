@@ -17,14 +17,10 @@ import { cubeRows, cubeInfoRows, cubeFactRows, checkerRows } from '../utils/anal
 import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
 import { STRIP, INK, splitWidth, paintTable } from '../utils/canvasTable.js';
 
-// Write a PNG rendered from a <canvas> to the clipboard, walking the image
-// clipboard's fallback ladder (see docs/adr/0004). Rung 1 is the WebView's own
-// clipboard — it needs no external tool, so it is tried first. Only if the
-// WebView declines does it hand off to the Go backend, which tries an external
-// tool (xclip/wl-copy) and, failing that, saves the PNG to a file. Returns
-// { method: 'clipboard' } or { method: 'file', path } so the caller can tell the
-// user where the image ended up. Throws only if every rung — including the file
-// save — fails.
+// Write a canvas PNG to the clipboard down the ADR-0004 fallback ladder: the
+// WebView clipboard first (no external tool), then the Go backend (xclip /
+// wl-copy, else a file). Returns { method: 'clipboard' } or { method: 'file',
+// path }; throws only if every rung fails.
 async function writeCanvasToClipboard(canvas) {
     // Rung 1: native WebView clipboard.
     try {
@@ -73,13 +69,8 @@ export function copyPosition() {
         )
     );
 
-    // A scratch board — the Eval panel (EVAL) and the search board (EDIT) —
-    // shows a position no stored record describes, but analysisStore still
-    // holds the record last opened: its xgid, its analysis and its comment all
-    // belong to a DIFFERENT position. Copying the board there must therefore
-    // regenerate the XGID from the board itself and carry nothing else, which
-    // is exactly what this clipboard is for in the Eval panel: pasting the
-    // position into XG, or into another blunderDB.
+    // On a scratch board (EVAL, EDIT) analysisStore describes ANOTHER position:
+    // regenerate the XGID from the board and carry nothing else.
     const scratchBoard = mode === 'EVAL' || mode === 'EDIT';
     const xgid = !scratchBoard && analysis.xgid ? analysis.xgid : generateXGID(position);
 
@@ -168,14 +159,10 @@ export function copyPosition() {
         });
 }
 
-// Put text on the system clipboard through the Go backend rather than
-// navigator.clipboard. navigator.clipboard.writeText() needs transient user
-// activation; a keydown carrying Ctrl is treated as a shortcut and grants none
-// in the WebView, which is exactly the difference between the toolbar button (a
-// click, always activated — it worked) and Ctrl-C (it did not). The backend has
-// no such requirement, and it is the same clipboard the paste side already reads
-// with ClipboardGetText(). The WebView call stays as a fallback for hosts where
-// the backend one is unavailable.
+// Text goes through the Go backend, not navigator.clipboard: writeText()
+// needs user activation, which a Ctrl keydown does not grant in the WebView
+// (so Ctrl-C failed where the toolbar click worked). The WebView call stays as
+// a fallback.
 export async function writeTextToClipboard(text) {
     try {
         if (await ClipboardSetText(text)) return;
@@ -192,7 +179,7 @@ export async function copyBoardImage() {
         return;
     }
     try {
-        // Un seul rendu (#278) : la copie du plateau vient de snapshotBoardSVG
+        // Un seul rendu : la copie du plateau vient de snapshotBoardSVG
         // comme l'export en fichier, plutôt que d'un bloc réécrit ici.
         const snapshot = snapshotBoardSVG();
         if (!snapshot) {
@@ -333,11 +320,9 @@ export async function copyBoardWithAnalysisImage() {
 }
 
 // ---------------------------------------------------------------------------
-// The analysis strip painted under the board. Every string it paints comes
-// from utils/analysisRows.js — the rows CubeVerdictTable and
-// CandidateMovesTable render — so the image cannot say something the screen
-// does not; what remains here is geometry: where a cell goes and what colour
-// sits behind it.
+// The analysis strip under the board. Every string comes from
+// utils/analysisRows.js (the on-screen tables' rows), so the image cannot
+// disagree with the screen; only geometry and colours live here.
 // ---------------------------------------------------------------------------
 
 // The image ranks the candidates itself and keeps the top of the list.
@@ -364,7 +349,7 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     const strip = analysisStrip(analysis);
     if (!strip) return;
     const t = translate;
-    // ADR-0016 point 6 / #190/C.3: the same referential the DOM tables read
+    // ADR-0016 point 6: the same referential the DOM tables read
     // off position, so the copied image's equity header never drifts from
     // the screen's.
     const isMoney = isMoneyPosition(position);
@@ -395,17 +380,9 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
 }
 
 /**
- * Enregistre l'image du plateau dans un fichier que l'utilisateur choisit
- * (#278, fiche I.22).
- *
- * Le presse-papier reste le geste courant ; celui-ci est l'autre besoin —
- * une illustration pour un article, un message de forum, une leçon. Le SVG
- * est proposé parce que le plateau EN EST un : c'est la forme qui survit à
- * un agrandissement, et elle ne coûte rien à offrir.
- *
- * L'échelle de repli de l'ADR-0004 ne s'applique pas ici : l'utilisateur a
- * désigné un chemin, il n'y a donc rien à deviner et un échec est une erreur
- * qui nomme le fichier.
+ * Enregistre l'image du plateau dans un fichier choisi (SVG, la forme native
+ * du plateau, ou PNG). Pas d'échelle de repli ADR-0004 : le chemin est
+ * désigné, un échec est une erreur qui nomme le fichier.
  *
  * @param {'svg'|'png'} format
  */

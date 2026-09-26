@@ -8,32 +8,15 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Statistiques d'étude corrélées au jeu réel (#275, fiche I.19).
+// Statistiques d'étude corrélées au jeu réel.
 //
-// « 40 positions de backgame révisées ce mois ; PR en backgame 9,2 → 6,8. »
+// Ce fichier ne rend PAS un effet ni une corrélation : par plan de jeu, trois
+// nombres côte à côte (positions révisées depuis une date, PR avant, PR
+// depuis). Rien ici ne contrôle les facteurs confondants, donc aucune
+// causalité n'est affirmée ; le rapprochement est celui du lecteur.
 //
-// # La formulation prudente que la fiche demande n'est pas un ton, c'est une
-// # forme de données
-//
-// Ce fichier ne rend PAS un effet, une amélioration ni une corrélation. Il
-// rend, plan de jeu par plan de jeu, trois nombres qui se lisent côte à côte :
-// combien de positions ont été révisées depuis une date, quel était le PR
-// avant cette date, quel est le PR depuis. Le rapprochement est celui du
-// lecteur, et l'interface le présente comme tel.
-//
-// Pourquoi ce n'est pas de la fausse modestie : rien ici ne contrôle quoi que
-// ce soit. Le joueur a pu jouer contre plus fort, changer de format, ou
-// simplement jouer plus de courses ce mois-ci. Un module qui écrirait « votre
-// révision a fait gagner 2,4 de PR » affirmerait une causalité qu'aucune de
-// ces données ne porte. Les nombres, eux, sont exacts.
-//
-// # Deux décomptes différents, et c'est voulu
-//
-// Les positions RÉVISÉES sont comptées comme des positions distinctes : une
-// carte revue quatre fois dans le mois est une position étudiée, et compter
-// les répétitions ferait passer un mois de bachotage pour un mois de
-// couverture. Les DÉCISIONS du PR, elles, sont bien toutes comptées : chacune
-// a été prise une fois.
+// Les positions RÉVISÉES sont comptées distinctes (quatre révisions d'une
+// carte = une position couverte) ; les DÉCISIONS du PR sont toutes comptées.
 
 // StudyImpactRow is one plan of play, with what was studied and what was
 // played on either side of the date.

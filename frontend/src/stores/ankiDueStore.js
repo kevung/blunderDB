@@ -1,22 +1,12 @@
 import { writable } from 'svelte/store';
 
-// Le badge de cartes dues sur l'onglet Anki (#287, fiche I.31).
-//
-// Une révision espacée ne sert que si l'on sait qu'il y a quelque chose à
-// réviser. Le compte était derrière un onglet qu'il fallait ouvrir pour le
-// voir — c'est-à-dire au mauvais endroit : ce chiffre est la RAISON d'ouvrir
-// l'onglet, pas ce qu'on y trouve.
-//
-// Le compte porte sur TOUS les paquets. Un badge par paquet aurait demandé
-// d'ouvrir l'onglet pour être lu, ce qui est le problème qu'on résout.
+// Le badge de cartes dues sur l'onglet Anki, tous paquets confondus : le chiffre est la raison
+// d'ouvrir l'onglet, il doit donc se lire sans l'ouvrir.
 
 /** @type {import('svelte/store').Writable<number>} */
 export const ankiDueStore = writable(0);
 
-/**
- * Rafraîchit le compte des cartes dues, tous paquets confondus. Zéro à défaut :
- * un badge qui reste sur un ancien chiffre est pire que pas de badge.
- */
+/** Rafraîchit le compte ; zéro à défaut — un ancien chiffre est pire que pas de badge. */
 export async function refreshAnkiDue() {
     const { get } = await import('svelte/store');
     const { databasePathStore } = await import('./databaseStore.js');

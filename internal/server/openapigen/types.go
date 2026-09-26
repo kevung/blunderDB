@@ -8,11 +8,9 @@ import (
 	"strings"
 )
 
-// collectTypeDecls records every top-level `type` declaration in f into
-// types, keyed by name. Called once per file; the caller merges across every
-// file before any route tries to resolve a type by name (a route in
-// handlers_collections.go can reference an alias declared in
-// handlers_iters.go).
+// collectTypeDecls records f's top-level `type` declarations into types. The
+// caller merges every file first: a route may reference a type declared in
+// another file.
 func collectTypeDecls(f *ast.File, types map[string]typeInfo) {
 	for _, decl := range f.Decls {
 		gd, ok := decl.(*ast.GenDecl)
@@ -47,11 +45,8 @@ func collectTypeDecls(f *ast.File, types map[string]typeInfo) {
 	}
 }
 
-// fieldsOf extracts the JSON-relevant fields of a struct type declaration:
-// wire name (json tag, or the Go field name lower-cased-first as
-// encoding/json would default to when untagged — every Req/Resp struct in
-// this codebase tags every field, so the untagged fallback is a safety net,
-// not the common case) and Go type text.
+// fieldsOf extracts a struct's JSON-relevant fields: wire name (json tag, else
+// the Go field name as encoding/json does) and Go type text.
 func fieldsOf(st *ast.StructType) []Field {
 	var fields []Field
 	if st.Fields == nil {

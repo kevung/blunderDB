@@ -12,12 +12,8 @@ import (
 	"github.com/adrg/xdg"
 )
 
-// The image clipboard is an Optional host capability (see docs/adr/0004): its
-// presence is not guaranteed and the way to reach it varies per system. This
-// file isolates that variability into a thin Capability probe (raw facts) and a
-// pure Fallback policy (which rung to take), so the risky part — the choice — is
-// unit-testable without a real host. The imperative shell (exec, file writes)
-// stays dumb around it.
+// The image clipboard is an optional host capability (ADR-0004): a thin probe
+// gathers facts, a pure policy picks the rung, so the choice is unit-testable.
 
 // clipboardFacts are the raw facts probeClipboardLinux gathers about the host's
 // image-clipboard capability. Facts only; it decides nothing.
@@ -36,9 +32,7 @@ const (
 	rungFile                        // no clipboard tool: save the PNG to a file
 )
 
-// probeClipboardLinux inspects the host and reports the facts. Deliberately thin
-// — two LookPaths and an env read, no branching logic worth more than a smoke
-// test; all the deciding lives in chooseClipboardRung.
+// probeClipboardLinux reports the host's facts; chooseClipboardRung decides.
 func probeClipboardLinux() clipboardFacts {
 	_, xclipErr := exec.LookPath("xclip")
 	_, wlErr := exec.LookPath("wl-copy")
@@ -57,11 +51,8 @@ func isWaylandSession() bool {
 	return os.Getenv("WAYLAND_DISPLAY") != ""
 }
 
-// chooseClipboardRung is the pure Fallback policy: facts in, chosen rung out, no
-// I/O. On Wayland prefer wl-copy — xclip on a pure-Wayland session only reaches
-// an XWayland clipboard the compositor may not surface — then fall back to xclip
-// if it is the only tool present. On X11 prefer xclip, then wl-copy. When
-// neither tool exists, fall back to writing the image to a file.
+// chooseClipboardRung is the pure policy. On Wayland prefer wl-copy (xclip
+// only reaches XWayland's clipboard), on X11 xclip; otherwise a file.
 func chooseClipboardRung(f clipboardFacts) clipboardRung {
 	if f.IsWayland {
 		switch {
@@ -81,10 +72,8 @@ func chooseClipboardRung(f clipboardFacts) clipboardRung {
 	return rungFile
 }
 
-// copyImageLinux walks the image-clipboard ladder on Linux and returns the path
-// the image was saved to when it fell back to a file (empty string when the
-// image reached the clipboard directly). A tool that is present but fails at
-// runtime degrades to the file rung rather than losing the user's gesture.
+// copyImageLinux walks the ladder and returns the fallback file's path ("" if
+// the clipboard was reached). A failing tool degrades to the file rung.
 func copyImageLinux(pngData []byte) (string, error) {
 	switch chooseClipboardRung(probeClipboardLinux()) {
 	case rungWlCopy:
@@ -112,17 +101,14 @@ func pipeToClipboardTool(pngData []byte, name string, args ...string) error {
 	return nil
 }
 
-// saveImageFallback writes the PNG to a predictable, user-findable location and
-// returns the full path. This is the last rung of the ladder on every platform:
-// the user's goal (obtain the board image) still succeeds, just through a file
-// instead of the clipboard.
+// saveImageFallback, the last rung everywhere, writes the PNG to a findable
+// location and returns its path.
 func saveImageFallback(pngData []byte) (string, error) {
 	return writeBoardImage(imageFallbackDir(), pngData)
 }
 
 // writeBoardImage writes the PNG into dir under a timestamped name and returns
-// the full path. Split out from directory selection so it is testable against a
-// temp dir without depending on the host's real Pictures/home location.
+// the full path.
 func writeBoardImage(dir string, pngData []byte) (string, error) {
 	name := fmt.Sprintf("blunderDB-board-%s.png", time.Now().Format("20060102-150405"))
 	path := filepath.Join(dir, name)

@@ -10,12 +10,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Confirming what the engine proposes, and doing what it did not (ADR-0047 §5).
-//
-// The posture is the one ADR-0044 took for a transcription, moved from a match to a room: the
-// engine proposes, the director decides, the Direction records, and nothing is refused but the
-// impossible. So every call here writes an event and comes back with the replayed view; none of
-// them second-guesses the director.
+// Confirming what the engine proposes, and doing what it did not (tasks/nicomaque/fonctionnel.md §5): the engine
+// proposes, the director decides, the Direction records, and only the impossible is refused.
+// Every call writes an event and returns the replayed view.
 
 // ConfirmProposal records one proposal the director confirmed. The proposal travels back as the
 // engine's own JSON, so the frontend confirms exactly what it was shown rather than describing
@@ -36,12 +33,9 @@ func (d *Database) ConfirmProposal(tournamentID int64, actionJSON string) (*Dire
 	return d.GetDirection(tournamentID)
 }
 
-// ConfirmAllProposals records every proposal in one gesture. It is two clicks for the director
-// whatever the count, which is the budget the UX document holds this to.
-//
-// It stops at the first refusal and returns it with what has already been recorded: a partial
-// round is a real state the director can act on, whereas rolling back would throw away
-// decisions that were valid. Nothing is silently skipped.
+// ConfirmAllProposals records every proposal in one gesture. It stops at the first refusal and
+// returns it with what was already recorded: a partial round is actionable, a rollback would
+// discard valid decisions.
 func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, error) {
 	ctx := context.Background()
 	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
@@ -51,9 +45,8 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 	// One instant for the whole batch: what is launched together is one round, and the engine
 	// reads that from the start times.
 	now := time.Now()
-	// Proposed at the SAME instant the events will carry: asking the engine at the journal's
-	// time and then writing at the wall clock is how a queue and its confirmation come to
-	// disagree about a micro-round's deadline (#388).
+	// Proposed at the SAME instant the events will carry, or the queue and its confirmation
+	// disagree about a micro-round's deadline.
 	for _, a := range dir.ProposeAt(now) {
 		if a.Kind == tournoi.ActWait {
 			continue
@@ -67,7 +60,7 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 		if a.Reason == tournoi.ReasonWaitingTable {
 			// A proposal with no free table stays in the queue: launching it here would put
 			// two matches on one table, or none, without the director ever choosing. They
-			// launch it themselves with a table they picked (ADR-0047 §3.2).
+			// launch it themselves with a table they picked (tasks/nicomaque/fonctionnel.md §3.2).
 			continue
 		}
 		if err := confirmAt(ctx, dir, a, now); err != nil {
@@ -84,10 +77,8 @@ func confirm(ctx context.Context, dir *direction.Direction, a tournoi.Action) er
 
 // confirmAt is confirm with the instant given rather than taken.
 //
-// It exists because a BATCH of matches must carry ONE instant. The engine groups matches into
-// batches by their start time — that is how it knows what a director calls a round — so
-// launching eight matches with eight successive time.Now() would make eight rounds of one match
-// each, and the pairing sheet (#387) would print one line per page.
+// A BATCH of matches must carry ONE instant: the engine groups matches into rounds by start
+// time, so successive time.Now() calls would make one round per match.
 func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, now time.Time) error {
 	ev, err := dir.EventFor(a, now)
 	if err != nil {
@@ -99,9 +90,7 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // StartMatchManually launches a match the engine did not propose: two free Participants, the
 // length and the table the director chose.
 //
-// This is the escape hatch that makes the whole panel usable by a real director — the one who
-// knows a player has a train to catch. A pairing that does not match the graph is ACCEPTED and
-// leaves a standing warning; only the impossible is refused, and the engine says which
+// A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
 // (unknown player, already playing, against themselves).
 func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
 	ctx := context.Background()
@@ -117,9 +106,8 @@ func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, t
 		length = st.Phases[st.Current].Length
 	}
 	if table <= 0 {
-		// No number typed: the first free table, as a proposal would get (#437). With none
-		// left the match still starts — the director decided — and the grid shows it under
-		// its "no table" cell.
+		// No number typed: the first free table, as a proposal would get. With none left the
+		// match still starts, under the grid's "no table" cell.
 		table = firstFreeTable(st, "", st.Current)
 	}
 	act := tournoi.Action{
@@ -137,9 +125,8 @@ func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, t
 // smallest one that is not in use, not out of service and not reserved for something else; 0
 // when there is none.
 //
-// It restates the engine's assignTables (Nicomaque engine.go) because that one is unexported
-// and runs only on proposals: the rule is the engine's, read from the same state and through
-// its exported AvailableFor, and this copy must follow it if it ever changes.
+// It restates Nicomaque's unexported assignTables (engine.go) through AvailableFor, and must
+// follow it if it changes.
 func firstFreeTable(st *tournoi.State, section string, phase int) int {
 	used := map[int]bool{}
 	for _, m := range st.Running() {

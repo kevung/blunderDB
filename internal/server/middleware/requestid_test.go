@@ -53,10 +53,8 @@ func TestRequestID_EchoesClientSuppliedID(t *testing.T) {
 	}
 }
 
-// TestRequestID_SanitizesControlCharsAndLength: a client-supplied id must
-// never carry CR/LF into a response header or a log line, and an
-// unreasonably long one must not either — both are treated as "generate one
-// instead" once truncation/stripping leaves nothing, or bounded otherwise.
+// TestRequestID_SanitizesControlCharsAndLength: a client id never carries
+// CR/LF or unbounded length into a header or log; nothing left means generate.
 func TestRequestID_SanitizesControlCharsAndLength(t *testing.T) {
 	var seen string
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -74,10 +72,8 @@ func TestRequestID_SanitizesControlCharsAndLength(t *testing.T) {
 	}
 }
 
-// TestRequestID_RelaysTraceparent: a present traceparent header must reach
-// TraceparentFromContext verbatim (no parsing/validation — see the doc
-// comment on TraceparentHeader) so Logging can relay it, while its absence
-// must not fabricate one.
+// TestRequestID_RelaysTraceparent: traceparent reaches TraceparentFromContext
+// verbatim, and its absence fabricates none.
 func TestRequestID_RelaysTraceparent(t *testing.T) {
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tp, ok := TraceparentFromContext(r.Context())

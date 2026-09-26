@@ -1,5 +1,5 @@
 <script>
-    // La barre de la file d'étude (#259, fiche I.3).
+    // La barre de la file d'étude.
     //
     // Quatre gestes par position, et trois d'entre eux ouvrent simplement le
     // panneau où ce geste se prend déjà. C'est délibéré : commenter, ranger en

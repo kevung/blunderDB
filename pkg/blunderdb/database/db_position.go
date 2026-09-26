@@ -24,14 +24,9 @@ type IndividualSaveResult struct {
 // was already stored, so the caller can merge its analysis and comment onto the
 // existing row instead of overwriting someone else's.
 //
-// It replaces the frontend's former PositionExists + conditional SavePosition
-// dance, which had two defects. PositionExists compares marshalled JSON in an
-// O(n) scan of every stored position, while the store deduplicates on the
-// Zobrist hash — two different notions of "the same position". And when the
-// position already existed the frontend skipped SavePosition entirely, so an
-// individual import of a position a match had already brought in never reached
-// the store and the provenance flag was never raised. That is exactly the case
-// the flag exists to serve.
+// It always goes through the store, which deduplicates on the Zobrist hash, so
+// an individual import of a position a match already brought in still raises
+// the sticky provenance flag — the very case the flag exists for.
 func (d *Database) SaveIndividualPosition(position *Position) (IndividualSaveResult, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -52,10 +47,8 @@ func (d *Database) SaveIndividualPosition(position *Position) (IndividualSaveRes
 	return IndividualSaveResult{ID: id, Existed: existed}, nil
 }
 
-// The position scalar-column codec lives in package engine so the SQLite
-// Storage backend can share it (package database imports storage/sqlite, so
-// the dependency cannot run the other way). These aliases keep the persistence
-// code in this package compiling against the unqualified names.
+// The position scalar-column codec lives in package engine, shared with
+// storage/sqlite; these aliases keep the unqualified names.
 var (
 	populatePositionColumns = engine.PopulatePositionColumns
 	encodeBoardCompact      = engine.EncodeBoardCompact
@@ -93,11 +86,9 @@ func scanPositionRow(scanner interface {
 }
 
 // positionIdentityJSON marshals only what makes two positions the same position.
-// The legacy .db importer keys a lookup map on this string, so any Position field
-// that is *not* part of the position's identity has to be zeroed here or the two
-// sides of the comparison stop matching. Today that is the row id and the
-// individually-imported provenance flag (ADR-0001) and the source-tool study
-// mark (docs/adr/0006).
+// The .db importer keys a lookup map on it, so every non-identity field is
+// zeroed: the row id, the provenance flag (ADR-0001) and the study mark
+// (ADR-0006).
 func positionIdentityJSON(pos Position) (string, error) {
 	pos.ID = 0
 	pos.IndividuallyImported = false
@@ -153,9 +144,8 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 }
 
 // ListPositionIDs returns every stored position id in LoadAllPositions's
-// order. It is what the GUI keeps for a library: the id list is a few hundred
-// kilobytes where the positions themselves are tens of megabytes of JSON
-// across the Wails bridge, and the board only ever shows one of them.
+// order: the GUI keeps ids, not tens of megabytes of positions, across the
+// Wails bridge.
 func (d *Database) ListPositionIDs() ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

@@ -6,21 +6,15 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// TrashStore persists what was deleted, so it can be put back (issue #285,
-// ADR-0036).
+// TrashStore persists what was deleted, so it can be put back (ADR-0036).
 //
-// A trash entry is a SNAPSHOT written just before the real delete, not a flag
-// on the live row. Nothing else in the schema knows this table exists: no
-// search filter, no statistic, no retention predicate, no uniqueness index.
-// That is the whole point of the choice — a `deleted_at` column would have to
-// be honoured in every one of those places, and the one that forgot would
-// silently count a deleted position in a PR or hand it to a review session.
+// A trash entry is a SNAPSHOT written just before the real delete, not a
+// `deleted_at` flag every search filter, statistic and retention predicate
+// would have to honour.
 //
-// Restoring is the caller's business, not this store's: putting a position
-// back means re-Saving it through PositionStore (so the Zobrist deduplication
-// decides where it lands, and it never creates a duplicate), putting a
-// collection back means recreating it and its membership. This store only
-// remembers.
+// Restoring is the caller's business: a position is re-Saved through
+// PositionStore (the Zobrist dedup decides where it lands), a collection is
+// recreated with its membership. This store only remembers.
 type TrashStore interface {
 	// Put writes a snapshot and returns its id. payload is the JSON the
 	// caller will read back to restore; label is what the trash list shows.

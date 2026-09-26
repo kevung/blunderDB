@@ -1,19 +1,12 @@
 /**
- * L'ordre des onglets, réconcilié avec celui que l'utilisateur a enregistré.
- *
- * L'ordre est persisté (`GetTabOrder`), et une version qui livre un onglet
- * neuf trouve donc une liste qui l'ignore. L'ajouter à la FIN était le premier
- * réflexe — il n'était pas perdu — mais un onglet conçu pour être entre Eval et
- * Anki qui apparaît après Métadonnées n'est pas à sa place : sa place fait
- * partie de ce qu'on a décidé (ADR-0040 règle 1). Il s'insère donc auprès de
- * son voisin de gauche par défaut, sans toucher à l'ordre choisi.
+ * L'ordre des onglets, réconcilié avec l'ordre enregistré (`GetTabOrder`). Un
+ * onglet nouveau s'insère auprès de son voisin de gauche par défaut, pas à la
+ * fin : sa place fait partie de sa conception (ADR-0040 règle 1).
  */
 
 /**
- * Les identifiants d'onglet qu'une version antérieure a pu enregistrer (ordre
- * des onglets, onglets masqués, onglet actif d'une vue) et le nom qu'ils
- * portent aujourd'hui. `epc` est le premier nom du panneau Eval (#401) : le
- * mode et l'onglet ont pris le nom du panneau, la mesure EPC garde le sien.
+ * Anciens identifiants d'onglet encore présents dans un état enregistré, et
+ * leur nom actuel (`epc` → `eval` ; la mesure EPC garde son nom).
  */
 const LEGACY_TAB_IDS = Object.freeze({ epc: 'eval' });
 

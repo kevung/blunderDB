@@ -17,9 +17,7 @@ import (
 // -> same tables/rows" invariant: ExportDatabase/ExportCollections/
 // ExportTournaments (the GUI and CLI) call ExportSQLite directly, while the
 // daemon's exports.sqlite calls it through SQLiteExporter.Export. Both must
-// write the same content for the same source and the same Selection — a
-// regression here would mean the two modes silently diverged after this
-// package was unified into one exporter.
+// write the same content for the same source and the same Selection.
 //
 // This is deliberately not a byte-for-byte file comparison (SQLite page
 // layout is not guaranteed stable across writers) but a comparison of the

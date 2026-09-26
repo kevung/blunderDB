@@ -8,22 +8,17 @@ import (
 	"github.com/PileOfCells/backgammon-tournoi/sim"
 )
 
-// What the clock strip reads besides the engine's counters (issue #456, D8.3).
+// What the clock strip reads besides the engine's counters.
 //
 // Three numbers a director asks for and the engine does not state as such:
 //
 //   - the PLAYING TIME: the time during which at least one match was running — the union of
-//     the matches' [start, end) intervals, a running match counting up to now. A night, a lunch
-//     with every table empty, a Monday between two rounds of a club championship: nothing is
-//     being played, and nothing is counted. On a single evening it is the elapsed time less the
-//     gaps between rounds; over five days it stops counting the nights as play (S5 showed
-//     « 48 h 45 » for two and a half days).
+//     the matches' [start, end) intervals, a running match counting up to now. Gaps with every
+//     table empty (a night, a lunch, a week between club rounds) are not counted.
 //   - the DAY: the calendar day of play, counted from the day of the first launched match,
 //     in the host's time zone. Day 1 is the first.
-//   - the ESTIMATED END: the engine's own forecast (sim.Forecast) — it replays the log and plays
-//     the rest of the tournament K times at the configured pace — its median remaining time,
-//     laid out after now and pushed past every declared break. A night that is not declared as
-//     a break counts as play: the engine knows the breaks, not the hall's opening hours.
+//   - the ESTIMATED END: the median remaining time of the engine's forecast (sim.Forecast), laid
+//     out after now and pushed past every declared break. An undeclared night counts as play.
 
 // PlayingTime is the union of the matches' running intervals up to now.
 func PlayingTime(st *tournoi.State, now time.Time) time.Duration {

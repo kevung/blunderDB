@@ -24,10 +24,8 @@ func (s *Server) tenantRoutes() []route {
 				return
 			}
 			if err := purger.PurgeTenant(r.Context(), scopeOf(r)); err != nil {
-				// Never err.Error() to the client: a PostgreSQL error can
-				// quote the DSN, a table or a statement (#160).
-				// writeStorageError masks it and stashes the cause for the
-				// server-side log line.
+				// Never err.Error() to the client: a PostgreSQL error can quote
+				// the DSN or a statement. writeStorageError masks and logs it.
 				writeStorageError(w, fmt.Errorf("purge tenant: %w", err))
 				return
 			}

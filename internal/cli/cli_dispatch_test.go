@@ -5,11 +5,8 @@ import (
 	"testing"
 )
 
-// TestIsCommandCoversEveryHandler guards the seam between main.go's mode
-// dispatch and this package: main.go asks IsCommand, so a subcommand wired into
-// handlers() must be recognised there too. `vacuum` shipped once with a handler
-// and no entry in main.go's hand-kept list, and `blunderdb vacuum` opened the
-// GUI.
+// TestIsCommandCoversEveryHandler guards main.go's mode dispatch: every
+// subcommand in handlers() must satisfy IsCommand, or it opens the GUI.
 func TestIsCommandCoversEveryHandler(t *testing.T) {
 	t.Parallel()
 	for name := range (&CLI{}).handlers() {

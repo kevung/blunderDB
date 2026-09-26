@@ -7,9 +7,7 @@ import (
 
 // This file holds the backend-independent half of PlayerTable: deciding who won
 // a match, folding the per-player figures together, and ordering the rows. The
-// backends contribute only the SQL that fills the inputs below, so the rules a
-// reader would argue about are stated once and tested once — the same split
-// PickReferencePlayer already uses for tournament badges.
+// backends contribute only the SQL that fills the inputs below.
 
 // PlayerDecisionStat is one backend row of the counted-decisions query: the
 // figures for one player and one decision type (0 = checker, 1 = cube).
@@ -52,9 +50,7 @@ type PlayerLuckAcc struct {
 // to be stated here:
 //
 //   - A match to N points is won by the seat that reaches N. If neither does,
-//     the match is unfinished — a truncated log, an abandoned match — and
-//     counts as neither a win nor a loss for anybody. That is why a player's
-//     wins and losses can add up to less than their match count.
+//     the match is unfinished and counts as neither a win nor a loss.
 //   - A money session (no target score) is won by whoever took more points,
 //     and is a draw at equal points. This mirrors gnuBG's own session result
 //     (+1 / 0 / -1, relational.c MatchResult).
@@ -175,9 +171,8 @@ func pr(sumErrMP int64, n int) float64 {
 }
 
 // sortPlayerRows orders the table as it is first shown: best PR first, since
-// the table exists to compare players. Players with no counted decision have no
-// PR to rank — a zero there means "nothing measured", not "played perfectly" —
-// so they go last instead of leading the table.
+// the table exists to compare players. Players with no counted decision go
+// last: their zero PR means "nothing measured", not "played perfectly".
 func sortPlayerRows(rows []PlayerRow) {
 	sort.SliceStable(rows, func(i, j int) bool {
 		a, b := rows[i], rows[j]

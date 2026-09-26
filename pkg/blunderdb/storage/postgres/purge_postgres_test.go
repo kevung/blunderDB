@@ -6,15 +6,9 @@
 //
 //	go test -tags postgres ./pkg/blunderdb/storage/postgres/... -run TestPurgeTenant -v
 //
-// This file is `package postgres` (white-box) because purgeSeedRows below
-// needs direct access to s.pool. The one test that instead needed direct
-// access to the unexported purgeOrder/rlsTables variables and no database,
-// TestPurgeOrderMatchesRLSTables, lives in purge_order_test.go (untagged, so
-// it runs on the default CI path) rather than here. That means the usual
-// startPostgres/resetPublicSchema helpers from postgres_test.go (a different
-// package, even though compiled into the same test binary) are not reachable
-// from here, so purgeTestDB/purgeResetSchema below are self-contained local
-// equivalents rather than reuses.
+// This file is `package postgres` (white-box: purgeSeedRows needs s.pool), so
+// postgres_test.go's helpers are unreachable and purgeTestDB/purgeResetSchema
+// are local equivalents.
 package postgres
 
 import (
@@ -153,8 +147,7 @@ func purgeQueryNames(t *testing.T, pool *pgxpool.Pool, sql string) []string {
 
 // purgeTenantTables returns, sorted, every base table of the live schema that
 // carries a tenant_id column — read from information_schema rather than from
-// rlsTables or purgeOrder, so that a table both lists forget is still counted
-// (#363: trash and import_batch were missing from both).
+// rlsTables or purgeOrder, so that a table both lists forget is still counted.
 func purgeTenantTables(t *testing.T, pool *pgxpool.Pool) []string {
 	t.Helper()
 	tables := purgeQueryNames(t, pool, `
@@ -173,7 +166,7 @@ func purgeTenantTables(t *testing.T, pool *pgxpool.Pool) []string {
 }
 
 // TestPurgeTenant seeds one row per tenant-scoped table plus a session
-// (six session_state rows since schema 2.17.0, #156) for two tenants, purges
+// (six session_state rows) for two tenants, purges
 // tenant A, and asserts every one of tenant A's rows — domain tables and
 // session alike — is gone, while tenant B's rows of the same tables and the
 // global schema-version metadata row are untouched. It also purges tenant A

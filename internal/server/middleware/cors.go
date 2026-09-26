@@ -5,24 +5,13 @@ import (
 	"strings"
 )
 
-// CORS adds permissive CORS headers for the configured origin(s). It is OFF
-// by default (allowOrigin == "") because the daemon is internal-only.
+// CORS adds CORS headers for the configured origin(s); OFF by default
+// (allowOrigin == "") because the daemon is internal-only.
 //
-// allowOrigin is either "*" or a comma-separated list of exact origins
-// (e.g. "https://a.example, https://b.example"): a request whose Origin
-// header matches one of them gets that same origin echoed back as
-// Access-Control-Allow-Origin, so more than one legitimate front-end can
-// share a daemon without every one of them being handed "*". A request whose
-// Origin matches none of them (or a same-origin request with no Origin
-// header at all) gets no Access-Control-Allow-Origin, same as CORS disabled.
-//
-// Vary: Origin is set on every response once CORS is enabled at all,
-// wildcard included: which origin (if any) is echoed back depends on the
-// request's Origin header, so a cache sitting in front of this daemon must
-// not serve the response computed for one origin to a different one's
-// request (#232).
-//
-// When enabled, preflight OPTIONS requests are answered with 204 directly.
+// allowOrigin is "*" or a comma-separated list of exact origins; a matching
+// Origin is echoed back, anything else gets no Access-Control-Allow-Origin.
+// Vary: Origin is set whenever CORS is on, wildcard included, so a cache never
+// serves one origin's response to another. Preflight OPTIONS answer 204.
 func CORS(allowOrigin string) func(http.Handler) http.Handler {
 	if allowOrigin == "" {
 		return func(next http.Handler) http.Handler { return next }

@@ -30,7 +30,7 @@
     import { databasePathStore } from '../stores/databaseStore';
     let databasePath = $derived($databasePathStore);
     let isSearchTab = $derived($activeTabStore === 'search');
-    // Both scratch boards can be saved — Search's and Eval's (#399); a Ctrl-U
+    // Both scratch boards can be saved — Search's and Eval's; a Ctrl-U
     // rewrite stays Search's alone.
     let hasScratchBoard = $derived(isSearchTab || $activeTabStore === 'eval');
 </script>

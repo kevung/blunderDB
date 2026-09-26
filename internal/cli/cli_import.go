@@ -92,7 +92,6 @@ func (cli *CLI) runImport(args []string) error {
 		return err
 	}
 
-	// Perform import based on type
 	switch strings.ToLower(*importType) {
 	case "match":
 		if *inputFile == "" {
@@ -145,8 +144,8 @@ type importMatchResult struct {
 	Location    string `json:"location,omitempty"`
 	MatchLength int32  `json:"match_length,omitempty"`
 	Games       int    `json:"games,omitempty"`
-	// Report is the end-of-import report (#257), the same object the
-	// interface's panel shows. Omitted when the batch could not be recorded.
+	// Report is the end-of-import report, the same object the GUI panel
+	// shows. Omitted when the batch could not be recorded.
 	Report *domain.ImportReport `json:"report,omitempty"`
 }
 
@@ -165,7 +164,6 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		fmt.Printf("Importing match from: %s\n", filePath)
 	}
 
-	// Verify file extension and route to appropriate importer
 	ext := strings.ToLower(filepath.Ext(filePath))
 	batchID := cli.beginImportBatch(filePath, strings.TrimPrefix(ext, "."))
 	var failures domain.ImportReport
@@ -254,11 +252,8 @@ type importPositionResult struct {
 	PositionID int64 `json:"position_id,omitempty"` // set only for a single BGBlitz position file
 }
 
-// importPosition imports a position file. It fails the run (regardless of
-// --fail-on-error) when nothing at all was imported — a file that produced
-// zero positions is never a silent success (#176) — and additionally fails
-// when failOnError is set and any individual line errored despite others
-// succeeding.
+// importPosition imports a position file. It fails the run when nothing was
+// imported, and with failOnError when any line errored.
 func (cli *CLI) importPosition(filePath, format string, failOnError bool) error {
 	if format != "json" {
 		fmt.Printf("Importing positions from: %s\n", filePath)
@@ -361,23 +356,18 @@ type importBatchResult struct {
 	Duplicates        int                 `json:"duplicates"`
 	Failed            int                 `json:"failed"`
 	PositionsImported int                 `json:"positions_imported"`
-	// Report is the end-of-import report (#257) over the whole batch.
+	// Report is the end-of-import report over the whole batch.
 	Report *domain.ImportReport `json:"report,omitempty"`
 }
 
-// importBatch imports all .xg files from a directory. Like importPosition, it
-// fails the run when nothing at all was imported (every file either errored
-// or was a duplicate), and additionally fails when failOnError is set and any
-// file errored despite others succeeding (#176). A duplicate is not a
-// failure: re-running a batch import over a directory that was already
-// imported, with no new file added, stays a success — only a batch where
-// NOTHING was recognised (every file failed) is an error.
+// importBatch imports all .xg files from a directory. It fails when every
+// file failed, and with failOnError when any file errored. A duplicate is not
+// a failure: re-importing an unchanged directory stays a success.
 func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool) error {
 	if format != "json" {
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 	}
 
-	// Find all supported match files
 	var matchFiles []string
 
 	walkFunc := func(path string, info os.FileInfo, err error) error {
@@ -393,7 +383,6 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			return nil
 		}
 
-		// Check for supported extensions
 		if ingest.IsImportable(path) {
 			matchFiles = append(matchFiles, path)
 		}
@@ -418,7 +407,6 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	batchID := cli.beginImportBatch(dirPath, "mixed")
 	var failures domain.ImportReport
 
-	// Import each file and collect results
 	var results []BatchImportResult
 	successCount := 0
 	failCount := 0
@@ -435,7 +423,6 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			FilePath: relPath,
 		}
 
-		// Route to appropriate importer based on extension
 		ext := strings.ToLower(filepath.Ext(filePath))
 		var matchID int64
 		switch ext {
@@ -574,11 +561,8 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		}
 	}
 
-	// Nothing recognised at all (every file failed) is always an error;
-	// --fail-on-error additionally fails a partial one. A directory whose
-	// files are all already in the database imported nothing NEW, but that
-	// is the nominal night of a script re-importing the same folder: it is
-	// a success, the duplicate count says so.
+	// Every file failed: always an error. --fail-on-error also fails a
+	// partial batch. All-duplicates is a success (a nightly re-import).
 	if successCount == 0 && duplicateCount == 0 {
 		return fmt.Errorf("no file was imported from %s (%d failure(s) out of %d file(s))",
 			dirPath, failCount, len(matchFiles))

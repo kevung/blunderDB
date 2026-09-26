@@ -17,24 +17,18 @@ type MatchGraph struct {
 	Match domain.Match
 	Games []GameGraph
 	// CommentOrigin is the provenance stamped on every comment this graph
-	// carries (issue #263). Each format mapper sets its own; the zero value
-	// reads as "unknown", which is what a graph built by something that does
-	// not say deserves.
+	// carries. Each format mapper sets its own; the zero value reads as
+	// "unknown".
 	CommentOrigin domain.CommentOrigin
-	// ImportBatchID stamps the match with the import it came in with
-	// (issue #257), 0 for none. Copied onto Match by WriteMatch, so a caller
-	// setting it here cannot be overridden by whatever the mapper left in
-	// Match.ImportBatchID.
+	// ImportBatchID stamps the match with the import it came in with, 0 for
+	// none. WriteMatch copies it onto Match, overriding whatever the mapper
+	// left in Match.ImportBatchID.
 	ImportBatchID int64
 	// ReplaceMatchID names an existing match this graph REPLACES rather than
 	// creates, 0 for the ordinary "this match is arriving" case. It is how a
 	// transcription draft is saved again after a correction (ADR-0045 §2): the
-	// match keeps its id — a tournament, a living collection and the
-	// last-visited position all point at it — while its games, moves and
-	// positions are rewritten from scratch.
-	//
-	// Set only by a caller who knows which match it is rewriting; an importer
-	// never does, which is why nothing else has to change to keep creating.
+	// match keeps its id, which other rows point at, while its games, moves
+	// and positions are rewritten. Importers never set it.
 	ReplaceMatchID int64
 }
 
@@ -118,13 +112,10 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			return res, err
 		}
 		if found {
-			// Still deliver the source-tool study marks. A flag added in XG
-			// after the match was imported does not change the match hash (it
-			// is computed from the play, not the file), so without this the
-			// mark could only ever reach the database by deleting the match and
-			// importing it again — which purges positions and destroys the
-			// comments the user wrote on them. Save ORs the flag, so this can
-			// only ever add (docs/adr/0006).
+			// Still deliver the source-tool study marks: a flag added in XG
+			// after the import does not change the match hash, and re-importing
+			// would mean deleting the match. Save ORs the flag, so this can
+			// only add (ADR-0006).
 			n, err := applyFlags(ctx, tx, scope, g)
 			if err != nil {
 				return res, err
@@ -152,9 +143,8 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		// The header is re-stated, never re-inserted: ReplaceHeader leaves the
 		// id, the import date, the import batch, the tournament, the match
 		// comment and the last-visited position exactly where they were. The
-		// tournament is deliberately not re-filed either — same reason as an
-		// enrich below: the match was put there by someone, and correcting a
-		// die three turns back is not a request to move it.
+		// tournament is not re-filed: correcting a die is not a request to
+		// move the match.
 		matchID = g.ReplaceMatchID
 		g.Match.ID = matchID
 		if err := tx.Matches().ReplaceHeader(ctx, scope, matchID, &g.Match); err != nil {
@@ -171,17 +161,10 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 		matchID = id
 
-		// The file names its event; make it a tournament. XG, GnuBG and BGF
-		// all carry an event name, every importer stored it in match.event,
-		// and nothing ever turned it into a row of the tournament table — so
-		// the Tournaments panel stayed empty on a library imported entirely
-		// from files that say which tournament each match belongs to.
-		//
-		// Only on a match this import created. A match already in the
-		// database was put in its tournament by someone, possibly by hand
-		// and under another name; re-importing its file must not move it.
-		// The tournament is created with an empty date and location (that is
-		// all SetMatchByName can do): the panel is where those get filled in.
+		// The file names its event; make it a tournament. Only on a match this
+		// import created: a match already stored may have been filed by hand,
+		// and re-importing its file must not move it. Date and location start
+		// empty.
 		if name := strings.TrimSpace(g.Match.Event); name != "" {
 			if err := tx.Tournaments().SetMatchByName(ctx, scope, matchID, name); err != nil {
 				return res, err
@@ -233,11 +216,9 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	// Only now, with the new moves written, is the retention predicate asked
 	// about the positions the old ones referenced: a position both versions
 	// share is held by its new move and survives on its existing row, with its
-	// analysis and its id; one that only the corrected Action reached is held by
-	// nothing and goes, unless the user did something with it — a comment they
-	// wrote, a collection, an Anki card, a study mark, an individual import.
-	// The ordinary purge, no trash: replacing a match twenty times during a
-	// review is not twenty deletions (ADR-0045 §3).
+	// analysis and its id; one only the corrected Action reached goes unless
+	// the retention predicate holds it. The ordinary purge, no trash
+	// (ADR-0045 §3).
 	if replace && len(orphanCandidates) > 0 {
 		if err := tx.Matches().PurgeOrphanPositions(ctx, scope, orphanCandidates); err != nil {
 			return res, err
@@ -277,10 +258,8 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 			return posID, err
 		}
 	}
-	// Add only comments not already on the position (#108). Positions are
-	// deduplicated by Zobrist, so an enrich re-import — or the same file imported
-	// twice — revisits a position that already carries its comment; adding again
-	// would duplicate it.
+	// Add only comments not already on the position: an enrich re-import, or
+	// the same file imported twice, revisits a deduplicated position.
 	if len(comments) > 0 {
 		existing := map[string]bool{}
 		for c, err := range tx.Comments().ByPosition(ctx, scope, posID) {

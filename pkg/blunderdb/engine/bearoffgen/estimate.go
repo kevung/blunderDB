@@ -10,7 +10,7 @@ import (
 //
 // The two-sided sweep is O(n³): n² pairs, each looking at the successors of
 // one of n positions. Measured on this repository's reference machine (Ryzen 7
-// PRO 6850U, 16 threads, 2026-09-05), serially:
+// PRO 6850U, 16 threads), serially:
 //
 //	TS-06-06   n =   924     0.96 s    a = 1.22e-9
 //	TS-06-07   n = 1 716     3.43 s    a = 6.8e-10

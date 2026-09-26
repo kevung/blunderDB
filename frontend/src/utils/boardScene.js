@@ -1,31 +1,16 @@
-// Drawing of the backgammon board, extracted from Board.svelte so the scene
-// can be asserted without mounting the component or a real two.js backend.
-//
-// Every function takes the same leading arguments:
-//   two   — anything exposing two.js's shape factories (makePath, makeText,
-//           makeCircle, makeRectangle, makeLine). In production it is the
-//           Two instance or a layer adapter around it; in tests, a recorder.
-//   geom  — boardMetrics() for the current drawing surface.
-//   cfg   — Board.svelte's boardCfg (orientation, widthFactor, palette).
-// and draws into `two` as a side effect. Nothing here reads a store: the
-// component resolves the display position, the offered-cube state, the label
-// flip and the selected move, then hands them over as plain values.
-//
-// The scene splits in two: drawStaticScene() — triangles, point labels, bar —
-// depends only on the geometry, the palette and the label flip, while
-// drawDynamicScene() — checkers, cube, bearoff, pip counts, dice, scores and
-// move arrows — depends on the position. drawFrame() sits on top of both so
-// the outline keeps a consistent linewidth over the checkers. layerOf()
-// routes each into its own two.js group.
+// Drawing of the backgammon board, outside Board.svelte so the scene can be asserted without the
+// component or a real two.js backend. Every function takes `two` (anything exposing two.js's
+// shape factories: the Two instance, a layer adapter, or a test recorder), `geom`
+// (boardMetrics()) and `cfg` (boardCfg), and reads no store: the component passes plain values.
+// drawStaticScene() depends only on geometry, palette and label flip; drawDynamicScene() on the
+// position; drawFrame() goes on top so the outline keeps its linewidth over the checkers.
 
 import { computePipCount } from './boardGeometry.js';
 
 /**
- * A drawing surface that puts every shape it creates into `group`. two.js's
- * factories add to the scene root and Group.add() reparents, so the shape
- * ends up in the group only. This is how Board.svelte keeps a static layer
- * (rebuilt on resize, orientation or palette change) and a dynamic layer
- * (emptied on every redraw) apart while both use the same drawing functions.
+ * A drawing surface that puts every shape into `group` (two.js factories add to the root and
+ * Group.add() reparents). Keeps Board.svelte's static layer (rebuilt on resize, orientation or
+ * palette change) and dynamic layer (emptied on every redraw) apart with the same functions.
  */
 export function layerOf(two, group) {
     const into =
@@ -67,10 +52,9 @@ function stacksUpward(point) {
 }
 
 /**
- * Centre of the `slot`-th checker (0-based) on `point` — the exact spot
- * drawCheckers() paints it, also used to anchor move arrows. Points 0 and 25
- * are the bars (stacking from the middle out), BEAROFF_POINT the tray beside
- * the board. Returns null for an unknown point.
+ * Centre of the `slot`-th checker (0-based) on `point`, as drawCheckers() paints it (also anchors
+ * move arrows). Points 0 and 25 are the bars (stacking from the middle out), BEAROFF_POINT the
+ * tray. Null for an unknown point.
  */
 export function stackSlotCenter(geom, cfg, point, slot) {
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
@@ -121,9 +105,8 @@ export function drawTriangles(two, geom, cfg) {
 }
 
 /**
- * The 24 point numbers, one under (points 1-12) or over (13-24) each column.
- * `flip` numbers the board from the other player's side (point p reads 25-p):
- * match mode with player 2 on roll, or an edited position with player 2 on roll.
+ * The 24 point numbers under (1-12) or over (13-24) each column. `flip` numbers the board from
+ * player 2's side (point p reads 25-p).
  */
 export function drawLabels(two, geom, cfg, flip) {
     const { originY, boardHeight, checkerSize } = geom;
@@ -233,10 +216,8 @@ export function drawCheckers(two, geom, cfg, position) {
 }
 
 /**
- * Where the doubling cube sits: centred on the left when nobody owns it,
- * beside the owner's home board otherwise, and in the middle of the left pan
- * when it has been offered (take/pass decision). Returns the square so the
- * click handler can hit-test it.
+ * Where the cube sits: centred on the left when nobody owns it, beside the owner's home board
+ * otherwise, mid left pan when offered. Returns the square for hit-testing.
  */
 export function cubeBox(geom, position, offered) {
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
@@ -244,10 +225,8 @@ export function cubeBox(geom, position, offered) {
     const gap = 0.75 * checkerSize;
     const restX = originX - boardWidth / 2 - size / 2 - gap;
     if (offered) {
-        // The board is 13 checkers wide (6 + bar + 6), so the left pan spans
-        // [-6.5, -0.5] checkers from centre and its midpoint is -3.5. Kept on
-        // the left — the same side the cube normally sits — so it never
-        // clashes with the bear-off (checker-off) indication on the right.
+        // 13 checkers wide (6 + bar + 6): the left pan's midpoint is -3.5 from centre, clear of
+        // the bear-off indication on the right.
         return { x: originX - 3.5 * checkerSize, y: originY, size };
     }
     if (position.cube.owner === 0) return { x: restX, y: originY + 0.5 * boardHeight - 1.5 * checkerSize, size };
@@ -396,11 +375,9 @@ export function drawScores(two, geom, cfg, position) {
 }
 
 /**
- * Arrows for a candidate move, one per checker moved. `moves` is
- * parseMoveNotation()'s output already mirrored to the display position when
- * needed; each arrow leaves from the top checker of its source stack and
- * lands on the next free slot of its destination, simulating the intermediate
- * board so a second checker on the same point stacks on the first.
+ * Arrows for a candidate move, one per checker moved (`moves` already mirrored to the display
+ * position). Each leaves from the top of its source stack and lands on the next free slot,
+ * simulating the intermediate board so two checkers on one point stack.
  */
 export function drawMoveArrows(two, geom, cfg, position, moves) {
     if (!moves || moves.length === 0) return;
@@ -450,14 +427,9 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
 }
 
 /**
- * Les points que le coup en cours offre : d'où un pas peut partir (un anneau
- * autour du pion du dessus) et où le pion choisi peut aller (un disque à la
- * place qu'il prendrait). C'est le retour visuel du coup joué au plateau —
- * quiz (#294) et transcription (T2.3) — et il ne dit rien d'autre que ce que
- * `quizPlaySourcesStore` et `quizPlayTargetsStore` contiennent.
- *
- * Dessiné APRÈS les pions et avant les flèches : un anneau sous une pile ne se
- * verrait pas, et le point choisi doit rester lisible.
+ * Les points qu'offre le coup en cours (quiz, transcription) : un anneau autour du pion d'où un
+ * pas peut partir, un disque là où le pion choisi irait — rien d'autre que `quizPlaySourcesStore`
+ * et `quizPlayTargetsStore`. Dessiné après les pions (sinon invisible) et avant les flèches.
  *
  * @param {any} two
  * @param {any} geom
@@ -494,9 +466,8 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
 }
 
 /**
- * Everything that depends on the position. `opts`: offeredCube (draw the
- * cube as offered, take/pass), showPipcount, moves (arrows), play (les points
- * offerts par le coup en cours). Returns the cube's box for hit-testing.
+ * Everything that depends on the position. `opts`: offeredCube, showPipcount, moves (arrows),
+ * play (highlights of the move in progress). Returns the cube's box for hit-testing.
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     const box = drawDoublingCube(two, geom, cfg, position, !!opts.offeredCube);

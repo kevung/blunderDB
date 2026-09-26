@@ -1,23 +1,15 @@
-// Package trash is the undo of a delete (issue #285, ADR-0036).
+// Package trash is the undo of a delete (ADR-0036).
 //
-// A delete is still a delete. What changes is that a JSON snapshot of what is
-// about to disappear is written first, so the gesture can be undone for thirty
-// days. Nothing else in the schema knows the trash exists — no search filter,
-// no statistic, no retention predicate, no uniqueness index — which is exactly
-// why this could be added without auditing all of them.
+// A delete is still a delete, preceded by a JSON snapshot of what disappears,
+// restorable for thirty days. Nothing else in the schema knows the trash exists
+// (no search filter, statistic, retention predicate or uniqueness index).
 //
-// Restoring is deliberately NOT symmetric with deleting. Putting a position
-// back means re-Saving it, so the Zobrist deduplication decides where it
-// lands: onto the row that already holds the position if one came back
-// meanwhile, onto a new row otherwise. It never creates a duplicate, which is
-// the invariant doing its job — but it does not preserve the row id, since the
-// old row is gone and AUTOINCREMENT does not reuse it. A restored position is
-// the same position, at a new number.
+// Restoring is NOT symmetric with deleting: a position is re-Saved, so Zobrist
+// deduplication decides where it lands — never a duplicate, never its old id
+// (AUTOINCREMENT does not reuse it).
 //
 // Everything here is written against storage.Stores, so the desktop wrapper,
-// the CLI and the daemon share one implementation rather than three. The trash
-// is entirely made of Storage calls — unlike the analysis sweeps next door,
-// whose GATHERING genuinely differs by mode.
+// the CLI and the daemon share one implementation.
 package trash
 
 import (
@@ -125,10 +117,8 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 	return id, nil
 }
 
-// findComment locates one comment entry by id. CommentStore has no by-id read
-// — nothing needed one until a snapshot did — so this walks the database-wide
-// listing, which is bounded by the number of comments and only ever runs on an
-// explicit delete.
+// findComment locates one comment entry by id. CommentStore has no by-id read,
+// so this walks the database-wide listing; it only runs on an explicit delete.
 func findComment(ctx context.Context, s storage.Stores, scope string, commentID int64) (*domain.CommentEntry, error) {
 	for c, err := range s.Comments().ListAll(ctx, scope, storage.ListOpts{}) {
 		if err != nil {
@@ -171,12 +161,8 @@ func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64)
 
 // restorePosition re-Saves the position, then puts back what cascaded off it.
 //
-// Save deduplicates by Zobrist hash, so the position lands on whatever row
-// already holds it and on a new one otherwise — never on a duplicate, and
-// never on the id it had. The analysis is written only when the target carries none: a
-// restore must not overwrite an analysis somebody has since produced for the
-// same position (ADR-0013's spirit — a stored analysis is never overwritten by
-// something that is not asking to correct it).
+// The analysis is written only when the target carries none: a restore must
+// not overwrite an analysis produced since (ADR-0013).
 func restorePosition(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (int64, error) {
 	var payload domain.TrashPositionPayload
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {

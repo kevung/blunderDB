@@ -1,23 +1,15 @@
 /**
- * helpers/directionEngine.js — une Direction ouverte, pour les specs de budget (D3.5, #390).
+ * Une Direction ouverte, pour les specs de budget de gestes.
  *
- * ## Ce que ce faux moteur fait, et ce qu'il refuse de faire
+ * Nicomaque décide des appariements, des arbres et du classement ; les tests Go du paquet
+ * `database` tiennent déjà ce qu'il produit, décision par décision. Le réécrire ici en
+ * JavaScript en ferait une seconde version qui dériverait, donc ce mock ne le fait pas : il
+ * tient seulement ce QU'UN GESTE DOIT FAIRE BOUGER À L'ÉCRAN (confirmer sort une proposition de
+ * la file et met un match sur une table, saisir un résultat libère la table, inscrire un joueur
+ * l'ajoute à la liste) — aucun appariement n'est calculé, les propositions sont posées d'avance.
  *
- * Nicomaque décide des appariements, des arbres et du classement. Le réécrire en JavaScript en
- * ferait une seconde version qui dériverait, et les tests Go du paquet `database` tiennent déjà
- * ce qu'il produit, décision par décision.
- *
- * Ce mock ne le réécrit donc pas. Il tient exactement ce QU'UN GESTE DOIT FAIRE BOUGER À
- * L'ÉCRAN, sans quoi un budget de clics ne voudrait rien dire : confirmer une proposition la
- * sort de la file et met un match sur une table, saisir un résultat libère la table et devient
- * la dernière décision, inscrire un joueur l'ajoute à la liste. Rien d'autre. Aucun appariement
- * n'est calculé ici : les propositions sont posées d'avance, et c'est le nombre de clics pour
- * les confirmer qui est mesuré.
- *
- * ## Pourquoi pas des constantes
- *
- * `installWailsMock` sert des constantes par méthode. Un budget se compte sur un enchaînement —
- * cliquer, voir le résultat, cliquer encore — et une constante rendrait la même file après
+ * Pas de constantes (contrairement à `installWailsMock`) : un budget compte un enchaînement
+ * (cliquer, voir le résultat, cliquer encore), et une constante rendrait la même file après
  * comme avant, si bien qu'un flux à cinq clics passerait pour un flux à un clic.
  */
 
@@ -30,10 +22,9 @@ export const ENTRANTS = [
 ];
 
 /**
- * Une salle pleine, l'état S2 samedi 14 h de la simulation (#440,
- * tasks/nicomaque/simulation-2026-09/rapport/S2.md) : 76 inscrits, 14 tables toutes occupées,
- * et les 48 joueurs restants en 24 propositions. C'est la hauteur de la file qui poussait la
- * grille sous la ligne de flottaison ; quatre joueurs sur quatre tables ne le montrent jamais.
+ * Une salle pleine : 76 inscrits, 14 tables toutes occupées, 48 joueurs restants en 24
+ * propositions. C'est la hauteur de la file qui poussait la grille sous la ligne de
+ * flottaison ; quatre joueurs sur quatre tables ne le montrent jamais.
  *
  * @param {number} n
  */
@@ -44,10 +35,7 @@ export function crowd(n) {
 /** Les options de l'état S2 : `installDirectionEngine(page, S2_HALL)`. */
 export const S2_HALL = { entrants: crowd(76), tables: 14, running: 14 };
 
-/**
- * L'état S4 du vendredi (#451, rapport/S4.md O6) : 25 inscrits, rondes 1 et 2 jouées, la
- * ronde 3 proposée et rien en cours.
- */
+/** L'état S4 du vendredi : 25 inscrits, rondes 1 et 2 jouées, la ronde 3 proposée et rien en cours. */
 export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2 };
 
 /**
@@ -82,7 +70,7 @@ export async function installDirectionEngine(page, opts = {}) {
             /** Les résultats saisis, dans l'ordre : ce que l'Historique relit et que le classement compte. */
             const results = [];
             let events = directed ? 1 : 0;
-            /** Clos ou non (#441) : ce que « Clore » et « Rouvrir » font bouger à l'écran. */
+            /** Clos ou non : ce que « Clore » et « Rouvrir » font bouger à l'écran. */
             let finished = false;
             let seq = 0;
 
@@ -166,7 +154,7 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.GetDirection = () => Promise.resolve(exists ? view() : null);
             // La configuration enregistrée est gardée, et l'aperçu nomme ce qui sépare la
-            // candidate de celle en vigueur — pour les tables hors service seulement (#438) : le
+            // candidate de celle en vigueur — pour les tables hors service seulement : le
             // reste de la comparaison est tenu en Go.
             db.SetDirectionConfig = (_id, blob) => {
                 CONFIG = JSON.parse(blob || '{}');
@@ -177,17 +165,17 @@ export async function installDirectionEngine(page, opts = {}) {
                 const next = JSON.parse(blob || '{}');
                 const list = (c) => (c?.tables?.unavailable || []).join(', ');
                 const changes = list(CONFIG) === list(next) ? [] : [{ code: 'tablesUnavailable', phase: 0, from: list(CONFIG), to: list(next) }];
-                // La consolante d'une phase (#455), comparée comme le fait diffConfig en Go.
+                // La consolante d'une phase, comparée comme le fait diffConfig en Go.
                 (next.phases || []).forEach((ph, i) => {
                     const was = !!CONFIG.phases?.[i]?.consolation;
                     if (was !== !!ph.consolation) changes.push({ code: 'consolation', phase: i + 1, from: String(was), to: String(!!ph.consolation) });
                 });
-                // Les verrous posés par l'état (#455) : une phase dont le tirage est fait.
+                // Les verrous posés par l'état : une phase dont le tirage est fait.
                 return Promise.resolve({ changes, refusals: [], locks: lockedPhases, opened: 0, current: -1, started: false });
             };
             db.SetDirectionStrings = () => Promise.resolve(null);
             db.WriteDirectionPage = () => Promise.resolve('');
-            // Les rondes déjà lancées (#451) : l'état S4 en a deux, sans aucun match en cours.
+            // Les rondes déjà lancées : l'état S4 en a deux, sans aucun match en cours.
             db.DirectionRounds = () => Promise.resolve(roundsAtStart || (running.length ? 1 : 0));
             // La feuille d'une ronde annoncée : rien n'est lancé, rien n'est écrit au journal ;
             // le spec relit ce qui a été demandé dans window.__announcedSheets.
@@ -293,7 +281,7 @@ export async function installDirectionEngine(page, opts = {}) {
                 return Promise.resolve(view());
             };
             // Corriger vise UN match, pas forcément le dernier : c'est tout le sens de corriger
-            // depuis l'Historique (#436).
+            // depuis l'Historique.
             db.CorrectResult = (_id, matchId, winner) => {
                 const r = results.find((x) => x.matchId === matchId);
                 if (r) {
@@ -352,7 +340,7 @@ export async function installDirectionEngine(page, opts = {}) {
                     .map((p, i) => ({ id: p.id, name: p.name, club: p.club, rank: i + 1, shared: false, note: { kind: 'record', wins: p.w, losses: 0 } }));
                 return Promise.resolve({ finished, pool: 0, retained: 0, payable: 0, entrants: players.length, sections: results.length ? [{ name: '', rows }] : [] });
             };
-            // Le CSV du classement (#454) : le texte que « Copier » et « Enregistrer… » reçoivent
+            // Le CSV du classement : le texte que « Copier » et « Enregistrer… » reçoivent
             // tous deux. Un texte qui dépend des résultats, pour qu'une copie périmée se voie.
             db.StandingsCSV = () => Promise.resolve('Phase;Rang;id;Joueur\r\n' + results.map((r, i) => `;${i + 1};${r.winner};${nameOf(r.winner)}\r\n`).join(''));
             // Le dialogue natif d'enregistrement : il rend le chemin choisi, et le spec relit ce
@@ -403,7 +391,7 @@ export async function installDirectionEngine(page, opts = {}) {
             };
             db.GetTournamentMatches = () => Promise.resolve([]);
 
-            // L'annuaire (#391). Un tournoi précédent, déjà dirigé, dont on reprend les
+            // L'annuaire. Un tournoi précédent, déjà dirigé, dont on reprend les
             // inscrits : c'est le geste que le budget mesure.
             const PREVIOUS_ID = 99;
             db.DirectorySources = () => Promise.resolve([{ tournamentId: PREVIOUS_ID, name: 'Open de Lyon, mars', date: '2026-03-14', entrants: entrants.length }]);
@@ -412,7 +400,7 @@ export async function installDirectionEngine(page, opts = {}) {
             db.DirectoryCSV = () => Promise.resolve('name,club,rating\n' + entrants.map((p) => `${p.name},${p.club},${p.rating}\n`).join(''));
             db.ParseDirectoryCSV = () => Promise.resolve({ rows: [], errors: [], skipped: [] });
 
-            // Une place d'exemption libre (#392). Le faux moteur ne tire aucun tableau : il
+            // Une place d'exemption libre. Le faux moteur ne tire aucun tableau : il
             // fournit la FORME que l'interface doit savoir montrer — où le retardataire entre —
             // et c'est ce que le budget mesure.
             let slots = [{ phase: 0, section: 'main', key: 'm-1-2', label: { kind: 'bracket_round', n: 1 } }];

@@ -94,8 +94,7 @@ func (cli *CLI) runVerify(args []string) error {
 	}
 
 	// Referential integrity: child rows whose parent is gone. The schema
-	// cascades every one of these deletes, so a healthy database has none;
-	// databases written before issue #157 was fixed may carry some.
+	// cascades every one of these deletes, so a healthy database has none.
 	orphans, err := cli.db.CountOrphans()
 	if err != nil {
 		return fmt.Errorf("failed to count orphaned rows: %w", err)

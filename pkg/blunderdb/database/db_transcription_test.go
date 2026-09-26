@@ -15,11 +15,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// The engine's own rules are tested in pkg/blunderdb/transcript. What is
-// tested here is the plumbing this file is: that a draft survives the round
-// trip through the row, that the Action being typed survives between two
-// gestures (the reason a session is held at all), and that closing a draft
-// deletes it.
+// The engine's rules are tested in pkg/blunderdb/transcript; this tests the
+// plumbing: row round trip, the Entry surviving between gestures, close.
 
 func TestCreateTranscription_ListsAndDefaults(t *testing.T) {
 	db := newTestDB(t)
@@ -155,12 +152,8 @@ func TestCloseTranscription_DeletesTheDraft(t *testing.T) {
 	}
 }
 
-// ── durability (T1.8, fonctionnel.md §3, ADR-0045 rule 1) ────────────
-//
-// What these hold is the promise the transcription table exists for: a match
-// typed in for an hour survives the application being killed, at the cost of
-// exactly the two things a crash is allowed to take — the dice half typed and
-// the undo stack.
+// Durability (ADR-0045 rule 1): a killed application loses only the dice half
+// typed and the undo stack.
 
 // applyGesture applies one gesture to a draft and fails the test if it is
 // refused: a scenario that carried on after a refused gesture would check a
@@ -207,14 +200,9 @@ func readTranscriptionRow(t *testing.T, db *Database, id int64) *storage.Transcr
 	return row
 }
 
-// A draft is on disk after every Action, so an application killed mid-typing
-// loses the dice being entered and nothing else (flux 21).
-//
-// The crash is simulated the way a power cut leaves a library: the files are
-// copied as they stand — the database and its write-ahead log, never the
-// volatile -shm, which SQLite rebuilds — while the original handle is still
-// open and has never been closed, checkpointed or optimised. Whatever the
-// copy answers, no clean shutdown put it there.
+// A draft is on disk after every Action. The crash is simulated by copying the
+// database and its WAL (never the -shm, which SQLite rebuilds) while the
+// original handle is still open, unclosed and uncheckpointed.
 func TestTranscription_SurvivesAnAbruptStop(t *testing.T) {
 	dir := tempDir(t)
 	live := NewDatabase()
@@ -458,12 +446,8 @@ func TestCreateTranscription_MoneyRulesAreKept(t *testing.T) {
 	}
 }
 
-// TestTranscriptionMAT_IsTheExportRenderer: the panel's ".mat text" pane is a
-// view OF THE EXPORT, not a second opinion about it. What is checked here is
-// therefore the join and nothing else — the open draft goes through
-// transcript.MatchParts and ingest.RenderMAT, so the pane shows the two
-// columns of a score sheet with the header the file will carry, and no row is
-// written on the way.
+// TestTranscriptionMAT_IsTheExportRenderer: the ".mat text" pane is a view OF
+// THE EXPORT (transcript.MatchParts + ingest.RenderMAT), and writes no row.
 func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
 	db := newTestDB(t)
 
@@ -495,11 +479,9 @@ func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
 	}
 }
 
-// Undo and redo are the two gestures that do not go through transcript.Apply:
-// the stack is state and it lives in the session's Editor. What this file owes
-// them is the plumbing — that they reach the stack, that they report both of
-// its sides, and that taking a gesture back leaves the ROW without it, since a
-// crash must not resurrect what the user undid (fonctionnel.md §3).
+// Undo and redo bypass transcript.Apply (the stack lives in the Editor). They
+// must reach the stack, report both sides, and leave the ROW without the
+// undone gesture, so a crash cannot resurrect it.
 func TestApplyTranscriptionGesture_UndoAndRedo(t *testing.T) {
 	db := newTestDB(t)
 
@@ -600,10 +582,8 @@ func TestApplyTranscriptionGesture_CursorLandsOnTheInconsistency(t *testing.T) {
 	}
 }
 
-// Reopening a draft puts the Cursor at the end, Inconsistencies or not: a
-// resumption continues after the last written Action (fonctionnel.md §3), and
-// an Inconsistency the user read and chose to keep must not drag them back to
-// it at every open.
+// Reopening a draft puts the Cursor at the end, Inconsistencies or not: a kept
+// Inconsistency must not drag the user back at every open.
 func TestOpenTranscription_DoesNotJumpToAnInconsistency(t *testing.T) {
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -633,11 +613,9 @@ func TestOpenTranscription_DoesNotJumpToAnInconsistency(t *testing.T) {
 	}
 }
 
-// TestCreateTranscription_DatesAndCreditsTheDraft holds the two defaults of
-// T3.1 that only the library can state: today's date, and the transcriber —
-// the library's own `user` metadata, which is who is sitting in front of the
-// board. Both are DEFAULTS: the metadata pane overwrites them, and overwriting
-// the transcriber must not touch the library's setting.
+// TestCreateTranscription_DatesAndCreditsTheDraft: today's date and the
+// library's `user` are DEFAULTS; overwriting the transcriber must not touch
+// the library's setting.
 func TestCreateTranscription_DatesAndCreditsTheDraft(t *testing.T) {
 	db := newTestDB(t)
 	if err := db.SaveMetadata(map[string]string{"user": "  Kévin Unger  "}); err != nil {
@@ -683,10 +661,8 @@ func TestCreateTranscription_DatesAndCreditsTheDraft(t *testing.T) {
 	}
 }
 
-// TestSaveTranscription_AttachesTheTournament is T3.1's "rattachement au
-// moment de l'enregistrement": the tournament named in the draft's header is
-// the tournament the Match belongs to once it is written, and clearing it
-// detaches the Match at the next save.
+// TestSaveTranscription_AttachesTheTournament: the header's tournament is the
+// Match's once saved, and clearing it detaches the Match at the next save.
 func TestSaveTranscription_AttachesTheTournament(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))

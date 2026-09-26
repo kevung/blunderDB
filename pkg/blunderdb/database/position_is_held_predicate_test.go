@@ -10,20 +10,11 @@ import (
 	"testing"
 )
 
-// Moved from the legacy tests/position_is_held_predicate_test.go (root
-// "tests" package, invisible to coverage since it built no code — see
-// CLAUDE.md "Invariants" and the project note on the three-copy retention
-// predicate).
-//
-// positionIsHeldSQL is stated three times on purpose (CLAUDE.md "Invariants"):
-// storage/sqlite/matches_sqlite.go, storage/postgres/matches_postgres.go and
-// database/db_match.go (the copy the GUI and CLI actually run). None of the
-// three exports the constant, and this package cannot import all three
-// anyway without pulling in unrelated backend wiring, so this test reads the
-// constant's raw SQL text straight out of the source files instead — the same
-// "read from the repo root" trick database/cli tests use via their TestMain
-// chdir (see pkg/blunderdb/database/main_test.go), just computed per-call
-// instead of via a package-wide chdir.
+// positionIsHeldSQL is stated three times on purpose (CLAUDE.md
+// "Invariants"): storage/sqlite/matches_sqlite.go,
+// storage/postgres/matches_postgres.go and database/db_match.go (the copy the
+// GUI and CLI run). None exports it, so this test reads the raw SQL out of the
+// source files.
 
 // positionIsHeldSourceFiles maps a short label to the file holding one copy
 // of the predicate, relative to the repository root.
@@ -76,14 +67,8 @@ var sqlKeywords = map[string]bool{
 
 // tenantScopingIdentifiers are excluded too: PostgreSQL is multi-tenant (every
 // table the predicate touches carries tenant_id) while SQLite is not (one
-// implicit tenant per file, no such column exists at all) — see
-// storage.go's "Design notes". The Postgres copy's four EXISTS clauses filter
-// on `tenant_id = position.tenant_id` for consistency with the rest of that
-// file (position_id is a globally unique key, so this is not a correctness
-// requirement); that is infrastructure a single-tenant backend has nothing to
-// mirror, not a change to what counts as "held". Excluding it here keeps the
-// test doing its real job: catching a *held-by* clause silently gained or
-// lost, not this expected, deliberate per-backend asymmetry.
+// implicit tenant per file). The Postgres copy's tenant_id filters are
+// infrastructure, not a change to what counts as "held".
 var tenantScopingIdentifiers = map[string]bool{
 	"tenant_id": true,
 }
@@ -94,9 +79,8 @@ var identifierPattern = regexp.MustCompile(`[A-Za-z_][A-Za-z0-9_]*`)
 // it references, dropping keywords, numeric literals (so `= 1` vs a bare
 // boolean column doesn't matter) and placeholders (`?1`, `$1` start with a
 // non-letter and are never matched by identifierPattern in the first place).
-// This is deliberately coarse per the fiche's guard-rail: it must not trip on
-// legitimate per-dialect spelling differences, only on a clause — a whole
-// table or column — being added or removed.
+// Deliberately coarse: it must not trip on per-dialect spelling, only on a
+// whole table or column being added or removed.
 func identifiersIn(sql string) map[string]bool {
 	set := map[string]bool{}
 	for _, tok := range identifierPattern.FindAllString(sql, -1) {
@@ -120,13 +104,10 @@ func sortedKeys(set map[string]bool) []string {
 }
 
 // TestPositionIsHeldPredicateParity guards the CLAUDE.md invariant that the
-// retention predicate is stated identically in its three deliberate copies.
-// A position is held by: another match's move, a collection, an Anki card,
-// individually_imported, or flagged (ADR-0006) — see the doc comment on any
-// of the three positionIsHeldSQL constants. Nothing but this test enforces
-// that the three lists of tables/columns stay in lockstep; the three cannot
-// be a single shared Go constant (different SQL dialects: `?1` vs `$1`,
-// `= 1` vs a bare boolean, plus different execer types).
+// retention predicate is stated identically in its three deliberate copies
+// (what holds a position: see the doc comment on positionIsHeldSQL). They
+// cannot share one Go constant across SQL dialects, and nothing but this test
+// keeps them in lockstep.
 //
 // The comparison is over the *set* of tables and columns each copy
 // references, not the SQL text, so placeholder syntax and boolean spelling

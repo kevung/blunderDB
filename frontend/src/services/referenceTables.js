@@ -1,17 +1,11 @@
 /**
  * Les tables de référence du score — points de prise et valeurs du gammon —
- * décrites UNE fois, avec leur géométrie.
+ * décrites une fois avec leur géométrie, pour l'affichage, l'exercice Scores
+ * (ADR-0040 règle 4) et les cartes Anki (ADR-0042). Le décalage (tp4 commence
+ * à 3 away, gv4 à 5) est un fait de la table : il décide des cases d'une fiche.
  *
- * Elles étaient jusqu'ici de simples tableaux que `modalTables.js` habillait
- * de ses décalages au moment de les afficher. L'exercice Scores les lit aussi
- * (ADR-0040 règle 4), et la carte Anki les lira demain (ADR-0042) : une copie,
- * plusieurs lecteurs. Le décalage n'est donc plus un détail d'affichage, c'est
- * un fait de la table — tp4 commence à 3 away, gv2 à 3, gv4 à 5 — et c'est ce
- * fait qui décide quelles cases une fiche de score porte.
- *
- * Convention de lecture, commune aux sept tables : la LIGNE est l'away du
- * joueur dont on parle (celui qui prend, celui qui gagne le gammon), la
- * COLONNE l'away de son adversaire.
+ * Convention des sept tables : la LIGNE est l'away du joueur dont on parle
+ * (celui qui prend, qui gagne le gammon), la COLONNE celui de l'adversaire.
  */
 import { takePoint2LastTable } from '../stores/takePoint2LastTable';
 import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
@@ -42,10 +36,8 @@ export const REFERENCE_TABLES = Object.freeze({
 });
 
 /**
- * La valeur d'une table pour un couple d'away, ou `null` quand la table ne la
- * définit pas. `null` et non 0 : « gv4 n'a pas d'objet à 3 away » n'est pas
- * « gv4 vaut zéro à 3 away », et c'est cette distinction qui fait qu'une fiche
- * de score n'a pas toujours ses quatorze cases.
+ * La valeur d'une table pour un couple d'away, ou `null` hors de sa définition
+ * — pas 0 : « sans objet » n'est pas « vaut zéro ».
  *
  * @param {string} id une clé de REFERENCE_TABLES
  * @param {number} rowAway l'away du joueur dont on parle

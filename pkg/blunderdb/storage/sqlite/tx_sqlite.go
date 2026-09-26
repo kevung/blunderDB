@@ -35,13 +35,11 @@ func (t *txImpl) Rollback() error {
 }
 
 // WrapTx exposes the store families over a transaction the caller has already
-// opened on the handle. It exists for the legacy Database wrapper's few
-// remaining hand-written transactional paths (the native .db importer), so
-// they can write positions through PositionStore.Save — the one place the
-// Zobrist hash and the scalar search columns are computed — instead of
-// re-implementing the insert with a raw INSERT that leaves those columns
-// NULL. Commit and Rollback act on tx itself; a caller that keeps driving tx
-// directly should simply ignore them.
+// opened on the handle, so the Database wrapper's hand-written transactional
+// paths (the native .db importer) write positions through PositionStore.Save,
+// the one place the Zobrist hash and scalar search columns are computed.
+// Commit and Rollback act on tx itself; a caller driving tx directly ignores
+// them.
 func WrapTx(tx *sql.Tx) storage.Tx {
 	return &txImpl{binder: binder{db: tx}, tx: tx}
 }

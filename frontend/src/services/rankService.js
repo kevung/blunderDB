@@ -5,12 +5,8 @@ import { loadPositionsByFilters } from './positionService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { tMsg } from '../i18n';
 
-// « Positions voisines » (ADR-0043), le geste plutôt que le jeton.
-//
-// Le menu contextuel du plateau et le raccourci clavier lancent exactement la
-// requête que l'utilisateur aurait tapée — `s like<id>` — et pas une seconde
-// façon de classer : le classement a un seul chemin, et c'est la grammaire.
-// Ce qui change ici est seulement d'où part le geste.
+// « Positions voisines » (ADR-0043) : menu contextuel et raccourci lancent
+// exactement `s like<id>`, le seul chemin du classement.
 
 /** Classe les voisines de la position courante. */
 export async function rankNeighboursOfCurrentPosition() {

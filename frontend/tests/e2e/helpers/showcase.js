@@ -291,11 +291,10 @@ export function showcaseMock() {
         // que la table n'arrive, déborde dessous.
         config: { GetLanguage: 'en', GetPanelPosition: 'bottom', GetPanelHeight: 280, GetPanelWidth: 520 },
         database: {
-            // Pagination (0.35.0): the library loads by id window
-            // (ListPositionIDs + LoadPositionsByIDs), LoadAllPositions is
-            // dead code on the frontend — overriding it alone left the
-            // status bar showing the fixtures' 3-position default instead
-            // of the 30-position showcase library.
+            // The library loads by id window (ListPositionIDs +
+            // LoadPositionsByIDs); LoadAllPositions is dead code on the
+            // frontend, so overriding it alone would not show the 30-position
+            // showcase library.
             ...libraryMockAfter(showcaseLibrary),
             GetAllMatches: [showcaseMatch],
             GetMatchByID: showcaseMatch,

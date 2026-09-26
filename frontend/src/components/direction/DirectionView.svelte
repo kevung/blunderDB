@@ -1,14 +1,7 @@
 <script>
     /*
-     * La vue tournoi : ce que la zone principale affiche à la place du plateau quand une
-     * Direction est ouverte (ADR-0047, tasks/nicomaque/ux.md §2).
-     *
-     * C'est la première fois de l'application que la zone principale montre autre chose que le
-     * plateau, et cela n'arrive QUE là : tout autre onglet ramène le plateau sans rien fermer.
-     *
-     * Sept onglets, tous rendus : la page Direction (file, grille, dernière décision), Joueurs,
-     * Arbres, Emplacements, Classement, Historique et Réglages. Il n'y a plus d'onglet « à
-     * venir », ni de branche pour en afficher un (#443).
+     * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047,
+     * tasks/nicomaque/ux.md §2) ; tout autre onglet ramène le plateau sans rien fermer.
      */
     import { t } from '../../i18n';
     import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
@@ -103,18 +96,13 @@
     /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
 
     const view = $derived($directionStore);
-    // Pas `state` : svelte-check lirait alors chaque rune `$state` de ce fichier comme un abonnement
-    // au store `state` — le piège qui avait fait planter DirectionSettings (#390).
+    // Pas `state` : chaque rune `$state` se lirait comme un abonnement au store `state`.
     const directionState = $derived(view?.state || 'draft');
 
-    /* En préparation la vue s'ouvre sur les Réglages, puisque c'est le seul geste possible ;
-       en cours elle s'ouvrira sur la page Direction, où le directeur passe 95 % de son temps.
-       Le choix ne vaut QUE pour l'ouverture : les Réglages restent accessibles en cours de
-       tournoi — c'est là qu'on baisse la bascule à 22 h (#385) — et un onglet qui se dérobe
-       sous le curseur serait pire que pas d'onglet du tout. */
-    /* La page prend le clavier en s'ouvrant (#415, services/directionKeys.js) : on l'ouvre d'un
-       clic sur un bouton du panneau Tournois, et le focus y resterait — J / K iraient alors au
-       panneau au lieu de la file. Jamais au détriment d'un champ où l'on tape. */
+    /* Onglet d'ouverture : Réglages en préparation, Direction en cours. Seulement à
+       l'ouverture : les Réglages restent accessibles en cours de tournoi. */
+    /* Prend le clavier à l'ouverture (services/directionKeys.js), sinon J / K iraient au
+       panneau Tournois ; jamais au détriment d'un champ. */
     let root = $state(/** @type {HTMLElement | null} */ (null));
     $effect(() => {
         if (root) focusPanelUnlessTyping(root);
@@ -130,8 +118,7 @@
 
     let config = $state(/** @type {DirectionConfig | null} */ (null));
     $effect(() => {
-        // La configuration éditée est une copie : tant qu'elle n'est pas enregistrée, elle ne
-        // doit pas se confondre avec ce que la base contient.
+        // Copie éditée, distincte de la base tant qu'elle n'est pas enregistrée.
         const c = view?.config;
         config = c ? JSON.parse(JSON.stringify(c)) : null;
     });
@@ -149,7 +136,6 @@
     /** @param {DirectionConfig} next */
     async function apply(next) {
         try {
-            // La vue n'est montée que lorsqu'une Direction est ouverte : l'identifiant est là.
             await saveDirectionConfig(/** @type {number} */ ($openDirectionIdStore), next);
             statusBarTextStore.set(tMsg('direction.settings.saved'));
         } catch (e) {
@@ -177,16 +163,14 @@
     let dirSources = $state(/** @type {DirectorySource[]} */ ([]));
     let openSlots = $state(/** @type {FreeSlot[]} */ ([]));
     let sheetRound = $state(0);
-    /* La feuille d'une ronde à venir (#451) : les appariements de la file, datés par le
+    /* La feuille d'une ronde à venir : les appariements de la file, datés par le
        directeur, imprimés sans rien lancer. */
     let announcing = $state(false);
     let announced = $state('');
     const upcoming = $derived((view?.proposals || []).filter((a) => a.kind === 'start_match').length);
 
-    /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
-       stockée. C'est la même règle que pour le classement et les arbres. */
+    /* La file est dérivée, jamais stockée (comme le classement et les arbres). */
     $effect(() => {
-        // La dépendance explicite : la file se recalcule dès qu'un événement est écrit.
         void view?.eventCount;
         freeParticipants().then((p) => (free = p));
         tableGrid().then((c) => (cells = c));
@@ -198,22 +182,19 @@
         clock().then((c) => (clockView = c));
         slots().then((r) => (slotRows = r));
         unattachedMatches().then((u) => (unattached = u));
-        // Les verrous de configuration : quels formats de phase ne changent plus, et pourquoi.
-        // Ils se lisent sur la configuration EN VIGUEUR, pas sur la copie en cours d'édition.
+        // Verrous de format, lus sur la configuration en vigueur, pas sur la copie.
         const saved = view?.config;
         if (saved) previewDirectionConfig(saved).then((p) => (configPreview = p));
-        // L'affichage de la salle est réécrit à chaque événement, sans aucun geste (#386).
-        // L'appel ne fait rien tant qu'aucun dossier n'a été choisi, et un échec d'écriture
-        // n'interrompt jamais la direction du tournoi.
+        // Affichage de salle réécrit à chaque événement ; sans dossier, rien ; un échec
+        // n'interrompt jamais la direction.
         writeDirectionPage().then((path) => {
             if (path === null) statusBarTextStore.set(tMsg('direction.display.error'));
         });
         directionRounds().then((n) => (rounds = n));
-        // L'annuaire est DÉRIVÉ de toutes les Directions de la base : il change dès qu'un
-        // inscrit entre quelque part, y compris ici.
+        // L'annuaire dérive de toutes les Directions de la base, celle-ci comprise.
         directory().then((e) => (dirEntries = e));
         directorySources().then((s) => (dirSources = s));
-        // Les places d'exemption encore libres : ce qu'on propose à un retardataire (#392).
+        // Les places d'exemption encore libres : ce qu'on propose à un retardataire.
         freeSlots().then((s) => (openSlots = s));
     });
 
@@ -222,9 +203,7 @@
         entrySuggestions().then((s) => (suggestions = s));
     });
 
-    /* Le temps écoulé d'un match avance sans qu'aucun événement ne soit écrit : la grille et
-       l'horloge se rafraîchissent donc à la minute, sans quoi une table qui traîne resterait
-       invisible. */
+    /* Rafraîchi à la minute : le temps écoulé avance sans événement. */
     $effect(() => {
         const timer = setInterval(() => {
             tableGrid().then((c) => (cells = c));
@@ -271,18 +250,14 @@
     const onReinstate = (i) => act(() => reinstateParticipant(i), 'direction.players.error');
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
-    /* Rouvrir est un geste explicite : le classement final cesse d'être final, et le journal
-       en gardera la trace. La confirmation est sur place, dans le Classement (#441). */
+    /* Rouvrir est explicite (le classement cesse d'être final), confirmé dans le Classement. */
     const onReopen = () => act(() => reopenTournament(), 'direction.standings.error');
     const onNote = (/** @type {string} */ text) => act(() => addNote(text), 'direction.history.error');
 
-    /* L'affichage de la salle : un dossier choisi une fois, puis plus rien à faire. La page
-       s'ouvre dans le navigateur du poste, hors ligne — c'est la seule chose sur laquelle on
-       puisse compter un dimanche matin. */
+    /* Affichage de salle : un dossier choisi une fois ; page hors ligne dans le navigateur. */
     const onChooseOutput = () => act(() => chooseDirectionOutputDir(), 'direction.display.error');
     const onForgetOutput = () => act(() => forgetDirectionOutputDir(), 'direction.display.error');
-    /* La feuille d'appariements : un clic, et le dialogue d'impression du système s'ouvre. Ce
-       que le directeur voulait, c'est le papier, pas un onglet. */
+    /* Feuille d'appariements : un clic ouvre le dialogue d'impression. */
     async function onPrintSheet() {
         const path = await writePairingSheet(sheetRound);
         if (!path) {
@@ -301,8 +276,7 @@
         BrowserOpenURL('file://' + path);
     }
 
-    /* L'annuaire : reprendre les inscrits d'un tournoi précédent est UN clic, et c'est tout le
-       sujet — retaper trente noms tous les mois est le premier abandon possible du logiciel. */
+    /* L'annuaire : reprendre les inscrits d'un tournoi précédent en un clic. */
     const onTakeEntrants = (/** @type {number} */ sourceId) => act(() => takeEntrantsFrom(sourceId), 'direction.directory.failed');
     const onImportEntrants = (/** @type {EntrantInput[]} */ rows) => act(() => enterParticipants(rows), 'direction.directory.failed');
     async function onExportDirectory() {
@@ -315,8 +289,7 @@
         }
     }
 
-    /* Enregistrer le CSV dans un fichier (#454) : le même texte que la copie, demandé une fois
-       et passé tel quel au dialogue natif ; annuler le dialogue ne dit rien. */
+    /* CSV vers fichier : le texte de la copie, au dialogue natif ; annuler ne dit rien. */
     /**
      * @param {() => Promise<string>} body
      * @param {string} word
@@ -358,8 +331,7 @@
             unattached = await unattachedMatches();
         }, 'direction.slots.error');
 
-    /* Transcrire depuis un emplacement ouvre l'onglet Transcription : le brouillon se tape
-       devant le plateau, pas dans la vue tournoi. */
+    /* Transcrire ouvre l'onglet Transcription, devant le plateau. */
     /** @param {string} slotId */
     async function onTranscribe(slotId) {
         busy = true;
@@ -380,8 +352,7 @@
         activeTabStore.set('matches');
     }
 
-    /* Copier le CSV au presse-papier : coller dans un tableur est le geste le plus court ;
-       « Enregistrer… » (onSaveStandings) en fait un fichier. */
+    /* CSV au presse-papier ; onSaveStandings en fait un fichier. */
     async function onCSV() {
         try {
             const csv = await standingsCSV();
@@ -393,8 +364,7 @@
         }
     }
 
-    /* Cliquer une place de l'arbre ramène à la page Direction, où le match se saisit : la
-       fiche de résultat vit sur la grille des tables, et il n'y en a qu'une. */
+    /* Une place de l'arbre ramène à la page Direction : la seule fiche de résultat. */
     /** @param {{ matchId?: string }} m */
     function openBracketMatch(m) {
         if (!m.matchId) return;
@@ -505,18 +475,15 @@
         {:else if tab === 'direction'}
             <div class="direction-page">
                 {#if (view?.warnings || []).length}
-                    <!-- Un avertissement est visible EN PERMANENCE et ne bloque rien : il
-                         disparaît quand sa cause disparaît, jamais parce qu'on l'a lu. -->
+                    <!-- Visible tant que dure sa cause, jamais bloquant. -->
                     <ul class="warnings" data-testid="direction-warnings">
                         {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
                             <li>{renderWarning($t, w, playerName)}</li>
                         {/each}
                     </ul>
                 {/if}
-                <!-- La grille AVANT la file (#440) : la file grandit avec les inscrits, la
-                     grille non. À 768 px de haut, dock ouvert, 24 propositions poussaient les
-                     14 tables sous l'écran ; dans cet ordre, les tables, la dernière décision et
-                     « Tout lancer » tiennent sans défiler. -->
+                <!-- La grille avant la file, qui grandit avec les inscrits : les tables
+                     restent à l'écran. -->
                 <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
                     {#snippet actions()}
                         {#if rounds > 0 || upcoming > 0}
@@ -667,9 +634,7 @@
         min-height: 0;
     }
 
-    /* La feuille d'appariements se demande dans l'en-tête de la grille, sans barre à elle :
-       c'est un geste de quelques fois par tournoi, et une ligne de plus au-dessus des tables
-       coûtait 33 px sur les ~390 qu'a la page à 768 px de haut (issue 440). */
+    /* Dans l'en-tête de la grille, sans barre à elle : geste rare, hauteur comptée. */
     .sheet {
         display: flex;
         align-items: center;
@@ -696,8 +661,7 @@
         cursor: pointer;
     }
 
-    /* Les avertissements sont une bande, pas une fenêtre : le directeur doit pouvoir continuer
-       à travailler avec eux sous les yeux. */
+    /* Une bande, pas une fenêtre : on travaille avec. */
     .warnings {
         list-style: none;
         margin: 0;
@@ -725,8 +689,7 @@
         color: var(--color-text-muted);
     }
 
-    /* Le crédit s'ouvre sous l'en-tête, là où le bouton est : il n'interrompt pas le travail
-       en cours et se referme d'un clic. */
+    /* Le crédit s'ouvre sous l'en-tête, sans interrompre. */
     .credit-layer {
         position: absolute;
         top: 2.2rem;

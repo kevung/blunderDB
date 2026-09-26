@@ -311,11 +311,8 @@ func TestExportTournaments(t *testing.T) {
 	}
 }
 
-// TestExportTournaments_RoundTrip_ScalarColumnsAndDedup is fiche-04's core
-// regression for the tournament export path — same defect and same fix as
-// ExportDatabase and ExportCollections: before the fix, ExportTournaments
-// hand-rolled its own two-column position table and never wrote
-// zobrist_hash or any scalar column.
+// TestExportTournaments_RoundTrip_ScalarColumnsAndDedup: the tournament
+// export must write zobrist_hash and the scalar columns, like ExportDatabase.
 func TestExportTournaments_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 	t.Parallel()
 	db := newTestDB(t)
@@ -396,9 +393,8 @@ func TestExportTournaments_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 	}
 }
 
-// TestExportTournaments_MetadataAllowListAndWatermark covers fiche-04's other
-// tournament-export defect: metadata used to be copied by raw inclusion, and
-// no watermark was ever written. See ADR-0007 and issuance.CarriedMetadataKeys.
+// TestExportTournaments_MetadataAllowListAndWatermark: metadata by allow-list,
+// and a watermark written. See ADR-0007 and issuance.CarriedMetadataKeys.
 func TestExportTournaments_MetadataAllowListAndWatermark(t *testing.T) {
 	t.Parallel()
 	db := newTestDB(t)

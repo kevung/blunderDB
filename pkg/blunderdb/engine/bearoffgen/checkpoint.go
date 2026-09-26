@@ -8,12 +8,8 @@ import (
 	"path/filepath"
 )
 
-// Pausing a two-sided run means writing its state down, so that resuming
-// continues the sweep instead of restarting it. The difference is not
-// cosmetic: TS-06-11 is about half an hour of arithmetic on one core, and the
-// domains beyond it are hours. A button labelled "Reprendre" that silently
-// started over would be a lie the user only discovers by watching the
-// percentage.
+// Pausing a two-sided run writes its state down so resuming continues the
+// sweep (TS-06-11 is half an hour on one core, wider domains hours).
 //
 // The state is the table so far plus the diagonal reached — nothing else,
 // since a diagonal reads only diagonals below it. So a checkpoint is the
@@ -21,8 +17,7 @@ import (
 // size the finished file will have.
 //
 // It lives next to the table as `<name>.ckpt`, a name neither Resolve nor
-// Verify will ever mistake for a table. A `.part` remains what it always was:
-// the debris of a run that died, of no use to anyone.
+// Verify will ever mistake for a table; a `.part` is the debris of a dead run.
 
 const (
 	checkpointMagic  = "blunderDB-bearoff-checkpoint-1\n"

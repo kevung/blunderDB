@@ -3,7 +3,7 @@ package database
 import "testing"
 
 // TestSwapMatchPlayersDelegates checks the legacy Desktop path swaps a match's
-// players by delegating to the storage layer (whose SwapPlayers does the #107
+// players by delegating to the storage layer (whose SwapPlayers does the
 // copy-on-write). Importing a real .mat, swapping, and reading back must show
 // the names exchanged with no error.
 func TestSwapMatchPlayersDelegates(t *testing.T) {

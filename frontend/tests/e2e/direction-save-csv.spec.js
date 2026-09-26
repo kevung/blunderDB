@@ -1,12 +1,11 @@
 /**
- * direction-save-csv.spec.js — enregistrer le classement et l'annuaire dans un fichier (#454,
- * D8.1).
+ * direction-save-csv.spec.js — enregistrer le classement et l'annuaire dans un fichier.
  *
- * Le « classement du mardi » de Nadia (S4 O10) ne sortait que par le presse-papier. Il
- * s'enregistre désormais par le dialogue natif, sous un nom proposé, et le fichier est le CSV
- * copié : les deux gestes reçoivent le même texte. Le nom proposé suit la langue de
- * l’interface (anglaise ici, comme dans les autres specs). Le dialogue est remplacé par le faux moteur
- * (helpers/directionEngine.js), qui rend le chemin choisi et garde ce qui a été écrit.
+ * Le classement s'enregistre par le dialogue natif, sous un nom proposé, et le fichier est le
+ * CSV copié : les deux gestes (Copier, Enregistrer…) reçoivent le même texte. Le nom proposé
+ * suit la langue de l'interface (anglaise ici, comme dans les autres specs). Le dialogue est
+ * remplacé par le faux moteur (helpers/directionEngine.js), qui rend le chemin choisi et garde
+ * ce qui a été écrit.
  */
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';

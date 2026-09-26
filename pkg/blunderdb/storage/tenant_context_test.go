@@ -7,9 +7,8 @@ import (
 )
 
 // TestParseTenant pins the one accepted spelling of a tenant: the canonical
-// decimal form of a positive integer, or the empty implicit desktop tenant.
-// Before ADR-0005's 2026-09-03 amendment every rejected value below silently
-// became tenant 0, so "alice", "bob" and "default" shared one set of rows.
+// decimal form of a positive integer, or the empty implicit desktop tenant
+// (ADR-0005): every rejected value below must never become tenant 0.
 func TestParseTenant(t *testing.T) {
 	accepted := map[string]int64{
 		"":                    0,

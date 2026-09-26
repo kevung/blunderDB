@@ -1,18 +1,11 @@
 /*
- * Le rendu des CODES du moteur (ADR-0047, Nicomaque `codes.go`).
- *
- * Le moteur n'émet aucune phrase : un libellé de match, une note de classement, un
- * avertissement ou une raison d'attente sont un code et ses paramètres. C'est ce qui permet à
- * blunderDB de parler neuf langues d'un moteur qui n'en parle aucune, et c'est ici que la
- * traduction se fait — une seule fois, pour toutes les vues.
- *
- * Un code inconnu n'est jamais masqué : il s'affiche tel quel. Une version future du moteur qui
- * ajouterait un libellé se verra donc à l'écran plutôt que de laisser un blanc, et la clé
- * manquante nomme elle-même ce qu'il faut traduire.
+ * Le rendu des codes du moteur (ADR-0047, Nicomaque `codes.go`), qui n'émet aucune phrase :
+ * la traduction se fait ici, une fois pour toutes les vues. Un code inconnu s'affiche tel
+ * quel, pour que la clé manquante se voie.
  */
 
 /**
- * La fonction de traduction : la valeur du store `$t`, ou son équivalent dans un test.
+ * La valeur du store `$t`, ou son équivalent dans un test.
  *
  * @typedef {(key: string, params?: Record<string, unknown>) => any} Translate
  */
@@ -47,8 +40,7 @@ export function renderLabel(t, label) {
 }
 
 /**
- * Rend le nom d'une section. Un nom de section est un IDENTIFIANT côté moteur — « main »,
- * « conso », « poule:A » — jamais un libellé ; c'est ici qu'il devient lisible.
+ * Rend le nom d'une section, un identifiant du moteur (« main », « conso », « poule:A »).
  *
  * @param {Translate} t
  * @param {string | null | undefined} name
@@ -112,9 +104,7 @@ export function renderWarning(t, w, playerName = (id) => id) {
 }
 
 /**
- * Le texte d'une proposition, dans la langue de l'utilisateur : ce que le directeur lit avant
- * de cliquer. Le libellé du moteur (« quart de finale », « 1 défaite, match 3 ») situe le
- * match ; les deux noms disent qui joue.
+ * Le texte d'une proposition : le libellé du moteur situe le match, les deux noms disent qui joue.
  *
  * @param {Translate} t
  * @param {{ kind: string, a?: string, b?: string, label?: DirectionLabel }} a
@@ -139,9 +129,7 @@ export function proposalLabel(t, a, playerName = (id) => id) {
         case 'finish':
             return t('direction.proposals.finish');
         case 'cancel_match':
-            // Une annulation n'est jamais proposée pour elle-même : le moteur ne la propose que
-            // pour réparer un graphe qu'une correction a désaccordé (Nicomaque reparation.go).
-            // Elle se lit donc comme une réparation, avec les deux joueurs qui ont joué là.
+            // Une annulation n'est proposée que pour réparer (Nicomaque reparation.go).
             return t('direction.proposals.repair', {
                 where,
                 a: playerName(a.a),
@@ -153,9 +141,8 @@ export function proposalLabel(t, a, playerName = (id) => id) {
 }
 
 /**
- * Une clé stable pour une proposition, afin que Svelte réutilise la ligne plutôt que de la
- * recréer — et pour que « ignorer pour l'instant » désigne bien la même proposition au
- * prochain appel, puisque le moteur est déterministe.
+ * Clé stable d'une proposition : Svelte réutilise la ligne, et « ignorer pour l'instant »
+ * désigne la même au prochain appel (le moteur est déterministe).
  *
  * @param {ProposalAction} a
  */
@@ -164,9 +151,7 @@ export function actionKey(a) {
 }
 
 /**
- * Rend une VALEUR de configuration : un nombre reste un nombre, un booléen devient oui/non, un
- * type de phase passe par son nom de format. Une valeur vide se dit « aucune », sans quoi la
- * liste des changements comporterait des trous que personne ne sait lire.
+ * Rend une valeur de configuration ; une valeur vide se dit « aucune », jamais un trou.
  *
  * @param {Translate} t
  * @param {string} code
@@ -186,11 +171,7 @@ function renderConfigValue(t, code, value) {
 }
 
 /**
- * Rend une ligne de la liste « voici ce qui va changer » (issue #385).
- *
- * Appliquer une configuration en cours de tournoi n'est pas l'enregistrement d'un formulaire,
- * c'est une décision : elle se montre avant d'être prise, réglage par réglage, avec la valeur
- * d'avant et celle d'après.
+ * Rend une ligne de la liste « voici ce qui va changer », valeur d'avant et d'après.
  *
  * @param {Translate} t
  * @param {{ code?: string, phase?: number, from?: string, to?: string } | null | undefined} change
@@ -222,12 +203,8 @@ export function renderLockReason(t, reason) {
 }
 
 /**
- * Vrai quand la proposition fait partie d'une réparation (issue #389).
- *
- * Le moteur ne propose une annulation que pour remettre un graphe d'accord avec les résultats,
- * après qu'une correction a fait jouer un match par les mauvaises personnes. C'est le seul cas,
- * et c'est ce qui permet de distinguer ces lignes des propositions ordinaires sans inventer de
- * marqueur.
+ * Vrai quand la proposition fait partie d'une réparation : le moteur ne propose une
+ * annulation que dans ce cas.
  *
  * @param {{ kind?: string } | null | undefined} a
  */
@@ -236,9 +213,8 @@ export function isRepair(a) {
 }
 
 /**
- * Le nom proposé pour un CSV enregistré (#454) : `<tournoi>-<mot>-<AAAA-MM-JJ>.csv`, le mot dans
- * la langue de l'interface (« classement », « annuaire »). Ce qu'un système de fichiers refuse
- * — et les espaces — devient un tiret ; les accents restent, ce sont des lettres.
+ * Nom proposé pour un CSV : `<tournoi>-<mot>-<AAAA-MM-JJ>.csv`, mot traduit ; caractères
+ * interdits et espaces → tiret, accents gardés.
  *
  * @param {string} tournament
  * @param {string} word

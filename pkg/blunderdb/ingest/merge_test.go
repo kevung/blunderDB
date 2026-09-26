@@ -7,15 +7,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// This file replaces tests/analysis_merge_test.go, whose four tests were
-// t.Log-only placeholders documenting intended behavior with no assertions.
-// The real merge/dedup/sort logic they described (mergeCheckerMoves,
-// mergePlayedMoves, sortCheckerMovesByEquity, mergeAnalysis) is unexported in
-// this package, so an external "tests" package can never reach it directly —
-// these tests replace the placeholders in the one package that can actually
-// exercise the code. Position-level Zobrist dedup (the other half of what the
-// old TestPositionDeduplication described) is covered directly in
-// pkg/blunderdb/domain/position_match_test.go (NormalizeForStorage) and
+// The merge/dedup/sort logic is unexported, so it is tested here. Position-level
+// Zobrist dedup is covered in pkg/blunderdb/domain/position_match_test.go and
 // pkg/blunderdb/engine/zobrist_test.go.
 
 // --- mergeCheckerMoves -------------------------------------------------------
@@ -92,10 +85,9 @@ func TestMergeCheckerMovesKeepsDeeperExistingAnalysisOnConflict(t *testing.T) {
 	if len(got) != 1 {
 		t.Fatalf("expected 1 move, got %d", len(got))
 	}
-	// The code compares m.AnalysisDepth >= existingMove.AnalysisDepth using
-	// the INCOMING move's depth on the left, so it only replaces when
-	// incoming's depth string sorts >= existing's. "0-ply" < "2-ply"
-	// lexically, so existing (2-ply/XG) must survive.
+	// The incoming move replaces the existing one only when its depth ranks
+	// >= (domain.AnalysisDepthRank): 0-ply < 2-ply, so existing (2-ply/XG)
+	// must survive.
 	if got[0].AnalysisDepth != "2-ply" || got[0].AnalysisEngine != "XG" {
 		t.Errorf("AnalysisDepth/Engine = %q/%q, want %q/%q (existing, deeper analysis, must survive a shallower incoming one)",
 			got[0].AnalysisDepth, got[0].AnalysisEngine, "2-ply", "XG")

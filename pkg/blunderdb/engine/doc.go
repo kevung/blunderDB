@@ -15,8 +15,9 @@
 //	                 discarded rather than removed (ADR-0028).
 //	bitboards.go     the four 26-bit occupancy and point masks the search
 //	                 filters on, computed once and stored as columns.
-//	epc.go           effective pip count, from the embedded one-sided
-//	                 gnubg OS-06-15 database (gnubg_os6.bd): the roll
+//	epc.go           effective pip count, from a generated one-sided
+//	                 gnubg table (ADR-0027): the roll
+
 //	                 distribution of a bearoff position, its mean, and the
 //	                 wastage the two imply.
 //	bearoff_export.go the combinatorial indexing every gnubg bearoff

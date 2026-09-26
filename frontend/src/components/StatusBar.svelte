@@ -25,12 +25,7 @@
     let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
 
-    // MATCH-mode move/game counters. These used to be {@const} in the
-    // template, recomputed with three O(n) passes (filter, slice+filter,
-    // map+Math.max) on every navigated move of a match — 500 moves ×
-    // however many re-renders a review pass triggers (D.8, #208). Now
-    // computed once per movePositions change; the per-move counter is an O(1)
-    // array lookup in the template.
+    // MATCH-mode counters, computed once per movePositions change, not per render.
     let checkerMoves = $derived($matchContextStore.movePositions.filter((p) => p.move_type === 'checker'));
     let checkerCountUpTo = $derived.by(() => {
         const moves = $matchContextStore.movePositions;
@@ -48,10 +43,8 @@
         return max;
     });
 
-    // --- Command autocompletion ------------------------------------------------
-    // Suggestions for the typed command word. Tab / Shift-Tab cycle through them;
-    // Escape dismisses the dropdown (a second Escape closes the command line).
-    // ArrowUp/Down stay reserved for command history.
+    // Command autocompletion: Tab/Shift-Tab cycle, Escape dismisses (a second one
+    // closes the line); ArrowUp/Down stay for history.
     let suggestionsDismissed = $state(false);
     let selectedSuggestion = $state(0);
     let suggestions = $derived(suggestionsDismissed ? [] : getCommandSuggestions($commandTextStore));
@@ -78,25 +71,18 @@
         selectedSuggestion = (selectedSuggestion + step + suggestions.length) % suggestions.length;
     }
 
-    // The status store may hold a plain string or a tMsg() descriptor
-    // ({ i18nKey, i18nParams }). Resolving through $t here makes the displayed
-    // message re-translate live whenever the language changes.
+    // A string or a tMsg() descriptor, resolved through $t so it re-translates live.
     let statusMessage = $derived(resolveStatusMessage($statusBarTextStore, $t));
 
-    // Le compteur de bibliothèque (#287). Rafraîchi à l'ouverture d'une base et
-    // après chaque mutation, jamais en boucle : trois COUNT ne coûtent rien une
-    // fois et coûteraient tout à chaque frappe.
+    // Compteur de bibliothèque : rafraîchi à l'ouverture et après chaque mutation, jamais en boucle.
     $effect(() => {
         void $databasePathStore;
         void $dbMutationCounterStore;
         refreshLibraryCounts();
     });
 
-    // La reprise de l'analyse d'une transcription (T3.3, ADR-0045 §8). La
-    // question est posée à l'ouverture d'une base et à ce moment-là seulement :
-    // le compte n'est pas un état qu'on suit, c'est le fait qu'un lot n'a pas
-    // fini, et le relancer à chaque mutation ferait réapparaître la
-    // proposition juste après qu'on l'a écartée.
+    // Reprise de l'analyse d'une transcription (ADR-0045 §8), demandée à
+    // l'ouverture seulement, pour qu'une proposition écartée ne revienne pas aussitôt.
     $effect(() => {
         const path = $databasePathStore;
         if (!path) {
@@ -109,9 +95,8 @@
     });
 
     /**
-     * Chaque nombre du compteur ouvre ce qu'il compte. « Blunders » passe par
-     * la ligne de commande plutôt que par un chemin à part : le jeton `E>100`
-     * est le même seuil que celui du compteur, et l'utilisateur le voit.
+     * Chaque nombre ouvre ce qu'il compte ; « Blunders » passe par la ligne de
+     * commande (`E>100`, le même seuil), visible de l'utilisateur.
      * @param {'positions'|'blunders'|'matches'} what
      */
     async function showLibrary(what) {
@@ -143,18 +128,14 @@
         historyIndex = -1;
     }
 
-    // gammonNet batch (#129, ADR-0013): "a bounded, visible job — never a
-    // resident background task". The status bar is always mounted, so it is
-    // where the running total is noticed without a modal getting in the way;
-    // cancelling here mirrors the config tab's bearoff download control.
+    // gammonNet batch (ADR-0013): a bounded, visible job, shown and cancelled
+    // here since the status bar is always mounted.
     let gammonNetBatch = $derived($gammonNetBatchStore);
 
     const unsubGammonNetBatch = [
         EventsOn('gammonnet-batch:progress', (p) => gammonNetBatchStore.set(p)),
-        // The evaluated/refused/failed split (#191) is the batch's own
-        // end-of-run figure — refused is deliberate (a dance, a match score
-        // beyond the MET) and never worth a warning; failed positions are
-        // retried, unchanged, the next time this batch runs.
+        // Refused is deliberate (dance, score beyond the MET), never a warning;
+        // failed positions are retried on the next run.
         EventsOn('gammonnet-batch:done', (summary) => {
             gammonNetBatchStore.set(null);
             statusBarTextStore.set(tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 }));
@@ -266,18 +247,10 @@
             <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder={$t('statusBar.typeCommand')} onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
-        <!-- Scoped to this span, not the whole status bar (#204): the status
-             bar also holds the command-line suggestions listbox, the
-             gammonNet batch chip and the position counter, none of which
-             are status announcements — a live region on the whole bar had a
-             screen reader re-read all of it on every one of those changes,
-             not just an actual status message. -->
+        <!-- Live region on this span only: the rest of the bar is not status announcements. -->
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
-    <!-- Le dossier surveillé (#258) annonce ses imports ici, jamais par une
-         fenêtre : l'utilisateur étudiait une position quand ses matchs sont
-         arrivés. Le bandeau ouvre le compte rendu si on le lui demande, et
-         disparaît dès qu'on l'écarte. -->
+    <!-- Imports du dossier surveillé : un bandeau, jamais une fenêtre. -->
     {#if $watchImportNoticeStore}
         <span class="watch-import-chip">
             {$t('status.watchImportNotice', {
@@ -297,20 +270,14 @@
             <button type="button" class="watch-import-action" onclick={() => watchImportNoticeStore.set(null)}>{$t('common.close')}</button>
         </span>
     {/if}
-    <!-- L'Action attendue en un mot (`ux.md` §5, câblé par ADR-0048 décision 2)
-         et, par-dessus, la réponse TRANSITOIRE d'un geste sans effet (décision 9).
-         Un seul emplacement : la réponse cède la place à la phrase au bout de
-         1,5 s. Elles ne se disputent rien d'autre — l'alerte d'Incohérence vit
-         dans le bandeau du Transcript, là où est la cellule fautive. -->
+    <!-- L'Action attendue (ADR-0048 décision 2), remplacée 1,5 s par la réponse
+         d'un geste sans effet (décision 9). -->
     {#if $transcriptionNoticeStore}
         <span class="transcription-notice" data-testid="transcription-notice">{$t($transcriptionNoticeStore.key, $transcriptionNoticeStore.params)}</span>
     {:else if $transcriptionPromptStore}
         <span class="transcription-prompt" data-testid="transcription-prompt">{$t($transcriptionPromptStore.key, $transcriptionPromptStore.params)}</span>
     {/if}
-    <!-- Le lot d'analyse d'un match transcrit que la fermeture a coupé
-         (T3.3, ADR-0045 §8) : rien n'a été noté nulle part, le compte est
-         refait à l'ouverture. Écarter la proposition n'écrit rien — elle
-         revient à la prochaine ouverture tant qu'il manque des positions. -->
+    <!-- Lot d'analyse interrompu (ADR-0045 §8), recompté à l'ouverture ; écarter n'écrit rien. -->
     {#if $transcriptionResumeStore}
         <span class="transcription-resume-chip">
             {$t('transcription.resumeAnalysis', { n: $transcriptionResumeStore.to_analyze })}
@@ -333,9 +300,7 @@
     {:else}
         <span class="position-info">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
     {/if}
-    <!-- Le compteur de bibliothèque (#287) : ce que la base contient, et
-         chaque nombre ouvre ce qu'il compte. Un chiffre qu'on ne peut pas
-         suivre est une décoration. -->
+    <!-- Compteur de bibliothèque : chaque nombre ouvre ce qu'il compte. -->
     {#if $libraryCountsStore}
         <span class="library-counts">
             <button type="button" class="count-link" onclick={() => showLibrary('positions')} title={$t('statusBar.countPositionsTitle')}>
@@ -398,9 +363,7 @@
         color: var(--color-text-muted);
     }
 
-    /* Pas de `font: inherit` ici : style.css le pose déjà sur les contrôles
-       de formulaire (ADR-0008), et le répéter est ce que la garde de type
-       interdit. */
+    /* Pas de `font: inherit` : style.css le pose déjà (ADR-0008), la garde interdit de le répéter. */
     .count-link {
         background: none;
         border: none;

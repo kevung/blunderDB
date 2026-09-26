@@ -6,18 +6,9 @@ import (
 	"testing"
 )
 
-// boundAppMethods is the exhaustive, explicit list of *App methods that are
-// meant to be bound to the Wails frontend (run.go's Bind: []interface{}{app,
-// ...}). This is a drift guard, not a completeness contract in the other
-// direction (#241): it does not check that the frontend calls every one of
-// these — internal/cli/parity_test.go's databaseParity map is the place
-// that kind of cross-referencing already happens for *database.Database —
-// but it does mean a newly exported App method cannot silently start being
-// bound (and thus reachable from arbitrary frontend/webview code) without a
-// deliberate update here, since TestBoundAppMethodsMatchExpected fails the
-// moment reflection sees a name this list does not.
-//
-// Kept sorted so a diff against a future mismatch is easy to read.
+// boundAppMethods is the explicit, sorted list of *App methods bound to the
+// frontend, so a newly exported method cannot become reachable from the
+// webview without a deliberate update here.
 var boundAppMethods = []string{
 	"BearoffStatus",
 	"CancelCubeMatrix",
@@ -78,13 +69,8 @@ var boundAppMethods = []string{
 	"StartupFilePath",
 }
 
-// TestBoundAppMethodsMatchExpected fails on ANY difference (added or
-// removed) between *App's actual exported method set and boundAppMethods
-// above (#241): the two "removed" cases from this ticket
-// (OpenPositionDialog, OpenXGFileDialog — confirmed zero references anywhere
-// in frontend/src, yet still exported and thus still bound) are exactly
-// what this guard would have caught earlier, and it is what catches the
-// next one.
+// TestBoundAppMethodsMatchExpected fails on any difference between *App's
+// exported methods and boundAppMethods.
 func TestBoundAppMethodsMatchExpected(t *testing.T) {
 	typ := reflect.TypeOf(&App{})
 	var got []string

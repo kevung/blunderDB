@@ -119,15 +119,9 @@ func (s *MetadataStore) Counts(ctx context.Context, scope string) (storage.Count
 // library's blunder threshold — the set `E>x` returns at that threshold, and
 // therefore the set the status bar's counter may promise.
 //
-// The denormalised error column scores ONE play (the first of the analysis'
-// PlayedMoves), which is exact for every Position player 1 played once — the
-// whole table but for a few openings. Counting off the column alone would
-// under-state the answer for those few and make the counter contradict the
-// search its own link opens. So the column does the counting, and the handful
-// of multi-played Positions (multiPlayedPlayer1Positions, the same list the
-// search builds) are re-scored one by one the way the search scores them.
-// That list is small by construction; when it is empty — the ordinary case —
-// this costs exactly one COUNT.
+// The denormalised error column scores ONE play, so it does the counting and
+// the few multi-played Positions (multiPlayedPlayer1Positions, as the search)
+// are re-scored one by one the way the search scores them.
 func (s *MetadataStore) blunderCount(ctx context.Context, scope string) (int, error) {
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {

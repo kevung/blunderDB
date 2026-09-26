@@ -19,16 +19,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// `blunderdb bearoff` is how a table is made outside the desktop application:
-// on a server, on a build machine, on a volume the daemon reads (ADR-0027).
-// Nothing here talks to a database — a bearoff table is arithmetic about the
-// game, not about anyone's positions — so these sub-commands take no --db.
-//
-// The domains that matter are large: TS-06-11 is 1.2 GB and minutes of every
-// core, TS-06-13 is hours and more memory than most machines have. So the
-// commands say what a run will cost before it starts, and Ctrl-C PAUSES rather
-// than throws the work away: the same checkpoint the desktop's Pause button
-// writes, and the next `generate` on that domain continues from it.
+// `blunderdb bearoff` makes a table outside the desktop app (ADR-0027). A
+// table touches no database, so these sub-commands take no --db. Large
+// domains cost minutes to hours, so the commands state the cost up front and
+// Ctrl-C pauses to the same checkpoint the desktop writes; the next
+// `generate` resumes it.
 
 func (cli *CLI) runBearoff(args []string) error {
 	if len(args) < 1 {
@@ -236,9 +231,8 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 		size, humanBytes(domain.RAMNeeded()),
 		humanDuration(domain.EstimateDuration(0, workers)))
 
-	// Ctrl-C pauses. The signal is caught rather than left to kill the
-	// process: half an hour of arithmetic is worth writing down, and the run
-	// is resumable by construction.
+	// Ctrl-C pauses: the signal is caught so the work done so far is
+	// checkpointed and resumable.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 

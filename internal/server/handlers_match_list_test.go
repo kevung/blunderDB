@@ -130,10 +130,8 @@ func TestStatsTournamentBadgesHTTP(t *testing.T) {
 	}
 }
 
-// TestStatsMatchMoveGradesHTTP — the Transcript's marks (#287) are served to
-// the daemon's clients too, not only to the desktop: a match with no analysed
-// Move answers 200 and an empty list. The grading itself is held by the
-// storage contract (Stats/MatchMoveGrades) on both backends.
+// TestStatsMatchMoveGradesHTTP: the Transcript's marks are served over HTTP;
+// a match with no analysed Move answers 200 and an empty list.
 func TestStatsMatchMoveGradesHTTP(t *testing.T) {
 	ts := newTestServer(t)
 	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
@@ -158,11 +156,8 @@ func TestStatsMatchMoveGradesHTTP(t *testing.T) {
 	}
 }
 
-// TestMatchesFindByHashHTTP guards the route matches.findByHash
-// (storage.MatchStore.FindByHash), also never wired into the RPC router: a
-// match saved with a hash must be found by it, an unknown hash must answer
-// found=false rather than an error, and an id-only match (no hash set) must
-// not be reachable through this lookup.
+// TestMatchesFindByHashHTTP: a match is found by its hash, an unknown hash
+// answers found=false (not an error), and an id-only match is unreachable.
 func TestMatchesFindByHashHTTP(t *testing.T) {
 	ts := newTestServer(t)
 

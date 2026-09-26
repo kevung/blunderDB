@@ -306,33 +306,21 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 }
 
 // positionIsHeldSQL reports whether anything still holds a position once the
-// match that referenced it is gone. Deleting a match must not destroy work the
-// user did on a position that merely happened to occur in it.
+// match that referenced it is gone: deleting a match must not destroy the
+// user's work on a position that merely occurred in it. The predicate is
+// stated three times — database/db_match.go, storage/sqlite, storage/postgres —
+// and must stay identical in all three.
 //
-// A position is held by: another match's move; membership in a collection; an
-// Anki card built from it; a comment the USER wrote on it (#263); having been
-// imported individually, which says the user brought it in deliberately
-// (docs/adr/0001); or the study mark the source tool carried, since deleting a
-// match must not delete the very positions the `fl` filter exists to surface
-// (docs/adr/0006).
+// A position is held by: another match's move; a collection membership; an
+// Anki card; a comment with origin = 'user'; the individually_imported mark
+// (ADR-0001); or the source tool's study mark (ADR-0006).
 //
-// Two things deliberately do NOT hold a position, because neither is evidence
-// the user did anything with it:
-//   - an analysis: it arrives with the match, and every match position has one,
-//     so counting it would mean never purging anything;
-//   - a comment that is not the user's: match importers attach the source
-//     file's per-move notes as comments (see ingest/xg.go), and until 2.19.0
-//     nothing told them apart from a note the user typed — so no comment held a
-//     position at all, and a note the user had written was lost with the match.
-//     A comment now carries its origin; only origin = 'user' holds. An imported
-//     note, or one written before the column existed ('unknown'), still does
-//     not, which leaves the rows of every older database judged as they always
-//     were.
+// Deliberately NOT held by an analysis (every match position has one, so
+// nothing would ever be purged), nor by an imported or 'unknown'-origin
+// comment (the source file's per-move notes, see ingest/xg.go).
 //
-// Phrased as a WHERE-clause fragment correlated against the outer `position`
-// row rather than a standalone query — see deleteOrphanedPositions, which
-// embeds it directly into a set-based DELETE instead of running it once per
-// candidate position.
+// A WHERE fragment correlated against the outer `position` row, embedded in
+// deleteOrphanedPositions' set-based DELETE.
 const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id AND tenant_id = position.tenant_id)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id AND tenant_id = position.tenant_id)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id AND tenant_id = position.tenant_id)
@@ -485,11 +473,9 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 			   AND game_id IN (SELECT id FROM game WHERE match_id = $1)`, id, tenant); err != nil {
 			return fmt.Errorf("swap move players: %w", err)
 		}
-		// Positions swap by copy-on-write, NOT in place (#107): a position is
-		// deduplicated by Zobrist and may be shared with other matches, and its
-		// score/cube are part of that hash. For each position this match uses, save
-		// a swapped copy (Save recomputes the Zobrist and dedups) and repoint this
-		// match's moves to it; the original stays intact for whoever else holds it.
+		// Positions swap by copy-on-write, NOT in place: a position may be
+		// shared with other matches and its score/cube are part of the Zobrist
+		// hash. Save a swapped copy (Save dedups) and repoint this match's moves.
 		rows, err := tx.Query(ctx,
 			`SELECT DISTINCT mv.position_id FROM move mv
 			 INNER JOIN game g ON mv.game_id = g.id
@@ -513,13 +499,8 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		}
 
 		ps := &positionStore{db: tx}
-		// Every swap position loaded in one round trip (LoadByIDs) instead of
-		// one Load per position (B.11, #179): a match's moves can reference
-		// this position library's biggest table, and this swap used to query
-		// it once per distinct position. Save (below) still runs once per
-		// position — it is what recomputes each one's Zobrist hash and dedups
-		// it against the rest of the library, and that decision is
-		// irreducibly per-position.
+		// Loaded in one round trip; Save below stays per-position, since the
+		// Zobrist dedup decision is.
 		loaded, err := ps.LoadByIDs(ctx, scope, posIDs)
 		if err != nil {
 			return fmt.Errorf("load swap positions: %w", err)
@@ -528,12 +509,8 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		for i := range loaded {
 			byID[loaded[i].ID] = &loaded[i]
 		}
-		// Positions this swap repointed away from: each is a delete candidate
-		// (mirrors the orphan cleanup of DeleteCascade), collected here and
-		// checked in one set-based DELETE after the loop rather than one
-		// EXISTS round-trip per position — the repoints must all land first
-		// anyway, since an orphan check run mid-loop could not see a later
-		// position's repoint.
+		// Positions repointed away from are orphan candidates, checked in one
+		// DELETE after the loop: a mid-loop check could not see later repoints.
 		var swappedAway []int64
 		for _, pid := range posIDs {
 			pos, ok := byID[pid]

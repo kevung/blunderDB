@@ -1,10 +1,7 @@
 /**
- * metadataStatus.js — Ctrl-G: the analysis dates plus the MET / take-point /
- * gammon-value figures for the position on screen, printed in the status bar.
- *
- * The only consumer of the static score tables (metTable, takePoint*,
- * gammonValue*) outside App.svelte's table modals; it lives here so that
- * positionService does not carry seven table imports for one shortcut.
+ * metadataStatus.js — Ctrl-G: analysis dates and MET / take-point /
+ * gammon-value figures for the position on screen, in the status bar. Keeps
+ * the score-table imports out of positionService.
  */
 
 import { get } from 'svelte/store';
@@ -23,10 +20,9 @@ import { gammonValue4Table } from '../stores/gammonValue4Table';
 import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
 import { takePoint4LastTable } from '../stores/takePoint4LastTable';
 
-// Each table is indexed by (away score − offset) on both axes; a score outside
-// the table reads as 'N/A'. The tables are indexed by the DISTANCE to victory,
-// so the post-Crawford sentinel is decoded first (pointsAway): a stored 0 is
-// one point away, and reading it raw fell off the top of every table (#338).
+// Indexed by (away score − offset); outside the table reads 'N/A'. The
+// post-Crawford sentinel is decoded first (pointsAway): a stored 0 is one
+// point away.
 function lookup(table, score, rowOffset, colOffset, decimals) {
     const row = pointsAway(score[0]) - rowOffset;
     const col = pointsAway(score[1]) - colOffset;

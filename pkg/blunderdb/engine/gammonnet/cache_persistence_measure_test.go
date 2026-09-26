@@ -7,38 +7,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Mesure du cache persistant (#297, fiche J.7) — et la raison pour laquelle il
-// n'a pas été écrit.
+// Mesure du cache persistant, et la raison pour laquelle il n'existe pas.
 //
-// RÉSULTAT, mesuré le 2026-09-06 sur seize décisions consécutives d'une même
-// partie, à 2-ply : porter le cache d'une décision à la suivante économise
-// 2,8 % des évaluations du réseau avec le cache par défaut (2^16 entrées), et
-// 3,8 % avec un cache assez grand pour ne JAMAIS évincer (2^22, ~240 Mo).
+// Sur seize décisions consécutives d'une partie à 2-ply, porter le cache
+// d'une décision à la suivante économise 2,8 % des évaluations (2^16
+// entrées), 3,8 % sans aucune éviction (2^22) — le plafond absolu, avant
+// entrées-sorties et contrôle de version. Et la réanalyse d'une base, son
+// bénéficiaire naturel, est justement le cas où le réseau a changé et le
+// fichier serait à jeter. Ces mesures restent pour rendre le refus révisable.
 //
-// 3,8 % est le plafond absolu de ce qu'un cache persistant pourrait rendre :
-// pas d'éviction, pas de contrôle de version, pas d'entrées-sorties. Un vrai
-// cache sur disque paierait les trois et rendrait moins. Et son bénéficiaire
-// naturel — la réanalyse d'une base — est précisément le cas où le fichier
-// doit être JETÉ, puisqu'il est indexé par la version du réseau et que
-// `analyze --stale` existe pour le cas où ce réseau a changé.
-//
-// La moitié « cache persistant » de la fiche est donc écartée, avec ce
-// fichier pour preuve plutôt que sur une intuition. Ces deux mesures restent
-// dans l'arbre : elles se relancent, et c'est ce qui rendra le refus révisable
-// si un jour la recherche change de forme.
-//
-// TestMeasureCacheAcrossDecisions measures what a cache that OUTLIVES one
-// decision would actually save.
-//
-// The question the fiche leaves open is not whether the cache would be exact —
-// it is, by construction, since the key is the whole position and the value is
-// the network's own output. The question is whether it would save anything.
-//
-// The measurement walks one game, evaluating each position at 2-ply, twice:
-// once with a single Searcher whose cache carries from one decision to the
-// next, and once with a fresh Searcher per decision — which is today's
-// behaviour for the live panel, and across runs of the batch. The gap between
-// the two eval counts is the whole prize.
+// TestMeasureCacheAcrossDecisions walks one game at 2-ply twice: one Searcher
+// whose cache carries across decisions, then a fresh Searcher per decision
+// (today's behaviour). The gap between the eval counts is the whole prize.
 func TestMeasureCacheAcrossDecisions(t *testing.T) {
 	if testing.Short() {
 		t.Skip("measurement, not a gate")
@@ -125,10 +105,8 @@ func walkOneGame(t *testing.T, n int) []Position {
 }
 
 // TestMeasureCacheAcrossDecisionsUnbounded is the same measurement with a
-// cache large enough never to evict (2^22 entries, ~240 MB), which is the
-// UPPER BOUND of what any persistent cache could ever save: no eviction, no
-// version gate, no I/O. A persistent cache cannot beat this number; it can
-// only pay more for less.
+// cache that never evicts (2^22 entries, ~240 MB): the upper bound of any
+// persistent cache.
 func TestMeasureCacheAcrossDecisionsUnbounded(t *testing.T) {
 	if testing.Short() {
 		t.Skip("measurement, not a gate")

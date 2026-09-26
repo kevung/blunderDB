@@ -22,13 +22,10 @@ import (
 // Config configures an embedded engine. Backend is "postgres" in production
 // (the only tenant-isolating backend); "sqlite" is for tests only.
 //
-// This only covers the settings that shape the *returned Handler's own
-// behaviour* — body-size caps, CORS, per-request deadlines, the watermark
-// identity. Settings that belong to a listener or an http.Server the
-// standalone daemon owns (ReadHeaderTimeout, IdleTimeout, MaxConnections,
-// ShutdownTimeout — see internal/server.Options) have no meaning here: the
-// embedder runs its own http.Server (or equivalent) around this Handler and
-// owns those decisions itself (#241/#236).
+// It covers only the returned Handler's own behaviour (body caps, CORS,
+// per-request deadlines, watermark identity). Listener/http.Server settings
+// (ReadHeaderTimeout, IdleTimeout, MaxConnections, ShutdownTimeout) belong to
+// the embedder's own server.
 type Config struct {
 	Backend        string // "postgres" | "sqlite"
 	DSN            string
@@ -67,13 +64,10 @@ type Config struct {
 	StreamTimeout  time.Duration
 
 	// Identity signs the watermark of an exports.sqlite response that asks
-	// for one. nil (the default) means this embedding cannot watermark — a
-	// request that asks for one anyway fails with CodeInvalid rather than
-	// silently exporting unmarked (ingest.SealWatermark is never called
-	// without one). There is no default identity: an embedder that wants
-	// watermarking loads or creates one itself (see
-	// issuance.LoadOrCreateIdentity, the same helper the standalone daemon's
-	// --identity-dir uses) and passes it here.
+	// for one. nil (the default) means no watermarking: such a request fails
+	// with CodeInvalid rather than silently exporting unmarked. There is no
+	// default identity; use issuance.LoadOrCreateIdentity (as the daemon's
+	// --identity-dir does).
 	Identity *issuance.Identity
 }
 

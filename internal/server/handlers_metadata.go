@@ -11,19 +11,11 @@ type versionResp struct {
 	Version string `json:"version"`
 }
 
-// metadataRoutes exposes the metadata table read-only, and only its schema
-// version: the table is database infrastructure (schema version, issuance),
-// global to every tenant and outside Row-Level Security. Until #156 it also
-// served metadata.load, metadata.save and metadata.setVersion — a tenant
-// could read every other tenant's session state (then stored there), rewrite
-// database_version, and take /readyz down for the whole instance. Those
-// routes are gone for good (ADR-0005: the daemon has no privileged tenant),
-// and the session state has its own tenant-scoped table.
-//
-// The library's own settings (ADR-0046) are served here too, and they ARE
-// writable: they are per-tenant data in a per-tenant table (library_settings,
-// under Row-Level Security), so a tenant setting its own thresholds reaches
-// nothing but its own rows — the very property metadata.save lacked.
+// metadataRoutes exposes the metadata table read-only, schema version only:
+// it is global infrastructure outside Row-Level Security, and a write route
+// would let one tenant break every other (ADR-0005: no privileged tenant).
+// The library settings (ADR-0046) ARE writable: they live in a per-tenant,
+// RLS-scoped table.
 func (s *Server) metadataRoutes() []route {
 	ms := func() storage.MetadataStore { return s.opts.Storage.Metadata() }
 	ls := func() storage.LibrarySettingsStore { return s.opts.Storage.LibrarySettings() }

@@ -16,10 +16,8 @@ func (cli *CLI) runEdit(args []string) error {
 	description := editCmd.String("description", "", "Set description")
 	clearUser := editCmd.Bool("clear-user", false, "Clear user name")
 	clearDescription := editCmd.Bool("clear-description", false, "Clear description")
-	// The two thresholds are taken in millipoints, the unit `E>x` and
-	// --move-error-min already speak; the GUI is where they are entered in
-	// equity. -1 means "leave it alone" — 0 is a value the pair refuses, not
-	// an absent flag.
+	// Thresholds in millipoints, like `E>x` and --move-error-min. -1 means
+	// "leave it alone"; 0 is a value the pair refuses, not an absent flag.
 	errorThreshold := editCmd.Int("error-threshold", -1,
 		"Set the error threshold, in millipoints (a decision costing this much or more is an error)")
 	blunderThreshold := editCmd.Int("blunder-threshold", -1,
@@ -61,7 +59,6 @@ func (cli *CLI) runEdit(args []string) error {
 		return fmt.Errorf("missing required flag: --db")
 	}
 
-	// Check that at least one edit option is provided
 	if *user == "" && *description == "" && !*clearUser && !*clearDescription &&
 		*errorThreshold < 0 && *blunderThreshold < 0 {
 		editCmd.Usage()
@@ -105,11 +102,9 @@ func (cli *CLI) runEdit(args []string) error {
 		return fmt.Errorf("failed to save metadata: %w", err)
 	}
 
-	// The library's own settings (ADR-0046) are not metadata rows on every
-	// backend, so they go through their own accessor. Either threshold can be
-	// set alone: the other keeps the value the library already had, and the
-	// pair is validated as a pair, so raising one past the other is refused
-	// here rather than stored.
+	// Library settings (ADR-0046) go through their own accessor, not
+	// metadata. Either threshold can be set alone; the pair is validated
+	// together, so one crossing the other is refused.
 	if *errorThreshold >= 0 || *blunderThreshold >= 0 {
 		settings, err := cli.db.GetLibrarySettings()
 		if err != nil {

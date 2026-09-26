@@ -1,12 +1,7 @@
 <script>
-    // Compact header strip shown directly above the board. While reviewing a
-    // match it shows that match (players, event, round, date, length + tournament).
-    // Outside match mode — search results, collection, go-to — it shows the
-    // *provenance* of the position being studied: the match(es) it came from,
-    // resolved via GetPositionProvenance. A position no match references (e.g. one
-    // imported on its own) shows nothing, so the board stays uncluttered. Because
-    // positions dedupe across imports, provenance can be one-to-many: the first
-    // match is shown and a "+N" badge lists the rest.
+    // Header strip above the board: the reviewed match in MATCH mode, otherwise
+    // the position's provenance (GetPositionProvenance) — nothing when no match
+    // references it, the first match plus a "+N" badge when several do (dedup).
     import { matchContextStore, positionStore } from '../stores/positionStore';
     import { transcriptionInfoStore } from '../stores/transcriptionStore.js';
     import { GetMatchByID, GetPositionProvenance } from '../../wailsjs/go/database/Database.js';
@@ -22,9 +17,7 @@
     // Cache key: 'm<id>' in match mode, 'p<id>' for a studied position's provenance.
     let loadedKey = $state(null);
 
-    // In match mode: fetch the reviewed match by id. Outside: fetch the studied
-    // position's provenance. Cached by key so navigating within a match (matchID
-    // stable) or redrawing doesn't refetch.
+    // Cached by key: navigating within a match or redrawing does not refetch.
     $effect(() => {
         const ctx = $matchContextStore;
         if (ctx.isMatchMode && ctx.matchID) {
@@ -85,11 +78,8 @@
         return formatDateI18n(d);
     }
 
-    // Optional metadata fields, in display order, empties omitted. Tournament
-    // name leads (it is the broadest provenance), then event/location/round/date/length.
-    // Deduplicate case-insensitively: tournament_name (from the tournament table)
-    // and event (the match header field) are frequently the same string for a match
-    // filed under a tournament, and showing both looked like a duplicate.
+    // Metadata in display order, empties omitted, tournament first; deduped
+    // case-insensitively since tournament_name and event are often equal.
     let metaParts = $derived.by(() => {
         const raw = [
             match?.tournament_name,
@@ -116,17 +106,8 @@
     // Data only — player names — so it needs no translation.
     let otherMatchesTitle = $derived(otherMatches.map((m) => `${m.player1_name} ${$t('matchInfo.vs')} ${m.player2_name}`).join('\n'));
 
-    // ── le troisième contexte : un brouillon en cours de frappe ──────────
-    //
-    // `ux.md` §5 plaçait ici l'état du brouillon — longueur, score, Crawford,
-    // camp au trait, videau — et ce câblage n'avait jamais été fait ; le panneau
-    // l'avait réimplémenté en sept pastilles, qui coûtaient 66 des 354 px
-    // repoussant sa liste de candidats hors de l'écran (ADR-0048 décision 2).
-    //
-    // C'est le bon endroit et pas seulement une place libre : la barre est
-    // au-dessus du plateau, donc lue au moment où l'œil y est — qui est le
-    // moment où l'on se demande « qui est au trait, et où en est le videau ».
-    // Le panneau POSE ces faits et n'en dessine aucun ; rien n'est dérivé ici.
+    // Troisième contexte : un brouillon en cours de frappe (ux.md §5, ADR-0048
+    // décision 2). Le panneau pose ces faits ; rien n'est dérivé ici.
     let draftInfo = $derived($transcriptionInfoStore);
 
     let draftParts = $derived.by(() => {
@@ -144,12 +125,8 @@
     // while a transcription draft is open.
     let visible = $derived(($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match || !!draftInfo);
 
-    // The bar takes its 22 px above the board, and Board.svelte measures its
-    // container on 'resize' only: inserted or removed without one, the board
-    // stayed that much too tall (or too short) for a whole match review
-    // (#201). Same recipe as App.svelte's panel-position effect: the rAF
-    // defers the synthetic resize until the flex layout has reflowed, and a
-    // resize that changes no window size is a no-op for windowAspectStore.
+    // Board.svelte measures only on 'resize': dispatch one (after a rAF, once the
+    // layout has reflowed) when the bar appears or goes.
     $effect(() => {
         visible; // tracked dep
         requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));

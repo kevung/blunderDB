@@ -1,14 +1,8 @@
 /**
  * eval-panel-no-scroll.spec.js
  *
- * "Only the candidate list ever scrolls" was decided by ADR-0017, restated by
- * ADR-0018, and left as an owed test by both. ADR-0020 finally owes it for a
- * reason rather than out of conscience: moving the badges to their own strip
- * (rule 8) spends ~18 px of the panel's height budget, and a property nobody
- * measures after three layout changes is not a property.
- *
- * Measured at the DEFAULT panel size, which is the only size at which the claim
- * is true — asserting it at any size would assert the impossible.
+ * "Only the candidate list ever scrolls" (ADR-0017, ADR-0020 rule 8), measured
+ * at the DEFAULT panel size — the only size at which the claim holds.
  */
 
 import { test, expect } from '@playwright/test';
@@ -110,22 +104,18 @@ test('a race cube position fits too — five race columns and all', async ({ pag
     expect(await overflow(page)).toBeLessThanOrEqual(0);
 });
 
-// blunderDB's own default window (config.go: 1024 px), not the suite's 1280:
-// the claim ADR-0021 makes is about the width the app actually ships with, and
-// at 1280 the old layout fit in French too — the test would have passed against
-// the very layout it is written to rule out.
+// blunderDB's default window (config.go: 1024 px), not the suite's 1280: the
+// ADR-0021 claim is about the shipped width, and at 1280 the layout it rules
+// out would pass too.
 test.describe("at blunderDB's default window width", () => {
     test.use({ viewport: { width: 1024, height: 768 } });
 
     test('the decision sits beside the facts, not under them (ADR-0021)', async ({ page }) => {
         await openEval(page, { epc: raceEpc, evalResult: cubeEval });
 
-        // The facts are two stacked blocks — two tbodies of one table, sharing
-        // one column grid — precisely so this holds at the default window in
-        // every language: on a single line of ten columns they needed 963 px
-        // (fr) to 1125 px (el) against the 996 px the panel has, so the cube
-        // block, last in the flex row, wrapped under them in seven languages
-        // out of nine.
+        // The facts are two stacked tbodies sharing one column grid so this
+        // holds in every language: on one line they needed 963–1125 px
+        // against the panel's 996.
         await expect(page.locator('.eval-panel .facts-table tbody')).toHaveCount(2);
 
         const box = (sel) => page.locator(sel).boundingBox();

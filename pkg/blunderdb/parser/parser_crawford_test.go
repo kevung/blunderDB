@@ -14,9 +14,7 @@ import (
 // Help, « XGID », part 8: 1 means the current game is Crawford, 0 that it is
 // not played with the Crawford rule). The away score carries that rule inside
 // the number (CONTEXT.md, « Away score »): a player one point away is `1` in
-// the Crawford game and `0` after it. The parser has always written that
-// distinction; since #360 it is domain.DecodeXGID that reads it, once, and this
-// test is what says the parser did not lose it on the way.
+// the Crawford game and `0` after it.
 func TestParsePositionWritesTheCrawfordSentinel(t *testing.T) {
 	const board = "-B-CBBB---a---A---ABcbbbd-"
 	for _, c := range []struct {
@@ -29,7 +27,7 @@ func TestParsePositionWritesTheCrawfordSentinel(t *testing.T) {
 		{"both one point away after Crawford", "XGID=" + board + ":1:-1:1:21:6:6:0:7:10", [2]int{domain.PostCrawford, domain.PostCrawford}},
 		// A 1-point match's only game starts one point from the match: it is
 		// the Crawford game whatever field 7 says, as the match importers
-		// write it (#411).
+		// write it.
 		{"1-point match, field 7 = 0", "XGID=" + board + ":0:0:1:21:0:0:0:1:10", [2]int{domain.Crawford, domain.Crawford}},
 		{"1-point match, field 7 = 1", "XGID=" + board + ":0:0:1:21:0:0:1:1:10", [2]int{domain.Crawford, domain.Crawford}},
 		// An empty field 7 states nothing about the rule: the ambiguous 1 is

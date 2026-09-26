@@ -1,15 +1,11 @@
 /**
- * root-ink-theme.spec.js — #403
+ * root-ink-theme.spec.js
  *
- * L'encre héritée vient du thème. style.css peignait `body` d'un noir littéral :
- * tout ce qui ne fixait pas sa propre couleur restait noir quel que soit le
- * thème — en sombre, le titre de l'écran d'accueil et les titres de ses cartes
- * s'écrivaient en noir sur une surface quasi noire. #359 avait corrigé la même
- * cause localement, dans Modal.svelte ; ceci la tient à la racine.
+ * L'encre héritée vient du thème, tenue à la racine (`body`) plutôt que noire en dur : tout ce
+ * qui ne fixe pas sa propre couleur doit rester lisible quel que soit le thème.
  *
  * Les titres des cartes sont des <button> : un bouton n'hérite pas l'encre (le
- * navigateur le peint en `buttontext`), d'où leur assertion à part — c'est
- * celle qui resterait rouge si l'on ne corrigeait que `body`.
+ * navigateur le peint en `buttontext`), d'où leur assertion à part.
  *
  * Les valeurs attendues sont lues dans themes.js, pas recopiées.
  */

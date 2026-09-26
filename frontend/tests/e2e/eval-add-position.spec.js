@@ -1,5 +1,5 @@
 /**
- * eval-add-position.spec.js — « Ajouter à la base » in the Eval panel (#399).
+ * eval-add-position.spec.js — « Ajouter à la base » in the Eval panel.
  *
  * The button is a labelled one, at the head of the badge strip, precisely so
  * it is seen; a label costs width, and the strip is one line (ADR-0020 rule 8,

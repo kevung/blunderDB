@@ -10,12 +10,8 @@ import (
 // TrainingStore implements storage.TrainingStore over `training_session` and
 // `training_item` (ADR-0040 rule 6). Both are domain tables: every statement
 // is confined to the scope's tenant through Dialect.TenantFilter /
-// TenantColumns, as the trash and import batches are.
-//
-// The SQL is the same on both backends — an append-only journal has no
-// dialect — which is why it is written once here. The only two facts the
-// shared statements ask the dialect for are the tenant columns and how a
-// boolean is spelled (`wrong`, `has_deviation`).
+// TenantColumns; the only other dialect fact is how a boolean is spelled
+// (`wrong`, `has_deviation`).
 type TrainingStore struct{ DB Execer }
 
 var _ storage.TrainingStore = (*TrainingStore)(nil)

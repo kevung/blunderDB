@@ -1,17 +1,9 @@
 <script module>
-    // The list tables of the Match, Tournament, Collection and Anki panels (and
-    // the players table of the statistics) all draw the same table: a sticky
-    // header whose sortable columns cycle through nextSort, rows selected by
-    // click and walked with j/k, an actions column of icon buttons, an empty
-    // state under the table. Each panel had its own copy of the CSS — eight
-    // selectors repeated four times, already diverging — and MatchPanel three
-    // copies of the setTimeout-then-scrollIntoView that follows a keyboard
-    // selection. This component owns all of it; the panels only describe their
-    // columns and render their cells through the `cells` snippet.
-    //
-    // The row navigation helpers are exported from the module script so a
-    // panel whose table is not mounted at the time (TournamentPanel lists the
-    // tournaments only while none is selected) can still step through its list.
+    // The shared list table of the Match, Tournament, Collection, Anki and
+    // statistics panels: sticky sortable header (nextSort), click/j/k selection,
+    // icon actions column, empty state. Panels describe columns and render cells
+    // via the `cells` snippet. Row helpers are exported from the module script
+    // for panels whose table is not always mounted.
 
     import { isBareLetter } from '../../utils/keys.js';
 
@@ -26,9 +18,8 @@
     }
 
     /**
-     * The row `delta` steps away from the selected one, or `null` at the ends of
-     * the list. With nothing selected, stepping forward lands on the first row
-     * and stepping back on nothing — the convention every panel followed.
+     * The row `delta` steps away from the selected one, or `null` at the ends;
+     * with no selection, forward lands on the first row, back on nothing.
      *
      * @template T
      * @param {T[]} rows
@@ -164,11 +155,7 @@
                             aria-sort={ariaSort(col)}
                         >
                             {#if col.sortable}
-                                <!-- The button is the actual interactive element: focusable
-                                     (no tabindex override — a previous "-1" here contradicted
-                                     this very comment, #204) and carrying its own click
-                                     handler, rather than a non-interactive <th> relying on the
-                                     click bubbling up to it from a keyboard-unreachable button. -->
+                                <!-- The button, not the <th>, is the keyboard-reachable control. -->
                                 <button type="button" class="sort-btn" onclick={() => handleSort(col)}>
                                     {col.label ?? ''}{#if sort?.column === col.key}<span class="sort-arrow">{sort.direction === 'asc' ? '▲' : '▼'}</span>{/if}
                                 </button>
@@ -319,9 +306,7 @@
         padding-right: 6px;
     }
 
-    /* Sized to the row's buttons rather than a fixed width: a hard cap clipped
-       the fourth action button and pushed the table past its container. The
-       flexible text columns absorb the width. */
+    /* Sized to its buttons, not fixed (a cap clipped the fourth); text columns absorb the rest. */
     .panel-table :global(.actions-col) {
         width: 1px;
         white-space: nowrap;

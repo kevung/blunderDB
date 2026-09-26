@@ -30,11 +30,8 @@
     let openInNewTab = $state(false);
 
     let searchText = $state('');
-    // Comment filter mode: 'contains' searches the text (t"…"), 'has'/'none'
-    // only ask whether a comment is there at all (co / xco). Mutually exclusive
-    // by construction — the backend treats presence and content as independent
-    // AND clauses, but offering both at once would only allow redundant or
-    // contradictory searches.
+    // Comment filter: 'contains' (t"…") or 'has'/'none' (co / xco), mutually
+    // exclusive — combining them only yields redundant or contradictory queries.
     let commentMode = $state('contains');
     let movePattern = $state('');
     let matchIDsSelected = $state([]);
@@ -42,20 +39,13 @@
     let showPickerModal = $state(false);
     let playerName = $state('');
 
-    // The 20 numeric min/max/range filters live in one reactive object keyed by
-    // filter key — see services/filterModel.js, the table that declares them.
-    // Each entry is { option, min, max, rangeMin, rangeMax }; the rows bind
-    // straight into it, and clear/save/restore/tokenise are loops over the table.
+    // Numeric filters, one reactive entry per key declared in services/filterModel.js.
     let numeric = $state(createFilterState());
-    // The 20 numeric backend arguments (`${key}Filter`), read from a parse
-    // result keyed by short name (parseFilterTokens → `${short}Filter`,
-    // parseSearchCommand → `${short}`).
+    // Backend arguments `${key}Filter`, read from a parse result keyed by short name.
     const numericArgs = (get) => Object.fromEntries(NUMERIC_FILTERS.map((f) => [`${f.key}Filter`, get(f.short)]));
     let diceRollOption = $state('both'); // 'both' | 'first'
-    // Decision-type filter (Display group). The "Include Decision Type" checkbox is
-    // the on/off ("Indifférent") gate; when on, decisionMode reflects the board
-    // (Pions = checker / Cube = cube decision) and cubeSubType refines a cube
-    // decision into all / double-no-double / take-pass.
+    // Decision-type filter: decisionMode follows the board (checker/cube);
+    // cubeSubType refines a cube decision (all / double / take-pass).
     let decisionMode = $state('checker'); // 'checker' | 'cube' — meaningful while the filter is enabled
     let cubeSubType = $state('all'); // 'all' | 'double' | 'takepass'
     let lastCheckerDice = $state([3, 1]); // remembers the roll when toggling Pions ⇄ Cube from the panel
@@ -78,14 +68,8 @@
     /** @type {{ id: number, name: string, command: string } | null} */
     let selectedSavedFilter = $state(null);
 
-    // Command-line-only filters (#203): `xD65` (exclude a dice roll) and
-    // `id5,10` (position id) have no panel checkbox — deliberately, not by
-    // omission. Both are repeatable/list-shaped in a way the other checkbox
-    // filters aren't (several `xD`/`id` tokens combine, `xD` also needs a
-    // 21-roll picker), and both are already documented as typed-command-only
-    // in doc/source/cmd_mode.rst. They still parse correctly wherever a
-    // command reaches parseSearchTokens (typed, or a history/library replay —
-    // see searchFilterService.js's doc comment for why that used to matter).
+    // `xD65` and `id5,10` are command-line only on purpose (list-shaped, see
+    // doc/source/cmd_mode.rst); they still parse on history/library replay.
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -123,10 +107,7 @@
         'Flagged'
     ];
 
-    // Canonical filter/group names stay in English because they double as logic
-    // keys (object keys for filterEnabled/params and `{#if filter === '...'}`
-    // branches). These maps yield the i18n key slug for the *displayed* label
-    // only. The filter→token mapping lives in services/searchFilterService.js.
+    // Filter names are English logic keys; these maps give only the i18n slug of the label.
     const filterKeySlug = {
         'Include Cube': 'includeCube',
         'Include Score': 'includeScore',
@@ -196,9 +177,8 @@
         { name: 'Other', filters: ['Creation Date', 'Matches & Tournaments', 'Player', 'Individually Imported', 'Flagged'] }
     ];
 
-    // Which structure the main board is currently editing: 'include' (au moins)
-    // or 'exclude' (sauf). While in 'exclude' mode the include board is stashed.
-    // Declared before restoreSearchState() below, which assigns structureMode.
+    // 'include' (au moins) or 'exclude' (sauf, include board stashed). Declared
+    // before restoreSearchState(), which assigns it.
     let structureMode = $state('include');
     let includeBoardStash = $state(null);
     // A pinned filter run with ALT-n while the panel is open goes back to the
@@ -210,27 +190,17 @@
         }
     });
 
-    // Initialize all filters as disabled, then restore previous search state if available.
-    // Both keys are set through the same forEach (rather than a lone top-level
-    // `filterEnabled['Matches & Tournaments'] = false` statement, #205): that
-    // stray assignment — every value it wrote was already a literal, not
-    // derived from anything reactive, so there was nothing actually stale
-    // about it — was the one line of this pair the compiler flagged as
-    // "only captures the initial value", unlike the identical-shaped
-    // assignment happening inside this very closure.
+    // All filters disabled, then the previous search restored. Set in one forEach:
+    // a lone top-level assignment draws the compiler's "only captures the initial value".
     [...availableFilters, 'Matches & Tournaments'].forEach((f) => (filterEnabled[f] = false));
     restoreSearchState();
 
     let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length + (filterEnabled['Matches & Tournaments'] ? 1 : 0));
-    // Track board position only while the search tab is active.
-    // When the user switches away, App.svelte's exitEditMode() fires synchronously
-    // and updates positionStore to a DB position before onDestroy runs.
-    // This reactive block stops updating once $activeTabStore !== 'search',
-    // so savedSearchPosition always holds the last board the user saw on this panel.
+    // Track the board only while on the search tab: leaving it swaps positionStore
+    // to a DB position before onDestroy, which must not overwrite savedSearchPosition.
     let savedSearchPosition = $state(null);
     $effect(() => {
-        // Only the include structure is tracked here; while editing the exclude
-        // structure the main board holds the "Sauf" pattern, not the include one.
+        // Include structure only (in exclude mode the board holds the "Sauf" pattern).
         if ($activeTabStore === 'search' && structureMode === 'include') {
             savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
         }
@@ -282,9 +252,7 @@
         if (mode === 'cube' && cubeSubType === 'takepass') applyOfferedCube();
     }
 
-    // applyOfferedCube turns the board cube into a centered "offered" cube (owner
-    // -1), matching how take/pass positions are stored (the board can't otherwise
-    // build a centered value>1 cube). An offered cube is at least a double.
+    // Centered offered cube (owner -1, value ≥ 2), as take/pass positions are stored.
     function applyOfferedCube() {
         if (structureMode !== 'include') return;
         positionStore.update((p) => {
@@ -303,9 +271,7 @@
         if (value === 'takepass') {
             applyOfferedCube();
         } else if (structureMode === 'include') {
-            // Leaving take/pass: reset the offered cube (centered, value > 1) back
-            // to the initial centered 1-cube. An owned cube set in double mode
-            // (owner 0/1) is preserved.
+            // Leaving take/pass: offered cube back to centred 1; an owned cube is kept.
             positionStore.update((p) => {
                 if (p.cube.owner === -1 && p.cube.value >= 1) {
                     p.cube.value = 0;
@@ -322,9 +288,7 @@
         untrack(() => searchOfferedCubeStore.set(offered));
     });
 
-    // restoreExcludeStructure resets the structure editing state to 'include' and
-    // loads the exclude ("Sauf") board from a replayed history/saved entry (or an
-    // empty board when the entry has none).
+    // Back to 'include' editing, loading the entry's "Sauf" board (or an empty one).
     function restoreExcludeStructure(excludePositionJSON) {
         structureMode = 'include';
         searchStructureModeStore.set('include');
@@ -381,9 +345,7 @@
     }
 
     function handleSearch() {
-        // The backend reads the include structure from positionStore, so make sure
-        // the main board holds the include board (syncing the exclude board to its
-        // store) before searching.
+        // The backend reads the include structure from positionStore: restore it first.
         if (structureMode === 'exclude') switchStructureMode('include');
         const excludeActive = boardHasCheckers($searchExcludePositionStore);
 
@@ -404,9 +366,7 @@
             playerName
         });
 
-        // Cube sub-type: when the decision-type filter constrains to a cube
-        // decision, narrow to double/no-double (`dd`) or take/pass (`dr`). The `d`
-        // token already carries the cube decision_type read from the board.
+        // Cube sub-type: `dd` (double/no-double) or `dr` (take/pass) on top of `d`.
         if (filterEnabled['Include Decision Type'] && decisionMode === 'cube' && cubeSubType !== 'all') {
             transformedFilters.push(cubeSubType === 'takepass' ? 'dr' : 'dd');
         }
@@ -420,10 +380,8 @@
         searchHistoryStore.update((h) => [entry, ...h].slice(0, MAX_SEARCH_HISTORY));
         SaveSearchHistory(searchCommand, JSON.stringify($positionStore), excludePositionJSON).catch((err) => logger.error('Error saving search history:', err));
 
-        // The box searches in the list on screen, by the same rule as `ss` (#410): the
-        // machine says which list that is — a match or a collection left behind the query
-        // board, or positionsStore. An empty list is refused rather than sent as '', which
-        // the backend reads as "no restriction" and answers with the whole library.
+        // Search within the list on screen (same rule as `ss`). An empty list is
+        // refused: '' would mean "no restriction" to the backend.
         let restrictToPositionIDs = '';
         if (searchInCurrentResults) {
             restrictToPositionIDs = displayedPositionIDs().join(',');
@@ -438,9 +396,7 @@
             includeCube: parsed.incCube,
             includeScore: parsed.incScore,
             ...numericArgs((short) => parsed[`${short}Filter`]),
-            // Only the 'contains' mode carries text. In 'has'/'none' the box is
-            // disabled but may still hold what the user typed before switching,
-            // and sending it would AND a content filter onto a presence one.
+            // Only 'contains' sends text; a stale disabled box must not add a content filter.
             searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
             decisionTypeFilter: parsed.dtFilter,
             diceRollFilter: parsed.drFilter,
@@ -523,12 +479,8 @@
         restoreExcludeStructure(search.excludePosition);
         const replay = replaySearchArgs(search.command);
         if (replay) {
-            // Un `like` nu classe contre le plateau de l'entrée (#404) : celui
-            // qu'on feuilletait ou qu'on avait dessiné, que l'historique et la
-            // bibliothèque conservent et qui vient d'être reposé ci-dessus.
-            // Une entrée qui ne l'a pas gardé n'a plus de cible ; la relancer
-            // contre le plateau à l'écran répondrait à une autre question sans
-            // le dire, alors on refuse.
+            // Un `like` nu vise le plateau conservé par l'entrée ; sans lui on
+            // refuse plutôt que de viser en silence le plateau à l'écran.
             if (replay.f.likeFilter && !replay.f.likeTargetId && !search.position) {
                 statusBarTextStore.set(tMsg('similar.noPosition'));
                 return;
@@ -617,9 +569,7 @@
         executeSearch({ command: filter.command, position: editPosition, excludePosition });
     }
 
-    // Enter on a focused saved filter runs it, as the double-click does. Only
-    // Enter: Space stays the global command-line key, so a click followed by
-    // Space behaves as it did before the row could take the focus.
+    // Enter runs a focused saved filter; Space stays the global command-line key.
     /**
      * @param {KeyboardEvent} event
      * @param {{ id: number, name: string, command: string }} filter
@@ -643,15 +593,8 @@
     function handleKeyDown(event) {
         if ($activeTabStore !== 'search') return;
         if (event.target.matches('input, textarea, select')) {
-            // Escape belongs to the global dispatcher (App.svelte listens on
-            // `window`, one level above this `document` listener): it blurs
-            // the field so the bare-key shortcuts work again. Stopping it here
-            // left the user stuck in the field with no way out but the mouse.
-            // Tab stays with the field on purpose, same as Escape: since #204,
-            // the global dispatcher only hijacks a bare Tab into "open the
-            // search tab" while focus sits on the board — but stopping it here
-            // too means Tab moves between this form's fields even before that
-            // guard is reached, and protects against a future change to it.
+            // Escape reaches the global dispatcher (on `window`), which blurs the
+            // field. Tab is stopped here so it moves between this form's fields.
             if (event.key === 'Escape') return;
             event.stopPropagation();
             if (event.key === 'Enter') {
@@ -688,10 +631,8 @@
         });
     }
 
-    // restoreSearchBoard restores the include board + exclude structure from the
-    // saved search params. It is invoked from onMount after tick() so it runs after
-    // App.svelte's enterEditMode() (which clears the board on entering the search
-    // tab) — otherwise enterEditMode would clobber the restored board.
+    // Restores both boards from the saved params; called after tick() so
+    // enterEditMode()'s board clear has already run.
     function restoreSearchBoard() {
         const saved = $searchParamsStore;
         structureMode = 'include';
@@ -730,8 +671,6 @@
 
     onMount(async () => {
         document.addEventListener('keydown', handleKeyDown);
-        // Restore the board after the initial flush so App.svelte's enterEditMode()
-        // (which clears the board on tab entry) has already run.
         await tick();
         restoreSearchBoard();
     });
@@ -928,7 +867,7 @@
                                     {#each searchHistory as search (search.timestamp)}
                                         <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
                                             <td class="date-cell">{formatTimestamp(search.timestamp)}</td>
-                                            <!-- Chaque jeton devient une pastille lisible (#287) ;
+                                            <!-- Chaque jeton devient une pastille lisible ;
                                              la commande exacte reste en infobulle, parce que
                                              c'est elle qu'on relance. -->
                                             <td class="command-cell" title={search.command}>
@@ -1452,7 +1391,7 @@
         width: 140px;
         white-space: nowrap;
     }
-    /* Les pastilles de l'historique (fiche I.31) : discrètes, sur la surface
+    /* Les pastilles de l'historique : discrètes, sur la surface
        alternée de la palette, et jamais colorées — elles nomment un filtre,
        elles n'alertent pas. */
     .token-chip {
@@ -1530,9 +1469,9 @@
         white-space: nowrap;
     }
 
-    /* 15 % of the ink over the surface: #e0e0e0 in the light theme, as before, and a
+    /* 15 % of the ink over the surface: #e0e0e0 in the light theme, and a
        grey that stays below the ink in the dark one — a literal light grey left a
-       disabled field light on a dark panel, its text in the scheme's grey (#402). */
+       disabled field light on a dark panel, its text in the scheme's grey. */
     input:disabled {
         background-color: color-mix(in srgb, var(--color-text) 15%, var(--color-surface));
         color: var(--color-text-muted);

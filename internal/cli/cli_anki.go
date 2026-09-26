@@ -15,11 +15,8 @@ import (
 )
 
 // runAnki handles the anki command: the read-only and maintenance side of the
-// spaced-repetition decks the GUI's Anki panel reviews and the daemon serves
-// under /v1/anki.*. A script can list the decks with their due/new counters,
-// read a deck's statistics, project the cards coming due, and resynchronise a
-// deck with its source. Reviewing a card is a GUI gesture (it needs the
-// board) and stays out of the CLI on purpose.
+// spaced-repetition decks. Reviewing a card needs the board, so it stays a GUI
+// gesture.
 func (cli *CLI) runAnki(args []string) error {
 	if len(args) < 1 {
 		cli.printAnkiUsage()
@@ -309,12 +306,9 @@ func (cli *CLI) runAnkiForecast(args []string) error {
 // ── sync ─────────────────────────────────────────────────────────────────────
 
 // runAnkiSync adds a card for every position of the deck's source that has
-// none yet; existing cards keep their scheduling state. A collection deck
-// re-reads its collection (Database.SyncAnkiDeck, exactly the GUI's call). A
-// search deck stores the search as JSON — {"command","position","ids"} — and
-// the GUI re-runs the command in its own command processor before calling
-// SyncAnkiDeckWithPositions with the merged ids; that grammar lives in the
-// frontend, so the CLI resynchronises from the stored ids and says so.
+// none yet; existing cards keep their scheduling. A search deck is resynced
+// from its stored ids only: re-running the search needs the frontend's
+// command processor, which the GUI has and the CLI does not.
 func (cli *CLI) runAnkiSync(args []string) error {
 	fs, dbPath := ankiFlagSet("sync", "Resynchronise a deck with its source (collection or stored search).",
 		"blunderdb anki sync --db database.db --deck 2")
@@ -364,13 +358,9 @@ func ankiSearchStoredIDs(sourceCommand string) ([]int64, bool) {
 	return stored.IDs, true
 }
 
-// runAnkiRetention reports the retention a deck's review log measures, read
-// against the target its owner chose.
-//
-// It reports and never writes (ADR-0026 rule 5). Under
-// domain.AnkiRetentionMinSample review-state reviews the measurement is named
-// as unavailable rather than printed: a pass rate over three reviews reads as
-// fact while being noise.
+// runAnkiRetention reports a deck's measured retention against its target. It
+// never writes (ADR-0026 rule 5); under domain.AnkiRetentionMinSample reviews
+// it reports the measure as unavailable rather than print noise.
 func (cli *CLI) runAnkiRetention(args []string) error {
 	fs, dbPath := ankiFlagSet("retention", "Measured retention of one deck against its target.",
 		"blunderdb anki retention --db database.db --deck 2",
@@ -416,13 +406,9 @@ func (cli *CLI) runAnkiRetention(args []string) error {
 	}
 }
 
-// runAnkiCard is the `anki card` sub-command: the three gestures on a single
-// card — suspend, bury, remove — which the daemon had served since it existed
-// while the CLI and the GUI had no way to reach them (G.14, #242).
-//
-// One sub-command with an action rather than three sibling sub-commands: they
-// share their argument (a card id), their confirmation and their output, and a
-// caller thinks "do something to this card", not "run the bury program".
+// runAnkiCard is the `anki card` sub-command: suspend, bury or remove one card.
+// One sub-command with an action, since the three share their argument,
+// confirmation and output.
 func (cli *CLI) runAnkiCard(args []string) error {
 	fs, dbPath := ankiFlagSet("card", "Suspend, bury or remove one card.",
 		"blunderdb anki card --db database.db --id 12 --action suspend",
@@ -476,9 +462,7 @@ func (cli *CLI) runAnkiCard(args []string) error {
 }
 
 // runAnkiLog is the `anki log` sub-command: the recorded review events, most
-// recent first. The log is what the scheduler was told, as opposed to what it
-// currently plans — the only place a grade entered by mistake is visible at
-// all, ADR-0026 keeping the schedule itself out of reach.
+// recent first — the only place a mistaken grade is visible (ADR-0026).
 func (cli *CLI) runAnkiLog(args []string) error {
 	fs, dbPath := ankiFlagSet("log", "Recorded review events, most recent first.",
 		"blunderdb anki log --db database.db",
@@ -504,10 +488,9 @@ func (cli *CLI) runAnkiLog(args []string) error {
 			return nil
 		}
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		// "SUBJECT" and not "POSITION": since 2.23.0 a review can be of a
-		// score card, which names a score and no position at all (ADR-0042).
-		// The column shows the card's key, which is the position id for a
-		// position card — the same number the header used to promise.
+		// "SUBJECT", not "POSITION": a score card names no position
+		// (ADR-0042). The column shows the card's key — the position id for a
+		// position card.
 		fmt.Fprintln(w, "REVIEWED AT\tDECK\tCARD\tSUBJECT\tGRADE\tINTERVAL")
 		for _, e := range entries {
 			fmt.Fprintf(w, "%s\t%d\t%d\t%s\t%s\t%dd\n",

@@ -1,11 +1,10 @@
 /**
- * primary-button-theme.spec.js — suite de #402
+ * primary-button-theme.spec.js
  *
  * Le bouton principal d'une fenêtre (« Fermer » de la configuration, « Aller »
  * d'Aller à la position…) reste l'action qu'on repère, et reste lisible, dans
- * chaque thème. #359 l'avait peint encre sur fond d'encre : juste en clair, mais
- * en sombre c'était le seul aplat clair de la fenêtre. Il suit désormais le
- * schéma sombre, teinté de l'accent.
+ * chaque thème : son fond suit le schéma sombre, teinté de l'accent, plutôt
+ * que de rester peint en clair.
  *
  * Mesuré sur les couleurs CALCULÉES par le moteur, au repos et au survol :
  * - l'encre tient 4,5:1 sur le fond du bouton (WCAG AA) ;

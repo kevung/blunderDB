@@ -10,15 +10,11 @@ import (
 	"time"
 )
 
-// TestProbeDecisionCost is a measurement, not an assertion. It reports what a
-// decision costs at each depth and filter so the numbers that size #125 and
-// #129 come from this build rather than from a citation. Run it on an idle
-// machine: under load it measures the machine.
+// TestProbeDecisionCost is a measurement, not an assertion: what a decision
+// costs at each depth and filter, on this build. Run it on an idle machine.
 func TestProbeDecisionCost(t *testing.T) {
-	// A measurement that cannot fail has no business lengthening the recipe.
-	// testing.Short() is not enough: the full suite runs without it, and this
-	// probe costs minutes there while asserting nothing. Behind an environment
-	// variable, like the corpus regeneration, it runs when it is wanted.
+	// Behind an environment variable: the full suite runs without -short, and
+	// this probe costs minutes while asserting nothing.
 	if os.Getenv("BLUNDERDB_PROBE") == "" {
 		t.Skip("set BLUNDERDB_PROBE to measure; this test asserts nothing")
 	}
@@ -36,9 +32,8 @@ func TestProbeDecisionCost(t *testing.T) {
 		{"2-ply, k=12, filter (0,1,3)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}, 1},
 		{"2-ply, k=12, filter (0,2,8)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 2, 8}}, 1},
 		{"2-ply, k=12, (0,1,3), NumCPU", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}, runtime.NumCPU()},
-		// 3-ply (#272/I.16). MaxPly has been 4 since the port landed and
-		// DefaultConfig has always had a filter for it; what was missing was
-		// the number that says whether it is offerable.
+		// 3-ply: the cost side of whether it is offerable
+		// (threeply_measure_test.go).
 		{"3-ply, canonique", DefaultConfig(3), 1},
 		{"3-ply, canonique, NumCPU", DefaultConfig(3), runtime.NumCPU()},
 	}

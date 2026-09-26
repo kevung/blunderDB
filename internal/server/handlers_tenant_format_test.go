@@ -15,10 +15,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// TestTenantHeaderNamedIsRejected is the recipe of issue #155:
-// `curl -H 'X-Tenant-ID: alice' …` answers 400 with code=invalid and a message
-// naming the expected format. Before ADR-0005's 2026-09-03 amendment the
-// request went through and every named tenant shared tenant 0's rows.
+// TestTenantHeaderNamedIsRejected: `X-Tenant-ID: alice` answers 400
+// code=invalid with a message naming the expected format (ADR-0005).
 func TestTenantHeaderNamedIsRejected(t *testing.T) {
 	ts := newTestServer(t)
 	for _, tenant := range []string{"alice", "default", "mon-tenant", "0", "-1", "007", "1.0"} {
@@ -49,12 +47,9 @@ func TestTenantHeaderNamedIsRejected(t *testing.T) {
 	}
 }
 
-// TestTenantIsolationSQLiteScopedFamilies checks two numeric tenants through
-// the HTTP layer on the one family the SQLite backend does scope (the filter
-// library carries a `scope` column): tenant 1 saves a filter, tenant 2 lists
-// none. Positions are not scoped by SQLite — the desktop's single implicit
-// tenant — which is why the position-level check lives in the PostgreSQL
-// test.
+// TestTenantIsolationSQLiteScopedFamilies: tenant 1 saves a filter, tenant 2
+// lists none. SQLite scopes only the filter library, so the position-level
+// check lives in the PostgreSQL test.
 func TestTenantIsolationSQLiteScopedFamilies(t *testing.T) {
 	ts := newTestServer(t)
 

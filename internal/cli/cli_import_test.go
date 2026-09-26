@@ -9,7 +9,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// B.8 (#176): total-failure errors, --fail-on-error, --format json
+// Total-failure errors, --fail-on-error, --format json
 // ---------------------------------------------------------------------------
 
 // writePositionFile writes one JSON-serialized Position per non-empty line,

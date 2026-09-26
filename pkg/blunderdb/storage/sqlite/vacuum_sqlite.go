@@ -10,52 +10,28 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Vacuum reclaims disk space left behind by deletions (matches, tournaments,
-// purges) that SQLite never shrinks the file for on its own. It is an
-// explicit, user-triggered action only — never run automatically at open,
-// since its cost is unpredictable on a large database. The desktop wrapper
-// (database.Database.Vacuum), the CLI's `vacuum` and the daemon's
-// /ops/maintenance.vacuum all come through here.
+// Vacuum reclaims disk space left behind by deletions. User-triggered only —
+// never at open, its cost is unpredictable. The desktop wrapper, the CLI's
+// `vacuum` and the daemon's /ops/maintenance.vacuum all come through here.
 //
 // Steps, in order:
 //
-//  1. `PRAGMA wal_checkpoint(TRUNCATE)` folds the WAL back into the main
-//     file first, so the "before" size (and the free-space check below)
-//     reflect the database honestly rather than a stale main file sitting
-//     next to a fat WAL.
-//  2. A free-space check refuses the run outright when the volume holding
-//     the file has less than roughly twice its size available. SQLite's
-//     VACUUM rebuilds the whole database into a fresh file before swapping
-//     it in, so it transiently needs about that much headroom; failing
-//     partway through a rebuild is far worse than refusing up front.
-//  3. `VACUUM` itself. SQLite refuses to run it inside a transaction, so
-//     it is issued as a bare Exec rather than through any transaction
-//     helper.
-//  4. `ANALYZE`, so the query planner's statistics reflect the rebuilt
-//     file instead of the pre-vacuum layout (fiche 05's synergy).
-//  5. A second `wal_checkpoint(TRUNCATE)`. Under WAL journal mode (the
-//     mode this package always opens in), VACUUM's rebuilt content is
-//     itself written through the WAL rather than truncating the main file
-//     in place — the file on disk does not actually shrink until that gets
-//     checkpointed back. Skipping this step would report a false "nothing
-//     reclaimed" even though the rebuild succeeded.
+//  1. `PRAGMA wal_checkpoint(TRUNCATE)`, so the "before" size and the
+//     free-space check are not fooled by a fat WAL.
+//  2. A free-space check refusing the run below roughly twice the file size:
+//     VACUUM rebuilds into a fresh file, and failing midway is worse.
+//  3. `VACUUM`, as a bare Exec: SQLite refuses it inside a transaction.
+//  4. `ANALYZE`, so planner statistics reflect the rebuilt file.
+//  5. A second `wal_checkpoint(TRUNCATE)`: under WAL, VACUUM's output goes
+//     through the WAL and the file only shrinks once checkpointed.
 //
-// Before any of that, recompressLegacyAnalyses (#180) walks the analysis
-// table and upgrades any row still holding the pre-zstd codec (raw JSON or
-// zlib — see engine.RecompressAnalysisData) to the current zstd+dictionary
-// format. Vacuum already rewrites the whole file and already asks the user
-// to accept an unpredictable cost, which makes it the natural trigger for a
-// pass that is otherwise easy to never get around to: a database opened
-// only with today's binary would otherwise carry its original-import codec
-// forever. The upgrade errs are non-fatal (logged, not returned) — a handful
-// of rows this pass could not read stay in their old format and are picked
-// up by ordinary reads/writes or the next vacuum; refusing the whole
-// compaction over that would be a worse outcome for the user than a few
-// bytes not yet reclaimed.
+// Before that, recompressLegacyAnalyses upgrades rows still in a pre-zstd
+// codec (engine.RecompressAnalysisData): vacuum already rewrites the whole
+// file. Its errors are logged, not returned: an unreadable row stays in its
+// old format, which is better than refusing the compaction.
 //
-// Returns the file size in bytes before and after. On an in-memory database
-// (tests, `:memory:`) there is no file to size or free-space-check against;
-// VACUUM and ANALYZE still run, and both sizes are reported as 0.
+// Returns the file size in bytes before and after; 0 and 0 on ":memory:",
+// where VACUUM and ANALYZE still run.
 func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 	if s.sqlDB == nil {
 		return storage.VacuumResult{}, fmt.Errorf("vacuum: no database open")
@@ -127,8 +103,7 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 
 // recompressLegacyAnalysesBatchSize is how many analysis rows are read and,
 // if needed, rewritten per transaction — small enough that a big table does
-// not hold one giant transaction open for the whole pass (within the report's
-// suggested 1,000-5,000 range, see docs/recherche/P11-compression-blobs.md).
+// not hold one giant transaction open for the whole pass.
 const recompressLegacyAnalysesBatchSize = 2000
 
 type legacyAnalysisRow struct {
@@ -160,9 +135,8 @@ func fetchLegacyAnalysisBatch(ctx context.Context, db execer, afterID int64, lim
 
 // recompressLegacyAnalyses walks analysis.data in id order and rewrites any
 // row not already in the current zstd format. engine.NeedsRecompression is a
-// cheap prefix check, so a database that has already been through one vacuum
-// (or was created after #180) costs one full-table SELECT of already-current
-// rows and no writes at all.
+// cheap prefix check, so an already-current database costs one full-table
+// SELECT and no writes.
 func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
 	var lastID int64
 	var scanned, upgraded int
@@ -209,12 +183,9 @@ func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
 }
 
 // DatabaseSizeBytes reports the current size of the SQLite main file in
-// bytes, for the daemon's blunderdb_database_size_bytes gauge (#238; see
-// server.sizeProvider) — a plain os.Stat, not the more careful
-// wal_checkpoint-then-stat Vacuum does, since this runs on an unattended
-// timer rather than a user-triggered action and a WAL-inclusive
-// approximation is good enough for a gauge. Returns 0, nil on an in-memory
-// database (tests, `:memory:`), which has no file to size.
+// bytes, for the daemon's blunderdb_database_size_bytes gauge: a plain
+// os.Stat without checkpoint, good enough for an unattended gauge. Returns
+// 0, nil on ":memory:".
 func (s *Storage) DatabaseSizeBytes(ctx context.Context) (int64, error) {
 	if s.sqlDB == nil {
 		return 0, fmt.Errorf("database size: no database open")

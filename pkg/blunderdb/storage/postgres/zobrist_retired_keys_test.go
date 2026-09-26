@@ -1,10 +1,8 @@
 // TestRetiredZobristKeysMatchTheEngine never touches a database: migration 014
 // undoes a XOR that engine.ZobristHash used to apply, and SQL cannot call Go,
 // so the two retired Zobrist keys are written into the .sql file as literals.
-// This test reads them back and compares them with the keys the engine draws.
-// Without it, a change to the Zobrist key stream would leave the PostgreSQL
-// backend converting hashes with the wrong constant — silently, and only for
-// the handful of positions that carry a rule flag.
+// This test reads them back and compares them with the keys the engine draws,
+// so a change to the key stream cannot silently leave a wrong constant there.
 package postgres
 
 import (

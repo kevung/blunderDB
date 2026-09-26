@@ -8,9 +8,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
-// recordingBind stands for the *database.Database run.go binds: the thing
-// shutdown closes, recording WHEN it was closed so the order against the
-// job cancellation can be asserted.
+// recordingBind stands for the bound *database.Database, recording when it
+// was closed.
 type recordingBind struct {
 	closed  chan struct{}
 	closeAt func()
@@ -24,12 +23,8 @@ func (b *recordingBind) Close() error {
 	return nil
 }
 
-// TestShutdownCancelsJobsBeforeClosingTheBinds is the ordering the fix is
-// about (ADR-0045 §8): the gammonNet batch writes an analysis per position
-// from its own goroutine, and the GUI holds the user's file on a single
-// SQLite connection, so closing the database first is a race and not merely
-// a lost batch. The spy records the order, not merely the absence of a
-// panic.
+// TestShutdownCancelsJobsBeforeClosingTheBinds: jobs stop before the
+// database closes (ADR-0045 §8).
 func TestShutdownCancelsJobsBeforeClosingTheBinds(t *testing.T) {
 	a := NewApp(nil)
 	a.ctx = context.Background()
@@ -38,10 +33,7 @@ func TestShutdownCancelsJobsBeforeClosingTheBinds(t *testing.T) {
 	stopped := make(chan struct{})
 	var cancelledBeforeClose bool
 
-	// A batch "in flight": the fields runGammonNetBatch would have set. Its
-	// goroutine is simulated by the closure below — cancellation lets it
-	// finish, and only then does it close its stopped channel, which is the
-	// window shutdown has to wait through.
+	// A simulated batch in flight, closing its stopped channel after cancel.
 	a.gnBatchMu.Lock()
 	a.gnBatchCancel = func() {
 		close(cancelled)
@@ -124,21 +116,17 @@ func TestStopBackgroundJobsGivesUpAfterTheGrace(t *testing.T) {
 	}
 }
 
-// TestRunGammonNetBatchSignalsItsEnd ties the two halves together: the shell
-// really does publish a channel that closes when the batch goroutine is
-// done, which is what stopBackgroundJobs waits on. Without a database the
-// shell returns at once, so this drives the shell directly.
+// TestRunGammonNetBatchSignalsItsEnd: the shell publishes the channel
+// stopBackgroundJobs waits on, closed when the batch is done.
 func TestRunGammonNetBatchSignalsItsEnd(t *testing.T) {
-	// A real (empty, in-memory) Database only because the shell refuses to
-	// start without one; the run closure below never touches it.
+	// The shell refuses to start without a Database; run never touches it.
 	d := database.NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
 	t.Cleanup(func() { _ = d.Close() })
 
-	// No a.ctx on purpose: the shell must run without a window, and emit
-	// nothing when there is none (emitBatch).
+	// No a.ctx: the shell must run, and emit nothing, without a window.
 	a := NewApp(d)
 
 	release := make(chan struct{})

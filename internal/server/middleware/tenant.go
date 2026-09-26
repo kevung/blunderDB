@@ -29,13 +29,11 @@ type tenantKey struct{}
 // a positive decimal integer. Surrounding whitespace is trimmed (a proxy that
 // pads the value must not create a distinct tenant), a value that is blank
 // once trimmed counts as missing, and anything that is not a positive decimal
-// integer is rejected — "alice", "default", "0" and "1.0" alike. The daemon
-// used to pass such values through verbatim, and every backend then mapped
-// them to tenant 0, so all named tenants shared one set of rows. Mapping a
-// name to its integer is the proxy's job (ADR-0005).
+// integer is rejected — "alice", "default", "0" and "1.0" alike: mapping a
+// name to its integer is the proxy's job, never the daemon's (ADR-0005).
 // SingleTenantID is the only tenant a single-tenant backend answers for. It is
 // "1" rather than "0" because a tenant is a POSITIVE integer (ADR-0005's
-// 2026-09-03 amendment) — 0 is what a bad parse used to collapse onto.
+// 2026-09-03 amendment).
 const SingleTenantID = "1"
 
 // Tenant enforces the X-Tenant-ID header. singleTenant, when true, additionally

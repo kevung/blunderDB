@@ -20,12 +20,8 @@
     let editingText = $state('');
     let promptText = $state('');
 
-    // Autocomplétion des tags (#265, fiche I.9). Un tag est un `#mot` dans la
-    // prose : rien ne le déclare, et la suggestion ne déclare rien non plus.
-    // Elle propose ce que CETTE base utilise déjà — pour qu'on réécrive
-    // `#backgame` comme la dernière fois plutôt que `#back-game` — et, à
-    // défaut, le vocabulaire recommandé, qui vient de la littérature et pas
-    // d'un calcul de blunderDB.
+    // Autocomplétion des `#tags` : ceux de cette base d'abord (pour réécrire le
+    // même), puis le vocabulaire recommandé.
     /** @type {string[]} */
     let tagVocabulary = $state([]);
     /** @type {string[]} */
@@ -36,10 +32,7 @@
     async function loadTagVocabulary() {
         try {
             const [used, recommended] = await Promise.all([Tags(), RecommendedTags()]);
-            // Un objet plutôt qu'un Set : la règle svelte/prefer-svelte-reactivity
-            // interdit un Set mutable ici, et rien de tout ceci n'a besoin
-            // d'être réactif — c'est une déduplication locale, jetée à la
-            // ligne suivante.
+            // Un objet, pas un Set (svelte/prefer-svelte-reactivity) : dédoublonnage local.
             /** @type {Record<string, boolean>} */
             const seen = {};
             const out = [];
@@ -63,9 +56,7 @@
     }
 
     /**
-     * Met à jour les suggestions d'après le mot en cours de frappe. Le mot est
-     * délimité par des espaces : c'est la même délimitation que la recherche
-     * par tag, donc ce qui est proposé ici est ce qui sera trouvé là.
+     * Suggestions pour le mot en cours, délimité par des espaces comme la recherche par tag.
      */
     function refreshTagSuggestions() {
         const el = promptEl;
@@ -119,11 +110,7 @@
         }
     });
 
-    // Provenance badge (#263). A comment carries where its text came from:
-    // 'user' (typed here), 'xg'/'gnubg'/'bgf' (lifted out of an imported file)
-    // or 'unknown' (written before the column existed). The user's own notes
-    // get no badge — they are the norm, and marking every one of them would be
-    // noise; only a note somebody else wrote is worth naming.
+    // Provenance: 'user', 'xg'/'gnubg'/'bgf' or 'unknown'; the user's own notes get no badge.
     function originLabel(origin) {
         switch (origin) {
             case 'xg':
@@ -155,11 +142,8 @@
     }
 
     async function loadComments() {
-        // Only update allComments here; the search $effect below owns
-        // displayedComments. Reading allComments in the same synchronous effect
-        // pass that writes it (the no-DB / position-id-0 case takes no await,
-        // so it stays synchronous) made the effect read-and-write the same
-        // state, triggering an infinite update loop (effect_update_depth_exceeded).
+        // Only allComments here: the search $effect owns displayedComments, and
+        // reading what this (possibly synchronous) pass writes would loop.
         try {
             const pos = $positionStore;
             if (pos && pos.id) {
@@ -219,9 +203,7 @@
     }
 
     function handlePromptKeyDown(event) {
-        // La liste de suggestions capte d'abord les touches qui la
-        // concernent — et seulement celles-là : tout le reste continue vers
-        // la saisie, y compris Entrée quand aucune suggestion n'est ouverte.
+        // La liste ne capte que ses touches ; le reste va à la saisie.
         if (tagSuggestions.length > 0) {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -297,7 +279,7 @@
     async function deleteComment(comment, event) {
         event.stopPropagation();
         try {
-            // Through the trash (#285): restorable from the `trash` command.
+            // Through the trash: restorable from the `trash` command.
             await TrashCommentEntry(comment.id);
             await loadComments();
         } catch (error) {
@@ -367,9 +349,7 @@
                                     ? formatDate(comment.modifiedAt) + ' ' + $t('comment.editedSuffix')
                                     : formatDate(comment.createdAt)}</span
                             >
-                            <!-- Provenance (#263). Only shown for a note the user did NOT
-                                 write: their own comments are the norm, and a badge on every
-                                 one of them would be noise. -->
+                            <!-- Only for a note the user did not write. -->
                             {#if originLabel(comment.origin)}
                                 <span class="msg-origin" title={originTitle(comment.origin)}>{originLabel(comment.origin)}</span>
                             {/if}

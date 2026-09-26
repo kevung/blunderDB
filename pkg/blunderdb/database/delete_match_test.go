@@ -24,7 +24,7 @@ func assertTableCount(t *testing.T, rawDB *sql.DB, table string, expected int) {
 //
 // The two comments here are the IMPORTER's — the per-move notes an .xg file
 // carries — so they hold nothing. A comment the user wrote does hold its
-// position since #263; TestDeleteMatchSparesUserComments covers that.
+// position; TestDeleteMatchSparesUserComments covers that.
 func TestDeleteMatchCleansUpAllData(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
@@ -334,11 +334,8 @@ func TestDeleteMatchPreservesSharedPositions(t *testing.T) {
 // assertTableCount uses countRows + fmt from this file's imports
 
 // TestDeleteMatchKeepsIndividuallyImportedPosition covers the path the GUI and
-// the CLI actually take. Database.DeleteMatch has its own copy of the orphan
-// purge — the Storage contract test exercises a different one — and this is the
-// copy that used to silently destroy the user's own positions: import a match,
-// then delete it, and any position the user had saved on their own that happened
-// to occur in it went with it.
+// the CLI actually take: Database.DeleteMatch has its own copy of the orphan
+// purge, which the Storage contract test does not exercise.
 func TestDeleteMatchKeepsIndividuallyImportedPosition(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
@@ -547,15 +544,10 @@ func TestDeleteMatchKeepsAnkiCardPosition(t *testing.T) {
 	}
 }
 
-// TestDeleteMatchSparesUserComments pins the rule #263 added to
-// positionIsHeldSQL: a comment the USER wrote holds its position through the
-// deletion of the match it occurred in, and an imported one does not.
-//
-// Until 2.19.0 a comment carried no provenance, so neither held anything and a
-// note the user had typed on a match position was destroyed with the match.
-// The distinction is the whole point of the origin column: without it, sparing
-// the position would mean sparing every position of every .xg file that
-// carries per-move notes.
+// TestDeleteMatchSparesUserComments pins positionIsHeldSQL's comment rule: a
+// comment the USER wrote holds its position through the match's deletion, an
+// imported one does not — otherwise every .xg with per-move notes would be
+// unpurgeable.
 func TestDeleteMatchSparesUserComments(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()

@@ -1,69 +1,38 @@
 /**
- * Dans quel sens le plateau est dessiné.
+ * Dans quel sens le plateau est dessiné : deux questions distinctes, qui ne
+ * coïncident que tant que le camp au trait est en bas (faux en transcription).
  *
- * Deux questions vivent ici, et elles n'ont pas la même réponse — c'est tout
- * l'objet du fichier. Elles ont longtemps coïncidé, parce que le camp au trait
- * était toujours en bas ; le jour où il a cessé de l'être (la transcription),
- * les trois endroits qui les avaient confondues se sont mis à répondre chacun
- * une chose différente : les pions dessinés d'un côté, le point cliqué d'un
- * autre, les flèches du coup sélectionné d'un troisième.
+ *   • [boardIsMirrored] — COORDONNÉES : faut-il retourner le modèle ? Si oui,
+ *     le point `p` se dessine en `25 - p`, et le clic convertit en sens inverse.
+ *   • [labelsFlipped] — ÉTIQUETTES : les points sont-ils numérotés depuis le
+ *     camp d'en face ? Le jan du bas est celui de la couleur 0 de la position
+ *     affichée ; rien n'est retourné.
  *
- *   • [boardIsMirrored] — faut-il RETOURNER la position du modèle ? C'est une
- *     question de COORDONNÉES : quand la réponse est oui, le point `p` du
- *     modèle se dessine à la place `25 - p` de l'écran, et le clic fait la
- *     conversion inverse.
+ * Le code reçoit des points dans deux numérotations :
+ *   • ABSOLUE — le damier du modèle (jan du joueur 1 en 1-6), celle des
+ *     `CheckerStep` de `domain.LegalMoves` : [screenOfModelPoint] ;
+ *   • RELATIVE AU CAMP AU TRAIT — toute notation (`domain.pointLabel`), donc
+ *     les flèches : [screenOfNotationPoint].
+ * Elles coïncident pour une position de la bibliothèque (normalisée, camp au
+ * trait = joueur 1) ; seule la transcription les sépare.
  *
- *   • [labelsFlipped] — les points sont-ils NUMÉROTÉS depuis le camp d'en face ?
- *     C'est une question d'ÉTIQUETTES : les points se comptent depuis le jan du
- *     camp au trait, et le jan dessiné en bas à droite est celui de la couleur 0
- *     de la position AFFICHÉE. Rien n'est retourné pour autant.
- *
- * Et il faut bien les deux, parce que le code reçoit des points dans DEUX
- * numérotations, jamais dans une seule :
- *
- *   • ABSOLUE — celle du damier du modèle, le jan du joueur 1 en 1-6 et celui du
- *     joueur 2 en 19-24. C'est celle des `CheckerStep` que `domain.LegalMoves`
- *     rend (`singleMoves` parcourt `Board.Points[src]`), donc celle du coup en
- *     cours et du filtre par point. Elle se convertit avec [screenOfModelPoint].
- *
- *   • RELATIVE AU CAMP AU TRAIT — celle de toute notation de backgammon, « 24 »
- *     nommant toujours les pions arriérés de celui qui joue (`domain.pointLabel`
- *     écrit 25-idx pour White). C'est celle des flèches, lues d'une notation.
- *     Elle se convertit avec [screenOfNotationPoint].
- *
- * Les deux numérotations coïncident quand le camp au trait est le joueur 1, et
- * les deux conversions coïncidaient quand le camp au trait était toujours en
- * bas : rien ne signalait qu'on employait l'une pour l'autre. Une position de la
- * bibliothèque étant enregistrée normalisée — camp au trait = joueur 1 —, aucun
- * des deux cas de divergence ne se rencontre hors transcription.
- *
- * Le composant n'a pas de test de rendu — two.js dessine sur un canvas que jsdom
- * n'implémente pas —, et c'est la raison pour laquelle ces deux réponses sont
- * ici plutôt que dans `Board.svelte` : elles sont la règle, elles se vérifient,
- * et une règle qui ne se vérifie nulle part dérive (même leçon que
- * services/boardRedraw.js).
+ * Ici plutôt que dans `Board.svelte`, sans test de rendu (two.js dessine sur
+ * un canvas absent de jsdom), pour que la règle soit vérifiée.
  */
 
 /**
- * Faut-il retourner la position du modèle pour l'afficher ?
+ * Faut-il retourner la position du modèle pour l'afficher ? (Stockage :
+ * toute position est normalisée, camp au trait = 0, en bas.)
  *
- * Rappel du STOCKAGE : toute position enregistrée est normalisée, camp au trait
- * en `player_on_roll = 0` — donc en bas, sans miroir.
- *
- * - `EVAL` et `EDIT` : jamais. La position est montrée telle quelle pour que les
- *   coordonnées de la souris soient celles du modèle ; le miroir de la recherche
- *   est appliqué ailleurs, au moment de chercher.
- * - `TRANSCRIBE` : seulement si l'utilisateur le demande. Le moteur y rend une
- *   position ABSOLUE — couleur 0 = joueur 1 — dont `player_on_roll` change à
- *   chaque demi-coup ; retourner sur le trait y ferait osciller le damier d'un
- *   tour sur l'autre, les pions de celui qu'on vient de regarder passant en
- *   haut. Le joueur 1 reste donc en bas et le trait se lit aux dés, qui changent
- *   de côté.
- * - Mode match : le joueur 1 reste en bas de même. La position est normalisée,
- *   et c'est `MatchMovePosition.player_on_roll` qui dit qui avait le trait :
- *   quand c'était le joueur 2, on retourne pour le renvoyer en haut.
- * - Sinon : le camp au trait en bas, ce qui ne retourne qu'une position éditée
- *   n'ayant pas encore été normalisée par l'enregistrement.
+ * - `EVAL`, `EDIT` : jamais, pour que la souris parle en coordonnées du
+ *   modèle ; le miroir de la recherche s'applique au moment de chercher.
+ * - `TRANSCRIBE` : sur demande seulement. La position y est ABSOLUE et le
+ *   trait change à chaque demi-coup : retourner sur le trait ferait osciller
+ *   le damier. Le joueur 1 reste en bas ; le trait se lit aux dés.
+ * - Match : le joueur 1 reste en bas ; on retourne quand
+ *   `MatchMovePosition.player_on_roll` dit que le joueur 2 avait le trait.
+ * - Sinon : camp au trait en bas (ne retourne qu'une position éditée non
+ *   encore normalisée).
  *
  * @param {{mode: string, position: any, matchContext?: any, transcriptionSwap?: boolean}} params
  * @returns {boolean}
@@ -79,11 +48,8 @@ export function boardIsMirrored({ mode, position, matchContext, transcriptionSwa
 }
 
 /**
- * Les points de la position AFFICHÉE sont-ils numérotés depuis le camp du
- * joueur 2 (le label du point `p` vaut alors `25 - p`) ?
- *
- * Toujours la même règle, quel que soit le mode : le jan du bas appartient à la
- * couleur 0, et la numérotation part du jan du camp au trait.
+ * Les points de la position AFFICHÉE sont-ils numérotés depuis le joueur 2
+ * (label de `p` = `25 - p`) ? Même règle dans tous les modes.
  *
  * @param {any} displayPosition la position telle qu'elle est dessinée, miroir compris
  * @returns {boolean}
@@ -98,11 +64,8 @@ function opposite(point) {
 }
 
 /**
- * La place, à l'écran, d'un point donné dans la numérotation ABSOLUE du modèle —
- * un pas de `domain.LegalMoves`, un point cliqué rendu au modèle.
- *
- * La conversion est celle du miroir, et elle est involutive : le clic s'en sert
- * dans l'autre sens, de l'écran vers le modèle.
+ * La place à l'écran d'un point en numérotation ABSOLUE (pas de
+ * `domain.LegalMoves`). Involutive : le clic s'en sert dans l'autre sens.
  *
  * @param {number} point
  * @param {boolean} mirrored la réponse de [boardIsMirrored]
@@ -112,14 +75,9 @@ export function screenOfModelPoint(point, mirrored) {
 }
 
 /**
- * La place, à l'écran, d'un point donné dans la numérotation RELATIVE AU CAMP AU
- * TRAIT — celle que porte toute notation, donc les flèches du coup choisi.
- *
- * Ce n'est PAS la conversion ci-dessus : la notation est déjà écrite du point de
- * vue de celui qui joue, et la seule question est de savoir si celui-ci est
- * dessiné en bas (numérotation de l'écran) ou en haut (numérotation inversée) —
- * c'est-à-dire exactement ce que dit [labelsFlipped], et exactement ce que les
- * étiquettes affichent sous chaque flèche.
+ * La place à l'écran d'un point en numérotation RELATIVE AU CAMP AU TRAIT
+ * (notation, flèches). Pas la conversion ci-dessus : seule compte la place du
+ * joueur au trait, c'est-à-dire [labelsFlipped].
  *
  * @param {number} point
  * @param {boolean} flipped la réponse de [labelsFlipped]

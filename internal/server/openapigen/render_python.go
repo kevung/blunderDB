@@ -6,18 +6,10 @@ import (
 	"strings"
 )
 
-// The generated half of the Python client (issue #289, fiche I.33).
-//
-// One method per route, generated from the SAME route table that produces
-// openapi.yaml and the documentation annex. A hand-written client would drift
-// the day a route is added and nobody would notice until a user did; this one
-// cannot, because `go run ./cmd/openapi-gen` rewrites it and
-// openapigen_test.go fails the build while it is stale.
-//
-// The transport — the session, the tenant header, the error envelope, the
-// NDJSON decode — is hand-written in clients/python/blunderdb/client.py. That
-// split is the point: what changes with the API is generated, what changes
-// with judgement is written.
+// The generated half of the Python client: one method per route, from the
+// same route table as openapi.yaml, so openapigen_test.go fails while it is
+// stale. The transport (session, tenant header, error envelope, NDJSON) is
+// hand-written in clients/python/blunderdb/client.py.
 
 // pythonHeader is the file's preamble. It carries the same "do not edit"
 // warning as the other generated files, for the same reason.
@@ -112,9 +104,8 @@ func pythonDocstring(r Route) string {
 }
 
 // pythonMethodName turns "/v1/positions.saveIndividual" into
-// "positions_save_individual": the family, then the operation in snake_case.
-// The family is kept because two families legitimately share an operation
-// name (`list`, `delete`), and a bare `list()` would collide.
+// "positions_save_individual"; the family prefix avoids collisions between
+// shared operation names (`list`, `delete`).
 func pythonMethodName(r Route) string {
 	return snakeCase(r.Family) + "_" + snakeCase(r.Op)
 }

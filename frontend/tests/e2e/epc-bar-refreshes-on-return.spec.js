@@ -1,17 +1,9 @@
 /**
- * epc-bar-refreshes-on-return.spec.js  — Scénario S1 étendu
+ * epc-bar-refreshes-on-return.spec.js
  *
- * Vérifie que la valeur EPC affichée dans le PANNEAU se met à jour quand on
- * change de position entre deux visites de l'onglet Eval — et que la barre
- * d'état, elle, ne transmet AUCUNE valeur EPC (le mode défi masque le
- * panneau ; une copie dans la barre d'état trahirait les réponses).
- *
- * Stratégie :
- *   1. Mock ComputeEPCFromPosition → retourne epcResultA pour positionA
- *   2. Cliquer Eval → vérifier que le panneau affiche « 66.47 »
- *   3. Quitter Eval (aller sur Stats)
- *   4. Patcher le mock pour retourner epcResultB
- *   5. Retour Eval → vérifier que le panneau affiche « 72.34 »
+ * L'EPC du panneau Eval se met à jour quand la position change entre deux
+ * visites de l'onglet, et la barre d'état n'en montre aucune (le mode défi
+ * masque le panneau ; une copie dans la barre trahirait les réponses).
  */
 
 import { test, expect } from '@playwright/test';

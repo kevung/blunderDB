@@ -1,11 +1,10 @@
 /**
- * color-scheme-theme.spec.js — #402
+ * color-scheme-theme.spec.js
  *
  * La racine déclare le schéma de couleur du thème actif. Les jetons ne
  * peignent que ce que les composants stylent ; les contrôles NATIFS — boutons,
  * listes, champs, cases, barres de défilement — sont peints par le moteur, qui
- * ne sait qu'une page est sombre que si `color-scheme` le lui dit. Sans lui, le
- * thème sombre gardait des contrôles clairs sur ses surfaces sombres.
+ * ne sait qu'une page est sombre que si `color-scheme` le lui dit.
  *
  * Tenu sur la propriété CALCULÉE de <html>, pour chaque thème nommé et pour
  * `system` dans les deux préférences du bureau, y compris quand celle-ci change

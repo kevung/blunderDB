@@ -1,12 +1,5 @@
-// Reordering a list by one step (▲/▼ buttons) or by an arbitrary move (drag),
-// with the new order persisted through a callback. Factored out of
-// TournamentPanel (moveMatchUp/Down, handleMatchReorder) and CollectionPanel
-// (moveCollectionUp/Down, movePositionUp/Down, the single-item branch of the
-// drag handlers), which each re-derived the same splice-and-persist sequence.
-//
-// The (from, to) convention is the one of dragReorder.js: the item at `from`
-// is taken out and reinserted at `to`, i.e. it ends up at index `to` of the
-// result. moveUp/moveDown are the two one-step cases of the same move.
+// Reordering a list by one step (▲/▼) or by a drag, persisted through a callback. (from, to) as in
+// dragReorder.js: the item at `from` ends up at index `to`.
 
 import { logger } from './logger.js';
 
@@ -41,10 +34,8 @@ export function moveDown(list, index) {
 }
 
 /**
- * Bind the moves above to a list held elsewhere (a store, a $state) and to a
- * persistence call. Each method applies the move locally first — the UI
- * answers at once — then persists; a persistence failure is logged and the
- * local order is kept, as the panels always did.
+ * Bind the moves to a list held elsewhere and to a persistence call. Each move applies locally
+ * first (the UI answers at once), then persists; a failure is logged and the local order kept.
  *
  * @template T
  * @param {object} opts

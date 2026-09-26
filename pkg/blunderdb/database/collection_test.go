@@ -334,12 +334,9 @@ func TestExportCollections(t *testing.T) {
 	}
 }
 
-// TestExportCollections_RoundTrip_ScalarColumnsAndDedup is fiche-04's core
-// regression for the collection export path — same defect and same fix as
-// ExportDatabase (see the comment block above
-// TestExportDatabase_RoundTrip_ScalarColumnsAndDedup in export_test.go):
-// before the fix, ExportCollections hand-rolled its own two-column position
-// table and never wrote zobrist_hash or any scalar column.
+// TestExportCollections_RoundTrip_ScalarColumnsAndDedup: the collection
+// export must write zobrist_hash and the scalar columns, as
+// TestExportDatabase_RoundTrip_ScalarColumnsAndDedup requires of ExportDatabase.
 func TestExportCollections_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 	t.Parallel()
 	db := newTestDB(t)
@@ -419,10 +416,9 @@ func TestExportCollections_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 	}
 }
 
-// TestExportCollections_MetadataAllowListAndWatermark covers fiche-04's other
-// collection-export defect: metadata used to be copied by raw inclusion
-// (`for key, value := range metadata { INSERT ... }`), and no watermark was
-// ever written. See ADR-0007 and issuance.CarriedMetadataKeys.
+// TestExportCollections_MetadataAllowListAndWatermark: metadata is copied by
+// allow-list, never by raw inclusion, and a watermark is written. See ADR-0007
+// and issuance.CarriedMetadataKeys.
 func TestExportCollections_MetadataAllowListAndWatermark(t *testing.T) {
 	t.Parallel()
 	db := newTestDB(t)

@@ -34,8 +34,8 @@ import (
 
 // handlerKind/kindOf live in routes.go (production code): server.go's
 // streamingPaths reuses the exact same classification to give a streaming
-// route a longer read/write deadline (#234), so this test and that behaviour
-// can never quietly drift apart.
+// route a longer read/write deadline, so this test and that behaviour can
+// never quietly drift apart.
 
 // customContentTypes names the hand-written handlers and the Content-Type
 // they are allowed to answer with on success. Keep it exhaustive: a custom
@@ -59,20 +59,20 @@ var customContentTypes = map[string][]string{
 	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
 	// gammonnet.compare is hand-written but NOT streamed: it writes nothing,
 	// so there is no partial state to report progress into, and its answer is
-	// one small object (#270).
+	// one small object.
 	"/v1/gammonnet.compare": {"application/json"},
 	// gammonnet.cubeMatrix likewise: a grid is a property of the position in
 	// the request, so there is nothing to gather, nothing to store and
-	// nothing to stream (#267).
+	// nothing to stream.
 	"/v1/gammonnet.cubeMatrix": {"application/json"},
 	// search.query streams positions like search.find; it is hand-written only
-	// so an unreadable query is refused before the 200 is committed (B.18).
+	// so an unreadable query is refused before the 200 is committed.
 	"/v1/search.query": {ndjsonContentType},
 
 	// These three are ordinary rpc-shaped JSON handlers, but wrapped with
-	// withIdempotency (#236) — the closure kindOf sees at runtime is
-	// withIdempotency's, not rpc's, so they classify as kindCustom despite
-	// answering exactly like any other rpc route.
+	// withIdempotency — the closure kindOf sees at runtime is withIdempotency's,
+	// not rpc's, so they classify as kindCustom despite answering exactly
+	// like any other rpc route.
 	"/v1/collections.create": {"application/json"},
 	"/v1/tournaments.create": {"application/json"},
 	"/v1/anki.reviewCard":    {"application/json"},

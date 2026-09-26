@@ -19,13 +19,12 @@ type PositionColumns struct {
 	BackCheckers1 int
 	BackCheckers2 int
 	NoContact     bool
-	// GamePhase is the derived phase label (ADR-0035, issue #264). It is
-	// computed here so every writer of a position — import, edit, repair —
-	// stores the same value, and recomputed rather than carried.
+	// GamePhase is the derived phase label (ADR-0035), computed here so every
+	// writer of a position — import, edit, repair — stores the same value.
 	GamePhase domain.GamePhase
-	// GameType is the derived plan-of-play label (issue #291). Computed here
-	// for the same reason as GamePhase, and it reads the SIDE ON ROLL as well
-	// as the board — it names the plan of the player to move.
+	// GameType is the derived plan-of-play label, computed here for the same
+	// reason; it reads the SIDE ON ROLL as well as the board.
+
 	GameType   domain.GameType
 	Occupancy1 uint32
 	Occupancy2 uint32

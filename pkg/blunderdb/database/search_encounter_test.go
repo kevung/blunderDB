@@ -1,11 +1,9 @@
 package database
 
-// search_encounter_test.go — le jeton `n` (rencontres, #282) répond la même
-// chose quel que soit le chemin qui le porte (#362) : la ligne de commande
-// (`blunderdb search --query 's n>3'`, qui passe par searchquery.Parse), la
-// charge utile JSON que l'application envoie à LoadPositionIDsByFilters, et une
-// collection vivante dont la requête le porte. Avant #362, l'application
-// n'envoyait pas le champ : la recherche partait sans lui et rendait tout.
+// search_encounter_test.go — le jeton `n` (rencontres) répond la même chose
+// quel que soit le chemin qui le porte : la ligne de commande
+// (searchquery.Parse), la charge utile JSON de LoadPositionIDsByFilters, et une
+// collection vivante. Un champ omis ferait tout rendre.
 
 import (
 	"encoding/json"

@@ -10,13 +10,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// TestRepairDenormalisedColumns exercises the repair on the very defect that
-// made it necessary (kevung/blunderDB#115): analysis.cube_error left holding the
-// error of an action that was never played.
-//
-// The column is corrupted in SQL rather than through the API, because the API
-// is precisely what has been fixed — going through it could no longer produce
-// the bad value, and the test would prove nothing.
+// TestRepairDenormalisedColumns exercises the repair on analysis.cube_error
+// left holding the error of an action that was never played. The column is
+// corrupted in SQL: the API can no longer produce the bad value.
 func TestRepairDenormalisedColumns(t *testing.T) {
 	ctx := context.Background()
 	dsn := filepath.Join(t.TempDir(), "repair.db")

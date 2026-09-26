@@ -1,10 +1,8 @@
 /**
  * helpers/screenshotTools.js
  *
- * Fonctions partagées par les specs de capture documentaire
- * (screenshot.spec.js, screenshot-panels.spec.js) : optimisation PNG et
- * capture-plus-vérification de taille. Un seul endroit pour choisir
- * l'optimiseur disponible sur le PATH, plutôt qu'une copie par spec.
+ * Fonctions partagées par les specs de capture documentaire : optimisation
+ * PNG et capture-plus-vérification de taille.
  */
 
 import { spawnSync } from 'node:child_process';

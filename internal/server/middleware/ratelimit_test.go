@@ -85,11 +85,8 @@ func TestRateLimiterBurstFloor(t *testing.T) {
 	}
 }
 
-// TestRateLimiterMaxBucketsEvictsLRU guards the hard cap (#230): without it,
-// a client sending many distinct X-Tenant-ID values grows the bucket map
-// without bound between the periodic Sweep calls. A tiny cap here (via
-// newRateLimiterCapped, production always uses DefaultMaxBuckets) makes the
-// eviction observable in a handful of requests.
+// TestRateLimiterMaxBucketsEvictsLRU: a tiny cap (newRateLimiterCapped) makes
+// the bucket-count bound observable in a handful of requests.
 func TestRateLimiterMaxBucketsEvictsLRU(t *testing.T) {
 	now := time.Unix(1_700_000_000, 0)
 	rl := newRateLimiterCapped(1, 1, func() time.Time { return now }, 2) // cap of 2 buckets

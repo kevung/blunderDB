@@ -1,14 +1,7 @@
 <script>
     /*
-     * Le crédit du moteur (issue #378, fonctionnel.md §10).
-     *
-     * Le moteur de tournoi n'est pas de blunderDB : c'est **Nicomaque, créé par Nicolas
-     * Harmand**. Le crédit doit être visible là où quelqu'un se demande d'où vient ce que
-     * l'écran affiche — d'où ce bouton dans la gestion d'un tournoi, en plus de la page À
-     * propos, de l'aide et du pied des pages produites.
-     *
-     * La version affichée est celle réellement embarquée, lue sur la Direction ouverte, et non
-     * une chaîne recopiée à la main qui vieillirait en silence.
+     * Le crédit du moteur (fonctionnel.md §10) : Nicomaque, créé par Nicolas Harmand. La
+     * version affichée est celle embarquée, lue sur la Direction ouverte.
      */
     import { t } from '../../i18n';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';

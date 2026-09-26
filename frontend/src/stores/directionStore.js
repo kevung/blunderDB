@@ -58,16 +58,9 @@ import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
 
 /*
- * La Direction ouverte (ADR-0047).
- *
- * Une seule à la fois : en ouvrir une autre ferme la première, et il n'y a rien à sauver
- * puisque chaque décision est déjà écrite. Rien de dérivé n'est gardé ici — classement, arbres,
- * propositions et avertissements arrivent rejoués à chaque rafraîchissement, exactement comme
- * ils arrivent à l'ouverture de la base.
- *
- * Aucun texte affichable ne transite : les libellés, les notes de classement, les
- * avertissements et les raisons d'attente sont les codes du moteur, et c'est l'interface qui
- * les traduit dans la langue de l'utilisateur.
+ * La Direction ouverte (ADR-0047) : une seule à la fois, rien à sauver (chaque décision est
+ * déjà écrite), rien de dérivé gardé ici — tout revient rejoué à chaque rafraîchissement.
+ * Aucun texte affichable ne transite : le moteur rend des codes, l'interface les traduit.
  */
 
 /** @typedef {import('../../wailsjs/go/models').database.DirectionView} DirectionView */
@@ -78,8 +71,7 @@ import { logger } from '../utils/logger.js';
 /** @typedef {import('../../wailsjs/go/models').tournoi.PrizeScale} PrizeScale */
 
 /**
- * Une configuration de Direction telle que le front la manipule : un objet JSON simple, envoyé
- * sérialisé au backend. Même forme que `tournoi.Config`, sans les classes générées.
+ * Une configuration de Direction côté front : même forme que `tournoi.Config`, en JSON simple.
  *
  * @typedef {Object} DirectionConfig
  * @property {string} name
@@ -90,11 +82,7 @@ import { logger } from '../utils/logger.js';
  * @property {{ start: string, end: string }[]} [breaks]
  */
 
-/**
- * Un joueur à inscrire en lot : ce que produisent un import et une reprise d'annuaire.
- *
- * @typedef {{ name: string, club?: string, rating?: number }} EntrantInput
- */
+/** @typedef {{ name: string, club?: string, rating?: number }} EntrantInput Un joueur à inscrire en lot. */
 
 /**
  * Un libellé structuré du moteur (`tournoi.Label`), en objet simple.
@@ -112,8 +100,7 @@ import { logger } from '../utils/logger.js';
  */
 
 /**
- * Une proposition du moteur (`tournoi.Action`), en objet simple : c'est elle qui repart,
- * sérialisée, quand le directeur la confirme.
+ * Une proposition du moteur (`tournoi.Action`) : c'est elle qui repart quand le directeur la confirme.
  *
  * @typedef {Object} ProposalAction
  * @property {string} kind
@@ -160,18 +147,14 @@ export const directionWarningsStore = derived(directionStore, ($d) => ($d && $d.
 export const directionOpenStore = derived(openDirectionIdStore, ($id) => $id !== null);
 
 /**
- * La page Direction remplace le plateau : l'onglet Tournois est actif ET une Direction est
- * ouverte. Tout autre onglet ramène le plateau sans rien fermer (ADR-0047). App.svelte l'affiche
- * sur ce seul signal, et le clavier le lit (services/directionKeys.js, #415).
+ * La page Direction remplace le plateau : onglet Tournois actif ET Direction ouverte (ADR-0047).
+ * App.svelte et le clavier (services/directionKeys.js) lisent ce seul signal.
  */
 export const directionPageShownStore = derived([activeTabStore, directionOpenStore], ([$tab, $open]) => $tab === 'tournaments' && $open);
 
 /**
- * Les configurations nommées proposées à la création. Ce sont des points de départ, pas des
- * formats figés : chaque champ reste modifiable tant que la Direction est un brouillon.
- *
- * La première est celle que l'étude des formats recommande, et c'est le défaut : un directeur
- * qui ne connaît pas les formats ne doit pas avoir à choisir pour commencer.
+ * Les configurations nommées proposées à la création, modifiables tant que la Direction est un
+ * brouillon. La première, recommandée, est le défaut : un directeur novice n'a pas à choisir.
  */
 /** @type {{ id: string, recommended?: boolean, build: (name: string) => DirectionConfig }[]} */
 export const namedConfigs = [
@@ -243,11 +226,7 @@ export const namedConfigs = [
     }
 ];
 
-/**
- * La configuration nommée par défaut, celle que l'étude recommande.
- *
- * @param {string} name
- */
+/** @param {string} name */
 export function defaultConfig(name) {
     return namedConfigs[0].build(name);
 }
@@ -262,11 +241,7 @@ export async function refreshDirectionSummaries() {
     }
 }
 
-/**
- * Dit si un tournoi est dirigé, sans le rejouer.
- *
- * @param {number} tournamentId
- */
+/** Dit si un tournoi est dirigé, sans le rejouer. @param {number} tournamentId */
 export async function tournamentIsDirected(tournamentId) {
     try {
         return await HasDirection(tournamentId);
@@ -300,14 +275,9 @@ export async function refreshDirection() {
 }
 
 /*
- * L'échéance d'une micro-ronde (issue #388).
- *
- * Elle tombe SANS QU'AUCUN ÉVÉNEMENT NE SOIT ÉCRIT : à 14 h 20, les joueurs libres deviennent
- * appariables, et rien dans la base ne l'a dit. Le rafraîchissement est donc programmé ici, dans
- * le store et non dans la vue — la vue tournoi n'est montée que lorsque son onglet est actif, et
- * c'est justement quand le directeur est ailleurs que le badge doit apparaître tout seul.
- *
- * Ce que le minuteur fait : redemander l'état. Ce qu'il ne fait pas : lancer quoi que ce soit.
+ * L'échéance d'une micro-ronde tombe sans qu'aucun événement ne soit écrit. Le rafraîchissement
+ * est donc programmé dans le store, pas dans la vue (non montée quand le directeur est ailleurs,
+ * justement quand le badge doit apparaître). Le minuteur redemande l'état, il ne lance rien.
  */
 /** @type {ReturnType<typeof setTimeout> | null} */
 let batchTimer = null;
@@ -356,10 +326,8 @@ function scheduleBatchRefresh(view) {
 }
 
 /**
- * Prévient quand des propositions apparaissent alors que le directeur est ailleurs.
- *
- * Le badge de l'onglet le dit déjà en silence ; la barre d'état le dit une fois, au moment où
- * ça arrive. Rien de tout cela ne lance quoi que ce soit.
+ * Annonce une fois, dans la barre d'état, des propositions apparues pendant que le directeur est
+ * ailleurs. Ne lance rien.
  *
  * @param {number} before
  * @param {number} after
@@ -371,9 +339,7 @@ function announceNewProposals(before, after) {
 }
 
 /**
- * Ouvre la Direction d'un tournoi. Une seule est ouverte à la fois ; ouvrir la suivante ferme
- * la précédente, sans confirmation — rien n'attend d'être écrit.
- *
+ * Ouvre la Direction d'un tournoi ; ferme la précédente sans confirmation (rien n'attend d'être écrit).
  * @param {number} tournamentId
  */
 export async function openDirection(tournamentId) {
@@ -383,11 +349,8 @@ export async function openDirection(tournamentId) {
 }
 
 /**
- * Donne au backend le bloc `direction` du catalogue courant (issue #386).
- *
- * La page d'affichage de la salle est écrite en Go, et Nicomaque n'émet que des codes : sans ce
- * geste elle sortirait avec des codes bruts. Le front passe donc ses propres mots, et les deux
- * côtés rendent les mêmes codes avec le même vocabulaire.
+ * Donne au backend le bloc `direction` du catalogue courant : la page de salle, écrite en Go,
+ * rend les codes du moteur avec le même vocabulaire que le front.
  */
 export async function publishDirectionStrings() {
     try {
@@ -405,9 +368,8 @@ language.subscribe(() => {
 });
 
 /**
- * Réécrit la page d'affichage de la salle. Sans dossier choisi elle ne fait rien et ne dit
- * rien : un directeur qui n'a jamais demandé d'affichage n'a pas à en entendre parler à chaque
- * résultat. Un échec est signalé et n'interrompt JAMAIS la direction du tournoi.
+ * Réécrit la page d'affichage de la salle ; sans dossier choisi, ne fait ni ne dit rien. Un
+ * échec est signalé et n'interrompt jamais la direction du tournoi.
  */
 export async function writeDirectionPage() {
     const id = get(openDirectionIdStore);
@@ -420,13 +382,7 @@ export async function writeDirectionPage() {
     }
 }
 
-/**
- * Écrit la feuille d'appariements d'une ronde et rend le fichier à ouvrir (issue #387).
- *
- * Le papier reste l'outil du directeur : la feuille se pose sur la table d'accueil, et les
- * joueurs viennent la lire. `round` vaut 0 pour la ronde la plus récente, celle qu'on imprime
- * en pratique.
- */
+/** Écrit la feuille d'appariements d'une ronde (0 = la plus récente) et rend le fichier à ouvrir. */
 export async function writePairingSheet(round = 0) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
@@ -439,9 +395,8 @@ export async function writePairingSheet(round = 0) {
 }
 
 /**
- * Écrit la feuille de la ronde que la file propose, AVANT de la lancer, datée par le directeur
- * (#451), et rend le fichier à ouvrir. Rien n'est lancé, rien n'est écrit au journal.
- *
+ * Écrit la feuille de la ronde proposée, datée, AVANT de la lancer, et rend le fichier. Ne lance
+ * rien, n'écrit rien au journal.
  * @param {string} announced  la date et l'heure annoncées, telles que tapées
  */
 export async function writeUpcomingSheet(announced) {
@@ -468,11 +423,8 @@ export async function directionRounds() {
 }
 
 /*
- * Les retardataires (issue #392).
- *
- * Il en arrive un à chaque tournoi. Le moteur ne refait JAMAIS un tirage déjà fait — le
- * retardataire prend une place d'exemption libre, ou il entre plus tard — et le rôle de
- * l'interface est de DIRE LEQUEL des deux avant que le directeur valide l'inscription.
+ * Retardataires : le moteur ne refait jamais un tirage — le retardataire prend une place
+ * d'exemption libre ou entre plus tard, et l'interface dit laquelle avant la validation.
  */
 
 /** Les places d'exemption encore libres, dans l'ordre du tableau. */
@@ -489,7 +441,6 @@ export async function freeSlots() {
 
 /**
  * Inscrit un retardataire sur une place d'exemption nommée.
- *
  * @param {string} name
  * @param {string} club
  * @param {number | string} rating
@@ -505,12 +456,8 @@ export async function addParticipantAtSlot(name, club, rating, section, key) {
 }
 
 /*
- * L'annuaire (issue #391).
- *
- * Un directeur de club dirige les mêmes trente personnes tous les mois, et retaper leurs noms à
- * chaque tournoi est le premier abandon possible du logiciel. L'annuaire est une VUE DÉRIVÉE de
- * toutes les Directions de la base, jamais une table : blunderDB continue de n'avoir aucune
- * notion de personne, et supprimer une Direction en retire ses Participants.
+ * L'annuaire : une vue dérivée de toutes les Directions de la base, jamais une table (blunderDB
+ * n'a aucune notion de personne ; supprimer une Direction en retire ses Participants).
  */
 
 /** Tous les Participants de toutes les Directions, dédoublonnés par nom. */
@@ -533,11 +480,7 @@ export async function directorySources() {
     }
 }
 
-/**
- * Reprend les inscrits d'un tournoi précédent dans celui qui est ouvert.
- *
- * @param {number} sourceTournamentId
- */
+/** Reprend les inscrits d'un tournoi précédent. @param {number} sourceTournamentId */
 export async function takeEntrantsFrom(sourceTournamentId) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
@@ -551,10 +494,8 @@ export async function directoryCSV() {
 }
 
 /**
- * Enregistre un CSV dans un fichier choisi par le directeur (#454) et rend le chemin écrit, ou
- * '' s'il a annulé. Le texte est celui que la copie met au presse-papier : l'appelant le
- * demande une fois et le passe tel quel, si bien que le fichier et la copie ne peuvent pas
- * différer.
+ * Enregistre un CSV dans un fichier choisi et rend le chemin, ou '' si annulé. L'appelant passe
+ * le même texte qu'à la copie : fichier et presse-papier ne peuvent pas différer.
  *
  * @param {string} defaultName
  * @param {string} body
@@ -564,20 +505,16 @@ export async function saveCSV(defaultName, body) {
 }
 
 /**
- * Lit un CSV collé, SANS RIEN ÉCRIRE : l'aperçu et l'entrée sont deux gestes, et le directeur
- * voit les lignes fautives avant que quoi que ce soit n'entre.
+ * Lit un CSV collé SANS RIEN ÉCRIRE : le directeur voit les lignes fautives avant l'entrée.
  *
  * @param {string} body
  */
 export async function parseDirectoryCSV(body) {
-    // La Direction ouverte : un nom qu'elle a déjà inscrit revient en avertissement (#442).
+    // La Direction ouverte : un nom qu'elle a déjà inscrit revient en avertissement.
     return await ParseDirectoryCSV(get(openDirectionIdStore) ?? 0, body || '');
 }
 
-/**
- * Choisit le dossier d'affichage, une fois par Direction. Ensuite, plus aucun geste : la page
- * est réécrite à chaque événement.
- */
+/** Choisit le dossier d'affichage, une fois par Direction ; la page est ensuite réécrite à chaque événement. */
 export async function chooseDirectionOutputDir() {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
@@ -604,8 +541,7 @@ export function closeDirection() {
 }
 
 /**
- * Commence à diriger un tournoi qui ne l'était pas, et l'ouvre.
- *
+ * Commence à diriger un tournoi et l'ouvre.
  * @param {number} tournamentId
  * @param {DirectionConfig} config
  * @param {number} [seed]
@@ -617,9 +553,8 @@ export async function createDirection(tournamentId, config, seed = 0) {
 }
 
 /**
- * Installe une configuration, en préparation comme en cours de tournoi (issue #385). Le moteur
- * refuse exactement deux choses : retirer une phase ouverte, et changer le format d'une phase
- * commencée — previewDirectionConfig le dit AVANT le clic.
+ * Installe une configuration. Le moteur refuse deux choses — retirer une phase ouverte, changer
+ * le format d'une phase commencée — et previewDirectionConfig le dit avant le clic.
  *
  * @param {number} tournamentId
  * @param {DirectionConfig} config
@@ -630,12 +565,8 @@ export async function saveDirectionConfig(tournamentId, config) {
 }
 
 /**
- * Compare une configuration candidate à celle en vigueur, sans rien écrire.
- *
- * Appelée avec la configuration inchangée elle ne rapporte aucun changement et remplit quand
- * même les verrous : c'est ainsi que la vue Réglages sait, en s'ouvrant, quels formats sont
- * figés et pourquoi.
- *
+ * Compare une configuration candidate à celle en vigueur, sans rien écrire. Inchangée, elle
+ * remplit quand même les verrous : la vue Réglages sait ainsi quels formats sont figés.
  * @param {DirectionConfig | import('../../wailsjs/go/models').tournoi.Config} config
  */
 export async function previewDirectionConfig(config) {
@@ -650,8 +581,7 @@ export async function previewDirectionConfig(config) {
 }
 
 /**
- * Inscrit plusieurs joueurs d'un coup : ce que produit un import ou une reprise d'annuaire.
- *
+ * Inscrit plusieurs joueurs d'un coup (import, reprise d'annuaire).
  * @param {EntrantInput[]} players
  */
 export async function enterParticipants(players) {
@@ -685,7 +615,6 @@ export async function entrySuggestions() {
 
 /**
  * Inscrit un joueur.
- *
  * @param {string} name
  * @param {string} club
  * @param {number} rating
@@ -699,8 +628,8 @@ export async function addParticipant(name, club, rating) {
 }
 
 /**
- * Corrige une inscription SANS changer son identifiant : c'est lui que désigne un emplacement,
- * donc corriger un nom ne doit pas défaire un Match déjà rattaché.
+ * Corrige une inscription SANS changer son identifiant, qui désigne un emplacement : un Match
+ * déjà rattaché reste rattaché.
  *
  * @param {string} participantId
  * @param {string} name
@@ -716,8 +645,7 @@ export async function updateParticipant(participantId, name, club, rating) {
 }
 
 /**
- * Réinscrit un joueur retiré (#439) : il est de nouveau apparié, avec ses résultats et ses vies.
- *
+ * Réinscrit un joueur retiré, avec ses résultats et ses vies.
  * @param {string} participantId
  */
 export async function reinstateParticipant(participantId) {
@@ -743,8 +671,7 @@ export async function withdrawParticipant(participantId, afterCurrent) {
 }
 
 /**
- * Supprime la Direction. Le tournoi reste, ses matchs aussi : ils perdent seulement
- * l'emplacement qu'ils remplissaient.
+ * Supprime la Direction ; le tournoi et ses matchs restent, sans leur emplacement.
  *
  * @param {number} tournamentId
  */
@@ -755,8 +682,8 @@ export async function deleteDirection(tournamentId) {
 }
 
 /**
- * Confirme une proposition. L'événement est écrit AVANT d'être appliqué, côté Go ; la vue qui
- * revient est déjà rejouée, si bien que la file se met à jour sans second aller-retour.
+ * Confirme une proposition. L'événement est écrit avant d'être appliqué ; la vue rendue est déjà
+ * rejouée, sans second aller-retour.
  *
  * @param {ProposalAction} action
  */
@@ -778,9 +705,8 @@ export async function confirmAllProposals() {
 }
 
 /**
- * Lance un match que le moteur n'a pas proposé. C'est l'échappatoire qui rend le panneau
- * utilisable par un vrai directeur — celui qui sait qu'un joueur a un train. Un appariement
- * hors graphe est accepté et laisse un avertissement ; seul l'impossible est refusé.
+ * Lance un match non proposé (le joueur qui a un train). Hors graphe il est accepté avec un
+ * avertissement ; seul l'impossible est refusé.
  *
  * @param {string} a
  * @param {string} b
@@ -820,8 +746,7 @@ export async function tableGrid() {
 }
 
 /**
- * Enregistre un résultat. Le VAINQUEUR est la seule chose exigée : les scores peuvent être nuls
- * tous les deux, ce que produit un directeur qui a seulement écrit « Alice gagne ».
+ * Enregistre un résultat. Seul le vainqueur est exigé : les scores peuvent être nuls tous deux.
  *
  * @param {string} matchId
  * @param {string} winner
@@ -892,8 +817,7 @@ export async function lastDecision() {
 }
 
 /**
- * Corrige le résultat d'un match déjà fini. Rien n'est effacé : la correction est un événement
- * de plus, et le premier résultat reste dans l'historique là où il a eu lieu.
+ * Corrige le résultat d'un match fini : un événement de plus, le premier résultat reste au journal.
  *
  * @param {string} matchId
  * @param {string} winner
@@ -940,8 +864,8 @@ export async function standingsCSV() {
 }
 
 /**
- * Clot le TOURNOI et fige le classement final — à ne pas confondre avec closeDirection, qui
- * ferme seulement la vue. Le mot « fermer » a deux sens ici, et les confondre coûterait cher.
+ * Clôt le TOURNOI et fige le classement final — à ne pas confondre avec closeDirection, qui
+ * ferme seulement la vue.
  */
 export async function finishTournament() {
     const id = get(openDirectionIdStore);
@@ -976,7 +900,6 @@ export async function history(player = '', match = '') {
 
 /**
  * Une annotation libre du directeur, horodatée.
- *
  * @param {string} text
  */
 export async function addNote(text) {
@@ -1024,8 +947,7 @@ export async function unattachedMatches() {
 }
 
 /**
- * Rattache un Match à un emplacement. C'est TOUJOURS un geste : une coïncidence de noms est une
- * suggestion, jamais une décision du logiciel.
+ * Rattache un Match à un emplacement — toujours un geste : une coïncidence de noms n'est qu'une suggestion.
  *
  * @param {string} slotId
  * @param {number} matchId
@@ -1050,8 +972,8 @@ export async function detachMatchFromSlot(slotId) {
 }
 
 /**
- * Ouvre un brouillon depuis un emplacement : l'en-tête est déjà rempli, et l'emplacement est
- * réservé dès le brouillon — sans quoi deux personnes taperaient le même match.
+ * Ouvre un brouillon depuis un emplacement, en-tête rempli ; l'emplacement est réservé dès le
+ * brouillon, sinon deux personnes taperaient le même match.
  *
  * @param {string} slotId
  */

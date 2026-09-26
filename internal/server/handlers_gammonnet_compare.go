@@ -13,21 +13,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// /v1/gammonnet.compare — what gammonNet is worth on this tenant's OWN library
-// (issue #270, fiche I.14).
-//
-// The daemon's half of the sweep: gather the positions carrying an analysis
-// somebody else wrote, run the engine on them, and fold the samples. What a
-// comparison IS — what counts as the same answer, how a disagreement is priced
-// — is gammonnet/compare.go's, shared with the desktop wrapper, exactly as
-// IsStaleAnalysis is shared by the two stale sweeps.
-//
-// Unlike the two sweeps next to it this one is NOT streamed and takes no job
-// id: it writes nothing, so there is no partial state to resume or cancel
-// into, and its answer is one small object rather than a long tail of
-// progress. `limit` is what bounds it — a comparison is a sample question, and
-// a client asking it of a sixty-thousand-position tenant should say how many
-// it is willing to pay for.
+// /v1/gammonnet.compare — what gammonNet is worth on this tenant's own
+// library: run the engine on positions analysed by someone else and fold the
+// samples. What a comparison IS lives in gammonnet/compare.go, shared with the
+// desktop. Not streamed, no job id: it writes nothing and answers one small
+// object; `limit` bounds the cost.
 
 // gammonnetCompareReq asks for a comparison. Limit caps the positions looked
 // at (0 = all); the search parameters default to the canonical ones (ADR-0013)

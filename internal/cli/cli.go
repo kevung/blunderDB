@@ -13,8 +13,7 @@ import (
 
 // withInterruptibleContext runs fn with a context cancelled by SIGINT
 // (Ctrl-C) — the CLI's answer to a long-running Database call that cannot
-// otherwise be aborted from a foreground process (B.13, #181; the pattern
-// cli_analyze.go established for `analyze` before this helper existed).
+// otherwise be aborted from a foreground process.
 // onInterrupt, if non-nil, runs once when the signal arrives, before ctx is
 // cancelled — e.g. to print "Cancelling..." only in text output mode.
 //

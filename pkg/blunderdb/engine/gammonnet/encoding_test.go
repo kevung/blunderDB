@@ -13,10 +13,8 @@ import (
 // 196 features — the encoding is written from the on-roll player's point of
 // view, so a symmetric board looks identical to both.
 //
-// This single assertion catches, together, the two errors this file is most
-// exposed to: a mirroring done the wrong way round (index i instead of 23-i),
-// and the colour identifiers being swapped between domain and gammonNet. Either
-// one breaks it; neither crashes anything otherwise.
+// It catches a mirroring the wrong way round and swapped colour identifiers,
+// neither of which crashes otherwise.
 func TestOpeningEncodesIdenticallyForBothPlayers(t *testing.T) {
 	const opening = "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10"
 
@@ -69,8 +67,7 @@ func TestOpeningEncodesIdenticallyForBothPlayers(t *testing.T) {
 // is not re-indexed from its own ace point.
 //
 // So whoever is on roll, their own six point is slot 5 of the MY block, and the
-// opponent's six point is slot 18 of the OPP block. Swap the mirroring or the
-// colours and this stops holding.
+// opponent's six point is slot 18 of the OPP block.
 func TestPerspectiveBlocksFollowTheOnRollPlayer(t *testing.T) {
 	// Five White checkers on White's six point (gammonNet index 5), five Black
 	// on Black's six point (index 18).
@@ -195,7 +192,7 @@ func TestEncodeRefusesInvalidPositions(t *testing.T) {
 	}
 }
 
-// BenchmarkEncode is the per-poste figure for the encoding (#150): Encode as
+// BenchmarkEncode is the per-poste figure for the encoding: Encode as
 // it stands, against the two things it does that a search's own positions do
 // not need — Valid() on a board that is legal by construction, and the full
 // 784-octet clear of a vector it then writes some forty values into.

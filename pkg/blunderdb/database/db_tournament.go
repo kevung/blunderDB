@@ -9,17 +9,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// ========== Tournament Functions ==========
-//
-// Every tournament method below is an adapter over the Storage backend
-// (d.store.Tournaments(), see storage.TournamentStore): it takes d.mu the way
-// the GUI and CLI expect, then delegates with the wrapper's implicit scope.
-// The SQL itself lives in storage/sqlite/tournaments_sqlite.go, held to the
-// shared contract suite alongside the PostgreSQL backend. ExportTournaments,
-// at the end of this file, is the one exception: it writes a match graph
-// (games, moves, move analyses) and the positions those matches reached to a
-// separate export file, via ingest.ExportSQLite — the same unified exporter
-// ExportDatabase and ExportCollections run.
+// Tournament methods take d.mu and delegate to d.store.Tournaments() with the
+// wrapper's implicit scope; ExportTournaments goes through ingest.ExportSQLite.
 
 // CreateTournament creates a new tournament
 func (d *Database) CreateTournament(name string, date string, location string) (int64, error) {
@@ -196,8 +187,6 @@ func (d *Database) GetMatchTournament(matchID int64) (*Tournament, error) {
 // moves and move analyses — and the positions those matches reached, to a
 // database file. watermark and watermarkNote mirror ExportDatabase's
 // Watermark/WatermarkNote: an empty watermark means the export carries none.
-// The work is ingest.ExportSQLite, the same exporter ExportDatabase and
-// ExportCollections run.
 func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool, watermark string, watermarkNote string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

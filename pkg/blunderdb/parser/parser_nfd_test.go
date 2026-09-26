@@ -6,11 +6,9 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// macOS's pasteboard hands accented Latin text back in NFD (decomposed) form
-// for some sources — observed with XG run under Sikarugir/Wine — while every
-// accent-bearing literal in this package is written in NFC (precomposed).
-// Without normalizing the input first, a pasted French analysis silently
-// parses to an empty AnalysisType (github.com/kevung/blunderdb#105).
+// macOS's pasteboard can hand accented text back in NFD while every accented
+// literal in this package is NFC: without normalizing first, a pasted French
+// analysis silently parses to an empty AnalysisType.
 func TestParsePositionNFDClipboard(t *testing.T) {
 	const checkerFR = "XGID=---BBCBAA---bB---bBb-bbcb-:1:1:1:43:0:0:0:9:10\n\n" +
 		"X:Nicolas   O:Kévin\n" +

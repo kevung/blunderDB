@@ -26,16 +26,9 @@ export const ankiReviewActionStore = writable(null);
 /** @type {import('svelte/store').Writable<any>} */
 export const ankiPausedSessionStore = writable(null);
 
-// Whether the answer of the card under review is shown (ADR-0025). A card asks
-// one question and gets one grade, so this is one boolean for the whole answer
-// — not the Eval panel's three independently revealed zones.
-//
-// It lives here rather than in AnkiPanel because TabbedPanel destroys and
-// remounts its child on every tab switch: component state would re-hide the
-// answer as soon as the user went to look at the Eval panel or the comment,
-// which is exactly the move this feature exists to encourage. What re-hides it
-// is a change of question — the next card, a new session, leaving the review —
-// never a change of view (rule 5).
+// Whether the answer of the card under review is shown (ADR-0025): one boolean, one question.
+// Here because TabbedPanel remounts on every tab switch, and looking at the Eval panel must not
+// re-hide it; only a change of question does (rule 5).
 export const ankiAnswerShownStore = writable(false);
 
 // Named helpers rather than bare .set(): the two call sites that matter are a

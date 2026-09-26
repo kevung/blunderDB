@@ -1,17 +1,7 @@
-// Lightweight i18n engine for blunderDB.
-//
-// Design (see tasks/i18n plan):
-//  - `language` is a writable store holding the current locale code.
-//  - `t` is a derived store that yields a translation FUNCTION, so components
-//    use it reactively as `$t('some.key', { param })`. Because it depends on
-//    `language`, switching the locale re-renders every `$t(...)` call.
-//  - `translate()` / `get(t)` are non-reactive helpers for use in plain `.js`
-//    files (commandProcessor, services, stores) where `$` auto-subscription is
-//    unavailable. Messages emitted from those files resolve at call time and do
-//    NOT live-update on language change — acceptable for transient log/status text.
-//
-// Fallback chain: selected locale -> English -> the key itself.
-// Interpolation: `"Merge {n} names"` + { n: 3 } -> "Merge 3 names".
+// Lightweight i18n engine. `t` is a derived store yielding a translation FUNCTION, used as
+// `$t('key', { param })`, so a locale switch re-renders every call. `translate()` / `get(t)` are
+// non-reactive helpers for plain `.js` files: their output does not follow a language change.
+// Fallback chain: locale -> English -> the key itself. `"Merge {n} names"` + { n: 3 } -> "Merge 3 names".
 
 import { writable, derived, get } from 'svelte/store';
 import { SaveLanguage } from '../../wailsjs/go/main/Config.js';
@@ -35,11 +25,9 @@ export const LANGUAGE_LABELS = {
     ru: 'Русский'
 };
 
-// Every non-English locale is fetched on demand instead of bundled statically:
-// the interface only ever needs the one the user picked, not all nine (#207 —
-// the 9 static imports put 511 kB of JSON in the main chunk). English stays a
-// static import: it is the second link of the fallback chain and the seed
-// value of `language`, so it must be available before any async load resolves.
+// Non-English locales are fetched on demand (bundling all nine put 511 kB of JSON in the main
+// chunk). English stays static: it is the fallback and the seed of `language`, needed before
+// any async load resolves.
 const localeLoaders = import.meta.glob('./locales/*.json');
 /** @type {Record<string, any>} */
 const messages = { en };
@@ -74,11 +62,8 @@ function interpolate(str, params) {
 }
 
 /**
- * A translation function: the value of `$t`, the shape of `translate`.
- *
- * A key resolves to its message text; a key that is missing everywhere
- * resolves to the key itself. Every call site names a leaf of the
- * catalogue, so the result is a string.
+ * A translation function (the value of `$t`, the shape of `translate`); a key missing everywhere
+ * resolves to itself.
  *
  * @typedef {(key: string, params?: Record<string, unknown> | null) => string} Translate
  */
@@ -107,11 +92,8 @@ export const language = writable(FALLBACK_LOCALE);
 export const t = derived(language, ($lang) => (/** @type {string} */ key, /** @type {Record<string, unknown> | null | undefined} */ params) => translateFor($lang, key, params));
 
 /**
- * Un bloc entier de messages, dans la langue courante, replié sur l'anglais clé par clé.
- *
- * Le backend en a besoin : la page d'affichage d'un tournoi (#386) est écrite en Go, et le
- * moteur Nicomaque n'émet que des CODES. Plutôt que de recopier les traductions côté Go, le
- * front lui passe son propre bloc, et les deux rendent les mêmes codes avec les mêmes mots.
+ * Un bloc entier de messages, dans la langue courante, replié sur l'anglais clé par clé : la page
+ * de salle, écrite en Go, rend ainsi les codes du moteur avec les mêmes mots que le front.
  *
  * @param {string} section
  */
@@ -146,11 +128,8 @@ export function translate(key, params) {
     return translateFor(get(language), key, params);
 }
 
-// Build a *deferred* status-bar message descriptor instead of a resolved string.
-// The status bar (StatusBar.svelte) holds the descriptor and resolves it through
-// the reactive `$t` store, so the message re-translates live when the language
-// changes — unlike a string produced by translate(), which is frozen at call time.
-// Plain strings (player names, technical tokens) may still be stored as-is.
+// A *deferred* status-bar message: StatusBar resolves it through `$t`, so it re-translates on a
+// language change, unlike a translate() string. Plain strings may still be stored as-is.
 /**
  * @typedef {{i18nKey: string, i18nParams: Record<string, any>|null}} StatusMessage
  */
@@ -164,8 +143,7 @@ export function tMsg(key, params) {
     return { i18nKey: key, i18nParams: params ?? null };
 }
 
-// Resolve a value that may be either a plain string or a tMsg() descriptor.
-// `tfn` is a translation function (e.g. the value of the `$t` store).
+// Resolve a plain string or a tMsg() descriptor with `tfn` (e.g. the value of `$t`).
 /**
  * @param {string | StatusMessage | null | undefined} value
  * @param {Translate} tfn
@@ -179,9 +157,8 @@ export function resolveStatusMessage(value, tfn) {
     return /** @type {string | null | undefined} */ (value);
 }
 
-// Change the active language and persist it to the Go config. The dictionary
-// is awaited before the store flips so `$t(...)` never renders raw keys
-// during the load.
+// Change and persist the language. The dictionary is awaited before the store flips, so
+// `$t(...)` never renders raw keys.
 /** @param {string} lang */
 export async function setLanguage(lang) {
     const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;

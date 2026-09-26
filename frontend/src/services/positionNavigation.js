@@ -1,15 +1,7 @@
-// positionNavigation.js — moving the "current position" cursor: first/previous/next/
-// last, jumping to an id, and a random pick.
-//
-// Extracted from positionService.js (fiche D.10, #210): one of that module's six
-// responsibilities. Re-exported from positionService.js so existing callers
-// (keyboardService, commandProcessor, App.svelte) keep one import.
-//
-// Depends on showPosition, which stays in positionService.js (too many other callers
-// — App.svelte, ankiService.js, modeMachine.js — to move alongside navigation alone):
-// the two modules import from each other, the same pattern positionService.js already
-// has with modeMachine.js. Safe here because nothing at either module's top level
-// calls into the other — only the exported functions do, once both are fully loaded.
+// positionNavigation.js — moving the current-position cursor: first/previous/
+// next/last, jump to an id, random pick. Re-exported from positionService.js.
+// The two modules import each other (showPosition stays there); safe because
+// nothing at either module's top level calls the other.
 import { get } from 'svelte/store';
 import { SaveLastVisitedPosition } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from '../stores/databaseStore.js';

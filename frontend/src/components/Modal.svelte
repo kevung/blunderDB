@@ -245,10 +245,9 @@
         justify-content: center;
     }
 
-    /* One palette for the footer buttons of every dialog — they used to come in five
-       (grey, dark, blue, red, light). Neutral by default, `.primary` for the action the
-       dialog exists for, `.danger` for the one destructive action. The buttons belong
-       to the modals' own templates, hence :global. */
+    /* One palette for every dialog's footer buttons: neutral, `.primary` for the
+       dialog's action, `.danger` for a destructive one. :global since the buttons
+       belong to each modal's template. */
     .modal-footer :global(button) {
         padding: 8px 16px;
         border: 1px solid var(--color-border);

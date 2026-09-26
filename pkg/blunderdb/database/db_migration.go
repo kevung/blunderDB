@@ -25,11 +25,8 @@ package database
 // the upgrade, so an interrupted step leaves the file at `from` and is
 // retried on the next open. Every step is therefore written to be
 // re-runnable (CREATE ... IF NOT EXISTS, addColumn for columns) and
-// unconditional: a step never decides from the file's contents whether it
-// applies — the recorded version alone says so. The 1.x steps once stopped
-// the chain when the table they create was already there, leaving the file
-// stamped with a version it had outgrown; a database that carries a table
-// ahead of its version is simply one whose step has nothing left to do.
+// unconditional: the recorded version alone says whether a step applies; a
+// table found ahead of its version just means the step has nothing to do.
 
 import (
 	"context"
@@ -168,11 +165,9 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		return fmt.Errorf("repairing positions without scalar columns: %w", err)
 	}
 
-	// Classify the phase of every position, once, on the open that crosses
-	// 2.19.0 (issue #264, ADR-0035). Here rather than in the migration step
-	// because the column is created by ensureAllTablesExist just above, and
-	// because the value is read out of the compact board encoding rather than
-	// out of another column — no SQL expression can produce it.
+	// Classify every position's phase once, on the open crossing 2.19.0
+	// (ADR-0035): here because ensureAllTablesExist just created the column,
+	// and the value needs the decoded board, not a SQL expression.
 	if d.pendingPhaseBackfill {
 		d.pendingPhaseBackfill = false
 		n, err := d.recomputeGamePhases(ctx)
@@ -184,12 +179,9 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		}
 	}
 
-	// Teach the anki tables that a card can be a score, on the open that
-	// crosses 2.23.0 (issue #324, ADR-0042). Here rather than in the migration
-	// step for the 2.19.0 reason — the `kind`/`key` columns it fills are
-	// created by ensureAllTablesExist just above — and because it ends by
-	// calling that pass a second time: the identity index cannot be built
-	// while every key is still empty.
+	// On the open crossing 2.23.0 (ADR-0042), after ensureAllTablesExist
+	// created `kind`/`key`; it reruns that pass, since the identity index
+	// cannot be built while every key is empty.
 	if d.pendingAnkiCardKinds {
 		d.pendingAnkiCardKinds = false
 		if err := d.repairAnkiCardKinds(ctx); err != nil {
@@ -307,10 +299,8 @@ func (d *Database) columnExists(table, column string) (bool, error) {
 // addColumn adds a column to table unless it is already there, which is what
 // a re-run after an interrupted step looks like. definition is the column as
 // an ALTER TABLE ... ADD COLUMN clause names it: `name TYPE [constraints]`.
-// Presence is decided by columnExists, not by matching the error text — the
-// driver prefixes and suffixes SQLite's message ("SQL logic error: duplicate
-// column name: x (1)"), so the old comparison against the bare message never
-// matched and a re-run of any step that adds a column failed.
+// Presence is decided by columnExists, not by the error text, which the
+// driver wraps unpredictably.
 func (d *Database) addColumn(table, definition string) error {
 	fields := strings.Fields(definition)
 	if len(fields) == 0 {

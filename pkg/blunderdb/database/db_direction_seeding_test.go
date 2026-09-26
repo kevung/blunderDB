@@ -7,13 +7,9 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
-// Seeding, optional and off by default (issue #394, fonctionnel.md §3.4).
-//
-// The engine's own study concludes "no protected seeds": that is the current culture of
-// backgammon, where a full draw is what players expect, and the empty default is a DESIGN
-// DECISION and not an oversight. Some organisers want them anyway. What is held here is that
-// the option changes the draw when it is on, changes nothing when it is off, and replays to the
-// same bracket either way.
+// Seeding, optional and off by default (fonctionnel.md §3.4): a full draw is what backgammon
+// players expect, so the empty default is a design decision. The option changes the draw when
+// on, nothing when off, and replays to the same bracket either way.
 
 // ratedBracket prepares a bracket of n players whose ratings are all different, so a seeded
 // draw is fully determined by them.

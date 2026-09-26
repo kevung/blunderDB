@@ -125,8 +125,7 @@ func TestDecodeXGIDMoneyGame(t *testing.T) {
 }
 
 func TestDecodeXGIDJacobyBeaver(t *testing.T) {
-	// Money game with field 7 = 3 (Jacoby + Beaver) — the "Pas de double /
-	// Beaver" position from issue #13. Both flags must be set.
+	// Money game with field 7 = 3 (Jacoby + Beaver): both flags must be set.
 	pos, err := DecodeXGID("XGID=bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10")
 	if err != nil {
 		t.Fatalf("DecodeXGID: %v", err)

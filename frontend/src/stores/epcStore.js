@@ -1,19 +1,8 @@
 import { writable } from 'svelte/store';
 
-// EPC data store: holds the current EPC computation results.
-// {
-//   bottomEPC: EPCResult | null,   // bottom player's EPC block (always exact)
-//   topEPC:    EPCResult | null,   // top player's EPC block (always exact)
-//   race:      RaceEval | null,    // race zone (pure bearoff only):
-//                                  //   { regime: 'exact'|'estimated', on_roll,
-//                                  //     source_checkers, win_prob, sigma, p99,
-//                                  //     money?: { cube_state, cubeless, no_double,
-//                                  //               double_take, double_pass, verdict } }
-//   error:     string | null
-// }
-// What the Eval panel last computed. The fields are typed loosely on purpose: the
-// EPC results come from the generated Wails models (engine.EPCResult), and the
-// panel adds its own (bottomPoints, topPoints, …) beside them.
+// What the Eval panel last computed: bottomEPC / topEPC (exact EPC blocks), race (pure bearoff
+// only: { regime, on_roll, source_checkers, win_prob, sigma, p99, money? }), error. Typed loosely:
+// the panel adds its own fields beside the generated engine.EPCResult.
 /** @type {import('svelte/store').Writable<{bottomEPC: any, topEPC: any, race: any, error: any, [field: string]: any}>} */
 export const epcDataStore = writable({
     bottomEPC: null,
@@ -27,11 +16,8 @@ export const epcDataStore = writable({
 // Config.SaveEpcChallenge; initialised from Config at startup.
 export const epcChallengeStore = writable(false);
 
-// Which zones the user has revealed since the last edit — the bottom row,
-// the top row, and the one decision block the board is asking for
-// (ADR-0017: whichever it is, race verdict or generic cube verdict, there is
-// only ever one, so one zone covers it). Reset by updateEPC (the same code
-// path that recomputes the data, so keyboard edits re-mask too).
+// Zones revealed since the last edit: bottom, top, and the one decision block (ADR-0017). Reset by
+// updateEPC, so keyboard edits re-mask too.
 export const epcRevealedStore = writable({ bottom: false, top: false, decision: false });
 
 export function resetEpcReveal() {

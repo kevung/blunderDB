@@ -1,11 +1,9 @@
 /**
- * modal-theme.spec.js — #359
+ * modal-theme.spec.js
  *
- * Une fenêtre modale se peint dans la surface et l'encre du thème. Modal.svelte
- * peignait sa boîte d'un blanc littéral : sous le thème sombre, le texte
- * alentour passait au clair et la boîte restait blanche — toute fenêtre de
- * l'application devenait illisible, et rien ne le voyait, puisque les tests
- * unitaires ne calculent pas de style.
+ * Une fenêtre modale se peint dans la surface et l'encre du thème, jamais en blanc littéral :
+ * les tests unitaires ne calculent pas de style, donc rien d'autre ne voit une boîte qui
+ * resterait blanche sous un thème sombre.
  *
  * Les valeurs attendues sont lues dans themes.js, pas recopiées : un thème qui
  * change de surface ne rend pas ce test faux.

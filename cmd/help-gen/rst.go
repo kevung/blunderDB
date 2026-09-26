@@ -8,13 +8,9 @@ import (
 	"strings"
 )
 
-// A deliberately small reader for the subset of reStructuredText the two
-// reference documents (raccourcis.rst, cmd_mode.rst) are written in: sections,
-// paragraphs, bullet lists, csv-tables and the three admonitions. It is not a
-// docutils replacement and does not try to be one — anything it does not
-// recognise is skipped, and every string it does recognise is looked up in the
-// gettext catalogues, so a construct that silently changed shape shows up as a
-// missing translation rather than as a wrong rendering.
+// A small reader for the RST subset the help sources use. Unknown constructs
+// are skipped; every recognised string is looked up in the catalogues, so a
+// construct that changed shape shows up as a missing translation.
 
 type block interface{ isBlock() }
 
@@ -27,18 +23,14 @@ type section struct {
 
 type paragraph struct{ text string }
 
-// admonition is a .. note:: / .. tip:: / .. warning:: / .. important:: /
-// .. caution:: with its body, parsed like any other: manuel.rst puts a
-// formula and a bullet list inside one.
+// admonition is a note/tip/warning/important/caution with a parsed body.
 type admonition struct {
 	kind   string
 	blocks []block
 }
 
-// literal is a body reproduced verbatim — the one .. math:: in the
-// documentation. The help modal has no formula renderer, so the source is
-// shown as it is written rather than dropped along with the sentence that
-// introduces it.
+// literal is a body shown verbatim (the .. math:: block: the help has no
+// formula renderer).
 type literal struct {
 	class string
 	text  string
@@ -46,10 +38,8 @@ type literal struct {
 
 type bulletList struct{ items []string }
 
-// blockquote is a body indented under the paragraph that introduces it — the
-// shape manuel.rst uses for a term and its definition, and the only place a
-// directive appears anywhere but column zero. Its content is parsed by the
-// same reader, one level in.
+// blockquote is an indented body (manuel.rst's term definitions), parsed by
+// the same reader.
 type blockquote struct{ blocks []block }
 
 type table struct {
@@ -65,9 +55,7 @@ func (blockquote) isBlock() {}
 func (literal) isBlock()    {}
 func (table) isBlock()      {}
 
-// document is one parsed .rst file. Internal link targets are collected
-// separately by scanTargets, which reads every documentation file — including
-// the ones this reader cannot parse.
+// document is one parsed .rst file; link targets come from scanTargets.
 type document struct {
 	blocks []block
 }
@@ -86,10 +74,8 @@ func parseRST(path string) (*document, error) {
 	}
 	lines := strings.Split(strings.ReplaceAll(string(raw), "\r\n", "\n"), "\n")
 
-	// Section underline characters in order of first appearance, so the nesting
-	// level of a title is the index of its underline character. The slice is
-	// shared with nested calls: a level is a property of the document, not of
-	// the indentation depth the reader happens to be at.
+	// Underline characters in order of first appearance: a title's level is
+	// its index. Shared with nested calls: levels belong to the document.
 	var levels []string
 	blocks, err := parseBlocks(lines, path, &levels)
 	if err != nil {
@@ -124,9 +110,7 @@ func parseBlocks(lines []string, path string, levels *[]string) ([]block, error)
 			continue
 		}
 
-		// An indented run opens a nested body, parsed by the same reader. It
-		// is what carries manuel.rst's definitions — and, inside them, the
-		// only csv-table and admonitions that do not start at column zero.
+		// An indented run is a nested body, parsed by the same reader.
 		if isIndented(line) {
 			body, next := collectIndented(lines, i)
 			sub, err := parseBlocks(body, path, levels)
@@ -353,10 +337,8 @@ func readCSV(s string) ([][]string, error) {
 	return out, nil
 }
 
-// scanTargets collects the `.. _label:` → section-title map of a document
-// without parsing its body. Cross-references may point into any of the sixteen
-// documentation files, most of which use constructs this reader deliberately
-// does not understand; resolving a reference only needs the titles.
+// scanTargets maps `.. _label:` to section titles without parsing the body,
+// so references can point into files this reader cannot parse.
 func scanTargets(path string) (map[string]string, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -374,10 +356,7 @@ func scanTargets(path string) (map[string]string, error) {
 			pending = append(pending, m[1])
 			continue
 		}
-		// An overlined title (`====` / title / `====`) is the shape the
-		// standalone chapters use for their own name — mode_headless.rst
-		// among them, which manuel.rst cross-references. The overline is
-		// not a title; step over it and read the line it introduces.
+		// An overlined title: step over the overline to the title.
 		if isUnderline(lines[i], 0) && i+2 < len(lines) {
 			next := strings.TrimSpace(lines[i+1])
 			if next != "" && isUnderline(lines[i+2], len([]rune(next))) {

@@ -7,12 +7,10 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
-// Repairing a bracket knocked out of tune by a correction (issue #389).
+// Repairing a bracket knocked out of tune by a correction.
 //
-// Correcting a bracket result long after the fact leaves the director in front of a wrong tree:
-// the matches below it were played by the wrong people. The engine PROPOSES the repair — it
-// never applies it. What is held here is that rule and its consequence: confirming nothing
-// changes nothing, and confirming everything clears the warning.
+// The engine PROPOSES the repair, never applies it: confirming nothing changes nothing, and
+// confirming everything clears the warning.
 
 // bracketDirection prepares a straight knock-out of n players.
 func bracketDirection(t *testing.T, d *Database, n int) int64 {

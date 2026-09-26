@@ -13,15 +13,13 @@ import (
 // FromMAT reads a Jellyfish/gnubg .mat transcript back into a Document — the same
 // parser the GnuBG importer uses, and this package's one external dependency.
 //
-// It is the inverse of [MatchParts] followed by ingest.RenderMAT, and it exists for
-// two reasons: it makes the round trip testable on real files, and it is what lets a
-// .mat be REPLAYED to have its Inconsistencies pointed out rather than merely imported.
+// It is the inverse of [MatchParts] + ingest.RenderMAT: it makes the round trip
+// testable and lets a .mat be REPLAYED for its Inconsistencies.
 //
-// A game's score line is kept when it is not the score the previous games give: it is
-// then a declared score on the game's opening (ADR-0053), so that a .mat written from a
-// transcription that declared one reads back as the same document.
+// A score line that differs from the derived score becomes a declared score on the
+// game's opening (ADR-0053), so the round trip is exact.
 //
-// Two things the format does not carry are reconstructed rather than invented:
+// Two things the format does not carry are reconstructed:
 //
 //   - The opening roll. A .mat starts a game at the first play, so the opening is
 //     rebuilt from it — the two dice, given to the player who moved first. A first
@@ -60,11 +58,8 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 		game := &parsed.Games[gi]
 		if rec := firstCheckerRecord(game.Moves); rec != nil {
 			opening := openingAction(rec)
-			// The score line of the game is what the file says it was played at.
-			// When the games before it do not give that score, the file carries
-			// a score error, and it is read back as the score it declares
-			// (ADR-0053) — never corrected into the derived one, which would lose
-			// what was written, nor refused.
+			// A score line the previous games do not give is read back as a
+			// declared score (ADR-0053), never corrected nor refused.
 			if score := game.Score; doc.Header.MatchLength > 0 && score != st.points {
 				opening.Score = &score
 				doc.FormatVersion = max(doc.FormatVersion, formatVersionScore)
@@ -134,11 +129,8 @@ func openingAction(rec *gnubgparser.MoveRecord) Action {
 	return a
 }
 
-// statedResult is what the FILE says a game was worth. The score line of the next game
-// is the statement of it a reader sees, and what the transcription must reproduce; the
-// "Wins N points" line says the same (gnubgparser v1.7.0 reads it by its column and
-// scores a drop), and is what the last game of a file, which has no successor, falls
-// back to.
+// statedResult is what the FILE says a game was worth: the next game's score line,
+// or for the last game the "Wins N points" line (gnubgparser v1.7.0+).
 func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points int) {
 	if i+1 < len(games) {
 		gained0 := games[i+1].Score[0] - games[i].Score[0]
@@ -151,10 +143,8 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 		}
 	}
 	winner, points = games[i].Winner, games[i].Points
-	// The last game has no successor to state its result. What it does have, when it
-	// is the game that ended the match, is one player it CAN belong to: the file's
-	// "and the match" says so, the parser drops it, and the arithmetic checks the
-	// winner it read against it.
+	// The last game has no successor; when it ended the match, the arithmetic
+	// checks the parsed winner against the one player it can belong to.
 	if matchLength > 0 && points > 0 {
 		ends0 := games[i].Score[0]+points >= matchLength
 		ends1 := games[i].Score[1]+points >= matchLength
@@ -172,12 +162,9 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 // as the file wrote them — the Replay recomputes the hits and the board they leave, and
 // says whether any legal play reaches it.
 //
-// A cell with no play in it is TWO different facts, and the difference is the whole of
-// this function. A cell holding nothing but its dice (or the "Cannot Move" some writers
-// put there) says the player could not play: a dance. A cell holding "???" says gnubg
-// did not write down what was played — the player moved, and the record is silent. The
-// parser's decoded Move is all -1 in both cases; its Unrecorded flag (gnubgparser
-// v1.7.0) is what separates them.
+// A cell with no play is TWO facts: dice alone (or "Cannot Move") is a dance; "???"
+// is an unrecorded play. The parser's Move is all -1 in both; only its Unrecorded
+// flag (gnubgparser v1.7.0+) separates them.
 func checkerAction(rec *gnubgparser.MoveRecord) Action {
 	side := rec.Player
 	dice := [2]int{rec.Dice[0], rec.Dice[1]}

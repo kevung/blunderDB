@@ -134,11 +134,8 @@ func TestCollectImportableFilesIsCaseInsensitiveOnExtension(t *testing.T) {
 
 func TestCollectImportableFilesOnMissingDirectory(t *testing.T) {
 	a := NewApp(nil)
-	// filepath.Walk reports the missing-root error to the walk callback (not
-	// to Walk's own return value); CollectImportableFiles's callback swallows
-	// every per-entry error unconditionally ("skip files/dirs we can't
-	// access"), so Walk itself sees no error and CollectImportableFiles
-	// returns (nil, nil) rather than surfacing "directory does not exist".
+	// Walk reports a missing root to the callback, which swallows every
+	// error, so the result is (nil, nil), not "directory does not exist".
 	dir := t.TempDir()
 	missing := filepath.Join(dir, "does-not-exist")
 	got, err := a.CollectImportableFiles(missing)

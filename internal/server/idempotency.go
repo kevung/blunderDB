@@ -12,8 +12,8 @@ import (
 // the package doc comment on idempotency — but a handful of "create" calls
 // genuinely insert a new row on every invocation with no natural dedup key
 // (unlike positions.save, which Zobrist-hashes its content): collections.create,
-// tournaments.create, anki.reviewCard (#236). Wrap exactly those routes'
-// handler with withIdempotency; every other route ignores this header
+// tournaments.create, anki.reviewCard. Wrap exactly those routes' handler
+// with withIdempotency; every other route ignores this header
 // entirely.
 const IdempotencyKeyHeader = "Idempotency-Key"
 

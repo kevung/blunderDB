@@ -6,12 +6,8 @@ import (
 	"strings"
 )
 
-// The file extensions blunderDB knows how to import, in ONE place.
-//
-// This list was written three times — the Wails app's drag-and-drop and
-// folder collection, the CLI's batch walk, and that walk's own error message
-// — and the three could drift apart without anything noticing. A watched
-// folder (#258) would have been the fourth.
+// The file extensions blunderDB knows how to import, in ONE place: drag-and-drop,
+// folder collection, the CLI's batch walk and the watched folder all read it.
 
 // importableExtensions maps a lower-cased extension (with its dot) to true.
 var importableExtensions = map[string]bool{

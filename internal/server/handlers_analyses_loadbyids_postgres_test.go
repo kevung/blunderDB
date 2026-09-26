@@ -9,10 +9,8 @@ import (
 	"testing"
 )
 
-// TestAnalysesLoadByIDsTenantIsolation asks one tenant for a list mixing its
-// own analysed positions with another tenant's. Only its own come back: an id
-// is a global row id on PostgreSQL, so knowing another tenant's id must never
-// be enough to read its analysis.
+// TestAnalysesLoadByIDsTenantIsolation: ids are global on PostgreSQL, so a
+// list mixing another tenant's ids returns only the caller's own analyses.
 func TestAnalysesLoadByIDsTenantIsolation(t *testing.T) {
 	ts := newPostgresTestServer(t)
 

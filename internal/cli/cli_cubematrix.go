@@ -13,12 +13,9 @@ import (
 )
 
 // runCubeMatrix handles the cubematrix command: the cube verdict at every
-// away × away score of a match, for one position given as an XGID (issue
-// #267, fiche I.11).
-//
-// Pure computation, like epc: no database is opened, and the grid comes from
-// the same gammonnet.ComputeCubeMatrix the Eval panel's tab and the daemon's
-// /v1/gammonnet.cubeMatrix call.
+// away × away score of a match, for one position given as an XGID. Pure
+// computation, no database: gammonnet.ComputeCubeMatrix, as the GUI and
+// daemon call it.
 func (cli *CLI) runCubeMatrix(args []string) error {
 	cmd := flag.NewFlagSet("cubematrix", flag.ContinueOnError)
 

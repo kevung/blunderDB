@@ -1,15 +1,9 @@
 /**
- * chrome-theme.spec.js — #416
- *
- * La chrome de l'application suit le thème. Après #359 (modales) et #403 (encre
- * héritée de body), la barre d'outils, la barre d'onglets du panneau inférieur,
- * la barre d'état et l'en-tête de partie (« Alice vs Bob · tournoi · … ») gardaient
- * un fond clair littéral : hors thème en sombre, et les noms des joueurs — un jeton
- * clair — s'y écrivaient sur ce fond clair, illisibles. Les libellés du panneau
- * Recherche avaient le même défaut.
- *
- * Chaque zone est tenue par son fond ET par l'encre de son texte : un fond passé au
- * jeton sans son texte (ou l'inverse) est exactement le défaut qu'on corrige.
+ * La chrome de l'application suit le thème : la barre d'outils, la barre d'onglets du panneau
+ * inférieur, la barre d'état et l'en-tête de partie (« Alice vs Bob · tournoi · … ») ne doivent
+ * pas garder de fond clair littéral en thème sombre, où un jeton clair (les noms des joueurs)
+ * deviendrait illisible. Chaque zone est tenue par son fond ET par l'encre de son texte : un
+ * fond passé au jeton sans son texte (ou l'inverse) reproduit le même défaut.
  *
  * Les valeurs attendues sont lues dans themes.js, pas recopiées.
  */

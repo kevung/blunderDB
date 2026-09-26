@@ -6,8 +6,8 @@ import (
 )
 
 // Typed sentinel errors returned by Storage implementations. They map onto a
-// closed set of categories so callers (and the future HTTP layer in P6) can
-// branch without inspecting backend-specific error strings.
+// closed set of categories so callers (the HTTP layer included) can branch
+// without inspecting backend-specific error strings.
 //
 // Use errors.Is to test them; implementations should wrap them with %w to add
 // context.

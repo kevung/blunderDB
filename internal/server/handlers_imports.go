@@ -25,10 +25,9 @@ import (
 // importRegistry tracks in-flight imports so imports.cancel can abort them.
 // An id is opaque — 16 random bytes, hex — and says nothing about who
 // started the import: the owning tenant is recorded beside the cancel func
-// and checked by equality. The first design encoded the scope into the id
-// ("<scope>-<counter>") and checked it by prefix, which let tenant "a"
-// cancel the imports of tenant "a-1", and let anyone enumerate the counter
-// (#160).
+// and checked by equality, never encoded into the id. Encoding the scope
+// into the id ("<scope>-<counter>") and matching by prefix let tenant "a"
+// cancel tenant "a-1"'s imports, and let anyone enumerate the counter.
 type importRegistry struct {
 	mu   sync.Mutex
 	jobs map[string]importJob
@@ -62,13 +61,10 @@ func (reg *importRegistry) start(scope string, cancel context.CancelFunc) string
 
 // startExclusive is start for a job a tenant may only have one of at a time.
 // It returns ErrConflict rather than a second id when one is already running
-// for that scope.
-//
-// The gammonNet sweep is the case (G.11, #239): it takes every core the daemon
-// has for as long as it runs, and two of them for the same tenant do not go
-// twice as fast — they halve each other while both writing analyses into the
-// same rows the other is reading as missing. One per tenant, and the second
-// caller is told so instead of being quietly queued behind the first.
+// for that scope: the gammonNet sweep is the case that matters, since it
+// takes every core the daemon has for as long as it runs, and two runs for
+// the same tenant do not go twice as fast — they halve each other while both
+// write analyses into the rows the other is reading as missing.
 func (reg *importRegistry) startExclusive(scope string, cancel context.CancelFunc) (string, error) {
 	reg.mu.Lock()
 	defer reg.mu.Unlock()
@@ -104,11 +100,11 @@ func (reg *importRegistry) cancel(scope, id string) bool {
 }
 
 // cancelAll aborts every in-flight job across every tenant, regardless of
-// scope. Server.Run calls this on both registries just before Shutdown
-// (#234): each job's own handler is watching its context and, once
-// cancelled, emits a trailing {"event":"cancelled"} and returns on its own,
-// so shutdown does not have to wait out the fixed ShutdownTimeout only to
-// cut every remaining stream's connection with no explanation.
+// scope. Server.Run calls this on both registries just before Shutdown: each
+// job's handler watches its context and, once cancelled, emits a trailing
+// {"event":"cancelled"} and returns on its own, so shutdown need not wait out
+// the fixed ShutdownTimeout only to cut every remaining stream with no
+// explanation.
 func (reg *importRegistry) cancelAll() {
 	reg.mu.Lock()
 	defer reg.mu.Unlock()
@@ -117,9 +113,9 @@ func (reg *importRegistry) cancelAll() {
 	}
 }
 
-// count returns the number of in-flight jobs, across every tenant — the
-// blunderdb_imports_inflight / blunderdb_gammonnet_sweep_inflight gauges
-// (#238), both backed by an importRegistry (see gammonnetJobs on Server).
+// count returns the number of in-flight jobs, across every tenant — backs the
+// blunderdb_imports_inflight / blunderdb_gammonnet_sweep_inflight gauges (see
+// gammonnetJobs on Server).
 func (reg *importRegistry) count() int {
 	reg.mu.Lock()
 	defer reg.mu.Unlock()
@@ -127,13 +123,11 @@ func (reg *importRegistry) count() int {
 }
 
 // spoolQuota bounds the total bytes any in-flight import may hold spooled to
-// $TMPDIR at once, across every tenant: with no ceiling, N concurrent
-// imports each up to ImportMaxBodyBytes have no upper bound on disk usage
-// (#234). A reservation claims the worst case (ImportMaxBodyBytes) up front
-// rather than metering bytes as they arrive — simpler, and conservative in
-// the direction that matters: the quota is never under-counted while an
-// import is still spooling, only ever released once it (successfully or
-// not) is done.
+// $TMPDIR at once, across every tenant: with no ceiling, N concurrent imports
+// each up to ImportMaxBodyBytes would have no upper bound on disk usage. A
+// reservation claims the worst case up front rather than metering bytes as
+// they arrive: the quota is never under-counted while an import is still
+// spooling, only released once it (successfully or not) is done.
 type spoolQuota struct {
 	max      int64
 	inFlight atomic.Int64
@@ -153,19 +147,17 @@ func (q *spoolQuota) reserve(n int64) bool {
 
 func (q *spoolQuota) release(n int64) { q.inFlight.Add(-n) }
 
-// usage returns the bytes currently reserved — blunderdb_import_spool_bytes
-// (#238).
+// usage returns the bytes currently reserved — backs blunderdb_import_spool_bytes.
 func (q *spoolQuota) usage() int64 { return q.inFlight.Load() }
 
 // allowedUploadExtensions is the allow-list for the spool file's suffix,
 // taken from the upload's filename. An extension outside it is dropped
-// rather than the upload refused: the suffix is load-bearing only for the
+// rather than the upload refused: the suffix is load-bearing only for
 // formats that dispatch on it (GnuBG's .sgf vs .mat/.txt, single-position's
 // .xgp vs .txt — see ingest.MapGnuBG / ingest.PositionImporter) and purely
-// cosmetic for the rest (the endpoint's fixed ingest.Format already says
-// what to parse); either way, an attacker-controlled filename — arbitrary
-// bytes, a path separator — must never reach os.CreateTemp's pattern
-// unfiltered (#234).
+// cosmetic for the rest. Either way, an attacker-controlled filename —
+// arbitrary bytes, a path separator — must never reach os.CreateTemp's
+// pattern unfiltered.
 var allowedUploadExtensions = map[string]bool{
 	".xg": true, ".xgp": true, ".sgf": true, ".mat": true,
 	".bgf": true, ".txt": true, ".db": true, ".dbx": true,
@@ -218,8 +210,7 @@ func (s *Server) exporterFor(f ingest.Format) ingest.Exporter {
 // exemption from limitBody's default cap (uploadPaths): a new format can
 // never be registered without its exemption, and no other route can inherit
 // the exemption by sharing the "/v1/imports." prefix — imports.cancel carries
-// a small JSON body and stays under the default cap like everything else
-// (#160).
+// a small JSON body and stays under the default cap like everything else.
 var uploadRoutes = []struct {
 	pattern string
 	format  ingest.Format
@@ -250,15 +241,14 @@ func (s *Server) ingestRoutes() []route {
 	}
 	return append(rs,
 		route{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
-		// Asking about a past import (#257). The report is recomputed on every
-		// call, so a client that analyses the positions an import brought in
-		// and asks again gets the new figures.
+		// Recomputed on every call, so a client that re-analyses the positions
+		// an import brought in and asks again gets the new figures.
 		route{http.MethodPost, "/v1/imports.report", rpc(func(ctx context.Context, scope string, req importReportReq) (*domain.ImportBatch, error) {
 			return s.opts.Storage.ImportBatches().Report(ctx, scope, req.BatchID, req.Players)
 		})},
-		// The queue that follows the report (#259): what to look at now, in
-		// the order to look at it. Measured on every call and never stored —
-		// running the same queue again is a legitimate thing to want.
+		// What to look at now, in the order to look at it, following the
+		// report above. Measured on every call and never stored — running the
+		// same queue again is a legitimate thing to want.
 		route{http.MethodPost, "/v1/imports.studyQueue", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
 			return s.opts.Storage.ImportBatches().StudyQueue(ctx, scope, req.BatchID, req.Players, req.Limit)
 		})},
@@ -304,15 +294,15 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 //
 // ingest.SQLiteExporter already materializes the whole file into its own temp
 // path before copying it to the writer it is given, but this handler must not
-// hand it the live ResponseWriter directly: the moment Export writes its first
-// byte, Go commits whatever status/headers are set at that instant, and this
-// handler used to set the binary headers *before* calling Export — so a
-// mid-export failure still went out as HTTP 200 with
-// Content-Type: application/octet-stream and a JSON error body wearing a
-// ".sqlite" Content-Disposition. Instead, Export targets a private temp file
-// here; the binary headers are set, and the file streamed to the client, only
-// once Export has returned successfully. On failure, writeStorageError sets a
-// proper status/content-type — nothing has reached the client yet.
+// hand it the live ResponseWriter directly: the moment Export writes its
+// first byte, Go commits whatever status/headers are set at that instant —
+// setting the binary headers before calling Export would send a mid-export
+// failure as HTTP 200 with an octet-stream Content-Type and a JSON error body
+// wearing a ".sqlite" Content-Disposition. So Export targets a private temp
+// file here; the binary headers are set, and the file streamed to the
+// client, only once Export has returned successfully. On failure,
+// writeStorageError sets a proper status/content-type — nothing has reached
+// the client yet.
 func (s *Server) handleExportSQLite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req exportSQLiteReq
@@ -359,12 +349,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Disposition", `attachment; filename="blunderdb-export.sqlite"`)
 		if _, err := io.Copy(w, f); err != nil {
-			// Headers/status are already committed at this point (the copy is
-			// the first write); nothing more to do than let the client see a
-			// truncated download with no error field to explain it. The log
-			// line is the only place this failure is ever recorded, which is
-			// exactly the Error case (see logging.go's scale): nobody else
-			// is going to see it.
+			// Headers/status are already committed (the copy is the first
+			// write): nothing more to do than let the client see a truncated
+			// download with no error field to explain it. The log line is the
+			// only place this failure is recorded — the Error case per
+			// logging.go's scale, since nobody else will see it.
 			slog.Error("server: stream sqlite export", "err", err)
 		}
 	}
@@ -372,7 +361,7 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 
 // handleImport streams an uploaded file through the importer, emitting NDJSON
 // progress events. The upload is spooled to a temp file so parser-backed
-// formats (PR3b/c) can seek; JSON reads it back sequentially.
+// formats can seek; JSON reads it back sequentially.
 func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		imp := s.importerFor(format)
@@ -381,10 +370,8 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			return
 		}
 
-		// Claim the worst case (ImportMaxBodyBytes) against the global spool
-		// quota before touching the body at all: N concurrent imports each up
-		// to ImportMaxBodyBytes would otherwise have no ceiling on
-		// $TMPDIR usage (#234).
+		// Claim the worst case against the global spool quota (see
+		// spoolQuota) before touching the body at all.
 		if !s.spool.reserve(s.opts.ImportMaxBodyBytes) {
 			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
 			return
@@ -399,11 +386,9 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 		defer file.Close()
 
-		// Preserve the upload's extension on the spool file when it is on
-		// allowedUploadExtensions: parser-backed formats dispatch on it
-		// (e.g. GnuBG .sgf vs .mat) — anything else is dropped rather than
-		// letting an attacker-controlled filename reach the temp name
-		// unfiltered (#234).
+		// Preserve the upload's extension when it is on allowedUploadExtensions
+		// (see its doc comment); anything else is dropped rather than letting
+		// an attacker-controlled filename reach the temp name unfiltered.
 		ext := ""
 		if header != nil {
 			ext = sanitizeUploadExt(filepath.Ext(header.Filename))
@@ -417,7 +402,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 
 		// A cancellable context, registered so imports.cancel can abort it —
 		// and so can Server.Run, on every in-flight import, just before
-		// Shutdown (#234).
+		// Shutdown.
 		ctx, cancel := context.WithCancel(r.Context())
 		defer cancel()
 		scope := scopeOf(r)
@@ -435,10 +420,10 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			}
 		}
 
-		// One batch per upload (#257): the report the client can ask for
-		// afterwards is about THIS file, not about the tenant. A batch that
-		// cannot be opened is not fatal — the import is what the caller asked
-		// for, and losing its summary must not cost them the import.
+		// One batch per upload: the report the client can ask for afterwards
+		// is about THIS file, not about the tenant. A batch that cannot be
+		// opened is not fatal — the import is what the caller asked for, and
+		// losing its summary must not cost them the import.
 		batches := s.opts.Storage.ImportBatches()
 		batchID, batchErr := batches.Begin(ctx, scope, sourceLabel(header), string(format))
 		if batchErr != nil {
@@ -460,8 +445,8 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				// imports.cancel, or a graceful shutdown cancelling every
-				// in-flight job (Server.Run) — either way the client asked
-				// for or was told about this, not a failure (#234).
+				// in-flight job (Server.Run) — either way the client asked for
+				// or was told about this, not a failure.
 				emit(map[string]any{"event": "cancelled"})
 				return
 			}
@@ -478,7 +463,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
-		// without a second call (#257). Best-effort — the import has already
+		// without a second call. Best-effort — the import has already
 		// succeeded and committed by here.
 		if batchID != 0 {
 			done["batch_id"] = batchID
@@ -577,9 +562,9 @@ type importReportReq struct {
 	Players []string `json:"players,omitempty"`
 }
 
-// importStudyQueueReq asks for the queue that follows a report (#259). Limit
-// 0 means the queue's own bound (domain.MaxStudyQueue) — a queue nobody
-// finishes is a queue nobody starts.
+// importStudyQueueReq asks for the queue that follows a report. Limit 0 means
+// the queue's own bound (domain.MaxStudyQueue) — a queue nobody finishes is a
+// queue nobody starts.
 type importStudyQueueReq struct {
 	BatchID int64    `json:"batchId"`
 	Players []string `json:"players,omitempty"`

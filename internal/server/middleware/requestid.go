@@ -12,7 +12,7 @@ import (
 // value that ends up in play — theirs, echoed back, or one this daemon
 // minted — is always present on the response and in the request-completion
 // log line, so a support request ("my import at 14:32 failed") can be tied
-// to one exact log line without guessing on timestamps (#238).
+// to one exact log line without guessing on timestamps.
 const RequestIDHeader = "X-Request-Id"
 
 // TraceparentHeader is the W3C Trace Context header. This daemon does not

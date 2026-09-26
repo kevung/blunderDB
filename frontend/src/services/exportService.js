@@ -105,11 +105,9 @@ export async function exportDatabase() {
     }
 }
 
-// exportMatchMat exports a single match to a Jellyfish/gnubg .mat file. The save
-// dialog is pre-filled with a name built server-side (the same helper the CLI
-// batch uses), and the file is written straight to the chosen path — a .mat has
-// nothing to configure, so there is no modal. Cancelling the dialog is a silent
-// no-op; a write failure raises a native alert and a status-bar message.
+// exportMatchMat exports one match to a .mat file: server-built file name (as
+// in the CLI), written straight to the chosen path, no modal. Cancel is a
+// silent no-op; a write failure raises an alert and a status message.
 export async function exportMatchMat(match) {
     if (!match || match.id == null) return;
     try {
@@ -141,11 +139,9 @@ export async function handleExportCommit() {
         const exportOptions = get(exportOptionsStore);
         const baseOptions = {
             exportPath: pendingExportPath,
-            // Send identifiers, not positions. Shipping the whole set was 73 MB of JSON for
-            // a real database — seconds of JSON.stringify on the browser's only thread,
-            // which left the progress dialog blank, then the same volume across the bridge
-            // and decoded again. The exporter reads them from the database it already has
-            // open. See ExportOptions.PositionIDs.
+            // Identifiers, not positions: the whole set can be tens of MB of
+            // JSON on the UI thread. The exporter reads its open database
+            // (ExportOptions.PositionIDs).
             positionIDs: get(positionsStore).ids,
             metadata: {
                 user: metadata.user || '',
@@ -156,12 +152,9 @@ export async function handleExportCommit() {
             includeComments: exportOptions.includeComments,
             includeFilterLibrary: exportOptions.includeFilterLibrary,
             includePlayedMoves: exportOptions.includePlayedMoves,
-            // The backend treats "IncludeMatches && empty MatchIDs" as "export ALL
-            // matches" (the CLI's --match-ids empty=all convention). In the GUI the
-            // modal always auto-fills every match id when the section is enabled, so
-            // an empty selection here can only mean the user explicitly clicked "None"
-            // (or unchecked every match) — which must export no matches, not all.
-            // Collapse that to includeMatches=false so "None" means none.
+            // Backend: IncludeMatches with empty MatchIDs means ALL matches
+            // (CLI convention). In the GUI an empty selection means "None", so
+            // collapse it to includeMatches=false.
             includeMatches: exportOptions.includeMatches && (exportOptions.matchIDs || []).length > 0,
             includeCollections: exportOptions.includeCollections,
             collectionIDs: exportOptions.collectionIDs || [],
@@ -181,10 +174,8 @@ export async function handleExportCommit() {
 
         logger.log('Export completed successfully');
 
-        // No completion screen: the dialog closes and the status bar says what happened.
-        // Acknowledging "it worked" with a click is friction, and it is how every other
-        // long operation in blunderDB reports — the .mat export has never had a dialog at
-        // all.
+        // No completion screen: the status bar reports, as for every long
+        // operation.
         const posCount = get(exportPositionCountStore);
         closeModal();
         resetExportState();

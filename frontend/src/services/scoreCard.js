@@ -1,20 +1,9 @@
 /**
- * La fiche de score (ADR-0040 règle 4).
- *
- * Une question de l'exercice Scores est UN score non ordonné. La fiche en
- * porte les deux faces — « vous » et « l'adversaire » — parce qu'une décision
- * de videau au score a besoin des deux : le point de prise corrigé combine les
- * valeurs de gammon des deux joueurs, et c'est le point de prise de
- * l'adversaire qui dit si le double passe.
- *
- * Chaque face ne rend que les cases que les tables définissent pour elle. Pas
- * de case « sans objet » à deviner : savoir que gv4 n'a pas d'objet à 3 away
- * est une convention, pas un calcul. D'où trois nombres à 2a-2a et quatorze au
- * plus, une seule colonne à score égal, et une ligne qu'aucune face ne définit
- * qui ne figure tout simplement pas.
- *
- * Ce module ne connaît ni Svelte, ni le plateau, ni Wails : il rend une
- * géométrie et des nombres, et c'est ce qui le rend vérifiable.
+ * La fiche de score (ADR-0040 règle 4) : un score non ordonné, vu des deux
+ * faces, car le point de prise corrigé combine les valeurs de gammon des deux
+ * joueurs. Chaque face ne rend que les cases que les tables définissent pour
+ * elle (gv4 n'existe pas à 3 away) : de 3 à 14 nombres, une seule colonne à
+ * score égal. Sans Svelte, plateau ni Wails.
  */
 import { REFERENCE_TABLES, referenceValue } from './referenceTables.js';
 
@@ -26,9 +15,8 @@ export const SCORE_AWAY_MIN = 2;
 export const SCORE_AWAY_MAX = 9;
 
 /**
- * Les 36 scores non ordonnés de 2 à 9 away, `[petit, grand]`. Non ordonnés :
- * 3:5 et 5:3 sont le même score, et la fiche le montre en échangeant ses deux
- * colonnes — ce n'est pas une seconde question.
+ * Les 36 scores non ordonnés de 2 à 9 away, `[petit, grand]` : 3:5 et 5:3 sont
+ * la même question, colonnes échangées.
  * @type {readonly [number, number][]}
  */
 export const UNORDERED_SCORES = Object.freeze(
@@ -64,9 +52,7 @@ export const UNORDERED_SCORES = Object.freeze(
  */
 
 /**
- * Construit la fiche d'un score. À score égal il n'y a qu'une colonne : les
- * deux faces liraient les mêmes cases, et les montrer deux fois serait une
- * redite, pas une comparaison.
+ * Construit la fiche d'un score ; une seule colonne à score égal.
  *
  * @param {number} awayYou @param {number} awayOpponent
  * @returns {ScoreCard}
@@ -94,9 +80,8 @@ export function buildScoreCard(awayYou, awayOpponent) {
 }
 
 /**
- * Les nombres de la fiche, à plat et dans l'ordre de lecture (ligne par ligne,
- * face par face). C'est cette liste que la session parcourt : un nombre est
- * l'unité de faute, jamais la question entière ni la ligne.
+ * Les nombres de la fiche, à plat, ligne par ligne et face par face : le
+ * nombre est l'unité de faute.
  * @param {ScoreCard} card
  * @returns {ScoreCardCell[]}
  */

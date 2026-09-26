@@ -6,11 +6,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// La comparaison porte sur la DÉCISION, pas sur la façon de l'écrire : deux
-// moteurs qui jouent le même coup mais le notent différemment ne doivent pas
-// être comptés en désaccord. C'est ce qui a fait passer la mesure de 78,8 % à
-// 93,2 % d'accord sur le corpus de test — quinze points de « désaccord » qui
-// n'étaient que du dialecte.
+// La comparaison porte sur la DÉCISION, pas sur sa notation : deux moteurs qui
+// jouent le même coup en le notant différemment sont d'accord.
 func TestCompareOne_LeDialecteNEstPasUnDesaccord(t *testing.T) {
 	stored := &domain.PositionAnalysis{
 		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{

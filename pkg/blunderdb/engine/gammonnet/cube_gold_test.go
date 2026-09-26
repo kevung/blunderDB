@@ -15,13 +15,9 @@ import (
 // jacoby, money-or-match-state) cube decisions that both this port and the C
 // reference (gn_cube_decide) must answer identically.
 //
-// Match-state cases are held to away scores <= cubeGoldMaxAway: gammonNet's
-// own gn_match_state_is_valid refuses beyond GN_MET_MAX_AWAY (25). Its
-// post-Crawford table now carries the full 25 entries on both sides of the
-// port (#24: blunderDB's own MET reads the same gammonNet export instead of
-// a hand transcription, so the trailer-at-25-away boundary this file used to
-// avoid is answered identically by both engines) — cubeGoldMaxAway is
-// therefore 25, gammonNet's own horizon, not one short of it.
+// Match-state cases are held to away scores <= cubeGoldMaxAway, gammonNet's
+// own horizon (GN_MET_MAX_AWAY, 25): blunderDB's MET reads the same gammonNet
+// export, so both engines answer identically up to it.
 const (
 	cubeCorpusMagic = "GNCB"
 	cubeGoldMagic   = "GNCG"
@@ -29,14 +25,8 @@ const (
 	cubeGoldPath    = "testdata/cube_gold.bin"
 	cubeGoldMaxAway = 25
 
-	// cubeGoldTolerance matches the search gold's 1e-6 (#24): blunderDB's own
-	// MET used to store Kazaross-XG2 in float32, transcribed by hand, where
-	// gammonNet's table is double — that gap (measured max|Δ| = 2.463e-06
-	// over 2320 decisions, see README.md) forced a tolerance ten times
-	// looser than the rest of this harness. blunderDB's MET now reads
-	// gammonNet's own float64 export for every index this file exercises
-	// (metPre/metPost in engine/met.go), closing the gap this tolerance
-	// existed to paper over.
+	// cubeGoldTolerance matches the search gold's 1e-6: blunderDB's MET reads
+	// gammonNet's own float64 export (metPre/metPost in engine/met.go).
 	cubeGoldTolerance = 1e-6
 
 	// cubeActionTieTolerance is the decision tie zone: an action disagreement
@@ -321,18 +311,11 @@ func TestCubeDecideMatchesTheGoldFile(t *testing.T) {
 			continue
 		}
 		if int32(dec.Action) != want.action {
-			// At an exact decision boundary (eND == eDouble in real
-			// arithmetic — e.g. a perfectly symmetric score with p = 0.5),
-			// residual floating-point noise can push a strict eDouble > eND
-			// either side of zero and flip NoDouble/DoubleTake. Rarer since
-			// #24 (blunderDB's MET now reads gammonNet's own float64 export
-			// instead of a float32 hand transcription), but still possible.
-			// Verdict's own comparisons are strict for exactly this reason
-			// (an exact tie must read NoDouble), so this is a tie-zone
-			// disagreement, not a computed-value one — tolerated only within
-			// cubeActionTieTolerance, and counted so a growing count is
-			// itself a signal, exactly as the search gold file treats its
-			// own equity ties.
+			// At an exact boundary (eND == eDouble in real arithmetic),
+			// floating-point noise can flip NoDouble/DoubleTake under
+			// Verdict's strict comparisons: a tie-zone disagreement, tolerated
+			// within cubeActionTieTolerance and counted, as the search gold
+			// treats its equity ties.
 			if delta := math.Abs(dec.EquityNoDouble - dec.EquityDouble); delta <= cubeActionTieTolerance {
 				ties++
 			} else {

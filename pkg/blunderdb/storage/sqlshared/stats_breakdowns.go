@@ -9,13 +9,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The three breakdowns of issue #266 (fiche I.10): the same PR the statistics
-// already show, sliced by game phase, by tag, and by away × away score.
-//
-// Every one of them reuses countedExpr and statsErrExpr — what counts as a
-// decision and what an error costs are stated once, in stats.go, and a
-// breakdown that restated either would be a second PR wearing the same name.
-// What each pass adds is a GROUP BY, or, for tags, a second query.
+// The breakdowns: the same PR the statistics already show, sliced by game
+// phase, plan of play, tag, and away × away score. Each reuses countedExpr and
+// statsErrExpr (stated once, in stats.go) and adds only a GROUP BY, or, for
+// tags, a second query.
 
 // computePerPhase splits the selection by the position's derived phase
 // (ADR-0035). A database whose phases have never been computed reports
@@ -47,9 +44,7 @@ func (s *StatsStore) computePerPhase(ctx context.Context, q statsQuery, result *
 }
 
 // computePerGameType splits the selection by the position's derived plan of
-// play (#291). Same shape as computePerPhase, same two expressions, one more
-// GROUP BY — a breakdown that restated what counts as a decision would be a
-// second PR wearing the same name.
+// play. Same shape as computePerPhase.
 func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	d := s.DB
 	rows, err := s.DB.Query(ctx,
@@ -83,13 +78,10 @@ func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, resul
 // why it does not depend on which player the filter selected.
 //
 // Money play (match_length 0, both scores 0) lands in the (0,0) cell and is
-// left there rather than dropped: "my PR at money" is a real question, and it
-// is the one cell of the matrix whose meaning is not an away score.
+// kept: "my PR at money" is a real question.
 //
-// Crawford is NOT a dimension here, because it is not stored on a position.
-// Its practical effect is small — a Crawford game has no cube decision at
-// all — but the omission is real and the documentation says so rather than
-// letting the matrix imply a distinction it does not make.
+// Crawford is NOT a dimension here, because it is not stored on a position;
+// the documentation says so.
 func (s *StatsStore) computePerScore(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	d := s.DB
 	rows, err := s.DB.Query(ctx,
@@ -128,13 +120,10 @@ func (s *StatsStore) computePerScore(ctx context.Context, q statsQuery, result *
 // computePerTag splits the selection by the tags in the positions' comments.
 //
 // A tag lives in prose, not in a column (see domain.ExtractTags), so this
-// cannot be a GROUP BY. It is two queries instead of one join, deliberately:
-// joining `comment` into statsBaseJoin would multiply a decision by the number
-// of comments on its position and inflate every count. The first query is the
-// decisions, the second the tags per position, and the two meet in Go.
-//
-// A position carrying two tags contributes to both rows. The rows therefore do
-// not sum to the total, which is what a label means as opposed to a partition.
+// cannot be a GROUP BY. Two queries rather than one join, deliberately:
+// joining `comment` would multiply a decision by its position's comment count.
+// A position carrying two tags contributes to both rows, so the rows do not
+// sum to the total.
 func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	type decision struct {
 		positionID int64

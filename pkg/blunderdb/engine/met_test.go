@@ -133,11 +133,8 @@ func TestConvertEMGLossToMWCLoss_Crawford(t *testing.T) {
 	}
 }
 
-// blunderDB writes 99999 as the match length of a money game. That sentinel used to flow
-// straight into the MET lookup, which indexes a 64-entry table by away score: one such row
-// among a user's matches panicked inside GetAllMatches, and because a panic in a bound
-// method makes Wails answer with an empty callback, the GUI call never settled and the
-// export screen simply never appeared.
+// blunderDB writes 99999 as the match length of a money game; it must never reach the
+// 64-entry MET index. A panic in a bound method leaves the Wails callback unsettled.
 func TestMoneyGameSentinelIsNotAMatch(t *testing.T) {
 	for _, matchLength := range []int{0, -1, 99999, gnuBGMaxScore + 1} {
 		got := ConvertEMGLossToMWCLoss(120, 0, 0, 0, 1, matchLength)
@@ -183,21 +180,16 @@ func TestNormalMatchEquityIsUnchanged(t *testing.T) {
 	}
 }
 
-// ── The table itself (#188) ─────────────────────────────────────────────────
+// ── The table itself ────────────────────────────────────────────────────────
 //
-// A table of 625 numbers is not proof-read; its PROPERTIES are. Until these
-// tests the file only exercised the EMG→MWC converter, and a transcription
-// error — one digit, one swapped pair of indices — would have moved a cube
-// verdict one time in a thousand without anything ever looking broken.
+// A table of 625 numbers is not proof-read; its PROPERTIES are: one wrong
+// digit or swapped index pair moves a cube verdict without looking broken.
 
 // A handful of the published Kazaross-XG2 values, as Tom Keith's article
 // (https://bkgm.com/articles/Keith/KazarossXG2MET/index.html) and GNU
-// Backgammon's met/Kazaross-XG2.xml print them: the textbook cells everyone
-// quotes, and the four corners of the explicit table. Checked against
-// gammonNet's canonical export (data/met_kazaross_xg2.json, embedded here as
-// met_kazaross_xg2.json — #24), which is now this file's actual source: the
-// float64 checks below compare EXACTLY (the export IS these numbers), the
-// float32 "live table" checks tolerate the overlay's rounding.
+// Backgammon's met/Kazaross-XG2.xml print them: the textbook cells and the
+// four corners. The float64 checks compare EXACTLY (the embedded export IS
+// these numbers); the float32 live-table checks tolerate the overlay's rounding.
 func TestKazarossXG2MatchesThePublication(t *testing.T) {
 	pre := []struct {
 		awayA, awayB int
@@ -226,9 +218,7 @@ func TestKazarossXG2MatchesThePublication(t *testing.T) {
 		if math.Abs(got-c.mwc) > 1e-6 {
 			t.Errorf("pre-Crawford %d-away/%d-away: table %.6f, published %.6f", c.awayA, c.awayB, got, c.mwc)
 		}
-		// And the live float32 table reads the same cell, to float32 rounding:
-		// the overlay covers it (overlayKazarossXG2), GnuBGGetME's own lookups
-		// go through metPre at the full float64 precision instead (see #24).
+		// The live float32 table reads the same cell, to float32 rounding.
 		if live := float64(preCrawfordMET[c.awayA-1][c.awayB-1]); math.Abs(live-got) > 1e-6 {
 			t.Errorf("pre-Crawford %d-away/%d-away: live table %.6f differs from the explicit %.6f", c.awayA, c.awayB, live, got)
 		}
@@ -244,10 +234,7 @@ func TestKazarossXG2MatchesThePublication(t *testing.T) {
 		{4, 0.31002},
 		{5, 0.19012},
 		{24, 0.00182},
-		// The 25th post-Crawford entry: this file used to stop at 24 explicit
-		// entries where gammonNet's table (and now its export) carries 25,
-		// so this cell answered the Zadeh fallback instead of Kazaross's own
-		// published 0.00123. Closed by #24 — the export supplies it directly.
+		// The 25th post-Crawford entry, Kazaross's own, not the Zadeh fallback.
 		{25, 0.00123},
 	}
 	for _, c := range post {
@@ -263,9 +250,7 @@ func TestKazarossXG2MatchesThePublication(t *testing.T) {
 
 // GnuBGGetME's own lookup (metPost/metPre) must answer the 25-away
 // post-Crawford trailer at the export's full precision — not the float32
-// overlay, and not the Zadeh fallback this file used to answer there. This
-// is the exact case the gold README documented as a "second, narrower,
-// already-known boundary disagreement" with gammonNet; #24 closes it.
+// overlay, and not the Zadeh fallback.
 func TestPostCrawford25AwayIsTheExplicitValue(t *testing.T) {
 	got := metPost(24) // index 24 = trailer 25-away
 	if math.Abs(got-0.00123) > 1e-9 {
@@ -289,8 +274,7 @@ func TestPostCrawford25AwayIsTheExplicitValue(t *testing.T) {
 // What one side wins the other loses: MET[i][j] + MET[j][i] = 1 over the whole
 // 64×64 live table — explicit cells and Zadeh extension alike — with the
 // diagonal at one half. Float32 storage rounds each cell on its own, so the
-// identity holds to float32 (measured worst 2.4e-7), not to the bit; the
-// explicit diagonal is exactly 0.5 as transcribed.
+// identity holds to float32, not to the bit; the explicit diagonal is exactly 0.5.
 func TestMETIsAntisymmetric(t *testing.T) {
 	worst := 0.0
 	for i := 0; i < gnuBGMaxScore; i++ {
@@ -316,12 +300,9 @@ func TestMETIsAntisymmetric(t *testing.T) {
 // The seam between Neil Kazaross's explicit 25×25 table and the Zadeh
 // extension: index 24 (25-away) is the last explicit row, index 25 the first
 // computed one. Across it the table must stay what a MET is — needing more
-// points is worse, against every opponent — and it must not jump: the first
-// Zadeh row sits within a few hundredths of the last explicit one (measured
-// 0.031 at 25-away/25-away → 26-away/25-away, the largest step anywhere at
-// the seam), which is the same order as the steps inside the table itself.
-// A seam that broke monotonicity, or stepped by a tenth, would mean the
-// overlay landed one row off — plausible numbers, wrong table.
+// points is worse, against every opponent — and it must not jump by more than
+// the steps inside the table itself. A broken seam would mean the overlay
+// landed one row off: plausible numbers, wrong table.
 func TestZadehExtensionJoinsKazarossAtTheSeam(t *testing.T) {
 	const last, first = 24, 25
 	for j := 0; j < 25; j++ {
@@ -410,14 +391,11 @@ func TestGnuBGGetMEIsAntisymmetricInPlayer(t *testing.T) {
 }
 
 // The horizon. GnuBGGetME CLAMPS an away score past MaxScore (64) to the
-// table's last row rather than refusing it — the decision this file
-// documents at the clamp itself: the lookup is called from bound methods
-// where a panic costs far more than a wrong number, and callers are expected
-// to filter (ConvertEMGLossToMWCLoss returns NaN, gammonnet.MatchState.IsValid
-// refuses). The clamp is therefore a documented degradation and this test
-// pins what it degrades TO, so a caller reading 0.5 for a 70-point match
-// can find out here that the number is the corner of the table and not an
-// equity: both scores saturate at index 63, and MET[63][63] is one half.
+// table's last row: callers filter (ConvertEMGLossToMWCLoss returns NaN,
+// gammonnet.MatchState.IsValid refuses), and this pins what the degradation
+// yields — 0.5 for a 70-point match is the table's corner MET[63][63], not an
+// equity.
+
 func TestGnuBGGetMEClampsBeyondTheHorizon(t *testing.T) {
 	at64 := GnuBGGetME(0, 0, gnuBGMaxScore, 0, 1, 0, false)
 	if at64 <= 0.5 || at64 >= 0.6 {

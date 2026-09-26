@@ -43,10 +43,8 @@ type copyPositionReq struct {
 	PositionID     int64 `json:"positionId"`
 }
 
-// collectionPositionsReq names a collection and, optionally, a page of it. A
-// collection can hold a whole library's worth of positions, and a client that
-// wants ten should not have to read all of them (issue #237). Both bounds
-// default to zero, which is what it has always meant: the whole thing.
+// collectionPositionsReq names a collection and, optionally, a page of it;
+// zero bounds mean the whole collection.
 type collectionPositionsReq struct {
 	CollectionID int64 `json:"collectionId"`
 	Limit        int   `json:"limit"`
@@ -56,7 +54,7 @@ type collectionPositionsReq struct {
 func (r collectionPositionsReq) pageLimit() int { return r.Limit }
 
 // collectionFilterReq makes a collection living, or (with an empty query)
-// turns it back into a hand-made list (#282).
+// turns it back into a hand-made list.
 type collectionFilterReq struct {
 	ID    int64  `json:"id"`
 	Query string `json:"query"`
@@ -65,11 +63,8 @@ type collectionFilterReq struct {
 func (s *Server) collectionRoutes() []route {
 	cs := func() storage.CollectionStore { return s.opts.Storage.Collections() }
 	return []route{
-		// Wrapped with withIdempotency (#236): Create has no natural dedup
-		// key (two collections named the same are still two rows), unlike
-		// positions.save's Zobrist hash — a client retrying a dropped
-		// response with the same Idempotency-Key gets the first attempt's
-		// id back rather than a second, identically-named collection.
+		// Idempotent: Create has no natural dedup key, so a retry would make a
+		// second, identically named collection.
 		{http.MethodPost, "/v1/collections.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req collectionCreateReq) (idResp, error) {
 			id, err := cs().Create(ctx, scope, req.Name, req.Description)
 			return idResp{ID: id}, err
@@ -83,10 +78,8 @@ func (s *Server) collectionRoutes() []route {
 		{http.MethodPost, "/v1/collections.update", rpcVoid(func(ctx context.Context, scope string, req collectionUpdateReq) error {
 			return cs().Update(ctx, scope, req.ID, req.Name, req.Description)
 		})},
-		// Une collection VIVANTE (#282) : sa composition est le résultat d'une
-		// requête, réévaluée à chaque ouverture. La route ne pose que la
-		// requête ; c'est le client qui la relance, avec la même recherche
-		// que la ligne de commande.
+		// Collection VIVANTE : la route pose la requête, le client la réévalue
+		// à chaque ouverture.
 		{http.MethodPost, "/v1/collections.setFilter", rpcVoid(func(ctx context.Context, scope string, req collectionFilterReq) error {
 			return cs().SetFilterQuery(ctx, scope, req.ID, req.Query)
 		})},

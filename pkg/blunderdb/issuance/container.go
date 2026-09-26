@@ -32,18 +32,16 @@ var containerMagic = []byte("BDBX\x01")
 //     — as the AEAD's additional data. Altering any of them makes Open fail exactly as a
 //     wrong passphrase does.
 //
-// Version 1 is still read, with a logged warning, because files already handed out cannot be
-// recalled; nothing writes it any more.
+// Version 1 is still read, with a logged warning (files handed out cannot be recalled), and
+// never written.
 const (
 	containerVersionUnauthenticatedHeader = 1
 	containerVersionCurrent               = 2
 )
 
-// maxContainerPayload caps what this package will hold in memory at once. AES-GCM
-// authenticates a whole message before it releases a byte of plaintext, so wrapping and
-// unwrapping are single-shot operations; course databases are a few megabytes, and refusing
-// an implausibly large one is better than exhausting memory on a machine that has none to
-// spare. Read paths check it against the file's size *before* allocating anything.
+// maxContainerPayload caps what this package holds in memory at once: AES-GCM is single-shot,
+// and refusing an implausibly large file beats exhausting memory. Read paths check it against
+// the file's size *before* allocating anything.
 const maxContainerPayload = 2 << 30 // 2 GiB
 
 // maxContainerHeader bounds the cleartext header. A real one is a few hundred bytes of JSON
@@ -188,12 +186,8 @@ func VerifyPassword(path, password string) error {
 // one time a passphrase is ever asked for. From then on the recipient works with a normal
 // file: no prompt, no re-encryption, no ceremony.
 //
-// Memory: the payload is held once. AES-GCM must authenticate the whole message before it
-// may release a single byte of plaintext, so a container cannot be streamed through a
-// bounded buffer without changing the format to chunked AEAD — not worth a third version
-// while the payload is capped at maxContainerPayload. What this does instead is decrypt in
-// place (the ciphertext buffer becomes the plaintext) and write that buffer straight to
-// outPath, so the peak is one copy of the file, checked against the cap before allocation.
+// Memory: the payload is decrypted in place and written straight to outPath, so the peak is
+// one copy of the file, checked against maxContainerPayload before allocation.
 func UnwrapContainer(path, outPath, passphrase string) (ContainerHeader, error) {
 	header, plaintext, err := openContainer(path, passphrase)
 	if err != nil {
@@ -324,11 +318,8 @@ func readExactly(f *os.File, consumed, limit, spare int64, tooLarge string) ([]b
 // DefaultUnwrapPath is where a protected copy lands when opened: beside it, same name,
 // ordinary extension.
 //
-// It must never return the container's own path — unwrapping would then overwrite the
-// protected file with its own contents. That is not hypothetical: a protected file does not
-// have to be named `.dbx` (blunderDB recognises one by its magic bytes, not its extension),
-// so a container called `cours.db` is perfectly openable and would otherwise unwrap onto
-// itself.
+// It must never return the container's own path, or unwrapping would overwrite it: a
+// container is recognised by its magic bytes, so one named `cours.db` is openable.
 func DefaultUnwrapPath(containerPath string) string {
 	dir := filepath.Dir(containerPath)
 	base := strings.TrimSuffix(filepath.Base(containerPath), ContainerExtension)
@@ -340,10 +331,9 @@ func DefaultUnwrapPath(containerPath string) string {
 	return target
 }
 
-// ProtectedPath is the name a protected export should carry. blunderDB opens a container by
-// its magic bytes, so the extension is a convention rather than a requirement — but a file
-// whose name says `.db` and whose contents are encrypted misleads every other tool the user
-// owns, so an export that asks for a password gets the `.dbx` name to match.
+// ProtectedPath is the name a protected export should carry: `.dbx`. The extension is a
+// convention (containers are recognised by magic bytes), but an encrypted `.db` would mislead
+// every other tool.
 func ProtectedPath(path string) string {
 	if strings.HasSuffix(strings.ToLower(path), ContainerExtension) {
 		return path

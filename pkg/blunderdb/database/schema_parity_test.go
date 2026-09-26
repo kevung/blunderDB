@@ -13,20 +13,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// The SQLite schema has one declaration, storage/sqlite's schemaStatements,
-// but several paths lead a database to it: sqlite.Bootstrap (fresh databases,
-// and since SetupDatabase delegates to it, the wrapper's fresh path too),
-// sqlite.EnsureSchema (every open of an existing database, through
-// ensureAllTablesExist in db_schema.go, deriving the missing columns from a
-// reference database rather than a second list), and the version-by-version
-// chain in db_migration.go, which keeps its own historical DDL. These tests
-// take a normalised snapshot of sqlite_master (tables, columns with type /
-// NOT NULL / default / pk, foreign keys, indexes with their columns and WHERE
-// clause, triggers, views) on databases produced by each path and diff them.
-//
-// A difference fails the test unless it is listed in an allow-list, and every
-// allow-list entry must explain itself and must actually match something —
-// an entry that no longer matches fails too, so the list cannot rot.
+// The schema has one declaration (storage/sqlite's schemaStatements) but
+// three paths to it: sqlite.Bootstrap, sqlite.EnsureSchema on every open, and
+// the migration chain's historical DDL. These tests diff normalised
+// sqlite_master snapshots of each path. A difference fails unless
+// allow-listed, and an allow-list entry that matches nothing fails too, so the
+// list cannot rot.
 
 // schemaFact is one normalised line describing a schema element.
 type schemaFact = string
@@ -287,14 +279,9 @@ func snapshotFile(t *testing.T, path string) []schemaFact {
 }
 
 // fixtureVersions are the starting points createOldDatabase models
-// faithfully: it builds the tables each 1.x version had, so the chain from
-// there is the exact path a real 1.x database takes. It cannot build a
-// faithful 2.x database (it only knows the 1.x tables and stamps the version;
-// the 2.x steps then either trip on the missing columns — "2.0.0" fails on
-// best_cube_action — or lean on ensureAllTablesExist to fill them, which is
-// not what a real 2.x file looks like), so 2.x starting points are not
-// diffed here. A real 2.x database was produced either by this same chain or
-// by Bootstrap, both of which are covered.
+// faithfully (the 1.x tables). It cannot build a faithful 2.x file, so 2.x
+// starting points are not diffed; a real 2.x file came from this chain or
+// from Bootstrap, both covered.
 var fixtureVersions = []string{
 	"1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0",
 }
@@ -363,12 +350,6 @@ var migratedFromV1Allowed = []allowedDiff{
 		reason: "the 1.3.0→1.4.0 migration created move_analysis with REAL rates where " +
 			"the fresh DDL says INTEGER; same affinity-only argument as analysis.",
 	},
-	// The review journal's missing foreign keys (issue #185) used to be
-	// allowed here: the 2.10.0→2.11.0 migration created the table without
-	// them, and SQLite adds no foreign key to a table that already exists.
-	// The 2.23.0 step REBUILDS anki_review_log — it has to, to make
-	// position_id nullable for a score card (ADR-0042) — and a rebuilt table
-	// is built from the fresh DDL, foreign keys included. So an upgraded
-	// database now constrains deck_id and position_id like a new one, and
-	// there is nothing left to allow.
+	// No entry for anki_review_log's foreign keys: the 2.23.0 step rebuilds
+	// the table from the fresh DDL (ADR-0042), foreign keys included.
 }

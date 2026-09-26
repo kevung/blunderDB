@@ -5,19 +5,9 @@ import (
 	"testing"
 )
 
-// TestInMemoryConcurrentReadsShareSchema guards against a regression where the
-// in-memory GUI database (SetupDatabase(":memory:")) lost its schema under
-// concurrent reads.
-//
-// Root cause: with database/sql, every pooled connection to ":memory:" is a
-// SEPARATE, empty in-memory database. SetupDatabase creates the schema on one
-// connection, but Database's RWMutex allows multiple concurrent readers, so the
-// pool would open extra connections — each with no tables — yielding
-// "SQL logic error: no such table: match/tournament/search_history". This
-// surfaced in the GUI before any database file was opened, when switching to
-// tabs (matches/tournaments/stats) that fire several Wails queries at once.
-//
-// Fix: ConfigurePool pins ":memory:" to a single connection (db.go).
+// TestInMemoryConcurrentReadsShareSchema: every pooled connection to
+// ":memory:" is a SEPARATE empty database, so concurrent readers would hit
+// "no such table"; ConfigurePool pins ":memory:" to one connection.
 func TestInMemoryConcurrentReadsShareSchema(t *testing.T) {
 	t.Parallel()
 	d := NewDatabase()

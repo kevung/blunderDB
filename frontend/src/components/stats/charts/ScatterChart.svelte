@@ -41,11 +41,7 @@
             chart = null;
         }
 
-        // Read live inside the effect (#205): a top-level `const` only captures
-        // `datasets` at the component's first run, so a chart created with one
-        // series would keep its legend hidden forever, even after a second
-        // series was added — the exact bug `datasets?.length > 1` is meant to
-        // guard against.
+        // Read inside the effect: a top-level `const` would freeze the first `datasets`.
         const baseOptions = {
             responsive: true,
             maintainAspectRatio: false,

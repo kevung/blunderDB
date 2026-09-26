@@ -15,11 +15,8 @@ import (
 )
 
 // MapGnuBG parses a GnuBG file (.sgf with analysis, or .mat/.txt moves-only)
-// into a backend-independent MatchGraph. It re-implements the mapping half of
-// database.ImportGnuBGMatch without touching SQLite. See MapXG for the model.
-//
-// Like MapXG it always produces the full graph; cross-format canonical-duplicate
-// enrichment is deferred (WriteMatch skips a whole match on a hash hit).
+// into a backend-independent MatchGraph. Like MapXG it always produces the
+// full graph; duplicates and enrichment are WriteMatch's.
 func MapGnuBG(path string) (*MatchGraph, error) {
 	ext := strings.ToLower(filepath.Ext(path))
 	isSGF := ext == ".sgf"
@@ -98,8 +95,7 @@ func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) (*Matc
 
 // mapGnuBGGameMoves replays one game's move records, reconstructing the board
 // state (setboard/setcube/setcubepos/setdice events plus checker moves) and
-// emitting a MoveGraph per checker move and per cube decision. It mirrors the
-// normal-import loop in database.importGnuBGMatchInternal.
+// emitting a MoveGraph per checker move and per cube decision.
 func mapGnuBGGameMoves(game *gnubgparser.Game, matchLength int, isSGF bool) ([]MoveGraph, error) {
 	var out []MoveGraph
 	currentBoard := initStandardGnuBGPosition()
@@ -169,7 +165,7 @@ func mapGnuBGGameMoves(game *gnubgparser.Game, matchLength int, isSGF bool) ([]M
 
 // mapGnuBGCheckerMove builds the MoveGraph for a checker decision, attaching the
 // checker analysis and (if present) the cube-for-checker analysis as ordered
-// fragments — matching the legacy two-save sequence.
+// fragments.
 func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr *gnubgparser.Position, game *gnubgparser.Game, matchLength int, isSGF bool) (MoveGraph, error) {
 	player := moveRec.Player
 	checkerMoveStr := gnuBGCheckerMoveStr(moveRec.Move, moveRec.MoveString, player, isSGF)
@@ -213,17 +209,15 @@ func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posP
 }
 
 // gnuBGLuckMP converts the SGF LU property to signed millipoints (positive =
-// lucky) — the same convention and unit as XG's ErrLuck, verified by importing
-// one match from both formats and comparing the rolls one by one.
+// lucky) — the same convention and unit as XG's ErrLuck.
 //
 // A roll gnuBG did not analyse carries no usable LU property — either none at
 // all, or gnuBG's own ERR_VAL, which it writes as LU[-inf] — so absence maps
 // straight to "unknown" and no zero has to be second-guessed, unlike the XG
 // side where 0 is ambiguous.
 //
-// Requires gnubgparser v1.4.0 or later: earlier versions required a rating
-// word in front of the value and so returned nothing for every real file,
-// which left gnuBG imports carrying no luck at all.
+// Requires gnubgparser v1.4.0 or later: earlier versions return no luck for
+// real files.
 func gnuBGLuckMP(moveRec *gnubgparser.MoveRecord) *int32 {
 	if moveRec == nil || moveRec.Luck == nil {
 		return nil

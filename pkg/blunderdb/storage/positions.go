@@ -47,36 +47,22 @@ type PositionStore interface {
 
 	// ReclassifyDerived recomputes the derived phase of every position whose
 	// stored value disagrees with engine.ClassifyGamePhase, and returns how
-	// many rows changed (issue #264, ADR-0035).
-	//
-	// The phase is derived, never edited, and this is what makes that true:
-	// change the classifier or its threshold, run this, and every row agrees
-	// with the new rule. `blunderdb repair` runs it, so does the 2.19.0
-	// migration, and so does /v1/positions.reclassifyPhases. Running it on a
-	// database that is already up to date rewrites nothing.
+	// many rows changed (ADR-0035): the phase is derived, never edited.
+	// `blunderdb repair`, the 2.19.0 migration and
+	// /v1/positions.reclassifyPhases run it; idempotent.
 	ReclassifyDerived(ctx context.Context, scope string) (int, error)
 
 	// RepairCrawfordSentinel rewrites the away score of every position that
 	// carries the ambiguous `1` although the game it was imported from is a
-	// post-Crawford one, and returns how many rows changed (issue #338,
-	// ADR-0045 §7).
+	// post-Crawford one, and returns how many rows changed (ADR-0045 §7).
+	// The away score is part of the Zobrist hash, so the row is REHASHED,
+	// merging into an already-correct twin when one exists.
 	//
-	// The away score carries the Crawford rule inside the number (CONTEXT.md,
-	// « Away score ») and the importers wrote `1` for both readings until
-	// this issue, so every post-Crawford position already in a database is
-	// read as cube-dead. Correcting it changes the Zobrist hash — the away
-	// score is part of the identity — so the row is REHASHED, merging into an
-	// already-correct twin when one exists rather than colliding with it.
+	// A position no game points at is corrected only on the proof of the XGID
+	// its analysis keeps (see sqlshared.RepairCrawfordSentinel).
 	//
-	// A position no game points at has no match to ask. It is corrected only
-	// when the XGID its analysis keeps was written by another program and
-	// states, in field 7, that the game is not the Crawford one, and describes
-	// that very position (#360); an XGID blunderDB regenerated itself echoes
-	// the stored `1` and proves nothing.
-	//
-	// `blunderdb repair` runs it, so does /v1/positions.repairCrawford;
-	// nothing runs it automatically, and running it on a database that is
-	// already correct rewrites nothing.
+	// Run by `blunderdb repair` and /v1/positions.repairCrawford, never
+	// automatically; idempotent.
 	RepairCrawfordSentinel(ctx context.Context, scope string) (int, error)
 }
 
@@ -98,17 +84,13 @@ type SimilarPosition struct {
 // business, not the class's — see domain.SearchFilters.LikeMaxDistance and
 // ListOpts.
 //
-// The distance was never the problem. Ranking the whole library WAS: measured
-// on the demo library, the ten nearest of any position were the checker play
-// twinning the cube decision on the same board (distance 0) and then the plies
-// before and after it in the same match, because two plies are one roll and no
-// other game comes that close. "Positions like this one" asks for the same
-// problem met elsewhere, not for the nearest drawing.
+// Ranking the whole library would return the same board's other decision and
+// the neighbouring plies of the same match; "like this one" asks for the same
+// problem met elsewhere.
 //
-// The dice, the score and the cube value are deliberately absent: they are not
-// part of the class, and the ordinary search filters narrow on them when the
-// user wants them to. Nothing is ever folded into the distance either — one
-// unit, readable in checker-pips, is what the metric has going for it.
+// Dice, score and cube value are deliberately absent: the ordinary search
+// filters narrow on them. Nothing is folded into the distance, which stays in
+// checker-pips.
 type SimilarOptions struct {
 	// DecisionType, when set, keeps only neighbours of that kind — a cube
 	// decision and the checker play on the same board are two problems, and

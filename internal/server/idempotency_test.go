@@ -63,11 +63,9 @@ func decodeIDResp(t *testing.T, resp *http.Response) idResp {
 	return out
 }
 
-// TestIdempotency_ReplaysCachedResponse guards #236: a retried
-// collections.create carrying the same Idempotency-Key must get the FIRST
-// attempt's id back, not create a second, identically-named collection —
-// collections.create has no natural dedup key the way positions.save's
-// Zobrist hash gives it one.
+// TestIdempotency_ReplaysCachedResponse: a retried collections.create with
+// the same Idempotency-Key gets the first attempt's id back; unlike
+// positions.save, it has no natural dedup key.
 func TestIdempotency_ReplaysCachedResponse(t *testing.T) {
 	ts, _ := idempotencyTestServer(t)
 
@@ -137,12 +135,9 @@ func TestIdempotency_ScopedByTenant(t *testing.T) {
 	}
 }
 
-// TestIdempotency_FailedAttemptNotCached: a request that never reaches a 2xx
-// (here, malformed JSON — a deterministic 400 from decodeJSON, reached
-// through withIdempotency exactly like any other failure the wrapped
-// handler can produce) must not be cached: a client that fixes its request
-// and retries with the same key gets a genuine attempt, not a replayed
-// failure for the next 24h.
+// TestIdempotency_FailedAttemptNotCached: a non-2xx (here a 400 from
+// decodeJSON) is not cached, so a fixed retry with the same key gets a real
+// attempt instead of a replayed failure.
 func TestIdempotency_FailedAttemptNotCached(t *testing.T) {
 	ts, _ := idempotencyTestServer(t)
 
@@ -186,18 +181,13 @@ func TestIdempotencyStore_ExpiresAfterTTL(t *testing.T) {
 	}
 }
 
-// TestIdempotencyStore_EvictsLeastRecentlyUsed guards the bounded-size
-// eviction (#236, mirroring middleware.RateLimiter's bucket cap): once full,
-// the least-recently-used entry — not an arbitrary one — is evicted.
+// TestIdempotencyStore_EvictsLeastRecentlyUsed: once full, the
+// least-recently-used entry is the one evicted.
 func TestIdempotencyStore_EvictsLeastRecentlyUsed(t *testing.T) {
 	now := time.Unix(1_700_000_000, 0)
 	store := newIdempotencyStore(func() time.Time { return now })
 
-	// Shrink the effective cap for this test by filling past a small number
-	// and relying on idempotencyMaxEntries directly would take 10k
-	// iterations; instead this test only checks the LRU *ordering* logic on
-	// a handful of entries plus one eviction-triggering fill, using the
-	// real constant so it stays honest about the actual cap.
+	// Fill to the real cap so the test stays honest about it.
 	for i := 0; i < idempotencyMaxEntries; i++ {
 		store.set(keyFor(i), idempotencyResult{status: 200, expiresAt: now.Add(idempotencyTTL)})
 	}

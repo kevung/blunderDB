@@ -1,12 +1,11 @@
 package database
 
-// search_displayed_board_test.go — #410
+// search_displayed_board_test.go
 //
-// The front sends a board with every search. In EDIT mode it is the query
-// board the user drew. Outside EDIT — `s E>80` typed on the library, `ss E>80`
-// typed in a collection or a match — it used to be the position on screen,
-// which carries all thirty checkers: the backend read it as an "at least"
-// structure and answered with that position alone, or nothing.
+// The front sends a board with every search. Outside EDIT mode it is the
+// position on screen, all thirty checkers, which must not be read as an
+// "at least" structure — that would answer with that position alone, or
+// nothing.
 //
 // These tests send the exact payload loadPositionsByFilters builds
 // (positionService.js): the displayed library position as Wails serialises it,
@@ -46,7 +45,7 @@ func frontMirror(t *testing.T, raw map[string]any) {
 
 // frontPayload builds the SearchFilters the front sends for `s <moveError>`
 // while `displayed` is on screen. clearCheckers reproduces the front's
-// out-of-EDIT board (#410): the checkers go, the rest of the position stays.
+// out-of-EDIT board: the checkers go, the rest of the position stays.
 func frontPayload(t *testing.T, displayed Position, moveError string, clearCheckers bool) SearchFilters {
 	t.Helper()
 	js, err := json.Marshal(displayed) // what Wails hands the front

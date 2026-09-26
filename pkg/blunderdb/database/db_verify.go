@@ -10,9 +10,7 @@ import (
 // OrphanCounts is what blunderdb verify reports about referential integrity:
 // child rows whose parent row is gone. The schema declares ON DELETE CASCADE
 // on every one of these foreign keys, so a healthy database holds none; they
-// appear when a deletion ran on a connection where foreign_keys was OFF —
-// which every pooled connection but one did before issue #157 was fixed —
-// and the rows outlive that bug in databases written back then.
+// appear when a deletion ran on a connection with foreign_keys OFF.
 type OrphanCounts struct {
 	GamesWithoutMatch           int64 `json:"games_without_match"`
 	MovesWithoutGame            int64 `json:"moves_without_game"`
@@ -51,23 +49,18 @@ var orphanQueries = []struct {
 	{"analysis without position",
 		`SELECT COUNT(*) FROM analysis a LEFT JOIN position p ON p.id = a.position_id WHERE p.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.AnalysesWithoutPosition }},
-	// The review journal's deck_id and position_id became foreign keys in
-	// 2.18.0 (issue #185); databases created before that had nothing saying
-	// the deck and the position had to exist, and SQLite adds no foreign key
-	// to a table that already exists, so an upgraded file still has none.
+	// deck_id/position_id are foreign keys only in files created at 2.18.0+:
+	// SQLite adds no foreign key to an existing table.
 	{"anki_review_log without deck",
 		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN anki_deck d ON d.id = l.deck_id WHERE d.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutDeck }},
-	// "IS NOT NULL" and not a missing filter: since 2.23.0 a review can be of
-	// a score card (ADR-0042), whose position_id is NULL by design. A row
-	// that names no position is not an orphan — an orphan names one that is
-	// gone.
+	// A score card's review has a NULL position_id by design (ADR-0042): an
+	// orphan names a position that is gone.
 	{"anki_review_log without position",
 		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN position p ON p.id = l.position_id
 		 WHERE l.position_id IS NOT NULL AND p.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutPosition }},
-	// The Training journal (2.21.0, issue #320): an item without its session
-	// is a fault the per-number detail would count against nobody's session.
+	// A Training item without its session would count against nobody.
 	{"training_item without session",
 		`SELECT COUNT(*) FROM training_item i LEFT JOIN training_session s ON s.id = i.session_id WHERE s.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.TrainingItemsWithoutSession }},
@@ -119,12 +112,9 @@ type ConstraintViolation struct {
 // constraintQueries counts, per rule the fresh schema declares, the rows an
 // existing database holds that would not be accepted today.
 //
-// SQLite adds neither a CHECK nor a NOT NULL through ALTER TABLE: the only way
-// to put them on an existing table is to rebuild it, which on a table holding
-// hundreds of thousands of positions is a long, disk-hungry operation to
-// enforce what the writing code already guarantees. So the constraints are
-// stated by the fresh DDL (storage/sqlite schemaStatements) and an existing
-// database is judged against them here, where `blunderdb verify` can say so.
+// ALTER TABLE adds no CHECK or NOT NULL, and rebuilding `position` is too
+// costly to enforce what the writing code already guarantees; so the fresh DDL
+// states them and an existing database is judged here instead.
 //
 // A NULL never counts: a CHECK on a NULL is unknown, not violated, and the
 // scalar columns are nullable by design. The one exception is the hash itself,
@@ -190,13 +180,9 @@ func TotalConstraintViolations(v []ConstraintViolation) int64 {
 // CounterDrift is what blunderdb verify reports about the two denormalised
 // counters, match.game_count and game.move_count.
 //
-// Both are written once, at import, from what the SOURCE FILE held —
-// `len(match.Games)`, `len(movesData)` in ingest — and are never recomputed.
-// They are what the match list and the game view display. A difference from
-// the rows actually stored is therefore not automatically corruption: an
-// importer that skipped a game it could not map, or a move that produced no
-// row, leaves a legitimate gap. It is still worth seeing, because nothing else
-// in the database says the displayed figure and the stored rows disagree.
+// Both record what the SOURCE FILE held, written once at import and displayed
+// as is. A difference from the stored rows is not necessarily corruption (an
+// unmappable game was skipped), but nothing else would reveal it.
 type CounterDrift struct {
 	// MatchesWithWrongGameCount is the number of matches whose game_count is
 	// not the number of game rows they hold.
@@ -217,10 +203,8 @@ func (c CounterDrift) Total() int64 {
 }
 
 // CheckCounters recomputes match.game_count and game.move_count from the rows
-// and reports how many disagree, and by how much at worst. It only reads;
-// nothing is rewritten — the counter records what the source file said, and
-// overwriting it with what was stored would erase the very discrepancy that is
-// worth looking at.
+// and reports how many disagree, and by how much at worst. It only reads:
+// overwriting the counter would erase the discrepancy worth looking at.
 func (d *Database) CheckCounters() (CounterDrift, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

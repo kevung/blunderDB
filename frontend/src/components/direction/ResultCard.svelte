@@ -1,16 +1,8 @@
 <script>
     /*
-     * La fiche de résultat (issue #371, tasks/nicomaque/ux.md §2.2).
-     *
-     * Le geste que le directeur répète le plus, et son budget est de DEUX clics : la case, puis
-     * le nom du vainqueur. Cliquer un nom VALIDE — il n'y a pas de bouton à chercher ensuite.
-     *
-     * Le score est facultatif : les deux, ou aucun. Le forfait, la remarque, le changement de
-     * table et l'annulation sont dans un menu discret, parce qu'ils servent une fois par
-     * tournoi et ne doivent encombrer personne (décision D17 du cadrage).
-     *
-     * La fiche s'ouvre SUR la case, jamais au centre de l'écran : le regard ne quitte pas la
-     * grille.
+     * La fiche de résultat (tasks/nicomaque/ux.md §2.2) : deux clics, la case puis le nom du
+     * vainqueur, qui valide. Score facultatif (les deux ou aucun) ; forfait, remarque, table
+     * et annulation dans un menu discret. Ouverte sur la case.
      */
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
@@ -72,7 +64,7 @@
         onClose();
     }
 
-    /* Échap ferme la fiche avant tout geste global, même quand le focus l'a quittée (#414). */
+    /* Échap ferme la fiche avant tout geste global, même quand le focus l'a quittée. */
     $effect(() => closeOnEscape(() => onClose()));
 
     /** @param {KeyboardEvent} e */
@@ -179,12 +171,7 @@
         gap: var(--space-1);
     }
 
-    /* Ce qui rend ces deux noms faciles à cliquer en se penchant sur un portable posé au coin
-       d'une table, c'est la TAILLE DE LA CIBLE — 44 px de haut, toute la moitié de la fiche —
-       et non la taille de la police. Le cadrage avait prévu de les agrandir d'une fois et
-       demie ; l'ADR-0008 fait venir la hiérarchie du poids et de la couleur, et il a raison
-       ici. Si le premier tournoi réel montre que les noms sont trop petits, ce sera à
-       l'ADR-0008 d'être amendé, avec la mesure qui le justifie. */
+    /* La cible fait 44 px, la police reste au jeton (ADR-0008). */
     .winner {
         min-height: 44px;
         font-weight: 600;

@@ -8,11 +8,8 @@ import (
 	"testing"
 )
 
-// The page cap (#232) is enforced generically, on every request type that
-// implements pagedReq. That is what makes it hold for a route added later —
-// but only if the route's request type actually implements it, which nothing
-// but a test can check. G.9 (#237) added three such routes, and a request
-// type that quietly forgot the method would be capped by nothing at all.
+// The page cap applies to every request type implementing pagedReq; only a
+// test can check that a listing route's type actually implements it.
 func TestPageLimit_AppliesToEveryListingRoute(t *testing.T) {
 	ts := newTestServer(t)
 

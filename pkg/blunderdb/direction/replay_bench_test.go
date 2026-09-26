@@ -11,11 +11,7 @@ import (
 // BenchmarkOpen measures what Open costs, since the whole design rests on replaying rather than
 // storing: every open of a Direction replays its entire log.
 //
-// The number that matters is the one for a real tournament. A 64-player two-life event plays
-// about 127 matches, and each match costs three events at most (start, result, and the
-// occasional correction), plus one entry per player: roughly 450 events. If that ever stopped
-// being instant the answer would be an incremental replay or a cached state, and the measure
-// would have to be written here — which is why the benchmark exists rather than a bare claim.
+// The case that matters is a 64-player two-life tournament: ~127 matches, a few hundred events.
 func BenchmarkOpen(b *testing.B) {
 	ctx := context.Background()
 	store := newMemStore()
@@ -80,7 +76,6 @@ func BenchmarkOpen(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
-	// AFTER the loop: ResetTimer deletes the metrics reported before it, and the "events"
-	// column never showed (#443).
+	// AFTER the loop: ResetTimer deletes the metrics reported before it.
 	b.ReportMetric(float64(events), "events")
 }

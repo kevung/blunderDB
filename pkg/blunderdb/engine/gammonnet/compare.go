@@ -12,34 +12,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// What gammonNet is worth on a user's OWN library (issue #270, fiche I.14).
+// What gammonNet is worth on a user's own library: where it disagrees with
+// the imported analyses, and what the disagreement costs.
 //
-// The engine's accuracy is measured against fixtures
-// (integration_gate_test.go) and against the exact bear-off table
-// (eval_measure_test.go). Both answer "how good is it, in general". Neither
-// answers the question a user actually has, which is about THEIR positions:
-// on the matches imported from XG, where does the embedded engine disagree
-// with the analysis that came in the file, and what does the disagreement
-// cost?
-//
-// What lives here is the comparison itself — what counts as the same answer,
-// how a disagreement is priced, how the samples aggregate. What does NOT live
-// here is finding the positions to compare: the desktop wrapper and the
-// daemon reach their storage differently, and each gathers its own ids and
-// feeds them through CompareOne, exactly as the two stale sweeps already do
-// around IsStaleAnalysis.
-//
-// Nothing here writes. That is not a precaution but the point: ADR-0013
-// protects an imported analysis unconditionally, and the value of the
-// comparison is precisely that it can be run on a library nobody is willing
-// to have rewritten.
+// This file holds the comparison (what counts as the same answer, pricing,
+// aggregation); each storage mode gathers its own ids and feeds CompareOne.
+// Nothing here writes: ADR-0013 protects an imported analysis
+// unconditionally, so the comparison can run on any library.
 
 // AnalysisComparison is what one comparison sweep found.
 //
-// Rates are over the decisions actually compared, which is fewer than the
-// positions looked at: a position whose stored analysis lists no move, or
-// which gammonNet declines to evaluate, is counted (Refused) and left out of
-// every rate.
+// Rates are over the decisions actually compared: a position with no stored
+// move, or that gammonNet declines, is counted (Refused) and left out.
 type AnalysisComparison struct {
 	// Compared is the number of decisions both engines answered.
 	Compared int `json:"compared"`
@@ -62,17 +46,9 @@ type AnalysisComparison struct {
 	CubeSameBest    int `json:"cubeSameBest"`
 
 	// CostQuantiles are the distribution of what following gammonNet would
-	// have cost ACCORDING TO THE STORED ANALYSIS: the stored equity of the
-	// move gammonNet prefers, minus the stored equity of the stored best
-	// move. Zero when they agree, positive otherwise, in the equity units the
-	// stored analysis is in (ADR-0019: money points at money, normalised
-	// equity at a score).
-	//
-	// This direction is deliberate and is the only one both engines can
-	// answer: it prices gammonNet's choice on the imported engine's own
-	// scale. The reverse — what the imported engine's choice costs on
-	// gammonNet's scale — is computable too, but pricing a disagreement
-	// twice invites reading the smaller number.
+	// have cost ACCORDING TO THE STORED ANALYSIS, in its units (ADR-0019):
+	// zero when they agree. Priced in one direction only, since pricing a
+	// disagreement twice invites reading the smaller number.
 	CostMean float64 `json:"costMean"`
 	CostP50  float64 `json:"costP50"`
 	CostP95  float64 `json:"costP95"`
@@ -109,9 +85,7 @@ type ComparisonDisagreement struct {
 }
 
 // ComparisonBlunderThreshold is the equity above which a disagreement is worth
-// a user's attention. 0.05 is the fiche's own figure and the one
-// integration_gate_test.go already blocks on, so the CLI and the gate cannot
-// drift into two different notions of "a real disagreement".
+// a user's attention — the same 0.05 integration_gate_test.go blocks on.
 const ComparisonBlunderThreshold = 0.05
 
 // MaxComparisonDisagreements is how many disagreements the report names. Ten:
@@ -182,12 +156,8 @@ func compareCheckerAnswer(stored *domain.PositionAnalysis, ours, phase string, i
 // analysis's scale: the stored best move's equity minus the stored equity of
 // the move gammonNet prefers.
 //
-// A move the stored analysis does not list at all cannot be priced — the
-// imported engine never considered it — and costs 0 here rather than an
-// invented number. That is a real limit of the measurement and is reported as
-// such: the candidacy question ("did the imported engine even look at what
-// gammonNet plays?") is integration_gate_test.go's criterion 3, not this
-// sweep's.
+// A move the stored analysis does not list cannot be priced and costs 0, a
+// known limit; candidacy is integration_gate_test.go's criterion 3.
 func checkerDisagreementCost(moves []domain.CheckerMove, want string) float64 {
 	if len(moves) == 0 {
 		return 0
@@ -205,10 +175,7 @@ func checkerDisagreementCost(moves []domain.CheckerMove, want string) float64 {
 // cubeDisagreementCost prices gammonNet's cube action on the stored analysis's
 // scale, from the three cubeful equities the stored analysis carries.
 func cubeDisagreementCost(a *domain.DoublingCubeAnalysis, want string) float64 {
-	// The action strings are the engines' own words, and they disagree on
-	// them ("No Double" / "No double" / "Too good to double, pass"). Matching
-	// on the SUBSTANCE — double or not, taken or passed — is what makes the
-	// comparison about the decision rather than about the wording.
+	// Engines word their actions differently: match on the substance.
 	equity := func(action string) (float64, bool) {
 		switch cubeActionKind(action) {
 		case cubeNoDouble:
@@ -272,16 +239,9 @@ func (c AnalysisComparison) String() string {
 	return s
 }
 
-// cubeActionKind folds an engine's cube-action wording onto the three
-// substantive answers, so a comparison is about the decision and not about
-// how each engine spells it. Every engine writing into blunderDB has its own
-// dialect — "No Double", "No double", "Too good to double, pass", "Double,
-// take" — and comparing the strings would report a disagreement between two
-// engines that decided the same thing.
-//
-// "Too good" folds into "no double": it is a reason not to offer the cube,
-// which is the decision the player acts on, and it is how
-// integration_gate_test.go already buckets it.
+// cubeActionKind folds an engine's cube-action wording ("No Double",
+// "No double", "Double, take"…) onto the three substantive answers. "Too
+// good" folds into "no double", as integration_gate_test.go buckets it.
 func cubeActionKind(action string) int {
 	a := strings.ToLower(strings.TrimSpace(action))
 	switch {
@@ -303,11 +263,8 @@ const (
 	cubeDoublePass
 )
 
-// ComparisonSample is one compared decision, on its way from a worker to the
-// goroutine that aggregates. Its fields are unexported: a caller produces
-// samples with CompareOne and folds them with Aggregate, and has no business
-// reading one on its own — what a single sample means is entirely a matter of
-// how the two engines' answers were matched, which is this file's affair.
+// ComparisonSample is one compared decision, produced by CompareOne and
+// folded by Aggregate; its fields are this file's affair.
 type ComparisonSample struct {
 	outcome int
 	dis     ComparisonDisagreement
@@ -315,10 +272,8 @@ type ComparisonSample struct {
 	cube    bool
 }
 
-// Outcome codes for a comparison sample. They mirror the analysis batch's own
-// three-way split (database/db_gammonnet_batch.go): a position the engine
-// legitimately declines is REFUSED, not failed, and a caller must not read a
-// nonzero Refused as anything being wrong.
+// Outcome codes for a comparison sample, mirroring the analysis batch's
+// split: a legitimately declined position is REFUSED, not failed.
 const (
 	// GNCompared: both engines answered, and the sample carries the comparison.
 	GNCompared = iota
@@ -329,10 +284,8 @@ const (
 	GNFailed
 )
 
-// Aggregate folds a stream of samples into one comparison. It is the second
-// half of the sweep, kept here with the first so the two modes cannot count
-// differently: each gathers its own ids, both feed CompareOne's samples
-// through this.
+// Aggregate folds a stream of samples into one comparison, so both storage
+// modes count the same way.
 func Aggregate(samples []ComparisonSample) AnalysisComparison {
 	cmp := AnalysisComparison{ByPhase: map[string]ComparisonBucket{}}
 	var costs []float64

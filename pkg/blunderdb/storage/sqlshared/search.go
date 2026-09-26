@@ -21,21 +21,13 @@ type SearchStore struct{ DB Execer }
 
 var _ storage.SearchStore = (*SearchStore)(nil)
 
-// Find streams the positions matching f. It is a faithful port of the
-// Database wrapper's LoadPositionsByFiltersCore: the cheap predicates are
-// pushed to SQL, the rest are evaluated in Go on the narrowed result set.
-// Results are restricted to the scope's tenant.
+// Find streams the positions matching f within the scope's tenant, a port of
+// the Database wrapper's LoadPositionsByFiltersCore: cheap predicates in SQL,
+// the rest in Go on the narrowed set.
 //
-// opts.Limit/Offset are pushed into the SQL query itself (LIMIT/OFFSET on the
-// ORDER BY that already picks the result order), bounding what the SQL scan
-// returns before any of it reaches Go. A zero ListOpts keeps today's
-// behaviour: no limit, from the start. Because the Go-side predicates below
-// (mirror search, the checker-structure/date/equity/move-pattern filters)
-// still run AFTER the SQL scan, on the page it returned, they can reject a
-// page's candidates the same way they already reject any SQL-matched row —
-// the guarantee is "at most opts.Limit SQL-matched candidates were
-// considered", not "exactly opts.Limit results returned"; a caller paging
-// through a search that also uses one of those filters may see short pages.
+// opts.Limit/Offset go into the SQL query, so they bound the SQL-matched
+// candidates, not the results: the Go-side predicates (mirror, structure,
+// date, equity, move pattern) run after and may leave a page short.
 func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
 		positions, err := s.find(ctx, scope, f, opts)
@@ -53,9 +45,7 @@ func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 
 // searchWhereClause is what buildWhere hands find: the WHERE clause text and
 // its bound arguments, plus the state later phases need that buildWhere
-// already had to compute while reading f (B.15, #183 — find used to carry
-// all of this, and the query execution, the row scan and the Go-side filter
-// pass, as one 730-line function).
+// already computed while reading f.
 type searchWhereClause struct {
 	where         string
 	args          []any
@@ -64,7 +54,7 @@ type searchWhereClause struct {
 	bitboardTight bool
 	// multiPlayed lists the positions player 1 played more than one way;
 	// only filled by a plain move-error search, where those rows escape the
-	// SQL column and are scored in Go (#167).
+	// SQL column and are scored in Go.
 	multiPlayed map[int64]bool
 	// effInclude is f.Filter with the points shared with ExcludeFilter
 	// cleared, so "Except" wins over "At least" on those points.
@@ -82,35 +72,14 @@ type searchWhereClause struct {
 // effInclude in the returned searchWhereClause are for.
 func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
 	useSQLFilters := !f.MirrorFilter
-	// multiPlayed lists the positions player 1 played more than one way;
-	// only filled by a plain move-error search, where those rows escape the
-	// SQL column and are scored in Go (#167).
 	var multiPlayed map[int64]bool
 
-	// The decoded analysis is consumed by the move-pattern filter, the Go-side
-	// analysis re-checks of mirror search, and the date/equity filters below —
-	// every other analysis filter (win/gammon/backgammon rate, cube error,
-	// move error) runs on the denormalised SQL columns instead. So decode the
-	// (zlib-compressed) blob per row only when one of those paths needs it — a
-	// search using none of them skips the decompress+unmarshal of every row.
-	//
-	// MoveErrorFilter is deliberately NOT one of the triggers: it is pushed to
-	// SQL like the rate filters (statsErrExpr in the WHERE builder below), and
-	// its Go-side re-check (matchesMoveErrorFilter) runs on the mirror path
-	// (`!useSQLFilters`, already covered by the `|| f.MirrorFilter` term
-	// below) and, on the plain path, only for the handful of positions player
-	// 1 played more than once (multiPlayed below), whose analysis is loaded
-	// one by one after the scan. Adding it here used to force a bulk a.data
-	// decode on every plain MoveErrorFilter search even though nothing read
-	// the result: on the tournois fixture that turned
-	// BenchmarkSearch_ErrorAboveTenth's ~2 200 SQL-matched rows into ~2 200
-	// needless decodes, ~80ms → ~200ms.
-	//
-	// DateFilter has no SQL pushdown at all (unlike MoveErrorFilter) and used
-	// to decode independently, once per candidate row, inside
-	// searchfilter.MatchesDateFilter (a second query plus a second decompression on top of
-	// this one whenever both ran). Folding it into needAnalysis makes this the
-	// only decode.
+	// Decode the compressed analysis blob per row only when a Go-side filter
+	// reads it: move pattern, mirror re-checks, date, equity. The rate, cube
+	// and move-error filters run on denormalised SQL columns. MoveErrorFilter
+	// is deliberately NOT a trigger: its Go re-check runs on the mirror path
+	// (already covered) or on the few multiPlayed positions, loaded one by one
+	// after the scan; triggering here decodes every row for nothing.
 	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
 		f.DateFilter != "" || f.EquityFilter != ""
 
@@ -137,21 +106,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		where.WriteString(" AND " + s.DB.Bool("p.flagged", true))
 	}
 
-	// Whether a position carries a comment is likewise a property of the row and
-	// not of the board, so this too stays in SQL even in mirror search. Keeping
-	// it here rather than in the Go phase also matters for cost: the Go-side
-	// SearchText check runs one query per candidate position, which is fine for
-	// a rarely-used content filter but not for a presence filter that is
-	// routinely the only thing narrowing the scan.
-	//
-	// COALESCE is deliberate: comment.text is nullable, and a bare
-	// `c.text <> ''` evaluates to NULL — not false — on a NULL row, which would
-	// silently drop it from EXISTS and keep it in NOT EXISTS. Empty text counts
-	// as no comment either way (see CONTEXT.md).
-	//
-	// On PostgreSQL the subquery carries tenant_id as well as position_id: it
-	// is what idx_comment_position is keyed on, and RLS aside, a scope must
-	// never read across tenants.
+	// Comment presence, origin, tags and phase are row properties too, so they
+	// stay in SQL even in mirror search (and in SQL for cost: a presence filter
+	// is often the only thing narrowing the scan).
 	s.appendClosedListClauses(scope, f, &where, &args)
 
 	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
@@ -164,14 +121,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// (ADR-0043).
 	var likeTarget *domain.Position
 	if f.LikeFilter {
-		// The target is a stored position when the token named one, and the
-		// board otherwise — which is how a DRAWN board becomes a legitimate
-		// target (ADR-0043 rule 3). It is the question the exact structure
-		// search believed it was asking: "I vaguely remember a position like
-		// this". The board is read as a POSITION and not as a pattern, so a
-		// point left empty is fifteen checkers minus what was placed, borne
-		// off — which is right for a real position and is what the manual
-		// warns about for a half-drawn one.
+		// The target is the named stored position, else the drawn board
+		// (ADR-0043 rule 3), read as a POSITION, not a pattern: checkers not
+		// placed count as borne off.
 		var t *domain.Position
 		if f.LikeTargetID > 0 {
 			loaded, err := LoadTargetPosition(ctx, s.DB, scope, f.LikeTargetID)
@@ -266,30 +218,22 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		KMin, KMax, KHasMin, KHasMax := searchfilter.ParseIntFilterExpr(f.Player2BackCheckerFilter, "K")
 		searchfilter.AppendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
-		// How many times the position was MET (#282): the move rows that reach
-		// it. A correlated subquery rather than a denormalised column — the
-		// count changes on every import, and a column would be one more thing
-		// to keep true; idx_move_position answers it from the index.
+		// How many times the position was MET: the move rows that reach it. A
+		// correlated subquery rather than a denormalised column that every
+		// import would have to keep true; idx_move_position answers it.
 		if f.EncounterFilter != "" {
 			nMin, nMax, nHasMin, nHasMax := searchfilter.ParseIntFilterExpr(f.EncounterFilter, "n")
 			searchfilter.AppendIntRangeSQL("(SELECT COUNT(*) FROM move mv WHERE mv.position_id = p.id)",
 				nMin, nMax, nHasMin, nHasMax, &where, &args)
 		}
 
-		// Win/gammon rate: pushed as `p.id IN (SELECT position_id FROM analysis
-		// WHERE …)` rather than a plain `AND a.player1_win_rate/gammon_rate …`
-		// clause on the outer LEFT JOIN. With the LEFT JOIN form the planner's
-		// only efficient path is idx_analysis_win_gammon(win_rate, gammon_rate),
-		// which returns rows ordered by rate, not by p.id — the ORDER BY at the
-		// end of this query then needs a full TEMP B-TREE sort. Feeding p.id
-		// through an IN-subquery instead lets SQLite keep scanning `position` in
-		// its natural (already p.id-ordered) rowid order and test membership per
-		// row, so the sort disappears entirely; idx_analysis_win_gammon now
-		// carries position_id as a third column (schema_sqlite.go) so the
-		// subquery is answered from the index alone, no analysis-table lookup.
-		// See FOLLOWUPS.md #4 and fiche-05 T3 for the verified EXPLAIN QUERY PLAN.
-		// PostgreSQL's idx_analysis_win_gammon_covering plays the same role,
-		// which is why the subquery also carries the tenant predicate there.
+		// Win/gammon rate as `p.id IN (SELECT position_id FROM analysis …)`,
+		// not a clause on the LEFT JOIN: the join form drives the scan through
+		// idx_analysis_win_gammon in rate order and forces a TEMP B-TREE sort
+		// for the ORDER BY p.id. The IN-subquery keeps the rowid-order scan and
+		// is answered from the covering index (position_id is its third column;
+		// idx_analysis_win_gammon_covering on PostgreSQL, hence the tenant
+		// predicate there).
 		var winGammonWhere strings.Builder
 		var winGammonArgs []any
 		wMin, wMax, wHasMin, wHasMax := searchfilter.ParseFloatFilterExpr(f.WinRateFilter, "w")
@@ -311,16 +255,11 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
 		searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
 
-		// The denormalised error column scores ONE play (the first of the
-		// analysis' PlayedMoves, see AnalysisStore.Save) — exact for a position
-		// player 1 played once, and that is the whole table but for a few
-		// openings. A position played several ways is let through regardless
-		// and settled in Go by matchesMoveErrorFilter, which takes the largest
-		// error among the plays (#167): the column, being one of them, can
-		// only under-state it, so "E>x" would silently drop the position and
-		// "E<x" would keep it. The set is listed once, before the scan
-		// (multiPlayedPlayer1Positions): a correlated subquery here ran on
-		// every row the column rejected and doubled the query's time.
+		// The denormalised error column scores ONE play (the first of
+		// PlayedMoves, see AnalysisStore.Save). A position played several ways
+		// is let through and settled in Go by matchesMoveErrorFilter on the
+		// largest error: the column can only under-state it. The set is listed
+		// once before the scan; a correlated subquery here doubled query time.
 		if f.MoveErrorFilter != "" {
 			var err error
 			if multiPlayed, err = multiPlayedPlayer1Positions(ctx, s.DB, scope); err != nil {
@@ -392,14 +331,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 // would return, ordered by how far each stands from the target, with that
 // distance attached (ADR-0043).
 //
-// The ordering is done in Go and not in SQL, and there is no choice about it:
-// several of this grammar's filters — mirror search, checker structure on a
-// loose mask, date, equity, move pattern — are decided in applyGoFilters,
-// after the scan. A distance computed in SQL would order rows that the next
-// step then removes, so the ranking has to see the survivors, which means
-// seeing all of them. That is the exhaustive scan P7 recommends and ADR-0043
-// keeps: below a hundred thousand positions the exact answer is cheaper than
-// the machinery an approximate index would need kept in step with every write.
+// The ordering is done in Go, necessarily: several filters are decided in
+// applyGoFilters after the scan, so the ranking must see all the survivors.
+// ADR-0043 keeps that exhaustive scan over an approximate index.
 func (s *SearchStore) Rank(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]storage.SimilarPosition, error) {
 	if !f.LikeFilter {
 		return nil, fmt.Errorf("Rank needs a query carrying the `like` token; use Find for an unordered search")
@@ -466,14 +400,8 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 // the survivors afterwards.
 func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts) ([]domain.Position, error) {
 
-	// a.data is the compressed analysis blob (~600 bytes/row on the tournois
-	// fixture) and is the only column here wc.needAnalysis gates: every other
-	// selected analysis column is a cheap denormalised scalar used by the SQL
-	// WHERE clause itself. A search that needs none of the Go-side
-	// analysis-dependent filters (move pattern, mirror, date, move-error,
-	// equity — see wc.needAnalysis above) has no use for the blob, so skip
-	// fetching and transporting it: NULL is 1 byte on the wire instead of ~600,
-	// for every row, sorted or not.
+	// a.data, the compressed analysis blob (~600 bytes/row), is fetched only
+	// when wc.needAnalysis says a Go-side filter reads it.
 	analysisDataCol := "NULL"
 	if wc.needAnalysis {
 		analysisDataCol = "a.data"
@@ -519,21 +447,11 @@ type scannedRow struct {
 // starts, decoding each row's compressed analysis blob when needAnalysis
 // says a later filter will read it.
 func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, error) {
-	// Drain the cursor before filtering. A cursor holds a pooled connection
-	// until it is exhausted, and the Go-side predicates below open queries of
-	// their own (comment text, creation date, played-move error, take/pass cube
-	// action). Running them inside the scan loop therefore needs a second
-	// connection for the whole duration of the scan — which an ":memory:"
-	// SQLite database can never provide, being pinned to exactly one
-	// connection (sqlite.ConfigurePool): the nested query waits for a
-	// connection only the cursor can release, and the cursor only advances
-	// once the nested query answers. A file or PostgreSQL pool merely
-	// postpones the same shape: once enough concurrent searches each hold a
-	// cursor, every connection is a cursor waiting for a connection that will
-	// never come.
-	//
-	// Buffering costs nothing here: find already materialises its whole result
-	// set, so these rows were going to be held in memory regardless.
+	// Drain the cursor before filtering: the Go-side predicates open queries
+	// of their own, and a cursor holds its pooled connection until exhausted.
+	// On ":memory:" (one connection, sqlite.ConfigurePool) that deadlocks at
+	// once; on a real pool, under enough concurrent searches. Buffering is
+	// free: find materialises its whole result anyway.
 	var scanned []scannedRow
 
 	for rows.Next() {
@@ -561,23 +479,16 @@ func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, erro
 			derefInt(pDT), derefInt(pPOR), derefInt(pD1), derefInt(pD2),
 			derefInt(pCV), derefInt(pCO), derefInt(pS1), derefInt(pS2),
 			boolToInt(pHJ), boolToInt(pHB))
-		// Row properties rather than board identity, so they are applied on top
-		// of the reconstructed position (ADR-0001, docs/adr/0006). Without this
-		// a searched position always came back unmarked, unlike the same
-		// position read through PositionStore.Load.
+		// Row properties rather than board identity, applied on top of the
+		// reconstructed position as PositionStore.Load does (ADR-0001, ADR-0006).
 		position.IndividuallyImported = pII != nil && *pII
 		position.Flagged = pFlag != nil && *pFlag
 		position.MaxCube = derefInt(pMC)
 
 		var ana *domain.PositionAnalysis
 		if needAnalysis && anaID != nil && len(anaData) > 0 {
-			// a.data is stored compressed (engine.EncodeAnalysisForStorage;
-			// see AnalysisStore.Save), so it must go through the same decoder as
-			// AnalysisStore.Load. A bare json.Unmarshal of the compressed bytes
-			// silently fails (first byte is the zstd/zlib header, never '{'), leaving
-			// ana nil on every row — which broke every analysis-dependent Go-side
-			// filter (move pattern, the win/gammon/equity fallbacks used by
-			// mirror search).
+			// a.data is stored compressed: decode as AnalysisStore.Load does, a
+			// bare json.Unmarshal fails silently.
 			if a, decErr := engine.DecodeAnalysisFromStorage(anaData); decErr == nil {
 				ana = &a
 			}
@@ -598,19 +509,12 @@ func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, erro
 
 // applyGoFilters runs the Go-side predicates buildWhere could not push to
 // SQL against each scanned row (and, for MirrorFilter, its mirror image
-// too), preloading per-family batch queries first — exactly what find used
-// to do inline, now split out so buildWhere/scanRows/applyGoFilters can each
-// be read (and in buildWhere's case, tested) on their own (B.15, #183).
+// too), preloading per-family batch queries first.
 func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, scanned []scannedRow) ([]domain.Position, error) {
 	var err error
-	// Preload, in one batched query per family, what the per-row predicates
-	// below used to fetch one row at a time: a SearchText filter checked every
-	// SQL-matched candidate's comment with its own query (loadCommentText),
-	// and a MoveErrorFilter (plus the take/pass mirror check in addPosition)
-	// checked every candidate's recorded plays with another — 2 000 SQL-matched
-	// rows meant 2 000-4 000 extra round trips (B.10, #178). Both preloads are
-	// gated on the filter actually being active, and both run only once the
-	// cursor above is drained and its connection is free.
+	// Preload comment texts and player-1 plays in one batched query per
+	// family instead of one per candidate, only when the filter is active and
+	// after the cursor is drained.
 	var commentTexts map[int64]string
 	var player1MovesByID map[int64]player1Moves
 	if f.SearchText != "" || f.TagFilter != "" || f.MoveErrorFilter != "" {
@@ -718,11 +622,8 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 					}
 				}
 			} else if f.MoveErrorFilter != "" && wc.multiPlayed[pos.ID] {
-				// The SQL column scored one play; a multi-played position is
-				// scored here by its largest error (#167). Its blob was not
-				// fetched with the scan (wc.needAnalysis is false on this path
-				// unless another filter wanted it), so load it now — the set
-				// is a handful of rows, and the cursor is already drained.
+				// A multi-played position is scored by its largest error; its
+				// blob may not have been fetched with the scan, so load it now.
 				if ana == nil {
 					ana = loadAnalysis(ctx, s.DB, pos.ID)
 				}
@@ -781,21 +682,16 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 }
 
 // rateFilterCheck is one of the six win/gammon/backgammon-rate search
-// filters, folded into a table (B.15, #183): find used to carry each as its
-// own ~15-line copy — parse the filter, read the rate from the cube
-// analysis or, failing that, the first checker move, compare — differing
-// only in which domain.SearchFilters field it read, the token
-// AnalysisMatchesFloatFilter names in a parse error, and which two
-// PositionAnalysis fields hold the rate.
+// filters: the filter field, the token named in a parse error, and the two
+// PositionAnalysis fields (cube, else first checker move) holding the rate.
 type rateFilterCheck struct {
 	filter  string
 	token   string
 	extract func(*domain.PositionAnalysis) (float64, bool)
 }
 
-// rateFilterChecks builds the six checks active for f. All six are always
-// present; an empty filter field simply passes every row in
-// matchesRateFilters, exactly as an absent `if f.XRateFilter != ""` used to.
+// rateFilterChecks builds the six checks for f; an empty filter field passes
+// every row in matchesRateFilters.
 func rateFilterChecks(f domain.SearchFilters) [6]rateFilterCheck {
 	return [6]rateFilterCheck{
 		{f.WinRateFilter, "w", func(ana *domain.PositionAnalysis) (float64, bool) {
@@ -858,7 +754,7 @@ func rateFilterChecks(f domain.SearchFilters) [6]rateFilterCheck {
 // matchesRateFilters reports whether ana satisfies every active check (an
 // empty filter string is inactive and always passes); a nil ana fails any
 // active check, and an analysis with neither a cube nor a checker-move rate
-// to read fails it too — both match the six original blocks' behaviour.
+// to read fails it too.
 func matchesRateFilters(checks [6]rateFilterCheck, ana *domain.PositionAnalysis) bool {
 	for _, c := range checks {
 		if c.filter == "" {
@@ -913,11 +809,8 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 		if f.TournamentIDsFilter != "" {
 			if tIDs, err := searchfilter.ParseFilterIDList(f.TournamentIDsFilter); err == nil {
 				for _, tID := range tIDs {
-					// A query failure here (a locked database, a dropped
-					// connection) must not silently narrow the tournament
-					// filter to "no matches" — that reads as "this
-					// tournament has no positions", not as the outage it
-					// is (B.6, #174).
+					// A query failure must not silently read as "this
+					// tournament has no positions".
 					matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID)
 					if err != nil {
 						return err
@@ -998,17 +891,18 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 
 // appendClosedListClauses adds the filters whose value comes from a short
 // closed vocabulary rather than being a number or a free string: whether a
-// comment is there at all (`co`/`xco`), where it came from (`co:user`, #263)
-// and the position's derived phase (`ph:race`, #264, ADR-0035).
-//
-// A method of its own because buildWhere sits at .golangci.yml's statement
-// ceiling and every filter added to it pushes it over — and because these
-// share a shape nothing else in the query has: read a ";"-separated list
-// against a fixed vocabulary, drop what it does not recognise, emit an IN.
+// comment is there at all (`co`/`xco`), where it came from (`co:user`)
+// and the position's derived phase (`ph:race`, ADR-0035). They share one
+// shape: a ";"-separated list against a fixed vocabulary, unknown values
+// dropped, one IN. (Also keeps buildWhere under .golangci.yml's statement
+// ceiling.)
 func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) {
 	// Comment presence: `co` (has one) / `xco` (has none). Asking for both is
 	// contradictory rather than ambiguous; "none" wins and the search comes
-	// back empty, which is the honest answer.
+	// back empty, which is the honest answer. COALESCE is deliberate:
+	// `c.text <> ''` is NULL on a NULL text, which EXISTS would drop and NOT
+	// EXISTS keep; empty text counts as no comment (CONTEXT.md). The subquery
+	// carries the tenant predicate: idx_comment_position is keyed on it.
 	if f.CommentFilter == "has" || f.CommentFilter == "none" {
 		cTenant, cArgs := s.DB.TenantFilter("c", scope)
 		not := ""
@@ -1021,8 +915,7 @@ func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilte
 	}
 
 	// Tags. This clause is a NARROWING, not the answer: a LIKE cannot tell
-	// #prime from #priming, and telling them apart is the whole point of the
-	// filter (#265). It exists so a tag search does not preload every comment
+	// #prime from #priming. It exists so a tag search does not preload every comment
 	// in the database; the exact, delimited test runs in Go on the survivors
 	// (domain.MatchesAllTags). One EXISTS per tag, because every named tag
 	// must be present — see domain.SearchFilters.TagFilter for why that is
@@ -1067,7 +960,7 @@ func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilte
 		}
 	}
 
-	// Derived plan of play (issue #291), read the same way and for the same
+	// Derived plan of play, read the same way and for the same
 	// reason: one indexed column, never reclassified at query time.
 	if types := domain.SplitFilterList(f.GameTypeFilter); len(types) > 0 {
 		var codes []any

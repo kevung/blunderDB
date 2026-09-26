@@ -31,18 +31,12 @@ Best Cube action: Double / Take
 
 eXtreme Gammon Version: 2.19`
 
-// TestUnsupportedXGLanguageIsReportedNotSwallowed pins the diagnostic of
-// issue #175: an analysis block whose labels the parser does not know used to
-// come back as an empty analysis with no error, and the position was saved
-// as if it had none. XG ships in English, German, French, Spanish, Japanese,
-// Greek and Russian (docs/recherche/P9-formats-de-fichiers.md); the first
-// four are read, the other three are not — their exact labels have not been
-// verified on a real installation, and guessed markers would parse some lines
-// and miss others in silence, which is worse than refusing. The Spanish text
-// below is therefore a stand-in, not a sample: what the test asserts is that
-// unknown labels around an analysis block produce ErrUnrecognisedAnalysis.
-// When a verified ES/EL/RU sample lands, add its markers and turn this case
-// into a parse assertion.
+// TestUnsupportedXGLanguageIsReportedNotSwallowed: an analysis block whose
+// labels the parser does not know must produce ErrUnrecognisedAnalysis, not
+// an empty analysis. Spanish, Greek and Russian labels are unverified on a
+// real installation (docs/recherche/P9-formats-de-fichiers.md), and guessed
+// markers would half-parse in silence; the Spanish text below is a stand-in,
+// not a sample.
 func TestUnsupportedXGLanguageIsReportedNotSwallowed(t *testing.T) {
 	es := strings.NewReplacer(
 		"Player Winning Chances:", "Probabilidad de victoria del jugador:",

@@ -10,18 +10,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
-// The desktop/CLI half of the comparison sweep (issue #270, fiche I.14).
-//
-// What a comparison IS — what counts as the same answer, how a disagreement is
-// priced, how the samples aggregate — lives in engine/gammonnet/compare.go, so
-// the daemon and this wrapper cannot count differently. What lives here is the
-// half that is genuinely this mode's: finding the positions to compare in a
-// SQLite file, and running them on this process's cores.
-//
-// It writes nothing, and that is the point rather than a precaution: ADR-0013
-// protects an imported analysis unconditionally, and the value of the sweep is
-// precisely that it can be run on a library nobody is willing to have
-// rewritten.
+// The desktop/CLI half of the comparison sweep; what a comparison IS lives in
+// engine/gammonnet/compare.go so every mode counts alike. It writes nothing:
+// ADR-0013 protects an imported analysis unconditionally.
 
 // positionIDsWithForeignAnalysis lists the positions carrying an analysis
 // somebody else wrote — the only ones a comparison has anything to compare
@@ -62,16 +53,11 @@ func (d *Database) CountPositionsWithForeignAnalysis() (int, error) {
 
 // CompareWithGammonNet runs gammonNet over every position carrying an analysis
 // somebody else wrote, and reports where the two disagree and what the
-// disagreement costs on the stored analysis's own scale (#270).
+// disagreement costs on the stored analysis's own scale.
 //
 // limit caps how many positions are looked at (0 = all): a comparison is a
-// sample question — "is my library's imported analysis broadly what this
-// engine would say" — and a user should be able to ask it of a thousand
-// positions without evaluating sixty thousand.
-//
-// Same parallelism and cancellation contract as the analysis batch: jobs
-// goroutines each own one reused Searcher, and a cancelled run reports what it
-// managed to compare. Nothing is left half-written because nothing is written.
+// sample question. Same parallelism and cancellation contract as the analysis
+// batch; a cancelled run reports what it compared.
 func (d *Database) CompareWithGammonNet(ctx context.Context, ply, pruneK, candidates, jobs, limit int, onProgress func(done, total int)) (gammonnet.AnalysisComparison, error) {
 	ids, err := d.positionIDsWithForeignAnalysis()
 	if err != nil {

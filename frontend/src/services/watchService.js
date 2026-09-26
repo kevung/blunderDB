@@ -7,26 +7,19 @@ import { databaseLoadedStore } from '../stores/databaseStore';
 import { importWatchedFiles } from './importService.js';
 import { logger } from '../utils/logger.js';
 
-// Le dossier surveillé, côté interface (#258, fiche I.2).
-//
-// Le Go REGARDE, l'interface IMPORTE. Les chemins arrivent par un événement et
-// repartent dans le même chemin d'import qu'un glisser-déposer : détection des
-// doublons, compte rendu, analyse automatique — rien n'est écrit deux fois, et
-// un import surveillé est par construction le même import qu'un import manuel.
+// Le dossier surveillé, côté interface : le Go regarde, l'interface importe
+// par le même chemin qu'un glisser-déposer (doublons, compte rendu, analyse
+// automatique).
 
 let subscribed = false;
 /** @type {string[]} */
 let pending = [];
 
 /**
- * Démarre l'écoute et, si la configuration le demande et qu'une base est
- * ouverte, la surveillance.
- *
- * La surveillance suit la base : sans base ouverte, il n'y a rien où importer,
- * et une surveillance qui tourne dans le vide marquerait les fichiers comme
- * vus sans les avoir importés — ils seraient perdus pour de bon. Ouvrir une
- * base la démarre, la fermer l'arrête, et les fichiers arrivés entre-temps
- * attendent dans la file plutôt que d'être jetés.
+ * Démarre l'écoute et, si configurée et qu'une base est ouverte, la
+ * surveillance. Elle suit la base : sans base, elle marquerait des fichiers
+ * vus sans les importer, perdus pour de bon ; ceux arrivés entre-temps
+ * attendent dans la file.
  */
 export async function initFolderWatch() {
     if (!subscribed) {
@@ -76,8 +69,7 @@ async function applyConfiguredWatch() {
 let importing = false;
 
 /**
- * Importe les fichiers annoncés par la surveillance, en file : deux salves
- * rapprochées ne doivent pas lancer deux imports concurrents sur la même base.
+ * Met en file les fichiers annoncés par la surveillance.
  * @param {string[]} files
  */
 async function onWatchedFiles(files) {
@@ -87,12 +79,9 @@ async function onWatchedFiles(files) {
 }
 
 /**
- * Vide la file, un lot à la fois : deux salves rapprochées ne doivent pas
- * lancer deux imports concurrents sur la même base.
- *
- * Sans base ouverte la file est CONSERVÉE, jamais jetée : le dossier a déjà
- * annoncé ces fichiers et ne les annoncera plus, donc les oublier ici les
- * perdrait définitivement. Ils partent à la prochaine ouverture.
+ * Vide la file un lot à la fois : jamais deux imports concurrents sur la même
+ * base. Sans base ouverte, la file est CONSERVÉE : le dossier n'annoncera plus
+ * ces fichiers.
  */
 async function drainPending() {
     if (importing || pending.length === 0) return;
@@ -144,8 +133,7 @@ export async function refreshWatchStatus() {
 }
 
 /**
- * Enregistre le réglage ET applique-le tout de suite : un réglage qui ne prend
- * effet qu'au prochain démarrage est un réglage dont on doute.
+ * Enregistre le réglage et l'applique aussitôt.
  * @param {boolean} on @param {string} folder @param {number} intervalSeconds
  */
 export async function saveWatchSetting(on, folder, intervalSeconds) {

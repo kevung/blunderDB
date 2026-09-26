@@ -1,26 +1,17 @@
 // Command help-gen builds the in-app help bundles (frontend/src/i18n/help/*.js)
 // from the documentation that already states the same facts.
 //
-// Three tabs — the manual, the keyboard shortcuts and the command line — are
-// rendered from doc/source/manuel.rst, doc/source/raccourcis.rst and
-// doc/source/cmd_mode.rst, in the nine documentation languages, through the
-// gettext catalogues under doc/source/locale. Only the About tab is
-// hand-written HTML, under frontend/src/i18n/help/prose/<lang>.html, and is
-// copied through verbatim; see the ADR "the in-app help is generated from the
-// documentation" for why it alone is not derived from the .rst.
-//
-// The manual tab was a hand-written digest until it had drifted eight sections
-// behind manuel.rst — the trash, the tags, the micro-drills, the cube matrix
-// among them — in nine languages at once, with nothing to catch it. Generating
-// it is what makes that drift impossible rather than merely noticed.
+// The manual, shortcuts and commands tabs are rendered from manuel.rst,
+// raccourcis.rst and cmd_mode.rst through the gettext catalogues, in nine
+// languages; only the About tab is hand-written HTML (prose/<lang>.html),
+// copied verbatim (ADR-0034).
 //
 // Usage:
 //
 //	go run ./cmd/help-gen          # rewrite the nine bundles (make help)
 //	go run ./cmd/help-gen -check   # exit non-zero if any bundle is stale
 //
-// TestHelpBundlesAreCurrent runs the -check path, so `go test ./...` fails when
-// the documentation moved and the bundles were not regenerated.
+// TestHelpBundlesAreCurrent runs -check, so `go test ./...` catches staleness.
 package main
 
 import (
@@ -33,9 +24,8 @@ import (
 
 const sourceLang = "fr"
 
-// languages is the documentation's own language list (French source plus the
-// eight gettext catalogues), and must stay equal to LOCALES in
-// frontend/src/i18n/index.js — i18n.locales.test.js checks the bundle set.
+// languages must equal LOCALES in frontend/src/i18n/index.js
+// (i18n.locales.test.js checks).
 var languages = []string{"de", "el", "en", "es", "fi", "fr", "it", "ja", "ru"}
 
 // tabs maps each generated help tab to the .rst document it is rendered from.

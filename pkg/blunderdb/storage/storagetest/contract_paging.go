@@ -8,13 +8,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The three listing families that streamed everything and nothing else
-// (issue #237): comments.listAll, tournaments.list, collections.positions.
-//
-// What is asserted is that the page is a WINDOW on the unbounded list — same
-// order, same rows, offset and limit composing — because that is the property
-// a client pages on. A limit that reordered would be worse than no limit: a
-// reader would see one row twice and never see another.
+// Paging of comments.listAll, tournaments.list and collections.positions: the
+// page is a WINDOW on the unbounded list — same order, same rows, offset and
+// limit composing — or a reader would see one row twice and miss another.
 func testListPaging(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -127,8 +123,8 @@ func drainTournaments(t *testing.T, seq func(func(*domain.Tournament, error) boo
 	return out
 }
 
-// WithoutAnalysis is what the daemon's catch-up sweep asks for (G.11, #239),
-// and its meaning is ADR-0013's gap rule: a position with NO analysis row, not
+// WithoutAnalysis is what the daemon's catch-up sweep asks for, and its
+// meaning is ADR-0013's gap rule: a position with NO analysis row, not
 // a position with no gammonNet analysis. One already analysed by XG or GNUbg is
 // not a gap and must never come back from here — filling it would overwrite
 // somebody's imported analysis with a computed one.

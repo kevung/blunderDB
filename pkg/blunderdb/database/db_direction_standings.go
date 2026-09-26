@@ -12,11 +12,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The standings, the prizes and the close (ADR-0047 §5.6 and §3.6, issues #374, #393).
-//
-// The last thing a director does, and the only one the players take home. Two rules from the
-// engine hold here and are not this layer's to soften: there is NO tie-break, so ties stay ties
-// and share their prizes; and a ranking note is a CODE, rendered by the frontend.
+// The standings, the prizes and the close (tasks/nicomaque/fonctionnel.md §5.6 and §3.6). NO tie-break: ties share
+// their prizes. A ranking note is a CODE, rendered by the frontend.
 
 // StandingRow is one line of the standings.
 type StandingRow struct {
@@ -66,9 +63,8 @@ func (d *Database) Standings(tournamentID int64) (*StandingsView, error) {
 	}
 	v.Retained = v.Pool - v.Payable
 
-	// The overall ranking has a scale of its own, under the key `all`. Passing nil here paid
-	// nobody at all when a director had put their whole prize fund on the general standings —
-	// the commonest configuration there is (found by the arithmetic test of #393).
+	// The overall ranking has its own scale under the key `all`; nil would pay nobody when the
+	// whole fund is on the general standings, the commonest configuration.
 	overall := StandingsSection{Rows: rowsFor(st, st.Ranking(), st.PrizeAmounts(tournoi.PrizeSectionAll))}
 	v.Sections = append(v.Sections, overall)
 
@@ -120,14 +116,8 @@ func rowsFor(st *tournoi.State, ranking []tournoi.Rank, amounts []float64) []Sta
 
 // StandingsCSV exports the standings in the USER'S LANGUAGE.
 //
-// The engine writes a CSV of its own, and it writes it in French — headings and ranking notes
-// alike. That is fine for its own console and wrong here: this file is pasted into a director's
-// accounts, and blunderDB speaks nine languages. So the CSV is built from the same catalogue the
-// display page and the pairing sheet use (issue #386), and a ranking note goes through the same
-// labeler rather than through the engine's `String()`.
-//
-// The separator stays a semicolon, which is what shipped and what a French spreadsheet opens
-// without being asked.
+// The engine's own CSV is in French; this one uses the display page's catalogue and labeler.
+// The separator is a semicolon, which a French spreadsheet opens as is.
 func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
 	v, err := d.Standings(tournamentID)
 	if err != nil {

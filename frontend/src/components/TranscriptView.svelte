@@ -1,43 +1,18 @@
 <!--
-  TranscriptView — a Transcript: the two columns of a score sheet.
+  TranscriptView — a Transcript: the two columns of a score sheet (CONTEXT.md,
+  "Recording a match"): player 1 left, player 2 right, one row per turn, cube
+  actions and game ends in the column of whoever acted.
 
-  The glossary (CONTEXT.md, "Recording a match") gives the word one meaning:
-  the RENDERING of a Match or of a Transcription as two columns — player 1
-  left, player 2 right, one row per turn, the cube action and the end of the
-  game in the column of whoever acted. That is the layout of `testdata/test.mat`
-  and of every score sheet, and it is what this component draws.
+  Presentational, no store: everything comes from one `annotated` object,
+  including the Action being typed (drawn dashed in its slot). The Go Replay
+  (pkg/blunderdb/transcript) is the only thing that derives; nothing is
+  recomputed here. It knows no draft or gesture, so a stored match can mount it
+  too: it frames an index and calls back with indices. It owns only two
+  fields: a move typed into a cell (ADR-0052, `onEditMove`) and a game's
+  score typed in its header (ADR-0053, `onEditScore`).
 
-  It is presentational and it holds NO store. Everything it shows is handed to
-  it as one `annotated` object and read from it — the side of an Action, its
-  notation, the score a game started on, the Crawford mention, the
-  Inconsistencies a Replay found, and the Action being TYPED, which is drawn in
-  dashes in the slot it will fill so that what is read and what is recorded
-  never say two different things. Nothing here recomputes a derived fact: the
-  Go Replay (pkg/blunderdb/transcript) is the only thing that derives, and a
-  second opinion written in JavaScript would be a second, drifting one.
-
-  It knows nothing about transcription either — no draft, no gesture, no
-  Cursor gesture — so that the Match panel can mount it one day on a stored
-  match (tasks/transcription/integration.md §4): it takes an index to frame and
-  calls back with the index that was clicked — or right-clicked, `onMenu` —, and
-  what those indices mean is the caller's business. The one field it owns is the
-  move typed into a cell on a double-click (ADR-0052): a text box and its
-  Enter/Escape, handed back as `onEditMove(index, text, pending)` — what the
-  text means, and whether it is accepted, is the caller's business too. The
-  other is the score of a game, typed in its header on a double-click
-  (ADR-0053) and handed back as `onEditScore(opening, score)`.
-
-  That promise used to be false in one place: a `.mat` pane lived here, with a
-  clipboard call, an acknowledgement timer and a fold state that belong to a
-  DRAFT — a stored match has its own export. It is a modal of the transcription
-  panel now (ADR-0048 decision 6), which is also where 62 columns of aligned
-  ASCII can be read: the 320 px column this component gets destroyed the
-  alignment, which is the only reason to look at a `.mat` at all.
-
-  The one thing it computes is the LAYOUT — which cell of which row an Action
-  goes in — because that is a fact about the two columns and about nothing
-  else. `transcriptRows` is the same rule as ingest/mat_export.go's
-  `layoutRows`, written once here and exported so a test can read it straight.
+  The one thing it computes is the LAYOUT: `transcriptRows` follows
+  ingest/mat_export.go's `layoutRows`, exported for tests.
 -->
 <script module>
     /**
@@ -56,18 +31,9 @@
     }
 
     /**
-     * L'Action en cours de SAISIE, là où elle atterrira, ou `null`.
-     *
-     * Pourquoi elle est dessinée. Le Transcript ne montrait que le document, et
-     * l'Entry n'en fait pas partie : une correction laissait donc la cellule
-     * afficher l'Action enregistrée jusqu'à la validation, et une insertion
-     * n'apparaissait nulle part avant elle. L'utilisateur lisait une chose
-     * pendant qu'il en tapait une autre — l'écart entre ce qu'on voit et ce qui
-     * est enregistré, que le Transcript existe précisément pour fermer.
-     *
-     * Rien n'est dérivé ici : le moteur dit où l'Entry tombe (`at`), si elle
-     * remplace, son camp, ses dés, la notation du coup choisi et la sorte
-     * d'Action que sa validation écrirait (`transcript.EntryInfo`).
+     * L'Action en cours de saisie, là où elle atterrira, ou `null` — dessinée
+     * pour que la cellule montre ce qu'on tape, pas l'Action qu'elle remplace.
+     * Tout vient du moteur (`transcript.EntryInfo`).
      *
      * @param {any} annotated
      * @param {any[]} infos
@@ -79,16 +45,12 @@
         const at = Math.max(0, Math.min(e.at ?? 0, infos.length));
         const replacing = e.replacing === true;
         const typed = (e.dice?.[0] ?? 0) > 0 || (e.dice?.[1] ?? 0) > 0 || !!e.notation;
-        // Une correction ne se dessine que lorsqu'elle DIT quelque chose : le
-        // Cursor posé sur une Action sans rien taper dessus montre l'Action, et
-        // non un fantôme d'elle-même.
+        // Rien de tapé : montrer l'Action, pas un fantôme d'elle-même.
         if (replacing && (!typed || at >= infos.length)) return null;
 
         const gameIndex = at < infos.length ? infos[at].game_index : infos.length ? infos[infos.length - 1].game_index : -1;
         if (gameIndex < 0 || gameIndex >= games.length) return null;
-        // Une partie finie n'accueille pas la suite : l'Action tapée ouvrira la
-        // partie suivante, qui n'existe pas encore et n'a donc aucun tableau où
-        // la poser. Elle s'y dessinera dès que son ouverture sera enregistrée.
+        // Partie finie : la saisie ouvrira la suivante, pas encore dessinable.
         if (!replacing && at >= infos.length && games[gameIndex]?.finished) return null;
 
         return {
@@ -108,19 +70,10 @@
     }
 
     /**
-     * The rows of each game: player 1's cell on the left, player 2's on the
-     * right, one row per turn.
-     *
-     * The rule is `ingest.RenderMAT`'s, and it is the one every score sheet
-     * follows: an Action of player 1 opens a row, an Action of player 2 joins
-     * the row player 1 just opened or takes one of its own with the left cell
-     * blank. An opening belongs to neither column — its two dice are one
-     * player's each — so it takes a row of its own across both. The end of the
-     * game is a cell like any other and belongs to the WINNER's column.
-     *
-     * The Action being typed follows the same rule, in the slot it will fill:
-     * over the cell it replaces, between the two it is inserted between (see
-     * [pendingOf]).
+     * The rows of each game, by `ingest.RenderMAT`'s rule: player 1 opens a
+     * row, player 2 joins it or takes one with the left cell blank; an opening
+     * spans both columns; a game end sits in the winner's column. The Action
+     * being typed takes the slot it will fill (see [pendingOf]).
      *
      * @param {any} annotated - a `transcript.Annotated` as the Go side returns it
      * @returns {{game: any, rows: {left: any, right: any, full: any, numbered: boolean}[]}[]}
@@ -150,8 +103,6 @@
                     return;
                 }
                 const side = camp === 1 ? 'right' : 'left';
-                // A new row when there is none, when the cell is taken, or
-                // when player 1 acts after player 2 answered on this one.
                 if (!row || row[side] || (side === 'left' && row.right)) open(true);
                 row[side] = cell;
             };
@@ -159,18 +110,14 @@
             for (const info of infos) {
                 if (info.game_index !== gameIndex) continue;
                 const filling = pending && !pending.replacing && pending.gameIndex === gameIndex && pending.at === info.index;
-                // The turn a double turn is missing is a cell of its own, in the
-                // other column, where the Cursor stops (ADR-0054) — unless the
-                // insertion being typed is already filling it.
+                // A double turn's missing turn is a cell of its own (ADR-0054),
+                // unless the insertion being typed fills it.
                 if (!filling && info.kind !== 'opening' && hasFlaw(info, 'double_turn')) {
                     place({ kind: 'hole', index: info.index, side: info.side === 1 ? 0 : 1 }, false, info.side === 1 ? 0 : 1);
                 }
                 if (pending && pending.gameIndex === gameIndex && pending.at === info.index) {
                     place(pending.cell, pending.cell.opening, pending.cell.side);
-                    // Une correction TIENT LA PLACE de l'Action : les deux ne se
-                    // montrent pas côte à côte, sans quoi le même coup se lirait
-                    // deux fois, une fois comme il était et une fois comme il
-                    // devient.
+                    // Une correction tient la place de l'Action, jamais à côté.
                     if (pending.replacing) continue;
                 }
                 place({ kind: 'action', index: info.index, info }, info.kind === 'opening', info.side);
@@ -179,8 +126,7 @@
                 place(pending.cell, pending.cell.opening, pending.cell.side);
             }
 
-            // " Wins N points": the result of a finished game, in the winner's
-            // column, on a row that carries no turn and therefore no number.
+            // " Wins N points": winner's column, unnumbered row.
             if (game.winner === 0 || game.winner === 1) {
                 const result = open(false);
                 result[game.winner === 1 ? 'right' : 'left'] = { kind: 'result', points: game.points_won };
@@ -212,30 +158,18 @@
          */
         onHole = null,
         /**
-         * Told when a cell is RIGHT-clicked: `(index, {x, y}) => void`, in
-         * client pixels. The caller opens whatever menu it wants there; this
-         * component knows no gesture and offers none.
-         *
-         * The native menu is suppressed on those cells, and only there: the
-         * right button means something else in the rest of the application,
-         * and a Transcript that swallowed it everywhere would take away the
-         * browser's own menu from the panel around it (fiche T2.5).
+         * Told when a cell is right-clicked: `(index, {x, y}) => void`, client
+         * pixels. The native menu is suppressed on cells only.
          */
         onMenu = null,
         /**
-         * Told when the move typed into a cell is validated with Enter:
-         * `(index, text, pending) => boolean` — `pending` for the dashed cell
-         * of the Action being typed. A `true` answer closes the field; `false`
-         * (a text that says no move) leaves it open. Without it, a double-click
-         * edits nothing (ADR-0052).
+         * `(index, text, pending) => boolean` on Enter in a cell's move field;
+         * `true` closes it. Absent: cells are not editable (ADR-0052).
          */
         onEditMove = null,
         /**
-         * Told when the score typed into a game's header is validated with
-         * Enter: `(opening, score) => boolean` — `opening` is the index of the
-         * game's opening, `score` is `[p1, p2]`, or `null` when the field was
-         * emptied (the declared score is cleared, ADR-0053). A `true` answer
-         * closes the field. Without it, the score is not editable.
+         * `(opening, score) => boolean` on Enter in a game's score field;
+         * `score` is `[p1, p2]` or `null` to clear it (ADR-0053); `true` closes it.
          */
         onEditScore = null
     } = $props();
@@ -244,9 +178,7 @@
     let at = $derived(cursor ?? annotated?.cursor ?? -1);
     let layout = $derived(transcriptRows(annotated));
 
-    // L'index de la cellule PROVISOIRE effectivement dessinée, ou −1. Elle porte
-    // le cadre du Cursor — c'est elle que l'on tape —, et l'Action qu'elle
-    // recouvre ne le porte donc pas une seconde fois.
+    // Index de la cellule provisoire dessinée, ou −1 ; elle porte seule le cadre du Cursor.
     let pendingIndex = $derived.by(() => {
         for (const group of layout) {
             for (const row of group.rows) {
@@ -258,19 +190,9 @@
         return -1;
     });
 
-    // ── le coup tapé dans sa cellule (ADR-0052) ──────────────────────────
-    //
-    // Un double-clic sur une cellule de coup la change en champ, pré-rempli de
-    // sa notation. On n'y tape QUE le coup : les dés sont ceux de la cellule, et
-    // le champ ne les montre pas. Entrée le rend à l'appelant, Échap le ferme
-    // sans rien écrire, et le quitter aussi — un champ abandonné n'est pas une
-    // validation.
-    //
-    // Échap passe par escapeService, écouté en capture : c'est le seul moyen
-    // qu'il ferme le champ et RIEN d'autre, ni la saisie du panneau, ni le
-    // répartiteur global. Les autres touches restent au champ : le panneau et
-    // le répartiteur laissent passer tout ce qui est tapé dans un champ
-    // (panelKeyGuard, keyboardService).
+    // Coup tapé dans sa cellule (ADR-0052) : double-clic, seul le coup s'y tape.
+    // Entrée valide ; Échap et la perte du focus ferment sans écrire. Échap passe
+    // par escapeService (capture) pour ne fermer que le champ.
 
     /** @type {{index: number, pending: boolean, text: string} | null} */
     let editing = $state(null);
@@ -292,9 +214,7 @@
     }
 
     /**
-     * Le champ ouvert est-il celui de cette cellule ? Une correction en place
-     * TIENT la place de l'Action (voir [pendingOf]) : le champ ouvert sur la
-     * cellule reste donc le sien quand le moteur y dessine la saisie.
+     * Le champ ouvert est-il celui de cette cellule (y compris sa saisie en place) ?
      *
      * @param {any} c
      */
@@ -304,13 +224,7 @@
         return c.kind === 'action' && !editing.pending;
     }
 
-    // ── le score annoncé d'une partie (ADR-0053) ─────────────────────────
-    //
-    // Même mécanique que le coup tapé dans sa cellule : un double-clic sur le
-    // score de l'en-tête le change en champ, pré-rempli du score affiché ;
-    // Entrée le rend à l'appelant, Échap (escapeService) et la perte du focus
-    // le ferment sans rien écrire. Un champ vidé puis validé efface le score
-    // annoncé : la partie revient au score que donnent les précédentes.
+    // Score annoncé (ADR-0053), même mécanique ; vidé puis validé, il s'efface.
 
     /** @type {{opening: number, number: number, text: string} | null} */
     let scoring = $state(null);
@@ -320,9 +234,8 @@
     });
 
     /**
-     * L'index de l'ouverture qui commence la partie, ou −1 quand son score ne
-     * se tape pas : en session d'argent (pas de score), ou quand la partie ne
-     * commence pas par une ouverture.
+     * Index de l'ouverture de la partie, ou −1 si son score ne se tape pas
+     * (argent, ou pas d'ouverture).
      *
      * @param {any} game
      */
@@ -342,9 +255,7 @@
 
     /** @param {KeyboardEvent} event */
     function scoreKeyDown(event) {
-        // Rien de ce qui est tapé ici n'atteint la machine à touches du
-        // panneau ni le répartiteur global, ni le <summary> qui plierait la
-        // partie sur une espace.
+        // Rien n'atteint le panneau, le répartiteur ni le <summary> (plié par espace).
         event.stopPropagation();
         if (event.key !== 'Enter' || !scoring) return;
         event.preventDefault();
@@ -382,8 +293,7 @@
     }
 
     /**
-     * Le champ prend la main à son ouverture, texte sélectionné : on retape
-     * par-dessus, ou l'on corrige au bout.
+     * Focus à l'ouverture, texte sélectionné.
      *
      * @param {HTMLInputElement} node
      */
@@ -392,8 +302,7 @@
         node.select();
     }
 
-    // The dice live on the document's Action (the Replay does not copy them
-    // onto its ActionInfo), so the two are read side by side, by index.
+    // Dice live on the document's Action, not on ActionInfo: read both by index.
     let actions = $derived(annotated?.document?.actions ?? []);
 
     // The game the Cursor is in — open, while the others start folded.
@@ -405,15 +314,12 @@
         return games.length ? games[games.length - 1].number : 0;
     });
 
-    // What the user said about a game, when they said anything: a game with no
-    // entry here follows the rule (the current one is open, the rest folded).
+    // User folds; absent = current game open, others folded.
     const folds = new SvelteMap();
     const isOpen = (/** @type {number} */ number) => (folds.has(number) ? folds.get(number) : number === currentGame);
 
-    // Entering a game clears the fold the user had put on it — otherwise the
-    // Cursor would walk into a game whose cells nobody can see. `seen` is a
-    // plain variable on purpose: the effect must react to the game changing,
-    // never to its own write.
+    // Entering a game unfolds it. `seen` is plain so the effect reacts to the
+    // game, never to its own write.
     let seen = -1;
     $effect(() => {
         const number = currentGame;
@@ -430,13 +336,8 @@
         folds.set(number, open);
     }
 
-    // Le Transcript défile jusqu'à la cellule encadrée. C'est ce qui rend
-    // visible le saut du Cursor sur la première Incohérence après un Replay
-    // (fonctionnel.md §1.4) : le moteur l'y place, et une correction faite
-    // vingt tours plus haut serait autrement encadrée hors de l'écran.
-    //
-    // `block: 'nearest'` ne bouge rien quand la cellule est déjà visible, ce qui
-    // évite de faire sauter la page à chaque touche pendant une saisie normale.
+    // Défile jusqu'à la cellule encadrée (le saut sur une Incohérence,
+    // fonctionnel.md §1.4) ; `block: 'nearest'` ne bouge rien si elle est visible.
     let scroller = $state(/** @type {HTMLDivElement | null} */ (null));
     $effect(() => {
         void at;
@@ -453,10 +354,7 @@
         return named || (side === 0 ? $t('transcript.player1') : $t('transcript.player2'));
     }
 
-    // The keys are written out rather than assembled: a key built at runtime
-    // (`'transcript.inconsistency.' + kind`) is invisible to the guard that
-    // hunts orphaned translations, and the seven Inconsistencies of
-    // fonctionnel.md §1.4 are a closed list anyway.
+    // Keys written out: runtime-built keys escape the orphan-translation guard.
     /** @type {Record<string, string>} */
     const FLAW_KEY = {
         illegal_move: 'transcript.inconsistency.illegal_move',
@@ -492,15 +390,10 @@
             case 'dance':
                 return `${dice[0]}${dice[1]}: ${$t('transcript.dance')}`;
             case 'unrecorded':
-                // The roll is known, the play is not. It is named, never left to
-                // look like a dance: the file says nobody wrote the play down, and
-                // the cell has to say the same thing.
+                // Roll known, play unrecorded: named, never shown as a dance.
                 return `${dice[0]}${dice[1]}: ${$t('transcript.unrecorded')}`;
             case 'double':
-                // The value the cube reaches. `before.cube.value` is the log2
-                // exponent everywhere in blunderDB (see the XGID contract), and
-                // the offer doubles it — the same arithmetic the board and the
-                // cube panel already do to print a cube.
+                // `before.cube.value` is the log2 exponent; the offer doubles it.
                 return $t('transcript.doubles', { n: 2 ** ((info.before?.cube?.value ?? 0) + 1) });
             case 'take':
                 return $t('transcript.takes');
@@ -514,12 +407,7 @@
     }
 
     /**
-     * L'Action en cours de saisie, telle qu'on la tape : les dés au fur et à
-     * mesure qu'ils tombent, « · » pour celui qui manque encore, et la notation
-     * du coup choisi dès qu'il y en a un.
-     *
-     * C'est un ÉTAT DE SAISIE et il se voit comme tel (la cellule est en
-     * pointillés) : rien n'est écrit dans le document avant la validation.
+     * L'Action en cours de saisie : dés tapés (« · » pour un manquant) et coup choisi.
      *
      * @param {any} e - `transcript.EntryInfo`
      */
@@ -581,8 +469,7 @@
                                 data-declared={group.game.declared ? 'true' : undefined}
                                 title={differs ? $t('transcript.derivedScore', { a: group.game.derived_score[0], b: group.game.derived_score[1] }) : editable ? $t('transcript.editScore') : undefined}
                                 onclick={(e) => {
-                                    // Le score qui se tape ne plie pas la partie :
-                                    // le premier clic du double-clic la replierait.
+                                    // Le premier clic du double-clic ne plie pas la partie.
                                     if (editable) e.preventDefault();
                                 }}
                                 ondblclick={() => startScore(group.game)}
@@ -693,11 +580,7 @@
 {/snippet}
 
 <style>
-    /* Borné, et c'est ce qui rend le `.scroller` effectif : sans `flex: 1` ni
-       `min-height: 0` sur toute la chaîne, un `overflow: auto` n'a rien à faire
-       déborder et le conteneur du panneau devient le seul qui défile — d'où le
-       `scrollIntoView` du Cursor qui faisait sauter le panneau entier à chaque
-       Action validée (ADR-0048 décision 5). */
+    /* Borné pour que `.scroller` défile, pas le panneau (ADR-0048 décision 5). */
     .transcript-view {
         display: flex;
         flex: 1;
@@ -833,9 +716,7 @@
         font-weight: 600;
     }
 
-    /* L'Action en cours de saisie : dessinée à sa place, mais en pointillés —
-       rien n'est écrit dans le document avant la validation, et la cellule le
-       dit d'elle-même plutôt que par une phrase ailleurs. */
+    /* Saisie en cours : pointillés, rien n'est encore écrit. */
     .cell.pending {
         border-style: dashed;
         border-color: var(--color-primary);
@@ -860,8 +741,7 @@
         border-color: transparent;
     }
 
-    /* Le tour qu'un double trait a perdu (ADR-0054) : une case vide, marquée
-       comme l'Incohérence qu'elle est, où le Cursor s'arrête. */
+    /* Tour perdu d'un double trait (ADR-0054), marqué comme Incohérence. */
     .cell.hole {
         border-style: dashed;
         border-color: var(--color-danger);

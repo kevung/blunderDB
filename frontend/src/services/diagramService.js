@@ -6,17 +6,10 @@ import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
 import { boardColorsStore } from '../stores/boardColorsStore.js';
 import { BOARD_BACKGROUND } from './boardSnapshot.js';
 
-// Dessiner une position QUELCONQUE, hors de l'écran (#279, fiche I.23).
-//
-// Le rapport HTML a besoin d'un diagramme par décision, et ces positions ne
-// sont pas celle du plateau. Plutôt qu'un second dessinateur — ce que #278
-// vient précisément d'éviter — on instancie une seconde surface two.js et on
-// lui fait exécuter LES MÊMES fonctions de scène. Le rendu est donc le même
-// par construction, palette de l'utilisateur comprise.
-//
-// L'élément n'est jamais attaché au document : two.js sait rendre dans un
-// nœud SVG détaché, et un diagramme qui apparaîtrait une fraction de seconde
-// à l'écran serait une nuisance visible.
+// Dessiner une position quelconque hors écran (diagrammes du rapport) : une
+// seconde surface two.js exécute les mêmes fonctions de scène, donc le même
+// rendu, palette comprise. Le nœud SVG n'est jamais attaché au document, pour
+// ne rien faire clignoter.
 
 /** La taille d'un diagramme de rapport. Assez grand pour être lisible
  *  imprimé, assez petit pour que dix tiennent dans un document. */
@@ -52,7 +45,7 @@ export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DI
     svg.setAttribute('width', String(width));
     svg.setAttribute('height', String(height));
     // Le viewBox rend le diagramme redimensionnable : la planche-contact
-    // (#287) le montre en vignette, et sans lui un SVG réduit se ROGNE au lieu
+    // le montre en vignette, et sans lui un SVG réduit se ROGNE au lieu
     // de rétrécir. À sa taille nominale, il ne change rien.
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 

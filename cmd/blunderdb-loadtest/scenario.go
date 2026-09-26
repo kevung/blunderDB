@@ -49,15 +49,9 @@ var (
 	}
 )
 
-// scenarios maps a scenario name to its definition. Reads are
-// list/search/stats; the only write is positions.save.
-//
-// The three numeric scenarios expect 2xx. "named-tenants" sends the same
-// mixed traffic under tenant NAMES ("tenant-1", "tenant-2", …) and expects
-// every request to be refused with 400: a tenant is a positive decimal
-// integer (ADR-0005, amendment 2026-09-03), and before that amendment such
-// names all landed on tenant 0 and shared its rows. The daemon under test
-// silently accepting them would show up as a wall of errors in the report.
+// scenarios maps a scenario name to its definition. The numeric scenarios
+// expect 2xx; "named-tenants" expects every request refused with 400, since a
+// tenant is a positive integer (ADR-0005).
 var scenarios = map[string]scenario{
 	"mixed":         {mixedOps, numericTenant, is2xx},
 	"read-heavy":    {readHeavyOps, numericTenant, is2xx},

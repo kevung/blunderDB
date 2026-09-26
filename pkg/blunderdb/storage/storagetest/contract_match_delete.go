@@ -61,14 +61,10 @@ func testMatchDeleteCascade(t *testing.T, s storage.Storage) {
 
 // testMatchDeleteCascadeRetention pins what survives deleting a match. Every
 // position below occurs in the match; they differ only in what else holds them.
-// Before the individually-imported flag existed, a position the user had
-// imported on its own was purged here as an orphan, silently, along with its
-// Anki card.
 //
-// A comment does NOT hold a position, and that is deliberate: match importers
-// attach the source file's per-move notes as comments (ingest/xg.go), so a
-// comment is not evidence the user did anything — holding on it would keep a
-// whole annotated match alive after the user deleted it.
+// Only a USER comment holds a position: match importers attach the source
+// file's per-move notes as comments (ingest/xg.go), and holding on those would
+// keep a whole annotated match alive after the user deleted it.
 func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -102,14 +98,12 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	individual := inMatch(2, true) // …the user brought this one in themselves
 	inCollection := inMatch(3, false)
 	commented := inMatch(4, false)     // …with a note that came in with the match
-	userCommented := inMatch(9, false) // …with a note the user wrote (#263)
+	userCommented := inMatch(9, false) // …with a note the user wrote
 	inDeck := inMatch(5, false)
 	ankiCard := inMatch(7, false)
 
-	// The user flagged this one for study in the source tool (docs/adr/0006):
-	// same reasoning as individually_imported — the retention predicate must
-	// keep it, or deleting a match would delete the very positions the `fl`
-	// filter exists to surface.
+	// Flagged for study in the source tool (ADR-0006): deleting a match must
+	// not delete the positions the `fl` filter exists to surface.
 	flaggedPos := provenancePos(6)
 	flaggedPos.Flagged = true
 	flagged, err := s.Positions().Save(ctx, "", &flaggedPos)
@@ -144,7 +138,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 
 	// An analysis never holds a position: it arrives with the match, and every
 	// match position has one, so holding on it would mean never purging
-	// anything. A comment holds one only when the USER wrote it (#263): an
+	// anything. A comment holds one only when the USER wrote it: an
 	// imported per-move note is the file's sentence, not theirs.
 	if err := s.Analyses().Save(ctx, "", purged, &domain.PositionAnalysis{}); err != nil {
 		t.Fatalf("Save analysis: %v", err)
@@ -205,10 +199,8 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 // removing the match — its id is what a tournament, a collection and the
 // last-visited position point at — and PurgeOrphanPositions, asked separately
 // and afterwards, drops only what nothing holds.
-//
-// The two are deliberately not one call: between them the caller writes the
-// corrected games, which is what keeps a position both versions share on its
-// existing row, analysis and id included.
+// Deliberately two calls: between them the caller writes the corrected games,
+// so a position both versions share keeps its row.
 func testMatchDeleteGamesKeepsTheMatch(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 

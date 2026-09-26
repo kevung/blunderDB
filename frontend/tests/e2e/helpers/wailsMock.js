@@ -49,16 +49,15 @@ export async function installWailsMock(page, overrides = {}) {
 
         /**
          * LoadPositionsByIDs est la seule méthode que le mock ne peut pas
-         * servir par une constante : depuis D.8 (#208) la recherche, le
-         * drill-down Stats et le deck Anki ne rapportent QUE des ids, et c'est
-         * elle qui charge la fenêtre affichée. Une constante ferait montrer au
-         * plateau la bibliothèque entière quels que soient les ids demandés —
-         * la spec dirait « 3 / 3 » là où l'app affiche « 1 / 2 ».
+         * servir par une constante : la recherche, le drill-down Stats et le
+         * deck Anki ne rapportent QUE des ids, et c'est elle qui charge la
+         * fenêtre affichée. Une constante montrerait la bibliothèque entière
+         * quels que soient les ids demandés.
          *
          * Sa valeur déclarée est donc lue comme LE CATALOGUE du backend
          * factice : elle répond aux ids demandés, dans l'ordre demandé. Exposée
-         * sur window pour que les overrides d'après chargement
-         * (overrideDbMethod, overrideDbMethodThen) suivent la même règle.
+         * sur window pour que les overrides d'après chargement suivent la
+         * même règle.
          */
         window.__mockPositionsByIDs = (catalog) => (ids) =>
             Promise.resolve((Array.isArray(ids) ? ids : []).map((id) => (Array.isArray(catalog) ? catalog.find((p) => p && p.id === id) : undefined)).filter(Boolean));
@@ -175,9 +174,9 @@ export async function installWailsMock(page, overrides = {}) {
                             ComputeStats: asyncNull,
                             ListPositionIDs: asyncArr,
                             LoadPositionsByIDs: asyncArr,
-                            // D.8 (#208) : la recherche, Stats et Anki ne
-                            // rendent plus que des ids ; sans stub la méthode
-                            // renverrait null et toute recherche paraîtrait vide.
+                            // La recherche, Stats et Anki ne rendent que des
+                            // ids ; sans stub la méthode renverrait null et
+                            // toute recherche paraîtrait vide.
                             LoadPositionIDsByFilters: asyncArr,
                             LoadAnalysis: asyncNull,
                             SaveSessionState: asyncVoid,
@@ -305,14 +304,11 @@ export async function getWailsCalls(page, methodName) {
 /**
  * Écarte l'écran d'accueil s'il est là.
  *
- * L'accueil (#284) couvre l'application tant qu'aucune base n'est ouverte, et
- * intercepte donc les clics sur les onglets. Une spec qui travaille sur le
- * plateau brouillon — Eval — est exactement le cas pour lequel le bouton
- * « écarter » existe : elle fait ici le geste que l'utilisateur ferait, plutôt
- * que d'ouvrir une base dont elle n'a pas besoin.
- *
- * Sans effet quand une base est montée (openLibraryMock) : l'accueil n'est
- * alors pas rendu.
+ * L'accueil couvre l'application tant qu'aucune base n'est ouverte et
+ * intercepte les clics sur les onglets ; une spec qui travaille sur le
+ * plateau brouillon (Eval) fait ici le geste d'écartement plutôt que
+ * d'ouvrir une base dont elle n'a pas besoin. Sans effet quand une base est
+ * montée (openLibraryMock) : l'accueil n'est alors pas rendu.
  *
  * @param {import('@playwright/test').Page} page
  */

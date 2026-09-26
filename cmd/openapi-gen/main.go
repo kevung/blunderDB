@@ -1,10 +1,6 @@
-// Command openapi-gen (re)generates blunderDB's OpenAPI contract
-// (openapi.yaml, repo root), its Sphinx annex
-// (doc/source/api_reference.rst) and the generated half of the Python client
-// (clients/python/blunderdb/_generated.py, #289) from internal/server's route
-// table — see
-// internal/server/openapigen's package doc comment for why this parses Go
-// source rather than reflecting on a running server.
+// Command openapi-gen regenerates openapi.yaml, doc/source/api_reference.rst
+// and clients/python/blunderdb/_generated.py from internal/server's route
+// table (see internal/server/openapigen).
 //
 // Usage (from the repo root):
 //

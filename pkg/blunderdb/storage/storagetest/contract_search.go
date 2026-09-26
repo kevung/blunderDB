@@ -124,14 +124,8 @@ func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
 
 // testSearchFilterByAnalysisDecodesCompressedBlob exercises the analysis-driven
 // Go-side filters (move pattern, equity) that only see a match once Find has
-// decoded the stored a.data blob. The blob is always written compressed (zstd, see engine.CompressAnalysisData)
-// (AnalysisStore.Save), so a decode path that forgot to decompress — as the
-// PostgreSQL backend's search once did, unmarshalling the compressed bytes
-// directly as JSON — silently produced ana == nil for every row and these
-// filters matched nothing, on every search, forever. Guards the fix, and
-// guards needAnalysis actually gating the decode on both filters (fiche-05
-// T1/T2: a filter missing from needAnalysis leaves a.data unselected, same
-// symptom).
+// decoded the compressed a.data blob. A decode path that skipped decompression,
+// or a filter missing from needAnalysis, would silently match nothing.
 func testSearchFilterByAnalysisDecodesCompressedBlob(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -156,13 +150,8 @@ func testSearchFilterByAnalysisDecodesCompressedBlob(t *testing.T, s storage.Sto
 		t.Fatalf("Save position without analysis: %v", err)
 	}
 
-	// Both filters are applied unconditionally against the decoded ana (never
-	// pushed to SQL, unlike WinRateFilter/GammonRateFilter/etc., which read the
-	// denormalised a.player1_win_rate column and would pass even with a broken
-	// decode) — so they are what actually exercises the blob decode.
-	// EquityFilter additionally needs DateFilter/MoveErrorFilter's needAnalysis
-	// companion (fiche-05 T2) to be decoded at all; without it ana is nil here
-	// too and the filter silently matches nothing, on both backends.
+	// Neither filter is pushed to SQL (unlike the rate filters, which read
+	// denormalised columns), so they are what exercises the blob decode.
 	if got := searchIDs(t, s, domain.SearchFilters{MovePatternFilter: `m"13/11"`}); len(got) != 1 || got[0] != idWith {
 		t.Errorf("MovePatternFilter: got %v, want [%d]", got, idWith)
 	}
@@ -227,8 +216,8 @@ func testSearchFilterByIndividuallyImported(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testSearchFilterByCommentPresence pins the comment-presence filter (issue
-// #109): "has" and "none" partition the database, empty text counts as no
+// testSearchFilterByCommentPresence pins the comment-presence filter:
+// "has" and "none" partition the database, empty text counts as no
 // comment at all, and the filter combines with the content filter as a plain
 // AND rather than as a contradiction the backend has to arbitrate.
 func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
@@ -293,11 +282,9 @@ func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
 	// contradictory pair is answered with an empty set rather than an error or
 	// a precedence rule.
 	//
-	// These two also stand as the regression guard for the cursor deadlock: they
-	// are the only assertions in the suite that reach a Go-phase predicate
-	// (SearchText), which used to query the database while the search cursor was
-	// still open and hung forever against this suite's single-connection
-	// :memory: database.
+	// These are also the suite's guard against the cursor deadlock: a Go-phase
+	// predicate (SearchText) querying while the cursor is open hangs forever on
+	// the single-connection :memory: database.
 	if got := find(domain.SearchFilters{CommentFilter: "none", SearchText: `t"blunder"`}); len(got) != 0 {
 		t.Errorf("none + content filter returned %v, want nothing", got)
 	}
@@ -378,11 +365,10 @@ func testSearchFilterByFlagged(t *testing.T, s storage.Storage) {
 }
 
 // testSearchMoveErrorFilterMaxOverPlays pins the semantics of the move-error
-// filter on a position player 1 played more than once (#167): the position is
+// filter on a position player 1 played more than once: the position is
 // scored by the LARGEST error among its plays, on the plain search (SQL
 // column plus Go re-check) and on the mirror search (Go re-check alone)
-// alike, and the answer is the same on every run — before the fix the Go
-// re-check took whichever play a map iteration yielded first.
+// alike, and the answer is the same on every run.
 //
 // The fixture is built so the denormalised column holds the SMALLER error:
 // PlayedMoves are merged sorted and the column scores the first of them, so
@@ -509,7 +495,7 @@ func testSearchMoveErrorFilterMaxOverPlays(t *testing.T, s storage.Storage) {
 }
 
 // testSearchPagination checks that ListOpts.Limit/Offset are genuinely pushed
-// into the SQL scan (B.10, #178): default order is p.id ascending
+// into the SQL scan: default order is p.id ascending
 // (domain.SearchOrderByClause), so a window is checkable against a plain
 // slice of the unbounded id list.
 func testSearchPagination(t *testing.T, s storage.Storage) {

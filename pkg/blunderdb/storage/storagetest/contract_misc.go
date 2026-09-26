@@ -297,7 +297,7 @@ func testSessionSaveLoad(t *testing.T, s storage.Storage) {
 
 	// The session is per-tenant data and lives in its own table: nothing of
 	// it may surface through the global metadata table, which every tenant
-	// shares (schema 2.16.0, #156).
+	// shares.
 	md, err := s.Metadata().Load(ctx, "")
 	if err != nil {
 		t.Fatalf("Metadata.Load: %v", err)
@@ -450,7 +450,7 @@ func testTxCommitPersists(t *testing.T, s storage.Storage) {
 
 // testScopeIsolation checks that command history, search history and saved
 // filters are isolated per scope. PostgreSQL scopes them by tenant_id; SQLite
-// scopes them by a `scope` column (added in schema 2.9.0). The same filter name
+// scopes them by a `scope` column. The same filter name
 // may coexist in distinct scopes.
 func testScopeIsolation(t *testing.T, s storage.Storage) {
 	ctx := context.Background()

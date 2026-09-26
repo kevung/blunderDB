@@ -1,22 +1,7 @@
 <script>
-    // L'onglet Entraînement (#320, ADR-0040).
-    //
-    // Tout le geste d'une session est ici : démarrer, révéler, cocher ses
-    // fautes, passer à la suivante, terminer, quitter. Le plateau montre la
-    // question de Pions et sa réponse une fois révélée — il ne porte aucun
-    // bouton. C'est l'objection qui a supprimé la barre d'entraînement : les
-    // saisies de l'application vivent dans ses panneaux. Décision (#323) se
-    // JOUE sur le plateau, contrainte aux coups légaux, mais annuler un pas,
-    // tout reprendre et valider sont ici.
-    //
-    // Évaluation (#322) mêle les deux gestes dans une question : on tape les
-    // chances de gain, on choisit l'action de videau, et « Valider » juge les
-    // deux en une fois. Après la réponse, le panneau montre le verdict du
-    // moteur, d'où vient la vérité, et l'EPC quand la position en a un exact.
-    //
-    // Au repos, le panneau montre le lanceur ET le bilan par exercice, que l'on
-    // déplie en détail par type de nombre. Pas de graphique : une tendance en
-    // chiffres suffit (règle 6).
+    // L'onglet Entraînement (ADR-0040). Tous les gestes de session sont ici ; le
+    // plateau n'a aucun bouton (Décision s'y joue, mais annuler/valider sont ici).
+    // Au repos : lanceur et bilan par exercice, sans graphique (règle 6).
     import { onMount } from 'svelte';
     import { t } from '../i18n';
     import { GetTrainingSeedSources, SaveTrainingSeedSource } from '../../wailsjs/go/main/Config.js';
@@ -48,18 +33,13 @@
     let exercise = $state(TRAINING_EXERCISES[0].id);
     let limitSeconds = $state(0);
     let unfolded = $state('');
-    // La source choisie, PAR EXERCICE et mémorisée d'une session à l'autre
-    // (ADR-0041 règle 2). Par exercice parce qu'ils n'offrent pas les mêmes
-    // sources : une seule mémoire se serait réinitialisée à chaque passage de
-    // Bearoff à Pions.
+    // Source mémorisée par exercice, qui n'offrent pas les mêmes (ADR-0041 règle 2).
     let rememberedSources = $state(/** @type {Record<string, string>} */ ({}));
 
     let session = $derived($trainingSessionStore);
     let question = $derived(session?.question ?? null);
     let chosen = $derived(TRAINING_EXERCISES.find((e) => e.id === exercise) ?? TRAINING_EXERCISES[0]);
-    // La source « base » demande une bibliothèque ouverte : sans elle il n'y a
-    // rien à tirer, et un bouton qui accepte le clic pour refuser ensuite fait
-    // faire le geste avant de dire qu'il ne mène nulle part (ADR-0041 règle 2).
+    // « base » sans bibliothèque ouverte : désactivée d'emblée (ADR-0041 règle 2).
     let hasLibrary = $derived(!!$databasePathStore);
     let remembered = $derived(rememberedSources[exercise]);
     let seedSource = $derived(chosen.sources.includes(remembered) && !(remembered === 'library' && !hasLibrary) ? remembered : usableDefault(chosen, hasLibrary));
@@ -84,12 +64,8 @@
         { id: 'dp', labelKey: 'training.doublePass' }
     ];
 
-    // Le focus suit la réponse. Le bouton qu'on vient d'actionner — « Révéler »,
-    // « Valider », une action de videau — disparaît ou se désactive avec la
-    // question ouverte : sans cela le focus retombait sur la page, et le geste
-    // suivant (ENTRÉE) n'allait nulle part (#323, défaut hérité de #321). Il
-    // va au geste suivant : « Suivante », ou « Terminer » quand il n'y a pas de
-    // suivante.
+    // Le bouton actionné disparaît : le focus va à « Suivante » (ou « Terminer »)
+    // pour que ENTRÉE ait une cible.
     let nextButton = $state(/** @type {HTMLButtonElement | undefined} */ (undefined));
     let finishButton = $state(/** @type {HTMLButtonElement | undefined} */ (undefined));
     let revealedAt = $derived(session?.question && session.revealed ? session.askedQuestions + 1 : 0);
@@ -101,8 +77,7 @@
 
     let elapsedSeconds = $derived(Math.floor($trainingElapsedStore / 1000));
 
-    // « Valider » ou « Révéler », pour y porter le focus une fois l'action de
-    // videau choisie : le geste suivant est de valider, et ENTRÉE doit y aller.
+    // Cible du focus après le choix de l'action de videau.
     let revealButton = $state(/** @type {HTMLButtonElement | undefined} */ (undefined));
     let questionBox = $state(/** @type {HTMLDivElement | undefined} */ (undefined));
 
@@ -114,9 +89,7 @@
     }
 
     /**
-     * ENTRÉE dans un champ : valide, sauf s'il reste une option à choisir — le
-     * focus y va alors, plutôt que de juger une action de videau qu'on n'a pas
-     * encore donnée.
+     * ENTRÉE dans un champ : valide, ou mène le focus à l'option encore à choisir.
      */
     function validateFromField() {
         const numbers = session?.question?.numbers ?? [];
@@ -148,8 +121,7 @@
     }
 
     function start() {
-        // La mémoire est écrite au LANCEMENT et non au clic : c'est démarrer
-        // qui dit qu'on a choisi, cliquer pour regarder ne le dit pas.
+        // Mémorisée au lancement, pas au clic.
         SaveTrainingSeedSource(exercise, seedSource).catch((error) => logger.error('could not remember the training source:', error));
         startTrainingSession({ exercise, seedSource, limitSeconds });
     }
@@ -204,9 +176,7 @@
 
             <div class="question" bind:this={questionBox}>
                 {#if !question}
-                    <!-- La question suivante n'a pas pu être bâtie. La session
-                         reste ouverte : ce qui a été répondu est encore là, et
-                         « Terminer » l'enregistre. -->
+                    <!-- Question suivante impossible : la session reste ouverte, « Terminer » l'enregistre. -->
                     <p class="refusal" data-testid="training-question-failed">{$t(refusalMessageKey(session.questionError))}</p>
                 {:else if question.kind === 'decision'}
                     <div class="decision">
@@ -235,11 +205,8 @@
                             {/if}
                         {/if}
                         {#if session.revealed && verdict}
-                            <!-- Trois issues à distinguer, et les confondre mentirait : un
-                                 coup impossible n'est pas un coup mal noté, et un coup légal
-                                 que le moteur n'a pas classé n'est pas une faute de jugement
-                                 — il n'a simplement pas de prix. Hors délai, il n'y a pas
-                                 d'issue : seulement la correction. -->
+                            <!-- Illégal, non classé (sans prix) et noté sont trois issues ;
+                                 hors délai, seulement la correction. -->
                             <p class="verdict" class:correct={!session.outOfTime && verdict.matched && verdict.errorMp === 0} data-testid="training-verdict">
                                 {#if !session.outOfTime}
                                     <span class="outcome">
@@ -263,20 +230,14 @@
                 {:else if question.kind === 'scores'}
                     <ScoreCard card={question.card} numbers={question.numbers} revealed={session.revealed} faults={session.faults} locked={session.outOfTime} onToggle={markFault} />
                 {:else if entered}
-                    <!-- Mode SAISI : on tape, l'application juge. La vérité
-                         apparaît à côté de ce qu'on a écrit — l'écart se lit
-                         entre les deux, et l'imprimer serait la même
-                         information une troisième fois (ADR-0031). Il est
-                         enregistré, SIGNÉ, et c'est le bilan qui en fait une
-                         moyenne. -->
+                    <!-- Mode saisi : la vérité à côté de la saisie, sans écart imprimé
+                         (ADR-0031) ; l'écart est enregistré signé. -->
                     <table class="entered">
                         <tbody>
                             {#each question.numbers as number, i (number.type)}
                                 <tr>
                                     {#if isChosenNumber(number)}
-                                        <!-- Un nombre CHOISI (l'action de videau d'Évaluation) :
-                                             trois boutons, qui retiennent le choix sans le juger.
-                                             « Valider » juge tout en une fois. -->
+                                        <!-- Choix retenu sans jugement ; « Valider » juge tout. -->
                                         <th scope="row"><span id="training-answer-label-{i}">{$t(numberTypeLabelKey(number.type))}</span></th>
                                         <td colspan="2">
                                             <div class="choices" role="group" aria-labelledby="training-answer-label-{i}">
@@ -295,9 +256,7 @@
                                                 {/each}
                                             </div>
                                             {#if session.revealed}
-                                                <!-- La vérité est le verdict du MOTEUR, à quatre issues :
-                                                     « trop bon » se dit, même si le bouton juste est
-                                                     « pas de double ». -->
+                                                <!-- Verdict du moteur à quatre issues, « trop bon » compris. -->
                                                 <p class="truth" data-testid="training-truth-{i}">
                                                     <span class="mark" aria-hidden="true">{session.faults[i] ? '×' : ''}</span><span class:fault={session.faults[i]}
                                                         >{$t(`cube.verdicts.${question.cubeVerdict}`)}</span
@@ -339,9 +298,7 @@
                         </tbody>
                     </table>
                     {#if session.revealed && question.kind === 'evaluation'}
-                        <!-- Montré après la réponse, jamais demandé : l'EPC a son
-                             propre exercice, et il n'existe ici que quand la position
-                             en a un exact (ADR-0027). -->
+                        <!-- Montré, jamais demandé, et seulement s'il est exact (ADR-0027). -->
                         {#if question.epc}
                             <p class="hint" data-testid="training-epc">
                                 {$t('training.epcShown', { p1: $t('board.player1'), a: epcOf(question.epc.bottom), p2: $t('board.player2'), b: epcOf(question.epc.top) })}
@@ -376,19 +333,12 @@
             </div>
 
             {#if question && session.revealed && !session.outOfTime && !entered && !judgedByEngine}
-                <!-- Le geste ne se devine pas, et une infobulle ne se lit ni au
-                     clavier ni au doigt : la consigne est à l'écran. En mode
-                     SAISI il n'y a rien à cocher : c'est l'application qui
-                     juge, contre la tolérance. -->
+                <!-- Consigne à l'écran, pas en infobulle. -->
                 <p class="hint">{$t('training.faultHint')}</p>
             {/if}
             {#if question && !session.revealed && entered}
-                <!-- La tolérance est une CONSTANTE de l'exercice, pas une
-                     variable : elle se dit en toutes lettres, dans chaque
-                     langue, plutôt que par un nombre formaté — « 0.5 » dans
-                     une phrase française n'est pas un demi-pion, c'est un
-                     séparateur décimal anglais. `trainingTab.test.js` tient
-                     la prose et `EPC_TOLERANCE` ensemble. -->
+                <!-- Tolérance écrite en toutes lettres par langue ; `trainingTab.test.js`
+                     la lie à `EPC_TOLERANCE`. -->
                 <p class="hint">{$t(session.exercise === 'evaluation' ? 'training.toleranceEvaluation' : 'training.tolerance')}</p>
             {/if}
 
@@ -423,8 +373,7 @@
                 </div>
             </div>
 
-            <!-- Une seule source n'est pas un choix : Décision ne connaît que la
-                 bibliothèque, et la refuse en le nommant quand elle manque. -->
+            <!-- Décision ne connaît que la bibliothèque. -->
             {#if chosen.sources.length > 1}
                 <div class="row">
                     <span class="field-label" id="training-source-label">{$t('training.source')}</span>
@@ -460,10 +409,7 @@
             </div>
 
             {#if $trainingRefusalStore}
-                <!-- Le refus se lit LÀ OÙ l'on vient de cliquer, et il nomme le
-                     domaine (ADR-0041 règle 3). Un message de barre d'état
-                     s'efface au geste suivant ; celui-ci reste tant qu'on n'a
-                     pas démarré autre chose. -->
+                <!-- Refus affiché au lieu du clic, nommant le domaine (ADR-0041 règle 3). -->
                 <p class="refusal" role="status" data-testid="training-refusal">{$t(refusalMessageKey($trainingRefusalStore))}</p>
             {/if}
         </div>
@@ -592,8 +538,7 @@
         color: var(--color-danger);
     }
 
-    /* Pas de jeton « succès » dans la palette (ADR-0031) : l'accent unique dit
-       « juste » aussi bien qu'un vert de plus. */
+    /* Pas de jeton « succès » (ADR-0031) : l'accent suffit. */
     .verdict.correct {
         color: var(--color-primary);
     }

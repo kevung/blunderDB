@@ -1,15 +1,6 @@
 <script>
-    // L'écran d'accueil (#284, fiche I.28).
-    //
-    // Sans base ouverte, blunderDB montrait un plateau vide et une barre
-    // d'outils. Un plateau vide n'est pas une invitation : il ne dit ni ce que
-    // l'outil sait faire, ni par où commencer. Quatre chemins, nommés par ce
-    // qu'ils apportent plutôt que par la mécanique qu'ils déclenchent.
-    //
-    // « Importer mes matchs » est le chemin qui compte, et il enchaîne : une
-    // base neuve, les fichiers choisis, le compte rendu (#257) — « voici votre
-    // PR et vos pires erreurs » — puis la file d'étude (#259) si l'on veut.
-    // C'est la promesse du produit tenue en deux minutes plutôt qu'expliquée.
+    // L'écran d'accueil, sans base ouverte : quatre chemins nommés par ce qu'ils
+    // apportent. « Importer mes matchs » enchaîne base neuve, fichiers, compte rendu.
     import { openModal, MODAL } from '../stores/uiStore';
     import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase } from '../services/databaseService.js';
     import { importPosition } from '../services/importService.js';
@@ -134,7 +125,7 @@
         border: 1px solid var(--color-border);
         background: var(--color-surface);
         /* A button does not inherit the ink (the browser paints it buttontext): without
-           this the card titles stayed black on the dark surface (#403). */
+           this the card titles stayed black on the dark surface. */
         color: inherit;
     }
 

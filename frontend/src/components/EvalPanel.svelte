@@ -22,14 +22,10 @@
 
     let isActive = $derived($statusBarModeStore === 'EVAL');
 
-    // « Ajouter à la base » (#399): the board on screen is a scratch board, and
-    // the button writes it through saveScratchBoard() — the position alone,
-    // never the evaluation shown, whose depth depends on when it is clicked.
-    // Disabled when nothing could be written, the tooltip saying why: no
-    // database (the panel works without one), or the refusal the save itself
-    // would give (the default bearoff, one side borne off, is one). No live
-    // "already stored" state: the click says it, and is not idle there — it
-    // marks the stored position individually imported.
+    // « Ajouter à la base » writes the position alone via saveScratchBoard(),
+    // never the evaluation. Disabled, with the reason as tooltip, when there is
+    // no database or the save would refuse. On a stored position the click
+    // marks it individually imported.
     let addRefusal = $derived(!$databasePathStore ? 'eval.addPositionNoDatabase' : $positionStore?.board ? positionRefusal($positionStore) : null);
     let adding = $state(false);
 
@@ -46,76 +42,45 @@
     let challenge = $derived($epcChallengeStore);
     let revealed = $derived($epcRevealedStore);
 
-    // The decision the board is asking for is decided structurally by
-    // whether dice are set (ADR-0017 rule 2) — the same [0, 0]-means-no-dice
-    // convention AnalysisPanel uses for its own cube position (#124/#125,
-    // ADR-0013).
+    // Dice set → checker decision, [0, 0] → cube (ADR-0017 rule 2, ADR-0013).
     let dice = $derived($positionStore?.dice ?? [0, 0]);
     let hasDiceSet = $derived(dice[0] > 0 && dice[1] > 0);
     let onRoll = $derived($positionStore?.player_on_roll ?? 0);
-    // isMoneyPosition, not a second inline `!= -1` predicate (#190/C.3 point
-    // 2): this used to read `score[0] !== -1 || score[1] !== -1`, which
-    // agrees with the AND form everywhere except the malformed case — one
-    // side carrying the money sentinel, the other a real away score — where
-    // the two silently disagreed on whether the position is money or match.
+    // isMoneyPosition, not an inline `!== -1`: OR and AND forms disagree on a
+    // malformed half-money score.
     let isMoney = $derived(isMoneyPosition($positionStore));
     let hasScore = $derived(!isMoney);
     let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
     let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
-    // The cube ceiling is not a money-only rule: a capped cube is stated by the
-    // identifier whatever the score, so it is read straight off the position.
+    // The cube ceiling applies at any score: read off the position.
     let maxCube = $derived($positionStore?.max_cube ?? 0);
 
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
-    // The cube verdict as a VALUE (ADR-0020 rule 3), beside the analysis's own
-    // BestCubeAction string: the string is what an importer stored, in its
-    // engine's words; this is ours, so it is translated and it keeps "too
-    // good", which cubeActionLabel has to flatten.
+    // The verdict as a value (ADR-0020 rule 3): translatable and keeps "too
+    // good", unlike the imported BestCubeAction string.
     let evalCubeVerdict = $state('');
-    // The engine declined this position outright — a match score beyond the
-    // MET's horizon. Data, not a rejected promise (ADR-0020 rule 4): a refusal
-    // is a state the panel names, and it used to arrive as an error the
-    // frontend logged and swallowed, leaving the previous position's numbers
-    // on screen under a placeholder promising an evaluation was coming.
+    // The engine declined the position (score beyond the MET): a state the
+    // panel names, not an error (ADR-0020 rule 4).
     let evalRefused = $state(false);
-    // Whether gammonNet has answered for the position currently on the board.
-    // Distinguishes "estimated, and the evaluated regime has not spoken yet"
-    // (pending) from "estimated, and it declined" (no decision) — see
-    // cubeDecision's `settled`.
+    // Whether gammonNet has answered for this position: pending vs declined
+    // (cubeDecision's `settled`).
     let evalSettled = $state(false);
-    // The engine did not decline the position — it never answered at all: the
-    // Wails call rejected, or a `gammonnet-eval:error` event arrived for the
-    // in-flight evaluation-at-rest. Before this state existed, only
-    // `logger.error` (invisible in production) marked the difference, and the
-    // panel stayed on `eval.pending` forever — the residual debt from
-    // ADR-0017 this fixes. `evalFailedMessage` carries the error text shown to
-    // the user; both are cleared the moment a new evaluation starts or one
-    // succeeds (`applyEvalResult`).
+    // The engine never answered (Wails call rejected or `gammonnet-eval:error`),
+    // as opposed to declining; otherwise the panel would stay pending forever.
+    // Cleared when a new evaluation starts or succeeds (`applyEvalResult`).
     let evalFailed = $state(false);
     let evalFailedMessage = $state('');
-    // Race panel's "evaluated" regime (#126, ADR-0012): gammonNet's own
-    // async result (same 0-ply-then-2-ply escalation as evalMoves/
-    // evalCubeAnalysis above), carrying a verdict where the fast synchronous
-    // path (updateEPC / epcDataStore, "exact"/"estimated" only) has none.
-    // Null whenever the position is not a race outside the exact domain —
-    // the Go side gates it on the same predicate race.Evaluate itself uses,
-    // so this self-clears on the very next 0-ply call after any gesture.
+    // Race "evaluated" regime (ADR-0012): gammonNet's async verdict, where the
+    // synchronous exact/estimated path has none. Null unless the position is a
+    // race outside the exact domain (same predicate as race.Evaluate).
     let evalRaceOverride = $state(null);
-    // The position's fact vector (ADR-0017): win/gammon/backgammon chances
-    // and the cubeless equity, before any roll — always mover-relative
-    // (Player/Opponent), converted to bottom/top below. Free on the cube
-    // branch, paid for on the moves branch (see gammonnet_eval.go).
+    // Pre-roll fact vector (ADR-0017), mover-relative; converted to bottom/top below.
     let evalPreRoll = $state(null);
 
-    // Exact never yields ITS OWN win probability (ADR-0012: "it wins
-    // wherever it is available, and nothing displaces it" — a real lookup,
-    // referential-independent). But the exact table is money-referential
-    // (MoneyFromEntry never reads the score): at a match score its equities
-    // and verdict answer the wrong question, so the evaluated regime — which
-    // IS match-aware via Decide's MatchState — supplies those instead, and
-    // the badge names both sources (ADR-0017 decision 4). Off score, or
-    // outside the exact domain, this is unchanged from before.
+    // Exact keeps its win probability (ADR-0012), but its table is money-only:
+    // at a match score the equities and verdict come from the match-aware
+    // evaluated regime, and the badge names both (ADR-0017 decision 4).
     let displayRace = $derived.by(() => {
         if (!data.race) return evalRaceOverride;
         if (data.race.regime !== 'exact') return evalRaceOverride ?? data.race;
@@ -124,21 +89,15 @@
         return { ...evalRaceOverride, win_prob: data.race.win_prob, source_checkers: data.race.source_checkers, exactWin: true };
     });
 
-    // Progressive escalation (#125): 0-ply synchronously at the gesture
-    // (measured ~376µs, ADR-0011 — cheap enough for a plain round trip),
-    // then the configured display depth (canonically 2-ply k=12) in the
-    // background after 500ms of rest, cancelled by any newer gesture. No
-    // 1-ply step: a state the user would never see pass.
+    // 0-ply synchronously (~376µs, ADR-0011), then the display depth after
+    // 500 ms of rest, cancelled by any newer gesture.
     const EVAL_REST_DELAY_MS = 500;
     let evalRestTimer = null;
     let evalGeneration = 0; // guards a late "done" against a position the user already left
 
-    // A stable signature is the effect's ONLY tracked dependency — never
-    // evalMoves/evalCubeAnalysis, which this same effect writes. Reading a
-    // $state an effect just wrote is exactly the fcde0243 regression
-    // (effect_update_depth_exceeded, StatsFilterBar.svelte): the fix there,
-    // reused here, is deriving from a local value and wrapping everything
-    // else in untrack() so Svelte sees one dependency.
+    // The signature is the effect's only tracked dependency; everything else is
+    // untrack()ed, since reading the $state it writes loops
+    // (effect_update_depth_exceeded).
     let positionSignature = $derived(JSON.stringify($positionStore ?? null));
 
     $effect(() => {
@@ -150,9 +109,7 @@
         });
     });
 
-    // Leaving the Eval tab clears the board's selected-move arrow — the same
-    // visibility-driven clearing AnalysisPanel already does, so a move
-    // picked here does not linger once a different panel is showing.
+    // Leaving the tab clears the selected-move arrow, as AnalysisPanel does.
     $effect(
         onChange(
             () => isActive,
@@ -167,11 +124,8 @@
         const pos = $positionStore;
         if (!isActive || !pos) return;
 
-        // Clear the selected-move arrow BEFORE the new result lands, not
-        // after: while the escalation is in flight the old candidate list
-        // (and its arrow) are for a position the user just left (ADR-0017
-        // rule 3's "a stale value is never shown dimmed" — the gesture that
-        // invalidates it is the gesture that triggers the recomputation).
+        // Clear the arrow before the new result lands: the old list belongs to
+        // the position just left (ADR-0017 rule 3).
         selectedMoveStore.set(null);
         evalSettled = false;
         evalFailed = false;
@@ -223,27 +177,16 @@
         }, EVAL_REST_DELAY_MS);
     }
 
-    // The depth label on the applied result always says what actually
-    // produced it (0-ply or the display depth) — never a depth that was
-    // requested but superseded before it ran. A "cancelled" event simply
-    // leaves whatever 0-ply result is already showing untouched.
-    //
-    // Moves and Cube are never both present (gammonnet_eval.go's
-    // GammonNetEvalResult: one or the other, `omitempty` elides the unused
-    // one). Only touch the field the result actually carries — overwriting
-    // the other with its own "nothing yet" value (`[]`/`null`) would flash
-    // the pending placeholder every time a checker-play gesture follows a
-    // cube gesture on the same position, even though that side's last real
-    // evaluation is still perfectly valid.
+    // The depth label names what actually produced the result; "cancelled"
+    // leaves the 0-ply result as is. Moves and Cube never come together: touch
+    // only the one present, or the other side flashes back to pending.
     function applyEvalResult(result) {
         evalSettled = true;
         evalFailed = false;
         evalFailedMessage = '';
         evalRefused = !!result?.refused;
         if (evalRefused) {
-            // Nothing this build can say about this position: drop both sides
-            // rather than leave the previous position's answer standing under
-            // a state that says there is none.
+            // Nothing to say: drop both sides, never keep the previous position's.
             evalMoves = [];
             evalCubeAnalysis = null;
             evalCubeVerdict = '';
@@ -300,16 +243,12 @@
         openModal(MODAL.CONFIG);
     }
 
-    // #131: a discreet, single-word attribution — the engine's name is the
-    // link itself, never a sentence. Full credit (Strehl for the network,
-    // gammonNet for the search/MET/cube configuration around it, ADR-0011)
-    // lives in the Acknowledgements section of the in-app help, not here.
+    // One-word attribution; full credit is in the help's Acknowledgements (ADR-0011).
     function openGammonNetRepo() {
         BrowserOpenURL('https://github.com/kevung/gammonNet');
     }
 
-    // The panel element itself: focus target for the keyboard navigation
-    // below (a click on a row hands it the keyboard).
+    // Focus target for the keyboard navigation below.
     /** @type {HTMLElement | undefined} */
     let panelEl;
 
@@ -319,25 +258,14 @@
         } else {
             selectedMoveStore.set(move.move);
         }
-        // The click is also what hands this panel the keyboard: the rows are
-        // plain <tr>s, so focus would otherwise stay wherever it was and the
-        // handler below would never see a key. Explicit rather than relying
-        // on the browser walking up to the nearest focusable ancestor, which
-        // WebKit and Chromium do not do alike.
+        // Rows are plain <tr>s: focus the panel explicitly (WebKit and Chromium
+        // differ on walking up to a focusable ancestor).
         panelEl?.focus({ preventScroll: true });
     }
 
-    // Walking the candidate list with the keyboard, exactly as the analysis
-    // panel does it (doc/source/raccourcis.rst): once a move is selected,
-    // j/BAS and k/HAUT move the selection — and with it the board's arrows —
-    // one rank at a time, Escape drops it. The list here is the evaluation's
-    // own ranking (never re-sorted, this panel offers no sort), so the order
-    // walked is the order shown.
-    //
-    // This handler is not a convenience: keyboardService withholds
-    // j/k/arrows app-wide while selectedMoveStore is set, so in a panel that
-    // shows candidates and does not handle them itself, those keys did
-    // nothing at all.
+    // j/k and arrows walk the candidates, Escape drops the selection, as in the
+    // analysis panel. Required: keyboardService withholds these keys app-wide
+    // while selectedMoveStore is set.
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             if ($selectedMoveStore) selectedMoveStore.set(null);
@@ -360,16 +288,9 @@
         }
     }
 
-    // The race analysis follows the position: the on-roll player is edited on
-    // the board (click a player's bearoff/score rectangle, as in EDIT mode)
-    // and the cube owner by clicking the cube on the board. The position
-    // store is the single source of truth: any change re-triggers updateEPC
-    // and re-masks the défi zones.
+    // positionStore is the source of truth: any change re-runs updateEPC and re-masks Défi.
 
-    // Défi mode: three zones — the bottom row, the top row, and the one
-    // decision block the board is asking for (ADR-0017's Q8 corollary).
-    // Values are replaced by a placeholder until their zone is revealed;
-    // clicking a masked row/block reveals it.
+    // Défi: three zones (bottom row, top row, decision block), each revealed by a click.
     let maskedBottom = $derived(challenge && !revealed.bottom);
     let maskedTop = $derived(challenge && !revealed.top);
     let maskedDecision = $derived(challenge && !revealed.decision);
@@ -377,12 +298,8 @@
     const HIDDEN = '···';
     const pct = (x) => (100 * x).toFixed(2);
 
-    // ADR-0017 rule 1/CONTEXT.md "Position fact": win/gammon/backgammon and
-    // the cubeless equity, per board side — always pre-roll, whatever the
-    // board is asking. A race position is authoritative from displayRace
-    // (it already carries the regime badge and, off the exact table, the
-    // same computation the generic cube path would otherwise duplicate);
-    // any other position falls back to the generic PreRoll payload.
+    // Position facts per board side, always pre-roll (ADR-0017 rule 1): from
+    // displayRace on a race, else the generic PreRoll payload.
     let raceFacts = $derived(
         displayRace
             ? moverFactsToSides(
@@ -401,18 +318,11 @@
               )
             : { bottom: null, top: null }
     );
-    // The cubeless equity follows the position's own referential (money at
-    // money play, 2×MWC−1 at a match score, ADR-0016): CubelessValue and
-    // race.CubeVerdict.Cubeless are both already computed in that scale, so
-    // no adjustment is needed here — ADR-0017's dependency on ADR-0016 for
-    // this column is resolved.
+    // Cubeless equity arrives in the position's referential (ADR-0016): no conversion.
     let facts = $derived(data.race ? raceFacts : genericFacts);
 
-    // The pre-roll vector in the axis of the list it heads (ADR-0018 rule
-    // 2): mover-relative — the SAME frame as a move row's own fields
-    // (domain.CheckerMove), never converted to bottom/top. Only ever handed
-    // to CandidateMovesTable, and only while dice are set; PositionFactsTable
-    // keeps the per-side reading (facts above) the rest of the time.
+    // Mover-relative, the frame of the move rows (ADR-0018 rule 2); only for
+    // CandidateMovesTable, dice set.
     let baselineFacts = $derived.by(() => {
         if (data.race) {
             if (!displayRace) return null;
@@ -429,13 +339,8 @@
         return evalPreRoll;
     });
 
-    // One cube Decision, one shape, whatever regime produced it (ADR-0020).
-    // The two source shapes — race.Money on a bearoff, DoublingCubeAnalysis
-    // everywhere else — become one object here, in the single place this panel
-    // already composes the exact/evaluated merge above. The block is shown
-    // whenever the board is asking a cube question at all, i.e. no dice
-    // (ADR-0017 rule 2), and its own state cell says whether there is an
-    // answer, none to be had, or a refusal.
+    // One cube Decision shape (ADR-0020) from race.Money or DoublingCubeAnalysis,
+    // shown whenever there are no dice; its state cell says answer, none or refusal.
     let decision = $derived(
         cubeDecision({
             race: displayRace,
@@ -449,25 +354,14 @@
     );
     let showDecision = $derived(!hasDiceSet);
 
-    // PositionFactsTable now carries only per-side facts (ADR-0018 rule 1):
-    // the race block always, the probability vector only when there is no
-    // list to read it against. With dice on a non-race position neither
-    // applies, and the table would be empty — so it is not mounted at all,
-    // leaving the content row genuinely empty rather than holding a table with
-    // nothing in it.
+    // PositionFactsTable (ADR-0018 rule 1) would be empty with dice off a race: not mounted.
     let showFactsTable = $derived(!!data.race || !hasDiceSet);
 
-    // Depth is already named by the race regime badge in the strip when the
-    // position is a race (ADR-0012). Off a race, CubeVerdictTable's own
-    // depth/engine footer is hidden in this panel (ADR-0018 rule 4) since
-    // every row of a live evaluation shares one depth/engine — so it is
-    // named once here instead.
+    // Off a race, depth is named once in the strip (ADR-0018 rule 4).
     let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));
 </script>
 
-<!-- First in the strip, left of the regime badge (#399), and present in every
-     state where a board is posed — the error states included: a failed
-     evaluation does not make the position unsavable. -->
+<!-- Present in every state, errors included: a failed evaluation leaves the position savable. -->
 {#snippet addPositionButton()}
     <button type="button" class="add-position" onclick={addPosition} disabled={!!addRefusal || adding} title={addRefusal ? $t(addRefusal) : $t('eval.addPositionTooltip')}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -477,12 +371,8 @@
     </button>
 {/snippet}
 
-<!-- A <section> rather than a <div>: the panel takes focus and listens for
-     keys (handleKeyDown), which is a landmark's business and a static
-     element's a11y warning — the same shape AnalysisPanel already has. The
-     section itself still draws a11y_no_noninteractive_element_interactions:
-     it is keyboard delegation on a focus container (tabindex="-1", no pointer
-     handler), and no ARIA role is both a landmark and interactive. -->
+<!-- A <section> taking focus for keyboard delegation (tabindex="-1"); no ARIA
+     role is both a landmark and interactive, hence the ignore. -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section class="eval-panel" bind:this={panelEl} aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
     {#if !isActive}
@@ -514,13 +404,7 @@
         </div>
     {:else}
         <div class="eval-content">
-            <!-- The strip: the add-to-database button, regime badge, depth,
-                 engine link and the Défi toggle, on their own full-width line (ADR-0018 rule 4, applied
-                 as written by ADR-0020 rule 8). It was a third member of the
-                 content row until then, held in the corner by a
-                 `margin-left: auto` that manufactured a band of white across
-                 the middle whenever the row had something in it. It stays at
-                 the top: a badge qualifies the numbers below it. -->
+            <!-- The strip, a full-width line on top (ADR-0020 rule 8): a badge qualifies the numbers below. -->
             <div class="badges-strip">
                 {@render addPositionButton()}
                 {#if data.race}
@@ -557,14 +441,8 @@
                 </label>
             </div>
 
-            <!-- Content row: the facts stack and the one decision block the
-                 board asks for (never both a cube verdict and a checker
-                 decision — ADR-0017 rule 2). The facts are two blocks stacked
-                 on one column grid rather than one line of ten columns
-                 (ADR-0021), which is what keeps the decision ON this row at the
-                 default window size in all nine languages; flex-wrap stays as
-                 the safety net for a panel narrowed by hand. Nothing pushes
-                 anything to a far edge, so no width can produce a void. -->
+            <!-- Facts and the one decision block (ADR-0017 rule 2); facts stacked on
+                 one grid (ADR-0021), flex-wrap only for a hand-narrowed panel. -->
             <div class="top-row">
                 {#if showFactsTable}
                     <PositionFactsTable
@@ -583,13 +461,7 @@
                 {/if}
 
                 {#if showDecision}
-                    <!-- Défi masks in place: the three rows stay, their values
-                         and the verdict become `···`, and the best-row
-                         emphasis goes with them (ADR-0020 rule 7). The opaque
-                         stand-in this used to need is gone — its excuse was
-                         that CubeVerdictTable was "a foreign component with
-                         its own scoped CSS", which stopped being true when the
-                         mask moved inside it. -->
+                    <!-- Défi masks in place: values and verdict become `···` (ADR-0020 rule 7). -->
                     <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <!-- svelte-ignore a11y_no_static_element_interactions -->
                     <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
@@ -598,20 +470,11 @@
                 {/if}
             </div>
 
-            <!-- The moves list is the only region that ever scrolls
-                 (ADR-0017): its header stays sticky, and everything above
-                 (facts, badges, and a race/cube decision when there is no
-                 dice) stays on screen regardless of candidate count. With
-                 dice set the Baseline row lives inside this same table
-                 (ADR-0018 rule 2), so Défi masks the band and the ranking
-                 together — the order IS the answer, there is no partial
-                 reveal (ADR-0018 rule 6). -->
+            <!-- The only scrolling region (ADR-0017). The Baseline row lives in this
+                 table, so Défi masks it with the ranking (ADR-0018 rules 2, 6). -->
             {#if hasDiceSet}
                 {#if maskedDecision}
-                    <!-- A button, so Défi reveals from the keyboard too. The click would
-                         otherwise strand the focus on a button that the reveal
-                         removes: hand it back to the panel, where a click on
-                         the old <div> left it. -->
+                    <!-- A button for keyboard reveal; focus goes back to the panel, since the reveal removes it. -->
                     <button
                         type="button"
                         class="decision-cube-masked moves-masked"
@@ -638,17 +501,14 @@
     .eval-panel {
         height: 100%;
         box-sizing: border-box;
-        /* Only .moves-scroll below ever scrolls (ADR-0017) — the panel
-           itself never grows a scrollbar. */
+        /* Only .moves-scroll scrolls (ADR-0017). */
         overflow: hidden;
         padding: 3px 14px;
         font-family: var(--font-family-ui);
         font-size: var(--font-size-base);
-        /* Lets CandidateMovesTable/CubeVerdictTable/PositionFactsTable's own
-           @container rules stack on a narrow panel (ADR-0017's layout). */
+        /* For the child tables' @container rules. */
         container-type: inline-size;
-        /* The panel takes focus so the candidate list answers j/k (see
-           handleKeyDown); it is a focus target, not a control. */
+        /* A focus target for j/k, not a control. */
         outline: none;
     }
 
@@ -698,9 +558,7 @@
         height: auto;
     }
 
-    /* The strip (ADR-0020 rule 8): its own full-width line above the content,
-       right-aligned, so nothing in the content row has to be pushed to a far
-       edge to keep it in the corner — the rule that used to make the void. */
+    /* The strip (ADR-0020 rule 8): its own right-aligned line. */
     .badges-strip {
         flex: 0 0 auto;
         display: flex;
@@ -710,14 +568,7 @@
         flex-wrap: wrap;
     }
 
-    /* Facts + the one decision block, side by side. Since ADR-0021 the facts
-       are two blocks stacked on one column grid (561 px at worst) instead of a
-       single line of ten columns (up to 880 px), so the pair fits the default
-       panel in all nine languages and the decision no longer falls under the
-       numbers it answers. The wrap is still there — one flow, driven by the
-       panel's own width, not by whether it is docked at the bottom or the side
-       — but it is now a fallback for a hand-narrowed panel, not the normal
-       case. */
+    /* Facts (≤ 561 px, ADR-0021) beside the decision block; wrap is a fallback. */
     .top-row {
         flex: 0 0 auto;
         display: flex;
@@ -763,18 +614,14 @@
         background: var(--color-surface-alt);
     }
 
-    /* The masked stand-in for the Baseline+list block (ADR-0018 rule 6):
-       same look as the cube's mask, but filling the flexible region the
-       real .moves-scroll would otherwise take, so masking never collapses
-       the panel's height. */
+    /* Masked Baseline+list (ADR-0018 rule 6): fills the region so height holds. */
     .moves-masked {
         flex: 1 1 auto;
         min-height: 0;
         width: 100%;
     }
 
-    /* A labelled button, not an icon (issue 399): discoverability is its purpose.
-       Shaped like the badges it leads so the strip stays one line of pills. */
+    /* Labelled, not an icon, for discoverability; shaped like the badges. */
     .add-position {
         display: inline-flex;
         align-items: center;
@@ -832,28 +679,21 @@
         color: #8a6413;
     }
 
-    /* Third regime (#126, ADR-0012): a distinct blue-leaning tone — closer
-       to the neutral chips than to either the green "exact" or the amber
-       "estimated" (a played-out search, not a lookup and not a summary
-       estimate). */
+    /* Third regime (ADR-0012): blue-leaning, neither exact green nor estimated amber. */
     .badge-evaluated {
         background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
         border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-surface));
         color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
     }
 
-    /* ADR-0017 decision 4: exact's win probability, evaluated's equities and
-       verdict — a composite the badge names outright rather than picking a
-       single colour that would misrepresent one half of it. */
+    /* Composite exact + evaluated (ADR-0017 decision 4). */
     .badge-composite {
         background: linear-gradient(90deg, #e5f3e8 0 50%, #e8f0fe 50% 100%);
         border: 1px solid #c4d8f5;
         color: var(--color-primary);
     }
 
-    /* #131: a discreet mention that gammonNet is the engine, one character
-       and a link — never a sentence in the panel itself (full attribution
-       lives in the in-app help's Acknowledgements). */
+    /* One-character engine link; full attribution in the help. */
     .eval-engine-badge {
         width: 14px;
         height: 14px;

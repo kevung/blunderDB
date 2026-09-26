@@ -263,8 +263,8 @@ func TestLookup_ZeroedFileDecodesToFloor(t *testing.T) {
 }
 
 // withDefaultTable isolates the resolver in a temp dir holding a real
-// TS-06-06, generated once and cached by bearofftest. It is what the embedded
-// table used to give every test for free.
+// TS-06-06, generated once and cached by bearofftest.
+
 func withDefaultTable(t *testing.T) string {
 	t.Helper()
 	dir := isolateSources(t)

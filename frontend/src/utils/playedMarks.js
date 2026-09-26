@@ -1,18 +1,8 @@
 /**
- * What a stored record says was actually PLAYED, as predicates the move and
- * cube tables use to highlight a row.
- *
- * A record keeps two scales of truth here. `playedMoves`/`playedCubeActions`
- * are every play seen across every match that reached this position — the
- * right answer while browsing a position. `playedMove`/`playedCubeAction`
- * (singular) is the one play of the match currently being walked, and it is
- * the only one that may be highlighted in MATCH mode: showing all of them
- * there would mark moves no player in this match ever made.
- *
- * Extracted from AnalysisPanel so the Anki review can highlight the played
- * move too (ADR-0025 rule 6) without a second copy of the rule — the move a
- * user actually played is, on a review card, precisely the blunder they are
- * revising.
+ * What a stored record says was PLAYED, as predicates the move and cube tables highlight with.
+ * `playedMoves`/`playedCubeActions` are every play seen in every match reaching the position (right
+ * while browsing); `playedMove`/`playedCubeAction` is the one play of the match being walked, the
+ * only one highlighted in MATCH mode. Shared with the Anki review (ADR-0025 rule 6).
  */
 import { normalizeCubeAction } from './cubeAction.js';
 

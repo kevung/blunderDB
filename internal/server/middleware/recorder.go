@@ -17,12 +17,9 @@ type responseRecorder struct {
 	err         error
 }
 
-// SetErr attaches the original error behind a response — a handler masking a
-// storage error as the generic "internal error" body a client sees (so
-// backend internals never leak) calls this first, so Logging can still put
-// the real cause in the server-side log line. A handler type-asserts its
-// http.ResponseWriter to `interface{ SetErr(error) }` to reach it without a
-// cross-package dependency on this concrete type.
+// SetErr attaches the real error behind a masked "internal error" body so
+// Logging can record it. Handlers reach it via `interface{ SetErr(error) }`,
+// avoiding a dependency on this type.
 func (r *responseRecorder) SetErr(err error) { r.err = err }
 
 func newResponseRecorder(w http.ResponseWriter) *responseRecorder {
@@ -63,11 +60,7 @@ func (r *responseRecorder) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return nil, nil, http.ErrNotSupported
 }
 
-// Unwrap exposes the wrapped writer to http.ResponseController (the
-// documented mechanism a wrapping ResponseWriter uses to let
-// SetReadDeadline/SetWriteDeadline reach the real connection through it).
-// Both Metrics and Logging wrap with a responseRecorder, so a handler's `w`
-// is two of these deep; without Unwrap the controller would stop at the
-// first one — which does not itself implement SetWriteDeadline — and every
-// call would fail with http.ErrNotSupported (#234).
+// Unwrap lets http.ResponseController reach the real connection: Metrics and
+// Logging stack two recorders, and without it SetWriteDeadline would fail
+// with http.ErrNotSupported.
 func (r *responseRecorder) Unwrap() http.ResponseWriter { return r.ResponseWriter }

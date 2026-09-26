@@ -10,31 +10,23 @@ import (
 
 // budgetPerQuestion is the stated cost of one question — walk AND truth — on
 // the reference machine (ADR-0041 rule 5: « the per-question cost against a
-// stated threshold »). Measured on 2026-09-14 on sixteen cores under a load
-// of 9.5, on the AVX2 kernel: 65 ms from the pool (a race), 96 ms from the
-// board (contact), for a serial judge at the canonical depth. The kernel is
-// part of the measurement, not a detail of it — see the skip below. The
-// budget leaves three times that:
-// crossing it is a change of approach — a deeper truth, a searcher rebuilt per
-// question, a walk that stopped being 0-ply — not a busy afternoon.
+// stated threshold »). A serial judge at the canonical depth on the AVX2
+// kernel costs about 65 ms (pool) and 96 ms (board) under load; the budget
+// leaves three times that, so crossing it means a change of approach (deeper
+// truth, searcher rebuilt per question, walk no longer 0-ply).
 //
-// Serial on purpose, and measured so: the same judge on sixteen workers cost
-// the same (64 ms, 109 ms). A question is prepared in the background while
-// the user thinks; a search that took every core for nothing would stack on
-// whatever else is running, a batch analysis first.
+// Serial on purpose: sixteen workers cost the same, and a background question
+// must not take every core from a running batch analysis.
 const budgetPerQuestion = 300 * time.Millisecond
 
 func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
 	if testing.Short() || raceEnabled {
 		t.Skip("timing measurement")
 	}
-	// The budget prices the vectorised kernel. Without one the pure-Go twin
-	// evaluates the same network an order of magnitude slower, so the figure
-	// would measure the missing kernel rather than the cost of a question:
-	// 2.6 s and 4.8 s on macos-latest, which is arm64 and has no NEON kernel
-	// yet (#151, and the comment in kernel_noasm.go). Stand aside rather than
-	// state a second budget nobody measured — windows-latest and every x86
-	// machine still hold the assertion.
+	// The budget prices the vectorised kernel; the pure-Go fallback (arm64,
+	// see kernel_noasm.go) is an order of magnitude slower, so stand aside
+	// rather than state a second, unmeasured budget.
+
 	if kernel := gammonnet.KernelName(); kernel == "go" {
 		t.Skipf("kernel %q is the pure-Go fallback: the budget is stated for a vectorised one (#151)", kernel)
 	}

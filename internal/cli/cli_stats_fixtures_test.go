@@ -2,10 +2,8 @@ package cli
 
 import "testing"
 
-// Stats test fixtures for the package main CLI tests. The database package has
-// equivalent helpers for its own tests; these are kept here because cli_stats
-// tests live in package main (they drive the CLI type) and cannot reach the
-// database package's test helpers.
+// Stats test fixtures for the CLI tests, which cannot reach the database
+// package's own test helpers.
 
 // insertStatsFixtureRow inserts one decision row: a position (with
 // decision_type), an analysis row carrying the error, and a move linking the

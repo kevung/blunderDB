@@ -6,12 +6,9 @@ import (
 	"strings"
 )
 
-// rstIntro/rstOutro are the only translatable prose in the generated
-// annex — see the package doc comment on why the family→method table itself
-// is a literal code-block instead of an RST table: Sphinx's gettext
-// extraction skips a code-block's content (unlike a docutils table's cell
-// text), so regenerating this file when a route is added or removed never
-// touches the eight .po catalogues; only a change to this prose does.
+// rstIntro/rstOutro are the annex's only translatable prose: the route table
+// is a code-block, which gettext skips, so adding a route never touches the
+// eight .po catalogues.
 const rstIntro = `.. _api_reference:
 
 Contrat d'API

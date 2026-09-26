@@ -6,18 +6,12 @@ package gammonnet
 //
 // # Why this exists next to domain.LegalMoves
 //
-// This repository already has a legal-move generator, and it stays the
-// canonical one for everything outside the search (it is what
-// /v1/positions.legalMoves serves). It is not usable here: it returns a
-// []LegalPlay whose every entry carries a Steps slice, a full domain.Position
-// and a Notation STRING, and it deduplicates through a string board key. Two
-// string allocations per candidate, in a search that generates on the order of
-// five thousand plays per decision, is a factor of a hundred.
-//
-// So the search gets its own, writing into a caller-supplied buffer over the
-// narrow representation. Two implementations are acceptable; two answers are
-// not, which is why a differential test requires both to produce the SAME SET
-// of resulting positions over a corpus × all 21 rolls.
+// domain.LegalMoves stays canonical outside the search, but it allocates
+// strings per candidate, a factor of a hundred at search volume. So the
+// search has its own, writing into a caller-supplied buffer. Two
+// implementations, one answer: moves_diff_test.go requires the same set of
+// resulting positions over a corpus × all 21 rolls.
+
 //
 // The rules enforced here are the full ones: enter from the bar before
 // anything else, play as many dice as possible, play the larger die when only

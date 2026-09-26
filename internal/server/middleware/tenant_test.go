@@ -24,8 +24,7 @@ func probeTenant(public map[string]bool, path, header string) (tenantProbe, int)
 }
 
 // probeTenantMode drives the middleware with the single-tenant rule on or off
-// (#240: the SQLite backend has no tenant column and must refuse the tenants it
-// cannot actually separate).
+// (SQLite has no tenant column and must refuse tenants it cannot separate).
 func probeTenantMode(public map[string]bool, path, header string, singleTenant bool) (tenantProbe, int) {
 	var p tenantProbe
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -72,12 +71,9 @@ func TestTenant_MissingHeaderIsRejected(t *testing.T) {
 	}
 }
 
-// TestTenant_MalformedValues pins the contract for values a proxy could
-// plausibly send: whitespace is trimmed, blank means missing, a positive
-// decimal integer is the tenant, and anything else is rejected as invalid —
-// the daemon never shapes a value into a tenant. Before ADR-0005's 2026-09-03
-// amendment "tenant-a", "a b" and every other name passed through and landed
-// on tenant 0, so all named tenants shared one set of rows.
+// TestTenant_MalformedValues: whitespace is trimmed, blank means missing, a
+// positive decimal integer is the tenant, anything else is invalid — the
+// daemon never shapes a value into a tenant (ADR-0005).
 func TestTenant_MalformedValues(t *testing.T) {
 	long := strings.Repeat("x", 64*1024)
 	cases := []struct {

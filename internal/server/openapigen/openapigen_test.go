@@ -7,13 +7,8 @@ import (
 	"testing"
 )
 
-// TestMain changes the working directory to the repository root before
-// running the package tests: cmd/openapi-gen's default output paths
-// (openapi.yaml, doc/source/api_reference.rst) and Parse's own default
-// input directory (internal/server) are all repo-root-relative, matching
-// how a developer actually runs `go run ./cmd/openapi-gen` from the repo
-// root — but `go test` runs with the package directory as the working
-// directory (see internal/cli/main_test.go for the same pattern).
+// TestMain chdirs to the repository root: openapi-gen's paths are
+// repo-root-relative, but `go test` runs in the package directory.
 func TestMain(m *testing.M) {
 	_, thisFile, _, ok := runtime.Caller(0)
 	if !ok {
@@ -26,15 +21,10 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// TestGeneratedFilesAreUpToDate is the non-drift guard cmd/openapi-gen's
-// -check flag also runs in CI: it regenerates openapi.yaml,
-// doc/source/api_reference.rst and the Python client's generated method
-// surface in memory from the current handlers_*.go
-// source and compares the result byte-for-byte against the committed
-// files. A mismatch means someone added, removed or reshaped a /v1 route
-// (or changed a Req/Resp struct's fields) without running
-// `go run ./cmd/openapi-gen` and committing the result — this test's
-// failure message says exactly that.
+// TestGeneratedFilesAreUpToDate regenerates openapi.yaml,
+// doc/source/api_reference.rst and the Python client in memory and compares
+// them byte-for-byte with the committed files; on mismatch, run
+// `go run ./cmd/openapi-gen`.
 func TestGeneratedFilesAreUpToDate(t *testing.T) {
 	model, err := Parse("internal/server")
 	if err != nil {
@@ -43,9 +33,8 @@ func TestGeneratedFilesAreUpToDate(t *testing.T) {
 
 	checkUpToDate(t, "openapi.yaml", GenerateOpenAPI(model))
 	checkUpToDate(t, "doc/source/api_reference.rst", GenerateAPIReferenceRST(model))
-	// The Python client's method surface is generated from the same model
-	// (#289): a route added without regenerating it is a client that silently
-	// cannot call the new route, which is the drift this guard exists for.
+	// The Python client is generated from the same model; a stale one cannot
+	// call the new route.
 	checkUpToDate(t, "clients/python/blunderdb/_generated.py", GeneratePythonClient(model))
 }
 

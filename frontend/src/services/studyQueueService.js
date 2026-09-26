@@ -8,19 +8,13 @@ import { fileImportReportStore, showFileImportModalStore, fileImportModeStore } 
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-// La file d'étude post-import (#259, fiche I.3), côté interface.
-//
-// La file ne s'approprie pas la liste de résultats : elle amène une position
-// sur le plateau à la fois, exactement comme le fait déjà le compte rendu
-// quand on clique une de ses pires décisions. Le reste de l'application
-// continue de fonctionner pendant le parcours — c'est justement ce qui permet
-// d'y commenter, d'y ranger en collection ou d'en faire une carte avec les
-// gestes qui existent déjà, plutôt que d'en réinventer trois.
+// La file d'étude post-import : amène une position à la fois sur le plateau,
+// sans s'approprier la liste, pour que les gestes existants (commenter,
+// collection, carte) restent disponibles pendant le parcours.
 
 /**
- * Démarre la file d'un lot d'import. Ne fait rien, en le disant, quand le lot
- * n'a rien qui mérite un second regard : une file vide qui s'ouvre quand même
- * serait une promesse non tenue.
+ * Démarre la file d'un lot d'import, ou dit qu'il n'a rien à revoir plutôt
+ * que d'ouvrir une file vide.
  * @param {number} batchId
  */
 export async function startStudyQueue(batchId) {
@@ -87,8 +81,8 @@ async function showCurrent() {
 }
 
 /**
- * Démarre la file depuis le compte rendu d'import : ferme la fenêtre, puis
- * amène la première position. Le lot est celui que le compte rendu affiche.
+ * Démarre la file du lot affiché par le compte rendu : ferme la fenêtre, puis
+ * amène la première position.
  */
 export async function beginStudyQueueFromReport() {
     const report = get(fileImportReportStore);

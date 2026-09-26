@@ -2,46 +2,22 @@ package engine
 
 import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
 
-// Game-type classification (issue #291, fiche J.1a).
+// Game-type classification: the plan of play a position stands in, for the
+// side on roll, derived from the board alone, stored in an indexed column,
+// recomputed by `blunderdb repair`, never editable.
 //
-// The plan of play a position stands in, derived from the board alone, stored
-// in an indexed column, recomputed by `blunderdb repair`, never editable.
-// It answers the question a bundle of saved filters cannot: "show me my errors
-// in a holding game".
+// Three boundaries are gnubg's own (sourced in
+// docs/recherche/P5-classification-type-de-jeu.md): game over, race
+// (domain.MatchesNoContact), and "crashed" (at most six checkers outside the
+// side's points 1 and 2). Everything else is a CONVENTION — the literature has
+// no numeric thresholds and no standard to validate against — so every
+// unsourced threshold is a named, versioned constant and the rules are
+// published in the documentation.
 //
-// # What is sourced and what is a convention
-//
-// Three boundaries are gnubg's own and are sourced in
-// docs/recherche/P5-classification-type-de-jeu.md: the game being over, the
-// race (the two rearmost checkers have crossed — domain.MatchesNoContact), and
-// "crashed" (at most six checkers outside the side's own points 1 and 2, a
-// threshold its author Joseph Heled calls arbitrary and chose to be
-// non-cyclic). Everything else is a CONVENTION: P5 searched the literature and
-// found the human plans qualitative and convergent on concepts but "quasiment
-// dépourvues de seuils numériques". No published inter-rater agreement exists
-// for this problem either, so this classifier cannot be validated against a
-// standard — there isn't one.
-//
-// That is why every unsourced threshold below is a named, versioned constant
-// rather than a literal in a condition, and why the rules are published in the
-// documentation. A contested taxonomy is worse than no taxonomy; a taxonomy
-// whose rules are readable and whose label is derived, non-editable and never
-// exported as truth is defensible.
-//
-// # Berliner's lesson, and what is done about it
-//
-// BKG's author first categorised positions hard and found that "errors in
-// comparing the two were often made" at the boundaries (P5 §D). P5's answer is
-// several labels and an ambiguity flag. This file keeps ONE label, and pays for
-// it by ordering the rules from the most specific to the most general so a
-// position that satisfies two rules gets the more informative one — a backgame
-// that is also a holding game is a backgame. Where that order is a judgement
-// rather than a deduction, the rule says so.
-//
-// # One label, for the player on roll
-//
-// The label describes the plan of the side to move, because the stored column
-// answers "what plan was I in when I made this decision".
+// One label, not several with an ambiguity flag (P5 §D): the rules are ordered
+// from most specific to most general so a position matching two gets the more
+// informative one (a backgame that is also a holding game is a backgame).
+// Where that order is a judgement rather than a deduction, the rule says so.
 
 // GameTypeRulesVersion names the calibration of the unsourced thresholds
 // below. It is bumped whenever one of them changes, so a label stored by an

@@ -10,17 +10,10 @@ import (
 	"github.com/PileOfCells/backgammon-tournoi/render"
 )
 
-// Translating the engine's codes on the Go side (issue #386).
-//
-// The engine emits no sentence: a match label, a ranking note, a warning are a code and its
-// parameters, and blunderDB renders them in nine languages. The panel does it in JavaScript
-// (components/direction/labels.js); the standalone display page is written by Go, so it needs
-// the same rendering here.
-//
-// What is NOT duplicated is the strings: both sides read the SAME catalogue — the `direction`
-// block of frontend/src/i18n/locales/<lang>.json, handed over as it is. Only the interpolation
-// rule is written twice, and `labeler_test.go` holds the two to the same expectations as
-// `directionLabels.test.js`.
+// Translating the engine's codes on the Go side, for the standalone page (the panel does it in
+// components/direction/labels.js). Both read the SAME catalogue — the `direction` block of
+// frontend/src/i18n/locales/<lang>.json; only interpolation is written twice, and
+// labeler_test.go holds it to the same expectations as directionLabels.test.js.
 
 // Catalog is one language's `direction` block: a tree of strings the host hands over.
 type Catalog struct{ tree map[string]any }
@@ -116,9 +109,7 @@ var _ render.Labeler = (*CatalogLabeler)(nil)
 
 // NewLabeler builds a Labeler over a catalogue.
 //
-// With NO catalogue it falls back to the engine's own French labeler rather than to the raw
-// codes. A host that never published its translations — the CLI, a test — then gets sentences;
-// codes in a director's CSV would be a defect, and French is at least a language.
+// With NO catalogue (CLI, tests) it falls back to the engine's French labeler, never raw codes.
 func NewLabeler(c *Catalog, name PlayerNamer) render.Labeler {
 	if c == nil {
 		return render.French()

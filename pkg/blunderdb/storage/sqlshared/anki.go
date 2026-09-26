@@ -15,28 +15,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// AnkiStore implements every storage.AnkiStore method except Forecast
-// (B.14, #182): its day-offset bucketing is genuine date-arithmetic
-// divergence — SQLite has no DATE type and computes it through julianday(),
-// PostgreSQL natively — so each backend still writes that one query itself,
-// embedding AnkiStore and shadowing the method (the stats_sqlite.go/
-// stats_postgres.go precedent for StatsStore.DateRange).
+// AnkiStore implements every storage.AnkiStore method except Forecast, whose
+// day-offset bucketing is genuine date-arithmetic divergence (julianday() vs
+// native dates): each backend embeds AnkiStore and shadows it.
 //
-// Every "now" this store writes or compares against is computed once in Go
-// (anki.TimeLayout, UTC) and bound through Execer.TimestampArg — the same
-// trick TimestampText already uses for reads — so due/last_review/
-// created_at/updated_at/reviewed_at need no per-backend SQL at all: SQLite's
-// columns are already TEXT in that layout, and PostgreSQL casts the bound
-// string with "::timestamptz". This is also why BuryCard's "start of
-// tomorrow, UTC" is computed in Go (time.Truncate(24h) is UTC-safe: no DST)
-// rather than through either backend's date arithmetic.
+// Every "now" is computed once in Go (anki.TimeLayout, UTC) and bound through
+// Execer.TimestampArg, so no timestamp column needs per-backend SQL; BuryCard's
+// "start of tomorrow, UTC" is computed in Go for the same reason.
 //
-// Positions is the position loader this store borrows rather than owns:
-// position scanning stays backend-specific (position, analyses, matches —
-// see the package doc), so the two places anki needs one (the next/random
-// card served, and DeckPositions) go through storage.PositionStore's
-// Load/LoadByIDs instead of a JOIN this package would have to write per
-// dialect.
+// Positions is borrowed, not owned: position scanning stays backend-specific,
+// so anki loads positions through storage.PositionStore rather than a JOIN.
 type AnkiStore struct {
 	DB        Execer
 	Positions storage.PositionStore
@@ -61,10 +49,7 @@ func (s *AnkiStore) ankiDeckSelectCols() string {
 func scanAnkiDeck(sc interface{ Scan(...any) error }) (domain.AnkiDeck, error) {
 	var d domain.AnkiDeck
 	var enableFuzz int
-	// NULL is "no limit" and stays nil in the domain; 0 is a limit that
-	// serves nothing. *int64 is what keeps the two apart across the
-	// boundary, on both backends (database/sql and pgx both support scanning
-	// a nullable column into a pointer-to-pointer destination).
+	// NULL is "no limit" and stays nil; 0 is a limit that serves nothing.
 	var sessionLimit *int64
 	if err := sc.Scan(&d.ID, &d.Name, &d.Description,
 		&d.SourceType, &d.SourceID, &d.SourceCommand,
@@ -85,10 +70,8 @@ func scanAnkiDeck(sc interface{ Scan(...any) error }) (domain.AnkiDeck, error) {
 func (s *AnkiStore) CreateDeck(ctx context.Context, scope string, name, description, sourceType string, sourceID int64, sourceCommand string) (int64, error) {
 	cols, args := s.DB.TenantColumns(scope)
 	cols = append(cols, "name", "description", "source_type", "source_id", "source_command", "maximum_interval")
-	// maximum_interval is written explicitly rather than left to the column
-	// default: the default a NEW deck gets is a product decision (ADR-0026
-	// rule 7), and the DDL's 36500 stays what it is so existing decks keep
-	// theirs.
+	// maximum_interval is written explicitly: a NEW deck's default is a
+	// product decision (ADR-0026 rule 7), the DDL's 36500 stays for old decks.
 	args = append(args, name, description, sourceType, sourceID, sourceCommand, float64(domain.AnkiDefaultMaximumInterval))
 	id, err := s.DB.Insert(ctx,
 		`INSERT INTO anki_deck (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
@@ -236,12 +219,10 @@ func (s *AnkiStore) Sync(ctx context.Context, scope string, deckID int64) error 
 
 // SyncWithPositions adds a card for every position not yet in the deck and
 // touches the deck's updated_at. Existing cards keep their scheduling state.
-// It is syncCards for position cards: the position ids ARE the keys, written
-// as text, which is what makes "every existing card is a position card with
-// its id as key" (ADR-0042) true of new cards too and not only of migrated
-// ones.
+// It is syncCards for position cards, keyed by the position id as text
+// (ADR-0042).
 func (s *AnkiStore) SyncWithPositions(ctx context.Context, scope string, deckID int64, positionIDs []int64) error {
-	// Une décision de videau est deux questions (#276) : si la source en
+	// Une décision de videau est deux questions : si la source en
 	// sélectionne une moitié, l'autre complète la décision plutôt que
 	// d'ajouter autre chose. Voir anki_cube_pairs.go.
 	positionIDs = completeCubePairs(ctx, s.DB, scope, positionIDs)
@@ -253,21 +234,12 @@ func (s *AnkiStore) SyncWithPositions(ctx context.Context, scope string, deckID 
 }
 
 // syncCards adds a card for every (kind, key) not yet in the deck and touches
-// the deck's updated_at. Existing cards keep their scheduling state — this is
-// the operation a deck is "regenerated" with, and regenerating must never cost
-// the user their history.
+// the deck's updated_at. Existing cards keep their scheduling state:
+// regenerating a deck must never cost the user their history.
 //
-// A position card also fills position_id, so the foreign key holds it to a
-// real row and a deleted position takes its card with it. A card of any other
-// kind leaves it NULL: there is no position, and a 0 would be a lie the
-// schema would then have to tolerate everywhere.
-// The insert's conflict-avoidance is the plain SQL-standard "ON CONFLICT ...
-// DO NOTHING", which SQLite (>= 3.24, same as the metadata/session upserts
-// elsewhere in this package) and PostgreSQL both execute identically — no
-// INSERT OR IGNORE/dialect split needed here. It names (deck_id, kind, key),
-// the unique index idx_anki_card_identity, and not the pair
-// (deck_id, position_id) it replaced: a deck holds one card per question,
-// whatever the question is about.
+// A position card also fills position_id, so a deleted position takes its
+// card with it; any other kind leaves it NULL. "ON CONFLICT (deck_id, kind,
+// key) DO NOTHING" (idx_anki_card_identity) runs identically on both backends.
 func (s *AnkiStore) syncCards(ctx context.Context, scope string, deckID int64, kind string, keys []string) error {
 	err := s.DB.Transact(ctx, func(tx Execer) error {
 		now := ankiNow()
@@ -304,9 +276,7 @@ func (s *AnkiStore) syncCards(ctx context.Context, scope string, deckID int64, k
 }
 
 // DeckPositions streams the positions linked to a deck's cards, ordered by
-// position id — via storage.PositionStore.LoadByIDs (one round trip) rather
-// than a JOIN, so this store never has to know how a backend selects a
-// position (see the type doc).
+// position id, via storage.PositionStore.LoadByIDs (see the type doc).
 func (s *AnkiStore) DeckPositions(ctx context.Context, scope string, deckID int64) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
 		tenant, targs := s.DB.TenantFilter("", scope)
@@ -363,10 +333,7 @@ func (s *AnkiStore) DeckStats(ctx context.Context, scope string, deckID int64) (
 			COALESCE(SUM(CASE WHEN due <= ` + s.DB.TimestampArg() + ` AND ` + avail + ` THEN 1 ELSE 0 END), 0),
 			COUNT(*)
 		 FROM anki_card WHERE deck_id = ? AND ` + tenant
-	// Six "now" placeholders precede deckID's, in this order: avail (new),
-	// avail (learning), due<= then avail (review), due<= then avail (due).
-	// All six bind the identical value, so their relative order does not
-	// actually matter — only the count does.
+	// Six identical "now" placeholders precede deckID's; only the count matters.
 	args := []any{now, now, now, now, now, now, deckID}
 	args = append(args, targs...)
 	var st domain.AnkiDeckStats
@@ -426,16 +393,10 @@ func (s *AnkiStore) ankiAvailable() string {
 // nextDueCard returns the highest-priority card due in a deck, or
 // storage.ErrNotFound.
 //
-// The last ORDER BY term is RANDOM(), and it is deliberate — not a tie-break
-// left unwritten (ADR-0026 rule 9). Every new card of a freshly synced deck
-// carries the SAME due timestamp, so `due ASC` separates none of them and the
-// engine falls back on insertion order: the order of the match the positions
-// came from. A session then served consecutive moves of one game, which are
-// correlated, in the sequence they were played — blocking, where the learning
-// literature wants interleaving. Randomising the ties is the fix, and it is
-// the behaviour, not an option: no display-order setting is exposed anywhere.
-// RANDOM() is spelled uppercase but is the same function as PostgreSQL's
-// random(): both fold unquoted identifiers case-insensitively.
+// The last ORDER BY term is RANDOM() on purpose (ADR-0026 rule 9): a freshly
+// synced deck's cards share one due timestamp, and insertion order would serve
+// a game's moves in sequence (blocking) instead of interleaved. RANDOM() is
+// the same function as PostgreSQL's random().
 func (s *AnkiStore) nextDueCard(ctx context.Context, scope string, deckID int64) (domain.AnkiCard, error) {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	now := ankiNow()
@@ -483,10 +444,8 @@ func (s *AnkiStore) randomCard(ctx context.Context, scope string, deckID, exclud
 	query := `SELECT ` + s.ankiCardCols() + ` FROM anki_card WHERE deck_id = ? AND ` + tenant
 	args := append([]any{deckID}, targs...)
 	if excludePositionID != 0 {
-		// A card without a position is never what this excludes: the caller
-		// names the position it has just served, and `position_id != ?` is
-		// UNKNOWN — therefore false — on a NULL, which would filter out every
-		// score card in the deck instead of one.
+		// `position_id != ?` is UNKNOWN on a NULL, which would drop every
+		// score card; only the one served position is excluded.
 		query += ` AND (position_id IS NULL OR position_id != ?)`
 		args = append(args, excludePositionID)
 	}
@@ -527,10 +486,9 @@ func (s *AnkiStore) RandomCard(ctx context.Context, scope string, deckID, exclud
 // scheduling state, and returns the next card still due in the same deck (nil
 // when none remain).
 //
-// The card update and the review-log append are one transaction: a log entry
-// without its card advance (or the reverse) would make the log lie about the
-// schedule it is supposed to explain. Looking up the next card happens after
-// the commit — failing to load it must not undo a grade that was given.
+// The card update and the review-log append are one transaction, so the log
+// never lies about the schedule. The next card is looked up after the commit:
+// failing to load it must not undo a grade.
 func (s *AnkiStore) ReviewCard(ctx context.Context, scope string, cardID int64, rating int) (*domain.AnkiReviewCard, error) {
 	var deckID int64
 	err := s.DB.Transact(ctx, func(tx Execer) error {
@@ -725,9 +683,8 @@ func (s *AnkiStore) ReviewLog(ctx context.Context, scope string, deckID int64, l
 }
 
 // Retention measures a deck's pass rate on review-state cards against its
-// target retention. Read-only by contract (ADR-0026 rule 5): it used to also
-// suggest a new target and write it back, which is the feedback loop FSRS's
-// authors reject.
+// target retention. Read-only by contract (ADR-0026 rule 5): writing a new
+// target back is the feedback loop FSRS's authors reject.
 func (s *AnkiStore) Retention(ctx context.Context, scope string, deckID int64) (*domain.AnkiRetention, error) {
 	dtenant, dtargs := s.DB.TenantFilter("", scope)
 	var target float64
@@ -758,12 +715,8 @@ func (s *AnkiStore) Retention(ctx context.Context, scope string, deckID int64) (
 }
 
 // ReviewsByGameType counts the POSITIONS reviewed since `since`, grouped by
-// the position's derived plan of play (#275).
-//
-// Positions and not reviews: a card revised four times in a month is one
-// position studied, and counting the repetitions would make a month of
-// cramming look like a month of coverage. That distinction is the whole
-// reason this is a query rather than a sum of the review log.
+// the position's derived plan of play. Positions, not reviews: repetitions of
+// one card must not look like coverage.
 func (s *AnkiStore) ReviewsByGameType(ctx context.Context, scope string, since string) (map[string]int, error) {
 	tenant, targs := s.DB.TenantFilter("rl", scope)
 	rows, err := s.DB.Query(ctx,

@@ -131,20 +131,11 @@ func TestLegalMovesDoublesUseFour(t *testing.T) {
 }
 
 // notation is MOVER-RELATIVE ("24" always names the mover's own back
-// checkers, whatever colour they are) — the convention every backgammon
-// notation uses, and the one NormalizeMove-based matching against gnubg/XG
-// candidate lists depends on (#123's integration gate, which is how this was
-// found: caught rendering "12/18 17/18" for a White decision gnubg itself
-// called "13/7 8/7").
-//
-// The opening is symmetric, so it is a clean probe: White and Black, rolling
-// the same dice from the same (mirrored) starting position, must render into
-// the identical SET of notations — "24/21 13/14" is the classic 3-1 play
-// from either seat. Before the fix, White's rendering used the board's
-// absolute indices verbatim and diverged; Black's happened to coincide with
-// mover-relative numbering by construction (Black's home already sits at the
-// low end of the absolute frame), which is why the bug was invisible to
-// every existing test — none of them put White on roll.
+// checkers), the convention NormalizeMove-based matching against gnubg/XG
+// candidate lists depends on. The opening is symmetric, so White and Black
+// rolling the same dice must render the identical SET of notations; only
+// White can catch an absolute-index rendering, since for Black the two
+// numberings coincide.
 func TestNotationIsMoverRelative(t *testing.T) {
 	for _, d := range [][2]int{{3, 1}, {6, 5}, {5, 1}, {6, 1}, {4, 4}} {
 		black := InitializePosition()
@@ -166,10 +157,8 @@ func TestNotationIsMoverRelative(t *testing.T) {
 	}
 }
 
-// gnubg and XG both write bar entries as lowercase "bar/24", never "Bar/24"
-// — confirmed against real fixtures while building #123's integration gate.
-// NormalizeMove does not case-fold, so a capitalised "Bar" silently failed
-// every comparison against a stored candidate involving a bar entry.
+// gnubg and XG both write bar entries as lowercase "bar/24", and NormalizeMove
+// does not case-fold, so a capitalised "Bar" would fail every comparison.
 func TestNotationBarIsLowercase(t *testing.T) {
 	p := mkPos(Black, 6, 1, map[int]int{BlackBar: 1, 13: 4, 8: 3, 6: 5, 24: 2})
 	plays := LegalMoves(&p)

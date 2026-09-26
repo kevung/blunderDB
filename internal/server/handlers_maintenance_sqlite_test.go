@@ -9,11 +9,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// TestMaintenanceVacuumSQLite: the SQLite-backed server compacts its database
-// and answers with the two sizes (both 0 on the :memory: test store — the
-// shrink itself is covered by the backend's own test), and the data is still
-// there afterwards. The PostgreSQL refusal is TestMaintenanceVacuumPostgresNotSupported
-// (handlers_maintenance_test.go, tagged postgres).
+// TestMaintenanceVacuumSQLite: the server compacts and answers both sizes (0
+// on :memory:; the shrink is the backend's test), data intact. The PostgreSQL
+// refusal is in handlers_maintenance_test.go.
 func TestMaintenanceVacuumSQLite(t *testing.T) {
 	ts := newTestServer(t)
 

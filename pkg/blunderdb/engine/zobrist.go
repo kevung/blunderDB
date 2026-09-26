@@ -31,13 +31,10 @@ var (
 // stored before schema 2.18.0 to obtain the hash the current ZobristHash
 // computes for the same position.
 //
-// Until 2.18.0 the Jacoby and beaver flags were folded into the hash; ADR-0028
-// took them out — they are rules of the *session*, not of the position, and no
-// import format but an XGID carries them, so the same money position reached
-// through two doors landed in two rows. A Zobrist hash is a XOR of keys, so
-// undoing a fold is XORing the same key back in: the migration needs no board
-// and no decode, only the two flag columns it already has. Arguments are the
-// stored column values (0 = clear, anything else = set).
+// A Zobrist hash is a XOR of keys, so undoing the old Jacoby/beaver fold
+// (ADR-0028) is XORing the same keys back in: the migration needs no board,
+// only the two flag columns. Arguments are the stored column values
+// (0 = clear, anything else = set).
 func RetiredFlagDelta(hasJacoby, hasBeaver int) uint64 {
 	var d uint64
 	if hasJacoby != 0 {
@@ -86,13 +83,8 @@ func init() {
 	for i := range zobristMatchLength {
 		zobristMatchLength[i] = next()
 	}
-	// Retired keys, still DRAWN, no longer folded in. Jacoby and beaver left
-	// the identity in schema 2.18.0 (ADR-0028); the two draws stay exactly
-	// where they were so every key that follows them in the stream keeps its
-	// value, and a position that never carried either flag — the overwhelming
-	// majority — keeps the hash it was stored under. Removing the draws would
-	// shift zobristDecisionType and zobristBearoff and rehash every row in
-	// every database for nothing.
+	// Retired keys, still DRAWN, no longer folded in (ADR-0028): removing the
+	// draws would shift every later key and rehash every database ever written.
 	zobristRetiredJacoby = next()
 	zobristRetiredBeaver = next()
 	for i := range zobristDecisionType {
@@ -120,18 +112,11 @@ func cubeOwnerIndex(owner int) int {
 // The position is normalized to player_on_roll=0 before hashing, so a
 // position and its PlayerOnRoll=1 mirror always produce the same hash.
 //
-// Only fields that are part of a position's identity are folded in.
-// Position.ID and Position.IndividuallyImported are excluded: the latter is
-// provenance metadata, and hashing it would split one position into two rows
-// depending on how it was imported, defeating deduplication (ADR-0001).
-// TestZobristIgnoresIndividuallyImported guards this.
-//
-// Position.HasJacoby and Position.HasBeaver are excluded for the same reason
-// since schema 2.18.0 (ADR-0028): they state which optional rules the session
-// was played under, not what is on the board, and only an XGID carries them —
-// every file importer leaves them at 0. Hashing them split one money position
-// into two rows according to the door it came in by.
-// TestZobristIgnoresJacobyAndBeaver guards this.
+// Only fields of a position's identity are folded in. Excluded: Position.ID;
+// IndividuallyImported, which is provenance (ADR-0001); HasJacoby and
+// HasBeaver, which are session rules only an XGID carries (ADR-0028). Hashing
+// either would split one position across two rows by the door it came in by.
+
 func ZobristHash(p *domain.Position) uint64 {
 	norm := p.NormalizeForStorage()
 	norm.ID = 0

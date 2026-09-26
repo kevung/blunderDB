@@ -15,14 +15,10 @@ import (
 
 // L'instrument de mesure du poste videau — entrelacé, dans un seul processus.
 //
-// Pourquoi pas deux exécutions de `go test -bench` : gammonNet a lu LE MÊME
-// poste à 10,6 %, 26 % ou 20,5 % le même après-midi sur la même machine, selon
-// qu'il soustrayait deux exécutions consécutives, alternait trois passes, ou
-// entrelaçait décision par décision (docs/mesures/2026-09-02-T85-videau-par-lot
-// §1.3). Un facteur 2,5, sur un seuil d'abandon de 5 %. Le plancher de bruit
-// d'une machine partagée est plus large que ce qu'on cherche à mesurer, donc
-// la seule mesure exploitable est un rapport pris décision par décision, les
-// deux configurations chronométrées à quelques millisecondes l'une de l'autre.
+// Pas deux exécutions de `go test -bench` : sur une machine partagée, le même
+// poste varie d'un facteur 2,5 selon la méthode. La seule mesure exploitable
+// est un rapport pris décision par décision, les deux configurations
+// chronométrées à quelques millisecondes l'une de l'autre.
 //
 // Ces tests n'assertent rien : ils sont derrière BLUNDERDB_MEASURE, comme
 // TestProbeDecisionCost l'est derrière BLUNDERDB_PROBE.
@@ -36,10 +32,9 @@ type measureCase struct {
 	owner  CubeOwner
 }
 
-// measureCorpus est un corpus de décisions de contact — l'ouverture et des
-// plateaux aléatoires — toutes au même score, videau centré. Le score compte :
-// en argent le modèle §3 a une forme fermée et ne construit aucune chaîne
-// d'enjeux, donc le poste y est nul (mesuré, pas supposé : T85 §1.2).
+// measureCorpus est un corpus de décisions de contact (l'ouverture et des
+// plateaux aléatoires), au même score, videau centré : en argent le modèle
+// §3 est en forme fermée et le poste est nul.
 func measureCorpus(t *testing.T, n int) []measureCase {
 	t.Helper()
 	rng := rand.New(rand.NewSource(20260903))
@@ -126,13 +121,9 @@ func timeCubeDecision(t *testing.T, s *Searcher, c measureCase) (time.Duration, 
 // TestMeasureCubeShare est la mesure d'ENTRÉE du poste : ce que le videau
 // coûte sur une décision au score, ici, sur cette machine, avec ce build.
 //
-// Réserve, la même qu'en amont : allumer le videau change le meilleur coup,
-// donc les deux configurations n'explorent pas exactement le même arbre. La
-// part lue est celle du poste dans une décision, pas une soustraction de deux
-// exécutions du même arbre — et c'est bien ce qu'on veut savoir avant de
-// décider si le poste vaut d'être attaqué. La mesure de GAIN, elle
-// (TestMeasureCubeBatch, ajouté avec le lot), compare deux codes qui rendent les mêmes bits et
-// explorent donc l'arbre identique.
+// Réserve : allumer le videau change le meilleur coup, donc les deux
+// configurations n'explorent pas le même arbre ; c'est la part du poste dans
+// une décision. Les mesures de GAIN comparent deux codes aux mêmes bits.
 func TestMeasureCubeShare(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE") == "" {
 		t.Skip("poser BLUNDERDB_MEASURE pour mesurer ; ce test n'assère rien")
@@ -258,14 +249,9 @@ func envInt(name string, def int) int {
 // lot alternés à quelques microsecondes l'un de l'autre, dans la même boucle,
 // dans le même processus, et un rapport pris par paire.
 //
-// Les bancs `go test -bench` ci-dessous n'alternent qu'à la granularité du
-// banc — une seconde entière chacun — et sur une machine dont la charge
-// dérive en quelques secondes, cela suffit à donner à l'un ce que l'autre a
-// perdu. C'est la leçon T85 §1.3 transposée d'un cran plus bas.
-//
-// n est la taille de fratrie ; le rapport est rendu par taille, parce que
-// c'est exactement la question qu'un lot pose (combien de voies faut-il pour
-// couvrir la latence d'une division).
+// Les bancs ci-dessous n'alternent qu'à la seconde, ce qu'une charge qui
+// dérive suffit à fausser. n est la taille de fratrie ; le rapport est rendu
+// par taille.
 func TestMeasureCubePost(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE") == "" {
 		t.Skip("poser BLUNDERDB_MEASURE pour mesurer ; ce test n'assère rien")
@@ -333,11 +319,9 @@ func TestMeasureCubePost(t *testing.T) {
 			batchNs = append(batchNs, float64(b.Nanoseconds())/float64(n))
 		}
 		m := medianOf(ratios)
-		// Le minimum est l'estimateur robuste sous interférence : sur une
-		// machine partagée, une exécution ne peut être que ralentie par le
-		// voisin, jamais accélérée, donc le plus petit relevé approche le
-		// coût non contendu. La médiane et le minimum doivent dire la même
-		// chose ; s'ils divergent, c'est la charge qu'on mesure.
+		// Le minimum est l'estimateur robuste sous interférence (un voisin ne
+		// peut que ralentir). Si médiane et minimum divergent, c'est la
+		// charge qu'on mesure.
 		z, a, b := minOf(baseNs), minOf(scalarNs), minOf(batchNs)
 		fmt.Printf("%6d %8.0f %8.0f %8.0f   %6.2f %6.2f %6.2f   %6.2f\n",
 			n, z, a, b, z/a, a/b, z/b, 1/m)
@@ -391,15 +375,9 @@ func timeBatchCube(t *testing.T, scratch *cubeScratch, probs []*[NumOutputs]floa
 
 // Le POSTE isolé — la valuation seule, sans la recherche autour.
 //
-// La mesure sur décision entière (TestMeasureCubeBatch) porte le bruit d'une
-// machine partagée sur une décision qui coûte des centaines de
-// millisecondes ; celle-ci porte le bruit sur une boucle de quelques
-// microsecondes, et `-count` alterne les deux bancs dans le même processus.
-// Les deux sont nécessaires : celle-ci dit si l'idée paye, celle-là dit ce
-// qu'elle rend là où le poste vit.
-//
-// n est la taille de fratrie : 12 est ce que l'élagage k=12 laisse à la passe
-// grand réseau, la plus fréquente ; 32 est une passe d'élagage typique.
+// Celle-ci dit si l'idée paye ; la mesure sur décision entière dit ce
+// qu'elle rend là où le poste vit. n est la taille de fratrie : 12 pour la
+// passe grand réseau (k=12), 32 pour une passe d'élagage typique.
 func benchCubeValue(b *testing.B, n int, batched bool) {
 	net, err := embeddedNetwork()
 	if err != nil {

@@ -1,24 +1,15 @@
 /**
- * direction-budgets.spec.js — les budgets de gestes d'ux.md §4, comptés sur l'application
- * réelle (D3.5, #390).
+ * Compte, sur l'application réelle, les budgets de gestes d'ux.md §4 : la
+ * souris est première, la charge mentale d'un directeur occasionnel prime,
+ * le coût d'entrée est bas — ce qui n'est pas mesuré dérive sans qu'il n'y
+ * paraisse (un clic d'armement de plus, une confirmation « par prudence »).
  *
- * ## Pourquoi ces specs existent
- *
- * Les budgets de ce chantier sont une contrainte de premier rang posée par l'auteur : la souris
- * est première, la charge mentale d'un directeur occasionnel prime, le coût d'entrée est bas.
- * Ce qui n'est pas mesuré dérive — il suffit d'un clic d'armement de plus, d'une confirmation
- * ajoutée « par prudence », pour qu'un budget se perde sans que rien ne rougisse.
- *
- * ## Ce qui est faux ici, et assumé
- *
- * Le moteur Nicomaque, remplacé par `helpers/directionEngine.js`. Il ne calcule aucun
- * appariement : il tient exactement ce qu'un geste doit faire bouger à l'écran, sans quoi un
- * enchaînement de clics ne voudrait rien dire. Ce que le moteur décide est tenu en Go, décision
- * par décision ; ce qui est tenu ici est COMBIEN de gestes le directeur fait.
- *
- * ## Un dépassement doit se lire sans ouvrir le code
- *
- * D'où `budget()` : le message d'échec nomme le flux, le budget et ce qui a été compté.
+ * Le moteur Nicomaque est remplacé par `helpers/directionEngine.js`, qui ne
+ * calcule aucun appariement : il tient ce qu'un geste doit faire bouger à
+ * l'écran, pour que l'enchaînement de clics ait un sens. Ce que le moteur
+ * décide est vérifié côté Go ; ce qui est tenu ici est COMBIEN de gestes le
+ * directeur fait. `budget()` nomme le flux, le budget et le compte, pour
+ * qu'un dépassement se lise sans ouvrir le code.
  */
 
 import { test, expect } from '@playwright/test';
@@ -120,7 +111,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('corriger la dernière saisie', counted, 2);
     });
 
-    // « corriger un résultat ancien | 4-5 gestes » (F8, #436). Le match est fini, il n'est plus
+    // « corriger un résultat ancien | 4-5 gestes ». Le match est fini, il n'est plus
     // sur la grille : c'est depuis sa ligne de l'Historique qu'on le reprend, sur place. Le
     // premier des deux résultats est celui qu'on corrige — la dernière décision, elle, a déjà
     // son propre chemin en deux clics.
@@ -147,7 +138,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('corriger un résultat ancien', counted, 5);
     });
 
-    // « déclarer une table hors service | ≤ 4 gestes hors saisie, à 14 tables » (#438). Le
+    // « déclarer une table hors service | ≤ 4 gestes hors saisie, à 14 tables ». Le
     // plateau de la table 7 casse en plein tournoi : Réglages, le numéro, Enregistrer, et la
     // liste de ce qui va changer le dit avant de confirmer. Baisser le nombre de tables aurait
     // retiré la 14, pas la 7.
@@ -174,7 +165,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         await expect(page.locator('[data-testid="direction-table-14"]')).toBeVisible();
     });
 
-    // « clore le tournoi » (#441) : avec des matchs en cours, la confirmation est sur place, en
+    // « clore le tournoi » : avec des matchs en cours, la confirmation est sur place, en
     // deux clics, et dit combien ; sans match en cours, un clic. « Rouvrir » se confirme de la
     // même façon. Aucun dialogue natif : Playwright en échouerait.
     test('clore avec des matchs en cours tient en deux clics, sans dialogue natif', async ({ page }) => {
@@ -252,7 +243,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('retirer un joueur', counted, 6);
     });
 
-    // « réinscrire un retiré | 1 clic » (#439). Le retour est un geste nommé, sur la ligne du
+    // « réinscrire un retiré | 1 clic ». Le retour est un geste nommé, sur la ligne du
     // retiré : corriger sa fiche ne le réinscrit plus en silence.
     test('réinscrire un retiré tient en un clic', async ({ page }) => {
         await openDirection(page);

@@ -11,10 +11,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// postAs issues a POST with the given tenant header and an optional JSON
-// body. It is the untagged twin of postTenant (handlers_tenant_test.go, which
-// only builds with -tags postgres), so the SQLite tests here run on the
-// default path.
+// postAs POSTs body (nil for none) under the given tenant header; the untagged
+// twin of postTenant, so the SQLite tests run on the default path.
 func postAs(t *testing.T, ts *httptest.Server, tenant, path string, body any) *http.Response {
 	t.Helper()
 	var buf bytes.Buffer
@@ -33,10 +31,8 @@ func postAs(t *testing.T, ts *httptest.Server, tenant, path string, body any) *h
 	return resp
 }
 
-// TestSessionScopedByTenant is the HTTP half of issue #156 on the SQLite
-// backend: tenant 1 saves a session, tenant 2 loads an empty one, tenant 1
-// reads its own back. Before schema 2.16.0 the session was six rows of the
-// global metadata table.
+// TestSessionScopedByTenant: tenant 1 saves a session, tenant 2 loads an
+// empty one, tenant 1 reads its own back (SQLite backend).
 func TestSessionScopedByTenant(t *testing.T) {
 	ts := newTestServer(t)
 	assertSessionIsolated(t, ts)
@@ -90,10 +86,8 @@ func assertSessionIsolated(t *testing.T, ts *httptest.Server) {
 	}
 }
 
-// TestMetadataWriteRoutesGone pins the removal of metadata.load, metadata.save
-// and metadata.setVersion from /v1 (#156): each now falls through to the
-// catch-all — 404 with the error envelope — while metadata.version and
-// metadata.counts still answer.
+// TestMetadataWriteRoutesGone: metadata.load/save/setVersion fall through to
+// the catch-all 404, while metadata.version and metadata.counts still answer.
 func TestMetadataWriteRoutesGone(t *testing.T) {
 	ts := newTestServer(t)
 	for _, path := range []string{"/v1/metadata.load", "/v1/metadata.save", "/v1/metadata.setVersion"} {

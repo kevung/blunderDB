@@ -1,16 +1,13 @@
 // Command blunderdb-loadtest is a self-contained HTTP load generator for a
-// running `blunderdb serve` daemon (P9). It has no external dependency (no wrk
-// / k6 / vegeta): it drives the /v1/* endpoints with a configurable scenario
-// mix across many tenants, then writes a JSON + Markdown latency report.
+// running `blunderdb serve` daemon: it drives /v1/* with a scenario mix
+// across many tenants and writes a JSON + Markdown latency report.
 //
 //	blunderdb-loadtest --target http://localhost:8080 \
 //	  --tenants 10000 --rps 10000 --duration 60s --scenario mixed \
 //	  --output report.json
 //
 // --rps 0 means unbounded (closed-loop: as fast as --concurrency allows).
-// Tenants are numbered 1..N and sent as their decimal integer, the only form
-// the daemon accepts; the named-tenants scenario sends names instead and
-// expects every request to be refused (see scenario.go).
+// Tenants are sent as integers 1..N (see scenario.go for named-tenants).
 package main
 
 import (
@@ -87,10 +84,8 @@ func run(cfg config, sc scenario) (report, error) {
 	client := &http.Client{Transport: transport, Timeout: 30 * time.Second}
 	defer transport.CloseIdleConnections()
 
-	// stop signals workers to stop *issuing* new requests at the deadline.
-	// In-flight requests run on their own background context and are allowed
-	// to finish, so the deadline never aborts a request mid-flight (which would
-	// otherwise show up as spurious 500s / errors in the tail).
+	// stop ends the issuing of new requests; in-flight ones finish on their
+	// own context, so the deadline adds no spurious errors to the tail.
 	stop := make(chan struct{})
 	timer := time.AfterFunc(cfg.duration, func() { close(stop) })
 	defer timer.Stop()
@@ -166,10 +161,9 @@ func flush(mu *sync.Mutex, dst *[]sample, src []sample) {
 	mu.Unlock()
 }
 
-// doRequest issues one request for op o under the given X-Tenant-ID value and
+// doRequest issues one request for op o under the given X-Tenant-ID and
 // returns its sample. A status ok rejects, a transport error or a context
-// expiry counts as a failure (context expiry near the deadline is expected and
-// folded into the error count, which stays tiny relative to total).
+// expiry counts as a failure.
 func doRequest(client *http.Client, target, tenant string, ok func(int) bool, o op, rng *rand.Rand) sample {
 	path, body := o.build(rng)
 	t0 := time.Now()

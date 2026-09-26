@@ -14,16 +14,13 @@ import (
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 )
 
-// TestMigrationChain_HistoricalReplayMatchesFreshBootstrap (#235): SQLite has
-// TestMigrationSteps_ContinuousChain guarding an unbroken chain from 1.0.0 to
-// DatabaseVersion; PostgreSQL had no equivalent — postgres_test.go's other
-// tests all start from bootstrap() (001 plus a Migrate that finds every
-// forward migration already recorded as a no-op), so 002..013 had never
-// actually been exercised as real, executed SQL against a database that
-// lacked their changes.
+// TestMigrationChain_HistoricalReplayMatchesFreshBootstrap is PostgreSQL's
+// counterpart of SQLite's TestMigrationSteps_ContinuousChain: every other test
+// starts from bootstrap(), which records the forward migrations without
+// executing them against a database that lacks their changes.
 //
-// This test rebuilds that "historical" starting point directly — apply ONLY
-// the raw 001 baseline SQL, bypassing bootstrap()/Migrate() — then calls the
+// It applies ONLY the raw 001 baseline SQL, bypassing bootstrap()/Migrate(),
+// then calls the
 // ordinary Migrate on it, so migrateForward has to apply 002 through the
 // current last migration for real. The resulting schema must match, table
 // for table, column for column, index for index, a database that went

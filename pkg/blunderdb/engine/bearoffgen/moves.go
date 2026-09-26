@@ -24,16 +24,10 @@ const homeBoard = 6
 // canBearOff reports whether the chequer on point `pt` (1-based) may come off
 // with a die of `die`.
 //
-// Three conditions, and the first one is the one a six-point table can never
-// notice: every chequer must be inside the home board, then the die must match
-// the point exactly, or exceed it with no chequer further back.
-//
-// Leaving the first condition out is correct for every table over six points —
-// there is nothing outside the home board to check — and wrong for every wider
-// one, where it lets a position bear a chequer off while another still sits on
-// the 7-point. That produces a table that is better than the game allows, and
-// it diverges from gnubg only from OS-07 on. gnubg gets this for free: it calls
-// its ordinary GenerateMoves on a full board.
+// Every chequer must be inside the home board, then the die must match the
+// point exactly, or exceed it with no chequer further back. The first
+// condition is invisible on a six-point table and diverges from gnubg from
+// OS-07 on (gnubg gets it free from GenerateMoves on a full board).
 func canBearOff(board []int, pt, die int) bool {
 	for outside := homeBoard + 1; outside <= len(board); outside++ {
 		if board[outside-1] > 0 {
@@ -60,10 +54,8 @@ func canBearOff(board []int, pt, die int) bool {
 	return true
 }
 
-// gen holds the scratch space the move search reuses. successors is called
-// nPos × 21 times — 1.1 million times for OS-06, far more for a wider domain —
-// and allocating a slice per die per call cost 7.3 GiB of garbage and most of
-// the wall clock. Everything below writes into buffers owned by gen.
+// gen holds the scratch space the move search reuses: successors is called
+// nPos × 21 times, so allocating per call would dominate the wall clock.
 type gen struct {
 	points   int
 	checkers int
@@ -148,9 +140,8 @@ func (g *gen) walk(b []int, depth int) {
 		die := g.dice[i]
 		next := g.boards[depth+1]
 		// The die is taken out of hand for the whole descent, whether or not an
-		// earlier die already moved: marking it only for the first mover let
-		// the second die be played again at the next ply, and the search ran
-		// past the four plies a double allows.
+		// earlier die already moved, or a die could be played twice.
+
 		g.used[i] = true
 		for pt := g.points; pt >= 1; pt-- {
 			if !g.playDie(next, b, pt, die) {

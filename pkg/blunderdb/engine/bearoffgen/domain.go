@@ -41,12 +41,9 @@ func (d Domain) FileName() string {
 // Size is the exact byte size of a two-sided table: a 40-byte header plus four
 // int16 per pair.
 //
-// A one-sided table is compressed — each distribution is stored as the run of
-// its non-zero entries — so its size is a fact about the data and not
-// arithmetic on the domain. What is returned for it is the MEASURED size of
-// the file gnubg produces, and 0 for a domain nobody has made yet: a caller
-// that shows the figure must show that it does not have one, rather than
-// print a number it invented.
+// A one-sided table is compressed, so its size is the MEASURED size of the
+// file gnubg produces, and 0 for a domain nobody has made yet: a caller must
+// show it has no figure rather than print an invented one.
 func (d Domain) Size() int64 {
 	if d.Kind == OneSidedKind {
 		return oneSidedSize[d.Points]
@@ -55,10 +52,9 @@ func (d Domain) Size() int64 {
 	return 40 + n*n*planeCount*2
 }
 
-// oneSidedSize is what `makebearoff -o p` actually produced (gnubg 1.08,
-// 2026-09-05), byte for byte what this generator writes. The compression makes
-// the size a fact about the data rather than arithmetic on the domain, so it
-// is measured and recorded rather than derived.
+// oneSidedSize is what `makebearoff -o p` produced (gnubg 1.08), byte for byte
+// what this generator writes.
+
 var oneSidedSize = map[int]int64{
 	6:  1465788,
 	7:  4934186,

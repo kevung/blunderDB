@@ -25,19 +25,15 @@ func TestGeneratedKernelHasNoFMAAndNoFramePointer(t *testing.T) {
 		t.Fatal("kernel_avx2_amd64.s has lost its generated-file header; it is produced by _asm, not edited")
 	}
 
-	// 1. No FMA. ADR-0024's whole point: a fused multiply-add keeps more
-	// precision than the scalar loop it replaces, which is a DIFFERENT answer
-	// on every machine that has the instruction. The gold suites tolerate 1e-6
-	// and would not notice. This grep would.
+	// 1. No FMA (ADR-0024): a different answer that the gold suites' 1e-6
+	// would not notice.
 	if fma := regexp.MustCompile(`(?m)^\s*V?FMADD\w*`).FindString(asm); fma != "" {
 		t.Errorf("the kernel emits %q: no fused multiply-add, ever (ADR-0024)", strings.TrimSpace(fma))
 	}
 
-	// 2. No BP. It is the frame pointer, and the Go runtime walks it to unwind
-	// the stack when a preemption signal lands. avo's register allocator will
-	// reach for it as soon as the tile needs more general registers than are
-	// free — and the resulting crash lands somewhere else entirely, once every
-	// few runs. Found the hard way while sizing the tile.
+	// 2. No BP: the runtime walks the frame pointer on a preemption signal,
+	// and avo reaches for it when the tile runs out of registers — a crash
+	// elsewhere, once every few runs.
 	if bp := regexp.MustCompile(`(?m)^\s*\w+\s+.*\bBP\b`).FindString(asm); bp != "" {
 		t.Errorf("the kernel touches BP (%q): the tile is too wide for the free registers, "+
 			"and clobbering the frame pointer crashes the runtime intermittently",

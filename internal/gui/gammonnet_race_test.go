@@ -7,14 +7,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// #126 (ADR-0012): the race panel's third regime. racePosition (defined in
-// gammonnet_eval_test.go) puts every checker of each colour on one point —
-// White bears off toward point 24 (home 19..24), Black toward point 1 (home
-// 1..6, race/epc.go's computeSide). racePosition(24, 1, ...) puts 15 a side
-// on each colour's own ace-equivalent point: both players AllInHome, and far
-// outside the embedded TS-06-06's 1..6-checker exact domain — guaranteed
-// "evaluated" (or, pre-#126, "estimated" with no verdict at all), never
-// "exact".
+// ADR-0012: the race panel's third regime. racePosition(24, 1, ...) puts 15
+// checkers a side on each colour's ace point: all home, far outside TS-06-06,
+// so always "evaluated".
 
 func TestEvaluateGammonNetRaceEvaluatedRegimeNoDice(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
@@ -42,9 +37,7 @@ func TestEvaluateGammonNetRaceEvaluatedRegimeNoDice(t *testing.T) {
 	}
 }
 
-// The race section ignores dice on the board (race.Evaluate's own contract),
-// so it must still populate Race even when the primary result is candidate
-// moves (dice set) rather than a cube decision.
+// Race ignores the dice, so it is populated alongside Moves too.
 func TestEvaluateGammonNetRacePopulatedAlongsideMoves(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{6, 5}, domain.White)
 
@@ -63,9 +56,8 @@ func TestEvaluateGammonNetRacePopulatedAlongsideMoves(t *testing.T) {
 	}
 }
 
-// The capability ADR-0009 refused and ADR-0012 unlocks: a cube verdict at a
-// match score, which the convolution-only "estimated" regime could never
-// offer (its chain, p -> MET, was the thing ADR-0009 measured and rejected).
+// ADR-0012: a cube verdict at a match score, which the "estimated" regime
+// cannot give (ADR-0009).
 func TestEvaluateGammonNetRaceEvaluatedAtMatchScore(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
 	pos.Score = [2]int{5, 7} // White 5-away, Black 7-away — not Crawford
@@ -82,9 +74,7 @@ func TestEvaluateGammonNetRaceEvaluatedAtMatchScore(t *testing.T) {
 	}
 }
 
-// A position inside the exact table's domain must keep showing "exact" — the
-// evaluated regime never displaces it (ADR-0012: "it wins wherever it is
-// available, and nothing displaces it").
+// Inside the exact table's domain, "exact" is never displaced (ADR-0012).
 func TestEvaluateGammonNetRaceExactDomainStaysExact(t *testing.T) {
 	// 3 checkers a side on their ace point: well inside TS-06-06 (1..6).
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)

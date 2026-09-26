@@ -13,55 +13,24 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
-// L'instrument de mesure de #192/C.5 — « à quel point l'efficacité du videau
-// est-elle lue au mauvais endroit ? »
+// Mesure : à quel point l'efficacité du videau est-elle lue au mauvais
+// endroit ? (ADR-0029)
 //
-// LA QUESTION. `DefaultEfficiency` rend TROIS valeurs, une par état du videau
-// (possédé 0,566 / centré 0,688 / adverse 0,687), ajustées séparément par
-// gammonNet contre les TROIS colonnes de sa table bilatérale exacte
-// (docs/mesures/2026-08-07-T34-ajustement.md). Ce sont donc trois
-// coefficients de BRANCHE, pas une propriété de la position. Or :
+// DefaultEfficiency rend trois coefficients de BRANCHE. Or search.go fixe
+// cfg.CubeX à la racine alors que le propriétaire est miroité à chaque ply,
+// et Decide tarife eDT (branche adverse) à l'efficacité du propriétaire
+// courant. Le C fait pareil (gn_search.c:299,740, gn_cube.c:754,790) : c'est
+// une question de modèle, que ces mesures chiffrent.
 //
-//   - `search.go` fixe `cfg.CubeX` à la racine (`ConfigForPosition`) et
-//     valorise chaque feuille avec ce x-là, alors que le PROPRIÉTAIRE est
-//     miroité à chaque ply : une feuille sur deux est donc tarifée avec le
-//     coefficient ajusté pour l'AUTRE branche.
-//   - `Decide` tarife la branche `eDT` — celle où l'adversaire détient le
-//     videau doublé — avec l'efficacité passée par l'appelant, qui est celle
-//     du propriétaire COURANT.
+// Sur les 669 décisions réelles de la porte d'intégration : écart moyen à
+// une feuille de 0,005 en équité normalisée au score, aucun verdict basculé
+// sur 604 décisions de videau, aucun meilleur coup changé sur 60. Lu au
+// mauvais endroit souvent, jamais vu changer ce que l'outil dit.
 //
-// Le C fait exactement pareil (`gn_search.c:299,740`, `gn_cube.c:754,790`) :
-// ce n'est pas un trou de portage, c'est une question de modèle. Ces mesures
-// la chiffrent avant de la trancher (ADR-0029).
-//
-// CE QU'ELLES ONT DONNÉ le 2026-09-03, 16 cœurs, sur les 669 décisions
-// analysées réelles des fixtures de la porte d'intégration :
-//
-//   - 369 / 669 (55,2 %) se jouent videau déjà tourné — les seules
-//     concernées ; sur les 300 autres la racine est centrée et l'écart est
-//     rigoureusement nul.
-//   - Écart à UNE feuille : money 0,0227 moyen / 0,0480 max (points par unité
-//     de videau) ; match 0,0050 moyen, 0,0040 médian, 0,0137 p95, 0,0404 max
-//     (équité normalisée), 10,2 % au-dessus de 0,01.
-//   - eDT retarifé sur sa propre branche, 604 décisions de videau au score :
-//     |Δ| moyen 0,00126 MWC, max 0,0159 ; take point déplacé de 0,0011 en
-//     moyenne, 0,0069 au pire ; **0 verdict basculé sur 604**.
-//   - Recherche 2-ply canonique, 60 positions à videau tourné : la variante
-//     exacte (nodeValue rapiécé en DefaultEfficiency(owner), mesuré puis
-//     révoqué) change **0 meilleur coup sur 60**, |Δ équité| 0,0040 moyen,
-//     0,0084 max ; l'encadrement ci-dessous (x uniforme 0,566 vs 0,687) rend
-//     les mêmes chiffres, 0/60 et 0,0040 / 0,0089.
-//
-// Autrement dit : lu au mauvais endroit souvent, visible à la troisième
-// décimale d'une équité affichée, et jamais vu changer ce que l'outil dit.
-//
-// Rien n'est asserté ici : le fichier est derrière BLUNDERDB_MEASURE_CUBEX,
-// comme cube_measure_test.go l'est derrière BLUNDERDB_MEASURE.
+// Rien n'est asserté : derrière BLUNDERDB_MEASURE_CUBEX.
 
-// cubeXCorpus is a corpus of REAL analysed positions — the same two gnubg
-// fixtures and the same XG fixture the integration gate replays — because the
-// question is "how often, and by how much, on a real board", and a corpus of
-// randomised boards would answer a different one.
+// cubeXCorpus is the integration gate's corpus of REAL analysed positions:
+// the question is how often, and by how much, on a real board.
 func cubeXCorpus(t *testing.T) []gateDecision {
 	t.Helper()
 	var out []gateDecision
@@ -120,12 +89,9 @@ func (d *deltaStats) report(t *testing.T, title string) {
 
 // TestMeasureCubeXLeafGap — MESURE 1 : l'erreur commise à UNE feuille.
 //
-// Une feuille dont le videau local est `o` devrait, si x est un coefficient
-// de branche, être tarifée à `DefaultEfficiency(o)`. La recherche la tarife à
-// `DefaultEfficiency(root)` où root est le videau de la RACINE. Comme le
-// propriétaire est miroité à chaque ply, l'écart mesuré ici est exactement
-// celui d'une feuille sur deux — et il est NUL quand le videau de la racine
-// est centré (Mirror(Centred) == Centred).
+// Une feuille de videau local `o` est tarifée à DefaultEfficiency(root) au
+// lieu de DefaultEfficiency(o) : l'écart d'une feuille sur deux, nul quand la
+// racine est centrée.
 func TestMeasureCubeXLeafGap(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE_CUBEX") == "" {
 		t.Skip("set BLUNDERDB_MEASURE_CUBEX to measure the cube-efficiency model gap")
@@ -170,10 +136,8 @@ func TestMeasureCubeXLeafGap(t *testing.T) {
 			continue
 		}
 
-		// Money scale, per unit of cube: what a leaf under an OWNED cube is
-		// worth priced at 0.566 (the fit's own branch) against 0.687 (what
-		// the search hands it when the root cube is the opponent's), and its
-		// mirror.
+		// Money, per unit of cube: an OWNED leaf at 0.566 against 0.687, and
+		// its mirror.
 		for _, o := range []CubeOwner{CubeOwned, CubeOpponent} {
 			local, ok1 := Value(&probs, o, nil, DefaultEfficiency(o))
 			foreign, ok2 := Value(&probs, o, nil, DefaultEfficiency(o.Mirror()))
@@ -280,16 +244,9 @@ func TestMeasureCubeXDecisionEDT(t *testing.T) {
 // TestMeasureCubeXSearchSensitivity — MESURE 3 : le choix du coup est-il
 // sensible à x du tout ?
 //
-// La variante « x local » assigne à chaque feuille l'un des deux coefficients
-// {0,566 ; 0,687}. Faute d'un drapeau en production (et il n'y en aura pas
-// avant que gammonNet ait tranché), cette mesure encadre : elle fait tourner
-// la MÊME recherche 2-ply aux deux extrêmes, x = 0,566 partout puis x = 0,687
-// partout. Si le meilleur coup ne bouge jamais sur toute l'amplitude, aucune
-// répartition intermédiaire ne le fera bouger non plus.
-//
-// C'est un encadrement empirique, pas une preuve : janowskiEquity est affine
-// en x, de pente (live − dead), dont le SIGNE dépend de p et de la branche,
-// donc la valeur d'une recherche n'est pas monotone en un mélange par feuille.
+// Encadrement : la même recherche 2-ply à x = 0,566 partout puis x = 0,687
+// partout. Empirique, pas une preuve : la pente en x (live − dead) change de
+// signe selon p et la branche.
 func TestMeasureCubeXSearchSensitivity(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE_CUBEX") == "" {
 		t.Skip("set BLUNDERDB_MEASURE_CUBEX to measure the cube-efficiency model gap")
@@ -360,22 +317,10 @@ func TestMeasureCubeXSearchSensitivity(t *testing.T) {
 	eqGap.report(t, "amplitude de l'équité 2-ply sur x ∈ {0,566 ; 0,687} (équité normalisée)")
 }
 
-// TestMeasureGateRedCasesAtDepth — MESURE 4, le second point de #192/C.5 :
-// « rejouer les 2 cas rouges de integration_gate_test.go à 3-ply et avec la
-// MET de XG ».
-//
-// Les deux cas sont les seules décisions au-dessus du bloc de 0,05 de la
-// porte : score [1,5], dés [4,3] (coût 0,0552) et [1,1] (coût 0,0738). Ils
-// sont dans la partie de Crawford, où il n'y a pas de videau du tout — ni
-// `use_cube` ni l'efficacité ne peuvent les déplacer, c'est ce que
-// l'en-tête de la porte a déjà mesuré au 2026-09-02. Reste la PROFONDEUR et
-// la TABLE.
-//
-// La table est déjà réglée : engine/met.go EST Kazaross-XG2, la MET par
-// défaut d'eXtreme Gammon (et de gnubg). Il n'y a pas de « MET de XG » à
-// essayer en plus — c'est celle qui tourne. Ce test fait donc varier ce qui
-// reste : la profondeur (2-ply canonique, 2-ply sans élagage, 3-ply), et
-// reporte le coût contre les équités stockées de XG à chaque réglage.
+// TestMeasureGateRedCasesAtDepth — MESURE 4 : rejoue les deux cas rouges de
+// integration_gate_test.go (score [1,5], partie de Crawford) à 2-ply
+// canonique, 2-ply sans élagage et 3-ply, et reporte le coût contre les
+// équités de XG. La MET est déjà celle de XG (Kazaross-XG2).
 func TestMeasureGateRedCasesAtDepth(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE_GATE_DEPTH") == "" {
 		t.Skip("set BLUNDERDB_MEASURE_GATE_DEPTH to replay the gate's two red decisions at depth")

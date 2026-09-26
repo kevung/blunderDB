@@ -1,13 +1,7 @@
-// Guided-tour definitions (data only). The tour engine (tourService.js) turns
-// these into driver.js steps, resolving the i18n keys at run time.
-//
-// Each step targets a stable DOM element via a `data-tour="..."` attribute (so
-// it does not depend on translated labels or on the two.js canvas internals).
-// A step without `element` is shown as a centered popover. Steps whose target
-// is absent from the DOM are skipped automatically.
-//
-// To add a new tour, append an entry here and add its i18n keys to every locale
-// (the locale-parity test enforces this). No engine change is needed.
+// Guided-tour definitions (data only), turned into driver.js steps by tourService.js. Steps
+// target `data-tour="..."` attributes (independent of labels and canvas); no `element` = centered
+// popover; an absent target is skipped. A new tour needs its i18n keys in every locale
+// (locale-parity test).
 
 export const TOURS = [
     {

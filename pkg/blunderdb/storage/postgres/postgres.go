@@ -15,7 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Environment variables overriding the connection-pool defaults below (#235).
+// Environment variables overriding the connection-pool defaults below.
 // Each is a Go duration string ("5s", "30m", "1h") except maxConnsEnv and
 // minConnsEnv, plain integers; absent or unparsable, a setting keeps its
 // default.
@@ -28,17 +28,9 @@ const (
 	maxConnIdleTimeEnv   = "BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME"
 )
 
-// Connection-pool defaults, each overridable via the env vars above (#235).
-//
-// connectTimeout bounds how long dialing a single new connection may take: an
-// unreachable database fails fast (5s) rather than hanging on the operating
-// system's own TCP connect timeout, which is typically much longer and gives
-// no useful signal back to the caller waiting on Open/Acquire.
-//
-// maxConnIdleTime closes a connection that has sat idle in the pool for this
-// long, independent of MaxConnLifetime: a traffic spike that grew the pool
-// well past MinConns should not leave those extra connections open forever
-// once the spike has passed.
+// Connection-pool defaults, each overridable via the env vars above.
+// connectTimeout makes an unreachable database fail fast rather than wait for
+// the OS TCP timeout; maxConnIdleTime shrinks the pool back after a spike.
 const (
 	defaultMaxConns        = 50
 	defaultMinConns        = 5
@@ -94,7 +86,7 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 }
 
 // intFromEnv reads a positive integer from the named environment variable,
-// falling back to def when it is unset, non-numeric, or not positive (#235).
+// falling back to def when it is unset, non-numeric, or not positive.
 func intFromEnv(name string, def int) int {
 	if v := os.Getenv(name); v != "" {
 		if n, err := strconv.Atoi(v); err == nil && n > 0 {
@@ -106,7 +98,7 @@ func intFromEnv(name string, def int) int {
 
 // durationFromEnv reads a Go duration string ("5s", "30m", "1h") from the
 // named environment variable, falling back to def when it is unset, does not
-// parse, or is not positive (#235).
+// parse, or is not positive.
 func durationFromEnv(name string, def time.Duration) time.Duration {
 	if v := os.Getenv(name); v != "" {
 		if d, err := time.ParseDuration(v); err == nil && d > 0 {
@@ -116,25 +108,17 @@ func durationFromEnv(name string, def time.Duration) time.Duration {
 	return def
 }
 
-// PoolStats reports a snapshot of the connection pool's state: connections
-// currently checked out, idle connections available, the configured maximum,
-// and the cumulative count of Acquire calls that had to wait for a
-// connection to be released or constructed because the pool was empty
-// (pgxpool's EmptyAcquireCount). Server.sweepPoolStats polls this
-// periodically to feed blunderdb_pg_pool_* (#235); the SQLite backend has no
-// equivalent method, so that sweep is simply never started against it (see
-// poolStatsProvider, internal/server/server.go).
+// PoolStats reports a snapshot of the connection pool: acquired, idle, the
+// configured maximum, and pgxpool's cumulative EmptyAcquireCount. It feeds
+// blunderdb_pg_pool_* (Server.sweepPoolStats); SQLite has no equivalent.
 func (s *Storage) PoolStats() (acquired, idle, max int32, waitCount int64) {
 	stat := s.pool.Stat()
 	return stat.AcquiredConns(), stat.IdleConns(), stat.MaxConns(), stat.EmptyAcquireCount()
 }
 
 // DatabaseSizeBytes reports the current database's on-disk size in bytes via
-// pg_database_size(current_database()) — this is a whole-database figure
-// (every tenant sharing the instance), not a per-tenant one, the same way
-// PoolStats is one number for the whole pool rather than per tenant. Feeds
-// the daemon's blunderdb_database_size_bytes gauge (#238; see
-// server.sizeProvider).
+// pg_database_size(current_database()), for the whole instance (every
+// tenant), feeding the daemon's blunderdb_database_size_bytes gauge.
 func (s *Storage) DatabaseSizeBytes(ctx context.Context) (int64, error) {
 	var n int64
 	err := s.pool.QueryRow(ctx, `SELECT pg_database_size(current_database())`).Scan(&n)
@@ -176,29 +160,17 @@ func (s *Storage) Version(ctx context.Context) (string, error) {
 	return v, nil
 }
 
-// migrationLockKey is the fixed pg_advisory_lock key guarding Migrate:
-// arbitrary but stable across builds and processes, so two of them (two
-// daemon replicas starting together, or the daemon racing a `blunderdb
-// migrate` invocation) contending for it serialize rather than run the
-// bootstrap/forward-migration sequence concurrently (#231). It is the ASCII
-// bytes of "_migrat" (7 bytes, 56 bits) read big-endian as an integer — no
-// hashing, so any two builds of this binary agree on it by construction,
-// and it is human-verifiable rather than a value someone has to trust.
-// Session-scoped (pg_advisory_lock, not the _xact variant): it must survive
-// several separate statements run outside one transaction — some migrations
-// use DO blocks / multi-statement batches via the simple query protocol,
-// which cannot all share a single explicit transaction.
+// migrationLockKey is the fixed pg_advisory_lock key guarding Migrate, stable
+// across builds (the ASCII bytes of "_migrat" read big-endian), so concurrent
+// migrators serialize. Session-scoped, not _xact: some migrations are
+// multi-statement batches that cannot share one explicit transaction.
 const migrationLockKey int64 = 0x5f6d6967726174 // "_migrat"
 
 // Migrate brings the database up to the current schema version. A fresh
 // database is bootstrapped to the v2.7.0 baseline; then any forward
 // migrations (002+) not yet recorded in schema_migrations are applied;
 // finally database_version is (re)written from domain.DatabaseVersion in one
-// place, never by an individual migration file (#231) — a chain interrupted
-// partway through used to leave the true (newer) schema declaring an older
-// version, which /readyz then reported as a mismatch even though the
-// interruption's real effect (a half-applied migration) is exactly what
-// /readyz cannot see either way.
+// place, never by an individual migration file.
 //
 // The whole sequence runs on one connection acquired for the duration, held
 // under a session-level pg_advisory_lock: two processes calling Migrate at
@@ -251,7 +223,7 @@ func isFreshDB(ctx context.Context, db execer) (bool, error) {
 
 // setDatabaseVersion (re)writes the metadata row Version reads, from the
 // Go constant — the one place Migrate names a version, after bootstrap and
-// every forward migration have both already succeeded (#231).
+// every forward migration have both already succeeded.
 func setDatabaseVersion(ctx context.Context, db execer) error {
 	if _, err := db.Exec(ctx,
 		`INSERT INTO metadata (key, value) VALUES ('database_version', $1)

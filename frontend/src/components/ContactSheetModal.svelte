@@ -1,22 +1,9 @@
 <script>
-    // La planche-contact de la liste parcourue (#287, fiche I.31).
-    //
-    // Une grille de mini-plateaux, une page à la fois ; choisir une vignette
-    // ouvre sa position sur le plateau. Le découpage et le clavier sont dans
-    // services/contactSheet.js ; ce composant tient ce qui coûte : charger une
-    // page de positions et la dessiner.
-    //
-    // Performance. Une liste peut compter cinquante mille positions. On ne
-    // charge que la page (getPositions, qui ne touche pas au cache du
-    // plateau), on ne dessine que la page, et on dessine UNE vignette par
-    // tâche : la grille s'affiche tout de suite, les plateaux s'y posent l'un
-    // après l'autre, et une page qu'on quitte en cours de dessin s'arrête là.
-    // Les vignettes déjà dessinées sont gardées le temps que la planche reste
-    // ouverte (bornées), pour qu'un aller-retour de page soit immédiat.
-    //
-    // Chaque vignette est une <img> au SVG en data: plutôt qu'un SVG en
-    // ligne : vingt-quatre SVG dans le document, ce sont des milliers de
-    // nœuds de plus et des identifiants two.js qui pourraient se croiser.
+    // La planche-contact de la liste parcourue, une page à la fois (découpage et
+    // clavier dans services/contactSheet.js). Seule la page est chargée et
+    // dessinée, une vignette par tâche, interrompue si l'on change de page ;
+    // un cache borné rend le retour immédiat. Vignettes en <img> data: SVG, pas
+    // en SVG en ligne (nœuds et identifiants two.js en conflit).
     import { tick, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteMap } from 'svelte/reactivity';
@@ -130,9 +117,7 @@
         }
     }
 
-    // La largeur mesurée à l'ouverture et à chaque redimensionnement de la
-    // fenêtre — pas par bind:clientWidth, qui demande un ResizeObserver pour
-    // une grille dont seule la fenêtre change la largeur.
+    // Mesurée sur resize de la fenêtre, seule à changer la largeur (pas de bind:clientWidth).
     function measure() {
         gridWidth = gridEl?.clientWidth ?? 0;
     }

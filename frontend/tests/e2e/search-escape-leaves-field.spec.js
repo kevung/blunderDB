@@ -1,11 +1,10 @@
 /**
- * search-escape-leaves-field.spec.js — #201 (D.1)
+ * search-escape-leaves-field.spec.js
  *
  * Dans le panneau Recherche, un champ qui a le focus garde les touches nues
  * pour lui (j/k, flèches, Tab) — mais Escape doit remonter au dispatcher
  * global, qui rend le focus au plateau : c'est la seule sortie clavier du
- * formulaire. Le panneau stoppait toutes les touches, Escape compris, et
- * l'utilisateur restait prisonnier du champ.
+ * formulaire.
  */
 
 import { test, expect } from '@playwright/test';

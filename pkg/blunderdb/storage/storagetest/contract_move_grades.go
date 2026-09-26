@@ -1,5 +1,5 @@
 // Contract case for the grades the Match panel's Transcript colours its rows
-// with (#287): each Move scored by its own play, graded at the library's
+// with: each Move scored by its own play, graded at the library's
 // thresholds (ADR-0046).
 // The table that runs it lives in contract.go.
 package storagetest

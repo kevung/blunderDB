@@ -4,7 +4,6 @@
     import { get } from 'svelte/store';
     import { fade } from 'svelte/transition';
 
-    // Wails runtime
     import { WindowGetSize } from '../wailsjs/runtime/runtime.js';
     import { isOnBoard } from './services/boardArea.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
@@ -28,14 +27,12 @@
         DEFAULT_PANEL_WIDTH
     } from './stores/panelLayoutStore';
 
-    // Stores
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
     import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
     import { transcriptionWheelStore } from './stores/transcriptionStore.js';
 
-    // Services
     import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, setStatusBarMessage } from './services/databaseService.js';
     import {
         showPosition,
@@ -76,7 +73,6 @@
     import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
-    // Components
     import Toolbar from './components/Toolbar.svelte';
     import CommandPalette from './components/CommandPalette.svelte';
     import Board from './components/Board.svelte';
@@ -98,26 +94,17 @@
     import { initFolderWatch } from './services/watchService.js';
     import { initTheme } from './stores/themeStore.js';
 
-    // Component state
     let mainArea;
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
-    // La hauteur PLANCHER de l'onglet Transcription (ADR-0048 décision 5). Un
-    // panneau qui a un contrat mesurable a le droit de dire de combien il a
-    // besoin. Le compte, MESURÉ et non estimé : la palette demande 236 px (la
-    // ligne du jet 25, la rangée de videau 25, le triangle 178, deux gaps de 4),
-    // la barre du brouillon et son gap 34, le padding 16 — et la barre d'onglets
-    // prend 30 px du dock avant que le panneau n'en voie rien. Les deux chiffres
-    // annoncés en séance (280, puis 300) oubliaient l'un cette barre, l'autre
-    // que la rangée de videau porte des MOTS et non quatre lettres. La valeur stockée n'est pas touchée : c'est un plancher à
-    // l'application, de sorte qu'un autre onglet retrouve la hauteur choisie.
+    // Hauteur plancher de l'onglet Transcription (ADR-0048 décision 5), mesurée : palette 236 px,
+    // barre du brouillon 34, padding 16, barre d'onglets 30. Appliquée sans toucher la valeur
+    // stockée, pour qu'un autre onglet retrouve la hauteur choisie.
     const TRANSCRIPTION_MIN_HEIGHT = 320;
     let appliedPanelHeight = $derived($activeTabStore === 'transcription' ? Math.max(panelHeight, TRANSCRIPTION_MIN_HEIGHT) : panelHeight);
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
-    // L'écran d'accueil s'écarte pour la session : le panneau Eval fonctionne
-    // sans base, et qui l'a écarté une fois ne veut pas le revoir à chaque
-    // fermeture de base.
+    // Écarté pour la session : le panneau Eval fonctionne sans base.
     let homeDismissed = $state(false);
     let positionCount = 0;
     let saveSessionTimeout = null;
@@ -131,18 +118,15 @@
         if ($statusBarModeStore === 'EVAL' && $positionStore) updateEPC($positionStore);
     });
 
-    // Re-fit the board whenever the effective panel position flips (manual mode
-    // change, or an auto-mode threshold crossing). The rAF defers the synthetic
-    // resize until after the flex layout has reflowed, so two.js measures the
-    // new container box. Dispatching 'resize' that doesn't change the window
-    // size is a no-op for windowAspectStore (safe_not_equal), so this can't loop.
+    // Re-fit the board when the effective panel position flips. The rAF lets the flex layout
+    // reflow first; a 'resize' that doesn't change the window size is a no-op for
+    // windowAspectStore (safe_not_equal), so this can't loop.
     $effect(() => {
         $effectivePositionStore; // tracked dep
         requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     });
 
-    // Reload positions when trigger increments (positionReloadTriggerStore is
-    // the only tracked dep; $databasePathStore is read at call time via $)
+    // Reload positions when the trigger increments (the only tracked dep).
     $effect(() => {
         $positionReloadTriggerStore; // tracked — fires each time MatchPanel triggers a reload
         untrack(() => {
@@ -150,13 +134,8 @@
         });
     });
 
-    // Keep `positionCount` in sync with positionsStore (an id list: the
-    // positions themselves are fetched by window through getPosition).
-    // Plain .subscribe() is intentional: `positionCount` is never read in the
-    // template directly, so $state reactivity is not needed here. The
-    // returned unsubscribe is captured and released in onDestroy below —
-    // App.svelte is mounted once for the app's lifetime, but leaving it
-    // unbound left the store holding a callback with no way to stop it.
+    // Plain .subscribe() is intentional: `positionCount` is never read in the template. App.svelte
+    // lives for the app's lifetime; the unsubscribe is still released in onDestroy.
     const unsubscribePositions = positionsStore.subscribe((value) => {
         positionCount = value?.length || 0;
         if (positionCount === 0) {
@@ -165,27 +144,17 @@
         }
     });
 
-    // Navigate to the current position when the library index changes. The
-    // cancelled flag guards against stale async callbacks when the index
-    // changes rapidly.
-    //
-    // Bug 1: in MATCH mode the board is driven directly by the match navigation
-    // (matchContextStore + showPosition in positionService), and
-    // currentPositionIndexStore is a STALE library index. Selecting an analysed
-    // move re-runs this effect via a downstream index notification; without this
-    // guard it would call showPosition(positions[value]) and snap the board to
-    // the last library position instead of staying on the studied match move.
-    // Read the mode with get() (non-reactive) so mode / match-context changes do
-    // not add themselves as dependencies of this effect. Exiting match mode sets
-    // the mode back to NORMAL *before* the index redraw (see loadAllPositions /
-    // exitEditMode), so this guard never blocks the return-to-library redraw.
+    // Navigate to the current position when the library index changes (`cancelled` guards stale
+    // async callbacks). In MATCH mode the board follows the match navigation and the index is
+    // stale: without the guard, selecting an analysed move would snap the board to a library
+    // position. The mode is read with get() so it is not a dependency; exiting match mode sets
+    // NORMAL before the index redraw, so the guard never blocks the return to the library.
     $effect(() => {
         const value = $currentPositionIndexStore;
         let cancelled = false;
         if (get(statusBarModeStore) === 'MATCH') return;
         if (positionCount > 0 && value >= 0 && value < positionCount) {
-            // getPosition loads the window around `value` on a cache miss and
-            // prefetches ahead; a stale callback (index moved on) is dropped.
+            // Loads the window around `value` on a miss; a stale callback is dropped.
             positionsStore
                 .getPosition(value)
                 .then((position) => {
@@ -203,14 +172,9 @@
         };
     });
 
-    // Tab handler: open/close panels and manage mode transitions.
-    // Only $activeTabStore is a tracked dependency; everything else is read
-    // inside untrack() so that mode/db-path changes alone don't re-run this.
-    //
-    // On the first run we must NOT return early: session restore may have
-    // already set activeTabStore to 'eval' or 'search', and we need to call
-    // enterEvalMode / enterEditMode immediately. We use `isFirstRun` to skip
-    // the exit paths (which depend on prevTab, unknown on the first call).
+    // Tab handler: only $activeTabStore is tracked, the rest is read in untrack(). The first run
+    // must not return early (session restore may already be on 'eval' or 'search'); `isFirstRun`
+    // skips only the exit paths, which need prevTab.
     $effect(() => {
         const tab = $activeTabStore;
         const isFirstRun = !tabInitialized;
@@ -227,9 +191,7 @@
                 }
                 if (tab === 'eval' && $statusBarModeStore !== 'EVAL') logger.perf('App:evalSync', () => enterEvalMode());
                 else if (!isFirstRun && prevTab === 'eval' && tab !== 'eval' && $statusBarModeStore === 'EVAL') exitEvalMode();
-                // The transcription tab is a scratch mode like the two above:
-                // entering photographs the studied position, leaving puts it
-                // back (ADR-0045 — the board belongs to the draft's Cursor).
+                // Transcription is a scratch mode too: the board belongs to the draft's Cursor (ADR-0045).
                 if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
                 else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();
                 applyTabPanels(tab);
@@ -239,9 +201,7 @@
 
     // ── UI event handlers ──────────────────────────────────────────
 
-    // Resize-handle drag (utils/resizeHandle.js). The action reads the mode
-    // and the start size at mousedown and hands them back so a layout flip
-    // mid-drag cannot cross axes.
+    // Resize-handle drag (utils/resizeHandle.js).
     function setPanelSize(size, side) {
         if (side) panelWidth = size;
         else panelHeight = size;
@@ -251,23 +211,15 @@
         else savePanelHeight(size);
     }
 
-    // A trackpad fires many wheel events per gesture; each step used to call
-    // straight into previousPosition()/nextPosition() (a Wails round trip for
-    // the analysis + comment of every intermediate position), stacking up
-    // awaits far faster than the board could show them. 60ms between
-    // navigations keeps one scroll gesture to a handful of steps (D.8, #208).
+    // A trackpad fires many wheel events per gesture, each a Wails round trip; 60 ms between
+    // navigations keeps one gesture to a handful of steps.
     let lastWheelNavTime = 0;
     function handleWheel(event) {
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL') return;
-        // La page Direction remplace le plateau dans la même zone : la molette y défile (#434).
+        // La page Direction remplace le plateau dans la même zone : la molette y défile.
         if (!isOnBoard(event.target)) return;
-        // En TRANSCRIBE, la molette au-dessus du plateau fait un pas dans la
-        // liste des candidats (ADR-0048 décision 11) : l'œil reste sur le
-        // plateau, les flèches du candidat défilent, et l'on reconnaît le coup
-        // vu sur la vidéo par son image. Ce mode manquait à l'exclusion
-        // ci-dessus, si bien qu'une molette y emmenait le plateau sur une autre
-        // position, contre laquelle l'effet du panneau se battait au geste
-        // suivant.
+        // En TRANSCRIBE, la molette au-dessus du plateau parcourt les candidats (ADR-0048
+        // décision 11) au lieu de changer de position, contre laquelle le panneau se battrait.
         if ($statusBarModeStore === 'TRANSCRIBE') {
             const delta = event.deltaY > 0 ? 1 : event.deltaY < 0 ? -1 : 0;
             if (delta === 0) return;
@@ -296,12 +248,8 @@
 
     // ── Lifecycle ──────────────────────────────────────────────────
 
-    // Opt-in, non-blocking update notice (#241): fires once at startup, never
-    // awaited by onMount (a slow/unreachable network must not delay
-    // anything else here), and only ever shows a status-bar line — never a
-    // dialog the user has to dismiss. CheckForUpdate itself is a no-op
-    // (PackageManaged: true) on an install detected as package-managed, so
-    // this is safe to call unconditionally once the opt-in is on.
+    // Opt-in update notice: fired once, never awaited (a slow network must not delay startup),
+    // shown only in the status bar. CheckForUpdate is a no-op on package-managed installs.
     async function maybeCheckForUpdate() {
         try {
             if (!(await GetCheckForUpdates())) return;
@@ -316,22 +264,13 @@
         }
     }
 
-    // `train` et `train <exercice>` (#273, #320, #323).
-    //
-    // Nu, il ouvre l'onglet Entraînement. Avec un exercice de l'onglet, il
-    // l'ouvre ET démarre : on tape `train scores` pour s'entraîner, pas pour
-    // arriver devant un lanceur. Les mots acceptés, alias compris (`tp`,
-    // `epc`, `quiz`…), sont écrits une fois, dans `exerciseForCommand`.
-    //
-    // La commande lit la MÊME source mémorisée que le lanceur (ADR-0041
-    // règle 2). Deux entrées du même exercice qui donnent deux sources ne sont
-    // pas deux entrées du même exercice, et le manuel promet la mémoire sans
-    // réserve.
+    // `train` ouvre l'onglet Entraînement ; `train <exercice>` l'ouvre ET démarre (alias dans
+    // `exerciseForCommand`). La commande lit la MÊME source mémorisée que le lanceur (ADR-0041
+    // règle 2) : le manuel promet la mémoire sans réserve.
     async function startTrainingCommand(drill) {
         const wanted = String(drill || '').trim();
         if (!wanted) {
-            // Ouvrir, jamais refermer : `cmd_mode.rst` dit « Ouvre », et taper
-            // `train` depuis l'onglet fermait la session sous les doigts.
+            // Ouvrir, jamais refermer (`cmd_mode.rst` dit « Ouvre »).
             showTrainingPanel();
             return;
         }
@@ -386,53 +325,36 @@
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
 
-        // Apply the persisted UI language before anything renders; fall back to
-        // English if the config read fails.
+        // The persisted UI language before anything renders; English if the read fails.
         try {
             await initLanguage(await GetLanguage());
         } catch (_e) {
             await initLanguage('en');
         }
 
-        // Load the persisted board palette (falls back to defaults internally).
         initBoardColors();
 
-        // Le thème nommé (#286) : les jetons seulement, pas la palette du
-        // plateau — celle de l'utilisateur vient d'être chargée, et la
-        // réécrire ici effacerait son travail à chaque lancement.
+        // Les jetons seulement : la palette de l'utilisateur vient d'être chargée et primerait.
         initTheme();
 
-        // Apply the persisted interface scale (falls back to 100% internally).
         initUIScale();
 
-        // Apply the persisted panel position (falls back to bottom internally).
         initPanelPosition();
 
-        // Apply the persisted panel size (falls back to the defaults internally).
-        // A one-shot seed of the local $state, not a reactive binding: the
-        // resize-handle drag below owns panelWidth/panelHeight afterwards.
+        // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         initPanelSize().then(() => {
             panelHeight = get(panelHeightStore);
             panelWidth = get(panelWidthStore);
         });
 
-        // On first launch only, show the guided-tour catalog once. The home
-        // screen (#284) offers the same tour, so the modal is not the only
-        // way in — it stays for the very first launch, where an empty
-        // application deserves both.
+        // First launch only: the guided-tour catalog, also offered by the home screen.
         maybeRunFirstRunTour();
 
-        // The watched folder (#258), if the user turned one on. Fire and
-        // forget: a folder that has gone away must not delay startup, and the
-        // settings pane reports what actually runs rather than what was asked
-        // for.
+        // The watched folder, fire and forget: a vanished folder must not delay startup.
         initFolderWatch();
 
-        // A database file the OS handed this process on the command line — a
-        // .desktop's Exec=blunderDB %f, a Windows/macOS file-association
-        // double-click (#241) — takes priority over the remembered last
-        // database: opening it is presumably why the user launched the app
-        // this time.
+        // A database handed on the command line (file association, Exec=blunderDB %f) takes
+        // priority over the remembered one.
         try {
             const startupPath = await StartupFilePath();
             if (startupPath && (await PathExists(startupPath))) {
@@ -443,31 +365,23 @@
             logger.error('Error opening the database passed on the command line:', error);
         }
 
-        // Reopen the last database, but treat the remembered path as a *host
-        // capability* (the filesystem it lives on may be unmounted, the file may
-        // be locked by another instance, etc). Only a *definitively* gone path is
-        // forgotten; a path that is merely temporarily unavailable is kept so a
-        // later launch can reopen it once the condition clears. Probing existence
-        // first also stops SQLite from silently recreating an empty database at a
-        // stale path (sql.Open is lazy and modernc creates the file on first use).
+        // Reopen the last database as a host capability (ADR-0004): only a definitively gone path
+        // is forgotten, a temporarily unavailable one is kept. Probing first also stops SQLite
+        // from silently creating an empty database at a stale path (modernc creates on first use).
         try {
             const lastDbPath = await GetLastDatabasePath();
             if (lastDbPath) {
                 if (await PathExists(lastDbPath)) {
-                    // Present: attempt to reopen. openDatabaseByPath handles and
-                    // surfaces its own open errors; we deliberately keep the path
-                    // whatever happens, so a transient lock/IO error never erases it.
+                    // Keep the path whatever happens: a transient lock/IO error must not erase it.
                     await openDatabaseByPath(lastDbPath);
                 } else {
-                    // Definitively gone: forget it so we don't keep trying (and
-                    // don't recreate an empty database at the old location).
+                    // Definitively gone: forget it (and never recreate an empty database there).
                     logger.log('Last database no longer exists, forgetting path:', lastDbPath);
                     await SaveLastDatabasePath('');
                 }
             }
         } catch (error) {
-            // Any failure here (including the existence probe itself) is treated as
-            // transient: keep the remembered path untouched.
+            // Any failure, the probe included, is transient: keep the path.
             logger.error('Error auto-reopening last database (keeping remembered path):', error);
         }
     });
@@ -495,7 +409,7 @@
         </div>
     {/if}
 
-    <!-- L'écran d'accueil (#284). Un plateau vide n'est pas une invitation :
+    <!-- L'écran d'accueil. Un plateau vide n'est pas une invitation :
          il ne dit ni ce que l'outil sait faire, ni par où commencer. Il
          s'efface dès qu'une base est ouverte, et se laisse écarter pour qui
          veut se servir du panneau Eval sans base. -->
@@ -509,7 +423,7 @@
 
     <MatchInfoBar />
 
-    <!-- La file d'étude post-import (#259) : une bande, pas une fenêtre. Le
+    <!-- La file d'étude post-import : une bande, pas une fenêtre. Le
          reste de l'application doit rester utilisable pendant le parcours,
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
     <StudyQueueBar />

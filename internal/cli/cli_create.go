@@ -55,12 +55,10 @@ func (cli *CLI) runCreate(args []string) error {
 	}
 	text := formatLower != "json"
 
-	// Ensure .db extension is present
 	if !strings.HasSuffix(strings.ToLower(*dbPath), ".db") {
 		*dbPath += ".db"
 	}
 
-	// Check if database already exists
 	existing := true
 	if _, err := os.Stat(*dbPath); err != nil {
 		existing = false
@@ -68,18 +66,14 @@ func (cli *CLI) runCreate(args []string) error {
 		return fmt.Errorf("database already exists: %s (use --force to overwrite)", *dbPath)
 	}
 
-	// Create directory if needed
 	dir := filepath.Dir(*dbPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	// --force overwrites whatever is at dbPath, not just a database SetupDatabase
-	// can open and erase in place: the point of --force is to replace ANY
-	// existing file there, including a leftover/corrupt one that fails
-	// SQLite's own header check ("file is not a database"). Removing it first
-	// guarantees SetupDatabase always starts from nothing rather than an
-	// unopenable file it has no chance of erasing content-wise.
+	// --force replaces any file at dbPath, including a corrupt one SQLite
+	// cannot open ("file is not a database"), so remove it first rather than
+	// let SetupDatabase try to erase it.
 	if existing {
 		if err := os.Remove(*dbPath); err != nil {
 			return fmt.Errorf("failed to remove existing database: %w", err)

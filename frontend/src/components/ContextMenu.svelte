@@ -25,7 +25,7 @@
     });
 
     // Escape closes the menu before anything else sees it — the panels' tiers,
-    // the global dispatcher (escapeService.js, #414).
+    // the global dispatcher (escapeService.js).
     $effect(() => closeOnEscape(() => onClose?.()));
 
     /** @param {KeyboardEvent} event */

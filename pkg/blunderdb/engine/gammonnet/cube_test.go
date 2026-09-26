@@ -172,9 +172,8 @@ func TestMatchStateSwap(t *testing.T) {
 	}
 }
 
-// Acceptance criterion (#122): a pair of decisions identical except for the
-// score must be able to disagree. This is the one test that catches a score
-// silently ignored anywhere between the codec, the recursion, and the MET.
+// Two decisions identical except for the score must be able to disagree: the
+// test that catches a score silently ignored between codec, recursion and MET.
 func TestDecideMatchScoreChangesTheVerdict(t *testing.T) {
 	p := probs(0.72, 0.28, 0.04, 0.03, 0.0)
 	eff := DefaultEfficiency(CubeCentred)
@@ -200,16 +199,12 @@ func TestDecideMatchScoreChangesTheVerdict(t *testing.T) {
 
 func closeEqual(a, b float64) bool { return math.Abs(a-b) < 1e-9 }
 
-// The Crawford game itself has no cube in play, by rule -- regardless of what
-// the equities say, and regardless of whether either away score happens to
-// be 1. This is exactly the kind of fact that gets lost in silence if the
-// flag is dropped anywhere on the way from a domain.Position.
+// The Crawford game has no cube in play, by rule, whatever the equities say:
+// a fact silently lost if the flag is dropped on the way from a
+// domain.Position.
 func TestDecideMatchCrawfordForcesNoDouble(t *testing.T) {
-	// The trailer (on roll, 5-away) against a leader at match point (1-away):
-	// textbook post-Crawford theory says the trailer should virtually always
-	// double. During the Crawford game itself, though, the cube is dead by
-	// rule regardless of what the equities say — that is what the flag alone
-	// must produce here, with every other input held fixed.
+	// Trailer 5-away against a leader at match point: post-Crawford he would
+	// double; the flag alone must make the cube dead here.
 	p := probs(0.7, 0.2, 0.03, 0.05, 0.0)
 	eff := DefaultEfficiency(CubeCentred)
 	state := MatchState{AwayOnRoll: 5, AwayOpponent: 1, Cube: 1, Crawford: true}
@@ -238,12 +233,8 @@ func TestDecideMatchCrawfordForcesNoDouble(t *testing.T) {
 }
 
 // During the Crawford game the VALUE, not just the verdict, is the dead
-// cube's: the cubeless match equity, whoever "owns" a cube nobody can turn
-// and whatever the efficiency. Found on 2026-09-02 by probing the opening
-// rolls against gnubg — Decide already forced NoDouble, but Value and the
-// no-double equity next to it still walked the redouble chain and valued the
-// 4-away/1-away Crawford opening at +0.68 (normalised) against gnubg's
-// +0.16, which is the same number cubeless and cubeful in that game.
+// cube's: the cubeless match equity, whatever the owner and efficiency (gnubg
+// gives the same number cubeless and cubeful there).
 func TestValueCrawfordIsTheDeadValue(t *testing.T) {
 	distributions := []*[NumOutputs]float32{
 		probs(0.3, 0.05, 0.0, 0.2, 0.01),
@@ -347,9 +338,7 @@ func TestValueMatchWithinEquityBand(t *testing.T) {
 // ── ADR-0022: the live curve's tails ────────────────────────────────────────
 
 // The live curve starts at (0, -L) and ends at (1, +W), in all three cube
-// states. This is the anchor the pre-ADR-0022 shape violated: it capped the
-// top tail at max(1, e(p)), so the cube a player keeps while playing the game
-// on for the gammon was priced at zero.
+// states — no plateau (ADR-0022).
 func TestLiveCurveReachesTheExtremeAnchors(t *testing.T) {
 	for _, wl := range [][2]float64{{1, 1}, {1.8, 1.2}, {2.5, 1}, {1, 2.5}} {
 		w, l := wl[0], wl[1]
@@ -364,11 +353,9 @@ func TestLiveCurveReachesTheExtremeAnchors(t *testing.T) {
 	}
 }
 
-// Gammonless, the tails are flat at ±1 — the exact values of the plateau
-// ADR-0022 removed. W = L = 1 is the domain of the two-sided bearoff oracle
-// the cube efficiencies were fitted against, so this test is what says the
-// correction invalidates no measured DefaultEfficiency. Breaking it means a
-// re-fit, not a re-baseline.
+// Gammonless (W = L = 1), the tails are flat at ±1. That is the domain the
+// cube efficiencies were fitted on, so this test says ADR-0022 invalidates no
+// DefaultEfficiency; breaking it means a re-fit, not a re-baseline.
 func TestGammonlessTailsStayFlat(t *testing.T) {
 	for _, p := range []float64{0.85, 0.90, 0.95, 0.99, 1.0} {
 		if got := janowskiEquity(p, 1, 1, CubeCentred, 1.0); math.Abs(got-1.0) > 1e-9 {
@@ -394,9 +381,8 @@ func TestGammonlessTailsStayFlat(t *testing.T) {
 //	gnubg 2-ply   ND +1.099   DT +1.707   (14.0 %)
 //	XG Roller++   ND +1.082   DT +1.678   (12.1 %)
 //
-// Before ADR-0022 this returned ND = +0.995 and therefore DoublePass. The
-// bracket is deliberately wide: what is pinned is the side of +1 and the
-// order of magnitude, not a fourth decimal the next weights would move.
+// The bracket is deliberately wide: it pins the side of +1 and the order of
+// magnitude, not a decimal the next weights would move.
 func TestDecideMoneyTooGoodOnAGammonishPosition(t *testing.T) {
 	p := probs(0.7292, 0.5347, 0.0475, 0.0545, 0.0030)
 	dec, ok := Decide(p, CubeCentred, nil, DefaultEfficiency(CubeCentred), false)

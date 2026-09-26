@@ -243,9 +243,9 @@ func participantState(t *testing.T, d *Database, tID int64, id string) string {
 	return ""
 }
 
-// TestUpdateWithdrawnKeepsWithdrawal (#439): the engine records a correction as the entry added
-// again under the same identifier, and adding a player clears their withdrawal. Correcting the
-// club of someone who left at 22 h put them back "in play", ranked, and paired — silently.
+// TestUpdateWithdrawnKeepsWithdrawal: the engine records a correction as the entry added
+// again under the same identifier, which clears a withdrawal: correcting a withdrawn player's
+// club must not silently put them back in play.
 func TestUpdateWithdrawnKeepsWithdrawal(t *testing.T) {
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)
@@ -275,7 +275,7 @@ func TestUpdateWithdrawnKeepsWithdrawal(t *testing.T) {
 	}
 }
 
-// TestReinstateParticipant (#439): coming back is a named gesture, not a side effect.
+// TestReinstateParticipant: coming back is a named gesture, not a side effect.
 func TestReinstateParticipant(t *testing.T) {
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)

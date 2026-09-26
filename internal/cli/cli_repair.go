@@ -6,26 +6,14 @@ import (
 	"strings"
 )
 
-// runRepair is `blunderdb repair`: recompute what the database DERIVES from
-// what it stores — the scalar columns of every analysis, from the JSON they
-// are a projection of, the phase of every position, from its board, and the
-// Crawford sentinel of every away score, from the match the position came
-// from or, for a position no match points at, the XGID it came in with from
-// another program (#338, #360).
+// runRepair is `blunderdb repair`: recompute what the database derives from
+// what it stores — each analysis's scalar columns from its JSON, each
+// position's phase from its board, and the Crawford sentinel of each away
+// score from its match or, lacking one, from its XGID. The stored JSON stays
+// intact, so a projection bug is fixed without re-importing.
 //
-// The JSON stays intact, so a bug in the projection is repairable without
-// re-importing anything — it has been needed once already, when the XG
-// importer's "Double No" was read as a real double and gave the column the
-// error of a double that never happened (#115). Fixing the reader did nothing
-// for the rows already written.
-//
-// Never automatic, and that is the point: rewriting every analysis column on
-// the mere act of opening a database is not something a tool should do behind
-// its user's back. It is a schema-preserving repair, not a migration.
-//
-// The daemon has served this as /v1/analyses.repair since it existed; the CLI
-// and the GUI could not reach it until the reverse parity check went looking
-// (G.14, #242).
+// Never automatic: it is a schema-preserving repair the user asks for, not a
+// migration run on open.
 func (cli *CLI) runRepair(args []string) error {
 	repairCmd := flag.NewFlagSet("repair", flag.ContinueOnError)
 

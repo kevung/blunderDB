@@ -1,9 +1,8 @@
 package cli
 
-// cli_search_query_test.go — `blunderdb search --query`, the flag that hands
-// the command line the same query language the application's command bar
-// speaks (B.18, #186). The twenty-four filter flags covered twenty-four of the
-// forty-five filter fields; the query covers every one a user can type.
+// cli_search_query_test.go — `blunderdb search --query`, the command bar's
+// query language on the command line; it covers every filter field, where
+// the flags cover only some.
 
 import (
 	"strings"
@@ -58,10 +57,9 @@ func TestSearchQueryRefusesUnknownTokens(t *testing.T) {
 	}
 }
 
-// The query and the filter flags are two spellings of the same thing, and a
-// precedence rule between them would be a rule nobody could remember. Refusing
-// the combination is the honest answer; a flag that says where to search or how
-// to print is not a filter and stays compatible.
+// The query and the filter flags are two spellings of the same thing, so the
+// combination is refused rather than given a precedence rule. Flags that say
+// where to search or how to print are not filters and stay compatible.
 func TestSearchQueryRefusesFilterFlagsButAcceptsOutputFlags(t *testing.T) {
 	t.Parallel()
 	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--query", "s cube", "--individual"})

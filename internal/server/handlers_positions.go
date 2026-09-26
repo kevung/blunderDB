@@ -26,12 +26,12 @@ type xgidReq struct {
 	XGID string `json:"xgid"`
 }
 
-// ogidReq carries an OpenGammon Position ID (#260).
+// ogidReq carries an OpenGammon Position ID.
 type ogidReq struct {
 	OGID string `json:"ogid"`
 }
 
-// similarReq asks for the neighbours of a stored position (#293).
+// similarReq asks for the neighbours of a stored position.
 type similarReq struct {
 	PositionID int64 `json:"positionId"`
 	Limit      int   `json:"limit"`
@@ -97,20 +97,19 @@ func (s *Server) positionRoutes() []route {
 			}
 			return ps().Update(ctx, scope, req.Position)
 		})},
-		// Reclassification de la phase dérivée (ADR-0035). Explicite et jamais
-		// automatique, comme /v1/analyses.repair : la phase se recalcule quand
-		// la règle change, pas à chaque ouverture. Le compte rendu dit combien
-		// de lignes ont RÉELLEMENT changé — « quelque chose avait bougé » se
-		// distingue de « ça a tourné ».
+		// Reclassifies the derived phase (ADR-0035). Explicit, never
+		// automatic, like /v1/analyses.repair: the phase recomputes when the
+		// rule changes, not on every open. The report counts rows that
+		// ACTUALLY changed, not merely visited.
 		{http.MethodPost, "/v1/positions.reclassifyPhases", rpc(func(ctx context.Context, scope string, _ struct{}) (reclassifyResp, error) {
 			n, err := ps().ReclassifyDerived(ctx, scope)
 			return reclassifyResp{Reclassified: n}, err
 		})},
-		// Réparation de la sentinelle Crawford (#338, ADR-0045 §7). Jumelle de
-		// la route ci-dessus, et pour la même raison : la valeur est dérivée du
-		// match, les importeurs l'ont longtemps écrite fausse, et la corriger
-		// après coup REHACHE la position — l'away score fait partie de
-		// l'identité Zobrist. Donc explicite, jamais automatique.
+		// Repairs the Crawford sentinel (ADR-0045 §7). Twin of the route
+		// above, and for the same reason: the value is derived from the
+		// match, and fixing it after the fact REHASHES the position — the
+		// away score is part of the Zobrist identity. So explicit, never
+		// automatic.
 		{http.MethodPost, "/v1/positions.repairCrawford", rpc(func(ctx context.Context, scope string, _ struct{}) (repairCrawfordResp, error) {
 			n, err := ps().RepairCrawfordSentinel(ctx, scope)
 			return repairCrawfordResp{Repaired: n}, err
@@ -131,7 +130,7 @@ func (s *Server) positionRoutes() []route {
 			}
 			return &pos, nil
 		})},
-		// Decode an OGID string into a Position (#260). Same shape and same
+		// Decode an OGID string into a Position. Same shape and same
 		// reasons as fromXGID above: pure, no storage, and useful to any
 		// client that has an identifier rather than a file.
 		{http.MethodPost, "/v1/positions.fromOGID", rpc(func(ctx context.Context, scope string, req ogidReq) (*domain.Position, error) {
@@ -210,10 +209,10 @@ func (s *Server) positionRoutes() []route {
 			}
 			return race.Evaluate(req.Position), nil
 		})},
-		// « Des positions comme celle-ci » (#293, ADR-0043). Un balayage
-		// exhaustif, donc des voisins EXACTS : sous cent mille positions un
-		// index approximatif coûterait sa cohérence pour un rappel moindre
-		// (P7). Le classement se prend DANS la classe de la cible.
+		// "Positions like this one" (ADR-0043). An exhaustive scan, so EXACT
+		// neighbours: under a hundred thousand positions, an approximate
+		// index would trade consistency for a smaller recall gain than it
+		// costs. Ranking is done WITHIN the target's class.
 		{http.MethodPost, "/v1/positions.similar", rpc(func(ctx context.Context, scope string, req similarReq) ([]storage.SimilarPosition, error) {
 			if req.PositionID <= 0 {
 				return nil, errMissing("positionId")

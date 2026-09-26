@@ -12,10 +12,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The clock strip on the two scenarios of the simulation that broke it (#456, D8.3;
-// tasks/nicomaque/simulation-2026-09/rapport/S5.md, scenarios-go § 8): S1, one club evening
-// that ends long after the hall closes, and S5, five days where the elapsed time counted the
-// nights as play and no end was forecast anywhere.
+// The clock strip on two scenarios: S1, one club evening that ends long after the hall closes,
+// and S5, five days whose nights must not count as play and whose end must be forecast.
 
 // hall is the time of day the tables are open: matches are launched only inside it.
 type hall struct{ open, close int }
@@ -212,7 +210,7 @@ func TestClockS5FiveDays(t *testing.T) {
 	}
 }
 
-// A closed tournament says nothing: no pace, no break, no end (#456).
+// A closed tournament says nothing: no pace, no break, no end.
 func TestClockAfterClosing(t *testing.T) {
 	d := newTestDB(t)
 	tID := directedAt(t, d, 8, `{"name":"Court","min_per_point":2,"tables":{"count":4},

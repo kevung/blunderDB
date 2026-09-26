@@ -1,5 +1,5 @@
 <script>
-    // La corbeille (#285, ADR-0036). Une suppression reste une suppression :
+    // La corbeille (ADR-0036). Une suppression reste une suppression :
     // un instantané JSON de ce qui disparaît est écrit avant, et rien d'autre
     // dans la base ne sait que cette table existe. Ce panneau est la seule
     // fenêtre par laquelle on la regarde.

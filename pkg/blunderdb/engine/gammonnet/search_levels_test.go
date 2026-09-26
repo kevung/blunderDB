@@ -13,12 +13,9 @@ import (
 	"testing"
 )
 
-// TestEmbeddedSearchLevelsJSONMatchesItsChecksumPin holds the copy embedded
-// in this package to the checksum gammonNet published alongside it
-// (search_levels.sha256, the same discipline data/met_kazaross_xg2.sha256
-// already applies to the match equity table, issue #24): a hand-edited or
-// silently stale copy fails here instead of quietly disagreeing with what
-// this package's own DefaultPruneK/DefaultConfig derive from it.
+// TestEmbeddedSearchLevelsJSONMatchesItsChecksumPin holds the embedded copy
+// to the checksum gammonNet published with it (search_levels.sha256): a
+// hand-edited or stale copy fails here.
 func TestEmbeddedSearchLevelsJSONMatchesItsChecksumPin(t *testing.T) {
 	sum := sha256.Sum256(embeddedSearchLevelsJSON)
 	got := hex.EncodeToString(sum[:])
@@ -31,10 +28,8 @@ func TestEmbeddedSearchLevelsJSONMatchesItsChecksumPin(t *testing.T) {
 	}
 }
 
-// TestDefaultsDeriveFromTheEmbeddedNormalLevel is the same property
-// TestSanityLevel proved by hand while this package was being written: the
-// package-level defaults are not a second, independent copy of "normal" —
-// they are literally that struct's own fields.
+// TestDefaultsDeriveFromTheEmbeddedNormalLevel: the package defaults are the
+// "normal" level's own fields, not a second copy.
 func TestDefaultsDeriveFromTheEmbeddedNormalLevel(t *testing.T) {
 	normal, ok := Level("normal")
 	if !ok {
@@ -66,25 +61,14 @@ func TestLevelRefusesAnUnknownName(t *testing.T) {
 	}
 }
 
-// TestCanonicalFormsAgreeWithGammonNet is THE mechanical guard issue #25
-// asks for: it fails if blunderDB's embedded copy of the canonical search
-// levels drifts from gammonNet's own `data/search_levels.json` without the
-// two moving together.
-//
-// It only runs when a gammonNet checkout is actually available next to this
-// one — the layout this whole cross-repo verticale is developed in — so it
-// is silent by default in a CI job that checks out blunderDB alone. Set
-// GAMMONNET_SEARCH_LEVELS_JSON to point at a specific export file to force
-// it (e.g. a CI job that checks out both repos); otherwise it tries the
-// conventional sibling layout gammonNet's own CLAUDE.md/worktree
-// instructions produce (`../gammonNet` next to this repository's root).
+// TestCanonicalFormsAgreeWithGammonNet fails if the embedded copy drifts from
+// gammonNet's own `data/search_levels.json`. It runs only when that file is
+// found: GAMMONNET_SEARCH_LEVELS_JSON, or a sibling `../gammonNet` checkout.
 func TestCanonicalFormsAgreeWithGammonNet(t *testing.T) {
 	path := os.Getenv("GAMMONNET_SEARCH_LEVELS_JSON")
 	if path == "" {
-		// Five levels up from pkg/blunderdb/engine/gammonnet reaches this
-		// repository's PARENT directory (`/home/unger/src`, in the sandbox
-		// this verticale was developed in) — where gammonNet's own worktree
-		// convention (CLAUDE.md there) places a sibling checkout.
+		// Five levels up reaches this repository's parent, where a sibling
+		// gammonNet checkout lives.
 		candidates := []string{
 			filepath.Join("..", "..", "..", "..", "..", "gammonNet", "data", "search_levels.json"),
 			filepath.Join("..", "..", "..", "..", "..", "gammonNet-formes-canoniques", "data", "search_levels.json"),

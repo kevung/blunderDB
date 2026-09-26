@@ -1,9 +1,9 @@
 /**
- * direction-queue-keys.spec.js — #415
+ * direction-queue-keys.spec.js
  *
  * La file des propositions au clavier, dans l'application réelle : J choisit la proposition
  * suivante, ENTRÉE la confirme. Le panneau Tournois est visible en même temps que la page
- * Direction ; son écouteur `document` arrêtait toute touche nue, et la file ne recevait rien.
+ * Direction ; sans garde, son écouteur `document` intercepterait toute touche nue.
  */
 
 import { test, expect } from '@playwright/test';

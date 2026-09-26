@@ -1,29 +1,19 @@
 // Package training makes the Training questions that need the neural
 // evaluator (ADR-0040, ADR-0041).
 //
-// # Why a package of its own
+// The Evaluation exercise's domain is ANY position (ADR-0041 rule 4), so it
+// needs gammonNet; race cannot import gammonnet (the reverse import exists),
+// hence a package above both.
 //
-// The Bearoff generator lives in engine/race because a bear-off has no
-// contact: its legal plays are one-sided and the exact table is enough to
-// choose between them. The Evaluation exercise's domain is ANY position — a
-// race in either regime, or contact (ADR-0041 rule 4) — so choosing a play
-// needs gammonNet, and so does the truth of a contact position. race cannot
-// import gammonnet (gammonnet imports race), so this generator lives one level
-// above both, and imports both, with no cycle.
-//
-// # What this is, and what it is not
-//
-// The same record as race/generate.go's: a question is a SEED plus k PLIES,
-// the plies exist to MAKE a position and are thrown away with it. No dice the
-// user sees, no score that advances, no game to review (ADR-0037). The plies
-// are chosen by gammonNet at 0-ply (« gammonNet at one ply », ADR-0041 rule 1
-// — one ply of lookahead is the position after each play, which is what the
-// 0-ply search values).
+// As in race/generate.go, a question is a SEED plus k PLIES thrown away with
+// it — not a play mode (ADR-0037). The plies are chosen by gammonNet at 0-ply
+// (« gammonNet at one ply », ADR-0041 rule 1: the 0-ply search values the
+// position after each play).
 //
 // # Where the truth comes from
 //
-// One scale leaves the engine (ADR-0019), and the questions are money play, so
-// every number here is the one the Eval panel shows for the same position:
+// Money play on the one scale that leaves the engine (ADR-0019), so every
+// number is the one the Eval panel shows for the same position:
 //
 //   - in the EXACT regime (a pure bear-off the two-sided table covers,
 //     ADR-0012), the table's own win probability and money verdict;
@@ -33,17 +23,11 @@
 //     (ADR-0009), and a win chance graded against an estimate would grade the
 //     estimator.
 //
-// The cube answer is decided HERE, not in the interface: the three buttons
-// are graded exactly against CubeAnswer, and the interface never compares two
-// equities of its own (#322).
+// The cube answer is decided here, not in the interface: the three buttons are
+// graded against CubeAnswer and the interface never compares equities itself.
 //
-// # Parity
-//
-// Bound on *gui.App (GenerateEvaluationQuestion) for the reason
-// GenerateBearoffQuestion is: a pure function of the engine over one
-// position, nothing for the Database wrapper to hold, and no CLI or daemon
-// face in v1 — a generated question exists because somebody is about to
-// answer it under a clock.
+// Parity: bound on *gui.App (GenerateEvaluationQuestion), with no CLI or
+// daemon face, for the same reason as GenerateBearoffQuestion.
 package training
 
 import (
@@ -79,10 +63,9 @@ const (
 	// RefusalNotMoneyCubeDecision — a library position the exercise cannot
 	// ask AS IT IS: played at a match score, carrying dice (a chequer
 	// decision, not a pre-roll one), or with the cube in the opponent's
-	// hands (the roller has no cube action to choose). The library source
-	// hands the position back unchanged at k = 0, so it cannot quietly move
-	// it to money or clear its dice — that would be asking about a position
-	// the library does not hold.
+	// hands. The library source hands the position back unchanged, so it
+	// cannot quietly move it to money or clear its dice.
+
 	RefusalNotMoneyCubeDecision = "notMoneyCubeDecision"
 	// RefusalNotEvaluable — the engine could not evaluate the question. Not
 	// expected on a valid money position; named rather than turned into an
@@ -206,7 +189,7 @@ func (g *Generator) evaluation(req EvaluationRequest, rng *rand.Rand, now func()
 		}
 		// Only the GEOMETRY and the roller are the seed's: the question is
 		// a money position at a centred cube, whatever the seed's score and
-		// cube — the source makes no other kind (#322).
+		// cube — the source makes no other kind.
 		seed, ok := seedOf(req.Seed, rng)
 		if !ok {
 			return EvaluationQuestion{Source: req.Source, Refusal: RefusalNotAGame}

@@ -1,20 +1,9 @@
-// The formatted rows of an analysis, built once for every surface that shows
-// them.
-//
-// Two DOM tables (CubeVerdictTable, CandidateMovesTable) and the canvas that
-// clipboardService paints for "copy board with analysis" each used to carry
-// their own formatEquity and their own .toFixed(2) — four copies of one rule,
-// and the copied image drifted from the screen: a centred cube was captioned
-// "Redouble" on the image, an absent error cell was painted +0.000, the played
-// action was matched with a narrower vocabulary than the panel's. This module
-// is the one place a number becomes a cell. The tables and the canvas consume
-// rows that are already strings, and only lay them out — which is also what
-// keeps ADR-0019 honest on the frontend: the figures leave here exactly as the
-// backend supplied them, formatted, never converted.
-//
-// Pure on purpose: no store, no DOM, no i18n import. The translation function
-// is a parameter, so the canvas (non-reactive `translate`) and a component
-// (reactive `$t`) get identical labels from identical code.
+// The formatted rows of an analysis, built once for every surface that shows them: the two DOM
+// tables (CubeVerdictTable, CandidateMovesTable) and the canvas of "copy board with analysis".
+// This is the one place a number becomes a cell; consumers only lay out strings, so figures
+// leave exactly as the backend supplied them, formatted, never converted (ADR-0019).
+// Pure: no store, no DOM, no i18n import — `t` is a parameter, so the canvas (`translate`) and
+// a component (`$t`) get identical labels.
 
 import { CUBE_OPTIONS, DECISION_STATE } from './cubeDecision.js';
 
@@ -31,16 +20,9 @@ export function formatEquity(value) {
     return (value >= 0 ? '+' : '') + value.toFixed(3);
 }
 
-// The equity column's header key (ADR-0016 point 6, #190/C.3): the figures
-// beneath it are on two different scales depending on the position's own
-// referential (ADR-0019) — money points at money play, normalised match
-// equity at a score — and before this the header just said "Équité" either
-// way, the one thing that could have told the reader the scale had changed.
-// `isMoney` is undefined at call sites with no position to read a
-// referential from (a bare formatting test, the search filter's own
-// "Équité (millièmes)" label, which names a stored column across the whole
-// database rather than one position's referential and is out of this
-// fiche's scope) — those keep the plain, referential-silent label.
+// The equity column's header key (ADR-0016 point 6): money points at money play, normalised
+// match equity at a score (ADR-0019), so the header says which. `isMoney` undefined (no position
+// to read a referential from, e.g. the search filter naming a stored column) keeps the plain label.
 function equityHeaderKey(isMoney) {
     if (isMoney === true) return 'analysis.equityMoney';
     if (isMoney === false) return 'analysis.equityMatch';
@@ -67,19 +49,15 @@ const OPTION_LABEL_KEYS = {
     double_pass: ['analysis.doublePass', 'analysis.redoublePass']
 };
 
-// Legacy action strings: AnalysisPanel's isPlayedCubeAction speaks the
-// vocabulary stored in playedCubeAction ("Double", "Take", …), so the
-// canonical keys are translated back at the call rather than changing a
-// contract two panels and the board already share.
+// playedCubeAction speaks the legacy vocabulary ("Double", "Take", …), so canonical keys are
+// translated back here rather than changing a contract shared by two panels and the board.
 export function isPlayedOption(key, isPlayedCubeAction) {
     if (key === 'no_double') return isPlayedCubeAction('No Double');
     if (key === 'double_take') return isPlayedCubeAction('Double') && isPlayedCubeAction('Take');
     return isPlayedCubeAction('Double') && isPlayedCubeAction('Pass');
 }
 
-// The single place the block's state is named (ADR-0020 rule 4). Empty means
-// "still computing" and nothing else — never a refusal, never a regime that
-// will never answer, never a dead cube.
+// The verdict cell's text (ADR-0020 rule 4): empty only while computing.
 function verdictText(decision, state, t) {
     switch (state) {
         case DECISION_STATE.PENDING:
@@ -93,28 +71,23 @@ function verdictText(decision, state, t) {
         case DECISION_STATE.CRAWFORD:
             return t('cube.crawford');
         default:
-            // A live evaluation names its verdict by key, so it is translated
-            // and keeps "too good"; a stored record carries its analysing
-            // engine's own words and is reported verbatim.
+            // A live verdict is a key (translated, keeps "too good"); a stored record's engine
+            // words are reported verbatim.
             return decision?.verdict ? t('cube.verdicts.' + decision.verdict) : (decision?.verdictText ?? '');
     }
 }
 
 /**
- * cubeRows lays out a cube Decision (utils/cubeDecision.js) as the three
- * named option rows plus the verdict row.
- *
- * An absent equity or error is an EMPTY cell here, not a dash: in this block
- * an empty cell is a state — pending (rule 4), the best option's "nothing to
- * lose" (rule 2), or "no choice to make" with a dead cube (rule 5).
+ * cubeRows lays out a cube Decision (utils/cubeDecision.js) as three option rows plus the
+ * verdict. An absent equity or error is an EMPTY cell, not a dash: here emptiness is a state —
+ * pending (rule 4), the best option's "nothing to lose" (rule 2), a dead cube (rule 5).
  *
  * @returns {{ header: string[], rows: {key, label, cells: string[], highlight: boolean, best: boolean}[], verdict: {label, text, unavailable} }}
  */
 export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () => false, masked = false, isMoney } = {}) {
     const options = decision?.options ?? CUBE_OPTIONS.map((key) => ({ key, equity: null, error: null }));
     const state = decision?.state ?? DECISION_STATE.PENDING;
-    // The best-row emphasis is suppressed under the mask — it is the verdict's
-    // only other carrier (ADR-0020 rule 7).
+    // No best-row emphasis under the mask: the verdict's only other carrier (ADR-0020 rule 7).
     const best = masked ? null : decision?.best;
     const cell = (v) => (masked ? HIDDEN : (formatEquity(v) ?? ''));
     return {
@@ -143,10 +116,8 @@ export function cubeInfoRows(cubeAnalysis, { t, engineFallback = '' } = {}) {
     ];
 }
 
-// The position facts of a stored cube record, in the compact P/O grid the
-// copied image paints beside the decision. The DOM shows these in
-// PositionFactsTable, on its own axis (ADR-0018); the image keeps the
-// compact grid, but the figures go through the same two rules as everywhere.
+// The position facts of a stored cube record, in the compact P/O grid the copied image paints
+// beside the decision (the DOM uses PositionFactsTable, ADR-0018), through the same two rules.
 export function cubeFactRows(cube) {
     const chance = (v) => formatChance(v) ?? DASH;
     const eq = (v) => formatEquity(v) ?? DASH;
@@ -171,23 +142,11 @@ export function cubeFactRows(cube) {
 export const CHECKER_COLUMNS = ['move', 'equity', 'error', 'pw', 'pg', 'pb', 'ow', 'og', 'ob', 'depth', 'engine'];
 
 /**
- * The two — and only two — named projections of a candidate list (ADR-0048
- * decision 4).
- *
- * `judge` is the list you weigh a play with: the six probability columns are the
- * matter of the judgement, and it is what the Eval and Analysis panels show.
- *
- * `identify` is the list you RECOGNISE a play in — the transcription of a match
- * played elsewhere, where the play is a fact already made and the question is
- * only "which of these is the one I saw". The probabilities are not read there;
- * they invite being read, and they cost 290 px of width, which is what stops the
- * three-column layout from fitting at 1024 px. `error` stays, because it says at
- * the moment of validation that the play just recorded was a blunder — the
- * reason the product exists.
- *
- * They are NAMED rather than exposed as a free `columns` list on purpose: a
- * third caller has to justify a third projection here, where the two are read
- * side by side, instead of inventing its own list and drifting.
+ * The two named projections of a candidate list (ADR-0048 decision 4). `judge` weighs a play:
+ * the six probability columns are the matter of it (Eval and Analysis panels). `identify`
+ * recognises a play already made (transcription): the probabilities cost 290 px, which breaks
+ * the three-column layout at 1024 px; `error` stays, to flag a blunder at validation.
+ * Named rather than a free `columns` list, so a third caller has to justify itself here.
  */
 export const CHECKER_PROJECTIONS = Object.freeze({
     judge: CHECKER_COLUMNS,
@@ -208,23 +167,10 @@ const CHECKER_HEADER_KEYS = {
     engine: 'analysis.engine'
 };
 
-// The reading order of a play: the least advanced checker moves first.
-//
-// A play is a set of steps, and the order its tokens are written in carries no
-// meaning to the engine — which is why they arrive in whatever order their
-// producer chose: gammonNet sorts them as strings ("18/14 24/18"), and an
-// imported analysis keeps XG's or gnubg's own order. A reader, though, replays
-// them one after the other on the board, so a play reads naturally only when it
-// starts from the back: "24/18 18/14", never "18/14 24/18".
-//
-// The rank of a token is its ORIGIN point, in the mover-relative numbering the
-// notation already uses (24 = the mover's own back checkers, "bar" further back
-// still, 25 here). Ties keep their original order — sort is stable — so
-// "8/5 8/3" is left exactly as its producer wrote it.
-//
-// Anything that does not parse as this notation ("Cannot move", a free-text
-// cell) is returned untouched: the rule reorders a play, it never rewrites a
-// string it does not understand.
+// The reading order of a play: the least advanced checker moves first ("24/18 18/14", never
+// "18/14 24/18"), since producers emit any order (gammonNet sorts as strings, imports keep XG's
+// or gnubg's). Rank = ORIGIN point, mover-relative, bar = 25. The sort is stable, so ties keep
+// the producer's order. A token that does not parse ("Cannot move") is returned untouched.
 function tokenOrigin(token) {
     const from = token.split('/')[0];
     if (from.toLowerCase() === 'bar') return 25;
@@ -243,31 +189,16 @@ export function orderMoveTokens(move) {
         .join(' ');
 }
 
-// One checker, one displacement: a play the SAME checker made in several steps
-// reads as the single move it is — "24/18 18/14" is "24/14".
-//
-// The step-by-step form carries something the condensed one cannot only when
-// the checker HIT on its way through: "24/18* 18/14" says a blot was picked up
-// on 18, and writing "24/14" would erase it. So a staging point survives
-// exactly when the checker hit on landing there, and disappears otherwise — a
-// hit on the FINAL point travels with the condensed token ("24/18 18/14*"
-// becomes "24/14*"), since nothing about it is lost.
-//
-// The rewrite only ever REMOVES a staging point; the surviving ones keep the
-// separator their producer wrote them with. gnubg's and XG's own chained form
-// stays chained ("24/18*/14"), a play written as separate tokens stays in
-// separate tokens, and no play is ever re-spelled just to look uniform.
-//
-// Two tokens are joined only when they carry the same multiplicity:
-// "24/18(2) 18/14(2)" is two checkers that both went the whole way, so it is
-// "24/14(2)"; "24/18(2) 18/14" is two checkers whose paths diverged, and the
-// notation is already the shortest true statement about them.
+// One checker, one displacement: "24/18 18/14" reads "24/14". A staging point survives only
+// when the checker HIT there ("24/18* 18/14" keeps the pickup on 18); a hit on the final point
+// travels with the condensed token ("24/14*"). The rewrite only removes staging points; the
+// survivors keep their producer's separator ("24/18*/14" stays chained). Tokens join only with
+// equal multiplicity: "24/18(2) 18/14" is two checkers whose paths diverged.
 
 const POINT = /^(?:bar|off|[1-9]|1\d|2[0-4])$/i;
 
-// A token is a chain of points ("24/18/14"), each LANDING point optionally
-// starred, with an optional multiplicity: "13/7*(2)". Anything else → null,
-// and the play is then left exactly as it arrived.
+// A token: a chain of points ("24/18/14"), each landing optionally starred, optional
+// multiplicity ("13/7*(2)"). Anything else → null, and the play is left as it arrived.
 function parseToken(token) {
     let body = token;
     let count = 1;
@@ -333,10 +264,8 @@ export function condenseMoveTokens(move) {
     const parsed = move.trim().split(/\s+/).filter(Boolean).map(parseToken);
     if (parsed.length === 0 || parsed.some((play) => play === null)) return move;
     const plays = parsed.map(dropIdleStages);
-    // The two halves of one checker's journey need not be neighbours in the
-    // producer's order ("13/11 12/10 11/9"), so every pair is a candidate; a
-    // join shortens the list, and the result may itself continue further, hence
-    // the restart. At most four steps in a play — the cost is nothing.
+    // The halves of one checker's journey need not be neighbours ("13/11 12/10 11/9"), so every
+    // pair is a candidate, and a join may continue further, hence the restart (≤ 4 steps).
     for (let i = 0; i < plays.length; i++) {
         const next = plays.findIndex((play, j) => j !== i && continues(plays[i], play));
         if (next === -1) continue;
@@ -359,25 +288,15 @@ function chanceCells(vector) {
 }
 
 /**
- * checkerRows lays out a ranked candidate list. Sorting, truncation and
- * selection stay with the caller; the rows come back in the order given.
- *
- * The move cell is rewritten by moveLabel above: one checker's several steps
- * become the single displacement they are (hits excepted), and the play is
- * then read from the back — the least advanced checker moves first, whatever
- * order the producer wrote.
- *
- * An absent value is a dash — the project's mark for a value never measured,
- * never for a zero. The one exception is the error column: the best move of a
- * stored record carries no error at all (domain.CheckerMove.EquityError is nil
- * there, by construction — it IS the reference), so its absence is a zero by
- * definition and is written +0.000, as it always was.
+ * checkerRows lays out a ranked candidate list, in the order given (sorting, truncation and
+ * selection stay with the caller); move cells go through moveLabel. An absent value is a dash
+ * (never measured, never a zero) — except the error column: the best move of a stored record
+ * has no error by construction (it IS the reference), written +0.000.
  *
  * @returns {{ columns: string[], header: string[], baseline: object|null, rows: {key, move, label, cells: string[], highlight: boolean}[] }}
  */
 export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null, isMoney, projection = 'judge' } = {}) {
-    // `identify` names its columns; `judge` keeps the historical truncation by
-    // showProvenance, which is ADR-0018 rule 4 and not a projection of its own.
+    // `judge` keeps the truncation by showProvenance (ADR-0018 rule 4), not a projection.
     const identifying = projection === 'identify';
     const columns = identifying ? CHECKER_PROJECTIONS.identify : showProvenance ? CHECKER_COLUMNS : CHECKER_COLUMNS.slice(0, 9);
     const provenance = (cells) => (showProvenance && !identifying ? cells : []);
@@ -403,10 +322,4 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
     };
 }
 
-// "Was this played?" (highlighting a row) is NOT this module's rule: it lives
-// once in utils/playedMarks.js (playedMovePredicate/playedCubeActionPredicate),
-// which AnalysisPanel and AnkiPanel both already call. clipboardService (the
-// canvas painter) calls the same two functions — fiche D.10, #210: this file
-// used to carry its own second copy, with its own positional-boolean
-// signature instead of playedMarks.js's `{ matchMode }`, and nothing checked
-// the two stayed in step.
+// "Was this played?" lives once in utils/playedMarks.js, shared by every surface that highlights.

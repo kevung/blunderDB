@@ -6,10 +6,8 @@ import (
 	"strings"
 )
 
-// translator turns a French source string into the target language. It is the
-// only place the gettext catalogues are consulted; missing is an error, never a
-// silent fallback to French (that fallback is exactly the failure mode this
-// generator exists to remove).
+// translator turns a French source string into the target language. A missing
+// translation is an error, never a silent fallback to French.
 type translator struct {
 	lang string
 	// cats is searched in order: the document's own catalogue first, then the
@@ -29,48 +27,29 @@ func (tr translator) tr(s string) (string, error) {
 	return "", fmt.Errorf("no %s translation for %q", tr.lang, s)
 }
 
-// escapeHTML escapes the three characters that can end a text node. The
-// generated fragments carry no attributes, so quote escaping is not needed —
-// and the help corpus is injected with {@html}, which is why nothing reaches
-// the renderer unescaped (see the safety test in frontend/src/__tests__).
+// escapeHTML escapes the characters that can end a text node (fragments carry
+// no attributes). The corpus is injected with {@html}, so nothing may skip it.
 func escapeHTML(s string) string {
 	r := strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
 	return r.Replace(s)
 }
 
-// boundary marks where a reStructuredText escaped space (`\ `) stood. Japanese
-// translations use it to separate inline markup from adjacent CJK text, where a
-// real space would be wrong; it must still act as a word boundary while the
-// emphasis patterns run, and disappear from the output afterwards.
+// boundary marks an RST escaped space (`\ `), used by Japanese next to CJK: a
+// word boundary for the emphasis patterns, removed from the output.
 const boundary = ""
 
 var (
 	literalRe = regexp.MustCompile("``([^`]+)``")
-	// Interpreted text with the default role, used in the documentation the way
-	// a literal is; the help modal has no title-reference styling to offer.
+	// Default-role interpreted text, rendered as a literal.
 	interpretedRe = regexp.MustCompile("`([^`]+)`")
 	strongRe      = regexp.MustCompile(`\*\*([^*]+)\*\*`)
-	// Emphasis, with docutils' own delimiter rules: the opening `*` must follow
-	// the start of the text, whitespace or an opening punctuation mark, and the
-	// closing `*` must precede the end, whitespace or a closing one — which is
-	// what makes the German `*TAB*-Taste` and the Finnish `*Historique*-välilehti`
-	// emphasis rather than literal asterisks. The private-use boundary rune
-	// (an escaped space, see above) counts on both sides.
-	//
-	// Docutils' "punctuation" is Unicode's, not a hand-picked list: openers are
-	// Ps/Pi/Pf, closers Pe/Pi/Pf, delimiters Pd/Po on both sides. A short list
-	// here left `*1*–*4*`, `*Advanced*…`, `、*着手の誤り*` and `*Décision*·` as
-	// literal asterisks in the help while the online documentation rendered
-	// them (#422). The classes are slightly wider than docutils' own tables
-	// (which drop a few ASCII Po such as `#` or `@`); being more lenient here
-	// only renders what Sphinx would reject — and the Sphinx build reports that.
+	// Emphasis with docutils' delimiter rules, using Unicode punctuation
+	// classes (openers Ps/Pi/Pf, closers Pe/Pi/Pf, Pd/Po either side) plus
+	// the boundary rune, so `*TAB*-Taste` or `、*着手の誤り*` render. Slightly
+	// wider than docutils; Sphinx reports what it would reject.
 	emRe = regexp.MustCompile(`(^|[\s<\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\x{E000}])\*([^*\s][^*]*)\*($|[\s>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\x{E000}])`)
-	// :ref:`text <label>` and :ref:`label`. inline() escapes before it
-	// substitutes, so by the time these run the angle brackets of the
-	// explicit-title form are already `&lt;`/`&gt;` — matching the raw `<`
-	// here silently sent `text &lt;label&gt;` to refBareRe as if it were a
-	// label, and every explicit-title reference in manuel.rst failed to
-	// resolve.
+	// :ref:`text <label>` and :ref:`label`, matched after escaping, so the
+	// angle brackets are already `&lt;`/`&gt;`.
 	refLabelRe = regexp.MustCompile(":ref:`([^`]+?)&lt;([^`]+?)&gt;`")
 	refBareRe  = regexp.MustCompile(":ref:`([^`]+)`")
 	roleRe     = regexp.MustCompile(":[a-z]+:`([^`]+)`")
@@ -89,13 +68,9 @@ func rstUnescape(s string) string {
 	})
 }
 
-// refuseEscapedBackslash rejects `\\` outside an inline literal. Docutils reads
-// it as a backslash to print, so `\\ ` — an escaped space written with one
-// escape too many, `\\\\ ` in a .po — shows a `\` in the online documentation
-// and would show one in the help (#422: six in ja.js). Nothing the help is
-// generated from wants a visible backslash in prose; the formula that does is a
-// .. math:: block, which never comes through here. An error, not a repair: the
-// fix belongs in the catalogue, where Sphinx renders the same string.
+// refuseEscapedBackslash rejects `\\` outside an inline literal: docutils
+// prints a backslash, never wanted in prose. An error, not a repair: the fix
+// belongs in the catalogue.
 func refuseEscapedBackslash(s string) error {
 	for _, m := range escapeRe.FindAllStringSubmatch(literalRe.ReplaceAllString(s, ""), -1) {
 		if m[1] == `\` {
@@ -105,11 +80,8 @@ func refuseEscapedBackslash(s string) error {
 	return nil
 }
 
-// inline renders reStructuredText inline markup as the small HTML vocabulary
-// the help modal styles. The text is escaped FIRST and the markup applied
-// afterwards, so no fragment of the source can inject an element: escaping
-// introduces none of the characters the patterns below look for, and the
-// patterns only ever emit the fixed tags written here.
+// inline renders RST inline markup as the help modal's HTML. The text is
+// escaped first, so only the fixed tags written here can appear.
 func (g *generator) inline(text string, tr translator) (string, error) {
 	s := escapeHTML(text)
 
@@ -171,11 +143,7 @@ func (g *generator) renderBlocks(blocks []block, tr translator) (string, error) 
 			if err != nil {
 				return "", err
 			}
-			// The manual nests three deep (a panel, its tabs, their parts);
-			// rendering every one as <h3> flattened "Onglet Joueurs" onto
-			// "Panneau Stats" and lost which belonged to which. h3 for the
-			// top level, then h4, h5, floored there — deeper than that the
-			// document would need a rewrite, not a smaller heading.
+			// h3, h4, h5 for the manual's three levels, floored at h5.
 			level := min(v.level+1, 5)
 			write("<h%d>%s</h%d>\n", level, escapeHTML(title), level)
 		case paragraph:
@@ -227,10 +195,8 @@ func (g *generator) renderBlocks(blocks []block, tr translator) (string, error) 
 			if err != nil {
 				return "", err
 			}
-			// LaTeX is made of braces, and `{i}` reads exactly like the
-			// `{appVersion}` placeholder the About tab interpolates. Encode
-			// them: the rendering is identical, and help.safety.test.js can
-			// keep refusing every brace outside that one tab.
+			// Encode braces: `{i}` would read as an interpolation
+			// placeholder, which help.safety.test.js refuses.
 			braces := strings.NewReplacer("{", "&#123;", "}", "&#125;")
 			write("<pre class=\"%s\">%s</pre>\n", v.class, braces.Replace(escapeHTML(text)))
 		case blockquote:

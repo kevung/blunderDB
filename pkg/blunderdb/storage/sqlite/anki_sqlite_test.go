@@ -159,13 +159,6 @@ func TestAnkiSyncMissingDeck(t *testing.T) {
 	}
 }
 
-// TestAnkiReviewUpdatesScheduling used to live here, checking that NextCard,
-// ReviewCard and ResetDeck move a card through its FSRS lifecycle — it is now
-// storagetest's testAnkiReviewUpdatesScheduling (contract_anki.go), run
-// against this backend as TestContract_SQLite/Anki/ReviewUpdatesScheduling
-// (B.14, #182): the two were exercising the exact same sequence, so this copy
-// added no coverage the shared one does not already give both backends.
-
 // TestAnkiReviewMissingCard verifies ReviewCard reports ErrNotFound for an
 // unknown card.
 func TestAnkiReviewMissingCard(t *testing.T) {

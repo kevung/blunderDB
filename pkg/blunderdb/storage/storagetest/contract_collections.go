@@ -538,7 +538,7 @@ func equalIDs(a, b []int64) bool {
 	return true
 }
 
-// testCollectionFilterQuery pins what makes a collection LIVING (#282): the
+// testCollectionFilterQuery pins what makes a collection LIVING: the
 // query is carried, it round-trips, and clearing it is reversible — the
 // membership rows a collection had before are still there, because making a
 // collection living must not destroy what it held.

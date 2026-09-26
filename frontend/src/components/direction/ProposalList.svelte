@@ -1,16 +1,9 @@
 <script>
     /*
-     * La file des propositions (issue #370, tasks/nicomaque/ux.md §2.3 et §4.1).
-     *
-     * C'est là que le directeur passe 95 % de son temps, et le budget de gestes le dit :
-     * confirmer une proposition est UN clic, tout lancer en fait DEUX quel que soit le nombre.
-     * La souris est première ; `j`/`k`/Entrée accélèrent pour qui les connaît, et l'infobulle
-     * les enseigne — un directeur occasionnel ne doit rien avoir à retenir.
-     *
-     * Ce que la file ne fait pas : refuser. Le moteur propose, le directeur décide (ADR-0047).
-     * D'où « apparier à la main », toujours offert, et « ignorer pour l'instant », qui n'écrit
-     * rien du tout — la proposition revient identique au prochain appel, puisqu'elle est
-     * déterministe.
+     * La file des propositions (tasks/nicomaque/ux.md §2.3, §4.1) : confirmer = un clic,
+     * tout lancer = deux ; `j`/`k`/Entrée en accélérateurs. Le moteur propose, le directeur
+     * décide (ADR-0047) : « apparier à la main » toujours offert, « ignorer pour l'instant »
+     * n'écrit rien.
      */
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
@@ -32,9 +25,7 @@
      */
     let { proposals = [], players = [], busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
 
-    /* Le compte à rebours d'une micro-ronde (issue #388). L'échéance vient du moteur ; ce qui
-       se compte ici, c'est le temps qui reste, et il faut donc un battement de seconde — aucun
-       événement ne sera écrit d'ici là. */
+    /* Compte à rebours d'une micro-ronde : un battement de seconde, sans événement. */
     let tick = $state(Date.now());
     $effect(() => {
         const timer = setInterval(() => (tick = Date.now()), 1000);
@@ -102,20 +93,13 @@
         manualOpen = false;
     }
 
-    /* J / ↓, K / ↑ et ENTRÉE, nus : tant que la page Direction est affichée, ils sont à la file,
-       sauf quand le focus est dans le panneau Tournois ou dans un champ — la règle et son
-       mécanisme sont écrits dans services/directionKeys.js (#415). Écouté en CAPTURE sur window :
-       le panneau Tournois et le répartiteur, montés avant la page, ne passent pas devant. Ce qui
-       est ouvert par-dessus (modale, surcouche, confirmation de « Tout lancer ») garde ses
-       touches, et l'appui continue alors son chemin. CTRL-J ouvre toujours l'Entraînement.
-       ENTRÉE laisse son geste au bouton qui a le focus ; J / K placent donc le focus sur la file,
-       pour que l'ENTRÉE suivante confirme la proposition qu'ils viennent de choisir. */
+    /* J / K / ↓ / ↑ / ENTRÉE vont à la file (règle dans services/directionKeys.js), écoutés
+       en capture sur window pour passer devant le panneau Tournois et le répartiteur. J / K
+       mettent le focus sur la file, pour que ENTRÉE confirme la ligne choisie. */
     /** @type {HTMLElement | null} */
     let queueEl = $state(null);
 
-    /* La file vient sous la grille (#440) : à 768 px de haut, les propositions au-delà de la
-       troisième sont sous la ligne de flottaison. J / K amènent donc la ligne choisie à l'écran,
-       au plus court — sans quoi ENTRÉE confirmerait une proposition qu'on ne voit pas. */
+    /* J / K amènent la ligne à l'écran : ENTRÉE ne confirme jamais une ligne invisible. */
     function focusQueue() {
         if (!queueEl) return;
         if (document.activeElement !== queueEl) queueEl.focus({ preventScroll: true });
@@ -157,9 +141,7 @@
     </header>
 
     {#if confirming}
-        <!-- « Confirmer » EN TÊTE de la liste de contrôle, pas au pied (#440) : sous une liste
-             de dix lignes, il passait sous la ligne de flottaison à 768 px de haut. La liste
-             se lit après, pour qui veut la lire ; le geste, lui, est déjà à portée. -->
+        <!-- « Confirmer » en tête, pour rester à l'écran au-dessus d'une longue liste. -->
         <div class="confirm" data-testid="direction-proposals-confirm">
             <div class="confirm-head">
                 <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
@@ -420,9 +402,7 @@
         color: var(--color-text-muted);
     }
 
-    /* Une réparation n'est pas une proposition ordinaire : elle DÉFAIT. Elle se distingue donc
-       à l'œil, sans devenir une alerte — le directeur peut très bien préférer laisser le
-       tableau tel qu'il a été joué et le noter à la main. */
+    /* Une réparation défait : distincte à l'œil, sans être une alerte. */
     .repair {
         border-left: 3px solid var(--color-danger);
         padding-left: var(--space-1);

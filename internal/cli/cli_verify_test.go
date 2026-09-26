@@ -8,10 +8,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
-// TestCLI_Verify_ReportsOrphans: verify counts and names the child rows whose
-// parent is gone (issue #157). The orphans are planted through a dedicated
-// connection with foreign keys switched off — the only way to create them
-// now that every pooled connection enforces them.
+// TestCLI_Verify_ReportsOrphans: verify counts and names child rows whose
+// parent is gone. Orphans are planted through a dedicated connection with
+// foreign keys off, since every pooled connection enforces them.
 func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
@@ -64,7 +63,7 @@ func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 	}
 }
 
-// TestCLI_Verify_ReportsSchemaDrift (issue #177): what the open could not add
+// TestCLI_Verify_ReportsSchemaDrift: what the open could not add
 // against the reference DDL is printed, not only logged. A UNIQUE index that
 // duplicate rows keep EnsureSchema from rebuilding is the reproducible case.
 func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
@@ -105,10 +104,9 @@ func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 	}
 }
 
-// TestCLI_Verify_ReportsCounterDrift (issue #185): match.game_count and
-// game.move_count are written once, at import, from what the source file held
-// and are what the match list displays. verify recomputes them from the rows
-// and says how far apart they are — without rewriting either.
+// TestCLI_Verify_ReportsCounterDrift: match.game_count and game.move_count,
+// written once at import, are recomputed from the rows and the gap reported,
+// without rewriting either.
 func TestCLI_Verify_ReportsCounterDrift(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 

@@ -8,18 +8,9 @@ package database
 // sets (database.* and storage.*) share json tags, so JSON equality is a
 // field-by-field comparison that also covers slice order and float formatting.
 //
-// # What the legacy oracle is, and what it is not
-//
-// The legacy implementation is FROZEN. It exists to prove that moving the
-// statistics onto the Storage contract did not change a single number the
-// application had been showing, and it is not maintained beyond that: nothing
-// new is added to it, because adding a figure to both sides would only prove
-// that the same code was written twice.
-//
-// A figure that exists only in the storage implementation is therefore not a
-// parity failure — it is a figure that came after the migration. The
-// comparison drops those fields by name (frozenOracleGaps below) rather than
-// asserting on them, and each one says why it is there.
+// The legacy oracle is FROZEN: it proves the move onto the Storage contract
+// changed no number, and nothing new is added to it. Newer storage-only
+// figures are dropped by name (frozenOracleGaps).
 
 import (
 	"context"
@@ -35,10 +26,8 @@ import (
 // compute, with the reason. They are dropped from BOTH sides before the
 // comparison — the point is to compare what both were built to answer.
 //
-// PerPhase/PerTag/PerScore came with #266, after the migration the oracle
-// exists to guard. Back-porting them into the legacy SQL would prove nothing
-// (the same query, written twice, agreeing with itself) and would extend a
-// body of code the migration exists to have retired.
+// Back-porting them into the legacy SQL would only prove the same query
+// agrees with itself.
 var frozenOracleGaps = map[string]string{
 	"PerPhase":    "#266, added after the migration the oracle guards",
 	"PerTag":      "#266, added after the migration the oracle guards",
@@ -114,30 +103,16 @@ func TestStatsStorageParity(t *testing.T) {
 			}
 
 			// ANALYZE before either side computes anything. TopBlunders' ORDER BY
-			// is not a total order (ties on ErrorMP — see FOLLOWUPS.md "Rolling
-			// stats non-determinism"), so which row lands in the last slot of a
-			// LIMIT can depend on the query plan the still-empty vs.
-			// already-populated sqlite_stat1 leads the planner to pick. Without
-			// this, legacyAll below ran against a database that had never been
-			// ANALYZEd, while gotAll (below) ran against the same file reopened
-			// after Close — which now also runs PRAGMA optimize (fiche-05 T7) and,
-			// on a freshly-imported database with no prior stats, performs a real
-			// ANALYZE. That asymmetry alone was enough to flip a tied entry.
-			// ANALYZE-ing up front puts both sides on equal footing, which is what
-			// a parity test should be comparing in the first place.
+			// is not total (ties on ErrorMP), so the last LIMIT slot depends on
+			// the plan; the reopened side gets stats from Close's PRAGMA
+			// optimize, so both sides must start with them.
 			if _, err := d.db.Exec(`ANALYZE`); err != nil {
 				t.Fatalf("ANALYZE: %v", err)
 			}
 
-			// The frozen oracle counts an error as any cost above zero, which is
-			// what the code said before the two thresholds became the library's
-			// own (ADR-0046). That behaviour did not disappear — it is the
-			// error threshold at its lowest, 1 millipoint — so the fixture says
-			// so and the two sides compare like for like. Setting it here rather
-			// than dropping the counts from the comparison keeps the oracle
-			// guarding what it was built to guard: that moving the statistics
-			// onto the Storage contract changed no number. The blunder threshold
-			// stays at its default, which is the 100 the oracle also hard-codes.
+			// The frozen oracle counts any cost above zero as an error: the
+			// error threshold at its lowest (ADR-0046). The blunder threshold
+			// stays at the default 100 the oracle also hard-codes.
 			if err := d.SaveLibrarySettings(storage.LibrarySettings{
 				ErrorThresholdMP:   storage.MinThresholdMP,
 				BlunderThresholdMP: storage.DefaultBlunderThresholdMP,

@@ -8,10 +8,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// TestGetMatchIDsForTournamentPropagatesScanError is B.6's (#174) test on the
-// tournament-filter helper: a scan failure on one row used to be silently
-// skipped (`continue`), returning a match list one short of the truth
-// instead of reporting that the query could not be trusted.
+// TestGetMatchIDsForTournamentPropagatesScanError: a scan failure on one row
+// must be reported, not skipped into a match list one short of the truth.
 func TestGetMatchIDsForTournamentPropagatesScanError(t *testing.T) {
 	f := &fakeExecer{queryCallToFail: 1}
 	if _, err := getMatchIDsForTournament(context.Background(), f, 1); err == nil {
@@ -20,12 +18,8 @@ func TestGetMatchIDsForTournamentPropagatesScanError(t *testing.T) {
 }
 
 // TestLoadPlayer1MovesPropagatesErrors covers both failure shapes on the
-// batched preload (B.10, #178, folding what was getPlayer1MovesForPosition's
-// one-query-per-position into one query per chunk of ids): the Query itself
-// failing (a locked database) and a Scan failing on one row — both used to
-// come back as (nil, nil) from the per-row helper, indistinguishable from
-// "this position recorded no moves", and must still fail loudly now that the
-// query runs once for every candidate instead of once per candidate.
+// batched preload: the Query itself failing and a Scan failing on one row.
+// Neither may read as "this position recorded no moves".
 func TestLoadPlayer1MovesPropagatesErrors(t *testing.T) {
 	t.Run("query failure", func(t *testing.T) {
 		f := &fakeExecer{queryErrToFail: 1}
@@ -41,9 +35,8 @@ func TestLoadPlayer1MovesPropagatesErrors(t *testing.T) {
 	})
 }
 
-// TestLoadCommentTextsPropagatesErrors is the same regression for the batched
-// comment preload (B.10, #178, folding loadCommentText into loadCommentTexts):
-// a locked database must fail the search outright, not silently answer every
+// TestLoadCommentTextsPropagatesErrors: the same for the batched comment
+// preload: a locked database must fail the search outright, not silently answer every
 // id with "no comment".
 func TestLoadCommentTextsPropagatesErrors(t *testing.T) {
 	t.Run("query failure", func(t *testing.T) {
@@ -60,12 +53,8 @@ func TestLoadCommentTextsPropagatesErrors(t *testing.T) {
 	})
 }
 
-// TestFindPropagatesTournamentLookupFailure is the search-level regression
-// for the same bug: SearchStore.find used to swallow getMatchIDsForTournament's
-// error (err == nil check dropped the branch entirely), silently narrowing a
-// tournament filter to "no matches in this tournament" whenever the lookup
-// query failed — a locked database made a tournament look empty instead of
-// failing the search.
+// TestFindPropagatesTournamentLookupFailure: at search level, a failed
+// tournament lookup must fail the search, not make the tournament look empty.
 func TestFindPropagatesTournamentLookupFailure(t *testing.T) {
 	f := &fakeExecer{queryErrToFail: 1}
 	store := &SearchStore{DB: f}

@@ -11,26 +11,13 @@ import (
 )
 
 // runTranscribe is `blunderdb transcribe`: replay a transcription and report
-// what the replay found — the CLI's window onto pkg/blunderdb/transcript, the
-// pure package the panel and the Wails bindings already use (ADR-0045 §9).
+// what the replay found, over pkg/blunderdb/transcript with no rule of its own
+// (ADR-0045 §9). It never writes to a database.
 //
-// It adds no rule of its own. --check is transcript.Replay's Inconsistencies
-// listed with the Action and the game they sit on; --render is
-// ingest.RenderMAT over transcript.MatchParts, the same renderer the export
-// button calls. Nothing is written to a database, ever: the command reads.
-//
-// # Why an inconsistency is not an error status
-//
-// An Inconsistency is a fact about what was written down, not a complaint
-// about the input: an illegal play in a .mat is what the players did (or what
-// the file's author typed), and ADR-0044 is explicit that nothing is ever
-// refused for one — not the save, not the export, and not this. So --check
-// REPORTS and exits 0 even when it lists a hundred of them, and a non-zero
-// status is kept for what really failed: an unreadable file, a .mat the
-// parser cannot make a match of, a database that will not open, an output
-// that cannot be written. A script that wants to act on the findings reads
-// them, from --format json, rather than reading a status that would conflate
-// "this file is broken" with "this game had an illegal move".
+// An Inconsistency is a finding, never a refusal (ADR-0044): --check exits 0
+// whatever it lists, and a non-zero status means something really failed
+// (unreadable file or database, unwritable output). Scripts read the findings
+// from --format json.
 func (cli *CLI) runTranscribe(args []string) error {
 	transcribeCmd := flag.NewFlagSet("transcribe", flag.ContinueOnError)
 
@@ -140,11 +127,8 @@ func (cli *CLI) runTranscribe(args []string) error {
 	return nil
 }
 
-// transcribeSource resolves the one source the command was given into a
-// Document. A .mat is read straight off the disk — transcript.FromMAT needs no
-// database, exactly as the GnuBG importer's parser does not — and both
-// database sources are the Database methods the GUI already calls, so the
-// three modes never grow a rule of their own (CLI/GUI/server parity).
+// transcribeSource resolves the command's one source into a Document: a .mat
+// straight off the disk, or the Database methods the GUI calls (parity).
 func (cli *CLI) transcribeSource(matFile, dbPath string, matchID, draftID int64, cmd *flag.FlagSet) (transcript.Document, string, error) {
 	var none transcript.Document
 
@@ -191,10 +175,9 @@ func (cli *CLI) transcribeSource(matFile, dbPath string, matchID, draftID int64,
 		return state.Annotated.Document, fmt.Sprintf("draft %d", draftID), nil
 	}
 
-	// A saved match has no Document of its own — a Match is what a
-	// transcription PRODUCES — so it is replayed through the .mat it would
-	// export, which is the round trip transcript.FromMAT documents. The plays
-	// travel as they were written, so an illegal one is still found.
+	// A saved match has no Document of its own, so it is replayed through the
+	// .mat it would export; plays travel as written, so an illegal one is
+	// still found.
 	mat, err := cli.db.MatchMAT(matchID)
 	if err != nil {
 		return none, "", fmt.Errorf("reading match %d: %w", matchID, err)

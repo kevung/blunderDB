@@ -1,40 +1,17 @@
 /**
- * transcription-layout.spec.js — le contrat de disposition d'ADR-0048, en pixels.
+ * transcription-layout.spec.js — le contrat de disposition d'ADR-0048, en
+ * pixels : le défaut était géométrique (une chaîne de hauteur cassée faisait
+ * défiler `.tab-content`), qu'un décompte de nœuds ne voit pas.
  *
- * ## Pourquoi en pixels, et pas en présence dans le DOM
+ * 1. `.tab-content` ne défile pas.
+ * 2. Cinq lignes de candidats sont ENTIÈREMENT visibles dans la liste
+ *    (`boundingBox`, jamais `count()`).
+ * 3. Rien ne s'intercale entre les cases du jet et la première ligne : la seule
+ *    qui mesure la règle, sans quoi on tient 1 et 2 en rétrécissant le
+ *    triangle. Un écart négatif est admis (en dock bas, la palette est à côté).
  *
- * Le panneau livré montait tout ce qu'il devait monter : une spec qui compte des
- * nœuds n'aurait rien vu. Ce qui était faux était géométrique — 354 px de
- * contrôles avant la première ligne de candidat dans une boîte de 168 px, et une
- * chaîne de hauteur cassée (`.draft` sans `flex: 1; min-height: 0`) qui rendait
- * inertes les deux `overflow: auto` déjà écrits, faisait de `.tab-content` le
- * seul conteneur qui défile, et faisait donc sauter le panneau entier à chaque
- * Action validée, le `scrollIntoView` du Cursor ne trouvant pas de boîte bornée.
- *
- * Le patron est celui d'`eval-panel-no-scroll.spec.js`, y compris son principe :
- * « a property nobody measures after three layout changes is not a property ».
- *
- * ## Les trois assertions, et laquelle compte
- *
- * 1. `.tab-content` ne défile pas — l'anti-régression du défaut lui-même.
- * 2. Cinq lignes de candidats sont ENTIÈREMENT dans le rectangle visible de la
- *    liste (`boundingBox`, jamais `count()`) : une ligne montée mais rognée ne
- *    compte pas, sinon on affirme une présence et non le contrat.
- * 3. Rien ne s'intercale entre les cases du jet et la première ligne de
- *    candidats. C'est la seule des trois qui mesure la RÈGLE ; sans elle on
- *    satisfait les deux autres en rétrécissant le triangle et en le remettant
- *    entre les deux, c'est-à-dire par la faute que l'ADR corrige.
- *
- * L'assertion 3 tolère un écart NÉGATIF : en dock bas la palette est à côté de
- * la liste, donc la première ligne commence plus haut que le bas des dés. Ce qui
- * est interdit est l'intercalation, pas la coexistence.
- *
- * ## Les deux tailles
- *
- * Dock bas à sa hauteur plancher (280 px sur cet onglet) et dock latéral à sa
- * largeur par défaut (420 px). Pas de balayage : un contrat mesuré à toutes les
- * tailles devient une distribution, et personne ne saura dire dans six mois à
- * quel point de rupture le rouge est légitime.
+ * Deux tailles fixes, dock bas plancher (280 px) et dock latéral par défaut
+ * (420 px) : pas de balayage, pour qu'un rouge désigne un point de rupture.
  */
 
 import { test, expect } from '@playwright/test';
@@ -141,15 +118,10 @@ test.describe('dock latéral, à sa largeur par défaut', () => {
 });
 
 /**
- * Le troisième régime : un dock latéral élargi, où le Transcript vient occuper
- * le blanc que le triangle laissait à sa droite.
- *
- * Il a son point de rupture à lui — 500 px —, et c'est une mesure : le triangle
- * demande 211 px et un Transcript 250 px, soit 485 px de panneau. La spec le
- * vérifie à 520, le premier cran où l'appariement est censé tenir. Sans elle,
- * régler le seuil sur l'impression laisserait passer un Transcript dont la
- * seconde colonne est rognée — ce qui n'est pas un Transcript rétréci mais autre
- * chose (ADR-0048 décision 6, l'argument qui a sorti le texte `.mat` d'ici).
+ * Le troisième régime : un dock latéral élargi, où le Transcript occupe le
+ * blanc à droite du triangle. Point de rupture 500 px (triangle 211 +
+ * Transcript 250 = 485), vérifié à 520 : une seconde colonne rognée ne serait
+ * plus un Transcript (ADR-0048 décision 6).
  */
 test.describe('dock latéral élargi, au-delà du second point de rupture', () => {
     test.beforeEach(async ({ page }) => {

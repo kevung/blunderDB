@@ -11,7 +11,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Le lot parallèle (#147) : les positions d'un lot sont indépendantes, donc
+// Le lot parallèle : les positions d'un lot sont indépendantes, donc
 // les répartir sur plusieurs goroutines ne peut pas changer ce qui est écrit.
 // C'est ce que ces tests vérifient — pas « à peu près », au bit près : chaque
 // goroutine possède son propre Searcher réutilisé d'une position à l'autre,
@@ -60,8 +60,7 @@ func analysesOf(t *testing.T, d *Database, ids []int64) map[int64]*PositionAnaly
 	return out
 }
 
-// TestAnalyzeGammonNetParallelMatchesSerial is the central test of #147: the
-// same batch, run on 1, 2 and NumCPU goroutines, writes exactly the same
+// TestAnalyzeGammonNetParallelMatchesSerial: the same batch, run on 1, 2 and NumCPU goroutines, writes exactly the same
 // analyses. Not "within a tolerance" — reflect.DeepEqual over the stored
 // structs, so every float32 that reaches the database is compared bit for
 // bit.
@@ -190,9 +189,8 @@ func TestAnalyzeGammonNetParallelYieldGates(t *testing.T) {
 	seedBatchPositions(t, d, 8)
 
 	release := make(chan struct{})
-	// `blocked` dit que le premier yield est ENTRÉ, donc que le lot est
-	// effectivement arrêté à sa grille — un fait, là où un time.Sleep n'était
-	// qu'un pari sur la vitesse de la machine (E.3, #219).
+	// `blocked` dit que le premier yield est ENTRÉ : le lot est arrêté à sa
+	// grille, un fait plutôt qu'un pari sur la vitesse de la machine.
 	blocked := make(chan struct{}, 1)
 	done := make(chan error, 1)
 	go func() {

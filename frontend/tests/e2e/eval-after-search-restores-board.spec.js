@@ -1,16 +1,11 @@
 /**
- * eval-after-search-restores-board.spec.js — #201 (D.1)
+ * Bibliothèque → onglet Recherche (damier vierge) → onglet Eval → retour à l'analyse : la
+ * position étudiée doit être de retour sur le damier. App.svelte enchaîne exitEditMode() sans
+ * await puis enterEvalMode() ; le damier vierge de la recherche est un clone sous l'id de la
+ * position, et son redessin est asynchrone, donc l'ordre des deux appels compte.
  *
- * Bibliothèque → onglet Recherche (damier vierge) → onglet Eval → retour à
- * l'analyse : la position étudiée doit être de retour sur le damier. App.svelte
- * enchaîne exitEditMode() sans await puis enterEvalMode() ; le damier vierge
- * de la recherche est un clone sous l'id de la position, et son redessin est
- * asynchrone : la photo prise à l'entrée d'Eval était le damier vierge, que
- * la sortie remettait à l'écran — définitivement quand la position étudiée
- * était la première de la liste (aucun changement d'index ne redessinait).
- *
- * Le plateau décrit la position affichée dans son aria-label (pips des deux
- * joueurs, joueur au trait) : c'est ce que la spec compare.
+ * Le plateau décrit la position affichée dans son aria-label (pips des deux joueurs, joueur au
+ * trait) : c'est ce que la spec compare.
  */
 
 import { test, expect } from '@playwright/test';

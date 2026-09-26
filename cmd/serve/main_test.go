@@ -33,19 +33,10 @@ func captureStderr(t *testing.T, fn func()) string {
 	return <-outC
 }
 
-// TestRunDispatchesOnFirstArgument is this package's one wiring test (#220):
-// run is the only decision cmd/serve makes on its own — everything else is
-// forwarded verbatim to internal/server — and it was previously untested, so
-// a swapped branch or a typo'd EqualFold would only surface at release time.
-//
-// "healthcheck" (any case) must reach server.RunHealthcheck; anything else
-// must reach server.RunServe. Neither call is allowed to touch a real daemon
-// or storage backend, so both are probed through paths that return before any
-// side effect: RunHealthcheck against a port nothing listens on, with a short
-// timeout (its error is wrapped "healthcheck: …" — proof of which function
-// ran); RunServe with -h, which flag.ContinueOnError intercepts before
-// OpenStorage or ListenAndServe — proof from its own usage banner, captured
-// off stderr, which names "serve" and never "healthcheck".
+// TestRunDispatchesOnFirstArgument: "healthcheck" (any case) reaches
+// server.RunHealthcheck, anything else server.RunServe. Both are probed before
+// any side effect: RunHealthcheck on a dead port (its error names it), RunServe
+// with -h (its usage banner names "serve").
 func TestRunDispatchesOnFirstArgument(t *testing.T) {
 	t.Run("healthcheck (any case) reaches RunHealthcheck", func(t *testing.T) {
 		for _, word := range []string{"healthcheck", "HealthCheck", "HEALTHCHECK"} {

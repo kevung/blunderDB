@@ -239,8 +239,7 @@ func TestSuggestMATFilename(t *testing.T) {
 // TestRenderMATMoneyGame: a money session (MatchLength 0 or the Unlimited
 // sentinel) renders a "0 point match" header — the gnubg/Jellyfish money
 // convention — never "-1 point match", and round-trips through gnubgparser as a
-// length-0 match. Guards the money-game header fix (both RenderMAT's clamp and
-// gnubgparser accepting a 0-length header).
+// length-0 match.
 func TestRenderMATMoneyGame(t *testing.T) {
 	for _, ml := range []int32{0, domain.Unlimited} {
 		m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: ml}
@@ -293,8 +292,7 @@ func TestRenderMATBlanksCannotMove(t *testing.T) {
 
 // TestRenderMATOptionalHeaders: a match that knows where it was played, in
 // which round, on which day and by whose hand writes the four PGN-style headers
-// gnubg/XG already read, and gnubgparser reads all four back. Before this, a
-// transcribed .mat lost the lot at every export.
+// gnubg/XG already read, and gnubgparser reads all four back.
 func TestRenderMATOptionalHeaders(t *testing.T) {
 	m := &domain.Match{
 		Player1Name: "Alice",
@@ -422,10 +420,9 @@ func TestRenderMATGameEndsWithoutLastMove(t *testing.T) {
 }
 
 // TestRenderMATWinsGoesToWinnersColumn: the result cell belongs to the winner,
-// and a .mat says who won by WHICH COLUMN it is written in. Rendered at the
-// margin — player 1's column — every game player 2 won came back from a
-// round-trip credited to player 1. The three ways a game ends for player 2 are
-// covered: bearing off, a refused double, a resignation.
+// and a .mat says who won by WHICH COLUMN it is written in. The three ways a
+// game ends for player 2 are covered: bearing off, a refused double, a
+// resignation.
 func TestRenderMATWinsGoesToWinnersColumn(t *testing.T) {
 	tests := []struct {
 		name  string

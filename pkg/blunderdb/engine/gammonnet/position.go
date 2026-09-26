@@ -4,29 +4,22 @@
 // feature encoding, search and cube model (https://github.com/kevung/gammonNet,
 // MIT).
 //
-// It ports the four gammonNet C modules blunderDB does not already have, per
-// ADR-0011: gn_encoding (the 196-feature perspective encoding), gn_infer (the
-// MLP forward pass and the BGNN weight format), gn_search (the expectiminimax
-// over the 21 dice rolls, with pruning and caching) and gn_cube (the Janowski
-// cube model). The match equity table and the endgame databases already exist
-// in this repository and are not duplicated here — the cube model is instead
-// branched onto blunderDB's own table (engine.GnuBGGetME) rather than a
-// re-ported gn_met.c; see cube.go.
+// It ports four gammonNet C modules (ADR-0011): gn_encoding (the 196-feature
+// perspective encoding), gn_infer (the MLP forward pass and BGNN weight
+// format), gn_search (the expectiminimax over the 21 rolls) and gn_cube (the
+// Janowski cube model). The match equity table is blunderDB's own
+// (engine.GnuBGGetME), not a re-ported gn_met.c; see cube.go.
 //
 // # The boundary
 //
-// The representation boundary sits at this package's edge, never inside its
-// loop. A domain.Position is converted to a Position once, on entry; from there
-// on everything stays in this package's narrow representation. Nothing in here
-// allocates per evaluation, and nothing in here calls back into domain.
+// A domain.Position is converted to a Position once, on entry; nothing inside
+// allocates per evaluation or calls back into domain.
 //
 // # Attribution
 //
-// The weights are `strehl-prob5-512-512-256-128`, the work of Alexander Strehl
+// The weights are `strehl-prob5-512-512-256-128`, by Alexander Strehl
 // (alexstrehl/backgammon-ai-engine, MIT, pinned commit b2750df), redistributed
-// by gammonNet v1.0.1. A network keeps its name as long as its weights do not
-// change: neither the search around it, nor a quantisation, nor this port makes
-// it a new network. "gammonNet" names the configuration, not the weights.
+// by gammonNet v1.0.1. "gammonNet" names the configuration, not the weights.
 // LICENSE.gammonNet and NOTICE.gammonNet travel with this package.
 package gammonnet
 
@@ -38,10 +31,8 @@ import (
 
 // Player identifiers, matching gammonNet's convention.
 //
-// BEWARE: they are the INVERSE of this repository's. gammonNet has
-// GN_WHITE = 0 and GN_BLACK = 1; domain has Black = 0 and White = 1. Every
-// conversion below is written out field by field for that reason — the two
-// structures must never be assumed to agree.
+// BEWARE: they are the INVERSE of domain's (Black = 0, White = 1); every
+// conversion is written out field by field for that reason.
 const (
 	White = 0
 	Black = 1
@@ -65,9 +56,8 @@ const (
 //
 //	Turn is the player who acts next.
 //
-// A mistake in this convention does not crash. It produces five perfectly
-// plausible probabilities that are wrong, and it contaminates every measurement
-// taken afterwards without ever looking broken.
+// A mistake in this convention does not crash: it yields plausible, wrong
+// probabilities.
 type Position struct {
 	Points [NumPoints]int8
 	Bar    [2]uint8
@@ -110,18 +100,9 @@ func (p *Position) checkerCount(player uint8) int {
 }
 
 // FromDomain converts a blunderDB position into the evaluator's representation.
-//
-// The geometry differs on both axes and neither difference is visible at a
-// glance, so both are written out here rather than assumed:
-//
-//   - Indices are reversed. domain numbers points 1..24 with Black moving
-//     high→low (its home is 1..6) and White low→high (its home is 19..24), so
-//     White's ace point is domain index 24. gammonNet's index 0 IS White's ace
-//     point. Hence gammonNet index i is domain point 24-i.
-//   - Player identifiers are swapped, as documented on White/Black above.
-//
-// It returns an error rather than a silently wrong position when the input does
-// not describe a legal board.
+// Both axes differ: gammonNet index i is domain point 24-i (domain's White
+// ace point is 24), and player identifiers are swapped (see White/Black).
+// An illegal board is an error, never a silently wrong position.
 func FromDomain(p *domain.Position) (Position, error) {
 	var out Position
 
@@ -219,12 +200,9 @@ func gameValue(p *Position) int {
 	return 2
 }
 
-// terminalEquity is the money value of a finished position, from the point of
-// view of its own Turn.
-//
-// At a terminal position Turn names the LOSER — the play that ended the game
-// already switched it — so this is in practice always negative. It is written
-// symmetrically anyway rather than assuming the caller's convention.
+// terminalEquity is the money value of a finished position from its own
+// Turn's view — in practice the loser's, so negative, but written
+// symmetrically.
 func terminalEquity(p *Position) float64 {
 	stake := gameValue(p)
 	if stake < 0 {
@@ -236,13 +214,9 @@ func terminalEquity(p *Position) float64 {
 	return -float64(stake)
 }
 
-// terminalValue is terminalEquity's match-referential counterpart: 2×MWC−1
-// of the game just finished, from p.Turn's point of view, with state nil
-// falling back to terminalEquity exactly as gn_search.c's terminal_value
-// does. A state whose metAfter fails (only possible when state is not
-// IsValid(), which NewSearcher already refused at construction) values the
-// position as 0 rather than propagating a search-wide failure over one
-// terminal node — the same choice the C makes.
+// terminalValue is terminalEquity's match counterpart, 2×MWC−1 from p.Turn's
+// view, falling back to terminalEquity when state is nil — gn_search.c's
+// terminal_value. An invalid state values as 0, as the C does.
 func terminalValue(p *Position, state *MatchState) float64 {
 	if state == nil {
 		return terminalEquity(p)

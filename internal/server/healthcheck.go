@@ -32,10 +32,8 @@ Usage:
 Flags:
 `
 
-// RunHealthcheck parses the `healthcheck` subcommand flags and probes a
-// daemon's /readyz. args are the arguments after "healthcheck". A non-nil
-// error means "not ready"; the message says why so an operator running it
-// by hand sees the reason (`docker inspect` also records the last output).
+// RunHealthcheck parses the `healthcheck` flags and probes /readyz. A non-nil
+// error means "not ready" and says why (`docker inspect` records it).
 func RunHealthcheck(args []string) error {
 	fs := flag.NewFlagSet("healthcheck", flag.ContinueOnError)
 	fs.Usage = func() {
@@ -60,11 +58,9 @@ func RunHealthcheck(args []string) error {
 	return nil
 }
 
-// Healthcheck performs one GET on /readyz at the daemon listening on addr
-// and returns the daemon's status word ("ready") on success. It fails when
-// the daemon is unreachable, answers anything but 200, or does not answer
-// before ctx expires; the error carries the daemon's own status word
-// ("down", "version_mismatch", …) when there is one.
+// Healthcheck GETs /readyz on addr and returns the status word ("ready"). The
+// error carries the daemon's own status word ("down", "version_mismatch", …)
+// when there is one.
 func Healthcheck(ctx context.Context, addr string) (string, error) {
 	url := ProbeURL(addr) + "/readyz"
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -97,13 +93,10 @@ func Healthcheck(ctx context.Context, addr string) (string, error) {
 	return body.Status, nil
 }
 
-// ProbeURL turns a listen address, as `serve --addr` takes it, into the base
-// URL a client on the same machine reaches it at. A missing or wildcard host
-// (":8080", "0.0.0.0:8080", "[::]:8080") becomes the loopback address of the
-// same family: the probe runs in the daemon's own network namespace, and the
-// loopback is the one interface a wildcard listener is certain to cover. A
-// concrete host is kept as is. An address without a port gets the default
-// one, and a value already carrying a scheme is trusted verbatim.
+// ProbeURL turns a `serve --addr` listen address into a base URL reachable
+// from the same machine. A wildcard or missing host becomes the loopback of
+// the same family (the one interface a wildcard listener surely covers); a
+// missing port gets the default; a value with a scheme is kept verbatim.
 func ProbeURL(addr string) string {
 	if strings.HasPrefix(addr, "http://") || strings.HasPrefix(addr, "https://") {
 		return strings.TrimRight(addr, "/")

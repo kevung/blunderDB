@@ -1,37 +1,16 @@
 <!--
-  TranscriptionMetadata — l'en-tête du brouillon, saisissable à tout moment.
+  TranscriptionMetadata — l'en-tête du brouillon, saisissable à tout moment ;
+  rien n'y est bloquant (fonctionnel.md §1.1). Client du moteur (ADR-0045
+  règle 9), il envoie deux gestes :
 
-  Les champs de `fonctionnel.md` §1.1 marqués « plus tard » : les deux noms,
-  l'événement, le lieu, la ronde, la date, le transcripteur, le tournoi
-  auquel le Match sera rattaché à l'enregistrement. Rien n'y est bloquant
-  (T3.1) : un brouillon sans noms s'enregistre et s'exporte, avec des en-têtes
-  vides, exactement comme un import en produirait.
+  — `set_header`, au commit d'un champ et non à chaque frappe (chaque geste
+    réécrit la ligne et rejoue tout) ; il ne touche que la partie descriptive
+    (transcript.mergeHeader).
+  — `swap_players` : même match, lu de l'autre côté.
 
-  Le volet est un CLIENT du moteur, comme le panneau qui le porte (ADR-0045
-  règle 9) : il ne dérive rien, il envoie deux gestes.
-
-  — `set_header` écrit la partie descriptive de l'en-tête, et elle seule : la
-    longueur, les règles de session et le `match_id` qu'un premier
-    enregistrement a posé lui survivent (transcript.mergeHeader). Il part au
-    COMMIT d'un champ — sa validation, sa perte de focus — et non à chaque
-    frappe : chaque geste est une écriture de ligne et un Replay complet.
-
-  — `swap_players` échange les noms, donne toutes les Actions au camp d'en
-    face et retourne le plateau. Le geste ne touche à aucune Action : c'est le
-    même match, lu de l'autre côté.
-
-  La longueur du match est ici aussi (T3.2), parce que c'est le même en-tête :
-  la changer en cours de transcription relance le Replay entier — le score away
-  de chaque position, la partie Crawford, le référentiel (argent si 0) et la
-  marque « au-delà de la fin » sur les Actions postérieures à la victoire. Rien
-  n'est jamais supprimé. Passer en argent fait apparaître les règles de session
-  (Jacoby, beaver), et repasser en match les masque sans les perdre : elles
-  restent dans le document, où aucune Position ne les lit (ADR-0028).
-
-  Les deux noms et le tournoi passent par EntityAutocomplete, le même widget
-  que les panneaux Matchs et Tournois : la liste des joueurs et celle des
-  tournois de la base y sont filtrées, au clavier comme à la souris, et un nom
-  absent de la liste reste tel qu'il a été tapé.
+  Changer la longueur rejoue tout sans rien supprimer ; les règles de session
+  (Jacoby, beaver) survivent à un aller-retour en match (ADR-0028). Noms et
+  tournoi passent par EntityAutocomplete ; un nom absent reste tel que tapé.
 -->
 <script>
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -51,10 +30,8 @@
     let players = $state(/** @type {any[]} */ ([]));
     let tournaments = $state(/** @type {any[]} */ ([]));
 
-    // Ce que les champs montrent. Une copie locale, et non l'en-tête lui-même :
-    // un champ en cours de frappe ne doit pas être réécrit par le document que
-    // le geste précédent a renvoyé, et un en-tête qui change ailleurs (annuler,
-    // inverser les joueurs) doit malgré tout se voir ici.
+    // Copie locale : un champ en frappe n'est pas réécrit par le document
+    // renvoyé, mais un changement venu d'ailleurs (annuler, inverser) se voit.
     let form = $state(blank());
     let synced = '';
 
@@ -63,10 +40,7 @@
     }
 
     /**
-     * La date de l'en-tête, en `YYYY-MM-DD` pour un `<input type="date">`.
-     *
-     * Go sérialise un `time.Time` en RFC 3339 et n'omet jamais un zéro
-     * (`omitempty` ne dit rien d'une structure) : l'an 1 est la date vide.
+     * La date en `YYYY-MM-DD` ; le zéro Go (an 1, jamais omis) est la date vide.
      *
      * @param {unknown} value
      */
@@ -132,9 +106,7 @@
         };
     });
 
-    // La longueur est un texte, comme dans le formulaire de création : `0` — la
-    // partie d'argent — est la seule réponse qu'un champ numérique lié à un
-    // nombre rendrait indiscernable d'un champ vide.
+    // Un texte : lié à un nombre, un champ vide deviendrait `0` (argent).
     let lengthField = $state('');
     /** @type {number | null} */
     let lengthSynced = null;
@@ -183,11 +155,8 @@
     }
 
     /**
-     * Change la longueur du match. Le Replay entier suit, dans le moteur : le
-     * volet ne dérive ni score, ni Crawford, ni fin de match.
-     *
-     * Les règles de session partent avec elle, telles que le document les
-     * porte : c'est ce qui les rend au retour d'un aller en match.
+     * Change la longueur (le moteur rejoue tout) ; les règles de session partent
+     * avec elle, pour revenir après un aller-retour en match.
      */
     function commitLength() {
         if (busy) return;
@@ -222,10 +191,8 @@
     }
 
     /**
-     * Un item choisi dans la liste. EntityAutocomplete prévient AVANT d'écrire
-     * le nom dans le champ (`pick` appelle `onSelect` puis remplit `value`), si
-     * bien qu'un commit branché tel quel sur `onSelect` enverrait le texte
-     * d'avant le clic. Le volet écrit donc le nom lui-même, puis commet.
+     * Un item choisi : `onSelect` précède l'écriture de `value`, donc le nom est
+     * écrit ici avant le commit.
      *
      * @param {'player1' | 'player2' | 'tournament'} field
      * @param {unknown} name

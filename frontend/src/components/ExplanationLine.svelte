@@ -1,16 +1,6 @@
 <script>
-    // La phrase d'explication (#298, fiche J.8).
-    //
-    // Une ligne, sous les tableaux, et seulement quand une règle est
-    // confiante. Le moteur rend un thème et ses écarts mesurés ; le gabarit
-    // traduit est ici. Quand le thème est vide — le cas le plus fréquent — ce
-    // composant ne rend rien du tout, pas même un cadre vide.
-    //
-    // Elle porte aussi, quand la liste parcourue est un CLASSEMENT, la
-    // distance qui a rangé cette position-là (ADR-0043). C'est une phrase
-    // contextuelle sur la position courante, exactement comme l'explication —
-    // et c'est le seul endroit où la distance survit au premier geste, là où
-    // le message de la barre d'état s'efface.
+    // La phrase d'explication, quand une règle est confiante (gabarit traduit
+    // ici), sinon rien. Porte aussi la distance d'un classement `like` (ADR-0043).
     import { explainDecision, playedFromAnalysis } from '../services/explainService.js';
     import { positionStore } from '../stores/positionStore.js';
     import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';

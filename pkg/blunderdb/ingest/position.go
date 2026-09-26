@@ -22,8 +22,7 @@ type PositionGraph struct {
 
 // MapXGPPosition parses an eXtreme Gammon .xgp single-position file into one or
 // two PositionGraphs (the decision position, plus the following checker
-// position when the file also carries it), reusing the XG match mappers. It
-// re-implements the mapping half of database.ImportXGPPosition.
+// position when the file also carries it), reusing the XG match mappers.
 func MapXGPPosition(path string) ([]PositionGraph, error) {
 	match, err := xgparser.ParseXGFromFile(path)
 	if err != nil {
@@ -83,7 +82,7 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 	}
 
 	// A following checker move (e.g. after a cube decision) is stored as its
-	// own position, mirroring database.ImportXGPPosition.
+	// own position.
 	if len(game.Moves) > 1 {
 		sm := &game.Moves[1]
 		if sm.MoveType == "checker" && sm.CheckerMove != nil && len(sm.CheckerMove.Analysis) > 0 {
@@ -105,8 +104,7 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 }
 
 // MapBGFTextPosition parses a BGBlitz text single-position export (.txt) into a
-// PositionGraph, re-implementing the mapping half of database.ImportBGFPosition.
-// A BGBlitz text position carries either move evaluations (checker) or cube
+// PositionGraph. A BGBlitz text position carries either move evaluations (checker) or cube
 // decisions, never both, so it yields a single analysis fragment.
 func MapBGFTextPosition(path string) ([]PositionGraph, error) {
 	bgfPos, err := bgfparser.ParseTXT(path)

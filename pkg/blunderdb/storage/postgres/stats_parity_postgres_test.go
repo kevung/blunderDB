@@ -4,11 +4,7 @@
 // legacy Database stats implementation in pkg/blunderdb/database/db_stats.go,
 // which is the ground truth validated against eXtreme Gammon reference output.
 //
-// The SQLite parity test (database/stats_storage_parity_test.go) already pins
-// the SQLite StatsStore to the legacy implementation; this one closes the same
-// loop for PostgreSQL, whose rich PR/MWC/Snowie aggregation SQL is a separate
-// dialect-specific reimplementation that was previously only exercised on an
-// empty database (storagetest contract) and a benchmark.
+// database/stats_storage_parity_test.go is the SQLite counterpart.
 //
 // For each XG fixture the match is imported through the legacy Database (into a
 // throwaway SQLite file), then migrated into a fresh PostgreSQL tenant. The
@@ -35,14 +31,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// normalizeStats marshals any stats result (legacy database.* or storage.*,
-// which share json tags), re-decodes into storage.StatsResult, zeroes the
-// migration-remapped primary keys (position/match/tournament ids in
-// TopBlunders, PerMatch and PerTournament) and sorts those slices by content so
-// neither id values nor tie-break ordering can make two equal aggregations
-// compare unequal. What remains — totals, PR/MWC/Snowie, rolling maps, the
-// error histogram and the cube-action breakdown, plus each row's stat fields —
-// is backend-independent, so string equality is a true parity gate.
 // dayOnly truncates a match-date string to its leading YYYY-MM-DD, normalising
 // the legacy/Postgres date representation difference (see normalizeStats).
 func dayOnly(s string) string {
@@ -52,6 +40,10 @@ func dayOnly(s string) string {
 	return s
 }
 
+// normalizeStats round-trips any stats result (legacy or storage, same json
+// tags) into storage.StatsResult, zeroes the migration-remapped ids and sorts
+// the id-bearing slices by content, so equality compares only the
+// backend-independent aggregation.
 func normalizeStats(t *testing.T, v any) storage.StatsResult {
 	t.Helper()
 	raw, err := json.Marshal(v)

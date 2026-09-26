@@ -69,10 +69,9 @@ func awayAndHashOf(t *testing.T, raw *sql.DB, id int64) ([2]int, int64) {
 	return [2]int{int(s1), int(s2)}, hash
 }
 
-// TestRepairCrawfordSentinelRehashesPostCrawfordPositions is issue #338's
-// repair: the importers wrote away `1` on every 1-away position, Crawford game
-// or not, so a post-Crawford position already in a database reads as cube-dead
-// (CONTEXT.md, « Away score »). Correcting it changes the Zobrist hash — the
+// TestRepairCrawfordSentinelRehashesPostCrawfordPositions: away `1` written on
+// every 1-away position, Crawford game or not, makes a post-Crawford position
+// read as cube-dead// (CONTEXT.md, « Away score »). Correcting it changes the Zobrist hash — the
 // away score is part of the identity, unlike has_jacoby/has_beaver (ADR-0028) —
 // so the row is REHASHED, and the analysis and comments hanging off it must
 // still be there afterwards.
@@ -354,14 +353,10 @@ func TestRepairCrawfordSentinelMergeKeepsTheDatabaseConsistent(t *testing.T) {
 	}
 }
 
-// TestRepairCrawfordSentinelOnePointMatch is #411 on the Database the GUI and
-// the CLI run. A 1-point match's only game starts one point from the match, so
-// it is the Crawford game, and the paste path — Ctrl-V and the command line's
-// `import XGID=…`, both through ParsePositionText — reads it at [1, 1] whatever
-// field 7 says. A position pasted before that, with field 7 at 0, was stored at
-// [0, 0]; the repair rehashes it onto [1, 1] on the word of the XGID it kept.
-// A [0, 0] position of a match game is the match's to decide, and the DMP
-// after the Crawford game of a longer match stays where it is.
+// TestRepairCrawfordSentinelOnePointMatch: a 1-point match's only game is the
+// Crawford game, which ParsePositionText reads at [1, 1] whatever XGID field 7
+// says. A pasted position stored at [0, 0] is rehashed onto [1, 1] from its
+// kept XGID; a match game's [0, 0] (the post-Crawford DMP) stays.
 func TestRepairCrawfordSentinelOnePointMatch(t *testing.T) {
 	t.Parallel()
 	db, raw, games := crawfordFixture(t, "onepoint.db")

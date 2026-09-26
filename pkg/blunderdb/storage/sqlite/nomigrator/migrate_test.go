@@ -1,16 +1,10 @@
 // Package nomigrator_test isolates a single scenario: storage/sqlite.Migrate
 // on a non-fresh, outdated database when no migrator has been registered.
 //
-// It lives in its own directory/package (rather than alongside the other
-// storage/sqlite tests) specifically so this test binary never imports
-// package database — not even transitively. Package database's init()
-// registers the legacy migration chain (see
-// pkg/blunderdb/database/migrate_hook.go and
-// pkg/blunderdb/storage/sqlite/migrate_hook.go); the sibling
-// storage/sqlite_test package already imports database from bench_test.go,
-// which would make registeredMigrator non-nil for the whole test binary and
-// defeat this test. This is exactly the situation cmd/serve is in when it
-// builds without the blank import of package database.
+// Its own package so this test binary never imports package database, whose
+// init() registers the migration chain (sqlite/migrate_hook.go): the sibling
+// sqlite_test package imports it. This is cmd/serve's situation without the
+// blank import of package database.
 package nomigrator_test
 
 import (

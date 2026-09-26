@@ -7,20 +7,13 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Mode quiz (#294, fiche J.4).
+// Mode quiz : on joue le coup, et l'erreur est mesurée contre l'analyse
+// enregistrée. Tout est pur (position, analyse, réponse), donc interface, CLI
+// et démon jugent de la même façon, sans base de données.
 //
-// Anki fait mémoriser, le quiz TESTE : on joue le coup, et l'erreur est
-// mesurée contre l'analyse enregistrée. Tout ce qui suit est pur — une
-// position, une analyse, une réponse — donc l'interface, la ligne de commande
-// et le démon jugent la même chose de la même façon, et le jugement se teste
-// sans base de données.
-//
-// Le quiz n'invente aucune échelle. L'erreur est celle que l'analyse porte
-// déjà, en millipoints d'équité normalisée, et le PR de session est calculé
-// par la formule que les statistiques appliquent au jeu réel : 500 × erreur
-// moyenne. C'est ce qui rend les deux nombres comparables, et c'était le
-// point de la fiche — le rapport P10 dit la même chose autrement : dériver la
-// note des seuils natifs des moteurs plutôt que d'inventer une échelle.
+// Le quiz n'invente aucune échelle : l'erreur est celle de l'analyse, en
+// millipoints d'équité normalisée, et le PR de session suit la formule des
+// statistiques (500 × erreur moyenne), ce qui rend les deux comparables.
 
 // QuizVerdict is the judgement of one answer.
 type QuizVerdict struct {

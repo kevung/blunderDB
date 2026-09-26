@@ -9,14 +9,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// The end-of-import report (issue #257, fiche I.1).
-//
-// An import used to end on a count of files. What the user actually wants to
-// know next is what came in worth looking at: how they played, which decisions
-// cost the most, how many positions the source tool had flagged, and how many
-// nothing has judged yet. The same object is rendered here and by the
-// interface, and travels verbatim under --format json, so a script sees what
-// the panel shows.
+// The end-of-import report: what came in worth looking at, beyond a count of
+// files — how they played, which decisions cost the most, how many positions
+// the source tool had flagged, and how many nothing has judged yet. The same
+// object is rendered here and by the interface, and travels verbatim under
+// --format json, so a script sees what the panel shows.
 
 // beginImportBatch opens a batch for the import about to run. A failure to
 // open one is deliberately NOT fatal: the report is a convenience, and losing
@@ -185,8 +182,8 @@ func (cli *CLI) listImports(limit int, batchID int64, format string, queue bool)
 	return nil
 }
 
-// printStudyQueue prints the queue that follows a batch's report (#259, fiche
-// I.3): what to look at now, in the order to look at it.
+// printStudyQueue prints the queue that follows a batch's report: what to
+// look at now, in the order to look at it.
 //
 // The desktop walks the same list on the board with four gestures per
 // position; here it is a list of position ids, which is what a script wants —

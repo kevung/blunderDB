@@ -12,10 +12,8 @@ type rowQuerier interface {
 // it returns — whether the rows ran out, fn failed, or the iteration did. fn
 // returning nil moves on to the next row.
 //
-// It is the loop-safe shape of `rows, err := Query(…); for rows.Next() {…}`:
-// a cursor opened inside a loop cannot be closed by a function-level defer
-// without keeping every one of them open until the function returns, and the
-// manual Close on each early-return path is exactly what gets forgotten.
+// Loop-safe: a function-level defer would keep every cursor opened in a loop
+// open until return, and a manual Close per early return gets forgotten.
 func forEachRow(q rowQuerier, query string, args []any, fn func(*sql.Rows) error) error {
 	rows, err := q.Query(query, args...)
 	if err != nil {

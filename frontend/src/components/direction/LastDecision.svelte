@@ -1,13 +1,7 @@
 <script>
     /*
-     * Le dernier geste du directeur, repris sur place (issue #372, ux.md flux F28).
-     *
-     * Un directeur est interrompu toutes les deux minutes : il cliquera le mauvais nom, et il
-     * s'en apercevra dans la seconde. Ce qui rend cela supportable, c'est que l'erreur se
-     * défasse LÀ, sous la file, en deux clics — et que défaire ne soit jamais effacer.
-     *
-     * `Ctrl+Z` ouvre la même correction. Il n'efface rien : la correction est un événement de
-     * plus, et le premier résultat reste dans l'historique là où il a eu lieu.
+     * Le dernier geste du directeur, corrigeable sur place en deux clics (ux.md flux F28), ou
+     * par `Ctrl+Z`. Corriger n'efface rien : c'est un événement de plus.
      */
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
@@ -29,7 +23,7 @@
         }
     }
 
-    /* Échap ferme la reprise avant tout geste global, où que soit le focus (#414). */
+    /* Échap ferme la reprise avant tout geste global, où que soit le focus. */
     $effect(() => {
         if (open) return closeOnEscape(() => (open = false));
     });

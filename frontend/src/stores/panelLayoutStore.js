@@ -2,24 +2,16 @@ import { writable, derived } from 'svelte/store';
 import { GetPanelPosition, SavePanelPosition, GetPanelHeight, SavePanelHeight, GetPanelWidth, SavePanelWidth } from '../../wailsjs/go/main/Config.js';
 import { logger } from '../utils/logger.js';
 
-// Where the tabbed panel lives relative to the board. `bottom` is the historical
-// default (full-width horizontal band); `side` pins it as a vertical column to
-// the right of the board so the board can grow to fill the otherwise-wasted
-// horizontal space on wide screens; `auto` picks between the two from the window
-// aspect ratio. Values mirror config.go (PanelPosition* constants).
+// Where the tabbed panel lives: `bottom` (full-width band), `side` (column right of the board,
+// letting it grow on wide screens), `auto` (from the window aspect). Mirrors config.go.
 export const PANEL_BOTTOM = 'bottom';
 export const PANEL_SIDE = 'side';
 export const PANEL_AUTO = 'auto';
 export const DEFAULT_PANEL_POSITION = PANEL_BOTTOM;
 
-// Auto-mode hysteresis on the window aspect ratio (width / height). The board
-// keeps a fixed shape (height ≈ 0.72 × width), so horizontal space starts being
-// wasted once the available area is wider than 1 / 0.72 ≈ 1.39:1 — that is the
-// point where docking the panel to the side (and letting the board grow) pays
-// off. The thresholds sit around that crossover; the dead-band between them
-// prevents flapping when the window hovers near a single value. (The window is
-// a touch wider than the board area once the toolbar/status bar are subtracted,
-// so these are deliberately a hair below 1.39.)
+// Auto-mode hysteresis on width / height. The board is ≈ 0.72 × as tall as wide, so horizontal
+// space is wasted beyond ≈ 1.39:1; the dead-band around it prevents flapping (a hair below,
+// since toolbar and status bar are subtracted from the window).
 const AUTO_TO_SIDE_ASPECT = 1.45;
 const AUTO_TO_BOTTOM_ASPECT = 1.3;
 
@@ -35,10 +27,8 @@ function currentAspect() {
     return window.innerWidth / window.innerHeight;
 }
 
-// Window aspect ratio, refreshed on resize. Svelte's writable dedupes via
-// safe_not_equal, so re-setting the same number (e.g. when a board re-fit
-// dispatches a synthetic 'resize' that doesn't change the window size) does not
-// notify subscribers — this is what keeps the layout effect from looping.
+// Window aspect ratio, refreshed on resize. writable dedupes (safe_not_equal), so a synthetic
+// 'resize' from a board re-fit does not notify — that keeps the layout effect from looping.
 const windowAspectStore = writable(currentAspect());
 if (typeof window !== 'undefined') {
     window.addEventListener('resize', () => windowAspectStore.set(currentAspect()));
@@ -75,13 +65,8 @@ export function setPanelPosition(pos) {
     SavePanelPosition(next).catch((err) => logger.error('Failed to save panel position:', err));
 }
 
-// Panel size, in pixels: the height App.svelte applies in bottom mode, the
-// width it applies in side mode (the other dimension stretches to fill the
-// window — see App.svelte's .panel-wrapper.side rule). These are the values
-// of config.go's DefaultPanelHeight/Width, which the backend answers on a
-// first launch: the layout is drawn with them before the answer arrives, so
-// a different pair here made the panel jump on every first launch (#201).
-// panelDefaults.sync.test.js keeps the two files in step.
+// Panel size in px: height in bottom mode, width in side mode. Must equal config.go's
+// DefaultPanelHeight/Width, or the panel jumps on first launch (panelDefaults.sync.test.js).
 export const DEFAULT_PANEL_HEIGHT = 250;
 export const DEFAULT_PANEL_WIDTH = 420;
 

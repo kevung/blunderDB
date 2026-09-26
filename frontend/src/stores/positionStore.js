@@ -1,16 +1,9 @@
 import { writable } from 'svelte/store';
 import { createPositionList } from './positionList.js';
 
-// emptyPosition() is the one canonical "nothing loaded yet" position: 26
-// empty points ({checkers, color: -1} — the shape Board.svelte and the rest
-// of the app expect everywhere else), no cube owner, no score. Every point
-// object is freshly allocated (not Array(26).fill({...}), which would give
-// every slot the *same* object reference) so a future per-point mutation
-// can't silently corrupt all 26 points at once.
-//
-// This is a factory, not a shared constant, so each caller gets its own
-// object graph — callers that then mutate the result in place (as
-// positionStore's own set() consumers do) never see each other's edits.
+// emptyPosition() is the canonical "nothing loaded yet" position: 26 empty points
+// ({checkers, color: -1}), no cube owner, no score. A factory with freshly allocated points (not
+// Array(26).fill({...}), which shares one object), so callers mutating in place never collide.
 export function emptyPosition() {
     return {
         id: 0,
@@ -34,10 +27,8 @@ export function emptyPosition() {
 
 export const pastePositionTextStore = writable('');
 export const positionStore = writable(emptyPosition());
-// The browsed list: ids plus a window cache (see positionList.js). Positions
-// are fetched through LoadPositionsByIDs; the binding is imported lazily so
-// this store stays free of the Wails module at import time (tests mock it
-// per file, and a cache miss is the only path that needs it).
+// The browsed list (positionList.js). LoadPositionsByIDs is imported lazily, keeping the Wails
+// module out of import time (tests mock it per file; only a cache miss needs it).
 export const positionsStore = createPositionList({
     loader: async (ids) => {
         const { LoadPositionsByIDs } = await import('../../wailsjs/go/database/Database.js');

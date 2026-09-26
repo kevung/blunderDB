@@ -109,7 +109,6 @@ func (cli *CLI) runList(args []string) error {
 		return err
 	}
 
-	// Perform listing based on type
 	switch strings.ToLower(*listType) {
 	case "matches":
 		return cli.listMatches(*limit)
@@ -133,7 +132,6 @@ func (cli *CLI) runList(args []string) error {
 	case "imports":
 		return cli.listImports(*limit, *batchID, strings.ToLower(*statsFormat), *importQueue)
 	case "stats":
-		// Build StatsFilter from flags
 		filter := StatsFilter{
 			PlayerName:   *statsPlayer,
 			DateFrom:     *statsFrom,
@@ -305,11 +303,8 @@ func (cli *CLI) listPositions(limit int) error {
 	return nil
 }
 
-// showStats displays database statistics using ComputeStats.
-//
-// metric is "pr" or "mwc", format is "text" or "json", topN is the number of
-// top blunders to display (only relevant for text format, JSON always includes
-// the full TopBlunders slice).
+// showStats displays database statistics. metric is "pr" or "mwc"; topN
+// bounds the text output only, JSON always carries every TopBlunder.
 func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) error {
 	textOutput := strings.ToLower(format) != "json"
 	var result *StatsResult
@@ -484,7 +479,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		fmt.Println()
 	}
 
-	// 6b. The three breakdowns of #266: the same decisions, sliced.
+	// 6b. The same decisions, sliced three ways.
 	if len(result.PerPhase) > 0 {
 		fmt.Println("── By Game Phase ──")
 		fmt.Fprintln(w, "  Phase\tDecisions\tBlunders\tPR")
@@ -503,9 +498,8 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\n", tag.Tag, tag.NumDecisions, tag.BlunderCount, tag.PR)
 		}
 		w.Flush()
-		// A tag labels; it does not partition. Saying so is the difference
-		// between a reader who trusts the column and one who adds it up and
-		// concludes the tool is broken.
+		// A tag labels, it does not partition: say so, or the column looks
+		// wrong when summed.
 		fmt.Println("  (a position may carry several tags; these rows do not sum to the total)")
 		fmt.Println()
 	}
@@ -550,9 +544,8 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	return nil
 }
 
-// showPlayerTable prints one statistics row per player. CSV is the format that
-// matters here: the request behind this table came from someone collecting a
-// competition's match logs, and a spreadsheet is where such a ranking ends up.
+// showPlayerTable prints one statistics row per player; CSV is its main
+// format, for a spreadsheet ranking.
 func (cli *CLI) showPlayerTable(filter StatsFilter, format string) error {
 	rows, err := cli.db.GetPlayerTable(filter)
 	if err != nil {
@@ -655,14 +648,9 @@ func orDash(s string) string {
 	return s
 }
 
-// exportLimit is --limit as a tabular export must read it: unbounded unless
-// the user asked for a bound.
-//
-// `--limit` defaults to 10 because a `list` printed to a terminal should not
-// scroll a database past the reader. An export is the opposite case: it is
-// redirected to a file and read by a program, and silently truncating it at
-// ten rows would be a trap nobody notices until the figures are wrong. So the
-// default is ignored here, and only a --limit the user actually typed applies.
+// exportLimit is --limit as a tabular export reads it: unbounded unless the
+// user typed a bound. The default of 10 suits a terminal; silently truncating
+// a file export would go unnoticed.
 func exportLimit(fs *flag.FlagSet, limit int) int {
 	explicit := false
 	fs.Visit(func(f *flag.Flag) {

@@ -8,11 +8,9 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
-// Changing the configuration of a tournament under way (issue #385).
+// Changing the configuration of a tournament under way.
 //
-// The rule these tests hold: the panel must be able to SAY, before the click, exactly what the
-// engine will accept and what it will refuse. A refusal discovered afterwards reads as a bug,
-// and a director in a hall at 22 h has no time to find out it was a rule.
+// The panel must SAY, before the click, exactly what the engine will accept and refuse.
 
 // configOf reads the configuration in force as the frontend does — as JSON, so a test edits
 // what a form would send.
@@ -294,9 +292,8 @@ func TestDirectionConfig_ReopenCorrectReclose(t *testing.T) {
 	}
 }
 
-// A table out of service (#438): the engine has had `tables.unavailable` since v0.2.0, and the
-// preview said nothing about it — `changes: null` for a broken board, so "save" looked like a
-// no-op. Adding it and taking it back are both changes, and both are named.
+// A table out of service (`tables.unavailable`): adding it and taking it back are both changes,
+// and both are named, or "save" would look like a no-op.
 func TestDirectionConfig_PreviewNamesAnUnavailableTable(t *testing.T) {
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)

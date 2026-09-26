@@ -14,10 +14,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// TestTenantPurgeSQLiteNotSupported confirms the endpoint refuses to run
-// against a SQLite-backed server: SQLite has no tenant concept to purge, so
-// the handler must 400 with CodeInvalid rather than silently no-op — and the
-// (untouched) SQLite data must still be there afterwards.
+// TestTenantPurgeSQLiteNotSupported: SQLite has no tenant to purge, so the
+// handler answers 400 CodeInvalid rather than a silent no-op, data intact.
 func TestTenantPurgeSQLiteNotSupported(t *testing.T) {
 	ts := newTestServer(t)
 

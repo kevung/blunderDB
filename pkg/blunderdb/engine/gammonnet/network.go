@@ -35,9 +35,8 @@ const (
 // The five outputs, in the order the reference engine establishes. They are
 // NESTED, not exclusive: PWinGammon counts backgammons too.
 //
-// The order is not taken on trust. It is forced by the equity identity
-// E = 2·p0 + p1 + p2 − p3 − p4 − 1, which is the algebraic consequence of this
-// reading and of no other. Permute the five and the identity breaks.
+// The order is forced by the equity identity E = 2·p0 + p1 + p2 − p3 − p4 − 1,
+// which holds for this reading and no other.
 const (
 	PWin = iota
 	PWinGammon
@@ -73,10 +72,8 @@ var (
 	embeddedErr  error
 )
 
-// Embedded returns the network compiled into the binary. The weights are the
-// float32 reference artifact, not the float16 transport variant: a desktop
-// application transports nothing, so the format that halves a download answers
-// a constraint that does not exist here.
+// embeddedNetwork returns the network compiled into the binary: the float32
+// reference artifact, not the float16 transport variant.
 func embeddedNetwork() (*Network, error) {
 	embeddedOnce.Do(func() {
 		embeddedNet, embeddedErr = Load(embeddedWeights)
@@ -188,9 +185,8 @@ func Load(raw []byte) (*Network, error) {
 	if pos != len(raw) {
 		return nil, fmt.Errorf("gammonnet: %d trailing bytes after the weights", len(raw)-pos)
 	}
-	// A kernel selector that names an unavailable path fails HERE, at the
-	// first door into the package, rather than silently downgrading to a
-	// slower one much later (decision D7 of the plan, criterion 4 of #133).
+	// A kernel selector naming an unavailable path fails HERE, at the first
+	// door into the package, never as a silent downgrade (ADR-0024).
 	if err := kernelError(); err != nil {
 		return nil, err
 	}
@@ -200,19 +196,14 @@ func Load(raw []byte) (*Network, error) {
 // Evaluator holds the scratch buffers one evaluation needs. A Network is
 // read-only and shared; an Evaluator is not, and each goroutine takes its own.
 //
-// gammonNet declares itself not thread-safe on purpose ("parallelism is by
-// PROCESS ... never by thread"). Separating the immutable weights from the
-// mutable scratch is what removes that constraint here rather than inheriting
-// it.
+// Separating immutable weights from mutable scratch lifts gammonNet's own
+// "parallelism by process, never by thread" constraint.
 type Evaluator struct {
 	net *Network
 	a   []float32
 	b   []float32
 
-	// Batched scratch (kernel.go). Allocated on the first EvaluateBatch and
-	// not before: the compacted first-layer weights are as big as the layer
-	// itself, and a caller that only ever evaluates one position at a time
-	// should not pay 400 KB for a path it never takes.
+	// Batched scratch (kernel.go), allocated on the first EvaluateBatch.
 	kernel      denseKernel
 	kernelErr   error
 	batchA      []float32 // feature-major activations, widest × EvalBatchWidth
@@ -221,12 +212,9 @@ type Evaluator struct {
 	batchWeight []float32 // the first layer's weights, compacted to those columns
 	nz          []int32   // the surviving feature indices, ascending
 
-	// noSkipZeros éteint la compaction des colonnes nulles pour CET
-	// évaluateur. Il n'existe que pour la mesure — sa valeur zéro est la
-	// compaction allumée, et rien dans l'application ne le pose. Il est par
-	// évaluateur et non global parce que c'est tout l'objet du poste 4 :
-	// personne n'avait jamais séparé le grand réseau du petit, et un
-	// interrupteur global ne le permet pas davantage.
+	// noSkipZeros éteint la compaction des colonnes nulles pour cet
+	// évaluateur, pour la mesure seulement. Par évaluateur pour pouvoir
+	// mesurer le grand et le petit réseau séparément.
 	noSkipZeros bool
 }
 
@@ -243,12 +231,10 @@ func NewEvaluator(net *Network) *Evaluator {
 // Evaluate runs the forward pass over pre-encoded features and writes the five
 // post-processed probabilities into probs.
 //
-// The arithmetic is deliberately float32 throughout, accumulating from the bias
-// in ascending index order, exactly as the reference C does. The explicit
-// float32 conversion around each product is not redundant: it forbids the
-// compiler from contracting the multiply-add into an FMA, which would keep more
-// precision than the reference and put cross-platform agreement out of reach on
-// the architectures where Go fuses.
+// The arithmetic is float32 throughout, accumulating from the bias in
+// ascending index order, as the reference C does. The explicit float32
+// conversion around each product is a fusion barrier: it forbids an FMA
+// contraction on the architectures where Go fuses (ADR-0024).
 func (e *Evaluator) Evaluate(features []float32, probs *[NumOutputs]float32) error {
 	if len(features) != e.net.inputSize {
 		return fmt.Errorf("gammonnet: %d features given, %d expected", len(features), e.net.inputSize)

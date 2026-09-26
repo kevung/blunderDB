@@ -12,14 +12,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// TestEvaluateMovesSetsEquityError guards the Eval panel bug (#132) where a
-// live checker-move evaluation always showed a 0 equity loss, no matter how
-// bad the candidate: evaluateMoves ranked moves but never filled in
-// EquityError. The convention mirrors the three other places that already
-// compute this figure at save time (ingest/merge.go's
-// sortCheckerMovesByEquity, database/db_analysis.go's two copies): nil for
-// the best move, bestEquity-equity (a non-negative loss, moves come back
-// best-first per Searcher.Plays) for every other one.
+// TestEvaluateMovesSetsEquityError: evaluateMoves fills EquityError as
+// ingest/merge.go does — nil for the best move, a non-negative
+// bestEquity-equity for every other one.
 func TestEvaluateMovesSetsEquityError(t *testing.T) {
 	rng := rand.New(rand.NewSource(20260830))
 
@@ -62,14 +57,10 @@ func TestEvaluateMovesSetsEquityError(t *testing.T) {
 	}
 }
 
-// TestEvaluatePositionHonoursTheScore is ADR-0016's own regression: before
-// use_match, the opening 6-4's candidates were bit-identical whatever the
-// score (measured 2026-08-31 across money, 7-away/7-away, gammon-go 4a/2a,
-// gammon-save 2a/4a, 2a/2a and DMP 1a/1a) because pos.Score never reached the
-// checker-move search. It must not go back to that: the gammonish play
-// (fewer priming points, more gammon chances — 6/2 8/2 on this roll) must be
-// valued differently at DMP, where a gammon is worth nothing extra, than at
-// gammon-go, where it is worth most of the game.
+// TestEvaluatePositionHonoursTheScore (ADR-0016): pos.Score must reach the
+// checker-move search, so the gammonish 6-4 play (6/2 8/2) is valued
+// differently at DMP, where a gammon is worth nothing extra, than at
+// gammon-go.
 func TestEvaluatePositionHonoursTheScore(t *testing.T) {
 	base, err := domain.DecodeXGID(openingXGID)
 	if err != nil {
@@ -84,12 +75,8 @@ func TestEvaluatePositionHonoursTheScore(t *testing.T) {
 		return p
 	}
 
-	// Score is indexed by PLAYER, and White is the one on roll here, so
-	// Score[1] is the mover's own away score. Gammon-go is the score where
-	// the MOVER is the trailer chasing the gammon — 4-away against a 2-away
-	// leader, i.e. {2, 4}. The mirror, {4, 2}, puts the mover 2-away: the
-	// leader, who wants the plain win he is about to double for and has the
-	// least use for a gammon of any score here.
+	// Score is indexed by PLAYER and White is on roll, so gammon-go (the
+	// mover 4-away chasing the gammon against a 2-away leader) is {2, 4}.
 	money := atScore([2]int{-1, -1})
 	dmp := atScore([2]int{1, 1})        // both 1-away: a gammon is worth nothing extra
 	gammonGo := atScore([2]int{2, 4})   // mover 4-away vs a 2-away leader
@@ -149,11 +136,9 @@ func TestEvaluatePositionHonoursTheScore(t *testing.T) {
 	if dmpLoss == goLoss {
 		t.Errorf("the gammonish play's loss is identical at DMP (%v) and gammon-go (%v) — the score is not reaching the checker-move search", dmpLoss, goLoss)
 	}
-	// At gammon-go the gammon-chasing play should cost LESS relative to the
-	// field than at DMP, where its extra gammon chances buy nothing. Since
-	// ADR-0023 prices the leaves with the cube this is no longer a near-tie:
-	// 8/2 6/2 IS the best play at 4-away/2-away (loss 0), and costs 0.038 at
-	// the mirror score — which is what gnubg plays there too.
+	// At gammon-go the gammon-chasing play should cost LESS than at DMP.
+	// With cubeful leaves (ADR-0023) 8/2 6/2 is the best play at
+	// 4-away/2-away, as gnubg plays it.
 	if goLoss > dmpLoss {
 		t.Errorf("gammon-go loss (%v) > DMP loss (%v) for the gammonish play — a gammon should be cheaper to chase at gammon-go, never more expensive", goLoss, dmpLoss)
 	}
@@ -170,12 +155,9 @@ func TestEvaluatePositionHonoursTheScore(t *testing.T) {
 	t.Logf("gammonish-play loss: money=%.4f DMP=%.4f gammon-go=%.4f gammon-save=%.4f", moneyLoss, dmpLoss, goLoss, saveLoss)
 }
 
-// TestEvaluatePositionDecodesPostCrawfordSentinel guards the bug the score
-// sentinel decode fixes (ADR-0016, CONTEXT.md's Away score entry): a
-// domain.Position at away=0 ("1-away, post-Crawford") must evaluate, not be
-// silently refused because 0 fails MatchState.IsValid()'s "away >= 1". Before
-// MatchStateFromPosition this position's cube decision failed with "not
-// evaluable at this score" on every post-Crawford 1-away position.
+// TestEvaluatePositionDecodesPostCrawfordSentinel: a domain.Position at
+// away=0 ("1-away, post-Crawford", CONTEXT.md) must evaluate, not be refused
+// by MatchState.IsValid()'s "away >= 1".
 func TestEvaluatePositionDecodesPostCrawfordSentinel(t *testing.T) {
 	base, err := domain.DecodeXGID(openingXGID)
 	if err != nil {
@@ -203,11 +185,8 @@ const tooGoodXGID = "XGID=bBBBBBB-C----e-----e--c---:0:0:1:00:0:0:0:0:10"
 
 // tooGoodContactXGID is the ordinary version of the same verdict: a live
 // contact position, ~73 % wins with about half of them gammons, centred
-// cube, money. No closed board, no checkers on the bar — the kind of
-// position a player actually meets, and the kind ADR-0022's plateau made
-// unreportable. tooGoodXGID above cleared the plateau only because its
-// CUBELESS equity already exceeded a point, which is why it kept passing
-// while the model was wrong everywhere else.
+// cube, money, cubeless equity below a point (unlike tooGoodXGID) — the
+// case ADR-0022's plateau made unreportable.
 //
 // Both reference engines, on this position:
 //
@@ -216,16 +195,10 @@ const tooGoodXGID = "XGID=bBBBBBB-C----e-----e--c---:0:0:1:00:0:0:0:0:10"
 //	XG Roller++   ND +1.082   DT +1.678   too good / pass (12.1 %)
 const tooGoodContactXGID = "XGID=bB-B--C-A---eE---c-caa--B-:0:0:1:00:0:0:0:0:0"
 
-// TestCubeEquitiesAreNormalisedAtEveryScore guards ADR-0019's bug: at a match
-// score the panel showed Decide's raw match winning chances as equities
-// (the opening position read "No double +0.767" at 3-away/7-away), while the
-// cubeless fact beside them was on the search's 2×MWC−1 and money was in
-// points — three scales, two of them wrong against the imported XG analyses
-// sharing the same column.
-//
-// The invariant that pins it down needs no reference engine: conceding the
-// cube's own value is worth exactly −1 and cashing it exactly +1, at every
-// score, which is what "normalised" means.
+// TestCubeEquitiesAreNormalisedAtEveryScore (ADR-0019): every equity that
+// leaves the package is normalised. The invariant needs no reference engine:
+// conceding the cube's value is worth exactly −1 and cashing it +1, at every
+// score.
 func TestCubeEquitiesAreNormalisedAtEveryScore(t *testing.T) {
 	base, err := domain.DecodeXGID(openingXGID)
 	if err != nil {
@@ -268,11 +241,9 @@ func TestCubeEquitiesAreNormalisedAtEveryScore(t *testing.T) {
 		}
 	}
 
-	// The cubeless fact carries no cube, so the score moves it only through
-	// the gammon prices — a few hundredths on the opening position. It is
-	// the sharpest available check that the scale itself is right: the bug
-	// put it on 2×MWC−1, five times too small at an even score, while the
-	// three cube equities beside it were on a third scale again.
+	// The cubeless fact moves with the score only through the gammon prices
+	// (a few hundredths): the sharpest check that its scale is right, since
+	// 2×MWC−1 would be five times too small at an even score.
 	for label, eq := range cubeless {
 		if math.Abs(eq-moneyCubeless) > 0.15 {
 			t.Errorf("%s: cubeless %+.4f is far from money's %+.4f — a scale, not a score effect",
@@ -281,14 +252,9 @@ func TestCubeEquitiesAreNormalisedAtEveryScore(t *testing.T) {
 	}
 }
 
-// TestTooGoodOnAContactPosition is ADR-0022's regression: the verdict must
-// be reachable on a position whose cubeless equity is BELOW a point, which is
-// where the flattened live curve made it impossible. Before the fix this
-// position reported "Double, Pass" with a no-double equity of +0.995.
-//
-// Money only: the plateau's signature is that eND stops at the cash
-// equivalent, and money is where that equivalent is exactly +1 and the
-// comparison is legible.
+// TestTooGoodOnAContactPosition (ADR-0022): TooGood must be reachable on a
+// position whose cubeless equity is BELOW a point. Money only, where the
+// cash equivalent is exactly +1.
 func TestTooGoodOnAContactPosition(t *testing.T) {
 	pos, err := domain.DecodeXGID(tooGoodContactXGID)
 	if err != nil {
@@ -314,14 +280,9 @@ func TestTooGoodOnAContactPosition(t *testing.T) {
 		t.Errorf("best action %q, want a too-good verdict", cube.BestCubeAction)
 	}
 
-	// The plateau's fingerprint: cubeless below a point, cubeful above it.
-	// The flattened curve could only ever produce the second by way of the
-	// first, so a position where they straddle +1 is exactly the one it got
-	// wrong. If they ever land on the same side again, this position has
-	// stopped exercising the tail and the guard is worth nothing —
-	// hence the check, on the pre-roll vector, which is where the cubeless
-	// figure actually lives (DoublingCubeAnalysis.CubelessNoDoubleEquity is
-	// an importer's field; evaluateCube leaves it zero).
+	// The fixture must straddle +1 (cubeless below, cubeful above) or it no
+	// longer exercises the tail. The cubeless figure lives in the pre-roll
+	// vector (evaluateCube leaves CubelessNoDoubleEquity zero).
 	if res.PreRoll == nil {
 		t.Fatal("no pre-roll facts on a cube decision")
 	}
@@ -334,10 +295,8 @@ func TestTooGoodOnAContactPosition(t *testing.T) {
 	}
 }
 
-// TestTooGoodIsReported guards the second half of ADR-0019: the engine had
-// been computing the TooGood verdict all along and cubeActionLabel threw it
-// away, so a position that is too good to double reported "No Double" —
-// indistinguishable from a position that is not good enough to double.
+// TestTooGoodIsReported (ADR-0019): a too-good position must not be labelled
+// "No Double".
 func TestTooGoodIsReported(t *testing.T) {
 	base, err := domain.DecodeXGID(tooGoodXGID)
 	if err != nil {
@@ -382,9 +341,8 @@ func TestTooGoodIsReported(t *testing.T) {
 	}
 }
 
-// notationForCandidateNaive is the linear rescan notationForCandidate did
-// before #150, kept for the A/B below and for the equality check that goes
-// with it.
+// notationForCandidateNaive is the linear rescan notationIndex replaces, kept
+// for the A/B below and its equality check.
 func notationForCandidateNaive(c *Candidate, legal []domain.LegalPlay, opponent int) string {
 	for _, play := range legal {
 		res := play.Result
@@ -440,9 +398,8 @@ func TestNotationIndexMatchesTheLinearScan(t *testing.T) {
 	t.Logf("%d candidats, %d coups légaux", len(cands), len(legal))
 }
 
-// BenchmarkNotationPhase is the per-poste figure for the notation lookup
-// (#150). Both forms run in the same process, and both include what they
-// each have to build: the index for one, nothing for the other.
+// BenchmarkNotationPhase compares the notation lookup's two forms, each
+// including what it has to build.
 func BenchmarkNotationPhase(b *testing.B) {
 	cands, legal, _, opponent := notationBenchFixture(b)
 	dp, _ := domain.DecodeXGID(openingXGID)
@@ -468,15 +425,10 @@ func BenchmarkNotationPhase(b *testing.B) {
 
 var sinkNotation string
 
-// TestCrawfordAtDoubleMatchPoint pins the [1,1] score (#188): both players
-// 1-away, which MatchStateFromPosition reads as the Crawford game — the
-// sentinel says Crawford whenever either raw away score is 1, and here both
-// are. It is the one score where every stake is the match: the cube is dead
-// by rule and worthless by arithmetic at once. The decision must be
-// evaluable (not refused), must not double, must price the double branch at
-// exactly the no-double value (a zero-cost non-option, never a "missed
-// double"), and its no-double equity must be the cubeless one — the dead
-// value Value returns for a Crawford game.
+// TestCrawfordAtDoubleMatchPoint pins the [1,1] score, read as the Crawford
+// game: the decision must be evaluable, must not double, must price the
+// double branch at exactly the no-double value, and its no-double equity
+// must be the dead (cubeless) one.
 func TestCrawfordAtDoubleMatchPoint(t *testing.T) {
 	pos, err := domain.DecodeXGID(openingXGID)
 	if err != nil {

@@ -1,8 +1,8 @@
 package sqlite_test
 
-// Concurrency tests for the SQLite backend (P5). With the global Database
-// mutex gone on the storage path, these exercise the bare *sql.DB pool +
-// busy_timeout under parallel readers and writers. They run on a file-backed
+// Concurrency tests for the SQLite backend: with no global lock on the storage
+// path, these exercise the bare *sql.DB pool + busy_timeout under parallel
+// readers and writers. They run on a file-backed
 // database (t.TempDir) because ":memory:" pins the pool to a single
 // connection (each connection is a separate in-memory DB) and so would not
 // exercise pool concurrency. Run with -race to catch data races.

@@ -1,28 +1,14 @@
-// Jouer le coup du quiz SUR LE PLATEAU (#294, fiche J.4).
+// Jouer le coup du quiz SUR LE PLATEAU : un réducteur pur (ni DOM, ni stores,
+// ni moteur), auquel `boardInteractions.js` passe le point cliqué.
 //
-// Ce module est un réducteur pur : un état, des fonctions qui en rendent un
-// autre. Il ne touche ni au DOM, ni aux magasins, ni au moteur — ce qui le
-// rend testable sans plateau, et ce qui permet à `boardInteractions.js` de
-// n'avoir qu'à lui passer le point cliqué.
+// Aucune règle du backgammon ici : les coups légaux viennent de
+// `App.LegalMoves` ; ce module garde ceux compatibles avec ce qui est joué.
 //
-// **Aucune règle du backgammon n'est écrite ici.** Les coups légaux viennent
-// de `App.LegalMoves`, donc de `domain.LegalMoves` : ce module ne fait que
-// choisir, parmi ces coups, ceux qui restent compatibles avec ce que
-// l'utilisateur a déjà joué.
-//
-// Le piège que ce choix évite : `LegalMoves` déduplique par position
-// résultante, donc pour « 24/23 13/11 » elle ne rend QU'UN ordre des deux
-// pas. Filtrer sur le préfixe des pas bloquerait l'utilisateur qui joue
-// l'autre ordre — un coup parfaitement légal, refusé par un artefact de
-// déduplication. La compatibilité se juge donc sur le MULTI-ENSEMBLE des pas :
-// un coup reste vivant tant que ce qui a été joué est contenu dans ses pas,
-// dans n'importe quel ordre.
-//
-// L'ordre reste contraint là où il doit l'être, et gratuitement : un pas ne
-// part que d'un point qui porte un pion du joueur SUR LE PLATEAU COURANT, donc
-// 11/8 avant 13/11 est impossible faute de pion en 11. Et les points bloqués
-// par l'adversaire le restent pendant tout le coup — ses pions ne bougent que
-// pour être frappés —, donc aucune séquence acceptée ici n'est illégale.
+// `LegalMoves` déduplique par position résultante et ne rend qu'UN ordre des
+// pas (« 24/23 13/11 ») : filtrer par préfixe refuserait l'autre ordre, légal.
+// La compatibilité se juge donc sur le MULTI-ENSEMBLE des pas. L'ordre reste
+// contraint par le plateau courant (pas de 11/8 sans pion en 11), et les points
+// adverses bloqués le restent : aucune séquence acceptée n'est illégale.
 
 /** Destination d'un pion sorti. Même sentinelle que `domain.Off`. */
 export const OFF = -1;
@@ -73,12 +59,9 @@ function contains(sup, sub) {
 }
 
 /**
- * L'état d'un coup en cours de saisie.
- *
- * `plays` sont les coups légaux tels que le moteur les rend ; `board` est le
- * plateau APRÈS les pas déjà joués ; `steps` est ce que l'utilisateur a joué,
- * dans SON ordre à lui ; `selected` est le point d'où part le prochain pas,
- * quand il est choisi.
+ * `plays` : les coups légaux du moteur ; `board` : le plateau APRÈS les pas
+ * joués ; `steps` : les pas dans l'ordre de l'utilisateur ; `selected` : le
+ * point du prochain pas, s'il est choisi.
  *
  * @typedef {{from: number, to: number, hit?: boolean}} Step
  * @typedef {{steps: Step[], notation: string, result: any}} Play
@@ -113,12 +96,9 @@ export function alivePlays(state) {
 }
 
 /**
- * Les pas `steps` d'un coup contiennent-ils ceux qui ont été joués,
- * multiplicités comprises et dans n'importe quel ordre ?
- *
- * C'est la règle d'`alivePlays`, offerte à qui tient une liste de coups sans
- * tenir d'état du réducteur — la liste des candidats d'une transcription, que
- * les pas joués au plateau réduisent (ADR-0052).
+ * La règle d'`alivePlays` (multi-ensemble, tout ordre), pour qui tient une
+ * liste de coups sans état du réducteur (candidats d'une transcription,
+ * ADR-0052).
  *
  * @param {Step[]} steps
  * @param {Step[]} played
@@ -128,11 +108,8 @@ export function containsSteps(steps, played) {
 }
 
 /**
- * Le coup achevé, s'il y en a un : tous ses pas sont joués.
- *
- * Rend le coup du moteur, et non le plateau reconstruit ici — c'est SA
- * position résultante qui part au juge, donc une erreur de reconstruction ne
- * peut pas se glisser dans la réponse.
+ * Le coup achevé, s'il y en a un. Rend le coup du moteur, dont la position
+ * résultante part au juge, jamais le plateau reconstruit ici.
  * @param {PlayState} state
  * @returns {Play|null}
  */
@@ -154,8 +131,7 @@ export function sources(state) {
 }
 
 /**
- * Les destinations qu'un pas partant de `from` peut atteindre. Vide quand
- * `from` n'a plus rien à donner.
+ * Les destinations d'un pas partant de `from`.
  * @param {PlayState} state
  * @param {number} from
  * @returns {Set<number>}
@@ -201,9 +177,8 @@ function hasMoverChecker(state, point) {
 }
 
 /**
- * Le clic sur un point : il choisit une source, en change, ou déselectionne.
- * Un point qui n'offre aucun pas ne devient pas une sélection — la barre
- * mise à part, où l'on est obligé d'entrer, et où le joueur clique d'abord.
+ * Le clic sur un point : choisit une source, en change, ou désélectionne. Un
+ * point sans pas offert n'est pas sélectionnable, sauf la barre.
  * @param {PlayState} state
  * @param {number} point
  * @returns {PlayState}
@@ -215,9 +190,8 @@ export function selectSource(state, point) {
 }
 
 /**
- * Joue un pas de `from` vers `to`. Rend l'état inchangé si le pas n'est offert
- * par aucun coup vivant : l'interface n'a alors rien à annuler ni à expliquer,
- * le pion n'a simplement pas bougé.
+ * Joue un pas de `from` vers `to`, ou rend l'état inchangé si aucun coup
+ * vivant ne l'offre.
  * @param {PlayState} state
  * @param {number} from
  * @param {number} to
@@ -255,10 +229,7 @@ export function resetPlay(state, position) {
 }
 
 // ── Le plateau affiché ───────────────────────────────────────────────────────
-//
-// Reconstruit pas à pas pour que l'utilisateur VOIE son coup. La réponse
-// envoyée au juge, elle, est la position résultante du moteur (completedPlay),
-// jamais celle-ci.
+// Reconstruit pour l'affichage seulement ; le juge reçoit la position du moteur.
 
 /** @param {any} board */
 function cloneBoard(board) {

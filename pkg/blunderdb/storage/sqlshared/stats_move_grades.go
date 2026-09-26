@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// MatchMoveGrades scores every Move of a match by its own play (#287): a
+// MatchMoveGrades scores every Move of a match by its own play: a
 // checker Move is looked up among its Position's analysed candidates, a cube
 // Move goes through engine.CubeActionError — the two rules the search's `E`
 // filter scores a play by. The grade is drawn at the library's thresholds
@@ -20,7 +20,7 @@ import (
 // The denormalised error column is deliberately not read: it scores the FIRST
 // play of a Position, and a Position deduplicated within a match (an opening
 // reached in two games, played two ways) would give both Moves the first
-// one's grade (#167). Each blob is decoded once per Position, however many
+// one's grade. Each blob is decoded once per Position, however many
 // Moves reach it.
 func (s *StatsStore) MatchMoveGrades(ctx context.Context, scope string, matchID int64) ([]storage.MoveGrade, error) {
 	settings, err := librarySettings(ctx, s.DB, scope)

@@ -17,12 +17,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// bearoffRacePosition builds a pure home-board race with no dice set (a cube
-// decision, not a checker decision) — cheap for gammonnet.EvaluatePosition to
-// search at 0-ply. gammonnet.FromDomain requires a structurally valid
-// position (15 checkers a side, on the board or borne off), so the checkers
-// not on the board must be accounted for in Board.Bearoff — the same
-// 15-onBoard convention domain/xgid.go uses.
+// bearoffRacePosition builds a home-board race with no dice (a cube decision),
+// cheap to search at 0-ply. FromDomain wants 15 checkers a side, so the ones
+// off the board go in Board.Bearoff.
 func bearoffRacePosition() domain.Position {
 	var pos domain.Position
 	set := func(point, color, n int) {
@@ -79,11 +76,8 @@ func postNDJSON(t *testing.T, srv *Server, path, body string) []map[string]any {
 	return events
 }
 
-// TestGammonNetAnalyzeMissingFillsOnlyTheGap mirrors
-// TestAnalyzeMissingWithGammonNetFillsOnlyTheGap (database package, #129):
-// a position with no analysis gets one written; a position that already
-// carries any analysis is left untouched (ADR-0013's gap rule), even though
-// the sweep runs over the whole tenant.
+// TestGammonNetAnalyzeMissingFillsOnlyTheGap: a position with no analysis gets
+// one; a position already carrying any analysis is left alone (ADR-0013).
 func TestGammonNetAnalyzeMissingFillsOnlyTheGap(t *testing.T) {
 	ctx := context.Background()
 	srv, s := newGammonNetTestServer(t)
@@ -94,10 +88,8 @@ func TestGammonNetAnalyzeMissingFillsOnlyTheGap(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// A genuinely different board: ZobristHash normalizes PlayerOnRoll to 0
-	// (mirroring the board to the on-roll player's perspective), so flipping
-	// PlayerOnRoll alone would NOT have changed the hash — this position
-	// differs on the board itself, landing it on a distinct row.
+	// ZobristHash normalizes PlayerOnRoll, so this position must differ on the
+	// board itself to land on a distinct row.
 	var analyzed domain.Position
 	analyzed.Board.Points[3] = domain.Point{Color: domain.Black, Checkers: 3}
 	analyzed.Board.Points[24] = domain.Point{Color: domain.White, Checkers: 3}
@@ -176,10 +168,9 @@ func TestGammonNetAnalyzeMissingEmptyLibrary(t *testing.T) {
 	}
 }
 
-// TestGammonNetAnalyzeMissingReportsEvaluatedCount (#191): the final "done"
-// event must carry the evaluated/refused/failed split, not just a bare
-// count — a caller has no other way to tell "everything succeeded" from
-// "something was silently skipped".
+// TestGammonNetAnalyzeMissingReportsEvaluatedCount: the "done" event carries
+// the evaluated/refused/failed split, the caller's only way to tell a full
+// success from a silent skip.
 func TestGammonNetAnalyzeMissingReportsEvaluatedCount(t *testing.T) {
 	ctx := context.Background()
 	srv, s := newGammonNetTestServer(t)
@@ -205,14 +196,9 @@ func TestGammonNetAnalyzeMissingReportsEvaluatedCount(t *testing.T) {
 	}
 }
 
-// TestGammonNetSweepStaleRerunsDepthOnlyChange (#191) is the server-side
-// twin of database.TestAnalyzeStaleGammonNetRerunsDepthOnlyChange: a
-// position analysed once at 0-ply is untouched by a second
-// analyzeMissing/sweepStale-at-0-ply pass, but IS caught and re-analysed by
-// /v1/gammonnet.sweepStale once asked for a different ply — the depth
-// entering gammonnet.IsStaleAnalysis, not just EngineVersion. An
-// XG-analysed position in the same tenant is left alone throughout
-// (ADR-0013's protection, gammonnet.IsStaleAnalysis's foreign-engine rule).
+// TestGammonNetSweepStaleRerunsDepthOnlyChange: an analysis at 0-ply is
+// re-analysed by sweepStale only when asked for a different ply (the depth
+// enters IsStaleAnalysis); an XG analysis is never touched (ADR-0013).
 func TestGammonNetSweepStaleRerunsDepthOnlyChange(t *testing.T) {
 	ctx := context.Background()
 	srv, s := newGammonNetTestServer(t)
@@ -262,8 +248,7 @@ func TestGammonNetSweepStaleRerunsDepthOnlyChange(t *testing.T) {
 		t.Fatalf("sweepStale at the same depth: total = %v, want 0", last["total"])
 	}
 
-	// sweepStale at a DIFFERENT depth (1): the depth mismatch alone makes it
-	// stale (#191).
+	// sweepStale at a different depth: the mismatch alone makes it stale.
 	events = postNDJSON(t, srv, "/v1/gammonnet.sweepStale", `{"ply":1}`)
 	last := events[len(events)-1]
 	if last["event"] != "done" {

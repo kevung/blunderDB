@@ -13,11 +13,8 @@ import { logger } from './utils/logger.js';
 import { tMsg } from './i18n';
 import { displayedPositionIDs, searchQueryBoard } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
-// The search-token grammar (parseSearchTokens) and its quote-stripping helper
-// live in searchFilterService.js, shared with the "retour" replay path
-// (parseSearchCommand) — see that module's doc comment and #203. Re-exported
-// here unchanged so existing importers (this file's own tests, ankiService.js)
-// do not have to change their import path.
+// The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
+// re-exported so existing importers keep their path.
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
 export { stripQuotedTokens };
 
@@ -57,10 +54,7 @@ export function processCommand(command) {
     } else if (command === 'export_db' || command === 'edb') {
         callbacks.onExportDatabase?.();
     } else if (command.startsWith('import ')) {
-        // `import <identifiant>` : le même verbe qu'`import` tout court, avec
-        // un argument. Sans argument on choisit un fichier ; avec, on lit
-        // l'identifiant — le cas où il arrive d'ailleurs que du
-        // presse-papier : d'un message, d'un forum, d'un script (#262).
+        // `import <identifiant>` : lit un identifiant venu d'ailleurs que du presse-papier.
         // Testé AVANT la forme exacte, qui ne peut pas le capter.
         callbacks.onImportIdentifier?.(command.slice('import '.length));
     } else if (command === 'import' || command === 'i') {
@@ -126,7 +120,7 @@ export function processCommand(command) {
     } else if (command.startsWith('train ')) {
         // `train <exercice>` : scores, pips, bearoff, decision et leurs alias
         // (`exerciseForCommand`). Testé AVANT la forme exacte, que la ligne
-        // suivante capte pour ouvrir l'onglet (#273, #323).
+        // suivante capte pour ouvrir l'onglet.
         callbacks.onTraining?.(command.slice('train '.length).trim());
     } else if (command === 'train') {
         callbacks.onTraining?.('');
@@ -169,16 +163,9 @@ export function processCommand(command) {
     }
 }
 
-// Handles both `s...` (search) and `ss...` (sub-search, restricted to the IDs of the
-// displayed list) — same body throughout, differing only in the command prefix length, the
-// bare-command spelling, whether the displayed list must be non-empty first, and which IDs
-// (if any) get sent as restrictToPositionIDs.
-//
-// `ss` searches in the list on screen whatever the path (#410): a collection's positions,
-// a match's positions — typed straight away or after TAB — or positionsStore otherwise.
-// The machine states that list (displayedPositionIDs); this function never guesses it.
-// `s` stays refused in a collection and in a match: it searches the whole library and
-// would replace the list the user is studying, so the refusal says so and names `ss`.
+// Handles `s…` (search) and `ss…` (sub-search in the list on screen, displayedPositionIDs —
+// never guessed). `s` is refused in a collection or a match: it would replace the list being
+// studied, so the refusal names `ss`.
 function handleSearchCommand(command, { isSubSearch }) {
     const mode = get(statusBarModeStore);
     if (!isSubSearch && (mode === 'COLLECTION' || mode === 'MATCH')) {
@@ -211,10 +198,8 @@ function handleSearchCommand(command, { isSubSearch }) {
                   .map((filter) => filter.trim());
     const parsedFilters = command === bareCommand ? null : parseFilters(filters, command);
 
-    // The entry records the board the search sends — without checkers outside
-    // EDIT (#410) — so that replaying it from the history asks the same
-    // question. A `like` keeps the board on screen: it is the target a bare
-    // `like` is replayed against (#404), never a structure.
+    // The history entry records the board the search sends (no checkers outside EDIT), so a replay
+    // asks the same question; a `like` keeps the on-screen board, its target.
     const historyBoard = JSON.stringify(/** @type {any} */ (parsedFilters)?.likeFilter ? get(positionStore) : searchQueryBoard());
     const searchHistoryEntry = {
         command: command,
@@ -245,10 +230,8 @@ function handleSearchCommand(command, { isSubSearch }) {
 }
 
 /**
- * Parse the `s …`/`ss …` filter tokens typed on the command line (the
- * "aller" path). A thin wrapper over {@link parseSearchTokens}
- * (searchFilterService.js) — see that function's doc comment for the shared
- * grammar and #203, the bug this split used to hide.
+ * Parse the `s …`/`ss …` filter tokens typed on the command line: a thin wrapper over
+ * {@link parseSearchTokens} (searchFilterService.js).
  *
  * @param {string[]} filters - filter tokens, already split and quote-stripped by the caller.
  * @param {string} command - the raw command, used to recover quoted values (`t"…"`, `m"…"`, `pl"…"`).

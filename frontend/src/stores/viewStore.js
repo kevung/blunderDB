@@ -73,18 +73,15 @@ function createViewStore() {
     }
 
     function restoreViewState(view) {
-        // The position cache is shared by every view (keyed by id), so a
-        // switch keeps whatever windows were loaded; only the id list moves.
+        // The position cache is shared by every view (keyed by id): only the id list moves.
         positionsStore.setIds(view.ids || []);
-        // A view restored from disk carries no board: show the position from
-        // the cache when it is there, otherwise the index effect fetches it.
+        // A view restored from disk has no board: cache, else the index effect fetches it.
         const cached = view.position ? null : positionsStore.peek(view.positionIndex || 0);
         positionStore.set(view.position ?? (cached ? JSON.parse(JSON.stringify(cached)) : emptyPosition()));
         analysisStore.set(view.analysis);
         selectedMoveStore.set(view.selectedMove ?? null);
-        // EVAL and EDIT are transient modes driven by the active tab: always
-        // restore as NORMAL so the tab handler re-enters them cleanly via
-        // enterEvalMode() / enterEditMode() once the DB is fully open.
+        // EVAL and EDIT follow the active tab: restore as NORMAL, the tab handler re-enters them
+        // once the DB is open.
         const mode = view.mode || 'NORMAL';
         statusBarModeStore.set(mode === 'EVAL' || mode === 'EDIT' ? 'NORMAL' : mode);
         activeTabStore.set(view.activeTab || 'matches');
@@ -159,9 +156,8 @@ function createViewStore() {
         });
     }
 
-    // Restore views from serialized data + a function listing the ids of the
-    // stored positions (ListPositionIDs): a saved id whose position has since
-    // been deleted is dropped, the rest keep their order and load on demand.
+    // Restore views, dropping saved ids no longer in the database (ListPositionIDs); the rest
+    // keep their order and load on demand.
     async function deserialize(json, listPositionIdsFn) {
         try {
             const data = JSON.parse(json);
@@ -178,13 +174,11 @@ function createViewStore() {
                     name: sv.name,
                     ids,
                     positionIndex: Math.min(sv.positionIndex || 0, Math.max(ids.length - 1, 0)),
-                    // No board yet: restoreViewState takes it from the cache or
-                    // leaves it to the index effect (getPosition).
+                    // No board yet: from the cache, or the index effect (getPosition).
                     position: null,
                     analysis: createDefaultAnalysis(),
                     selectedMove: sv.selectedMove ?? null,
-                    // A session saved before #401 names the Eval tab `epc` and
-                    // its mode `EPC`: both reopen Eval under today's names.
+                    // Old names (`epc` tab, `EPC` mode) reopen as Eval.
                     activeTab: normalizeTabId(sv.activeTab) || 'analysis',
                     commentText: sv.commentText || '',
                     mode: (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL',

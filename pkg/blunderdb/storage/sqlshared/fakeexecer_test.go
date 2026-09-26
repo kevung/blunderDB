@@ -6,13 +6,9 @@ import (
 	"reflect"
 )
 
-// This file gives the B.6 (#174) regression tests a way to simulate "the
-// database returned a genuine error mid-scan" without a real corrupted
-// SQLite/PostgreSQL file: Execer is already the seam every shared store runs
-// against (sqlshared.go), so a fake implementation lets a test fail exactly
-// one row of exactly one query and check that the store surfaces an error
-// instead of quietly finishing with fewer rows or a lower PR than the data
-// actually has.
+// A fake Execer lets a test fail exactly one row of exactly one query and
+// check that the store surfaces an error instead of quietly finishing with
+// fewer rows than the data has.
 
 // fakeDialect answers every Dialect question with the simplest SQLite-shaped
 // fact; the SQL text itself is never executed by these fakes; only its
@@ -81,8 +77,7 @@ func (emptyRows) Close() error           { return nil }
 // corruptRows yields exactly one row whose Scan always fails — the shape of
 // a query that hit one bad row among possibly many others (a NULL where the
 // column is not nullable in practice, a value the driver cannot convert to
-// the destination type). Before B.6 several call sites turned this into
-// "stop accumulating and report what you have so far" rather than an error.
+// the destination type).
 type corruptRows struct{ seen bool }
 
 func (r *corruptRows) Next() bool {

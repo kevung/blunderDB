@@ -9,13 +9,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Entering a result, and the room the matches are played in (ADR-0047 §5.3 and §5.5).
+// Entering a result, and the room the matches are played in (tasks/nicomaque/fonctionnel.md §5.3 and §5.5).
 //
-// The one rule that shapes every signature here: THE WINNER IS THE ONLY THING REQUIRED. A
-// director often writes "Alice wins" and nothing else, and a result with no score is an
-// ordinary result — not a half-filled form. The scores are optional, the remark is rarer still,
-// and a score that contradicts the announced length is ACCEPTED with a warning rather than
-// refused: during a tournament it is the director's word that stands.
+// THE WINNER IS THE ONLY THING REQUIRED: a result without a score is ordinary. A score
+// contradicting the announced length is ACCEPTED with a warning; the director's word stands.
 
 // TableCell is one square of the table grid: what the director reads from two metres away.
 type TableCell struct {
@@ -34,7 +31,7 @@ type TableCell struct {
 	// comes to complain.
 	ElapsedSeconds int  `json:"elapsedSeconds,omitempty"`
 	Slow           bool `json:"slow,omitempty"`
-	// NoTable marks a running match that has no table — paired by hand in a full room (#437).
+	// NoTable marks a running match that has no table — paired by hand in a full room.
 	// Its Table is 0; such cells come after the room's tables, one per match.
 	NoTable bool `json:"noTable,omitempty"`
 }
@@ -104,7 +101,7 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		out = append(out, c)
 	}
 	// A match with no table is still a match in the room: leaving it out of the grid is how a
-	// manual pairing came to be launched and seen nowhere (#437).
+	// manual pairing came to be launched and seen nowhere.
 	for _, m := range tableless {
 		c := TableCell{NoTable: true}
 		fill(&c, m)
@@ -129,12 +126,8 @@ func playerNameIn(st *tournoi.State, id tournoi.PlayerID) string {
 	return string(id)
 }
 
-// EnterResult records the result of a match. `winner` is the only thing required; scoreA and
-// scoreB may both be zero, which is what a director who wrote only "Alice wins" produces.
-//
-// `note` is the rare remark — "ran out of time", "abandoned: …" — and travels on the event.
-// A score beyond the announced length is accepted; the engine raises a standing warning and
-// the director decides what to do with it.
+// EnterResult records the result of a match. Only `winner` is required; both scores may be zero.
+// `note` travels on the event. A score beyond the length raises a standing warning.
 func (d *Database) EnterResult(tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
 	ctx := context.Background()
 	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)

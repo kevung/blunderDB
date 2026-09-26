@@ -7,12 +7,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The brackets of a Direction (ADR-0047 §5.6, issue #373).
+// The brackets of a Direction (tasks/nicomaque/fonctionnel.md §5.6).
 //
-// The engine draws them too — package render produces an SVG for the standalone display page —
-// but the view INSIDE the application is drawn by the frontend, and that is a deliberate split:
-// in here a bracket is translated in nine languages and clickable, and both of those live in
-// the frontend. What Go hands over is the structure, with the engine's codes untranslated.
+// The engine renders an SVG for the display page, but the in-app view is the frontend's
+// (translated, clickable); Go hands over the structure with untranslated codes.
 
 // BracketMatch is one place in a graph: who is expected there, who played, and what came of it.
 type BracketMatch struct {

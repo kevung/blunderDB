@@ -19,15 +19,10 @@ func bearoffBoard(whitePoint, blackPoint int) domain.Position {
 	return p
 }
 
-// The geometry of FromDomain is the single most dangerous line in this package:
-// getting it backwards does not crash, it produces plausible and wrong
-// probabilities. So it is pinned against an oracle that already exists in this
-// repository and is tested independently — domain.LegalMoves.
-//
-// If domain point 24 really is White's ace point, a White checker sitting there
-// bears off on a 1. That is asserted first, from domain alone. Only then is
-// FromDomain required to place that same point at gammonNet index 0, which the
-// gammonNet convention defines as "White's ace point".
+// FromDomain's geometry fails silently, so it is pinned against an
+// independent oracle, domain.LegalMoves: a White checker on domain point 24
+// bears off on a 1 (asserted from domain alone), and FromDomain must place
+// that point at gammonNet index 0, White's ace point.
 func TestDomainPoint24IsWhitesAcePointAndMapsToIndexZero(t *testing.T) {
 	p := bearoffBoard(24, 1)
 
@@ -134,15 +129,10 @@ func BenchmarkEvaluate(b *testing.B) {
 	}
 }
 
-// BenchmarkEvaluateBatch is the per-position cost the batched kernel has to
-// beat, measured the way the search actually meets it: a whole batch of
-// DISTINCT positions, evaluated back to back. BenchmarkEvaluate re-evaluates
-// one position, which keeps its features in L1 and its branch history perfect;
-// that figure flatters any kernel and would flatter a batched one most. The
-// distinct-position figure is the honest baseline (#145, ADR-0024).
-//
-// Reported per position, so a scalar run and a batched run print numbers that
-// can be divided by each other.
+// BenchmarkEvaluateBatch is the per-position cost on DISTINCT positions, as
+// the search meets them; BenchmarkEvaluate's single position stays in L1 and
+// flatters any kernel. Reported per position, so scalar and batched runs
+// divide.
 func BenchmarkEvaluateBatch(b *testing.B) {
 	net, err := embeddedNetwork()
 	if err != nil {
@@ -179,11 +169,8 @@ func BenchmarkEvaluateBatch(b *testing.B) {
 	b.ReportMetric(float64(b.Elapsed().Nanoseconds())/float64(b.N*EvalBatchWidth), "ns/position")
 }
 
-// BenchmarkDecision2Ply is the number the plan's target is stated in: one
-// canonical 2-ply k=12 decision, serially, on one core. It is a benchmark
-// rather than a probe row so that `go test -bench` yields it without an
-// environment variable, and so that -benchtime can hold it to a single
-// iteration on a slow machine.
+// BenchmarkDecision2Ply is one canonical 2-ply k=12 decision, serially, on
+// one core.
 func BenchmarkDecision2Ply(b *testing.B) {
 	if testing.Short() {
 		b.Skip("a 2-ply decision costs seconds")
@@ -217,13 +204,9 @@ func BenchmarkDecision2Ply(b *testing.B) {
 	}
 }
 
-// BenchmarkDecision2PlyMatch is the same canonical decision in the
-// configuration the application actually runs (ConfigForPosition): match
-// referential and cube-valued leaves, ADR-0016 + ADR-0023. It exists next to
-// the money benchmark above because the cube model is only ever exercised at
-// a score — money leaves take janowskiEquity's closed form and never build a
-// stake chain — so a money-only number cannot see the cost of buildLevels
-// and its bisections.
+// BenchmarkDecision2PlyMatch is the same decision as the application runs it
+// (ConfigForPosition, match and cube-valued leaves): only at a score does the
+// cube model build a stake chain.
 func BenchmarkDecision2PlyMatch(b *testing.B) {
 	if testing.Short() {
 		b.Skip("a 2-ply decision costs seconds")

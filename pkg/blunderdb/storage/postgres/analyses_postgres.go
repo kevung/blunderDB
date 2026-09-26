@@ -20,9 +20,7 @@ type analysisStore struct{ db execer }
 var _ storage.AnalysisStore = (*analysisStore)(nil)
 
 // repairPageSize bounds how many analysis rows RepairDenormalisedColumns
-// holds in memory at once (id keyset pagination) — see the SQLite backend's
-// identical constant, `sqlite.repairPageSize` (unexported in both packages,
-// so restated rather than shared).
+// holds in memory at once (id keyset pagination), as sqlite.repairPageSize.
 const repairPageSize = 500
 
 const analysisInsertSQL = `INSERT INTO analysis (
@@ -34,10 +32,8 @@ const analysisInsertSQL = `INSERT INTO analysis (
 ) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14)`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
-// same statement. It replaced a SELECT followed by an INSERT or an UPDATE:
-// two concurrent saves both read "no row" and both inserted, and Load — a
-// plain `WHERE position_id = $1` — then returned whichever row came first.
-// The conflict target names the UNIQUE index idx_analysis_position; position
+// same statement, so concurrent saves cannot insert two rows. The conflict
+// target names the UNIQUE index idx_analysis_position; position
 // ids are unique across tenants (one BIGSERIAL sequence), so the index needs
 // no tenant_id and the target is position_id alone.
 const analysisUpsertSQL = analysisInsertSQL + `
@@ -63,7 +59,7 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	tenant := tenantID(scope)
 	a.PositionID = int(positionID)
 	// The played actions come from the analysis when it states them, and from
-	// the match when it does not — see engine.PlayedActionsFor (#268). The
+	// the match when it does not — see engine.PlayedActionsFor. The
 	// lookup is skipped entirely when the blob already answers, so an import
 	// carrying its own analysis pays nothing for it.
 	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
@@ -142,7 +138,7 @@ func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int
 
 // playedActionsFromMatch reads the earliest recorded checker move and cube
 // action for a position from the `move` table — the actions an analysis
-// computed here cannot know (#268). Earliest by move id, so the answer is
+// computed here cannot know. Earliest by move id, so the answer is
 // stable across runs when a deduplicated position was played more than once.
 // Scoped by tenant like every other read here: RLS is a backstop, not the
 // only fence.
@@ -175,8 +171,8 @@ func deref(s *string) string {
 
 // LoadMany — see storage.AnalysisStore. ids is walked in loadByIDsChunk-sized
 // rounds, each its own `= ANY($1)` query, exactly as positionStore.LoadByIDs
-// walks its own (#232: a caller's cancelled context is noticed between
-// rounds); the payloads are then decoded in parallel
+// walks its own (a cancelled context is noticed between rounds); the payloads
+// are then decoded in parallel
 // (engine.DecodeAnalysesConcurrently).
 func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64) (map[int64]*domain.PositionAnalysis, error) {
 	raw := make(map[int64][]byte, len(ids))
@@ -217,10 +213,8 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 // unlike the SQLite backend (one database, one library): a repair must never
 // reach beyond the tenant it was asked for.
 //
-// Rows are read, decoded and rewritten a page at a time (id keyset
-// pagination, repairPageSize — see the SQLite backend's counterpart), never
-// loaded whole: a real database holds tens of thousands of analyses, and the
-// point of a repair is to run on the biggest ones (B.11, #179).
+// Rows are read, decoded and rewritten a page at a time (repairPageSize),
+// never loaded whole.
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope string) (int, error) {
 	tid := tenantID(scope)
 	type row struct {
@@ -231,7 +225,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		forced, closeCub     bool
 		// The match's own record of what was played, joined in here rather
 		// than looked up row by row: a repair walks every analysis in the
-		// tenant (#268).
+		// tenant.
 		mvMove, mvCube *string
 	}
 	repaired := 0

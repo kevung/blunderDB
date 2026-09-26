@@ -13,11 +13,8 @@ import (
 // testSimilarIsExactAndOrdered pins the two promises the contract makes about
 // Similar, both of which an approximate index would break: the neighbours come
 // back NEAREST FIRST, and the scan is exhaustive — so a position that is
-// closer is never missed (issue #293).
-//
-// It also pins the one exclusion: a position is not its own neighbour. Asking
-// "what is like this?" and being handed the thing itself is a non-answer, and
-// it is the kind of thing a query written against the whole table gets wrong.
+// closer is never missed. It also pins that a position is not its own
+// neighbour.
 func testSimilarIsExactAndOrdered(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps := s.Positions()
@@ -69,13 +66,8 @@ func testSimilarIsExactAndOrdered(t *testing.T, s storage.Storage) {
 
 // testSimilarRanksInsideTheClass pins what a neighbour IS (ADR-0043): the same
 // PROBLEM nearby, not the nearest drawing.
-//
-// Ranking the whole library by distance alone answered a question nobody
-// asked. Measured on the demo library, the nearest of any position was the
-// checker play twinning its cube decision — the same board, distance zero, two
-// rows — and the next ones were the plies before and after it in the same
-// match, because two plies are one roll and no other game comes that close.
-// Each case below is one of those three ways of being close and useless.
+// Each case below is one way of being close and useless: the same board's
+// other decision, the neighbouring plies of the same match.
 func testSimilarRanksInsideTheClass(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps := s.Positions()
@@ -156,10 +148,7 @@ func testSimilarRanksInsideTheClass(t *testing.T, s storage.Storage) {
 // testSimilarExcludesTheTargetsMatches pins the third rule of the class: the
 // plies around a position, in every match that played through it, are its
 // closest structures and never its neighbours (ADR-0043).
-//
-// Two plies are one roll — eight to sixteen checker-pips — so on a library of
-// imported matches they crowd out everything else, and "positions like this
-// one" answers "here is the game you are looking at".
+// Two plies are one roll, so they would crowd out everything else.
 func testSimilarExcludesTheTargetsMatches(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps, ms := s.Positions(), s.Matches()
@@ -221,10 +210,7 @@ func testSimilarExcludesTheTargetsMatches(t *testing.T, s storage.Storage) {
 
 // testSimilarCeilingLeavesAnEmptyRankingEmpty pins the honest answer: when
 // nothing stands close enough, the ranking is EMPTY (ADR-0043 rule 4).
-//
-// A fixed count alone hands back the least distant of the unrelated, which on
-// a small library is ten positions with nothing to do with the question and a
-// figure in the status bar as the only warning.
+// A fixed count alone would hand back the least distant of the unrelated.
 func testSimilarCeilingLeavesAnEmptyRankingEmpty(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps := s.Positions()
@@ -301,12 +287,8 @@ func testSimilarWithoutAMatchExcludesNothing(t *testing.T, s storage.Storage) {
 
 // testSimilarRanksAgainstADrawnBoard pins the target that was never stored:
 // a board the user has merely DRAWN (ADR-0043 rule 3).
-//
-// It is the question the exact structure search believed it was asking — "I
-// vaguely remember a position like this" — and the one the structure filter
-// cannot answer, because it does not forgive an approximate drawing. The board
-// is read as a POSITION and not as a pattern: a point left empty counts as
-// checkers borne off, which is right for a real position.
+// The board is read as a POSITION, not a pattern: checkers not placed count as
+// borne off.
 func testSimilarRanksAgainstADrawnBoard(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ps := s.Positions()

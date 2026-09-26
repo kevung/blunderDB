@@ -6,11 +6,9 @@ import (
 	"testing"
 )
 
-// TestCLI_Vacuum_ReclaimsSpace is the fiche's mandated CLI scenario: create,
-// fill, delete, vacuum, file shrinks. Padding rows are inserted directly
-// through the SQL connection (rather than via a real match import) so the
-// size delta is large and deterministic instead of depending on how big a
-// single imported match happens to be.
+// TestCLI_Vacuum_ReclaimsSpace: create, fill, delete, vacuum, file shrinks.
+// Padding rows go straight through SQL so the size delta is large and
+// deterministic.
 func TestCLI_Vacuum_ReclaimsSpace(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 

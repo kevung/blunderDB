@@ -5,17 +5,10 @@ import "context"
 // StatsFilter defines the filtering criteria for a stats computation.
 type StatsFilter struct {
 	PlayerName string
-	// PlayerAliases are the other spellings the same person signed under. A
-	// player's name is typed by hand into every file, so one person routinely
-	// appears as "Kévin Unger", "Kévin UNGER" and "UNGER Kevin" — in a real
-	// 151-match corpus, 12 % of the matches sat under the two minor spellings.
-	// Matching a single string computes on part of the data and nothing looks
-	// wrong, which is the worst kind of defect.
-	//
-	// The filter keeps the decisions of ANY of PlayerName + PlayerAliases: the
-	// field is purely additive, so filling both is not a trap. Merging the names
-	// in place (MergePlayers) is the other answer, and the wrong one as soon as
-	// the database is shared — it would rewrite other people's matches.
+	// PlayerAliases are the other spellings the same person signed under
+	// (names are typed by hand, so one person appears several ways). The
+	// filter keeps the decisions of ANY of PlayerName + PlayerAliases. Merging
+	// names in place (MergePlayers) would rewrite a shared database's matches.
 	PlayerAliases []string
 	TournamentIDs []int64
 	DateFrom      string // ISO "YYYY-MM-DD"
@@ -110,17 +103,13 @@ type StatsResult struct {
 	ErrorHistogram []ErrorBucket  `json:"ErrorHistogram"`
 	TopBlunders    []BlunderEntry `json:"TopBlunders"`
 
-	// The three breakdowns of issue #266 (fiche I.10). Each is the SAME
-	// figures as the global ones, restricted to a slice of the same
-	// selection — never a second notion of what counts as a decision, which
-	// would be a second PR.
+	// The breakdowns below are the SAME figures as the global ones, restricted
+	// to a slice of the selection — never a second notion of what counts as a
+	// decision.
 	//
-	// PerPhase splits by the position's derived game phase (ADR-0035), which
-	// is what answers "my PR in the race versus in contact".
+	// PerPhase splits by the position's derived game phase (ADR-0035).
 	PerPhase []PhaseStats `json:"PerPhase"`
-	// PerGameType splits by the position's derived plan of play (#291). It is
-	// the breakdown the classifier exists for: "où est-ce que je perds le
-	// plus", plan par plan.
+	// PerGameType splits by the position's derived plan of play.
 	PerGameType []GameTypeStats `json:"PerGameType"`
 	// PerTag splits by the tags in the position's comments. A position
 	// carrying two tags appears in both rows: a tag is a label, not a
@@ -133,7 +122,7 @@ type StatsResult struct {
 	PerScore []ScoreCellStats `json:"PerScore"`
 }
 
-// PhaseStats is one row of the per-phase breakdown (#266).
+// PhaseStats is one row of the per-phase breakdown.
 type PhaseStats struct {
 	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
 	Phase        string  `json:"Phase"`
@@ -142,7 +131,7 @@ type PhaseStats struct {
 	BlunderCount int     `json:"BlunderCount"`
 }
 
-// GameTypeStats is one row of the per-game-type breakdown (#291).
+// GameTypeStats is one row of the per-game-type breakdown.
 type GameTypeStats struct {
 	// GameType is the stable token of domain.GameType ("holding", "blitz", …).
 	GameType     string  `json:"GameType"`
@@ -151,7 +140,7 @@ type GameTypeStats struct {
 	BlunderCount int     `json:"BlunderCount"`
 }
 
-// TagStats is one row of the per-tag breakdown (#266). Tag carries the "#".
+// TagStats is one row of the per-tag breakdown. Tag carries the "#".
 type TagStats struct {
 	Tag          string  `json:"Tag"`
 	PR           float64 `json:"PR"`
@@ -159,14 +148,10 @@ type TagStats struct {
 	BlunderCount int     `json:"BlunderCount"`
 }
 
-// ScoreCellStats is one cell of the away × away matrix (#266).
-//
-// Away is "points still needed to win": 1 is DMP-adjacent, and the cell is
-// identified by the pair (mover's away, opponent's away) from the reference
-// player's side. Crawford is a separate flag rather than a fourth dimension:
-// a Crawford game at 1-away/3-away is a different decision from a
-// post-Crawford one at the same score, and folding them would average two
-// different games.
+// ScoreCellStats is one cell of the away × away matrix, keyed by (mover's
+// away, opponent's away) from the reference player's side. Crawford is a
+// separate flag: Crawford and post-Crawford at the same score are different
+// games and must not be averaged.
 type ScoreCellStats struct {
 	MoverAway    int     `json:"MoverAway"`
 	OpponentAway int     `json:"OpponentAway"`
@@ -302,10 +287,9 @@ type MatchDetailStats struct {
 	Player2 MatchPlayerDetailStats `json:"player2"`
 }
 
-// The two grades a Move of a match can carry in its Transcript (#287). They are
-// the library's two words — an Error, and the Blunder an Error becomes — drawn
-// at the library's own thresholds (ADR-0046), the same lines the statistics
-// count at. A play under the error threshold carries no grade.
+// The two grades a Move of a match can carry in its Transcript, drawn at the
+// library's thresholds (ADR-0046) as the statistics are. A play under the
+// error threshold carries no grade.
 const (
 	MoveGradeError   = "error"
 	MoveGradeBlunder = "blunder"
@@ -420,16 +404,12 @@ type StatsStore interface {
 	// PlayerTable computes one row per player over the matches the filter
 	// retains, for the players table of the Stats panel.
 	//
-	// It honours the filter's date range, tournaments and match lengths only.
-	// PlayerName/PlayerAliases and DecisionType are ignored by design: the
-	// table is about every player at once, and it splits checker from cube in
-	// its own columns rather than through a global filter that would leave them
-	// inconsistent with each other.
+	// It honours the filter's date range, tournaments and match lengths only;
+	// PlayerName/PlayerAliases and DecisionType are ignored by design (every
+	// player at once, checker and cube in their own columns).
 	//
-	// Rows come back sorted by PR ascending — best player first — with players
-	// having no counted decision last. Nothing is hidden: a player with three
-	// decisions is listed, with the decision count that says what their PR is
-	// worth.
+	// Rows come back sorted by PR ascending, players with no counted decision
+	// last. Nothing is hidden: the decision count says what a PR is worth.
 	PlayerTable(ctx context.Context, scope string, filter StatsFilter) ([]PlayerRow, error)
 
 	// MatchDetail computes per-player statistics for a single match.
@@ -437,7 +417,7 @@ type StatsStore interface {
 
 	// MatchMoveGrades scores every Move of a match by its own play and grades
 	// it at the library's thresholds — what the Match panel's Transcript
-	// colours its rows with (#287). Moves come back in Transcript order; a
+	// colours its rows with. Moves come back in Transcript order; a
 	// Move the analysis does not score is absent.
 	MatchMoveGrades(ctx context.Context, scope string, matchID int64) ([]MoveGrade, error)
 

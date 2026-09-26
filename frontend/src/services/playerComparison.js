@@ -1,25 +1,13 @@
-// Deux joueurs côte à côte (#282, fiche I.26).
+// Deux joueurs côte à côte : module pur, deux lignes de la table Joueurs
+// entrent, des lignes comparables sortent. Aucun calcul nouveau ; seule la
+// décision de ce qui reçoit un verdict.
 //
-// Module pur : deux lignes de la table Joueurs entrent, une liste de lignes
-// comparables sort. Aucun calcul nouveau — tout est déjà mesuré par
-// `PlayerTable` —, uniquement la décision de ce qui se compare et de ce qui
-// ne se compare pas.
-//
-// **Trois indicateurs ne reçoivent pas de verdict, et c'est le cœur du
-// module.**
-//
-// *La chance n'est pas une qualité.* Un joueur plus chanceux n'est pas
-// meilleur, et afficher une flèche verte en face de sa chance transformerait
-// une mesure (ADR-0010) en compliment. Elle est montrée, sans verdict.
-//
-// *Un nombre de blunders ne se compare pas brut.* Douze blunders sur cent
-// décisions et douze sur mille ne disent pas la même chose. Le taux, lui, se
-// compare — il est calculé ici, pour cent décisions, et c'est LUI qui porte le
-// verdict ; le compte reste à côté, comme contexte.
-//
-// *Le volume n'est pas une performance.* Matchs, bilan et décisions situent ce
-// que les taux valent ; les mettre en compétition ferait gagner celui qui a
-// simplement joué davantage.
+// Trois indicateurs n'en reçoivent pas :
+// - la chance n'est pas une qualité (ADR-0010) : montrée, sans verdict ;
+// - un nombre de blunders ne se compare pas brut : le taux pour cent
+//   décisions porte le verdict, le compte reste en contexte ;
+// - le volume (matchs, bilan, décisions) situe les taux sans être une
+//   performance.
 
 /** Une ligne sans verdict : elle situe, elle ne départage pas. */
 const CONTEXT = /** @type {const} */ ('context');
@@ -65,9 +53,8 @@ function fmt(value, digits = 2) {
 }
 
 /**
- * Qui l'emporte sur une ligne où le plus petit gagne. Rend null dès qu'une des
- * deux valeurs manque, ET en cas d'égalité : une égalité n'est pas une
- * victoire, et la marquer d'un côté serait un tirage au sort déguisé.
+ * Qui l'emporte quand le plus petit gagne ; null si une valeur manque ou en
+ * cas d'égalité.
  * @param {number|null} va
  * @param {number|null} vb
  * @returns {'a'|'b'|null}

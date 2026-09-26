@@ -8,20 +8,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// La classe d'équivalence d'un classement par similarité (#293, ADR-0043) :
-// ce qui restreint l'ENSEMBLE que la distance ordonne, dit en SQL.
+// La classe d'équivalence d'un classement par similarité (ADR-0043) : ce qui
+// restreint l'ENSEMBLE que la distance ordonne, dit en SQL. Le classement
+// lui-même est dans search.go, avec le reste de la recherche.
 //
-// Le classement lui-même est dans search.go, avec le reste de la recherche :
-// classer, c'est chercher dans un certain ordre, et un second balayage de la
-// table des positions aurait été une seconde moitié de grammaire à tenir en
-// phase avec la première. Ce fichier ne porte que ce que la classe ajoute à
-// la clause WHERE, et de quoi savoir dans quels matchs une cible a été
-// rencontrée.
-//
-// La classe se dit en SQL et non après le calcul de la distance : le décodage
-// de `state` est le vrai coût du balayage, donc filtrer sur des colonnes
-// indexables avant de décoder paye la classe une fois par ligne au lieu d'une
-// fois par vecteur.
+// La classe se dit en SQL, avant la distance : décoder `state` est le vrai
+// coût du balayage, et des colonnes indexables filtrent avant de décoder.
 
 // AppendClassSQL writes opts' class into an existing WHERE clause.
 func AppendClassSQL(opts storage.SimilarOptions, excludedMatches []int64, where *strings.Builder, args *[]any) {
@@ -55,12 +47,8 @@ func AppendClassSQL(opts storage.SimilarOptions, excludedMatches []int64, where 
 // MatchesOfPosition lists the matches a stored position was met in, which is
 // what the class's third rule excludes.
 //
-// Plural, and that is the point: positions are deduplicated by Zobrist hash,
-// so one row is reached by the moves of every match that played through it.
-// The plies around it are equally uninformative in each of them.
-//
-// A position that belongs to no match — imported on its own, or a board the
-// user has merely drawn — returns nothing, and then nothing is excluded.
+// Plural: a deduplicated position is reached by every match that played
+// through it. A position in no match returns nothing, and nothing is excluded.
 func MatchesOfPosition(ctx context.Context, db Execer, scope string, positionID int64) ([]int64, error) {
 	if positionID <= 0 {
 		return nil, nil

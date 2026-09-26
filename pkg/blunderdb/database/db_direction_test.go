@@ -182,7 +182,7 @@ func TestDirectionStore_List(t *testing.T) {
 
 // TestDirectionAPI_PreparationThenFirstMatch covers the shape the panel drives: direct a
 // Tournament, edit the configuration and enter players while in preparation, then launch the
-// first match — which is what ends preparation (issue #368, #369).
+// first match — which is what ends preparation.
 func TestDirectionAPI_PreparationThenFirstMatch(t *testing.T) {
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")

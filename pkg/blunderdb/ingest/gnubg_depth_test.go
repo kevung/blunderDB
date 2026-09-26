@@ -6,10 +6,8 @@ import (
 )
 
 // gnuBG SGF records the evaluation depth inside its evalcontext, after the
-// outputs for a move and right after the version for a cube decision. Until
-// gnubgparser v1.5.0 the cube parser read the `3` of `ver 3` — the SGF analysis
-// FORMAT VERSION — as if it were the ply, so every cube analysis ever imported
-// from a gnuBG SGF was labelled "3-ply" (kevung/gnubgparser#2).
+// outputs for a move and right after the version for a cube decision; the `3`
+// of `ver 3` is the SGF analysis FORMAT VERSION, not a ply.
 //
 // The two fixtures were analysed by gnuBG at 2-ply cubeful, with its usual
 // 0-ply pre-filter over the whole candidate list. This pins that, on real

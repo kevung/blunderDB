@@ -40,12 +40,10 @@ func replaceGraph(m domain.Match, positions ...*domain.Position) *MatchGraph {
 
 // TestWriteMatchReplace is the replacement mode of ADR-0045 §2-3: saving a
 // corrected transcription rewrites the match it already produced instead of
-// making a second one. The match keeps its id — a tournament, a collection and
-// the last-visited position all point at it — its games and moves are rewritten
-// from scratch, the positions of unchanged Actions land back on their existing
-// rows by deduplication, and the ones only the corrected Action reached are
-// purged by the ordinary retention rule. Nothing goes to the trash: replacing a
-// match twenty times during a review is not twenty deletions.
+// making a second one. The match keeps its id, its games and moves are
+// rewritten, unchanged Actions land back on their existing rows, and positions
+// only the corrected Action reached are purged by the ordinary retention rule,
+// with no trash.
 func TestWriteMatchReplace(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)

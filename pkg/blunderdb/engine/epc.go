@@ -50,10 +50,9 @@ var (
 // LoadOneSided points the EPC at a one-sided table on disk, replacing whatever
 // was loaded. An empty path unloads it.
 //
-// The table is no longer compiled into the binary (ADR-0027): it is generated
-// on the machine that needs it, which means there is a moment — the first
-// launch, until the background generation finishes — when there is none. The
-// EPC answers that it cannot compute rather than pretending; see OneSidedReady.
+// The table is generated on the machine (ADR-0027), so until the first
+// generation finishes there is none and the EPC says it cannot compute; see
+// OneSidedReady.
 func LoadOneSided(path string) error {
 	bearoffMu.Lock()
 	defer bearoffMu.Unlock()
@@ -133,10 +132,8 @@ func loadBearoffDatabaseFrom(path string) (*BearoffDatabase, error) {
 	// Position 17: fCompressed (1)
 	// Position 19: fND (0)
 	//
-	// The point count is READ, not assumed to be six. A table over seven points
-	// or more is what lets the EPC answer for a side whose farthest chequer is
-	// outside the home board, and it differs from the six-point one in nothing
-	// but its width — same header, same index, same runs (ADR-0027 §9).
+	// The point count is READ, not assumed to be six: a wider table differs in
+	// nothing but its width (ADR-0027 §9).
 	if string(raw[:9]) != "gnubg-OS-" {
 		return nil, fmt.Errorf("%s is not a one-sided bearoff database", path)
 	}
@@ -278,9 +275,9 @@ func ComputeEPC(anBoard [6]int) (*EPCResult, error) {
 // OneSidedPoints is how wide the loaded table is: the highest point a chequer
 // may stand on and still have an EPC. 0 when no table is loaded.
 //
-// A caller asks this before deciding whether a side is answerable, which is
-// what makes the answer honest: the panel says "exact, OS-08" rather than
-// silently extrapolating a six-point table past its domain.
+// Callers ask it before deciding a side is answerable, rather than
+// extrapolating a narrower table past its domain.
+
 func OneSidedPoints() int {
 	bearoffMu.RLock()
 	defer bearoffMu.RUnlock()

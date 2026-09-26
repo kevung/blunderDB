@@ -6,17 +6,11 @@ import (
 	"testing"
 )
 
-// withInterruptibleContext (cli.go) is the shared Ctrl-C plumbing search,
-// list --type stats and export now use (B.13, #181) to cancel a long Database
-// call in flight, mirroring the pattern cli_analyze.go established for
-// `analyze`. Actually delivering os.Interrupt to the process from a test is
-// avoided here: it is not portably reliable across this project's CI matrix
-// (windows-latest included — Process.Signal(os.Interrupt) there depends on
-// console process-group plumbing a test runner does not provide). What is
-// safe and worth locking down is the part unique to this helper: fn's return
-// value passes through untouched, and onInterrupt never fires, when no
-// signal arrives — the two ways a careless refactor of the shared helper
-// could silently break every caller at once.
+// withInterruptibleContext (cli.go) is the shared Ctrl-C plumbing that
+// cancels a long Database call. Sending os.Interrupt from a test is not
+// portable (Windows needs console process groups a runner lacks), so this
+// locks the no-signal path: fn's return passes through and onInterrupt never
+// fires.
 func TestWithInterruptibleContextPassesThroughWithoutSignal(t *testing.T) {
 	t.Parallel()
 	called := false
@@ -41,9 +35,7 @@ func TestWithInterruptibleContextPassesThroughWithoutSignal(t *testing.T) {
 
 func TestWithInterruptibleContextNilOnInterrupt(t *testing.T) {
 	t.Parallel()
-	// onInterrupt is optional; passing nil must not panic when fn returns
-	// normally (the only path this test can exercise without sending a
-	// signal).
+	// onInterrupt is optional; nil must not panic when fn returns normally.
 	err := withInterruptibleContext(nil, func(ctx context.Context) error {
 		return nil
 	})

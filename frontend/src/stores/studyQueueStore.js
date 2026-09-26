@@ -1,16 +1,8 @@
 import { writable, derived } from 'svelte/store';
 
-// La file d'étude post-import (#259, fiche I.3).
-//
-// Le compte rendu d'import répond à « que vient-il de se passer ? ». La file
-// répond à la question qui suit — « qu'est-ce que je regarde maintenant ? » —
-// et elle y répond UNE FOIS : une liste ordonnée, parcourue, une décision
-// prise sur chaque position.
-//
-// Rien n'est enregistré, et rien ne note qu'une position a été vue. Ce que
-// l'utilisateur en fait — un commentaire, une collection, une carte — EST la
-// trace, et il n'y a rien d'autre à garder. C'est la même retenue que
-// l'ADR-0006 énonce à propos des marques.
+// La file d'étude post-import : « qu'est-ce que je regarde maintenant ? », une liste ordonnée
+// parcourue une fois. Rien n'est enregistré, pas même qu'une position a été vue : ce que
+// l'utilisateur en fait est la trace (même retenue que l'ADR-0006).
 
 /** @typedef {{positionId: number, matchId: number, reason: string, label: string, errorMp: number, isCube: boolean}} StudyQueueEntry */
 

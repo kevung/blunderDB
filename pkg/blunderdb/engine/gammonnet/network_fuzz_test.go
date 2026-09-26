@@ -10,10 +10,8 @@ import (
 )
 
 // encodeBGNN writes a BGNN file (network.go's format) with the given header
-// and per-layer sizes, every weight and bias set by fill(i). A tiny network —
-// one hidden layer of three neurons — is under two kilobytes, which is what a
-// fuzz seed has to be; the embedded weights are two megabytes and would make
-// every mutation cost a network's worth of parsing.
+// and per-layer sizes, every weight and bias set by fill(i); small enough for
+// a fuzz seed.
 func encodeBGNN(numHidden, inputSize, activation, outputMode int32, hidden []int32, fill func(i int) float32) []byte {
 	var buf bytes.Buffer
 	buf.WriteString("BGNN")
@@ -39,7 +37,7 @@ func tinyBGNN() []byte {
 	return encodeBGNN(1, NumFeatures, activationReLU, outputModeProb5, []int32{3}, func(i int) float32 { return float32(i%7) * 0.01 })
 }
 
-// FuzzLoadBGNN exercises the weight-file loader (#188): a binary format whose
+// FuzzLoadBGNN exercises the weight-file loader: a binary format whose
 // layer sizes are lengths read from the file itself, so a hostile or merely
 // corrupt header can ask for any allocation. Load must refuse — never panic,
 // never allocate what the file cannot contain — and a network it accepts
@@ -81,10 +79,8 @@ func FuzzLoadBGNN(f *testing.F) {
 	Encode(&pos, &feat)
 
 	f.Fuzz(func(t *testing.T, data []byte) {
-		// A real weight file is two megabytes; what the fuzzer is for is the
-		// header and the length checks, which a few kilobytes exercise
-		// fully. The cap keeps the mutator from growing inputs whose only
-		// cost is the minimisation of a megabyte.
+		// The header and length checks are fully exercised by a few
+		// kilobytes; the cap stops the mutator growing megabyte inputs.
 		if len(data) > 64<<10 {
 			t.Skip("a weight file this size is not what the fuzzer is for")
 		}

@@ -9,9 +9,7 @@ import (
 
 // ExportMatchMAT writes match matchID as a Jellyfish/gnubg .mat transcript to
 // outputPath. It reads and renders first, then writes the file, so a read
-// failure never leaves a truncated .mat behind. The desktop store is
-// single-tenant, hence the empty scope. The same path backs the GUI export
-// button and the CLI `export --type mat` command (CLI/GUI parity).
+// failure never leaves a truncated .mat behind.
 func (d *Database) ExportMatchMAT(matchID int64, outputPath string) error {
 	text, err := d.MatchMAT(matchID)
 	if err != nil {

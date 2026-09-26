@@ -3,14 +3,9 @@
  *
  *   <main use:fileDrop={{ onDrop, onOverlayChange }}>
  *
- * Wails delivers the dropped paths through its runtime (OnFileDrop — the
- * only way to get native paths; the browser drop event carries none), while
- * the drag-over highlight is driven by the browser's own dragover / dragleave
- * / drop events on `window`. Both are wired for the node's lifetime.
- *
- * On Linux the WebView must keep receiving the drop for OnFileDrop to fire
- * (DisableWebViewDrop stays false, see internal/gui/run.go); this action only
- * listens, it never cancels the drop.
+ * Paths come from Wails (OnFileDrop — the browser drop event carries none); the highlight from the
+ * browser's dragover/dragleave/drop on `window`. On Linux the WebView must keep receiving the drop
+ * (DisableWebViewDrop false, internal/gui/run.go): this action only listens, never cancels.
  *
  * @param {HTMLElement} _node - unused: the listeners are window-wide
  * @param {Object} params

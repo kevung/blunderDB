@@ -52,7 +52,7 @@
 
     let matches = $state([]);
     let selectedMatch = $state(null);
-    // A match requested from the command palette is being opened (#287).
+    // A match requested from the command palette is being opened.
     let openingRequested = false;
     const visible = $derived($openPanels.has(PANEL.MATCH));
     const databaseLoaded = $derived($databaseLoadedStore);
@@ -63,7 +63,7 @@
     let detailMatch = $state(null); // Match currently shown in detail pane
     let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
     let detailGames = $state([]); // Game[] for the detail match
-    let detailGrades = $state([]); // MoveGrade[] for the detail match (#287)
+    let detailGrades = $state([]); // MoveGrade[] for the detail match
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     let detailStats = $state(null); // MatchDetailStats for the detail match
@@ -130,7 +130,7 @@
         if (untrack(() => !visible || !databaseLoaded)) return;
         loadMatches().then(() => {
             const lvm = lastVisitedMatch;
-            if (openingRequested) return; // the command palette's match wins (#287)
+            if (openingRequested) return; // the command palette's match wins
             if (lvm && lvm.matchID) {
                 const m = matches.find((mm) => mm.id === lvm.matchID);
                 if (m) {
@@ -141,11 +141,8 @@
         });
     });
 
-    // Track panel open/close transitions and load data on open. The panel may be
-    // open before the DB has finished loading (session restore opens the Matches
-    // tab by default, before openDatabaseByPath completes); that case is covered
-    // by the matchPanelRefreshTriggerStore bump fired once the DB is open and the
-    // session restored — see openDatabaseByPath.
+    // Load on open. Opening before the DB is ready (session restore) is covered
+    // by openDatabaseByPath's matchPanelRefreshTriggerStore bump.
     $effect(
         onChange(
             () => visible, // $derived — tracked
@@ -153,7 +150,7 @@
                 if (opened && databaseLoaded) {
                     loadMatches().then(() => {
                         const lvm = lastVisitedMatch;
-                        if (openingRequested) return; // the command palette's match wins (#287)
+                        if (openingRequested) return; // the command palette's match wins
                         if (lvm && lvm.matchID) {
                             const m = matches.find((mm) => mm.id === lvm.matchID);
                             if (m) {
@@ -189,14 +186,8 @@
                 logger.error('Error loading matches:', error);
                 matches = [];
             }
-            // The drafts ride along with the matches: they are refreshed on
-            // the same three occasions (the panel opens, the library changes,
-            // an import lands), and a draft written before a crash must be
-            // here the moment the library is reopened. Deliberately NOT
-            // awaited: onMount awaits this function before installing the
-            // panel's keyboard handler, and a second round trip in front of it
-            // would leave the panel deaf for a frame longer. The band is
-            // reactive; it appears when the list does.
+            // Drafts refresh with the matches. Not awaited: onMount awaits this
+            // before installing the keyboard handler.
             void refreshTranscriptionDrafts();
         });
     }
@@ -276,8 +267,7 @@
         loadingDetail = false;
     }
 
-    // The marks are a comfort on top of the transcript: if they cannot be
-    // read, the transcript still shows, unmarked, rather than not at all.
+    // Marks are optional: on failure the transcript shows unmarked.
     async function loadMoveGrades(matchID) {
         try {
             return (await GetMatchMoveGrades(matchID)) || [];
@@ -287,10 +277,7 @@
         }
     }
 
-    // The grades are drawn at the library's thresholds, which the settings can
-    // move; the library counter is refreshed when they do (and after every
-    // import), so its change is the moment to re-read the marks of the match
-    // on screen.
+    // Grades follow the library thresholds: re-read when the library counter changes.
     $effect(() => {
         void $libraryCountsStore; // tracked dep: re-grade on a threshold change or an import
         untrack(() => {
@@ -321,15 +308,10 @@
         }
     }
 
-    // Group move positions by game number for transcript display. Each move
-    // carries its globalIdx (its position in detailMovePositions) precomputed
-    // here — the template used to recover it with detailMovePositions.indexOf(mp)
-    // inside the {#each} of rows, an O(n) scan per row that made a 500-move
-    // match cost ~250 000 comparisons per render (D.8, #208).
+    // Moves grouped by game, each with its precomputed globalIdx (an indexOf per
+    // row would be quadratic).
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
-        // Each move carries its grade (#287), looked up once here rather than
-        // per row in the template.
         const gradeByMove = indexMoveGrades(detailGrades);
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
@@ -341,20 +323,14 @@
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
-            // Find corresponding game info
             const gameInfo = detailGames.find((g) => g.game_number === gameNum);
             result.push({ gameNumber: gameNum, moves, gameInfo, marks: countGrades(moves) });
         }
         return result;
     });
 
-    // Which games' transcript tables are actually mounted: collapsed games
-    // render only their <summary> header, not their (potentially long) move
-    // table, so a many-game match keeps most of its transcript out of the DOM
-    // until the user opens it (D.8, #208). Mutated in place — the template
-    // tracks this one SvelteSet instance, already reactive on its own — and
-    // reseeded to just the game holding the current move whenever a
-    // different match's moves load.
+    // Games whose move table is mounted (collapsed ones render only <summary>).
+    // A SvelteSet mutated in place; reseeded to the current game on match change.
     const openGames = new SvelteSet();
 
     $effect(() => {
@@ -380,17 +356,11 @@
         else openGames.delete(gameNumber);
     }
 
-    // The game the review last stepped into. Reopening is a reaction to
-    // *crossing into* a game, not a standing rule that the reviewed game is
-    // open: without this, collapsing the game holding the current move
-    // reopened it at once — the effect re-ran on the openGames read and put it
-    // straight back. Game 1 bore the brunt of it, since a review starts there.
+    // Last game stepped into: reopening reacts to crossing into a game, so the
+    // user can still collapse the current one.
     let lastCrossedGame = null;
 
-    // Keep the transcript following along while reviewing this match in MATCH
-    // mode: crossing into a collapsed game reopens it (games are only ever
-    // added here, never closed, so a review pass just accumulates the games
-    // actually visited).
+    // In MATCH mode, crossing into a collapsed game reopens it (never closes any).
     $effect(() => {
         const ctx = $matchContextStore;
         if (!ctx.isMatchMode || !detailMatch || ctx.matchID !== detailMatch.id) {
@@ -473,8 +443,7 @@
         commentTextStore.set('');
         selectedMoveStore.set(null);
         statusBarModeStore.set('MATCH');
-        // Player names are shown in the match-info header bar above the board
-        // (MatchInfoBar.svelte), so the status bar no longer echoes "P1 vs P2".
+        // Player names are in MatchInfoBar.svelte, not the status bar.
 
         lastVisitedMatchStore.set({
             matchID: match.id,
@@ -516,10 +485,8 @@
         enterMatchMode(match);
     }
 
-    // A match asked for from outside the panel — the command palette (#287) —
-    // opens as a double-click on its row would, once the list holding it is
-    // loaded. The request is consumed either way: a match deleted since the
-    // palette listed it is said so, not retried.
+    // A match requested by the command palette opens like a double-click once
+    // the list is loaded; the request is consumed even if the match is gone.
     $effect(() => {
         const requested = $matchOpenRequestStore;
         if (requested == null || !visible || matches.length === 0) return;
@@ -531,10 +498,8 @@
                 return;
             }
             selectedMatch = match;
-            // The detail of another match may be the one loaded: load this
-            // one's before entering it, never reuse the previous moves. The
-            // flag keeps the list's own "reselect the last visited match"
-            // from loading another detail over this one meanwhile.
+            // Load this match's detail first; the flag stops the list's reselect
+            // from loading another detail meanwhile.
             openingRequested = true;
             loadMatchDetail(match)
                 .then(() => enterMatchMode(match))
@@ -669,12 +634,8 @@
     }
 
     function handleClickOutside(event) {
-        // This listener lives on `document` for the whole life of the panel, so it also sees
-        // clicks that have nothing to do with it — including every click inside a modal. It
-        // used to blur whatever was focused, which made text fields in the export and
-        // settings dialogs impossible to click into: the field took focus on mousedown and
-        // lost it on the click that followed. Tab still worked, which is what made the
-        // symptom so confusing.
+        // A `document` listener sees every click, modals included: it must never
+        // blur the focused element, or modal text fields become unclickable.
         if (get(isAnyModalOpen)) return;
         // Don't interfere while the merge players modal is open
         if (showMergePlayersModal) return;
@@ -722,9 +683,7 @@
             <div class="match-list-toolbar">
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
-            <!-- One line per draft being transcribed: the match it will become
-                 is not here yet, so this is where the user finds it again after
-                 a crash (integration.md §4). Clicking opens the tab it is typed in. -->
+            <!-- Drafts being transcribed, found here again after a crash; a click opens their tab. -->
             {#if $transcriptionListStore.length > 0}
                 <div class="draft-band">
                     {#each $transcriptionListStore as draft (draft.id)}
@@ -838,11 +797,7 @@
                                     }}
                                     title={$t('match.swapPlayers')}>⇄</button
                                 >
-                                <!-- Enrichir depuis un fichier (#262). Rien de
-                                     nouveau sous ce bouton : réimporter le même
-                                     match dans un autre format l'enrichit déjà.
-                                     Ce que le bouton apporte, c'est qu'on le
-                                     trouve. -->
+                                <!-- Enrichir : le même réimport qu'ailleurs, rendu trouvable. -->
                                 <button
                                     class="icon-btn"
                                     onclick={(e) => {
@@ -874,15 +829,9 @@
             </PanelTable>
         </div>
 
-        <!-- Detail pane (right side). It exists only while a match is
-             selected: an empty pane holding nothing but "select a match" took
-             55% of the panel for a sentence, so the list now spans the full
-             width until there is something to show. The first click therefore
-             narrows the list from 100% to 45% again; that used to move the
-             clicked row out from under the cursor before the second click of a
-             double-click (#201), which is why the change of width carries no
-             transition — and why Enter on the selection and the pane's
-             "Review" button are the two other ways to open a match. -->
+        <!-- Detail pane, only while a match is selected (the list spans the full
+             width otherwise). The width change is not animated, so the clicked row
+             stays under the cursor for the second click of a double-click. -->
         {#if detailMatch}
             <div class="detail-pane">
                 <!-- Match metadata header -->
@@ -1138,8 +1087,7 @@
     }
 
     /* --- Match list pane (left) --- */
-    /* Fixed split with the detail pane (see the template's note): the list
-       never changes width, so a row never moves under the cursor. */
+    /* Full width until a match is selected, then 45 % beside the detail pane. */
     .match-list-pane {
         flex: 1 1 100%;
         max-width: 100%;
@@ -1150,10 +1098,9 @@
         flex-direction: column;
     }
 
-    /* No transition on purpose: the row must reach its final width before the
-       second click of a double-click, not travel under the cursor (see the
-       template comment above the pane). NB: no `#nnn` issue reference inside a
-       <style> block — colorTokens.sync.test.js reads it as a hex colour. */
+    /* No transition: the row must not travel under the cursor between the two
+       clicks of a double-click. No `#nnn` in <style>: colorTokens.sync.test.js
+       reads it as a hex colour. */
     .match-list-pane.has-detail {
         flex: 0 0 45%;
         max-width: 45%;
@@ -1170,8 +1117,7 @@
         background: var(--color-surface-alt);
     }
 
-    /* The drafts being transcribed, one line each, above the matches they are
-       not yet. Deliberately quiet: a draft is a promise of a match, not one. */
+    /* Drafts, deliberately quiet: a promise of a match, not one. */
     .draft-band {
         flex-shrink: 0;
         display: flex;
@@ -1382,10 +1328,7 @@
         list-style: none;
     }
 
-    /* .game-header is a <summary>: a game's move table is only mounted while
-       its <details> is open (D.8, perf ticket 208), so collapsed games cost
-       one row of DOM instead of their whole transcript. Replace the native
-       marker with a small disclosure triangle that flips with [open]. */
+    /* .game-header is a <summary>; the native marker is replaced by a triangle flipping with [open]. */
     .game-header::-webkit-details-marker {
         display: none;
     }
@@ -1487,9 +1430,7 @@
         background-color: color-mix(in srgb, #ffc107 20%, var(--color-surface));
     }
 
-    /* The marks of the Transcript (issue 287): a left rule in the row and the mark
-       after the play, so the grade reads without colour too. A Blunder takes the
-       danger token and tints its row, an Error the same red faded. */
+    /* Transcript marks: a left rule and a glyph, so the grade reads without colour. */
     .transcript-row.graded-error > td:first-child {
         box-shadow: inset 3px 0 0 var(--grade-error-color);
     }

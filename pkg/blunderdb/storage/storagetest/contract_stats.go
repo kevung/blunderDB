@@ -15,11 +15,8 @@ import (
 )
 
 // testStatsAggregateCounts checks the StatsStore wiring and its behaviour on an
-// empty database. Rich correctness (PR/MWC/Snowie aggregation against real
-// matches) is covered by the SQLite parity test against the legacy Database
-// implementation. Backends that have not implemented Stats yet return
-// ErrInternal ("not implemented"); the case skips for them so it lights up
-// automatically once the family lands.
+// empty database. Rich correctness is covered by the SQLite parity test. A
+// backend returning ErrInternal ("not implemented") skips.
 func testStatsAggregateCounts(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ss := s.Stats()
@@ -96,18 +93,12 @@ var statsDicePairs = [][2]int{
 	{6, 6},
 }
 
-// statsDecisionPos returns a position unique to slot via its dice (rather
-// than score, unlike provenancePos): the stats fixtures below need a
-// realistic, non-degenerate score so the MWC-loss computation doesn't hit an
-// edge case, so uniqueness comes from statsDicePairs instead.
 // statsCubeDecision saves one cube decision: a position, the move that carries
 // the action actually played, and the analysis carrying the engine's ruling.
 //
-// The equities are what make the fixture real rather than decorative. gnuBG's
-// "close cube" predicate (engine.ComputeIsCloseCube) compares the optimal line
-// with the double/take line, and statsCountedExpr drops non-close no-doubles —
-// so a fixture with careless equities would be silently excluded from every
-// aggregate and the test would pass on an empty set.
+// The equities must be real: statsCountedExpr drops non-close no-doubles
+// (engine.ComputeIsCloseCube), so careless ones would leave every aggregate
+// empty and the test passing on nothing.
 func statsCubeDecision(t *testing.T, s storage.Storage, gameID int64, slot int,
 	player int32, played, best string, ndEq, dtEq, dpEq float64) {
 	t.Helper()
@@ -248,11 +239,8 @@ func testStatsCubeDirections(t *testing.T, s storage.Storage) {
 // formatgs.c:415-424). Filtering on a player must narrow the errors, never the
 // move count — the denominator only follows the matches retained.
 //
-// The additivity check is what catches the defect: in a database holding one
-// Alice-vs-Bob match, their two filtered rates must add up to the unfiltered
-// one, since they share a denominator. When the filter also narrowed the move
-// count, each player was divided by their own moves alone and every filtered
-// Snowie ER came out roughly twice too big.
+// The check is additivity: with one Alice-vs-Bob match, the two filtered rates
+// share a denominator and must add up to the unfiltered one.
 func testStatsSnowieDenominator(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {
@@ -293,13 +281,9 @@ func testStatsSnowieDenominator(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testStatsBreakdowns pins the three breakdowns of #266: the same figures as
-// the global ones, sliced by phase, by away × away score, and by tag.
-//
-// What it checks above all is that a slice cannot disagree with the whole:
-// every breakdown must count the same decisions the global PR counts, because
-// all of them read the same countedExpr. A breakdown that restated what counts
-// as a decision would be a second PR under the same name.
+// testStatsBreakdowns pins the breakdowns by phase, by away × away score and by
+// tag: a slice must count the same decisions the global PR counts (the same
+// countedExpr), never a second notion of a decision.
 func testStatsBreakdowns(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 

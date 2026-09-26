@@ -7,11 +7,8 @@ import (
 )
 
 // runVacuum handles the vacuum command: it compacts the database file,
-// reclaiming space left behind by deletions (matches, tournaments, purges)
-// that SQLite does not shrink the file for on its own. The mechanics —
-// WAL checkpoint, free-space guard, VACUUM outside a transaction, trailing
-// ANALYZE — live on Database.Vacuum so the GUI's "Compacter la base" button
-// goes through the exact same path.
+// reclaiming the space deletions leave. The mechanics live on
+// Database.Vacuum, shared with the GUI.
 func (cli *CLI) runVacuum(args []string) error {
 	vacuumCmd := flag.NewFlagSet("vacuum", flag.ContinueOnError)
 

@@ -13,25 +13,12 @@ const engineVersionPrefix = "gammonNet "
 
 // IsStaleAnalysis reports whether a's every entry is gammonNet's own and at
 // least one entry is either older than the running build's EngineVersion or
-// not at targetDepth (the exact string DepthLabel produces for the depth a
-// caller is about to re-run at). This is the ONE staleness predicate a
-// re-analysis sweep uses — the gammonNet batch on *database.Database
-// (db_gammonnet_batch.go) and the serve daemon's
-// /v1/gammonnet.sweepStale both call it rather than keeping their own copy
-// (#191, CLI/GUI/server parity: the logic lives where it can be shared, not
-// forked per mode).
+// not at targetDepth (the exact DepthLabel string, so a depth change alone
+// marks rows stale). It is the one staleness predicate every re-analysis
+// sweep uses (db_gammonnet_batch.go, /v1/gammonnet.sweepStale).
 //
-// A position that also carries an XG, GNUbg or BGBlitz entry is never
-// reported stale here, whatever its gammonNet entries say — ADR-0013
-// protects an imported analysis unconditionally, and a re-analysis sweep
-// only ever touches this package's own past output (ADR-0016's narrow
-// exception).
-//
-// targetDepth entering the predicate is what makes moving the canonical
-// depth up — 0-ply to 2-ply, say — actually mark existing rows stale:
-// EngineVersion alone never changes just because the depth a caller asks
-// for did, so a depth-only bump used to leave every already-analysed
-// position looking perfectly current (#191).
+// A position that also carries an XG, GNUbg or BGBlitz entry is never stale:
+// ADR-0013 protects an imported analysis unconditionally.
 func IsStaleAnalysis(a *domain.PositionAnalysis, targetDepth string) bool {
 	if a == nil {
 		return false
@@ -59,9 +46,8 @@ func IsStaleAnalysis(a *domain.PositionAnalysis, targetDepth string) bool {
 }
 
 // IsOurAnalysis reports whether every entry of a was written by gammonNet,
-// whatever version. It is IsStaleAnalysis's first half, exported because the
-// comparison sweep (#270) needs the opposite question — which positions carry
-// an analysis somebody ELSE wrote, and are therefore worth comparing against.
+// whatever version — IsStaleAnalysis's first half, which the comparison sweep
+// also needs.
 //
 // An analysis with no entry at all is nobody's and answers false.
 func IsOurAnalysis(a *domain.PositionAnalysis) bool {

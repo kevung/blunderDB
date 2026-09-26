@@ -106,11 +106,9 @@ func TestRateLimitMetrics(t *testing.T) {
 	}
 }
 
-// TestWritePrometheus_Format is the exposition golden: HELP/TYPE headers,
-// quoted labels, one "le" line per bucket plus +Inf, then _sum and _count,
-// the two rate-limit series, the business gauges (#238), and — because
-// SetDatabaseSizeBytes was called — the database size gauge, in this exact
-// order.
+// TestWritePrometheus_Format is the exposition golden: HELP/TYPE, quoted
+// labels, buckets plus +Inf, _sum and _count, rate-limit series, business
+// gauges and the database size gauge, in this exact order.
 func TestWritePrometheus_Format(t *testing.T) {
 	r := New()
 	r.ObserveRequest("GET", "/healthz", 200, 3*time.Millisecond)
@@ -168,11 +166,8 @@ blunderdb_database_size_bytes 4096
 	}
 }
 
-// TestWritePrometheus_DatabaseSizeOmittedUntilSet mirrors the PostgreSQL pool
-// gauges' convention: blunderdb_database_size_bytes must not appear at all
-// until SetDatabaseSizeBytes has been called at least once (a backend with
-// no meaningful notion of "size" — none exists today, but the interface is
-// optional — must never publish a misleading permanent zero).
+// TestWritePrometheus_DatabaseSizeOmittedUntilSet: like the pool gauges, the
+// size gauge is absent until first set, never a misleading permanent zero.
 func TestWritePrometheus_DatabaseSizeOmittedUntilSet(t *testing.T) {
 	r := New()
 	var out strings.Builder

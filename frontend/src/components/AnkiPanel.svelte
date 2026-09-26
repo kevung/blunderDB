@@ -33,8 +33,7 @@
     import ScoreCard from './ScoreCard.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
 
-    // Read-only mirrors of stores — declared as $derived so Svelte tracks
-    // dependencies via $store reads (the project rule, see CLAUDE.md).
+    // Read-only store mirrors.
     let decks = $derived($ankiDecksStore || []);
     let selectedDeck = $derived($selectedAnkiDeckStore);
     let reviewCard = $derived($ankiReviewCardStore);
@@ -47,46 +46,33 @@
     let pausedSession = $derived($ankiPausedSessionStore);
     let answerShown = $derived($ankiAnswerShownStore);
 
-    // ── The answer of the card under review (ADR-0025) ──────────────────
-    // A card asks about a position or about a score (ADR-0042). Everything
-    // that reads the board, the analysis or the position id below is about a
-    // position card; a score card's whole question is its key, and its whole
-    // answer is the sheet the Training tab draws — the same component.
+    // The answer of the card under review (ADR-0025). Board/analysis reads below
+    // concern position cards; a score card's answer is the Training tab's sheet (ADR-0042).
     let isScoreCard = $derived(anki.isScoreCard(reviewCard));
     let scoreAways = $derived(anki.scoreCardAways(reviewCard));
     let scoreSheet = $derived(scoreAways ? buildScoreCard(scoreAways[0], scoreAways[1]) : null);
-    // The stored analysis of the card's position, loaded by showCard through
-    // showPosition — never a live evaluation (rule 1).
+    // The stored analysis, never a live evaluation (rule 1).
     let analysis = $derived($analysisStore);
-    // Which block the answer is: outside MATCH mode the record's own type
-    // decides, exactly as the Analysis tab decides it there.
+    // The record's own type picks the block, as in the Analysis tab outside MATCH mode.
     let answerKind = $derived(analysis?.analysisType === 'DoublingCube' ? 'cube' : 'checker');
     let answerMoves = $derived(analysis?.checkerAnalysis?.moves ?? []);
-    // Whether this card has an answer at all. A position can be in a deck
-    // without a stored analysis (typed by hand, imported bare): that is an
-    // ABSENT answer, not a hidden one, so it is named rather than masked
-    // (rule 3's rejected alternative) — a mask revealing nothing would be a
-    // lie the interface tells.
+    // A position without stored analysis has an absent answer: named, not masked (rule 3).
     let hasAnswer = $derived(isScoreCard ? scoreSheet !== null : answerKind === 'cube' ? cubeAnalysesCount(analysis) > 0 : answerMoves.length > 0);
     let turnability = $derived(cubeTurnability($positionStore));
     let cubeValue = $derived($positionStore?.cube?.value ?? 0);
     let onRoll = $derived($positionStore?.player_on_roll ?? 0);
-    // ADR-0016 point 6 / #190/C.3: same referential and rule flags as
-    // AnalysisPanel, read off the card's own position.
+    // Referential and rule flags as in AnalysisPanel (ADR-0016 point 6).
     let isMoney = $derived(isMoneyPosition($positionStore));
     let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
     let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
-    // The cube ceiling is not a money-only rule: a capped cube is stated by the
-    // identifier whatever the score, so it is read straight off the position.
+    // The cube ceiling applies at any score: read off the position.
     let maxCube = $derived($positionStore?.max_cube ?? 0);
 
-    // A review is never in MATCH mode, so every play recorded on this position
-    // is highlighted — including the blunder that put the card in the deck.
+    // Never MATCH mode: every recorded play is highlighted, the card's blunder included.
     let isPlayedMove = $derived(playedMovePredicate(analysis));
     let isPlayedCubeAction = $derived(playedCubeActionPredicate(analysis));
 
-    // Clicking a candidate move puts it on the board — the moment of learning,
-    // and the same gesture as the Analysis tab. Toggles off on a second click.
+    // A candidate click shows it on the board, as in the Analysis tab; a second click clears it.
     function handleMoveRowClick(move) {
         selectedMoveStore.set($selectedMoveStore === move.move ? null : move.move);
     }
@@ -139,14 +125,10 @@
     let settingsRetention = $state(0.9);
     let settingsMaxInterval = $state(36500);
     let settingsFuzz = $state(true);
-    // Session limit as the form holds it: a checkbox for "limited at all" plus
-    // a number. Two controls because nil and 0 are different states — one field
-    // alone would make "no limit" and "serve nothing" the same value
-    // (ADR-0026 rule 3).
+    // Checkbox + number: nil (no limit) and 0 (serve nothing) differ (ADR-0026 rule 3).
     let settingsLimited = $state(false);
     let settingsSessionLimit = $state(20);
-    // What the deck's log measures, read when the settings view opens. Null
-    // until it answers, and reported as unavailable below the sample floor.
+    // Deck log measurement; null until loaded, unavailable below the sample floor.
     let retention = $state(null);
 
     const deckColumns = $derived([
@@ -159,15 +141,8 @@
         { key: 'actions', label: $t('anki.colActions'), actions: true }
     ]);
 
-    // ── The review log (G.14, #242) ─────────────────────────────────────────
-    //
-    // What the scheduler was actually TOLD, as opposed to what it currently
-    // plans. It is the only place a grade entered by mistake can be seen at
-    // all — ADR-0026 keeps the schedule itself out of reach, deliberately, and
-    // that rule is what makes the log worth showing: you cannot correct the
-    // past here either, but you can at least know what it was.
-    //
-    // Reachable over HTTP since the daemon existed and from nowhere else.
+    // The review log: what the scheduler was told, the only place a mistaken
+    // grade shows, since the schedule stays out of reach (ADR-0026).
     const REVIEW_LOG_LIMIT = 200;
     /** @type {any[]} */
     let reviewLog = $state([]);
@@ -193,15 +168,11 @@
         reviewLog.map((/** @type {any} */ e) => ({
             id: e.id,
             reviewedAt: (e.reviewedAt || '').replace('T', ' ').slice(0, 19),
-            // What the review was about: the position's number, or the score
-            // of a score card (ADR-0042). The key holds either, so the column
-            // reads it and falls back on the id for a journal written before
-            // the column existed.
+            // Position number or score (ADR-0042); falls back on the id for older journals.
             subject: e.key || e.positionId,
             rating: RATING_KEYS[e.rating] ? $t(RATING_KEYS[e.rating]) : String(e.rating),
             state: anki.stateLabel(e.state),
-            // The interval this review granted, in days. Zero is a card that
-            // comes back in the same session, not a missing value.
+            // Days granted; 0 = back in the same session, not missing.
             scheduledDays: `${e.scheduledDays} ${$t('anki.days')}`
         }))
     );
@@ -302,8 +273,7 @@
     // random cards and never schedules anything.
     async function startSession(cram) {
         if (!selectedDeck) return;
-        // A limit of 0 serves nothing, which is a state of its own and not a
-        // mistake (ADR-0026 rule 3). Said rather than shown as an empty deck.
+        // A limit of 0 serves nothing, and says so (ADR-0026 rule 3).
         if (!cram && anki.sessionLimitReached(selectedDeck, 0)) {
             statusBarTextStore.set(tMsg('anki.sessionLimitZero'));
             return;
@@ -333,11 +303,8 @@
             const next = cramMode ? await anki.nextCramCard(selectedDeck, reviewCard) : await anki.reviewCard(reviewCard, rating);
             reviewSessionCount++;
 
-            // The session limit stops the sitting here, and says so: reusing
-            // the ordinary "review complete" message would claim the queue is
-            // empty when the limit is what emptied it (ADR-0026 rule 4). No
-            // "keep going" button — cram already serves more positions, and
-            // unlike an override it schedules nothing.
+            // The limit ended the sitting, not an empty queue: its own message
+            // (ADR-0026 rule 4). No "keep going": cram serves more.
             if (next && anki.sessionLimitReached(selectedDeck, reviewSessionCount, { cram: cramMode })) {
                 ankiViewModeStore.set('list');
                 ankiPausedSessionStore.set(null);
@@ -366,14 +333,8 @@
         }
     }
 
-    // ── The three gestures that set a card aside (G.14, #242) ───────────────
-    //
-    // A right-click on the card under review: suspend it, bury it until
-    // tomorrow, remove it from the deck. They live in a context menu rather
-    // than beside the four grading buttons on purpose — the grading strip
-    // answers one question ("how did that go?") and these three answer
-    // another ("this card should not be here"), and a fifth button next to
-    // Again/Hard/Good/Easy would be pressed by mistake at speed.
+    // Suspend / bury / remove, in a context menu rather than beside the grading
+    // buttons, where they would be pressed by mistake at speed.
     /** @type {{x: number, y: number, items: {label: string, onClick: () => void}[]} | null} */
     let cardMenu = $state(null);
 
@@ -392,8 +353,7 @@
         };
     }
 
-    // Removing is the one that cannot be undone from here — a suspended or
-    // buried card comes back, a removed one has to be put in the deck again.
+    // Removing is the only one not undoable from here.
     async function confirmRemoveCard() {
         if (!(await confirmAction($t('anki.removeCardConfirm'), { confirmLabel: $t('common.delete') }))) return;
         await setAside(anki.removeCard, 'anki.cardRemoved');
@@ -408,8 +368,7 @@
         try {
             const next = await action(reviewCard, selectedDeck, { cram: cramMode });
             statusBarTextStore.set(tMsg(messageKey));
-            // The card left without being graded, so the session count does
-            // not move: it counts answers, and this was not one.
+            // Not an answer: the session count does not move.
             if (!next) {
                 ankiViewModeStore.set('list');
                 ankiPausedSessionStore.set(null);
@@ -486,10 +445,8 @@
             ankiPausedSessionStore.set({ deckId: selectedDeck.id, sessionCount: reviewSessionCount });
         }
         cramMode = false;
-        // Leaving the review is a change of question (ADR-0025 rule 5). The
-        // move selection must go with it: left set, selectedMoveStore freezes
-        // j/k position browsing app-wide — the regression AnalysisPanel's
-        // onDestroy already had to fix once.
+        // Leaving clears the move selection (ADR-0025 rule 5): a set
+        // selectedMoveStore freezes j/k browsing app-wide.
         hideAnkiAnswer();
         selectedMoveStore.set(null);
         ankiViewModeStore.set('list');
@@ -523,9 +480,7 @@
             {/if}
         </div>
 
-        <!-- The grading strip stays put and the answer scrolls under it
-             (ADR-0025): a checker analysis can run twenty rows, and in a side
-             column it would push the buttons out of reach on every card. -->
+        <!-- The grading strip stays put; the answer scrolls under it (ADR-0025). -->
         <div class="review-body">
             <div class="review-strip">
                 <div class="review-position-id">
@@ -557,10 +512,7 @@
                 {#if !hasAnswer}
                     <div class="answer-absent">{isScoreCard ? $t('anki.badScoreKey') : $t('anki.noAnalysis')}</div>
                 {:else if answerShown && isScoreCard}
-                    <!-- The sheet is the answer, whole: no ticking of faults
-                         here. Anki schedules a memory, it does not measure a
-                         calculation (ADR-0042 rule 3) — that is the Training
-                         tab's job, and its own journal's. -->
+                    <!-- The whole sheet, no fault ticking: Anki schedules a memory (ADR-0042 rule 3). -->
                     <ScoreCard card={scoreSheet} revealed locked />
                 {:else if answerShown}
                     <AnalysisView
@@ -605,8 +557,7 @@
                     {$t('anki.retentionNotEnough', { sample: retention.sampleSize, needed: anki.RETENTION_MIN_SAMPLE })}
                 {/if}
             </div>
-            <!-- Without this line the change looks broken: it takes effect one
-                 review at a time and moves no existing due date (rule 8). -->
+            <!-- The change applies review by review, moving no due date (rule 8). -->
             <div class="settings-note">{$t('anki.retentionNotRetroactive')}</div>
             <div class="settings-row">
                 <label for="{settingsId}-max-interval">{$t('anki.maxInterval')}</label>
@@ -690,9 +641,7 @@
                             {/each}
                         </select>
                     {:else if newDeckSourceType === anki.SOURCE_SCORES}
-                        <!-- Nothing to choose: the deck is the 36 unordered
-                             scores of 2 to 9 away, and the user enters none of
-                             them (ADR-0042 rule 2). -->
+                        <!-- Fixed: the 36 unordered scores of 2 to 9 away (ADR-0042 rule 2). -->
                         <span class="search-hint">{$t('anki.scoresCount', { count: UNORDERED_SCORES.length })}</span>
                     {:else}
                         <span class="search-hint">{$t('anki.positionsCount', { count: positionIds.length })}</span>
@@ -1026,9 +975,7 @@
         padding: 12px;
         gap: 8px;
         min-height: 0;
-        /* Query container so the revealed answer lays itself out on the panel's
-           own width — bottom band or side column — exactly as it does in the
-           Analysis tab. */
+        /* Query container: the answer lays out on the panel's own width. */
         container-type: inline-size;
     }
 
@@ -1053,12 +1000,8 @@
         max-width: 320px;
     }
 
-    /* The answer, below the strip: the only part that scrolls, on both axes.
-       A candidate table is wider than a side column, and clipping it would
-       hide the very columns being revealed — wide content scrolls inside its
-       own box, it is never cut off. Content sits at the TOP: centred in a tall
-       side column, the answer floated half a panel away from the buttons that
-       grade it. */
+    /* The only part that scrolls, both axes (never clip revealed columns);
+       top-aligned so the answer stays near the grading buttons. */
     .review-answer {
         flex: 1;
         min-height: 0;
@@ -1070,9 +1013,8 @@
         padding-top: 10px;
     }
 
-    /* One opaque stand-in for the whole answer (ADR-0025 rule 3), not the Eval
-       panel's in-place mask: a checker table's rows ARE the moves, ordered by
-       equity, so masking in place would leave the answer on the first line. */
+    /* One opaque stand-in (ADR-0025 rule 3): masking rows in place would still
+       reveal the best move by its position. */
     .answer-masked {
         width: 100%;
         max-width: 320px;

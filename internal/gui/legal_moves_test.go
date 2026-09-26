@@ -7,9 +7,7 @@ import (
 )
 
 // mkPos builds a position from a signed checker map (positive = Black,
-// negative = White; 1..24 are the points). Bearoff is derived so each side
-// totals fifteen — the same shape domain's own move tests use, rewritten here
-// because that helper is unexported.
+// negative = White; 1..24 are the points), bearoff derived to total fifteen.
 func mkPos(mover, d1, d2 int, pts map[int]int) domain.Position {
 	var p domain.Position
 	for i := range p.Board.Points {
@@ -33,10 +31,8 @@ func mkPos(mover, d1, d2 int, pts map[int]int) domain.Position {
 	return p
 }
 
-// The binding is a one-liner, so what is worth testing is the shape the
-// frontend relies on: nil when there is no question to ask, an EMPTY slice
-// when there is no answer to give, and plays that carry both their steps and
-// their name.
+// The shape the frontend relies on: nil without dice, an empty slice for a
+// dance, plays carrying steps and notation.
 func TestLegalMovesShapeForTheFrontend(t *testing.T) {
 	a := &App{}
 

@@ -9,17 +9,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
-// The trash over HTTP (issue #285, ADR-0036).
-//
-// Every one of these is a thin call into package trash, which is written
-// against storage.Stores and shared with the desktop wrapper: the trash is
-// entirely made of Storage calls, so there is nothing here that is genuinely
-// the daemon's. What the daemon adds is the tenant scope.
-//
-// Deleting THROUGH the trash is offered as its own routes rather than by
-// changing what positions.delete does: an API a client already calls must not
-// start leaving rows behind because the server gained an undo. A client that
-// wants undo asks for it.
+// The trash over HTTP (ADR-0036): thin calls into package trash, shared with
+// the desktop; the daemon adds only the tenant scope. Deleting through the
+// trash has its own routes so positions.delete does not start leaving rows
+// behind for existing clients.
 
 func (s *Server) trashRoutes() []route {
 	st := func() storage.Storage { return s.opts.Storage }
@@ -62,9 +55,7 @@ func (s *Server) trashRoutes() []route {
 }
 
 // trashListReq narrows a listing to one kind and pages it. An unknown kind
-// simply matches nothing — the vocabulary is the domain's, and a client
-// spelling it wrong gets an empty list rather than an error about a value it
-// can look up.
+// matches nothing rather than erroring.
 type trashListReq struct {
 	Kind   string `json:"kind,omitempty"`
 	Limit  int    `json:"limit"`

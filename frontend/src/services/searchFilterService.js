@@ -1,37 +1,18 @@
 import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, numericToken, readFlat } from './filterModel.js';
 
-// searchFilterService — shared logic that turns the search UI's active filter
-// labels + their option/min/max/range state into the backend command tokens
-// (`cube`, `p>12`, `e10,50`, `t"foo"`, `T>2026/01/01`, …), and back.
+// searchFilterService — turns the search UI's active filter labels and their
+// option/min/max/range state into backend command tokens (`cube`, `p>12`,
+// `e10,50`, `t"foo"`, `T>2026/01/01`, …), and back.
 //
-// This was originally duplicated verbatim as a 31-case switch inside two search
-// components (the now-removed SearchModal and the live SearchPanel). Extracting
-// it removed the duplication and makes the mapping unit-testable.
+// `options` is flat: the non-numeric fields plus, per numeric filter (from
+// NUMERIC_FILTERS), `<key>Option/Min/Max/RangeMin/RangeMax` — the shape
+// `filterModel.toStore` produces. Missing fields yield `undefined` in the token.
 //
-// `options` is a flat object carrying the non-numeric fields the switch reads
-// plus, for each numeric filter, its `<key>Option/Min/Max/RangeMin/RangeMax`
-// fields (the shape `filterModel.toStore` produces). The numeric filters are
-// no longer spelled out here: they come from the NUMERIC_FILTERS table.
-// Missing fields simply produce `undefined` in the token, exactly as the
-// original inline switch did.
-//
-// `parseSearchTokens` (below) is the single grammar that reads command tokens
-// back into filter values. It used to be forked in two: `commandProcessor.js`
-// had its own copy for the "aller" path (a command the user types or a saved
-// search replayed straight through it, e.g. the Anki deck sync in
-// `ankiService.js`), and this file had a second, less complete copy
-// (`parseSearchCommand`) for the "retour" path (double-clicking a search
-// history or filter-library entry in `SearchPanel.svelte`). The two diverged
-// silently: `xD…` (exclude-dice), `id…` (position id) and the derived
-// comment-presence mode were parsed on the aller path and dropped on the
-// retour path, so replaying `s D xD65` from history brought the 6-5 roll
-// back (#203). `parseFilters` (commandProcessor.js) and `parseSearchCommand`
-// (below) are now both thin adapters over `parseSearchTokens`, keeping their
-// existing return shapes (long field names / short abbreviated keys
-// respectively) so no caller had to change — only the parsing itself is
-// shared. `testdata/search_query_corpus.json` cross-checks both adapters
-// against the same cases (shared with the future Go grammar, B.18).
+// `parseSearchTokens` is the single grammar reading tokens back into filter
+// values; `parseFilters` (commandProcessor.js) and `parseSearchCommand` are
+// thin adapters keeping their return shapes, so the two paths cannot diverge.
+// `testdata/search_query_corpus.json` checks both against the same cases.
 
 /**
  * Map a list of active filter labels to their backend command tokens.
@@ -103,8 +84,8 @@ export function buildFilterTokens(activeFilters, options) {
 }
 
 /**
- * Assemble the `s …` search command string from filter tokens, dropping the
- * empty text/move placeholders exactly as the inline code did.
+ * Assemble the `s …` search command from filter tokens, dropping empty
+ * text/move placeholders.
  * @param {string[]} tokens
  * @returns {string}
  */
@@ -118,34 +99,18 @@ export function buildSearchCommand(tokens) {
     return commandParts.join(' ');
 }
 
-// Quoted filter values — pl"…" (player), m"…" (move pattern) and t"…" (search
-// text / comment) — may contain spaces. A naive whitespace split tears a
-// multi-word value into loose words (`t"big win"` → `t"big`, `win"`) and those
-// words get misclassified as range filters (`win"` → win-rate, the bare `b` →
-// backgammon-rate), silently corrupting the result set. Strip the whole quoted
-// region before splitting so no interior word survives, on both the aller and
-// retour paths. Both quote styles are supported. Moved here (from
-// `commandProcessor.js`, which re-exports it) so `parseSearchTokens` below can
-// tokenize a raw command the same way regardless of caller.
-/** @param {string} str */
+// Quoted values — pl"…", m"…", t"…" — may contain spaces; a whitespace split
+// would leave loose words misread as range filters (`win"` → win-rate). Strip
+// the whole quoted region before splitting (both quote styles).
 export function stripQuotedTokens(str) {
     return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
 }
 
 /**
- * The single grammar behind every search-token parser in the app: reads
- * filter tokens back into the full `SearchFilters` shape (long field names,
- * matching what `onLoadPositionsByFilters` / `buildSearchFilterPayload`
- * expect). Accepts either an already-split token array (paired with the
- * source command, needed to recover quoted values) or a bare command string,
- * from which tokens are derived the same way `stripQuotedTokens` +
- * whitespace-split does everywhere else.
- *
- * `parseFilters` (`commandProcessor.js`, the "aller" path: a typed or
- * replayed-verbatim command) and `parseSearchCommand` (below, the "retour"
- * path: SearchPanel replaying a history/library entry) are both thin adapters
- * over this function — see the module doc comment for why that split existed
- * and what it silently dropped (#203).
+ * The single grammar behind every search-token parser: reads filter tokens
+ * into the full `SearchFilters` shape (long backend field names). Accepts a
+ * token array (with the source command, to recover quoted values) or a bare
+ * command string.
  *
  * @param {string[]|string} filtersOrCommand - filter tokens (no leading `s`), or the full command.
  * @param {string} [command] - the raw command, used to recover quoted values; required when
@@ -174,10 +139,8 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
     const noContactFilter = filters.includes('nc');
     // `like`, `like42`, `like<12`, `like42<12*` : le seul jeton qui CLASSE au
-    // lieu de restreindre (ADR-0043). Reconnu par sa FORME et non par son
-    // préfixe, pour la raison qui vaut pour `n` : une règle de préfixe
-    // réclamerait n'importe quel mot commençant par « like » et transformerait
-    // une faute de frappe en un tri silencieux du résultat.
+    // lieu de restreindre (ADR-0043). Reconnu par sa forme, pas son préfixe,
+    // pour qu'une faute de frappe ne devienne pas un tri silencieux.
     const likeMatch = filters.map((f) => /^like(\d+)?(?:<(\d+))?(\*)?$/.exec(f)).find(Boolean);
     const likeFilter = !!likeMatch;
     const likeTargetId = likeMatch && likeMatch[1] ? parseInt(likeMatch[1], 10) : 0;
@@ -203,11 +166,8 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // 'x' marks that an exclusion ("Sauf") structure is active. The structure
     // itself is carried by the exclude board (store), like the include structure.
     const excludeStructure = filters.includes('x');
-    // Comment presence: `co` (has one) / `xco` (has none). Exact matches, so
-    // they collide neither with each other nor with the `co` alias of the
-    // `comment` command — filter tokens only exist after the `s ` prefix.
-    // Asking for both is contradictory rather than ambiguous; 'none' wins and
-    // the search comes back empty, which is the honest answer.
+    // `co` / `xco`: exact matches, so no clash with the `comment` command's
+    // `co` alias. Both at once is contradictory: 'none' wins, empty result.
     const commentFilter = filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '';
     // Derived game phase: `ph:race`, repeatable (`ph:race ph:bearoff`), joined
     // into a ";"-separated string for the backend (GamePhaseFilter, ADR-0035).
@@ -216,36 +176,28 @@ export function parseSearchTokens(filtersOrCommand, command) {
         .filter((f) => typeof f === 'string' && /^ph:[a-z]+$/.test(f))
         .map((f) => f.slice(3))
         .join(';');
-    // Derived plan of play: `gt:holding`, repeatable, joined the same way
-    // (GameTypeFilter, #291). This is the token the classifier exists for —
-    // « mes erreurs en holding game » est UN jeton, pas un paquet de plages
-    // sauvegardées.
+    // Derived plan of play: `gt:holding`, repeatable (GameTypeFilter).
     const gameTypeFilter = filters
         .filter((f) => typeof f === 'string' && /^gt:[a-z-]+$/.test(f))
         .map((f) => f.slice(3))
         .join(';');
     // Comment provenance: `co:user`, repeatable, joined the same way
-    // (CommentOriginFilter, #263). Distinct from the bare `co` above, which
+    // (CommentOriginFilter). Distinct from the bare `co` above, which
     // asks about presence only — an exact match, so the two never collide.
     const commentOriginFilter = filters
         .filter((f) => typeof f === 'string' && /^co:[a-z]+$/.test(f))
         .map((f) => f.slice(3))
         .join(';');
-    // Tags: `#prime`, repeatable, joined the same way (TagFilter, #265). A tag
-    // names itself, so there is no letter prefix to strip and nothing else can
-    // claim the token. Several tags narrow TOGETHER — a position has many
-    // tags, so naming two means "both", unlike the two closed lists above
-    // where naming two can only mean "either".
+    // Tags: `#prime`, repeatable (TagFilter). Several tags mean "both" — a
+    // position has many — unlike the closed lists above, where two mean "either".
     const tagFilter = filters
         .filter((f) => typeof f === 'string' && /^#[^\s#]+$/.test(f))
         .map((f) => f.toLowerCase())
         .join(';');
-    // Rencontres : `n>3`, `n<10`, `n2,5` ou `n4` (« exactement quatre »), le
-    // nombre de coups qui aboutissent à la position (EncounterFilter, #282).
-    // Reconnu par sa FORME, pas par son préfixe : `nc` commence par la même
-    // lettre, et une règle de préfixe ferait d'une faute de frappe un filtre
-    // silencieux. Absent de cette grammaire jusqu'à #362 : tapé dans
-    // l'application, le jeton partait nulle part et la recherche rendait tout.
+    // Rencontres : `n>3`, `n<10`, `n2,5`, `n4` (exactement), le nombre de coups
+    // aboutissant à la position (EncounterFilter). Reconnu par sa forme : `nc`
+    // commence par la même lettre, et un préfixe ferait d'une faute de frappe
+    // un filtre silencieux.
     let encounterFilter = filters.find((f) => typeof f === 'string' && /^n(?:[<>]\d+|\d+(?:,\d+)?)$/.test(f)) || '';
     if (encounterFilter && !/[,<>]/.test(encounterFilter)) {
         encounterFilter = `${encounterFilter},${encounterFilter.slice(1)}`;
@@ -255,7 +207,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
     // Exclude `gt:…` (game type), which starts with 'g' and is no gammon rate:
-    // it would otherwise shadow a real `g>10` placed after it (#405).
+    // it would otherwise shadow a real `g>10` placed after it.
     const gammonRateFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('gt:') && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
     const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
     const player2WinRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
@@ -379,11 +331,9 @@ export function parseSearchTokens(filtersOrCommand, command) {
 }
 
 /**
- * Pick the individual backend filter arguments back out of a freshly built
- * token list (the "save" path: SearchPanel's checkboxes → `buildFilterTokens`
- * → this function → `onLoadPositionsByFilters`). A thin adapter over
- * {@link parseSearchTokens}, reporting the same fields under the short
- * abbreviated keys this call site (and its tests) have always used.
+ * Pick the backend filter arguments out of a freshly built token list (the
+ * save path: checkboxes → `buildFilterTokens` → here → onLoadPositionsByFilters).
+ * Adapter over {@link parseSearchTokens}, under short keys.
  *
  * @param {string[]} tokens - the output of {@link buildFilterTokens}.
  * @returns the named filter arguments consumed by onLoadPositionsByFilters.
@@ -437,8 +387,7 @@ export function parseFilterTokens(tokens) {
         // travels separately as the t"…" token.
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains',
         cdFilter: p.dateFilter,
-        // Le classement garde ses noms entiers : il n'a pas d'abréviation
-        // historique à respecter, et `likeFilter` se lit.
+        // Nom entier : le classement n'a pas d'abréviation.
         likeFilter: p.likeFilter,
         likeTargetId: p.likeTargetId,
         likeMaxDistance: p.likeMaxDistance,
@@ -447,14 +396,8 @@ export function parseFilterTokens(tokens) {
 }
 
 /**
- * Parse a persisted `s …` search command string back into the flat set of
- * filter values SearchPanel hands to its `onLoadPositionsByFilters` callback
- * when replaying a saved/library search (the "retour" path). A thin adapter
- * over {@link parseSearchTokens}, reporting the same fields under the short
- * abbreviated keys this call site (and its tests) have always used — plus
- * `xd`/`posIds`/`commentMode`, the three fields the pre-#203 version of this
- * function silently dropped because it parsed the command on its own instead
- * of sharing `parseFilters`' (commandProcessor.js) grammar.
+ * Parse a stored `s …` command back into the flat filter values SearchPanel
+ * replays. Adapter over {@link parseSearchTokens}, under short keys.
  *
  * @param {string} command - a command starting with `s ` (or the bare `s`).
  * @returns the parsed filter values, keyed by short name.
@@ -466,9 +409,7 @@ export function parseSearchCommand(command) {
         ic: p.includeCube,
         is: p.includeScore,
         nc: p.noContactFilter,
-        // Le classement garde ses noms entiers sur les trois chemins : il n'a
-        // pas d'abréviation historique à respecter, et une quatrième
-        // orthographe de `like` n'aurait servi personne.
+        // Nom entier sur les trois chemins.
         likeFilter: p.likeFilter,
         likeTargetId: p.likeTargetId,
         likeMaxDistance: p.likeMaxDistance,
@@ -505,33 +446,28 @@ export function parseSearchCommand(command) {
         me: p.moveErrorFilter,
         matchIDs: p.matchIDsFilter,
         tournamentIDs: p.tournamentIDsFilter,
-        // Previously dropped on replay (#203): no panel checkbox drives these
-        // (documented as command-line only, cmd_mode.rst), so a saved/history
-        // command carrying them silently lost them here.
+        // Command-line only (cmd_mode.rst): no checkbox drives these, so the
+        // replay must carry them.
         xd: p.exceptDiceFilter,
         posIds: p.positionIDsFilter,
         ph: p.gamePhaseFilter,
         gt: p.gameTypeFilter,
         coOrigin: p.commentOriginFilter,
         tags: p.tagFilter,
-        // Comme `like`, le jeton garde son nom entier : pas d'abréviation
-        // historique à respecter.
+        // Nom entier, comme `like`.
         encounterFilter: p.encounterFilter,
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains'
     };
 }
 
-// Command-line token for each search filter, keyed by its canonical (English)
-// label — the same labels SearchPanel's filterGroups use. Single source of
-// truth for the in-UI token hint shown on hover; the range entries come from
-// the NUMERIC_FILTERS table, the others mirror the buildFilterTokens switch
-// above. `type` drives how filterTokenHint renders the usage forms:
+// Command-line token per search filter, keyed by canonical (English) label as
+// in SearchPanel's filterGroups: the source of the hover hint. `type` picks
+// the usage forms:
 //   flag  — the bare token (cube, nc, M, d)
-//   range — three forms: X>n, X<n, Xn,m
-//   text  — quoted free text: t"…"
+//   range — X>n, X<n, Xn,m
+//   text  — t"…"
 //   date  — T>YYYY/MM/DD …
 //   dice  — D (both rolls) / D1 (first roll only)
-/** @type {Record<string, { token: string, type: string }>} */
 const FILTER_TOKENS = {
     'Include Cube': { token: 'cube', type: 'flag' },
     'Include Score': { token: 'score', type: 'flag' },
@@ -550,10 +486,9 @@ const FILTER_TOKENS = {
 };
 
 /**
- * The arguments of loadPositionsByFilters for a stored `s …` command — the
- * replay of a search history entry or of a saved filter. The search panel and
- * the pinned filters (filterLibraryService.js, Alt+1…9) both go through here,
- * so a filter run from anywhere asks the question it asks from the panel.
+ * The loadPositionsByFilters arguments for a stored `s …` command. The search
+ * panel and pinned filters (Alt+1…9) both go through here, so a filter asks
+ * the same question from anywhere.
  *
  * @param {string} command - the stored command, `s` or `s …`.
  * @returns {{ args: object, f: ReturnType<typeof parseSearchCommand> } | null}
@@ -581,23 +516,18 @@ export function replaySearchArgs(command) {
         tournamentIDsFilter: f.tournamentIDs,
         diceRollMode: f.drMode,
         playerFilter: f.plf,
-        // Command-line-only tokens with no panel checkbox (#203): unlike
-        // commentFilter/cubeResponseFilter, positionService does not
-        // re-derive these from `filters`, so they must be forwarded
-        // explicitly or a replayed `s D xD65`/`s id5,10` silently loses
-        // the exclusion/restriction on double-click.
+        // Command-line-only tokens: positionService does not re-derive them
+        // from `filters`, so a replay would otherwise lose them.
         exceptDiceFilter: f.xd,
         positionIDsFilter: f.posIds,
         gamePhaseFilter: f.ph,
-        // `gt:`, `#tag` et `n>3` étaient lus par parseSearchCommand et
-        // jamais transmis (#362) : le rejeu d'un historique ou d'un
-        // filtre de la bibliothèque rendait la recherche sans eux.
+        // `gt:`, `#tag`, `n>3` : transmis explicitement, sinon un rejeu les
+        // perdrait.
         gameTypeFilter: f.gt,
         tagFilter: f.tags,
         encounterFilter: f.encounterFilter,
         commentOriginFilter: f.coOrigin,
-        // Le classement (ADR-0043), perdu de la même façon (#404) :
-        // `s like42` rejoué partait en recherche non classée.
+        // Le classement (ADR-0043), pour la même raison.
         likeFilter: f.likeFilter,
         likeTargetId: f.likeTargetId,
         likeMaxDistance: f.likeMaxDistance,
@@ -607,11 +537,8 @@ export function replaySearchArgs(command) {
 }
 
 /**
- * The command-line token hint for a filter label, shown as the filter's `title`
- * (hover tooltip) in SearchPanel so the cryptic `s` tokens are discoverable
- * without leaving the UI. Returns '' for unknown labels. The string is
- * deliberately word-free — only the token and its operator forms — so it needs
- * no translation.
+ * The token hint for a filter label (its hover `title`), or ''. Word-free, so
+ * it needs no translation.
  *
  * @param {string} label - the canonical (English) filter label.
  * @returns {string}
@@ -638,17 +565,12 @@ export function filterTokenHint(label) {
 }
 
 /**
- * Build the SearchFilters object the LoadPositionsByFilters binding expects.
+ * Build the single SearchFilters object LoadPositionsByFilters takes. Passed
+ * positionally, the filters would deserialise to an all-zero struct and the
+ * search would return the whole database.
  *
- * The binding takes exactly one argument, so every filter has to travel inside a
- * single object. Passing them positionally — as AnkiPanel did — leaves all of
- * them behind and hands the backend a Position where it expects a SearchFilters:
- * that deserialises to an all-zero struct, i.e. no filter at all, and the search
- * answers with the whole database (#111).
- *
- * `position` is sent as-is. Callers pass the board recorded in lastSearchStore,
- * which positionService already normalised and mirrored; normalising it a second
- * time would flip an already-mirrored board.
+ * `position` is sent as-is: it is already normalised and mirrored, and a second
+ * normalisation would flip it.
  *
  * @param {object} position - the search board, already normalised.
  * @param {Record<string, any>} [pf] - parsed filter flags, as returned by `parseFilters`.
@@ -683,10 +605,9 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         encounterFilter: pf.encounterFilter || '',
         likeFilter: pf.likeFilter || false,
         likeTargetId: pf.likeTargetId || 0,
-        // Le plateau dessiné voyage dans son propre champ. Le mettre dans
-        // `filter` l'aurait fait servir deux fois — comme cible ET comme motif
-        // de structure que toute candidate doit contenir — ce qui est
-        // l'inverse de pardonner un dessin approximatif (ADR-0043).
+        // Dans son propre champ : dans `filter`, le plateau servirait aussi de
+        // motif que toute candidate doit contenir, l'inverse de pardonner un
+        // dessin approximatif (ADR-0043).
         likeTargetBoard: pf.likeTargetBoard || emptySearchBoardPosition(),
         likeMaxDistance: pf.likeMaxDistance || 0,
         likeWidened: pf.likeWidened || false,
@@ -719,15 +640,9 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
 }
 
 /**
- * Décrit une commande de recherche enregistrée, jeton par jeton (#287, fiche
- * I.31).
- *
- * L'historique de recherche affichait `s E>100 gt:holding ph:race` — exact, et
- * illisible pour qui n'a pas les jetons en tête. Chaque jeton devient ici une
- * pastille avec son libellé, ce qui rend l'historique relisable sans le rendre
- * approximatif : la commande d'origine reste la commande d'origine, et un
- * jeton que rien ne reconnaît est rendu TEL QUEL plutôt que traduit au plus
- * proche.
+ * Décrit une commande de recherche enregistrée, jeton par jeton, pour
+ * l'historique. Un jeton non reconnu est rendu tel quel, jamais traduit au
+ * plus proche.
  *
  * @param {string} command la commande, avec ou sans son `s ` de tête
  * @returns {{token: string, label: string}[]}
@@ -742,7 +657,7 @@ export function describeCommandTokens(command) {
 }
 
 /**
- * Le libellé lisible d'un jeton, ou le jeton lui-même s'il n'est pas reconnu.
+ * Le libellé d'un jeton, ou le jeton lui-même.
  *
  * @param {string} token
  */
@@ -765,9 +680,7 @@ function matchesToken(token, base, type) {
     if (type === 'flag') return token === base;
     if (type === 'dice') return token === base || token === base + '1';
     if (type === 'text' || type === 'comment') return token.startsWith(base + '"');
-    // range et date : le jeton commence par sa lettre, suivie d'un opérateur
-    // ou d'un chiffre. La comparaison est stricte sur la lettre pour ne pas
-    // confondre `p` (pipcount) et `pl"…"` (joueur), la collision que le
-    // parseur a déjà appris à éviter.
+    // range et date : la lettre, puis un opérateur ou un chiffre — pour ne pas
+    // confondre `p` (pips) et `pl"…"` (joueur).
     return token.length > base.length && token.startsWith(base) && /[<>0-9]/.test(token[base.length]);
 }

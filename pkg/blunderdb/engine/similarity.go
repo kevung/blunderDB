@@ -2,35 +2,18 @@ package engine
 
 import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
 
-// « Des positions comme celle-ci » (#293, fiche J.3).
+// « Des positions comme celle-ci » : ce que « proche » veut dire, en une
+// distance.
 //
-// Personne ne rencontre deux fois la même position, et c'est ce que
-// l'utilisateur croit demander quand il cherche par structure. Ce fichier dit
-// ce que « proche » veut dire, en une distance et rien d'autre.
+// Vecteur brut des points (P7 : l'espace latent du réseau n'est validé par
+// aucune littérature pour le backgammon) et TRANSPORT OPTIMAL en une dimension
+// (Wasserstein-1) : contrairement à L1/L2, W₁ tient compte de la proximité des
+// points — un pion avancé d'un cran coûte 1, de six crans 6, là où L1 compte 2
+// pour les deux. Sur un axe, W₁ est la somme des écarts absolus des sommes
+// PRÉFIXES (forme close de Vallender), en O(n), et se lit en PIONS-PAS.
 //
-// # Le choix de la métrique, et pourquoi celle-là
-//
-// Le rapport P7 recommande de commencer par le vecteur brut des points plutôt
-// que par l'espace latent du réseau — l'idée est plausible mais aucune
-// littérature ne l'a validée pour le backgammon — et signale la métrique la
-// mieux adaptée à un plateau : le TRANSPORT OPTIMAL en une dimension
-// (Wasserstein-1). L1 et L2 traitent chaque point indépendamment ; W₁ tient
-// compte de la proximité des points, ce qui est exactement l'intuition
-// « presque la même position ». Un pion avancé d'un cran coûte 1, avancé de
-// six crans coûte 6, là où L1 les compte tous les deux 2.
-//
-// Sur un axe, W₁ se calcule en O(n) : c'est la somme des écarts absolus des
-// sommes PRÉFIXES des deux distributions (forme close de Vallender). Et le
-// nombre obtenu se lit : c'est un nombre de PIONS-PAS, la quantité de
-// mouvement de pions qui sépare les deux positions.
-//
-// # Deux invariances, l'une voulue et l'autre refusée
-//
-// Le point de vue est celui du joueur au trait, toujours : la même position
-// vue des deux côtés est la même position. En revanche, aucune invariance par
-// translation le long du plateau — les points ont une valeur absolue au
-// backgammon (le jan, la barre, le point 20), et deux structures identiques
-// translatées ne sont pas stratégiquement équivalentes (P7 §2).
+// Toujours du point de vue du joueur au trait ; aucune invariance par
+// translation : les points ont une valeur absolue (P7 §2).
 
 // SimilarityVector is a position reduced to what "close" is measured on: each
 // side's fifteen checkers laid out on one axis, seen from the side on roll.

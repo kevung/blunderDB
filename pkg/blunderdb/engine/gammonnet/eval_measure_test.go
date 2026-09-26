@@ -14,47 +14,20 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// TestEvalMeasure is #127, ADR-0012: before the "evaluated" regime can be
-// offered on a race outside the exact table's domain, gammonNet 2-ply must be
-// measured against the exact table where BOTH answer. This does not decide
-// whether the exact table stays (it does, ADR-0012) — it decides what
-// blunderDB is allowed to write in the documentation next to the word
-// "evaluated".
+// TestEvalMeasure (ADR-0012) measures gammonNet 2-ply against the exact
+// two-sided table where both answer: the figures blunderDB may print next to
+// the word "evaluated" in doc/source/manuel.rst.
 //
-// # Why this is money-only
+// Money only: the two-sided table carries no gammon-rate breakdown, so there is no
+// exact oracle for a match-score verdict.
 //
-// race.Evaluate/race.MoneyFromEntry only ever produce a MONEY cube verdict —
-// the two-sided database's four planes carry no gammon-rate breakdown, so
-// there is no exact oracle for a match-score verdict to compare against.
-// "Evaluated at a match score" (ADR-0012's stated advantage over the old
-// dead-cube chain) is therefore not something this measurement can check; it
-// falls out of the codec/search/cube proof (#120-#123), not from an oracle
-// that does not exist at a score.
+// A FIXED-SEED sample (BLUNDERDB_EVAL_MEASURE_N positions) over TS-06-06
+// home-board configurations with 1..6 checkers a side; exhausting the
+// ~852,000 pairs would take hours. Distance to the take point uses
+// gammonNet's OWN take point against the exact win probability: how it does
+// near where it thinks the decision turns.
 //
-// # Sampling, not exhaustion
-//
-// The embedded TS-06-06 domain (checkers 0..6 a side in the home board) holds
-// 924 home-board configurations a side, ~852,000 (us, them) pairs. A 2-ply
-// k=12 decision costs on the order of 13,400 big-network evaluations
-// (ADR-0011); exhausting that domain is hours, not the "few minutes" #123's
-// gate already set as the budget for a pre-merge recipe step. This test
-// therefore draws a FIXED-SEED sample (BLUNDERDB_EVAL_MEASURE_N positions,
-// default below) uniformly over home-board configurations with 1..6 checkers
-// a side, deliberately excluding the closing move (0 checkers — no decision
-// left to take).
-//
-// # Distance to the take point
-//
-// The two-sided table gives no gammon-rate breakdown either, so a true
-// (ground-truth) take point cannot be computed from it. The bucketing instead
-// uses gammonNet's OWN estimated take point (gammonnet.TakePoint, fed by its
-// own CubeInputs) against the EXACT win probability: distance = |p_exact -
-// tp_gammonNet|. This is deliberately the model-under-test's own take point,
-// not an oracle one — it answers "how does gammonNet do near where gammonNet
-// itself thinks the decision turns", which is the question a user reading a
-// verdict near that line actually has.
-//
-// # Measured on 2026-08-29 (embedded TS-06-06, N=4000, seed 1, single core, 196s)
+// Measured (TS-06-06, N=4000, seed 1):
 //
 //	cube verdict agreement (overall): 3735/4000 = 93.4%
 //	agreement by distance to gammonNet's own take point:
@@ -65,14 +38,6 @@ import (
 //	  >=20%   94.4% (2559/2712)
 //	|delta win prob|:        mean=0.00852 p50=0.00438 p95=0.03212 max=0.08295
 //	|delta cubeful equity|:  mean=0.03881 p50=0.01794 p95=0.15068 max=0.40647
-//
-// The shape is exactly what ADR-0012 predicted rather than assumed: agreement
-// is worst (61%) in the <1% band, right where a coin-flip decision is most
-// sensitive to a small model disagreement, and climbs to 93-94% everywhere
-// else. TS-06-11 (BLUNDERDB_TS11_PATH) was not set on this run; the extension
-// exists and is exercised whenever the variable is provided, but was not run
-// here. These are the numbers ADR-0012 requires next to the word "evaluated"
-// in doc/source/manuel.rst (#126, not this ticket).
 const defaultEvalMeasureN = 4000
 
 func TestEvalMeasure(t *testing.T) {
@@ -139,9 +104,8 @@ func randHome(rng *rand.Rand, n int) [6]int {
 
 // buildPosition places us (on-roll player's home, points 1..6 own numbering)
 // and them (opponent's home) as a pure-race position with White on roll.
-// Choosing White on roll is WLOG: the encoding is proven symmetric by
-// construction (ADR-0011's opening-position mirror test), and the cube model
-// and race table are both stated from the on-roll player's point of view.
+// White on roll is WLOG: the encoding is symmetric (ADR-0011's mirror test),
+// and the cube model and race table speak from the on-roll player's view.
 func buildPosition(us, them [6]int) Position {
 	var p Position
 	sumUs, sumThem := 0, 0
@@ -221,10 +185,8 @@ func runEvalMeasure(t *testing.T, searcher *Searcher, ts *race.TwoSided, label s
 
 			gnVerdict := decision.Action
 			if gnVerdict == TooGood {
-				// The exact table's Verdict has no "too good" label — it
-				// folds that case into NoDouble (money.go: the double
-				// condition fails whenever DoublePass < NoDouble, which is
-				// exactly the too-good case). Compare like with like.
+				// The exact table folds "too good" into NoDouble (money.go):
+				// compare like with like.
 				gnVerdict = NoDouble
 			}
 			agree := verdictsAgree(money.Verdict, gnVerdict)

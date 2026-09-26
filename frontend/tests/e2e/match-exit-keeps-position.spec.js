@@ -1,10 +1,9 @@
 /**
- * match-exit-keeps-position.spec.js — #201 (D.1)
+ * match-exit-keeps-position.spec.js
  *
- * Quitter la revue d'un match (commande `m`) recharge la bibliothèque, qui
- * repartait de sa dernière position : le coup que l'on étudiait — une
- * position de la bibliothèque comme les autres — était perdu. La sortie doit
- * se poser sur lui.
+ * Quitter la revue d'un match (commande `m`) recharge la bibliothèque : le coup que l'on
+ * étudiait — une position de la bibliothèque comme les autres — doit rester la position
+ * affichée à la sortie, pas la dernière de la bibliothèque.
  *
  * La bibliothèque factice contient ici les trois positions habituelles plus
  * les six positions du match, dans cet ordre.

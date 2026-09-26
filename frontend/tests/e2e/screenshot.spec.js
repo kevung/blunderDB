@@ -7,12 +7,9 @@
  * revue sur une position de milieu de partie, onglet Analyse avec la table
  * des coups. Anglais, 1280×960, thème par défaut.
  *
- * Pourquoi 960 et non 800 de haut : le plateau two.js écrit ses étiquettes
- * (numéros de points, pips, score, videau) en taille fixe. Sous ~600 px de
- * large elles se chevauchent et débordent du cadre ; avec le panneau du bas à
- * sa hauteur utile (neuf coups, 280 px) et la barre d'outils, 800 px ne
- * laissent au plateau que ~420 px de haut, soit 580 px de large. À 960 il
- * dispose de 580 px de haut et s'étale sur 800 px : tout est lisible.
+ * 960 px de haut et non 800 : les étiquettes du plateau two.js sont en taille
+ * fixe et se chevauchent sous ~600 px de large, largeur qu'un plateau de 800
+ * px de haut n'atteint pas une fois le panneau du bas ouvert.
  *
  * Ce n'est pas un test : il ne tourne que sur demande, hors de la suite.
  *
@@ -46,10 +43,8 @@ test('capture de l’interface pour la documentation', async ({ page }) => {
     await expect(statusBar).toContainText('30 / 30');
     await overrideDbMethodByArg(page, 'LoadAnalysis', showcaseAnalyses);
 
-    // Le panneau Match est l'onglet ouvert au chargement : Entrée sur la ligne
-    // du match entre en revue sur son dernier coup visité, onglet Analyse actif.
-    // Clic sur le nom du joueur, pas sur la ligne entière : son centre tombe
-    // sur la cellule tournoi, qui ouvre son propre éditeur et vole Entrée.
+    // Entrée sur la ligne du match entre en revue. Clic sur le nom du joueur :
+    // le centre de la ligne tombe sur la cellule tournoi, qui vole Entrée.
     const matchPanel = page.getByRole('region', { name: 'Match navigator' });
     await matchPanel.getByRole('row', { name: /Alice/ }).getByText('Alice').click();
     await page.keyboard.press('Enter');
@@ -62,11 +57,9 @@ test('capture de l’interface pour la documentation', async ({ page }) => {
     await expect(rows).toHaveCount(9);
     await expect(page.locator('.checker-table tr.played')).toContainText(showcasePlayedMove);
 
-    // Le plateau two.js a rendu ses pions dans le SVG. Il s'est ajusté au
-    // chargement, avant que la barre d'information du match ne prenne sa
-    // ligne : le même 'resize' que dispatch App.svelte quand la disposition
-    // change le fait remesurer sa zone, sinon la rangée 12–1 passe sous le
-    // panneau.
+    // Le plateau s'est ajusté avant que la barre d'information du match ne
+    // prenne sa ligne : un 'resize' (comme App.svelte) le fait remesurer,
+    // sinon la rangée 12–1 passe sous le panneau.
     await expect(page.locator('#backgammon-board svg path').first()).toBeVisible();
     await page.mouse.move(0, 0);
     await page.evaluate(() => window.dispatchEvent(new Event('resize')));

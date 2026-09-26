@@ -1,38 +1,20 @@
-// Les thèmes nommés (#286, fiche I.30).
-//
-// Un thème est une DONNÉE, pas une feuille de style : quatre listes de valeurs,
-// appliquées aux variables CSS de `:root` et à la palette du plateau. Écrire
-// chaque thème en CSS aurait dupliqué la liste des jetons autant de fois qu'il
-// y a de thèmes, et un jeton ajouté un jour aurait manqué dans trois d'entre
-// eux sans que rien ne le dise.
-//
-// # Pourquoi le plateau en fait partie
-//
-// L'ADR-0031 laisse volontairement la palette du plateau HORS du système de
-// jetons, parce qu'elle est une préférence de l'utilisateur et non la chrome de
-// l'interface. Cela reste vrai. Mais une interface sombre autour d'un plateau
-// clair n'est pas un thème, c'est une moitié de thème : le plateau occupe
-// l'essentiel de l'écran. Un thème propose donc AUSSI une palette de plateau,
-// et l'utilisateur garde le dernier mot — l'onglet Couleurs continue de la
-// régler, et son réglage survit au thème. Voir ADR-0038.
+// Les thèmes nommés : des DONNÉES appliquées aux variables CSS de `:root` et à la palette du
+// plateau, pour que la liste des jetons ne soit écrite qu'une fois. Un thème propose aussi une
+// palette de plateau (une interface sombre autour d'un plateau clair n'est qu'une moitié de
+// thème), mais l'onglet Couleurs garde le dernier mot (ADR-0031, ADR-0038).
 
 /** L'identifiant du thème qui suit le système. */
 export const THEME_SYSTEM = 'system';
 
 /**
- * Les jetons de couleur de l'interface. Ce sont EXACTEMENT ceux que
- * `style.css` déclare sous `:root` (ADR-0031) : un thème qui en oublierait un
- * laisserait la valeur du thème précédent, ce qui est la façon la plus sûre de
- * produire du texte illisible.
+ * Les jetons de couleur de l'interface, EXACTEMENT ceux de `style.css` sous `:root` (ADR-0031) :
+ * un jeton oublié garderait la valeur du thème précédent.
  */
 export const UI_COLOR_TOKENS = ['--color-text', '--color-text-muted', '--color-border', '--color-surface', '--color-surface-alt', '--color-primary', '--color-danger'];
 
 /**
- * `scheme` est le `color-scheme` que la racine déclare sous ce thème (#402) :
- * c'est lui, et non les jetons, qui dit au moteur de peindre ses contrôles
- * natifs — boutons, listes, champs, cases, barres de défilement — en clair ou en
- * sombre. Sans lui, un thème sombre garde des contrôles clairs sur sa surface
- * sombre. Il suit la clarté de `--color-surface`, ce que themes.test.js vérifie.
+ * `scheme` est le `color-scheme` déclaré sous ce thème : c'est lui qui fait peindre les contrôles
+ * natifs en clair ou en sombre. Il suit la clarté de `--color-surface` (themes.test.js).
  *
  * @typedef {{scheme: 'light' | 'dark', ui: Record<string, string>, board: Record<string, string>}} Theme
  */
@@ -152,10 +134,8 @@ export const THEMES = {
 export const THEME_NAMES = [THEME_SYSTEM, ...Object.keys(THEMES)];
 
 /**
- * Le thème effectivement à appliquer pour un choix donné. `system` suit
- * `prefers-color-scheme`, et retombe sur le thème clair quand la préférence
- * n'est pas exprimée — ce qui est le cas de la plupart des environnements de
- * bureau que ce WebView rencontre.
+ * Le thème à appliquer pour un choix. `system` suit `prefers-color-scheme`, et retombe sur le
+ * clair quand la préférence n'est pas exprimée (le cas de la plupart des bureaux).
  * @param {string} name
  */
 export function resolveTheme(name) {
@@ -165,14 +145,9 @@ export function resolveTheme(name) {
 }
 
 /**
- * Écrit les jetons d'un thème sur l'élément racine, déclare son schéma de
- * couleur (`color-scheme`, pour les contrôles natifs — #402), et pose
- * `data-theme` pour qu'une règle CSS puisse s'y accrocher si un jour l'une en a
- * besoin. Pose aussi `data-scheme` : une règle qui dépend de la clarté du thème
- * et non de son nom — le bouton principal des fenêtres, encre sur fond d'encre
- * en clair, qui serait un aplat clair sur une surface sombre (suite de #402) —
- * s'y accroche, et un thème sombre ajouté un jour en hérite sans y penser.
- * @param {string} name
+ * Écrit les jetons d'un thème sur la racine, déclare son `color-scheme` et pose `data-theme` et
+ * `data-scheme` — ce dernier pour les règles qui dépendent de la clarté et non du nom, dont un
+ * futur thème sombre hérite sans y penser.
  * @returns {Theme} le thème résolu, pour que l'appelant en tire la palette.
  */
 export function applyThemeTokens(name) {

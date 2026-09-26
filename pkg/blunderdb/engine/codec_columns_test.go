@@ -8,16 +8,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Les fonctions couvertes ici sont celles qui ÉCRIVENT LES COLONNES
-// SCALAIRES — les valeurs dénormalisées que la recherche, les statistiques et
-// les filtres SQL lisent sans jamais rouvrir le blob. Elles étaient toutes à
-// 0 % (fiche C.11, #198), et c'est exactement la famille où le bug
-// `CommitImportDatabase` s'était logé : une colonne qui n'est plus écrite ne
-// casse aucun test, elle rend simplement des résultats vides.
-//
-// La règle suivie ici : une colonne se teste contre la valeur qu'elle doit
-// contenir (167 pips à l'ouverture, un taux ×100, une équité ×1000), jamais
-// contre elle-même.
+// Tests des fonctions qui ÉCRIVENT LES COLONNES SCALAIRES que la recherche,
+// les statistiques et les filtres SQL lisent sans rouvrir le blob : une
+// colonne qui n'est plus écrite ne casse rien de visible, elle rend des
+// résultats vides. Une colonne se teste contre la valeur qu'elle doit contenir
+// (167 pips à l'ouverture, un taux ×100, une équité ×1000), jamais contre
+// elle-même.
 
 // openingXGID est la position d'ouverture, dés 3-1 pour le joueur au trait.
 const openingXGID = "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10"

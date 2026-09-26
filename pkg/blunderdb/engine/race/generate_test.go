@@ -328,13 +328,9 @@ func TestPastItsDeadlineAQuestionFallsBackToAPoolSeedAtZeroPlies(t *testing.T) {
 // ── The cost, measured ──────────────────────────────────────────────────────
 
 // budgetPerQuestion is the stated ceiling of ADR-0041 rule 5. It is generous on
-// purpose: what it guards against is not a slow machine but a change of
-// approach — a generator that searched instead of looking up, or that rebuilt
-// the table per question, lands two or three decades above it. Measured on the
-// reference machine on 2026-09-07: 48 µs on an idle machine, 189 µs under a
-// load average of 6. Both are nearly three decades under, which is the point
-// of a ceiling this generous: it survives a busy machine and still catches a
-// change of approach.
+// purpose: it guards against a change of approach (searching instead of
+// looking up, rebuilding the table per question), which lands two or three
+// decades above it, while a question costs about 50-200 µs even under load.
 const budgetPerQuestion = 100 * time.Millisecond
 
 func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
@@ -394,10 +390,9 @@ func rollers(t *testing.T, req BearoffRequest, draws int) map[int]int {
 }
 
 func TestTheRollerIsDrawnFromThePoolAndKeptFromASeed(t *testing.T) {
-	// « Roller drawn » (rule 4). The first version of this test only checked
-	// that the side on roll was 0 or 1 — which is true of the zero value, so
-	// it stayed green while every library question handed the move to Black.
-	// The oracle has to tell a DRAW from a constant.
+	// « Roller drawn » (rule 4). Checking only "0 or 1" would pass on the zero
+	// value; the oracle has to tell a DRAW from a constant.
+
 	pool := rollers(t, BearoffRequest{Source: SourcePool}, 400)
 	if pool[domain.Black] == 0 || pool[domain.White] == 0 {
 		t.Errorf("pool questions put %v on roll: the roller is not drawn", pool)

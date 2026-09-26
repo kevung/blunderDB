@@ -100,13 +100,9 @@ func assertLockFree(t *testing.T, path string) {
 	}
 }
 
-// TestSetupDatabase_MidSetupFailureReleasesLock guards the fix for a wedged
-// wrapper: a failure between acquiring the write lock and finishing setup
-// used to return with the lock still held and d.db still set — a directory
-// standing in for a "path" makes sql.Open succeed lazily but every Exec
-// SetupDatabase issues right after (pragmas, table creation) fail with
-// "unable to open database file". Both the lock and the handle must be
-// rolled back so the wrapper is usable again.
+// TestSetupDatabase_MidSetupFailureReleasesLock: a failure after the lock is
+// taken must roll back both the lock and the handle. A directory as "path"
+// makes sql.Open succeed lazily and every following Exec fail.
 func TestSetupDatabase_MidSetupFailureReleasesLock(t *testing.T) {
 	t.Parallel()
 	badPath := t.TempDir() // a directory, not a file: every Exec on it fails

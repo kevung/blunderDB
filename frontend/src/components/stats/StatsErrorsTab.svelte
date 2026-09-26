@@ -59,12 +59,8 @@
         });
     }
 
-    // ── 1b. Cube error directions ─────────────────────────────────────────────
-    // Section 1 says how much the cube costs; this one says in which direction
-    // it goes wrong. Offering and answering are two decisions taken by two
-    // different players, hence two rows and never one score: a player can be
-    // late to double while taking too wide, and an average calls that
-    // "balanced".
+    // 1b. Cube error directions: offering and answering are separate rows,
+    // since an average would call "late double + wide take" balanced.
     let directions = $derived(result?.CubeDirections ?? null);
     let directionTotal = $derived(
         !directions ? 0 : directions.Offer.Right + directions.Offer.Missed + directions.Offer.Premature + directions.Answer.Right + directions.Answer.WrongPass + directions.Answer.WrongTake

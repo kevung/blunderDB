@@ -13,13 +13,8 @@
     let { rows = null, onSelectPlayer = undefined } = $props();
 
     /**
-     * Columns of the table, in display order.
-     *
-     * `rate` marks the columns holding a measured rate rather than a count.
-     * Sorting those keeps players with nothing measured at the bottom in both
-     * directions: their zero means "not measured", and letting it win an
-     * ascending sort would put the least-known players at the top of a table
-     * whose whole point is to compare the known ones.
+     * Columns in display order. `rate` columns keep unmeasured players (zero)
+     * at the bottom in both sort directions.
      */
     const COLUMNS = [
         { key: 'compare', labelKey: 'stats.compareColumn', align: 'left', plain: true },
@@ -35,9 +30,7 @@
         { key: 'luck', labelKey: 'stats.playersColLuck', rate: true }
     ];
 
-    // The header cycles through nextSort (in PanelTable): a column is first
-    // picked in its natural direction — lower is better for a rate, higher is
-    // more for a count — and a second click flips it.
+    // First click sorts in the natural direction (rate ascending, count descending).
     let sort = $state({ column: 'pr', direction: 'asc' });
     const columns = $derived(
         COLUMNS.map((col) => ({
@@ -109,9 +102,7 @@
         return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
     }
 
-    // Au plus deux joueurs comparés : au troisième, le plus ancien sort. Une
-    // comparaison à trois colonnes n'est plus une comparaison, c'est la table
-    // qu'on a déjà au-dessus.
+    // Au plus deux joueurs comparés : au troisième, le plus ancien sort.
     let compared = $state(/** @type {string[]} */ ([]));
 
     /** @param {string} name */
@@ -121,9 +112,7 @@
 
     const comparedRows = $derived(compared.map((name) => (rows ?? []).find((r) => r.name === name)).filter(Boolean));
 
-    // La sélection ne survit pas à un changement de tableau : comparer deux
-    // joueurs qui ne sont plus dans le filtre montrerait des chiffres que le
-    // panneau ne calcule plus.
+    // La sélection ne survit pas à un changement de tableau.
     $effect(() => {
         const names = new Set((rows ?? []).map((r) => r.name));
         if (compared.some((n) => !names.has(n))) compared = compared.filter((n) => names.has(n));

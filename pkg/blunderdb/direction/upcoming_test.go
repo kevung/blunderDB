@@ -6,7 +6,7 @@ import (
 )
 
 // The announced date goes under the title, in the host's words, and escaped: it is what the
-// director typed (#451).
+// director typed.
 func TestAnnounceUsesTheCatalogue(t *testing.T) {
 	cat, err := NewCatalog([]byte(`{"term":{"announced":"Annoncée : {at}"}}`))
 	if err != nil {

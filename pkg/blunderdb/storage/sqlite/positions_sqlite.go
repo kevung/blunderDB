@@ -87,24 +87,16 @@ const markFlaggedSQL = `UPDATE position SET flagged = 1
 	WHERE zobrist_hash = ? AND flagged = 0`
 
 // Save stores p, deduplicated by Zobrist hash: a position whose hash is already
-// present is not re-inserted and Save returns the existing id (D1). p is
-// updated in place with the storage-normalised board and the resulting id.
+// present is not re-inserted and Save returns the existing id. p is updated in
+// place with the storage-normalised board and the resulting id.
 //
 // p.IndividuallyImported and p.Flagged are ORed into the stored value rather
-// than assigned
-// (ADR-0001): a match import (which never sets it) cannot clear the flag on a
-// position the user had already imported on its own, and an individual import
-// of a position a match had already brought in still marks it. The flag is
-// therefore independent of the order the user imports their files in.
+// than assigned (ADR-0001), so they do not depend on import order.
 //
-// Under heavy concurrent writers a pooled connection can still lose the race
-// for the write lock once busy_timeout itself has been exhausted (more often
-// on Windows, where file locking is measurably slower — P5); Save retries a
-// bounded number of times on SQLITE_BUSY via retryOnBusy. Every statement
-// saveOnce runs is naturally idempotent (INSERT … ON CONFLICT DO NOTHING, the
-// two mark statements are guarded by their own WHERE, the dedup lookup is a
-// pure read), and *p is only mutated once saveOnce has fully succeeded, so
-// re-running the whole attempt from scratch is safe.
+// A writer can still lose the write lock once busy_timeout is exhausted
+// (more often on Windows), so Save retries on SQLITE_BUSY via retryOnBusy.
+// That is safe: every statement saveOnce runs is idempotent, and *p is only
+// mutated once saveOnce has fully succeeded.
 func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Position) (int64, error) {
 	var id int64
 	err := retryOnBusy(func() error {

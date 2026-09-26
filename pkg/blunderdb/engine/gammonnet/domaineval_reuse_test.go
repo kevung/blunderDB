@@ -10,20 +10,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// TestEvaluatePositionWithReusedSearcherIsBitIdentical is the licence the
-// parallel batch (#147) rests on: one Searcher, re-aimed position after
-// position and carrying its evaluation cache from one to the next, answers
-// exactly what a brand-new Searcher answers for the same position.
-//
-// Two things could have broken that, and both are checked here at once: a
-// leftover from the previous configuration (score, cube owner) surviving
-// Reconfigure, and a warm cache changing an answer. It cannot — the cache
-// key is the whole position and its value is the network's own output, so a
-// hit is by construction what a miss would have computed (cache.go) — but
-// "cannot" is what a test is for.
-//
-// Bit-identical, not "within a tolerance": reflect.DeepEqual over the whole
-// EvalResult, every float64 included.
+// TestEvaluatePositionWithReusedSearcherIsBitIdentical is what the parallel
+// batch rests on: a Searcher re-aimed position after position, with a warm
+// cache, answers exactly what a brand-new one does — no configuration
+// leftover survives Reconfigure. reflect.DeepEqual over the whole EvalResult.
 func TestEvaluatePositionWithReusedSearcherIsBitIdentical(t *testing.T) {
 	rng := rand.New(rand.NewSource(20260902))
 

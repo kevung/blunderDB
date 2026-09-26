@@ -13,17 +13,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
-// runAnalyze handles the analyze command: gammonNet's catch-up sweep (#130,
-// ADR-0013/ADR-0015) for a library — write an analysis for every position
-// that has none — or, with --stale, its re-analysis sweep (#191): every
-// position whose stored analysis is entirely gammonNet's own but was written
-// at an older EngineVersion or a different depth than --ply now asks for.
-// The same query/evaluate/write loop the GUI's auto-after-import trigger
-// (#129), its "analyze now" button, and its "re-analyse stale positions"
-// button use (Database.AnalyzeMissingWithGammonNet /
-// Database.AnalyzeStaleGammonNet); a CLI run has no interactive evaluation
-// to yield to, so it passes no yield func and simply runs at full speed, on
-// --jobs cores at once (#147).
+// runAnalyze handles the analyze command: gammonNet's catch-up sweep
+// (ADR-0013/ADR-0015) for a library — write an analysis for every position
+// that has none — or, with --stale, its re-analysis sweep: every position
+// whose stored analysis is entirely gammonNet's own but was written at an
+// older EngineVersion or a different depth than --ply now asks for. The same
+// query/evaluate/write loop the GUI's auto-after-import trigger, its
+// "analyze now" button, and its "re-analyse stale positions" button use
+// (Database.AnalyzeMissingWithGammonNet / Database.AnalyzeStaleGammonNet); a
+// CLI run has no interactive evaluation to yield to, so it passes no yield
+// func and simply runs at full speed, on --jobs cores at once.
 func (cli *CLI) runAnalyze(args []string) error {
 	analyzeCmd := flag.NewFlagSet("analyze", flag.ContinueOnError)
 
@@ -187,9 +186,9 @@ type analyzeResult struct {
 	Analyzed  int  `json:"analyzed"`
 	Cancelled bool `json:"cancelled,omitempty"`
 	// Stale says which sweep ran: filling gaps, or re-analysing what is
-	// outdated (#191). Evaluated/Refused/Failed are the same three counters
-	// the text output prints — a position gammonNet declines to judge is not
-	// a failure, and the JSON must not flatten the two either (C.4).
+	// outdated. Evaluated/Refused/Failed are the same three counters the text
+	// output prints — a position gammonNet declines to judge is not a
+	// failure, and the JSON must not flatten the two either.
 	Stale bool `json:"stale,omitempty"`
 	// MatchID names the match the sweep was restricted to, absent when it
 	// ran over the whole library — so a caller reading the JSON back can
@@ -204,8 +203,8 @@ type analyzeResult struct {
 	Jobs       int   `json:"jobs"`
 }
 
-// runAnalyzeCompare is `blunderdb analyze --compare` (issue #270, fiche I.14):
-// how does the embedded engine differ from the analyses that came in with the
+// runAnalyzeCompare is `blunderdb analyze --compare`: how does the embedded
+// engine differ from the analyses that came in with the
 // user's files, on the user's own positions?
 //
 // It writes nothing. That is not a precaution but the point: ADR-0013

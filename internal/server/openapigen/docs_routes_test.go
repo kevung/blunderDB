@@ -7,12 +7,9 @@ import (
 	"testing"
 )
 
-// TestHeadlessPageNamesOnlyRealRoutes locks the hand-written server page,
-// doc/source/mode_headless.rst, to the route table: every `/v1/<family>.<op>`
-// or `/ops/<family>.<op>` the prose cites must be a route the daemon serves.
-// The generated annex (api_reference.rst) cannot drift; the prose can, and
-// did — two routes stayed written `/v1/` for a release after moving under
-// `/ops/` (tasks/critique-doc-2026-09, persona 4 #1 and persona 7 #3).
+// TestHeadlessPageNamesOnlyRealRoutes: every `/v1/…` or `/ops/…` route cited
+// in the hand-written doc/source/mode_headless.rst must be one the daemon
+// serves; unlike the generated annex, that prose can drift.
 func TestHeadlessPageNamesOnlyRealRoutes(t *testing.T) {
 	model, err := Parse("internal/server")
 	if err != nil {

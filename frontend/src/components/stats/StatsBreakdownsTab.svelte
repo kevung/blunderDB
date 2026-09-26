@@ -1,6 +1,5 @@
 <script>
-    // Les ventilations de #266 (fiche I.10), plus celle par plan de jeu
-    // (#291) : les mêmes décisions que
+    // Les ventilations, plus celle par plan de jeu : les mêmes décisions que
     // les chiffres globaux, découpées par phase de partie, par étiquette et
     // par score. Aucune d'elles ne redéfinit ce qui compte comme une décision
     // — ce serait un second PR sous le même nom.
@@ -12,7 +11,7 @@
     let phases = $derived(result?.PerPhase ?? []);
     let tags = $derived(result?.PerTag ?? []);
     let cells = $derived(result?.PerScore ?? []);
-    // Le plan de jeu (#291). Les lignes « inconnu » sont écartées : sur une
+    // Le plan de jeu. Les lignes « inconnu » sont écartées : sur une
     // base dont les plans n'ont jamais été calculés elles seraient TOUTE la
     // table, et elles ne diraient rien qu'un `blunderdb repair` ne règle.
     let gameTypes = $derived((result?.PerGameType ?? []).filter((g) => g.GameType !== 'unknown'));

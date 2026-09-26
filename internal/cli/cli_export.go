@@ -290,7 +290,7 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 	}
 
 	// Export with the specified options. Ctrl-C cancels a large export in
-	// flight instead of waiting it out (B.13, #181).
+	// flight instead of waiting it out.
 	opts := ExportOptions{
 		ExportPath:           outputFile,
 		Positions:            positions,
@@ -378,7 +378,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text
 	}
 
 	// Export with positions, analysis, comments disabled, but matches enabled.
-	// Ctrl-C cancels it in flight instead of waiting it out (B.13, #181).
+	// Ctrl-C cancels it in flight instead of waiting it out.
 	opts := ExportOptions{
 		ExportPath:         outputFile,
 		Positions:          positions,

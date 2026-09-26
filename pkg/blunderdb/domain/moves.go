@@ -364,13 +364,9 @@ func notation(steps []CheckerStep, mover int) string {
 	return strings.Join(tokens, " ")
 }
 
-// pointLabel renders one point in MOVER-RELATIVE numbering. Board indices are
-// absolute (Black's home 1..6, White's home 19..24 — moves.go's own doc
-// comment above); the mover-relative convention every notation uses instead
-// numbers from the mover's own back checkers (24) down to their own deepest
-// home point (1), which for Black already IS the absolute index (Black moves
-// high→low, home already at the low end) but for White is its mirror,
-// 25-idx (White's home sits at the high end of the absolute frame).
+// pointLabel renders one point in MOVER-RELATIVE numbering (24 = the mover's
+// back checkers, 1 = deepest home point): the absolute index for Black, its
+// mirror 25-idx for White.
 func pointLabel(mover, idx int) string {
 	switch idx {
 	case Off:
@@ -387,10 +383,8 @@ func pointLabel(mover, idx int) string {
 
 // Notation renders a play the way every transcript writes it, in the
 // mover-relative form described above. LegalPlay carries the notation of the
-// plays the generator produced; this is the same rule for the plays it did not —
-// a transcription records the illegal move that was made at the table and still
-// has to write it down (ADR-0044). Keeping one renderer is what stops the two
-// from drifting apart.
+// plays the generator produced; this is the same rule for the plays it did not,
+// such as an illegal move a transcription records (ADR-0044).
 func Notation(steps []CheckerStep, mover int) string { return notation(steps, mover) }
 
 // StepUsesDie reports whether one step is a move of exactly `die` pips — a

@@ -6,14 +6,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// The tag vocabulary, desktop/CLI side (issue #265, fiche I.9).
-//
-// A tag is a `#word` inside a comment. Nothing declares one, no table holds
-// one, and that is deliberate: the vocabulary is the user's own prose, and
-// forcing a declaration before a tag can be used would turn a habit into
-// paperwork. What was missing was the other half — being able to SEE the
-// vocabulary one has actually built, and to click a tag rather than remember
-// how it was spelt.
+// The tag vocabulary, desktop/CLI side. A tag is a `#word` inside a comment;
+// deliberately nothing declares one and no table holds one.
 
 // Tags returns every tag used in this database with the number of positions
 // carrying it, most used first. Delegates to the Storage contract, so the
@@ -25,9 +19,7 @@ func (d *Database) Tags() ([]domain.TagCount, error) {
 }
 
 // RecommendedTags is the vocabulary the comment editor suggests at '#'. It is
-// a constant of the domain, exposed here only so the frontend can read it
-// through the same binding as everything else rather than keeping a second
-// copy of the list.
+// a domain constant, exposed so the frontend keeps no second copy.
 func (d *Database) RecommendedTags() []string {
 	return domain.RecommendedTags
 }

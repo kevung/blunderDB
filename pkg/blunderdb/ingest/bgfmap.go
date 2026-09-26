@@ -11,11 +11,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Pure BGBlitz (.bgf) → domain mappers, lifted from
-// pkg/blunderdb/database/db_import_bgf.go with the *Database receiver dropped.
-// BGF data arrives as untyped map[string]interface{} trees, so the bgfGet*
-// accessors below mirror the legacy helpers verbatim. The legacy path is left
-// untouched; the bgf parity test gates these against it.
+// Pure BGBlitz (.bgf) → domain mappers. BGF data arrives as untyped
+// map[string]interface{} trees, read through the bgfGet* accessors below.
 
 func bgfPlayerToBlunderDB(bgfPlayer int) int {
 	if bgfPlayer == -1 {
@@ -539,10 +536,10 @@ func convertBGFTextPosition(bgfPos *bgfparser.Position) *domain.Position {
 	if bgfPos.MatchLength > 0 {
 		// bgfparser reads the scores and never field 7 of the XGID the file
 		// carries, which is where BGBlitz states the Crawford rule (its gnubg
-		// Match-ID says the same). Read it, once, the way DecodeXGID does, so a
+		// Match-ID says the same). Read it the way DecodeXGID does, so a
 		// post-Crawford position gets the 0 sentinel rather than the ambiguous 1
-		// (CONTEXT.md, « Away score »; #360). A file without an XGID, or one
-		// whose field 7 states nothing, keeps the 1 it always had.
+		// (CONTEXT.md, « Away score »). A file without an XGID, or one whose
+		// field 7 states nothing, keeps the 1.
 		crawford, stated := domain.XGIDCrawfordGame(bgfPos.XGID)
 		pos.Score = domain.AwayScoresWithCrawford(bgfPos.MatchLength, bgfPos.ScoreX, bgfPos.ScoreO, crawford || !stated)
 	} else {

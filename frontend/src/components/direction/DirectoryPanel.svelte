@@ -1,17 +1,8 @@
 <script>
     /*
-     * L'annuaire (issue #391, fonctionnel.md §4.2).
-     *
-     * Un directeur de club dirige les mêmes trente personnes tous les mois. Retaper leurs noms à
-     * chaque tournoi est le premier abandon possible du logiciel : d'où « reprendre les inscrits
-     * du mois dernier », qui est UN clic une fois le bloc ouvert.
-     *
-     * Le bloc est replié par défaut. Un directeur qui inscrit son premier tournoi n'a rien à
-     * reprendre, et l'écran des joueurs doit rester ce qu'il est — un champ, une liste.
-     *
-     * L'aperçu montre, AVANT « Inscrire », les lignes illisibles et les doublons (#442) : un
-     * doublon — deux fois dans le collage, ou déjà inscrit — n'entre pas par défaut ; une case à
-     * cocher le fait entrer quand même, parce que deux homonymes existent.
+     * L'annuaire (fonctionnel.md §4.2) : reprendre les inscrits d'un tournoi en un clic ; replié
+     * par défaut. L'aperçu signale lignes illisibles et doublons, exclus par défaut mais
+     * admissibles par une case (les homonymes existent).
      */
     import { t } from '../../i18n';
 

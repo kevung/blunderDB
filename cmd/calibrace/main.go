@@ -12,11 +12,9 @@
 //	BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go run ./cmd/calibrace \
 //	    -out pkg/blunderdb/engine/race/correction_coeffs.go
 //
-// It samples pairs of one-sided positions in the estimated regime
-// (max(checkers) ≥ 7), fits the 32-coefficient least-squares correction on a
-// train split, measures the residual on a disjoint holdout, and writes the
-// frozen coefficients plus the measured bounds as Go source. Deterministic:
-// same oracle, same output.
+// It fits the 32-coefficient least-squares correction on the estimated regime
+// (max(checkers) ≥ 7), measures the residual on a holdout, and writes the
+// coefficients as Go source. Deterministic for a given oracle.
 package main
 
 import (

@@ -1,31 +1,17 @@
-// The one shape a cube Decision takes, whatever regime produced its equities
-// (ADR-0020). Two sources reach the panel — race.Money, carried by the race
-// regimes, and domain.DoublingCubeAnalysis, produced live by gammonNet or read
-// from a stored record — and this is where they become one object.
-//
-// It lives in the frontend, and in one place, for the reason gammonnet_eval.go
-// already states about the exact/evaluated merge: "this function itself does
-// not know how the two are combined, that merge lives in the frontend's
-// displayRace". race.Money keeps its regime and its deliberately
-// money-referential exact case (ADR-0017 rule 4); folding it into
-// DoublingCubeAnalysis, a type with neither regime nor Referential, would push
-// a display distinction into storage.
-//
-// A pure module on purpose: like moverFactsToSides, it is the part worth
-// testing without a DOM.
+// The one shape a cube Decision takes, whatever regime produced its equities (ADR-0020): race.Money
+// (race regimes) and domain.DoublingCubeAnalysis (live gammonNet or a stored record) become one
+// object here. It lives in the frontend because the exact/evaluated merge already does (displayRace):
+// folding race.Money, with its regime and money-referential exact case (ADR-0017 rule 4), into
+// DoublingCubeAnalysis would push a display distinction into storage. Pure, testable without a DOM.
 
 import { normalizeCubeAction } from './cubeAction.js';
 
-// The three options, in canonical order, never sorted (ADR-0020 rule 1). They
-// are NAMED, so unlike a ranked play list their order carries no information —
-// and sorting them by equity would permute the rows under the eye across the
-// 0-ply → display-depth escalation, on exactly the close decisions a user is
-// studying.
+// The three options, in canonical order, never sorted (ADR-0020 rule 1): they are named, and
+// sorting by equity would permute rows across the 0-ply → display-depth escalation.
 export const CUBE_OPTIONS = ['no_double', 'double_take', 'double_pass'];
 
-// What the block's verdict cell is saying. Exactly one of these at a time, and
-// it is the single place the block's state is named (ADR-0020 rule 4) — an
-// empty cell means "still computing" and nothing else.
+// The block's state, exactly one at a time (ADR-0020 rule 4); an empty cell means "still
+// computing" and nothing else.
 export const DECISION_STATE = {
     PENDING: 'pending', // a search is genuinely in flight
     VERDICT: 'verdict', // there is an answer
@@ -35,29 +21,17 @@ export const DECISION_STATE = {
     CRAWFORD: 'crawford' // the Crawford game: no cube in play, by rule
 };
 
-// isMoneyPosition is THE money/match predicate on the frontend's own position
-// shape — the JS twin of gammonnet.IsMoneyPosition (#190/C.3 point 2). Before
-// it existed, cubeTurnability below and EvalPanel's own hasScore each wrote
-// this test independently (`score[0] < 0 && score[1] < 0` here,
-// `score[0] !== -1 || score[1] !== -1` there): equivalent on a well-formed
-// score, and silently NOT equivalent on the malformed one — exactly one side
-// carrying the money sentinel — which is the same divergence the Go side had
-// between gammonnet_eval.go and domaineval.go before this fiche.
+// isMoneyPosition is THE money/match predicate on the frontend (twin of gammonnet.IsMoneyPosition);
+// callers must not re-derive it: `score[0] < 0 && score[1] < 0` and `score[0] !== -1 || …`
+// diverge when only one side carries the money sentinel.
 export function isMoneyPosition(position) {
     const score = position?.score ?? [-1, -1];
     return score[0] < 0 && score[1] < 0;
 }
 
-// cubeTurnability reports whether the player on roll can turn the cube at all.
-// This is a rule of the game read off the board, never an engine output —
-// which is why it is computed here and not carried on the wire. gammonNet says
-// as much itself (cube.go): "A cube the opponent owns cannot be turned by the
-// player on roll: the verdict table presupposes doubling is an option, so
-// outside that precondition there is nothing to weigh."
-//
-// Crawford is read from the away-score sentinel, the same rule
-// MatchStateFromPosition uses: either side raw-1-away means this game is the
-// Crawford game (0 is the "1-away, post-Crawford" sentinel, see CONTEXT.md).
+// cubeTurnability reports whether the player on roll can turn the cube at all — a rule of the
+// game read off the board, not an engine output. Crawford is read from the away-score sentinel
+// like MatchStateFromPosition: either side raw 1 = Crawford game (0 = 1-away post-Crawford, CONTEXT.md).
 export function cubeTurnability(position) {
     if (!position) return null;
     const score = position.score ?? [-1, -1];
@@ -70,25 +44,11 @@ export function cubeTurnability(position) {
     return null;
 }
 
-// currentScoreCell names the cell of the cube matrix the position actually
-// stands on — the "you are here" of the grid, so it is read from « ma case »
-// outwards rather than from a corner.
-//
-// The grid's axes are AWAY scores, not points scored, and the engine's own
-// cell computation (cubematrix.go's scoreForCell) writes nothing but an away
-// pair: the verdict at 4-away/6-away does not depend on how long the match
-// is. So the position has a cell in a grid whenever both its away scores fit
-// in it, and that cell is not an approximation of its decision — it is a
-// recomputation of the very same one.
-//
-// Three scores designate nothing, and designating an approaching cell would
-// be false: money (no away score at all), the Crawford game (raw 1 — the grid
-// is post-Crawford throughout, so row 1 is a different rule), and an away
-// beyond the grid. The raw 0 sentinel is 1-away post-Crawford and is the
-// grid's row 1 (see CONTEXT.md, "Away score").
-//
-// Returns `{ awayOnRoll, awayOpponent }` in the grid's own axes — the player
-// on roll is the one deciding, so it holds the rows — or null.
+// currentScoreCell names the cube-matrix cell the position stands on ("you are here"). The axes
+// are AWAY scores and the verdict does not depend on match length, so the cell is a recomputation
+// of the very same decision. Null for money, the Crawford game (raw 1; the grid is post-Crawford,
+// raw 0 is its row 1) and an away beyond the grid. Returns `{ awayOnRoll, awayOpponent }`: the
+// player on roll decides, so it holds the rows.
 export function currentScoreCell(position, gridLength) {
     if (!position || !(gridLength > 0)) return null;
     const score = position.score ?? [-1, -1];
@@ -103,11 +63,8 @@ export function currentScoreCell(position, gridLength) {
     return { awayOnRoll: mine, awayOpponent: theirs };
 }
 
-// fromRaceMoney maps a race.Money (`{cubeless, no_double, double_take,
-// double_pass, verdict}`) onto the common shape. Cubeless is deliberately
-// dropped: ADR-0017 rule 1 makes it a position fact, and the facts table has
-// carried it since — the copy in the race decision was the last place that
-// said otherwise.
+// fromRaceMoney maps a race.Money onto the common shape. Cubeless is dropped: it is a position
+// fact (ADR-0017 rule 1).
 function fromRaceMoney(money) {
     return {
         equities: {
@@ -126,8 +83,7 @@ function fromCubeAnalysis(cube, verdictKey) {
             double_take: cube.cubefulDoubleTakeEquity ?? null,
             double_pass: cube.cubefulDoublePassEquity ?? null
         },
-        // A stored record's own errors, kept for the `stored` content rule
-        // below — never recomputed.
+        // A stored record's own errors, never recomputed (see `stored` below).
         errors: {
             no_double: cube.cubefulNoDoubleError ?? null,
             double_take: cube.cubefulDoubleTakeError ?? null,
@@ -138,12 +94,9 @@ function fromCubeAnalysis(cube, verdictKey) {
     };
 }
 
-// bestOption is the option to mark, derived from the equities rather than
-// taken on trust: the doubling branch is worth the CHEAPER of take/pass (the
-// opponent picks), and the best is whichever of that and no-double is higher —
-// the same rule domaineval.go and ingest/xgmap.go's computeBestCubeAction
-// apply. "Too good" is a verdict, not a fourth option: it still means "do not
-// double", so it marks the no-double row.
+// bestOption is derived from the equities: the doubling branch is worth the CHEAPER of take/pass,
+// the best is the higher of that and no-double (as domaineval.go and xgmap.go's
+// computeBestCubeAction). "Too good" is a verdict, not an option: it marks the no-double row.
 function bestOption(equities) {
     const { no_double: nd, double_take: dt, double_pass: dp } = equities;
     if (nd == null || dt == null || dp == null) return null;
@@ -152,11 +105,8 @@ function bestOption(equities) {
     return 'no_double';
 }
 
-// bestFromLabel maps a stored record's own best-action string onto one of the
-// three canonical rows, reusing normalizeCubeAction — the very function
-// AnalysisPanel already trusts to highlight the played action. An absent or
-// unparseable string marks nothing: the panel falls back to what it showed
-// before this decision, never to a row marked at random.
+// bestFromLabel maps a stored best-action string onto a canonical row via normalizeCubeAction.
+// Unparseable marks nothing, never a row at random.
 function bestFromLabel(label) {
     const parts = normalizeCubeAction(label);
     if (!parts.length) return null;
@@ -167,12 +117,9 @@ function bestFromLabel(label) {
 }
 
 /**
- * cubeDecision builds the block's whole content from whichever source the
- * position has. Returns `{ state, options, verdict, best }` where options is
- * always the three canonical rows, in order, with `equity`/`error` null until
- * a value lands — the structure never depends on the state of the calculation
- * (ADR-0017 rule 3).
- *
+ * cubeDecision builds the block's content from whichever source the position has. Returns
+ * `{ state, options, verdict, best }`; options are always the three canonical rows with
+ * `equity`/`error` null until a value lands (ADR-0017 rule 3).
  * @param {object}  args
  * @param {object=} args.race         race.Eval currently on display (displayRace), when the position is a race
  * @param {boolean} args.isRace       whether the position is a pure bearoff at all
@@ -191,16 +138,9 @@ export function cubeDecision({ race = null, isRace = false, cubeAnalysis = null,
     let source = null;
     if (isRace) {
         if (race?.money) source = fromRaceMoney(race.money);
-        // A race whose regime is not entitled to a verdict: not pending, and it
-        // will never become pending. ADR-0009 — the cube verdict is never
-        // estimated.
-        //
-        // Only once an evaluation has come back for this position, though: the
-        // fast synchronous race path (updateEPC) lands well before gammonNet's
-        // own answer, and an estimated block with no money block yet is still
-        // waiting for the EVALUATED regime that ADR-0012 makes available. Saying
-        // "no decision" in that window would flash a settled state at a position
-        // still being computed — the same lie in the other direction.
+        // A race regime not entitled to a verdict (ADR-0009): never pending — but only once an
+        // evaluation has come back. The synchronous race path lands before gammonNet's answer
+        // (ADR-0012's evaluated regime); "no decision" in that window would flash a false state.
         else if (race) return { state: settled ? DECISION_STATE.NO_DECISION : DECISION_STATE.PENDING, options: empty, verdict: null, best: null };
     } else if (cubeAnalysis) {
         source = fromCubeAnalysis(cubeAnalysis, verdictKey);
@@ -210,11 +150,8 @@ export function cubeDecision({ race = null, isRace = false, cubeAnalysis = null,
 
     const best = bestOption(source.equities);
 
-    // Where doubling is not an option, the equities still inform — "if the
-    // cube were centred, doubling would be worth this" — but nothing advises:
-    // an error is what a CHOICE costs, and there is no choice (ADR-0020 rule
-    // 5). That includes the no-double row, which is not a decision either when
-    // the cube is dead.
+    // Where doubling is not an option the equities still inform, but nothing advises: an error is
+    // what a choice costs, and there is none, not even no-double (ADR-0020 rule 5).
     if (turnability) {
         return {
             state: turnability,
@@ -224,12 +161,9 @@ export function cubeDecision({ race = null, isRace = false, cubeAnalysis = null,
         };
     }
 
-    // Analysis reports, it does not correct (ADR-0020). A stored record's
-    // errors are shown as written — including a best action whose error is not
-    // zero, which a rounding or an inconsistent source can produce — and the
-    // marked row follows the record's OWN declared best action rather than our
-    // arithmetic on its equities. Blanking, and deriving the best, are rules of
-    // the path where we compute `equity − best` ourselves.
+    // Analysis reports, it does not correct (ADR-0020): a stored record's errors are shown as
+    // written and the marked row is its OWN declared best action. Blanking and deriving the best
+    // apply only when we compute `equity − best` ourselves.
     if (stored) {
         const declared = bestFromLabel(source.verdictText);
         return {
@@ -247,10 +181,8 @@ export function cubeDecision({ race = null, isRace = false, cubeAnalysis = null,
         options: CUBE_OPTIONS.map((key) => ({
             key,
             equity: source.equities[key],
-            // Blank on the best option rather than +0.000 — the same rule
-            // ADR-0018 rule 3 gives the Baseline band, for the same reason:
-            // a zero reads as a measured result, an absence reads as "there
-            // is nothing to lose here".
+            // Blank on the best option rather than +0.000 (as ADR-0018 rule 3): a zero reads as
+            // measured, an absence as "nothing to lose".
             error: key === best || bestEquity == null || source.equities[key] == null ? null : source.equities[key] - bestEquity
         })),
         verdict: source.verdict,

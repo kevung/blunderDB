@@ -7,34 +7,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// Expliquer un blunder en une phrase (#298, fiche J.8), et la moitié « thèmes
-// d'erreur » de J.1b (#291).
+// Expliquer un blunder : les thèmes d'erreur.
 //
-// # Ce que ce fichier rend, et ce qu'il ne rend pas
+// Ce fichier rend un THÈME et les écarts mesurés qui le justifient, jamais une
+// phrase : l'interface l'écrit dans la langue de l'utilisateur à partir d'un
+// gabarit (la séparation gabarits/règles que P18 relève chez DecodeChess, Fritz).
 //
-// Il ne rend PAS une phrase. Il rend un THÈME et les écarts mesurés qui le
-// justifient ; la phrase est écrite dans la langue de l'utilisateur par
-// l'interface, à partir d'un gabarit. C'est la séparation que P18 relève chez
-// les outils qui expliquent sans LLM (DecodeChess, Fritz) : des gabarits à
-// trous alimentés par une base de règles. Rendre une phrase ici en aurait fait
-// une phrase française dans un moteur qui parle neuf langues.
+// Chaque seuil est un seuil de PRISE DE PAROLE, pas de classement : au-dessous,
+// Explanation.Theme est vide et l'interface se tait plutôt que de dire une
+// banalité, comme gnubg (« There was nothing wrong with not doubling »).
 //
-// # La règle qui compte : se taire
-//
-// « Ne parler que quand une règle est confiante » est la contrainte de la
-// fiche, et P18 en fait un principe : gnubg lui-même laisse son menu d'analyse
-// VIDE quand rien ne mérite d'être dit — « There was nothing wrong with not
-// doubling ». Chaque seuil ci-dessous est donc un seuil de PRISE DE PAROLE,
-// pas un seuil de classement : au-dessous, Explanation.Theme est vide et
-// l'interface n'affiche rien plutôt qu'une banalité.
-//
-// # Six thèmes, pas vingt
-//
-// P18 constate que les écosystèmes échecs et poker convergent sur très peu de
-// catégories et sur une unité unique de gravité — la perte de probabilité de
-// gain — que le backgammon possède déjà (l'équité normalisée). Une taxonomie
-// trop fine produit des faux positifs, et un faux positif d'explication coûte
-// plus cher que le silence : il apprend quelque chose de faux.
+// Six thèmes seulement, gravité en équité normalisée : une taxonomie trop fine
+// produit des faux positifs, et une fausse explication coûte plus que le silence.
 
 // Explanation is what a rule found, or nothing.
 type Explanation struct {

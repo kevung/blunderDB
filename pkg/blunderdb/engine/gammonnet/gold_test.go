@@ -10,15 +10,9 @@ import (
 )
 
 // BLUNDERDB_GOLD gates TestSearchMatchesTheGoldFile out of the default `go
-// test ./...` run. `testing.Short()` alone does not do it: CI's test job
-// (.github/workflows/build.yml) never passes `-short`, and this test pays the
-// race detector's cost on a search that is already parallel — measured
-// 2026-08-29 on a 16-core machine: 10.3s plain, still running past 300s under
-// `-race` (the CI job's own flag), a >30x blow-up that alone exceeds the whole
-// suite's 1200s CI budget. Same treatment as TestIntegrationGate
-// (integration_gate_test.go, BLUNDERDB_GATE) and TestEvalMeasure
-// (eval_measure_test.go, BLUNDERDB_EVAL_MEASURE): a pre-merge recipe step, not
-// a CI test.
+// test ./...` run: CI never passes `-short`, and under `-race` this already
+// parallel search blows up more than 30x, past the whole suite's budget. A
+// pre-merge recipe step, like TestIntegrationGate and TestEvalMeasure.
 
 // The gold file: what gammonNet's C reference answers for every decision in the
 // corpus, at the canonical configuration — prune k=12, filter (0,1,3).
@@ -35,27 +29,11 @@ const (
 	// TOLERANCE, so demanding that both engines pick the same one would be
 	// demanding more than the tolerance states.
 	//
-	// LA MOITIÉ DE SA JUSTIFICATION A DISPARU, et le resserrement ci-dessous
-	// est ce qu'il en reste. La clause tolérait DEUX causes de désaccord :
-	//
-	//  1. Le départage des ex æquo. La référence ordonnait ses candidats avec
-	//     qsort, qui n'est pas stable : sur une égalité parfaite, le coup rendu
-	//     dépendait de la libc qui a produit le fichier. **Cette cause n'existe
-	//     plus** : gammonNet trie stablement depuis v1.3.0 (chantier T88), et
-	//     il l'a fait EN REPRENANT LA RÈGLE DE CE PORTAGE — à équité égale,
-	//     l'ordre de génération est conservé. Les deux implémentations sont donc
-	//     d'accord sur les ex æquo, et ce fichier est produit par le tri stable.
-	//  2. Le bruit arithmétique. Deux coups dont les vraies équités sont
-	//     séparées de moins du double de l'écart port/référence peuvent
-	//     s'échanger de rang sans que personne ait tort. **Cette cause reste**,
-	//     et c'est pourquoi la clause n'est pas supprimée.
-	//
-	// Le resserrement : l'allocation doit rester INEMPLOYÉE. Elle ne l'a jamais
-	// été (0 sur les 85 décisions argent et les 123 décisions match+videau,
-	// mesuré contre v1.3.0), et un compte qui se met à monter était déjà décrit
-	// comme un signal par le README du fichier d'or — replayGold en fait
-	// maintenant un échec plutôt qu'une ligne de journal. Réemployer
-	// l'allocation redevient ainsi un acte délibéré.
+	// Only arithmetic noise justifies the tie zone now: gammonNet sorts
+	// stably since v1.3.0, with this port's rule (generation order kept on a
+	// tie), so ex aequo no longer depend on a libc. The allowance must stay
+	// UNUSED — replayGold fails if it is used — so relying on it is a
+	// deliberate act.
 	goldTolerance = 1e-6
 )
 
@@ -102,7 +80,7 @@ func loadGold(t *testing.T, goldPath string) []goldEntry {
 	return out
 }
 
-// The search parity gate of #121: the same chosen move as the C reference, with
+// The search parity gate: the same chosen move as the C reference, with
 // equities agreeing to 1e-6.
 func TestSearchMatchesTheGoldFile(t *testing.T) {
 	if os.Getenv("BLUNDERDB_GOLD") == "" {

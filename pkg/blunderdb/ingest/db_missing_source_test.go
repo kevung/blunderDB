@@ -9,10 +9,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// TestDBImporterRefusesMissingSource: importing a native .db whose path does
-// not exist used to create that file — sqlite.Open bootstraps a fresh
-// database — and then import nothing from it. The importer must refuse
-// before anything touches the disk.
+// TestDBImporterRefusesMissingSource: sqlite.Open bootstraps a fresh database
+// at a missing path, so the importer must refuse before anything touches the
+// disk.
 func TestDBImporterRefusesMissingSource(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

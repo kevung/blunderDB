@@ -1,23 +1,13 @@
 /**
- * transcriptionSave.js — enregistrer un brouillon, l'exporter, le fermer (T1.9).
+ * transcriptionSave.js — enregistrer un brouillon en Match, l'exporter en
+ * `.mat`, le fermer. Hors du panneau, client du moteur qui ne décide de rien
+ * (ADR-0045 règle 9). Tout l'état (incohérences, coup illégal, match id) est
+ * lu dans le document annoté renvoyé par le Go.
  *
- * Les trois gestes qui font sortir une Transcription d'elle-même : elle devient
- * un Match de la bibliothèque, un fichier `.mat`, ou plus rien du tout. Ils
- * vivent ici et non dans le panneau pour deux raisons — le panneau est un
- * client du moteur et ne décide de rien (ADR-0045 règle 9), et ces trois-là
- * s'écrivent et se testent sans monter un composant.
- *
- * Ce que le service NE fait pas : dériver l'état du match. Les incohérences,
- * le coup illégal, le match id, tout est lu dans le document annoté que le Go
- * a renvoyé. Ce fichier ne fait qu'y poser des questions.
- *
- * L'enregistrement suit fonctionnel.md §4 dans l'ordre : le document est
- * rejoué (il l'est déjà, c'est ce que le panneau tient en main), ses
- * incohérences sont ANNONCÉES et jamais opposées (ADR-0044), le Match est créé
- * puis remplacé aux fois suivantes (ADR-0045 §2), et le lot d'analyse ciblé
- * démarre aussitôt sur les seules positions nouvelles (ADR-0013, ADR-0045 §8).
- * Sa progression et son annulation sont celles de la barre d'état, qui écoute
- * déjà les événements `gammonnet-batch:*` : il n'y a rien à rebrancher ici.
+ * L'enregistrement suit fonctionnel.md §4 : incohérences ANNONCÉES, jamais
+ * opposées (ADR-0044) ; Match créé puis remplacé (ADR-0045 §2) ; lot
+ * d'analyse ciblé sur les positions nouvelles (ADR-0013, ADR-0045 §8), suivi
+ * par la barre d'état via `gammonnet-batch:*`.
  */
 
 import { get, writable } from 'svelte/store';
@@ -31,14 +21,9 @@ import { OpenExportMatDialog, StartGammonNetMatchBatch } from '../../wailsjs/go/
 import { GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
 
 /**
- * Ce que le dernier enregistrement de CETTE session a laissé :
- * `{ id, matchId, at, signature }`, ou null.
- *
- * Il est en mémoire, comme la pile d'annulation, et pour la même raison : la
- * seule chose durable est le `match_id` posé sur le document, que le moteur
- * écrit dans la ligne. Ce store ajoute ce que la base ne dit pas — l'heure de
- * l'enregistrement et l'état du document à ce moment-là, dont se déduit
- * « modifié depuis ».
+ * Le dernier enregistrement de cette session : `{ id, matchId, at,
+ * signature }`, ou null. En mémoire : la base ne garde que `match_id` ; ce
+ * store ajoute l'heure et la signature, d'où « modifié depuis ».
  *
  * @type {import('svelte/store').Writable<{id: number, matchId: number, at: number, signature: string} | null>}
  */
@@ -50,9 +35,8 @@ export function resetTranscriptionSave() {
 }
 
 /**
- * La signature du document : son en-tête et ses Actions, rien de dérivé. Deux
- * documents de même signature produiraient le même Match, ce qui est
- * exactement la question que pose « modifié depuis l'enregistrement ».
+ * La signature du document (en-tête et Actions, rien de dérivé) : même
+ * signature, même Match.
  *
  * @param {any} annotated
  */
@@ -63,8 +47,6 @@ export function documentSignature(annotated) {
 }
 
 /**
- * Les sortes d'Incohérence que porte le document, sans doublon.
- *
  * @param {any} annotated
  * @returns {Set<string>}
  */
@@ -84,10 +66,8 @@ export function hasInconsistency(annotated) {
 }
 
 /**
- * Un coup que les règles ne peuvent pas atteindre — celui qui fera dire
- * « Invalid move » à gnubg et à XG, et divergera ensuite. Un jet incohérent
- * avec le coup requalifie le coup en illégal (transcript.InconsistentDice) :
- * les deux valent avertissement à l'export.
+ * Un coup que les règles n'atteignent pas (« Invalid move » dans gnubg et XG),
+ * ou un jet incohérent qui le requalifie en illégal : avertissement à l'export.
  *
  * @param {any} annotated
  */
@@ -107,27 +87,10 @@ export function savedMatchID(annotated) {
 }
 
 /**
- * Ce que la barre du brouillon dit de son état : jamais enregistré, enregistré
- * il y a tant, ou modifié depuis. Rendue comme une clé i18n et ses paramètres
- * plutôt que comme une phrase, pour que le calcul se teste sans la langue.
- *
- * Le brouillon entier, et pas seulement son document : l'enregistrement de
- * cette session ne vaut que pour LE brouillon qui l'a fait — revenir à la liste
- * et en ouvrir un autre ne doit pas lui prêter l'heure du premier. C'est aussi
- * ce qui rend la barre juste dans la seconde qui suit le premier
- * enregistrement, avant que le geste suivant ne rapporte un document portant
- * enfin son `match_id`.
- */
-/**
- * Ce que la barre du brouillon dit de son MATCH — jamais du salut du brouillon
- * (ADR-0048 décision 12).
- *
- * « jamais enregistré » portait deux concepts en un mot et montrait l'alarmant :
- * le brouillon est écrit après chaque Action (`ApplyTranscriptionGesture` écrit
- * la ligne, `durableJSON` avant/après), il n'y a rien à signaler, et la prudence
- * que la phrase inspirait matérialisait le Match entier et lançait un lot
- * d'analyse 2-ply à chaque fois. Ces clés nomment donc l'objet qui existe ou
- * n'existe pas : le Match.
+ * Ce que la barre du brouillon dit de son MATCH, jamais du salut du brouillon
+ * (ADR-0048 décision 12), le brouillon étant écrit après chaque Action. Rendu
+ * en clé i18n et paramètres, testable sans la langue. Prend le brouillon
+ * entier : l'enregistrement de la session ne vaut que pour celui qui l'a fait.
  *
  * @param {{id: number, annotated: any} | null | undefined} draft
  * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
@@ -155,12 +118,9 @@ export function draftSaveState(draft, saved, now = Date.now()) {
 }
 
 /**
- * Enregistre le brouillon en Match : création la première fois, remplacement
- * ensuite (même `id`), puis le lot d'analyse ciblé.
- *
- * Les incohérences sont annoncées avant, jamais opposées : la question posée
- * est « enregistrer quand même ? », et son seul refus possible est celui de
- * l'utilisateur.
+ * Enregistre le brouillon en Match (création, puis remplacement au même `id`),
+ * puis lance le lot d'analyse ciblé. Les incohérences sont annoncées ; seul
+ * l'utilisateur peut refuser.
  *
  * @param {any} draft
  * @returns le résultat du moteur, ou null si rien n'a été écrit.
@@ -199,10 +159,8 @@ export async function saveDraft(draft) {
 }
 
 /**
- * Le lot gammonNet restreint aux positions de CE match qui n'ont pas
- * d'analyse. La profondeur est celle que la bibliothèque s'est donnée pour ses
- * analyses — la même que le rattrapage d'après import ; le panneau n'en a pas
- * une à lui.
+ * Le lot gammonNet limité aux positions sans analyse de ce match, à la
+ * profondeur de la bibliothèque.
  *
  * @param {any} result
  */
@@ -217,23 +175,17 @@ async function startTargetedAnalysis(result) {
 }
 
 /**
- * La reprise de l'analyse (T3.3, fonctionnel.md §4, ADR-0045 §8).
- *
- * `{ transcription_id, match_id, label, to_analyze }` quand le match du
- * dernier brouillon enregistré a des positions sans analyse, `null` sinon.
- *
- * Rien n'est stocké pour cela, ni ici ni en base : c'est un comptage refait à
- * chaque ouverture de base. Ignorer la proposition n'écrit rien, donc elle
- * revient tant qu'il manque des positions, et elle disparaît d'elle-même quand
- * le lot a fini.
+ * La reprise de l'analyse (fonctionnel.md §4, ADR-0045 §8) : le match du
+ * dernier brouillon enregistré s'il a des positions sans analyse, sinon null.
+ * Rien n'est stocké : recompté à chaque ouverture de base, la proposition
+ * revient tant qu'il en manque.
  *
  * @type {import('svelte/store').Writable<{transcription_id: number, match_id: number, label: string, to_analyze: number} | null>}
  */
 export const transcriptionResumeStore = writable(null);
 
 /**
- * Repose la question à la base ouverte. Appelée à l'ouverture d'une base, et
- * nulle part en boucle : trois lignes de SQL une fois, jamais à chaque frappe.
+ * Recompte, à l'ouverture d'une base seulement.
  */
 export async function refreshTranscriptionResume() {
     try {
@@ -245,10 +197,8 @@ export async function refreshTranscriptionResume() {
 }
 
 /**
- * Termine le lot : exactement celui que l'enregistrement lance (T1.9), sur le
- * seul match du brouillon. Jamais le rattrapage de toute la bibliothèque —
- * l'utilisateur a transcrit un match, il n'a pas demandé les milliers de
- * positions importées.
+ * Termine le lot sur le seul match du brouillon, jamais le rattrapage de toute
+ * la bibliothèque.
  */
 export async function resumeTranscriptionAnalysis() {
     const pending = get(transcriptionResumeStore);
@@ -264,9 +214,9 @@ export function dismissTranscriptionResume() {
 }
 
 /**
- * Exporte le brouillon en `.mat`, tel qu'il est écrit. Un coup illégal sort
- * comme il a été joué, avec l'avertissement que gnubg et XG le signaleront et
- * divergeront ensuite ; l'export n'est jamais refusé (fonctionnel.md §5).
+ * Exporte le brouillon en `.mat` tel qu'écrit, jamais refusé (fonctionnel.md
+ * §5) : un coup illégal sort comme joué, avec l'avertissement que gnubg et XG
+ * divergeront.
  *
  * @param {any} draft
  * @returns true si un fichier a été écrit.
@@ -298,14 +248,9 @@ export async function exportDraftMat(draft) {
 }
 
 /**
- * Ferme le brouillon : la ligne est supprimée, rien n'est mis à la corbeille.
- *
- * La confirmation est demandée dans les deux cas, et ce n'est pas une
- * prudence de principe : les deux pertes sont réelles et différentes. Un
- * brouillon jamais enregistré emporte tout ce qui y est écrit ; un brouillon
- * enregistré laisse son Match, définitif — plus rien ne pourra en corriger un
- * coup, puisque rien dans blunderDB n'édite les coups d'un Match. La phrase
- * dit laquelle des deux s'applique.
+ * Ferme le brouillon : la ligne est supprimée, sans corbeille. Confirmation
+ * toujours, la phrase nommant la perte : sans enregistrement, tout le
+ * brouillon ; sinon, toute correction future du Match (rien n'édite ses coups).
  *
  * @param {any} draft
  * @returns true si le brouillon a été fermé.

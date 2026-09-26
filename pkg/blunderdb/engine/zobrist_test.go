@@ -310,9 +310,7 @@ func TestZobristIgnoresIndividuallyImported(t *testing.T) {
 
 // TestZobristIgnoresJacobyAndBeaver guards ADR-0028: the two optional-rule
 // flags say how the session was played, not what is on the board, and only an
-// XGID carries them — every file importer leaves them at 0. While they were
-// hashed, the same money position pasted as an XGID and imported from a match
-// file landed on two rows.
+// XGID carries them.
 func TestZobristIgnoresJacobyAndBeaver(t *testing.T) {
 	plain := initialPosition()
 	for _, tc := range []struct {
@@ -363,7 +361,8 @@ func TestRetiredFlagDeltaUndoesTheOldFold(t *testing.T) {
 // beaver, now applied to the third session rule: a cube ceiling is a fact of
 // the session an identifier was written in, not of the position, and folding
 // it into the hash would split one money position across two rows depending
-// on which identifier reached the database first (#271).
+// on which identifier reached the database first.
+
 func TestZobristIgnoresMaxCube(t *testing.T) {
 	plain := initialPosition()
 	capped := initialPosition()

@@ -1,5 +1,5 @@
 /**
- * training-evaluation.spec.js — l'exercice Évaluation, dans l'application réelle (#322).
+ * training-evaluation.spec.js — l'exercice Évaluation, dans l'application réelle.
  *
  * Le parcours de l'utilisateur : taper `train evaluation`, trouver la question
  * dans l'onglet Entraînement, SAISIR les chances de gain, CHOISIR l'action de

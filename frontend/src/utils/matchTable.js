@@ -14,10 +14,7 @@ export function compareValues(a, b) {
     return a - b;
 }
 
-/**
- * Extract the sortable value for a match table column. Mirrors the column keys
- * used by the Matches panel header.
- */
+/** Extract the sortable value for a Matches panel column key. */
 export function getSortValue(match, column) {
     switch (column) {
         case 'player1':
@@ -39,11 +36,7 @@ export function getSortValue(match, column) {
     }
 }
 
-/**
- * Sort a copy of `matches` by `column` in `direction` ('asc' | 'desc').
- * Returns `matches` unchanged when no column is given. The Matches panel's
- * `sortedMatches` derived state delegates here.
- */
+/** Sort a copy of `matches` by `column` in `direction` ('asc' | 'desc'); unchanged without a column. */
 export function sortMatches(matches, column, direction) {
     if (!column) return matches;
     const sorted = [...matches].sort((a, b) => {
@@ -91,11 +84,9 @@ export const fmtEquityError = (v) => (v > 0 ? '-' + v.toFixed(3) : '—');
 export const fmtMwcLoss = (v) => (v > 0 ? '-' + (v * 100).toFixed(2) + '%' : '—');
 export const fmtErrorsBlunders = (errors, blunders) => `${errors} (${blunders})`;
 
-// MATCH_STAT_ROWS describes the per-player match stats table row by row. Each
-// entry is either a section header ({ section }) or a metric ({ label, fmt, … });
-// fmt maps one player's stats to its cell. Rendered by MatchPanel; labels are
-// i18n keys translated at render time. bullet = leading "•"; sub = indented
-// sub-metric; valClass = extra value-cell class.
+// The per-player match stats table, row by row: a section header ({ section }) or a metric
+// ({ label, fmt, … }; fmt maps one player's stats to its cell). Labels are i18n keys.
+// bullet = leading "•"; sub = indented sub-metric; valClass = extra value-cell class.
 export const MATCH_STAT_ROWS = [
     { section: 'match.performanceRating' },
     { label: 'match.overallPr', bullet: true, valClass: 'pr-val', fmt: (p) => fmtPR(p.pr, p.total_decisions) },
@@ -125,11 +116,8 @@ export const MATCH_STAT_ROWS = [
     { label: 'match.takeDecisions', sub: true, fmt: (p) => String(p.take_decisions) }
 ];
 
-// The marks of the Transcript (#287): a Move's grade, as the library's own
-// thresholds draw it (ADR-0046), written the way the analysis tools annotate
-// a play — `?` for an Error, `??` for a Blunder. The grade itself comes from
-// the backend (GetMatchMoveGrades); nothing here compares a cost to a
-// threshold, so the Transcript cannot draw a line the statistics do not.
+// Transcript marks for a Move's grade (ADR-0046): `?` Error, `??` Blunder. The grade comes from
+// the backend (GetMatchMoveGrades), so the Transcript cannot draw a line the statistics do not.
 export const GRADE_MARKS = { error: '?', blunder: '??' };
 
 /** Index a match's MoveGrade list by move id, keeping only graded Moves. */

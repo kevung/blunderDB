@@ -26,21 +26,16 @@ import (
 // Only the WALK is measured: the truth attached afterwards does not move a
 // chequer.
 //
-// # The ratchet, and the difference it leaves standing
+// # The ratchet
 //
-// maxPipHistogramDistance records what the pool MEASURES (2026-09-14: 0.218;
-// every input is fixed, so the number is deterministic). It may go down, never
-// up. The reference's own sampling noise is 0.099, so about 0.12 of it is a
-// real difference, and it is left standing rather than tuned away: the
-// running breaks alone measured 0.393, and adding the holding breaks — one side
-// already bearing off when the other leaves its anchor, the way a third of the
-// real sides stand under thirty pips — brought it to 0.218. What remains is
-// mostly the generated side walked all the way down to a handful of pips, and
-// the back-game races of 150 pips and more that no pool shape stands for;
-// closing it bin by bin on 181 positions would be fitting this fixture set.
+// maxPipHistogramDistance is a ratchet over deterministic inputs, measured at
+// 0.218: it may go down, never up. The reference's sampling noise is 0.099;
+// the remaining difference (sides walked down to a handful of pips, back-game
+// races of 150+ pips no pool shape stands for) is left standing, since
+// tuning bin by bin on 181 positions would fit this fixture set.
 //
-// The uniform placement ADR-0041 rejected sits at 0.715: that is the assertion
-// that falls first if the pool ever degenerates into a placement.
+// The uniform placement ADR-0041 rejected sits at 0.715: that assertion falls
+// first if the pool ever degenerates into a placement.
 
 const (
 	pipBinWidth = 10

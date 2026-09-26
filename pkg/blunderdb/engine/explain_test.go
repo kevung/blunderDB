@@ -42,9 +42,8 @@ func TestExplainCube_NamesTheDirection(t *testing.T) {
 	}
 }
 
-// TestExplain_StaysSilent is the rule the fiche states and P18 turns into a
-// principle: a rule speaks only when it is confident. A cheap decision, or one
-// whose reason is none of the six, produces NO sentence — gnubg leaves its own
+// TestExplain_StaysSilent: a rule speaks only when it is confident. A cheap
+// decision, or one whose reason is none of the six, produces NO sentence — gnubg leaves its own
 // analysis menu empty in exactly that case.
 func TestExplain_StaysSilent(t *testing.T) {
 	// Below the speaking threshold: right answer, nothing to say.

@@ -23,10 +23,8 @@ func newTestDB(t *testing.T) *Database {
 
 // closeOnCleanup registers db.Close (idempotent — see Database.Close) via
 // tb.Cleanup so the underlying SQLite handle is released before t.TempDir()
-// tries to remove the directory it lives in. On Linux a still-open handle is
-// unlinked silently; on Windows the removal itself fails ("The process cannot
-// access the file because it is being used by another process"), which is
-// where this class of bug was first noticed (windows-latest CI).
+// tries to remove the directory: on Windows a still-open handle makes the
+// removal fail, while Linux unlinks it silently.
 func closeOnCleanup(tb testing.TB, db *Database) {
 	tb.Helper()
 	tb.Cleanup(func() {
@@ -49,13 +47,9 @@ func tempDir(tb testing.TB) string {
 	return dir
 }
 
-// assertNoLeakedTempFiles registers the leak check tempDir relies on. Windows
-// reports a leaked SQLite handle loudly, as a TempDir cleanup failure; Linux
-// normally unlinks the file out from under the open descriptor without
-// complaint, hiding the same bug. /proc/self/fd makes it visible here too: a
-// symlink under it resolving inside dir after the test's own cleanups have
-// run means something never called Close. Best-effort — silently a no-op
-// where /proc is unavailable (non-Linux).
+// assertNoLeakedTempFiles registers the leak check tempDir relies on. Linux
+// hides a leaked handle that Windows reports, so /proc/self/fd is checked for
+// a descriptor still resolving inside dir after cleanups. No-op without /proc.
 func assertNoLeakedTempFiles(tb testing.TB, dir string) {
 	tb.Helper()
 	tb.Cleanup(func() {

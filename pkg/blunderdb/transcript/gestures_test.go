@@ -365,9 +365,7 @@ func TestGesturesOnTheDocument(t *testing.T) {
 		if after.Actions[2].Side != domain.Black {
 			t.Error("deleting an Action moved another Action's side")
 		}
-		// Which is the whole point: the two plays of player 1 now follow each other,
-		// and that ONE local double turn is what the user is shown — not a match
-		// whose every side was flipped underneath them (ADR-0045 rule 4).
+		// ONE local double turn, not every side flipped (ADR-0045 rule 4).
 		if !hasInconsistency(Replay(after, 0).Actions[2], DoubleTurn) {
 			t.Error("the deletion left no double turn where it must")
 		}
@@ -408,10 +406,8 @@ func TestGesturesOnTheDocument(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// A match carries neither Jacoby nor beaver — on its POSITIONS, which
-		// is where the rules of a session are read. The header keeps them,
-		// deliberately: it is what makes money → match → money give back the
-		// session that was stated and not the defaults (T3.2).
+		// A match's POSITIONS carry neither Jacoby nor beaver; the header keeps
+		// them so money → match → money gives back the stated session.
 		annBack := Replay(back, 0)
 		if annBack.Actions[1].Before.HasJacoby != 0 || annBack.Actions[1].Before.HasBeaver != 0 {
 			t.Error("a match position carries neither Jacoby nor beaver")
@@ -494,17 +490,10 @@ func hasInconsistency(info ActionInfo, kind InconsistencyKind) bool {
 	return false
 }
 
-// TestSwapPlayersIsTheSameMatchFromTheOtherSide is the recipe of T3.1's "inverser
-// les joueurs": the gesture exchanges the names, gives every Action to the other
-// camp and turns the board around — and the proof is a Replay, not a diff of the
-// document. The same match must come back, read from the other side: the same
-// games, the same points, won by the other player, with the score and the cube
-// exchanged and not one Inconsistency more than before.
-//
-// The gesture is checked on a document that has actually derived something: a
-// double taken (a cube with an owner, which the mirror has to move too) and a game
-// finished by a resignation, whose winner is a fact of the Replay and not of any
-// Action.
+// TestSwapPlayersIsTheSameMatchFromTheOtherSide: swapping names, sides and board
+// must Replay to the same match read from the other side — same games and points,
+// other winner, score and cube exchanged, no new Inconsistency. The document has an
+// owned cube and a resigned game, both derived by the Replay.
 func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
 	doc := docOf(5, opening(domain.Black, 6, 3))
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
@@ -576,12 +565,8 @@ func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
 	}
 }
 
-// TestSetHeaderWritesTheMetadataAndNothingElse holds the contract of T3.1's
-// metadata pane: the pane states the descriptive head of the document, and the
-// three things it is NOT asked for survive it — the length, the session's rules,
-// and the match id a first save posted. A form that sent a zero length would
-// otherwise turn a 7-point match into a money session, and a form that dropped
-// the match id would file a second Match at the next save.
+// TestSetHeaderWritesTheMetadataAndNothingElse: length, session rules and match id
+// survive the metadata form (see GestureSetHeader).
 func TestSetHeaderWritesTheMetadataAndNothingElse(t *testing.T) {
 	doc := openedMatch(t, 7)
 	matchID := int64(42)
@@ -624,12 +609,9 @@ func TestSetHeaderWritesTheMetadataAndNothingElse(t *testing.T) {
 	}
 }
 
-// TestSetLengthReplaysTheWholeMatch is T3.2's recipe: the length of a match is
-// changed in the middle of a transcription — a score sheet misread, "5 points"
-// where the match was played to 3 — and everything the Replay derives from it is
-// derived again. The away score of every Position, the Crawford game, the
-// referential, and the Actions that now fall past the end of the match, MARKED
-// and never removed (ADR-0044).
+// TestSetLengthReplaysTheWholeMatch: changing the length mid-transcription
+// re-derives every away score, the Crawford game, the referential, and MARKS (never
+// removes) Actions now past the end (ADR-0044).
 //
 // The document is three games won by resignation and a fourth started: at 7 it
 // is an ordinary match, at 3 it was over two games ago, and at 0 it is a money

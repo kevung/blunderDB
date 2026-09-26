@@ -11,11 +11,8 @@ import (
 )
 
 // TestRunRejectsNamedTenant pins that a scope which is not a positive decimal
-// integer is refused before a single row is read: "mon-tenant" used to be
-// accepted and copied into tenant 0, where every other named tenant already
-// lived (ADR-0005, amendment 2026-09-03). Untagged (no PostgreSQL, no
-// Docker): the check happens before the destination is touched, and a
-// dry run needs no destination at all.
+// integer ("mon-tenant") is refused before a single row is read (ADR-0005).
+// Untagged: the check happens before the destination is touched.
 func TestRunRejectsNamedTenant(t *testing.T) {
 	ctx := context.Background()
 	src, err := sqlite.Open(ctx, ":memory:", nil)

@@ -1,22 +1,19 @@
 import { writable } from 'svelte/store';
 
 /**
- * Promise-based confirm/cancel dialog, backed by WarningModal in "confirm" mode.
- *
- * Deliberately decoupled from the exclusive `activeModal` store (stores/uiStore.js): a
- * destructive action can be triggered from inside another modal (e.g. deleting the bearoff
- * download from ConfigModal), and reusing `activeModal` there would replace that modal with
- * the confirm dialog instead of layering on top of it. confirmModalStore is null when no
- * confirmation is showing, or { message, confirmLabel, cancelLabel } while one is pending.
+ * Promise-based confirm/cancel dialog (WarningModal in "confirm" mode). Kept
+ * apart from the exclusive `activeModal` store so it can layer over a modal
+ * that triggers a destructive action instead of replacing it. null, or
+ * { message, confirmLabel, cancelLabel } while pending.
  */
 export const confirmModalStore = writable(null);
 
 let pendingResolve = null;
 
 /**
- * Show a confirm/cancel dialog and resolve to whether the user confirmed. Any call still
- * pending when a new one starts resolves false first, so a stale confirmation can never fire
- * after the situation that prompted it has moved on.
+ * Show a confirm/cancel dialog; resolves to whether the user confirmed. A call
+ * still pending when a new one starts resolves false first, so a stale
+ * confirmation never fires.
  *
  * @param {string} message
  * @param {{confirmLabel?: string, cancelLabel?: string}} [options]

@@ -114,12 +114,9 @@ func TestTerminalProbsMatchesTerminalEquity(t *testing.T) {
 	}
 }
 
-// TestParallelProbsIsBitIdentical is TestParallelSearchIsBitIdentical
-// (search_test.go), extended to Probs (#195/C.8): the panel's cube decision
-// calls Probs on a searcher built with WithWorkers, and probsAt's own root
-// loop is the one place this file lets a worker count change which core
-// computes a term — never the order the twenty-one are summed in. Any
-// worker count must return the exact same five floats, to the bit.
+// TestParallelProbsIsBitIdentical is TestParallelSearchIsBitIdentical for
+// Probs (the panel's cube decision): any worker count must return the same
+// five floats, to the bit.
 func TestParallelProbsIsBitIdentical(t *testing.T) {
 	if testing.Short() {
 		t.Skip("a 2-ply Probs call costs seconds")
@@ -160,13 +157,9 @@ func TestParallelProbsIsBitIdentical(t *testing.T) {
 	}
 }
 
-// BenchmarkProbsSerial2Ply and BenchmarkProbsParallel2Ply are the pair C.8
-// (#195) is measured against: one canonical 2-ply Probs call — the panel's
-// cube decision (gammonnet_eval.go) — serially and with a worker per core.
-// Before the fix, probsAt's own twenty-one root rolls each opened and closed
-// their own worker barrier (21 separate deepenLevel calls of ~21 tasks each);
-// after, they are combined into deepenGroups' single queue, exactly as
-// rankPlays' phase three already does for Plays/BestPlay.
+// BenchmarkProbsSerial2Ply and BenchmarkProbsParallel2Ply time one canonical
+// 2-ply Probs call (the panel's cube decision) serially and with a worker per
+// core.
 func BenchmarkProbsSerial2Ply(b *testing.B) {
 	if testing.Short() {
 		b.Skip("a 2-ply decision costs seconds")

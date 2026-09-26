@@ -14,21 +14,13 @@ type levelEntry struct {
 	n     int
 }
 
-// Deduplication is by resulting position, and it used to be a linear scan of
-// everything written so far: quadratic, on 29-octet comparisons, with up to
-// maxLevel entries. A double on an open board reaches several hundred
-// distinct intermediate positions, and that scan was the whole of its cost.
-//
-// dedupTable is the membership test that replaces it past a threshold. It
-// changes nothing about WHAT is produced or in WHICH ORDER: entries are still
-// written in generation order, and the table only answers "already seen".
-// That order determines the stable sort, and the stable sort determines the
-// gold, so it is not negotiable.
+// dedupTable is the "already seen" test for deduplication by resulting
+// position, used past a threshold instead of a quadratic scan. It changes
+// neither what is produced nor its order: entries are written in generation
+// order, which determines the stable sort and so the gold.
 //
 // Open addressing with linear probing, and an epoch instead of a clear: a
-// slot belongs to the current deduplication only if its stamp matches. The
-// table is never cleared except on the epoch's (astronomically rare)
-// wraparound.
+// slot counts only if its stamp matches; cleared only on epoch wraparound.
 const (
 	dedupBits  = 11 // 2048 slots for at most maxLevel = 1024 entries
 	dedupSlots = 1 << dedupBits
@@ -76,11 +68,8 @@ func (d *dedupTable) add(pos *Position) bool {
 	}
 }
 
-// dedupHash is FNV-1a folded four bytes at a time — seven multiplies where
-// the byte-wise hashPosition of cache.go needs twenty-nine. Nothing outside
-// this file reads it, so it owes no compatibility to that one; it only owes
-// a good spread, and a membership test that is wrong is impossible anyway
-// because add compares the whole position on a hit.
+// dedupHash is FNV-1a folded four bytes at a time. It owes only a good
+// spread: add compares the whole position on a hit.
 func dedupHash(p *Position) uint64 {
 	h := uint64(fnvOffset64)
 	for i := 0; i < NumPoints; i += 4 {
@@ -100,11 +89,7 @@ func dedupHash(p *Position) uint64 {
 // goroutine and reuse it; generating then allocates nothing.
 //
 // The two working levels sit in one array and generation ALTERNATES between
-// them. It used to hold them in two fields and swap them by value — and a
-// levelEntry is 48 octets, maxLevel is 1024, so that assignment moved 147 Ko
-// per die played, four times for a double, at every node of the search. That
-// single copy was the whole of the generator's cost: generating the sixteen
-// legal plays of the opening 3-1 took 17 µs before this and 1,5 µs after.
+// them: swapping them by value would copy 147 Ko per die played.
 type Generator struct {
 	levels [2][maxLevel]levelEntry
 	side   int // which half of levels is the current one
@@ -112,10 +97,9 @@ type Generator struct {
 	seen   dedupTable
 }
 
-// cur is the level being played from, next the one being written. advance
-// makes the written level current — what the swap used to do, without moving
-// anything. side survives from one call to the next, which is harmless:
-// every entry point rewrites cur[0] before reading it.
+// cur is the level being played from, next the one being written; advance
+// makes the written level current. side survives between calls harmlessly:
+// every entry point rewrites cur[0] first.
 func (g *Generator) cur() *[maxLevel]levelEntry  { return &g.levels[g.side] }
 func (g *Generator) next() *[maxLevel]levelEntry { return &g.levels[g.side^1] }
 func (g *Generator) advance()                    { g.side ^= 1 }
@@ -127,9 +111,8 @@ func (g *Generator) advance()                    { g.side ^= 1 }
 // dance, not an error. It returns -1 when the position is invalid, the dice are
 // out of range, or generation would exceed its capacity.
 //
-// A truncated list is NEVER returned. A silently short candidate list is
-// indistinguishable from a position that genuinely has fewer options, and would
-// make the search quietly blind to moves it never saw.
+// A truncated list is NEVER returned: it would be indistinguishable from a
+// position with fewer options.
 func (g *Generator) LegalPlays(p *Position, d1, d2 int, out []Play) int {
 	if !p.Valid() || d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
 		return -1

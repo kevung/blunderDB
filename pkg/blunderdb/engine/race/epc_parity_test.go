@@ -170,8 +170,9 @@ func TestComputeEPC_ParityWithLegacy(t *testing.T) {
 	assertParity(t, empty)
 }
 
-// TestComputeEPC_BarBlocksAllInHome pins the bar-aware semantics the server
-// copy used to get wrong: a checker on the bar must clear AllInHome.
+// TestComputeEPC_BarBlocksAllInHome pins the bar-aware semantics: a checker on
+// the bar must clear AllInHome.
+
 func TestComputeEPC_BarBlocksAllInHome(t *testing.T) {
 	var b domain.Board
 	for i := range b.Points {

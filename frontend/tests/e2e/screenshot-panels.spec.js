@@ -1,6 +1,5 @@
 /**
- * screenshot-panels.spec.js — galerie de captures pour le manuel et le guide
- * (fiche H.5, #247)
+ * screenshot-panels.spec.js — galerie de captures pour le manuel et le guide.
  *
  * Produit doc/source/img/panel_*.png : douze captures panneau par panneau,
  * sur le même jeu de données vitrine que screenshot.spec.js (helpers/showcase.js),

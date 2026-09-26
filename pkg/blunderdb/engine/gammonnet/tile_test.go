@@ -10,18 +10,11 @@ import (
 
 // L'arrondi des tuiles : le garde-fou, et la preuve qu'il garde.
 //
-// Le test a DEUX VOLETS, et le second est le point. Le volet positif montre que
-// roundDownMultiple tient sa postcondition et qu'un parcours tuilé à tuile 6
-// reste dans les bornes. Pris seul, il ne prouverait rien : il passerait aussi
-// bien sur une tranche surdimensionnée, où le débordement n'aurait simplement
-// pas de quoi se voir. Le volet négatif exige donc que la forme masquée
-// FAUTIVE meure sur cette même tranche. Si elle survit, ce n'est pas que le
-// code est sain, c'est que le harnais ne détecte rien.
-//
-// gammonNet doit compiler son volet négatif sous AddressSanitizer pour qu'un
-// débordement de trois flottants soit visible ; ici la vérification de bornes
-// des tranches est toujours active, et le débordement est une panique
-// déterministe. C'est la seule chose que ce portage ait de plus facile.
+// Deux volets : le positif (roundDownMultiple tient sa postcondition, un
+// parcours à tuile 6 reste dans les bornes) ne prouve rien seul ; le négatif
+// exige que la forme masquée FAUTIVE panique sur la même tranche, sinon le
+// harnais ne détecte rien. La vérification de bornes de Go rend le
+// débordement déterministe (gammonNet a besoin d'AddressSanitizer).
 
 // tiledSum parcourt row par tuiles de tile jusqu'à rounded, puis finit le
 // reste une ligne à la fois — la forme exacte d'un noyau tuilé. Panique si
@@ -75,7 +68,7 @@ func TestRoundDownMultipleHoldsItsPostcondition(t *testing.T) {
 // une ligne allouée à la taille EXACTE, une tuile qui n'est pas une puissance
 // de deux, et le parcours qui va au bout.
 func TestTiledWalkStaysInBoundsAtANonPowerOfTwoTile(t *testing.T) {
-	// 195 et 6 sont les valeurs du défaut réel (#133) : 195 &^ 5 = 194, qui
+	// 195 et 6 sont les valeurs du défaut réel : 195 &^ 5 = 194, qui
 	// n'est pas un multiple de 6, et le parcours atteint alors row[192:198].
 	const outDim, tile = 195, 6
 	row := make([]float32, outDim)
@@ -112,10 +105,9 @@ func TestTheMaskedFormReallyDoesOverrun(t *testing.T) {
 }
 
 // TestNoKernelRoundsATileWithAMask relit les sources du noyau et de son
-// générateur, exactement comme TestGeneratedKernelHasNoFMAAndNoFramePointer
-// relit l'assembleur produit : la propriété est un invariant, et elle
-// n'apparaît jamais comme une mauvaise réponse dans un banc — elle apparaît
-// comme une lecture hors matrice, une fois sur trois, selon l'allocation.
+// générateur, comme TestGeneratedKernelHasNoFMAAndNoFramePointer relit
+// l'assembleur : un débordement n'apparaît jamais comme une mauvaise réponse
+// dans un banc.
 func TestNoKernelRoundsATileWithAMask(t *testing.T) {
 	// `x &^ (n - 1)`, avec ou sans espaces et parenthèses, et sa variante
 	// écrite `& ^(n - 1)`. Le circonflexe est obligatoire : `n & (n-1)` sans

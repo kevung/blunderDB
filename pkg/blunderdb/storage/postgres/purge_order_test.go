@@ -1,13 +1,6 @@
-// TestPurgeOrderMatchesRLSTables never touches a database — it compares two
-// package-level slices with the tenant-scoped tables the embedded migrations
-// actually create — unlike TestPurgeTenant and friends
-// (purge_postgres_test.go, tagged `//go:build postgres`, which provision a
-// real PostgreSQL via testcontainers-go). It used to live in that tagged
-// file, so `go test ./...` (no `-tags postgres`) never ran it. It lives in its
-// own untagged file, `package postgres` (white-box) like its old home, because
-// it needs direct access to the unexported package-level variables it guards
-// (purgeOrder in purge_postgres.go, rlsTables in rls_postgres.go,
-// migrationsFS in migrate_postgres.go).
+// TestPurgeOrderMatchesRLSTables never touches a database, so it lives in an
+// untagged file that plain `go test ./...` runs; `package postgres` for the
+// unexported purgeOrder, rlsTables and migrationsFS it guards.
 package postgres
 
 import (
@@ -67,10 +60,7 @@ func migratedTenantTables(t *testing.T) []string {
 
 // TestPurgeOrderMatchesRLSTables guards purgeOrder (purge_postgres.go) and
 // rlsTables (rls_postgres.go) against the schema itself, not merely against
-// each other: comparing the two hand-written lists let trash and import_batch
-// (2.19.0) and direction and direction_event (2.24.0) go missing from BOTH at
-// once, and PurgeTenant left their rows behind while the test stayed green
-// (#363). This test needs no database.
+// each other, which would miss a table both lists forget.
 func TestPurgeOrderMatchesRLSTables(t *testing.T) {
 	want := migratedTenantTables(t)
 	if len(want) == 0 {

@@ -1,12 +1,8 @@
 /**
- * tab-switch-stats.spec.js  — Scénario S2
+ * tab-switch-stats.spec.js
  *
  * Vérifie que les transitions d'onglets *impliquant l'onglet Stats* changent
  * effectivement le contenu du panneau (TabbedPanel).
- *
- * Attendu initial sur la branche `ui-reactivity` : au moins une variante
- * ROUGE reproductible 10/10 fois (bug S2 confirmé). Ces specs deviendront
- * vertes après Fiche 05.a.
  *
  * Sélecteurs utilisés :
  *   - [data-testid="tab-<id>"]  → bouton d'onglet (TabbedPanel.svelte)

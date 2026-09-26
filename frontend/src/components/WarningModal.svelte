@@ -3,13 +3,9 @@
     import { t } from '../i18n';
 
     /**
-     * Two modes:
-     *  - 'info' (default): a single message with a close button — the original warning toast
-     *    (e.g. database version mismatch).
-     *  - 'confirm': a destructive-action confirmation. Mirrors native window.confirm() keyboard
-     *    semantics so it feels familiar and stays fluid to drive without touching the mouse —
-     *    Enter always confirms and Escape always cancels, regardless of which button (if any)
-     *    has focus. onConfirm/onClose are both required in this mode.
+     * 'info' (default): a message and a close button. 'confirm': a destructive
+     * confirmation where Enter confirms and Escape cancels whatever has focus;
+     * onConfirm/onClose are required.
      */
     let { message = '', visible = false, onClose = () => {}, mode = 'info', onConfirm = () => {}, confirmLabel = '', cancelLabel = '' } = $props();
 

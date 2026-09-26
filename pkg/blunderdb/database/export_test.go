@@ -692,16 +692,9 @@ func TestExport_NoTournaments(t *testing.T) {
 	}
 }
 
-// TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted covers the
-// "silently ignored scan" fix: a stale collection or tournament id (deleted
-// between the caller listing it and the export running, say) used to just
-// vanish from the export with no trace anywhere. ExportDatabase now logs a
-// slog.Warn for each skipped row and a final aggregate "skipped" count — not
-// threaded through the return value (this function already has 40+
-// early-return error paths and three external CLI callers; see the comment
-// on the `skipped` local in db_export.go), but a real, discoverable signal
-// instead of nothing. The export itself must still succeed: an unknown id is
-// exactly the kind of single-row problem that must not fail the whole run.
+// TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted: a stale
+// collection or tournament id is logged (slog.Warn per row plus a "skipped"
+// count) rather than vanishing silently, and the export still succeeds.
 func TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted(t *testing.T) {
 	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
@@ -1148,16 +1141,9 @@ func TestExport_CubeAnalysisPreserved_NoPlayedMoves(t *testing.T) {
 	}
 }
 
-// --- fiche-04: the exported file must be a database on the CURRENT schema ---
-//
-// Before the fix, ExportDatabase hand-rolled a two-column "position(id, state,
-// individually_imported)" table and stamped database_version to the CURRENT
-// version. Reopening that file worked (ensureAllTablesExist backfills the
-// missing columns on open) but left zobrist_hash and every scalar column
-// (dice_1, score_1, pip_diff, …) NULL forever, because nothing had ever
-// written them: the migration chain never runs its ALTER TABLE steps for a
-// database that already claims to be current. Dedup and every SQL-column
-// search were silently dead on a reopened export.
+// The exported file must be a database on the CURRENT schema, with its hash
+// and scalar columns written: a file claiming the current version is never
+// repaired by the migration chain, so NULL columns would stay NULL forever.
 
 func TestExportDatabase_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 	t.Parallel()
@@ -1209,7 +1195,7 @@ func TestExportDatabase_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 	}
 
 	// Search index presence: the unique zobrist index is what makes dedup possible
-	// at all (fiche-04's own criterion — "index créés").
+	// at all.
 	var indexCount int
 	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name='idx_position_zobrist'`).Scan(&indexCount); err != nil {
 		t.Fatalf("query sqlite_master: %v", err)

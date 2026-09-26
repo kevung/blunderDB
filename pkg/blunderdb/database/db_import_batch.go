@@ -8,19 +8,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Import batches: what an import brought in, and how to ask afterwards
-// (issue #257, fiche I.1).
-//
-// An import used to end on nothing — the progress bar reached the end and the
-// window went back to what it was. The BATCH is what makes an end-of-import
-// report possible at all: the matches an import writes point back at it, so
-// the report can speak about *this import* rather than about the database.
-//
-// One batch is open at a time, exactly as one import is: the wrapper already
-// assumes a single in-flight import (beginCancellableImport keeps one cancel
-// function). A second BeginImportBatch replaces the first, and a match written
-// with no batch open carries none — which is what a match saved outside an
-// import should carry.
+// Import batches: the matches an import writes point back at its batch, so
+// the end-of-import report speaks about *this import*. One batch is open at a
+// time, like one import; a second BeginImportBatch replaces the first, and a
+// match written outside any batch carries none.
 
 // BeginImportBatch opens a batch for an import that is starting and returns
 // its id. Every match written until FinishImportBatch is stamped with it.
@@ -43,16 +34,10 @@ func (d *Database) BeginImportBatch(source, format string) (int64, error) {
 	return id, nil
 }
 
-// FinishImportBatch closes the batch and stores the counts the import
-// observed, which two parties see between them: the writing path counted the
-// matches written, skipped and enriched and the positions saved; `failures`
-// carries what only the CALLER sees — the files it could not read at all,
-// which never reached the writing path.
-//
-// Everything else in the report is measured afterwards, by ImportReport.
-//
-// It always clears the open batch, even when storing the counts fails: a batch
-// left open would silently stamp the NEXT import's matches.
+// FinishImportBatch closes the batch and stores its counts: the writing
+// path's, plus `failures`, the unreadable files only the CALLER sees. It
+// always clears the open batch, even on error, or it would stamp the NEXT
+// import's matches.
 func (d *Database) FinishImportBatch(batchID int64, failures domain.ImportReport) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -75,15 +60,9 @@ func (d *Database) FinishImportBatch(batchID int64, failures domain.ImportReport
 // source tool had flagged, positions no engine has judged, the batch's own PR
 // and its worst decisions.
 //
-// The measured half is recomputed on every call rather than cached. A position
-// the batch brought in can be analysed afterwards, and a report still claiming
-// "12 positions without analysis" once they had been analysed would be worse
-// than no report at all.
-//
-// The PR is the reference player's when the database names one (the `user`
-// metadata key, which the identity dialog writes), and both seats' otherwise.
-// The report says which — a rate mixing two players is a fact about the
-// import, but only if it is labelled as one.
+// The measured half is recomputed on every call, since positions can be
+// analysed afterwards. The PR is the reference player's (`user` metadata) when
+// set, both seats' otherwise, and the report says which.
 func (d *Database) ImportReport(batchID int64) (*domain.ImportBatch, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -102,15 +81,9 @@ func (d *Database) ImportReport(batchID int64) (*domain.ImportBatch, error) {
 }
 
 // ImportStudyQueue returns the batch's positions worth a second look, in the
-// order they should be walked (issue #259, fiche I.3): what cost something,
-// then what the source tool had marked, then the close cube decisions.
-//
-// The report answers "what just happened"; this answers the question that
-// follows it, "what do I look at now?". Nothing is stored and nothing records
-// that a position was seen — what the user does with one is the record.
-//
-// Same reference-player convention as ImportReport: the metadata's `user` when
-// there is one, both seats otherwise.
+// order they should be walked: what cost something, then what the source tool
+// had marked, then the close cube decisions. Nothing records that a position
+// was seen. Same reference-player convention as ImportReport.
 func (d *Database) ImportStudyQueue(batchID int64, limit int) ([]domain.StudyQueueEntry, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

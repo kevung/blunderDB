@@ -1,10 +1,10 @@
 /**
- * direction-wheel.spec.js — la molette et Tab au-dessus de la page Direction (#434, #435).
+ * direction-wheel.spec.js — la molette et Tab au-dessus de la page Direction.
  *
- * La page Direction remplace le plateau dans la zone principale (ADR-0047). La molette y
- * changeait la position de la bibliothèque cachée derrière — 757 → 753 sur la base de la
- * simulation 2026-09 — sans faire défiler la page ; et Tab, du score A au score B, ouvrait
- * l'onglet Recherche. Sur la page Direction, ce sont une page et ses champs.
+ * La page Direction remplace le plateau dans la zone principale (ADR-0047). Ni la molette
+ * (qui ne doit pas faire défiler la bibliothèque cachée derrière, ni la page) ni Tab (du score
+ * A au score B, qui ne doit pas ouvrir l'onglet Recherche) ne doivent agir sur ce qui est
+ * caché : sur la page Direction, ce sont une page et ses champs.
  */
 
 import { test, expect } from '@playwright/test';

@@ -7,14 +7,8 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The clock of a Direction (ADR-0047 §6, issue #377).
-//
-// A director wonders all evening whether they will finish before midnight, and watches the
-// tables that are dragging. The engine can answer both; what was missing was somewhere to read
-// it.
-//
-// The threshold for "slow" is 1.5× the expected duration, which is the default the UX document
-// fixes — a default, not a law of nature.
+// The clock of a Direction (tasks/nicomaque/fonctionnel.md §6). A match is "slow" past 1.5× its expected duration,
+// the UX document's default.
 const slowFactor = 1.5
 
 // ClockView is the clock strip: one line of text, not a dashboard.
@@ -22,7 +16,7 @@ type ClockView struct {
 	// ElapsedSeconds counts from the first match launched, not from the Direction's creation:
 	// a tournament prepared the evening before has not been running since then.
 	ElapsedSeconds int `json:"elapsedSeconds"`
-	// PlayingSeconds is the time during which at least one match was running (#456): the
+	// PlayingSeconds is the time during which at least one match was running: the
 	// nights of a tournament over several days are not play. direction.PlayingTime.
 	PlayingSeconds int `json:"playingSeconds"`
 	// Day is the calendar day of play, 1 on the day of the first launched match, 0 before.
@@ -91,7 +85,7 @@ func (d *Database) clockAt(tournamentID int64, now time.Time) (*ClockView, error
 	}
 	if st.Finished {
 		// A closed tournament has no pace, no next break and no end to forecast: the strip
-		// said « pause à HH:MM » after the prize-giving (#456).
+		// said « pause à HH:MM » after the prize-giving.
 		return &ClockView{Finished: true, Warnings: len(st.Warnings)}, nil
 	}
 

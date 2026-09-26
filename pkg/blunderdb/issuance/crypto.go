@@ -15,10 +15,7 @@ import (
 const kdfArgon2id = "argon2id"
 
 // Argon2Params are the cost parameters of the key derivation, written into every protected
-// file next to the KDF name. Recording them is what lets a file written today still open
-// after the defaults move, and — the reverse — lets a file claiming parameters this build
-// never used be refused instead of being fed to a derivation that will "succeed" with the
-// wrong key and report a wrong passphrase.
+// file next to the KDF name, so an unknown set is refused by name (see resolveArgon2).
 type Argon2Params struct {
 	Time    uint32 `json:"t"`
 	Memory  uint32 `json:"m"` // KiB
@@ -32,10 +29,9 @@ var argon2Default = Argon2Params{Time: 3, Memory: 64 * 1024, Threads: 4}
 
 const argonKeyLen = 32
 
-// resolveArgon2 returns the parameters a stored file asks for. A file written before the
-// parameters were recorded (nil) used argon2Default, the only set that ever existed; a file
-// recording any other set was not written by a blunderDB this package knows and is refused
-// rather than tried.
+// resolveArgon2 returns the parameters a stored file asks for: nil means argon2Default (the
+// only set ever used); any other set is refused rather than tried, since a wrong cost would
+// only report a wrong passphrase.
 func resolveArgon2(kdf string, stored *Argon2Params) (Argon2Params, error) {
 	if kdf != kdfArgon2id {
 		return Argon2Params{}, fmt.Errorf("unsupported key derivation %q: this file needs a newer blunderDB", kdf)

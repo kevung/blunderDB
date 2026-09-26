@@ -11,26 +11,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Health serves the liveness, readiness, and metrics endpoints. These are the
-// only routes reachable without an X-Tenant-ID header.
-//
-// Liveness and readiness answer two different questions and must not be
-// conflated: /healthz says "this process is up and serving HTTP", /readyz
-// says "this process can currently do useful work". An orchestrator restarts
-// a container whose liveness fails and merely stops routing traffic to one
-// whose readiness fails — so a probe that reaches the database belongs in
-// readiness only. Live once queried the storage; a database that was briefly
-// unreachable then restarted a perfectly healthy daemon in a loop (#166).
+// Health serves the liveness, readiness and metrics endpoints, the only
+// routes reachable without X-Tenant-ID. /healthz means "process up", /readyz
+// "can do useful work": an orchestrator restarts on the first and only stops
+// routing on the second, so a database probe belongs in readiness only.
 type Health struct {
 	Storage         storage.Storage
 	Metrics         *metrics.Registry
 	ExpectedVersion string
 }
 
-// Live answers GET /healthz: always 200. Reaching this handler is the proof
-// that the process is alive and its HTTP server is accepting requests; it
-// deliberately touches neither the storage nor anything else that can fail
-// for reasons a restart would not cure.
+// Live answers GET /healthz: always 200. It touches nothing that can fail for
+// reasons a restart would not cure.
 func (h *Health) Live(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }

@@ -11,11 +11,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The standalone display page (issue #386).
+// The standalone display page.
 //
-// What these tests hold is the page's promise: it opens OFFLINE — no network resource of any
-// kind — it shows names and words rather than identifiers and codes, it credits the engine's
-// author, and a folder that has gone away is reported without interrupting the tournament.
+// It opens OFFLINE (no network resource), shows names and words rather than codes, credits the
+// engine's author, and a vanished folder is reported without interrupting the tournament.
 
 // frenchStrings hands the backend the frontend's own `direction` catalogue, which is what the
 // panel does when a Direction is opened.
@@ -208,7 +207,7 @@ func TestDirectionPage_CostOfARewrite(t *testing.T) {
 	}
 }
 
-// The printable pairing sheet (issue #387).
+// The printable pairing sheet.
 //
 // What is held here is what the paper is for: the two names, the length, the table, and an empty
 // box for the score — readable at a metre, and printable without hunting for Ctrl+P.

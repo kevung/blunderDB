@@ -1,56 +1,34 @@
 /**
- * Les règles d'une session de l'onglet Entraînement (ADR-0040).
+ * Les règles d'une session de l'onglet Entraînement (ADR-0040), sans Svelte,
+ * plateau ni Wails : un état de session entre, le suivant sort.
  *
- * Ce module ne connaît ni Svelte, ni le plateau, ni Wails : il prend un état
- * de session et rend le suivant. Le service qui l'entoure
- * (trainingTabService.js) fabrique les questions, tient le chronomètre et
- * écrit au journal ; ici vivent les seules décisions qui définissent
- * l'exercice — ce qu'une révélation produit, ce qu'une échéance produit à sa
- * place, et ce qu'une session finie laisse derrière elle.
- *
- * Le mode DÉCLARÉ, en une phrase : « Révéler » arrête le chrono et montre la
- * vérité ; chaque nombre est juste par défaut, et l'on clique celui qu'on a
- * raté. Ce qui est compté ou récité est juste ou faux, et le taper n'apprend
- * rien de plus (règle 2).
+ * Mode DÉCLARÉ : « Révéler » arrête le chrono et montre la vérité ; chaque
+ * nombre est juste par défaut et l'on clique celui qu'on a raté (règle 2).
  */
 
 /**
  * Les cinq exercices de l'ADR-0040 règle 3.
  *
- * `sources` est la liste des sources de graine que l'exercice accepte, dans
- * l'ordre où le lanceur les propose ; une liste vide veut dire que la question
- * ne vient d'aucune position — c'est le cas de Scores, dont le vivier est les
- * 36 scores non ordonnés.
+ * `sources` : les sources de graine acceptées, dans l'ordre du lanceur ; vide
+ * pour Scores, dont le vivier est les 36 scores non ordonnés.
  *
- * `mode` est le mode de réponse (ADR-0040 règle 2), propriété de l'exercice et
- * jamais réglage de session : ce qui est COMPTÉ ou RÉCITÉ se déclare (on
- * révèle, on coche ce qu'on a raté), ce qui est ESTIMÉ se saisit — parce que
- * là, la taille de l'erreur est la leçon.
+ * `mode` (règle 2) appartient à l'exercice, jamais à la session : le COMPTÉ ou
+ * RÉCITÉ se déclare, l'ESTIMÉ se saisit (la taille de l'erreur est la leçon).
  *
- * `boardIsTheQuestion` distingue les deux façons dont la source « plateau » se
- * comporte. Pour Pions, le plateau EST la question : il n'y en a qu'une à
- * poser, et « Suivante » reposerait la même. Pour Bearoff, le plateau est une
- * GRAINE que le moteur joue sur un à quatre plis (ADR-0041 règle 2), donc
- * chaque question diffère et l'enchaînement a un sens.
+ * `boardIsTheQuestion` : pour Pions le plateau EST la question (« Suivante »
+ * reposerait la même) ; pour Bearoff c'est une graine jouée sur un à quatre
+ * plis (ADR-0041 règle 2).
  *
- * `surface` est ce qui, hors de l'onglet, montre la question (ADR-0040 règle
- * 2) : le plateau, ou rien. Tant qu'une question à surface `board` est à
- * l'écran, le plateau lui APPARTIENT — le répartiteur ne le fait pas défiler
- * sous elle (`questionOnBoard`).
+ * `surface` : ce qui montre la question hors de l'onglet. Une question
+ * `board` à l'écran possède le plateau (`questionOnBoard`).
  *
- * Décision (#323) se répond en mode CHOISI : le coup se joue sur le plateau
- * (`quizPlay.js`) ou l'action de videau se clique, et le juge du moteur rend
- * le verdict contre l'analyse enregistrée. Sa seule source est la
- * bibliothèque : une question demande une analyse, et seule une position de la
- * base en porte une.
+ * Décision se répond en mode CHOISI (coup joué au plateau via `quizPlay.js`,
+ * ou action de videau cliquée), jugé contre l'analyse enregistrée : sa seule
+ * source est donc la bibliothèque.
  *
- * Évaluation (#322) mêle les deux modes dans UNE question : les chances de
- * gain se SAISISSENT (l'écart signé est la leçon), l'action de videau se
- * CHOISIT (trois boutons, juste ou faux). Son `mode` est donc `entered` — c'est
- * « Valider » qui juge, en une fois — et le nombre choisi le déclare lui-même
- * (`TrainingNumber.mode`). Le mode reste une propriété de l'exercice : c'est
- * lui qui dit lequel de ses nombres se tape et lequel se clique, jamais la
- * session.
+ * Évaluation mêle les deux dans une question : chances de gain saisies, action
+ * de videau choisie. Son `mode` est `entered` (« Valider » juge en une fois) et
+ * le nombre choisi le déclare lui-même (`TrainingNumber.mode`).
  */
 /**
  * @typedef {object} TrainingExercise
@@ -87,10 +65,8 @@ export function isChosenExercise(exercise) {
 }
 
 /**
- * Le plateau appartient-il à la question en ce moment ? Oui tant qu'une
- * question d'un exercice à surface `board` est à l'écran, révélée ou non :
- * révélée, sa vérité est encore affichée dans le panneau, et elle ne décrirait
- * plus rien si la liste avait défilé dessous (#323, défaut hérité de #321).
+ * Le plateau appartient-il à la question ? Oui tant qu'une question `board` est
+ * à l'écran, même révélée : sa vérité affichée décrit ce plateau.
  * @param {TrainingSessionState|null|undefined} session
  */
 export function questionOnBoard(session) {
@@ -99,11 +75,8 @@ export function questionOnBoard(session) {
 }
 
 /**
- * Les mots que `train <exercice>` accepte. Les alias sont ceux que les doigts
- * ont appris : `tp` et `takepoint` pour la fiche de score, comme les tables du
- * même nom ; `epc` pour Bearoff, qui s'appelait ainsi dans la bande ; `quiz`
- * pour Décision, qui en est la suite dans l'onglet (#323). Une commande qu'on
- * tapait hier ne doit pas répondre « exercice inconnu » aujourd'hui.
+ * Les mots que `train <exercice>` accepte, alias hérités compris (`tp`,
+ * `takepoint`, `epc`, `quiz`), pour qu'une commande d'hier marche encore.
  */
 const EXERCISE_WORDS = Object.freeze({
     scores: 'scores',
@@ -119,7 +92,6 @@ const EXERCISE_WORDS = Object.freeze({
 });
 
 /**
- * L'exercice qu'un mot de la commande `train` désigne, ou `null`.
  * @param {string} word
  * @returns {string|null}
  */
@@ -131,14 +103,9 @@ export function exerciseForCommand(word) {
 }
 
 /**
- * Le PR d'une session de Décision, sur la MÊME échelle que celui que les
- * statistiques calculent pour le jeu réel : 500 × erreur moyenne en équité
- * normalisée. C'est ce qui rend les deux nombres comparables — sans quoi
- * l'exercice aurait inventé une échelle de plus.
- *
- * Cette fonction double `engine.QuizPR` côté Go, et le double est assumé : le
- * nombre est calculé ici sur des verdicts déjà rendus, sans aller-retour. La
- * formule, elle, est celle de `storage.pr` et n'a pas d'autre variante.
+ * Le PR d'une session de Décision, sur l'échelle des statistiques : 500 ×
+ * erreur moyenne en équité normalisée (formule de `storage.pr`). Double
+ * assumé d'`engine.QuizPR`, pour éviter un aller-retour.
  *
  * @param {number} sumErrorMp @param {number} decisions
  */
@@ -148,8 +115,7 @@ export function quizPR(sumErrorMp, decisions) {
 }
 
 /**
- * Y a-t-il une question SUIVANTE à poser ? Non quand la source est le plateau
- * d'un exercice dont le plateau est la question : on reposerait la même.
+ * Y a-t-il une question suivante ? Non si le plateau est la question.
  * @param {string} exercise @param {string} seedSource
  */
 export function canAskAnother(exercise, seedSource) {
@@ -218,8 +184,7 @@ export const TREND_WINDOW = 10;
  */
 
 /**
- * Une session vide. Elle n'a pas de longueur : un vivier de scores est infini,
- * et c'est « Terminer » qui décide de la fin (règle 5).
+ * Une session vide, sans longueur : « Terminer » décide de la fin (règle 5).
  * @param {{exercise: string, seedSource?: string, limitSeconds?: number}} opts
  * @returns {TrainingSessionState}
  */
@@ -247,9 +212,7 @@ export function newSession({ exercise, seedSource = '', limitSeconds = 0 }) {
 }
 
 /**
- * Pose une question : le chrono part à l'affichage, jamais avant (la
- * fabrication de la question se cache derrière le temps de réflexion de la
- * précédente, elle ne se facture pas à celle-ci).
+ * Pose une question : le chrono part à l'affichage, jamais avant.
  * @param {TrainingSessionState} session @param {TrainingQuestion} question @param {number} now
  * @returns {TrainingSessionState}
  */
@@ -270,9 +233,8 @@ export function askQuestion(session, question, now) {
 }
 
 /**
- * Enregistre ce qui est tapé dans un champ, sans le juger : le jugement est à
- * « Valider », une seule fois, et un champ qui se juge en cours de frappe
- * annoncerait la réponse avant qu'on ait fini de la donner.
+ * Enregistre la saisie d'un champ sans la juger : juger en cours de frappe
+ * annoncerait la réponse.
  * @param {TrainingSessionState} session @param {number} index @param {string} text
  * @returns {TrainingSessionState}
  */
@@ -285,11 +247,8 @@ export function setAnswer(session, index, text) {
 }
 
 /**
- * Aucune question n'a pu être posée — la position tirée a disparu, la source
- * s'est vidée. La session RESTE OUVERTE et le dit : ce qui a déjà été répondu
- * est encore là, « Terminer » l'enregistre, et l'on peut réessayer. Une
- * session ne se perd jamais sans que l'utilisateur l'ait décidé, et un écran
- * qui rebascule tout seul sur le lanceur est une perte, pas une information.
+ * Aucune question n'a pu être posée. La session reste ouverte et le dit, pour
+ * que « Terminer » garde ce qui a été répondu et qu'on puisse réessayer.
  * @param {TrainingSessionState} session @param {string} reason
  * @returns {TrainingSessionState}
  */
@@ -298,10 +257,8 @@ export function failNextQuestion(session, reason) {
 }
 
 /**
- * Arrête le chrono et montre la vérité. Hors délai, la question compte tous
- * ses nombres faux : on ne mesure pas une réponse qui n'a pas été donnée, et
- * la cocher ensuite n'aurait pas de sens — c'est un verdict, pas une
- * déclaration.
+ * Arrête le chrono et montre la vérité. Hors délai, tous les nombres sont
+ * faux : c'est un verdict, rien à cocher.
  * @param {TrainingSessionState} session @param {number} now
  * @param {{outOfTime?: boolean}} [opts]
  * @returns {TrainingSessionState}
@@ -324,13 +281,9 @@ export function reveal(session, now, { outOfTime = false } = {}) {
 }
 
 /**
- * Le verdict du juge sur une question en mode CHOISI (Décision, #323). Il
- * arrête le chrono comme « Révéler », et il est seul à décider de la faute :
- * n'est juste qu'un coup — ou une action — classé et sans coût. Un coup
- * illégal ou légal mais non évalué est une faute qui ne coûte rien ; le
- * verdict garde les trois issues distinctes pour le panneau.
- *
- * Un second verdict ne remplace pas le premier : la réponse est donnée.
+ * Le verdict du juge en mode CHOISI : arrête le chrono et décide seul de la
+ * faute. Juste = classé et sans coût ; illégal ou non évalué = faute à coût
+ * nul. Un second verdict ne remplace pas le premier.
  *
  * @param {TrainingSessionState} session @param {QuizVerdict} verdict @param {number} now
  * @returns {TrainingSessionState}
@@ -350,10 +303,8 @@ export function answerChosen(session, verdict, now) {
 }
 
 /**
- * La correction d'une question CHOISIE restée sans réponse : le meilleur coup,
- * demandé au juge après l'échéance. Elle n'arrive qu'après un aller-retour,
- * donc elle ne s'attache qu'à la question qui l'a demandée (`key`), et jamais
- * par-dessus un verdict.
+ * Le meilleur coup d'une question CHOISIE restée sans réponse. Arrivé après un
+ * aller-retour, il ne s'attache qu'à sa question (`key`), jamais sur un verdict.
  * @param {TrainingSessionState} session @param {string} key @param {QuizVerdict} correction
  * @returns {TrainingSessionState}
  */
@@ -363,18 +314,13 @@ export function attachCorrection(session, key, correction) {
 }
 
 /**
- * Le jugement d'un nombre SAISI (ADR-0040 règle 2). L'écart est SIGNÉ et il est
- * gardé même quand la réponse est bonne : surestimer n'est pas sous-estimer, et
- * c'est le sens de l'erreur qu'on vient apprendre — « je surestime les
- * positions à trous » ne se lit que sur des écarts signés.
+ * Le jugement d'un nombre SAISI (ADR-0040 règle 2). L'écart est SIGNÉ et gardé
+ * même si la réponse est bonne : le sens de l'erreur est la leçon. Un champ
+ * vide ou illisible est une faute SANS écart (le compter zéro fausserait la
+ * moyenne).
  *
- * Un champ vide ou illisible est une faute SANS écart : on ne mesure pas une
- * réponse qui n'a pas été donnée, et la compter zéro tirerait la moyenne vers
- * une justesse qui n'a pas eu lieu.
- *
- * Un nombre CHOISI (l'action de videau d'Évaluation) se juge exactement contre
- * l'option que le moteur a rendue juste : ni tolérance ni écart — une action
- * de videau n'est pas « presque » prise. Rien de choisi est une faute.
+ * Un nombre CHOISI se juge exactement contre l'option du moteur, sans
+ * tolérance ; rien de choisi est une faute.
  *
  * @param {TrainingNumber} number @param {string} text
  */
@@ -387,7 +333,6 @@ function judgeNumber(number, text) {
 }
 
 /**
- * Ce nombre se choisit-il parmi des options, plutôt que se taper ?
  * @param {TrainingNumber|null|undefined} number
  */
 export function isChosenNumber(number) {
@@ -395,9 +340,8 @@ export function isChosenNumber(number) {
 }
 
 /**
- * Coche — ou décoche — le nombre qu'on a raté. Sans effet tant que la question
- * n'est pas révélée (elle est encore ouverte) et sur une question hors délai
- * (son verdict est déjà rendu).
+ * Coche ou décoche le nombre raté ; sans effet avant la révélation ou hors
+ * délai.
  * @param {TrainingSessionState} session @param {number} index
  * @returns {TrainingSessionState}
  */
@@ -414,19 +358,16 @@ export function toggleFault(session, index) {
 }
 
 /**
- * Enregistre la question révélée dans la session et la retire de l'écran.
- * Rien n'est écrit en base ici : la session entière l'est à « Terminer », et
- * « Quitter » la jette.
+ * Enregistre la question révélée dans la session. Rien n'est écrit en base
+ * avant « Terminer » ; « Quitter » jette tout.
  * @param {TrainingSessionState} session
  * @returns {TrainingSessionState}
  */
 export function recordQuestion(session) {
     if (!session.question || !session.revealed) return session;
     const items = session.question.numbers.map((number, i) => {
-        // Le mode déclaré ne produit aucun écart : un compte de pions ou une
-        // case de table est juste ou faux. Rester à `false` ici est ce qui
-        // garde la moyenne des écarts vide plutôt que nulle — une colonne à
-        // zéro dirait « sans erreur », pas « sans mesure ».
+        // Mode déclaré : pas d'écart. `false` garde la moyenne vide plutôt que
+        // nulle — zéro dirait « sans erreur », pas « sans mesure ».
         const deviation = session.deviations[i];
         return {
             numberType: number.type,
@@ -435,10 +376,8 @@ export function recordQuestion(session) {
             deviation: deviation ?? 0
         };
     });
-    // Le PR ne compte que les décisions JUGÉES : une question hors délai n'a
-    // pas de réponse, donc ni coût ni décision — on ne mesure pas une réponse
-    // qui n'a pas été donnée. Un coup illégal, lui, a été joué : il compte, et
-    // ne coûte rien.
+    // Le PR ne compte que les décisions jugées : hors délai, ni coût ni
+    // décision. Un coup illégal a été joué : il compte, sans coût.
     const judged = isChosenExercise(session.exercise) && !session.outOfTime && !!session.verdict;
     return {
         ...session,
@@ -459,8 +398,8 @@ export function recordQuestion(session) {
 }
 
 /**
- * La ligne de journal d'une session terminée, avec ses nombres. Une question
- * révélée mais pas enregistrée n'y figure pas : elle n'a pas été validée.
+ * La ligne de journal d'une session terminée ; une question révélée non
+ * enregistrée n'y figure pas.
  * @param {TrainingSessionState} session
  */
 export function finishedSession(session) {
@@ -480,21 +419,14 @@ export function finishedSession(session) {
 }
 
 /**
- * Le bilan d'un exercice, lu sur ses lignes de journal les plus récentes
- * d'abord. Des nombres, pas des phrases : le taux de fautes, l'écart moyen
- * quand il en existe un, le temps médian, et la tendance.
+ * Le bilan d'un exercice, lignes de journal les plus récentes d'abord : taux
+ * de fautes, écart moyen s'il existe, temps médian, tendance.
  *
- * Le temps médian est la MÉDIANE DES MÉDIANES de session — une question où
- * l'on est allé chercher un café ne dit rien du rythme, et une session entière
- * non plus. La tendance est l'écart entre le taux de fautes des dix dernières
- * sessions et celui de toutes : négatif, on s'améliore. Elle ne s'annonce pas
- * AU-DELÀ de dix sessions : à dix pile, la fenêtre récente EST le tout, l'écart
- * vaut structurellement zéro, et afficher ce zéro dirait « vous stagnez » là où
- * il n'y a rien à comparer.
- *
- * Le PR, pour Décision, est celui de la DERNIÈRE session, tel qu'enregistré :
- * une moyenne de PR de sessions de longueurs différentes serait une échelle de
- * plus, et le journal n'a pas de quoi la pondérer juste.
+ * Temps médian = médiane des médianes de session (robuste aux pauses).
+ * Tendance = taux des dix dernières sessions moins taux global ; annoncée
+ * seulement AU-DELÀ de dix, car à dix l'écart vaut zéro par construction.
+ * PR de Décision = celui de la dernière session : une moyenne de sessions de
+ * longueurs différentes ne se pondère pas juste.
  *
  * @param {{exercise?: string, numbersAsked: number, faults: number, deviations: number, meanDeviation: number, medianMs: number, pr?: number}[]} sessions
  */

@@ -32,11 +32,9 @@ const (
 	// which a .mat writes "???". Nothing is wrong with the match; the RECORD is
 	// incomplete, and everything after it stands on a board nobody can check.
 	UnrecordedMove InconsistencyKind = "unrecorded_move"
-	// ScoreMismatch: the score declared on a game's opening is not the one the
-	// previous games give — a score error made at the table, or a game the record
-	// skipped (ADR-0053). The game is played at the declared score all the same, and
-	// the detail names the derived one. It also marks a declared score the Replay
-	// cannot use: on a re-roll, in a money session, or below zero.
+	// ScoreMismatch: the score declared on a game's opening is not the derived one
+	// (ADR-0053); the game is played at the declared score and the detail names the
+	// derived one. It also marks an unusable declaration (re-roll, money, negative).
 	ScoreMismatch InconsistencyKind = "score_mismatch"
 )
 
@@ -126,10 +124,8 @@ type Next struct {
 // so it travels here rather than on the Document, and it is nil when nothing is
 // being typed.
 //
-// It exists for one sentence on screen that the panel must not invent: whether
-// the play under a corrected roll is the one that was written down or a stand-in
-// the software preselected. The panel is a client of the engine (rule 9), so the
-// engine says which.
+// The engine, not the panel (rule 9), says whether the play under a corrected roll
+// was written down or preselected.
 type EntryInfo struct {
 	// At is the slot the entry lands on, and Replacing says whether validating
 	// it overwrites the Action there (a correction in place) or inserts.
@@ -150,12 +146,8 @@ type EntryInfo struct {
 	// Notation is the play picked so far, written as a Transcript writes it, and
 	// "" while none is.
 	//
-	// It is here so that the Transcript can DRAW the Action being typed where it
-	// will land — over the cell a correction replaces, in the slot an insertion
-	// opens — instead of leaving the neighbour it is about to become. Nothing is
-	// written to the document before validation; what changes is that the user
-	// sees what they are typing, and a correction no longer looks like it did
-	// nothing at all.
+	// It lets the Transcript DRAW the Action being typed where it will land;
+	// nothing is written before validation.
 	Notation string `json:"notation,omitempty"`
 }
 
@@ -195,14 +187,10 @@ func (a Annotated) Inconsistent() bool {
 // score of each game, its Crawford mention, its winner and points, the end of the
 // match — and the Inconsistencies of §1.4.
 //
-// It replays from the first Action, every time. `from` selects only where the Cursor
-// lands — on the first Inconsistency at or after it, which is what a correction wants
-// to show next.
-//
-// A full Replay costs what [domain.LegalMoves] costs, some 340 µs per checker Action:
-// a hundred milliseconds on a long match, which is a hundred milliseconds too many at
-// every keystroke. A caller that replays the SAME document again and again — which is
-// what entering a match is — holds a [Replayer] instead.
+// It replays from the first Action every time; `from` selects only where the Cursor
+// lands (the first Inconsistency at or after it). At ~340 µs per checker Action
+// ([domain.LegalMoves]), a caller replaying the same document at every keystroke
+// holds a [Replayer] instead.
 func Replay(doc Document, from int) Annotated {
 	var r Replayer
 	return r.Replay(doc, from)
@@ -212,15 +200,11 @@ func Replay(doc Document, from int) Annotated {
 // the state before each Action and what that Action derived; the next call replays
 // only from the first Action that changed.
 //
-// It buys nothing but time, and changes nothing else: what it returns is what the
-// free [Replay] returns for the same document, which is the property
-// TestReplayIncrementalMatchesFull holds. The derivation of an Action depends on the
-// state left by the one before it and on nothing else, which is what makes the cache
-// sound — and what any new field read by [state.step] must keep true.
+// It returns exactly what [Replay] returns (TestReplayIncrementalMatchesFull). The
+// cache is sound because an Action's derivation depends only on the state left by the
+// one before it — any new field read by [state.step] must keep that true.
 //
-// A Replayer is NOT safe for concurrent use, and it is not shared state: it belongs to
-// one editing session, exactly as [Editor] does. The package stays pure — a Replayer
-// remembers a computation, it reaches for nothing.
+// A Replayer is NOT safe for concurrent use; it belongs to one editing session.
 type Replayer struct {
 	// doc is a deep copy of the document the cache describes, so that a caller editing
 	// its Actions in place cannot pass the cache off as still valid.
@@ -229,9 +213,8 @@ type Replayer struct {
 	// It is empty until the first Replay.
 	states []state
 	infos  []ActionInfo
-	// replayed is how many Actions the last call stepped through — the work it did, as
-	// opposed to the work it reused. It is what TestReplayIncrementalCostsOneAction
-	// holds, rather than a duration a loaded machine can stretch.
+	// replayed is how many Actions the last call stepped through, the work measure
+	// TestReplayIncrementalCostsOneAction holds (not a duration).
 	replayed int
 }
 
@@ -279,9 +262,7 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 			Review:    e.Review,
 			Kind:      entryExpects(doc, *e, out.Next.Expects),
 		}
-		// The notation of the play being typed, from the board the entry's slot
-		// is reached with — states[i] is the state BEFORE Action i, which is
-		// exactly what the cache holds, so drawing the entry costs no replay.
+		// states[i] is the state before the entry's slot: no replay needed.
 		if at := clampSlot(e.At, len(doc.Actions)); len(e.Steps) > 0 && out.Entry.Kind != KindOpening {
 			resolved, _ := resolveSteps(r.states[at].board, e.Side, e.Steps)
 			out.Entry.Notation = domain.Notation(resolved, e.Side)
@@ -418,9 +399,7 @@ func (s *state) awayScores() [2]int {
 }
 
 // position builds the Position an Action is played from. The session's rules are
-// posted on it and are not part of its identity (ADR-0028): they are stated here
-// because the panel and the evaluator read them, never because they distinguish a
-// board from another.
+// posted for the panel and evaluator, not as identity (ADR-0028).
 func (s *state) position(side int, dice [2]int, decision int, cube domain.Cube) domain.Position {
 	pos := domain.Position{
 		Board:        s.board,
@@ -489,9 +468,8 @@ func (s *state) endGame(winner, points int) {
 // loser bore nothing off, a backgammon when a loser's checker is still on the bar or
 // in the winner's home board — times the value of the cube.
 //
-// Jacoby is deliberately absent: fonctionnel.md §1.3 states this formula without it,
-// and the rule stays what ADR-0028 made it, a flag posted on the Position that the
-// evaluator applies. Nothing here reduces a gammon the user recorded.
+// Jacoby is deliberately absent (fonctionnel.md §1.3): it is a Position flag the
+// evaluator applies (ADR-0028), never a reduction of a recorded gammon.
 func (s *state) gamePoints(winner int) int {
 	loser := opponent(winner)
 	base := 1
@@ -528,10 +506,8 @@ func (s *state) trapped(loser, winner int) bool {
 // where it was, which is why the doubler playing right after a take is not a double
 // turn (fonctionnel.md §1.4).
 //
-// A resignation is out of the count too, which §1.4's list does not say in so many
-// words: it is given up at any moment, one's own roll included, so counting it would
-// mark every resignation that follows its author's last play — a false positive on
-// ordinary matches, and the Inconsistencies are worth exactly what their silence is.
+// A resignation is out of the count too: it may come at any moment, and counting it
+// would mark every resignation after its author's own play — a false positive.
 func bearsTurn(k Kind) bool {
 	switch k {
 	case KindOpening, KindTake, KindPass, KindResign:
@@ -588,10 +564,8 @@ func (s *state) step(i int, a Action) ActionInfo {
 		legal := domain.LegalMoves(&pos)
 
 		if a.Kind == KindUnrecorded {
-			// The play is missing, not absent: the board it left is unknown, and the
-			// last known one is carried forward so the replay can go on. Nothing is
-			// checked against the rules here — there is nothing to check — and the
-			// finding says the record is incomplete, never that the players erred.
+			// The board is unknown: carry the last one forward, check nothing,
+			// and report an incomplete record, not a player error.
 			info.After = s.board
 			info.Notation = UnrecordedNotation
 			info.add(UnrecordedMove, "the record does not say what was played")
@@ -606,11 +580,8 @@ func (s *state) step(i int, a Action) ActionInfo {
 				info.add(InconsistentDice, fmt.Sprintf("the play does not use the roll %d%d", a.Dice[0], a.Dice[1]))
 			}
 			resolved, reached := resolveSteps(s.board, a.Side, a.Steps)
-			// The notation is of the steps as they were RECORDED, never of the legal
-			// play that happens to reach the same board: one board has several
-			// spellings ("16/10 10/7" and "13/7 16/13" move the same checkers to the
-			// same points), and the transcript owes the reader the one that was
-			// written down at the table.
+			// Notate the steps as RECORDED, not the legal play reaching the same
+			// board: one board has several spellings ("16/10 10/7", "13/7 16/13").
 			info.Notation = domain.Notation(resolved, a.Side)
 			if play := findPlay(legal, reached); play != nil {
 				info.After = play.Result.Board
@@ -709,12 +680,9 @@ func (s *state) step(i int, a Action) ActionInfo {
 }
 
 // declare posts the score an opening declares as the score of play, and reports
-// whether it did. A score it cannot use is marked and left aside: on the re-roll
-// after a tie (the game was opened, at its score, by the opening before), in a money
-// session (which has no score), and below zero. A score it uses is marked when it is
-// not the one the previous games give — and played from all the same (ADR-0053).
-// A score that reaches the match length is used too: what follows it is then past
-// the end, and the Replay says so there.
+// whether it did. An unusable score (re-roll, money, negative) is marked and left
+// aside; a used one is marked when it differs from the derived score (ADR-0053).
+// A score reaching the length is used; what follows is marked PastEnd.
 func (s *state) declare(info *ActionInfo, score [2]int, opens bool) bool {
 	switch {
 	case !opens:
@@ -783,13 +751,10 @@ func findPlay(plays []domain.LegalPlay, board domain.Board) *domain.LegalPlay {
 // resolveSteps plays steps on a board without judging them, and returns them in the
 // order they were playable with their hits filled in, alongside the board they leave.
 //
-// It is deliberately NOT domain's own applier: that one is fed by the legal-move
-// generator and may assume its input, while a transcription's steps are whatever the
-// user typed or a file wrote. So the steps are taken in an order that keeps them
-// applicable — "bar/24 24/18" whichever way round it was written — hits are recomputed
-// from the board rather than trusted from the step, and a step with no checker to move
-// is played last and simply produces the board it produces, which the Replay then
-// reports as illegal.
+// It is NOT domain's applier, which may assume legal-generator input: steps here are
+// arbitrary. They are ordered to stay applicable ("bar/24 24/18" either way round),
+// hits are recomputed from the board, and a step with no checker is played last and
+// yields whatever board the Replay then reports as illegal.
 func resolveSteps(b domain.Board, mover int, steps []domain.CheckerStep) ([]domain.CheckerStep, domain.Board) {
 	remaining := append([]domain.CheckerStep(nil), steps...)
 	resolved := make([]domain.CheckerStep, 0, len(steps))

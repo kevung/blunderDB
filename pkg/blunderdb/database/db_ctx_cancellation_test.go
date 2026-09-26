@@ -9,12 +9,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// B.13 (#181): the three long-running Database calls the CLI can now cancel
-// through a Ctx variant — search, stats, export — must actually honour a
-// context cancelled before the call, rather than silently running to
-// completion on the context.Background() they used to hardcode. A context
-// cancelled up front (rather than mid-query) keeps these tests deterministic:
-// database/sql refuses to even dispatch the statement once ctx.Err() != nil.
+// The Ctx variants of search, stats and export must honour a context
+// cancelled before the call. Cancelling up front keeps the tests
+// deterministic: database/sql dispatches nothing once ctx.Err() != nil.
 
 func TestLoadPositionsByFiltersCoreCtxRespectsCancellation(t *testing.T) {
 	t.Parallel()

@@ -9,14 +9,8 @@ import (
 	"testing"
 )
 
-// TestLogging_SurfacesStashedErrorAtErrorLevel guards the fix for "500
-// without a server-side trace": a handler that masks an internal error
-// behind a generic body (the client must never see backend internals) used
-// to leave no trace of what actually failed anywhere in the server logs. A
-// handler now reaches its ResponseWriter's SetErr (responseRecorder
-// implements it) before masking, and Logging must both include that error in
-// the log line and log at Error level (not Info) so a 500 is not lost in
-// request-volume noise.
+// TestLogging_SurfacesStashedErrorAtErrorLevel: an error stashed via SetErr
+// before masking appears in the log line, at Error level.
 func TestLogging_SurfacesStashedErrorAtErrorLevel(t *testing.T) {
 	var buf strings.Builder
 	logger := slog.New(slog.NewTextHandler(&buf, nil))
@@ -69,11 +63,8 @@ func TestLogging_NoStashedErrorStaysInfo(t *testing.T) {
 	}
 }
 
-// TestLogging_IncludesRequestIDAndTraceparent guards #238: a request that
-// went through RequestID must have its correlation id and (when present) its
-// traceparent surface in the same request-completion log line Logging
-// already emits, rather than being a separate, harder-to-correlate log
-// stream.
+// TestLogging_IncludesRequestIDAndTraceparent: the request id and traceparent
+// appear in the same completion log line.
 func TestLogging_IncludesRequestIDAndTraceparent(t *testing.T) {
 	var buf strings.Builder
 	logger := slog.New(slog.NewTextHandler(&buf, nil))
@@ -98,10 +89,8 @@ func TestLogging_IncludesRequestIDAndTraceparent(t *testing.T) {
 	}
 }
 
-// TestLogging_NoRequestIDMiddlewareOmitsFields: Logging must not fabricate a
-// request_id/traceparent field when it runs without RequestID ahead of it
-// (e.g. a unit test that exercises Logging alone, as every other test in
-// this file does).
+// TestLogging_NoRequestIDMiddlewareOmitsFields: without RequestID ahead,
+// Logging fabricates no request_id/traceparent field.
 func TestLogging_NoRequestIDMiddlewareOmitsFields(t *testing.T) {
 	var buf strings.Builder
 	logger := slog.New(slog.NewTextHandler(&buf, nil))

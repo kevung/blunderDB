@@ -7,10 +7,8 @@ import "github.com/kevung/blunderdb/pkg/blunderdb/engine"
 // take or pass. Averaging them together — as a single "cube PR" does — says how
 // much a player loses on the cube, never in which direction they get it wrong.
 //
-// These counts answer the second question, and only that: they are counts, not
-// a verdict. What a neutral point is, how wide the uncertainty must be before a
-// leaning may be named, and what to name it, are decisions that belong to the
-// caller (see gammonGo ADR 0058).
+// These counts answer the second question: counts, not a verdict. Naming a
+// leaning is the caller's decision (see gammonGo ADR 0058).
 
 // CubeDirectionRow is one raw (best, played) cell as a backend reads it out of
 // SQL, before any label is interpreted. Best is the engine's ruling
@@ -52,8 +50,7 @@ type CubeDirections struct {
 
 // The six cells of the matrix, as returned by ClassifyCubeDirection. They are
 // also the values a SelectionSpec carries to drill from a cell down to the
-// positions behind it — so a cell displayed and a cell clicked cannot drift
-// apart ("ce qu'on clique = ce qu'on voit").
+// positions behind it, so a cell displayed and a cell clicked cannot drift.
 const (
 	CubeCellNone            = ""
 	CubeCellOfferRight      = "offer_right"
@@ -67,9 +64,8 @@ const (
 // ClassifyCubeDirection places one (ruling, action) pair in its cell, or
 // returns CubeCellNone when either label cannot be read.
 //
-// An unreadable label is DROPPED, never guessed: counted as "no double" — by
-// far the most common action — it would quietly inflate the busiest cell of the
-// matrix, and nothing downstream would look wrong.
+// An unreadable label is DROPPED, never guessed: counted as "no double" it
+// would quietly inflate the busiest cell.
 func ClassifyCubeDirection(best, played string) string {
 	verdict, ok := engine.BestCubeVerdict(best)
 	if !ok {

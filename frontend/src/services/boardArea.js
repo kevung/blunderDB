@@ -1,12 +1,7 @@
 /**
- * boardArea.js — où finit le plateau.
- *
- * La zone principale (`.scrollable-content`) montre le plateau, ou la page Direction qui le
- * remplace quand un tournoi est dirigé (ADR-0047). Deux gestes y ont un sens de plateau : la
- * molette change de position, Tab ouvre la Recherche (#204). Sur la page Direction, ce sont une
- * page et ses champs : la molette y défile et Tab y passe au champ suivant. Les confondre
- * faisait défiler la bibliothèque cachée derrière la grille des tables et quitter la Direction
- * au milieu d'une saisie de score (simulation 2026-09, #434, #435).
+ * boardArea.js — où finit le plateau. Dans `.scrollable-content`, la molette
+ * change de position et Tab ouvre la Recherche, sauf sur la page Direction
+ * (ADR-0047), où ils défilent et passent au champ suivant.
  */
 
 /** Ce qui, dans la zone principale, n'est pas le plateau. */

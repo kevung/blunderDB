@@ -14,11 +14,9 @@ import (
 // zstdZeroBomb compresses n zero bytes into a real zstd frame (with this
 // package's shared dictionary, so it exercises the exact decode path
 // DecompressAnalysisData uses) using the fastest encoder level. Unlike
-// zlibZeroBomb this shells out to the actual compressor rather than
-// hand-assembling bits: zstd's ratio on an all-zero run is high enough
-// (~1 GB → ~200 KB) that even at the fastest level this stays well under a
-// second, which a hand-rolled RLE-block frame would only save a few hundred
-// milliseconds on at the cost of a much harder to verify implementation.
+// zlibZeroBomb it runs the real compressor: on all-zero input that stays well
+// under a second, and a hand-rolled frame would be much harder to verify.
+
 func zstdZeroBomb(n int64) []byte {
 	enc, err := zstd.NewWriter(nil, zstd.WithEncoderLevel(zstd.SpeedFastest))
 	if err != nil {

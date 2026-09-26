@@ -11,8 +11,7 @@ import (
 
 // TestTenantID pins that the conversion refuses to invent a tenant: a scope
 // that is not a positive decimal integer panics instead of collapsing onto
-// tenant 0 (which is what "alice", "default" and "mon-tenant" all did before
-// ADR-0005's 2026-09-03 amendment, sharing one set of rows).
+// tenant 0 (ADR-0005).
 func TestTenantID(t *testing.T) {
 	if got := tenantID(""); got != 0 {
 		t.Errorf("tenantID(\"\") = %d, want 0 (the implicit desktop tenant)", got)
