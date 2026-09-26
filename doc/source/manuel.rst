@@ -1577,6 +1577,14 @@ quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
 joueur part tout de suite ou finit ce qu'il joue.
 
+Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
+sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
+(pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse
+par rondes, *jusqu'à la ronde* portant son numéro. Le moteur cesse alors de
+l'apparier, mais son rang, ses vies et sa place au tableau restent ceux qu'il a
+gagnés — l'absence n'est pas un forfait. **Revenir**, sur sa ligne, lève
+l'absence en un clic, avant l'échéance déclarée ou après.
+
 Corriger la fiche d'un joueur retiré — son nom, son club, sa cote — le laisse
 retiré. Son retour est un geste à part : **Réinscrire**, sur sa ligne. Il est de
 nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les
