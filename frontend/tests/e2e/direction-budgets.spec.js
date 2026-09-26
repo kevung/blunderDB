@@ -231,13 +231,14 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('apparier à la main', withPicks, 7);
     });
 
-    // « retirer un joueur | ≤ 6 clics ».
+    // « retirer un joueur | ≤ 6 clics ». Le bouton est nommé, pas compté : sa place dans la
+    // cellule dépend de l'état du joueur (un joueur libre porte aussi « Absenter »).
     test('retirer un joueur tient dans son budget', async ({ page }) => {
         await openDirection(page);
 
         const counted = await countGestures(page, async (g) => {
             await g.click(page.locator('[data-testid="direction-tab-players"]'));
-            await g.click(page.locator('.players tbody tr').first().locator('td.actions button').nth(1));
+            await g.click(page.locator('.players tbody tr').first().locator('[data-testid="direction-player-withdraw-now"]'));
             await expect(page.locator('.players tbody tr').first()).toContainText(/retiré|withdrawn/i);
         });
         budget('retirer un joueur', counted, 6);
