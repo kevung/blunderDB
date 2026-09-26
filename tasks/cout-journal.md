@@ -28,3 +28,17 @@ décision (un gain ou une garde). Rien d'autre.
   de dossier pour gammonNet, passe de sobriété sur les commentaires.
 - **À vérifier à la prochaine passe** : `sleep` à zéro et contexte moyen sous 150k ; sinon le
   hook ne tient pas et il faut le durcir.
+
+### Passe de sobriété (ADR, commentaires)
+
+- **Relevé** : ADR 422 → 161 Ko ; commentaires du code 2 903 → 2 164 Ko (29 → 24 %), aucune
+  ligne de code modifiée. Vingt ouvriers ; le plafond de 150 appels a arrêté proprement quatre
+  d'entre eux, repris sans perte par un ouvrier neuf. Le seuil de contexte a signalé la
+  session principale à 283k.
+- **Écart** : les ouvriers Sonnet n'ont fait que retirer l'historique (−0,7 à −4 % sur leur
+  zone) et ont atteint le plafond trois fois sur quatre ; une seconde passe Opus a été
+  nécessaire partout (−34 à −40 %). Condenser un commentaire est un jugement dont l'erreur est
+  silencieuse : c'était Opus d'emblée (ADR-0055 règle 5), la règle était juste, son
+  application non.
+- **Décision** : aucune règle nouvelle ; un travail éditorial (commentaires, ADR, doc) part sur
+  Opus.
