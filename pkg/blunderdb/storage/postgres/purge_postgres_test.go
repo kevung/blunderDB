@@ -99,7 +99,9 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 
 	exec(`INSERT INTO trash (tenant_id, kind, payload) VALUES ($1, 'match', '{}')`, tenantID)
 
-	tournamentID := scalar(`INSERT INTO tournament (tenant_id, name) VALUES ($1, 't') RETURNING id`, tenantID)
+	rencontreID := scalar(`INSERT INTO rencontre (tenant_id, name) VALUES ($1, 'r') RETURNING id`, tenantID)
+	tournamentID := scalar(`INSERT INTO tournament (tenant_id, name, rencontre_id) VALUES ($1, 't', $2) RETURNING id`, tenantID, rencontreID)
+	exec(`INSERT INTO direction_pair_member (tournament_id, tenant_id, player_id, seat, name) VALUES ($1, $2, 'a-b', 0, 'a')`, tournamentID, tenantID)
 	exec(`INSERT INTO direction (tournament_id, tenant_id) VALUES ($1, $2)`, tournamentID, tenantID)
 	exec(`INSERT INTO direction_event (tournament_id, tenant_id, seq, kind, time, payload) VALUES ($1, $2, 1, 'created', now(), '{}')`, tournamentID, tenantID)
 	batchID := scalar(`INSERT INTO import_batch (tenant_id) VALUES ($1) RETURNING id`, tenantID)

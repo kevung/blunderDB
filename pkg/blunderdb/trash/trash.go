@@ -150,6 +150,8 @@ func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64)
 		restored, err = restoreCollection(ctx, s, scope, entry)
 	case domain.TrashComment:
 		restored, err = restoreComment(ctx, s, scope, entry)
+	case domain.TrashRencontre:
+		restored, err = restoreRencontre(ctx, s, scope, entry)
 	default:
 		err = fmt.Errorf("trash entry %d: nothing knows how to restore a %q", trashID, entry.Kind)
 	}
@@ -242,6 +244,47 @@ func restoreComment(ctx context.Context, s storage.Stores, scope string, entry *
 	}
 	return s.Comments().AddFrom(ctx, scope, payload.Comment.PositionID,
 		payload.Comment.Text, payload.Comment.Origin)
+}
+
+// Rencontre deletes a Rencontre after snapshotting it and its members. Its
+// Tournaments are detached, never deleted: each keeps its Direction, its log
+// and its tables (ADR-0056).
+func Rencontre(ctx context.Context, s storage.Stores, scope string, rencontreID int64) (int64, error) {
+	r, err := s.Rencontres().Get(ctx, scope, rencontreID)
+	if err != nil {
+		return 0, err
+	}
+	id, err := put(ctx, s, scope, domain.TrashRencontre, r.Name, domain.TrashRencontrePayload{Rencontre: *r})
+	if err != nil {
+		return 0, err
+	}
+	if err := s.Rencontres().Delete(ctx, scope, rencontreID); err != nil {
+		_ = s.Trash().Discard(ctx, scope, id)
+		return 0, err
+	}
+	return id, nil
+}
+
+// restoreRencontre recreates the Rencontre and attaches again the Tournaments
+// that still exist and have not joined another Rencontre meanwhile.
+func restoreRencontre(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (int64, error) {
+	var payload domain.TrashRencontrePayload
+	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
+		return 0, fmt.Errorf("trash entry %d: %w", entry.ID, err)
+	}
+	id, err := s.Rencontres().Create(ctx, scope, payload.Rencontre)
+	if err != nil {
+		return 0, err
+	}
+	for _, tid := range payload.Rencontre.TournamentIDs {
+		if of, err := s.Rencontres().Of(ctx, scope, tid); err != nil || of != 0 {
+			continue
+		}
+		if err := s.Rencontres().Attach(ctx, scope, tid, id); err != nil {
+			return 0, err
+		}
+	}
+	return id, nil
 }
 
 // put marshals a payload and writes the snapshot.

@@ -25,6 +25,10 @@ const (
 	// TrashAnkiCard — one card's scheduling state, so restoring puts it back
 	// where FSRS had it rather than as new.
 	TrashAnkiCard TrashKind = "anki_card"
+	// TrashRencontre — a Rencontre with the Tournaments it held. Deleting it
+	// detached them (they keep their Direction, log and tables); restoring
+	// attaches again those still free.
+	TrashRencontre TrashKind = "rencontre"
 )
 
 // TrashEntry is one deleted thing, kept so it can be put back.

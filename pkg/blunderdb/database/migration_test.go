@@ -2987,3 +2987,62 @@ func TestDirectionSchema_2_24_0(t *testing.T) {
 		t.Error("deleting the Tournament unlinks its Matches, it does not delete them")
 	}
 }
+
+// TestRencontreSchema_2_25_0 covers the Rencontre and the doubles members
+// (ADR-0056): deleting a Rencontre detaches its Tournaments and never deletes
+// one; deleting a Tournament takes its pair members with it.
+func TestRencontreSchema_2_25_0(t *testing.T) {
+	d := newTestDB(t)
+	ctx := context.Background()
+
+	res, err := d.db.ExecContext(ctx,
+		`INSERT INTO rencontre (name, starts_on, ends_on, tables, output_dir)
+		 VALUES ('Festival', '2026-10-03', '2026-10-04', 14, '')`)
+	if err != nil {
+		t.Fatalf("insert rencontre: %v", err)
+	}
+	rID, err := res.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tID, err := d.CreateTournament("Principal", "2026-10-03", "Lyon")
+	if err != nil {
+		t.Fatalf("create tournament: %v", err)
+	}
+	if _, err := d.db.ExecContext(ctx, `UPDATE tournament SET rencontre_id = ? WHERE id = ?`, rID, tID); err != nil {
+		t.Fatalf("attach: %v", err)
+	}
+	for seat, name := range []string{"Ana", "Bea"} {
+		if _, err := d.db.ExecContext(ctx,
+			`INSERT INTO direction_pair_member (tournament_id, player_id, seat, name, club, rating)
+			 VALUES (?, 'ana-bea', ?, ?, 'BC', 5.5)`, tID, seat, name); err != nil {
+			t.Fatalf("insert member %d: %v", seat, err)
+		}
+	}
+	if _, err := d.db.ExecContext(ctx,
+		`INSERT INTO direction_pair_member (tournament_id, player_id, seat, name) VALUES (?, 'ana-bea', 0, 'Ana')`, tID); err == nil {
+		t.Error("a pair has one person per seat")
+	}
+
+	if _, err := d.db.ExecContext(ctx, `DELETE FROM rencontre WHERE id = ?`, rID); err != nil {
+		t.Fatalf("delete rencontre: %v", err)
+	}
+	var attached sql.NullInt64
+	if err := d.db.QueryRowContext(ctx, `SELECT rencontre_id FROM tournament WHERE id = ?`, tID).Scan(&attached); err != nil {
+		t.Fatalf("deleting a Rencontre must not delete its Tournament: %v", err)
+	}
+	if attached.Valid {
+		t.Errorf("deleting a Rencontre detaches its Tournament, rencontre_id = %d", attached.Int64)
+	}
+
+	if err := d.DeleteTournament(tID); err != nil {
+		t.Fatalf("delete tournament: %v", err)
+	}
+	var n int
+	if err := d.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM direction_pair_member WHERE tournament_id = ?`, tID).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 0 {
+		t.Errorf("deleting the Tournament must take its pair members, %d left", n)
+	}
+}

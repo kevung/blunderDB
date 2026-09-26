@@ -969,3 +969,12 @@ func sharedColumns(ctx context.Context, conn *sql.Conn, src, dst string) ([]stri
 func (d *Database) migrate_2_23_0_to_2_24_0(context.Context) error {
 	return nil
 }
+
+// migrate_2_24_0_to_2_25_0 covers the Rencontre (ADR-0056): the rencontre
+// table, tournament.rencontre_id, and direction_pair_member, the two persons
+// behind a doubles Participant. EnsureSchema creates them; the step keeps the
+// chain continuous. Nothing to backfill: no Tournament was in a Rencontre
+// before, and a pair entered earlier as one "A / B" name stays one name.
+func (d *Database) migrate_2_24_0_to_2_25_0(context.Context) error {
+	return nil
+}

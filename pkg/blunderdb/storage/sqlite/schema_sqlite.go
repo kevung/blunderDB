@@ -331,6 +331,20 @@ var schemaStatements = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_training_item_session ON training_item(session_id)`,
 	`CREATE INDEX IF NOT EXISTS idx_training_item_type ON training_item(number_type)`,
+	// A Rencontre is the room several directed Tournaments share (ADR-0056):
+	// its tables, and the output folder of its wall page. What happens in the
+	// room — a table out of service, a break — is not stored here: it is an
+	// event in the log of every member Direction.
+	`CREATE TABLE IF NOT EXISTS rencontre (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		starts_on TEXT DEFAULT '',
+		ends_on TEXT DEFAULT '',
+		tables INTEGER NOT NULL DEFAULT 0,
+		output_dir TEXT DEFAULT '',
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
 	`CREATE TABLE IF NOT EXISTS tournament (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,
@@ -339,8 +353,12 @@ var schemaStatements = []string{
 		sort_order INTEGER DEFAULT 0,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		comment TEXT DEFAULT ''
+		comment TEXT DEFAULT '',
+		-- The Rencontre this Tournament plays in, if any. Deleting the
+		-- Rencontre detaches its Tournaments; it never deletes one.
+		rencontre_id INTEGER REFERENCES rencontre(id) ON DELETE SET NULL
 	)`,
+	`CREATE INDEX IF NOT EXISTS idx_tournament_rencontre ON tournament(rencontre_id)`,
 	// The Direction of a Tournament (ADR-0047): everything the tournament
 	// director decided while running it. One row per directed Tournament, plus
 	// one row per event in direction_event.
@@ -373,6 +391,19 @@ var schemaStatements = []string{
 		PRIMARY KEY (tournament_id, seq)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_direction_event_tournament ON direction_event(tournament_id, seq)`,
+	// The two people behind a doubles Participant (ADR-0056 §4). The engine
+	// knows one Participant named "A / B"; the Directory, the availability
+	// check and the entry form need the two persons, each with a club and a
+	// rating. seat is 0 or 1, in the order the pair was entered.
+	`CREATE TABLE IF NOT EXISTS direction_pair_member (
+		tournament_id INTEGER NOT NULL REFERENCES tournament(id) ON DELETE CASCADE,
+		player_id TEXT NOT NULL,
+		seat INTEGER NOT NULL,
+		name TEXT NOT NULL,
+		club TEXT NOT NULL DEFAULT '',
+		rating REAL NOT NULL DEFAULT 0,
+		PRIMARY KEY (tournament_id, player_id, seat)
+	)`,
 	// A Slot carries at most one Match: the pair (tournament, slot) is unique
 	// wherever a slot is actually named. The partial index leaves the empty
 	// string free, which is what every Match that fills no Slot carries.

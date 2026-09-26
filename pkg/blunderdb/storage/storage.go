@@ -52,6 +52,7 @@ type Stores interface {
 	Comments() CommentStore
 	Collections() CollectionStore
 	Tournaments() TournamentStore
+	Rencontres() RencontreStore
 	Anki() AnkiStore
 	Filters() FilterStore
 	Session() SessionStore
