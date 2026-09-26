@@ -2160,6 +2160,7 @@
             "rank": "#",
             "prize": "Palkinto",
             "wins": "V",
+            "losses_column": "T",
             "opponents": "Kohdatut vastustajat",
             "waiting": "Odottaa",
             "state": "Tila",

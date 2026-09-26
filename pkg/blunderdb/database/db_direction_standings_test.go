@@ -204,4 +204,60 @@ func TestStandingsCSV(t *testing.T) {
 	if !strings.Contains(lines[0], "Joueur") {
 		t.Errorf("the first line is a header in the user's language: %q", lines[0])
 	}
+	// The record, not only the state: a column of wins, then one of losses.
+	if !strings.Contains(lines[0], ";V;D;") {
+		t.Errorf("the header carries the wins and losses columns: %q", lines[0])
+	}
+}
+
+// A player who leaves keeps the rank their record earned: the best player of the evening,
+// gone before the end, is not ranked below those who were eliminated.
+func TestStandings_WithdrawnKeepsTheirRank(t *testing.T) {
+	d := newTestDB(t)
+	tID := directedAt(t, d, 8, `{"name":"Mardi","tables":{"count":4},
+		"phases":[{"kind":"swiss_lives","length":5,"lives":3,"mode":"rounds"}]}`)
+	var leaver tournoi.PlayerID
+	for round := 0; round < 3; round++ {
+		v, err := d.ConfirmAllProposals(tID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, m := range v.Running {
+			if leaver == "" {
+				leaver = m.A
+			}
+			winner := m.A
+			if m.B == leaver {
+				winner = m.B
+			}
+			if _, err := d.EnterResult(tID, string(m.ID), string(winner), 0, 0, ""); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if _, err := d.WithdrawParticipant(tID, string(leaver), false); err != nil {
+		t.Fatal(err)
+	}
+	v, err := d.Standings(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rows := v.Sections[0].Rows
+	last := rows[len(rows)-1].Rank
+	for _, r := range rows {
+		if r.ID != string(leaver) {
+			continue
+		}
+		if r.Note.Kind != tournoi.NoteWithdrawn {
+			t.Errorf("the leaver's note is %q, want withdrawn", r.Note.Kind)
+		}
+		if r.Wins != 3 || r.Losses != 0 {
+			t.Errorf("the leaver's record is %d–%d, want 3–0", r.Wins, r.Losses)
+		}
+		if r.Rank == last {
+			t.Errorf("the leaver, unbeaten, is ranked last (%d): %+v", r.Rank, rows)
+		}
+		return
+	}
+	t.Fatal("the leaver is missing from the standings")
 }

@@ -2160,6 +2160,7 @@
             "rank": "#",
             "prize": "賞金",
             "wins": "勝",
+            "losses_column": "敗",
             "opponents": "対戦した相手",
             "waiting": "待機",
             "state": "状態",

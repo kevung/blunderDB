@@ -2160,6 +2160,7 @@
             "rank": "#",
             "prize": "Приз",
             "wins": "П",
+            "losses_column": "Пр",
             "opponents": "Сыгранные соперники",
             "waiting": "Ожидание",
             "state": "Статус",

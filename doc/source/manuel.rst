@@ -1600,8 +1600,10 @@ fichier d'un match rattaché contredit le résultat enregistré, l'écart est mo
 sans être résolu — pendant un tournoi, la parole du directeur fait foi.
 
 L'onglet **Classement** montre le classement courant, section par section, avec
-les prix lorsqu'une dotation est réglée. Deux ex æquo partagent la place et le
-prix. **Clore le tournoi** fige le classement final. Le classement se copie en
+le bilan de chacun (victoires–défaites) et les prix lorsqu'une dotation est
+réglée. Deux ex æquo partagent la place et le prix. Un joueur retiré garde le
+rang que son parcours lui vaut, noté « retiré » avec son bilan ou l'endroit du
+tableau où il s'est arrêté. **Clore le tournoi** fige le classement final. Le classement se copie en
 CSV, dans la langue de l'interface, ou s'enregistre dans un fichier :
 **Enregistrer…** ouvre le dialogue du système sur un nom proposé, le tournoi
 suivi du mot « classement » et de la date du jour, et le fichier contient

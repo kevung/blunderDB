@@ -86,6 +86,7 @@
                             <th class="rank">#</th>
                             <th>{$t('direction.players.name')}</th>
                             <th>{$t('direction.players.club')}</th>
+                            <th class="record">{$t('direction.players.record')}</th>
                             <th>{$t('direction.standings.note')}</th>
                             {#if s.rows.some((r) => r.prize)}
                                 <th class="prize">{$t('direction.standings.prize')}</th>
@@ -100,6 +101,7 @@
                                 </td>
                                 <td class="name">{r.name}</td>
                                 <td class="muted">{r.club || ''}</td>
+                                <td class="record">{r.wins ?? 0}–{r.losses ?? 0}</td>
                                 <td class="muted">{renderNote($t, r.note)}</td>
                                 {#if s.rows.some((x) => x.prize)}
                                     <td class="prize">{money(r.prize)}</td>
@@ -180,9 +182,14 @@
         margin-left: 1px;
     }
 
-    .prize {
+    .prize,
+    .record {
         text-align: right;
         white-space: nowrap;
+    }
+
+    .record {
+        font-variant-numeric: tabular-nums;
     }
 
     .confirm {

@@ -17,13 +17,17 @@ import (
 
 // StandingRow is one line of the standings.
 type StandingRow struct {
-	Rank   int          `json:"rank"`
-	ID     string       `json:"id"`
-	Name   string       `json:"name"`
-	Club   string       `json:"club,omitempty"`
-	Note   tournoi.Note `json:"note"`
-	Prize  float64      `json:"prize,omitempty"`
-	Shared bool         `json:"shared,omitempty"`
+	Rank int          `json:"rank"`
+	ID   string       `json:"id"`
+	Name string       `json:"name"`
+	Club string       `json:"club,omitempty"`
+	Note tournoi.Note `json:"note"`
+	// Wins and Losses count the player's matches over the whole tournament, every phase
+	// together: the state says where a player stands, the record says how they got there.
+	Wins   int     `json:"wins"`
+	Losses int     `json:"losses"`
+	Prize  float64 `json:"prize,omitempty"`
+	Shared bool    `json:"shared,omitempty"`
 }
 
 // StandingsSection is one ranking: the overall one, or a section of a bracket with its own
@@ -109,9 +113,26 @@ func rowsFor(st *tournoi.State, ranking []tournoi.Rank, amounts []float64) []Sta
 		if p := st.Players[r.Player]; p != nil {
 			row.Club = p.Club
 		}
+		for _, ph := range st.Phases {
+			row.Wins += ph.Wins[r.Player]
+			row.Losses += ph.Losses[r.Player]
+		}
 		out = append(out, row)
 	}
 	return out
+}
+
+// termLossesColumn heads the losses column. The engine's own TermLosses is a count phrase
+// ("{n} défaite(s)"), not a heading.
+const termLossesColumn render.Term = "losses_column"
+
+// lossesHead renders the losses heading; without a catalogue, the engine's French labeler does
+// not know the term, and "D" answers its "V".
+func lossesHead(l render.Labeler) string {
+	if h := l.Term(termLossesColumn, 0); h != string(termLossesColumn) {
+		return h
+	}
+	return "D"
 }
 
 // StandingsCSV exports the standings in the USER'S LANGUAGE.
@@ -134,6 +155,7 @@ func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
 	head := []string{
 		l.Term(render.TermPhase, 0), l.Term(render.TermRank, 0), "id",
 		l.Term(render.TermPlayer, 0), l.Term(render.TermClub, 0),
+		l.Term(render.TermWins, 0), lossesHead(l),
 		l.Term(render.TermState, 0), l.Term(render.TermPrize, 0),
 	}
 	if err := w.Write(head); err != nil {
@@ -146,7 +168,8 @@ func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
 			if r.Prize != 0 {
 				prize = strconv.FormatFloat(r.Prize, 'f', 2, 64)
 			}
-			row := []string{name, strconv.Itoa(r.Rank), r.ID, r.Name, r.Club, l.Note(r.Note), prize}
+			row := []string{name, strconv.Itoa(r.Rank), r.ID, r.Name, r.Club,
+				strconv.Itoa(r.Wins), strconv.Itoa(r.Losses), l.Note(r.Note), prize}
 			if err := w.Write(row); err != nil {
 				return "", err
 			}

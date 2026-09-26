@@ -2160,6 +2160,7 @@
             "rank": "#",
             "prize": "Preis",
             "wins": "S",
+            "losses_column": "N",
             "opponents": "Bisherige Gegner",
             "waiting": "Wartend",
             "state": "Status",

@@ -2160,6 +2160,7 @@
             "rank": "#",
             "prize": "Prix",
             "wins": "V",
+            "losses_column": "D",
             "opponents": "Adversaires rencontrés",
             "waiting": "Attente",
             "state": "État",

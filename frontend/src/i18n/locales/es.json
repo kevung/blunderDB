@@ -2160,6 +2160,7 @@
             "rank": "#",
             "prize": "Premio",
             "wins": "V",
+            "losses_column": "D",
             "opponents": "Rivales enfrentados",
             "waiting": "Espera",
             "state": "Estado",
