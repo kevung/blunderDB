@@ -1894,7 +1894,8 @@
             "no_pairing": "Aucun appariement possible pour l’instant.",
             "waiting_batch": "Appariement au prochain lot.",
             "waiting_table": "aucune table libre",
-            "player_unavailable": "joueur indisponible"
+            "player_unavailable": "joueur indisponible",
+            "player_busy": "joue dans une autre épreuve"
         },
         "proposals": {
             "title": "Propositions ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Annuler"
         },
         "waiting": {
-            "title": "En attente ({n})"
+            "title": "En attente ({n})",
+            "elsewhere": "joue au {event}, table {table}",
+            "elsewhereNoTable": "joue au {event}"
         },
         "table": {
             "title": "Tables ({n})",

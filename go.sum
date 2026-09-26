@@ -10,6 +10,8 @@ github.com/PileOfCells/backgammon-tournoi v0.2.1 h1:j4DPnVCC2Rg9BnWoTy3MHgwDXFE4
 github.com/PileOfCells/backgammon-tournoi v0.2.1/go.mod h1:F/dRMEA0MteLOOE92AZn382p8rT7YnvpywDs6kCuA+o=
 github.com/PileOfCells/backgammon-tournoi v0.3.0 h1:OiqKH9J6Q4gfYTFddVeY4dduHxQjJ61EcoqWZui4j84=
 github.com/PileOfCells/backgammon-tournoi v0.3.0/go.mod h1:F/dRMEA0MteLOOE92AZn382p8rT7YnvpywDs6kCuA+o=
+github.com/PileOfCells/backgammon-tournoi v0.4.1 h1:yPtEncGQyUPzHjD17kwkRSu/c8UuMNid/973YezwJU4=
+github.com/PileOfCells/backgammon-tournoi v0.4.1/go.mod h1:F/dRMEA0MteLOOE92AZn382p8rT7YnvpywDs6kCuA+o=
 github.com/adrg/xdg v0.5.3 h1:xRnxJXne7+oWDatRhR1JLnvuccuIeCoBu2rtuLqQB78=
 github.com/adrg/xdg v0.5.3/go.mod h1:nlTsY+NNiCBGCK2tpm09vRqfVzrc2fLmXGpBLF0zlTQ=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=

@@ -7,6 +7,7 @@
      */
     import { t } from '../../i18n';
     import ResultCard from './ResultCard.svelte';
+    import { seatLabel } from './labels.js';
 
     /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
 
@@ -88,6 +89,14 @@
                     <span class="num">{c.noTable ? $t('direction.table.noTable') : c.table}</span>
                     {#if c.matchId}
                         <span class="players">{c.aName} – {c.bName}</span>
+                        {#if c.aElsewhere || c.bElsewhere}
+                            <!-- Un appariement à la main d'un joueur qui joue aussi à côté : accepté, signalé. -->
+                            <span class="meta seat" data-testid="direction-table-seat">
+                                {#if c.aElsewhere}{c.aName} {seatLabel($t, c.aElsewhere)}{/if}
+                                {#if c.aElsewhere && c.bElsewhere}&middot;{/if}
+                                {#if c.bElsewhere}{c.bName} {seatLabel($t, c.bElsewhere)}{/if}
+                            </span>
+                        {/if}
                         <span class="meta">
                             {$t('direction.proposals.points', { n: c.length })} &middot;
                             {elapsed(c.elapsedSeconds || 0)}
@@ -191,6 +200,10 @@
        le temps en gras suffisent. */
     .cell.slow {
         border-color: var(--color-danger);
+    }
+
+    .cell .meta.seat {
+        color: var(--color-danger);
     }
 
     .cell.slow .meta {

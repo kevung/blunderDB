@@ -48,6 +48,10 @@ type DirectionView struct {
 	// BusyTables are the tables the sister events of the Rencontre play on right now: the
 	// proposals above already avoid them. Replayed, never stored.
 	BusyTables []int `json:"busyTables"`
+	// Elsewhere says, by Participant id, where each one who plays in a sister event sits right
+	// now — a pair as soon as one of its members does. The proposals already hold them back; a
+	// manual pairing of one is accepted and shown with this seat. Replayed, never stored.
+	Elsewhere map[string]direction.Seat `json:"elsewhere,omitempty"`
 	// Pairs gives the two persons behind each doubles Participant, by Participant id; empty for
 	// a singles event (ADR-0056 §4).
 	Pairs map[string][]PairMember `json:"pairs,omitempty"`
@@ -105,8 +109,15 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 	if st := dir.State(); st != nil {
 		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
 		// deadline and a break's warning depend on the current time, not on the last result.
-		ext := d.outside(context.Background(), tournamentID)
+		room := d.roomAround(context.Background(), tournamentID, dir)
+		ext := room.external()
 		v.BusyTables = ext.BusyTables
+		if len(room.players) > 0 {
+			v.Elsewhere = make(map[string]direction.Seat, len(room.players))
+			for id, seat := range room.players {
+				v.Elsewhere[string(id)] = seat
+			}
+		}
 		v.Proposals = dir.ProposeWith(time.Now(), ext)
 		v.Warnings = dir.Warnings()
 		v.Ranking = dir.Ranking()

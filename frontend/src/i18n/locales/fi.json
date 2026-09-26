@@ -1894,7 +1894,8 @@
             "no_pairing": "Paria ei voi juuri nyt muodostaa.",
             "waiting_batch": "Parit seuraavassa erässä.",
             "waiting_table": "ei vapaata pöytää",
-            "player_unavailable": "pelaaja ei käytettävissä"
+            "player_unavailable": "pelaaja ei käytettävissä",
+            "player_busy": "pelaa toisessa turnauksessa"
         },
         "proposals": {
             "title": "Ehdotukset ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Peruuta"
         },
         "waiting": {
-            "title": "Odottaa ({n})"
+            "title": "Odottaa ({n})",
+            "elsewhere": "pelaa turnauksessa {event}, pöytä {table}",
+            "elsewhereNoTable": "pelaa turnauksessa {event}"
         },
         "table": {
             "title": "Pöydät ({n})",

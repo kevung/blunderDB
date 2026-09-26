@@ -83,6 +83,9 @@ func TestLabeler_RendersEngineCodes(t *testing.T) {
 	if got := l.Reason(tournoi.ReasonPlayerUnavailable); got != "joueur indisponible" {
 		t.Errorf("reason = %q", got)
 	}
+	if got := l.Reason(tournoi.ReasonPlayerBusy); got != "joue dans une autre épreuve" {
+		t.Errorf("reason = %q", got)
+	}
 }
 
 func TestLabeler_SectionNamesAreIdentifiers(t *testing.T) {

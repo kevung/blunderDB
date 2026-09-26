@@ -37,6 +37,10 @@ type TableCell struct {
 	// Elsewhere names the sister event of the Rencontre playing on this table right now: the
 	// table is not free for this one (ADR-0056).
 	Elsewhere string `json:"elsewhere,omitempty"`
+	// AElsewhere and BElsewhere say where a player of this match also sits right now in a
+	// sister event: a manual pairing the engine would not have proposed, accepted and shown.
+	AElsewhere *direction.Seat `json:"aElsewhere,omitempty"`
+	BElsewhere *direction.Seat `json:"bElsewhere,omitempty"`
 }
 
 // TableGrid returns one cell per table of the room, in order. A room with no declared table
@@ -76,6 +80,14 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		slow[m.ID] = true
 	}
 
+	room := d.roomAround(context.Background(), tournamentID, dir)
+	elsewhere := room.tables
+	seat := func(id tournoi.PlayerID) *direction.Seat {
+		if s, ok := room.players[id]; ok {
+			return &s
+		}
+		return nil
+	}
 	fill := func(c *TableCell, m *tournoi.Match) {
 		c.MatchID = string(m.ID)
 		c.A, c.B = string(m.A), string(m.B)
@@ -83,9 +95,9 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		c.Length = m.Length
 		c.ElapsedSeconds = int(now.Sub(m.Start).Seconds())
 		c.Slow = slow[m.ID]
+		c.AElsewhere, c.BElsewhere = seat(m.A), seat(m.B)
 	}
 
-	elsewhere := d.occupiedElsewhere(context.Background(), tournamentID)
 	out := make([]TableCell, 0, count+len(tableless))
 	for n := 1; n <= count; n++ {
 		c := TableCell{Table: n}

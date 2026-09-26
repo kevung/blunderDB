@@ -1894,7 +1894,8 @@
             "no_pairing": "Nessun abbinamento possibile per ora.",
             "waiting_batch": "Abbinamento al prossimo lotto.",
             "waiting_table": "nessun tavolo libero",
-            "player_unavailable": "giocatore non disponibile"
+            "player_unavailable": "giocatore non disponibile",
+            "player_busy": "gioca in un altro torneo"
         },
         "proposals": {
             "title": "Proposte ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Annulla"
         },
         "waiting": {
-            "title": "In attesa ({n})"
+            "title": "In attesa ({n})",
+            "elsewhere": "gioca in {event}, tavolo {table}",
+            "elsewhereNoTable": "gioca in {event}"
         },
         "table": {
             "title": "Tavoli ({n})",

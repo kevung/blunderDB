@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"slices"
 	"testing"
+
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
 
 func eventCount(t *testing.T, d *Database, tID int64) int {
@@ -126,6 +128,76 @@ func TestRencontreProposalsAvoidTheSistersTables(t *testing.T) {
 	}
 	if vb, _ = d.GetDirection(b); len(vb.BusyTables) != 0 || vb.RencontreID != 0 || vb.Config.Tables.Count != 8 {
 		t.Errorf("detached: busy %v, rencontre %d, %d tables", vb.BusyTables, vb.RencontreID, vb.Config.Tables.Count)
+	}
+}
+
+// A player at a match of a sister event is not proposed in this one, and the panel says where
+// they play; paired by hand anyway, the match is accepted and the seat shown on its table.
+func TestRencontreBusyPlayersAreNotProposed(t *testing.T) {
+	d := newTestDB(t)
+	_, a := directedTournament(t, d, 16)
+	_, b := directedTournament(t, d, 16) // the same sixteen names: the same persons
+	r, err := d.CreateRencontre("Festival", "", "", 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tID := range []int64{a, b} {
+		if _, err := d.AttachToRencontre(tID, r.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	va, err := d.ConfirmAllProposals(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	seatOf := map[string]int{}
+	for _, m := range va.Running {
+		seatOf[string(m.A)], seatOf[string(m.B)] = m.Table, m.Table
+	}
+	if len(seatOf) != 16 {
+		t.Fatalf("A seats %d players, want all 16", len(seatOf))
+	}
+	vb, err := d.GetDirection(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(vb.Elsewhere) != 16 {
+		t.Fatalf("B sees %d players busy next door, want 16", len(vb.Elsewhere))
+	}
+	for id, seat := range vb.Elsewhere {
+		if seat.Event != "Open de Lyon" || seat.Table != seatOf[id] {
+			t.Errorf("%s: seen at %+v, plays at table %d", id, seat, seatOf[id])
+		}
+	}
+	for _, p := range vb.Proposals {
+		if p.Kind == tournoi.ActStartMatch && p.Table > 0 {
+			t.Errorf("B proposes %s-%s at table %d while both play in A", p.A, p.B, p.Table)
+		}
+	}
+	if vb, err = d.ConfirmAllProposals(b); err != nil || len(vb.Running) != 0 {
+		t.Fatalf("B launched %d match(es) of busy players (%v)", len(vb.Running), err)
+	}
+
+	// The director pairs two of them by hand: accepted, and the grid says where they also sit.
+	if _, err := d.StartMatchManually(b, "a", "b", 0, 0); err != nil {
+		t.Fatalf("a manual pairing of busy players is refused: %v", err)
+	}
+	cells, err := d.TableGrid(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, c := range cells {
+		if c.MatchID == "" {
+			continue
+		}
+		found = true
+		if c.AElsewhere == nil || c.BElsewhere == nil || c.AElsewhere.Table != seatOf[c.A] {
+			t.Errorf("manual match %s: seats %v / %v, want A's tables", c.MatchID, c.AElsewhere, c.BElsewhere)
+		}
+	}
+	if !found {
+		t.Error("the manual match is on no cell of the grid")
 	}
 }
 

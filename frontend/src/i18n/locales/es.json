@@ -1894,7 +1894,8 @@
             "no_pairing": "Ningún emparejamiento posible por ahora.",
             "waiting_batch": "Emparejamiento en la próxima tanda.",
             "waiting_table": "ninguna mesa libre",
-            "player_unavailable": "jugador no disponible"
+            "player_unavailable": "jugador no disponible",
+            "player_busy": "juega en otro torneo"
         },
         "proposals": {
             "title": "Propuestas ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Anular"
         },
         "waiting": {
-            "title": "En espera ({n})"
+            "title": "En espera ({n})",
+            "elsewhere": "juega en {event}, mesa {table}",
+            "elsewhereNoTable": "juega en {event}"
         },
         "table": {
             "title": "Mesas ({n})",

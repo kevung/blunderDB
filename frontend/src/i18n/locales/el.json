@@ -1894,7 +1894,8 @@
             "no_pairing": "Καμία κλήρωση δυνατή προς το παρόν.",
             "waiting_batch": "Κλήρωση στην επόμενη παρτίδα.",
             "waiting_table": "κανένα ελεύθερο τραπέζι",
-            "player_unavailable": "μη διαθέσιμος παίκτης"
+            "player_unavailable": "μη διαθέσιμος παίκτης",
+            "player_busy": "παίζει σε άλλο τουρνουά"
         },
         "proposals": {
             "title": "Προτάσεις ({n})",
@@ -1927,7 +1928,9 @@
             "cancelMatch": "Ακύρωση"
         },
         "waiting": {
-            "title": "Σε αναμονή ({n})"
+            "title": "Σε αναμονή ({n})",
+            "elsewhere": "παίζει στο {event}, τραπέζι {table}",
+            "elsewhereNoTable": "παίζει στο {event}"
         },
         "table": {
             "title": "Τραπέζια ({n})",
