@@ -1704,6 +1704,13 @@ Rencontre, et vaut pour toutes les épreuves ; le nombre de tables, les tables
 hors service et les pauses modifiés dans les Réglages d'une épreuve valent aussi
 pour la salle, et la liste de ce qui va changer nomme les autres épreuves.
 
+Ouvrir la Direction d'une épreuve en Rencontre ouvre aussi les autres : un
+onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé —
+propositions en attente, matchs en cours, une alerte s'il y en a. Changer
+d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée ne
+se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
+hors Rencontre n'a qu'une épreuve : pas d'onglet à montrer.
+
 L'affichage de la salle
 ~~~~~~~~~~~~~~~~~~~~~~~
 

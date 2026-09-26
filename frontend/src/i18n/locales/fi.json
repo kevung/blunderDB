@@ -2270,6 +2270,11 @@
             "confirmTitle": "Mitä tässä turnauksessa muuttuu:",
             "noChange": "Ei mitään: sen pöydät ovat jo salin pöydät.",
             "confirm": "Liitä"
+        },
+        "epreuves": {
+            "pending": "{n} odottaa",
+            "running": "{n} käynnissä",
+            "alert": "Huomio"
         }
     },
     "palette": {

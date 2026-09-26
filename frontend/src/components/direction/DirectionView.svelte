@@ -26,6 +26,8 @@
     import {
         directionStore,
         openDirectionIdStore,
+        epreuveTabsStore,
+        switchEpreuve,
         saveDirectionConfig,
         deleteDirection,
         closeDirection,
@@ -451,6 +453,20 @@
 </script>
 
 <div class="direction-view" tabindex="-1" bind:this={root}>
+    {#if $epreuveTabsStore.length > 1}
+        <!-- La Rencontre (ADR-0056 §5) : un onglet par épreuve, résumé visible sans y aller, un
+             clic pour y passer — rien ne ferme ni ne rejoue l'épreuve quittée. -->
+        <nav class="epreuve-tabs" data-testid="epreuve-tabs">
+            {#each $epreuveTabsStore as ep (ep.tournamentId)}
+                <button type="button" data-testid="epreuve-tab-{ep.tournamentId}" class:active={ep.active} onclick={() => switchEpreuve(ep.tournamentId)}>
+                    <span class="epreuve-name">{ep.name}</span>
+                    {#if ep.pending}<span class="badge pending" title={$t('direction.epreuves.pending', { n: ep.pending })}>{ep.pending}</span>{/if}
+                    {#if ep.running}<span class="badge running" title={$t('direction.epreuves.running', { n: ep.running })}>{ep.running}</span>{/if}
+                    {#if ep.warning}<span class="badge warning" title={$t('direction.epreuves.alert')}>!</span>{/if}
+                </button>
+            {/each}
+        </nav>
+    {/if}
     <header>
         <span class="name">{view?.config?.name || ''}</span>
         <span class="state">{$t(`direction.state.${directionState}`)}</span>
@@ -651,6 +667,32 @@
     nav button.active {
         border-color: var(--color-primary);
         color: var(--color-text);
+    }
+
+    .epreuve-tabs {
+        padding: var(--space-1) var(--space-2) 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .epreuve-tabs button {
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+    }
+
+    .badge {
+        font-size: var(--font-size-small);
+        line-height: 1;
+        padding: 0.1rem 0.35rem;
+        border-radius: var(--radius);
+        background: var(--color-border);
+        color: var(--color-text);
+    }
+
+    .badge.warning {
+        background: var(--color-danger, #b00020);
+        color: #fff;
+        font-weight: 600;
     }
 
     .close {

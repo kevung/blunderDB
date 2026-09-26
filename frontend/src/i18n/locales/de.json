@@ -2270,6 +2270,11 @@
             "confirmTitle": "Was sich in diesem Turnier ändert:",
             "noChange": "Nichts: seine Tische sind bereits die des Saals.",
             "confirm": "Zuordnen"
+        },
+        "epreuves": {
+            "pending": "{n} ausstehend",
+            "running": "{n} laufend",
+            "alert": "Hinweis"
         }
     },
     "palette": {

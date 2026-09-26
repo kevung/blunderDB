@@ -2270,6 +2270,11 @@
             "confirmTitle": "この大会で変わること：",
             "noChange": "なし：テーブルはすでに会場のものです。",
             "confirm": "追加"
+        },
+        "epreuves": {
+            "pending": "{n}件 保留中",
+            "running": "{n}件 進行中",
+            "alert": "警告"
         }
     },
     "palette": {

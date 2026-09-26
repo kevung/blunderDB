@@ -54,7 +54,8 @@ import {
     DirectoryCSV,
     ParseDirectoryCSV,
     DirectionFreeSlots,
-    AddParticipantAtSlot
+    AddParticipantAtSlot,
+    GetRencontre
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog, SaveCSV } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock, tMsg } from '../i18n';
@@ -136,13 +137,83 @@ export const openDirectionIdStore = writable(null);
 /** @type {import('svelte/store').Writable<DirectionSummary[]>} */
 export const directionSummariesStore = writable([]);
 
+/**
+ * Le nombre de propositions à confirmer d'une vue rejouée : « attendre » n'en est pas une, c'est
+ * le moteur qui dit qu'il n'y a rien à faire — la compter ferait clignoter un badge en permanence.
+ * @param {DirectionView | null | undefined} view
+ */
+function pendingCountOf(view) {
+    if (!view || !view.proposals) return 0;
+    return view.proposals.filter((a) => a.kind !== 'wait').length;
+}
+
 /** Le nombre de propositions en attente : ce que le badge de l'onglet montre. */
-export const pendingProposalsStore = derived(directionStore, ($d) => {
-    if (!$d || !$d.proposals) return 0;
-    // « Attendre » n'est pas une proposition à confirmer : c'est le moteur qui dit qu'il n'y a
-    // rien à faire. La compter ferait clignoter un badge en permanence.
-    return $d.proposals.filter((a) => a.kind !== 'wait').length;
-});
+export const pendingProposalsStore = derived(directionStore, ($d) => pendingCountOf($d));
+
+/*
+ * Les épreuves d'une Rencontre (ADR-0056 §5) : ouvrir l'une ouvre les autres, rejouées à côté et
+ * gardées ici tant que la Rencontre est affichée, pour que chaque onglet porte son résumé sans
+ * attendre qu'on le choisisse. `directionStore` reste la seule vue "active" (ADR-0047) ; ce
+ * store est un aparté qui ne la remplace pas.
+ */
+/** @type {import('svelte/store').Writable<Record<number, DirectionView>>} */
+const rencontreEpreuveViewsStore = writable({});
+
+/** @type {import('svelte/store').Writable<{ tournamentId: number, name: string }[]>} */
+const rencontreEpreuveOrderStore = writable([]);
+
+/**
+ * Les onglets d'épreuve à montrer dans l'en-tête, dans l'ordre de la Rencontre ; un tableau vide
+ * quand le tournoi ouvert n'en a pas — aucun changement visible pour lui.
+ */
+export const epreuveTabsStore = derived([rencontreEpreuveOrderStore, rencontreEpreuveViewsStore, openDirectionIdStore], ([$order, $views, $activeId]) =>
+    $order.map((m) => {
+        const v = $views[m.tournamentId];
+        return {
+            tournamentId: m.tournamentId,
+            name: m.name,
+            active: m.tournamentId === $activeId,
+            pending: pendingCountOf(v),
+            running: v?.running?.length || 0,
+            warning: (v?.warnings?.length || 0) > 0
+        };
+    })
+);
+
+/**
+ * Recharge les épreuves sœurs de la Rencontre du tournoi ouvert (aucune si `rencontreId` est 0),
+ * en gardant la vue déjà connue de l'épreuve active plutôt que de la redemander.
+ * @param {number} rencontreId
+ * @param {DirectionView} activeView
+ */
+async function refreshRencontreEpreuves(rencontreId, activeView) {
+    if (!rencontreId) {
+        rencontreEpreuveOrderStore.set([]);
+        rencontreEpreuveViewsStore.set({});
+        return;
+    }
+    try {
+        const room = await GetRencontre(rencontreId);
+        const members = room?.members || [];
+        rencontreEpreuveOrderStore.set(members.map((m) => ({ tournamentId: m.tournamentId, name: m.name })));
+        /** @type {Record<number, DirectionView>} */
+        const views = {};
+        for (const m of members) {
+            if (m.tournamentId === activeView.tournamentId) {
+                views[m.tournamentId] = activeView;
+                continue;
+            }
+            try {
+                views[m.tournamentId] = await GetDirection(m.tournamentId);
+            } catch (e) {
+                logger.error('direction: refreshing a sister épreuve failed', e);
+            }
+        }
+        rencontreEpreuveViewsStore.set(views);
+    } catch (e) {
+        logger.error('direction: refreshing the Rencontre failed', e);
+    }
+}
 
 /** Les avertissements courants, comptés dans la bande d'horloge. */
 export const directionWarningsStore = derived(directionStore, ($d) => ($d && $d.warnings) || []);
@@ -261,6 +332,7 @@ export async function refreshDirection() {
     if (id === null) {
         directionStore.set(null);
         clearBatchTimer();
+        refreshRencontreEpreuves(0, null);
         return null;
     }
     try {
@@ -269,11 +341,13 @@ export async function refreshDirection() {
         directionStore.set(view);
         announceNewProposals(before, get(pendingProposalsStore));
         scheduleBatchRefresh(view);
+        await refreshRencontreEpreuves(view.rencontreId || 0, view);
         return view;
     } catch (e) {
         logger.error('direction: refresh failed', e);
         directionStore.set(null);
         clearBatchTimer();
+        refreshRencontreEpreuves(0, null);
         return null;
     }
 }
@@ -347,6 +421,21 @@ function announceNewProposals(before, after) {
  * @param {number} tournamentId
  */
 export async function openDirection(tournamentId) {
+    openDirectionIdStore.set(tournamentId);
+    await publishDirectionStrings();
+    return refreshDirection();
+}
+
+/**
+ * Change d'épreuve dans la Rencontre ouverte (ADR-0056 §5) : un clic, sans confirmation, sans
+ * rien fermer ni rejouer depuis le début — la vue déjà connue de l'épreuve visée (si la Rencontre
+ * l'a chargée) s'affiche tout de suite, `refreshDirection` la rafraîchit ensuite. Mêmes gestes que
+ * `openDirection`, l'épreuve quittée restant présente dans `epreuveTabsStore`.
+ * @param {number} tournamentId
+ */
+export async function switchEpreuve(tournamentId) {
+    const cached = get(rencontreEpreuveViewsStore)[tournamentId];
+    if (cached) directionStore.set(cached);
     openDirectionIdStore.set(tournamentId);
     await publishDirectionStrings();
     return refreshDirection();
@@ -542,6 +631,8 @@ export async function forgetDirectionOutputDir() {
 export function closeDirection() {
     openDirectionIdStore.set(null);
     directionStore.set(null);
+    rencontreEpreuveOrderStore.set([]);
+    rencontreEpreuveViewsStore.set({});
 }
 
 /**

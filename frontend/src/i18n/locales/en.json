@@ -2270,6 +2270,11 @@
             "confirmTitle": "What will change in this event:",
             "noChange": "Nothing: its tables are already the room's.",
             "confirm": "Attach"
+        },
+        "epreuves": {
+            "pending": "{n} pending",
+            "running": "{n} running",
+            "alert": "Alert"
         }
     },
     "palette": {

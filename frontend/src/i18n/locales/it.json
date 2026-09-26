@@ -2270,6 +2270,11 @@
             "confirmTitle": "Cosa cambierà in questo torneo:",
             "noChange": "Niente: i suoi tavoli sono già quelli della sala.",
             "confirm": "Collega"
+        },
+        "epreuves": {
+            "pending": "{n} in attesa",
+            "running": "{n} in corso",
+            "alert": "Avviso"
         }
     },
     "palette": {

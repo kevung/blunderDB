@@ -2270,6 +2270,11 @@
             "confirmTitle": "Ce qui va changer dans cette épreuve :",
             "noChange": "Rien : ses tables sont déjà celles de la salle.",
             "confirm": "Rattacher"
+        },
+        "epreuves": {
+            "pending": "{n} en attente",
+            "running": "{n} en cours",
+            "alert": "Alerte"
         }
     },
     "palette": {

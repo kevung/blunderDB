@@ -172,7 +172,13 @@ export async function installDirectionEngine(page, opts = {}) {
                 exists = false;
                 return Promise.resolve(null);
             };
-            db.GetDirection = () => Promise.resolve(exists ? view() : null);
+            // Un id qui n'est pas celui de l'épreuve tenue ici : `room.dual` (D6.4) donne une
+            // vraie deuxième Direction, plate, pour les specs d'onglets ; sinon, inconnu.
+            db.GetDirection = (id) => {
+                if (room && room.dual && id === 2) return Promise.resolve(room.dual);
+                if (id && id !== TOURNAMENT_ID) return Promise.resolve(null);
+                return Promise.resolve(exists ? view() : null);
+            };
             // La configuration enregistrée est gardée, et l'aperçu nomme ce qui sépare la
             // candidate de celle en vigueur — pour les tables hors service seulement : le
             // reste de la comparaison est tenu en Go.
@@ -376,6 +382,7 @@ export async function installDirectionEngine(page, opts = {}) {
                 };
             }
             db.ListRencontres = () => Promise.resolve(room ? [rencontre()] : []);
+            db.GetRencontre = (id) => Promise.resolve(room && room.id === id ? rencontre() : null);
             db.SetRencontreTableOutOfService = (_id, table, out) => {
                 window.__roomGestures.push({ table, out });
                 const rest = (CONFIG.tables.unavailable || []).filter((x) => x !== table);

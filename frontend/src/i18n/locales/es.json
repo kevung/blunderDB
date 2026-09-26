@@ -2270,6 +2270,11 @@
             "confirmTitle": "Lo que cambiará en este torneo:",
             "noChange": "Nada: sus mesas ya son las de la sala.",
             "confirm": "Vincular"
+        },
+        "epreuves": {
+            "pending": "{n} pendientes",
+            "running": "{n} en curso",
+            "alert": "Alerta"
         }
     },
     "palette": {
