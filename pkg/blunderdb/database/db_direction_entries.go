@@ -152,25 +152,16 @@ func (d *Database) UpdateParticipant(tournamentID int64, id, name, club string, 
 	if st == nil {
 		return nil, direction.ErrNoDirection
 	}
-	if _, ok := st.Players[tournoi.PlayerID(id)]; !ok {
+	cur, ok := st.Players[tournoi.PlayerID(id)]
+	if !ok {
 		return nil, fmt.Errorf("direction: no entry %q", id)
 	}
-	// Re-adding under the same identifier is how the engine records a correction: the entry
-	// keeps its place, its matches and its Slots.
-	//
-	// It also CLEARS a withdrawal (the engine has no correct-without-re-entering event), so a
-	// withdrawn player's withdrawal is written again at the same instant; it forfeits nothing.
-	// Coming back is ReinstateParticipant.
-	withdrawn := st.Withdrawn[tournoi.PlayerID(id)]
-	now := time.Now()
-	p := tournoi.Player{ID: tournoi.PlayerID(id), Name: name, Club: club, Rating: rating}
-	if err := dir.Apply(ctx, tournoi.PlayerAddedEvent(p, now)); err != nil {
+	// The whole record travels, so what this form does not edit keeps its value; a correction
+	// leaves the entry's place, its matches, its Slots and a withdrawal untouched.
+	p := *cur
+	p.Name, p.Club, p.Rating = name, club, rating
+	if err := dir.Apply(ctx, tournoi.PlayerUpdatedEvent(p, time.Now())); err != nil {
 		return nil, err
-	}
-	if withdrawn {
-		if err := dir.Apply(ctx, tournoi.PlayerWithdrawnEvent(p.ID, now)); err != nil {
-			return nil, err
-		}
 	}
 	return d.GetDirection(tournamentID)
 }

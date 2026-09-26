@@ -1,7 +1,12 @@
 package database
 
 import (
+	"context"
 	"testing"
+	"time"
+
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
 // preparedDirection directs a Tournament and leaves it in preparation, with no entry.
@@ -243,17 +248,21 @@ func participantState(t *testing.T, d *Database, tID int64, id string) string {
 	return ""
 }
 
-// TestUpdateWithdrawnKeepsWithdrawal: the engine records a correction as the entry added
-// again under the same identifier, which clears a withdrawal: correcting a withdrawn player's
-// club must not silently put them back in play.
+// TestUpdateWithdrawnKeepsWithdrawal: correcting a withdrawn player's club must not silently
+// put them back in play, and it is ONE decision in the journal.
 func TestUpdateWithdrawnKeepsWithdrawal(t *testing.T) {
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 8)
 	if _, err := d.WithdrawParticipant(tID, "aa", false); err != nil {
 		t.Fatal(err)
 	}
+	before := len(journalOf(t, d, tID))
 	if _, err := d.UpdateParticipant(tID, "aa", "Joueur aa", "Lyon", 5); err != nil {
 		t.Fatal(err)
+	}
+	j := journalOf(t, d, tID)
+	if len(j) != before+1 || j[len(j)-1].Kind != tournoi.EvPlayerUpdated {
+		t.Fatalf("a correction writes one player_updated, got %d events ending in %q", len(j)-before, j[len(j)-1].Kind)
 	}
 	if got := participantState(t, d, tID, "aa"); got != "withdrawn" {
 		t.Fatalf("a corrected entry must stay withdrawn, got %q", got)
@@ -271,6 +280,39 @@ func TestUpdateWithdrawnKeepsWithdrawal(t *testing.T) {
 	for _, a := range v.Proposals {
 		if a.A == "aa" || a.B == "aa" {
 			t.Errorf("a withdrawn player is proposed again after a correction: %+v", a)
+		}
+	}
+}
+
+// TestOldCorrectionPairStillReads: journals written before player_updated recorded a
+// correction of a withdrawn entry as the entry added again, then withdrawn again at the same
+// instant. Replayed, that pair still leaves the corrected, withdrawn entry.
+func TestOldCorrectionPairStillReads(t *testing.T) {
+	d := newTestDB(t)
+	tID := startedDirection(t, d, 8)
+	if _, err := d.WithdrawParticipant(tID, "aa", false); err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now()
+	p := *dir.State().Players["aa"]
+	p.Club = "Lyon"
+	for _, ev := range []tournoi.Event{tournoi.PlayerAddedEvent(p, now), tournoi.PlayerWithdrawnEvent(p.ID, now)} {
+		if err := dir.Apply(ctx, ev); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if got := participantState(t, d, tID, "aa"); got != "withdrawn" {
+		t.Fatalf("the old pair replays as a withdrawn entry, got %q", got)
+	}
+	rows, _ := d.Participants(tID)
+	for _, r := range rows {
+		if r.ID == "aa" && r.Club != "Lyon" {
+			t.Errorf("the old pair's correction is lost, club %q", r.Club)
 		}
 	}
 }
