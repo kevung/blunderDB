@@ -273,6 +273,8 @@ var databaseParity = map[string]parityEntry{
 	"UpdateParticipant":                 {Why: whyDirection},
 	"WithdrawParticipant":               {Why: whyDirection},
 	"ReinstateParticipant":              {Why: whyDirection},
+	"MakeParticipantAbsent":             {Why: whyDirection},
+	"MakeParticipantAvailable":          {Why: whyDirection},
 	"CorrectResult":                     {Why: whyDirection},
 	"FinishedMatches":                   {Why: whyDirection},
 	"LastDecision":                      {Why: whyDirection},

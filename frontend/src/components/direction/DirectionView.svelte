@@ -48,6 +48,8 @@
         updatePair,
         withdrawParticipant,
         reinstateParticipant,
+        makeParticipantAbsent,
+        makeParticipantAvailable,
         brackets,
         standings,
         standingsCSV,
@@ -101,6 +103,12 @@
     const view = $derived($directionStore);
     // Pas `state` : chaque rune `$state` se lirait comme un abonnement au store `state`.
     const directionState = $derived(view?.state || 'draft');
+    // Un retour "à la ronde N" n'a de sens que dans un suisse par rondes (absence.go) : sinon
+    // le moteur le refuse, et la case ne doit même pas être proposée.
+    const roundsMode = $derived.by(() => {
+        const ph = view?.config?.phases?.[view?.phase ?? -1];
+        return !!ph && ph.kind === 'swiss_lives' && ph.mode === 'rounds';
+    });
 
     /* Onglet d'ouverture : Réglages en préparation, Direction en cours. Seulement à
        l'ouverture : les Réglages restent accessibles en cours de tournoi. */
@@ -255,6 +263,10 @@
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
     /** @type {(i: string) => Promise<void>} */
     const onReinstate = (i) => act(() => reinstateParticipant(i), 'direction.players.error');
+    /** @type {(i: string, until: string, round: number) => Promise<void>} */
+    const onAbsent = (i, until, round) => act(() => makeParticipantAbsent(i, until, round), 'direction.players.error');
+    /** @type {(i: string) => Promise<void>} */
+    const onReturn = (i) => act(() => makeParticipantAvailable(i), 'direction.players.error');
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
     /* Rouvrir est explicite (le classement cesse d'être final), confirmé dans le Classement. */
@@ -574,6 +586,9 @@
                 pairs={view?.pairs || {}}
                 {onWithdraw}
                 {onReinstate}
+                {onAbsent}
+                {onReturn}
+                {roundsMode}
                 slots={openSlots}
                 infos={view?.infos || []}
                 {onAddAtSlot}

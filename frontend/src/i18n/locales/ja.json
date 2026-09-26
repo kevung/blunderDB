@@ -1980,12 +1980,22 @@
             "withdrawLaterHint": "以後は組まれませんが、今の試合は最後まで行います。",
             "reinstate": "再登録",
             "reinstateHint": "再登録します：棄権したときの成績と残りライフのまま、再び組み合わせの対象になります。棄権時に不戦敗となった対局はそのままです。",
+            "absent": "不在にする",
+            "absentHint": "一時的に不在にします。組み合わせの対象からは外れますが、順位・残りライフ・立場はそのまま保たれます（棄権ではありません）。",
+            "absentUntilTime": "復帰時刻",
+            "absentUntilRound": "復帰ラウンド",
+            "absentConfirm": "確定",
+            "absentUntilTimeLabel": "{time} まで不在",
+            "absentUntilRoundLabel": "第{n}ラウンドまで不在",
+            "return": "復帰",
+            "returnHint": "不在を解除し、すぐに組み合わせの対象に戻します。",
             "none": "登録者がいません。",
             "states": {
                 "free": "待機",
                 "playing": "対戦中",
                 "withdrawn": "棄権",
-                "leaving": "試合後に退出"
+                "leaving": "試合後に退出",
+                "absent": "不在"
             },
             "error": "登録できませんでした。",
             "entersAt": "参加先",

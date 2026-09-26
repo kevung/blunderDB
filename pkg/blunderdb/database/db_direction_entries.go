@@ -31,9 +31,13 @@ type ParticipantRow struct {
 	// Opponents are the names already met, which is what a director checks before pairing
 	// two people by hand.
 	Opponents []string `json:"opponents,omitempty"`
-	// State is a CODE — playing, free, withdrawn, leaving — rendered by the frontend.
+	// State is a CODE — playing, free, withdrawn, leaving, absent — rendered by the frontend.
 	State string `json:"state"`
 	Table int    `json:"table,omitempty"`
+	// AbsentUntil (RFC3339) and AbsentRound say WHEN an "absent" row returns — one of the two,
+	// never both (the engine refuses declaring both at once).
+	AbsentUntil string `json:"absentUntil,omitempty"`
+	AbsentRound int    `json:"absentRound,omitempty"`
 }
 
 // EntrySuggestion is a Player of this database offered at entry time: the literal name their
@@ -74,6 +78,7 @@ func (d *Database) Participants(tournamentID int64) ([]ParticipantRow, error) {
 		busy[m.A], busy[m.B] = m, m
 	}
 	ph := st.Phases[st.Current]
+	now := time.Now()
 	out := make([]ParticipantRow, 0, len(st.Order))
 	for _, id := range st.Order {
 		p := st.Players[id]
@@ -91,6 +96,19 @@ func (d *Database) Participants(tournamentID int64) ([]ParticipantRow, error) {
 		for _, o := range ph.Opponents[id] {
 			row.Opponents = append(row.Opponents, playerNameIn(st, o))
 		}
+		// isAbsent replays the engine's own absent() test (unexported): a time deadline
+		// compares to the wall clock, a round deadline to the phase's own round counter. Only
+		// used to LABEL the row — the engine decides pairing on its own, from the journal.
+		absence, declared := st.Unavailable[id]
+		isAbsent := declared
+		if declared {
+			switch {
+			case absence.Round > 0:
+				isAbsent = absence.Phase == st.Current && ph.Round < absence.Round
+			case !absence.Until.IsZero():
+				isAbsent = now.Before(absence.Until)
+			}
+		}
 		switch {
 		case st.Withdrawn[id]:
 			row.State = "withdrawn"
@@ -100,6 +118,13 @@ func (d *Database) Participants(tournamentID int64) ([]ParticipantRow, error) {
 		case busy[id] != nil:
 			row.State = "playing"
 			row.Table = busy[id].Table
+		case isAbsent:
+			row.State = "absent"
+			if absence.Round > 0 {
+				row.AbsentRound = absence.Round
+			} else {
+				row.AbsentUntil = absence.Until.Format(time.RFC3339)
+			}
 		default:
 			row.State = "free"
 		}
@@ -209,6 +234,54 @@ func (d *Database) WithdrawParticipant(tournamentID int64, id string, afterCurre
 		ev = tournoi.PlayerWithdrawnAfterCurrentEvent(tournoi.PlayerID(id), time.Now())
 	}
 	if err := dir.Apply(ctx, ev); err != nil {
+		return nil, err
+	}
+	return d.GetDirection(tournamentID)
+}
+
+// MakeParticipantAbsent declares a player unavailable for a time (D7.1): they keep their rank,
+// their lives and everywhere they stand, but the engine stops pairing them — a suisse waits for
+// them by name, a bracket holds their match without a table — until the deadline. Exactly one
+// of until/round is given: until (RFC3339, empty = none) for a return at an hour, round (0 =
+// none) for a return at a round of the current swiss-by-rounds phase. Giving both, or neither,
+// or a round outside a rounds phase, is refused by the engine itself.
+func (d *Database) MakeParticipantAbsent(tournamentID int64, id, until string, round int) (*DirectionView, error) {
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	var ev tournoi.Event
+	if round > 0 {
+		ev = tournoi.PlayerUnavailableUntilRoundEvent(tournoi.PlayerID(id), round, time.Now())
+	} else {
+		var t time.Time
+		if until != "" {
+			t, err = time.Parse(time.RFC3339, until)
+			if err != nil {
+				return nil, fmt.Errorf("direction: absence: heure de retour invalide: %w", err)
+			}
+		}
+		if t.IsZero() {
+			return nil, fmt.Errorf("direction: absence: une heure ou une ronde de retour est requise")
+		}
+		ev = tournoi.PlayerUnavailableEvent(tournoi.PlayerID(id), t, time.Now())
+	}
+	if err := dir.Apply(ctx, ev); err != nil {
+		return nil, err
+	}
+	return d.GetDirection(tournamentID)
+}
+
+// MakeParticipantAvailable lifts an absence, whatever its deadline, and returns the player to
+// pairing right away — the one-click way back the queue's own countdown does automatically.
+func (d *Database) MakeParticipantAvailable(tournamentID int64, id string) (*DirectionView, error) {
+	ctx := context.Background()
+	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	if err := dir.Apply(ctx, tournoi.PlayerAvailableEvent(tournoi.PlayerID(id), time.Now())); err != nil {
 		return nil, err
 	}
 	return d.GetDirection(tournamentID)

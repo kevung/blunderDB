@@ -241,6 +241,28 @@ export async function installDirectionEngine(page, opts = {}) {
                 events += 1;
                 return Promise.resolve(view());
             };
+            // Absenter/revenir (D7.1) : un joueur absent garde son rang et ses vies, il quitte
+            // seulement l'appariement — donc `pair()` n'est pas relancé sur `withdrawn`.
+            db.MakeParticipantAbsent = (_id, participantId, until, round) => {
+                const p = players.find((x) => x.id === participantId);
+                if (!p) return Promise.reject(new Error('no such participant'));
+                if (!until && !round) return Promise.reject(new Error('needs until or round'));
+                p.state = 'absent';
+                p.absentUntil = until || '';
+                p.absentRound = round || 0;
+                events += 1;
+                return Promise.resolve(view());
+            };
+            db.MakeParticipantAvailable = (_id, participantId) => {
+                const p = players.find((x) => x.id === participantId);
+                if (p && p.state === 'absent') {
+                    delete p.state;
+                    delete p.absentUntil;
+                    delete p.absentRound;
+                }
+                events += 1;
+                return Promise.resolve(view());
+            };
             db.Participants = () =>
                 Promise.resolve(
                     players.map((p) => ({
@@ -253,7 +275,9 @@ export async function installDirectionEngine(page, opts = {}) {
                         losses: 0,
                         lives: 2,
                         opponents: [],
-                        table: 0
+                        table: 0,
+                        absentUntil: p.absentUntil || '',
+                        absentRound: p.absentRound || 0
                     }))
                 );
             db.EntrySuggestions = () => Promise.resolve([]);

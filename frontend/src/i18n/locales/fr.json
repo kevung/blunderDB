@@ -1980,12 +1980,22 @@
             "withdrawLaterHint": "Il n’est plus apparié mais finit le match qu’il joue.",
             "reinstate": "Réinscrire",
             "reinstateHint": "Le réinscrire : il est de nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les matchs perdus par forfait à son retrait le restent.",
+            "absent": "Absenter",
+            "absentHint": "Absent pour un temps : il n'est plus apparié, mais garde son rang, ses vies, sa place — sans le retirer.",
+            "absentUntilTime": "Jusqu'à",
+            "absentUntilRound": "Jusqu'à la ronde",
+            "absentConfirm": "Valider",
+            "absentUntilTimeLabel": "jusqu'à {time}",
+            "absentUntilRoundLabel": "jusqu'à la ronde {n}",
+            "return": "Revenir",
+            "returnHint": "Lever l'absence : il redevient appariable tout de suite.",
             "none": "Personne d’inscrit.",
             "states": {
                 "free": "libre",
                 "playing": "en jeu",
                 "withdrawn": "retiré",
-                "leaving": "part après son match"
+                "leaving": "part après son match",
+                "absent": "absent"
             },
             "error": "Impossible d’enregistrer cette inscription.",
             "entersAt": "entre",

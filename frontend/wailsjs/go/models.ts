@@ -1127,6 +1127,8 @@ export namespace database {
 	    opponents?: string[];
 	    state: string;
 	    table?: number;
+	    absentUntil?: string;
+	    absentRound?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new ParticipantRow(source);
@@ -1145,6 +1147,8 @@ export namespace database {
 	        this.opponents = source["opponents"];
 	        this.state = source["state"];
 	        this.table = source["table"];
+	        this.absentUntil = source["absentUntil"];
+	        this.absentRound = source["absentRound"];
 	    }
 	}
 	

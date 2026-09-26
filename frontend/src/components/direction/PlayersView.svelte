@@ -17,6 +17,13 @@
         onWithdraw = () => {},
         // Le retour d'un retiré est un geste nommé : corriger sa fiche ne le réinscrit plus.
         onReinstate = (/** @type {string} */ _id) => {},
+        // Absenter (D7.1) : jusqu'à une heure (until, ISO 8601) ou jusqu'à une ronde (round),
+        // jamais les deux — le moteur refuse sinon. Le retour est un second geste, à un clic.
+        onAbsent = (/** @type {string} */ _id, /** @type {string} */ _until, /** @type {number} */ _round) => {},
+        onReturn = (/** @type {string} */ _id) => {},
+        // "à la ronde N" n'a de sens qu'au suisse par rondes en cours ; sinon la case ne doit
+        // même pas être proposée.
+        roundsMode = false,
         // Les places d'exemption encore libres et les inscrits qui n'ont pas encore de place.
         // Vides en préparation : il n'y a pas de retardataire avant le tirage.
         slots = [],
@@ -138,6 +145,63 @@
         }
         await onUpdate(editing.id, editing.name.trim(), editing.club.trim(), num(editing.rating));
         editing = null;
+    }
+
+    /* Le formulaire d'absence : une ligne à la fois, sous le nom du joueur, plutôt qu'une
+       fenêtre — la place se lit à côté de la ligne qu'elle concerne (fonctionnel.md §4). */
+    let absentEditing = $state(/** @type {string | null} */ (null));
+    let absentTime = $state('');
+    let absentRound = $state('');
+
+    /* Par défaut, dans une demi-heure : la director n'a rien à taper pour le cas courant. */
+    function defaultAbsentTime() {
+        const d = new Date(Date.now() + 30 * 60000);
+        return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    }
+
+    /** @param {import('../../../wailsjs/go/models').database.ParticipantRow} r */
+    function openAbsent(r) {
+        absentEditing = r.id;
+        absentTime = defaultAbsentTime();
+        absentRound = '';
+    }
+
+    /* Une heure du jour devient un instant : aujourd'hui, ou demain si l'heure est déjà passée.
+       Des Date jetables, jamais mutées (svelte/prefer-svelte-reactivity) : seul le constructeur
+       et des lecteurs (getFullYear…) les touchent. */
+    /** @param {string} hhmm */
+    function untilFromTime(hhmm) {
+        const [h, m] = hhmm.split(':').map(Number);
+        const today = new Date();
+        const candidate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), h, m, 0, 0).getTime();
+        const chosen = candidate <= Date.now() ? candidate + 86400000 : candidate;
+        return new Date(chosen).toISOString();
+    }
+
+    /** @param {string} id */
+    async function confirmAbsentTime(id) {
+        if (!absentTime) return;
+        await onAbsent(id, untilFromTime(absentTime), 0);
+        absentEditing = null;
+    }
+
+    /** @param {string} id */
+    async function confirmAbsentRound(id) {
+        const n = parseInt(absentRound, 10);
+        if (!Number.isFinite(n) || n < 1) return;
+        await onAbsent(id, '', n);
+        absentEditing = null;
+    }
+
+    /** @param {import('../../../wailsjs/go/models').database.ParticipantRow} r */
+    function absentLabel(r) {
+        if (r.absentRound) return $t('direction.players.absentUntilRoundLabel', { n: r.absentRound });
+        if (r.absentUntil) {
+            const d = new Date(r.absentUntil);
+            const hhmm = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            return $t('direction.players.absentUntilTimeLabel', { time: hhmm });
+        }
+        return '';
     }
 </script>
 
@@ -274,13 +338,36 @@
                         {/if}
                         <td class="muted">
                             {$t(`direction.players.states.${r.state}`)}
+                            {#if r.state === 'absent'}
+                                &middot; {absentLabel(r)}
+                            {/if}
                             {#if r.table}
                                 &middot; {$t('direction.proposals.table', { n: r.table })}
                             {/if}
                         </td>
                         <td class="actions">
                             <button type="button" data-testid="direction-player-correct" disabled={busy} onclick={() => startEdit(r)}>{$t('direction.players.correct')}</button>
-                            {#if r.state !== 'withdrawn'}
+                            {#if r.state === 'withdrawn'}
+                                <button type="button" data-testid="direction-player-reinstate" disabled={busy} onclick={() => onReinstate(r.id)} title={$t('direction.players.reinstateHint')}
+                                    >{$t('direction.players.reinstate')}</button
+                                >
+                            {:else if r.state === 'absent'}
+                                <button type="button" class="primary" data-testid="direction-player-return" disabled={busy} onclick={() => onReturn(r.id)} title={$t('direction.players.returnHint')}
+                                    >{$t('direction.players.return')}</button
+                                >
+                                <button
+                                    type="button"
+                                    data-testid="direction-player-withdraw-now"
+                                    disabled={busy}
+                                    onclick={() => onWithdraw(r.id, false)}
+                                    title={$t('direction.players.withdrawNowHint')}>{$t('direction.players.withdrawNow')}</button
+                                >
+                            {:else}
+                                {#if r.state === 'free'}
+                                    <button type="button" data-testid="direction-player-absent" disabled={busy} onclick={() => openAbsent(r)} title={$t('direction.players.absentHint')}
+                                        >{$t('direction.players.absent')}</button
+                                    >
+                                {/if}
                                 <button
                                     type="button"
                                     data-testid="direction-player-withdraw-now"
@@ -297,14 +384,29 @@
                                         title={$t('direction.players.withdrawLaterHint')}>{$t('direction.players.withdrawLater')}</button
                                     >
                                 {/if}
-                            {:else}
-                                <button type="button" data-testid="direction-player-reinstate" disabled={busy} onclick={() => onReinstate(r.id)} title={$t('direction.players.reinstateHint')}
-                                    >{$t('direction.players.reinstate')}</button
-                                >
                             {/if}
                         </td>
                     {/if}
                 </tr>
+                {#if absentEditing === r.id}
+                    <tr class="absent-form" data-testid="direction-player-absent-form">
+                        <td colspan="8">
+                            <span class="absent-label">{$t('direction.players.absentUntilTime')}</span>
+                            <input type="time" bind:value={absentTime} data-testid="direction-player-absent-time" />
+                            <button type="button" class="primary" disabled={busy || !absentTime} onclick={() => confirmAbsentTime(r.id)} data-testid="direction-player-absent-confirm-time"
+                                >{$t('direction.players.absentConfirm')}</button
+                            >
+                            {#if roundsMode}
+                                <span class="absent-label">{$t('direction.players.absentUntilRound')}</span>
+                                <input type="number" min="1" bind:value={absentRound} data-testid="direction-player-absent-round" />
+                                <button type="button" disabled={busy || !absentRound} onclick={() => confirmAbsentRound(r.id)} data-testid="direction-player-absent-confirm-round"
+                                    >{$t('direction.players.absentConfirm')}</button
+                                >
+                            {/if}
+                            <button type="button" onclick={() => (absentEditing = null)}>{$t('common.cancel')}</button>
+                        </td>
+                    </tr>
+                {/if}
             {/each}
             {#if shown.length === 0}
                 <tr><td colspan="8" class="muted">{$t('direction.players.none')}</td></tr>
@@ -472,5 +574,30 @@
         padding: 0;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
+    }
+
+    /* Le formulaire d'absence : une ligne sous celle du joueur, pas une fenêtre — la place se
+       lit à côté de la ligne qu'elle concerne. */
+    .absent-form td {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        flex-wrap: wrap;
+        padding: 0.3rem 0.4rem;
+        background: var(--color-surface-alt);
+    }
+
+    .absent-label {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+    }
+
+    .absent-form input[type='time'],
+    .absent-form input[type='number'] {
+        padding: 0.15rem 0.3rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
     }
 </style>

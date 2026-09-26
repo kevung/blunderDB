@@ -26,6 +26,8 @@ import {
     UpdateParticipant,
     WithdrawParticipant,
     ReinstateParticipant,
+    MakeParticipantAbsent,
+    MakeParticipantAvailable,
     EnterParticipants,
     Brackets,
     Standings,
@@ -696,6 +698,34 @@ export async function withdrawParticipant(participantId, afterCurrent) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
     const view = await WithdrawParticipant(id, participantId, afterCurrent);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Absente un joueur (D7.1) : il n'est plus apparié jusqu'à l'échéance, mais garde son rang, ses
+ * vies, sa place — un `until` (ISO) OU un `round`, jamais les deux (le moteur refuse sinon).
+ *
+ * @param {string} participantId
+ * @param {string} until ISO 8601, vide si round est donné
+ * @param {number} round 0 si until est donné
+ */
+export async function makeParticipantAbsent(participantId, until, round) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await MakeParticipantAbsent(id, participantId, until || '', round || 0);
+    directionStore.set(view);
+    return view;
+}
+
+/**
+ * Lève l'absence d'un joueur, tout de suite : le retour en un clic.
+ * @param {string} participantId
+ */
+export async function makeParticipantAvailable(participantId) {
+    const id = get(openDirectionIdStore);
+    if (id === null) return null;
+    const view = await MakeParticipantAvailable(id, participantId);
     directionStore.set(view);
     return view;
 }

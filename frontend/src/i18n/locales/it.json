@@ -1980,12 +1980,22 @@
             "withdrawLaterHint": "Non viene più abbinato, ma finisce la partita in corso.",
             "reinstate": "Reiscrivi",
             "reinstateHint": "Reiscriverlo: torna a essere abbinato, con i risultati e le vite che aveva quando si è ritirato; i match persi a tavolino al ritiro restano persi.",
+            "absent": "Segna assente",
+            "absentHint": "Assente per un po': non più abbinato, ma mantiene il suo rango, le sue vite e il suo posto — senza ritirarlo.",
+            "absentUntilTime": "Fino a",
+            "absentUntilRound": "Fino al turno",
+            "absentConfirm": "Conferma",
+            "absentUntilTimeLabel": "fino alle {time}",
+            "absentUntilRoundLabel": "fino al turno {n}",
+            "return": "Rientra",
+            "returnHint": "Togliere l'assenza: torna subito abbinabile.",
             "none": "Nessun iscritto.",
             "states": {
                 "free": "libero",
                 "playing": "in gioco",
                 "withdrawn": "ritirato",
-                "leaving": "esce dopo la partita"
+                "leaving": "esce dopo la partita",
+                "absent": "assente"
             },
             "error": "Impossibile registrare questa iscrizione.",
             "entersAt": "entra",

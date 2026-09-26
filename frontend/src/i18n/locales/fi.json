@@ -1980,12 +1980,22 @@
             "withdrawLaterHint": "Ei enää pareja, mutta pelaa ottelunsa loppuun.",
             "reinstate": "Palauta",
             "reinstateHint": "Palauta pelaaja: hänet paritetaan taas, niillä tuloksilla ja elämillä jotka hänellä oli lähtiessään; vetäytymisessä luovutuksella hävityt ottelut pysyvät hävittyinä.",
+            "absent": "Merkitse poissaolevaksi",
+            "absentHint": "Poissa hetken: ei enää paritettavana, mutta säilyttää sijansa, elämänsä ja paikkansa — ilman vetäytymistä.",
+            "absentUntilTime": "Kunnes",
+            "absentUntilRound": "Kierrokseen asti",
+            "absentConfirm": "Vahvista",
+            "absentUntilTimeLabel": "kunnes {time}",
+            "absentUntilRoundLabel": "kierrokseen {n} asti",
+            "return": "Palaa",
+            "returnHint": "Poista poissaolo: hänet paritetaan heti taas.",
             "none": "Ei ilmoittautuneita.",
             "states": {
                 "free": "vapaa",
                 "playing": "pelaa",
                 "withdrawn": "poistunut",
-                "leaving": "lähtee ottelun jälkeen"
+                "leaving": "lähtee ottelun jälkeen",
+                "absent": "poissa"
             },
             "error": "Ilmoittautumista ei voitu kirjata.",
             "entersAt": "tulee mukaan",
