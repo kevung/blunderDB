@@ -478,6 +478,7 @@ export namespace database {
 	    engineVersion: string;
 	    outputDir: string;
 	    updatedAt: string;
+	    rencontreName?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new DirectionSummary(source);
@@ -490,6 +491,7 @@ export namespace database {
 	        this.engineVersion = source["engineVersion"];
 	        this.outputDir = source["outputDir"];
 	        this.updatedAt = source["updatedAt"];
+	        this.rencontreName = source["rencontreName"];
 	    }
 	}
 	export class DirectionView {

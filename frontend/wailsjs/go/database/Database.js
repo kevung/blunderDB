@@ -818,6 +818,10 @@ export function RencontreOf(arg1) {
   return window['go']['database']['Database']['RencontreOf'](arg1);
 }
 
+export function RencontrePageHTML(arg1) {
+  return window['go']['database']['Database']['RencontrePageHTML'](arg1);
+}
+
 export function ReopenDirection(arg1) {
   return window['go']['database']['Database']['ReopenDirection'](arg1);
 }
@@ -956,6 +960,10 @@ export function SetMigrationProgress(arg1) {
 
 export function SetRencontreBreaks(arg1, arg2) {
   return window['go']['database']['Database']['SetRencontreBreaks'](arg1, arg2);
+}
+
+export function SetRencontreOutputDir(arg1, arg2) {
+  return window['go']['database']['Database']['SetRencontreOutputDir'](arg1, arg2);
 }
 
 export function SetRencontreTableOutOfService(arg1, arg2, arg3) {
@@ -1124,4 +1132,8 @@ export function WriteDirectionPairingSheet(arg1, arg2) {
 
 export function WriteDirectionUpcomingSheet(arg1, arg2) {
   return window['go']['database']['Database']['WriteDirectionUpcomingSheet'](arg1, arg2);
+}
+
+export function WriteRencontrePage(arg1) {
+  return window['go']['database']['Database']['WriteRencontrePage'](arg1);
 }

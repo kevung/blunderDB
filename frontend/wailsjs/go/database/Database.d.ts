@@ -421,6 +421,8 @@ export function RemovePositionsFromCollection(arg1:number,arg2:Array<number>):Pr
 
 export function RencontreOf(arg1:number):Promise<number>;
 
+export function RencontrePageHTML(arg1:number):Promise<string>;
+
 export function ReopenDirection(arg1:number):Promise<database.DirectionView>;
 
 export function ReorderCollectionPositions(arg1:number,arg2:Array<number>):Promise<void>;
@@ -490,6 +492,8 @@ export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 export function SetMigrationProgress(arg1:any):Promise<void>;
 
 export function SetRencontreBreaks(arg1:number,arg2:string):Promise<database.RencontreView>;
+
+export function SetRencontreOutputDir(arg1:number,arg2:string):Promise<database.RencontreView>;
 
 export function SetRencontreTableOutOfService(arg1:number,arg2:number,arg3:boolean):Promise<database.RencontreView>;
 
@@ -574,3 +578,5 @@ export function WriteDirectionPage(arg1:number):Promise<string>;
 export function WriteDirectionPairingSheet(arg1:number,arg2:number):Promise<string>;
 
 export function WriteDirectionUpcomingSheet(arg1:number,arg2:string):Promise<string>;
+
+export function WriteRencontrePage(arg1:number):Promise<string>;
