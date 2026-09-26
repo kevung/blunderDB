@@ -66,6 +66,8 @@
                 return $t('direction.history.created');
             case 'player_added':
                 return $t('direction.history.entered', { player: e.playerName || e.player });
+            case 'player_updated':
+                return $t('direction.history.updated', { player: e.playerName || e.player });
             case 'player_withdrawn':
                 return $t('direction.history.withdrawn', { player: e.playerName || e.player });
             case 'match_started':

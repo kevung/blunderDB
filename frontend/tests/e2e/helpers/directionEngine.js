@@ -102,7 +102,7 @@ export async function installDirectionEngine(page, opts = {}) {
                 return {
                     tournamentId: TOURNAMENT_ID,
                     state: !exists ? 'draft' : running.length || last ? 'running' : 'draft',
-                    engineVersion: 'v0.2.1',
+                    engineVersion: 'v0.3.0',
                     outputDir: '',
                     config: CONFIG,
                     proposals,
@@ -140,7 +140,7 @@ export async function installDirectionEngine(page, opts = {}) {
                 for (let i = 0; i < runningAtStart && proposals.length; i++) start(proposals[0].a, proposals[0].b, 7, 0);
             }
 
-            db.ListDirections = () => Promise.resolve(exists ? [{ tournamentId: TOURNAMENT_ID, state: view().state, engineVersion: 'v0.2.1', outputDir: '', updatedAt: '' }] : []);
+            db.ListDirections = () => Promise.resolve(exists ? [{ tournamentId: TOURNAMENT_ID, state: view().state, engineVersion: 'v0.3.0', outputDir: '', updatedAt: '' }] : []);
             db.HasDirection = () => Promise.resolve(exists);
             db.CreateDirection = () => {
                 exists = true;

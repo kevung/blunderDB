@@ -1871,7 +1871,9 @@
             "finalist": "finalist",
             "alive": "alive ({lives} lives)",
             "record": "{wins} wins, {losses} losses",
-            "forfeit": "withdrawn",
+            "forfeit": "μη εμφάνιση",
+            "withdrawn": "αποσύρθηκε ({wins} νίκες, {losses} ήττες)",
+            "withdrawnSection": "αποσύρθηκε ({section}, {sub})",
             "running": "still in",
             "awaiting_draw": "awaiting the draw",
             "unranked": "unranked",
@@ -1883,13 +1885,17 @@
             "bracket_wrong_players": "Match {match} ({section}, {label}): {a} against {b}, but the bracket expects {expectedA} against {expectedB}.",
             "score_over_length": "Match {match}: score {scoreA}-{scoreB} beyond the length {length}.",
             "ends_in_break": "Match {match}: its expected end falls during a break.",
-            "slow_match": "Match {match}: running beyond the expected time."
+            "slow_match": "Match {match}: running beyond the expected time.",
+            "table_shared": "Τραπέζι {table}: οι αγώνες {other} και {match} παίζονται και οι δύο εκεί.",
+            "correction_eliminates_running": "Αγώνας {match}: ο/η {player} δεν έχει πια ζωή μετά από διόρθωση, και παίζει ακόμα.",
+            "correction_revives": "Ο/Η {player} ξαναβρίσκει μια ζωή μετά από διόρθωση: μπορεί ξανά να ζευγαρωθεί."
         },
         "reason": {
             "matches_running": "Αγώνες σε εξέλιξη.",
             "no_pairing": "Καμία κλήρωση δυνατή προς το παρόν.",
             "waiting_batch": "Κλήρωση στην επόμενη παρτίδα.",
-            "waiting_table": "κανένα ελεύθερο τραπέζι"
+            "waiting_table": "κανένα ελεύθερο τραπέζι",
+            "player_unavailable": "μη διαθέσιμος παίκτης"
         },
         "proposals": {
             "title": "Προτάσεις ({n})",
@@ -2028,6 +2034,7 @@
             "created": "Το τουρνουά δημιουργήθηκε",
             "entered": "Ο/Η {player} εγγράφηκε",
             "withdrawn": "Ο/Η {player} αποσύρθηκε",
+            "updated": "Διορθώθηκε η εγγραφή του/της {player}",
             "started": "{a} – {b} ξεκίνησε · {where}",
             "result": "Ο/Η {winner} νικά {scoreA}–{scoreB}",
             "resultNoScore": "Ο/Η {winner} νικά",

@@ -53,6 +53,21 @@ describe('les codes du moteur deviennent des phrases', () => {
         expect(renderNote(t, { kind: 'winner' })).toBe('vainqueur');
     });
 
+    test('un retiré est situé par son bilan en suisse, par sa section en tableau', () => {
+        expect(renderNote(t, { kind: 'withdrawn', wins: 4, losses: 2, lives: 1 })).toBe('retiré (4 victoires, 2 défaites)');
+        expect(renderNote(t, { kind: 'withdrawn', section: 'main', sub: { kind: 'semi_final' } })).toBe('retiré (principal, Demi-finale)');
+        expect(renderNote(t, { kind: 'forfeit' })).toBe('forfait');
+    });
+
+    test('les avertissements de table partagée et de correction nomment la table et le joueur', () => {
+        /** @type {Record<string, string>} */
+        const names = { alice: 'Alice' };
+        const name = (/** @type {any} */ id) => names[id] || id;
+        expect(renderWarning(t, { code: 'table_shared', table: 3, match: 'M7', other: 'M5' }, name)).toBe('Table 3 : les matchs M5 et M7 y sont en cours tous les deux.');
+        expect(renderWarning(t, { code: 'correction_eliminates_running', match: 'M9', player: 'alice' }, name)).toContain('Alice');
+        expect(renderWarning(tEn, { code: 'correction_revives', player: 'alice' }, name)).toBe('Alice regains a life after a correction: can be paired again.');
+    });
+
     test('un avertissement nomme les joueurs, pas leurs identifiants', () => {
         const w = {
             code: 'bracket_wrong_players',

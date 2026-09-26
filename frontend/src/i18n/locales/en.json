@@ -1871,7 +1871,9 @@
             "finalist": "finalist",
             "alive": "alive ({lives} lives)",
             "record": "{wins} wins, {losses} losses",
-            "forfeit": "withdrawn",
+            "forfeit": "forfeit",
+            "withdrawn": "withdrawn ({wins} wins, {losses} losses)",
+            "withdrawnSection": "withdrawn ({section}, {sub})",
             "running": "still in",
             "awaiting_draw": "awaiting the draw",
             "unranked": "unranked",
@@ -1883,13 +1885,17 @@
             "bracket_wrong_players": "Match {match} ({section}, {label}): {a} against {b}, but the bracket expects {expectedA} against {expectedB}.",
             "score_over_length": "Match {match}: score {scoreA}-{scoreB} beyond the length {length}.",
             "ends_in_break": "Match {match}: its expected end falls during a break.",
-            "slow_match": "Match {match}: running beyond the expected time."
+            "slow_match": "Match {match}: running beyond the expected time.",
+            "table_shared": "Table {table}: matches {other} and {match} are both running there.",
+            "correction_eliminates_running": "Match {match}: {player} has no life left since a correction, and is still playing.",
+            "correction_revives": "{player} regains a life after a correction: can be paired again."
         },
         "reason": {
             "matches_running": "Matches running.",
             "no_pairing": "No pairing possible right now.",
             "waiting_batch": "Pairing at the next batch.",
-            "waiting_table": "no free table"
+            "waiting_table": "no free table",
+            "player_unavailable": "player unavailable"
         },
         "proposals": {
             "title": "Proposals ({n})",
@@ -2028,6 +2034,7 @@
             "created": "Tournament created",
             "entered": "{player} entered",
             "withdrawn": "{player} withdrawn",
+            "updated": "{player}'s entry corrected",
             "started": "{a} – {b} launched · {where}",
             "result": "{winner} wins {scoreA}–{scoreB}",
             "resultNoScore": "{winner} wins",

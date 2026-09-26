@@ -177,8 +177,8 @@
                 {/if}
                 {#if a.table}
                     <span class="meta">{$t('direction.proposals.table', { n: a.table })}</span>
-                {:else if a.reason === 'waiting_table'}
-                    <span class="meta warn">{$t('direction.reason.waiting_table')}</span>
+                {:else if a.reason}
+                    <span class="meta warn">{$t(`direction.reason.${a.reason}`)}</span>
                 {/if}
                 {#if a.warn}
                     <!-- Le moteur a remarqué quelque chose sur CETTE proposition et ne bloque

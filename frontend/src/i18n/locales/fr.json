@@ -1872,6 +1872,8 @@
             "alive": "en vie ({lives} vies)",
             "record": "{wins} victoires, {losses} défaites",
             "forfeit": "forfait",
+            "withdrawn": "retiré ({wins} victoires, {losses} défaites)",
+            "withdrawnSection": "retiré ({section}, {sub})",
             "running": "en cours",
             "awaiting_draw": "en attente du tirage",
             "unranked": "non classé",
@@ -1883,13 +1885,17 @@
             "bracket_wrong_players": "Match {match} ({section}, {label}) : {a} contre {b}, mais le tableau attend {expectedA} contre {expectedB}.",
             "score_over_length": "Match {match} : score {scoreA}-{scoreB} au-delà de la longueur {length}.",
             "ends_in_break": "Match {match} : la fin attendue tombe pendant une pause.",
-            "slow_match": "Match {match} : la durée dépasse ce qui était attendu."
+            "slow_match": "Match {match} : la durée dépasse ce qui était attendu.",
+            "table_shared": "Table {table} : les matchs {other} et {match} y sont en cours tous les deux.",
+            "correction_eliminates_running": "Match {match} : {player} n'a plus de vie depuis une correction, et joue encore.",
+            "correction_revives": "{player} retrouve une vie après une correction : de nouveau appariable."
         },
         "reason": {
             "matches_running": "Matchs en cours.",
             "no_pairing": "Aucun appariement possible pour l’instant.",
             "waiting_batch": "Appariement au prochain lot.",
-            "waiting_table": "aucune table libre"
+            "waiting_table": "aucune table libre",
+            "player_unavailable": "joueur indisponible"
         },
         "proposals": {
             "title": "Propositions ({n})",
@@ -2028,6 +2034,7 @@
             "created": "Tournoi créé",
             "entered": "{player} inscrit",
             "withdrawn": "{player} retiré",
+            "updated": "Fiche de {player} corrigée",
             "started": "{a} – {b} lancé · {where}",
             "result": "{winner} gagne {scoreA}–{scoreB}",
             "resultNoScore": "{winner} gagne",

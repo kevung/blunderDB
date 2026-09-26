@@ -150,7 +150,12 @@ func (l *CatalogLabeler) Note(n tournoi.Note) string {
 	if n.Sub != nil {
 		sub = l.Label(*n.Sub)
 	}
-	out, ok := l.C.t("note."+string(n.Kind), map[string]any{
+	key := "note." + string(n.Kind)
+	if n.Kind == tournoi.NoteWithdrawn && n.Section != "" {
+		// Un retiré de tableau est situé par sa section, un retiré de suisse par son bilan.
+		key = "note.withdrawnSection"
+	}
+	out, ok := l.C.t(key, map[string]any{
 		"wins": n.Wins, "losses": n.Losses, "lives": n.Lives,
 		"section": l.SectionName(n.Section), "sub": sub,
 	})

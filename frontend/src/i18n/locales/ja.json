@@ -1871,7 +1871,9 @@
             "finalist": "finalist",
             "alive": "alive ({lives} lives)",
             "record": "{wins} wins, {losses} losses",
-            "forfeit": "withdrawn",
+            "forfeit": "不戦敗",
+            "withdrawn": "棄権（{wins}勝{losses}敗）",
+            "withdrawnSection": "棄権（{section}、{sub}）",
             "running": "still in",
             "awaiting_draw": "awaiting the draw",
             "unranked": "unranked",
@@ -1883,13 +1885,17 @@
             "bracket_wrong_players": "Match {match} ({section}, {label}): {a} against {b}, but the bracket expects {expectedA} against {expectedB}.",
             "score_over_length": "Match {match}: score {scoreA}-{scoreB} beyond the length {length}.",
             "ends_in_break": "Match {match}: its expected end falls during a break.",
-            "slow_match": "Match {match}: running beyond the expected time."
+            "slow_match": "Match {match}: running beyond the expected time.",
+            "table_shared": "卓 {table}：試合 {other} と {match} が同時に進行中です。",
+            "correction_eliminates_running": "試合 {match}：修正により {player} のライフが0になりましたが、まだ対局中です。",
+            "correction_revives": "修正により {player} のライフが戻りました：再び組み合わせ対象です。"
         },
         "reason": {
             "matches_running": "試合が進行中です。",
             "no_pairing": "今は組み合わせられません。",
             "waiting_batch": "次の組み合わせ時に決めます。",
-            "waiting_table": "空き卓なし"
+            "waiting_table": "空き卓なし",
+            "player_unavailable": "プレイヤー不在"
         },
         "proposals": {
             "title": "提案（{n}件）",
@@ -2028,6 +2034,7 @@
             "created": "大会を作成",
             "entered": "{player} を登録",
             "withdrawn": "{player} が棄権",
+            "updated": "{player} の登録情報を修正",
             "started": "{a} – {b} 開始 · {where}",
             "result": "{winner} が {scoreA}–{scoreB} で勝利",
             "resultNoScore": "{winner} が勝利",

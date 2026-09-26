@@ -73,6 +73,16 @@ func TestLabeler_RendersEngineCodes(t *testing.T) {
 	if got := l.Reason("waiting_table"); got != "aucune table libre" {
 		t.Errorf("reason = %q", got)
 	}
+	if got := l.Note(tournoi.Note{Kind: tournoi.NoteWithdrawn, Wins: 4, Losses: 2}); got != "retiré (4 victoires, 2 défaites)" {
+		t.Errorf("withdrawn from a swiss = %q", got)
+	}
+	sub := tournoi.Label{Kind: "semi_final"}
+	if got := l.Note(tournoi.Note{Kind: tournoi.NoteWithdrawn, Section: "main", Sub: &sub}); got != "retiré (principal, Demi-finale)" {
+		t.Errorf("withdrawn from a bracket = %q", got)
+	}
+	if got := l.Reason(tournoi.ReasonPlayerUnavailable); got != "joueur indisponible" {
+		t.Errorf("reason = %q", got)
+	}
 }
 
 func TestLabeler_SectionNamesAreIdentifiers(t *testing.T) {

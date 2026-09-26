@@ -1871,7 +1871,9 @@
             "finalist": "finalist",
             "alive": "alive ({lives} lives)",
             "record": "{wins} wins, {losses} losses",
-            "forfeit": "withdrawn",
+            "forfeit": "luovutus",
+            "withdrawn": "poistui ({wins} voittoa, {losses} tappiota)",
+            "withdrawnSection": "poistui ({section}, {sub})",
             "running": "still in",
             "awaiting_draw": "awaiting the draw",
             "unranked": "unranked",
@@ -1883,13 +1885,17 @@
             "bracket_wrong_players": "Match {match} ({section}, {label}): {a} against {b}, but the bracket expects {expectedA} against {expectedB}.",
             "score_over_length": "Match {match}: score {scoreA}-{scoreB} beyond the length {length}.",
             "ends_in_break": "Match {match}: its expected end falls during a break.",
-            "slow_match": "Match {match}: running beyond the expected time."
+            "slow_match": "Match {match}: running beyond the expected time.",
+            "table_shared": "Pöytä {table}: ottelut {other} ja {match} ovat molemmat käynnissä siinä.",
+            "correction_eliminates_running": "Ottelu {match}: pelaajalla {player} ei ole korjauksen jälkeen enää elämiä, ja hän pelaa yhä.",
+            "correction_revives": "{player} saa korjauksen jälkeen elämän takaisin: voidaan taas pariuttaa."
         },
         "reason": {
             "matches_running": "Otteluita käynnissä.",
             "no_pairing": "Paria ei voi juuri nyt muodostaa.",
             "waiting_batch": "Parit seuraavassa erässä.",
-            "waiting_table": "ei vapaata pöytää"
+            "waiting_table": "ei vapaata pöytää",
+            "player_unavailable": "pelaaja ei käytettävissä"
         },
         "proposals": {
             "title": "Ehdotukset ({n})",
@@ -2028,6 +2034,7 @@
             "created": "Turnaus luotu",
             "entered": "{player} ilmoittautui",
             "withdrawn": "{player} poistui",
+            "updated": "Pelaajan {player} tiedot korjattu",
             "started": "{a} – {b} aloitettu · {where}",
             "result": "{winner} voittaa {scoreA}–{scoreB}",
             "resultNoScore": "{winner} voittaa",

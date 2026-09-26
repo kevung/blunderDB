@@ -66,7 +66,9 @@ export function renderSectionName(t, name) {
  */
 export function renderNote(t, note) {
     if (!note || !note.kind) return '';
-    const key = `direction.note.${note.kind}`;
+    // Un retiré de tableau est situé par sa section, un retiré de suisse par son bilan.
+    const kind = note.kind === 'withdrawn' && note.section ? 'withdrawnSection' : note.kind;
+    const key = `direction.note.${kind}`;
     const out = t(key, {
         wins: note.wins ?? 0,
         losses: note.losses ?? 0,
@@ -81,7 +83,7 @@ export function renderNote(t, note) {
  * Rend un avertissement (`Warning`) : ce que le moteur signale sans jamais bloquer.
  *
  * @param {Translate} t
- * @param {{ code?: string, match?: string, section?: string, label?: DirectionLabel, a?: string, b?: string, expected_a?: string, expected_b?: string, length?: number, score_a?: number, score_b?: number } | null | undefined} w
+ * @param {{ code?: string, match?: string, section?: string, label?: DirectionLabel, a?: string, b?: string, expected_a?: string, expected_b?: string, length?: number, score_a?: number, score_b?: number, player?: string, table?: number, other?: string } | null | undefined} w
  * @param {PlayerName} [playerName]
  * @returns {string}
  */
@@ -98,7 +100,10 @@ export function renderWarning(t, w, playerName = (id) => id) {
         expectedB: playerName(w.expected_b),
         length: w.length ?? 0,
         scoreA: w.score_a ?? 0,
-        scoreB: w.score_b ?? 0
+        scoreB: w.score_b ?? 0,
+        player: playerName(w.player),
+        table: w.table ?? 0,
+        other: w.other ?? ''
     });
     return out === key ? w.code : out;
 }
