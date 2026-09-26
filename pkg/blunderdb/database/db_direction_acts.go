@@ -57,10 +57,11 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 			// (found by the standings test, which closed the tournament without meaning to).
 			continue
 		}
-		if a.Reason == tournoi.ReasonWaitingTable {
-			// A proposal with no free table stays in the queue: launching it here would put
-			// two matches on one table, or none, without the director ever choosing. They
-			// launch it themselves with a table they picked (tasks/nicomaque/fonctionnel.md §3.2).
+		if a.Reason == tournoi.ReasonWaitingTable || a.Reason == tournoi.ReasonPlayerUnavailable {
+			// A proposal with no table stays in the queue: launching it here would put two
+			// matches on one table, or none, without the director ever choosing. In rounds
+			// mode the round stays open until all its players are engaged, so the rest of it
+			// is proposed again as tables free up (tasks/nicomaque/fonctionnel.md §3.2).
 			continue
 		}
 		if err := confirmAt(ctx, dir, a, now); err != nil {

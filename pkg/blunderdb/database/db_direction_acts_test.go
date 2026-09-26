@@ -300,3 +300,41 @@ func TestManualPairingTakesAFreeTable(t *testing.T) {
 		t.Errorf("typed table: %d, want 1", got)
 	}
 }
+
+// S4 with the real hall: a round in rounds mode proposes more matches than there are tables.
+// "Launch all" launches the matches that have a table; the others stay proposed, waiting for
+// one, and nothing of the round disappears.
+func TestConfirmAll_RoundLargerThanTheHall(t *testing.T) {
+	d := newTestDB(t)
+	tID := directedAt(t, d, 25, `{"name":"Championnat du lundi","min_per_point":8,"tables":{"count":6},
+		"phases":[{"kind":"swiss_lives","length":7,"lives":6,"mode":"rounds"}]}`)
+	playUntil(t, d, tID, localAt(2026, 10, 5, 20, 0), localAt(2026, 10, 5, 23, 0), hall{open: 20, close: 21}, 8)
+
+	starts := proposedStarts(t, d, tID)
+	withTable := 0
+	for _, a := range starts {
+		if a.Table != 0 {
+			withTable++
+		}
+	}
+	t.Logf("%d start proposals, %d with a table", len(starts), withTable)
+	if withTable == 0 || withTable == len(starts) {
+		t.Fatalf("the round must be larger than the hall: %d proposals, %d with a table", len(starts), withTable)
+	}
+	after, err := d.ConfirmAllProposals(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(after.Running) != withTable {
+		t.Errorf("%d matches launched, want the %d that had a table", len(after.Running), withTable)
+	}
+	left := proposedStarts(t, d, tID)
+	if len(left) != len(starts)-withTable {
+		t.Fatalf("%d proposals left after launch all, want %d", len(left), len(starts)-withTable)
+	}
+	for _, a := range left {
+		if a.Table != 0 || a.Reason != tournoi.ReasonWaitingTable {
+			t.Errorf("a proposal left in the queue waits for a table: %+v", a)
+		}
+	}
+}

@@ -36,22 +36,24 @@ export function crowd(n) {
 export const S2_HALL = { entrants: crowd(76), tables: 14, running: 14 };
 
 /** L'état S4 du vendredi : 25 inscrits, rondes 1 et 2 jouées, la ronde 3 proposée et rien en cours. */
-export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2 };
+export const S4_FRIDAY = { entrants: crowd(25), tables: 6, running: 0, rounds: 2, seats: true };
 
 /**
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number, phases?: Object[], locks?: Object[]}} [opts]
+ * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number, seats?: boolean, phases?: Object[], locks?: Object[]}} [opts]
  *   `directed: false` part d'un tournoi non dirigé, pour mesurer le coût d'entrée depuis rien.
  *   `entrants`, `tables` et `running` changent la taille de la salle (défaut : les quatre
  *   inscrits, quatre tables, aucun match) ; `running` matchs sont lancés d'avance. `rounds`
  *   donne le nombre de rondes déjà lancées, `phases` le format, `locks` les verrous que
- *   l'aperçu de configuration renvoie (une phase dont le tirage est fait).
+ *   l'aperçu de configuration renvoie (une phase dont le tirage est fait). `seats` donne aux
+ *   propositions les tables libres, et aux autres la raison `waiting_table`, comme le moteur ;
+ *   sans lui, la file ignore la salle.
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, phases, lockedPhases }) => {
+        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, seats, phases, lockedPhases }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
@@ -78,7 +80,10 @@ export async function installDirectionEngine(page, opts = {}) {
             function pair() {
                 const free = players.filter((p) => p.state !== 'withdrawn' && !running.some((m) => m.a === p.id || m.b === p.id));
                 const out = [];
+                const busy = new Set(running.map((m) => m.Table));
+                const freeTables = Array.from({ length: tableCount }, (_, i) => i + 1).filter((t) => !busy.has(t));
                 for (let i = 0; i + 1 < free.length; i += 2) {
+                    const table = seats ? freeTables.shift() || 0 : 0;
                     out.push({
                         kind: 'start_match',
                         phase: 0,
@@ -86,7 +91,8 @@ export async function installDirectionEngine(page, opts = {}) {
                         a: free[i].id,
                         b: free[i + 1].id,
                         length: 7,
-                        table: 0,
+                        table,
+                        ...(seats && !table ? { reason: 'waiting_table' } : {}),
                         label: { kind: 'swiss_group', losses: 0, match: 1 }
                     });
                 }
@@ -242,13 +248,14 @@ export async function installDirectionEngine(page, opts = {}) {
             db.ConfirmProposal = (_id, blob) => {
                 const a = JSON.parse(blob || '{}');
                 proposals = proposals.filter((p) => p.key !== a.key);
-                if (a.kind === 'start_match') start(a.a, a.b, a.length, 0);
+                if (a.kind === 'start_match') start(a.a, a.b, a.length, a.table || 0);
                 return Promise.resolve(view());
             };
             db.ConfirmAllProposals = () => {
                 const queue = proposals.slice();
                 proposals = [];
-                for (const a of queue) if (a.kind === 'start_match') start(a.a, a.b, a.length, 0);
+                // Un match sans table reste dans la file, comme dans ConfirmAllProposals.
+                for (const a of queue) if (a.kind === 'start_match' && !a.reason) start(a.a, a.b, a.length, a.table);
                 return Promise.resolve(view());
             };
             db.StartMatchManually = (_id, a, b, length, table) => {
@@ -425,6 +432,7 @@ export async function installDirectionEngine(page, opts = {}) {
             tableCount: opts.tables || 4,
             runningAtStart: opts.running || 0,
             roundsAtStart: opts.rounds || 0,
+            seats: !!opts.seats,
             phases: opts.phases || null,
             lockedPhases: opts.locks || []
         }

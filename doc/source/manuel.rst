@@ -1514,8 +1514,10 @@ intervalles où aucune table ne jouait. Un tournoi clos n'a plus de bande
 d'horloge.
 
 Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** confirme
-la file entière en deux clics, après en avoir montré la liste ; *Confirmer* est
-en tête de cette liste. « Ignorer pour
+en deux clics les propositions qui ont une table, après en avoir montré la
+liste ; *Confirmer* est en tête de cette liste. Les appariements sans table
+restent dans la file, marqués « aucune table libre » : en mode rondes, une ronde
+reste ouverte tant que tous ses joueurs n'y sont pas engagés. « Ignorer pour
 l'instant » n'écrit rien : le moteur est déterministe, et la proposition revient
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.

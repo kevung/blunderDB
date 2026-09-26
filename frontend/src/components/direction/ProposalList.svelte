@@ -57,6 +57,9 @@
     let manualTable = $state(0);
 
     const shown = $derived(actionable.filter((a) => !ignored.has(actionKey(a))));
+    /* Ce que « Tout lancer » lance : un match sans table reste dans la file, comme le fait
+       ConfirmAllProposals. */
+    const launchable = $derived(shown.filter((a) => !(a.kind === 'start_match' && !a.table && a.reason)));
 
     $effect(() => {
         if (selected >= shown.length) selected = Math.max(0, shown.length - 1);
@@ -133,7 +136,7 @@
 <section class="proposals">
     <header>
         <h3>{$t('direction.proposals.title', { n: shown.length })}</h3>
-        {#if shown.length > 1}
+        {#if launchable.length > 1}
             <button type="button" class="all" data-testid="direction-proposals-all" disabled={busy} title={$t('direction.proposals.allHint')} onclick={askConfirmAll}
                 >{$t('direction.proposals.all')}</button
             >
@@ -144,14 +147,14 @@
         <!-- « Confirmer » en tête, pour rester à l'écran au-dessus d'une longue liste. -->
         <div class="confirm" data-testid="direction-proposals-confirm">
             <div class="confirm-head">
-                <p>{$t('direction.proposals.allConfirm', { n: shown.length })}</p>
+                <p>{$t('direction.proposals.allConfirm', { n: launchable.length })}</p>
                 <div class="confirm-actions">
                     <button type="button" class="primary" data-testid="direction-proposals-confirm-all" onclick={doConfirmAll}>{$t('direction.proposals.confirm')}</button>
                     <button type="button" onclick={() => (confirming = false)}>{$t('common.cancel')}</button>
                 </div>
             </div>
             <ul>
-                {#each shown as a (actionKey(a))}
+                {#each launchable as a (actionKey(a))}
                     <li class:repair={isRepair(a)}>
                         {#if isRepair(a)}
                             <span class="tag">{$t('direction.proposals.repairTag')}</span>
