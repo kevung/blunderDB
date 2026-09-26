@@ -228,6 +228,52 @@ func TestRencontreTrashDetaches(t *testing.T) {
 	}
 }
 
+// Restoring a Rencontre from the trash attaches its events again on the room's tables, as
+// attaching does: detached, an event may have changed its own.
+func TestRencontreRestoreRealignsTables(t *testing.T) {
+	d := newTestDB(t)
+	_, a := directedTournament(t, d, 8)
+	r, err := d.CreateRencontre("Festival", "", "", 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.AttachToRencontre(a, r.ID); err != nil {
+		t.Fatal(err)
+	}
+	trashID, err := d.TrashRencontre(r.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v, err := d.GetDirection(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := v.Config
+	cfg.Tables.Count = 6
+	raw, err := json.Marshal(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := d.SetDirectionConfig(a, string(raw)); err != nil {
+		t.Fatal(err)
+	}
+	before := eventCount(t, d, a)
+
+	rid, err := d.RestoreFromTrash(trashID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v, err = d.GetDirection(a); err != nil {
+		t.Fatal(err)
+	}
+	if v.RencontreID != rid || v.Config.Tables.Count != 10 {
+		t.Errorf("restored: rencontre %d (want %d), %d tables (want the room's 10)", v.RencontreID, rid, v.Config.Tables.Count)
+	}
+	if got := eventCount(t, d, a); got != before+1 {
+		t.Errorf("the alignment wrote %d event(s), want one configuration change", got-before)
+	}
+}
+
 // Changing a room setting from one member's settings is the room's gesture: the preview names the
 // sister events, and saving writes it in their logs too.
 func TestRencontreSettingsChangeReachesTheRoom(t *testing.T) {

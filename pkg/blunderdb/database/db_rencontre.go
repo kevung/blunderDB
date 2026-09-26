@@ -157,18 +157,8 @@ func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*Rencontr
 		} else if of != 0 && of != rencontreID {
 			return fmt.Errorf("rencontre: tournament %d already plays in another Rencontre", tournamentID)
 		}
-		dir, err := direction.Open(ctx, store, tournamentID)
-		if err != nil {
+		if err := alignTables(ctx, store, tournamentID, room); err != nil {
 			return err
-		}
-		cfg, err := dir.Config()
-		if err != nil {
-			return err
-		}
-		if next := direction.WithTables(cfg, room); !sameTables(cfg, next) {
-			if err := dir.SetConfigAt(ctx, next, time.Now()); err != nil {
-				return err
-			}
 		}
 		return tx.Rencontres().Attach(ctx, "", tournamentID, rencontreID)
 	})
@@ -176,6 +166,36 @@ func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*Rencontr
 		return nil, err
 	}
 	return d.GetRencontre(rencontreID)
+}
+
+// alignTables puts one Tournament on the room's tables by a configuration change, and writes
+// nothing when it already sits on them.
+func alignTables(ctx context.Context, store direction.Store, tournamentID int64, room direction.Room) error {
+	dir, err := direction.Open(ctx, store, tournamentID)
+	if err != nil {
+		return err
+	}
+	cfg, err := dir.Config()
+	if err != nil {
+		return err
+	}
+	if next := direction.WithTables(cfg, room); !sameTables(cfg, next) {
+		return dir.SetConfigAt(ctx, next, time.Now())
+	}
+	return nil
+}
+
+// realignRencontre puts every member of a Rencontre back on the room's tables, as attaching
+// them does. A restored Rencontre needs it: its events kept their own tables while detached.
+func (d *Database) realignRencontre(id int64) error {
+	return d.inRoom(id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+		for _, tid := range r.TournamentIDs {
+			if err := alignTables(ctx, store, tid, room); err != nil {
+				return fmt.Errorf("rencontre: tournament %d: %w", tid, err)
+			}
+		}
+		return nil
+	})
 }
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.

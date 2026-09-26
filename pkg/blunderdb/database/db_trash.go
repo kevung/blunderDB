@@ -49,14 +49,31 @@ func (d *Database) TrashCommentEntry(commentID int64) (int64, error) {
 
 // RestoreFromTrash puts one entry back and removes it from the trash. The id
 // it returns is a position, collection or comment id, depending on the kind.
+//
+// A restored Rencontre attaches its events again, and they come back on the room's tables as
+// attaching aligns them: detached, each kept its own.
 func (d *Database) RestoreFromTrash(trashID int64) (int64, error) {
+	id, kind, err := d.restoreFromTrash(trashID)
+	if err != nil || kind != domain.TrashRencontre {
+		return id, err
+	}
+	return id, d.realignRencontre(id)
+}
+
+func (d *Database) restoreFromTrash(trashID int64) (int64, domain.TrashKind, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	if d.db == nil {
-		return 0, fmt.Errorf("no database is currently open")
+		return 0, "", fmt.Errorf("no database is currently open")
 	}
-	return trash.Restore(context.Background(), d.store, "", trashID)
+	ctx := context.Background()
+	entry, err := d.store.Trash().Load(ctx, "", trashID)
+	if err != nil {
+		return 0, "", err
+	}
+	id, err := trash.Restore(ctx, d.store, "", trashID)
+	return id, entry.Kind, err
 }
 
 // ListTrash returns the trash, most recently deleted first. kind narrows to
