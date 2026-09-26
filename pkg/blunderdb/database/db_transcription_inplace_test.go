@@ -57,7 +57,7 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 	apply(die(4))
 	apply(die(1))
 	apply(transcript.Gesture{Kind: transcript.GestureValidate})
-	state = apply(transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 0})
+	apply(transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 0})
 	state = apply(transcript.Gesture{Kind: transcript.GestureValidate})
 
 	count := len(state.Annotated.Document.Actions)
