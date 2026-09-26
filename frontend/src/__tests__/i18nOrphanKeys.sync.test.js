@@ -79,6 +79,10 @@ const DYNAMIC_PREFIXES = [
     // Ils ne sont jamais lus par le front — ils partent au backend, qui écrit la page en Go et
     // rend `term.<code>` par le même catalogue. Voir `pkg/blunderdb/direction/labeler.go`.
     'direction.term.',
+    // La page murale d'une Rencontre (#448) : « {n} rondes annoncées » est écrite par
+    // wallpage.go via le même catalogue — jamais lue par le front, qui n'affiche pas
+    // cette page. Voir `pkg/blunderdb/direction/wallpage.go`.
+    'direction.rencontre.wall.',
     // Les erreurs d'un CSV d'annuaire (#391) sont des CODES rendus par l'interface —
     // `$t(`direction.directory.errors.${e.code}`)` — comme tout ce qui vient du backend.
     'direction.directory.errors.',
