@@ -683,6 +683,17 @@ func validate(doc Document) (Document, error) {
 	if e.Dice[0] == 0 || e.Dice[1] == 0 {
 		return doc, ErrNoDice
 	}
+	// Confirming a cell that says exactly what it already holds is a READ, not
+	// a correction, and must write nothing — the same rule commitCorrection
+	// applies to walking away, here for Enter pressed on a cell nobody
+	// changed. Without it, Enter sent the Cursor to Return and cleared the
+	// Entry, so the NEXT keystroke reopened whatever Action the Cursor landed
+	// on instead of writing a new one, however far from the correction that
+	// landing was. The last Action is the one exception (ADR-0051): its
+	// validation always reaches the end, changed or not.
+	if e.Mode == EntryReplace && e.At < len(doc.Actions) && e.At+1 != len(doc.Actions) && !entryDiffers(doc.Actions[e.At], *e) {
+		return doc, nil
+	}
 	var a Action
 	if expectsOpening(doc, *e) {
 		a = Action{Side: e.Side, Kind: KindOpening, Dice: e.Dice}

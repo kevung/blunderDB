@@ -254,3 +254,48 @@ func TestLastActionValidatedAppendsNext(t *testing.T) {
 		}
 	})
 }
+
+// TestValidatingAnUnchangedCellIsARead holds the bug report: reviewing an
+// earlier Action — walked back to and confirmed WITHOUT retyping anything —
+// used to send the Cursor to Return like a genuine correction, even though
+// nothing was written. When Return happened to be the last Action, the next
+// keystroke reopened it (proposedEntry loads whatever the Cursor stands on)
+// instead of appending the roll that continues the transcription.
+func TestValidatingAnUnchangedCellIsARead(t *testing.T) {
+	doc := typedMatch(t, 7)
+	n := len(doc.Actions)
+	e := NewEditor(doc)
+
+	// Walk back to an earlier Action and confirm it without changing anything.
+	e.SeekCursor(1)
+	before := e.Doc.Actions[1]
+	if err := e.Apply(confirm()); err != nil {
+		t.Fatal(err)
+	}
+	if !sameAction(e.Doc.Actions[1], before) {
+		t.Fatalf("action 1 changed: %+v, want %+v", e.Doc.Actions[1], before)
+	}
+	if e.Doc.Cursor != 1 || e.Doc.Entry == nil || e.Doc.Entry.At != 1 {
+		t.Fatalf("cursor = %d, entry = %+v; a read must not move the Cursor away", e.Doc.Cursor, e.Doc.Entry)
+	}
+
+	// Walk on to the true last Action and validate it for real: the roll
+	// after it must still be an append, not a correction of the last Action.
+	for e.Doc.Cursor < n-1 {
+		if err := e.Apply(Gesture{Kind: GestureCursorForward}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, g := range []Gesture{die(3), die(1), candidate(0), confirm()} {
+		if err := e.Apply(g); err != nil {
+			t.Fatalf("%s: %v", g.Kind, err)
+		}
+	}
+	if e.Doc.Cursor != n || e.Doc.Entry != nil {
+		t.Fatalf("cursor = %d, entry = %+v; want the end of the document, nothing typed", e.Doc.Cursor, e.Doc.Entry)
+	}
+	next := runSteps(t, e.Doc, []step{{"a roll", die(4), nil}, {"its second die", die(2), nil}, {"a play", candidate(0), nil}, {"validate", confirm(), nil}})
+	if len(next.Actions) != n+1 {
+		t.Errorf("actions = %d, want %d — the roll was not appended", len(next.Actions), n+1)
+	}
+}
