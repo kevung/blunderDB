@@ -139,6 +139,34 @@ func testStatsMatchMoveGrades(t *testing.T, s storage.Storage) {
 		{MoveID: ids[7], ErrorMP: 200, Grade: storage.MoveGradeBlunder},
 	})
 
+	// The same per-play cost travels on the Move itself, through both reads
+	// of a match's moves: 150, 60 and 20 on one Position prove it is scored
+	// per Move and not per Position.
+	wantMP := []int32{0, 150, 60, 20, -1, 300, 0, 200} // -1: unscored
+	checkMoves := func(read string, it func(func(*domain.Move, error) bool)) {
+		t.Helper()
+		byID := map[int64]*domain.Move{}
+		for mv, err := range it {
+			if err != nil {
+				t.Fatalf("%s: %v", read, err)
+			}
+			byID[mv.ID] = mv
+		}
+		for i, want := range wantMP {
+			mv := byID[ids[i]]
+			switch {
+			case mv == nil:
+				t.Errorf("%s: move %d missing", read, i)
+			case want < 0 && mv.ErrorMP != nil:
+				t.Errorf("%s: move %d (%s): ErrorMP = %d, want unscored", read, i, plays[i].label, *mv.ErrorMP)
+			case want >= 0 && (mv.ErrorMP == nil || *mv.ErrorMP != want):
+				t.Errorf("%s: move %d (%s): ErrorMP = %v, want %d", read, i, plays[i].label, mv.ErrorMP, want)
+			}
+		}
+	}
+	checkMoves("MovesByMatch", s.Matches().MovesByMatch(ctx, "", matchID))
+	checkMoves("Moves", s.Matches().Moves(ctx, "", gameID))
+
 	// A match without analysed Moves grades nothing, and says so without error.
 	empty := domain.Match{Player1Name: "Nobody", Player2Name: "Nowhere"}
 	emptyID, err := s.Matches().Save(ctx, "", &empty)

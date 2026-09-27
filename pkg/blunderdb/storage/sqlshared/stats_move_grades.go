@@ -118,3 +118,31 @@ func checkerPlayError(ca *domain.CheckerAnalysis, played string) (float64, bool)
 	}
 	return 0, false
 }
+
+// PlayScorer fills Move.ErrorMP from the analysis blob read beside each Move,
+// decoding a Position's blob once however many Moves reach it. A nil blob
+// (no analysis) or an undecodable one leaves the Move unscored.
+type PlayScorer map[int64]*domain.PositionAnalysis
+
+// Score sets mv.ErrorMP from data, the stored analysis of mv's Position.
+func (p PlayScorer) Score(mv *domain.Move, data []byte) {
+	if len(data) == 0 || mv.PositionID == 0 {
+		return
+	}
+	analysis, seen := p[mv.PositionID]
+	if !seen {
+		if a, err := engine.DecodeAnalysisFromStorage(data); err == nil {
+			analysis = &a
+		}
+		p[mv.PositionID] = analysis
+	}
+	if analysis == nil {
+		return
+	}
+	cost, ok := playError(analysis, mv.MoveType, mv.CheckerMove, mv.CubeAction)
+	if !ok {
+		return
+	}
+	errMP := int32(math.Round(cost * 1000))
+	mv.ErrorMP = &errMP
+}

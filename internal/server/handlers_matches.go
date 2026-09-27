@@ -64,14 +64,15 @@ type findByHashResp struct {
 // matchListReq mirrors storage.MatchListOpts over the wire. An all-zero body
 // streams every match, most recent first.
 type matchListReq struct {
-	PlayerName    string  `json:"playerName"`
-	TournamentIDs []int64 `json:"tournamentIds"`
-	DateFrom      string  `json:"dateFrom"`
-	DateTo        string  `json:"dateTo"`
-	MatchLength   []int   `json:"matchLength"`
-	Sort          string  `json:"sort"`
-	Limit         int     `json:"limit"`
-	Offset        int     `json:"offset"`
+	PlayerName         string  `json:"playerName"`
+	PlayerNameContains string  `json:"playerNameContains"`
+	TournamentIDs      []int64 `json:"tournamentIds"`
+	DateFrom           string  `json:"dateFrom"`
+	DateTo             string  `json:"dateTo"`
+	MatchLength        []int   `json:"matchLength"`
+	Sort               string  `json:"sort"`
+	Limit              int     `json:"limit"`
+	Offset             int     `json:"offset"`
 }
 
 // pageLimit implements pagedReq (handlers_rpc.go): rpc/rpcStream enforce
@@ -101,14 +102,15 @@ func (s *Server) matchRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, req matchListReq) iterMatches {
 			return ms().List(ctx, scope, storage.MatchListOpts{
-				PlayerName:    req.PlayerName,
-				TournamentIDs: req.TournamentIDs,
-				DateFrom:      req.DateFrom,
-				DateTo:        req.DateTo,
-				MatchLength:   req.MatchLength,
-				Sort:          req.Sort,
-				Limit:         req.Limit,
-				Offset:        req.Offset,
+				PlayerName:         req.PlayerName,
+				PlayerNameContains: req.PlayerNameContains,
+				TournamentIDs:      req.TournamentIDs,
+				DateFrom:           req.DateFrom,
+				DateTo:             req.DateTo,
+				MatchLength:        req.MatchLength,
+				Sort:               req.Sort,
+				Limit:              req.Limit,
+				Offset:             req.Offset,
 			})
 		})},
 		{http.MethodPost, "/v1/matches.update", rpcVoid(func(ctx context.Context, scope string, req matchUpdateReq) error {
