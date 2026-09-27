@@ -336,32 +336,61 @@ func stepUsesDie(s CheckerStep, mover, die int) bool {
 // notation renders the play in the standard MOVER-RELATIVE form every
 // backgammon notation uses ("24/18", regardless of colour: 24 always names
 // the mover's own back checkers) — bar / off / * hit, collapsing identical
-// steps as "(n)" and sorting tokens (matching the engine's NormalizeMove
-// convention for comparison against analysed candidate moves, which are
-// themselves mover-relative: gnubg and XG both render this way, lowercase
-// "bar" included).
+// steps as "(n)" and ordering tokens by descending mover-relative origin
+// point (matching the order gnubg and XG both write). A plain lexicographic
+// sort would place a token like "20/15" before "24/20": harmless for two
+// independent checkers, but for one checker playing both dice ("24/20"
+// then "20/15") it rewrites the chain out of order — the intermediate point
+// is not occupied yet when the reordered text is replayed, which a strict
+// reader (XG) rejects as an illegal move even though the play itself is
+// legal (ADR-0044's transcript keeps the steps; only this rendering sorted
+// them wrong).
 func notation(steps []CheckerStep, mover int) string {
-	counts := map[string]int{}
-	var order []string
+	type token struct {
+		text  string
+		count int
+		from  int // mover-relative origin, for ordering only
+	}
+	var order []*token
+	index := map[string]*token{}
 	for _, s := range steps {
 		tok := pointLabel(mover, s.From) + "/" + pointLabel(mover, s.To)
 		if s.Hit {
 			tok += "*"
 		}
-		if _, ok := counts[tok]; !ok {
-			order = append(order, tok)
+		if t, ok := index[tok]; ok {
+			t.count++
+			continue
 		}
-		counts[tok]++
+		t := &token{text: tok, count: 1, from: moverRelativeOrigin(mover, s.From)}
+		index[tok] = t
+		order = append(order, t)
 	}
+	sort.SliceStable(order, func(i, j int) bool { return order[i].from > order[j].from })
 	tokens := make([]string, 0, len(order))
-	for _, tok := range order {
-		if counts[tok] > 1 {
-			tok += "(" + strconv.Itoa(counts[tok]) + ")"
+	for _, t := range order {
+		text := t.text
+		if t.count > 1 {
+			text += "(" + strconv.Itoa(t.count) + ")"
 		}
-		tokens = append(tokens, tok)
+		tokens = append(tokens, text)
 	}
-	sort.Strings(tokens)
 	return strings.Join(tokens, " ")
+}
+
+// moverRelativeOrigin is a point's mover-relative index for ordering tokens:
+// the bar sorts before every point (25, one past the mover's own 24) since
+// entering is always played before the rest of the roll.
+func moverRelativeOrigin(mover, idx int) int {
+	switch idx {
+	case BlackBar, WhiteBar:
+		return 25
+	default:
+		if mover == White {
+			idx = 25 - idx
+		}
+		return idx
+	}
 }
 
 // pointLabel renders one point in MOVER-RELATIVE numbering (24 = the mover's
