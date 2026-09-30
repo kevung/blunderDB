@@ -1940,7 +1940,8 @@
             "slow": "長引き",
             "none": "卓が登録されていません。",
             "noTable": "卓なし",
-            "elsewhere": "使用中：{event}"
+            "elsewhere": "使用中：{event}",
+            "shared": "この台に2つの試合があります。1つを移動してください"
         },
         "result": {
             "title": "結果",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "この試合を取り消す",
             "error": "結果を記録できませんでした。",
             "more": "その他",
-            "apply": "適用"
+            "apply": "適用",
+            "forfeitWins": "{loser} 不在 → {winner} の勝ち",
+            "forfeitConfirm": "{loser} の不戦敗：{winner} がこの試合に勝ちます。確定しますか？",
+            "cancelConfirm": "試合 {a} – {b} を取り消しますか？会場からは消えますが、記録には残ります。"
         },
         "last": {
             "result": "{winner} が {loser} に勝利",
@@ -2011,7 +2015,9 @@
             "pairHint": "ダブルス大会：2人で1組の参加者「A / B」。",
             "name2": "パートナーの名前",
             "pairRating": "ペアのレーティング",
-            "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。"
+            "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。",
+            "withdrawNowConfirm": "{name} を今すぐ大会から棄権させますか？以後の組み合わせから外れます（復帰可能）。",
+            "withdrawLaterConfirm": "{name} を試合終了後に棄権させますか？以後の組み合わせから外れます（復帰可能）。"
         },
         "bracket": {
             "current": "進行中",
@@ -2275,7 +2281,8 @@
             "confirm": "追加",
             "wall": {
                 "rounds": "{n} ラウンド発表済み"
-            }
+            },
+            "trashConfirm": "イベント「{name}」を削除しますか？各大会は切り離されて残ります。"
         },
         "epreuves": {
             "pending": "{n}件 保留中",

@@ -1940,7 +1940,8 @@
             "slow": "lent",
             "none": "Aucune table déclarée.",
             "noTable": "sans table",
-            "elsewhere": "Occupée : {event}"
+            "elsewhere": "Occupée : {event}",
+            "shared": "Deux matchs sur cette table : déplacez-en un"
         },
         "result": {
             "title": "Résultat",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Annuler ce match",
             "error": "Impossible d’enregistrer ce résultat.",
             "more": "Plus",
-            "apply": "Appliquer"
+            "apply": "Appliquer",
+            "forfeitWins": "{loser} absent → {winner} gagne",
+            "forfeitConfirm": "Forfait de {loser} : {winner} gagne ce match. Confirmer ?",
+            "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît de la salle ; le journal le garde."
         },
         "last": {
             "result": "{winner} bat {loser}",
@@ -2011,7 +2015,9 @@
             "pairHint": "Une épreuve en doubles : deux personnes, un seul inscrit « A / B ».",
             "name2": "Nom du partenaire",
             "pairRating": "Cote de la paire",
-            "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace."
+            "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace.",
+            "withdrawNowConfirm": "Retirer {name} du tournoi maintenant ? Il ne sera plus apparié (réintégration possible).",
+            "withdrawLaterConfirm": "Retirer {name} à la fin de son match ? Il ne sera plus apparié ensuite (réintégration possible)."
         },
         "bracket": {
             "current": "en cours",
@@ -2275,7 +2281,8 @@
             "confirm": "Rattacher",
             "wall": {
                 "rounds": "{n} rondes annoncées"
-            }
+            },
+            "trashConfirm": "Supprimer la rencontre « {name} » ? Ses épreuves restent, détachées."
         },
         "epreuves": {
             "pending": "{n} en attente",

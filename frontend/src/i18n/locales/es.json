@@ -1940,7 +1940,8 @@
             "slow": "lenta",
             "none": "Ninguna mesa declarada.",
             "noTable": "sin mesa",
-            "elsewhere": "Ocupada: {event}"
+            "elsewhere": "Ocupada: {event}",
+            "shared": "Dos partidas en esta mesa: mueva una"
         },
         "result": {
             "title": "Resultado",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Anular esta partida",
             "error": "No se ha podido registrar este resultado.",
             "more": "Más",
-            "apply": "Aplicar"
+            "apply": "Aplicar",
+            "forfeitWins": "{loser} ausente → gana {winner}",
+            "forfeitConfirm": "{loser} no se presenta: {winner} gana esta partida. ¿Confirmar?",
+            "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de la sala; el registro la conserva."
         },
         "last": {
             "result": "{winner} gana a {loser}",
@@ -2011,7 +2015,9 @@
             "pairHint": "Un torneo de dobles: dos personas, un solo inscrito «A / B».",
             "name2": "Nombre del compañero",
             "pairRating": "Valoración de la pareja",
-            "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye."
+            "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye.",
+            "withdrawNowConfirm": "¿Retirar a {name} del torneo ahora? Ya no será emparejado (se puede reincorporar).",
+            "withdrawLaterConfirm": "¿Retirar a {name} al final de su partida? Después no será emparejado (se puede reincorporar)."
         },
         "bracket": {
             "current": "en curso",
@@ -2275,7 +2281,8 @@
             "confirm": "Vincular",
             "wall": {
                 "rounds": "{n} rondas anunciadas"
-            }
+            },
+            "trashConfirm": "¿Eliminar el encuentro «{name}»? Sus pruebas se mantienen, desvinculadas."
         },
         "epreuves": {
             "pending": "{n} pendientes",

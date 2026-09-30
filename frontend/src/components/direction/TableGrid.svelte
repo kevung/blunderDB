@@ -26,13 +26,18 @@
 
     let openKey = $state('');
 
-    /** @param {TableCell} c */
+    /**
+     * Une table partagée par deux matchs (hérité d'un journal ancien) donne deux cases au même
+     * numéro : la clé est alors le match, sans quoi l'un des deux disparaîtrait.
+     *
+     * @param {TableCell} c
+     */
     function key(c) {
-        return c.noTable ? `m:${c.matchId}` : `t:${c.table}`;
+        return c.noTable || c.shared ? `m:${c.matchId}` : `t:${c.table}`;
     }
 
-    /** Le titre compte les tables de la salle, pas les matchs qui n'en ont pas. */
-    let tableCount = $derived(cells.filter((c) => !c.noTable).length);
+    /** Le titre compte les tables de la salle, une seule fois chacune. */
+    let tableCount = $derived(new Set(cells.filter((c) => !c.noTable).map((c) => c.table)).size);
 
     /**
      * Le temps écoulé d'un match. Zéro seconde est omis par le backend (`omitempty`) : un match
@@ -77,12 +82,13 @@
                 <button
                     type="button"
                     class="cell"
-                    data-testid={c.noTable ? `direction-table-none-${c.matchId}` : `direction-table-${c.table}`}
+                    data-testid={c.noTable ? `direction-table-none-${c.matchId}` : c.shared ? `direction-table-shared-${c.matchId}` : `direction-table-${c.table}`}
                     class:busy={c.matchId}
                     class:slow={c.slow}
                     class:idle={!c.matchId}
                     class:elsewhere={!!c.elsewhere}
                     class:no-table={c.noTable}
+                    class:shared={c.shared}
                     disabled={!c.matchId}
                     onclick={() => (openKey = openKey === key(c) ? '' : key(c))}
                 >
@@ -104,6 +110,9 @@
                                 &middot; {$t('direction.table.slow')}
                             {/if}
                         </span>
+                        {#if c.shared}
+                            <span class="meta conflict" data-testid="direction-table-conflict">{$t('direction.table.shared')}</span>
+                        {/if}
                     {:else}
                         <span class="state">{label(c)}</span>
                     {/if}
@@ -202,6 +211,12 @@
         border-color: var(--color-danger);
     }
 
+    /* Deux matchs sur une table : chacun garde sa case, et la case dit qu'il faut en déplacer un. */
+    .cell.shared {
+        border-color: var(--color-danger);
+    }
+
+    .cell .meta.conflict,
     .cell .meta.seat {
         color: var(--color-danger);
     }

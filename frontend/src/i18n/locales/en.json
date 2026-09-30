@@ -1940,7 +1940,8 @@
             "slow": "slow",
             "none": "No table declared.",
             "noTable": "no table",
-            "elsewhere": "In use: {event}"
+            "elsewhere": "In use: {event}",
+            "shared": "Two matches on this table: move one"
         },
         "result": {
             "title": "Result",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Cancel this match",
             "error": "Could not record this result.",
             "more": "More",
-            "apply": "Apply"
+            "apply": "Apply",
+            "forfeitWins": "{loser} absent → {winner} wins",
+            "forfeitConfirm": "{loser} forfeits: {winner} wins this match. Confirm?",
+            "cancelConfirm": "Cancel the match {a} – {b}? It leaves the room; the log keeps it."
         },
         "last": {
             "result": "{winner} beat {loser}",
@@ -2011,7 +2015,9 @@
             "pairHint": "A doubles event: two persons, one entrant \"A / B\".",
             "name2": "Partner's name",
             "pairRating": "Pair rating",
-            "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it."
+            "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it.",
+            "withdrawNowConfirm": "Withdraw {name} from the tournament now? They will no longer be paired (can be reinstated).",
+            "withdrawLaterConfirm": "Withdraw {name} after their match? They will not be paired afterwards (can be reinstated)."
         },
         "bracket": {
             "current": "current",
@@ -2275,7 +2281,8 @@
             "confirm": "Attach",
             "wall": {
                 "rounds": "{n} rounds announced"
-            }
+            },
+            "trashConfirm": "Delete the event “{name}”? Its tournaments remain, detached."
         },
         "epreuves": {
             "pending": "{n} pending",

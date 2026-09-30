@@ -125,6 +125,18 @@
         await add();
     }
 
+    /**
+     * Un retrait sort le joueur de tous les appariements à venir : on le confirme, la
+     * réintégration restant possible ensuite.
+     *
+     * @param {{ id: string, name: string }} r
+     * @param {boolean} after
+     */
+    function withdraw(r, after) {
+        if (!window.confirm($t(after ? 'direction.players.withdrawLaterConfirm' : 'direction.players.withdrawNowConfirm', { name: r.name }))) return;
+        onWithdraw(r.id, after);
+    }
+
     /** @param {import('../../../wailsjs/go/models').database.ParticipantRow} r */
     function startEdit(r) {
         editing = { id: r.id, name: r.name, club: r.club || '', rating: r.rating || '' };
@@ -355,12 +367,8 @@
                                 <button type="button" class="primary" data-testid="direction-player-return" disabled={busy} onclick={() => onReturn(r.id)} title={$t('direction.players.returnHint')}
                                     >{$t('direction.players.return')}</button
                                 >
-                                <button
-                                    type="button"
-                                    data-testid="direction-player-withdraw-now"
-                                    disabled={busy}
-                                    onclick={() => onWithdraw(r.id, false)}
-                                    title={$t('direction.players.withdrawNowHint')}>{$t('direction.players.withdrawNow')}</button
+                                <button type="button" data-testid="direction-player-withdraw-now" disabled={busy} onclick={() => withdraw(r, false)} title={$t('direction.players.withdrawNowHint')}
+                                    >{$t('direction.players.withdrawNow')}</button
                                 >
                             {:else}
                                 {#if r.state === 'free'}
@@ -368,19 +376,15 @@
                                         >{$t('direction.players.absent')}</button
                                     >
                                 {/if}
-                                <button
-                                    type="button"
-                                    data-testid="direction-player-withdraw-now"
-                                    disabled={busy}
-                                    onclick={() => onWithdraw(r.id, false)}
-                                    title={$t('direction.players.withdrawNowHint')}>{$t('direction.players.withdrawNow')}</button
+                                <button type="button" data-testid="direction-player-withdraw-now" disabled={busy} onclick={() => withdraw(r, false)} title={$t('direction.players.withdrawNowHint')}
+                                    >{$t('direction.players.withdrawNow')}</button
                                 >
                                 {#if r.state === 'playing'}
                                     <button
                                         type="button"
                                         data-testid="direction-player-withdraw-later"
                                         disabled={busy}
-                                        onclick={() => onWithdraw(r.id, true)}
+                                        onclick={() => withdraw(r, true)}
                                         title={$t('direction.players.withdrawLaterHint')}>{$t('direction.players.withdrawLater')}</button
                                     >
                                 {/if}

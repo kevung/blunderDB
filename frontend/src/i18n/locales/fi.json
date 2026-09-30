@@ -1940,7 +1940,8 @@
             "slow": "hidas",
             "none": "Pöytiä ei ole ilmoitettu.",
             "noTable": "ei pöytää",
-            "elsewhere": "Varattu: {event}"
+            "elsewhere": "Varattu: {event}",
+            "shared": "Kaksi ottelua tässä pöydässä: siirrä toinen"
         },
         "result": {
             "title": "Tulos",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Peruuta tämä ottelu",
             "error": "Tulosta ei voitu kirjata.",
             "more": "Lisää",
-            "apply": "Käytä"
+            "apply": "Käytä",
+            "forfeitWins": "{loser} poissa → {winner} voittaa",
+            "forfeitConfirm": "{loser} luovuttaa: {winner} voittaa tämän ottelun. Vahvistetaanko?",
+            "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu salista; loki säilyttää sen."
         },
         "last": {
             "result": "{winner} voitti pelaajan {loser}",
@@ -2011,7 +2015,9 @@
             "pairHint": "Nelinpeliturnaus: kaksi henkilöä, yksi osallistuja ”A / B”.",
             "name2": "Parin toisen nimi",
             "pairRating": "Parin luokitus",
-            "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen."
+            "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen.",
+            "withdrawNowConfirm": "Poistetaanko {name} turnauksesta nyt? Häntä ei enää paritella (palautus mahdollinen).",
+            "withdrawLaterConfirm": "Poistetaanko {name} ottelunsa jälkeen? Häntä ei sen jälkeen paritella (palautus mahdollinen)."
         },
         "bracket": {
             "current": "käynnissä",
@@ -2275,7 +2281,8 @@
             "confirm": "Liitä",
             "wall": {
                 "rounds": "{n} kierrosta ilmoitettu"
-            }
+            },
+            "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen turnaukset jäävät, irrotettuina."
         },
         "epreuves": {
             "pending": "{n} odottaa",

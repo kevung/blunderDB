@@ -1811,6 +1811,7 @@ export namespace database {
 	    elapsedSeconds?: number;
 	    slow?: boolean;
 	    noTable?: boolean;
+	    shared?: boolean;
 	    elsewhere?: string;
 	    aElsewhere?: direction.Seat;
 	    bElsewhere?: direction.Seat;
@@ -1834,6 +1835,7 @@ export namespace database {
 	        this.elapsedSeconds = source["elapsedSeconds"];
 	        this.slow = source["slow"];
 	        this.noTable = source["noTable"];
+	        this.shared = source["shared"];
 	        this.elsewhere = source["elsewhere"];
 	        this.aElsewhere = this.convertValues(source["aElsewhere"], direction.Seat);
 	        this.bElsewhere = this.convertValues(source["bElsewhere"], direction.Seat);

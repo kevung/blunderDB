@@ -94,7 +94,8 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // length and the table the director chose.
 //
 // A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
-// (unknown player, already playing, against themselves).
+// (unknown player, already playing, against themselves) — and a table another match is
+// played on, which would hide that match.
 func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
 	ctx := context.Background()
 	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
@@ -112,6 +113,8 @@ func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, t
 		// No number typed: the first free table, as a proposal would get. With none left the
 		// match still starts, under the grid's "no table" cell.
 		table = firstFreeTable(st, "", st.Current)
+	} else if occupant(st, table, "") != nil {
+		return nil, fmt.Errorf("direction: table %d is taken", table)
 	}
 	act := tournoi.Action{
 		Kind: tournoi.ActStartMatch, Phase: st.Current,

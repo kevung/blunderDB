@@ -31,6 +31,16 @@
     });
 
     /**
+     * Annuler un match le retire de la salle : on le confirme.
+     *
+     * @param {import('../../../wailsjs/go/models').database.HistoryEntry} e
+     */
+    function cancel(e) {
+        if (!window.confirm($t('direction.result.cancelConfirm', { a: e.aName || e.a || '', b: e.bName || e.b || '' }))) return;
+        onCancel(e.matchId || '');
+    }
+
+    /**
      * @param {import('../../../wailsjs/go/models').database.HistoryEntry} e
      * @param {string} winner
      * @param {number} scoreA
@@ -147,7 +157,7 @@
                         >{$t('direction.last.correct')}</button
                     >
                 {:else if e.cancellable}
-                    <button type="button" disabled={busy} onclick={() => onCancel(e.matchId)}>{$t('direction.last.cancel')}</button>
+                    <button type="button" disabled={busy} onclick={() => cancel(e)}>{$t('direction.last.cancel')}</button>
                 {/if}
             </li>
             {#if correcting === e.seq && e.correctable}
