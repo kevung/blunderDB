@@ -2016,6 +2016,8 @@
             "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace."
         },
         "bracket": {
+            "correct": "Corriger le résultat",
+            "live": "un tableau est en cours",
             "current": "en cours",
             "notDrawn": "pas encore tiré",
             "pending": "—",

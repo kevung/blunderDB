@@ -2016,6 +2016,8 @@
             "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen."
         },
         "bracket": {
+            "correct": "Korjaa tulos",
+            "live": "turnauskaavio on käynnissä",
             "current": "käynnissä",
             "notDrawn": "ei vielä arvottu",
             "pending": "—",

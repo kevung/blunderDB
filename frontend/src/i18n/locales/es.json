@@ -2016,6 +2016,8 @@
             "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye."
         },
         "bracket": {
+            "correct": "Corregir el resultado",
+            "live": "un cuadro está en curso",
             "current": "en curso",
             "notDrawn": "sin sortear",
             "pending": "—",

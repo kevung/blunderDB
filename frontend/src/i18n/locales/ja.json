@@ -2016,6 +2016,8 @@
             "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。"
         },
         "bracket": {
+            "correct": "結果を訂正",
+            "live": "トーナメント表が進行中",
             "current": "進行中",
             "notDrawn": "未抽選",
             "pending": "—",

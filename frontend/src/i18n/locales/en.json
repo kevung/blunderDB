@@ -2016,6 +2016,8 @@
             "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it."
         },
         "bracket": {
+            "correct": "Correct the result",
+            "live": "a bracket is running",
             "current": "current",
             "notDrawn": "not drawn yet",
             "pending": "—",
