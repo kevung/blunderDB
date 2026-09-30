@@ -178,7 +178,7 @@ avec l'id d'épreuve par case [H] ; la page murale a déjà cette fusion
 
 Écart avec ADR-0056 §5 (« pas d'écran partagé : 370 px utiles n'en portent pas deux ») : la
 Salle n'est pas deux épreuves côte à côte, c'est **une** grille de salle ; elle suppose la
-pleine largeur (§4.3). À acter par un amendement d'ADR-0056 §5.
+pleine largeur (§4.3). **Tranché** : ADR-0056 §5 admet la vue Salle.
 
 ### 4.2 Placer et échanger
 
@@ -246,7 +246,7 @@ Chaque lot est livrable seul, avec sa documentation (`doc/source/manuel.rst`,
 | **E4** Mise en page TD | jetons, container queries, un défilement par onglet, panneau replié | `style.css`, `DirectionView.svelte`, `TableGrid.svelte`, `App.svelte` | — |
 | **E5** Échange de tables | `Database.SwapTables` (une transaction, deux événements) + CLI/GUI ; glisser-déposer pointeur | `db_direction_result.go`, `TableGrid.svelte` | E2, E4 |
 | **E6** Recherche | source `direction` de la palette, `/`, `RencontreSearchIndex` | `commandPalette.js`, `CommandPalette.svelte`, `keyboardService.js`, `db_rencontre.go` | E2 |
-| **E7** Vue Salle | `RencontreTableGrid`, grille fusionnée, propositions groupées ; amendement ADR-0056 §5 | `DirectionView.svelte`, nouveau `HallView.svelte`, `db_rencontre_page.go` | E4, E5 |
+| **E7** Vue Salle | `RencontreTableGrid`, grille fusionnée, propositions groupées ; ADR-0056 §5 amendé | `DirectionView.svelte`, nouveau `HallView.svelte`, `db_rencontre_page.go` | E4, E5 |
 | **E8** Arbre dessiné | SVG inline avec traits, poules en croisé, squelette avant tirage | `BracketsView.svelte`, `db_direction_brackets.go` | E1 |
 | **E9** Arbre au mur | arbres des épreuves en phase tableau sur la page de la Rencontre, rotation | `direction/wallpage.go`, `db_rencontre_page.go` | E8 |
 | **E10** Plein écran (option B) | seulement si #380 le demande | `App.svelte`, `internal/gui` | E4, mesure |
@@ -275,4 +275,5 @@ schéma ni le hash Zobrist ; E5 ajoute des événements du moteur existant, pas 
 4. Le glisser-déposer par pointeur ne réveille pas le drag-drop de fichiers de Wails.
 5. Un échange = deux `TableChangedEvent` suffit ; sinon un événement `TablesSwapped` à demander
    à Nicomaque.
-6. La vue Salle amende ADR-0056 §5 sans le contredire (une grille, pas deux épreuves).
+6. ~~La vue Salle amende ADR-0056 §5~~ — tranché : ADR-0056 §5 réécrit, une grille de salle
+   est admise.

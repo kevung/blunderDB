@@ -6,18 +6,13 @@ qu'un frontend web puisse transcrire et diriger. Base : commit `2bcd82568`.
 
 Conventions : un fait vérifié porte `fichier:ligne` ; **[H]** marque une hypothèse.
 
-## 0. Ce plan contredit quatre ADR acceptées — à trancher d'abord
+## 0. Contradiction avec quatre ADR — tranchée par ADR-0057
 
-| ADR | Ce qu'elle dit | Ligne |
-|---|---|---|
-| 0045 règle 9 | « the CLI has `transcribe`; `serve` exposes nothing » | `docs/adr/0045-…md:48` |
-| 0047 | « aucune route de consultation, rien dans le front web (ADR-0039 règle 1) » ; « Le démon ne reçoit rien » | `docs/adr/0047-…md:26-28`, `:36` |
-| 0056 | CLI en lecture seule ; « Le démon ne reçoit rien (ADR-0047) » | `docs/adr/0056-…md:63-64` |
-| 0039 règle 1 | le front web ne fait que consulter, chercher, réviser ; « ni édition, ni import, …, matchs, tournois » ; l'ouvrir, « c'est remplacer cette ADR et reposer “faut-il une seconde application ?” » | `docs/adr/0039-…md:15-19`, `:31-32` |
-
-Rien de ce qui suit ne se code avant une ADR qui remplace 0039 et amende 0045 §9, 0047 et 0056.
-Le plan distingue donc **l'API** (routes `/v1/`, utiles aussi à `call`, à gammonGo et aux
-scripts, sans rouvrir 0039) et **le front web** (qui la rouvre).
+Le plan contredisait ADR-0045 règle 9, ADR-0047, ADR-0056 (« le démon ne reçoit rien ») et
+ADR-0039 règle 1 (front web en consultation). **Tranché** : l'API `/v1/` et `call` exposent
+Transcription, Direction et Rencontre à un **client externe** (gammonGo, scripts) ; le front
+web embarqué reste en consultation, **ADR-0039 intacte**. ADR-0057 amende 0045 §9, 0047 et
+0056, qui y renvoient. Le lot H8 (front web) sort donc de ce plan.
 
 ## 1. L'existant
 
@@ -110,15 +105,17 @@ Famille `transcriptions.*`, `POST /v1/…`, corps JSON :
 
 | Route | Rôle |
 |---|---|
-| `list`, `get`, `create`, `delete` | CRUD du brouillon (contrat existant) |
+| `list`, `get`, `create` | brouillon (contrat existant) ; `editMatch` ouvre un brouillon depuis un Match, avec le décompte des pertes s'il est importé |
 | `open` | rend `TranscriptionState` + `version` + `sessionId` |
 | `apply` | `{id, version, gesture}` → état annoté ; 409 si `version` périmée |
 | `undo`, `redo` | sur la session |
 | `close` | libère la session |
-| `saveAsMatch`, `exportMat` | enregistrement (analyse 2-ply comprise, ADR-0045 §8) ; long → `streamingPaths` |
+| `finish` | enregistre le Match et libère le brouillon (analyse 2-ply comprise, ADR-0045 §8) ; long → `streamingPaths` |
+| `abandon` | libère le brouillon sans Match |
+| `exportMat` | export `.mat` |
 
 `call transcriptions.apply --json '{…}'` marche mais chaque appel est un processus neuf : la
-pile d'annulation doit donc être persistée (§2.4) ou `undo` indisponible par `call` [décision].
+pile d'annulation ne survit pas d'un appel à l'autre : `undo` n'annule rien par `call` (§5.2).
 
 ### 2.3 Routes direction et rencontre
 
@@ -224,15 +221,15 @@ d'écriture au CLI relève de ADR-0056 (« CLI en lecture seule ») et n'est pas
 
 | Lot | Contenu | Garde |
 |---|---|---|
-| **H0** ADR | remplace 0039, amende 0045 §9, 0047, 0056 ; tranche §5 | — |
+| **H0** ADR | fait : ADR-0057 amende 0045 §9, 0047, 0056 ; 0039 intacte ; §5 tranché | — |
 | **H1** `DirectionStore` au contrat | interface, SQLite, PostgreSQL (code d'accès sur 025/027), `storagetest/contract_direction.go` ; corriger le commentaire `direction.go:54-55` | contrat vert sur les deux backends |
 | **H2** Service de direction | logique de `db_direction_*.go` et `db_rencontre*.go` déplacée ; `Database` façade ; aucun changement GUI | tests existants de `database` inchangés, verts |
 | **H3** Routes de lecture | `directions.*`, `rencontres.*` en lecture, `ETag`/`If-None-Match`, `openapi.yaml` régénéré, `mode_headless.rst` + 8 `.po` | tests `internal/server`, suite `call` |
 | **H4** Routes de gestes | `ifVersion`/`If-Match` → 409, `Idempotency-Key`, `serve --direction` | test de course : deux gestes concurrents, un 409 |
 | **H5** SSE | `/v1/events`, bus mémoire, `streamingPaths`, Compress/RateLimit | test : un geste → un message |
-| **H6** Service de transcription | `open/apply/undo/redo/close`, sessions (A) avec TTL, 410 ; enregistrement en Match sur le contrat | test : TTL expiré → 410 → réouverture, aucun geste perdu |
+| **H6** Service de transcription | `open/apply/undo/redo/close/finish/abandon/editMatch`, colonne de révision (bump), sessions (A) avec TTL, 410 ; enregistrement en Match sur le contrat | test : TTL expiré → 410 → réouverture, aucun geste perdu |
 | **H7** PostgreSQL multi-instance | `LISTEN/NOTIFY` pour le bus | test d'intégration PG (nightly) |
-| **H8** Front web | selon H0 : client de H3–H6 ; hors de ce plan | — |
+| **H8** Front web | écarté par H0 : le client est externe (gammonGo) | — |
 
 H1 → H2 est le gros du travail et sert le bureau aussi (une seule implémentation, testée sur
 PostgreSQL). H3 livre la page murale web sans ouvrir l'écriture. Aucun lot ne change le hash
@@ -249,18 +246,26 @@ Zobrist ; seul le choix B de §2.4 ou une colonne `revision` imposent un bump de
 - Le catalogue i18n de direction est poussé par le front (`SetDirectionStrings`) : état
   global du processus, faux en multi-tenant et multi-langue.
 
-## 5. Décisions à trancher (ADR à écrire)
+## 5. Décisions tranchées (ADR-0057, ADR-0045, ADR-0056)
 
-1. **Rouvrir le périmètre web** : remplacer ADR-0039 (front web éditeur) ou n'exposer que
-   l'API (`call`, gammonGo, scripts) et garder le front web en consultation ?
-2. **Session de transcription** : mémoire + TTL (A), persistée (B) ou sans état (C) ; que
-   promet `undo` par `call` ?
-3. **Versionnage** : `seq` du journal comme version et `If-Match` obligatoire sur les gestes,
-   ou facultatif (dernier qui écrit gagne, signalé) ; `revision` de transcription en colonne
-   (bump) ou dans le document ?
-4. **Temps réel** : SSE seul, et `LISTEN/NOTIFY` pour plusieurs instances, ou une instance par
-   tenant imposée pour la direction ?
-5. **Garde-fou d'exposition** : `serve --direction` éteint par défaut, et la page murale web
-   exige-t-elle un tenant ?
-6. **CLI d'écriture** : `call` suffit-il, ou la CLI reçoit-elle les gestes décrits dans
-   ux.md §3 (amende ADR-0056) ?
+1. **Périmètre** : API seule (`/v1/`, `call`) pour un client externe ; ADR-0039 intacte ;
+   0045 §9, 0047, 0056 amendés par ADR-0057.
+2. **Session de transcription** : option A — mémoire par (tenant, brouillon), TTL
+   d'inactivité → 410 ; le document reste écrit à chaque geste, seule la pile d'annulation se
+   perd. Sous `call`, pas d'annulation entre deux appels ; C n'est pas retenue en repli.
+3. **Versionnage** : optimiste et **obligatoire** sur tout geste d'écriture — `If-Match`
+   absent → 428, périmé → 409. Direction : numéro d'événement du journal. Transcription :
+   **colonne** de révision (bump de `DatabaseVersion`, migration SQLite et PostgreSQL), pas un
+   champ du document.
+4. **Temps réel** : SSE sur `/v1/events` ; `LISTEN/NOTIFY` en PostgreSQL multi-instance ;
+   aucune instance par tenant imposée.
+5. **Exposition** : routes d'écriture éteintes par défaut, `serve --direction` et
+   `serve --transcription` ; lecture toujours disponible, sous tenant. Aucune authentification
+   dans le moteur (ADR-0005).
+6. **CLI d'écriture** : `call` suffit ; aucune nouvelle sous-commande d'écriture.
+7. **Sorties de la transcription** (ADR-0045 règles 2-3, ADR-0048 règle 12 réécrites) :
+   « Terminer » enregistre le Match et libère le brouillon, « Abandonner » le libère sans
+   Match ; plus de « Créer/Mettre à jour le match » ni de « Fermer le brouillon ».
+   « Éditer la transcription » ouvre un brouillon depuis tout Match existant, avec un
+   avertissement chiffré des pertes pour un match importé. Le service H6 expose `finish`,
+   `abandon` et `editMatch` (§2.2) ; `close` ne libère que la session.

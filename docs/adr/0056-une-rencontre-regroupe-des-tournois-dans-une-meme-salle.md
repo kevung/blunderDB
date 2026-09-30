@@ -2,7 +2,8 @@
 
 Statut : acceptée.
 Amende : ADR-0047 §1 (« une seule entité »).
-Voir aussi : ADR-0044, ADR-0036, ADR-0005.
+Amendée par : ADR-0057 (exposition au démon).
+Voir aussi : ADR-0044, ADR-0036, ADR-0005, ADR-0057.
 
 ## Contexte
 
@@ -42,7 +43,10 @@ Plusieurs Directions par Tournament restent écartées.
 5. **Ouvrir la Rencontre ouvre toutes ses épreuves.** Un onglet par épreuve dans l'en-tête de la
    Direction, avec son résumé (propositions, matchs en cours, alerte) ; changer d'épreuve est un
    clic, sans confirmation, sans rien fermer ni rejouer. Pas d'écran partagé : 370 px utiles
-   n'en portent pas deux. Un tournoi hors Rencontre ne voit aucun changement.
+   n'en portent pas deux. Une vue **Salle** est admise, parce qu'elle n'est pas deux épreuves
+   côte à côte mais **une** grille : une case par table de la Rencontre, quelle que soit
+   l'épreuve, marquée de son épreuve, en pleine largeur ; la fiche de résultat y agit sur
+   toutes. Un tournoi hors Rencontre ne voit aucun changement.
 6. **Un dossier de sortie.** La Rencontre écrit `<dossier>/index.html`, la page murale de la
    salle (une ligne par table, quelle que soit l'épreuve ; les rondes annoncées ; un lien vers
    chaque épreuve), et chaque épreuve rattachée écrit dans `<dossier>/<épreuve>/`. Le dossier
@@ -61,14 +65,15 @@ Plusieurs Directions par Tournament restent écartées.
 - La logique vit sur `Database` et le contrat `Storage` ; `pkg/blunderdb/direction` reste le
   seul paquet qui connaît Nicomaque et calcule tables occupées et disponibilités.
 - CLI en lecture seule, comme pour la Direction : `tournament list` nomme la Rencontre,
-  `tournament page --rencontre` écrit la page murale. Le démon ne reçoit rien (ADR-0047).
+  `tournament page --rencontre` écrit la page murale. Le démon et `call` exposent la Rencontre
+  à un client externe, lecture toujours, gestes de salle sous `serve --direction` (ADR-0057).
 - Vocabulaire : **Rencontre** dans `CONTEXT.md` ; Participant et Directory complétés pour les
   doubles.
 - Écartés : un regroupement dérivé (aucun propriétaire pour la salle) ; un journal propre à la
   Rencontre (une épreuve ne se rejouerait plus seule) ; une liste mutable des tables hors
   service (perd l'historique, contredit ADR-0047 §3) ; un lien explicite entre Participants
   (la fiche personne que l'ADR-0047 écarte) ; un Match à quatre noms (refonte du domaine,
-  qui a deux joueurs partout) ; un écran partagé.
+  qui a deux joueurs partout) ; un écran partagé de deux épreuves.
 
 ## Garde
 
