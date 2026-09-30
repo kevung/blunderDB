@@ -12,7 +12,8 @@ import (
 
 // runTranscribe is `blunderdb transcribe`: replay a transcription and report
 // what the replay found, over pkg/blunderdb/transcript with no rule of its own
-// (ADR-0045 §9). It never writes to a database.
+// (ADR-0045 §9). Only --finish, --abandon and --edit write, each through the
+// Database method the panel calls.
 //
 // An Inconsistency is a finding, never a refusal (ADR-0044): --check exits 0
 // whatever it lists, and a non-zero status means something really failed
@@ -28,6 +29,10 @@ func (cli *CLI) runTranscribe(args []string) error {
 	check := transcribeCmd.Bool("check", false, "List the inconsistencies the replay finds (the default)")
 	render := transcribeCmd.String("render", "", "Write the transcription back as a .mat file to this path")
 	format := transcribeCmd.String("format", "text", "Output format: text or json")
+	finish := transcribeCmd.Bool("finish", false, "Finish the --draft: write its match (or replace the one it was opened from) and release the draft")
+	abandon := transcribeCmd.Bool("abandon", false, "Abandon the --draft: delete it without a match; a match it was opened from is left untouched")
+	edit := transcribeCmd.Bool("edit", false, "Open a draft on the --match (or return the one already open on it), for a correction finished with --finish")
+	acceptLosses := transcribeCmd.Bool("accept-losses", false, "With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost")
 
 	transcribeCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb transcribe [options]")
@@ -55,6 +60,13 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("--render writes the transcription back as a .mat file,")
 		fmt.Println("which is how the round trip is checked on real files.")
 		fmt.Println()
+		fmt.Println("Three options write, and only these: --finish writes a")
+		fmt.Println("draft's match and releases the draft, --abandon deletes a")
+		fmt.Println("draft without a match, --edit opens a draft on an existing")
+		fmt.Println("match so that --finish replaces it in place. Editing an")
+		fmt.Println("imported match counts what a .mat cannot carry (analyses,")
+		fmt.Println("comments) and refuses without --accept-losses.")
+		fmt.Println()
 		fmt.Println("Options:")
 		transcribeCmd.PrintDefaults()
 		fmt.Println()
@@ -71,6 +83,13 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("  # Replay a match of the library, or a draft being typed")
 		fmt.Println("  blunderdb transcribe --db database.db --match 5 --check")
 		fmt.Println("  blunderdb transcribe --db database.db --draft 3 --check")
+		fmt.Println()
+		fmt.Println("  # Correct a match: open a draft on it, then finish it")
+		fmt.Println("  blunderdb transcribe --db database.db --match 5 --edit")
+		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --finish")
+		fmt.Println()
+		fmt.Println("  # Drop a draft")
+		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --abandon")
 	}
 
 	if err := transcribeCmd.Parse(args); err != nil {
@@ -82,6 +101,13 @@ func (cli *CLI) runTranscribe(args []string) error {
 		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
 	}
 	text := formatLower != "json"
+
+	if *finish || *abandon || *edit {
+		return cli.transcribeWrite(transcribeWriteArgs{
+			dbPath: *dbPath, matchID: *matchID, draftID: *draftID, matFile: *matFile,
+			finish: *finish, abandon: *abandon, edit: *edit, acceptLosses: *acceptLosses, text: text,
+		}, transcribeCmd)
+	}
 
 	doc, source, err := cli.transcribeSource(*matFile, *dbPath, *matchID, *draftID, transcribeCmd)
 	if err != nil {
