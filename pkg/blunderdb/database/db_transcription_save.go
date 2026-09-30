@@ -76,7 +76,7 @@ func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult,
 	// than a second Match (fonctionnel.md §1.1).
 	if !replace {
 		matchID := res.MatchID
-		ed.Doc.Header.MatchID = &matchID
+		ed.SetMatchID(&matchID)
 		if _, err := d.saveTranscription(id, ed.Doc); err != nil {
 			return nil, err
 		}

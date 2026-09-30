@@ -54,6 +54,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/DeleteCascadeRetention", testMatchDeleteCascadeRetention},
 		{"Match/DeleteGamesKeepsTheMatch", testMatchDeleteGamesKeepsTheMatch},
 		{"Match/ReplaceHeader", testMatchReplaceHeader},
+		{"Match/ReplaceHeaderUnknownID", testMatchReplaceHeaderUnknownID},
 		{"Match/FindByHash", testMatchFindByHash},
 		{"Match/SwapCopyOnWrite", testMatchSwapCopyOnWrite},
 		{"Match/ListFilterSortPaginate", testMatchListFilterSortPaginate},
