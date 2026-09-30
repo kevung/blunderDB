@@ -67,6 +67,7 @@
         transcriptionBoardSwapStore,
         setTranscription,
         clearTranscription,
+        transcriptionLibrary,
         resetTranscriptionKeys,
         noticeTranscription,
         clearTranscriptionNotice
@@ -219,8 +220,9 @@
      */
     async function settledDraft() {
         const id = draft?.id;
+        const library = transcriptionLibrary();
         await pending;
-        return draft && draft.id === id ? draft : null;
+        return draft && draft.id === id && transcriptionLibrary() === library ? draft : null;
     }
 
     async function handleSave() {
@@ -362,14 +364,16 @@
         if (!gestures.length) return pending;
         const id = draft?.id;
         if (id == null) return pending;
+        const library = transcriptionLibrary();
+        const stillOurs = () => draft?.id === id && transcriptionLibrary() === library;
         pending = pending
             .then(async () => {
                 for (const gesture of gestures) {
                     // Le brouillon a changé (un autre ouvert, la base changée) :
                     // ni la suite des gestes ni la réponse ne sont les siennes.
-                    if (draft?.id !== id) return;
+                    if (!stillOurs()) return;
                     const next = await ApplyTranscriptionGesture(id, gesture);
-                    if (draft?.id !== id) return;
+                    if (!stillOurs()) return;
                     setTranscription(next);
                 }
                 error = '';

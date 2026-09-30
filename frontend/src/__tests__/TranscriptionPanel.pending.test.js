@@ -36,7 +36,7 @@ import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.
 import { saveDraft, exportDraftMat } from '../services/transcriptionSave.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionStore, clearTranscription, bumpTranscriptionLibrary } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -150,5 +150,24 @@ describe('la file des gestes', () => {
         await tick();
         await tick();
         expect(get(transcriptionStore)?.id).toBe(2);
+    });
+
+    test("la réponse en vol ne sert pas le brouillon de même id d'une autre base", async () => {
+        const reply = deferred();
+        /** @type {any} */ (ApplyTranscriptionGesture).mockReturnValue(reply.promise);
+        await openedPanel();
+        await press('KeyR');
+        await press('Digit2');
+        await vi.waitFor(() => expect(ApplyTranscriptionGesture).toHaveBeenCalledTimes(1));
+
+        // Changement de base, puis ouverture du brouillon n° 1 de la nouvelle.
+        bumpTranscriptionLibrary();
+        const other = { id: 1, annotated: annotated() };
+        transcriptionStore.set(other);
+        reply.resolve({ id: 1, annotated: annotated(1) });
+        await reply.promise;
+        await tick();
+        await tick();
+        expect(get(transcriptionStore)).toBe(other);
     });
 });

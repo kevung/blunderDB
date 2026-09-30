@@ -201,6 +201,16 @@ describe('la fermeture', () => {
         expect(confirmAction.mock.calls[0][0]).toMatch(/not saved|lost/i);
     });
 
+    test('un match supprimé depuis dans la bibliothèque ne passe plus pour gardé', async () => {
+        const d = draft({ actions: clean });
+        await saveDraft(d);
+        // Le geste suivant rend un document rechargé, sans match : le Match a été supprimé.
+        const reloaded = draft({ actions: clean });
+        await closeDraft(reloaded);
+        expect(confirmAction.mock.calls[0][0]).toMatch(/never saved/i);
+        expect(draftSaveState(reloaded, get(transcriptionSaveStore)).key).toBe('transcription.stateNoMatch');
+    });
+
     test('le refus ne supprime rien', async () => {
         confirmAction.mockResolvedValue(false);
         expect(await closeDraft(draft({ actions: clean }))).toBe(false);

@@ -116,6 +116,21 @@ export function clearTranscriptionNotice() {
     transcriptionNoticeStore.set(null);
 }
 
+// La base dont les brouillons sont montrés : un id de brouillon ne vaut que
+// dans sa base, et une réponse en vol ne doit pas servir le brouillon de même
+// id de la suivante.
+let libraryGeneration = 0;
+
+/** Un changement de base : les réponses en vol de la précédente seront ignorées. */
+export function bumpTranscriptionLibrary() {
+    libraryGeneration += 1;
+}
+
+/** La génération de base courante, à comparer avant d'appliquer une réponse. */
+export function transcriptionLibrary() {
+    return libraryGeneration;
+}
+
 /**
  * Lets go of the open draft, also on library change: a stale draft would answer for a row id of
  * another file.

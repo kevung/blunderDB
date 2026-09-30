@@ -22,10 +22,11 @@ import { GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/ma
 
 /**
  * Le dernier enregistrement de cette session : `{ id, matchId, at,
- * signature }`, ou null. En mémoire : la base ne garde que `match_id` ; ce
+ * signature, annotated }`, ou null ; `annotated` est le document enregistré,
+ * tant que le panneau n'en a pas rechargé d'autre. En mémoire : la base ne garde que `match_id` ; ce
  * store ajoute l'heure et la signature, d'où « modifié depuis ».
  *
- * @type {import('svelte/store').Writable<{id: number, matchId: number, at: number, signature: string} | null>}
+ * @type {import('svelte/store').Writable<{id: number, matchId: number, at: number, signature: string, annotated?: any} | null>}
  */
 export const transcriptionSaveStore = writable(null);
 
@@ -94,7 +95,7 @@ export function savedMatchID(annotated) {
  * L'enregistrement de cette session, s'il est celui de ce brouillon.
  *
  * @param {{id: number} | null | undefined} draft
- * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
+ * @param {{id: number, matchId: number, at: number, signature: string, annotated?: any} | null | undefined} saved
  */
 function ownSave(draft, saved) {
     return saved && draft && saved.id === draft.id ? saved : null;
@@ -105,10 +106,15 @@ function ownSave(draft, saved) {
  * session vient d'écrire — le document affiché n'est rechargé qu'au geste suivant.
  *
  * @param {{id: number, annotated: any} | null | undefined} draft
- * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
+ * @param {{id: number, matchId: number, at: number, signature: string, annotated?: any} | null | undefined} saved
  */
 function draftMatchID(draft, saved) {
-    return savedMatchID(draft?.annotated) || ownSave(draft, saved)?.matchId || 0;
+    const fromDocument = savedMatchID(draft?.annotated);
+    if (fromDocument) return fromDocument;
+    // Le repli ne vaut que pour le document même qui a été enregistré : un
+    // document rechargé depuis et sans match dit que le Match a été supprimé.
+    const own = ownSave(draft, saved);
+    return own && own.annotated === draft?.annotated ? own.matchId : 0;
 }
 
 /**
@@ -118,7 +124,7 @@ function draftMatchID(draft, saved) {
  * entier : l'enregistrement de la session ne vaut que pour celui qui l'a fait.
  *
  * @param {{id: number, annotated: any} | null | undefined} draft
- * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
+ * @param {{id: number, matchId: number, at: number, signature: string, annotated?: any} | null | undefined} saved
  * @param {number} [now]
  */
 export function draftSaveState(draft, saved, now = Date.now()) {
@@ -173,6 +179,7 @@ export async function saveDraft(draft) {
 
     transcriptionSaveStore.set({
         id,
+        annotated,
         matchId: result?.match_id ?? 0,
         at: Date.now(),
         signature: documentSignature(annotated)
