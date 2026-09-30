@@ -44,12 +44,6 @@ const (
 	sopCount
 )
 
-// undoLosesMatchID holds the scenario back from undo and redo once the draft
-// has been saved, for as long as TestTranscriptionUndoAfterSaveKeepsTheMatch
-// is skipped: otherwise every program that saves then undoes stops on that one
-// bug, and the fuzzer finds nothing else. Set it to false with the fix.
-const undoLosesMatchID = true
-
 type sessionBytes struct {
 	data []byte
 	i    int
@@ -238,16 +232,10 @@ func runSessionScenario(t *testing.T, db *Database, data []byte) {
 			sc := [2]int{int(src.or(0)) % 15, int(src.or(0)) % 15}
 			r.gesture(transcript.Gesture{Kind: transcript.GestureSetScore, At: int(src.or(0)) % (len(r.doc().Actions) + 1), Score: &sc})
 		case sopUndo:
-			if undoLosesMatchID && r.matchID != 0 {
-				break
-			}
 			for k := int(src.or(0)) % 5; k >= 0; k-- {
 				r.gesture(transcript.Gesture{Kind: transcript.GestureUndo})
 			}
 		case sopRedo:
-			if undoLosesMatchID && r.matchID != 0 {
-				break
-			}
 			for k := int(src.or(0)) % 5; k >= 0; k-- {
 				r.gesture(transcript.Gesture{Kind: transcript.GestureRedo})
 			}
@@ -318,13 +306,10 @@ func TestTranscriptionSessionSeeded(t *testing.T) {
 	}
 }
 
-// TestTranscriptionUndoAfterSaveKeepsTheMatch: the match id is posted on the
-// session's document at the first save, outside the undo stack, so undoing the
-// gesture before the save hands back a document without it — the row is
-// rewritten without it and the next save creates a SECOND Match.
+// TestTranscriptionUndoAfterSaveKeepsTheMatch: the match id is a fact of the
+// library, not a gesture, so undoing the gesture before a save must not take it
+// away — or the next save would create a SECOND Match.
 func TestTranscriptionUndoAfterSaveKeepsTheMatch(t *testing.T) {
-	t.Skip("bug: undo after SaveTranscriptionAsMatch drops Header.MatchID (posted outside the Editor's stack); the next save creates a second Match")
-
 	db := newTestDB(t)
 	st, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
