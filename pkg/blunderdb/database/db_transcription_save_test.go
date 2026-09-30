@@ -81,13 +81,13 @@ func lastPlayedAction(t *testing.T, state *TranscriptionState) int {
 	return -1
 }
 
-func TestSaveTranscriptionAsMatch_CreatesThenReplacesInPlace(t *testing.T) {
+func TestFinishTranscription_CreatesThenEditReplacesInPlace(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
-	first, err := db.SaveTranscriptionAsMatch(id)
+	first, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
 	if first.MatchID == 0 {
 		t.Fatal("the first save produced no match")
@@ -108,12 +108,27 @@ func TestSaveTranscriptionAsMatch_CreatesThenReplacesInPlace(t *testing.T) {
 		t.Errorf("%d move rows, the save reports %d", moveRows, first.Moves)
 	}
 
-	// The match id is posted on the draft, and it is what makes the next save
-	// a replacement rather than a second match.
-	state, err := db.OpenTranscription(id)
-	if err != nil {
-		t.Fatalf("OpenTranscription: %v", err)
+	// Finishing released the draft: its row went in the same transaction.
+	if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM transcription`); n != 0 {
+		t.Fatalf("%d draft rows after finishing, want 0", n)
 	}
+
+	// A transcribed match loses nothing to a new draft.
+	losses, err := db.MatchTranscriptionLosses(first.MatchID)
+	if err != nil {
+		t.Fatalf("MatchTranscriptionLosses: %v", err)
+	}
+	if losses.Imported || losses.Lossy() {
+		t.Errorf("a transcribed match reports losses: %+v", losses)
+	}
+
+	// Editing opens a draft naming the match, and that id is what makes the
+	// next finish a replacement rather than a second match.
+	state, err := db.EditMatchTranscription(first.MatchID)
+	if err != nil {
+		t.Fatalf("EditMatchTranscription: %v", err)
+	}
+	id = state.ID
 	if state.Annotated.Document.Header.MatchID == nil || *state.Annotated.Document.Header.MatchID != first.MatchID {
 		t.Fatalf("the draft's match id is %v, want %d", state.Annotated.Document.Header.MatchID, first.MatchID)
 	}
@@ -140,9 +155,9 @@ func TestSaveTranscriptionAsMatch_CreatesThenReplacesInPlace(t *testing.T) {
 		t.Fatalf("flip_side: %v", err)
 	}
 
-	second, err := db.SaveTranscriptionAsMatch(id)
+	second, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("second SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("second FinishTranscription: %v", err)
 	}
 	if second.MatchID != first.MatchID {
 		t.Fatalf("the second save produced match %d, want the same match %d", second.MatchID, first.MatchID)
@@ -229,25 +244,8 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 		t.Fatalf("TranscriptionMAT: %v", err)
 	}
 
-	saved, err := db.SaveTranscriptionAsMatch(id)
-	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
-	}
-
-	out := filepath.Join(t.TempDir(), "match.mat")
-	if err := db.ExportMatchMAT(saved.MatchID, out); err != nil {
-		t.Fatalf("ExportMatchMAT: %v", err)
-	}
-	matchText, err := os.ReadFile(out)
-	if err != nil {
-		t.Fatalf("read the exported .mat: %v", err)
-	}
-	if draftText != string(matchText) {
-		t.Errorf("the draft and its Match export different .mat files\n--- draft ---\n%s\n--- match ---\n%s", draftText, matchText)
-	}
-
-	// And the draft's own export writes the very same bytes to the file the
-	// user chose.
+	// The draft's own export, taken before finishing releases the draft,
+	// writes the very same bytes to the file the user chose.
 	fromDraft := filepath.Join(t.TempDir(), "draft.mat")
 	if err := db.ExportTranscriptionMAT(id, fromDraft); err != nil {
 		t.Fatalf("ExportTranscriptionMAT: %v", err)
@@ -280,18 +278,36 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 	if filepath.Ext(name) != ".mat" {
 		t.Errorf("the suggested name is %q", name)
 	}
+
+	saved, err := db.FinishTranscription(id)
+	if err != nil {
+		t.Fatalf("FinishTranscription: %v", err)
+	}
+
+	out := filepath.Join(t.TempDir(), "match.mat")
+	if err := db.ExportMatchMAT(saved.MatchID, out); err != nil {
+		t.Fatalf("ExportMatchMAT: %v", err)
+	}
+	matchText, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read the exported .mat: %v", err)
+	}
+	if draftText != string(matchText) {
+		t.Errorf("the draft and its Match export different .mat files\n--- draft ---\n%s\n--- match ---\n%s", draftText, matchText)
+	}
+
 }
 
 // A draft with nothing in it is the one thing a save refuses: an empty Match
 // would count in the statistics and answer searches with nothing at all.
-func TestSaveTranscriptionAsMatch_RefusesAnEmptyDraft(t *testing.T) {
+func TestFinishTranscription_RefusesAnEmptyDraft(t *testing.T) {
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
-	if _, err := db.SaveTranscriptionAsMatch(state.ID); err == nil {
+	if _, err := db.FinishTranscription(state.ID); err == nil {
 		t.Fatal("saving an empty draft succeeded")
 	}
 	if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM match`); n != 0 {
@@ -307,9 +323,9 @@ func TestSetLength_RehashesEveryPosition(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
-	first, err := db.SaveTranscriptionAsMatch(id)
+	first, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
 	before := matchPositionIDs(t, db, first.MatchID)
 	if len(before) == 0 {
@@ -321,10 +337,11 @@ func TestSetLength_RehashesEveryPosition(t *testing.T) {
 		}
 	}
 
-	state, err := db.OpenTranscription(id)
+	state, err := db.EditMatchTranscription(first.MatchID)
 	if err != nil {
-		t.Fatalf("OpenTranscription: %v", err)
+		t.Fatalf("EditMatchTranscription: %v", err)
 	}
+	id = state.ID
 	length := state.Annotated.Document.Header.MatchLength
 	if length <= 0 {
 		t.Fatalf("the fixture is a money session (%d): there is no away score to change", length)
@@ -337,9 +354,9 @@ func TestSetLength_RehashesEveryPosition(t *testing.T) {
 		t.Fatalf("set_length: %v", err)
 	}
 
-	second, err := db.SaveTranscriptionAsMatch(id)
+	second, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("second SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("second FinishTranscription: %v", err)
 	}
 	if second.MatchID != first.MatchID || !second.Replaced {
 		t.Fatalf("the second save produced match %d (replaced %v), want the same match replaced", second.MatchID, second.Replaced)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 00:49+0200\n"
+"POT-Creation-Date: 2026-10-01 01:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1221,9 +1221,11 @@ msgstr "CTRL-INTRO"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
-"déjà."
-msgstr "Crear el partido a partir del borrador, o actualizarlo si ya existe."
+"Terminer le brouillon : écrire le match, ou remplacer celui dont il a été"
+" ouvert, et libérer le brouillon."
+msgstr ""
+"Terminar el borrador: escribir el partido, o sustituir aquel del que se "
+"abrió, y liberar el borrador."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1732,3 +1734,10 @@ msgstr "Cerrar la ayuda."
 
 #~ msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
 #~ msgstr "Mostrar/ocultar el panel Torneos para dirigir un torneo."
+
+#~ msgid ""
+#~ "Créer le match à partir du "
+#~ "brouillon, ou le mettre à jour "
+#~ "s'il existe déjà."
+#~ msgstr "Crear el partido a partir del borrador, o actualizarlo si ya existe."
+

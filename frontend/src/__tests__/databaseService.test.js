@@ -85,7 +85,6 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, activeModal, MODAL } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiViewModeStore, ankiAnswerShownStore } from '../stores/ankiStore.js';
 import { transcriptionStore } from '../stores/transcriptionStore.js';
-import { transcriptionSaveStore } from '../services/transcriptionSave.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -405,14 +404,12 @@ describe('setStatusBarMessage', () => {
 describe('changing library lets go of the open transcription draft', () => {
     function openDraft() {
         transcriptionStore.set({ id: 1, annotated: { document: { header: {}, actions: [] } } });
-        transcriptionSaveStore.set({ id: 1, matchId: 7, at: 0, signature: '' });
     }
 
     test('opening another database', async () => {
         openDraft();
         await openDatabaseByPath('/tmp/other.db');
         expect(get(transcriptionStore)).toBeNull();
-        expect(get(transcriptionSaveStore)).toBeNull();
     });
 
     test('creating a new database', async () => {
@@ -420,6 +417,5 @@ describe('changing library lets go of the open transcription draft', () => {
         SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
         await newDatabase();
         expect(get(transcriptionStore)).toBeNull();
-        expect(get(transcriptionSaveStore)).toBeNull();
     });
 });
