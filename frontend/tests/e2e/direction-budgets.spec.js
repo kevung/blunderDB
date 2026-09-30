@@ -235,6 +235,8 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // cellule dépend de l'état du joueur (un joueur libre porte aussi « Absenter »).
     test('retirer un joueur tient dans son budget', async ({ page }) => {
         await openDirection(page);
+        // Le retrait se confirme : la boîte de confirmation est acceptée.
+        page.on('dialog', (d) => d.accept());
 
         const counted = await countGestures(page, async (g) => {
             await g.click(page.locator('[data-testid="direction-tab-players"]'));
@@ -248,6 +250,8 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // retiré : corriger sa fiche ne le réinscrit plus en silence.
     test('réinscrire un retiré tient en un clic', async ({ page }) => {
         await openDirection(page);
+        // Le retrait se confirme : la boîte de confirmation est acceptée.
+        page.on('dialog', (d) => d.accept());
         await page.locator('[data-testid="direction-tab-players"]').click();
         const row = page.locator('.players tbody tr').first();
         await row.locator('[data-testid="direction-player-withdraw-now"]').click();

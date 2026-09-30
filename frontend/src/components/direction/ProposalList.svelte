@@ -171,7 +171,7 @@
          choisie. Pas de listbox / option — chaque ligne porte ses propres boutons. -->
     <ul class="queue" tabindex="-1" aria-label={$t('direction.proposals.title', { n: shown.length })} bind:this={queueEl}>
         {#each shown as a, i (actionKey(a))}
-            <li class:selected={i === selected} class:repair={isRepair(a)} aria-current={i === selected ? 'true' : undefined} onmouseenter={() => (selected = i)}>
+            <li class:selected={i === selected} class:repair={isRepair(a)} aria-current={i === selected ? 'true' : undefined}>
                 {#if isRepair(a)}
                     <span class="tag">{$t('direction.proposals.repairTag')}</span>
                 {/if}

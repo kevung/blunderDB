@@ -53,6 +53,21 @@ export function directionOwnsKey(event) {
     return !isTypingTarget(active) && !isTypingTarget(/** @type {Element | null} */ (event.target));
 }
 
+/** Les touches qui font défiler une page : sous la Direction, elles défilent la page. */
+const SCROLL_KEYS = ['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+
+/**
+ * L'appui est-il une touche de défilement que la page Direction laisse au navigateur ? Le
+ * plateau est caché : le parcourir déplacerait une position que personne ne voit.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {boolean}
+ */
+export function directionLeavesToPage(event) {
+    const bare = !event.ctrlKey && !event.metaKey && !event.altKey;
+    return bare && SCROLL_KEYS.includes(event.key) && directionPageShown();
+}
+
 /** Ce qui est ouvert par-dessus la page garde ses touches : une modale, une surcouche. */
 export function somethingOpenAbove() {
     return hasOpenOverlay() || document.querySelector('[aria-modal="true"]') !== null;

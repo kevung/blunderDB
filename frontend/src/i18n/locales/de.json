@@ -1942,7 +1942,8 @@
             "slow": "langsam",
             "none": "Kein Tisch angegeben.",
             "noTable": "ohne Tisch",
-            "elsewhere": "Belegt: {event}"
+            "elsewhere": "Belegt: {event}",
+            "shared": "Zwei Matches an diesem Tisch: einen verlegen"
         },
         "result": {
             "title": "Ergebnis",
@@ -1955,7 +1956,10 @@
             "cancelMatch": "Diese Partie abbrechen",
             "error": "Das Ergebnis konnte nicht gespeichert werden.",
             "more": "Mehr",
-            "apply": "Anwenden"
+            "apply": "Anwenden",
+            "forfeitWins": "Nichtantritt von {loser} → {winner} gewinnt",
+            "forfeitConfirm": "{loser} tritt nicht an: {winner} gewinnt dieses Match. Bestätigen?",
+            "cancelConfirm": "Match {a} – {b} annullieren? Es verschwindet aus dem Saal; das Protokoll behält es."
         },
         "last": {
             "result": "{winner} schlägt {loser}",
@@ -2013,7 +2017,9 @@
             "pairHint": "Ein Doppelturnier: zwei Personen, ein Teilnehmer „A / B\".",
             "name2": "Name des Partners",
             "pairRating": "Wertung des Paars",
-            "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn."
+            "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn.",
+            "withdrawNowConfirm": "{name} jetzt aus dem Turnier nehmen? Keine weiteren Paarungen (Wiederaufnahme möglich).",
+            "withdrawLaterConfirm": "{name} nach dem Match aus dem Turnier nehmen? Danach keine Paarungen mehr (Wiederaufnahme möglich)."
         },
         "bracket": {
             "correct": "Ergebnis korrigieren",
@@ -2279,7 +2285,8 @@
             "confirm": "Zuordnen",
             "wall": {
                 "rounds": "{n} Runden angekündigt"
-            }
+            },
+            "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Turniere bleiben, abgelöst."
         },
         "epreuves": {
             "pending": "{n} ausstehend",

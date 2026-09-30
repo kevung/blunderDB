@@ -119,8 +119,9 @@ Outils
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
    "J / K", "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
-   "GAUCHE / DROITE", "Dans la fiche de résultat : le joueur de gauche gagne, celui de droite gagne."
-   "CTRL-Z", "Reprendre la dernière décision d'un tournoi dirigé."
+   "GAUCHE / DROITE", "Dans la fiche de résultat, hors d'un champ : choisir le joueur de gauche ou celui de droite ; ENTRÉE enregistre sa victoire."
+   "CTRL-Z", "Reprendre la dernière décision d'un tournoi dirigé (hors d'un champ de saisie, où il annule la frappe)."
+   "PAGE HAUT / PAGE BAS, DÉBUT / FIN", "Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache."
    "ÉCHAP", "Fermer la fiche de résultat ou la reprise en cours."
    "?", "Afficher/cacher l'aide."
 

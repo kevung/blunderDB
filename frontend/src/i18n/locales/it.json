@@ -1942,7 +1942,8 @@
             "slow": "lento",
             "none": "Nessun tavolo dichiarato.",
             "noTable": "senza tavolo",
-            "elsewhere": "Occupato: {event}"
+            "elsewhere": "Occupato: {event}",
+            "shared": "Due partite su questo tavolo: spostarne una"
         },
         "result": {
             "title": "Risultato",
@@ -1955,7 +1956,10 @@
             "cancelMatch": "Annulla questa partita",
             "error": "Impossibile registrare questo risultato.",
             "more": "Altro",
-            "apply": "Applica"
+            "apply": "Applica",
+            "forfeitWins": "Forfait di {loser} → vince {winner}",
+            "forfeitConfirm": "Forfait di {loser}: {winner} vince questa partita. Confermare?",
+            "cancelConfirm": "Annullare la partita {a} – {b}? Esce dalla sala; il registro la conserva."
         },
         "last": {
             "result": "{winner} batte {loser}",
@@ -2013,7 +2017,9 @@
             "pairHint": "Un torneo di doppio: due persone, un solo iscritto «A / B».",
             "name2": "Nome del compagno",
             "pairRating": "Valutazione della coppia",
-            "pairRatingHint": "Per impostazione predefinita la media delle due valutazioni; un valore inserito la sostituisce."
+            "pairRatingHint": "Per impostazione predefinita la media delle due valutazioni; un valore inserito la sostituisce.",
+            "withdrawNowConfirm": "Ritirare {name} dal torneo adesso? Non sarà più abbinato (reintegro possibile).",
+            "withdrawLaterConfirm": "Ritirare {name} a fine partita? Dopo non sarà più abbinato (reintegro possibile)."
         },
         "bracket": {
             "correct": "Correggere il risultato",
@@ -2279,7 +2285,8 @@
             "confirm": "Collega",
             "wall": {
                 "rounds": "{n} turni annunciati"
-            }
+            },
+            "trashConfirm": "Eliminare l’incontro «{name}»? Le sue prove restano, staccate."
         },
         "epreuves": {
             "pending": "{n} in attesa",

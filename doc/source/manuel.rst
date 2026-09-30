@@ -1522,7 +1522,8 @@ l'instant » n'écrit rien : le moteur est déterministe, et la proposition revi
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.
 
-Un match apparié à la main sans numéro de table prend la première table libre.
+Un match apparié à la main sans numéro de table prend la première table libre ;
+une table où un match est en cours est refusée.
 Si la salle est pleine, il est lancé quand même et sa case apparaît au bout de
 la grille, « sans table », jusqu'à ce qu'on le déplace sur une table.
 
@@ -1538,11 +1539,19 @@ La fiche de résultat
 Un clic sur une table occupée ouvre la fiche du match. Elle montre deux grandes
 cibles : les **noms des deux joueurs**. Cliquer celui qui a gagné enregistre le
 résultat — deux clics en tout, table comprise. Le vainqueur est la seule chose
-exigée ; le score est libre, l'un et l'autre ou aucun des deux.
+exigée ; le score est libre, l'un et l'autre ou aucun des deux. Au clavier,
+*GAUCHE* ou *DROITE* choisit le vainqueur et *ENTRÉE* l'enregistre. La fiche ne
+se ferme qu'une fois le résultat écrit : un échec la laisse ouverte, avec son
+message.
 
-Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait, une
-remarque libre (« tombé au temps », « abandonné pour raison de… »), le
-déplacement du match sur une autre table, et son annulation.
+Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait — chaque
+bouton nomme l'absent et celui qui gagne —, une remarque libre (« tombé au
+temps », « abandonné pour raison de… »), le déplacement du match sur une autre
+table, et son annulation. Le forfait et l'annulation se confirment. Déplacé sur
+une table occupée, le match échange sa table avec celui qui l'occupe : deux
+matchs ne partagent jamais une table, et le même geste les remet en place. Si un
+ancien journal en a laissé deux sur une table, la grille montre les deux cases,
+signalées, jusqu'à ce qu'on en déplace un.
 
 Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille :
 **Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* ouvre la même
@@ -1581,7 +1590,7 @@ qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans
 quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
-joueur part tout de suite ou finit ce qu'il joue.
+joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
 
 Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
@@ -1701,8 +1710,8 @@ rattacher…** ouvre la salle avec son nombre de tables, **Rattacher…** y ajou
 une épreuve dirigée. Rattacher montre d'abord ce qui va changer : les tables de
 l'épreuve deviennent celles de la salle. **Détacher de la rencontre** rend
 l'épreuve à elle-même, avec son journal et ses tables ; **Supprimer la
-rencontre** la met à la corbeille et détache ses épreuves sans en supprimer
-aucune.
+rencontre**, après confirmation, la met à la corbeille et détache ses épreuves
+sans en supprimer aucune.
 
 Dans une Rencontre, aucune épreuve ne propose une table où joue une autre : la
 grille montre ces tables occupées, avec le nom de l'épreuve, et un appariement

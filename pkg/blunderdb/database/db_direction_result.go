@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -34,6 +35,10 @@ type TableCell struct {
 	// NoTable marks a running match that has no table — paired by hand in a full room.
 	// Its Table is 0; such cells come after the room's tables, one per match.
 	NoTable bool `json:"noTable,omitempty"`
+	// Shared flags a table holding two running matches at once — a state the log may carry from
+	// before moves became swaps. Every such match gets its own cell with the same Table, the
+	// extras after the room's tables, so none of them disappears from the grid.
+	Shared bool `json:"shared,omitempty"`
 	// Elsewhere names the sister event of the Rencontre playing on this table right now: the
 	// table is not free for this one (ADR-0056).
 	Elsewhere string `json:"elsewhere,omitempty"`
@@ -56,11 +61,17 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 	}
 	now := time.Now()
 	running := map[int]*tournoi.Match{}
-	var tableless []*tournoi.Match
+	var tableless, extra []*tournoi.Match
+	shared := map[int]bool{}
 	highest := 0
 	for _, m := range st.Running() {
 		if m.Table <= 0 {
 			tableless = append(tableless, m)
+			continue
+		}
+		if running[m.Table] != nil {
+			shared[m.Table] = true
+			extra = append(extra, m)
 			continue
 		}
 		running[m.Table] = m
@@ -103,6 +114,7 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		c := TableCell{Table: n}
 		if m := running[n]; m != nil {
 			fill(&c, m)
+			c.Shared = shared[n]
 			out = append(out, c)
 			continue
 		}
@@ -116,6 +128,11 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		default:
 			c.Free = true
 		}
+		out = append(out, c)
+	}
+	for _, m := range extra {
+		c := TableCell{Table: m.Table, Shared: true}
+		fill(&c, m)
 		out = append(out, c)
 	}
 	// A match with no table is still a match in the room: leaving it out of the grid is how a
@@ -180,20 +197,59 @@ func (d *Database) EnterForfeit(tournamentID int64, matchID, winner, note string
 	return d.GetDirection(tournamentID)
 }
 
-// MoveMatchToTable moves a running match to another table (noise, light, a broadcast).
+// MoveMatchToTable moves a running match to another table (noise, light, a broadcast). When
+// that table is taken, the two matches swap tables: two matches never share a table, and the
+// same gesture puts them back. Both moves are written in one transaction.
 func (d *Database) MoveMatchToTable(tournamentID int64, matchID string, table int) (*DirectionView, error) {
 	if table <= 0 {
 		return nil, fmt.Errorf("direction: table %d is not a table", table)
 	}
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	err := d.directionTx(func(ctx context.Context, _ *sql.Tx, store direction.Store) error {
+		dir, err := direction.Open(ctx, store, tournamentID)
+		if err != nil {
+			return err
+		}
+		st := dir.State()
+		if st == nil {
+			return fmt.Errorf("direction: the tournament has not started")
+		}
+		m := st.Matches[tournoi.MatchID(matchID)]
+		if m == nil || m.Status != tournoi.Running {
+			return fmt.Errorf("direction: match %q is not running", matchID)
+		}
+		from := m.Table
+		if from == table {
+			return nil
+		}
+		o := occupant(st, table, m.ID)
+		if o != nil && from <= 0 {
+			// A match with no table has nowhere to send the occupant: refused rather than
+			// stacking two matches on one table.
+			return fmt.Errorf("direction: table %d is taken", table)
+		}
+		now := time.Now()
+		if err := dir.Apply(ctx, tournoi.TableChangedEvent(m.ID, table, now)); err != nil {
+			return err
+		}
+		if o != nil {
+			return dir.Apply(ctx, tournoi.TableChangedEvent(o.ID, from, now))
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	if err := dir.Apply(ctx, tournoi.TableChangedEvent(tournoi.MatchID(matchID), table, time.Now())); err != nil {
-		return nil, err
-	}
 	return d.GetDirection(tournamentID)
+}
+
+// occupant is the running match at this table other than self, or nil.
+func occupant(st *tournoi.State, table int, self tournoi.MatchID) *tournoi.Match {
+	for _, m := range st.Running() {
+		if m.Table == table && m.ID != self {
+			return m
+		}
+	}
+	return nil
 }
 
 // CancelMatch removes a match launched by mistake — the wrong players, the wrong table. The

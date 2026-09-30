@@ -33,12 +33,14 @@ vi.mock('../services/positionService.js', async (importOriginal) => ({
     ...(await importOriginal()),
     nextPosition: vi.fn(),
     previousPosition: vi.fn(),
+    firstPosition: vi.fn(),
+    lastPosition: vi.fn(),
     leaveSubSearchResults: vi.fn()
 }));
 
 import { GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 import { handleKeyDown } from '../services/keyboardService.js';
-import { nextPosition, previousPosition } from '../services/positionService.js';
+import { nextPosition, previousPosition, firstPosition, lastPosition } from '../services/positionService.js';
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import ProposalList from '../components/direction/ProposalList.svelte';
 import ContextMenu from '../components/ContextMenu.svelte';
@@ -245,6 +247,37 @@ describe('focus dans le panneau Tournois : J / K lui reviennent', () => {
 
         expect(queueIndex()).toBe(0);
         expect(onConfirm).not.toHaveBeenCalled();
+    });
+});
+
+describe('le survol ne choisit pas', () => {
+    test('ENTRÉE confirme la proposition choisie, pas celle sous la souris', async () => {
+        await showDirectionQueue();
+        activeTabStore.set('tournaments');
+        await tick();
+        const rows = document.querySelectorAll('.proposals .queue li');
+        await fireEvent.mouseEnter(rows[2]);
+        expect(queueIndex()).toBe(0);
+
+        await press(document.body, 'Enter');
+        expect(onConfirm).toHaveBeenCalledWith(PROPOSALS[0]);
+    });
+});
+
+describe('page Direction affichée : les touches de défilement restent à la page', () => {
+    test('PageUp / PageDown / ← / → / Début / Fin ne parcourent pas le plateau caché', async () => {
+        await showDirectionQueue();
+        activeTabStore.set('tournaments');
+        await tick();
+
+        for (const key of ['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End']) {
+            const ev = await press(document.body, key);
+            expect(ev.defaultPrevented, key).toBe(false);
+        }
+        expect(firstPosition).not.toHaveBeenCalled();
+        expect(lastPosition).not.toHaveBeenCalled();
+        expect(previousPosition).not.toHaveBeenCalled();
+        expect(nextPosition).not.toHaveBeenCalled();
     });
 });
 

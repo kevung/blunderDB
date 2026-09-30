@@ -6,7 +6,7 @@ import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../sto
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
-import { directionOwnsKey } from './directionKeys.js';
+import { directionOwnsKey, directionLeavesToPage } from './directionKeys.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
@@ -194,6 +194,8 @@ export function handleKeyDown(event) {
     // (services/directionKeys.js). The queue has claimed them already, or something open above it
     // keeps them — either way they browse nothing on the board the page hides.
     if (directionOwnsKey(event)) return;
+    // The scrolling keys scroll the Direction page natively, without browsing the hidden board.
+    if (directionLeavesToPage(event)) return;
 
     // A board-surface training question holds the board, revealed or not:
     // browsing would put another position under the answer. Focus is

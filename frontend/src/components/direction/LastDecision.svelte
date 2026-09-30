@@ -6,6 +6,7 @@
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
     import { isLetter } from '../../utils/keys.js';
+    import { isTypingTarget } from '../../utils/panelFocus.js';
     import CorrectionPanel from './CorrectionPanel.svelte';
 
     let { last = null, busy = false, onCorrect = () => {}, onCancelMatch = () => {} } = $props();
@@ -13,10 +14,11 @@
     let open = $state(false);
 
     /* Ctrl+Z ouvre la reprise du dernier geste. Il n'annule rien tout seul : ce serait défaire
-       sans montrer quoi, et le directeur doit voir ce qu'il reprend. */
+       sans montrer quoi, et le directeur doit voir ce qu'il reprend. Dans un champ, Ctrl+Z
+       reste l'annulation de la frappe. */
     /** @param {KeyboardEvent} e */
     function onKey(e) {
-        if (!last) return;
+        if (!last || isTypingTarget(/** @type {Element | null} */ (e.target))) return;
         if ((e.ctrlKey || e.metaKey) && !e.shiftKey && isLetter(e, 'z')) {
             e.preventDefault();
             open = true;
@@ -27,6 +29,12 @@
     $effect(() => {
         if (open) return closeOnEscape(() => (open = false));
     });
+
+    /* Annuler un match retire un résultat en cours de la grille : on le confirme. */
+    function cancelMatch() {
+        if (!window.confirm($t('direction.result.cancelConfirm', { a: last.aName, b: last.bName }))) return;
+        onCancelMatch(last.matchId);
+    }
 
     /** @type {(winner: string, scoreA: number, scoreB: number) => void} */
     function correct(winner, scoreA, scoreB) {
@@ -53,7 +61,7 @@
         {#if last.correctable}
             <button type="button" data-testid="direction-last-correct" disabled={busy} onclick={() => (open = !open)}>{$t('direction.last.correct')}</button>
         {:else if last.cancellable}
-            <button type="button" class="danger" data-testid="direction-last-cancel" disabled={busy} onclick={() => onCancelMatch(last.matchId)}>{$t('direction.last.cancel')}</button>
+            <button type="button" class="danger" data-testid="direction-last-cancel" disabled={busy} onclick={cancelMatch}>{$t('direction.last.cancel')}</button>
         {/if}
     </div>
 
