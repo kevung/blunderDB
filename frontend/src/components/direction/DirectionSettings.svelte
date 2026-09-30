@@ -295,8 +295,8 @@
 
 <div class="settings">
     {#if isDraft}
-        <section class="formats">
-            <h3>{$t('direction.settings.format')}</h3>
+        <details class="sec formats" open>
+            <summary><h3>{$t('direction.settings.format')}</h3></summary>
             <div class="cards">
                 {#each namedConfigs as named (named.id)}
                     <button type="button" class="card" data-testid="direction-format-{named.id}" class:recommended={named.recommended} onclick={() => pickNamed(named)}>
@@ -308,12 +308,12 @@
                     </button>
                 {/each}
             </div>
-        </section>
+        </details>
     {/if}
 
     {#if config}
-        <section>
-            <h3>{$t('direction.settings.phases')}</h3>
+        <details class="sec" open>
+            <summary><h3>{$t('direction.settings.phases')}</h3></summary>
             <ul class="phases">
                 {#each config.phases || [] as phase, i (i)}
                     <li>
@@ -431,10 +431,10 @@
             <button type="button" class="link" data-testid="direction-settings-add-phase" onclick={addPhase} title={$t('direction.settings.addPhaseHint')}>
                 {$t('direction.settings.addPhase')}
             </button>
-        </section>
+        </details>
 
-        <section>
-            <h3>{$t('direction.settings.tables')}</h3>
+        <details class="sec" open>
+            <summary><h3>{$t('direction.settings.tables')}</h3></summary>
             <label title={$t('direction.settings.tableCountHint')}>
                 {$t('direction.settings.tableCount')}
                 <input type="number" data-testid="direction-settings-tables" min="0" max="200" bind:value={config.tables.count} />
@@ -463,10 +463,10 @@
                     {/if}
                 </p>
             {/if}
-        </section>
+        </details>
 
-        <section>
-            <h3>{$t('direction.settings.prizes')}</h3>
+        <details class="sec" open>
+            <summary><h3>{$t('direction.settings.prizes')}</h3></summary>
             <div class="row">
                 <label title={$t('direction.settings.entryFeeHint')}>
                     {$t('direction.settings.entryFee')}
@@ -516,10 +516,10 @@
                     </li>
                 {/each}
             </ul>
-        </section>
+        </details>
 
-        <section>
-            <h3>{$t('direction.settings.breaks')}</h3>
+        <details class="sec" open>
+            <summary><h3>{$t('direction.settings.breaks')}</h3></summary>
             <p class="facts">{$t('direction.settings.breaksHint')}</p>
             <ul class="breaks">
                 {#each config.breaks || [] as pause, i (i)}
@@ -539,10 +539,10 @@
                 {/each}
             </ul>
             <button type="button" class="link" data-testid="direction-settings-add-break" onclick={addBreak}>{$t('direction.settings.addBreak')}</button>
-        </section>
+        </details>
 
-        <section>
-            <h3>{$t('direction.display.title')}</h3>
+        <details class="sec" open>
+            <summary><h3>{$t('direction.display.title')}</h3></summary>
             <p class="facts">{$t('direction.display.hint')}</p>
             {#if outputDir}
                 <p class="facts path">{outputDir}</p>
@@ -560,7 +560,7 @@
                     <button type="button" class="link" onclick={onForgetOutput}>{$t('direction.display.forget')}</button>
                 {/if}
             </div>
-        </section>
+        </details>
 
         <div class="actions">
             <button type="button" class="primary" data-testid="direction-settings-apply" onclick={askApply}>
@@ -622,7 +622,21 @@
         flex-direction: column;
         gap: 1rem;
         padding: 0.75rem;
-        overflow-y: auto;
+    }
+
+    /* Une section se replie sur son titre : un réglage rare ne pousse pas les autres hors de l'écran. */
+    .sec > summary {
+        cursor: pointer;
+        list-style-position: inside;
+        min-height: var(--td-target);
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .sec > summary h3 {
+        display: inline;
+        margin: 0;
     }
 
     h3 {

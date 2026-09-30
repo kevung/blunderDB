@@ -29,7 +29,7 @@ async function openDirection(page) {
 test('la molette fait défiler la page Direction et ne change pas de position', async ({ page }) => {
     await openDirection(page);
     await page.locator('[data-testid="direction-tab-settings"]').click();
-    const body = page.locator('.direction-view .body');
+    const body = page.locator('.direction-view .pane');
     const overflow = await body.evaluate((e) => e.scrollHeight - e.clientHeight);
     expect(overflow, 'les Réglages débordent à 1024×768, dock ouvert').toBeGreaterThan(100);
     const status = page.locator('.status-bar');

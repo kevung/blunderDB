@@ -152,15 +152,27 @@
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-        gap: var(--space-1);
+        grid-template-columns: 1fr;
+        gap: var(--td-gap, var(--space-1));
     }
 
-    /* Sous 900 px la grille devient une colonne : les cases redeviennent des lignes, comme le
-       document d'ergonomie le prévoit. */
-    @media (max-width: 900px) {
+    /* Le nombre de colonnes suit la largeur de la zone (le conteneur de défilement de l'onglet),
+       non celle de la fenêtre : le panneau latéral la réduit. */
+    @container (min-width: 600px) {
         .grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @container (min-width: 900px) {
+        .grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @container (min-width: 1300px) {
+        .grid {
+            grid-template-columns: repeat(6, 1fr);
         }
     }
 
@@ -174,7 +186,7 @@
         align-items: flex-start;
         gap: 2px;
         width: 100%;
-        min-height: 62px;
+        min-height: calc(2 * var(--td-target, 31px));
         padding: var(--space-1) var(--space-2);
         border: 1px solid var(--color-border);
         border-radius: var(--radius);

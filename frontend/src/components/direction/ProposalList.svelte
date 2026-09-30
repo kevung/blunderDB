@@ -373,8 +373,6 @@
         margin: 0;
         padding-left: var(--space-4);
         font-size: var(--font-size-small);
-        max-height: 12rem;
-        overflow: auto;
     }
 
     .confirm-actions {

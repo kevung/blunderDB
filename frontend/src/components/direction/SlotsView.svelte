@@ -133,8 +133,6 @@
         display: flex;
         flex-direction: column;
         gap: 1px;
-        max-height: 14rem;
-        overflow-y: auto;
     }
 
     .unattached li {

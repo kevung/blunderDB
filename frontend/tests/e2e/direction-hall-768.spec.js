@@ -36,11 +36,11 @@ async function openHall(page) {
     await expect(page.locator('.proposals .queue li').first()).toBeVisible();
 }
 
-/** Le `scrollTop` de tout ce qui peut défiler entre la page et la racine. */
+/** Le `scrollTop` de tout ce qui défile hors du panneau de l'onglet : rien ne doit. */
 async function scrollState(page) {
     return page.evaluate(() => {
         const out = [window.scrollY];
-        for (const el of document.querySelectorAll('*')) if (el.scrollTop) out.push(`${el.className}:${el.scrollTop}`);
+        for (const el of document.querySelectorAll('*')) if (el.scrollTop && !el.classList.contains('pane')) out.push(`${el.className}:${el.scrollTop}`);
         return out.join('|');
     });
 }
@@ -60,6 +60,14 @@ async function reachable(locator) {
 }
 
 async function expectReachable(locator, what) {
+    // Cibles de 44 px (mode TD) : la page ne tient plus dans ~370 px. Le budget est un seul
+    // défilement, celui du panneau de l'onglet, jamais des zones imbriquées ; on amène donc la
+    // cible dans le panneau, puis on exige qu'elle y soit entière.
+    await locator.evaluate((el) =>
+        document.querySelector('.direction-view .pane').scrollTo({
+            top: el.getBoundingClientRect().top - document.querySelector('.direction-view .pane').getBoundingClientRect().top + document.querySelector('.direction-view .pane').scrollTop - 8
+        })
+    );
     const box = await reachable(locator);
     expect(box.ok, `${what} : y ${box.y} → ${box.bottom}, zone visible ${box.bodyTop} → ${box.bodyBottom}`).toBe(true);
 }
@@ -68,9 +76,9 @@ test.describe('#440 — 24 propositions, 14 tables, 1024×768, dock ouvert', () 
     test('un résultat sur n’importe quelle table : 2 clics, 0 cran', async ({ page }) => {
         await openHall(page);
         for (const table of [1, 7, 12, 14]) {
-            const scroll = await scrollState(page);
             const cell = page.locator(`[data-testid="direction-table-${table}"]`);
             await expectReachable(cell, `table ${table}`);
+            const scroll = await scrollState(page);
             const busyBefore = await page.locator('.grid .cell.busy').count();
 
             const counted = await countGestures(page, async (g) => {
@@ -88,9 +96,9 @@ test.describe('#440 — 24 propositions, 14 tables, 1024×768, dock ouvert', () 
 
     test('« Tout lancer » avec 24 propositions : 2 clics, 0 cran', async ({ page }) => {
         await openHall(page);
-        const scroll = await scrollState(page);
         const all = page.locator('[data-testid="direction-proposals-all"]');
         await expectReachable(all, '« Tout lancer »');
+        const scroll = await scrollState(page);
 
         const counted = await countGestures(page, async (g) => {
             await g.click(all);
@@ -111,9 +119,9 @@ test.describe('#440 — 24 propositions, 14 tables, 1024×768, dock ouvert', () 
         await page.locator('[data-testid="direction-table-14"]').click();
         await page.locator('[data-testid="direction-result-winner-a"]').click();
         await expect(page.locator('[data-testid="direction-last"]')).toBeVisible();
-        const scroll = await scrollState(page);
         const all = page.locator('[data-testid="direction-proposals-all"]');
         await expectReachable(all, '« Tout lancer »');
+        const scroll = await scrollState(page);
         await all.click();
         await expectReachable(page.locator('[data-testid="direction-proposals-confirm-all"]'), '« Confirmer »');
         expect(await scrollState(page), 'tout lancer : la page a défilé').toBe(scroll);

@@ -122,6 +122,22 @@
     });
 
     let tab = $state('settings');
+    const paneKey = $derived(`${view?.tournamentId ?? 0}:${tab}`);
+
+    /** Position de défilement par (épreuve, onglet), gardée tant que la vue vit.
+     * @type {Map<string, number>} */
+    const scrollPositions = new Map(); // eslint-disable-line svelte/prefer-svelte-reactivity -- non réactif : jamais lu par le rendu
+
+    /**
+     * @param {HTMLElement} node
+     * @param {string} key
+     */
+    function scrollMemory(node, key) {
+        node.scrollTop = scrollPositions.get(key) ?? 0;
+        const save = () => scrollPositions.set(key, node.scrollTop);
+        node.addEventListener('scroll', save, { passive: true });
+        return { destroy: () => node.removeEventListener('scroll', save) };
+    }
     let tabChosen = false;
     $effect(() => {
         // Tant que la Direction n'est pas chargée, son état n'est pas « brouillon » : il est
@@ -482,6 +498,9 @@
             {/each}
         </nav>
         <span class="spacer"></span>
+        {#if view?.outputDir}
+            <button type="button" class="page-btn" data-testid="direction-open-page" onclick={onOpenPage}>{$t('direction.display.open')}</button>
+        {/if}
         <button type="button" class="credit-btn" data-testid="direction-credit" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}
             >ⓘ</button
         >
@@ -497,132 +516,136 @@
     <ClockBar clock={clockView} warnings={view?.warnings?.length || 0} onWarnings={() => (tab = 'direction')} />
 
     <div class="body">
-        {#if tab === 'settings'}
-            <DirectionSettings
-                bind:config
-                {directionState}
-                tournamentName={view?.config?.name || ''}
-                entrantCount={view?.players?.length || 0}
-                onApply={apply}
-                onDelete={remove}
-                onPreview={previewDirectionConfig}
-                locks={configPreview?.locks || []}
-                opened={configPreview?.opened || 0}
-                outputDir={view?.outputDir || ''}
-                {onChooseOutput}
-                {onForgetOutput}
-                {onOpenPage}
-            />
-            {#if view}
-                <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
-            {/if}
-        {:else if tab === 'direction'}
-            <div class="direction-page">
-                {#if (view?.warnings || []).length}
-                    <!-- Visible tant que dure sa cause, jamais bloquant. -->
-                    <ul class="warnings" data-testid="direction-warnings">
-                        {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
-                            <li>{renderWarning($t, w, playerName)}</li>
-                        {/each}
-                    </ul>
-                {/if}
-                <!-- La grille avant la file, qui grandit avec les inscrits : les tables
-                     restent à l'écran. -->
-                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
-                    {#snippet actions()}
-                        {#if rounds > 0 || upcoming > 0}
-                            <div class="sheet">
-                                {#if announcing}
-                                    <label title={$t('direction.sheet.announcedHint')}>
-                                        {$t('direction.sheet.announcedFor')}
-                                        <input type="text" data-testid="direction-sheet-announced" bind:value={announced} placeholder={$t('direction.sheet.announcedPlaceholder')} />
-                                    </label>
-                                    <button type="button" data-testid="direction-sheet-upcoming-print" onclick={onPrintUpcoming}>
-                                        {$t('direction.sheet.print')}
-                                    </button>
-                                    <button type="button" data-testid="direction-sheet-upcoming-cancel" onclick={() => (announcing = false)}>
-                                        {$t('common.cancel')}
-                                    </button>
-                                {:else}
-                                    {#if upcoming > 0}
-                                        <button type="button" data-testid="direction-sheet-upcoming" title={$t('direction.sheet.upcomingHint')} onclick={() => (announcing = true)}>
-                                            {$t('direction.sheet.upcoming')}
-                                        </button>
-                                    {/if}
-                                {/if}
-                                {#if rounds > 1 && !announcing}
-                                    <label title={$t('direction.sheet.roundHint')}>
-                                        {$t('direction.sheet.round')}
-                                        <select bind:value={sheetRound}>
-                                            <option value={0}>{$t('direction.sheet.latest')}</option>
-                                            {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
-                                                <option value={n}>{n}</option>
-                                            {/each}
-                                        </select>
-                                    </label>
-                                {/if}
-                                {#if rounds > 0 && !announcing}
-                                    <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
-                                        {$t('direction.sheet.print')}
-                                    </button>
-                                {/if}
-                            </div>
+        {#key paneKey}
+            <div class="pane" data-testid="direction-pane-{tab}" use:scrollMemory={paneKey}>
+                {#if tab === 'settings'}
+                    <DirectionSettings
+                        bind:config
+                        {directionState}
+                        tournamentName={view?.config?.name || ''}
+                        entrantCount={view?.players?.length || 0}
+                        onApply={apply}
+                        onDelete={remove}
+                        onPreview={previewDirectionConfig}
+                        locks={configPreview?.locks || []}
+                        opened={configPreview?.opened || 0}
+                        outputDir={view?.outputDir || ''}
+                        {onChooseOutput}
+                        {onForgetOutput}
+                        {onOpenPage}
+                    />
+                    {#if view}
+                        <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
+                    {/if}
+                {:else if tab === 'direction'}
+                    <div class="direction-page">
+                        {#if (view?.warnings || []).length}
+                            <!-- Visible tant que dure sa cause, jamais bloquant. -->
+                            <ul class="warnings" data-testid="direction-warnings">
+                                {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
+                                    <li>{renderWarning($t, w, playerName)}</li>
+                                {/each}
+                            </ul>
                         {/if}
-                    {/snippet}
-                </TableGrid>
-                <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
-                <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
-                <section class="waiting">
-                    <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
-                    <p data-testid="direction-waiting">
-                        {#each free as p (p.id)}
-                            <span class="who"
-                                >{p.name}{#if view?.elsewhere?.[p.id]}
-                                    <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
-                            >
-                        {/each}
-                    </p>
-                </section>
+                        <!-- La grille avant la file, qui grandit avec les inscrits : les tables
+                     restent à l'écran. -->
+                        <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
+                            {#snippet actions()}
+                                {#if rounds > 0 || upcoming > 0}
+                                    <div class="sheet">
+                                        {#if announcing}
+                                            <label title={$t('direction.sheet.announcedHint')}>
+                                                {$t('direction.sheet.announcedFor')}
+                                                <input type="text" data-testid="direction-sheet-announced" bind:value={announced} placeholder={$t('direction.sheet.announcedPlaceholder')} />
+                                            </label>
+                                            <button type="button" data-testid="direction-sheet-upcoming-print" onclick={onPrintUpcoming}>
+                                                {$t('direction.sheet.print')}
+                                            </button>
+                                            <button type="button" data-testid="direction-sheet-upcoming-cancel" onclick={() => (announcing = false)}>
+                                                {$t('common.cancel')}
+                                            </button>
+                                        {:else}
+                                            {#if upcoming > 0}
+                                                <button type="button" data-testid="direction-sheet-upcoming" title={$t('direction.sheet.upcomingHint')} onclick={() => (announcing = true)}>
+                                                    {$t('direction.sheet.upcoming')}
+                                                </button>
+                                            {/if}
+                                        {/if}
+                                        {#if rounds > 1 && !announcing}
+                                            <label title={$t('direction.sheet.roundHint')}>
+                                                {$t('direction.sheet.round')}
+                                                <select bind:value={sheetRound}>
+                                                    <option value={0}>{$t('direction.sheet.latest')}</option>
+                                                    {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
+                                                        <option value={n}>{n}</option>
+                                                    {/each}
+                                                </select>
+                                            </label>
+                                        {/if}
+                                        {#if rounds > 0 && !announcing}
+                                            <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
+                                                {$t('direction.sheet.print')}
+                                            </button>
+                                        {/if}
+                                    </div>
+                                {/if}
+                            {/snippet}
+                        </TableGrid>
+                        <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
+                        <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                        <section class="waiting">
+                            <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
+                            <p data-testid="direction-waiting">
+                                {#each free as p (p.id)}
+                                    <span class="who"
+                                        >{p.name}{#if view?.elsewhere?.[p.id]}
+                                            <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
+                                    >
+                                {/each}
+                            </p>
+                        </section>
+                    </div>
+                {:else if tab === 'slots'}
+                    <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
+                {:else if tab === 'standings'}
+                    <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
+                {:else if tab === 'history'}
+                    <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
+                {:else if tab === 'brackets'}
+                    <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
+                {:else if tab === 'players'}
+                    <DirectoryPanel
+                        sources={dirSources}
+                        entries={dirEntries}
+                        {busy}
+                        onTake={onTakeEntrants}
+                        onExport={onExportDirectory}
+                        onSave={onSaveDirectory}
+                        onParse={parseDirectoryCSV}
+                        onImport={onImportEntrants}
+                    />
+                    <PlayersView
+                        {rows}
+                        {suggestions}
+                        {busy}
+                        started={directionState !== 'draft'}
+                        {onAdd}
+                        {onUpdate}
+                        {onAddPair}
+                        {onUpdatePair}
+                        pairs={view?.pairs || {}}
+                        {onWithdraw}
+                        {onReinstate}
+                        {onAbsent}
+                        {onReturn}
+                        {roundsMode}
+                        slots={openSlots}
+                        infos={view?.infos || []}
+                        {onAddAtSlot}
+                    />
+                {/if}
             </div>
-        {:else if tab === 'slots'}
-            <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
-        {:else if tab === 'standings'}
-            <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
-        {:else if tab === 'history'}
-            <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
-        {:else if tab === 'brackets'}
-            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
-        {:else if tab === 'players'}
-            <DirectoryPanel
-                sources={dirSources}
-                entries={dirEntries}
-                {busy}
-                onTake={onTakeEntrants}
-                onExport={onExportDirectory}
-                onSave={onSaveDirectory}
-                onParse={parseDirectoryCSV}
-                onImport={onImportEntrants}
-            />
-            <PlayersView
-                {rows}
-                {suggestions}
-                {busy}
-                started={directionState !== 'draft'}
-                {onAdd}
-                {onUpdate}
-                {onAddPair}
-                {onUpdatePair}
-                pairs={view?.pairs || {}}
-                {onWithdraw}
-                {onReinstate}
-                {onAbsent}
-                {onReturn}
-                {roundsMode}
-                slots={openSlots}
-                infos={view?.infos || []}
-                {onAddAtSlot}
-            />
-        {/if}
+        {/key}
     </div>
 </div>
 
@@ -632,7 +655,12 @@
     }
 
     .direction-view {
+        --font-size-base: var(--td-font);
+        --font-size-small: var(--td-font);
         position: relative;
+        width: 100%;
+        flex: 1;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -666,8 +694,20 @@
         flex-wrap: wrap;
     }
 
+    /* Cibles de la salle : au moins --td-target, dans toute la vue et ses enfants. */
+    .direction-view :global(button:not(.link)),
+    .direction-view :global(select),
+    .direction-view :global(input:not([type='checkbox']):not([type='radio'])) {
+        min-height: var(--td-target);
+    }
+
+    .direction-view :global(button:not(.link)) {
+        min-width: var(--td-target);
+    }
+
     nav button,
-    .close {
+    .close,
+    .page-btn {
         font-size: var(--font-size-small);
         padding: 0.15rem 0.55rem;
         border: 1px solid transparent;
@@ -726,7 +766,17 @@
     .body {
         flex: 1;
         min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Un seul défilement par onglet (et par épreuve) : la position est mémorisée par paneKey. Le
+       conteneur sert aussi aux container queries des vues. */
+    .pane {
+        flex: 1;
+        min-height: 0;
         overflow: auto;
+        container-type: inline-size;
     }
 
     .direction-page {
@@ -807,6 +857,7 @@
     }
 
     .credit-btn {
+        min-width: 0;
         border-color: transparent;
         color: var(--color-text-muted);
         background: transparent;

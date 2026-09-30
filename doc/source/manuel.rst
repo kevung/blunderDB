@@ -1491,6 +1491,15 @@ jamais rien ; la **grille des tables**, dont l'en-tête porte le bouton
 des propositions** ; et les joueurs libres. La grille précède la file : une file
 longue ne la pousse jamais hors de l'écran.
 
+La vue occupe toute la largeur de la zone principale, et chaque onglet défile
+seul : quitter un onglet puis y revenir, ou passer d'une épreuve à l'autre,
+retrouve la position où on l'avait laissé. Les boutons et les champs font au
+moins 40 pixels de haut, pour se viser sans précision au comptoir ; le nombre de
+colonnes de la grille suit la largeur de la zone, non celle de la fenêtre. Dans
+les **Réglages**, chaque section se replie sur son titre, et le bouton **Ouvrir
+dans le navigateur** de l'en-tête ouvre la page murale en un clic dès qu'un
+dossier de sortie est choisi.
+
 Une ronde proposée s'annonce avant d'être lancée : **Ronde à venir…**, à côté de
 *Imprimer la feuille*, demande la date et l'heure à imprimer (« lundi 21/09,
 20 h ») et imprime la feuille des appariements de la file, marquée « annoncée ».
