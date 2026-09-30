@@ -20,6 +20,7 @@ export const ankiDeckStatsStore = writable(null);
 export const ankiViewModeStore = writable('list');
 
 // Store for routing review key presses from App.svelte to AnkiPanel (rating 1-4, or 'back')
+/** @type {import("svelte/store").Writable<number | string | null>} */
 export const ankiReviewActionStore = writable(null);
 
 // Store for paused review session: { deckId, sessionCount } or null

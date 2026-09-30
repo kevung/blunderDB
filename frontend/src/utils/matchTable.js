@@ -120,16 +120,22 @@ export const MATCH_STAT_ROWS = [
 // the backend (GetMatchMoveGrades), so the Transcript cannot draw a line the statistics do not.
 export const GRADE_MARKS = { error: '?', blunder: '??' };
 
-/** Index a match's MoveGrade list by move id, keeping only graded Moves. */
+/**
+ * Index a match's MoveGrade list by move id, keeping only graded Moves.
+ * @param {any[] | null | undefined} grades
+ */
 export function indexMoveGrades(grades) {
     const byMove = new Map();
     for (const g of grades || []) {
-        if (g && GRADE_MARKS[g.grade]) byMove.set(g.move_id, g);
+        if (g && GRADE_MARKS[/** @type {'error' | 'blunder'} */ (g.grade)]) byMove.set(g.move_id, g);
     }
     return byMove;
 }
 
-/** Count the marks of one game's moves, as they appear in its rows. */
+/**
+ * Count the marks of one game's moves, as they appear in its rows.
+ * @param {any[]} moves
+ */
 export function countGrades(moves) {
     let errors = 0;
     let blunders = 0;
@@ -140,5 +146,8 @@ export function countGrades(moves) {
     return { errors, blunders };
 }
 
-/** A play's cost in equity, the unit every table shows (millipoints stored). */
+/**
+ * A play's cost in equity, the unit every table shows (millipoints stored).
+ * @param {number | string} mp
+ */
 export const fmtGradeCost = (mp) => (Number(mp) / 1000).toFixed(3);
