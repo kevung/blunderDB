@@ -24,6 +24,9 @@ type PositionGraph struct {
 // two PositionGraphs (the decision position, plus the following checker
 // position when the file also carries it), reusing the XG match mappers.
 func MapXGPPosition(path string) ([]PositionGraph, error) {
+	if err := checkXGHeader(path); err != nil {
+		return nil, err
+	}
 	match, err := xgparser.ParseXGFromFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse xgp file: %w", err)

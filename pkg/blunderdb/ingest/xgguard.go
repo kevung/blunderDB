@@ -1,0 +1,49 @@
+package ingest
+
+import (
+	"encoding/binary"
+	"errors"
+	"fmt"
+	"io"
+	"os"
+)
+
+// ErrXGHeader is returned when an XG container's header announces sizes its
+// file cannot hold.
+var ErrXGHeader = errors.New("ingest: malformed XG header")
+
+// xgHeaderPrefix is the part of the Game Data Format header that carries the
+// two sizes xgparser allocates from: magic, version, header size, thumbnail
+// offset, thumbnail size — little-endian, as xgparser reads them.
+const xgHeaderPrefix = 4 + 4 + 4 + 8 + 4
+
+// checkXGHeader refuses an .xg/.xgp file whose header size or thumbnail size
+// exceeds the file itself. xgparser allocates both straight from the header,
+// so a 70 KB file announcing a 4 GB thumbnail takes the process down before
+// any read can fail. A file too short to hold the header is left to
+// xgparser, which reports it as not a game file.
+func checkXGHeader(path string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		return err
+	}
+	var hdr [xgHeaderPrefix]byte
+	if _, err := io.ReadFull(f, hdr[:]); err != nil {
+		return nil
+	}
+	size := st.Size()
+	headerSize := int64(int32(binary.LittleEndian.Uint32(hdr[8:12])))
+	thumbSize := int64(binary.LittleEndian.Uint32(hdr[20:24]))
+	if headerSize < 0 || headerSize > size {
+		return fmt.Errorf("%w: header size %d, file size %d", ErrXGHeader, headerSize, size)
+	}
+	if thumbSize > size {
+		return fmt.Errorf("%w: thumbnail size %d, file size %d", ErrXGHeader, thumbSize, size)
+	}
+	return nil
+}
