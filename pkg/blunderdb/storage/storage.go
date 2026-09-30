@@ -53,6 +53,7 @@ type Stores interface {
 	Collections() CollectionStore
 	Tournaments() TournamentStore
 	Rencontres() RencontreStore
+	Directions() DirectionStore
 	Anki() AnkiStore
 	Filters() FilterStore
 	Session() SessionStore
