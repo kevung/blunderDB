@@ -1608,9 +1608,16 @@ matchs perdus par forfait à son retrait le restent.
 Arbres, emplacements, classement, historique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-L'onglet **Arbres** dessine les tableaux et, pour un suisse, le tableau des vies.
-Un match déjà joué y porte son résultat ; un match que le moteur signale y est
-marqué sur place.
+L'onglet **Arbres** dessine les tableaux avec leurs traits, de la première
+ronde à la finale, la consolante à côté du tableau principal, et, pour un suisse,
+le tableau des vies. Une poule s'y lit en résultats croisés. Un tableau pas encore
+tiré montre son squelette grisé. Un match déjà joué y porte son résultat ; un
+match que le moteur signale y est marqué sur place. Une pastille à côté du nom de
+l'onglet indique qu'un tableau est en cours.
+
+**Cliquer une place** (ou Entrée sur une place focalisée) ouvre sur elle la même
+fiche que sur la grille des tables : le vainqueur d'un match en cours se saisit en
+deux clics, et un match terminé se corrige en cliquant le nom du vrai vainqueur.
 
 .. _direction_emplacements:
 
@@ -1749,6 +1756,16 @@ lien vers sa propre page — et chaque épreuve rattachée écrit la sienne dans
 sous-dossier. Un geste dans n'importe quelle épreuve de la Rencontre régénère la
 page murale ; le dossier propre d'une épreuve rattachée est gardé mais ignoré
 tant qu'elle reste dans la Rencontre.
+
+Quand une épreuve est en phase de tableau et que celui-ci est tiré, sa page
+murale et celle de la Rencontre montrent l'arbre en grand, lisible de loin : une
+colonne par tour, les perdants qui descendent en consolante en pointillé. La page
+défile d'elle-même, sans script, entre son contenu habituel (les tables pour la
+Rencontre) et l'arbre de chaque épreuve en tableau, douze secondes chacun ; elle
+se recharge toujours toutes les trente secondes et reprend la rotation là où elle
+en était. Une
+épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
+reste celle d'avant.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``

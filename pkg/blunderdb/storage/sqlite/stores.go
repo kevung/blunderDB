@@ -58,6 +58,9 @@ func (b binder) LibrarySettings() storage.LibrarySettingsStore {
 func (b binder) Rencontres() storage.RencontreStore {
 	return &sqlshared.RencontreStore{DB: b.shared()}
 }
+func (b binder) Directions() storage.DirectionStore {
+	return &sqlshared.DirectionStore{DB: b.shared()}
+}
 func (b binder) Transcriptions() storage.TranscriptionStore {
 	return &sqlshared.TranscriptionStore{DB: b.shared()}
 }

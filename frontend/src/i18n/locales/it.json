@@ -2014,6 +2014,8 @@
             "pairRatingHint": "Per impostazione predefinita la media delle due valutazioni; un valore inserito la sostituisce."
         },
         "bracket": {
+            "correct": "Correggere il risultato",
+            "live": "un tabellone è in corso",
             "current": "in corso",
             "notDrawn": "non ancora sorteggiato",
             "pending": "—",

@@ -2,6 +2,9 @@ package database
 
 import (
 	"context"
+	"strconv"
+	"strings"
+	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -37,6 +40,20 @@ type BracketMatch struct {
 	// Flagged marks a match the engine complains about, so the view can show it in place
 	// rather than only in a list far from the bracket.
 	Flagged bool `json:"flagged,omitempty"`
+	// Feeds lists the places of other matches whose winner (or loser) takes a seat here, so
+	// the view can draw the lines of the graph without knowing the engine's indices.
+	Feeds []BracketFeed `json:"feeds,omitempty"`
+}
+
+// BracketFeed links a seat of a match to the match it comes from.
+type BracketFeed struct {
+	// Side is the seat fed: 0 for A, 1 for B.
+	Side int `json:"side"`
+	// Section is the source match's section name; empty when it is the same graph.
+	Section string `json:"section,omitempty"`
+	Key     string `json:"key"`
+	// Loser is true when the seat goes to the loser of the source match.
+	Loser bool `json:"loser,omitempty"`
 }
 
 // BracketSection is one graph: the main draw, a consolation, a pool, a GSL block.
@@ -105,7 +122,12 @@ func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
 			Index: ph.Index, Kind: ph.Cfg.Kind, Name: ph.Cfg.Name,
 			Current: ph.Index == st.Current, Drawn: ph.Drawn, Config: ph.Cfg,
 		}
-		for _, sec := range ph.Sections {
+		sections := ph.Sections
+		skeleton := false
+		if len(sections) == 0 {
+			sections, skeleton = bracketSkeleton(st, ph)
+		}
+		for _, sec := range sections {
 			bs := BracketSection{
 				Name: sec.Name, Kind: sec.Kind, Group: sec.Group, Block: sec.Block,
 				Rounds: len(sec.Rounds), Spots: sec.Spots,
@@ -132,6 +154,7 @@ func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
 					MatchID: string(g.MatchID), Winner: string(g.Winner),
 					Done: g.Done, Walkover: g.Walkover, Skipped: g.Skipped,
 				}
+				bm.Feeds = bracketFeeds(sections, sec, g)
 				if r, ok := row[g.Key]; ok {
 					bm.Round = r
 				} else {
@@ -141,6 +164,10 @@ func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
 					bm.ScoreA, bm.ScoreB = m.ScoreA, m.ScoreB
 					bm.Running = m.Status == tournoi.Running
 					bm.Flagged = flagged[m.ID]
+				}
+				if skeleton {
+					// An undrawn draw has no players, no byes, no results: only its shape.
+					bm = BracketMatch{Key: bm.Key, Label: bm.Label, Round: bm.Round, Length: bm.Length, Feeds: bm.Feeds}
 				}
 				bs.Matches = append(bs.Matches, bm)
 			}
@@ -153,6 +180,99 @@ func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
 		out = append(out, bp)
 	}
 	return out, nil
+}
+
+// bracketFeeds resolves the engine's index-based sources into match keys. A source that is a
+// fixed player, or that points outside the graphs, draws no line.
+func bracketFeeds(all []*tournoi.Section, sec *tournoi.Section, g tournoi.GMatch) []BracketFeed {
+	var feeds []BracketFeed
+	for side, src := range g.Src {
+		if src.Player != "" {
+			continue
+		}
+		from := sec
+		if src.Section != "" && src.Section != sec.Name {
+			found := false
+			for _, o := range all {
+				if o.Name == src.Section {
+					from, found = o, true
+					break
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+		if src.From < 0 || src.From >= len(from.Matches) {
+			continue
+		}
+		f := BracketFeed{Side: side, Key: from.Matches[src.From].Key, Loser: src.Loser}
+		if from.Name != sec.Name {
+			f.Section = from.Name
+		}
+		feeds = append(feeds, f)
+	}
+	return feeds
+}
+
+// bracketSkeleton is the shape a not-yet-drawn elimination phase will take, asked of the
+// engine itself: a throwaway tournament with as many anonymous players as will enter, drawn
+// once. Nothing is returned when the number of entrants is not known before the draw (players
+// coming from a Swiss phase that has not finished, lives that differ from one to the next),
+// because a guessed size would be wrong rather than merely rough.
+func bracketSkeleton(st *tournoi.State, ph *tournoi.PhaseState) ([]*tournoi.Section, bool) {
+	cfg := ph.Cfg
+	if ph.Drawn || (cfg.Kind != tournoi.KindBracket && cfg.Kind != tournoi.KindLivesBracket) {
+		return nil, false
+	}
+	n := len(ph.Entrants)
+	if n == 0 {
+		active := 0
+		for id := range st.Players {
+			if !st.Withdrawn[id] {
+				active++
+			}
+		}
+		switch {
+		case cfg.Entry == "all" || (ph.Index == 0 && (cfg.Entry == "" || cfg.Entry == "survivors")):
+			n = active
+		case strings.HasPrefix(cfg.Entry, "top:"):
+			if k, err := strconv.Atoi(cfg.Entry[4:]); err == nil && k > 0 {
+				n = min(k, active)
+			}
+		}
+		// Players who arrive with the lives they have left cannot be sized in advance.
+		if cfg.Kind == tournoi.KindLivesBracket && ph.Index != 0 {
+			n = 0
+		}
+	}
+	if n < 2 {
+		return nil, false
+	}
+	cfg.Entry, cfg.Seeding = "", ""
+	cfg.Name = ""
+	sim, _, err := tournoi.New(tournoi.Config{Name: "skeleton", Phases: []tournoi.PhaseConfig{cfg}}, 1, time.Unix(0, 0))
+	if err != nil {
+		return nil, false
+	}
+	for i := 0; i < n; i++ {
+		id := tournoi.PlayerID("sk" + strconv.Itoa(i))
+		if sim.Apply(tournoi.Event{Version: tournoi.JournalVersion, Kind: tournoi.EvPlayerAdded, Player: &tournoi.Player{ID: id, Name: string(id)}}) != nil {
+			return nil, false
+		}
+	}
+	for _, a := range sim.Propose() {
+		if a.Kind != tournoi.ActDraw || a.Draw == nil {
+			continue
+		}
+		if sim.Apply(tournoi.Event{Version: tournoi.JournalVersion, Kind: tournoi.EvDraw, Phase: a.Phase, Section: a.Section, Draw: a.Draw}) != nil {
+			return nil, false
+		}
+		if sim.Current >= 0 && sim.Current < len(sim.Phases) && len(sim.Phases[sim.Current].Sections) > 0 {
+			return sim.Phases[sim.Current].Sections, true
+		}
+	}
+	return nil, false
 }
 
 func livesRows(st *tournoi.State, ph *tournoi.PhaseState) []LivesRow {
@@ -179,4 +299,49 @@ func livesRows(st *tournoi.State, ph *tournoi.PhaseState) []LivesRow {
 		rows = append(rows, r)
 	}
 	return rows
+}
+
+// wallBracket is the bracket a wall page shows for a Direction: its current phase when that is an
+// elimination phase already drawn. A Swiss phase, a pool, a playoff or a phase not yet drawn has
+// no tree to show, and nothing is returned.
+func (d *Database) wallBracket(tournamentID int64, event string) *direction.WallBracket {
+	phases, err := d.Brackets(tournamentID)
+	if err != nil {
+		return nil
+	}
+	for _, ph := range phases {
+		if !ph.Current || !ph.Drawn {
+			continue
+		}
+		br := direction.WallBracket{Event: event}
+		for _, sec := range ph.Sections {
+			if sec.Kind == "poule" || sec.Kind == "barrage" || sec.Rounds == 0 || len(sec.Matches) == 0 {
+				continue
+			}
+			ws := direction.WallBracketSection{Name: sec.Name}
+			for _, m := range sec.Matches {
+				wm := direction.WallBracketMatch{
+					Key: m.Key, Label: m.Label, Length: m.Length, Round: m.Round,
+					AName: m.AName, BName: m.BName, ScoreA: m.ScoreA, ScoreB: m.ScoreB,
+					Done: m.Done, Running: m.Running, Skipped: m.Skipped,
+				}
+				switch {
+				case m.Winner == "":
+				case m.Winner == m.A:
+					wm.Winner = 1
+				case m.Winner == m.B:
+					wm.Winner = 2
+				}
+				for _, f := range m.Feeds {
+					wm.Feeds = append(wm.Feeds, direction.WallBracketFeed{Side: f.Side, Section: f.Section, Key: f.Key, Loser: f.Loser})
+				}
+				ws.Matches = append(ws.Matches, wm)
+			}
+			br.Sections = append(br.Sections, ws)
+		}
+		if len(br.Sections) > 0 {
+			return &br
+		}
+	}
+	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"strings"
+	"time"
 
 	"github.com/PileOfCells/backgammon-tournoi/render"
 )
@@ -38,6 +39,11 @@ type WallPageInput struct {
 	Name   string
 	Tables []WallTable
 	Events []WallEvent
+	// Brackets are the events currently in a bracket phase; each gets a view of its own, in
+	// rotation with the tables. None: the page is the plain one.
+	Brackets []WallBracket
+	// Now places the rotation on the wall clock; it is the render time.
+	Now time.Time
 }
 
 func wallEsc(s string) string { return html.EscapeString(s) }
@@ -81,14 +87,33 @@ func WallPage(in WallPageInput, cat *Catalog, lang string) string {
 		b.WriteString(`</ul>`)
 	}
 
+	style := render.DefaultStyle
+	content := b.String()
+	if views := wallBracketViews(in, l); len(views) > 0 {
+		var css string
+		css, content = rotation(append([]string{content}, views...), in.Now)
+		style += css
+	}
+
 	var page strings.Builder
 	fmt.Fprintf(&page, `<!doctype html><html lang="%s"><head><meta charset="utf-8">`+
-		`<meta http-equiv="refresh" content="30">`+
+		`<meta http-equiv="refresh" content="%d">`+
 		`<meta name="viewport" content="width=device-width,initial-scale=1"><title>%s</title><style>%s</style></head><body>`,
-		wallEsc(lang), wallEsc(in.Name), render.DefaultStyle)
-	page.WriteString(b.String())
+		wallEsc(lang), minRefresh, wallEsc(in.Name), style)
+	page.WriteString(content)
 	fmt.Fprintf(&page, `<p class="credit">%s</p></body></html>`, wallEsc(credit))
 	return page.String()
+}
+
+// wallBracketViews renders one view per event that has a bracket to show.
+func wallBracketViews(in WallPageInput, l render.Labeler) []string {
+	var views []string
+	for _, br := range in.Brackets {
+		if svg := BracketSVG(br, l); svg != "" {
+			views = append(views, fmt.Sprintf(`<h1>%s — %s</h1>%s`, wallEsc(in.Name), wallEsc(br.Event), svg))
+		}
+	}
+	return views
 }
 
 // wallTerm reads a key of the host catalogue, or falls back to a French sentence — the wall

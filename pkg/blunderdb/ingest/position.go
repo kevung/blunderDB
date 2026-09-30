@@ -24,6 +24,9 @@ type PositionGraph struct {
 // two PositionGraphs (the decision position, plus the following checker
 // position when the file also carries it), reusing the XG match mappers.
 func MapXGPPosition(path string) ([]PositionGraph, error) {
+	if err := checkXGHeader(path); err != nil {
+		return nil, err
+	}
 	match, err := xgparser.ParseXGFromFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse xgp file: %w", err)
@@ -107,7 +110,7 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 // PositionGraph. A BGBlitz text position carries either move evaluations (checker) or cube
 // decisions, never both, so it yields a single analysis fragment.
 func MapBGFTextPosition(path string) ([]PositionGraph, error) {
-	bgfPos, err := bgfparser.ParseTXT(path)
+	bgfPos, err := guardParse(func() (*bgfparser.Position, error) { return bgfparser.ParseTXT(path) })
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
 	}
@@ -117,7 +120,9 @@ func MapBGFTextPosition(path string) ([]PositionGraph, error) {
 // MapBGFTextPositionText maps a BGBlitz text position from string content (e.g.
 // a clipboard paste) into a PositionGraph, mirroring MapBGFTextPosition.
 func MapBGFTextPositionText(content string) ([]PositionGraph, error) {
-	bgfPos, err := bgfparser.ParseTXTFromReader(strings.NewReader(content))
+	bgfPos, err := guardParse(func() (*bgfparser.Position, error) {
+		return bgfparser.ParseTXTFromReader(strings.NewReader(content))
+	})
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
 	}
