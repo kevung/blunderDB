@@ -102,6 +102,7 @@ export function buildSearchCommand(tokens) {
 // Quoted values — pl"…", m"…", t"…" — may contain spaces; a whitespace split
 // would leave loose words misread as range filters (`win"` → win-rate). Strip
 // the whole quoted region before splitting (both quote styles).
+/** @param {string} str */
 export function stripQuotedTokens(str) {
     return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
 }
@@ -132,7 +133,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
                 ? []
                 : stripQuotedTokens(cmd.slice(2).trim())
                       .split(' ')
-                      .map((f) => f.trim());
+                      .map((/** @type {string} */ f) => f.trim());
     }
 
     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
@@ -496,7 +497,7 @@ const FILTER_TOKENS = {
  */
 export function replaySearchArgs(command) {
     if (!(command.startsWith('s ') || command === 's')) return null;
-    const f = parseSearchCommand(command);
+    const f = /** @type {any} */ (parseSearchCommand(command));
     const args = {
         filters: f.cmdFilters,
         includeCube: f.ic,
@@ -544,7 +545,7 @@ export function replaySearchArgs(command) {
  * @returns {string}
  */
 export function filterTokenHint(label) {
-    const entry = FILTER_TOKENS[label];
+    const entry = /** @type {Record<string, { token: string, type: string }>} */ (FILTER_TOKENS)[label];
     if (!entry) return '';
     const { token, type } = entry;
     switch (type) {

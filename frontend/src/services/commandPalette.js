@@ -32,7 +32,7 @@ import { logger } from '../utils/logger.js';
  * @property {string} detail    the secondary line: command and aliases, shortcut, filter text…
  * @property {string[]} keywords other texts a query may match (command name, aliases…)
  * @property {string[]} exact   texts that, typed whole, put this entry first
- * @property {object} target    what runPaletteItem acts on
+ * @property {string | number | object} target    what runPaletteItem acts on
  */
 
 /**
@@ -41,7 +41,10 @@ import { logger } from '../utils/logger.js';
  */
 export const ARGUMENT_COMMANDS = new Set(['s', 'ss']);
 
-/** The i18n key of a command's palette description. */
+/**
+ * The i18n key of a command's palette description.
+ * @param {string} name
+ */
 export function commandLabelKey(name) {
     return `palette.cmd.${name}`;
 }
@@ -50,7 +53,7 @@ export function commandLabelKey(name) {
  * Every entry the palette can offer, in its resting order: pinned filters,
  * tabs, commands, the other filters, then the matches, newest first.
  *
- * @param {{ translate: (key: string, params?: object) => string, matches?: any[], filters?: Array<{ id: number, name: string, command: string, pinned?: boolean }> }} sources
+ * @param {{ translate: (key: string, params?: Record<string, unknown> | null) => string, matches?: any[], filters?: Array<{ id: number, name: string, command: string, pinned?: boolean }> }} sources
  * @returns {PaletteItem[]}
  */
 export function buildPaletteItems({ translate, matches = [], filters = [] }) {

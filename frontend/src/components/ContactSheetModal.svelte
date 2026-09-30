@@ -165,6 +165,8 @@
         </div>
     </div>
     <p class="sheet-hint" id={hintId}>{$t('contactSheet.hint')}</p>
+    <!-- The list only catches the arrow keys bubbling from its tile buttons (roving focus). -->
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <ul
         class="sheet-grid"
         style:grid-template-columns="repeat({columns}, minmax(0, 1fr))"

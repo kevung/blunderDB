@@ -66,6 +66,8 @@ jobs:
           - { pkg: ./pkg/blunderdb/ingest, target: FuzzMATExportRoundTrip }
           - { pkg: ./internal/server, target: FuzzRPC }
           - { pkg: ./internal/server, target: FuzzRunCall }
+          - { pkg: ./pkg/blunderdb/transcript, target: FuzzTranscriptGestures }
+          - { pkg: ./pkg/blunderdb/database, target: FuzzTranscriptionSession }
     name: ${{ matrix.target }}
     steps:
       - name: Checkout

@@ -65,6 +65,7 @@ const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 
 
 // Position-browsing keys: bare h/j/k/l (Shift-J/K switch views), arrows,
 // PageUp/PageDown. Panels holding a selection keep them for their own list.
+/** @param {KeyboardEvent} event */
 function isBoardNavigationKey(event) {
     return (
         isBareLetter(event, 'j') ||
@@ -233,7 +234,7 @@ export function handleKeyDown(event) {
         return;
     }
 
-    const inTextField = document.activeElement.matches('input, textarea, [contenteditable]');
+    const inTextField = document.activeElement?.matches('input, textarea, [contenteditable]');
 
     // In an editable field the clipboard/selection/undo combos belong to the
     // field: return without preventDefault() so the WebView performs them.
@@ -248,13 +249,13 @@ export function handleKeyDown(event) {
 
     // Comment panel: suppress single-key shortcuts while focused inside it;
     // Ctrl-combos, Escape (blur) and Tab still pass.
-    if (document.activeElement.closest('.comment-panel') && !isAlwaysGlobal(event) && event.key !== 'Escape' && event.key !== 'Tab') {
+    if (document.activeElement?.closest('.comment-panel') && !isAlwaysGlobal(event) && event.key !== 'Escape' && event.key !== 'Tab') {
         return;
     }
 
     // The analysis panel focuses itself on open, so this branch must pass the
     // same isAlwaysGlobal() keys as panelKeyGuard().
-    if (document.activeElement.closest('.analysis-panel')) {
+    if (document.activeElement?.closest('.analysis-panel')) {
         if (isAlwaysGlobal(event) || event.key === 'Escape' || event.key === 'Tab') {
             // Let shortcut through
         } else {
@@ -269,7 +270,7 @@ export function handleKeyDown(event) {
     // The comment tab has no PANEL entry: the active tab is the only signal
     // that CommentPanel is mounted.
     const showComment = get(activeTabStore) === 'comments';
-    if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
+    if (document.activeElement?.closest('.match-panel') || document.activeElement?.closest('.collection-panel') || document.activeElement?.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
             event.preventDefault();
         } else if (event.key === 'Escape' || event.key === 'Tab' || isAlwaysGlobal(event)) {

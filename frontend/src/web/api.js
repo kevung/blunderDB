@@ -13,6 +13,7 @@ const devTenant = new URLSearchParams(window.location.search).get('tenant');
  * @param {object} body
  */
 export async function call(route, body = {}) {
+    /** @type {Record<string, string>} */
     const headers = { 'Content-Type': 'application/json' };
     if (devTenant) headers['X-Tenant-ID'] = devTenant;
     const response = await fetch(`/v1/${route}`, {
@@ -31,6 +32,7 @@ export async function call(route, body = {}) {
  * Les routes qui diffusent (rpcStream) répondent en NDJSON, un objet par ligne ; décodées en une
  * passe, sans que la page connaisse la pagination.
  */
+/** @param {string} text */
 function parseBody(text) {
     const trimmed = text.trim();
     if (!trimmed) return null;
@@ -41,9 +43,10 @@ function parseBody(text) {
     return trimmed
         .split('\n')
         .filter(Boolean)
-        .map((line) => JSON.parse(line));
+        .map((/** @type {string} */ line) => JSON.parse(line));
 }
 
+/** @param {string} text */
 function extractError(text) {
     try {
         const parsed = JSON.parse(text);

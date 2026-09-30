@@ -1757,6 +1757,16 @@ sous-dossier. Un geste dans n'importe quelle épreuve de la Rencontre régénèr
 page murale ; le dossier propre d'une épreuve rattachée est gardé mais ignoré
 tant qu'elle reste dans la Rencontre.
 
+Quand une épreuve est en phase de tableau et que celui-ci est tiré, sa page
+murale et celle de la Rencontre montrent l'arbre en grand, lisible de loin : une
+colonne par tour, les perdants qui descendent en consolante en pointillé. La page
+défile d'elle-même, sans script, entre son contenu habituel (les tables pour la
+Rencontre) et l'arbre de chaque épreuve en tableau, douze secondes chacun ; elle
+se recharge toujours toutes les trente secondes et reprend la rotation là où elle
+en était. Une
+épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
+reste celle d'avant.
+
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
 et ``export`` ; ``page --rencontre`` écrit la page murale d'une Rencontre au lieu
