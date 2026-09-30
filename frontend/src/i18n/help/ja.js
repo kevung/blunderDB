@@ -2368,6 +2368,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p><code>pl</code>、<code>m</code>、<code>t</code> の値は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を含んでいても完全な値にならないトークンは無視され、<code>blunderdb search --query</code> がそれを報告します。タグにはアポストロフィを含められますが（<code>#l'ouverture</code>）、二重引用符は含められません。セミコロンは識別子とタグのリストの区切りです。どの値にも現れず、<code>ma1;2</code> はトークンではありません（<code>ma1 ma2</code> と書きます）。</p>
 <h3>その他のコマンド</h3>
 <table>
 <thead>

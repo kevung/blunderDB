@@ -106,6 +106,12 @@ export function stripQuotedTokens(str) {
     return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
 }
 
+// A tag whose quote characters are plain apostrophes: no double quote.
+/** @param {string} f */
+function isQuotedTag(f) {
+    return /^#[^\s#;]+$/.test(f) && !f.includes('"');
+}
+
 /**
  * The single grammar behind every search-token parser: reads filter tokens
  * into the full `SearchFilters` shape (long backend field names). Accepts a
@@ -136,8 +142,16 @@ export function parseSearchTokens(filtersOrCommand, command) {
     }
     // A token still holding a quote is the debris of an unterminated or stray
     // quoted value. No rule claims it: a formatter could not write it back
-    // without it opening a quoted value of its own.
-    const filters = tokens.map((f) => (typeof f === 'string' && /["']/.test(f) ? '' : f));
+    // without it opening a quoted value of its own. A tag is the exception: its
+    // apostrophe (`#don't`) is part of the word, a double quote is not. The Go reader reports the
+    // dropped token as a diagnostic; the command bar has nowhere to show one.
+    const filters = tokens.map((f) => (typeof f === 'string' && /["']/.test(f) && !isQuotedTag(f) ? '' : f));
+    // Format writes the tags last and lower-cased, side by side: if that run
+    // would open a quoted value (`#M''` reads as the tag `#m''`), none is kept.
+    const quotedTags = filters.filter((f) => typeof f === 'string' && /["']/.test(f));
+    if (/(?:pl|m|t)["'][^"']*["']/.test(quotedTags.join(' ').toLowerCase())) {
+        for (let i = 0; i < filters.length; i++) if (quotedTags.includes(filters[i])) filters[i] = '';
+    }
 
     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');

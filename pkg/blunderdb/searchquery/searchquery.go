@@ -105,6 +105,13 @@ var (
 	moveErrRe = regexp.MustCompile(`^E\d`)
 )
 
+// quotedTag reports whether tok is a tag whose quote characters are plain
+// apostrophes: no double quote, and nothing that, lower-cased as a tag is,
+// would open a quoted value (`#M”` is the tag `#m”`, not a move pattern).
+func quotedTag(tok string) bool {
+	return tagRe.MatchString(tok) && !strings.Contains(tok, `"`)
+}
+
 // StripQuoted blanks out the quoted regions of a command so a whitespace split
 // cannot tear a multi-word value apart. Exported because the same treatment is
 // needed by anything that wants the command's bare tokens.
@@ -137,11 +144,30 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	tokens := Tokenize(command)
 	// A token still holding a quote is the debris of an unterminated or
 	// stray quoted value. No rule claims it, for Format could not write it
-	// back without it opening a quoted value of its own.
+	// back without it opening a quoted value of its own. A tag is the
+	// exception: its apostrophe (`#don't`) is part of the word, and a comment
+	// can carry it. The caller still hears of the dropped token as DiagUnknown;
+	// the JS reader reports none, the command bar having nowhere to show it.
 	ruleTokens := make([]string, len(tokens))
+	var quotedTags []int
 	for i, tok := range tokens {
-		if !strings.ContainsAny(tok, `"'`) {
+		switch {
+		case !strings.ContainsAny(tok, `"'`):
 			ruleTokens[i] = tok
+		case quotedTag(tok):
+			ruleTokens[i] = tok
+			quotedTags = append(quotedTags, i)
+		}
+	}
+	// Format writes the tags last and lower-cased, side by side: if that run
+	// would open a quoted value, none of them is kept.
+	var run []string
+	for _, i := range quotedTags {
+		run = append(run, tokens[i])
+	}
+	if quotedRe.MatchString(strings.ToLower(strings.Join(run, " "))) {
+		for _, i := range quotedTags {
+			ruleTokens[i] = ""
 		}
 	}
 	var f domain.SearchFilters
@@ -457,9 +483,9 @@ func Format(f domain.SearchFilters) string {
 }
 
 // addList renders a ";"-separated id list back as one token per id, the form
-// Parse reads. A list joined into a single token (`ma1;2`) would parse back to
-// the same string, but the per-id form is what the interface produces and what
-// the corpus pins.
+// Parse reads. A list joined into a single token (`ma1;2`) is no token of the
+// grammar: ";" is the separator Parse joins values with, so a value never
+// holds one. The per-id form is what the interface produces and the corpus pins.
 func addList(parts *[]string, prefix, list string) {
 	for _, v := range strings.Split(list, ";") {
 		if v != "" {

@@ -269,6 +269,12 @@
       }
     },
     {
+      "command": "s #l'ouverture #don't",
+      "expected": {
+        "tagFilter": "#l'ouverture;#don't"
+      }
+    },
+    {
       "command": "s #Prime",
       "expected": {
         "tagFilter": "#prime"

@@ -2368,6 +2368,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>Los valores <code>pl</code>, <code>m</code> y <code>t</code> se abren con comillas o un apóstrofo y se cierran con cualquiera de los dos. Un token que conserva una comilla sin formar un valor completo se ignora, y <code>blunderdb search --query</code> lo señala. Una etiqueta puede contener un apóstrofo (<code>#l'ouverture</code>), nunca comillas. El punto y coma es el separador de las listas de identificadores y de etiquetas: no aparece en ningún valor, y <code>ma1;2</code> no es un token (escriba <code>ma1 ma2</code>).</p>
 <h3>Comandos diversos</h3>
 <table>
 <thead>

@@ -34,6 +34,7 @@ func FuzzParse(f *testing.F) {
 		f.Add(c.Command)
 	}
 	f.Add(`s t"unterminated`)
+	f.Add(`s #l'ouverture #don't #it's ma1;2 id0;`)
 	f.Add(`ss c"a b" p>-1 p<99999999999999999999 n3,2 like7<2* E9 ##`)
 
 	f.Fuzz(func(t *testing.T, command string) {
