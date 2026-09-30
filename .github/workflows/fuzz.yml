@@ -56,6 +56,8 @@ jobs:
           - { pkg: ./pkg/blunderdb/ingest, target: FuzzBGFApplyCheckerMove }
           - { pkg: ./pkg/blunderdb/engine/gammonnet, target: FuzzLoadBGNN }
           - { pkg: ./pkg/blunderdb/engine/gammonnet, target: FuzzDecide }
+          - { pkg: ./pkg/blunderdb/transcript, target: FuzzTranscriptGestures }
+          - { pkg: ./pkg/blunderdb/database, target: FuzzTranscriptionSession }
     name: ${{ matrix.target }}
     steps:
       - name: Checkout
