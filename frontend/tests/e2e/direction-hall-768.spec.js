@@ -64,8 +64,12 @@ async function expectReachable(locator, what) {
     // défilement, celui du panneau de l'onglet, jamais des zones imbriquées ; on amène donc la
     // cible dans le panneau, puis on exige qu'elle y soit entière.
     await locator.evaluate((el) =>
-        document.querySelector('.direction-view .pane').scrollTo({
-            top: el.getBoundingClientRect().top - document.querySelector('.direction-view .pane').getBoundingClientRect().top + document.querySelector('.direction-view .pane').scrollTop - 8
+        document.querySelector('.direction-view .pane:not([hidden])').scrollTo({
+            top:
+                el.getBoundingClientRect().top -
+                document.querySelector('.direction-view .pane:not([hidden])').getBoundingClientRect().top +
+                document.querySelector('.direction-view .pane:not([hidden])').scrollTop -
+                8
         })
     );
     const box = await reachable(locator);

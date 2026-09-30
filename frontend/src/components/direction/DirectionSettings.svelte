@@ -627,11 +627,9 @@
     /* Une section se replie sur son titre : un réglage rare ne pousse pas les autres hors de l'écran. */
     .sec > summary {
         cursor: pointer;
+        display: list-item;
         list-style-position: inside;
-        min-height: var(--td-target);
-        display: flex;
-        align-items: center;
-        gap: var(--space-1);
+        padding: calc((var(--td-target) - 1.4em) / 2) 0;
     }
 
     .sec > summary h3 {

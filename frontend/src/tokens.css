@@ -20,14 +20,13 @@
        and import counters (--font-size-stat-figure). */
     --font-size-base: 12px; /* body text, labels, values, controls, buttons */
     --font-size-small: 11px; /* dense lists, secondary notes and hints, monospace beside base text */
-    --font-size-title: 15px;
+    --font-size-title: 15px; /* panel titles, and a few deliberately compact dialog titles */
 
     /* Direction (mode TD, au comptoir) : la cible grossit, pas la hiérarchie typographique.
        Actifs sous .direction-view seulement (DirectionView.svelte). */
     --td-target: 44px;
     --td-gap: 8px;
-    --td-cell-min: 140px;
-    --td-font: 14px; /* panel titles, and a few deliberately compact dialog titles */
+    --td-font: 14px;
 
     /* Dialog chrome — named exceptions under ADR-0008, not part of the body scale above.
        Most modal titles are larger than a panel title (users scan for the modal's
