@@ -1063,3 +1063,25 @@ func (e *Editor) Redo() bool {
 	e.future = e.future[:len(e.future)-1]
 	return true
 }
+
+// SetMatchID states which Match the draft has produced, on the document AND on
+// every document of the undo stack. It is a fact about the library, not a
+// gesture: undoing past a save must not forget the Match, or the next save
+// would create a second one. It pushes nothing.
+func (e *Editor) SetMatchID(id *int64) {
+	set := func(doc *Document) {
+		if id == nil {
+			doc.Header.MatchID = nil
+			return
+		}
+		v := *id
+		doc.Header.MatchID = &v
+	}
+	set(&e.Doc)
+	for i := range e.past {
+		set(&e.past[i])
+	}
+	for i := range e.future {
+		set(&e.future[i])
+	}
+}

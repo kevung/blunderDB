@@ -1096,6 +1096,7 @@
         "transcriberLabel": "Transcriber",
         "tournamentLabel": "Tournament",
         "tournamentNone": "None",
+        "tournamentUnknown": "No tournament is called “{name}”: the draft's tournament is not changed.",
         "swapPlayers": "Swap the players",
         "swapPlayersTooltip": "Exchange the two players: the names, the sides and the board",
         "boardSwap": "Flip the board",
@@ -1167,6 +1168,7 @@
         "exportAnyway": "Export anyway",
         "closeUnsavedConfirm": "This draft was never saved: closing it loses everything written in it. Close?",
         "closeSavedConfirm": "The draft will be deleted; match #{id} stays in the library, final. Close?",
+        "closeSavedBehindConfirm": "The draft will be deleted with its corrections not saved since: they will be lost; match #{id} stays as saved. Close?",
         "savedMatch": "Match #{id} saved.",
         "replacedMatch": "Match #{id} replaced.",
         "resumeAnalysis": "Analysis interrupted: {n} position(s) of the last transcribed match are still to analyse.",
@@ -2020,6 +2022,8 @@
             "withdrawLaterConfirm": "Withdraw {name} after their match? They will not be paired afterwards (can be reinstated)."
         },
         "bracket": {
+            "correct": "Correct the result",
+            "live": "a bracket is running",
             "current": "current",
             "notDrawn": "not drawn yet",
             "pending": "—",

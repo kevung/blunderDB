@@ -1096,6 +1096,7 @@
         "transcriberLabel": "記録者",
         "tournamentLabel": "トーナメント",
         "tournamentNone": "なし",
+        "tournamentUnknown": "「{name}」という大会はありません。下書きの大会は変更されません。",
         "swapPlayers": "プレイヤーを入れ替え",
         "swapPlayersTooltip": "2人のプレイヤーを入れ替える：名前、手番、盤面",
         "boardSwap": "盤を反転",
@@ -1167,6 +1168,7 @@
         "exportAnyway": "それでも書き出す",
         "closeUnsavedConfirm": "この下書きは一度も保存されていません。閉じると書いた内容はすべて失われます。閉じますか？",
         "closeSavedConfirm": "下書きは削除されます。マッチ #{id} はライブラリに残り、確定します。閉じますか？",
+        "closeSavedBehindConfirm": "下書きは未保存の修正とともに削除され、修正は失われます。マッチ #{id} は保存時のまま残ります。閉じますか？",
         "savedMatch": "マッチ #{id} を保存しました。",
         "replacedMatch": "マッチ #{id} を置き換えました。",
         "resumeAnalysis": "解析が中断されました：直前に記譜したマッチの {n} 局面が未解析です。",
@@ -2020,6 +2022,8 @@
             "withdrawLaterConfirm": "{name} を試合終了後に棄権させますか？以後の組み合わせから外れます（復帰可能）。"
         },
         "bracket": {
+            "correct": "結果を訂正",
+            "live": "トーナメント表が進行中",
             "current": "進行中",
             "notDrawn": "未抽選",
             "pending": "—",

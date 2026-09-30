@@ -1,7 +1,8 @@
 # ADR-0047 — Diriger un tournoi, c'est créer ses Matchs avant qu'ils soient joués
 
-Statut : acceptée ; §1 amendé par ADR-0056 (la Rencontre).
-Voir aussi : ADR-0037, ADR-0039, ADR-0044, ADR-0045, ADR-0005.
+Statut : acceptée ; §1 amendé par ADR-0056 (la Rencontre) ; exposition au démon amendée par
+ADR-0057.
+Voir aussi : ADR-0037, ADR-0039, ADR-0044, ADR-0045, ADR-0005, ADR-0057.
 
 ## Contexte
 
@@ -24,7 +25,8 @@ Participants, une longueur, une table, un résultat) que remplit une Transcripti
    sont rejoués depuis la Direction à chaque ouverture.
 
 Hors périmètre : l'écran des joueurs. blunderDB écrit une page HTML autonome à projeter ou
-imprimer ; aucune route de consultation, rien dans le front web (ADR-0039 règle 1).
+imprimer ; rien dans le front web embarqué (ADR-0039 règle 1). Les routes `/v1/` servent un
+client externe (ADR-0057).
 
 Les renvois « ADR-0047 §N » du code désignent les sections de la spécification
 `tasks/nicomaque/fonctionnel.md`.
@@ -33,7 +35,8 @@ Les renvois « ADR-0047 §N » du code désignent les sections de la spécificat
 
 - La Direction est une table **append-only**, une ligne par événement, écrite dans la
   transaction du geste ; logique sur `Database` et le contrat `Storage`, exposée au frontend et
-  à une sous-commande CLI non interactive. Le démon ne reçoit rien.
+  à une sous-commande CLI non interactive, et au démon par `/v1/` et `call`, lecture toujours,
+  gestes sous `serve --direction` (ADR-0057).
 - La zone principale affiche autre chose que le plateau seulement quand l'onglet Tournoi est
   actif et une Direction ouverte.
 - Vocabulaire dans `CONTEXT.md` : Direction, Participant, Directory, Slot (*journal* et

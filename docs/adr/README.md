@@ -71,3 +71,4 @@ that come out of them.
 | [0054](0054-le-trou-d-un-double-trait-est-une-case-et-seule-une-ecriture-deplace-le-curseur.md) | Le trou d'un double trait est une case, et seule une écriture déplace le curseur | double-turn hole, `HoldCursor` |
 | [0055](0055-le-contexte-d-un-agent-est-un-budget-borne.md) | Le contexte d'un agent est un budget borné | agent context budget, `.claude/` |
 | [0056](0056-une-rencontre-regroupe-des-tournois-dans-une-meme-salle.md) | Une Rencontre regroupe des Tournaments dirigés dans une même salle | Rencontre, shared hall, doubles, `pkg/blunderdb/direction` |
+| [0057](0057-la-transcription-et-la-direction-s-exposent-par-l-api-a-un-client-externe.md) | La transcription et la direction s'exposent par l'API à un client externe | `/v1/` transcription & direction, If-Match, SSE, `serve --direction`/`--transcription` |

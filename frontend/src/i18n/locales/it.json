@@ -1096,6 +1096,7 @@
         "transcriberLabel": "Trascrittore",
         "tournamentLabel": "Torneo",
         "tournamentNone": "Nessuno",
+        "tournamentUnknown": "Nessun torneo si chiama «{name}»: il torneo della bozza non cambia.",
         "swapPlayers": "Invertire i giocatori",
         "swapPlayersTooltip": "Scambiare i due giocatori: i nomi, i campi e la damiera",
         "boardSwap": "Ruotare il tavoliere",
@@ -1167,6 +1168,7 @@
         "exportAnyway": "Esporta comunque",
         "closeUnsavedConfirm": "Questa bozza non è mai stata salvata: chiuderla perde tutto ciò che vi è scritto. Chiudere?",
         "closeSavedConfirm": "La bozza sarà eliminata; la partita n. {id} resta nella libreria, definitiva. Chiudere?",
+        "closeSavedBehindConfirm": "La bozza sarà eliminata con le correzioni non salvate: andranno perse; la partita n. {id} resta come salvata. Chiudere?",
         "savedMatch": "Partita n. {id} salvata.",
         "replacedMatch": "Partita n. {id} sostituita.",
         "resumeAnalysis": "Analisi interrotta: restano {n} posizione/i da analizzare dell'ultimo match trascritto.",
@@ -2020,6 +2022,8 @@
             "withdrawLaterConfirm": "Ritirare {name} a fine partita? Dopo non sarà più abbinato (reintegro possibile)."
         },
         "bracket": {
+            "correct": "Correggere il risultato",
+            "live": "un tabellone è in corso",
             "current": "in corso",
             "notDrawn": "non ancora sorteggiato",
             "pending": "—",

@@ -1096,6 +1096,7 @@
         "transcriberLabel": "Transcripteur",
         "tournamentLabel": "Tournoi",
         "tournamentNone": "Aucun",
+        "tournamentUnknown": "Aucun tournoi ne s'appelle « {name} » : le tournoi du brouillon n'est pas changé.",
         "swapPlayers": "Inverser les joueurs",
         "swapPlayersTooltip": "Échanger les deux joueurs : les noms, les camps et le plateau",
         "boardSwap": "Retourner le plateau",
@@ -1167,6 +1168,7 @@
         "exportAnyway": "Exporter quand même",
         "closeUnsavedConfirm": "Ce brouillon n'a jamais été enregistré : le fermer perd tout ce qui y est écrit. Fermer ?",
         "closeSavedConfirm": "Le brouillon sera supprimé ; le match #{id} reste dans la bibliothèque, définitif. Fermer ?",
+        "closeSavedBehindConfirm": "Le brouillon sera supprimé avec ses corrections non enregistrées : elles seront perdues ; le match #{id} reste tel qu'enregistré. Fermer ?",
         "savedMatch": "Match #{id} enregistré.",
         "replacedMatch": "Match #{id} remplacé.",
         "resumeAnalysis": "Analyse interrompue : {n} position(s) du dernier match transcrit restent à analyser.",
@@ -2020,6 +2022,8 @@
             "withdrawLaterConfirm": "Retirer {name} à la fin de son match ? Il ne sera plus apparié ensuite (réintégration possible)."
         },
         "bracket": {
+            "correct": "Corriger le résultat",
+            "live": "un tableau est en cours",
             "current": "en cours",
             "notDrawn": "pas encore tiré",
             "pending": "—",

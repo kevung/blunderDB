@@ -19,6 +19,9 @@ import (
 // storage. It always produces the full graph; duplicate detection and
 // cross-format enrichment are WriteMatch's.
 func MapXG(path string) (*MatchGraph, error) {
+	if err := checkXGHeader(path); err != nil {
+		return nil, err
+	}
 	imp := xgparser.NewImport(path)
 	segments, err := imp.GetFileSegments()
 	if err != nil {

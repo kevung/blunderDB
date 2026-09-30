@@ -1096,6 +1096,7 @@
         "transcriberLabel": "Kirjaaja",
         "tournamentLabel": "Turnaus",
         "tournamentNone": "Ei mitään",
+        "tournamentUnknown": "Mikään turnaus ei ole nimeltään ”{name}”: luonnoksen turnausta ei muuteta.",
         "swapPlayers": "Vaihda pelaajat keskenään",
         "swapPlayersTooltip": "Vaihda kaksi pelaajaa keskenään: nimet, puolet ja lauta",
         "boardSwap": "Käännä lauta",
@@ -1167,6 +1168,7 @@
         "exportAnyway": "Vie silti",
         "closeUnsavedConfirm": "Tätä luonnosta ei ole koskaan tallennettu: sulkeminen hävittää kaiken siihen kirjoitetun. Suljetaanko?",
         "closeSavedConfirm": "Luonnos poistetaan; ottelu #{id} jää kirjastoon lopullisena. Suljetaanko?",
+        "closeSavedBehindConfirm": "Luonnos poistetaan tallentamattomine korjauksineen: ne menetetään; ottelu #{id} jää sellaisena kuin se tallennettiin. Suljetaanko?",
         "savedMatch": "Ottelu #{id} tallennettu.",
         "replacedMatch": "Ottelu #{id} korvattu.",
         "resumeAnalysis": "Analyysi keskeytyi: viimeksi litteroidusta ottelusta on vielä {n} asemaa analysoitavana.",
@@ -2020,6 +2022,8 @@
             "withdrawLaterConfirm": "Poistetaanko {name} ottelunsa jälkeen? Häntä ei sen jälkeen paritella (palautus mahdollinen)."
         },
         "bracket": {
+            "correct": "Korjaa tulos",
+            "live": "turnauskaavio on käynnissä",
             "current": "käynnissä",
             "notDrawn": "ei vielä arvottu",
             "pending": "—",

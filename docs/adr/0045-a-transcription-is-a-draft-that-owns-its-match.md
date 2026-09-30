@@ -1,6 +1,6 @@
 # A transcription is a draft that owns its match
 
-Status: accepted.
+Status: accepted; rule 9 amended by ADR-0057 (API exposure).
 See also: ADR-0044, ADR-0036, ADR-0013, ADR-0001, ADR-0028, ADR-0035.
 
 ## Context
@@ -18,14 +18,21 @@ crash.
    dedicated table holding a JSON document with its own format version (a shape change is a
    document version, never a `DatabaseVersion` migration). The row is written after every
    recorded Action, in its own transaction. The undo stack stays in memory.
-2. **Saving materialises a Match; saving again replaces it; the draft stays the source of
-   truth until closed.** The replacement is atomic, keeps the Match `id`, and goes through
-   `ingest.WriteMatch`. Positions of unchanged Actions land on their existing rows (comments,
-   Anki cards, collection memberships survive); positions of corrected Actions go by the
-   ordinary retention rule.
+2. **"Finish" (« Terminer ») materialises the Match and releases the draft; "Abandon"
+   (« Abandonner ») releases it without a Match.** These are the only two exits: there is no
+   separate save that leaves the draft open, and no "close draft". Finishing writes through
+   `ingest.WriteMatch` in one transaction and deletes the draft row. A correction found
+   later goes through **"Edit the transcription"** (« Éditer la transcription »), which opens
+   a draft from any existing Match; finishing it replaces that Match atomically and keeps its
+   `id`. Positions of unchanged Actions land on their existing rows (comments, Anki cards,
+   collection memberships survive); positions of corrected Actions go by the ordinary
+   retention rule. Opening a draft from an **imported** Match first shows a counted warning
+   of what the draft cannot carry and finishing would drop (e.g. "12 analyses, 3 comments,
+   2 metadata fields"); a Match that came from a transcription loses nothing.
 3. **The replacement never passes through the trash**, even the day match deletion is
-   snapshotted — replacing twenty times is housekeeping, as ADR-0036 exempts the orphan
-   purge. Closing a never-saved draft deletes its row after confirmation, with no snapshot.
+   snapshotted — replacing is housekeeping, as ADR-0036 exempts the orphan purge. Abandoning
+   a draft deletes its row after confirmation, with no snapshot; an existing Match it was
+   opened from is left untouched.
 4. **An Action is one player's act**: a double and its answer are two Actions, each with its
    Position and Decision. The side is proposed by the engine at entry and owned by the Action
    once recorded, so inserting or deleting never flips later sides; it creates one local
@@ -39,13 +46,14 @@ crash.
 7. **Crawford is derived from the score sequence and written as the glossary's sentinel**:
    away `1` for the Crawford game, `0` after it. Every writer uses it; `blunderdb repair`
    rehashes positions written without it.
-8. **Saving starts the canonical 2-ply analysis, scoped to the match's unanalysed positions**
+8. **Finishing starts the canonical 2-ply analysis, scoped to the match's unanalysed positions**
    (ADR-0013). Candidates while typing are a 0-ply Evaluation, never written. Shutdown cancels
    a running batch before closing the database. No "analysis pending" state is stored: the
    panel derives it and offers to finish.
 9. **The engine lives in Go**, in the pure package `pkg/blunderdb/transcript/` (no SQL, depends
    only on `domain`, not on `ingest`): a document, its gestures, and an annotated document in
-   return. The Svelte panel is a client; the CLI has `transcribe`; `serve` exposes nothing.
+   return. The Svelte panel is a client; the CLI has `transcribe`; `serve` and `call` expose
+   its gestures to an external client (ADR-0057).
 
 ## Consequences
 
@@ -56,10 +64,10 @@ crash.
 - `RenderMAT` writes Site, Round, EventDate, Transcriber; a `.mat` with an illegal move is
   exported with a warning, never refused.
 - Rejected: writing into `match`/`game`/`move` while typing (see Context); a draft file in XDG
-  (belongs to one library, needs a query, must travel with backups); a final save that closes
-  the draft (no path for a correction found after saving); `Double/Take` as one Action (the
-  cursor must stand between them); deriving the side at each replay (one deletion would flip
-  every later Action); an `illegal` column on `move` (rule 5); the engine in JavaScript (a
+  (belongs to one library, needs a query, must travel with backups); a save that leaves the
+  draft open beside its Match (two sources of truth for one match); `Double/Take` as one
+  Action (the cursor must stand between them); deriving the side at each replay (one deletion
+  would flip every later Action); an `illegal` column on `move` (rule 5); the engine in JavaScript (a
   second copy of the rules).
 
 ## Guard

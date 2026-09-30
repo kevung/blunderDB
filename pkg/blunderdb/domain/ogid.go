@@ -153,6 +153,11 @@ func DecodeOGID(ogid string) (Position, error) {
 	blackPts, okB := ogidInt(fields, 7)
 	whitePts, okW := ogidInt(fields, 6)
 	if length, modifier, ok := ogidMatchLength(fields); ok && length > 0 && okB && okW {
+		// A player at or past the length has won: no decision is left, and
+		// the away score would go negative, a value no reader expects.
+		if blackPts < 0 || whitePts < 0 || blackPts >= length || whitePts >= length {
+			return pos, fmt.Errorf("%w: score %d-%d does not fit a %d-point match", ErrInvalidOGID, whitePts, blackPts, length)
+		}
 		crawford := modifier == 'C' || length == 1
 		pos.Score = AwayScoresWithCrawford(length, blackPts, whitePts, crawford)
 	}

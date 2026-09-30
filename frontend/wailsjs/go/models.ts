@@ -28,6 +28,24 @@ export namespace database {
 	        this.PlayerNames = source["PlayerNames"];
 	    }
 	}
+	export class BracketFeed {
+	    side: number;
+	    section?: string;
+	    key: string;
+	    loser?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new BracketFeed(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.side = source["side"];
+	        this.section = source["section"];
+	        this.key = source["key"];
+	        this.loser = source["loser"];
+	    }
+	}
 	export class BracketMatch {
 	    key: string;
 	    label: tournoi.Label;
@@ -46,6 +64,7 @@ export namespace database {
 	    walkover?: boolean;
 	    skipped?: boolean;
 	    flagged?: boolean;
+	    feeds?: BracketFeed[];
 	
 	    static createFrom(source: any = {}) {
 	        return new BracketMatch(source);
@@ -70,6 +89,7 @@ export namespace database {
 	        this.walkover = source["walkover"];
 	        this.skipped = source["skipped"];
 	        this.flagged = source["flagged"];
+	        this.feeds = this.convertValues(source["feeds"], BracketFeed);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -392,12 +392,9 @@
         }
     }
 
-    /* Une place de l'arbre ramène à la page Direction : la seule fiche de résultat. */
-    /** @param {{ matchId?: string }} m */
-    function openBracketMatch(m) {
-        if (!m.matchId) return;
-        tab = 'direction';
-    }
+    /* L'arbre a une place ouverte sur une fiche dès qu'une phase a un graphe en cours : la
+       pastille de l'onglet, pour le voir sans aller le chercher. */
+    const bracketLive = $derived(phases.some((p) => p.current && p.sections.some((s) => s.kind !== 'barrage' && s.matches.length > 0)));
 
     /** @param {string | undefined} id */
     function playerName(id) {
@@ -479,7 +476,9 @@
         <span class="state">{$t(`direction.state.${directionState}`)}</span>
         <nav>
             {#each tabs as item (item.id)}
-                <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}>{$t(item.labelKey)}</button>
+                <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}
+                    >{$t(item.labelKey)}{#if item.id === 'brackets' && bracketLive}<span class="tab-dot" data-testid="brackets-dot" title={$t('direction.bracket.live')}>●</span>{/if}</button
+                >
             {/each}
         </nav>
         <span class="spacer"></span>
@@ -592,7 +591,7 @@
         {:else if tab === 'history'}
             <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
-            <BracketsView {phases} onOpenMatch={openBracketMatch} />
+            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
         {:else if tab === 'players'}
             <DirectoryPanel
                 sources={dirSources}
@@ -701,6 +700,12 @@
         border-radius: var(--radius);
         background: var(--color-border);
         color: var(--color-text);
+    }
+
+    .tab-dot {
+        margin-left: 0.3em;
+        font-size: var(--font-size-small);
+        color: var(--color-primary);
     }
 
     .badge.warning {
