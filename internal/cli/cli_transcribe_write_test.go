@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
 // The CLI's writing options go through the panel's Database methods: edit
@@ -78,4 +80,25 @@ func runTranscribeOnFile(t *testing.T, args ...string) (string, error) {
 	var err error
 	out := captureStdout(t, func() { err = c.runTranscribe(args) })
 	return out, err
+}
+
+// A draft that never produced a Match loses everything typed in it when
+// abandoned: the CLI asks for --yes, as the panel asks for a confirmation.
+func TestTranscribeWrite_AbandonOfANeverFinishedDraftNeedsYes(t *testing.T) {
+	c, dbPath := setupCLIWithDB(t)
+	state, err := c.db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	c.db.Close()
+
+	if _, err := runTranscribeOnFile(t, "--db", dbPath, "--draft", itoa64(state.ID), "--abandon"); err == nil {
+		t.Fatal("--abandon without --yes deleted a draft that never produced a match")
+	}
+	if _, err := runTranscribeOnFile(t, "--db", dbPath, "--draft", itoa64(state.ID), "--check"); err != nil {
+		t.Fatalf("the refused abandon took the draft anyway: %v", err)
+	}
+	if _, err := runTranscribeOnFile(t, "--db", dbPath, "--draft", itoa64(state.ID), "--abandon", "--yes"); err != nil {
+		t.Fatalf("--abandon --yes: %v", err)
+	}
 }

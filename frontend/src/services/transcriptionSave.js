@@ -22,6 +22,7 @@ import { confirmAction } from './confirmService.js';
 import {
     FinishTranscription,
     AbandonTranscription,
+    OpenTranscription,
     EditMatchTranscription,
     MatchTranscriptionLosses,
     SuggestTranscriptionMatFilename,
@@ -222,7 +223,7 @@ export async function abandonDraft(draft) {
     const id = draft?.id;
     if (id == null) return false;
 
-    if (!savedMatchID(draft.annotated)) {
+    if (!(await currentMatchID(draft))) {
         const go = await confirmAction(/** @type {string} */ (translate('transcription.abandonConfirm')), {
             confirmLabel: /** @type {string} */ (translate('transcription.abandon'))
         });
@@ -238,6 +239,25 @@ export async function abandonDraft(draft) {
     }
     statusBarTextStore.set(tMsg('transcription.abandoned'));
     return true;
+}
+
+/**
+ * Le Match d'origine tel que le moteur le voit maintenant : le document
+ * affiché peut encore nommer un Match supprimé depuis, que la lecture Go
+ * oublie ; le brouillon redevient alors sans match, et tout ce qui y est
+ * écrit se perd à l'abandon.
+ *
+ * @param {any} draft
+ * @returns {Promise<number>}
+ */
+async function currentMatchID(draft) {
+    if (!savedMatchID(draft.annotated)) return 0;
+    try {
+        return savedMatchID((await OpenTranscription(draft.id))?.annotated);
+    } catch (error) {
+        logger.error('Failed to reread a transcription draft before abandoning it:', error);
+        return 0;
+    }
 }
 
 /**

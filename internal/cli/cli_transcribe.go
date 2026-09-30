@@ -32,6 +32,7 @@ func (cli *CLI) runTranscribe(args []string) error {
 	finish := transcribeCmd.Bool("finish", false, "Finish the --draft: write its match (or replace the one it was opened from) and release the draft")
 	abandon := transcribeCmd.Bool("abandon", false, "Abandon the --draft: delete it without a match; a match it was opened from is left untouched")
 	edit := transcribeCmd.Bool("edit", false, "Open a draft on the --match (or return the one already open on it), for a correction finished with --finish")
+	yes := transcribeCmd.Bool("yes", false, "With --abandon on a draft that never produced a match: confirm that everything typed in it is lost")
 	acceptLosses := transcribeCmd.Bool("accept-losses", false, "With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost")
 
 	transcribeCmd.Usage = func() {
@@ -65,7 +66,9 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("draft without a match, --edit opens a draft on an existing")
 		fmt.Println("match so that --finish replaces it in place. Editing an")
 		fmt.Println("imported match counts what a .mat cannot carry (analyses,")
-		fmt.Println("comments) and refuses without --accept-losses.")
+		fmt.Println("comments) and refuses without --accept-losses. Abandoning a")
+		fmt.Println("draft that never produced a match loses everything typed")
+		fmt.Println("in it, and asks for --yes.")
 		fmt.Println()
 		fmt.Println("Options:")
 		transcribeCmd.PrintDefaults()
@@ -105,7 +108,7 @@ func (cli *CLI) runTranscribe(args []string) error {
 	if *finish || *abandon || *edit {
 		return cli.transcribeWrite(transcribeWriteArgs{
 			dbPath: *dbPath, matchID: *matchID, draftID: *draftID, matFile: *matFile,
-			finish: *finish, abandon: *abandon, edit: *edit, acceptLosses: *acceptLosses, text: text,
+			finish: *finish, abandon: *abandon, edit: *edit, acceptLosses: *acceptLosses, yes: *yes, text: text,
 		}, transcribeCmd)
 	}
 

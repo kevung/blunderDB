@@ -20,6 +20,7 @@ import { get } from 'svelte/store';
 const {
     FinishTranscription,
     AbandonTranscription,
+    OpenTranscription,
     EditMatchTranscription,
     MatchTranscriptionLosses,
     SuggestTranscriptionMatFilename,
@@ -31,6 +32,7 @@ const {
 } = vi.hoisted(() => ({
     FinishTranscription: vi.fn(),
     AbandonTranscription: vi.fn(),
+    OpenTranscription: vi.fn(),
     EditMatchTranscription: vi.fn(),
     MatchTranscriptionLosses: vi.fn(),
     PendingTranscriptionAnalysis: vi.fn(),
@@ -44,6 +46,7 @@ const {
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     FinishTranscription,
     AbandonTranscription,
+    OpenTranscription,
     EditMatchTranscription,
     MatchTranscriptionLosses,
     SuggestTranscriptionMatFilename,
@@ -108,6 +111,7 @@ beforeEach(() => {
     OpenExportMatDialog.mockResolvedValue('/tmp/A_B.mat');
     ExportTranscriptionMAT.mockResolvedValue(undefined);
     AbandonTranscription.mockResolvedValue(undefined);
+    OpenTranscription.mockImplementation(async (id) => ({ id, annotated: { document: { header: { match_id: 7 }, actions: [] } } }));
     PendingTranscriptionAnalysis.mockResolvedValue(null);
     dismissTranscriptionResume();
     confirmAction.mockResolvedValue(true);
@@ -192,6 +196,13 @@ describe('Abandonner', () => {
         expect(await abandonDraft(draft({ matchId: 7, actions: clean }))).toBe(true);
         expect(confirmAction).not.toHaveBeenCalled();
         expect(AbandonTranscription).toHaveBeenCalledWith(1);
+    });
+
+    test('un brouillon dont le match d’origine a été supprimé redevient sans match : confirmé', async () => {
+        OpenTranscription.mockResolvedValue({ id: 1, annotated: { document: { header: {}, actions: [] } } });
+        expect(await abandonDraft(draft({ matchId: 7, actions: clean }))).toBe(true);
+        expect(confirmAction).toHaveBeenCalledTimes(1);
+        expect(confirmAction.mock.calls[0][0]).toMatch(/never been finished/i);
     });
 
     test('le refus ne supprime rien', async () => {

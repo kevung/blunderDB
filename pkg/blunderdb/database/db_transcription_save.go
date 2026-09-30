@@ -114,6 +114,18 @@ func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.Matc
 		_ = tx.Rollback()
 		return res, err
 	}
+	// An imported Match keeps the hashes of its source file, as it keeps its
+	// file_path and import batch: they are what makes the same file, imported
+	// again, a duplicate of this Match rather than a second copy of it.
+	if graph.ReplaceMatchID != 0 {
+		old, err := tx.Matches().Get(ctx, "", graph.ReplaceMatchID)
+		if err != nil {
+			return fail(err)
+		}
+		if isImported(old) {
+			header.MatchHash, header.CanonicalHash = old.MatchHash, old.CanonicalHash
+		}
+	}
 	res, err = ingest.WriteMatch(ctx, tx, "", graph, nil)
 	if err != nil {
 		return fail(err)

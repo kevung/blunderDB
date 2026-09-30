@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "Questa bozza contiene incoerenze. Sono conservate così come sono nel Match. Terminare comunque?",
         "finishAnyway": "Termina comunque",
         "stateEditsMatch": "modifica il match #{id}",
-        "editLossWarning": "Questo match è stato importato: {analyses} analisi e {comments} commento/i non passano in una trascrizione, e terminarla può perderli. Aprire la trascrizione?",
+        "editLossWarning": "Questo match è stato importato: fino a {analyses} analisi e fino a {comments} commento/i non passano in una trascrizione, e terminarla può perderli. Aprire la trascrizione?",
         "editAnyway": "Apri la trascrizione",
         "editFailed": "Impossibile aprire la trascrizione: {error}"
     },

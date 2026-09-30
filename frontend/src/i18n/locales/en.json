@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "This draft carries inconsistencies. They are kept as they are in the Match. Finish anyway?",
         "finishAnyway": "Finish anyway",
         "stateEditsMatch": "edits match #{id}",
-        "editLossWarning": "This match was imported: {analyses} analysis(es) and {comments} comment(s) are not carried by a transcription, and finishing it may lose them. Open the transcription?",
+        "editLossWarning": "This match was imported: up to {analyses} analysis(es) and up to {comments} comment(s) are not carried by a transcription, and finishing it may lose them. Open the transcription?",
         "editAnyway": "Open the transcription",
         "editFailed": "Could not open the transcription: {error}"
     },

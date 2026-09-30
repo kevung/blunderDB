@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "Luonnoksessa on epäjohdonmukaisuuksia. Ne säilyvät ottelussa sellaisinaan. Viedäänkö silti valmiiksi?",
         "finishAnyway": "Vie silti valmiiksi",
         "stateEditsMatch": "muokkaa ottelua #{id}",
-        "editLossWarning": "Tämä ottelu on tuotu: {analyses} analyysia ja {comments} kommenttia ei siirry litterointiin, ja sen vieminen valmiiksi voi menettää ne. Avataanko litterointi?",
+        "editLossWarning": "Tämä ottelu on tuotu: enintään {analyses} analyysia ja enintään {comments} kommenttia ei siirry litterointiin, ja sen vieminen valmiiksi voi menettää ne. Avataanko litterointi?",
         "editAnyway": "Avaa litterointi",
         "editFailed": "Litterointia ei voitu avata: {error}"
     },

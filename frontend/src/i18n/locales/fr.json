@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "Ce brouillon porte des incohérences. Elles sont conservées telles quelles dans le Match. Terminer quand même ?",
         "finishAnyway": "Terminer quand même",
         "stateEditsMatch": "édite le match #{id}",
-        "editLossWarning": "Ce match a été importé : {analyses} analyse(s) et {comments} commentaire(s) ne passent pas dans une transcription, et la terminer peut les perdre. Ouvrir la transcription ?",
+        "editLossWarning": "Ce match a été importé : jusqu'à {analyses} analyse(s) et jusqu'à {comments} commentaire(s) ne passent pas dans une transcription, et la terminer peut les perdre. Ouvrir la transcription ?",
         "editAnyway": "Ouvrir la transcription",
         "editFailed": "Impossible d'ouvrir la transcription : {error}"
     },

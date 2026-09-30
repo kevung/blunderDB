@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "Este borrador contiene incoherencias. Se conservan tal cual en el Match. ¿Terminar de todos modos?",
         "finishAnyway": "Terminar de todos modos",
         "stateEditsMatch": "edita el match #{id}",
-        "editLossWarning": "Este match fue importado: {analyses} análisis y {comments} comentario(s) no pasan a una transcripción, y terminarla puede perderlos. ¿Abrir la transcripción?",
+        "editLossWarning": "Este match fue importado: hasta {analyses} análisis y hasta {comments} comentario(s) no pasan a una transcripción, y terminarla puede perderlos. ¿Abrir la transcripción?",
         "editAnyway": "Abrir la transcripción",
         "editFailed": "No se pudo abrir la transcripción: {error}"
     },

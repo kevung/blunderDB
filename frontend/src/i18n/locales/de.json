@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "Dieser Entwurf enthält Inkonsistenzen. Sie bleiben im Match unverändert erhalten. Trotzdem abschließen?",
         "finishAnyway": "Trotzdem abschließen",
         "stateEditsMatch": "bearbeitet Match #{id}",
-        "editLossWarning": "Dieses Match wurde importiert: {analyses} Analyse(n) und {comments} Kommentar(e) gehen nicht in eine Transkription über und können beim Abschließen verloren gehen. Transkription öffnen?",
+        "editLossWarning": "Dieses Match wurde importiert: bis zu {analyses} Analyse(n) und bis zu {comments} Kommentar(e) gehen nicht in eine Transkription über und können beim Abschließen verloren gehen. Transkription öffnen?",
         "editAnyway": "Transkription öffnen",
         "editFailed": "Transkription konnte nicht geöffnet werden: {error}"
     },

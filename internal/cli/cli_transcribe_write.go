@@ -11,10 +11,10 @@ import (
 // Database methods as the panel: no rule of their own here.
 
 type transcribeWriteArgs struct {
-	dbPath, matFile       string
-	matchID, draftID      int64
-	finish, abandon, edit bool
-	acceptLosses, text    bool
+	dbPath, matFile         string
+	matchID, draftID        int64
+	finish, abandon, edit   bool
+	acceptLosses, yes, text bool
 }
 
 // transcribeWriteResult is the --format json shape of a writing option.
@@ -63,6 +63,16 @@ func (cli *CLI) transcribeWrite(a transcribeWriteArgs, cmd *flag.FlagSet) error 
 		}
 		out = transcribeWriteResult{Action: "finish", DraftID: a.draftID, Finish: res}
 	case a.abandon:
+		// The panel confirms the same case: the draft is all there is of it.
+		if !a.yes {
+			state, err := cli.db.OpenTranscription(a.draftID)
+			if err != nil {
+				return fmt.Errorf("reading draft %d: %w", a.draftID, err)
+			}
+			if m := state.Annotated.Document.Header.MatchID; m == nil || *m == 0 {
+				return fmt.Errorf("draft %d never produced a match: abandoning it loses everything typed in it; pass --yes to confirm", a.draftID)
+			}
+		}
 		if err := cli.db.AbandonTranscription(a.draftID); err != nil {
 			return fmt.Errorf("abandoning draft %d: %w", a.draftID, err)
 		}
@@ -73,7 +83,7 @@ func (cli *CLI) transcribeWrite(a transcribeWriteArgs, cmd *flag.FlagSet) error 
 			return err
 		}
 		if losses.Lossy() && !a.acceptLosses {
-			return fmt.Errorf("match %d was imported: %d analyses and %d comments are not carried by a transcription and may be lost; pass --accept-losses to open a draft on it",
+			return fmt.Errorf("match %d was imported: up to %d analyses and up to %d comments are not carried by a transcription and may be lost; pass --accept-losses to open a draft on it",
 				a.matchID, losses.Analyses, losses.Comments)
 		}
 		state, err := cli.db.EditMatchTranscription(a.matchID)

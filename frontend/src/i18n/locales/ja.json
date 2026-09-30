@@ -1201,7 +1201,7 @@
         "finishInconsistentWarning": "この下書きには不整合があります。マッチにはそのまま保持されます。それでも完了しますか？",
         "finishAnyway": "それでも完了",
         "stateEditsMatch": "マッチ #{id} を編集中",
-        "editLossWarning": "このマッチはインポートされたものです。{analyses} 件の解析と {comments} 件のコメントは記譜に引き継がれず、完了すると失われる可能性があります。記譜を開きますか？",
+        "editLossWarning": "このマッチはインポートされたものです。最大 {analyses} 件の解析と最大 {comments} 件のコメントは記譜に引き継がれず、完了すると失われる可能性があります。記譜を開きますか？",
         "editAnyway": "記譜を開く",
         "editFailed": "記譜を開けませんでした: {error}"
     },
