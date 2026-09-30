@@ -1860,7 +1860,6 @@ export namespace database {
 	
 	
 	export class TranscriptionAnalysisResume {
-	    transcription_id: number;
 	    match_id: number;
 	    label: string;
 	    to_analyze: number;
@@ -1871,10 +1870,29 @@ export namespace database {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.transcription_id = source["transcription_id"];
 	        this.match_id = source["match_id"];
 	        this.label = source["label"];
 	        this.to_analyze = source["to_analyze"];
+	    }
+	}
+	export class TranscriptionLosses {
+	    match_id: number;
+	    imported: boolean;
+	    analyses: number;
+	    comments: number;
+	    draft_id: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionLosses(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.imported = source["imported"];
+	        this.analyses = source["analyses"];
+	        this.comments = source["comments"];
+	        this.draft_id = source["draft_id"];
 	    }
 	}
 	export class TranscriptionSaveResult {
