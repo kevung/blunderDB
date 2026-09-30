@@ -21,8 +21,8 @@
     } from '../../stores/rencontreStore.js';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
 
-    /** @typedef {import('../../../wailsjs/go/models').database.RencontreView} RencontreView */
-    /** @typedef {import('../../../wailsjs/go/models').database.ConfigPreview} ConfigPreview */
+    /** @typedef {import('../../../wailsjs/go/models').service.RencontreView} RencontreView */
+    /** @typedef {import('../../../wailsjs/go/models').service.ConfigPreview} ConfigPreview */
 
     /** @type {{ tournamentId: number, rencontreId?: number }} */
     let { tournamentId, rencontreId = 0 } = $props();

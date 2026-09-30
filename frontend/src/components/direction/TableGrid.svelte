@@ -9,7 +9,7 @@
     import ResultCard from './ResultCard.svelte';
     import { seatLabel } from './labels.js';
 
-    /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
+    /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
     /**
      * @type {{

@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -24,8 +25,8 @@ type FreeSlot struct {
 
 // DirectionFreeSlots lists the byes still open, in bracket order. The director picks one; the
 // engine refuses a place already played, unknown, or taken.
-func (d *Database) DirectionFreeSlots(tournamentID int64) ([]FreeSlot, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) DirectionFreeSlots(ctx context.Context, tournamentID int64) ([]FreeSlot, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -45,13 +46,12 @@ func (d *Database) DirectionFreeSlots(tournamentID int64) ([]FreeSlot, error) {
 //
 // Separate from AddParticipant on purpose: the place is the director's decision, and one no
 // longer free is refused rather than replaced.
-func (d *Database) AddParticipantAtSlot(tournamentID int64, name, club string, rating float64, section, key string) (*DirectionView, error) {
+func (d *Service) AddParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (*DirectionView, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return nil, fmt.Errorf("direction: an entry needs a name")
 	}
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -68,5 +68,5 @@ func (d *Database) AddParticipantAtSlot(tournamentID int64, name, club string, r
 	if err := dir.Apply(ctx, tournoi.PlayerAddedAtSlotEvent(p, slot, time.Now())); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }

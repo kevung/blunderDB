@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -48,8 +49,8 @@ type HistoryEntry struct {
 // History returns the decisions of a Direction, oldest first.
 //
 // `player` and `match`, when given, filter it.
-func (d *Database) History(tournamentID int64, player, match string) ([]HistoryEntry, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) History(ctx context.Context, tournamentID int64, player, match string) ([]HistoryEntry, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -120,22 +121,21 @@ func historyMatches(e HistoryEntry, player, match string) bool {
 // AddDirectionNote records a free note of the director's, timestamped. It is the one place in
 // the log where their own words go, and it is refused by nothing — including after the close,
 // since a note about a closed tournament is exactly when one is written.
-func (d *Database) AddDirectionNote(tournamentID int64, text string) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) AddDirectionNote(ctx context.Context, tournamentID int64, text string) (*DirectionView, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
 	if err := dir.Apply(ctx, tournoi.NoteEvent(strings.TrimSpace(text), time.Now())); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // SinceLastGesture returns the decisions recorded after a given sequence number: what happened
 // while the director was somewhere else.
-func (d *Database) SinceLastGesture(tournamentID int64, seq int) ([]HistoryEntry, error) {
-	all, err := d.History(tournamentID, "", "")
+func (d *Service) SinceLastGesture(ctx context.Context, tournamentID int64, seq int) ([]HistoryEntry, error) {
+	all, err := d.History(ctx, tournamentID, "", "")
 	if err != nil {
 		return nil, err
 	}

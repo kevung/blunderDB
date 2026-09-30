@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -9,10 +9,10 @@ import (
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
@@ -38,32 +38,31 @@ type RencontreView struct {
 }
 
 // CreateRencontre opens a room with its number of tables.
-func (d *Database) CreateRencontre(name, startsOn, endsOn string, tables int) (*RencontreView, error) {
+func (d *Service) CreateRencontre(ctx context.Context, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
 	if name == "" {
 		return nil, fmt.Errorf("rencontre: a name is required")
 	}
 	if tables <= 0 {
 		return nil, fmt.Errorf("rencontre: the room needs at least one table")
 	}
-	id, err := d.store.Rencontres().Create(context.Background(), "", domain.Rencontre{
+	id, err := d.st.Rencontres().Create(ctx, d.scope, domain.Rencontre{
 		Name: name, StartsOn: startsOn, EndsOn: endsOn, Tables: tables,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return d.GetRencontre(id)
+	return d.GetRencontre(ctx, id)
 }
 
 // ListRencontres returns every Rencontre, newest first.
-func (d *Database) ListRencontres() ([]RencontreView, error) {
-	ctx := context.Background()
-	rs, err := d.store.Rencontres().List(ctx, "")
+func (d *Service) ListRencontres(ctx context.Context) ([]RencontreView, error) {
+	rs, err := d.st.Rencontres().List(ctx, d.scope)
 	if err != nil {
 		return nil, err
 	}
 	out := make([]RencontreView, 0, len(rs))
 	for _, r := range rs {
-		v, err := d.rencontreView(ctx, d.store, d.DirectionStore(), r)
+		v, err := d.rencontreView(ctx, d.st, d.dirStore(), r)
 		if err != nil {
 			return nil, err
 		}
@@ -73,26 +72,25 @@ func (d *Database) ListRencontres() ([]RencontreView, error) {
 }
 
 // GetRencontre returns one Rencontre with its room and members.
-func (d *Database) GetRencontre(id int64) (*RencontreView, error) {
-	ctx := context.Background()
-	r, err := d.store.Rencontres().Get(ctx, "", id)
+func (d *Service) GetRencontre(ctx context.Context, id int64) (*RencontreView, error) {
+	r, err := d.st.Rencontres().Get(ctx, d.scope, id)
 	if err != nil {
 		return nil, err
 	}
-	return d.rencontreView(ctx, d.store, d.DirectionStore(), r)
+	return d.rencontreView(ctx, d.st, d.dirStore(), r)
 }
 
 // RencontreOf names the Rencontre a Tournament plays in, 0 when none.
-func (d *Database) RencontreOf(tournamentID int64) (int64, error) {
-	return d.store.Rencontres().Of(context.Background(), "", tournamentID)
+func (d *Service) RencontreOf(ctx context.Context, tournamentID int64) (int64, error) {
+	return d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 }
 
-func (d *Database) rencontreView(ctx context.Context, stores storage.Stores, store direction.Store, r *domain.Rencontre) (*RencontreView, error) {
+func (d *Service) rencontreView(ctx context.Context, stores storage.Stores, store direction.Store, r *domain.Rencontre) (*RencontreView, error) {
 	v := &RencontreView{Rencontre: *r, Room: direction.Room{Tables: r.Tables}, Members: []RencontreMember{}}
 	roomRead := false
 	for _, tid := range r.TournamentIDs {
 		m := RencontreMember{TournamentID: tid}
-		if t, err := stores.Tournaments().Get(ctx, "", tid); err == nil {
+		if t, err := stores.Tournaments().Get(ctx, d.scope, tid); err == nil {
 			m.Name = t.Name
 		}
 		if dir, err := direction.Open(ctx, store, tid); err == nil {
@@ -111,14 +109,14 @@ func (d *Database) rencontreView(ctx context.Context, stores storage.Stores, sto
 
 // UpdateRencontre renames the room and moves its dates. A new number of tables is a gesture on
 // the room: every member Direction records it.
-func (d *Database) UpdateRencontre(id int64, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
+func (d *Service) UpdateRencontre(ctx context.Context, id int64, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
 	if name == "" || tables <= 0 {
 		return nil, fmt.Errorf("rencontre: a name and at least one table are required")
 	}
-	err := d.inRoom(id, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	err := d.inRoom(ctx, id, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		changed := r.Tables != tables
 		r.Name, r.StartsOn, r.EndsOn, r.Tables = name, startsOn, endsOn, tables
-		if err := tx.Rencontres().Update(ctx, "", *r); err != nil {
+		if err := tx.Rencontres().Update(ctx, d.scope, *r); err != nil {
 			return err
 		}
 		if !changed {
@@ -130,13 +128,13 @@ func (d *Database) UpdateRencontre(id int64, name, startsOn, endsOn string, tabl
 	if err != nil {
 		return nil, err
 	}
-	return d.afterRoomGesture(id)
+	return d.afterRoomGesture(ctx, id)
 }
 
 // PreviewAttachToRencontre shows what attaching changes in the Tournament's configuration — its
 // tables become the room's — without writing anything.
-func (d *Database) PreviewAttachToRencontre(tournamentID, rencontreID int64) (*ConfigPreview, error) {
-	next, err := d.alignedConfig(context.Background(), d.DirectionStore(), tournamentID, rencontreID)
+func (d *Service) PreviewAttachToRencontre(ctx context.Context, tournamentID, rencontreID int64) (*ConfigPreview, error) {
+	next, err := d.alignedConfig(ctx, d.dirStore(), tournamentID, rencontreID)
 	if err != nil {
 		return nil, err
 	}
@@ -144,15 +142,15 @@ func (d *Database) PreviewAttachToRencontre(tournamentID, rencontreID int64) (*C
 	if err != nil {
 		return nil, err
 	}
-	return d.PreviewDirectionConfig(tournamentID, string(blob))
+	return d.PreviewDirectionConfig(ctx, tournamentID, string(blob))
 }
 
 // AttachToRencontre puts a directed Tournament in the room: its tables are aligned by a
 // configuration change, and membership is recorded, in one transaction. Permitted at any time,
 // the event under way included. A Tournament without a Direction has no room to join.
-func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*RencontreView, error) {
-	err := d.inRoom(rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
-		if of, err := tx.Rencontres().Of(ctx, "", tournamentID); err != nil {
+func (d *Service) AttachToRencontre(ctx context.Context, tournamentID, rencontreID int64) (*RencontreView, error) {
+	err := d.inRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+		if of, err := tx.Rencontres().Of(ctx, d.scope, tournamentID); err != nil {
 			return err
 		} else if of != 0 && of != rencontreID {
 			return fmt.Errorf("rencontre: tournament %d already plays in another Rencontre", tournamentID)
@@ -160,12 +158,12 @@ func (d *Database) AttachToRencontre(tournamentID, rencontreID int64) (*Rencontr
 		if err := alignTables(ctx, store, tournamentID, room); err != nil {
 			return err
 		}
-		return tx.Rencontres().Attach(ctx, "", tournamentID, rencontreID)
+		return tx.Rencontres().Attach(ctx, d.scope, tournamentID, rencontreID)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return d.afterRoomGesture(rencontreID)
+	return d.afterRoomGesture(ctx, rencontreID)
 }
 
 // alignTables puts one Tournament on the room's tables by a configuration change, and writes
@@ -185,10 +183,10 @@ func alignTables(ctx context.Context, store direction.Store, tournamentID int64,
 	return nil
 }
 
-// realignRencontre puts every member of a Rencontre back on the room's tables, as attaching
+// Realign puts every member of a Rencontre back on the room's tables, as attaching
 // them does. A restored Rencontre needs it: its events kept their own tables while detached.
-func (d *Database) realignRencontre(id int64) error {
-	return d.inRoom(id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+func (d *Service) Realign(ctx context.Context, id int64) error {
+	return d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		for _, tid := range r.TournamentIDs {
 			if err := alignTables(ctx, store, tid, room); err != nil {
 				return fmt.Errorf("rencontre: tournament %d: %w", tid, err)
@@ -199,30 +197,27 @@ func (d *Database) realignRencontre(id int64) error {
 }
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
-func (d *Database) DetachFromRencontre(tournamentID int64) error {
-	ctx := context.Background()
-	rid, _ := d.store.Rencontres().Of(ctx, "", tournamentID)
-	if err := d.store.Rencontres().Attach(ctx, "", tournamentID, 0); err != nil {
+func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) error {
+	rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
+	if err := d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0); err != nil {
 		return err
 	}
 	if rid != 0 {
-		_, _ = d.WriteRencontrePage(rid)
+		_, _ = d.WriteRencontrePage(ctx, rid)
 	}
 	return nil
 }
 
 // TrashRencontre deletes a Rencontre through the trash (ADR-0036). Its Tournaments are detached,
 // never deleted.
-func (d *Database) TrashRencontre(id int64) (int64, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	return trash.Rencontre(context.Background(), d.store, "", id)
+func (d *Service) TrashRencontre(ctx context.Context, id int64) (int64, error) {
+	return trash.Rencontre(ctx, d.st, d.scope, id)
 }
 
 // SetRencontreTableOutOfService declares a table of the room out of service, or back in service.
 // Declared once, recorded in every member Direction.
-func (d *Database) SetRencontreTableOutOfService(id int64, table int, out bool) (*RencontreView, error) {
-	err := d.inRoom(id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+func (d *Service) SetRencontreTableOutOfService(ctx context.Context, id int64, table int, out bool) (*RencontreView, error) {
+	err := d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if table <= 0 || table > r.Tables {
 			return fmt.Errorf("rencontre: the room has no table %d", table)
 		}
@@ -235,56 +230,42 @@ func (d *Database) SetRencontreTableOutOfService(id int64, table int, out bool) 
 	if err != nil {
 		return nil, err
 	}
-	return d.afterRoomGesture(id)
+	return d.afterRoomGesture(ctx, id)
 }
 
 // SetRencontreBreaks replaces the room's breaks — a meal, the prize-giving — in every member
 // Direction at once. breaksJSON is the engine's own list of {start, end}.
-func (d *Database) SetRencontreBreaks(id int64, breaksJSON string) (*RencontreView, error) {
+func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON string) (*RencontreView, error) {
 	var breaks []tournoi.TimeRange
 	if breaksJSON != "" {
 		if err := json.Unmarshal([]byte(breaksJSON), &breaks); err != nil {
 			return nil, fmt.Errorf("rencontre: breaks: %w", err)
 		}
 	}
-	err := d.inRoom(id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	err := d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		room.Breaks = breaks
 		return applyRoom(ctx, store, r.TournamentIDs, room, true)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return d.afterRoomGesture(id)
+	return d.afterRoomGesture(ctx, id)
 }
 
-// inRoom runs fn inside one SQL transaction, under the write lock, with the Rencontre and its room
+// inRoom runs fn inside one transaction with the Rencontre and its room
 // as the members' logs state it. Nothing fn writes survives an error.
-func (d *Database) inRoom(id int64, fn func(context.Context, storage.Tx, direction.Store, *domain.Rencontre, direction.Room) error) error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-	ctx := context.Background()
-	sqlTx, err := d.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = sqlTx.Rollback() }()
-	tx := sqlite.WrapTx(sqlTx)
-	store := directionStore{d: d, tx: sqlTx}
-	r, err := tx.Rencontres().Get(ctx, "", id)
-	if err != nil {
-		return err
-	}
-	v, err := d.rencontreView(ctx, tx, store, r)
-	if err != nil {
-		return err
-	}
-	if err := fn(ctx, tx, store, r, v.Room); err != nil {
-		return err
-	}
-	return sqlTx.Commit()
+func (d *Service) inRoom(ctx context.Context, id int64, fn func(context.Context, storage.Tx, direction.Store, *domain.Rencontre, direction.Room) error) error {
+	return d.inTx(ctx, func(tx storage.Tx, store direction.Store) error {
+		r, err := tx.Rencontres().Get(ctx, d.scope, id)
+		if err != nil {
+			return err
+		}
+		v, err := d.rencontreView(ctx, tx, store, r)
+		if err != nil {
+			return err
+		}
+		return fn(ctx, tx, store, r, v.Room)
+	})
 }
 
 // applyRoom writes the room into every member Direction that is not already in it. withBreaks
@@ -321,12 +302,12 @@ func applyRoom(ctx context.Context, store direction.Store, members []int64, room
 }
 
 // alignedConfig is the Tournament's configuration on the room's tables.
-func (d *Database) alignedConfig(ctx context.Context, store direction.Store, tournamentID, rencontreID int64) (tournoi.Config, error) {
-	r, err := d.store.Rencontres().Get(ctx, "", rencontreID)
+func (d *Service) alignedConfig(ctx context.Context, store direction.Store, tournamentID, rencontreID int64) (tournoi.Config, error) {
+	r, err := d.st.Rencontres().Get(ctx, d.scope, rencontreID)
 	if err != nil {
 		return tournoi.Config{}, err
 	}
-	v, err := d.rencontreView(ctx, d.store, store, r)
+	v, err := d.rencontreView(ctx, d.st, store, r)
 	if err != nil {
 		return tournoi.Config{}, err
 	}
@@ -367,19 +348,19 @@ func (r sisterRoom) external() tournoi.External {
 }
 
 // outside is the room as the engine takes it, for one Tournament.
-func (d *Database) outside(ctx context.Context, tournamentID int64, me *direction.Direction) tournoi.External {
+func (d *Service) outside(ctx context.Context, tournamentID int64, me *direction.Direction) tournoi.External {
 	return d.roomAround(ctx, tournamentID, me).external()
 }
 
 // roomAround replays the sister events of a Tournament. me is its own replayed Direction, to
 // find which of its Participants play next door; nil when only the tables are wanted.
-func (d *Database) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) sisterRoom {
+func (d *Service) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) sisterRoom {
 	out := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
-	rid, err := d.store.Rencontres().Of(ctx, "", tournamentID)
+	rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 	if err != nil || rid == 0 {
 		return out
 	}
-	r, err := d.store.Rencontres().Get(ctx, "", rid)
+	r, err := d.st.Rencontres().Get(ctx, d.scope, rid)
 	if err != nil {
 		return out
 	}
@@ -388,29 +369,29 @@ func (d *Database) roomAround(ctx context.Context, tournamentID int64, me *direc
 		if tid == tournamentID {
 			continue
 		}
-		o, err := direction.Open(ctx, d.DirectionStore(), tid)
+		o, err := direction.Open(ctx, d.dirStore(), tid)
 		if err != nil {
 			continue
 		}
 		name := fmt.Sprintf("#%d", tid)
-		if t, err := d.store.Tournaments().Get(ctx, "", tid); err == nil && t.Name != "" {
+		if t, err := d.st.Tournaments().Get(ctx, d.scope, tid); err == nil && t.Name != "" {
 			name = t.Name
 		}
 		for _, n := range direction.BusyTables(o) {
 			out.tables[n] = name
 		}
-		sisters = append(sisters, direction.Sister{Name: name, Dir: o, Members: d.memberNames(tid)})
+		sisters = append(sisters, direction.Sister{Name: name, Dir: o, Members: d.memberNames(ctx, tid)})
 	}
 	if me != nil {
-		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), d.memberNames(tournamentID))
+		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), d.memberNames(ctx, tournamentID))
 	}
 	return out
 }
 
 // memberNames gives the two persons behind each doubles Participant, by Participant id; empty
 // for a singles event.
-func (d *Database) memberNames(tournamentID int64) map[string][]string {
-	pairs, err := d.Pairs(tournamentID)
+func (d *Service) memberNames(ctx context.Context, tournamentID int64) map[string][]string {
+	pairs, err := d.Pairs(ctx, tournamentID)
 	if err != nil || len(pairs) == 0 {
 		return nil
 	}
@@ -426,8 +407,8 @@ func (d *Database) memberNames(tournamentID int64) map[string][]string {
 // setMemberConfig saves a configuration for a Tournament of a Rencontre. When its room part
 // changes — tables, tables out of service, breaks — the gesture is the room's: every member
 // Direction records it, in the same transaction.
-func (d *Database) setMemberConfig(rencontreID, tournamentID int64, cfg tournoi.Config) error {
-	return d.inRoom(rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, _ direction.Room) error {
+func (d *Service) setMemberConfig(ctx context.Context, rencontreID, tournamentID int64, cfg tournoi.Config) error {
+	return d.inRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, _ direction.Room) error {
 		me, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err
@@ -438,7 +419,7 @@ func (d *Database) setMemberConfig(rencontreID, tournamentID int64, cfg tournoi.
 		room := direction.RoomOf(cfg)
 		if room.Tables != r.Tables && room.Tables > 0 {
 			r.Tables = room.Tables
-			if err := tx.Rencontres().Update(ctx, "", *r); err != nil {
+			if err := tx.Rencontres().Update(ctx, d.scope, *r); err != nil {
 				return err
 			}
 		}
@@ -448,15 +429,15 @@ func (d *Database) setMemberConfig(rencontreID, tournamentID int64, cfg tournoi.
 
 // roomAlsoFor names the other events a configuration change will reach because it touches the
 // room. Empty when the Tournament is in no Rencontre, or the room part is unchanged.
-func (d *Database) roomAlsoFor(ctx context.Context, tournamentID int64, cur, next tournoi.Config) []string {
+func (d *Service) roomAlsoFor(ctx context.Context, tournamentID int64, cur, next tournoi.Config) []string {
 	if direction.SameRoom(cur, direction.RoomOf(next)) {
 		return nil
 	}
-	rid, err := d.store.Rencontres().Of(ctx, "", tournamentID)
+	rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 	if err != nil || rid == 0 {
 		return nil
 	}
-	r, err := d.store.Rencontres().Get(ctx, "", rid)
+	r, err := d.st.Rencontres().Get(ctx, d.scope, rid)
 	if err != nil {
 		return nil
 	}
@@ -465,7 +446,7 @@ func (d *Database) roomAlsoFor(ctx context.Context, tournamentID int64, cur, nex
 		if tid == tournamentID {
 			continue
 		}
-		if t, err := d.store.Tournaments().Get(ctx, "", tid); err == nil {
+		if t, err := d.st.Tournaments().Get(ctx, d.scope, tid); err == nil {
 			names = append(names, t.Name)
 		}
 	}

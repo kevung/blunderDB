@@ -29,9 +29,9 @@
 
     /* La phase courante est dépliée ; les précédentes sont repliées mais consultables — un
        directeur relit le tableau des vies pendant que le tableau final tourne. */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketPhase} BracketPhase */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketSection} BracketSection */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketMatch} BracketMatch */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketPhase} BracketPhase */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketSection} BracketSection */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketMatch} BracketMatch */
 
     let openPhases = $state(/** @type {Record<number, boolean> | null} */ (null));
 

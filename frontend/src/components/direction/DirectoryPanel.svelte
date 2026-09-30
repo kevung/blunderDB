@@ -6,12 +6,12 @@
      */
     import { t } from '../../i18n';
 
-    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryImport} DirectoryImport */
-    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryEntry} DirectoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').service.DirectoryImport} DirectoryImport */
+    /** @typedef {import('../../../wailsjs/go/models').service.DirectoryEntry} DirectoryEntry */
 
     /**
      * @type {{
-     *     sources?: import('../../../wailsjs/go/models').database.DirectorySource[],
+     *     sources?: import('../../../wailsjs/go/models').service.DirectorySource[],
      *     entries?: DirectoryEntry[],
      *     busy?: boolean,
      *     onTake?: (tournamentId: number) => void,

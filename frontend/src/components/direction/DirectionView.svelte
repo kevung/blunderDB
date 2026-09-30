@@ -87,20 +87,20 @@
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
     /** @typedef {import('../../stores/directionStore.js').EntrantInput} EntrantInput */
     /** @typedef {import('../../../wailsjs/go/models').tournoi.Player} Player */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketPhase} BracketPhase */
-    /** @typedef {import('../../../wailsjs/go/models').database.ClockView} ClockView */
-    /** @typedef {import('../../../wailsjs/go/models').database.ConfigPreview} ConfigPreview */
-    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryEntry} DirectoryEntry */
-    /** @typedef {import('../../../wailsjs/go/models').database.DirectorySource} DirectorySource */
-    /** @typedef {import('../../../wailsjs/go/models').database.EntrySuggestion} EntrySuggestion */
-    /** @typedef {import('../../../wailsjs/go/models').database.FreeSlot} FreeSlot */
-    /** @typedef {import('../../../wailsjs/go/models').database.HistoryEntry} HistoryEntry */
-    /** @typedef {import('../../../wailsjs/go/models').database.LastDecision} LastDecision */
-    /** @typedef {import('../../../wailsjs/go/models').database.ParticipantRow} ParticipantRow */
-    /** @typedef {import('../../../wailsjs/go/models').database.SlotRow} SlotRow */
-    /** @typedef {import('../../../wailsjs/go/models').database.SlotSuggestion} SlotSuggestion */
-    /** @typedef {import('../../../wailsjs/go/models').database.StandingsView} StandingsView */
-    /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketPhase} BracketPhase */
+    /** @typedef {import('../../../wailsjs/go/models').service.ClockView} ClockView */
+    /** @typedef {import('../../../wailsjs/go/models').service.ConfigPreview} ConfigPreview */
+    /** @typedef {import('../../../wailsjs/go/models').service.DirectoryEntry} DirectoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').service.DirectorySource} DirectorySource */
+    /** @typedef {import('../../../wailsjs/go/models').service.EntrySuggestion} EntrySuggestion */
+    /** @typedef {import('../../../wailsjs/go/models').service.FreeSlot} FreeSlot */
+    /** @typedef {import('../../../wailsjs/go/models').service.HistoryEntry} HistoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').service.LastDecision} LastDecision */
+    /** @typedef {import('../../../wailsjs/go/models').service.ParticipantRow} ParticipantRow */
+    /** @typedef {import('../../../wailsjs/go/models').service.SlotRow} SlotRow */
+    /** @typedef {import('../../../wailsjs/go/models').service.SlotSuggestion} SlotSuggestion */
+    /** @typedef {import('../../../wailsjs/go/models').service.StandingsView} StandingsView */
+    /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
     const view = $derived($directionStore);
     // Pas `state` : chaque rune `$state` se lirait comme un abonnement au store `state`.
