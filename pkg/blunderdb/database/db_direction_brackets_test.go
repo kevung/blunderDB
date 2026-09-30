@@ -3,6 +3,7 @@ package database
 import (
 	"strings"
 	"testing"
+	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 )
@@ -230,5 +231,121 @@ func TestBracketFlagsTheMatchTheEngineComplainsAbout(t *testing.T) {
 	}
 	if flagged == 0 {
 		t.Error("the match the engine complains about must be flagged on the bracket itself")
+	}
+}
+
+// undrawnBrackets starts a Direction on cfg with n participants, without drawing.
+func undrawnBrackets(t *testing.T, cfg string, n int) []BracketPhase {
+	t.Helper()
+	d := newTestDB(t)
+	tID, err := d.CreateTournament("Squelette", "2026-09-12", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := d.CreateDirection(tID, cfg, 5); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for i := 0; i < n; i++ {
+		id := "p" + strings.Repeat("x", i)
+		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
+	}
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
+		t.Fatal(err)
+	}
+	phases, err := d.Brackets(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return phases
+}
+
+func sectionsByKind(p BracketPhase) map[string]BracketSection {
+	out := map[string]BracketSection{}
+	for _, s := range p.Sections {
+		out[s.Kind] = s
+	}
+	return out
+}
+
+// TestBracketSkeleton: an undrawn elimination phase shows the shape the engine will draw — with
+// its consolation, last chance and grand final — and nobody in it.
+func TestBracketSkeleton(t *testing.T) {
+	cases := []struct {
+		name    string
+		cfg     string
+		n       int
+		matches map[string]int // section kind -> number of places
+	}{
+		{"simple", `{"name":"T","tables":{"count":8},"phases":[{"kind":"bracket","length":5}]}`, 8, map[string]int{"main": 7}},
+		{"non-power-of-two", `{"name":"T","tables":{"count":8},"phases":[{"kind":"bracket","length":5}]}`, 6, map[string]int{"main": 7}},
+		{"consolation", `{"name":"T","tables":{"count":8},"phases":[{"kind":"bracket","length":5,"consolation":true}]}`, 8, nil},
+		{"last chance", `{"name":"T","tables":{"count":8},"phases":[{"kind":"bracket","length":5,"consolation":true,"last_chance":true}]}`, 16, nil},
+		{"double elimination", `{"name":"T","tables":{"count":8},"phases":[{"kind":"bracket","length":5,"consolation":true,"reconciliation":true,"recharge":true}]}`, 8, map[string]int{"main": 7, "gf": 2}},
+		{"lives bracket", `{"name":"T","tables":{"count":8},"phases":[{"kind":"lives_bracket","length":5}]}`, 8, nil},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			p := undrawnBrackets(t, c.cfg, c.n)[0]
+			if p.Drawn {
+				t.Fatal("nothing is drawn yet")
+			}
+			if len(p.Sections) == 0 {
+				t.Fatal("no skeleton")
+			}
+			for _, s := range p.Sections {
+				for _, m := range s.Matches {
+					if m.A != "" || m.B != "" || m.AName != "" || m.BName != "" || m.MatchID != "" || m.Done || m.Walkover || m.Winner != "" {
+						t.Fatalf("a skeleton place holds nobody: %+v", m)
+					}
+				}
+			}
+			by := sectionsByKind(p)
+			for kind, want := range c.matches {
+				if got := len(by[kind].Matches); got != want {
+					t.Errorf("%s: %d places, want %d", kind, got, want)
+				}
+			}
+			if c.name == "consolation" && by["conso"].Name == "" {
+				t.Error("the consolation is part of the skeleton")
+			}
+			if c.name == "last chance" && by["last"].Name == "" {
+				t.Error("the last chance is part of the skeleton")
+			}
+		})
+	}
+}
+
+// TestBracketSkeletonSize: the size comes from those who enter, not from everyone registered,
+// and is not guessed when it cannot be known.
+func TestBracketSkeletonSize(t *testing.T) {
+	// A Swiss phase followed by a bracket: only the Swiss phase exists until it ends.
+	phases := undrawnBrackets(t, `{"name":"T","tables":{"count":8},"phases":[{"kind":"swiss_lives","length":5,"lives":2},{"kind":"bracket","length":5,"entry":"top:8"}]}`, 24)
+	if len(phases) != 1 || len(phases[0].Sections) != 0 {
+		t.Fatalf("a Swiss phase has no skeleton: %+v", phases)
+	}
+
+	cfg := tournoi.PhaseConfig{Kind: tournoi.KindBracket, Length: 5, Entry: "top:8"}
+	sim, _, err := tournoi.New(tournoi.Config{Name: "T", Phases: []tournoi.PhaseConfig{{Kind: tournoi.KindSwissLives, Length: 5, Lives: 2}, cfg}}, 1, time.Unix(0, 0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 24; i++ {
+		id := tournoi.PlayerID("q" + strings.Repeat("x", i))
+		if err := sim.Apply(tournoi.Event{Version: tournoi.JournalVersion, Kind: tournoi.EvPlayerAdded, Player: &tournoi.Player{ID: id, Name: string(id)}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	secs, ok := bracketSkeleton(sim, &tournoi.PhaseState{Index: 1, Cfg: cfg})
+	if !ok || len(secs) != 1 || len(secs[0].Matches) != 7 {
+		t.Fatalf("top:8 of 24 is a bracket of 8 (7 places): ok=%v %+v", ok, secs)
+	}
+	cfg.Entry = "survivors"
+	if _, ok := bracketSkeleton(sim, &tournoi.PhaseState{Index: 1, Cfg: cfg}); ok {
+		t.Error("survivors of an unfinished Swiss phase: size unknown, no skeleton")
+	}
+	cfg.Kind, cfg.Entry = tournoi.KindLivesBracket, "all"
+	if _, ok := bracketSkeleton(sim, &tournoi.PhaseState{Index: 1, Cfg: cfg}); ok {
+		t.Error("a lives bracket after another phase: lives differ, no skeleton")
 	}
 }

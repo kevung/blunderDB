@@ -6,7 +6,7 @@
      */
     import { t } from '../../i18n';
     import { renderLabel, renderSectionName } from './labels.js';
-    import { BOX_W, BOX_H, layoutSection, skeletonSection, crossTable } from './bracketLayout.js';
+    import { BOX_W, BOX_H, layoutSection, crossTable } from './bracketLayout.js';
     import ResultCard from './ResultCard.svelte';
     import CorrectionPanel from './CorrectionPanel.svelte';
 
@@ -14,7 +14,7 @@
        tables : cliquer une place, c'est ouvrir la même fiche que sur la case. */
     /**
      * @type {{
-     *     phases?: any[], cells?: any[], entrants?: number, busy?: boolean,
+     *     phases?: any[], cells?: any[], busy?: boolean,
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
      *     onForfeit?: (matchId: string, winner: string, note: string) => void,
      *     onMove?: (matchId: string, table: number) => void,
@@ -22,7 +22,7 @@
      *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void
      * }}
      */
-    let { phases = [], cells = [], entrants = 0, busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onCorrect = () => {} } = $props();
+    let { phases = [], cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onCorrect = () => {} } = $props();
 
     /** La place dont la fiche est ouverte, par clé de section et de place. */
     let openKey = $state('');
@@ -62,20 +62,17 @@
         return s.kind === 'poule';
     }
 
-    /* Un tableau non tiré montre son squelette dès qu'on connaît le nombre d'entrants. */
-    /** @param {BracketPhase} p */
-    function skeleton(p) {
-        const graph = p.kind === 'bracket' || p.kind === 'lives_bracket';
-        if (p.drawn || p.sections.length > 0 || !graph || entrants < 2) return null;
-        return layoutSection(skeletonSection(entrants));
-    }
-
     /** @param {string} sec @param {BracketMatch} m */
     const placeKey = (sec, m) => `${sec}/${m.key}`;
 
+    /* Une fiche n'existe que pour un match en cours, ou fini entre deux joueurs : un forfait à un
+       seul joueur n'a rien à corriger ici. */
+    /** @param {BracketMatch} m */
+    const canOpen = (m) => !!m.matchId && (m.running || (m.done && !!m.a && !!m.b));
+
     /** @param {string} sec @param {BracketMatch} m */
     function open(sec, m) {
-        if (!m.matchId) return;
+        if (!canOpen(m)) return;
         openKey = openKey === placeKey(sec, m) ? '' : placeKey(sec, m);
     }
 
@@ -240,12 +237,6 @@
                     </table>
                 {/if}
 
-                {#if skeleton(p)}
-                    <div class="sections">
-                        <div class="section">{@render graph('sk', /** @type {any} */ (skeleton(p)), true)}</div>
-                    </div>
-                {/if}
-
                 {#if p.sections.length}
                     <div class="sections">
                         {#each p.sections as s (s.name)}
@@ -297,7 +288,7 @@
                                         </tbody>
                                     </table>
                                 {:else}
-                                    {@render graph(s.name, layoutSection(s), false)}
+                                    {@render graph(s.name, layoutSection(s), !p.drawn)}
                                 {/if}
                             </div>
                         {/each}

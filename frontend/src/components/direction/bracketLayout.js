@@ -75,27 +75,6 @@ export function layoutSection(section) {
 }
 
 /**
- * Un tableau à élimination simple, vide, pour une phase non tirée.
- *
- * @param {number} entrants
- * @returns {{ matches: LayoutMatch[] }}
- */
-export function skeletonSection(entrants) {
-    let size = 2;
-    while (size < entrants) size *= 2;
-    /** @type {LayoutMatch[]} */
-    const matches = [];
-    let count = size / 2;
-    for (let r = 0; count >= 1; r++, count /= 2) {
-        for (let i = 0; i < count; i++) {
-            const feeds = r === 0 ? [] : [0, 1].map((side) => ({ side, key: `sk-${r - 1}-${2 * i + side}` }));
-            matches.push({ key: `sk-${r}-${i}`, round: r, feeds });
-        }
-    }
-    return { matches };
-}
-
-/**
  * Les poules : un tableau de résultats croisés, joueur en ligne contre joueur en colonne.
  *
  * @param {{ matches: any[] }} section

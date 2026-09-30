@@ -584,7 +584,7 @@
         {:else if tab === 'history'}
             <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
-            <BracketsView {phases} {cells} {busy} entrants={view?.players?.length || 0} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
+            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
         {:else if tab === 'players'}
             <DirectoryPanel
                 sources={dirSources}

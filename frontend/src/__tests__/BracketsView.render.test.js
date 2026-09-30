@@ -10,7 +10,7 @@ import { describe, test, expect, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
 import BracketsView from '../components/direction/BracketsView.svelte';
-import { layoutSection, skeletonSection } from '../components/direction/bracketLayout.js';
+import { layoutSection } from '../components/direction/bracketLayout.js';
 
 afterEach(cleanup);
 
@@ -82,15 +82,63 @@ describe('l’arbre des rencontres', () => {
         expect(t.textContent).toContain('3–5');
     });
 
-    test('un tableau non tiré montre son squelette', () => {
-        const { getByTestId } = render(BracketsView, { props: { phases: [phase({ drawn: false, sections: [] })], entrants: 8 } });
+    test('un tableau non tiré grise les places vides que le backend décrit, sans les ouvrir', async () => {
+        // Un suisse puis un tableau à 8 (top:8) : sept places, quel que soit le nombre d'inscrits.
+        const empty = (/** @type {string} */ key, /** @type {number} */ round, /** @type {any[]} */ feeds = []) => ({
+            key,
+            label: { kind: 'round' },
+            round,
+            length: 5,
+            done: false,
+            running: false,
+            feeds
+        });
+        const skeleton = {
+            name: 'Principal',
+            kind: 'main',
+            rounds: 3,
+            matches: [
+                ...[0, 1, 2, 3].map((i) => empty(`r0.${i}`, 0)),
+                ...[0, 1].map((i) =>
+                    empty(`r1.${i}`, 1, [
+                        { side: 0, key: `r0.${2 * i}` },
+                        { side: 1, key: `r0.${2 * i + 1}` }
+                    ])
+                ),
+                empty('r2.0', 2, [
+                    { side: 0, key: 'r1.0' },
+                    { side: 1, key: 'r1.1' }
+                ])
+            ]
+        };
+        const { getByTestId, container, queryByTestId } = render(BracketsView, { props: { phases: [phase({ kind: 'bracket', drawn: false, sections: [skeleton] })] } });
         expect(getByTestId('bracket-skeleton').querySelectorAll('rect.box').length).toBe(7);
+        expect(container.querySelectorAll('path.edge').length).toBe(6);
+        expect(queryByTestId('bracket-card')).toBeNull();
+    });
+
+    test('un match annulé ou sans deux joueurs n’ouvre aucune fiche', async () => {
+        const lone = place('w0', 0, { a: 'a', aName: 'Alice', matchId: 'z', done: true, winner: 'a' });
+        const { container, queryByTestId } = render(BracketsView, { props: { phases: [phase({ sections: [{ ...main, matches: [lone] }] })] } });
+        await fireEvent.click(/** @type {Element} */ (container.querySelector('[data-testid="bracket-place"]')));
+        expect(queryByTestId('bracket-card')).toBeNull();
     });
 });
 
 describe('bracketLayout', () => {
     test('une place se centre sur ses deux sources', () => {
-        const g = layoutSection(skeletonSection(4));
+        const g = layoutSection({
+            matches: [
+                place('a', 0),
+                place('b', 0),
+                place('c', 1, {
+                    feeds: [
+                        { side: 0, key: 'a' },
+                        { side: 1, key: 'b' }
+                    ]
+                })
+            ]
+        });
         const final = g.nodes.find((n) => n.m.round === 1);
         const first = g.nodes.filter((n) => n.m.round === 0);
         expect(final?.y).toBe((first[0].y + first[1].y) / 2);
