@@ -212,11 +212,23 @@
     // Enregistrer, exporter, fermer. `busy` verrouille : un second Ctrl+Entrée
     // relancerait la réécriture du match entier.
 
+    /**
+     * Le brouillon une fois servis les gestes déjà tapés, ou null s'il a été
+     * quitté entre-temps : enregistrer, exporter ou fermer part de ce que
+     * l'utilisateur a écrit, jamais d'un document en retard d'une frappe.
+     */
+    async function settledDraft() {
+        const id = draft?.id;
+        await pending;
+        return draft && draft.id === id ? draft : null;
+    }
+
     async function handleSave() {
         if (busy || !draft) return;
         busy = true;
         try {
-            if (await saveDraft(draft)) {
+            const current = await settledDraft();
+            if (current && (await saveDraft(current))) {
                 error = '';
                 await refresh();
             }
@@ -229,7 +241,8 @@
         if (busy || !draft) return;
         busy = true;
         try {
-            await exportDraftMat(draft);
+            const current = await settledDraft();
+            if (current) await exportDraftMat(current);
         } finally {
             busy = false;
         }
@@ -239,7 +252,8 @@
         if (busy || !draft) return;
         busy = true;
         try {
-            if (await closeDraft(draft)) {
+            const current = await settledDraft();
+            if (current && (await closeDraft(current))) {
                 clearTranscription();
                 resetTranscriptionSave();
                 await refresh();
@@ -351,7 +365,12 @@
         pending = pending
             .then(async () => {
                 for (const gesture of gestures) {
-                    setTranscription(await ApplyTranscriptionGesture(id, gesture));
+                    // Le brouillon a changé (un autre ouvert, la base changée) :
+                    // ni la suite des gestes ni la réponse ne sont les siennes.
+                    if (draft?.id !== id) return;
+                    const next = await ApplyTranscriptionGesture(id, gesture);
+                    if (draft?.id !== id) return;
+                    setTranscription(next);
                 }
                 error = '';
             })

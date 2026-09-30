@@ -43,7 +43,11 @@ export function resetTranscriptionSave() {
 export function documentSignature(annotated) {
     const doc = annotated?.document;
     if (!doc) return '';
-    return JSON.stringify([doc.header ?? null, doc.actions ?? []]);
+    // Le match id n'est pas une écriture de l'utilisateur : posté par le premier
+    // enregistrement, il ne rend pas le match « en retard ».
+    const header = doc.header ? { ...doc.header } : null;
+    if (header) delete header.match_id;
+    return JSON.stringify([header, doc.actions ?? []]);
 }
 
 /**
@@ -87,6 +91,27 @@ export function savedMatchID(annotated) {
 }
 
 /**
+ * L'enregistrement de cette session, s'il est celui de ce brouillon.
+ *
+ * @param {{id: number} | null | undefined} draft
+ * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
+ */
+function ownSave(draft, saved) {
+    return saved && draft && saved.id === draft.id ? saved : null;
+}
+
+/**
+ * Le match du brouillon : celui que porte le document, sinon celui que cette
+ * session vient d'écrire — le document affiché n'est rechargé qu'au geste suivant.
+ *
+ * @param {{id: number, annotated: any} | null | undefined} draft
+ * @param {{id: number, matchId: number, at: number, signature: string} | null | undefined} saved
+ */
+function draftMatchID(draft, saved) {
+    return savedMatchID(draft?.annotated) || ownSave(draft, saved)?.matchId || 0;
+}
+
+/**
  * Ce que la barre du brouillon dit de son MATCH, jamais du salut du brouillon
  * (ADR-0048 décision 12), le brouillon étant écrit après chaque Action. Rendu
  * en clé i18n et paramètres, testable sans la langue. Prend le brouillon
@@ -98,8 +123,8 @@ export function savedMatchID(annotated) {
  */
 export function draftSaveState(draft, saved, now = Date.now()) {
     const annotated = draft?.annotated ?? null;
-    const own = saved && draft && saved.id === draft.id ? saved : null;
-    const matchId = savedMatchID(annotated) || own?.matchId || 0;
+    const own = ownSave(draft, saved);
+    const matchId = draftMatchID(draft, saved);
     if (!matchId) return { key: 'transcription.stateNoMatch', params: {} };
 
     // Un brouillon enregistré lors d'une session précédente porte son match id
@@ -109,7 +134,7 @@ export function draftSaveState(draft, saved, now = Date.now()) {
         return { key: 'transcription.stateMatchUpToDate', params: { id: matchId } };
     }
     if (own.signature !== documentSignature(annotated)) {
-        return { key: 'transcription.stateMatchBehind', params: {} };
+        return { key: 'transcription.stateMatchBehind', params: { id: matchId } };
     }
     const minutes = Math.floor(Math.max(0, now - own.at) / 60000);
     if (minutes < 1) return { key: 'transcription.stateMatchJustUpdated', params: {} };
@@ -259,8 +284,16 @@ export async function closeDraft(draft) {
     const id = draft?.id;
     if (id == null) return false;
 
-    const matchId = savedMatchID(draft.annotated);
-    const message = /** @type {string} */ (matchId ? translate('transcription.closeSavedConfirm', { id: matchId }) : translate('transcription.closeUnsavedConfirm'));
+    const saved = get(transcriptionSaveStore);
+    const matchId = draftMatchID(draft, saved);
+    const own = ownSave(draft, saved);
+    // Des corrections faites depuis l'enregistrement de cette session ne sont
+    // pas dans le match : les taire laisserait croire qu'il n'y a rien à perdre.
+    const behind = matchId && own?.matchId === matchId && own.signature !== documentSignature(draft.annotated);
+    let key = 'transcription.closeUnsavedConfirm';
+    if (behind) key = 'transcription.closeSavedBehindConfirm';
+    else if (matchId) key = 'transcription.closeSavedConfirm';
+    const message = /** @type {string} */ (translate(key, { id: matchId }));
     const go = await confirmAction(message, { confirmLabel: /** @type {string} */ (translate('transcription.closeDraft')) });
     if (!go) return false;
 

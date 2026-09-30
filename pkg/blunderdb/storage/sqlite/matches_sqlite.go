@@ -271,7 +271,7 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 // reason Save does it: their UNIQUE index counts two empty strings as a
 // duplicate, where two NULLs are two unknowns.
 func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, m *domain.Match) error {
-	if _, err := s.db.ExecContext(ctx,
+	res, err := s.db.ExecContext(ctx,
 		`UPDATE match SET player1_name = ?, player2_name = ?, event = ?, location = ?,
 		                  round = ?, match_length = ?, match_date = ?, game_count = ?,
 		                  match_hash = ?, canonical_hash = ?
@@ -279,8 +279,16 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 		m.Player1Name, m.Player2Name, m.Event, m.Location,
 		m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash),
-		id); err != nil {
+		id)
+	if err != nil {
 		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
+	}
+	// A replacement names its match: none there means the caller holds a
+	// stale id, which must not pass for a rewrite.
+	if n, err := res.RowsAffected(); err != nil {
+		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
+	} else if n == 0 {
+		return fmt.Errorf("sqlite: replace match %d header: %w", id, storage.ErrNotFound)
 	}
 	return nil
 }

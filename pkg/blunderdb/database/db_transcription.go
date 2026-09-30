@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -140,9 +141,16 @@ func (d *Database) OpenTranscription(id int64) (*TranscriptionState, error) {
 	// A draft already open keeps the session it has: reopening the tab must
 	// not throw away an Entry or an undo stack the user still has in hand.
 	if e := d.transcriptSessions[id]; e != nil {
+		if err := d.forgetDeletedMatch(id, e); err != nil {
+			return nil, err
+		}
 		return opened(id, e), nil
 	}
-	return opened(id, d.openTranscript(id, doc)), nil
+	ed := d.openTranscript(id, doc)
+	if err := d.forgetDeletedMatch(id, ed); err != nil {
+		return nil, err
+	}
+	return opened(id, ed), nil
 }
 
 // TranscriptionMAT renders the open draft as .mat text through the SAME
@@ -263,14 +271,53 @@ func stateOf(id int64, ed *transcript.Editor, from int) *TranscriptionState {
 // session returns the live editor for id, loading the row when the draft was
 // not opened in this run. Caller holds transcriptMu.
 func (d *Database) session(id int64) (*transcript.Editor, error) {
-	if e := d.transcriptSessions[id]; e != nil {
-		return e, nil
+	ed := d.transcriptSessions[id]
+	if ed == nil {
+		doc, err := d.loadTranscription(id)
+		if err != nil {
+			return nil, err
+		}
+		ed = d.openTranscript(id, doc)
 	}
-	doc, err := d.loadTranscription(id)
-	if err != nil {
+	if err := d.forgetDeletedMatch(id, ed); err != nil {
 		return nil, err
 	}
-	return d.openTranscript(id, doc), nil
+	return ed, nil
+}
+
+// forgetDeletedMatch takes a draft whose Match was deleted from the library
+// back to "never saved": the column went NULL with the Match, but the document
+// still names it, so every write would break the foreign key and the next save
+// would replace a Match that is gone. The row is rewritten at once so that it
+// agrees with its column. Caller holds transcriptMu.
+func (d *Database) forgetDeletedMatch(id int64, ed *transcript.Editor) error {
+	if ed.Doc.Header.MatchID == nil {
+		return nil
+	}
+	exists, err := d.matchExists(*ed.Doc.Header.MatchID)
+	if err != nil || exists {
+		return err
+	}
+	ed.SetMatchID(nil)
+	_, err = d.saveTranscription(id, ed.Doc)
+	return err
+}
+
+func (d *Database) matchExists(matchID int64) (bool, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return false, fmt.Errorf("no database is currently open")
+	}
+	_, err := d.store.Matches().Get(context.Background(), "", matchID)
+	switch {
+	case err == nil:
+		return true, nil
+	case errors.Is(err, storage.ErrNotFound):
+		return false, nil
+	default:
+		return false, err
+	}
 }
 
 // loadTranscription reads one row and decodes its document, putting the

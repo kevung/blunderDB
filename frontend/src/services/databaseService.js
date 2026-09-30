@@ -17,6 +17,8 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
+import { clearTranscription } from '../stores/transcriptionStore.js';
+import { resetTranscriptionSave } from './transcriptionSave.js';
 import { logger } from '../utils/logger.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -43,6 +45,13 @@ function resetAnkiStores() {
     hideAnkiAnswer();
 }
 
+// A draft row id names a row of ONE library: kept across a change of file, the
+// panel would send its gestures to the draft of the same id in the next one.
+function resetTranscriptionStores() {
+    clearTranscription();
+    resetTranscriptionSave();
+}
+
 function resetAnalysisAndCommentStores() {
     analysisStore.set(emptyAnalysis());
     commentTextStore.set('');
@@ -60,6 +69,7 @@ export async function newDatabase() {
         if (filePath) {
             resetAnalysisAndCommentStores();
             resetAnkiStores();
+            resetTranscriptionStores();
 
             try {
                 await DeleteFile(filePath);
@@ -144,6 +154,7 @@ export async function openDatabaseByPath(filePath) {
     try {
         resetAnalysisAndCommentStores();
         resetAnkiStores();
+        resetTranscriptionStores();
 
         databasePathStore.set(filePath);
         logger.log('databasePathStore:', filePath);

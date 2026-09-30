@@ -184,6 +184,23 @@ describe('la fermeture', () => {
         expect(confirmAction.mock.calls[0][0]).toMatch(/match #7/i);
     });
 
+    test('un brouillon enregistré dans cette session le sait sans avoir été rechargé', async () => {
+        const d = draft({ actions: clean });
+        await saveDraft(d);
+        await closeDraft(d);
+        expect(confirmAction.mock.calls[0][0]).toMatch(/match #7/i);
+        expect(confirmAction.mock.calls[0][0]).not.toMatch(/never saved/i);
+    });
+
+    test('des corrections non enregistrées sont annoncées perdues', async () => {
+        const d = draft({ matchId: 7, actions: clean });
+        await saveDraft(d);
+        const corrected = draft({ matchId: 7, actions: [...clean, { kind: 'checker', inconsistencies: [] }] });
+        await closeDraft(corrected);
+        expect(confirmAction.mock.calls[0][0]).toMatch(/match #7/i);
+        expect(confirmAction.mock.calls[0][0]).toMatch(/not saved|lost/i);
+    });
+
     test('le refus ne supprime rien', async () => {
         confirmAction.mockResolvedValue(false);
         expect(await closeDraft(draft({ actions: clean }))).toBe(false);
@@ -211,7 +228,14 @@ describe("l'état du brouillon", () => {
         });
 
         const corrected = draft({ matchId: 7, actions: [...clean, { kind: 'checker', inconsistencies: [] }] });
-        expect(draftSaveState(corrected, saved, 30_000).key).toBe('transcription.stateMatchBehind');
+        expect(draftSaveState(corrected, saved, 30_000)).toEqual({ key: 'transcription.stateMatchBehind', params: { id: 7 } });
+    });
+
+    test("le match id posté au premier enregistrement n'est pas une modification", () => {
+        const before = draft({ actions: clean });
+        const saved = { id: 1, matchId: 7, at: 0, signature: documentSignature(before.annotated) };
+        const after = draft({ matchId: 7, actions: clean });
+        expect(draftSaveState(after, saved, 30_000).key).toBe('transcription.stateMatchJustUpdated');
     });
 
     test("un brouillon enregistré lors d'une session précédente le dit sans mentir sur l'heure", () => {
