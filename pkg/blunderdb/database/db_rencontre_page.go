@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -179,7 +180,7 @@ func (d *Database) RencontrePageHTML(id int64) (string, error) {
 		tables = append(tables, direction.WallTable{Number: t, Unavailable: slices.Contains(room.Unavailable, t)})
 	}
 	cat, lang := d.directionStrings()
-	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events, Brackets: brackets}, cat, lang), nil
+	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events, Brackets: brackets, Now: time.Now()}, cat, lang), nil
 }
 
 // WriteRencontrePage rewrites the wall page and returns the file written. It writes nothing, and

@@ -1753,7 +1753,8 @@ murale et celle de la Rencontre montrent l'arbre en grand, lisible de loin : une
 colonne par tour, les perdants qui descendent en consolante en pointillé. La page
 défile d'elle-même, sans script, entre son contenu habituel (les tables pour la
 Rencontre) et l'arbre de chaque épreuve en tableau, douze secondes chacun ; elle
-se recharge alors à chaque cycle au lieu de toutes les trente secondes. Une
+se recharge toujours toutes les trente secondes et reprend la rotation là où elle
+en était. Une
 épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
 reste celle d'avant.
 

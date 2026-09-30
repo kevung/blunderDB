@@ -79,7 +79,8 @@ func (d *Database) DirectionPageHTML(tournamentID int64) (string, error) {
 
 // directionPage renders the display page, with the event's bracket in rotation when it has one.
 func (d *Database) directionPage(dir *direction.Direction, tournamentID int64, cat *direction.Catalog, lang string) (string, error) {
-	page, err := dir.Page(cat, lang, time.Now())
+	now := time.Now()
+	page, err := dir.Page(cat, lang, now)
 	if err != nil {
 		return "", err
 	}
@@ -87,7 +88,7 @@ func (d *Database) directionPage(dir *direction.Direction, tournamentID int64, c
 	if t, err := d.store.Tournaments().Get(context.Background(), "", tournamentID); err == nil && t.Name != "" {
 		name = t.Name
 	}
-	return direction.WithBracketView(page, d.wallBracket(tournamentID, name), cat), nil
+	return direction.WithBracketView(page, d.wallBracket(tournamentID, name), cat, now), nil
 }
 
 // The printable pairing sheet: the display page's plumbing, plus a print instruction that opens

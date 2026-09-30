@@ -59,7 +59,10 @@ func TestWallPage_RotatesTheBracketsOfEventsInBracketPhase(t *testing.T) {
 	if n := strings.Count(page, `<section class="vue"`); n != 2 {
 		t.Errorf("%d views in rotation, want 2 (tables, then the tree)", n)
 	}
-	if !strings.Contains(page, "animation-delay:12s") || !strings.Contains(page, `content="30"`) && !strings.Contains(page, `content="24"`) {
+	if !strings.Contains(page, `content="30"`) {
+		t.Error("a rotating page still reloads every 30 seconds")
+	}
+	if !strings.Contains(page, "animation-delay:") {
 		t.Error("the views are not scheduled one after the other")
 	}
 	if strings.Contains(page, "<script") {

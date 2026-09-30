@@ -5,6 +5,7 @@ import (
 	"html"
 	"slices"
 	"strings"
+	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/PileOfCells/backgammon-tournoi/render"
@@ -229,14 +230,16 @@ func wbBox(b *strings.Builder, m WallBracketMatch, p wbPos, l render.Labeler) {
 // bracket from the back of the room, short enough that the tables come round again quickly.
 const viewSeconds = 12
 
-// minRefresh is the plain page's reload period; a rotating page reloads once per full cycle,
-// because a reload restarts the CSS animation and would otherwise never get past the first views.
+// minRefresh is the page's reload period, rotating or not: results must show within half a
+// minute. A reload restarts CSS animations, so rotation() starts each view already part-way
+// through the cycle, at the point the wall clock says it has reached.
 const minRefresh = 30
 
 // rotation stacks views in one grid cell and shows them one after the other with a pure-CSS
-// animation: the page keeps no script. It returns the stylesheet to add, the markup, and the
-// refresh period. Reduced-motion and print show every view in turn, stacked, instead.
-func rotation(views []string) (css, markup string, refresh int) {
+// animation: the page keeps no script. The negative animation-delay is derived from now (Unix
+// time modulo the cycle), so a reloaded page resumes the rotation where it was instead of
+// starting over. Reduced-motion and print show every view, stacked, instead.
+func rotation(views []string, now time.Time) (css, markup string) {
 	n := len(views)
 	total := n * viewSeconds
 	on := 100 / float64(n)
@@ -244,19 +247,22 @@ func rotation(views []string) (css, markup string, refresh int) {
 		`@keyframes vue{0%%{visibility:visible}%.3f%%{visibility:hidden}100%%{visibility:hidden}}`+
 		`@media (prefers-reduced-motion:reduce),print{.rot{display:block}.rot>.vue{visibility:visible;animation:none}}`+
 		`.arbre-mur{display:block;max-height:88vh;margin-top:8px}`, total, on)
+	elapsed := int(((now.Unix() % int64(total)) + int64(total)) % int64(total))
 	var b strings.Builder
 	b.WriteString(`<div class="rot">`)
 	for i, v := range views {
-		fmt.Fprintf(&b, `<section class="vue" style="animation-delay:%ds">%s</section>`, i*viewSeconds, v)
+		// Seconds since this view's own turn began, in [0, total).
+		local := ((elapsed-i*viewSeconds)%total + total) % total
+		fmt.Fprintf(&b, `<section class="vue" style="animation-delay:%ds">%s</section>`, -local, v)
 	}
 	b.WriteString(`</div>`)
-	return css, b.String(), max(minRefresh, total)
+	return css, b.String()
 }
 
 // WithBracketView adds a rotating bracket view to an event's own display page (the engine's
 // Page output): the page as it was, then the bracket, each in turn. The engine's own small
 // board is left out — this one replaces it. A page with no bracket to show is returned as is.
-func WithBracketView(page string, br *WallBracket, cat *Catalog) string {
+func WithBracketView(page string, br *WallBracket, cat *Catalog, now time.Time) string {
 	if br == nil {
 		return page
 	}
@@ -273,9 +279,7 @@ func WithBracketView(page string, br *WallBracket, cat *Catalog) string {
 			main = main[:i] + main[i+j+len(`</div>`):]
 		}
 	}
-	css, markup, refresh := rotation([]string{main, `<h1>` + wallEsc(br.Event) + `</h1>` + svg})
+	css, markup := rotation([]string{main, `<h1>` + wallEsc(br.Event) + `</h1>` + svg}, now)
 	out := page[:bodyAt] + markup + page[creditAt:]
-	out = strings.Replace(out, `</style>`, css+`</style>`, 1)
-	return strings.Replace(out, `<meta http-equiv="refresh" content="30">`,
-		fmt.Sprintf(`<meta http-equiv="refresh" content="%d">`, refresh), 1)
+	return strings.Replace(out, `</style>`, css+`</style>`, 1)
 }
