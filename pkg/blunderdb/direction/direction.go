@@ -51,8 +51,10 @@ type StoredEvent struct {
 	Payload []byte
 }
 
-// Store is everything this package needs from persistence. The desktop wrapper and both
-// storage backends implement it, so the logic is written once (CLI/GUI/server parity).
+// Store is everything this package needs from persistence, so the logic is written once
+// (CLI/GUI/server parity). The desktop wrapper implements it over its own handle
+// (database.DirectionStore); both storage backends reach it through storage.BindDirection,
+// which fixes the tenant scope of their storage.DirectionStore.
 //
 // AppendEvent must be atomic with respect to the caller's transaction and must REFUSE to
 // overwrite an existing sequence number — the log is append-only, and a silent overwrite would

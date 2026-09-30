@@ -15,7 +15,9 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -35,6 +37,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Match", checkMatchIsolation},
 	{"Comment", checkCommentIsolation},
 	{"Anki/Deck", checkAnkiDeckIsolation},
+	{"Direction", checkDirectionIsolation},
 }
 
 // RunTenantIsolationTests runs every family's isolation check against a
@@ -203,5 +206,48 @@ func checkAnkiDeckIsolation(t *testing.T, ctx context.Context, s storage.Storage
 	}
 	if n != 0 {
 		t.Errorf("tenant %s sees %d deck(s) belonging to tenant %s, want 0", b, n, a)
+	}
+}
+
+func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	tid, err := s.Tournaments().Create(ctx, a, "priv-directed", "2026-10-03", "")
+	if err != nil {
+		t.Fatalf("Create tournament(%s): %v", a, err)
+	}
+	ds := s.Directions()
+	if err := ds.Create(ctx, b, direction.Record{TournamentID: tid, State: direction.StateDraft}); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Create(%s) on a Tournament of %s: got %v, want ErrNotFound", b, a, err)
+	}
+	if err := ds.Create(ctx, a, direction.Record{TournamentID: tid, State: direction.StateDraft}); err != nil {
+		t.Fatalf("Create(%s): %v", a, err)
+	}
+	if err := ds.AppendEvent(ctx, a, tid, direction.StoredEvent{Seq: 0, Kind: "created", Time: time.Now(), Payload: []byte(`{}`)}); err != nil {
+		t.Fatalf("AppendEvent(%s): %v", a, err)
+	}
+
+	if list, err := ds.List(ctx, b); err != nil || len(list) != 0 {
+		t.Errorf("List(%s) = %d, %v; want none of %s's", b, len(list), err, a)
+	}
+	if _, err := ds.Get(ctx, b, tid); !errors.Is(err, direction.ErrNoDirection) {
+		t.Errorf("Get(%s, id from %s): got %v, want ErrNoDirection", b, a, err)
+	}
+	if evs, err := ds.LoadEvents(ctx, b, tid); err != nil || len(evs) != 0 {
+		t.Errorf("LoadEvents(%s) = %d, %v; want none of %s's", b, len(evs), err, a)
+	}
+	if err := ds.AppendEvent(ctx, b, tid, direction.StoredEvent{Seq: 1, Kind: "result", Time: time.Now(), Payload: []byte(`{}`)}); !errors.Is(err, direction.ErrNoDirection) {
+		t.Errorf("AppendEvent(%s) into %s's log: got %v, want ErrNoDirection", b, a, err)
+	}
+	if err := ds.Update(ctx, b, direction.Record{TournamentID: tid, State: direction.StateFinished}); !errors.Is(err, direction.ErrNoDirection) {
+		t.Errorf("Update(%s) of %s's record: got %v, want ErrNoDirection", b, a, err)
+	}
+	if err := ds.Delete(ctx, b, tid); err != nil {
+		t.Fatalf("Delete(%s): %v", b, err)
+	}
+	rec, err := ds.Get(ctx, a, tid)
+	if err != nil || rec.State != direction.StateDraft {
+		t.Errorf("Get(%s) after %s's writes = %+v, %v; want the draft untouched", a, b, rec, err)
+	}
+	if evs, _ := ds.LoadEvents(ctx, a, tid); len(evs) != 1 {
+		t.Errorf("LoadEvents(%s) after %s's Delete = %d events, want 1", a, b, len(evs))
 	}
 }
