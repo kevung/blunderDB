@@ -1304,6 +1304,8 @@ contiendrait.
   dont il a été ouvert, et libère le brouillon.
 * ``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un match
   dont il a été ouvert reste tel quel.
+* ``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme que
+  tout ce qui y est écrit est perdu.
 
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
@@ -1327,9 +1329,10 @@ l'aller-retour sur un fichier réel, en dehors des tests.
 Seules trois options écrivent, par les mêmes méthodes que le panneau
 Transcription : ``--edit`` ouvre un brouillon sur un match existant,
 ``--finish`` le termine — le match est remplacé sous le même identifiant —, et
-``--abandon`` supprime un brouillon sans match. Un match importé porte des
-analyses et des commentaires qu'un ``.mat`` ne porte pas : ``--edit`` en donne
-le compte et refuse sans ``--accept-losses``.
+``--abandon`` supprime un brouillon sans match, et exige ``--yes`` pour un
+brouillon jamais terminé, qui emporte tout ce qui y est écrit. Un match importé
+porte des analyses et des commentaires qu'un ``.mat`` ne porte pas : ``--edit``
+en donne le compte au plus et refuse sans ``--accept-losses``.
 
 **Exemple:**
 

@@ -1426,7 +1426,7 @@ Terminer ce brouillon remplace le match sous le même identifiant ; les
 positions des actions inchangées gardent leurs commentaires, leurs analyses et
 leurs cartes. Un match importé (XG, GnuBG, BGF) porte des analyses et des
 commentaires qu'un ``.mat`` ne porte pas : avant d'ouvrir, un dialogue dit
-combien, et que terminer le brouillon peut les perdre.
+jusqu'à combien, et que terminer le brouillon peut les perdre.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 

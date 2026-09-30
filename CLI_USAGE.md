@@ -2860,7 +2860,9 @@ draft's match and releases the draft, --abandon deletes a
 draft without a match, --edit opens a draft on an existing
 match so that --finish replaces it in place. Editing an
 imported match counts what a .mat cannot carry (analyses,
-comments) and refuses without --accept-losses.
+comments) and refuses without --accept-losses. Abandoning a
+draft that never produced a match loses everything typed
+in it, and asks for --yes.
 
 Options:
   -abandon
@@ -2885,6 +2887,8 @@ Options:
     	Match id to replay (requires --db)
   -render string
     	Write the transcription back as a .mat file to this path
+  -yes
+    	With --abandon on a draft that never produced a match: confirm that everything typed in it is lost
 
 Examples:
   # List what a .mat file's replay finds
