@@ -391,3 +391,15 @@ func testMatchReplaceHeader(t *testing.T, s storage.Storage) {
 		t.Errorf("FindByHash(h-old) = (found %v, %v), want not found", found, err)
 	}
 }
+
+// testMatchReplaceHeaderUnknownID: replacing a match that is not there is
+// ErrNotFound, never a silent no-op a caller would take for a rewrite.
+func testMatchReplaceHeaderUnknownID(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5}
+	err := s.Matches().ReplaceHeader(ctx, "", 987654321, &m)
+	if !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("ReplaceHeader on an unknown id = %v, want ErrNotFound", err)
+	}
+}

@@ -33,6 +33,8 @@
     // Copie locale : un champ en frappe n'est pas réécrit par le document
     // renvoyé, mais un changement venu d'ailleurs (annuler, inverser) se voit.
     let form = $state(blank());
+    // Le nom de tournoi tapé et resté sans correspondance, '' sinon.
+    let unknownTournament = $state('');
     let synced = '';
 
     function blank() {
@@ -149,8 +151,13 @@
             transcriber: form.transcriber.trim(),
             date: dateHeaderOf(form.date)
         };
-        const tournamentId = tournamentIdOf(form.tournament);
-        if (tournamentId) next.tournament_id = tournamentId;
+        const typed = form.tournament.trim();
+        const tournamentId = tournamentIdOf(typed);
+        // Un nom que la bibliothèque ne connaît pas n'est pas « aucun tournoi » :
+        // le prendre pour tel détacherait le Match à l'enregistrement.
+        unknownTournament = typed && !tournamentId ? typed : '';
+        const kept = unknownTournament ? header?.tournament_id : tournamentId;
+        if (kept) next.tournament_id = kept;
         apply({ Kind: 'set_header', Header: next });
     }
 
@@ -295,6 +302,9 @@
         {/if}
     </div>
 
+    {#if unknownTournament}
+        <p class="warning" role="alert">{$t('transcription.tournamentUnknown', { name: unknownTournament })}</p>
+    {/if}
     <p class="hint">{$t('transcription.metadataHint')}</p>
     <p class="hint">{$t('transcription.lengthHint')}</p>
 </div>
@@ -367,5 +377,10 @@
     .hint {
         margin: 0;
         color: var(--color-text-muted);
+    }
+
+    .warning {
+        margin: 0;
+        color: var(--color-danger);
     }
 </style>
