@@ -47,3 +47,20 @@ func checkXGHeader(path string) error {
 	}
 	return nil
 }
+
+// ErrParserPanic is returned when a third-party parser panicked on its input.
+var ErrParserPanic = errors.New("ingest: parser failed on malformed input")
+
+// guardParse runs a third-party parser and turns its panic into an error. The
+// parsers read files and pastes from anywhere; bgfparser's text reader shifts
+// by an unchecked cube exponent (`1 << val`) and panics on a negative one,
+// which would take down the GUI or CLI with the whole import.
+func guardParse[T any](parse func() (T, error)) (v T, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			var zero T
+			v, err = zero, fmt.Errorf("%w: %v", ErrParserPanic, r)
+		}
+	}()
+	return parse()
+}

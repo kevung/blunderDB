@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -404,5 +406,26 @@ func TestCheckXGHeader_RefusesOversizedSizes(t *testing.T) {
 		if _, err := MapXG(path); !errors.Is(err, ErrXGHeader) {
 			t.Errorf("%s: MapXG err = %v, want ErrXGHeader", name, err)
 		}
+	}
+}
+
+// bgfparser shifts by the cube exponent of an XGID line unchecked; a negative
+// one panicked inside the text-position import instead of failing it.
+func TestMapBGFTextPositionText_ParserPanicIsAnError(t *testing.T) {
+	data, err := os.ReadFile("testdata/fuzz/FuzzImportPosition/753c203fcd260860")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var content string
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "[]byte(") {
+			content, err = strconv.Unquote(strings.TrimSuffix(strings.TrimPrefix(line, "[]byte("), ")"))
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	if _, err := MapBGFTextPositionText(content); !errors.Is(err, ErrParserPanic) {
+		t.Fatalf("err = %v, want ErrParserPanic", err)
 	}
 }
