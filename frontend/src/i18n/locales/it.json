@@ -1957,7 +1957,7 @@
             "error": "Impossibile registrare questo risultato.",
             "more": "Altro",
             "apply": "Applica",
-            "forfeitWins": "{loser} assente → vince {winner}",
+            "forfeitWins": "Forfait di {loser} → vince {winner}",
             "forfeitConfirm": "Forfait di {loser}: {winner} vince questa partita. Confermare?",
             "cancelConfirm": "Annullare la partita {a} – {b}? Esce dalla sala; il registro la conserva."
         },

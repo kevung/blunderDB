@@ -61,6 +61,21 @@ describe('clavier', () => {
     });
 });
 
+describe('Entrée dans le champ de table', () => {
+    test('déplace le match, même avec un vainqueur choisi', async () => {
+        const h = mount();
+        const card = screen.getByTestId('direction-result-card');
+        await fireEvent.keyDown(card, { key: 'ArrowLeft' });
+        await fireEvent.click(screen.getByTestId('direction-result-more'));
+        const table = screen.getByTestId('direction-result-move-table');
+        await fireEvent.input(table, { target: { value: '5' } });
+        await fireEvent.keyDown(table, { key: 'Enter' });
+        await flush();
+        expect(h.onResult).not.toHaveBeenCalled();
+        expect(h.onMove).toHaveBeenCalledWith('m1', 5);
+    });
+});
+
 describe('attente du backend', () => {
     test('un échec garde la fiche ouverte et le dit', async () => {
         const h = mount({ onResult: vi.fn().mockResolvedValue(false) });

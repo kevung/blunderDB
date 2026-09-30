@@ -1957,7 +1957,7 @@
             "error": "No se ha podido registrar este resultado.",
             "more": "Más",
             "apply": "Aplicar",
-            "forfeitWins": "{loser} ausente → gana {winner}",
+            "forfeitWins": "Incomparecencia de {loser} → gana {winner}",
             "forfeitConfirm": "{loser} no se presenta: {winner} gana esta partida. ¿Confirmar?",
             "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de la sala; el registro la conserva."
         },

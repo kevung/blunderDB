@@ -1957,7 +1957,7 @@
             "error": "Das Ergebnis konnte nicht gespeichert werden.",
             "more": "Mehr",
             "apply": "Anwenden",
-            "forfeitWins": "{loser} fehlt → {winner} gewinnt",
+            "forfeitWins": "Nichtantritt von {loser} → {winner} gewinnt",
             "forfeitConfirm": "{loser} tritt nicht an: {winner} gewinnt dieses Match. Bestätigen?",
             "cancelConfirm": "Match {a} – {b} annullieren? Es verschwindet aus dem Saal; das Protokoll behält es."
         },

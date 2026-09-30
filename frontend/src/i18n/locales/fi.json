@@ -1957,7 +1957,7 @@
             "error": "Tulosta ei voitu kirjata.",
             "more": "Lisää",
             "apply": "Käytä",
-            "forfeitWins": "{loser} poissa → {winner} voittaa",
+            "forfeitWins": "Luovutus: {loser} → voittaja: {winner}",
             "forfeitConfirm": "{loser} luovuttaa: {winner} voittaa tämän ottelun. Vahvistetaanko?",
             "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu salista; loki säilyttää sen."
         },

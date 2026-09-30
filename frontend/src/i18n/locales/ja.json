@@ -1957,7 +1957,7 @@
             "error": "結果を記録できませんでした。",
             "more": "その他",
             "apply": "適用",
-            "forfeitWins": "{loser} 不在 → {winner} の勝ち",
+            "forfeitWins": "{loser} の不戦敗 → {winner} の勝ち",
             "forfeitConfirm": "{loser} の不戦敗：{winner} がこの試合に勝ちます。確定しますか？",
             "cancelConfirm": "試合 {a} – {b} を取り消しますか？会場からは消えますが、記録には残ります。"
         },

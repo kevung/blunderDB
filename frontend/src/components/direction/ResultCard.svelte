@@ -39,6 +39,7 @@
     let more = $state(false);
     let note = $state('');
     let moveTo = $state('');
+    let moveInput = $state(/** @type {HTMLInputElement | null} */ (null));
     /** Le vainqueur choisi au clavier (← / →), que Entrée valide. */
     let chosen = $state('');
     let failed = $state(false);
@@ -115,6 +116,11 @@
             e.stopPropagation();
             if (e.target instanceof HTMLButtonElement) return;
             e.preventDefault();
+            // Le champ de table a son propre geste : Entrée y déplace, jamais n'enregistre.
+            if (e.target === moveInput) {
+                if (!busy) move();
+                return;
+            }
             if (chosen && !busy) win(chosen);
             return;
         }
@@ -177,7 +183,7 @@
             </label>
             <div class="row">
                 <span class="row-label">{$t('direction.result.move')}</span>
-                <input type="number" data-testid="direction-result-move-table" min="1" max="200" bind:value={moveTo} />
+                <input type="number" data-testid="direction-result-move-table" bind:this={moveInput} min="1" max="200" bind:value={moveTo} />
                 <button type="button" data-testid="direction-result-move" disabled={busy || sending} onclick={move}>{$t('direction.result.apply')}</button>
             </div>
             <div class="row">

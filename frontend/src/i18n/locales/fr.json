@@ -1957,7 +1957,7 @@
             "error": "Impossible d’enregistrer ce résultat.",
             "more": "Plus",
             "apply": "Appliquer",
-            "forfeitWins": "{loser} absent → {winner} gagne",
+            "forfeitWins": "Forfait de {loser} → {winner} gagne",
             "forfeitConfirm": "Forfait de {loser} : {winner} gagne ce match. Confirmer ?",
             "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît de la salle ; le journal le garde."
         },
