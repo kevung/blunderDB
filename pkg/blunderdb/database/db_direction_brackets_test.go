@@ -126,6 +126,25 @@ func TestBracketsOfABracketPhase(t *testing.T) {
 	if rows[0] != 4 || rows[1] != 2 || rows[2] != 1 {
 		t.Errorf("rows should be 4/2/1, got %v", rows)
 	}
+	// Every later place names the two places whose winners meet there: the view draws its
+	// lines from that, not from positions.
+	keys := map[string]bool{}
+	for _, m := range main.Matches {
+		keys[m.Key] = true
+	}
+	for _, m := range main.Matches {
+		if m.Round == 0 {
+			continue
+		}
+		if len(m.Feeds) != 2 {
+			t.Errorf("a place after the first round has two feeders: %+v", m)
+		}
+		for _, f := range m.Feeds {
+			if !keys[f.Key] || f.Loser {
+				t.Errorf("feeder %+v must be a winner of this draw", f)
+			}
+		}
+	}
 	// The first round knows its players by name; the later rows do not yet.
 	for _, m := range main.Matches {
 		if m.Round != 0 {

@@ -2014,6 +2014,8 @@
             "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn."
         },
         "bracket": {
+            "correct": "Ergebnis korrigieren",
+            "live": "ein Turnierbaum läuft",
             "current": "laufend",
             "notDrawn": "noch nicht ausgelost",
             "pending": "—",

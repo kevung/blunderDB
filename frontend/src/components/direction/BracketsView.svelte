@@ -6,8 +6,26 @@
      */
     import { t } from '../../i18n';
     import { renderLabel, renderSectionName } from './labels.js';
+    import { BOX_W, BOX_H, layoutSection, skeletonSection, crossTable } from './bracketLayout.js';
+    import ResultCard from './ResultCard.svelte';
+    import CorrectionPanel from './CorrectionPanel.svelte';
 
-    let { phases = [], onOpenMatch = () => {} } = $props();
+    /* `cells` donne la table d'un match en cours ; les gestes sont ceux de la grille des
+       tables : cliquer une place, c'est ouvrir la même fiche que sur la case. */
+    /**
+     * @type {{
+     *     phases?: any[], cells?: any[], entrants?: number, busy?: boolean,
+     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
+     *     onForfeit?: (matchId: string, winner: string, note: string) => void,
+     *     onMove?: (matchId: string, table: number) => void,
+     *     onCancel?: (matchId: string) => void,
+     *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void
+     * }}
+     */
+    let { phases = [], cells = [], entrants = 0, busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onCorrect = () => {} } = $props();
+
+    /** La place dont la fiche est ouverte, par clé de section et de place. */
+    let openKey = $state('');
 
     /* La phase courante est dépliée ; les précédentes sont repliées mais consultables — un
        directeur relit le tableau des vies pendant que le tableau final tourne. */
@@ -39,16 +57,63 @@
         return p.name || $t(`direction.format.${p.kind}`);
     }
 
-    /* Les places d'une section, rangées par tour : c'est ainsi qu'un tableau se lit, en
-       colonnes du premier tour à la finale. */
-    /** @param {BracketSection} section */
-    function columns(section) {
-        /** @type {BracketMatch[][]} */
-        const cols = [];
-        for (const m of section.matches) {
-            (cols[m.round] ||= []).push(m);
+    /** @param {BracketSection} s */
+    function isPool(s) {
+        return s.kind === 'poule';
+    }
+
+    /* Un tableau non tiré montre son squelette dès qu'on connaît le nombre d'entrants. */
+    /** @param {BracketPhase} p */
+    function skeleton(p) {
+        const graph = p.kind === 'bracket' || p.kind === 'lives_bracket';
+        if (p.drawn || p.sections.length > 0 || !graph || entrants < 2) return null;
+        return layoutSection(skeletonSection(entrants));
+    }
+
+    /** @param {string} sec @param {BracketMatch} m */
+    const placeKey = (sec, m) => `${sec}/${m.key}`;
+
+    /** @param {string} sec @param {BracketMatch} m */
+    function open(sec, m) {
+        if (!m.matchId) return;
+        openKey = openKey === placeKey(sec, m) ? '' : placeKey(sec, m);
+    }
+
+    /** @param {KeyboardEvent} e @param {string} sec @param {BracketMatch} m */
+    function onPlaceKey(e, sec, m) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            open(sec, m);
         }
-        return cols.map((c) => c || []);
+    }
+
+    /** @param {BracketMatch} m */
+    function runningCell(m) {
+        const c = cells.find((x) => x.matchId === m.matchId);
+        return {
+            table: c?.table,
+            noTable: c ? !!c.noTable : true,
+            length: m.length,
+            matchId: /** @type {string} */ (m.matchId),
+            a: m.a || '',
+            b: m.b || '',
+            aName: m.aName,
+            bName: m.bName
+        };
+    }
+
+    /** @param {string} name */
+    function short(name) {
+        return name.length > 22 ? `${name.slice(0, 21)}…` : name;
+    }
+
+    /** Le score d'un camp ; ailleurs que dans un score, l'issue (forfait, en cours). */
+    /** @param {BracketMatch} m @param {number} side */
+    function sideText(m, side) {
+        if (m.skipped || m.walkover) return side === 0 ? outcome(m) : '';
+        if (m.done && (m.scoreA || 0) + (m.scoreB || 0) > 0) return String(side === 0 ? m.scoreA || 0 : m.scoreB || 0);
+        if (m.running && side === 0) return '●';
+        return '';
     }
 
     /** @param {BracketMatch} m */
@@ -61,6 +126,79 @@
         return '';
     }
 </script>
+
+{#snippet card(/** @type {BracketMatch} */ m)}
+    <div class="card-layer" data-testid="bracket-card">
+        {#if m.running}
+            <ResultCard cell={runningCell(m)} {busy} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+        {:else if m.done && m.a && m.b}
+            <div class="correction">
+                <div class="correction-head">
+                    <span>{$t('direction.bracket.correct')}</span>
+                    <button type="button" class="close" title={$t('common.close')} onclick={() => (openKey = '')}>×</button>
+                </div>
+                <CorrectionPanel
+                    a={m.a}
+                    b={m.b}
+                    aName={m.aName || m.a}
+                    bName={m.bName || m.b}
+                    {busy}
+                    testid="bracket-correct"
+                    onPick={(w, sa, sb) => {
+                        onCorrect(/** @type {string} */ (m.matchId), w, sa, sb);
+                        openKey = '';
+                    }}
+                />
+            </div>
+        {/if}
+    </div>
+{/snippet}
+
+{#snippet graph(/** @type {string} */ sec, /** @type {ReturnType<typeof layoutSection>} */ g, /** @type {boolean} */ ghost)}
+    <div class="graph-wrap">
+        <svg class="graph" class:ghost width={g.width} height={g.height} viewBox="0 0 {g.width} {g.height}" role="group" data-testid={ghost ? 'bracket-skeleton' : 'bracket-graph'}>
+            {#each g.edges as e (e.key)}
+                <path class="edge" class:loser={e.loser} d={e.d} fill="none" />
+            {/each}
+            {#each g.nodes as n (n.m.key)}
+                {@const m = n.m}
+                {#if ghost}
+                    <rect class="box" x={n.x} y={n.y} width={BOX_W} height={BOX_H} rx="4" />
+                {:else}
+                    <g
+                        class="place"
+                        class:done={m.done}
+                        class:running={m.running}
+                        class:flagged={m.flagged}
+                        class:skipped={m.skipped}
+                        class:idle={!m.matchId}
+                        role="button"
+                        tabindex={m.matchId ? 0 : -1}
+                        aria-disabled={!m.matchId}
+                        aria-label={`${m.aName || $t('direction.bracket.pending')} – ${m.bName || $t('direction.bracket.pending')}`}
+                        data-testid="bracket-place"
+                        transform="translate({n.x},{n.y})"
+                        onclick={() => open(sec, m)}
+                        onkeydown={(e) => onPlaceKey(e, sec, m)}
+                    >
+                        <title>{renderLabel($t, m.label)}</title>
+                        <rect class="box" width={BOX_W} height={BOX_H} rx="4" />
+                        <line class="sep" x1="0" y1={BOX_H / 2} x2={BOX_W} y2={BOX_H / 2} />
+                        <text class="side" class:winner={m.done && m.winner === m.a} class:pending={!m.aName} x="6" y={BOX_H / 4 + 4}>{short(m.aName || $t('direction.bracket.pending'))}</text>
+                        <text class="side" class:winner={m.done && m.winner === m.b} class:pending={!m.bName} x="6" y={(3 * BOX_H) / 4 + 4}>{short(m.bName || $t('direction.bracket.pending'))}</text>
+                        <text class="score" x={BOX_W - 6} y={BOX_H / 4 + 4} text-anchor="end">{sideText(m, 0)}</text>
+                        <text class="score" x={BOX_W - 6} y={(3 * BOX_H) / 4 + 4} text-anchor="end">{sideText(m, 1)}</text>
+                    </g>
+                {/if}
+            {/each}
+        </svg>
+        {#each g.nodes as n (n.m.key)}
+            {#if !ghost && openKey === placeKey(sec, n.m)}
+                <div class="card-anchor" style="left:{n.x}px; top:{n.y + BOX_H}px">{@render card(n.m)}</div>
+            {/if}
+        {/each}
+    </div>
+{/snippet}
 
 <div class="brackets">
     {#each phases as p (p.index)}
@@ -102,6 +240,12 @@
                     </table>
                 {/if}
 
+                {#if skeleton(p)}
+                    <div class="sections">
+                        <div class="section">{@render graph('sk', /** @type {any} */ (skeleton(p)), true)}</div>
+                    </div>
+                {/if}
+
                 {#if p.sections.length}
                     <div class="sections">
                         {#each p.sections as s (s.name)}
@@ -115,32 +259,45 @@
                                             spots: s.spots
                                         })}
                                     </p>
+                                {:else if isPool(s)}
+                                    {@const ct = crossTable(s)}
+                                    <table class="cross" data-testid="bracket-pool">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                {#each ct.players as pl (pl.id)}<th class="vs" title={pl.name}>{short(pl.name)}</th>{/each}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {#each ct.players as row, i (row.id)}
+                                                <tr>
+                                                    <th class="name" scope="row">{row.name}</th>
+                                                    {#each ct.players as col, j (col.id)}
+                                                        {@const c = ct.cell(i, j)}
+                                                        <td class:self={i === j} class:done={c?.m.done} class:running={c?.m.running} class:flagged={c?.m.flagged}>
+                                                            {#if c && i !== j}
+                                                                <button
+                                                                    type="button"
+                                                                    class="pool-cell"
+                                                                    disabled={!c.m.matchId}
+                                                                    data-testid="bracket-place"
+                                                                    title={renderLabel($t, c.m.label)}
+                                                                    onclick={() => open(s.name, c.m)}
+                                                                >
+                                                                    {#if c.m.done}<span class:winner={c.m.winner === row.id}>{c.own}–{c.other}</span>{:else if c.m.running}●{:else}·{/if}
+                                                                </button>
+                                                                {#if openKey === placeKey(s.name, c.m)}
+                                                                    <div class="card-anchor" style="left:0; top:100%">{@render card(c.m)}</div>
+                                                                {/if}
+                                                            {/if}
+                                                        </td>
+                                                    {/each}
+                                                </tr>
+                                            {/each}
+                                        </tbody>
+                                    </table>
                                 {:else}
-                                    <div class="cols">
-                                        {#each columns(s) as col, ci (ci)}
-                                            <div class="col">
-                                                {#each col as m (m.key)}
-                                                    <button
-                                                        type="button"
-                                                        class="place"
-                                                        class:done={m.done}
-                                                        class:running={m.running}
-                                                        class:flagged={m.flagged}
-                                                        class:skipped={m.skipped}
-                                                        disabled={!m.matchId}
-                                                        title={renderLabel($t, m.label)}
-                                                        onclick={() => onOpenMatch(m)}
-                                                    >
-                                                        <span class="side" class:winner={m.done && m.winner === m.a}>{m.aName || $t('direction.bracket.pending')}</span>
-                                                        <span class="side" class:winner={m.done && m.winner === m.b}>{m.bName || $t('direction.bracket.pending')}</span>
-                                                        {#if outcome(m)}
-                                                            <span class="outcome">{outcome(m)}</span>
-                                                        {/if}
-                                                    </button>
-                                                {/each}
-                                            </div>
-                                        {/each}
-                                    </div>
+                                    {@render graph(s.name, layoutSection(s), false)}
                                 {/if}
                             </div>
                         {/each}
@@ -211,60 +368,178 @@
         color: var(--color-text-muted);
     }
 
-    .cols {
-        display: flex;
-        gap: var(--space-2);
-        align-items: flex-start;
+    .graph-wrap {
+        position: relative;
     }
 
-    .col {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        gap: var(--space-1);
-        min-width: 11rem;
+    .graph {
+        display: block;
+    }
+
+    .edge {
+        stroke: var(--color-border);
+        stroke-width: 1.5;
+    }
+
+    .edge.loser {
+        stroke-dasharray: 4 3;
+    }
+
+    .box {
+        fill: var(--color-surface);
+        stroke: var(--color-border);
+    }
+
+    .ghost .box {
+        fill: var(--color-surface-alt);
+        stroke-dasharray: 3 3;
+        opacity: 0.7;
     }
 
     .place {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-        padding: 0.2rem 0.4rem;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        background: var(--color-surface);
-        color: var(--color-text);
-        text-align: left;
-        font-size: var(--font-size-small);
         cursor: pointer;
+        font-size: var(--font-size-small);
+        color: var(--color-text);
     }
 
-    .place:disabled {
+    .place.idle {
         cursor: default;
-        color: var(--color-text-muted);
     }
 
-    .place.running {
-        border-color: var(--color-primary);
+    .place:focus-visible {
+        outline: none;
     }
 
-    /* L'avertissement du moteur se voit SUR la place, pas seulement dans une liste loin de
-       l'arbre : c'est là que le directeur regarde quand un tableau cloche. */
-    .place.flagged {
-        border-color: var(--color-danger);
-        border-width: 2px;
+    .place:focus-visible .box {
+        stroke: var(--color-primary);
+        stroke-width: 2;
+    }
+
+    .place .sep {
+        stroke: var(--color-border);
+    }
+
+    .place text {
+        fill: var(--color-text);
+        font-size: var(--font-size-small);
+    }
+
+    .place text.pending,
+    .place text.score {
+        fill: var(--color-text-muted);
+    }
+
+    .place.idle text {
+        fill: var(--color-text-muted);
+    }
+
+    .place text.winner {
+        font-weight: 600;
+        fill: var(--color-text);
+    }
+
+    .place.running .box {
+        stroke: var(--color-primary);
+        stroke-width: 2;
+    }
+
+    .place.flagged .box {
+        stroke: var(--color-danger);
+        stroke-width: 2;
     }
 
     .place.skipped {
         opacity: 0.5;
     }
 
-    .side.winner {
+    .card-anchor {
+        position: absolute;
+        z-index: 20;
+        width: 18rem;
+    }
+
+    .card-layer {
+        position: relative;
+    }
+
+    .correction {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-2);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .correction-head {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+    }
+
+    .correction-head .close {
+        border: none;
+        background: transparent;
+        color: var(--color-text-muted);
+        cursor: pointer;
+    }
+
+    table.cross {
+        border-collapse: collapse;
+        font-size: var(--font-size-small);
+    }
+
+    .cross th,
+    .cross td {
+        border: 1px solid var(--color-border);
+        padding: 0.15rem 0.4rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .cross th.name {
+        text-align: left;
         font-weight: 600;
     }
 
-    .outcome {
+    .cross th.vs {
+        font-weight: 400;
         color: var(--color-text-muted);
+        max-width: 7rem;
+    }
+
+    .cross td.self {
+        background: var(--color-surface-alt);
+    }
+
+    .cross td.running {
+        outline: 2px solid var(--color-primary);
+        outline-offset: -2px;
+    }
+
+    .cross td.flagged {
+        outline: 2px solid var(--color-danger);
+        outline-offset: -2px;
+    }
+
+    .pool-cell {
+        border: none;
+        background: transparent;
+        color: var(--color-text);
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .pool-cell:disabled {
+        cursor: default;
+        color: var(--color-text-muted);
+    }
+
+    .pool-cell .winner {
+        font-weight: 600;
     }
 
     table.lives {

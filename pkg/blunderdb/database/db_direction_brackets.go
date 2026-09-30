@@ -37,6 +37,20 @@ type BracketMatch struct {
 	// Flagged marks a match the engine complains about, so the view can show it in place
 	// rather than only in a list far from the bracket.
 	Flagged bool `json:"flagged,omitempty"`
+	// Feeds lists the places of other matches whose winner (or loser) takes a seat here, so
+	// the view can draw the lines of the graph without knowing the engine's indices.
+	Feeds []BracketFeed `json:"feeds,omitempty"`
+}
+
+// BracketFeed links a seat of a match to the match it comes from.
+type BracketFeed struct {
+	// Side is the seat fed: 0 for A, 1 for B.
+	Side int `json:"side"`
+	// Section is the source match's section name; empty when it is the same graph.
+	Section string `json:"section,omitempty"`
+	Key     string `json:"key"`
+	// Loser is true when the seat goes to the loser of the source match.
+	Loser bool `json:"loser,omitempty"`
 }
 
 // BracketSection is one graph: the main draw, a consolation, a pool, a GSL block.
@@ -132,6 +146,7 @@ func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
 					MatchID: string(g.MatchID), Winner: string(g.Winner),
 					Done: g.Done, Walkover: g.Walkover, Skipped: g.Skipped,
 				}
+				bm.Feeds = bracketFeeds(ph, sec, g)
 				if r, ok := row[g.Key]; ok {
 					bm.Round = r
 				} else {
@@ -153,6 +168,39 @@ func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
 		out = append(out, bp)
 	}
 	return out, nil
+}
+
+// bracketFeeds resolves the engine's index-based sources into match keys. A source that is a
+// fixed player, or that points outside the graphs, draws no line.
+func bracketFeeds(ph *tournoi.PhaseState, sec *tournoi.Section, g tournoi.GMatch) []BracketFeed {
+	var feeds []BracketFeed
+	for side, src := range g.Src {
+		if src.Player != "" {
+			continue
+		}
+		from := sec
+		if src.Section != "" && src.Section != sec.Name {
+			found := false
+			for _, o := range ph.Sections {
+				if o.Name == src.Section {
+					from, found = o, true
+					break
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+		if src.From < 0 || src.From >= len(from.Matches) {
+			continue
+		}
+		f := BracketFeed{Side: side, Key: from.Matches[src.From].Key, Loser: src.Loser}
+		if from.Name != sec.Name {
+			f.Section = from.Name
+		}
+		feeds = append(feeds, f)
+	}
+	return feeds
 }
 
 func livesRows(st *tournoi.State, ph *tournoi.PhaseState) []LivesRow {
