@@ -79,14 +79,11 @@ func (d Diag) String() string { return fmt.Sprintf("%s: %s", d.Token, d.Message)
 // loose `win"` is then read as a win-rate filter: the query silently returns
 // the wrong rows. Both quote styles are accepted, as in the JS.
 var (
-	quotedRe    = regexp.MustCompile(`(?:pl|m|t)["'][^"']*["']`)
-	movePatRe   = regexp.MustCompile(`m["'][^"']*["']`)
-	searchTxtRe = regexp.MustCompile(`t["'][^"']*["']`)
-	playerRe    = regexp.MustCompile(`pl["'][^"']*["']`)
-	exceptDice  = regexp.MustCompile(`^xD[1-6][1-6]$`)
-	maRe        = regexp.MustCompile(`^ma\d`)
-	tnRe        = regexp.MustCompile(`^tn\d`)
-	idRe        = regexp.MustCompile(`^id\d`)
+	quotedRe   = regexp.MustCompile(`(?:pl|m|t)["'][^"']*["']`)
+	exceptDice = regexp.MustCompile(`^xD[1-6][1-6]$`)
+	maRe       = regexp.MustCompile(`^ma\d[^;]*$`)
+	tnRe       = regexp.MustCompile(`^tn\d[^;]*$`)
+	idRe       = regexp.MustCompile(`^id\d[^;]*$`)
 	// Closed vocabularies, so the token names its value rather than quoting it:
 	// `ph:race`, `co:user`. Repeatable, and joined the way the storage layer
 	// expects — the same shape as the id lists above.
@@ -103,8 +100,8 @@ var (
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
 	// claim it and it needs no place in the precedence above. The
 	// pattern is domain.tagPattern anchored — one '#', then anything that is
-	// neither whitespace nor another '#'.
-	tagRe     = regexp.MustCompile(`^#[^\s#]+$`)
+	// neither whitespace nor another '#', nor the ';' a list is joined with.
+	tagRe     = regexp.MustCompile(`^#[^\s#;]+$`)
 	moveErrRe = regexp.MustCompile(`^E\d`)
 )
 
@@ -138,12 +135,21 @@ func Tokenize(command string) []string {
 // same corpus; see the package doc.
 func Parse(command string) (domain.SearchFilters, []Diag) {
 	tokens := Tokenize(command)
+	// A token still holding a quote is the debris of an unterminated or
+	// stray quoted value. No rule claims it, for Format could not write it
+	// back without it opening a quoted value of its own.
+	ruleTokens := make([]string, len(tokens))
+	for i, tok := range tokens {
+		if !strings.ContainsAny(tok, `"'`) {
+			ruleTokens[i] = tok
+		}
+	}
 	var f domain.SearchFilters
 	claimed := make([]bool, len(tokens))
 
 	has := func(want string) bool {
 		found := false
-		for i, tok := range tokens {
+		for i, tok := range ruleTokens {
 			if tok == want {
 				claimed[i] = true
 				found = true
@@ -155,7 +161,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// JS uses Array.prototype.find, so a repeated numeric filter keeps its
 	// first occurrence; repeating one is a user error either way.
 	first := func(pred func(string) bool) string {
-		for i, tok := range tokens {
+		for i, tok := range ruleTokens {
 			if pred(tok) {
 				claimed[i] = true
 				return tok
@@ -165,7 +171,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	}
 	all := func(pred func(string) bool) []string {
 		var out []string
-		for i, tok := range tokens {
+		for i, tok := range ruleTokens {
 			if pred(tok) {
 				claimed[i] = true
 				out = append(out, tok)
@@ -290,9 +296,24 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// name or a comment with spaces survives. The token is kept whole, wrapper
 	// included: that is what the storage layer unwraps.
 	raw := strings.TrimSpace(command)
-	f.MovePatternFilter = movePatRe.FindString(raw)
-	f.SearchText = searchTxtRe.FindString(raw)
-	f.PlayerFilter = playerRe.FindString(raw)
+	// One left-to-right scan, the first value of each kind: a value that
+	// opens inside another one (`m"t'x"`) belongs to the outer one only.
+	for _, q := range quotedRe.FindAllString(raw, -1) {
+		switch {
+		case strings.HasPrefix(q, "pl"):
+			if f.PlayerFilter == "" {
+				f.PlayerFilter = q
+			}
+		case strings.HasPrefix(q, "m"):
+			if f.MovePatternFilter == "" {
+				f.MovePatternFilter = q
+			}
+		default:
+			if f.SearchText == "" {
+				f.SearchText = q
+			}
+		}
+	}
 
 	var diags []Diag
 	for i, tok := range tokens {
