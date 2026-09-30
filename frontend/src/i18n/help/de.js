@@ -2369,6 +2369,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>Die Werte <code>pl</code>, <code>m</code> und <code>t</code> beginnen mit einem Anführungszeichen oder einem Apostroph und enden mit einem der beiden. Ein Token, das ein Anführungszeichen behält, ohne einen vollständigen Wert zu bilden, wird ignoriert, und <code>blunderdb search --query</code> meldet es. Ein Tag darf einen Apostroph enthalten (<code>#l'ouverture</code>), nie ein Anführungszeichen. Das Semikolon trennt Bezeichner- und Tag-Listen: Es kommt in keinem Wert vor, und <code>ma1;2</code> ist kein Token (<code>ma1 ma2</code> schreiben).</p>
 <h3>Verschiedene Befehle</h3>
 <table>
 <thead>

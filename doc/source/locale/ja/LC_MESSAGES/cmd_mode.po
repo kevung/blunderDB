@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 02:47+0200\n"
+"POT-Creation-Date: 2026-10-01 01:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1468,7 +1468,23 @@ msgstr ""
 "は番号42の局面を取り、\\ ``like<12`` は十二チェッカーピップを超えるものを除き、\\ ``like42*`` "
 "は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ :ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:228
+msgid ""
+"Les valeurs ``pl``, ``m`` et ``t`` s'ouvrent par un guillemet ou une "
+"apostrophe et se ferment par l'un des deux. Un jeton qui garde un "
+"guillemet sans former une valeur complète est ignoré, et ``blunderdb "
+"search --query`` le signale. Un tag peut contenir une apostrophe "
+"(``#l'ouverture``), jamais un guillemet. Le point-virgule est le "
+"séparateur des listes d'identifiants et de tags : il ne figure dans "
+"aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
+msgstr ""
+"``pl``、``m``、``t`` "
+"の値は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を含んでいても完全な値にならないトークンは無視され、``blunderdb"
+" search --query`` "
+"がそれを報告します。タグにはアポストロフィを含められますが（``#l'ouverture``）、二重引用符は含められません。セミコロンは識別子とタグのリストの区切りです。どの値にも現れず、``ma1;2``"
+" はトークンではありません（``ma1 ma2`` と書きます）。"
+
+#: ../../source/cmd_mode.rst:233
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

@@ -2369,6 +2369,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>I valori <code>pl</code>, <code>m</code> e <code>t</code> si aprono con le virgolette o un apostrofo e si chiudono con l'uno o l'altro. Un token che conserva una virgoletta senza formare un valore completo viene ignorato, e <code>blunderdb search --query</code> lo segnala. Un tag può contenere un apostrofo (<code>#l'ouverture</code>), mai le virgolette. Il punto e virgola è il separatore delle liste di identificatori e di tag: non compare in nessun valore, e <code>ma1;2</code> non è un token (scrivere <code>ma1 ma2</code>).</p>
 <h3>Comandi vari</h3>
 <table>
 <thead>

@@ -107,6 +107,12 @@ export function stripQuotedTokens(str) {
     return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
 }
 
+// A tag whose quote characters are plain apostrophes: no double quote.
+/** @param {string} f */
+function isQuotedTag(f) {
+    return /^#[^\s#;]+$/.test(f) && !f.includes('"');
+}
+
 /**
  * The single grammar behind every search-token parser: reads filter tokens
  * into the full `SearchFilters` shape (long backend field names). Accepts a
@@ -120,20 +126,32 @@ export function stripQuotedTokens(str) {
  */
 export function parseSearchTokens(filtersOrCommand, command) {
     /** @type {string[]} */
-    let filters;
+    let tokens;
     /** @type {string} */
     let cmd;
     if (Array.isArray(filtersOrCommand)) {
-        filters = filtersOrCommand;
+        tokens = filtersOrCommand;
         cmd = command ?? '';
     } else {
         cmd = filtersOrCommand ?? '';
-        filters =
+        tokens =
             cmd === 's' || cmd === ''
                 ? []
                 : stripQuotedTokens(cmd.slice(2).trim())
                       .split(' ')
                       .map((/** @type {string} */ f) => f.trim());
+    }
+    // A token still holding a quote is the debris of an unterminated or stray
+    // quoted value. No rule claims it: a formatter could not write it back
+    // without it opening a quoted value of its own. A tag is the exception: its
+    // apostrophe (`#don't`) is part of the word, a double quote is not. The Go reader reports the
+    // dropped token as a diagnostic; the command bar has nowhere to show one.
+    const filters = tokens.map((f) => (typeof f === 'string' && /["']/.test(f) && !isQuotedTag(f) ? '' : f));
+    // Format writes the tags last and lower-cased, side by side: if that run
+    // would open a quoted value (`#M''` reads as the tag `#m''`), none is kept.
+    const quotedTags = filters.filter((f) => typeof f === 'string' && /["']/.test(f));
+    if (/(?:pl|m|t)["'][^"']*["']/.test(quotedTags.join(' ').toLowerCase())) {
+        for (let i = 0; i < filters.length; i++) if (quotedTags.includes(filters[i])) filters[i] = '';
     }
 
     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
@@ -192,7 +210,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // Tags: `#prime`, repeatable (TagFilter). Several tags mean "both" — a
     // position has many — unlike the closed lists above, where two mean "either".
     const tagFilter = filters
-        .filter((f) => typeof f === 'string' && /^#[^\s#]+$/.test(f))
+        .filter((f) => typeof f === 'string' && /^#[^\s#;]+$/.test(f))
         .map((f) => f.toLowerCase())
         .join(';');
     // Rencontres : `n>3`, `n<10`, `n2,5`, `n4` (exactement), le nombre de coups
@@ -241,28 +259,32 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const player1AbsolutePipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P')));
     const equityFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e')));
     const dateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T')));
-    const movePatternMatch = cmd.match(/m["'][^"']*["']/);
-    const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
-    const searchTextMatch = cmd.match(/t["'][^"']*["']/);
-    const searchText = searchTextMatch ? searchTextMatch[0] : '';
-    // Player filter `pl"Name"` — matched on the raw command so names with spaces
-    // survive (the space-split `filters` array would break them).
-    const playerMatch = cmd.match(/pl["'][^"']*["']/);
-    const playerFilter = playerMatch ? playerMatch[0] : '';
+    // Quoted values are read off the raw command so names with spaces survive
+    // (the space-split tokens would break them). One left-to-right scan, the
+    // first value of each kind: a value opening inside another (`m"t'x"`)
+    // belongs to the outer one only.
+    let movePatternFilter = '';
+    let searchText = '';
+    let playerFilter = '';
+    for (const [q] of cmd.matchAll(/(?:pl|m|t)["'][^"']*["']/g)) {
+        if (q.startsWith('pl')) playerFilter ||= q;
+        else if (q.startsWith('m')) movePatternFilter ||= q;
+        else searchText ||= q;
+    }
     const player1OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
     const player2OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
     const player1JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
     const player2JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ')));
     const moveErrorFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f))));
 
-    const matchIDTokens = filters.filter((f) => typeof f === 'string' && /^ma\d/.test(f));
+    const matchIDTokens = filters.filter((f) => typeof f === 'string' && /^ma\d[^;]*$/.test(f));
     let matchIDsFilter = '';
     if (matchIDTokens.length > 0) {
         const parts = matchIDTokens.map((token) => token.slice(2));
         matchIDsFilter = parts.join(';');
     }
 
-    const tournamentIDTokens = filters.filter((f) => typeof f === 'string' && /^tn\d/.test(f));
+    const tournamentIDTokens = filters.filter((f) => typeof f === 'string' && /^tn\d[^;]*$/.test(f));
     let tournamentIDsFilter = '';
     if (tournamentIDTokens.length > 0) {
         const parts = tournamentIDTokens.map((token) => token.slice(2));
@@ -271,7 +293,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
 
     // Position-id filter: `id12`, `id5,10` (range 5..10), or several `id` tokens
     // joined as an explicit list (e.g. `id5 id10`). Mirrors the ma/tn convention.
-    const positionIDTokens = filters.filter((f) => typeof f === 'string' && /^id\d/.test(f));
+    const positionIDTokens = filters.filter((f) => typeof f === 'string' && /^id\d[^;]*$/.test(f));
     let positionIDsFilter = '';
     if (positionIDTokens.length > 0) {
         const parts = positionIDTokens.map((token) => token.slice(2));
@@ -279,7 +301,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     }
 
     return {
-        tokens: filters,
+        tokens,
         includeCube,
         includeScore,
         noContactFilter,

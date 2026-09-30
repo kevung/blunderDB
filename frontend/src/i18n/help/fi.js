@@ -2369,6 +2369,7 @@ export default {
 </tr>
 </tbody>
 </table>
+<p>Arvot <code>pl</code>, <code>m</code> ja <code>t</code> alkavat lainausmerkillä tai heittomerkillä ja päättyvät jompaankumpaan. Merkki, joka säilyttää lainausmerkin muodostamatta täydellistä arvoa, ohitetaan, ja <code>blunderdb search --query</code> ilmoittaa siitä. Tunniste voi sisältää heittomerkin (<code>#l'ouverture</code>), mutta ei lainausmerkkiä. Puolipiste erottaa tunnisteluettelot ja tagiluettelot: sitä ei ole missään arvossa, eikä <code>ma1;2</code> ole kelvollinen merkki (kirjoita <code>ma1 ma2</code>).</p>
 <h3>Sekalaisia komentoja</h3>
 <table>
 <thead>

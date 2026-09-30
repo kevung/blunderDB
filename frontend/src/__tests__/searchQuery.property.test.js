@@ -163,4 +163,13 @@ describe('search grammar — generated commands', () => {
             }
         }
     }, 30000);
+
+    test('a saved search with an apostrophe tag stays valid, and a stray quote token claims nothing', () => {
+        const saved = /** @type {Record<string, unknown>} */ (parseSearchTokens("s cube #l'ouverture"));
+        expect(saved.includeCube).toBe(true);
+        expect(saved.tagFilter).toBe("#l'ouverture");
+        const stray = /** @type {Record<string, unknown>} */ (parseSearchTokens('s Bt" id0;'));
+        expect(stray.player2BackgammonFilter ?? stray.player2BackgammonRateFilter).toBeUndefined();
+        expect(stray.positionIDsFilter).toBe('');
+    });
 });
