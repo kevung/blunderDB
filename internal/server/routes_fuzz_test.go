@@ -103,7 +103,8 @@ func FuzzRPC(f *testing.F) {
 			t.Fatalf("%s did not answer within 10s (tenant %q, body %q)", path, tenant, body)
 		}
 
-		n, err := storage.ParseTenant(tenant)
+		// The middleware trims the header, as the wire would have.
+		n, err := storage.ParseTenant(strings.TrimSpace(tenant))
 		validTenant := err == nil && n > 0
 		if !validTenant && rec.Code != http.StatusBadRequest {
 			t.Fatalf("%s with tenant %q: status %d, want 400", path, tenant, rec.Code)
