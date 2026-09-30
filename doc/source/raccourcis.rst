@@ -266,6 +266,26 @@ Panneau des tournois
    "Double-clic (sur un match du tournoi)", "Naviguer dans le match."
    "Esc", "Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 
+.. _raccourcis_direction:
+
+Page Direction
+--------------
+
+Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la file des
+propositions, sauf quand le focus est sur une case de la grille des tables, où
+*HAUT* et *BAS* changent de case. Les menus contextuels sont décrits dans le
+manuel (:ref:`menus contextuels <direction_menus>`).
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic droit, MENU, MAJ-F10", "Ouvrir le menu contextuel de l'objet focalisé : case de table, joueur, place de l'arbre, emplacement, proposition, ligne d'historique. HAUT/BAS parcourent le menu, ENTRÉE choisit, ÉCHAP le ferme."
+   "GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN", "Passer d'une case de la grille des tables à l'autre (cases libres comprises)."
+   "1 à 9, puis 0 à 9", "Ouvrir la fiche de la table de ce numéro ; deux chiffres, dans les 0,4 s, pour une table au-delà de 9."
+   "M, X", "Sur une case occupée, ouvrir la fiche sur le champ de table ; viser une table occupée échange les deux matchs."
+
 .. _raccourcis_collection_panel:
 
 Panneau des collections

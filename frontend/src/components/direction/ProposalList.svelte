@@ -8,8 +8,11 @@
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
     import { proposalLabel, actionKey, renderWarning, isRepair, seatLabel } from './labels.js';
-    import { directionOwnsKey, somethingOpenAbove } from '../../services/directionKeys.js';
+    import { directionOwnsKey, somethingOpenAbove, gridHasFocus } from '../../services/directionKeys.js';
     import { isBareLetter } from '../../utils/keys.js';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { proposalMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
 
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
 
@@ -66,6 +69,29 @@
         if (selected >= shown.length) selected = Math.max(0, shown.length - 1);
     });
 
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {ProposalAction} a @param {number} i */
+    function onRowMenu(ev, a, i) {
+        const req = menuRequest(ev, () =>
+            proposalMenu((k, p) => $t(k, p), a, {
+                busy,
+                onLaunch: () => onConfirm(a),
+                onIgnore: () => ignore(a),
+                // Apparier autrement : l'appariement à la main s'ouvre avec les deux joueurs.
+                onArrange: () => {
+                    manualA = a.a || '';
+                    manualB = a.b || '';
+                    manualOpen = true;
+                }
+            })
+        );
+        if (req) {
+            selected = i;
+            menu = req;
+        }
+    }
+
     /** @param {string | undefined} id */
     function playerName(id) {
         const p = players.find((x) => x.id === id);
@@ -113,6 +139,8 @@
     /** @param {KeyboardEvent} e */
     function onKey(e) {
         if (!directionOwnsKey(e) || somethingOpenAbove() || confirming) return;
+        // Sur une case de la grille, les flèches vont de case en case : la file ne les prend pas.
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && gridHasFocus()) return;
         if (isBareLetter(e, 'j') || e.key === 'ArrowDown') {
             selected = Math.min(selected + 1, shown.length - 1);
             focusQueue();
@@ -171,7 +199,15 @@
          choisie. Pas de listbox / option — chaque ligne porte ses propres boutons. -->
     <ul class="queue" tabindex="-1" aria-label={$t('direction.proposals.title', { n: shown.length })} bind:this={queueEl}>
         {#each shown as a, i (actionKey(a))}
-            <li class:selected={i === selected} class:repair={isRepair(a)} aria-current={i === selected ? 'true' : undefined}>
+            <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+            <li
+                class:selected={i === selected}
+                class:repair={isRepair(a)}
+                aria-current={i === selected ? 'true' : undefined}
+                tabindex="0"
+                oncontextmenu={(ev) => onRowMenu(ev, a, i)}
+                onkeydown={(ev) => onRowMenu(ev, a, i)}
+            >
                 {#if isRepair(a)}
                     <span class="tag">{$t('direction.proposals.repairTag')}</span>
                 {/if}
@@ -237,6 +273,10 @@
         {/if}
     </div>
 </section>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .proposals {

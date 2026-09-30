@@ -352,6 +352,17 @@ export default {
 <p>Napsautus varattuun pöytään avaa ottelun kortin. Siinä on kaksi suurta kohdetta: <strong>kummankin pelaajan nimi</strong>. Voittajan napsauttaminen kirjaa tuloksen — kaksi napsautusta kaikkiaan, pöytä mukaan lukien. Voittaja on ainoa vaadittu tieto; tulos on vapaa, toinen, molemmat tai ei kumpaakaan. Näppäimistöllä <em>VASEN</em> tai <em>OIKEA</em> valitsee voittajan ja <em>ENTER</em> kirjaa hänet. Kortti sulkeutuu vasta, kun tulos on kirjoitettu: virhe jättää sen auki viestineen.</p>
 <p>Kortin <strong>⋯</strong>-painike avaa harvoin tarvittavat toiminnot: luovutuksen (forfait) — jokainen painike nimeää poissaolevan ja voittajan —, vapaan huomautuksen (”aika loppui”, ”keskeytetty syystä…”), ottelun siirron toiselle pöydälle ja sen mitätöinnin. Luovutus ja mitätöinti vahvistetaan. Varattuun pöytään siirrettynä ottelu vaihtaa pöytänsä pöydän haltijan kanssa: kaksi ottelua ei koskaan jaa pöytää, ja sama ele palauttaa ne paikoilleen. Jos vanha loki on jättänyt kaksi samalle pöydälle, ruudukko näyttää molemmat ruudut merkittyinä, kunnes toinen siirretään.</p>
 <p>Heti huomattu kirjausvirhe perutaan kahdella napsautuksella ruudukon alta: <strong>Korjaa</strong> viimeisin päätös, sitten oikea voittaja (<em>CTRL-Z</em> avaa saman peruutuksen). Vanhempi korjaus tehdään historiasta.</p>
+<h4>Kontekstivalikot</h4>
+<p>Napsautus hiiren oikealla, <em>MENU</em>-näppäin tai <em>SHIFT-F10</em> Direction-sivun kohteella avaa sen tavalliset toiminnot ilman kortin kautta kiertämistä: ruudukon ruutu (vapaa tai varattu), pelaaja (<strong>Pelaajat</strong>-välilehti, vapaat pelaajat), kaavion paikka, paikka, jonon ehdotus, historian rivi. Valikko avautuu kohteen kohdalle; <em>YLÖS</em> ja <em>ALAS</em> liikkuvat siinä, <em>ENTER</em> valitsee, <em>ESC</em> sulkee sen ja palauttaa kohdistuksen kohteeseen.</p>
+<ul>
+<li>Varattu ruutu: kirjaa tulos, kumman tahansa luovutus (forfait), vaihda pöytää, vaihda pöytä toisen kanssa, mitätöi ottelu, kummankin pelaajan historia.</li>
+<li>Vapaa ruutu: ota pöytä pois käytöstä tai palauta se käyttöön (Rencontren pöydät).</li>
+<li>Pelaaja: kirjaa käynnissä olevan ottelun tulos, siirry hänen pöytäänsä, historia, merkitse poissaolevaksi tai läsnä olevaksi, poista nyt tai ottelun jälkeen, ilmoita uudelleen, korjaa kortti.</li>
+<li>Ehdotus: aloita, muodosta pari toisin (käsin parittaminen avautuu molemmilla pelaajilla), ohita toistaiseksi.</li>
+<li>Historian rivi: korjaa tai mitätöi, lisää huomautus, suodata toisen pelaajan mukaan.</li>
+</ul>
+<p>Luovutus, ottelun mitätöinti ja pelaajan poistaminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa.</p>
+<p>Näppäimistöllä jokainen ruudukon ruutu voi saada kohdistuksen, myös vapaat. <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkenttään, ja niin myös <em>X</em>: varatun pöydän valinta vaihtaa kaksi ottelua keskenään.</p>
 <h4>Pelaajat</h4>
 <p><strong>Pelaajat</strong>-välilehti ilmoittaa, korjaa ja poistaa. Ilmoittautumiskenttä säilyttää kohdistuksen ja tyhjenee jokaisen nimen jälkeen: kaksikymmentä pelaajaa ilmoitetaan pelkällä näppäimistöllä. Täydennys tarjoaa tietokannan pelaajia; yhden valitseminen lukitsee sen tarkan kirjoitusasun, jonka hänen ottelunsa kantavat, ja esitäyttää luokituksen hänen PR:llään.</p>
 <p><strong>Hakemisto</strong> kokoaa kaikkien tietokannan johdettujen turnausten osallistujat, nimen mukaan yhdistettyinä, viimeisimmän ilmoittautumisen seuran ja luokituksen kera. Sitä ei koskaan tallenneta: johtamisen poistaminen poistaa siitä sen osallistujat. Aiemman turnauksen osallistujien ottaminen on yksi napsautus, olipa heitä kuinka monta tahansa; hakemisto kopioidaan CSV:nä tai tallennetaan tiedostoon (<strong>Tallenna…</strong>), ja se luetaan takaisin liitettynä.</p>
@@ -1388,6 +1399,34 @@ export default {
 <tr>
 <td>Esc</td>
 <td>Peruuta käynnissä oleva muokkaus, muuten tyhjennä ottelun lisäyshaku, muuten poista turnauksen valinta, muuten sulje paneeli (askel kerrallaan).</td>
+</tr>
+</tbody>
+</table>
+<h3>Johtamissivu</h3>
+<p>Direction-sivulla <em>J</em>, <em>K</em>, <em>YLÖS</em>, <em>ALAS</em> ja <em>ENTER</em> siirtyvät ehdotusjonoon, paitsi kun kohdistus on pöytäruudukon ruudussa, jossa <em>YLÖS</em> ja <em>ALAS</em> vaihtavat ruutua. Kontekstivalikot on kuvattu käsikirjassa (kontekstivalikot).</p>
+<table>
+<thead>
+<tr>
+<th>Oikotie</th>
+<th>Toiminto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Napsautus hiiren oikealla, MENU, SHIFT-F10</td>
+<td>Avaa kohdistetun kohteen kontekstivalikko: pöytäruutu, pelaaja, kaavion paikka, paikka, ehdotus, historian rivi. YLÖS/ALAS liikkuvat valikossa, ENTER valitsee, ESC sulkee sen.</td>
+</tr>
+<tr>
+<td>VASEN, OIKEA, YLÖS, ALAS, HOME, END</td>
+<td>Siirry pöytäruudukon ruudusta toiseen (vapaat ruudut mukaan lukien).</td>
+</tr>
+<tr>
+<td>1–9, sitten 0–9</td>
+<td>Avaa kyseisen numeron pöydän kortti; kaksi numeroa 0,4 sekunnin kuluessa yli 9:n pöydälle.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Varatussa ruudussa avaa kortti pöytäkenttään; varatun pöydän valinta vaihtaa kaksi ottelua keskenään.</td>
 </tr>
 </tbody>
 </table>

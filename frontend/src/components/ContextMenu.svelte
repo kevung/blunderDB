@@ -6,7 +6,7 @@
     /**
      * Reusable context-menu popover.
      *
-     * @typedef {{ label: string, onClick: () => void }} MenuItem
+     * @typedef {{ label: string, onClick: () => void, shortcut?: string, disabled?: boolean }} MenuItem
      *
      * Props:
      *   x       {number}     - Client X pixel where the menu appears
@@ -20,8 +20,14 @@
     let menuEl = $state(null);
 
     onMount(() => {
-        // Focus the first item immediately for keyboard access
-        menuEl?.querySelector('button')?.focus();
+        // Focus the first item immediately for keyboard access; the opener gets the focus back
+        // on close so a keyboard user does not restart from the top of the page.
+        const opener = /** @type {HTMLElement | null} */ (document.activeElement);
+        /** @type {HTMLElement | null | undefined} */ (menuEl?.querySelector('button:not(:disabled)'))?.focus();
+        return () => {
+            const a = document.activeElement;
+            if (opener?.isConnected && (!a || a === document.body || menuEl?.contains(a) || !a.isConnected)) opener.focus();
+        };
     });
 
     // Escape closes the menu before anything else sees it — the panels' tiers,
@@ -30,6 +36,19 @@
 
     /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
+        if (menuEl && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+            const enabled = /** @type {HTMLElement[]} */ ([...menuEl.querySelectorAll('button:not(:disabled)')]);
+            if (enabled.length === 0) return;
+            const at = enabled.indexOf(/** @type {HTMLElement} */ (document.activeElement));
+            let next;
+            if (event.key === 'ArrowDown') next = (at + 1) % enabled.length;
+            else if (event.key === 'ArrowUp') next = (at - 1 + enabled.length) % enabled.length;
+            else next = event.key === 'Home' ? 0 : enabled.length - 1;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            enabled[next].focus();
+            return;
+        }
         if (event.key === 'Tab' && menuEl) {
             // Trap focus inside menu
             const focusable = [...menuEl.querySelectorAll('button')];
@@ -62,7 +81,9 @@
 
 <div bind:this={menuEl} class="context-menu" style="left:{x}px; top:{y}px" role="menu" aria-label={$t('common.contextMenu')}>
     {#each items as item (item.label)}
-        <button class="context-menu-item" role="menuitem" onclick={() => handleItemClick(item)}>{item.label}</button>
+        <button class="context-menu-item" role="menuitem" disabled={item.disabled} onclick={() => handleItemClick(item)}>
+            {item.label}{#if item.shortcut}<kbd>{item.shortcut}</kbd>{/if}
+        </button>
     {/each}
 </div>
 
@@ -95,6 +116,17 @@
     .context-menu-item:focus {
         background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
         outline: none;
+    }
+
+    .context-menu-item:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+    .context-menu-item kbd {
+        float: right;
+        margin-left: 18px;
+        opacity: 0.6;
     }
 
     .context-menu-item:focus-visible {

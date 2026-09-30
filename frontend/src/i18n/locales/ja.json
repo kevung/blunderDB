@@ -2292,6 +2292,32 @@
             "pending": "{n}件 保留中",
             "running": "{n}件 進行中",
             "alert": "警告"
+        },
+        "menu": {
+            "enterResult": "結果を入力",
+            "correctResult": "結果を訂正",
+            "forfeitOf": "{name} の棄権",
+            "moveTable": "テーブルを変更…",
+            "cancelMatch": "この対局を取り消す",
+            "historyOf": "{name} の履歴",
+            "outOfService": "テーブルを使用停止にする",
+            "backInService": "テーブルを使用再開にする",
+            "goToTable": "テーブル {n} へ移動",
+            "absent": "欠席にする",
+            "present": "出席にする",
+            "withdrawNow": "今すぐ棄権させる",
+            "withdrawLater": "対局後に棄権させる",
+            "reinstate": "再登録",
+            "correctPlayer": "情報を訂正",
+            "launch": "開始",
+            "ignore": "今回は無視",
+            "arrangeOther": "別の組み合わせにする",
+            "addNote": "メモを追加",
+            "filterOn": "{name} で絞り込む",
+            "openMatch": "関連付けた対局を開く",
+            "detach": "対局の関連付けを外す",
+            "transcribe": "対局を書き起こす",
+            "swapTable": "テーブルと入れ替える…"
         }
     },
     "palette": {

@@ -2292,6 +2292,32 @@
             "pending": "{n} en attente",
             "running": "{n} en cours",
             "alert": "Alerte"
+        },
+        "menu": {
+            "enterResult": "Saisir le résultat",
+            "correctResult": "Corriger le résultat",
+            "forfeitOf": "Forfait de {name}",
+            "moveTable": "Changer de table…",
+            "cancelMatch": "Annuler ce match",
+            "historyOf": "Historique de {name}",
+            "outOfService": "Mettre la table hors service",
+            "backInService": "Remettre la table en service",
+            "goToTable": "Aller à la table {n}",
+            "absent": "Marquer absent",
+            "present": "Marquer présent",
+            "withdrawNow": "Retirer maintenant",
+            "withdrawLater": "Retirer après son match",
+            "reinstate": "Réinscrire",
+            "correctPlayer": "Corriger la fiche",
+            "launch": "Lancer",
+            "ignore": "Ignorer pour l’instant",
+            "arrangeOther": "Apparier autrement",
+            "addNote": "Ajouter une remarque",
+            "filterOn": "Filtrer sur {name}",
+            "openMatch": "Ouvrir le match rattaché",
+            "detach": "Détacher le match",
+            "transcribe": "Transcrire le match",
+            "swapTable": "Échanger avec la table…"
         }
     },
     "palette": {

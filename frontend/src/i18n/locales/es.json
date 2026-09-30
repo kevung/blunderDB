@@ -2292,6 +2292,32 @@
             "pending": "{n} pendientes",
             "running": "{n} en curso",
             "alert": "Alerta"
+        },
+        "menu": {
+            "enterResult": "Introducir el resultado",
+            "correctResult": "Corregir el resultado",
+            "forfeitOf": "Abandono de {name}",
+            "moveTable": "Cambiar de mesa…",
+            "cancelMatch": "Anular este partido",
+            "historyOf": "Historial de {name}",
+            "outOfService": "Poner la mesa fuera de servicio",
+            "backInService": "Volver a poner la mesa en servicio",
+            "goToTable": "Ir a la mesa {n}",
+            "absent": "Marcar ausente",
+            "present": "Marcar presente",
+            "withdrawNow": "Retirar ahora",
+            "withdrawLater": "Retirar tras su partido",
+            "reinstate": "Volver a inscribir",
+            "correctPlayer": "Corregir la ficha",
+            "launch": "Iniciar",
+            "ignore": "Ignorar por ahora",
+            "arrangeOther": "Emparejar de otro modo",
+            "addNote": "Añadir una nota",
+            "filterOn": "Filtrar por {name}",
+            "openMatch": "Abrir el partido vinculado",
+            "detach": "Desvincular el partido",
+            "transcribe": "Transcribir el partido",
+            "swapTable": "Intercambiar con la mesa…"
         }
     },
     "palette": {

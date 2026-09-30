@@ -352,6 +352,17 @@ export default {
 <p>A click on a busy table opens the match's card. It shows two large targets: the <strong>names of the two players</strong>. Clicking the one who won records the result — two clicks in all, table included. The winner is the only thing required; the score is free, either one, both or neither. On the keyboard, <em>LEFT</em> or <em>RIGHT</em> picks the winner and <em>ENTER</em> records it. The card closes only once the result is written: a failure leaves it open, with its message.</p>
 <p>The <strong>⋯</strong> button on the card unfolds what is rarely needed: the forfeit — each button names the absent player and the one who wins —, a free remark (“lost on time”, “abandoned because of…”), moving the match to another table, and cancelling it. The forfeit and the cancellation are confirmed. Moved to a busy table, the match swaps its table with the one who occupies it: two matches never share a table, and the same gesture puts them back. If an old log left two on one table, the grid shows both cells, flagged, until one of them is moved.</p>
 <p>A typing mistake seen at once is taken back in two clicks below the grid: <strong>Correct</strong> the last decision, then the right winner (<em>CTRL-Z</em> opens the same take-back). An older correction is made from the history.</p>
+<h4>The context menus</h4>
+<p>A right click, the <em>MENU</em> key or <em>SHIFT-F10</em> on an object of the Direction page opens its usual actions without going through the card: a cell of the grid (free or busy), a player (<strong>Players</strong> tab, free players), a bracket slot, a slot, a proposal of the queue, a history row. The menu opens on the object; <em>UP</em> and <em>DOWN</em> move through it, <em>ENTER</em> picks, <em>ESC</em> closes it and returns the focus to the object.</p>
+<ul>
+<li>Busy cell: enter the result, forfeit by either player, change table, swap with the table, cancel the match, history of each player.</li>
+<li>Free cell: take the table out of service, or put it back in service (tables of a Rencontre).</li>
+<li>Player: enter the result of their current match, go to their table, history, mark absent or present, withdraw now or after their match, re-register, correct the card.</li>
+<li>Proposal: launch, pair otherwise (pairing by hand opens with the two players), ignore for now.</li>
+<li>History row: correct or cancel, add a remark, filter on one of the players.</li>
+</ul>
+<p>The forfeit, the cancellation of a match and the withdrawal of a player keep the confirmation they have in the card and in the row buttons.</p>
+<p>On the keyboard, every cell of the grid can take the focus, free ones included. <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, the second digit is typed within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>: aiming at a busy table swaps the two matches.</p>
 <h4>The players</h4>
 <p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
 <p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
@@ -1388,6 +1399,34 @@ export default {
 <tr>
 <td>Esc</td>
 <td>Cancel the current edit, otherwise clear the add-match search, otherwise deselect the tournament, otherwise close the panel (one step at a time).</td>
+</tr>
+</tbody>
+</table>
+<h3>Direction page</h3>
+<p>Under the Direction page, <em>J</em>, <em>K</em>, <em>UP</em>, <em>DOWN</em> and <em>ENTER</em> go to the proposal queue, except when the focus is on a cell of the table grid, where <em>UP</em> and <em>DOWN</em> change cell. The context menus are described in the manual (context menus).</p>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Right-click, MENU, SHIFT-F10</td>
+<td>Open the context menu of the focused object: table cell, player, bracket slot, slot, proposal, history row. UP/DOWN move through the menu, ENTER picks, ESC closes it.</td>
+</tr>
+<tr>
+<td>LEFT, RIGHT, UP, DOWN, HOME, END</td>
+<td>Move from one cell of the table grid to another (free cells included).</td>
+</tr>
+<tr>
+<td>1 to 9, then 0 to 9</td>
+<td>Open the card of the table with that number; two digits, within 0.4 s, for a table beyond 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>On a busy cell, open the card on the table field; aiming at a busy table swaps the two matches.</td>
 </tr>
 </tbody>
 </table>

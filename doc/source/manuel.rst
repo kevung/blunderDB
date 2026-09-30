@@ -1558,6 +1558,39 @@ Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille :
 reprise). Une correction plus ancienne se fait depuis l':ref:`historique
 <direction_historique>`.
 
+.. _direction_menus:
+
+Les menus contextuels
+~~~~~~~~~~~~~~~~~~~~~
+
+Un clic droit, la touche *MENU* ou *MAJ-F10* sur un objet de la page Direction
+ouvre ses actions courantes sans passer par la fiche : une case de la grille
+(libre ou occupée), un joueur (onglet **Joueurs**, joueurs libres), une place de
+l'arbre, un emplacement, une proposition de la file, une ligne de l'historique.
+Le menu s'ouvre sur l'objet ; *HAUT* et *BAS* le parcourent, *ENTRÉE* choisit,
+*ÉCHAP* le ferme et rend le focus à l'objet.
+
+- Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de
+  table, échanger avec la table, annuler le match, historique de chaque joueur.
+- Case libre : mettre la table hors service, ou la remettre en service (tables
+  d'une Rencontre).
+- Joueur : saisir le résultat de son match en cours, aller à sa table,
+  historique, marquer absent ou présent, retirer maintenant ou après son match,
+  réinscrire, corriger la fiche.
+- Proposition : lancer, apparier autrement (l'appariement à la main s'ouvre avec
+  les deux joueurs), ignorer pour l'instant.
+- Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer sur un
+  des joueurs.
+
+Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la
+confirmation qu'ils ont dans la fiche et dans les boutons des lignes.
+
+Au clavier, chaque case de la grille se focalise, libre comprise. *GAUCHE*,
+*DROITE*, *HAUT*, *BAS*, *DÉBUT* et *FIN* passent d'une case à l'autre. Un
+chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9,
+le second chiffre se tape dans les 0,4 s. *M* ouvre la fiche sur le champ de
+table, et *X* aussi : viser une table occupée échange les deux matchs.
+
 Les joueurs
 ~~~~~~~~~~~
 
