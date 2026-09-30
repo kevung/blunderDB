@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -58,7 +59,7 @@ func (d *Database) WriteDirectionPage(tournamentID int64) (string, error) {
 		return "", nil
 	}
 	cat, lang := d.directionStrings()
-	page, err := dir.Page(cat, lang, time.Now())
+	page, err := d.directionPage(dir, tournamentID, cat, lang)
 	if err != nil {
 		return "", err
 	}
@@ -73,7 +74,20 @@ func (d *Database) DirectionPageHTML(tournamentID int64) (string, error) {
 		return "", err
 	}
 	cat, lang := d.directionStrings()
-	return dir.Page(cat, lang, time.Now())
+	return d.directionPage(dir, tournamentID, cat, lang)
+}
+
+// directionPage renders the display page, with the event's bracket in rotation when it has one.
+func (d *Database) directionPage(dir *direction.Direction, tournamentID int64, cat *direction.Catalog, lang string) (string, error) {
+	page, err := dir.Page(cat, lang, time.Now())
+	if err != nil {
+		return "", err
+	}
+	name := fmt.Sprintf("#%d", tournamentID)
+	if t, err := d.store.Tournaments().Get(context.Background(), "", tournamentID); err == nil && t.Name != "" {
+		name = t.Name
+	}
+	return direction.WithBracketView(page, d.wallBracket(tournamentID, name), cat), nil
 }
 
 // The printable pairing sheet: the display page's plumbing, plus a print instruction that opens

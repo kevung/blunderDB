@@ -300,3 +300,48 @@ func livesRows(st *tournoi.State, ph *tournoi.PhaseState) []LivesRow {
 	}
 	return rows
 }
+
+// wallBracket is the bracket a wall page shows for a Direction: its current phase when that is an
+// elimination phase already drawn. A Swiss phase, a pool, a playoff or a phase not yet drawn has
+// no tree to show, and nothing is returned.
+func (d *Database) wallBracket(tournamentID int64, event string) *direction.WallBracket {
+	phases, err := d.Brackets(tournamentID)
+	if err != nil {
+		return nil
+	}
+	for _, ph := range phases {
+		if !ph.Current || !ph.Drawn {
+			continue
+		}
+		br := direction.WallBracket{Event: event}
+		for _, sec := range ph.Sections {
+			if sec.Kind == "poule" || sec.Kind == "barrage" || sec.Rounds == 0 || len(sec.Matches) == 0 {
+				continue
+			}
+			ws := direction.WallBracketSection{Name: sec.Name}
+			for _, m := range sec.Matches {
+				wm := direction.WallBracketMatch{
+					Key: m.Key, Label: m.Label, Length: m.Length, Round: m.Round,
+					AName: m.AName, BName: m.BName, ScoreA: m.ScoreA, ScoreB: m.ScoreB,
+					Done: m.Done, Running: m.Running, Skipped: m.Skipped,
+				}
+				switch {
+				case m.Winner == "":
+				case m.Winner == m.A:
+					wm.Winner = 1
+				case m.Winner == m.B:
+					wm.Winner = 2
+				}
+				for _, f := range m.Feeds {
+					wm.Feeds = append(wm.Feeds, direction.WallBracketFeed{Side: f.Side, Section: f.Section, Key: f.Key, Loser: f.Loser})
+				}
+				ws.Matches = append(ws.Matches, wm)
+			}
+			br.Sections = append(br.Sections, ws)
+		}
+		if len(br.Sections) > 0 {
+			return &br
+		}
+	}
+	return nil
+}

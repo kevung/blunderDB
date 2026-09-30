@@ -138,6 +138,7 @@ func (d *Database) RencontrePageHTML(id int64) (string, error) {
 	roomRead := false
 	occupied := map[int]direction.WallTable{}
 	events := make([]direction.WallEvent, 0, len(r.TournamentIDs))
+	var brackets []direction.WallBracket
 	for _, tid := range r.TournamentIDs {
 		name := fmt.Sprintf("#%d", tid)
 		if t, err := d.store.Tournaments().Get(ctx, "", tid); err == nil && t.Name != "" {
@@ -154,6 +155,9 @@ func (d *Database) RencontrePageHTML(id int64) (string, error) {
 			roomRead = true
 		}
 		events = append(events, direction.WallEvent{Name: name, Slug: slugs[tid], Rounds: dir.Rounds()})
+		if br := d.wallBracket(tid, name); br != nil {
+			brackets = append(brackets, *br)
+		}
 		if st := dir.State(); st != nil {
 			for _, m := range st.Running() {
 				if m.Table <= 0 {
@@ -175,7 +179,7 @@ func (d *Database) RencontrePageHTML(id int64) (string, error) {
 		tables = append(tables, direction.WallTable{Number: t, Unavailable: slices.Contains(room.Unavailable, t)})
 	}
 	cat, lang := d.directionStrings()
-	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events}, cat, lang), nil
+	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events, Brackets: brackets}, cat, lang), nil
 }
 
 // WriteRencontrePage rewrites the wall page and returns the file written. It writes nothing, and
