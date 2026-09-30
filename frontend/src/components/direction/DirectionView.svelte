@@ -124,7 +124,9 @@
     let tab = $state('settings');
     let tabChosen = false;
     $effect(() => {
-        if (tabChosen) return;
+        // Tant que la Direction n'est pas chargée, son état n'est pas « brouillon » : il est
+        // inconnu, et choisir sur lui ouvrirait les Réglages d'un tournoi en cours.
+        if (tabChosen || !view) return;
         if (directionState !== 'draft') tab = 'direction';
         tabChosen = true;
     });
@@ -226,48 +228,53 @@
     });
 
     /**
+     * Rend `false` sur un échec, pour qu'une fiche ouverte le dise au lieu de se fermer.
+     *
      * @param {() => Promise<unknown>} fn
      * @param {string} key
+     * @returns {Promise<boolean>}
      */
     async function act(fn, key) {
         busy = true;
         try {
             await fn();
+            return true;
         } catch (e) {
             logger.error('direction: ' + key, e);
             statusBarTextStore.set(tMsg(key));
+            return false;
         } finally {
             busy = false;
         }
     }
 
-    /** @type {(m: string, w: string, a: number, b: number, note: string) => Promise<void>} */
+    /** @type {(m: string, w: string, a: number, b: number, note: string) => Promise<boolean>} */
     const onResult = (m, w, a, b, note) => act(() => enterResult(m, w, a, b, note), 'direction.result.error');
-    /** @type {(m: string, w: string, note: string) => Promise<void>} */
+    /** @type {(m: string, w: string, note: string) => Promise<boolean>} */
     const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
-    /** @type {(m: string, table: number) => Promise<void>} */
+    /** @type {(m: string, table: number) => Promise<boolean>} */
     const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
-    /** @type {(m: string) => Promise<void>} */
+    /** @type {(m: string) => Promise<boolean>} */
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
-    /** @type {(m: string, w: string, a: number, b: number) => Promise<void>} */
+    /** @type {(m: string, w: string, a: number, b: number) => Promise<boolean>} */
     const onCorrect = (m, w, a, b) => act(() => correctResult(m, w, a, b, ''), 'direction.result.error');
-    /** @type {(n: string, c: string, r: number) => Promise<void>} */
+    /** @type {(n: string, c: string, r: number) => Promise<boolean>} */
     const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
-    /** @type {(n: string, c: string, r: number, section: string, key: string) => Promise<void>} */
+    /** @type {(n: string, c: string, r: number, section: string, key: string) => Promise<boolean>} */
     const onAddAtSlot = (n, c, r, section, key) => act(() => addParticipantAtSlot(n, c, r, section, key), 'direction.players.error');
-    /** @type {(i: string, n: string, c: string, r: number) => Promise<void>} */
+    /** @type {(i: string, n: string, c: string, r: number) => Promise<boolean>} */
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
-    /** @type {(m: {name: string, club: string, rating: number}[], r: number) => Promise<void>} */
+    /** @type {(m: {name: string, club: string, rating: number}[], r: number) => Promise<boolean>} */
     const onAddPair = (m, r) => act(() => addPair(m, r), 'direction.players.error');
-    /** @type {(i: string, m: {name: string, club: string, rating: number}[], r: number) => Promise<void>} */
+    /** @type {(i: string, m: {name: string, club: string, rating: number}[], r: number) => Promise<boolean>} */
     const onUpdatePair = (i, m, r) => act(() => updatePair(i, m, r), 'direction.players.error');
-    /** @type {(i: string, after: boolean) => Promise<void>} */
+    /** @type {(i: string, after: boolean) => Promise<boolean>} */
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
-    /** @type {(i: string) => Promise<void>} */
+    /** @type {(i: string) => Promise<boolean>} */
     const onReinstate = (i) => act(() => reinstateParticipant(i), 'direction.players.error');
-    /** @type {(i: string, until: string, round: number) => Promise<void>} */
+    /** @type {(i: string, until: string, round: number) => Promise<boolean>} */
     const onAbsent = (i, until, round) => act(() => makeParticipantAbsent(i, until, round), 'direction.players.error');
-    /** @type {(i: string) => Promise<void>} */
+    /** @type {(i: string) => Promise<boolean>} */
     const onReturn = (i) => act(() => makeParticipantAvailable(i), 'direction.players.error');
 
     const onClose = () => act(() => finishTournament(), 'direction.standings.error');
@@ -337,14 +344,14 @@
         }
         BrowserOpenURL('file://' + path);
     }
-    /** @type {(slot: string, matchId: number) => Promise<void>} */
+    /** @type {(slot: string, matchId: number) => Promise<boolean>} */
     const onAttach = (slot, matchId) =>
         act(async () => {
             await attachMatchToSlot(slot, matchId);
             slotRows = await slots();
             unattached = await unattachedMatches();
         }, 'direction.slots.error');
-    /** @type {(slot: string) => Promise<void>} */
+    /** @type {(slot: string) => Promise<boolean>} */
     const onDetach = (slot) =>
         act(async () => {
             await detachMatchFromSlot(slot);
@@ -385,12 +392,9 @@
         }
     }
 
-    /* Une place de l'arbre ramène à la page Direction : la seule fiche de résultat. */
-    /** @param {{ matchId?: string }} m */
-    function openBracketMatch(m) {
-        if (!m.matchId) return;
-        tab = 'direction';
-    }
+    /* L'arbre a une place ouverte sur une fiche dès qu'une phase a un graphe en cours : la
+       pastille de l'onglet, pour le voir sans aller le chercher. */
+    const bracketLive = $derived(phases.some((p) => p.current && p.sections.some((s) => s.kind !== 'barrage' && s.matches.length > 0)));
 
     /** @param {string | undefined} id */
     function playerName(id) {
@@ -472,7 +476,9 @@
         <span class="state">{$t(`direction.state.${directionState}`)}</span>
         <nav>
             {#each tabs as item (item.id)}
-                <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}>{$t(item.labelKey)}</button>
+                <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}
+                    >{$t(item.labelKey)}{#if item.id === 'brackets' && bracketLive}<span class="tab-dot" data-testid="brackets-dot" title={$t('direction.bracket.live')}>●</span>{/if}</button
+                >
             {/each}
         </nav>
         <span class="spacer"></span>
@@ -585,7 +591,7 @@
         {:else if tab === 'history'}
             <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
         {:else if tab === 'brackets'}
-            <BracketsView {phases} onOpenMatch={openBracketMatch} />
+            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
         {:else if tab === 'players'}
             <DirectoryPanel
                 sources={dirSources}
@@ -694,6 +700,12 @@
         border-radius: var(--radius);
         background: var(--color-border);
         color: var(--color-text);
+    }
+
+    .tab-dot {
+        margin-left: 0.3em;
+        font-size: var(--font-size-small);
+        color: var(--color-primary);
     }
 
     .badge.warning {

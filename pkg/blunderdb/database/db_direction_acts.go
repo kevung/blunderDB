@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -94,31 +95,37 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // length and the table the director chose.
 //
 // A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
-// (unknown player, already playing, against themselves).
+// (unknown player, already playing, against themselves) — and a table another match is
+// played on, which would hide that match.
 func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	// The occupancy check and the write share one transaction: checked outside it, two
+	// directors could both see the table free and both start a match on it.
+	err := d.directionTx(func(ctx context.Context, _ *sql.Tx, store direction.Store) error {
+		dir, err := direction.Open(ctx, store, tournamentID)
+		if err != nil {
+			return err
+		}
+		st := dir.State()
+		if st == nil {
+			return fmt.Errorf("direction: the tournament has not started")
+		}
+		if length <= 0 {
+			length = st.Phases[st.Current].Length
+		}
+		if table <= 0 {
+			// No number typed: the first free table, as a proposal would get. With none left the
+			// match still starts, under the grid's "no table" cell.
+			table = firstFreeTable(st, "", st.Current)
+		} else if occupant(st, table, "") != nil {
+			return fmt.Errorf("direction: table %d is taken", table)
+		}
+		return confirm(ctx, dir, tournoi.Action{
+			Kind: tournoi.ActStartMatch, Phase: st.Current,
+			A: tournoi.PlayerID(a), B: tournoi.PlayerID(b),
+			Length: length, Table: table,
+		})
+	})
 	if err != nil {
-		return nil, err
-	}
-	st := dir.State()
-	if st == nil {
-		return nil, fmt.Errorf("direction: the tournament has not started")
-	}
-	if length <= 0 {
-		length = st.Phases[st.Current].Length
-	}
-	if table <= 0 {
-		// No number typed: the first free table, as a proposal would get. With none left the
-		// match still starts, under the grid's "no table" cell.
-		table = firstFreeTable(st, "", st.Current)
-	}
-	act := tournoi.Action{
-		Kind: tournoi.ActStartMatch, Phase: st.Current,
-		A: tournoi.PlayerID(a), B: tournoi.PlayerID(b),
-		Length: length, Table: table,
-	}
-	if err := confirm(ctx, dir, act); err != nil {
 		return nil, err
 	}
 	return d.GetDirection(tournamentID)

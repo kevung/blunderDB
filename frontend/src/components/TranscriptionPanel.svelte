@@ -67,6 +67,7 @@
         transcriptionBoardSwapStore,
         setTranscription,
         clearTranscription,
+        transcriptionLibrary,
         resetTranscriptionKeys,
         noticeTranscription,
         clearTranscriptionNotice
@@ -79,7 +80,7 @@
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
-    import { saveDraft, exportDraftMat, closeDraft, draftSaveState, savedMatchID, transcriptionSaveStore, resetTranscriptionSave } from '../services/transcriptionSave.js';
+    import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
 
     // Mirrors Go's transcript.DefaultMatchLength: the form shows it before any call.
@@ -203,21 +204,36 @@
         }
     }
 
-    // Back to the list; the draft stays open Go-side (deleting it is handleClose).
+    // Back to the list; the draft stays, resumable from it (it leaves only by Terminer or Abandonner).
     function backToList() {
         clearTranscription();
         refresh();
     }
 
-    // Enregistrer, exporter, fermer. `busy` verrouille : un second Ctrl+Entrée
-    // relancerait la réécriture du match entier.
+    // Terminer, exporter, abandonner. `busy` verrouille : un second Ctrl+Entrée
+    // relancerait l'écriture du match entier.
 
-    async function handleSave() {
+    /**
+     * Le brouillon une fois servis les gestes déjà tapés, ou null s'il a été
+     * quitté entre-temps : terminer, exporter ou abandonner part de ce que
+     * l'utilisateur a écrit, jamais d'un document en retard d'une frappe.
+     */
+    async function settledDraft() {
+        const id = draft?.id;
+        const library = transcriptionLibrary();
+        await pending;
+        return draft && draft.id === id && transcriptionLibrary() === library ? draft : null;
+    }
+
+    // Terminer libère le brouillon : le panneau revient à la liste.
+    async function handleFinish() {
         if (busy || !draft) return;
         busy = true;
         try {
-            if (await saveDraft(draft)) {
+            const current = await settledDraft();
+            if (current && (await finishDraft(current))) {
                 error = '';
+                clearTranscription();
                 await refresh();
             }
         } finally {
@@ -229,19 +245,20 @@
         if (busy || !draft) return;
         busy = true;
         try {
-            await exportDraftMat(draft);
+            const current = await settledDraft();
+            if (current) await exportDraftMat(current);
         } finally {
             busy = false;
         }
     }
 
-    async function handleClose() {
+    async function handleAbandon() {
         if (busy || !draft) return;
         busy = true;
         try {
-            if (await closeDraft(draft)) {
+            const current = await settledDraft();
+            if (current && (await abandonDraft(current))) {
                 clearTranscription();
-                resetTranscriptionSave();
                 await refresh();
             }
         } finally {
@@ -249,20 +266,9 @@
         }
     }
 
-    // Horloge qui fait vieillir « enregistré il y a 3 min ».
-    let nowTick = $state(Date.now());
-    $effect(() => {
-        if (!draft) return;
-        const handle = setInterval(() => (nowTick = Date.now()), 30000);
-        return () => clearInterval(handle);
-    });
-
-    let saveState = $derived(draftSaveState(draft, $transcriptionSaveStore, nowTick));
-
-    // Le bouton nomme le Match, pas « Enregistrer » : le brouillon s'écrit à
-    // chaque Action (ADR-0048 décision 12).
-    let savedMatchId = $derived(savedMatchID(annotated) || ($transcriptionSaveStore && $transcriptionSaveStore.id === draft?.id ? $transcriptionSaveStore.matchId : 0));
-    let saveLabel = $derived(savedMatchId ? $t('transcription.updateMatch', { id: savedMatchId }) : $t('transcription.createMatch'));
+    // Ce que Terminer fera : créer un Match, ou remplacer celui dont le
+    // brouillon a été ouvert.
+    let exitState = $derived(draftState(draft));
 
     // Each command becomes one gesture, sent in order through one promise chain
     // (never a bare `await` per handler) so keystrokes' round trips never interleave.
@@ -348,10 +354,17 @@
         if (!gestures.length) return pending;
         const id = draft?.id;
         if (id == null) return pending;
+        const library = transcriptionLibrary();
+        const stillOurs = () => draft?.id === id && transcriptionLibrary() === library;
         pending = pending
             .then(async () => {
                 for (const gesture of gestures) {
-                    setTranscription(await ApplyTranscriptionGesture(id, gesture));
+                    // Le brouillon a changé (un autre ouvert, la base changée) :
+                    // ni la suite des gestes ni la réponse ne sont les siennes.
+                    if (!stillOurs()) return;
+                    const next = await ApplyTranscriptionGesture(id, gesture);
+                    if (!stillOurs()) return;
+                    setTranscription(next);
                 }
                 error = '';
             })
@@ -781,7 +794,7 @@
             if (!panelEl?.contains(document.activeElement)) return;
             event.preventDefault();
             event.stopPropagation();
-            handleSave();
+            handleFinish();
             return;
         }
         if (panelKeyGuard(event)) return;
@@ -1423,7 +1436,7 @@
                  et l'annulation à la souris (ADR-0048 décisions 2, 3 et 11). -->
             <div class="draft-bar">
                 <button class="new-btn" onclick={backToList}>{$t('transcription.backToList')}</button>
-                <span class="save-state">{$t(saveState.key, saveState.params)}</span>
+                <span class="save-state">{$t(exitState.key, exitState.params)}</span>
                 <span class="bar-gap"></span>
                 <button
                     class="icon-btn"
@@ -1438,8 +1451,8 @@
                 <button class="new-btn" onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}>{$t('transcription.metadata')}</button>
                 <button class="new-btn" onclick={() => (matOpen = true)} title={$t('transcription.matModalTooltip')}>{$t('transcription.matModal')}</button>
                 <button class="new-btn" onclick={handleExport} disabled={busy} title={$t('transcription.exportMatTooltip')}>{$t('transcription.exportMat')}</button>
-                <button class="primary-btn" onclick={handleSave} disabled={busy} title={$t('transcription.saveTooltip')}>{saveLabel}</button>
-                <button class="danger-btn" onclick={handleClose} disabled={busy} title={$t('transcription.closeDraftTooltip')}>{$t('transcription.closeDraft')}</button>
+                <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
+                <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
             </div>
 
             {#if metaOpen}

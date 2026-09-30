@@ -56,6 +56,18 @@ jobs:
           - { pkg: ./pkg/blunderdb/ingest, target: FuzzBGFApplyCheckerMove }
           - { pkg: ./pkg/blunderdb/engine/gammonnet, target: FuzzLoadBGNN }
           - { pkg: ./pkg/blunderdb/engine/gammonnet, target: FuzzDecide }
+          - { pkg: ./pkg/blunderdb/domain, target: FuzzDecodeOGID }
+          - { pkg: ./pkg/blunderdb/searchquery, target: FuzzParse }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzImportGnuBGMAT }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzImportGnuBGSGF }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzImportXG }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzImportBGF }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzImportPosition }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzMATExportRoundTrip }
+          - { pkg: ./internal/server, target: FuzzRPC }
+          - { pkg: ./internal/server, target: FuzzRunCall }
+          - { pkg: ./pkg/blunderdb/transcript, target: FuzzTranscriptGestures }
+          - { pkg: ./pkg/blunderdb/database, target: FuzzTranscriptionSession }
     name: ${{ matrix.target }}
     steps:
       - name: Checkout
@@ -104,12 +116,19 @@ jobs:
       # that is the only condition that should fail this job. A timeout or a
       # worker hiccup with no crash artifact is not a bug and must stay green,
       # or the workflow goes back to being permanently (and uselessly) red.
+      # Only an UNTRACKED input counts: the committed ones are regression
+      # seeds. The directory is searched module-wide because a package whose
+      # TestMain changes directory (searchquery moves to the repository root)
+      # has its inputs written relative to that directory, not to the package.
       - name: Evaluate fuzz result
         run: |
           set -u
-          crash_dir="${{ matrix.pkg }}/testdata/fuzz/${{ matrix.target }}"
-          if [ -d "$crash_dir" ] && [ -n "$(ls -A "$crash_dir" 2>/dev/null)" ]; then
-            echo "::error::Crash artifact found in $crash_dir — a real failure was found by fuzzing."
+          new=$(git ls-files --others --exclude-standard | grep -E "(^|/)testdata/fuzz/${{ matrix.target }}/" || true)
+          if [ -n "$new" ]; then
+            echo "::error::Crash artifact found — a real failure was found by fuzzing:"
+            echo "$new"
+            mkdir -p crash
+            echo "$new" | xargs -I{} cp {} crash/
             exit 1
           fi
           if [ "${{ steps.fuzz.outcome }}" = "success" ]; then
@@ -124,7 +143,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: fuzz-crash-${{ matrix.target }}
-          path: ${{ matrix.pkg }}/testdata/fuzz/${{ matrix.target }}/
+          path: crash/
           if-no-files-found: ignore
 
   # The search-parity gate of #121, gated behind BLUNDERDB_GOLD so it never

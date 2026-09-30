@@ -67,10 +67,10 @@ s'intercale verticalement entre les cases du jet et la première ligne de candid
     au-dessus de la liste et du plateau (`TRANSCRIBE` exclu de `handleWheel`) ; double-clic
     sur un candidat = valider ; boutons `↶ ↷` dans la barre du brouillon ; clic sur les cases
     du jet = les effacer.
-12. **Le bouton et la pastille nomment le Match, non le salut du brouillon** (écrit à chaque
-    geste, ADR-0045 règle 1) : « Créer le match », puis « Mettre à jour le match #N » ; pastille
-    « aucun match » / « match #N à jour » / « match #N en retard sur le brouillon ». Aucune
-    phrase sur la sûreté du brouillon.
+12. **Les boutons nomment la sortie, non le salut du brouillon** (écrit à chaque geste,
+    ADR-0045 règle 1) : « Terminer » (enregistre le Match et libère le brouillon) et
+    « Abandonner », seules sorties (ADR-0045 règle 2). Ni « Créer le match », ni « Mettre à
+    jour le match », ni « Fermer le brouillon ». Aucune phrase sur la sûreté du brouillon.
 13. **Le contrat est mesuré en pixels** à deux tailles : dock bas au plancher de l'onglet
     (viewport 1280×800) et dock latéral 420 px. Assertions : `.tab-content` ne défile pas ;
     cinq lignes de candidats entièrement dans le rectangle visible (`boundingBox`, pas

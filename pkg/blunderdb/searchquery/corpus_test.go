@@ -302,3 +302,16 @@ func TestCorpusCoversEveryToken(t *testing.T) {
 		}
 	}
 }
+
+// A saved search written with a tag that holds an apostrophe stays readable:
+// the tag vocabulary accepts what a comment carries, `#l'ouverture` included.
+func TestSavedSearchWithApostropheTagStaysValid(t *testing.T) {
+	const saved = "s cube #l'ouverture"
+	f, diags := Parse(saved)
+	if len(diags) != 0 || f.TagFilter != "#l'ouverture" || !f.IncludeCube {
+		t.Fatalf("Parse(%q) = tag %q cube %v diags %v", saved, f.TagFilter, f.IncludeCube, diags)
+	}
+	if got := Format(f); got != "s cube #l'ouverture" {
+		t.Fatalf("Format = %q", got)
+	}
+}

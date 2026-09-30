@@ -572,7 +572,9 @@
         "tournamentCleared": "Torneo eliminado de la partida",
         "tournamentSet": "Torneo \"{name}\" asignado",
         "confirmDelete": "¿Eliminar la partida entre {player1} y {player2}?",
-        "enrichFromFile": "Enriquecer desde un fichero…"
+        "enrichFromFile": "Enriquecer desde un fichero…",
+        "editTranscription": "Editar la transcripción",
+        "editTranscriptionTooltip": "Abrir este match como borrador de transcripción; terminarlo reemplaza el match"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -1096,6 +1098,7 @@
         "transcriberLabel": "Transcriptor",
         "tournamentLabel": "Torneo",
         "tournamentNone": "Ninguno",
+        "tournamentUnknown": "Ningún torneo se llama «{name}»: el torneo del borrador no cambia.",
         "swapPlayers": "Invertir los jugadores",
         "swapPlayersTooltip": "Intercambiar los dos jugadores: los nombres, los bandos y el tablero",
         "boardSwap": "Girar el tablero",
@@ -1156,26 +1159,16 @@
         "correcting": "Corrección en el sitio: la validación reemplaza la acción y el cursor vuelve donde estaba.",
         "reviewHint": "Jugada por revisar: la jugada registrada no es una jugada de esta tirada, se propone el primer candidato.",
         "inconsistencyPrefix": "Incoherencia:",
-        "saveTooltip": "Guardar el borrador como partido (Ctrl+Intro)",
         "exportMat": "Exportar .mat",
         "exportMatTooltip": "Escribir el partido en un archivo .mat",
-        "closeDraft": "Cerrar el borrador",
-        "closeDraftTooltip": "Eliminar el borrador; un partido ya guardado permanece",
-        "saveInconsistentWarning": "Este borrador contiene incoherencias. Se conservan tal cual en el partido guardado. ¿Guardar de todos modos?",
-        "saveAnyway": "Guardar de todos modos",
         "illegalExportWarning": "Este borrador contiene una jugada ilegal. gnubg y XG la señalarán («Invalid move») y divergirán después. ¿Exportar de todos modos?",
         "exportAnyway": "Exportar de todos modos",
-        "closeUnsavedConfirm": "Este borrador nunca se ha guardado: cerrarlo pierde todo lo escrito. ¿Cerrar?",
-        "closeSavedConfirm": "El borrador se eliminará; el partido n.º {id} permanece en la biblioteca, definitivo. ¿Cerrar?",
-        "savedMatch": "Partido n.º {id} guardado.",
+        "savedMatch": "Match #{id} creado.",
         "replacedMatch": "Partido n.º {id} reemplazado.",
         "resumeAnalysis": "Análisis interrumpido: quedan {n} posición(es) por analizar del último partido transcrito.",
         "resumeAnalysisFinish": "Terminar",
-        "saveFailed": "Error al guardar: {error}",
         "exported": "Partido exportado a .mat.",
         "exportFailed": "Error al exportar: {error}",
-        "closed": "Borrador cerrado.",
-        "closeFailed": "Error al cerrar: {error}",
         "inconsistency": {
             "illegal_move": "jugada ilegal",
             "double_turn": "doble turno",
@@ -1185,14 +1178,7 @@
             "unrecorded_move": "jugada no registrada",
             "score_mismatch": "marcador anunciado incoherente"
         },
-        "stateNoMatch": "no match",
-        "stateMatchUpToDate": "match #{id}",
-        "stateMatchBehind": "match #{id} behind the draft",
-        "stateMatchJustUpdated": "match up to date",
-        "stateMatchMinutes": "match up to date {n} min ago",
-        "stateMatchHours": "match up to date {n} h ago",
-        "createMatch": "Create the match",
-        "updateMatch": "Update match #{id}",
+        "stateNoMatch": "match nuevo",
         "noMatch": "no match",
         "matModal": ".mat text",
         "matModalTooltip": "See the .mat file as it would be written",
@@ -1203,7 +1189,21 @@
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered"
         },
-        "candidatesLabel": "Candidate moves"
+        "candidatesLabel": "Candidate moves",
+        "finish": "Terminar",
+        "finishTooltip": "Escribir el Match (o reemplazar aquel del que se abrió el borrador) y liberar el borrador (Ctrl+Intro)",
+        "abandon": "Abandonar",
+        "abandonTooltip": "Eliminar el borrador sin Match; un Match del que se abrió queda como está",
+        "abandonConfirm": "Este borrador nunca se ha terminado: abandonarlo pierde todo lo escrito en él. ¿Abandonar?",
+        "abandonFailed": "Error al abandonar: {error}",
+        "abandoned": "Borrador abandonado.",
+        "finishFailed": "Error al terminar: {error}",
+        "finishInconsistentWarning": "Este borrador contiene incoherencias. Se conservan tal cual en el Match. ¿Terminar de todos modos?",
+        "finishAnyway": "Terminar de todos modos",
+        "stateEditsMatch": "edita el match #{id}",
+        "editLossWarning": "Este match fue importado: hasta {analyses} análisis y hasta {comments} comentario(s) no pasan a una transcripción, y terminarla puede perderlos. ¿Abrir la transcripción?",
+        "editAnyway": "Abrir la transcripción",
+        "editFailed": "No se pudo abrir la transcripción: {error}"
     },
     "transcript": {
         "title": "Transcripción",
@@ -1940,7 +1940,8 @@
             "slow": "lenta",
             "none": "Ninguna mesa declarada.",
             "noTable": "sin mesa",
-            "elsewhere": "Ocupada: {event}"
+            "elsewhere": "Ocupada: {event}",
+            "shared": "Dos partidas en esta mesa: mueva una"
         },
         "result": {
             "title": "Resultado",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Anular esta partida",
             "error": "No se ha podido registrar este resultado.",
             "more": "Más",
-            "apply": "Aplicar"
+            "apply": "Aplicar",
+            "forfeitWins": "Incomparecencia de {loser} → gana {winner}",
+            "forfeitConfirm": "{loser} no se presenta: {winner} gana esta partida. ¿Confirmar?",
+            "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de la sala; el registro la conserva."
         },
         "last": {
             "result": "{winner} gana a {loser}",
@@ -2011,9 +2015,13 @@
             "pairHint": "Un torneo de dobles: dos personas, un solo inscrito «A / B».",
             "name2": "Nombre del compañero",
             "pairRating": "Valoración de la pareja",
-            "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye."
+            "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye.",
+            "withdrawNowConfirm": "¿Retirar a {name} del torneo ahora? Ya no será emparejado (se puede reincorporar).",
+            "withdrawLaterConfirm": "¿Retirar a {name} al final de su partida? Después no será emparejado (se puede reincorporar)."
         },
         "bracket": {
+            "correct": "Corregir el resultado",
+            "live": "un cuadro está en curso",
             "current": "en curso",
             "notDrawn": "sin sortear",
             "pending": "—",
@@ -2275,7 +2283,8 @@
             "confirm": "Vincular",
             "wall": {
                 "rounds": "{n} rondas anunciadas"
-            }
+            },
+            "trashConfirm": "¿Eliminar el encuentro «{name}»? Sus pruebas se mantienen, desvinculadas."
         },
         "epreuves": {
             "pending": "{n} pendientes",

@@ -572,7 +572,9 @@
         "tournamentCleared": "Turnaus poistettu ottelusta",
         "tournamentSet": "Turnaus \"{name}\" asetettu",
         "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?",
-        "enrichFromFile": "Rikasta tiedostosta…"
+        "enrichFromFile": "Rikasta tiedostosta…",
+        "editTranscription": "Muokkaa litterointia",
+        "editTranscriptionTooltip": "Avaa tämä ottelu litterointiluonnoksena; sen vieminen valmiiksi korvaa ottelun"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -1096,6 +1098,7 @@
         "transcriberLabel": "Kirjaaja",
         "tournamentLabel": "Turnaus",
         "tournamentNone": "Ei mitään",
+        "tournamentUnknown": "Mikään turnaus ei ole nimeltään ”{name}”: luonnoksen turnausta ei muuteta.",
         "swapPlayers": "Vaihda pelaajat keskenään",
         "swapPlayersTooltip": "Vaihda kaksi pelaajaa keskenään: nimet, puolet ja lauta",
         "boardSwap": "Käännä lauta",
@@ -1156,26 +1159,16 @@
         "correcting": "Korjaus paikallaan: hyväksyntä korvaa toiminnon ja kohdistin palaa sinne, missä se oli.",
         "reviewHint": "Tarkistettava siirto: tallennettu siirto ei ole tämän heiton siirto, ensimmäistä ehdokasta tarjotaan.",
         "inconsistencyPrefix": "Epäjohdonmukaisuus:",
-        "saveTooltip": "Tallenna luonnos otteluksi (Ctrl+Enter)",
         "exportMat": "Vie .mat",
         "exportMatTooltip": "Kirjoita ottelu .mat-tiedostoon",
-        "closeDraft": "Sulje luonnos",
-        "closeDraftTooltip": "Poista luonnos; jo tallennettu ottelu säilyy",
-        "saveInconsistentWarning": "Tässä luonnoksessa on epäjohdonmukaisuuksia. Ne säilyvät sellaisinaan tallennetussa ottelussa. Tallennetaanko silti?",
-        "saveAnyway": "Tallenna silti",
         "illegalExportWarning": "Tässä luonnoksessa on sääntöjenvastainen siirto. gnubg ja XG ilmoittavat siitä (”Invalid move”) ja poikkeavat siitä eteenpäin. Viedäänkö silti?",
         "exportAnyway": "Vie silti",
-        "closeUnsavedConfirm": "Tätä luonnosta ei ole koskaan tallennettu: sulkeminen hävittää kaiken siihen kirjoitetun. Suljetaanko?",
-        "closeSavedConfirm": "Luonnos poistetaan; ottelu #{id} jää kirjastoon lopullisena. Suljetaanko?",
-        "savedMatch": "Ottelu #{id} tallennettu.",
+        "savedMatch": "Ottelu #{id} luotu.",
         "replacedMatch": "Ottelu #{id} korvattu.",
         "resumeAnalysis": "Analyysi keskeytyi: viimeksi litteroidusta ottelusta on vielä {n} asemaa analysoitavana.",
         "resumeAnalysisFinish": "Viimeistele",
-        "saveFailed": "Tallennus epäonnistui: {error}",
         "exported": "Ottelu viety .mat-tiedostoon.",
         "exportFailed": "Vienti epäonnistui: {error}",
-        "closed": "Luonnos suljettu.",
-        "closeFailed": "Sulkeminen epäonnistui: {error}",
         "inconsistency": {
             "illegal_move": "laiton siirto",
             "double_turn": "kaksi siirtoa peräkkäin",
@@ -1185,14 +1178,7 @@
             "unrecorded_move": "kirjaamaton siirto",
             "score_mismatch": "epäjohdonmukainen ilmoitettu tilanne"
         },
-        "stateNoMatch": "no match",
-        "stateMatchUpToDate": "match #{id}",
-        "stateMatchBehind": "match #{id} behind the draft",
-        "stateMatchJustUpdated": "match up to date",
-        "stateMatchMinutes": "match up to date {n} min ago",
-        "stateMatchHours": "match up to date {n} h ago",
-        "createMatch": "Create the match",
-        "updateMatch": "Update match #{id}",
+        "stateNoMatch": "uusi ottelu",
         "noMatch": "no match",
         "matModal": ".mat text",
         "matModalTooltip": "See the .mat file as it would be written",
@@ -1203,7 +1189,21 @@
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered"
         },
-        "candidatesLabel": "Candidate moves"
+        "candidatesLabel": "Candidate moves",
+        "finish": "Valmis",
+        "finishTooltip": "Kirjoita ottelu (tai korvaa se, josta luonnos avattiin) ja vapauta luonnos (Ctrl+Enter)",
+        "abandon": "Hylkää",
+        "abandonTooltip": "Poista luonnos ilman ottelua; ottelu, josta se avattiin, säilyy ennallaan",
+        "abandonConfirm": "Tätä luonnosta ei ole koskaan viety valmiiksi: hylkääminen menettää kaiken siihen kirjoitetun. Hylätäänkö?",
+        "abandonFailed": "Hylkääminen epäonnistui: {error}",
+        "abandoned": "Luonnos hylätty.",
+        "finishFailed": "Valmiiksi vieminen epäonnistui: {error}",
+        "finishInconsistentWarning": "Luonnoksessa on epäjohdonmukaisuuksia. Ne säilyvät ottelussa sellaisinaan. Viedäänkö silti valmiiksi?",
+        "finishAnyway": "Vie silti valmiiksi",
+        "stateEditsMatch": "muokkaa ottelua #{id}",
+        "editLossWarning": "Tämä ottelu on tuotu: enintään {analyses} analyysia ja enintään {comments} kommenttia ei siirry litterointiin, ja sen vieminen valmiiksi voi menettää ne. Avataanko litterointi?",
+        "editAnyway": "Avaa litterointi",
+        "editFailed": "Litterointia ei voitu avata: {error}"
     },
     "transcript": {
         "title": "Siirtoluettelo",
@@ -1940,7 +1940,8 @@
             "slow": "hidas",
             "none": "Pöytiä ei ole ilmoitettu.",
             "noTable": "ei pöytää",
-            "elsewhere": "Varattu: {event}"
+            "elsewhere": "Varattu: {event}",
+            "shared": "Kaksi ottelua tässä pöydässä: siirrä toinen"
         },
         "result": {
             "title": "Tulos",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Peruuta tämä ottelu",
             "error": "Tulosta ei voitu kirjata.",
             "more": "Lisää",
-            "apply": "Käytä"
+            "apply": "Käytä",
+            "forfeitWins": "Luovutus: {loser} → voittaja: {winner}",
+            "forfeitConfirm": "{loser} luovuttaa: {winner} voittaa tämän ottelun. Vahvistetaanko?",
+            "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu salista; loki säilyttää sen."
         },
         "last": {
             "result": "{winner} voitti pelaajan {loser}",
@@ -2011,9 +2015,13 @@
             "pairHint": "Nelinpeliturnaus: kaksi henkilöä, yksi osallistuja ”A / B”.",
             "name2": "Parin toisen nimi",
             "pairRating": "Parin luokitus",
-            "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen."
+            "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen.",
+            "withdrawNowConfirm": "Poistetaanko {name} turnauksesta nyt? Häntä ei enää paritella (palautus mahdollinen).",
+            "withdrawLaterConfirm": "Poistetaanko {name} ottelunsa jälkeen? Häntä ei sen jälkeen paritella (palautus mahdollinen)."
         },
         "bracket": {
+            "correct": "Korjaa tulos",
+            "live": "turnauskaavio on käynnissä",
             "current": "käynnissä",
             "notDrawn": "ei vielä arvottu",
             "pending": "—",
@@ -2275,7 +2283,8 @@
             "confirm": "Liitä",
             "wall": {
                 "rounds": "{n} kierrosta ilmoitettu"
-            }
+            },
+            "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen turnaukset jäävät, irrotettuina."
         },
         "epreuves": {
             "pending": "{n} odottaa",

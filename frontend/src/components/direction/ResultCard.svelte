@@ -6,6 +6,7 @@
      */
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
+    import { isTypingTarget } from '../../utils/panelFocus.js';
 
     /**
      * La case d'une table où un match est en cours : la fiche ne s'ouvre que sur celle-là.
@@ -14,14 +15,21 @@
      */
 
     /**
+     * Chaque geste rend la promesse du backend : `false` (ou une exception) dit qu'il a échoué,
+     * et la fiche reste ouverte avec l'erreur plutôt que de laisser croire qu'il a eu lieu.
+     *
+     * @typedef {Promise<boolean | void> | boolean | void} Outcome
+     */
+
+    /**
      * @type {{
      *     cell: ResultCell,
      *     busy?: boolean,
      *     onClose?: () => void,
-     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
-     *     onForfeit?: (matchId: string, winner: string, note: string) => void,
-     *     onMove?: (matchId: string, table: number) => void,
-     *     onCancel?: (matchId: string) => void
+     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => Outcome,
+     *     onForfeit?: (matchId: string, winner: string, note: string) => Outcome,
+     *     onMove?: (matchId: string, table: number) => Outcome,
+     *     onCancel?: (matchId: string) => Outcome
      * }}
      */
     let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
@@ -31,6 +39,11 @@
     let more = $state(false);
     let note = $state('');
     let moveTo = $state('');
+    let moveInput = $state(/** @type {HTMLInputElement | null} */ (null));
+    /** Le vainqueur choisi au clavier (← / →), que Entrée valide. */
+    let chosen = $state('');
+    let failed = $state(false);
+    let sending = $state(false);
 
     /** @param {string} v */
     function num(v) {
@@ -38,44 +51,86 @@
         return Number.isFinite(n) && n >= 0 ? n : 0;
     }
 
+    /**
+     * Attend le backend avant de fermer : sur un échec, la fiche reste ouverte.
+     *
+     * @param {() => Outcome} fn
+     */
+    async function submit(fn) {
+        if (sending) return;
+        sending = true;
+        failed = false;
+        let ok;
+        try {
+            ok = (await fn()) !== false;
+        } catch {
+            ok = false;
+        }
+        sending = false;
+        if (ok) onClose();
+        else failed = true;
+    }
+
     /* Cliquer un nom valide : avec ou sans score, c'est le même geste. */
     /** @param {string} winner */
     function win(winner) {
-        onResult(cell.matchId, winner, num(scoreA), num(scoreB), note.trim());
-        onClose();
+        submit(() => onResult(cell.matchId, winner, num(scoreA), num(scoreB), note.trim()));
     }
 
-    /** @param {string} winner */
-    function forfeit(winner) {
-        onForfeit(cell.matchId, winner, note.trim());
-        onClose();
+    /**
+     * Un forfait donne la victoire à l'autre : il se confirme, car il ne se lit pas comme un
+     * résultat et pèse sur le parcours du forfait.
+     *
+     * @param {string} winner
+     * @param {string} loserName
+     * @param {string} winnerName
+     */
+    function forfeit(winner, loserName, winnerName) {
+        if (!window.confirm($t('direction.result.forfeitConfirm', { loser: loserName, winner: winnerName }))) return;
+        submit(() => onForfeit(cell.matchId, winner, note.trim()));
     }
 
     function move() {
         const n = num(moveTo);
-        if (n > 0) {
-            onMove(cell.matchId, n);
-            onClose();
-        }
+        if (n > 0) submit(() => onMove(cell.matchId, n));
     }
 
     function cancel() {
-        onCancel(cell.matchId);
-        onClose();
+        if (!window.confirm($t('direction.result.cancelConfirm', { a: cell.aName ?? cell.a, b: cell.bName ?? cell.b }))) return;
+        submit(() => onCancel(cell.matchId));
     }
 
     /* Échap ferme la fiche avant tout geste global, même quand le focus l'a quittée. */
     $effect(() => closeOnEscape(() => onClose()));
 
-    /** @param {KeyboardEvent} e */
+    /**
+     * ← et → choisissent un vainqueur, Entrée le valide. Dans un champ, les flèches appartiennent
+     * au champ : aucun raccourci d'une touche n'y est pris.
+     *
+     * @param {KeyboardEvent} e
+     */
     function onKey(e) {
-        if (e.key === 'Enter' && !more) {
-            e.stopPropagation();
+        if (e.key === 'Enter') {
             // Sans vainqueur choisi, Entrée ne fait rien : le vainqueur est la seule chose exigée.
-        } else if (e.key === 'ArrowLeft') {
-            win(cell.a);
+            // Rien ne sort de la fiche : Entrée lancerait sinon la proposition sélectionnée.
+            e.stopPropagation();
+            if (e.target instanceof HTMLButtonElement) return;
+            e.preventDefault();
+            // Le champ de table a son propre geste : Entrée y déplace, jamais n'enregistre.
+            if (e.target === moveInput) {
+                if (!busy) move();
+                return;
+            }
+            if (chosen && !busy) win(chosen);
+            return;
+        }
+        if (isTypingTarget(/** @type {Element | null} */ (e.target)) || e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.key === 'ArrowLeft') {
+            chosen = cell.a;
+            e.preventDefault();
         } else if (e.key === 'ArrowRight') {
-            win(cell.b);
+            chosen = cell.b;
+            e.preventDefault();
         }
     }
 </script>
@@ -94,9 +149,12 @@
     <!-- Deux grosses cibles aux noms des joueurs : on clique dessus en se penchant, d'où
          l'exception typographique nommée dans l'ADR-0008. -->
     <div class="winners">
-        <button type="button" class="winner" data-testid="direction-result-winner-a" disabled={busy} onclick={() => win(cell.a)}>{cell.aName}</button>
-        <button type="button" class="winner" data-testid="direction-result-winner-b" disabled={busy} onclick={() => win(cell.b)}>{cell.bName}</button>
+        <button type="button" class="winner" class:chosen={chosen === cell.a} data-testid="direction-result-winner-a" disabled={busy || sending} onclick={() => win(cell.a)}>{cell.aName}</button>
+        <button type="button" class="winner" class:chosen={chosen === cell.b} data-testid="direction-result-winner-b" disabled={busy || sending} onclick={() => win(cell.b)}>{cell.bName}</button>
     </div>
+    {#if failed}
+        <p class="error" role="alert" data-testid="direction-result-error">{$t('direction.result.error')}</p>
+    {/if}
 
     <div class="score">
         <label>
@@ -112,8 +170,12 @@
         <div class="more">
             <div class="row">
                 <span class="row-label">{$t('direction.result.forfeit')}</span>
-                <button type="button" data-testid="direction-result-forfeit-a" disabled={busy} onclick={() => forfeit(cell.b)}>{cell.aName}</button>
-                <button type="button" data-testid="direction-result-forfeit-b" disabled={busy} onclick={() => forfeit(cell.a)}>{cell.bName}</button>
+                <button type="button" data-testid="direction-result-forfeit-a" disabled={busy || sending} onclick={() => forfeit(cell.b, cell.aName ?? cell.a, cell.bName ?? cell.b)}
+                    >{$t('direction.result.forfeitWins', { loser: cell.aName ?? cell.a, winner: cell.bName ?? cell.b })}</button
+                >
+                <button type="button" data-testid="direction-result-forfeit-b" disabled={busy || sending} onclick={() => forfeit(cell.a, cell.bName ?? cell.b, cell.aName ?? cell.a)}
+                    >{$t('direction.result.forfeitWins', { loser: cell.bName ?? cell.b, winner: cell.aName ?? cell.a })}</button
+                >
             </div>
             <label class="row">
                 <span class="row-label">{$t('direction.result.note')}</span>
@@ -121,11 +183,11 @@
             </label>
             <div class="row">
                 <span class="row-label">{$t('direction.result.move')}</span>
-                <input type="number" data-testid="direction-result-move-table" min="1" max="200" bind:value={moveTo} />
-                <button type="button" data-testid="direction-result-move" disabled={busy} onclick={move}>{$t('direction.result.apply')}</button>
+                <input type="number" data-testid="direction-result-move-table" bind:this={moveInput} min="1" max="200" bind:value={moveTo} />
+                <button type="button" data-testid="direction-result-move" disabled={busy || sending} onclick={move}>{$t('direction.result.apply')}</button>
             </div>
             <div class="row">
-                <button type="button" class="danger" data-testid="direction-result-cancel" disabled={busy} onclick={cancel}>{$t('direction.result.cancelMatch')}</button>
+                <button type="button" class="danger" data-testid="direction-result-cancel" disabled={busy || sending} onclick={cancel}>{$t('direction.result.cancelMatch')}</button>
             </div>
         </div>
     {/if}
@@ -181,6 +243,17 @@
         background: var(--color-surface-alt);
         color: var(--color-text);
         cursor: pointer;
+    }
+
+    .winner.chosen {
+        background: var(--color-primary);
+        color: var(--color-surface);
+    }
+
+    .error {
+        margin: 0;
+        font-size: var(--font-size-small);
+        color: var(--color-danger);
     }
 
     .winner:hover:not(:disabled) {

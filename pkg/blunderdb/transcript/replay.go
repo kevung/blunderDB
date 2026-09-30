@@ -352,6 +352,12 @@ type state struct {
 	prevSide int
 	prevTie  bool
 	hasPrev  bool
+
+	// opening is the decided opening roll the game's first play must use, by
+	// openingSide; openingPending says that play is still to come.
+	opening        [2]int
+	openingSide    int
+	openingPending bool
 }
 
 func newState(h Header) *state {
@@ -462,6 +468,7 @@ func (s *state) endGame(winner, points int) {
 	s.gameActive = false
 	s.pendingDouble = -1
 	s.turn = -1
+	s.openingPending = false
 }
 
 // gamePoints is what winning by bearing off is worth: a single, a gammon when the
@@ -550,11 +557,13 @@ func (s *state) step(i int, a Action) ActionInfo {
 		info.Before = s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
 		info.After = s.board
 		tie = a.Dice[domain.Black] == a.Dice[domain.White]
+		s.openingPending = false
 		if !tie {
 			s.turn = domain.Black
 			if a.Dice[domain.White] > a.Dice[domain.Black] {
 				s.turn = domain.White
 			}
+			s.opening, s.openingSide, s.openingPending = a.Dice, s.turn, true
 		}
 
 	case KindChecker, KindDance, KindUnrecorded:
@@ -562,6 +571,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 		pos := s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
 		info.Before, info.HasPosition = pos, true
 		legal := domain.LegalMoves(&pos)
+		s.openingPlayed(&info, a)
 
 		if a.Kind == KindUnrecorded {
 			// The board is unknown: carry the last one forward, check nothing,
@@ -677,6 +687,27 @@ func (s *state) step(i int, a Action) ActionInfo {
 
 	s.prevKind, s.prevSide, s.prevTie, s.hasPrev = a.Kind, a.Side, tie, true
 	return info
+}
+
+// openingPlayed marks the game's first play when it is not the opening roll
+// played by its winner, or follows a tied opening that was never rolled again. A .mat has no opening line and reads the opening off
+// the first play, so an unmarked mismatch would be rewritten by the export.
+func (s *state) openingPlayed(info *ActionInfo, a Action) {
+	if s.hasPrev && s.prevTie {
+		info.add(InconsistentDice, "the opening roll was a tie: it is rolled again before anyone plays")
+		return
+	}
+	if !s.openingPending {
+		return
+	}
+	s.openingPending = false
+	o := s.opening
+	if a.Dice != o && a.Dice != [2]int{o[1], o[0]} {
+		info.add(InconsistentDice, fmt.Sprintf("the first play does not use the opening roll %d%d", max(o[0], o[1]), min(o[0], o[1])))
+	}
+	if a.Side != s.openingSide {
+		info.add(InconsistentDice, fmt.Sprintf("player %d won the opening roll and plays first", s.openingSide+1))
+	}
 }
 
 // declare posts the score an opening declares as the score of play, and reports

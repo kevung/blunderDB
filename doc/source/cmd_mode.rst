@@ -225,6 +225,8 @@ Deux recherches complètes :
    "``pl'nom'``", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée.", "—"
    "like, like42, like<12, like42*", "Classe le résultat par distance croissante à une position cible, au lieu de le restreindre : ``like`` prend la position courante, ``like42`` celle d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, ``like42*`` élargit la classe de la cible à tous les types de décision et aux deux régimes, argent et match. Voir :ref:`panneau_recherche`.", "—"
 
+Les valeurs ``pl``, ``m`` et ``t`` s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``).
+
 .. _cmd_misc:
 
 Commandes diverses

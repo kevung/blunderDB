@@ -572,7 +572,9 @@
         "tournamentCleared": "Tournoi retiré du match",
         "tournamentSet": "Tournoi « {name} » assigné",
         "confirmDelete": "Supprimer le match entre {player1} et {player2} ?",
-        "enrichFromFile": "Enrichir depuis un fichier…"
+        "enrichFromFile": "Enrichir depuis un fichier…",
+        "editTranscription": "Éditer la transcription",
+        "editTranscriptionTooltip": "Ouvrir ce match en brouillon de transcription ; le terminer remplace le match"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -1096,6 +1098,7 @@
         "transcriberLabel": "Transcripteur",
         "tournamentLabel": "Tournoi",
         "tournamentNone": "Aucun",
+        "tournamentUnknown": "Aucun tournoi ne s'appelle « {name} » : le tournoi du brouillon n'est pas changé.",
         "swapPlayers": "Inverser les joueurs",
         "swapPlayersTooltip": "Échanger les deux joueurs : les noms, les camps et le plateau",
         "boardSwap": "Retourner le plateau",
@@ -1156,26 +1159,16 @@
         "correcting": "Correction en place : la validation remplace l'action et le curseur revient où il était.",
         "reviewHint": "Coup à revoir : le coup enregistré n'est pas un coup de ce jet, le premier candidat est proposé.",
         "inconsistencyPrefix": "Incohérence :",
-        "saveTooltip": "Enregistrer le brouillon en Match (Ctrl+Entrée)",
         "exportMat": "Exporter .mat",
         "exportMatTooltip": "Écrire le match dans un fichier .mat",
-        "closeDraft": "Fermer le brouillon",
-        "closeDraftTooltip": "Supprimer le brouillon ; un Match déjà enregistré reste",
-        "saveInconsistentWarning": "Ce brouillon porte des incohérences. Elles sont conservées telles quelles dans le Match. Enregistrer quand même ?",
-        "saveAnyway": "Enregistrer quand même",
         "illegalExportWarning": "Ce brouillon porte un coup illégal. gnubg et XG le signaleront (« Invalid move ») et divergeront ensuite. Exporter quand même ?",
         "exportAnyway": "Exporter quand même",
-        "closeUnsavedConfirm": "Ce brouillon n'a jamais été enregistré : le fermer perd tout ce qui y est écrit. Fermer ?",
-        "closeSavedConfirm": "Le brouillon sera supprimé ; le match #{id} reste dans la bibliothèque, définitif. Fermer ?",
-        "savedMatch": "Match #{id} enregistré.",
+        "savedMatch": "Match #{id} créé.",
         "replacedMatch": "Match #{id} remplacé.",
         "resumeAnalysis": "Analyse interrompue : {n} position(s) du dernier match transcrit restent à analyser.",
         "resumeAnalysisFinish": "Terminer",
-        "saveFailed": "Échec de l'enregistrement : {error}",
         "exported": "Match exporté en .mat.",
         "exportFailed": "Échec de l'export : {error}",
-        "closed": "Brouillon fermé.",
-        "closeFailed": "Échec de la fermeture : {error}",
         "inconsistency": {
             "illegal_move": "coup illégal",
             "double_turn": "double trait",
@@ -1185,14 +1178,7 @@
             "unrecorded_move": "coup non consigné",
             "score_mismatch": "score annoncé incohérent"
         },
-        "stateNoMatch": "aucun match",
-        "stateMatchUpToDate": "match #{id}",
-        "stateMatchBehind": "match #{id} en retard sur le brouillon",
-        "stateMatchJustUpdated": "match à jour",
-        "stateMatchMinutes": "match à jour il y a {n} min",
-        "stateMatchHours": "match à jour il y a {n} h",
-        "createMatch": "Créer le match",
-        "updateMatch": "Mettre à jour le match #{id}",
+        "stateNoMatch": "nouveau match",
         "noMatch": "aucun match",
         "matModal": "Texte .mat",
         "matModalTooltip": "Voir le fichier .mat tel qu’il serait écrit",
@@ -1203,7 +1189,21 @@
             "noAction": "Aucune Action sous le curseur",
             "noDice": "Aucun jet en cours"
         },
-        "candidatesLabel": "Coups candidats"
+        "candidatesLabel": "Coups candidats",
+        "finish": "Terminer",
+        "finishTooltip": "Écrire le Match (ou remplacer celui dont le brouillon a été ouvert) et libérer le brouillon (Ctrl+Entrée)",
+        "abandon": "Abandonner",
+        "abandonTooltip": "Supprimer le brouillon sans Match ; un Match dont il a été ouvert reste tel quel",
+        "abandonConfirm": "Ce brouillon n'a jamais été terminé : l'abandonner perd tout ce qui y est écrit. Abandonner ?",
+        "abandonFailed": "Échec de l'abandon : {error}",
+        "abandoned": "Brouillon abandonné.",
+        "finishFailed": "Échec de l'écriture du match : {error}",
+        "finishInconsistentWarning": "Ce brouillon porte des incohérences. Elles sont conservées telles quelles dans le Match. Terminer quand même ?",
+        "finishAnyway": "Terminer quand même",
+        "stateEditsMatch": "édite le match #{id}",
+        "editLossWarning": "Ce match a été importé : jusqu'à {analyses} analyse(s) et jusqu'à {comments} commentaire(s) ne passent pas dans une transcription, et la terminer peut les perdre. Ouvrir la transcription ?",
+        "editAnyway": "Ouvrir la transcription",
+        "editFailed": "Impossible d'ouvrir la transcription : {error}"
     },
     "transcript": {
         "title": "Transcript",
@@ -1940,7 +1940,8 @@
             "slow": "lent",
             "none": "Aucune table déclarée.",
             "noTable": "sans table",
-            "elsewhere": "Occupée : {event}"
+            "elsewhere": "Occupée : {event}",
+            "shared": "Deux matchs sur cette table : déplacez-en un"
         },
         "result": {
             "title": "Résultat",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Annuler ce match",
             "error": "Impossible d’enregistrer ce résultat.",
             "more": "Plus",
-            "apply": "Appliquer"
+            "apply": "Appliquer",
+            "forfeitWins": "Forfait de {loser} → {winner} gagne",
+            "forfeitConfirm": "Forfait de {loser} : {winner} gagne ce match. Confirmer ?",
+            "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît de la salle ; le journal le garde."
         },
         "last": {
             "result": "{winner} bat {loser}",
@@ -2011,9 +2015,13 @@
             "pairHint": "Une épreuve en doubles : deux personnes, un seul inscrit « A / B ».",
             "name2": "Nom du partenaire",
             "pairRating": "Cote de la paire",
-            "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace."
+            "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace.",
+            "withdrawNowConfirm": "Retirer {name} du tournoi maintenant ? Il ne sera plus apparié (réintégration possible).",
+            "withdrawLaterConfirm": "Retirer {name} à la fin de son match ? Il ne sera plus apparié ensuite (réintégration possible)."
         },
         "bracket": {
+            "correct": "Corriger le résultat",
+            "live": "un tableau est en cours",
             "current": "en cours",
             "notDrawn": "pas encore tiré",
             "pending": "—",
@@ -2275,7 +2283,8 @@
             "confirm": "Rattacher",
             "wall": {
                 "rounds": "{n} rondes annoncées"
-            }
+            },
+            "trashConfirm": "Supprimer la rencontre « {name} » ? Ses épreuves restent, détachées."
         },
         "epreuves": {
             "pending": "{n} en attente",

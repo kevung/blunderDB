@@ -1284,6 +1284,8 @@ contiendrait.
    ./blunderdb transcribe --mat <fichier> [--check] [--render <sortie>]
    ./blunderdb transcribe --db <path> --match <id> --check
    ./blunderdb transcribe --db <path> --draft <id> --check
+   ./blunderdb transcribe --db <path> --match <id> --edit [--accept-losses]
+   ./blunderdb transcribe --db <path> --draft <id> --finish|--abandon
 
 **Options:**
 
@@ -1294,11 +1296,22 @@ contiendrait.
 * ``--check`` — Liste les incohérences trouvées (comportement par défaut).
 * ``--render`` — Réécrit la transcription en ``.mat`` à ce chemin.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
+* ``--edit`` — Ouvre un brouillon sur le ``--match`` (ou rend celui qui y est
+  déjà ouvert).
+* ``--accept-losses`` — Avec ``--edit`` sur un match importé : accepte que ses
+  analyses et commentaires puissent être perdus.
+* ``--finish`` — Termine le ``--draft`` : écrit son match, ou remplace celui
+  dont il a été ouvert, et libère le brouillon.
+* ``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un match
+  dont il a été ouvert reste tel quel.
+* ``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme que
+  tout ce qui y est écrit est perdu.
 
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
 de videau impossible, action au-delà de la fin du match, coup dont les pas
-n'utilisent pas ses propres dés, coup non consigné — la cellule ``???`` que
+n'utilisent pas ses propres dés, premier coup d'une partie qui n'est pas le
+lancer d'ouverture joué par son gagnant, coup non consigné — la cellule ``???`` que
 gnubg écrit quand il n'a pas gardé le coup joué, et qui n'est pas une danse —,
 score annoncé incohérent — une partie dont la ligne de score n'est pas celle
 que donnent les parties précédentes, rejouée au score écrit.
@@ -1312,6 +1325,14 @@ ne se confondent pas.
 
 ``--render`` réécrit la transcription en ``.mat``, ce qui permet de vérifier
 l'aller-retour sur un fichier réel, en dehors des tests.
+
+Seules trois options écrivent, par les mêmes méthodes que le panneau
+Transcription : ``--edit`` ouvre un brouillon sur un match existant,
+``--finish`` le termine — le match est remplacé sous le même identifiant —, et
+``--abandon`` supprime un brouillon sans match, et exige ``--yes`` pour un
+brouillon jamais terminé, qui emporte tout ce qui y est écrit. Un match importé
+porte des analyses et des commentaires qu'un ``.mat`` ne porte pas : ``--edit``
+en donne le compte au plus et refuse sans ``--accept-losses``.
 
 **Exemple:**
 

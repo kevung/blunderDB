@@ -26,6 +26,7 @@
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
+    import { editMatchTranscription } from '../services/transcriptionSave.js';
     import { enrichMatchFromFile } from '../services/importService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { t, tMsg } from '../i18n';
@@ -50,7 +51,9 @@
     import { transcriptionListStore } from '../stores/transcriptionStore.js';
     import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
+    /** @type {any[]} */
     let matches = $state([]);
+    /** @type {any} */
     let selectedMatch = $state(null);
     // A match requested from the command palette is being opened.
     let openingRequested = false;
@@ -60,17 +63,23 @@
     let tournaments = $derived($tournamentsStore || []);
 
     // Detail pane state
+    /** @type {any} */
     let detailMatch = $state(null); // Match currently shown in detail pane
+    /** @type {any[]} */
     let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
+    /** @type {any[]} */
     let detailGames = $state([]); // Game[] for the detail match
+    /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
+    /** @type {any} */
     let detailStats = $state(null); // MatchDetailStats for the detail match
     let loadingStats = $state(false);
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
     let sort = $state({ column: null, direction: 'asc' });
+    /** @type {any} */
     let table = $state(null); // PanelTable instance: keyboard navigation and scrolling
 
     // Inline tournament editing (autocomplete over the known tournaments)
@@ -268,6 +277,7 @@
     }
 
     // Marks are optional: on failure the transcript shows unmarked.
+    /** @param {number} matchID */
     async function loadMoveGrades(matchID) {
         try {
             return (await GetMatchMoveGrades(matchID)) || [];
@@ -793,6 +803,15 @@
                                     class="icon-btn"
                                     onclick={(e) => {
                                         e.stopPropagation();
+                                        editMatchTranscription(match.id);
+                                    }}
+                                    title={$t('match.editTranscriptionTooltip')}
+                                    aria-label={$t('match.editTranscription')}>✎</button
+                                >
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
                                         ((e) => swapMatchPlayers(match, e))(e);
                                     }}
                                     title={$t('match.swapPlayers')}>⇄</button
@@ -861,6 +880,7 @@
                         <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>{$t('match.info')}</button>
                         <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>{$t('match.stats')}</button>
                         <button class="detail-tab export-mat-btn" onclick={() => exportMatchMat(detailMatch)} title={$t('match.exportMat')}>⬇ .mat</button>
+                        <button class="detail-tab" onclick={() => editMatchTranscription(detailMatch.id)} title={$t('match.editTranscriptionTooltip')}>✎ {$t('match.editTranscription')}</button>
                         <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="{$t('match.enterMatchMode')} (↵)">▶ {$t('match.review')}</button>
                     </div>
                 </div>

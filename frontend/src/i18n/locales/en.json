@@ -572,7 +572,9 @@
         "tournamentCleared": "Tournament cleared from match",
         "tournamentSet": "Tournament \"{name}\" assigned",
         "confirmDelete": "Delete match between {player1} and {player2}?",
-        "enrichFromFile": "Enrich from a file…"
+        "enrichFromFile": "Enrich from a file…",
+        "editTranscription": "Edit the transcription",
+        "editTranscriptionTooltip": "Open this match as a transcription draft; finishing it replaces the match"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -1096,6 +1098,7 @@
         "transcriberLabel": "Transcriber",
         "tournamentLabel": "Tournament",
         "tournamentNone": "None",
+        "tournamentUnknown": "No tournament is called “{name}”: the draft's tournament is not changed.",
         "swapPlayers": "Swap the players",
         "swapPlayersTooltip": "Exchange the two players: the names, the sides and the board",
         "boardSwap": "Flip the board",
@@ -1156,26 +1159,16 @@
         "correcting": "Correcting in place: validating replaces the action and the cursor returns where it was.",
         "reviewHint": "Play to review: the recorded play is not a play of this roll, the first candidate is offered.",
         "inconsistencyPrefix": "Inconsistency:",
-        "saveTooltip": "Save the draft as a Match (Ctrl+Enter)",
         "exportMat": "Export .mat",
         "exportMatTooltip": "Write the match to a .mat file",
-        "closeDraft": "Close draft",
-        "closeDraftTooltip": "Delete the draft; a Match already saved stays",
-        "saveInconsistentWarning": "This draft carries inconsistencies. They are kept as they are in the saved Match. Save anyway?",
-        "saveAnyway": "Save anyway",
         "illegalExportWarning": "This draft carries an illegal move. gnubg and XG will flag it (“Invalid move”) and diverge from there. Export anyway?",
         "exportAnyway": "Export anyway",
-        "closeUnsavedConfirm": "This draft was never saved: closing it loses everything written in it. Close?",
-        "closeSavedConfirm": "The draft will be deleted; match #{id} stays in the library, final. Close?",
-        "savedMatch": "Match #{id} saved.",
+        "savedMatch": "Match #{id} created.",
         "replacedMatch": "Match #{id} replaced.",
         "resumeAnalysis": "Analysis interrupted: {n} position(s) of the last transcribed match are still to analyse.",
         "resumeAnalysisFinish": "Finish",
-        "saveFailed": "Save failed: {error}",
         "exported": "Match exported to .mat.",
         "exportFailed": "Export failed: {error}",
-        "closed": "Draft closed.",
-        "closeFailed": "Close failed: {error}",
         "inconsistency": {
             "illegal_move": "illegal move",
             "double_turn": "double turn",
@@ -1185,14 +1178,7 @@
             "unrecorded_move": "unrecorded play",
             "score_mismatch": "inconsistent declared score"
         },
-        "stateNoMatch": "no match",
-        "stateMatchUpToDate": "match #{id}",
-        "stateMatchBehind": "match #{id} behind the draft",
-        "stateMatchJustUpdated": "match up to date",
-        "stateMatchMinutes": "match up to date {n} min ago",
-        "stateMatchHours": "match up to date {n} h ago",
-        "createMatch": "Create the match",
-        "updateMatch": "Update match #{id}",
+        "stateNoMatch": "new match",
         "noMatch": "no match",
         "matModal": ".mat text",
         "matModalTooltip": "See the .mat file as it would be written",
@@ -1203,7 +1189,21 @@
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered"
         },
-        "candidatesLabel": "Candidate moves"
+        "candidatesLabel": "Candidate moves",
+        "finish": "Finish",
+        "finishTooltip": "Write the Match (or replace the one this draft was opened from) and release the draft (Ctrl+Enter)",
+        "abandon": "Abandon",
+        "abandonTooltip": "Delete the draft without a Match; a Match it was opened from stays as it is",
+        "abandonConfirm": "This draft has never been finished: abandoning it loses everything written in it. Abandon?",
+        "abandonFailed": "Abandon failed: {error}",
+        "abandoned": "Draft abandoned.",
+        "finishFailed": "Finish failed: {error}",
+        "finishInconsistentWarning": "This draft carries inconsistencies. They are kept as they are in the Match. Finish anyway?",
+        "finishAnyway": "Finish anyway",
+        "stateEditsMatch": "edits match #{id}",
+        "editLossWarning": "This match was imported: up to {analyses} analysis(es) and up to {comments} comment(s) are not carried by a transcription, and finishing it may lose them. Open the transcription?",
+        "editAnyway": "Open the transcription",
+        "editFailed": "Could not open the transcription: {error}"
     },
     "transcript": {
         "title": "Transcript",
@@ -1940,7 +1940,8 @@
             "slow": "slow",
             "none": "No table declared.",
             "noTable": "no table",
-            "elsewhere": "In use: {event}"
+            "elsewhere": "In use: {event}",
+            "shared": "Two matches on this table: move one"
         },
         "result": {
             "title": "Result",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Cancel this match",
             "error": "Could not record this result.",
             "more": "More",
-            "apply": "Apply"
+            "apply": "Apply",
+            "forfeitWins": "Forfeit by {loser} → {winner} wins",
+            "forfeitConfirm": "{loser} forfeits: {winner} wins this match. Confirm?",
+            "cancelConfirm": "Cancel the match {a} – {b}? It leaves the room; the log keeps it."
         },
         "last": {
             "result": "{winner} beat {loser}",
@@ -2011,9 +2015,13 @@
             "pairHint": "A doubles event: two persons, one entrant \"A / B\".",
             "name2": "Partner's name",
             "pairRating": "Pair rating",
-            "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it."
+            "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it.",
+            "withdrawNowConfirm": "Withdraw {name} from the tournament now? They will no longer be paired (can be reinstated).",
+            "withdrawLaterConfirm": "Withdraw {name} after their match? They will not be paired afterwards (can be reinstated)."
         },
         "bracket": {
+            "correct": "Correct the result",
+            "live": "a bracket is running",
             "current": "current",
             "notDrawn": "not drawn yet",
             "pending": "—",
@@ -2275,7 +2283,8 @@
             "confirm": "Attach",
             "wall": {
                 "rounds": "{n} rounds announced"
-            }
+            },
+            "trashConfirm": "Delete the event “{name}”? Its tournaments remain, detached."
         },
         "epreuves": {
             "pending": "{n} pending",

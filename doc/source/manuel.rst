@@ -1388,21 +1388,21 @@ menu du navigateur n'est retiré que là. Ils n'ont pas de boutons ailleurs : un
 bouton qui agirait sur « l'action du curseur » viserait une cellule que l'on ne
 voit pas forcément, quand le clic droit désigne la sienne.
 
-La barre du brouillon porte les gestes qui le font sortir de lui-même.
-« **Créer le match** » (CTRL-ENTREE) l'écrit dans la bibliothèque, et devient
-ensuite « Mettre à jour le match #\ *n* » : le match est remplacé sous le même
-identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec
-sa progression et son annulation dans la barre d'état. À côté, la barre dit où
-en est ce match — aucun match, à jour, ou en retard sur le brouillon. Elle ne
-dit rien du salut du brouillon lui-même : il est écrit dans la base après chaque
-action, il n'y a rien à surveiller.
+La barre du brouillon porte ses deux seules sorties. « **Terminer** »
+(CTRL-ENTREE) écrit le match dans la bibliothèque et libère le brouillon ;
+l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression
+et son annulation dans la barre d'état. « **Abandonner** » supprime le
+brouillon sans match ; la confirmation n'est demandée que pour un brouillon qui
+n'a jamais été terminé, puisqu'il emporte tout ce qui y est écrit. À côté, la
+barre dit ce que Terminer fera — un nouveau match, ou le remplacement du match
+#\ *n*. Elle ne dit rien du salut du brouillon lui-même : il est écrit dans la
+base après chaque action, et revenir à la liste le laisse à reprendre plus tard.
 
 « **Texte .mat** » ouvre le fichier Jellyfish tel qu'il serait écrit, dans une
 fenêtre assez large pour que ses colonnes restent alignées, avec un bouton pour
-le copier. « **Exporter .mat** » écrit ce même fichier sur le disque. « **Fermer
-le brouillon** » le supprime après confirmation ; un match déjà créé reste dans
-la bibliothèque, définitif. Les deux flèches **↶** et **↷** annulent et
-rétablissent, comme *CTRL-Z* et *CTRL-MAJ-Z*.
+le copier. « **Exporter .mat** » écrit ce même fichier sur le disque. Les deux
+flèches **↶** et **↷** annulent et rétablissent, comme *CTRL-Z* et
+*CTRL-MAJ-Z*.
 
 Si l'analyse d'un match transcrit a été interrompue — l'application fermée
 pendant le lot —, la barre d'état le signale à la prochaine ouverture de la base
@@ -1410,7 +1410,7 @@ et propose de la terminer. Rien n'est retenu de cette interruption : la
 proposition revient tant qu'il reste des positions à analyser, et le lot relancé
 ne porte que sur ce match, jamais sur toute la bibliothèque.
 
-Un brouillon qui porte des incohérences est enregistré tout de même, après un
+Un brouillon qui porte des incohérences est terminé tout de même, après un
 avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
 joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
 divergeront ensuite.
@@ -1418,6 +1418,15 @@ divergeront ensuite.
 Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la
 liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet
 Transcription.
+
+Pour corriger un match de la bibliothèque, le bouton ✎ de la liste des matchs
+ou « **Éditer la transcription** » de sa fiche ouvre un brouillon depuis ce
+match — ou rouvre celui qui y est déjà ouvert : un seul brouillon par match.
+Terminer ce brouillon remplace le match sous le même identifiant ; les
+positions des actions inchangées gardent leurs commentaires, leurs analyses et
+leurs cartes. Un match importé (XG, GnuBG, BGF) porte des analyses et des
+commentaires qu'un ``.mat`` ne porte pas : avant d'ouvrir, un dialogue dit
+jusqu'à combien, et que terminer le brouillon peut les perdre.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
@@ -1522,7 +1531,8 @@ l'instant » n'écrit rien : le moteur est déterministe, et la proposition revi
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.
 
-Un match apparié à la main sans numéro de table prend la première table libre.
+Un match apparié à la main sans numéro de table prend la première table libre ;
+une table où un match est en cours est refusée.
 Si la salle est pleine, il est lancé quand même et sa case apparaît au bout de
 la grille, « sans table », jusqu'à ce qu'on le déplace sur une table.
 
@@ -1538,11 +1548,19 @@ La fiche de résultat
 Un clic sur une table occupée ouvre la fiche du match. Elle montre deux grandes
 cibles : les **noms des deux joueurs**. Cliquer celui qui a gagné enregistre le
 résultat — deux clics en tout, table comprise. Le vainqueur est la seule chose
-exigée ; le score est libre, l'un et l'autre ou aucun des deux.
+exigée ; le score est libre, l'un et l'autre ou aucun des deux. Au clavier,
+*GAUCHE* ou *DROITE* choisit le vainqueur et *ENTRÉE* l'enregistre. La fiche ne
+se ferme qu'une fois le résultat écrit : un échec la laisse ouverte, avec son
+message.
 
-Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait, une
-remarque libre (« tombé au temps », « abandonné pour raison de… »), le
-déplacement du match sur une autre table, et son annulation.
+Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait — chaque
+bouton nomme l'absent et celui qui gagne —, une remarque libre (« tombé au
+temps », « abandonné pour raison de… »), le déplacement du match sur une autre
+table, et son annulation. Le forfait et l'annulation se confirment. Déplacé sur
+une table occupée, le match échange sa table avec celui qui l'occupe : deux
+matchs ne partagent jamais une table, et le même geste les remet en place. Si un
+ancien journal en a laissé deux sur une table, la grille montre les deux cases,
+signalées, jusqu'à ce qu'on en déplace un.
 
 Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille :
 **Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* ouvre la même
@@ -1581,7 +1599,7 @@ qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans
 quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
-joueur part tout de suite ou finit ce qu'il joue.
+joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
 
 Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
@@ -1599,9 +1617,16 @@ matchs perdus par forfait à son retrait le restent.
 Arbres, emplacements, classement, historique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-L'onglet **Arbres** dessine les tableaux et, pour un suisse, le tableau des vies.
-Un match déjà joué y porte son résultat ; un match que le moteur signale y est
-marqué sur place.
+L'onglet **Arbres** dessine les tableaux avec leurs traits, de la première
+ronde à la finale, la consolante à côté du tableau principal, et, pour un suisse,
+le tableau des vies. Une poule s'y lit en résultats croisés. Un tableau pas encore
+tiré montre son squelette grisé. Un match déjà joué y porte son résultat ; un
+match que le moteur signale y est marqué sur place. Une pastille à côté du nom de
+l'onglet indique qu'un tableau est en cours.
+
+**Cliquer une place** (ou Entrée sur une place focalisée) ouvre sur elle la même
+fiche que sur la grille des tables : le vainqueur d'un match en cours se saisit en
+deux clics, et un match terminé se corrige en cliquant le nom du vrai vainqueur.
 
 .. _direction_emplacements:
 
@@ -1694,8 +1719,8 @@ rattacher…** ouvre la salle avec son nombre de tables, **Rattacher…** y ajou
 une épreuve dirigée. Rattacher montre d'abord ce qui va changer : les tables de
 l'épreuve deviennent celles de la salle. **Détacher de la rencontre** rend
 l'épreuve à elle-même, avec son journal et ses tables ; **Supprimer la
-rencontre** la met à la corbeille et détache ses épreuves sans en supprimer
-aucune.
+rencontre**, après confirmation, la met à la corbeille et détache ses épreuves
+sans en supprimer aucune.
 
 Dans une Rencontre, aucune épreuve ne propose une table où joue une autre : la
 grille montre ces tables occupées, avec le nom de l'épreuve, et un appariement
@@ -1740,6 +1765,16 @@ lien vers sa propre page — et chaque épreuve rattachée écrit la sienne dans
 sous-dossier. Un geste dans n'importe quelle épreuve de la Rencontre régénère la
 page murale ; le dossier propre d'une épreuve rattachée est gardé mais ignoré
 tant qu'elle reste dans la Rencontre.
+
+Quand une épreuve est en phase de tableau et que celui-ci est tiré, sa page
+murale et celle de la Rencontre montrent l'arbre en grand, lisible de loin : une
+colonne par tour, les perdants qui descendent en consolante en pointillé. La page
+défile d'elle-même, sans script, entre son contenu habituel (les tables pour la
+Rencontre) et l'arbre de chaque épreuve en tableau, douze secondes chacun ; elle
+se recharge toujours toutes les trente secondes et reprend la rotation là où elle
+en était. Une
+épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
+reste celle d'avant.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``

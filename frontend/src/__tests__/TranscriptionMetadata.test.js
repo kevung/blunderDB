@@ -142,7 +142,7 @@ describe('le volet des métadonnées', () => {
         expect(apply.mock.calls.at(-1)[0].Header.player1).toBe('Zoé Martin');
     });
 
-    test('le tournoi voyage par son identifiant, un nom inconnu n’en pose aucun', async () => {
+    test('le tournoi voyage par son identifiant, un nom inconnu ne détache pas', async () => {
         const apply = await mount(headerOf({ tournament_id: 3 }));
         const field = /** @type {HTMLInputElement} */ (screen.getByLabelText('Tournament'));
         expect(field.value).toBe('Open de Paris');
@@ -152,16 +152,30 @@ describe('le volet des métadonnées', () => {
         await tick();
         expect(apply.mock.calls.at(-1)[0].Header.tournament_id).toBe(4);
 
+        // Un nom que la bibliothèque ne connaît pas ne détache pas en silence :
+        // le tournoi du brouillon reste, et le volet le dit.
         await fireEvent.input(field, { target: { value: 'Un tournoi qui n’existe pas' } });
         await fireEvent.keyDown(field, { key: 'Enter' });
         await tick();
-        expect(apply.mock.calls.at(-1)[0].Header.tournament_id).toBeUndefined();
+        expect(apply.mock.calls.at(-1)[0].Header.tournament_id).toBe(3);
+        expect(screen.getByRole('alert').textContent).toMatch(/Un tournoi qui n’existe pas/);
 
         // Vider le champ détache : c'est ce que l'enregistrement lira.
         await fireEvent.input(field, { target: { value: '' } });
         await fireEvent.keyDown(field, { key: 'Enter' });
         await tick();
         expect(apply.mock.calls.at(-1)[0].Header.tournament_id).toBeUndefined();
+        expect(screen.queryByRole('alert')).toBeNull();
+    });
+
+    test('un nom de tournoi inconnu sur un brouillon sans tournoi n’en pose aucun, et le dit', async () => {
+        const apply = await mount();
+        const field = /** @type {HTMLInputElement} */ (screen.getByLabelText('Tournament'));
+        await fireEvent.input(field, { target: { value: 'Inconnu' } });
+        await fireEvent.keyDown(field, { key: 'Enter' });
+        await tick();
+        expect(apply.mock.calls.at(-1)[0].Header.tournament_id).toBeUndefined();
+        expect(screen.getByRole('alert').textContent).toMatch(/Inconnu/);
     });
 
     test('inverser les joueurs est un geste du moteur, pas un échange de champs', async () => {

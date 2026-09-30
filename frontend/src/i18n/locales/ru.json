@@ -572,7 +572,9 @@
         "tournamentCleared": "Турнир снят с матча",
         "tournamentSet": "Турнир «{name}» назначен",
         "confirmDelete": "Удалить матч между {player1} и {player2}?",
-        "enrichFromFile": "Дополнить из файла…"
+        "enrichFromFile": "Дополнить из файла…",
+        "editTranscription": "Править запись",
+        "editTranscriptionTooltip": "Открыть этот матч как черновик записи; его завершение заменяет матч"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -1096,6 +1098,7 @@
         "transcriberLabel": "Расшифровщик",
         "tournamentLabel": "Турнир",
         "tournamentNone": "Нет",
+        "tournamentUnknown": "Турнира «{name}» нет: турнир черновика не изменён.",
         "swapPlayers": "Поменять игроков местами",
         "swapPlayersTooltip": "Поменять двух игроков местами: имена, стороны и доску",
         "boardSwap": "Перевернуть доску",
@@ -1156,26 +1159,16 @@
         "correcting": "Исправление на месте: подтверждение заменяет действие, и курсор возвращается туда, где он был.",
         "reviewHint": "Ход требует проверки: записанный ход не является ходом этого броска, предложен первый кандидат.",
         "inconsistencyPrefix": "Несоответствие:",
-        "saveTooltip": "Сохранить черновик как матч (Ctrl+Enter)",
         "exportMat": "Экспорт .mat",
         "exportMatTooltip": "Записать матч в файл .mat",
-        "closeDraft": "Закрыть черновик",
-        "closeDraftTooltip": "Удалить черновик; уже сохранённый матч остаётся",
-        "saveInconsistentWarning": "В черновике есть несоответствия. Они сохраняются как есть в сохранённом матче. Всё равно сохранить?",
-        "saveAnyway": "Всё равно сохранить",
         "illegalExportWarning": "В черновике есть невозможный ход. gnubg и XG отметят его («Invalid move») и дальше разойдутся. Всё равно экспортировать?",
         "exportAnyway": "Всё равно экспортировать",
-        "closeUnsavedConfirm": "Этот черновик ни разу не сохранялся: при закрытии всё написанное будет потеряно. Закрыть?",
-        "closeSavedConfirm": "Черновик будет удалён; матч №{id} останется в библиотеке окончательным. Закрыть?",
-        "savedMatch": "Матч №{id} сохранён.",
+        "savedMatch": "Матч #{id} создан.",
         "replacedMatch": "Матч №{id} заменён.",
         "resumeAnalysis": "Анализ прерван: {n} позиц. последнего записанного матча ещё не проанализированы.",
         "resumeAnalysisFinish": "Завершить",
-        "saveFailed": "Не удалось сохранить: {error}",
         "exported": "Матч экспортирован в .mat.",
         "exportFailed": "Не удалось экспортировать: {error}",
-        "closed": "Черновик закрыт.",
-        "closeFailed": "Не удалось закрыть: {error}",
         "inconsistency": {
             "illegal_move": "недопустимый ход",
             "double_turn": "два хода подряд",
@@ -1185,14 +1178,7 @@
             "unrecorded_move": "незаписанный ход",
             "score_mismatch": "несогласованный заявленный счёт"
         },
-        "stateNoMatch": "no match",
-        "stateMatchUpToDate": "match #{id}",
-        "stateMatchBehind": "match #{id} behind the draft",
-        "stateMatchJustUpdated": "match up to date",
-        "stateMatchMinutes": "match up to date {n} min ago",
-        "stateMatchHours": "match up to date {n} h ago",
-        "createMatch": "Create the match",
-        "updateMatch": "Update match #{id}",
+        "stateNoMatch": "новый матч",
         "noMatch": "no match",
         "matModal": ".mat text",
         "matModalTooltip": "See the .mat file as it would be written",
@@ -1203,7 +1189,21 @@
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered"
         },
-        "candidatesLabel": "Candidate moves"
+        "candidatesLabel": "Candidate moves",
+        "finish": "Завершить",
+        "finishTooltip": "Записать матч (или заменить тот, из которого открыт черновик) и освободить черновик (Ctrl+Enter)",
+        "abandon": "Отказаться",
+        "abandonTooltip": "Удалить черновик без матча; матч, из которого он открыт, остаётся без изменений",
+        "abandonConfirm": "Этот черновик ни разу не был завершён: отказ от него теряет всё, что в нём записано. Отказаться?",
+        "abandonFailed": "Не удалось отказаться: {error}",
+        "abandoned": "Черновик удалён.",
+        "finishFailed": "Не удалось завершить: {error}",
+        "finishInconsistentWarning": "В этом черновике есть несоответствия. Они сохраняются в матче как есть. Всё равно завершить?",
+        "finishAnyway": "Всё равно завершить",
+        "stateEditsMatch": "правит матч #{id}",
+        "editLossWarning": "Этот матч импортирован: до {analyses} анализов и до {comments} комментариев не переходят в запись, и её завершение может их потерять. Открыть запись?",
+        "editAnyway": "Открыть запись",
+        "editFailed": "Не удалось открыть запись: {error}"
     },
     "transcript": {
         "title": "Запись",
@@ -1940,7 +1940,8 @@
             "slow": "затянулся",
             "none": "Столы не объявлены.",
             "noTable": "без стола",
-            "elsewhere": "Занят: {event}"
+            "elsewhere": "Занят: {event}",
+            "shared": "Два матча за этим столом: перенесите один"
         },
         "result": {
             "title": "Результат",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Отменить этот матч",
             "error": "Не удалось записать результат.",
             "more": "Ещё",
-            "apply": "Применить"
+            "apply": "Применить",
+            "forfeitWins": "Неявка: {loser} → победа: {winner}",
+            "forfeitConfirm": "Неявка {loser}: {winner} выигрывает этот матч. Подтвердить?",
+            "cancelConfirm": "Отменить матч {a} – {b}? Он исчезнет из зала; журнал его сохранит."
         },
         "last": {
             "result": "{winner} обыграл(а) {loser}",
@@ -2011,9 +2015,13 @@
             "pairHint": "Парный турнир: два человека, один участник «A / B».",
             "name2": "Имя партнёра",
             "pairRating": "Рейтинг пары",
-            "pairRatingHint": "По умолчанию среднее двух рейтингов; введённое значение заменяет его."
+            "pairRatingHint": "По умолчанию среднее двух рейтингов; введённое значение заменяет его.",
+            "withdrawNowConfirm": "Снять {name} с турнира сейчас? Он больше не будет в парах (можно вернуть).",
+            "withdrawLaterConfirm": "Снять {name} после его матча? Дальше он не будет в парах (можно вернуть)."
         },
         "bracket": {
+            "correct": "Исправить результат",
+            "live": "идёт сетка",
             "current": "идёт",
             "notDrawn": "жеребьёвка не проведена",
             "pending": "—",
@@ -2275,7 +2283,8 @@
             "confirm": "Присоединить",
             "wall": {
                 "rounds": "{n} объявленных туров"
-            }
+            },
+            "trashConfirm": "Удалить встречу «{name}»? Её турниры останутся, отсоединённые."
         },
         "epreuves": {
             "pending": "{n} в ожидании",

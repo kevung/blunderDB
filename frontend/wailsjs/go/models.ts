@@ -28,6 +28,24 @@ export namespace database {
 	        this.PlayerNames = source["PlayerNames"];
 	    }
 	}
+	export class BracketFeed {
+	    side: number;
+	    section?: string;
+	    key: string;
+	    loser?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new BracketFeed(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.side = source["side"];
+	        this.section = source["section"];
+	        this.key = source["key"];
+	        this.loser = source["loser"];
+	    }
+	}
 	export class BracketMatch {
 	    key: string;
 	    label: tournoi.Label;
@@ -46,6 +64,7 @@ export namespace database {
 	    walkover?: boolean;
 	    skipped?: boolean;
 	    flagged?: boolean;
+	    feeds?: BracketFeed[];
 	
 	    static createFrom(source: any = {}) {
 	        return new BracketMatch(source);
@@ -70,6 +89,7 @@ export namespace database {
 	        this.walkover = source["walkover"];
 	        this.skipped = source["skipped"];
 	        this.flagged = source["flagged"];
+	        this.feeds = this.convertValues(source["feeds"], BracketFeed);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1811,6 +1831,7 @@ export namespace database {
 	    elapsedSeconds?: number;
 	    slow?: boolean;
 	    noTable?: boolean;
+	    shared?: boolean;
 	    elsewhere?: string;
 	    aElsewhere?: direction.Seat;
 	    bElsewhere?: direction.Seat;
@@ -1834,6 +1855,7 @@ export namespace database {
 	        this.elapsedSeconds = source["elapsedSeconds"];
 	        this.slow = source["slow"];
 	        this.noTable = source["noTable"];
+	        this.shared = source["shared"];
 	        this.elsewhere = source["elsewhere"];
 	        this.aElsewhere = this.convertValues(source["aElsewhere"], direction.Seat);
 	        this.bElsewhere = this.convertValues(source["bElsewhere"], direction.Seat);
@@ -1860,7 +1882,6 @@ export namespace database {
 	
 	
 	export class TranscriptionAnalysisResume {
-	    transcription_id: number;
 	    match_id: number;
 	    label: string;
 	    to_analyze: number;
@@ -1871,10 +1892,29 @@ export namespace database {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.transcription_id = source["transcription_id"];
 	        this.match_id = source["match_id"];
 	        this.label = source["label"];
 	        this.to_analyze = source["to_analyze"];
+	    }
+	}
+	export class TranscriptionLosses {
+	    match_id: number;
+	    imported: boolean;
+	    analyses: number;
+	    comments: number;
+	    draft_id: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionLosses(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.imported = source["imported"];
+	        this.analyses = source["analyses"];
+	        this.comments = source["comments"];
+	        this.draft_id = source["draft_id"];
 	    }
 	}
 	export class TranscriptionSaveResult {

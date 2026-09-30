@@ -100,6 +100,7 @@
 
     async function remove() {
         if (!current) return;
+        if (!window.confirm($t('direction.rencontre.trashConfirm', { name: current.name }))) return;
         try {
             await trashRencontre(current.id);
             await reload();

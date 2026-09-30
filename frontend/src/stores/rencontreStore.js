@@ -39,29 +39,40 @@ export async function createRencontre(name, startsOn, endsOn, tables) {
     return CreateRencontre(name, startsOn, endsOn, tables);
 }
 
-/** Ce que le rattachement changera dans la configuration du tournoi, sans rien écrire. */
+/**
+ * Ce que le rattachement changera dans la configuration du tournoi, sans rien écrire.
+ * @param {number} tournamentId @param {number} rencontreId
+ */
 export async function previewAttach(tournamentId, rencontreId) {
     return PreviewAttachToRencontre(tournamentId, rencontreId);
 }
 
+/** @param {number} tournamentId @param {number} rencontreId */
 export async function attachToRencontre(tournamentId, rencontreId) {
     const r = await AttachToRencontre(tournamentId, rencontreId);
     await refreshDirection();
     return r;
 }
 
+/** @param {number} tournamentId */
 export async function detachFromRencontre(tournamentId) {
     await DetachFromRencontre(tournamentId);
     await refreshDirection();
 }
 
-/** Supprime la Rencontre par la corbeille : ses épreuves sont détachées, aucune supprimée. */
+/**
+ * Supprime la Rencontre par la corbeille : ses épreuves sont détachées, aucune supprimée.
+ * @param {number} rencontreId
+ */
 export async function trashRencontre(rencontreId) {
     await TrashRencontre(rencontreId);
     await refreshDirection();
 }
 
-/** Une table hors service (ou rendue), déclarée une fois pour toute la salle. */
+/**
+ * Une table hors service (ou rendue), déclarée une fois pour toute la salle.
+ * @param {number} rencontreId @param {number} table @param {boolean} out
+ */
 export async function setTableOutOfService(rencontreId, table, out) {
     const r = await SetRencontreTableOutOfService(rencontreId, table, out);
     await refreshDirection();
@@ -71,6 +82,7 @@ export async function setTableOutOfService(rencontreId, table, out) {
 /**
  * Choisit le dossier de sortie de la Rencontre — le geste unique de D6.5 : le dossier réglé, la
  * page murale est déjà écrite, et chaque épreuve rattachée y écrit désormais les siennes.
+ * @param {number} rencontreId
  */
 export async function chooseRencontreOutputDir(rencontreId) {
     const dir = await OpenDirectionOutputDialog();
@@ -78,12 +90,18 @@ export async function chooseRencontreOutputDir(rencontreId) {
     return SetRencontreOutputDir(rencontreId, dir);
 }
 
-/** Oublie le dossier de la Rencontre : la page murale cesse d'être réécrite, celle qui existe reste. */
+/**
+ * Oublie le dossier de la Rencontre : la page murale cesse d'être réécrite, celle qui existe reste.
+ * @param {number} rencontreId
+ */
 export async function forgetRencontreOutputDir(rencontreId) {
     return SetRencontreOutputDir(rencontreId, '');
 }
 
-/** Réécrit la page murale et rend le fichier à ouvrir. */
+/**
+ * Réécrit la page murale et rend le fichier à ouvrir.
+ * @param {number} rencontreId
+ */
 export async function writeRencontrePage(rencontreId) {
     return (await WriteRencontrePage(rencontreId)) || '';
 }

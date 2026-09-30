@@ -18,29 +18,32 @@ import (
 // transcript package, ingest.WriteMatch and the gammonNet batch; the two
 // decisions of its own are stated where they are made.
 
-// TranscriptionSaveResult is what a save reports. ToAnalyze is the derived,
-// never stored, count of the match's positions without analysis (ADR-0045 §8).
+// TranscriptionSaveResult is what finishing a draft reports. ToAnalyze is the
+// derived, never stored, count of the match's positions without analysis
+// (ADR-0045 §8).
 type TranscriptionSaveResult struct {
 	MatchID int64 `json:"match_id"`
-	// Replaced is false on the first save (the Match was created) and true on
-	// every one after it (the same Match was rewritten in place).
+	// Replaced is false when the draft created its Match and true when it was
+	// opened from one and rewrote it in place.
 	Replaced  bool `json:"replaced"`
 	Games     int  `json:"games"`
 	Moves     int  `json:"moves"`
 	Positions int  `json:"positions"`
 	ToAnalyze int  `json:"to_analyze"`
-	// Inconsistent: the draft carries an Inconsistency; saved all the same
+	// Inconsistent: the draft carries an Inconsistency; finished all the same
 	// (ADR-0044), flagged for callers that did not warn.
 	Inconsistent bool `json:"inconsistent"`
 }
 
-// SaveTranscriptionAsMatch materialises the open draft as a Match: the first
-// save creates it and posts its id on the document, every save after that
-// REPLACES the same Match, id and all (ADR-0045 §2).
+// FinishTranscription materialises the draft as a Match and releases it: a
+// draft that names no Match creates one, a draft opened from a Match
+// (EditMatchTranscription) REPLACES it, id and all (ADR-0045 §2). The Match
+// is written and the draft row deleted in ONE transaction, so there is never
+// a moment with both or neither.
 //
-// The draft stays the source of truth. A replacement is not snapshotted to the
-// trash (ADR-0045 §3). The analysis batch is the caller's to start.
-func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult, error) {
+// A replacement is not snapshotted to the trash (ADR-0045 §3). The analysis
+// batch is the caller's to start.
+func (d *Database) FinishTranscription(id int64) (*TranscriptionSaveResult, error) {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
 
@@ -54,33 +57,22 @@ func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult,
 	// The one refusal: no game at all. ADR-0044 keeps what was written, it
 	// does not licence an empty Match polluting statistics and searches.
 	if len(parts.Games) == 0 {
-		return nil, fmt.Errorf("transcription %d: nothing to save yet", id)
+		return nil, fmt.Errorf("transcription %d: nothing to finish yet", id)
 	}
 
-	replace := ed.Doc.Header.MatchID != nil && *ed.Doc.Header.MatchID != 0
 	graph := transcriptGraph(parts)
-	if replace {
-		graph.ReplaceMatchID = *ed.Doc.Header.MatchID
+	if m := ed.Doc.Header.MatchID; m != nil && *m != 0 {
+		graph.ReplaceMatchID = *m
 	}
 
 	header := *parts.Match
 	header.MatchHash, header.CanonicalHash = transcriptMatchHashes(parts)
 
-	res, err := d.writeTranscribedMatch(context.Background(), graph, header)
+	res, err := d.writeTranscribedMatch(context.Background(), graph, header, id)
 	if err != nil {
 		return nil, err
 	}
-
-	// The match id is posted on the document at the FIRST save and never
-	// changes again: it is what makes every later save a replacement rather
-	// than a second Match (fonctionnel.md §1.1).
-	if !replace {
-		matchID := res.MatchID
-		ed.Doc.Header.MatchID = &matchID
-		if _, err := d.saveTranscription(id, ed.Doc); err != nil {
-			return nil, err
-		}
-	}
+	delete(d.transcriptSessions, id)
 
 	out := &TranscriptionSaveResult{
 		MatchID:      res.MatchID,
@@ -99,13 +91,13 @@ func (d *Database) SaveTranscriptionAsMatch(id int64) (*TranscriptionSaveResult,
 }
 
 // writeTranscribedMatch is the write itself: one transaction, ingest.WriteMatch,
-// and the content hashes stated afterwards.
+// the content hashes stated afterwards, and the draft row deleted.
 //
-// Afterwards on purpose: WriteMatch dedups on the hashes, which for a save
-// would enrich a match the library already holds from XG and hand it to the
-// draft. So the graph travels hash-less and ReplaceHeader stamps them in the
-// same transaction, for a future IMPORT to dedup against.
-func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.MatchGraph, header domain.Match) (ingest.WriteResult, error) {
+// Afterwards on purpose: WriteMatch dedups on the hashes, which for a first
+// write would enrich a match the library already holds from XG and hand it to
+// the draft. So the graph travels hash-less and ReplaceHeader stamps them in
+// the same transaction, for a future IMPORT to dedup against.
+func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.MatchGraph, header domain.Match, draftID int64) (ingest.WriteResult, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -118,19 +110,35 @@ func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.Matc
 	if err != nil {
 		return res, err
 	}
-	res, err = ingest.WriteMatch(ctx, tx, "", graph, nil)
-	if err != nil {
+	fail := func(err error) (ingest.WriteResult, error) {
 		_ = tx.Rollback()
 		return res, err
+	}
+	// An imported Match keeps the hashes of its source file, as it keeps its
+	// file_path and import batch: they are what makes the same file, imported
+	// again, a duplicate of this Match rather than a second copy of it.
+	if graph.ReplaceMatchID != 0 {
+		old, err := tx.Matches().Get(ctx, "", graph.ReplaceMatchID)
+		if err != nil {
+			return fail(err)
+		}
+		if isImported(old) {
+			header.MatchHash, header.CanonicalHash = old.MatchHash, old.CanonicalHash
+		}
+	}
+	res, err = ingest.WriteMatch(ctx, tx, "", graph, nil)
+	if err != nil {
+		return fail(err)
 	}
 	header.ID = res.MatchID
 	if err := tx.Matches().ReplaceHeader(ctx, "", res.MatchID, &header); err != nil {
-		_ = tx.Rollback()
-		return res, err
+		return fail(err)
 	}
 	if err := attachTournament(ctx, tx, res.MatchID, header.TournamentID); err != nil {
-		_ = tx.Rollback()
-		return res, err
+		return fail(err)
+	}
+	if err := tx.Transcriptions().Delete(ctx, "", draftID); err != nil {
+		return fail(err)
 	}
 	if err := tx.Commit(); err != nil {
 		return res, err
@@ -271,53 +279,55 @@ func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
 }
 
 // TranscriptionAnalysisResume is the fact ADR-0045 §8 refuses to store,
-// recounted instead: the last draft that produced a Match, and how many of
-// its positions still lack analysis.
+// recounted instead: the most recent transcribed Match, and how many of its
+// positions still lack analysis.
 type TranscriptionAnalysisResume struct {
-	// TranscriptionID is the draft that produced the Match, and Label what the
-	// drafts list shows for it, so the offer can name what it is about.
-	TranscriptionID int64  `json:"transcription_id"`
-	MatchID         int64  `json:"match_id"`
-	Label           string `json:"label"`
+	MatchID int64 `json:"match_id"`
+	// Label names the match the offer is about, as the drafts list would.
+	Label string `json:"label"`
 	// ToAnalyze is CountMatchPositionsToAnalyze at the moment of asking, and
 	// never anything else: the figure the targeted batch is about to work
 	// through.
 	ToAnalyze int `json:"to_analyze"`
 }
 
-// PendingTranscriptionAnalysis reports whether the last SAVED draft's Match
-// has positions left to analyse, and returns nil when it has none — which is
-// also what a library with no saved draft at all answers.
+// PendingTranscriptionAnalysis reports whether the most recent transcribed
+// Match has positions left to analyse, and returns nil when it has none —
+// which is also what a library with no transcribed match answers.
 //
-// Asked on open; ignoring the offer stores nothing. Scoped to one match on
-// purpose, not the library's imported positions. "Last saved" is the most
-// recently updated draft with a match id (ListTranscriptions' order); a
-// deleted Match has its column NULLed by the schema.
+// Asked on open; ignoring the offer stores nothing. A finished draft is gone
+// (ADR-0045 §2), so "transcribed" is read off the Match itself: no source file
+// and no import batch, which only an import sets. Scoped to that one match on
+// purpose, never the library's imported positions.
 func (d *Database) PendingTranscriptionAnalysis() (*TranscriptionAnalysisResume, error) {
-	drafts, err := d.ListTranscriptions()
+	d.mu.RLock()
+	if d.db == nil {
+		d.mu.RUnlock()
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	ids, err := queryInt64s(d.db, `
+		SELECT id FROM match
+		 WHERE COALESCE(file_path, '') = '' AND import_batch_id IS NULL
+		 ORDER BY id DESC LIMIT 1`)
+	d.mu.RUnlock()
+	if err != nil || len(ids) == 0 {
+		return nil, err
+	}
+
+	// CountMatchPositionsToAnalyze takes the read lock itself; holding it
+	// here as well would deadlock the moment a writer queued up between the
+	// two (sync.RWMutex does not admit nested readers).
+	n, err := d.CountMatchPositionsToAnalyze(ids[0])
+	if err != nil || n == 0 {
+		return nil, err
+	}
+	m, err := d.GetMatchByID(ids[0])
 	if err != nil {
 		return nil, err
 	}
-	for _, draft := range drafts {
-		if draft.MatchID == 0 {
-			continue
-		}
-		// CountMatchPositionsToAnalyze takes the read lock itself; taking it
-		// around this loop as well would deadlock the moment a writer queued
-		// up between the two (sync.RWMutex does not admit nested readers).
-		n, err := d.CountMatchPositionsToAnalyze(draft.MatchID)
-		if err != nil {
-			return nil, err
-		}
-		if n == 0 {
-			return nil, nil
-		}
-		return &TranscriptionAnalysisResume{
-			TranscriptionID: draft.ID,
-			MatchID:         draft.MatchID,
-			Label:           draft.Label,
-			ToAnalyze:       n,
-		}, nil
-	}
-	return nil, nil
+	return &TranscriptionAnalysisResume{
+		MatchID:   ids[0],
+		Label:     labelOf(transcript.Header{Player1: m.Player1Name, Player2: m.Player2Name, Event: m.Event}),
+		ToAnalyze: n,
+	}, nil
 }

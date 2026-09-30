@@ -572,7 +572,9 @@
         "tournamentCleared": "Το τουρνουά αφαιρέθηκε από τον αγώνα",
         "tournamentSet": "Τουρνουά «{name}» ανατέθηκε",
         "confirmDelete": "Διαγραφή του αγώνα μεταξύ {player1} και {player2};",
-        "enrichFromFile": "Εμπλουτισμός από αρχείο…"
+        "enrichFromFile": "Εμπλουτισμός από αρχείο…",
+        "editTranscription": "Επεξεργασία μεταγραφής",
+        "editTranscriptionTooltip": "Άνοιγμα αυτού του match ως πρόχειρο μεταγραφής· η ολοκλήρωσή του αντικαθιστά το match"
     },
     "collection": {
         "addDescription": "Προσθήκη περιγραφής…",
@@ -1096,6 +1098,7 @@
         "transcriberLabel": "Καταγραφέας",
         "tournamentLabel": "Τουρνουά",
         "tournamentNone": "Κανένα",
+        "tournamentUnknown": "Κανένα τουρνουά δεν λέγεται «{name}»: το τουρνουά του προσχεδίου δεν αλλάζει.",
         "swapPlayers": "Αντιστροφή των παικτών",
         "swapPlayersTooltip": "Ανταλλαγή των δύο παικτών: τα ονόματα, οι πλευρές και το ταμπλό",
         "boardSwap": "Αναστροφή του ταμπλό",
@@ -1156,26 +1159,16 @@
         "correcting": "Διόρθωση επί τόπου: η επικύρωση αντικαθιστά την ενέργεια και ο δρομέας επιστρέφει εκεί που ήταν.",
         "reviewHint": "Κίνηση προς επανεξέταση: η καταγεγραμμένη κίνηση δεν είναι κίνηση αυτής της ζαριάς, προτείνεται ο πρώτος υποψήφιος.",
         "inconsistencyPrefix": "Ασυνέπεια:",
-        "saveTooltip": "Αποθήκευση του προσχεδίου ως αγώνα (Ctrl+Enter)",
         "exportMat": "Εξαγωγή .mat",
         "exportMatTooltip": "Εγγραφή του αγώνα σε αρχείο .mat",
-        "closeDraft": "Κλείσιμο προσχεδίου",
-        "closeDraftTooltip": "Διαγραφή του προσχεδίου· ένας ήδη αποθηκευμένος αγώνας παραμένει",
-        "saveInconsistentWarning": "Το προσχέδιο περιέχει ασυνέπειες. Διατηρούνται ως έχουν στον αποθηκευμένο αγώνα. Αποθήκευση ούτως ή άλλως;",
-        "saveAnyway": "Αποθήκευση ούτως ή άλλως",
         "illegalExportWarning": "Το προσχέδιο περιέχει μη επιτρεπτή κίνηση. Το gnubg και το XG θα την επισημάνουν («Invalid move») και θα αποκλίνουν στη συνέχεια. Εξαγωγή ούτως ή άλλως;",
         "exportAnyway": "Εξαγωγή ούτως ή άλλως",
-        "closeUnsavedConfirm": "Αυτό το προσχέδιο δεν αποθηκεύτηκε ποτέ: το κλείσιμο χάνει όλα όσα γράφτηκαν. Κλείσιμο;",
-        "closeSavedConfirm": "Το προσχέδιο θα διαγραφεί· ο αγώνας #{id} παραμένει στη βιβλιοθήκη, οριστικός. Κλείσιμο;",
-        "savedMatch": "Ο αγώνας #{id} αποθηκεύτηκε.",
+        "savedMatch": "Το match #{id} δημιουργήθηκε.",
         "replacedMatch": "Ο αγώνας #{id} αντικαταστάθηκε.",
         "resumeAnalysis": "Η ανάλυση διακόπηκε: {n} θέση/εις του τελευταίου μεταγεγραμμένου αγώνα μένουν να αναλυθούν.",
         "resumeAnalysisFinish": "Ολοκλήρωση",
-        "saveFailed": "Η αποθήκευση απέτυχε: {error}",
         "exported": "Ο αγώνας εξήχθη σε .mat.",
         "exportFailed": "Η εξαγωγή απέτυχε: {error}",
-        "closed": "Το προσχέδιο έκλεισε.",
-        "closeFailed": "Το κλείσιμο απέτυχε: {error}",
         "inconsistency": {
             "illegal_move": "παράνομη κίνηση",
             "double_turn": "διπλή σειρά",
@@ -1185,14 +1178,7 @@
             "unrecorded_move": "μη καταγεγραμμένη κίνηση",
             "score_mismatch": "ασυνεπές δηλωμένο σκορ"
         },
-        "stateNoMatch": "no match",
-        "stateMatchUpToDate": "match #{id}",
-        "stateMatchBehind": "match #{id} behind the draft",
-        "stateMatchJustUpdated": "match up to date",
-        "stateMatchMinutes": "match up to date {n} min ago",
-        "stateMatchHours": "match up to date {n} h ago",
-        "createMatch": "Create the match",
-        "updateMatch": "Update match #{id}",
+        "stateNoMatch": "νέο match",
         "noMatch": "no match",
         "matModal": ".mat text",
         "matModalTooltip": "See the .mat file as it would be written",
@@ -1203,7 +1189,21 @@
             "noAction": "No Action under the cursor",
             "noDice": "No roll being entered"
         },
-        "candidatesLabel": "Candidate moves"
+        "candidatesLabel": "Candidate moves",
+        "finish": "Ολοκλήρωση",
+        "finishTooltip": "Εγγραφή του Match (ή αντικατάσταση εκείνου από το οποίο άνοιξε το πρόχειρο) και αποδέσμευση του προχείρου (Ctrl+Enter)",
+        "abandon": "Εγκατάλειψη",
+        "abandonTooltip": "Διαγραφή του προχείρου χωρίς Match· ένα Match από το οποίο άνοιξε μένει ως έχει",
+        "abandonConfirm": "Αυτό το πρόχειρο δεν ολοκληρώθηκε ποτέ: η εγκατάλειψη χάνει ό,τι έχει γραφτεί. Εγκατάλειψη;",
+        "abandonFailed": "Η εγκατάλειψη απέτυχε: {error}",
+        "abandoned": "Το πρόχειρο εγκαταλείφθηκε.",
+        "finishFailed": "Η ολοκλήρωση απέτυχε: {error}",
+        "finishInconsistentWarning": "Αυτό το πρόχειρο περιέχει ασυνέπειες. Διατηρούνται ως έχουν στο Match. Ολοκλήρωση παρ' όλα αυτά;",
+        "finishAnyway": "Ολοκλήρωση παρ' όλα αυτά",
+        "stateEditsMatch": "επεξεργάζεται το match #{id}",
+        "editLossWarning": "Αυτό το match εισήχθη: έως {analyses} ανάλυση(-εις) και έως {comments} σχόλιο(-α) δεν περνούν σε μια μεταγραφή, και η ολοκλήρωσή της μπορεί να τα χάσει. Άνοιγμα της μεταγραφής;",
+        "editAnyway": "Άνοιγμα της μεταγραφής",
+        "editFailed": "Αδύνατο το άνοιγμα της μεταγραφής: {error}"
     },
     "transcript": {
         "title": "Καταγραφή",
@@ -1940,7 +1940,8 @@
             "slow": "αργό",
             "none": "Δεν δηλώθηκε τραπέζι.",
             "noTable": "χωρίς τραπέζι",
-            "elsewhere": "Κατειλημμένο: {event}"
+            "elsewhere": "Κατειλημμένο: {event}",
+            "shared": "Δύο αγώνες σε αυτό το τραπέζι: μετακινήστε έναν"
         },
         "result": {
             "title": "Αποτέλεσμα",
@@ -1953,7 +1954,10 @@
             "cancelMatch": "Ακύρωση αυτού του αγώνα",
             "error": "Αδύνατη η καταχώριση του αποτελέσματος.",
             "more": "Περισσότερα",
-            "apply": "Εφαρμογή"
+            "apply": "Εφαρμογή",
+            "forfeitWins": "Μη εμφάνιση: {loser} → κερδίζει: {winner}",
+            "forfeitConfirm": "Μη εμφάνιση του {loser}: ο {winner} κερδίζει αυτόν τον αγώνα. Επιβεβαίωση;",
+            "cancelConfirm": "Ακύρωση του αγώνα {a} – {b}; Φεύγει από την αίθουσα· το ημερολόγιο τον κρατά."
         },
         "last": {
             "result": "Ο/Η {winner} νίκησε τον/την {loser}",
@@ -2011,9 +2015,13 @@
             "pairHint": "Τουρνουά διπλών: δύο πρόσωπα, ένας συμμετέχων «A / B».",
             "name2": "Όνομα συμπαίκτη",
             "pairRating": "Βαθμολογία ζευγαριού",
-            "pairRatingHint": "Εξ ορισμού ο μέσος όρος των δύο βαθμολογιών· μια τιμή που πληκτρολογείται τον αντικαθιστά."
+            "pairRatingHint": "Εξ ορισμού ο μέσος όρος των δύο βαθμολογιών· μια τιμή που πληκτρολογείται τον αντικαθιστά.",
+            "withdrawNowConfirm": "Απόσυρση του {name} από το τουρνουά τώρα; Δεν θα ζευγαρώνεται πια (δυνατή επανένταξη).",
+            "withdrawLaterConfirm": "Απόσυρση του {name} μετά τον αγώνα του; Δεν θα ζευγαρώνεται μετά (δυνατή επανένταξη)."
         },
         "bracket": {
+            "correct": "Διόρθωση του αποτελέσματος",
+            "live": "ένας πίνακας βρίσκεται σε εξέλιξη",
             "current": "σε εξέλιξη",
             "notDrawn": "δεν έχει κληρωθεί",
             "pending": "—",
@@ -2275,7 +2283,8 @@
             "confirm": "Σύνδεση",
             "wall": {
                 "rounds": "{n} ανακοινωμένοι γύροι"
-            }
+            },
+            "trashConfirm": "Διαγραφή της συνάντησης «{name}»; Τα τουρνουά της μένουν, αποσυνδεδεμένα."
         },
         "epreuves": {
             "pending": "{n} σε αναμονή",

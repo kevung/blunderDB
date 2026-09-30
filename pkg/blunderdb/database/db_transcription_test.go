@@ -129,15 +129,15 @@ func TestApplyTranscriptionGesture_PersistsTheDocument(t *testing.T) {
 	}
 }
 
-func TestCloseTranscription_DeletesTheDraft(t *testing.T) {
+func TestAbandonTranscription_DeletesTheDraft(t *testing.T) {
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
-	if err := db.CloseTranscription(state.ID); err != nil {
-		t.Fatalf("CloseTranscription: %v", err)
+	if err := db.AbandonTranscription(state.ID); err != nil {
+		t.Fatalf("AbandonTranscription: %v", err)
 	}
 
 	list, err := db.ListTranscriptions()
@@ -678,9 +678,9 @@ func TestSaveTranscription_AttachesTheTournament(t *testing.T) {
 		t.Fatalf("set_header: %v", err)
 	}
 
-	saved, err := db.SaveTranscriptionAsMatch(id)
+	saved, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
 	tour, err := db.GetMatchTournament(saved.MatchID)
 	if err != nil {
@@ -699,17 +699,28 @@ func TestSaveTranscription_AttachesTheTournament(t *testing.T) {
 		t.Fatalf("tournament matches = %+v", matches)
 	}
 
-	// Clearing the field detaches at the next save: the attachment is decided
-	// by the draft, at every save, and not once and for all.
+	// Editing the match carries its tournament into the draft: the .mat does
+	// not, and finishing without it would detach the match silently.
+	edited, err := db.EditMatchTranscription(saved.MatchID)
+	if err != nil {
+		t.Fatalf("EditMatchTranscription: %v", err)
+	}
+	if got := edited.Annotated.Document.Header.TournamentID; got == nil || *got != tournamentID {
+		t.Fatalf("the edited draft's tournament is %v, want %d", got, tournamentID)
+	}
+	id = edited.ID
+
+	// Clearing the field detaches at the next finish: the attachment is
+	// decided by the draft, and not once and for all.
 	if _, err := db.ApplyTranscriptionGesture(id, transcript.Gesture{
 		Kind:   transcript.GestureSetHeader,
 		Header: transcript.Header{Player1: "Alice", Player2: "Bob"},
 	}); err != nil {
 		t.Fatalf("set_header: %v", err)
 	}
-	again, err := db.SaveTranscriptionAsMatch(id)
+	again, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("second SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("second FinishTranscription: %v", err)
 	}
 	if again.MatchID != saved.MatchID {
 		t.Fatalf("the second save produced match %d, want %d", again.MatchID, saved.MatchID)

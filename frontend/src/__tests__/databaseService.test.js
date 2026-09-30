@@ -84,6 +84,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, activeModal, MODAL } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiViewModeStore, ankiAnswerShownStore } from '../stores/ankiStore.js';
+import { transcriptionStore } from '../stores/transcriptionStore.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -395,5 +396,26 @@ describe('setStatusBarMessage', () => {
     test('writes straight through to statusBarTextStore', () => {
         setStatusBarMessage('hello');
         expect(get(statusBarTextStore)).toBe('hello');
+    });
+});
+
+// A draft row id belongs to one library: left open across a change of file,
+// its gestures would land on the draft of the same id in the next one.
+describe('changing library lets go of the open transcription draft', () => {
+    function openDraft() {
+        transcriptionStore.set({ id: 1, annotated: { document: { header: {}, actions: [] } } });
+    }
+
+    test('opening another database', async () => {
+        openDraft();
+        await openDatabaseByPath('/tmp/other.db');
+        expect(get(transcriptionStore)).toBeNull();
+    });
+
+    test('creating a new database', async () => {
+        openDraft();
+        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        await newDatabase();
+        expect(get(transcriptionStore)).toBeNull();
     });
 });

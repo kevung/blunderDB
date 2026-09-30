@@ -35,7 +35,7 @@ describe('un score blanchi garde son zéro', () => {
             }
         ];
         const { container } = render(BracketsView, { props: { phases } });
-        expect(container.querySelector('.outcome')?.textContent).toBe('7–0');
+        expect([...container.querySelectorAll('.score')].map((e) => e.textContent)).toEqual(['7', '0']);
     });
 
     test('dans la liste des emplacements', () => {

@@ -13,6 +13,8 @@ import {tournoi} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
 
+export function AbandonTranscription(arg1:number):Promise<void>;
+
 export function AddComment(arg1:number,arg2:string):Promise<void>;
 
 export function AddDirectionNote(arg1:number,arg2:string):Promise<database.DirectionView>;
@@ -175,6 +177,8 @@ export function DirectorySources():Promise<Array<database.DirectorySource>>;
 
 export function DiscardFromTrash(arg1:number):Promise<void>;
 
+export function EditMatchTranscription(arg1:number):Promise<database.TranscriptionState>;
+
 export function EmptyTrash(arg1:number):Promise<number>;
 
 export function EnterForfeit(arg1:number,arg2:string,arg3:string,arg4:string):Promise<database.DirectionView>;
@@ -200,6 +204,8 @@ export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<str
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
 export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
+
+export function FinishTranscription(arg1:number):Promise<database.TranscriptionSaveResult>;
 
 export function FinishedMatches(arg1:number,arg2:number):Promise<Array<database.TableCell>>;
 
@@ -375,6 +381,8 @@ export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<databa
 
 export function MatchMAT(arg1:number):Promise<string>;
 
+export function MatchTranscriptionLosses(arg1:number):Promise<database.TranscriptionLosses>;
+
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 
 export function MoveMatchToTable(arg1:number,arg2:string,arg3:number):Promise<database.DirectionView>;
@@ -470,8 +478,6 @@ export function SaveSearchHistory(arg1:string,arg2:string,arg3:string):Promise<v
 export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 
 export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
-
-export function SaveTranscriptionAsMatch(arg1:number):Promise<database.TranscriptionSaveResult>;
 
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
