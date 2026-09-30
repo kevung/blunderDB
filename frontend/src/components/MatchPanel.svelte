@@ -50,7 +50,9 @@
     import { transcriptionListStore } from '../stores/transcriptionStore.js';
     import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
+    /** @type {any[]} */
     let matches = $state([]);
+    /** @type {any} */
     let selectedMatch = $state(null);
     // A match requested from the command palette is being opened.
     let openingRequested = false;
@@ -60,17 +62,23 @@
     let tournaments = $derived($tournamentsStore || []);
 
     // Detail pane state
+    /** @type {any} */
     let detailMatch = $state(null); // Match currently shown in detail pane
+    /** @type {any[]} */
     let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
+    /** @type {any[]} */
     let detailGames = $state([]); // Game[] for the detail match
+    /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
+    /** @type {any} */
     let detailStats = $state(null); // MatchDetailStats for the detail match
     let loadingStats = $state(false);
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
     let sort = $state({ column: null, direction: 'asc' });
+    /** @type {any} */
     let table = $state(null); // PanelTable instance: keyboard navigation and scrolling
 
     // Inline tournament editing (autocomplete over the known tournaments)
@@ -268,6 +276,7 @@
     }
 
     // Marks are optional: on failure the transcript shows unmarked.
+    /** @param {number} matchID */
     async function loadMoveGrades(matchID) {
         try {
             return (await GetMatchMoveGrades(matchID)) || [];

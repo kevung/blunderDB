@@ -29,6 +29,7 @@
 
     let query = $state('');
     let active = $state(0);
+    /** @type {any[]} */
     let matches = $state([]);
     /** @type {HTMLInputElement | undefined} */
     let inputEl = $state();

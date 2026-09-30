@@ -148,6 +148,7 @@ export function resolveTheme(name) {
  * Écrit les jetons d'un thème sur la racine, déclare son `color-scheme` et pose `data-theme` et
  * `data-scheme` — ce dernier pour les règles qui dépendent de la clarté et non du nom, dont un
  * futur thème sombre hérite sans y penser.
+ * @param {string} name
  * @returns {Theme} le thème résolu, pour que l'appelant en tire la palette.
  */
 export function applyThemeTokens(name) {
