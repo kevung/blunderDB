@@ -102,56 +102,53 @@ func (s *TranscriptionStore) Save(ctx context.Context, scope string, t *storage.
 	return id, nil
 }
 
-// update rewrites an existing draft under t.Revision's expectation.
+// update rewrites an existing draft under t.Revision's expectation and sets
+// t.Revision to the revision THIS write produced, returned by the statement
+// itself: read back separately, it could be a later writer's, which the
+// caller would then overwrite without a conflict.
 func (s *TranscriptionStore) update(ctx context.Context, scope string, t *storage.Transcription) error {
 	what := fmt.Sprintf("save transcription %d", t.ID)
 	tenant, targs := s.DB.TenantFilter("", scope)
 	args := append([]any{t.FormatVersion, nullableID(t.MatchID), t.Label, t.Document, t.ID, t.Revision, t.Revision}, targs...)
-	n, err := s.DB.Exec(ctx,
+	var rev int64
+	err := s.DB.QueryRow(ctx,
 		`UPDATE transcription
 		 SET format_version = ?, match_id = ?, label = ?, document = ?,
 		     revision = revision + 1, updated_at = CURRENT_TIMESTAMP
-		 WHERE id = ? AND (CAST(? AS BIGINT) = 0 OR revision = ?) AND `+tenant, args...)
-	if err != nil {
-		return errf(s.DB, what, s.DB.Referenced(err))
-	}
-	if n == 0 {
+		 WHERE id = ? AND (CAST(? AS BIGINT) = 0 OR revision = ?) AND `+tenant+`
+		 RETURNING revision`, args...).Scan(&rev)
+	if errors.Is(err, ErrNoRows) {
 		return errf(s.DB, what, s.missOrStale(ctx, scope, t.ID))
 	}
-	rev, err := s.revision(ctx, scope, t.ID)
 	if err != nil {
-		return errf(s.DB, what, err)
+		return errf(s.DB, what, s.DB.Referenced(err))
 	}
 	t.Revision = rev
 	return nil
 }
 
 // Touch advances an unchanged draft's revision under the caller's
-// expectation (0: none) and returns the new one.
+// expectation (0: none) and returns the revision this write produced.
 func (s *TranscriptionStore) Touch(ctx context.Context, scope string, id, revision int64) (int64, error) {
 	what := fmt.Sprintf("touch transcription %d", id)
 	tenant, targs := s.DB.TenantFilter("", scope)
-	n, err := s.DB.Exec(ctx,
+	var rev int64
+	err := s.DB.QueryRow(ctx,
 		`UPDATE transcription SET revision = revision + 1
-		 WHERE id = ? AND (CAST(? AS BIGINT) = 0 OR revision = ?) AND `+tenant,
-		append([]any{id, revision, revision}, targs...)...)
-	if err != nil {
-		return 0, errf(s.DB, what, err)
-	}
-	if n == 0 {
+		 WHERE id = ? AND (CAST(? AS BIGINT) = 0 OR revision = ?) AND `+tenant+`
+		 RETURNING revision`,
+		append([]any{id, revision, revision}, targs...)...).Scan(&rev)
+	if errors.Is(err, ErrNoRows) {
 		return 0, errf(s.DB, what, s.missOrStale(ctx, scope, id))
 	}
-	rev, err := s.revision(ctx, scope, id)
 	if err != nil {
 		return 0, errf(s.DB, what, err)
 	}
 	return rev, nil
 }
 
-// revision reads a row's revision back after a write. The write and this read
-// may straddle another writer's; the value is then that writer's, which the
-// caller's next expectation will fail against — a 409 rather than a lost
-// write.
+// revision reads a row's current revision, to tell a missing row from a
+// stale expectation after a conditional write touched nothing.
 func (s *TranscriptionStore) revision(ctx context.Context, scope string, id int64) (int64, error) {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	var rev int64
