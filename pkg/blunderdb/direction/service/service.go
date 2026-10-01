@@ -10,20 +10,20 @@
 // # Concurrent gestures
 //
 // A gesture reads a Direction's log, decides, and appends the next event at the next sequence
-// number. The backends hold no global lock, so the service serialises the gestures itself, in
-// its Memory: one at a time per (scope, Direction), and a gesture that may write several
-// Directions (a room, a shared configuration) or put a match on a table of a shared room alone
-// in its scope. Reads take no lock, and the pages a gesture rewrites are written once its lock
-// is released.
-//
-// That serialisation is per process. Between processes — several serve daemons over one
-// PostgreSQL — the primary key of direction_event (tournament, seq) is the guard: the second
-// of two simultaneous gestures fails on it, and the caller gets that conflict as an error
-// (storage.ErrConflict), never a silently merged log. Repeating the gesture reads the new log.
+// number. It runs in one transaction of the backend under two locks on what it names — the
+// Direction, or its Rencontre when it plays in one, since a gesture may seat a match on a table
+// the sisters share: a mutex in this process, and the backend's guard across processes
+// (storage.GuardedBeginner: an advisory lock in PostgreSQL, the write lock in SQLite), so
+// several serve daemons, the desktop and a `call` on one file are serialised alike. A version
+// its caller stated (ExpectVersion) is compared inside that transaction, after the guard: what
+// it read cannot change before the gesture commits. Reads take no lock, and the pages a gesture
+// rewrites are written once its locks are released.
 package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -36,6 +36,8 @@ type Service struct {
 	st    storage.Storage
 	scope string
 	*Memory
+	// g is set on the service a gesture runs through, bound to its transaction (lockGesture).
+	g *gestureTx
 }
 
 // New binds the service to a backend and a scope. mem carries what outlives a call — the
@@ -58,126 +60,242 @@ type Memory struct {
 	directionMu      sync.RWMutex
 	directionCatalog *direction.Catalog
 	directionLang    string
-	// gestureMu guards the two lock tables below; see lockDirection.
-	gestureMu  sync.Mutex
-	scopeLocks map[string]*sync.RWMutex
-	dirLocks   map[forecastKey]*sync.Mutex
+	// pageWarning is told of a page a gesture could not write (OnPageWarning).
+	pageWarning func(PageWarning)
+	// gestureMu guards locks, the process-side locks of the gestures; see lockGesture.
+	gestureMu sync.Mutex
+	locks     map[gestureLock]*sync.Mutex
 }
 
-// gestureLocks returns the scope's room lock and the Direction's own lock, made on first use.
-func (m *Memory) gestureLocks(scope string, tournamentID int64) (*sync.RWMutex, *sync.Mutex) {
+// gestureLock names one process-side lock: a Direction's own, or a Rencontre's.
+type gestureLock struct {
+	scope string
+	room  bool
+	id    int64
+}
+
+// guardKey is the lock's name for the backend's guard (storage.GuardedBeginner).
+func (k gestureLock) guardKey() string {
+	if k.room {
+		return fmt.Sprintf("direction|%s|rencontre|%d", k.scope, k.id)
+	}
+	return fmt.Sprintf("direction|%s|tournament|%d", k.scope, k.id)
+}
+
+// gestureMutex returns the process-side lock k names, made on first use.
+func (m *Memory) gestureMutex(k gestureLock) *sync.Mutex {
 	m.gestureMu.Lock()
 	defer m.gestureMu.Unlock()
-	if m.scopeLocks == nil {
-		m.scopeLocks = map[string]*sync.RWMutex{}
-		m.dirLocks = map[forecastKey]*sync.Mutex{}
+	if m.locks == nil {
+		m.locks = map[gestureLock]*sync.Mutex{}
 	}
-	room := m.scopeLocks[scope]
-	if room == nil {
-		room = &sync.RWMutex{}
-		m.scopeLocks[scope] = room
+	mu := m.locks[k]
+	if mu == nil {
+		mu = &sync.Mutex{}
+		m.locks[k] = mu
 	}
-	if tournamentID == 0 {
-		return room, nil
-	}
-	k := forecastKey{scope, tournamentID}
-	own := m.dirLocks[k]
-	if own == nil {
-		own = &sync.Mutex{}
-		m.dirLocks[k] = own
-	}
-	return room, own
+	return mu
 }
 
-// ownLock serialises the gestures of one Direction: a gesture reads the log, decides, and
-// appends at the next sequence number, so two at once would claim the same number. The
-// returned func releases it. Gestures of other Directions run alongside.
-func (d *Service) ownLock(tournamentID int64) func() {
-	room, own := d.gestureLocks(d.scope, tournamentID)
-	room.RLock()
-	own.Lock()
-	return func() {
-		own.Unlock()
-		room.RUnlock()
-	}
+// gestureTarget is what a gesture names, and so what its locks and its version are.
+type gestureTarget struct {
+	tournamentID int64 // the Direction, or 0 for a gesture on a room
+	rencontreID  int64 // the room a gesture on a room names; or the room an attach joins
+	own          bool  // the Direction's own lock as well as its room's: membership changes
 }
 
-// roomLock serialises a gesture that may write several Directions of the scope — a room, a
-// configuration a room shares — against every other gesture of the scope.
-func (d *Service) roomLock() func() {
-	room, _ := d.gestureLocks(d.scope, 0)
-	room.Lock()
-	return room.Unlock
+// lockDirection opens a gesture on one Direction. A Direction that plays in a Rencontre is
+// locked by its room: a gesture may seat a match on a table the sisters share, or write a
+// sister's log in a swap, and its version is the room's.
+func (d *Service) lockDirection(ctx context.Context, tournamentID int64) (*Service, func(*error), error) {
+	g, end, _, err := d.lockGesture(ctx, gestureTarget{tournamentID: tournamentID}, true)
+	return g, end, err
 }
 
-// tablesLock takes the lock a gesture that puts a match on a table needs. In a Rencontre it is
-// the room's: a table free of the sisters must stay free until the match is written on it, and
-// a swap may write a sister's log. Membership is read under the room's lock, so it cannot change
-// between that reading and the choice; outside any Rencontre the gesture falls back to its own
-// Direction's lock, and checks again that no attach slipped in meanwhile. shared says which lock
-// is held.
-func (d *Service) tablesLock(ctx context.Context, tournamentID int64) (release func(), shared bool) {
-	for {
-		release = d.roomLock()
-		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err != nil || rid != 0 {
-			return release, true
-		}
-		release()
-		release = d.ownLock(tournamentID)
-		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err == nil && rid == 0 {
-			return release, false
-		}
-		release()
-	}
+// lockTables is lockDirection that also says whether the Direction shares its tables.
+func (d *Service) lockTables(ctx context.Context, tournamentID int64) (*Service, func(*error), bool, error) {
+	return d.lockGesture(ctx, gestureTarget{tournamentID: tournamentID}, true)
 }
 
-// lockDirection opens a gesture on one Direction: its lock, then the caller's version checked
-// under it (ExpectVersion). The returned func releases the lock and rewrites the Direction's
-// display page, so every caller gets its page alike and a slow folder holds no gesture.
+// lockRoom opens a gesture on a room — the Rencontre rencontreID, or the room of the Direction
+// tournamentID. Its end writes no page: a room gesture rewrites the pages it changed itself.
+func (d *Service) lockRoom(ctx context.Context, tournamentID, rencontreID int64) (*Service, func(*error), error) {
+	g, end, _, err := d.lockGesture(ctx, gestureTarget{tournamentID: tournamentID, rencontreID: rencontreID}, false)
+	return g, end, err
+}
+
+// lockMembership opens a gesture that moves the Direction tournamentID in or out of a room
+// (rencontreID, or the one it plays in): both the Direction's lock and the room's, so neither
+// a gesture that read the old membership nor one that reads the new one runs alongside. The
+// version checked is the room's when rencontreID is set, the Direction's otherwise.
+func (d *Service) lockMembership(ctx context.Context, tournamentID, rencontreID int64) (*Service, func(*error), error) {
+	g, end, _, err := d.lockGesture(ctx, gestureTarget{tournamentID: tournamentID, rencontreID: rencontreID, own: true}, false)
+	return g, end, err
+}
+
+// lockGesture serialises a gesture against every other one on what it names, in this process
+// (a mutex) and across processes (the backend's guard, held by the gesture's transaction), then
+// checks the caller's version, if it stated one (ExpectVersion), inside that transaction: what
+// the comparison read cannot change before the gesture's writes commit.
 //
-// A caller that states a version holds the token of the whole room when the Direction plays in
-// a Rencontre (DirectionVersion), and a sister's gesture moves it: the check then takes the
-// room's lock, or two gestures on two sisters could both pass under one token.
-func (d *Service) lockDirection(ctx context.Context, tournamentID int64) (func(), error) {
-	if _, ok := expectedVersion(ctx); ok {
-		release, _, err := d.lockTables(ctx, tournamentID)
-		return release, err
+// It returns the service bound to that transaction — the gesture reads and writes through it
+// — and the end the caller defers with its error: nil commits, anything else rolls back, so a
+// gesture writes all of its rows or none. A conflict on the log's sequence (a writer that took
+// no guard) is a stale version for a caller that stated one. withPages rewrites the
+// Direction's pages once the locks are released.
+func (d *Service) lockGesture(ctx context.Context, t gestureTarget, withPages bool) (*Service, func(*error), bool, error) {
+	if d.g != nil {
+		// Already inside a gesture: its transaction and its locks hold.
+		return d, func(*error) {}, false, nil
 	}
-	unlock := d.ownLock(tournamentID)
-	return func() {
-		unlock()
-		d.writePages(ctx, tournamentID)
-	}, nil
+	for {
+		room, err := d.roomOf(ctx, d.st, t)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		keys := d.lockKeys(t, room)
+		for _, k := range keys {
+			d.gestureMutex(k).Lock()
+		}
+		unlock := func() {
+			for i := len(keys) - 1; i >= 0; i-- {
+				d.gestureMutex(keys[i]).Unlock()
+			}
+		}
+		g, tx, err := d.beginGesture(ctx, keys)
+		if err != nil {
+			unlock()
+			return nil, nil, false, err
+		}
+		// Another process may have moved the Direction between the reading and the guard.
+		if now, err := d.roomOf(ctx, g.st, t); err != nil || now != room {
+			_ = tx.Rollback()
+			unlock()
+			if err != nil {
+				return nil, nil, false, err
+			}
+			continue
+		}
+		if err := g.checkVersion(ctx, t.tournamentID, t.rencontreID); err != nil {
+			_ = tx.Rollback()
+			unlock()
+			return nil, nil, false, err
+		}
+		end := func(errp *error) {
+			if *errp == nil && g.g.failed {
+				*errp = errGestureAborted
+			}
+			if *errp == nil {
+				g.recordVersion(ctx, t.tournamentID, t.rencontreID)
+				*errp = tx.Commit()
+			}
+			if *errp != nil {
+				_ = tx.Rollback()
+				if _, ok := expectedVersion(ctx); ok && errors.Is(*errp, storage.ErrConflict) {
+					*errp = ErrStale
+				}
+			}
+			unlock()
+			if *errp == nil && withPages && t.tournamentID != 0 {
+				d.writePages(context.WithoutCancel(ctx), t.tournamentID)
+			}
+		}
+		return g, end, room != 0, nil
+	}
 }
 
-// lockTables is tablesLock for a gesture: the caller's version is checked under the lock, and
-// the release rewrites the Direction's display page.
-func (d *Service) lockTables(ctx context.Context, tournamentID int64) (release func(), shared bool, err error) {
-	unlock, shared := d.tablesLock(ctx, tournamentID)
-	if err := d.checkVersion(ctx, tournamentID, 0); err != nil {
-		unlock()
-		return nil, false, err
+// errGestureAborted reports a gesture whose nested transaction rolled back while the gesture
+// itself returned no error: nothing of it is committed.
+var errGestureAborted = errors.New("direction: the gesture was rolled back")
+
+// roomOf is the room a gesture's locks follow: the Rencontre it names, or the one its Direction
+// plays in (0 when none).
+func (d *Service) roomOf(ctx context.Context, st storage.Stores, t gestureTarget) (int64, error) {
+	if t.tournamentID == 0 || (t.rencontreID != 0 && t.own) {
+		return t.rencontreID, nil
 	}
-	return func() {
-		d.recordVersion(ctx, tournamentID, 0)
-		unlock()
-		d.writePages(ctx, tournamentID)
-	}, shared, nil
+	return st.Rencontres().Of(ctx, d.scope, t.tournamentID)
 }
 
-// lockRoom is roomLock for a gesture on a room: the caller's version of what it names — a
-// Direction, or a Rencontre when rencontreID is set — is checked under the lock. Its release
-// writes nothing: a room gesture rewrites the pages it changed itself.
-func (d *Service) lockRoom(ctx context.Context, tournamentID, rencontreID int64) (func(), error) {
-	unlock := d.roomLock()
-	if err := d.checkVersion(ctx, tournamentID, rencontreID); err != nil {
-		unlock()
-		return nil, err
+// lockKeys are the locks a gesture takes, the Direction's before the room's: the order every
+// gesture that takes both follows.
+func (d *Service) lockKeys(t gestureTarget, room int64) []gestureLock {
+	var keys []gestureLock
+	if t.tournamentID != 0 && (t.own || room == 0) {
+		keys = append(keys, gestureLock{scope: d.scope, id: t.tournamentID})
 	}
-	return func() {
-		d.recordVersion(ctx, tournamentID, rencontreID)
-		unlock()
-	}, nil
+	if room != 0 {
+		keys = append(keys, gestureLock{scope: d.scope, room: true, id: room})
+	}
+	return keys
+}
+
+// gestureTx is the transaction a gesture runs in, shared by the transactions it nests.
+type gestureTx struct {
+	failed bool
+}
+
+// beginGesture opens the gesture's transaction under the backend's guard and returns the
+// service bound to it.
+func (d *Service) beginGesture(ctx context.Context, keys []gestureLock) (*Service, storage.Tx, error) {
+	var tx storage.Tx
+	var err error
+	if gb, ok := d.st.(storage.GuardedBeginner); ok {
+		names := make([]string, len(keys))
+		for i, k := range keys {
+			names[i] = k.guardKey()
+		}
+		tx, err = gb.BeginGuardedTx(ctx, names...)
+	} else {
+		tx, err = d.st.BeginTx(ctx)
+	}
+	if err != nil {
+		return nil, nil, err
+	}
+	g := &gestureTx{}
+	return &Service{st: &txStorage{Tx: tx, g: g}, scope: d.scope, Memory: d.Memory, g: g}, tx, nil
+}
+
+// txStorage is a gesture's transaction seen as a Storage, so the service's code reads and
+// writes through it unchanged. A transaction it begins is the gesture's own: committing it
+// waits for the gesture's end, and rolling it back fails the whole gesture.
+type txStorage struct {
+	storage.Tx
+	g *gestureTx
+}
+
+func (t *txStorage) BeginTx(context.Context) (storage.Tx, error) {
+	return &nestedTx{Tx: t.Tx, g: t.g}, nil
+}
+
+func (t *txStorage) Close() error { return nil }
+
+func (t *txStorage) Version(ctx context.Context) (string, error) {
+	return t.Metadata().Version(ctx, "")
+}
+
+func (t *txStorage) Migrate(context.Context) error {
+	return errors.New("direction: no migration inside a gesture")
+}
+
+// nestedTx is a transaction begun inside a gesture's.
+type nestedTx struct {
+	storage.Tx
+	g    *gestureTx
+	done bool
+}
+
+func (n *nestedTx) Commit() error {
+	n.done = true
+	return nil
+}
+
+func (n *nestedTx) Rollback() error {
+	if !n.done {
+		n.done = true
+		n.g.failed = true
+	}
+	return nil
 }
 
 type forecastKey struct {

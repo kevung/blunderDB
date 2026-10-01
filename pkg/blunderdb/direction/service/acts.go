@@ -33,12 +33,12 @@ func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actio
 	return d.GetDirection(ctx, tournamentID)
 }
 
-func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tournoi.Action) error {
-	release, shared, err := d.lockTables(ctx, tournamentID)
+func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tournoi.Action) (err error) {
+	d, release, shared, err := d.lockTables(ctx, tournamentID)
 	if err != nil {
 		return err
 	}
-	defer release()
+	defer release(&err)
 	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
 		if _, taken := d.roomAround(ctx, tournamentID, nil).tables[a.Table]; taken {
 			return fmt.Errorf("direction: table %d is taken", a.Table)
@@ -61,14 +61,14 @@ func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (
 	return d.GetDirection(ctx, tournamentID)
 }
 
-func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) error {
+func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (err error) {
 	// The room's lock in a Rencontre: the sisters' tables are read once, and none of them may
 	// take one of the tables handed out here before the batch is written.
-	release, _, err := d.lockTables(ctx, tournamentID)
+	d, release, _, err := d.lockTables(ctx, tournamentID)
 	if err != nil {
 		return err
 	}
-	defer release()
+	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return err
@@ -127,12 +127,12 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
 // (unknown player, already playing, against themselves) — and a table another match is
 // played on, in this event or a sister of its room, which would hide that match.
-func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
-	release, shared, err := d.lockTables(ctx, tournamentID)
+func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (_ *DirectionView, err error) {
+	d, release, shared, err := d.lockTables(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	// The sisters' tables are read before the transaction opens — on a single-connection
 	// database a read beside it would wait for it forever — and the room's lock keeps them as
 	// read until the match is written.

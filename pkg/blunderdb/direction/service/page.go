@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"sync"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -56,20 +57,100 @@ func (d *Service) WriteDirectionPage(ctx context.Context, tournamentID int64) (s
 // writePages rewrites, after a gesture, the display page of each Tournament it wrote in (0s
 // skipped), then the wall page of each room they play in — once, however many of its members
 // the gesture touched. Called with no lock held: writing a file is not part of the gesture, and
-// a failure is not the gesture's (ADR-0004).
+// a failure does not undo it (ADR-0004); it is reported as a PageWarning instead.
 func (d *Service) writePages(ctx context.Context, tournamentIDs ...int64) {
 	var rooms []int64
 	for _, tid := range tournamentIDs {
 		if tid == 0 {
 			continue
 		}
-		_, _ = d.writeOwnPage(ctx, tid)
+		if _, err := d.writeOwnPage(ctx, tid); err != nil {
+			d.warnPage(ctx, PageWarning{TournamentID: tid, Err: err.Error()})
+		}
 		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tid); err == nil && rid != 0 && !slices.Contains(rooms, rid) {
 			rooms = append(rooms, rid)
 		}
 	}
 	for _, rid := range rooms {
-		_, _ = d.WriteRencontrePage(ctx, rid)
+		d.writeWallPage(ctx, rid)
+	}
+}
+
+// writeWallPage is WriteRencontrePage after a gesture: a failure is a PageWarning.
+func (d *Service) writeWallPage(ctx context.Context, rid int64) {
+	if _, err := d.WriteRencontrePage(ctx, rid); err != nil {
+		d.warnPage(ctx, PageWarning{RencontreID: rid, Err: err.Error()})
+	}
+}
+
+// writeRencontrePages rewrites a room's wall page and each member's own page: what a gesture on
+// the room changed.
+func (d *Service) writeRencontrePages(ctx context.Context, rid int64) {
+	if r, err := d.st.Rencontres().Get(ctx, d.scope, rid); err == nil && len(r.TournamentIDs) > 0 {
+		d.writePages(ctx, r.TournamentIDs...)
+		return
+	}
+	d.writeWallPage(ctx, rid)
+}
+
+// PageWarning reports a display page a gesture could not rewrite — a folder gone, a disk
+// full. The gesture itself stands; the director is told so the wall is not left stale unseen.
+type PageWarning struct {
+	TournamentID int64  `json:"tournamentId,omitempty"`
+	RencontreID  int64  `json:"rencontreId,omitempty"`
+	Err          string `json:"error"`
+}
+
+func (w PageWarning) String() string {
+	if w.RencontreID != 0 {
+		return fmt.Sprintf("rencontre %d: page not written: %s", w.RencontreID, w.Err)
+	}
+	return fmt.Sprintf("tournament %d: page not written: %s", w.TournamentID, w.Err)
+}
+
+type pageWarningsKey struct{}
+
+type pageWarnings struct {
+	mu   sync.Mutex
+	list []PageWarning
+}
+
+// CollectPageWarnings returns ctx collecting the PageWarnings of the gestures run under it, for
+// a caller that answers them with its response (the serve daemon).
+func CollectPageWarnings(ctx context.Context) context.Context {
+	return context.WithValue(ctx, pageWarningsKey{}, &pageWarnings{})
+}
+
+// PageWarnings are the warnings collected under ctx (CollectPageWarnings).
+func PageWarnings(ctx context.Context) []PageWarning {
+	c, ok := ctx.Value(pageWarningsKey{}).(*pageWarnings)
+	if !ok {
+		return nil
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return slices.Clone(c.list)
+}
+
+// OnPageWarning installs the function told of every PageWarning in this Memory — the desktop's
+// status bar. nil removes it.
+func (m *Memory) OnPageWarning(f func(PageWarning)) {
+	m.directionMu.Lock()
+	defer m.directionMu.Unlock()
+	m.pageWarning = f
+}
+
+func (d *Service) warnPage(ctx context.Context, w PageWarning) {
+	if c, ok := ctx.Value(pageWarningsKey{}).(*pageWarnings); ok {
+		c.mu.Lock()
+		c.list = append(c.list, w)
+		c.mu.Unlock()
+	}
+	d.directionMu.RLock()
+	f := d.pageWarning
+	d.directionMu.RUnlock()
+	if f != nil {
+		f(w)
 	}
 }
 

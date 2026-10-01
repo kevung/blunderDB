@@ -149,7 +149,21 @@ func (d *Service) PreviewAttachToRencontre(ctx context.Context, tournamentID, re
 // configuration change, and membership is recorded, in one transaction. Permitted at any time,
 // the event under way included. A Tournament without a Direction has no room to join.
 func (d *Service) AttachToRencontre(ctx context.Context, tournamentID, rencontreID int64) (*RencontreView, error) {
-	err := d.lockedRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	if err := d.attach(ctx, tournamentID, rencontreID); err != nil {
+		return nil, err
+	}
+	return d.afterRoomGesture(ctx, rencontreID)
+}
+
+// attach runs under the Tournament's lock and the room's: a gesture on the Tournament that read
+// it unattached must not run alongside.
+func (d *Service) attach(ctx context.Context, tournamentID, rencontreID int64) (err error) {
+	d, release, err := d.lockMembership(ctx, tournamentID, rencontreID)
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	return d.inRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if of, err := tx.Rencontres().Of(ctx, d.scope, tournamentID); err != nil {
 			return err
 		} else if of != 0 && of != rencontreID {
@@ -160,10 +174,6 @@ func (d *Service) AttachToRencontre(ctx context.Context, tournamentID, rencontre
 		}
 		return tx.Rencontres().Attach(ctx, d.scope, tournamentID, rencontreID)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return d.afterRoomGesture(ctx, rencontreID)
 }
 
 // alignTables puts one Tournament on the room's tables by a configuration change, and writes
@@ -186,11 +196,19 @@ func alignTables(ctx context.Context, store direction.Store, tournamentID int64,
 // Realign puts every member of a Rencontre back on the room's tables, as attaching
 // them does. A restored Rencontre needs it: its events kept their own tables while detached.
 func (d *Service) Realign(ctx context.Context, id int64) error {
-	release, err := d.lockRoom(ctx, 0, id)
+	if err := d.realign(ctx, id); err != nil {
+		return err
+	}
+	d.writeRencontrePages(context.WithoutCancel(ctx), id)
+	return nil
+}
+
+func (d *Service) realign(ctx context.Context, id int64) (err error) {
+	d, release, err := d.lockRoom(ctx, 0, id)
 	if err != nil {
 		return err
 	}
-	defer release()
+	defer release(&err)
 	return d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		for _, tid := range r.TournamentIDs {
 			if err := alignTables(ctx, store, tid, room); err != nil {
@@ -201,33 +219,56 @@ func (d *Service) Realign(ctx context.Context, id int64) error {
 	})
 }
 
-// DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
+// DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables. Its
+// own page and its former sisters' are rewritten: none of them shares the room any more.
 func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) error {
-	release, err := d.lockRoom(ctx, tournamentID, 0)
+	rid, err := d.detach(ctx, tournamentID)
 	if err != nil {
 		return err
 	}
-	rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
-	err = d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0)
-	release()
-	if err != nil {
-		return err
-	}
+	ctx = context.WithoutCancel(ctx)
+	d.writePages(ctx, tournamentID)
 	if rid != 0 {
-		_, _ = d.WriteRencontrePage(ctx, rid)
+		d.writeRencontrePages(ctx, rid)
 	}
 	return nil
 }
 
-// TrashRencontre deletes a Rencontre through the trash (ADR-0036). Its Tournaments are detached,
-// never deleted.
-func (d *Service) TrashRencontre(ctx context.Context, id int64) (int64, error) {
-	release, err := d.lockRoom(ctx, 0, id)
+func (d *Service) detach(ctx context.Context, tournamentID int64) (rid int64, err error) {
+	d, release, err := d.lockMembership(ctx, tournamentID, 0)
 	if err != nil {
 		return 0, err
 	}
-	defer release()
-	return trash.Rencontre(ctx, d.st, d.scope, id)
+	defer release(&err)
+	if rid, err = d.st.Rencontres().Of(ctx, d.scope, tournamentID); err != nil {
+		return 0, err
+	}
+	return rid, d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0)
+}
+
+// TrashRencontre deletes a Rencontre through the trash (ADR-0036). Its Tournaments are detached,
+// never deleted; their pages are rewritten without the room.
+func (d *Service) TrashRencontre(ctx context.Context, id int64) (int64, error) {
+	trashID, members, err := d.trashRencontre(ctx, id)
+	if err != nil {
+		return 0, err
+	}
+	d.writePages(context.WithoutCancel(ctx), members...)
+	return trashID, nil
+}
+
+func (d *Service) trashRencontre(ctx context.Context, id int64) (_ int64, members []int64, err error) {
+	d, release, err := d.lockRoom(ctx, 0, id)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer release(&err)
+	r, err := d.st.Rencontres().Get(ctx, d.scope, id)
+	if err != nil {
+		return 0, nil, err
+	}
+	trashID, err := trash.Rencontre(ctx, d.st, d.scope, id)
+	return trashID, r.TournamentIDs, err
 }
 
 // SetRencontreTableOutOfService declares a table of the room out of service, or back in service.
@@ -270,12 +311,12 @@ func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON s
 
 // lockedRoom is inRoom under the room's lock, released on return: what a room gesture does
 // next — rewriting its wall page — runs without it.
-func (d *Service) lockedRoom(ctx context.Context, id int64, fn func(context.Context, storage.Tx, direction.Store, *domain.Rencontre, direction.Room) error) error {
-	release, err := d.lockRoom(ctx, 0, id)
+func (d *Service) lockedRoom(ctx context.Context, id int64, fn func(context.Context, storage.Tx, direction.Store, *domain.Rencontre, direction.Room) error) (err error) {
+	d, release, err := d.lockRoom(ctx, 0, id)
 	if err != nil {
 		return err
 	}
-	defer release()
+	defer release(&err)
 	return d.inRoom(ctx, id, fn)
 }
 

@@ -21,7 +21,7 @@ import (
 // room's lock was held at that moment; and how many wall pages were started.
 type pageWatch struct {
 	storage.Storage
-	room *sync.RWMutex
+	room *sync.Mutex
 
 	mu         sync.Mutex
 	wallWrites int
@@ -89,14 +89,14 @@ func TestSwapWritesItsPagesOnceAndOutsideTheLock(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = raw.Close() })
 	mem := &Memory{}
-	room, _ := mem.gestureLocks("", 0)
-	w := &pageWatch{Storage: raw, room: room}
+	w := &pageWatch{Storage: raw}
 	svc := New(w, "", mem)
 
 	r, err := svc.CreateRencontre(ctx, "Festival", "", "", 8)
 	if err != nil {
 		t.Fatal(err)
 	}
+	w.room = mem.gestureMutex(gestureLock{room: true, id: r.ID})
 	cfg := tournoi.Config{Name: "Open", Tables: tournoi.Tables{Count: 8},
 		Phases: []tournoi.PhaseConfig{{Kind: tournoi.KindSwissLives, Length: 7, Target: 16}}}
 	var tids []int64

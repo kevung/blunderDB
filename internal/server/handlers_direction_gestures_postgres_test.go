@@ -6,11 +6,32 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 )
+
+// TestDirectionGestures_TwoInstancesPostgres: two daemons over one PostgreSQL, each with its own
+// pool and its own process locks — the advisory lock of the gesture's transaction is all they
+// share.
+func TestDirectionGestures_TwoInstancesPostgres(t *testing.T) {
+	dsn := postgresDSN(t)
+	open := func() storage.Storage {
+		st, err := pg.Open(context.Background(), dsn, nil)
+		if err != nil {
+			t.Fatalf("pg.Open: %v", err)
+		}
+		t.Cleanup(func() { st.Close() })
+		return st
+	}
+	stA := open()
+	checkTwoInstances(t, stA, open())
+}
 
 // TestDirectionGestures_RacePostgres: on a pooled backend too, two gestures on one reading
 // apply once — the comparison runs under the gesture's lock, not on one connection.

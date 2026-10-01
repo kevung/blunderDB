@@ -137,12 +137,12 @@ func (d *Service) Participants(ctx context.Context, tournamentID int64) ([]Parti
 
 // AddParticipant enters one player. It is an event, in preparation as afterwards: a late
 // arrival is an entry like any other, and the engine decides where they come in.
-func (d *Service) AddParticipant(ctx context.Context, tournamentID int64, name, club string, rating float64) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) AddParticipant(ctx context.Context, tournamentID int64, name, club string, rating float64) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return nil, fmt.Errorf("direction: an entry needs a name")
@@ -169,12 +169,12 @@ func (d *Service) AddParticipant(ctx context.Context, tournamentID int64, name, 
 // UpdateParticipant corrects an entry — a mistyped name, a missing club, a wrong rating —
 // WITHOUT changing its identifier. That matters: the identifier is what a Slot points at, so
 // correcting a name must not undo a Match already attached to it.
-func (d *Service) UpdateParticipant(ctx context.Context, tournamentID int64, id, name, club string, rating float64) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) UpdateParticipant(ctx context.Context, tournamentID int64, id, name, club string, rating float64) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return nil, fmt.Errorf("direction: an entry needs a name")
@@ -205,12 +205,12 @@ func (d *Service) UpdateParticipant(ctx context.Context, tournamentID int64, id,
 // paired again, with the results and lives they had when they left; the matches their
 // withdrawal lost by forfeit stay lost. It is refused for someone who has not withdrawn, so a
 // mistaken click cannot re-enter a player twice.
-func (d *Service) ReinstateParticipant(ctx context.Context, tournamentID int64, id string) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) ReinstateParticipant(ctx context.Context, tournamentID int64, id string) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -237,12 +237,12 @@ func (d *Service) ReinstateParticipant(ctx context.Context, tournamentID int64, 
 // WithdrawParticipant removes a player. Immediately, their running matches are lost by forfeit;
 // deferred, they are no longer paired but the match they are at goes to its end — the case of
 // someone who has a train at six.
-func (d *Service) WithdrawParticipant(ctx context.Context, tournamentID int64, id string, afterCurrent bool) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) WithdrawParticipant(ctx context.Context, tournamentID int64, id string, afterCurrent bool) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -263,12 +263,12 @@ func (d *Service) WithdrawParticipant(ctx context.Context, tournamentID int64, i
 // of until/round is given: until (RFC3339, empty = none) for a return at an hour, round (0 =
 // none) for a return at a round of the current swiss-by-rounds phase. Giving both, or neither,
 // or a round outside a rounds phase, is refused by the engine itself.
-func (d *Service) MakeParticipantAbsent(ctx context.Context, tournamentID int64, id, until string, round int) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) MakeParticipantAbsent(ctx context.Context, tournamentID int64, id, until string, round int) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -297,12 +297,12 @@ func (d *Service) MakeParticipantAbsent(ctx context.Context, tournamentID int64,
 
 // MakeParticipantAvailable lifts an absence, whatever its deadline, and returns the player to
 // pairing right away — the one-click way back the queue's own countdown does automatically.
-func (d *Service) MakeParticipantAvailable(ctx context.Context, tournamentID int64, id string) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) MakeParticipantAvailable(ctx context.Context, tournamentID int64, id string) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err

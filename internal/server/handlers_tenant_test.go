@@ -52,24 +52,7 @@ func newPostgresTestServerAndHandler(t *testing.T) (*httptest.Server, *Server) {
 func newPostgresTestServerAndHandlerWith(t *testing.T, opt func(*Options)) (*httptest.Server, *Server) {
 	t.Helper()
 	ctx := context.Background()
-
-	container, err := tcpg.Run(ctx, "postgres:16-alpine",
-		tcpg.WithDatabase("blunderdb"),
-		tcpg.WithUsername("test"),
-		tcpg.WithPassword("test"),
-		tcpg.BasicWaitStrategies(),
-	)
-	if err != nil {
-		t.Skipf("postgres container unavailable (Docker required): %v", err)
-	}
-	t.Cleanup(func() { _ = testcontainers.TerminateContainer(container) })
-
-	dsn, err := container.ConnectionString(ctx, "sslmode=disable")
-	if err != nil {
-		t.Fatalf("connection string: %v", err)
-	}
-
-	st, err := pg.Open(ctx, dsn, nil)
+	st, err := pg.Open(ctx, postgresDSN(t), nil)
 	if err != nil {
 		t.Fatalf("pg.Open: %v", err)
 	}
@@ -88,6 +71,29 @@ func newPostgresTestServerAndHandlerWith(t *testing.T, opt func(*Options)) (*htt
 	ts := httptest.NewServer(srv.Handler())
 	t.Cleanup(ts.Close)
 	return ts, srv
+}
+
+// postgresDSN starts a PostgreSQL container for the test and returns its DSN.
+func postgresDSN(t *testing.T) string {
+	t.Helper()
+	ctx := context.Background()
+
+	container, err := tcpg.Run(ctx, "postgres:16-alpine",
+		tcpg.WithDatabase("blunderdb"),
+		tcpg.WithUsername("test"),
+		tcpg.WithPassword("test"),
+		tcpg.BasicWaitStrategies(),
+	)
+	if err != nil {
+		t.Skipf("postgres container unavailable (Docker required): %v", err)
+	}
+	t.Cleanup(func() { _ = testcontainers.TerminateContainer(container) })
+
+	dsn, err := container.ConnectionString(ctx, "sslmode=disable")
+	if err != nil {
+		t.Fatalf("connection string: %v", err)
+	}
+	return dsn
 }
 
 // postTenant POSTs body (nil for none) under the given tenant header.

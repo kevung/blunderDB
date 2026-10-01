@@ -68,8 +68,8 @@ func (d *Service) versionOf(ctx context.Context, tournamentID, rencontreID int64
 }
 
 // checkVersion compares the caller's version, if it stated one, with the current version of
-// what the gesture names. Called under the gesture's lock, so nothing of this process writes
-// between the comparison and the gesture.
+// what the gesture names. Called in the gesture's guarded transaction (lockGesture), so no
+// writer of any process moves it between the comparison and the commit.
 func (d *Service) checkVersion(ctx context.Context, tournamentID, rencontreID int64) error {
 	e, ok := expectedVersion(ctx)
 	if !ok {
@@ -85,8 +85,8 @@ func (d *Service) checkVersion(ctx context.Context, tournamentID, rencontreID in
 	return nil
 }
 
-// recordVersion hands the caller of a versioned gesture the version it left, still under the
-// gesture's lock.
+// recordVersion hands the caller of a versioned gesture the version it left, read in its
+// transaction before the commit.
 func (d *Service) recordVersion(ctx context.Context, tournamentID, rencontreID int64) {
 	if e, ok := expectedVersion(ctx); ok {
 		e.result, _ = d.versionOf(ctx, tournamentID, rencontreID)

@@ -79,12 +79,12 @@ func parsePair(membersJSON string) ([]PairMember, error) {
 // AddPair enters a pair: one Participant "A / B" for the engine, two persons for the Directory,
 // written in one transaction. rating 0 means "the mean of the two"; any other value is the
 // director's correction.
-func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON string, rating float64) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON string, rating float64) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	members, err := parsePair(membersJSON)
 	if err != nil {
 		return nil, err
@@ -120,12 +120,12 @@ func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON s
 
 // UpdatePair corrects a pair — a member's name, club or rating, or the entry rating — without
 // changing its identifier, which is what its Slots and Matches point at.
-func (d *Service) UpdatePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (*DirectionView, error) {
-	release, err := d.lockDirection(ctx, tournamentID)
+func (d *Service) UpdatePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (_ *DirectionView, err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	defer release()
+	defer release(&err)
 	members, err := parsePair(membersJSON)
 	if err != nil {
 		return nil, err
