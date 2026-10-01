@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -67,6 +68,7 @@ func (s *Service) Finish(ctx context.Context, scope string, id int64, exp Expect
 		return nil, err
 	}
 	s.drop(scope, id, ss)
+	s.published(scope, id, events.Event{Removed: true, MatchID: res.MatchID})
 
 	out := &SaveResult{
 		MatchID:      res.MatchID,

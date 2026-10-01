@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -24,6 +25,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/handlers"
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
@@ -66,6 +68,10 @@ type Server struct {
 	// direction is what the Direction service keeps between requests — the clock forecasts —
 	// shared by every tenant's calls; nothing in it is persisted (service.Memory).
 	direction *service.Memory
+	// events fans the committed gestures out to the /v1/events subscribers (events.go);
+	// eventsEpoch prefixes the ids it streams, so ids from two runs never compare.
+	events      *events.Bus
+	eventsEpoch string
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -87,6 +93,11 @@ func New(opts Options) (*Server, error) {
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),
 		direction:     &service.Memory{},
+		events:        events.NewBus(),
+		eventsEpoch:   strconv.FormatInt(time.Now().UnixNano(), 36),
+	}
+	if s.eventsEnabled() {
+		s.direction.SetPublisher(s.events)
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)
@@ -140,10 +151,18 @@ func New(opts Options) (*Server, error) {
 // streamingPaths names. Errors from SetReadDeadline/SetWriteDeadline are
 // ignored — they fail only when the underlying connection genuinely cannot
 // support a deadline (e.g. already hijacked), leaving nothing more useful to
-// do than proceed without one.
+// do than proceed without one. A route unboundedPaths names gets no deadline at all — and
+// loses one a previous request on the same connection left — and bounds its writes itself.
 func (s *Server) withDeadlines(next http.Handler) http.Handler {
 	streaming := s.streamingPaths()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if unboundedPaths[r.URL.Path] {
+			rc := http.NewResponseController(w)
+			_ = rc.SetReadDeadline(time.Time{})
+			_ = rc.SetWriteDeadline(time.Time{})
+			next.ServeHTTP(w, r)
+			return
+		}
 		timeout := s.opts.RequestTimeout
 		if streaming[r.URL.Path] {
 			timeout = s.opts.StreamTimeout
@@ -395,6 +414,9 @@ func (s *Server) Run(ctx context.Context) error {
 		// the deadline passes, with no chance to tell the client why.
 		s.imports.cancelAll()
 		s.gammonnetJobs.cancelAll()
+		// Shutdown waits for every handler to return, and an event stream returns only when
+		// its subscription ends: closing the bus ends them all.
+		s.events.Close()
 		shutCtx, cancel := context.WithTimeout(context.Background(), s.opts.ShutdownTimeout)
 		defer cancel()
 		if err := s.http.Shutdown(shutCtx); err != nil {

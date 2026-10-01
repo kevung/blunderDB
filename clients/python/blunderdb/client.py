@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import urllib.error
 import urllib.request
-from typing import Any, Iterator, Optional, Union
+from typing import Any, Iterable, Iterator, Optional, Union
 
 
 class APIError(RuntimeError):
@@ -83,6 +83,55 @@ class BaseClient:
                     line = line.strip()
                     if line:
                         yield json.loads(line)
+        except urllib.error.HTTPError as err:
+            raise self._error(err) from None
+
+    # -- events ------------------------------------------------------------
+
+    def events(
+        self,
+        *,
+        tournament: Optional[Iterable[int]] = None,
+        rencontre: Optional[Iterable[int]] = None,
+        transcription: Optional[Iterable[int]] = None,
+        last_event_id: Optional[str] = None,
+        timeout: Optional[float] = None,
+    ) -> Iterator[dict]:
+        """Follow ``GET /v1/events``: one dict per committed gesture of the tenant.
+
+        Each event names what moved and its new ``version`` (or ``revision``),
+        never the state: read it again. A ``{"kind": "resync"}`` event means
+        events may have been missed — after a reconnection (``last_event_id``)
+        or for falling behind — and everything shown must be read again. The
+        iterator ends when the daemon closes the stream; the caller reconnects
+        with the last ``_id`` it saw. ``timeout`` (default: none) bounds the
+        silence between two frames; the daemon sends a heartbeat every 25 s.
+        """
+        query = []
+        for name, ids in (("tournament", tournament), ("rencontre", rencontre), ("transcription", transcription)):
+            if ids:
+                query.append("%s=%s" % (name, ",".join(str(int(i)) for i in ids)))
+        url = self.base_url + "/v1/events" + ("?" + "&".join(query) if query else "")
+        headers = {"Accept": "text/event-stream", "X-Tenant-ID": str(self.tenant)}
+        if last_event_id:
+            headers["Last-Event-ID"] = last_event_id
+        request = urllib.request.Request(url, headers=headers, method="GET")
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                event_id, data = None, []
+                for raw in response:
+                    line = raw.decode("utf-8").rstrip("\r\n")
+                    if line == "":
+                        if data:
+                            event = json.loads("\n".join(data))
+                            if event_id:
+                                event["_id"] = event_id
+                            yield event
+                        event_id, data = None, []
+                    elif line.startswith("id:"):
+                        event_id = line[3:].strip()
+                    elif line.startswith("data:"):
+                        data.append(line[5:].strip())
         except urllib.error.HTTPError as err:
             raise self._error(err) from None
 

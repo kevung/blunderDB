@@ -51,6 +51,7 @@ func (d *Service) CreateRencontre(ctx context.Context, name, startsOn, endsOn st
 	if err != nil {
 		return nil, err
 	}
+	d.publishRoom(ctx, id)
 	return d.GetRencontre(ctx, id)
 }
 

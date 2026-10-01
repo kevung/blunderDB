@@ -89,6 +89,9 @@ func GenerateAPIReferenceRST(model *Model) string {
 			fmt.Fprintln(&b, strings.TrimRight(line, " "))
 		}
 	}
+	// The event stream is no <family>.<method> call: the parser does not see it.
+	b.WriteString("   events\n")
+	fmt.Fprintf(&b, "     %-4s %-40s %s\n", "GET", "/v1/events", "SSE")
 	b.WriteString("\n")
 	fmt.Fprintf(&b, rstOutroTemplate, idempotentCount)
 	return b.String()

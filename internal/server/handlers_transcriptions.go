@@ -64,7 +64,11 @@ func (s *Server) transcripts() *transcription.Service {
 		if ttl <= 0 {
 			ttl = defaultTranscriptionTTL
 		}
-		s.transcriptSvc = transcription.New(s.opts.Storage, transcription.Options{TTL: ttl})
+		o := transcription.Options{TTL: ttl}
+		if s.eventsEnabled() {
+			o.Events = s.events
+		}
+		s.transcriptSvc = transcription.New(s.opts.Storage, o)
 	})
 	return s.transcriptSvc
 }

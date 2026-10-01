@@ -266,6 +266,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/trash.empty                          JSON
      POST /v1/trash.list                           JSON
      POST /v1/trash.restore                        JSON
+   events
+     GET  /v1/events                               SSE
 
 
 Idempotence

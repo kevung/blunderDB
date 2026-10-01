@@ -27,6 +27,7 @@ import (
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -62,6 +63,8 @@ type Memory struct {
 	directionLang    string
 	// pageWarning is told of a page a gesture could not write (OnPageWarning).
 	pageWarning func(PageWarning)
+	// publisher is told of every committed gesture (SetPublisher); guarded by directionMu.
+	publisher events.Publisher
 	// gestureMu guards locks, the process-side locks of the gestures; see lockGesture.
 	gestureMu sync.Mutex
 	locks     map[gestureLock]*sync.Mutex
@@ -142,7 +145,8 @@ func (d *Service) lockMembership(ctx context.Context, tournamentID, rencontreID 
 // — and the end the caller defers with its error: nil commits, anything else rolls back, so a
 // gesture writes all of its rows or none. A conflict on the log's sequence (a writer that took
 // no guard) is a stale version for a caller that stated one. withPages rewrites the
-// Direction's pages once the locks are released.
+// Direction's pages once the locks are released. A gesture that committed is published
+// (SetPublisher) once its locks are released; one that rolled back is not.
 func (d *Service) lockGesture(ctx context.Context, t gestureTarget, withPages bool) (*Service, func(*error), bool, error) {
 	if d.g != nil {
 		// Already inside a gesture: its transaction and its locks hold.
@@ -181,6 +185,7 @@ func (d *Service) lockGesture(ctx context.Context, t gestureTarget, withPages bo
 			unlock()
 			return nil, nil, false, err
 		}
+		members := d.roomMembers(ctx, g.st, room)
 		end := func(errp *error) {
 			if *errp == nil && g.g.failed {
 				*errp = errGestureAborted
@@ -195,6 +200,9 @@ func (d *Service) lockGesture(ctx context.Context, t gestureTarget, withPages bo
 				}
 			}
 			unlock()
+			if *errp == nil {
+				d.publishGesture(ctx, t.tournamentID, room, members)
+			}
 			if *errp == nil && withPages && t.tournamentID != 0 {
 				d.writePages(context.WithoutCancel(ctx), t.tournamentID)
 			}

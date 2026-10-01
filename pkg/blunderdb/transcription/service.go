@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -49,6 +50,9 @@ type Options struct {
 	TTL time.Duration
 	// Now is the clock, for tests; time.Now when nil.
 	Now func() time.Time
+	// Events is told of every write that committed: a draft created, moved to a new
+	// revision, abandoned or finished. nil tells no one.
+	Events events.Publisher
 }
 
 // Expect is what a gesture claims to have seen. Session "" uses the draft's
@@ -79,9 +83,10 @@ type State struct {
 // sessions of the drafts being typed. One Service serves the desktop, the CLI
 // and the daemon alike; every method takes the tenant as scope.
 type Service struct {
-	store storage.Storage
-	ttl   time.Duration
-	now   func() time.Time
+	store  storage.Storage
+	ttl    time.Duration
+	now    func() time.Time
+	events events.Publisher
 
 	mu       sync.Mutex
 	sessions map[key]*session
@@ -113,7 +118,11 @@ func New(store storage.Storage, o Options) *Service {
 	if now == nil {
 		now = time.Now
 	}
-	return &Service{store: store, ttl: o.TTL, now: now, sessions: make(map[key]*session)}
+	pub := o.Events
+	if pub == nil {
+		pub = events.Discard{}
+	}
+	return &Service{store: store, ttl: o.TTL, now: now, events: pub, sessions: make(map[key]*session)}
 }
 
 // Forget drops every session, as when the library behind the service is
@@ -287,4 +296,10 @@ func newSessionID() string {
 		panic(fmt.Sprintf("transcription: session id: %v", err))
 	}
 	return hex.EncodeToString(b[:])
+}
+
+// published tells the publisher a draft's committed write.
+func (s *Service) published(scope string, id int64, ev events.Event) {
+	ev.Scope, ev.Kind, ev.TranscriptionID = scope, events.KindTranscription, id
+	s.events.Publish(ev)
 }

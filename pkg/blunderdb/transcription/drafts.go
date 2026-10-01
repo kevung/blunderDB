@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -82,6 +83,7 @@ func (s *Service) insert(ctx context.Context, scope string, doc transcript.Docum
 	if err != nil {
 		return nil, err
 	}
+	s.published(scope, id, events.Event{Revision: row.Revision})
 	ss := s.install(scope, id, doc, row.Revision)
 	ss.mu.Lock()
 	defer ss.mu.Unlock()
@@ -189,6 +191,7 @@ func (s *Service) Abandon(ctx context.Context, scope string, id int64, exp Expec
 	if err := tx.Commit(); err != nil {
 		return err
 	}
+	s.published(scope, id, events.Event{Removed: true})
 	_ = s.Close(scope, id, "")
 	return nil
 }
@@ -242,6 +245,7 @@ func (s *Service) write(ctx context.Context, scope string, id int64, ss *session
 		return s.failed(ctx, scope, id, ss, err)
 	}
 	ss.rev = row.Revision
+	s.published(scope, id, events.Event{Revision: row.Revision})
 	return nil
 }
 

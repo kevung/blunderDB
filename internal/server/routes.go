@@ -94,6 +94,7 @@ func (s *Server) routes() []route {
 		rs = append(rs, route{http.MethodGet, webui.Prefix, webui.Handler().ServeHTTP})
 	}
 	rs = append(rs, s.domainRoutes()...)
+	rs = append(rs, s.eventRoutes()...)
 	if s.opts.OpsAddr == "" {
 		rs = append(rs, s.opsRoutes()...)
 	}

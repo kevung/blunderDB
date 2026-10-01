@@ -375,6 +375,9 @@ famille est conservée parce que plusieurs familles partagent un nom
 d'opération (``list``, ``delete``), et qu'un ``list()`` nu entrerait en
 collision.
 
+``events()`` suit ``/v1/events`` et rend un dictionnaire par message (voir
+:ref:`headless_events`).
+
 Un échec lève ``APIError``, qui porte l'enveloppe du démon telle quelle : le
 ``code`` (ce sur quoi un programme branche), le ``message`` (ce qu'une personne
 lit), le statut HTTP et les détails.
@@ -554,6 +557,56 @@ qu'une fois. Seule une réponse réussie est retenue.
    qui réserve ``/v1/directions.`` et ``/v1/rencontres.`` aux directeurs, ou
    n'y laisse passer que les lectures. Ne lancez jamais ``--direction`` sur un
    démon joignable sans ce proxy, même sur le Wi-Fi d'un club.
+
+.. _headless_events:
+
+Être prévenu des gestes : ``/v1/events``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``GET /v1/events`` est un flux *Server-Sent Events* (``text/event-stream``) :
+un message par geste validé du tenant, publié après l'écriture en base, jamais
+pour un geste refusé ou annulé. Le message dit ce qui a bougé et sa nouvelle
+version, pas l'état : le client relit ce qu'il affiche, avec
+``If-None-Match``.
+
+* ``event: rencontre`` — ``rencontreId``, ``tournamentIds`` (les épreuves de
+  la salle, avant et après le geste) et ``version`` ;
+* ``event: direction`` — ``tournamentId`` et ``version``, pour un tournoi
+  joué hors de toute Rencontre ;
+* ``event: transcription`` — ``transcriptionId`` et ``revision`` ; un
+  brouillon abandonné ou terminé porte ``removed`` (et ``matchId`` pour
+  Terminer).
+
+``removed: true`` signale ce qui n'existe plus. La route n'est servie qu'avec
+``--direction`` ou ``--transcription`` : sans eux, le démon n'écrit rien qu'il
+aurait à annoncer, et ``/v1/events`` répond ``404``. Comme toute route
+``/v1/``, elle exige ``X-Tenant-ID`` : un abonné n'entend que son tenant. Le
+poste de travail emprunte le même service et publie de la même façon, mais
+rien ne l'écoute.
+
+Les paramètres ``tournament``, ``rencontre`` et ``transcription`` (identifiants
+séparés par des virgules, ou répétés) restreignent l'abonnement : un message
+passe s'il nomme l'un d'eux. Un tournoi d'une Rencontre reçoit les messages de
+sa salle. Un paramètre inconnu ou un identifiant invalide rend ``400``.
+
+.. code-block:: bash
+
+   curl -N http://127.0.0.1:8080/v1/events?rencontre=2 -H 'X-Tenant-ID: 1'
+
+**Pas d'historique.** Le démon ne garde aucun message. Un client qui se
+reconnecte avec ``Last-Event-ID`` reçoit d'abord ``event: resync`` : il a pu
+manquer des gestes et relit tout ce qu'il affiche. Un abonné trop lent, dont la
+file de 64 messages est pleine, est déconnecté après le même ``resync`` : il
+ne retarde jamais un geste. Le flux annonce un délai de reconnexion de
+3 secondes.
+
+**À travers un proxy.** Un commentaire ``: ping`` part toutes les 25 secondes
+pour qu'un proxy ne coupe pas un flux silencieux ; ``X-Accel-Buffering: no``
+demande à nginx de ne pas le mettre en tampon. Le flux n'est pas compressé,
+échappe au délai des requêtes ordinaires et ne compte qu'une requête pour la
+limitation de débit. L'arrêt du démon ferme tous les flux. Le bus est en
+mémoire, par instance : un abonné n'entend que les gestes passés par le démon
+auquel il est relié.
 
 .. _headless_bearoff:
 

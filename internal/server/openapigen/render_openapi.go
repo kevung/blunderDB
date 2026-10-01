@@ -37,6 +37,93 @@ servers:
   - url: /v1
 `
 
+// eventsPathItem documents GET /v1/events by hand: the route is no POST
+// /v1/<family>.<method> call and is registered outside handlers_*.go
+// (internal/server/events.go), so the parser does not see it.
+const eventsPathItem = `  /v1/events:
+    get:
+      operationId: events
+      tags: [events]
+      x-kind: sse
+      x-streaming: true
+      description: >-
+        Server-Sent Events: one message per committed gesture of the caller's
+        tenant (Direction, Rencontre, transcription), naming what moved and its
+        new version or revision — never the state; read it again with
+        If-None-Match. Served only under serve --direction or --transcription.
+        No history is kept: a reconnection (Last-Event-ID) or a subscriber
+        dropped for falling behind receives event resync and reads everything
+        again. A ": ping" comment every 25 s keeps proxies from closing the
+        stream.
+      parameters:
+        - name: tournament
+          in: query
+          required: false
+          description: Direction ids, comma-separated; a Direction in a Rencontre hears its room.
+          schema:
+            type: string
+        - name: rencontre
+          in: query
+          required: false
+          description: Rencontre ids, comma-separated.
+          schema:
+            type: string
+        - name: transcription
+          in: query
+          required: false
+          description: Draft ids, comma-separated.
+          schema:
+            type: string
+        - name: Last-Event-ID
+          in: header
+          required: false
+          description: The id of the last event seen; the stream then opens with event resync.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                description: >-
+                  Frames "id", "event" (direction, rencontre, transcription,
+                  resync) and "data", one JSON object shaped as below.
+                type: object
+                properties:
+                  kind:
+                    type: string
+                    enum: [direction, rencontre, transcription, resync]
+                  tournamentId:
+                    type: integer
+                    format: int64
+                  tournamentIds:
+                    type: array
+                    items:
+                      type: integer
+                      format: int64
+                  rencontreId:
+                    type: integer
+                    format: int64
+                  transcriptionId:
+                    type: integer
+                    format: int64
+                  version:
+                    type: string
+                  revision:
+                    type: integer
+                    format: int64
+                  removed:
+                    type: boolean
+                  matchId:
+                    type: integer
+                    format: int64
+                  reason:
+                    type: string
+        "400":
+          description: An unknown parameter or an invalid id.
+`
+
 // Generate renders model as an OpenAPI 3.0.3 YAML document.
 func GenerateOpenAPI(model *Model) string {
 	comps := newComponents()
@@ -47,6 +134,7 @@ func GenerateOpenAPI(model *Model) string {
 	for _, r := range model.Routes {
 		writePathItem(&b, r, model.Types, comps)
 	}
+	b.WriteString(eventsPathItem)
 
 	writeComponents(&b, comps)
 	return b.String()
