@@ -56,14 +56,27 @@ func WinnerMigrationCases() []WinnerMigrationMatch {
 		// an .xg match saved again from a transcription holds gnubg's values.
 		{Name: "xg file, gnubg values", FilePath: "/m/f.xg", Length: 7, Games: []WinnerMigrationGame{
 			g(0, 0, 0, 1, p1), g(1, 0, 1, 1, p2)}},
-		// BGF stored 0 for every game: the scores settle all but the last.
+		// BGF stored 0 for every game: the scores settle all but the last,
+		// which the length settles when only one player can reach it.
 		{Name: "bgf", FilePath: "/m/g.bgf", BatchFormat: "bgf", Length: 5, Games: []WinnerMigrationGame{
 			g(0, 0, 0, 2, p2), g(0, 2, 0, 1, p1), g(1, 2, 0, 4, none)}},
-		// A gnubg match whose players were swapped: the swap negated 0 and 1
-		// as if they were XG's. The scores repair what they settle; the last
-		// game, which nothing settles, reads as unfinished.
+		{Name: "bgf last to player 1 by the length", FilePath: "/m/j.bgf", Length: 3, Games: []WinnerMigrationGame{
+			g(0, 0, 0, 2, p1), g(2, 0, 0, 1, p1)}},
+		{Name: "bgf last to player 2 by the length", FilePath: "", BatchFormat: "bgf", Length: 5, Games: []WinnerMigrationGame{
+			g(0, 0, 0, 1, p2), g(0, 1, 0, 2, p2), g(0, 3, 0, 1, p1), g(1, 3, 0, 2, p2)}},
+		// A gnubg match whose players were swapped: the swap negated its
+		// winners as if they were XG's, so 0 is player 2 and -1 player 1.
 		{Name: "swapped mat", FilePath: "/m/h.mat", Length: 7, Games: []WinnerMigrationGame{
-			g(0, 0, 0, 1, p2), g(0, 1, -1, 2, none)}},
+			g(0, 0, 0, 1, p2), g(0, 1, -1, 2, p1)}},
+		{Name: "swapped mat, last unfinished", FilePath: "/m/k.mat", Length: 7, Games: []WinnerMigrationGame{
+			g(0, 0, -1, 2, p1), g(2, 0, 1, 0, none)}},
+		// A one-game transcription, swapped: nothing votes, the length decides.
+		{Name: "swapped transcription, one game", FilePath: "", Length: 5, Games: []WinnerMigrationGame{
+			g(2, 0, -1, 3, p1)}},
+		// A match saved between two games ends on a finished game that did
+		// not end it: the encoding the other games name outweighs the length.
+		{Name: "mat saved between games", FilePath: "/m/l.mat", Length: 7, Games: []WinnerMigrationGame{
+			g(0, 0, 0, 6, p1), g(6, 0, 1, 1, p2)}},
 		{Name: "nulls", FilePath: "/m/i.mat", Length: 7, Games: []WinnerMigrationGame{
 			{S1: 0, S2: 0, Winner: nil, PointsWon: nil, Want: none},
 			{S1: 0, S2: 0, Winner: v(0), PointsWon: nil, Want: none}}},

@@ -3054,6 +3054,68 @@ func TestRencontreSchema_2_25_0(t *testing.T) {
 // fixture through 028 (TestMigrate_028_GameWinner).
 func TestMigrate_2_25_0_to_2_26_0_GameWinner(t *testing.T) {
 	t.Parallel()
+	dbPath, cases, ids := seedWinnerLibrary(t)
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open 2.25.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	checkWinners(t, d.db, cases, ids, true)
+}
+
+// TestMigrate_2_25_0_to_2_26_0_InterruptedThenRetried: the conversion is not
+// idempotent, so it and the version stamp commit together. A failure while
+// stamping must leave the games as they were and the version at 2.25.0, and
+// the next open converts them once.
+func TestMigrate_2_25_0_to_2_26_0_InterruptedThenRetried(t *testing.T) {
+	t.Parallel()
+	dbPath, cases, ids := seedWinnerLibrary(t)
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`CREATE TRIGGER stamp_fails BEFORE UPDATE ON metadata
+		WHEN NEW.key = 'database_version' AND NEW.value = '2.26.0'
+		BEGIN SELECT RAISE(ABORT, 'interrupted'); END`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err == nil {
+		t.Fatal("open succeeded although the version stamp failed")
+	}
+	d.Close()
+
+	raw, err = sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var version string
+	if err := raw.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err != nil || version != "2.25.0" {
+		t.Fatalf("version after the failed open = %q, %v; want 2.25.0", version, err)
+	}
+	checkWinners(t, raw, cases, ids, false)
+	if _, err := raw.Exec(`DROP TRIGGER stamp_fails`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open after the interruption: %v", err)
+	}
+	closeOnCleanup(t, d)
+	checkWinners(t, d.db, cases, ids, true)
+}
+
+// seedWinnerLibrary writes storagetest.WinnerMigrationCases into a library
+// stamped 2.25.0 and returns its path and every game's id.
+func seedWinnerLibrary(t *testing.T) (string, []storagetest.WinnerMigrationMatch, [][]int64) {
+	t.Helper()
 	dbPath := filepath.Join(tempDir(t), "winner.db")
 	d := NewDatabase()
 	if err := d.SetupDatabase(dbPath); err != nil {
@@ -3092,23 +3154,24 @@ func TestMigrate_2_25_0_to_2_26_0_GameWinner(t *testing.T) {
 	if err := d.Close(); err != nil {
 		t.Fatalf("close: %v", err)
 	}
+	return dbPath, cases, gameIDs
+}
 
-	d = NewDatabase()
-	if err := d.OpenDatabase(dbPath); err != nil {
-		t.Fatalf("open 2.25.0 database: %v", err)
-	}
-	closeOnCleanup(t, d)
-	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
-		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
-	}
+// checkWinners compares every game's stored winner with the fixture's: the
+// normalized one when converted, the one it was seeded with otherwise.
+func checkWinners(t *testing.T, db *sql.DB, cases []storagetest.WinnerMigrationMatch, ids [][]int64, converted bool) {
+	t.Helper()
 	for i, c := range cases {
 		for n, g := range c.Games {
-			var got int32
-			if err := d.db.QueryRow(`SELECT winner FROM game WHERE id = ?`, gameIDs[i][n]).Scan(&got); err != nil {
+			var got sql.NullInt32
+			if err := db.QueryRow(`SELECT winner FROM game WHERE id = ?`, ids[i][n]).Scan(&got); err != nil {
 				t.Fatalf("%s: read game %d: %v", c.Name, n+1, err)
 			}
-			if got != g.Want {
-				t.Errorf("%s, game %d: winner %d, want %d", c.Name, n+1, got, g.Want)
+			switch {
+			case converted && got.Int32 != g.Want:
+				t.Errorf("%s, game %d: winner %d, want %d", c.Name, n+1, got.Int32, g.Want)
+			case !converted && g.Winner != nil && got.Int32 != *g.Winner:
+				t.Errorf("%s, game %d: winner %d moved before the migration committed (seeded %d)", c.Name, n+1, got.Int32, *g.Winner)
 			}
 		}
 	}

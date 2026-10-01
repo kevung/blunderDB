@@ -11,9 +11,8 @@ import (
 // migrate_2_25_0_to_2_26_0 brings every game.winner to the one encoding the
 // library keeps (domain.WinnerPlayer1). The column stays; only its values
 // change, by the statement PostgreSQL's 028 runs too (sqlshared.NormalizeGameWinnerSQL
-// documents the rule per source). It runs in the step, not after
-// EnsureSchema like a deferred backfill: the version is stamped as soon as the
-// step returns, and a conversion left for later would never be retried.
+// documents the rule per source). It runs in the step, not after EnsureSchema
+// like a deferred backfill, so that it commits with its version stamp.
 func (d *Database) migrate_2_25_0_to_2_26_0(ctx context.Context) error {
 	// A library from before matches holds no game to convert.
 	if ok, err := d.columnExists("game", "winner"); err != nil || !ok {
@@ -30,8 +29,20 @@ func (d *Database) migrate_2_25_0_to_2_26_0(ctx context.Context) error {
 		stmt = strings.Replace(stmt, sqlshared.WinnerBatchJoin,
 			"LEFT JOIN (SELECT NULL AS id, NULL AS format) b ON 1 = 0", 1)
 	}
-	if _, err := d.db.ExecContext(ctx, stmt); err != nil {
+	// The conversion is not idempotent (a normalized 1 reads as gnubg's
+	// player 2), so it commits with the version stamp or not at all: an
+	// interruption between the two would convert the games again on the next
+	// open. The chain's own stamp after the step then rewrites the same value.
+	tx, err := d.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback() }()
+	if _, err := tx.ExecContext(ctx, stmt); err != nil {
 		return fmt.Errorf("normalize game.winner: %w", err)
 	}
-	return nil
+	if _, err := tx.ExecContext(ctx, `UPDATE metadata SET value = '2.26.0' WHERE key = 'database_version'`); err != nil {
+		return fmt.Errorf("stamp 2.26.0: %w", err)
+	}
+	return tx.Commit()
 }

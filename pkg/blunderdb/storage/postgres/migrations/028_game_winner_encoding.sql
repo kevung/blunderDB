@@ -32,6 +32,7 @@ WITH g AS (
            COALESCE(g.initial_score_2, 0) AS s2,
            LEAD(COALESCE(g.initial_score_1, 0)) OVER (PARTITION BY g.match_id ORDER BY g.game_number, g.id) AS n1,
            LEAD(COALESCE(g.initial_score_2, 0)) OVER (PARTITION BY g.match_id ORDER BY g.game_number, g.id) AS n2,
+           COALESCE(m.match_length, 0) AS len,
            CASE WHEN LOWER(COALESCE(b.format, '')) = 'bgf' OR LOWER(COALESCE(m.file_path, '')) LIKE '%.bgf' THEN 'bgf'
                 WHEN LOWER(COALESCE(b.format, '')) = 'xg' OR LOWER(COALESCE(m.file_path, '')) LIKE '%.xg' THEN 'xg'
                 ELSE 'gnubg' END AS hint
@@ -47,24 +48,34 @@ WITH g AS (
       FROM g
 ), v AS (
     SELECT match_id,
-           SUM(CASE WHEN truth IN (1, -1) AND w = truth THEN 1 ELSE 0 END) AS xg_votes,
-           SUM(CASE WHEN (truth = 1 AND w = 0) OR (truth = -1 AND w = 1) THEN 1 ELSE 0 END) AS gnubg_votes
+           SUM(CASE WHEN (truth = 1 AND w = 1) OR (truth = -1 AND w = -1) THEN 1 ELSE 0 END) AS xg,
+           SUM(CASE WHEN (truth = 1 AND w = 0) OR (truth = -1 AND w = 1) THEN 1 ELSE 0 END) AS gnubg,
+           SUM(CASE WHEN (truth = 1 AND w = -1) OR (truth = -1 AND w = 0) THEN 1 ELSE 0 END) AS swapped
       FROM t
      GROUP BY match_id
 ), e AS (
-    SELECT t.id, t.w, t.truth,
-           CASE WHEN t.hint = 'bgf' THEN 'bgf'
-                WHEN v.xg_votes > 0 AND v.gnubg_votes = 0 THEN 'xg'
-                WHEN v.gnubg_votes > 0 AND v.xg_votes = 0 THEN 'gnubg'
-                ELSE t.hint END AS enc
+    SELECT t.*,
+           CASE WHEN t.hint = 'bgf' THEN ''
+                WHEN v.xg > 0 AND v.gnubg = 0 AND v.swapped = 0 THEN 'xg'
+                WHEN v.gnubg > 0 AND v.xg = 0 AND v.swapped = 0 THEN 'gnubg'
+                WHEN v.swapped > 0 AND v.xg = 0 AND v.gnubg = 0 THEN 'swapped'
+                ELSE '' END AS voted
       FROM t
       JOIN v ON v.match_id = t.match_id
 ), c AS (
     SELECT id,
            CASE WHEN truth IS NOT NULL THEN truth
-                WHEN enc = 'xg' AND w IN (1, -1) THEN w
-                WHEN enc = 'gnubg' AND w = 0 THEN 1
-                WHEN enc = 'gnubg' AND w = 1 THEN -1
+                WHEN voted = 'xg' AND w IN (1, -1) THEN w
+                WHEN voted = 'gnubg' AND w = 0 THEN 1
+                WHEN voted = 'gnubg' AND w = 1 THEN -1
+                WHEN voted = 'swapped' AND w = -1 THEN 1
+                WHEN voted = 'swapped' AND w = 0 THEN -1
+                WHEN voted <> '' THEN 0
+                WHEN n1 IS NULL AND len > 0 AND s1 + p >= len AND s2 + p < len THEN 1
+                WHEN n1 IS NULL AND len > 0 AND s2 + p >= len AND s1 + p < len THEN -1
+                WHEN hint = 'xg' AND w IN (1, -1) THEN w
+                WHEN hint = 'gnubg' AND w = 0 THEN 1
+                WHEN hint = 'gnubg' AND w = 1 THEN -1
                 ELSE 0 END AS nw
       FROM e
 )
