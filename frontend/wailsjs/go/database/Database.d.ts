@@ -498,6 +498,10 @@ export function SetDirectionOutputDir(arg1:number,arg2:string):Promise<void>;
 
 export function SetDirectionStrings(arg1:string,arg2:string):Promise<void>;
 
+export function SetDirectionTables(arg1:number,arg2:Array<domain.TableSetting>):Promise<service.DirectionView>;
+
+export function SetEventRooms(arg1:number,arg2:number,arg3:Array<string>):Promise<service.RencontreView>;
+
 export function SetFilterPinned(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
@@ -509,6 +513,8 @@ export function SetRencontreBreaks(arg1:number,arg2:string):Promise<service.Renc
 export function SetRencontreOutputDir(arg1:number,arg2:string):Promise<service.RencontreView>;
 
 export function SetRencontreTableOutOfService(arg1:number,arg2:number,arg3:boolean):Promise<service.RencontreView>;
+
+export function SetRencontreTables(arg1:number,arg2:Array<domain.TableSetting>):Promise<service.RencontreView>;
 
 export function SetupDatabase(arg1:string):Promise<void>;
 
@@ -541,6 +547,8 @@ export function SyncAnkiDeck(arg1:number):Promise<void>;
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
 
 export function TableGrid(arg1:number):Promise<Array<service.TableCell>>;
+
+export function TablePlan(arg1:number):Promise<direction.TablePlan>;
 
 export function Tags():Promise<Array<domain.TagCount>>;
 
