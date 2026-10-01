@@ -124,7 +124,7 @@ func (s *DirectionStore) Update(ctx context.Context, scope string, rec direction
 	return nil
 }
 
-// Delete removes the record and its log. The Matches keep their Tournament
+// Delete removes the record, its log and its pairs. The Matches keep their Tournament
 // and lose only the Slot they filled.
 func (s *DirectionStore) Delete(ctx context.Context, scope string, tournamentID int64) error {
 	return s.DB.Transact(ctx, func(tx Execer) error {
@@ -134,6 +134,7 @@ func (s *DirectionStore) Delete(ctx context.Context, scope string, tournamentID 
 			{"delete direction events", `DELETE FROM direction_event WHERE tournament_id = ? AND ` + tenant},
 			{"delete direction", `DELETE FROM direction WHERE tournament_id = ? AND ` + tenant},
 			{"clear direction slots", `UPDATE match SET direction_match_id = '' WHERE tournament_id = ? AND ` + tenant},
+			{"delete direction pairs", `DELETE FROM direction_pair_member WHERE tournament_id = ? AND ` + tenant},
 		} {
 			if _, err := tx.Exec(ctx, st.sql, args...); err != nil {
 				return errf(tx, st.what, err)

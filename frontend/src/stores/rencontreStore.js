@@ -19,7 +19,7 @@ import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
 import { refreshDirection } from './directionStore.js';
 import { logger } from '../utils/logger.js';
 
-/** @typedef {import('../../wailsjs/go/models').database.RencontreView} RencontreView */
+/** @typedef {import('../../wailsjs/go/models').service.RencontreView} RencontreView */
 
 /** Toutes les Rencontres de la base, la plus récente d'abord. */
 export async function listRencontres() {

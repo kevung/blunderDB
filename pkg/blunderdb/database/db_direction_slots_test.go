@@ -201,6 +201,82 @@ func TestDisagreementIsShownNeverResolved(t *testing.T) {
 	if !flagged {
 		t.Error("the disagreement should be visible on the slot")
 	}
+
+	// The score a Match's file gives is compared too, and only a real difference is flagged.
+	// The games end on a gammon at 5-4 in a 7-point match: the winner reaches 7, not 9. The
+	// winner column is gnubg's 0/1 for a transcribed or gnubg-imported Match, XG's -1/1 for
+	// an XG import; both say the same thing when points were won.
+	type game struct{ s1, s2, winner, points int }
+	gnubg := []game{{0, 0, 1, 4}, {0, 4, 0, 5}, {5, 4, 0, 4}}
+	xg := []game{{0, 0, 1, 4}, {0, 4, -1, 5}, {5, 4, -1, 4}}
+	cases := []struct {
+		name           string
+		games          []game
+		swapped        bool
+		scoreA, scoreB int
+		flag           bool
+	}{
+		{"transcribed, agreeing", gnubg, false, 7, 4, false},
+		{"transcribed, disagreeing", gnubg, false, 7, 2, true},
+		{"XG import, agreeing", xg, false, 7, 4, false},
+		{"XG import, disagreeing", xg, false, 7, 3, true},
+		{"players in the other order, agreeing", gnubg, true, 7, 4, false},
+	}
+	if len(v.Running) < len(cases)+1 {
+		t.Fatalf("need %d running matches, have %d", len(cases)+1, len(v.Running))
+	}
+	for i, c := range cases {
+		rm := v.Running[i+1]
+		if _, err := d.EnterResult(tID, string(rm.ID), string(rm.A), c.scoreA, c.scoreB, ""); err != nil {
+			t.Fatal(err)
+		}
+		var aName, bName string
+		for _, s := range slots {
+			if s.SlotID == string(rm.ID) {
+				aName, bName = s.AName, s.BName
+			}
+		}
+		p1, p2 := aName, bName
+		if c.swapped {
+			p1, p2 = bName, aName
+		}
+		res, err := RawConn(d).Exec(
+			`INSERT INTO match (player1_name, player2_name, match_length, tournament_id) VALUES (?, ?, 7, ?)`, p1, p2, tID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		mid, _ := res.LastInsertId()
+		for n, g := range c.games {
+			s1, s2, w := g.s1, g.s2, g.winner
+			if c.swapped {
+				// The file's player 1 is the Slot's B: every game reads mirrored.
+				s1, s2 = g.s2, g.s1
+				w = 1 - g.winner
+			}
+			if _, err := RawConn(d).Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won)
+				VALUES (?, ?, ?, ?, ?, ?)`, mid, n+1, s1, s2, w, g.points); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if err := d.AttachMatchToSlot(tID, string(rm.ID), mid); err != nil {
+			t.Fatal(err)
+		}
+		after, err := d.Slots(tID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, s := range after {
+			if s.SlotID != string(rm.ID) {
+				continue
+			}
+			if got := s.Disagreement != ""; got != c.flag {
+				t.Errorf("%s: disagreement %q, want flagged=%v", c.name, s.Disagreement, c.flag)
+			}
+			if s.ScoreA != c.scoreA || s.ScoreB != c.scoreB {
+				t.Errorf("%s: the recorded result must not be overruled: %+v", c.name, s)
+			}
+		}
+	}
 }
 
 // TestDetachKeepsEverything: emptying a Slot touches neither the Match nor the result.

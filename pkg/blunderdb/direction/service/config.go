@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"cmp"
@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -65,12 +66,12 @@ type ConfigPreview struct {
 //
 // Called with the unmodified configuration it reports no change and still fills Locks — which
 // is how the settings view knows, on opening, which formats are frozen.
-func (d *Database) PreviewDirectionConfig(tournamentID int64, configJSON string) (*ConfigPreview, error) {
+func (d *Service) PreviewDirectionConfig(ctx context.Context, tournamentID int64, configJSON string) (*ConfigPreview, error) {
 	next, err := parseDirectionConfig(configJSON)
 	if err != nil {
 		return nil, err
 	}
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +89,7 @@ func (d *Database) PreviewDirectionConfig(tournamentID int64, configJSON string)
 	if p.Refusals, err = configRefusal(st, next, p.Changes); err != nil {
 		return nil, err
 	}
-	p.AlsoFor = d.roomAlsoFor(context.Background(), tournamentID, cur, next)
+	p.AlsoFor = d.roomAlsoFor(ctx, tournamentID, cur, next)
 	return p, nil
 }
 
