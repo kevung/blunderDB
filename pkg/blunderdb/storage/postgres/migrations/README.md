@@ -180,3 +180,15 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `tenant_id` too and the delete fails on its NOT NULL instead of unlinking
   the child. Constraint-only, like `006`/`008`/`010`/`017`: no
   `DatabaseVersion` bump.
+- `027_rencontre.sql` — the Rencontre (ADR-0056): `rencontre`,
+  `tournament.rencontre_id`, `direction_pair_member`.
+- `028_game_winner_encoding.sql` — data only: every `game.winner` to the one
+  encoding (1 = player 1, -1 = player 2, 0 = unfinished), by the statement
+  SQLite's 2.25.0 → 2.26.0 step runs (`sqlshared.NormalizeGameWinnerSQL`,
+  which documents the rule per source). Not idempotent on its own — a second
+  pass would read normalized values as gnubg's — so it relies on
+  `schema_migrations`, where its row is written in the same batch as the
+  statement: either both land or neither does, and a replay finds the row and
+  skips it. A fresh bootstrap holds no game to convert, so its run is a no-op.
+  Lifts FORCEd RLS on the three tables it
+  reads for the statement, since the migrating connection carries no tenant.

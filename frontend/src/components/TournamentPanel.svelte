@@ -28,7 +28,7 @@
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
     import { directionSummariesStore, openDirectionIdStore, refreshDirectionSummaries, createDirection, openDirection, closeDirection, defaultConfig } from '../stores/directionStore';
-    import { directionOwnsKey, directionPageShown } from '../services/directionKeys.js';
+    import { directionOwnsKey, directionPageShown, directionSearchKey } from '../services/directionKeys.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
@@ -455,6 +455,8 @@
         // Sous la page Direction, ces touches vont à la file (services/directionKeys.js) :
         // ni stopPropagation ni navigation ici.
         if (directionOwnsKey(event)) return;
+        // `/` opens the Direction's quick search, handled by the global dispatcher.
+        if (directionSearchKey(event)) return;
 
         // Block all other non-Ctrl keys from propagating (prevents position browsing)
         event.stopPropagation();

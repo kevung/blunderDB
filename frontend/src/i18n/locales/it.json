@@ -2333,6 +2333,13 @@
         "kindTab": "Scheda",
         "kindFilter": "Filtro",
         "kindMatch": "Match",
+        "kindPlayer": "Giocatore",
+        "kindTable": "Tavolo",
+        "kindEpreuve": "Gara",
+        "kindRunning": "Partita in corso",
+        "placeholderDirection": "Cerca un giocatore, un tavolo, una gara, una partita…",
+        "directionTable": "Tavolo {n}",
+        "directionVs": "contro {name}",
         "matchLength": "{n} pt",
         "matchGone": "Questo match non esiste più.",
         "cmd": {

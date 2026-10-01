@@ -16,18 +16,15 @@ import (
 // FilledSlots returns the Matches of the Tournament that fill a Slot. The
 // final score of a Match is the last score its games reach, never past its
 // length: a gammon at 5-5 in a 7-point match ends at 7.
-//
-// Game.Winner is stored in its source's encoding — gnubg's 0/1 with -1 for
-// an unfinished game (transcriptions, .mat, .sgf), XG's -1/1 with 0 for an
-// unfinished game (.xg) — so a game is credited only when it won points, and
-// then 1 is player 2 and anything else player 1, which both encodings agree on.
+// A game's points go to its Game.Winner (1 = player 1, -1 = player 2, see
+// domain.WinnerPlayer1); an unfinished game adds nothing.
 func (s *DirectionStore) FilledSlots(ctx context.Context, scope string, tournamentID int64) ([]storage.FilledSlot, error) {
 	tenant, targs := s.DB.TenantFilter("m", scope)
 	rows, err := s.DB.Query(ctx, `
 		SELECT m.direction_match_id, m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_name,''),
 		       COALESCE(m.match_length,0),
-		       (SELECT MAX(g.initial_score_1 + CASE WHEN g.points_won > 0 AND g.winner <> 1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id),
-		       (SELECT MAX(g.initial_score_2 + CASE WHEN g.points_won > 0 AND g.winner = 1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id)
+		       (SELECT MAX(g.initial_score_1 + CASE WHEN g.points_won > 0 AND g.winner = 1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id),
+		       (SELECT MAX(g.initial_score_2 + CASE WHEN g.points_won > 0 AND g.winner = -1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id)
 		  FROM match m
 		 WHERE `+tenant+` AND m.tournament_id = ? AND m.direction_match_id <> ''
 		 ORDER BY m.id`, append(targs, tournamentID)...)

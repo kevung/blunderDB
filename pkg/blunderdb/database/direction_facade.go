@@ -51,6 +51,7 @@ type (
 	HistoryEntry        = service.HistoryEntry
 	PairMember          = service.PairMember
 	ParticipantRow      = service.ParticipantRow
+	SearchEntry         = service.SearchEntry
 	EntrySuggestion     = service.EntrySuggestion
 )
 
@@ -486,3 +487,13 @@ func (d *Database) WriteRencontrePage(id int64) (string, error) {
 }
 
 func itoa(n int) string { return strconv.Itoa(n) }
+
+// RencontreSearchIndex is service.Service.RencontreSearchIndex on the open database.
+func (d *Database) RencontreSearchIndex(id int64) ([]SearchEntry, error) {
+	return d.directionService().RencontreSearchIndex(context.Background(), id)
+}
+
+// DirectionSearchIndex is service.Service.DirectionSearchIndex on the open database.
+func (d *Database) DirectionSearchIndex(tournamentID int64) ([]SearchEntry, error) {
+	return d.directionService().DirectionSearchIndex(context.Background(), tournamentID)
+}

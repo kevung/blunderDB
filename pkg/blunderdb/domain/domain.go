@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.25.0"
+	DatabaseVersion = "2.26.0"
 )
 
 // Anki deck source types
@@ -742,14 +742,50 @@ type Match struct {
 	Transcriber string `json:"transcriber,omitempty"`
 }
 
+// Game.Winner has one encoding in storage, whatever the source of the match:
+// XG's, as eXtreme Gammon writes it in its files, which is also Move.Player's.
+// Every importer converts to it and every reader assumes it; gnubg's 0/1/-1
+// (player 1 / player 2 / unfinished) never reaches a column.
+const (
+	WinnerUnfinished int32 = 0
+	WinnerPlayer1    int32 = 1
+	WinnerPlayer2    int32 = -1
+)
+
+// WinnerFromSide converts a side — Black (player 1) or White (player 2), which
+// is also gnubg's game-winner encoding — to Game.Winner. Any other value is an
+// unfinished game.
+func WinnerFromSide(side int) int32 {
+	switch side {
+	case Black:
+		return WinnerPlayer1
+	case White:
+		return WinnerPlayer2
+	}
+	return WinnerUnfinished
+}
+
+// WinnerSide is WinnerFromSide's inverse: Black, White, or None for a game
+// with no winner.
+func WinnerSide(winner int32) int {
+	switch winner {
+	case WinnerPlayer1:
+		return Black
+	case WinnerPlayer2:
+		return White
+	}
+	return None
+}
+
 type Game struct {
 	ID           int64    `json:"id"`
 	MatchID      int64    `json:"match_id"`
 	GameNumber   int32    `json:"game_number"`
 	InitialScore [2]int32 `json:"initial_score"`
-	Winner       int32    `json:"winner"`
-	PointsWon    int32    `json:"points_won"`
-	MoveCount    int      `json:"move_count"`
+	// Winner is WinnerPlayer1, WinnerPlayer2 or WinnerUnfinished.
+	Winner    int32 `json:"winner"`
+	PointsWon int32 `json:"points_won"`
+	MoveCount int   `json:"move_count"`
 }
 
 type Move struct {

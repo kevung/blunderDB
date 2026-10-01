@@ -42,7 +42,7 @@ crash.
    recomputed by replaying from the corrected Action. The saved Match carries none as data; an
    illegal move is a Move whose Position is the board it left.
 6. **A resignation is an Action of the draft and a fact of the Game** (`winner`,
-   `points_won`), not a Move. An abandoned match is unfinished: `winner = -1` on its last game.
+   `points_won`), not a Move. An abandoned match is unfinished: `winner = 0` on its last game.
 7. **Crawford is derived from the score sequence and written as the glossary's sentinel**:
    away `1` for the Crawford game, `0` after it. Every writer uses it; `blunderdb repair`
    rehashes positions written without it.
