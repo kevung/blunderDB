@@ -1181,15 +1181,15 @@
         "stateNoMatch": "neues Match",
         "noMatch": "no match",
         "matModal": ".mat text",
-        "matModalTooltip": "See the .mat file as it would be written",
-        "clearDice": "Clear the roll being entered",
+        "matModalTooltip": "Die .mat-Datei so anzeigen, wie sie geschrieben würde",
+        "clearDice": "Die eingegebene Wurfzahl löschen",
         "notice": {
-            "nothingToUndo": "Nothing to undo",
-            "nothingToRedo": "Nothing to redo",
-            "noAction": "No Action under the cursor",
-            "noDice": "No roll being entered"
+            "nothingToUndo": "Nichts zum Rückgängigmachen",
+            "nothingToRedo": "Nichts zum Wiederholen",
+            "noAction": "Keine Aktion unter dem Cursor",
+            "noDice": "Kein Wurf in Eingabe"
         },
-        "candidatesLabel": "Candidate moves",
+        "candidatesLabel": "Kandidatenzüge",
         "finish": "Abschließen",
         "finishTooltip": "Das Match schreiben (oder das ersetzen, aus dem der Entwurf geöffnet wurde) und den Entwurf freigeben (Strg+Eingabe)",
         "abandon": "Verwerfen",
