@@ -263,6 +263,17 @@ func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storag
 	if err := ds.AttachSlot(ctx, a, tid, "M1", mid); err != nil {
 		t.Fatalf("AttachSlot(%s): %v", a, err)
 	}
+	own := domain.Match{Player1Name: "Carl", Player2Name: "Dora", MatchLength: 5}
+	ownID, err := s.Matches().Save(ctx, b, &own)
+	if err != nil {
+		t.Fatalf("Save match(%s): %v", b, err)
+	}
+	if err := ds.AttachSlot(ctx, b, tid, "M2", ownID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("AttachSlot(%s) of its own Match into %s's Tournament: got %v, want ErrNotFound", b, a, err)
+	}
+	if _, slot, err := ds.SlotOf(ctx, b, ownID); err != nil || slot != "" {
+		t.Errorf("SlotOf(%s) after the refused attach = %q, %v; want none", b, slot, err)
+	}
 	if got, err := ds.FilledSlots(ctx, b, tid); err != nil || len(got) != 0 {
 		t.Errorf("FilledSlots(%s) = %d, %v; want none of %s's", b, len(got), err, a)
 	}

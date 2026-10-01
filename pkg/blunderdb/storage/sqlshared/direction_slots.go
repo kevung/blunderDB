@@ -14,14 +14,20 @@ import (
 // statement is confined to the scope's tenant.
 
 // FilledSlots returns the Matches of the Tournament that fill a Slot. The
-// final score of a Match is the last score its games reach.
+// final score of a Match is the last score its games reach, never past its
+// length: a gammon at 5-5 in a 7-point match ends at 7.
+//
+// Game.Winner is stored in its source's encoding — gnubg's 0/1 with -1 for
+// an unfinished game (transcriptions, .mat, .sgf), XG's -1/1 with 0 for an
+// unfinished game (.xg) — so a game is credited only when it won points, and
+// then 1 is player 2 and anything else player 1, which both encodings agree on.
 func (s *DirectionStore) FilledSlots(ctx context.Context, scope string, tournamentID int64) ([]storage.FilledSlot, error) {
 	tenant, targs := s.DB.TenantFilter("m", scope)
 	rows, err := s.DB.Query(ctx, `
 		SELECT m.direction_match_id, m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_name,''),
 		       COALESCE(m.match_length,0),
-		       (SELECT MAX(g.initial_score_1 + CASE WHEN g.winner = 1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id),
-		       (SELECT MAX(g.initial_score_2 + CASE WHEN g.winner = 2 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id)
+		       (SELECT MAX(g.initial_score_1 + CASE WHEN g.points_won > 0 AND g.winner <> 1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id),
+		       (SELECT MAX(g.initial_score_2 + CASE WHEN g.points_won > 0 AND g.winner = 1 THEN g.points_won ELSE 0 END) FROM game g WHERE g.match_id = m.id)
 		  FROM match m
 		 WHERE `+tenant+` AND m.tournament_id = ? AND m.direction_match_id <> ''
 		 ORDER BY m.id`, append(targs, tournamentID)...)
@@ -39,7 +45,7 @@ func (s *DirectionStore) FilledSlots(ctx context.Context, scope string, tourname
 			return nil, errf(s.DB, "filled slots", err)
 		}
 		if s1 != nil && s2 != nil {
-			f.Score1, f.Score2, f.HasScore = int(*s1), int(*s2), true
+			f.Score1, f.Score2, f.HasScore = capScore(int(*s1), f.Length), capScore(int(*s2), f.Length), true
 		}
 		out = append(out, f)
 	}
@@ -47,6 +53,15 @@ func (s *DirectionStore) FilledSlots(ctx context.Context, scope string, tourname
 		return nil, errf(s.DB, "filled slots", err)
 	}
 	return out, nil
+}
+
+// capScore stops a score at the match length; a money session (length 0)
+// has none.
+func capScore(score, length int) int {
+	if length > 0 && score > length {
+		return length
+	}
+	return score
 }
 
 // UnattachedMatches returns the Matches of the Tournament that fill no Slot.
@@ -68,6 +83,10 @@ func (s *DirectionStore) UnattachedMatches(ctx context.Context, scope string, to
 		if err := rows.Scan(&c.MatchID, &c.Player1, &c.Player2, &c.Length, &c.Date); err != nil {
 			return nil, errf(s.DB, "unattached matches", err)
 		}
+		// SQLite hands back the stored timestamp text; the contract is the day.
+		if len(c.Date) > len("2006-01-02") {
+			c.Date = c.Date[:len("2006-01-02")]
+		}
 		out = append(out, c)
 	}
 	if err := rows.Err(); err != nil {
@@ -77,16 +96,20 @@ func (s *DirectionStore) UnattachedMatches(ctx context.Context, scope string, to
 }
 
 // AttachSlot fills a Slot with a Match. The unique (tournament, slot) index
-// refuses a second Match in an occupied Slot.
+// refuses a second Match in an occupied Slot. The Tournament must be the
+// scope's as much as the Match.
 func (s *DirectionStore) AttachSlot(ctx context.Context, scope string, tournamentID int64, slotID string, matchID int64) error {
 	tenant, targs := s.DB.TenantFilter("", scope)
-	n, err := s.DB.Exec(ctx, `UPDATE match SET tournament_id = ?, direction_match_id = ? WHERE id = ? AND `+tenant,
-		append([]any{tournamentID, slotID, matchID}, targs...)...)
+	ttenant, ttargs := s.DB.TenantFilter("t", scope)
+	args := append([]any{tournamentID, slotID, matchID}, targs...)
+	args = append(append(args, tournamentID), ttargs...)
+	n, err := s.DB.Exec(ctx, `UPDATE match SET tournament_id = ?, direction_match_id = ? WHERE id = ? AND `+tenant+`
+		AND EXISTS (SELECT 1 FROM tournament t WHERE t.id = ? AND `+ttenant+`)`, args...)
 	if err != nil {
 		return errf(s.DB, "attach slot", err)
 	}
 	if n == 0 {
-		return fmt.Errorf("%s: attach slot: match %d: %w", s.DB.Name(), matchID, storage.ErrNotFound)
+		return fmt.Errorf("%s: attach slot: match %d in tournament %d: %w", s.DB.Name(), matchID, tournamentID, storage.ErrNotFound)
 	}
 	return nil
 }

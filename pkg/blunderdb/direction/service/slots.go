@@ -82,7 +82,7 @@ func (d *Service) Slots(ctx context.Context, tournamentID int64) ([]SlotRow, err
 		}
 		if mt, ok := filled[string(m.ID)]; ok {
 			r.MatchID = mt.id
-			r.Disagreement = disagreement(m, mt)
+			r.Disagreement = disagreement(m, r.AName, mt)
 		}
 		r.DraftID = drafts[string(m.ID)]
 		out = append(out, r)
@@ -168,7 +168,8 @@ func slotFromRound(round string) string {
 
 // disagreement compares what the director recorded with what the attached Match's own file
 // says. It returns a description, or "" when they agree — and it never changes either.
-func disagreement(m *tournoi.Match, f filledMatch) string {
+// aName is the name of the Slot's A, which is what a Match's file knows its players by.
+func disagreement(m *tournoi.Match, aName string, f filledMatch) string {
 	if f.length > 0 && m.Length > 0 && f.length != m.Length {
 		return fmt.Sprintf("length %d vs %d", f.length, m.Length)
 	}
@@ -179,7 +180,7 @@ func disagreement(m *tournoi.Match, f filledMatch) string {
 	}
 	// The Match's player1 is not necessarily the Slot's A.
 	a, b := f.score1, f.score2
-	if !strings.EqualFold(f.player1, string(m.A)) && strings.EqualFold(f.player2, string(m.A)) {
+	if !strings.EqualFold(f.player1, aName) && strings.EqualFold(f.player2, aName) {
 		a, b = f.score2, f.score1
 	}
 	if a != m.ScoreA || b != m.ScoreB {

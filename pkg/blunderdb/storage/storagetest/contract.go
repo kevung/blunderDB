@@ -140,6 +140,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Direction/DeleteFreesSlots", testDirectionDeleteFreesSlots},
 		{"Direction/Slots", testDirectionSlots},
 		{"Direction/Pairs", testDirectionPairs},
+		{"Direction/SlotScore", testDirectionSlotScore},
+		{"Direction/DeleteDropsPairs", testDirectionDeleteDropsPairs},
 		{"Direction/TxRollback", testDirectionTxRollback},
 		{"Direction/BindsToThePackageStore", testDirectionBindsToThePackageStore},
 		{"Transcription/CRUD", testTranscriptionCRUD},
