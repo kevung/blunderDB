@@ -12,6 +12,7 @@
  */
 
 import { openLibraryMock, libraryMockAfter } from './fixtures.js';
+import { showcasePlayerNames } from './showcasePlayers.js';
 
 /** Construit un tableau de 26 points vide (0 et 25 sont les barres). */
 function emptyPoints() {
@@ -443,7 +444,7 @@ export function showcaseGalleryMock() {
             GetPlayerTable: showcasePlayerTable,
             // StatsFilterBar treats an empty GetAllPlayerNames as "database
             // empty" and replaces the whole filter row with an import hint.
-            GetAllPlayerNames: ['Alice', 'Bob', 'Charlie'],
+            GetAllPlayerNames: showcasePlayerNames,
             GetStatsDateRange: { DateFrom: '2026-01-18', DateTo: '2026-03-14' }
         }
     };
