@@ -18,7 +18,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
-	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
 type Database struct {
@@ -44,13 +44,11 @@ type Database struct {
 	pendingAnkiCardKinds bool
 	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
 	readOnly             bool      // opened read-only because another instance holds the write lock
-	// transcriptSessions holds the open transcription drafts, keyed by row id
-	// (db_transcription.go). They cache what the stored JSON cannot hold — the
-	// Action being typed and the undo stack, both in memory by design
-	// (ADR-0045 rule 1). transcriptMu guards the map; the lock ORDER is
-	// transcriptMu -> mu, never the reverse.
-	transcriptMu       sync.Mutex
-	transcriptSessions map[int64]*transcript.Editor
+	// transcriptSvc is the transcription service over this handle's store
+	// (db_transcription.go), holding the open drafts' sessions; transcriptMu
+	// guards the pointer.
+	transcriptMu  sync.Mutex
+	transcriptSvc *transcription.Service
 	// directionMem is what the direction service keeps between calls: the clock forecasts and
 	// the page catalogue. Per Database, so two open databases never share one language.
 	directionMem service.Memory

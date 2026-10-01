@@ -48,9 +48,7 @@ func TestDeclaredScore_TravelsIntoTheMatchAndTheMAT(t *testing.T) {
 
 	// The draft on disk carries it: a fresh session reads it back, as it would
 	// after a restart.
-	db.transcriptMu.Lock()
-	delete(db.transcriptSessions, id)
-	db.transcriptMu.Unlock()
+	db.dropTranscriptSession(id)
 	state, err = db.OpenTranscription(id)
 	if err != nil {
 		t.Fatal(err)

@@ -2,21 +2,14 @@ package database
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"os"
-	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
-// Saving and exporting a draft (ADR-0045 §2, §3, §8). Plumbing between the
-// transcript package, ingest.WriteMatch and the gammonNet batch; the two
-// decisions of its own are stated where they are made.
+// Finishing a draft (ADR-0045 §2, §3, §8): transcription.Service writes the
+// Match; the analysis batch is the caller's to start.
 
 // TranscriptionSaveResult is what finishing a draft reports. ToAnalyze is the
 // derived, never stored, count of the match's positions without analysis
@@ -37,247 +30,21 @@ type TranscriptionSaveResult struct {
 
 // FinishTranscription materialises the draft as a Match and releases it: a
 // draft that names no Match creates one, a draft opened from a Match
-// (EditMatchTranscription) REPLACES it, id and all (ADR-0045 §2). The Match
-// is written and the draft row deleted in ONE transaction, so there is never
-// a moment with both or neither.
-//
-// A replacement is not snapshotted to the trash (ADR-0045 §3). The analysis
-// batch is the caller's to start.
+// (EditMatchTranscription) REPLACES it, id and all (ADR-0045 §2), in one
+// transaction with the deletion of the draft.
 func (d *Database) FinishTranscription(id int64) (*TranscriptionSaveResult, error) {
-	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
-
-	ed, err := d.session(id)
-	if err != nil {
-		return nil, err
-	}
-
-	parts := transcript.Build(ed.Doc)
-
-	// The one refusal: no game at all. ADR-0044 keeps what was written, it
-	// does not licence an empty Match polluting statistics and searches.
-	if len(parts.Games) == 0 {
-		return nil, fmt.Errorf("transcription %d: nothing to finish yet", id)
-	}
-
-	graph := transcriptGraph(parts)
-	if m := ed.Doc.Header.MatchID; m != nil && *m != 0 {
-		graph.ReplaceMatchID = *m
-	}
-
-	header := *parts.Match
-	header.MatchHash, header.CanonicalHash = transcriptMatchHashes(parts)
-
-	res, err := d.writeTranscribedMatch(context.Background(), graph, header, id)
-	if err != nil {
-		return nil, err
-	}
-	delete(d.transcriptSessions, id)
-
-	out := &TranscriptionSaveResult{
-		MatchID:      res.MatchID,
-		Replaced:     res.Replaced,
-		Games:        len(parts.Games),
-		Positions:    res.SavedPositions,
-		Inconsistent: parts.Inconsistent,
-	}
-	for _, moves := range parts.Moves {
-		out.Moves += len(moves)
-	}
-	if n, err := d.CountMatchPositionsToAnalyze(res.MatchID); err == nil {
-		out.ToAnalyze = n
-	}
-	return out, nil
-}
-
-// writeTranscribedMatch is the write itself: one transaction, ingest.WriteMatch,
-// the content hashes stated afterwards, and the draft row deleted.
-//
-// Afterwards on purpose: WriteMatch dedups on the hashes, which for a first
-// write would enrich a match the library already holds from XG and hand it to
-// the draft. So the graph travels hash-less and ReplaceHeader stamps them in
-// the same transaction, for a future IMPORT to dedup against.
-func (d *Database) writeTranscribedMatch(ctx context.Context, graph *ingest.MatchGraph, header domain.Match, draftID int64) (ingest.WriteResult, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	var res ingest.WriteResult
-	if d.db == nil {
-		return res, fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.store.BeginTx(ctx)
-	if err != nil {
-		return res, err
-	}
-	fail := func(err error) (ingest.WriteResult, error) {
-		_ = tx.Rollback()
-		return res, err
-	}
-	// An imported Match keeps the hashes of its source file, as it keeps its
-	// file_path and import batch: they are what makes the same file, imported
-	// again, a duplicate of this Match rather than a second copy of it.
-	if graph.ReplaceMatchID != 0 {
-		old, err := tx.Matches().Get(ctx, "", graph.ReplaceMatchID)
-		if err != nil {
-			return fail(err)
-		}
-		if isImported(old) {
-			header.MatchHash, header.CanonicalHash = old.MatchHash, old.CanonicalHash
-		}
-	}
-	res, err = ingest.WriteMatch(ctx, tx, "", graph, nil)
-	if err != nil {
-		return fail(err)
-	}
-	header.ID = res.MatchID
-	if err := tx.Matches().ReplaceHeader(ctx, "", res.MatchID, &header); err != nil {
-		return fail(err)
-	}
-	if err := attachTournament(ctx, tx, res.MatchID, header.TournamentID); err != nil {
-		return fail(err)
-	}
-	if err := tx.Transcriptions().Delete(ctx, "", draftID); err != nil {
-		return fail(err)
-	}
-	if err := tx.Commit(); err != nil {
-		return res, err
-	}
-	return res, nil
-}
-
-// attachTournament is the header's tournament made true of the Match, in the
-// same transaction as the write.
-//
-// Here, not in the graph: ReplaceHeader does not touch tournament_id, which
-// the tournament store owns with its sort order. A save with no tournament
-// DETACHES, so clearing the field is not silently ignored.
-func attachTournament(ctx context.Context, tx storage.Tx, matchID int64, tournamentID *int64) error {
-	if tournamentID != nil && *tournamentID != 0 {
-		return tx.Tournaments().AddMatch(ctx, "", *tournamentID, matchID)
-	}
-	return tx.Tournaments().RemoveMatch(ctx, "", matchID)
-}
-
-// transcriptGraph turns what the transcript package returns into the graph
-// ingest.WriteMatch writes. It carries no analysis and no comment: the
-// analysis is the batch's job afterwards (ADR-0045 §8), and a transcription
-// has no notes to attach.
-//
-// The transcript's own ids are not database ids and are dropped; so are the
-// hashes (see writeTranscribedMatch).
-func transcriptGraph(parts transcript.Parts) *ingest.MatchGraph {
-	g := &ingest.MatchGraph{Match: *parts.Match}
-	g.Match.MatchHash, g.Match.CanonicalHash = "", ""
-
-	for _, game := range parts.Games {
-		moves := parts.Moves[game.ID]
-		positions := parts.Positions[game.ID]
-
-		gg := ingest.GameGraph{Game: *game}
-		gg.Game.ID = 0
-		gg.Game.MatchID = 0
-		for i, mv := range moves {
-			mg := ingest.MoveGraph{Move: *mv}
-			mg.Move.GameID = 0
-			if i < len(positions) {
-				pos := positions[i]
-				mg.Position = &pos
-			}
-			gg.Moves = append(gg.Moves, mg)
-		}
-		g.Games = append(g.Games, gg)
-	}
-	return g
-}
-
-// transcriptMatchHashes are the two content hashes of a transcribed match.
-//
-// The canonical one is the SAME scheme as the importers
-// (computeCanonicalMatchHashFromXG and twins), so a later XG/GnuBG import of
-// the same match enriches instead of duplicating. The format-specific one
-// hashes the plays as typed and changes whenever the document does.
-func transcriptMatchHashes(parts transcript.Parts) (matchHash, canonicalHash string) {
-	m := parts.Match
-
-	var b strings.Builder
-	p1 := strings.TrimSpace(strings.ToLower(m.Player1Name))
-	p2 := strings.TrimSpace(strings.ToLower(m.Player2Name))
-	fmt.Fprintf(&b, "transcript1:%s|%s|%d|", p1, p2, m.MatchLength)
-	for gi, game := range parts.Games {
-		// The winner is hashed as a side (0/1/-1), like the document states it:
-		// the hash follows the transcription, not the storage encoding.
-		fmt.Fprintf(&b, "g%d:%d,%d,%d,%d|", gi,
-			game.InitialScore[0], game.InitialScore[1], domain.WinnerSide(game.Winner), game.PointsWon)
-		for mi, mv := range parts.Moves[game.ID] {
-			fmt.Fprintf(&b, "m%d:%s,%d,d%d%d,p%s|", mi, mv.MoveType, mv.Player,
-				mv.Dice[0], mv.Dice[1], mv.CheckerMove+mv.CubeAction)
-		}
-	}
-	matchHash = sha256Hex(b.String())
-
-	var c strings.Builder
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
-	fmt.Fprintf(&c, "canonical2:%s|%s|%d|%d|", p1, p2, m.MatchLength, len(parts.Games))
-	for gi, game := range parts.Games {
-		fmt.Fprintf(&c, "g%d|", gi)
-		dice := 0
-		for _, mv := range parts.Moves[game.ID] {
-			if dice >= transcriptCanonicalDicePerGame {
-				break
-			}
-			if mv.MoveType != "checker" {
-				continue
-			}
-			d1, d2 := mv.Dice[0], mv.Dice[1]
-			if d1 > d2 {
-				d1, d2 = d2, d1
-			}
-			fmt.Fprintf(&c, "d%d%d|", d1, d2)
-			dice++
-		}
-	}
-	return matchHash, sha256Hex(c.String())
-}
-
-// transcriptCanonicalDicePerGame mirrors ingest's maxCanonicalDicePerGame,
-// which is unexported there. The two must state the same number or a
-// transcribed match stops hashing like its imported twin — which is the whole
-// point of the canonical hash.
-const transcriptCanonicalDicePerGame = 10
-
-func sha256Hex(s string) string {
-	sum := sha256.Sum256([]byte(s))
-	return hex.EncodeToString(sum[:])
-}
-
-// SuggestTranscriptionMatFilename is SuggestMatFilename for a draft: the name
-// the export dialog opens on, built by the same helper from the match the
-// document would produce, so a draft and the Match it was saved as suggest
-// the same file.
-func (d *Database) SuggestTranscriptionMatFilename(id int64) (string, error) {
-	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
-
-	ed, err := d.session(id)
-	if err != nil {
-		return "", err
-	}
-	m, _, _ := transcript.MatchParts(ed.Doc)
-	return ingest.SuggestMATFilename(m), nil
-}
-
-// ExportTranscriptionMAT writes the open draft as a .mat file, rendering
-// first so a failure leaves no truncated file. Exported AS TYPED, illegal
-// plays included (ADR-0044); nothing is written to the library.
-func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
-	text, err := d.TranscriptionMAT(id)
-	if err != nil {
+	var res *transcription.SaveResult
+	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+		res, err = svc.Finish(context.Background(), "", id, transcription.Expect{})
 		return err
+	})
+	if err != nil {
+		return nil, err
 	}
-	return os.WriteFile(outputPath, []byte(text), 0o644)
+	return &TranscriptionSaveResult{
+		MatchID: res.MatchID, Replaced: res.Replaced, Games: res.Games, Moves: res.Moves,
+		Positions: res.Positions, ToAnalyze: res.ToAnalyze, Inconsistent: res.Inconsistent,
+	}, nil
 }
 
 // TranscriptionAnalysisResume is the fact ADR-0045 §8 refuses to store,
@@ -329,7 +96,7 @@ func (d *Database) PendingTranscriptionAnalysis() (*TranscriptionAnalysisResume,
 	}
 	return &TranscriptionAnalysisResume{
 		MatchID:   ids[0],
-		Label:     labelOf(transcript.Header{Player1: m.Player1Name, Player2: m.Player2Name, Event: m.Event}),
+		Label:     transcription.Label(transcript.Header{Player1: m.Player1Name, Player2: m.Player2Name, Event: m.Event}),
 		ToAnalyze: n,
 	}, nil
 }

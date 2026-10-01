@@ -1,28 +1,19 @@
 package database
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"strconv"
-	"strings"
-	"time"
+	"os"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
-// Transcriptions (ADR-0045): plumbing only. The rules live in
-// pkg/blunderdb/transcript, persistence in storage.TranscriptionStore; this
-// file reads the row, applies the gesture, writes the row back.
-//
-// An opened draft keeps a transcript.Editor in memory because the Entry (the
-// Action being typed) and the undo stack are deliberately not serialised
-// (ADR-0045 rule 1), yet successive gestures need them. The session is a
-// cache, never the truth: the row is rewritten after every durable change.
+// Transcriptions (ADR-0045, ADR-0057): a façade over transcription.Service,
+// the one implementation the desktop, the CLI and the daemon share. The
+// desktop is one user in one process: its sessions never expire, and its
+// gestures name no revision, so the session's own is the expectation and a
+// write still fails if anything else moved the row.
 
 // TranscriptionSummary is one line of the drafts list. Its facts are decoded
 // from the document rather than duplicated in columns that could drift.
@@ -56,415 +47,144 @@ type TranscriptionState struct {
 	CanRedo bool `json:"can_redo"`
 }
 
-// ListTranscriptions returns the library's drafts, most recently updated
-// first. Never nil: the panel iterates it straight from JSON.
-func (d *Database) ListTranscriptions() ([]TranscriptionSummary, error) {
+// transcriptService returns the service over the open library, made on first
+// use. Caller holds d.mu (read); transcriptMu guards the pointer, lock ORDER
+// mu -> transcriptMu, and forgetTranscriptSessions takes transcriptMu alone.
+func (d *Database) transcriptService() *transcription.Service {
+	d.transcriptMu.Lock()
+	defer d.transcriptMu.Unlock()
+	if d.transcriptSvc == nil {
+		d.transcriptSvc = transcription.New(d.store, transcription.Options{})
+	}
+	return d.transcriptSvc
+}
+
+// withTranscripts runs fn on the service under the read lock, so the library
+// cannot be closed or replaced under a gesture.
+func (d *Database) withTranscripts(fn func(*transcription.Service) error) error {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
 	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
+		return fmt.Errorf("no database is currently open")
 	}
+	return fn(d.transcriptService())
+}
 
-	out := []TranscriptionSummary{}
-	for row, err := range d.store.Transcriptions().List(context.Background(), "") {
-		if err != nil {
-			return nil, err
+// ListTranscriptions returns the drafts, most recently updated first.
+func (d *Database) ListTranscriptions() ([]TranscriptionSummary, error) {
+	var out []TranscriptionSummary
+	err := d.withTranscripts(func(svc *transcription.Service) error {
+		rows, err := svc.List(context.Background(), "")
+		for _, r := range rows {
+			out = append(out, TranscriptionSummary{
+				ID: r.ID, CreatedAt: r.CreatedAt, UpdatedAt: r.UpdatedAt, FormatVersion: r.FormatVersion,
+				MatchID: r.MatchID, Label: r.Label, Player1: r.Player1, Player2: r.Player2,
+				MatchLength: r.MatchLength, ActionCount: r.ActionCount,
+			})
 		}
-		out = append(out, summarize(row))
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	if out == nil {
+		out = []TranscriptionSummary{}
 	}
 	return out, nil
 }
 
 // CreateTranscription opens a new draft and returns it, ready to type into.
-//
-// A zero header means a match of transcript.DefaultMatchLength. The draft is
-// written immediately, before any Action, so a crash cannot lose it.
 func (d *Database) CreateTranscription(header transcript.Header) (*TranscriptionState, error) {
-	doc := transcript.New(header.MatchLength)
-	// Keep whatever else the form stated (players, event, rules), but never
-	// let a caller post a match id on a draft that has produced no match.
-	doc.Header = header
-	doc.Header.MatchID = nil
-	if doc.Header.MatchLength == 0 && !header.Jacoby && !header.Beaver {
-		// A money draft is Jacoby by default (transcript.New); an all-zero
-		// header is "unstated", not "Jacoby off".
-		doc.Header.Jacoby = true
-	}
-	// Defaults only (today, the library's user); the metadata pane overwrites
-	// both without touching the library's `user` setting.
-	if doc.Header.Date.IsZero() {
-		doc.Header.Date = time.Now()
-	}
-	if strings.TrimSpace(doc.Header.Transcriber) == "" {
-		doc.Header.Transcriber = d.metadataUser()
-	}
-
-	id, err := d.saveTranscription(0, doc)
-	if err != nil {
-		return nil, err
-	}
-
-	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
-	return opened(id, d.openTranscript(id, doc)), nil
+	return d.transcriptState(func(svc *transcription.Service) (*transcription.State, error) {
+		return svc.Create(context.Background(), "", header)
+	})
 }
 
-// metadataUser is the library's `user` metadata, trimmed, "" when absent or
-// not open: only the default transcriber of a new draft.
-func (d *Database) metadataUser() string {
-	d.mu.RLock()
-	defer d.mu.RUnlock()
-
-	if d.db == nil {
-		return ""
-	}
-	meta, err := d.store.Metadata().Load(context.Background(), "")
-	if err != nil {
-		return ""
-	}
-	return strings.TrimSpace(meta["user"])
-}
-
-// OpenTranscription loads a draft and returns it replayed in full: the
-// position of every Action, the scores, the Crawford games, the
-// Inconsistencies. The Cursor lands at the end of the document, since the
-// Entry a correction was in the middle of is not persisted.
+// OpenTranscription loads a draft and returns it replayed in full, Cursor at
+// the end of the document; a draft already open keeps its session.
 func (d *Database) OpenTranscription(id int64) (*TranscriptionState, error) {
-	doc, err := d.loadTranscription(id)
-	if err != nil {
-		return nil, err
-	}
-
-	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
-	// A draft already open keeps the session it has: reopening the tab must
-	// not throw away an Entry or an undo stack the user still has in hand.
-	if e := d.transcriptSessions[id]; e != nil {
-		if err := d.forgetDeletedMatch(id, e); err != nil {
-			return nil, err
-		}
-		return opened(id, e), nil
-	}
-	ed := d.openTranscript(id, doc)
-	if err := d.forgetDeletedMatch(id, ed); err != nil {
-		return nil, err
-	}
-	return opened(id, ed), nil
+	return d.transcriptState(func(svc *transcription.Service) (*transcription.State, error) {
+		return svc.Open(context.Background(), "", id)
+	})
 }
 
-// TranscriptionMAT renders the open draft as .mat text through the SAME
-// renderer as the library's matches (transcript.MatchParts + ingest.RenderMAT),
-// so the pane shows exactly what the export holds. Writes nothing. A draft
-// with Inconsistencies renders all the same (ADR-0044); an illegal play goes
-// out as played.
+// ApplyTranscriptionGesture records one gesture and returns the draft.
+func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*TranscriptionState, error) {
+	return d.transcriptState(func(svc *transcription.Service) (*transcription.State, error) {
+		return svc.Apply(context.Background(), "", id, transcription.Expect{}, g)
+	})
+}
+
+// TranscriptionMAT renders the draft as .mat text through the library's own
+// renderer. Writes nothing.
 func (d *Database) TranscriptionMAT(id int64) (string, error) {
-	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
-
-	ed, err := d.session(id)
-	if err != nil {
-		return "", err
-	}
-	return ingest.RenderMAT(transcript.MatchParts(ed.Doc)), nil
+	var text string
+	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+		text, err = svc.MAT(context.Background(), "", id)
+		return err
+	})
+	return text, err
 }
 
-// CloseTranscription releases the in-memory session only: the Entry being
-// typed and the undo stack. The row stays, and the draft resumes from the
-// drafts list; a draft leaves only by FinishTranscription or
-// AbandonTranscription (ADR-0045 §2).
+// CloseTranscription releases the in-memory session only; the draft resumes
+// from the drafts list and leaves only by Finish or Abandon (ADR-0045 §2).
 func (d *Database) CloseTranscription(id int64) error {
 	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
-	delete(d.transcriptSessions, id)
+	svc := d.transcriptSvc
+	d.transcriptMu.Unlock()
+	if svc != nil {
+		svc.Close("", id, "")
+	}
 	return nil
 }
 
-// AbandonTranscription deletes the draft without a Match. Nothing is
-// snapshotted, and a Match the draft was opened from is left untouched
-// (ADR-0045 §3); the caller confirms beforehand.
+// AbandonTranscription deletes the draft without a Match (ADR-0045 §3); the
+// caller confirms beforehand.
 func (d *Database) AbandonTranscription(id int64) error {
-	d.transcriptMu.Lock()
-	delete(d.transcriptSessions, id)
-	d.transcriptMu.Unlock()
-
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-	return d.store.Transcriptions().Delete(context.Background(), "", id)
+	return d.withTranscripts(func(svc *transcription.Service) error {
+		return svc.Abandon(context.Background(), "", id, transcription.Expect{})
+	})
 }
 
-// ApplyTranscriptionGesture records one gesture and returns the draft. The row
-// is rewritten, in its own transaction, whenever the header or the Actions
-// changed; a gesture that only moves the Cursor, fills a die or picks a
-// candidate writes nothing (Entry is not serialised, durableJSON normalises
-// the Cursor).
-//
-// The Replay starts at the Action the gesture TOUCHED (Editor.From), not at
-// the Cursor: a correction in place returns the Cursor elsewhere, while the
-// Inconsistency it created lies behind.
-//
-// Undo and redo bypass transcript.Apply (the stack lives in the Editor) but
-// write like any gesture, or a crash would resurrect an undone Action.
-func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*TranscriptionState, error) {
-	d.transcriptMu.Lock()
-	defer d.transcriptMu.Unlock()
+// SuggestTranscriptionMatFilename is the default file name of a draft's .mat.
+func (d *Database) SuggestTranscriptionMatFilename(id int64) (string, error) {
+	var name string
+	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+		name, err = svc.SuggestMATFilename(context.Background(), "", id)
+		return err
+	})
+	return name, err
+}
 
-	ed, err := d.session(id)
+// ExportTranscriptionMAT writes the draft's .mat to outputPath.
+func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
+	text, err := d.TranscriptionMAT(id)
 	if err != nil {
-		return nil, err
-	}
-
-	before, err := durableJSON(ed.Doc)
-	if err != nil {
-		return nil, fmt.Errorf("transcription %d: %w", id, err)
-	}
-	switch g.Kind {
-	case transcript.GestureUndo:
-		// A stack with nothing on it is not an error: Ctrl-Z at the start of a
-		// session is a keystroke that does nothing, exactly as it is in every
-		// editor, and an error dialog for it would be noise.
-		ed.Undo()
-	case transcript.GestureRedo:
-		ed.Redo()
-	default:
-		if err := ed.Apply(g); err != nil {
-			return nil, err
-		}
-	}
-	after, err := durableJSON(ed.Doc)
-	if err != nil {
-		return nil, fmt.Errorf("transcription %d: %w", id, err)
-	}
-	if !bytes.Equal(before, after) {
-		if _, err := d.writeTranscription(id, ed.Doc, after); err != nil {
-			return nil, err
-		}
-	}
-	return stateOf(id, ed, ed.From()), nil
-}
-
-// The session map: d.transcriptMu guards it, lock ORDER transcriptMu → d.mu,
-// never the reverse. The storage helpers take d.mu under transcriptMu so
-// "read, apply, write" is one gesture, not three interleavable ones.
-
-// openTranscript installs a session for id. Caller holds transcriptMu.
-func (d *Database) openTranscript(id int64, doc transcript.Document) *transcript.Editor {
-	if d.transcriptSessions == nil {
-		d.transcriptSessions = make(map[int64]*transcript.Editor)
-	}
-	ed := transcript.NewEditor(doc)
-	d.transcriptSessions[id] = ed
-	return ed
-}
-
-// opened is stateOf for a freshly opened draft, the one case where the Cursor
-// does NOT jump to an Inconsistency: a resumed draft continues after its last
-// Action, and a kept Inconsistency must not drag the user back at every open.
-func opened(id int64, ed *transcript.Editor) *TranscriptionState {
-	return stateOf(id, ed, len(ed.Doc.Actions))
-}
-
-// stateOf annotates a session and hands back what every binding returns. After
-// a Replay the Cursor jumps to the first Inconsistency at or after `from`; the
-// document is moved there and replayed again (incremental, free) so the next
-// `h` counts from the cell the user sees.
-func stateOf(id int64, ed *transcript.Editor, from int) *TranscriptionState {
-	ann := ed.Replay(from)
-	if ann.Cursor != ed.Doc.Cursor {
-		ed.SeekCursor(ann.Cursor)
-		ann = ed.Replay(ed.Doc.Cursor)
-	}
-	return &TranscriptionState{ID: id, Annotated: ann, CanUndo: ed.CanUndo(), CanRedo: ed.CanRedo()}
-}
-
-// session returns the live editor for id, loading the row when the draft was
-// not opened in this run. Caller holds transcriptMu.
-func (d *Database) session(id int64) (*transcript.Editor, error) {
-	ed := d.transcriptSessions[id]
-	if ed == nil {
-		doc, err := d.loadTranscription(id)
-		if err != nil {
-			return nil, err
-		}
-		ed = d.openTranscript(id, doc)
-	}
-	if err := d.forgetDeletedMatch(id, ed); err != nil {
-		return nil, err
-	}
-	return ed, nil
-}
-
-// forgetDeletedMatch takes a draft whose Match was deleted from the library
-// back to "never saved": the column went NULL with the Match, but the document
-// still names it, so every write would break the foreign key and the next save
-// would replace a Match that is gone. The row is rewritten at once so that it
-// agrees with its column. Caller holds transcriptMu.
-func (d *Database) forgetDeletedMatch(id int64, ed *transcript.Editor) error {
-	if ed.Doc.Header.MatchID == nil {
-		return nil
-	}
-	exists, err := d.matchExists(*ed.Doc.Header.MatchID)
-	if err != nil || exists {
 		return err
 	}
-	ed.SetMatchID(nil)
-	_, err = d.saveTranscription(id, ed.Doc)
-	return err
+	return os.WriteFile(outputPath, []byte(text), 0o644)
 }
 
-func (d *Database) matchExists(matchID int64) (bool, error) {
-	d.mu.RLock()
-	defer d.mu.RUnlock()
-	if d.db == nil {
-		return false, fmt.Errorf("no database is currently open")
-	}
-	_, err := d.store.Matches().Get(context.Background(), "", matchID)
-	switch {
-	case err == nil:
-		return true, nil
-	case errors.Is(err, storage.ErrNotFound):
-		return false, nil
-	default:
-		return false, err
-	}
-}
-
-// loadTranscription reads one row and decodes its document, putting the
-// Cursor at the END: the Entry is not persisted, so a resumed draft continues
-// after its last Action. Redone here (durableJSON already does it) so the
-// rule holds for rows written by any build.
-func (d *Database) loadTranscription(id int64) (transcript.Document, error) {
-	d.mu.RLock()
-	defer d.mu.RUnlock()
-
-	var doc transcript.Document
-	if d.db == nil {
-		return doc, fmt.Errorf("no database is currently open")
-	}
-	row, err := d.store.Transcriptions().Get(context.Background(), "", id)
+func (d *Database) transcriptState(fn func(*transcription.Service) (*transcription.State, error)) (*TranscriptionState, error) {
+	var st *transcription.State
+	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+		st, err = fn(svc)
+		return err
+	})
 	if err != nil {
-		return doc, err
+		return nil, err
 	}
-	doc, err = decodeTranscription(row)
-	if err != nil {
-		return doc, err
-	}
-	doc.Cursor = len(doc.Actions)
-	return doc, nil
-}
-
-// durableJSON encodes what a crash must not lose — header and Actions — and is
-// what "has the draft changed?" compares. The Cursor is normalised to the end:
-// it is not a fact of the match, so moving it must cost no write, and a
-// resumption starts there anyway. Entry and the undo stack are `json:"-"`
-// (ADR-0045 rule 1).
-func durableJSON(doc transcript.Document) ([]byte, error) {
-	doc.Cursor = len(doc.Actions)
-	blob, err := json.Marshal(doc)
-	if err != nil {
-		return nil, fmt.Errorf("encode transcription: %w", err)
-	}
-	return blob, nil
-}
-
-// saveTranscription writes doc into row id (0 to insert) and returns the id
-// the row has.
-func (d *Database) saveTranscription(id int64, doc transcript.Document) (int64, error) {
-	blob, err := durableJSON(doc)
-	if err != nil {
-		return 0, err
-	}
-	return d.writeTranscription(id, doc, blob)
-}
-
-// writeTranscription is one autocommit statement, so one gesture is one
-// transaction (ADR-0045 rule 1). It survives an application crash; under
-// synchronous=NORMAL a power cut may still cost the last commits, the trade
-// the whole database makes. The format version is in the document (true when
-// copied) AND a column (filterable without decoding).
-func (d *Database) writeTranscription(id int64, doc transcript.Document, blob []byte) (int64, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	if d.db == nil {
-		return 0, fmt.Errorf("no database is currently open")
-	}
-	row := &storage.Transcription{
-		ID:            id,
-		FormatVersion: strconv.Itoa(doc.FormatVersion),
-		Label:         labelOf(doc.Header),
-		Document:      string(blob),
-	}
-	if doc.Header.MatchID != nil {
-		row.MatchID = *doc.Header.MatchID
-	}
-	return d.store.Transcriptions().Save(context.Background(), "", row)
-}
-
-// decodeTranscription reads a stored draft's JSON. An unknown format version
-// is refused rather than half-read, which would drop Actions silently; an older
-// one is converted to the current shape.
-func decodeTranscription(row *storage.Transcription) (transcript.Document, error) {
-	var doc transcript.Document
-	if err := json.Unmarshal([]byte(row.Document), &doc); err != nil {
-		return doc, fmt.Errorf("transcription %d: %w", row.ID, err)
-	}
-	if doc.FormatVersion > transcript.FormatVersion {
-		return doc, fmt.Errorf("transcription %d was written in document format %d, this version reads up to %d",
-			row.ID, doc.FormatVersion, transcript.FormatVersion)
-	}
-	return transcript.Upgrade(doc), nil
-}
-
-// summarize reads a row's document for the list. An undecodable document
-// still yields a line from the row's own columns, or the user could not
-// delete it.
-func summarize(row *storage.Transcription) TranscriptionSummary {
-	s := TranscriptionSummary{
-		ID:            row.ID,
-		CreatedAt:     row.CreatedAt,
-		UpdatedAt:     row.UpdatedAt,
-		FormatVersion: row.FormatVersion,
-		MatchID:       row.MatchID,
-		Label:         row.Label,
-		MatchLength:   -1,
-		ActionCount:   -1,
-	}
-	doc, err := decodeTranscription(row)
-	if err != nil {
-		return s
-	}
-	s.Player1 = doc.Header.Player1
-	s.Player2 = doc.Header.Player2
-	s.MatchLength = doc.Header.MatchLength
-	s.ActionCount = len(doc.Actions)
-	return s
-}
-
-// labelOf is the free text the list falls back on and a future search reads:
-// the two players when they are known, the event otherwise, nothing at all
-// for a draft that has not said who is playing yet.
-func labelOf(h transcript.Header) string {
-	p1, p2 := strings.TrimSpace(h.Player1), strings.TrimSpace(h.Player2)
-	switch {
-	case p1 != "" && p2 != "":
-		return p1 + " vs " + p2
-	case p1 != "":
-		return p1
-	case p2 != "":
-		return p2
-	default:
-		return strings.TrimSpace(h.Event)
-	}
+	return &TranscriptionState{ID: st.ID, Annotated: st.Annotated, CanUndo: st.CanUndo, CanRedo: st.CanRedo}, nil
 }
 
 // forgetTranscriptSessions drops every open draft when the handle is replaced
-// or closed, BEFORE d.mu is taken (order transcriptMu → mu); otherwise a row
-// id of the previous library would answer for the next one.
+// or closed, BEFORE d.mu is taken; otherwise a row id of the previous library
+// would answer for the next one.
 func (d *Database) forgetTranscriptSessions() {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
-	d.transcriptSessions = nil
+	if d.transcriptSvc != nil {
+		d.transcriptSvc.Forget()
+	}
+	d.transcriptSvc = nil
 }

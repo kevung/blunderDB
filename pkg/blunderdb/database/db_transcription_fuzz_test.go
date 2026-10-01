@@ -79,7 +79,7 @@ func (r *sessionRun) fail(format string, args ...any) {
 }
 
 func (r *sessionRun) doc() transcript.Document {
-	return r.db.transcriptSessions[r.id].Doc
+	return r.db.sessionDoc(r.id)
 }
 
 // gesture applies one gesture; a refusal is an answer, not a failure.
@@ -157,9 +157,7 @@ func (r *sessionRun) reopen() {
 	if err != nil {
 		r.fail("durableJSON: %v", err)
 	}
-	r.db.transcriptMu.Lock()
-	delete(r.db.transcriptSessions, r.id)
-	r.db.transcriptMu.Unlock()
+	r.db.dropTranscriptSession(r.id)
 	st, err := r.db.OpenTranscription(r.id)
 	if err != nil {
 		r.fail("OpenTranscription: %v", err)

@@ -291,7 +291,8 @@ func copyCrashedLibrary(t *testing.T, src, dst string) {
 }
 
 // A gesture that changes an Action writes the row; a gesture that only moves
-// the Cursor, fills a die or picks a candidate writes nothing (§3).
+// the Cursor, fills a die or picks a candidate leaves the document alone and
+// advances the revision only (§3, ADR-0057 rule 4).
 //
 // The proof is a sentinel written into the document column behind the
 // engine's back: a gesture that does not write leaves it there, and a gesture
@@ -307,9 +308,9 @@ func TestApplyTranscriptionGesture_OnlyAnActionCostsAWrite(t *testing.T) {
 	typeChecker(t, db, id, 6, 3) // one Action on disk
 
 	const sentinel = "this row was not rewritten"
-	row := readTranscriptionRow(t, db, id)
-	row.Document = sentinel
-	if _, err := db.store.Transcriptions().Save(context.Background(), "", row); err != nil {
+	// Planted in SQL, revision untouched: through the store it would be a
+	// write of its own, which the session's next gesture must refuse.
+	if _, err := db.db.Exec(`UPDATE transcription SET document = ? WHERE id = ?`, sentinel, id); err != nil {
 		t.Fatalf("planting the sentinel: %v", err)
 	}
 
@@ -450,7 +451,7 @@ func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
 		t.Fatalf("TranscriptionMAT: %v", err)
 	}
 
-	doc := db.transcriptSessions[state.ID].Doc
+	doc := db.sessionDoc(state.ID)
 	if want := ingest.RenderMAT(transcript.MatchParts(doc)); text != want {
 		t.Fatalf("the pane's text is not the exporter's:\n--- got ---\n%s\n--- want ---\n%s", text, want)
 	}
