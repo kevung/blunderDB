@@ -7,7 +7,12 @@
      */
     import { t } from '../../i18n';
     import ResultCard from './ResultCard.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
     import { seatLabel } from './labels.js';
+    import { cellMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
+    import { directionPageShown, somethingOpenAbove } from '../../services/directionKeys.js';
+    import { gridKeyAction, TABLE_DIGIT_DELAY_MS } from '../../services/directionGridKeys.js';
 
     /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
@@ -19,12 +24,147 @@
      *     onForfeit?: (matchId: string, winner: string, note: string) => void,
      *     onMove?: (matchId: string, table: number) => void,
      *     onCancel?: (matchId: string) => void,
+     *     onHistory?: (name: string) => void,
+     *     onOutOfService?: (table: number, out: boolean) => void,
+     *     onLaunchHere?: (table: number) => void,
+     *     reveal?: { table: number, open?: boolean, seq: number } | null,
      *     actions?: import('svelte').Snippet
      * }}
      */
-    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, actions } = $props();
+    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onHistory, onOutOfService, onLaunchHere, reveal = null, actions } = $props();
 
     let openKey = $state('');
+    /** La fiche s'ouvre (ou, déjà ouverte, passe) sur le champ de table quand M, X ou le menu le demandent. */
+    let moveFor = $state({ key: '', seq: 0 });
+    let moveSeq = 0;
+    /** La case qui prend le Tab : une seule, les flèches font le reste (grille ARIA). */
+    let rovingKey = $state('');
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+    /** @type {HTMLElement | null} */
+    let gridEl = $state(null);
+
+    /** @param {TableCell} c @param {boolean} move */
+    function openCard(c, move = false) {
+        if (!c.matchId) return;
+        moveFor = move ? { key: key(c), seq: ++moveSeq } : { key: '', seq: 0 };
+        openKey = key(c);
+    }
+
+    /** @param {TableCell} c */
+    function menuItems(c) {
+        return cellMenu((k, p) => $t(k, p), c, {
+            busy,
+            onLaunchHere,
+            openResult: () => openCard(c),
+            openMove: () => openCard(c, true),
+            onForfeit,
+            onCancel,
+            onHistory,
+            onOutOfService
+        });
+    }
+
+    /**
+     * Menu sur la case (clic droit, Menu, Maj+F10) et clavier de la grille : flèches entre
+     * cases, M / X ouvrent le champ de table, Entrée la fiche.
+     *
+     * @param {KeyboardEvent} e
+     * @param {TableCell} c
+     */
+    function onCellKey(e, c) {
+        const req = menuRequest(e, () => menuItems(c));
+        if (req) {
+            menu = req;
+            return;
+        }
+        if (e.target !== e.currentTarget || !gridEl) return;
+        const cellEls = /** @type {HTMLElement[]} */ ([...gridEl.querySelectorAll('.cell')]);
+        const action = gridKeyAction(e, cellEls, /** @type {HTMLElement} */ (e.currentTarget), !!c.matchId);
+        if (!action) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (action.focus) action.focus.focus();
+        else if (action.move) openCard(c, true);
+    }
+
+    /** @param {MouseEvent} e @param {TableCell} c */
+    function onCellContext(e, c) {
+        const req = menuRequest(e, () => menuItems(c));
+        if (req) menu = req;
+    }
+
+    /** @param {number} table */
+    function cellOfTable(table) {
+        return cells.find((c) => !c.noTable && !c.shared && c.table === table);
+    }
+
+    /**
+     * Mène à la table N : le focus sur sa case, et sa fiche si un match y joue.
+     *
+     * @param {number} table
+     * @param {boolean} open
+     */
+    function goTo(table, open) {
+        const c = cellOfTable(table);
+        if (!c || !gridEl) return false;
+        /** @type {HTMLElement | null} */ (gridEl.querySelector(`[data-testid="direction-table-${table}"]`))?.focus();
+        if (open) openCard(c);
+        return true;
+    }
+
+    let lastReveal = 0;
+    $effect(() => {
+        if (reveal && reveal.seq !== lastReveal) {
+            lastReveal = reveal.seq;
+            const r = reveal;
+            // Attend que la grille soit montée (la vue vient de changer d'onglet).
+            queueMicrotask(() => goTo(r.table, !!r.open));
+        }
+    });
+
+    /* Chiffres = table N (un ou deux chiffres, le second dans les 400 ms), comme un numéro de
+       canal. En capture pour passer avant le répartiteur ; jamais dans un champ, sous une
+       surcouche, ni pendant qu'une fiche est ouverte (ses champs prennent les chiffres). */
+    let digits = '';
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let digitTimer;
+
+    /** @param {KeyboardEvent} e */
+    function onDigit(e) {
+        if (!directionPageShown() || somethingOpenAbove() || openKey) return;
+        const m = /^(?:Digit|Numpad)([0-9])$/.exec(e.code);
+        if (!m || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+        if (e.target instanceof Element && e.target.closest('input, select, textarea, [contenteditable]')) return;
+        const tables = cells.filter((c) => !c.noTable && !c.shared).map((c) => c.table);
+        // Un chiffre qui ne prolonge pas le numéro en cours repart de zéro : « 1 » puis « 5 »
+        // sans table 15 mène à la table 5, pas nulle part.
+        let next = digits + m[1];
+        if (digits && !tables.some((n) => String(n).startsWith(next))) next = m[1];
+        clearTimeout(digitTimer);
+        digits = '';
+        if (!tables.some((n) => String(n).startsWith(next))) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const n = parseInt(next, 10);
+        const longer = tables.some((t) => t !== n && String(t).startsWith(next));
+        if (longer) {
+            digits = next;
+            digitTimer = setTimeout(() => {
+                digits = '';
+                goTo(n, true);
+            }, TABLE_DIGIT_DELAY_MS);
+        } else {
+            goTo(n, true);
+        }
+    }
+
+    $effect(() => {
+        window.addEventListener('keydown', onDigit, true);
+        return () => {
+            window.removeEventListener('keydown', onDigit, true);
+            clearTimeout(digitTimer);
+        };
+    });
 
     /**
      * Une table partagée par deux matchs (hérité d'un journal ancien) donne deux cases au même
@@ -76,12 +216,15 @@
         <h3>{$t('direction.table.title', { n: tableCount })}</h3>
         {#if actions}{@render actions()}{/if}
     </header>
-    <div class="grid">
+    <div class="grid" role="grid" aria-label={$t('direction.table.title', { n: tableCount })} bind:this={gridEl}>
         {#each cells as c (key(c))}
-            <div class="cell-wrap">
+            <div class="cell-wrap" role="row">
                 <button
                     type="button"
+                    role="gridcell"
                     class="cell"
+                    tabindex={(rovingKey && cells.some((x) => key(x) === rovingKey) ? rovingKey === key(c) : c === cells[0]) ? 0 : -1}
+                    onfocus={() => (rovingKey = key(c))}
                     data-testid={c.noTable ? `direction-table-none-${c.matchId}` : c.shared ? `direction-table-shared-${c.matchId}` : `direction-table-${c.table}`}
                     class:busy={c.matchId}
                     class:slow={c.slow}
@@ -89,8 +232,10 @@
                     class:elsewhere={!!c.elsewhere}
                     class:no-table={c.noTable}
                     class:shared={c.shared}
-                    disabled={!c.matchId}
-                    onclick={() => (openKey = openKey === key(c) ? '' : key(c))}
+                    aria-haspopup={menuItems(c).length > 0 ? 'menu' : undefined}
+                    onclick={() => (openKey === key(c) ? (openKey = '') : openCard(c))}
+                    oncontextmenu={(e) => onCellContext(e, c)}
+                    onkeydown={(e) => onCellKey(e, c)}
                 >
                     <span class="num">{c.noTable ? $t('direction.table.noTable') : c.table}</span>
                     {#if c.matchId}
@@ -119,7 +264,9 @@
                 </button>
 
                 {#if openKey === key(c) && c.matchId}
-                    <ResultCard cell={runningCell(c)} {busy} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+                    <div role="gridcell">
+                        <ResultCard cell={runningCell(c)} {busy} moveRequest={moveFor.key === key(c) ? moveFor.seq : 0} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+                    </div>
                 {/if}
             </div>
         {/each}
@@ -128,6 +275,10 @@
         {/if}
     </div>
 </section>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .grid-wrap {

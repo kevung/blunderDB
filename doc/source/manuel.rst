@@ -1567,6 +1567,49 @@ Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille :
 reprise). Une correction plus ancienne se fait depuis l':ref:`historique
 <direction_historique>`.
 
+.. _direction_menus:
+
+Les menus contextuels
+~~~~~~~~~~~~~~~~~~~~~
+
+Un clic droit, la touche *MENU* ou *MAJ-F10* sur un objet de la page Direction
+ouvre ses actions courantes sans passer par la fiche : une case de la grille
+(libre ou occupée), un joueur (onglet **Joueurs**, joueurs libres), une place de
+l'arbre, un emplacement, une proposition de la file, une ligne de l'historique.
+Le menu s'ouvre sur l'objet ; *HAUT* et *BAS* le parcourent, *ENTRÉE* choisit,
+*ÉCHAP* le ferme et rend le focus à l'objet.
+
+- Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de
+  table (viser une table occupée échange les deux matchs), annuler le match,
+  historique de chaque joueur.
+- Case libre : lancer ici la proposition sélectionnée, mettre la table hors
+  service, ou la remettre en service (tables d'une Rencontre). Une table réservée
+  à une autre épreuve ne propose rien.
+- Joueur : saisir le résultat de son match en cours, aller à sa table,
+  historique, apparier à la main avec un autre joueur libre, aller dans l'autre
+  épreuve où il joue aussi, marquer absent ou présent, retirer maintenant ou
+  après son match, réinscrire, corriger la fiche.
+- Emplacement sans match : rattacher un match importé que cette place attend.
+- Proposition : lancer, lancer à la table…, changer la longueur…, apparier
+  autrement (ces trois entrées ouvrent l'appariement à la main avec les deux
+  joueurs, la longueur et la table de la proposition), ignorer pour l'instant,
+  imprimer la feuille de la ronde.
+- Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer sur un
+  des joueurs.
+
+Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la
+confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant
+qu'une action est en cours, les entrées qui agissent sont grisées, comme les
+boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le
+premier.
+
+Au clavier, la grille ne prend qu'un arrêt de *TAB* : chaque case se focalise,
+libre comprise, et *GAUCHE*, *DROITE*, *HAUT*, *BAS*, *DÉBUT* et *FIN* passent
+d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour
+une table au-delà de 9, le second chiffre se tape dans les 0,4 s. *M* ouvre la
+fiche sur le champ de table, et *X* aussi, que la fiche soit déjà ouverte ou
+non : viser une table occupée échange les deux matchs.
+
 Les joueurs
 ~~~~~~~~~~~
 

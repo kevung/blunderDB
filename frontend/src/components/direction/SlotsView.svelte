@@ -6,10 +6,34 @@
      */
     import { t } from '../../i18n';
     import { renderLabel } from './labels.js';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { matchMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
 
     let { slots = [], unattached = [], busy = false, onTranscribe = () => {}, onAttach = () => {}, onDetach = () => {}, onOpenMatch = () => {} } = $props();
 
     let bannerDismissed = $state(false);
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {any} s */
+    function onRowMenu(ev, s) {
+        const req = menuRequest(ev, () =>
+            matchMenu(
+                (k, p) => $t(k, p),
+                { matchId: s.matchId, aName: s.aName, bName: s.bName, done: s.done },
+                {
+                    busy,
+                    onOpenMatch: s.matchId ? () => onOpenMatch(s.matchId) : undefined,
+                    onDetach: s.matchId ? () => onDetach(s.slotId) : undefined,
+                    onTranscribe: !s.matchId && !s.draftId ? () => onTranscribe(s.slotId) : undefined,
+                    // Rattacher : les matchs importés que cette place attend, un par entrée.
+                    attachables: unattached.filter((u) => u.suggestSlot === s.slotId).map((u) => ({ matchId: u.matchId, label: `${u.player1} – ${u.player2}` })),
+                    onAttach: s.matchId || s.draftId ? undefined : (/** @type {string} */ m) => onAttach(s.slotId, m)
+                }
+            )
+        );
+        if (req) menu = req;
+    }
 
     const suggested = $derived(unattached.filter((u) => u.suggestSlot));
     const showBanner = $derived(!bannerDismissed && unattached.length > 0);
@@ -65,7 +89,7 @@
         </thead>
         <tbody>
             {#each slots as s (s.slotId)}
-                <tr class:flagged={s.disagreement}>
+                <tr class:flagged={s.disagreement} tabindex="0" oncontextmenu={(ev) => onRowMenu(ev, s)} onkeydown={(ev) => onRowMenu(ev, s)}>
                     <td class="muted">{renderLabel($t, s.label)}</td>
                     <td class="names">{s.aName} – {s.bName}</td>
                     <td class="muted">
@@ -105,6 +129,10 @@
         </tbody>
     </table>
 </div>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .slots {

@@ -353,6 +353,18 @@ export default {
 <p>Un clic en una mesa ocupada abre la ficha del partido. Muestra dos grandes objetivos: los <strong>nombres de los dos jugadores</strong>. Hacer clic en el que ha ganado registra el resultado — dos clics en total, mesa incluida. El ganador es lo único exigido; el marcador es libre, uno, ambos o ninguno. Con el teclado, <em>IZQUIERDA</em> o <em>DERECHA</em> elige al ganador e <em>INTRO</em> lo registra. La ficha solo se cierra cuando el resultado está escrito: un fallo la deja abierta, con su mensaje.</p>
 <p>El botón <strong>⋯</strong> de la ficha despliega lo que se usa raramente: la incomparecencia (forfait) — cada botón nombra al ausente y a quien gana —, una observación libre («caído por tiempo», «abandonado por motivo de…»), el traslado del partido a otra mesa y su anulación. La incomparecencia y la anulación se confirman. Trasladado a una mesa ocupada, el partido intercambia su mesa con el que la ocupa: dos partidos nunca comparten mesa, y el mismo gesto los devuelve a su sitio. Si un registro antiguo dejó dos en una mesa, la cuadrícula muestra las dos casillas, señaladas, hasta que se traslade una.</p>
 <p>Un error de escritura visto en el acto se retoma en dos clics bajo la cuadrícula: <strong>Corregir</strong> la última decisión y luego el ganador correcto (<em>CTRL-Z</em> abre la misma corrección). Una corrección más antigua se hace desde el historial.</p>
+<h4>Los menús contextuales</h4>
+<p>Un clic derecho, la tecla <em>MENU</em> o <em>MAYÚS-F10</em> sobre un objeto de la página Dirección abre sus acciones habituales sin pasar por la ficha: una casilla de la cuadrícula (libre u ocupada), un jugador (pestaña <strong>Jugadores</strong>, jugadores libres), un puesto del cuadro, un hueco, una propuesta de la cola, una fila del historial. El menú se abre sobre el objeto; <em>ARRIBA</em> y <em>ABAJO</em> lo recorren, <em>INTRO</em> elige, <em>ESC</em> lo cierra y devuelve el foco al objeto.</p>
+<ul>
+<li>Casilla ocupada: introducir el resultado, abandono de uno u otro, cambiar de mesa (apuntar a una mesa ocupada intercambia las dos partidas), anular la partida, historial de cada jugador.</li>
+<li>Casilla libre: iniciar aquí el emparejamiento seleccionado, poner la mesa fuera de servicio o volver a ponerla en servicio (mesas de una Rencontre). Una mesa reservada a otra prueba no ofrece nada.</li>
+<li>Jugador: introducir el resultado de su partida en curso, ir a su mesa, historial, emparejar a mano con otro jugador libre, ir a la otra prueba en la que también juega, marcar ausente o presente, retirar ahora o tras su partida, volver a inscribir, corregir la ficha.</li>
+<li>Puesto sin partida: vincular una partida importada que este puesto está esperando.</li>
+<li>Emparejamiento: iniciar, iniciar en una mesa…, cambiar la longitud…, emparejar de otro modo (estas tres entradas abren el emparejamiento a mano con los dos jugadores, la longitud y la mesa del emparejamiento), ignorar por ahora, imprimir la hoja de la ronda.</li>
+<li>Fila del historial: corregir o anular, añadir una observación, filtrar por uno de los jugadores.</li>
+</ul>
+<p>El abandono, la anulación de una partida y la retirada de un jugador conservan la confirmación que tienen en la ficha y en los botones de las filas. Mientras una acción está en curso, las entradas que actúan aparecen atenuadas, como los botones. Solo hay un menú abierto a la vez: abrir un segundo cierra el primero.</p>
+<p>Con el teclado, la cuadrícula ocupa una sola parada de <em>TAB</em>: cada casilla recibe el foco, también las libres, y <em>IZQUIERDA</em>, <em>DERECHA</em>, <em>ARRIBA</em>, <em>ABAJO</em>, <em>INICIO</em> y <em>FIN</em> pasan de una casilla a otra. Un dígito abre la ficha de la mesa con ese número; para una mesa superior a 9, el segundo dígito se teclea en 0,4 s. <em>M</em> abre la ficha en el campo de mesa, y <em>X</em> también, esté la ficha ya abierta o no: apuntar a una mesa ocupada intercambia las dos partidas.</p>
 <h4>Los jugadores</h4>
 <p>La pestaña <strong>Jugadores</strong> inscribe, corrige y retira. El campo de inscripción mantiene el foco y se vacía tras cada nombre: veinte jugadores se inscriben solo con el teclado. El autocompletado propone los jugadores de la base; elegir uno fija la ortografía exacta que llevan sus partidos y rellena su valoración con su PR.</p>
 <p>El <strong>directorio</strong> reúne a los inscritos de todos los torneos dirigidos de la base, sin duplicados por nombre, con el club y la valoración de su última inscripción. Nunca se almacena: borrar una dirección retira de él a sus inscritos. Retomar los inscritos de un torneo anterior es un clic, sean cuantos sean; el directorio se copia en CSV o se guarda en un archivo (<strong>Guardar…</strong>), y se relee pegado.</p>
@@ -1389,6 +1401,34 @@ export default {
 <tr>
 <td>Esc</td>
 <td>Cancelar la edición en curso, si no borrar la búsqueda de añadir partida, si no deseleccionar el torneo, si no cerrar el panel (por etapas).</td>
+</tr>
+</tbody>
+</table>
+<h3>Página Dirección</h3>
+<p>Bajo la página Dirección, <em>J</em>, <em>K</em>, <em>ARRIBA</em>, <em>ABAJO</em> e <em>INTRO</em> van a la cola de propuestas, salvo cuando el foco está en una casilla de la cuadrícula de mesas, donde <em>ARRIBA</em> y <em>ABAJO</em> cambian de casilla. Los menús contextuales se describen en el manual (menús contextuales).</p>
+<table>
+<thead>
+<tr>
+<th>Atajo</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic derecho, MENU, MAYÚS-F10</td>
+<td>Abrir el menú contextual del objeto con el foco: casilla de mesa, jugador, puesto del cuadro, hueco, propuesta, fila del historial. ARRIBA/ABAJO recorren el menú, INTRO elige, ESC lo cierra.</td>
+</tr>
+<tr>
+<td>IZQUIERDA, DERECHA, ARRIBA, ABAJO, INICIO, FIN</td>
+<td>Pasar de una casilla de la cuadrícula de mesas a otra (casillas libres incluidas); la cuadrícula ocupa una sola parada de TAB.</td>
+</tr>
+<tr>
+<td>1 a 9, luego 0 a 9</td>
+<td>Abrir la ficha de la mesa con ese número; dos dígitos, en 0,4 s, para una mesa superior a 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>En una casilla ocupada, abrir la ficha (o, si está abierta, el campo de mesa); apuntar a una mesa ocupada intercambia las dos partidas.</td>
 </tr>
 </tbody>
 </table>

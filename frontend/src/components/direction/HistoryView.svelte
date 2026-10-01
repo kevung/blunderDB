@@ -8,6 +8,9 @@
     import { closeOnEscape } from '../../services/escapeService.js';
     import { renderLabel } from './labels.js';
     import CorrectionPanel from './CorrectionPanel.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { historyMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
 
     /**
      * @type {{
@@ -15,12 +18,38 @@
      *     busy?: boolean,
      *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void,
      *     onCancel?: (matchId: string) => void,
-     *     onNote?: (text: string) => void
+     *     onNote?: (text: string) => void,
+     *     filterRequest?: { text: string, seq: number } | null
      * }}
      */
-    let { entries = [], busy = false, onCorrect = () => {}, onCancel = () => {}, onNote = () => {} } = $props();
+    let { entries = [], busy = false, onCorrect = () => {}, onCancel = () => {}, onNote = () => {}, filterRequest = null } = $props();
 
     let filter = $state('');
+    let noteInput = $state(/** @type {HTMLInputElement | null} */ (null));
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+    let lastFilterSeq = 0;
+    /* Un autre écran demande l'historique d'un joueur (menu contextuel) : le filtre s'applique
+       une fois par demande, puis redevient libre. */
+    $effect(() => {
+        if (filterRequest && filterRequest.seq !== lastFilterSeq) {
+            lastFilterSeq = filterRequest.seq;
+            filter = filterRequest.text;
+        }
+    });
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {import('../../../wailsjs/go/models').service.HistoryEntry} e */
+    function onRowMenu(ev, e) {
+        const req = menuRequest(ev, () =>
+            historyMenu((k, p) => $t(k, p), e, {
+                busy,
+                onCorrect: () => (correcting = e.seq),
+                onCancel,
+                onNote: () => noteInput?.focus(),
+                onFilter: (name) => (filter = name)
+            })
+        );
+        if (req) menu = req;
+    }
     let note = $state('');
     /* La ligne dont la correction est ouverte : une seule à la fois, comme la fiche d'une table. */
     let correcting = $state(/** @type {number | null} */ (null));
@@ -139,13 +168,14 @@
             }
         }}
     >
-        <input bind:value={note} type="text" placeholder={$t('direction.history.notePlaceholder')} />
+        <input bind:this={noteInput} bind:value={note} type="text" placeholder={$t('direction.history.notePlaceholder')} />
         <button type="submit" disabled={busy || !note.trim()}>{$t('direction.history.addNote')}</button>
     </form>
 
     <ol>
         {#each shown as e (e.seq)}
-            <li data-testid="direction-history-{e.seq}" class:note-line={e.kind === 'note'}>
+            <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+            <li data-testid="direction-history-{e.seq}" class:note-line={e.kind === 'note'} tabindex="0" oncontextmenu={(ev) => onRowMenu(ev, e)} onkeydown={(ev) => onRowMenu(ev, e)}>
                 <span class="time">{when(e.time)}</span>
                 <span class="what">{what(e)}</span>
                 {#if e.text && e.kind !== 'note'}
@@ -171,6 +201,10 @@
         {/if}
     </ol>
 </div>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .history {

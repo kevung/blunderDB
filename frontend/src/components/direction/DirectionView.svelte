@@ -22,6 +22,10 @@
     import ClockBar from './ClockBar.svelte';
     import CreditModal from './CreditModal.svelte';
     import SlotsView from './SlotsView.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { playerMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
+    import { setTableOutOfService } from '../../stores/rencontreStore.js';
     import { renderWarning, csvFilename, seatLabel } from './labels.js';
     import {
         directionStore,
@@ -130,6 +134,65 @@
         if (directionState !== 'draft') tab = 'direction';
         tabChosen = true;
     });
+
+    /* Les menus contextuels mènent d'un écran à l'autre : la table d'un joueur, l'historique
+       d'un nom. Chaque demande porte un numéro, pour que la même demande répétée se rejoue. */
+    let reveal = $state(/** @type {{ table: number, open?: boolean, seq: number } | null} */ (null));
+    let historyFilter = $state(/** @type {{ text: string, seq: number } | null} */ (null));
+    let requestSeq = 0;
+    /** Une demande à la file des propositions : appariement à la main, ou lancer ici. */
+    let queueRequest = $state(/** @type {{ kind: 'manual' | 'launchHere', a?: string, table?: number, focus?: 'a' | 'b', seq: number } | null} */ (null));
+    let waitingMenu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+
+    /** @param {number} table @param {boolean} open */
+    function goToTable(table, open) {
+        tab = 'direction';
+        reveal = { table, open, seq: ++requestSeq };
+    }
+
+    /** @param {string} id */
+    function pairManually(id) {
+        tab = 'direction';
+        queueRequest = { kind: 'manual', a: id, focus: 'b', seq: ++requestSeq };
+    }
+
+    /** Une table libre prend la proposition sélectionnée : offert tant que la file en a une à lancer. @type {((table: number) => void) | undefined} */
+    const onLaunchHere = $derived(
+        (view?.proposals || []).some((a) => a.kind === 'start_match')
+            ? (/** @type {number} */ table) => {
+                  queueRequest = { kind: 'launchHere', table, seq: ++requestSeq };
+              }
+            : undefined
+    );
+
+    /** « Joue aussi à <épreuve> » : l'onglet de cette épreuve de la Rencontre. @param {string} event */
+    function goEpreuve(event) {
+        const ep = $epreuveTabsStore.find((x) => x.name === event);
+        if (ep) switchEpreuve(ep.tournamentId);
+    }
+
+    /** @param {string} name */
+    function showHistory(name) {
+        tab = 'history';
+        historyFilter = { text: name, seq: ++requestSeq };
+    }
+
+    /** Hors service : la table d'une Rencontre, seule à porter cet état. @type {((table: number, out: boolean) => void) | undefined} */
+    const onOutOfService = $derived(
+        view?.rencontreId ? (/** @type {number} */ table, /** @type {boolean} */ out) => void act(() => setTableOutOfService(view?.rencontreId || 0, table, out), 'direction.result.error') : undefined
+    );
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {{ id: string, name: string }} p */
+    function onWaitingMenu(ev, p) {
+        const req = menuRequest(ev, () =>
+            playerMenu(
+                (k, m) => $t(k, m),
+                { id: p.id, name: p.name, state: 'free', elsewhere: view?.elsewhere?.[p.id] },
+                { busy, onHistory: showHistory, onWithdraw, onManual: pairManually, onGoElsewhere: goEpreuve }
+            )
+        );
+        if (req) waitingMenu = req;
+    }
 
     let config = $state(/** @type {DirectionConfig | null} */ (null));
     $effect(() => {
@@ -528,7 +591,7 @@
                 {/if}
                 <!-- La grille avant la file, qui grandit avec les inscrits : les tables
                      restent à l'écran. -->
-                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
+                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {onLaunchHere} {reveal}>
                     {#snippet actions()}
                         {#if rounds > 0 || upcoming > 0}
                             <div class="sheet">
@@ -571,12 +634,23 @@
                     {/snippet}
                 </TableGrid>
                 <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
-                <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                <ProposalList
+                    proposals={view?.proposals || []}
+                    players={free}
+                    elsewhere={view?.elsewhere || {}}
+                    {busy}
+                    onConfirm={confirm}
+                    onConfirmAll={confirmAll}
+                    onManual={manual}
+                    request={queueRequest}
+                    onPrintSheet={rounds > 0 ? onPrintSheet : undefined}
+                />
                 <section class="waiting">
                     <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
                     <p data-testid="direction-waiting">
                         {#each free as p (p.id)}
-                            <span class="who"
+                            <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_static_element_interactions -->
+                            <span class="who" tabindex="0" oncontextmenu={(ev) => onWaitingMenu(ev, p)} onkeydown={(ev) => onWaitingMenu(ev, p)}
                                 >{p.name}{#if view?.elsewhere?.[p.id]}
                                     <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
                             >
@@ -589,9 +663,9 @@
         {:else if tab === 'standings'}
             <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
         {:else if tab === 'history'}
-            <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
+            <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} filterRequest={historyFilter} />
         {:else if tab === 'brackets'}
-            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
+            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} onHistory={showHistory} />
         {:else if tab === 'players'}
             <DirectoryPanel
                 sources={dirSources}
@@ -617,6 +691,11 @@
                 {onReinstate}
                 {onAbsent}
                 {onReturn}
+                onGoTable={goToTable}
+                onHistory={showHistory}
+                onManual={pairManually}
+                onGoEpreuve={goEpreuve}
+                elsewhere={view?.elsewhere || {}}
                 {roundsMode}
                 slots={openSlots}
                 infos={view?.infos || []}
@@ -625,6 +704,10 @@
         {/if}
     </div>
 </div>
+
+{#if waitingMenu}
+    <ContextMenu x={waitingMenu.x} y={waitingMenu.y} items={waitingMenu.items} onClose={() => (waitingMenu = null)} />
+{/if}
 
 <style>
     .direction-view:focus {

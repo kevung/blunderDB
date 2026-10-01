@@ -190,6 +190,10 @@ export function handleKeyDown(event) {
 
     if (get(isAnyModalOpen)) return;
 
+    // An open context menu owns the arrows (its own handler moves between items): they must
+    // never browse the board behind it, on the Direction page or off it.
+    if ((isBoardNavigationKey(event) || ['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) && document.querySelector('.context-menu')) return;
+
     // Under the Direction page, bare J / K / ↓ / ↑ / Enter belong to the proposal queue
     // (services/directionKeys.js). The queue has claimed them already, or something open above it
     // keeps them — either way they browse nothing on the board the page hides.
