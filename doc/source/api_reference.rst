@@ -191,6 +191,20 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.tournamentOf             JSON
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
+   transcriptions
+     POST /v1/transcriptions.abandon               JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/transcriptions.apply                 JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/transcriptions.close                 JSON
+     POST /v1/transcriptions.create                JSON
+     POST /v1/transcriptions.editMatch             JSON
+     POST /v1/transcriptions.exportMat             JSON
+     POST /v1/transcriptions.finish                JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/transcriptions.get                   custom
+     POST /v1/transcriptions.list                  JSON
+     POST /v1/transcriptions.losses                JSON
+     POST /v1/transcriptions.open                  JSON
+     POST /v1/transcriptions.redo                  JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/transcriptions.undo                  JSON  (Idempotency-Key)  (If-Match)
    trash
      POST /v1/trash.count                          JSON
      POST /v1/trash.deleteCollection               JSON
@@ -209,7 +223,7 @@ La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et ``positions.save`` (comme le reste de
 ``positions.*``) est naturellement idempotente grâce au hachage Zobrist du
 contenu — enregistrer deux fois la même position renvoie la même ligne, jamais
-un doublon. 3 méthodes n'ont pas cette propriété (deux appels sont deux effets
+un doublon. 8 méthodes n'ont pas cette propriété (deux appels sont deux effets
 distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel : un appel
 rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
 répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau

@@ -30,6 +30,13 @@ import (
 // matching startPostgres/purgeTestDB's convention in the postgres package.
 func newPostgresTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
+	return newPostgresTestServerWith(t, func(*Options) {})
+}
+
+// newPostgresTestServerWith is newPostgresTestServer with options of the
+// test's own (a write family switched on, say).
+func newPostgresTestServerWith(t *testing.T, opt func(*Options)) *httptest.Server {
+	t.Helper()
 	ctx := context.Background()
 
 	container, err := tcpg.Run(ctx, "postgres:16-alpine",
@@ -54,11 +61,13 @@ func newPostgresTestServer(t *testing.T) *httptest.Server {
 	}
 	t.Cleanup(func() { st.Close() })
 
-	srv, err := New(Options{
+	o := Options{
 		Storage:       st,
 		Metrics:       metrics.New(),
 		EnableMetrics: true,
-	})
+	}
+	opt(&o)
+	srv, err := New(o)
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

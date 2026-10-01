@@ -14,6 +14,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/net/netutil"
@@ -21,6 +22,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/handlers"
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
 // Server is the HTTP daemon. Construct it with New and run it with Run.
@@ -43,6 +45,9 @@ type Server struct {
 	allowedMethod map[string]string
 
 	imports *importRegistry
+	// transcriptSvc holds the transcription sessions (handlers_transcriptions.go).
+	transcriptsOnce sync.Once
+	transcriptSvc   *transcription.Service
 	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps, kept separate
 	// from imports so cancelling one can never be confused with the other —
 	// reuses importRegistry's scope-keyed cancel bookkeeping under its own

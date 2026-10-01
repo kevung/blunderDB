@@ -108,6 +108,7 @@ func routeFromLit(lit *ast.CompositeLit, types map[string]typeInfo) (Route, bool
 	family, op := familyOf(pattern)
 	r := Route{Method: method, Pattern: pattern, Family: family, Op: op}
 	r.Kind, r.ReqType, r.RespType, r.ItemType, r.IdempotencyKeySupported = classifyHandler(lit.Elts[2], types)
+	r.IfMatchRequired = requiresIfMatch(lit.Elts[2])
 	return r, true, nil
 }
 
@@ -145,6 +146,10 @@ func classifyHandler(e ast.Expr, types map[string]typeInfo) (kind, req, resp, it
 		if fn.Sel.Name == "withIdempotency" && len(call.Args) == 1 {
 			kind, req, resp, item, _ = classifyHandler(call.Args[0], types)
 			return kind, req, resp, item, true
+		}
+		// s.withIfMatch(INNER) only checks a header: the shape is INNER's.
+		if fn.Sel.Name == "withIfMatch" && len(call.Args) == 1 {
+			return classifyHandler(call.Args[0], types)
 		}
 		return kindCustom, "", "", "", false
 	default:
@@ -340,4 +345,19 @@ func extractLoopRoutes(f *ast.File, loopPatterns map[string][]string) []Route {
 // the Prometheus exposition format, neither of which the contract describes.
 func isAPIPattern(pattern string) bool {
 	return strings.HasPrefix(pattern, "/v1/") || strings.HasPrefix(pattern, "/ops/")
+}
+
+// requiresIfMatch reports whether a handler expression is wrapped, at any
+// depth of the s.withX(...) wrappers, in withIfMatch: the route refuses a
+// request without an If-Match header (428).
+func requiresIfMatch(e ast.Expr) bool {
+	call, ok := e.(*ast.CallExpr)
+	if !ok || len(call.Args) != 1 {
+		return false
+	}
+	sel, ok := call.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return false
+	}
+	return sel.Sel.Name == "withIfMatch" || requiresIfMatch(call.Args[0])
 }

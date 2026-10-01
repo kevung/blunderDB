@@ -646,6 +646,58 @@ class GeneratedAPI(BaseClient):
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
 
+    def transcriptions_abandon(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.abandon — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.abandon", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def transcriptions_apply(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.apply — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.apply", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def transcriptions_close(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.close — JSON."
+        return self._call("/v1/transcriptions.close", payload)
+
+    def transcriptions_create(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.create — JSON."
+        return self._call("/v1/transcriptions.create", payload)
+
+    def transcriptions_edit_match(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.editMatch — JSON."
+        return self._call("/v1/transcriptions.editMatch", payload)
+
+    def transcriptions_export_mat(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.exportMat — JSON."
+        return self._call("/v1/transcriptions.exportMat", payload)
+
+    def transcriptions_finish(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.finish — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.finish", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def transcriptions_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.get — hand-written handler — see openapi.yaml."
+        return self._call("/v1/transcriptions.get", payload)
+
+    def transcriptions_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.list — JSON."
+        return self._call("/v1/transcriptions.list", payload)
+
+    def transcriptions_losses(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.losses — JSON."
+        return self._call("/v1/transcriptions.losses", payload)
+
+    def transcriptions_open(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.open — JSON."
+        return self._call("/v1/transcriptions.open", payload)
+
+    def transcriptions_redo(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.redo — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.redo", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def transcriptions_undo(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.undo — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.undo", payload, if_match=if_match, idempotency_key=idempotency_key)
+
     def trash_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/trash.count — JSON."
         return self._call("/v1/trash.count", payload)

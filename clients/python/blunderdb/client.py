@@ -53,9 +53,16 @@ class BaseClient:
 
     # -- the two verbs the generated methods use ---------------------------
 
-    def _call(self, path: str, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+    def _call(
+        self,
+        path: str,
+        payload: Optional[dict] = None,
+        *,
+        idempotency_key: Optional[str] = None,
+        if_match: Optional[int] = None,
+    ) -> Optional[Any]:
         """One JSON call. Returns the decoded body, or None for no content."""
-        body = self._request(path, payload, idempotency_key)
+        body = self._request(path, payload, idempotency_key, if_match)
         if not body.strip():
             return None
         return json.loads(body)
@@ -78,7 +85,9 @@ class BaseClient:
 
     # -- plumbing ----------------------------------------------------------
 
-    def _build(self, path: str, payload: Optional[dict], idempotency_key: Optional[str]) -> urllib.request.Request:
+    def _build(
+        self, path: str, payload: Optional[dict], idempotency_key: Optional[str], if_match: Optional[int] = None
+    ) -> urllib.request.Request:
         data = json.dumps(payload if payload is not None else {}).encode("utf-8")
         headers = {
             "Content-Type": "application/json",
@@ -86,10 +95,15 @@ class BaseClient:
         }
         if idempotency_key:
             headers["Idempotency-Key"] = idempotency_key
+        if if_match is not None:
+            # The revision a transcription gesture was typed against.
+            headers["If-Match"] = '"%d"' % if_match
         return urllib.request.Request(self.base_url + path, data=data, headers=headers, method="POST")
 
-    def _request(self, path: str, payload: Optional[dict], idempotency_key: Optional[str]) -> str:
-        request = self._build(path, payload, idempotency_key)
+    def _request(
+        self, path: str, payload: Optional[dict], idempotency_key: Optional[str], if_match: Optional[int] = None
+    ) -> str:
+        request = self._build(path, payload, idempotency_key, if_match)
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 return response.read().decode("utf-8")

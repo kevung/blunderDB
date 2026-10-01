@@ -19,7 +19,7 @@ func realServerPaths(t *testing.T) []string {
 		t.Fatalf("sqlite.Open: %v", err)
 	}
 	t.Cleanup(func() { st.Close() })
-	srv, err := internalserver.New(internalserver.Options{Storage: st})
+	srv, err := internalserver.New(internalserver.Options{Storage: st, Transcription: true})
 	if err != nil {
 		t.Fatalf("internalserver.New: %v", err)
 	}

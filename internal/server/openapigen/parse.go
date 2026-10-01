@@ -51,6 +51,9 @@ type Route struct {
 	// wrapper call itself), not guessed, so this can never silently drift
 	// from the real code the way a hand-maintained list would.
 	IdempotencyKeySupported bool
+	// IfMatchRequired is true for the routes wrapped with withIfMatch: a
+	// gesture that names the revision it was typed against (ADR-0057).
+	IfMatchRequired bool
 }
 
 const (

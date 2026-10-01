@@ -57,6 +57,7 @@ func RunCall(args []string) error {
 		jsonBody = fs.String("json", "{}", "request body as JSON")
 		jsonFile = fs.String("json-file", "", "read the request body from a file instead of --json")
 		list     = fs.Bool("list", false, "list every available <family>.<method> and exit")
+		ifMatch  = fs.String("if-match", "", "revision a transcription gesture was typed against, sent as If-Match")
 	)
 	if err := fs.Parse(rest); err != nil {
 		return err
@@ -90,7 +91,9 @@ func RunCall(args []string) error {
 		return fmt.Errorf("call: migrate: %w", err)
 	}
 
-	srv, err := New(Options{Storage: st})
+	// A local process with the file in hand writes as the CLI does: the
+	// transcription gestures are served, unlike on a daemon (ADR-0057 rule 5).
+	srv, err := New(Options{Storage: st, Transcription: true})
 	if err != nil {
 		return err
 	}
@@ -121,6 +124,9 @@ func RunCall(args []string) error {
 		return fmt.Errorf("call: build request: %w", err)
 	}
 	req.Header.Set(middleware.TenantHeader, *scope)
+	if *ifMatch != "" {
+		req.Header.Set("If-Match", *ifMatch)
+	}
 
 	// Stream to stdout instead of buffering in a recorder: NDJSON routes and
 	// exports would otherwise sit whole in RAM before the first byte.

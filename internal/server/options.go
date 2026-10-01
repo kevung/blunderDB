@@ -56,6 +56,17 @@ type Options struct {
 	// forbids — a daemon exposed with no proxy in front of it.
 	EnableWebUI bool
 
+	// Transcription serves the transcription gestures (create, open, apply,
+	// undo, redo, close, finish, abandon, editMatch; ADR-0057 rule 5). OFF by
+	// default for the reason EnableWebUI is: writing through a daemon that
+	// authenticates nobody is the operator's decision. The reads are served
+	// either way.
+	Transcription bool
+
+	// TranscriptionTTL closes a transcription session idle for longer; its
+	// undo stack goes, nothing typed does. 0 means 30 minutes.
+	TranscriptionTTL time.Duration
+
 	// CORSAllowOrigin enables CORS for the given origin(s): "*", or a
 	// comma-separated list of exact origins (each one echoed back only to a
 	// request whose Origin header matches it — see middleware.CORS). Empty
