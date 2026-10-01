@@ -29,6 +29,14 @@ name: Nightly
 # below (E.9, #225): build.yml used to carry a `benchmark` job that ran on
 # every push to main and was never compared against anything (115s/push,
 # "an artefact nobody compares" — that job is gone, this one replaces it).
+#
+# Also here: the daemon's own PostgreSQL integration (`server-postgres`):
+# internal/server under the `postgres` tag — two daemons on one database
+# hearing each other's gestures by LISTEN/NOTIFY, a killed LISTEN
+# connection, the tenant purge, the gestures serialised across instances.
+# Each test starts its own container, under -race: minutes, not seconds, for
+# code a push rarely touches. build.yml's test-postgres keeps the transport's
+# own quick test (pkg/blunderdb/events/pgnotify) on every push.
 
 on:
   schedule:
@@ -210,6 +218,31 @@ jobs:
   # survives the run, and every request it accepted came back 2xx. The report
   # is kept as an artefact for anyone who wants to look at the latencies, and
   # deliberately not gated on a threshold.
+  server-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # A runner without Docker fails the job instead of skipping every test.
+      BLUNDERDB_REQUIRE_PG: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          check-latest: true
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: go test -race -tags postgres (serve daemon)
+        run: go test -race -tags postgres -count=1 -timeout 1500s ./internal/server/...
+        shell: bash
+
   loadtest:
     runs-on: ubuntu-latest
     timeout-minutes: 15

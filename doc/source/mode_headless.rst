@@ -608,9 +608,31 @@ pour qu'un proxy ne coupe pas un flux silencieux ; ``X-Accel-Buffering: no``
 demande à nginx de ne pas le mettre en tampon. Le flux n'est pas compressé,
 échappe au délai des requêtes ordinaires et ne compte qu'une requête pour la
 limitation de débit. L'arrêt du démon ferme tous les flux ; un abonnement
-demandé pendant l'arrêt reçoit ``503``. Le bus est en
-mémoire, par instance : un abonné n'entend que les gestes passés par le démon
-auquel il est relié.
+demandé pendant l'arrêt reçoit ``503``.
+
+**Plusieurs instances.** Sur SQLite, une seule instance tient la base : le bus
+en mémoire suffit. Sur PostgreSQL, dès que ``--direction`` ou
+``--transcription`` est actif, chaque instance relaie ses gestes aux autres par
+``LISTEN/NOTIFY``, sur le canal ``blunderdb_events`` : un abonné relié à une
+instance entend un geste validé sur une autre, ou passé par ``call`` sur la
+même base. Le tenant voyage dans la notification et l'instance qui la reçoit ne
+la remet qu'aux abonnés de ce tenant. Chaque instance ouvre deux connexions de
+plus (``application_name`` ``blunderdb-events-…`` pour l'écoute,
+``blunderdb-notify-…`` pour l'envoi) ; une instance qui ne peut pas écouter au
+démarrage refuse de démarrer.
+
+* La notification part après l'écriture en base, comme le message local. Une
+  instance arrêtée brutalement entre les deux n'annonce pas ce geste aux
+  autres : leurs clients le voient à leur prochain ``resync``.
+* Une connexion d'écoute perdue est rétablie, avec une attente croissante de
+  250 ms à 30 s. Les gestes des autres instances passés pendant la coupure
+  sont perdus : à la reprise, chaque abonné de l'instance reçoit un ``resync``
+  de motif ``missed``. Une notification trop longue pour PostgreSQL
+  (8 000 octets), ou qu'une instance n'a pas pu envoyer, arrive aux autres
+  comme ce même ``resync`` pour le tenant concerné.
+* Les ``id`` du flux sont propres à chaque instance. Un client qu'un
+  répartiteur de charge envoie vers une autre instance n'en tire rien : le
+  ``resync`` qui ouvre tout flux lui fait relire ce qu'il affiche.
 
 .. _headless_bearoff:
 

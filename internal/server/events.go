@@ -41,6 +41,9 @@ const (
 	eventsWriteTimeout = 30 * time.Second
 	// eventsRetry is the reconnection delay the stream advises (milliseconds).
 	eventsRetry = 3000
+	// eventsListenTimeout bounds the first LISTEN of a daemon that shares its PostgreSQL
+	// database: one that cannot listen refuses to start.
+	eventsListenTimeout = 15 * time.Second
 )
 
 // unboundedPaths are the routes withDeadlines leaves without a deadline and the metrics count

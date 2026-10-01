@@ -55,7 +55,9 @@ const eventsPathItem = `  /v1/events:
         "reconnected" under Last-Event-ID, "subscribed" otherwise), and a
         subscriber dropped for falling behind receives one too; the client then
         reads everything again. A ": ping" comment every 25 s keeps proxies from closing the
-        stream.
+        stream. Over PostgreSQL the daemons sharing the database relay their gestures to one
+        another (LISTEN/NOTIFY); stream ids are local to one daemon, and one that lost its
+        listener sends resync "missed" to its subscribers.
       parameters:
         - name: tournament
           in: query

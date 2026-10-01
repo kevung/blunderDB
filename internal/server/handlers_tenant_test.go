@@ -11,6 +11,7 @@ package server
 
 import (
 	"context"
+	"os"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -85,6 +86,9 @@ func postgresDSN(t *testing.T) string {
 		tcpg.BasicWaitStrategies(),
 	)
 	if err != nil {
+		if os.Getenv("BLUNDERDB_REQUIRE_PG") == "1" {
+			t.Fatalf("postgres container unavailable (BLUNDERDB_REQUIRE_PG=1 requires Docker): %v", err)
+		}
 		t.Skipf("postgres container unavailable (Docker required): %v", err)
 	}
 	t.Cleanup(func() { _ = testcontainers.TerminateContainer(container) })

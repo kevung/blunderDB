@@ -180,3 +180,29 @@ func TestBus_Wants(t *testing.T) {
 		t.Fatal("Discard wants")
 	}
 }
+
+func TestBus_ResyncReachesEveryFilterOfItsScopeOnly(t *testing.T) {
+	b := NewBus(0)
+	narrow, _ := b.Subscribe("1", Filter{Tournaments: []int64{9}}, 4)
+	wide, _ := b.Subscribe("1", Filter{}, 4)
+	other, _ := b.Subscribe("2", Filter{}, 4)
+	b.Resync("1", "missed")
+	for _, s := range []*Subscription{narrow, wide} {
+		d, ok := recv(t, s)
+		if !ok || d.Event.Kind != KindResync || d.Event.Reason != "missed" || d.Seq != 1 {
+			t.Fatalf("got %+v ok=%v", d, ok)
+		}
+	}
+	empty(t, other)
+
+	b.ResyncAll("missed")
+	for _, s := range []*Subscription{narrow, wide, other} {
+		if d, ok := recv(t, s); !ok || d.Event.Kind != KindResync {
+			t.Fatalf("got %+v ok=%v", d, ok)
+		}
+	}
+	b.Resync("absent", "missed") // a scope with no subscriber counts nothing
+	if s, _ := b.Subscribe("absent", Filter{}, 1); s.Start != 0 {
+		t.Fatalf("Start = %d", s.Start)
+	}
+}

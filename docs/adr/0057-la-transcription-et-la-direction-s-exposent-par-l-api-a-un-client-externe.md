@@ -63,7 +63,11 @@ comment deux écritures concurrentes se détectent, et comment un client apprend
    court par geste validé (sorte, identifiant, version), publié après `commit` ; le client
    relit ce qui l'intéresse, il n'y a qu'un format de lecture. Le bus est en mémoire par
    processus et par tenant ; en PostgreSQL à plusieurs instances, il passe par
-   `LISTEN/NOTIFY`. SQLite reste une instance par construction.
+   `LISTEN/NOTIFY` : la notification part après `commit` elle aussi, sur un canal unique
+   dont la charge porte le tenant, et l'instance qui la reçoit ne la remet qu'aux abonnés de
+   ce tenant. La numérotation d'un flux est propre à l'instance : ce qui a pu être perdu
+   (coupure de l'écoute, client passé à une autre instance) se rattrape par un `resync`,
+   jamais par un rejeu. SQLite reste une instance par construction.
 7. **Aucune authentification dans le moteur** (ADR-0005) : ni compte, ni rôle de directeur ou
    d'arbitre. Le démon fait confiance à `X-Tenant-ID` derrière un proxy authentifiant ; un
    rôle est une règle du proxy sur un préfixe de route. Les avertissements de

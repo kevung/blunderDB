@@ -80,6 +80,14 @@ type Options struct {
 	// undo stack goes, nothing typed does. 0 means 30 minutes.
 	TranscriptionTTL time.Duration
 
+	// EventsDSN is the PostgreSQL database the daemon shares with other
+	// instances: when set, and EnableDirection or Transcription is, the
+	// committed gestures travel between instances by LISTEN/NOTIFY
+	// (pkg/blunderdb/events/pgnotify) and New fails if it cannot listen.
+	// Empty: the in-memory bus alone, right for SQLite, which one instance
+	// holds by construction.
+	EventsDSN string
+
 	// CORSAllowOrigin enables CORS for the given origin(s): "*", or a
 	// comma-separated list of exact origins (each one echoed back only to a
 	// request whose Origin header matches it — see middleware.CORS). Empty

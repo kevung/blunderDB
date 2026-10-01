@@ -10,9 +10,10 @@
 // publishes nothing. It never learns where the event goes.
 //
 // Bus is the in-process transport: it fans an event out to the subscribers of the event's
-// scope. A transport across processes — PostgreSQL LISTEN/NOTIFY for several serve daemons on
-// one database — is a second Publisher: its Publish sends the event to the database, and its
-// listener hands every notification it receives to the local Bus.Publish. The emitters do not
+// scope. A transport across processes — PostgreSQL LISTEN/NOTIFY (package pgnotify) for
+// several serve daemons on one database — is a second Publisher: its Publish sends the event
+// to the database, and its listener hands every notification it receives to the local
+// Bus.Publish. The emitters do not
 // change; only what the server hands them does.
 //
 // # Delivery
@@ -41,7 +42,8 @@ const (
 	// KindTranscription: a draft moved. TranscriptionID names it, Revision is its new one.
 	KindTranscription Kind = "transcription"
 	// KindResync tells a client it may have missed events and should read everything again.
-	// The bus never publishes it; the serve daemon sends it to a client that reconnects.
+	// Publish never carries it: the serve daemon sends it to a client that (re)connects, and
+	// Bus.Resync to the subscribers of a scope whose events a transport may have lost.
 	KindResync Kind = "resync"
 )
 
@@ -66,6 +68,8 @@ type Event struct {
 	Removed bool `json:"removed,omitempty"`
 	// MatchID is the Match a finished draft was saved as.
 	MatchID int64 `json:"matchId,omitempty"`
+	// Reason says why a KindResync was sent; empty on every other kind.
+	Reason string `json:"reason,omitempty"`
 }
 
 // Publisher is what an emitter holds. Publish must not block on any subscriber. Wants reports
@@ -191,6 +195,46 @@ func (b *Bus) Publish(ev Event) {
 		select {
 		case s.c <- d:
 		default:
+			s.overflowed = true
+			b.drop(s)
+		}
+	}
+}
+
+// Resync tells every subscriber of scope, whatever its filter, that it may have missed events:
+// a transport lost some it cannot name. It is a delivery like any other and takes the next
+// sequence number of the scope.
+func (b *Bus) Resync(scope, reason string) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.resync(scope, reason)
+}
+
+// ResyncAll is Resync on every scope that has a subscriber: what was lost cannot be told apart
+// by scope.
+func (b *Bus) ResyncAll(reason string) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for scope := range b.count {
+		b.resync(scope, reason)
+	}
+}
+
+// resync delivers a KindResync to every subscriber of scope. Caller holds b.mu.
+func (b *Bus) resync(scope, reason string) {
+	if b.closed || b.count[scope] == 0 {
+		return
+	}
+	b.seq[scope]++
+	d := Delivery{Seq: b.seq[scope], Event: Event{Scope: scope, Kind: KindResync, Reason: reason}}
+	for s := range b.subs {
+		if s.scope != scope {
+			continue
+		}
+		select {
+		case s.c <- d:
+		default:
+			// A full queue drops the subscription, whose client reconnects and resyncs anyway.
 			s.overflowed = true
 			b.drop(s)
 		}

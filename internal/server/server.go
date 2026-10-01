@@ -25,6 +25,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events"
+	"github.com/kevung/blunderdb/pkg/blunderdb/events/pgnotify"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
@@ -71,6 +72,10 @@ type Server struct {
 	// eventsEpoch prefixes the ids it streams, so ids from two runs never compare.
 	events      *events.Bus
 	eventsEpoch string
+	// publisher is what the emitters are handed: events itself, or the LISTEN/NOTIFY transport
+	// that feeds it when other instances share the PostgreSQL database (Options.EventsDSN).
+	publisher events.Publisher
+	notify    *pgnotify.Transport
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -96,7 +101,17 @@ func New(opts Options) (*Server, error) {
 		eventsEpoch:   newEventsEpoch(),
 	}
 	if s.eventsEnabled() {
-		s.direction.SetPublisher(s.events)
+		s.publisher = s.events
+		if opts.EventsDSN != "" {
+			ctx, cancel := context.WithTimeout(context.Background(), eventsListenTimeout)
+			t, err := pgnotify.Start(ctx, opts.EventsDSN, s.events, pgnotify.Options{Logger: opts.Logger})
+			cancel()
+			if err != nil {
+				return nil, fmt.Errorf("server: events across instances: %w", err)
+			}
+			s.notify, s.publisher = t, t
+		}
+		s.direction.SetPublisher(s.publisher)
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)
@@ -352,10 +367,21 @@ func (s *Server) sweepBusinessMetrics(ctx context.Context) {
 	}
 }
 
+// Close ends the event streams and stops listening to the other instances. Run calls it on
+// its way out; a Server served without Run (a test's httptest server) calls it itself.
+// Idempotent.
+func (s *Server) Close() {
+	s.events.Close()
+	if s.notify != nil {
+		s.notify.Close()
+	}
+}
+
 // Run starts the server and blocks until ctx is cancelled, then shuts down
 // gracefully within ShutdownTimeout. It returns the listener/serve error, or
 // nil on a clean shutdown.
 func (s *Server) Run(ctx context.Context) error {
+	defer s.Close()
 	ln, err := net.Listen("tcp", s.opts.Addr)
 	if err != nil {
 		return fmt.Errorf("server: listen %s: %w", s.opts.Addr, err)

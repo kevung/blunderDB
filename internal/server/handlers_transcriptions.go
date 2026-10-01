@@ -66,7 +66,7 @@ func (s *Server) transcripts() *transcription.Service {
 		}
 		o := transcription.Options{TTL: ttl}
 		if s.eventsEnabled() {
-			o.Events = s.events
+			o.Events = s.publisher
 		}
 		s.transcriptSvc = transcription.New(s.opts.Storage, o)
 	})

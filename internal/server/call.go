@@ -96,10 +96,17 @@ func RunCall(args []string) error {
 	// A local process with the file in hand writes as the CLI does: the
 	// transcription gestures are served, unlike on a daemon (ADR-0057 rule 5).
 	// The gestures of a Direction are served too.
-	srv, err := New(Options{Storage: st, EnableDirection: true, Transcription: true, SessionPerCall: true})
+	// On a PostgreSQL database that daemons share, the gesture is announced to their
+	// subscribers like one of theirs; Close sends it before the process ends.
+	o := Options{Storage: st, EnableDirection: true, Transcription: true, SessionPerCall: true}
+	if !*list {
+		o.EventsDSN = eventsDSN(*backend, effDSN)
+	}
+	srv, err := New(o)
 	if err != nil {
 		return err
 	}
+	defer srv.Close()
 
 	if *list {
 		for _, p := range srv.Paths() {

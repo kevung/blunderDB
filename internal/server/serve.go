@@ -221,6 +221,7 @@ func RunServe(args []string) error {
 		EnableDirection:  cfg.enableDir,
 		Transcription:    cfg.transcription,
 		TranscriptionTTL: cfg.transcriptTTL,
+		EventsDSN:        eventsDSN(cfg.backend, cfg.dsn),
 		CORSAllowOrigin:  cfg.corsOrigin,
 		RateLimitRPS:     cfg.rateLimitRPS,
 		RateLimitBurst:   cfg.rateLimitBurst,
@@ -289,6 +290,16 @@ func startPprofServer(ctx context.Context, logger *slog.Logger, addr string) (st
 			<-done
 		})
 	}
+}
+
+// eventsDSN is dsn when backend names PostgreSQL, "" otherwise: several daemons may share a
+// PostgreSQL database and must tell one another of their gestures.
+func eventsDSN(backend, dsn string) string {
+	switch strings.ToLower(backend) {
+	case "postgres", "postgresql", "pg":
+		return dsn
+	}
+	return ""
 }
 
 // OpenStorage opens the requested backend. enableRLS turns on PostgreSQL

@@ -312,8 +312,8 @@ jobs:
         run: go test -race -count=1 -run 'Parallel|Concurrent|Batch' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
-  # Runs the shared storage contract, RLS and SQLite→PostgreSQL migration
-  # tests against a real PostgreSQL via testcontainers-go. These live behind
+  # Runs the shared storage contract, RLS, SQLite→PostgreSQL migration and
+  # LISTEN/NOTIFY transport tests against a real PostgreSQL via testcontainers-go. These live behind
   # the `postgres` build tag (see postgres_test.go) because they need Docker;
   # BLUNDERDB_REQUIRE_PG=1 turns the tests' "Docker unavailable" skip into a
   # hard failure so a broken runner can't silently skip the whole suite.
@@ -345,7 +345,7 @@ jobs:
       - name: Run PostgreSQL storage + migration tests
         run: |
           go test -tags postgres -timeout 1200s -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
-            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/... 2>&1 | tee test-output.txt
+            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/... ./pkg/blunderdb/events/pgnotify/... 2>&1 | tee test-output.txt
         shell: bash
 
       - name: Upload coverage shard
