@@ -974,10 +974,12 @@
     });
 
     // Focus on tab entry so the first keystroke lands (ADR-0048 décision 10),
-    // unless a Transcript cell is being typed in (ADR-0052).
+    // unless a Transcript cell is being typed in (ADR-0052). Not while the .mat dialog is
+    // open: a draft reloaded under it would pull the focus out of the dialog, which
+    // listens for Escape only from inside, and leave it impossible to close.
     $effect(() => {
         void draft;
-        if ($activeTabStore !== 'transcription') return;
+        if ($activeTabStore !== 'transcription' || matOpen) return;
         const active = document.activeElement;
         if (active && panelEl?.contains(active) && active.matches('input, textarea, select')) return;
         panelEl?.focus({ preventScroll: true });
