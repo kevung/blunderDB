@@ -276,9 +276,12 @@ func (t *Transport) hangUp(conn *pgx.Conn) {
 }
 
 // send sends the queued notifications, and the resyncs of the scopes whose events could not be,
-// until ctx ends; then it sends what is still queued within closeTimeout.
-func (t *Transport) send(ctx context.Context) {
+// until stop ends; then it sends what is still queued, and the pending resyncs, within
+// closeTimeout. A notification is never sent on stop itself: one queued before Close, or picked
+// from the queue as Close arrives, must still leave.
+func (t *Transport) send(stop context.Context) {
 	defer t.wg.Done()
+	ctx := context.Background()
 	retry := time.NewTimer(t.min)
 	retry.Stop()
 	wait := t.min
@@ -287,7 +290,7 @@ func (t *Transport) send(ctx context.Context) {
 		case w := <-t.queue:
 			t.notify(ctx, w)
 		case <-retry.C:
-		case <-ctx.Done():
+		case <-stop.Done():
 			t.drain()
 			return
 		}
@@ -300,7 +303,7 @@ func (t *Transport) send(ctx context.Context) {
 	}
 }
 
-// drain sends what Publish queued before Close, within closeTimeout.
+// drain sends what Publish queued before Close, then the pending resyncs, within closeTimeout.
 func (t *Transport) drain() {
 	ctx, cancel := context.WithTimeout(context.Background(), closeTimeout)
 	defer cancel()
@@ -309,6 +312,7 @@ func (t *Transport) drain() {
 		case w := <-t.queue:
 			t.notify(ctx, w)
 		default:
+			t.flushPending(ctx)
 			return
 		}
 	}
