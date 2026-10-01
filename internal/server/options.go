@@ -161,9 +161,11 @@ type Options struct {
 	// now is an injectable clock for deterministic tests. Defaults to
 	// time.Now.
 	now func() time.Time
-	// eventsHeartbeat and eventsBuffer tune /v1/events (events.go), for tests.
-	eventsHeartbeat time.Duration
-	eventsBuffer    int
+	// eventsHeartbeat, eventsBuffer and eventsMaxPerTenant tune /v1/events (events.go), for
+	// tests.
+	eventsHeartbeat    time.Duration
+	eventsBuffer       int
+	eventsMaxPerTenant int
 }
 
 const (
@@ -223,6 +225,9 @@ func (o *Options) applyDefaults() {
 	}
 	if o.eventsBuffer == 0 {
 		o.eventsBuffer = defaultEventsBuffer
+	}
+	if o.eventsMaxPerTenant == 0 {
+		o.eventsMaxPerTenant = defaultEventsMaxPerTenant
 	}
 	if o.RateLimitRPS > 0 && o.RateLimitBurst == 0 {
 		o.RateLimitBurst = int(2 * o.RateLimitRPS)

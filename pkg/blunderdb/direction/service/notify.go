@@ -11,24 +11,31 @@ import (
 )
 
 // SetPublisher installs the publisher told of every gesture this Memory's services commit —
-// the serve daemon's event bus. nil (the default) tells no one and reads nothing more.
+// the serve daemon's event bus. nil (the default) tells no one and reads nothing more; neither
+// does a publisher that wants nothing of the scope. The desktop installs none.
 func (m *Memory) SetPublisher(p events.Publisher) {
 	m.directionMu.Lock()
 	defer m.directionMu.Unlock()
 	m.publisher = p
 }
 
-func (m *Memory) currentPublisher() events.Publisher {
-	m.directionMu.RLock()
-	defer m.directionMu.RUnlock()
-	return m.publisher
+// listener is the publisher when someone listens to the service's scope, nil otherwise: the
+// versions an event carries cost reads that no one would hear.
+func (d *Service) listener() events.Publisher {
+	d.directionMu.RLock()
+	p := d.publisher
+	d.directionMu.RUnlock()
+	if p == nil || !p.Wants(d.scope) {
+		return nil
+	}
+	return p
 }
 
 // roomMembers is the members of room before a gesture, so that a gesture that removes one —
 // a detach, a trashed room — still reaches the subscribers of the Directions it moved. Read
 // only when someone listens.
 func (d *Service) roomMembers(ctx context.Context, st storage.Stores, room int64) []int64 {
-	if room == 0 || d.currentPublisher() == nil {
+	if room == 0 || d.listener() == nil {
 		return nil
 	}
 	r, err := st.Rencontres().Get(ctx, d.scope, room)
@@ -43,7 +50,7 @@ func (d *Service) roomMembers(ctx context.Context, st storage.Stores, room int64
 // after the gesture. The versions are read after the commit, outside the gesture's locks: a
 // later writer may already have moved them, and then publishes its own event.
 func (d *Service) publishGesture(ctx context.Context, tournamentID, room int64, before []int64) {
-	p := d.currentPublisher()
+	p := d.listener()
 	if p == nil {
 		return
 	}
@@ -83,7 +90,7 @@ func (d *Service) publishDirection(ctx context.Context, p events.Publisher, tour
 // publishRoom publishes a Rencontre written outside a gesture's locks (its creation). Inside a
 // gesture it waits for the gesture's own commit, which publishes what it locked.
 func (d *Service) publishRoom(ctx context.Context, id int64) {
-	if d.g != nil || d.currentPublisher() == nil {
+	if d.g != nil || d.listener() == nil {
 		return
 	}
 	d.publishGesture(ctx, 0, id, nil)

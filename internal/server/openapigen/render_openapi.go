@@ -51,9 +51,10 @@ const eventsPathItem = `  /v1/events:
         tenant (Direction, Rencontre, transcription), naming what moved and its
         new version or revision — never the state; read it again with
         If-None-Match. Served only under serve --direction or --transcription.
-        No history is kept: a reconnection (Last-Event-ID) or a subscriber
-        dropped for falling behind receives event resync and reads everything
-        again. A ": ping" comment every 25 s keeps proxies from closing the
+        No history is kept: every stream opens with event resync (reason
+        "reconnected" under Last-Event-ID, "subscribed" otherwise), and a
+        subscriber dropped for falling behind receives one too; the client then
+        reads everything again. A ": ping" comment every 25 s keeps proxies from closing the
         stream.
       parameters:
         - name: tournament
@@ -77,7 +78,7 @@ const eventsPathItem = `  /v1/events:
         - name: Last-Event-ID
           in: header
           required: false
-          description: The id of the last event seen; the stream then opens with event resync.
+          description: The id of the last event seen; the opening resync then says "reconnected".
           schema:
             type: string
       responses:
@@ -121,7 +122,13 @@ const eventsPathItem = `  /v1/events:
                   reason:
                     type: string
         "400":
-          description: An unknown parameter or an invalid id.
+          description: An unknown parameter or an invalid id, or no X-Tenant-ID.
+        "404":
+          description: Neither --direction nor --transcription — nothing this daemon writes would be announced, and the route is absent.
+        "429":
+          description: The tenant already holds its maximum of open streams (16).
+        "503":
+          description: The daemon is stopping.
 `
 
 // Generate renders model as an OpenAPI 3.0.3 YAML document.

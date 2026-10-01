@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -93,8 +92,8 @@ func New(opts Options) (*Server, error) {
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),
 		direction:     &service.Memory{},
-		events:        events.NewBus(),
-		eventsEpoch:   strconv.FormatInt(time.Now().UnixNano(), 36),
+		events:        events.NewBus(opts.eventsMaxPerTenant),
+		eventsEpoch:   newEventsEpoch(),
 	}
 	if s.eventsEnabled() {
 		s.direction.SetPublisher(s.events)
@@ -204,7 +203,7 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 	h = middleware.CORS(s.opts.CORSAllowOrigin)(h)
 	h = middleware.Logging(s.opts.Logger, s.knownPaths, s.opts.now)(h)
 	if s.opts.EnableMetrics {
-		h = middleware.Metrics(s.opts.Metrics, s.knownPaths, s.opts.now)(h)
+		h = middleware.Metrics(s.opts.Metrics, s.knownPaths, unboundedPaths, s.opts.now)(h)
 	}
 	h = s.limitBody(h)
 	h = middleware.Recover(s.opts.Logger, func(w http.ResponseWriter, _ *http.Request) {

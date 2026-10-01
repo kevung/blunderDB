@@ -101,8 +101,10 @@ class BaseClient:
 
         Each event names what moved and its new ``version`` (or ``revision``),
         never the state: read it again. A ``{"kind": "resync"}`` event means
-        events may have been missed — after a reconnection (``last_event_id``)
-        or for falling behind — and everything shown must be read again. The
+        events may have been missed and everything shown must be read again:
+        every stream opens with one (``reason`` "reconnected" when
+        ``last_event_id`` is given, "subscribed" otherwise), and a subscriber
+        dropped for falling behind gets one before the stream ends. The
         iterator ends when the daemon closes the stream; the caller reconnects
         with the last ``_id`` it saw. ``timeout`` (default: none) bounds the
         silence between two frames; the daemon sends a heartbeat every 25 s.

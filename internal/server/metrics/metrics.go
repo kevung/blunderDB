@@ -161,6 +161,19 @@ func New() *Registry {
 	}
 }
 
+// CountRequest counts one request without timing it.
+func (r *Registry) CountRequest(method, path string, status int) {
+	if r == nil {
+		return
+	}
+	if path == "" {
+		path = "unmatched"
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.counters[counterKey{method, path, status}]++
+}
+
 // ObserveRequest records one finished HTTP request: its matched route pattern
 // (path), method, response status, and duration.
 func (r *Registry) ObserveRequest(method, path string, status int, dur time.Duration) {

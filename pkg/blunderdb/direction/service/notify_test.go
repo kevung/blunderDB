@@ -15,6 +15,8 @@ type recorder struct{ got []events.Event }
 
 func (r *recorder) Publish(ev events.Event) { r.got = append(r.got, ev) }
 
+func (r *recorder) Wants(string) bool { return true }
+
 // TestGesturesArePublishedAfterCommit: whoever calls the service — the daemon, the desktop's
 // façade — a committed gesture is published once with the version a read now gives, and a
 // refused or stale one is not.
@@ -93,7 +95,7 @@ func TestSlowSubscriberNeverBlocksAGesture(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = st.Close() })
-	bus := events.NewBus()
+	bus := events.NewBus(0)
 	mem := &service.Memory{}
 	mem.SetPublisher(bus)
 	sub, _ := bus.Subscribe("", events.Filter{}, 1)

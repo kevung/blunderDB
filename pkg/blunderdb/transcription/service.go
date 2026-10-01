@@ -300,6 +300,9 @@ func newSessionID() string {
 
 // published tells the publisher a draft's committed write.
 func (s *Service) published(scope string, id int64, ev events.Event) {
+	if !s.events.Wants(scope) {
+		return
+	}
 	ev.Scope, ev.Kind, ev.TranscriptionID = scope, events.KindTranscription, id
 	s.events.Publish(ev)
 }

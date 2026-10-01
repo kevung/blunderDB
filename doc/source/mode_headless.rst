@@ -580,9 +580,10 @@ version, pas l'état : le client relit ce qu'il affiche, avec
 ``removed: true`` signale ce qui n'existe plus. La route n'est servie qu'avec
 ``--direction`` ou ``--transcription`` : sans eux, le démon n'écrit rien qu'il
 aurait à annoncer, et ``/v1/events`` répond ``404``. Comme toute route
-``/v1/``, elle exige ``X-Tenant-ID`` : un abonné n'entend que son tenant. Le
-poste de travail emprunte le même service et publie de la même façon, mais
-rien ne l'écoute.
+``/v1/``, elle exige ``X-Tenant-ID`` : un abonné n'entend que son tenant. Un
+tenant tient au plus 16 flux ouverts à la fois ; au-delà, ``429``. Le poste de
+travail emprunte le même service mais n'y branche aucun bus : ses gestes ne
+sont pas annoncés.
 
 Les paramètres ``tournament``, ``rencontre`` et ``transcription`` (identifiants
 séparés par des virgules, ou répétés) restreignent l'abonnement : un message
@@ -593,9 +594,11 @@ sa salle. Un paramètre inconnu ou un identifiant invalide rend ``400``.
 
    curl -N http://127.0.0.1:8080/v1/events?rencontre=2 -H 'X-Tenant-ID: 1'
 
-**Pas d'historique.** Le démon ne garde aucun message. Un client qui se
-reconnecte avec ``Last-Event-ID`` reçoit d'abord ``event: resync`` : il a pu
-manquer des gestes et relit tout ce qu'il affiche. Un abonné trop lent, dont la
+**Pas d'historique.** Le démon ne garde aucun message. Tout flux s'ouvre sur
+``event: resync``, avec un ``id`` : le client a pu manquer des gestes avant de
+se connecter, ou entre deux connexions, et relit tout ce qu'il affiche. Le
+motif est ``reconnected`` quand la requête porte ``Last-Event-ID``,
+``subscribed`` sinon. Un abonné trop lent, dont la
 file de 64 messages est pleine, est déconnecté après le même ``resync`` : il
 ne retarde jamais un geste. Le flux annonce un délai de reconnexion de
 3 secondes.
@@ -604,7 +607,8 @@ ne retarde jamais un geste. Le flux annonce un délai de reconnexion de
 pour qu'un proxy ne coupe pas un flux silencieux ; ``X-Accel-Buffering: no``
 demande à nginx de ne pas le mettre en tampon. Le flux n'est pas compressé,
 échappe au délai des requêtes ordinaires et ne compte qu'une requête pour la
-limitation de débit. L'arrêt du démon ferme tous les flux. Le bus est en
+limitation de débit. L'arrêt du démon ferme tous les flux ; un abonnement
+demandé pendant l'arrêt reçoit ``503``. Le bus est en
 mémoire, par instance : un abonné n'entend que les gestes passés par le démon
 auquel il est relié.
 

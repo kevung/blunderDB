@@ -28,7 +28,7 @@ func pathLabels(text string) map[string]bool {
 func TestMetrics_UnknownPathsShareOneLabel(t *testing.T) {
 	reg := metrics.New()
 	known := map[string]bool{"/healthz": true, "/v1/positions.list": true}
-	handler := Metrics(reg, known, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := Metrics(reg, known, nil, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if known[r.URL.Path] {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -75,7 +75,7 @@ func TestMetrics_RecordsStatusAndDuration(t *testing.T) {
 		clock = clock.Add(40 * time.Millisecond) // each call advances: start, then end
 		return clock
 	}
-	handler := Metrics(reg, map[string]bool{"/v1/x": true}, now)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := Metrics(reg, map[string]bool{"/v1/x": true}, nil, now)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusTeapot)
 	}))
 	handler.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodPost, "/v1/x", nil))
@@ -99,7 +99,7 @@ func TestMetrics_RecordsStatusAndDuration(t *testing.T) {
 // WriteHeader is a 200, and the recorder must report it as such.
 func TestMetrics_DefaultStatusIsOK(t *testing.T) {
 	reg := metrics.New()
-	handler := Metrics(reg, map[string]bool{"/healthz": true}, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := Metrics(reg, map[string]bool{"/healthz": true}, nil, nil)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("ok"))
 	}))
 	handler.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/healthz", nil))

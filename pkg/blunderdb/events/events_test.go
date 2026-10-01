@@ -29,7 +29,7 @@ func empty(t *testing.T, s *Subscription) {
 }
 
 func TestBus_DeliversWithinScopeOnly(t *testing.T) {
-	b := NewBus()
+	b := NewBus(0)
 	a, _ := b.Subscribe("1", Filter{}, 4)
 	other, _ := b.Subscribe("2", Filter{}, 4)
 	b.Publish(Event{Scope: "1", Kind: KindDirection, TournamentID: 7, Version: "v"})
@@ -41,7 +41,7 @@ func TestBus_DeliversWithinScopeOnly(t *testing.T) {
 }
 
 func TestBus_Filter(t *testing.T) {
-	b := NewBus()
+	b := NewBus(0)
 	byT, _ := b.Subscribe("", Filter{Tournaments: []int64{5}}, 4)
 	byR, _ := b.Subscribe("", Filter{Rencontres: []int64{3}}, 4)
 	byD, _ := b.Subscribe("", Filter{Transcriptions: []int64{9}}, 4)
@@ -63,7 +63,7 @@ func TestBus_Filter(t *testing.T) {
 
 // A subscriber that does not read is dropped once its queue is full; the publisher never waits.
 func TestBus_SlowSubscriberIsDropped(t *testing.T) {
-	b := NewBus()
+	b := NewBus(0)
 	slow, _ := b.Subscribe("", Filter{}, 2)
 	fast, _ := b.Subscribe("", Filter{}, 16)
 	done := make(chan struct{})
@@ -94,7 +94,7 @@ func TestBus_SlowSubscriberIsDropped(t *testing.T) {
 }
 
 func TestBus_CancelAndClose(t *testing.T) {
-	b := NewBus()
+	b := NewBus(0)
 	s, _ := b.Subscribe("", Filter{}, 1)
 	s.Cancel()
 	s.Cancel()
@@ -115,5 +115,68 @@ func TestBus_CancelAndClose(t *testing.T) {
 	b.Publish(Event{})
 	if b.Subscribers() != 0 {
 		t.Fatal("subscribers left after Close")
+	}
+}
+
+// The sequence is the scope's own: a tenant cannot count another's gestures.
+func TestBus_SequencePerScope(t *testing.T) {
+	b := NewBus(0)
+	a, _ := b.Subscribe("1", Filter{}, 4)
+	for range 3 {
+		b.Publish(Event{Scope: "2", Kind: KindDirection})
+	}
+	if a.Start != 0 {
+		t.Fatalf("start %d", a.Start)
+	}
+	b.Publish(Event{Scope: "1", Kind: KindDirection})
+	if d, _ := recv(t, a); d.Seq != 1 {
+		t.Fatalf("tenant 1's first event has seq %d; want 1", d.Seq)
+	}
+	// Nobody listened to tenant 2: its events were not even numbered.
+	later, _ := b.Subscribe("2", Filter{}, 4)
+	b.Publish(Event{Scope: "2", Kind: KindDirection})
+	if later.Start != 0 {
+		t.Fatalf("tenant 2 subscribes at %d; want 0", later.Start)
+	}
+	if d, _ := recv(t, later); d.Seq != 1 {
+		t.Fatalf("tenant 2's first heard event has seq %d; want 1", d.Seq)
+	}
+}
+
+func TestBus_LimitPerScope(t *testing.T) {
+	b := NewBus(2)
+	s1, _ := b.Subscribe("1", Filter{}, 1)
+	if _, err := b.Subscribe("1", Filter{}, 1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := b.Subscribe("1", Filter{}, 1); !errors.Is(err, ErrTooMany) {
+		t.Fatalf("third subscription: %v", err)
+	}
+	if _, err := b.Subscribe("2", Filter{}, 1); err != nil {
+		t.Fatalf("another tenant is capped by the first: %v", err)
+	}
+	s1.Cancel()
+	if _, err := b.Subscribe("1", Filter{}, 1); err != nil {
+		t.Fatalf("a freed place is refused: %v", err)
+	}
+}
+
+// Wants tells an emitter whether reading the version is worth it.
+func TestBus_Wants(t *testing.T) {
+	b := NewBus(0)
+	if b.Wants("1") {
+		t.Fatal("wants with no subscriber")
+	}
+	s, _ := b.Subscribe("1", Filter{}, 1)
+	if !b.Wants("1") || b.Wants("2") {
+		t.Fatal("wants is not per scope")
+	}
+	b.Publish(Event{Scope: "2"})
+	s.Cancel()
+	if b.Wants("1") {
+		t.Fatal("wants after the last subscriber left")
+	}
+	if (Discard{}).Wants("1") {
+		t.Fatal("Discard wants")
 	}
 }

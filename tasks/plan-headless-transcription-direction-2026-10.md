@@ -228,7 +228,7 @@ d'écriture au CLI relève de ADR-0056 (« CLI en lecture seule ») et n'est pas
 | **H4** Routes de gestes | `ifVersion`/`If-Match` → 409, `Idempotency-Key`, `serve --direction` | test de course : deux gestes concurrents, un 409 |
 | **H5** SSE | `/v1/events`, bus mémoire, `streamingPaths`, Compress/RateLimit | test : un geste → un message |
 | **H6** Service de transcription | `open/apply/undo/redo/close/finish/abandon/editMatch`, colonne de révision (bump), sessions (A) avec TTL, 410 ; enregistrement en Match sur le contrat | test : TTL expiré → 410 → réouverture, aucun geste perdu |
-| **H7** PostgreSQL multi-instance | `LISTEN/NOTIFY` pour le bus | test d'intégration PG (nightly) |
+| **H7** PostgreSQL multi-instance | `LISTEN/NOTIFY` pour le bus (un second `events.Publisher`, dont `Wants` répond pour toutes les instances) ; la façade `Database` du bureau installe un publisher (`Memory.SetPublisher`, `transcription.Options.Events`) pour qu'un bureau et un démon sur un même PostgreSQL se voient — aujourd'hui elle n'en installe aucun | test d'intégration PG (nightly) |
 | **H8** Front web | écarté par H0 : le client est externe (gammonGo) | — |
 
 H1 → H2 est le gros du travail et sert le bureau aussi (une seule implémentation, testée sur

@@ -1,7 +1,10 @@
 package server
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -30,6 +33,9 @@ const (
 	defaultEventsHeartbeat = 25 * time.Second
 	// defaultEventsBuffer bounds what a subscriber may fall behind before it is dropped.
 	defaultEventsBuffer = 64
+	// defaultEventsMaxPerTenant bounds the streams one tenant holds open at once: each is a
+	// connection and a goroutine of the daemon.
+	defaultEventsMaxPerTenant = 16
 	// eventsWriteTimeout bounds each write: a client that stopped reading is cut off instead of
 	// holding a goroutine for ever.
 	eventsWriteTimeout = 30 * time.Second
@@ -37,9 +43,26 @@ const (
 	eventsRetry = 3000
 )
 
-// unboundedPaths are the routes withDeadlines leaves without a deadline: a stream that lasts
-// as long as its client listens. The handler bounds each write itself.
+// unboundedPaths are the routes withDeadlines leaves without a deadline and the metrics count
+// without timing: a stream lasts as long as its client listens. The handler bounds each write
+// itself.
 var unboundedPaths = map[string]bool{eventsPath: true}
+
+// serverOnlyPaths are the /v1 routes the daemon serves outside Paths(), with the reason `call`
+// and the parity check (TestDatabaseParity) do without them. Every other served /v1 or /ops/
+// route is in Paths() (routes_parity_test.go).
+var serverOnlyPaths = map[string]string{
+	eventsPath: "a stream that tells a connected client of other clients' gestures; " +
+		"`call` answers one request and has no client to tell, and the desktop shows its own gestures",
+}
+
+// newEventsEpoch draws the prefix of the stream ids: random, so an id tells nothing of when the
+// daemon started, and ids from two runs never compare.
+func newEventsEpoch() string {
+	var b [6]byte
+	_, _ = rand.Read(b[:])
+	return hex.EncodeToString(b[:])
+}
 
 // eventsEnabled reports whether the daemon serves /v1/events and publishes its gestures.
 func (s *Server) eventsEnabled() bool {
@@ -94,8 +117,12 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sub, err := s.events.Subscribe(scopeOf(r), f, s.opts.eventsBuffer)
-	if err != nil {
-		writeErrorCode(w, CodeInternal, "the daemon is stopping")
+	switch {
+	case errors.Is(err, events.ErrTooMany):
+		writeErrorCode(w, CodeRateLimited, "too many event streams open for this tenant")
+		return
+	case err != nil:
+		writeErrorCode(w, CodeUnavailable, "the daemon is stopping")
 		return
 	}
 	defer sub.Cancel()
@@ -110,15 +137,19 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) {
 
 	write := func(b []byte) bool {
 		_ = rc.SetWriteDeadline(time.Now().Add(eventsWriteTimeout))
-		if _, err := w.Write(b); err != nil {
+		if _, err := w.Write(b); err != nil { //nolint:gosec // G705: text/event-stream of JSON the daemon encodes, never rendered as HTML
 			return false
 		}
 		return rc.Flush() == nil
 	}
-	head := fmt.Sprintf("retry: %d\n: subscribed\n\n", eventsRetry)
+	// Every stream opens with a resync: a client that reconnects before it heard anything has
+	// no Last-Event-ID to send, and may have missed gestures all the same. Its id is the
+	// scope's position, which a later reconnection sends back.
+	reason := "subscribed"
 	if r.Header.Get("Last-Event-ID") != "" {
-		head += resyncFrame("reconnected")
+		reason = "reconnected"
 	}
+	head := fmt.Sprintf("retry: %d\n: subscribed\n\nid: %s-%d\n%s", eventsRetry, s.eventsEpoch, sub.Start, resyncFrame(reason))
 	if !write([]byte(head)) {
 		return
 	}

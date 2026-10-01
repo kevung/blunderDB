@@ -27,19 +27,22 @@ import (
 type sseFrame struct {
 	id, event string
 	data      events.Event
+	raw       string
 	comment   string
 }
 
 // sseStream is an open subscription: its frames arrive on frames, closed at the end of the
 // stream.
 type sseStream struct {
-	frames chan sseFrame
-	cancel context.CancelFunc
-	resp   *http.Response
+	frames  chan sseFrame
+	cancel  context.CancelFunc
+	resp    *http.Response
+	opening sseFrame
 }
 
 // subscribe opens GET /v1/events?query as tenant and waits for the subscription to be
-// registered (the ": subscribed" comment), so a gesture sent afterwards is seen.
+// registered (the ": subscribed" comment), so a gesture sent afterwards is seen. The resync
+// every stream opens with is kept in s.opening.
 func subscribe(t *testing.T, base, tenant, query string, header http.Header) *sseStream {
 	t.Helper()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -81,13 +84,18 @@ func subscribe(t *testing.T, base, tenant, query string, header http.Header) *ss
 			case strings.HasPrefix(line, "event: "):
 				f.event = strings.TrimPrefix(line, "event: ")
 			case strings.HasPrefix(line, "data: "):
-				_ = json.Unmarshal([]byte(strings.TrimPrefix(line, "data: ")), &f.data)
+				f.raw = strings.TrimPrefix(line, "data: ")
+				_ = json.Unmarshal([]byte(f.raw), &f.data)
 			}
 		}
 	}()
 	t.Cleanup(cancel)
 	if f := s.next(t); f.comment != "subscribed" {
 		t.Fatalf("first frame %+v; want the subscribed comment", f)
+	}
+	s.opening = s.next(t)
+	if s.opening.event != string(events.KindResync) || s.opening.id == "" {
+		t.Fatalf("the stream opens with %+v; want a resync with an id", s.opening)
 	}
 	return s
 }
@@ -239,8 +247,93 @@ func checkEvents(t *testing.T, st storage.Storage) {
 func TestEvents_Reconnect(t *testing.T) {
 	ts, _ := eventServerOn(t, memStorage(t), nil)
 	s := subscribe(t, ts.URL, "1", "", http.Header{"Last-Event-ID": {"x-1"}})
-	if f := s.next(t); f.event != string(events.KindResync) || f.data.Kind != events.KindResync {
-		t.Fatalf("frame %+v; want resync", f)
+	if !strings.Contains(s.opening.raw, `"reconnected"`) {
+		t.Fatalf("opening %+v; want a resync for a reconnection", s.opening)
+	}
+}
+
+// TestEvents_EveryOpeningIsResync: a client that reconnects before it heard a single event has
+// no Last-Event-ID to send, and may still have missed gestures; every stream opens with a
+// resync, with an id the client can send back.
+func TestEvents_EveryOpeningIsResync(t *testing.T) {
+	ts, _ := eventServerOn(t, memStorage(t), nil)
+	s := subscribe(t, ts.URL, "1", "", nil)
+	if !strings.Contains(s.opening.raw, `"subscribed"`) {
+		t.Fatalf("opening %+v", s.opening)
+	}
+}
+
+func getEvents(t *testing.T, base, tenant string, header http.Header) *http.Response {
+	t.Helper()
+	req, _ := http.NewRequest(http.MethodGet, base+eventsPath, nil)
+	req.Header.Set(middleware.TenantHeader, tenant)
+	for k, vs := range header {
+		req.Header[k] = vs
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return resp
+}
+
+// TestEvents_StoppingIs503: a subscription refused because the daemon stops is unavailable,
+// not a failure of the daemon.
+func TestEvents_StoppingIs503(t *testing.T) {
+	ts, srv := eventServerOn(t, memStorage(t), nil)
+	srv.events.Close()
+	resp := getEvents(t, ts.URL, "1", nil)
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusServiceUnavailable {
+		t.Fatalf("status %d; want 503", resp.StatusCode)
+	}
+}
+
+// TestEvents_StreamsPerTenantAreCapped: beyond the cap a tenant gets 429; another tenant is
+// not affected.
+func TestEvents_StreamsPerTenantAreCapped(t *testing.T) {
+	ts, _ := eventServerOn(t, memStorage(t), func(o *Options) { o.eventsMaxPerTenant = 2 })
+	subscribe(t, ts.URL, "1", "", nil)
+	subscribe(t, ts.URL, "1", "", nil)
+	resp := getEvents(t, ts.URL, "1", nil)
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusTooManyRequests {
+		t.Fatalf("third stream: %d; want 429", resp.StatusCode)
+	}
+	subscribe(t, ts.URL, "2", "", nil)
+}
+
+// TestEvents_CORSLetsLastEventIDThrough: a browser reconnecting sends Last-Event-ID; the
+// preflight must allow it.
+func TestEvents_CORSLetsLastEventIDThrough(t *testing.T) {
+	ts, _ := eventServerOn(t, memStorage(t), func(o *Options) { o.CORSAllowOrigin = "*" })
+	req, _ := http.NewRequest(http.MethodOptions, ts.URL+eventsPath, nil)
+	req.Header.Set("Origin", "http://example.org")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if !strings.Contains(resp.Header.Get("Access-Control-Allow-Headers"), "Last-Event-ID") {
+		t.Fatalf("Allow-Headers %q", resp.Header.Get("Access-Control-Allow-Headers"))
+	}
+}
+
+// TestEvents_StreamIsNotTimed: a stream lasts as long as its client; its duration would drown
+// the latency histogram. It is counted, not timed.
+func TestEvents_StreamIsNotTimed(t *testing.T) {
+	ts, srv := eventServerOn(t, memStorage(t), func(o *Options) { o.EnableMetrics = true })
+	s := subscribe(t, ts.URL, "1", "", nil)
+	s.cancel()
+	s.ended(t)
+	var out strings.Builder
+	waitFor(t, func() bool {
+		out.Reset()
+		srv.opts.Metrics.WritePrometheus(&out)
+		return strings.Contains(out.String(), `blunderdb_http_requests_total{method="GET",path="/v1/events"`)
+	}, "the stream is not counted")
+	if strings.Contains(out.String(), `blunderdb_http_request_duration_seconds_count{method="GET",path="/v1/events"`) {
+		t.Fatal("the stream's duration is in the latency histogram")
 	}
 }
 

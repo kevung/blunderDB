@@ -68,9 +68,12 @@ type Event struct {
 	MatchID int64 `json:"matchId,omitempty"`
 }
 
-// Publisher is what an emitter holds. Publish must not block on any subscriber.
+// Publisher is what an emitter holds. Publish must not block on any subscriber. Wants reports
+// whether anyone may hear an event of scope: an emitter skips the reads an event costs when no
+// one does. A transport across processes answers for every process it reaches.
 type Publisher interface {
 	Publish(Event)
+	Wants(scope string) bool
 }
 
 // Filter narrows a subscription. An empty Filter receives every event of its scope; otherwise
@@ -105,7 +108,8 @@ func (f Filter) Match(ev Event) bool {
 	return ev.TranscriptionID != 0 && slices.Contains(f.Transcriptions, ev.TranscriptionID)
 }
 
-// Delivery is an event as a subscriber receives it, with the bus's sequence number.
+// Delivery is an event as a subscriber receives it, with its scope's sequence number: each
+// scope counts its own, so a tenant cannot count another's gestures.
 type Delivery struct {
 	Seq   uint64
 	Event Event
@@ -114,23 +118,32 @@ type Delivery struct {
 // ErrClosed refuses a subscription on a bus that was closed (the daemon is stopping).
 var ErrClosed = errors.New("events: the bus is closed")
 
+// ErrTooMany refuses a subscription beyond the bus's limit for its scope.
+var ErrTooMany = errors.New("events: too many subscriptions for this scope")
+
 // Bus fans events out in memory to the subscribers of their scope.
 type Bus struct {
 	mu     sync.Mutex
 	subs   map[*Subscription]struct{}
-	seq    uint64
+	count  map[string]int    // live subscriptions per scope
+	seq    map[string]uint64 // last sequence number per scope
+	limit  int
 	closed bool
 }
 
-// NewBus returns an open, empty bus.
-func NewBus() *Bus {
-	return &Bus{subs: map[*Subscription]struct{}{}}
+// NewBus returns an open, empty bus that accepts at most limit subscriptions per scope (0: no
+// limit).
+func NewBus(limit int) *Bus {
+	return &Bus{subs: map[*Subscription]struct{}{}, count: map[string]int{}, seq: map[string]uint64{}, limit: limit}
 }
 
 // Subscription receives the events of one scope that pass its filter, on C, until it is
 // cancelled, its queue overflows, or the bus closes; C is then closed.
 type Subscription struct {
 	C <-chan Delivery
+	// Start is the scope's sequence number when the subscription opened: the first delivery
+	// comes after it.
+	Start uint64
 
 	bus        *Bus
 	c          chan Delivery
@@ -152,7 +165,12 @@ func (b *Bus) Subscribe(scope string, f Filter, buffer int) (*Subscription, erro
 	if b.closed {
 		return nil, ErrClosed
 	}
+	if b.limit > 0 && b.count[scope] >= b.limit {
+		return nil, ErrTooMany
+	}
+	s.Start = b.seq[scope]
 	b.subs[s] = struct{}{}
+	b.count[scope]++
 	return s, nil
 }
 
@@ -161,11 +179,11 @@ func (b *Bus) Subscribe(scope string, f Filter, buffer int) (*Subscription, erro
 func (b *Bus) Publish(ev Event) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	if b.closed {
+	if b.closed || b.count[ev.Scope] == 0 {
 		return
 	}
-	b.seq++
-	d := Delivery{Seq: b.seq, Event: ev}
+	b.seq[ev.Scope]++
+	d := Delivery{Seq: b.seq[ev.Scope], Event: ev}
 	for s := range b.subs {
 		if s.scope != ev.Scope || !s.filter.Match(ev) {
 			continue
@@ -189,6 +207,13 @@ func (b *Bus) Close() {
 	}
 }
 
+// Wants reports whether scope has a live subscription.
+func (b *Bus) Wants(scope string) bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.count[scope] > 0
+}
+
 // Subscribers is the number of live subscriptions.
 func (b *Bus) Subscribers() int {
 	b.mu.Lock()
@@ -202,6 +227,9 @@ func (b *Bus) drop(s *Subscription) {
 		return
 	}
 	delete(b.subs, s)
+	if b.count[s.scope]--; b.count[s.scope] == 0 {
+		delete(b.count, s.scope)
+	}
 	close(s.c)
 }
 
@@ -225,3 +253,6 @@ type Discard struct{}
 
 // Publish does nothing.
 func (Discard) Publish(Event) {}
+
+// Wants is always false.
+func (Discard) Wants(string) bool { return false }

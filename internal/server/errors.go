@@ -28,6 +28,9 @@ const (
 	// CodeIdempotencyMismatch: an Idempotency-Key already names another
 	// request (method, path or body differ); mint a new key (422).
 	CodeIdempotencyMismatch = "idempotency_key_reused"
+	// CodeUnavailable: the daemon is stopping and takes nothing new; retry
+	// against another instance or later (503).
+	CodeUnavailable = "unavailable"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -60,6 +63,8 @@ func statusForCode(code string) int {
 		return http.StatusPreconditionRequired
 	case CodeIdempotencyMismatch:
 		return http.StatusUnprocessableEntity
+	case CodeUnavailable:
+		return http.StatusServiceUnavailable
 	default:
 		return http.StatusInternalServerError
 	}
