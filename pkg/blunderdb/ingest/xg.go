@@ -564,8 +564,8 @@ func blunderDBPlayerToXG(blunderDBPlayer int) int32 {
 }
 
 // computeMatchHash is the format-specific content hash used for exact
-// duplicate detection. A copy of database.ComputeMatchHash: no test compares
-// the two, so a change to one must be made in the other by hand.
+// duplicate detection. Stored databases deduplicate on it:
+// TestMatchHashReference freezes its value.
 func computeMatchHash(match *xgparser.Match) string {
 	var b strings.Builder
 	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1Name))
@@ -592,13 +592,11 @@ func computeMatchHash(match *xgparser.Match) string {
 }
 
 // maxCanonicalDicePerGame bounds the dice included in the canonical hash so it
-// is identical across export formats. Mirrors database.maxCanonicalDicePerGame.
+// is identical across export formats.
 const maxCanonicalDicePerGame = 10
 
 // computeCanonicalMatchHashFromXG is the format-independent hash for
-// cross-format duplicate detection. Copied from
-// database.ComputeCanonicalMatchHashFromXG; no test compares the two, so a
-// change to one must be made in the other by hand.
+// cross-format duplicate detection.
 func computeCanonicalMatchHashFromXG(match *xgparser.Match) string {
 	var b strings.Builder
 	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1Name))
