@@ -170,13 +170,13 @@ func TestIdempotencyStore_ExpiresAfterTTL(t *testing.T) {
 	now := time.Unix(1_700_000_000, 0)
 	store := newIdempotencyStore(func() time.Time { return now })
 
-	store.set("k", idempotencyResult{status: 200, body: []byte("x"), expiresAt: now.Add(idempotencyTTL)})
-	if _, ok := store.get("k"); !ok {
+	store.set("1", "k", idempotencyResult{status: 200, body: []byte("x"), expiresAt: now.Add(idempotencyTTL)})
+	if _, ok := store.get("1", "k"); !ok {
 		t.Fatal("expected a hit immediately after set")
 	}
 
 	now = now.Add(idempotencyTTL + time.Second)
-	if _, ok := store.get("k"); ok {
+	if _, ok := store.get("1", "k"); ok {
 		t.Error("expected a miss once past idempotencyTTL")
 	}
 }
@@ -188,21 +188,21 @@ func TestIdempotencyStore_EvictsLeastRecentlyUsed(t *testing.T) {
 	store := newIdempotencyStore(func() time.Time { return now })
 
 	// Fill to the real cap so the test stays honest about it.
-	for i := 0; i < idempotencyMaxEntries; i++ {
-		store.set(keyFor(i), idempotencyResult{status: 200, expiresAt: now.Add(idempotencyTTL)})
+	for i := 0; i < idempotencyMaxEntriesPerTenant; i++ {
+		store.set("1", keyFor(i), idempotencyResult{status: 200, expiresAt: now.Add(idempotencyTTL)})
 	}
 	// Touch the first key so it is no longer the least-recently-used one.
-	if _, ok := store.get(keyFor(0)); !ok {
+	if _, ok := store.get("1", keyFor(0)); !ok {
 		t.Fatal("expected key 0 to still be present before the evicting insert")
 	}
 	// One more insert must evict the least-recently-used entry, which is
 	// now key 1 (0 was just touched, 1 was not).
-	store.set("one-more", idempotencyResult{status: 200, expiresAt: now.Add(idempotencyTTL)})
+	store.set("1", "one-more", idempotencyResult{status: 200, expiresAt: now.Add(idempotencyTTL)})
 
-	if _, ok := store.get(keyFor(0)); !ok {
+	if _, ok := store.get("1", keyFor(0)); !ok {
 		t.Error("recently-touched key 0 was evicted, want it kept")
 	}
-	if _, ok := store.get(keyFor(1)); ok {
+	if _, ok := store.get("1", keyFor(1)); ok {
 		t.Error("least-recently-used key 1 was kept, want it evicted")
 	}
 }

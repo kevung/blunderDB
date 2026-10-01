@@ -25,6 +25,9 @@ const (
 	// CodePreconditionRequired: a gesture that writes named no revision in
 	// If-Match (428).
 	CodePreconditionRequired = "precondition_required"
+	// CodeIdempotencyMismatch: an Idempotency-Key already names another
+	// request (method, path or body differ); mint a new key (422).
+	CodeIdempotencyMismatch = "idempotency_key_reused"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -55,6 +58,8 @@ func statusForCode(code string) int {
 		return http.StatusGone
 	case CodePreconditionRequired:
 		return http.StatusPreconditionRequired
+	case CodeIdempotencyMismatch:
+		return http.StatusUnprocessableEntity
 	default:
 		return http.StatusInternalServerError
 	}
