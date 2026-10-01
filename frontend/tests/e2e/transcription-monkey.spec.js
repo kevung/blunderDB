@@ -306,7 +306,13 @@ async function checkLeak(page, s) {
 
 /** Invariant 2 : de retour en fin de document, un chiffre est pris comme un dé. */
 async function checkInteractive(page) {
-    for (let i = 0; i < 3 && (await page.locator('.modal-overlay').count()); i += 1) await page.keyboard.press('Escape');
+    // Un Escape tapé avant que le dialogue ait pris le focus tombe dans le vide, et un dialogue
+    // peut s'ouvrir après le dernier pas : on ferme jusqu'à ce que plus rien ne reste.
+    await settle(page);
+    for (let i = 0; i < 20 && (await page.locator('.modal-overlay').count()); i += 1) {
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(100);
+    }
     await page.locator('[data-testid="tab-transcription"]').click();
     await settle(page);
     if (!(await page.locator(`${panel} .draft-bar`).count())) {

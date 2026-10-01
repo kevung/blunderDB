@@ -688,7 +688,9 @@
         width: 50%;
     }
 
+    /* border-box : un <span> vide (cellule absente) sinon dépasse de sa colonne du rembourrage et du filet. */
     .cell {
+        box-sizing: border-box;
         display: block;
         width: 100%;
         padding: var(--space-1);
