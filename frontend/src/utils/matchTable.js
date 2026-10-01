@@ -2,19 +2,33 @@
 // dice formatters. Extracted from MatchPanel.svelte so they can be unit-tested
 // without mounting the component (they close over no component state).
 
+/** @typedef {Partial<import('../../wailsjs/go/models').domain.Match>} Match */
+/** @typedef {import('../../wailsjs/go/models').database.MatchPlayerDetailStats} MatchPlayerStats */
+/** @typedef {import('../../wailsjs/go/models').storage.MoveGrade} MoveGrade */
+/** @typedef {'player1' | 'player2' | 'date' | 'length' | 'tournament' | 'pr' | 'mwc'} MatchColumn */
+/** @typedef {'asc' | 'desc'} SortDirection */
+
 /**
  * Comparator with null-handling: nulls sort last, strings compare
  * case-insensitively, numbers numerically.
+ * @param {string | number | null | undefined} a
+ * @param {string | number | null | undefined} b
+ * @returns {number}
  */
 export function compareValues(a, b) {
     if (a == null && b == null) return 0;
     if (a == null) return 1;
     if (b == null) return -1;
-    if (typeof a === 'string') return a.localeCompare(b, undefined, { sensitivity: 'base' });
-    return a - b;
+    if (typeof a === 'string') return a.localeCompare(String(b), undefined, { sensitivity: 'base' });
+    return Number(a) - Number(b);
 }
 
-/** Extract the sortable value for a Matches panel column key. */
+/**
+ * Extract the sortable value for a Matches panel column key.
+ * @param {Match} match
+ * @param {string} column
+ * @returns {string | number}
+ */
 export function getSortValue(match, column) {
     switch (column) {
         case 'player1':
@@ -36,7 +50,13 @@ export function getSortValue(match, column) {
     }
 }
 
-/** Sort a copy of `matches` by `column` in `direction` ('asc' | 'desc'); unchanged without a column. */
+/**
+ * Sort a copy of `matches` by `column` in `direction` ('asc' | 'desc'); unchanged without a column.
+ * @param {Match[]} matches
+ * @param {string | null | undefined} column
+ * @param {string} direction
+ * @returns {Match[]}
+ */
 export function sortMatches(matches, column, direction) {
     if (!column) return matches;
     const sorted = [...matches].sort((a, b) => {
@@ -46,7 +66,11 @@ export function sortMatches(matches, column, direction) {
     return sorted;
 }
 
-/** Convert a date string to a `yyyy-mm-dd` value for a date <input>; '' if invalid. */
+/**
+ * Convert a date string to a `yyyy-mm-dd` value for a date <input>; '' if invalid.
+ * @param {string | number | Date | null | undefined} dateStr
+ * @returns {string}
+ */
 export function toDateInputValue(dateStr) {
     if (!dateStr) return '';
     try {
@@ -58,7 +82,11 @@ export function toDateInputValue(dateStr) {
     }
 }
 
-/** Format a date string as `yyyy/mm/dd` for display; '-' if empty or invalid. */
+/**
+ * Format a date string as `yyyy/mm/dd` for display; '-' if empty or invalid.
+ * @param {string | number | Date | null | undefined} dateStr
+ * @returns {string}
+ */
 export function formatDate(dateStr) {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
@@ -69,7 +97,11 @@ export function formatDate(dateStr) {
     return `${y}/${m}/${d}`;
 }
 
-/** Compact dice rendering, e.g. [3,1] → "31"; '' when there are no dice. */
+/**
+ * Compact dice rendering, e.g. [3,1] → "31"; '' when there are no dice.
+ * @param {number[] | null | undefined} dice
+ * @returns {string}
+ */
 export function formatDiceShort(dice) {
     if (!dice || (!dice[0] && !dice[1])) return '';
     return `${dice[0]}${dice[1]}`;
@@ -79,14 +111,23 @@ export function formatDiceShort(dice) {
 
 // Cell formatters for the MatchPanel "stats" tab. A player's MatchPlayerDetailStats
 // maps to a displayed string; em-dash ("—") marks "not applicable / no data".
+/** @type {(val: number, decisions: number) => string} */
 export const fmtPR = (val, decisions) => (decisions > 0 ? val.toFixed(2) : '—');
+/** @type {(v: number) => string} */
 export const fmtEquityError = (v) => (v > 0 ? '-' + v.toFixed(3) : '—');
+/** @type {(v: number) => string} */
 export const fmtMwcLoss = (v) => (v > 0 ? '-' + (v * 100).toFixed(2) + '%' : '—');
+/** @type {(errors: number, blunders: number) => string} */
 export const fmtErrorsBlunders = (errors, blunders) => `${errors} (${blunders})`;
 
 // The per-player match stats table, row by row: a section header ({ section }) or a metric
 // ({ label, fmt, … }; fmt maps one player's stats to its cell). Labels are i18n keys.
 // bullet = leading "•"; sub = indented sub-metric; valClass = extra value-cell class.
+/**
+ * @typedef {{ section: string } | { label: string, bullet?: boolean, sub?: boolean, valClass?: string, fmt: (p: MatchPlayerStats) => string }} MatchStatRow
+ */
+
+/** @type {MatchStatRow[]} */
 export const MATCH_STAT_ROWS = [
     { section: 'match.performanceRating' },
     { label: 'match.overallPr', bullet: true, valClass: 'pr-val', fmt: (p) => fmtPR(p.pr, p.total_decisions) },
@@ -122,9 +163,11 @@ export const GRADE_MARKS = { error: '?', blunder: '??' };
 
 /**
  * Index a match's MoveGrade list by move id, keeping only graded Moves.
- * @param {any[] | null | undefined} grades
+ * @param {MoveGrade[] | null | undefined} grades
+ * @returns {Map<number, MoveGrade>}
  */
 export function indexMoveGrades(grades) {
+    /** @type {Map<number, MoveGrade>} */
     const byMove = new Map();
     for (const g of grades || []) {
         if (g && GRADE_MARKS[/** @type {'error' | 'blunder'} */ (g.grade)]) byMove.set(g.move_id, g);
@@ -134,7 +177,8 @@ export function indexMoveGrades(grades) {
 
 /**
  * Count the marks of one game's moves, as they appear in its rows.
- * @param {any[]} moves
+ * @param {{ grade?: { grade?: string } | null }[]} moves
+ * @returns {{ errors: number, blunders: number }}
  */
 export function countGrades(moves) {
     let errors = 0;
@@ -149,5 +193,6 @@ export function countGrades(moves) {
 /**
  * A play's cost in equity, the unit every table shows (millipoints stored).
  * @param {number | string} mp
+ * @returns {string}
  */
 export const fmtGradeCost = (mp) => (Number(mp) / 1000).toFixed(3);

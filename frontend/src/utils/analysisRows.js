@@ -7,6 +7,26 @@
 
 import { CUBE_OPTIONS, DECISION_STATE } from './cubeDecision.js';
 
+/** @typedef {import('../../wailsjs/go/models').domain.DoublingCubeAnalysis} CubeAnalysis */
+/** @typedef {import('../../wailsjs/go/models').domain.CheckerMove} CheckerMove */
+/** @typedef {(key: string, params?: Record<string, unknown>) => string} Translate */
+/** @typedef {'no_double' | 'double_take' | 'double_pass'} CubeOptionKey */
+/** @typedef {{ key: CubeOptionKey, equity: number | null, error: number | null }} CubeOption */
+/**
+ * A cube Decision (utils/cubeDecision.js): the one shape every regime's verdict takes.
+ * @typedef {{ state: string, options: CubeOption[], verdict?: string | null, verdictText?: string, best: string | null }} CubeDecision
+ */
+/** @typedef {{ label: string, cells: string[] }} TableRow */
+/** @typedef {{ key: string, label: string, cells: string[], highlight: boolean, best: boolean }} CubeRow */
+/** @typedef {{ label: string, text: string, unavailable: boolean }} CubeVerdict */
+/** @typedef {{ header: string[], rows: TableRow[] }} FactRows */
+/** @typedef {{ columns: string[], header: string[], baseline: TableRow | null, rows: CheckerRow[] }} CheckerRowSet */
+/** @typedef {{ key: string | number, move: CheckerMove, label: string, cells: (string | null)[], highlight: boolean }} CheckerRow */
+/**
+ * The pre-roll vector shown above a candidate list.
+ * @typedef {{ cubelessEquity?: number, playerWinChance?: number, playerGammonChance?: number, playerBackgammonChance?: number, opponentWinChance?: number, opponentGammonChance?: number, opponentBackgammonChance?: number }} ChanceVector
+ */
+
 // An absent fact — PositionFactsTable's own mark, so a value that does not
 // exist reads the same way in every table of the panel.
 export const DASH = '—';
@@ -15,6 +35,10 @@ export const HIDDEN = '···';
 
 // The single equity rule: three decimals, an explicit sign. Absent → null, so
 // the caller decides what an absence means on its surface (see below).
+/**
+ * @param {number | null | undefined} value
+ * @returns {string | null}
+ */
 export function formatEquity(value) {
     if (value == null || Number.isNaN(value)) return null;
     return (value >= 0 ? '+' : '') + value.toFixed(3);
@@ -23,6 +47,7 @@ export function formatEquity(value) {
 // The equity column's header key (ADR-0016 point 6): money points at money play, normalised
 // match equity at a score (ADR-0019), so the header says which. `isMoney` undefined (no position
 // to read a referential from, e.g. the search filter naming a stored column) keeps the plain label.
+/** @param {boolean | undefined} isMoney */
 function equityHeaderKey(isMoney) {
     if (isMoney === true) return 'analysis.equityMoney';
     if (isMoney === false) return 'analysis.equityMatch';
@@ -31,6 +56,10 @@ function equityHeaderKey(isMoney) {
 
 // The single probability rule: two decimals, on the scale the value arrives in
 // (the backend's percentages — no ×100 here, ADR-0019).
+/**
+ * @param {number | null | undefined} value
+ * @returns {string | null}
+ */
 export function formatChance(value) {
     if (value == null || Number.isNaN(value)) return null;
     return value.toFixed(2);
@@ -43,6 +72,7 @@ export function formatChance(value) {
 // cubeValue is the log2 exponent everywhere in blunderDB (see the XGID
 // contract), so >= 1 means the cube has already been turned at least once:
 // the options are redoubles.
+/** @type {Record<CubeOptionKey, [string, string]>} */
 const OPTION_LABEL_KEYS = {
     no_double: ['analysis.noDouble', 'analysis.noRedouble'],
     double_take: ['analysis.doubleTake', 'analysis.redoubleTake'],
@@ -51,6 +81,11 @@ const OPTION_LABEL_KEYS = {
 
 // playedCubeAction speaks the legacy vocabulary ("Double", "Take", …), so canonical keys are
 // translated back here rather than changing a contract shared by two panels and the board.
+/**
+ * @param {string} key
+ * @param {(action: string) => boolean} isPlayedCubeAction
+ * @returns {boolean}
+ */
 export function isPlayedOption(key, isPlayedCubeAction) {
     if (key === 'no_double') return isPlayedCubeAction('No Double');
     if (key === 'double_take') return isPlayedCubeAction('Double') && isPlayedCubeAction('Take');
@@ -58,6 +93,12 @@ export function isPlayedOption(key, isPlayedCubeAction) {
 }
 
 // The verdict cell's text (ADR-0020 rule 4): empty only while computing.
+/**
+ * @param {CubeDecision | null | undefined} decision
+ * @param {string} state
+ * @param {Translate} t
+ * @returns {string}
+ */
 function verdictText(decision, state, t) {
     switch (state) {
         case DECISION_STATE.PENDING:
@@ -82,14 +123,17 @@ function verdictText(decision, state, t) {
  * verdict. An absent equity or error is an EMPTY cell, not a dash: here emptiness is a state —
  * pending (rule 4), the best option's "nothing to lose" (rule 2), a dead cube (rule 5).
  *
- * @returns {{ header: string[], rows: {key, label, cells: string[], highlight: boolean, best: boolean}[], verdict: {label, text, unavailable} }}
+ * @param {CubeDecision | null | undefined} decision
+ * @param {{ t: Translate, cubeValue?: number, isPlayedCubeAction?: (action: string) => boolean, masked?: boolean, isMoney?: boolean }} opts
+ * @returns {{ header: string[], rows: CubeRow[], verdict: CubeVerdict }}
  */
-export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () => false, masked = false, isMoney } = {}) {
-    const options = decision?.options ?? CUBE_OPTIONS.map((key) => ({ key, equity: null, error: null }));
+export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () => false, masked = false, isMoney }) {
+    /** @type {CubeOption[]} */
+    const options = decision?.options ?? CUBE_OPTIONS.map((key) => ({ key: /** @type {CubeOptionKey} */ (key), equity: null, error: null }));
     const state = decision?.state ?? DECISION_STATE.PENDING;
     // No best-row emphasis under the mask: the verdict's only other carrier (ADR-0020 rule 7).
     const best = masked ? null : decision?.best;
-    const cell = (v) => (masked ? HIDDEN : (formatEquity(v) ?? ''));
+    const cell = (/** @type {number | null | undefined} */ v) => (masked ? HIDDEN : (formatEquity(v) ?? ''));
     return {
         header: [t('analysis.decision'), t(equityHeaderKey(isMoney)), t('analysis.error')],
         rows: options.map((option) => ({
@@ -109,7 +153,12 @@ export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () =
 
 // The provenance footer of a stored record: depth and engine, the engine
 // falling back to the record-wide version when the cube analysis has none.
-export function cubeInfoRows(cubeAnalysis, { t, engineFallback = '' } = {}) {
+/**
+ * @param {CubeAnalysis | null | undefined} cubeAnalysis
+ * @param {{ t: Translate, engineFallback?: string }} opts
+ * @returns {TableRow[]}
+ */
+export function cubeInfoRows(cubeAnalysis, { t, engineFallback = '' }) {
     return [
         { label: t('analysis.analysisDepth'), cells: [cubeAnalysis?.analysisDepth ?? ''] },
         { label: t('analysis.engine'), cells: [cubeAnalysis?.analysisEngine || engineFallback || ''] }
@@ -118,9 +167,13 @@ export function cubeInfoRows(cubeAnalysis, { t, engineFallback = '' } = {}) {
 
 // The position facts of a stored cube record, in the compact P/O grid the copied image paints
 // beside the decision (the DOM uses PositionFactsTable, ADR-0018), through the same two rules.
+/**
+ * @param {CubeAnalysis | null | undefined} cube
+ * @returns {FactRows}
+ */
 export function cubeFactRows(cube) {
-    const chance = (v) => formatChance(v) ?? DASH;
-    const eq = (v) => formatEquity(v) ?? DASH;
+    const chance = (/** @type {number | undefined} */ v) => formatChance(v) ?? DASH;
+    const eq = (/** @type {number | undefined} */ v) => formatEquity(v) ?? DASH;
     return {
         header: ['', 'P', 'O'],
         rows: [
@@ -153,6 +206,7 @@ export const CHECKER_PROJECTIONS = Object.freeze({
     identify: ['move', 'equity', 'error']
 });
 
+/** @type {Record<string, string>} */
 const CHECKER_HEADER_KEYS = {
     move: 'analysis.move',
     equity: 'analysis.equity',
@@ -171,6 +225,10 @@ const CHECKER_HEADER_KEYS = {
 // "18/14 24/18"), since producers emit any order (gammonNet sorts as strings, imports keep XG's
 // or gnubg's). Rank = ORIGIN point, mover-relative, bar = 25. The sort is stable, so ties keep
 // the producer's order. A token that does not parse ("Cannot move") is returned untouched.
+/**
+ * @param {string} token
+ * @returns {number | null}
+ */
 function tokenOrigin(token) {
     const from = token.split('/')[0];
     if (from.toLowerCase() === 'bar') return 25;
@@ -178,13 +236,17 @@ function tokenOrigin(token) {
     return Number.isNaN(point) || point < 1 || point > 24 ? null : point;
 }
 
+/**
+ * @param {string | null | undefined} move
+ * @returns {string}
+ */
 export function orderMoveTokens(move) {
     if (!move) return '';
     const tokens = move.trim().split(/\s+/).filter(Boolean);
     const ranked = tokens.map((token) => ({ token, origin: tokenOrigin(token) }));
     if (ranked.some((r) => r.origin === null)) return move;
     return ranked
-        .sort((a, b) => b.origin - a.origin)
+        .sort((a, b) => /** @type {number} */ (b.origin) - /** @type {number} */ (a.origin))
         .map((r) => r.token)
         .join(' ');
 }
@@ -195,10 +257,16 @@ export function orderMoveTokens(move) {
 // survivors keep their producer's separator ("24/18*/14" stays chained). Tokens join only with
 // equal multiplicity: "24/18(2) 18/14" is two checkers whose paths diverged.
 
+/** @typedef {{ points: string[], hits: boolean[], count: number }} Play */
+
 const POINT = /^(?:bar|off|[1-9]|1\d|2[0-4])$/i;
 
 // A token: a chain of points ("24/18/14"), each landing optionally starred, optional
 // multiplicity ("13/7*(2)"). Anything else → null, and the play is left as it arrived.
+/**
+ * @param {string} token
+ * @returns {Play | null}
+ */
 function parseToken(token) {
     let body = token;
     let count = 1;
@@ -209,7 +277,9 @@ function parseToken(token) {
     }
     const parts = body.split('/');
     if (parts.length < 2) return null;
+    /** @type {string[]} */
     const points = [];
+    /** @type {boolean[]} */
     const hits = [];
     for (const [i, part] of parts.entries()) {
         const hit = part.endsWith('*');
@@ -222,6 +292,10 @@ function parseToken(token) {
     return { points, hits, count };
 }
 
+/**
+ * @param {Play} play
+ * @returns {string}
+ */
 function renderToken({ points, hits, count }) {
     let text = points[0];
     for (let i = 1; i < points.length; i++) text += '/' + points[i] + (hits[i - 1] ? '*' : '');
@@ -230,8 +304,13 @@ function renderToken({ points, hits, count }) {
 
 // hits[i - 1] is the landing on points[i]: keep that point when the checker hit
 // there, and always keep the point the play ends on.
+/**
+ * @param {Play} play
+ * @returns {Play}
+ */
 function dropIdleStages({ points, hits, count }) {
     const kept = [points[0]];
+    /** @type {boolean[]} */
     const keptHits = [];
     for (let i = 1; i < points.length; i++) {
         if (hits[i - 1] || i === points.length - 1) {
@@ -242,15 +321,25 @@ function dropIdleStages({ points, hits, count }) {
     return { points: kept, hits: keptHits, count };
 }
 
-const landsOn = (play) => play.points[play.points.length - 1];
-const hitOnLanding = (play) => play.hits[play.hits.length - 1];
+const landsOn = (/** @type {Play} */ play) => play.points[play.points.length - 1];
+const hitOnLanding = (/** @type {Play} */ play) => play.hits[play.hits.length - 1];
 
 // The second play continues the first when it starts where the first ended,
 // the same number of checkers made both, and no blot was picked up in between.
+/**
+ * @param {Play} first
+ * @param {Play} second
+ * @returns {boolean}
+ */
 function continues(first, second) {
     return first.count === second.count && !hitOnLanding(first) && landsOn(first) === second.points[0];
 }
 
+/**
+ * @param {Play} first
+ * @param {Play} second
+ * @returns {Play}
+ */
 function chain(first, second) {
     return {
         points: [...first.points.slice(0, -1), ...second.points.slice(1)],
@@ -259,11 +348,15 @@ function chain(first, second) {
     };
 }
 
+/**
+ * @param {string | null | undefined} move
+ * @returns {string}
+ */
 export function condenseMoveTokens(move) {
     if (!move) return '';
     const parsed = move.trim().split(/\s+/).filter(Boolean).map(parseToken);
     if (parsed.length === 0 || parsed.some((play) => play === null)) return move;
-    const plays = parsed.map(dropIdleStages);
+    const plays = /** @type {Play[]} */ (parsed).map(dropIdleStages);
     // The halves of one checker's journey need not be neighbours ("13/11 12/10 11/9"), so every
     // pair is a candidate, and a join may continue further, hence the restart (≤ 4 steps).
     for (let i = 0; i < plays.length; i++) {
@@ -277,10 +370,18 @@ export function condenseMoveTokens(move) {
 }
 
 // The move cell of a candidate list: condensed first, then read from the back.
+/**
+ * @param {string | null | undefined} move
+ * @returns {string}
+ */
 export function moveLabel(move) {
     return orderMoveTokens(condenseMoveTokens(move));
 }
 
+/**
+ * @param {ChanceVector | null | undefined} vector
+ * @returns {string[]}
+ */
 function chanceCells(vector) {
     return [vector?.playerWinChance, vector?.playerGammonChance, vector?.playerBackgammonChance, vector?.opponentWinChance, vector?.opponentGammonChance, vector?.opponentBackgammonChance].map(
         (v) => formatChance(v) ?? DASH
@@ -293,14 +394,16 @@ function chanceCells(vector) {
  * (never measured, never a zero) — except the error column: the best move of a stored record
  * has no error by construction (it IS the reference), written +0.000.
  *
- * @returns {{ columns: string[], header: string[], baseline: object|null, rows: {key, move, label, cells: string[], highlight: boolean}[] }}
+ * @param {CheckerMove[] | null | undefined} moves
+ * @param {{ t: Translate, isPlayedMove?: (move: CheckerMove) => boolean, showProvenance?: boolean, baseline?: ChanceVector | null, isMoney?: boolean, projection?: 'judge' | 'identify' }} opts
+ * @returns {CheckerRowSet}
  */
-export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null, isMoney, projection = 'judge' } = {}) {
+export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null, isMoney, projection = 'judge' }) {
     // `judge` keeps the truncation by showProvenance (ADR-0018 rule 4), not a projection.
     const identifying = projection === 'identify';
     const columns = identifying ? CHECKER_PROJECTIONS.identify : showProvenance ? CHECKER_COLUMNS : CHECKER_COLUMNS.slice(0, 9);
-    const provenance = (cells) => (showProvenance && !identifying ? cells : []);
-    const chances = (row) => (identifying ? [] : chanceCells(row));
+    const provenance = (/** @type {string[]} */ cells) => (showProvenance && !identifying ? cells : []);
+    const chances = (/** @type {ChanceVector} */ row) => (identifying ? [] : chanceCells(row));
     return {
         columns,
         header: columns.map((c) => (c === 'equity' ? t(equityHeaderKey(isMoney)) : t(CHECKER_HEADER_KEYS[c]))),

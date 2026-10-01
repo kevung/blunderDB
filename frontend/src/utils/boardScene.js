@@ -7,17 +7,36 @@
 
 import { computePipCount } from './boardGeometry.js';
 
+/** @typedef {import('./boardGeometry.js').BoardMetrics} BoardMetrics */
+/** @typedef {import('./boardGeometry.js').BoardPosition} BoardPosition */
+/** @typedef {import('./boardGeometry.js').StepMove} StepMove */
+/** @typedef {import('./boardConfig.js').BoardConfig} BoardConfig */
+/** @typedef {import('two.js').default} Two */
+/** @typedef {Pick<Two, 'makeText' | 'makeCircle' | 'makeRectangle' | 'makeLine'> & { makePath: (...args: number[]) => ReturnType<Two['makePath']> }} Surface */
+/** @typedef {Two['scene']} Group */
+/** @typedef {{ x: number, y: number }} Pt */
+/** @typedef {{ x: number, y: number, size: number }} CubeBox */
+
 /**
  * A drawing surface that puts every shape into `group` (two.js factories add to the root and
  * Group.add() reparents). Keeps Board.svelte's static layer (rebuilt on resize, orientation or
  * palette change) and dynamic layer (emptied on every redraw) apart with the same functions.
+ *
+ * @param {Surface} two
+ * @param {Group} group
+ * @returns {Surface}
  */
 export function layerOf(two, group) {
+    /**
+     * @template {(...args: never[]) => object} F
+     * @param {F} factory
+     * @returns {(...args: Parameters<F>) => ReturnType<F>}
+     */
     const into =
         (factory) =>
         (...args) => {
-            const shape = factory.apply(two, args);
-            group.add(shape);
+            const shape = /** @type {ReturnType<F>} */ (Reflect.apply(factory, two, args));
+            group.add(/** @type {Parameters<Group['add']>[0]} */ (shape));
             return shape;
         };
     return {
@@ -35,7 +54,14 @@ export const EXCLUDE_EMPTY = 2;
 // Bearoff tray pseudo-point used by move notation ("6/off").
 export const BEAROFF_POINT = -1;
 
-/** X of the column of `point` (1..24, or 0/25 for the bar) in the given orientation. */
+/**
+ * X of the column of `point` (1..24, or 0/25 for the bar) in the given orientation.
+ *
+ * @param {BoardMetrics} geom
+ * @param {string} orientation
+ * @param {number} point
+ * @returns {number}
+ */
 export function pointColumnX(geom, orientation, point) {
     const { originX, checkerSize } = geom;
     const sign = orientation === 'left' ? -1 : 1;
@@ -46,7 +72,12 @@ export function pointColumnX(geom, orientation, point) {
     return originX + sign * (point - 18) * checkerSize;
 }
 
-/** True when `point` stacks from the bottom edge upwards (points 1-12 and the top bar). */
+/**
+ * True when `point` stacks from the bottom edge upwards (points 1-12 and the top bar).
+ *
+ * @param {number} point
+ * @returns {boolean}
+ */
 function stacksUpward(point) {
     return (point !== 0 && point <= 12) || point === 25;
 }
@@ -55,6 +86,12 @@ function stacksUpward(point) {
  * Centre of the `slot`-th checker (0-based) on `point`, as drawCheckers() paints it (also anchors
  * move arrows). Points 0 and 25 are the bars (stacking from the middle out), BEAROFF_POINT the
  * tray. Null for an unknown point.
+ *
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} point
+ * @param {number} slot
+ * @returns {Pt | null}
  */
 export function stackSlotCenter(geom, cfg, point, slot) {
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
@@ -74,6 +111,14 @@ export function stackSlotCenter(geom, cfg, point, slot) {
     return { x: pointColumnX(geom, orientation, point), y: yBase + dir * (slot + 0.5) * step };
 }
 
+/**
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} x
+ * @param {number} y
+ * @param {boolean} flip
+ */
 function makeTriangle(two, cfg, geom, x, y, flip) {
     const cs = geom.checkerSize;
     const th = geom.triangleHeight;
@@ -83,6 +128,14 @@ function makeTriangle(two, cfg, geom, x, y, flip) {
     return triangle;
 }
 
+/**
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} x
+ * @param {number} y
+ * @param {boolean} flip
+ */
 function drawQuadrant(two, geom, cfg, x, y, flip) {
     for (let i = 0; i < 6; i++) {
         const t = makeTriangle(two, cfg, geom, x + i * geom.checkerSize, y, flip);
@@ -93,7 +146,13 @@ function drawQuadrant(two, geom, cfg, x, y, flip) {
     }
 }
 
-/** The 24 triangles: four quadrants of six, top ones pointing down, bottom ones up. */
+/**
+ * The 24 triangles: four quadrants of six, top ones pointing down, bottom ones up.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ */
 export function drawTriangles(two, geom, cfg) {
     const { originX, originY, boardWidth, checkerSize, triangleHeight } = geom;
     const topY = originY - triangleHeight - 0.5 * checkerSize;
@@ -107,6 +166,11 @@ export function drawTriangles(two, geom, cfg) {
 /**
  * The 24 point numbers under (1-12) or over (13-24) each column. `flip` numbers the board from
  * player 2's side (point p reads 25-p).
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {boolean} flip
  */
 export function drawLabels(two, geom, cfg, flip) {
     const { originY, boardHeight, checkerSize } = geom;
@@ -120,7 +184,13 @@ export function drawLabels(two, geom, cfg, flip) {
     }
 }
 
-/** The bar, painted before the checkers so those on the bar sit above it. */
+/**
+ * The bar, painted before the checkers so those on the bar sit above it.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ */
 export function drawBar(two, geom, cfg) {
     const bar = two.makeRectangle(geom.originX, geom.originY, geom.checkerSize, geom.boardHeight);
     bar.fill = cfg.fill;
@@ -129,7 +199,13 @@ export function drawBar(two, geom, cfg) {
     return bar;
 }
 
-/** The board outline, painted last so its linewidth is not eaten by the checkers. */
+/**
+ * The board outline, painted last so its linewidth is not eaten by the checkers.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ */
 export function drawFrame(two, geom, cfg) {
     const board = two.makeRectangle(geom.originX, geom.originY, geom.boardWidth, geom.boardHeight);
     board.fill = 'transparent';
@@ -138,7 +214,14 @@ export function drawFrame(two, geom, cfg) {
     return board;
 }
 
-/** Everything that survives a position change: triangles, labels, bar. */
+/**
+ * Everything that survives a position change: triangles, labels, bar.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {boolean} flip
+ */
 export function drawStaticScene(two, geom, cfg, flip) {
     drawLabels(two, geom, cfg, flip);
     drawTriangles(two, geom, cfg);
@@ -147,10 +230,16 @@ export function drawStaticScene(two, geom, cfg, flip) {
 
 // "Must be empty" exclusion marker: a red hatched, crossed-out cell spanning
 // the point's checker column to make the block obvious.
+/**
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} point
+ */
 function drawExcludeMarker(two, geom, cfg, point) {
     const cs = cfg.checker.sizeFactor * geom.checkerSize;
     const spanSlots = 3; // cover ~3 checker slots
-    const { x, y: firstSlotY } = stackSlotCenter(geom, cfg, point, 0);
+    const { x, y: firstSlotY } = /** @type {Pt} */ (stackSlotCenter(geom, cfg, point, 0));
     const dir = stacksUpward(point) ? -1 : 1;
     const cy = firstSlotY - dir * 0.5 * cs + dir * (spanSlots / 2) * cs;
     const w = cs;
@@ -186,6 +275,11 @@ function drawExcludeMarker(two, geom, cfg, point) {
  * The checkers of every point and both bars: at most five per stack, the
  * fifth carrying the true count when the stack is taller. An EXCLUDE_EMPTY
  * point draws the exclusion marker instead.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
  */
 export function drawCheckers(two, geom, cfg, position) {
     const radius = (cfg.checker.sizeFactor * geom.checkerSize) / 2;
@@ -196,7 +290,7 @@ export function drawCheckers(two, geom, cfg, position) {
         }
         const checkersToDraw = Math.min(point.checkers, 5);
         for (let i = 0; i < checkersToDraw; i++) {
-            const { x, y } = stackSlotCenter(geom, cfg, index, i);
+            const { x, y } = /** @type {Pt} */ (stackSlotCenter(geom, cfg, index, i));
             const checker = two.makeCircle(x, y, radius);
             checker.fill = cfg.checker.colors[point.color];
             checker.stroke = cfg.triangle.stroke;
@@ -218,6 +312,11 @@ export function drawCheckers(two, geom, cfg, position) {
 /**
  * Where the cube sits: centred on the left when nobody owns it, beside the owner's home board
  * otherwise, mid left pan when offered. Returns the square for hit-testing.
+ *
+ * @param {BoardMetrics} geom
+ * @param {BoardPosition} position
+ * @param {boolean} offered
+ * @returns {CubeBox}
  */
 export function cubeBox(geom, position, offered) {
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
@@ -234,7 +333,16 @@ export function cubeBox(geom, position, offered) {
     return { x: restX, y: originY, size };
 }
 
-/** The doubling cube with its face value (2^value). Returns its box. */
+/**
+ * The doubling cube with its face value (2^value). Returns its box.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ * @param {boolean} offered
+ * @returns {CubeBox}
+ */
 export function drawDoublingCube(two, geom, cfg, position, offered) {
     const box = cubeBox(geom, position, offered);
     const cube = two.makeRectangle(box.x, box.y, box.size, box.size);
@@ -249,6 +357,12 @@ export function drawDoublingCube(two, geom, cfg, position, offered) {
     return box;
 }
 
+/**
+ * @param {Surface} two
+ * @param {string} content
+ * @param {number} x
+ * @param {number} y
+ */
 function boldText(two, content, x, y) {
     const t = two.makeText(content, x, y);
     t.size = 20;
@@ -258,7 +372,13 @@ function boldText(two, content, x, y) {
     return t;
 }
 
-/** Both pip counts, on the left at the height of the scores. */
+/**
+ * Both pip counts, on the left at the height of the scores.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardPosition} position
+ */
 export function drawPipCounts(two, geom, position) {
     const { pipCount1, pipCount2 } = computePipCount(position);
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
@@ -267,7 +387,13 @@ export function drawPipCounts(two, geom, position) {
     boldText(two, `pip: ${pipCount2}`, x, originY - boardHeight / 2 - 0.2 * checkerSize);
 }
 
-/** Layout of the side column (bearoff counts, dice, scores) beside the board. */
+/**
+ * Layout of the side column (bearoff counts, dice, scores) beside the board.
+ *
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} playerOnRoll
+ */
 export function sideLayout(geom, cfg, playerOnRoll) {
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
     const sign = cfg.orientation === 'left' ? -1 : 1;
@@ -291,7 +417,14 @@ export function sideLayout(geom, cfg, playerOnRoll) {
     };
 }
 
-/** "(n OFF)" for both players. */
+/**
+ * "(n OFF)" for both players.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ */
 export function drawBearoff(two, geom, cfg, position) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
     for (const [i, y] of [side.bearoff1Y, side.bearoff2Y].entries()) {
@@ -338,7 +471,14 @@ const DIE_DOTS = [
     ]
 ];
 
-/** Two dice on the roller's side; blank faces for a cube decision. */
+/**
+ * Two dice on the roller's side; blank faces for a cube decision.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ */
 export function drawDice(two, geom, cfg, position) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
     const { diceSize, diceGap, diceY } = side;
@@ -356,7 +496,12 @@ export function drawDice(two, geom, cfg, position) {
     });
 }
 
-/** The score label for one player: away count, crawford, post-crawford or money. */
+/**
+ * The score label for one player: away count, crawford, post-crawford or money.
+ *
+ * @param {number} score
+ * @returns {string}
+ */
 export function scoreLabel(score) {
     if (score === 1) return 'crawford';
     if (score === 0) return 'post';
@@ -364,7 +509,14 @@ export function scoreLabel(score) {
     return `${score} away`;
 }
 
-/** Both scores on the right; post-crawford takes two lines. */
+/**
+ * Both scores on the right; post-crawford takes two lines.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ */
 export function drawScores(two, geom, cfg, position) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
     for (const [i, y] of [side.score1Y, side.score2Y].entries()) {
@@ -378,9 +530,16 @@ export function drawScores(two, geom, cfg, position) {
  * Arrows for a candidate move, one per checker moved (`moves` already mirrored to the display
  * position). Each leaves from the top of its source stack and lands on the next free slot,
  * simulating the intermediate board so two checkers on one point stack.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ * @param {StepMove[] | null | undefined} moves
  */
 export function drawMoveArrows(two, geom, cfg, position, moves) {
     if (!moves || moves.length === 0) return;
+    /** @type {Record<number, number>} */
     const counts = {};
     position.board.points.forEach((point, index) => {
         counts[index] = point.checkers;
@@ -431,10 +590,10 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
  * pas peut partir, un disque là où le pion choisi irait — rien d'autre que `quizPlaySourcesStore`
  * et `quizPlayTargetsStore`. Dessiné après les pions (sinon invisible) et avant les flèches.
  *
- * @param {any} two
- * @param {any} geom
- * @param {any} cfg
- * @param {any} position
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
  * @param {{sources?: Iterable<number>, targets?: Iterable<number>, selected?: number|null}} opts
  */
 export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
@@ -444,7 +603,7 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
 
     const cs = geom.checkerSize;
     const radius = cs * 0.42;
-    const count = (point) => (point === BEAROFF_POINT ? 0 : (position.board.points[point]?.checkers ?? 0));
+    const count = (/** @type {number} */ point) => (point === BEAROFF_POINT ? 0 : (position.board.points[point]?.checkers ?? 0));
 
     for (const point of targets) {
         const centre = stackSlotCenter(geom, cfg, point, Math.min(count(point), 4));
@@ -468,6 +627,13 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
 /**
  * Everything that depends on the position. `opts`: offeredCube, showPipcount, moves (arrows),
  * play (highlights of the move in progress). Returns the cube's box for hit-testing.
+ *
+ * @param {Surface} two
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {BoardPosition} position
+ * @param {{ offeredCube?: boolean, showPipcount?: boolean, moves?: StepMove[] | null, play?: { sources?: Iterable<number>, targets?: Iterable<number>, selected?: number | null } }} [opts]
+ * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     const box = drawDoublingCube(two, geom, cfg, position, !!opts.offeredCube);
