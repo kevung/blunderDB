@@ -621,6 +621,25 @@ func TestGameStartIsTheOpeningRoll(t *testing.T) {
 		t.Errorf("the export does not say the draft is inconsistent")
 	}
 
+	// Re-editing the cell with the same two dice, in either order, keeps the camp:
+	// only a different roll decides the opening again.
+	for _, order := range [][2]int{{2, 5}, {5, 2}} {
+		again := runSteps(t, doc, []step{
+			{name: "back", g: Gesture{Kind: GestureCursorBack}},
+			{name: "die", g: die(order[0])}, {name: "die", g: die(order[1])},
+			{name: "play", g: confirm()},
+		})
+		if a := again.Actions[0]; a.Side != domain.White || a.Dice != [2]int{2, 5} {
+			t.Errorf("re-edited with %v: %+v, want player 2's 52 untouched", order, a)
+		}
+	}
+	// `s` on a first play gives the opening to the other camp, dice with it.
+	flipped := runSteps(t, doc, []step{{name: "back", g: Gesture{Kind: GestureCursorBack}},
+		{name: "flip", g: Gesture{Kind: GestureFlipSide}}})
+	if a := flipped.Actions[0]; a.Side != domain.Black || a.Dice != [2]int{5, 2} {
+		t.Errorf("flipped first play = %+v", a)
+	}
+
 	cube := runSteps(t, New(7), []step{{name: "double", g: Gesture{Kind: GestureDouble}}})
 	if !hasInconsistency(Replay(cube, 0).Actions[0], ImpossibleCube) {
 		t.Errorf("a double before the first play carries no Inconsistency")

@@ -1351,7 +1351,9 @@ videau valent eux aussi comme corrections : sur une passe, *t* — ou le bouton
 supprimer puis insérer. La partie reprend alors son cours : une cellule s'ouvre
 juste après la prise, au camp du doubleur, et la suite de la partie s'y tape
 comme d'habitude, insérée devant le premier coup de la partie suivante, jusqu'à ce
-que la partie se termine. Les mêmes touches remplissent la cellule qu'une
+que la partie se termine. Ce premier coup garde le score auquel sa partie
+commençait, désormais annoncé : si la fin de la partie reprise en donne un
+autre, l'écart est marqué. Les mêmes touches remplissent la cellule qu'une
 insertion vient d'ouvrir : *i* puis *d* insère un double devant l'action visée.
 
 Revenir sur la **dernière** action, c'est revenir là où la transcription
@@ -1360,15 +1362,15 @@ retapé, le chiffre suivant la valide et ouvre la décision d'après ; ENTREE la
 valide de même. Les décisions suivantes s'ajoutent alors à la suite, comme la
 première fois.
 
-Ressaisir les deux dés sur le **premier coup** d'une partie décide à nouveau qui
+Taper un **autre jet** sur le **premier coup** d'une partie décide à nouveau qui
 commence : le dé du joueur 1 se tape en premier, celui du joueur 2 ensuite, et
 c'est le plus fort qui l'emporte — gros dé d'abord, le coup revient au joueur 1,
-en bas du plateau ; petit dé d'abord, il revient au joueur 2, en haut. **Le coup
-change de colonne avec son camp** et reste le même, vu de l'autre côté, tant
-qu'il est légal pour le nouveau jet ; sinon le premier candidat est présélectionné
-et le coup est à revoir. C'est la seule action que ces dés déplacent : la suite
-de la partie garde ses camps, et *s* donne aussi le premier coup à l'autre
-joueur.
+en bas du plateau ; petit dé d'abord, il revient au joueur 2, en haut. Le premier
+candidat du nouveau jet est présélectionné et le coup est à revoir. Retaper le
+**même jet**, dans un ordre ou dans l'autre, ne change rien. Pour donner le
+premier coup à l'autre joueur sans changer de jet, c'est *s* : l'ordre des dés
+suit le camp, et un premier coup joué par le camp que cet ordre ne désigne pas
+est marqué « dés incohérents ». La suite de la partie garde ses camps.
 
 Une **insertion au milieu du document continue d'insérer** : la validation
 ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au

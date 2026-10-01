@@ -77,3 +77,72 @@ func TestUpgradeDropsTheOpenings(t *testing.T) {
 		t.Error("a current document is not returned unchanged")
 	}
 }
+
+// v2 builds a version-2 draft of a 5-point match from its Actions' JSON.
+func v2(t *testing.T, actions string) Document {
+	t.Helper()
+	var doc Document
+	blob := `{"format_version":2,"header":{"match_length":5},"actions":[` + actions + `],"cursor":99}`
+	if err := json.Unmarshal([]byte(blob), &doc); err != nil {
+		t.Fatal(err)
+	}
+	return doc
+}
+
+const wonGame = `{"side":0,"kind":"opening","dice":[3,1]},
+	{"side":0,"kind":"checker","dice":[3,1],"steps":[{"from":8,"to":5},{"from":6,"to":5}]},
+	{"side":1,"kind":"checker","dice":[3,1],"steps":[{"from":17,"to":20},{"from":19,"to":20}]},
+	{"side":0,"kind":"double"},{"side":1,"kind":"pass"}`
+
+// TestUpgradeKeepsATrailingOpening: a draft closed right after an opening keeps what
+// that opening said — the score declared on it, or the end of the game it cut short —
+// for the next Action written at the end.
+func TestUpgradeKeepsATrailingOpening(t *testing.T) {
+	declared := Upgrade(v2(t, wonGame+`,{"side":0,"kind":"opening","dice":[4,2],"score":[3,0]}`))
+	if declared.NextScore == nil || *declared.NextScore != [2]int{3, 0} {
+		t.Fatalf("the declared score was lost: %v", declared.NextScore)
+	}
+	if n := Replay(declared, 0).Next; !n.GameStart || n.Position.Score != [2]int{2, 5} {
+		t.Errorf("next = %+v, want game 2 at the declared 3-0", n)
+	}
+	doc := runSteps(t, declared, []step{
+		{"die 4", die(4), nil}, {"die 2", die(2), nil}, {"a play", candidate(0), nil}, {"validate", confirm(), nil},
+	})
+	if a := lastAction(t, doc); a.Score == nil || *a.Score != [2]int{3, 0} || doc.NextScore != nil {
+		t.Errorf("the first play written = %+v, next score %v", a, doc.NextScore)
+	}
+
+	cut := Upgrade(v2(t, `{"side":0,"kind":"opening","dice":[3,1]},
+		{"side":0,"kind":"checker","dice":[3,1],"steps":[{"from":8,"to":5},{"from":6,"to":5}]},
+		{"side":1,"kind":"opening","dice":[1,6]}`))
+	if cut.NextScore == nil || *cut.NextScore != [2]int{} {
+		t.Fatalf("the cut is lost: %v", cut.NextScore)
+	}
+	if n := Replay(cut, 0).Next; !n.GameStart || n.GameNumber != 2 {
+		t.Errorf("next = %+v, want game 2", n)
+	}
+}
+
+// TestUpgradeFirstPlayDice: the first play takes the opening roll in its order —
+// player 1's die, player 2's — and one the opening does not give is still marked.
+func TestUpgradeFirstPlayDice(t *testing.T) {
+	won := Upgrade(v2(t, `{"side":1,"kind":"opening","dice":[2,5]},
+		{"side":1,"kind":"checker","dice":[5,2],"steps":[{"from":12,"to":17},{"from":12,"to":14}]}`))
+	if a := won.Actions[0]; a.Dice != [2]int{2, 5} || a.Side != domain.White {
+		t.Errorf("player 2's opening play = %+v, want dice [2 5]", a)
+	}
+	if Replay(won, 0).Inconsistent() {
+		t.Errorf("a regular opening is marked: %+v", Replay(won, 0).Actions[0].Inconsistencies)
+	}
+
+	for name, actions := range map[string]string{
+		"played by the loser": `{"side":0,"kind":"opening","dice":[6,3]},
+			{"side":1,"kind":"checker","dice":[6,3],"steps":[{"from":1,"to":7},{"from":12,"to":15}]}`,
+		"another roll": `{"side":0,"kind":"opening","dice":[6,3]},
+			{"side":0,"kind":"checker","dice":[5,2],"steps":[{"from":13,"to":8},{"from":13,"to":11}]}`,
+	} {
+		if info := Replay(Upgrade(v2(t, actions)), 0).Actions[0]; !hasInconsistency(info, InconsistentDice) {
+			t.Errorf("%s: not marked: %+v", name, info.Inconsistencies)
+		}
+	}
+}

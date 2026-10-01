@@ -35,7 +35,6 @@ change ensuite que par le geste « changer de camp ».
 
 | `kind` | Champs propres | Ce que la sauvegarde en fait |
 |---|---|---|
-| `opening` | `dice[2]` : dé du J1, dé du J2 ; `score[2]` **facultatif** : le score annoncé de la partie qu'elle ouvre (ADR-0053) | rien de propre ; fixe le `side` et le jet de la première Action `checker` ; une égalité reste dans le document (affichée « relance ») et ne produit ni Move ni Position ; un score annoncé devient l'`InitialScore` du Game |
 | `checker` | `dice[2]`, `steps[]` (`from`, `to`, `hit`) ; `board_after` **seulement** si le coup est illégal | un Move `checker` avec sa notation et la Position d'avant le coup |
 | `dance` | `dice[2]` | un Move `checker` « Cannot Move », sa Position |
 | `unrecorded` | `dice[2]` | un Move `checker` de notation `???`, sa Position ; le coup a été joué, le fichier ne dit pas lequel |
@@ -44,9 +43,14 @@ change ensuite que par le geste « changer de camp ».
 | `pass` | — | un Move `cube` `Pass`, sa Position ; termine la partie |
 | `resign` | `level` ∈ {1, 2, 3} | rien dans `move` ; `winner` et `points_won` de la partie |
 
-La première Action d'une partie est toujours `opening`. Après `opening`, le camp du gagnant
-du jet joue un `checker` avec **les deux dés de l'ouverture** — l'utilisateur ne les
-ressaisit pas. Une `opening` à égalité est suivie d'une autre `opening`.
+Il n'y a pas d'Action d'ouverture. La première Action d'une partie est son premier coup,
+joué par le gagnant du jet d'ouverture avec ce jet : ses `dice` sont **dé du J1, dé du J2**,
+et le plus haut désigne le camp qui joue. Un premier coup en double est marqué « dés
+incohérents » (aucun jet d'ouverture n'est un double), comme un premier coup joué par le
+camp que l'ordre des dés ne désigne pas ; un `double` avant le premier coup est un « videau
+impossible ». Les égalités (relances) ne se transcrivent pas. Toute Action peut porter
+`score[2]` **facultatif**, le score annoncé de la partie qu'elle ouvre (ADR-0053) : une
+Action qui en porte un ouvre toujours une partie, et close inachevée celle en cours.
 
 ### 1.3 Ce que le Replay dérive
 
@@ -64,13 +68,13 @@ les `steps` correspondent (comparaison par plateau résultant, jamais par notati
 selon que l'adversaire a sorti au moins un pion, aucun, ou aucun avec un pion dans le jan
 adverse ou à la barre, × valeur du videau), après un `pass` (valeur du videau avant le
 double), après un `resign` (`level` × valeur du videau). Le score de la partie suivante
-en découle ; l'`opening` suivante est attendue.
+en découle ; le premier coup de la partie suivante est attendu.
 
-**Score annoncé** (ADR-0053) : **sauf** quand l'ouverture qui commence une partie porte un
+**Score annoncé** (ADR-0053) : **sauf** quand la première Action d'une partie porte un
 `score`. La partie est alors jouée à ce score — `initial_score`, scores away de ses
 positions, mention Crawford, et tout ce qui suit en découle —, et s'il n'est pas celui que
-donnent les parties précédentes, l'ouverture porte l'Incohérence « score annoncé
-incohérent ». Un score annoncé sur une relance, en argent ou négatif est marqué de même et
+donnent les parties précédentes, cette Action porte l'Incohérence « score annoncé
+incohérent ». Un score annoncé en argent (autre que 0-0) ou négatif est marqué de même et
 ignoré.
 
 **Crawford** : la première partie où un joueur atteint `match_length − 1` est la partie
@@ -86,12 +90,12 @@ l'Incohérence « au-delà de la fin ».
 | Incohérence | Détection | Conservée |
 |---|---|---|
 | coup illégal | `board_after` n'est le résultat d'aucun coup de `LegalMoves(position d'avant)` ; ou `steps` ne correspondent à aucun coup légal après une correction en amont | oui, `board_after` fait foi |
-| double trait | deux Actions consécutives de même `side` hors `opening`/`take`/`pass` (après un `take`, le doubleur rejoue : ce n'est pas un double trait) | oui |
+| double trait | deux Actions consécutives de même `side` d'une même partie, hors `take`/`pass`/`resign` (après un `take`, le doubleur rejoue : ce n'est pas un double trait) | oui |
 | videau impossible | `double` par un camp qui ne possède pas le videau (ni centré) ; `double` en partie Crawford ; `take`/`pass` sans `double` juste avant ; `double` avec un videau déjà au plafond `max_cube` s'il est défini | oui |
 | au-delà de la fin | Action après que le match est gagné | oui |
 | dés incohérents | `checker` dont les `steps` n'utilisent pas les dés de l'Action (cas produit par une correction de jet) | oui, requalifie le coup en illégal |
 | coup non consigné | Action `unrecorded` : le jet est connu, le coup ne l'est pas (`???` dans un `.mat` de gnubg) | oui, le plateau d'avant est reconduit et tout ce qui suit est invérifiable |
-| score annoncé incohérent | l'ouverture d'une partie annonce un score que les parties précédentes ne donnent pas (ADR-0053) ; ou un score qui ne peut servir : sur une relance, en argent, négatif | oui, la partie est jouée au score annoncé, le détail cite le score dérivé |
+| score annoncé incohérent | la première Action d'une partie annonce un score que les parties précédentes ne donnent pas (ADR-0053) ; ou un score qui ne peut servir : en argent, négatif | oui, la partie est jouée au score annoncé, le détail cite le score dérivé |
 
 Le **coup non consigné** n'est pas une danse. Une cellule qui ne porte que ses dés dit que
 le joueur n'a **pas pu** jouer ; une cellule `???` dit que gnubg n'a **pas consigné** ce
@@ -109,8 +113,8 @@ annoté`. Les touches sont dans [ux.md](ux.md) ; ici, l'effet.
 
 | Geste | Précondition | Effet | Replay depuis |
 |---|---|---|---|
-| créer un brouillon | longueur donnée | document vide, une `opening` attendue | — |
-| saisir un dé | Action en cours `opening` ou `checker` attendue | remplit le premier dé libre ; si les deux sont pleins, recommence | — |
+| créer un brouillon | longueur donnée | document vide, le premier coup d'une partie attendu | — |
+| saisir un dé | `checker` attendue | remplit le premier dé libre ; si les deux sont pleins, recommence ; au premier coup d'une partie, le second dé désigne le camp (le plus haut joue), sauf si le jet ressaisi est celui déjà écrit | — |
 | effacer les dés | dés saisis, Action non validée | vide les deux dés | — |
 | sélectionner un candidat | jet saisi, coups légaux non vides | `steps` = ceux du candidat | — |
 | valider | candidat sélectionné | l'Action `checker` est **créée** au Cursor (ou remplace l'Action corrigée) ; le Cursor avance | l'Action créée |
@@ -125,7 +129,7 @@ annoté`. Les touches sont dans [ux.md](ux.md) ; ici, l'effet.
 | changer de camp | Cursor sur une Action | `side` inversé | l'Action |
 | changer la longueur | — | `match_length` ; en argent ↔ match, drapeaux de session réévalués | la première Action |
 | inverser les joueurs | — | noms échangés ; tous les `side` inversés ; plateau retourné ; scores annoncés inversés | la première Action |
-| annoncer le score d'une partie | partie qui commence par une `opening`, match (pas d'argent), score ≥ 0 ; un score ≥ `match_length` est accepté et marqué | `score` posé sur l'ouverture de la partie (geste `set_score`, `At` = l'index de l'ouverture) ; sans score, il est effacé et la partie revient au score dérivé ; le Cursor ne bouge pas (ADR-0053) | l'ouverture (Cursor tenu) |
+| annoncer le score d'une partie | `At` = la première Action d'une partie, match (pas d'argent), score ≥ 0 ; un score ≥ `match_length` est accepté et marqué | `score` posé sur la première Action de la partie (geste `set_score`) ; sans score, il est effacé et la partie revient au score dérivé ; le Cursor ne bouge pas (ADR-0053) | cette Action (Cursor tenu) |
 | annuler / rétablir | pile non vide | document précédent / suivant (pile en mémoire) | tout |
 | enregistrer | au moins une Action | Match créé ou remplacé (§4) | — |
 | exporter `.mat` | — | fichier rendu depuis le document ; avertissement si coup illégal | — |
@@ -189,7 +193,9 @@ repart. Aucun état n'est stocké pour cela.
   « Invalid move » et divergeront ensuite ; l'export n'est jamais refusé.
 - **Score annoncé** : la ligne de score d'une partie est son `InitialScore`, donc le score
   annoncé quand il y en a un (ADR-0053). À la lecture, une ligne de score que les parties
-  précédentes ne donnent pas redevient un score annoncé sur l'ouverture de la partie.
+  précédentes ne donnent pas redevient un score annoncé sur la première Action de la
+  partie ; le premier coup prend l'ordre de l'ouverture (dé J1, dé J2), le `.mat` écrivant
+  le gros dé d'abord.
 - **Coup non consigné** : lu `???`, rendu `???`. L'aller-retour d'un `.mat` de gnubg qui en
   porte redonne le même nombre de cellules `???`, jamais des danses.
 - **Aller-retour** : `gnubgparser.ParseMAT(ingest.RenderMAT(transcript.MatchParts(doc)))`
@@ -203,21 +209,21 @@ repart. Aucun état n'est stocké pour cela.
 État avant → gestes → état après. Les touches sont dans ux.md.
 
 1. **Nouveau match** : aucun brouillon ouvert → « nouvelle transcription », longueur → document
-   vide, `opening` attendue, plateau initial, score `[N, N]`.
-2. **Ouverture** : `opening` attendue → dé J1, dé J2 → si égalité : « relance », `opening`
-   attendue ; sinon le gagnant a le trait, ses candidats pour ce jet sont listés.
+   vide, premier coup attendu, plateau initial, score `[N, N]`.
+2. **Premier coup** : premier coup attendu → dé J1, dé J2 → le plus haut a le trait, ses
+   candidats pour ce jet sont listés → choix → validation. Les égalités ne se saisissent pas.
 3. **Tour de pions** : `checker` attendue → deux dés → liste, premier présélectionné → choix
    → validation → Action créée, plateau avancé, trait à l'autre camp.
 4. **Danse** : deux dés → aucun coup → `dance` créée, trait à l'autre camp.
 5. **Double / prise** : trait au camp A, videau disponible → `double` → `take` par B → videau
    à B au niveau doublé, trait à A, dés attendus.
 6. **Double / passe** : `double` → `pass` → partie gagnée par A de la valeur d'avant le
-   double ; score avancé ; `opening` attendue.
+   double ; score avancé ; premier coup de la partie suivante attendu.
 7. **Redouble** : videau possédé par A → `double` par A → §5/§6.
 8. **Résignation** : partie en cours → camp, niveau → partie gagnée par l'autre ; score ;
-   `opening` attendue.
+   premier coup de la partie suivante attendu.
 9. **Fin de partie par sortie** : `checker` qui sort le quinzième pion → points calculés ;
-   score ; `opening` attendue.
+   score ; premier coup de la partie suivante attendu.
 10. **Partie suivante** : score affiché, Crawford dérivé et affiché si c'est la partie.
 11. **Fin de match** : score atteint `match_length` → le document est « terminé » ; toute
     Action de plus est marquée.

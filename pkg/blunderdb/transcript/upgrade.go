@@ -14,7 +14,12 @@ const kindOpening Kind = "opening"
 // re-roll after a tie is dropped with it — the declared score of a tie passes to
 // the game's first play all the same. An opening that cut a game short becomes a
 // declared score on the next game's first Action, the one thing that still starts a
-// game while another is running. The Cursor keeps its Action, or the end.
+// game while another is running; an opening with nothing behind it leaves that
+// boundary waiting at the end ([Document.NextScore]). The Cursor keeps its Action,
+// or the end.
+//
+// The first play takes the opening roll, player 1's die then player 2's: played by
+// the opening's loser, or with another roll, it reads back marked as it was.
 func Upgrade(doc Document) Document {
 	if doc.FormatVersion >= FormatVersion {
 		return doc
@@ -27,13 +32,17 @@ func Upgrade(doc Document) Document {
 	st := newState(doc.Header)
 	opened := false
 	var declared *[2]int
+	var roll [2]int
 	for i, a := range doc.Actions {
 		if i == doc.Cursor {
 			out.Cursor = len(out.Actions)
 		}
 		if a.Kind == kindOpening {
 			if !opened {
-				opened, declared = true, nil
+				opened, declared, roll = true, nil, [2]int{}
+			}
+			if a.Dice[0] != a.Dice[1] {
+				roll = a.Dice
 			}
 			if a.Score != nil && declared == nil {
 				sc := *a.Score
@@ -50,9 +59,25 @@ func Upgrade(doc Document) Document {
 				declared = &sc
 			}
 			a.Score, declared = declared, nil
+			switch {
+			case a.Kind != KindChecker && a.Kind != KindDance && a.Kind != KindUnrecorded:
+			case roll != [2]int{}:
+				a.Dice = roll
+			default:
+				a.Dice = openingOrder(a)
+			}
 		}
 		st.step(len(out.Actions), a)
 		out.Actions = append(out.Actions, a)
+	}
+	if opened {
+		switch {
+		case declared != nil:
+			out.NextScore = declared
+		case st.gameActive:
+			sc := st.points
+			out.NextScore = &sc
+		}
 	}
 	if out.Cursor < 0 || doc.Cursor >= len(doc.Actions) {
 		out.Cursor = len(out.Actions)

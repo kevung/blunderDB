@@ -69,6 +69,7 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 		push := func(a Action) {
 			if first {
 				a.Score, first = declared, false
+				a.Dice = openingOrder(a)
 			}
 			push(a)
 		}
@@ -102,8 +103,34 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 		}
 	}
 
+	// A last game with nothing in it yet is a boundary waiting for its first play.
+	if n := len(parsed.Games); n > 0 && len(parsed.Games[n-1].Moves) == 0 {
+		if _, points := statedResult(parsed.Games, n-1, doc.Header.MatchLength); points == 0 {
+			score := parsed.Games[n-1].Score
+			if doc.Header.MatchLength <= 0 {
+				score = [2]int{}
+			}
+			doc.NextScore = &score
+		}
+	}
+
 	doc.Cursor = len(doc.Actions)
 	return doc, nil
+}
+
+// openingOrder writes a game's first roll as the opening roll it was: player 1's
+// die then player 2's, the higher one with the side that plays. A .mat writes the
+// roll as it fell, which says nothing of who won the opening.
+func openingOrder(a Action) [2]int {
+	d := a.Dice
+	if a.Kind != KindChecker && a.Kind != KindDance && a.Kind != KindUnrecorded || d[0] == d[1] {
+		return d
+	}
+	hi, lo := max(d[0], d[1]), min(d[0], d[1])
+	if a.Side == domain.White {
+		return [2]int{lo, hi}
+	}
+	return [2]int{hi, lo}
 }
 
 // statedResult is what the FILE says a game was worth: the next game's score line,

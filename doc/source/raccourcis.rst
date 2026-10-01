@@ -301,7 +301,7 @@ veille ne demande pas la souris.
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé. Sur le premier coup d'une partie : dé du joueur 1, puis dé du joueur 2 (le plus fort commence et joue les deux dés)."
    "1 … 6 (jet saisi)", "Valider le coup sélectionné et ouvrir le jet suivant. Sur une action relue, où le curseur est posé sur une action déjà écrite, le chiffre recommence le jet de cette action au lieu de valider."
-   "1 … 6 (curseur sur le premier coup d'une partie)", "Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2. Le plus fort l'emporte — gros dé d'abord, le coup revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut. Le coup change de colonne avec son camp et reste le même s'il est encore légal."
+   "1 … 6 (curseur sur le premier coup d'une partie)", "Taper un autre jet d'ouverture : dé du joueur 1 puis dé du joueur 2. Le plus fort l'emporte — gros dé d'abord, le coup revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut ; le premier candidat est présélectionné. Le même jet retapé ne change rien ; *s* donne le coup à l'autre joueur."
    "BAS, j", "Sélectionner le candidat suivant (les flèches du coup apparaissent sur le plateau)."
    "HAUT, k", "Sélectionner le candidat précédent."
    "Molette", "Sélectionner le candidat suivant ou précédent, au-dessus de la liste comme au-dessus du damier : le regard reste sur le plateau et les flèches défilent."

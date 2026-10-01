@@ -7,42 +7,31 @@ import (
 )
 
 // TestFirstPlayRetypedChangesCamp: the dice of a game's first play are the opening
-// roll, so typing them again decides once more who starts. The play follows its new
-// camp — mirrored, since the starting board is symmetric — and nothing else moves.
+// roll, so typing ANOTHER roll there decides once more who starts; the same two dice,
+// in either order, change nothing. Nothing but the first play moves.
 func TestFirstPlayRetypedChangesCamp(t *testing.T) {
-	// 3 then 6 on the first play: the higher die is player 2's now.
-	retype := func(t *testing.T, doc Document) Document {
+	retype := func(t *testing.T, doc Document, d1, d2 int) Document {
 		t.Helper()
 		return runSteps(t, seek(t, doc, 0), []step{
-			{"first die", die(3), nil},
-			{"second die", die(6), nil},
+			{"first die", die(d1), nil},
+			{"second die", die(d2), nil},
 			{"validate", confirm(), nil},
 		})
 	}
 
-	t.Run("the play changes camp with the winner", func(t *testing.T) {
+	t.Run("another roll changes camp with the winner", func(t *testing.T) {
 		doc := runSteps(t, openedMatch(t, 7), []step{
 			{"a play", candidate(0), nil},
 			{"validate", confirm(), nil},
 		})
-		if doc.Actions[0].Side != domain.Black {
-			t.Fatalf("the fixture does not start with player 1: %+v", doc.Actions)
+		played := doc.Actions[0]
+		if same := retype(t, doc, 3, 6).Actions[0]; same.Side != domain.Black || same.Dice != [2]int{6, 3} ||
+			!sameSteps(same.Steps, played.Steps) {
+			t.Errorf("the same roll retyped = %+v, want the play untouched", same)
 		}
-		var mirrored []domain.CheckerStep
-		for _, st := range doc.Actions[0].Steps {
-			mirrored = append(mirrored, domain.CheckerStep{From: mirrorIndex(st.From), To: mirrorIndex(st.To)})
-		}
-
-		doc = retype(t, doc)
-
-		if a := doc.Actions[0]; a.Side != domain.White || a.Dice != [2]int{3, 6} {
-			t.Fatalf("first play = %+v, want player 2's 36", a)
-		}
-		if !sameSteps(doc.Actions[0].Steps, mirrored) {
-			t.Errorf("steps = %v, want the recorded play mirrored %v", doc.Actions[0].Steps, mirrored)
-		}
-		if len(doc.Actions) != 1 || Replay(doc, 0).Inconsistent() {
-			t.Errorf("actions = %s", dumpActions(doc.Actions))
+		if a := retype(t, doc, 2, 5).Actions[0]; a.Side != domain.White || a.Dice != [2]int{2, 5} ||
+			!diceCoherent(a.Steps, a.Dice, a.Side) {
+			t.Errorf("first play = %+v, want a play of player 2's 52", a)
 		}
 	})
 
@@ -53,7 +42,7 @@ func TestFirstPlayRetypedChangesCamp(t *testing.T) {
 			sides[i] = a.Side
 		}
 
-		doc = retype(t, doc)
+		doc = retype(t, doc, 2, 5)
 
 		for i := 1; i < len(doc.Actions); i++ {
 			if doc.Actions[i].Side != sides[i] {

@@ -86,12 +86,13 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 	}
 	// The game the pass had WON is nobody's again, which is the whole point: it
 	// runs on until the rest of it is typed in front of the next game's plays,
-	// and it is worth no points to anybody.
+	// and it is worth no points to anybody. The next game keeps its boundary by
+	// declaring the score it started at, so it is not swallowed meanwhile.
 	if g := state.Annotated.Games[0]; g.Winner != -1 || g.PointsWon != 0 {
 		t.Errorf("game 1 = %+v, want it won by nobody — the take was not replayed", g)
 	}
-	if state.Annotated.Score != [2]int{0, 0} {
-		t.Errorf("score = %v, want 0–0: the pass no longer gives a point away", state.Annotated.Score)
+	if g := state.Annotated.Games[1]; !g.Declared || g.First != passAt+1 {
+		t.Errorf("game 2 = %+v, want it kept, opened at %d by its declared score", g, passAt+1)
 	}
 }
 
@@ -132,23 +133,28 @@ func TestTranscriptionFirstPlayRetypedDecidesWhoStarts(t *testing.T) {
 		t.Fatalf("entry = %+v, want the first play held for correction as a game's first", e)
 	}
 
-	// 3 then 6: the higher die is player 2's now, and player 2 plays first.
+	// The same roll retyped changes nothing; 2 then 5 is another roll, and its
+	// higher die is player 2's: player 2 plays first.
 	apply(die(3))
-	state = apply(die(6))
+	if state = apply(die(6)); state.Annotated.Entry == nil || state.Annotated.Entry.Side != 0 {
+		t.Fatalf("entry = %+v, want the same roll left with player 1", state.Annotated.Entry)
+	}
+	apply(die(2))
+	state = apply(die(5))
 	if e := state.Annotated.Entry; e == nil || e.Side != 1 || !e.Selected {
 		t.Fatalf("entry = %+v, want player 2 with the play preselected", e)
 	}
 	state = apply(transcript.Gesture{Kind: transcript.GestureValidate})
 
 	first := state.Annotated.Document.Actions[0]
-	if first.Kind != transcript.KindChecker || first.Dice != [2]int{3, 6} {
+	if first.Kind != transcript.KindChecker || first.Dice != [2]int{2, 5} {
 		t.Fatalf("first play = %+v, want the roll retyped", first)
 	}
 	if first.Side != 1 {
 		t.Errorf("side = %d, want player 2 — the small die first gives the turn to the top", first.Side)
 	}
 	if flags := state.Annotated.Actions[0].Inconsistencies; len(flags) != 0 {
-		t.Errorf("the first play carries %+v; the mirrored play is player 2's legal 6-3", flags)
+		t.Errorf("the first play carries %+v; the preselected play is player 2's legal 5-2", flags)
 	}
 	if len(state.Annotated.Document.Actions) != 1 {
 		t.Errorf("actions = %d, want 1 — the first play was replaced, not inserted", len(state.Annotated.Document.Actions))

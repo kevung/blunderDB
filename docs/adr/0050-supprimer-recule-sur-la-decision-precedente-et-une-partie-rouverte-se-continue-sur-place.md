@@ -19,8 +19,11 @@ mais la cellule suivante est le premier coup de la partie d'après : la suite ta
    un brouillon vide répond « aucune action sous le curseur ».
 2. **Une correction qui laisse sa partie ouverte, quand l'Action suivante ouvrait la partie
    d'après, ouvre un créneau d'insertion juste après elle**, au camp que la suite propose
-   (après une prise, le doubleur). Tant que la partie n'est pas finie, le Replay rattache à
-   elle les coups de la partie suivante et les marque ; la fin de la partie les rend à la leur.
+   (après une prise, le doubleur). Le premier coup de la partie suivante reçoit le score
+   dérivé auquel elle commençait, comme score annoncé (ADR-0053) : il garde sa frontière, et
+   la partie continuée ne l'absorbe pas — elle reste inachevée tant que la suite n'est pas
+   tapée. Ce score ne suit pas une fin de partie tapée ensuite : un écart avec le nouveau
+   score dérivé est marqué.
 3. **Une insertion qui continue s'arrête quand sa partie se termine** : le curseur se pose sur
    le premier coup de la partie suivante.
 4. **Ces gestes tiennent le curseur** (`Document.HoldCursor`, lu par `Editor.From`) : le Replay

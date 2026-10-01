@@ -169,6 +169,12 @@ type Document struct {
 	Actions       []Action `json:"actions"`
 	Cursor        int      `json:"cursor"`
 
+	// NextScore is a game boundary waiting for its first Action: the score the next
+	// Action appended at the end declares, opening a game with it (and closing,
+	// unfinished, one still running). Only a converted draft whose last opening had
+	// no play behind it, or a .mat whose last game has none, leaves one.
+	NextScore *[2]int `json:"next_score,omitempty"`
+
 	Entry     *Entry `json:"-"`
 	Return    int    `json:"-"`
 	HasReturn bool   `json:"-"`
@@ -240,6 +246,10 @@ func (d Document) clone() Document {
 	out.Actions = make([]Action, len(d.Actions))
 	for i, a := range d.Actions {
 		out.Actions[i] = a.clone()
+	}
+	if d.NextScore != nil {
+		sc := *d.NextScore
+		out.NextScore = &sc
 	}
 	if d.pendingBoard != nil {
 		b := *d.pendingBoard

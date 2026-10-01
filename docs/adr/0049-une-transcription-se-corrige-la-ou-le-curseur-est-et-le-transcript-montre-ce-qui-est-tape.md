@@ -40,10 +40,13 @@ Le geste écrit où le curseur est, et ce qui est tapé se voit à cette place a
    marqué `inconsistent_dice`, aucun jet d'ouverture n'étant un double. Les égalités, rejouées
    à la table, ne se transcrivent pas. Ailleurs le trait est proposé par le Replay, et `s` le
    change sur une Action écrite, premier coup compris.
-7. **Retaper les dés d'un premier coup redécide son camp**, et le coup suit en miroir s'il
-   reste légal (la position de départ est symétrique) ; sinon le premier candidat est
-   présélectionné et la cellule marquée à revoir. Le reste de la partie garde ses camps
-   (ADR-0045 règle 4).
+7. **Taper un autre jet sur un premier coup redécide son camp** (dé du joueur 1, puis dé du
+   joueur 2) ; le coup écrit ne correspond plus au jet : le premier candidat est présélectionné
+   et la cellule marquée à revoir. Retaper le même jet, dans un ordre ou dans l'autre, ne
+   change rien — ni camp, ni ordre des dés, ni coup. `s` donne le premier coup à l'autre camp
+   sans changer de jet et échange l'ordre de ses dés ; un premier coup joué par le camp que
+   cet ordre ne désigne pas est marqué `inconsistent_dice`. Le reste de la partie garde ses
+   camps (ADR-0045 règle 4).
 
 ## Conséquences
 

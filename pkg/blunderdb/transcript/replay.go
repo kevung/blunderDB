@@ -263,7 +263,7 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 			out.Winner = domain.White
 		}
 	}
-	out.Next = s.next()
+	out.Next = s.next(doc.NextScore)
 	if e := doc.Entry; e != nil {
 		out.Entry = &EntryInfo{
 			At:        e.At,
@@ -310,8 +310,10 @@ func slotOpensGame(ann Annotated, at int, replacing bool) bool {
 	if gi < 0 || gi >= len(ann.Games) {
 		return true
 	}
+	// A game closed by the next one's declared score, unfinished, has no winner:
+	// the slot after it still belongs to it.
 	g := ann.Games[gi]
-	return g.Finished && g.Last == at-1
+	return g.Finished && g.Winner >= 0 && g.Last == at-1
 }
 
 // reusable returns how many leading Actions the cache still describes: the length of
@@ -578,11 +580,21 @@ func (s *state) step(i int, a Action) ActionInfo {
 	switch a.Kind {
 	case KindChecker, KindDance, KindUnrecorded:
 		s.ensureGame()
-		pos := s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
+		dice := a.Dice
+		if opens {
+			// The opening order (player 1's die first) is the document's; the
+			// Position, the saved Move and the .mat carry the roll high die first,
+			// as every other source writes an opening play.
+			dice = [2]int{max(dice[0], dice[1]), min(dice[0], dice[1])}
+		}
+		pos := s.position(a.Side, dice, domain.CheckerAction, s.cube)
 		info.Before, info.HasPosition = pos, true
 		legal := domain.LegalMoves(&pos)
 		if opens && a.Dice[0] != 0 && a.Dice[0] == a.Dice[1] {
 			info.add(InconsistentDice, fmt.Sprintf("the game's first play is rolled %d%d: no opening roll is a double", a.Dice[0], a.Dice[1]))
+		}
+		if w := openingWinner(a.Dice); opens && w >= 0 && w != a.Side {
+			info.add(InconsistentDice, fmt.Sprintf("player %d won the opening roll and plays first", w+1))
 		}
 
 		if a.Kind == KindUnrecorded {
@@ -732,17 +744,28 @@ func (s *state) declare(info *ActionInfo, score [2]int) bool {
 // next describes the Action the document is waiting for, on a projection of the state:
 // when a game has just ended, the score and the Crawford mention of the game to come
 // are already the ones the panel must show.
-func (s *state) next() Next {
+func (s *state) next(nextScore *[2]int) Next {
 	proj := *s
 	proj.games = append([]GameInfo(nil), s.games...)
+	gameStart := !s.gameActive
+	if nextScore != nil {
+		// A boundary waiting at the end: the next Action opens a game at that score.
+		proj.endGame(-1, 0)
+		if proj.header.MatchLength > 0 && nextScore[0] >= 0 && nextScore[1] >= 0 {
+			proj.points = *nextScore
+		}
+		gameStart = true
+	}
+	active := proj.gameActive
 	proj.ensureGame()
 
 	n := Next{MatchOver: s.matchOver(), GameNumber: len(proj.games)}
 	if len(proj.games) > 0 {
 		n.Crawford = proj.games[len(proj.games)-1].Crawford
 	}
+	n.MatchOver = proj.matchOver()
 	switch {
-	case !s.gameActive:
+	case gameStart || !active:
 		n.Expects, n.Side, n.GameStart = KindChecker, domain.Black, true
 	case s.pendingDouble >= 0:
 		n.Expects, n.Side = KindTake, opponent(s.pendingDouble)
@@ -760,6 +783,18 @@ func (s *state) next() Next {
 	}
 	n.Position = proj.position(n.Side, [2]int{}, decision, cube)
 	return n
+}
+
+// openingWinner is the side an opening roll names — the dice are player 1's then
+// player 2's, the higher one wins — or -1 for a double or an incomplete roll.
+func openingWinner(d [2]int) int {
+	switch {
+	case d[0] == 0 || d[1] == 0 || d[0] == d[1]:
+		return -1
+	case d[0] > d[1]:
+		return domain.Black
+	}
+	return domain.White
 }
 
 // findPlay returns the legal play that reaches board, or nil. The comparison is by

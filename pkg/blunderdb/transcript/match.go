@@ -25,8 +25,7 @@ type Parts struct {
 //
 // A game is one Game with its initial score, its winner and its points; every checker,
 // dance, double, take and pass Action is one Move. A resignation is none of them: it
-// leaves winner and points on the Game and adds no row to `move` (ADR-0045 §6), and an
-// opening produces nothing at all.
+// leaves winner and points on the Game and adds no row to `move` (ADR-0045 §6).
 //
 // Positions are not in the triplet; take [Build], or read ActionInfo.Before at
 // ActionInfo.GameIndex/MoveNumber.

@@ -18,7 +18,8 @@ const (
 	// GestureEnterDie fills the first free die of the Action being typed; once both
 	// are full it starts the roll again. On a game's first play the two dice are the
 	// opening roll, player 1's die then player 2's: the higher one gives the play to
-	// its side, and a double names no one.
+	// its side, and a double names no one. Retyping the roll a first play already
+	// has, in either order, leaves its camp and its order alone.
 	GestureEnterDie GestureKind = "enter_die"
 	// GestureClearDice empties both dice of an Action not yet validated.
 	GestureClearDice GestureKind = "clear_dice"
@@ -189,10 +190,11 @@ func apply(doc Document, g Gesture) (Document, error) {
 			e.Dice = [2]int{g.Die, 0}
 		}
 		e.Steps, e.Selected, e.Review = nil, false, false
-		if d := e.Dice; d[1] != 0 && d[0] != d[1] && slotOpensGame(Replay(out, 0), e.At, e.Mode == EntryReplace) {
-			e.Side = domain.Black
-			if d[1] > d[0] {
-				e.Side = domain.White
+		if d := e.Dice; d[1] != 0 && slotOpensGame(Replay(out, 0), e.At, e.Mode == EntryReplace) {
+			if e.Mode == EntryReplace && e.At < len(out.Actions) && sameRoll(d, out.Actions[e.At].Dice) {
+				e.Dice, e.Side = out.Actions[e.At].Dice, out.Actions[e.At].Side
+			} else if w := openingWinner(d); w >= 0 {
+				e.Side = w
 			}
 		}
 		reroll(&out)
@@ -288,7 +290,13 @@ func apply(doc Document, g Gesture) (Document, error) {
 		if out.Cursor < 0 || out.Cursor >= len(out.Actions) {
 			return doc, ErrNoAction
 		}
-		out.Actions[out.Cursor].Side = opponent(out.Actions[out.Cursor].Side)
+		a := &out.Actions[out.Cursor]
+		a.Side = opponent(a.Side)
+		// A game's first play holds the opening roll in player order: giving it to
+		// the other camp gives that camp the higher die.
+		if openingWinner(a.Dice) >= 0 && Replay(out, 0).Actions[out.Cursor].OpensGame {
+			a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
+		}
 		out.Touched, out.HasTouched = out.Cursor, true
 		out.Entry = nil
 		return out, nil
@@ -315,6 +323,8 @@ func apply(doc Document, g Gesture) (Document, error) {
 		for i := range out.Actions {
 			a := &out.Actions[i]
 			a.Side = opponent(a.Side)
+			// The dice are player 1's then player 2's on a game's first play.
+			a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
 			if a.Score != nil {
 				a.Score[0], a.Score[1] = a.Score[1], a.Score[0]
 			}
@@ -326,6 +336,9 @@ func apply(doc Document, g Gesture) (Document, error) {
 				b := mirrorBoard(*a.BoardAfter)
 				a.BoardAfter = &b
 			}
+		}
+		if out.NextScore != nil {
+			out.NextScore[0], out.NextScore[1] = out.NextScore[1], out.NextScore[0]
 		}
 		out.Entry = nil
 		return out, nil
@@ -366,6 +379,11 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 	out.Actions[at].Score = &sc
 	out.HoldCursor = true
 	return out, nil
+}
+
+// sameRoll reports whether two rolls are the same two dice, in either order.
+func sameRoll(a, b [2]int) bool {
+	return a == b || a == [2]int{b[1], b[0]}
 }
 
 // mergeHeader writes the descriptive fields of `in` over `cur` and keeps length,
@@ -538,11 +556,16 @@ func gameEndsAt(doc Document, at int) bool {
 
 // continueGame opens the slot right after `at` when the Action written there leaves
 // its game running although the next Action started the next game before the
-// correction (`nextOpened`; a pass turned take, ADR-0050): rolls are INSERTED until
-// the game ends, rather than overwriting that game's first play.
-func continueGame(doc *Document, at int, nextOpened bool) bool {
-	if !nextOpened || at+1 >= len(doc.Actions) || doc.Actions[at+1].Score != nil || gameEndsAt(*doc, at) {
+// correction (a pass turned take, ADR-0050): rolls are INSERTED until the game ends,
+// rather than overwriting that game's first play. `nextScore` is the score that
+// game started at; it is declared on its first play, so the game being continued
+// cannot swallow it.
+func continueGame(doc *Document, at int, nextScore *[2]int) bool {
+	if nextScore == nil || at+1 >= len(doc.Actions) || gameEndsAt(*doc, at) {
 		return false
+	}
+	if doc.Actions[at+1].Score == nil {
+		doc.Actions[at+1].Score = nextScore
 	}
 	doc.Cursor, doc.HasReturn = at+1, false
 	doc.Entry, doc.pendingBoard = &Entry{Side: proposedSide(*doc, at+1), Mode: EntryNew, At: at + 1}, nil
@@ -632,14 +655,6 @@ func reroll(doc *Document) {
 	// that its steps fit the dice (§1.4 "dés incohérents": a 6-1 played as
 	// 8/2 6/5 lands where a 6-1 lands, yet is no 5-4).
 	steps := played.Steps
-	if played.Side != e.Side {
-		// A game's first play changing camp with its opening roll: the starting
-		// board is symmetric, so the same play, mirrored, is the new winner's.
-		steps = make([]domain.CheckerStep, len(played.Steps))
-		for i, st := range played.Steps {
-			steps[i] = domain.CheckerStep{From: mirrorIndex(st.From), To: mirrorIndex(st.To)}
-		}
-	}
 	if _, reached := resolveSteps(pos.Board, e.Side, steps); findPlay(legal, reached) != nil &&
 		diceCoherent(steps, e.Dice, e.Side) {
 		e.Steps = append([]domain.CheckerStep(nil), steps...)
@@ -744,9 +759,16 @@ func record(doc Document, a Action) Document {
 		if a.Score == nil {
 			a.Score = doc.Actions[at].Score
 		}
-		nextOpened := at+1 < len(doc.Actions) && gameEndsAt(doc, at)
+		var nextScore *[2]int
+		if at+1 < len(doc.Actions) && gameEndsAt(doc, at) {
+			ann := Replay(doc, 0)
+			if gi := ann.Actions[at+1].GameIndex; gi >= 0 {
+				sc := ann.Games[gi].InitialScore
+				nextScore = &sc
+			}
+		}
 		doc.Actions[at] = a
-		if continueGame(&doc, at, nextOpened) {
+		if continueGame(&doc, at, nextScore) {
 			return doc
 		}
 		doc.Cursor = at + 1
@@ -763,6 +785,13 @@ func record(doc Document, a Action) Document {
 		if at < len(doc.Actions) && doc.Actions[at].Score != nil && a.Score == nil &&
 			slotOpensGame(Replay(doc, 0), at, false) {
 			a.Score, doc.Actions[at].Score = doc.Actions[at].Score, nil
+		}
+		// A boundary waiting at the end goes to the Action that opens the game.
+		if at == len(doc.Actions) && doc.NextScore != nil {
+			if a.Score == nil {
+				a.Score = doc.NextScore
+			}
+			doc.NextScore = nil
 		}
 		doc.Actions = append(doc.Actions, Action{})
 		copy(doc.Actions[at+1:], doc.Actions[at:])

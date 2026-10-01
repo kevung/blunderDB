@@ -117,6 +117,7 @@ func TestTakeCorrectedContinuesTheGame(t *testing.T) {
 		t.Fatalf("fixture: action %d does not open the second game", nextFirst)
 	}
 	firstPlay := doc.Actions[nextFirst]
+	nextScore := Replay(doc, 0).Games[1].InitialScore
 	total := len(doc.Actions)
 
 	e := NewEditor(seek(t, doc, pass))
@@ -146,8 +147,18 @@ func TestTakeCorrectedContinuesTheGame(t *testing.T) {
 	if len(e.Doc.Actions) != total+1 || e.Doc.Actions[pass+1].Kind != KindChecker {
 		t.Fatalf("the roll was not inserted after the take: %d actions", len(e.Doc.Actions))
 	}
-	if !sameAction(e.Doc.Actions[pass+2], firstPlay) {
+	// The next game keeps its boundary: its first play carries the score it was
+	// derived at, so the continued game does not swallow it.
+	kept := e.Doc.Actions[pass+2]
+	if kept.Score == nil || *kept.Score != nextScore {
+		t.Fatalf("the next game's first play carries %v, want its derived score %v", kept.Score, nextScore)
+	}
+	kept.Score = nil
+	if !sameAction(kept, firstPlay) {
 		t.Fatal("the next game's first play was overwritten")
+	}
+	if ann := Replay(e.Doc, 0); !ann.Actions[pass+2].OpensGame || ann.Games[0].Last != pass+1 {
+		t.Fatalf("the continued game swallowed the next one: %+v", ann.Games)
 	}
 	if en := e.Doc.Entry; en == nil || en.Mode != EntryNew || en.At != pass+2 {
 		t.Fatalf("entry = %+v; the game is still running, the next slot must be open", en)
