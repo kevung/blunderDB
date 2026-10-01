@@ -284,7 +284,8 @@ func gnuBGDoubleResponse(game *gnubgparser.Game, idx int) string {
 }
 
 // computeGnuBGMatchHash is the format-specific content hash. Copied from
-// database.ComputeGnuBGMatchHash; TestGnuBGHashParity keeps them in lock-step.
+// database.ComputeGnuBGMatchHash; no test compares the two, so a change to
+// one must be made in the other by hand.
 func computeGnuBGMatchHash(match *gnubgparser.Match) string {
 	var b strings.Builder
 	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))

@@ -14,7 +14,7 @@ import (
 // gammonNet is the source of truth: `gn_search_level` (src/gn_search.c) is
 // the one table, `data/search_levels.json` its export. The copy here is
 // byte-identical, checked against `search_levels.sha256` by
-// TestEmbeddedSearchLevelsJSON, so a stale or hand-edited copy fails loudly.
+// TestEmbeddedSearchLevelsJSONMatchesItsChecksumPin, so a stale or hand-edited copy fails loudly.
 //
 //go:embed search_levels.json
 var embeddedSearchLevelsJSON []byte

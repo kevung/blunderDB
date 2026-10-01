@@ -18,7 +18,6 @@ import (
 // unqualified names. See pkg/blunderdb/engine/analysiscodec.go.
 var (
 	compressAnalysisData      = engine.CompressAnalysisData
-	decompressAnalysisData    = engine.DecompressAnalysisData
 	recompressAnalysisData    = engine.RecompressAnalysisData
 	encodeAnalysisForStorage  = engine.EncodeAnalysisForStorage
 	decodeAnalysisFromStorage = engine.DecodeAnalysisFromStorage

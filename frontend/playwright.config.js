@@ -14,7 +14,7 @@ export default defineConfig({
     // failure is never masked on a dev machine.
     retries: process.env.CI ? 2 : 0,
     // Unbounded parallelism on a shared CI runner is what made retries needed
-    // in the first place (E.8, #224): cap at 2 workers there. A dev machine
+    // in the first place: cap at 2 workers there. A dev machine
     // keeps Playwright's own default (CPU count / 2).
     workers: process.env.CI ? 2 : undefined,
     use: {
@@ -31,7 +31,6 @@ export default defineConfig({
         timeout: 30000
     },
     // The JSON report is what scripts/check-e2e-flaky.mjs reads: a spec that
-    // failed and then passed on retry is a real instability signal (D.13,
-    // #214), not a free pass just because the job went green overall.
+    // failed and then passed on retry is a real instability signal, not a free pass just because the job went green overall.
     reporter: [['list'], ['html', { open: 'never' }], ['json', { outputFile: 'playwright-report/results.json' }]]
 });

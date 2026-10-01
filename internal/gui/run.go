@@ -35,7 +35,7 @@ func Run(assets embed.FS, icon []byte, width, height int, db *database.Database,
 		OnShutdown:       shutdown(app, extraBinds),
 		DragAndDrop: &options.DragAndDrop{
 			EnableFileDrop:     true,
-			DisableWebViewDrop: false, // Must be false on Linux: gtk_drag_dest_unset() prevents GTK drag signals from firing (Wails v2 bug #4743)
+			DisableWebViewDrop: false, // Must be false on Linux: gtk_drag_dest_unset() prevents GTK drag signals from firing (a Wails v2 bug)
 		},
 		Bind: append([]interface{}{app}, extraBinds...),
 		Linux: &linux.Options{

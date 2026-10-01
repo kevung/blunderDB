@@ -342,7 +342,8 @@ func mapBGFCubeMove(moveData, gameData map[string]interface{}, matchLen int, boa
 func convertBlunderDBPlayerToXG(p int) int32 { return blunderDBPlayerToXG(p) }
 
 // computeBGFMatchHash is the format-specific content hash. Copied from
-// database.ComputeBGFMatchHash; TestBGFHashParity keeps them in lock-step.
+// database.ComputeBGFMatchHash; no test compares the two, so a change to one
+// must be made in the other by hand.
 func computeBGFMatchHash(match *bgfparser.Match) string {
 	var b strings.Builder
 	data := match.Data
