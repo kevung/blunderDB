@@ -191,8 +191,14 @@ func apply(doc Document, g Gesture) (Document, error) {
 		}
 		e.Steps, e.Selected, e.Review = nil, false, false
 		if d := e.Dice; d[1] != 0 && slotOpensGame(Replay(out, 0), e.At, e.Mode == EntryReplace) {
-			if e.Mode == EntryReplace && e.At < len(out.Actions) && sameRoll(d, out.Actions[e.At].Dice) {
-				e.Dice, e.Side = out.Actions[e.At].Dice, out.Actions[e.At].Side
+			// The roll the play already has is kept as written — unless it is written
+			// against its camp, which retyping it in player order repairs.
+			stored := Action{Side: -1}
+			if e.Mode == EntryReplace && e.At < len(out.Actions) {
+				stored = out.Actions[e.At]
+			}
+			if sameRoll(d, stored.Dice) && openingWinner(stored.Dice) == stored.Side {
+				e.Dice, e.Side = stored.Dice, stored.Side
 			} else if w := openingWinner(d); w >= 0 {
 				e.Side = w
 			}
@@ -291,12 +297,13 @@ func apply(doc Document, g Gesture) (Document, error) {
 			return doc, ErrNoAction
 		}
 		a := &out.Actions[out.Cursor]
-		a.Side = opponent(a.Side)
 		// A game's first play holds the opening roll in player order: giving it to
-		// the other camp gives that camp the higher die.
-		if openingWinner(a.Dice) >= 0 && Replay(out, 0).Actions[out.Cursor].OpensGame {
+		// the other camp gives that camp the higher die. A roll written against its
+		// camp is left as it is, so that the flip is what repairs it.
+		if openingWinner(a.Dice) == a.Side && Replay(out, 0).Actions[out.Cursor].OpensGame {
 			a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
 		}
+		a.Side = opponent(a.Side)
 		out.Touched, out.HasTouched = out.Cursor, true
 		out.Entry = nil
 		return out, nil
@@ -320,11 +327,15 @@ func apply(doc Document, g Gesture) (Document, error) {
 
 	case GestureSwapPlayers:
 		out.Header.Player1, out.Header.Player2 = out.Header.Player2, out.Header.Player1
+		ann := Replay(doc, 0)
 		for i := range out.Actions {
 			a := &out.Actions[i]
 			a.Side = opponent(a.Side)
-			// The dice are player 1's then player 2's on a game's first play.
-			a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
+			// The dice are player 1's then player 2's on a game's first play only;
+			// any other roll keeps its cell as written.
+			if ann.Actions[i].OpensGame {
+				a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
+			}
 			if a.Score != nil {
 				a.Score[0], a.Score[1] = a.Score[1], a.Score[0]
 			}
@@ -359,13 +370,22 @@ func apply(doc Document, g Gesture) (Document, error) {
 // setScore is GestureSetScore. It refuses only the meaningless (not a game's first
 // Action, money play, negative); a score past the length is declared and marked
 // (ADR-0044). It moves neither the Cursor nor the entry, and holds the Cursor.
+//
+// At the end slot (At = len(Actions)) it declares the score of the game the next
+// Action appended opens, which is where a boundary waiting there is corrected or
+// cleared ([Document.NextScore]).
 func setScore(doc, out Document, g Gesture) (Document, error) {
 	at := g.At
-	if at < 0 || at >= len(out.Actions) || !Replay(out, 0).Actions[at].OpensGame {
+	end := at == len(out.Actions)
+	if at < 0 || at > len(out.Actions) || !end && !Replay(out, 0).Actions[at].OpensGame {
 		return doc, fmt.Errorf("transcript: action %d is not the first of a game", at)
 	}
 	if g.Score == nil {
-		out.Actions[at].Score = nil
+		if end {
+			out.NextScore = nil
+		} else {
+			out.Actions[at].Score = nil
+		}
 		out.HoldCursor = true
 		return out, nil
 	}
@@ -376,7 +396,11 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 		return doc, fmt.Errorf("transcript: %d-%d is not a score", g.Score[0], g.Score[1])
 	}
 	sc := *g.Score
-	out.Actions[at].Score = &sc
+	if end {
+		out.NextScore = &sc
+	} else {
+		out.Actions[at].Score = &sc
+	}
 	out.HoldCursor = true
 	return out, nil
 }

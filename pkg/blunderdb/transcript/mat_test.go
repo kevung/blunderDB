@@ -330,3 +330,25 @@ func TestFromMATFirstPlayDice(t *testing.T) {
 		t.Errorf("the empty last game is lost: %v", doc.NextScore)
 	}
 }
+
+// TestFromMATEmptyGameAfterTheEnd: an empty last game of a match already won says
+// nothing; it must not open a game past the end.
+func TestFromMATEmptyGameAfterTheEnd(t *testing.T) {
+	const text = ` 1 point match
+
+ Game 1
+ A : 0                           B : 0
+  1) 31: 8/5 6/5                 52: 13/8 13/11
+  2)  Doubles => 2               Drops
+      Wins 1 point and the match
+ Game 2
+ A : 1                           B : 0
+`
+	doc, err := FromMAT(text)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if doc.NextScore != nil {
+		t.Errorf("a game after the end of the match left a boundary: %v", *doc.NextScore)
+	}
+}

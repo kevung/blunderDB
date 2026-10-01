@@ -44,7 +44,11 @@ joué.
 v2 est converti à la lecture (`transcript.Upgrade`, appelé par `decodeTranscription`) :
 l'ouverture disparaît et le coup qui la suivait devient la première Action, portant le score
 annoncé sur elle ; les relances sont ignorées ; une ouverture qui coupait une partie en cours
-devient un score annoncé (le score dérivé) sur la première Action suivante.
+devient un score annoncé (le score dérivé) sur la première Action suivante. Une ouverture
+sans coup derrière — brouillon fermé juste après elle — laisse une frontière en attente en
+fin de document (`next_score`), que reprend l'Action ajoutée ensuite ; un `.mat` dont la
+dernière partie est vide en laisse une aussi, sauf après la fin du match. `set_score` sur
+la case de fin (`At` = nombre d'Actions) la corrige ou l'efface.
 
 ## Conséquences
 

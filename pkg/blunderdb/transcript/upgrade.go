@@ -1,5 +1,7 @@
 package transcript
 
+import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
+
 // kindOpening is the opening roll of documents before version 3: Dice[0] player 1's
 // die, Dice[1] player 2's, a tie followed by another one. [Upgrade] alone reads it.
 const kindOpening Kind = "opening"
@@ -61,8 +63,18 @@ func Upgrade(doc Document) Document {
 			a.Score, declared = declared, nil
 			switch {
 			case a.Kind != KindChecker && a.Kind != KindDance && a.Kind != KindUnrecorded:
-			case roll != [2]int{}:
+			case roll != [2]int{} && sameRoll(a.Dice, roll):
+				// Played by the opening's winner it reads clean; by the loser,
+				// the order names the winner and the play is marked.
 				a.Dice = roll
+			case roll != [2]int{} && a.Dice[0] != a.Dice[1]:
+				// Another roll than the opening's: the play keeps its dice, set
+				// against its camp so that the Replay marks it.
+				hi, lo := max(a.Dice[0], a.Dice[1]), min(a.Dice[0], a.Dice[1])
+				a.Dice = [2]int{lo, hi}
+				if a.Side == domain.White {
+					a.Dice = [2]int{hi, lo}
+				}
 			default:
 				a.Dice = openingOrder(a)
 			}

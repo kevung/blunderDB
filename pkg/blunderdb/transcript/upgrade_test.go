@@ -3,6 +3,7 @@ package transcript
 import (
 	"encoding/json"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -144,5 +145,100 @@ func TestUpgradeFirstPlayDice(t *testing.T) {
 		if info := Replay(Upgrade(v2(t, actions)), 0).Actions[0]; !hasInconsistency(info, InconsistentDice) {
 			t.Errorf("%s: not marked: %+v", name, info.Inconsistencies)
 		}
+	}
+}
+
+// TestUpgradedLoserPlayIsRepairable: a first play the opening's loser made reads back
+// marked, and either gesture that says who really started repairs it — the roll typed
+// again in player order, or `s`.
+func TestUpgradedLoserPlayIsRepairable(t *testing.T) {
+	loser := Upgrade(v2(t, `{"side":0,"kind":"opening","dice":[6,3]},
+		{"side":1,"kind":"checker","dice":[6,3],"steps":[{"from":1,"to":7},{"from":12,"to":15}]}`))
+	if !hasInconsistency(Replay(loser, 0).Actions[0], InconsistentDice) {
+		t.Fatal("fixture: the loser's play is not marked")
+	}
+
+	retyped := runSteps(t, loser, []step{
+		{"back", Gesture{Kind: GestureCursorBack}, nil},
+		{"player 1's die", die(3), nil}, {"player 2's die", die(6), nil},
+		{"validate", confirm(), nil},
+	})
+	if a := retyped.Actions[0]; a.Side != domain.White || a.Dice != [2]int{3, 6} {
+		t.Errorf("retyped = %+v, want player 2's 36", a)
+	}
+	if Replay(retyped, 0).Inconsistent() {
+		t.Errorf("retyping the roll did not repair it: %+v", Replay(retyped, 0).Actions[0].Inconsistencies)
+	}
+
+	flipped := runSteps(t, loser, []step{
+		{"back", Gesture{Kind: GestureCursorBack}, nil},
+		{"flip", Gesture{Kind: GestureFlipSide}, nil},
+	})
+	if a := flipped.Actions[0]; a.Side != domain.Black || a.Dice != [2]int{6, 3} {
+		t.Errorf("flipped = %+v, want player 1 with the roll as it stands", a)
+	}
+	// The play is still player 2's steps — illegal for player 1 — but the opening
+	// itself no longer contradicts the camp.
+	for _, inc := range Replay(flipped, 0).Actions[0].Inconsistencies {
+		if strings.Contains(inc.Detail, "won the opening roll") {
+			t.Errorf("`s` did not repair the opening: %+v", inc)
+		}
+	}
+}
+
+// TestUpgradeOtherRollKeepsItsDice: a first play made with a roll the opening did not
+// give keeps its own dice, and is marked.
+func TestUpgradeOtherRollKeepsItsDice(t *testing.T) {
+	doc := Upgrade(v2(t, `{"side":0,"kind":"opening","dice":[6,3]},
+		{"side":0,"kind":"checker","dice":[5,2],"steps":[{"from":13,"to":8},{"from":13,"to":11}]}`))
+	if d := doc.Actions[0].Dice; !sameRoll(d, [2]int{5, 2}) {
+		t.Errorf("dice = %v, want the play's 52", d)
+	}
+	if !hasInconsistency(Replay(doc, 0).Actions[0], InconsistentDice) {
+		t.Error("not marked")
+	}
+}
+
+// TestNextScore holds the boundary waiting at the end: it is corrected or cleared
+// by GestureSetScore at the end slot, survives JSON, an insertion in the middle and
+// the deletion of the last Action, and is used only by an Action appended at the end.
+func TestNextScore(t *testing.T) {
+	doc := Upgrade(v2(t, wonGame+`,{"side":0,"kind":"opening","dice":[4,2],"score":[3,0]}`))
+	end := len(doc.Actions)
+
+	set, err := Apply(doc, Gesture{Kind: GestureSetScore, At: end, Score: scoreOf(2, 0)})
+	if err != nil || set.NextScore == nil || *set.NextScore != [2]int{2, 0} {
+		t.Fatalf("set at the end: %v %v", set.NextScore, err)
+	}
+	cleared, err := Apply(doc, Gesture{Kind: GestureSetScore, At: end})
+	if err != nil || cleared.NextScore != nil {
+		t.Fatalf("cleared at the end: %v %v", cleared.NextScore, err)
+	}
+
+	blob, _ := json.Marshal(doc)
+	var back Document
+	if err := json.Unmarshal(blob, &back); err != nil || back.NextScore == nil || *back.NextScore != [2]int{3, 0} {
+		t.Fatalf("JSON round trip: %v %v", back.NextScore, err)
+	}
+
+	mid := doc.clone()
+	mid.Cursor = 1
+	ins, err := Apply(mid, Gesture{Kind: GestureInsertBefore})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ins, err = Apply(ins, Gesture{Kind: GestureResign, Level: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ins.NextScore == nil || len(ins.Actions) != end+1 {
+		t.Errorf("an insertion in the middle used the boundary: %v", ins.NextScore)
+	}
+
+	del := doc.clone()
+	del.Cursor = end - 1
+	del, err = Apply(del, Gesture{Kind: GestureDelete})
+	if err != nil || del.NextScore == nil || *del.NextScore != [2]int{3, 0} {
+		t.Errorf("deleting the last Action: %v %v", del.NextScore, err)
 	}
 }

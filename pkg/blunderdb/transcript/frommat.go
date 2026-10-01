@@ -104,7 +104,8 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 	}
 
 	// A last game with nothing in it yet is a boundary waiting for its first play.
-	if n := len(parsed.Games); n > 0 && len(parsed.Games[n-1].Moves) == 0 {
+	// One after the end of the match says nothing, and would open a game past it.
+	if n := len(parsed.Games); n > 0 && len(parsed.Games[n-1].Moves) == 0 && !st.matchOver() {
 		if _, points := statedResult(parsed.Games, n-1, doc.Header.MatchLength); points == 0 {
 			score := parsed.Games[n-1].Score
 			if doc.Header.MatchLength <= 0 {

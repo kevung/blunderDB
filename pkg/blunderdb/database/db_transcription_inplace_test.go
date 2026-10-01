@@ -94,6 +94,15 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 	if g := state.Annotated.Games[1]; !g.Declared || g.First != passAt+1 {
 		t.Errorf("game 2 = %+v, want it kept, opened at %d by its declared score", g, passAt+1)
 	}
+	// The score it declares is the one the pass had given; with the game it
+	// followed unfinished, the previous games no longer give it, and it says so.
+	marked := false
+	for _, inc := range state.Annotated.Actions[passAt+1].Inconsistencies {
+		marked = marked || inc.Kind == transcript.ScoreMismatch
+	}
+	if !marked {
+		t.Errorf("the next game's first play carries %+v, want a score mismatch", state.Annotated.Actions[passAt+1].Inconsistencies)
+	}
 }
 
 // TestTranscriptionFirstPlayRetypedDecidesWhoStarts holds the other half of the

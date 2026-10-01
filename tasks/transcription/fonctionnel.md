@@ -26,6 +26,17 @@ version du document, jamais une migration de `DatabaseVersion`.
 | `tournament_id` | plus tard | nul | rattachement à l'enregistrement |
 | `match_id` | jamais | nul | posé au premier enregistrement, stable ensuite |
 | `cursor` | dérivé du geste | fin du document | l'Action courante |
+| `next_score` | jamais saisi directement | nul | une frontière de partie en attente en fin de document : le score que déclare l'Action ajoutée ensuite, qui ouvre une partie (et close, inachevée, celle en cours). Seuls la conversion d'un brouillon dont la dernière ouverture n'avait pas de coup, et un `.mat` dont la dernière partie est vide (match non terminé), en laissent un ; `set_score` en fin de document (`At` = nombre d'Actions) le corrige ou l'efface. Une insertion au milieu ne le consomme pas, une suppression ne l'efface pas |
+
+**Format** : le document porte `format_version` = 3, sans Action d'ouverture. Un brouillon
+de format 1 ou 2 est converti à la lecture (`transcript.Upgrade`) : chaque `opening` est
+retirée ; le coup qui la suivait devient le premier coup de la partie, porte le score
+annoncé de l'ouverture (ou de l'égalité qui la précédait) et prend les dés de l'ouverture
+en ordre de joueur — joué par le perdant, il reste marqué « dés incohérents » ; joué avec
+un autre jet, il garde ses dés et est marqué de même. Les relances sont ignorées. Une
+ouverture qui coupait une partie en cours devient un score annoncé (le score dérivé) sur
+le premier coup suivant ; une ouverture sans coup derrière laisse `next_score`. Le Cursor
+garde son Action, ou la fin.
 
 ### 1.2 Les Actions
 

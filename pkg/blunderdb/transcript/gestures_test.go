@@ -491,6 +491,13 @@ func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Only a game's first play holds the dice in player order; any other roll
+	// keeps its cell as written.
+	for i, a := range after.Actions {
+		if !before.Actions[i].OpensGame && a.Dice != doc.Actions[i].Dice {
+			t.Errorf("action %d: dice %v became %v", i, doc.Actions[i].Dice, a.Dice)
+		}
+	}
 	if after.Header.Player1 != "Bob" || after.Header.Player2 != "Alice" {
 		t.Fatalf("names = %q/%q", after.Header.Player1, after.Header.Player2)
 	}
@@ -704,4 +711,22 @@ func kindsOf(flags []Inconsistency) map[InconsistencyKind]bool {
 		out[f.Kind] = true
 	}
 	return out
+}
+
+// TestSwapPlayersKeepsAnOrdinaryRoll: the .mat cell "46:" of an ordinary play is the
+// same after the swap; only a game's first play reorders its dice.
+func TestSwapPlayersKeepsAnOrdinaryRoll(t *testing.T) {
+	doc := docOf(5)
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.White, 4, 6))
+	after, err := Apply(doc, Gesture{Kind: GestureSwapPlayers})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := after.Actions[1].Dice; got != [2]int{4, 6} {
+		t.Errorf("the ordinary roll 46 became %v", got)
+	}
+	if got := after.Actions[0].Dice; got != [2]int{3, 6} {
+		t.Errorf("the first play's 63 became %v, want 36 for player 2", got)
+	}
 }
