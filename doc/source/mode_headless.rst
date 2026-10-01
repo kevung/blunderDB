@@ -106,6 +106,14 @@ depuis plusieurs clients.
      - ``false``
      - sert la page web de consultation sous ``/app/`` ; **éteinte par
        défaut**, voir plus bas
+   * - ``--transcription``
+     - ``false``
+     - sert les gestes de transcription (``transcriptions.create``,
+       ``apply``, ``finish``…) ; **éteints par défaut**, voir
+       :ref:`headless_transcription`
+   * - ``--transcription-ttl <durée>``
+     - ``30m``
+     - ferme une session de transcription inactive depuis plus longtemps
    * - ``--cors-allow-origin <origine>``
      - –
      - active CORS pour cette origine, une liste d'origines séparées par des
@@ -276,6 +284,47 @@ et ne sont pas une API pour des programmes tiers. Et le **contrat lui-même est
 généré** depuis la table de routes du démon (``openapi.yaml``,
 :ref:`api_reference`) : il ne peut pas décrire autre chose que ce que le
 serveur sert.
+
+.. _headless_transcription:
+
+Transcrire par l'API
+~~~~~~~~~~~~~~~~~~~~
+
+La famille ``transcriptions.*`` permet à un client externe de transcrire un
+match geste par geste, avec la même logique que le bureau. Les lectures
+(``list``, ``get``, ``exportMat``, ``losses``) sont toujours servies. Les
+gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
+``close``, ``finish``, ``abandon``) ne le sont qu'avec ``serve
+--transcription`` : sans ce drapeau, ces routes répondent 404.
+
+``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
+``sessionId``. Chaque geste qui écrit porte la révision vue en dernier dans
+l'en-tête ``If-Match`` et rend la suivante :
+
+* ``If-Match`` absent → **428** ;
+* révision périmée → **409** ; l'enveloppe d'erreur donne la révision
+  courante (``details.revision``), le client relit le brouillon
+  (``transcriptions.get``) avant de rejouer son geste ;
+* session expirée ou inconnue → **410** ; le client rouvre le brouillon
+  (``open``), curseur en fin de document.
+
+La session ne garde que la pile d'annulation et la saisie en cours : le
+brouillon est écrit après chaque geste, une session perdue (inactivité,
+redémarrage, autre instance) ne perd aucun geste. ``transcriptions.get`` rend
+la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
+
+``finish`` enregistre le Match et supprime le brouillon, ``abandon`` le
+supprime sans Match, ``close`` ne libère que la session. ``editMatch`` ouvre un
+brouillon sur un Match existant et rend, pour un match importé, le décompte
+des analyses et commentaires que la transcription ne garde pas
+(``losses.lossy``). L'analyse du match enregistré se lance par
+``gammonnet.analyzeMissing``.
+
+.. warning::
+
+   Le démon n'authentifie personne : ouvrir l'écriture, c'est la confier au
+   proxy (:ref:`headless_proxy_deployment`). Un rôle « transcripteur » est une règle du
+   proxy sur le préfixe ``/v1/transcriptions.``, pas une notion du démon.
 
 .. _headless_client_python:
 
@@ -1201,6 +1250,14 @@ les tests d'intégration.
    * - ``--list``
      - –
      - affiche toutes les méthodes ``<famille>.<méthode>`` et quitte
+   * - ``--if-match <révision>``
+     - –
+     - révision envoyée en ``If-Match``, exigée par les gestes de
+       transcription (:ref:`headless_transcription`)
+
+``call`` sert les gestes de transcription sans drapeau : il travaille sur un
+fichier local, comme la CLI. Chaque appel est un processus neuf, donc sa propre
+session : pas d'annulation d'un appel à l'autre.
 
 La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est écrite
 sur la sortie standard. En cas d'erreur, le processus se termine avec un code
