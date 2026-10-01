@@ -376,7 +376,7 @@
      * Rend `false` sur un échec, pour qu'une fiche ouverte le dise au lieu de se fermer.
      *
      * @param {() => Promise<unknown>} fn
-     * @param {string} key
+     * @param {string | ((e: any) => import('../../i18n').StatusMessage)} key
      * @returns {Promise<boolean>}
      */
     async function act(fn, key) {
@@ -385,8 +385,8 @@
             await fn();
             return true;
         } catch (e) {
-            logger.error('direction: ' + key, e);
-            statusBarTextStore.set(tMsg(key));
+            logger.error('direction: ' + (typeof key === 'string' ? key : 'failed'), e);
+            statusBarTextStore.set(typeof key === 'string' ? tMsg(key) : key(e));
             return false;
         } finally {
             busy = false;
@@ -398,7 +398,12 @@
     /** @type {(m: string, w: string, note: string) => Promise<boolean>} */
     const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
     /** @type {(m: string, table: number) => Promise<boolean>} */
-    const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
+    const onMove = (m, table) =>
+        act(
+            () => moveMatchToTable(m, table),
+            // Le service dit pourquoi (table hors service…) : le refus se lit tel quel.
+            (e) => tMsg('direction.table.moveRefused', { reason: String(e?.message ?? e).replace(/^direction:\s*/, '') })
+        );
     /** @type {(m: string) => Promise<boolean>} */
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
     /** @type {(m: string, w: string, a: number, b: number) => Promise<boolean>} */

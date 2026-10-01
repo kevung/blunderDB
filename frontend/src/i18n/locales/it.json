@@ -1938,7 +1938,10 @@
             "none": "Nessun tavolo dichiarato.",
             "noTable": "senza tavolo",
             "elsewhere": "Occupato: {event}",
-            "shared": "Due partite su questo tavolo: spostarne una"
+            "shared": "Due partite su questo tavolo: spostarne una",
+            "swapConfirm": "Tavolo {from} ↔ Tavolo {to}?",
+            "swap": "Scambia",
+            "moveRefused": "Spostamento rifiutato: {reason}"
         },
         "result": {
             "title": "Risultato",

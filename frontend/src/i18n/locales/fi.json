@@ -1938,7 +1938,10 @@
             "none": "Pöytiä ei ole ilmoitettu.",
             "noTable": "ei pöytää",
             "elsewhere": "Varattu: {event}",
-            "shared": "Kaksi ottelua tässä pöydässä: siirrä toinen"
+            "shared": "Kaksi ottelua tässä pöydässä: siirrä toinen",
+            "swapConfirm": "Pöytä {from} ↔ Pöytä {to}?",
+            "swap": "Vaihda",
+            "moveRefused": "Siirto hylätty: {reason}"
         },
         "result": {
             "title": "Tulos",

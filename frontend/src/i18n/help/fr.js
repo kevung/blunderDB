@@ -366,6 +366,7 @@ export default {
 </ul>
 <p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant qu'une action est en cours, les entrées qui agissent sont grisées, comme les boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le premier.</p>
 <p>Au clavier, la grille ne prend qu'un arrêt de <em>TAB</em> : chaque case se focalise, libre comprise, et <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi, que la fiche soit déjà ouverte ou non : viser une table occupée échange les deux matchs.</p>
+<p>À la souris, on <strong>glisse</strong> une case occupée sur une autre : sur une case libre le match change de table ; sur une case occupée, une ligne « Table 3 ↔ Table 7 ? » demande de confirmer l'<strong>échange</strong> des deux matchs. Un fantôme suit le pointeur et la case visée s'entoure ; <em>ÉCHAP</em> annule le geste, et rien n'est écrit tant que le pointeur n'est pas relâché sur une case. Une table hors service est refusée, et la barre d'état en donne le motif. En ligne de commande, <code>blunderdb tournament move</code> fait le même déplacement ou le même échange (voir Interface en ligne de commande (CLI)).</p>
 <h4>Les joueurs</h4>
 <p>L'onglet <strong>Joueurs</strong> inscrit, corrige et retire. Le champ d'inscription garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul. L'autocomplétion propose les joueurs de la base ; en choisir un fixe l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.</p>
 <p>L'<strong>annuaire</strong> regroupe les inscrits de tous les tournois dirigés de la base, dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ; l'annuaire se copie en CSV ou s'enregistre dans un fichier (<strong>Enregistrer…</strong>), et se relit collé.</p>
@@ -1430,6 +1431,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs.</td>
+</tr>
+<tr>
+<td>Glisser une case occupée sur une autre</td>
+<td>À la souris : sur une case libre, déplacer le match ; sur une case occupée, échanger les deux matchs après confirmation. ÉCHAP annule le glisser.</td>
 </tr>
 </tbody>
 </table>

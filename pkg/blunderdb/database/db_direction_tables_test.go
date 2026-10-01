@@ -162,3 +162,36 @@ func mustWarnings(t *testing.T, d *Database, tID int64) []tournoi.Warning {
 	}
 	return dir.Warnings()
 }
+
+// A table out of service takes no match: moving onto it is refused, and nothing moves.
+func TestMoveMatchToUnavailableTableIsRefused(t *testing.T) {
+	d := newTestDB(t)
+	tID, err := d.CreateTournament("Salle", "2026-09-12", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Salle","tables":{"count":4,"unavailable":[3]},"phases":[
+		{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":4}]}`
+	if err := d.CreateDirection(tID, cfg, 7); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for _, id := range []string{"p0", "p1", "p2", "p3"} {
+		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
+	}
+	if err := d.EnterParticipants(tID, "["+strings.Join(players, ",")+"]"); err != nil {
+		t.Fatal(err)
+	}
+	v, err := d.StartMatchManually(tID, "p0", "p1", 0, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m := string(v.Running[0].ID)
+	_, err = d.MoveMatchToTable(tID, m, 3)
+	if err == nil || !strings.Contains(err.Error(), "out of service") {
+		t.Fatalf("a move onto an out-of-service table must be refused, got %v", err)
+	}
+	if got := tableOfMatch(t, d, tID, m); got != 1 {
+		t.Errorf("the match stayed on table %d, want 1", got)
+	}
+}
