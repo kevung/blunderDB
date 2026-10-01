@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "Supprimer la rencontre « {name} » ? Ses épreuves restent, détachées."
         },
+        "hall": {
+            "tab": "Salle",
+            "legend": "Épreuves de la salle",
+            "proposals": "Propositions de la salle ({n})",
+            "loading": "Chargement de la salle…",
+            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b}) ?"
+        },
         "epreuves": {
             "pending": "{n} en attente",
             "running": "{n} en cours",

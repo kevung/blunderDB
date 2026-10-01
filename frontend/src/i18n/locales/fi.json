@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen turnaukset jäävät, irrotettuina."
         },
+        "hall": {
+            "tab": "Sali",
+            "legend": "Salin kilpailut",
+            "proposals": "Salin ehdotukset ({n})",
+            "loading": "Ladataan salia…",
+            "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?"
+        },
         "epreuves": {
             "pending": "{n} odottaa",
             "running": "{n} käynnissä",

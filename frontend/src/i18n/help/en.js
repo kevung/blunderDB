@@ -395,6 +395,7 @@ export default {
 <p>Several events played in the same room — a main event, a speed, doubles — are grouped in a <strong>Rencontre</strong>, at the bottom of the Settings: <strong>Create and attach…</strong> opens the room with its number of tables, <strong>Attach…</strong> adds a directed event to it. Attaching first shows what will change: the event's tables become the room's. <strong>Detach from the rencontre</strong> gives the event back to itself, with its log and its tables; <strong>Delete the rencontre</strong>, after confirmation, moves it to the trash and detaches its events without deleting any.</p>
 <p>In a Rencontre, no event proposes a table where another is playing: the grid shows those tables as in use, with the event's name, and a pairing with no free table waits. A table out of service is ticked once, in the Rencontre, and applies to every event; the number of tables, the tables out of service and the breaks changed in one event's Settings apply to the room as well, and the list of what will change names the other events.</p>
 <p>Opening the Direction of an event in a Rencontre opens the others too: a tab per event appears at the top of the Direction, each with its summary — pending proposals, matches under way, an alert if there is one. Switching events is a click on its tab, with no confirmation; the event left behind does not close and replays nothing, it stays exactly as it was left. A tournament outside a Rencontre has only one event: no tab to show.</p>
+<p>The <strong>Hall</strong> tab, to the left of the events, shows the whole hall in a single grid: one cell per table of the Rencontre, whichever event occupies it, marked with the name and color of its event. The result card, the context menus, the keyboard and drag-and-drop work there as in an event's grid, and each gesture goes to the event of the cell. Dragging a match onto a table occupied by another event swaps the two matches after a confirmation that names both events. Below the grid, the proposals of all events are grouped by event, each with its <em>Launch</em> button. Clicking an event or a view tab leaves the Hall.</p>
 <p>One person may play several events of the Rencontre: two Participants with the same name are the same person, and for a doubles pair each of its two members counts. While they play in one event, the others do not propose them, and their <em>Waiting</em> list says where they play: “playing in main, table 4”. Pairing by hand is still allowed: the match starts, and its cell in the grid carries the same note.</p>
 <h4>The hall display</h4>
 <p>A tournament is watched. Choosing a <strong>display folder</strong> in the Settings is enough once and for all: blunderDB rewrites a standalone HTML page there at every event, and the page reloads itself. It opens offline, on a second screen or projected, and loads no outside resource. <em>Open in the browser</em> shows it at once.</p>
@@ -1435,6 +1436,10 @@ export default {
 <tr>
 <td>Drag an occupied cell onto another</td>
 <td>With the mouse: on a free cell, move the match; on an occupied cell, swap the two matches after confirmation. ESC cancels the drag.</td>
+</tr>
+<tr>
+<td>Hall</td>
+<td>On the grid of the Hall of a Rencontre, the same keys, menus and drag-and-drop act on the table of any event; a swap with another event names both in the confirmation.</td>
 </tr>
 </tbody>
 </table>

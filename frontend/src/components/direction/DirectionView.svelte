@@ -15,6 +15,7 @@
     import DirectoryPanel from './DirectoryPanel.svelte';
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
+    import HallView from './HallView.svelte';
     import LastDecision from './LastDecision.svelte';
     import PlayersView from './PlayersView.svelte';
     import BracketsView from './BracketsView.svelte';
@@ -85,7 +86,8 @@
         parseDirectoryCSV,
         enterParticipants,
         freeSlots,
-        addParticipantAtSlot
+        addParticipantAtSlot,
+        hallGrid
     } from '../../stores/directionStore';
 
     /** @typedef {import('../../stores/directionStore.js').DirectionConfig} DirectionConfig */
@@ -363,9 +365,40 @@
         entrySuggestions().then((s) => (suggestions = s));
     });
 
+    /*
+     * La Salle (ADR-0056 §5) : un onglet à gauche des épreuves quand une Rencontre est ouverte.
+     * Elle remplace les volets de l'épreuve sans les démonter ; un clic sur une épreuve ou sur un
+     * onglet de vue la quitte. Rechargée quand l'épreuve ouverte ou une sœur change.
+     */
+    let hallOpen = $state(false);
+    let hall = $state(/** @type {import('../../../wailsjs/go/models').service.HallView | null} */ (null));
+    const hasHall = $derived($epreuveTabsStore.length > 1);
+    $effect(() => {
+        if (!hasHall) hallOpen = false;
+    });
+    $effect(() => {
+        void view;
+        void $epreuveTabsStore;
+        if (hallOpen) hallGrid().then((h) => (hall = h));
+    });
+
+    /** @param {number} tournamentId */
+    function pickEpreuve(tournamentId) {
+        hallOpen = false;
+        switchEpreuve(tournamentId);
+    }
+
+    /** L'historique d'un joueur de la Salle est celui de l'épreuve de sa case. @param {string} name @param {number} tid */
+    async function hallHistory(name, tid) {
+        hallOpen = false;
+        if (tid && tid !== view?.tournamentId) await switchEpreuve(tid);
+        showHistory(name);
+    }
+
     /* Rafraîchi à la minute : le temps écoulé avance sans événement. */
     $effect(() => {
         const timer = setInterval(() => {
+            if (hallOpen) hallGrid().then((h) => (hall = h));
             tableGrid().then((c) => (cells = c));
             clock().then((c) => (clockView = c));
         }, 60000);
@@ -622,8 +655,11 @@
         <!-- La Rencontre (ADR-0056 §5) : un onglet par épreuve, résumé visible sans y aller, un
              clic pour y passer — rien ne ferme ni ne rejoue l'épreuve quittée. -->
         <nav class="epreuve-tabs" data-testid="epreuve-tabs">
+            <button type="button" data-testid="epreuve-tab-hall" class="hall-tab" class:active={hallOpen} aria-pressed={hallOpen} onclick={() => (hallOpen = true)}>
+                <span class="epreuve-name">{$t('direction.hall.tab')}</span>
+            </button>
             {#each $epreuveTabsStore as ep (ep.tournamentId)}
-                <button type="button" data-testid="epreuve-tab-{ep.tournamentId}" class:active={ep.active} onclick={() => switchEpreuve(ep.tournamentId)}>
+                <button type="button" data-testid="epreuve-tab-{ep.tournamentId}" class:active={ep.active && !hallOpen} onclick={() => pickEpreuve(ep.tournamentId)}>
                     <span class="epreuve-name">{ep.name}</span>
                     {#if ep.pending}<span class="badge pending" title={$t('direction.epreuves.pending', { n: ep.pending })}>{ep.pending}</span>{/if}
                     {#if ep.running}<span class="badge running" title={$t('direction.epreuves.running', { n: ep.running })}>{ep.running}</span>{/if}
@@ -637,7 +673,14 @@
         <span class="state">{$t(`direction.state.${directionState}`)}</span>
         <nav>
             {#each tabs as item (item.id)}
-                <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}
+                <button
+                    type="button"
+                    data-testid="direction-tab-{item.id}"
+                    class:active={!hallOpen && tab === item.id}
+                    onclick={() => {
+                        hallOpen = false;
+                        tab = item.id;
+                    }}
                     >{$t(item.labelKey)}{#if item.id === 'brackets' && bracketLive}<span class="tab-dot" data-testid="brackets-dot" title={$t('direction.bracket.live')}>●</span>{/if}</button
                 >
             {/each}
@@ -659,8 +702,13 @@
     <ClockBar clock={clockView} warnings={view?.warnings?.length || 0} onWarnings={() => (tab = 'direction')} />
 
     <div class="body">
+        {#if hallOpen || hall}
+            <div class="pane" hidden={!hallOpen} tabindex="-1" data-testid="direction-pane-hall" use:registerPane={'hall'} onscroll={() => onPaneScroll('hall')}>
+                <HallView {hall} {busy} {act} onHistory={hallHistory} {onOutOfService} />
+            </div>
+        {/if}
         {#if visited.settings}
-            <div class="pane" hidden={tab !== 'settings'} tabindex="-1" data-testid="direction-pane-settings" use:registerPane={'settings'} onscroll={() => onPaneScroll('settings')}>
+            <div class="pane" hidden={hallOpen || tab !== 'settings'} tabindex="-1" data-testid="direction-pane-settings" use:registerPane={'settings'} onscroll={() => onPaneScroll('settings')}>
                 <DirectionSettings
                     bind:config
                     {directionState}
@@ -682,7 +730,7 @@
             </div>
         {/if}
         {#if visited.direction}
-            <div class="pane" hidden={tab !== 'direction'} tabindex="-1" data-testid="direction-pane-direction" use:registerPane={'direction'} onscroll={() => onPaneScroll('direction')}>
+            <div class="pane" hidden={hallOpen || tab !== 'direction'} tabindex="-1" data-testid="direction-pane-direction" use:registerPane={'direction'} onscroll={() => onPaneScroll('direction')}>
                 <div class="direction-page">
                     {#if (view?.warnings || []).length}
                         <!-- Visible tant que dure sa cause, jamais bloquant. -->
@@ -764,27 +812,27 @@
             </div>
         {/if}
         {#if visited.slots}
-            <div class="pane" hidden={tab !== 'slots'} tabindex="-1" data-testid="direction-pane-slots" use:registerPane={'slots'} onscroll={() => onPaneScroll('slots')}>
+            <div class="pane" hidden={hallOpen || tab !== 'slots'} tabindex="-1" data-testid="direction-pane-slots" use:registerPane={'slots'} onscroll={() => onPaneScroll('slots')}>
                 <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
             </div>
         {/if}
         {#if visited.standings}
-            <div class="pane" hidden={tab !== 'standings'} tabindex="-1" data-testid="direction-pane-standings" use:registerPane={'standings'} onscroll={() => onPaneScroll('standings')}>
+            <div class="pane" hidden={hallOpen || tab !== 'standings'} tabindex="-1" data-testid="direction-pane-standings" use:registerPane={'standings'} onscroll={() => onPaneScroll('standings')}>
                 <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
             </div>
         {/if}
         {#if visited.history}
-            <div class="pane" hidden={tab !== 'history'} tabindex="-1" data-testid="direction-pane-history" use:registerPane={'history'} onscroll={() => onPaneScroll('history')}>
+            <div class="pane" hidden={hallOpen || tab !== 'history'} tabindex="-1" data-testid="direction-pane-history" use:registerPane={'history'} onscroll={() => onPaneScroll('history')}>
                 <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} filterRequest={historyFilter} />
             </div>
         {/if}
         {#if visited.brackets}
-            <div class="pane" hidden={tab !== 'brackets'} tabindex="-1" data-testid="direction-pane-brackets" use:registerPane={'brackets'} onscroll={() => onPaneScroll('brackets')}>
+            <div class="pane" hidden={hallOpen || tab !== 'brackets'} tabindex="-1" data-testid="direction-pane-brackets" use:registerPane={'brackets'} onscroll={() => onPaneScroll('brackets')}>
                 <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} onHistory={showHistory} />
             </div>
         {/if}
         {#if visited.players}
-            <div class="pane" hidden={tab !== 'players'} tabindex="-1" data-testid="direction-pane-players" use:registerPane={'players'} onscroll={() => onPaneScroll('players')}>
+            <div class="pane" hidden={hallOpen || tab !== 'players'} tabindex="-1" data-testid="direction-pane-players" use:registerPane={'players'} onscroll={() => onPaneScroll('players')}>
                 <DirectoryPanel
                     sources={dirSources}
                     entries={dirEntries}

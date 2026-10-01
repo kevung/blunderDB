@@ -395,6 +395,7 @@ export default {
 <p>Useat samassa salissa pelattavat turnaukset — pääturnaus, speed, nelinpeli — kootaan <strong>Rencontreen</strong> Asetusten alaosassa: <strong>Luo ja liitä…</strong> avaa salin pöytämäärineen, <strong>Liitä…</strong> lisää siihen johdetun turnauksen. Liittäminen näyttää ensin, mikä muuttuu: turnauksen pöydät muuttuvat salin pöydiksi. <strong>Irrota rencontresta</strong> palauttaa turnauksen itselleen lokeineen ja pöytineen; <strong>Poista rencontre</strong> siirtää sen vahvistuksen jälkeen roskakoriin ja irrottaa sen turnaukset poistamatta yhtäkään.</p>
 <p>Rencontressa mikään turnaus ei ehdota pöytää, jossa toinen pelaa: ruudukko näyttää nämä pöydät varattuina turnauksen nimen kanssa, ja paritus ilman vapaata pöytää odottaa. Käytöstä poistettu pöytä merkitään kerran, Rencontressa, ja se koskee kaikkia turnauksia; yhden turnauksen Asetuksissa muutettu pöytämäärä, käytöstä poistetut pöydät ja tauot koskevat myös salia, ja muutosluettelo nimeää muut turnaukset.</p>
 <p>Turnauksen Directionin avaaminen Rencontressa avaa myös muut: Directionin yläreunaan ilmestyy välilehti jokaista turnausta kohti, kussakin oma yhteenveto — odottavat ehdotukset, käynnissä olevat ottelut, hälytys jos sellainen on. Turnauksen vaihtaminen on yksi klikkaus sen välilehteen, ilman vahvistusta; jätetty turnaus ei sulkeudu eikä toistu alusta, se pysyy juuri sellaisena kuin se jätettiin. Rencontren ulkopuolinen turnaus on vain yksi turnaus: ei välilehteä näytettäväksi.</p>
+<p><strong>Sali</strong>-välilehti turnausten vasemmalla puolella näyttää koko salin yhdessä ruudukossa: yksi ruutu Rencontren jokaista pöytää kohti, riippumatta siitä, mikä turnaus sen varaa, merkittynä turnauksensa nimellä ja värillä. Tuloskortti, kontekstivalikot, näppäimistö ja vetäminen toimivat siellä kuten turnauksen ruudukossa, ja jokainen ele kohdistuu ruudun turnaukseen. Ottelun vetäminen toisen turnauksen varaamalle pöydälle vaihtaa kaksi ottelua vahvistuksen jälkeen, jossa mainitaan molemmat turnaukset. Ruudukon alla kaikkien turnausten ehdotukset on ryhmitelty turnauksittain, kullakin oma <em>Aloita</em>-painike. Turnauksen tai näkymävälilehden napsauttaminen poistuu Salista.</p>
 <p>Sama henkilö voi pelata useampaa Rencontren turnausta: kaksi samannimistä osallistujaa ovat sama henkilö, ja nelinpelin parissa kumpikin jäsen lasketaan. Niin kauan kuin hän pelaa yhdessä turnauksessa, muut eivät ehdota häntä, ja niiden <em>Odottaa</em>-luettelo kertoo, missä hän pelaa: ”pelaa turnauksessa pääturnaus, pöytä 4”. Käsin parittaminen on yhä sallittua: ottelu alkaa, ja sen ruudussa näkyy sama maininta.</p>
 <h4>Salin näyttö</h4>
 <p>Turnausta katsotaan. <strong>Näyttökansion</strong> valitseminen asetuksista riittää kertaheitolla: blunderDB kirjoittaa sinne itsenäisen HTML-sivun uudelleen jokaisen tapahtuman kohdalla, ja sivu latautuu itsestään. Se aukeaa offline-tilassa, toisella näytöllä tai heijastettuna, eikä lataa ulkopuolisia resursseja. <em>Avaa selaimessa</em> näyttää sen heti.</p>
@@ -1435,6 +1436,10 @@ export default {
 <tr>
 <td>Vedä varattu ruutu toisen päälle</td>
 <td>Hiirellä: vapaaseen ruutuun siirretään ottelu; varattuun ruutuun kaksi ottelua vaihdetaan vahvistuksen jälkeen. ESC peruu vedon.</td>
+</tr>
+<tr>
+<td>Sali</td>
+<td>Rencontren Salin ruudukossa samat näppäimet, valikot ja vetäminen vaikuttavat minkä tahansa turnauksen pöytään; vaihto toisen turnauksen kanssa mainitsee vahvistuksessa molemmat.</td>
 </tr>
 </tbody>
 </table>

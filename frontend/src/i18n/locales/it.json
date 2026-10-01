@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "Eliminare l’incontro «{name}»? Le sue prove restano, staccate."
         },
+        "hall": {
+            "tab": "Sala",
+            "legend": "Tornei della sala",
+            "proposals": "Proposte della sala ({n})",
+            "loading": "Caricamento della sala…",
+            "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?"
+        },
         "epreuves": {
             "pending": "{n} in attesa",
             "running": "{n} in corso",

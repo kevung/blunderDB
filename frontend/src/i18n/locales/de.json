@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Turniere bleiben, abgelöst."
         },
+        "hall": {
+            "tab": "Saal",
+            "legend": "Turniere im Saal",
+            "proposals": "Vorschläge im Saal ({n})",
+            "loading": "Saal wird geladen…",
+            "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?"
+        },
         "epreuves": {
             "pending": "{n} ausstehend",
             "running": "{n} laufend",

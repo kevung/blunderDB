@@ -27,6 +27,14 @@
     --td-target: 44px;
     --td-gap: 8px;
     --td-font: 14px;
+    /* La couleur d'une épreuve dans la Salle, par rang dans la Rencontre (modulo 6) : une
+       pastille et un liseré, jamais le seul signe — le nom court l'accompagne. */
+    --td-event-0: #1976d2;
+    --td-event-1: #c2571a;
+    --td-event-2: #2e7d32;
+    --td-event-3: #7b3fa0;
+    --td-event-4: #b0306a;
+    --td-event-5: #8a6d00;
 
     /* Dialog chrome — named exceptions under ADR-0008, not part of the body scale above.
        Most modal titles are larger than a panel title (users scan for the modal's

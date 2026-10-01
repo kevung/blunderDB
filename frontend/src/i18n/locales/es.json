@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "¿Eliminar el encuentro «{name}»? Sus pruebas se mantienen, desvinculadas."
         },
+        "hall": {
+            "tab": "Sala",
+            "legend": "Torneos de la sala",
+            "proposals": "Propuestas de la sala ({n})",
+            "loading": "Cargando la sala…",
+            "swapConfirm": "¿Mesa {from} ({a}) ↔ Mesa {to} ({b})?"
+        },
         "epreuves": {
             "pending": "{n} pendientes",
             "running": "{n} en curso",

@@ -1380,11 +1380,17 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
 * ``move --id N --match M --table T [--format text|json]`` — Change la table
   d'un match en cours, comme le glisser-déposer d'une case sur une autre dans
   la grille. Si la table visée est occupée, les deux matchs **échangent** leurs
-  tables ; une table hors service est refusée. Affiche la table de chaque match
-  en cours.
+  tables ; une table hors service est refusée. Dans une Rencontre, si la table
+  est occupée par une autre épreuve, l'échange se fait entre les deux épreuves :
+  un changement de table est écrit dans chaque journal. Affiche la table de
+  chaque match en cours.
+* ``hall --rencontre N [--format text|json]`` — La Salle d'une Rencontre : une
+  ligne par table, quelle que soit l'épreuve qui l'occupe (épreuve, match,
+  joueurs), puis les propositions de chaque épreuve. C'est la grille que la vue
+  *Salle* de la Direction affiche.
 
 **Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
-``list`` et ``page --rencontre``), ``--format``.
+``list``, ``page --rencontre`` et ``hall``), ``--format``.
 
 **Exemples:**
 
@@ -1397,6 +1403,7 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
    ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
    ./blunderdb tournament export --db base.db --id 3 > journal.json
    ./blunderdb tournament move --db base.db --id 3 --match m4 --table 7
+   ./blunderdb tournament hall --db base.db --rencontre 1
 
 trash — La corbeille
 ---------------------

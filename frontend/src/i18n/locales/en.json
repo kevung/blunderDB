@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "Delete the event “{name}”? Its tournaments remain, detached."
         },
+        "hall": {
+            "tab": "Hall",
+            "legend": "Events in the hall",
+            "proposals": "Hall proposals ({n})",
+            "loading": "Loading the hall…",
+            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b})?"
+        },
         "epreuves": {
             "pending": "{n} pending",
             "running": "{n} running",

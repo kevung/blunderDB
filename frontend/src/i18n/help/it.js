@@ -395,6 +395,7 @@ export default {
 <p>Più tornei giocati nella stessa sala — un principale, uno speed, un doppio — si raggruppano in una <strong>Rencontre</strong>, in fondo alle Impostazioni: <strong>Crea e collega…</strong> apre la sala con il suo numero di tavoli, <strong>Collega…</strong> vi aggiunge un torneo diretto. Collegare mostra prima cosa cambierà: i tavoli del torneo diventano quelli della sala. <strong>Stacca dalla rencontre</strong> restituisce il torneo a sé stesso, con il suo registro e i suoi tavoli; <strong>Elimina la rencontre</strong>, dopo conferma, la mette nel cestino e stacca i suoi tornei senza eliminarne alcuno.</p>
 <p>In una Rencontre nessun torneo propone un tavolo dove ne gioca un altro: la griglia mostra quei tavoli occupati, con il nome del torneo, e un abbinamento senza tavolo libero attende. Un tavolo fuori servizio si spunta una volta, nella Rencontre, e vale per tutti i tornei; il numero di tavoli, i tavoli fuori servizio e le pause modificati nelle Impostazioni di un torneo valgono anche per la sala, e l'elenco di cosa cambierà nomina gli altri tornei.</p>
 <p>Aprire la Direction di un torneo in una Rencontre apre anche le altre: in alto nella Direction appare una scheda per torneo, ciascuna con il proprio riepilogo — proposte in attesa, partite in corso, un avviso se ce n'è uno. Cambiare torneo è un clic sulla sua scheda, senza conferma; il torneo lasciato non si chiude e non viene rigiocato, resta esattamente come lo si è lasciato. Un torneo fuori da una Rencontre ha un solo torneo: nessuna scheda da mostrare.</p>
+<p>La scheda <strong>Sala</strong>, a sinistra dei tornei, mostra l'intera sala in un'unica griglia: una casella per tavolo della Rencontre, qualunque torneo lo occupi, contrassegnata dal nome e dal colore del suo torneo. La scheda del risultato, i menu contestuali, la tastiera e il trascinamento funzionano come nella griglia di un torneo, e ogni gesto si rivolge al torneo della casella. Trascinare un incontro su un tavolo occupato da un altro torneo scambia i due incontri dopo una conferma che nomina i due tornei. Sotto la griglia, le proposte di tutti i tornei sono raggruppate per torneo, ciascuna con il proprio pulsante <em>Avvia</em>. Fare clic su un torneo o su una scheda di vista esce dalla Sala.</p>
 <p>Una stessa persona può giocare più tornei della Rencontre: due Partecipanti con lo stesso nome sono la stessa persona, e in una coppia di doppio conta ciascuno dei due membri. Finché gioca in un torneo, gli altri non la propongono, e la loro lista <em>In attesa</em> dice dove gioca: «gioca in principale, tavolo 4». L'abbinamento a mano resta permesso: il match parte e la sua casella nella griglia riporta la stessa indicazione.</p>
 <h4>Il display della sala</h4>
 <p>Un torneo si guarda. Scegliere una <strong>cartella del display</strong> nelle Impostazioni basta una volta per tutte: blunderDB vi riscrive una pagina HTML autonoma a ogni evento, e la pagina si ricarica da sola. Si apre offline, su un secondo schermo o proiettata, e non carica alcuna risorsa esterna. <em>Apri nel browser</em> la mostra subito.</p>
@@ -1435,6 +1436,10 @@ export default {
 <tr>
 <td>Trascinare una casella occupata su un'altra</td>
 <td>Con il mouse: su una casella libera, spostare l'incontro; su una casella occupata, scambiare i due incontri dopo conferma. ESC annulla il trascinamento.</td>
+</tr>
+<tr>
+<td>Sala</td>
+<td>Sulla griglia della Sala di una Rencontre, gli stessi tasti, menu e il trascinamento agiscono sul tavolo di qualsiasi torneo; uno scambio con un altro torneo nomina entrambi nella conferma.</td>
 </tr>
 </tbody>
 </table>

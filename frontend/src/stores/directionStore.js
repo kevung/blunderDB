@@ -12,6 +12,7 @@ import {
     StartMatchManually,
     FreeParticipants,
     TableGrid,
+    RencontreTableGrid,
     EnterResult,
     EnterForfeit,
     MoveMatchToTable,
@@ -895,6 +896,58 @@ export async function tableGrid() {
         return [];
     }
 }
+
+/**
+ * La Salle de la Rencontre ouverte (ADR-0056 §5) : une case par table, quelle que soit
+ * l'épreuve, et les propositions de chacune — fusionnées en Go, rejouées à chaque appel. Null
+ * hors Rencontre.
+ *
+ * @returns {Promise<import('../../wailsjs/go/models').service.HallView | null>}
+ */
+export async function hallGrid() {
+    const rid = get(directionStore)?.rencontreId || 0;
+    if (!rid) return null;
+    try {
+        return await RencontreTableGrid(rid);
+    } catch (e) {
+        logger.error('direction: hall grid failed', e);
+        return null;
+    }
+}
+
+/**
+ * Un geste de la Salle vise l'épreuve de sa case, qui n'est pas forcément l'épreuve ouverte :
+ * ensuite l'épreuve ouverte et ses sœurs sont rejouées, pour que chaque onglet dise vrai.
+ *
+ * @template T
+ * @param {() => Promise<T>} fn
+ * @returns {Promise<T>}
+ */
+async function hallGesture(fn) {
+    const v = await fn();
+    await refreshDirection();
+    return v;
+}
+
+/** @param {number} tid @param {string} matchId @param {string} winner @param {number} [a] @param {number} [b] @param {string} [note] */
+export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') => hallGesture(() => EnterResult(tid, matchId, winner, a, b, note));
+
+/** @param {number} tid @param {string} matchId @param {string} winner @param {string} [note] */
+export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(() => EnterForfeit(tid, matchId, winner, note));
+
+/**
+ * Déplace un match de la Salle ; sur une table occupée par une épreuve sœur, le service échange
+ * les deux matchs, un changement de table dans chaque journal.
+ *
+ * @param {number} tid @param {string} matchId @param {number} table
+ */
+export const hallMoveMatch = (tid, matchId, table) => hallGesture(() => MoveMatchToTable(tid, matchId, table));
+
+/** @param {number} tid @param {string} matchId */
+export const hallCancelMatch = (tid, matchId) => hallGesture(() => CancelMatch(tid, matchId));
+
+/** @param {number} tid @param {ProposalAction} action */
+export const hallConfirmProposal = (tid, action) => hallGesture(() => ConfirmProposal(tid, JSON.stringify(action)));
 
 /**
  * Enregistre un résultat. Seul le vainqueur est exigé : les scores peuvent être nuls tous deux.

@@ -395,6 +395,7 @@ export default {
 <p>Plusieurs épreuves jouées dans la même salle — un principal, un speed, des doubles — se regroupent dans une <strong>Rencontre</strong>, en bas des Réglages : <strong>Créer et rattacher…</strong> ouvre la salle avec son nombre de tables, <strong>Rattacher…</strong> y ajoute une épreuve dirigée. Rattacher montre d'abord ce qui va changer : les tables de l'épreuve deviennent celles de la salle. <strong>Détacher de la rencontre</strong> rend l'épreuve à elle-même, avec son journal et ses tables ; <strong>Supprimer la rencontre</strong>, après confirmation, la met à la corbeille et détache ses épreuves sans en supprimer aucune.</p>
 <p>Dans une Rencontre, aucune épreuve ne propose une table où joue une autre : la grille montre ces tables occupées, avec le nom de l'épreuve, et un appariement sans table libre attend. Une table hors service se coche une fois, dans la Rencontre, et vaut pour toutes les épreuves ; le nombre de tables, les tables hors service et les pauses modifiés dans les Réglages d'une épreuve valent aussi pour la salle, et la liste de ce qui va changer nomme les autres épreuves.</p>
 <p>Ouvrir la Direction d'une épreuve en Rencontre ouvre aussi les autres : un onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé — propositions en attente, matchs en cours, une alerte s'il y en a. Changer d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée ne se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi hors Rencontre n'a qu'une épreuve : pas d'onglet à montrer.</p>
+<p>L'onglet <strong>Salle</strong>, à gauche des épreuves, montre toute la salle en une seule grille : une case par table de la Rencontre, quelle que soit l'épreuve qui l'occupe, marquée du nom et de la couleur de son épreuve. La fiche de résultat, les menus contextuels, le clavier et le glisser-déposer y fonctionnent comme dans la grille d'une épreuve, et chaque geste s'adresse à l'épreuve de la case. Glisser un match sur une table occupée par une autre épreuve échange les deux matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les propositions de toutes les épreuves sont groupées par épreuve, chacune avec son bouton <em>Lancer</em>. Cliquer sur une épreuve ou sur un onglet de vue quitte la Salle.</p>
 <p>Une même personne peut jouer plusieurs épreuves de la Rencontre : deux Participants du même nom sont la même personne, et pour une paire de doubles chacun des deux membres compte. Tant qu'elle joue dans une épreuve, les autres ne la proposent pas, et leur liste <em>En attente</em> dit où elle joue : « joue au principal, table 4 ». L'appariement à la main reste permis : le match démarre, et sa case de la grille porte la même mention.</p>
 <h4>L'affichage de la salle</h4>
 <p>Un tournoi se regarde. Choisir un <strong>dossier d'affichage</strong> dans les Réglages suffit une fois pour toutes : blunderDB y réécrit une page HTML autonome à chaque événement, et la page se recharge d'elle-même. Elle s'ouvre hors ligne, sur un second écran ou projetée, et ne charge aucune ressource extérieure. <em>Ouvrir dans le navigateur</em> l'affiche immédiatement.</p>
@@ -1435,6 +1436,10 @@ export default {
 <tr>
 <td>Glisser une case occupée sur une autre</td>
 <td>À la souris : sur une case libre, déplacer le match ; sur une case occupée, échanger les deux matchs après confirmation. ÉCHAP annule le glisser.</td>
+</tr>
+<tr>
+<td>Salle</td>
+<td>Sur la grille de la Salle d'une Rencontre, les mêmes touches, menus et glisser-déposer agissent sur la table de n'importe quelle épreuve ; un échange avec une autre épreuve nomme les deux dans la confirmation.</td>
 </tr>
 </tbody>
 </table>

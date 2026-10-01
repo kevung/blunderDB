@@ -34,6 +34,9 @@ type (
 	ConfigPreview       = service.ConfigPreview
 	LastDecision        = service.LastDecision
 	TableCell           = service.TableCell
+	HallCell            = service.HallCell
+	HallEvent           = service.HallEvent
+	HallView            = service.HallView
 	SlotRow             = service.SlotRow
 	SlotSuggestion      = service.SlotSuggestion
 	MatchSlot           = service.MatchSlot
@@ -348,6 +351,11 @@ func (d *Database) Pairs(tournamentID int64) (map[string][]PairMember, error) {
 // TableGrid is service.Service.TableGrid on the open database.
 func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 	return d.directionService().TableGrid(context.Background(), tournamentID)
+}
+
+// RencontreTableGrid is service.Service.RencontreTableGrid on the open database.
+func (d *Database) RencontreTableGrid(rencontreID int64) (*HallView, error) {
+	return d.directionService().RencontreTableGrid(context.Background(), rencontreID)
 }
 
 // EnterResult is service.Service.EnterResult on the open database.

@@ -395,6 +395,7 @@ export default {
 <p>Varios torneos jugados en la misma sala — un principal, un speed, dobles — se agrupan en una <strong>Rencontre</strong>, al pie de los Ajustes: <strong>Crear y vincular…</strong> abre la sala con su número de mesas, <strong>Vincular…</strong> le añade un torneo dirigido. Vincular muestra primero lo que cambiará: las mesas del torneo pasan a ser las de la sala. <strong>Separar de la rencontre</strong> devuelve el torneo a sí mismo, con su registro y sus mesas; <strong>Eliminar la rencontre</strong>, tras confirmación, la envía a la papelera y separa sus torneos sin eliminar ninguno.</p>
 <p>En una Rencontre, ningún torneo propone una mesa donde juega otro: la cuadrícula muestra esas mesas ocupadas, con el nombre del torneo, y un emparejamiento sin mesa libre espera. Una mesa fuera de servicio se marca una vez, en la Rencontre, y vale para todos los torneos; el número de mesas, las mesas fuera de servicio y las pausas cambiados en los Ajustes de un torneo valen también para la sala, y la lista de lo que cambiará nombra los demás torneos.</p>
 <p>Abrir la Dirección de un torneo en una Rencontre abre también las otras: aparece una pestaña por torneo en la parte superior de la Dirección, cada una con su resumen — propuestas pendientes, partidos en curso, una alerta si la hay. Cambiar de torneo es un clic en su pestaña, sin confirmación; el torneo abandonado no se cierra ni se vuelve a reproducir, queda exactamente como se dejó. Un torneo fuera de una Rencontre solo tiene un torneo: ninguna pestaña que mostrar.</p>
+<p>La pestaña <strong>Sala</strong>, a la izquierda de los torneos, muestra toda la sala en una sola cuadrícula: una casilla por mesa de la Rencontre, sea cual sea el torneo que la ocupa, marcada con el nombre y el color de su torneo. La ficha de resultado, los menús contextuales, el teclado y el arrastrar y soltar funcionan allí como en la cuadrícula de un torneo, y cada gesto se dirige al torneo de la casilla. Arrastrar un partido a una mesa ocupada por otro torneo intercambia los dos partidos tras una confirmación que nombra los dos torneos. Bajo la cuadrícula, las propuestas de todos los torneos se agrupan por torneo, cada una con su botón <em>Lanzar</em>. Hacer clic en un torneo o en una pestaña de vista abandona la Sala.</p>
 <p>Una misma persona puede jugar varios torneos de la Rencontre: dos Participantes con el mismo nombre son la misma persona, y en una pareja de dobles cuenta cada uno de sus dos miembros. Mientras juega en un torneo, los demás no la proponen, y su lista <em>En espera</em> dice dónde juega: «juega en principal, mesa 4». El emparejamiento a mano sigue permitido: el match empieza y su casilla de la cuadrícula lleva la misma mención.</p>
 <h4>La pantalla de la sala</h4>
 <p>Un torneo se mira. Elegir una <strong>carpeta de pantalla</strong> en los Ajustes basta de una vez por todas: blunderDB reescribe allí una página HTML autónoma en cada evento, y la página se recarga sola. Se abre sin conexión, en una segunda pantalla o proyectada, y no carga ningún recurso externo. <em>Abrir en el navegador</em> la muestra al instante.</p>
@@ -1435,6 +1436,10 @@ export default {
 <tr>
 <td>Arrastrar una casilla ocupada sobre otra</td>
 <td>Con el ratón: sobre una casilla libre, mover el partido; sobre una casilla ocupada, intercambiar los dos partidos tras confirmación. ESC cancela el arrastre.</td>
+</tr>
+<tr>
+<td>Sala</td>
+<td>En la cuadrícula de la Sala de una Rencontre, las mismas teclas, menús y el mismo arrastrar y soltar actúan sobre la mesa de cualquier torneo; un intercambio con otro torneo nombra a los dos en la confirmación.</td>
 </tr>
 </tbody>
 </table>

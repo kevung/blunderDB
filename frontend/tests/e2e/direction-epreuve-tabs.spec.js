@@ -55,9 +55,10 @@ test('changer d’épreuve est un clic, sans confirmation ni fermeture', async (
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
 
-    // Les deux épreuves de la Rencontre sont ouvertes d'emblée : deux onglets, chacun son résumé.
+    // Les deux épreuves de la Rencontre sont ouvertes d'emblée : deux onglets, chacun son
+    // résumé, après celui de la Salle.
     const tabs = page.locator('[data-testid="epreuve-tabs"] button');
-    await expect(tabs).toHaveCount(2);
+    await expect(tabs).toHaveCount(3);
     const tab1 = page.locator('[data-testid="epreuve-tab-1"]');
     const tab2 = page.locator('[data-testid="epreuve-tab-2"]');
     await expect(tab1).toHaveClass(/active/);

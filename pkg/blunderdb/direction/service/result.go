@@ -201,10 +201,19 @@ func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID,
 // MoveMatchToTable moves a running match to another table (noise, light, a broadcast). When
 // that table is taken, the two matches swap tables: two matches never share a table, and the
 // same gesture puts them back. Both moves are written in one transaction.
+//
+// In a Rencontre the occupant may belong to a sister event: the swap then writes one table
+// change in each of the two logs, in the same transaction, under the room's lock — each log
+// still replays alone, and the room never holds two matches on one table because of a move.
 func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matchID string, table int) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
 	if table <= 0 {
 		return nil, fmt.Errorf("direction: table %d is not a table", table)
+	}
+	sisters := d.sistersOf(ctx, tournamentID)
+	if len(sisters) > 0 {
+		defer d.lockRoom()()
+	} else {
+		defer d.lockDirection(tournamentID)()
 	}
 	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
@@ -234,12 +243,22 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 			// stacking two matches on one table.
 			return fmt.Errorf("direction: table %d is taken", table)
 		}
+		var sister *direction.Direction
+		var so *tournoi.Match
+		if o == nil && from > 0 {
+			if sister, so, err = sisterOccupant(ctx, store, sisters, table); err != nil {
+				return err
+			}
+		}
 		now := time.Now()
 		if err := dir.Apply(ctx, tournoi.TableChangedEvent(m.ID, table, now)); err != nil {
 			return err
 		}
-		if o != nil {
+		switch {
+		case o != nil:
 			return dir.Apply(ctx, tournoi.TableChangedEvent(o.ID, from, now))
+		case so != nil:
+			return sister.Apply(ctx, tournoi.TableChangedEvent(so.ID, from, now))
 		}
 		return nil
 	})
@@ -247,6 +266,45 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 		return nil, err
 	}
 	return d.GetDirection(ctx, tournamentID)
+}
+
+// sistersOf lists the other events of the Rencontre a Tournament plays in; none outside one.
+func (d *Service) sistersOf(ctx context.Context, tournamentID int64) []int64 {
+	rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
+	if err != nil || rid == 0 {
+		return nil
+	}
+	r, err := d.st.Rencontres().Get(ctx, d.scope, rid)
+	if err != nil {
+		return nil
+	}
+	var out []int64
+	for _, tid := range r.TournamentIDs {
+		if tid != tournamentID {
+			out = append(out, tid)
+		}
+	}
+	return out
+}
+
+// sisterOccupant finds the match of a sister event running at this table, with its Direction
+// opened on the transaction's store so the swap writes through it; nil when the table is free
+// of them.
+func sisterOccupant(ctx context.Context, store direction.Store, sisters []int64, table int) (*direction.Direction, *tournoi.Match, error) {
+	for _, tid := range sisters {
+		dir, err := direction.Open(ctx, store, tid)
+		if err != nil {
+			continue
+		}
+		st := dir.State()
+		if st == nil || st.Finished {
+			continue
+		}
+		if o := occupant(st, table, ""); o != nil {
+			return dir, o, nil
+		}
+	}
+	return nil, nil, nil
 }
 
 // occupant is the running match at this table other than self, or nil.

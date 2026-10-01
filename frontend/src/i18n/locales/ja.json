@@ -2289,6 +2289,13 @@
             },
             "trashConfirm": "イベント「{name}」を削除しますか？各大会は切り離されて残ります。"
         },
+        "hall": {
+            "tab": "会場",
+            "legend": "会場の大会",
+            "proposals": "会場の提案（{n}）",
+            "loading": "会場を読み込み中…",
+            "swapConfirm": "テーブル {from}（{a}）↔ テーブル {to}（{b}）？"
+        },
         "epreuves": {
             "pending": "{n}件 保留中",
             "running": "{n}件 進行中",

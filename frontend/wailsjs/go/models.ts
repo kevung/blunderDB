@@ -3727,6 +3727,148 @@ export namespace service {
 		    return a;
 		}
 	}
+	export class HallCell {
+	    table: number;
+	    free: boolean;
+	    unavailable: boolean;
+	    reserved: boolean;
+	    matchId?: string;
+	    a?: string;
+	    b?: string;
+	    aName?: string;
+	    bName?: string;
+	    length?: number;
+	    elapsedSeconds?: number;
+	    slow?: boolean;
+	    noTable?: boolean;
+	    shared?: boolean;
+	    elsewhere?: string;
+	    aElsewhere?: direction.Seat;
+	    bElsewhere?: direction.Seat;
+	    tournamentId?: number;
+	    event?: string;
+	    eventIndex: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new HallCell(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.table = source["table"];
+	        this.free = source["free"];
+	        this.unavailable = source["unavailable"];
+	        this.reserved = source["reserved"];
+	        this.matchId = source["matchId"];
+	        this.a = source["a"];
+	        this.b = source["b"];
+	        this.aName = source["aName"];
+	        this.bName = source["bName"];
+	        this.length = source["length"];
+	        this.elapsedSeconds = source["elapsedSeconds"];
+	        this.slow = source["slow"];
+	        this.noTable = source["noTable"];
+	        this.shared = source["shared"];
+	        this.elsewhere = source["elsewhere"];
+	        this.aElsewhere = this.convertValues(source["aElsewhere"], direction.Seat);
+	        this.bElsewhere = this.convertValues(source["bElsewhere"], direction.Seat);
+	        this.tournamentId = source["tournamentId"];
+	        this.event = source["event"];
+	        this.eventIndex = source["eventIndex"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class HallEvent {
+	    tournamentId: number;
+	    name: string;
+	    index: number;
+	    proposals: tournoi.Action[];
+	    names: Record<string, string>;
+	
+	    static createFrom(source: any = {}) {
+	        return new HallEvent(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournamentId = source["tournamentId"];
+	        this.name = source["name"];
+	        this.index = source["index"];
+	        this.proposals = this.convertValues(source["proposals"], tournoi.Action);
+	        this.names = source["names"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class HallView {
+	    rencontreId: number;
+	    name: string;
+	    events: HallEvent[];
+	    cells: HallCell[];
+	
+	    static createFrom(source: any = {}) {
+	        return new HallView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rencontreId = source["rencontreId"];
+	        this.name = source["name"];
+	        this.events = this.convertValues(source["events"], HallEvent);
+	        this.cells = this.convertValues(source["cells"], HallCell);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class HistoryEntry {
 	    seq: number;
 	    kind: string;

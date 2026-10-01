@@ -45,8 +45,14 @@ Plusieurs Directions par Tournament restent écartées.
    clic, sans confirmation, sans rien fermer ni rejouer. Pas d'écran partagé : 370 px utiles
    n'en portent pas deux. Une vue **Salle** est admise, parce qu'elle n'est pas deux épreuves
    côte à côte mais **une** grille : une case par table de la Rencontre, quelle que soit
-   l'épreuve, marquée de son épreuve, en pleine largeur ; la fiche de résultat y agit sur
-   toutes. Un tournoi hors Rencontre ne voit aucun changement.
+   l'épreuve, marquée de son épreuve, en pleine largeur ; la fiche de résultat, les menus, le
+   clavier et le glisser-déposer y agissent sur toutes, chaque geste adressé à l'épreuve de sa
+   case. Sous la grille, les propositions de chaque épreuve, groupées. La fusion est faite en Go
+   (`RencontreTableGrid`), rejouée à chaque appel, jamais stockée ; la page murale lit la salle
+   par la même fusion. Déplacer un match sur une table occupée par une épreuve sœur échange les
+   deux matchs : un changement de table dans chacun des deux journaux, dans une transaction,
+   sous le verrou de la salle — la salle ne porte jamais deux matchs sur une table du fait d'un
+   déplacement. Un tournoi hors Rencontre ne voit aucun changement.
 6. **Un dossier de sortie.** La Rencontre écrit `<dossier>/index.html`, la page murale de la
    salle (une ligne par table, quelle que soit l'épreuve ; les rondes annoncées ; un lien vers
    chaque épreuve), et chaque épreuve rattachée écrit dans `<dossier>/<épreuve>/`. Le dossier
@@ -64,8 +70,9 @@ Plusieurs Directions par Tournament restent écartées.
   (`database`, `storage/sqlite`, `storage/postgres`), migration testée, base de démo régénérée.
 - La logique vit sur `Database` et le contrat `Storage` ; `pkg/blunderdb/direction` reste le
   seul paquet qui connaît Nicomaque et calcule tables occupées et disponibilités.
-- CLI en lecture seule, comme pour la Direction : `tournament list` nomme la Rencontre,
-  `tournament page --rencontre` écrit la page murale. Le démon et `call` exposent la Rencontre
+- CLI : `tournament list` nomme la Rencontre, `tournament page --rencontre` écrit la page
+  murale, `tournament hall --rencontre` imprime la grille de la Salle ; le seul geste est
+  `tournament move`, qui échange aussi avec une épreuve sœur. Le démon et `call` exposent la Rencontre
   à un client externe, lecture toujours, gestes de salle sous `serve --direction` (ADR-0057).
 - Vocabulaire : **Rencontre** dans `CONTEXT.md` ; Participant et Directory complétés pour les
   doubles.

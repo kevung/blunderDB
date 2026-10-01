@@ -838,6 +838,10 @@ export function RencontrePageHTML(arg1) {
   return window['go']['database']['Database']['RencontrePageHTML'](arg1);
 }
 
+export function RencontreTableGrid(arg1) {
+  return window['go']['database']['Database']['RencontreTableGrid'](arg1);
+}
+
 export function ReopenDirection(arg1) {
   return window['go']['database']['Database']['ReopenDirection'](arg1);
 }

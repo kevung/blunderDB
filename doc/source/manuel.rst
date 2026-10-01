@@ -1797,6 +1797,16 @@ d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée n
 se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
 hors Rencontre n'a qu'une épreuve : pas d'onglet à montrer.
 
+L'onglet **Salle**, à gauche des épreuves, montre toute la salle en une seule
+grille : une case par table de la Rencontre, quelle que soit l'épreuve qui
+l'occupe, marquée du nom et de la couleur de son épreuve. La fiche de résultat,
+les menus contextuels, le clavier et le glisser-déposer y fonctionnent comme
+dans la grille d'une épreuve, et chaque geste s'adresse à l'épreuve de la case.
+Glisser un match sur une table occupée par une autre épreuve échange les deux
+matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les
+propositions de toutes les épreuves sont groupées par épreuve, chacune avec son
+bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte la Salle.
+
 Une même personne peut jouer plusieurs épreuves de la Rencontre : deux
 Participants du même nom sont la même personne, et pour une paire de doubles
 chacun des deux membres compte. Tant qu'elle joue dans une épreuve, les autres ne

@@ -432,6 +432,8 @@ export function RencontreOf(arg1:number):Promise<number>;
 
 export function RencontrePageHTML(arg1:number):Promise<string>;
 
+export function RencontreTableGrid(arg1:number):Promise<service.HallView>;
+
 export function ReopenDirection(arg1:number):Promise<service.DirectionView>;
 
 export function ReorderCollectionPositions(arg1:number,arg2:Array<number>):Promise<void>;

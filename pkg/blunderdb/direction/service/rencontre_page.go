@@ -10,8 +10,6 @@ import (
 	"strings"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -117,14 +115,14 @@ func (d *Service) regenerateRencontrePage(ctx context.Context, tournamentID int6
 	_, _ = d.WriteRencontrePage(ctx, rid)
 }
 
-// wallPlayerName gives a player's name for the wall page, falling back to the identifier — a
-// page with a hole in it is worse than one with an identifier in it (the same rule the per-event
-// page follows).
-func wallPlayerName(st *tournoi.State, id tournoi.PlayerID) string {
-	if p := st.Players[id]; p != nil && p.Name != "" {
-		return p.Name
+// orID gives a player's name for the wall page, falling back to the identifier — a page with a
+// hole in it is worse than one with an identifier in it (the same rule the per-event page
+// follows).
+func orID(name, id string) string {
+	if name != "" {
+		return name
 	}
-	return string(id)
+	return id
 }
 
 // RencontrePageHTML renders the room's wall page without writing it — what the CLI's
@@ -137,7 +135,6 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 	slugs := rencontreSlugs(ctx, d.st, d.scope, r.TournamentIDs)
 	room := direction.Room{Tables: r.Tables}
 	roomRead := false
-	occupied := map[int]direction.WallTable{}
 	events := make([]direction.WallEvent, 0, len(r.TournamentIDs))
 	var brackets []direction.WallBracket
 	for _, tid := range r.TournamentIDs {
@@ -159,16 +156,19 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 		if br := d.wallBracket(ctx, tid, name); br != nil {
 			brackets = append(brackets, *br)
 		}
-		if st := dir.State(); st != nil {
-			for _, m := range st.Running() {
-				if m.Table <= 0 {
-					continue
-				}
-				occupied[m.Table] = direction.WallTable{
-					Number: m.Table, Event: name,
-					A: wallPlayerName(st, m.A), B: wallPlayerName(st, m.B),
-				}
+	}
+	// The wall page and the Hall read the room the same way: one line per table, the first
+	// match on it, whatever its event.
+	occupied := map[int]direction.WallTable{}
+	if h, err := d.hall(ctx, r, false); err == nil {
+		for _, c := range h.Cells {
+			if c.MatchID == "" || c.NoTable || c.Table <= 0 {
+				continue
 			}
+			if _, ok := occupied[c.Table]; ok {
+				continue
+			}
+			occupied[c.Table] = direction.WallTable{Number: c.Table, Event: c.Event, A: orID(c.AName, c.A), B: orID(c.BName, c.B)}
 		}
 	}
 	tables := make([]direction.WallTable, 0, room.Tables)
