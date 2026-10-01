@@ -621,7 +621,7 @@ comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne de commande
 pour y écrire les filtres ; un filtre se lance comme d'un double-clic dans la
 bibliothèque ; un match s'ouvre comme d'un double-clic dans le panneau Matchs.
 
-Quand une Direction est ouverte, la palette y ajoute sa salle : joueurs, tables,
+Quand une Direction est ouverte, la palette y ajoute le tournoi : joueurs, tables,
 matchs en cours et épreuves (voir :ref:`la recherche rapide <direction_recherche>`).
 
 .. _panneau_analyse:
@@ -1551,7 +1551,7 @@ moteur propose, le directeur décide.
 
 Un match apparié à la main sans numéro de table prend la première table libre ;
 une table où un match est en cours est refusée.
-Si la salle est pleine, il est lancé quand même et sa case apparaît au bout de
+Si toutes les tables sont prises, il est lancé quand même et sa case apparaît au bout de
 la grille, « sans table », jusqu'à ce qu'on le déplace sur une table.
 
 Une proposition peut porter une remarque du moteur : aucune table libre, ou une
@@ -1601,7 +1601,7 @@ Le menu s'ouvre sur l'objet ; *HAUT* et *BAS* le parcourent, *ENTRÉE* choisit,
   table (viser une table occupée échange les deux matchs), annuler le match,
   historique de chaque joueur.
 - Case libre : lancer ici la proposition sélectionnée, mettre la table hors
-  service, ou la remettre en service (tables d'une Rencontre). Une table réservée
+  service, ou la remettre en service (tables d'un événement). Une table réservée
   à une autre épreuve ne propose rien.
 - Joueur : saisir le résultat de son match en cours, aller à sa table,
   historique, apparier à la main avec un autre joueur libre, aller dans l'autre
@@ -1656,17 +1656,17 @@ fin aussi.
 La recherche rapide
 ~~~~~~~~~~~~~~~~~~~
 
-La touche */* de la page Direction ouvre la palette sur la salle seule :
-joueurs, tables, matchs en cours et épreuves de la Rencontre ouverte, ou de
-l'épreuve seule quand elle n'est dans aucune Rencontre. On tape un nom, un club
+La touche */* de la page Direction ouvre la palette sur le tournoi seul :
+joueurs, tables, matchs en cours et épreuves de l'événement ouvert, ou de
+l'épreuve seule quand elle n'est dans aucun événement. On tape un nom, un club
 ou un numéro de table (« 4 » ou « t4 ») ; les joueurs à une table passent avant
 les joueurs libres. *ENTRÉE* amène à l'objet : un joueur en cours de match, un
 match ou une table occupée ouvrent la fiche de la table, une table libre se
 focalise dans la grille, un joueur libre s'affiche dans l'onglet **Joueurs**
 filtré sur son nom, une épreuve devient l'onglet courant. Un résultat d'une
-autre épreuve de la Rencontre change d'abord d'épreuve. *ÉCHAP* referme sans
+autre épreuve de l'événement change d'abord d'épreuve. *ÉCHAP* referme sans
 rien ouvrir, et la touche reste une barre oblique dans un champ de saisie.
-*CTRL-MAJ-P* ouvre la palette complète, qui contient aussi la salle.
+*CTRL-MAJ-P* ouvre la palette complète, qui contient aussi le tournoi.
 
 Les joueurs
 ~~~~~~~~~~~
@@ -1811,55 +1811,55 @@ Les **têtes de série** sont une option, éteinte par défaut : l'étude du mot
 conclut « pas de têtes de série protégées », qui est la culture actuelle du
 backgammon. Activées, les joueurs sont placés par cote.
 
-La salle partagée
-~~~~~~~~~~~~~~~~~
+Les épreuves d'un événement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Plusieurs épreuves jouées dans la même salle — un principal, un speed, des
-doubles — se regroupent dans une **Rencontre**, en bas des Réglages : **Créer et
-rattacher…** ouvre la salle avec son nombre de tables, **Rattacher…** y ajoute
+Plusieurs épreuves jouées sur les mêmes tables — un principal, un speed, des
+doubles — se regroupent dans un **Événement**, en bas des Réglages : **Créer et
+rattacher…** crée l'événement avec son nombre de tables, **Rattacher…** y ajoute
 une épreuve dirigée. Rattacher montre d'abord ce qui va changer : les tables de
-l'épreuve deviennent celles de la salle. **Détacher de la rencontre** rend
-l'épreuve à elle-même, avec son journal et ses tables ; **Supprimer la
-rencontre**, après confirmation, la met à la corbeille et détache ses épreuves
+l'épreuve deviennent celles de l'événement. **Détacher de l'événement** rend
+l'épreuve à elle-même, avec son journal et ses tables ; **Supprimer
+l'événement**, après confirmation, le met à la corbeille et détache ses épreuves
 sans en supprimer aucune.
 
-Dans une Rencontre, aucune épreuve ne propose une table où joue une autre : la
+Dans un événement, aucune épreuve ne propose une table où joue une autre : la
 grille montre ces tables occupées, avec le nom de l'épreuve, et un appariement
-sans table libre attend. Une table hors service se coche une fois, dans la
-Rencontre, et vaut pour toutes les épreuves ; le nombre de tables, les tables
+sans table libre attend. Une table hors service se coche une fois, dans
+l'événement, et vaut pour toutes ses épreuves ; le nombre de tables, les tables
 hors service et les pauses modifiés dans les Réglages d'une épreuve valent aussi
-pour la salle, et la liste de ce qui va changer nomme les autres épreuves.
+pour l'événement, et la liste de ce qui va changer nomme les autres épreuves.
 
-Ouvrir la Direction d'une épreuve en Rencontre ouvre aussi les autres : un
+Ouvrir la Direction d'une épreuve d'un événement ouvre aussi les autres : un
 onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé —
 propositions en attente, matchs en cours, une alerte s'il y en a. Changer
 d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée ne
 se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
-hors Rencontre n'a qu'une épreuve : pas d'onglet à montrer.
+hors de tout événement n'a qu'une épreuve : pas d'onglet à montrer.
 
-L'onglet **Salle**, à gauche des épreuves, montre toute la salle en une seule
-grille : une case par table de la Rencontre, quelle que soit l'épreuve qui
+L'onglet **Toutes les tables**, à gauche des épreuves, montre toutes les tables
+de l'événement en une seule grille : une case par table, quelle que soit l'épreuve qui
 l'occupe, marquée du nom et de la couleur de son épreuve. La fiche de résultat,
 les menus contextuels, le clavier et le glisser-déposer y fonctionnent comme
 dans la grille d'une épreuve, et chaque geste s'adresse à l'épreuve de la case.
 Glisser un match sur une table occupée par une autre épreuve échange les deux
 matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les
 propositions de toutes les épreuves sont groupées par épreuve, chacune avec son
-bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte la Salle.
+bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte *Toutes les tables*.
 
-Une même personne peut jouer plusieurs épreuves de la Rencontre : deux
+Une même personne peut jouer plusieurs épreuves de l'événement : deux
 Participants du même nom sont la même personne, et pour une paire de doubles
 chacun des deux membres compte. Tant qu'elle joue dans une épreuve, les autres ne
 la proposent pas, et leur liste *En attente* dit où elle joue : « joue au
 principal, table 4 ». L'appariement à la main reste permis : le match démarre, et
 sa case de la grille porte la même mention.
 
-L'affichage de la salle
-~~~~~~~~~~~~~~~~~~~~~~~
+L'affichage du tournoi
+~~~~~~~~~~~~~~~~~~~~~~
 
 Un tournoi se regarde. Choisir un **dossier d'affichage** dans les Réglages suffit
 une fois pour toutes : blunderDB y réécrit une page HTML autonome à chaque
-événement, et la page se recharge d'elle-même. Elle s'ouvre hors ligne, sur un
+changement, et la page se recharge d'elle-même. Elle s'ouvre hors ligne, sur un
 second écran ou projetée, et ne charge aucune ressource extérieure. *Ouvrir dans
 le navigateur* l'affiche immédiatement.
 
@@ -1868,20 +1868,20 @@ La **feuille d'appariements** se pose sur la table d'accueil : un clic sur
 match — les deux joueurs, la longueur, la table, deux cases vides pour le score —
 et une ronde de trente-deux joueurs tient sur une page A4.
 
-Une Rencontre a son propre dossier de sortie, choisi une fois dans son panneau de
+Un événement a son propre dossier de sortie, choisi une fois dans son panneau de
 Réglages avec le même bouton *Choisir le dossier* : blunderDB y écrit
-``index.html``, la **page murale** de la salle — une ligne par table, quelle que
+``index.html``, la **page murale** de l'événement — une ligne par table, quelle que
 soit l'épreuve qui l'occupe, avec les rondes annoncées de chaque épreuve et un
 lien vers sa propre page — et chaque épreuve rattachée écrit la sienne dans un
-sous-dossier. Un geste dans n'importe quelle épreuve de la Rencontre régénère la
+sous-dossier. Un geste dans n'importe quelle épreuve de l'événement régénère la
 page murale ; le dossier propre d'une épreuve rattachée est gardé mais ignoré
-tant qu'elle reste dans la Rencontre.
+tant qu'elle reste dans l'événement.
 
 Quand une épreuve est en phase de tableau et que celui-ci est tiré, sa page
-murale et celle de la Rencontre montrent l'arbre en grand, lisible de loin : une
+murale et celle de l'événement montrent l'arbre en grand, lisible de loin : une
 colonne par tour, les perdants qui descendent en consolante en pointillé. La page
-défile d'elle-même, sans script, entre son contenu habituel (les tables pour la
-Rencontre) et l'arbre de chaque épreuve en tableau, douze secondes chacun ; elle
+défile d'elle-même, sans script, entre son contenu habituel (les tables pour
+l'événement) et l'arbre de chaque épreuve en tableau, douze secondes chacun ; elle
 se recharge toujours toutes les trente secondes et reprend la rotation là où elle
 en était. Une
 épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
@@ -1889,7 +1889,7 @@ reste celle d'avant.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
-et ``export`` ; ``page --rencontre`` écrit la page murale d'une Rencontre au lieu
+et ``export`` ; ``page --rencontre`` écrit la page murale d'un événement au lieu
 de la page d'une seule épreuve. Voir :ref:`cli`.
 
 .. _stats:
