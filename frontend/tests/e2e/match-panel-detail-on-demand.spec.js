@@ -32,7 +32,9 @@ test.beforeEach(async ({ page }) => {
 
 test('le volet de détail n’apparaît qu’avec un match sélectionné', async ({ page }) => {
     const panel = page.getByRole('region', { name: 'Match navigator' });
-    const row = panel.getByRole('row', { name: /Alice/ });
+    // Une cellule de nom, pas le centre de la ligne : la liste se rétrécit à la sélection,
+    // et ce centre tombe alors sur la cellule du tournoi, qui s'édite au clic.
+    const row = panel.getByRole('row', { name: /Alice/ }).getByRole('cell', { name: /Alice/ });
     const list = panel.locator('.match-list-pane');
     const detail = panel.locator('.detail-pane');
 
