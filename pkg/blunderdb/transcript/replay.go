@@ -93,8 +93,8 @@ type GameInfo struct {
 	// two differ exactly where the opening carries a ScoreMismatch.
 	Declared     bool   `json:"declared"`
 	DerivedScore [2]int `json:"derived_score"`
-	// Winner is the gnubg encoding the domain uses: 0 = player 1, 1 = player 2,
-	// -1 = the game is unfinished.
+	// Winner is the encoding of domain.Game.Winner: 1 = player 1, -1 = player 2,
+	// 0 = the game is unfinished.
 	Winner    int  `json:"winner"`
 	PointsWon int  `json:"points_won"`
 	Crawford  bool `json:"crawford"`

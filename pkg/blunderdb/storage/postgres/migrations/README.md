@@ -187,6 +187,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   SQLite's 2.25.0 → 2.26.0 step runs (`sqlshared.NormalizeGameWinnerSQL`,
   which documents the rule per source). Not idempotent on its own — a second
   pass would read normalized values as gnubg's — so it relies on
-  `schema_migrations`; a fresh bootstrap records it without running it, and
-  holds no game to convert anyway. Lifts FORCEd RLS on the three tables it
+  `schema_migrations`, where its row is written in the same batch as the
+  statement: either both land or neither does, and a replay finds the row and
+  skips it. A fresh bootstrap holds no game to convert, so its run is a no-op.
+  Lifts FORCEd RLS on the three tables it
   reads for the statement, since the migrating connection carries no tenant.
