@@ -98,6 +98,14 @@ describe("garde d'ouverture", () => {
     });
 });
 
+// Une page entière de vignettes est dessinée une par tâche (setTimeout 0 puis
+// un rendu SVG) : du calcul réel, que la charge de la machine étire bien
+// au-delà du délai par défaut de vitest (5 s) — et la même valeur pour le
+// délai du test et celui de l'attente les faisait échouer ensemble. Le délai
+// de l'attente reste donc strictement dans celui du test.
+const MOUNTED_TIMEOUT = 60000;
+const DRAW_TIMEOUT = 45000;
+
 describe('la planche montée', () => {
     beforeEach(() => {
         positionsStore.set(Array.from({ length: 30 }, (_, i) => position(i + 1)));
@@ -105,30 +113,39 @@ describe('la planche montée', () => {
     });
     afterEach(() => cleanup());
 
-    test('montre la page de la position courante, et la dessine', async () => {
-        const { container } = render(ContactSheetModal, { visible: true, onClose: () => {} });
-        const tiles = container.querySelectorAll('.tile');
-        expect(tiles.length).toBe(PAGE_SIZE);
-        expect(container.querySelector('.tile.current')?.getAttribute('data-index')).toBe('2');
-        await waitFor(() => expect(container.querySelectorAll('.tile img').length).toBe(PAGE_SIZE), { timeout: 5000 });
-        expect(container.querySelector('.tile img')?.getAttribute('src')).toMatch(/^data:image\/svg\+xml/);
-    });
+    test(
+        'montre la page de la position courante, et la dessine',
+        async () => {
+            const { container } = render(ContactSheetModal, { visible: true, onClose: () => {} });
+            const tiles = container.querySelectorAll('.tile');
+            expect(tiles.length).toBe(PAGE_SIZE);
+            expect(container.querySelector('.tile.current')?.getAttribute('data-index')).toBe('2');
+            await waitFor(() => expect(container.querySelectorAll('.tile img').length).toBe(PAGE_SIZE), { timeout: DRAW_TIMEOUT });
+            expect(container.querySelector('.tile img')?.getAttribute('src')).toMatch(/^data:image\/svg\+xml/);
+        },
+        MOUNTED_TIMEOUT
+    );
 
-    test('se parcourt au clavier et ouvre la vignette choisie', async () => {
-        const onClose = vi.fn();
-        const { container } = render(ContactSheetModal, { visible: true, onClose });
-        await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe('2'));
-        await fireEvent.keyDown(document.activeElement, { key: 'ArrowRight' });
-        await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe('3'));
-        // Une seule vignette dans l'ordre de tabulation : celle qui a le focus.
-        expect(container.querySelectorAll('.tile[tabindex="0"]').length).toBe(1);
+    test(
+        'se parcourt au clavier et ouvre la vignette choisie',
+        async () => {
+            const onClose = vi.fn();
+            const { container } = render(ContactSheetModal, { visible: true, onClose });
+            const focusOpts = { timeout: DRAW_TIMEOUT };
+            await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe('2'), focusOpts);
+            await fireEvent.keyDown(document.activeElement, { key: 'ArrowRight' });
+            await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe('3'), focusOpts);
+            // Une seule vignette dans l'ordre de tabulation : celle qui a le focus.
+            expect(container.querySelectorAll('.tile[tabindex="0"]').length).toBe(1);
 
-        await fireEvent.keyDown(document.activeElement, { key: 'PageDown' });
-        await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe(String(PAGE_SIZE + 3)));
-        expect(container.querySelectorAll('.tile').length).toBe(30 - PAGE_SIZE);
+            await fireEvent.keyDown(document.activeElement, { key: 'PageDown' });
+            await waitFor(() => expect(document.activeElement?.getAttribute('data-index')).toBe(String(PAGE_SIZE + 3)), focusOpts);
+            expect(container.querySelectorAll('.tile').length).toBe(30 - PAGE_SIZE);
 
-        await fireEvent.click(document.activeElement);
-        expect(get(currentPositionIndexStore)).toBe(PAGE_SIZE + 3);
-        expect(onClose).toHaveBeenCalled();
-    });
+            await fireEvent.click(document.activeElement);
+            expect(get(currentPositionIndexStore)).toBe(PAGE_SIZE + 3);
+            expect(onClose).toHaveBeenCalled();
+        },
+        MOUNTED_TIMEOUT
+    );
 });
