@@ -87,7 +87,7 @@ func (d *Service) directionPage(ctx context.Context, dir *direction.Direction, t
 	if t, err := d.st.Tournaments().Get(ctx, d.scope, tournamentID); err == nil && t.Name != "" {
 		name = t.Name
 	}
-	return direction.WithBracketView(page, d.wallBracket(ctx, tournamentID, name), cat, now), nil
+	return direction.WithBracketView(page, d.wallBracket(ctx, dir, name), cat, now), nil
 }
 
 // The printable pairing sheet: the display page's plumbing, plus a print instruction that opens

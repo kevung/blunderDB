@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -70,8 +71,18 @@ func TestWallPageReplaysEachEventOnce(t *testing.T) {
 	counter.mu.Lock()
 	counter.loads = map[int64]int{}
 	counter.mu.Unlock()
-	if _, err := svc.RencontrePageHTML(ctx, room.ID); err != nil {
+	page, err := svc.RencontrePageHTML(ctx, room.ID)
+	if err != nil {
 		t.Fatal(err)
+	}
+	// The golden file was produced before the grid and the brackets shared one replay: sharing
+	// it must not change a byte of the page.
+	want, err := os.ReadFile("testdata/rencontre_wall_page.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if page != string(want) {
+		t.Errorf("wall page differs from testdata/rencontre_wall_page.html:\n%s", page)
 	}
 	counter.mu.Lock()
 	defer counter.mu.Unlock()

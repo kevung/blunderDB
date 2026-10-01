@@ -159,7 +159,7 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 			roomRead = true
 		}
 		events = append(events, direction.WallEvent{Name: m.name, Slug: slugs[m.tid], Rounds: m.dir.Rounds()})
-		if br := d.wallBracket(ctx, m.tid, m.name); br != nil {
+		if br := d.wallBracket(ctx, m.dir, m.name); br != nil {
 			brackets = append(brackets, *br)
 		}
 	}

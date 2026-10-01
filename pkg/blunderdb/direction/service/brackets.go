@@ -107,6 +107,12 @@ func (d *Service) Brackets(ctx context.Context, tournamentID int64) ([]BracketPh
 	if err != nil {
 		return nil, err
 	}
+	return d.bracketsOf(ctx, dir)
+}
+
+// bracketsOf is Brackets over a Direction already replayed, so a caller that holds one does not
+// replay the log again.
+func (d *Service) bracketsOf(ctx context.Context, dir *direction.Direction) ([]BracketPhase, error) {
 	st := dir.State()
 	if st == nil {
 		return nil, nil
@@ -305,8 +311,8 @@ func livesRows(st *tournoi.State, ph *tournoi.PhaseState) []LivesRow {
 // wallBracket is the bracket a wall page shows for a Direction: its current phase when that is an
 // elimination phase already drawn. A Swiss phase, a pool, a playoff or a phase not yet drawn has
 // no tree to show, and nothing is returned.
-func (d *Service) wallBracket(ctx context.Context, tournamentID int64, event string) *direction.WallBracket {
-	phases, err := d.Brackets(ctx, tournamentID)
+func (d *Service) wallBracket(ctx context.Context, dir *direction.Direction, event string) *direction.WallBracket {
+	phases, err := d.bracketsOf(ctx, dir)
 	if err != nil {
 		return nil
 	}
