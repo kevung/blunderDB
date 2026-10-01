@@ -57,8 +57,8 @@ func pathItem(doc, pattern string) string {
 // the version. The two creates name nothing that has a version yet; previewConfig writes nothing.
 func TestDirectionGestures_DeclareTheirContract(t *testing.T) {
 	exempt := map[string]bool{
-		"/v1/directions.create":        true,
-		"/v1/rencontres.create":        true,
+		"/v1/directions.create": true,
+		"/v1/rencontres.create": true,
 	}
 	model, err := Parse("internal/server")
 	if err != nil {

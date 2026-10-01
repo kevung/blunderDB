@@ -181,36 +181,50 @@ func (d *Service) StandingsCSV(ctx context.Context, tournamentID int64) (string,
 }
 
 // CloseDirection closes the tournament and freezes the final standings.
-func (d *Service) CloseDirection(ctx context.Context, tournamentID int64) (_ *DirectionView, err error) {
+func (d *Service) CloseDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	if err := d.closeDirection(ctx, tournamentID); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) closeDirection(ctx context.Context, tournamentID int64) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if err := dir.Finish(ctx, time.Now()); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // ReopenDirection takes a closed tournament back, because a result was wrong. The final
 // standings are recomputed at the next close; the log keeps everything.
-func (d *Service) ReopenDirection(ctx context.Context, tournamentID int64) (_ *DirectionView, err error) {
+func (d *Service) ReopenDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	if err := d.reopenDirection(ctx, tournamentID); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) reopenDirection(ctx context.Context, tournamentID int64) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if err := dir.Reopen(ctx, time.Now()); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }

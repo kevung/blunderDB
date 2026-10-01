@@ -167,46 +167,60 @@ func playerNameIn(st *tournoi.State, id tournoi.PlayerID) string {
 
 // EnterResult records the result of a match. Only `winner` is required; both scores may be zero.
 // `note` travels on the event. A score beyond the length raises a standing warning.
-func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (_ *DirectionView, err error) {
+func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
+	if err := d.enterResult(ctx, tournamentID, matchID, winner, scoreA, scoreB, note); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) enterResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	ev := tournoi.ResultEvent(tournoi.MatchID(matchID), tournoi.PlayerID(winner), scoreA, scoreB, time.Now())
 	if note != "" {
 		ev = ev.WithNote(note)
 	}
 	if err := dir.Apply(ctx, ev); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // EnterForfeit records that a player did not turn up for THIS match, without withdrawing them
 // from the tournament: they go on to follow a loser's path, the consolation for instance.
-func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID, winner, note string) (_ *DirectionView, err error) {
+func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID, winner, note string) (*DirectionView, error) {
+	if err := d.enterForfeit(ctx, tournamentID, matchID, winner, note); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) enterForfeit(ctx context.Context, tournamentID int64, matchID, winner, note string) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	ev := tournoi.ForfeitEvent(tournoi.MatchID(matchID), tournoi.PlayerID(winner), time.Now())
 	if note != "" {
 		ev = ev.WithNote(note)
 	}
 	if err := dir.Apply(ctx, ev); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // MoveMatchToTable moves a running match to another table (noise, light, a broadcast). When
@@ -228,7 +242,7 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 	// may not be looking at it — is rewritten here, so the GUI, the CLI and any client get it
 	// alike, once the lock is released: a slow folder must not hold the room's other gestures.
 	d.writePages(context.WithoutCancel(ctx), tournamentID, touched)
-	return d.GetDirection(ctx, tournamentID)
+	return d.viewAfter(ctx, tournamentID)
 }
 
 // moveMatch writes the move and, for a swap with a sister event, names that sister in touched.
@@ -357,18 +371,25 @@ func occupant(st *tournoi.State, table int, self tournoi.MatchID) *tournoi.Match
 
 // CancelMatch removes a match launched by mistake — the wrong players, the wrong table. The
 // state is recomputed; nothing is erased from the log.
-func (d *Service) CancelMatch(ctx context.Context, tournamentID int64, matchID string) (_ *DirectionView, err error) {
+func (d *Service) CancelMatch(ctx context.Context, tournamentID int64, matchID string) (*DirectionView, error) {
+	if err := d.cancelMatch(ctx, tournamentID, matchID); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) cancelMatch(ctx context.Context, tournamentID int64, matchID string) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if err := dir.Apply(ctx, tournoi.CancelEvent(tournoi.MatchID(matchID), time.Now())); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }

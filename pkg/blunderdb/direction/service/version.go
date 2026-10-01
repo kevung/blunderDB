@@ -44,9 +44,9 @@ func ExpectVersion(ctx context.Context, version string) context.Context {
 	return context.WithValue(ctx, expectKey{}, &expectation{want: version})
 }
 
-// ResultVersion is the version a gesture run under ExpectVersion left behind, read under its
-// lock: the version of the state it wrote, never of a later one. Empty when the gesture wrote
-// nothing, or removed what it named.
+// ResultVersion is the version of the view a gesture run under ExpectVersion handed back
+// (ViewAfter). Empty when the gesture returned no view — it removed what it named — or when
+// writers kept that view and its version from agreeing.
 func ResultVersion(ctx context.Context) string {
 	if e, ok := expectedVersion(ctx); ok {
 		return e.result
@@ -85,12 +85,54 @@ func (d *Service) checkVersion(ctx context.Context, tournamentID, rencontreID in
 	return nil
 }
 
-// recordVersion hands the caller of a versioned gesture the version it left, read in its
-// transaction before the commit.
-func (d *Service) recordVersion(ctx context.Context, tournamentID, rencontreID int64) {
-	if e, ok := expectedVersion(ctx); ok {
-		e.result, _ = d.versionOf(ctx, tournamentID, rencontreID)
+// stableReads bounds the rereads of viewAfter and roomAfter while writers keep moving the state.
+const stableReads = 5
+
+// ViewAfter is the Direction as a gesture left it, read once the gesture's locks are released,
+// and — for a caller that stated a version (ExpectVersion) — the version that view was built
+// from, as ResultVersion: read before and after the view, again until both agree, so the view
+// and the version handed back describe one state, whoever wrote meanwhile. When writers never
+// let them agree, no version is handed back and the caller reads again.
+func (d *Service) ViewAfter(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	return afterGesture(ctx, func() (string, error) { return d.DirectionVersion(ctx, tournamentID) },
+		func() (*DirectionView, error) { return d.GetDirection(ctx, tournamentID) })
+}
+
+func (d *Service) viewAfter(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	return d.ViewAfter(ctx, tournamentID)
+}
+
+// roomAfter is ViewAfter for a Rencontre.
+func (d *Service) roomAfter(ctx context.Context, id int64) (*RencontreView, error) {
+	return afterGesture(ctx, func() (string, error) { return d.RencontreVersion(ctx, id) },
+		func() (*RencontreView, error) { return d.GetRencontre(ctx, id) })
+}
+
+func afterGesture[V any](ctx context.Context, version func() (string, error), view func() (V, error)) (V, error) {
+	e, versioned := expectedVersion(ctx)
+	if !versioned {
+		return view()
 	}
+	e.result = ""
+	var out V
+	for range stableReads {
+		before, err := version()
+		if err != nil {
+			return out, err
+		}
+		if out, err = view(); err != nil {
+			return out, err
+		}
+		after, err := version()
+		if err != nil {
+			return out, err
+		}
+		if before == after {
+			e.result = before
+			return out, nil
+		}
+	}
+	return out, nil
 }
 
 // DirectionVersion is the token of a read about one Direction. A Direction that plays in a

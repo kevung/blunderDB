@@ -79,15 +79,22 @@ func parsePair(membersJSON string) ([]PairMember, error) {
 // AddPair enters a pair: one Participant "A / B" for the engine, two persons for the Directory,
 // written in one transaction. rating 0 means "the mean of the two"; any other value is the
 // director's correction.
-func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON string, rating float64) (_ *DirectionView, err error) {
+func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON string, rating float64) (*DirectionView, error) {
+	if err := d.addPair(ctx, tournamentID, membersJSON, rating); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) addPair(ctx context.Context, tournamentID int64, membersJSON string, rating float64) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	members, err := parsePair(membersJSON)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = d.directionTx(ctx, func(ctx context.Context, tx storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
@@ -113,22 +120,29 @@ func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON s
 		return writePairMembers(ctx, tx, d.scope, tournamentID, string(p.ID), members)
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // UpdatePair corrects a pair — a member's name, club or rating, or the entry rating — without
 // changing its identifier, which is what its Slots and Matches point at.
-func (d *Service) UpdatePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (_ *DirectionView, err error) {
+func (d *Service) UpdatePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (*DirectionView, error) {
+	if err := d.updatePair(ctx, tournamentID, id, membersJSON, rating); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) updatePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	members, err := parsePair(membersJSON)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = d.directionTx(ctx, func(ctx context.Context, tx storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
@@ -154,9 +168,9 @@ func (d *Service) UpdatePair(ctx context.Context, tournamentID int64, id, member
 		return writePairMembers(ctx, tx, d.scope, tournamentID, id, members)
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 func writePairMembers(ctx context.Context, tx storage.Tx, scope string, tournamentID int64, id string, members []PairMember) error {

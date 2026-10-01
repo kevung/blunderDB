@@ -260,12 +260,13 @@ func bareRoom(r *service.RencontreView, err error) (*service.RencontreView, erro
 	return r, err
 }
 
-// thenView returns the Direction as it stands once a gesture that answers nothing succeeded.
+// thenView returns the Direction as it stands once a gesture that answers nothing succeeded,
+// and the version of that very view as the answer's Direction-Version (service.ViewAfter).
 func thenView(ctx context.Context, svc *service.Service, tournamentID int64, err error) (*service.DirectionView, error) {
 	if err != nil {
 		return nil, err
 	}
-	return bare(svc.GetDirection(ctx, tournamentID))
+	return bare(svc.ViewAfter(ctx, tournamentID))
 }
 
 // directionGestureRoutes is empty unless the daemon was started with --direction.

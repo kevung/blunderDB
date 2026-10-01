@@ -121,20 +121,27 @@ func historyMatches(e HistoryEntry, player, match string) bool {
 // AddDirectionNote records a free note of the director's, timestamped. It is the one place in
 // the log where their own words go, and it is refused by nothing — including after the close,
 // since a note about a closed tournament is exactly when one is written.
-func (d *Service) AddDirectionNote(ctx context.Context, tournamentID int64, text string) (_ *DirectionView, err error) {
+func (d *Service) AddDirectionNote(ctx context.Context, tournamentID int64, text string) (*DirectionView, error) {
+	if err := d.addDirectionNote(ctx, tournamentID, text); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) addDirectionNote(ctx context.Context, tournamentID int64, text string) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if err := dir.Apply(ctx, tournoi.NoteEvent(strings.TrimSpace(text), time.Now())); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // SinceLastGesture returns the decisions recorded after a given sequence number: what happened

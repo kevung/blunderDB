@@ -111,7 +111,7 @@ func (d *Service) effectiveOutputDir(ctx context.Context, tournamentID int64, ow
 // every member too (ADR-0056 §6) — and returns the Rencontre as it now stands.
 func (d *Service) afterRoomGesture(ctx context.Context, id int64) (*RencontreView, error) {
 	d.writeRencontrePages(context.WithoutCancel(ctx), id)
-	return d.GetRencontre(ctx, id)
+	return d.roomAfter(ctx, id)
 }
 
 // regenerateRencontrePage rewrites the room's wall page when tournamentID plays in one, best

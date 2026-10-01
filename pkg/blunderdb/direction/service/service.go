@@ -186,7 +186,6 @@ func (d *Service) lockGesture(ctx context.Context, t gestureTarget, withPages bo
 				*errp = errGestureAborted
 			}
 			if *errp == nil {
-				g.recordVersion(ctx, t.tournamentID, t.rencontreID)
 				*errp = tx.Commit()
 			}
 			if *errp != nil {

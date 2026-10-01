@@ -46,23 +46,30 @@ func (d *Service) DirectionFreeSlots(ctx context.Context, tournamentID int64) ([
 //
 // Separate from AddParticipant on purpose: the place is the director's decision, and one no
 // longer free is refused rather than replaced.
-func (d *Service) AddParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (_ *DirectionView, err error) {
+func (d *Service) AddParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (*DirectionView, error) {
+	if err := d.addParticipantAtSlot(ctx, tournamentID, name, club, rating, section, key); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) addParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	name = strings.TrimSpace(name)
 	if name == "" {
-		return nil, fmt.Errorf("direction: an entry needs a name")
+		return fmt.Errorf("direction: an entry needs a name")
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	st := dir.State()
 	if st == nil {
-		return nil, direction.ErrNoDirection
+		return direction.ErrNoDirection
 	}
 	taken := map[string]bool{}
 	for id := range st.Players {
@@ -71,7 +78,7 @@ func (d *Service) AddParticipantAtSlot(ctx context.Context, tournamentID int64, 
 	p := tournoi.Player{ID: tournoi.PlayerID(participantID(name, taken)), Name: name, Club: club, Rating: rating}
 	slot := tournoi.Slot{Phase: st.Current, Section: section, Key: key}
 	if err := dir.Apply(ctx, tournoi.PlayerAddedAtSlotEvent(p, slot, time.Now())); err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }

@@ -127,10 +127,17 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
 // (unknown player, already playing, against themselves) — and a table another match is
 // played on, in this event or a sister of its room, which would hide that match.
-func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (_ *DirectionView, err error) {
+func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
+	if err := d.startMatchManually(ctx, tournamentID, a, b, length, table); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (err error) {
 	d, release, shared, err := d.lockTables(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer release(&err)
 	// The sisters' tables are read before the transaction opens — on a single-connection
@@ -169,9 +176,9 @@ func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a,
 		})
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // firstFreeTable is the table the engine would give a proposal of this section and phase: the
