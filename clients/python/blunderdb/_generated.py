@@ -230,6 +230,66 @@ class GeneratedAPI(BaseClient):
         "POST /v1/comments.update — JSON."
         return self._call("/v1/comments.update", payload)
 
+    def directions_brackets(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.brackets — JSON."
+        return self._call("/v1/directions.brackets", payload)
+
+    def directions_clock(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.clock — JSON."
+        return self._call("/v1/directions.clock", payload)
+
+    def directions_directory(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.directory — JSON."
+        return self._call("/v1/directions.directory", payload)
+
+    def directions_free_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.freeParticipants — JSON."
+        return self._call("/v1/directions.freeParticipants", payload)
+
+    def directions_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.get — JSON."
+        return self._call("/v1/directions.get", payload)
+
+    def directions_history(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.history — JSON."
+        return self._call("/v1/directions.history", payload)
+
+    def directions_last_decision(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.lastDecision — JSON."
+        return self._call("/v1/directions.lastDecision", payload)
+
+    def directions_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.list — JSON."
+        return self._call("/v1/directions.list", payload)
+
+    def directions_page_html(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.pageHtml — JSON."
+        return self._call("/v1/directions.pageHtml", payload)
+
+    def directions_pairing_sheet_html(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.pairingSheetHtml — JSON."
+        return self._call("/v1/directions.pairingSheetHtml", payload)
+
+    def directions_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.participants — JSON."
+        return self._call("/v1/directions.participants", payload)
+
+    def directions_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.slots — JSON."
+        return self._call("/v1/directions.slots", payload)
+
+    def directions_standings(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.standings — JSON."
+        return self._call("/v1/directions.standings", payload)
+
+    def directions_standings_csv(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.standingsCsv — JSON."
+        return self._call("/v1/directions.standingsCsv", payload)
+
+    def directions_table_grid(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.tableGrid — JSON."
+        return self._call("/v1/directions.tableGrid", payload)
+
     def exports_json(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/exports.json — hand-written handler — see openapi.yaml."
         return self._call("/v1/exports.json", payload)
@@ -517,6 +577,18 @@ class GeneratedAPI(BaseClient):
     def quiz_grade_cube(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/quiz.gradeCube — JSON."
         return self._call("/v1/quiz.gradeCube", payload)
+
+    def rencontres_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.get — JSON."
+        return self._call("/v1/rencontres.get", payload)
+
+    def rencontres_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.list — JSON."
+        return self._call("/v1/rencontres.list", payload)
+
+    def rencontres_page_html(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.pageHtml — JSON."
+        return self._call("/v1/rencontres.pageHtml", payload)
 
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."

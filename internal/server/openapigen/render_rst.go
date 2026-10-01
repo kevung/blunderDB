@@ -37,6 +37,13 @@ distincts) et acceptent un en-tête ` + "``Idempotency-Key``" + ` optionnel : un
 rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
 répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau
 ci-dessus. Aucune autre méthode n'a besoin ou n'accepte cet en-tête.
+
+Lectures conditionnelles
+------------------------
+
+Les méthodes marquées « (ETag) » rendent un en-tête ` + "``ETag``" + `. Le renvoyer dans
+` + "``If-None-Match``" + ` obtient une réponse ` + "``304``" + ` sans corps tant que rien de ce que la
+méthode lit n'a changé — voir :ref:` + "`headless_direction`" + `.
 `
 
 // GenerateAPIReferenceRST renders model as the Sphinx annex
@@ -72,6 +79,9 @@ func GenerateAPIReferenceRST(model *Model) string {
 			if r.IdempotencyKeySupported {
 				line += "  (Idempotency-Key)"
 				idempotentCount++
+			}
+			if r.Conditional {
+				line += "  (ETag)"
 			}
 			fmt.Fprintln(&b, strings.TrimRight(line, " "))
 		}

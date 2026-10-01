@@ -16,6 +16,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
+
 	"golang.org/x/net/netutil"
 
 	"github.com/kevung/blunderdb/internal/server/handlers"
@@ -56,6 +58,9 @@ type Server struct {
 	// (tenant, route, Idempotency-Key) triple, for the handful of routes with
 	// no natural dedup key — see idempotency.go.
 	idempotency *idempotencyStore
+	// direction is what the Direction service keeps between requests — the clock forecasts —
+	// shared by every tenant's calls; nothing in it is persisted (service.Memory).
+	direction *service.Memory
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -76,6 +81,7 @@ func New(opts Options) (*Server, error) {
 		gammonnetJobs: newImportRegistry(),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),
+		direction:     &service.Memory{},
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)

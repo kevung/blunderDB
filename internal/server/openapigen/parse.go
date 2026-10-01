@@ -51,6 +51,10 @@ type Route struct {
 	// wrapper call itself), not guessed, so this can never silently drift
 	// from the real code the way a hand-maintained list would.
 	IdempotencyKeySupported bool
+
+	// Conditional is true for the read routes built with rpcRead: they answer
+	// with an ETag and turn a matching If-None-Match into 304.
+	Conditional bool
 }
 
 const (

@@ -332,6 +332,58 @@ ces choses appartiennent au démon parce qu'il fait face à un réseau, et
 l'ADR-0005 dit pourquoi. Un programme qui embarque le moteur choisit lui-même
 son tenant et répond de ses appels.
 
+.. _headless_direction:
+
+Direction de tournoi et Rencontres
+----------------------------------
+
+Les tournois dirigés au poste de travail et les Rencontres qui les regroupent
+se lisent par l'API, sous le tenant de l'appelant, avec le même code que le
+poste de travail. Le démon sert **la lecture seule** : les gestes de direction
+(saisir un résultat, appairer, ouvrir une salle) se font au poste de travail.
+
+* ``directions.list`` et ``directions.directory`` lisent tout le tenant : la
+  liste des tournois dirigés, l'annuaire des joueurs.
+* Les autres ``directions.*`` prennent ``{"tournamentId": N}`` :
+  ``directions.get`` (la vue complète : propositions, classement, matchs en
+  cours), ``directions.participants``, ``directions.freeParticipants``,
+  ``directions.tableGrid``, ``directions.brackets``, ``directions.standings``,
+  ``directions.standingsCsv``, ``directions.history`` (filtres facultatifs
+  ``player`` et ``match``), ``directions.clock``, ``directions.slots``,
+  ``directions.lastDecision``, ``directions.pageHtml`` et
+  ``directions.pairingSheetHtml`` (avec ``round``).
+* ``rencontres.list``, puis ``rencontres.get`` et ``rencontres.pageHtml``
+  avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de la salle,
+  un document HTML autonome dans le champ ``html`` : un écran mural l'affiche
+  et la relit périodiquement.
+
+Les pages sont rendues en français, la langue du moteur de direction. Un
+tournoi qui n'est pas dirigé, ou qui appartient à un autre tenant, répond
+``404``.
+
+**Lectures conditionnelles.** Chacune de ces routes rend un en-tête ``ETag``.
+Renvoyé dans ``If-None-Match``, il obtient ``304`` sans corps tant que rien de
+ce que la route lit n'a changé : un geste dans le tournoi ou dans un tournoi de
+la même Rencontre, le rattachement d'un match, la modification de la salle.
+Répondre ``304`` ne rejoue aucun tournoi, ce qui rend peu coûteuse une page
+murale qui interroge toutes les quelques secondes. Un ``ETag`` vaut au plus une
+minute : les propositions, l'horloge et les pages dépendent aussi de l'heure,
+et un client qui relit voit passer une échéance ou une pause dans la minute.
+
+.. code-block:: bash
+
+   curl -si -X POST http://127.0.0.1:8080/v1/rencontres.pageHtml \
+     -H 'X-Tenant-ID: 1' -d '{"id":1}' | grep -i '^etag'
+   curl -si -X POST http://127.0.0.1:8080/v1/rencontres.pageHtml \
+     -H 'X-Tenant-ID: 1' -H 'If-None-Match: W/"…"' -d '{"id":1}'
+   # HTTP/1.1 304 Not Modified
+
+Comme le reste de ``/v1``, ces routes n'authentifient personne : derrière le
+proxy (:ref:`headless_proxy_deployment`), quiconque atteint le préfixe
+``/v1/directions.`` d'un tenant lit ses tournois, noms des joueurs compris. Un
+proxy qui réserve ces lectures à certains utilisateurs le fait par une règle
+sur ce préfixe et sur ``/v1/rencontres.``.
+
 .. _headless_bearoff:
 
 Les bases de bearoff
