@@ -366,3 +366,18 @@ func htmlUnder(t *testing.T, dir string) []string {
 	})
 	return out
 }
+
+// TestDirectionGestures_RefusalIsInvalid: a gesture the engine refuses — an unknown match — is
+// the client's request, a 400, and writes nothing.
+func TestDirectionGestures_RefusalIsInvalid(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	v := f.versionOf(t, ts)
+	r := send(t, ts, "1", "/v1/directions.enterResult", f.body(`"matchId":"nope","winner":"aa"`), v, "")
+	if r.status != http.StatusBadRequest {
+		t.Errorf("unknown match: status %d, body %.200s; want 400", r.status, r.body)
+	}
+	if got := f.versionOf(t, ts); got != v {
+		t.Error("a refused gesture moved the version")
+	}
+}

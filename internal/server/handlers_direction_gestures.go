@@ -281,10 +281,12 @@ func (s *Server) directionGestureRoutes() []route {
 				return nil, errNoTarget("tournamentId")
 			}
 			d := svc(scope)
-			return thenView(ctx, d, req.TournamentID, d.CreateDirection(ctx, req.TournamentID, rawText(req.Config), req.Seed))
+			v, err := thenView(ctx, d, req.TournamentID, d.CreateDirection(ctx, req.TournamentID, rawText(req.Config), req.Seed))
+			return v, gestureError(err)
 		}))},
 		{http.MethodPost, "/v1/directions.previewConfig", rpc(func(ctx context.Context, scope string, req directionConfigReq) (*service.ConfigPreview, error) {
-			return svc(scope).PreviewDirectionConfig(ctx, req.TournamentID, rawText(req.Config))
+			p, err := svc(scope).PreviewDirectionConfig(ctx, req.TournamentID, rawText(req.Config))
+			return p, gestureError(err)
 		})},
 		{http.MethodPost, "/v1/directions.setConfig", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionConfigReq) (*service.DirectionView, error) {
 			d := svc(scope)
@@ -374,7 +376,8 @@ func (s *Server) rencontreGestureRoutes() []route {
 	idem := s.withIdempotency
 	return []route{
 		{http.MethodPost, "/v1/rencontres.create", idem(rpc(func(ctx context.Context, scope string, req rencontreCreateReq) (*service.RencontreView, error) {
-			return bareRoom(svc(scope).CreateRencontre(ctx, req.Name, req.StartsOn, req.EndsOn, req.Tables))
+			r, err := bareRoom(svc(scope).CreateRencontre(ctx, req.Name, req.StartsOn, req.EndsOn, req.Tables))
+			return r, gestureError(err)
 		}))},
 		{http.MethodPost, "/v1/rencontres.update", idem(rpcGesture(s, func(ctx context.Context, scope string, req rencontreUpdateReq) (*service.RencontreView, error) {
 			return bareRoom(svc(scope).UpdateRencontre(ctx, req.ID, req.Name, req.StartsOn, req.EndsOn, req.Tables))

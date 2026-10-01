@@ -2,11 +2,18 @@ package server
 
 import (
 	"context"
+	"database/sql"
+	"database/sql/driver"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 
+	"github.com/jackc/pgx/v5/pgconn"
+	"modernc.org/sqlite"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -76,7 +83,7 @@ func rpcGesture[Req gestureReq, Resp any](s *Server, fn func(ctx context.Context
 			return
 		}
 		if err != nil {
-			writeStorageError(w, err)
+			writeStorageError(w, gestureError(err))
 			return
 		}
 		if v := service.ResultVersion(ctx); v != "" {
@@ -112,6 +119,30 @@ func (s *Server) writeStale(w http.ResponseWriter, ctx context.Context, scope st
 	}
 	writeErrorDetails(w, CodeConflict,
 		"someone else wrote since your version was read: read the state in details and decide again", details)
+}
+
+// gestureError classes a gesture's failure. The service and the engine refuse a gesture in
+// plain errors (an unknown player, a taken table, a configuration the engine rejects): the
+// client's request, a 400, not the daemon's fault. A sentinel keeps its own code, and a failure
+// of the database or of the request's context stays what it is.
+func gestureError(err error) error {
+	if err == nil {
+		return nil
+	}
+	for _, sentinel := range []error{storage.ErrNotFound, storage.ErrConflict, storage.ErrInvalid,
+		direction.ErrNoDirection, context.Canceled, context.DeadlineExceeded,
+		sql.ErrConnDone, sql.ErrTxDone, driver.ErrBadConn} {
+		if errors.Is(err, sentinel) {
+			return err
+		}
+	}
+	var pgErr *pgconn.PgError
+	var liteErr *sqlite.Error
+	var netErr net.Error
+	if errors.As(err, &pgErr) || errors.As(err, &liteErr) || errors.As(err, &netErr) {
+		return err
+	}
+	return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 }
 
 // errNoTarget refuses a gesture request that names nothing to version.
