@@ -185,7 +185,7 @@ export const epreuveTabsStore = derived([rencontreEpreuveOrderStore, rencontreEp
  * Recharge les épreuves sœurs de la Rencontre du tournoi ouvert (aucune si `rencontreId` est 0),
  * en gardant la vue déjà connue de l'épreuve active plutôt que de la redemander.
  * @param {number} rencontreId
- * @param {DirectionView} activeView
+ * @param {DirectionView | null} activeView
  */
 async function refreshRencontreEpreuves(rencontreId, activeView) {
     if (!rencontreId) {

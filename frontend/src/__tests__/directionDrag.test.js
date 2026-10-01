@@ -7,6 +7,6 @@ describe('dropAction', () => {
     });
 
     test("un match sans table sur une table occupée n'est pas un échange « Table 0 ↔ N »", () => {
-        expect(dropAction({ matchId: 'm1', table: 0, noTable: true }, { matchId: 'm2', table: 7 })).toEqual({ kind: 'move', matchId: 'm1', table: 7 });
+        expect(dropAction(/** @type {any} */ ({ matchId: 'm1', table: 0, noTable: true }), { matchId: 'm2', table: 7 })).toEqual({ kind: 'move', matchId: 'm1', table: 7 });
     });
 });

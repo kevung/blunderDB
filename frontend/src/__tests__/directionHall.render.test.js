@@ -23,6 +23,7 @@ afterEach(() => {
     vi.clearAllMocks();
 });
 
+/** @param {any} table @param {any} tid @param {any} event @param {any} eventIndex @param {any} id @param {any} [extra] */
 const match = (table, tid, event, eventIndex, id, extra = {}) => ({
     table,
     free: false,
@@ -40,6 +41,7 @@ const match = (table, tid, event, eventIndex, id, extra = {}) => ({
     ...extra
 });
 
+/** @type {any} */
 const hall = {
     rencontreId: 1,
     name: 'Festival',
