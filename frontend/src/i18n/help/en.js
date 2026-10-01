@@ -366,6 +366,7 @@ export default {
 </ul>
 <p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
 <p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
+<p>With the mouse, <strong>drag</strong> an occupied cell onto another: on a free cell the match changes table; on an occupied cell, a line "Table 3 ↔ Table 7?" asks you to confirm the <strong>swap</strong> of the two matches. A ghost follows the pointer and the target cell is outlined; <em>ESC</em> cancels the gesture, and nothing is written until the pointer is released over a cell. An out-of-service table is refused, and the status bar gives the reason. On the command line, <code>blunderdb tournament move</code> does the same move or swap (see Command Line Interface (CLI)).</p>
 <h4>The players</h4>
 <p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
 <p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
@@ -1430,6 +1431,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>On an occupied cell, open the card (or, if it is open, the table field); aiming at an occupied table swaps the two matches.</td>
+</tr>
+<tr>
+<td>Drag an occupied cell onto another</td>
+<td>With the mouse: on a free cell, move the match; on an occupied cell, swap the two matches after confirmation. ESC cancels the drag.</td>
 </tr>
 </tbody>
 </table>

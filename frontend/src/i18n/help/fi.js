@@ -366,6 +366,7 @@ export default {
 </ul>
 <p>Luovutus, ottelun peruutus ja pelaajan vetäytyminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa. Kun toiminto on käynnissä, toimivat valinnat näkyvät harmaina kuten painikkeet. Vain yksi valikko on auki kerrallaan: toisen avaaminen sulkee ensimmäisen.</p>
 <p>Näppäimistöllä ruudukko vie vain yhden <em>TAB</em>-pysähdyksen: jokainen ruutu, myös vapaa, saa kohdistuksen, ja <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkentässä, ja myös <em>X</em>, olipa kortti jo auki tai ei: varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</p>
+<p>Hiirellä varattu ruutu <strong>vedetään</strong> toisen päälle: vapaaseen ruutuun ottelu vaihtaa pöytää; varattuun ruutuun rivi ”Pöytä 3 ↔ Pöytä 7?” pyytää vahvistamaan kahden ottelun <strong>vaihdon</strong>. Haamukuva seuraa osoitinta ja kohderuutu korostuu; <em>ESC</em> peruu eleen, eikä mitään kirjoiteta ennen kuin osoitin vapautetaan ruudun päällä. Käytöstä poistettu pöytä hylätään, ja tilarivi kertoo syyn. Komentorivillä <code>blunderdb tournament move</code> tekee saman siirron tai vaihdon (katso Komentoriviliittymä (CLI)).</p>
 <h4>Pelaajat</h4>
 <p><strong>Pelaajat</strong>-välilehti ilmoittaa, korjaa ja poistaa. Ilmoittautumiskenttä säilyttää kohdistuksen ja tyhjenee jokaisen nimen jälkeen: kaksikymmentä pelaajaa ilmoitetaan pelkällä näppäimistöllä. Täydennys tarjoaa tietokannan pelaajia; yhden valitseminen lukitsee sen tarkan kirjoitusasun, jonka hänen ottelunsa kantavat, ja esitäyttää luokituksen hänen PR:llään.</p>
 <p><strong>Hakemisto</strong> kokoaa kaikkien tietokannan johdettujen turnausten osallistujat, nimen mukaan yhdistettyinä, viimeisimmän ilmoittautumisen seuran ja luokituksen kera. Sitä ei koskaan tallenneta: johtamisen poistaminen poistaa siitä sen osallistujat. Aiemman turnauksen osallistujien ottaminen on yksi napsautus, olipa heitä kuinka monta tahansa; hakemisto kopioidaan CSV:nä tai tallennetaan tiedostoon (<strong>Tallenna…</strong>), ja se luetaan takaisin liitettynä.</p>
@@ -1430,6 +1431,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>Varatussa ruudussa avaa kortti (tai, jos se on auki, pöytäkenttä); varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</td>
+</tr>
+<tr>
+<td>Vedä varattu ruutu toisen päälle</td>
+<td>Hiirellä: vapaaseen ruutuun siirretään ottelu; varattuun ruutuun kaksi ottelua vaihdetaan vahvistuksen jälkeen. ESC peruu vedon.</td>
 </tr>
 </tbody>
 </table>

@@ -1941,7 +1941,10 @@
             "none": "No table declared.",
             "noTable": "no table",
             "elsewhere": "In use: {event}",
-            "shared": "Two matches on this table: move one"
+            "shared": "Two matches on this table: move one",
+            "swapConfirm": "Table {from} ↔ Table {to}?",
+            "swap": "Swap",
+            "moveRefused": "Move refused: {reason}"
         },
         "result": {
             "title": "Result",

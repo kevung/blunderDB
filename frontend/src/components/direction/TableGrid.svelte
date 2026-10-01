@@ -13,6 +13,9 @@
     import { menuRequest } from '../../services/contextMenuTrigger.js';
     import { directionPageShown, somethingOpenAbove } from '../../services/directionKeys.js';
     import { gridKeyAction, TABLE_DIGIT_DELAY_MS } from '../../services/directionGridKeys.js';
+    import { pastThreshold, canGrab, dropAction } from '../../services/directionDrag.js';
+    import { closeOnEscape } from '../../services/escapeService.js';
+    import { confirmAction } from '../../services/confirmService.js';
 
     /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
@@ -86,6 +89,71 @@
         if (action.focus) action.focus.focus();
         else if (action.move) openCard(c, true);
     }
+
+    /*
+     * Glisser une case occupée sur une autre : déplacer le match sur une table libre, échanger
+     * les deux sur une table occupée (après confirmation). Événements pointeur, pas l'API HTML5.
+     * Le service décide de ce qui est permis ; ici on n'envoie que le geste.
+     */
+    let drag = $state(/** @type {{ key: string, cell: TableCell, x: number, y: number, startX: number, startY: number, started: boolean, over: string } | null} */ (null));
+    /** Le clic qui suit un glissement ne doit pas ouvrir la fiche. */
+    let swallowClick = false;
+
+    /** @param {number} x @param {number} y */
+    function cellAt(x, y) {
+        const el = document.elementFromPoint(x, y)?.closest('.cell');
+        const k = el?.getAttribute('data-key');
+        return k ? (cells.find((c) => key(c) === k) ?? null) : null;
+    }
+
+    /** @param {PointerEvent} e @param {TableCell} c */
+    function onCellDown(e, c) {
+        if (e.button !== 0 || busy || !canGrab(c)) return;
+        drag = { key: key(c), cell: c, x: e.clientX, y: e.clientY, startX: e.clientX, startY: e.clientY, started: false, over: '' };
+    }
+
+    /** @param {PointerEvent} e */
+    function onDragMove(e) {
+        if (!drag) return;
+        const started = drag.started || pastThreshold({ x: drag.startX, y: drag.startY }, { x: e.clientX, y: e.clientY });
+        const over = started ? cellAt(e.clientX, e.clientY) : null;
+        drag = { ...drag, x: e.clientX, y: e.clientY, started, over: over ? key(over) : '' };
+    }
+
+    function endDrag() {
+        drag = null;
+    }
+
+    /** @param {PointerEvent} e */
+    async function onDragUp(e) {
+        const d = drag;
+        drag = null;
+        if (!d || !d.started) return;
+        swallowClick = true;
+        setTimeout(() => (swallowClick = false), 0);
+        const target = cellAt(e.clientX, e.clientY);
+        const act = dropAction(d.cell, target);
+        if (act.kind === 'none') return;
+        if (act.kind === 'swap') {
+            const ok = await confirmAction($t('direction.table.swapConfirm', { from: act.from, to: act.to }), { confirmLabel: $t('direction.table.swap') });
+            if (!ok) return;
+        }
+        onMove(act.matchId, act.table);
+    }
+
+    $effect(() => {
+        if (!drag) return;
+        window.addEventListener('pointermove', onDragMove);
+        window.addEventListener('pointerup', onDragUp);
+        window.addEventListener('pointercancel', endDrag);
+        const unEsc = closeOnEscape(endDrag);
+        return () => {
+            window.removeEventListener('pointermove', onDragMove);
+            window.removeEventListener('pointerup', onDragUp);
+            window.removeEventListener('pointercancel', endDrag);
+            unEsc();
+        };
+    });
 
     /** @param {MouseEvent} e @param {TableCell} c */
     function onCellContext(e, c) {
@@ -233,7 +301,14 @@
                     class:no-table={c.noTable}
                     class:shared={c.shared}
                     aria-haspopup={menuItems(c).length > 0 ? 'menu' : undefined}
-                    onclick={() => (openKey === key(c) ? (openKey = '') : openCard(c))}
+                    data-key={key(c)}
+                    class:grabbed={drag?.started && drag.key === key(c)}
+                    class:drop-over={drag?.started && drag.over === key(c) && drag.key !== key(c)}
+                    onpointerdown={(e) => onCellDown(e, c)}
+                    onclick={() => {
+                        if (swallowClick) return;
+                        openKey === key(c) ? (openKey = '') : openCard(c);
+                    }}
                     oncontextmenu={(e) => onCellContext(e, c)}
                     onkeydown={(e) => onCellKey(e, c)}
                 >
@@ -275,6 +350,12 @@
         {/if}
     </div>
 </section>
+
+{#if drag?.started}
+    <div class="ghost" data-testid="direction-drag-ghost" style="left: {drag.x + 12}px; top: {drag.y + 12}px">
+        {drag.cell.noTable ? '' : `${drag.cell.table} · `}{drag.cell.aName} – {drag.cell.bName}
+    </div>
+{/if}
 
 {#if menu}
     <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
@@ -347,6 +428,29 @@
         cursor: pointer;
     }
 
+    .cell.grabbed {
+        opacity: 0.5;
+    }
+
+    /* La case sous le pointeur : prête à recevoir, que ce soit un déplacement ou un échange. */
+    .cell.drop-over {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 1px;
+    }
+
+    .ghost {
+        position: fixed;
+        z-index: 1000;
+        pointer-events: none;
+        padding: var(--space-1) var(--space-2);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text);
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+    }
+
     .cell.idle {
         background: var(--color-surface-alt);
         cursor: default;
@@ -354,6 +458,7 @@
 
     .cell.busy {
         border-color: var(--color-primary);
+        user-select: none;
     }
 
     /* Occupée par une épreuve sœur de la Rencontre : pas libre ici, sans être à nous. */
