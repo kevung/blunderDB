@@ -298,15 +298,18 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
         if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
     }
 
+    // `j`/`k` sont à la liste des candidats, qu'elle existe ou non : sans
+    // elle la touche reste prise, sinon elle remonterait au répartiteur
+    // global et parcourrait la bibliothèque.
+    const delta = selectionDelta(event);
+    if (delta !== 0) return moveSelection(state, delta);
+
     // Une réponse à un double n'est pas une saisie de dés : ses touches sont
     // `t`/`p`, traitées juste au-dessus.
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);
     if (die > 0) return enterDie(state, die, replacing, last);
-
-    const delta = selectionDelta(event);
-    if (delta !== 0) return moveSelection(state, delta);
 
     if (event.key === 'Enter') {
         // Entrée valide seule : le dernier coup d'une partie n'a pas de tour
@@ -482,7 +485,7 @@ function enterDie(state, die, replacing = false, last = false) {
  * @returns {KeyResult}
  */
 function moveSelection(state, delta) {
-    if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return ignored(state);
+    if (state.phase !== PHASE.ROLL && state.phase !== PHASE.CANDIDATE) return swallowed(state);
     // La liste n'est pas encore revenue du moteur : la touche est à nous, mais
     // il n'y a rien à déplacer.
     if (state.awaitingCandidates || state.candidateCount <= 0) return swallowed(state);

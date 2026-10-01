@@ -68,8 +68,8 @@ import { logger } from '../utils/logger.js';
  * Aucun texte affichable ne transite : le moteur rend des codes, l'interface les traduit.
  */
 
-/** @typedef {import('../../wailsjs/go/models').database.DirectionView} DirectionView */
-/** @typedef {import('../../wailsjs/go/models').database.DirectionSummary} DirectionSummary */
+/** @typedef {import('../../wailsjs/go/models').service.DirectionView} DirectionView */
+/** @typedef {import('../../wailsjs/go/models').service.DirectionSummary} DirectionSummary */
 /** @typedef {import('../../wailsjs/go/models').tournoi.PhaseConfig} PhaseConfig */
 /** @typedef {import('../../wailsjs/go/models').tournoi.TableRule} TableRule */
 /** @typedef {import('../../wailsjs/go/models').tournoi.Retention} Retention */

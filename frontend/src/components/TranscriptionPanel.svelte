@@ -18,7 +18,8 @@
 <script>
     import { onMount, onDestroy, untrack } from 'svelte';
     import PanelTable from './panels/PanelTable.svelte';
-    import { t } from '../i18n';
+    import { t, tMsg } from '../i18n';
+    import { setStatusBarMessage } from '../services/databaseService.js';
     import { logger } from '../utils/logger.js';
     import { databaseLoadedStore } from '../stores/databaseStore.js';
     import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -357,6 +358,9 @@
         if (!gestures.length) return pending;
         const id = draft?.id;
         if (id == null) return pending;
+        // Terminer, exporter et abandonner attendent la file puis agissent : un
+        // geste tapé pendant ce temps arriverait sur un brouillon déjà libéré.
+        if (busy) return pending;
         const library = transcriptionLibrary();
         const stillOurs = () => draft?.id === id && transcriptionLibrary() === library;
         pending = pending
@@ -1367,7 +1371,13 @@
     let matCopyTimer = undefined;
 
     async function copyMat() {
-        await writeTextToClipboard(matText);
+        try {
+            await writeTextToClipboard(matText);
+        } catch (err) {
+            logger.error('Copying the .mat text of a transcription draft failed:', err);
+            setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
+            return;
+        }
         matCopied = true;
         clearTimeout(matCopyTimer);
         matCopyTimer = setTimeout(() => (matCopied = false), 1500);

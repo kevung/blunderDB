@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/PileOfCells/backgammon-tournoi/render"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -50,8 +51,8 @@ type StandingsView struct {
 }
 
 // Standings replays the tournament and returns its rankings with the prizes attached.
-func (d *Database) Standings(tournamentID int64) (*StandingsView, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) Standings(ctx context.Context, tournamentID int64) (*StandingsView, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -139,15 +140,15 @@ func lossesHead(l render.Labeler) string {
 //
 // The engine's own CSV is in French; this one uses the display page's catalogue and labeler.
 // The separator is a semicolon, which a French spreadsheet opens as is.
-func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
-	v, err := d.Standings(tournamentID)
+func (d *Service) StandingsCSV(ctx context.Context, tournamentID int64) (string, error) {
+	v, err := d.Standings(ctx, tournamentID)
 	if err != nil {
 		return "", err
 	}
 	if v == nil {
 		return "", direction.ErrNoDirection
 	}
-	cat, _ := d.directionStrings()
+	cat, _ := d.directionStrings(ctx)
 	l := direction.NewLabeler(cat, nil)
 	var b strings.Builder
 	w := csv.NewWriter(&b)
@@ -180,28 +181,28 @@ func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
 }
 
 // CloseDirection closes the tournament and freezes the final standings.
-func (d *Database) CloseDirection(tournamentID int64) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) CloseDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
 	if err := dir.Finish(ctx, time.Now()); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // ReopenDirection takes a closed tournament back, because a result was wrong. The final
 // standings are recomputed at the next close; the log keeps everything.
-func (d *Database) ReopenDirection(tournamentID int64) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) ReopenDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
 	if err := dir.Reopen(ctx, time.Now()); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }

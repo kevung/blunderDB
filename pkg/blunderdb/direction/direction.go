@@ -52,9 +52,9 @@ type StoredEvent struct {
 }
 
 // Store is everything this package needs from persistence, so the logic is written once
-// (CLI/GUI/server parity). The desktop wrapper implements it over its own handle
-// (database.DirectionStore); both storage backends reach it through storage.BindDirection,
-// which fixes the tenant scope of their storage.DirectionStore.
+// (CLI/GUI/server parity). Both storage backends reach it through storage.BindDirection, which
+// fixes the tenant scope of their storage.DirectionStore; direction/service and the desktop's
+// database.DirectionStore are that binding.
 //
 // AppendEvent must be atomic with respect to the caller's transaction and must REFUSE to
 // overwrite an existing sequence number — the log is append-only, and a silent overwrite would

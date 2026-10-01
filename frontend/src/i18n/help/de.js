@@ -343,6 +343,7 @@ export default {
 <p>Alles Entschiedene wird in ein <strong>Journal</strong> geschrieben, und sonst nichts. Wertung, Tableaus, Vorschläge und Warnungen werden bei jedem Öffnen aus diesem Journal abgespielt: Ein Stromausfall kostet nichts, und eine Korrektur löscht nie, was geschehen ist — sie kommt hinzu.</p>
 <h4>Die Leitungsseite</h4>
 <p>Hier verbringt die Turnierleitung die meiste Zeit. Von oben nach unten: die <strong>Warnungen</strong> der Engine, die sichtbar bleiben und nie etwas blockieren; das <strong>Tischraster</strong>, dessen Kopfzeile die Schaltfläche <strong>Blatt drucken</strong> für die Paarungen trägt; die <strong>letzte Entscheidung</strong>; die <strong>Vorschlagsliste</strong>; und die freien Spieler. Das Raster steht vor der Liste: Eine lange Liste schiebt es nie aus dem Bildschirm.</p>
+<p>Die Ansicht nimmt die gesamte Breite des Hauptbereichs ein, und jeder Reiter scrollt für sich: Verlässt man einen Reiter und kehrt zurück oder wechselt von einem Turnier zum anderen, wird die zuletzt verlassene Position wiederhergestellt. Schaltflächen und Felder sind mindestens 40 Pixel hoch, damit man sie am Tisch ohne Zielgenauigkeit trifft; die Spaltenzahl des Rasters folgt der Breite des Bereichs, nicht der des Fensters. In den <strong>Einstellungen</strong> lässt sich jeder Abschnitt auf seinen Titel zusammenklappen, und die Schaltfläche <strong>Im Browser öffnen</strong> in der Kopfzeile öffnet die Wandseite mit einem Klick, sobald ein Ausgabeordner gewählt ist.</p>
 <p>Eine vorgeschlagene Runde lässt sich ankündigen, bevor sie gestartet wird: <strong>Kommende Runde…</strong> neben <em>Blatt drucken</em> fragt nach dem zu druckenden Datum und der Uhrzeit („Montag 21.09., 20 Uhr“) und druckt das Blatt mit den Paarungen der Warteschlange, als „angekündigt“ markiert. Nichts wird gestartet oder ins Protokoll geschrieben: Die Runde wird am Tag selbst zu ihrer Zeit gestartet. Eine Paarung, die auf einen freien Tisch wartet, trägt statt der Tischnummer einen Strich.</p>
 <p>Oben in der Turnieransicht passt die <strong>Uhrleiste</strong> in eine Zeile: die Uhrzeit, die seit dem ersten gestarteten Match verstrichene Zeit, die gespielten und laufenden Matches, das beobachtete Tempo in Minuten pro Punkt gegenüber dem geplanten, die langsamen Matches, die nächste Pause und das <strong>voraussichtliche Ende</strong>. Das voraussichtliche Ende ist die Prognose der Engine: Sie spielt das Protokoll nach, beendet das Turnier fünfzehnmal im geplanten Tempo, und die Leiste zeigt den Median, hinter die eingetragenen Pausen verschoben. Eine Nacht, die nicht als Pause eingetragen ist, zählt daher als Spielzeit. Eine Uhrzeit, die nicht von heute ist, trägt ihren Tag.</p>
 <p>Ab dem zweiten Tag weicht die verstrichene Zeit dem <strong>Spieltag</strong> (der Tag des ersten gestarteten Matches ist Tag 1) und der <strong>Spielzeit</strong>: der Zeit, in der mindestens ein Match lief, ohne die Nächte und ohne die Lücken, in denen kein Tisch spielte. Ein abgeschlossenes Turnier hat keine Uhrleiste mehr.</p>
@@ -353,6 +354,18 @@ export default {
 <p>Ein Klick auf einen besetzten Tisch öffnet die Karte des Matches. Sie zeigt zwei große Flächen: die <strong>Namen der beiden Spieler</strong>. Ein Klick auf den Sieger trägt das Ergebnis ein — zwei Klicks insgesamt, Tisch inbegriffen. Verlangt wird nur der Sieger; das Ergebnis ist frei, eines von beiden, beide oder keines. Per Tastatur wählt <em>LINKS</em> oder <em>RECHTS</em> den Sieger und <em>EINGABE</em> trägt ihn ein. Die Karte schließt sich erst, wenn das Ergebnis geschrieben ist: Bei einem Fehler bleibt sie mit ihrer Meldung offen.</p>
 <p>Die Schaltfläche <strong>⋯</strong> der Karte klappt auf, was selten gebraucht wird: die Aufgabe (Forfait) — jede Schaltfläche nennt den Abwesenden und den Gewinner —, eine freie Bemerkung („Zeit überschritten“, „aufgegeben wegen…“), das Verschieben des Matches an einen anderen Tisch und seine Annullierung. Aufgabe und Annullierung werden bestätigt. Auf einen besetzten Tisch verschoben, tauscht das Match seinen Tisch mit dem dortigen: Zwei Matches teilen sich nie einen Tisch, und dieselbe Geste stellt sie wieder her. Hat ein altes Protokoll zwei an einen Tisch gesetzt, zeigt das Raster beide Felder markiert, bis eines verschoben wird.</p>
 <p>Ein sofort bemerkter Eingabefehler wird unter dem Raster in zwei Klicks zurückgenommen: die letzte Entscheidung <strong>korrigieren</strong>, dann den richtigen Sieger (<em>STRG-Z</em> öffnet dieselbe Rücknahme). Eine ältere Korrektur erfolgt über den Verlauf.</p>
+<h4>Die Kontextmenüs</h4>
+<p>Ein Rechtsklick, die Taste <em>MENU</em> oder <em>UMSCHALT-F10</em> auf einem Objekt der Direction-Seite öffnet dessen übliche Aktionen, ohne den Umweg über die Karte: ein Feld des Rasters (frei oder besetzt), ein Spieler (Reiter <strong>Spieler</strong>, freie Spieler), ein Platz im Tableau, ein Platz, ein Vorschlag der Liste, eine Zeile des Verlaufs. Das Menü öffnet sich am Objekt; <em>OBEN</em> und <em>UNTEN</em> bewegen sich darin, <em>EINGABE</em> wählt, <em>ESC</em> schließt es und gibt den Fokus an das Objekt zurück.</p>
+<ul>
+<li>Belegtes Feld: Ergebnis eintragen, Aufgabe des einen oder anderen Spielers, Tisch wechseln (ein belegter Zieltisch tauscht die beiden Matches), Match abbrechen, Verlauf jedes Spielers.</li>
+<li>Freies Feld: die ausgewählte Ansetzung hier starten, den Tisch außer Betrieb nehmen oder wieder in Betrieb nehmen (Tische einer Rencontre). Ein für ein anderes Turnier reservierter Tisch bietet nichts an.</li>
+<li>Spieler: das Ergebnis seines laufenden Matches eintragen, zu seinem Tisch wechseln, Verlauf, von Hand mit einem anderen freien Spieler ansetzen, in das andere Turnier wechseln, in dem er ebenfalls spielt, als abwesend oder anwesend markieren, jetzt oder nach seinem Match zurückziehen, wieder anmelden, die Angaben korrigieren.</li>
+<li>Platz ohne Match: ein importiertes Match zuordnen, auf das dieser Platz wartet.</li>
+<li>Ansetzung: starten, an einem Tisch starten…, die Länge ändern…, anders paaren (diese drei Einträge öffnen die manuelle Ansetzung mit den beiden Spielern, der Länge und dem Tisch der Ansetzung), vorerst ignorieren, das Rundenblatt drucken.</li>
+<li>Verlaufszeile: korrigieren oder annullieren, eine Anmerkung hinzufügen, auf einen der Spieler filtern.</li>
+</ul>
+<p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
+<p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
 <h4>Die Spieler</h4>
 <p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
 <p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV kopiert oder in einer Datei gespeichert (<strong>Speichern…</strong>) und eingefügt wieder eingelesen.</p>
@@ -1389,6 +1402,34 @@ export default {
 <tr>
 <td>Esc</td>
 <td>Die laufende Bearbeitung abbrechen, sonst die Suche zum Hinzufügen eines Matches leeren, sonst die Turnierauswahl aufheben, sonst das Fenster schließen (schrittweise).</td>
+</tr>
+</tbody>
+</table>
+<h3>Direction-Seite</h3>
+<p>Unter der Direction-Seite gehen <em>J</em>, <em>K</em>, <em>OBEN</em>, <em>UNTEN</em> und <em>EINGABE</em> zur Liste der Vorschläge, außer wenn der Fokus auf einem Feld des Tischrasters liegt, wo <em>OBEN</em> und <em>UNTEN</em> das Feld wechseln. Die Kontextmenüs sind im Handbuch beschrieben (Kontextmenüs).</p>
+<table>
+<thead>
+<tr>
+<th>Tastenkürzel</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rechtsklick, MENU, UMSCHALT-F10</td>
+<td>Das Kontextmenü des fokussierten Objekts öffnen: Tischfeld, Spieler, Platz im Tableau, Platz, Vorschlag, Verlaufszeile. OBEN/UNTEN bewegen sich im Menü, EINGABE wählt, ESC schließt es.</td>
+</tr>
+<tr>
+<td>LINKS, RECHTS, OBEN, UNTEN, POS1, ENDE</td>
+<td>Von einem Feld des Tischrasters zum anderen wechseln (freie Felder eingeschlossen); das Raster nimmt nur einen TAB-Halt ein.</td>
+</tr>
+<tr>
+<td>1 bis 9, dann 0 bis 9</td>
+<td>Die Karte des Tisches mit dieser Nummer öffnen; zwei Ziffern innerhalb von 0,4 s für einen Tisch über 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Auf einem belegten Feld die Karte öffnen (oder, wenn sie offen ist, das Tischfeld); ein belegter Zieltisch tauscht die beiden Matches.</td>
 </tr>
 </tbody>
 </table>

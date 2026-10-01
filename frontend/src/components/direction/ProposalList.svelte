@@ -5,11 +5,15 @@
      * décide (ADR-0047) : « apparier à la main » toujours offert, « ignorer pour l'instant »
      * n'écrit rien.
      */
+    import { tick as nextTick, untrack } from 'svelte';
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
     import { proposalLabel, actionKey, renderWarning, isRepair, seatLabel } from './labels.js';
-    import { directionOwnsKey, somethingOpenAbove } from '../../services/directionKeys.js';
+    import { directionOwnsKey, somethingOpenAbove, gridHasFocus } from '../../services/directionKeys.js';
     import { isBareLetter } from '../../utils/keys.js';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { proposalMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
 
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
 
@@ -21,10 +25,12 @@
      *     busy?: boolean,
      *     onConfirm?: (action: ProposalAction) => void,
      *     onConfirmAll?: () => void | Promise<void>,
-     *     onManual?: (a: string, b: string, length: number, table: number) => void | Promise<void>
+     *     onManual?: (a: string, b: string, length: number, table: number) => void | Promise<void>,
+     *     request?: { kind: 'manual' | 'launchHere', a?: string, b?: string, length?: number, table?: number, focus?: 'a' | 'b' | 'length' | 'table', seq: number } | null,
+     *     onPrintSheet?: () => void
      * }}
      */
-    let { proposals = [], players = [], elsewhere = {}, busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {} } = $props();
+    let { proposals = [], players = [], elsewhere = {}, busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {}, request = null, onPrintSheet = undefined } = $props();
 
     /* Compte à rebours d'une micro-ronde : un battement de seconde, sans événement. */
     let tick = $state(Date.now());
@@ -65,6 +71,60 @@
     $effect(() => {
         if (selected >= shown.length) selected = Math.max(0, shown.length - 1);
     });
+
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+    /** @type {Record<string, HTMLElement | null>} */
+    const manualEls = $state({ a: null, b: null, length: null, table: null });
+
+    /**
+     * Ouvre l'appariement à la main, pré-rempli, le curseur sur le champ demandé.
+     *
+     * @param {{ a?: string, b?: string, length?: number, table?: number, focus?: 'a' | 'b' | 'length' | 'table' }} init
+     */
+    function openManual(init) {
+        manualA = init.a || '';
+        manualB = init.b || '';
+        manualLength = init.length || 0;
+        manualTable = init.table || 0;
+        manualOpen = true;
+        nextTick().then(() => manualEls[init.focus || 'a']?.focus());
+    }
+
+    /** Lance la proposition sélectionnée (à défaut, la première) sur la table libre demandée. @param {number} table */
+    function launchHere(table) {
+        const pick = shown[selected]?.kind === 'start_match' ? shown[selected] : shown.find((x) => x.kind === 'start_match');
+        if (pick?.a && pick.b) onManual(pick.a, pick.b, pick.length || 0, table);
+    }
+
+    /* Une demande venue d'un autre écran (menu d'un joueur ou d'une case libre) : une fois par numéro. */
+    let lastRequest = 0;
+    $effect(() => {
+        const r = request;
+        if (!r || r.seq === lastRequest) return;
+        lastRequest = r.seq;
+        untrack(() => (r.kind === 'launchHere' ? launchHere(r.table || 0) : openManual(r)));
+    });
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {ProposalAction} a @param {number} i */
+    function onRowMenu(ev, a, i) {
+        const req = menuRequest(ev, () =>
+            proposalMenu((k, p) => $t(k, p), a, {
+                busy,
+                onLaunch: () => onConfirm(a),
+                onIgnore: () => ignore(a),
+                // Apparier autrement, lancer à une table, changer la longueur : l'appariement à la
+                // main s'ouvre avec les deux joueurs, la longueur et la table de la proposition.
+                onArrange: () => openManual({ a: a.a, b: a.b, length: a.length, table: a.table, focus: 'a' }),
+                onLaunchAtTable: () => openManual({ a: a.a, b: a.b, length: a.length, table: a.table, focus: 'table' }),
+                onChangeLength: () => openManual({ a: a.a, b: a.b, length: a.length, table: a.table, focus: 'length' }),
+                onPrintSheet
+            })
+        );
+        if (req) {
+            selected = i;
+            menu = req;
+        }
+    }
 
     /** @param {string | undefined} id */
     function playerName(id) {
@@ -113,6 +173,8 @@
     /** @param {KeyboardEvent} e */
     function onKey(e) {
         if (!directionOwnsKey(e) || somethingOpenAbove() || confirming) return;
+        // Sur une case de la grille, les flèches vont de case en case : la file ne les prend pas.
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && gridHasFocus()) return;
         if (isBareLetter(e, 'j') || e.key === 'ArrowDown') {
             selected = Math.min(selected + 1, shown.length - 1);
             focusQueue();
@@ -171,7 +233,15 @@
          choisie. Pas de listbox / option — chaque ligne porte ses propres boutons. -->
     <ul class="queue" tabindex="-1" aria-label={$t('direction.proposals.title', { n: shown.length })} bind:this={queueEl}>
         {#each shown as a, i (actionKey(a))}
-            <li class:selected={i === selected} class:repair={isRepair(a)} aria-current={i === selected ? 'true' : undefined}>
+            <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+            <li
+                class:selected={i === selected}
+                class:repair={isRepair(a)}
+                aria-current={i === selected ? 'true' : undefined}
+                tabindex="0"
+                oncontextmenu={(ev) => onRowMenu(ev, a, i)}
+                onkeydown={(ev) => onRowMenu(ev, a, i)}
+            >
                 {#if isRepair(a)}
                     <span class="tag">{$t('direction.proposals.repairTag')}</span>
                 {/if}
@@ -214,22 +284,22 @@
 
     <div class="manual">
         {#if manualOpen}
-            <select bind:value={manualA}>
+            <select bind:value={manualA} bind:this={manualEls.a}>
                 <option value="">{$t('direction.proposals.playerA')}</option>
                 {#each players as p (p.id)}
                     <!-- Apparier à la main un joueur occupé ailleurs reste permis : on le dit. -->
                     <option value={p.id}>{p.name}{elsewhere[p.id] ? ` (${seatLabel($t, elsewhere[p.id])})` : ''}</option>
                 {/each}
             </select>
-            <select bind:value={manualB}>
+            <select bind:value={manualB} bind:this={manualEls.b}>
                 <option value="">{$t('direction.proposals.playerB')}</option>
                 {#each players as p (p.id)}
                     <!-- Apparier à la main un joueur occupé ailleurs reste permis : on le dit. -->
                     <option value={p.id}>{p.name}{elsewhere[p.id] ? ` (${seatLabel($t, elsewhere[p.id])})` : ''}</option>
                 {/each}
             </select>
-            <input type="number" min="0" max="99" bind:value={manualLength} title={$t('direction.proposals.lengthHint')} />
-            <input type="number" min="0" max="200" bind:value={manualTable} title={$t('direction.proposals.tableHint')} />
+            <input type="number" min="0" max="99" bind:value={manualLength} bind:this={manualEls.length} title={$t('direction.proposals.lengthHint')} />
+            <input type="number" min="0" max="200" bind:value={manualTable} bind:this={manualEls.table} title={$t('direction.proposals.tableHint')} />
             <button type="button" class="primary" disabled={busy} onclick={startManual}>{$t('direction.proposals.launch')}</button>
             <button type="button" onclick={() => (manualOpen = false)}>{$t('common.cancel')}</button>
         {:else}
@@ -237,6 +307,10 @@
         {/if}
     </div>
 </section>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .proposals {
@@ -373,8 +447,6 @@
         margin: 0;
         padding-left: var(--space-4);
         font-size: var(--font-size-small);
-        max-height: 12rem;
-        overflow: auto;
     }
 
     .confirm-actions {

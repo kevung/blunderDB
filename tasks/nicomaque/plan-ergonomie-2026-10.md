@@ -134,6 +134,30 @@ apparier autrement (ouvre l'appariement manuel pré-rempli) · imprimer la feuil
 Corriger (`onCorrect`) · annuler (`onCancel`) · ajouter une remarque (`onNote`) · filtrer sur
 ce joueur / ce match · aller à la table ou à la place dans l'arbre.
 
+### 2.6 Écarts du lot E2 livré
+
+Livré sur des méthodes `Database` existantes : « lancer ici la proposition sélectionnée » (case
+libre ; passe par `startMatchManually` avec la table de la case, `ConfirmProposal` n'acceptant pas
+de table imposée), « apparier à la main avec… » (joueur libre), « joue aussi à <épreuve>, aller
+là-bas » (onglet de l'épreuve sœur), « rattacher » (emplacement sans match, un match importé
+attendu par entrée), « lancer à la table… » et « changer la longueur… » (l'appariement à la main
+s'ouvre pré-rempli, curseur sur le champ), « imprimer la feuille » (quand une ronde existe).
+Les entrées qui agissent sont grisées pendant `busy`, comme les boutons.
+
+Non livré, faute de méthode ou de lot [H] — aucun contournement côté frontend :
+
+- **« Transcrire ce match » sur une case de table** : `transcribeFromSlot` prend un emplacement ;
+  une `TableCell` ne porte pas le sien. Demande un lien match en cours → emplacement côté Go.
+- **Hors service hors Rencontre** : seule `SetRencontreTableOutOfService` existe ; une épreuve
+  isolée exige l'événement `EvConfigChanged` [H]. L'entrée n'est offerte que dans une Rencontre.
+- **« Rattacher » depuis l'arbre ou le classement** : seules les places des emplacements ont un
+  `slotId` ; l'arbre n'en porte pas.
+- **§2.5 « aller à la table / à la place dans l'arbre »** : une ligne d'historique de match
+  terminé n'a plus de table, et l'arbre n'a pas de révélation d'une place par match [H].
+- **« Échanger avec la table… »** retirée : `MoveMatchToTable` échange déjà quand la table visée
+  est occupée, l'entrée doublait « Changer de table… » (même `openMove`). Le lot E5 se réduit au
+  glisser-déposer pointeur et à la parité CLI de l'échange.
+
 Fichiers : `ContextMenu.svelte`, nouveau `services/directionMenus.js` (une fonction par objet
 qui rend `MenuItem[]`, testable sans DOM), les cinq vues. Budget : forfait **3 → 2 clics**
 (clic droit, entrée) ; changer de table 3 clics + 2 K inchangé mais sans ouvrir la fiche.
@@ -244,7 +268,7 @@ Chaque lot est livrable seul, avec sa documentation (`doc/source/manuel.rst`,
 | **E2** Menus contextuels | `directionMenus.js`, Menu / Maj+F10 dans `ContextMenu`, cases libres focalisables, §2.1–2.5 | `ContextMenu.svelte`, `TableGrid.svelte`, `ProposalList.svelte`, `HistoryView.svelte`, `PlayersView.svelte` | — |
 | **E3** Clavier de la grille | chiffres = table N, flèches entre cases, `M`/`X` | `directionKeys.js`, `TableGrid.svelte` | E2 |
 | **E4** Mise en page TD | jetons, container queries, un défilement par onglet, panneau replié | `style.css`, `DirectionView.svelte`, `TableGrid.svelte`, `App.svelte` | — |
-| **E5** Échange de tables | `Database.SwapTables` (une transaction, deux événements) + CLI/GUI ; glisser-déposer pointeur | `db_direction_result.go`, `TableGrid.svelte` | E2, E4 |
+| **E5** Échange de tables | glisser-déposer pointeur + parité CLI de l'échange (le menu n'y a plus part, §2.6) | `db_direction_result.go`, `TableGrid.svelte` | E2, E4 |
 | **E6** Recherche | source `direction` de la palette, `/`, `RencontreSearchIndex` | `commandPalette.js`, `CommandPalette.svelte`, `keyboardService.js`, `db_rencontre.go` | E2 |
 | **E7** Vue Salle | `RencontreTableGrid`, grille fusionnée, propositions groupées ; ADR-0056 §5 amendé | `DirectionView.svelte`, nouveau `HallView.svelte`, `db_rencontre_page.go` | E4, E5 |
 | **E8** Arbre dessiné | SVG inline avec traits, poules en croisé, squelette avant tirage | `BracketsView.svelte`, `db_direction_brackets.go` | E1 |

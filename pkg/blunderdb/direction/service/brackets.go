@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -101,8 +102,8 @@ type LivesRow struct {
 
 // Brackets returns every phase's graphs, oldest first. Past phases are kept: a director looks
 // back at the Swiss table while the bracket is running.
-func (d *Database) Brackets(tournamentID int64) ([]BracketPhase, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) Brackets(ctx context.Context, tournamentID int64) ([]BracketPhase, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -304,8 +305,8 @@ func livesRows(st *tournoi.State, ph *tournoi.PhaseState) []LivesRow {
 // wallBracket is the bracket a wall page shows for a Direction: its current phase when that is an
 // elimination phase already drawn. A Swiss phase, a pool, a playoff or a phase not yet drawn has
 // no tree to show, and nothing is returned.
-func (d *Database) wallBracket(tournamentID int64, event string) *direction.WallBracket {
-	phases, err := d.Brackets(tournamentID)
+func (d *Service) wallBracket(ctx context.Context, tournamentID int64, event string) *direction.WallBracket {
+	phases, err := d.Brackets(ctx, tournamentID)
 	if err != nil {
 		return nil
 	}

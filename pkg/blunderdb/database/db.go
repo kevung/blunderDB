@@ -15,7 +15,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -42,12 +42,8 @@ type Database struct {
 	// pendingAnkiCardKinds is the same deferral for the 2.23.0 step, whose
 	// repair also rebuilds anki_card: ALTER TABLE relaxes no constraint.
 	pendingAnkiCardKinds bool
-	// forecasts memoises the estimated end of each Direction's clock
-	// (db_direction_clock.go); forecastMu guards it and is never held with mu.
-	forecastMu sync.Mutex
-	forecasts  map[int64]forecastMemo
-	lock       *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
-	readOnly   bool      // opened read-only because another instance holds the write lock
+	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
+	readOnly             bool      // opened read-only because another instance holds the write lock
 	// transcriptSessions holds the open transcription drafts, keyed by row id
 	// (db_transcription.go). They cache what the stored JSON cannot hold — the
 	// Action being typed and the undo stack, both in memory by design
@@ -55,13 +51,9 @@ type Database struct {
 	// transcriptMu -> mu, never the reverse.
 	transcriptMu       sync.Mutex
 	transcriptSessions map[int64]*transcript.Editor
-	// directionCatalog and directionLang translate the pages written for a
-	// tournament (ADR-0047). They belong to the interface, so nothing is
-	// persisted; per Database, not package-level, so two open databases never
-	// share one language.
-	directionMu      sync.RWMutex
-	directionCatalog *direction.Catalog
-	directionLang    string
+	// directionMem is what the direction service keeps between calls: the clock forecasts and
+	// the page catalogue. Per Database, so two open databases never share one language.
+	directionMem service.Memory
 }
 
 // lockPathFor returns the file whose advisory lock guards a database against a

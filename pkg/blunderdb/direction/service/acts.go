@@ -1,14 +1,15 @@
-package database
+package service
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Confirming what the engine proposes, and doing what it did not (tasks/nicomaque/fonctionnel.md §5): the engine
@@ -18,28 +19,28 @@ import (
 // ConfirmProposal records one proposal the director confirmed. The proposal travels back as the
 // engine's own JSON, so the frontend confirms exactly what it was shown rather than describing
 // it again in its own words — a description that could drift from the engine's.
-func (d *Database) ConfirmProposal(tournamentID int64, actionJSON string) (*DirectionView, error) {
+func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actionJSON string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	var a tournoi.Action
 	if err := json.Unmarshal([]byte(actionJSON), &a); err != nil {
 		return nil, fmt.Errorf("direction: proposal: %w", err)
 	}
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
 	if err := confirm(ctx, dir, a); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // ConfirmAllProposals records every proposal in one gesture. It stops at the first refusal and
 // returns it with what was already recorded: a partial round is actionable, a rollback would
 // discard valid decisions.
-func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, erro
 			return nil, err
 		}
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // confirm turns one action into its event and records it.
@@ -97,10 +98,11 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
 // (unknown player, already playing, against themselves) — and a table another match is
 // played on, which would hide that match.
-func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
+func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	// The occupancy check and the write share one transaction: checked outside it, two
 	// directors could both see the table free and both start a match on it.
-	err := d.directionTx(func(ctx context.Context, _ *sql.Tx, store direction.Store) error {
+	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err
@@ -128,7 +130,7 @@ func (d *Database) StartMatchManually(tournamentID int64, a, b string, length, t
 	if err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // firstFreeTable is the table the engine would give a proposal of this section and phase: the
@@ -158,8 +160,8 @@ func firstFreeTable(st *tournoi.State, section string, phase int) int {
 
 // FreeParticipants names the Participants of the current phase who are not playing: who the
 // director can pair by hand, and the waiting queue the panel shows.
-func (d *Database) FreeParticipants(tournamentID int64) ([]tournoi.Player, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) FreeParticipants(ctx context.Context, tournamentID int64) ([]tournoi.Player, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}

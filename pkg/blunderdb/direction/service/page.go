@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -18,7 +18,7 @@ import (
 //
 // Nicomaque emits codes; rather than copy frontend/src/i18n/locales/<lang>.json into Go, the
 // frontend passes its block so both sides render the same words.
-func (d *Database) SetDirectionStrings(lang, catalogJSON string) error {
+func (d *Service) SetDirectionStrings(ctx context.Context, lang, catalogJSON string) error {
 	cat, err := direction.NewCatalog([]byte(catalogJSON))
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (d *Database) SetDirectionStrings(lang, catalogJSON string) error {
 
 // directionStrings gives the catalogue in force, defaulting to French — the engine's own
 // language, so a host that never published one still gets sentences rather than codes.
-func (d *Database) directionStrings() (*direction.Catalog, string) {
+func (d *Service) directionStrings(ctx context.Context) (*direction.Catalog, string) {
 	d.directionMu.RLock()
 	defer d.directionMu.RUnlock()
 	lang := d.directionLang
@@ -47,9 +47,8 @@ func (d *Database) directionStrings() (*direction.Catalog, string) {
 // plays in a Rencontre with a folder of its own, this writes into that Rencontre's `<slug>/`
 // subfolder instead (ADR-0056 §6) and regenerates the room's wall page too — a gesture in any
 // member is a gesture on the whole room.
-func (d *Database) WriteDirectionPage(tournamentID int64) (string, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) WriteDirectionPage(ctx context.Context, tournamentID int64) (string, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
@@ -58,8 +57,8 @@ func (d *Database) WriteDirectionPage(tournamentID int64) (string, error) {
 	if out == "" {
 		return "", nil
 	}
-	cat, lang := d.directionStrings()
-	page, err := d.directionPage(dir, tournamentID, cat, lang)
+	cat, lang := d.directionStrings(ctx)
+	page, err := d.directionPage(ctx, dir, tournamentID, cat, lang)
 	if err != nil {
 		return "", err
 	}
@@ -68,39 +67,39 @@ func (d *Database) WriteDirectionPage(tournamentID int64) (string, error) {
 
 // DirectionPageHTML renders the page without writing it, which is what a test — and the CLI's
 // `tournament page` — needs.
-func (d *Database) DirectionPageHTML(tournamentID int64) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) DirectionPageHTML(ctx context.Context, tournamentID int64) (string, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	cat, lang := d.directionStrings()
-	return d.directionPage(dir, tournamentID, cat, lang)
+	cat, lang := d.directionStrings(ctx)
+	return d.directionPage(ctx, dir, tournamentID, cat, lang)
 }
 
 // directionPage renders the display page, with the event's bracket in rotation when it has one.
-func (d *Database) directionPage(dir *direction.Direction, tournamentID int64, cat *direction.Catalog, lang string) (string, error) {
+func (d *Service) directionPage(ctx context.Context, dir *direction.Direction, tournamentID int64, cat *direction.Catalog, lang string) (string, error) {
 	now := time.Now()
 	page, err := dir.Page(cat, lang, now)
 	if err != nil {
 		return "", err
 	}
 	name := fmt.Sprintf("#%d", tournamentID)
-	if t, err := d.store.Tournaments().Get(context.Background(), "", tournamentID); err == nil && t.Name != "" {
+	if t, err := d.st.Tournaments().Get(ctx, d.scope, tournamentID); err == nil && t.Name != "" {
 		name = t.Name
 	}
-	return direction.WithBracketView(page, d.wallBracket(tournamentID, name), cat, now), nil
+	return direction.WithBracketView(page, d.wallBracket(ctx, tournamentID, name), cat, now), nil
 }
 
 // The printable pairing sheet: the display page's plumbing, plus a print instruction that opens
 // the system dialog by itself.
 
 // DirectionPairingSheetHTML renders the sheet of one batch without writing it.
-func (d *Database) DirectionPairingSheetHTML(tournamentID int64, round int) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) DirectionPairingSheetHTML(ctx context.Context, tournamentID int64, round int) (string, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	cat, lang := d.directionStrings()
+	cat, lang := d.directionStrings(ctx)
 	return dir.PairingSheet(cat, lang, round)
 }
 
@@ -108,13 +107,12 @@ func (d *Database) DirectionPairingSheetHTML(tournamentID int64, round int) (str
 //
 // It goes into the Direction's display folder when there is one, and into the system's
 // temporary folder otherwise: printing must not require choosing a folder first.
-func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (string, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) WriteDirectionPairingSheet(ctx context.Context, tournamentID int64, round int) (string, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	cat, lang := d.directionStrings()
+	cat, lang := d.directionStrings(ctx)
 	sheet, err := dir.PairingSheet(cat, lang, round)
 	if err != nil {
 		return "", err
@@ -128,24 +126,23 @@ func (d *Database) WriteDirectionPairingSheet(tournamentID int64, round int) (st
 
 // DirectionUpcomingSheetHTML renders the sheet of the round the queue proposes, before it is
 // launched, headed by the date the director typed. Nothing is written to the log.
-func (d *Database) DirectionUpcomingSheetHTML(tournamentID int64, announced string) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) DirectionUpcomingSheetHTML(ctx context.Context, tournamentID int64, announced string) (string, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	cat, lang := d.directionStrings()
+	cat, lang := d.directionStrings(ctx)
 	return dir.UpcomingSheet(cat, lang, announced, time.Now())
 }
 
 // WriteDirectionUpcomingSheet writes the announced sheet where the pairing sheet goes, under a
 // name of its own, and returns the file to open.
-func (d *Database) WriteDirectionUpcomingSheet(tournamentID int64, announced string) (string, error) {
-	sheet, err := d.DirectionUpcomingSheetHTML(tournamentID, announced)
+func (d *Service) WriteDirectionUpcomingSheet(ctx context.Context, tournamentID int64, announced string) (string, error) {
+	sheet, err := d.DirectionUpcomingSheetHTML(ctx, tournamentID, announced)
 	if err != nil {
 		return "", err
 	}
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
@@ -159,8 +156,8 @@ func (d *Database) WriteDirectionUpcomingSheet(tournamentID int64, announced str
 // DirectionRounds counts the batches of the current phase: how many sheets there are to choose
 // from. A batch is what a director calls a round in a Swiss by rounds, a block in a GSL, a
 // round in a bracket — the engine has no word for it, and needs none.
-func (d *Database) DirectionRounds(tournamentID int64) (int, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) DirectionRounds(ctx context.Context, tournamentID int64) (int, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return 0, err
 	}

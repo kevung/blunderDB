@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -61,9 +62,8 @@ type DirectionView struct {
 }
 
 // ListDirections names the directed tournaments of this database.
-func (d *Database) ListDirections() ([]DirectionSummary, error) {
-	ctx := context.Background()
-	recs, err := d.DirectionStore().ListDirections(ctx)
+func (d *Service) ListDirections(ctx context.Context) ([]DirectionSummary, error) {
+	recs, err := d.dirStore().ListDirections(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -75,10 +75,10 @@ func (d *Database) ListDirections() ([]DirectionSummary, error) {
 			EngineVersion: r.EngineVersion, OutputDir: r.OutputDir,
 			UpdatedAt: r.UpdatedAt.Format(time.RFC3339),
 		}
-		if rid, err := d.store.Rencontres().Of(ctx, "", r.TournamentID); err == nil && rid != 0 {
+		if rid, err := d.st.Rencontres().Of(ctx, d.scope, r.TournamentID); err == nil && rid != 0 {
 			if name, ok := names[rid]; ok {
 				s.RencontreName = name
-			} else if rc, err := d.store.Rencontres().Get(ctx, "", rid); err == nil {
+			} else if rc, err := d.st.Rencontres().Get(ctx, d.scope, rid); err == nil {
 				names[rid] = rc.Name
 				s.RencontreName = rc.Name
 			}
@@ -91,18 +91,19 @@ func (d *Database) ListDirections() ([]DirectionSummary, error) {
 // CreateDirection starts directing a Tournament that has none. The configuration arrives as the
 // engine's own JSON so the frontend composes it without this file knowing every format option.
 // A seed of 0 means "pick one" (and record it, so the draw stays reproducible).
-func (d *Database) CreateDirection(tournamentID int64, configJSON string, seed int64) error {
+func (d *Service) CreateDirection(ctx context.Context, tournamentID int64, configJSON string, seed int64) error {
+	defer d.lockDirection(tournamentID)()
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
 		return err
 	}
-	_, err = direction.Create(context.Background(), d.DirectionStore(), tournamentID, cfg, seed, time.Now())
+	_, err = direction.Create(ctx, d.dirStore(), tournamentID, cfg, seed, time.Now())
 	return err
 }
 
 // GetDirection replays a Tournament's Direction and returns everything the panel shows.
-func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) GetDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -116,14 +117,14 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 		EngineVersion: rec.EngineVersion, OutputDir: rec.OutputDir,
 		Config: cfg, EventCount: len(dir.Journal()),
 	}
-	v.RencontreID, _ = d.RencontreOf(tournamentID)
-	if v.Pairs, err = d.Pairs(tournamentID); err != nil {
+	v.RencontreID, _ = d.RencontreOf(ctx, tournamentID)
+	if v.Pairs, err = d.Pairs(ctx, tournamentID); err != nil {
 		return nil, err
 	}
 	if st := dir.State(); st != nil {
 		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
 		// deadline and a break's warning depend on the current time, not on the last result.
-		room := d.roomAround(context.Background(), tournamentID, dir)
+		room := d.roomAround(ctx, tournamentID, dir)
 		ext := room.external()
 		v.BusyTables = ext.BusyTables
 		if len(room.players) > 0 {
@@ -149,8 +150,8 @@ func (d *Database) GetDirection(tournamentID int64) (*DirectionView, error) {
 }
 
 // HasDirection says whether a Tournament is directed, without replaying it.
-func (d *Database) HasDirection(tournamentID int64) (bool, error) {
-	_, err := d.DirectionStore().GetDirection(context.Background(), tournamentID)
+func (d *Service) HasDirection(ctx context.Context, tournamentID int64) (bool, error) {
+	_, err := d.dirStore().GetDirection(ctx, tournamentID)
 	if errors.Is(err, direction.ErrNoDirection) {
 		return false, nil
 	}
@@ -160,38 +161,41 @@ func (d *Database) HasDirection(tournamentID int64) (bool, error) {
 // SetDirectionConfig installs a configuration, in preparation and in the middle of a tournament
 // alike. It is always an event, so decisions stay readable in order. PreviewDirectionConfig
 // shows the engine's refusal BEFORE the click; the refusal returned here is the same *tournoi.ConfigRefusal.
-func (d *Database) SetDirectionConfig(tournamentID int64, configJSON string) error {
+func (d *Service) SetDirectionConfig(ctx context.Context, tournamentID int64, configJSON string) error {
+	defer d.lockRoom()()
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
 		return err
 	}
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return err
 	}
-	if rid, _ := d.RencontreOf(tournamentID); rid != 0 {
+	if rid, _ := d.RencontreOf(ctx, tournamentID); rid != 0 {
 		if cur, err := dir.Config(); err == nil && !direction.SameRoom(cur, direction.RoomOf(cfg)) {
 			if err := cfg.Validate(); err != nil {
 				return err
 			}
-			return d.setMemberConfig(rid, tournamentID, cfg)
+			return d.setMemberConfig(ctx, rid, tournamentID, cfg)
 		}
 	}
-	return dir.SetConfig(context.Background(), cfg)
+	return dir.SetConfig(ctx, cfg)
 }
 
 // SetDirectionOutputDir remembers where the standalone display page is written.
-func (d *Database) SetDirectionOutputDir(tournamentID int64, dir string) error {
-	dd, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) SetDirectionOutputDir(ctx context.Context, tournamentID int64, dir string) error {
+	defer d.lockDirection(tournamentID)()
+	dd, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return err
 	}
-	return dd.SetOutputDir(context.Background(), dir)
+	return dd.SetOutputDir(ctx, dir)
 }
 
 // EnterParticipants records several entries at once — what an import or "take last time's
 // entrants" produces. Entering is possible in preparation and afterwards alike.
-func (d *Database) EnterParticipants(tournamentID int64, playersJSON string) error {
+func (d *Service) EnterParticipants(ctx context.Context, tournamentID int64, playersJSON string) error {
+	defer d.lockDirection(tournamentID)()
 	var players []tournoi.Player
 	if playersJSON == "" {
 		return nil
@@ -199,8 +203,7 @@ func (d *Database) EnterParticipants(tournamentID int64, playersJSON string) err
 	if err := json.Unmarshal([]byte(playersJSON), &players); err != nil {
 		return fmt.Errorf("entries: %w", err)
 	}
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return err
 	}
@@ -227,8 +230,9 @@ func (d *Database) EnterParticipants(tournamentID int64, playersJSON string) err
 
 // DeleteDirection removes a Direction and its log. The Tournament and its Matches stay; the
 // Matches merely lose the Slot they filled (ADR-0047).
-func (d *Database) DeleteDirection(tournamentID int64) error {
-	return d.DirectionStore().DeleteDirection(context.Background(), tournamentID)
+func (d *Service) DeleteDirection(ctx context.Context, tournamentID int64) error {
+	defer d.lockRoom()()
+	return d.dirStore().DeleteDirection(ctx, tournamentID)
 }
 
 // parseDirectionConfig reads and validates a configuration coming from the frontend.
@@ -248,8 +252,8 @@ func parseDirectionConfig(configJSON string) (tournoi.Config, error) {
 
 // DirectionJournalJSON gives a Direction's raw event journal: the whole truth, from which
 // everything else is replayed. Readable with the engine alone — an exit, not a lock-in.
-func (d *Database) DirectionJournalJSON(tournamentID int64) (string, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) DirectionJournalJSON(ctx context.Context, tournamentID int64) (string, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}

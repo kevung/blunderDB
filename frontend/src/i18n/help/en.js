@@ -343,6 +343,7 @@ export default {
 <p>Everything decided is written into a <strong>journal</strong>, and nothing else is. The standings, the brackets, the proposals and the warnings are replayed from that journal at every open: a power cut costs nothing, and a correction never erases what happened — it is added to it.</p>
 <h4>The Directing page</h4>
 <p>This is where the director spends most of their time. From top to bottom: the engine's <strong>warnings</strong>, which stay visible and never block anything; the <strong>table grid</strong>, whose header carries the <strong>Print the sheet</strong> button for the pairings; the <strong>last decision</strong>; the <strong>proposal queue</strong>; and the free players. The grid comes before the queue: a long queue never pushes it off the screen.</p>
+<p>The view fills the whole width of the main area, and each tab scrolls on its own: leaving a tab and coming back, or switching from one event to another, restores the position where you left it. Buttons and fields are at least 40 pixels tall, so they can be hit without precision at the desk; the number of columns of the grid follows the width of the area, not that of the window. In <strong>Settings</strong>, each section folds onto its title, and the <strong>Open in the browser</strong> button in the header opens the wall page in one click once an output folder is chosen.</p>
 <p>A proposed round can be announced before it is launched: <strong>Upcoming round…</strong>, next to <em>Print the sheet</em>, asks for the date and time to print (“Monday 21/09, 8 pm”) and prints the sheet of the pairings in the queue, marked “announced”. Nothing is launched or written to the log: the round is launched on the day, at its time. A pairing waiting for a free table carries a dash instead of the table number.</p>
 <p>At the top of the tournament view, the <strong>clock strip</strong> fits on one line: the time, the time elapsed since the first launched match, the matches played and running, the observed pace in minutes per point against the planned pace, the slow matches, the next break and the <strong>estimated end</strong>. The estimated end is the engine's forecast: it replays the log, finishes the tournament fifteen times at the planned pace, and the strip gives the median, pushed past the declared breaks. A night that is not declared as a break therefore counts as play. A time that is not today's carries its day.</p>
 <p>From the second day on, the elapsed time gives way to the <strong>day of play</strong> (the day of the first launched match is day 1) and to the <strong>playing time</strong>: the time during which at least one match was running, without the nights or the gaps when no table was playing. A closed tournament has no clock strip any more.</p>
@@ -353,6 +354,18 @@ export default {
 <p>A click on a busy table opens the match's card. It shows two large targets: the <strong>names of the two players</strong>. Clicking the one who won records the result — two clicks in all, table included. The winner is the only thing required; the score is free, either one, both or neither. On the keyboard, <em>LEFT</em> or <em>RIGHT</em> picks the winner and <em>ENTER</em> records it. The card closes only once the result is written: a failure leaves it open, with its message.</p>
 <p>The <strong>⋯</strong> button on the card unfolds what is rarely needed: the forfeit — each button names the absent player and the one who wins —, a free remark (“lost on time”, “abandoned because of…”), moving the match to another table, and cancelling it. The forfeit and the cancellation are confirmed. Moved to a busy table, the match swaps its table with the one who occupies it: two matches never share a table, and the same gesture puts them back. If an old log left two on one table, the grid shows both cells, flagged, until one of them is moved.</p>
 <p>A typing mistake seen at once is taken back in two clicks below the grid: <strong>Correct</strong> the last decision, then the right winner (<em>CTRL-Z</em> opens the same take-back). An older correction is made from the history.</p>
+<h4>The context menus</h4>
+<p>A right click, the <em>MENU</em> key or <em>SHIFT-F10</em> on an object of the Direction page opens its usual actions without going through the card: a cell of the grid (free or busy), a player (<strong>Players</strong> tab, free players), a bracket slot, a slot, a proposal of the queue, a history row. The menu opens on the object; <em>UP</em> and <em>DOWN</em> move through it, <em>ENTER</em> picks, <em>ESC</em> closes it and returns the focus to the object.</p>
+<ul>
+<li>Occupied cell: enter the result, forfeit by either player, change table (aiming at an occupied table swaps the two matches), cancel the match, history of each player.</li>
+<li>Free cell: start the selected pairing here, take the table out of service, or put it back in service (tables of a Rencontre). A table reserved for another event offers nothing.</li>
+<li>Player: enter the result of their current match, go to their table, history, pair by hand with another free player, go to the other event where they also play, mark absent or present, withdraw now or after their match, re-enter, edit the details.</li>
+<li>Slot without a match: attach an imported match that this slot is waiting for.</li>
+<li>Pairing: start, start at a table…, change the length…, pair differently (these three entries open the manual pairing with the two players, the length and the table of the pairing), ignore for now, print the round sheet.</li>
+<li>History row: correct or cancel, add a remark, filter on one of the players.</li>
+</ul>
+<p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
+<p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
 <h4>The players</h4>
 <p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
 <p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
@@ -1389,6 +1402,34 @@ export default {
 <tr>
 <td>Esc</td>
 <td>Cancel the current edit, otherwise clear the add-match search, otherwise deselect the tournament, otherwise close the panel (one step at a time).</td>
+</tr>
+</tbody>
+</table>
+<h3>Direction page</h3>
+<p>Under the Direction page, <em>J</em>, <em>K</em>, <em>UP</em>, <em>DOWN</em> and <em>ENTER</em> go to the proposal queue, except when the focus is on a cell of the table grid, where <em>UP</em> and <em>DOWN</em> change cell. The context menus are described in the manual (context menus).</p>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Right-click, MENU, SHIFT-F10</td>
+<td>Open the context menu of the focused object: table cell, player, bracket slot, slot, proposal, history row. UP/DOWN move through the menu, ENTER picks, ESC closes it.</td>
+</tr>
+<tr>
+<td>LEFT, RIGHT, UP, DOWN, HOME, END</td>
+<td>Move from one cell of the table grid to another (free cells included); the grid takes only one TAB stop.</td>
+</tr>
+<tr>
+<td>1 to 9, then 0 to 9</td>
+<td>Open the card of the table with that number; two digits, within 0.4 s, for a table beyond 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>On an occupied cell, open the card (or, if it is open, the table field); aiming at an occupied table swaps the two matches.</td>
 </tr>
 </tbody>
 </table>

@@ -8,7 +8,7 @@
 
     /**
      * @type {{
-     *     view?: import('../../../wailsjs/go/models').database.StandingsView | null,
+     *     view?: import('../../../wailsjs/go/models').service.StandingsView | null,
      *     busy?: boolean,
      *     running?: number,
      *     onClose?: () => void,

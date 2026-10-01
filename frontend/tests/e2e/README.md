@@ -30,13 +30,15 @@ tests/e2e/
 │   ├── fixtures.js    – positions, matches, stats, résultats EPC factices
 │   ├── showcase.js    – jeu « vitrine » de la capture d'écran (30 positions, match, analyse)
 │   ├── gestureCount.js       – compte les keyboard.press / clics d'un bloc (budgets ux.md §4)
-│   └── transcriptionDraft.js – un brouillon de transcription ouvert, moteur Go figé
+│   ├── transcriptionDraft.js – un brouillon de transcription ouvert, moteur Go figé
+│   └── transcriptionMonkey.js – deux brouillons, moteur à état, réponses lentes et désordonnées
 ├── tab-switch-stats.spec.js          – S2 : transitions d'onglets Stats
 ├── epc-bar-refreshes-on-return.spec.js – S1 étendu : mise à jour EPC
 ├── search-flow.spec.js               – Recherche : filtres + structure, résultats, navigation
 ├── match-navigation.spec.js          – Match : ouverture, parcours des coups, sortie
 ├── import-position.spec.js           – Import : XGID collé, fichier via dialogue
 ├── transcription-budgets.spec.js     – T3.5 : les budgets de gestes d'ux.md §§4.1–4.3, comptés
+├── transcription-monkey.spec.js      – séquences aléatoires à graine (MONKEY_SEED, MONKEY_STEPS) et invariants du panneau
 ├── screenshot.spec.js                – Capture documentaire (hors suite, voir plus bas)
 └── README.md (ce fichier)
 ```
