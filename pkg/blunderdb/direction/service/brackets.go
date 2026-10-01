@@ -128,6 +128,8 @@ func (d *Service) bracketsOf(ctx context.Context, dir *direction.Direction) ([]B
 		bp := BracketPhase{
 			Index: ph.Index, Kind: ph.Cfg.Kind, Name: ph.Cfg.Name,
 			Current: ph.Index == st.Current, Drawn: ph.Drawn, Config: ph.Cfg,
+			// Empty, never nil: the view reads sections.length and matches.length.
+			Sections: []BracketSection{},
 		}
 		sections := ph.Sections
 		skeleton := false
@@ -137,7 +139,7 @@ func (d *Service) bracketsOf(ctx context.Context, dir *direction.Direction) ([]B
 		for _, sec := range sections {
 			bs := BracketSection{
 				Name: sec.Name, Kind: sec.Kind, Group: sec.Group, Block: sec.Block,
-				Rounds: len(sec.Rounds), Spots: sec.Spots,
+				Rounds: len(sec.Rounds), Spots: sec.Spots, Matches: []BracketMatch{},
 			}
 			for _, p := range sec.Players {
 				bs.Players = append(bs.Players, playerNameIn(st, p))

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 	"time"
@@ -27,6 +28,10 @@ func TestBracketsOfASwissPhase(t *testing.T) {
 	}
 	if len(p.Sections) != 0 {
 		t.Error("a Swiss phase has no graph")
+	}
+	// The view reads p.sections.length: no graph is an empty list, never null.
+	if js, _ := json.Marshal(p); !strings.Contains(string(js), `"sections":[]`) {
+		t.Errorf("a phase without a graph must send an empty list: %s", js)
 	}
 	if len(p.Lives) != 24 {
 		t.Fatalf("%d lives rows, want 24", len(p.Lives))
