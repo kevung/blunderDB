@@ -1,4 +1,4 @@
-.PHONY: dev build check check-fast check-all test lint vet gofmt golangci vuln \
+.PHONY: dev build check check-comments check-fast check-all test lint vet gofmt golangci vuln \
         test-go test-pg test-e2e test-frontend lint-frontend release-check screenshots help
 
 # VERSION feeds `blunderdb version`'s app-version line (internal/cli.appVersion,
@@ -42,7 +42,7 @@ check-fast: gofmt vet lint-frontend
 # `golangci` here does not need a separate gofmt pass: .golangci.yml enables
 # the gofmt/goimports formatters, so `golangci-lint run` already catches what
 # check-fast's `gofmt` target catches (plus goimports' import-grouping).
-check: vet golangci vuln test-go test-frontend lint-frontend
+check: vet golangci check-comments vuln test-go test-frontend lint-frontend
 
 # check-all is full CI parity: check, plus the PostgreSQL contract suite
 # (needs Docker — see test-pg, which says so loudly if it isn't there), the
@@ -117,6 +117,9 @@ golangci: frontend/dist
 
 vuln: frontend/dist
 	govulncheck ./...
+
+check-comments:
+	scripts/check-comments.sh
 
 lint-frontend:
 	cd frontend && npm run lint && npm run format:check

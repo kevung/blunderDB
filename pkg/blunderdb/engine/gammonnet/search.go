@@ -367,7 +367,7 @@ func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, sta
 		return -1
 	}
 	if level == 0 {
-		s.seedMatchState(state) // #197/C.10: fixes matchStates[0]/[1] for this whole chain
+		s.seedMatchState(state) // fixes matchStates[0]/[1] for this whole chain
 	}
 	plays := s.playsAt(level)
 	count := s.genAt(level).LegalPlays(pos, d1, d2, plays)
@@ -594,7 +594,7 @@ func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owne
 // consulted (the roots farm out through deepenGroups).
 func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchState, owner CubeOwner) (float64, bool) {
 	if level == 0 {
-		s.seedMatchState(state) // #197/C.10: only a direct test entry point takes this in production
+		s.seedMatchState(state) // only a direct test entry point takes this in production
 	}
 	if pos.isOver() {
 		return terminalValue(pos, state), true

@@ -12,7 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// A directed tournament in the demonstration database (issue #397, ux.md §4.2).
+// A directed tournament in the demonstration database.
 //
 // The entry cost is a first-rank constraint of this whole piece of work, and nothing reduces it
 // like SEEING A ROOM RUNNING before directing one's own. So the demo carries a Swiss of
@@ -20,7 +20,7 @@ import (
 // tables, proposals waiting, and standings already worth reading.
 //
 // Everything here is generated, never hand-made, and the names are fictional — the
-// demonstration database names nobody real (issue #162, and `demo_test.go` greps for the people
+// demonstration database names nobody real (`demo_test.go` greps for the people
 // the fixtures name).
 //
 // ## The one thing that ages

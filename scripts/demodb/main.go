@@ -6,7 +6,7 @@
 //
 //   - replace the players, events and file names of the imported matches by
 //     fictional ones (the fixtures under testdata/ name real people, and a
-//     distributed binary must not — see ADR-0007 and issue #162);
+//     distributed binary must not — see ADR-0007);
 //   - group the tournament matches under a fictional tournament;
 //   - build three thematic collections from the worst errors of the base;
 //   - comment a handful of positions with #blunder / #cube tags;
@@ -165,7 +165,7 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	if err := simulateReviews(database.RawConn(d), deckID, now, seed); err != nil {
 		return err
 	}
-	// A directed tournament, so the demonstration shows a room running (issue #397).
+	// A directed tournament, so the demonstration shows a room running.
 	return buildDemoDirection(d, now, seed)
 }
 
@@ -205,7 +205,7 @@ func disguiseMatches(d *database.Database) error {
 			f.event, f.location, f.round, f.filePath, m.ID); err != nil {
 			return fmt.Errorf("relabelling match %d: %w", m.ID, err)
 		}
-		// The import batch records the path the file was read from (#257), and
+		// The import batch records the path the file was read from, and
 		// that path names both the machine it was built on and the real people
 		// in the fixture's filename. Renaming the match is not enough: the
 		// batch is a second copy of the same fact, and TestDemoDatabaseNamesNobodyReal

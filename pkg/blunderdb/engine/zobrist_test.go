@@ -77,7 +77,7 @@ func scorePosition(s1, s2 int) Position {
 // ---------------------------------------------------------------------------
 
 // stabilityPositions defines the 32 positions whose hashes must never change.
-// The want values are filled in by freezeZobristHashes (run once with -update).
+// A failing TestZobristStability prints the current hash of each position.
 var stabilityPositions = []struct {
 	name string
 	pos  Position
@@ -261,36 +261,6 @@ func TestZobristEquivalence(t *testing.T) {
 		if h0 != h1 {
 			t.Errorf("%s: PlayerOnRoll=0 hash 0x%016x != mirror hash 0x%016x", tc.name, h0, h1)
 		}
-	}
-}
-
-// TestZobristDistinct verifies that distinct positions have distinct hashes
-// (collision would be a red flag, though not guaranteed impossible).
-func TestZobristDistinct(t *testing.T) {
-	seen := make(map[uint64]string)
-	for _, tc := range stabilityPositions {
-		h := ZobristHash(&tc.pos)
-		if prev, ok := seen[h]; ok {
-			// Collision: report but don't fail — two "distinct" test positions
-			// might intentionally normalize to the same hash (e.g. initial and initial_mirror).
-			t.Logf("collision: %s and %s share hash 0x%016x", tc.name, prev, h)
-		}
-		seen[h] = tc.name
-	}
-}
-
-// ---------------------------------------------------------------------------
-// Helper to print hashes for freezing (run manually when positions change)
-// ---------------------------------------------------------------------------
-
-func TestZobristPrintHashes(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping hash printer in short mode")
-	}
-	t.Log("Hash values for stabilityPositions (paste into want fields to freeze):")
-	for _, tc := range stabilityPositions {
-		h := ZobristHash(&tc.pos)
-		t.Logf(`{"%s", ..., 0x%016x},`, tc.name, h)
 	}
 }
 

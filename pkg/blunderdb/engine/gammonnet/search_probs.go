@@ -70,7 +70,7 @@ func (s *Searcher) Probs(pos *Position) ([NumOutputs]float32, bool) {
 // asymmetric score from 2 ply (TestProbsMatchEquityMatchesPositionEquity).
 func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
 	if level == 0 {
-		s.seedMatchState(state) // #197/C.10: fixes matchStates[0]/[1] for this whole chain
+		s.seedMatchState(state) // fixes matchStates[0]/[1] for this whole chain
 	}
 	if pos.isOver() {
 		return terminalProbs(pos), true

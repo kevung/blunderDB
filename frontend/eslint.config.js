@@ -47,11 +47,8 @@ export default [
                     caughtErrorsIgnorePattern: '^_'
                 }
             ],
-            // #205: every `{#each}` in the codebase is now keyed (verified
-            // 2026-09-03, zero warnings from either rule below) — promoted
-            // from 'warn' so a future unkeyed each-block or reactive loop
-            // fails CI instead of accumulating silently the way the 35
-            // Svelte-compiler warnings this fiche put a ceiling on did.
+            // Errors, not warnings: an unkeyed each-block or reactive loop
+            // must fail CI instead of accumulating silently.
             'svelte/require-each-key': 'error',
             'svelte/prefer-svelte-reactivity': 'error',
             'svelte/infinite-reactive-loop': 'error',

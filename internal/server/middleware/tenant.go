@@ -13,7 +13,7 @@ import (
 //
 // Authentication is delegated to an upstream reverse-proxy: the daemon trusts
 // this header and must never be exposed directly to the public internet. See
-// docs/adr/0005 (and its 2026-09-03 amendment for the header's format).
+// docs/adr/0005 (and its amendment for the header's format).
 const TenantHeader = "X-Tenant-ID"
 
 type tenantKey struct{}
@@ -33,7 +33,7 @@ type tenantKey struct{}
 // name to its integer is the proxy's job, never the daemon's (ADR-0005).
 // SingleTenantID is the only tenant a single-tenant backend answers for. It is
 // "1" rather than "0" because a tenant is a POSITIVE integer (ADR-0005's
-// 2026-09-03 amendment).
+// amendment).
 const SingleTenantID = "1"
 
 // Tenant enforces the X-Tenant-ID header. singleTenant, when true, additionally

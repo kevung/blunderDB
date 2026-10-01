@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
-// La construction du front web (#295, fiche J.5).
+// La construction du front web.
 //
 // Une seconde entrée, pas une seconde chaîne d'outils : le front web réutilise
 // le dessinateur de plateau de l'application (ADR-0039), donc il est bâti par

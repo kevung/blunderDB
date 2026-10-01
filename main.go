@@ -57,7 +57,7 @@ func main() {
 		}
 		// Anything else positional is a database file path the OS handed this
 		// process — build/linux/blunderdb.desktop's `Exec=blunderDB %f`, or a
-		// Windows/macOS file-association double-click (#241) — not a flag
+		// Windows/macOS file-association double-click — not a flag
 		// (which would start with "-"): GUI mode, opening that file. A
 		// leading "-" is left alone rather than treated as a startup path, so
 		// an unrecognised flag reports itself sanely instead of being handed
