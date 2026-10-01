@@ -20,6 +20,7 @@ import (
 // engine's own JSON, so the frontend confirms exactly what it was shown rather than describing
 // it again in its own words — a description that could drift from the engine's.
 func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actionJSON string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	var a tournoi.Action
 	if err := json.Unmarshal([]byte(actionJSON), &a); err != nil {
 		return nil, fmt.Errorf("direction: proposal: %w", err)
@@ -38,6 +39,7 @@ func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actio
 // returns it with what was already recorded: a partial round is actionable, a rollback would
 // discard valid decisions.
 func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -97,6 +99,7 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // (unknown player, already playing, against themselves) — and a table another match is
 // played on, which would hide that match.
 func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	// The occupancy check and the write share one transaction: checked outside it, two
 	// directors could both see the table free and both start a match on it.
 	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {

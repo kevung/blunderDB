@@ -116,7 +116,8 @@ func (d *Service) slotMatches(ctx context.Context, tournamentID int64) (map[stri
 	return out, nil
 }
 
-// slotDrafts finds the Transcriptions started from a Slot and not yet saved.
+// slotDrafts finds the Transcriptions started from a Slot and not yet saved. When a Slot has
+// several, it leads to the one typed last: List gives the most recently updated first.
 func (d *Service) slotDrafts(ctx context.Context, tournamentID int64) (map[string]int64, error) {
 	out := map[string]int64{}
 	for t, err := range d.st.Transcriptions().List(ctx, d.scope) {
@@ -127,7 +128,7 @@ func (d *Service) slotDrafts(ctx context.Context, tournamentID int64) (map[strin
 			continue
 		}
 		slot, tid := draftSlot(t.Document)
-		if slot != "" && tid == tournamentID {
+		if _, seen := out[slot]; slot != "" && tid == tournamentID && !seen {
 			out[slot] = t.ID
 		}
 	}
@@ -195,6 +196,7 @@ func disagreement(m *tournoi.Match, aName string, f filledMatch) string {
 // Attaching also puts the Match in the Tournament if it was not there, since a Match filling a
 // Slot of that tournament is a match OF that tournament.
 func (d *Service) AttachMatchToSlot(ctx context.Context, tournamentID int64, slotID string, matchID int64) error {
+	defer d.lockDirection(tournamentID)()
 	if slotID == "" {
 		return fmt.Errorf("direction: no slot given")
 	}
@@ -216,6 +218,7 @@ func (d *Service) AttachMatchToSlot(ctx context.Context, tournamentID int64, slo
 // DetachMatchFromSlot empties a Slot. It touches neither the Match nor the recorded result:
 // the Match keeps its Tournament, and the Slot keeps what the director said happened.
 func (d *Service) DetachMatchFromSlot(ctx context.Context, tournamentID int64, slotID string) error {
+	defer d.lockDirection(tournamentID)()
 	return d.st.Directions().DetachSlot(ctx, d.scope, tournamentID, slotID)
 }
 

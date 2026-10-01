@@ -53,6 +53,7 @@ func rencontreSlugs(ctx context.Context, stores storage.Stores, scope string, id
 // away: choosing the folder is the whole gesture (D6.5's acceptance criterion), not the first of
 // several.
 func (d *Service) SetRencontreOutputDir(ctx context.Context, id int64, dir string) (*RencontreView, error) {
+	defer d.lockRoom()()
 	r, err := d.st.Rencontres().Get(ctx, d.scope, id)
 	if err != nil {
 		return nil, err

@@ -182,6 +182,7 @@ func (d *Service) StandingsCSV(ctx context.Context, tournamentID int64) (string,
 
 // CloseDirection closes the tournament and freezes the final standings.
 func (d *Service) CloseDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -195,6 +196,7 @@ func (d *Service) CloseDirection(ctx context.Context, tournamentID int64) (*Dire
 // ReopenDirection takes a closed tournament back, because a result was wrong. The final
 // standings are recomputed at the next close; the log keeps everything.
 func (d *Service) ReopenDirection(ctx context.Context, tournamentID int64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err

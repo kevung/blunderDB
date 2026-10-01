@@ -3,9 +3,21 @@
 // implementation over SQLite and PostgreSQL alike (ADR-0057 rule 2).
 //
 // The direction package holds the rules and the engine; this one reads and writes what they
-// need through storage.Stores and shapes the views the callers show. It takes no lock: every
-// write is one transaction of the backend, and a gesture that writes several Directions runs in
-// one storage.Tx.
+// need through storage.Stores and shapes the views the callers show. Every write is one
+// transaction of the backend, and a gesture that writes several Directions runs in one
+// storage.Tx.
+//
+// # Concurrent gestures
+//
+// A gesture reads a Direction's log, decides, and appends the next event at the next sequence
+// number. The backends hold no global lock, so the service serialises the gestures itself, in
+// its Memory: one at a time per (scope, Direction), and a gesture that may write several
+// Directions (a room, a shared configuration) alone in its scope. Reads take no lock.
+//
+// That serialisation is per process. Between processes — several serve daemons over one
+// PostgreSQL — the primary key of direction_event (tournament, seq) is the guard: the second
+// of two simultaneous gestures fails on it, and the caller gets that conflict as an error
+// (storage.ErrConflict), never a silently merged log. Repeating the gesture reads the new log.
 package service
 
 import (
@@ -44,6 +56,56 @@ type Memory struct {
 	directionMu      sync.RWMutex
 	directionCatalog *direction.Catalog
 	directionLang    string
+	// gestureMu guards the two lock tables below; see lockDirection.
+	gestureMu  sync.Mutex
+	scopeLocks map[string]*sync.RWMutex
+	dirLocks   map[forecastKey]*sync.Mutex
+}
+
+// gestureLocks returns the scope's room lock and the Direction's own lock, made on first use.
+func (m *Memory) gestureLocks(scope string, tournamentID int64) (*sync.RWMutex, *sync.Mutex) {
+	m.gestureMu.Lock()
+	defer m.gestureMu.Unlock()
+	if m.scopeLocks == nil {
+		m.scopeLocks = map[string]*sync.RWMutex{}
+		m.dirLocks = map[forecastKey]*sync.Mutex{}
+	}
+	room := m.scopeLocks[scope]
+	if room == nil {
+		room = &sync.RWMutex{}
+		m.scopeLocks[scope] = room
+	}
+	if tournamentID == 0 {
+		return room, nil
+	}
+	k := forecastKey{scope, tournamentID}
+	own := m.dirLocks[k]
+	if own == nil {
+		own = &sync.Mutex{}
+		m.dirLocks[k] = own
+	}
+	return room, own
+}
+
+// lockDirection serialises the gestures of one Direction: a gesture reads the log, decides,
+// and appends at the next sequence number, so two at once would claim the same number. The
+// returned func releases it. Gestures of other Directions run alongside.
+func (d *Service) lockDirection(tournamentID int64) func() {
+	room, own := d.gestureLocks(d.scope, tournamentID)
+	room.RLock()
+	own.Lock()
+	return func() {
+		own.Unlock()
+		room.RUnlock()
+	}
+}
+
+// lockRoom serialises a gesture that may write several Directions of the scope — a room, a
+// configuration a room shares — against every other gesture of the scope.
+func (d *Service) lockRoom() func() {
+	room, _ := d.gestureLocks(d.scope, 0)
+	room.Lock()
+	return room.Unlock
 }
 
 type forecastKey struct {

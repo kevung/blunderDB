@@ -110,6 +110,7 @@ func (d *Service) rencontreView(ctx context.Context, stores storage.Stores, stor
 // UpdateRencontre renames the room and moves its dates. A new number of tables is a gesture on
 // the room: every member Direction records it.
 func (d *Service) UpdateRencontre(ctx context.Context, id int64, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
+	defer d.lockRoom()()
 	if name == "" || tables <= 0 {
 		return nil, fmt.Errorf("rencontre: a name and at least one table are required")
 	}
@@ -149,6 +150,7 @@ func (d *Service) PreviewAttachToRencontre(ctx context.Context, tournamentID, re
 // configuration change, and membership is recorded, in one transaction. Permitted at any time,
 // the event under way included. A Tournament without a Direction has no room to join.
 func (d *Service) AttachToRencontre(ctx context.Context, tournamentID, rencontreID int64) (*RencontreView, error) {
+	defer d.lockRoom()()
 	err := d.inRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if of, err := tx.Rencontres().Of(ctx, d.scope, tournamentID); err != nil {
 			return err
@@ -186,6 +188,7 @@ func alignTables(ctx context.Context, store direction.Store, tournamentID int64,
 // Realign puts every member of a Rencontre back on the room's tables, as attaching
 // them does. A restored Rencontre needs it: its events kept their own tables while detached.
 func (d *Service) Realign(ctx context.Context, id int64) error {
+	defer d.lockRoom()()
 	return d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		for _, tid := range r.TournamentIDs {
 			if err := alignTables(ctx, store, tid, room); err != nil {
@@ -198,6 +201,7 @@ func (d *Service) Realign(ctx context.Context, id int64) error {
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
 func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) error {
+	defer d.lockRoom()()
 	rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 	if err := d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0); err != nil {
 		return err
@@ -211,12 +215,14 @@ func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) e
 // TrashRencontre deletes a Rencontre through the trash (ADR-0036). Its Tournaments are detached,
 // never deleted.
 func (d *Service) TrashRencontre(ctx context.Context, id int64) (int64, error) {
+	defer d.lockRoom()()
 	return trash.Rencontre(ctx, d.st, d.scope, id)
 }
 
 // SetRencontreTableOutOfService declares a table of the room out of service, or back in service.
 // Declared once, recorded in every member Direction.
 func (d *Service) SetRencontreTableOutOfService(ctx context.Context, id int64, table int, out bool) (*RencontreView, error) {
+	defer d.lockRoom()()
 	err := d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if table <= 0 || table > r.Tables {
 			return fmt.Errorf("rencontre: the room has no table %d", table)
@@ -236,6 +242,7 @@ func (d *Service) SetRencontreTableOutOfService(ctx context.Context, id int64, t
 // SetRencontreBreaks replaces the room's breaks — a meal, the prize-giving — in every member
 // Direction at once. breaksJSON is the engine's own list of {start, end}.
 func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON string) (*RencontreView, error) {
+	defer d.lockRoom()()
 	var breaks []tournoi.TimeRange
 	if breaksJSON != "" {
 		if err := json.Unmarshal([]byte(breaksJSON), &breaks); err != nil {

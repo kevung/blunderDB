@@ -165,6 +165,7 @@ func playerNameIn(st *tournoi.State, id tournoi.PlayerID) string {
 // EnterResult records the result of a match. Only `winner` is required; both scores may be zero.
 // `note` travels on the event. A score beyond the length raises a standing warning.
 func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -182,6 +183,7 @@ func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, 
 // EnterForfeit records that a player did not turn up for THIS match, without withdrawing them
 // from the tournament: they go on to follow a loser's path, the consolation for instance.
 func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID, winner, note string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -200,6 +202,7 @@ func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID,
 // that table is taken, the two matches swap tables: two matches never share a table, and the
 // same gesture puts them back. Both moves are written in one transaction.
 func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matchID string, table int) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	if table <= 0 {
 		return nil, fmt.Errorf("direction: table %d is not a table", table)
 	}
@@ -254,6 +257,7 @@ func occupant(st *tournoi.State, table int, self tournoi.MatchID) *tournoi.Match
 // CancelMatch removes a match launched by mistake — the wrong players, the wrong table. The
 // state is recomputed; nothing is erased from the log.
 func (d *Service) CancelMatch(ctx context.Context, tournamentID int64, matchID string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
