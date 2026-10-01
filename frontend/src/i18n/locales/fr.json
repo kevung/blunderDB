@@ -2294,6 +2294,8 @@
             "legend": "Épreuves de la salle",
             "proposals": "Propositions de la salle ({n})",
             "loading": "Chargement de la salle…",
+            "error": "La salle n'a pas pu être lue : {reason}",
+            "eventError": "{event} ne se rejoue pas ; ses tables manquent : {reason}",
             "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b}) ?"
         },
         "epreuves": {

@@ -362,32 +362,56 @@ func (d *Service) outside(ctx context.Context, tournamentID int64, me *direction
 // roomAround replays the sister events of a Tournament. me is its own replayed Direction, to
 // find which of its Participants play next door; nil when only the tables are wanted.
 func (d *Service) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) sisterRoom {
-	out := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
 	rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 	if err != nil || rid == 0 {
-		return out
+		return sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
 	}
 	r, err := d.st.Rencontres().Get(ctx, d.scope, rid)
 	if err != nil {
-		return out
+		return sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
 	}
-	var sisters []direction.Sister
+	return d.roomFrom(ctx, tournamentID, me, d.openMembers(ctx, r, tournamentID))
+}
+
+// member is one event of a Rencontre, replayed once for every reader of the room. dir is nil
+// and err says why when its log does not replay.
+type member struct {
+	tid  int64
+	name string
+	dir  *direction.Direction
+	err  error
+}
+
+// openMembers replays the events of a Rencontre, in its order, except skip (0 skips none).
+func (d *Service) openMembers(ctx context.Context, r *domain.Rencontre, skip int64) []member {
+	out := make([]member, 0, len(r.TournamentIDs))
 	for _, tid := range r.TournamentIDs {
-		if tid == tournamentID {
+		if tid == skip {
 			continue
 		}
-		o, err := direction.Open(ctx, d.dirStore(), tid)
-		if err != nil {
-			continue
-		}
-		name := fmt.Sprintf("#%d", tid)
+		m := member{tid: tid, name: fmt.Sprintf("#%d", tid)}
 		if t, err := d.st.Tournaments().Get(ctx, d.scope, tid); err == nil && t.Name != "" {
-			name = t.Name
+			m.name = t.Name
 		}
-		for _, n := range direction.BusyTables(o) {
-			out.tables[n] = name
+		m.dir, m.err = direction.Open(ctx, d.dirStore(), tid)
+		out = append(out, m)
+	}
+	return out
+}
+
+// roomFrom is the room around one Tournament, read from members already replayed: the tables
+// and players of every other member that replays.
+func (d *Service) roomFrom(ctx context.Context, tournamentID int64, me *direction.Direction, members []member) sisterRoom {
+	out := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
+	var sisters []direction.Sister
+	for _, m := range members {
+		if m.tid == tournamentID || m.dir == nil {
+			continue
 		}
-		sisters = append(sisters, direction.Sister{Name: name, Dir: o, Members: d.memberNames(ctx, tid)})
+		for _, n := range direction.BusyTables(m.dir) {
+			out.tables[n] = m.name
+		}
+		sisters = append(sisters, direction.Sister{Name: m.name, Dir: m.dir, Members: d.memberNames(ctx, m.tid)})
 	}
 	if me != nil {
 		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), d.memberNames(ctx, tournamentID))

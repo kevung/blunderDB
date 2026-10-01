@@ -1,7 +1,12 @@
 package database
 
 import (
+	"io/fs"
+	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
 // hallSetup is a room of ten tables: A seats its sixteen players on the first tables, B pairs
@@ -141,5 +146,133 @@ func TestMoveMatchToAFreeTableInTheRoom(t *testing.T) {
 	}
 	if h.Cells[9].MatchID != bMatch || !h.Cells[8].Free {
 		t.Errorf("table 9 = %+v, table 10 = %+v", h.Cells[8], h.Cells[9])
+	}
+}
+
+// fillRoom seats B's second match on table 10, then pairs a third with no table left.
+func fillRoom(t *testing.T, d *Database, b int64) string {
+	t.Helper()
+	if _, err := d.StartMatchManually(b, "c", "d", 0, 10); err != nil {
+		t.Fatal(err)
+	}
+	v, err := d.StartMatchManually(b, "e", "f", 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range v.Running {
+		if m.Table <= 0 {
+			return string(m.ID)
+		}
+	}
+	t.Fatal("the third match of B got a table in a full room")
+	return ""
+}
+
+// A match with no table dropped on a table a sister event plays on has nowhere to send the
+// occupant: refused, never two matches on one table.
+func TestMoveTablelessMatchOntoASisterTableIsRefused(t *testing.T) {
+	d, rID, a, b, _ := hallSetup(t)
+	loose := fillRoom(t, d, b)
+	beforeA := eventCount(t, d, a)
+	if _, err := d.MoveMatchToTable(b, loose, 1); err == nil {
+		t.Fatal("a tableless match was stacked on a sister's table")
+	}
+	if eventCount(t, d, a) != beforeA {
+		t.Error("the refused move wrote in the sister log")
+	}
+	h, _ := d.RencontreTableGrid(rID)
+	for _, c := range h.Cells {
+		if c.Shared {
+			t.Errorf("table %d holds two matches", c.Table)
+		}
+	}
+}
+
+// The occupant goes back to the moved match's table: when that table is out of service, the
+// swap is refused, for a sister occupant as for one of the same event.
+func TestSwapRefusesToSendTheOccupantToAnOutOfServiceTable(t *testing.T) {
+	d, rID, a, b, bMatch := hallSetup(t)
+	if _, err := d.SetRencontreTableOutOfService(rID, 9, true); err != nil {
+		t.Fatal(err)
+	}
+	beforeA := eventCount(t, d, a)
+	if _, err := d.MoveMatchToTable(b, bMatch, 1); err == nil {
+		t.Error("A's match was sent to table 9, out of service")
+	}
+	if eventCount(t, d, a) != beforeA {
+		t.Error("the refused swap wrote in the sister log")
+	}
+	// Same event: B's match on 9 swaps with B's match on 10.
+	if _, err := d.StartMatchManually(b, "c", "d", 0, 10); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.MoveMatchToTable(b, bMatch, 10); err == nil {
+		t.Error("B's match on table 10 was sent to table 9, out of service")
+	}
+}
+
+// A sister whose log does not replay may sit on the very table: the write is refused.
+func TestMoveRefusedWhenASisterDoesNotReplay(t *testing.T) {
+	d, _, a, b, bMatch := hallSetup(t)
+	if err := d.DeleteDirection(a); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.MoveMatchToTable(b, bMatch, 10); err == nil {
+		t.Error("a move went through without seeing the whole room")
+	}
+}
+
+// The Hall still shows the events that replay when one does not, and says which one failed.
+func TestHallToleratesAnEventThatDoesNotReplay(t *testing.T) {
+	d, rID, a, b, bMatch := hallSetup(t)
+	if err := d.DeleteDirection(a); err != nil {
+		t.Fatal(err)
+	}
+	h, err := d.RencontreTableGrid(rID)
+	if err != nil {
+		t.Fatalf("one broken event broke the whole hall: %v", err)
+	}
+	if h.Events[0].TournamentID != a || h.Events[0].Error == "" {
+		t.Errorf("A's event = %+v, want its error", h.Events[0])
+	}
+	if h.Cells[8].TournamentID != b || h.Cells[8].MatchID != bMatch {
+		t.Errorf("table 9 = %+v, want B's match", h.Cells[8])
+	}
+}
+
+// A swap with a sister rewrites both events' display pages, not only the one the gesture came
+// from.
+func TestSwapRewritesTheSisterPage(t *testing.T) {
+	d, rID, a, _, _ := hallSetup(t)
+	dir := t.TempDir()
+	if _, err := d.SetRencontreOutputDir(rID, dir); err != nil {
+		t.Fatal(err)
+	}
+	pages := func() int {
+		n := 0
+		_ = filepath.WalkDir(dir, func(p string, e fs.DirEntry, _ error) error {
+			if e != nil && !e.IsDir() && e.Name() == direction.PageName && filepath.Dir(p) != dir {
+				n++
+			}
+			return nil
+		})
+		return n
+	}
+	before := pages()
+	h, _ := d.RencontreTableGrid(rID)
+	var aMatch string
+	for _, c := range h.Cells {
+		if c.TournamentID == a && c.MatchID != "" {
+			aMatch = c.MatchID
+			break
+		}
+	}
+	_ = os.RemoveAll(dir)
+	_ = os.MkdirAll(dir, 0o755)
+	if _, err := d.MoveMatchToTable(a, aMatch, 9); err != nil {
+		t.Fatal(err)
+	}
+	if got := pages(); got != 2 {
+		t.Errorf("event pages written by the swap: %d (before: %d), want both events'", got, before)
 	}
 }

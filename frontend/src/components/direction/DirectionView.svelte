@@ -379,8 +379,24 @@
     $effect(() => {
         void view;
         void $epreuveTabsStore;
-        if (hallOpen) hallGrid().then((h) => (hall = h));
+        if (hallOpen) loadHall();
     });
+
+    let hallError = $state('');
+    /* Une réponse dépassée rend `undefined` : on garde ce qu'on a. Une erreur se montre au lieu
+       d'un chargement sans fin. */
+    function loadHall() {
+        hallGrid().then(
+            (h) => {
+                if (h === undefined) return;
+                hall = h;
+                hallError = '';
+            },
+            (e) => {
+                hallError = String(e?.message ?? e);
+            }
+        );
+    }
 
     /** @param {number} tournamentId */
     function pickEpreuve(tournamentId) {
@@ -398,7 +414,7 @@
     /* Rafraîchi à la minute : le temps écoulé avance sans événement. */
     $effect(() => {
         const timer = setInterval(() => {
-            if (hallOpen) hallGrid().then((h) => (hall = h));
+            if (hallOpen) loadHall();
             tableGrid().then((c) => (cells = c));
             clock().then((c) => (clockView = c));
         }, 60000);
@@ -702,9 +718,9 @@
     <ClockBar clock={clockView} warnings={view?.warnings?.length || 0} onWarnings={() => (tab = 'direction')} />
 
     <div class="body">
-        {#if hallOpen || hall}
+        {#if hallOpen || hall || hallError}
             <div class="pane" hidden={!hallOpen} tabindex="-1" data-testid="direction-pane-hall" use:registerPane={'hall'} onscroll={() => onPaneScroll('hall')}>
-                <HallView {hall} {busy} {act} onHistory={hallHistory} {onOutOfService} />
+                <HallView {hall} error={hallError} {busy} {act} onHistory={hallHistory} {onOutOfService} />
             </div>
         {/if}
         {#if visited.settings}

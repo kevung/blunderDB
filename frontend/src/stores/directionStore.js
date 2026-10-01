@@ -897,43 +897,57 @@ export async function tableGrid() {
     }
 }
 
+/** Le numéro de la dernière demande de Salle : une réponse plus ancienne arrivée après est ignorée. */
+let hallSeq = 0;
+
 /**
  * La Salle de la Rencontre ouverte (ADR-0056 §5) : une case par table, quelle que soit
  * l'épreuve, et les propositions de chacune — fusionnées en Go, rejouées à chaque appel. Null
- * hors Rencontre.
+ * hors Rencontre ; `undefined` quand une demande plus récente l'a dépassée (sa réponse, ou son
+ * erreur, ne doit pas écraser celle d'après). Une erreur remonte à l'appelant, qui la montre.
  *
- * @returns {Promise<import('../../wailsjs/go/models').service.HallView | null>}
+ * @returns {Promise<import('../../wailsjs/go/models').service.HallView | null | undefined>}
  */
 export async function hallGrid() {
+    const seq = ++hallSeq;
     const rid = get(directionStore)?.rencontreId || 0;
     if (!rid) return null;
     try {
-        return await RencontreTableGrid(rid);
+        const h = await RencontreTableGrid(rid);
+        return seq === hallSeq ? h : undefined;
     } catch (e) {
+        if (seq !== hallSeq) return undefined;
         logger.error('direction: hall grid failed', e);
-        return null;
+        throw e;
     }
 }
 
 /**
  * Un geste de la Salle vise l'épreuve de sa case, qui n'est pas forcément l'épreuve ouverte :
- * ensuite l'épreuve ouverte et ses sœurs sont rejouées, pour que chaque onglet dise vrai.
+ * sa page d'affichage est réécrite (celle de l'épreuve ouverte l'est par la vue), puis
+ * l'épreuve ouverte et ses sœurs sont rejouées, pour que chaque onglet dise vrai.
  *
  * @template T
+ * @param {number} tid
  * @param {() => Promise<T>} fn
  * @returns {Promise<T>}
  */
-async function hallGesture(fn) {
+async function hallGesture(tid, fn) {
     const v = await fn();
+    try {
+        await WriteDirectionPage(tid);
+    } catch (e) {
+        logger.error('direction: writing the page of a hall gesture failed', e);
+    }
     await refreshDirection();
     return v;
 }
 
 /** @param {number} tid @param {string} matchId @param {string} winner @param {number} [a] @param {number} [b] @param {string} [note] */
-export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') => hallGesture(() => EnterResult(tid, matchId, winner, a, b, note));
+export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') => hallGesture(tid, () => EnterResult(tid, matchId, winner, a, b, note));
 
 /** @param {number} tid @param {string} matchId @param {string} winner @param {string} [note] */
-export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(() => EnterForfeit(tid, matchId, winner, note));
+export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(tid, () => EnterForfeit(tid, matchId, winner, note));
 
 /**
  * Déplace un match de la Salle ; sur une table occupée par une épreuve sœur, le service échange
@@ -941,13 +955,13 @@ export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture
  *
  * @param {number} tid @param {string} matchId @param {number} table
  */
-export const hallMoveMatch = (tid, matchId, table) => hallGesture(() => MoveMatchToTable(tid, matchId, table));
+export const hallMoveMatch = (tid, matchId, table) => hallGesture(tid, () => MoveMatchToTable(tid, matchId, table));
 
 /** @param {number} tid @param {string} matchId */
-export const hallCancelMatch = (tid, matchId) => hallGesture(() => CancelMatch(tid, matchId));
+export const hallCancelMatch = (tid, matchId) => hallGesture(tid, () => CancelMatch(tid, matchId));
 
 /** @param {number} tid @param {ProposalAction} action */
-export const hallConfirmProposal = (tid, action) => hallGesture(() => ConfirmProposal(tid, JSON.stringify(action)));
+export const hallConfirmProposal = (tid, action) => hallGesture(tid, () => ConfirmProposal(tid, JSON.stringify(action)));
 
 /**
  * Enregistre un résultat. Seul le vainqueur est exigé : les scores peuvent être nuls tous deux.

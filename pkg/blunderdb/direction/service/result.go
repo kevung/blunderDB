@@ -56,11 +56,15 @@ func (d *Service) TableGrid(ctx context.Context, tournamentID int64) ([]TableCel
 	if err != nil {
 		return nil, err
 	}
+	return gridOf(dir, d.roomAround(ctx, tournamentID, dir), time.Now()), nil
+}
+
+// gridOf draws the table grid of a replayed Direction in the room given.
+func gridOf(dir *direction.Direction, room sisterRoom, now time.Time) []TableCell {
 	st := dir.State()
 	if st == nil {
-		return nil, nil
+		return nil
 	}
-	now := time.Now()
 	running := map[int]*tournoi.Match{}
 	var tableless, extra []*tournoi.Match
 	shared := map[int]bool{}
@@ -92,7 +96,6 @@ func (d *Service) TableGrid(ctx context.Context, tournamentID int64) ([]TableCel
 		slow[m.ID] = true
 	}
 
-	room := d.roomAround(ctx, tournamentID, dir)
 	elsewhere := room.tables
 	seat := func(id tournoi.PlayerID) *direction.Seat {
 		if s, ok := room.players[id]; ok {
@@ -143,7 +146,7 @@ func (d *Service) TableGrid(ctx context.Context, tournamentID int64) ([]TableCel
 		fill(&c, m)
 		out = append(out, c)
 	}
-	return out, nil
+	return out
 }
 
 func contains(xs []int, n int) bool {
@@ -209,12 +212,16 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 	if table <= 0 {
 		return nil, fmt.Errorf("direction: table %d is not a table", table)
 	}
-	sisters := d.sistersOf(ctx, tournamentID)
-	if len(sisters) > 0 {
+	// The room's lock as soon as the event is in a Rencontre, and its members read again under
+	// it: a swap may write a sister's log, and the membership must not change in between.
+	var sisters []int64
+	if rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID); rid != 0 {
 		defer d.lockRoom()()
+		sisters = d.sistersOf(ctx, tournamentID)
 	} else {
 		defer d.lockDirection(tournamentID)()
 	}
+	var touched int64
 	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
@@ -238,17 +245,25 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 			return fmt.Errorf("direction: table %d is out of service", table)
 		}
 		o := occupant(st, table, m.ID)
-		if o != nil && from <= 0 {
-			// A match with no table has nowhere to send the occupant: refused rather than
-			// stacking two matches on one table.
-			return fmt.Errorf("direction: table %d is taken", table)
-		}
 		var sister *direction.Direction
 		var so *tournoi.Match
-		if o == nil && from > 0 {
+		if o == nil {
 			if sister, so, err = sisterOccupant(ctx, store, sisters, table); err != nil {
 				return err
 			}
+		}
+		if (o != nil || so != nil) && from <= 0 {
+			// A match with no table has nowhere to send the occupant, whatever its event:
+			// refused rather than stacking two matches on one table.
+			return fmt.Errorf("direction: table %d is taken", table)
+		}
+		// The occupant goes back to the moved match's table: that end of the swap must be in
+		// service too, in the occupant's own configuration.
+		if o != nil && contains(st.Config.Tables.Unavailable, from) {
+			return fmt.Errorf("direction: table %d is out of service", from)
+		}
+		if so != nil && contains(sister.State().Config.Tables.Unavailable, from) {
+			return fmt.Errorf("direction: table %d is out of service", from)
 		}
 		now := time.Now()
 		if err := dir.Apply(ctx, tournoi.TableChangedEvent(m.ID, table, now)); err != nil {
@@ -258,12 +273,20 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 		case o != nil:
 			return dir.Apply(ctx, tournoi.TableChangedEvent(o.ID, from, now))
 		case so != nil:
+			touched = sister.Record().TournamentID
 			return sister.Apply(ctx, tournoi.TableChangedEvent(so.ID, from, now))
 		}
 		return nil
 	})
 	if err != nil {
 		return nil, err
+	}
+	// The display page of every Direction the move wrote in — the sister's too, whose director
+	// may not be looking at it — is rewritten here, so the GUI, the CLI and any client get it
+	// alike. Best effort, like every page rewrite: a failure is not the gesture's.
+	_, _ = d.WriteDirectionPage(ctx, tournamentID)
+	if touched != 0 {
+		_, _ = d.WriteDirectionPage(ctx, touched)
 	}
 	return d.GetDirection(ctx, tournamentID)
 }
@@ -292,9 +315,11 @@ func (d *Service) sistersOf(ctx context.Context, tournamentID int64) []int64 {
 // of them.
 func sisterOccupant(ctx context.Context, store direction.Store, sisters []int64, table int) (*direction.Direction, *tournoi.Match, error) {
 	for _, tid := range sisters {
+		// A sister that does not replay may be sitting on this very table: a write that cannot
+		// see the room is refused rather than risking two matches on one table.
 		dir, err := direction.Open(ctx, store, tid)
 		if err != nil {
-			continue
+			return nil, nil, fmt.Errorf("direction: event %d of the room does not replay: %w", tid, err)
 		}
 		st := dir.State()
 		if st == nil || st.Finished {

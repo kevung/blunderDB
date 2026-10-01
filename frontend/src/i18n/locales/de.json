@@ -2294,6 +2294,8 @@
             "legend": "Turniere im Saal",
             "proposals": "Vorschläge im Saal ({n})",
             "loading": "Saal wird geladen…",
+            "error": "Der Saal konnte nicht gelesen werden: {reason}",
+            "eventError": "{event} lässt sich nicht nachspielen; seine Tische fehlen: {reason}",
             "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?"
         },
         "epreuves": {

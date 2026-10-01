@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 
@@ -33,6 +33,9 @@ type HallEvent struct {
 	Proposals    []tournoi.Action `json:"proposals"`
 	// Names gives each Participant's name by id: a proposal names players by id.
 	Names map[string]string `json:"names"`
+	// Error says why the event's log did not replay: its tables are missing from the Hall, the
+	// other events' are still there.
+	Error string `json:"error,omitempty"`
 }
 
 // HallView is the Hall of a Rencontre.
@@ -52,40 +55,35 @@ func (d *Service) RencontreTableGrid(ctx context.Context, rencontreID int64) (*H
 	if err != nil {
 		return nil, err
 	}
-	return d.hall(ctx, r, true)
+	return d.hallOf(ctx, r, d.openMembers(ctx, r, 0), true), nil
 }
 
-// hall builds the Hall of a Rencontre; without proposals when only the tables are wanted (the
-// wall page), which spares asking the engine for them.
-func (d *Service) hall(ctx context.Context, r *domain.Rencontre, proposals bool) (*HallView, error) {
+// hallOf builds the Hall from members replayed once; without proposals when only the tables are
+// wanted (the wall page), which spares asking the engine for them.
+func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []member, proposals bool) *HallView {
 	v := &HallView{RencontreID: r.ID, Name: r.Name, Events: []HallEvent{}, Cells: []HallCell{}}
 	type eventGrid struct {
 		ev    HallEvent
 		cells []TableCell
 	}
-	grids := make([]eventGrid, 0, len(r.TournamentIDs))
+	grids := make([]eventGrid, 0, len(members))
 	highest := r.Tables
-	for i, tid := range r.TournamentIDs {
-		ev := HallEvent{TournamentID: tid, Name: fmt.Sprintf("#%d", tid), Index: i, Proposals: []tournoi.Action{}, Names: map[string]string{}}
-		if t, err := d.st.Tournaments().Get(ctx, d.scope, tid); err == nil && t.Name != "" {
-			ev.Name = t.Name
-		}
-		cells, err := d.TableGrid(ctx, tid)
-		if err != nil {
-			// A member without a readable log has no table to show; the others still do.
+	now := time.Now()
+	for i, m := range members {
+		ev := HallEvent{TournamentID: m.tid, Name: m.name, Index: i, Proposals: []tournoi.Action{}, Names: map[string]string{}}
+		if m.dir == nil {
+			ev.Error = m.err.Error()
 			v.Events = append(v.Events, ev)
 			continue
 		}
-		if proposals {
-			view, err := d.GetDirection(ctx, tid)
-			if err != nil {
-				return nil, err
+		room := d.roomFrom(ctx, m.tid, m.dir, members)
+		cells := gridOf(m.dir, room, now)
+		if st := m.dir.State(); proposals && st != nil {
+			if p := m.dir.ProposeWith(now, room.external()); p != nil {
+				ev.Proposals = p
 			}
-			if view.Proposals != nil {
-				ev.Proposals = view.Proposals
-			}
-			for _, p := range view.Players {
-				ev.Names[string(p.ID)] = p.Name
+			for id, p := range st.Players {
+				ev.Names[string(id)] = p.Name
 			}
 		}
 		for _, c := range cells {
@@ -149,5 +147,5 @@ func (d *Service) hall(ctx context.Context, r *domain.Rencontre, proposals bool)
 	}
 	v.Cells = append(v.Cells, extra...)
 	v.Cells = append(v.Cells, tableless...)
-	return v, nil
+	return v
 }

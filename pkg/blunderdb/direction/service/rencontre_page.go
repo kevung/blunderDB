@@ -135,41 +135,35 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 	slugs := rencontreSlugs(ctx, d.st, d.scope, r.TournamentIDs)
 	room := direction.Room{Tables: r.Tables}
 	roomRead := false
-	events := make([]direction.WallEvent, 0, len(r.TournamentIDs))
+	members := d.openMembers(ctx, r, 0)
+	events := make([]direction.WallEvent, 0, len(members))
 	var brackets []direction.WallBracket
-	for _, tid := range r.TournamentIDs {
-		name := fmt.Sprintf("#%d", tid)
-		if t, err := d.st.Tournaments().Get(ctx, d.scope, tid); err == nil && t.Name != "" {
-			name = t.Name
-		}
-		dir, err := direction.Open(ctx, d.dirStore(), tid)
-		if err != nil {
-			events = append(events, direction.WallEvent{Name: name, Slug: slugs[tid]})
+	for _, m := range members {
+		if m.dir == nil {
+			events = append(events, direction.WallEvent{Name: m.name, Slug: slugs[m.tid]})
 			continue
 		}
-		if cfg, err := dir.Config(); err == nil && !roomRead {
+		if cfg, err := m.dir.Config(); err == nil && !roomRead {
 			room = direction.RoomOf(cfg)
 			room.Tables = r.Tables
 			roomRead = true
 		}
-		events = append(events, direction.WallEvent{Name: name, Slug: slugs[tid], Rounds: dir.Rounds()})
-		if br := d.wallBracket(ctx, tid, name); br != nil {
+		events = append(events, direction.WallEvent{Name: m.name, Slug: slugs[m.tid], Rounds: m.dir.Rounds()})
+		if br := d.wallBracket(ctx, m.tid, m.name); br != nil {
 			brackets = append(brackets, *br)
 		}
 	}
 	// The wall page and the Hall read the room the same way: one line per table, the first
 	// match on it, whatever its event.
 	occupied := map[int]direction.WallTable{}
-	if h, err := d.hall(ctx, r, false); err == nil {
-		for _, c := range h.Cells {
-			if c.MatchID == "" || c.NoTable || c.Table <= 0 {
-				continue
-			}
-			if _, ok := occupied[c.Table]; ok {
-				continue
-			}
-			occupied[c.Table] = direction.WallTable{Number: c.Table, Event: c.Event, A: orID(c.AName, c.A), B: orID(c.BName, c.B)}
+	for _, c := range d.hallOf(ctx, r, members, false).Cells {
+		if c.MatchID == "" || c.NoTable || c.Table <= 0 {
+			continue
 		}
+		if _, ok := occupied[c.Table]; ok {
+			continue
+		}
+		occupied[c.Table] = direction.WallTable{Number: c.Table, Event: c.Event, A: orID(c.AName, c.A), B: orID(c.BName, c.B)}
 	}
 	tables := make([]direction.WallTable, 0, room.Tables)
 	for t := 1; t <= room.Tables; t++ {

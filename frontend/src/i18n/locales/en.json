@@ -2294,6 +2294,8 @@
             "legend": "Events in the hall",
             "proposals": "Hall proposals ({n})",
             "loading": "Loading the hall…",
+            "error": "The hall could not be read: {reason}",
+            "eventError": "{event} does not replay; its tables are missing: {reason}",
             "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b})?"
         },
         "epreuves": {

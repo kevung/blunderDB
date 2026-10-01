@@ -89,3 +89,20 @@ describe('la Salle', () => {
         expect(hallConfirmProposal).toHaveBeenCalledWith(4, hall.events[1].proposals[0]);
     });
 });
+
+describe('la Salle en erreur', () => {
+    test("une erreur de lecture se montre au lieu d'un chargement sans fin", () => {
+        const act = vi.fn();
+        const { getByTestId, queryByText } = render(HallView, { props: { hall: null, error: 'boom', act } });
+        expect(getByTestId('hall-error').textContent).toContain('boom');
+        expect(queryByText(/Loading|Chargement/)).toBeNull();
+    });
+
+    test('une épreuve qui ne se rejoue pas est nommée, les autres restent', () => {
+        const act = vi.fn();
+        const broken = { ...hall, events: [{ ...hall.events[0], error: 'no direction' }, hall.events[1]] };
+        const { getByTestId } = render(HallView, { props: { hall: broken, act } });
+        expect(getByTestId('hall-event-error-3').textContent).toContain('Principal');
+        expect(getByTestId('direction-table-2').textContent).toContain('Speed');
+    });
+});

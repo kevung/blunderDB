@@ -2294,6 +2294,8 @@
             "legend": "Tornei della sala",
             "proposals": "Proposte della sala ({n})",
             "loading": "Caricamento della sala…",
+            "error": "Impossibile leggere la sala: {reason}",
+            "eventError": "{event} non si ricostruisce; mancano i suoi tavoli: {reason}",
             "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?"
         },
         "epreuves": {

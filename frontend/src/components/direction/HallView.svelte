@@ -19,13 +19,14 @@
     /**
      * @type {{
      *     hall?: Hall | null,
+     *     error?: string,
      *     busy?: boolean,
      *     act: (fn: () => Promise<unknown>, key: string | ((e: any) => import('../../i18n').StatusMessage)) => Promise<boolean>,
      *     onHistory?: (name: string, tournamentId: number) => void,
      *     onOutOfService?: (table: number, out: boolean) => void
      * }}
      */
-    let { hall = null, busy = false, act, onHistory, onOutOfService } = $props();
+    let { hall = null, error = '', busy = false, act, onHistory, onOutOfService } = $props();
 
     /** @param {HallCellLike | undefined} c */
     const tidOf = (c) => c?.tournamentId || 0;
@@ -62,7 +63,13 @@
 </script>
 
 <div class="hall" data-testid="direction-hall">
+    {#if error}
+        <p class="error" role="alert" data-testid="hall-error">{$t('direction.hall.error', { reason: error })}</p>
+    {/if}
     {#if hall}
+        {#each hall.events.filter((ev) => ev.error) as ev (ev.tournamentId)}
+            <p class="error" role="alert" data-testid="hall-event-error-{ev.tournamentId}">{$t('direction.hall.eventError', { event: ev.name, reason: ev.error })}</p>
+        {/each}
         <ul class="legend" aria-label={$t('direction.hall.legend')}>
             {#each hall.events as ev (ev.tournamentId)}
                 <li class="chip" style={evColor(ev.index)}>{ev.name}</li>
@@ -95,7 +102,7 @@
                 <p class="empty">{$t('direction.proposals.none')}</p>
             {/if}
         </section>
-    {:else}
+    {:else if !error}
         <p class="empty">{$t('direction.hall.loading')}</p>
     {/if}
 </div>
@@ -173,6 +180,11 @@
     .go {
         min-height: var(--td-target, auto);
         min-width: var(--td-target, auto);
+    }
+
+    .error {
+        margin: var(--space-2) var(--space-2) 0;
+        color: var(--color-danger);
     }
 
     .empty {

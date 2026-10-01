@@ -115,9 +115,10 @@ func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a,
 			length = st.Phases[st.Current].Length
 		}
 		if table <= 0 {
-			// No number typed: the first free table, as a proposal would get. With none left the
-			// match still starts, under the grid's "no table" cell.
-			table = firstFreeTable(st, "", st.Current)
+			// No number typed: the first free table, as a proposal would get — one no sister
+			// event of the room plays on either. With none left the match still starts, under
+			// the grid's "no table" cell.
+			table = firstFreeTable(st, "", st.Current, d.roomAround(ctx, tournamentID, nil).tables)
 		} else if occupant(st, table, "") != nil {
 			return fmt.Errorf("direction: table %d is taken", table)
 		}
@@ -135,12 +136,15 @@ func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a,
 
 // firstFreeTable is the table the engine would give a proposal of this section and phase: the
 // smallest one that is not in use, not out of service and not reserved for something else; 0
-// when there is none.
+// when there is none. sisters are the tables the room's other events play on.
 //
 // It restates Nicomaque's unexported assignTables (engine.go) through AvailableFor, and must
 // follow it if it changes.
-func firstFreeTable(st *tournoi.State, section string, phase int) int {
+func firstFreeTable(st *tournoi.State, section string, phase int, sisters map[int]string) int {
 	used := map[int]bool{}
+	for t := range sisters {
+		used[t] = true
+	}
 	for _, m := range st.Running() {
 		if m.Table > 0 {
 			used[m.Table] = true

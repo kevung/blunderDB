@@ -50,6 +50,8 @@ export function canDrop(cell) {
 export function dropAction(source, target) {
     if (!target || !source.matchId || !canDrop(target)) return { kind: 'none' };
     if (target.table === source.table && !!target.matchId && target.matchId === source.matchId) return { kind: 'none' };
-    if (target.matchId) return { kind: 'swap', matchId: source.matchId, table: target.table, from: source.table, to: target.table };
+    // Un match sans table n'a pas de table à rendre : pas d'échange à confirmer (« Table 0 ↔ N »),
+    // le geste part comme un déplacement et le service le refuse en disant pourquoi.
+    if (target.matchId && source.table > 0) return { kind: 'swap', matchId: source.matchId, table: target.table, from: source.table, to: target.table };
     return { kind: 'move', matchId: source.matchId, table: target.table };
 }

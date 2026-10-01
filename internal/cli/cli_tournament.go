@@ -326,10 +326,27 @@ func (cli *CLI) runTournamentMove(args []string) error {
 	for _, m := range view.Running {
 		rows = append(rows, map[string]any{"match": string(m.ID), "table": m.Table})
 	}
+	// In a Rencontre a swap may have moved a sister event's match too: its matches follow,
+	// named with their event.
+	if view.RencontreID != 0 {
+		h, err := cli.db.RencontreTableGrid(view.RencontreID)
+		if err != nil {
+			return err
+		}
+		for _, c := range h.Cells {
+			if c.MatchID != "" && c.TournamentID != *id {
+				rows = append(rows, map[string]any{"event": c.Event, "match": c.MatchID, "table": c.Table})
+			}
+		}
+	}
 	if strings.ToLower(*format) == "json" {
 		return printJSON(rows)
 	}
 	for _, r := range rows {
+		if ev, ok := r["event"]; ok {
+			fmt.Printf("%s\t%s\ttable %d\n", ev, r["match"], r["table"])
+			continue
+		}
 		fmt.Printf("%s\ttable %d\n", r["match"], r["table"])
 	}
 	return nil

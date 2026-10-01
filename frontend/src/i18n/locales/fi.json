@@ -2294,6 +2294,8 @@
             "legend": "Salin kilpailut",
             "proposals": "Salin ehdotukset ({n})",
             "loading": "Ladataan salia…",
+            "error": "Salia ei voitu lukea: {reason}",
+            "eventError": "Kilpailua {event} ei voi toistaa; sen pöydät puuttuvat: {reason}",
             "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?"
         },
         "epreuves": {

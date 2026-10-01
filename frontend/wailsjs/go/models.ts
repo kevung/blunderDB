@@ -3801,6 +3801,7 @@ export namespace service {
 	    index: number;
 	    proposals: tournoi.Action[];
 	    names: Record<string, string>;
+	    error?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new HallEvent(source);
@@ -3813,6 +3814,7 @@ export namespace service {
 	        this.index = source["index"];
 	        this.proposals = this.convertValues(source["proposals"], tournoi.Action);
 	        this.names = source["names"];
+	        this.error = source["error"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -2294,6 +2294,8 @@
             "legend": "Torneos de la sala",
             "proposals": "Propuestas de la sala ({n})",
             "loading": "Cargando la sala…",
+            "error": "No se pudo leer la sala: {reason}",
+            "eventError": "{event} no se puede reproducir; faltan sus mesas: {reason}",
             "swapConfirm": "¿Mesa {from} ({a}) ↔ Mesa {to} ({b})?"
         },
         "epreuves": {
