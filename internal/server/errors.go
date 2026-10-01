@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -50,7 +52,8 @@ func statusForCode(code string) int {
 // codeForErr maps a storage sentinel error to an API error code.
 func codeForErr(err error) string {
 	switch {
-	case errors.Is(err, storage.ErrNotFound):
+	case errors.Is(err, storage.ErrNotFound), errors.Is(err, direction.ErrNoDirection):
+		// A Tournament that was never directed has no Direction to read.
 		return CodeNotFound
 	case errors.Is(err, storage.ErrConflict):
 		return CodeConflict

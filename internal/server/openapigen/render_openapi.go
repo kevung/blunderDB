@@ -64,6 +64,15 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	if r.Kind == kindStream {
 		b.WriteString("      x-streaming: true\n")
 	}
+	if r.Conditional {
+		b.WriteString("      parameters:\n")
+		b.WriteString("        - name: If-None-Match\n")
+		b.WriteString("          in: header\n")
+		b.WriteString("          required: false\n")
+		b.WriteString("          description: An ETag of an earlier answer; 304 while it still holds.\n")
+		b.WriteString("          schema:\n")
+		b.WriteString("            type: string\n")
+	}
 
 	if reqSchema := resolveSchema(r.ReqType, types, comps); reqSchema != nil {
 		b.WriteString("      requestBody:\n")
@@ -74,8 +83,19 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	}
 
 	b.WriteString("      responses:\n")
+	if r.Conditional {
+		b.WriteString("        \"304\":\n")
+		b.WriteString("          description: Not Modified — the If-None-Match tag still holds; no body.\n")
+	}
 	b.WriteString("        \"200\":\n")
 	b.WriteString("          description: OK\n")
+	if r.Conditional {
+		b.WriteString("          headers:\n")
+		b.WriteString("            ETag:\n")
+		b.WriteString("              description: Weak tag of this answer; send it back in If-None-Match.\n")
+		b.WriteString("              schema:\n")
+		b.WriteString("                type: string\n")
+	}
 	switch r.Kind {
 	case kindStream:
 		itemSchema := resolveSchema(r.ItemType, types, comps)

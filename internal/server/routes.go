@@ -19,7 +19,7 @@ type route struct {
 }
 
 // handlerKind is inferred from the name of the function that produced the
-// http.HandlerFunc: rpc/rpcVoid/rpcStream are generic builders whose closures
+// http.HandlerFunc: rpc/rpcVoid/rpcRead/rpcStream are generic builders whose closures
 // carry the builder's name (server.rpcStream[...].func1); everything else is
 // a hand-written handler. Two things read this classification: the routing
 // smoke test's Content-Type check (routes_smoke_test.go), and
@@ -39,7 +39,7 @@ func kindOf(h http.HandlerFunc) handlerKind {
 	switch {
 	case strings.Contains(name, ".rpcStream["):
 		return kindStream
-	case strings.Contains(name, ".rpc["), strings.Contains(name, ".rpcVoid["):
+	case strings.Contains(name, ".rpc["), strings.Contains(name, ".rpcVoid["), strings.Contains(name, ".rpcRead["):
 		return kindJSON
 	default:
 		return kindCustom
@@ -153,6 +153,8 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.ingestRoutes()...)
 	rs = append(rs, s.gammonnetRoutes()...)
 	rs = append(rs, s.trashRoutes()...)
+	rs = append(rs, s.directionReadRoutes()...)
+	rs = append(rs, s.rencontreReadRoutes()...)
 	return rs
 }
 

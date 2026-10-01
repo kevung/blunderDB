@@ -40,6 +40,10 @@ type DirectionStore interface {
 	AppendEvent(ctx context.Context, scope string, tournamentID int64, ev direction.StoredEvent) error
 	// LoadEvents returns the log in sequence order.
 	LoadEvents(ctx context.Context, scope string, tournamentID int64) ([]direction.StoredEvent, error)
+	// EventsHead returns the log's length and its last sequence number (-1
+	// for an empty log) without reading the events: what changes at every
+	// append, for a reader that only needs to know whether the log moved.
+	EventsHead(ctx context.Context, scope string, tournamentID int64) (count, lastSeq int, err error)
 
 	// FilledSlots returns the library Matches of the Tournament that fill a
 	// Slot, with the final score their own games give.

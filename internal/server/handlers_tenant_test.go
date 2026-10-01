@@ -30,6 +30,14 @@ import (
 // matching startPostgres/purgeTestDB's convention in the postgres package.
 func newPostgresTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
+	ts, _ := newPostgresTestServerAndHandler(t)
+	return ts
+}
+
+// newPostgresTestServerAndHandler is newPostgresTestServer for a test that
+// seeds the storage beside the daemon.
+func newPostgresTestServerAndHandler(t *testing.T) (*httptest.Server, *Server) {
+	t.Helper()
 	ctx := context.Background()
 
 	container, err := tcpg.Run(ctx, "postgres:16-alpine",
@@ -64,7 +72,7 @@ func newPostgresTestServer(t *testing.T) *httptest.Server {
 	}
 	ts := httptest.NewServer(srv.Handler())
 	t.Cleanup(ts.Close)
-	return ts
+	return ts, srv
 }
 
 // postTenant POSTs body (nil for none) under the given tenant header.
