@@ -846,6 +846,10 @@ export function RencontreSearchIndex(arg1) {
   return window['go']['database']['Database']['RencontreSearchIndex'](arg1);
 }
 
+export function RencontreTableGrid(arg1) {
+  return window['go']['database']['Database']['RencontreTableGrid'](arg1);
+}
+
 export function ReopenDirection(arg1) {
   return window['go']['database']['Database']['ReopenDirection'](arg1);
 }

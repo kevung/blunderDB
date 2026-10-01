@@ -109,6 +109,7 @@ func routeFromLit(lit *ast.CompositeLit, types map[string]typeInfo) (Route, bool
 	r := Route{Method: method, Pattern: pattern, Family: family, Op: op}
 	r.Kind, r.ReqType, r.RespType, r.ItemType, r.IdempotencyKeySupported = classifyHandler(lit.Elts[2], types)
 	r.IfMatchRequired = requiresIfMatch(lit.Elts[2])
+	r.Conditional = isConditional(lit.Elts[2])
 	return r, true, nil
 }
 
@@ -163,6 +164,13 @@ func classifyHandler(e ast.Expr, types map[string]typeInfo) (kind, req, resp, it
 // package-level function used directly as a route's third element, however
 // unlikely) falls back to kindCustom rather than guessing.
 func classifyRPCCall(name string, call *ast.CallExpr, types map[string]typeInfo) (kind, req, resp, item string) {
+	if name == "rpcRead" && len(call.Args) == 2 {
+		// rpcRead(version, func ...): rpc's shape behind a version function.
+		if fn, ok := call.Args[1].(*ast.FuncLit); ok {
+			return kindJSON, lastParamType(fn), firstResultType(fn), ""
+		}
+		return kindCustom, "", "", ""
+	}
 	if len(call.Args) != 1 {
 		return kindCustom, "", "", ""
 	}
@@ -360,4 +368,15 @@ func requiresIfMatch(e ast.Expr) bool {
 		return false
 	}
 	return sel.Sel.Name == "withIfMatch" || requiresIfMatch(call.Args[0])
+}
+
+// isConditional reports whether a route's handler is an rpcRead call — the
+// builder of the conditional reads (ETag / If-None-Match).
+func isConditional(e ast.Expr) bool {
+	call, ok := e.(*ast.CallExpr)
+	if !ok {
+		return false
+	}
+	id, ok := call.Fun.(*ast.Ident)
+	return ok && id.Name == "rpcRead"
 }

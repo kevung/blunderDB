@@ -29,6 +29,7 @@
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
     import { directionSummariesStore, openDirectionIdStore, refreshDirectionSummaries, createDirection, openDirection, closeDirection, defaultConfig } from '../stores/directionStore';
     import { directionOwnsKey, directionPageShown, directionSearchKey } from '../services/directionKeys.js';
+    import { directionFullscreenKey } from '../services/directionFullscreen.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
@@ -457,6 +458,8 @@
         if (directionOwnsKey(event)) return;
         // `/` opens the Direction's quick search, handled by the global dispatcher.
         if (directionSearchKey(event)) return;
+        // F11 toggles the Direction's full screen, also handled by the global dispatcher.
+        if (directionFullscreenKey(event)) return;
 
         // Block all other non-Ctrl keys from propagating (prevents position browsing)
         event.stopPropagation();

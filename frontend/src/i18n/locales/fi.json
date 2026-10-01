@@ -1704,6 +1704,10 @@
         "direct": "Johda tätä turnausta",
         "open": "Avaa johtaminen",
         "close": "Sulje johtaminen",
+        "fullscreen": {
+            "enter": "Koko näyttö (F11)",
+            "exit": "Poistu koko näytöstä (F11 tai Esc)"
+        },
         "directed": "johdettu",
         "state": {
             "draft": "valmistelussa",
@@ -2286,6 +2290,15 @@
                 "rounds": "{n} kierrosta ilmoitettu"
             },
             "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen turnaukset jäävät, irrotettuina."
+        },
+        "hall": {
+            "tab": "Sali",
+            "legend": "Salin kilpailut",
+            "proposals": "Salin ehdotukset ({n})",
+            "loading": "Ladataan salia…",
+            "error": "Salia ei voitu lukea: {reason}",
+            "eventError": "Kilpailua {event} ei voi toistaa; sen pöydät puuttuvat: {reason}",
+            "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?"
         },
         "epreuves": {
             "pending": "{n} odottaa",

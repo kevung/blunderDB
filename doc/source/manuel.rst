@@ -1637,6 +1637,20 @@ refusée, et la barre d'état en donne le motif. En ligne de commande,
 ``blunderdb tournament move`` fait le même déplacement ou le même échange
 (voir :ref:`cli`).
 
+.. _direction_plein_ecran:
+
+Le plein écran
+~~~~~~~~~~~~~~
+
+La touche *F11* de la page Direction, ou le bouton en bas à droite, la met en
+plein écran : la barre d'outils, les onglets, le plateau, le panneau et la barre
+d'état disparaissent, et toute la fenêtre est rendue à la direction. Le mode
+traverse les onglets de la direction (Direction, Joueurs, Historique, …). Un menu
+ou une fiche ouverts se ferment d'abord sur *ÉCHAP* ; un second *ÉCHAP*, ou
+*F11*, sort du plein écran et rend la fenêtre à son état précédent. Quitter la
+page, en changeant d'onglet de l'application ou en fermant la direction, y met
+fin aussi.
+
 .. _direction_recherche:
 
 La recherche rapide
@@ -1822,6 +1836,16 @@ propositions en attente, matchs en cours, une alerte s'il y en a. Changer
 d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée ne
 se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
 hors Rencontre n'a qu'une épreuve : pas d'onglet à montrer.
+
+L'onglet **Salle**, à gauche des épreuves, montre toute la salle en une seule
+grille : une case par table de la Rencontre, quelle que soit l'épreuve qui
+l'occupe, marquée du nom et de la couleur de son épreuve. La fiche de résultat,
+les menus contextuels, le clavier et le glisser-déposer y fonctionnent comme
+dans la grille d'une épreuve, et chaque geste s'adresse à l'épreuve de la case.
+Glisser un match sur une table occupée par une autre épreuve échange les deux
+matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les
+propositions de toutes les épreuves sont groupées par épreuve, chacune avec son
+bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte la Salle.
 
 Une même personne peut jouer plusieurs épreuves de la Rencontre : deux
 Participants du même nom sont la même personne, et pour une paire de doubles

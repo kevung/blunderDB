@@ -17,17 +17,22 @@
     import { closeOnEscape } from '../../services/escapeService.js';
     import { confirmAction } from '../../services/confirmService.js';
 
-    /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
+    /**
+     * Une case de salle (HallView) porte en plus son épreuve : la même grille sert aux deux, et
+     * chaque geste reçoit la case pour savoir à quelle épreuve il s'adresse.
+     *
+     * @typedef {import('../../../wailsjs/go/models').service.TableCell & { tournamentId?: number, event?: string, eventIndex?: number }} TableCell
+     */
 
     /**
      * @type {{
      *     cells?: TableCell[],
      *     busy?: boolean,
-     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
-     *     onForfeit?: (matchId: string, winner: string, note: string) => void,
-     *     onMove?: (matchId: string, table: number) => void,
-     *     onCancel?: (matchId: string) => void,
-     *     onHistory?: (name: string) => void,
+     *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string, cell?: TableCell) => any,
+     *     onForfeit?: (matchId: string, winner: string, note: string, cell?: TableCell) => any,
+     *     onMove?: (matchId: string, table: number, cell?: TableCell) => any,
+     *     onCancel?: (matchId: string, cell?: TableCell) => any,
+     *     onHistory?: (name: string, cell?: TableCell) => void,
      *     onOutOfService?: (table: number, out: boolean) => void,
      *     onLaunchHere?: (table: number) => void,
      *     reveal?: { table: number, open?: boolean, seq: number } | null,
@@ -60,9 +65,9 @@
             onLaunchHere,
             openResult: () => openCard(c),
             openMove: () => openCard(c, true),
-            onForfeit,
-            onCancel,
-            onHistory,
+            onForfeit: (/** @type {string} */ m, /** @type {string} */ w, /** @type {string} */ n) => onForfeit(m, w, n, c),
+            onCancel: (/** @type {string} */ m) => onCancel(m, c),
+            onHistory: onHistory ? (/** @type {string} */ name) => onHistory(name, c) : undefined,
             onOutOfService
         });
     }
@@ -135,10 +140,16 @@
         const act = dropAction(d.cell, target);
         if (act.kind === 'none') return;
         if (act.kind === 'swap') {
-            const ok = await confirmAction($t('direction.table.swapConfirm', { from: act.from, to: act.to }), { confirmLabel: $t('direction.table.swap') });
+            // Deux épreuves de la salle : le service écrit un changement dans chaque journal, le
+            // directeur voit lesquelles avant de dire oui.
+            const across = !!target?.event && !!d.cell.event && target.tournamentId !== d.cell.tournamentId;
+            const question = across
+                ? $t('direction.hall.swapConfirm', { from: act.from, to: act.to, a: d.cell.event ?? '', b: target?.event ?? '' })
+                : $t('direction.table.swapConfirm', { from: act.from, to: act.to });
+            const ok = await confirmAction(question, { confirmLabel: $t('direction.table.swap') });
             if (!ok) return;
         }
-        onMove(act.matchId, act.table);
+        onMove(act.matchId, act.table, d.cell);
     }
 
     $effect(() => {
@@ -199,7 +210,8 @@
 
     /** @param {KeyboardEvent} e */
     function onDigit(e) {
-        if (!directionPageShown() || somethingOpenAbove() || openKey) return;
+        // Deux grilles peuvent être montées (l'épreuve et la salle) : seule la visible répond.
+        if (!directionPageShown() || somethingOpenAbove() || openKey || !gridEl || gridEl.closest('[hidden]')) return;
         const m = /^(?:Digit|Numpad)([0-9])$/.exec(e.code);
         if (!m || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
         if (e.target instanceof Element && e.target.closest('input, select, textarea, [contenteditable]')) return;
@@ -241,7 +253,8 @@
      * @param {TableCell} c
      */
     function key(c) {
-        return c.noTable || c.shared ? `m:${c.matchId}` : `t:${c.table}`;
+        const ev = c.tournamentId ? `${c.tournamentId}:` : '';
+        return c.noTable || c.shared ? `m:${ev}${c.matchId}` : `t:${c.table}`;
     }
 
     /** Le titre compte les tables de la salle, une seule fois chacune. */
@@ -293,13 +306,19 @@
                     class="cell"
                     tabindex={(rovingKey && cells.some((x) => key(x) === rovingKey) ? rovingKey === key(c) : c === cells[0]) ? 0 : -1}
                     onfocus={() => (rovingKey = key(c))}
-                    data-testid={c.noTable ? `direction-table-none-${c.matchId}` : c.shared ? `direction-table-shared-${c.matchId}` : `direction-table-${c.table}`}
+                    data-testid={c.noTable
+                        ? `direction-table-none-${c.tournamentId ? c.tournamentId + '-' : ''}${c.matchId}`
+                        : c.shared
+                          ? `direction-table-shared-${c.tournamentId ? c.tournamentId + '-' : ''}${c.matchId}`
+                          : `direction-table-${c.table}`}
                     class:busy={c.matchId}
                     class:slow={c.slow}
                     class:idle={!c.matchId}
                     class:elsewhere={!!c.elsewhere}
                     class:no-table={c.noTable}
                     class:shared={c.shared}
+                    class:in-event={!!c.event}
+                    style={c.event ? `--ev: var(--td-event-${(c.eventIndex ?? 0) % 6})` : undefined}
                     aria-haspopup={menuItems(c).length > 0 ? 'menu' : undefined}
                     data-key={key(c)}
                     class:grabbed={drag?.started && drag.key === key(c)}
@@ -313,6 +332,9 @@
                     onkeydown={(e) => onCellKey(e, c)}
                 >
                     <span class="num">{c.noTable ? $t('direction.table.noTable') : c.table}</span>
+                    {#if c.event}
+                        <span class="event-chip" data-testid="hall-event-chip">{c.event}</span>
+                    {/if}
                     {#if c.matchId}
                         <span class="players">{c.aName} – {c.bName}</span>
                         {#if c.aElsewhere || c.bElsewhere}
@@ -340,7 +362,16 @@
 
                 {#if openKey === key(c) && c.matchId}
                     <div role="gridcell">
-                        <ResultCard cell={runningCell(c)} {busy} moveRequest={moveFor.key === key(c) ? moveFor.seq : 0} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+                        <ResultCard
+                            cell={runningCell(c)}
+                            {busy}
+                            moveRequest={moveFor.key === key(c) ? moveFor.seq : 0}
+                            onClose={() => (openKey = '')}
+                            onResult={(m, w, a, b, note) => onResult(m, w, a, b, note, c)}
+                            onForfeit={(m, w, note) => onForfeit(m, w, note, c)}
+                            onMove={(m, table) => onMove(m, table, c)}
+                            onCancel={(m) => onCancel(m, c)}
+                        />
                     </div>
                 {/if}
             </div>
@@ -497,6 +528,24 @@
     .num {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
+    }
+
+    .cell.in-event {
+        border-left: 4px solid var(--ev);
+    }
+
+    .event-chip {
+        max-width: 100%;
+        padding: 0 var(--space-1);
+        border-left: 3px solid var(--ev);
+        border-radius: 3px;
+        background: color-mix(in srgb, var(--ev) 15%, transparent);
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .players {

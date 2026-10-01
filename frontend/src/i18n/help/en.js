@@ -368,6 +368,8 @@ export default {
 <p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
 <p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
 <p>With the mouse, <strong>drag</strong> an occupied cell onto another: on a free cell the match changes table; on an occupied cell, a line "Table 3 ↔ Table 7?" asks you to confirm the <strong>swap</strong> of the two matches. A ghost follows the pointer and the target cell is outlined; <em>ESC</em> cancels the gesture, and nothing is written until the pointer is released over a cell. An out-of-service table is refused, and the status bar gives the reason. On the command line, <code>blunderdb tournament move</code> does the same move or swap (see Command Line Interface (CLI)).</p>
+<h4>Full screen</h4>
+<p>The <em>F11</em> key on the Direction page, or the button at the bottom right, puts it in full screen: the toolbar, the tabs, the board, the panel and the status bar disappear and the whole window goes to the tournament director. The mode carries across the direction's tabs (Direction, Players, History, …). An open menu or card closes first on <em>ESC</em>; a second <em>ESC</em>, or <em>F11</em>, leaves full screen and returns the window to its previous state. Leaving the page, by switching the application tab or closing the direction, ends it too.</p>
 <h4>Quick search</h4>
 <p>The <em>/</em> key on the Direction page opens the palette on the room alone: players, tables, running matches and events of the open Rencontre, or of the event alone when it is in no Rencontre. Type a name, a club or a table number (“4” or “t4”); players at a table come before free players. <em>ENTER</em> takes you to the object: a player in a match, a match or an occupied table open the table's card, a free table is focused in the grid, a free player is shown in the <strong>Players</strong> tab filtered on their name, an event becomes the current tab. A result from another event of the Rencontre switches event first. <em>ESC</em> closes without opening anything, and the key stays a slash in an input field. <em>CTRL-SHIFT-P</em> opens the full palette, which also contains the room.</p>
 <h4>The players</h4>
@@ -398,6 +400,7 @@ export default {
 <p>Several events played in the same room — a main event, a speed, doubles — are grouped in a <strong>Rencontre</strong>, at the bottom of the Settings: <strong>Create and attach…</strong> opens the room with its number of tables, <strong>Attach…</strong> adds a directed event to it. Attaching first shows what will change: the event's tables become the room's. <strong>Detach from the rencontre</strong> gives the event back to itself, with its log and its tables; <strong>Delete the rencontre</strong>, after confirmation, moves it to the trash and detaches its events without deleting any.</p>
 <p>In a Rencontre, no event proposes a table where another is playing: the grid shows those tables as in use, with the event's name, and a pairing with no free table waits. A table out of service is ticked once, in the Rencontre, and applies to every event; the number of tables, the tables out of service and the breaks changed in one event's Settings apply to the room as well, and the list of what will change names the other events.</p>
 <p>Opening the Direction of an event in a Rencontre opens the others too: a tab per event appears at the top of the Direction, each with its summary — pending proposals, matches under way, an alert if there is one. Switching events is a click on its tab, with no confirmation; the event left behind does not close and replays nothing, it stays exactly as it was left. A tournament outside a Rencontre has only one event: no tab to show.</p>
+<p>The <strong>Hall</strong> tab, to the left of the events, shows the whole hall in a single grid: one cell per table of the Rencontre, whichever event occupies it, marked with the name and color of its event. The result card, the context menus, the keyboard and drag-and-drop work there as in an event's grid, and each gesture goes to the event of the cell. Dragging a match onto a table occupied by another event swaps the two matches after a confirmation that names both events. Below the grid, the proposals of all events are grouped by event, each with its <em>Launch</em> button. Clicking an event or a view tab leaves the Hall.</p>
 <p>One person may play several events of the Rencontre: two Participants with the same name are the same person, and for a doubles pair each of its two members counts. While they play in one event, the others do not propose them, and their <em>Waiting</em> list says where they play: “playing in main, table 4”. Pairing by hand is still allowed: the match starts, and its cell in the grid carries the same note.</p>
 <h4>The hall display</h4>
 <p>A tournament is watched. Choosing a <strong>display folder</strong> in the Settings is enough once and for all: blunderDB rewrites a standalone HTML page there at every event, and the page reloads itself. It opens offline, on a second screen or projected, and loads no outside resource. <em>Open in the browser</em> shows it at once.</p>
@@ -1440,8 +1443,16 @@ export default {
 <td>Open quick search: players, tables, running matches and events of the room, found by a name or a table number (details). No effect in an input field.</td>
 </tr>
 <tr>
+<td>F11</td>
+<td>Put the Direction page in full screen (toolbar, tabs, panel and status bar hidden), or leave it. ESC leaves it too, after closing the open menu or card (details).</td>
+</tr>
+<tr>
 <td>Drag an occupied cell onto another</td>
 <td>With the mouse: on a free cell, move the match; on an occupied cell, swap the two matches after confirmation. ESC cancels the drag.</td>
+</tr>
+<tr>
+<td>Hall</td>
+<td>On the grid of the Hall of a Rencontre, the same keys, menus and drag-and-drop act on the table of any event; a swap with another event names both in the confirmation.</td>
 </tr>
 </tbody>
 </table>

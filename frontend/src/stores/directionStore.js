@@ -12,6 +12,7 @@ import {
     StartMatchManually,
     FreeParticipants,
     TableGrid,
+    RencontreTableGrid,
     EnterResult,
     EnterForfeit,
     MoveMatchToTable,
@@ -184,7 +185,7 @@ export const epreuveTabsStore = derived([rencontreEpreuveOrderStore, rencontreEp
  * Recharge les épreuves sœurs de la Rencontre du tournoi ouvert (aucune si `rencontreId` est 0),
  * en gardant la vue déjà connue de l'épreuve active plutôt que de la redemander.
  * @param {number} rencontreId
- * @param {DirectionView} activeView
+ * @param {DirectionView | null} activeView
  */
 async function refreshRencontreEpreuves(rencontreId, activeView) {
     if (!rencontreId) {
@@ -910,6 +911,77 @@ export async function tableGrid() {
         return [];
     }
 }
+
+/** Le numéro de la dernière demande de Salle : une réponse plus ancienne arrivée après est ignorée. */
+let hallSeq = 0;
+
+/**
+ * La Salle de la Rencontre ouverte (ADR-0056 §5) : une case par table, quelle que soit
+ * l'épreuve, et les propositions de chacune — fusionnées en Go, rejouées à chaque appel. Null
+ * hors Rencontre ; `undefined` quand une demande plus récente l'a dépassée (sa réponse, ou son
+ * erreur, ne doit pas écraser celle d'après). Une erreur remonte à l'appelant, qui la montre.
+ *
+ * @returns {Promise<import('../../wailsjs/go/models').service.HallView | null | undefined>}
+ */
+export async function hallGrid() {
+    const seq = ++hallSeq;
+    const rid = get(directionStore)?.rencontreId || 0;
+    if (!rid) return null;
+    try {
+        const h = await RencontreTableGrid(rid);
+        return seq === hallSeq ? h : undefined;
+    } catch (e) {
+        if (seq !== hallSeq) return undefined;
+        logger.error('direction: hall grid failed', e);
+        throw e;
+    }
+}
+
+/**
+ * Un geste de la Salle vise l'épreuve de sa case, qui n'est pas forcément l'épreuve ouverte :
+ * sa page d'affichage est réécrite (celle de l'épreuve ouverte l'est par la vue), puis
+ * l'épreuve ouverte et ses sœurs sont rejouées, pour que chaque onglet dise vrai. `pages`
+ * est faux pour un geste dont le service écrit lui-même les pages (le déplacement, qui peut
+ * toucher une sœur) : les réécrire ici les écrirait deux fois.
+ *
+ * @template T
+ * @param {number} tid
+ * @param {() => Promise<T>} fn
+ * @param {boolean} [pages]
+ * @returns {Promise<T>}
+ */
+async function hallGesture(tid, fn, pages = true) {
+    const v = await fn();
+    if (pages) {
+        try {
+            await WriteDirectionPage(tid);
+        } catch (e) {
+            logger.error('direction: writing the page of a hall gesture failed', e);
+        }
+    }
+    await refreshDirection();
+    return v;
+}
+
+/** @param {number} tid @param {string} matchId @param {string} winner @param {number} [a] @param {number} [b] @param {string} [note] */
+export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') => hallGesture(tid, () => EnterResult(tid, matchId, winner, a, b, note));
+
+/** @param {number} tid @param {string} matchId @param {string} winner @param {string} [note] */
+export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(tid, () => EnterForfeit(tid, matchId, winner, note));
+
+/**
+ * Déplace un match de la Salle ; sur une table occupée par une épreuve sœur, le service échange
+ * les deux matchs, un changement de table dans chaque journal.
+ *
+ * @param {number} tid @param {string} matchId @param {number} table
+ */
+export const hallMoveMatch = (tid, matchId, table) => hallGesture(tid, () => MoveMatchToTable(tid, matchId, table), false);
+
+/** @param {number} tid @param {string} matchId */
+export const hallCancelMatch = (tid, matchId) => hallGesture(tid, () => CancelMatch(tid, matchId));
+
+/** @param {number} tid @param {ProposalAction} action */
+export const hallConfirmProposal = (tid, action) => hallGesture(tid, () => ConfirmProposal(tid, JSON.stringify(action)));
 
 /**
  * Enregistre un résultat. Seul le vainqueur est exigé : les scores peuvent être nuls tous deux.

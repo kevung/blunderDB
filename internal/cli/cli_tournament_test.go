@@ -273,6 +273,7 @@ func TestCLI_TournamentAsksForItsArguments(t *testing.T) {
 		{"tournament", "standings", "--db", dbPath},
 		{"tournament", "page", "--db", dbPath},
 		{"tournament", "export", "--db", dbPath},
+		{"tournament", "hall", "--db", dbPath},
 	} {
 		captureStdout(t, func() {
 			if err := cli.Run(args); err == nil {
@@ -362,5 +363,102 @@ func TestCLI_TournamentMove(t *testing.T) {
 	}
 	if err := cli.Run([]string{"tournament", "move", "--db", dbPath, "--id", itoa64(tID), "--match", "nope", "--table", "3"}); err == nil {
 		t.Error("an unknown match must fail")
+	}
+}
+
+// hall prints one line per table of the Rencontre, the running match with its event, and the
+// proposals of every event.
+func TestCLI_TournamentHall(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	a := directedTournamentCLI(t, cli, 8)
+	r, err := cli.db.CreateRencontre("Festival", "", "", 6)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.AttachToRencontre(a, r.ID); err != nil {
+		t.Fatal(err)
+	}
+	text := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "hall", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
+			t.Fatalf("hall: %v", err)
+		}
+	})
+	if strings.Count(text, "\tfree\n") != 6 || !strings.Contains(text, "proposal\tOpen de Lyon\tdraw\n") {
+		t.Errorf("hall before launching:\n%s", text)
+	}
+	for range 2 { // the draw, then the matches it pairs
+		if _, err := cli.db.ConfirmAllProposals(a); err != nil {
+			t.Fatal(err)
+		}
+	}
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "hall", "--db", dbPath, "--rencontre", itoa64(r.ID), "--format", "json"}); err != nil {
+			t.Fatalf("hall --format json: %v", err)
+		}
+	})
+	var h struct {
+		Cells []struct {
+			Table        int    `json:"table"`
+			TournamentID int64  `json:"tournamentId"`
+			MatchID      string `json:"matchId"`
+		} `json:"cells"`
+	}
+	if err := json.Unmarshal([]byte(out), &h); err != nil {
+		t.Fatalf("hall json: %v\n%s", err, out)
+	}
+	busy := 0
+	for _, c := range h.Cells {
+		if c.MatchID != "" {
+			busy++
+			if c.TournamentID != a {
+				t.Errorf("table %d names event %d, want %d", c.Table, c.TournamentID, a)
+			}
+		}
+	}
+	if busy != 4 {
+		t.Errorf("%d tables busy in the hall, want the bracket's 4 matches:\n%s", busy, out)
+	}
+}
+
+// move in a Rencontre prints the sister's match it swapped with, at its new table.
+func TestCLI_TournamentMoveShowsTheSisterSwap(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	a := directedTournamentCLI(t, cli, 8)
+	b := directedTournamentCLI(t, cli, 2)
+	r, err := cli.db.CreateRencontre("Festival", "", "", 6)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tID := range []int64{a, b} {
+		if _, err := cli.db.AttachToRencontre(tID, r.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for range 2 {
+		if _, err := cli.db.ConfirmAllProposals(a); err != nil {
+			t.Fatal(err)
+		}
+	}
+	vb, err := cli.db.StartMatchManually(b, "a", "b", 0, 6)
+	if err != nil || len(vb.Running) != 1 {
+		t.Fatalf("B's match: %v", err)
+	}
+	h, err := cli.db.RencontreTableGrid(r.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var aMatch string
+	for _, c := range h.Cells {
+		if c.Table == 1 {
+			aMatch = c.MatchID
+		}
+	}
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "move", "--db", dbPath, "--id", itoa64(b), "--match", string(vb.Running[0].ID), "--table", "1"}); err != nil {
+			t.Fatalf("move: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Open de Lyon\t"+aMatch+"\ttable 6\n") {
+		t.Errorf("the sister's match is not shown at its new table:\n%s", out)
 	}
 }

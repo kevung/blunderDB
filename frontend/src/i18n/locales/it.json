@@ -1704,6 +1704,10 @@
         "direct": "Dirigi questo torneo",
         "open": "Apri la direzione",
         "close": "Chiudi la direzione",
+        "fullscreen": {
+            "enter": "Schermo intero (F11)",
+            "exit": "Esci dallo schermo intero (F11 o Esc)"
+        },
         "directed": "diretto",
         "state": {
             "draft": "in preparazione",
@@ -2286,6 +2290,15 @@
                 "rounds": "{n} turni annunciati"
             },
             "trashConfirm": "Eliminare l’incontro «{name}»? Le sue prove restano, staccate."
+        },
+        "hall": {
+            "tab": "Sala",
+            "legend": "Tornei della sala",
+            "proposals": "Proposte della sala ({n})",
+            "loading": "Caricamento della sala…",
+            "error": "Impossibile leggere la sala: {reason}",
+            "eventError": "{event} non si ricostruisce; mancano i suoi tavoli: {reason}",
+            "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?"
         },
         "epreuves": {
             "pending": "{n} in attesa",

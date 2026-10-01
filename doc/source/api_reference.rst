@@ -68,6 +68,22 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/comments.tags                        JSON
      POST /v1/comments.text                        JSON
      POST /v1/comments.update                      JSON
+   directions
+     POST /v1/directions.brackets                  JSON  (ETag)
+     POST /v1/directions.clock                     JSON  (ETag)
+     POST /v1/directions.directory                 JSON  (ETag)
+     POST /v1/directions.freeParticipants          JSON  (ETag)
+     POST /v1/directions.get                       JSON  (ETag)
+     POST /v1/directions.history                   JSON  (ETag)
+     POST /v1/directions.lastDecision              JSON  (ETag)
+     POST /v1/directions.list                      JSON  (ETag)
+     POST /v1/directions.pageHtml                  JSON  (ETag)
+     POST /v1/directions.pairingSheetHtml          JSON  (ETag)
+     POST /v1/directions.participants              JSON  (ETag)
+     POST /v1/directions.slots                     JSON  (ETag)
+     POST /v1/directions.standings                 JSON  (ETag)
+     POST /v1/directions.standingsCsv              JSON  (ETag)
+     POST /v1/directions.tableGrid                 JSON  (ETag)
    exports
      POST /v1/exports.json                         custom
      POST /v1/exports.sqlite                       custom
@@ -152,6 +168,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/quiz.gradeChecker                    JSON
      POST /v1/quiz.gradeCheckerMove                JSON
      POST /v1/quiz.gradeCube                       JSON
+   rencontres
+     POST /v1/rencontres.get                       JSON  (ETag)
+     POST /v1/rencontres.list                      JSON  (ETag)
+     POST /v1/rencontres.pageHtml                  JSON  (ETag)
    search
      POST /v1/search.find                          NDJSON
      POST /v1/search.parse                         JSON
@@ -228,3 +248,10 @@ distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel : un appel
 rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
 répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau
 ci-dessus. Aucune autre méthode n'a besoin ou n'accepte cet en-tête.
+
+Lectures conditionnelles
+------------------------
+
+Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer dans
+``If-None-Match`` obtient une réponse ``304`` sans corps tant que rien de ce que la
+méthode lit n'a changé — voir :ref:`headless_direction`.

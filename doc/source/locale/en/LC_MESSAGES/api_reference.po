@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 04:30+0200\n"
+"POT-Creation-Date: 2026-10-01 05:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -42,11 +42,11 @@ msgstr ""
 " with their response shape (JSON, or NDJSON for a streamed list) and, "
 "where it exists, a note of the optional ``Idempotency-Key`` header."
 
-#: ../../source/api_reference.rst:220
+#: ../../source/api_reference.rst:240
 msgid "Idempotence"
 msgstr "Idempotency"
 
-#: ../../source/api_reference.rst:222
+#: ../../source/api_reference.rst:242
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et ``positions.save`` (comme le reste "
@@ -68,3 +68,18 @@ msgstr ""
 "first attempt's result instead of repeating its effect — see the "
 "\"(Idempotency-Key)\" mark in the table above. No other method needs or "
 "accepts that header."
+
+#: ../../source/api_reference.rst:253
+msgid "Lectures conditionnelles"
+msgstr "Conditional reads"
+
+#: ../../source/api_reference.rst:255
+msgid ""
+"Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
+" dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
+"rien de ce que la méthode lit n'a changé — voir "
+":ref:`headless_direction`."
+msgstr ""
+"Methods marked \"(ETag)\" return an ``ETag`` header. Sending it back in "
+"``If-None-Match`` gets a body-less ``304`` response as long as nothing "
+"the method reads has changed — see :ref:`headless_direction`."

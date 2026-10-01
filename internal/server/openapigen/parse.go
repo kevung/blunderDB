@@ -54,6 +54,10 @@ type Route struct {
 	// IfMatchRequired is true for the routes wrapped with withIfMatch: a
 	// gesture that names the revision it was typed against (ADR-0057).
 	IfMatchRequired bool
+
+	// Conditional is true for the read routes built with rpcRead: they answer
+	// with an ETag and turn a matching If-None-Match into 304.
+	Conditional bool
 }
 
 const (

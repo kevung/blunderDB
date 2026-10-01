@@ -2754,6 +2754,26 @@ Examples:
   blunderdb tournament export --db base.db --id 3 > journal.json
 ```
 
+### `blunderdb tournament hall`
+
+```
+Usage: blunderdb tournament hall [options]
+
+Print a Rencontre's tables, every event together, and the proposals of each event.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -rencontre int
+    	Rencontre ID (required)
+
+Examples:
+  blunderdb tournament hall --db base.db --rencontre 1
+  blunderdb tournament hall --db base.db --rencontre 1 --format json
+```
+
 ### `blunderdb tournament list`
 
 ```

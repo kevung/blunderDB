@@ -6,8 +6,11 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
@@ -50,6 +53,7 @@ func (cli *CLI) tournamentHandlers() map[string]func([]string) error {
 		"page":      cli.runTournamentPage,
 		"export":    cli.runTournamentExport,
 		"move":      cli.runTournamentMove,
+		"hall":      cli.runTournamentHall,
 	}
 }
 
@@ -79,6 +83,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  page       Write the standalone display page, or a Rencontre's wall page")
 	fmt.Println("  export     Print the raw event journal, replayable by the engine's tools")
 	fmt.Println("  move       Move a running match to another table, swapping with its occupant")
+	fmt.Println("  hall       Print a Rencontre's tables, every event together, and its proposals")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb tournament list --db base.db")
@@ -88,6 +93,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
 	fmt.Println("  blunderdb tournament export --db base.db --id 3 > journal.json")
 	fmt.Println("  blunderdb tournament move --db base.db --id 3 --match m4 --table 7")
+	fmt.Println("  blunderdb tournament hall --db base.db --rencontre 1")
 }
 
 func tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
@@ -320,11 +326,93 @@ func (cli *CLI) runTournamentMove(args []string) error {
 	for _, m := range view.Running {
 		rows = append(rows, map[string]any{"match": string(m.ID), "table": m.Table})
 	}
+	// In a Rencontre a swap may have moved a sister event's match too: its matches follow,
+	// named with their event.
+	if view.RencontreID != 0 {
+		h, err := cli.db.RencontreTableGrid(view.RencontreID)
+		if err != nil {
+			return err
+		}
+		for _, c := range h.Cells {
+			if c.MatchID != "" && c.TournamentID != *id {
+				rows = append(rows, map[string]any{"event": c.Event, "match": c.MatchID, "table": c.Table})
+			}
+		}
+	}
 	if strings.ToLower(*format) == "json" {
 		return printJSON(rows)
 	}
 	for _, r := range rows {
+		if ev, ok := r["event"]; ok {
+			fmt.Printf("%s\t%s\ttable %d\n", ev, r["match"], r["table"])
+			continue
+		}
 		fmt.Printf("%s\ttable %d\n", r["match"], r["table"])
+	}
+	return nil
+}
+
+// ── hall ─────────────────────────────────────────────────────────────────────
+
+// runTournamentHall prints the Hall of a Rencontre, the grid the GUI shows: one line per table
+// of the room whatever the event, then the proposals of each event. The merge is the service's.
+func (cli *CLI) runTournamentHall(args []string) error {
+	fs, dbPath := tournamentFlagSet("hall", "Print a Rencontre's tables, every event together, and the proposals of each event.",
+		"blunderdb tournament hall --db base.db --rencontre 1",
+		"blunderdb tournament hall --db base.db --rencontre 1 --format json")
+	rencontre := fs.Int64("rencontre", 0, "Rencontre ID (required)")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *rencontre == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --rencontre")
+	}
+	h, err := cli.db.RencontreTableGrid(*rencontre)
+	if err != nil {
+		return err
+	}
+	if strings.ToLower(*format) == "json" {
+		return printJSON(h)
+	}
+	for _, c := range h.Cells {
+		table := strconv.Itoa(c.Table)
+		if c.NoTable {
+			table = "-"
+		}
+		switch {
+		case c.MatchID != "":
+			shared := ""
+			if c.Shared {
+				shared = "\tshared"
+			}
+			fmt.Printf("%s\t%s\t%s\t%s - %s%s\n", table, c.Event, c.MatchID, c.AName, c.BName, shared)
+		case c.Unavailable:
+			fmt.Printf("%s\tout of service\n", table)
+		case c.Reserved:
+			fmt.Printf("%s\treserved\n", table)
+		default:
+			fmt.Printf("%s\tfree\n", table)
+		}
+	}
+	for _, ev := range h.Events {
+		for _, a := range ev.Proposals {
+			if a.Kind == tournoi.ActWait {
+				continue
+			}
+			name := func(id tournoi.PlayerID) string {
+				if n := ev.Names[string(id)]; n != "" {
+					return n
+				}
+				return string(id)
+			}
+			if a.A == "" {
+				fmt.Printf("proposal\t%s\t%s\n", ev.Name, a.Kind)
+				continue
+			}
+			fmt.Printf("proposal\t%s\t%s\t%s - %s\ttable %d\n", ev.Name, a.Kind, name(a.A), name(a.B), a.Table)
+		}
 	}
 	return nil
 }

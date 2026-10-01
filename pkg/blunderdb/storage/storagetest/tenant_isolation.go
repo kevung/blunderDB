@@ -235,6 +235,9 @@ func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storag
 	if evs, err := ds.LoadEvents(ctx, b, tid); err != nil || len(evs) != 0 {
 		t.Errorf("LoadEvents(%s) = %d, %v; want none of %s's", b, len(evs), err, a)
 	}
+	if n, last, err := ds.EventsHead(ctx, b, tid); err != nil || n != 0 || last != -1 {
+		t.Errorf("EventsHead(%s) = %d, %d, %v; want none of %s's", b, n, last, err, a)
+	}
 	if err := ds.AppendEvent(ctx, b, tid, direction.StoredEvent{Seq: 1, Kind: "result", Time: time.Now(), Payload: []byte(`{}`)}); !errors.Is(err, direction.ErrNoDirection) {
 		t.Errorf("AppendEvent(%s) into %s's log: got %v, want ErrNoDirection", b, a, err)
 	}

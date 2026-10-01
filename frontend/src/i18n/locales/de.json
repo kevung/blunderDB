@@ -1704,6 +1704,10 @@
         "direct": "Dieses Turnier leiten",
         "open": "Leitung öffnen",
         "close": "Leitung schließen",
+        "fullscreen": {
+            "enter": "Vollbild (F11)",
+            "exit": "Vollbild verlassen (F11 oder Esc)"
+        },
         "directed": "geleitet",
         "state": {
             "draft": "in Vorbereitung",
@@ -2286,6 +2290,15 @@
                 "rounds": "{n} Runden angekündigt"
             },
             "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Turniere bleiben, abgelöst."
+        },
+        "hall": {
+            "tab": "Saal",
+            "legend": "Turniere im Saal",
+            "proposals": "Vorschläge im Saal ({n})",
+            "loading": "Saal wird geladen…",
+            "error": "Der Saal konnte nicht gelesen werden: {reason}",
+            "eventError": "{event} lässt sich nicht nachspielen; seine Tische fehlen: {reason}",
+            "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?"
         },
         "epreuves": {
             "pending": "{n} ausstehend",

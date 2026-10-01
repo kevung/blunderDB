@@ -966,6 +966,491 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/directions.brackets:
+    post:
+      operationId: directions.brackets
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_BracketPhase"
+  /v1/directions.clock:
+    post:
+      operationId: directions.clock
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_ClockView"
+                nullable: true
+  /v1/directions.directory:
+    post:
+      operationId: directions.directory
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/scopeReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_DirectoryEntry"
+  /v1/directions.freeParticipants:
+    post:
+      operationId: directions.freeParticipants
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/tournoi_Player"
+  /v1/directions.get:
+    post:
+      operationId: directions.get
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
+  /v1/directions.history:
+    post:
+      operationId: directions.history
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionHistoryReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_HistoryEntry"
+  /v1/directions.lastDecision:
+    post:
+      operationId: directions.lastDecision
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_LastDecision"
+                nullable: true
+  /v1/directions.list:
+    post:
+      operationId: directions.list
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/scopeReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_DirectionSummary"
+  /v1/directions.pageHtml:
+    post:
+      operationId: directions.pageHtml
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/htmlResp"
+  /v1/directions.pairingSheetHtml:
+    post:
+      operationId: directions.pairingSheetHtml
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionRoundReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/htmlResp"
+  /v1/directions.participants:
+    post:
+      operationId: directions.participants
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_ParticipantRow"
+  /v1/directions.slots:
+    post:
+      operationId: directions.slots
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionSlotsReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_SlotRow"
+  /v1/directions.standings:
+    post:
+      operationId: directions.standings
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_StandingsView"
+                nullable: true
+  /v1/directions.standingsCsv:
+    post:
+      operationId: directions.standingsCsv
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/csvResp"
+  /v1/directions.tableGrid:
+    post:
+      operationId: directions.tableGrid
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_TableCell"
   /v1/exports.json:
     post:
       operationId: exports.json
@@ -2171,6 +2656,102 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/engine_QuizVerdict"
+  /v1/rencontres.get:
+    post:
+      operationId: rencontres.get
+      tags: [rencontres]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/rencontreReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_RencontreView"
+                nullable: true
+  /v1/rencontres.list:
+    post:
+      operationId: rencontres.list
+      tags: [rencontres]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/scopeReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_RencontreView"
+  /v1/rencontres.pageHtml:
+    post:
+      operationId: rencontres.pageHtml
+      tags: [rencontres]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/rencontreReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/htmlResp"
   /v1/search.find:
     post:
       operationId: search.find
@@ -3239,6 +3820,11 @@ components:
         count:
           type: integer
           format: int32
+    csvResp:
+      type: object
+      properties:
+        csv:
+          type: string
     deckCreateReq:
       type: object
       properties:
@@ -3298,6 +3884,37 @@ components:
           type: string
         description:
           type: string
+    directionHistoryReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        player:
+          type: string
+        match:
+          type: string
+    directionReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+    directionRoundReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        round:
+          type: integer
+          format: int32
+    directionSlotsReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
     domain_AnkiDeck:
       type: object
       description: "Opaque: see the Go type domain.AnkiDeck (defined outside internal/server, not expanded here)."
@@ -3469,6 +4086,11 @@ components:
         game:
           $ref: "#/components/schemas/domain_Game"
           nullable: true
+    htmlResp:
+      type: object
+      properties:
+        html:
+          type: string
     idReq:
       type: object
       properties:
@@ -3726,6 +4348,12 @@ components:
         reclassified:
           type: integer
           format: int32
+    rencontreReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
     reorderMatchesReq:
       type: object
       properties:
@@ -3778,6 +4406,8 @@ components:
       properties:
         since:
           type: string
+    scopeReq:
+      type: object
     searchFindReq:
       type: object
       properties:
@@ -3836,6 +4466,42 @@ components:
         offset:
           type: integer
           format: int32
+    service_BracketPhase:
+      type: object
+      description: "Opaque: see the Go type service.BracketPhase (defined outside internal/server, not expanded here)."
+    service_ClockView:
+      type: object
+      description: "Opaque: see the Go type service.ClockView (defined outside internal/server, not expanded here)."
+    service_DirectionSummary:
+      type: object
+      description: "Opaque: see the Go type service.DirectionSummary (defined outside internal/server, not expanded here)."
+    service_DirectionView:
+      type: object
+      description: "Opaque: see the Go type service.DirectionView (defined outside internal/server, not expanded here)."
+    service_DirectoryEntry:
+      type: object
+      description: "Opaque: see the Go type service.DirectoryEntry (defined outside internal/server, not expanded here)."
+    service_HistoryEntry:
+      type: object
+      description: "Opaque: see the Go type service.HistoryEntry (defined outside internal/server, not expanded here)."
+    service_LastDecision:
+      type: object
+      description: "Opaque: see the Go type service.LastDecision (defined outside internal/server, not expanded here)."
+    service_ParticipantRow:
+      type: object
+      description: "Opaque: see the Go type service.ParticipantRow (defined outside internal/server, not expanded here)."
+    service_RencontreView:
+      type: object
+      description: "Opaque: see the Go type service.RencontreView (defined outside internal/server, not expanded here)."
+    service_SlotRow:
+      type: object
+      description: "Opaque: see the Go type service.SlotRow (defined outside internal/server, not expanded here)."
+    service_StandingsView:
+      type: object
+      description: "Opaque: see the Go type service.StandingsView (defined outside internal/server, not expanded here)."
+    service_TableCell:
+      type: object
+      description: "Opaque: see the Go type service.TableCell (defined outside internal/server, not expanded here)."
     sessionSaveReq:
       type: object
       properties:
@@ -4007,6 +4673,9 @@ components:
           type: string
         location:
           type: string
+    tournoi_Player:
+      type: object
+      description: "Opaque: see the Go type tournoi.Player (defined outside internal/server, not expanded here)."
     transcript_Gesture:
       type: object
       description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."

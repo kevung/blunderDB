@@ -368,6 +368,8 @@ export default {
 <p>Luovutus, ottelun peruutus ja pelaajan vetäytyminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa. Kun toiminto on käynnissä, toimivat valinnat näkyvät harmaina kuten painikkeet. Vain yksi valikko on auki kerrallaan: toisen avaaminen sulkee ensimmäisen.</p>
 <p>Näppäimistöllä ruudukko vie vain yhden <em>TAB</em>-pysähdyksen: jokainen ruutu, myös vapaa, saa kohdistuksen, ja <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkentässä, ja myös <em>X</em>, olipa kortti jo auki tai ei: varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</p>
 <p>Hiirellä varattu ruutu <strong>vedetään</strong> toisen päälle: vapaaseen ruutuun ottelu vaihtaa pöytää; varattuun ruutuun rivi ”Pöytä 3 ↔ Pöytä 7?” pyytää vahvistamaan kahden ottelun <strong>vaihdon</strong>. Haamukuva seuraa osoitinta ja kohderuutu korostuu; <em>ESC</em> peruu eleen, eikä mitään kirjoiteta ennen kuin osoitin vapautetaan ruudun päällä. Käytöstä poistettu pöytä hylätään, ja tilarivi kertoo syyn. Komentorivillä <code>blunderdb tournament move</code> tekee saman siirron tai vaihdon (katso Komentoriviliittymä (CLI)).</p>
+<h4>Koko näyttö</h4>
+<p>Turnauksenjohdon sivun <em>F11</em>-näppäin tai oikean alakulman painike asettaa sivun koko näytön tilaan: työkalupalkki, välilehdet, lauta, paneeli ja tilapalkki katoavat ja koko ikkuna annetaan turnauksenjohdolle. Tila säilyy johdon välilehtien (Johto, Pelaajat, Historia, …) välillä. Avoin valikko tai kortti sulkeutuu ensin näppäimellä <em>ESC</em>; toinen <em>ESC</em> tai <em>F11</em> poistuu koko näytöstä ja palauttaa ikkunan aiempaan tilaansa. Tila päättyy myös sivulta poistuttaessa, vaihtamalla sovelluksen välilehteä tai sulkemalla johdon.</p>
 <h4>Pikahaku</h4>
 <p>Direction-sivun <em>/</em>-näppäin avaa paletin pelkästään salille: avoimen Rencontren pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut, tai pelkän kilpailun, kun se ei ole missään Rencontressa. Kirjoitetaan nimi, seura tai pöydän numero (”4” tai ”t4”); pöydässä olevat pelaajat tulevat ennen vapaita pelaajia. <em>ENTER</em> vie kohteeseen: pelaaja ottelussa, ottelu tai varattu pöytä avaavat pöydän kortin, vapaa pöytä saa kohdistuksen ruudukossa, vapaa pelaaja näytetään <strong>Pelaajat</strong>-välilehdellä nimellään suodatettuna, kilpailusta tulee nykyinen välilehti. Rencontren toisen kilpailun tulos vaihtaa ensin kilpailua. <em>ESC</em> sulkee avaamatta mitään, ja syöttökentässä näppäin pysyy vinoviivana. <em>CTRL-SHIFT-P</em> avaa täyden paletin, jossa sali on myös mukana.</p>
 <h4>Pelaajat</h4>
@@ -398,6 +400,7 @@ export default {
 <p>Useat samassa salissa pelattavat turnaukset — pääturnaus, speed, nelinpeli — kootaan <strong>Rencontreen</strong> Asetusten alaosassa: <strong>Luo ja liitä…</strong> avaa salin pöytämäärineen, <strong>Liitä…</strong> lisää siihen johdetun turnauksen. Liittäminen näyttää ensin, mikä muuttuu: turnauksen pöydät muuttuvat salin pöydiksi. <strong>Irrota rencontresta</strong> palauttaa turnauksen itselleen lokeineen ja pöytineen; <strong>Poista rencontre</strong> siirtää sen vahvistuksen jälkeen roskakoriin ja irrottaa sen turnaukset poistamatta yhtäkään.</p>
 <p>Rencontressa mikään turnaus ei ehdota pöytää, jossa toinen pelaa: ruudukko näyttää nämä pöydät varattuina turnauksen nimen kanssa, ja paritus ilman vapaata pöytää odottaa. Käytöstä poistettu pöytä merkitään kerran, Rencontressa, ja se koskee kaikkia turnauksia; yhden turnauksen Asetuksissa muutettu pöytämäärä, käytöstä poistetut pöydät ja tauot koskevat myös salia, ja muutosluettelo nimeää muut turnaukset.</p>
 <p>Turnauksen Directionin avaaminen Rencontressa avaa myös muut: Directionin yläreunaan ilmestyy välilehti jokaista turnausta kohti, kussakin oma yhteenveto — odottavat ehdotukset, käynnissä olevat ottelut, hälytys jos sellainen on. Turnauksen vaihtaminen on yksi klikkaus sen välilehteen, ilman vahvistusta; jätetty turnaus ei sulkeudu eikä toistu alusta, se pysyy juuri sellaisena kuin se jätettiin. Rencontren ulkopuolinen turnaus on vain yksi turnaus: ei välilehteä näytettäväksi.</p>
+<p><strong>Sali</strong>-välilehti turnausten vasemmalla puolella näyttää koko salin yhdessä ruudukossa: yksi ruutu Rencontren jokaista pöytää kohti, riippumatta siitä, mikä turnaus sen varaa, merkittynä turnauksensa nimellä ja värillä. Tuloskortti, kontekstivalikot, näppäimistö ja vetäminen toimivat siellä kuten turnauksen ruudukossa, ja jokainen ele kohdistuu ruudun turnaukseen. Ottelun vetäminen toisen turnauksen varaamalle pöydälle vaihtaa kaksi ottelua vahvistuksen jälkeen, jossa mainitaan molemmat turnaukset. Ruudukon alla kaikkien turnausten ehdotukset on ryhmitelty turnauksittain, kullakin oma <em>Aloita</em>-painike. Turnauksen tai näkymävälilehden napsauttaminen poistuu Salista.</p>
 <p>Sama henkilö voi pelata useampaa Rencontren turnausta: kaksi samannimistä osallistujaa ovat sama henkilö, ja nelinpelin parissa kumpikin jäsen lasketaan. Niin kauan kuin hän pelaa yhdessä turnauksessa, muut eivät ehdota häntä, ja niiden <em>Odottaa</em>-luettelo kertoo, missä hän pelaa: ”pelaa turnauksessa pääturnaus, pöytä 4”. Käsin parittaminen on yhä sallittua: ottelu alkaa, ja sen ruudussa näkyy sama maininta.</p>
 <h4>Salin näyttö</h4>
 <p>Turnausta katsotaan. <strong>Näyttökansion</strong> valitseminen asetuksista riittää kertaheitolla: blunderDB kirjoittaa sinne itsenäisen HTML-sivun uudelleen jokaisen tapahtuman kohdalla, ja sivu latautuu itsestään. Se aukeaa offline-tilassa, toisella näytöllä tai heijastettuna, eikä lataa ulkopuolisia resursseja. <em>Avaa selaimessa</em> näyttää sen heti.</p>
@@ -1440,8 +1443,16 @@ export default {
 <td>Avaa pikahaku: salin pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut löytyvät nimellä tai pöydän numerolla (lisätiedot). Ei vaikutusta syöttökentässä.</td>
 </tr>
 <tr>
+<td>F11</td>
+<td>Aseta turnauksenjohdon sivu koko näytön tilaan (työkalupalkki, välilehdet, paneeli ja tilapalkki piilotettuina) tai poistu siitä. ESC poistuu myös, kun avoin valikko tai kortti on suljettu (lisätiedot).</td>
+</tr>
+<tr>
 <td>Vedä varattu ruutu toisen päälle</td>
 <td>Hiirellä: vapaaseen ruutuun siirretään ottelu; varattuun ruutuun kaksi ottelua vaihdetaan vahvistuksen jälkeen. ESC peruu vedon.</td>
+</tr>
+<tr>
+<td>Sali</td>
+<td>Rencontren Salin ruudukossa samat näppäimet, valikot ja vetäminen vaikuttavat minkä tahansa turnauksen pöytään; vaihto toisen turnauksen kanssa mainitsee vahvistuksessa molemmat.</td>
 </tr>
 </tbody>
 </table>

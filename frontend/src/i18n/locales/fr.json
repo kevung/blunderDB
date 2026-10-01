@@ -1704,6 +1704,10 @@
         "direct": "Diriger ce tournoi",
         "open": "Ouvrir la direction",
         "close": "Fermer la direction",
+        "fullscreen": {
+            "enter": "Plein écran (F11)",
+            "exit": "Quitter le plein écran (F11 ou Échap)"
+        },
         "directed": "dirigé",
         "state": {
             "draft": "en préparation",
@@ -2286,6 +2290,15 @@
                 "rounds": "{n} rondes annoncées"
             },
             "trashConfirm": "Supprimer la rencontre « {name} » ? Ses épreuves restent, détachées."
+        },
+        "hall": {
+            "tab": "Salle",
+            "legend": "Épreuves de la salle",
+            "proposals": "Propositions de la salle ({n})",
+            "loading": "Chargement de la salle…",
+            "error": "La salle n'a pas pu être lue : {reason}",
+            "eventError": "{event} ne se rejoue pas ; ses tables manquent : {reason}",
+            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b}) ?"
         },
         "epreuves": {
             "pending": "{n} en attente",

@@ -172,7 +172,8 @@
 
     /** @param {KeyboardEvent} e */
     function onKey(e) {
-        if (!directionOwnsKey(e) || somethingOpenAbove() || confirming) return;
+        // La file d'une épreuve cachée derrière la Salle ne prend pas les touches.
+        if (!directionOwnsKey(e) || somethingOpenAbove() || confirming || queueEl?.closest('[hidden]')) return;
         // Sur une case de la grille, les flèches vont de case en case : la file ne les prend pas.
         if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && gridHasFocus()) return;
         if (isBareLetter(e, 'j') || e.key === 'ArrowDown') {

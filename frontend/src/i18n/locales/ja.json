@@ -1704,6 +1704,10 @@
         "direct": "この大会を進行する",
         "open": "進行を開く",
         "close": "進行を閉じる",
+        "fullscreen": {
+            "enter": "全画面表示 (F11)",
+            "exit": "全画面表示を終了 (F11 または Esc)"
+        },
         "directed": "進行中",
         "state": {
             "draft": "準備中",
@@ -2286,6 +2290,15 @@
                 "rounds": "{n} ラウンド発表済み"
             },
             "trashConfirm": "イベント「{name}」を削除しますか？各大会は切り離されて残ります。"
+        },
+        "hall": {
+            "tab": "会場",
+            "legend": "会場の大会",
+            "proposals": "会場の提案（{n}）",
+            "loading": "会場を読み込み中…",
+            "error": "会場を読み込めませんでした：{reason}",
+            "eventError": "{event} を再生できません。そのテーブルは表示されません：{reason}",
+            "swapConfirm": "テーブル {from}（{a}）↔ テーブル {to}（{b}）？"
         },
         "epreuves": {
             "pending": "{n}件 保留中",
