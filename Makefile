@@ -1,5 +1,6 @@
 .PHONY: dev build check check-fast check-all test lint vet gofmt golangci vuln \
-        test-go test-pg test-e2e test-frontend lint-frontend release-check screenshots help
+        test-go test-pg test-e2e test-frontend lint-frontend check-frontend golangci-pg vet-windows setup \
+        release-check screenshots help
 
 # VERSION feeds `blunderdb version`'s app-version line (internal/cli.appVersion,
 # see internal/cli/version.go). It tracks the nearest git tag, same as CI
@@ -36,20 +37,22 @@ frontend/dist:
 # (test-go, golangci, govulncheck, PG, e2e) waits for `check`/`check-all`.
 check-fast: gofmt vet lint-frontend
 
-# check is the local pre-push loop: everything CI's build.yml runs on every
-# push EXCEPT what needs Docker (test-pg) or a browser (test-e2e), or is only
-# meaningful at release time (release-check) — check-all adds those three.
+# check is the local pre-push loop: the cheap checks of CI's build.yml `test`
+# and `lint` jobs — go vet (linux and GOOS=windows), golangci-lint (default and
+# `postgres` build tag), govulncheck, Go and frontend tests, eslint/prettier and
+# the two svelte gates (warnings budget, svelte-check type budget).
+# Left to CI alone: the multi-OS matrix (macOS arm64 kernel identity, Windows
+# tests), the Docker jobs (test-pg, hostile-smoke, serve image), Playwright,
+# coverage and benchmark reporting, fuzzing and the nightly schedule.
 # `golangci` here does not need a separate gofmt pass: .golangci.yml enables
 # the gofmt/goimports formatters, so `golangci-lint run` already catches what
 # check-fast's `gofmt` target catches (plus goimports' import-grouping).
-check: vet golangci vuln test-go test-frontend lint-frontend
+check: vet vet-windows golangci golangci-pg vuln test-go test-frontend lint-frontend check-frontend
 
 # check-all is full CI parity: check, plus the PostgreSQL contract suite
 # (needs Docker — see test-pg, which says so loudly if it isn't there), the
 # Playwright end-to-end suite (needs a browser), and the release
 # version-string check. golangci-lint's second pass with
-# `--build-tags postgres` (E.2, #218) belongs here too once it exists as a
-# target — it does not on this branch.
 check-all: check test-pg test-e2e release-check
 
 test: test-go test-frontend
@@ -114,6 +117,23 @@ help:
 
 golangci: frontend/dist
 	golangci-lint run ./...
+
+# The default pass never sees the files behind the `postgres` build tag.
+golangci-pg: frontend/dist
+	golangci-lint run --build-tags postgres ./...
+
+# Catches Unix-only calls that compile here and break the Windows build.
+vet-windows: frontend/dist
+	GOOS=windows go vet ./...
+
+# The two Svelte gates CI runs after lint: compiler-warnings budget and the
+# svelte-check type budget (ceilings in frontend/.svelte-*-budget).
+check-frontend:
+	cd frontend && npm run check:svelte-warnings && npm run check:types
+
+# setup wires the versioned git hooks (.githooks/pre-commit) into this clone.
+setup:
+	git config core.hooksPath .githooks
 
 vuln: frontend/dist
 	govulncheck ./...
