@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -15,6 +16,10 @@ import (
 //
 //go:embed migrations/*.sql
 var migrationsFS embed.FS
+
+// migrationVersionRE is the shape of a migration's name, which migrateForward
+// writes into its batch as a literal.
+var migrationVersionRE = regexp.MustCompile(`^[0-9]{3}_[a-z0-9_]+$`)
 
 // migrateForward applies every forward migration (002+) that has not yet been
 // recorded in schema_migrations, in numeric order. Each migration is idempotent
@@ -69,13 +74,17 @@ func migrateForward(ctx context.Context, db execer) error {
 			return fmt.Errorf("postgres: read migration %s: %w", name, err)
 		}
 		// Run as one batch via the simple query protocol (Exec with no bound
-		// arguments), which permits the multiple semicolon-separated statements.
-		if _, err := db.Exec(ctx, string(stmt)); err != nil {
-			return fmt.Errorf("postgres: apply migration %s: %w", version, err)
+		// arguments), which permits the multiple semicolon-separated statements
+		// and runs them as one implicit transaction. The schema_migrations row
+		// is the batch's last statement, so a migration and its record commit
+		// together: a data migration that is not idempotent (028) is never
+		// applied without being recorded, nor recorded without being applied.
+		if !migrationVersionRE.MatchString(version) {
+			return fmt.Errorf("postgres: migration name %q is not a plain identifier", version)
 		}
-		if _, err := db.Exec(ctx,
-			`INSERT INTO schema_migrations (version) VALUES ($1) ON CONFLICT DO NOTHING`, version); err != nil {
-			return fmt.Errorf("postgres: record migration %s: %w", version, err)
+		batch := string(stmt) + "\n;\nINSERT INTO schema_migrations (version) VALUES ('" + version + "') ON CONFLICT DO NOTHING;\n"
+		if _, err := db.Exec(ctx, batch); err != nil {
+			return fmt.Errorf("postgres: apply migration %s: %w", version, err)
 		}
 	}
 	return nil

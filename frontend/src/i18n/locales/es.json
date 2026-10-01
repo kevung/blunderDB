@@ -2333,6 +2333,13 @@
         "kindTab": "Pestaña",
         "kindFilter": "Filtro",
         "kindMatch": "Match",
+        "kindPlayer": "Jugador",
+        "kindTable": "Mesa",
+        "kindEpreuve": "Prueba",
+        "kindRunning": "Partida en curso",
+        "placeholderDirection": "Buscar un jugador, una mesa, una prueba, una partida…",
+        "directionTable": "Mesa {n}",
+        "directionVs": "contra {name}",
         "matchLength": "{n} pts",
         "matchGone": "Este match ya no existe.",
         "cmd": {

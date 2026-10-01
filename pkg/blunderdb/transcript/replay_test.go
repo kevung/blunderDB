@@ -531,8 +531,8 @@ func TestResignationIsAGameFactNotAMove(t *testing.T) {
 		t.Fatalf("games = %+v, want an unfinished second game", ann.Games)
 	}
 	_, games, _ = MatchParts(doc)
-	if games[1].Winner != -1 || games[1].PointsWon != 0 {
-		t.Errorf("abandoned game = winner %d, %d points; want -1 and 0", games[1].Winner, games[1].PointsWon)
+	if games[1].Winner != domain.WinnerUnfinished || games[1].PointsWon != 0 {
+		t.Errorf("abandoned game = winner %d, %d points; want unfinished and 0", games[1].Winner, games[1].PointsWon)
 	}
 	if ann.Finished {
 		t.Error("an abandoned match is not a finished one")

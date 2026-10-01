@@ -65,7 +65,7 @@ func Build(doc Document) Parts {
 			MatchID:      m.ID,
 			GameNumber:   int32(g.Number),
 			InitialScore: [2]int32{int32(g.InitialScore[0]), int32(g.InitialScore[1])},
-			Winner:       int32(g.Winner),
+			Winner:       domain.WinnerFromSide(g.Winner),
 			PointsWon:    int32(g.PointsWon),
 		})
 	}

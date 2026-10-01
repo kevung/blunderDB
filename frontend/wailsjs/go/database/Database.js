@@ -302,6 +302,10 @@ export function DirectionRounds(arg1) {
   return window['go']['database']['Database']['DirectionRounds'](arg1);
 }
 
+export function DirectionSearchIndex(arg1) {
+  return window['go']['database']['Database']['DirectionSearchIndex'](arg1);
+}
+
 export function DirectionStore() {
   return window['go']['database']['Database']['DirectionStore']();
 }
@@ -836,6 +840,10 @@ export function RencontreOf(arg1) {
 
 export function RencontrePageHTML(arg1) {
   return window['go']['database']['Database']['RencontrePageHTML'](arg1);
+}
+
+export function RencontreSearchIndex(arg1) {
+  return window['go']['database']['Database']['RencontreSearchIndex'](arg1);
 }
 
 export function ReopenDirection(arg1) {

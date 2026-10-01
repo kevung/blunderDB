@@ -2333,6 +2333,13 @@
         "kindTab": "Вкладка",
         "kindFilter": "Фильтр",
         "kindMatch": "Матч",
+        "kindPlayer": "Игрок",
+        "kindTable": "Стол",
+        "kindEpreuve": "Турнир",
+        "kindRunning": "Идущий матч",
+        "placeholderDirection": "Найти игрока, стол, турнир, матч…",
+        "directionTable": "Стол {n}",
+        "directionVs": "против {name}",
         "matchLength": "{n} очк.",
         "matchGone": "Этого матча больше нет.",
         "cmd": {

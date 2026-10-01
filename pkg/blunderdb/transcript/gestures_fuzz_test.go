@@ -529,9 +529,6 @@ func checkMATRoundTrip(t *testing.T, doc Document, trace []string) {
 	if ann.Inconsistent() || len(ann.Games) == 0 {
 		return
 	}
-	if last := ann.Games[len(ann.Games)-1]; lastGameWinnerGuessed && last.Finished && !ann.Finished {
-		return
-	}
 	text := ingest.RenderMAT(MatchParts(doc))
 	back, err := FromMAT(text)
 	if err != nil {
@@ -643,41 +640,5 @@ func TestGameStartIsTheOpeningRoll(t *testing.T) {
 	cube := runSteps(t, New(7), []step{{name: "double", g: Gesture{Kind: GestureDouble}}})
 	if !hasInconsistency(Replay(cube, 0).Actions[0], ImpossibleCube) {
 		t.Errorf("a double before the first play carries no Inconsistency")
-	}
-}
-
-// lastGameWinnerGuessed holds the .mat round trip off a finished last game of an
-// unfinished match for as long as TestMATLastGameOfUnfinishedMatchKeepsItsWinner
-// is skipped: every such program would stop on that one defect. Set it to false
-// with the fix.
-const lastGameWinnerGuessed = true
-
-// TestMATLastGameOfUnfinishedMatchKeepsItsWinner: FromMAT reads the winner of
-// the last game off the arithmetic "who reaches the length with these points",
-// which assumes the game ended the match. At 2-0 to 3, player 2 winning one
-// point ends nothing, yet the file is read back as player 1 winning the match.
-func TestMATLastGameOfUnfinishedMatchKeepsItsWinner(t *testing.T) {
-	t.Skip("bug: FromMAT (statedResult) gives the last game to the player the points would crown, even when the match is not over — 2-0 to 3, player 2 wins 1, read back as player 1 winning")
-
-	doc := New(3)
-	game := func(loser int) {
-		doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 3, 1))
-		doc.Actions = append(doc.Actions, Action{Side: loser, Kind: KindResign, Level: 1})
-	}
-	game(domain.White)
-	game(domain.White)
-	game(domain.Black)
-	doc.Cursor = len(doc.Actions)
-
-	ann := Replay(doc, 0)
-	if ann.Inconsistent() || ann.Finished || ann.Score != [2]int{2, 1} {
-		t.Fatalf("setup: inconsistent=%v finished=%v score=%v", ann.Inconsistent(), ann.Finished, ann.Score)
-	}
-	back, err := FromMAT(ingest.RenderMAT(MatchParts(doc)))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got := Replay(back, 0); got.Finished || got.Score != [2]int{2, 1} {
-		t.Errorf(".mat round trip: finished=%v score=%v, want an unfinished match at 2-1", got.Finished, got.Score)
 	}
 }

@@ -17,6 +17,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
 
 // createOldDatabase creates a minimal database simulating a given schema version.
@@ -3044,5 +3045,134 @@ func TestRencontreSchema_2_25_0(t *testing.T) {
 	}
 	if n != 0 {
 		t.Errorf("deleting the Tournament must take its pair members, %d left", n)
+	}
+}
+
+// TestMigrate_2_25_0_to_2_26_0_GameWinner runs the chain on a 2.25.0 library
+// holding one match per source of storagetest.WinnerMigrationCases, and
+// checks every game ends in the one encoding. PostgreSQL runs the same
+// fixture through 028 (TestMigrate_028_GameWinner).
+func TestMigrate_2_25_0_to_2_26_0_GameWinner(t *testing.T) {
+	t.Parallel()
+	dbPath, cases, ids := seedWinnerLibrary(t)
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open 2.25.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	checkWinners(t, d.db, cases, ids, true)
+}
+
+// TestMigrate_2_25_0_to_2_26_0_InterruptedThenRetried: the conversion is not
+// idempotent, so it and the version stamp commit together. A failure while
+// stamping must leave the games as they were and the version at 2.25.0, and
+// the next open converts them once.
+func TestMigrate_2_25_0_to_2_26_0_InterruptedThenRetried(t *testing.T) {
+	t.Parallel()
+	dbPath, cases, ids := seedWinnerLibrary(t)
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`CREATE TRIGGER stamp_fails BEFORE UPDATE ON metadata
+		WHEN NEW.key = 'database_version' AND NEW.value = '2.26.0'
+		BEGIN SELECT RAISE(ABORT, 'interrupted'); END`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err == nil {
+		t.Fatal("open succeeded although the version stamp failed")
+	}
+	d.Close()
+
+	raw, err = sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var version string
+	if err := raw.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err != nil || version != "2.25.0" {
+		t.Fatalf("version after the failed open = %q, %v; want 2.25.0", version, err)
+	}
+	checkWinners(t, raw, cases, ids, false)
+	if _, err := raw.Exec(`DROP TRIGGER stamp_fails`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open after the interruption: %v", err)
+	}
+	closeOnCleanup(t, d)
+	checkWinners(t, d.db, cases, ids, true)
+}
+
+// seedWinnerLibrary writes storagetest.WinnerMigrationCases into a library
+// stamped 2.25.0 and returns its path and every game's id.
+func seedWinnerLibrary(t *testing.T) (string, []storagetest.WinnerMigrationMatch, [][]int64) {
+	t.Helper()
+	dbPath := filepath.Join(tempDir(t), "winner.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	cases := storagetest.WinnerMigrationCases()
+	gameIDs := make([][]int64, len(cases))
+	for i, c := range cases {
+		var batchID any
+		if c.BatchFormat != "" {
+			res, err := d.db.Exec(`INSERT INTO import_batch (source, format) VALUES (?, ?)`, c.FilePath, c.BatchFormat)
+			if err != nil {
+				t.Fatalf("%s: insert batch: %v", c.Name, err)
+			}
+			batchID, _ = res.LastInsertId()
+		}
+		res, err := d.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length, file_path, import_batch_id)
+			VALUES ('A', 'B', ?, ?, ?)`, c.Length, c.FilePath, batchID)
+		if err != nil {
+			t.Fatalf("%s: insert match: %v", c.Name, err)
+		}
+		matchID, _ := res.LastInsertId()
+		for n, g := range c.Games {
+			res, err := d.db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won)
+				VALUES (?, ?, ?, ?, ?, ?)`, matchID, n+1, g.S1, g.S2, g.Winner, g.PointsWon)
+			if err != nil {
+				t.Fatalf("%s: insert game: %v", c.Name, err)
+			}
+			id, _ := res.LastInsertId()
+			gameIDs[i] = append(gameIDs[i], id)
+		}
+	}
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.25.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatalf("stamp 2.25.0: %v", err)
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+	return dbPath, cases, gameIDs
+}
+
+// checkWinners compares every game's stored winner with the fixture's: the
+// normalized one when converted, the one it was seeded with otherwise.
+func checkWinners(t *testing.T, db *sql.DB, cases []storagetest.WinnerMigrationMatch, ids [][]int64, converted bool) {
+	t.Helper()
+	for i, c := range cases {
+		for n, g := range c.Games {
+			var got sql.NullInt32
+			if err := db.QueryRow(`SELECT winner FROM game WHERE id = ?`, ids[i][n]).Scan(&got); err != nil {
+				t.Fatalf("%s: read game %d: %v", c.Name, n+1, err)
+			}
+			switch {
+			case converted && got.Int32 != g.Want:
+				t.Errorf("%s, game %d: winner %d, want %d", c.Name, n+1, got.Int32, g.Want)
+			case !converted && g.Winner != nil && got.Int32 != *g.Winner:
+				t.Errorf("%s, game %d: winner %d moved before the migration committed (seeded %d)", c.Name, n+1, got.Int32, *g.Winner)
+			}
+		}
 	}
 }

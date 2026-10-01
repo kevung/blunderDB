@@ -2333,6 +2333,13 @@
         "kindTab": "Välilehti",
         "kindFilter": "Suodatin",
         "kindMatch": "Ottelu",
+        "kindPlayer": "Pelaaja",
+        "kindTable": "Pöytä",
+        "kindEpreuve": "Kilpailu",
+        "kindRunning": "Käynnissä oleva ottelu",
+        "placeholderDirection": "Etsi pelaaja, pöytä, kilpailu tai ottelu…",
+        "directionTable": "Pöytä {n}",
+        "directionVs": "vastaan {name}",
         "matchLength": "{n} p",
         "matchGone": "Tätä ottelua ei ole enää olemassa.",
         "cmd": {

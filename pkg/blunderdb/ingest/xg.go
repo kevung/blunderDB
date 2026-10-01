@@ -59,9 +59,10 @@ func MapXG(path string) (*MatchGraph, error) {
 			Game: domain.Game{
 				GameNumber:   game.GameNumber,
 				InitialScore: game.InitialScore,
-				Winner:       game.Winner,
-				PointsWon:    game.PointsWon,
-				MoveCount:    len(game.Moves),
+				// XG's encoding is the stored one (domain.WinnerPlayer1).
+				Winner:    game.Winner,
+				PointsWon: game.PointsWon,
+				MoveCount: len(game.Moves),
 			},
 		}
 		gg.Moves, err = mapGameMoves(gameIdx, &game, match.Metadata.MatchLength,

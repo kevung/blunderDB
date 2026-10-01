@@ -2333,6 +2333,13 @@
         "kindTab": "Onglet",
         "kindFilter": "Filtre",
         "kindMatch": "Match",
+        "kindPlayer": "Joueur",
+        "kindTable": "Table",
+        "kindEpreuve": "Épreuve",
+        "kindRunning": "Match en cours",
+        "placeholderDirection": "Trouver un joueur, une table, une épreuve, un match…",
+        "directionTable": "Table {n}",
+        "directionVs": "contre {name}",
         "matchLength": "{n} pts",
         "matchGone": "Ce match n'existe plus.",
         "cmd": {

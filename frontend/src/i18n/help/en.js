@@ -180,6 +180,7 @@ export default {
 <h3>The command palette</h3>
 <p>The command palette (<em>CTRL-SHIFT-P</em>) finds, by an approximate name, what you no longer know where to look for: a command of the command line, a tab, a filter of the library or a match. The letters typed must appear in order, not necessarily next to each other, regardless of case and accents: “cbmtx” finds the cube matrix, “lyon” the matches of a tournament in Lyon.</p>
 <p>The arrows choose, <em>ENTER</em> runs, <em>ESC</em> closes. A command runs as if it had been typed; <code>s</code> and <code>ss</code> open the command line to write the filters in it; a filter runs as from a double-click in the library; a match opens as from a double-click in the Matches panel.</p>
+<p>When a Direction is open, the palette adds its room: players, tables, running matches and events (see quick search).</p>
 <h3>Analysis Panel</h3>
 <p>The <strong>Analysis</strong> panel (<em>CTRL-L</em>) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, or BGBlitz. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The <em>d</em> key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press <em>CTRL-L</em> or run the <code>list</code> command to show or hide the panel.</p>
 <p>Under the tables, a <strong>sentence</strong> sometimes says what the played decision cost and why: “You lose 120 mMWC: the move played leaves three blots where 13/7 8/7 leaves only one.” It comes from six measurable rules — exposure, a home point made or missed, gammon chances given up, a safety that costs more than it earns, and the two directions of a cube error (doubling too late or too early, taking too loose or passing too tight).</p>
@@ -367,6 +368,8 @@ export default {
 <p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
 <p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
 <p>With the mouse, <strong>drag</strong> an occupied cell onto another: on a free cell the match changes table; on an occupied cell, a line "Table 3 ↔ Table 7?" asks you to confirm the <strong>swap</strong> of the two matches. A ghost follows the pointer and the target cell is outlined; <em>ESC</em> cancels the gesture, and nothing is written until the pointer is released over a cell. An out-of-service table is refused, and the status bar gives the reason. On the command line, <code>blunderdb tournament move</code> does the same move or swap (see Command Line Interface (CLI)).</p>
+<h4>Quick search</h4>
+<p>The <em>/</em> key on the Direction page opens the palette on the room alone: players, tables, running matches and events of the open Rencontre, or of the event alone when it is in no Rencontre. Type a name, a club or a table number (“4” or “t4”); players at a table come before free players. <em>ENTER</em> takes you to the object: a player in a match, a match or an occupied table open the table's card, a free table is focused in the grid, a free player is shown in the <strong>Players</strong> tab filtered on their name, an event becomes the current tab. A result from another event of the Rencontre switches event first. <em>ESC</em> closes without opening anything, and the key stays a slash in an input field. <em>CTRL-SHIFT-P</em> opens the full palette, which also contains the room.</p>
 <h4>The players</h4>
 <p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
 <p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
@@ -1431,6 +1434,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>On an occupied cell, open the card (or, if it is open, the table field); aiming at an occupied table swaps the two matches.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Open quick search: players, tables, running matches and events of the room, found by a name or a table number (details). No effect in an input field.</td>
 </tr>
 <tr>
 <td>Drag an occupied cell onto another</td>

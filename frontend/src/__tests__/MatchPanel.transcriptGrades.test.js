@@ -38,8 +38,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetMatchMovePositions: vi.fn(() => Promise.resolve(MOVES)),
     GetGamesByMatch: vi.fn(() =>
         Promise.resolve([
-            { game_number: 1, initial_score: [0, 0], winner: 0, points_won: 1 },
-            { game_number: 2, initial_score: [1, 0], winner: 1, points_won: 2 }
+            { game_number: 1, initial_score: [0, 0], winner: 1, points_won: 1 },
+            { game_number: 2, initial_score: [1, 0], winner: -1, points_won: 2 }
         ])
     ),
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),

@@ -900,10 +900,11 @@
                                         <span class="game-title">{$t('match.game', { n: game.gameNumber })}</span>
                                         {#if game.gameInfo}
                                             <span class="game-score">{$t('match.score')}: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
-                                            {#if game.gameInfo.winner >= 0}
+                                            <!-- game.winner: 1 = player 1, -1 = player 2, 0 = unfinished (domain.WinnerPlayer1) -->
+                                            {#if game.gameInfo.winner === 1 || game.gameInfo.winner === -1}
                                                 <span class="game-result"
                                                     >{$t('match.wonBy', {
-                                                        player: game.gameInfo.winner === 0 ? detailMatch.player1_name : detailMatch.player2_name,
+                                                        player: game.gameInfo.winner === 1 ? detailMatch.player1_name : detailMatch.player2_name,
                                                         points: game.gameInfo.points_won
                                                     })}</span
                                                 >

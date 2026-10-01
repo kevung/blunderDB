@@ -4,7 +4,9 @@
 //     commandProcessor.js); an entry runs through processCommand as if typed;
 //   - the tabs (tabCatalog.js);
 //   - the saved filters (filterLibraryStore);
-//   - the matches (GetAllMatches).
+//   - the matches (GetAllMatches);
+//   - the open Direction's room (RencontreSearchIndex / DirectionSearchIndex): its
+//     players, tables, running matches and events, only while a Direction is open.
 // Its own data is each command's description, palette.cmd.<name> in the nine
 // locales — a test requires one per command.
 
@@ -13,8 +15,9 @@ import { COMMANDS } from '../commandVocabulary.js';
 import { TABS } from './tabCatalog.js';
 import { fuzzyMatch, fold } from '../utils/fuzzy.js';
 import { formatDate } from '../utils/matchTable.js';
-import { GetAllMatches } from '../../wailsjs/go/database/Database.js';
-import { activeTabStore, commandTextStore, showCommandInputStore, commandPaletteOpenStore, matchOpenRequestStore } from '../stores/uiStore.js';
+import { GetAllMatches, RencontreSearchIndex, DirectionSearchIndex } from '../../wailsjs/go/database/Database.js';
+import { activeTabStore, commandTextStore, showCommandInputStore, commandPaletteOpenStore, commandPaletteScopeStore, matchOpenRequestStore } from '../stores/uiStore.js';
+import { directionStore, openDirectionIdStore, requestDirectionJump } from '../stores/directionStore.js';
 import { databaseLoadedStore } from '../stores/databaseStore.js';
 import { loadFilterLibrary, runSavedFilter } from './filterLibraryService.js';
 import { showTab } from './tabToggles.js';
@@ -22,7 +25,7 @@ import { toggleEvalMode } from './modeMachine.js';
 import { processCommand } from '../commandProcessor.js';
 import { logger } from '../utils/logger.js';
 
-/** @typedef {'command' | 'tab' | 'filter' | 'match'} PaletteKind */
+/** @typedef {'command' | 'tab' | 'filter' | 'match' | 'direction'} PaletteKind */
 
 /**
  * @typedef {object} PaletteItem
@@ -33,6 +36,8 @@ import { logger } from '../utils/logger.js';
  * @property {string[]} keywords other texts a query may match (command name, aliases…)
  * @property {string[]} exact   texts that, typed whole, put this entry first
  * @property {string | number | object} target    what runPaletteItem acts on
+ * @property {number} [boost]   added to the score of a match: a player at a table before a free one
+ * @property {string} [badge]   the kind's label when the entry says it itself (a player, a table…)
  */
 
 /**
@@ -53,10 +58,15 @@ export function commandLabelKey(name) {
  * Every entry the palette can offer, in its resting order: pinned filters,
  * tabs, commands, the other filters, then the matches, newest first.
  *
- * @param {{ translate: (key: string, params?: Record<string, unknown> | null) => string, matches?: any[], filters?: Array<{ id: number, name: string, command: string, pinned?: boolean }> }} sources
+ * With `scope: 'direction'` the room's entries are all there is.
+ *
+ * @param {{ translate: (key: string, params?: Record<string, unknown> | null) => string, matches?: any[], filters?: Array<{ id: number, name: string, command: string, pinned?: boolean }>, direction?: any[], scope?: 'direction' | null }} sources
  * @returns {PaletteItem[]}
  */
-export function buildPaletteItems({ translate, matches = [], filters = [] }) {
+export function buildPaletteItems({ translate, matches = [], filters = [], direction = [], scope = null }) {
+    const room = directionItems(translate, direction || []);
+    if (scope === 'direction') return room;
+
     /** @type {PaletteItem[]} */
     const pinned = [];
     /** @type {PaletteItem[]} */
@@ -113,7 +123,69 @@ export function buildPaletteItems({ translate, matches = [], filters = [] }) {
         };
     });
 
-    return [...pinned, ...tabs, ...commands, ...otherFilters, ...matchItems];
+    return [...pinned, ...tabs, ...commands, ...otherFilters, ...room, ...matchItems];
+}
+
+/** Worth a few characters of length in the fuzzy score, never a better match. */
+const PLAYING_BOOST = 3;
+
+/**
+ * The room's entries as the palette lists them. A table answers to its number typed whole ("4",
+ * "t4"); a player at a table ranks a little above a free one of the same name.
+ *
+ * @param {(key: string, params?: Record<string, unknown> | null) => string} translate
+ * @param {Array<{ kind: string, tournamentId: number, epreuve?: string, name: string, playerId?: string, club?: string, opponent?: string, state?: string, table?: number, matchId?: string }>} entries
+ * @returns {PaletteItem[]}
+ */
+function directionItems(translate, entries) {
+    /** @type {PaletteItem[]} */
+    const out = [];
+    for (const e of entries) {
+        const tid = e.tournamentId;
+        const tableText = e.table ? translate('direction.proposals.table', { n: e.table }) : '';
+        const base = { kind: /** @type {PaletteKind} */ ('direction'), keywords: /** @type {string[]} */ ([]), exact: /** @type {string[]} */ ([]) };
+        if (e.kind === 'epreuve') {
+            out.push({ ...base, id: `direction:epreuve:${tid}`, badge: translate('palette.kindEpreuve'), label: e.name, detail: '', target: { kind: 'epreuve', tournamentId: tid } });
+        } else if (e.kind === 'player') {
+            const playing = e.state === 'playing' && e.table;
+            const detail = [translate(`direction.players.states.${e.state || 'free'}`), playing ? tableText : '', e.opponent ? translate('palette.directionVs', { name: e.opponent }) : '', e.epreuve]
+                .filter(Boolean)
+                .join(' · ');
+            out.push({
+                ...base,
+                id: `direction:player:${tid}:${e.playerId}`,
+                badge: translate('palette.kindPlayer'),
+                label: e.name,
+                detail,
+                boost: playing ? PLAYING_BOOST : 0,
+                keywords: [e.club || '', e.epreuve || ''].filter(Boolean),
+                target: playing ? { kind: 'table', tournamentId: tid, table: e.table, open: true } : { kind: 'player', tournamentId: tid, name: e.name }
+            });
+        } else if (e.kind === 'table') {
+            const occupied = e.tournamentId > 0 && e.name;
+            const detail = occupied ? [e.name, e.epreuve].filter(Boolean).join(' · ') : translate(e.state === 'unavailable' ? 'direction.table.unavailable' : 'direction.table.free');
+            out.push({
+                ...base,
+                id: `direction:table:${e.table}`,
+                badge: translate('palette.kindTable'),
+                label: translate('palette.directionTable', { n: e.table }),
+                detail,
+                keywords: [`t${e.table}`, String(e.table), e.name],
+                exact: [`t${e.table}`, String(e.table)],
+                target: { kind: 'table', tournamentId: tid, table: e.table, open: !!occupied }
+            });
+        } else if (e.kind === 'match') {
+            out.push({
+                ...base,
+                id: `direction:match:${tid}:${e.matchId}`,
+                badge: translate('palette.kindRunning'),
+                label: e.name,
+                detail: [tableText, e.epreuve].filter(Boolean).join(' · '),
+                target: { kind: 'table', tournamentId: tid, table: e.table, open: true }
+            });
+        }
+    }
+    return out;
 }
 
 /**
@@ -144,6 +216,7 @@ export function rankPaletteItems(items, query, limit = 60) {
             const m = fuzzyMatch(q, keyword);
             if (m && m.score * 0.9 > score) score = m.score * 0.9;
         }
+        if (score !== -Infinity) score += item.boost || 0;
         if (item.exact.some((form) => fold(form) === folded)) score += 1000;
         if (score === -Infinity) return;
         ranked.push({ item, score, labelIndices: onLabel ? onLabel.indices : [], order });
@@ -170,7 +243,33 @@ export async function loadPaletteSources() {
     return matches || [];
 }
 
+/**
+ * What a Direction's room offers the palette: its Rencontre's index when it plays in one, its
+ * own otherwise. Nothing without a Direction open.
+ *
+ * @returns {Promise<any[]>}
+ */
+export async function loadDirectionIndex() {
+    const id = get(openDirectionIdStore);
+    if (id === null) return [];
+    const rencontreId = get(directionStore)?.rencontreId;
+    try {
+        return (rencontreId ? await RencontreSearchIndex(rencontreId) : await DirectionSearchIndex(id)) || [];
+    } catch (error) {
+        logger.error('Command palette: loading the room index failed:', error);
+        return [];
+    }
+}
+
 export function openCommandPalette() {
+    commandPaletteScopeStore.set(null);
+    commandPaletteOpenStore.set(true);
+}
+
+/** The `/` key of the Direction page: the palette on the room's entries alone. */
+export function openDirectionSearch() {
+    if (get(openDirectionIdStore) === null) return;
+    commandPaletteScopeStore.set('direction');
     commandPaletteOpenStore.set(true);
 }
 
@@ -180,6 +279,7 @@ export function closeCommandPalette() {
 
 /** Ctrl+Maj+P: open the palette, or close it when it is already open. */
 export function toggleCommandPalette() {
+    if (!get(commandPaletteOpenStore)) commandPaletteScopeStore.set(null);
     commandPaletteOpenStore.update((open) => !open);
 }
 
@@ -220,6 +320,11 @@ export async function runPaletteItem(item) {
             // double-click on its row does (MatchPanel.svelte).
             matchOpenRequestStore.set(/** @type {number} */ (item.target));
             activeTabStore.set('matches');
+            return;
+        case 'direction':
+            // The request first: the page reads it when it mounts, or at once when it is shown.
+            requestDirectionJump(/** @type {any} */ (item.target));
+            activeTabStore.set('tournaments');
             return;
     }
 }

@@ -86,14 +86,14 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 			case gnubgparser.MoveTypeDrop:
 				push(Action{Side: rec.Player, Kind: KindPass})
 			case gnubgparser.MoveTypeResign:
-				_, points := statedResult(parsed.Games, gi, doc.Header.MatchLength)
+				_, points := statedResult(parsed.Games, gi)
 				push(Action{Side: rec.Player, Kind: KindResign, Level: resignLevel(points, cubeValue(st.cube))})
 			}
 		}
 
 		// The plays do not end a game the file says was won — or there are none: it
 		// was resigned.
-		if winner, points := statedResult(parsed.Games, gi, doc.Header.MatchLength); (st.gameActive || first) && points > 0 &&
+		if winner, points := statedResult(parsed.Games, gi); (st.gameActive || first) && points > 0 &&
 			(winner == domain.Black || winner == domain.White) {
 			push(Action{
 				Side:  opponent(winner),
@@ -106,7 +106,7 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 	// A last game with nothing in it yet is a boundary waiting for its first play.
 	// One after the end of the match says nothing, and would open a game past it.
 	if n := len(parsed.Games); n > 0 && len(parsed.Games[n-1].Moves) == 0 && !st.matchOver() {
-		if _, points := statedResult(parsed.Games, n-1, doc.Header.MatchLength); points == 0 {
+		if _, points := statedResult(parsed.Games, n-1); points == 0 {
 			score := parsed.Games[n-1].Score
 			if doc.Header.MatchLength <= 0 {
 				score = [2]int{}
@@ -136,7 +136,7 @@ func openingOrder(a Action) [2]int {
 
 // statedResult is what the FILE says a game was worth: the next game's score line,
 // or for the last game the "Wins N points" line (gnubgparser v1.7.0+).
-func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points int) {
+func statedResult(games []gnubgparser.Game, i int) (winner, points int) {
 	if i+1 < len(games) {
 		gained0 := games[i+1].Score[0] - games[i].Score[0]
 		gained1 := games[i+1].Score[1] - games[i].Score[1]
@@ -147,19 +147,10 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 			return domain.White, gained1
 		}
 	}
+	// The last game has no successor: its "Wins" line says who, by the column it
+	// stands in. The points alone cannot: they would crown whoever they bring to
+	// the length, and a last game need not end the match.
 	winner, points = games[i].Winner, games[i].Points
-	// The last game has no successor; when it ended the match, the arithmetic
-	// checks the parsed winner against the one player it can belong to.
-	if matchLength > 0 && points > 0 {
-		ends0 := games[i].Score[0]+points >= matchLength
-		ends1 := games[i].Score[1]+points >= matchLength
-		if ends0 != ends1 {
-			winner = domain.White
-			if ends0 {
-				winner = domain.Black
-			}
-		}
-	}
 	return winner, points
 }
 

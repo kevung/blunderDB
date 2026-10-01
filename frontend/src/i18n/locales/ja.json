@@ -2333,6 +2333,13 @@
         "kindTab": "タブ",
         "kindFilter": "フィルター",
         "kindMatch": "マッチ",
+        "kindPlayer": "選手",
+        "kindTable": "テーブル",
+        "kindEpreuve": "種目",
+        "kindRunning": "進行中の試合",
+        "placeholderDirection": "選手・テーブル・種目・試合を検索…",
+        "directionTable": "テーブル {n}",
+        "directionVs": "対 {name}",
         "matchLength": "{n} ポイント",
         "matchGone": "このマッチはもう存在しません。",
         "cmd": {

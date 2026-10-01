@@ -2333,6 +2333,13 @@
         "kindTab": "Reiter",
         "kindFilter": "Filter",
         "kindMatch": "Match",
+        "kindPlayer": "Spieler",
+        "kindTable": "Tisch",
+        "kindEpreuve": "Wettbewerb",
+        "kindRunning": "Laufendes Match",
+        "placeholderDirection": "Spieler, Tisch, Wettbewerb oder Match finden…",
+        "directionTable": "Tisch {n}",
+        "directionVs": "gegen {name}",
         "matchLength": "{n} Pkt.",
         "matchGone": "Dieses Match existiert nicht mehr.",
         "cmd": {
