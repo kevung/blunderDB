@@ -1388,21 +1388,21 @@ menu du navigateur n'est retiré que là. Ils n'ont pas de boutons ailleurs : un
 bouton qui agirait sur « l'action du curseur » viserait une cellule que l'on ne
 voit pas forcément, quand le clic droit désigne la sienne.
 
-La barre du brouillon porte les gestes qui le font sortir de lui-même.
-« **Créer le match** » (CTRL-ENTREE) l'écrit dans la bibliothèque, et devient
-ensuite « Mettre à jour le match #\ *n* » : le match est remplacé sous le même
-identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec
-sa progression et son annulation dans la barre d'état. À côté, la barre dit où
-en est ce match — aucun match, à jour, ou en retard sur le brouillon. Elle ne
-dit rien du salut du brouillon lui-même : il est écrit dans la base après chaque
-action, il n'y a rien à surveiller.
+La barre du brouillon porte ses deux seules sorties. « **Terminer** »
+(CTRL-ENTREE) écrit le match dans la bibliothèque et libère le brouillon ;
+l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression
+et son annulation dans la barre d'état. « **Abandonner** » supprime le
+brouillon sans match ; la confirmation n'est demandée que pour un brouillon qui
+n'a jamais été terminé, puisqu'il emporte tout ce qui y est écrit. À côté, la
+barre dit ce que Terminer fera — un nouveau match, ou le remplacement du match
+#\ *n*. Elle ne dit rien du salut du brouillon lui-même : il est écrit dans la
+base après chaque action, et revenir à la liste le laisse à reprendre plus tard.
 
 « **Texte .mat** » ouvre le fichier Jellyfish tel qu'il serait écrit, dans une
 fenêtre assez large pour que ses colonnes restent alignées, avec un bouton pour
-le copier. « **Exporter .mat** » écrit ce même fichier sur le disque. « **Fermer
-le brouillon** » le supprime après confirmation ; un match déjà créé reste dans
-la bibliothèque, définitif. Les deux flèches **↶** et **↷** annulent et
-rétablissent, comme *CTRL-Z* et *CTRL-MAJ-Z*.
+le copier. « **Exporter .mat** » écrit ce même fichier sur le disque. Les deux
+flèches **↶** et **↷** annulent et rétablissent, comme *CTRL-Z* et
+*CTRL-MAJ-Z*.
 
 Si l'analyse d'un match transcrit a été interrompue — l'application fermée
 pendant le lot —, la barre d'état le signale à la prochaine ouverture de la base
@@ -1410,7 +1410,7 @@ et propose de la terminer. Rien n'est retenu de cette interruption : la
 proposition revient tant qu'il reste des positions à analyser, et le lot relancé
 ne porte que sur ce match, jamais sur toute la bibliothèque.
 
-Un brouillon qui porte des incohérences est enregistré tout de même, après un
+Un brouillon qui porte des incohérences est terminé tout de même, après un
 avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
 joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
 divergeront ensuite.
@@ -1418,6 +1418,15 @@ divergeront ensuite.
 Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la
 liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet
 Transcription.
+
+Pour corriger un match de la bibliothèque, le bouton ✎ de la liste des matchs
+ou « **Éditer la transcription** » de sa fiche ouvre un brouillon depuis ce
+match — ou rouvre celui qui y est déjà ouvert : un seul brouillon par match.
+Terminer ce brouillon remplace le match sous le même identifiant ; les
+positions des actions inchangées gardent leurs commentaires, leurs analyses et
+leurs cartes. Un match importé (XG, GnuBG, BGF) porte des analyses et des
+commentaires qu'un ``.mat`` ne porte pas : avant d'ouvrir, un dialogue dit
+jusqu'à combien, et que terminer le brouillon peut les perdre.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
@@ -1566,6 +1575,49 @@ Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille :
 **Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* ouvre la même
 reprise). Une correction plus ancienne se fait depuis l':ref:`historique
 <direction_historique>`.
+
+.. _direction_menus:
+
+Les menus contextuels
+~~~~~~~~~~~~~~~~~~~~~
+
+Un clic droit, la touche *MENU* ou *MAJ-F10* sur un objet de la page Direction
+ouvre ses actions courantes sans passer par la fiche : une case de la grille
+(libre ou occupée), un joueur (onglet **Joueurs**, joueurs libres), une place de
+l'arbre, un emplacement, une proposition de la file, une ligne de l'historique.
+Le menu s'ouvre sur l'objet ; *HAUT* et *BAS* le parcourent, *ENTRÉE* choisit,
+*ÉCHAP* le ferme et rend le focus à l'objet.
+
+- Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de
+  table (viser une table occupée échange les deux matchs), annuler le match,
+  historique de chaque joueur.
+- Case libre : lancer ici la proposition sélectionnée, mettre la table hors
+  service, ou la remettre en service (tables d'une Rencontre). Une table réservée
+  à une autre épreuve ne propose rien.
+- Joueur : saisir le résultat de son match en cours, aller à sa table,
+  historique, apparier à la main avec un autre joueur libre, aller dans l'autre
+  épreuve où il joue aussi, marquer absent ou présent, retirer maintenant ou
+  après son match, réinscrire, corriger la fiche.
+- Emplacement sans match : rattacher un match importé que cette place attend.
+- Proposition : lancer, lancer à la table…, changer la longueur…, apparier
+  autrement (ces trois entrées ouvrent l'appariement à la main avec les deux
+  joueurs, la longueur et la table de la proposition), ignorer pour l'instant,
+  imprimer la feuille de la ronde.
+- Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer sur un
+  des joueurs.
+
+Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la
+confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant
+qu'une action est en cours, les entrées qui agissent sont grisées, comme les
+boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le
+premier.
+
+Au clavier, la grille ne prend qu'un arrêt de *TAB* : chaque case se focalise,
+libre comprise, et *GAUCHE*, *DROITE*, *HAUT*, *BAS*, *DÉBUT* et *FIN* passent
+d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour
+une table au-delà de 9, le second chiffre se tape dans les 0,4 s. *M* ouvre la
+fiche sur le champ de table, et *X* aussi, que la fiche soit déjà ouverte ou
+non : viser une table occupée échange les deux matchs.
 
 Les joueurs
 ~~~~~~~~~~~

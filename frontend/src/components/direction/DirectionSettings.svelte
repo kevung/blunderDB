@@ -13,8 +13,8 @@
 
     /** @typedef {import('../../stores/directionStore.js').DirectionConfig} DirectionConfig */
     /** @typedef {import('../../../wailsjs/go/models').tournoi.PhaseConfig} PhaseConfig */
-    /** @typedef {import('../../../wailsjs/go/models').database.PhaseLock} PhaseLock */
-    /** @typedef {import('../../../wailsjs/go/models').database.ConfigChange} ConfigChange */
+    /** @typedef {import('../../../wailsjs/go/models').service.PhaseLock} PhaseLock */
+    /** @typedef {import('../../../wailsjs/go/models').service.ConfigChange} ConfigChange */
     /**
      * Ce que rend l'aperçu d'une configuration : les changements, et ceux que le moteur refuse.
      *

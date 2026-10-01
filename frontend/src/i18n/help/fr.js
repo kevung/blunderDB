@@ -323,11 +323,12 @@ export default {
 <p>Une <strong>insertion au milieu du document continue d'insérer</strong> : la validation ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au lieu d'écraser celle d'après. C'est ce qui permet de rattraper toute la fin d'une partie — une passe qui aurait dû être une prise — sans perdre ce qui a déjà été tapé de la partie suivante. La fin de la partie, ou un déplacement du curseur, met fin à l'insertion : le curseur se pose alors sur l'ouverture suivante.</p>
 <p><strong>Suppr</strong> (ou <em>x</em>) retire la décision en cours d'édition et recule sur la précédente, prête à être corrigée : sur une cellule écrite, l'action disparaît ; sur une insertion ouverte ou un jet tapé en bout de document, c'est la saisie qui est abandonnée. Suppr pressée à répétition remonte ainsi le transcript en effaçant. Les actions suivantes gardent leur camp, et le double trait qu'une suppression laisse est marqué sans que le curseur y soit ramené.</p>
 <p>Un clic droit sur une cellule ouvre les corrections de cette action — insérer avant, insérer après, supprimer, changer de camp — et amène le curseur dessus au passage ; ce sont les mêmes gestes que les touches <em>i</em>, <em>a</em>, <em>x</em> et <em>s</em>, et le menu du navigateur n'est retiré que là. Ils n'ont pas de boutons ailleurs : un bouton qui agirait sur « l'action du curseur » viserait une cellule que l'on ne voit pas forcément, quand le clic droit désigne la sienne.</p>
-<p>La barre du brouillon porte les gestes qui le font sortir de lui-même. « <strong>Créer le match</strong> » (CTRL-ENTREE) l'écrit dans la bibliothèque, et devient ensuite « Mettre à jour le match #<em>n</em> » : le match est remplacé sous le même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. À côté, la barre dit où en est ce match — aucun match, à jour, ou en retard sur le brouillon. Elle ne dit rien du salut du brouillon lui-même : il est écrit dans la base après chaque action, il n'y a rien à surveiller.</p>
-<p>« <strong>Texte .mat</strong> » ouvre le fichier Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que ses colonnes restent alignées, avec un bouton pour le copier. « <strong>Exporter .mat</strong> » écrit ce même fichier sur le disque. « <strong>Fermer le brouillon</strong> » le supprime après confirmation ; un match déjà créé reste dans la bibliothèque, définitif. Les deux flèches <strong>↶</strong> et <strong>↷</strong> annulent et rétablissent, comme <em>CTRL-Z</em> et <em>CTRL-MAJ-Z</em>.</p>
+<p>La barre du brouillon porte ses deux seules sorties. « <strong>Terminer</strong> » (CTRL-ENTREE) écrit le match dans la bibliothèque et libère le brouillon ; l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. « <strong>Abandonner</strong> » supprime le brouillon sans match ; la confirmation n'est demandée que pour un brouillon qui n'a jamais été terminé, puisqu'il emporte tout ce qui y est écrit. À côté, la barre dit ce que Terminer fera — un nouveau match, ou le remplacement du match #<em>n</em>. Elle ne dit rien du salut du brouillon lui-même : il est écrit dans la base après chaque action, et revenir à la liste le laisse à reprendre plus tard.</p>
+<p>« <strong>Texte .mat</strong> » ouvre le fichier Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que ses colonnes restent alignées, avec un bouton pour le copier. « <strong>Exporter .mat</strong> » écrit ce même fichier sur le disque. Les deux flèches <strong>↶</strong> et <strong>↷</strong> annulent et rétablissent, comme <em>CTRL-Z</em> et <em>CTRL-MAJ-Z</em>.</p>
 <p>Si l'analyse d'un match transcrit a été interrompue — l'application fermée pendant le lot —, la barre d'état le signale à la prochaine ouverture de la base et propose de la terminer. Rien n'est retenu de cette interruption : la proposition revient tant qu'il reste des positions à analyser, et le lot relancé ne porte que sur ce match, jamais sur toute la bibliothèque.</p>
-<p>Un brouillon qui porte des incohérences est enregistré tout de même, après un avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et divergeront ensuite.</p>
+<p>Un brouillon qui porte des incohérences est terminé tout de même, après un avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et divergeront ensuite.</p>
 <p>Le panneau <strong>Matchs</strong> rappelle chaque brouillon en cours au-dessus de la liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet Transcription.</p>
+<p>Pour corriger un match de la bibliothèque, le bouton ✎ de la liste des matchs ou « <strong>Éditer la transcription</strong> » de sa fiche ouvre un brouillon depuis ce match — ou rouvre celui qui y est déjà ouvert : un seul brouillon par match. Terminer ce brouillon remplace le match sous le même identifiant ; les positions des actions inchangées gardent leurs commentaires, leurs analyses et leurs cartes. Un match importé (XG, GnuBG, BGF) porte des analyses et des commentaires qu'un <code>.mat</code> ne porte pas : avant d'ouvrir, un dialogue dit jusqu'à combien, et que terminer le brouillon peut les perdre.</p>
 <div class="admonition tip">
 <p>Se référer à Raccourcis clavier pour les raccourcis disponibles.</p>
 </div>
@@ -353,6 +354,18 @@ export default {
 <p>Un clic sur une table occupée ouvre la fiche du match. Elle montre deux grandes cibles : les <strong>noms des deux joueurs</strong>. Cliquer celui qui a gagné enregistre le résultat — deux clics en tout, table comprise. Le vainqueur est la seule chose exigée ; le score est libre, l'un et l'autre ou aucun des deux. Au clavier, <em>GAUCHE</em> ou <em>DROITE</em> choisit le vainqueur et <em>ENTRÉE</em> l'enregistre. La fiche ne se ferme qu'une fois le résultat écrit : un échec la laisse ouverte, avec son message.</p>
 <p>Le bouton <strong>⋯</strong> de la fiche déplie ce qui sert rarement : le forfait — chaque bouton nomme l'absent et celui qui gagne —, une remarque libre (« tombé au temps », « abandonné pour raison de… »), le déplacement du match sur une autre table, et son annulation. Le forfait et l'annulation se confirment. Déplacé sur une table occupée, le match échange sa table avec celui qui l'occupe : deux matchs ne partagent jamais une table, et le même geste les remet en place. Si un ancien journal en a laissé deux sur une table, la grille montre les deux cases, signalées, jusqu'à ce qu'on en déplace un.</p>
 <p>Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille : <strong>Corriger</strong> la dernière décision, puis le bon vainqueur (<em>CTRL-Z</em> ouvre la même reprise). Une correction plus ancienne se fait depuis l'historique.</p>
+<h4>Les menus contextuels</h4>
+<p>Un clic droit, la touche <em>MENU</em> ou <em>MAJ-F10</em> sur un objet de la page Direction ouvre ses actions courantes sans passer par la fiche : une case de la grille (libre ou occupée), un joueur (onglet <strong>Joueurs</strong>, joueurs libres), une place de l'arbre, un emplacement, une proposition de la file, une ligne de l'historique. Le menu s'ouvre sur l'objet ; <em>HAUT</em> et <em>BAS</em> le parcourent, <em>ENTRÉE</em> choisit, <em>ÉCHAP</em> le ferme et rend le focus à l'objet.</p>
+<ul>
+<li>Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de table (viser une table occupée échange les deux matchs), annuler le match, historique de chaque joueur.</li>
+<li>Case libre : lancer ici la proposition sélectionnée, mettre la table hors service, ou la remettre en service (tables d'une Rencontre). Une table réservée à une autre épreuve ne propose rien.</li>
+<li>Joueur : saisir le résultat de son match en cours, aller à sa table, historique, apparier à la main avec un autre joueur libre, aller dans l'autre épreuve où il joue aussi, marquer absent ou présent, retirer maintenant ou après son match, réinscrire, corriger la fiche.</li>
+<li>Emplacement sans match : rattacher un match importé que cette place attend.</li>
+<li>Proposition : lancer, lancer à la table…, changer la longueur…, apparier autrement (ces trois entrées ouvrent l'appariement à la main avec les deux joueurs, la longueur et la table de la proposition), ignorer pour l'instant, imprimer la feuille de la ronde.</li>
+<li>Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer sur un des joueurs.</li>
+</ul>
+<p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant qu'une action est en cours, les entrées qui agissent sont grisées, comme les boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le premier.</p>
+<p>Au clavier, la grille ne prend qu'un arrêt de <em>TAB</em> : chaque case se focalise, libre comprise, et <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi, que la fiche soit déjà ouverte ou non : viser une table occupée échange les deux matchs.</p>
 <h4>Les joueurs</h4>
 <p>L'onglet <strong>Joueurs</strong> inscrit, corrige et retire. Le champ d'inscription garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul. L'autocomplétion propose les joueurs de la base ; en choisir un fixe l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.</p>
 <p>L'<strong>annuaire</strong> regroupe les inscrits de tous les tournois dirigés de la base, dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ; l'annuaire se copie en CSV ou s'enregistre dans un fichier (<strong>Enregistrer…</strong>), et se relit collé.</p>
@@ -1392,6 +1405,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Page Direction</h3>
+<p>Sous la page Direction, <em>J</em>, <em>K</em>, <em>HAUT</em>, <em>BAS</em> et <em>ENTRÉE</em> vont à la file des propositions, sauf quand le focus est sur une case de la grille des tables, où <em>HAUT</em> et <em>BAS</em> changent de case. Les menus contextuels sont décrits dans le manuel (menus contextuels).</p>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic droit, MENU, MAJ-F10</td>
+<td>Ouvrir le menu contextuel de l'objet focalisé : case de table, joueur, place de l'arbre, emplacement, proposition, ligne d'historique. HAUT/BAS parcourent le menu, ENTRÉE choisit, ÉCHAP le ferme.</td>
+</tr>
+<tr>
+<td>GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN</td>
+<td>Passer d'une case de la grille des tables à l'autre (cases libres comprises) ; la grille ne prend qu'un arrêt de TAB.</td>
+</tr>
+<tr>
+<td>1 à 9, puis 0 à 9</td>
+<td>Ouvrir la fiche de la table de ce numéro ; deux chiffres, dans les 0,4 s, pour une table au-delà de 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs.</td>
+</tr>
+</tbody>
+</table>
 <h3>Panneau des collections</h3>
 <table>
 <thead>
@@ -1563,7 +1604,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-ENTREE</td>
-<td>Créer le match à partir du brouillon, ou le mettre à jour s'il existe déjà.</td>
+<td>Terminer le brouillon : écrire le match, ou remplacer celui dont il a été ouvert, et libérer le brouillon.</td>
 </tr>
 <tr>
 <td>i</td>

@@ -33,7 +33,7 @@
 //
 // # What is NOT here
 //
-// No SQL: persistence goes through the Store interface, implemented by the desktop wrapper and
-// by the storage backends. No display strings. No knowledge of Wails, of the board, or of the
+// No SQL: persistence goes through the Store interface, which the storage backends implement
+// (storage.BindDirection). No display strings. No knowledge of Wails, of the board, or of the
 // analysis engine.
 package direction

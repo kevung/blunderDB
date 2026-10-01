@@ -9,7 +9,7 @@
 
     /**
      * @type {{
-     *     clock?: import('../../../wailsjs/go/models').database.ClockView | null,
+     *     clock?: import('../../../wailsjs/go/models').service.ClockView | null,
      *     warnings?: number,
      *     onWarnings?: () => void
      * }}

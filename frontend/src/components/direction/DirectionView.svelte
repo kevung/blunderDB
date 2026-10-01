@@ -23,6 +23,10 @@
     import ClockBar from './ClockBar.svelte';
     import CreditModal from './CreditModal.svelte';
     import SlotsView from './SlotsView.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { playerMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
+    import { setTableOutOfService } from '../../stores/rencontreStore.js';
     import { renderWarning, csvFilename, seatLabel } from './labels.js';
     import {
         directionStore,
@@ -88,20 +92,20 @@
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
     /** @typedef {import('../../stores/directionStore.js').EntrantInput} EntrantInput */
     /** @typedef {import('../../../wailsjs/go/models').tournoi.Player} Player */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketPhase} BracketPhase */
-    /** @typedef {import('../../../wailsjs/go/models').database.ClockView} ClockView */
-    /** @typedef {import('../../../wailsjs/go/models').database.ConfigPreview} ConfigPreview */
-    /** @typedef {import('../../../wailsjs/go/models').database.DirectoryEntry} DirectoryEntry */
-    /** @typedef {import('../../../wailsjs/go/models').database.DirectorySource} DirectorySource */
-    /** @typedef {import('../../../wailsjs/go/models').database.EntrySuggestion} EntrySuggestion */
-    /** @typedef {import('../../../wailsjs/go/models').database.FreeSlot} FreeSlot */
-    /** @typedef {import('../../../wailsjs/go/models').database.HistoryEntry} HistoryEntry */
-    /** @typedef {import('../../../wailsjs/go/models').database.LastDecision} LastDecision */
-    /** @typedef {import('../../../wailsjs/go/models').database.ParticipantRow} ParticipantRow */
-    /** @typedef {import('../../../wailsjs/go/models').database.SlotRow} SlotRow */
-    /** @typedef {import('../../../wailsjs/go/models').database.SlotSuggestion} SlotSuggestion */
-    /** @typedef {import('../../../wailsjs/go/models').database.StandingsView} StandingsView */
-    /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketPhase} BracketPhase */
+    /** @typedef {import('../../../wailsjs/go/models').service.ClockView} ClockView */
+    /** @typedef {import('../../../wailsjs/go/models').service.ConfigPreview} ConfigPreview */
+    /** @typedef {import('../../../wailsjs/go/models').service.DirectoryEntry} DirectoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').service.DirectorySource} DirectorySource */
+    /** @typedef {import('../../../wailsjs/go/models').service.EntrySuggestion} EntrySuggestion */
+    /** @typedef {import('../../../wailsjs/go/models').service.FreeSlot} FreeSlot */
+    /** @typedef {import('../../../wailsjs/go/models').service.HistoryEntry} HistoryEntry */
+    /** @typedef {import('../../../wailsjs/go/models').service.LastDecision} LastDecision */
+    /** @typedef {import('../../../wailsjs/go/models').service.ParticipantRow} ParticipantRow */
+    /** @typedef {import('../../../wailsjs/go/models').service.SlotRow} SlotRow */
+    /** @typedef {import('../../../wailsjs/go/models').service.SlotSuggestion} SlotSuggestion */
+    /** @typedef {import('../../../wailsjs/go/models').service.StandingsView} StandingsView */
+    /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
     const view = $derived($directionStore);
     // Pas `state` : chaque rune `$state` se lirait comme un abonnement au store `state`.
@@ -212,6 +216,65 @@
         if (directionState !== 'draft') tab = 'direction';
         tabChosen = true;
     });
+
+    /* Les menus contextuels mènent d'un écran à l'autre : la table d'un joueur, l'historique
+       d'un nom. Chaque demande porte un numéro, pour que la même demande répétée se rejoue. */
+    let reveal = $state(/** @type {{ table: number, open?: boolean, seq: number } | null} */ (null));
+    let historyFilter = $state(/** @type {{ text: string, seq: number } | null} */ (null));
+    let requestSeq = 0;
+    /** Une demande à la file des propositions : appariement à la main, ou lancer ici. */
+    let queueRequest = $state(/** @type {{ kind: 'manual' | 'launchHere', a?: string, table?: number, focus?: 'a' | 'b', seq: number } | null} */ (null));
+    let waitingMenu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+
+    /** @param {number} table @param {boolean} open */
+    function goToTable(table, open) {
+        tab = 'direction';
+        reveal = { table, open, seq: ++requestSeq };
+    }
+
+    /** @param {string} id */
+    function pairManually(id) {
+        tab = 'direction';
+        queueRequest = { kind: 'manual', a: id, focus: 'b', seq: ++requestSeq };
+    }
+
+    /** Une table libre prend la proposition sélectionnée : offert tant que la file en a une à lancer. @type {((table: number) => void) | undefined} */
+    const onLaunchHere = $derived(
+        (view?.proposals || []).some((a) => a.kind === 'start_match')
+            ? (/** @type {number} */ table) => {
+                  queueRequest = { kind: 'launchHere', table, seq: ++requestSeq };
+              }
+            : undefined
+    );
+
+    /** « Joue aussi à <épreuve> » : l'onglet de cette épreuve de la Rencontre. @param {string} event */
+    function goEpreuve(event) {
+        const ep = $epreuveTabsStore.find((x) => x.name === event);
+        if (ep) switchEpreuve(ep.tournamentId);
+    }
+
+    /** @param {string} name */
+    function showHistory(name) {
+        tab = 'history';
+        historyFilter = { text: name, seq: ++requestSeq };
+    }
+
+    /** Hors service : la table d'une Rencontre, seule à porter cet état. @type {((table: number, out: boolean) => void) | undefined} */
+    const onOutOfService = $derived(
+        view?.rencontreId ? (/** @type {number} */ table, /** @type {boolean} */ out) => void act(() => setTableOutOfService(view?.rencontreId || 0, table, out), 'direction.result.error') : undefined
+    );
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {{ id: string, name: string }} p */
+    function onWaitingMenu(ev, p) {
+        const req = menuRequest(ev, () =>
+            playerMenu(
+                (k, m) => $t(k, m),
+                { id: p.id, name: p.name, state: 'free', elsewhere: view?.elsewhere?.[p.id] },
+                { busy, onHistory: showHistory, onWithdraw, onManual: pairManually, onGoElsewhere: goEpreuve }
+            )
+        );
+        if (req) waitingMenu = req;
+    }
 
     let config = $state(/** @type {DirectionConfig | null} */ (null));
     $effect(() => {
@@ -626,7 +689,7 @@
                     {/if}
                     <!-- La grille avant la file, qui grandit avec les inscrits : les tables
                      restent à l'écran. -->
-                    <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
+                    <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {onLaunchHere} {reveal}>
                         {#snippet actions()}
                             {#if rounds > 0 || upcoming > 0}
                                 <div class="sheet">
@@ -669,12 +732,23 @@
                         {/snippet}
                     </TableGrid>
                     <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
-                    <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                    <ProposalList
+                        proposals={view?.proposals || []}
+                        players={free}
+                        elsewhere={view?.elsewhere || {}}
+                        {busy}
+                        onConfirm={confirm}
+                        onConfirmAll={confirmAll}
+                        onManual={manual}
+                        request={queueRequest}
+                        onPrintSheet={rounds > 0 ? onPrintSheet : undefined}
+                    />
                     <section class="waiting">
                         <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
                         <p data-testid="direction-waiting">
                             {#each free as p (p.id)}
-                                <span class="who"
+                                <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_static_element_interactions -->
+                                <span class="who" tabindex="0" oncontextmenu={(ev) => onWaitingMenu(ev, p)} onkeydown={(ev) => onWaitingMenu(ev, p)}
                                     >{p.name}{#if view?.elsewhere?.[p.id]}
                                         <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
                                 >
@@ -696,12 +770,12 @@
         {/if}
         {#if visited.history}
             <div class="pane" hidden={tab !== 'history'} tabindex="-1" data-testid="direction-pane-history" use:registerPane={'history'} onscroll={() => onPaneScroll('history')}>
-                <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
+                <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} filterRequest={historyFilter} />
             </div>
         {/if}
         {#if visited.brackets}
             <div class="pane" hidden={tab !== 'brackets'} tabindex="-1" data-testid="direction-pane-brackets" use:registerPane={'brackets'} onscroll={() => onPaneScroll('brackets')}>
-                <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
+                <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} onHistory={showHistory} />
             </div>
         {/if}
         {#if visited.players}
@@ -730,6 +804,11 @@
                     {onReinstate}
                     {onAbsent}
                     {onReturn}
+                    onGoTable={goToTable}
+                    onHistory={showHistory}
+                    onManual={pairManually}
+                    onGoEpreuve={goEpreuve}
+                    elsewhere={view?.elsewhere || {}}
                     {roundsMode}
                     slots={openSlots}
                     infos={view?.infos || []}
@@ -738,6 +817,9 @@
             </div>
         {/if}
     </div>
+    {#if waitingMenu}
+        <ContextMenu x={waitingMenu.x} y={waitingMenu.y} items={waitingMenu.items} onClose={() => (waitingMenu = null)} />
+    {/if}
 </div>
 
 <style>
@@ -786,8 +868,9 @@
     }
 
     /* Cibles de la salle : au moins --td-target, pour les contrôles de la vue (en-tête, onglets,
-       feuille, actions des panneaux) ; jamais dans une fiche, une surcouche ou un menu, où une
-       petite commande reste petite. */
+       feuille, actions des panneaux), les joueurs en attente qui ouvrent un menu, et les entrées
+       des menus contextuels de la vue, touchés au doigt comme le reste ; jamais dans une fiche
+       ni une surcouche, où une petite commande reste petite. */
     header button:not(.credit-btn),
     .epreuve-tabs button,
     .sheet :global(button),
@@ -798,6 +881,16 @@
     .pane :global(.td-target) {
         min-height: var(--td-target);
         min-width: var(--td-target);
+    }
+
+    .direction-view :global(.context-menu-item) {
+        min-height: var(--td-target);
+    }
+
+    .waiting .who {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--td-target);
     }
 
     .pane[hidden] {

@@ -323,11 +323,12 @@ export default {
 <p>Eine <strong>Einfügung mitten im Dokument fügt weiter ein</strong>: die Bestätigung öffnet dahinter eine leere Zelle, und die nächste Aktion wird ihrerseits eingefügt, statt die folgende zu überschreiben. Das ist es, was erlaubt, das ganze Ende einer Partie nachzutragen — eine Aufgabe, die eine Annahme hätte sein sollen —, ohne zu verlieren, was von der folgenden Partie schon eingegeben wurde. Das Ende der Partie oder eine Bewegung des Cursors beendet die Einfügung: der Cursor setzt sich dann auf die nächste Eröffnung.</p>
 <p><strong>Entf</strong> (oder <em>x</em>) entfernt die gerade bearbeitete Entscheidung und geht auf die vorige zurück, bereit zur Korrektur: auf einer geschriebenen Zelle verschwindet die Aktion; auf einer offenen Einfügung oder einem am Ende des Dokuments eingegebenen Wurf wird die Eingabe verworfen. Wiederholt gedrückt, geht Entf so löschend im Transkript zurück. Die folgenden Aktionen behalten ihre Seite, und der doppelte Zug, den ein Löschen hinterlässt, wird markiert, ohne dass der Cursor dorthin zurückgeführt wird.</p>
 <p>Ein Rechtsklick auf eine Zelle öffnet die Korrekturen dieser Aktion — davor einfügen, danach einfügen, löschen, Seite wechseln — und führt den Cursor unterwegs darauf; es sind dieselben Gesten wie die Tasten <em>i</em>, <em>a</em>, <em>x</em> und <em>s</em>, und nur dort wird das Browsermenü unterdrückt. Anderswo haben sie keine Schaltflächen: eine Schaltfläche, die auf „die Aktion unter dem Cursor“ wirkte, zielte auf eine Zelle, die man womöglich nicht sieht, während der Rechtsklick seine eigene benennt.</p>
-<p>Die Entwurfsleiste trägt die Gesten, die den Entwurf aus sich selbst herausführen. „<strong>Match erstellen</strong>“ (STRG-EINGABE) schreibt ihn in die Datenbank und wird danach zu „Match #<em>n</em> aktualisieren“: das Match wird unter derselben Kennung ersetzt, und die Analyse allein der neuen Positionen beginnt sofort, mit ihrem Fortschritt und ihrem Abbruch in der Statusleiste. Daneben sagt die Leiste, wie es um dieses Match steht — kein Match, aktuell, oder hinter dem Entwurf zurück. Über die Sicherheit des Entwurfs selbst sagt sie nichts: er wird nach jeder Aktion in die Datenbank geschrieben, da ist nichts zu überwachen.</p>
-<p>„<strong>.mat-Text</strong>“ öffnet die Jellyfish-Datei so, wie sie geschrieben würde, in einem Fenster, das breit genug ist, damit ihre Spalten ausgerichtet bleiben, mit einer Schaltfläche zum Kopieren. „<strong>.mat exportieren</strong>“ schreibt dieselbe Datei auf die Festplatte. „<strong>Entwurf schließen</strong>“ löscht ihn nach Bestätigung; ein bereits erstelltes Match bleibt endgültig in der Datenbank. Die beiden Pfeile <strong>↶</strong> und <strong>↷</strong> machen rückgängig und stellen wieder her, wie <em>STRG-Z</em> und <em>STRG-UMSCHALT-Z</em>.</p>
+<p>Die Entwurfsleiste trägt seine beiden einzigen Ausgänge. „<strong>Abschließen</strong>“ (STRG-EINGABE) schreibt das Match in die Datenbank und gibt den Entwurf frei; die Analyse nur der neuen Stellungen startet sofort, mit Fortschritt und Abbruch in der Statusleiste. „<strong>Verwerfen</strong>“ löscht den Entwurf ohne Match; eine Bestätigung wird nur für einen Entwurf verlangt, der nie abgeschlossen wurde, da er alles mitnimmt, was darin geschrieben steht. Daneben sagt die Leiste, was Abschließen tun wird — ein neues Match oder den Ersatz von Match #<em>n</em>. Über die Sicherung des Entwurfs selbst sagt sie nichts: Er wird nach jeder Aktion in die Datenbank geschrieben, und die Rückkehr zur Liste lässt ihn für später zum Weiterarbeiten bestehen.</p>
+<p>„<strong>.mat-Text</strong>“ öffnet die Jellyfish-Datei so, wie sie geschrieben würde, in einem Fenster, das breit genug ist, damit ihre Spalten ausgerichtet bleiben, mit einer Schaltfläche zum Kopieren. „<strong>.mat exportieren</strong>“ schreibt dieselbe Datei auf die Festplatte. Die beiden Pfeile <strong>↶</strong> und <strong>↷</strong> machen rückgängig und stellen wieder her, wie <em>STRG-Z</em> und <em>STRG-UMSCHALT-Z</em>.</p>
 <p>Wurde die Analyse eines transkribierten Matches unterbrochen — die Anwendung während des Stapellaufs geschlossen —, weist die Statusleiste beim nächsten Öffnen der Datenbank darauf hin und bietet an, sie zu beenden. Von dieser Unterbrechung wird nichts gespeichert: Das Angebot erscheint erneut, solange noch Stellungen zu analysieren sind, und der neu gestartete Lauf betrifft nur dieses Match, nie die gesamte Bibliothek.</p>
-<p>Ein Entwurf mit Unstimmigkeiten wird trotzdem gespeichert, nach einer Warnung: nichts wird abgelehnt. Ein unmöglicher Zug wird so exportiert, wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden („Invalid move“) und danach abweichen.</p>
+<p>Ein Entwurf mit Unstimmigkeiten wird nach einer Warnung trotzdem abgeschlossen: nichts wird abgelehnt. Ein regelwidriger Zug wird so exportiert, wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden („Invalid move“) und danach abweichen werden.</p>
 <p>Das Panel <strong>Matches</strong> erinnert über der Matchliste an jeden laufenden Entwurf: Die Zeile „Entwurf in Arbeit“ öffnet den Reiter Transkription.</p>
+<p>Um ein Match der Bibliothek zu korrigieren, öffnet die Schaltfläche ✎ der Matchliste oder „<strong>Transkription bearbeiten</strong>“ auf seiner Karte einen Entwurf aus diesem Match — oder öffnet den bereits darauf geöffneten erneut: ein Entwurf pro Match. Das Abschließen dieses Entwurfs ersetzt das Match unter derselben Kennung; die Positionen unveränderter Aktionen behalten ihre Kommentare, Analysen und Karten. Ein importiertes Match (XG, GnuBG, BGF) trägt Analysen und Kommentare, die eine <code>.mat</code>-Datei nicht trägt: Vor dem Öffnen nennt ein Dialog, bis zu wie vielen, und dass das Abschließen des Entwurfs sie verlieren kann.</p>
 <div class="admonition tip">
 <p>Siehe Tastenkürzel für die verfügbaren Tastenkürzel.</p>
 </div>
@@ -353,6 +354,18 @@ export default {
 <p>Ein Klick auf einen besetzten Tisch öffnet die Karte des Matches. Sie zeigt zwei große Flächen: die <strong>Namen der beiden Spieler</strong>. Ein Klick auf den Sieger trägt das Ergebnis ein — zwei Klicks insgesamt, Tisch inbegriffen. Verlangt wird nur der Sieger; das Ergebnis ist frei, eines von beiden, beide oder keines. Per Tastatur wählt <em>LINKS</em> oder <em>RECHTS</em> den Sieger und <em>EINGABE</em> trägt ihn ein. Die Karte schließt sich erst, wenn das Ergebnis geschrieben ist: Bei einem Fehler bleibt sie mit ihrer Meldung offen.</p>
 <p>Die Schaltfläche <strong>⋯</strong> der Karte klappt auf, was selten gebraucht wird: die Aufgabe (Forfait) — jede Schaltfläche nennt den Abwesenden und den Gewinner —, eine freie Bemerkung („Zeit überschritten“, „aufgegeben wegen…“), das Verschieben des Matches an einen anderen Tisch und seine Annullierung. Aufgabe und Annullierung werden bestätigt. Auf einen besetzten Tisch verschoben, tauscht das Match seinen Tisch mit dem dortigen: Zwei Matches teilen sich nie einen Tisch, und dieselbe Geste stellt sie wieder her. Hat ein altes Protokoll zwei an einen Tisch gesetzt, zeigt das Raster beide Felder markiert, bis eines verschoben wird.</p>
 <p>Ein sofort bemerkter Eingabefehler wird unter dem Raster in zwei Klicks zurückgenommen: die letzte Entscheidung <strong>korrigieren</strong>, dann den richtigen Sieger (<em>STRG-Z</em> öffnet dieselbe Rücknahme). Eine ältere Korrektur erfolgt über den Verlauf.</p>
+<h4>Die Kontextmenüs</h4>
+<p>Ein Rechtsklick, die Taste <em>MENU</em> oder <em>UMSCHALT-F10</em> auf einem Objekt der Direction-Seite öffnet dessen übliche Aktionen, ohne den Umweg über die Karte: ein Feld des Rasters (frei oder besetzt), ein Spieler (Reiter <strong>Spieler</strong>, freie Spieler), ein Platz im Tableau, ein Platz, ein Vorschlag der Liste, eine Zeile des Verlaufs. Das Menü öffnet sich am Objekt; <em>OBEN</em> und <em>UNTEN</em> bewegen sich darin, <em>EINGABE</em> wählt, <em>ESC</em> schließt es und gibt den Fokus an das Objekt zurück.</p>
+<ul>
+<li>Belegtes Feld: Ergebnis eintragen, Aufgabe des einen oder anderen Spielers, Tisch wechseln (ein belegter Zieltisch tauscht die beiden Matches), Match abbrechen, Verlauf jedes Spielers.</li>
+<li>Freies Feld: die ausgewählte Ansetzung hier starten, den Tisch außer Betrieb nehmen oder wieder in Betrieb nehmen (Tische einer Rencontre). Ein für ein anderes Turnier reservierter Tisch bietet nichts an.</li>
+<li>Spieler: das Ergebnis seines laufenden Matches eintragen, zu seinem Tisch wechseln, Verlauf, von Hand mit einem anderen freien Spieler ansetzen, in das andere Turnier wechseln, in dem er ebenfalls spielt, als abwesend oder anwesend markieren, jetzt oder nach seinem Match zurückziehen, wieder anmelden, die Angaben korrigieren.</li>
+<li>Platz ohne Match: ein importiertes Match zuordnen, auf das dieser Platz wartet.</li>
+<li>Ansetzung: starten, an einem Tisch starten…, die Länge ändern…, anders paaren (diese drei Einträge öffnen die manuelle Ansetzung mit den beiden Spielern, der Länge und dem Tisch der Ansetzung), vorerst ignorieren, das Rundenblatt drucken.</li>
+<li>Verlaufszeile: korrigieren oder annullieren, eine Anmerkung hinzufügen, auf einen der Spieler filtern.</li>
+</ul>
+<p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
+<p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
 <h4>Die Spieler</h4>
 <p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
 <p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV kopiert oder in einer Datei gespeichert (<strong>Speichern…</strong>) und eingefügt wieder eingelesen.</p>
@@ -1392,6 +1405,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Direction-Seite</h3>
+<p>Unter der Direction-Seite gehen <em>J</em>, <em>K</em>, <em>OBEN</em>, <em>UNTEN</em> und <em>EINGABE</em> zur Liste der Vorschläge, außer wenn der Fokus auf einem Feld des Tischrasters liegt, wo <em>OBEN</em> und <em>UNTEN</em> das Feld wechseln. Die Kontextmenüs sind im Handbuch beschrieben (Kontextmenüs).</p>
+<table>
+<thead>
+<tr>
+<th>Tastenkürzel</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rechtsklick, MENU, UMSCHALT-F10</td>
+<td>Das Kontextmenü des fokussierten Objekts öffnen: Tischfeld, Spieler, Platz im Tableau, Platz, Vorschlag, Verlaufszeile. OBEN/UNTEN bewegen sich im Menü, EINGABE wählt, ESC schließt es.</td>
+</tr>
+<tr>
+<td>LINKS, RECHTS, OBEN, UNTEN, POS1, ENDE</td>
+<td>Von einem Feld des Tischrasters zum anderen wechseln (freie Felder eingeschlossen); das Raster nimmt nur einen TAB-Halt ein.</td>
+</tr>
+<tr>
+<td>1 bis 9, dann 0 bis 9</td>
+<td>Die Karte des Tisches mit dieser Nummer öffnen; zwei Ziffern innerhalb von 0,4 s für einen Tisch über 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Auf einem belegten Feld die Karte öffnen (oder, wenn sie offen ist, das Tischfeld); ein belegter Zieltisch tauscht die beiden Matches.</td>
+</tr>
+</tbody>
+</table>
 <h3>Sammlungs-Fenster</h3>
 <table>
 <thead>
@@ -1563,7 +1604,7 @@ export default {
 </tr>
 <tr>
 <td>STRG-EINGABE</td>
-<td>Das Match aus dem Entwurf erstellen oder es aktualisieren, wenn es bereits besteht.</td>
+<td>Den Entwurf abschließen: das Match schreiben oder dasjenige ersetzen, aus dem er geöffnet wurde, und den Entwurf freigeben.</td>
 </tr>
 <tr>
 <td>i</td>

@@ -4,6 +4,7 @@
      * vainqueur, qui valide. Score facultatif (les deux ou aucun) ; forfait, remarque, table
      * et annulation dans un menu discret. Ouverte sur la case.
      */
+    import { tick } from 'svelte';
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
     import { isTypingTarget } from '../../utils/panelFocus.js';
@@ -29,10 +30,11 @@
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => Outcome,
      *     onForfeit?: (matchId: string, winner: string, note: string) => Outcome,
      *     onMove?: (matchId: string, table: number) => Outcome,
-     *     onCancel?: (matchId: string) => Outcome
+     *     onCancel?: (matchId: string) => Outcome,
+     *     moveRequest?: number
      * }}
      */
-    let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {} } = $props();
+    let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, moveRequest = 0 } = $props();
 
     let scoreA = $state('');
     let scoreB = $state('');
@@ -99,6 +101,14 @@
         if (!window.confirm($t('direction.result.cancelConfirm', { a: cell.aName ?? cell.a, b: cell.bName ?? cell.b }))) return;
         submit(() => onCancel(cell.matchId));
     }
+
+    /* « Changer de table » (menu, M, X) : le champ de table passe devant le curseur, que la fiche
+       vienne de s'ouvrir ou le soit déjà. Chaque demande a son numéro. */
+    $effect(() => {
+        if (moveRequest <= 0) return;
+        more = true;
+        tick().then(() => moveInput?.focus());
+    });
 
     /* Échap ferme la fiche avant tout geste global, même quand le focus l'a quittée. */
     $effect(() => closeOnEscape(() => onClose()));

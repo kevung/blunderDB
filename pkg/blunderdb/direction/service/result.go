@@ -1,13 +1,14 @@
-package database
+package service
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Entering a result, and the room the matches are played in (tasks/nicomaque/fonctionnel.md §5.3 and §5.5).
@@ -50,8 +51,8 @@ type TableCell struct {
 
 // TableGrid returns one cell per table of the room, in order. A room with no declared table
 // count shows exactly the tables in use, since there is nothing else to draw.
-func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) TableGrid(ctx context.Context, tournamentID int64) ([]TableCell, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +92,7 @@ func (d *Database) TableGrid(tournamentID int64) ([]TableCell, error) {
 		slow[m.ID] = true
 	}
 
-	room := d.roomAround(context.Background(), tournamentID, dir)
+	room := d.roomAround(ctx, tournamentID, dir)
 	elsewhere := room.tables
 	seat := func(id tournoi.PlayerID) *direction.Seat {
 		if s, ok := room.players[id]; ok {
@@ -163,9 +164,9 @@ func playerNameIn(st *tournoi.State, id tournoi.PlayerID) string {
 
 // EnterResult records the result of a match. Only `winner` is required; both scores may be zero.
 // `note` travels on the event. A score beyond the length raises a standing warning.
-func (d *Database) EnterResult(tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -176,14 +177,14 @@ func (d *Database) EnterResult(tournamentID int64, matchID, winner string, score
 	if err := dir.Apply(ctx, ev); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // EnterForfeit records that a player did not turn up for THIS match, without withdrawing them
 // from the tournament: they go on to follow a loser's path, the consolation for instance.
-func (d *Database) EnterForfeit(tournamentID int64, matchID, winner, note string) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID, winner, note string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -194,17 +195,18 @@ func (d *Database) EnterForfeit(tournamentID int64, matchID, winner, note string
 	if err := dir.Apply(ctx, ev); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // MoveMatchToTable moves a running match to another table (noise, light, a broadcast). When
 // that table is taken, the two matches swap tables: two matches never share a table, and the
 // same gesture puts them back. Both moves are written in one transaction.
-func (d *Database) MoveMatchToTable(tournamentID int64, matchID string, table int) (*DirectionView, error) {
+func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matchID string, table int) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	if table <= 0 {
 		return nil, fmt.Errorf("direction: table %d is not a table", table)
 	}
-	err := d.directionTx(func(ctx context.Context, _ *sql.Tx, store direction.Store) error {
+	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err
@@ -239,7 +241,7 @@ func (d *Database) MoveMatchToTable(tournamentID int64, matchID string, table in
 	if err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // occupant is the running match at this table other than self, or nil.
@@ -254,14 +256,14 @@ func occupant(st *tournoi.State, table int, self tournoi.MatchID) *tournoi.Match
 
 // CancelMatch removes a match launched by mistake — the wrong players, the wrong table. The
 // state is recomputed; nothing is erased from the log.
-func (d *Database) CancelMatch(tournamentID int64, matchID string) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) CancelMatch(ctx context.Context, tournamentID int64, matchID string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
 	if err := dir.Apply(ctx, tournoi.CancelEvent(tournoi.MatchID(matchID), time.Now())); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }

@@ -18,7 +18,6 @@ import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analy
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { clearTranscription, bumpTranscriptionLibrary } from '../stores/transcriptionStore.js';
-import { resetTranscriptionSave } from './transcriptionSave.js';
 import { logger } from '../utils/logger.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -50,7 +49,6 @@ function resetAnkiStores() {
 function resetTranscriptionStores() {
     bumpTranscriptionLibrary();
     clearTranscription();
-    resetTranscriptionSave();
 }
 
 function resetAnalysisAndCommentStores() {

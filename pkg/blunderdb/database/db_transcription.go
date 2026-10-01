@@ -169,9 +169,21 @@ func (d *Database) TranscriptionMAT(id int64) (string, error) {
 	return ingest.RenderMAT(transcript.MatchParts(ed.Doc)), nil
 }
 
-// CloseTranscription deletes the row and drops the session. Nothing is
-// snapshotted: a saved draft leaves its Match behind (ADR-0045 rule 3).
+// CloseTranscription releases the in-memory session only: the Entry being
+// typed and the undo stack. The row stays, and the draft resumes from the
+// drafts list; a draft leaves only by FinishTranscription or
+// AbandonTranscription (ADR-0045 §2).
 func (d *Database) CloseTranscription(id int64) error {
+	d.transcriptMu.Lock()
+	defer d.transcriptMu.Unlock()
+	delete(d.transcriptSessions, id)
+	return nil
+}
+
+// AbandonTranscription deletes the draft without a Match. Nothing is
+// snapshotted, and a Match the draft was opened from is left untouched
+// (ADR-0045 §3); the caller confirms beforehand.
+func (d *Database) AbandonTranscription(id int64) error {
 	d.transcriptMu.Lock()
 	delete(d.transcriptSessions, id)
 	d.transcriptMu.Unlock()

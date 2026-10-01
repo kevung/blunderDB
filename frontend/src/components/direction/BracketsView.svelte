@@ -9,12 +9,16 @@
     import { BOX_W, BOX_H, layoutSection, crossTable } from './bracketLayout.js';
     import ResultCard from './ResultCard.svelte';
     import CorrectionPanel from './CorrectionPanel.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { matchMenu } from '../../services/directionMenus.js';
+    import { menuRequest, isMenuKey } from '../../services/contextMenuTrigger.js';
 
     /* `cells` donne la table d'un match en cours ; les gestes sont ceux de la grille des
        tables : cliquer une place, c'est ouvrir la même fiche que sur la case. */
     /**
      * @type {{
      *     phases?: any[], cells?: any[], busy?: boolean,
+     *     onHistory?: (name: string) => void,
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
      *     onForfeit?: (matchId: string, winner: string, note: string) => void,
      *     onMove?: (matchId: string, table: number) => void,
@@ -22,16 +26,44 @@
      *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void
      * }}
      */
-    let { phases = [], cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onCorrect = () => {} } = $props();
+    let { phases = [], cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onCorrect = () => {}, onHistory = undefined } = $props();
+
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+    /** « Changer de table » (menu) met le champ de table devant le curseur, fiche ouverte ou non. */
+    let moveFor = $state({ key: '', seq: 0 });
+    let moveSeq = 0;
+
+    /** Ouvre la fiche sur la place, sans la refermer si elle l'est déjà. @param {string} sec @param {BracketMatch} m @param {boolean} move */
+    function show(sec, m, move) {
+        if (!canOpen(m)) return;
+        moveFor = move ? { key: placeKey(sec, m), seq: ++moveSeq } : { key: '', seq: 0 };
+        openKey = placeKey(sec, m);
+    }
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {string} sec @param {BracketMatch} m */
+    function onPlaceMenu(ev, sec, m) {
+        const req = menuRequest(ev, () =>
+            matchMenu((k, p) => $t(k, p), m, {
+                busy,
+                openResult: () => show(sec, m, false),
+                openMove: () => show(sec, m, true),
+                onForfeit,
+                onCancel,
+                onCorrect: () => show(sec, m, false),
+                onHistory
+            })
+        );
+        if (req) menu = req;
+    }
 
     /** La place dont la fiche est ouverte, par clé de section et de place. */
     let openKey = $state('');
 
     /* La phase courante est dépliée ; les précédentes sont repliées mais consultables — un
        directeur relit le tableau des vies pendant que le tableau final tourne. */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketPhase} BracketPhase */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketSection} BracketSection */
-    /** @typedef {import('../../../wailsjs/go/models').database.BracketMatch} BracketMatch */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketPhase} BracketPhase */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketSection} BracketSection */
+    /** @typedef {import('../../../wailsjs/go/models').service.BracketMatch} BracketMatch */
 
     let openPhases = $state(/** @type {Record<number, boolean> | null} */ (null));
 
@@ -73,11 +105,16 @@
     /** @param {string} sec @param {BracketMatch} m */
     function open(sec, m) {
         if (!canOpen(m)) return;
+        moveFor = { key: '', seq: 0 };
         openKey = openKey === placeKey(sec, m) ? '' : placeKey(sec, m);
     }
 
     /** @param {KeyboardEvent} e @param {string} sec @param {BracketMatch} m */
     function onPlaceKey(e, sec, m) {
+        if (isMenuKey(e)) {
+            onPlaceMenu(e, sec, m);
+            return;
+        }
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             open(sec, m);
@@ -127,7 +164,7 @@
 {#snippet card(/** @type {BracketMatch} */ m)}
     <div class="card-layer" data-testid="bracket-card">
         {#if m.running}
-            <ResultCard cell={runningCell(m)} {busy} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+            <ResultCard cell={runningCell(m)} {busy} moveRequest={moveFor.key === openKey ? moveFor.seq : 0} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
         {:else if m.done && m.a && m.b}
             <div class="correction">
                 <div class="correction-head">
@@ -176,6 +213,7 @@
                         data-testid="bracket-place"
                         transform="translate({n.x},{n.y})"
                         onclick={() => open(sec, m)}
+                        oncontextmenu={(e) => onPlaceMenu(e, sec, m)}
                         onkeydown={(e) => onPlaceKey(e, sec, m)}
                     >
                         <title>{renderLabel($t, m.label)}</title>
@@ -274,6 +312,8 @@
                                                                     data-testid="bracket-place"
                                                                     title={renderLabel($t, c.m.label)}
                                                                     onclick={() => open(s.name, c.m)}
+                                                                    oncontextmenu={(e) => onPlaceMenu(e, s.name, c.m)}
+                                                                    onkeydown={(e) => onPlaceMenu(e, s.name, c.m)}
                                                                 >
                                                                     {#if c.m.done}<span class:winner={c.m.winner === row.id}>{c.own}–{c.other}</span>{:else if c.m.running}●{:else}·{/if}
                                                                 </button>
@@ -301,6 +341,10 @@
         <p class="muted">{$t('direction.bracket.none')}</p>
     {/if}
 </div>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .brackets {

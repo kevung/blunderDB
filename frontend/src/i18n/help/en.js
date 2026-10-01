@@ -323,11 +323,12 @@ export default {
 <p>An <strong>insertion in the middle of the document goes on inserting</strong>: the validation opens an empty cell after it, and the next action is inserted in its turn instead of overwriting the one that follows. That is what makes it possible to catch up the whole end of a game — a pass that should have been a take — without losing what has already been typed of the next game. The end of the game, or moving the cursor, puts an end to the insertion: the cursor then lands on the next opening.</p>
 <p><strong>Del</strong> (or <em>x</em>) removes the decision being edited and steps back onto the previous one, ready to be corrected: on a written cell, the action disappears; on an open insertion or a roll typed at the end of the document, it is the entry that is abandoned. Pressing Del repeatedly thus goes back up the transcript, erasing as it goes. The actions that follow keep their side, and the double turn a deletion leaves is marked without the cursor being brought back to it.</p>
 <p>A right click on a cell opens the corrections of that action — insert before, insert after, delete, change side — and brings the cursor onto it on the way; these are the same gestures as the <em>i</em>, <em>a</em>, <em>x</em> and <em>s</em> keys, and the browser menu is suppressed only there. They have no buttons elsewhere: a button acting on "the action under the cursor" would aim at a cell one may not see, where the right click names its own.</p>
-<p>The draft bar carries the gestures that take the draft out of itself. "<strong>Create the match</strong>" (CTRL-ENTER) writes it into the library, and then becomes "Update match #<em>n</em>": the match is replaced under the same id, and the analysis of the new positions only starts at once, with its progress and its cancellation in the status bar. Beside it, the bar says where that match stands — no match, up to date, or behind the draft. It says nothing about the safety of the draft itself: it is written to the library after every action, there is nothing to watch.</p>
-<p>"<strong>.mat text</strong>" opens the Jellyfish file as it would be written, in a window wide enough for its columns to stay aligned, with a button to copy it. "<strong>Export .mat</strong>" writes that same file to disk. "<strong>Close the draft</strong>" deletes it after confirmation; a match already created stays in the library, for good. The two arrows <strong>↶</strong> and <strong>↷</strong> undo and redo, like <em>CTRL-Z</em> and <em>CTRL-SHIFT-Z</em>.</p>
+<p>The draft bar carries its only two exits. "<strong>Finish</strong>" (CTRL-ENTER) writes the match to the library and releases the draft; analysis of the new positions alone starts right away, with its progress and its cancellation in the status bar. "<strong>Abandon</strong>" deletes the draft without a match; confirmation is asked only for a draft that has never been finished, since it takes away everything written in it. Next to them, the bar says what Finish will do — a new match, or the replacement of match #<em>n</em>. It says nothing about saving the draft itself: it is written to the database after each action, and returning to the list leaves it to be resumed later.</p>
+<p>"<strong>.mat text</strong>" opens the Jellyfish file as it would be written, in a window wide enough for its columns to stay aligned, with a button to copy it. "<strong>Export .mat</strong>" writes that same file to disk. The two arrows <strong>↶</strong> and <strong>↷</strong> undo and redo, like <em>CTRL-Z</em> and <em>CTRL-SHIFT-Z</em>.</p>
 <p>If the analysis of a transcribed match was interrupted — the application closed while the batch was running — the status bar says so the next time the database is opened and offers to finish it. Nothing is kept about that interruption: the offer comes back for as long as positions remain to be analysed, and the batch that restarts covers only that match, never the whole library.</p>
-<p>A draft carrying inconsistencies is saved all the same, after a warning: nothing is refused. An illegal move is exported as it was played, with the warning that gnubg and XG will flag it (“Invalid move”) and diverge from there.</p>
+<p>A draft that carries inconsistencies is finished all the same, after a warning: nothing is refused. An illegal move is exported as it was played, with the warning that gnubg and XG will flag it ("Invalid move") and diverge afterwards.</p>
 <p>The <strong>Matches</strong> panel recalls every draft in progress above the list of matches: the “Draft in progress” line opens the Transcription tab.</p>
+<p>To correct a match in the library, the ✎ button in the match list or "<strong>Edit the transcription</strong>" on its card opens a draft from that match — or reopens the one already open on it: one draft per match. Finishing this draft replaces the match under the same identifier; the positions of unchanged actions keep their comments, analyses and cards. An imported match (XG, GnuBG, BGF) carries analyses and comments that a <code>.mat</code> does not: before opening, a dialog says up to how many, and that finishing the draft may lose them.</p>
 <div class="admonition tip">
 <p>Refer to Keyboard shortcuts for available shortcuts.</p>
 </div>
@@ -353,6 +354,18 @@ export default {
 <p>A click on a busy table opens the match's card. It shows two large targets: the <strong>names of the two players</strong>. Clicking the one who won records the result — two clicks in all, table included. The winner is the only thing required; the score is free, either one, both or neither. On the keyboard, <em>LEFT</em> or <em>RIGHT</em> picks the winner and <em>ENTER</em> records it. The card closes only once the result is written: a failure leaves it open, with its message.</p>
 <p>The <strong>⋯</strong> button on the card unfolds what is rarely needed: the forfeit — each button names the absent player and the one who wins —, a free remark (“lost on time”, “abandoned because of…”), moving the match to another table, and cancelling it. The forfeit and the cancellation are confirmed. Moved to a busy table, the match swaps its table with the one who occupies it: two matches never share a table, and the same gesture puts them back. If an old log left two on one table, the grid shows both cells, flagged, until one of them is moved.</p>
 <p>A typing mistake seen at once is taken back in two clicks below the grid: <strong>Correct</strong> the last decision, then the right winner (<em>CTRL-Z</em> opens the same take-back). An older correction is made from the history.</p>
+<h4>The context menus</h4>
+<p>A right click, the <em>MENU</em> key or <em>SHIFT-F10</em> on an object of the Direction page opens its usual actions without going through the card: a cell of the grid (free or busy), a player (<strong>Players</strong> tab, free players), a bracket slot, a slot, a proposal of the queue, a history row. The menu opens on the object; <em>UP</em> and <em>DOWN</em> move through it, <em>ENTER</em> picks, <em>ESC</em> closes it and returns the focus to the object.</p>
+<ul>
+<li>Occupied cell: enter the result, forfeit by either player, change table (aiming at an occupied table swaps the two matches), cancel the match, history of each player.</li>
+<li>Free cell: start the selected pairing here, take the table out of service, or put it back in service (tables of a Rencontre). A table reserved for another event offers nothing.</li>
+<li>Player: enter the result of their current match, go to their table, history, pair by hand with another free player, go to the other event where they also play, mark absent or present, withdraw now or after their match, re-enter, edit the details.</li>
+<li>Slot without a match: attach an imported match that this slot is waiting for.</li>
+<li>Pairing: start, start at a table…, change the length…, pair differently (these three entries open the manual pairing with the two players, the length and the table of the pairing), ignore for now, print the round sheet.</li>
+<li>History row: correct or cancel, add a remark, filter on one of the players.</li>
+</ul>
+<p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
+<p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
 <h4>The players</h4>
 <p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
 <p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
@@ -1392,6 +1405,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Direction page</h3>
+<p>Under the Direction page, <em>J</em>, <em>K</em>, <em>UP</em>, <em>DOWN</em> and <em>ENTER</em> go to the proposal queue, except when the focus is on a cell of the table grid, where <em>UP</em> and <em>DOWN</em> change cell. The context menus are described in the manual (context menus).</p>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Right-click, MENU, SHIFT-F10</td>
+<td>Open the context menu of the focused object: table cell, player, bracket slot, slot, proposal, history row. UP/DOWN move through the menu, ENTER picks, ESC closes it.</td>
+</tr>
+<tr>
+<td>LEFT, RIGHT, UP, DOWN, HOME, END</td>
+<td>Move from one cell of the table grid to another (free cells included); the grid takes only one TAB stop.</td>
+</tr>
+<tr>
+<td>1 to 9, then 0 to 9</td>
+<td>Open the card of the table with that number; two digits, within 0.4 s, for a table beyond 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>On an occupied cell, open the card (or, if it is open, the table field); aiming at an occupied table swaps the two matches.</td>
+</tr>
+</tbody>
+</table>
 <h3>Collection Panel</h3>
 <table>
 <thead>
@@ -1563,7 +1604,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-ENTER</td>
-<td>Create the match from the draft, or update it if it already exists.</td>
+<td>Finish the draft: write the match, or replace the one it was opened from, and release the draft.</td>
 </tr>
 <tr>
 <td>i</td>

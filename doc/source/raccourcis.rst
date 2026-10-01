@@ -266,6 +266,26 @@ Panneau des tournois
    "Double-clic (sur un match du tournoi)", "Naviguer dans le match."
    "Esc", "Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 
+.. _raccourcis_direction:
+
+Page Direction
+--------------
+
+Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la file des
+propositions, sauf quand le focus est sur une case de la grille des tables, où
+*HAUT* et *BAS* changent de case. Les menus contextuels sont décrits dans le
+manuel (:ref:`menus contextuels <direction_menus>`).
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic droit, MENU, MAJ-F10", "Ouvrir le menu contextuel de l'objet focalisé : case de table, joueur, place de l'arbre, emplacement, proposition, ligne d'historique. HAUT/BAS parcourent le menu, ENTRÉE choisit, ÉCHAP le ferme."
+   "GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN", "Passer d'une case de la grille des tables à l'autre (cases libres comprises) ; la grille ne prend qu'un arrêt de TAB."
+   "1 à 9, puis 0 à 9", "Ouvrir la fiche de la table de ce numéro ; deux chiffres, dans les 0,4 s, pour une table au-delà de 9."
+   "M, X", "Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs."
+
 .. _raccourcis_collection_panel:
 
 Panneau des collections
@@ -328,7 +348,7 @@ veille ne demande pas la souris.
    "Double-clic (sur une cellule)", "Taper le coup de cette action au clavier, dans la cellule : 13/7 8/7*, bar/22, 6/off. Seul le coup se tape, les dés sont ceux de la cellule ; ENTREE l'enregistre, même illégal, et Esc referme la cellule sans rien écrire. Vaut pour un coup, une danse, un coup non consigné, et pour la cellule en pointillés de la saisie en cours dès que ses deux dés sont saisis."
    "Double-clic (sur le score d'une partie)", "Taper le score auquel cette partie a été jouée, dans l'en-tête : 3-2, 3–2 ou 3 2. ENTREE l'enregistre, un champ vidé revient au score que donnent les parties précédentes, et Esc referme le champ sans rien écrire. Un score qui diffère de celui-ci est marqué comme une incohérence. Pas de score en argent."
    "Clic droit (sur une cellule)", "Ouvrir les corrections de cette action : insérer avant, insérer après, supprimer, changer de camp. Le curseur est amené sur la cellule au passage."
-   "CTRL-ENTREE", "Créer le match à partir du brouillon, ou le mettre à jour s'il existe déjà."
+   "CTRL-ENTREE", "Terminer le brouillon : écrire le match, ou remplacer celui dont il a été ouvert, et libérer le brouillon."
    "i", "Insérer une action devant celle du curseur (camp proposé pour que la suite reste cohérente)."
    "a", "Insérer une action derrière celle du curseur."
    "x, Del", "Supprimer la décision en cours d'édition — l'action du curseur, ou la saisie pas encore écrite — et reculer sur la précédente, prête à être corrigée ; les suivantes gardent leur camp. En bout de document, recule sur la dernière action."

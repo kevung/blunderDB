@@ -323,11 +323,12 @@ export default {
 <p>Keskelle asiakirjaa tehty <strong>lisäys jatkaa lisäämistä</strong>: vahvistus avaa tyhjän solun sen perään, ja seuraava toiminto lisätään vuorostaan sen sijaan että se korvaisi jälkimmäisen. Juuri tämä sallii kirjata jälkikäteen kokonaisen pelin lopun — luovutuksen, jonka olisi pitänyt olla otto — menettämättä sitä, mitä seuraavasta pelistä on jo kirjoitettu. Pelin loppu tai kohdistimen siirtäminen päättää lisäyksen: kohdistin asettuu silloin seuraavan avauksen kohdalle.</p>
 <p><strong>Del</strong> (tai <em>x</em>) poistaa muokattavana olevan päätöksen ja palaa edelliseen, valmiina korjattavaksi: kirjoitetussa solussa toiminto katoaa; avoimessa lisäyksessä tai asiakirjan loppuun kirjoitetussa heitossa hylätään syöttö. Toistuvasti painettu Del kulkee näin transkriptia taaksepäin pyyhkien. Seuraavat toiminnot säilyttävät puolensa, ja poiston jättämä kaksoisvuoro merkitään viemättä kohdistinta sen kohdalle.</p>
 <p>Napsautus hiiren oikealla painikkeella soluun avaa tämän toiminnon korjaukset — lisää ennen, lisää jälkeen, poista, vaihda puolta — ja tuo kohdistimen sen päälle matkalla; ne ovat samat eleet kuin näppäimet <em>i</em>, <em>a</em>, <em>x</em> ja <em>s</em>, ja selaimen valikko poistetaan vain siellä. Muualla niillä ei ole painikkeita: painike, joka vaikuttaisi ”kohdistimen alla olevaan toimintoon”, tähtäisi soluun, jota ei ehkä näe, kun taas oikea napsautus nimeää omansa.</p>
-<p>Luonnospalkki kantaa eleet, jotka vievät luonnoksen itsensä ulkopuolelle. ”<strong>Luo ottelu</strong>” (CTRL-ENTER) kirjoittaa sen kirjastoon, ja siitä tulee sitten ”Päivitä ottelu #<em>n</em>”: ottelu korvataan samalla tunnisteella, ja pelkästään uusien asemien analyysi alkaa heti, sen edistyminen ja peruutus tilapalkissa. Vieressä palkki kertoo, missä tämä ottelu on — ei ottelua, ajan tasalla, tai luonnosta jäljessä. Se ei kerro mitään itse luonnoksen turvasta: se kirjoitetaan tietokantaan jokaisen toiminnon jälkeen, mitään ei ole vahdittavana.</p>
-<p>”<strong>.mat-teksti</strong>” avaa Jellyfish-tiedoston sellaisena kuin se kirjoitettaisiin, ikkunassa, joka on riittävän leveä pitämään sen sarakkeet kohdakkain, ja painikkeella sen kopioimiseen. ”<strong>Vie .mat</strong>” kirjoittaa saman tiedoston levylle. ”<strong>Sulje luonnos</strong>” poistaa sen vahvistuksen jälkeen; jo luotu ottelu jää kirjastoon lopullisesti. Kaksi nuolta <strong>↶</strong> ja <strong>↷</strong> kumoavat ja tekevät uudelleen, kuten <em>CTRL-Z</em> ja <em>CTRL-VAIHTO-Z</em>.</p>
+<p>Luonnospalkki sisältää sen kaksi ainoaa poistumistietä. ”<strong>Valmis</strong>” (CTRL-ENTER) kirjoittaa ottelun kirjastoon ja vapauttaa luonnoksen; vain uusien asemien analyysi alkaa heti, edistymisineen ja peruutuksineen tilapalkissa. ”<strong>Hylkää</strong>” poistaa luonnoksen ilman ottelua; vahvistus kysytään vain luonnokselta, jota ei ole koskaan viimeistelty, koska se vie mukanaan kaiken siihen kirjoitetun. Vieressä palkki kertoo, mitä Valmis tekee — uuden ottelun tai ottelun #<em>n</em> korvaamisen. Se ei sano mitään luonnoksen omasta tallennuksesta: se kirjoitetaan tietokantaan jokaisen toiminnon jälkeen, ja paluu luetteloon jättää sen jatkettavaksi myöhemmin.</p>
+<p>”<strong>.mat-teksti</strong>” avaa Jellyfish-tiedoston sellaisena kuin se kirjoitettaisiin, ikkunassa, joka on riittävän leveä pitämään sen sarakkeet kohdakkain, ja painikkeella sen kopioimiseen. ”<strong>Vie .mat</strong>” kirjoittaa saman tiedoston levylle. Kaksi nuolta <strong>↶</strong> ja <strong>↷</strong> kumoavat ja tekevät uudelleen, kuten <em>CTRL-Z</em> ja <em>CTRL-VAIHTO-Z</em>.</p>
 <p>Jos litteroidun ottelun analyysi keskeytyi — sovellus suljettiin erän ollessa kesken —, tilarivi kertoo siitä seuraavalla kerralla, kun tietokanta avataan, ja tarjoutuu viemään sen loppuun. Keskeytyksestä ei jää mitään muistiin: tarjous palaa niin kauan kuin asemia on analysoimatta, ja uudelleen käynnistetty erä koskee vain tätä ottelua, ei koskaan koko kirjastoa.</p>
-<p>Luonnos, jossa on epäjohdonmukaisuuksia, tallennetaan silti varoituksen jälkeen: mitään ei torjuta. Sääntöjenvastainen siirto viedään sellaisena kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä (”Invalid move”) ja poikkeavat siitä eteenpäin.</p>
+<p>Epäjohdonmukaisuuksia sisältävä luonnos viimeistellään silti varoituksen jälkeen: mitään ei hylätä. Laiton siirto viedään sellaisena kuin se pelattiin, varoituksella, että gnubg ja XG ilmoittavat siitä (”Invalid move”) ja poikkeavat sen jälkeen.</p>
 <p><strong>Ottelupaneeli</strong> muistuttaa jokaisesta kesken olevasta luonnoksesta otteluluettelon yläpuolella: rivi ”Luonnos kesken” avaa Litterointi-välilehden.</p>
+<p>Kirjaston ottelun korjaamiseksi ottelulistan ✎-painike tai sen kortin ”<strong>Muokkaa litterointia</strong>” avaa luonnoksen kyseisestä ottelusta — tai avaa uudelleen sen, joka on jo auki — yksi luonnos ottelua kohden. Luonnoksen viimeistely korvaa ottelun samalla tunnisteella; muuttumattomien toimintojen asemat säilyttävät kommenttinsa, analyysinsä ja korttinsa. Tuotu ottelu (XG, GnuBG, BGF) sisältää analyysejä ja kommentteja, joita <code>.mat</code> ei sisällä: ennen avaamista valintaikkuna kertoo, enintään kuinka monta niitä on, ja että luonnoksen viimeistely voi menettää ne.</p>
 <div class="admonition tip">
 <p>Katso saatavilla olevat pikanäppäimet kohdasta Näppäimistöoikotiet.</p>
 </div>
@@ -353,6 +354,18 @@ export default {
 <p>Napsautus varattuun pöytään avaa ottelun kortin. Siinä on kaksi suurta kohdetta: <strong>kummankin pelaajan nimi</strong>. Voittajan napsauttaminen kirjaa tuloksen — kaksi napsautusta kaikkiaan, pöytä mukaan lukien. Voittaja on ainoa vaadittu tieto; tulos on vapaa, toinen, molemmat tai ei kumpaakaan. Näppäimistöllä <em>VASEN</em> tai <em>OIKEA</em> valitsee voittajan ja <em>ENTER</em> kirjaa hänet. Kortti sulkeutuu vasta, kun tulos on kirjoitettu: virhe jättää sen auki viestineen.</p>
 <p>Kortin <strong>⋯</strong>-painike avaa harvoin tarvittavat toiminnot: luovutuksen (forfait) — jokainen painike nimeää poissaolevan ja voittajan —, vapaan huomautuksen (”aika loppui”, ”keskeytetty syystä…”), ottelun siirron toiselle pöydälle ja sen mitätöinnin. Luovutus ja mitätöinti vahvistetaan. Varattuun pöytään siirrettynä ottelu vaihtaa pöytänsä pöydän haltijan kanssa: kaksi ottelua ei koskaan jaa pöytää, ja sama ele palauttaa ne paikoilleen. Jos vanha loki on jättänyt kaksi samalle pöydälle, ruudukko näyttää molemmat ruudut merkittyinä, kunnes toinen siirretään.</p>
 <p>Heti huomattu kirjausvirhe perutaan kahdella napsautuksella ruudukon alta: <strong>Korjaa</strong> viimeisin päätös, sitten oikea voittaja (<em>CTRL-Z</em> avaa saman peruutuksen). Vanhempi korjaus tehdään historiasta.</p>
+<h4>Kontekstivalikot</h4>
+<p>Napsautus hiiren oikealla, <em>MENU</em>-näppäin tai <em>SHIFT-F10</em> Direction-sivun kohteella avaa sen tavalliset toiminnot ilman kortin kautta kiertämistä: ruudukon ruutu (vapaa tai varattu), pelaaja (<strong>Pelaajat</strong>-välilehti, vapaat pelaajat), kaavion paikka, paikka, jonon ehdotus, historian rivi. Valikko avautuu kohteen kohdalle; <em>YLÖS</em> ja <em>ALAS</em> liikkuvat siinä, <em>ENTER</em> valitsee, <em>ESC</em> sulkee sen ja palauttaa kohdistuksen kohteeseen.</p>
+<ul>
+<li>Varattu ruutu: kirjaa tulos, kumman tahansa luovutus, vaihda pöytää (varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään), peruuta ottelu, kunkin pelaajan historia.</li>
+<li>Vapaa ruutu: aloita tässä valittu pariutus, poista pöytä käytöstä tai palauta se käyttöön (Rencontren pöydät). Toiselle kilpailulle varattu pöytä ei tarjoa mitään.</li>
+<li>Pelaaja: kirjaa käynnissä olevan ottelun tulos, siirry hänen pöytäänsä, historia, pariuta käsin toisen vapaan pelaajan kanssa, siirry toiseen kilpailuun, jossa hän myös pelaa, merkitse poissaolevaksi tai paikalla olevaksi, vetäydy nyt tai ottelun jälkeen, ilmoita uudelleen, korjaa tiedot.</li>
+<li>Paikka ilman ottelua: liitä tuotu ottelu, jota tämä paikka odottaa.</li>
+<li>Pariutus: aloita, aloita pöydässä…, vaihda pituutta…, pari toisin (nämä kolme valintaa avaavat käsin pariuttamisen kahden pelaajan, pariutuksen pituuden ja pöydän kanssa), ohita toistaiseksi, tulosta kierroksen lehti.</li>
+<li>Historian rivi: korjaa tai mitätöi, lisää huomautus, suodata toisen pelaajan mukaan.</li>
+</ul>
+<p>Luovutus, ottelun peruutus ja pelaajan vetäytyminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa. Kun toiminto on käynnissä, toimivat valinnat näkyvät harmaina kuten painikkeet. Vain yksi valikko on auki kerrallaan: toisen avaaminen sulkee ensimmäisen.</p>
+<p>Näppäimistöllä ruudukko vie vain yhden <em>TAB</em>-pysähdyksen: jokainen ruutu, myös vapaa, saa kohdistuksen, ja <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkentässä, ja myös <em>X</em>, olipa kortti jo auki tai ei: varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</p>
 <h4>Pelaajat</h4>
 <p><strong>Pelaajat</strong>-välilehti ilmoittaa, korjaa ja poistaa. Ilmoittautumiskenttä säilyttää kohdistuksen ja tyhjenee jokaisen nimen jälkeen: kaksikymmentä pelaajaa ilmoitetaan pelkällä näppäimistöllä. Täydennys tarjoaa tietokannan pelaajia; yhden valitseminen lukitsee sen tarkan kirjoitusasun, jonka hänen ottelunsa kantavat, ja esitäyttää luokituksen hänen PR:llään.</p>
 <p><strong>Hakemisto</strong> kokoaa kaikkien tietokannan johdettujen turnausten osallistujat, nimen mukaan yhdistettyinä, viimeisimmän ilmoittautumisen seuran ja luokituksen kera. Sitä ei koskaan tallenneta: johtamisen poistaminen poistaa siitä sen osallistujat. Aiemman turnauksen osallistujien ottaminen on yksi napsautus, olipa heitä kuinka monta tahansa; hakemisto kopioidaan CSV:nä tai tallennetaan tiedostoon (<strong>Tallenna…</strong>), ja se luetaan takaisin liitettynä.</p>
@@ -1392,6 +1405,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Johtamissivu</h3>
+<p>Direction-sivulla <em>J</em>, <em>K</em>, <em>YLÖS</em>, <em>ALAS</em> ja <em>ENTER</em> siirtyvät ehdotusjonoon, paitsi kun kohdistus on pöytäruudukon ruudussa, jossa <em>YLÖS</em> ja <em>ALAS</em> vaihtavat ruutua. Kontekstivalikot on kuvattu käsikirjassa (kontekstivalikot).</p>
+<table>
+<thead>
+<tr>
+<th>Oikotie</th>
+<th>Toiminto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Napsautus hiiren oikealla, MENU, SHIFT-F10</td>
+<td>Avaa kohdistetun kohteen kontekstivalikko: pöytäruutu, pelaaja, kaavion paikka, paikka, ehdotus, historian rivi. YLÖS/ALAS liikkuvat valikossa, ENTER valitsee, ESC sulkee sen.</td>
+</tr>
+<tr>
+<td>VASEN, OIKEA, YLÖS, ALAS, HOME, END</td>
+<td>Siirry pöytäruudukon ruudusta toiseen (vapaat ruudut mukaan lukien); ruudukko vie vain yhden TAB-pysähdyksen.</td>
+</tr>
+<tr>
+<td>1–9, sitten 0–9</td>
+<td>Avaa kyseisen numeron pöydän kortti; kaksi numeroa 0,4 sekunnin kuluessa yli 9:n pöydälle.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Varatussa ruudussa avaa kortti (tai, jos se on auki, pöytäkenttä); varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</td>
+</tr>
+</tbody>
+</table>
 <h3>Kokoelmapaneeli</h3>
 <table>
 <thead>
@@ -1563,7 +1604,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-ENTER</td>
-<td>Luo ottelu luonnoksesta, tai päivitä se jos se on jo olemassa.</td>
+<td>Viimeistele luonnos: kirjoita ottelu tai korvaa se, josta luonnos avattiin, ja vapauta luonnos.</td>
 </tr>
 <tr>
 <td>i</td>

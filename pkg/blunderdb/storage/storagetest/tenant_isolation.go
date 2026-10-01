@@ -250,4 +250,46 @@ func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storag
 	if evs, _ := ds.LoadEvents(ctx, a, tid); len(evs) != 1 {
 		t.Errorf("LoadEvents(%s) after %s's Delete = %d events, want 1", a, b, len(evs))
 	}
+
+	// Slots and pairs: another tenant neither reads nor moves them.
+	m := domain.Match{Player1Name: "Anna", Player2Name: "Bruno", MatchLength: 5}
+	mid, err := s.Matches().Save(ctx, a, &m)
+	if err != nil {
+		t.Fatalf("Save match(%s): %v", a, err)
+	}
+	if err := ds.AttachSlot(ctx, b, tid, "M1", mid); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("AttachSlot(%s) of %s's Match: got %v, want ErrNotFound", b, a, err)
+	}
+	if err := ds.AttachSlot(ctx, a, tid, "M1", mid); err != nil {
+		t.Fatalf("AttachSlot(%s): %v", a, err)
+	}
+	own := domain.Match{Player1Name: "Carl", Player2Name: "Dora", MatchLength: 5}
+	ownID, err := s.Matches().Save(ctx, b, &own)
+	if err != nil {
+		t.Fatalf("Save match(%s): %v", b, err)
+	}
+	if err := ds.AttachSlot(ctx, b, tid, "M2", ownID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("AttachSlot(%s) of its own Match into %s's Tournament: got %v, want ErrNotFound", b, a, err)
+	}
+	if _, slot, err := ds.SlotOf(ctx, b, ownID); err != nil || slot != "" {
+		t.Errorf("SlotOf(%s) after the refused attach = %q, %v; want none", b, slot, err)
+	}
+	if got, err := ds.FilledSlots(ctx, b, tid); err != nil || len(got) != 0 {
+		t.Errorf("FilledSlots(%s) = %d, %v; want none of %s's", b, len(got), err, a)
+	}
+	if _, _, err := ds.SlotOf(ctx, b, mid); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("SlotOf(%s) of %s's Match: got %v, want ErrNotFound", b, a, err)
+	}
+	if err := ds.DetachSlot(ctx, b, tid, "M1"); err != nil {
+		t.Fatalf("DetachSlot(%s): %v", b, err)
+	}
+	if _, slot, err := ds.SlotOf(ctx, a, mid); err != nil || slot != "M1" {
+		t.Errorf("SlotOf(%s) after %s's DetachSlot = %q, %v; want M1", a, b, slot, err)
+	}
+	if err := ds.SetPair(ctx, a, tid, "P1", []storage.PairMember{{Name: "Anna"}, {Name: "Bruno"}}); err != nil {
+		t.Fatalf("SetPair(%s): %v", a, err)
+	}
+	if got, err := ds.Pairs(ctx, b, tid); err != nil || len(got) != 0 {
+		t.Errorf("Pairs(%s) = %v, %v; want none of %s's", b, got, err, a)
+	}
 }

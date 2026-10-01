@@ -323,11 +323,12 @@ export default {
 <p>Un <strong>inserimento in mezzo al documento continua a inserire</strong>: la convalida apre una cella vuota di seguito, e l'azione successiva si inserisce a sua volta invece di sovrascrivere quella dopo. È questo che permette di recuperare tutta la fine di una partita — un rifiuto che avrebbe dovuto essere un'accettazione — senza perdere ciò che è già stato digitato della partita seguente. La fine della partita, o lo spostamento del cursore, mette fine all'inserimento: il cursore si posa allora sull'apertura successiva.</p>
 <p><strong>Canc</strong> (o <em>x</em>) toglie la decisione in corso di modifica e arretra sulla precedente, pronta per essere corretta: su una cella scritta, l'azione scompare; su un inserimento aperto o un lancio digitato in fondo al documento, è l'immissione a essere abbandonata. Premendo Canc più volte si risale così la trascrizione cancellando. Le azioni successive mantengono il loro campo, e il doppio turno lasciato da un'eliminazione è segnalato senza che il cursore vi sia riportato.</p>
 <p>Un clic destro su una cella apre le correzioni di quell'azione — inserire prima, inserire dopo, eliminare, cambiare campo — e vi porta il cursore per strada; sono gli stessi gesti dei tasti <em>i</em>, <em>a</em>, <em>x</em> e <em>s</em>, e il menu del browser viene soppresso soltanto lì. Altrove non hanno pulsanti: un pulsante che agisse sull'«azione sotto il cursore» mirerebbe a una cella che si può non vedere, mentre il clic destro nomina la propria.</p>
-<p>La barra della bozza porta i gesti che la fanno uscire da sé stessa. «<strong>Creare la partita</strong>» (CTRL-INVIO) la scrive nella biblioteca, e diventa poi «Aggiornare la partita #<em>n</em>»: la partita è sostituita sotto lo stesso identificativo, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. Accanto, la barra dice a che punto sia quella partita — nessuna partita, aggiornata, oppure indietro rispetto alla bozza. Non dice nulla sulla salvezza della bozza stessa: viene scritta nel database dopo ogni azione, non c'è nulla da sorvegliare.</p>
-<p>«<strong>Testo .mat</strong>» apre il file Jellyfish così come verrebbe scritto, in una finestra abbastanza larga perché le sue colonne restino allineate, con un pulsante per copiarlo. «<strong>Esportare .mat</strong>» scrive quello stesso file su disco. «<strong>Chiudere la bozza</strong>» la elimina dopo conferma; una partita già creata resta nella biblioteca, definitiva. Le due frecce <strong>↶</strong> e <strong>↷</strong> annullano e ripristinano, come <em>CTRL-Z</em> e <em>CTRL-MAIUSC-Z</em>.</p>
+<p>La barra della bozza porta le sue due sole uscite. «<strong>Termina</strong>» (CTRL-INVIO) scrive la partita nella biblioteca e libera la bozza; l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e la sua annullabilità nella barra di stato. «<strong>Abbandona</strong>» elimina la bozza senza partita; la conferma viene chiesta solo per una bozza mai terminata, poiché porta via tutto ciò che vi è scritto. Accanto, la barra dice che cosa farà Termina — una nuova partita, o la sostituzione della partita #<em>n</em>. Non dice nulla della salvaguardia della bozza stessa: viene scritta nella base dopo ogni azione, e tornare all'elenco la lascia da riprendere più tardi.</p>
+<p>«<strong>Testo .mat</strong>» apre il file Jellyfish così come verrebbe scritto, in una finestra abbastanza larga perché le sue colonne restino allineate, con un pulsante per copiarlo. «<strong>Esportare .mat</strong>» scrive quello stesso file su disco. Le due frecce <strong>↶</strong> e <strong>↷</strong> annullano e ripristinano, come <em>CTRL-Z</em> e <em>CTRL-MAIUSC-Z</em>.</p>
 <p>Se l'analisi di un match trascritto è stata interrotta — l'applicazione chiusa durante il lotto —, la barra di stato lo segnala alla successiva apertura della base e propone di terminarla. Di questa interruzione non viene conservato nulla: la proposta ritorna finché restano posizioni da analizzare, e il lotto riavviato riguarda solo questo match, mai l'intera biblioteca.</p>
-<p>Una bozza che contiene incoerenze viene salvata comunque, dopo un avvertimento: nulla viene rifiutato. Una mossa illegale è esportata così come è stata giocata, con l'avvertimento che gnubg e XG la segnaleranno («Invalid move») e divergeranno da lì.</p>
+<p>Una bozza che porta incoerenze viene comunque terminata, dopo un avviso: nulla viene rifiutato. Una mossa illegale viene esportata così come è stata giocata, con l'avviso che gnubg e XG la segnaleranno («Invalid move») e divergeranno in seguito.</p>
 <p>Il pannello <strong>Match</strong> ricorda ogni bozza in corso sopra l'elenco dei match: la riga «Bozza in corso» apre la scheda Trascrizione.</p>
+<p>Per correggere una partita della libreria, il pulsante ✎ dell'elenco delle partite o «<strong>Modifica la trascrizione</strong>» della sua scheda apre una bozza a partire da quella partita — o riapre quella già aperta su di essa: una sola bozza per partita. Terminare questa bozza sostituisce la partita con lo stesso identificatore; le posizioni delle azioni invariate conservano i loro commenti, le loro analisi e le loro carte. Una partita importata (XG, GnuBG, BGF) porta analisi e commenti che un <code>.mat</code> non porta: prima di aprire, una finestra indica fino a quanti, e che terminare la bozza può perderli.</p>
 <div class="admonition tip">
 <p>Fare riferimento a Scorciatoie da tastiera per le scorciatoie disponibili.</p>
 </div>
@@ -353,6 +354,18 @@ export default {
 <p>Un clic su un tavolo occupato apre la scheda della partita. Mostra due grandi bersagli: i <strong>nomi dei due giocatori</strong>. Cliccare quello che ha vinto registra il risultato — due clic in tutto, tavolo compreso. Il vincitore è l'unica cosa richiesta; il punteggio è libero, l'uno, entrambi o nessuno. Da tastiera, <em>SINISTRA</em> o <em>DESTRA</em> sceglie il vincitore e <em>INVIO</em> lo registra. La scheda si chiude solo quando il risultato è scritto: un errore la lascia aperta, con il suo messaggio.</p>
 <p>Il pulsante <strong>⋯</strong> della scheda apre ciò che serve di rado: il forfait — ogni pulsante nomina l'assente e chi vince —, una nota libera («caduto per tempo», «abbandonato per motivo di…»), lo spostamento della partita su un altro tavolo e il suo annullamento. Il forfait e l'annullamento si confermano. Spostata su un tavolo occupato, la partita scambia il suo tavolo con quella che lo occupa: due partite non condividono mai un tavolo, e lo stesso gesto le rimette a posto. Se un vecchio registro ne ha lasciate due su un tavolo, la griglia mostra le due caselle, segnalate, finché non se ne sposta una.</p>
 <p>Un errore di digitazione visto subito si riprende in due clic sotto la griglia: <strong>Correggi</strong> l'ultima decisione, poi il vincitore giusto (<em>CTRL-Z</em> apre la stessa ripresa). Una correzione più vecchia si fa dalla cronologia.</p>
+<h4>I menu contestuali</h4>
+<p>Un clic destro, il tasto <em>MENU</em> o <em>MAIUSC-F10</em> su un oggetto della pagina Direzione apre le sue azioni abituali senza passare dalla scheda: una casella della griglia (libera od occupata), un giocatore (scheda <strong>Giocatori</strong>, giocatori liberi), un posto del tabellone, un posto, una proposta della coda, una riga della cronologia. Il menu si apre sull'oggetto; <em>SU</em> e <em>GIÙ</em> lo scorrono, <em>INVIO</em> sceglie, <em>ESC</em> lo chiude e restituisce il focus all'oggetto.</p>
+<ul>
+<li>Casella occupata: inserire il risultato, ritiro dell'uno o dell'altro, cambiare tavolo (puntare a un tavolo occupato scambia i due incontri), annullare l'incontro, cronologia di ciascun giocatore.</li>
+<li>Casella libera: avviare qui l'abbinamento selezionato, mettere il tavolo fuori servizio o rimetterlo in servizio (tavoli di una Rencontre). Un tavolo riservato a un'altra prova non propone nulla.</li>
+<li>Giocatore: inserire il risultato del suo incontro in corso, andare al suo tavolo, cronologia, abbinare a mano con un altro giocatore libero, andare all'altra prova in cui gioca anch'egli, segnare assente o presente, ritirare ora o dopo il suo incontro, reiscrivere, correggere la scheda.</li>
+<li>Posto senza incontro: collegare un incontro importato che questo posto sta aspettando.</li>
+<li>Abbinamento: avviare, avviare a un tavolo…, cambiare la lunghezza…, abbinare diversamente (queste tre voci aprono l'abbinamento a mano con i due giocatori, la lunghezza e il tavolo dell'abbinamento), ignorare per ora, stampare il foglio del turno.</li>
+<li>Riga della cronologia: correggere o annullare, aggiungere una nota, filtrare su uno dei giocatori.</li>
+</ul>
+<p>Il ritiro, l'annullamento di un incontro e il ritiro di un giocatore mantengono la conferma che hanno nella scheda e nei pulsanti delle righe. Mentre un'azione è in corso, le voci che agiscono sono disattivate, come i pulsanti. Un solo menu è aperto alla volta: aprirne un secondo chiude il primo.</p>
+<p>Con la tastiera, la griglia occupa una sola sosta di <em>TAB</em>: ogni casella riceve il focus, anche quelle libere, e <em>SINISTRA</em>, <em>DESTRA</em>, <em>SU</em>, <em>GIÙ</em>, <em>HOME</em> e <em>FINE</em> passano da una casella all'altra. Una cifra apre la scheda del tavolo con quel numero; per un tavolo oltre il 9, la seconda cifra si digita entro 0,4 s. <em>M</em> apre la scheda sul campo del tavolo, e anche <em>X</em>, che la scheda sia già aperta o no: puntare a un tavolo occupato scambia i due incontri.</p>
 <h4>I giocatori</h4>
 <p>La scheda <strong>Giocatori</strong> iscrive, corregge e ritira. Il campo d'iscrizione mantiene il focus e si svuota dopo ogni nome: venti giocatori si iscrivono con la sola tastiera. Il completamento automatico propone i giocatori della base; sceglierne uno fissa l'ortografia esatta che portano le sue partite e precompila il suo punteggio con il PR.</p>
 <p>La <strong>rubrica</strong> raccoglie gli iscritti di tutti i tornei diretti della base, senza duplicati per nome, con il club e il punteggio della loro ultima iscrizione. Non è mai memorizzata: eliminare una direzione ne toglie gli iscritti. Riprendere gli iscritti di un torneo precedente è un clic, quanti che siano; la rubrica si copia in CSV o si salva in un file (<strong>Salva…</strong>), e si rilegge incollata.</p>
@@ -1392,6 +1405,34 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Pagina Direzione</h3>
+<p>Nella pagina Direzione, <em>J</em>, <em>K</em>, <em>SU</em>, <em>GIÙ</em> e <em>INVIO</em> vanno alla coda delle proposte, tranne quando il focus è su una casella della griglia dei tavoli, dove <em>SU</em> e <em>GIÙ</em> cambiano casella. I menu contestuali sono descritti nel manuale (menu contestuali).</p>
+<table>
+<thead>
+<tr>
+<th>Scorciatoia</th>
+<th>Azione</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic destro, MENU, MAIUSC-F10</td>
+<td>Aprire il menu contestuale dell'oggetto con il focus: casella di tavolo, giocatore, posto del tabellone, posto, proposta, riga della cronologia. SU/GIÙ scorrono il menu, INVIO sceglie, ESC lo chiude.</td>
+</tr>
+<tr>
+<td>SINISTRA, DESTRA, SU, GIÙ, HOME, FINE</td>
+<td>Passare da una casella all'altra della griglia dei tavoli (comprese le caselle libere); la griglia occupa una sola sosta di TAB.</td>
+</tr>
+<tr>
+<td>Da 1 a 9, poi da 0 a 9</td>
+<td>Aprire la scheda del tavolo con quel numero; due cifre, entro 0,4 s, per un tavolo oltre il 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Su una casella occupata, aprire la scheda (o, se è aperta, il campo del tavolo); puntare a un tavolo occupato scambia i due incontri.</td>
+</tr>
+</tbody>
+</table>
 <h3>Pannello delle collezioni</h3>
 <table>
 <thead>
@@ -1563,7 +1604,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-INVIO</td>
-<td>Creare la partita a partire dalla bozza, o aggiornarla se esiste già.</td>
+<td>Terminare la bozza: scrivere la partita, o sostituire quella da cui è stata aperta, e liberare la bozza.</td>
 </tr>
 <tr>
 <td>i</td>

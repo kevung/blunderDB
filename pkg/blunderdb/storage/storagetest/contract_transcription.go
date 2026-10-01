@@ -160,6 +160,47 @@ func testTranscriptionMatchLink(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testTranscriptionDeleteInTx pins that a draft deleted inside a transaction
+// comes back when the transaction rolls back: finishing a draft deletes it
+// together with the match write, and the two land whole or not at all.
+func testTranscriptionDeleteInTx(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	id, err := s.Transcriptions().Save(ctx, "", &storage.Transcription{FormatVersion: "1", Label: "keep", Document: "{}"})
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+
+	tx, err := s.BeginTx(ctx)
+	if err != nil {
+		t.Fatalf("BeginTx: %v", err)
+	}
+	if err := tx.Transcriptions().Delete(ctx, "", id); err != nil {
+		_ = tx.Rollback()
+		t.Fatalf("tx Delete: %v", err)
+	}
+	if err := tx.Rollback(); err != nil {
+		t.Fatalf("Rollback: %v", err)
+	}
+	if got, err := s.Transcriptions().Get(ctx, "", id); err != nil || got.Label != "keep" {
+		t.Fatalf("Get after rollback = %v, %v; the draft must still be there", got, err)
+	}
+
+	tx, err = s.BeginTx(ctx)
+	if err != nil {
+		t.Fatalf("BeginTx: %v", err)
+	}
+	if err := tx.Transcriptions().Delete(ctx, "", id); err != nil {
+		_ = tx.Rollback()
+		t.Fatalf("tx Delete: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("Commit: %v", err)
+	}
+	if _, err := s.Transcriptions().Get(ctx, "", id); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("Get after commit: got %v, want ErrNotFound", err)
+	}
+}
+
 func countTranscriptions(t *testing.T, ts storage.TranscriptionStore) int {
 	t.Helper()
 	n := 0

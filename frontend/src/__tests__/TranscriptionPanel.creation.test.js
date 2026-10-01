@@ -38,7 +38,6 @@ import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, clearTranscription, transcriptionPromptStore } from '../stores/transcriptionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { transcriptionSaveStore, resetTranscriptionSave } from '../services/transcriptionSave.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 
 // Un document annoté minimal, tel que le moteur Go le renvoie : ce que le
@@ -214,31 +213,25 @@ describe("l'ouverture", () => {
     });
 });
 
-// Le bouton d'enregistrement nomme le Match que le brouillon possède déjà. Le
-// moteur le pose dans l'EN-TÊTE du document (`header.match_id`) ; le panneau le
-// lisait sur le document lui-même et sur l'état Wails, où il n'est pas, si bien
-// que le bouton disait « créer » sur un brouillon dont le Match existait.
-describe('le bouton d’enregistrement nomme le Match du brouillon', () => {
-    afterEach(() => resetTranscriptionSave());
-
-    test('un brouillon jamais enregistré propose de créer le Match', async () => {
+// La barre nomme la sortie, jamais le salut du brouillon (ADR-0048 décision
+// 12) : un seul « Terminer », et à côté ce qu'il fera. Le moteur pose le Match
+// d'origine dans l'EN-TÊTE du document (`header.match_id`).
+describe('la barre du brouillon nomme ses sorties', () => {
+    test('un brouillon sans match propose Terminer et Abandonner, pour un nouveau match', async () => {
         transcriptionStore.set(stateFor(annotated({ expects: 'checker' })));
         render(TranscriptionPanel);
-        expect(await screen.findByText('Create the match')).toBeTruthy();
+        expect(await screen.findByText('Finish')).toBeTruthy();
+        expect(screen.getByText('Abandon')).toBeTruthy();
+        expect(screen.getByText('new match')).toBeTruthy();
+        expect(screen.queryByText('Create the match')).toBeNull();
     });
 
-    test('un brouillon rouvert dont le Match existe propose de le mettre à jour', async () => {
+    test('un brouillon ouvert depuis un match dit qu’il le remplacera', async () => {
         const ann = /** @type {any} */ (annotated({ expects: 'checker' }));
         ann.document.header = { ...ann.document.header, match_id: 12 };
         transcriptionStore.set(stateFor(ann));
         render(TranscriptionPanel);
-        expect(await screen.findByText('Update match #12')).toBeTruthy();
-    });
-
-    test('juste après le premier enregistrement, avant que le document ne porte son match_id', async () => {
-        transcriptionStore.set(stateFor(annotated({ expects: 'checker' })));
-        transcriptionSaveStore.set({ id: 1, matchId: 9, at: Date.now(), signature: '' });
-        render(TranscriptionPanel);
-        expect(await screen.findByText('Update match #9')).toBeTruthy();
+        expect(await screen.findByText('edits match #12')).toBeTruthy();
+        expect(screen.getByText('Finish')).toBeTruthy();
     });
 });
