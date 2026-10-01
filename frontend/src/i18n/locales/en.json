@@ -2317,7 +2317,13 @@
             "openMatch": "Open the attached match",
             "detach": "Detach the match",
             "transcribe": "Transcribe the match",
-            "swapTable": "Swap with table…"
+            "attach": "Attach {name}",
+            "pairManually": "Pair by hand with…",
+            "playsElsewhere": "Also plays in {event}, go there",
+            "launchHere": "Start the selected pairing here",
+            "launchAtTable": "Start at a table…",
+            "changeLength": "Change the length…",
+            "printSheet": "Print the round sheet"
         }
     },
     "palette": {

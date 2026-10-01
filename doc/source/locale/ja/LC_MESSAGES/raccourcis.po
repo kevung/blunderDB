@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:39+0200\n"
+"POT-Creation-Date: 2026-10-01 02:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -812,8 +812,8 @@ msgstr "LEFT, RIGHT, UP, DOWN, HOME, END"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer d'une case de la grille des tables à l'autre (cases libres "
-"comprises)."
-msgstr "テーブルのグリッドのセル間を移動します（空きのセルも含みます）。"
+"comprises) ; la grille ne prend qu'un arrêt de TAB."
+msgstr "テーブルグリッドのセル間を移動します(空きのセルを含む)。グリッドが占める TAB の停止位置は1つだけです。"
 
 #: ../../source/raccourcis.rst:1
 msgid "1 à 9, puis 0 à 9"
@@ -831,9 +831,9 @@ msgstr "M, X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Sur une case occupée, ouvrir la fiche sur le champ de table ; viser une "
-"table occupée échange les deux matchs."
-msgstr "使用中のセルで、テーブル欄にカードを開きます。使用中のテーブルを指定すると、2つのマッチが入れ替わります。"
+"Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ "
+"de table) ; viser une table occupée échange les deux matchs."
+msgstr "使用中のセルで、カードを開きます(開いている場合はテーブル欄)。使用中のテーブルを指定すると2つの対局が入れ替わります。"
 
 #: ../../source/raccourcis.rst:292
 msgid "Panneau des collections"

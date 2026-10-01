@@ -19,8 +19,11 @@
  *     running?: boolean, done?: boolean, table?: number, noTable?: boolean
  * }} MatchLike
  *
- * Les gestes qu'une vue sait faire ; une clé absente retire l'entrée du menu.
+ * Les gestes qu'une vue sait faire ; une clé absente retire l'entrée du menu. `busy` (une
+ * action est en cours) grise les entrées qui agissent sans autre étape : un menu n'est pas un
+ * chemin plus court que les boutons, que `busy` désactive déjà.
  * @typedef {{
+ *     busy?: boolean,
  *     confirm?: (message: string) => boolean,
  *     openResult?: () => void,
  *     openMove?: () => void,
@@ -30,7 +33,9 @@
  *     onHistory?: (name: string) => void,
  *     onOpenMatch?: (matchId: string) => void,
  *     onDetach?: () => void,
- *     onTranscribe?: () => void
+ *     onTranscribe?: () => void,
+ *     attachables?: { matchId: string, label: string }[],
+ *     onAttach?: (matchId: string) => void
  * }} MatchActions
  */
 
@@ -59,25 +64,27 @@ export function matchMenu(t, m, h) {
         if (forfeit) {
             items.push({
                 label: t('direction.menu.forfeitOf', { name: aName }),
+                disabled: !!h.busy,
                 onClick: () => {
                     if (ask(h, t('direction.result.forfeitConfirm', { loser: aName, winner: bName }))) forfeit(id, m.b || '', '');
                 }
             });
             items.push({
                 label: t('direction.menu.forfeitOf', { name: bName }),
+                disabled: !!h.busy,
                 onClick: () => {
                     if (ask(h, t('direction.result.forfeitConfirm', { loser: bName, winner: aName }))) forfeit(id, m.a || '', '');
                 }
             });
         }
         if (h.openMove) {
-            items.push({ label: t('direction.menu.moveTable'), shortcut: 'M', onClick: h.openMove });
-            items.push({ label: t('direction.menu.swapTable'), shortcut: 'X', onClick: h.openMove });
+            items.push({ label: t('direction.menu.moveTable'), shortcut: 'M / X', onClick: h.openMove });
         }
         const cancel = h.onCancel;
         if (cancel) {
             items.push({
                 label: t('direction.menu.cancelMatch'),
+                disabled: !!h.busy,
                 onClick: () => {
                     if (ask(h, t('direction.result.cancelConfirm', { a: aName, b: bName }))) cancel(id);
                 }
@@ -89,35 +96,49 @@ export function matchMenu(t, m, h) {
     if (h.onHistory && aName) items.push({ label: t('direction.menu.historyOf', { name: aName }), onClick: () => h.onHistory?.(aName) });
     if (h.onHistory && bName) items.push({ label: t('direction.menu.historyOf', { name: bName }), onClick: () => h.onHistory?.(bName) });
     if (h.onOpenMatch && id && !m.running) items.push({ label: t('direction.menu.openMatch'), onClick: () => h.onOpenMatch?.(id) });
-    if (h.onDetach) items.push({ label: t('direction.menu.detach'), onClick: h.onDetach });
-    if (h.onTranscribe) items.push({ label: t('direction.menu.transcribe'), onClick: h.onTranscribe });
+    if (h.onDetach) items.push({ label: t('direction.menu.detach'), disabled: !!h.busy, onClick: h.onDetach });
+    if (h.onTranscribe) items.push({ label: t('direction.menu.transcribe'), disabled: !!h.busy, onClick: h.onTranscribe });
+    const attach = h.onAttach;
+    if (attach && !id) {
+        for (const u of h.attachables || []) items.push({ label: t('direction.menu.attach', { name: u.label }), disabled: !!h.busy, onClick: () => attach(u.matchId) });
+    }
     return items;
 }
 
 /**
  * Une case de la grille des tables : le match qui s'y joue, ou la table elle-même quand elle
- * est libre (hors service / remise en service).
+ * est libre (lancer ici, hors service / remise en service). Une table réservée à une autre
+ * épreuve ou en cours de service ailleurs n'est pas libre : rien ne s'y propose.
  *
  * @param {Translate} t
- * @param {MatchLike & { free?: boolean, unavailable?: boolean, elsewhere?: string }} c
- * @param {MatchActions & { onOutOfService?: (table: number, out: boolean) => void }} h
+ * @param {MatchLike & { free?: boolean, unavailable?: boolean, reserved?: boolean, elsewhere?: string }} c
+ * @param {MatchActions & { onOutOfService?: (table: number, out: boolean) => void, onLaunchHere?: (table: number) => void }} h
  * @returns {MenuItem[]}
  */
 export function cellMenu(t, c, h) {
     if (c.matchId) return matchMenu(t, { ...c, running: true }, h);
-    if (c.elsewhere || !h.onOutOfService || !c.table) return [];
+    if (c.elsewhere || !c.table) return [];
     const table = c.table;
     const toggle = h.onOutOfService;
-    if (c.unavailable) return [{ label: t('direction.menu.backInService'), onClick: () => toggle(table, false) }];
-    return [{ label: t('direction.menu.outOfService'), onClick: () => toggle(table, true) }];
+    if (c.unavailable) return toggle ? [{ label: t('direction.menu.backInService'), disabled: !!h.busy, onClick: () => toggle(table, false) }] : [];
+    if (c.reserved) return [];
+    /** @type {MenuItem[]} */
+    const items = [];
+    const launch = h.onLaunchHere;
+    if (launch) items.push({ label: t('direction.menu.launchHere'), disabled: !!h.busy, onClick: () => launch(table) });
+    if (toggle) items.push({ label: t('direction.menu.outOfService'), disabled: !!h.busy, onClick: () => toggle(table, true) });
+    return items;
 }
 
 /**
  * Un joueur. `state` est celui de la ligne des Joueurs : free, playing, absent, withdrawn.
  *
  * @param {Translate} t
- * @param {{ id: string, name: string, state?: string, table?: number }} p
+ * @param {{ id: string, name: string, state?: string, table?: number, elsewhere?: { event: string, table?: number } }} p
  * @param {{
+ *     busy?: boolean,
+ *     onManual?: (id: string) => void,
+ *     onGoElsewhere?: (event: string) => void,
  *     confirm?: (message: string) => boolean,
  *     onGoTable?: (table: number, open: boolean) => void,
  *     onHistory?: (name: string) => void,
@@ -139,12 +160,18 @@ export function playerMenu(t, p, h) {
         items.push({ label: t('direction.menu.goToTable', { n: table }), onClick: () => h.onGoTable?.(table, false) });
     }
     if (h.onHistory) items.push({ label: t('direction.menu.historyOf', { name: p.name }), onClick: () => h.onHistory?.(p.name) });
+    if (p.state === 'free' && h.onManual) items.push({ label: t('direction.menu.pairManually'), disabled: !!h.busy, onClick: () => h.onManual?.(p.id) });
+    if (p.elsewhere?.event && h.onGoElsewhere) {
+        const event = p.elsewhere.event;
+        items.push({ label: t('direction.menu.playsElsewhere', { event }), onClick: () => h.onGoElsewhere?.(event) });
+    }
     if (p.state === 'free' && h.onAbsent) items.push({ label: t('direction.menu.absent'), onClick: () => h.onAbsent?.(p.id) });
-    if (p.state === 'absent' && h.onReturn) items.push({ label: t('direction.menu.present'), onClick: () => h.onReturn?.(p.id) });
+    if (p.state === 'absent' && h.onReturn) items.push({ label: t('direction.menu.present'), disabled: !!h.busy, onClick: () => h.onReturn?.(p.id) });
     const withdraw = h.onWithdraw;
     if (withdraw && p.state !== 'withdrawn') {
         items.push({
             label: t('direction.menu.withdrawNow'),
+            disabled: !!h.busy,
             onClick: () => {
                 if (ask(h, t('direction.players.withdrawNowConfirm', { name: p.name }))) withdraw(p.id, false);
             }
@@ -152,13 +179,14 @@ export function playerMenu(t, p, h) {
         if (p.state === 'playing') {
             items.push({
                 label: t('direction.menu.withdrawLater'),
+                disabled: !!h.busy,
                 onClick: () => {
                     if (ask(h, t('direction.players.withdrawLaterConfirm', { name: p.name }))) withdraw(p.id, true);
                 }
             });
         }
     }
-    if (p.state === 'withdrawn' && h.onReinstate) items.push({ label: t('direction.menu.reinstate'), onClick: () => h.onReinstate?.(p.id) });
+    if (p.state === 'withdrawn' && h.onReinstate) items.push({ label: t('direction.menu.reinstate'), disabled: !!h.busy, onClick: () => h.onReinstate?.(p.id) });
     if (h.onEdit) items.push({ label: t('direction.menu.correctPlayer'), onClick: () => h.onEdit?.(p.id) });
     return items;
 }
@@ -168,15 +196,19 @@ export function playerMenu(t, p, h) {
  *
  * @param {Translate} t
  * @param {{ kind: string, a?: string, b?: string }} a
- * @param {{ busy?: boolean, onLaunch?: () => void, onIgnore?: () => void, onArrange?: () => void }} h
+ * @param {{ busy?: boolean, onLaunch?: () => void, onIgnore?: () => void, onArrange?: () => void, onLaunchAtTable?: () => void, onChangeLength?: () => void, onPrintSheet?: () => void }} h
  * @returns {MenuItem[]}
  */
 export function proposalMenu(t, a, h) {
     /** @type {MenuItem[]} */
     const items = [];
     if (h.onLaunch) items.push({ label: t('direction.menu.launch'), shortcut: '↵', disabled: !!h.busy, onClick: h.onLaunch });
-    if (h.onArrange && a.kind === 'start_match' && a.a && a.b) items.push({ label: t('direction.menu.arrangeOther'), onClick: h.onArrange });
+    const startsMatch = a.kind === 'start_match' && !!a.a && !!a.b;
+    if (h.onLaunchAtTable && startsMatch) items.push({ label: t('direction.menu.launchAtTable'), onClick: h.onLaunchAtTable });
+    if (h.onChangeLength && startsMatch) items.push({ label: t('direction.menu.changeLength'), onClick: h.onChangeLength });
+    if (h.onArrange && startsMatch) items.push({ label: t('direction.menu.arrangeOther'), onClick: h.onArrange });
     if (h.onIgnore) items.push({ label: t('direction.menu.ignore'), onClick: h.onIgnore });
+    if (h.onPrintSheet) items.push({ label: t('direction.menu.printSheet'), disabled: !!h.busy, onClick: h.onPrintSheet });
     return items;
 }
 
@@ -186,6 +218,7 @@ export function proposalMenu(t, a, h) {
  * @param {Translate} t
  * @param {{ correctable?: boolean, cancellable?: boolean, matchId?: string, aName?: string, bName?: string, a?: string, b?: string }} e
  * @param {{
+ *     busy?: boolean,
  *     confirm?: (message: string) => boolean,
  *     onCorrect?: () => void,
  *     onCancel?: (matchId: string) => unknown,
@@ -204,6 +237,7 @@ export function historyMenu(t, e, h) {
     if (e.cancellable && !e.correctable && cancel) {
         items.push({
             label: t('direction.menu.cancelMatch'),
+            disabled: !!h.busy,
             onClick: () => {
                 if (ask(h, t('direction.result.cancelConfirm', { a: aName, b: bName }))) cancel(e.matchId || '');
             }

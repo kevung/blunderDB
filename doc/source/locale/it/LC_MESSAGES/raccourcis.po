@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:39+0200\n"
+"POT-Creation-Date: 2026-10-01 02:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -834,10 +834,10 @@ msgstr "SINISTRA, DESTRA, SU, GIÙ, HOME, FINE"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer d'une case de la grille des tables à l'autre (cases libres "
-"comprises)."
+"comprises) ; la grille ne prend qu'un arrêt de TAB."
 msgstr ""
-"Passare da una casella della griglia dei tavoli all'altra (comprese "
-"quelle libere)."
+"Passare da una casella all'altra della griglia dei tavoli (comprese le "
+"caselle libere); la griglia occupa una sola sosta di TAB."
 
 #: ../../source/raccourcis.rst:1
 msgid "1 à 9, puis 0 à 9"
@@ -857,11 +857,11 @@ msgstr "M, X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Sur une case occupée, ouvrir la fiche sur le champ de table ; viser une "
-"table occupée échange les deux matchs."
+"Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ "
+"de table) ; viser une table occupée échange les deux matchs."
 msgstr ""
-"Su una casella occupata, aprire la scheda sul campo del tavolo; puntare a"
-" un tavolo occupato scambia le due partite."
+"Su una casella occupata, aprire la scheda (o, se è aperta, il campo del "
+"tavolo); puntare a un tavolo occupato scambia i due incontri."
 
 #: ../../source/raccourcis.rst:292
 msgid "Panneau des collections"

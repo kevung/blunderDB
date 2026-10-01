@@ -65,6 +65,13 @@
         }
     }
 
+    /* Un seul menu à la fois : un clic droit hors de celui-ci le ferme, en capture, avant que
+       l'objet visé n'ouvre le sien. */
+    /** @param {MouseEvent} event */
+    function handleWindowContextMenu(event) {
+        if (menuEl && !menuEl.contains(/** @type {Node} */ (event.target))) onClose?.();
+    }
+
     function handleWindowClick(event) {
         if (menuEl && !menuEl.contains(event.target)) {
             onClose?.();
@@ -77,7 +84,7 @@
     }
 </script>
 
-<svelte:window onkeydown={handleKeyDown} onclick={handleWindowClick} />
+<svelte:window onkeydown={handleKeyDown} onclick={handleWindowClick} oncontextmenucapture={handleWindowContextMenu} />
 
 <div bind:this={menuEl} class="context-menu" style="left:{x}px; top:{y}px" role="menu" aria-label={$t('common.contextMenu')}>
     {#each items as item (item.label)}

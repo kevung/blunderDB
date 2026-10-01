@@ -2317,7 +2317,13 @@
             "openMatch": "Verknüpftes Match öffnen",
             "detach": "Match lösen",
             "transcribe": "Match transkribieren",
-            "swapTable": "Mit Tisch tauschen…"
+            "attach": "{name} zuordnen",
+            "pairManually": "Von Hand ansetzen mit…",
+            "playsElsewhere": "Spielt auch bei {event}, dorthin wechseln",
+            "launchHere": "Ausgewählte Ansetzung hier starten",
+            "launchAtTable": "An einem Tisch starten…",
+            "changeLength": "Länge ändern…",
+            "printSheet": "Rundenblatt drucken"
         }
     },
     "palette": {

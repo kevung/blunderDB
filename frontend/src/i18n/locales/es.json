@@ -2317,7 +2317,13 @@
             "openMatch": "Abrir el partido vinculado",
             "detach": "Desvincular el partido",
             "transcribe": "Transcribir el partido",
-            "swapTable": "Intercambiar con la mesa…"
+            "attach": "Asociar {name}",
+            "pairManually": "Emparejar a mano con…",
+            "playsElsewhere": "También juega en {event}, ir allí",
+            "launchHere": "Iniciar aquí el emparejamiento seleccionado",
+            "launchAtTable": "Iniciar en una mesa…",
+            "changeLength": "Cambiar la longitud…",
+            "printSheet": "Imprimir la hoja de la ronda"
         }
     },
     "palette": {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:39+0200\n"
+"POT-Creation-Date: 2026-10-01 02:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -836,8 +836,10 @@ msgstr "LEFT, RIGHT, UP, DOWN, HOME, END"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer d'une case de la grille des tables à l'autre (cases libres "
-"comprises)."
-msgstr "Перейти от одной ячейки сетки столов к другой (включая свободные)."
+"comprises) ; la grille ne prend qu'un arrêt de TAB."
+msgstr ""
+"Переход от одной ячейки сетки столов к другой (включая свободные ячейки);"
+" сетка занимает лишь одну остановку TAB."
 
 #: ../../source/raccourcis.rst:1
 msgid "1 à 9, puis 0 à 9"
@@ -857,11 +859,11 @@ msgstr "M, X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Sur une case occupée, ouvrir la fiche sur le champ de table ; viser une "
-"table occupée échange les deux matchs."
+"Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ "
+"de table) ; viser une table occupée échange les deux matchs."
 msgstr ""
-"На занятой ячейке открыть карточку на поле стола; если указать занятый "
-"стол, два матча меняются местами."
+"На занятой ячейке открыть карточку (или, если она открыта, поле стола); "
+"выбор занятого стола меняет два матча местами."
 
 #: ../../source/raccourcis.rst:292
 msgid "Panneau des collections"

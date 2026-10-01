@@ -41,6 +41,7 @@
     function onRowMenu(ev, e) {
         const req = menuRequest(ev, () =>
             historyMenu((k, p) => $t(k, p), e, {
+                busy,
                 onCorrect: () => (correcting = e.seq),
                 onCancel,
                 onNote: () => noteInput?.focus(),

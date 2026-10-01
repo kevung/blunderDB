@@ -140,12 +140,35 @@
     let reveal = $state(/** @type {{ table: number, open?: boolean, seq: number } | null} */ (null));
     let historyFilter = $state(/** @type {{ text: string, seq: number } | null} */ (null));
     let requestSeq = 0;
+    /** Une demande à la file des propositions : appariement à la main, ou lancer ici. */
+    let queueRequest = $state(/** @type {{ kind: 'manual' | 'launchHere', a?: string, table?: number, focus?: 'a' | 'b', seq: number } | null} */ (null));
     let waitingMenu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
 
     /** @param {number} table @param {boolean} open */
     function goToTable(table, open) {
         tab = 'direction';
         reveal = { table, open, seq: ++requestSeq };
+    }
+
+    /** @param {string} id */
+    function pairManually(id) {
+        tab = 'direction';
+        queueRequest = { kind: 'manual', a: id, focus: 'b', seq: ++requestSeq };
+    }
+
+    /** Une table libre prend la proposition sélectionnée : offert tant que la file en a une à lancer. @type {((table: number) => void) | undefined} */
+    const onLaunchHere = $derived(
+        (view?.proposals || []).some((a) => a.kind === 'start_match')
+            ? (/** @type {number} */ table) => {
+                  queueRequest = { kind: 'launchHere', table, seq: ++requestSeq };
+              }
+            : undefined
+    );
+
+    /** « Joue aussi à <épreuve> » : l'onglet de cette épreuve de la Rencontre. @param {string} event */
+    function goEpreuve(event) {
+        const ep = $epreuveTabsStore.find((x) => x.name === event);
+        if (ep) switchEpreuve(ep.tournamentId);
     }
 
     /** @param {string} name */
@@ -161,7 +184,13 @@
 
     /** @param {MouseEvent | KeyboardEvent} ev @param {{ id: string, name: string }} p */
     function onWaitingMenu(ev, p) {
-        const req = menuRequest(ev, () => playerMenu((k, m) => $t(k, m), { id: p.id, name: p.name, state: 'free' }, { onHistory: showHistory, onWithdraw }));
+        const req = menuRequest(ev, () =>
+            playerMenu(
+                (k, m) => $t(k, m),
+                { id: p.id, name: p.name, state: 'free', elsewhere: view?.elsewhere?.[p.id] },
+                { busy, onHistory: showHistory, onWithdraw, onManual: pairManually, onGoElsewhere: goEpreuve }
+            )
+        );
         if (req) waitingMenu = req;
     }
 
@@ -562,7 +591,7 @@
                 {/if}
                 <!-- La grille avant la file, qui grandit avec les inscrits : les tables
                      restent à l'écran. -->
-                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {reveal}>
+                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {onLaunchHere} {reveal}>
                     {#snippet actions()}
                         {#if rounds > 0 || upcoming > 0}
                             <div class="sheet">
@@ -605,7 +634,17 @@
                     {/snippet}
                 </TableGrid>
                 <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
-                <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
+                <ProposalList
+                    proposals={view?.proposals || []}
+                    players={free}
+                    elsewhere={view?.elsewhere || {}}
+                    {busy}
+                    onConfirm={confirm}
+                    onConfirmAll={confirmAll}
+                    onManual={manual}
+                    request={queueRequest}
+                    onPrintSheet={rounds > 0 ? onPrintSheet : undefined}
+                />
                 <section class="waiting">
                     <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
                     <p data-testid="direction-waiting">
@@ -654,6 +693,9 @@
                 {onReturn}
                 onGoTable={goToTable}
                 onHistory={showHistory}
+                onManual={pairManually}
+                onGoEpreuve={goEpreuve}
+                elsewhere={view?.elsewhere || {}}
                 {roundsMode}
                 slots={openSlots}
                 infos={view?.infos || []}

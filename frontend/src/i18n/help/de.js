@@ -355,14 +355,15 @@ export default {
 <h4>Die Kontextmenüs</h4>
 <p>Ein Rechtsklick, die Taste <em>MENU</em> oder <em>UMSCHALT-F10</em> auf einem Objekt der Direction-Seite öffnet dessen übliche Aktionen, ohne den Umweg über die Karte: ein Feld des Rasters (frei oder besetzt), ein Spieler (Reiter <strong>Spieler</strong>, freie Spieler), ein Platz im Tableau, ein Platz, ein Vorschlag der Liste, eine Zeile des Verlaufs. Das Menü öffnet sich am Objekt; <em>OBEN</em> und <em>UNTEN</em> bewegen sich darin, <em>EINGABE</em> wählt, <em>ESC</em> schließt es und gibt den Fokus an das Objekt zurück.</p>
 <ul>
-<li>Besetztes Feld: Ergebnis eintragen, Aufgabe (Forfait) des einen oder des anderen, Tisch wechseln, mit dem Tisch tauschen, Match annullieren, Verlauf jedes Spielers.</li>
-<li>Freies Feld: den Tisch außer Betrieb nehmen oder wieder in Betrieb nehmen (Tische einer Rencontre).</li>
-<li>Spieler: das Ergebnis seines laufenden Matches eintragen, zu seinem Tisch gehen, Verlauf, als abwesend oder anwesend markieren, jetzt oder nach seinem Match zurückziehen, neu anmelden, die Karte korrigieren.</li>
-<li>Vorschlag: starten, anders paaren (die Paarung von Hand öffnet sich mit den beiden Spielern), vorerst übergehen.</li>
+<li>Belegtes Feld: Ergebnis eintragen, Aufgabe des einen oder anderen Spielers, Tisch wechseln (ein belegter Zieltisch tauscht die beiden Matches), Match abbrechen, Verlauf jedes Spielers.</li>
+<li>Freies Feld: die ausgewählte Ansetzung hier starten, den Tisch außer Betrieb nehmen oder wieder in Betrieb nehmen (Tische einer Rencontre). Ein für ein anderes Turnier reservierter Tisch bietet nichts an.</li>
+<li>Spieler: das Ergebnis seines laufenden Matches eintragen, zu seinem Tisch wechseln, Verlauf, von Hand mit einem anderen freien Spieler ansetzen, in das andere Turnier wechseln, in dem er ebenfalls spielt, als abwesend oder anwesend markieren, jetzt oder nach seinem Match zurückziehen, wieder anmelden, die Angaben korrigieren.</li>
+<li>Platz ohne Match: ein importiertes Match zuordnen, auf das dieser Platz wartet.</li>
+<li>Ansetzung: starten, an einem Tisch starten…, die Länge ändern…, anders paaren (diese drei Einträge öffnen die manuelle Ansetzung mit den beiden Spielern, der Länge und dem Tisch der Ansetzung), vorerst ignorieren, das Rundenblatt drucken.</li>
 <li>Verlaufszeile: korrigieren oder annullieren, eine Anmerkung hinzufügen, auf einen der Spieler filtern.</li>
 </ul>
-<p>Die Aufgabe, die Annullierung eines Matches und der Rückzug eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben.</p>
-<p>Per Tastatur kann jedes Feld des Rasters den Fokus erhalten, auch freie. <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte im Tischfeld, und <em>X</em> ebenso: Zielt man auf einen besetzten Tisch, tauschen die beiden Matches.</p>
+<p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
+<p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
 <h4>Die Spieler</h4>
 <p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
 <p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV kopiert oder in einer Datei gespeichert (<strong>Speichern…</strong>) und eingefügt wieder eingelesen.</p>
@@ -1418,7 +1419,7 @@ export default {
 </tr>
 <tr>
 <td>LINKS, RECHTS, OBEN, UNTEN, POS1, ENDE</td>
-<td>Von einem Feld des Tischrasters zum anderen wechseln (freie Felder eingeschlossen).</td>
+<td>Von einem Feld des Tischrasters zum anderen wechseln (freie Felder eingeschlossen); das Raster nimmt nur einen TAB-Halt ein.</td>
 </tr>
 <tr>
 <td>1 bis 9, dann 0 bis 9</td>
@@ -1426,7 +1427,7 @@ export default {
 </tr>
 <tr>
 <td>M, X</td>
-<td>Auf einem besetzten Feld die Karte im Tischfeld öffnen; zielt man auf einen besetzten Tisch, tauschen die beiden Matches.</td>
+<td>Auf einem belegten Feld die Karte öffnen (oder, wenn sie offen ist, das Tischfeld); ein belegter Zieltisch tauscht die beiden Matches.</td>
 </tr>
 </tbody>
 </table>

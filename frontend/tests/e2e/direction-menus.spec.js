@@ -44,3 +44,25 @@ test('Maj+F10 sur une proposition focalisée ouvre le menu, ENTRÉE lance', asyn
     await page.keyboard.press('Enter');
     await expect(page.locator(proposal)).toHaveCount(before - 1);
 });
+
+test('un seul menu contextuel à la fois : en ouvrir un second ferme le premier', async ({ page }) => {
+    await openDirection(page);
+    await page.locator(proposal).first().click({ button: 'right' });
+    await expect(page.locator('.context-menu')).toHaveCount(1);
+    await page.locator('.grid .cell').first().click({ button: 'right' });
+    await expect(page.locator('.context-menu')).toHaveCount(1);
+    await expect(page.locator('.context-menu .context-menu-item', { hasText: /Start the selected pairing here|Take the table out of service/ }).first()).toBeVisible();
+    await page.locator(proposal).first().click({ button: 'right' });
+    await expect(page.locator('.context-menu')).toHaveCount(1);
+});
+
+test('la grille est un seul arrêt de Tab ; les flèches vont de case en case', async ({ page }) => {
+    await openDirection(page);
+    const cells = page.locator('.grid [role="gridcell"].cell');
+    expect(await cells.count()).toBeGreaterThan(1);
+    expect(await page.locator('.grid .cell[tabindex="0"]').count()).toBe(1);
+    await cells.first().focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(cells.nth(1)).toBeFocused();
+    expect(await page.locator('.grid .cell[tabindex="0"]').count()).toBe(1);
+});

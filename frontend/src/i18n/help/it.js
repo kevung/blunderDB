@@ -355,14 +355,15 @@ export default {
 <h4>I menu contestuali</h4>
 <p>Un clic destro, il tasto <em>MENU</em> o <em>MAIUSC-F10</em> su un oggetto della pagina Direzione apre le sue azioni abituali senza passare dalla scheda: una casella della griglia (libera od occupata), un giocatore (scheda <strong>Giocatori</strong>, giocatori liberi), un posto del tabellone, un posto, una proposta della coda, una riga della cronologia. Il menu si apre sull'oggetto; <em>SU</em> e <em>GIÙ</em> lo scorrono, <em>INVIO</em> sceglie, <em>ESC</em> lo chiude e restituisce il focus all'oggetto.</p>
 <ul>
-<li>Casella occupata: inserire il risultato, forfait dell'uno o dell'altro, cambiare tavolo, scambiare con il tavolo, annullare la partita, cronologia di ciascun giocatore.</li>
-<li>Casella libera: mettere il tavolo fuori servizio, o rimetterlo in servizio (tavoli di una Rencontre).</li>
-<li>Giocatore: inserire il risultato della sua partita in corso, andare al suo tavolo, cronologia, segnare assente o presente, ritirare ora o dopo la sua partita, reiscrivere, correggere la scheda.</li>
-<li>Proposta: lanciare, abbinare altrimenti (l'abbinamento a mano si apre con i due giocatori), ignorare per ora.</li>
+<li>Casella occupata: inserire il risultato, ritiro dell'uno o dell'altro, cambiare tavolo (puntare a un tavolo occupato scambia i due incontri), annullare l'incontro, cronologia di ciascun giocatore.</li>
+<li>Casella libera: avviare qui l'abbinamento selezionato, mettere il tavolo fuori servizio o rimetterlo in servizio (tavoli di una Rencontre). Un tavolo riservato a un'altra prova non propone nulla.</li>
+<li>Giocatore: inserire il risultato del suo incontro in corso, andare al suo tavolo, cronologia, abbinare a mano con un altro giocatore libero, andare all'altra prova in cui gioca anch'egli, segnare assente o presente, ritirare ora o dopo il suo incontro, reiscrivere, correggere la scheda.</li>
+<li>Posto senza incontro: collegare un incontro importato che questo posto sta aspettando.</li>
+<li>Abbinamento: avviare, avviare a un tavolo…, cambiare la lunghezza…, abbinare diversamente (queste tre voci aprono l'abbinamento a mano con i due giocatori, la lunghezza e il tavolo dell'abbinamento), ignorare per ora, stampare il foglio del turno.</li>
 <li>Riga della cronologia: correggere o annullare, aggiungere una nota, filtrare su uno dei giocatori.</li>
 </ul>
-<p>Il forfait, l'annullamento di una partita e il ritiro di un giocatore mantengono la conferma che hanno nella scheda e nei pulsanti delle righe.</p>
-<p>Da tastiera, ogni casella della griglia può ricevere il focus, comprese quelle libere. <em>SINISTRA</em>, <em>DESTRA</em>, <em>SU</em>, <em>GIÙ</em>, <em>HOME</em> e <em>FINE</em> passano da una casella all'altra. Una cifra apre la scheda del tavolo con quel numero; per un tavolo oltre il 9, la seconda cifra si digita entro 0,4 s. <em>M</em> apre la scheda sul campo del tavolo, e anche <em>X</em>: puntare a un tavolo occupato scambia le due partite.</p>
+<p>Il ritiro, l'annullamento di un incontro e il ritiro di un giocatore mantengono la conferma che hanno nella scheda e nei pulsanti delle righe. Mentre un'azione è in corso, le voci che agiscono sono disattivate, come i pulsanti. Un solo menu è aperto alla volta: aprirne un secondo chiude il primo.</p>
+<p>Con la tastiera, la griglia occupa una sola sosta di <em>TAB</em>: ogni casella riceve il focus, anche quelle libere, e <em>SINISTRA</em>, <em>DESTRA</em>, <em>SU</em>, <em>GIÙ</em>, <em>HOME</em> e <em>FINE</em> passano da una casella all'altra. Una cifra apre la scheda del tavolo con quel numero; per un tavolo oltre il 9, la seconda cifra si digita entro 0,4 s. <em>M</em> apre la scheda sul campo del tavolo, e anche <em>X</em>, che la scheda sia già aperta o no: puntare a un tavolo occupato scambia i due incontri.</p>
 <h4>I giocatori</h4>
 <p>La scheda <strong>Giocatori</strong> iscrive, corregge e ritira. Il campo d'iscrizione mantiene il focus e si svuota dopo ogni nome: venti giocatori si iscrivono con la sola tastiera. Il completamento automatico propone i giocatori della base; sceglierne uno fissa l'ortografia esatta che portano le sue partite e precompila il suo punteggio con il PR.</p>
 <p>La <strong>rubrica</strong> raccoglie gli iscritti di tutti i tornei diretti della base, senza duplicati per nome, con il club e il punteggio della loro ultima iscrizione. Non è mai memorizzata: eliminare una direzione ne toglie gli iscritti. Riprendere gli iscritti di un torneo precedente è un clic, quanti che siano; la rubrica si copia in CSV o si salva in un file (<strong>Salva…</strong>), e si rilegge incollata.</p>
@@ -1418,7 +1419,7 @@ export default {
 </tr>
 <tr>
 <td>SINISTRA, DESTRA, SU, GIÙ, HOME, FINE</td>
-<td>Passare da una casella della griglia dei tavoli all'altra (comprese quelle libere).</td>
+<td>Passare da una casella all'altra della griglia dei tavoli (comprese le caselle libere); la griglia occupa una sola sosta di TAB.</td>
 </tr>
 <tr>
 <td>Da 1 a 9, poi da 0 a 9</td>
@@ -1426,7 +1427,7 @@ export default {
 </tr>
 <tr>
 <td>M, X</td>
-<td>Su una casella occupata, aprire la scheda sul campo del tavolo; puntare a un tavolo occupato scambia le due partite.</td>
+<td>Su una casella occupata, aprire la scheda (o, se è aperta, il campo del tavolo); puntare a un tavolo occupato scambia i due incontri.</td>
 </tr>
 </tbody>
 </table>

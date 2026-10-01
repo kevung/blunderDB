@@ -2317,7 +2317,13 @@
             "openMatch": "関連付けた対局を開く",
             "detach": "対局の関連付けを外す",
             "transcribe": "対局を書き起こす",
-            "swapTable": "テーブルと入れ替える…"
+            "attach": "{name} を割り当てる",
+            "pairManually": "手動で対戦を組む…",
+            "playsElsewhere": "{event} にも出場中、そちらへ移動",
+            "launchHere": "選択中の組み合わせをここで開始",
+            "launchAtTable": "テーブルを指定して開始…",
+            "changeLength": "ポイント数を変更…",
+            "printSheet": "ラウンド表を印刷"
         }
     },
     "palette": {

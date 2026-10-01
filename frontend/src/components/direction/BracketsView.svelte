@@ -29,13 +29,14 @@
     let { phases = [], cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onCorrect = () => {}, onHistory = undefined } = $props();
 
     let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
-    /** La fiche ouverte par le menu sur « changer de table » s'ouvre sur son champ. */
-    let openInMove = $state(false);
+    /** « Changer de table » (menu) met le champ de table devant le curseur, fiche ouverte ou non. */
+    let moveFor = $state({ key: '', seq: 0 });
+    let moveSeq = 0;
 
     /** Ouvre la fiche sur la place, sans la refermer si elle l'est déjà. @param {string} sec @param {BracketMatch} m @param {boolean} move */
     function show(sec, m, move) {
         if (!canOpen(m)) return;
-        openInMove = move;
+        moveFor = move ? { key: placeKey(sec, m), seq: ++moveSeq } : { key: '', seq: 0 };
         openKey = placeKey(sec, m);
     }
 
@@ -43,6 +44,7 @@
     function onPlaceMenu(ev, sec, m) {
         const req = menuRequest(ev, () =>
             matchMenu((k, p) => $t(k, p), m, {
+                busy,
                 openResult: () => show(sec, m, false),
                 openMove: () => show(sec, m, true),
                 onForfeit,
@@ -103,7 +105,7 @@
     /** @param {string} sec @param {BracketMatch} m */
     function open(sec, m) {
         if (!canOpen(m)) return;
-        openInMove = false;
+        moveFor = { key: '', seq: 0 };
         openKey = openKey === placeKey(sec, m) ? '' : placeKey(sec, m);
     }
 
@@ -162,7 +164,7 @@
 {#snippet card(/** @type {BracketMatch} */ m)}
     <div class="card-layer" data-testid="bracket-card">
         {#if m.running}
-            <ResultCard cell={runningCell(m)} {busy} startInMove={openInMove} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+            <ResultCard cell={runningCell(m)} {busy} moveRequest={moveFor.key === openKey ? moveFor.seq : 0} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
         {:else if m.done && m.a && m.b}
             <div class="correction">
                 <div class="correction-head">

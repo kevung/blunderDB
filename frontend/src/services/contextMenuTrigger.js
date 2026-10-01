@@ -43,7 +43,8 @@ export function menuPoint(e, el) {
  * @returns {MenuRequest | null}
  */
 export function menuRequest(e, items) {
-    if (e.type === 'keydown' && !isMenuKey(/** @type {KeyboardEvent} */ (e))) return null;
+    // Un appui venu d'un enfant (un bouton de la ligne) est le sien : la ligne ne le prend pas.
+    if (e.type === 'keydown' && (!isMenuKey(/** @type {KeyboardEvent} */ (e)) || e.target !== e.currentTarget)) return null;
     const list = items();
     if (list.length === 0) return null;
     e.preventDefault();

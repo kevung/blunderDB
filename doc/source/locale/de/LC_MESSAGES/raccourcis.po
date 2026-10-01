@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:39+0200\n"
+"POT-Creation-Date: 2026-10-01 02:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -842,10 +842,10 @@ msgstr "LINKS, RECHTS, OBEN, UNTEN, POS1, ENDE"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Passer d'une case de la grille des tables à l'autre (cases libres "
-"comprises)."
+"comprises) ; la grille ne prend qu'un arrêt de TAB."
 msgstr ""
 "Von einem Feld des Tischrasters zum anderen wechseln (freie Felder "
-"eingeschlossen)."
+"eingeschlossen); das Raster nimmt nur einen TAB-Halt ein."
 
 #: ../../source/raccourcis.rst:1
 msgid "1 à 9, puis 0 à 9"
@@ -865,11 +865,11 @@ msgstr "M, X"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Sur une case occupée, ouvrir la fiche sur le champ de table ; viser une "
-"table occupée échange les deux matchs."
+"Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ "
+"de table) ; viser une table occupée échange les deux matchs."
 msgstr ""
-"Auf einem besetzten Feld die Karte im Tischfeld öffnen; zielt man auf "
-"einen besetzten Tisch, tauschen die beiden Matches."
+"Auf einem belegten Feld die Karte öffnen (oder, wenn sie offen ist, das "
+"Tischfeld); ein belegter Zieltisch tauscht die beiden Matches."
 
 #: ../../source/raccourcis.rst:292
 msgid "Panneau des collections"

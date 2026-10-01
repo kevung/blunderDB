@@ -73,7 +73,7 @@ export function somethingOpenAbove() {
     return hasOpenOverlay() || document.querySelector('[aria-modal="true"], .context-menu') !== null;
 }
 
-/** Le focus est-il sur une case de la grille des tables ? Les flèches y vont de case en case. */
+/** Le focus est-il sur une case de la grille des tables ? Les flèches y vont de case en case ; l'en-tête (Tout lancer, Imprimer) n'en est pas. */
 export function gridHasFocus() {
-    return document.activeElement?.closest('.grid-wrap') != null;
+    return document.activeElement?.closest('.grid-wrap .grid') != null;
 }

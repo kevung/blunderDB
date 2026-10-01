@@ -355,14 +355,15 @@ export default {
 <h4>Los menús contextuales</h4>
 <p>Un clic derecho, la tecla <em>MENU</em> o <em>MAYÚS-F10</em> sobre un objeto de la página Dirección abre sus acciones habituales sin pasar por la ficha: una casilla de la cuadrícula (libre u ocupada), un jugador (pestaña <strong>Jugadores</strong>, jugadores libres), un puesto del cuadro, un hueco, una propuesta de la cola, una fila del historial. El menú se abre sobre el objeto; <em>ARRIBA</em> y <em>ABAJO</em> lo recorren, <em>INTRO</em> elige, <em>ESC</em> lo cierra y devuelve el foco al objeto.</p>
 <ul>
-<li>Casilla ocupada: introducir el resultado, incomparecencia (forfait) de uno u otro, cambiar de mesa, intercambiar con la mesa, anular el partido, historial de cada jugador.</li>
-<li>Casilla libre: poner la mesa fuera de servicio, o volver a ponerla en servicio (mesas de una Rencontre).</li>
-<li>Jugador: introducir el resultado de su partido en curso, ir a su mesa, historial, marcar ausente o presente, retirar ahora o después de su partido, reinscribir, corregir la ficha.</li>
-<li>Propuesta: lanzar, emparejar de otro modo (el emparejamiento a mano se abre con los dos jugadores), ignorar por ahora.</li>
+<li>Casilla ocupada: introducir el resultado, abandono de uno u otro, cambiar de mesa (apuntar a una mesa ocupada intercambia las dos partidas), anular la partida, historial de cada jugador.</li>
+<li>Casilla libre: iniciar aquí el emparejamiento seleccionado, poner la mesa fuera de servicio o volver a ponerla en servicio (mesas de una Rencontre). Una mesa reservada a otra prueba no ofrece nada.</li>
+<li>Jugador: introducir el resultado de su partida en curso, ir a su mesa, historial, emparejar a mano con otro jugador libre, ir a la otra prueba en la que también juega, marcar ausente o presente, retirar ahora o tras su partida, volver a inscribir, corregir la ficha.</li>
+<li>Puesto sin partida: vincular una partida importada que este puesto está esperando.</li>
+<li>Emparejamiento: iniciar, iniciar en una mesa…, cambiar la longitud…, emparejar de otro modo (estas tres entradas abren el emparejamiento a mano con los dos jugadores, la longitud y la mesa del emparejamiento), ignorar por ahora, imprimir la hoja de la ronda.</li>
 <li>Fila del historial: corregir o anular, añadir una observación, filtrar por uno de los jugadores.</li>
 </ul>
-<p>La incomparecencia, la anulación de un partido y la retirada de un jugador mantienen la confirmación que tienen en la ficha y en los botones de las filas.</p>
-<p>Con el teclado, cada casilla de la cuadrícula puede recibir el foco, incluidas las libres. <em>IZQUIERDA</em>, <em>DERECHA</em>, <em>ARRIBA</em>, <em>ABAJO</em>, <em>INICIO</em> y <em>FIN</em> pasan de una casilla a otra. Un dígito abre la ficha de la mesa con ese número; para una mesa superior a 9, el segundo dígito se teclea en 0,4 s. <em>M</em> abre la ficha sobre el campo de mesa, y <em>X</em> también: apuntar a una mesa ocupada intercambia los dos partidos.</p>
+<p>El abandono, la anulación de una partida y la retirada de un jugador conservan la confirmación que tienen en la ficha y en los botones de las filas. Mientras una acción está en curso, las entradas que actúan aparecen atenuadas, como los botones. Solo hay un menú abierto a la vez: abrir un segundo cierra el primero.</p>
+<p>Con el teclado, la cuadrícula ocupa una sola parada de <em>TAB</em>: cada casilla recibe el foco, también las libres, y <em>IZQUIERDA</em>, <em>DERECHA</em>, <em>ARRIBA</em>, <em>ABAJO</em>, <em>INICIO</em> y <em>FIN</em> pasan de una casilla a otra. Un dígito abre la ficha de la mesa con ese número; para una mesa superior a 9, el segundo dígito se teclea en 0,4 s. <em>M</em> abre la ficha en el campo de mesa, y <em>X</em> también, esté la ficha ya abierta o no: apuntar a una mesa ocupada intercambia las dos partidas.</p>
 <h4>Los jugadores</h4>
 <p>La pestaña <strong>Jugadores</strong> inscribe, corrige y retira. El campo de inscripción mantiene el foco y se vacía tras cada nombre: veinte jugadores se inscriben solo con el teclado. El autocompletado propone los jugadores de la base; elegir uno fija la ortografía exacta que llevan sus partidos y rellena su valoración con su PR.</p>
 <p>El <strong>directorio</strong> reúne a los inscritos de todos los torneos dirigidos de la base, sin duplicados por nombre, con el club y la valoración de su última inscripción. Nunca se almacena: borrar una dirección retira de él a sus inscritos. Retomar los inscritos de un torneo anterior es un clic, sean cuantos sean; el directorio se copia en CSV o se guarda en un archivo (<strong>Guardar…</strong>), y se relee pegado.</p>
@@ -1418,7 +1419,7 @@ export default {
 </tr>
 <tr>
 <td>IZQUIERDA, DERECHA, ARRIBA, ABAJO, INICIO, FIN</td>
-<td>Pasar de una casilla de la cuadrícula de mesas a otra (incluidas las libres).</td>
+<td>Pasar de una casilla de la cuadrícula de mesas a otra (casillas libres incluidas); la cuadrícula ocupa una sola parada de TAB.</td>
 </tr>
 <tr>
 <td>1 a 9, luego 0 a 9</td>
@@ -1426,7 +1427,7 @@ export default {
 </tr>
 <tr>
 <td>M, X</td>
-<td>En una casilla ocupada, abrir la ficha sobre el campo de mesa; apuntar a una mesa ocupada intercambia los dos partidos.</td>
+<td>En una casilla ocupada, abrir la ficha (o, si está abierta, el campo de mesa); apuntar a una mesa ocupada intercambia las dos partidas.</td>
 </tr>
 </tbody>
 </table>

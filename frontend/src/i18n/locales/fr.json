@@ -2317,7 +2317,13 @@
             "openMatch": "Ouvrir le match rattaché",
             "detach": "Détacher le match",
             "transcribe": "Transcrire le match",
-            "swapTable": "Échanger avec la table…"
+            "attach": "Rattacher {name}",
+            "pairManually": "Apparier à la main avec…",
+            "playsElsewhere": "Joue aussi à {event}, aller là-bas",
+            "launchHere": "Lancer ici la proposition sélectionnée",
+            "launchAtTable": "Lancer à la table…",
+            "changeLength": "Changer la longueur…",
+            "printSheet": "Imprimer la feuille de la ronde"
         }
     },
     "palette": {

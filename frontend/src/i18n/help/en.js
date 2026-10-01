@@ -355,14 +355,15 @@ export default {
 <h4>The context menus</h4>
 <p>A right click, the <em>MENU</em> key or <em>SHIFT-F10</em> on an object of the Direction page opens its usual actions without going through the card: a cell of the grid (free or busy), a player (<strong>Players</strong> tab, free players), a bracket slot, a slot, a proposal of the queue, a history row. The menu opens on the object; <em>UP</em> and <em>DOWN</em> move through it, <em>ENTER</em> picks, <em>ESC</em> closes it and returns the focus to the object.</p>
 <ul>
-<li>Busy cell: enter the result, forfeit by either player, change table, swap with the table, cancel the match, history of each player.</li>
-<li>Free cell: take the table out of service, or put it back in service (tables of a Rencontre).</li>
-<li>Player: enter the result of their current match, go to their table, history, mark absent or present, withdraw now or after their match, re-register, correct the card.</li>
-<li>Proposal: launch, pair otherwise (pairing by hand opens with the two players), ignore for now.</li>
+<li>Occupied cell: enter the result, forfeit by either player, change table (aiming at an occupied table swaps the two matches), cancel the match, history of each player.</li>
+<li>Free cell: start the selected pairing here, take the table out of service, or put it back in service (tables of a Rencontre). A table reserved for another event offers nothing.</li>
+<li>Player: enter the result of their current match, go to their table, history, pair by hand with another free player, go to the other event where they also play, mark absent or present, withdraw now or after their match, re-enter, edit the details.</li>
+<li>Slot without a match: attach an imported match that this slot is waiting for.</li>
+<li>Pairing: start, start at a table…, change the length…, pair differently (these three entries open the manual pairing with the two players, the length and the table of the pairing), ignore for now, print the round sheet.</li>
 <li>History row: correct or cancel, add a remark, filter on one of the players.</li>
 </ul>
-<p>The forfeit, the cancellation of a match and the withdrawal of a player keep the confirmation they have in the card and in the row buttons.</p>
-<p>On the keyboard, every cell of the grid can take the focus, free ones included. <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, the second digit is typed within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>: aiming at a busy table swaps the two matches.</p>
+<p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
+<p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
 <h4>The players</h4>
 <p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
 <p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
@@ -1418,7 +1419,7 @@ export default {
 </tr>
 <tr>
 <td>LEFT, RIGHT, UP, DOWN, HOME, END</td>
-<td>Move from one cell of the table grid to another (free cells included).</td>
+<td>Move from one cell of the table grid to another (free cells included); the grid takes only one TAB stop.</td>
 </tr>
 <tr>
 <td>1 to 9, then 0 to 9</td>
@@ -1426,7 +1427,7 @@ export default {
 </tr>
 <tr>
 <td>M, X</td>
-<td>On a busy cell, open the card on the table field; aiming at a busy table swaps the two matches.</td>
+<td>On an occupied cell, open the card (or, if it is open, the table field); aiming at an occupied table swaps the two matches.</td>
 </tr>
 </tbody>
 </table>

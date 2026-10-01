@@ -22,9 +22,13 @@
                 (k, p) => $t(k, p),
                 { matchId: s.matchId, aName: s.aName, bName: s.bName, done: s.done },
                 {
+                    busy,
                     onOpenMatch: s.matchId ? () => onOpenMatch(s.matchId) : undefined,
-                    onDetach: s.matchId && !busy ? () => onDetach(s.slotId) : undefined,
-                    onTranscribe: !s.matchId && !s.draftId && !busy ? () => onTranscribe(s.slotId) : undefined
+                    onDetach: s.matchId ? () => onDetach(s.slotId) : undefined,
+                    onTranscribe: !s.matchId && !s.draftId ? () => onTranscribe(s.slotId) : undefined,
+                    // Rattacher : les matchs importés que cette place attend, un par entrée.
+                    attachables: unattached.filter((u) => u.suggestSlot === s.slotId).map((u) => ({ matchId: u.matchId, label: `${u.player1} – ${u.player2}` })),
+                    onAttach: s.matchId || s.draftId ? undefined : (/** @type {string} */ m) => onAttach(s.slotId, m)
                 }
             )
         );

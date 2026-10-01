@@ -26,15 +26,19 @@
      *     onCancel?: (matchId: string) => void,
      *     onHistory?: (name: string) => void,
      *     onOutOfService?: (table: number, out: boolean) => void,
+     *     onLaunchHere?: (table: number) => void,
      *     reveal?: { table: number, open?: boolean, seq: number } | null,
      *     actions?: import('svelte').Snippet
      * }}
      */
-    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onHistory, onOutOfService, reveal = null, actions } = $props();
+    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onHistory, onOutOfService, onLaunchHere, reveal = null, actions } = $props();
 
     let openKey = $state('');
-    /** La fiche s'ouvre sur le champ de table quand elle vient de M, X ou du menu. */
-    let openInMove = $state(false);
+    /** La fiche s'ouvre (ou, déjà ouverte, passe) sur le champ de table quand M, X ou le menu le demandent. */
+    let moveFor = $state({ key: '', seq: 0 });
+    let moveSeq = 0;
+    /** La case qui prend le Tab : une seule, les flèches font le reste (grille ARIA). */
+    let rovingKey = $state('');
     let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
     /** @type {HTMLElement | null} */
     let gridEl = $state(null);
@@ -42,13 +46,15 @@
     /** @param {TableCell} c @param {boolean} move */
     function openCard(c, move = false) {
         if (!c.matchId) return;
-        openInMove = move;
+        moveFor = move ? { key: key(c), seq: ++moveSeq } : { key: '', seq: 0 };
         openKey = key(c);
     }
 
     /** @param {TableCell} c */
     function menuItems(c) {
         return cellMenu((k, p) => $t(k, p), c, {
+            busy,
+            onLaunchHere,
             openResult: () => openCard(c),
             openMove: () => openCard(c, true),
             onForfeit,
@@ -72,7 +78,7 @@
             return;
         }
         if (e.target !== e.currentTarget || !gridEl) return;
-        const cellEls = /** @type {HTMLElement[]} */ ([...gridEl.querySelectorAll('button.cell')]);
+        const cellEls = /** @type {HTMLElement[]} */ ([...gridEl.querySelectorAll('.cell')]);
         const action = gridKeyAction(e, cellEls, /** @type {HTMLElement} */ (e.currentTarget), !!c.matchId);
         if (!action) return;
         e.preventDefault();
@@ -130,14 +136,15 @@
         if (!m || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
         if (e.target instanceof Element && e.target.closest('input, select, textarea, [contenteditable]')) return;
         const tables = cells.filter((c) => !c.noTable && !c.shared).map((c) => c.table);
-        const next = digits + m[1];
-        if (!tables.some((n) => String(n).startsWith(next))) {
-            digits = '';
-            return;
-        }
+        // Un chiffre qui ne prolonge pas le numéro en cours repart de zéro : « 1 » puis « 5 »
+        // sans table 15 mène à la table 5, pas nulle part.
+        let next = digits + m[1];
+        if (digits && !tables.some((n) => String(n).startsWith(next))) next = m[1];
+        clearTimeout(digitTimer);
+        digits = '';
+        if (!tables.some((n) => String(n).startsWith(next))) return;
         e.preventDefault();
         e.stopImmediatePropagation();
-        clearTimeout(digitTimer);
         const n = parseInt(next, 10);
         const longer = tables.some((t) => t !== n && String(t).startsWith(next));
         if (longer) {
@@ -147,7 +154,6 @@
                 goTo(n, true);
             }, TABLE_DIGIT_DELAY_MS);
         } else {
-            digits = '';
             goTo(n, true);
         }
     }
@@ -210,12 +216,15 @@
         <h3>{$t('direction.table.title', { n: tableCount })}</h3>
         {#if actions}{@render actions()}{/if}
     </header>
-    <div class="grid" bind:this={gridEl}>
+    <div class="grid" role="grid" aria-label={$t('direction.table.title', { n: tableCount })} bind:this={gridEl}>
         {#each cells as c (key(c))}
-            <div class="cell-wrap">
+            <div class="cell-wrap" role="row">
                 <button
                     type="button"
+                    role="gridcell"
                     class="cell"
+                    tabindex={(rovingKey && cells.some((x) => key(x) === rovingKey) ? rovingKey === key(c) : c === cells[0]) ? 0 : -1}
+                    onfocus={() => (rovingKey = key(c))}
                     data-testid={c.noTable ? `direction-table-none-${c.matchId}` : c.shared ? `direction-table-shared-${c.matchId}` : `direction-table-${c.table}`}
                     class:busy={c.matchId}
                     class:slow={c.slow}
@@ -223,7 +232,7 @@
                     class:elsewhere={!!c.elsewhere}
                     class:no-table={c.noTable}
                     class:shared={c.shared}
-                    aria-haspopup="menu"
+                    aria-haspopup={menuItems(c).length > 0 ? 'menu' : undefined}
                     onclick={() => (openKey === key(c) ? (openKey = '') : openCard(c))}
                     oncontextmenu={(e) => onCellContext(e, c)}
                     onkeydown={(e) => onCellKey(e, c)}
@@ -255,7 +264,9 @@
                 </button>
 
                 {#if openKey === key(c) && c.matchId}
-                    <ResultCard cell={runningCell(c)} {busy} startInMove={openInMove} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+                    <div role="gridcell">
+                        <ResultCard cell={runningCell(c)} {busy} moveRequest={moveFor.key === key(c) ? moveFor.seq : 0} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+                    </div>
                 {/if}
             </div>
         {/each}

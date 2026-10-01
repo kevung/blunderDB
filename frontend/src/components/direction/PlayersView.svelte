@@ -27,6 +27,10 @@
         // Les gestes qui sortent de la vue : la table du joueur, son historique.
         onGoTable = /** @type {((table: number, open: boolean) => void) | undefined} */ (undefined),
         onHistory = /** @type {((name: string) => void) | undefined} */ (undefined),
+        onManual = /** @type {((id: string) => void) | undefined} */ (undefined),
+        onGoEpreuve = /** @type {((event: string) => void) | undefined} */ (undefined),
+        // Où le joueur joue en même temps, dans une autre épreuve de la Rencontre.
+        elsewhere = /** @type {Record<string, { event: string, table?: number }>} */ ({}),
         // "à la ronde N" n'a de sens qu'au suisse par rondes en cours ; sinon la case ne doit
         // même pas être proposée.
         roundsMode = false,
@@ -149,15 +153,22 @@
     function onRowMenu(ev, r) {
         if (editing && editing.id === r.id) return;
         const req = menuRequest(ev, () =>
-            playerMenu((k, p) => $t(k, p), r, {
-                onGoTable,
-                onHistory,
-                onAbsent: () => openAbsent(r),
-                onReturn: (id) => onReturn(id),
-                onWithdraw: (id, after) => onWithdraw(id, after),
-                onReinstate: (id) => onReinstate(id),
-                onEdit: () => startEdit(r)
-            })
+            playerMenu(
+                (k, p) => $t(k, p),
+                { ...r, elsewhere: elsewhere[r.id] },
+                {
+                    busy,
+                    onManual,
+                    onGoElsewhere: onGoEpreuve,
+                    onGoTable,
+                    onHistory,
+                    onAbsent: () => openAbsent(r),
+                    onReturn: (id) => onReturn(id),
+                    onWithdraw: (id, after) => onWithdraw(id, after),
+                    onReinstate: (id) => onReinstate(id),
+                    onEdit: () => startEdit(r)
+                }
+            )
         );
         if (req) menu = req;
     }

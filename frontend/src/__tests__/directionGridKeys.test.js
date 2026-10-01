@@ -8,6 +8,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
 import TableGrid from '../components/direction/TableGrid.svelte';
 import { gridKeyAction } from '../services/directionGridKeys.js';
+import { gridHasFocus } from '../services/directionKeys.js';
 import { openDirectionIdStore } from '../stores/directionStore.js';
 import { activeTabStore } from '../stores/uiStore.js';
 
@@ -125,5 +126,38 @@ describe('la grille au clavier', () => {
         await fireEvent.keyDown(input, { code: 'Digit2', key: '2' });
         expect(document.activeElement).toBe(input);
         expect(getByTestId('direction-table-2')).toBeTruthy();
+    });
+});
+
+describe('numéros de table et focus de la grille', () => {
+    test('« 1 » puis « 5 » désigne la table 15', async () => {
+        vi.useFakeTimers();
+        const cells = Array.from({ length: 16 }, (_, i) => cell(i + 1));
+        const { getByTestId } = render(TableGrid, { props: { cells } });
+        await fireEvent.keyDown(window, { code: 'Digit1', key: '1' });
+        await fireEvent.keyDown(window, { code: 'Digit5', key: '5' });
+        vi.advanceTimersByTime(450);
+        expect(document.activeElement).toBe(getByTestId('direction-table-15'));
+    });
+
+    test('un second chiffre qui ne prolonge rien repart de zéro : « 1 » puis « 5 », sans table 15, mène à la 5', async () => {
+        vi.useFakeTimers();
+        const cells = Array.from({ length: 12 }, (_, i) => cell(i + 1));
+        const { getByTestId } = render(TableGrid, { props: { cells } });
+        await fireEvent.keyDown(window, { code: 'Digit1', key: '1' });
+        await fireEvent.keyDown(window, { code: 'Digit5', key: '5' });
+        vi.advanceTimersByTime(450);
+        expect(document.activeElement).toBe(getByTestId('direction-table-5'));
+    });
+
+    test("l'en-tête de la grille (Tout lancer, Imprimer) n'est pas la grille", () => {
+        const { container } = render(TableGrid, { props: { cells: [cell(1)] } });
+        const header = /** @type {HTMLElement} */ (container.querySelector('.grid-wrap header'));
+        const button = document.createElement('button');
+        header.appendChild(button);
+        button.focus();
+        expect(gridHasFocus()).toBe(false);
+        /** @type {HTMLElement} */ (container.querySelector('.cell')).focus();
+        expect(gridHasFocus()).toBe(true);
     });
 });

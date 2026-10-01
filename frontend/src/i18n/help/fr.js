@@ -355,14 +355,15 @@ export default {
 <h4>Les menus contextuels</h4>
 <p>Un clic droit, la touche <em>MENU</em> ou <em>MAJ-F10</em> sur un objet de la page Direction ouvre ses actions courantes sans passer par la fiche : une case de la grille (libre ou occupée), un joueur (onglet <strong>Joueurs</strong>, joueurs libres), une place de l'arbre, un emplacement, une proposition de la file, une ligne de l'historique. Le menu s'ouvre sur l'objet ; <em>HAUT</em> et <em>BAS</em> le parcourent, <em>ENTRÉE</em> choisit, <em>ÉCHAP</em> le ferme et rend le focus à l'objet.</p>
 <ul>
-<li>Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de table, échanger avec la table, annuler le match, historique de chaque joueur.</li>
-<li>Case libre : mettre la table hors service, ou la remettre en service (tables d'une Rencontre).</li>
-<li>Joueur : saisir le résultat de son match en cours, aller à sa table, historique, marquer absent ou présent, retirer maintenant ou après son match, réinscrire, corriger la fiche.</li>
-<li>Proposition : lancer, apparier autrement (l'appariement à la main s'ouvre avec les deux joueurs), ignorer pour l'instant.</li>
+<li>Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de table (viser une table occupée échange les deux matchs), annuler le match, historique de chaque joueur.</li>
+<li>Case libre : lancer ici la proposition sélectionnée, mettre la table hors service, ou la remettre en service (tables d'une Rencontre). Une table réservée à une autre épreuve ne propose rien.</li>
+<li>Joueur : saisir le résultat de son match en cours, aller à sa table, historique, apparier à la main avec un autre joueur libre, aller dans l'autre épreuve où il joue aussi, marquer absent ou présent, retirer maintenant ou après son match, réinscrire, corriger la fiche.</li>
+<li>Emplacement sans match : rattacher un match importé que cette place attend.</li>
+<li>Proposition : lancer, lancer à la table…, changer la longueur…, apparier autrement (ces trois entrées ouvrent l'appariement à la main avec les deux joueurs, la longueur et la table de la proposition), ignorer pour l'instant, imprimer la feuille de la ronde.</li>
 <li>Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer sur un des joueurs.</li>
 </ul>
-<p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes.</p>
-<p>Au clavier, chaque case de la grille se focalise, libre comprise. <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi : viser une table occupée échange les deux matchs.</p>
+<p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant qu'une action est en cours, les entrées qui agissent sont grisées, comme les boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le premier.</p>
+<p>Au clavier, la grille ne prend qu'un arrêt de <em>TAB</em> : chaque case se focalise, libre comprise, et <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi, que la fiche soit déjà ouverte ou non : viser une table occupée échange les deux matchs.</p>
 <h4>Les joueurs</h4>
 <p>L'onglet <strong>Joueurs</strong> inscrit, corrige et retire. Le champ d'inscription garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul. L'autocomplétion propose les joueurs de la base ; en choisir un fixe l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.</p>
 <p>L'<strong>annuaire</strong> regroupe les inscrits de tous les tournois dirigés de la base, dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ; l'annuaire se copie en CSV ou s'enregistre dans un fichier (<strong>Enregistrer…</strong>), et se relit collé.</p>
@@ -1418,7 +1419,7 @@ export default {
 </tr>
 <tr>
 <td>GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN</td>
-<td>Passer d'une case de la grille des tables à l'autre (cases libres comprises).</td>
+<td>Passer d'une case de la grille des tables à l'autre (cases libres comprises) ; la grille ne prend qu'un arrêt de TAB.</td>
 </tr>
 <tr>
 <td>1 à 9, puis 0 à 9</td>
@@ -1426,7 +1427,7 @@ export default {
 </tr>
 <tr>
 <td>M, X</td>
-<td>Sur une case occupée, ouvrir la fiche sur le champ de table ; viser une table occupée échange les deux matchs.</td>
+<td>Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs.</td>
 </tr>
 </tbody>
 </table>

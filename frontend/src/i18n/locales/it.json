@@ -2317,7 +2317,13 @@
             "openMatch": "Apri l’incontro collegato",
             "detach": "Scollega l’incontro",
             "transcribe": "Trascrivi l’incontro",
-            "swapTable": "Scambia con il tavolo…"
+            "attach": "Collega {name}",
+            "pairManually": "Abbina a mano con…",
+            "playsElsewhere": "Gioca anche in {event}, vai là",
+            "launchHere": "Avvia qui l'abbinamento selezionato",
+            "launchAtTable": "Avvia a un tavolo…",
+            "changeLength": "Cambia la lunghezza…",
+            "printSheet": "Stampa il foglio del turno"
         }
     },
     "palette": {
