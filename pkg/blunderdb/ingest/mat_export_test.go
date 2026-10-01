@@ -19,7 +19,7 @@ import (
 func TestRenderMATRoundTrip(t *testing.T) {
 	m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
 	games := []*domain.Game{
-		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 2},
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer1, PointsWon: 2},
 	}
 	moves := map[int64][]*domain.Move{
 		1: {
@@ -81,7 +81,7 @@ func TestRenderMATRoundTrip(t *testing.T) {
 func TestRenderMATCombinedCubeAndMatchWin(t *testing.T) {
 	m := &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3}
 	games := []*domain.Game{
-		{ID: 1, GameNumber: 1, InitialScore: [2]int32{1, 0}, Winner: 0, PointsWon: 2},
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{1, 0}, Winner: domain.WinnerPlayer1, PointsWon: 2},
 	}
 	moves := map[int64][]*domain.Move{
 		1: {
@@ -244,7 +244,7 @@ func TestRenderMATMoneyGame(t *testing.T) {
 	for _, ml := range []int32{0, domain.Unlimited} {
 		m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: ml}
 		games := []*domain.Game{
-			{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1},
+			{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer1, PointsWon: 1},
 		}
 		moves := map[int64][]*domain.Move{
 			1: {
@@ -305,7 +305,7 @@ func TestRenderMATOptionalHeaders(t *testing.T) {
 		Transcriber: "Kévin Unger",
 	}
 	games := []*domain.Game{
-		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1},
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer1, PointsWon: 1},
 	}
 	moves := map[int64][]*domain.Move{
 		1: {{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}},
@@ -353,7 +353,7 @@ func TestRenderMATOptionalHeaders(t *testing.T) {
 func TestRenderMATOmitsEmptyHeaders(t *testing.T) {
 	m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
 	games := []*domain.Game{
-		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1},
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer1, PointsWon: 1},
 	}
 	moves := map[int64][]*domain.Move{
 		1: {{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}},
@@ -378,7 +378,7 @@ func TestRenderMATGameEndsWithoutLastMove(t *testing.T) {
 	m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
 	games := []*domain.Game{
 		// Alice wins 2 points; nothing in `moves` says how — a resignation.
-		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 2},
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer1, PointsWon: 2},
 	}
 	moves := map[int64][]*domain.Move{
 		1: {
@@ -454,8 +454,8 @@ func TestRenderMATWinsGoesToWinnersColumn(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
-			// Winner 1 is gnubg's player 2.
-			games := []*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 1, PointsWon: 1}}
+			// The game is player 2's; the re-read is gnubg's, where player 2 is 1.
+			games := []*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer2, PointsWon: 1}}
 			out := RenderMAT(m, games, map[int64][]*domain.Move{1: tt.moves})
 
 			// The result must never sit at player 1's column.
@@ -489,7 +489,7 @@ func TestRenderMATWinsLineShape(t *testing.T) {
 	// Player 1's column is taken by the double they just made: own line, and the
 	// cell lands under the cells above it — byte for byte what test.mat writes.
 	p1 := RenderMAT(m,
-		[]*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1}},
+		[]*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer1, PointsWon: 1}},
 		map[int64][]*domain.Move{1: {{Player: 1, MoveType: "cube", CubeAction: "Double/Pass"}}})
 	if !strings.Contains(p1, "\n      Wins 1 point\n") {
 		t.Errorf("player 1's result must take an unnumbered line at their own column:\n%q", p1)
@@ -501,7 +501,7 @@ func TestRenderMATWinsLineShape(t *testing.T) {
 	// Player 2's column is free on the line player 1 just opened: the cell joins
 	// it, on the same line, and no new numbered line appears.
 	p2 := RenderMAT(m,
-		[]*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 1, PointsWon: 1}},
+		[]*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: domain.WinnerPlayer2, PointsWon: 1}},
 		map[int64][]*domain.Move{1: {
 			{Player: -1, MoveType: "cube", CubeAction: "Double"},
 			{Player: 1, MoveType: "cube", CubeAction: "Pass"},

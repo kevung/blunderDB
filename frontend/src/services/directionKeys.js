@@ -19,6 +19,8 @@
  *   lancer »), le panneau Tournois et le répartiteur lisent `directionOwnsKey` pour ne pas
  *   changer de tournoi ni parcourir le plateau caché.
  *
+ * `/` ouvre la recherche rapide (`directionSearchKey`, lue par le répartiteur de `keyboardService`).
+ *
  * La page prend le focus à l'ouverture et la prise de focus différée du panneau Tournois
  * s'abstient tant qu'elle est affichée.
  */
@@ -51,6 +53,20 @@ export function directionOwnsKey(event) {
     if (active?.closest('.tournament-panel')) return false;
     if (event.key === 'Enter' && active?.matches(INTERACTIVE)) return false;
     return !isTypingTarget(active) && !isTypingTarget(/** @type {Element | null} */ (event.target));
+}
+
+/**
+ * `/` ouvre la recherche rapide de la Direction : sur la page seulement, jamais dans un champ de
+ * saisie (on y tape une barre oblique), jamais sous une modale ou un menu, ni avec Ctrl / Alt /
+ * Méta. Maj est permis : au clavier AZERTY, `/` est Maj + `:`.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {boolean}
+ */
+export function directionSearchKey(event) {
+    if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || !directionPageShown()) return false;
+    if (somethingOpenAbove()) return false;
+    return !isTypingTarget(document.activeElement) && !isTypingTarget(/** @type {Element | null} */ (event.target));
 }
 
 /** Les touches qui font défiler une page : sous la Direction, elles défilent la page. */

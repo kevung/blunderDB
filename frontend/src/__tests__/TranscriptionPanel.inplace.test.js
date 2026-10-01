@@ -4,16 +4,16 @@
  * Trois promesses, toutes nées du même écart : ce que l'utilisateur voit à
  * l'écran et ce que le document dit doivent être la même chose, tout de suite.
  *
- *  1. Le plateau suit le Cursor sur TOUTE Action — l'ouverture d'une partie et
- *     l'abandon compris. `has_position` dit qu'une Action ne produit ni Move ni
+ *  1. Le plateau suit le Cursor sur TOUTE Action — le premier coup d'une partie
+ *     et l'abandon compris. `has_position` dit qu'une Action ne produit ni Move ni
  *     Position dans le Match enregistré, jamais qu'il n'y a rien à montrer : le
  *     lire comme une absence renvoyait le plateau à la fin du document dès
  *     qu'on cliquait sur la première cellule d'une partie.
  *  2. `t` sur une passe écrit une prise À LA PLACE de la passe. Le moteur écrit
  *     au rang de l'Entry ; la machine à touches, elle, avalait la touche parce
  *     qu'aucune offre n'était en attente EN BOUT DE DOCUMENT.
- *  3. Une cellule d'ouverture se ressaisit comme une ouverture : deux dés, une
- *     validation au second, et c'est l'ordre des dés qui décide qui commence.
+ *  3. Le premier coup d'une partie se ressaisit sur place : deux dés, sans
+ *     validation, et c'est l'ordre des dés qui décide qui commence.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -57,13 +57,12 @@ const POSITION = (/** @type {any} */ mark) => ({
 });
 
 const ACTIONS = [
-    { side: 0, kind: 'opening', dice: [6, 3] },
     { side: 0, kind: 'checker', dice: [6, 3] },
     { side: 1, kind: 'checker', dice: [5, 2] },
     { side: 0, kind: 'double' },
     { side: 1, kind: 'pass' }
 ];
-const NOTATIONS = ['', '24/18 13/10', '13/8 13/11', '', ''];
+const NOTATIONS = ['24/18 13/10', '13/8 13/11', '', ''];
 const END = 99;
 
 /**
@@ -82,7 +81,8 @@ function annotated(cursor) {
                   dice: ACTIONS[cursor].dice ?? [0, 0],
                   selected: false,
                   review: false,
-                  kind: ACTIONS[cursor].kind === 'opening' ? 'opening' : 'checker',
+                  kind: 'checker',
+                  game_start: cursor === 0,
                   notation: NOTATIONS[cursor]
               }
             : null;
@@ -94,9 +94,8 @@ function annotated(cursor) {
             kind: a.kind,
             // Le marqueur EST le rang : la position d'une Action est la sienne.
             before: POSITION(index),
-            // L'ouverture n'en produit pas dans le Match enregistré, et le
-            // plateau doit tout de même la montrer.
-            has_position: a.kind !== 'opening',
+            has_position: true,
+            opens_game: index === 0,
             notation: NOTATIONS[index],
             game_index: 0,
             game_number: 1,
@@ -104,8 +103,8 @@ function annotated(cursor) {
             move_number: index,
             inconsistencies: []
         })),
-        games: [{ number: 1, initial_score: [0, 0], winner: 1, points_won: 1, crawford: false, finished: true, first: 0, last: 4 }],
-        next: { expects: 'opening', side: 0, position: POSITION(END), crawford: false },
+        games: [{ number: 1, initial_score: [0, 0], winner: 1, points_won: 1, crawford: false, finished: true, first: 0, last: 3 }],
+        next: { expects: 'checker', game_start: true, side: 0, position: POSITION(END), crawford: false },
         entry,
         score: [0, 1],
         cursor
@@ -153,7 +152,7 @@ afterEach(() => {
 });
 
 describe('le plateau suit le Cursor', () => {
-    test('un clic sur l’ouverture d’une partie montre la position de l’ouverture', async () => {
+    test('un clic sur le premier coup d’une partie montre sa position', async () => {
         const { container } = await openedPanel();
         await settle();
 
@@ -167,15 +166,15 @@ describe('le plateau suit le Cursor', () => {
         const { container } = await openedPanel();
         await settle();
 
-        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="3"]')));
+        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="2"]')));
         await settle();
 
-        expect(/** @type {any} */ (get(positionStore)).score).toEqual([3, 3]);
+        expect(/** @type {any} */ (get(positionStore)).score).toEqual([2, 2]);
     });
 });
 
-describe('l’ouverture ressaisie', () => {
-    test('les deux dés sont validés au second : c’est l’ordre qui décide qui commence', async () => {
+describe('le premier coup ressaisi', () => {
+    test('les deux dés se retapent sur place, sans validation : l’ordre dit qui commence', async () => {
         const { container } = await openedPanel();
         await settle();
 
@@ -183,14 +182,18 @@ describe('l’ouverture ressaisie', () => {
         await settle();
         /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
 
-        // Le petit dé d'abord : le joueur 2 commence. Le moteur en tire le camp
-        // de l'ouverture ; ce qui est tenu ici est que la cellule se comporte en
-        // OUVERTURE — validation immédiate — et non en coup de pions.
+        // Le petit dé d'abord : le joueur 2 commence. Le moteur en tire le camp ;
+        // ce qui est tenu ici est que le jet se corrige en place, le coup restant
+        // à choisir.
         await fireEvent.keyDown(document, { code: 'Digit3', key: '3' });
         await fireEvent.keyDown(document, { code: 'Digit5', key: '5' });
         await settle();
 
-        expect(gestures()).toEqual([{ Kind: 'enter_die', Die: 3 }, { Kind: 'enter_die', Die: 5 }, { Kind: 'validate' }]);
+        expect(gestures().slice(0, 2)).toEqual([
+            { Kind: 'enter_die', Die: 3 },
+            { Kind: 'enter_die', Die: 5 }
+        ]);
+        expect(gestures().map((/** @type {any} */ g) => g.Kind)).not.toContain('validate');
     });
 });
 
@@ -199,7 +202,7 @@ describe('les gestes de videau corrigent la cellule tenue par le Cursor', () => 
         const { container } = await openedPanel();
         await settle();
 
-        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="4"]')));
+        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="3"]')));
         await settle();
         /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
 
@@ -217,7 +220,7 @@ describe('les gestes de videau corrigent la cellule tenue par le Cursor', () => 
         // En bout de document, plus rien à prendre : le bouton est éteint.
         expect(takeButton()?.disabled).toBe(true);
 
-        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="4"]')));
+        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="3"]')));
         await settle();
 
         expect(takeButton()?.disabled).toBe(false);

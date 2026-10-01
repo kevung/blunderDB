@@ -44,8 +44,7 @@ func testDirectionSlots(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ds := s.Directions()
 	tid := newDirectedTournament(t, s, "Principal")
-	// Game.Winner is gnubg's encoding here: 1 is player 2.
-	scored := newTournamentMatch(t, s, tid, "Anna", "Bruno", domain.Game{InitialScore: [2]int32{3, 2}, Winner: 1, PointsWon: 2})
+	scored := newTournamentMatch(t, s, tid, "Anna", "Bruno", domain.Game{InitialScore: [2]int32{3, 2}, Winner: domain.WinnerPlayer2, PointsWon: 2})
 	bare := newTournamentMatch(t, s, tid, "Carl", "Dora")
 
 	if err := ds.AttachSlot(ctx, "", tid, "M1", 999999); !errors.Is(err, storage.ErrNotFound) {
@@ -146,14 +145,13 @@ func testDirectionPairs(t *testing.T, s storage.Storage) {
 }
 
 // testDirectionSlotScore: the final score of a filled Slot credits every game
-// to its winner and never passes the length. Game.Winner has two encodings in
-// the library — gnubg's 0/1 (-1 unfinished) for a transcribed, .mat or .sgf
-// Match, XG's -1/1 (0 unfinished) for an .xg one — and with points won both
-// read 1 as player 2 and anything else as player 1.
+// to its winner (domain.WinnerPlayer1 / WinnerPlayer2) and never passes the
+// length; an unfinished game credits no one.
 func testDirectionSlotScore(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ds := s.Directions()
 	tid := newDirectedTournament(t, s, "Principal")
+	const p1, p2, none = domain.WinnerPlayer1, domain.WinnerPlayer2, domain.WinnerUnfinished
 	g := func(s1, s2, winner, points int32) domain.Game {
 		return domain.Game{InitialScore: [2]int32{s1, s2}, Winner: winner, PointsWon: points}
 	}
@@ -162,11 +160,10 @@ func testDirectionSlotScore(t *testing.T, s storage.Storage) {
 		games  []domain.Game
 		s1, s2 int
 	}{
-		{"gnubg, gammon at 5-5 to 7", []domain.Game{g(0, 0, 0, 5), g(5, 0, 1, 5), g(5, 5, 1, 4)}, 5, 7},
-		{"gnubg, player 1 wins last", []domain.Game{g(0, 0, 1, 2), g(0, 2, 0, 6)}, 6, 2},
-		{"gnubg, last game unfinished", []domain.Game{g(0, 0, 0, 2), g(2, 0, -1, 0)}, 2, 0},
-		{"XG, player 1 wins last", []domain.Game{g(0, 0, 1, 2), g(0, 2, -1, 9)}, 7, 2},
-		{"XG, last game unfinished", []domain.Game{g(0, 0, -1, 3), g(3, 0, 0, 0)}, 3, 0},
+		{"gammon at 5-5 to 7", []domain.Game{g(0, 0, p1, 5), g(5, 0, p2, 5), g(5, 5, p2, 4)}, 5, 7},
+		{"player 1 wins last", []domain.Game{g(0, 0, p2, 2), g(0, 2, p1, 6)}, 6, 2},
+		{"player 1 wins past the length", []domain.Game{g(0, 0, p2, 2), g(0, 2, p1, 9)}, 7, 2},
+		{"last game unfinished", []domain.Game{g(0, 0, p1, 2), g(2, 0, none, 0)}, 2, 0},
 	}
 	want := map[string][2]int{}
 	for i, c := range cases {

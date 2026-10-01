@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevung/gnubgparser"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
@@ -226,9 +227,7 @@ func TestFromMATUnrecordedIsNotADance(t *testing.T) {
 	}
 	var kinds []Kind
 	for _, a := range doc.Actions {
-		if a.Kind != KindOpening {
-			kinds = append(kinds, a.Kind)
-		}
+		kinds = append(kinds, a.Kind)
 	}
 	want := []Kind{KindChecker, KindDance, KindUnrecorded}
 	if len(kinds) != len(want) {
@@ -301,5 +300,55 @@ func TestRenderMATGivesBackTheQuestionMarks(t *testing.T) {
 	out := ingest.RenderMAT(MatchParts(doc))
 	if n := strings.Count(out, UnrecordedNotation); n != unrecordedFixtureCount {
 		t.Errorf("%d %q cells rendered, want %d:\n%s", n, UnrecordedNotation, unrecordedFixtureCount, out)
+	}
+}
+
+// TestFromMATFirstPlayDice: the .mat writes a roll as it fell; the first play keeps
+// the opening order, player 1's die then player 2's. A last game with no play yet is
+// kept as the game the next Action opens.
+func TestFromMATFirstPlayDice(t *testing.T) {
+	const text = ` 5 point match
+
+ Game 1
+ A : 0                           B : 0
+  1)                             52: 13/8 13/11
+  2) 31: 8/5 6/5
+ Game 2
+ A : 0                           B : 3
+`
+	doc, err := FromMAT(text)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a := doc.Actions[0]; a.Side != domain.White || a.Dice != [2]int{2, 5} {
+		t.Errorf("player 2's opening play = %+v, want dice [2 5]", a)
+	}
+	if ann := Replay(doc, 0); ann.Inconsistent() {
+		t.Errorf("marked: %+v", ann.Actions[0].Inconsistencies)
+	}
+	if doc.NextScore == nil || *doc.NextScore != [2]int{0, 3} {
+		t.Errorf("the empty last game is lost: %v", doc.NextScore)
+	}
+}
+
+// TestFromMATEmptyGameAfterTheEnd: an empty last game of a match already won says
+// nothing; it must not open a game past the end.
+func TestFromMATEmptyGameAfterTheEnd(t *testing.T) {
+	const text = ` 1 point match
+
+ Game 1
+ A : 0                           B : 0
+  1) 31: 8/5 6/5                 52: 13/8 13/11
+  2)  Doubles => 2               Drops
+      Wins 1 point and the match
+ Game 2
+ A : 1                           B : 0
+`
+	doc, err := FromMAT(text)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if doc.NextScore != nil {
+		t.Errorf("a game after the end of the match left a boundary: %v", *doc.NextScore)
 	}
 }

@@ -30,8 +30,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetMatchMovePositions: vi.fn(() => Promise.resolve(MOVES)),
     GetGamesByMatch: vi.fn(() =>
         Promise.resolve([
-            { game_number: 1, initial_score: [0, 0], winner: 0, points_won: 1 },
-            { game_number: 2, initial_score: [1, 0], winner: 1, points_won: 2 }
+            { game_number: 1, initial_score: [0, 0], winner: 1, points_won: 1 },
+            { game_number: 2, initial_score: [1, 0], winner: -1, points_won: 2 }
         ])
     ),
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
@@ -97,6 +97,10 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
         expect(sections().length, 'both games are listed').toBe(2);
         const first = sections()[0];
         expect(first.open, 'game 1 is the one seeded open').toBe(true);
+        // game.winner is 1 for player 1 and -1 for player 2.
+        const results = sections().map((s) => s.querySelector('.game-result')?.textContent ?? '');
+        expect(results[0]).toContain('Alice');
+        expect(results[1]).toContain('Bob');
 
         // Collapse it the way the browser does: flip `open`, then fire toggle.
         first.open = false;

@@ -55,7 +55,7 @@ const POSITION = {
  */
 function twoGames(length = 7) {
     const game = [
-        { side: 0, kind: 'opening', dice: [3, 1] },
+        { side: 0, kind: 'checker', dice: [3, 1] },
         { side: 0, kind: 'double' },
         { side: 1, kind: 'pass' }
     ];
@@ -68,11 +68,12 @@ function twoGames(length = 7) {
             side: a.side,
             kind: a.kind,
             before: POSITION,
-            has_position: a.kind !== 'opening',
+            has_position: true,
+            opens_game: index === 0 || index === 3,
             game_index: index < 3 ? 0 : 1,
             game_number: index < 3 ? 1 : 2,
             score: index < 3 ? [0, 0] : [3, 0],
-            move_number: a.kind === 'opening' ? -1 : 0,
+            move_number: index % 3,
             inconsistencies: index === 3 && declared ? [{ kind: 'score_mismatch', detail: '' }] : []
         })),
         games: [
@@ -90,7 +91,7 @@ function twoGames(length = 7) {
                 last: 5
             }
         ],
-        next: { expects: 'opening', side: 0, position: POSITION, crawford: false },
+        next: { expects: 'checker', game_start: true, side: 0, position: POSITION, crawford: false },
         score: [4, 0],
         cursor: actions.length
     };
@@ -191,7 +192,7 @@ describe('le score annoncé d’une partie (double-clic sur son score)', () => {
         expect(details.open).toBe(open);
     });
 
-    test('Entrée envoie set_score sur l’ouverture de la partie', async () => {
+    test('Entrée envoie set_score sur la première Action de la partie', async () => {
         await openedOn(twoGames());
         await doubleClick(scoreOf(2));
         await vi.waitFor(() => expect(field()).not.toBeNull());

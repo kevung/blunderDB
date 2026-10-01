@@ -6,7 +6,7 @@ import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../sto
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
-import { directionOwnsKey, directionLeavesToPage } from './directionKeys.js';
+import { directionOwnsKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
@@ -41,7 +41,7 @@ import { undoTranscription } from './transcriptionService.js';
 import { exportDatabase } from './exportService.js';
 import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './clipboardService.js';
 import { runPinnedFilter } from './filterLibraryService.js';
-import { toggleCommandPalette } from './commandPalette.js';
+import { toggleCommandPalette, openDirectionSearch } from './commandPalette.js';
 
 let lastCtrlXTime = 0;
 
@@ -200,6 +200,13 @@ export function handleKeyDown(event) {
     if (directionOwnsKey(event)) return;
     // The scrolling keys scroll the Direction page natively, without browsing the hidden board.
     if (directionLeavesToPage(event)) return;
+
+    // `/` on the Direction page opens the palette on the room's players, tables and events.
+    if (directionSearchKey(event)) {
+        event.preventDefault();
+        openDirectionSearch();
+        return;
+    }
 
     // A board-surface training question holds the board, revealed or not:
     // browsing would put another position under the answer. Focus is

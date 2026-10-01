@@ -203,12 +203,11 @@ func TestDisagreementIsShownNeverResolved(t *testing.T) {
 	}
 
 	// The score a Match's file gives is compared too, and only a real difference is flagged.
-	// The games end on a gammon at 5-4 in a 7-point match: the winner reaches 7, not 9. The
-	// winner column is gnubg's 0/1 for a transcribed or gnubg-imported Match, XG's -1/1 for
-	// an XG import; both say the same thing when points were won.
+	// The games end on a gammon at 5-4 in a 7-point match: the winner reaches 7, not 9.
+	// The winner column is domain.WinnerPlayer1 (1) / WinnerPlayer2 (-1), whatever the source.
 	type game struct{ s1, s2, winner, points int }
-	gnubg := []game{{0, 0, 1, 4}, {0, 4, 0, 5}, {5, 4, 0, 4}}
-	xg := []game{{0, 0, 1, 4}, {0, 4, -1, 5}, {5, 4, -1, 4}}
+	gnubg := []game{{0, 0, -1, 4}, {0, 4, 1, 5}, {5, 4, 1, 4}}
+	xg := gnubg
 	cases := []struct {
 		name           string
 		games          []game
@@ -251,7 +250,7 @@ func TestDisagreementIsShownNeverResolved(t *testing.T) {
 			if c.swapped {
 				// The file's player 1 is the Slot's B: every game reads mirrored.
 				s1, s2 = g.s2, g.s1
-				w = 1 - g.winner
+				w = -g.winner
 			}
 			if _, err := RawConn(d).Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won)
 				VALUES (?, ?, ?, ?, ?, ?)`, mid, n+1, s1, s2, w, g.points); err != nil {

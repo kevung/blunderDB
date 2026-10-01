@@ -116,7 +116,7 @@ func TestTranscribeCheck_NamesAScoreTheGamesDoNotGive(t *testing.T) {
 	}
 	found := false
 	for _, bad := range result.Inconsistencies {
-		if bad.Type == string(transcript.ScoreMismatch) && bad.Game == 2 && bad.Kind == string(transcript.KindOpening) {
+		if bad.Type == string(transcript.ScoreMismatch) && bad.Game == 2 && bad.Kind == string(transcript.KindChecker) {
 			found = true
 		}
 	}

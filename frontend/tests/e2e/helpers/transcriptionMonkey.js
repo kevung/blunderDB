@@ -126,21 +126,30 @@ export async function installMonkeyEngine(page, opts) {
                     game_index: 0,
                     game_number: 1,
                     score: [0, 0],
-                    move_number: index
+                    move_number: index,
+                    opens_game: index === 0
                 }));
                 const nextSide = len ? 1 - doc.actions[len - 1].side : 0;
                 const at = doc.cursor;
                 const entry =
                     at < len
-                        ? { at, kind: 'checker', side: doc.actions[at].side, replacing: true, review: false, selected: true, dice: [...doc.dice] }
-                        : { at, kind: doc.waiting, side: nextSide, replacing: false, review: false, selected: false, dice: [...doc.dice] };
+                        ? { at, kind: 'checker', game_start: at === 0, side: doc.actions[at].side, replacing: true, review: false, selected: true, dice: [...doc.dice] }
+                        : { at, kind: doc.waiting, game_start: at === 0, side: nextSide, replacing: false, review: false, selected: false, dice: [...doc.dice] };
                 return {
                     id: doc.id,
                     annotated: {
                         document: { format_version: '1', header: clone(doc.header), actions: [], cursor: at },
                         actions,
                         games: [{ number: 1, initial_score: [0, 0], winner: -1, points_won: 0, crawford: false, finished: false, first: 0, last: len - 1 }],
-                        next: { expects: doc.waiting, side: nextSide, position: { ...clone(position), player_on_roll: nextSide }, game_number: 1, crawford: false, match_over: false },
+                        next: {
+                            expects: doc.waiting,
+                            game_start: len === 0,
+                            side: nextSide,
+                            position: { ...clone(position), player_on_roll: nextSide },
+                            game_number: 1,
+                            crawford: false,
+                            match_over: false
+                        },
                         entry,
                         finished: false,
                         winner: -1,

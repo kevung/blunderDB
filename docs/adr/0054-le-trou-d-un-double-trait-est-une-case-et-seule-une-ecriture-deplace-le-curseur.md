@@ -17,7 +17,7 @@ qu'un dé tapé devant le trou partait ailleurs. Le trou lui-même était une ce
    tiennent le curseur (`Document.HoldCursor`), sauf si le pas enregistre une correction au
    passage — c'est alors une écriture.
 2. **Le tour qu'un double trait a perdu est un arrêt du curseur** : entre deux Actions à tour
-   du même camp, `h` et `l` s'y arrêtent ; une insertion y est ouverte pour le camp manquant,
+   du même camp dans une même partie (le premier coup d'une partie ne suit personne), `h` et `l` s'y arrêtent ; une insertion y est ouverte pour le camp manquant,
    et en sortir sans rien taper l'abandonne.
 3. **Le trou se dessine et se clique** : dans la colonne du camp qui n'a pas joué, encadré de
    pointillés rouges ; `cursorStop` compte les trous dans le rang des arrêts.

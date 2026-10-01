@@ -219,6 +219,21 @@ async function refreshRencontreEpreuves(rencontreId, activeView) {
 /** Les avertissements courants, comptés dans la bande d'horloge. */
 export const directionWarningsStore = derived(directionStore, ($d) => ($d && $d.warnings) || []);
 
+/**
+ * Une demande de la recherche rapide : mener à une table (sa fiche si elle est occupée), à un
+ * joueur (sa liste) ou à une épreuve. La page la lit quand elle est montée et que l'épreuve
+ * visée est la sienne, puis la rend ; `seq` fait rejouer deux fois la même demande.
+ * @typedef {{ kind: 'table' | 'player' | 'epreuve', tournamentId: number, table?: number, open?: boolean, name?: string, seq: number }} DirectionJump
+ */
+/** @type {import('svelte/store').Writable<DirectionJump | null>} */
+export const directionJumpStore = writable(null);
+let jumpSeq = 0;
+
+/** @param {Omit<DirectionJump, 'seq'>} jump */
+export function requestDirectionJump(jump) {
+    directionJumpStore.set({ ...jump, seq: ++jumpSeq });
+}
+
 /** Vrai quand la vue tournoi doit occuper la zone principale à la place du plateau. */
 export const directionOpenStore = derived(openDirectionIdStore, ($id) => $id !== null);
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 03:33+0200\n"
+"POT-Creation-Date: 2026-10-01 04:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -864,6 +864,20 @@ msgstr ""
 "tavolo); puntare a un tavolo occupato scambia i due incontri."
 
 #: ../../source/raccourcis.rst:1
+msgid "/"
+msgstr "/"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir la recherche rapide : joueurs, tables, matchs en cours et épreuves"
+" de la salle, retrouvés par un nom ou un numéro de table (:ref:`détail "
+"<direction_recherche>`). Sans effet dans un champ de saisie."
+msgstr ""
+"Aprire la ricerca rapida: giocatori, tavoli, match in corso e prove della"
+" sala, trovati per nome o per numero di tavolo (:ref:`dettaglio "
+"<direction_recherche>`). Nessun effetto in un campo di testo."
+
+#: ../../source/raccourcis.rst:1
 msgid "Glisser une case occupée sur une autre"
 msgstr "Trascinare una casella occupata su un'altra"
 
@@ -891,7 +905,7 @@ msgstr ""
 "trascinamento agiscono sul tavolo di qualsiasi torneo; uno scambio con un"
 " altro torneo nomina entrambi nella conferma."
 
-#: ../../source/raccourcis.rst:294
+#: ../../source/raccourcis.rst:295
 msgid "Panneau des collections"
 msgstr "Pannello delle collezioni"
 
@@ -921,11 +935,11 @@ msgstr ""
 "Torna all'elenco delle collezioni, altrimenti deseleziona la collezione, "
 "altrimenti chiudi il pannello (a tappe)."
 
-#: ../../source/raccourcis.rst:309
+#: ../../source/raccourcis.rst:310
 msgid "Panneau Transcription"
 msgstr "Pannello di trascrizione"
 
-#: ../../source/raccourcis.rst:311
+#: ../../source/raccourcis.rst:312
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -973,11 +987,11 @@ msgstr "1 … 6"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
-"plus fort commence et joue les deux dés)."
+"Saisir un dé. Sur le premier coup d'une partie : dé du joueur 1, puis dé "
+"du joueur 2 (le plus fort commence et joue les deux dés)."
 msgstr ""
-"Inserire un dado: dado del giocatore 1, poi del giocatore 2 per "
-"l'apertura (il più alto inizia e gioca entrambi i dadi)."
+"Inserire un dado. Sulla prima mossa di una partita: dado del giocatore 1,"
+" poi del giocatore 2 (il più alto comincia e gioca entrambi i dadi)."
 
 #: ../../source/raccourcis.rst:1
 msgid "1 … 6 (jet saisi)"
@@ -994,21 +1008,22 @@ msgstr ""
 "cifra ricomincia il lancio di quell'azione invece di convalidare."
 
 #: ../../source/raccourcis.rst:1
-msgid "1 … 6 (curseur sur l'ouverture d'une partie)"
-msgstr "1 … 6 (cursore sull'apertura di una partita)"
+msgid "1 … 6 (curseur sur le premier coup d'une partie)"
+msgstr "1 … 6 (cursore sulla prima mossa di una partita)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, "
-"validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait "
-"revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut. Le "
-"premier coup de pions de la partie suit le nouveau vainqueur."
+"Taper un autre jet d'ouverture : dé du joueur 1 puis dé du joueur 2. Le "
+"plus fort l'emporte — gros dé d'abord, le coup revient au joueur 1 en bas"
+" ; petit dé d'abord, au joueur 2 en haut ; le premier candidat est "
+"présélectionné. Le même jet retapé ne change rien ; *s* donne le coup à "
+"l'autre joueur."
 msgstr ""
-"Reinserire il lancio d'apertura: dado del giocatore 1 e poi del giocatore"
-" 2, registrati al secondo dado. Vince il più alto — il dado grande per "
-"primo, il turno va al giocatore 1 in basso; il piccolo per primo, al "
-"giocatore 2 in alto. La prima mossa di pedine della partita segue il "
-"nuovo vincitore."
+"Digitare un altro tiro d'apertura: dado del giocatore 1 poi del giocatore"
+" 2. Vince il più alto — dado grande prima, la mossa va al giocatore 1 in "
+"basso; dado piccolo prima, al giocatore 2 in alto; il primo candidato è "
+"preselezionato. Lo stesso tiro ridigitato non cambia nulla; *s* dà la "
+"mossa all'altro giocatore."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -1058,12 +1073,12 @@ msgstr "Clic (sul triangolo dei tiri)"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur "
-"la diagonale. Pendant l'ouverture, le triangle laisse la place à une "
-"rangée de six dés, un clic donnant le dé d'un camp."
+"la diagonale. Sur le premier coup d'une partie, le triangle laisse la "
+"place à une rangée de six dés, un clic donnant le dé d'un camp."
 msgstr ""
-"Inserire il tiro con un solo gesto: la casella porta entrambi i dadi, i "
-"doppi sulla diagonale. Durante l'apertura il triangolo lascia il posto a "
-"una fila di sei dadi, e un clic dà il dado di un campo."
+"Inserire il tiro con un solo gesto: la casella porta i due dadi, i doppi "
+"sulla diagonale. Sulla prima mossa di una partita il triangolo lascia il "
+"posto a una fila di sei dadi, e un clic dà il dado di un campo."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (aucun dé saisi)"
@@ -1371,7 +1386,7 @@ msgstr "CTRL-MAIUSC-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Ripristinare il gesto annullato."
 
-#: ../../source/raccourcis.rst:361
+#: ../../source/raccourcis.rst:362
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1379,7 +1394,7 @@ msgstr ""
 "Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
 "tasto in più."
 
-#: ../../source/raccourcis.rst:364
+#: ../../source/raccourcis.rst:365
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1406,7 +1421,7 @@ msgstr ""
 "la decisione seguente, come in fondo al documento, e anche INVIO porta "
 "lì."
 
-#: ../../source/raccourcis.rst:375
+#: ../../source/raccourcis.rst:376
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1419,7 +1434,7 @@ msgstr ""
 "sostituisce, un inserimento apre una cella tra le sue due vicine, e il "
 "campo si legge dalla colonna. Nulla è registrato prima della convalida."
 
-#: ../../source/raccourcis.rst:380
+#: ../../source/raccourcis.rst:381
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1431,7 +1446,7 @@ msgstr ""
 " volta invece di sovrascrivere quella dopo. La fine della partita o lo "
 "spostamento del cursore vi mette fine."
 
-#: ../../source/raccourcis.rst:385
+#: ../../source/raccourcis.rst:386
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1443,7 +1458,7 @@ msgstr ""
 "cursore» in fondo al documento. La frase si cancella da sola e rende il "
 "posto all'azione attesa."
 
-#: ../../source/raccourcis.rst:390
+#: ../../source/raccourcis.rst:391
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1463,7 +1478,7 @@ msgstr ""
 "fino alla convalida. Avanzare o arretrare il cursore dopo aver cambiato "
 "qualcosa registra la correzione al passaggio."
 
-#: ../../source/raccourcis.rst:398
+#: ../../source/raccourcis.rst:399
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1489,7 +1504,7 @@ msgstr ""
 "per il campo a cui mancava. La pila di annullamento vive in memoria: va "
 "persa alla chiusura della bozza."
 
-#: ../../source/raccourcis.rst:409
+#: ../../source/raccourcis.rst:410
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1499,7 +1514,7 @@ msgstr ""
 "la trascrizione e la barra della bozza — è descritto in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:416
+#: ../../source/raccourcis.rst:417
 msgid "Planche-contact"
 msgstr "Provino"
 
@@ -1547,7 +1562,7 @@ msgstr "Aprire la posizione sul tavoliere e chiudere il provino."
 msgid "Refermer la planche."
 msgstr "Chiudere il provino."
 
-#: ../../source/raccourcis.rst:433
+#: ../../source/raccourcis.rst:434
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

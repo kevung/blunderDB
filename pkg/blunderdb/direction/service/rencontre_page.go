@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -113,6 +115,14 @@ func (d *Service) regenerateRencontrePage(ctx context.Context, tournamentID int6
 		return
 	}
 	_, _ = d.WriteRencontrePage(ctx, rid)
+}
+
+// wallPlayerName gives a player's name from a replayed state, falling back to the identifier.
+func wallPlayerName(st *tournoi.State, id tournoi.PlayerID) string {
+	if p := st.Players[id]; p != nil {
+		return orID(p.Name, string(id))
+	}
+	return string(id)
 }
 
 // orID gives a player's name for the wall page, falling back to the identifier — a page with a

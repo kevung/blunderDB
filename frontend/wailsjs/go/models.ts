@@ -4131,6 +4131,36 @@ export namespace service {
 		    return a;
 		}
 	}
+	export class SearchEntry {
+	    kind: string;
+	    tournamentId: number;
+	    epreuve?: string;
+	    name: string;
+	    playerId?: string;
+	    club?: string;
+	    opponent?: string;
+	    state?: string;
+	    table?: number;
+	    matchId?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SearchEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.tournamentId = source["tournamentId"];
+	        this.epreuve = source["epreuve"];
+	        this.name = source["name"];
+	        this.playerId = source["playerId"];
+	        this.club = source["club"];
+	        this.opponent = source["opponent"];
+	        this.state = source["state"];
+	        this.table = source["table"];
+	        this.matchId = source["matchId"];
+	    }
+	}
 	export class SlotRow {
 	    slotId: string;
 	    label: tournoi.Label;
@@ -5394,6 +5424,7 @@ export namespace transcript {
 	    game_number: number;
 	    score: number[];
 	    move_number: number;
+	    opens_game: boolean;
 	    inconsistencies?: Inconsistency[];
 	
 	    static createFrom(source: any = {}) {
@@ -5413,6 +5444,7 @@ export namespace transcript {
 	        this.game_number = source["game_number"];
 	        this.score = source["score"];
 	        this.move_number = source["move_number"];
+	        this.opens_game = source["opens_game"];
 	        this.inconsistencies = this.convertValues(source["inconsistencies"], Inconsistency);
 	    }
 	
@@ -5442,6 +5474,7 @@ export namespace transcript {
 	    selected: boolean;
 	    review: boolean;
 	    kind: string;
+	    game_start: boolean;
 	    notation?: string;
 	
 	    static createFrom(source: any = {}) {
@@ -5457,11 +5490,13 @@ export namespace transcript {
 	        this.selected = source["selected"];
 	        this.review = source["review"];
 	        this.kind = source["kind"];
+	        this.game_start = source["game_start"];
 	        this.notation = source["notation"];
 	    }
 	}
 	export class Next {
 	    expects: string;
+	    game_start: boolean;
 	    side: number;
 	    position: domain.Position;
 	    game_number: number;
@@ -5475,6 +5510,7 @@ export namespace transcript {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.expects = source["expects"];
+	        this.game_start = source["game_start"];
 	        this.side = source["side"];
 	        this.position = this.convertValues(source["position"], domain.Position);
 	        this.game_number = source["game_number"];
@@ -5590,6 +5626,7 @@ export namespace transcript {
 	    header: Header;
 	    actions: Action[];
 	    cursor: number;
+	    next_score?: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Document(source);
@@ -5601,6 +5638,7 @@ export namespace transcript {
 	        this.header = this.convertValues(source["header"], Header);
 	        this.actions = this.convertValues(source["actions"], Action);
 	        this.cursor = source["cursor"];
+	        this.next_score = source["next_score"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

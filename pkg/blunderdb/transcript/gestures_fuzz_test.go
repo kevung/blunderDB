@@ -316,7 +316,7 @@ func (m *gestureModel) playTurn(s *byteSource) {
 	}
 	cands := Candidates(m.ed.Doc)
 	if len(cands) == 0 {
-		// An opening is validated, a closed board is a dance.
+		// A closed board is a dance.
 		if m.apply(Gesture{Kind: GestureValidate}) != nil {
 			_ = m.apply(Gesture{Kind: GestureDance})
 		}
@@ -427,10 +427,13 @@ func runGestureScenario(t *testing.T, data []byte) {
 		case opTurn, opTurn2, opTurn3:
 			m.playTurn(src)
 		case opOpening:
+			// The two opening dice, player 1's then player 2's, and the first
+			// candidate of the side they name.
 			d1 := 1 + int(src.byteOr(0))%6
 			d2 := 1 + int(src.byteOr(1))%6
 			_ = m.apply(Gesture{Kind: GestureEnterDie, Die: d1})
 			_ = m.apply(Gesture{Kind: GestureEnterDie, Die: d2})
+			_ = m.apply(Gesture{Kind: GestureSelectCandidate})
 			_ = m.apply(Gesture{Kind: GestureValidate})
 		case opCreate:
 			r := src.byteOr(0)
@@ -476,7 +479,6 @@ type playShape struct {
 }
 
 type gameShape struct {
-	Opening      [2]int
 	InitialScore [2]int
 	Winner       int
 	PointsWon    int
@@ -494,12 +496,8 @@ func matShape(doc Document) (int, []gameShape) {
 		games[i] = gameShape{InitialScore: g.InitialScore, Winner: g.Winner, PointsWon: g.PointsWon,
 			Crawford: g.Crawford, Finished: g.Finished}
 	}
-	for i, info := range ann.Actions {
+	for _, info := range ann.Actions {
 		if info.GameIndex < 0 || info.GameIndex >= len(games) {
-			continue
-		}
-		if info.Kind == KindOpening {
-			games[info.GameIndex].Opening = doc.Actions[i].Dice
 			continue
 		}
 		if !info.HasPosition {
@@ -511,15 +509,8 @@ func matShape(doc Document) (int, []gameShape) {
 		}
 		games[info.GameIndex].Plays = append(games[info.GameIndex].Plays, p)
 	}
-	// A game nobody played in has no line in a .mat: the format folds the opening
-	// into the first play, so without one the opening is not carried.
-	for i := range games {
-		if len(games[i].Plays) == 0 {
-			games[i].Opening = [2]int{}
-		}
-	}
-	// Nor has a game without a play or a winner, closed by the next opening:
-	// there is nothing in it for the file to say.
+	// A game without a play or a winner, closed by the next game's declared score,
+	// has no line in a .mat: there is nothing in it for the file to say.
 	kept := games[:0]
 	for _, g := range games {
 		if len(g.Plays) > 0 || g.Winner >= 0 {
@@ -529,44 +520,13 @@ func matShape(doc Document) (int, []gameShape) {
 	return doc.Header.MatchLength, kept
 }
 
-// firstMoveNotARoll reports a game whose first Move is not a roll played
-// after its opening: no opening before it, as deleting the opening leaves it,
-// or a cube action before any roll is played. The Replay marks neither; the
-// .mat reads the opening off the first roll played, so it cannot carry them.
-func firstMoveNotARoll(doc Document, ann Annotated) bool {
-	for _, g := range ann.Games {
-		for i := g.First; i >= 0 && i <= g.Last && i < len(doc.Actions); i++ {
-			if doc.Actions[i].Kind == KindOpening {
-				break
-			}
-			if ann.Actions[i].HasPosition {
-				return true
-			}
-		}
-		for i := g.First; i >= 0 && i <= g.Last && i < len(doc.Actions); i++ {
-			switch doc.Actions[i].Kind {
-			case KindDouble, KindTake, KindPass:
-				return true
-			case KindChecker, KindDance, KindUnrecorded:
-			default:
-				continue
-			}
-			break
-		}
-	}
-	return false
-}
-
 // checkMATRoundTrip exports a consistent draft to .mat and reads it back: the
 // same games, scores, results and plays. An inconsistent draft is exported as
 // played (ADR-0044) and is out of the format's reach, so it is not held to this.
 func checkMATRoundTrip(t *testing.T, doc Document, trace []string) {
 	t.Helper()
 	ann := Replay(doc, 0)
-	if ann.Inconsistent() || len(ann.Games) == 0 || firstMoveNotARoll(doc, ann) {
-		return
-	}
-	if last := ann.Games[len(ann.Games)-1]; lastGameWinnerGuessed && last.Finished && !ann.Finished {
+	if ann.Inconsistent() || len(ann.Games) == 0 {
 		return
 	}
 	text := ingest.RenderMAT(MatchParts(doc))
@@ -630,86 +590,55 @@ func TestTranscriptGesturesSeeded(t *testing.T) {
 	}
 }
 
-// TestOpeningRollNotPlayedIsMarked: the first play of a game uses the opening
-// roll, by its winner. A .mat has no opening line and reads the opening off the
-// first play, so a different roll there cannot survive the export: it is marked,
-// and the export says the draft is inconsistent instead of rewriting it silently.
-func TestOpeningRollNotPlayedIsMarked(t *testing.T) {
-	opening := []step{{name: "die 2", g: die(2)}, {name: "die 1", g: die(1)}, {name: "opening", g: confirm()}}
-	cases := []struct {
-		name  string
-		steps []step
-	}{
-		{"other roll by the winner", []step{
-			{name: "die 3", g: die(3)}, {name: "die 3 again", g: die(3)},
-			{name: "candidate", g: candidate(0)}, {name: "play", g: confirm()},
-		}},
-		{"opening roll by the loser", []step{
-			{name: "insert", g: Gesture{Kind: GestureInsertAfter, Side: domain.White, HasSide: true}},
-			{name: "die 2", g: die(2)}, {name: "die 1", g: die(1)},
-			{name: "candidate", g: candidate(0)}, {name: "play", g: confirm()},
-		}},
+// TestGameStartIsTheOpeningRoll: a game's first play is typed as the opening roll —
+// player 1's die, then player 2's, the higher one naming the side — and what no
+// opening can be is marked, never refused: a roll of doubles, a cube before the
+// first play.
+func TestGameStartIsTheOpeningRoll(t *testing.T) {
+	doc := runSteps(t, New(7), []step{
+		{name: "player 1's die", g: die(2)}, {name: "player 2's die", g: die(5)},
+		{name: "candidate", g: candidate(0)}, {name: "play", g: confirm()},
+	})
+	if a := doc.Actions[0]; a.Side != domain.White || a.Kind != KindChecker || a.Dice != [2]int{2, 5} {
+		t.Fatalf("a 2 against a 5 gives %s, want player 2's 52", dumpActions(doc.Actions))
 	}
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			doc := runSteps(t, New(7), append(append([]step(nil), opening...), c.steps...))
-			if len(doc.Actions) != 2 || doc.Actions[0].Kind != KindOpening || doc.Actions[1].Kind != KindChecker {
-				t.Fatalf("setup: %s", dumpActions(doc.Actions))
-			}
-			if !hasInconsistency(Replay(doc, 0).Actions[1], InconsistentDice) {
-				t.Errorf("%s after a 21 opening carries no Inconsistency", dumpActions(doc.Actions[1:]))
-			}
-			if !Build(doc).Inconsistent {
-				t.Errorf("the export does not say the draft is inconsistent")
-			}
-		})
-	}
-
-	// A tie is rolled again before anyone plays; a play straight after it has
-	// no opening a .mat could read back.
-	tie := Document{FormatVersion: FormatVersion, Header: Header{MatchLength: 7}, Actions: []Action{
-		{Side: domain.Black, Kind: KindOpening, Dice: [2]int{3, 3}},
-		{Side: domain.Black, Kind: KindChecker, Dice: [2]int{5, 5},
-			Steps: []domain.CheckerStep{{From: 13, To: 8}, {From: 8, To: 3}, {From: 8, To: 3}, {From: 8, To: 3}}},
-	}}
-	if !hasInconsistency(Replay(tie, 0).Actions[1], InconsistentDice) {
-		t.Errorf("a play straight after a tied opening carries no Inconsistency")
-	}
-}
-
-// lastGameWinnerGuessed holds the .mat round trip off a finished last game of an
-// unfinished match for as long as TestMATLastGameOfUnfinishedMatchKeepsItsWinner
-// is skipped: every such program would stop on that one defect. Set it to false
-// with the fix.
-const lastGameWinnerGuessed = true
-
-// TestMATLastGameOfUnfinishedMatchKeepsItsWinner: FromMAT reads the winner of
-// the last game off the arithmetic "who reaches the length with these points",
-// which assumes the game ended the match. At 2-0 to 3, player 2 winning one
-// point ends nothing, yet the file is read back as player 1 winning the match.
-func TestMATLastGameOfUnfinishedMatchKeepsItsWinner(t *testing.T) {
-	t.Skip("bug: FromMAT (statedResult) gives the last game to the player the points would crown, even when the match is not over — 2-0 to 3, player 2 wins 1, read back as player 1 winning")
-
-	doc := New(3)
-	game := func(loser int) {
-		doc.Actions = append(doc.Actions, opening(domain.Black, 3, 1))
-		doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 3, 1))
-		doc.Actions = append(doc.Actions, Action{Side: loser, Kind: KindResign, Level: 1})
-	}
-	game(domain.White)
-	game(domain.White)
-	game(domain.Black)
-	doc.Cursor = len(doc.Actions)
-
 	ann := Replay(doc, 0)
-	if ann.Inconsistent() || ann.Finished || ann.Score != [2]int{2, 1} {
-		t.Fatalf("setup: inconsistent=%v finished=%v score=%v", ann.Inconsistent(), ann.Finished, ann.Score)
+	if !ann.Actions[0].OpensGame || ann.Inconsistent() || ann.Next.Side != domain.Black {
+		t.Errorf("the first play: %+v, next %+v", ann.Actions[0], ann.Next)
 	}
-	back, err := FromMAT(ingest.RenderMAT(MatchParts(doc)))
-	if err != nil {
-		t.Fatal(err)
+
+	doubles := runSteps(t, New(7), []step{
+		{name: "die 3", g: die(3)}, {name: "die 3 again", g: die(3)},
+		{name: "candidate", g: candidate(0)}, {name: "play", g: confirm()},
+	})
+	if !hasInconsistency(Replay(doubles, 0).Actions[0], InconsistentDice) {
+		t.Errorf("a first play rolled 33 carries no Inconsistency")
 	}
-	if got := Replay(back, 0); got.Finished || got.Score != [2]int{2, 1} {
-		t.Errorf(".mat round trip: finished=%v score=%v, want an unfinished match at 2-1", got.Finished, got.Score)
+	if !Build(doubles).Inconsistent {
+		t.Errorf("the export does not say the draft is inconsistent")
+	}
+
+	// Re-editing the cell with the same two dice, in either order, keeps the camp:
+	// only a different roll decides the opening again.
+	for _, order := range [][2]int{{2, 5}, {5, 2}} {
+		again := runSteps(t, doc, []step{
+			{name: "back", g: Gesture{Kind: GestureCursorBack}},
+			{name: "die", g: die(order[0])}, {name: "die", g: die(order[1])},
+			{name: "play", g: confirm()},
+		})
+		if a := again.Actions[0]; a.Side != domain.White || a.Dice != [2]int{2, 5} {
+			t.Errorf("re-edited with %v: %+v, want player 2's 52 untouched", order, a)
+		}
+	}
+	// `s` on a first play gives the opening to the other camp, dice with it.
+	flipped := runSteps(t, doc, []step{{name: "back", g: Gesture{Kind: GestureCursorBack}},
+		{name: "flip", g: Gesture{Kind: GestureFlipSide}}})
+	if a := flipped.Actions[0]; a.Side != domain.Black || a.Dice != [2]int{5, 2} {
+		t.Errorf("flipped first play = %+v", a)
+	}
+
+	cube := runSteps(t, New(7), []step{{name: "double", g: Gesture{Kind: GestureDouble}}})
+	if !hasInconsistency(Replay(cube, 0).Actions[0], ImpossibleCube) {
+		t.Errorf("a double before the first play carries no Inconsistency")
 	}
 }

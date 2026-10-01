@@ -205,8 +205,10 @@ func transcriptMatchHashes(parts transcript.Parts) (matchHash, canonicalHash str
 	p2 := strings.TrimSpace(strings.ToLower(m.Player2Name))
 	fmt.Fprintf(&b, "transcript1:%s|%s|%d|", p1, p2, m.MatchLength)
 	for gi, game := range parts.Games {
+		// The winner is hashed as a side (0/1/-1), like the document states it:
+		// the hash follows the transcription, not the storage encoding.
 		fmt.Fprintf(&b, "g%d:%d,%d,%d,%d|", gi,
-			game.InitialScore[0], game.InitialScore[1], game.Winner, game.PointsWon)
+			game.InitialScore[0], game.InitialScore[1], domain.WinnerSide(game.Winner), game.PointsWon)
 		for mi, mv := range parts.Moves[game.ID] {
 			fmt.Fprintf(&b, "m%d:%s,%d,d%d%d,p%s|", mi, mv.MoveType, mv.Player,
 				mv.Dice[0], mv.Dice[1], mv.CheckerMove+mv.CubeAction)

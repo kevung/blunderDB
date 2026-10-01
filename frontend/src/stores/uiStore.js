@@ -23,6 +23,13 @@ export const showCommandInputStore = writable(false);
 // Whether the command palette (Ctrl+Maj+P) is open — CommandPalette.svelte.
 export const commandPaletteOpenStore = writable(false);
 
+/**
+ * Ce que la palette ouverte ne montre que : 'direction' (la touche / de la page Direction), ou
+ * null pour tout. Posé à l'ouverture, lu à l'ouverture.
+ * @type {import('svelte/store').Writable<'direction' | null>}
+ */
+export const commandPaletteScopeStore = writable(null);
+
 // A match someone asked to open from outside the match panel (the command
 // palette): its id, until MatchPanel has loaded its list and opened it.
 /** @type {import('svelte/store').Writable<number | null>} */

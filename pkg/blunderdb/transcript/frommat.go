@@ -17,14 +17,12 @@ import (
 // testable and lets a .mat be REPLAYED for its Inconsistencies.
 //
 // A score line that differs from the derived score becomes a declared score on the
-// game's opening (ADR-0053), so the round trip is exact.
+// game's first Action (ADR-0053), so the round trip is exact. A game that follows
+// one the file leaves unfinished declares its score line all the same: it is what
+// starts a new game while the previous one is still running.
 //
-// Two things the format does not carry are reconstructed:
+// One thing the format does not carry is reconstructed:
 //
-//   - The opening roll. A .mat starts a game at the first play, so the opening is
-//     rebuilt from it — the two dice, given to the player who moved first. A first
-//     roll of doubles (which no opening can be) is written down as it stands and reads
-//     as a tie; the play that follows keeps its own side and roll either way.
 //   - The resignation. The format has no token for it: a game whose recorded plays do
 //     not end it, yet which announces a winner, ended by a resignation, and the level
 //     is what the announced points and the cube say it was.
@@ -56,20 +54,24 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 
 	for gi := range parsed.Games {
 		game := &parsed.Games[gi]
-		if rec := firstCheckerRecord(game.Moves); rec != nil {
-			opening := openingAction(rec)
-			// A score line the previous games do not give is read back as a
-			// declared score (ADR-0053), never corrected nor refused.
-			if score := game.Score; doc.Header.MatchLength > 0 && score != st.points {
-				opening.Score = &score
-				doc.FormatVersion = max(doc.FormatVersion, formatVersionScore)
+		// The game's first Action carries its score line when the previous games do
+		// not give it, or when the previous game is still running and only a
+		// declaration can close it (ADR-0053).
+		var declared *[2]int
+		score := game.Score
+		if doc.Header.MatchLength <= 0 {
+			score = [2]int{}
+		}
+		if st.gameActive || score != st.points {
+			declared = &score
+		}
+		first := true
+		push := func(a Action) {
+			if first {
+				a.Score, first = declared, false
+				a.Dice = openingOrder(a)
 			}
-			push(opening)
-		} else {
-			// Nothing to rebuild an opening from: close the running game by hand so
-			// this one starts on a fresh board all the same.
-			st.endGame(-1, 0)
-			st.ensureGame()
+			push(a)
 		}
 
 		for i := range game.Moves {
@@ -84,13 +86,14 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 			case gnubgparser.MoveTypeDrop:
 				push(Action{Side: rec.Player, Kind: KindPass})
 			case gnubgparser.MoveTypeResign:
-				_, points := statedResult(parsed.Games, gi, doc.Header.MatchLength)
+				_, points := statedResult(parsed.Games, gi)
 				push(Action{Side: rec.Player, Kind: KindResign, Level: resignLevel(points, cubeValue(st.cube))})
 			}
 		}
 
-		// The plays do not end a game the file says was won: it was resigned.
-		if winner, points := statedResult(parsed.Games, gi, doc.Header.MatchLength); st.gameActive && points > 0 &&
+		// The plays do not end a game the file says was won — or there are none: it
+		// was resigned.
+		if winner, points := statedResult(parsed.Games, gi); (st.gameActive || first) && points > 0 &&
 			(winner == domain.Black || winner == domain.White) {
 			push(Action{
 				Side:  opponent(winner),
@@ -100,38 +103,40 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 		}
 	}
 
+	// A last game with nothing in it yet is a boundary waiting for its first play.
+	// One after the end of the match says nothing, and would open a game past it.
+	if n := len(parsed.Games); n > 0 && len(parsed.Games[n-1].Moves) == 0 && !st.matchOver() {
+		if _, points := statedResult(parsed.Games, n-1); points == 0 {
+			score := parsed.Games[n-1].Score
+			if doc.Header.MatchLength <= 0 {
+				score = [2]int{}
+			}
+			doc.NextScore = &score
+		}
+	}
+
 	doc.Cursor = len(doc.Actions)
 	return doc, nil
 }
 
-// firstCheckerRecord returns the first play of a game, which is the only trace its
-// opening roll left in the file.
-func firstCheckerRecord(records []gnubgparser.MoveRecord) *gnubgparser.MoveRecord {
-	for i := range records {
-		if records[i].Type == gnubgparser.MoveTypeNormal {
-			return &records[i]
-		}
+// openingOrder writes a game's first roll as the opening roll it was: player 1's
+// die then player 2's, the higher one with the side that plays. A .mat writes the
+// roll as it fell, which says nothing of who won the opening.
+func openingOrder(a Action) [2]int {
+	d := a.Dice
+	if a.Kind != KindChecker && a.Kind != KindDance && a.Kind != KindUnrecorded || d[0] == d[1] {
+		return d
 	}
-	return nil
-}
-
-// openingAction rebuilds the opening from the first play: the higher die goes to the
-// player who moved, which is what having won the opening means.
-func openingAction(rec *gnubgparser.MoveRecord) Action {
-	hi, lo := rec.Dice[0], rec.Dice[1]
-	if lo > hi {
-		hi, lo = lo, hi
+	hi, lo := max(d[0], d[1]), min(d[0], d[1])
+	if a.Side == domain.White {
+		return [2]int{lo, hi}
 	}
-	a := Action{Side: rec.Player, Kind: KindOpening, Dice: [2]int{hi, lo}}
-	if rec.Player == domain.White {
-		a.Dice = [2]int{lo, hi}
-	}
-	return a
+	return [2]int{hi, lo}
 }
 
 // statedResult is what the FILE says a game was worth: the next game's score line,
 // or for the last game the "Wins N points" line (gnubgparser v1.7.0+).
-func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points int) {
+func statedResult(games []gnubgparser.Game, i int) (winner, points int) {
 	if i+1 < len(games) {
 		gained0 := games[i+1].Score[0] - games[i].Score[0]
 		gained1 := games[i+1].Score[1] - games[i].Score[1]
@@ -142,19 +147,10 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 			return domain.White, gained1
 		}
 	}
+	// The last game has no successor: its "Wins" line says who, by the column it
+	// stands in. The points alone cannot: they would crown whoever they bring to
+	// the length, and a last game need not end the match.
 	winner, points = games[i].Winner, games[i].Points
-	// The last game has no successor; when it ended the match, the arithmetic
-	// checks the parsed winner against the one player it can belong to.
-	if matchLength > 0 && points > 0 {
-		ends0 := games[i].Score[0]+points >= matchLength
-		ends1 := games[i].Score[1]+points >= matchLength
-		if ends0 != ends1 {
-			winner = domain.White
-			if ends0 {
-				winner = domain.Black
-			}
-		}
-	}
 	return winner, points
 }
 

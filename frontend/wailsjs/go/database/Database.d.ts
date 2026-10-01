@@ -164,6 +164,8 @@ export function DirectionPairingSheetHTML(arg1:number,arg2:number):Promise<strin
 
 export function DirectionRounds(arg1:number):Promise<number>;
 
+export function DirectionSearchIndex(arg1:number):Promise<Array<service.SearchEntry>>;
+
 export function DirectionStore():Promise<direction.Store>;
 
 export function DirectionUpcomingSheetHTML(arg1:number,arg2:string):Promise<string>;
@@ -431,6 +433,8 @@ export function RemovePositionsFromCollection(arg1:number,arg2:Array<number>):Pr
 export function RencontreOf(arg1:number):Promise<number>;
 
 export function RencontrePageHTML(arg1:number):Promise<string>;
+
+export function RencontreSearchIndex(arg1:number):Promise<Array<service.SearchEntry>>;
 
 export function RencontreTableGrid(arg1:number):Promise<service.HallView>;
 
