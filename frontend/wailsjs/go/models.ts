@@ -791,6 +791,44 @@ export namespace database {
 	        this.draft_id = source["draft_id"];
 	    }
 	}
+	export class TranscriptionState {
+	    id: number;
+	    annotated: transcript.Annotated;
+	    can_undo: boolean;
+	    can_redo: boolean;
+	    conflict: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionState(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.annotated = this.convertValues(source["annotated"], transcript.Annotated);
+	        this.can_undo = source["can_undo"];
+	        this.can_redo = source["can_redo"];
+	        this.conflict = source["conflict"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class TranscriptionSaveResult {
 	    match_id: number;
 	    replaced: boolean;
@@ -837,44 +875,7 @@ export namespace database {
 		    return a;
 		}
 	}
-	export class TranscriptionState {
-	    id: number;
-	    annotated: transcript.Annotated;
-	    can_undo: boolean;
-	    can_redo: boolean;
-	    conflict: boolean;
 	
-	    static createFrom(source: any = {}) {
-	        return new TranscriptionState(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	        this.annotated = this.convertValues(source["annotated"], transcript.Annotated);
-	        this.can_undo = source["can_undo"];
-	        this.can_redo = source["can_redo"];
-	        this.conflict = source["conflict"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class TranscriptionSummary {
 	    id: number;
 	    created_at: string;
