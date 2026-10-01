@@ -2428,6 +2428,8 @@ export default {
 </tbody>
 </table>
 <p><code>pl</code>、<code>m</code>、<code>t</code> の値は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を含んでいても完全な値にならないトークンは無視され、<code>blunderdb search --query</code> がそれを報告します。タグにはアポストロフィを含められますが（<code>#l'ouverture</code>）、二重引用符は含められません。セミコロンは識別子とタグのリストの区切りです。どの値にも現れず、<code>ma1;2</code> はトークンではありません（<code>ma1 ma2</code> と書きます）。</p>
+<h3>ターミナルから転記する</h3>
+<p>コマンドラインに転記用のコマンドはありません。操作は <em>記譜</em> タブで入力します。アプリケーションの外では <code>blunderdb call</code> (APIで記譜する) を使います。例: <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>。<code>--if-match</code> は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、<code>sessionId</code> はなく、呼び出しをまたいだ取り消しもできません。</p>
 <h3>その他のコマンド</h3>
 <table>
 <thead>

@@ -298,20 +298,29 @@ gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
 --transcription`` : sans ce drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
-``sessionId``. Chaque geste qui écrit porte la révision vue en dernier dans
-l'en-tête ``If-Match`` et rend la suivante :
+``sessionId``. ``apply``, ``undo``, ``redo`` et ``close`` nomment ce
+``sessionId`` : absent → **400**, session expirée ou inconnue → **410** ; le
+client rouvre alors le brouillon (``open``), curseur en fin de document.
+Chaque geste qui écrit porte la révision vue en dernier dans l'en-tête
+``If-Match`` et rend la suivante :
 
 * ``If-Match`` absent → **428** ;
 * révision périmée → **409** ; l'enveloppe d'erreur donne la révision
-  courante (``details.revision``), le client relit le brouillon
-  (``transcriptions.get``) avant de rejouer son geste ;
-* session expirée ou inconnue → **410** ; le client rouvre le brouillon
-  (``open``), curseur en fin de document.
+  courante (``details.revision``) et l'état frais du brouillon
+  (``details.state`` : document, révision, session et curseur), que le client
+  affiche avant de rejouer son geste s'il tient encore.
 
-La session ne garde que la pile d'annulation et la saisie en cours : le
-brouillon est écrit après chaque geste, une session perdue (inactivité,
-redémarrage, autre instance) ne perd aucun geste. ``transcriptions.get`` rend
-la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
+La révision n'avance que quand le document change (en-tête et actions) :
+déplacer le curseur ou entrer un dé de l'action en cours n'écrit rien et rend
+la même révision. Une session est celle du brouillon, pas celle d'un client :
+``open`` rend la session vivante quand il y en a une, et les onglets ou postes
+qui la partagent partagent aussi le curseur et la pile d'annulation.
+
+La session ne garde que la pile d'annulation, le curseur et la saisie en
+cours : le brouillon est écrit après chaque geste qui le change, une session
+perdue (inactivité, redémarrage, autre instance) ne perd aucun geste.
+``transcriptions.get`` rend la révision en ``ETag`` et répond 304 à un
+``If-None-Match`` qui la nomme.
 
 ``finish`` enregistre le Match et supprime le brouillon, ``abandon`` le
 supprime sans Match, ``close`` ne libère que la session. ``editMatch`` ouvre un
@@ -1257,7 +1266,8 @@ les tests d'intégration.
 
 ``call`` sert les gestes de transcription sans drapeau : il travaille sur un
 fichier local, comme la CLI. Chaque appel est un processus neuf, donc sa propre
-session : pas d'annulation d'un appel à l'autre.
+session : le ``sessionId`` peut être omis, et il n'y a pas d'annulation d'un
+appel à l'autre.
 
 La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est écrite
 sur la sortie standard. En cas d'erreur, le processus se termine avec un code

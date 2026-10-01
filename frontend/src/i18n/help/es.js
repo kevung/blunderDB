@@ -2428,6 +2428,8 @@ export default {
 </tbody>
 </table>
 <p>Los valores <code>pl</code>, <code>m</code> y <code>t</code> se abren con comillas o un apóstrofo y se cierran con cualquiera de los dos. Un token que conserva una comilla sin formar un valor completo se ignora, y <code>blunderdb search --query</code> lo señala. Una etiqueta puede contener un apóstrofo (<code>#l'ouverture</code>), nunca comillas. El punto y coma es el separador de las listas de identificadores y de etiquetas: no aparece en ningún valor, y <code>ma1;2</code> no es un token (escriba <code>ma1 ma2</code>).</p>
+<h3>Transcribir desde un terminal</h3>
+<p>La línea de comandos no tiene un comando de transcripción: los gestos se teclean en la pestaña <em>Transcripción</em>. Fuera de la aplicación, pasan por <code>blunderdb call</code> (Transcribir por la API), por ejemplo <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nombra la revisión devuelta por la llamada anterior; cada llamada es su propia sesión, sin <code>sessionId</code> ni deshacer de una llamada a otra.</p>
 <h3>Comandos diversos</h3>
 <table>
 <thead>

@@ -28,20 +28,24 @@ comment deux écritures concurrentes se détectent, et comment un client apprend
    contrat `Storage` et un service commun ; `Database` en devient la façade pour le bureau et
    la CLI. Une seule implémentation sert le GUI, la CLI et le démon (parité, `CLAUDE.md`).
 3. **La session de transcription est un cache en mémoire.** Une session par (tenant,
-   brouillon), fermée après un délai d'inactivité ; un identifiant de session inconnu ou
-   expiré rend **410**, et le client rouvre le brouillon, curseur en fin de document. Le
-   document reste écrit après chaque geste (ADR-0045 règle 1) : une session perdue
-   (inactivité, redémarrage, autre instance) ne perd que la pile d'annulation, jamais un
-   geste. Sous `call`, chaque appel est sa propre session : pas d'annulation d'un appel à
+   brouillon), fermée après un délai d'inactivité ; elle tient le curseur, la saisie en
+   cours et la pile d'annulation, partagés par tous les clients qui l'ont ouverte. Sur HTTP,
+   un geste nomme sa session : absente → 400, inconnue ou expirée → **410**, et le client
+   rouvre le brouillon, curseur en fin de document. Le document reste écrit après chaque
+   geste qui le change (ADR-0045 règle 1) : une session perdue (inactivité, redémarrage,
+   autre instance) ne perd que la pile d'annulation, jamais un geste. Sous `call`, chaque
+   appel est sa propre session et n'en nomme aucune : pas d'annulation d'un appel à
    l'autre.
 4. **Tout geste d'écriture porte sa version, obligatoirement.** `If-Match` absent → **428** ;
-   version périmée → **409** avec l'état frais, que le client relit avant de rejouer son
-   geste s'il reste valide. La comparaison se fait dans la transaction du geste. Direction :
+   version périmée → **409** avec l'état frais (document, révision, session et curseur),
+   que le client affiche avant de rejouer son geste s'il reste valide. La comparaison se fait dans la transaction du geste. Direction :
    la version est le numéro du dernier événement du journal ; un geste de salle compare
    celles de toutes les épreuves membres. Transcription : une **colonne de révision** sur la
-   table des brouillons, incrémentée à chaque geste — un changement de schéma (bump de
-   `DatabaseVersion`, migration SQLite et PostgreSQL), parce que la version doit se lire et
-   se comparer sans désérialiser le document. Les lectures rendent un `ETag` ; `If-None-Match`
+   table des brouillons, incrémentée quand le document durable (en-tête et actions) change
+   et seulement alors — un curseur déplacé ou une saisie en cours n'écrit rien et ne la
+   fait pas avancer — ; l'écriture rend la révision qu'elle a produite. C'est un changement
+   de schéma (bump de `DatabaseVersion`, migration SQLite et PostgreSQL), parce que la
+   version doit se lire et se comparer sans désérialiser le document. Les lectures rendent un `ETag` ; `If-None-Match`
    → 304. Le GUI de bureau passe par le même contrôle.
 5. **L'écriture est éteinte par défaut, la lecture non.** `serve --direction` ouvre les gestes
    de Direction et de Rencontre, `serve --transcription` ceux de la Transcription ; sans ces
@@ -66,6 +70,9 @@ comment deux écritures concurrentes se détectent, et comment un client apprend
 - La route SSE rejoint les routes sans échéance ; la compression la vide à chaque message ;
   la limitation de débit compte une connexion, pas ses messages.
 - Un `Idempotency-Key` sur un geste évite qu'un double envoi saisisse deux résultats.
+- `transcriptions.finish` enregistre le Match sans l'analyser : le démon ne lance pas
+  l'analyse que le bureau propose après Terminer (ADR-0045 règle 8) ; le client la demande par
+  `gammonnet.analyzeMissing`.
 - Écartés : remplacer l'ADR-0039 pour un front web éditeur (un second front, que rien ne
   demande tant que le client est externe) ; une session persistée en base (un bump pour une
   pile d'annulation) ; une session tenue par le client (le moteur devrait accepter une pile

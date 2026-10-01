@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:22+0200\n"
+"POT-Creation-Date: 2026-10-01 05:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1539,6 +1539,29 @@ msgstr ""
 "``ma1;2`` ole kelvollinen merkki (kirjoita ``ma1 ma2``)."
 
 #: ../../source/cmd_mode.rst:233
+msgid "Transcrire depuis un terminal"
+msgstr "Litterointi päätteestä"
+
+#: ../../source/cmd_mode.rst:235
+#, no-python-brace-format
+msgid ""
+"La ligne de commande n'a pas de commande de transcription : les gestes se"
+" tapent dans l'onglet *Transcription*. Hors de l'application, ils passent"
+" par ``blunderdb call`` (:ref:`headless_transcription`), par exemple "
+"``blunderdb call transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` nomme "
+"la révision rendue par l'appel précédent ; chaque appel est sa propre "
+"session, sans ``sessionId`` ni annulation d'un appel à l'autre."
+msgstr ""
+"Komentorivillä ei ole litterointikomentoa: eleet kirjoitetaan "
+"*Litterointi*-välilehdellä. Sovelluksen ulkopuolella ne kulkevat komennon"
+" ``blunderdb call`` kautta (:ref:`headless_transcription`), esimerkiksi "
+"``blunderdb call transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` nimeää"
+" edellisen kutsun palauttaman revision; jokainen kutsu on oma istuntonsa,"
+" ilman ``sessionId``-tunnistetta ja ilman kumoamista kutsusta toiseen."
+
+#: ../../source/cmd_mode.rst:246
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

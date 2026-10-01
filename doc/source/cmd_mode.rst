@@ -227,6 +227,19 @@ Deux recherches complètes :
 
 Les valeurs ``pl``, ``m`` et ``t`` s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``).
 
+.. _cmd_transcription_call:
+
+Transcrire depuis un terminal
+-----------------------------
+
+La ligne de commande n'a pas de commande de transcription : les gestes se
+tapent dans l'onglet *Transcription*. Hors de l'application, ils passent par
+``blunderdb call`` (:ref:`headless_transcription`), par exemple
+``blunderdb call transcriptions.apply --db base.db --if-match 3 --json
+'{"id":1,"gesture":{"Kind":"validate"}}'``. ``--if-match`` nomme la révision
+rendue par l'appel précédent ; chaque appel est sa propre session, sans
+``sessionId`` ni annulation d'un appel à l'autre.
+
 .. _cmd_misc:
 
 Commandes diverses
