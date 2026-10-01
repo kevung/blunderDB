@@ -1,0 +1,8 @@
+# Generated or bulky files that drown source searches (ripgrep and ugrep read
+# this file; plain grep does not, so `grep -rn` is unaffected).
+frontend/wailsjs
+frontend/src/i18n/help
+internal/server/webui/dist
+openapi.yaml
+**/*.po
+clients/python/blunderdb/_generated.py

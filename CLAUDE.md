@@ -22,6 +22,7 @@ over the same handlers; `migrate` → SQLite → PostgreSQL; anything in `handle
 ## Build, run, test
 
 ```bash
+make setup                        # once per clone: wires .githooks/pre-commit (incremental)
 make dev                          # wails dev -tags webkit2_41 (webkit2gtk-4.1)
 make build                        # → build/bin/blunderDB
 go test ./...                     # Go; -run TestNameRegex for one test
