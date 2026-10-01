@@ -204,7 +204,15 @@ func (d *Service) DirectionPageHTML(ctx context.Context, tournamentID int64) (st
 // directionPage renders the display page, with the event's bracket in rotation when it has one.
 func (d *Service) directionPage(ctx context.Context, dir *direction.Direction, tournamentID int64, cat *direction.Catalog, lang string) (string, error) {
 	now := time.Now()
-	page, err := dir.Page(cat, lang, now)
+	cfg, err := dir.Config()
+	if err != nil {
+		return "", err
+	}
+	plan, err := d.planFor(ctx, tournamentID, cfg)
+	if err != nil {
+		return "", err
+	}
+	page, err := dir.PageIn(cat, lang, now, plan, d.memberNames(ctx, tournamentID))
 	if err != nil {
 		return "", err
 	}

@@ -52,6 +52,9 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 		if err := d.tableBeyond(ctx, dir, tournamentID, a.Table); err != nil {
 			return err
 		}
+		if err := d.refuseOutside(ctx, dir, tournamentID, a.Table); err != nil {
+			return err
+		}
 	}
 	return confirm(ctx, dir, a)
 }
@@ -84,7 +87,7 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 	// Proposed at the SAME instant the events will carry, or the queue and its confirmation
 	// disagree about a micro-round's deadline.
 	// The sister events of the Rencontre, if any, hold tables the engine must not give out.
-	for _, a := range dir.ProposeWith(now, d.outside(ctx, tournamentID, dir)) {
+	for _, a := range d.roomAround(ctx, tournamentID, dir).propose(dir, now) {
 		if a.Kind == tournoi.ActWait {
 			continue
 		}
@@ -168,11 +171,19 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 		if err := d.tableBeyond(ctx, dir, tournamentID, table); err != nil {
 			return err
 		}
+		if err := d.refuseOutside(ctx, dir, tournamentID, table); err != nil {
+			return err
+		}
 		if table <= 0 {
 			// No number typed: the first free table, as a proposal would get — one no sister
-			// event of the room plays on either. With none left the match still starts, under
-			// the grid's "no table" cell.
-			table = firstFreeTable(st, "", st.Current, sisters)
+			// event of the room plays on, inside the event's rooms, neither reserved nor kept
+			// for someone. With none left the match still starts, under the grid's "no table"
+			// cell.
+			skip := d.closedTables(ctx, dir, tournamentID)
+			for n, ev := range sisters {
+				skip[n] = ev
+			}
+			table = firstFreeTable(st, "", st.Current, skip)
 		} else if _, next := sisters[table]; next || occupant(st, table, "") != nil {
 			return direction.Refusef("direction: table %d is taken", table)
 		}

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"slices"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
@@ -19,6 +20,14 @@ import (
 // TableCell is one square of the table grid: what the director reads from two metres away.
 type TableCell struct {
 	Table int `json:"table"`
+	// Name, Room and AssignedTo are the table's properties (ADR-0058): the name shown beside
+	// the number, the room it stands in, the persons it is kept for.
+	Name       string   `json:"name,omitempty"`
+	Room       string   `json:"room,omitempty"`
+	AssignedTo []string `json:"assignedTo,omitempty"`
+	// OutsideRooms marks a table outside the rooms the event may play in: never proposed to
+	// it, and refused to its gestures.
+	OutsideRooms bool `json:"outsideRooms,omitempty"`
 	// Free, Unavailable and Reserved are mutually exclusive with a running match.
 	Free        bool   `json:"free"`
 	Unavailable bool   `json:"unavailable"`
@@ -114,8 +123,15 @@ func gridOf(dir *direction.Direction, room sisterRoom, now time.Time) []TableCel
 	}
 
 	out := make([]TableCell, 0, count+len(tableless))
+	named := func(n int) TableCell {
+		c := TableCell{Table: n, OutsideRooms: !room.plan.Allowed(n)}
+		if s, ok := room.plan.Setting(n); ok {
+			c.Name, c.Room, c.AssignedTo = s.Name, s.Room, s.AssignedTo
+		}
+		return c
+	}
 	for n := 1; n <= count; n++ {
-		c := TableCell{Table: n}
+		c := named(n)
 		if m := running[n]; m != nil {
 			fill(&c, m)
 			c.Shared = shared[n]
@@ -129,13 +145,17 @@ func gridOf(dir *direction.Direction, room sisterRoom, now time.Time) []TableCel
 			c.Unavailable = true
 		case !st.Config.Tables.AvailableFor(n, "", st.Current):
 			c.Reserved = true
+		case slices.Contains(room.plan.Closed(), n) && room.plan.Allowed(n):
+			// Reserved, or kept for someone: never proposed, placed by hand (ADR-0058 §7, §8).
+			c.Reserved = true
 		default:
 			c.Free = true
 		}
 		out = append(out, c)
 	}
 	for _, m := range extra {
-		c := TableCell{Table: m.Table, Shared: true}
+		c := named(m.Table)
+		c.Shared = true
 		fill(&c, m)
 		out = append(out, c)
 	}
@@ -267,6 +287,9 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		if err := d.tableBeyond(ctx, dir, tournamentID, table); err != nil {
 			return err
 		}
+		if err := d.refuseOutside(ctx, dir, tournamentID, table); err != nil {
+			return err
+		}
 		st := dir.State()
 		if st == nil {
 			return direction.Refusef("direction: the tournament has not started")
@@ -304,6 +327,13 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		}
 		if so != nil && contains(sister.State().Config.Tables.Unavailable, from) {
 			return direction.Refusef("direction: table %d is out of service", from)
+		}
+		if so != nil {
+			// The sister's match lands on the moved match's table: that end of the swap must
+			// be in the sister's rooms too.
+			if err := d.refuseOutside(ctx, sister, sister.Record().TournamentID, from); err != nil {
+				return err
+			}
 		}
 		now := time.Now()
 		if err := dir.Apply(ctx, tournoi.TableChangedEvent(m.ID, table, now)); err != nil {
