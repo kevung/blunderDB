@@ -4,8 +4,8 @@
  * L'équivalence clic/frappe est tenue par la machine (transcriptionKeys.mouse.test.js).
  * Ce qui ne se voit qu'ici : que le clic ATTEIGNE le moteur — deux `enter_die`
  * dans l'ordre, puis la demande des candidats — que le triangle soit posé à
- * côté du clavier et non à sa place, et que l'ouverture montre une rangée de
- * six dés plutôt qu'un triangle, un dé par camp.
+ * côté du clavier et non à sa place, et que le premier coup d'une partie
+ * montre une rangée de six dés plutôt qu'un triangle, un dé par camp.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -45,12 +45,12 @@ const POSITION = {
     decision_type: 0
 };
 
-function annotated({ expects = 'checker' } = {}) {
+function annotated({ expects = 'checker', gameStart = false } = {}) {
     return {
         document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice' }, actions: [], cursor: 0 },
         actions: [],
         games: [],
-        next: { expects, side: 0, position: POSITION, crawford: false },
+        next: { expects, game_start: gameStart, side: 0, position: POSITION, crawford: false },
         score: [0, 0],
         cursor: 0
     };
@@ -64,8 +64,8 @@ const RANKED = [{ index: 0, move: '8/5 6/5', equity: 0.1 }];
 const gestures = () => /** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ call) => call[1]);
 const diceCells = () => [...document.querySelectorAll('.transcription-panel button')].filter((b) => /^\d{1,2}$/.test(b.textContent.trim()));
 
-async function openedPanel(expects = 'checker') {
-    transcriptionStore.set(state(annotated({ expects })));
+async function openedPanel(expects = 'checker', gameStart = false) {
+    transcriptionStore.set(state(annotated({ expects, gameStart })));
     render(TranscriptionPanel);
     await tick();
 }
@@ -119,8 +119,8 @@ describe('le triangle des jets dans le panneau', () => {
         expect(document.activeElement?.id).toBe('transcriptionPanel');
     });
 
-    test('l-ouverture montre six dés, pas le triangle', async () => {
-        await openedPanel('opening');
+    test('le premier coup d-une partie montre six dés, pas le triangle', async () => {
+        await openedPanel('checker', true);
         const faces = diceCells().map((b) => b.textContent.trim());
         expect(faces).toEqual(['1', '2', '3', '4', '5', '6']);
 

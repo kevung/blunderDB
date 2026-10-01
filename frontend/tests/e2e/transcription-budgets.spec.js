@@ -223,7 +223,7 @@ test.describe('ux.md §4.2 — le videau', () => {
         await expect.poll(() => sentKinds(page)).toEqual(['double', 'take']);
     });
 
-    // « double, passe (partie finie, ouverture suivante) | d p | 0,56 s ».
+    // « double, passe (partie finie, premier coup de la suivante) | d p | 0,56 s ».
     test('double puis passe coûtent deux touches', async ({ page }) => {
         await openDraft(page);
         const count = await countGestures(page, async (g) => {

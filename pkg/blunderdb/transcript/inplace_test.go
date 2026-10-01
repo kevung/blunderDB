@@ -6,66 +6,32 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// TestOpeningCorrectedCarriesTheFirstPlay holds the one exception to "the side
-// belongs to the Action": the play a game starts with follows the opening that
-// names its camp, because the user never chose that camp — the panel proposed it
-// and carried the roll over (fonctionnel.md §1.2).
-// See followOpening.
-func TestOpeningCorrectedCarriesTheFirstPlay(t *testing.T) {
-	// The opening is 6-3 for player 1, who then plays it.
-	opened := func(t *testing.T) Document {
+// TestFirstPlayRetypedChangesCamp: the dice of a game's first play are the opening
+// roll, so typing ANOTHER roll there decides once more who starts; the same two dice,
+// in either order, change nothing. Nothing but the first play moves.
+func TestFirstPlayRetypedChangesCamp(t *testing.T) {
+	retype := func(t *testing.T, doc Document, d1, d2 int) Document {
 		t.Helper()
-		return runSteps(t, openedMatch(t, 7), []step{
+		return runSteps(t, seek(t, doc, 0), []step{
+			{"first die", die(d1), nil},
+			{"second die", die(d2), nil},
+			{"validate", confirm(), nil},
+		})
+	}
+
+	t.Run("another roll changes camp with the winner", func(t *testing.T) {
+		doc := runSteps(t, openedMatch(t, 7), []step{
 			{"a play", candidate(0), nil},
 			{"validate", confirm(), nil},
 		})
-	}
-	// 3 then 6 on the opening cell: the higher die is player 2's now.
-	retype := func(t *testing.T, doc Document) Document {
-		t.Helper()
-		return runSteps(t, seek(t, doc, 0), []step{
-			{"first die", die(3), nil},
-			{"second die", die(6), nil},
-			{"validate", confirm(), nil},
-		})
-	}
-
-	t.Run("the play changes camp with the winner", func(t *testing.T) {
-		doc := opened(t)
-		if doc.Actions[0].Side != domain.Black || doc.Actions[1].Side != domain.Black {
-			t.Fatalf("the fixture does not start with player 1: %+v", doc.Actions)
+		played := doc.Actions[0]
+		if same := retype(t, doc, 3, 6).Actions[0]; same.Side != domain.Black || same.Dice != [2]int{6, 3} ||
+			!sameSteps(same.Steps, played.Steps) {
+			t.Errorf("the same roll retyped = %+v, want the play untouched", same)
 		}
-		played := append([]domain.CheckerStep(nil), doc.Actions[1].Steps...)
-
-		doc = retype(t, doc)
-
-		if doc.Actions[0].Side != domain.White {
-			t.Fatalf("opening = %+v, want player 2 as the winner", doc.Actions[0])
-		}
-		if doc.Actions[1].Side != domain.White {
-			t.Errorf("the first play stayed with player %d; it must follow the opening", doc.Actions[1].Side+1)
-		}
-		// Only the side moved: the play itself is the one that was recorded.
-		if !sameSteps(doc.Actions[1].Steps, played) {
-			t.Errorf("steps = %v, want the recorded %v", doc.Actions[1].Steps, played)
-		}
-		if len(doc.Actions) != 2 {
-			t.Errorf("actions = %d, want 2 — nothing was added", len(doc.Actions))
-		}
-	})
-
-	t.Run("a play already given to the other camp is left alone", func(t *testing.T) {
-		doc := seek(t, opened(t), 1)
-		flipped, err := Apply(doc, Gesture{Kind: GestureFlipSide})
-		if err != nil {
-			t.Fatal(err)
-		}
-		if flipped.Actions[1].Side != domain.White {
-			t.Fatalf("the fixture was not flipped: %+v", flipped.Actions[1])
-		}
-
-		if out := retype(t, flipped); out.Actions[1].Side != domain.White {
-			t.Error("a side the user had chosen was overwritten by the opening")
+		if a := retype(t, doc, 2, 5).Actions[0]; a.Side != domain.White || a.Dice != [2]int{2, 5} ||
+			!diceCoherent(a.Steps, a.Dice, a.Side) {
+			t.Errorf("first play = %+v, want a play of player 2's 52", a)
 		}
 	})
 
@@ -76,11 +42,11 @@ func TestOpeningCorrectedCarriesTheFirstPlay(t *testing.T) {
 			sides[i] = a.Side
 		}
 
-		doc = retype(t, doc)
+		doc = retype(t, doc, 2, 5)
 
-		for i := 2; i < len(doc.Actions); i++ {
+		for i := 1; i < len(doc.Actions); i++ {
 			if doc.Actions[i].Side != sides[i] {
-				t.Fatalf("action %d changed camp; only the first play follows the opening", i)
+				t.Fatalf("action %d changed camp; only the first play follows the opening roll", i)
 			}
 		}
 	})
@@ -261,15 +227,15 @@ func TestEntryInfoDrawsTheActionBeingTyped(t *testing.T) {
 		}
 	})
 
-	t.Run("an opening slot says so, whatever the end of the document expects", func(t *testing.T) {
+	t.Run("a game's first play says so, whatever the end of the document expects", func(t *testing.T) {
 		doc := typedMatch(t, 7)
 		doc = seek(t, doc, 0)
 		e := Replay(doc, 0).Entry
-		if e == nil || e.Kind != KindOpening {
-			t.Fatalf("entry = %+v, want the opening slot named as one", e)
+		if e == nil || !e.GameStart || e.Kind != KindChecker {
+			t.Fatalf("entry = %+v, want the game's first play named as one", e)
 		}
-		if ann := Replay(doc, 0); ann.Next.Expects == KindOpening {
-			t.Fatal("the fixture's end expects an opening too; the case is not built")
+		if ann := Replay(doc, 0); ann.Next.GameStart {
+			t.Fatal("the fixture's end expects a new game too; the case is not built")
 		}
 	})
 

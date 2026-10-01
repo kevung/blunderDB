@@ -404,7 +404,8 @@ func (d *Database) writeTranscription(id int64, doc transcript.Document, blob []
 }
 
 // decodeTranscription reads a stored draft's JSON. An unknown format version
-// is refused rather than half-read, which would drop Actions silently.
+// is refused rather than half-read, which would drop Actions silently; an older
+// one is converted to the current shape.
 func decodeTranscription(row *storage.Transcription) (transcript.Document, error) {
 	var doc transcript.Document
 	if err := json.Unmarshal([]byte(row.Document), &doc); err != nil {
@@ -414,7 +415,7 @@ func decodeTranscription(row *storage.Transcription) (transcript.Document, error
 		return doc, fmt.Errorf("transcription %d was written in document format %d, this version reads up to %d",
 			row.ID, doc.FormatVersion, transcript.FormatVersion)
 	}
-	return doc, nil
+	return transcript.Upgrade(doc), nil
 }
 
 // summarize reads a row's document for the list. An undecodable document

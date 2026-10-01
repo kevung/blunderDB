@@ -39,10 +39,7 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 		apply(transcript.Gesture{Kind: transcript.GestureValidate})
 	}
 
-	// Game 1: the opening, one play each, a double and a pass.
-	apply(die(6))
-	apply(die(3))
-	apply(transcript.Gesture{Kind: transcript.GestureValidate})
+	// Game 1: player 1 wins the opening with 6-3, one play each, a double and a pass.
 	play(6, 3)
 	play(5, 2)
 	apply(transcript.Gesture{Kind: transcript.GestureDouble})
@@ -54,11 +51,9 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 	}
 
 	// Game 2 is started before the mistake is seen.
-	apply(die(4))
-	apply(die(1))
-	apply(transcript.Gesture{Kind: transcript.GestureValidate})
-	apply(transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 0})
-	state = apply(transcript.Gesture{Kind: transcript.GestureValidate})
+	play(4, 1)
+	play(5, 3)
+	state = apply(transcript.Gesture{Kind: transcript.GestureCursorForward})
 
 	count := len(state.Annotated.Document.Actions)
 	tail := append([]transcript.Action(nil), state.Annotated.Document.Actions[passAt+1:]...)
@@ -90,21 +85,31 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 		}
 	}
 	// The game the pass had WON is nobody's again, which is the whole point: it
-	// is left open by the opening that follows it — the one the rest of the
-	// game is now typed in front of — and it is worth no points to anybody.
+	// runs on until the rest of it is typed in front of the next game's plays,
+	// and it is worth no points to anybody. The next game keeps its boundary by
+	// declaring the score it started at, so it is not swallowed meanwhile.
 	if g := state.Annotated.Games[0]; g.Winner != -1 || g.PointsWon != 0 {
 		t.Errorf("game 1 = %+v, want it won by nobody — the take was not replayed", g)
 	}
-	if state.Annotated.Score != [2]int{0, 0} {
-		t.Errorf("score = %v, want 0–0: the pass no longer gives a point away", state.Annotated.Score)
+	if g := state.Annotated.Games[1]; !g.Declared || g.First != passAt+1 {
+		t.Errorf("game 2 = %+v, want it kept, opened at %d by its declared score", g, passAt+1)
+	}
+	// The score it declares is the one the pass had given; with the game it
+	// followed unfinished, the previous games no longer give it, and it says so.
+	marked := false
+	for _, inc := range state.Annotated.Actions[passAt+1].Inconsistencies {
+		marked = marked || inc.Kind == transcript.ScoreMismatch
+	}
+	if !marked {
+		t.Errorf("the next game's first play carries %+v, want a score mismatch", state.Annotated.Actions[passAt+1].Inconsistencies)
 	}
 }
 
-// TestTranscriptionOpeningRetypedDecidesWhoStarts holds the other half of the
-// same session: the opening of a game is where "the big die first is player 1"
-// is said, and saying it again must decide again — through the binding, where
-// the entry is loaded by the Cursor and the validation replaces in place.
-func TestTranscriptionOpeningRetypedDecidesWhoStarts(t *testing.T) {
+// TestTranscriptionFirstPlayRetypedDecidesWhoStarts holds the other half of the
+// same session: a game's first play is where "the big die first is player 1" is
+// said, and saying it again must decide again — through the binding, where the
+// entry is loaded by the Cursor and the validation replaces in place.
+func TestTranscriptionFirstPlayRetypedDecidesWhoStarts(t *testing.T) {
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
@@ -122,44 +127,45 @@ func TestTranscriptionOpeningRetypedDecidesWhoStarts(t *testing.T) {
 	}
 	die := func(n int) transcript.Gesture { return transcript.Gesture{Kind: transcript.GestureEnterDie, Die: n} }
 
-	// 6 then 3: player 1 rolled the higher die and starts.
-	apply(die(6))
-	apply(die(3))
-	state = apply(transcript.Gesture{Kind: transcript.GestureValidate})
-	if got := state.Annotated.Document.Actions[0].Side; got != 0 {
-		t.Fatalf("side = %d, want player 1", got)
-	}
-
-	// One play, then back onto the opening.
+	// 6 then 3: player 1 rolled the higher die and plays first.
 	apply(die(6))
 	apply(die(3))
 	apply(transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 0})
 	state = apply(transcript.Gesture{Kind: transcript.GestureValidate})
+	if got := state.Annotated.Document.Actions[0].Side; got != 0 {
+		t.Fatalf("side = %d, want player 1", got)
+	}
 	for i := len(state.Annotated.Document.Actions); i > 0; i-- {
 		state = apply(transcript.Gesture{Kind: transcript.GestureCursorBack})
 	}
-	if e := state.Annotated.Entry; e == nil || e.Kind != transcript.KindOpening {
-		t.Fatalf("entry = %+v, want the opening slot named as one so the panel types an opening", e)
+	if e := state.Annotated.Entry; e == nil || !e.GameStart || !e.Replacing {
+		t.Fatalf("entry = %+v, want the first play held for correction as a game's first", e)
 	}
 
-	// 3 then 6: the higher die is player 2's now, and player 2 starts.
+	// The same roll retyped changes nothing; 2 then 5 is another roll, and its
+	// higher die is player 2's: player 2 plays first.
 	apply(die(3))
-	apply(die(6))
+	if state = apply(die(6)); state.Annotated.Entry == nil || state.Annotated.Entry.Side != 0 {
+		t.Fatalf("entry = %+v, want the same roll left with player 1", state.Annotated.Entry)
+	}
+	apply(die(2))
+	state = apply(die(5))
+	if e := state.Annotated.Entry; e == nil || e.Side != 1 || !e.Selected {
+		t.Fatalf("entry = %+v, want player 2 with the play preselected", e)
+	}
 	state = apply(transcript.Gesture{Kind: transcript.GestureValidate})
 
-	opening := state.Annotated.Document.Actions[0]
-	if opening.Kind != transcript.KindOpening || opening.Dice != [2]int{3, 6} {
-		t.Fatalf("opening = %+v, want the roll retyped", opening)
+	first := state.Annotated.Document.Actions[0]
+	if first.Kind != transcript.KindChecker || first.Dice != [2]int{2, 5} {
+		t.Fatalf("first play = %+v, want the roll retyped", first)
 	}
-	if opening.Side != 1 {
-		t.Errorf("side = %d, want player 2 — the small die first gives the turn to the top", opening.Side)
+	if first.Side != 1 {
+		t.Errorf("side = %d, want player 2 — the small die first gives the turn to the top", first.Side)
 	}
-	// And the play made with that roll follows it: its camp was proposed by the
-	// opening, never chosen by the user (fonctionnel.md §1.2).
-	if got := state.Annotated.Document.Actions[1].Side; got != 1 {
-		t.Errorf("the first play stayed with player %d; it must follow the opening", got+1)
+	if flags := state.Annotated.Actions[0].Inconsistencies; len(flags) != 0 {
+		t.Errorf("the first play carries %+v; the preselected play is player 2's legal 5-2", flags)
 	}
-	if len(state.Annotated.Document.Actions) != 2 {
-		t.Errorf("actions = %d, want 2 — the opening was replaced, not inserted", len(state.Annotated.Document.Actions))
+	if len(state.Annotated.Document.Actions) != 1 {
+		t.Errorf("actions = %d, want 1 — the first play was replaced, not inserted", len(state.Annotated.Document.Actions))
 	}
 }

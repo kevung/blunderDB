@@ -151,7 +151,7 @@ export const draftRow = {
 /**
  * Installe le faux moteur. À appeler après `installWailsMock` (il complète
  * `window.go`), avant `page.goto`. `expects` pose l'Action attendue (`'take'`,
- * `'opening'`) ; `cursor` où le Cursor commence (fin du document par défaut).
+ * `'checker'`) ; `cursor` où le Cursor commence (fin du document par défaut).
  *
  * @param {import('@playwright/test').Page} page
  * @param {{expects?: string, cursor?: number}} [opts]

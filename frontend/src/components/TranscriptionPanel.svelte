@@ -112,10 +112,13 @@
     let keys = $derived($transcriptionKeyStore);
     // `awaits` : ce que le document attend après sa dernière Action ;
     // `expects` : ce qu'attend la cellule sous le curseur (`entry.kind`), sinon
-    // `awaits`. Confondre les deux ressaisissait une ouverture comme un coup de
-    // pions, hors de la convention qui décide qui commence.
+    // `awaits`.
     let awaits = $derived(annotated?.next?.expects ?? '');
     let expects = $derived(annotated?.entry?.kind || awaits);
+    // Premier coup d'une partie : ses deux dés sont le jet d'ouverture, dé du
+    // joueur 1 puis du joueur 2, et le moteur donne le coup au plus fort. Lu
+    // sur la cellule sous le curseur, sinon sur la fin du document.
+    let gameStart = $derived(annotated?.entry ? annotated.entry.game_start === true : annotated?.next?.game_start === true);
     // Discriminant de la touche chiffrée (ADR-0048 décision 1) : en bout de
     // document elle valide, sur une Action existante elle recommence le jet.
     let replacing = $derived(annotated?.entry?.replacing === true);
@@ -690,7 +693,7 @@
             noticeTranscription('transcription.notice.noDice');
             return;
         }
-        applyResult({ state: { ...initialKeyState(), tie: state.tie }, commands: [{ kind: COMMAND.CLEAR }] });
+        applyResult({ state: initialKeyState(), commands: [{ kind: COMMAND.CLEAR }] });
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1013,9 +1016,8 @@
         if (awaitingAnswer) return { key: 'transcription.answerPrompt', params: { player: playerName(sideOnRoll) } };
         if (underReview) return { key: 'transcription.reviewHint', params: {} };
         if (correcting) return { key: 'transcription.correcting', params: {} };
-        if (keys.tie) return { key: 'transcription.tie', params: {} };
         if (danced) return { key: 'transcription.dance', params: {} };
-        if (expects === 'opening') return { key: 'transcription.openingPrompt', params: {} };
+        if (gameStart && (keys.phase === PHASE.DICE || keys.phase === PHASE.DIE1)) return { key: 'transcription.firstPlayPrompt', params: {} };
         return { key: 'transcription.rollPrompt', params: { player: playerName(sideOnRoll) } };
     });
 
@@ -1026,20 +1028,16 @@
     // ── the board ────────────────────────────────────────────────────────
 
     // The board shows the Cursor's Action's starting Position (the match's
-    // current one at the end), with the dice as typed — except an opening's,
-    // which belong to two players and stay in the panel.
+    // current one at the end), with the dice as typed.
     /**
      * @param {any} ann
      * @param {number[]} dice
-     * @param {boolean} opening
      */
-    function boardPosition(ann, dice, opening) {
-        const actions = ann.actions ?? [];
+    function boardPosition(ann, dice) {
         const at = ann.cursor ?? 0;
-        const current = at >= 0 && at < actions.length ? actions[at] : null;
         const base = positionAt(ann, at);
         if (!base) return null;
-        const rolled = (!opening || current) && dice[0] > 0 && dice[1] > 0 ? [dice[0], dice[1]] : [0, 0];
+        const rolled = dice[0] > 0 && dice[1] > 0 ? [dice[0], dice[1]] : [0, 0];
         const pos = { ...structuredClone(base), id: 0, dice: rolled };
         // Dés du côté du camp de l'Action saisie, pas du voisin qu'une insertion repousse.
         if (ann.entry && ann.entry.at === at && typeof ann.entry.side === 'number') pos.player_on_roll = ann.entry.side;
@@ -1048,7 +1046,7 @@
 
     $effect(() => {
         if (!annotated || $statusBarModeStore !== 'TRANSCRIBE') return;
-        const pos = boardPosition(annotated, keys.dice, expects === 'opening');
+        const pos = boardPosition(annotated, keys.dice);
         if (pos) positionStore.set(pos);
     });
 
@@ -1093,7 +1091,9 @@
 
     let matchLength = $derived(annotated?.document?.header?.match_length ?? 0);
     let score = $derived(annotated?.score ?? [0, 0]);
-    let sideOnRoll = $derived(annotated?.next?.side ?? 0);
+    // Au premier coup d'une partie, le camp est celui que le jet d'ouverture
+    // vient de désigner sur l'entrée, pas le défaut de `next`.
+    let sideOnRoll = $derived(gameStart && typeof annotated?.entry?.side === 'number' ? annotated.entry.side : (annotated?.next?.side ?? 0));
 
     /** @param {number} side */
     function playerName(side) {
@@ -1322,7 +1322,7 @@
         /** @type {PanelCommand[]} */
         let lead = [];
         if (pending) {
-            if (!ann.entry || ann.entry.kind === 'opening') return false;
+            if (!ann.entry) return false;
             pos = entryPosition();
             dice = ann.entry.dice ?? [0, 0];
         } else {
@@ -1346,12 +1346,12 @@
      * Score annoncé d'une partie (ADR-0053) : `[p1, p2]`, ou `null` pour le
      * score déduit. Même file que les touches.
      *
-     * @param {number} opening
+     * @param {number} first - la première Action de la partie
      * @param {[number, number] | null} score
      */
-    function declareScore(opening, score) {
+    function declareScore(first, score) {
         if (!draft) return false;
-        sendGesture({ Kind: 'set_score', At: opening, Score: score });
+        sendGesture({ Kind: 'set_score', At: first, Score: score });
         panelEl?.focus({ preventScroll: true });
         return true;
     }
@@ -1533,7 +1533,7 @@
 
                     {#if diceEntryOpen}
                         <!-- Sous les cases du jet, jamais à leur place : le clavier reste deux fois plus rapide. -->
-                        <DiceTriangle single={expects === 'opening'} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
+                        <DiceTriangle single={gameStart} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
                     {/if}
                 </div>
 

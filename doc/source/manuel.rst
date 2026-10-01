@@ -1159,7 +1159,7 @@ le numéro de la partie, l'état du videau — sa valeur, centré ou au nom de c
 qui le possède — et le camp au trait — s'affiche dans la **barre de match**,
 au-dessus du plateau : c'est là que le regard se trouve déjà quand on se demande
 qui est au trait. L'action attendue, elle, est écrite en toutes lettres dans la
-**barre d'état** : « dés de Kévin », « réponse d'Alice au double », « relance ».
+**barre d'état** : « dés de Kévin », « réponse d'Alice au double ».
 
 La **barre du brouillon**, en tête du panneau, ne porte que les gestes qui font
 sortir le brouillon de lui-même, les deux flèches d'annulation et le sens du
@@ -1208,9 +1208,14 @@ première ligne des candidats, et cinq candidats au moins se lisent sans faire
 défiler quoi que ce soit.
 
 La palette montre les deux dés au fur et à mesure de leur saisie ; un clic
-dessus les efface, comme *RETOUR ARRIERE*. Une partie s'ouvre par un dé de chaque camp : le plus
-fort commence et joue les deux dés sans avoir à les ressaisir ; une égalité est
-enregistrée telle quelle et une autre ouverture est attendue.
+dessus les efface, comme *RETOUR ARRIERE*. Une partie commence par son premier
+coup, joué par le gagnant du jet d'ouverture : ses deux dés se tapent comme ce
+jet, dé du joueur 1 puis dé du joueur 2, et le plus fort donne le coup à son
+camp, qui joue les deux dés. Le coup se choisit ensuite parmi les candidats,
+comme tout autre. Les égalités, rejouées à la table, ne se transcrivent pas ; un
+premier coup tapé en double est enregistré tel quel et marqué « dés
+incohérents », aucun jet d'ouverture n'étant un double, et un double de videau
+avant le premier coup est marqué « action de videau impossible ».
 
 Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,
 classés par le moteur embarqué, le premier présélectionné et ses flèches posées
@@ -1290,7 +1295,7 @@ passe sont deux réponses symétriques et vivent ensemble dans la rangée, un cl
 chacune.
 
 La **barre d'état** dit ce que le brouillon attend, en un mot : la danse
-enregistrée d'office, l'égalité à relancer, la réponse attendue à un double, le
+enregistrée d'office, le premier coup d'une partie, la réponse attendue à un double, le
 niveau attendu après une résignation, la correction en place, le coup « à
 revoir » dont le jet a changé. Elle y répond aussi aux gestes qui n'ont rien à
 faire — « rien à annuler », « aucune action sous le curseur » — le temps d'une
@@ -1300,7 +1305,7 @@ signalée en tête du transcript, là où se trouve la cellule fautive.
 Une partie se termine par une passe, par une résignation ou par la sortie du
 quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du
 videau). Le score, la partie Crawford et la fin du match paraissent alors dans
-la barre de match, et l'ouverture de la partie suivante est attendue.
+la barre de match, et le premier coup de la partie suivante est attendu.
 
 Le score d'une partie est celui que donnent les parties précédentes, sauf s'il
 a été annoncé autrement à la table. Un double-clic sur le score de l'en-tête
@@ -1310,8 +1315,8 @@ l'enregistre, ÉCHAP referme le champ sans rien écrire, et un champ vidé puis
 validé revient au score dérivé. La partie est jouée à ce score : la partie
 Crawford, la fin du match et les parties suivantes en découlent, et le match
 enregistré comme le fichier ``.mat`` le portent. Un score qui diffère du score
-dérivé est marqué, l'info-bulle donne celui-ci, et l'ouverture de la partie
-porte l'incohérence « score annoncé incohérent ». En argent, il n'y a pas de
+dérivé est marqué, l'info-bulle donne celui-ci, et la première action de la
+partie porte l'incohérence « score annoncé incohérent ». En argent, il n'y a pas de
 score à annoncer.
 
 Le transcript occupe la moitié droite du panneau : une colonne par joueur, une
@@ -1345,8 +1350,10 @@ videau valent eux aussi comme corrections : sur une passe, *t* — ou le bouton
 **Prendre** — écrit une prise **à la place** de la passe, sans qu'il faille la
 supprimer puis insérer. La partie reprend alors son cours : une cellule s'ouvre
 juste après la prise, au camp du doubleur, et la suite de la partie s'y tape
-comme d'habitude, insérée devant l'ouverture de la partie suivante, jusqu'à ce
-que la partie se termine. Les mêmes touches remplissent la cellule qu'une
+comme d'habitude, insérée devant le premier coup de la partie suivante, jusqu'à ce
+que la partie se termine. Ce premier coup garde le score auquel sa partie
+commençait, désormais annoncé : si la fin de la partie reprise en donne un
+autre, l'écart est marqué. Les mêmes touches remplissent la cellule qu'une
 insertion vient d'ouvrir : *i* puis *d* insère un double devant l'action visée.
 
 Revenir sur la **dernière** action, c'est revenir là où la transcription
@@ -1355,24 +1362,23 @@ retapé, le chiffre suivant la valide et ouvre la décision d'après ; ENTREE la
 valide de même. Les décisions suivantes s'ajoutent alors à la suite, comme la
 première fois.
 
-Ressaisir les deux dés sur la cellule d'**ouverture** d'une partie décide à
-nouveau qui commence : le dé du joueur 1 se tape en premier, celui du joueur 2
-ensuite, et c'est le plus fort qui l'emporte — gros dé d'abord, le trait revient
-au joueur 1, en bas du plateau ; petit dé d'abord, il revient au joueur 2, en
-haut. La validation est immédiate au second dé, comme pour une ouverture neuve.
-**Le premier coup de pions de la partie suit le nouveau vainqueur** et change de
-colonne avec lui : son camp n'avait pas été choisi, il était proposé par
-l'ouverture — le gagnant du jet joue les deux dés sans les ressaisir. C'est la
-seule action que corriger une ouverture déplace : la suite de la partie garde
-ses camps, et un coup déjà donné à l'autre joueur par *s* n'est pas repris.
+Taper un **autre jet** sur le **premier coup** d'une partie décide à nouveau qui
+commence : le dé du joueur 1 se tape en premier, celui du joueur 2 ensuite, et
+c'est le plus fort qui l'emporte — gros dé d'abord, le coup revient au joueur 1,
+en bas du plateau ; petit dé d'abord, il revient au joueur 2, en haut. Le premier
+candidat du nouveau jet est présélectionné et le coup est à revoir. Retaper le
+**même jet**, dans un ordre ou dans l'autre, ne change rien. Pour donner le
+premier coup à l'autre joueur sans changer de jet, c'est *s* : l'ordre des dés
+suit le camp, et un premier coup joué par le camp que cet ordre ne désigne pas
+est marqué « dés incohérents ». La suite de la partie garde ses camps.
 
 Une **insertion au milieu du document continue d'insérer** : la validation
 ouvre une cellule vide à la suite, et l'action suivante s'insère à son tour au
 lieu d'écraser celle d'après. C'est ce qui permet de rattraper toute la fin
 d'une partie — une passe qui aurait dû être une prise — sans perdre ce qui a
 déjà été tapé de la partie suivante. La fin de la partie, ou un déplacement du
-curseur, met fin à l'insertion : le curseur se pose alors sur l'ouverture
-suivante.
+curseur, met fin à l'insertion : le curseur se pose alors sur le premier coup
+de la partie suivante.
 
 **Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la
 précédente, prête à être corrigée : sur une cellule écrite, l'action disparaît ;
