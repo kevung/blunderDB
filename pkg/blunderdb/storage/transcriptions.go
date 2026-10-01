@@ -34,6 +34,14 @@ type Transcription struct {
 	Label string `json:"label"`
 	// Document is the draft itself, opaque to storage.
 	Document string `json:"document"`
+	// Revision counts the writes the row has taken: 1 at insert, one more at
+	// every Save or Touch. It is a column, not a field of Document, so that
+	// two writers can be told apart without decoding the draft (ADR-0057
+	// rule 4). On Save it is also the caller's expectation: a non-zero
+	// Revision that the row no longer has reports ErrConflict; 0 rewrites
+	// whatever the row holds, which only a copy or a repair may do, never a
+	// gesture. Save writes the row's new revision back into it.
+	Revision int64 `json:"revision"`
 }
 
 // TranscriptionStore persists the drafts. A draft is written after every
@@ -49,9 +57,22 @@ type TranscriptionStore interface {
 
 	// Save writes t and returns its id: an insert when t.ID is 0 (t.ID is
 	// left untouched — the caller reads the returned id), an in-place rewrite
-	// otherwise, which reports ErrNotFound when the row is gone. A MatchID
-	// that names no match of the scope reports ErrNotFound.
+	// otherwise, which reports ErrNotFound when the row is gone and
+	// ErrConflict when t.Revision is non-zero and no longer the row's. A
+	// MatchID that names no match of the scope reports ErrNotFound. Either
+	// way t.Revision holds the row's new revision on success.
 	Save(ctx context.Context, scope string, t *Transcription) (int64, error)
+
+	// Touch advances the revision of an unchanged draft, under the same
+	// expectation as Save, and returns the new one: a gesture that moved
+	// only the cursor still changes what the next writer must have seen.
+	// updated_at is left alone, so the list order follows the typing.
+	Touch(ctx context.Context, scope string, id, revision int64) (int64, error)
+
+	// Annotations counts what a Match carries that a .mat cannot: the
+	// analyses (position and move) and the comments on its positions. It is
+	// what reopening an imported Match as a draft would drop (ADR-0045 §2).
+	Annotations(ctx context.Context, scope string, matchID int64) (analyses, comments int, err error)
 
 	// Delete removes a draft, or reports ErrNotFound. Nothing is snapshotted:
 	// closing a draft that was never saved has nothing saved to put back

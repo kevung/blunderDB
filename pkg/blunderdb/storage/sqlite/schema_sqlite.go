@@ -224,7 +224,8 @@ var schemaStatements = []string{
 	// the columns the library list shows. The document carries its OWN
 	// format_version, so its shape changes never need a DatabaseVersion
 	// migration. match_id is the Match it produced, if any; ON DELETE SET NULL
-	// so deleting the match never destroys the typing behind it.
+	// so deleting the match never destroys the typing behind it. revision
+	// counts the row's writes, the version a gesture must name (ADR-0057).
 	`CREATE TABLE IF NOT EXISTS transcription (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -232,7 +233,8 @@ var schemaStatements = []string{
 		format_version TEXT NOT NULL,
 		match_id INTEGER REFERENCES match(id) ON DELETE SET NULL,
 		label TEXT DEFAULT '',
-		document TEXT NOT NULL
+		document TEXT NOT NULL,
+		revision INTEGER NOT NULL DEFAULT 1
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_transcription_match ON transcription(match_id)`,
 	`CREATE TABLE IF NOT EXISTS move_analysis (

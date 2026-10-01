@@ -3176,3 +3176,54 @@ func checkWinners(t *testing.T, db *sql.DB, cases []storagetest.WinnerMigrationM
 		}
 	}
 }
+
+// TestMigrate_2_26_0_to_2_27_0_TranscriptionRevision opens a 2.26.0 library
+// holding a draft written before the column existed: the draft keeps its
+// typing and reads revision 1, the revision a fresh insert starts at, and
+// the next write advances it.
+func TestMigrate_2_26_0_to_2_27_0_TranscriptionRevision(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2260.db")
+	createOldDatabase(t, dbPath, "2.26.0")
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`CREATE TABLE IF NOT EXISTS transcription (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		format_version TEXT NOT NULL,
+		match_id INTEGER,
+		label TEXT DEFAULT '',
+		document TEXT NOT NULL)`); err != nil {
+		t.Fatalf("create 2.26.0 transcription: %v", err)
+	}
+	if _, err := raw.Exec(`INSERT INTO transcription (format_version, label, document) VALUES ('3', 'A vs B', '{}')`); err != nil {
+		t.Fatalf("insert draft: %v", err)
+	}
+	_ = raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.26.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !columnExists(t, d.db, "transcription", "revision") {
+		t.Fatal("transcription.revision should exist after migration")
+	}
+	ctx := context.Background()
+	row, err := d.store.Transcriptions().Get(ctx, "", 1)
+	if err != nil {
+		t.Fatalf("read the draft back: %v", err)
+	}
+	if row.Revision != 1 || row.Document != "{}" {
+		t.Fatalf("migrated draft = revision %d, document %q; want 1, {}", row.Revision, row.Document)
+	}
+	if _, err := d.store.Transcriptions().Save(ctx, "", row); err != nil || row.Revision != 2 {
+		t.Fatalf("a write must advance the revision: got %d, %v", row.Revision, err)
+	}
+}
