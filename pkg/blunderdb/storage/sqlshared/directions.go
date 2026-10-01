@@ -211,6 +211,17 @@ func (s *DirectionStore) LoadEvents(ctx context.Context, scope string, tournamen
 	return out, nil
 }
 
+// EventsHead counts the log and reads its last sequence number.
+func (s *DirectionStore) EventsHead(ctx context.Context, scope string, tournamentID int64) (count, lastSeq int, err error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	err = s.DB.QueryRow(ctx, `SELECT COUNT(*), COALESCE(MAX(seq), -1) FROM direction_event
+		WHERE tournament_id = ? AND `+tenant, append([]any{tournamentID}, targs...)...).Scan(&count, &lastSeq)
+	if err != nil {
+		return 0, 0, errf(s.DB, "direction events head", err)
+	}
+	return count, lastSeq, nil
+}
+
 // sqlTime scans a timestamp column whatever shape the driver hands back: a
 // time.Time from PostgreSQL's TIMESTAMPTZ, text or a time.Time from SQLite's
 // DATETIME. Reading it raw rather than through Dialect.TimestampText keeps

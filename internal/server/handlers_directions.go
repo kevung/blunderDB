@@ -17,7 +17,8 @@ import (
 // and the daemon opens them only on request (rule 5).
 //
 // Left out on purpose: the routes that write a file on the server's disk (WriteDirectionPage,
-// WriteRencontrePage, the output folders) — a remote client reads pageHtml instead — and
+// WriteRencontrePage, the output folders) — a remote client reads pageHtml instead, and the
+// outputDir fields are emptied, a path of the server's disk being no client's business — and
 // SetDirectionStrings, a catalogue the desktop pushes into its own process. The pages render
 // in the engine's own language, French.
 
@@ -44,6 +45,23 @@ type directionRoundReq struct {
 }
 
 func (r directionRoundReq) readKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
+func (r directionRoundReq) validate() error {
+	if r.Round < 0 {
+		return fmt.Errorf("%w: round %d is negative", storage.ErrInvalid, r.Round)
+	}
+	return nil
+}
+
+// directionSlotsReq names the Direction whose Slots are read; their drafts are part of what
+// the answer depends on.
+type directionSlotsReq struct {
+	TournamentID int64 `json:"tournamentId"`
+}
+
+func (r directionSlotsReq) readKey() readKey {
+	return readKey{tournamentID: r.TournamentID, drafts: true}
+}
 
 // rencontreReq names one Rencontre.
 type rencontreReq struct {
@@ -78,6 +96,8 @@ func (s *Server) readVersion(ctx context.Context, scope string, k readKey) (stri
 	var v string
 	var err error
 	switch {
+	case k.tournamentID != 0 && k.drafts:
+		v, err = svc.SlotsVersion(ctx, k.tournamentID)
 	case k.tournamentID != 0:
 		v, err = svc.DirectionVersion(ctx, k.tournamentID)
 	case k.rencontreID != 0:
@@ -93,20 +113,23 @@ func (s *Server) readVersion(ctx context.Context, scope string, k readKey) (stri
 	return fmt.Sprintf("%s|%d", v, s.opts.now().Unix()/60), nil
 }
 
-// errNegativeRound refuses a round below zero before it reaches the engine.
-func errNegativeRound(round int) error {
-	return fmt.Errorf("%w: round %d is negative", storage.ErrInvalid, round)
-}
-
 func (s *Server) directionReadRoutes() []route {
 	svc := s.directionService
 	v := s.readVersion
 	return []route{
 		{http.MethodPost, "/v1/directions.list", rpcRead(v, func(ctx context.Context, scope string, _ scopeReq) ([]service.DirectionSummary, error) {
-			return svc(scope).ListDirections(ctx)
+			list, err := svc(scope).ListDirections(ctx)
+			for i := range list {
+				list[i].OutputDir = ""
+			}
+			return list, err
 		})},
 		{http.MethodPost, "/v1/directions.get", rpcRead(v, func(ctx context.Context, scope string, req directionReq) (*service.DirectionView, error) {
-			return svc(scope).GetDirection(ctx, req.TournamentID)
+			v, err := svc(scope).GetDirection(ctx, req.TournamentID)
+			if v != nil {
+				v.OutputDir = ""
+			}
+			return v, err
 		})},
 		{http.MethodPost, "/v1/directions.participants", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]service.ParticipantRow, error) {
 			return svc(scope).Participants(ctx, req.TournamentID)
@@ -133,7 +156,7 @@ func (s *Server) directionReadRoutes() []route {
 		{http.MethodPost, "/v1/directions.clock", rpcRead(v, func(ctx context.Context, scope string, req directionReq) (*service.ClockView, error) {
 			return svc(scope).Clock(ctx, req.TournamentID)
 		})},
-		{http.MethodPost, "/v1/directions.slots", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]service.SlotRow, error) {
+		{http.MethodPost, "/v1/directions.slots", rpcRead(v, func(ctx context.Context, scope string, req directionSlotsReq) ([]service.SlotRow, error) {
 			return svc(scope).Slots(ctx, req.TournamentID)
 		})},
 		{http.MethodPost, "/v1/directions.lastDecision", rpcRead(v, func(ctx context.Context, scope string, req directionReq) (*service.LastDecision, error) {
@@ -147,9 +170,6 @@ func (s *Server) directionReadRoutes() []route {
 			return htmlResp{HTML: html}, err
 		})},
 		{http.MethodPost, "/v1/directions.pairingSheetHtml", rpcRead(v, func(ctx context.Context, scope string, req directionRoundReq) (htmlResp, error) {
-			if req.Round < 0 {
-				return htmlResp{}, errNegativeRound(req.Round)
-			}
 			html, err := svc(scope).DirectionPairingSheetHTML(ctx, req.TournamentID, req.Round)
 			return htmlResp{HTML: html}, err
 		})},
@@ -161,10 +181,18 @@ func (s *Server) rencontreReadRoutes() []route {
 	v := s.readVersion
 	return []route{
 		{http.MethodPost, "/v1/rencontres.list", rpcRead(v, func(ctx context.Context, scope string, _ scopeReq) ([]service.RencontreView, error) {
-			return svc(scope).ListRencontres(ctx)
+			list, err := svc(scope).ListRencontres(ctx)
+			for i := range list {
+				list[i].OutputDir = ""
+			}
+			return list, err
 		})},
 		{http.MethodPost, "/v1/rencontres.get", rpcRead(v, func(ctx context.Context, scope string, req rencontreReq) (*service.RencontreView, error) {
-			return svc(scope).GetRencontre(ctx, req.ID)
+			r, err := svc(scope).GetRencontre(ctx, req.ID)
+			if r != nil {
+				r.OutputDir = ""
+			}
+			return r, err
 		})},
 		{http.MethodPost, "/v1/rencontres.pageHtml", rpcRead(v, func(ctx context.Context, scope string, req rencontreReq) (htmlResp, error) {
 			html, err := svc(scope).RencontrePageHTML(ctx, req.ID)

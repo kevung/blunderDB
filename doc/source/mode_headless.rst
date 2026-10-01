@@ -363,12 +363,23 @@ tournoi qui n'est pas dirigé, ou qui appartient à un autre tenant, répond
 
 **Lectures conditionnelles.** Chacune de ces routes rend un en-tête ``ETag``.
 Renvoyé dans ``If-None-Match``, il obtient ``304`` sans corps tant que rien de
-ce que la route lit n'a changé : un geste dans le tournoi ou dans un tournoi de
-la même Rencontre, le rattachement d'un match, la modification de la salle.
-Répondre ``304`` ne rejoue aucun tournoi, ce qui rend peu coûteuse une page
-murale qui interroge toutes les quelques secondes. Un ``ETag`` vaut au plus une
-minute : les propositions, l'horloge et les pages dépendent aussi de l'heure,
-et un client qui relit voit passer une échéance ou une pause dans la minute.
+ce que la route lit n'a changé. Toute écriture change l'``ETag`` aussitôt : un
+geste dans le tournoi ou dans un tournoi de la même Rencontre, le rattachement
+d'un match, un brouillon démarré depuis un emplacement, le renommage d'un
+tournoi, la modification de la salle. Répondre ``304`` ne rejoue aucun tournoi,
+ce qui rend peu coûteuse une page murale qui interroge toutes les quelques
+secondes. Seul ce qui dépend de l'heure fait exception : les propositions,
+l'horloge et les pages sont calculées au moment de la lecture, et un ``ETag``
+vaut donc au plus une minute. Un client qui relit voit ainsi passer une
+échéance ou une pause dans la minute.
+
+Ces routes sont des ``POST``. Pour ce verbe, la RFC 9110 (§13.1.2) répond
+``412`` à un ``If-None-Match`` vérifié. Le démon répond pourtant ``304`` : le
+corps de la requête ne porte que les paramètres d'une lecture sans effet, qui
+se comporte comme un ``GET``. La forme ``If-None-Match: *`` est refusée
+(``400``), car elle ne désigne aucune réponse que le client aurait déjà. Une
+requête invalide (``round`` négatif, par exemple) est refusée avant toute
+condition.
 
 .. code-block:: bash
 

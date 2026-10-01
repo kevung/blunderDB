@@ -263,3 +263,113 @@ func TestRunCallDirectionReads(t *testing.T) {
 		t.Fatalf("rencontres.pageHtml: %v (out=%.300s)", err, out)
 	}
 }
+
+// frozenServer is a SQLite daemon whose clock stands still, so a tag can only change because
+// what the route reads did.
+func frozenServer(t *testing.T) (*httptest.Server, *Server, directedFixture) {
+	t.Helper()
+	ts, srv := newTestServerAndHandler(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	now := time.Date(2026, 10, 1, 14, 0, 10, 0, time.UTC)
+	srv.opts.now = func() time.Time { return now }
+	return ts, srv, f
+}
+
+// tagOf reads a route and returns its tag.
+func tagOf(t *testing.T, ts *httptest.Server, f directedFixture, path, body string) string {
+	t.Helper()
+	resp, b := readAs(t, ts, f.tenant, path, body, "")
+	if resp.StatusCode != http.StatusOK || resp.ETag == "" {
+		t.Fatalf("%s: status %d, tag %q, body %.200s", path, resp.StatusCode, resp.ETag, b)
+	}
+	return resp.ETag
+}
+
+// TestDirectionReads_RenameChangesTagNow: a Tournament's name is on its pages, so renaming it
+// changes the tag within the minute.
+func TestDirectionReads_RenameChangesTagNow(t *testing.T) {
+	ts, srv, f := frozenServer(t)
+	calls := directionReadCalls(f)
+	paths := []string{"/v1/directions.get", "/v1/directions.pageHtml", "/v1/rencontres.pageHtml", "/v1/directions.list"}
+	before := map[string]string{}
+	for _, p := range paths {
+		before[p] = tagOf(t, ts, f, p, calls[p])
+	}
+	if err := srv.opts.Storage.Tournaments().Update(f.ctx, f.tenant, f.tournamentID, "Open de Lyon — finale", "2026-10-01", "Lyon"); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range paths {
+		if resp, _ := readAs(t, ts, f.tenant, p, calls[p], before[p]); resp.StatusCode != http.StatusOK {
+			t.Errorf("%s after a rename: status %d, want 200 under a new tag", p, resp.StatusCode)
+		}
+	}
+}
+
+// TestDirectionReads_DraftChangesSlotsTag: a draft started from a Slot shows in slots at once.
+func TestDirectionReads_DraftChangesSlotsTag(t *testing.T) {
+	ts, srv, f := frozenServer(t)
+	body := directionReadCalls(f)["/v1/directions.slots"]
+	tag := tagOf(t, ts, f, "/v1/directions.slots", body)
+	v, err := f.svc.GetDirection(f.ctx, f.tournamentID)
+	if err != nil || len(v.Running) == 0 {
+		t.Fatalf("GetDirection: %v", err)
+	}
+	doc := `{"header":{"round":"Ronde #` + string(v.Running[0].ID) + `","tournament_id":` + strconv.FormatInt(f.tournamentID, 10) + `}}`
+	if _, err := srv.opts.Storage.Transcriptions().Save(f.ctx, f.tenant, &storage.Transcription{Document: doc}); err != nil {
+		t.Fatal(err)
+	}
+	if resp, _ := readAs(t, ts, f.tenant, "/v1/directions.slots", body, tag); resp.StatusCode != http.StatusOK {
+		t.Errorf("slots after a draft started: status %d, want 200 under a new tag", resp.StatusCode)
+	}
+}
+
+// TestDirectionReads_WildcardAndValidation: If-None-Match * names no answer, and a request the
+// route refuses is refused whatever condition it carries.
+func TestDirectionReads_WildcardAndValidation(t *testing.T) {
+	ts, _, f := frozenServer(t)
+	calls := directionReadCalls(f)
+	if resp, _ := readAs(t, ts, f.tenant, "/v1/directions.get", calls["/v1/directions.get"], "*"); resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("If-None-Match *: status %d, want 400", resp.StatusCode)
+	}
+	tag := tagOf(t, ts, f, "/v1/directions.pairingSheetHtml", calls["/v1/directions.pairingSheetHtml"])
+	bad := `{"tournamentId":` + strconv.FormatInt(f.tournamentID, 10) + `,"round":-1}`
+	for _, cond := range []string{"", tag, "*"} {
+		if resp, _ := readAs(t, ts, f.tenant, "/v1/directions.pairingSheetHtml", bad, cond); resp.StatusCode != http.StatusBadRequest {
+			t.Errorf("round -1 with If-None-Match %q: status %d, want 400", cond, resp.StatusCode)
+		}
+	}
+}
+
+// TestDirectionReads_MemberWithoutDirection: a Tournament attached to the room but not directed
+// leaves the wall page readable, and tagged.
+func TestDirectionReads_MemberWithoutDirection(t *testing.T) {
+	ts, srv, f := frozenServer(t)
+	st := srv.opts.Storage
+	plain, err := st.Tournaments().Create(f.ctx, f.tenant, "Consolante", "2026-10-01", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.Rencontres().Attach(f.ctx, f.tenant, plain, f.rencontreID); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []string{"/v1/rencontres.pageHtml", "/v1/rencontres.get", "/v1/directions.get"} {
+		tagOf(t, ts, f, p, directionReadCalls(f)[p])
+	}
+}
+
+// TestDirectionReads_NoServerPath: an output folder is a path of the server's disk, which a
+// remote client has no use for and should not learn.
+func TestDirectionReads_NoServerPath(t *testing.T) {
+	ts, _, f := frozenServer(t)
+	if err := f.svc.SetDirectionOutputDir(f.ctx, f.tournamentID, "/srv/secret-dir"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.svc.SetRencontreOutputDir(f.ctx, f.rencontreID, "/srv/secret-room"); err != nil {
+		t.Fatal(err)
+	}
+	for p, body := range directionReadCalls(f) {
+		if _, b := readAs(t, ts, f.tenant, p, body, ""); strings.Contains(string(b), "/srv/secret") {
+			t.Errorf("%s shows a server path: %.300s", p, b)
+		}
+	}
+}

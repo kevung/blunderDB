@@ -106,6 +106,13 @@ func testDirectionLogIsAppendOnly(t *testing.T, s storage.Storage) {
 		t.Fatalf("AppendEvent undirected = %v, want ErrNoDirection", err)
 	}
 
+	if n, last, err := ds.EventsHead(ctx, "", tid); err != nil || n != 2 || last != 1 {
+		t.Errorf("EventsHead = %d, %d, %v; want 2 events, last seq 1", n, last, err)
+	}
+	if n, last, err := ds.EventsHead(ctx, "", plain); err != nil || n != 0 || last != -1 {
+		t.Errorf("EventsHead of an empty log = %d, %d, %v; want 0, -1", n, last, err)
+	}
+
 	evs, err := ds.LoadEvents(ctx, "", tid)
 	if err != nil {
 		t.Fatalf("LoadEvents: %v", err)
