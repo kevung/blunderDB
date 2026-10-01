@@ -39,6 +39,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Comment", checkCommentIsolation},
 	{"Anki/Deck", checkAnkiDeckIsolation},
 	{"Direction", checkDirectionIsolation},
+	{"TableSetting", checkTableSettingIsolation},
 }
 
 // RunTenantIsolationTests runs every family's isolation check against a

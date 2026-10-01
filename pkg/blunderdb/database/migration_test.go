@@ -3227,3 +3227,76 @@ func TestMigrate_2_26_0_to_2_27_0_TranscriptionRevision(t *testing.T) {
 		t.Fatalf("a write must advance the revision: got %d, %v", row.Revision, err)
 	}
 }
+
+// TestMigrate_2_27_0_to_2_28_0_TableSettings opens a 2.27.0 library holding a
+// Rencontre with a member: the library gains table_setting and
+// tournament.rencontre_rooms, the member keeps its membership with no room
+// restriction, and the Rencontre takes table properties (ADR-0058).
+func TestMigrate_2_27_0_to_2_28_0_TableSettings(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2270.db")
+	createOldDatabase(t, dbPath, "2.27.0")
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, stmt := range []string{
+		`CREATE TABLE IF NOT EXISTS rencontre (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			starts_on TEXT DEFAULT '',
+			ends_on TEXT DEFAULT '',
+			tables INTEGER NOT NULL DEFAULT 0,
+			output_dir TEXT DEFAULT '',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)`,
+		`DROP TABLE IF EXISTS tournament`,
+		`CREATE TABLE tournament (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			date TEXT,
+			location TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			comment TEXT DEFAULT '',
+			rencontre_id INTEGER REFERENCES rencontre(id) ON DELETE SET NULL)`,
+		`INSERT INTO rencontre (name, tables) VALUES ('Open', 32)`,
+		`INSERT INTO tournament (name, rencontre_id) VALUES ('Principal', 1)`,
+	} {
+		if _, err := raw.Exec(stmt); err != nil {
+			t.Fatalf("seed 2.27.0: %v", err)
+		}
+	}
+	_ = raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.27.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !tableExists(d.db, "table_setting") || !columnExists(t, d.db, "tournament", "rencontre_rooms") {
+		t.Fatal("table_setting and tournament.rencontre_rooms should exist after migration")
+	}
+	ctx := context.Background()
+	rs := d.store.Rencontres()
+	r, err := rs.Get(ctx, "", 1)
+	if err != nil {
+		t.Fatalf("read the Rencontre back: %v", err)
+	}
+	if len(r.TournamentIDs) != 1 || len(r.EventRooms) != 0 || len(r.TableSettings) != 0 {
+		t.Fatalf("migrated Rencontre = %+v; want one member, no rooms, no settings", r)
+	}
+	if err := rs.SetTableSettings(ctx, "", 1, []domain.TableSetting{{Number: 21, Name: "Stream", Room: "B"}}); err != nil {
+		t.Fatalf("SetTableSettings on a migrated library: %v", err)
+	}
+	if err := rs.SetEventRooms(ctx, "", 1, []string{"B"}); err != nil {
+		t.Fatalf("SetEventRooms on a migrated library: %v", err)
+	}
+	if r, _ = rs.Get(ctx, "", 1); len(r.TableSettings) != 1 || r.TableSettings[0].Room != "B" || len(r.EventRooms[1]) != 1 {
+		t.Fatalf("after writing = %+v", r)
+	}
+}

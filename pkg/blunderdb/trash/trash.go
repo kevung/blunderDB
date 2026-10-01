@@ -265,8 +265,9 @@ func Rencontre(ctx context.Context, s storage.Stores, scope string, rencontreID 
 	return id, nil
 }
 
-// restoreRencontre recreates the Rencontre and attaches again the Tournaments
-// that still exist and have not joined another Rencontre meanwhile.
+// restoreRencontre recreates the Rencontre with its table settings and
+// attaches again the Tournaments that still exist and have not joined another
+// Rencontre meanwhile, each with the rooms it had.
 func restoreRencontre(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (int64, error) {
 	var payload domain.TrashRencontrePayload
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
@@ -276,12 +277,20 @@ func restoreRencontre(ctx context.Context, s storage.Stores, scope string, entry
 	if err != nil {
 		return 0, err
 	}
+	if err := s.Rencontres().SetTableSettings(ctx, scope, id, payload.Rencontre.TableSettings); err != nil {
+		return 0, err
+	}
 	for _, tid := range payload.Rencontre.TournamentIDs {
 		if of, err := s.Rencontres().Of(ctx, scope, tid); err != nil || of != 0 {
 			continue
 		}
 		if err := s.Rencontres().Attach(ctx, scope, tid, id); err != nil {
 			return 0, err
+		}
+		if rooms := payload.Rencontre.EventRooms[tid]; len(rooms) > 0 {
+			if err := s.Rencontres().SetEventRooms(ctx, scope, tid, rooms); err != nil {
+				return 0, err
+			}
 		}
 	}
 	return id, nil

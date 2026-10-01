@@ -62,7 +62,7 @@ var wantTables = []string{
 	"filter_library", "game", "import_batch",
 	"library_settings", "match", "metadata", "move", "move_analysis",
 	"position", "rencontre", "schema_migrations", "search_history", "session_state",
-	"tournament", "training_item", "training_session", "transcription",
+	"table_setting", "tournament", "training_item", "training_session", "transcription",
 	"trash",
 }
 
@@ -88,6 +88,7 @@ var wantIndexes = []string{
 	"idx_position_no_contact", "idx_position_off",
 	"idx_position_pip_1", "idx_position_pip_diff",
 	"idx_position_score_cube", "idx_position_zobrist",
+	"idx_table_setting_rencontre", "idx_table_setting_tournament",
 	"idx_tournament_rencontre",
 	"idx_training_item_session", "idx_training_item_type",
 	"idx_training_session_exercise", "idx_transcription_match",
