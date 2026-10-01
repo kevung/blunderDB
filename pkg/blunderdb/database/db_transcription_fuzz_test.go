@@ -24,7 +24,7 @@ const (
 	sopTurn = iota
 	sopTurn2
 	sopTurn3
-	sopOpening
+	sopRollValidate
 	sopDouble
 	sopTake
 	sopPass
@@ -213,7 +213,7 @@ func runSessionScenario(t *testing.T, db *Database, data []byte) {
 		switch int(b) % sopCount {
 		case sopTurn, sopTurn2, sopTurn3:
 			r.turn(src)
-		case sopOpening:
+		case sopRollValidate:
 			r.gesture(transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 1 + int(src.or(0))%6})
 			r.gesture(transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 1 + int(src.or(1))%6})
 			r.gesture(transcript.Gesture{Kind: transcript.GestureValidate})
@@ -262,10 +262,10 @@ func runSessionScenario(t *testing.T, db *Database, data []byte) {
 
 func sessionSeeds() [][]byte {
 	return [][]byte{
-		{7, sopOpening, 6, 3, sopTurn, 1, 2, 0, sopSave, sopTurn, 5, 5, 1, sopSave, sopReopen, sopSave},
-		{5, sopOpening, 4, 2, sopTurn, 6, 6, 0, sopSave, sopUndo, 4, sopSave, sopRedo, 4, sopSave},
-		{3, sopOpening, 3, 1, sopTurn, 6, 5, 0, sopDouble, sopPass, sopSave, sopBack, sopBack, sopDelete, sopSave},
-		{0, sopOpening, 5, 2, sopTurn, 4, 4, 0, sopResign, 1, sopSave, sopSetLength, 3, sopSave, sopReopen},
+		{7, sopRollValidate, 6, 3, sopTurn, 1, 2, 0, sopSave, sopTurn, 5, 5, 1, sopSave, sopReopen, sopSave},
+		{5, sopRollValidate, 4, 2, sopTurn, 6, 6, 0, sopSave, sopUndo, 4, sopSave, sopRedo, 4, sopSave},
+		{3, sopRollValidate, 3, 1, sopTurn, 6, 5, 0, sopDouble, sopPass, sopSave, sopBack, sopBack, sopDelete, sopSave},
+		{0, sopRollValidate, 5, 2, sopTurn, 4, 4, 0, sopResign, 1, sopSave, sopSetLength, 3, sopSave, sopReopen},
 	}
 }
 
@@ -324,7 +324,7 @@ func TestTranscriptionUndoAfterSaveKeepsTheMatch(t *testing.T) {
 	}
 	for _, g := range []transcript.Gesture{
 		{Kind: transcript.GestureEnterDie, Die: 6}, {Kind: transcript.GestureEnterDie, Die: 3},
-		{Kind: transcript.GestureValidate},
+		{Kind: transcript.GestureSelectCandidate}, {Kind: transcript.GestureValidate},
 		{Kind: transcript.GestureEnterDie, Die: 2}, {Kind: transcript.GestureEnterDie, Die: 1},
 		{Kind: transcript.GestureSelectCandidate}, {Kind: transcript.GestureValidate},
 	} {

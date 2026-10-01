@@ -35,8 +35,8 @@ func TestCreateTranscription_ListsAndDefaults(t *testing.T) {
 	if got := state.Annotated.Document.Header.MatchLength; got != 7 {
 		t.Fatalf("match length = %d, want 7", got)
 	}
-	if state.Annotated.Next.Expects != transcript.KindOpening {
-		t.Fatalf("a fresh draft expects %q, want an opening", state.Annotated.Next.Expects)
+	if n := state.Annotated.Next; n.Expects != transcript.KindChecker || !n.GameStart {
+		t.Fatalf("a fresh draft expects %+v, want a game's first play", n)
 	}
 
 	list, err := db.ListTranscriptions()
@@ -167,19 +167,10 @@ func applyGesture(t *testing.T, db *Database, id int64, g transcript.Gesture) *T
 	return state
 }
 
-// typeOpening records the opening roll: 6 for player 1, 3 for player 2, so
-// player 1 is on roll with that same 6-3.
-func typeOpening(t *testing.T, db *Database, id int64) {
-	t.Helper()
-	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6})
-	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 3})
-	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureValidate})
-}
-
 // typeChecker records one checker play: the roll, the first candidate the
-// engine lists for it, and the validation that turns it into an Action. Dice
-// of 0 keep the roll already proposed — which is what the play right after an
-// opening does, since the winner plays the dice that were just rolled.
+// engine lists for it, and the validation that turns it into an Action. On a
+// game's first play the roll is the opening roll, player 1's die first: 6 then
+// 3 gives player 1 a 6-3.
 func typeChecker(t *testing.T, db *Database, id int64, dice ...int) {
 	t.Helper()
 	for _, die := range dice {
@@ -222,8 +213,7 @@ func TestTranscription_SurvivesAnAbruptStop(t *testing.T) {
 	}
 	id := state.ID
 
-	typeOpening(t, live, id)
-	typeChecker(t, live, id)       // player 1 plays the opening's 6-3
+	typeChecker(t, live, id, 6, 3) // player 1 wins the opening with 6-3 and plays it
 	typeChecker(t, live, id, 5, 4) // player 2
 	typeChecker(t, live, id, 3, 2) // player 1
 	// The crash catches the user in the middle of a correction: the Cursor
@@ -232,8 +222,8 @@ func TestTranscription_SurvivesAnAbruptStop(t *testing.T) {
 	applyGesture(t, live, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
 	last := applyGesture(t, live, id, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6})
 	want := last.Annotated.Document.Actions
-	if len(want) != 4 {
-		t.Fatalf("the scenario recorded %d actions, want 4", len(want))
+	if len(want) != 3 {
+		t.Fatalf("the scenario recorded %d actions, want 3", len(want))
 	}
 
 	crashedPath := filepath.Join(dir, "crashed.db")
@@ -314,8 +304,7 @@ func TestApplyTranscriptionGesture_OnlyAnActionCostsAWrite(t *testing.T) {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
 	id := state.ID
-	typeOpening(t, db, id)
-	typeChecker(t, db, id) // two Actions on disk
+	typeChecker(t, db, id, 6, 3) // one Action on disk
 
 	const sentinel = "this row was not rewritten"
 	row := readTranscriptionRow(t, db, id)
@@ -339,8 +328,8 @@ func TestApplyTranscriptionGesture_OnlyAnActionCostsAWrite(t *testing.T) {
 	}
 
 	after := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureValidate})
-	if n := len(after.Annotated.Document.Actions); n != 3 {
-		t.Fatalf("the validation recorded %d actions, want 3", n)
+	if n := len(after.Annotated.Document.Actions); n != 2 {
+		t.Fatalf("the validation recorded %d actions, want 2", n)
 	}
 	stored := readTranscriptionRow(t, db, id)
 	if stored.Document == sentinel {
@@ -360,74 +349,68 @@ func TestApplyTranscriptionGesture_OnlyAnActionCostsAWrite(t *testing.T) {
 	}
 }
 
-// The opening, end to end through the plumbing (fonctionnel.md §6 flux 2): two
-// dice, the stronger one starts, and the roll it won with is the roll of the
-// first checker Action — the user does not type it again.
-func TestApplyTranscriptionGesture_Opening(t *testing.T) {
+// A game's first play, end to end through the plumbing (fonctionnel.md §6 flux
+// 2): its two dice are the opening roll, player 1's die then player 2's, and the
+// higher one gives the play to its side — the candidates offered are that side's.
+func TestApplyTranscriptionGesture_FirstPlay(t *testing.T) {
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
-
 	for _, g := range []transcript.Gesture{
 		{Kind: transcript.GestureEnterDie, Die: 2},
 		{Kind: transcript.GestureEnterDie, Die: 5},
+	} {
+		if state, err = db.ApplyTranscriptionGesture(state.ID, g); err != nil {
+			t.Fatalf("gesture %s: %v", g.Kind, err)
+		}
+	}
+	e := state.Annotated.Entry
+	if e == nil || !e.GameStart || e.Side != 1 {
+		t.Fatalf("entry = %+v, want a game's first play for player 2", e)
+	}
+	if len(state.Annotated.Document.Actions) != 0 {
+		t.Fatalf("the opening roll wrote %+v; it is the first play's roll, nothing more", state.Annotated.Document.Actions)
+	}
+	if len(transcript.Candidates(state.Annotated.Document)) == 0 {
+		t.Fatal("no candidate for the opening roll")
+	}
+	for _, g := range []transcript.Gesture{
+		{Kind: transcript.GestureSelectCandidate, Candidate: 0},
 		{Kind: transcript.GestureValidate},
 	} {
 		if state, err = db.ApplyTranscriptionGesture(state.ID, g); err != nil {
 			t.Fatalf("gesture %s: %v", g.Kind, err)
 		}
 	}
-
-	actions := state.Annotated.Document.Actions
-	if len(actions) != 1 || actions[0].Kind != transcript.KindOpening {
-		t.Fatalf("actions = %+v, want one opening", actions)
+	actions := state.Annotated.Actions
+	if len(actions) != 1 || actions[0].Kind != transcript.KindChecker || actions[0].Side != 1 || !actions[0].OpensGame {
+		t.Fatalf("actions = %+v, want player 2's first play", actions)
 	}
-	if actions[0].Dice != [2]int{2, 5} {
-		t.Fatalf("opening dice = %v, want [2 5]", actions[0].Dice)
-	}
-	// Player 2 rolled the higher die, so player 2 starts and a checker play is
-	// what the document expects next.
-	if actions[0].Side != 1 {
-		t.Fatalf("side = %d, want player 2", actions[0].Side)
-	}
-	if state.Annotated.Next.Expects != transcript.KindChecker || state.Annotated.Next.Side != 1 {
-		t.Fatalf("next = %+v", state.Annotated.Next)
-	}
-	// And the candidates offered are those of the opening roll, not of a roll
-	// the user would have to type again.
-	cands := transcript.Candidates(state.Annotated.Document)
-	if len(cands) == 0 {
-		t.Fatal("no candidate for the opening roll")
+	if n := state.Annotated.Next; n.Expects != transcript.KindChecker || n.Side != 0 {
+		t.Fatalf("next = %+v, want player 1 on roll", n)
 	}
 }
 
-// A tie is kept, produces neither Move nor Position, and another opening is
-// expected — the panel's "relance".
-func TestApplyTranscriptionGesture_OpeningTie(t *testing.T) {
+// A first play rolled as a double is written as typed — no re-roll is
+// transcribed — and marked: no opening roll is a double.
+func TestApplyTranscriptionGesture_FirstPlayDoubleIsMarked(t *testing.T) {
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
-	for _, g := range []transcript.Gesture{
-		{Kind: transcript.GestureEnterDie, Die: 4},
-		{Kind: transcript.GestureEnterDie, Die: 4},
-		{Kind: transcript.GestureValidate},
-	} {
-		if state, err = db.ApplyTranscriptionGesture(state.ID, g); err != nil {
-			t.Fatalf("gesture %s: %v", g.Kind, err)
-		}
+	typeChecker(t, db, state.ID, 4, 4)
+	if state, err = db.OpenTranscription(state.ID); err != nil {
+		t.Fatalf("OpenTranscription: %v", err)
 	}
-
-	if len(state.Annotated.Document.Actions) != 1 {
-		t.Fatalf("the tie was not kept: %+v", state.Annotated.Document.Actions)
-	}
-	if state.Annotated.Next.Expects != transcript.KindOpening {
-		t.Fatalf("next = %+v, want another opening", state.Annotated.Next)
+	actions := state.Annotated.Actions
+	if len(actions) != 1 || len(actions[0].Inconsistencies) == 0 ||
+		actions[0].Inconsistencies[0].Kind != transcript.InconsistentDice {
+		t.Fatalf("actions = %+v, want one play marked inconsistent_dice", actions)
 	}
 }
 
@@ -459,8 +442,7 @@ func TestTranscriptionMAT_IsTheExportRenderer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
-	typeOpening(t, db, state.ID)
-	typeChecker(t, db, state.ID)
+	typeChecker(t, db, state.ID, 6, 3)
 	typeChecker(t, db, state.ID, 5, 2)
 
 	text, err := db.TranscriptionMAT(state.ID)
@@ -493,8 +475,7 @@ func TestApplyTranscriptionGesture_UndoAndRedo(t *testing.T) {
 	if state.CanUndo || state.CanRedo {
 		t.Fatalf("a fresh draft reports undo=%v redo=%v", state.CanUndo, state.CanRedo)
 	}
-	typeOpening(t, db, id)
-	typeChecker(t, db, id)
+	typeChecker(t, db, id, 6, 3)
 	typeChecker(t, db, id, 5, 4)
 
 	before := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
@@ -551,8 +532,7 @@ func TestApplyTranscriptionGesture_CursorLandsOnTheInconsistency(t *testing.T) {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
 	id := state.ID
-	typeOpening(t, db, id)
-	typeChecker(t, db, id)
+	typeChecker(t, db, id, 6, 3)
 	typeChecker(t, db, id, 5, 4)
 	typeChecker(t, db, id, 4, 2)
 
@@ -577,8 +557,8 @@ func TestApplyTranscriptionGesture_CursorLandsOnTheInconsistency(t *testing.T) {
 		t.Fatalf("the document's cursor is %d while the answer says %d", got, at)
 	}
 	// Nothing was deleted or repaired on the way (ADR-0044).
-	if n := len(flipped.Annotated.Document.Actions); n != 4 {
-		t.Fatalf("actions = %d, want 4", n)
+	if n := len(flipped.Annotated.Document.Actions); n != 3 {
+		t.Fatalf("actions = %d, want 3", n)
 	}
 }
 
@@ -591,8 +571,7 @@ func TestOpenTranscription_DoesNotJumpToAnInconsistency(t *testing.T) {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
 	id := state.ID
-	typeOpening(t, db, id)
-	typeChecker(t, db, id)
+	typeChecker(t, db, id, 6, 3)
 	typeChecker(t, db, id, 5, 4)
 	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureCursorBack})
 	applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureFlipSide})

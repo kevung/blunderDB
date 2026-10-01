@@ -4,8 +4,8 @@
  * Ce qui est vérifié, c'est fonctionnel.md §1.1 et §6 flux 1-2 : la LONGUEUR est
  * le seul champ exigé, elle est proposée à celle du dernier brouillon (sinon 7),
  * `0` est une partie d'argent et c'est ce qui déplie Jacoby et le beaver — les
- * deux règles de session, jamais des Actions (ADR-0028, ADR-0044). Puis
- * l'ouverture : deux dés, le plus fort commence, une égalité relance.
+ * deux règles de session, jamais des Actions (ADR-0028, ADR-0044). Puis le
+ * premier coup : ses deux dés sont le jet d'ouverture, le plus fort joue.
  *
  * Les allers-retours Wails sont simulés ; les vrais stores pilotent le composant.
  */
@@ -22,7 +22,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ApplyTranscriptionGesture: vi.fn()
 }));
 // Le classement des candidats est l'affaire de T1.3 et de son propre fichier ;
-// ici il ne doit qu'exister, pour que la validation de l'ouverture ne bute pas
+// ici il ne doit qu'exister, pour que la saisie du premier coup ne bute pas
 // dessus.
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn().mockResolvedValue([]),
@@ -42,13 +42,14 @@ import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 
 // Un document annoté minimal, tel que le moteur Go le renvoie : ce que le
 // panneau lit, et rien de plus (il ne dérive ni score, ni Crawford, ni trait).
-/** @param {{expects?: string, side?: number, length?: number, actions?: any[], cursor?: number, score?: number[]}} [options] */
-function annotated({ expects = 'opening', side = 0, length = 7, actions = [], cursor = 0, score = [0, 0] } = {}) {
+/** @param {{expects?: string, side?: number, length?: number, actions?: any[], cursor?: number, score?: number[], entry?: any}} [options] */
+function annotated({ expects = 'checker', side = 0, length = 7, actions = [], cursor = 0, score = [0, 0], entry = undefined } = {}) {
     return {
         document: { header: { match_length: length, player1: '', player2: '' }, actions, cursor },
         actions: [],
         games: [],
-        next: { expects, side, position: { board: { points: [], bearoff: [0, 0] }, dice: [0, 0] }, crawford: false },
+        next: { expects, game_start: actions.length === 0, side, position: { board: { points: [], bearoff: [0, 0] }, dice: [0, 0] }, crawford: false },
+        entry,
         score,
         cursor
     };
@@ -134,7 +135,7 @@ describe('le formulaire de création', () => {
         // L'Action attendue habite la barre d'état (ADR-0048 décision 2, qui
         // applique enfin ux.md §5) ; ce test monte le panneau seul et lit donc
         // le magasin que la barre lit.
-        await vi.waitFor(() => expect(get(transcriptionPromptStore)?.key).toBe('transcription.openingPrompt'));
+        await vi.waitFor(() => expect(get(transcriptionPromptStore)?.key).toBe('transcription.firstPlayPrompt'));
     });
 
     test('une partie d’argent porte les règles de session cochées', async () => {
@@ -148,8 +149,11 @@ describe('le formulaire de création', () => {
     });
 });
 
-describe("l'ouverture", () => {
+describe('le premier coup d’une partie', () => {
     async function openedPanel() {
+        // Un jet sans coup serait une danse, que le panneau enregistre seul.
+        /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '13/8 13/11' }]);
+        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '13/8 13/11', equity: 0.1 }] });
         transcriptionStore.set(stateFor(annotated()));
         const rendered = render(TranscriptionPanel);
         await tick();
@@ -162,7 +166,7 @@ describe("l'ouverture", () => {
         return fireEvent.keyDown(document, { code, key: digit ? digit[1] : code });
     }
 
-    test('deux dés suffisent : le second valide, sans troisième touche', async () => {
+    test('le second dé ne valide rien : le coup reste à choisir', async () => {
         await openedPanel();
         await press('Digit6');
         await press('Digit3');
@@ -170,28 +174,30 @@ describe("l'ouverture", () => {
 
         expect(/** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1])).toEqual([
             { Kind: 'enter_die', Die: 6 },
-            { Kind: 'enter_die', Die: 3 },
-            { Kind: 'validate' }
+            { Kind: 'enter_die', Die: 3 }
         ]);
     });
 
-    test('une égalité affiche « relance » et n’attend rien d’autre', async () => {
-        // Le moteur répond qu'une ouverture est de nouveau attendue.
-        /** @type {any} */ (ApplyTranscriptionGesture).mockResolvedValue(stateFor(annotated({ expects: 'opening' })));
+    test('un double se saisit tel quel : aucune relance n’est transcrite', async () => {
         await openedPanel();
         await press('Digit4');
         await press('Digit4');
         await tick();
 
-        expect(get(transcriptionKeyStore).tie).toBe(true);
-        await vi.waitFor(() => expect(get(transcriptionPromptStore)?.key).toBe('transcription.tie'));
+        expect(get(transcriptionKeyStore).dice).toEqual([4, 4]);
+        expect(/** @type {any} */ (ApplyTranscriptionGesture).mock.calls.map((/** @type {any} */ c) => c[1].Kind)).not.toContain('validate');
     });
 
-    test('le gagnant a le trait, avec les deux dés de l’ouverture', async () => {
-        // Le moteur ne change ce qu'il attend qu'une fois l'ouverture validée :
-        // saisir un dé ne décide de rien.
+    test('le plus fort des deux dés a le trait', async () => {
+        // Le moteur donne le coup au camp du dé le plus fort dès le second dé.
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) =>
-            Promise.resolve(stateFor(gesture.Kind === 'validate' ? annotated({ expects: 'checker', side: 1 }) : annotated()))
+            Promise.resolve(
+                stateFor(
+                    gesture.Die === 5
+                        ? annotated({ entry: { at: 0, replacing: false, side: 1, dice: [2, 5], selected: false, kind: 'checker', game_start: true } })
+                        : annotated({ entry: { at: 0, replacing: false, side: 0, dice: [2, 0], selected: false, kind: 'checker', game_start: true } })
+                )
+            )
         );
         // Le jet du gagnant a des coups : sans cela ce serait une danse, et la
         // machine repartirait à zéro (ce que couvre TranscriptionPanel.turn).
@@ -203,8 +209,8 @@ describe("l'ouverture", () => {
         await tick();
         await tick();
 
-        // Le jet reste affiché, plus fort d'abord : il n'est pas ressaisi.
-        expect(get(transcriptionKeyStore).dice).toEqual([5, 2]);
+        // Le jet reste tel que tapé : l'ordre a dit qui commence.
+        expect(get(transcriptionKeyStore).dice).toEqual([2, 5]);
         await vi.waitFor(() => {
             const prompt = get(transcriptionPromptStore);
             expect(prompt?.key).toBe('transcription.rollPrompt');

@@ -82,7 +82,7 @@ func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) (*Matc
 			Game: domain.Game{
 				GameNumber:   int32(game.GameNumber),
 				InitialScore: [2]int32{int32(game.Score[0]), int32(game.Score[1])},
-				Winner:       int32(game.Winner),
+				Winner:       gnuBGWinner(game),
 				PointsWon:    int32(game.Points),
 				MoveCount:    len(game.Moves),
 			},
@@ -392,4 +392,15 @@ func (im GnuBGImporter) Import(ctx context.Context, scope string, src Source, pr
 	}
 	sum.BatchID = src.BatchID
 	return sum, nil
+}
+
+// gnuBGWinner converts gnubg's game winner (0 = player 1, 1 = player 2, -1 =
+// unfinished) to domain.Game.Winner. A game that awarded no points has no
+// winner, whatever the parser defaulted to: an SGF game without a result
+// reads as player 1's.
+func gnuBGWinner(game gnubgparser.Game) int32 {
+	if game.Points <= 0 {
+		return domain.WinnerUnfinished
+	}
+	return domain.WinnerFromSide(game.Winner)
 }

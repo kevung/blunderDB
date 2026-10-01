@@ -25,8 +25,7 @@ type Parts struct {
 //
 // A game is one Game with its initial score, its winner and its points; every checker,
 // dance, double, take and pass Action is one Move. A resignation is none of them: it
-// leaves winner and points on the Game and adds no row to `move` (ADR-0045 §6), and an
-// opening produces nothing at all.
+// leaves winner and points on the Game and adds no row to `move` (ADR-0045 §6).
 //
 // Positions are not in the triplet; take [Build], or read ActionInfo.Before at
 // ActionInfo.GameIndex/MoveNumber.
@@ -66,7 +65,7 @@ func Build(doc Document) Parts {
 			MatchID:      m.ID,
 			GameNumber:   int32(g.Number),
 			InitialScore: [2]int32{int32(g.InitialScore[0]), int32(g.InitialScore[1])},
-			Winner:       int32(g.Winner),
+			Winner:       domain.WinnerFromSide(g.Winner),
 			PointsWon:    int32(g.PointsWon),
 		})
 	}

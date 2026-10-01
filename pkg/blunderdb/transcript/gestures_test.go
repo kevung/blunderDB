@@ -40,15 +40,15 @@ func candidate(i int) Gesture {
 	return Gesture{Kind: GestureSelectCandidate, Candidate: i}
 }
 
-// openedMatch returns a draft whose opening has been recorded: player 1 won it 6-3 and
-// is on roll with that same roll.
+// openedMatch returns a draft whose first roll is typed: player 1 won the opening 6-3
+// and is on roll with it, the play still to pick.
 func openedMatch(t *testing.T, length int) Document {
 	t.Helper()
 	doc, err := Apply(New(length), Gesture{Kind: GestureEnterDie, Die: 6})
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, g := range []Gesture{die(3), confirm()} {
+	for _, g := range []Gesture{die(3)} {
 		if doc, err = Apply(doc, g); err != nil {
 			t.Fatal(err)
 		}
@@ -68,7 +68,7 @@ func lastAction(t *testing.T, doc Document) Action {
 // gestures that record it, checking the document after every gesture — the table of
 // fonctionnel.md §1.2 read through the gestures of §2.
 func TestGesturesByKind(t *testing.T) {
-	t.Run("opening", func(t *testing.T) {
+	t.Run("a game's first play", func(t *testing.T) {
 		runSteps(t, New(7), []step{
 			{"first die", die(6), func(t *testing.T, doc Document) {
 				if doc.Entry == nil || doc.Entry.Dice != [2]int{6, 0} {
@@ -85,62 +85,37 @@ func TestGesturesByKind(t *testing.T) {
 					t.Fatalf("entry dice = %v", doc.Entry.Dice)
 				}
 			}},
-			{"back to 6-3", die(3), nil},
+			{"player 2's die higher", die(6), func(t *testing.T, doc Document) {
+				// The two dice are the opening roll: the higher one plays.
+				if doc.Entry.Side != domain.White {
+					t.Errorf("side = %d, want player 2", doc.Entry.Side)
+				}
+				if e := Replay(doc, 0).Entry; e == nil || !e.GameStart || e.Kind != KindChecker {
+					t.Errorf("entry info = %+v, want a game's first play", e)
+				}
+			}},
+			{"select", candidate(0), nil},
 			{"validate", confirm(), func(t *testing.T, doc Document) {
 				a := lastAction(t, doc)
-				if a.Kind != KindOpening || a.Dice != [2]int{5, 3} {
+				if a.Kind != KindChecker || a.Dice != [2]int{5, 6} || a.Side != domain.White {
 					t.Fatalf("action = %+v", a)
-				}
-				// Player 1 rolled the higher die, so player 1 starts.
-				if a.Side != domain.Black {
-					t.Errorf("side = %d, want player 1", a.Side)
 				}
 				if doc.Cursor != 1 {
 					t.Errorf("cursor = %d, want 1", doc.Cursor)
 				}
 				ann := Replay(doc, 0)
-				if ann.Next.Expects != KindChecker || ann.Next.Side != domain.Black {
+				if ann.Next.Expects != KindChecker || ann.Next.Side != domain.Black || ann.Next.GameStart {
 					t.Errorf("next = %+v", ann.Next)
 				}
-				if len(ann.Games) != 1 || ann.Games[0].Number != 1 {
+				if len(ann.Games) != 1 || ann.Games[0].Number != 1 || !ann.Actions[0].OpensGame {
 					t.Errorf("games = %+v", ann.Games)
 				}
 			}},
 		})
 	})
 
-	t.Run("opening tie is kept and re-rolled", func(t *testing.T) {
-		doc := runSteps(t, New(7), []step{
-			{"4", die(4), nil}, {"4", die(4), nil},
-			{"validate", confirm(), func(t *testing.T, doc Document) {
-				ann := Replay(doc, 0)
-				if ann.Next.Expects != KindOpening {
-					t.Errorf("a tie must be followed by another opening, got %s", ann.Next.Expects)
-				}
-				if len(ann.Games) != 1 {
-					t.Errorf("a tie opens no second game: %d games", len(ann.Games))
-				}
-			}},
-		})
-		// The tie stays in the document: nothing removes an Action.
-		if len(doc.Actions) != 1 || doc.Actions[0].Dice != [2]int{4, 4} {
-			t.Errorf("the tie was not kept: %+v", doc.Actions)
-		}
-		// And it produces neither Move nor Position.
-		_, _, moves := MatchParts(doc)
-		for _, mvs := range moves {
-			if len(mvs) != 0 {
-				t.Errorf("an opening produced %d moves", len(mvs))
-			}
-		}
-	})
-
 	t.Run("checker", func(t *testing.T) {
 		doc := openedMatch(t, 7)
-		if doc.Entry != nil {
-			t.Fatalf("validation left an entry behind: %+v", doc.Entry)
-		}
-		// The roll of the opening is not typed again.
 		cands := Candidates(doc)
 		if len(cands) == 0 {
 			t.Fatal("no candidate for the opening roll")
@@ -249,7 +224,7 @@ func TestGesturesByKind(t *testing.T) {
 				if ann.Score != [2]int{0, 1} {
 					t.Errorf("score = %v", ann.Score)
 				}
-				if ann.Next.Expects != KindOpening || ann.Next.GameNumber != 2 {
+				if !ann.Next.GameStart || ann.Next.GameNumber != 2 {
 					t.Errorf("next = %+v", ann.Next)
 				}
 			}},
@@ -277,7 +252,7 @@ func TestGesturesByKind(t *testing.T) {
 		if n := len(moves[games[0].ID]); n != 0 {
 			t.Errorf("a resignation produced %d moves", n)
 		}
-		if games[0].Winner != 0 || games[0].PointsWon != 2 {
+		if games[0].Winner != domain.WinnerPlayer1 || games[0].PointsWon != 2 {
 			t.Errorf("game = %+v", games[0])
 		}
 	})
@@ -354,7 +329,7 @@ func TestGesturesOnTheDocument(t *testing.T) {
 
 	t.Run("delete leaves the sides of the others alone", func(t *testing.T) {
 		doc := base(t)
-		doc.Cursor = 2 // player 2's play, between two plays of player 1
+		doc.Cursor = 1 // player 2's play, between two plays of player 1
 		after, err := Apply(doc, Gesture{Kind: GestureDelete})
 		if err != nil {
 			t.Fatal(err)
@@ -362,11 +337,11 @@ func TestGesturesOnTheDocument(t *testing.T) {
 		if len(after.Actions) != len(doc.Actions)-1 {
 			t.Fatalf("actions = %d", len(after.Actions))
 		}
-		if after.Actions[2].Side != domain.Black {
+		if after.Actions[1].Side != domain.Black {
 			t.Error("deleting an Action moved another Action's side")
 		}
 		// ONE local double turn, not every side flipped (ADR-0045 rule 4).
-		if !hasInconsistency(Replay(after, 0).Actions[2], DoubleTurn) {
+		if !hasInconsistency(Replay(after, 0).Actions[1], DoubleTurn) {
 			t.Error("the deletion left no double turn where it must")
 		}
 	})
@@ -378,7 +353,7 @@ func TestGesturesOnTheDocument(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if after.Actions[1].Side != domain.White {
+		if after.Actions[1].Side != domain.Black {
 			t.Fatalf("side = %d", after.Actions[1].Side)
 		}
 		if !Replay(after, 0).Inconsistent() {
@@ -474,8 +449,8 @@ func TestGesturesOnTheDocument(t *testing.T) {
 		if fresh.Header.MatchLength != 7 || len(fresh.Actions) != 0 {
 			t.Errorf("draft = %+v", fresh.Header)
 		}
-		if Replay(fresh, 0).Next.Expects != KindOpening {
-			t.Error("an empty draft expects an opening")
+		if !Replay(fresh, 0).Next.GameStart {
+			t.Error("an empty draft expects a game's first play")
 		}
 	})
 }
@@ -495,7 +470,7 @@ func hasInconsistency(info ActionInfo, kind InconsistencyKind) bool {
 // other winner, score and cube exchanged, no new Inconsistency. The document has an
 // owned cube and a resigned game, both derived by the Replay.
 func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
-	doc := docOf(5, opening(domain.Black, 6, 3))
+	doc := docOf(5)
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
 	doc.Actions = append(doc.Actions,
 		Action{Side: domain.White, Kind: KindDouble},
@@ -503,7 +478,6 @@ func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
 		// Player 2 gives the game up at the doubled cube: 2 points to player 1.
 		Action{Side: domain.White, Kind: KindResign, Level: 1},
 	)
-	doc.Actions = append(doc.Actions, opening(domain.White, 2, 5))
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.White, 5, 2))
 	doc.Header.Player1, doc.Header.Player2 = "Alice", "Bob"
 	doc.Cursor = len(doc.Actions)
@@ -516,6 +490,13 @@ func TestSwapPlayersIsTheSameMatchFromTheOtherSide(t *testing.T) {
 	after, err := Apply(doc, Gesture{Kind: GestureSwapPlayers})
 	if err != nil {
 		t.Fatal(err)
+	}
+	// Only a game's first play holds the dice in player order; any other roll
+	// keeps its cell as written.
+	for i, a := range after.Actions {
+		if !before.Actions[i].OpensGame && a.Dice != doc.Actions[i].Dice {
+			t.Errorf("action %d: dice %v became %v", i, doc.Actions[i].Dice, a.Dice)
+		}
 	}
 	if after.Header.Player1 != "Bob" || after.Header.Player2 != "Alice" {
 		t.Fatalf("names = %q/%q", after.Header.Player1, after.Header.Player2)
@@ -617,12 +598,11 @@ func TestSetHeaderWritesTheMetadataAndNothingElse(t *testing.T) {
 // is an ordinary match, at 3 it was over two games ago, and at 0 it is a money
 // session with no Crawford and no end at all.
 func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
-	doc := docOf(7, opening(domain.Black, 6, 3))
+	doc := docOf(7)
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
 	// Player 2 gives up three games in a row: 3-0.
 	for range 3 {
 		doc.Actions = append(doc.Actions, Action{Side: domain.White, Kind: KindResign, Level: 1})
-		doc.Actions = append(doc.Actions, opening(domain.Black, 5, 2))
 		doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 5, 2))
 	}
 	doc.Cursor = len(doc.Actions)
@@ -633,7 +613,7 @@ func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
 	if long.Score != [2]int{3, 0} || long.Finished {
 		t.Fatalf("at 7 points: score %v, finished %v", long.Score, long.Finished)
 	}
-	if got := long.Actions[1].Before.Score; got != [2]int{7, 7} {
+	if got := long.Actions[0].Before.Score; got != [2]int{7, 7} {
 		t.Fatalf("away score = %v, want [7 7]", got)
 	}
 	for i, g := range long.Games {
@@ -658,7 +638,7 @@ func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
 	if !ann.Finished || ann.Winner != domain.Black || ann.Score != [2]int{3, 0} {
 		t.Fatalf("at 3 points: finished %v, winner %d, score %v", ann.Finished, ann.Winner, ann.Score)
 	}
-	if got := ann.Actions[1].Before.Score; got != [2]int{3, 3} {
+	if got := ann.Actions[0].Before.Score; got != [2]int{3, 3} {
 		t.Errorf("away score of the first play = %v, want [3 3]", got)
 	}
 	// The third game is the one a player enters at 2-0, one point from the
@@ -666,7 +646,7 @@ func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
 	if !ann.Games[2].Crawford || ann.Games[0].Crawford || ann.Games[1].Crawford {
 		t.Errorf("Crawford is on the wrong game: %+v", ann.Games)
 	}
-	crawfordPlay := 7 // opening, play, resign, opening, play, resign, opening, play
+	crawfordPlay := 4 // play, resign, play, resign, play
 	if got := ann.Actions[crawfordPlay].Before.Score; got != [2]int{domain.Crawford, 3} {
 		t.Errorf("Crawford away score = %v, want [%d 3]", got, domain.Crawford)
 	}
@@ -687,10 +667,10 @@ func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
 	if annMoney.Finished {
 		t.Error("a money session never ends by a score")
 	}
-	if got := annMoney.Actions[1].Before.Score; got != [2]int{domain.Unlimited, domain.Unlimited} {
+	if got := annMoney.Actions[0].Before.Score; got != [2]int{domain.Unlimited, domain.Unlimited} {
 		t.Errorf("money away score = %v", got)
 	}
-	if annMoney.Actions[1].Before.HasJacoby != 1 {
+	if annMoney.Actions[0].Before.HasJacoby != 1 {
 		t.Error("the session's rules are posted on every money position")
 	}
 	for i, g := range annMoney.Games {
@@ -712,7 +692,7 @@ func TestSetLengthReplaysTheWholeMatch(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if pos := Replay(asMatch, 0).Actions[1].Before; pos.HasBeaver != 0 || pos.HasJacoby != 0 {
+	if pos := Replay(asMatch, 0).Actions[0].Before; pos.HasBeaver != 0 || pos.HasJacoby != 0 {
 		t.Error("a match position carries no session rule")
 	}
 	backToMoney, err := Apply(asMatch, Gesture{Kind: GestureSetLength, HasLength: true, MatchLength: 0})
@@ -731,4 +711,22 @@ func kindsOf(flags []Inconsistency) map[InconsistencyKind]bool {
 		out[f.Kind] = true
 	}
 	return out
+}
+
+// TestSwapPlayersKeepsAnOrdinaryRoll: the .mat cell "46:" of an ordinary play is the
+// same after the swap; only a game's first play reorders its dice.
+func TestSwapPlayersKeepsAnOrdinaryRoll(t *testing.T) {
+	doc := docOf(5)
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.White, 4, 6))
+	after, err := Apply(doc, Gesture{Kind: GestureSwapPlayers})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := after.Actions[1].Dice; got != [2]int{4, 6} {
+		t.Errorf("the ordinary roll 46 became %v", got)
+	}
+	if got := after.Actions[0].Dice; got != [2]int{3, 6} {
+		t.Errorf("the first play's 63 became %v, want 36 for player 2", got)
+	}
 }

@@ -1,10 +1,10 @@
 /**
- * transcriptionKeys.opening.test.js — la dernière ligne du tableau d'ux.md §3.
+ * transcriptionKeys.firstPlay.test.js — le premier coup d'une partie au clavier.
  *
- * « ouverture | 1–6, 1–6 | dé J1, dé J2 ; égalité → « relance », rejouer | jet
- * corrigeable (gagnant) ». Une transition par test, et le budget d'ux.md §4.5 :
- * l'ouverture coûte DEUX touches, pas trois — le second dé valide, on ne
- * confirme pas.
+ * Ses deux dés sont le jet d'ouverture : dé du joueur 1, puis dé du joueur 2.
+ * C'est le moteur qui donne le coup au plus fort (GestureEnterDie) ; la
+ * machine à touches les saisit comme n'importe quel jet, sans validation au
+ * second dé ni relance : un double est saisi tel quel et le moteur le marque.
  *
  * Les tours de pions (jet corrigeable, candidats, j/k, Entrée, danse) ont leur
  * propre fichier, transcriptionKeys.turn.test.js.
@@ -13,7 +13,7 @@
 import { describe, test, expect } from 'vitest';
 import { PHASE, COMMAND, initialKeyState, pressKey, dieOf } from '../services/transcriptionKeys.js';
 
-const OPENING = { expects: 'opening' };
+const FIRST_PLAY = { expects: 'checker' };
 
 /**
  * Une frappe. Les chiffres sont positionnels (`event.code`), les lettres se
@@ -28,7 +28,7 @@ function key(/** @type {string} */ code, extra = {}) {
 }
 
 /** Enchaîne des frappes et rend l'état final avec tous les gestes émis. */
-function type(/** @type {any} */ codes, context = OPENING, start = initialKeyState()) {
+function type(/** @type {any} */ codes, context = FIRST_PLAY, start = initialKeyState()) {
     let state = start;
     const commands = [];
     let presses = 0;
@@ -49,37 +49,29 @@ describe('la saisie des dés', () => {
         expect(commands).toEqual([{ kind: COMMAND.DIE, value: 6 }]);
     });
 
-    test('le second chiffre remplit le second dé et valide l’ouverture', () => {
+    test('le second chiffre remplit le second dé et attend les candidats, sans rien valider', () => {
         const { state, commands } = type(['Digit6', 'Digit3']);
-        expect(commands).toEqual([{ kind: COMMAND.DIE, value: 6 }, { kind: COMMAND.DIE, value: 3 }, { kind: COMMAND.VALIDATE }]);
-        // Le gagnant joue les DEUX dés : ils restent affichés, plus fort d'abord.
-        expect(state.dice).toEqual([6, 3]);
+        expect(commands).toEqual([
+            { kind: COMMAND.DIE, value: 6 },
+            { kind: COMMAND.DIE, value: 3 }
+        ]);
         expect(state.phase).toBe(PHASE.ROLL);
         expect(state.awaitingCandidates).toBe(true);
-        expect(state.tie).toBe(false);
     });
 
-    test('le dé du joueur 2 peut être le plus fort : le jet reste trié', () => {
+    test('les dés restent dans l’ordre tapé : c’est lui qui dit qui commence', () => {
         const { state } = type(['Digit2', 'Digit5']);
-        expect(state.dice).toEqual([5, 2]);
+        expect(state.dice).toEqual([2, 5]);
     });
 
-    test('une égalité affiche « relance » et attend une nouvelle ouverture', () => {
+    test('un double est saisi tel quel : aucune relance n’est transcrite', () => {
         const { state, commands } = type(['Digit4', 'Digit4']);
-        // L'Action `opening` est créée quand même : rien n'est refusé, rien
-        // n'est supprimé (fonctionnel.md §1.2).
-        expect(commands).toEqual([{ kind: COMMAND.DIE, value: 4 }, { kind: COMMAND.DIE, value: 4 }, { kind: COMMAND.VALIDATE }]);
-        expect(state.tie).toBe(true);
-        expect(state.phase).toBe(PHASE.DICE);
-        expect(state.dice).toEqual([0, 0]);
-        expect(state.awaitingCandidates).toBe(false);
-    });
-
-    test('la relance repart d’une saisie vide', () => {
-        const first = type(['Digit4', 'Digit4']);
-        const second = type(['Digit6', 'Digit1'], OPENING, first.state);
-        expect(second.state.tie).toBe(false);
-        expect(second.state.dice).toEqual([6, 1]);
+        expect(commands).toEqual([
+            { kind: COMMAND.DIE, value: 4 },
+            { kind: COMMAND.DIE, value: 4 }
+        ]);
+        expect(state.phase).toBe(PHASE.ROLL);
+        expect(state.dice).toEqual([4, 4]);
     });
 
     test('Retour arrière efface les deux dés', () => {
@@ -92,7 +84,7 @@ describe('la saisie des dés', () => {
     // Ailleurs Retour arrière réinitialise le plateau ; ici le plateau est celui
     // du brouillon, donc la touche est prise même quand il n'y a rien à effacer.
     test('Retour arrière est pris même sans dé saisi, mais n’émet rien', () => {
-        const result = pressKey(initialKeyState(), key('Backspace'), OPENING);
+        const result = pressKey(initialKeyState(), key('Backspace'), FIRST_PLAY);
         expect(result.handled).toBe(true);
         expect(result.commands).toEqual([]);
     });
@@ -100,16 +92,16 @@ describe('la saisie des dés', () => {
     // Échap ferme le panneau partout ailleurs : elle n'est prise que s'il y a
     // une saisie à abandonner.
     test('Échap abandonne la saisie en cours, et rien d’autre', () => {
-        expect(pressKey(initialKeyState(), key('Escape'), OPENING).handled).toBe(false);
+        expect(pressKey(initialKeyState(), key('Escape'), FIRST_PLAY).handled).toBe(false);
         const started = type(['Digit3']).state;
-        const result = pressKey(started, key('Escape'), OPENING);
+        const result = pressKey(started, key('Escape'), FIRST_PLAY);
         expect(result.handled).toBe(true);
         expect(result.state.dice).toEqual([0, 0]);
     });
 
     test('les touches qui ne sont pas des dés remontent au répartiteur', () => {
         for (const code of ['KeyP', 'Enter', 'Digit7', 'Digit9']) {
-            expect(pressKey(initialKeyState(), key(code), OPENING).handled).toBe(false);
+            expect(pressKey(initialKeyState(), key(code), FIRST_PLAY).handled).toBe(false);
         }
     });
 
@@ -137,10 +129,9 @@ describe('les dés sont positionnels', () => {
 });
 
 describe('le budget d’ux.md §4.5', () => {
-    test('une ouverture coûte deux touches', () => {
-        const { presses, commands } = type(['Digit6', 'Digit3']);
-        expect(presses).toBe(2);
-        // Et elle est enregistrée : la validation ne demande pas de troisième touche.
-        expect(commands.some((c) => c.kind === COMMAND.VALIDATE)).toBe(true);
+    test('le jet d’ouverture coûte deux touches, la validation vient avec le tour suivant', () => {
+        const { presses, commands } = type(['Digit6', 'Digit3', 'Digit5']);
+        expect(presses).toBe(3);
+        expect(commands).toContainEqual({ kind: COMMAND.VALIDATE });
     });
 });

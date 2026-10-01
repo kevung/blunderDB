@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	_ "modernc.org/sqlite"
 )
@@ -1386,6 +1387,8 @@ func TestImportMATGameResults(t *testing.T) {
 				if err := rows.Scan(&g.number, &g.score[0], &g.score[1], &g.winner, &g.points); err != nil {
 					t.Fatal(err)
 				}
+				// Stored as domain.WinnerPlayer1/2; checked below as a side index.
+				g.winner = domain.WinnerSide(int32(g.winner))
 				games = append(games, g)
 			}
 			if err := rows.Err(); err != nil {

@@ -40,9 +40,9 @@
 //
 // An Action's Side is 0 for player 1 and 1 for player 2 — the domain's Black/White,
 // player 1 at the bottom of the board. The domain types this package returns keep
-// their own encodings, which are not the same one: domain.Move.Player is XG's +1/-1
-// and domain.Game.Winner is gnubg's 0/1/-1. The conversion happens once, in
-// [MatchParts].
+// XG's encoding: domain.Move.Player is +1/-1 and domain.Game.Winner is
+// domain.WinnerPlayer1/WinnerPlayer2/WinnerUnfinished. The conversion happens once,
+// in [MatchParts].
 package transcript
 
 import (
@@ -55,14 +55,12 @@ import (
 // itself: a change to the form of a Transcription is a version of the document, never
 // a DatabaseVersion migration (ADR-0045 rule 1).
 //
-// Version 2 carries the declared score ([Action.Score], ADR-0053); a version-1
-// document reads unchanged. The version is raised when a score is written
-// ([GestureSetScore]), so an older binary refuses the draft instead of silently
-// dropping the score at its next save.
-const FormatVersion = 2
-
-// formatVersionScore is the first version that carries a declared score.
-const formatVersionScore = 2
+// Version 3 has no opening Action: a game starts with its first play, made by the
+// winner of the opening roll, and the declared score ([Action.Score], ADR-0053) sits
+// on that first Action. A version-1 or -2 document is converted as it is read
+// ([Upgrade]); every document written is version 3, so an older binary refuses it
+// instead of misreading a game that starts without an opening.
+const FormatVersion = 3
 
 // DefaultMatchLength is the length a first draft is offered, when no previous draft
 // says otherwise (fonctionnel.md §1.1).
@@ -72,11 +70,6 @@ const DefaultMatchLength = 7
 type Kind string
 
 const (
-	// KindOpening is the opening roll: Dice[0] is player 1's die, Dice[1] player 2's.
-	// It produces neither Move nor Position; it fixes who starts and with which roll,
-	// and it opens a game. A tie stays in the document and is followed by another
-	// opening ("relance").
-	KindOpening Kind = "opening"
 	// KindChecker is a roll and the checker play it was used for.
 	KindChecker Kind = "checker"
 	// KindDance is a roll that allowed no play at all.
@@ -111,7 +104,8 @@ type Action struct {
 	Side int  `json:"side"`
 	Kind Kind `json:"kind"`
 
-	// Dice carries the roll of an opening, a checker play or a dance.
+	// Dice carries the roll of a checker play or a dance. On a game's first play it
+	// is the opening roll, which no double can be.
 	Dice [2]int `json:"dice,omitempty"`
 
 	// Steps is the checker play, in absolute board indices (domain.CheckerStep).
@@ -126,9 +120,11 @@ type Action struct {
 	Level int `json:"level,omitempty"`
 
 	// Score is the score (player 1, player 2) DECLARED at the start of the game this
-	// opening opens; nil means the derived one (ADR-0053). Read only on a game's
-	// first opening, not a re-roll. The Replay plays from it; a mismatch with the
-	// derived score is marked (ScoreMismatch), never corrected.
+	// Action opens; nil means the derived one (ADR-0053). An Action that carries one
+	// always opens a game — closing, unfinished, a game still running, which is how
+	// a .mat game that stops short is kept apart from the next. The Replay plays
+	// from it; a mismatch with the derived score is marked (ScoreMismatch), never
+	// corrected.
 	Score *[2]int `json:"score,omitempty"`
 }
 
@@ -172,6 +168,12 @@ type Document struct {
 	Header        Header   `json:"header"`
 	Actions       []Action `json:"actions"`
 	Cursor        int      `json:"cursor"`
+
+	// NextScore is a game boundary waiting for its first Action: the score the next
+	// Action appended at the end declares, opening a game with it (and closing,
+	// unfinished, one still running). Only a converted draft whose last opening had
+	// no play behind it, or a .mat whose last game has none, leaves one.
+	NextScore *[2]int `json:"next_score,omitempty"`
 
 	Entry     *Entry `json:"-"`
 	Return    int    `json:"-"`
@@ -225,7 +227,7 @@ type Entry struct {
 	Review bool
 }
 
-// New returns an empty draft of the given length, with an opening expected. A length of
+// New returns an empty draft of the given length, with a game's first play expected. A length of
 // 0 is a money session, where Jacoby is on by default and beaver off.
 func New(matchLength int) Document {
 	return Document{
@@ -244,6 +246,10 @@ func (d Document) clone() Document {
 	out.Actions = make([]Action, len(d.Actions))
 	for i, a := range d.Actions {
 		out.Actions[i] = a.clone()
+	}
+	if d.NextScore != nil {
+		sc := *d.NextScore
+		out.NextScore = &sc
 	}
 	if d.pendingBoard != nil {
 		b := *d.pendingBoard

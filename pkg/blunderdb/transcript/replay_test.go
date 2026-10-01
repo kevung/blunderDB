@@ -71,7 +71,7 @@ func TestGameEndByBearingOff(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			doc := docOf(7, opening(domain.Black, 6, 3))
+			doc := docOf(7)
 			if tc.cube {
 				doc.Actions = append(doc.Actions,
 					Action{Side: domain.Black, Kind: KindDouble},
@@ -89,7 +89,7 @@ func TestGameEndByBearingOff(t *testing.T) {
 			if g.Winner != domain.Black || g.PointsWon != tc.points {
 				t.Fatalf("game = player %d wins %d, want player 1 winning %d", g.Winner+1, g.PointsWon, tc.points)
 			}
-			if !g.Finished || ann.Next.Expects != KindOpening {
+			if !g.Finished || !ann.Next.GameStart {
 				t.Errorf("the game did not close: %+v / next %s", g, ann.Next.Expects)
 			}
 		})
@@ -101,12 +101,10 @@ func TestGameEndByBearingOff(t *testing.T) {
 // "needs one point, Crawford behind us" (CONTEXT.md, ADR-0045 rule 7).
 func TestPostCrawfordSentinel(t *testing.T) {
 	doc := docOf(2,
-		opening(domain.Black, 6, 3),
 		Action{Side: domain.White, Kind: KindResign, Level: 1}, // 1-0, game 2 is Crawford
-		opening(domain.Black, 5, 2),
 		Action{Side: domain.Black, Kind: KindResign, Level: 1}, // 1-1, game 3 is post-Crawford
-		opening(domain.Black, 4, 1),
 	)
+	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
 	ann := Replay(doc, 0)
 	if len(ann.Games) != 3 {
 		t.Fatalf("games = %d", len(ann.Games))
@@ -114,10 +112,10 @@ func TestPostCrawfordSentinel(t *testing.T) {
 	if !ann.Games[1].Crawford || ann.Games[2].Crawford {
 		t.Fatalf("Crawford is on the wrong game: %+v", ann.Games)
 	}
-	if got := ann.Actions[2].Before.Score; got != [2]int{domain.Crawford, 2} {
+	if got := ann.Actions[1].Before.Score; got != [2]int{domain.Crawford, 2} {
 		t.Errorf("Crawford away score = %v, want [1 2]", got)
 	}
-	if got := ann.Actions[4].Before.Score; got != [2]int{domain.PostCrawford, domain.PostCrawford} {
+	if got := ann.Actions[2].Before.Score; got != [2]int{domain.PostCrawford, domain.PostCrawford} {
 		t.Errorf("post-Crawford away score = %v, want [0 0]", got)
 	}
 }
@@ -264,7 +262,7 @@ func TestReplayIncrementalCostsOneAction(t *testing.T) {
 	}
 }
 
-// declared puts a declared score on an opening.
+// declared puts a declared score on an Action, which then opens a game.
 func declared(a Action, p1, p2 int) Action {
 	a.Score = &[2]int{p1, p2}
 	return a
@@ -282,8 +280,6 @@ func kitchenSinkDoc(t *testing.T) Document {
 
 	// A one-point match: everything after the first game is played past the end.
 	doc := docOf(1,
-		opening(domain.Black, 3, 3), // a tie: another opening follows, same game
-		opening(domain.Black, 6, 3),
 		Action{Side: domain.Black, Kind: KindChecker, Dice: [2]int{6, 3},
 			Steps: []domain.CheckerStep{{From: 24, To: 18}}, BoardAfter: &board}, // illegal
 		Action{Side: domain.White, Kind: KindDance, Dice: [2]int{6, 5}}, // the roll allows a play
@@ -292,10 +288,9 @@ func kitchenSinkDoc(t *testing.T) Document {
 		Action{Side: domain.White, Kind: KindTake},
 		Action{Side: domain.Black, Kind: KindChecker, Dice: [2]int{2, 1},
 			Steps: []domain.CheckerStep{{From: 13, To: 8}}}, // the play does not use the roll
-		Action{Side: domain.White, Kind: KindPass},                           // nothing to answer: the game ends here
-		Action{Side: domain.Black, Kind: KindUnrecorded, Dice: [2]int{4, 2}}, // the record does not say what was played
-		declared(opening(domain.Black, 5, 2), 0, 0),                          // a score the games before do not give
-		Action{Side: domain.Black, Kind: KindResign, Level: 2},
+		Action{Side: domain.White, Kind: KindPass},                             // nothing to answer: the game ends here
+		Action{Side: domain.Black, Kind: KindUnrecorded, Dice: [2]int{4, 2}},   // the record does not say what was played
+		declared(Action{Side: domain.Black, Kind: KindResign, Level: 2}, 0, 0), // a score the games before do not give
 		Action{Side: domain.White, Kind: "no such kind"},
 	)
 
@@ -308,7 +303,7 @@ func kitchenSinkDoc(t *testing.T) Document {
 			found[inc.Kind] = true
 		}
 	}
-	for _, k := range []Kind{KindOpening, KindChecker, KindDance, KindUnrecorded, KindDouble, KindTake, KindPass, KindResign} {
+	for _, k := range []Kind{KindChecker, KindDance, KindUnrecorded, KindDouble, KindTake, KindPass, KindResign} {
 		if !kinds[k] {
 			t.Fatalf("the fixture no longer covers kind %q", k)
 		}
@@ -353,10 +348,7 @@ func TestReplayIncrementalMatchesFull(t *testing.T) {
 			t.Fatalf("incremental replay after undoing the correction at %d differs from a full one", n)
 		}
 		// A declared score is part of the Action: declaring, changing or clearing
-		// one on any opening must replay from there (ADR-0053).
-		if doc.Actions[n].Kind != KindOpening {
-			continue
-		}
+		// one on any Action must replay from there (ADR-0053).
 		for _, score := range []*[2]int{nil, {1, 0}, {0, 0}} {
 			scored := doc.clone()
 			scored.Actions[n].Score = score
@@ -408,7 +400,7 @@ func TestReplayIncrementalMatchesFull(t *testing.T) {
 func TestCubeFlowsThroughAMatch(t *testing.T) {
 	// Flow 5 — double, take: the cube goes to the taker at the doubled value and
 	// the DOUBLER rolls next.
-	doc := docOf(7, opening(domain.Black, 6, 3))
+	doc := docOf(7)
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
 	doc.Actions = append(doc.Actions,
 		Action{Side: domain.White, Kind: KindDouble},
@@ -449,8 +441,8 @@ func TestCubeFlowsThroughAMatch(t *testing.T) {
 
 	// Flow 10 — the next game: its number, its initial score and the away score
 	// the next Position carries are all derived before a single Action of it.
-	if ann.Next.Expects != KindOpening || ann.Next.GameNumber != 2 {
-		t.Fatalf("next = %+v, want the opening of game 2", ann.Next)
+	if !ann.Next.GameStart || ann.Next.GameNumber != 2 {
+		t.Fatalf("next = %+v, want the first play of game 2", ann.Next)
 	}
 	if ann.Next.Crawford {
 		t.Error("2-0 in a 7-point match is not the Crawford game")
@@ -463,14 +455,17 @@ func TestCubeFlowsThroughAMatch(t *testing.T) {
 	// cube alone: a double passed in game 1 puts player 2 one point from a
 	// two-point match, so game 2 is the Crawford game and a double in it is
 	// impossible; a second pass ends the match.
-	short := docOf(2,
-		opening(domain.Black, 6, 3),
+	opened := []Action{
+		{Side: domain.Black, Kind: KindChecker, Dice: [2]int{3, 1},
+			Steps: []domain.CheckerStep{{From: 8, To: 5}, {From: 6, To: 5}}},
+		{Side: domain.White, Kind: KindChecker, Dice: [2]int{3, 1},
+			Steps: []domain.CheckerStep{{From: 17, To: 20}, {From: 19, To: 20}}},
+	}
+	short := docOf(2, append(append(append([]Action(nil), opened...),
 		Action{Side: domain.Black, Kind: KindDouble},
-		Action{Side: domain.White, Kind: KindPass},
-		opening(domain.Black, 5, 2),
+		Action{Side: domain.White, Kind: KindPass}), append(opened,
 		Action{Side: domain.Black, Kind: KindDouble},
-		Action{Side: domain.White, Kind: KindPass},
-	)
+		Action{Side: domain.White, Kind: KindPass})...)...)
 	ann = Replay(short, 0)
 	if len(ann.Games) != 2 {
 		t.Fatalf("games = %d, want 2", len(ann.Games))
@@ -478,7 +473,7 @@ func TestCubeFlowsThroughAMatch(t *testing.T) {
 	if !ann.Games[1].Crawford {
 		t.Errorf("game 2 is the Crawford game: %+v", ann.Games)
 	}
-	if !hasInconsistency(ann.Actions[4], ImpossibleCube) {
+	if !hasInconsistency(ann.Actions[6], ImpossibleCube) {
 		t.Error("the cube is dead in the Crawford game; the double was not marked")
 	}
 	if !ann.Finished || ann.Winner != domain.Black || ann.Score != [2]int{2, 0} {
@@ -501,7 +496,7 @@ func TestCubeFlowsThroughAMatch(t *testing.T) {
 // Match, `winner = -1` on its last game, which is what the domain's Game already
 // means by -1 and what a save must carry through untouched.
 func TestResignationIsAGameFactNotAMove(t *testing.T) {
-	doc := docOf(7, opening(domain.Black, 6, 3))
+	doc := docOf(7)
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 6, 3))
 	// Player 1 has just played, and player 1 gives the game up: two Actions of the
 	// same side in a row, and NOT a double turn.
@@ -509,7 +504,7 @@ func TestResignationIsAGameFactNotAMove(t *testing.T) {
 	doc.Cursor = len(doc.Actions)
 
 	ann := Replay(doc, 0)
-	if hasInconsistency(ann.Actions[2], DoubleTurn) {
+	if hasInconsistency(ann.Actions[1], DoubleTurn) {
 		t.Error("a resignation after its author's own play was counted as a double turn")
 	}
 	if g := ann.Games[0]; g.Winner != domain.White || g.PointsWon != 2 {
@@ -519,7 +514,7 @@ func TestResignationIsAGameFactNotAMove(t *testing.T) {
 		t.Errorf("score = %v, want [0 2]", ann.Score)
 	}
 	// The resignation itself produces no Move, and no Position either.
-	if info := ann.Actions[2]; info.MoveNumber != -1 || info.HasPosition {
+	if info := ann.Actions[1]; info.MoveNumber != -1 || info.HasPosition {
 		t.Errorf("the resignation produced a move slot: %+v", info)
 	}
 	_, games, moves := MatchParts(doc)
@@ -528,7 +523,6 @@ func TestResignationIsAGameFactNotAMove(t *testing.T) {
 	}
 
 	// A match abandoned mid-game: the last Game is unfinished and says so.
-	doc.Actions = append(doc.Actions, opening(domain.Black, 5, 2))
 	doc.Actions = append(doc.Actions, firstCandidate(t, doc, domain.Black, 5, 2))
 	doc.Cursor = len(doc.Actions)
 
@@ -537,8 +531,8 @@ func TestResignationIsAGameFactNotAMove(t *testing.T) {
 		t.Fatalf("games = %+v, want an unfinished second game", ann.Games)
 	}
 	_, games, _ = MatchParts(doc)
-	if games[1].Winner != -1 || games[1].PointsWon != 0 {
-		t.Errorf("abandoned game = winner %d, %d points; want -1 and 0", games[1].Winner, games[1].PointsWon)
+	if games[1].Winner != domain.WinnerUnfinished || games[1].PointsWon != 0 {
+		t.Errorf("abandoned game = winner %d, %d points; want unfinished and 0", games[1].Winner, games[1].PointsWon)
 	}
 	if ann.Finished {
 		t.Error("an abandoned match is not a finished one")

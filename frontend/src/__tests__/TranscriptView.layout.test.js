@@ -51,7 +51,7 @@ function annotatedOf(rows, games) {
             side: r.action.side,
             kind: r.action.kind,
             before: r.before ?? POSITION(r.action.dice ?? [0, 0]),
-            has_position: r.action.kind !== 'opening',
+            has_position: r.action.kind !== 'resign',
             notation: r.notation ?? '',
             game_index: r.game ?? 0,
             game_number: (r.game ?? 0) + 1,
@@ -68,10 +68,10 @@ function annotatedOf(rows, games) {
 
 const GAME = (over = {}) => ({ number: 1, initial_score: [0, 0], winner: -1, points_won: 0, crawford: false, finished: false, first: 0, last: 0, ...over });
 
-/** Une partie ordinaire : ouverture, quatre coups, un double pris. */
+/** Une partie ordinaire : cinq coups, un double pris. */
 const ORDINARY = annotatedOf(
     [
-        { action: { side: 0, kind: 'opening', dice: [3, 1] } },
+        { action: { side: 1, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4' },
         { action: { side: 0, kind: 'checker', dice: [3, 1] }, notation: '8/5 6/5' },
         { action: { side: 1, kind: 'checker', dice: [5, 2] }, notation: '13/8 13/11' },
         { action: { side: 0, kind: 'checker', dice: [6, 4] }, notation: '24/14' },
@@ -93,7 +93,7 @@ describe('la disposition en deux colonnes', () => {
     test('une cellule par Action, dans la colonne de son camp', () => {
         const { container } = render(TranscriptView, { props: { annotated: ORDINARY } });
 
-        // Sept Actions, sept cellules — l'ouverture comprise, plus rien.
+        // Sept Actions, sept cellules, rien de plus.
         expect(cells(container).filter((c) => c.dataset.index !== undefined).length).toBe(7);
 
         const byIndex = (/** @type {number} */ i) => container.querySelector(`[data-index="${i}"]`);
@@ -111,8 +111,10 @@ describe('la disposition en deux colonnes', () => {
         expect(line(1)).toBe(line(2)); // 31: 8/5 6/5 | 52: 13/8 13/11
         expect(line(3)).toBe(line(4)); // 64: 24/14   | Double
         expect(line(3)).toBe(line(1) + 1);
-        // L'ouverture appartient aux deux camps : elle prend sa ligne entière.
-        expect(/** @type {any} */ (container.querySelector('[data-index="0"]')).closest('td').getAttribute('colspan')).toBe('2');
+        // Le premier coup de la partie est une cellule comme une autre, dans la
+        // colonne de son camp, sur la première ligne.
+        expect(columnOf(container.querySelector('[data-index="0"]'))).toBe(2);
+        expect(line(0)).toBe(0);
     });
 
     test('les dés précèdent la notation, comme sur une feuille de match', () => {
@@ -128,7 +130,10 @@ describe('la disposition en deux colonnes', () => {
 
     test('la fin de partie est une cellule de la colonne du vainqueur', () => {
         const won = annotatedOf(
-            [{ action: { side: 0, kind: 'opening', dice: [3, 1] } }, { action: { side: 0, kind: 'checker', dice: [3, 1] }, notation: '8/5 6/5' }],
+            [
+                { action: { side: 1, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4' },
+                { action: { side: 0, kind: 'checker', dice: [3, 1] }, notation: '8/5 6/5' }
+            ],
             [GAME({ winner: 1, points_won: 2, finished: true, last: 1 })]
         );
         const { container } = render(TranscriptView, { props: { annotated: won } });
@@ -144,9 +149,9 @@ describe('la disposition en deux colonnes', () => {
     test('transcriptRows range chaque Action dans sa partie', () => {
         const twoGames = annotatedOf(
             [
-                { action: { side: 0, kind: 'opening', dice: [3, 1] }, game: 0 },
+                { action: { side: 1, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4', game: 0 },
                 { action: { side: 0, kind: 'checker', dice: [3, 1] }, notation: '8/5 6/5', game: 0 },
-                { action: { side: 1, kind: 'opening', dice: [5, 2] }, game: 1 },
+                { action: { side: 0, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4', game: 1 },
                 { action: { side: 1, kind: 'checker', dice: [5, 2] }, notation: '13/8 13/11', game: 1 }
             ],
             [GAME({ number: 1, last: 1 }), GAME({ number: 2, initial_score: [1, 0], first: 2, last: 3 })]
@@ -182,7 +187,7 @@ describe('les Incohérences sont décorées et nommées', () => {
     test.each(KINDS)('%s a sa décoration et son info-bulle', (kind) => {
         const flawed = annotatedOf(
             [
-                { action: { side: 0, kind: 'opening', dice: [3, 1] } },
+                { action: { side: 1, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4' },
                 { action: { side: 0, kind: 'checker', dice: [3, 1] }, notation: '8/5 6/5', flaws: [{ kind, detail: 'whatever the engine says' }] }
             ],
             [GAME({ last: 1 })]
@@ -198,7 +203,7 @@ describe('les Incohérences sont décorées et nommées', () => {
     test('deux Incohérences sur la même cellule sont toutes deux nommées', () => {
         const flawed = annotatedOf(
             [
-                { action: { side: 0, kind: 'opening', dice: [3, 1] } },
+                { action: { side: 1, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4' },
                 {
                     action: { side: 0, kind: 'checker', dice: [3, 1] },
                     notation: '8/5 6/5',
@@ -220,9 +225,9 @@ describe('les Incohérences sont décorées et nommées', () => {
 describe('les parties sont repliables', () => {
     const twoGames = annotatedOf(
         [
-            { action: { side: 0, kind: 'opening', dice: [3, 1] }, game: 0 },
+            { action: { side: 1, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4', game: 0 },
             { action: { side: 0, kind: 'checker', dice: [3, 1] }, notation: '8/5 6/5', game: 0 },
-            { action: { side: 1, kind: 'opening', dice: [5, 2] }, game: 1 },
+            { action: { side: 0, kind: 'checker', dice: [4, 2] }, notation: '8/4 6/4', game: 1 },
             { action: { side: 1, kind: 'checker', dice: [5, 2] }, notation: '13/8 13/11', game: 1 }
         ],
         [GAME({ number: 1, last: 1 }), GAME({ number: 2, initial_score: [1, 0], first: 2, last: 3 })]

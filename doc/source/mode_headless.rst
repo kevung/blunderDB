@@ -547,6 +547,12 @@ affiché sur sa vignette (PR du joueur de référence), et ``matches.findByHash`
 indique si un match donné est déjà présent, à partir des deux empreintes de
 détection de doublon — de quoi éviter un import redondant avant de l'engager.
 
+Le champ ``winner`` d'une partie, reçu par ``matches.createGame`` et renvoyé par
+``matches.games``, a un seul codage : ``1`` pour le joueur 1, ``-1`` pour le
+joueur 2, ``0`` pour une partie inachevée. Un client qui envoie encore ``0``,
+``1`` ou ``-1`` au sens de gnubg (``0`` pour le joueur 1, ``1`` pour le
+joueur 2) inscrit le gagnant inverse.
+
 ``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse (dont
 ``cube_error``) à partir de son analyse complète, et renvoie le nombre de
 lignes **réellement** corrigées. Ces colonnes ne sont qu'une projection : une

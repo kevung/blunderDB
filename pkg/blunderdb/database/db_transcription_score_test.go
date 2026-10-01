@@ -11,7 +11,7 @@ import (
 )
 
 // TestDeclaredScore_TravelsIntoTheMatchAndTheMAT: a score declared on a game's
-// opening (ADR-0053) is the score the game was played at — the draft keeps it
+// first Action (ADR-0053) is the score the game was played at — the draft keeps it
 // across a reopening, the saved Match's game starts at it, the games after it
 // follow it, and the .mat says it.
 func TestDeclaredScore_TravelsIntoTheMatchAndTheMAT(t *testing.T) {
@@ -28,15 +28,15 @@ func TestDeclaredScore_TravelsIntoTheMatchAndTheMAT(t *testing.T) {
 	}
 	derived := games[1].InitialScore
 	declared := [2]int{derived[0] + 1, derived[1]}
-	opening := games[1].First
+	first := games[1].First
 
-	state, err = db.ApplyTranscriptionGesture(id, transcript.Gesture{Kind: transcript.GestureSetScore, At: opening, Score: &declared})
+	state, err = db.ApplyTranscriptionGesture(id, transcript.Gesture{Kind: transcript.GestureSetScore, At: first, Score: &declared})
 	if err != nil {
 		t.Fatalf("set_score: %v", err)
 	}
-	flags := state.Annotated.Actions[opening].Inconsistencies
+	flags := state.Annotated.Actions[first].Inconsistencies
 	if len(flags) != 1 || flags[0].Kind != transcript.ScoreMismatch {
-		t.Fatalf("the opening carries %+v, want one score_mismatch", flags)
+		t.Fatalf("the first play carries %+v, want one score_mismatch", flags)
 	}
 	want := make([][2]int, len(state.Annotated.Games))
 	for i, g := range state.Annotated.Games {
@@ -56,8 +56,8 @@ func TestDeclaredScore_TravelsIntoTheMatchAndTheMAT(t *testing.T) {
 		t.Fatal(err)
 	}
 	if doc := state.Annotated.Document; doc.FormatVersion != transcript.FormatVersion ||
-		doc.Actions[opening].Score == nil || *doc.Actions[opening].Score != declared {
-		t.Fatalf("the reopened draft lost the score: version %d, %+v", doc.FormatVersion, doc.Actions[opening])
+		doc.Actions[first].Score == nil || *doc.Actions[first].Score != declared {
+		t.Fatalf("the reopened draft lost the score: version %d, %+v", doc.FormatVersion, doc.Actions[first])
 	}
 
 	// Rendered before finishing: finishing releases the draft.
