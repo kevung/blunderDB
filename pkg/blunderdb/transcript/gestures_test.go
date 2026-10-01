@@ -277,7 +277,7 @@ func TestGesturesByKind(t *testing.T) {
 		if n := len(moves[games[0].ID]); n != 0 {
 			t.Errorf("a resignation produced %d moves", n)
 		}
-		if games[0].Winner != 0 || games[0].PointsWon != 2 {
+		if games[0].Winner != domain.WinnerPlayer1 || games[0].PointsWon != 2 {
 			t.Errorf("game = %+v", games[0])
 		}
 	})

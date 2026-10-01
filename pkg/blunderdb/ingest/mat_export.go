@@ -15,8 +15,8 @@ import (
 // inverse of the .mat parser, and the format XG re-imports. The output
 // round-trips through gnubgparser.ParseMAT; analysis is NOT part of .mat.
 
-// Move.Player encoding is XG {1 = player 1, -1 = player 2}; Game.Winner is the
-// gnubg encoding {0 = player 1, 1 = player 2, -1 = unfinished}.
+// Move.Player and Game.Winner share XG's encoding {1 = player 1, -1 = player 2},
+// Game.Winner adding 0 for an unfinished game (domain.WinnerPlayer1).
 
 // ReadMatchForMAT reconstructs a stored match into the shape RenderMAT wants:
 // the match header, its games in order, and each game's moves keyed by game id.
@@ -124,16 +124,12 @@ func renderMATGame(b *strings.Builder, m *domain.Match, p1, p2 string, g *domain
 	// margin it would read as player 1's win on a round-trip.
 	unnumbered := -1
 	if wins := winsLine(m, g); wins != "" {
-		winner := int32(1)
-		if g.Winner == 1 {
-			winner = -1
-		}
 		last := len(rows) - 1
 		// Player 2's column can take the cell on the spot; player 1's opens a
 		// line, exactly as an ordinary play of theirs would.
-		if winner == -1 && last >= 0 && rows[last].left != "" && rows[last].right == "" {
+		if g.Winner == domain.WinnerPlayer2 && last >= 0 && rows[last].left != "" && rows[last].right == "" {
 			rows[last].right = wins
-		} else if winner == 1 {
+		} else if g.Winner == domain.WinnerPlayer1 {
 			rows = append(rows, matRow{left: wins})
 			unnumbered = len(rows) - 1
 		} else {
@@ -228,9 +224,10 @@ func movesToPlays(moves []*domain.Move) []play {
 	return plays
 }
 
-// winsLine renders the game result. Game.Winner is 0=p1, 1=p2, -1=unfinished.
+// winsLine renders the game result, empty for an unfinished game.
 func winsLine(m *domain.Match, g *domain.Game) string {
-	if g.PointsWon <= 0 || (g.Winner != 0 && g.Winner != 1) {
+	side := domain.WinnerSide(g.Winner)
+	if g.PointsWon <= 0 || side == domain.None {
 		return ""
 	}
 	pts := int(g.PointsWon)
@@ -239,7 +236,7 @@ func winsLine(m *domain.Match, g *domain.Game) string {
 		unit = "points"
 	}
 	// "and the match" when the win reaches the match length.
-	winnerScoreBefore := g.InitialScore[int(g.Winner)]
+	winnerScoreBefore := g.InitialScore[side]
 	andMatch := ""
 	if m.MatchLength > 0 && int(winnerScoreBefore)+pts >= int(m.MatchLength) {
 		andMatch = " and the match"

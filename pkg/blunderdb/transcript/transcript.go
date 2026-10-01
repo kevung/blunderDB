@@ -40,9 +40,9 @@
 //
 // An Action's Side is 0 for player 1 and 1 for player 2 — the domain's Black/White,
 // player 1 at the bottom of the board. The domain types this package returns keep
-// their own encodings, which are not the same one: domain.Move.Player is XG's +1/-1
-// and domain.Game.Winner is gnubg's 0/1/-1. The conversion happens once, in
-// [MatchParts].
+// XG's encoding: domain.Move.Player is +1/-1 and domain.Game.Winner is
+// domain.WinnerPlayer1/WinnerPlayer2/WinnerUnfinished. The conversion happens once,
+// in [MatchParts].
 package transcript
 
 import (

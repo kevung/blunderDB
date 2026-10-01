@@ -69,7 +69,7 @@ func MapBGF(path string) (*MatchGraph, error) {
 			Game: domain.Game{
 				GameNumber:   int32(gameIdx + 1),
 				InitialScore: [2]int32{int32(bgfGetInt(gameData, "scoreGreen")), int32(bgfGetInt(gameData, "scoreRed"))},
-				Winner:       0,
+				Winner:       bgfWinner(data, gamesData, gameIdx),
 				PointsWon:    int32(bgfGetInt(gameData, "wonPoints")),
 				MoveCount:    len(movesData),
 			},
@@ -476,4 +476,34 @@ func (im BGFImporter) Import(ctx context.Context, scope string, src Source, prog
 	}
 	sum.BatchID = src.BatchID
 	return sum, nil
+}
+
+// bgfWinner reads who won a BGF game off the scores, since BGBlitz records no
+// winner on the game: the player whose score the next game starts higher, or,
+// for the last game, the one whose final score (finalGreen / finalRed, at the
+// top of the file) exceeds the score it started on. Green is player 1. A game
+// whose scores do not name exactly one player is unfinished.
+func bgfWinner(data map[string]interface{}, games []interface{}, i int) int32 {
+	cur, _ := games[i].(map[string]interface{})
+	if bgfGetInt(cur, "wonPoints") <= 0 {
+		return domain.WinnerUnfinished
+	}
+	var green, red int
+	if i+1 < len(games) {
+		next, _ := games[i+1].(map[string]interface{})
+		green, red = bgfGetInt(next, "scoreGreen"), bgfGetInt(next, "scoreRed")
+	} else {
+		if _, ok := data["finalGreen"]; !ok {
+			return domain.WinnerUnfinished
+		}
+		green, red = bgfGetInt(data, "finalGreen"), bgfGetInt(data, "finalRed")
+	}
+	dGreen, dRed := green-bgfGetInt(cur, "scoreGreen"), red-bgfGetInt(cur, "scoreRed")
+	switch {
+	case dGreen > 0 && dRed == 0:
+		return domain.WinnerPlayer1
+	case dRed > 0 && dGreen == 0:
+		return domain.WinnerPlayer2
+	}
+	return domain.WinnerUnfinished
 }
