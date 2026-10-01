@@ -106,6 +106,10 @@ depuis plusieurs clients.
      - ``false``
      - sert la page web de consultation sous ``/app/`` ; **éteinte par
        défaut**, voir plus bas
+   * - ``--direction``
+     - ``false``
+     - sert les gestes de direction de tournoi et de Rencontre ; **éteints
+       par défaut**, voir :ref:`headless_direction_gestures`
    * - ``--cors-allow-origin <origine>``
      - –
      - active CORS pour cette origine, une liste d'origines séparées par des
@@ -339,8 +343,9 @@ Direction de tournoi et Rencontres
 
 Les tournois dirigés au poste de travail et les Rencontres qui les regroupent
 se lisent par l'API, sous le tenant de l'appelant, avec le même code que le
-poste de travail. Le démon sert **la lecture seule** : les gestes de direction
-(saisir un résultat, appairer, ouvrir une salle) se font au poste de travail.
+poste de travail. La lecture est toujours servie ; les gestes (saisir un
+résultat, appairer, ouvrir une salle) ne le sont que sous ``serve --direction``
+(:ref:`headless_direction_gestures`).
 
 * ``directions.list`` et ``directions.directory`` lisent tout le tenant : la
   liste des tournois dirigés, l'annuaire des joueurs.
@@ -394,6 +399,78 @@ proxy (:ref:`headless_proxy_deployment`), quiconque atteint le préfixe
 ``/v1/directions.`` d'un tenant lit ses tournois, noms des joueurs compris. Un
 proxy qui réserve ces lectures à certains utilisateurs le fait par une règle
 sur ce préfixe et sur ``/v1/rencontres.``.
+
+.. _headless_direction_gestures:
+
+Les gestes de direction
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``blunderdb serve --direction`` ouvre les gestes que le poste de travail fait
+sur un tournoi dirigé et sur une Rencontre. Sans ce drapeau, ces routes
+répondent ``404``, comme absentes. ``call`` les sert toujours.
+
+* ``directions.create`` (``tournamentId``, ``config``, ``seed``),
+  ``directions.setConfig`` et ``directions.previewConfig`` (``config``, la
+  configuration au format JSON du moteur) ;
+* les inscriptions : ``directions.enterParticipants`` (``players``),
+  ``directions.addParticipant`` (``name``, ``club``, ``rating`` ; avec
+  ``section`` et ``key``, un retardataire prend une place d'exemption),
+  ``directions.updateParticipant``, ``directions.withdraw``,
+  ``directions.reinstate``, ``directions.makeAbsent``,
+  ``directions.makeAvailable``, ``directions.addPair``,
+  ``directions.updatePair`` ;
+* le déroulement : ``directions.confirmProposal`` (``action``, telle que
+  ``directions.get`` la propose), ``directions.confirmAllProposals``,
+  ``directions.startMatch``, ``directions.enterResult``,
+  ``directions.enterForfeit``, ``directions.moveMatchToTable``,
+  ``directions.cancelMatch``, ``directions.correctResult``,
+  ``directions.close``, ``directions.reopen``, ``directions.addNote``,
+  ``directions.attachMatch``, ``directions.detachMatch`` ;
+* la salle : ``rencontres.create``, ``rencontres.update``,
+  ``rencontres.attach``, ``rencontres.detach``, ``rencontres.trash``,
+  ``rencontres.setTableOutOfService``, ``rencontres.setBreaks``.
+
+Un geste de tournoi rend la vue complète du tournoi, comme ``directions.get`` ;
+un geste de salle rend la Rencontre. Le service réécrit ensuite les pages
+d'affichage dans le dossier que la base désigne, comme au poste de travail.
+
+**Version obligatoire.** Toute lecture d'un tournoi ou d'une Rencontre rend un
+en-tête ``Direction-Version``, et tout geste le renvoie dans ``If-Match`` :
+
+* sans ``If-Match`` (ou avec ``*``), le geste est refusé : ``428`` ;
+* si quelqu'un a écrit depuis cette lecture, le geste est refusé : ``409``. Le
+  champ ``details`` de l'erreur porte l'état frais et sa ``version`` : le
+  client relit, puis rejoue son geste s'il reste valable ;
+* sinon le geste s'applique et rend la nouvelle version dans
+  ``Direction-Version``.
+
+La comparaison se fait sous le verrou du geste : de deux gestes envoyés sur la
+même lecture, un seul s'applique. Un tournoi joué dans une Rencontre a la
+version de sa salle, si bien qu'un geste dans une épreuve sœur la change
+aussi. ``directions.create`` et ``rencontres.create`` ne visent rien
+d'existant et ne prennent pas de version.
+
+**Idempotence.** Un geste qui porte un en-tête ``Idempotency-Key`` ne
+s'applique qu'une fois : renvoyé avec la même clé, il rend la première réponse
+(en-tête ``Idempotency-Replayed: true``). Un double clic ou une reprise réseau
+ne saisit pas deux résultats.
+
+.. code-block:: bash
+
+   curl -si -X POST http://127.0.0.1:8080/v1/directions.get \
+     -H 'X-Tenant-ID: 1' -d '{"tournamentId":3}' | grep -i '^direction-version'
+   curl -s -X POST http://127.0.0.1:8080/v1/directions.enterResult \
+     -H 'X-Tenant-ID: 1' -H 'If-Match: "…"' -H 'Idempotency-Key: t4-r2' \
+     -d '{"tournamentId":3,"matchId":"m7","winner":"aa","scoreA":7,"scoreB":3}'
+
+.. warning::
+
+   Le démon n'authentifie personne (ADR-0005). Avec ``--direction``,
+   quiconque le proxy laisse passer saisit des résultats. Le moteur ne connaît
+   aucun rôle (directeur, arbitre, lecteur) : un rôle est une règle du proxy,
+   qui réserve ``/v1/directions.`` et ``/v1/rencontres.`` aux directeurs, ou
+   n'y laisse passer que les lectures. Ne lancez jamais ``--direction`` sur un
+   démon joignable sans ce proxy, même sur le Wi-Fi d'un club.
 
 .. _headless_bearoff:
 
@@ -1233,6 +1310,10 @@ les tests d'intégration.
    blunderdb call positions.save  --db database.db --json '{"position":{...}}'
    blunderdb call matches.delete  --db database.db --json '{"id":42}'
 
+   # a gesture of a tournament Direction, with the version a read printed
+   blunderdb call directions.enterResult --db database.db --if-match '…' \
+     --json '{"tournamentId":3,"matchId":"m7","winner":"aa"}'
+
 **Options:**
 
 .. list-table::
@@ -1264,8 +1345,15 @@ les tests d'intégration.
    * - ``--list``
      - –
      - affiche toutes les méthodes ``<famille>.<méthode>`` et quitte
+   * - ``--if-match <version>``
+     - –
+     - version sur laquelle un geste de direction a été décidé, envoyée comme
+       ``If-Match`` (:ref:`headless_direction_gestures`)
 
 La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est écrite
 sur la sortie standard. En cas d'erreur, le processus se termine avec un code
 non nul et l'enveloppe ``{"error":{…}}`` est imprimée sur la sortie standard
-pour rester analysable (par exemple avec ``jq``).
+pour rester analysable (par exemple avec ``jq``). Une réponse qui porte un
+en-tête ``Direction-Version`` l'imprime sur la sortie d'erreur : c'est la
+valeur que le geste suivant passe à ``--if-match``. ``call`` sert les gestes de
+direction sans drapeau, comme la CLI, puisqu'il s'exécute en local.

@@ -367,11 +367,7 @@
         // Verrous de format, lus sur la configuration en vigueur, pas sur la copie.
         const saved = view?.config;
         if (saved) previewDirectionConfig(saved).then((p) => (configPreview = p));
-        // Affichage de salle réécrit à chaque événement ; sans dossier, rien ; un échec
-        // n'interrompt jamais la direction.
-        writeDirectionPage().then((path) => {
-            if (path === null) statusBarTextStore.set(tMsg('direction.display.error'));
-        });
+        // L'affichage de salle est réécrit par le service après chaque geste, d'où qu'il vienne.
         directionRounds().then((n) => (rounds = n));
         // L'annuaire dérive de toutes les Directions de la base, celle-ci comprise.
         directory().then((e) => (dirEntries = e));

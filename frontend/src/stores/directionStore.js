@@ -470,10 +470,10 @@ export async function publishDirectionStrings() {
 }
 
 /* Changer de langue en cours de tournoi doit changer la page affichée dans la salle : le
-   catalogue est republié dès que la langue bouge. Un `subscribe` est ici à sa place — la règle
+   catalogue est republié dès que la langue bouge, et la page réécrite dans la nouvelle. Un `subscribe` est ici à sa place — la règle
    des stores Svelte 5 vise les composants, pas les modules. */
 language.subscribe(() => {
-    if (get(openDirectionIdStore) !== null) publishDirectionStrings();
+    if (get(openDirectionIdStore) !== null) publishDirectionStrings().then(writeDirectionPage);
 });
 
 /**
@@ -939,35 +939,24 @@ export async function hallGrid() {
 
 /**
  * Un geste de la Salle vise l'épreuve de sa case, qui n'est pas forcément l'épreuve ouverte :
- * sa page d'affichage est réécrite (celle de l'épreuve ouverte l'est par la vue), puis
- * l'épreuve ouverte et ses sœurs sont rejouées, pour que chaque onglet dise vrai. `pages`
- * est faux pour un geste dont le service écrit lui-même les pages (le déplacement, qui peut
- * toucher une sœur) : les réécrire ici les écrirait deux fois.
+ * le service réécrit les pages d'affichage qu'il touche, puis l'épreuve ouverte et ses sœurs
+ * sont rejouées, pour que chaque onglet dise vrai.
  *
  * @template T
- * @param {number} tid
  * @param {() => Promise<T>} fn
- * @param {boolean} [pages]
  * @returns {Promise<T>}
  */
-async function hallGesture(tid, fn, pages = true) {
+async function hallGesture(fn) {
     const v = await fn();
-    if (pages) {
-        try {
-            await WriteDirectionPage(tid);
-        } catch (e) {
-            logger.error('direction: writing the page of a hall gesture failed', e);
-        }
-    }
     await refreshDirection();
     return v;
 }
 
 /** @param {number} tid @param {string} matchId @param {string} winner @param {number} [a] @param {number} [b] @param {string} [note] */
-export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') => hallGesture(tid, () => EnterResult(tid, matchId, winner, a, b, note));
+export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') => hallGesture(() => EnterResult(tid, matchId, winner, a, b, note));
 
 /** @param {number} tid @param {string} matchId @param {string} winner @param {string} [note] */
-export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(tid, () => EnterForfeit(tid, matchId, winner, note));
+export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(() => EnterForfeit(tid, matchId, winner, note));
 
 /**
  * Déplace un match de la Salle ; sur une table occupée par une épreuve sœur, le service échange
@@ -975,13 +964,13 @@ export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture
  *
  * @param {number} tid @param {string} matchId @param {number} table
  */
-export const hallMoveMatch = (tid, matchId, table) => hallGesture(tid, () => MoveMatchToTable(tid, matchId, table), false);
+export const hallMoveMatch = (tid, matchId, table) => hallGesture(() => MoveMatchToTable(tid, matchId, table));
 
 /** @param {number} tid @param {string} matchId */
-export const hallCancelMatch = (tid, matchId) => hallGesture(tid, () => CancelMatch(tid, matchId));
+export const hallCancelMatch = (tid, matchId) => hallGesture(() => CancelMatch(tid, matchId));
 
 /** @param {number} tid @param {ProposalAction} action */
-export const hallConfirmProposal = (tid, action) => hallGesture(tid, () => ConfirmProposal(tid, JSON.stringify(action)));
+export const hallConfirmProposal = (tid, action) => hallGesture(() => ConfirmProposal(tid, JSON.stringify(action)));
 
 /**
  * Enregistre un résultat. Seul le vainqueur est exigé : les scores peuvent être nuls tous deux.

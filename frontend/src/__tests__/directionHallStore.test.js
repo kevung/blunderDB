@@ -51,10 +51,10 @@ describe('la Salle, côté store', () => {
         await expect(hallGrid()).rejects.toThrow('boom');
     });
 
-    test("un geste de la Salle réécrit la page de l'épreuve de la case, pas seulement l'ouverte", async () => {
+    test("un geste de la Salle laisse au service l'écriture des pages", async () => {
         await hallEnterResult(2, 'm1', 'a');
         expect(EnterResult).toHaveBeenCalledWith(2, 'm1', 'a', 0, 0, '');
-        expect(WriteDirectionPage).toHaveBeenCalledWith(2);
+        expect(WriteDirectionPage).not.toHaveBeenCalled();
     });
 
     test('un déplacement ne réécrit pas les pages : le service les a déjà écrites', async () => {

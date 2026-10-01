@@ -55,4 +55,3 @@ func checkGestureIsolation(t *testing.T, ts *httptest.Server, mine, theirs direc
 		t.Errorf("tenant %s's Direction moved under another tenant's gestures", mine.tenant)
 	}
 }
-
