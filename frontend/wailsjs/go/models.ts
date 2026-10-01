@@ -4017,7 +4017,6 @@ export namespace service {
 	        this.matchId = source["matchId"];
 	    }
 	}
-	
 	export class SlotRow {
 	    slotId: string;
 	    label: tournoi.Label;
