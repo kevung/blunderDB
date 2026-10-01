@@ -55,8 +55,10 @@ type Options struct {
 // live session, opening one when there is none (the desktop, and `call`,
 // where every invocation is its own process). Revision 0 claims nothing and
 // the session's own revision is the expectation; the write still fails if
-// another writer moved the row. The API refuses a gesture without a revision
-// before it reaches the service (ADR-0057 rule 4).
+// another writer moved the row. The revision is checked first against the
+// session's, not the row's: a session behind another instance learns it at its
+// next write, so the client converges in one round trip more. The API refuses
+// a gesture without a revision before it reaches the service (ADR-0057 rule 4).
 type Expect struct {
 	Session  string
 	Revision int64

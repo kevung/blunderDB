@@ -126,6 +126,9 @@ func (s *Server) transcriptionRoutes() []route {
 			return s.transcripts().Close(scope, req.ID, req.SessionID)
 		})},
 		{http.MethodPost, "/v1/transcriptions.finish", s.withIdempotency(s.withIfMatch(rpc(func(ctx context.Context, scope string, req transcriptionSessionReq) (*transcription.SaveResult, error) {
+			if err := s.sessionOf(req.SessionID); err != nil {
+				return nil, err
+			}
 			return s.transcripts().Finish(ctx, scope, req.ID, expectOf(ctx, req.SessionID))
 		})))},
 		{http.MethodPost, "/v1/transcriptions.abandon", s.withIdempotency(s.withIfMatch(rpcVoid(func(ctx context.Context, scope string, req transcriptionIDReq) error {

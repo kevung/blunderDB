@@ -114,3 +114,41 @@ func TestConflictCarriesTheFreshState(t *testing.T) {
 		t.Fatalf("error details %v must name the revision and the state", details)
 	}
 }
+
+// The state a conflict carries is read off the session without moving it: the
+// Cursor the user parked before an Inconsistency stays there, in the session
+// every tab shares as in the state handed back.
+func TestStaleStateLeavesTheSharedCursor(t *testing.T) {
+	ctx := context.Background()
+	svc := New(newStore(t), Options{})
+	st, err := svc.Create(ctx, "1", transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	st = play(t, svc, "1", st, checkerAction(6, 3))
+	st = play(t, svc, "1", st, checkerAction(5, 4))
+	st = play(t, svc, "1", st, checkerAction(4, 2))
+	st = play(t, svc, "1", st, []transcript.Gesture{{Kind: transcript.GestureCursorBack}, {Kind: transcript.GestureCursorBack}})
+	flipped, err := svc.Apply(ctx, "1", st.ID, Expect{Session: st.SessionID, Revision: st.Revision}, transcript.Gesture{Kind: transcript.GestureFlipSide})
+	if err != nil || !flipped.Annotated.Inconsistent() {
+		t.Fatalf("flip side: %v; the fixture needs an inconsistency", err)
+	}
+	st = flipped
+	for st.Annotated.Document.Cursor > 0 {
+		st = play(t, svc, "1", st, []transcript.Gesture{{Kind: transcript.GestureCursorBack}})
+	}
+
+	_, err = svc.Apply(ctx, "1", st.ID, Expect{Session: st.SessionID, Revision: st.Revision + 5}, transcript.Gesture{Kind: transcript.GestureCursorForward})
+	var stale *StaleError
+	if !errors.As(err, &stale) {
+		t.Fatalf("a stale expectation: got %v, want a StaleError", err)
+	}
+	if got := stale.State.Annotated.Document.Cursor; got != 0 {
+		t.Errorf("the conflict's state puts the Cursor at %d, want 0 (where the session is)", got)
+	}
+	svc.WithEditor("1", st.ID, func(ed *transcript.Editor) {
+		if ed.Doc.Cursor != 0 {
+			t.Errorf("building the conflict moved the session's Cursor to %d", ed.Doc.Cursor)
+		}
+	})
+}

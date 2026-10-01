@@ -111,4 +111,23 @@ describe('un brouillon modifié ailleurs', () => {
         await press('Digit3');
         await vi.waitFor(() => expect(document.querySelector('.error')).toBeNull());
     });
+
+    test('les frappes déjà en file après le geste refusé sont abandonnées, et le message reste', async () => {
+        /** @type {(v: any) => void} */
+        let release = () => {};
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementationOnce(() => new Promise((r) => (release = r))).mockResolvedValue({ id: 1, annotated: annotated(5) });
+        await openedPanel();
+        await press('KeyR');
+        await press('Digit2');
+        await vi.waitFor(() => expect(ApplyTranscriptionGesture).toHaveBeenCalledTimes(1));
+        await press('Digit3');
+        await press('Digit4');
+        release({ id: 1, annotated: annotated(1), conflict: true });
+        await vi.waitFor(() => expect(document.querySelector('.error')?.textContent).toMatch(/changed elsewhere/));
+        await tick();
+        await tick();
+        expect(ApplyTranscriptionGesture).toHaveBeenCalledTimes(1);
+        expect(get(transcriptionStore)?.annotated.document.actions).toHaveLength(1);
+        expect(document.querySelector('.error')?.textContent).toMatch(/changed elsewhere/);
+    });
 });

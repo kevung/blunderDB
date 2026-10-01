@@ -116,6 +116,14 @@ export async function finishDraft(draft) {
         return null;
     }
 
+    if (result?.conflict) {
+        // Another writer changed the draft: no Match was written. The draft is
+        // redrawn as it now stands, undo reset, and Terminer can be asked again.
+        setTranscription(result.state);
+        statusBarTextStore.set(/** @type {string} */ (translate('transcription.conflict')));
+        return null;
+    }
+
     statusBarTextStore.set(tMsg(result?.replaced ? 'transcription.replacedMatch' : 'transcription.savedMatch', { id: result?.match_id ?? 0 }));
     await startTargetedAnalysis(result);
     return result;

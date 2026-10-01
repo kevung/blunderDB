@@ -63,8 +63,8 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 }));
 vi.mock('../services/confirmService.js', () => ({ confirmAction }));
 
-import { transcriptionStore } from '../stores/transcriptionStore.js';
-import { activeTabStore } from '../stores/uiStore.js';
+import { transcriptionStore, transcriptionHistoryStore, setTranscription } from '../stores/transcriptionStore.js';
+import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';
 import {
     finishDraft,
     exportDraftMat,
@@ -147,6 +147,17 @@ describe('Terminer', () => {
         FinishTranscription.mockResolvedValue({ match_id: 7, replaced: true, to_analyze: 0 });
         await finishDraft(draft({ actions: clean }));
         expect(StartGammonNetMatchBatch).not.toHaveBeenCalled();
+    });
+
+    test('un brouillon modifié ailleurs : rien écrit, le brouillon frais redessiné et le conflit dit', async () => {
+        setTranscription({ id: 1, annotated: draft({ actions: clean }).annotated, can_undo: true, can_redo: false });
+        const fresh = draft({ actions: [...clean, ...clean] });
+        FinishTranscription.mockResolvedValue({ conflict: true, state: { id: 1, annotated: fresh.annotated, can_undo: false, can_redo: false, conflict: true } });
+        expect(await finishDraft(draft({ actions: clean }))).toBeNull();
+        expect(StartGammonNetMatchBatch).not.toHaveBeenCalled();
+        expect(get(transcriptionStore)?.annotated.document.actions).toHaveLength(2);
+        expect(get(transcriptionHistoryStore)).toEqual({ canUndo: false, canRedo: false });
+        expect(String(get(statusBarTextStore))).toMatch(/changed elsewhere/);
     });
 
     test("l'échec de l'écriture ne rend rien et ne lance aucun lot", async () => {

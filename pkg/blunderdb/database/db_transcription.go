@@ -192,15 +192,24 @@ func (d *Database) transcriptState(fn func(*transcription.Service) (*transcripti
 		st, err = fn(svc)
 		return err
 	})
-	var stale *transcription.StaleError
-	conflict := errors.As(err, &stale) && stale.State != nil
-	if conflict {
-		st, err = stale.State, nil
+	if fresh := conflictState(err); fresh != nil {
+		return fresh, nil
 	}
 	if err != nil {
 		return nil, err
 	}
-	return &TranscriptionState{ID: st.ID, Annotated: st.Annotated, CanUndo: st.CanUndo, CanRedo: st.CanRedo, Conflict: conflict}, nil
+	return &TranscriptionState{ID: st.ID, Annotated: st.Annotated, CanUndo: st.CanUndo, CanRedo: st.CanRedo}, nil
+}
+
+// conflictState is the fresh draft a conflict carries, flagged Conflict, or
+// nil when err is not such a conflict.
+func conflictState(err error) *TranscriptionState {
+	var stale *transcription.StaleError
+	if !errors.As(err, &stale) || stale.State == nil {
+		return nil
+	}
+	st := stale.State
+	return &TranscriptionState{ID: st.ID, Annotated: st.Annotated, CanUndo: st.CanUndo, CanRedo: st.CanRedo, Conflict: true}
 }
 
 // forgetTranscriptSessions drops every open draft when the handle is replaced

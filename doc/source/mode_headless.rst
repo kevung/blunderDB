@@ -298,9 +298,11 @@ gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
 --transcription`` : sans ce drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
-``sessionId``. ``apply``, ``undo``, ``redo`` et ``close`` nomment ce
-``sessionId`` : absent → **400**, session expirée ou inconnue → **410** ; le
+``sessionId``. ``apply``, ``undo``, ``redo``, ``close`` et ``finish`` nomment
+ce ``sessionId`` : absent → **400**, session expirée ou inconnue → **410** ; le
 client rouvre alors le brouillon (``open``), curseur en fin de document.
+``abandon`` ne nomme pas de session : il supprime le brouillon sous la seule
+révision de ``If-Match``.
 Chaque geste qui écrit porte la révision vue en dernier dans l'en-tête
 ``If-Match`` et rend la suivante :
 

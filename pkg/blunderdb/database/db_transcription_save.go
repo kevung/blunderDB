@@ -26,6 +26,10 @@ type TranscriptionSaveResult struct {
 	// Inconsistent: the draft carries an Inconsistency; finished all the same
 	// (ADR-0044), flagged for callers that did not warn.
 	Inconsistent bool `json:"inconsistent"`
+	// Conflict: another writer changed the draft, nothing was written, and
+	// State is the draft as it now stands, its undo stack reset.
+	Conflict bool                `json:"conflict"`
+	State    *TranscriptionState `json:"state,omitempty"`
 }
 
 // FinishTranscription materialises the draft as a Match and releases it: a
@@ -38,6 +42,9 @@ func (d *Database) FinishTranscription(id int64) (*TranscriptionSaveResult, erro
 		res, err = svc.Finish(context.Background(), "", id, transcription.Expect{})
 		return err
 	})
+	if fresh := conflictState(err); fresh != nil {
+		return &TranscriptionSaveResult{Conflict: true, State: fresh}, nil
+	}
 	if err != nil {
 		return nil, err
 	}

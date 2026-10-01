@@ -93,3 +93,44 @@ func TestTranscription_ConflictHandsBackTheFreshDraft(t *testing.T) {
 		t.Fatal("the gesture after the conflict is typed on the fresh draft")
 	}
 }
+
+// Finishing a draft another writer moved writes no Match: the desktop gets the
+// draft as it now stands, flagged as a conflict, and can finish again.
+func TestTranscription_FinishConflictHandsBackTheFreshDraft(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "finish-conflict.db")
+	db := NewDatabase()
+	if err := db.SetupDatabase(path); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	defer db.Close()
+	st, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
+	if err != nil {
+		t.Fatalf("CreateTranscription: %v", err)
+	}
+	typeChecker(t, db, st.ID, 6, 3)
+
+	other, err := sqlite.Open(context.Background(), path, nil)
+	if err != nil {
+		t.Fatalf("second handle: %v", err)
+	}
+	defer other.Close()
+	row := readTranscriptionRow(t, db, st.ID)
+	if _, err := other.Transcriptions().Touch(context.Background(), "", st.ID, row.Revision); err != nil {
+		t.Fatalf("the other writer: %v", err)
+	}
+
+	res, err := db.FinishTranscription(st.ID)
+	if err != nil {
+		t.Fatalf("a conflict is handed back as a result, not an error: %v", err)
+	}
+	if !res.Conflict || res.State == nil || !res.State.Conflict || res.MatchID != 0 {
+		t.Fatalf("finish behind another writer: %+v; want a conflict with the fresh draft and no Match", res)
+	}
+	if n := len(res.State.Annotated.Document.Actions); n != 1 || res.State.CanUndo {
+		t.Fatalf("fresh draft: %d actions, canUndo %v; want 1, false", n, res.State.CanUndo)
+	}
+	again, err := db.FinishTranscription(st.ID)
+	if err != nil || again.Conflict || again.MatchID == 0 {
+		t.Fatalf("finishing again: %+v, %v; want a Match", again, err)
+	}
+}

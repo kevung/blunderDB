@@ -181,10 +181,11 @@ func TestTranscriptionConcurrentApplyOne409(t *testing.T) {
 // new one silently, and nobody closes a session that is not theirs.
 func TestTranscriptionGesturesRequireTheirSession(t *testing.T) {
 	ts := newTranscriptionServer(t, 0)
-	st := createDraft(t, ts, testTenant)
+	// One Action, so that a finish naming no session would have something to write.
+	st := typeAction(t, ts, testTenant, createDraft(t, ts, testTenant), 6, 3)
 	die := transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6}
 	for _, path := range []string{"/v1/transcriptions.apply", "/v1/transcriptions.undo",
-		"/v1/transcriptions.redo", "/v1/transcriptions.close"} {
+		"/v1/transcriptions.redo", "/v1/transcriptions.close", "/v1/transcriptions.finish"} {
 		if status, body := gesture(t, ts, testTenant, path, st.Revision,
 			map[string]any{"id": st.ID, "gesture": die}); status != http.StatusBadRequest {
 			t.Errorf("%s without sessionId: status %d, want 400 (%s)", path, status, body)

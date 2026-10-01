@@ -259,9 +259,14 @@ func (s *Service) failed(ctx context.Context, scope string, id int64, ss *sessio
 }
 
 // staleSession is the conflict a session answers with: its own state, which
-// is the row's. Caller holds ss.mu.
+// is the row's. It is read off a copy replayed from the end, so that neither
+// the shared session's Cursor nor the one handed back jumps to an
+// Inconsistency. Caller holds ss.mu.
 func staleSession(id int64, ss *session) *StaleError {
-	return &StaleError{Revision: ss.rev, State: annotate(id, ss.ed, ss.rev, ss.id, ss.ed.Doc.Cursor)}
+	view := transcript.NewEditor(ss.ed.Doc)
+	st := &State{ID: id, Revision: ss.rev, SessionID: ss.id, Annotated: view.Replay(len(view.Doc.Actions)),
+		CanUndo: ss.ed.CanUndo(), CanRedo: ss.ed.CanRedo()}
+	return &StaleError{Revision: ss.rev, State: st}
 }
 
 // stale turns a refused conditional write outside any session into a
