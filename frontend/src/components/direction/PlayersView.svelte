@@ -6,6 +6,9 @@
      */
     import { t } from '../../i18n';
     import { renderLabel, renderSectionName } from './labels.js';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { playerMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
 
     let {
         rows = [],
@@ -21,6 +24,13 @@
         // jamais les deux — le moteur refuse sinon. Le retour est un second geste, à un clic.
         onAbsent = (/** @type {string} */ _id, /** @type {string} */ _until, /** @type {number} */ _round) => {},
         onReturn = (/** @type {string} */ _id) => {},
+        // Les gestes qui sortent de la vue : la table du joueur, son historique.
+        onGoTable = /** @type {((table: number, open: boolean) => void) | undefined} */ (undefined),
+        onHistory = /** @type {((name: string) => void) | undefined} */ (undefined),
+        onManual = /** @type {((id: string) => void) | undefined} */ (undefined),
+        onGoEpreuve = /** @type {((event: string) => void) | undefined} */ (undefined),
+        // Où le joueur joue en même temps, dans une autre épreuve de la Rencontre.
+        elsewhere = /** @type {Record<string, { event: string, table?: number }>} */ ({}),
         // "à la ronde N" n'a de sens qu'au suisse par rondes en cours ; sinon la case ne doit
         // même pas être proposée.
         roundsMode = false,
@@ -135,6 +145,32 @@
     function withdraw(r, after) {
         if (!window.confirm($t(after ? 'direction.players.withdrawLaterConfirm' : 'direction.players.withdrawNowConfirm', { name: r.name }))) return;
         onWithdraw(r.id, after);
+    }
+
+    let menu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {import('../../../wailsjs/go/models').service.ParticipantRow} r */
+    function onRowMenu(ev, r) {
+        if (editing && editing.id === r.id) return;
+        const req = menuRequest(ev, () =>
+            playerMenu(
+                (k, p) => $t(k, p),
+                { ...r, elsewhere: elsewhere[r.id] },
+                {
+                    busy,
+                    onManual,
+                    onGoElsewhere: onGoEpreuve,
+                    onGoTable,
+                    onHistory,
+                    onAbsent: () => openAbsent(r),
+                    onReturn: (id) => onReturn(id),
+                    onWithdraw: (id, after) => onWithdraw(id, after),
+                    onReinstate: (id) => onReinstate(id),
+                    onEdit: () => startEdit(r)
+                }
+            )
+        );
+        if (req) menu = req;
     }
 
     /** @param {import('../../../wailsjs/go/models').service.ParticipantRow} r */
@@ -321,7 +357,7 @@
         </thead>
         <tbody>
             {#each shown as r (r.id)}
-                <tr data-testid="direction-player-{r.id}">
+                <tr data-testid="direction-player-{r.id}" tabindex="0" oncontextmenu={(ev) => onRowMenu(ev, r)} onkeydown={(ev) => onRowMenu(ev, r)}>
                     {#if editing && editing.id === r.id}
                         {#if pairs[editing.id]}
                             <td>{editing.name}</td>
@@ -418,6 +454,10 @@
         </tbody>
     </table>
 </div>
+
+{#if menu}
+    <ContextMenu x={menu.x} y={menu.y} items={menu.items} onClose={() => (menu = null)} />
+{/if}
 
 <style>
     .players {

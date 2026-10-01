@@ -1941,7 +1941,10 @@
             "none": "Aucune table déclarée.",
             "noTable": "sans table",
             "elsewhere": "Occupée : {event}",
-            "shared": "Deux matchs sur cette table : déplacez-en un"
+            "shared": "Deux matchs sur cette table : déplacez-en un",
+            "swapConfirm": "Table {from} ↔ Table {to} ?",
+            "swap": "Échanger",
+            "moveRefused": "Déplacement refusé : {reason}"
         },
         "result": {
             "title": "Résultat",
@@ -2290,6 +2293,38 @@
             "pending": "{n} en attente",
             "running": "{n} en cours",
             "alert": "Alerte"
+        },
+        "menu": {
+            "enterResult": "Saisir le résultat",
+            "correctResult": "Corriger le résultat",
+            "forfeitOf": "Forfait de {name}",
+            "moveTable": "Changer de table…",
+            "cancelMatch": "Annuler ce match",
+            "historyOf": "Historique de {name}",
+            "outOfService": "Mettre la table hors service",
+            "backInService": "Remettre la table en service",
+            "goToTable": "Aller à la table {n}",
+            "absent": "Marquer absent",
+            "present": "Marquer présent",
+            "withdrawNow": "Retirer maintenant",
+            "withdrawLater": "Retirer après son match",
+            "reinstate": "Réinscrire",
+            "correctPlayer": "Corriger la fiche",
+            "launch": "Lancer",
+            "ignore": "Ignorer pour l’instant",
+            "arrangeOther": "Apparier autrement",
+            "addNote": "Ajouter une remarque",
+            "filterOn": "Filtrer sur {name}",
+            "openMatch": "Ouvrir le match rattaché",
+            "detach": "Détacher le match",
+            "transcribe": "Transcrire le match",
+            "attach": "Rattacher {name}",
+            "pairManually": "Apparier à la main avec…",
+            "playsElsewhere": "Joue aussi à {event}, aller là-bas",
+            "launchHere": "Lancer ici la proposition sélectionnée",
+            "launchAtTable": "Lancer à la table…",
+            "changeLength": "Changer la longueur…",
+            "printSheet": "Imprimer la feuille de la ronde"
         }
     },
     "palette": {

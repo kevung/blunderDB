@@ -53,7 +53,7 @@ export const S3_SATURDAY_20H = {
  * Installe la Direction factice. À appeler APRÈS `installWailsMock` et avant `page.goto`.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number, seats?: boolean, phases?: Object[], locks?: Object[]}} [opts]
+ * @param {{directed?: boolean, entrants?: typeof ENTRANTS, tables?: number, running?: number, rounds?: number, seats?: boolean, phases?: Object[], locks?: Object[], unavailable?: number[]}} [opts]
  *   `directed: false` part d'un tournoi non dirigé, pour mesurer le coût d'entrée depuis rien.
  *   `entrants`, `tables` et `running` changent la taille de la salle (défaut : les quatre
  *   inscrits, quatre tables, aucun match) ; `running` matchs sont lancés d'avance. `rounds`
@@ -64,13 +64,13 @@ export const S3_SATURDAY_20H = {
  */
 export async function installDirectionEngine(page, opts = {}) {
     await page.addInitScript(
-        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, seats, phases, lockedPhases, room }) => {
+        ({ entrants, directed, tableCount, runningAtStart, roundsAtStart, seats, phases, lockedPhases, room, unavailable }) => {
             const db = window.go.database.Database;
 
             const TOURNAMENT_ID = 1;
             let CONFIG = {
                 name: 'Open de Lyon',
-                tables: { count: tableCount },
+                tables: { count: tableCount, ...(unavailable.length ? { unavailable } : {}) },
                 phases: phases || [{ kind: 'swiss_lives', length: 7, lives: 2, mode: 'continuous', target: 0 }]
             };
 
@@ -351,7 +351,20 @@ export async function installDirectionEngine(page, opts = {}) {
                 return Promise.resolve(view());
             };
             db.CancelMatch = () => Promise.resolve(view());
-            db.MoveMatchToTable = () => Promise.resolve(view());
+            // Comme le service : une table occupée échange, une table hors service est refusée.
+            window.__moves = [];
+            db.MoveMatchToTable = (_id, matchId, table) => {
+                const m = running.find((x) => x.ID === matchId);
+                if ((CONFIG.tables.unavailable || []).includes(table)) return Promise.reject(new Error(`direction: table ${table} is out of service`));
+                if (m && m.Table !== table) {
+                    const o = running.find((x) => x.Table === table && x !== m);
+                    if (o) o.Table = m.Table;
+                    m.Table = table;
+                    events += 1;
+                    window.__moves.push([matchId, table]);
+                }
+                return Promise.resolve(view());
+            };
             db.LastDecision = () => Promise.resolve(last);
             db.FinishedMatches = () => Promise.resolve([]);
             db.CloseDirection = () => {
@@ -508,7 +521,8 @@ export async function installDirectionEngine(page, opts = {}) {
             seats: !!opts.seats,
             phases: opts.phases || null,
             lockedPhases: opts.locks || [],
-            room: opts.room || null
+            room: opts.room || null,
+            unavailable: opts.unavailable || []
         }
     );
 }

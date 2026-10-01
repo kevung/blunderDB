@@ -1349,7 +1349,8 @@ tournament — Lire un tournoi dirigé
 
 Lit un tournoi dirigé sans interface graphique. Diriger un tournoi de façon
 interactive est le rôle de la console du moteur Nicomaque ; ces
-sous-commandes ne font que **lire**, et aucune n'attend de saisie.
+sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
+écrit.
 
 .. code-block:: bash
 
@@ -1376,6 +1377,11 @@ sous-commandes ne font que **lire**, et aucune n'attend de saisie.
   moteur. Le journal est toute la vérité d'une direction : le classement, les
   arbres et les avertissements en sont rejoués. Un outil qui lit cette sortie
   n'a besoin d'aucun blunderDB.
+* ``move --id N --match M --table T [--format text|json]`` — Change la table
+  d'un match en cours, comme le glisser-déposer d'une case sur une autre dans
+  la grille. Si la table visée est occupée, les deux matchs **échangent** leurs
+  tables ; une table hors service est refusée. Affiche la table de chaque match
+  en cours.
 
 **Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
 ``list`` et ``page --rencontre``), ``--format``.
@@ -1390,6 +1396,7 @@ sous-commandes ne font que **lire**, et aucune n'attend de saisie.
    ./blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
    ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
    ./blunderdb tournament export --db base.db --id 3 > journal.json
+   ./blunderdb tournament move --db base.db --id 3 --match m4 --table 7
 
 trash — La corbeille
 ---------------------

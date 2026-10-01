@@ -343,6 +343,7 @@ export default {
 <p>Tout ce qui est décidé est écrit dans un <strong>journal</strong>, et rien d'autre ne l'est. Le classement, les arbres, les propositions et les avertissements sont rejoués depuis ce journal à chaque ouverture : une coupure de courant ne coûte rien, et une correction n'efface jamais ce qui s'est passé — elle s'ajoute.</p>
 <h4>La page Direction</h4>
 <p>C'est là que le directeur passe l'essentiel de son temps. Elle porte, de haut en bas : les <strong>avertissements</strong> du moteur, qui restent visibles et ne bloquent jamais rien ; la <strong>grille des tables</strong>, dont l'en-tête porte le bouton <strong>Imprimer la feuille</strong> d'appariements ; la <strong>dernière décision</strong> ; la <strong>file des propositions</strong> ; et les joueurs libres. La grille précède la file : une file longue ne la pousse jamais hors de l'écran.</p>
+<p>La vue occupe toute la largeur de la zone principale, et chaque onglet défile seul : quitter un onglet puis y revenir, ou passer d'une épreuve à l'autre, retrouve la position où on l'avait laissé. Les boutons et les champs font au moins 40 pixels de haut, pour se viser sans précision au comptoir ; le nombre de colonnes de la grille suit la largeur de la zone, non celle de la fenêtre. Dans les <strong>Réglages</strong>, chaque section se replie sur son titre, et le bouton <strong>Ouvrir dans le navigateur</strong> de l'en-tête ouvre la page murale en un clic dès qu'un dossier de sortie est choisi.</p>
 <p>Une ronde proposée s'annonce avant d'être lancée : <strong>Ronde à venir…</strong>, à côté de <em>Imprimer la feuille</em>, demande la date et l'heure à imprimer (« lundi 21/09, 20 h ») et imprime la feuille des appariements de la file, marquée « annoncée ». Rien n'est lancé ni écrit au journal : la ronde se lance le jour venu, à son heure. Un appariement qui attend une table libre porte un tiret à la place du numéro de table.</p>
 <p>En tête de la vue tournoi, la <strong>bande d'horloge</strong> tient en une ligne : l'heure, le temps écoulé depuis le premier match lancé, les matchs joués et en cours, le rythme observé en minutes par point face au rythme prévu, les matchs lents, la prochaine pause et la <strong>fin estimée</strong>. La fin estimée est la prévision du moteur : il rejoue le journal, termine le tournoi quinze fois au rythme prévu, et la bande en donne la médiane, repoussée après les pauses déclarées. Une nuit qui n'est pas déclarée comme pause compte donc comme du jeu. Une heure qui n'est pas celle du jour porte son jour.</p>
 <p>À partir du deuxième jour, le temps écoulé laisse la place au <strong>jour de jeu</strong> (le jour du premier match lancé est le jour 1) et au <strong>temps de jeu</strong> : le temps pendant lequel au moins un match était en cours, sans les nuits ni les intervalles où aucune table ne jouait. Un tournoi clos n'a plus de bande d'horloge.</p>
@@ -353,6 +354,19 @@ export default {
 <p>Un clic sur une table occupée ouvre la fiche du match. Elle montre deux grandes cibles : les <strong>noms des deux joueurs</strong>. Cliquer celui qui a gagné enregistre le résultat — deux clics en tout, table comprise. Le vainqueur est la seule chose exigée ; le score est libre, l'un et l'autre ou aucun des deux. Au clavier, <em>GAUCHE</em> ou <em>DROITE</em> choisit le vainqueur et <em>ENTRÉE</em> l'enregistre. La fiche ne se ferme qu'une fois le résultat écrit : un échec la laisse ouverte, avec son message.</p>
 <p>Le bouton <strong>⋯</strong> de la fiche déplie ce qui sert rarement : le forfait — chaque bouton nomme l'absent et celui qui gagne —, une remarque libre (« tombé au temps », « abandonné pour raison de… »), le déplacement du match sur une autre table, et son annulation. Le forfait et l'annulation se confirment. Déplacé sur une table occupée, le match échange sa table avec celui qui l'occupe : deux matchs ne partagent jamais une table, et le même geste les remet en place. Si un ancien journal en a laissé deux sur une table, la grille montre les deux cases, signalées, jusqu'à ce qu'on en déplace un.</p>
 <p>Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille : <strong>Corriger</strong> la dernière décision, puis le bon vainqueur (<em>CTRL-Z</em> ouvre la même reprise). Une correction plus ancienne se fait depuis l'historique.</p>
+<h4>Les menus contextuels</h4>
+<p>Un clic droit, la touche <em>MENU</em> ou <em>MAJ-F10</em> sur un objet de la page Direction ouvre ses actions courantes sans passer par la fiche : une case de la grille (libre ou occupée), un joueur (onglet <strong>Joueurs</strong>, joueurs libres), une place de l'arbre, un emplacement, une proposition de la file, une ligne de l'historique. Le menu s'ouvre sur l'objet ; <em>HAUT</em> et <em>BAS</em> le parcourent, <em>ENTRÉE</em> choisit, <em>ÉCHAP</em> le ferme et rend le focus à l'objet.</p>
+<ul>
+<li>Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer de table (viser une table occupée échange les deux matchs), annuler le match, historique de chaque joueur.</li>
+<li>Case libre : lancer ici la proposition sélectionnée, mettre la table hors service, ou la remettre en service (tables d'une Rencontre). Une table réservée à une autre épreuve ne propose rien.</li>
+<li>Joueur : saisir le résultat de son match en cours, aller à sa table, historique, apparier à la main avec un autre joueur libre, aller dans l'autre épreuve où il joue aussi, marquer absent ou présent, retirer maintenant ou après son match, réinscrire, corriger la fiche.</li>
+<li>Emplacement sans match : rattacher un match importé que cette place attend.</li>
+<li>Proposition : lancer, lancer à la table…, changer la longueur…, apparier autrement (ces trois entrées ouvrent l'appariement à la main avec les deux joueurs, la longueur et la table de la proposition), ignorer pour l'instant, imprimer la feuille de la ronde.</li>
+<li>Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer sur un des joueurs.</li>
+</ul>
+<p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant qu'une action est en cours, les entrées qui agissent sont grisées, comme les boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le premier.</p>
+<p>Au clavier, la grille ne prend qu'un arrêt de <em>TAB</em> : chaque case se focalise, libre comprise, et <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi, que la fiche soit déjà ouverte ou non : viser une table occupée échange les deux matchs.</p>
+<p>À la souris, on <strong>glisse</strong> une case occupée sur une autre : sur une case libre le match change de table ; sur une case occupée, une ligne « Table 3 ↔ Table 7 ? » demande de confirmer l'<strong>échange</strong> des deux matchs. Un fantôme suit le pointeur et la case visée s'entoure ; <em>ÉCHAP</em> annule le geste, et rien n'est écrit tant que le pointeur n'est pas relâché sur une case. Une table hors service est refusée, et la barre d'état en donne le motif. En ligne de commande, <code>blunderdb tournament move</code> fait le même déplacement ou le même échange (voir Interface en ligne de commande (CLI)).</p>
 <h4>Les joueurs</h4>
 <p>L'onglet <strong>Joueurs</strong> inscrit, corrige et retire. Le champ d'inscription garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul. L'autocomplétion propose les joueurs de la base ; en choisir un fixe l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.</p>
 <p>L'<strong>annuaire</strong> regroupe les inscrits de tous les tournois dirigés de la base, dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ; l'annuaire se copie en CSV ou s'enregistre dans un fichier (<strong>Enregistrer…</strong>), et se relit collé.</p>
@@ -1389,6 +1403,38 @@ export default {
 <tr>
 <td>Esc</td>
 <td>Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers).</td>
+</tr>
+</tbody>
+</table>
+<h3>Page Direction</h3>
+<p>Sous la page Direction, <em>J</em>, <em>K</em>, <em>HAUT</em>, <em>BAS</em> et <em>ENTRÉE</em> vont à la file des propositions, sauf quand le focus est sur une case de la grille des tables, où <em>HAUT</em> et <em>BAS</em> changent de case. Les menus contextuels sont décrits dans le manuel (menus contextuels).</p>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic droit, MENU, MAJ-F10</td>
+<td>Ouvrir le menu contextuel de l'objet focalisé : case de table, joueur, place de l'arbre, emplacement, proposition, ligne d'historique. HAUT/BAS parcourent le menu, ENTRÉE choisit, ÉCHAP le ferme.</td>
+</tr>
+<tr>
+<td>GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN</td>
+<td>Passer d'une case de la grille des tables à l'autre (cases libres comprises) ; la grille ne prend qu'un arrêt de TAB.</td>
+</tr>
+<tr>
+<td>1 à 9, puis 0 à 9</td>
+<td>Ouvrir la fiche de la table de ce numéro ; deux chiffres, dans les 0,4 s, pour une table au-delà de 9.</td>
+</tr>
+<tr>
+<td>M, X</td>
+<td>Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs.</td>
+</tr>
+<tr>
+<td>Glisser une case occupée sur une autre</td>
+<td>À la souris : sur une case libre, déplacer le match ; sur une case occupée, échanger les deux matchs après confirmation. ÉCHAP annule le glisser.</td>
 </tr>
 </tbody>
 </table>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:48+0200\n"
+"POT-Creation-Date: 2026-10-01 03:01+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -798,6 +798,85 @@ msgstr ""
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
 #: ../../source/raccourcis.rst:272
+msgid "Page Direction"
+msgstr "Direction page"
+
+#: ../../source/raccourcis.rst:274
+msgid ""
+"Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
+"file des propositions, sauf quand le focus est sur une case de la grille "
+"des tables, où *HAUT* et *BAS* changent de case. Les menus contextuels "
+"sont décrits dans le manuel (:ref:`menus contextuels <direction_menus>`)."
+msgstr ""
+"Under the Direction page, *J*, *K*, *UP*, *DOWN* and *ENTER* go to the "
+"proposal queue, except when the focus is on a cell of the table grid, "
+"where *UP* and *DOWN* change cell. The context menus are described in the"
+" manual (:ref:`context menus <direction_menus>`)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit, MENU, MAJ-F10"
+msgstr "Right-click, MENU, SHIFT-F10"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de l'objet focalisé : case de table, joueur, "
+"place de l'arbre, emplacement, proposition, ligne d'historique. HAUT/BAS "
+"parcourent le menu, ENTRÉE choisit, ÉCHAP le ferme."
+msgstr ""
+"Open the context menu of the focused object: table cell, player, bracket "
+"slot, slot, proposal, history row. UP/DOWN move through the menu, ENTER "
+"picks, ESC closes it."
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN"
+msgstr "LEFT, RIGHT, UP, DOWN, HOME, END"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Passer d'une case de la grille des tables à l'autre (cases libres "
+"comprises) ; la grille ne prend qu'un arrêt de TAB."
+msgstr ""
+"Move from one cell of the table grid to another (free cells included); "
+"the grid takes only one TAB stop."
+
+#: ../../source/raccourcis.rst:1
+msgid "1 à 9, puis 0 à 9"
+msgstr "1 to 9, then 0 to 9"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir la fiche de la table de ce numéro ; deux chiffres, dans les 0,4 s,"
+" pour une table au-delà de 9."
+msgstr ""
+"Open the card of the table with that number; two digits, within 0.4 s, "
+"for a table beyond 9."
+
+#: ../../source/raccourcis.rst:1
+msgid "M, X"
+msgstr "M, X"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ "
+"de table) ; viser une table occupée échange les deux matchs."
+msgstr ""
+"On an occupied cell, open the card (or, if it is open, the table field); "
+"aiming at an occupied table swaps the two matches."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser une case occupée sur une autre"
+msgstr "Drag an occupied cell onto another"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"À la souris : sur une case libre, déplacer le match ; sur une case "
+"occupée, échanger les deux matchs après confirmation. ÉCHAP annule le "
+"glisser."
+msgstr ""
+"With the mouse: on a free cell, move the match; on an occupied cell, swap"
+" the two matches after confirmation. ESC cancels the drag."
+
+#: ../../source/raccourcis.rst:293
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -825,11 +904,11 @@ msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:308
 msgid "Panneau Transcription"
 msgstr "Transcription Panel"
 
-#: ../../source/raccourcis.rst:289
+#: ../../source/raccourcis.rst:310
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1268,7 +1347,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Redo the undone gesture."
 
-#: ../../source/raccourcis.rst:339
+#: ../../source/raccourcis.rst:360
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1276,7 +1355,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:342
+#: ../../source/raccourcis.rst:363
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1303,7 +1382,7 @@ msgstr ""
 "following decision, as at the end of the document, and ENTER leads there "
 "too."
 
-#: ../../source/raccourcis.rst:353
+#: ../../source/raccourcis.rst:374
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1316,7 +1395,7 @@ msgstr ""
 "insertion opens a cell between its two neighbours, and the side is read "
 "from the column. Nothing is recorded before the validation."
 
-#: ../../source/raccourcis.rst:358
+#: ../../source/raccourcis.rst:379
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1328,7 +1407,7 @@ msgstr ""
 "in its turn instead of overwriting the one that follows. The end of the "
 "game or moving the cursor puts an end to it."
 
-#: ../../source/raccourcis.rst:363
+#: ../../source/raccourcis.rst:384
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1340,7 +1419,7 @@ msgstr ""
 " the document. The sentence clears itself and gives the place back to the"
 " expected action."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:389
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1360,7 +1439,7 @@ msgstr ""
 "review” until it is validated. Moving the cursor forward or back after "
 "changing something records the correction on the way."
 
-#: ../../source/raccourcis.rst:376
+#: ../../source/raccourcis.rst:397
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1386,7 +1465,7 @@ msgstr ""
 "inserted for the side it was missing from. The undo stack lives in "
 "memory: it is lost when the draft is closed."
 
-#: ../../source/raccourcis.rst:387
+#: ../../source/raccourcis.rst:408
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1396,7 +1475,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:394
+#: ../../source/raccourcis.rst:415
 msgid "Planche-contact"
 msgstr "Contact sheet"
 
@@ -1444,7 +1523,7 @@ msgstr "Open the position on the board and close the sheet."
 msgid "Refermer la planche."
 msgstr "Close the sheet."
 
-#: ../../source/raccourcis.rst:411
+#: ../../source/raccourcis.rst:432
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
@@ -1719,4 +1798,3 @@ msgstr "Close the help."
 #~ "brouillon, ou le mettre à jour "
 #~ "s'il existe déjà."
 #~ msgstr "Create the match from the draft, or update it if it already exists."
-

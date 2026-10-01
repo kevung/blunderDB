@@ -3,6 +3,7 @@
      * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047,
      * tasks/nicomaque/ux.md §2) ; tout autre onglet ramène le plateau sans rien fermer.
      */
+    import { tick } from 'svelte';
     import { t } from '../../i18n';
     import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
     import { tMsg } from '../../i18n';
@@ -22,6 +23,10 @@
     import ClockBar from './ClockBar.svelte';
     import CreditModal from './CreditModal.svelte';
     import SlotsView from './SlotsView.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { playerMenu } from '../../services/directionMenus.js';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
+    import { setTableOutOfService } from '../../stores/rencontreStore.js';
     import { renderWarning, csvFilename, seatLabel } from './labels.js';
     import {
         directionStore,
@@ -122,6 +127,87 @@
     });
 
     let tab = $state('settings');
+    const paneKey = $derived(`${view?.tournamentId ?? 0}:${tab}`);
+
+    /* Un onglet se monte à sa première visite puis reste monté, masqué : ses filtres, ses sections
+       repliées et sa saisie survivent au changement d'onglet. */
+    let visited = $state(/** @type {Record<string, boolean>} */ ({}));
+    $effect(() => {
+        visited[tab] = true;
+    });
+
+    /** Position de défilement par (épreuve, onglet), gardée tant que la vue vit.
+     * @type {Map<string, number>} */
+    const scrollPositions = new Map(); // eslint-disable-line svelte/prefer-svelte-reactivity -- non réactif : jamais lu par le rendu
+    /** @type {Record<string, HTMLElement>} */
+    const paneEls = {};
+    let restoring = false;
+    /** @type {(() => void) | null} */
+    let stopRestore = null;
+
+    /**
+     * @param {HTMLElement} node
+     * @param {string} id
+     */
+    function registerPane(node, id) {
+        paneEls[id] = node;
+        return { destroy: () => delete paneEls[id] };
+    }
+
+    /** @param {string} id */
+    function onPaneScroll(id) {
+        const el = paneEls[id];
+        if (restoring || id !== tab || !el || el.clientHeight === 0) return;
+        scrollPositions.set(paneKey, el.scrollTop);
+    }
+
+    /* Rend la position mémorisée une fois le contenu assez haut pour l'atteindre (les données
+       arrivent après le montage) ; l'enregistrement est suspendu pendant ce temps, sans quoi le
+       défilement clampé à 0 écraserait la mémoire. Un geste de l'utilisateur y met fin. */
+    /** @param {HTMLElement} el @param {string} key */
+    function restoreScroll(el, key) {
+        stopRestore?.();
+        const target = scrollPositions.get(key) ?? 0;
+        el.scrollTop = target;
+        if (target === 0 || el.scrollTop >= target - 1) {
+            restoring = false;
+            return;
+        }
+        restoring = true;
+        const ro = new ResizeObserver(() => {
+            el.scrollTop = target;
+            if (el.scrollTop >= target - 1) stopRestore?.();
+        });
+        for (const c of Array.from(el.children)) ro.observe(c);
+        const timer = setTimeout(() => stopRestore?.(), 1500);
+        const cancel = () => stopRestore?.();
+        el.addEventListener('wheel', cancel, { once: true, passive: true });
+        el.addEventListener('pointerdown', cancel, { once: true, passive: true });
+        el.addEventListener('keydown', cancel, { once: true });
+        stopRestore = () => {
+            ro.disconnect();
+            clearTimeout(timer);
+            el.removeEventListener('wheel', cancel);
+            el.removeEventListener('pointerdown', cancel);
+            el.removeEventListener('keydown', cancel);
+            restoring = false;
+            stopRestore = null;
+        };
+    }
+
+    /* À chaque changement d'épreuve ou d'onglet : la position revient, et le volet actif prend le
+       clavier (PageUp / PageDown / flèches le font défiler), sans voler un champ en cours de saisie. */
+    $effect(() => {
+        const key = paneKey;
+        const id = tab;
+        void visited[id];
+        tick().then(() => {
+            const el = paneEls[id];
+            if (!el || id !== tab) return;
+            restoreScroll(el, key);
+            focusPanelUnlessTyping(el);
+        });
+    });
     let tabChosen = false;
     $effect(() => {
         // Tant que la Direction n'est pas chargée, son état n'est pas « brouillon » : il est
@@ -130,6 +216,65 @@
         if (directionState !== 'draft') tab = 'direction';
         tabChosen = true;
     });
+
+    /* Les menus contextuels mènent d'un écran à l'autre : la table d'un joueur, l'historique
+       d'un nom. Chaque demande porte un numéro, pour que la même demande répétée se rejoue. */
+    let reveal = $state(/** @type {{ table: number, open?: boolean, seq: number } | null} */ (null));
+    let historyFilter = $state(/** @type {{ text: string, seq: number } | null} */ (null));
+    let requestSeq = 0;
+    /** Une demande à la file des propositions : appariement à la main, ou lancer ici. */
+    let queueRequest = $state(/** @type {{ kind: 'manual' | 'launchHere', a?: string, table?: number, focus?: 'a' | 'b', seq: number } | null} */ (null));
+    let waitingMenu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
+
+    /** @param {number} table @param {boolean} open */
+    function goToTable(table, open) {
+        tab = 'direction';
+        reveal = { table, open, seq: ++requestSeq };
+    }
+
+    /** @param {string} id */
+    function pairManually(id) {
+        tab = 'direction';
+        queueRequest = { kind: 'manual', a: id, focus: 'b', seq: ++requestSeq };
+    }
+
+    /** Une table libre prend la proposition sélectionnée : offert tant que la file en a une à lancer. @type {((table: number) => void) | undefined} */
+    const onLaunchHere = $derived(
+        (view?.proposals || []).some((a) => a.kind === 'start_match')
+            ? (/** @type {number} */ table) => {
+                  queueRequest = { kind: 'launchHere', table, seq: ++requestSeq };
+              }
+            : undefined
+    );
+
+    /** « Joue aussi à <épreuve> » : l'onglet de cette épreuve de la Rencontre. @param {string} event */
+    function goEpreuve(event) {
+        const ep = $epreuveTabsStore.find((x) => x.name === event);
+        if (ep) switchEpreuve(ep.tournamentId);
+    }
+
+    /** @param {string} name */
+    function showHistory(name) {
+        tab = 'history';
+        historyFilter = { text: name, seq: ++requestSeq };
+    }
+
+    /** Hors service : la table d'une Rencontre, seule à porter cet état. @type {((table: number, out: boolean) => void) | undefined} */
+    const onOutOfService = $derived(
+        view?.rencontreId ? (/** @type {number} */ table, /** @type {boolean} */ out) => void act(() => setTableOutOfService(view?.rencontreId || 0, table, out), 'direction.result.error') : undefined
+    );
+
+    /** @param {MouseEvent | KeyboardEvent} ev @param {{ id: string, name: string }} p */
+    function onWaitingMenu(ev, p) {
+        const req = menuRequest(ev, () =>
+            playerMenu(
+                (k, m) => $t(k, m),
+                { id: p.id, name: p.name, state: 'free', elsewhere: view?.elsewhere?.[p.id] },
+                { busy, onHistory: showHistory, onWithdraw, onManual: pairManually, onGoElsewhere: goEpreuve }
+            )
+        );
+        if (req) waitingMenu = req;
+    }
 
     let config = $state(/** @type {DirectionConfig | null} */ (null));
     $effect(() => {
@@ -231,7 +376,7 @@
      * Rend `false` sur un échec, pour qu'une fiche ouverte le dise au lieu de se fermer.
      *
      * @param {() => Promise<unknown>} fn
-     * @param {string} key
+     * @param {string | ((e: any) => import('../../i18n').StatusMessage)} key
      * @returns {Promise<boolean>}
      */
     async function act(fn, key) {
@@ -240,8 +385,8 @@
             await fn();
             return true;
         } catch (e) {
-            logger.error('direction: ' + key, e);
-            statusBarTextStore.set(tMsg(key));
+            logger.error('direction: ' + (typeof key === 'string' ? key : 'failed'), e);
+            statusBarTextStore.set(typeof key === 'string' ? tMsg(key) : key(e));
             return false;
         } finally {
             busy = false;
@@ -253,7 +398,12 @@
     /** @type {(m: string, w: string, note: string) => Promise<boolean>} */
     const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
     /** @type {(m: string, table: number) => Promise<boolean>} */
-    const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
+    const onMove = (m, table) =>
+        act(
+            () => moveMatchToTable(m, table),
+            // Le service dit pourquoi (table hors service…) : le refus se lit tel quel.
+            (e) => tMsg('direction.table.moveRefused', { reason: String(e?.message ?? e).replace(/^direction:\s*/, '') })
+        );
     /** @type {(m: string) => Promise<boolean>} */
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
     /** @type {(m: string, w: string, a: number, b: number) => Promise<boolean>} */
@@ -445,9 +595,20 @@
         }
     }
 
+    /* Page murale depuis l'en-tête : sans dossier de sortie, on le demande d'abord. */
+    async function openPageFromHeader() {
+        if (!view?.outputDir) {
+            const dir = await chooseDirectionOutputDir().catch(() => null);
+            if (!dir) return;
+        }
+        await onOpenPage();
+    }
+
     async function remove() {
         if (!window.confirm($t('direction.settings.deleteConfirm'))) return;
         try {
+            const tid = view?.tournamentId;
+            for (const k of Array.from(scrollPositions.keys())) if (k.startsWith(`${tid}:`)) scrollPositions.delete(k);
             await deleteDirection(/** @type {number} */ ($openDirectionIdStore));
             statusBarTextStore.set(tMsg('direction.settings.deleted'));
         } catch (e) {
@@ -482,6 +643,7 @@
             {/each}
         </nav>
         <span class="spacer"></span>
+        <button type="button" class="page-btn" data-testid="direction-open-page" onclick={openPageFromHeader}>{$t('direction.display.open')}</button>
         <button type="button" class="credit-btn" data-testid="direction-credit" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}
             >ⓘ</button
         >
@@ -497,133 +659,172 @@
     <ClockBar clock={clockView} warnings={view?.warnings?.length || 0} onWarnings={() => (tab = 'direction')} />
 
     <div class="body">
-        {#if tab === 'settings'}
-            <DirectionSettings
-                bind:config
-                {directionState}
-                tournamentName={view?.config?.name || ''}
-                entrantCount={view?.players?.length || 0}
-                onApply={apply}
-                onDelete={remove}
-                onPreview={previewDirectionConfig}
-                locks={configPreview?.locks || []}
-                opened={configPreview?.opened || 0}
-                outputDir={view?.outputDir || ''}
-                {onChooseOutput}
-                {onForgetOutput}
-                {onOpenPage}
-            />
-            {#if view}
-                <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
-            {/if}
-        {:else if tab === 'direction'}
-            <div class="direction-page">
-                {#if (view?.warnings || []).length}
-                    <!-- Visible tant que dure sa cause, jamais bloquant. -->
-                    <ul class="warnings" data-testid="direction-warnings">
-                        {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
-                            <li>{renderWarning($t, w, playerName)}</li>
-                        {/each}
-                    </ul>
+        {#if visited.settings}
+            <div class="pane" hidden={tab !== 'settings'} tabindex="-1" data-testid="direction-pane-settings" use:registerPane={'settings'} onscroll={() => onPaneScroll('settings')}>
+                <DirectionSettings
+                    bind:config
+                    {directionState}
+                    tournamentName={view?.config?.name || ''}
+                    entrantCount={view?.players?.length || 0}
+                    onApply={apply}
+                    onDelete={remove}
+                    onPreview={previewDirectionConfig}
+                    locks={configPreview?.locks || []}
+                    opened={configPreview?.opened || 0}
+                    outputDir={view?.outputDir || ''}
+                    {onChooseOutput}
+                    {onForgetOutput}
+                    {onOpenPage}
+                />
+                {#if view}
+                    <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
                 {/if}
-                <!-- La grille avant la file, qui grandit avec les inscrits : les tables
+            </div>
+        {/if}
+        {#if visited.direction}
+            <div class="pane" hidden={tab !== 'direction'} tabindex="-1" data-testid="direction-pane-direction" use:registerPane={'direction'} onscroll={() => onPaneScroll('direction')}>
+                <div class="direction-page">
+                    {#if (view?.warnings || []).length}
+                        <!-- Visible tant que dure sa cause, jamais bloquant. -->
+                        <ul class="warnings" data-testid="direction-warnings">
+                            {#each view?.warnings || [] as w, i (w.code + (w.match || '') + i)}
+                                <li>{renderWarning($t, w, playerName)}</li>
+                            {/each}
+                        </ul>
+                    {/if}
+                    <!-- La grille avant la file, qui grandit avec les inscrits : les tables
                      restent à l'écran. -->
-                <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel}>
-                    {#snippet actions()}
-                        {#if rounds > 0 || upcoming > 0}
-                            <div class="sheet">
-                                {#if announcing}
-                                    <label title={$t('direction.sheet.announcedHint')}>
-                                        {$t('direction.sheet.announcedFor')}
-                                        <input type="text" data-testid="direction-sheet-announced" bind:value={announced} placeholder={$t('direction.sheet.announcedPlaceholder')} />
-                                    </label>
-                                    <button type="button" data-testid="direction-sheet-upcoming-print" onclick={onPrintUpcoming}>
-                                        {$t('direction.sheet.print')}
-                                    </button>
-                                    <button type="button" data-testid="direction-sheet-upcoming-cancel" onclick={() => (announcing = false)}>
-                                        {$t('common.cancel')}
-                                    </button>
-                                {:else}
-                                    {#if upcoming > 0}
-                                        <button type="button" data-testid="direction-sheet-upcoming" title={$t('direction.sheet.upcomingHint')} onclick={() => (announcing = true)}>
-                                            {$t('direction.sheet.upcoming')}
+                    <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {onLaunchHere} {reveal}>
+                        {#snippet actions()}
+                            {#if rounds > 0 || upcoming > 0}
+                                <div class="sheet">
+                                    {#if announcing}
+                                        <label title={$t('direction.sheet.announcedHint')}>
+                                            {$t('direction.sheet.announcedFor')}
+                                            <input type="text" data-testid="direction-sheet-announced" bind:value={announced} placeholder={$t('direction.sheet.announcedPlaceholder')} />
+                                        </label>
+                                        <button type="button" data-testid="direction-sheet-upcoming-print" onclick={onPrintUpcoming}>
+                                            {$t('direction.sheet.print')}
+                                        </button>
+                                        <button type="button" data-testid="direction-sheet-upcoming-cancel" onclick={() => (announcing = false)}>
+                                            {$t('common.cancel')}
+                                        </button>
+                                    {:else}
+                                        {#if upcoming > 0}
+                                            <button type="button" data-testid="direction-sheet-upcoming" title={$t('direction.sheet.upcomingHint')} onclick={() => (announcing = true)}>
+                                                {$t('direction.sheet.upcoming')}
+                                            </button>
+                                        {/if}
+                                    {/if}
+                                    {#if rounds > 1 && !announcing}
+                                        <label title={$t('direction.sheet.roundHint')}>
+                                            {$t('direction.sheet.round')}
+                                            <select bind:value={sheetRound}>
+                                                <option value={0}>{$t('direction.sheet.latest')}</option>
+                                                {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
+                                                    <option value={n}>{n}</option>
+                                                {/each}
+                                            </select>
+                                        </label>
+                                    {/if}
+                                    {#if rounds > 0 && !announcing}
+                                        <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
+                                            {$t('direction.sheet.print')}
                                         </button>
                                     {/if}
-                                {/if}
-                                {#if rounds > 1 && !announcing}
-                                    <label title={$t('direction.sheet.roundHint')}>
-                                        {$t('direction.sheet.round')}
-                                        <select bind:value={sheetRound}>
-                                            <option value={0}>{$t('direction.sheet.latest')}</option>
-                                            {#each Array.from({ length: rounds }, (_, i) => i + 1) as n (n)}
-                                                <option value={n}>{n}</option>
-                                            {/each}
-                                        </select>
-                                    </label>
-                                {/if}
-                                {#if rounds > 0 && !announcing}
-                                    <button type="button" data-testid="direction-sheet-print" title={$t('direction.sheet.hint')} onclick={onPrintSheet}>
-                                        {$t('direction.sheet.print')}
-                                    </button>
-                                {/if}
-                            </div>
-                        {/if}
-                    {/snippet}
-                </TableGrid>
-                <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
-                <ProposalList proposals={view?.proposals || []} players={free} elsewhere={view?.elsewhere || {}} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
-                <section class="waiting">
-                    <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
-                    <p data-testid="direction-waiting">
-                        {#each free as p (p.id)}
-                            <span class="who"
-                                >{p.name}{#if view?.elsewhere?.[p.id]}
-                                    <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
-                            >
-                        {/each}
-                    </p>
-                </section>
+                                </div>
+                            {/if}
+                        {/snippet}
+                    </TableGrid>
+                    <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
+                    <ProposalList
+                        proposals={view?.proposals || []}
+                        players={free}
+                        elsewhere={view?.elsewhere || {}}
+                        {busy}
+                        onConfirm={confirm}
+                        onConfirmAll={confirmAll}
+                        onManual={manual}
+                        request={queueRequest}
+                        onPrintSheet={rounds > 0 ? onPrintSheet : undefined}
+                    />
+                    <section class="waiting">
+                        <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
+                        <p data-testid="direction-waiting">
+                            {#each free as p (p.id)}
+                                <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_static_element_interactions -->
+                                <span class="who" tabindex="0" oncontextmenu={(ev) => onWaitingMenu(ev, p)} onkeydown={(ev) => onWaitingMenu(ev, p)}
+                                    >{p.name}{#if view?.elsewhere?.[p.id]}
+                                        <span class="elsewhere">({seatLabel($t, view.elsewhere[p.id])})</span>{/if}</span
+                                >
+                            {/each}
+                        </p>
+                    </section>
+                </div>
             </div>
-        {:else if tab === 'slots'}
-            <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
-        {:else if tab === 'standings'}
-            <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
-        {:else if tab === 'history'}
-            <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} />
-        {:else if tab === 'brackets'}
-            <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} />
-        {:else if tab === 'players'}
-            <DirectoryPanel
-                sources={dirSources}
-                entries={dirEntries}
-                {busy}
-                onTake={onTakeEntrants}
-                onExport={onExportDirectory}
-                onSave={onSaveDirectory}
-                onParse={parseDirectoryCSV}
-                onImport={onImportEntrants}
-            />
-            <PlayersView
-                {rows}
-                {suggestions}
-                {busy}
-                started={directionState !== 'draft'}
-                {onAdd}
-                {onUpdate}
-                {onAddPair}
-                {onUpdatePair}
-                pairs={view?.pairs || {}}
-                {onWithdraw}
-                {onReinstate}
-                {onAbsent}
-                {onReturn}
-                {roundsMode}
-                slots={openSlots}
-                infos={view?.infos || []}
-                {onAddAtSlot}
-            />
+        {/if}
+        {#if visited.slots}
+            <div class="pane" hidden={tab !== 'slots'} tabindex="-1" data-testid="direction-pane-slots" use:registerPane={'slots'} onscroll={() => onPaneScroll('slots')}>
+                <SlotsView slots={slotRows} {unattached} {busy} {onTranscribe} {onAttach} {onDetach} {onOpenMatch} />
+            </div>
+        {/if}
+        {#if visited.standings}
+            <div class="pane" hidden={tab !== 'standings'} tabindex="-1" data-testid="direction-pane-standings" use:registerPane={'standings'} onscroll={() => onPaneScroll('standings')}>
+                <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
+            </div>
+        {/if}
+        {#if visited.history}
+            <div class="pane" hidden={tab !== 'history'} tabindex="-1" data-testid="direction-pane-history" use:registerPane={'history'} onscroll={() => onPaneScroll('history')}>
+                <HistoryView {entries} {busy} {onCorrect} {onCancel} {onNote} filterRequest={historyFilter} />
+            </div>
+        {/if}
+        {#if visited.brackets}
+            <div class="pane" hidden={tab !== 'brackets'} tabindex="-1" data-testid="direction-pane-brackets" use:registerPane={'brackets'} onscroll={() => onPaneScroll('brackets')}>
+                <BracketsView {phases} {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} {onCorrect} onHistory={showHistory} />
+            </div>
+        {/if}
+        {#if visited.players}
+            <div class="pane" hidden={tab !== 'players'} tabindex="-1" data-testid="direction-pane-players" use:registerPane={'players'} onscroll={() => onPaneScroll('players')}>
+                <DirectoryPanel
+                    sources={dirSources}
+                    entries={dirEntries}
+                    {busy}
+                    onTake={onTakeEntrants}
+                    onExport={onExportDirectory}
+                    onSave={onSaveDirectory}
+                    onParse={parseDirectoryCSV}
+                    onImport={onImportEntrants}
+                />
+                <PlayersView
+                    {rows}
+                    {suggestions}
+                    {busy}
+                    started={directionState !== 'draft'}
+                    {onAdd}
+                    {onUpdate}
+                    {onAddPair}
+                    {onUpdatePair}
+                    pairs={view?.pairs || {}}
+                    {onWithdraw}
+                    {onReinstate}
+                    {onAbsent}
+                    {onReturn}
+                    onGoTable={goToTable}
+                    onHistory={showHistory}
+                    onManual={pairManually}
+                    onGoEpreuve={goEpreuve}
+                    elsewhere={view?.elsewhere || {}}
+                    {roundsMode}
+                    slots={openSlots}
+                    infos={view?.infos || []}
+                    {onAddAtSlot}
+                />
+            </div>
         {/if}
     </div>
+    {#if waitingMenu}
+        <ContextMenu x={waitingMenu.x} y={waitingMenu.y} items={waitingMenu.items} onClose={() => (waitingMenu = null)} />
+    {/if}
 </div>
 
 <style>
@@ -632,7 +833,12 @@
     }
 
     .direction-view {
+        --font-size-base: var(--td-font);
+        --font-size-small: var(--td-font);
         position: relative;
+        width: 100%;
+        flex: 1;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -666,8 +872,39 @@
         flex-wrap: wrap;
     }
 
+    /* Cibles de la salle : au moins --td-target, pour les contrôles de la vue (en-tête, onglets,
+       feuille, actions des panneaux), les joueurs en attente qui ouvrent un menu, et les entrées
+       des menus contextuels de la vue, touchés au doigt comme le reste ; jamais dans une fiche
+       ni une surcouche, où une petite commande reste petite. */
+    header button:not(.credit-btn),
+    .epreuve-tabs button,
+    .sheet :global(button),
+    .sheet :global(select),
+    .sheet :global(input),
+    .pane :global(.primary),
+    .pane :global(.actions button),
+    .pane :global(.td-target) {
+        min-height: var(--td-target);
+        min-width: var(--td-target);
+    }
+
+    .direction-view :global(.context-menu-item) {
+        min-height: var(--td-target);
+    }
+
+    .waiting .who {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--td-target);
+    }
+
+    .pane[hidden] {
+        display: none;
+    }
+
     nav button,
-    .close {
+    .close,
+    .page-btn {
         font-size: var(--font-size-small);
         padding: 0.15rem 0.55rem;
         border: 1px solid transparent;
@@ -726,7 +963,17 @@
     .body {
         flex: 1;
         min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Un seul défilement par onglet (et par épreuve) : la position est mémorisée par paneKey. Le
+       conteneur sert aussi aux container queries des vues. */
+    .pane {
+        flex: 1;
+        min-height: 0;
         overflow: auto;
+        container-type: inline-size;
     }
 
     .direction-page {
@@ -807,6 +1054,7 @@
     }
 
     .credit-btn {
+        min-width: 0;
         border-color: transparent;
         color: var(--color-text-muted);
         background: transparent;
