@@ -117,13 +117,14 @@ func TestDirectionGestures_AbsentWithoutFlag(t *testing.T) {
 	ts, srv := newTestServerAndHandler(t)
 	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
 	v := f.versionOf(t, ts)
-	for _, path := range []string{"/v1/directions.enterResult", "/v1/directions.create", "/v1/rencontres.setBreaks", "/v1/rencontres.create"} {
+	for _, path := range []string{"/v1/directions.enterResult", "/v1/directions.create", "/v1/rencontres.setBreaks", "/v1/rencontres.create",
+		"/v1/rencontres.setTables", "/v1/rencontres.setEventRooms", "/v1/directions.setTables"} {
 		if r := send(t, ts, "1", path, f.body(""), v, ""); r.status != http.StatusNotFound {
 			t.Errorf("%s without --direction: status %d; want 404", path, r.status)
 		}
 	}
 	for _, p := range srv.Paths() {
-		if strings.HasSuffix(p, ".enterResult") || strings.HasSuffix(p, ".setBreaks") {
+		if strings.HasSuffix(p, ".enterResult") || strings.HasSuffix(p, ".setBreaks") || strings.HasSuffix(p, ".setTables") {
 			t.Errorf("Paths() lists %s without --direction", p)
 		}
 	}
@@ -444,5 +445,29 @@ func TestDirectionGestures_DetachRewritesTheRoom(t *testing.T) {
 	}
 	if pages := htmlUnder(t, dir); len(pages) < 2 {
 		t.Errorf("after a detach, %v under %s; want the room's wall and the sister's page", pages, dir)
+	}
+}
+
+// TestDirectionGestures_SetTables: a Tournament playing alone sets its table properties with its
+// version; one attached to a Rencontre is refused, its tables being the Rencontre's.
+func TestDirectionGestures_SetTables(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	body := f.body(`"tableSettings":[{"number":1,"name":"Stream","reserved":true}]`)
+	if r := send(t, ts, "1", "/v1/directions.setTables", body, "", ""); r.status != http.StatusPreconditionRequired {
+		t.Errorf("without If-Match: status %d; want 428", r.status)
+	}
+	if r := send(t, ts, "1", "/v1/directions.setTables", body, f.versionOf(t, ts), ""); r.status != http.StatusBadRequest {
+		t.Errorf("attached event: status %d, body %.200s; want 400", r.status, r.body)
+	}
+	if err := f.svc.DetachFromRencontre(f.ctx, f.tournamentID); err != nil {
+		t.Fatal(err)
+	}
+	r := send(t, ts, "1", "/v1/directions.setTables", body, f.versionOf(t, ts), "")
+	if r.status != http.StatusOK || !strings.Contains(string(r.body), `"name":"Stream"`) {
+		t.Fatalf("alone: status %d, body %.300s", r.status, r.body)
+	}
+	if r.version == "" || r.version != f.versionOf(t, ts) {
+		t.Errorf("answered version %q, next read %q", r.version, f.versionOf(t, ts))
 	}
 }

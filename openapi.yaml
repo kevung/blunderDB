@@ -2254,6 +2254,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/directions.setTables:
+    post:
+      operationId: directions.setTables
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionTablesReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
   /v1/directions.slots:
     post:
       operationId: directions.slots
@@ -4032,6 +4078,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_RencontreView"
                 nullable: true
+  /v1/rencontres.setEventRooms:
+    post:
+      operationId: rencontres.setEventRooms
+      tags: [rencontres]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/rencontreRoomsReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_RencontreView"
+                nullable: true
   /v1/rencontres.setTableOutOfService:
     post:
       operationId: rencontres.setTableOutOfService
@@ -4057,6 +4149,52 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/rencontreTableReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_RencontreView"
+                nullable: true
+  /v1/rencontres.setTables:
+    post:
+      operationId: rencontres.setTables
+      tags: [rencontres]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/rencontreTablesReq"
       responses:
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -5674,6 +5812,16 @@ components:
         table:
           type: integer
           format: int32
+    directionTablesReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        tableSettings:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_TableSetting"
     directionUpdatePairReq:
       type: object
       properties:
@@ -5767,6 +5915,9 @@ components:
     domain_StudyQueueEntry:
       type: object
       description: "Opaque: see the Go type domain.StudyQueueEntry (defined outside internal/server, not expanded here)."
+    domain_TableSetting:
+      type: object
+      description: "Opaque: see the Go type domain.TableSetting (defined outside internal/server, not expanded here)."
     domain_TagCount:
       type: object
       description: "Opaque: see the Go type domain.TagCount (defined outside internal/server, not expanded here)."
@@ -6188,6 +6339,19 @@ components:
         id:
           type: integer
           format: int64
+    rencontreRoomsReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        tournamentId:
+          type: integer
+          format: int64
+        rooms:
+          type: array
+          items:
+            type: string
     rencontreTableReq:
       type: object
       properties:
@@ -6199,6 +6363,16 @@ components:
           format: int32
         out:
           type: boolean
+    rencontreTablesReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        tableSettings:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_TableSetting"
     rencontreUpdateReq:
       type: object
       properties:

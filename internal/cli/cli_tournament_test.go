@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // The `tournament` sub-command: each sub-command works on a plain database
@@ -460,5 +462,61 @@ func TestCLI_TournamentMoveShowsTheSisterSwap(t *testing.T) {
 	})
 	if !strings.Contains(out, "Open de Lyon\t"+aMatch+"\ttable 6\n") {
 		t.Errorf("the sister's match is not shown at its new table:\n%s", out)
+	}
+}
+
+// tables prints a Rencontre's table properties and its events' rooms, or the plan one event
+// plays under; hall groups its lines by room and names the tables.
+func TestCLI_TournamentTables(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	a := directedTournamentCLI(t, cli, 8)
+	r, err := cli.db.CreateRencontre("Festival", "", "", 4)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.AttachToRencontre(a, r.ID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.SetRencontreTables(r.ID, []domain.TableSetting{
+		{Number: 1, Room: "A", Name: "Stream", Reserved: true}, {Number: 2, Room: "A"},
+		{Number: 3, Room: "B", AssignedTo: []string{"Alice"}}, {Number: 4, Room: "B"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cli.db.SetEventRooms(r.ID, a, []string{"B"}); err != nil {
+		t.Fatal(err)
+	}
+	text := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "tables", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
+			t.Fatalf("tables: %v", err)
+		}
+	})
+	if !strings.Contains(text, "1\tStream\tA\tyes\t\n") || !strings.Contains(text, "3\t\tB\tno\tAlice\n") ||
+		!strings.Contains(text, "\tOpen de Lyon\tB\n") {
+		t.Errorf("tables --rencontre:\n%s", text)
+	}
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "tables", "--db", dbPath, "--tournament", itoa64(a), "--format", "json"}); err != nil {
+			t.Fatalf("tables --tournament: %v", err)
+		}
+	})
+	var plan struct {
+		Settings []domain.TableSetting `json:"settings"`
+		Rooms    []string              `json:"rooms"`
+	}
+	if err := json.Unmarshal([]byte(out), &plan); err != nil || len(plan.Settings) != 4 || strings.Join(plan.Rooms, ",") != "B" {
+		t.Errorf("tables --tournament json: %v\n%s", err, out)
+	}
+	if err := cli.Run([]string{"tournament", "tables", "--db", dbPath}); err == nil {
+		t.Error("tables without --rencontre or --tournament must fail")
+	}
+	hall := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "hall", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
+			t.Fatalf("hall: %v", err)
+		}
+	})
+	ra, rb := strings.Index(hall, "room\tA\n"), strings.Index(hall, "room\tB\n")
+	if ra < 0 || rb < ra || !strings.Contains(hall, "1 (Stream)\treserved\n") {
+		t.Errorf("hall not grouped by room:\n%s", hall)
 	}
 }

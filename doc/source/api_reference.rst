@@ -101,6 +101,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.reinstate                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.reopen                    JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.setConfig                 JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/directions.setTables                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.slots                     JSON  (ETag)
      POST /v1/directions.standings                 JSON  (ETag)
      POST /v1/directions.standingsCsv              JSON  (ETag)
@@ -201,7 +202,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rencontres.list                      JSON  (ETag)
      POST /v1/rencontres.pageHtml                  JSON  (ETag)
      POST /v1/rencontres.setBreaks                 JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/rencontres.setEventRooms             JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.setTableOutOfService      JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/rencontres.setTables                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.trash                     JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.update                    JSON  (Idempotency-Key)  (If-Match)
    search
@@ -277,7 +280,7 @@ La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et ``positions.save`` (comme le reste de
 ``positions.*``) est naturellement idempotente grâce au hachage Zobrist du
 contenu — enregistrer deux fois la même position renvoie la même ligne, jamais
-un doublon. 39 méthodes n'ont pas cette propriété (deux appels sont deux effets
+un doublon. 42 méthodes n'ont pas cette propriété (deux appels sont deux effets
 distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel : un appel
 rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
 répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau

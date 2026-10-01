@@ -64,6 +64,12 @@ func TestDirectionGestures_EveryGestureAnswersItsVersion(t *testing.T) {
 		{"/v1/rencontres.setBreaks", func() string { return room + `,"breaks":[]}` }},
 		{"/v1/rencontres.setTableOutOfService", func() string { return room + `,"table":4,"out":false}` }},
 		{"/v1/rencontres.update", func() string { return room + `,"name":"Salle","tables":4}` }},
+		{"/v1/rencontres.setTables", func() string {
+			return room + `,"tableSettings":[{"number":1,"room":"A","name":"Stream"},{"number":2,"room":"A"},{"number":3,"room":"A"},{"number":4,"room":"A"}]}`
+		}},
+		{"/v1/rencontres.setEventRooms", func() string {
+			return room + `,"tournamentId":` + strconv.FormatInt(b.tournamentID, 10) + `,"rooms":["A"]}`
+		}},
 	}
 	for _, c := range calls {
 		r := send(t, ts, "1", c.path, c.body(), f.versionOf(t, ts), "")

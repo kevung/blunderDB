@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // The gestures of a Direction and of a Rencontre (ADR-0057): every write the desktop makes on a
@@ -236,6 +237,28 @@ type rencontreBreaksReq struct {
 
 func (r rencontreBreaksReq) gestureKey() readKey { return readKey{rencontreID: r.ID} }
 
+type rencontreTablesReq struct {
+	ID            int64                 `json:"id"`
+	TableSettings []domain.TableSetting `json:"tableSettings"`
+}
+
+func (r rencontreTablesReq) gestureKey() readKey { return readKey{rencontreID: r.ID} }
+
+type rencontreRoomsReq struct {
+	ID           int64    `json:"id"`
+	TournamentID int64    `json:"tournamentId"`
+	Rooms        []string `json:"rooms"`
+}
+
+func (r rencontreRoomsReq) gestureKey() readKey { return readKey{rencontreID: r.ID} }
+
+type directionTablesReq struct {
+	TournamentID  int64                 `json:"tournamentId"`
+	TableSettings []domain.TableSetting `json:"tableSettings"`
+}
+
+func (r directionTablesReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
 // trashResp names the trash entry a deleted Rencontre went to.
 type trashResp struct {
 	TrashID int64 `json:"trashId"`
@@ -398,6 +421,15 @@ func (s *Server) rencontreGestureRoutes() []route {
 		}))},
 		{http.MethodPost, "/v1/rencontres.setBreaks", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreBreaksReq) (*service.RencontreView, error) {
 			return bareRoom(svc(scope).SetRencontreBreaks(ctx, req.ID, rawText(req.Breaks)))
+		}))},
+		{http.MethodPost, "/v1/rencontres.setTables", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreTablesReq) (*service.RencontreView, error) {
+			return bareRoom(svc(scope).SetRencontreTables(ctx, req.ID, req.TableSettings))
+		}))},
+		{http.MethodPost, "/v1/rencontres.setEventRooms", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreRoomsReq) (*service.RencontreView, error) {
+			return bareRoom(svc(scope).SetEventRooms(ctx, req.ID, req.TournamentID, req.Rooms))
+		}))},
+		{http.MethodPost, "/v1/directions.setTables", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionTablesReq) (*service.DirectionView, error) {
+			return bare(svc(scope).SetDirectionTables(ctx, req.TournamentID, req.TableSettings))
 		}))},
 	}
 }

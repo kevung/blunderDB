@@ -358,6 +358,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.setConfig — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.setConfig", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def directions_set_tables(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.setTables — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.setTables", payload, if_match=if_match, idempotency_key=idempotency_key)
+
     def directions_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.slots — JSON."
         return self._call("/v1/directions.slots", payload)
@@ -706,9 +710,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.setBreaks — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.setBreaks", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def rencontres_set_event_rooms(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.setEventRooms — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.setEventRooms", payload, if_match=if_match, idempotency_key=idempotency_key)
+
     def rencontres_set_table_out_of_service(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/rencontres.setTableOutOfService — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.setTableOutOfService", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def rencontres_set_tables(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.setTables — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.setTables", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def rencontres_trash(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/rencontres.trash — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
