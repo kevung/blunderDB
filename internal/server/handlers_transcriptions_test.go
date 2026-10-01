@@ -117,8 +117,9 @@ func TestTranscriptionGestureWithoutIfMatchIs428(t *testing.T) {
 	}
 }
 
-// Two gestures naming the same revision race: one lands, the other is 409
-// with the revision it lost to.
+// Two gestures that change the document race on the same revision: one
+// lands, the other is 409 with the fresh state — revision, document and the
+// session's Cursor.
 func TestTranscriptionConcurrentApplyOne409(t *testing.T) {
 	ts := newTranscriptionServer(t, 0)
 	st := createDraft(t, ts, testTenant)
@@ -131,7 +132,8 @@ func TestTranscriptionConcurrentApplyOne409(t *testing.T) {
 		wg.Go(func() {
 			<-start
 			statuses[i], bodies[i] = gesture(t, ts, testTenant, "/v1/transcriptions.apply", st.Revision,
-				map[string]any{"id": st.ID, "sessionId": st.SessionID, "gesture": transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6}})
+				map[string]any{"id": st.ID, "sessionId": st.SessionID,
+					"gesture": transcript.Gesture{Kind: transcript.GestureSetLength, MatchLength: 3 + 2*i, HasLength: true}})
 		})
 	}
 	close(start)
@@ -163,6 +165,38 @@ func TestTranscriptionConcurrentApplyOne409(t *testing.T) {
 	if env.Error.Code != CodeConflict || env.Error.Details["revision"] != float64(st.Revision+1) {
 		t.Errorf("409 envelope = %+v, want code conflict and revision %d", env.Error, st.Revision+1)
 	}
+	fresh, _ := env.Error.Details["state"].(map[string]any)
+	if fresh == nil || fresh["revision"] != float64(st.Revision+1) || fresh["sessionId"] != st.SessionID {
+		t.Fatalf("409 must carry the fresh state with its revision and session, got %v", env.Error.Details["state"])
+	}
+	ann, _ := fresh["annotated"].(map[string]any)
+	doc, _ := ann["document"].(map[string]any)
+	if _, ok := doc["cursor"]; !ok {
+		t.Errorf("the fresh state must carry the document and its Cursor, got %v", fresh["annotated"])
+	}
+}
+
+// Over HTTP a session gesture names its session: none is 400, an unknown one
+// 410, so a client whose session expired learns it instead of being handed a
+// new one silently, and nobody closes a session that is not theirs.
+func TestTranscriptionGesturesRequireTheirSession(t *testing.T) {
+	ts := newTranscriptionServer(t, 0)
+	st := createDraft(t, ts, testTenant)
+	die := transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6}
+	for _, path := range []string{"/v1/transcriptions.apply", "/v1/transcriptions.undo",
+		"/v1/transcriptions.redo", "/v1/transcriptions.close"} {
+		if status, body := gesture(t, ts, testTenant, path, st.Revision,
+			map[string]any{"id": st.ID, "gesture": die}); status != http.StatusBadRequest {
+			t.Errorf("%s without sessionId: status %d, want 400 (%s)", path, status, body)
+		}
+		if status, body := gesture(t, ts, testTenant, path, st.Revision,
+			map[string]any{"id": st.ID, "sessionId": "not-a-session", "gesture": die}); status != http.StatusGone {
+			t.Errorf("%s with an unknown sessionId: status %d, want 410 (%s)", path, status, body)
+		}
+	}
+	// The live session survived all of the above.
+	gestureState(t, ts, testTenant, "/v1/transcriptions.apply", st.Revision,
+		map[string]any{"id": st.ID, "sessionId": st.SessionID, "gesture": die})
 }
 
 // A session past its TTL answers 410; reopening gives a session on the
@@ -236,5 +270,28 @@ func TestTranscriptionGetETagAndFinish(t *testing.T) {
 	}
 	if status, _ := gesture(t, ts, testTenant, "/v1/transcriptions.get", 0, map[string]any{"id": st.ID}); status != http.StatusNotFound {
 		t.Errorf("get after finish: status %d, want 404", status)
+	}
+}
+
+// Under `call` every invocation is its own process: a gesture naming no
+// session uses the draft's live one or opens one.
+func TestTranscriptionSessionPerCallNeedsNoSession(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatalf("sqlite.Open: %v", err)
+	}
+	t.Cleanup(func() { st.Close() })
+	srv, err := New(Options{Storage: st, Transcription: true, SessionPerCall: true})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	ts := httptest.NewServer(srv.Handler())
+	t.Cleanup(ts.Close)
+
+	d := createDraft(t, ts, testTenant)
+	gestureState(t, ts, testTenant, "/v1/transcriptions.apply", d.Revision,
+		map[string]any{"id": d.ID, "gesture": transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6}})
+	if status, body := gesture(t, ts, testTenant, "/v1/transcriptions.close", 0, map[string]any{"id": d.ID}); status != http.StatusOK && status != http.StatusNoContent {
+		t.Fatalf("close without sessionId under call: status %d (%s)", status, body)
 	}
 }

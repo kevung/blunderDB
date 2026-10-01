@@ -1074,6 +1074,7 @@
         "training": "Allenamento"
     },
     "transcription": {
+        "conflict": "La bozza è stata modificata altrove: è stata ricaricata com’è ora e la cronologia degli annullamenti è stata azzerata.",
         "title": "Trascrizioni",
         "new": "Nuova trascrizione",
         "newTooltip": "Creare una bozza di partita da trascrivere",

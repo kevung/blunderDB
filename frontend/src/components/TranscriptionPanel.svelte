@@ -372,6 +372,13 @@
                     const next = await ApplyTranscriptionGesture(id, gesture);
                     if (!stillOurs()) return;
                     setTranscription(next);
+                    if (next?.conflict) {
+                        // Another writer changed the draft: the gesture was not recorded, the
+                        // draft is redrawn as it now stands, and the rest of the queue was typed
+                        // on the version that lost.
+                        error = $t('transcription.conflict');
+                        return;
+                    }
                 }
                 error = '';
             })

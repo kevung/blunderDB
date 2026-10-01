@@ -820,6 +820,7 @@ export namespace database {
 	    annotated: transcript.Annotated;
 	    can_undo: boolean;
 	    can_redo: boolean;
+	    conflict: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new TranscriptionState(source);
@@ -831,6 +832,7 @@ export namespace database {
 	        this.annotated = this.convertValues(source["annotated"], transcript.Annotated);
 	        this.can_undo = source["can_undo"];
 	        this.can_redo = source["can_redo"];
+	        this.conflict = source["conflict"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -1074,6 +1074,7 @@
         "training": "Training"
     },
     "transcription": {
+        "conflict": "Der Entwurf wurde anderswo geändert: Er wurde im aktuellen Stand neu geladen, der Rückgängig-Verlauf wurde zurückgesetzt.",
         "title": "Transkriptionen",
         "new": "Neue Transkription",
         "newTooltip": "Einen Entwurf für ein zu transkribierendes Match anlegen",

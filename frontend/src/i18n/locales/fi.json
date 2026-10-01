@@ -1074,6 +1074,7 @@
         "training": "Harjoittelu"
     },
     "transcription": {
+        "conflict": "Luonnosta muutettiin muualla: se ladattiin uudelleen nykyisessä muodossaan, ja kumoamishistoria nollattiin.",
         "title": "Litteroinnit",
         "new": "Uusi litterointi",
         "newTooltip": "Luo luonnos litteroitavasta ottelusta",

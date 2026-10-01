@@ -51,7 +51,8 @@ func checkerAction(d1, d2 int) []transcript.Gesture {
 }
 
 // play applies gestures in the given session, each naming the revision the
-// previous one returned, and returns the last state.
+// previous one returned, and returns the last state. The revision advances
+// exactly when the durable document changed.
 func play(t *testing.T, svc *Service, scope string, st *State, gs []transcript.Gesture) *State {
 	t.Helper()
 	for _, g := range gs {
@@ -59,8 +60,12 @@ func play(t *testing.T, svc *Service, scope string, st *State, gs []transcript.G
 		if err != nil {
 			t.Fatalf("Apply %s: %v", g.Kind, err)
 		}
-		if next.Revision <= st.Revision {
+		changed := len(next.Annotated.Document.Actions) != len(st.Annotated.Document.Actions)
+		if changed && next.Revision <= st.Revision {
 			t.Fatalf("Apply %s: revision %d does not advance past %d", g.Kind, next.Revision, st.Revision)
+		}
+		if !changed && next.Revision != st.Revision {
+			t.Fatalf("Apply %s: revision moved to %d without a change of the document", g.Kind, next.Revision)
 		}
 		st = next
 	}
@@ -112,8 +117,8 @@ func TestSessionExpiresThenReopensWithoutLoss(t *testing.T) {
 	}
 }
 
-// Two gestures naming the same revision: one is recorded, the other is
-// refused with the revision it lost to.
+// Two gestures that change the document, naming the same revision: one is
+// recorded, the other is refused with the revision it lost to.
 func TestConcurrentGesturesOneConflict(t *testing.T) {
 	ctx := context.Background()
 	svc := New(newStore(t), Options{})
@@ -129,7 +134,7 @@ func TestConcurrentGesturesOneConflict(t *testing.T) {
 		wg.Go(func() {
 			<-start
 			_, errs[i] = svc.Apply(ctx, "1", st.ID, Expect{Session: st.SessionID, Revision: st.Revision},
-				transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 6})
+				transcript.Gesture{Kind: transcript.GestureSetLength, MatchLength: 3 + 2*i, HasLength: true})
 		})
 	}
 	close(start)
@@ -156,9 +161,10 @@ func TestConcurrentGesturesOneConflict(t *testing.T) {
 }
 
 // Two services on one store are two daemon instances: the second's session
-// is behind once the first has written, its write is refused, its session
-// is reloaded from the row, and the gesture replayed at the fresh revision
-// lands on top of the first's.
+// is behind once the first has written. Typing in its Entry writes nothing
+// and goes through; the gesture that would write is refused, the session is
+// reloaded from the row, and the Action replayed at the fresh revision lands
+// on top of the first's.
 func TestTwoInstancesConflictThenReplay(t *testing.T) {
 	ctx := context.Background()
 	store := newStore(t)
@@ -174,7 +180,8 @@ func TestTwoInstancesConflictThenReplay(t *testing.T) {
 	}
 	play(t, a, "1", st, checkerAction(6, 3))
 
-	_, err = b.Apply(ctx, "1", sb.ID, Expect{Session: sb.SessionID}, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 4})
+	sb = play(t, b, "1", sb, checkerAction(4, 1)[:3])
+	_, err = b.Apply(ctx, "1", sb.ID, Expect{Session: sb.SessionID}, transcript.Gesture{Kind: transcript.GestureValidate})
 	var stale *StaleError
 	if !errors.As(err, &stale) {
 		t.Fatalf("b behind a: got %v, want a StaleError", err)
@@ -183,8 +190,7 @@ func TestTwoInstancesConflictThenReplay(t *testing.T) {
 	if err != nil || fresh.Revision != stale.Revision {
 		t.Fatalf("Get after the conflict: %+v, %v; want revision %d", fresh, err, stale.Revision)
 	}
-	sb.Revision = stale.Revision
-	sb = play(t, b, "1", sb, checkerAction(4, 1))
+	sb = play(t, b, "1", stale.State, checkerAction(4, 1))
 	if n := len(sb.Annotated.Document.Actions); n != 2 {
 		t.Fatalf("after the replay: %d actions, want 2 (a's and b's)", n)
 	}

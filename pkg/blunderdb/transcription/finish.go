@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -42,7 +43,7 @@ func (s *Service) Finish(ctx context.Context, scope string, id int64, exp Expect
 	}
 	defer ss.mu.Unlock()
 	if exp.Revision != 0 && exp.Revision != ss.rev {
-		return nil, &StaleError{Revision: ss.rev}
+		return nil, staleSession(id, ss)
 	}
 
 	parts := transcript.Build(ss.ed.Doc)
@@ -57,8 +58,13 @@ func (s *Service) Finish(ctx context.Context, scope string, id int64, exp Expect
 	header.MatchHash, header.CanonicalHash = transcriptMatchHashes(parts)
 
 	res, err := s.writeMatch(ctx, scope, id, ss.rev, graph, header)
+	if errors.Is(err, storage.ErrConflict) {
+		// Another writer moved the row: the session reloads from it, or the
+		// next Finish would compare against the revision that just lost.
+		return nil, s.failed(ctx, scope, id, ss, err)
+	}
 	if err != nil {
-		return nil, s.stale(ctx, scope, id, err)
+		return nil, err
 	}
 	s.drop(scope, id, ss)
 

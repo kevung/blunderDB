@@ -121,10 +121,11 @@ func (s *Service) Revision(ctx context.Context, scope string, id int64) (int64, 
 	return row.Revision, nil
 }
 
-// Apply records one gesture and returns the draft. Every accepted gesture
-// advances the revision: the row is rewritten when the header or the Actions
-// changed, otherwise only its revision moves (a die filled, a cursor moved
-// still changes what the next writer must have seen).
+// Apply records one gesture and returns the draft. The row is rewritten, and
+// the revision advances, only when the durable document — header and
+// Actions — changed: a die typed in the Entry or a Cursor moved lives in the
+// session alone, writes nothing and leaves the revision where it was, so it
+// costs no write per keystroke and works on a library opened read-only.
 //
 // The Replay starts at the Action the gesture TOUCHED (Editor.From), not at
 // the Cursor: a correction in place returns the Cursor elsewhere, while the
@@ -138,7 +139,7 @@ func (s *Service) Apply(ctx context.Context, scope string, id int64, exp Expect,
 	}
 	defer ss.mu.Unlock()
 	if exp.Revision != 0 && exp.Revision != ss.rev {
-		return nil, &StaleError{Revision: ss.rev}
+		return nil, staleSession(id, ss)
 	}
 
 	before, err := DurableJSON(ss.ed.Doc)
@@ -161,13 +162,10 @@ func (s *Service) Apply(ctx context.Context, scope string, id int64, exp Expect,
 	if err != nil {
 		return nil, fmt.Errorf("transcription %d: %w", id, err)
 	}
-	if bytes.Equal(before, after) {
-		err = s.touch(ctx, scope, id, ss)
-	} else {
-		err = s.write(ctx, scope, id, ss, after)
-	}
-	if err != nil {
-		return nil, err
+	if !bytes.Equal(before, after) {
+		if err := s.write(ctx, scope, id, ss, after); err != nil {
+			return nil, err
+		}
 	}
 	return annotate(id, ss.ed, ss.rev, ss.id, ss.ed.From()), nil
 }
@@ -191,7 +189,7 @@ func (s *Service) Abandon(ctx context.Context, scope string, id int64, exp Expec
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	s.Close(scope, id, "")
+	_ = s.Close(scope, id, "")
 	return nil
 }
 
@@ -228,10 +226,9 @@ func (s *Service) current(ctx context.Context, scope string, id int64) (transcri
 	return doc, err
 }
 
-// write rewrites the row from ss under ss's revision. A conflict reloads the
-// session from the row (its undo stack described a document that is no
-// longer there) and reports the revision found; any other failure drops the
-// session, whose Editor no longer agrees with the row. Caller holds ss.mu.
+// write rewrites the row from ss under ss's revision; a refusal goes through
+// failed (the undo stack of a conflicting session described a document that
+// is no longer there). Caller holds ss.mu.
 func (s *Service) write(ctx context.Context, scope string, id int64, ss *session, blob []byte) error {
 	if blob == nil {
 		var err error
@@ -248,37 +245,37 @@ func (s *Service) write(ctx context.Context, scope string, id int64, ss *session
 	return nil
 }
 
-// touch advances the revision of an unchanged draft. Caller holds ss.mu.
-func (s *Service) touch(ctx context.Context, scope string, id int64, ss *session) error {
-	rev, err := s.store.Transcriptions().Touch(ctx, scope, id, ss.rev)
-	if err != nil {
-		return s.failed(ctx, scope, id, ss, err)
-	}
-	ss.rev = rev
-	return nil
-}
-
+// failed handles a write the store refused. A conflict reloads the session
+// from the row and reports it fresh; any other failure drops the session,
+// whose Editor no longer agrees with the row. Caller holds ss.mu.
 func (s *Service) failed(ctx context.Context, scope string, id int64, ss *session, err error) error {
 	if errors.Is(err, storage.ErrConflict) {
 		if lerr := s.load(ctx, scope, id, ss); lerr == nil {
-			return &StaleError{Revision: ss.rev}
+			return staleSession(id, ss)
 		}
 	}
 	s.drop(scope, id, ss)
 	return err
 }
 
-// stale turns a refused conditional write into a StaleError naming the row's
-// revision; any other error passes through.
+// staleSession is the conflict a session answers with: its own state, which
+// is the row's. Caller holds ss.mu.
+func staleSession(id int64, ss *session) *StaleError {
+	return &StaleError{Revision: ss.rev, State: annotate(id, ss.ed, ss.rev, ss.id, ss.ed.Doc.Cursor)}
+}
+
+// stale turns a refused conditional write outside any session into a
+// StaleError carrying the draft as its row now holds it; any other error
+// passes through.
 func (s *Service) stale(ctx context.Context, scope string, id int64, err error) error {
 	if !errors.Is(err, storage.ErrConflict) {
 		return err
 	}
-	rev, rerr := s.Revision(ctx, scope, id)
-	if rerr != nil {
-		return rerr
+	st, gerr := s.Get(ctx, scope, id)
+	if gerr != nil {
+		return gerr
 	}
-	return &StaleError{Revision: rev}
+	return &StaleError{Revision: st.Revision, State: st}
 }
 
 // read loads a row and decodes its document, Cursor at the END: the Entry is
@@ -324,6 +321,11 @@ func annotate(id int64, ed *transcript.Editor, rev int64, sessionID string, from
 // are `json:"-"` (ADR-0045 rule 1).
 func DurableJSON(doc transcript.Document) ([]byte, error) {
 	doc.Cursor = len(doc.Actions)
+	if doc.Actions == nil {
+		// No Action yet, however the slice came to be: one encoding, or an
+		// untouched draft would compare as changed.
+		doc.Actions = []transcript.Action{}
+	}
 	blob, err := json.Marshal(doc)
 	if err != nil {
 		return nil, fmt.Errorf("encode transcription: %w", err)

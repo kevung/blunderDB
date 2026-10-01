@@ -93,7 +93,7 @@ func RunCall(args []string) error {
 
 	// A local process with the file in hand writes as the CLI does: the
 	// transcription gestures are served, unlike on a daemon (ADR-0057 rule 5).
-	srv, err := New(Options{Storage: st, Transcription: true})
+	srv, err := New(Options{Storage: st, Transcription: true, SessionPerCall: true})
 	if err != nil {
 		return err
 	}

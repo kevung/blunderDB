@@ -20,9 +20,14 @@ import (
 var ErrSessionGone = errors.New("transcription: session gone, reopen the draft")
 
 // StaleError answers a gesture naming a revision the draft no longer has:
-// another writer went first. Revision is the draft's current one, which the
-// caller reads the draft at before replaying its gesture, if it still holds.
-type StaleError struct{ Revision int64 }
+// another writer went first. Revision is the draft's current one and State
+// the draft as it now is — document, session and Cursor, the undo stack
+// emptied when the session had to be reloaded — which the caller redraws
+// before replaying its gesture, if it still holds.
+type StaleError struct {
+	Revision int64
+	State    *State
+}
 
 func (e *StaleError) Error() string {
 	return fmt.Sprintf("transcription: stale revision, the draft is at revision %d", e.Revision)
@@ -33,7 +38,9 @@ func (e *StaleError) Error() string {
 func (e *StaleError) Unwrap() error { return storage.ErrConflict }
 
 // ErrorDetails is what an API error envelope carries besides the message.
-func (e *StaleError) ErrorDetails() map[string]any { return map[string]any{"revision": e.Revision} }
+func (e *StaleError) ErrorDetails() map[string]any {
+	return map[string]any{"revision": e.Revision, "state": e.State}
+}
 
 // Options configures a Service.
 type Options struct {
@@ -119,15 +126,21 @@ func (s *Service) Forget() {
 }
 
 // Close releases a draft's session only; the row stays and the draft resumes
-// from the list. A sessionID that is not the live one leaves it alone.
-func (s *Service) Close(scope string, id int64, sessionID string) {
+// from the list. A named session that is not the live one is ErrSessionGone
+// and the live one is left alone; "" closes whichever is live (the desktop).
+func (s *Service) Close(scope string, id int64, sessionID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	k := key{scope, id}
-	if ss := s.sessions[k]; ss != nil && (sessionID == "" || ss.id == sessionID) {
+	ss := s.sessions[k]
+	if sessionID != "" && (ss == nil || ss.id != sessionID) {
+		return ErrSessionGone
+	}
+	if ss != nil {
 		ss.closed = true
 		delete(s.sessions, k)
 	}
+	return nil
 }
 
 // WithEditor runs fn on a draft's live Editor under its session lock and

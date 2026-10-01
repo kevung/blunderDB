@@ -2,11 +2,13 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
@@ -28,9 +30,9 @@ type transcriptionCreateReq struct {
 	Header transcript.Header `json:"header"`
 }
 
-// transcriptionSessionReq names a draft and, optionally, the session the
-// client holds. Without a session the gesture uses the live one or opens a
-// new one: what `call` does, one process per call, no undo between calls.
+// transcriptionSessionReq names a draft and the session the client holds.
+// Over HTTP the session is required (see sessionOf); under `call` it may be
+// left out, one process per call, no undo between calls.
 type transcriptionSessionReq struct {
 	ID        int64  `json:"id"`
 	SessionID string `json:"sessionId"`
@@ -100,17 +102,28 @@ func (s *Server) transcriptionRoutes() []route {
 			return transcriptionEditResp{State: st, Losses: losses}, err
 		})},
 		{http.MethodPost, "/v1/transcriptions.apply", s.withIdempotency(s.withIfMatch(rpc(func(ctx context.Context, scope string, req transcriptionApplyReq) (*transcription.State, error) {
+			if err := s.sessionOf(req.SessionID); err != nil {
+				return nil, err
+			}
 			return s.transcripts().Apply(ctx, scope, req.ID, expectOf(ctx, req.SessionID), req.Gesture)
 		})))},
 		{http.MethodPost, "/v1/transcriptions.undo", s.withIdempotency(s.withIfMatch(rpc(func(ctx context.Context, scope string, req transcriptionSessionReq) (*transcription.State, error) {
+			if err := s.sessionOf(req.SessionID); err != nil {
+				return nil, err
+			}
 			return s.transcripts().Apply(ctx, scope, req.ID, expectOf(ctx, req.SessionID), transcript.Gesture{Kind: transcript.GestureUndo})
 		})))},
 		{http.MethodPost, "/v1/transcriptions.redo", s.withIdempotency(s.withIfMatch(rpc(func(ctx context.Context, scope string, req transcriptionSessionReq) (*transcription.State, error) {
+			if err := s.sessionOf(req.SessionID); err != nil {
+				return nil, err
+			}
 			return s.transcripts().Apply(ctx, scope, req.ID, expectOf(ctx, req.SessionID), transcript.Gesture{Kind: transcript.GestureRedo})
 		})))},
 		{http.MethodPost, "/v1/transcriptions.close", rpcVoid(func(_ context.Context, scope string, req transcriptionSessionReq) error {
-			s.transcripts().Close(scope, req.ID, req.SessionID)
-			return nil
+			if err := s.sessionOf(req.SessionID); err != nil {
+				return err
+			}
+			return s.transcripts().Close(scope, req.ID, req.SessionID)
 		})},
 		{http.MethodPost, "/v1/transcriptions.finish", s.withIdempotency(s.withIfMatch(rpc(func(ctx context.Context, scope string, req transcriptionSessionReq) (*transcription.SaveResult, error) {
 			return s.transcripts().Finish(ctx, scope, req.ID, expectOf(ctx, req.SessionID))
@@ -171,6 +184,15 @@ func (s *Server) withIfMatch(next http.HandlerFunc) http.HandlerFunc {
 		}
 		next(w, r.WithContext(context.WithValue(r.Context(), ifMatchKey{}, rev)))
 	}
+}
+
+// sessionOf refuses a session gesture that names no session, unless the
+// server runs one session per call (Options.SessionPerCall).
+func (s *Server) sessionOf(sessionID string) error {
+	if sessionID == "" && !s.opts.SessionPerCall {
+		return fmt.Errorf("sessionId is required: name the session transcriptions.open returned: %w", storage.ErrInvalid)
+	}
+	return nil
 }
 
 // expectOf is the expectation a gesture states: its session and its

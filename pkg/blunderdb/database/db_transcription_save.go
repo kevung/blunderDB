@@ -34,7 +34,7 @@ type TranscriptionSaveResult struct {
 // transaction with the deletion of the draft.
 func (d *Database) FinishTranscription(id int64) (*TranscriptionSaveResult, error) {
 	var res *transcription.SaveResult
-	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+	err := d.writeTranscripts(func(svc *transcription.Service) (err error) {
 		res, err = svc.Finish(context.Background(), "", id, transcription.Expect{})
 		return err
 	})

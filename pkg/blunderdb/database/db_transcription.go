@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
@@ -45,10 +46,14 @@ type TranscriptionState struct {
 	// moment the application is restarted, and that is the promise, not a gap.
 	CanUndo bool `json:"can_undo"`
 	CanRedo bool `json:"can_redo"`
+	// Conflict: another writer changed the draft, the gesture was NOT
+	// recorded, and this is the draft as it now stands, its undo stack reset.
+	// The panel redraws it and says so.
+	Conflict bool `json:"conflict"`
 }
 
 // transcriptService returns the service over the open library, made on first
-// use. Caller holds d.mu (read); transcriptMu guards the pointer, lock ORDER
+// use. Caller holds d.mu; transcriptMu guards the pointer, lock ORDER
 // mu -> transcriptMu, and forgetTranscriptSessions takes transcriptMu alone.
 func (d *Database) transcriptService() *transcription.Service {
 	d.transcriptMu.Lock()
@@ -59,11 +64,22 @@ func (d *Database) transcriptService() *transcription.Service {
 	return d.transcriptSvc
 }
 
-// withTranscripts runs fn on the service under the read lock, so the library
-// cannot be closed or replaced under a gesture.
+// withTranscripts runs a read on the service under the read lock, so the
+// library cannot be closed or replaced under it.
 func (d *Database) withTranscripts(fn func(*transcription.Service) error) error {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return fn(d.transcriptService())
+}
+
+// writeTranscripts runs a gesture that may write under the write lock, as
+// every other write of the legacy wrapper does.
+func (d *Database) writeTranscripts(fn func(*transcription.Service) error) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
@@ -108,7 +124,9 @@ func (d *Database) OpenTranscription(id int64) (*TranscriptionState, error) {
 	})
 }
 
-// ApplyTranscriptionGesture records one gesture and returns the draft.
+// ApplyTranscriptionGesture records one gesture and returns the draft. When
+// another writer changed the draft first, the gesture is not recorded and
+// the draft comes back as it now stands, flagged Conflict.
 func (d *Database) ApplyTranscriptionGesture(id int64, g transcript.Gesture) (*TranscriptionState, error) {
 	return d.transcriptState(func(svc *transcription.Service) (*transcription.State, error) {
 		return svc.Apply(context.Background(), "", id, transcription.Expect{}, g)
@@ -133,7 +151,7 @@ func (d *Database) CloseTranscription(id int64) error {
 	svc := d.transcriptSvc
 	d.transcriptMu.Unlock()
 	if svc != nil {
-		svc.Close("", id, "")
+		_ = svc.Close("", id, "")
 	}
 	return nil
 }
@@ -141,7 +159,7 @@ func (d *Database) CloseTranscription(id int64) error {
 // AbandonTranscription deletes the draft without a Match (ADR-0045 §3); the
 // caller confirms beforehand.
 func (d *Database) AbandonTranscription(id int64) error {
-	return d.withTranscripts(func(svc *transcription.Service) error {
+	return d.writeTranscripts(func(svc *transcription.Service) error {
 		return svc.Abandon(context.Background(), "", id, transcription.Expect{})
 	})
 }
@@ -165,16 +183,24 @@ func (d *Database) ExportTranscriptionMAT(id int64, outputPath string) error {
 	return os.WriteFile(outputPath, []byte(text), 0o644)
 }
 
+// transcriptState runs a gesture that opens or changes a draft under the
+// write lock. A conflict carrying the fresh draft is handed back as that
+// draft, flagged, rather than as an error the panel could only print.
 func (d *Database) transcriptState(fn func(*transcription.Service) (*transcription.State, error)) (*TranscriptionState, error) {
 	var st *transcription.State
-	err := d.withTranscripts(func(svc *transcription.Service) (err error) {
+	err := d.writeTranscripts(func(svc *transcription.Service) (err error) {
 		st, err = fn(svc)
 		return err
 	})
+	var stale *transcription.StaleError
+	conflict := errors.As(err, &stale) && stale.State != nil
+	if conflict {
+		st, err = stale.State, nil
+	}
 	if err != nil {
 		return nil, err
 	}
-	return &TranscriptionState{ID: st.ID, Annotated: st.Annotated, CanUndo: st.CanUndo, CanRedo: st.CanRedo}, nil
+	return &TranscriptionState{ID: st.ID, Annotated: st.Annotated, CanUndo: st.CanUndo, CanRedo: st.CanRedo, Conflict: conflict}, nil
 }
 
 // forgetTranscriptSessions drops every open draft when the handle is replaced

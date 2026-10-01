@@ -63,6 +63,13 @@ type Options struct {
 	// either way.
 	Transcription bool
 
+	// SessionPerCall lets a transcription gesture name no session: it then
+	// uses the draft's live session or opens one. Right for `call`, where
+	// every invocation is its own process and no session outlives it; over
+	// HTTP a gesture without its session is refused (400), so a client whose
+	// session expired is told (410) rather than handed a new one silently.
+	SessionPerCall bool
+
 	// TranscriptionTTL closes a transcription session idle for longer; its
 	// undo stack goes, nothing typed does. 0 means 30 minutes.
 	TranscriptionTTL time.Duration
