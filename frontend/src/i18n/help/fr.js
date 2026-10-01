@@ -180,6 +180,7 @@ export default {
 <h3>La palette de commandes</h3>
 <p>La palette de commandes (<em>CTRL-MAJ-P</em>) retrouve par un nom approché ce que l'on ne sait plus où chercher : une commande de la ligne de commande, un onglet, un filtre de la bibliothèque ou un match. Les lettres tapées doivent apparaître dans l'ordre, pas forcément côte à côte, et sans égard aux majuscules ni aux accents : « mtrc » trouve la matrice du videau, « lyon » les matchs d'un tournoi de Lyon.</p>
 <p>Les flèches choisissent, <em>ENTREE</em> lance, <em>ECHAP</em> referme. Une commande se lance comme si elle avait été tapée ; <code>s</code> et <code>ss</code> ouvrent la ligne de commande pour y écrire les filtres ; un filtre se lance comme d'un double-clic dans la bibliothèque ; un match s'ouvre comme d'un double-clic dans le panneau Matchs.</p>
+<p>Quand une Direction est ouverte, la palette y ajoute sa salle : joueurs, tables, matchs en cours et épreuves (voir la recherche rapide).</p>
 <h3>Panneau Analyse</h3>
 <p>Le panneau <strong>Analyse</strong> (<em>CTRL-L</em>) affiche les données d'analyse de la position courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente les meilleures alternatives (coups de pions ou décisions de videau) avec leurs valeurs d'équité et les erreurs correspondantes. La touche <em>d</em> bascule entre l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste des alternatives. Appuyer sur <em>CTRL-L</em> ou exécuter la commande <code>list</code> pour afficher ou masquer le panneau.</p>
 <p>Sous les tableaux, une <strong>phrase</strong> dit parfois ce que la décision jouée a coûté et pourquoi : « Vous perdez 120 mMWC : le coup joué laisse trois blots là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles mesurables — l'exposition, un point du jan fait ou manqué, les chances de gammon abandonnées, une sécurité qui coûte plus qu'elle ne rapporte, et les deux sens d'une erreur de videau (doubler trop tard ou trop tôt, prendre trop large ou passer trop serré).</p>
@@ -366,6 +367,8 @@ export default {
 </ul>
 <p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant qu'une action est en cours, les entrées qui agissent sont grisées, comme les boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le premier.</p>
 <p>Au clavier, la grille ne prend qu'un arrêt de <em>TAB</em> : chaque case se focalise, libre comprise, et <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi, que la fiche soit déjà ouverte ou non : viser une table occupée échange les deux matchs.</p>
+<h4>La recherche rapide</h4>
+<p>La touche <em>/</em> de la page Direction ouvre la palette sur la salle seule : joueurs, tables, matchs en cours et épreuves de la Rencontre ouverte, ou de l'épreuve seule quand elle n'est dans aucune Rencontre. On tape un nom, un club ou un numéro de table (« 4 » ou « t4 ») ; les joueurs à une table passent avant les joueurs libres. <em>ENTRÉE</em> amène à l'objet : un joueur en cours de match, un match ou une table occupée ouvrent la fiche de la table, une table libre se focalise dans la grille, un joueur libre s'affiche dans l'onglet <strong>Joueurs</strong> filtré sur son nom, une épreuve devient l'onglet courant. Un résultat d'une autre épreuve de la Rencontre change d'abord d'épreuve. <em>ÉCHAP</em> referme sans rien ouvrir, et la touche reste une barre oblique dans un champ de saisie. <em>CTRL-MAJ-P</em> ouvre la palette complète, qui contient aussi la salle.</p>
 <h4>Les joueurs</h4>
 <p>L'onglet <strong>Joueurs</strong> inscrit, corrige et retire. Le champ d'inscription garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent au clavier seul. L'autocomplétion propose les joueurs de la base ; en choisir un fixe l'orthographe exacte que portent ses matchs et pré-remplit sa cote avec son PR.</p>
 <p>L'<strong>annuaire</strong> regroupe les inscrits de tous les tournois dirigés de la base, dédoublonnés par nom, avec le club et la cote de leur dernière inscription. Il n'est jamais stocké : supprimer une direction en retire ses inscrits. Reprendre les inscrits d'un tournoi précédent est un clic, quel que soit leur nombre ; l'annuaire se copie en CSV ou s'enregistre dans un fichier (<strong>Enregistrer…</strong>), et se relit collé.</p>
@@ -1430,6 +1433,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Ouvrir la recherche rapide : joueurs, tables, matchs en cours et épreuves de la salle, retrouvés par un nom ou un numéro de table (détail). Sans effet dans un champ de saisie.</td>
 </tr>
 </tbody>
 </table>

@@ -414,6 +414,41 @@ export async function installDirectionEngine(page, opts = {}) {
                     })
                 );
 
+            // L'index de la recherche rapide : les joueurs de l'épreuve, ses tables et celles de la
+            // sœur, comme le Go les rend (épreuves, joueurs, tables, matchs).
+            function searchIndex() {
+                const tid = TOURNAMENT_ID;
+                const epreuve = CONFIG.name;
+                const out = [{ kind: 'epreuve', tournamentId: tid, epreuve, name: epreuve }];
+                if (room) out.push({ kind: 'epreuve', tournamentId: 2, epreuve: room.sister, name: room.sister });
+                const playing = (p) => running.some((m) => m.a === p.id || m.b === p.id);
+                const row = (p) => {
+                    const m = running.find((x) => x.a === p.id || x.b === p.id);
+                    return {
+                        kind: 'player',
+                        tournamentId: tid,
+                        epreuve,
+                        name: p.name,
+                        playerId: p.id,
+                        club: p.club || '',
+                        state: p.state || (m ? 'playing' : 'free'),
+                        table: m ? m.Table : 0,
+                        opponent: m ? nameOf(m.a === p.id ? m.b : m.a) : ''
+                    };
+                };
+                out.push(...players.filter(playing).map(row), ...players.filter((p) => !playing(p)).map(row));
+                for (let t = 1; t <= CONFIG.tables.count; t++) {
+                    const m = running.find((x) => x.Table === t);
+                    if (m) out.push({ kind: 'table', tournamentId: tid, epreuve, name: nameOf(m.a) + ' – ' + nameOf(m.b), table: t, state: 'running' });
+                    else if (room && room.busy.includes(t)) out.push({ kind: 'table', tournamentId: 2, epreuve: room.sister, name: 'Joueur X – Joueur Y', table: t, state: 'running' });
+                    else out.push({ kind: 'table', tournamentId: 0, table: t, state: (CONFIG.tables.unavailable || []).includes(t) ? 'unavailable' : 'free' });
+                }
+                for (const m of running) out.push({ kind: 'match', tournamentId: tid, epreuve, name: nameOf(m.a) + ' – ' + nameOf(m.b), table: m.Table, matchId: m.ID, state: 'running' });
+                return out;
+            }
+            db.DirectionSearchIndex = () => Promise.resolve(searchIndex());
+            db.RencontreSearchIndex = () => Promise.resolve(searchIndex());
+
             db.Brackets = () => Promise.resolve([]);
             // Le classement compte les victoires, rien de plus : assez pour qu'une correction le
             // fasse bouger à l'écran. Le vrai, sans départage, est tenu en Go.

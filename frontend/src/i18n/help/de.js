@@ -180,6 +180,7 @@ export default {
 <h3>Die Befehlspalette</h3>
 <p>Die Befehlspalette (<em>STRG-UMSCHALT-P</em>) findet über einen ungefähren Namen, wonach man nicht mehr zu suchen weiß: einen Befehl der Befehlszeile, einen Reiter, einen Filter der Bibliothek oder ein Match. Die getippten Buchstaben müssen in der richtigen Reihenfolge vorkommen, nicht unbedingt nebeneinander, ohne Rücksicht auf Groß- und Kleinschreibung oder Akzente: „dpmtx“ findet die Doppelwürfel-Matrix, „lyon“ die Matches eines Turniers in Lyon.</p>
 <p>Die Pfeiltasten wählen, <em>EINGABE</em> führt aus, <em>ESC</em> schließt. Ein Befehl läuft, als wäre er getippt worden; <code>s</code> und <code>ss</code> öffnen die Befehlszeile, um die Filter dort einzugeben; ein Filter läuft wie nach einem Doppelklick in der Bibliothek; ein Match öffnet sich wie nach einem Doppelklick im Match-Bereich.</p>
+<p>Ist eine Direction geöffnet, ergänzt die Palette deren Saal: Spieler, Tische, laufende Matches und Turniere (siehe Schnellsuche).</p>
 <h3>Analyse-Panel</h3>
 <p>Das Panel <strong>Analyse</strong> (<em>CTRL-L</em>) zeigt die Analysedaten der aktuellen Stellung an, importiert aus eXtreme Gammon (XG), GNUbg oder BGBlitz. Es stellt die besten Alternativen (Steinzüge oder Doppler-Entscheidungen) mit ihren Equity-Werten und den entsprechenden Fehlern dar. Die Taste <em>d</em> schaltet zwischen der Analyse der Steinzüge und der Analyse des Dopplers um. Beim Navigieren in einem Match wird der tatsächlich gespielte Zug in der Liste der Alternativen hervorgehoben. Drücken Sie <em>CTRL-L</em> oder führen Sie den Befehl <code>list</code> aus, um das Panel ein- oder auszublenden.</p>
 <p>Unter den Tabellen sagt manchmal ein <strong>Satz</strong>, was die gespielte Entscheidung gekostet hat und warum: „Sie verlieren 120 mMWC: Der gespielte Zug lässt drei Blots stehen, 13/7 8/7 nur einen.“ Er stammt aus sechs messbaren Regeln — Blößen, ein gemachter oder verpasster Heimfeldpunkt, aufgegebene Gammon-Chancen, eine Sicherheit, die mehr kostet als sie bringt, und die beiden Richtungen eines Verdopplungsfehlers (zu spät oder zu früh doppeln, zu locker annehmen oder zu eng aufgeben).</p>
@@ -366,6 +367,8 @@ export default {
 </ul>
 <p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
 <p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
+<h4>Die Schnellsuche</h4>
+<p>Die Taste <em>/</em> auf der Direction-Seite öffnet die Palette nur für den Saal: Spieler, Tische, laufende Matches und Turniere der geöffneten Rencontre, oder des einzelnen Turniers, wenn es in keiner Rencontre liegt. Man tippt einen Namen, einen Verein oder eine Tischnummer („4“ oder „t4“); Spieler an einem Tisch stehen vor freien Spielern. <em>EINGABE</em> führt zum Objekt: Ein Spieler in einem Match, ein Match oder ein besetzter Tisch öffnen die Karte des Tisches, ein freier Tisch erhält den Fokus im Raster, ein freier Spieler erscheint im Reiter <strong>Spieler</strong>, auf seinen Namen gefiltert, ein Turnier wird zum aktuellen Reiter. Ein Treffer aus einem anderen Turnier der Rencontre wechselt zuerst das Turnier. <em>ESC</em> schließt, ohne etwas zu öffnen, und in einem Eingabefeld bleibt die Taste ein Schrägstrich. <em>STRG-UMSCHALT-P</em> öffnet die vollständige Palette, die den Saal ebenfalls enthält.</p>
 <h4>Die Spieler</h4>
 <p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
 <p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV kopiert oder in einer Datei gespeichert (<strong>Speichern…</strong>) und eingefügt wieder eingelesen.</p>
@@ -1430,6 +1433,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>Auf einem belegten Feld die Karte öffnen (oder, wenn sie offen ist, das Tischfeld); ein belegter Zieltisch tauscht die beiden Matches.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Die Schnellsuche öffnen: Spieler, Tische, laufende Matches und Turniere des Saals, gefunden über einen Namen oder eine Tischnummer (Details). Ohne Wirkung in einem Eingabefeld.</td>
 </tr>
 </tbody>
 </table>

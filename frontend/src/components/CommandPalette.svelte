@@ -1,7 +1,9 @@
 <!--
   CommandPalette — one field that finds anything by approximate name:
-  a command of the command line, a tab, a saved filter, a match. Ctrl+Maj+P
-  opens and closes it (keyboardService.js); Ctrl+K stays the Anki tab's.
+  a command of the command line, a tab, a saved filter, a match, and — while a Direction
+  is open — a player, a table, a running match or an event of its room. Ctrl+Maj+P
+  opens and closes it, `/` opens it on the room alone (keyboardService.js); Ctrl+K stays
+  the Anki tab's.
 
   What it lists and what choosing does live in services/commandPalette.js, which
   reads the existing lists (commandVocabulary, tabCatalog, filterLibraryStore,
@@ -12,10 +14,10 @@
 -->
 <script>
     import { tick, untrack } from 'svelte';
-    import { commandPaletteOpenStore } from '../stores/uiStore.js';
+    import { commandPaletteOpenStore, commandPaletteScopeStore } from '../stores/uiStore.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore.js';
     import { closeOnEscape } from '../services/escapeService.js';
-    import { buildPaletteItems, rankPaletteItems, runPaletteItem, loadPaletteSources, closeCommandPalette } from '../services/commandPalette.js';
+    import { buildPaletteItems, rankPaletteItems, runPaletteItem, loadPaletteSources, loadDirectionIndex, closeCommandPalette } from '../services/commandPalette.js';
     import { highlightSegments } from '../utils/fuzzy.js';
     import { t } from '../i18n';
 
@@ -23,7 +25,8 @@
         command: 'palette.kindCommand',
         tab: 'palette.kindTab',
         filter: 'palette.kindFilter',
-        match: 'palette.kindMatch'
+        match: 'palette.kindMatch',
+        direction: 'palette.kindPlayer'
     };
     const PAGE = 8;
 
@@ -39,7 +42,11 @@
     let returnFocus = null;
 
     const open = $derived($commandPaletteOpenStore);
-    const items = $derived(buildPaletteItems({ translate: $t, matches, filters: $filterLibraryStore }));
+    /** @type {any[]} */
+    let room = $state([]);
+    /** The scope the palette was opened with: it does not change under an open palette. */
+    let scope = $state(/** @type {'direction' | null} */ (null));
+    const items = $derived(buildPaletteItems({ translate: $t, matches, filters: $filterLibraryStore, direction: room, scope }));
     const results = $derived(rankPaletteItems(items, query));
 
     $effect(() => {
@@ -54,9 +61,13 @@
         returnFocus = document.activeElement;
         query = '';
         active = 0;
+        scope = $commandPaletteScopeStore;
+        room = [];
         await tick();
         inputEl?.focus();
-        matches = await loadPaletteSources();
+        const [index, loaded] = await Promise.all([loadDirectionIndex(), scope === 'direction' ? Promise.resolve([]) : loadPaletteSources()]);
+        room = index;
+        matches = loaded;
     }
 
     function close() {
@@ -132,7 +143,7 @@
                 aria-controls="command-palette-list"
                 aria-activedescendant={results[active] ? `palette-option-${active}` : undefined}
                 aria-autocomplete="list"
-                placeholder={$t('palette.placeholder')}
+                placeholder={scope === 'direction' ? $t('palette.placeholderDirection') : $t('palette.placeholder')}
                 spellcheck="false"
                 autocomplete="off"
             />
@@ -149,7 +160,7 @@
                         }}
                         onmousemove={() => (active = i)}
                     >
-                        <span class="kind kind-{item.kind}">{$t(KIND_LABEL_KEYS[item.kind])}</span>
+                        <span class="kind kind-{item.kind}">{item.badge ?? $t(KIND_LABEL_KEYS[item.kind])}</span>
                         <span class="label"
                             >{#each highlightSegments(item.label, labelIndices) as seg, k (k)}{#if seg.hit}<mark>{seg.text}</mark>{:else}{seg.text}{/if}{/each}</span
                         >

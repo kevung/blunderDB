@@ -180,6 +180,7 @@ export default {
 <h3>Komentopaletti</h3>
 <p>Komentopaletti (<em>CTRL-SHIFT-P</em>) löytää likimääräisellä nimellä sen, mitä ei enää tiedä mistä etsiä: komentorivin komennon, välilehden, kirjaston suodattimen tai ottelun. Kirjoitettujen kirjainten on esiinnyttävä järjestyksessä, ei välttämättä vierekkäin, isoista kirjaimista ja aksenteista välittämättä: ”kmtrs” löytää kuutiomatriisin, ”lyon” Lyonin turnauksen ottelut.</p>
 <p>Nuolinäppäimet valitsevat, <em>ENTER</em> suorittaa, <em>ESC</em> sulkee. Komento suoritetaan kuin se olisi kirjoitettu; <code>s</code> ja <code>ss</code> avaavat komentorivin suodattimien kirjoittamista varten; suodatin suoritetaan kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin kaksoisnapsautuksella Otteluiden paneelissa.</p>
+<p>Kun Direction on auki, paletti lisää siihen salin: pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut (ks. pikahaku).</p>
 <h3>Analyysipaneeli</h3>
 <p><strong>Analyysipaneeli</strong> (<em>CTRL-L</em>) näyttää nykyisen aseman analyysitiedot, jotka on tuotu lähteistä eXtreme Gammon (XG), GNUbg tai BGBlitz. Se esittää parhaat vaihtoehdot (pelinappulasiirrot tai kuutiopäätökset) niiden ekviteettiarvoineen ja vastaavine virheineen. <em>d</em>-näppäin vaihtaa pelinappulasiirtojen analyysin ja kuutioanalyysin välillä. Ottelussa navigoitaessa todella pelattu siirto korostetaan vaihtoehtojen luettelossa. Näytä tai piilota paneeli painamalla <em>CTRL-L</em> tai suorittamalla komento <code>list</code>.</p>
 <p>Taulukoiden alla <strong>lause</strong> kertoo joskus, mitä pelattu päätös maksoi ja miksi: ”Menetät 120 mMWC: pelattu siirto jättää kolme yksinäistä nappulaa, kun 13/7 8/7 jättää vain yhden.” Se syntyy kuudesta mitattavasta säännöstä — alttiudesta, tehdystä tai menetetystä kotipisteestä, luovutetuista gammon-mahdollisuuksista, turvallisuudesta joka maksaa enemmän kuin tuottaa, ja kuutiovirheen kahdesta suunnasta (tuplaus liian myöhään tai liian aikaisin, liian löysä hyväksyntä tai liian tiukka luovutus).</p>
@@ -366,6 +367,8 @@ export default {
 </ul>
 <p>Luovutus, ottelun peruutus ja pelaajan vetäytyminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa. Kun toiminto on käynnissä, toimivat valinnat näkyvät harmaina kuten painikkeet. Vain yksi valikko on auki kerrallaan: toisen avaaminen sulkee ensimmäisen.</p>
 <p>Näppäimistöllä ruudukko vie vain yhden <em>TAB</em>-pysähdyksen: jokainen ruutu, myös vapaa, saa kohdistuksen, ja <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkentässä, ja myös <em>X</em>, olipa kortti jo auki tai ei: varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</p>
+<h4>Pikahaku</h4>
+<p>Direction-sivun <em>/</em>-näppäin avaa paletin pelkästään salille: avoimen Rencontren pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut, tai pelkän kilpailun, kun se ei ole missään Rencontressa. Kirjoitetaan nimi, seura tai pöydän numero (”4” tai ”t4”); pöydässä olevat pelaajat tulevat ennen vapaita pelaajia. <em>ENTER</em> vie kohteeseen: pelaaja ottelussa, ottelu tai varattu pöytä avaavat pöydän kortin, vapaa pöytä saa kohdistuksen ruudukossa, vapaa pelaaja näytetään <strong>Pelaajat</strong>-välilehdellä nimellään suodatettuna, kilpailusta tulee nykyinen välilehti. Rencontren toisen kilpailun tulos vaihtaa ensin kilpailua. <em>ESC</em> sulkee avaamatta mitään, ja syöttökentässä näppäin pysyy vinoviivana. <em>CTRL-SHIFT-P</em> avaa täyden paletin, jossa sali on myös mukana.</p>
 <h4>Pelaajat</h4>
 <p><strong>Pelaajat</strong>-välilehti ilmoittaa, korjaa ja poistaa. Ilmoittautumiskenttä säilyttää kohdistuksen ja tyhjenee jokaisen nimen jälkeen: kaksikymmentä pelaajaa ilmoitetaan pelkällä näppäimistöllä. Täydennys tarjoaa tietokannan pelaajia; yhden valitseminen lukitsee sen tarkan kirjoitusasun, jonka hänen ottelunsa kantavat, ja esitäyttää luokituksen hänen PR:llään.</p>
 <p><strong>Hakemisto</strong> kokoaa kaikkien tietokannan johdettujen turnausten osallistujat, nimen mukaan yhdistettyinä, viimeisimmän ilmoittautumisen seuran ja luokituksen kera. Sitä ei koskaan tallenneta: johtamisen poistaminen poistaa siitä sen osallistujat. Aiemman turnauksen osallistujien ottaminen on yksi napsautus, olipa heitä kuinka monta tahansa; hakemisto kopioidaan CSV:nä tai tallennetaan tiedostoon (<strong>Tallenna…</strong>), ja se luetaan takaisin liitettynä.</p>
@@ -1430,6 +1433,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>Varatussa ruudussa avaa kortti (tai, jos se on auki, pöytäkenttä); varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Avaa pikahaku: salin pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut löytyvät nimellä tai pöydän numerolla (lisätiedot). Ei vaikutusta syöttökentässä.</td>
 </tr>
 </tbody>
 </table>

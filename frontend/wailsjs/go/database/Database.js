@@ -298,6 +298,10 @@ export function DirectionPairingSheetHTML(arg1, arg2) {
   return window['go']['database']['Database']['DirectionPairingSheetHTML'](arg1, arg2);
 }
 
+export function DirectionSearchIndex(arg1) {
+  return window['go']['database']['Database']['DirectionSearchIndex'](arg1);
+}
+
 export function DirectionRounds(arg1) {
   return window['go']['database']['Database']['DirectionRounds'](arg1);
 }
@@ -832,6 +836,10 @@ export function RemovePositionsFromCollection(arg1, arg2) {
 
 export function RencontreOf(arg1) {
   return window['go']['database']['Database']['RencontreOf'](arg1);
+}
+
+export function RencontreSearchIndex(arg1) {
+  return window['go']['database']['Database']['RencontreSearchIndex'](arg1);
 }
 
 export function RencontrePageHTML(arg1) {

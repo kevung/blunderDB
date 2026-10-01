@@ -3987,6 +3987,37 @@ export namespace service {
 		    return a;
 		}
 	}
+	export class SearchEntry {
+	    kind: string;
+	    tournamentId: number;
+	    epreuve?: string;
+	    name: string;
+	    playerId?: string;
+	    club?: string;
+	    opponent?: string;
+	    state?: string;
+	    table?: number;
+	    matchId?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SearchEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.tournamentId = source["tournamentId"];
+	        this.epreuve = source["epreuve"];
+	        this.name = source["name"];
+	        this.playerId = source["playerId"];
+	        this.club = source["club"];
+	        this.opponent = source["opponent"];
+	        this.state = source["state"];
+	        this.table = source["table"];
+	        this.matchId = source["matchId"];
+	    }
+	}
+	
 	export class SlotRow {
 	    slotId: string;
 	    label: tournoi.Label;

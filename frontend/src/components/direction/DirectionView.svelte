@@ -31,6 +31,7 @@
     import {
         directionStore,
         openDirectionIdStore,
+        directionJumpStore,
         epreuveTabsStore,
         switchEpreuve,
         saveDirectionConfig,
@@ -223,6 +224,7 @@
     let historyFilter = $state(/** @type {{ text: string, seq: number } | null} */ (null));
     let requestSeq = 0;
     /** Une demande à la file des propositions : appariement à la main, ou lancer ici. */
+    let playerFilter = $state(/** @type {{ text: string, seq: number } | null} */ (null));
     let queueRequest = $state(/** @type {{ kind: 'manual' | 'launchHere', a?: string, table?: number, focus?: 'a' | 'b', seq: number } | null} */ (null));
     let waitingMenu = $state(/** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */ (null));
 
@@ -231,6 +233,24 @@
         tab = 'direction';
         reveal = { table, open, seq: ++requestSeq };
     }
+
+    /* La recherche rapide : la demande attend que l'épreuve visée soit celle de la page, change
+       d'épreuve au besoin, puis réutilise les demandes des menus contextuels. */
+    $effect(() => {
+        const j = $directionJumpStore;
+        if (!j || !view) return;
+        if (j.tournamentId && j.tournamentId !== view.tournamentId) {
+            if (j.tournamentId === $openDirectionIdStore) return;
+            void switchEpreuve(j.tournamentId);
+            return;
+        }
+        directionJumpStore.set(null);
+        if (j.kind === 'table' && j.table) goToTable(j.table, !!j.open);
+        else if (j.kind === 'player' && j.name) {
+            tab = 'players';
+            playerFilter = { text: j.name, seq: ++requestSeq };
+        }
+    });
 
     /** @param {string} id */
     function pairManually(id) {
@@ -808,6 +828,7 @@
                     onHistory={showHistory}
                     onManual={pairManually}
                     onGoEpreuve={goEpreuve}
+                    filterRequest={playerFilter}
                     elsewhere={view?.elsewhere || {}}
                     {roundsMode}
                     slots={openSlots}

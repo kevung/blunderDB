@@ -2333,6 +2333,13 @@
         "kindTab": "Tab",
         "kindFilter": "Filter",
         "kindMatch": "Match",
+        "kindPlayer": "Player",
+        "kindTable": "Table",
+        "kindEpreuve": "Event",
+        "kindRunning": "Running match",
+        "placeholderDirection": "Find a player, a table, an event, a match…",
+        "directionTable": "Table {n}",
+        "directionVs": "vs {name}",
         "matchLength": "{n} pts",
         "matchGone": "This match no longer exists.",
         "cmd": {

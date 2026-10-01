@@ -621,6 +621,9 @@ comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne de commande
 pour y écrire les filtres ; un filtre se lance comme d'un double-clic dans la
 bibliothèque ; un match s'ouvre comme d'un double-clic dans le panneau Matchs.
 
+Quand une Direction est ouverte, la palette y ajoute sa salle : joueurs, tables,
+matchs en cours et épreuves (voir :ref:`la recherche rapide <direction_recherche>`).
+
 .. _panneau_analyse:
 
 Panneau Analyse
@@ -1618,6 +1621,23 @@ d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pou
 une table au-delà de 9, le second chiffre se tape dans les 0,4 s. *M* ouvre la
 fiche sur le champ de table, et *X* aussi, que la fiche soit déjà ouverte ou
 non : viser une table occupée échange les deux matchs.
+
+.. _direction_recherche:
+
+La recherche rapide
+~~~~~~~~~~~~~~~~~~~
+
+La touche */* de la page Direction ouvre la palette sur la salle seule :
+joueurs, tables, matchs en cours et épreuves de la Rencontre ouverte, ou de
+l'épreuve seule quand elle n'est dans aucune Rencontre. On tape un nom, un club
+ou un numéro de table (« 4 » ou « t4 ») ; les joueurs à une table passent avant
+les joueurs libres. *ENTRÉE* amène à l'objet : un joueur en cours de match, un
+match ou une table occupée ouvrent la fiche de la table, une table libre se
+focalise dans la grille, un joueur libre s'affiche dans l'onglet **Joueurs**
+filtré sur son nom, une épreuve devient l'onglet courant. Un résultat d'une
+autre épreuve de la Rencontre change d'abord d'épreuve. *ÉCHAP* referme sans
+rien ouvrir, et la touche reste une barre oblique dans un champ de saisie.
+*CTRL-MAJ-P* ouvre la palette complète, qui contient aussi la salle.
 
 Les joueurs
 ~~~~~~~~~~~

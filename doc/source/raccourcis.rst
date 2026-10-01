@@ -285,6 +285,7 @@ manuel (:ref:`menus contextuels <direction_menus>`).
    "GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN", "Passer d'une case de la grille des tables à l'autre (cases libres comprises) ; la grille ne prend qu'un arrêt de TAB."
    "1 à 9, puis 0 à 9", "Ouvrir la fiche de la table de ce numéro ; deux chiffres, dans les 0,4 s, pour une table au-delà de 9."
    "M, X", "Sur une case occupée, ouvrir la fiche (ou, si elle est ouverte, le champ de table) ; viser une table occupée échange les deux matchs."
+   "/", "Ouvrir la recherche rapide : joueurs, tables, matchs en cours et épreuves de la salle, retrouvés par un nom ou un numéro de table (:ref:`détail <direction_recherche>`). Sans effet dans un champ de saisie."
 
 .. _raccourcis_collection_panel:
 

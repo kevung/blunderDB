@@ -2333,6 +2333,13 @@
         "kindTab": "Καρτέλα",
         "kindFilter": "Φίλτρο",
         "kindMatch": "Αγώνας",
+        "kindPlayer": "Παίκτης",
+        "kindTable": "Τραπέζι",
+        "kindEpreuve": "Αγώνισμα",
+        "kindRunning": "Ματς σε εξέλιξη",
+        "placeholderDirection": "Βρείτε παίκτη, τραπέζι, αγώνισμα, αγώνα…",
+        "directionTable": "Τραπέζι {n}",
+        "directionVs": "εναντίον {name}",
         "matchLength": "{n} πόντοι",
         "matchGone": "Αυτός ο αγώνας δεν υπάρχει πλέον.",
         "cmd": {

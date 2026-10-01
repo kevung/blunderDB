@@ -42,7 +42,10 @@
         // Les doubles : une paire est deux personnes, un seul Participant « A / B » (ADR-0056).
         pairs = /** @type {Record<string, {name: string, club?: string, rating?: number}[]>} */ ({}),
         onAddPair = (/** @type {{name: string, club: string, rating: number}[]} */ _m, /** @type {number} */ _r) => {},
-        onUpdatePair = (/** @type {string} */ _i, /** @type {{name: string, club: string, rating: number}[]} */ _m, /** @type {number} */ _r) => {}
+        onUpdatePair = (/** @type {string} */ _i, /** @type {{name: string, club: string, rating: number}[]} */ _m, /** @type {number} */ _r) => {},
+        // La recherche rapide mène à la fiche d'un joueur : le filtre s'applique une fois par
+        // demande, puis redevient libre.
+        filterRequest = /** @type {{ text: string, seq: number } | null} */ (null)
     } = $props();
 
     /* Une épreuve en doubles se reconnaît à ses paires ; la case reste libre pour la première. */
@@ -64,6 +67,13 @@
     let club = $state('');
     let rating = $state('');
     let filter = $state('');
+    let lastFilterSeq = 0;
+    $effect(() => {
+        if (filterRequest && filterRequest.seq !== lastFilterSeq) {
+            lastFilterSeq = filterRequest.seq;
+            filter = filterRequest.text;
+        }
+    });
     let editing = $state(/** @type {{ id: string, name: string, club: string, rating: number | string } | null} */ (null));
     let nameInput = $state(/** @type {HTMLInputElement | null} */ (null));
 
