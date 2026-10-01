@@ -334,10 +334,20 @@ func (a *App) ShowQuestionDialog(title, message string, buttons []string, defaul
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	// A display page a gesture could not rewrite reaches the status bar: the gesture stands,
+	// but the wall would stay stale without the director knowing.
+	if a.db != nil {
+		database.OnDirectionPageWarning(a.db, func(w database.PageWarning) {
+			runtime.EventsEmit(a.ctx, directionPageWarningEvent, w)
+		})
+	}
 	// Generate the missing bearoff tables silently in the background
 	// (ADR-0027; about six seconds of one core on first launch).
 	a.EnsureBearoffTables()
 }
+
+// directionPageWarningEvent carries a database.PageWarning to the frontend.
+const directionPageWarningEvent = "direction:page-warning"
 
 // StartupFilePath returns the database file the OS passed on the command
 // line, or "" on an ordinary launch.

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
@@ -28,6 +29,10 @@ import (
 // versionHeader carries the version a gesture states in If-Match. It is not the read's ETag:
 // that one also covers the request and the minute, and changes when nothing was written.
 const versionHeader = "Direction-Version"
+
+// pageWarningHeader reports, once per page, a display page the gesture could not rewrite: the
+// gesture applied, the page shows the state before it.
+const pageWarningHeader = "Direction-Page-Warning"
 
 // gestureReq is implemented by the request of every versioned gesture: it names the Direction
 // (tournamentID) or the Rencontre (rencontreID) whose version If-Match states.
@@ -72,8 +77,11 @@ func rpcGesture[Req gestureReq, Resp any](s *Server, fn func(ctx context.Context
 			return
 		}
 		scope := scopeOf(r)
-		ctx := service.ExpectVersion(r.Context(), want)
+		ctx := service.CollectPageWarnings(service.ExpectVersion(r.Context(), want))
 		resp, err := fn(ctx, scope, req)
+		for _, pw := range service.PageWarnings(ctx) {
+			w.Header().Add(pageWarningHeader, pageWarningValue(pw))
+		}
 		if errors.Is(err, service.ErrStale) {
 			s.writeStale(w, r.Context(), scope, req.gestureKey())
 			return
@@ -87,6 +95,15 @@ func rpcGesture[Req gestureReq, Resp any](s *Server, fn func(ctx context.Context
 		}
 		writeJSONResp(w, resp)
 	}
+}
+
+// pageWarningValue names the page, not the failure: the error would name the server's folder,
+// which a client is never shown.
+func pageWarningValue(pw service.PageWarning) string {
+	if pw.RencontreID != 0 {
+		return "rencontre " + strconv.FormatInt(pw.RencontreID, 10)
+	}
+	return "tournament " + strconv.FormatInt(pw.TournamentID, 10)
 }
 
 // writeStale answers 409 to a gesture decided on a version that moved: the current state of

@@ -1017,6 +1017,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1057,6 +1061,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -1101,6 +1109,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1141,6 +1153,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -1218,6 +1234,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1292,6 +1312,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1332,6 +1356,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -1376,6 +1404,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1416,6 +1448,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -1484,6 +1520,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -1561,6 +1601,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1603,6 +1647,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1643,6 +1691,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -1850,6 +1902,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1892,6 +1948,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -1932,6 +1992,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -2089,6 +2153,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -2131,6 +2199,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -2171,6 +2243,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -2311,6 +2387,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -2386,6 +2466,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -2428,6 +2512,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -2468,6 +2556,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -3717,6 +3809,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -3783,6 +3879,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -3923,6 +4023,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -3963,6 +4067,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:
@@ -4007,6 +4115,10 @@ paths:
               description: The version the gesture left; the If-Match of the next one.
               schema:
                 type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -4046,6 +4158,10 @@ paths:
           headers:
             Direction-Version:
               description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
               schema:
                 type: string
           content:

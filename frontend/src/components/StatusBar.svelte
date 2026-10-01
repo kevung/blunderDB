@@ -141,7 +141,9 @@
             statusBarTextStore.set(tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 }));
         }),
         EventsOn('gammonnet-batch:cancelled', () => gammonNetBatchStore.set(null)),
-        EventsOn('gammonnet-batch:error', () => gammonNetBatchStore.set(null))
+        EventsOn('gammonnet-batch:error', () => gammonNetBatchStore.set(null)),
+        // A gesture stood but its display page could not be rewritten (a folder gone, a disk full).
+        EventsOn('direction:page-warning', () => statusBarTextStore.set(tMsg('direction.display.error')))
     ];
     onDestroy(() => unsubGammonNetBatch.forEach((off) => off && off()));
 

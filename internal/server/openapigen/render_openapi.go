@@ -122,6 +122,10 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 		b.WriteString("              description: The version the gesture left; the If-Match of the next one.\n")
 		b.WriteString("              schema:\n")
 		b.WriteString("                type: string\n")
+		b.WriteString("            Direction-Page-Warning:\n")
+		b.WriteString("              description: A display page the gesture applied but could not rewrite, once per page.\n")
+		b.WriteString("              schema:\n")
+		b.WriteString("                type: string\n")
 	}
 	if r.Conditional {
 		b.WriteString("          headers:\n")

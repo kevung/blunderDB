@@ -64,6 +64,16 @@ func PairLabel(members []PairMember) string { return service.PairLabel(members) 
 // PairRating is the rating a pair enters with.
 func PairRating(members []PairMember) float64 { return service.PairRating(members) }
 
+// PageWarning reports a display page a gesture could not rewrite.
+type PageWarning = service.PageWarning
+
+// OnDirectionPageWarning installs on d the function told of every page a gesture could not
+// rewrite — the desktop's status bar. A function, not a method: Database is bound to the
+// frontend, which has no use for a callback.
+func OnDirectionPageWarning(d *Database, f func(PageWarning)) {
+	d.directionMem.OnPageWarning(f)
+}
+
 // directionService binds the service to the open database, private scope.
 func (d *Database) directionService() *service.Service {
 	d.mu.RLock()

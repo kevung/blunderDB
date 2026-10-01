@@ -381,3 +381,67 @@ func TestDirectionGestures_RefusalIsInvalid(t *testing.T) {
 		t.Error("a refused gesture moved the version")
 	}
 }
+
+// TestDirectionGestures_PageWarning: a page the gesture could not rewrite does not undo it, and
+// the answer says which page, without the server's folder.
+func TestDirectionGestures_PageWarning(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	dir := filepath.Join(t.TempDir(), "mur")
+	if err := os.Mkdir(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.svc.SetRencontreOutputDir(f.ctx, f.rencontreID, dir); err != nil {
+		t.Fatal(err)
+	}
+	// The folder becomes a file: every write under it fails.
+	if err := os.RemoveAll(dir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(dir, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/directions.enterResult", strings.NewReader(f.resultBody(f.running(t)[0])))
+	req.Header.Set(middleware.TenantHeader, "1")
+	req.Header.Set("If-Match", f.versionOf(t, ts))
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status %d; a page that fails does not fail the gesture", resp.StatusCode)
+	}
+	got := resp.Header.Values(pageWarningHeader)
+	if len(got) == 0 {
+		t.Fatal("no Direction-Page-Warning although no page could be written")
+	}
+	for _, v := range got {
+		if strings.Contains(v, dir) {
+			t.Errorf("the warning names the server's folder: %q", v)
+		}
+	}
+}
+
+// TestDirectionGestures_DetachRewritesTheRoom: detaching a member rewrites the room's wall page,
+// which no longer lists it.
+func TestDirectionGestures_DetachRewritesTheRoom(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	seedSister(t, srv.opts.Storage, f, "Speed", "s")
+	dir := t.TempDir()
+	if _, err := f.svc.SetRencontreOutputDir(f.ctx, f.rencontreID, dir); err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range htmlUnder(t, dir) {
+		if err := os.Remove(e); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if r := send(t, ts, "1", "/v1/rencontres.detach", f.body(""), f.versionOf(t, ts), ""); r.status != http.StatusOK {
+		t.Fatalf("detach: %d %.200s", r.status, r.body)
+	}
+	if pages := htmlUnder(t, dir); len(pages) < 2 {
+		t.Errorf("after a detach, %v under %s; want the room's wall and the sister's page", pages, dir)
+	}
+}
