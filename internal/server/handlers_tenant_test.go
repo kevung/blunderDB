@@ -11,10 +11,10 @@ package server
 
 import (
 	"context"
-	"os"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
