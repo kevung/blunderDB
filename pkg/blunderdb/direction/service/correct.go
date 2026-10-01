@@ -1,10 +1,11 @@
-package database
+package service
 
 import (
 	"context"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
@@ -40,9 +41,8 @@ type LastDecision struct {
 //
 // It reads the log backwards past entries and notes, so "undo" lands on the last RESULT or the
 // last match launched.
-func (d *Database) LastDecision(tournamentID int64) (*LastDecision, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) LastDecision(ctx context.Context, tournamentID int64) (*LastDecision, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -88,9 +88,9 @@ func (d *Database) LastDecision(tournamentID int64) (*LastDecision, error) {
 //
 // The engine raises whatever the correction breaks (a bracket match now played by the wrong
 // players); nothing is repaired behind the director's back.
-func (d *Database) CorrectResult(tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
-	ctx := context.Background()
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) CorrectResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,13 +101,13 @@ func (d *Database) CorrectResult(tournamentID int64, matchID, winner string, sco
 	if err := dir.Apply(ctx, ev); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // FinishedMatches lists the matches already played, most recent first, so a result can be
 // corrected long after the table it was played on has been taken by someone else.
-func (d *Database) FinishedMatches(tournamentID int64, limit int) ([]TableCell, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) FinishedMatches(ctx context.Context, tournamentID int64, limit int) ([]TableCell, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}

@@ -1,15 +1,16 @@
-package database
+package service
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // A doubles event enters pairs (ADR-0056 §4). The engine knows ONE Participant per pair, named
@@ -19,11 +20,7 @@ import (
 // rating is their mean unless the director corrects it.
 
 // PairMember is one of the two persons of a pair.
-type PairMember struct {
-	Name   string  `json:"name"`
-	Club   string  `json:"club,omitempty"`
-	Rating float64 `json:"rating,omitempty"`
-}
+type PairMember = storage.PairMember
 
 // PairLabel is the Participant's name for a pair: "A / B", in the order the pair was entered.
 func PairLabel(members []PairMember) string {
@@ -82,12 +79,13 @@ func parsePair(membersJSON string) ([]PairMember, error) {
 // AddPair enters a pair: one Participant "A / B" for the engine, two persons for the Directory,
 // written in one transaction. rating 0 means "the mean of the two"; any other value is the
 // director's correction.
-func (d *Database) AddPair(tournamentID int64, membersJSON string, rating float64) (*DirectionView, error) {
+func (d *Service) AddPair(ctx context.Context, tournamentID int64, membersJSON string, rating float64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	members, err := parsePair(membersJSON)
 	if err != nil {
 		return nil, err
 	}
-	err = d.directionTx(func(ctx context.Context, tx *sql.Tx, store direction.Store) error {
+	err = d.directionTx(ctx, func(ctx context.Context, tx storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err
@@ -108,22 +106,23 @@ func (d *Database) AddPair(tournamentID int64, membersJSON string, rating float6
 		if err := dir.Apply(ctx, tournoi.PlayerAddedEvent(p, time.Now())); err != nil {
 			return err
 		}
-		return writePairMembers(ctx, tx, tournamentID, string(p.ID), members)
+		return writePairMembers(ctx, tx, d.scope, tournamentID, string(p.ID), members)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
 // UpdatePair corrects a pair — a member's name, club or rating, or the entry rating — without
 // changing its identifier, which is what its Slots and Matches point at.
-func (d *Database) UpdatePair(tournamentID int64, id, membersJSON string, rating float64) (*DirectionView, error) {
+func (d *Service) UpdatePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (*DirectionView, error) {
+	defer d.lockDirection(tournamentID)()
 	members, err := parsePair(membersJSON)
 	if err != nil {
 		return nil, err
 	}
-	err = d.directionTx(func(ctx context.Context, tx *sql.Tx, store direction.Store) error {
+	err = d.directionTx(ctx, func(ctx context.Context, tx storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err
@@ -144,60 +143,35 @@ func (d *Database) UpdatePair(tournamentID int64, id, membersJSON string, rating
 		if err := dir.Apply(ctx, tournoi.PlayerUpdatedEvent(p, time.Now())); err != nil {
 			return err
 		}
-		return writePairMembers(ctx, tx, tournamentID, id, members)
+		return writePairMembers(ctx, tx, d.scope, tournamentID, id, members)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return d.GetDirection(tournamentID)
+	return d.GetDirection(ctx, tournamentID)
 }
 
-func writePairMembers(ctx context.Context, tx *sql.Tx, tournamentID int64, id string, members []PairMember) error {
-	if _, err := tx.ExecContext(ctx, `DELETE FROM direction_pair_member WHERE tournament_id = ? AND player_id = ?`, tournamentID, id); err != nil {
+func writePairMembers(ctx context.Context, tx storage.Tx, scope string, tournamentID int64, id string, members []PairMember) error {
+	if err := tx.Directions().SetPair(ctx, scope, tournamentID, id, members); err != nil {
 		return fmt.Errorf("direction: pair %s: %w", id, err)
-	}
-	for seat, m := range members {
-		if _, err := tx.ExecContext(ctx, `
-			INSERT INTO direction_pair_member (tournament_id, player_id, seat, name, club, rating)
-			VALUES (?, ?, ?, ?, ?, ?)`, tournamentID, id, seat, m.Name, m.Club, m.Rating); err != nil {
-			return fmt.Errorf("direction: pair %s: %w", id, err)
-		}
 	}
 	return nil
 }
 
 // Pairs gives the persons of every pair of a Direction, by Participant id. Empty for a singles
 // event.
-func (d *Database) Pairs(tournamentID int64) (map[string][]PairMember, error) {
-	d.mu.RLock()
-	defer d.mu.RUnlock()
-	rows, err := d.db.QueryContext(context.Background(), `
-		SELECT player_id, name, club, rating FROM direction_pair_member
-		 WHERE tournament_id = ? ORDER BY player_id, seat`, tournamentID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	out := map[string][]PairMember{}
-	for rows.Next() {
-		var id string
-		var m PairMember
-		if err := rows.Scan(&id, &m.Name, &m.Club, &m.Rating); err != nil {
-			return nil, err
-		}
-		out[id] = append(out[id], m)
-	}
-	return out, rows.Err()
+func (d *Service) Pairs(ctx context.Context, tournamentID int64) (map[string][]PairMember, error) {
+	return d.st.Directions().Pairs(ctx, d.scope, tournamentID)
 }
 
 // personsOf is a Direction's entrants as persons: a pair counts as its two members, so the
 // Directory never holds an "A / B" line.
-func (d *Database) personsOf(ctx context.Context, tournamentID int64) ([]tournoi.Player, error) {
+func (d *Service) personsOf(ctx context.Context, tournamentID int64) ([]tournoi.Player, error) {
 	players, err := d.entrantsOf(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	pairs, err := d.Pairs(tournamentID)
+	pairs, err := d.Pairs(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -218,22 +192,8 @@ func (d *Database) personsOf(ctx context.Context, tournamentID int64) ([]tournoi
 	return out, nil
 }
 
-// directionTx runs fn in one SQL transaction under the write lock, with a Direction store bound
-// to it: an event and the rows that go with it are written together or not at all.
-func (d *Database) directionTx(fn func(context.Context, *sql.Tx, direction.Store) error) error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-	ctx := context.Background()
-	tx, err := d.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = tx.Rollback() }()
-	if err := fn(ctx, tx, directionStore{d: d, tx: tx}); err != nil {
-		return err
-	}
-	return tx.Commit()
+// directionTx runs fn in one transaction with a Direction store bound to it: an event and the
+// rows that go with it are written together or not at all.
+func (d *Service) directionTx(ctx context.Context, fn func(context.Context, storage.Tx, direction.Store) error) error {
+	return d.inTx(ctx, func(tx storage.Tx, store direction.Store) error { return fn(ctx, tx, store) })
 }

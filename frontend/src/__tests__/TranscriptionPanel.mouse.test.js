@@ -30,10 +30,10 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
         return Promise.resolve(engine.state);
     }),
     TranscriptionMAT: vi.fn(() => Promise.resolve('')),
-    SaveTranscriptionAsMatch: vi.fn(() => Promise.resolve(0)),
+    FinishTranscription: vi.fn(() => Promise.resolve(0)),
     SuggestTranscriptionMatFilename: vi.fn(() => Promise.resolve('')),
     ExportTranscriptionMAT: vi.fn(() => Promise.resolve()),
-    CloseTranscription: vi.fn(() => Promise.resolve()),
+    AbandonTranscription: vi.fn(() => Promise.resolve()),
     PendingTranscriptionAnalysis: vi.fn(() => Promise.resolve(null))
 }));
 

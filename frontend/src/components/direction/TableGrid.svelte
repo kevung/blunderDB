@@ -14,7 +14,7 @@
     import { directionPageShown, somethingOpenAbove } from '../../services/directionKeys.js';
     import { gridKeyAction, TABLE_DIGIT_DELAY_MS } from '../../services/directionGridKeys.js';
 
-    /** @typedef {import('../../../wailsjs/go/models').database.TableCell} TableCell */
+    /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
     /**
      * @type {{

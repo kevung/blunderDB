@@ -2855,13 +2855,30 @@ file, the database or the output failed.
 --render writes the transcription back as a .mat file,
 which is how the round trip is checked on real files.
 
+Three options write, and only these: --finish writes a
+draft's match and releases the draft, --abandon deletes a
+draft without a match, --edit opens a draft on an existing
+match so that --finish replaces it in place. Editing an
+imported match counts what a .mat cannot carry (analyses,
+comments) and refuses without --accept-losses. Abandoning a
+draft that never produced a match loses everything typed
+in it, and asks for --yes.
+
 Options:
+  -abandon
+    	Abandon the --draft: delete it without a match; a match it was opened from is left untouched
+  -accept-losses
+    	With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost
   -check
     	List the inconsistencies the replay finds (the default)
   -db string
     	Database holding the match or the draft to replay
   -draft int
     	Transcription draft id to replay (requires --db)
+  -edit
+    	Open a draft on the --match (or return the one already open on it), for a correction finished with --finish
+  -finish
+    	Finish the --draft: write its match (or replace the one it was opened from) and release the draft
   -format string
     	Output format: text or json (default "text")
   -mat string
@@ -2870,6 +2887,8 @@ Options:
     	Match id to replay (requires --db)
   -render string
     	Write the transcription back as a .mat file to this path
+  -yes
+    	With --abandon on a draft that never produced a match: confirm that everything typed in it is lost
 
 Examples:
   # List what a .mat file's replay finds
@@ -2884,6 +2903,13 @@ Examples:
   # Replay a match of the library, or a draft being typed
   blunderdb transcribe --db database.db --match 5 --check
   blunderdb transcribe --db database.db --draft 3 --check
+
+  # Correct a match: open a draft on it, then finish it
+  blunderdb transcribe --db database.db --match 5 --edit
+  blunderdb transcribe --db database.db --draft 4 --finish
+
+  # Drop a draft
+  blunderdb transcribe --db database.db --draft 4 --abandon
 ```
 
 ### `blunderdb trash`

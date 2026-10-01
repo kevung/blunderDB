@@ -14,7 +14,7 @@
 
     /**
      * @type {{
-     *     entries?: import('../../../wailsjs/go/models').database.HistoryEntry[],
+     *     entries?: import('../../../wailsjs/go/models').service.HistoryEntry[],
      *     busy?: boolean,
      *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void,
      *     onCancel?: (matchId: string) => void,
@@ -37,7 +37,7 @@
         }
     });
 
-    /** @param {MouseEvent | KeyboardEvent} ev @param {import('../../../wailsjs/go/models').database.HistoryEntry} e */
+    /** @param {MouseEvent | KeyboardEvent} ev @param {import('../../../wailsjs/go/models').service.HistoryEntry} e */
     function onRowMenu(ev, e) {
         const req = menuRequest(ev, () =>
             historyMenu((k, p) => $t(k, p), e, {
@@ -62,7 +62,7 @@
     /**
      * Annuler un match le retire de la salle : on le confirme.
      *
-     * @param {import('../../../wailsjs/go/models').database.HistoryEntry} e
+     * @param {import('../../../wailsjs/go/models').service.HistoryEntry} e
      */
     function cancel(e) {
         if (!window.confirm($t('direction.result.cancelConfirm', { a: e.aName || e.a || '', b: e.bName || e.b || '' }))) return;
@@ -70,7 +70,7 @@
     }
 
     /**
-     * @param {import('../../../wailsjs/go/models').database.HistoryEntry} e
+     * @param {import('../../../wailsjs/go/models').service.HistoryEntry} e
      * @param {string} winner
      * @param {number} scoreA
      * @param {number} scoreB
@@ -98,7 +98,7 @@
 
     /* Ce que la ligne raconte. Chaque sorte d'événement a sa phrase, dans la langue de
        l'utilisateur : le moteur, lui, n'en écrit aucune. */
-    /** @param {import('../../../wailsjs/go/models').database.HistoryEntry} e */
+    /** @param {import('../../../wailsjs/go/models').service.HistoryEntry} e */
     function what(e) {
         switch (e.kind) {
             case 'created':

@@ -27,13 +27,13 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 }));
 vi.mock('../services/transcriptionSave.js', async (importOriginal) => ({
     .../** @type {any} */ (await importOriginal()),
-    saveDraft: vi.fn().mockResolvedValue(null),
+    finishDraft: vi.fn().mockResolvedValue(null),
     exportDraftMat: vi.fn().mockResolvedValue(false)
 }));
 
 import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';
 import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
-import { saveDraft, exportDraftMat } from '../services/transcriptionSave.js';
+import { finishDraft, exportDraftMat } from '../services/transcriptionSave.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, clearTranscription, bumpTranscriptionLibrary } from '../stores/transcriptionStore.js';
@@ -102,7 +102,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('la file des gestes', () => {
-    test("l'enregistrement attend le geste en vol et part du brouillon qu'il a fait", async () => {
+    test("Terminer attend le geste en vol et part du brouillon qu'il a fait", async () => {
         const reply = deferred();
         /** @type {any} */ (ApplyTranscriptionGesture).mockReturnValue(reply.promise);
         await openedPanel();
@@ -112,11 +112,25 @@ describe('la file des gestes', () => {
 
         await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('.primary-btn')));
         await tick();
-        expect(saveDraft).not.toHaveBeenCalled();
+        expect(finishDraft).not.toHaveBeenCalled();
 
         reply.resolve({ id: 1, annotated: annotated(1) });
-        await vi.waitFor(() => expect(saveDraft).toHaveBeenCalledTimes(1));
-        expect(/** @type {any} */ (saveDraft).mock.calls[0][0].annotated.document.actions).toHaveLength(1);
+        await vi.waitFor(() => expect(finishDraft).toHaveBeenCalledTimes(1));
+        expect(/** @type {any} */ (finishDraft).mock.calls[0][0].annotated.document.actions).toHaveLength(1);
+    });
+
+    test("une frappe pendant Terminer n'est pas envoyée au brouillon qu'il libère", async () => {
+        const finishing = deferred();
+        /** @type {any} */ (finishDraft).mockReturnValueOnce(finishing.promise);
+        await openedPanel();
+
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('.primary-btn')));
+        await vi.waitFor(() => expect(finishDraft).toHaveBeenCalledTimes(1));
+        await press('Digit3');
+        await tick();
+        expect(ApplyTranscriptionGesture).not.toHaveBeenCalled();
+
+        finishing.resolve(null);
     });
 
     test("l'export attend le geste en vol", async () => {

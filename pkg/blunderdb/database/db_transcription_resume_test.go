@@ -33,9 +33,9 @@ func TestPendingTranscriptionAnalysis_OffersTheUnfinishedMatch(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
-	saved, err := db.SaveTranscriptionAsMatch(id)
+	saved, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
 	if saved.ToAnalyze == 0 {
 		t.Fatal("the freshly saved match has nothing to analyse; the fixture cannot exercise a resume")
@@ -50,9 +50,8 @@ func TestPendingTranscriptionAnalysis_OffersTheUnfinishedMatch(t *testing.T) {
 	if resume == nil {
 		t.Fatal("a transcribed match with no analysis at all offers no resume")
 	}
-	if resume.MatchID != saved.MatchID || resume.TranscriptionID != id {
-		t.Errorf("resume names draft %d / match %d; the draft is %d and its match %d",
-			resume.TranscriptionID, resume.MatchID, id, saved.MatchID)
+	if resume.MatchID != saved.MatchID {
+		t.Errorf("resume names match %d; the finished draft produced %d", resume.MatchID, saved.MatchID)
 	}
 	if resume.ToAnalyze != saved.ToAnalyze {
 		t.Errorf("resume counts %d positions to analyse, the save counted %d", resume.ToAnalyze, saved.ToAnalyze)
@@ -72,9 +71,9 @@ func TestPendingTranscriptionAnalysis_SaysNothingOnAnAnalysedMatch(t *testing.T)
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
-	saved, err := db.SaveTranscriptionAsMatch(id)
+	saved, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
 	analyseEveryMatchPosition(t, db, saved.MatchID)
 
@@ -103,5 +102,26 @@ func TestPendingTranscriptionAnalysis_IgnoresADraftThatProducedNoMatch(t *testin
 	}
 	if resume != nil {
 		t.Errorf("an unsaved draft offers a resume: %+v", resume)
+	}
+}
+
+// An imported match is the library's to analyse, not the transcription's:
+// the offer never names one, however much of it lacks analysis.
+func TestPendingTranscriptionAnalysis_IgnoresAnImportedMatch(t *testing.T) {
+	db := newTestDB(t)
+	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
+	saved, err := db.FinishTranscription(id)
+	if err != nil {
+		t.Fatalf("FinishTranscription: %v", err)
+	}
+	if _, err := db.db.Exec(`UPDATE match SET file_path = 'imported.xg' WHERE id = ?`, saved.MatchID); err != nil {
+		t.Fatal(err)
+	}
+	resume, err := db.PendingTranscriptionAnalysis()
+	if err != nil {
+		t.Fatalf("PendingTranscriptionAnalysis: %v", err)
+	}
+	if resume != nil {
+		t.Fatalf("an imported match is offered: %+v", resume)
 	}
 }

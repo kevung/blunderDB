@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 02:11+0200\n"
+"POT-Creation-Date: 2026-10-01 02:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1277,9 +1277,11 @@ msgstr "CTRL-ENTER"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Créer le match à partir du brouillon, ou le mettre à jour s'il existe "
-"déjà."
-msgstr "Luo ottelu luonnoksesta, tai päivitä se jos se on jo olemassa."
+"Terminer le brouillon : écrire le match, ou remplacer celui dont il a été"
+" ouvert, et libérer le brouillon."
+msgstr ""
+"Viimeistele luonnos: kirjoita ottelu tai korvaa se, josta luonnos "
+"avattiin, ja vapauta luonnos."
 
 #: ../../source/raccourcis.rst:1
 msgid "i"
@@ -1774,3 +1776,9 @@ msgstr "Sulje ohje."
 
 #~ msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
 #~ msgstr "Näytä/piilota Turnaukset-paneeli turnauksen johtamista varten."
+
+#~ msgid ""
+#~ "Créer le match à partir du "
+#~ "brouillon, ou le mettre à jour "
+#~ "s'il existe déjà."
+#~ msgstr "Luo ottelu luonnoksesta, tai päivitä se jos se on jo olemassa."

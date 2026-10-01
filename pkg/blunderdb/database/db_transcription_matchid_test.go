@@ -10,34 +10,34 @@ import (
 // The Match a draft has produced is a fact about the library, not a gesture:
 // undo and redo walk the draft's own history and must not forget it, or the
 // next save would create a second Match.
-func TestSaveTranscription_MatchIDSurvivesUndoAndRedo(t *testing.T) {
+func TestFinishTranscription_MatchIDSurvivesUndoAndRedo(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
+	first, err := db.FinishTranscription(id)
+	if err != nil {
+		t.Fatalf("FinishTranscription: %v", err)
+	}
+	id = editDraft(t, db, first.MatchID)
 	applyGesture(t, db, id, transcript.Gesture{
 		Kind:   transcript.GestureSetHeader,
 		Header: transcript.Header{Player1: "Alice", Player2: "Bob"},
 	})
-	first, err := db.SaveTranscriptionAsMatch(id)
-	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
-	}
 
 	undone := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureUndo})
 	if got := undone.Annotated.Document.Header.MatchID; got == nil || *got != first.MatchID {
 		t.Fatalf("after undo the draft's match id is %v, want %d", got, first.MatchID)
 	}
-	again, err := db.SaveTranscriptionAsMatch(id)
-	if err != nil {
-		t.Fatalf("second SaveTranscriptionAsMatch: %v", err)
-	}
-	if again.MatchID != first.MatchID || !again.Replaced {
-		t.Fatalf("save after undo: match %d replaced=%v, want match %d replaced", again.MatchID, again.Replaced, first.MatchID)
-	}
-
 	redone := applyGesture(t, db, id, transcript.Gesture{Kind: transcript.GestureRedo})
 	if got := redone.Annotated.Document.Header.MatchID; got == nil || *got != first.MatchID {
 		t.Fatalf("after redo the draft's match id is %v, want %d", got, first.MatchID)
+	}
+	again, err := db.FinishTranscription(id)
+	if err != nil {
+		t.Fatalf("second FinishTranscription: %v", err)
+	}
+	if again.MatchID != first.MatchID || !again.Replaced {
+		t.Fatalf("finish after undo and redo: match %d replaced=%v, want match %d replaced", again.MatchID, again.Replaced, first.MatchID)
 	}
 	if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM match`); n != 1 {
 		t.Fatalf("%d matches in the library, want 1", n)
@@ -46,14 +46,15 @@ func TestSaveTranscription_MatchIDSurvivesUndoAndRedo(t *testing.T) {
 
 // A Match deleted from the library takes the draft back to "never saved": its
 // gestures still write, and the next save creates a Match anew.
-func TestSaveTranscription_DeletedMatchMakesTheDraftUnsaved(t *testing.T) {
+func TestFinishTranscription_DeletedMatchMakesTheDraftUnsaved(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
-	first, err := db.SaveTranscriptionAsMatch(id)
+	first, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
+	id = editDraft(t, db, first.MatchID)
 	if err := db.DeleteMatch(first.MatchID); err != nil {
 		t.Fatalf("DeleteMatch: %v", err)
 	}
@@ -69,9 +70,9 @@ func TestSaveTranscription_DeletedMatchMakesTheDraftUnsaved(t *testing.T) {
 		t.Fatalf("the draft still names match %d after its deletion", *got)
 	}
 
-	again, err := db.SaveTranscriptionAsMatch(id)
+	again, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("save after the match was deleted: %v", err)
+		t.Fatalf("finish after the match was deleted: %v", err)
 	}
 	if again.Replaced || again.MatchID == 0 || again.MatchID == first.MatchID {
 		t.Fatalf("save after deletion: match %d replaced=%v, want a new match", again.MatchID, again.Replaced)
@@ -79,12 +80,8 @@ func TestSaveTranscription_DeletedMatchMakesTheDraftUnsaved(t *testing.T) {
 	if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM match`); n != 1 {
 		t.Fatalf("%d matches in the library, want 1", n)
 	}
-	stored, err := decodeTranscription(readTranscriptionRow(t, db, id))
-	if err != nil {
-		t.Fatalf("decoding the row: %v", err)
-	}
-	if stored.Header.MatchID == nil || *stored.Header.MatchID != again.MatchID {
-		t.Fatalf("the row names match %v, want %d", stored.Header.MatchID, again.MatchID)
+	if n := countTranscriptRows(t, db, `SELECT COUNT(*) FROM transcription`); n != 0 {
+		t.Fatalf("%d draft rows after finishing, want 0", n)
 	}
 }
 
@@ -94,10 +91,11 @@ func TestOpenTranscription_DeletedMatchAcrossSessions(t *testing.T) {
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
-	first, err := db.SaveTranscriptionAsMatch(id)
+	first, err := db.FinishTranscription(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatalf("FinishTranscription: %v", err)
 	}
+	id = editDraft(t, db, first.MatchID)
 	if err := db.DeleteMatch(first.MatchID); err != nil {
 		t.Fatalf("DeleteMatch: %v", err)
 	}
@@ -110,4 +108,14 @@ func TestOpenTranscription_DeletedMatchAcrossSessions(t *testing.T) {
 	if got := state.Annotated.Document.Header.MatchID; got != nil {
 		t.Fatalf("the reopened draft names deleted match %d", *got)
 	}
+}
+
+// editDraft opens a draft on matchID and returns its id.
+func editDraft(t *testing.T, db *Database, matchID int64) int64 {
+	t.Helper()
+	state, err := db.EditMatchTranscription(matchID)
+	if err != nil {
+		t.Fatalf("EditMatchTranscription(%d): %v", matchID, err)
+	}
+	return state.ID
 }

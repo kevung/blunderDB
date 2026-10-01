@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -36,8 +36,8 @@ type ClockView struct {
 }
 
 // Clock returns what the strip shows, at the host's clock.
-func (d *Database) Clock(tournamentID int64) (*ClockView, error) {
-	return d.clockAt(tournamentID, time.Now())
+func (d *Service) Clock(ctx context.Context, tournamentID int64) (*ClockView, error) {
+	return d.ClockAt(ctx, tournamentID, time.Now())
 }
 
 // forecastTTL is how long an estimated end stands while nothing is written: the forecast
@@ -54,10 +54,11 @@ type forecastMemo struct {
 	ok     bool
 }
 
-func (d *Database) estimatedEnd(tournamentID int64, dir *direction.Direction, now time.Time) (time.Time, bool) {
+func (d *Service) estimatedEnd(ctx context.Context, tournamentID int64, dir *direction.Direction, now time.Time) (time.Time, bool) {
 	n := len(dir.Journal())
 	d.forecastMu.Lock()
-	m, hit := d.forecasts[tournamentID]
+	key := forecastKey{d.scope, tournamentID}
+	m, hit := d.forecasts[key]
 	d.forecastMu.Unlock()
 	if hit && m.events == n && !now.Before(m.at) && now.Sub(m.at) < forecastTTL {
 		return m.end, m.ok
@@ -65,17 +66,17 @@ func (d *Database) estimatedEnd(tournamentID int64, dir *direction.Direction, no
 	end, ok := dir.EstimatedEnd(now)
 	d.forecastMu.Lock()
 	if d.forecasts == nil {
-		d.forecasts = map[int64]forecastMemo{}
+		d.forecasts = map[forecastKey]forecastMemo{}
 	}
-	d.forecasts[tournamentID] = forecastMemo{events: n, at: now, end: end, ok: ok}
+	d.forecasts[key] = forecastMemo{events: n, at: now, end: end, ok: ok}
 	d.forecastMu.Unlock()
 	return end, ok
 }
 
-// clockAt is Clock at a given instant, which is what lets a test read the strip of a
+// ClockAt is Clock at a given instant, which is what lets a test read the strip of a
 // five-day tournament on its Wednesday morning.
-func (d *Database) clockAt(tournamentID int64, now time.Time) (*ClockView, error) {
-	dir, err := direction.Open(context.Background(), d.DirectionStore(), tournamentID)
+func (d *Service) ClockAt(ctx context.Context, tournamentID int64, now time.Time) (*ClockView, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +107,7 @@ func (d *Database) clockAt(tournamentID int64, now time.Time) (*ClockView, error
 		v.PlayingSeconds = int(direction.PlayingTime(st, now).Seconds())
 		v.Day = direction.DayOfPlay(start, now)
 	}
-	if end, ok := d.estimatedEnd(tournamentID, dir, now); ok {
+	if end, ok := d.estimatedEnd(ctx, tournamentID, dir, now); ok {
 		v.EstimatedEnd = end.Format(time.RFC3339)
 	}
 	c := st.ClockAt(now, start)

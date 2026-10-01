@@ -41,44 +41,7 @@ source .venv/bin/activate
 scripts/doc-po-update.sh >/dev/null
 
 # 4. Les traductions des deux côtés, reposées par msgid exact (vides ET fuzzy).
-python3 - <<'PY'
-import subprocess, pathlib, json, re
-def entries(t):
-    out = {}
-    for b in t.split('\n\n'):
-        i = re.search(r'^msgid ((?:".*"\n?)+)', b, re.M)
-        s = re.search(r'^msgstr ((?:".*"\n?)+)', b, re.M)
-        if not i or not s: continue
-        d = lambda r: ''.join(re.findall(r'^"(.*)"$', r.strip(), re.M))
-        k, v = d(i.group(1)), d(s.group(1))
-        if k and v: out[k] = v
-    return out
-def wanted(t):
-    """Les msgid qu'il faut (re)poser : msgstr vide, ou entrée fuzzy."""
-    out = set()
-    for b in t.split('\n\n'):
-        i = re.search(r'^msgid ((?:".*"\n?)+)', b, re.M)
-        s = re.search(r'^msgstr ((?:".*"\n?)+)', b, re.M)
-        if not i: continue
-        d = lambda r: ''.join(re.findall(r'^"(.*)"$', r.strip(), re.M))
-        k = d(i.group(1))
-        v = d(s.group(1)) if s else ''
-        if k and (not v or '#, fuzzy' in b): out.add(k)
-    return out
-table = {}
-for p in pathlib.Path('doc/source/locale').rglob('*.po'):
-    path, txt = str(p), p.read_text(encoding='utf-8')
-    need = wanted(txt)
-    if not need: continue
-    for rev in ('HEAD', 'MERGE_HEAD'):
-        r = subprocess.run(['git','show',f'{rev}:{path}'], capture_output=True, text=True)
-        if r.returncode: continue
-        src = entries(r.stdout)
-        for k in need:
-            if k in src: table.setdefault(path, {}).setdefault(k, src[k])
-pathlib.Path('/tmp/merge-fill.json').write_text(json.dumps(table, ensure_ascii=False))
-print(sum(len(v) for v in table.values()), 'traductions reposées')
-PY
+python3 scripts/merge-carry-translations.py /tmp/merge-fill.json
 scripts/po-fill.py /tmp/merge-fill.json >/dev/null
 scripts/doc-i18n-check.sh | tail -1
 

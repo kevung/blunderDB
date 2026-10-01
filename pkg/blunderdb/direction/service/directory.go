@@ -1,4 +1,4 @@
-package database
+package service
 
 import (
 	"context"
@@ -10,7 +10,10 @@ import (
 	"strings"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // The directory: EVERY Participant of EVERY Direction, de-duplicated by name. A DERIVED VIEW,
@@ -42,13 +45,12 @@ type DirectorySource struct {
 }
 
 // Directory rebuilds the directory. Nothing is stored; every call replays the journals.
-func (d *Database) Directory() ([]DirectoryEntry, error) {
-	ctx := context.Background()
-	recs, err := d.DirectionStore().ListDirections(ctx)
+func (d *Service) Directory(ctx context.Context) ([]DirectoryEntry, error) {
+	recs, err := d.dirStore().ListDirections(ctx)
 	if err != nil {
 		return nil, err
 	}
-	names, err := d.tournamentNames()
+	names, err := d.tournamentNames(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -92,13 +94,12 @@ func (d *Database) Directory() ([]DirectoryEntry, error) {
 }
 
 // DirectorySources lists the directed tournaments whose entrants can be taken again.
-func (d *Database) DirectorySources() ([]DirectorySource, error) {
-	ctx := context.Background()
-	recs, err := d.DirectionStore().ListDirections(ctx)
+func (d *Service) DirectorySources(ctx context.Context) ([]DirectorySource, error) {
+	recs, err := d.dirStore().ListDirections(ctx)
 	if err != nil {
 		return nil, err
 	}
-	names, err := d.tournamentNames()
+	names, err := d.tournamentNames(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -124,8 +125,8 @@ func (d *Database) DirectorySources() ([]DirectorySource, error) {
 }
 
 // DirectoryEntrants gives one Direction's entrants, ready to be entered into another.
-func (d *Database) DirectoryEntrants(tournamentID int64) ([]DirectoryEntry, error) {
-	players, err := d.personsOf(context.Background(), tournamentID)
+func (d *Service) DirectoryEntrants(ctx context.Context, tournamentID int64) ([]DirectoryEntry, error) {
+	players, err := d.personsOf(ctx, tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -137,8 +138,8 @@ func (d *Database) DirectoryEntrants(tournamentID int64) ([]DirectoryEntry, erro
 }
 
 // entrantsOf replays one Direction and returns its Participants in entry order.
-func (d *Database) entrantsOf(ctx context.Context, tournamentID int64) ([]tournoi.Player, error) {
-	dir, err := direction.Open(ctx, d.DirectionStore(), tournamentID)
+func (d *Service) entrantsOf(ctx context.Context, tournamentID int64) ([]tournoi.Player, error) {
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -156,14 +157,13 @@ func (d *Database) entrantsOf(ctx context.Context, tournamentID int64) ([]tourno
 }
 
 // tournamentNames indexes the tournaments by id, so a directory line can say where it came from.
-func (d *Database) tournamentNames() (map[int64]Tournament, error) {
-	all, err := d.GetAllTournaments()
-	if err != nil {
-		return nil, err
-	}
-	out := make(map[int64]Tournament, len(all))
-	for _, t := range all {
-		out[t.ID] = t
+func (d *Service) tournamentNames(ctx context.Context) (map[int64]domain.Tournament, error) {
+	out := map[int64]domain.Tournament{}
+	for t, err := range d.st.Tournaments().List(ctx, d.scope, storage.ListOpts{}) {
+		if err != nil {
+			return nil, err
+		}
+		out[t.ID] = *t
 	}
 	return out, nil
 }
@@ -176,8 +176,8 @@ func directoryKey(name string) string {
 }
 
 // DirectoryCSV renders the directory as a CSV the director keeps between seasons.
-func (d *Database) DirectoryCSV() (string, error) {
-	entries, err := d.Directory()
+func (d *Service) DirectoryCSV(ctx context.Context) (string, error) {
+	entries, err := d.Directory(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -243,7 +243,7 @@ type DirectoryImport struct {
 // A name that comes twice in the paste, or that is already entered in tournamentID (0: none),
 // is a warning and is held back from Rows. Names match as the directory matches them: case
 // and surrounding space only.
-func (d *Database) ParseDirectoryCSV(tournamentID int64, body string) (*DirectoryImport, error) {
+func (d *Service) ParseDirectoryCSV(ctx context.Context, tournamentID int64, body string) (*DirectoryImport, error) {
 	out := &DirectoryImport{Rows: []DirectoryEntry{}, Errors: []DirectoryCSVError{}, Skipped: []DirectoryCSVError{}, Warnings: []DirectoryCSVWarning{}}
 	body = strings.TrimPrefix(body, "\ufeff")
 	if strings.TrimSpace(body) == "" {
@@ -251,7 +251,7 @@ func (d *Database) ParseDirectoryCSV(tournamentID int64, body string) (*Director
 	}
 	entered := map[string]bool{}
 	if tournamentID > 0 {
-		players, err := d.personsOf(context.Background(), tournamentID)
+		players, err := d.personsOf(ctx, tournamentID)
 		if err != nil {
 			return nil, err
 		}
