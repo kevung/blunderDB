@@ -557,7 +557,7 @@ Tournament into the entries of the next. It is not an identity: two spellings ar
 A doubles pair appears as its two members, never as a row "A / B".
 _Avoid_: player list, address book, roster (a roster is one Tournament's Participants)
 
-**Rencontre**:
+**Rencontre** (interface: *événement*):
 Several directed Tournaments played on the same tables, on the same dates, by the same
 director — a weekend festival with its main event, its speed and its doubles. It owns the
 tables: their number, their properties (Table, Salle), the output folder and the one wall page
@@ -566,7 +566,11 @@ gesture (a table out of service, a break) is written into every member Direction
 one still replays alone. Two Participants spelled the same in two events of a Rencontre are
 one person for availability: the Rencontre knows they cannot sit at two tables. A Tournament
 belongs to at most one Rencontre and may be attached or detached at any time (ADR-0056).
-_Avoid_: festival (an event's name, not an object), meeting, réunion, event group
+The interface says *événement* (en: *Event*): an *événement* gathers *épreuves*, the two words
+never stand for one another. The technical name stays `rencontre` in code, schema, CLI and
+API, because `event` is already taken there (the SSE stream, a Direction's events).
+_Avoid_: festival (an event's name, not an object), meeting, réunion, event group, épreuve
+(one Tournament of it)
 
 **Table**:
 A numbered place where one match is played. The number is its identity — "table 23" in the
@@ -584,8 +588,8 @@ A named group of the Tables of a Rencontre — "salle A = tables 1–20". It is 
 Table, not an object of its own: a Rencontre whose tables carry no Salle has one implicit Salle
 covering them all. An event of the Rencontre may be restricted to some Salles; it is then
 proposed, moved and swapped only onto their tables. The grid of every table of the Rencontre,
-grouped by Salle, is the view *Toutes les tables* — never "Salle", which names a part of it
-(ADR-0058).
+grouped by Salle, is the view *Toutes les tables* — never "Salle", which names a part of it,
+nor "Événement", which names the panel that manages the Rencontre (ADR-0058).
 _Avoid_: hall (for the whole Rencontre), room, venue, area
 
 ### Players

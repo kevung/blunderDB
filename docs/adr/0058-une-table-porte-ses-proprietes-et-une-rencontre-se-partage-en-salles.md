@@ -72,7 +72,12 @@ salle en est une, au même titre que son nom et sa réservation.
     uniques par Rencontre (ADR-0056 §5, §6) et groupent leurs tables par salle quand des
     salles existent. La vue d'interface qui s'appelait « Salle » devient **Toutes les
     tables** : « salle » désigne désormais une partie de la Rencontre, et la grille les montre
-    toutes ; « Rencontre » désigne déjà le panneau qui la gère.
+    toutes ; « Événement » désigne déjà le panneau qui la gère.
+13. **L'interface dit « événement ».** La Rencontre s'appelle **Événement** dans l'interface,
+    l'aide et la documentation (en : *Event*) : un événement regroupe des épreuves, et les deux
+    mots ne se remplacent jamais l'un l'autre. Le nom technique reste `rencontre` dans le code,
+    le schéma, la CLI (`tournament … --rencontre`) et l'API (`/v1/rencontres.*`), parce que
+    `event` y est déjà pris : le flux SSE `/v1/events`, les événements du journal, `HallEvent`.
 
 ## Conséquences
 
