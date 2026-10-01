@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:22+0200\n"
+"POT-Creation-Date: 2026-10-01 05:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1559,6 +1559,30 @@ msgstr ""
 "``ma1;2`` non è un token (scrivere ``ma1 ma2``)."
 
 #: ../../source/cmd_mode.rst:233
+msgid "Transcrire depuis un terminal"
+msgstr "Trascrivere da un terminale"
+
+#: ../../source/cmd_mode.rst:235
+#, no-python-brace-format
+msgid ""
+"La ligne de commande n'a pas de commande de transcription : les gestes se"
+" tapent dans l'onglet *Transcription*. Hors de l'application, ils passent"
+" par ``blunderdb call`` (:ref:`headless_transcription`), par exemple "
+"``blunderdb call transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` nomme "
+"la révision rendue par l'appel précédent ; chaque appel est sa propre "
+"session, sans ``sessionId`` ni annulation d'un appel à l'autre."
+msgstr ""
+"La riga di comando non ha un comando di trascrizione: i gesti si digitano"
+" nella scheda *Trascrizione*. Fuori dall'applicazione, passano per "
+"``blunderdb call`` (:ref:`headless_transcription`), per esempio "
+"``blunderdb call transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` nomina"
+" la revisione restituita dalla chiamata precedente; ogni chiamata è una "
+"sessione a sé, senza ``sessionId`` né annullamento da una chiamata "
+"all'altra."
+
+#: ../../source/cmd_mode.rst:246
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 

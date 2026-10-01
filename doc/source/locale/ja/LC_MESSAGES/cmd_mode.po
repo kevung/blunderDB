@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:22+0200\n"
+"POT-Creation-Date: 2026-10-01 05:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1485,6 +1485,28 @@ msgstr ""
 " はトークンではありません（``ma1 ma2`` と書きます）。"
 
 #: ../../source/cmd_mode.rst:233
+msgid "Transcrire depuis un terminal"
+msgstr "ターミナルから転記する"
+
+#: ../../source/cmd_mode.rst:235
+#, no-python-brace-format
+msgid ""
+"La ligne de commande n'a pas de commande de transcription : les gestes se"
+" tapent dans l'onglet *Transcription*. Hors de l'application, ils passent"
+" par ``blunderdb call`` (:ref:`headless_transcription`), par exemple "
+"``blunderdb call transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` nomme "
+"la révision rendue par l'appel précédent ; chaque appel est sa propre "
+"session, sans ``sessionId`` ni annulation d'un appel à l'autre."
+msgstr ""
+"コマンドラインに転記用のコマンドはありません。操作は *記譜* タブで入力します。アプリケーションの外では ``blunderdb call`` "
+"(:ref:`headless_transcription`) を使います。例: ``blunderdb call "
+"transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``\\ 。\\ ``--if-match`` "
+"は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
+"はなく、呼び出しをまたいだ取り消しもできません。"
+
+#: ../../source/cmd_mode.rst:246
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

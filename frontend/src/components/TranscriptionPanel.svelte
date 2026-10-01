@@ -353,6 +353,8 @@
         return queue(commands.map(gestureOf).filter(Boolean));
     }
 
+    let conflictEpoch = 0;
+
     /** @param {any[]} gestures sent in order, one round trip each */
     function queue(gestures) {
         if (!gestures.length) return pending;
@@ -363,8 +365,12 @@
         if (busy) return pending;
         const library = transcriptionLibrary();
         const stillOurs = () => draft?.id === id && transcriptionLibrary() === library;
+        // Keystrokes queued before a conflict was answered were typed on the version that
+        // lost: they are dropped, and the message stays until the user's next gesture.
+        const epoch = conflictEpoch;
         pending = pending
             .then(async () => {
+                if (epoch !== conflictEpoch) return;
                 for (const gesture of gestures) {
                     // Le brouillon a changé (un autre ouvert, la base changée) :
                     // ni la suite des gestes ni la réponse ne sont les siennes.
@@ -372,6 +378,13 @@
                     const next = await ApplyTranscriptionGesture(id, gesture);
                     if (!stillOurs()) return;
                     setTranscription(next);
+                    if (next?.conflict) {
+                        // Another writer changed the draft: the gesture was not recorded and the
+                        // draft is redrawn as it now stands.
+                        conflictEpoch++;
+                        error = $t('transcription.conflict');
+                        return;
+                    }
                 }
                 error = '';
             })

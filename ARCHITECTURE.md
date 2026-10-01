@@ -119,7 +119,9 @@ Each package's `doc.go` is the first thing to read; this map only says where to 
 - `pkg/blunderdb/ingest/` (import/export for the daemon), `parser/` (position text),
   `migrate/` (SQLite → PostgreSQL), `server/` (`Bootstrap()` for embedding in gammonGo).
 - Feature packages, pure of SQL: `searchquery/` (the search grammar, locked to the frontend
-  parser by a shared corpus), `transcript/` (Transcription), `direction/` (tournament
+  parser by a shared corpus), `transcript/` (Transcription; `transcription/` is its service
+  on the storage contract — sessions, revision, Finish — and `database/db_transcription*.go`
+  the desktop's façade), `direction/` (tournament
   Direction, the only user of Nicomaque; `direction/service/` runs it and the Rencontre on the
   storage contract for all three modes, `database/direction_facade.go` is the desktop's façade), `anki/` (FSRS), `trash/`, `watch/`, `issuance/`
   (watermark and encrypted export; its glue is `database/db_issuance.go`).

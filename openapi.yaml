@@ -3737,6 +3737,242 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/transcriptions.abandon:
+    post:
+      operationId: transcriptions.abandon
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/transcriptions.apply:
+    post:
+      operationId: transcriptions.apply
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionApplyReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_State"
+                nullable: true
+  /v1/transcriptions.close:
+    post:
+      operationId: transcriptions.close
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionSessionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/transcriptions.create:
+    post:
+      operationId: transcriptions.create
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionCreateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_State"
+                nullable: true
+  /v1/transcriptions.editMatch:
+    post:
+      operationId: transcriptions.editMatch
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcriptionEditResp"
+  /v1/transcriptions.exportMat:
+    post:
+      operationId: transcriptions.exportMat
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcriptionMATResp"
+  /v1/transcriptions.finish:
+    post:
+      operationId: transcriptions.finish
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionSessionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_SaveResult"
+                nullable: true
+  /v1/transcriptions.get:
+    post:
+      operationId: transcriptions.get
+      tags: [transcriptions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/transcriptions.list:
+    post:
+      operationId: transcriptions.list
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/transcription_Summary"
+  /v1/transcriptions.losses:
+    post:
+      operationId: transcriptions.losses
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_Losses"
+                nullable: true
+  /v1/transcriptions.open:
+    post:
+      operationId: transcriptions.open
+      tags: [transcriptions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_State"
+                nullable: true
+  /v1/transcriptions.redo:
+    post:
+      operationId: transcriptions.redo
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionSessionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_State"
+                nullable: true
+  /v1/transcriptions.undo:
+    post:
+      operationId: transcriptions.undo
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionSessionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_State"
+                nullable: true
   /v1/trash.count:
     post:
       operationId: trash.count
@@ -4873,6 +5109,69 @@ components:
     tournoi_Player:
       type: object
       description: "Opaque: see the Go type tournoi.Player (defined outside internal/server, not expanded here)."
+    transcript_Gesture:
+      type: object
+      description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."
+    transcript_Header:
+      type: object
+      description: "Opaque: see the Go type transcript.Header (defined outside internal/server, not expanded here)."
+    transcriptionApplyReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        sessionId:
+          type: string
+        gesture:
+          $ref: "#/components/schemas/transcript_Gesture"
+    transcriptionCreateReq:
+      type: object
+      properties:
+        header:
+          $ref: "#/components/schemas/transcript_Header"
+    transcriptionEditResp:
+      type: object
+      properties:
+        state:
+          $ref: "#/components/schemas/transcription_State"
+          nullable: true
+        losses:
+          $ref: "#/components/schemas/transcription_Losses"
+          nullable: true
+    transcriptionIDReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+    transcriptionMATResp:
+      type: object
+      properties:
+        text:
+          type: string
+        filename:
+          type: string
+    transcriptionSessionReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        sessionId:
+          type: string
+    transcription_Losses:
+      type: object
+      description: "Opaque: see the Go type transcription.Losses (defined outside internal/server, not expanded here)."
+    transcription_SaveResult:
+      type: object
+      description: "Opaque: see the Go type transcription.SaveResult (defined outside internal/server, not expanded here)."
+    transcription_State:
+      type: object
+      description: "Opaque: see the Go type transcription.State (defined outside internal/server, not expanded here)."
+    transcription_Summary:
+      type: object
+      description: "Opaque: see the Go type transcription.Summary (defined outside internal/server, not expanded here)."
     trashEmptyReq:
       type: object
       properties:

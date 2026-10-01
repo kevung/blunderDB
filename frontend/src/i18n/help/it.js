@@ -2439,6 +2439,8 @@ export default {
 </tbody>
 </table>
 <p>I valori <code>pl</code>, <code>m</code> e <code>t</code> si aprono con le virgolette o un apostrofo e si chiudono con l'uno o l'altro. Un token che conserva una virgoletta senza formare un valore completo viene ignorato, e <code>blunderdb search --query</code> lo segnala. Un tag può contenere un apostrofo (<code>#l'ouverture</code>), mai le virgolette. Il punto e virgola è il separatore delle liste di identificatori e di tag: non compare in nessun valore, e <code>ma1;2</code> non è un token (scrivere <code>ma1 ma2</code>).</p>
+<h3>Trascrivere da un terminale</h3>
+<p>La riga di comando non ha un comando di trascrizione: i gesti si digitano nella scheda <em>Trascrizione</em>. Fuori dall'applicazione, passano per <code>blunderdb call</code> (Trascrivere tramite l'API), per esempio <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nomina la revisione restituita dalla chiamata precedente; ogni chiamata è una sessione a sé, senza <code>sessionId</code> né annullamento da una chiamata all'altra.</p>
 <h3>Comandi vari</h3>
 <table>
 <thead>

@@ -34,9 +34,22 @@ func newPostgresTestServer(t *testing.T) *httptest.Server {
 	return ts
 }
 
+// newPostgresTestServerWith is newPostgresTestServer with options of the
+// test's own (a write family switched on, say).
+func newPostgresTestServerWith(t *testing.T, opt func(*Options)) *httptest.Server {
+	t.Helper()
+	ts, _ := newPostgresTestServerAndHandlerWith(t, opt)
+	return ts
+}
+
 // newPostgresTestServerAndHandler is newPostgresTestServer for a test that
 // seeds the storage beside the daemon.
 func newPostgresTestServerAndHandler(t *testing.T) (*httptest.Server, *Server) {
+	t.Helper()
+	return newPostgresTestServerAndHandlerWith(t, func(*Options) {})
+}
+
+func newPostgresTestServerAndHandlerWith(t *testing.T, opt func(*Options)) (*httptest.Server, *Server) {
 	t.Helper()
 	ctx := context.Background()
 
@@ -62,11 +75,13 @@ func newPostgresTestServerAndHandler(t *testing.T) (*httptest.Server, *Server) {
 	}
 	t.Cleanup(func() { st.Close() })
 
-	srv, err := New(Options{
+	o := Options{
 		Storage:       st,
 		Metrics:       metrics.New(),
 		EnableMetrics: true,
-	})
+	}
+	opt(&o)
+	srv, err := New(o)
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

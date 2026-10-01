@@ -148,9 +148,7 @@ func TestFinishTranscription_CreatesThenEditReplacesInPlace(t *testing.T) {
 	// each of which is a full Replay and a row write; the gesture itself goes
 	// through the ordinary path.
 	at := lastPlayedAction(t, state)
-	db.transcriptMu.Lock()
-	db.transcriptSessions[id].Doc.Cursor = at
-	db.transcriptMu.Unlock()
+	db.withSession(id, func(ed *transcript.Editor) { ed.Doc.Cursor = at })
 	if _, err := db.ApplyTranscriptionGesture(id, transcript.Gesture{Kind: transcript.GestureFlipSide}); err != nil {
 		t.Fatalf("flip_side: %v", err)
 	}
@@ -231,10 +229,11 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 	// The one header a Match cannot carry: there is no match.transcriber
 	// column (domain.Match says so), so a draft naming its transcriber exports
 	// one line the saved Match cannot. Cleared here, and asserted below.
-	db.transcriptMu.Lock()
-	transcriber := db.transcriptSessions[id].Doc.Header.Transcriber
-	db.transcriptSessions[id].Doc.Header.Transcriber = ""
-	db.transcriptMu.Unlock()
+	var transcriber string
+	db.withSession(id, func(ed *transcript.Editor) {
+		transcriber = ed.Doc.Header.Transcriber
+		ed.Doc.Header.Transcriber = ""
+	})
 	if transcriber == "" {
 		t.Fatal("the fixture is meant to name a transcriber")
 	}
@@ -260,9 +259,7 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 
 	// The transcriber line is the draft's alone, and it is there when the
 	// header names one.
-	db.transcriptMu.Lock()
-	db.transcriptSessions[id].Doc.Header.Transcriber = transcriber
-	db.transcriptMu.Unlock()
+	db.withSession(id, func(ed *transcript.Editor) { ed.Doc.Header.Transcriber = transcriber })
 	withTranscriber, err := db.TranscriptionMAT(id)
 	if err != nil {
 		t.Fatalf("TranscriptionMAT: %v", err)

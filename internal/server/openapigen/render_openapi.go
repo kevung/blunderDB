@@ -61,6 +61,9 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	if r.IdempotencyKeySupported {
 		b.WriteString("      x-idempotency-key: true\n")
 	}
+	if r.IfMatchRequired {
+		b.WriteString("      x-if-match: required\n")
+	}
 	if r.Kind == kindStream {
 		b.WriteString("      x-streaming: true\n")
 	}

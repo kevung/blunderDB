@@ -66,14 +66,23 @@ func writePythonMethod(b *strings.Builder, r Route, name string) {
 	}
 
 	args := "self, payload: Optional[dict] = None"
+	var kw, pass []string
+	if r.IfMatchRequired {
+		kw = append(kw, "if_match: int")
+		pass = append(pass, "if_match=if_match")
+	}
 	if r.IdempotencyKeySupported {
-		args += ", *, idempotency_key: Optional[str] = None"
+		kw = append(kw, "idempotency_key: Optional[str] = None")
+		pass = append(pass, "idempotency_key=idempotency_key")
+	}
+	if len(kw) > 0 {
+		args += ", *, " + strings.Join(kw, ", ")
 	}
 
 	fmt.Fprintf(b, "\n    def %s(%s) -> %s:\n", name, args, ret)
 	fmt.Fprintf(b, "        %s\n", pythonDocstring(r))
-	if r.IdempotencyKeySupported {
-		fmt.Fprintf(b, "        return self._%s(%q, payload, idempotency_key=idempotency_key)\n", callVerb(stream), r.Pattern)
+	if len(pass) > 0 {
+		fmt.Fprintf(b, "        return self._%s(%q, payload, %s)\n", callVerb(stream), r.Pattern, strings.Join(pass, ", "))
 		return
 	}
 	fmt.Fprintf(b, "        return self._%s(%q, payload)\n", callVerb(stream), r.Pattern)
@@ -97,8 +106,11 @@ func pythonDocstring(r Route) string {
 		shape = "hand-written handler — see openapi.yaml"
 	}
 	extra := ""
+	if r.IfMatchRequired {
+		extra += " Requires If-Match: the draft's revision."
+	}
 	if r.IdempotencyKeySupported {
-		extra = " Accepts an Idempotency-Key."
+		extra += " Accepts an Idempotency-Key."
 	}
 	return fmt.Sprintf("%q", fmt.Sprintf("%s %s — %s.%s", r.Method, r.Pattern, shape, extra))
 }

@@ -62,6 +62,23 @@ type Options struct {
 	// (ADR-0005), and these routes enter results. Without it they answer 404,
 	// as absent; the reads are served either way.
 	EnableDirection bool
+	// Transcription serves the transcription gestures (create, open, apply,
+	// undo, redo, close, finish, abandon, editMatch; ADR-0057 rule 5). OFF by
+	// default for the reason EnableWebUI is: writing through a daemon that
+	// authenticates nobody is the operator's decision. The reads are served
+	// either way.
+	Transcription bool
+
+	// SessionPerCall lets a transcription gesture name no session: it then
+	// uses the draft's live session or opens one. Right for `call`, where
+	// every invocation is its own process and no session outlives it; over
+	// HTTP a gesture without its session is refused (400), so a client whose
+	// session expired is told (410) rather than handed a new one silently.
+	SessionPerCall bool
+
+	// TranscriptionTTL closes a transcription session idle for longer; its
+	// undo stack goes, nothing typed does. 0 means 30 minutes.
+	TranscriptionTTL time.Duration
 
 	// CORSAllowOrigin enables CORS for the given origin(s): "*", or a
 	// comma-separated list of exact origins (each one echoed back only to a

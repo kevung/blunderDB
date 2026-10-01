@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -65,6 +66,8 @@ type serveConfig struct {
 	enableMetrics  bool
 	enableWebUI    bool
 	enableDir      bool
+	transcription  bool
+	transcriptTTL  time.Duration
 	corsOrigin     string
 	rateLimitRPS   float64
 	rateLimitBurst int
@@ -102,6 +105,8 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableMetrics = fs.Bool("metrics", envBoolOr("BLUNDERDB_METRICS", true), "expose /metrics (Prometheus)")
 		enableWebUI   = fs.Bool("web", envBoolOr("BLUNDERDB_WEB", false), "serve the read-mostly web page under /app/ (off by default: this daemon authenticates nobody — see ADR-0005)")
 		enableDir     = fs.Bool("direction", envBoolOr("BLUNDERDB_DIRECTION", false), "serve the gestures of a tournament Direction and of a Rencontre — results, pairings, rooms (off by default: this daemon authenticates nobody, so put a proxy that does in front — see ADR-0005, ADR-0057)")
+		transcribe    = fs.Bool("transcription", envBoolOr("BLUNDERDB_TRANSCRIPTION", false), "serve the transcription gestures (off by default: this daemon authenticates nobody — see ADR-0005, ADR-0057)")
+		transcriptTTL = fs.Duration("transcription-ttl", defaultTranscriptionTTL, "close a transcription session idle for longer (its undo stack goes, nothing typed does)")
 		corsOrigin    = fs.String("cors-allow-origin", envOr("BLUNDERDB_CORS_ALLOW_ORIGIN", ""), "enable CORS for this origin, a comma-separated list of origins, or \"*\" (off by default)")
 		rateLimitRPS  = fs.Float64("rate-limit-rps", envFloatOr("BLUNDERDB_RATE_LIMIT_RPS", defaultRateLimitRPS),
 			fmt.Sprintf("per-tenant sustained requests/second (0 = disabled; default %d, generous headroom for real traffic)", defaultRateLimitRPS))
@@ -130,6 +135,8 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableMetrics:  *enableMetrics,
 		enableWebUI:    *enableWebUI,
 		enableDir:      *enableDir,
+		transcription:  *transcribe,
+		transcriptTTL:  *transcriptTTL,
 		corsOrigin:     *corsOrigin,
 		rateLimitRPS:   *rateLimitRPS,
 		rateLimitBurst: *rateLimitBurst,
@@ -205,17 +212,19 @@ func RunServe(args []string) error {
 		OpsAddr: cfg.opsAddr,
 		// SQLite has no tenant column: serving several tenants from it would
 		// hand them all the same rows.
-		SingleTenant:    cfg.backend == "sqlite",
-		Storage:         st,
-		Logger:          logger,
-		Metrics:         metrics.New(),
-		EnableMetrics:   cfg.enableMetrics,
-		EnableWebUI:     cfg.enableWebUI,
-		EnableDirection: cfg.enableDir,
-		CORSAllowOrigin: cfg.corsOrigin,
-		RateLimitRPS:    cfg.rateLimitRPS,
-		RateLimitBurst:  cfg.rateLimitBurst,
-		Identity:        identity,
+		SingleTenant:     cfg.backend == "sqlite",
+		Storage:          st,
+		Logger:           logger,
+		Metrics:          metrics.New(),
+		EnableMetrics:    cfg.enableMetrics,
+		EnableWebUI:      cfg.enableWebUI,
+		EnableDirection:  cfg.enableDir,
+		Transcription:    cfg.transcription,
+		TranscriptionTTL: cfg.transcriptTTL,
+		CORSAllowOrigin:  cfg.corsOrigin,
+		RateLimitRPS:     cfg.rateLimitRPS,
+		RateLimitBurst:   cfg.rateLimitBurst,
+		Identity:         identity,
 	})
 	if err != nil {
 		return err

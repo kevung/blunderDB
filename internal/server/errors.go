@@ -8,6 +8,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
 // Error codes. This is a near-closed set — external clients depend on it.
@@ -18,6 +19,9 @@ const (
 	CodeInvalid     = "invalid"
 	CodeInternal    = "internal"
 	CodeRateLimited = "rate_limited"
+	// CodeGone: the transcription session the request names expired or was
+	// never this instance's; reopen the draft (410).
+	CodeGone = "gone"
 	// CodePreconditionRequired: a gesture that writes named no revision in
 	// If-Match (428).
 	CodePreconditionRequired = "precondition_required"
@@ -47,6 +51,8 @@ func statusForCode(code string) int {
 		return http.StatusBadRequest
 	case CodeRateLimited:
 		return http.StatusTooManyRequests
+	case CodeGone:
+		return http.StatusGone
 	case CodePreconditionRequired:
 		return http.StatusPreconditionRequired
 	default:
@@ -57,6 +63,8 @@ func statusForCode(code string) int {
 // codeForErr maps a storage sentinel error to an API error code.
 func codeForErr(err error) string {
 	switch {
+	case errors.Is(err, transcription.ErrSessionGone):
+		return CodeGone
 	case errors.Is(err, storage.ErrNotFound), errors.Is(err, direction.ErrNoDirection):
 		// A Tournament that was never directed has no Direction to read.
 		return CodeNotFound
@@ -120,14 +128,21 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 		}
 		msg = internalErrorMessage
 	}
-	return errorBody{Code: code, Message: msg}
+	body := errorBody{Code: code, Message: msg}
+	// An error that knows more than its message (a conflict's current
+	// revision) hands it over as details.
+	var d interface{ ErrorDetails() map[string]any }
+	if code != CodeInternal && errors.As(err, &d) {
+		body.Details = d.ErrorDetails()
+	}
+	return body
 }
 
 // writeStorageError maps a storage error onto the envelope — errorBodyFor's
 // masking, then the matching HTTP status.
 func writeStorageError(w http.ResponseWriter, err error) {
 	body := errorBodyFor(w, err)
-	writeErrorCode(w, body.Code, body.Message)
+	writeErrorDetails(w, body.Code, body.Message, body.Details)
 }
 
 // writeDecodeError reports a request body that could not be read as `what`

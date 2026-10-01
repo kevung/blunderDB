@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:22+0200\n"
+"POT-Creation-Date: 2026-10-01 05:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1542,6 +1542,30 @@ msgstr ""
 "токеном (пишите ``ma1 ma2``)."
 
 #: ../../source/cmd_mode.rst:233
+msgid "Transcrire depuis un terminal"
+msgstr "Запись из терминала"
+
+#: ../../source/cmd_mode.rst:235
+#, no-python-brace-format
+msgid ""
+"La ligne de commande n'a pas de commande de transcription : les gestes se"
+" tapent dans l'onglet *Transcription*. Hors de l'application, ils passent"
+" par ``blunderdb call`` (:ref:`headless_transcription`), par exemple "
+"``blunderdb call transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` nomme "
+"la révision rendue par l'appel précédent ; chaque appel est sa propre "
+"session, sans ``sessionId`` ni annulation d'un appel à l'autre."
+msgstr ""
+"В командной строке нет команды транскрипции: жесты набираются на вкладке "
+"*Запись*. Вне приложения они идут через ``blunderdb call`` "
+"(:ref:`headless_transcription`), например ``blunderdb call "
+"transcriptions.apply --db base.db --if-match 3 --json "
+"'{\"id\":1,\"gesture\":{\"Kind\":\"validate\"}}'``. ``--if-match`` "
+"называет ревизию, возвращённую предыдущим вызовом; каждый вызов — "
+"отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
+"другому."
+
+#: ../../source/cmd_mode.rst:246
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

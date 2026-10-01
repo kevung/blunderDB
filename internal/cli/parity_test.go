@@ -52,16 +52,16 @@ const (
 	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
-	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture, and its draft never leaves the library it names two players of: the daemon exposes nothing of it (ADR-0045 rule 9, ADR-0039), and the CLI's `transcribe` REPLAYS a transcription rather than typing one — it reads a document and never writes a gesture into one; it finishes, abandons or opens one on a match through the panel's own methods"
-	// whyTranscriptionMAT: the panel's ".mat text" pane renders a DRAFT held
-	// in the desktop session, not a saved Match — `export --type mat` and
-	// /v1/matches.exportMat render the other object, so neither covers this.
+	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture: the CLI's `transcribe` REPLAYS a transcription rather than typing one — it reads a document and never writes a gesture into one; it finishes, abandons or opens one on a match through the panel's own methods. A script types gestures through `call transcriptions.*`, the daemon's routes (ADR-0057), so no write sub-command is added"
+	// whyTranscriptionMAT: the .mat text of a DRAFT, not of a saved Match —
+	// `export --type mat` renders the other object; a script reads it from
+	// `call transcriptions.exportMat`.
 	whyTranscriptionMAT = whyTranscription
-	whyResumeOffer      = "the offer the desktop makes when a library is opened: a transcribed match whose targeted batch was cut short (ADR-0045 §8). Nothing is stored for it, so the fact exists only at the moment someone opens the library, which is a question only an interactive session asks. The other two modes have the DEED without the offer — `analyze --match` finishes exactly that batch — and the daemon exposes nothing of a transcription (ADR-0045 §9, ADR-0039)"
+	whyResumeOffer      = "the offer the desktop makes when a library is opened: a transcribed match whose targeted batch was cut short (ADR-0045 §8). Nothing is stored for it, so the fact exists only at the moment someone opens the library, which is a question only an interactive session asks. The other two modes have the DEED without the offer — `analyze --match` finishes exactly that batch, and a client of the daemon reads `toAnalyze` from transcriptions.finish"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
-	whyMatchScoped      = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8), which `serve` exposes nothing of (ADR-0045 §9, ADR-0039); a client of the daemon asks for the library sweep it already has"
+	whyMatchScoped      = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8); a client of the daemon asks for the library sweep it already has"
 	whyCtxVariant       = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
 	whySearchIndex      = "a navigation aid of the director's console: it feeds the GUI palette so a director reaches a player, a table or an event in one gesture; the CLI and the daemon have the same data in `tournament` and expose nothing of the console (whyDirection)"
 	whyDirection        = "a Direction is what a tournament DIRECTOR decided while running a tournament (ADR-0047). The daemon serves its reads (/v1/directions.*, /v1/rencontres.*, ADR-0057) and, under `serve --direction` and `call`, its gestures (whyDirectionGesture); this method is neither, a tool of the director's console; the CLI's `tournament` subcommand — list, verify, standings, page, export, move, deliberately non-interactive since Nicomaque ships its own TD console — is the other headless face. This accessor hands out the persistence the direction package runs on; it carries no capability of its own"
@@ -103,6 +103,12 @@ var serverOnly = map[string]string{
 	"/v1/imports.json":                    whyTransport,
 	"/v1/gammonnet.analyzeMissing.cancel": whyTransport,
 	"/v1/search.query":                    whyTransport,
+	// get: a remote client reads a draft back after a 409, the desktop holds
+	// it in its session; undo/redo: the desktop sends them through
+	// ApplyTranscriptionGesture (/v1/transcriptions.apply) as gesture kinds.
+	"/v1/transcriptions.get":  whyTransport,
+	"/v1/transcriptions.redo": whyTransport,
+	"/v1/transcriptions.undo": whyTransport,
 
 	// Backend-specific, and the wrapper is SQLite-only.
 	"/ops/tenant.purge": whyPostgresOnly,
@@ -199,18 +205,18 @@ var databaseParity = map[string]parityEntry{
 	"GetStatsDateRange":                 {Server: "/v1/stats.dateRange", Why: "bounds of the GUI's date picker; the CLI takes --from/--to as given"},
 	"GetTournamentMatches":              {CLI: "list --type tournaments", Server: "/v1/tournaments.matches"},
 	"ExplainDecision":                   {Server: "/v1/positions.explain", Why: whyExplain},
-	"ListTranscriptions":                {Why: whyTranscription},
-	"CreateTranscription":               {Why: whyTranscription},
-	"OpenTranscription":                 {CLI: "transcribe --draft", Why: whyTranscription},
-	"CloseTranscription":                {Why: whyTranscription},
-	"ApplyTranscriptionGesture":         {Why: whyTranscription},
-	"TranscriptionMAT":                  {Why: whyTranscriptionMAT},
-	"FinishTranscription":               {CLI: "transcribe --finish", Why: whyTranscription},
-	"AbandonTranscription":              {CLI: "transcribe --abandon", Why: whyTranscription},
-	"EditMatchTranscription":            {CLI: "transcribe --edit", Why: whyTranscription},
-	"MatchTranscriptionLosses":          {CLI: "transcribe --edit", Why: whyTranscription},
+	"ListTranscriptions":                {Server: "/v1/transcriptions.list", Why: whyTranscription},
+	"CreateTranscription":               {Server: "/v1/transcriptions.create", Why: whyTranscription},
+	"OpenTranscription":                 {Server: "/v1/transcriptions.open", CLI: "transcribe --draft", Why: whyTranscription},
+	"CloseTranscription":                {Server: "/v1/transcriptions.close", Why: whyTranscription},
+	"ApplyTranscriptionGesture":         {Server: "/v1/transcriptions.apply", Why: whyTranscription},
+	"TranscriptionMAT":                  {Server: "/v1/transcriptions.exportMat", Why: whyTranscriptionMAT},
+	"FinishTranscription":               {Server: "/v1/transcriptions.finish", CLI: "transcribe --finish", Why: whyTranscription},
+	"AbandonTranscription":              {Server: "/v1/transcriptions.abandon", CLI: "transcribe --abandon", Why: whyTranscription},
+	"EditMatchTranscription":            {Server: "/v1/transcriptions.editMatch", CLI: "transcribe --edit", Why: whyTranscription},
+	"MatchTranscriptionLosses":          {Server: "/v1/transcriptions.losses", CLI: "transcribe --edit", Why: whyTranscription},
 	"ExportTranscriptionMAT":            {Why: whyTranscription},
-	"SuggestTranscriptionMatFilename":   {Why: whyTranscription},
+	"SuggestTranscriptionMatFilename":   {Server: "/v1/transcriptions.exportMat", Why: whyTranscription},
 	"PendingTranscriptionAnalysis":      {Why: whyResumeOffer},
 	"GradeQuizChecker":                  {Server: "/v1/quiz.gradeChecker", Why: whyQuiz},
 	"GradeQuizCheckerMove":              {Server: "/v1/quiz.gradeCheckerMove", Why: whyQuiz},
@@ -417,7 +423,7 @@ func serverPaths(t *testing.T) map[string]bool {
 	}
 	t.Cleanup(func() { st.Close() })
 	// The gestures of a Direction are counted: `call` serves them, and so does `serve --direction`.
-	srv, err := server.New(server.Options{Storage: st, Logger: slog.New(slog.DiscardHandler), EnableDirection: true})
+	srv, err := server.New(server.Options{Storage: st, Logger: slog.New(slog.DiscardHandler), EnableDirection: true, Transcription: true})
 	if err != nil {
 		t.Fatalf("server.New: %v", err)
 	}

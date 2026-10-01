@@ -80,6 +80,9 @@ func GenerateAPIReferenceRST(model *Model) string {
 				line += "  (Idempotency-Key)"
 				idempotentCount++
 			}
+			if r.IfMatchRequired {
+				line += "  (If-Match)"
+			}
 			if r.Conditional {
 				line += "  (ETag)"
 			}

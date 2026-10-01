@@ -2439,6 +2439,8 @@ export default {
 </tbody>
 </table>
 <p>Les valeurs <code>pl</code>, <code>m</code> et <code>t</code> s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et <code>blunderdb search --query</code> le signale. Un tag peut contenir une apostrophe (<code>#l'ouverture</code>), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et <code>ma1;2</code> n'est pas un jeton (écrire <code>ma1 ma2</code>).</p>
+<h3>Transcrire depuis un terminal</h3>
+<p>La ligne de commande n'a pas de commande de transcription : les gestes se tapent dans l'onglet <em>Transcription</em>. Hors de l'application, ils passent par <code>blunderdb call</code> (Transcrire par l'API), par exemple <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nomme la révision rendue par l'appel précédent ; chaque appel est sa propre session, sans <code>sessionId</code> ni annulation d'un appel à l'autre.</p>
 <h3>Commandes diverses</h3>
 <table>
 <thead>

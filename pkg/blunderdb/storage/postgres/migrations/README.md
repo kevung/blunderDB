@@ -192,3 +192,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   skips it. A fresh bootstrap holds no game to convert, so its run is a no-op.
   Lifts FORCEd RLS on the three tables it
   reads for the statement, since the migrating connection carries no tenant.
+- `029_transcription_revision.sql` — `transcription.revision`, the version a
+  transcription gesture names (ADR-0057 rule 4): incremented at every write,
+  compared in the write's own statement, a column so that it is read without
+  decoding the document. Existing rows start at 1. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.27.0.

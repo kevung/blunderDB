@@ -59,7 +59,7 @@ func RunCall(args []string) error {
 		jsonBody = fs.String("json", "{}", "request body as JSON")
 		jsonFile = fs.String("json-file", "", "read the request body from a file instead of --json")
 		list     = fs.Bool("list", false, "list every available <family>.<method> and exit")
-		ifMatch  = fs.String("if-match", "", "version a gesture of a Direction or a Rencontre was decided on, sent as If-Match: the Direction-Version a read printed on stderr")
+		ifMatch  = fs.String("if-match", "", "version a gesture of a Direction, a Rencontre or a transcription was decided on, sent as If-Match: the Direction-Version a read printed on stderr")
 	)
 	if err := fs.Parse(rest); err != nil {
 		return err
@@ -93,8 +93,10 @@ func RunCall(args []string) error {
 		return fmt.Errorf("call: migrate: %w", err)
 	}
 
-	// A local process, like the CLI: the gestures of a Direction are served (ADR-0057).
-	srv, err := New(Options{Storage: st, EnableDirection: true})
+	// A local process with the file in hand writes as the CLI does: the
+	// transcription gestures are served, unlike on a daemon (ADR-0057 rule 5).
+	// The gestures of a Direction are served too.
+	srv, err := New(Options{Storage: st, EnableDirection: true, Transcription: true, SessionPerCall: true})
 	if err != nil {
 		return err
 	}

@@ -2439,6 +2439,8 @@ export default {
 </tbody>
 </table>
 <p>Die Werte <code>pl</code>, <code>m</code> und <code>t</code> beginnen mit einem Anführungszeichen oder einem Apostroph und enden mit einem der beiden. Ein Token, das ein Anführungszeichen behält, ohne einen vollständigen Wert zu bilden, wird ignoriert, und <code>blunderdb search --query</code> meldet es. Ein Tag darf einen Apostroph enthalten (<code>#l'ouverture</code>), nie ein Anführungszeichen. Das Semikolon trennt Bezeichner- und Tag-Listen: Es kommt in keinem Wert vor, und <code>ma1;2</code> ist kein Token (<code>ma1 ma2</code> schreiben).</p>
+<h3>Von einem Terminal aus transkribieren</h3>
+<p>Die Kommandozeile hat keinen Transkriptionsbefehl: Die Züge werden in der Registerkarte <em>Transkription</em> eingegeben. Außerhalb der Anwendung laufen sie über <code>blunderdb call</code> (Transkribieren über die API), zum Beispiel <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nennt die vom vorherigen Aufruf gelieferte Revision; jeder Aufruf ist eine eigene Sitzung, ohne <code>sessionId</code> und ohne Rückgängigmachen von einem Aufruf zum nächsten.</p>
 <h3>Verschiedene Befehle</h3>
 <table>
 <thead>

@@ -1074,6 +1074,7 @@
         "training": "Training"
     },
     "transcription": {
+        "conflict": "The draft was changed elsewhere: it has been reloaded as it now stands, and the undo history was reset.",
         "title": "Transcriptions",
         "new": "New transcription",
         "newTooltip": "Create a draft of a match to transcribe",

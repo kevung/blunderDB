@@ -108,6 +108,14 @@ var customContentTypes = map[string][]string{
 	"/v1/rencontres.setTableOutOfService": {"application/json"},
 	"/v1/rencontres.setBreaks":            {"application/json"},
 	"/v1/anki.reviewCard":                 {"application/json"},
+	// The transcription gestures, wrapped with withIdempotency and withIfMatch
+	// for the same reason; get is hand-written for its ETag and 304.
+	"/v1/transcriptions.get":     {"application/json"},
+	"/v1/transcriptions.apply":   {"application/json"},
+	"/v1/transcriptions.undo":    {"application/json"},
+	"/v1/transcriptions.redo":    {"application/json"},
+	"/v1/transcriptions.finish":  {"application/json"},
+	"/v1/transcriptions.abandon": {"application/json"},
 }
 
 // smokeServer builds the Server (not just the httptest wrapper) so the test
@@ -121,6 +129,8 @@ func smokeServer(t *testing.T) (*Server, *httptest.Server) {
 	t.Cleanup(func() { st.Close() })
 	srv, err := New(Options{
 		Storage: st,
+		// Every route is probed, the write families' included.
+		Transcription: true,
 		// The probe deliberately trips validation on every route; the
 		// request log would drown the failures that matter.
 		Logger:          slog.New(slog.DiscardHandler),

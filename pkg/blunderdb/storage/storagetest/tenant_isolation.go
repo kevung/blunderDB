@@ -30,6 +30,7 @@ type tenantIsolationCase struct {
 
 var tenantIsolationCases = []tenantIsolationCase{
 	{"Position", checkPositionIsolation},
+	{"TranscriptionRevision", checkTranscriptionRevisionIsolation},
 	{"Analysis", checkAnalysisIsolation},
 	{"Collection", checkCollectionIsolation},
 	{"Tournament", checkTournamentIsolation},

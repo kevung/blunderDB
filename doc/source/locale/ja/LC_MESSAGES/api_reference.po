@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 04:15+0200\n"
+"POT-Creation-Date: 2026-10-01 05:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,35 +41,35 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:226
+#: ../../source/api_reference.rst:240
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:228
+#: ../../source/api_reference.rst:242
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et ``positions.save`` (comme le reste "
 "de ``positions.*``) est naturellement idempotente grâce au hachage "
 "Zobrist du contenu — enregistrer deux fois la même position renvoie la "
-"même ligne, jamais un doublon. 3 méthodes n'ont pas cette propriété (deux"
+"même ligne, jamais un doublon. 8 méthodes n'ont pas cette propriété (deux"
 " appels sont deux effets distincts) et acceptent un en-tête "
 "``Idempotency-Key`` optionnel : un appel rejoué avec la même clé renvoie "
 "le résultat de la première tentative au lieu de répéter son effet — voir "
 "la marque « (Idempotency-Key) » dans le tableau ci-dessus. Aucune autre "
 "méthode n'a besoin ou n'accepte cet en-tête."
 msgstr ""
-"ほとんどのメソッドには特別な仕組みは一切必要ありません。読み取りには副作用がなく、\\ ``positions.save``\\ (他の "
-"``positions.*``\\ と同様)は Zobrist コンテンツハッシュのおかげで本質的に冪等です — "
-"同じポジションを2回保存しても同じ行が返され、重複が生じることはありません。この性質を持たないメソッドが3つあり(2回の呼び出しは2つの異なる効果になります)、任意の"
+"ほとんどのメソッドには特別な仕組みは一切必要ありません。読み取りには副作用がなく、\\ ``positions.save``\\ （他の "
+"``positions.*``\\ と同様）は Zobrist コンテンツハッシュのおかげで本質的に冪等です — "
+"同じポジションを2回保存しても同じ行が返され、重複が生じることはありません。この性質を持たないメソッドが8つあり(2回の呼び出しは2つの異なる効果になります)、任意の"
 " ``Idempotency-Key`` "
 "ヘッダーを受け付けます。同じキーで再試行された呼び出しは、その効果を繰り返す代わりに最初の試行の結果を返します — 上記の表の"
 "「(Idempotency-Key)」の印を参照してください。他のどのメソッドもこのヘッダーを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:239
+#: ../../source/api_reference.rst:253
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:241
+#: ../../source/api_reference.rst:255
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

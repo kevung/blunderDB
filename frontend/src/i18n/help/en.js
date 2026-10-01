@@ -2439,6 +2439,8 @@ export default {
 </tbody>
 </table>
 <p>The <code>pl</code>, <code>m</code> and <code>t</code> values open with a double quote or an apostrophe and close with either. A token that keeps a quote without forming a complete value is ignored, and <code>blunderdb search --query</code> reports it. A tag may contain an apostrophe (<code>#l'ouverture</code>), never a double quote. The semicolon is the separator of identifier and tag lists: it appears in no value, and <code>ma1;2</code> is not a token (write <code>ma1 ma2</code>).</p>
+<h3>Transcribing from a terminal</h3>
+<p>The command line has no transcription command: moves are entered in the <em>Transcription</em> tab. Outside the application, they go through <code>blunderdb call</code> (Transcribing through the API), for example <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> names the revision returned by the previous call; every call is its own session, with no <code>sessionId</code> and no undo from one call to the next.</p>
 <h3>Various commands</h3>
 <table>
 <thead>

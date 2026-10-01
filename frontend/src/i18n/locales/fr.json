@@ -1074,6 +1074,7 @@
         "training": "Entraînement"
     },
     "transcription": {
+        "conflict": "Le brouillon a été modifié ailleurs : il est rechargé tel qu’il est maintenant, et l’annulation est réinitialisée.",
         "title": "Transcriptions",
         "new": "Nouvelle transcription",
         "newTooltip": "Créer un brouillon de match à transcrire",

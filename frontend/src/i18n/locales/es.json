@@ -1074,6 +1074,7 @@
         "training": "Entrenamiento"
     },
     "transcription": {
+        "conflict": "El borrador se modificó en otro lugar: se ha recargado tal como está ahora y el historial de deshacer se ha reiniciado.",
         "title": "Transcripciones",
         "new": "Nueva transcripción",
         "newTooltip": "Crear un borrador de partida para transcribir",
