@@ -212,17 +212,28 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 	if table <= 0 {
 		return nil, fmt.Errorf("direction: table %d is not a table", table)
 	}
-	// The room's lock as soon as the event is in a Rencontre, and its members read again under
-	// it: a swap may write a sister's log, and the membership must not change in between.
-	var sisters []int64
-	if rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID); rid != 0 {
-		defer d.lockRoom()()
-		sisters = d.sistersOf(ctx, tournamentID)
-	} else {
-		defer d.lockDirection(tournamentID)()
+	touched, err := d.moveMatch(ctx, tournamentID, matchID, table)
+	if err != nil {
+		return nil, err
 	}
-	var touched int64
-	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
+	// The display page of every Direction the move wrote in — the sister's too, whose director
+	// may not be looking at it — is rewritten here, so the GUI, the CLI and any client get it
+	// alike, once the lock is released: a slow folder must not hold the room's other gestures.
+	d.writePages(ctx, tournamentID, touched)
+	return d.GetDirection(ctx, tournamentID)
+}
+
+// moveMatch writes the move and, for a swap with a sister event, names that sister in touched.
+func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID string, table int) (touched int64, err error) {
+	// The room's lock as soon as the event is in a Rencontre, and its members read under it: a
+	// swap may write a sister's log, and the membership must not change in between.
+	release, shared := d.lockTables(ctx, tournamentID)
+	defer release()
+	var sisters []int64
+	if shared {
+		sisters = d.sistersOf(ctx, tournamentID)
+	}
+	err = d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err
@@ -278,17 +289,7 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-	// The display page of every Direction the move wrote in — the sister's too, whose director
-	// may not be looking at it — is rewritten here, so the GUI, the CLI and any client get it
-	// alike. Best effort, like every page rewrite: a failure is not the gesture's.
-	_, _ = d.WriteDirectionPage(ctx, tournamentID)
-	if touched != 0 {
-		_, _ = d.WriteDirectionPage(ctx, touched)
-	}
-	return d.GetDirection(ctx, tournamentID)
+	return touched, err
 }
 
 // sistersOf lists the other events of the Rencontre a Tournament plays in; none outside one.

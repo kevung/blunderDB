@@ -110,11 +110,10 @@ func (d *Service) rencontreView(ctx context.Context, stores storage.Stores, stor
 // UpdateRencontre renames the room and moves its dates. A new number of tables is a gesture on
 // the room: every member Direction records it.
 func (d *Service) UpdateRencontre(ctx context.Context, id int64, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
-	defer d.lockRoom()()
 	if name == "" || tables <= 0 {
 		return nil, fmt.Errorf("rencontre: a name and at least one table are required")
 	}
-	err := d.inRoom(ctx, id, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	err := d.lockedRoom(ctx, id, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		changed := r.Tables != tables
 		r.Name, r.StartsOn, r.EndsOn, r.Tables = name, startsOn, endsOn, tables
 		if err := tx.Rencontres().Update(ctx, d.scope, *r); err != nil {
@@ -150,8 +149,7 @@ func (d *Service) PreviewAttachToRencontre(ctx context.Context, tournamentID, re
 // configuration change, and membership is recorded, in one transaction. Permitted at any time,
 // the event under way included. A Tournament without a Direction has no room to join.
 func (d *Service) AttachToRencontre(ctx context.Context, tournamentID, rencontreID int64) (*RencontreView, error) {
-	defer d.lockRoom()()
-	err := d.inRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	err := d.lockedRoom(ctx, rencontreID, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if of, err := tx.Rencontres().Of(ctx, d.scope, tournamentID); err != nil {
 			return err
 		} else if of != 0 && of != rencontreID {
@@ -201,9 +199,11 @@ func (d *Service) Realign(ctx context.Context, id int64) error {
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
 func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) error {
-	defer d.lockRoom()()
+	release := d.lockRoom()
 	rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
-	if err := d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0); err != nil {
+	err := d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0)
+	release()
+	if err != nil {
 		return err
 	}
 	if rid != 0 {
@@ -222,8 +222,7 @@ func (d *Service) TrashRencontre(ctx context.Context, id int64) (int64, error) {
 // SetRencontreTableOutOfService declares a table of the room out of service, or back in service.
 // Declared once, recorded in every member Direction.
 func (d *Service) SetRencontreTableOutOfService(ctx context.Context, id int64, table int, out bool) (*RencontreView, error) {
-	defer d.lockRoom()()
-	err := d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	err := d.lockedRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if table <= 0 || table > r.Tables {
 			return fmt.Errorf("rencontre: the room has no table %d", table)
 		}
@@ -242,14 +241,13 @@ func (d *Service) SetRencontreTableOutOfService(ctx context.Context, id int64, t
 // SetRencontreBreaks replaces the room's breaks — a meal, the prize-giving — in every member
 // Direction at once. breaksJSON is the engine's own list of {start, end}.
 func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON string) (*RencontreView, error) {
-	defer d.lockRoom()()
 	var breaks []tournoi.TimeRange
 	if breaksJSON != "" {
 		if err := json.Unmarshal([]byte(breaksJSON), &breaks); err != nil {
 			return nil, fmt.Errorf("rencontre: breaks: %w", err)
 		}
 	}
-	err := d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
+	err := d.lockedRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		room.Breaks = breaks
 		return applyRoom(ctx, store, r.TournamentIDs, room, true)
 	})
@@ -257,6 +255,13 @@ func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON s
 		return nil, err
 	}
 	return d.afterRoomGesture(ctx, id)
+}
+
+// lockedRoom is inRoom under the room's lock, released on return: what a room gesture does
+// next — rewriting its wall page — runs without it.
+func (d *Service) lockedRoom(ctx context.Context, id int64, fn func(context.Context, storage.Tx, direction.Store, *domain.Rencontre, direction.Room) error) error {
+	defer d.lockRoom()()
+	return d.inRoom(ctx, id, fn)
 }
 
 // inRoom runs fn inside one transaction with the Rencontre and its room
@@ -411,7 +416,9 @@ func (d *Service) roomFrom(ctx context.Context, tournamentID int64, me *directio
 		for _, n := range direction.BusyTables(m.dir) {
 			out.tables[n] = m.name
 		}
-		sisters = append(sisters, direction.Sister{Name: m.name, Dir: m.dir, Members: d.memberNames(ctx, m.tid)})
+		if me != nil {
+			sisters = append(sisters, direction.Sister{Name: m.name, Dir: m.dir, Members: d.memberNames(ctx, m.tid)})
+		}
 	}
 	if me != nil {
 		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), d.memberNames(ctx, tournamentID))

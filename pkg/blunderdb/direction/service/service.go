@@ -12,7 +12,9 @@
 // A gesture reads a Direction's log, decides, and appends the next event at the next sequence
 // number. The backends hold no global lock, so the service serialises the gestures itself, in
 // its Memory: one at a time per (scope, Direction), and a gesture that may write several
-// Directions (a room, a shared configuration) alone in its scope. Reads take no lock.
+// Directions (a room, a shared configuration) or put a match on a table of a shared room alone
+// in its scope. Reads take no lock, and the pages a gesture rewrites are written once its lock
+// is released.
 //
 // That serialisation is per process. Between processes — several serve daemons over one
 // PostgreSQL — the primary key of direction_event (tournament, seq) is the guard: the second
@@ -106,6 +108,27 @@ func (d *Service) lockRoom() func() {
 	room, _ := d.gestureLocks(d.scope, 0)
 	room.Lock()
 	return room.Unlock
+}
+
+// lockTables takes the lock a gesture that puts a match on a table needs. In a Rencontre it is
+// the room's: a table free of the sisters must stay free until the match is written on it, and
+// a swap may write a sister's log. Membership is read under the room's lock, so it cannot change
+// between that reading and the choice; outside any Rencontre the gesture falls back to its own
+// Direction's lock, and checks again that no attach slipped in meanwhile. shared says which lock
+// is held.
+func (d *Service) lockTables(ctx context.Context, tournamentID int64) (release func(), shared bool) {
+	for {
+		release = d.lockRoom()
+		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err != nil || rid != 0 {
+			return release, true
+		}
+		release()
+		release = d.lockDirection(tournamentID)
+		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err == nil && rid == 0 {
+			return release, false
+		}
+		release()
+	}
 }
 
 type forecastKey struct {

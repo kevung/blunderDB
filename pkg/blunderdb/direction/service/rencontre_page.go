@@ -53,13 +53,7 @@ func rencontreSlugs(ctx context.Context, stores storage.Stores, scope string, id
 // away: choosing the folder is the whole gesture (D6.5's acceptance criterion), not the first of
 // several.
 func (d *Service) SetRencontreOutputDir(ctx context.Context, id int64, dir string) (*RencontreView, error) {
-	defer d.lockRoom()()
-	r, err := d.st.Rencontres().Get(ctx, d.scope, id)
-	if err != nil {
-		return nil, err
-	}
-	r.OutputDir = dir
-	if err := d.st.Rencontres().Update(ctx, d.scope, *r); err != nil {
+	if err := d.setRencontreOutputDir(ctx, id, dir); err != nil {
 		return nil, err
 	}
 	if dir != "" {
@@ -71,6 +65,16 @@ func (d *Service) SetRencontreOutputDir(ctx context.Context, id int64, dir strin
 		}
 	}
 	return d.GetRencontre(ctx, id)
+}
+
+func (d *Service) setRencontreOutputDir(ctx context.Context, id int64, dir string) error {
+	defer d.lockRoom()()
+	r, err := d.st.Rencontres().Get(ctx, d.scope, id)
+	if err != nil {
+		return err
+	}
+	r.OutputDir = dir
+	return d.st.Rencontres().Update(ctx, d.scope, *r)
 }
 
 // effectiveOutputDir is where a Tournament's own pages actually land: its Rencontre's

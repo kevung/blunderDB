@@ -19,30 +19,53 @@ import (
 // ConfirmProposal records one proposal the director confirmed. The proposal travels back as the
 // engine's own JSON, so the frontend confirms exactly what it was shown rather than describing
 // it again in its own words — a description that could drift from the engine's.
+//
+// In a Rencontre the proposal may be stale: a sister event may have taken its table since it was
+// shown. It is then refused, and proposed again on a table still free.
 func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actionJSON string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
 	var a tournoi.Action
 	if err := json.Unmarshal([]byte(actionJSON), &a); err != nil {
 		return nil, fmt.Errorf("direction: proposal: %w", err)
 	}
-	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
-	if err != nil {
-		return nil, err
-	}
-	if err := confirm(ctx, dir, a); err != nil {
+	if err := d.confirmProposal(ctx, tournamentID, a); err != nil {
 		return nil, err
 	}
 	return d.GetDirection(ctx, tournamentID)
+}
+
+func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tournoi.Action) error {
+	release, shared := d.lockTables(ctx, tournamentID)
+	defer release()
+	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
+		if _, taken := d.roomAround(ctx, tournamentID, nil).tables[a.Table]; taken {
+			return fmt.Errorf("direction: table %d is taken", a.Table)
+		}
+	}
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
+	if err != nil {
+		return err
+	}
+	return confirm(ctx, dir, a)
 }
 
 // ConfirmAllProposals records every proposal in one gesture. It stops at the first refusal and
 // returns it with what was already recorded: a partial round is actionable, a rollback would
 // discard valid decisions.
 func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	if err := d.confirmAllProposals(ctx, tournamentID); err != nil {
+		return nil, err
+	}
+	return d.GetDirection(ctx, tournamentID)
+}
+
+func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) error {
+	// The room's lock in a Rencontre: the sisters' tables are read once, and none of them may
+	// take one of the tables handed out here before the batch is written.
+	release, _ := d.lockTables(ctx, tournamentID)
+	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	// One instant for the whole batch: what is launched together is one round, and the engine
 	// reads that from the start times.
@@ -69,10 +92,10 @@ func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (
 			continue
 		}
 		if err := confirmAt(ctx, dir, a, now); err != nil {
-			return nil, err
+			return err
 		}
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return nil
 }
 
 // confirm turns one action into its event and records it.
@@ -97,9 +120,17 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 //
 // A pairing off the graph is ACCEPTED with a standing warning; only the impossible is refused
 // (unknown player, already playing, against themselves) — and a table another match is
-// played on, which would hide that match.
+// played on, in this event or a sister of its room, which would hide that match.
 func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, shared := d.lockTables(ctx, tournamentID)
+	defer release()
+	// The sisters' tables are read before the transaction opens — on a single-connection
+	// database a read beside it would wait for it forever — and the room's lock keeps them as
+	// read until the match is written.
+	sisters := map[int]string{}
+	if shared {
+		sisters = d.roomAround(ctx, tournamentID, nil).tables
+	}
 	// The occupancy check and the write share one transaction: checked outside it, two
 	// directors could both see the table free and both start a match on it.
 	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
@@ -118,8 +149,8 @@ func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a,
 			// No number typed: the first free table, as a proposal would get — one no sister
 			// event of the room plays on either. With none left the match still starts, under
 			// the grid's "no table" cell.
-			table = firstFreeTable(st, "", st.Current, d.roomAround(ctx, tournamentID, nil).tables)
-		} else if occupant(st, table, "") != nil {
+			table = firstFreeTable(st, "", st.Current, sisters)
+		} else if _, next := sisters[table]; next || occupant(st, table, "") != nil {
 			return fmt.Errorf("direction: table %d is taken", table)
 		}
 		return confirm(ctx, dir, tournoi.Action{

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"slices"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -48,11 +49,36 @@ func (d *Service) directionStrings(ctx context.Context) (*direction.Catalog, str
 // subfolder instead (ADR-0056 §6) and regenerates the room's wall page too — a gesture in any
 // member is a gesture on the whole room.
 func (d *Service) WriteDirectionPage(ctx context.Context, tournamentID int64) (string, error) {
+	defer d.regenerateRencontrePage(ctx, tournamentID)
+	return d.writeOwnPage(ctx, tournamentID)
+}
+
+// writePages rewrites, after a gesture, the display page of each Tournament it wrote in (0s
+// skipped), then the wall page of each room they play in — once, however many of its members
+// the gesture touched. Called with no lock held: writing a file is not part of the gesture, and
+// a failure is not the gesture's (ADR-0004).
+func (d *Service) writePages(ctx context.Context, tournamentIDs ...int64) {
+	var rooms []int64
+	for _, tid := range tournamentIDs {
+		if tid == 0 {
+			continue
+		}
+		_, _ = d.writeOwnPage(ctx, tid)
+		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tid); err == nil && rid != 0 && !slices.Contains(rooms, rid) {
+			rooms = append(rooms, rid)
+		}
+	}
+	for _, rid := range rooms {
+		_, _ = d.WriteRencontrePage(ctx, rid)
+	}
+}
+
+// writeOwnPage is WriteDirectionPage without the room's wall page.
+func (d *Service) writeOwnPage(ctx context.Context, tournamentID int64) (string, error) {
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return "", err
 	}
-	defer d.regenerateRencontrePage(ctx, tournamentID)
 	out := d.effectiveOutputDir(ctx, tournamentID, dir.Record().OutputDir)
 	if out == "" {
 		return "", nil

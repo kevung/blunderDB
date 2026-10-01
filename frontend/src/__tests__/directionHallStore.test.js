@@ -9,12 +9,13 @@ vi.mock('../../wailsjs/go/database/Database', async (importOriginal) => ({
     ...(await importOriginal()),
     RencontreTableGrid: vi.fn(),
     EnterResult: vi.fn(async () => ({})),
+    MoveMatchToTable: vi.fn(async () => ({})),
     WriteDirectionPage: vi.fn(async () => ''),
     GetDirection: vi.fn(async () => null)
 }));
 
-import { RencontreTableGrid, EnterResult, WriteDirectionPage } from '../../wailsjs/go/database/Database';
-import { directionStore, hallGrid, hallEnterResult } from '../stores/directionStore';
+import { RencontreTableGrid, EnterResult, MoveMatchToTable, WriteDirectionPage } from '../../wailsjs/go/database/Database';
+import { directionStore, hallGrid, hallEnterResult, hallMoveMatch } from '../stores/directionStore';
 
 /** @returns {{ promise: Promise<any>, resolve: (v: any) => void, reject: (e: any) => void }} */
 function deferred() {
@@ -54,5 +55,11 @@ describe('la Salle, côté store', () => {
         await hallEnterResult(2, 'm1', 'a');
         expect(EnterResult).toHaveBeenCalledWith(2, 'm1', 'a', 0, 0, '');
         expect(WriteDirectionPage).toHaveBeenCalledWith(2);
+    });
+
+    test('un déplacement ne réécrit pas les pages : le service les a déjà écrites', async () => {
+        await hallMoveMatch(2, 'm1', 3);
+        expect(MoveMatchToTable).toHaveBeenCalledWith(2, 'm1', 3);
+        expect(WriteDirectionPage).not.toHaveBeenCalled();
     });
 });
