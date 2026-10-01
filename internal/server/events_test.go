@@ -480,3 +480,22 @@ func TestEvents_ShutdownClosesStreams(t *testing.T) {
 		t.Fatal("shutdown took the timeout")
 	}
 }
+
+// TestEvents_SendOnlyTransportNeverRefuses: a process that only announces (`call`) serves its
+// request even when the transport cannot start; a daemon that listens refuses to start.
+func TestEvents_SendOnlyTransportNeverRefuses(t *testing.T) {
+	st := memStorage(t)
+	o := Options{Storage: st, Metrics: metrics.New(), EnableDirection: true, EventsDSN: "port=notanumber"}
+	if _, err := New(o); err == nil {
+		t.Fatal("a daemon that cannot listen started")
+	}
+	o.EventsSendOnly = true
+	srv, err := New(o)
+	if err != nil {
+		t.Fatalf("send-only New: %v", err)
+	}
+	defer srv.Close()
+	if srv.notify != nil || srv.publisher != events.Publisher(srv.events) {
+		t.Fatal("a failed transport is installed")
+	}
+}

@@ -104,12 +104,18 @@ func New(opts Options) (*Server, error) {
 		s.publisher = s.events
 		if opts.EventsDSN != "" {
 			ctx, cancel := context.WithTimeout(context.Background(), eventsListenTimeout)
-			t, err := pgnotify.Start(ctx, opts.EventsDSN, s.events, pgnotify.Options{Logger: opts.Logger})
+			t, err := pgnotify.Start(ctx, opts.EventsDSN, s.events,
+				pgnotify.Options{Logger: opts.Logger, SendOnly: opts.EventsSendOnly})
 			cancel()
-			if err != nil {
+			switch {
+			case err == nil:
+				s.notify, s.publisher = t, t
+			case opts.EventsSendOnly:
+				// A process that only announces serves its request all the same.
+				opts.Logger.Warn("events: the other instances will not hear this process's gestures", "err", err)
+			default:
 				return nil, fmt.Errorf("server: events across instances: %w", err)
 			}
-			s.notify, s.publisher = t, t
 		}
 		s.direction.SetPublisher(s.publisher)
 	}

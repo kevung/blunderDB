@@ -619,11 +619,19 @@ même base. Le tenant voyage dans la notification et l'instance qui la reçoit n
 la remet qu'aux abonnés de ce tenant. Chaque instance ouvre deux connexions de
 plus (``application_name`` ``blunderdb-events-…`` pour l'écoute,
 ``blunderdb-notify-…`` pour l'envoi) ; une instance qui ne peut pas écouter au
-démarrage refuse de démarrer.
+démarrage refuse de démarrer. ``call`` annonce sans écouter, et sert sa
+requête même s'il ne peut pas annoncer.
 
-* La notification part après l'écriture en base, comme le message local. Une
-  instance arrêtée brutalement entre les deux n'annonce pas ce geste aux
-  autres : leurs clients le voient à leur prochain ``resync``.
+Tout rôle autorisé à se connecter peut émettre sur ce canal, sous ``--rls``
+aussi. Une notification reçue n'est crue que si son tenant est valide et sa
+sorte connue ; le reste est journalisé et ignoré. Une notification forgée peut
+au pire faire relire leurs données aux abonnés d'un tenant.
+
+* La notification part après l'écriture en base, comme le message local. Deux
+  pertes restent sans ``resync`` : une instance tuée entre l'écriture et la
+  notification, et un arrêt qui ne peut pas envoyer en 2 secondes ce qui reste
+  en file. Le geste est validé, mais les flux déjà ouverts sur les autres
+  instances ne l'apprennent qu'à la reconnexion de leur client.
 * Une connexion d'écoute perdue est rétablie, avec une attente croissante de
   250 ms à 30 s. Les gestes des autres instances passés pendant la coupure
   sont perdus : à la reprise, chaque abonné de l'instance reçoit un ``resync``

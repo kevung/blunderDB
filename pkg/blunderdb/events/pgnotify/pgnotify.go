@@ -35,7 +35,21 @@
 // keeps none for a session that is gone. The Transport reconnects with an exponential backoff
 // and, once it listens again, sends a resync to every local subscriber. When a NOTIFY cannot be
 // sent (the database unreachable, the queue full), the scope is remembered and a resync of it is
-// sent to the other instances as soon as one can be.
+// sent to the other instances as soon as one can be. Two losses remain without a resync, and a
+// stream already open on another instance does not see the gesture until its client reconnects:
+// a process killed between its COMMIT and its NOTIFY, and a Close that cannot send what is
+// still queued within closeTimeout.
+//
+// # What a notification is believed for
+//
+// Any role allowed to connect may NOTIFY on Channel — under --rls too, where a restricted role
+// reads only its tenant's rows. A received payload is therefore checked: its scope must be a
+// tenant (storage.ParseTenant) and its kind one the emitters publish; anything else is logged
+// and dropped. What a forged notification can still do is tell a tenant's subscribers that
+// something moved: they read again, and see only what their tenant's rows say.
+//
+// A process with no subscriber (`call`) starts SendOnly: no LISTEN connection, nothing waited
+// for at Start.
 package pgnotify
 
 import (
@@ -46,6 +60,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"sync"
 	"time"
 
@@ -53,6 +68,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/events"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Channel is the one PostgreSQL channel every instance notifies and listens on.
@@ -79,6 +95,9 @@ type Options struct {
 	// MinBackoff and MaxBackoff bound the wait between two attempts to listen again, or to send
 	// a pending resync (defaults 250 ms and 30 s).
 	MinBackoff, MaxBackoff time.Duration
+	// SendOnly announces this process's events and hears none: no LISTEN connection, nothing
+	// waited for at Start. Right for a process with no subscriber (`call`).
+	SendOnly bool
 }
 
 // wire is a notification's payload. Event is nil for a resync of Scope.
@@ -107,8 +126,8 @@ type Transport struct {
 	pending map[string]bool // scopes whose events another instance may have missed
 }
 
-// Start connects to dsn, listens on Channel and returns the running Transport, which feeds bus.
-// The first LISTEN must succeed: a daemon that cannot listen at start refuses to start rather
+// Start connects to dsn, listens on Channel (unless o.SendOnly) and returns the running
+// Transport, which feeds bus. The first LISTEN must succeed: a daemon that cannot listen at start refuses to start rather
 // than serve streams that would miss the other instances' gestures.
 func Start(ctx context.Context, dsn string, bus *events.Bus, o Options) (*Transport, error) {
 	if o.Logger == nil {
@@ -143,17 +162,22 @@ func Start(ctx context.Context, dsn string, bus *events.Bus, o Options) (*Transp
 	if t.pool, err = pgxpool.NewWithConfig(ctx, pcf); err != nil {
 		return nil, fmt.Errorf("pgnotify: %w", err)
 	}
-	conn, err := t.connect(ctx)
-	if err != nil {
-		t.pool.Close()
-		return nil, fmt.Errorf("pgnotify: listen: %w", err)
+	var conn *pgx.Conn
+	if !o.SendOnly {
+		if conn, err = t.connect(ctx); err != nil {
+			t.pool.Close()
+			return nil, fmt.Errorf("pgnotify: listen: %w", err)
+		}
 	}
 
 	run, cancel := context.WithCancel(context.Background())
 	t.cancel = cancel
-	t.wg.Add(2)
-	go t.listen(run, conn)
+	t.wg.Add(1)
 	go t.send(run)
+	if conn != nil {
+		t.wg.Add(1)
+		go t.listen(run, conn)
+	}
 	return t, nil
 }
 
@@ -243,23 +267,39 @@ func (t *Transport) receive(ctx context.Context, conn *pgx.Conn) error {
 		if err != nil {
 			return err
 		}
-		var w wire
-		if err := json.Unmarshal([]byte(n.Payload), &w); err != nil {
-			t.log.Warn("events: unreadable notification ignored", "err", err)
-			continue
-		}
-		switch {
-		case w.Instance == t.instance:
-			// Already delivered by Publish.
-		case w.Event == nil:
-			t.bus.Resync(w.Scope, ReasonMissed)
-		case w.Event.Kind == events.KindResync:
-			t.bus.Resync(w.Scope, ReasonMissed)
-		default:
-			ev := *w.Event
-			ev.Scope = w.Scope
-			t.bus.Publish(ev)
-		}
+		t.deliver(n.Payload)
+	}
+}
+
+// deliveredKinds are the kinds a notification may carry to the local bus; a resync travels as a
+// payload without an event.
+var deliveredKinds = []events.Kind{events.KindDirection, events.KindRencontre, events.KindTranscription, events.KindResync}
+
+// deliver hands one notification to the local bus. Any role allowed to connect may NOTIFY on
+// the channel, so a payload is checked before it is believed: an unreadable one, a scope that is
+// not a tenant, or a kind the emitters do not publish is ignored.
+func (t *Transport) deliver(payload string) {
+	var w wire
+	if err := json.Unmarshal([]byte(payload), &w); err != nil {
+		t.log.Warn("events: unreadable notification ignored", "err", err)
+		return
+	}
+	if w.Instance == t.instance {
+		return // already delivered by Publish
+	}
+	if _, err := storage.ParseTenant(w.Scope); err != nil {
+		t.log.Warn("events: notification for an invalid scope ignored", "err", err)
+		return
+	}
+	switch {
+	case w.Event == nil || w.Event.Kind == events.KindResync:
+		t.bus.Resync(w.Scope, ReasonMissed)
+	case !slices.Contains(deliveredKinds, w.Event.Kind):
+		t.log.Warn("events: notification of an unknown kind ignored", "kind", w.Event.Kind)
+	default:
+		ev := *w.Event
+		ev.Scope = w.Scope
+		t.bus.Publish(ev)
 	}
 }
 

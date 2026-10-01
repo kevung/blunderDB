@@ -205,19 +205,13 @@ jobs:
           gh pr comment "${{ inputs.pr_number }}" --repo "${{ github.repository }}" --body-file pr-comment-full.md
         shell: bash
 
-  # A short loadtest against a real daemon (G.11, #239).
-  #
-  # SQLite and one tenant: the point is not to measure a fleet, it is to notice
-  # the day a change makes the daemon fall over or crawl under a few hundred
-  # concurrent requests. The 10 k-tenant PostgreSQL run stays a manual
-  # pre-release exercise on a dedicated machine — a shared CI runner cannot
-  # produce a number worth comparing, and pretending otherwise would put a
-  # meaningless graph in front of whoever reads this.
-  #
-  # So this job asserts two things a runner CAN answer honestly: the daemon
-  # survives the run, and every request it accepted came back 2xx. The report
-  # is kept as an artefact for anyone who wants to look at the latencies, and
-  # deliberately not gated on a threshold.
+  # The serve daemon's PostgreSQL integration: internal/server under the
+  # `postgres` tag, -race. Two daemons on one database hearing each other's
+  # gestures by LISTEN/NOTIFY, a killed LISTEN connection, the tenant purge,
+  # gestures serialised across instances. Every test starts its own
+  # container: minutes, not seconds, for code a push rarely touches. The
+  # transport's own quick test (pkg/blunderdb/events/pgnotify) stays in
+  # build.yml's test-postgres, on every push.
   server-postgres:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -243,6 +237,19 @@ jobs:
         run: go test -race -tags postgres -count=1 -timeout 1500s ./internal/server/...
         shell: bash
 
+  # A short loadtest against a real daemon (G.11, #239).
+  #
+  # SQLite and one tenant: the point is not to measure a fleet, it is to notice
+  # the day a change makes the daemon fall over or crawl under a few hundred
+  # concurrent requests. The 10 k-tenant PostgreSQL run stays a manual
+  # pre-release exercise on a dedicated machine — a shared CI runner cannot
+  # produce a number worth comparing, and pretending otherwise would put a
+  # meaningless graph in front of whoever reads this.
+  #
+  # So this job asserts two things a runner CAN answer honestly: the daemon
+  # survives the run, and every request it accepted came back 2xx. The report
+  # is kept as an artefact for anyone who wants to look at the latencies, and
+  # deliberately not gated on a threshold.
   loadtest:
     runs-on: ubuntu-latest
     timeout-minutes: 15

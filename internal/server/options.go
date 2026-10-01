@@ -87,6 +87,10 @@ type Options struct {
 	// Empty: the in-memory bus alone, right for SQLite, which one instance
 	// holds by construction.
 	EventsDSN string
+	// EventsSendOnly announces the gestures over EventsDSN without listening:
+	// a process with no subscriber (`call`). New never fails on the
+	// transport then; without it, the gesture is simply not announced.
+	EventsSendOnly bool
 
 	// CORSAllowOrigin enables CORS for the given origin(s): "*", or a
 	// comma-separated list of exact origins (each one echoed back only to a
