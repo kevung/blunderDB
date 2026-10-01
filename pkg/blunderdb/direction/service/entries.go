@@ -152,7 +152,7 @@ func (d *Service) addParticipant(ctx context.Context, tournamentID int64, name, 
 	defer release(&err)
 	name = strings.TrimSpace(name)
 	if name == "" {
-		return fmt.Errorf("direction: an entry needs a name")
+		return direction.Refusef("direction: an entry needs a name")
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
@@ -191,7 +191,7 @@ func (d *Service) updateParticipant(ctx context.Context, tournamentID int64, id,
 	defer release(&err)
 	name = strings.TrimSpace(name)
 	if name == "" {
-		return fmt.Errorf("direction: an entry needs a name")
+		return direction.Refusef("direction: an entry needs a name")
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
@@ -203,7 +203,7 @@ func (d *Service) updateParticipant(ctx context.Context, tournamentID int64, id,
 	}
 	cur, ok := st.Players[tournoi.PlayerID(id)]
 	if !ok {
-		return fmt.Errorf("direction: no entry %q", id)
+		return direction.Refusef("direction: no entry %q", id)
 	}
 	// The whole record travels, so what this form does not edit keeps its value; a correction
 	// leaves the entry's place, its matches, its Slots and a withdrawal untouched.
@@ -242,10 +242,10 @@ func (d *Service) reinstateParticipant(ctx context.Context, tournamentID int64, 
 	}
 	p, ok := st.Players[tournoi.PlayerID(id)]
 	if !ok {
-		return fmt.Errorf("direction: no entry %q", id)
+		return direction.Refusef("direction: no entry %q", id)
 	}
 	if !st.Withdrawn[p.ID] {
-		return fmt.Errorf("direction: %q has not withdrawn", id)
+		return direction.Refusef("direction: %q has not withdrawn", id)
 	}
 	// Re-entering under the same identifier is the engine's only way back: it clears the
 	// withdrawal and keeps everything else.
@@ -320,7 +320,7 @@ func (d *Service) makeParticipantAbsent(ctx context.Context, tournamentID int64,
 			}
 		}
 		if t.IsZero() {
-			return fmt.Errorf("direction: absence: une heure ou une ronde de retour est requise")
+			return direction.Refusef("direction: absence: une heure ou une ronde de retour est requise")
 		}
 		ev = tournoi.PlayerUnavailableEvent(tournoi.PlayerID(id), t, time.Now())
 	}

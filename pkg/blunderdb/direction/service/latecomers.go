@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
@@ -61,7 +60,7 @@ func (d *Service) addParticipantAtSlot(ctx context.Context, tournamentID int64, 
 	defer release(&err)
 	name = strings.TrimSpace(name)
 	if name == "" {
-		return fmt.Errorf("direction: an entry needs a name")
+		return direction.Refusef("direction: an entry needs a name")
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {

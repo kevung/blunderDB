@@ -202,7 +202,7 @@ func (d *Service) AttachMatchToSlot(ctx context.Context, tournamentID int64, slo
 	}
 	defer release(&err)
 	if slotID == "" {
-		return fmt.Errorf("direction: no slot given")
+		return direction.Refusef("direction: no slot given")
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
@@ -210,7 +210,7 @@ func (d *Service) AttachMatchToSlot(ctx context.Context, tournamentID int64, slo
 	}
 	st := dir.State()
 	if st == nil || st.Matches[tournoi.MatchID(slotID)] == nil {
-		return fmt.Errorf("direction: no match %q in this tournament", slotID)
+		return direction.Refusef("direction: no match %q in this tournament", slotID)
 	}
 	// A Match fills at most one Slot: leaving the one it held is part of attaching it here.
 	if err := d.st.Directions().AttachSlot(ctx, d.scope, tournamentID, slotID, matchID); err != nil {
@@ -323,7 +323,7 @@ func (d *Service) SlotHeader(ctx context.Context, tournamentID int64, slotID str
 	}
 	m := st.Matches[tournoi.MatchID(slotID)]
 	if m == nil {
-		return transcript.Header{}, fmt.Errorf("direction: no match %q in this tournament", slotID)
+		return transcript.Header{}, direction.Refusef("direction: no match %q in this tournament", slotID)
 	}
 	name, date, location := d.tournamentHeader(ctx, tournamentID)
 	tid := tournamentID

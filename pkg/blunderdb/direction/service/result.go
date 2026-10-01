@@ -232,7 +232,7 @@ func (d *Service) enterForfeit(ctx context.Context, tournamentID int64, matchID,
 // still replays alone, and the room never holds two matches on one table because of a move.
 func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matchID string, table int) (*DirectionView, error) {
 	if table <= 0 {
-		return nil, fmt.Errorf("direction: table %d is not a table", table)
+		return nil, direction.Refusef("direction: table %d is not a table", table)
 	}
 	touched, err := d.moveMatch(ctx, tournamentID, matchID, table)
 	if err != nil {
@@ -266,11 +266,11 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		}
 		st := dir.State()
 		if st == nil {
-			return fmt.Errorf("direction: the tournament has not started")
+			return direction.Refusef("direction: the tournament has not started")
 		}
 		m := st.Matches[tournoi.MatchID(matchID)]
 		if m == nil || m.Status != tournoi.Running {
-			return fmt.Errorf("direction: match %q is not running", matchID)
+			return direction.Refusef("direction: match %q is not running", matchID)
 		}
 		from := m.Table
 		if from == table {
@@ -279,7 +279,7 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		if contains(st.Config.Tables.Unavailable, table) {
 			// A table out of service takes no match, whether by a move or as the far end of a
 			// swap: the rule is here so the grid, the card and the CLI refuse in one voice.
-			return fmt.Errorf("direction: table %d is out of service", table)
+			return direction.Refusef("direction: table %d is out of service", table)
 		}
 		o := occupant(st, table, m.ID)
 		var sister *direction.Direction
@@ -292,15 +292,15 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		if (o != nil || so != nil) && from <= 0 {
 			// A match with no table has nowhere to send the occupant, whatever its event:
 			// refused rather than stacking two matches on one table.
-			return fmt.Errorf("direction: table %d is taken", table)
+			return direction.Refusef("direction: table %d is taken", table)
 		}
 		// The occupant goes back to the moved match's table: that end of the swap must be in
 		// service too, in the occupant's own configuration.
 		if o != nil && contains(st.Config.Tables.Unavailable, from) {
-			return fmt.Errorf("direction: table %d is out of service", from)
+			return direction.Refusef("direction: table %d is out of service", from)
 		}
 		if so != nil && contains(sister.State().Config.Tables.Unavailable, from) {
-			return fmt.Errorf("direction: table %d is out of service", from)
+			return direction.Refusef("direction: table %d is out of service", from)
 		}
 		now := time.Now()
 		if err := dir.Apply(ctx, tournoi.TableChangedEvent(m.ID, table, now)); err != nil {

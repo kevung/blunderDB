@@ -184,7 +184,7 @@ func (d *Service) SetDirectionConfig(ctx context.Context, tournamentID int64, co
 	if rid, _ := d.RencontreOf(ctx, tournamentID); rid != 0 {
 		if cur, err := dir.Config(); err == nil && !direction.SameRoom(cur, direction.RoomOf(cfg)) {
 			if err := cfg.Validate(); err != nil {
-				return err
+				return direction.Refused(err)
 			}
 			return d.setMemberConfig(ctx, rid, tournamentID, cfg)
 		}
@@ -219,7 +219,7 @@ func (d *Service) EnterParticipants(ctx context.Context, tournamentID int64, pla
 		return nil
 	}
 	if err := json.Unmarshal([]byte(playersJSON), &players); err != nil {
-		return fmt.Errorf("entries: %w", err)
+		return direction.Refused(fmt.Errorf("entries: %w", err))
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
@@ -261,13 +261,13 @@ func (d *Service) DeleteDirection(ctx context.Context, tournamentID int64) (err 
 func parseDirectionConfig(configJSON string) (tournoi.Config, error) {
 	var cfg tournoi.Config
 	if configJSON == "" {
-		return cfg, fmt.Errorf("direction: empty configuration")
+		return cfg, direction.Refusef("direction: empty configuration")
 	}
 	if err := json.Unmarshal([]byte(configJSON), &cfg); err != nil {
-		return cfg, fmt.Errorf("direction: configuration: %w", err)
+		return cfg, direction.Refused(fmt.Errorf("direction: configuration: %w", err))
 	}
 	if err := cfg.Validate(); err != nil {
-		return cfg, err
+		return cfg, direction.Refused(err)
 	}
 	return cfg, nil
 }

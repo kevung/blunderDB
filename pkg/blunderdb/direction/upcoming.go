@@ -1,7 +1,6 @@
 package direction
 
 import (
-	"errors"
 	"fmt"
 	"html"
 	"strings"
@@ -23,7 +22,7 @@ import (
 const UpcomingSheetName = "appariements-annonce.html"
 
 // ErrNothingProposed: the queue proposes no match, so there is no round to announce.
-var ErrNothingProposed = errors.New("direction: no match is proposed")
+var ErrNothingProposed = Refusef("direction: no match is proposed")
 
 // UpcomingSheet renders the sheet of the matches the queue proposes at now, as if they were
 // launched together, headed by announced — the date and time the director typed.

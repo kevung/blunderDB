@@ -61,16 +61,16 @@ func pairClub(members []PairMember) string {
 func parsePair(membersJSON string) ([]PairMember, error) {
 	var members []PairMember
 	if err := json.Unmarshal([]byte(membersJSON), &members); err != nil {
-		return nil, fmt.Errorf("direction: pair: %w", err)
+		return nil, direction.Refused(fmt.Errorf("direction: pair: %w", err))
 	}
 	if len(members) != 2 {
-		return nil, fmt.Errorf("direction: a pair is two persons, got %d", len(members))
+		return nil, direction.Refusef("direction: a pair is two persons, got %d", len(members))
 	}
 	for i := range members {
 		members[i].Name = strings.TrimSpace(members[i].Name)
 		members[i].Club = strings.TrimSpace(members[i].Club)
 		if members[i].Name == "" {
-			return nil, fmt.Errorf("direction: each person of a pair needs a name")
+			return nil, direction.Refusef("direction: each person of a pair needs a name")
 		}
 	}
 	return members, nil
@@ -155,7 +155,7 @@ func (d *Service) updatePair(ctx context.Context, tournamentID int64, id, member
 		}
 		cur, ok := st.Players[tournoi.PlayerID(id)]
 		if !ok {
-			return fmt.Errorf("direction: no entry %q", id)
+			return direction.Refusef("direction: no entry %q", id)
 		}
 		if rating <= 0 {
 			rating = PairRating(members)

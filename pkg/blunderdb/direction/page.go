@@ -103,7 +103,7 @@ func WritePage(dir, page string) (string, error) {
 // own folder is confirmed still there.
 func WriteFileAtomically(dir, name, page string) (string, error) {
 	if dir == "" {
-		return "", fmt.Errorf("direction: no output folder chosen")
+		return "", Refusef("direction: no output folder chosen")
 	}
 	final := filepath.Join(dir, name)
 	tmp, err := os.CreateTemp(dir, "."+strings.TrimSuffix(name, ".html")+"-*.html")

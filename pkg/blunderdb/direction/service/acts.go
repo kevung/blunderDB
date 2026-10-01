@@ -25,7 +25,7 @@ import (
 func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actionJSON string) (*DirectionView, error) {
 	var a tournoi.Action
 	if err := json.Unmarshal([]byte(actionJSON), &a); err != nil {
-		return nil, fmt.Errorf("direction: proposal: %w", err)
+		return nil, direction.Refused(fmt.Errorf("direction: proposal: %w", err))
 	}
 	if err := d.confirmProposal(ctx, tournamentID, a); err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 	defer release(&err)
 	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
 		if _, taken := d.roomAround(ctx, tournamentID, nil).tables[a.Table]; taken {
-			return fmt.Errorf("direction: table %d is taken", a.Table)
+			return direction.Refusef("direction: table %d is taken", a.Table)
 		}
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
@@ -58,7 +58,7 @@ func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (
 	if err := d.confirmAllProposals(ctx, tournamentID); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return d.viewAfter(ctx, tournamentID)
 }
 
 func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (err error) {
@@ -156,7 +156,7 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 		}
 		st := dir.State()
 		if st == nil {
-			return fmt.Errorf("direction: the tournament has not started")
+			return direction.Refusef("direction: the tournament has not started")
 		}
 		if length <= 0 {
 			length = st.Phases[st.Current].Length
@@ -167,7 +167,7 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 			// the grid's "no table" cell.
 			table = firstFreeTable(st, "", st.Current, sisters)
 		} else if _, next := sisters[table]; next || occupant(st, table, "") != nil {
-			return fmt.Errorf("direction: table %d is taken", table)
+			return direction.Refusef("direction: table %d is taken", table)
 		}
 		return confirm(ctx, dir, tournoi.Action{
 			Kind: tournoi.ActStartMatch, Phase: st.Current,

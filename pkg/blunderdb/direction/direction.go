@@ -74,7 +74,7 @@ type Store interface {
 var ErrNoDirection = errors.New("direction: this tournament has no direction")
 
 // ErrFinished says the Direction is closed: it accepts no further decision until it is reopened.
-var ErrFinished = errors.New("direction: the tournament is closed")
+var ErrFinished = Refusef("direction: the tournament is closed")
 
 // Direction is an open Direction: its record, its log, and the state replayed from it.
 type Direction struct {
@@ -121,7 +121,7 @@ func Open(ctx context.Context, store Store, tournamentID int64) (*Direction, err
 // "In preparation" means "no match launched yet" (ADR-0047), not "nothing written".
 func Create(ctx context.Context, store Store, tournamentID int64, cfg tournoi.Config, seed int64, now time.Time) (*Direction, error) {
 	if _, err := store.GetDirection(ctx, tournamentID); err == nil {
-		return nil, fmt.Errorf("direction: tournament %d is already directed", tournamentID)
+		return nil, Refusef("direction: tournament %d is already directed", tournamentID)
 	} else if !errors.Is(err, ErrNoDirection) {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func Create(ctx context.Context, store Store, tournamentID int64, cfg tournoi.Co
 	}
 	st, created, err := tournoi.New(cfg, seed, now)
 	if err != nil {
-		return nil, err
+		return nil, Refused(err)
 	}
 	rec := Record{
 		TournamentID:  tournamentID,
@@ -183,7 +183,7 @@ func (d *Direction) SetConfigAt(ctx context.Context, cfg tournoi.Config, now tim
 		return ErrNoDirection
 	}
 	if err := cfg.Validate(); err != nil {
-		return err
+		return Refused(err)
 	}
 	return d.Apply(ctx, tournoi.ConfigChangedEvent(cfg, now))
 }
@@ -261,13 +261,13 @@ func (d *Direction) Warnings() []tournoi.Warning {
 // written, so a refused decision leaves nothing in the log.
 func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 	if d.st == nil {
-		return fmt.Errorf("direction: the tournament has not started")
+		return Refusef("direction: the tournament has not started")
 	}
 	if d.st.Finished && ev.Kind != tournoi.EvNote {
 		return ErrFinished
 	}
 	if err := d.st.Apply(ev); err != nil {
-		return err
+		return Refused(err)
 	}
 	if err := d.append(ctx, ev); err != nil {
 		return err
@@ -281,9 +281,10 @@ func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 // EventFor turns a proposal the director confirmed into the event that records it.
 func (d *Direction) EventFor(a tournoi.Action, now time.Time) (tournoi.Event, error) {
 	if d.st == nil {
-		return tournoi.Event{}, fmt.Errorf("direction: the tournament has not started")
+		return tournoi.Event{}, Refusef("direction: the tournament has not started")
 	}
-	return d.st.EventFromAction(a, now)
+	ev, err := d.st.EventFromAction(a, now)
+	return ev, Refused(err)
 }
 
 // append writes one event at the next sequence number and keeps the in-memory log in step.
@@ -305,7 +306,7 @@ func (d *Direction) append(ctx context.Context, ev tournoi.Event) error {
 // Finish closes the tournament and freezes the final standings.
 func (d *Direction) Finish(ctx context.Context, now time.Time) error {
 	if d.st == nil {
-		return fmt.Errorf("direction: the tournament has not started")
+		return Refusef("direction: the tournament has not started")
 	}
 	if d.st.Finished {
 		return ErrFinished

@@ -40,10 +40,10 @@ type RencontreView struct {
 // CreateRencontre opens a room with its number of tables.
 func (d *Service) CreateRencontre(ctx context.Context, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
 	if name == "" {
-		return nil, fmt.Errorf("rencontre: a name is required")
+		return nil, direction.Refusef("rencontre: a name is required")
 	}
 	if tables <= 0 {
-		return nil, fmt.Errorf("rencontre: the room needs at least one table")
+		return nil, direction.Refusef("rencontre: the room needs at least one table")
 	}
 	id, err := d.st.Rencontres().Create(ctx, d.scope, domain.Rencontre{
 		Name: name, StartsOn: startsOn, EndsOn: endsOn, Tables: tables,
@@ -111,7 +111,7 @@ func (d *Service) rencontreView(ctx context.Context, stores storage.Stores, stor
 // the room: every member Direction records it.
 func (d *Service) UpdateRencontre(ctx context.Context, id int64, name, startsOn, endsOn string, tables int) (*RencontreView, error) {
 	if name == "" || tables <= 0 {
-		return nil, fmt.Errorf("rencontre: a name and at least one table are required")
+		return nil, direction.Refusef("rencontre: a name and at least one table are required")
 	}
 	err := d.lockedRoom(ctx, id, func(ctx context.Context, tx storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		changed := r.Tables != tables
@@ -167,7 +167,7 @@ func (d *Service) attach(ctx context.Context, tournamentID, rencontreID int64) (
 		if of, err := tx.Rencontres().Of(ctx, d.scope, tournamentID); err != nil {
 			return err
 		} else if of != 0 && of != rencontreID {
-			return fmt.Errorf("rencontre: tournament %d already plays in another Rencontre", tournamentID)
+			return direction.Refusef("rencontre: tournament %d already plays in another Rencontre", tournamentID)
 		}
 		if err := alignTables(ctx, store, tournamentID, room); err != nil {
 			return err
@@ -276,7 +276,7 @@ func (d *Service) trashRencontre(ctx context.Context, id int64) (_ int64, member
 func (d *Service) SetRencontreTableOutOfService(ctx context.Context, id int64, table int, out bool) (*RencontreView, error) {
 	err := d.lockedRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		if table <= 0 || table > r.Tables {
-			return fmt.Errorf("rencontre: the room has no table %d", table)
+			return direction.Refusef("rencontre: the room has no table %d", table)
 		}
 		room.Unavailable = slices.DeleteFunc(slices.Clone(room.Unavailable), func(t int) bool { return t == table })
 		if out {
@@ -296,7 +296,7 @@ func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON s
 	var breaks []tournoi.TimeRange
 	if breaksJSON != "" {
 		if err := json.Unmarshal([]byte(breaksJSON), &breaks); err != nil {
-			return nil, fmt.Errorf("rencontre: breaks: %w", err)
+			return nil, direction.Refused(fmt.Errorf("rencontre: breaks: %w", err))
 		}
 	}
 	err := d.lockedRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
