@@ -2,6 +2,8 @@
 // les diagrammes du rapport (rendus hors écran avec les mêmes fonctions de
 // scène) partagent ce littéral pour ne jamais faire diverger deux palettes.
 
+/** @typedef {ReturnType<typeof defaultBoardConfig>} BoardConfig */
+
 /**
  * Une configuration NEUVE à chaque appel : l'appelant la mute (applyPalette), et deux plateaux
  * partageant l'objet partageraient leurs couleurs.
@@ -40,7 +42,7 @@ export function defaultBoardConfig() {
 
 /**
  * Applique la palette de l'utilisateur à une configuration, en place.
- * @param {ReturnType<typeof defaultBoardConfig>} cfg
+ * @param {BoardConfig} cfg
  * @param {Record<string, string>} colors
  */
 export function applyPalette(cfg, colors) {

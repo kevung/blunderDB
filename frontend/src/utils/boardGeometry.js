@@ -1,10 +1,27 @@
 // Pure board geometry/parsing helpers, testable without two.js (drawing: boardScene.js; mouse:
 // boardInteractions.js).
 
+/** @typedef {{ points: { color: number, checkers: number }[], bearoff: number[] }} BoardPoints */
+/**
+ * The part of a domain.Position the board mirrors; a structural subset, so a scratch position and
+ * a stored one are both accepted.
+ * @typedef {{ board: BoardPoints, cube: { owner: number, value: number }, score: number[], player_on_roll: number }} MirrorablePosition
+ */
+/**
+ * The part of a domain.Position the board draws.
+ * @typedef {MirrorablePosition & { dice: number[], decision_type?: number }} BoardPosition
+ */
+/** @typedef {'left' | 'right'} Orientation */
+/** @typedef {{ from: number, to: number, index: number }} StepMove */
+/** @typedef {ReturnType<typeof boardMetrics>} BoardMetrics */
+
 /**
  * Parse a move string (e.g. "24/23 13/11(2)", "bar/23", "6/off(4)") into a flat
  * list of `{ from, to, index }` moves. `bar` → 0, `off` → -1; the `(n)` suffix
  * expands to n moves. Empty/"bar"/"cannot move" strings yield [].
+ *
+ * @param {string | null | undefined} moveString
+ * @returns {StepMove[]}
  */
 export function parseMoveNotation(moveString) {
     if (!moveString || moveString === 'bar' || moveString.toLowerCase().includes('cannot move')) {
@@ -35,6 +52,10 @@ export function parseMoveNotation(moveString) {
 /**
  * Mirror a position to bring the other player to the bottom: points i ↔ 25-i with colours
  * swapped, bearoff/scores swapped, on-roll and cube owner flipped. Returns a deep copy.
+ *
+ * @template {MirrorablePosition} P
+ * @param {P} pos
+ * @returns {P}
  */
 export function mirrorPosition(pos) {
     const mirrored = JSON.parse(JSON.stringify(pos)); // Deep copy
@@ -63,6 +84,9 @@ export function mirrorPosition(pos) {
 /**
  * Compute both players' pip counts from a (display) position: color-0 checkers
  * count their point index, color-1 checkers count 25 - index.
+ *
+ * @param {{ board: Pick<BoardPoints, 'points'> }} position
+ * @returns {{ pipCount1: number, pipCount2: number }}
  */
 export function computePipCount(position) {
     let pipCount1 = 0;
@@ -83,6 +107,10 @@ export function computePipCount(position) {
  * The board's fixed measurements for a `width` × `height` surface: every drawing function and hit
  * test derives from this one object, so they cannot disagree. 13 checkers wide (6 + bar + 6),
  * 11 tall, centred; a triangle is 5 checkers tall.
+ *
+ * @param {number} width
+ * @param {number} height
+ * @param {number} widthFactor
  */
 export function boardMetrics(width, height, widthFactor) {
     const boardWidth = widthFactor * width;
@@ -104,6 +132,13 @@ export function boardMetrics(width, height, widthFactor) {
  * Convert a mouse event position into drawing coordinates. The canvas may be CSS-scaled
  * (interface zoom, side layout), so client pixels are normalised by drawing size / rendered box;
  * otherwise clicks drift with the scale.
+ *
+ * @param {number} clientX
+ * @param {number} clientY
+ * @param {{ left: number, top: number, width: number, height: number }} rect
+ * @param {number} width
+ * @param {number} height
+ * @returns {{ x: number, y: number }}
  */
 export function boardMouseToDrawing(clientX, clientY, rect, width, height) {
     const scaleX = rect.width > 0 ? width / rect.width : 1;
@@ -117,6 +152,14 @@ export function boardMouseToDrawing(clientX, clientY, rect, width, height) {
 /**
  * Map drawing coordinates to the clicked point and checker slot, matching drawCheckers.
  * Returns { checkerPoint, checkerCount }; checkerPoint is -1 outside the board, 0/25 the bars.
+ *
+ * @param {number} x_mouse
+ * @param {number} y_mouse
+ * @param {number} width
+ * @param {number} height
+ * @param {number} widthFactor
+ * @param {string} orientation
+ * @returns {{ checkerPoint: number, checkerCount: number }}
  */
 export function checkerPointAndCountAt(x_mouse, y_mouse, width, height, widthFactor, orientation) {
     const boardAspectFactor = 11 / 13;
