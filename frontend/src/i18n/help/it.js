@@ -367,6 +367,7 @@ export default {
 </ul>
 <p>Il ritiro, l'annullamento di un incontro e il ritiro di un giocatore mantengono la conferma che hanno nella scheda e nei pulsanti delle righe. Mentre un'azione è in corso, le voci che agiscono sono disattivate, come i pulsanti. Un solo menu è aperto alla volta: aprirne un secondo chiude il primo.</p>
 <p>Con la tastiera, la griglia occupa una sola sosta di <em>TAB</em>: ogni casella riceve il focus, anche quelle libere, e <em>SINISTRA</em>, <em>DESTRA</em>, <em>SU</em>, <em>GIÙ</em>, <em>HOME</em> e <em>FINE</em> passano da una casella all'altra. Una cifra apre la scheda del tavolo con quel numero; per un tavolo oltre il 9, la seconda cifra si digita entro 0,4 s. <em>M</em> apre la scheda sul campo del tavolo, e anche <em>X</em>, che la scheda sia già aperta o no: puntare a un tavolo occupato scambia i due incontri.</p>
+<p>Con il mouse, si <strong>trascina</strong> una casella occupata su un'altra: su una casella libera l'incontro cambia tavolo; su una casella occupata, una riga «Tavolo 3 ↔ Tavolo 7?» chiede di confermare lo <strong>scambio</strong> dei due incontri. Un fantasma segue il puntatore e la casella di destinazione viene evidenziata; <em>ESC</em> annulla il gesto, e non viene scritto nulla finché il puntatore non è rilasciato su una casella. Un tavolo fuori servizio viene rifiutato e la barra di stato ne dà il motivo. Da riga di comando, <code>blunderdb tournament move</code> esegue lo stesso spostamento o scambio (vedi Interfaccia a riga di comando (CLI)).</p>
 <h4>La ricerca rapida</h4>
 <p>Il tasto <em>/</em> della pagina Direzione apre la tavolozza sulla sola sala: giocatori, tavoli, match in corso e prove della Rencontre aperta, o della prova da sola quando non è in nessuna Rencontre. Si digita un nome, un club o un numero di tavolo («4» o «t4»); i giocatori a un tavolo vengono prima dei giocatori liberi. <em>INVIO</em> porta all'oggetto: un giocatore in un match, un match o un tavolo occupato aprono la scheda del tavolo, un tavolo libero riceve il focus nella griglia, un giocatore libero compare nella scheda <strong>Giocatori</strong> filtrato sul suo nome, una prova diventa la scheda corrente. Un risultato di un'altra prova della Rencontre cambia prima prova. <em>ESC</em> chiude senza aprire nulla, e in un campo di testo il tasto resta una barra. <em>CTRL-MAIUSC-P</em> apre la tavolozza completa, che contiene anche la sala.</p>
 <h4>I giocatori</h4>
@@ -1437,6 +1438,10 @@ export default {
 <tr>
 <td>/</td>
 <td>Aprire la ricerca rapida: giocatori, tavoli, match in corso e prove della sala, trovati per nome o per numero di tavolo (dettaglio). Nessun effetto in un campo di testo.</td>
+</tr>
+<tr>
+<td>Trascinare una casella occupata su un'altra</td>
+<td>Con il mouse: su una casella libera, spostare l'incontro; su una casella occupata, scambiare i due incontri dopo conferma. ESC annulla il trascinamento.</td>
 </tr>
 </tbody>
 </table>

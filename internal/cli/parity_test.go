@@ -290,7 +290,7 @@ var databaseParity = map[string]parityEntry{
 	"ConfirmAllProposals":               {Why: whyDirection},
 	"EnterForfeit":                      {Why: whyDirection},
 	"EnterResult":                       {Why: whyDirection},
-	"MoveMatchToTable":                  {Why: whyDirection},
+	"MoveMatchToTable":                  {CLI: "tournament move", Why: whyDirection},
 	"TableGrid":                         {Why: whyDirection},
 	"ConfirmProposal":                   {Why: whyDirection},
 	"CreateDirection":                   {Why: whyDirection},

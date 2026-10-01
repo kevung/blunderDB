@@ -223,6 +223,11 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 		if from == table {
 			return nil
 		}
+		if contains(st.Config.Tables.Unavailable, table) {
+			// A table out of service takes no match, whether by a move or as the far end of a
+			// swap: the rule is here so the grid, the card and the CLI refuse in one voice.
+			return fmt.Errorf("direction: table %d is out of service", table)
+		}
 		o := occupant(st, table, m.ID)
 		if o != nil && from <= 0 {
 			// A match with no table has nowhere to send the occupant: refused rather than

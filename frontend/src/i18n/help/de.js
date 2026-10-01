@@ -367,6 +367,7 @@ export default {
 </ul>
 <p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
 <p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
+<p>Mit der Maus <strong>zieht</strong> man ein belegtes Feld auf ein anderes: auf ein freies Feld wechselt das Match den Tisch; auf ein belegtes Feld fragt eine Zeile „Tisch 3 ↔ Tisch 7?“ nach der Bestätigung des <strong>Tauschs</strong> der beiden Matches. Ein Geisterbild folgt dem Zeiger und das Zielfeld wird umrandet; <em>ESC</em> bricht die Geste ab, und es wird nichts geschrieben, bevor der Zeiger über einem Feld losgelassen wird. Ein Tisch außer Betrieb wird abgelehnt, die Statusleiste nennt den Grund. In der Kommandozeile führt <code>blunderdb tournament move</code> dieselbe Verschiebung oder denselben Tausch aus (siehe Befehlszeilenschnittstelle (CLI)).</p>
 <h4>Die Schnellsuche</h4>
 <p>Die Taste <em>/</em> auf der Direction-Seite öffnet die Palette nur für den Saal: Spieler, Tische, laufende Matches und Turniere der geöffneten Rencontre, oder des einzelnen Turniers, wenn es in keiner Rencontre liegt. Man tippt einen Namen, einen Verein oder eine Tischnummer („4“ oder „t4“); Spieler an einem Tisch stehen vor freien Spielern. <em>EINGABE</em> führt zum Objekt: Ein Spieler in einem Match, ein Match oder ein besetzter Tisch öffnen die Karte des Tisches, ein freier Tisch erhält den Fokus im Raster, ein freier Spieler erscheint im Reiter <strong>Spieler</strong>, auf seinen Namen gefiltert, ein Turnier wird zum aktuellen Reiter. Ein Treffer aus einem anderen Turnier der Rencontre wechselt zuerst das Turnier. <em>ESC</em> schließt, ohne etwas zu öffnen, und in einem Eingabefeld bleibt die Taste ein Schrägstrich. <em>STRG-UMSCHALT-P</em> öffnet die vollständige Palette, die den Saal ebenfalls enthält.</p>
 <h4>Die Spieler</h4>
@@ -1437,6 +1438,10 @@ export default {
 <tr>
 <td>/</td>
 <td>Die Schnellsuche öffnen: Spieler, Tische, laufende Matches und Turniere des Saals, gefunden über einen Namen oder eine Tischnummer (Details). Ohne Wirkung in einem Eingabefeld.</td>
+</tr>
+<tr>
+<td>Ein belegtes Feld auf ein anderes ziehen</td>
+<td>Mit der Maus: auf ein freies Feld das Match verschieben; auf ein belegtes Feld die beiden Matches nach Bestätigung tauschen. ESC bricht das Ziehen ab.</td>
 </tr>
 </tbody>
 </table>

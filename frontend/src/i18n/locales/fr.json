@@ -1941,7 +1941,10 @@
             "none": "Aucune table déclarée.",
             "noTable": "sans table",
             "elsewhere": "Occupée : {event}",
-            "shared": "Deux matchs sur cette table : déplacez-en un"
+            "shared": "Deux matchs sur cette table : déplacez-en un",
+            "swapConfirm": "Table {from} ↔ Table {to} ?",
+            "swap": "Échanger",
+            "moveRefused": "Déplacement refusé : {reason}"
         },
         "result": {
             "title": "Résultat",

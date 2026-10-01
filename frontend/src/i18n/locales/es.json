@@ -1941,7 +1941,10 @@
             "none": "Ninguna mesa declarada.",
             "noTable": "sin mesa",
             "elsewhere": "Ocupada: {event}",
-            "shared": "Dos partidas en esta mesa: mueva una"
+            "shared": "Dos partidas en esta mesa: mueva una",
+            "swapConfirm": "¿Mesa {from} ↔ Mesa {to}?",
+            "swap": "Intercambiar",
+            "moveRefused": "Movimiento rechazado: {reason}"
         },
         "result": {
             "title": "Resultado",

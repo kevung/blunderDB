@@ -313,3 +313,54 @@ func playRoundsCLI(t *testing.T, cli *CLI, tID int64, rounds int) {
 }
 
 func itoa64(v int64) string { return strconv.FormatInt(v, 10) }
+
+// `tournament move` is the table grid's drag-and-drop: a free table moves the match, a taken
+// one swaps the two, an out-of-service one is refused.
+func TestCLI_TournamentMove(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	tID := directedTournamentCLI(t, cli, 6)
+	if _, err := cli.db.StartMatchManually(tID, "a", "b", 0, 1); err != nil {
+		t.Fatal(err)
+	}
+	v, err := cli.db.StartMatchManually(tID, "c", "d", 0, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tables := map[string]int{}
+	for _, m := range v.Running {
+		tables[string(m.ID)] = m.Table
+	}
+	var m1, m2 string
+	for id, tb := range tables {
+		if tb == 1 {
+			m1 = id
+		} else {
+			m2 = id
+		}
+	}
+	run := func(table string) error {
+		return cli.Run([]string{"tournament", "move", "--db", dbPath, "--id", itoa64(tID), "--match", m1, "--table", table})
+	}
+	if err := run("2"); err != nil {
+		t.Fatalf("swap: %v", err)
+	}
+	got, err := cli.db.GetDirection(tID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range got.Running {
+		want := map[string]int{m1: 2, m2: 1}[string(m.ID)]
+		if m.Table != want {
+			t.Errorf("match %s on table %d, want %d", m.ID, m.Table, want)
+		}
+	}
+	if err := run("5"); err != nil {
+		t.Fatalf("move to a free table: %v", err)
+	}
+	if err := cli.Run([]string{"tournament", "move", "--db", dbPath, "--id", itoa64(tID), "--match", m1}); err == nil {
+		t.Error("move without --table must fail")
+	}
+	if err := cli.Run([]string{"tournament", "move", "--db", dbPath, "--id", itoa64(tID), "--match", "nope", "--table", "3"}); err == nil {
+		t.Error("an unknown match must fail")
+	}
+}

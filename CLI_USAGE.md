@@ -1020,7 +1020,8 @@ diff match.mat out.mat
 
 Read a directed tournament without a graphical interface. Directing one
 interactively is the engine's own console (Nicomaque ships it); these
-sub-commands only read, and none of them waits for input.
+sub-commands read, none of them waits for input, and `move` is the only one that
+writes.
 
 Use it after a tournament rather than during one: `verify` is the check you run
 on last season's databases, `standings` is what goes into the accounts, `page`
@@ -1033,7 +1034,12 @@ is the whole truth of a direction, and a tool that reads it needs no blunderDB.
 ./blunderDB tournament standings --db database.db --id 3 > standings.csv
 ./blunderDB tournament page --db database.db --id 3 --out /tmp/display
 ./blunderDB tournament export --db database.db --id 3 > journal.json
+./blunderDB tournament move --db database.db --id 3 --match m4 --table 7
 ```
+
+`move` changes the table of a running match, the gesture of dragging one table
+onto another in the grid. When the destination is taken the two matches swap
+tables; an out-of-service table is refused.
 
 `verify` **exits in error** when a warning remains after the replay: a script
 that runs it over a season's databases wants a status, not a line to grep.
@@ -2764,6 +2770,30 @@ Options:
 Examples:
   blunderdb tournament list --db base.db
   blunderdb tournament list --db base.db --format json
+```
+
+### `blunderdb tournament move`
+
+```
+Usage: blunderdb tournament move [options]
+
+Move a running match to another table; a taken table swaps the two matches.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Tournament ID (required)
+  -match string
+    	Running match ID (required)
+  -table int
+    	Destination table number (required)
+
+Examples:
+  blunderdb tournament move --db base.db --id 3 --match m4 --table 7
+  blunderdb tournament move --db base.db --id 3 --match m4 --table 2 --format json
 ```
 
 ### `blunderdb tournament page`

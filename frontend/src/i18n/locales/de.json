@@ -1941,7 +1941,10 @@
             "none": "Kein Tisch angegeben.",
             "noTable": "ohne Tisch",
             "elsewhere": "Belegt: {event}",
-            "shared": "Zwei Matches an diesem Tisch: einen verlegen"
+            "shared": "Zwei Matches an diesem Tisch: einen verlegen",
+            "swapConfirm": "Tisch {from} ↔ Tisch {to}?",
+            "swap": "Tauschen",
+            "moveRefused": "Verschieben abgelehnt: {reason}"
         },
         "result": {
             "title": "Ergebnis",

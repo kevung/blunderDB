@@ -1622,6 +1622,15 @@ une table au-delà de 9, le second chiffre se tape dans les 0,4 s. *M* ouvre la
 fiche sur le champ de table, et *X* aussi, que la fiche soit déjà ouverte ou
 non : viser une table occupée échange les deux matchs.
 
+À la souris, on **glisse** une case occupée sur une autre : sur une case libre le
+match change de table ; sur une case occupée, une ligne « Table 3 ↔ Table 7 ? »
+demande de confirmer l'**échange** des deux matchs. Un fantôme suit le pointeur
+et la case visée s'entoure ; *ÉCHAP* annule le geste, et rien n'est écrit tant
+que le pointeur n'est pas relâché sur une case. Une table hors service est
+refusée, et la barre d'état en donne le motif. En ligne de commande,
+``blunderdb tournament move`` fait le même déplacement ou le même échange
+(voir :ref:`cli`).
+
 .. _direction_recherche:
 
 La recherche rapide
