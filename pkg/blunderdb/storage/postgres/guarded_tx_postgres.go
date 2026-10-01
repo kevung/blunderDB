@@ -36,5 +36,5 @@ func (s *Storage) BeginGuardedTx(ctx context.Context, keys ...string) (storage.T
 func guardKey(k string) int64 {
 	h := fnv.New64a()
 	_, _ = h.Write([]byte("blunderdb guard|" + k))
-	return int64(h.Sum64()) //nolint:gosec // a lock name: wrapping is harmless.
+	return int64(h.Sum64())
 }
