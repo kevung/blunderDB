@@ -91,13 +91,13 @@ export const COMMAND = Object.freeze({
  * Les sortes d'Action saisies par deux dés. Exporté pour que le panneau n'en
  * tienne pas une seconde liste.
  */
-export const DICE_KINDS = new Set(['opening', 'checker', 'dance']);
+export const DICE_KINDS = new Set(['checker', 'dance']);
 
 /** Le niveau d'une résignation : simple, gammon, backgammon. */
 const RESIGN_LEVELS = new Set([1, 2, 3]);
 
 /**
- * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, tie: boolean, retyped: boolean, resume: KeyState|null}} KeyState
+ * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, retyped: boolean, resume: KeyState|null}} KeyState
  */
 
 /**
@@ -109,8 +109,7 @@ const RESIGN_LEVELS = new Set([1, 2, 3]);
  */
 
 /**
- * L'état initial. `tie` retient une ouverture à égalité, affichée « relance »
- * (elle reste au document sans Move ni Position, fonctionnel.md §1.2).
+ * L'état initial.
  *
  * @returns {KeyState}
  */
@@ -121,7 +120,6 @@ export function initialKeyState() {
         selected: 0,
         candidateCount: 0,
         awaitingCandidates: false,
-        tie: false,
         // Le jet en cours a été TAPÉ dans cette saisie, et non chargé d'une
         // Action relue : c'est ce qui sépare, sur la dernière Action, le
         // chiffre qui corrige son jet de celui qui ouvre le suivant (ADR-0051).
@@ -305,7 +303,7 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
     if (!DICE_KINDS.has(expects)) return ignored(state);
 
     const die = dieOf(event);
-    if (die > 0) return enterDie(state, die, expects, replacing, last);
+    if (die > 0) return enterDie(state, die, replacing, last);
 
     const delta = selectionDelta(event);
     if (delta !== 0) return moveSelection(state, delta);
@@ -326,7 +324,7 @@ export function pressKey(state, event, { expects = 'checker', replacing = false,
         }
         return {
             handled: true,
-            state: { ...initialKeyState(), tie: state.tie },
+            state: initialKeyState(),
             commands: [{ kind: COMMAND.CLEAR }]
         };
     }
@@ -435,44 +433,21 @@ export function menuCommands(from, to, kind) {
  *
  * @param {KeyState} state
  * @param {number} die
- * @param {string} expects
  * @param {boolean} [replacing]
  * @param {boolean} [last] - l'Action remplacée est la dernière du document
  * @returns {KeyResult}
  */
-function enterDie(state, die, expects, replacing = false, last = false) {
+function enterDie(state, die, replacing = false, last = false) {
     switch (state.phase) {
         case PHASE.DICE:
             return {
                 handled: true,
-                state: { ...state, phase: PHASE.DIE1, dice: [die, 0], tie: false },
+                state: { ...state, phase: PHASE.DIE1, dice: [die, 0] },
                 commands: [{ kind: COMMAND.DIE, value: die }]
             };
 
         case PHASE.DIE1: {
             const dice = [state.dice[0], die];
-            if (expects === 'opening') {
-                const commands = [{ kind: COMMAND.DIE, value: die }, { kind: COMMAND.VALIDATE }];
-                if (dice[0] === dice[1]) {
-                    // Égalité : l'Action `opening` est enregistrée telle quelle et
-                    // une autre ouverture est attendue. Rien n'est refusé.
-                    return { handled: true, state: { ...initialKeyState(), tie: true }, commands };
-                }
-                // Une ouverture RESSAISIE ne relance pas la partie : elle décide
-                // à nouveau qui commence et rend le Cursor là où la relecture
-                // l'avait pris, sans enchaîner sur les candidats du premier coup.
-                if (replacing && !last) {
-                    return { handled: true, state: initialKeyState(), commands };
-                }
-                // Le gagnant joue les deux dés de l'ouverture sans les
-                // ressaisir ; le moteur les repose sur l'Entry suivante.
-                const roll = dice[0] >= dice[1] ? [dice[0], dice[1]] : [dice[1], dice[0]];
-                return {
-                    handled: true,
-                    state: { ...initialKeyState(), phase: PHASE.ROLL, dice: roll, awaitingCandidates: true, retyped: true },
-                    commands
-                };
-            }
             return {
                 handled: true,
                 state: { ...initialKeyState(), phase: PHASE.ROLL, dice, awaitingCandidates: true, retyped: true },
@@ -564,24 +539,25 @@ export function applyCandidates(state, count) {
  * @param {KeyState} state
  * @param {number} d1 - le dé fort, celui que porte l'étiquette de la case
  * @param {number} d2
- * @param {{expects?: string, replacing?: boolean, last?: boolean}} context
+ * @param {{expects?: string, replacing?: boolean, last?: boolean}} context - `expects` est lu par `pressKey` ; un clic ne s’en sert pas
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
-export function enterDicePair(state, d1, d2, { expects = 'checker', replacing = false, last = false } = {}) {
-    const first = enterDie(state, d1, expects, replacing, last);
-    const second = enterDie(first.state, d2, expects, replacing, last);
+export function enterDicePair(state, d1, d2, { replacing = false, last = false } = {}) {
+    const first = enterDie(state, d1, replacing, last);
+    const second = enterDie(first.state, d2, replacing, last);
     return { state: second.state, commands: [...first.commands, ...second.commands] };
 }
 
 /**
- * Un seul dé au clic (rangée de l'ouverture, où chaque camp donne le sien).
+ * Un seul dé au clic (rangée du premier coup d'une partie, où chaque camp
+ * donne le dé de son jet d'ouverture).
  *
  * @param {KeyState} state
  * @param {number} die
- * @param {{expects?: string, replacing?: boolean, last?: boolean}} context
+ * @param {{expects?: string, replacing?: boolean, last?: boolean}} context - `expects` est lu par `pressKey` ; un clic ne s’en sert pas
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
-export function enterSingleDie(state, die, { expects = 'checker', replacing = false, last = false } = {}) {
-    const result = enterDie(state, die, expects, replacing, last);
+export function enterSingleDie(state, die, { replacing = false, last = false } = {}) {
+    const result = enterDie(state, die, replacing, last);
     return { state: result.state, commands: result.commands };
 }

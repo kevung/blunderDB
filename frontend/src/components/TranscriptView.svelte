@@ -57,7 +57,7 @@
             at,
             gameIndex,
             replacing,
-            cell: { kind: 'pending', index: at, entry: e, side: e.side ?? 0, opening: e.kind === 'opening', replacing }
+            cell: { kind: 'pending', index: at, entry: e, side: e.side ?? 0, replacing }
         };
     }
 
@@ -71,12 +71,12 @@
 
     /**
      * The rows of each game, by `ingest.RenderMAT`'s rule: player 1 opens a
-     * row, player 2 joins it or takes one with the left cell blank; an opening
-     * spans both columns; a game end sits in the winner's column. The Action
+     * row, player 2 joins it or takes one with the left cell blank; a game end
+     * sits in the winner's column. The Action
      * being typed takes the slot it will fill (see [pendingOf]).
      *
      * @param {any} annotated - a `transcript.Annotated` as the Go side returns it
-     * @returns {{game: any, rows: {left: any, right: any, full: any, numbered: boolean}[]}[]}
+     * @returns {{game: any, rows: {left: any, right: any, numbered: boolean}[]}[]}
      */
     export function transcriptRows(annotated) {
         const infos = annotated?.actions ?? [];
@@ -90,18 +90,13 @@
             let row = null;
 
             const open = (/** @type {boolean} */ numbered) => {
-                row = { left: null, right: null, full: null, numbered };
+                row = { left: null, right: null, numbered };
                 rows.push(row);
                 return row;
             };
 
             /** Une cellule à sa place — la règle du `.mat`, pour les deux sortes. */
-            const place = (/** @type {any} */ cell, /** @type {boolean} */ opening, /** @type {number} */ camp) => {
-                if (opening) {
-                    open(true).full = cell;
-                    row = null;
-                    return;
-                }
+            const place = (/** @type {any} */ cell, /** @type {number} */ camp) => {
                 const side = camp === 1 ? 'right' : 'left';
                 if (!row || row[side] || (side === 'left' && row.right)) open(true);
                 row[side] = cell;
@@ -112,18 +107,18 @@
                 const filling = pending && !pending.replacing && pending.gameIndex === gameIndex && pending.at === info.index;
                 // A double turn's missing turn is a cell of its own (ADR-0054),
                 // unless the insertion being typed fills it.
-                if (!filling && info.kind !== 'opening' && hasFlaw(info, 'double_turn')) {
-                    place({ kind: 'hole', index: info.index, side: info.side === 1 ? 0 : 1 }, false, info.side === 1 ? 0 : 1);
+                if (!filling && hasFlaw(info, 'double_turn')) {
+                    place({ kind: 'hole', index: info.index, side: info.side === 1 ? 0 : 1 }, info.side === 1 ? 0 : 1);
                 }
                 if (pending && pending.gameIndex === gameIndex && pending.at === info.index) {
-                    place(pending.cell, pending.cell.opening, pending.cell.side);
+                    place(pending.cell, pending.cell.side);
                     // Une correction tient la place de l'Action, jamais à côté.
                     if (pending.replacing) continue;
                 }
-                place({ kind: 'action', index: info.index, info }, info.kind === 'opening', info.side);
+                place({ kind: 'action', index: info.index, info }, info.side);
             }
             if (pending && pending.gameIndex === gameIndex && pending.at >= infos.length) {
-                place(pending.cell, pending.cell.opening, pending.cell.side);
+                place(pending.cell, pending.cell.side);
             }
 
             // " Wins N points": winner's column, unnumbered row.
@@ -168,7 +163,7 @@
          */
         onEditMove = null,
         /**
-         * `(opening, score) => boolean` on Enter in a game's score field;
+         * `(first, score) => boolean` on Enter in a game's score field;
          * `score` is `[p1, p2]` or `null` to clear it (ADR-0053); `true` closes it.
          */
         onEditScore = null
@@ -182,7 +177,7 @@
     let pendingIndex = $derived.by(() => {
         for (const group of layout) {
             for (const row of group.rows) {
-                for (const c of [row.full, row.left, row.right]) {
+                for (const c of [row.left, row.right]) {
                     if (c?.kind === 'pending') return c.index;
                 }
             }
@@ -209,7 +204,7 @@
      */
     function typable(c) {
         if (!onEditMove || !c) return false;
-        if (c.kind === 'pending') return !c.opening && (c.entry?.dice?.[0] ?? 0) > 0 && (c.entry?.dice?.[1] ?? 0) > 0;
+        if (c.kind === 'pending') return (c.entry?.dice?.[0] ?? 0) > 0 && (c.entry?.dice?.[1] ?? 0) > 0;
         return c.kind === 'action' && (c.info?.kind === 'checker' || c.info?.kind === 'dance' || c.info?.kind === 'unrecorded');
     }
 
@@ -226,7 +221,7 @@
 
     // Score annoncé (ADR-0053), même mécanique ; vidé puis validé, il s'efface.
 
-    /** @type {{opening: number, number: number, text: string} | null} */
+    /** @type {{first: number, number: number, text: string} | null} */
     let scoring = $state(null);
 
     $effect(() => {
@@ -234,23 +229,23 @@
     });
 
     /**
-     * Index de l'ouverture de la partie, ou −1 si son score ne se tape pas
-     * (argent, ou pas d'ouverture).
+     * Index de la première Action de la partie, celle qui porte son score
+     * annoncé, ou −1 si son score ne se tape pas (argent, partie vide).
      *
      * @param {any} game
      */
-    function scoreOpening(game) {
+    function scoreFirst(game) {
         if (!onEditScore || !((header.match_length ?? 0) > 0)) return -1;
         const first = game?.first ?? -1;
-        return first >= 0 && annotated?.actions?.[first]?.kind === 'opening' ? first : -1;
+        return first >= 0 && annotated?.actions?.[first]?.opens_game === true ? first : -1;
     }
 
     /** @param {any} game */
     function startScore(game) {
-        const opening = scoreOpening(game);
-        if (opening < 0) return;
+        const first = scoreFirst(game);
+        if (first < 0) return;
         const [a, b] = game.initial_score ?? [0, 0];
-        scoring = { opening, number: game.number, text: `${a}-${b}` };
+        scoring = { first, number: game.number, text: `${a}-${b}` };
     }
 
     /** @param {KeyboardEvent} event */
@@ -261,7 +256,7 @@
         event.preventDefault();
         const score = parseScore(scoring.text);
         if (score === undefined) return;
-        if (onEditScore?.(scoring.opening, score)) scoring = null;
+        if (onEditScore?.(scoring.first, score)) scoring = null;
     }
 
     /**
@@ -383,8 +378,6 @@
         const action = actions[c.index] ?? {};
         const dice = action.dice ?? [0, 0];
         switch (info.kind) {
-            case 'opening':
-                return dice[0] === dice[1] ? $t('transcript.openingTie', { a: dice[0], b: dice[1] }) : $t('transcript.opening', { a: dice[0], b: dice[1] });
             case 'checker':
                 return `${dice[0]}${dice[1]}: ${info.notation ?? ''}`.trim();
             case 'dance':
@@ -414,7 +407,6 @@
     function pendingText(e) {
         const a = e.dice?.[0] || '·';
         const b = e.dice?.[1] || '·';
-        if (e.kind === 'opening') return $t('transcript.opening', { a, b });
         return e.notation ? `${a}${b}: ${e.notation}` : `${a}${b}`;
     }
 
@@ -459,7 +451,7 @@
                                 use:focusField
                             />
                         {:else}
-                            {@const editable = scoreOpening(group.game) >= 0}
+                            {@const editable = scoreFirst(group.game) >= 0}
                             {@const differs = scoreDiffers(group.game)}
                             <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
                             <span
@@ -493,12 +485,8 @@
                                 {#each group.rows as row, i (i)}
                                     <tr>
                                         <td class="num">{row.numbered ? i + 1 : ''}</td>
-                                        {#if row.full}
-                                            <td class="side" colspan="2">{@render cellBlock(row.full)}</td>
-                                        {:else}
-                                            <td class="side">{@render cellBlock(row.left)}</td>
-                                            <td class="side">{@render cellBlock(row.right)}</td>
-                                        {/if}
+                                        <td class="side">{@render cellBlock(row.left)}</td>
+                                        <td class="side">{@render cellBlock(row.right)}</td>
                                     </tr>
                                 {/each}
                             </tbody>

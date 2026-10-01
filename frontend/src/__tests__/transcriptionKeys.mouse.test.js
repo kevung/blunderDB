@@ -89,23 +89,17 @@ describe('un clic vaut ses deux touches', () => {
         expect(clicked.state.dice).toEqual([4, 2]);
     });
 
-    // L'ouverture demande un dé par camp : la rangée de six rend un dé, et le
-    // second valide l'Action `opening` comme le ferait la seconde touche.
-    test('les deux dés de l-ouverture, un clic chacun, valident l-ouverture', () => {
-        const first = enterSingleDie(initialKeyState(), 6, { expects: 'opening' });
-        const second = enterSingleDie(first.state, 3, { expects: 'opening' });
-        const pressed = typed(initialKeyState(), 6, 3, 'opening');
+    // Le premier coup d'une partie demande un dé par camp : la rangée de six
+    // rend un dé, et les deux clics valent les deux touches, sans validation.
+    test('les deux dés du premier coup, un clic chacun, valent les deux touches', () => {
+        const first = enterSingleDie(initialKeyState(), 3, { expects: 'checker' });
+        const second = enterSingleDie(first.state, 6, { expects: 'checker' });
+        const pressed = typed(initialKeyState(), 3, 6, 'checker');
 
         expect([...first.commands, ...second.commands]).toEqual(pressed.commands);
-        expect(second.commands.map((c) => c.kind)).toContain(COMMAND.VALIDATE);
-        // Le gagnant joue les deux dés, dé fort d'abord (fonctionnel.md §1.2).
-        expect(second.state.dice).toEqual([6, 3]);
-    });
-
-    test('l-égalité à l-ouverture se lit « relance » au clic comme à la touche', () => {
-        const first = enterSingleDie(initialKeyState(), 4, { expects: 'opening' });
-        const second = enterSingleDie(first.state, 4, { expects: 'opening' });
-        expect(second.state.tie).toBe(true);
+        expect(second.commands.map((c) => c.kind)).not.toContain(COMMAND.VALIDATE);
+        // L'ordre tapé est gardé : le moteur y lit qui commence.
+        expect(second.state.dice).toEqual([3, 6]);
     });
 });
 
