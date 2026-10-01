@@ -109,8 +109,13 @@ const allSource = sourceFiles(SRC)
     .map((f) => fs.readFileSync(f, 'utf8'))
     .join('\n');
 
+// Every quoted token of the sources, collected once: a key is referenced exactly when it
+// occurs between two identical quotes, which a set lookup answers without rescanning the blob
+// for each of the ~2000 keys.
+const quotedTokens = new Set(allSource.match(/(?<=')[^'"\s]+(?=')|(?<=")[^'"\s]+(?=")/g));
+
 function isReferenced(key) {
-    return allSource.includes(`'${key}'`) || allSource.includes(`"${key}"`);
+    return quotedTokens.has(key);
 }
 
 // Flatten a nested dictionary into a flat list of dotted leaf keys.
