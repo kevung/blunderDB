@@ -11,6 +11,9 @@ import (
 	"net/http/httptest"
 	"strconv"
 	"testing"
+	"time"
+
+	"github.com/jackc/pgx/v5"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
@@ -30,7 +33,26 @@ func TestDirectionGestures_TwoInstancesPostgres(t *testing.T) {
 		return st
 	}
 	stA := open()
-	checkTwoInstances(t, stA, open())
+	conn, err := pgx.Connect(context.Background(), dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = conn.Close(context.Background()) })
+	checkTwoInstances(t, stA, open(), func(n int) {
+		deadline := time.Now().Add(10 * time.Second)
+		for time.Now().Before(deadline) {
+			var waiting int
+			if err := conn.QueryRow(context.Background(),
+				`SELECT count(*) FROM pg_locks WHERE locktype = 'advisory' AND NOT granted`).Scan(&waiting); err != nil {
+				t.Fatal(err)
+			}
+			if waiting >= n {
+				return
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+		t.Fatalf("fewer than %d gestures wait on the guard", n)
+	})
 }
 
 // TestDirectionGestures_RacePostgres: on a pooled backend too, two gestures on one reading

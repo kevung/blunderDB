@@ -43,6 +43,9 @@ class BaseClient:
 
     def __init__(self, base_url: str = "http://127.0.0.1:8080", tenant: int = 1, timeout: float = 30.0):
         self.base_url = base_url.rstrip("/")
+        # The Direction-Version of the last answer that carried one — a read, a gesture, or the
+        # 409 that refused a gesture: the If-Match of the next gesture.
+        self.last_version: Optional[str] = None
         # The tenant is a positive decimal integer. A name is refused by the
         # daemon with 400 invalid rather than mapped to a tenant, so refusing
         # it here too turns a server round-trip into a local error.
@@ -106,9 +109,16 @@ class BaseClient:
         request = self._build(path, payload, idempotency_key, if_match)
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                self._note_version(response.headers)
                 return response.read().decode("utf-8")
         except urllib.error.HTTPError as err:
+            self._note_version(err.headers)
             raise self._error(err) from None
+
+    def _note_version(self, headers: Any) -> None:
+        version = headers.get("Direction-Version") if headers is not None else None
+        if version:
+            self.last_version = version.strip('"')
 
     @staticmethod
     def _error(err: urllib.error.HTTPError) -> APIError:

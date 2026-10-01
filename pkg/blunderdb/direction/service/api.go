@@ -165,13 +165,20 @@ func (d *Service) HasDirection(ctx context.Context, tournamentID int64) (bool, e
 // SetDirectionConfig installs a configuration, in preparation and in the middle of a tournament
 // alike. It is always an event, so decisions stay readable in order. PreviewDirectionConfig
 // shows the engine's refusal BEFORE the click; the refusal returned here is the same *tournoi.ConfigRefusal.
-func (d *Service) SetDirectionConfig(ctx context.Context, tournamentID int64, configJSON string) (err error) {
+func (d *Service) SetDirectionConfig(ctx context.Context, tournamentID int64, configJSON string) error {
+	if err := d.setDirectionConfig(ctx, tournamentID, configJSON); err != nil {
+		return err
+	}
+	// A configuration a room shares changes every sister's page, not only this one.
+	d.writeRoomPages(context.WithoutCancel(ctx), tournamentID)
+	return nil
+}
+
+func (d *Service) setDirectionConfig(ctx context.Context, tournamentID int64, configJSON string) (err error) {
 	d, release, err := d.lockRoom(ctx, tournamentID, 0)
 	if err != nil {
 		return err
 	}
-	// Deferred first, so it runs once the lock is released.
-	defer d.writeRoomPages(ctx, tournamentID)
 	defer release(&err)
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {

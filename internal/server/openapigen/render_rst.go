@@ -86,9 +86,6 @@ func GenerateAPIReferenceRST(model *Model) string {
 			if r.Conditional {
 				line += "  (ETag)"
 			}
-			if r.Gesture {
-				line += "  (If-Match)"
-			}
 			fmt.Fprintln(&b, strings.TrimRight(line, " "))
 		}
 	}

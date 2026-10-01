@@ -264,6 +264,9 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		if err != nil {
 			return err
 		}
+		if err := d.tableBeyond(ctx, dir, tournamentID, table); err != nil {
+			return err
+		}
 		st := dir.State()
 		if st == nil {
 			return direction.Refusef("direction: the tournament has not started")
@@ -390,6 +393,25 @@ func (d *Service) cancelMatch(ctx context.Context, tournamentID int64, matchID s
 	}
 	if err := dir.Apply(ctx, tournoi.CancelEvent(tournoi.MatchID(matchID), time.Now())); err != nil {
 		return err
+	}
+	return nil
+}
+
+// tableBeyond refuses a table past the last one — the room's in a Rencontre, the configuration's
+// otherwise: a match seated there would have no cell in the grid and vanish from it. A count of
+// 0 bounds nothing.
+func (d *Service) tableBeyond(ctx context.Context, dir *direction.Direction, tournamentID int64, table int) error {
+	limit := 0
+	if cfg, err := dir.Config(); err == nil {
+		limit = cfg.Tables.Count
+	}
+	if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err == nil && rid != 0 {
+		if r, err := d.st.Rencontres().Get(ctx, d.scope, rid); err == nil && r.Tables > 0 {
+			limit = r.Tables
+		}
+	}
+	if limit > 0 && table > limit {
+		return direction.Refusef("direction: there is no table %d, the last is %d", table, limit)
 	}
 	return nil
 }

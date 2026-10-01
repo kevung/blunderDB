@@ -51,6 +51,7 @@ type gestureResult struct {
 	version  string
 	replayed bool
 	body     []byte
+	header   http.Header
 }
 
 // send posts body to path as tenant, with If-Match and Idempotency-Key when given.
@@ -73,7 +74,7 @@ func send(t *testing.T, ts *httptest.Server, tenant, path, body, ifMatch, key st
 	defer resp.Body.Close()
 	b, _ := io.ReadAll(resp.Body)
 	return gestureResult{status: resp.StatusCode, version: resp.Header.Get(versionHeader),
-		replayed: resp.Header.Get(idempotencyReplayedHeader) == "true", body: b}
+		replayed: resp.Header.Get(idempotencyReplayedHeader) == "true", body: b, header: resp.Header}
 }
 
 // versionOf reads the Direction and returns the version its gestures state.

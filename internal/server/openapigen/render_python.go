@@ -107,7 +107,11 @@ func pythonDocstring(r Route) string {
 	}
 	extra := ""
 	if r.IfMatchRequired {
-		extra += " Requires If-Match: the draft's revision."
+		if r.Gesture {
+			extra += " Requires If-Match: the Direction-Version of your last read."
+		} else {
+			extra += " Requires If-Match: the draft's revision."
+		}
 	}
 	if r.IdempotencyKeySupported {
 		extra += " Accepts an Idempotency-Key."

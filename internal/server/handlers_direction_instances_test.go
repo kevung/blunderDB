@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -19,7 +20,9 @@ import (
 // their gestures. Each check runs one gesture on each instance, on one reading.
 
 // raceOnTwo sends one gesture to each instance at once and returns their answers.
-func raceOnTwo(t *testing.T, tss [2]*httptest.Server, tenant string, paths, bodies [2]string, version string) [2]gestureResult {
+// When gate is set, both gestures are in flight before either runs: gate holds their guard
+// until they are both waiting on it.
+func raceOnTwo(t *testing.T, tss [2]*httptest.Server, tenant string, paths, bodies [2]string, version string, gate func()) [2]gestureResult {
 	t.Helper()
 	var out [2]gestureResult
 	var wg sync.WaitGroup
@@ -33,6 +36,9 @@ func raceOnTwo(t *testing.T, tss [2]*httptest.Server, tenant string, paths, bodi
 		}()
 	}
 	close(start)
+	if gate != nil {
+		gate()
+	}
 	wg.Wait()
 	return out
 }
@@ -88,8 +94,29 @@ func seedSister(t *testing.T, st storage.Storage, f directedFixture, name, prefi
 	return directedFixture{tenant: f.tenant, tournamentID: tid, rencontreID: f.rencontreID, svc: svc, ctx: f.ctx}
 }
 
+// holdGuard takes the room's guard now and returns the gate that releases it once
+// waitBlocked(2) says both gestures wait on it.
+func holdGuard(t *testing.T, st storage.Storage, f directedFixture, waitBlocked func(n int)) func() {
+	t.Helper()
+	gb, ok := st.(storage.GuardedBeginner)
+	if !ok {
+		t.Fatal("the backend has no guard")
+	}
+	tx, err := gb.BeginGuardedTx(context.Background(), "direction|"+f.tenant+"|rencontre|"+strconv.FormatInt(f.rencontreID, 10))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return func() {
+		waitBlocked(2)
+		if err := tx.Commit(); err != nil {
+			t.Error(err)
+		}
+	}
+}
+
 // checkTwoInstances runs the three races of two instances over stA and stB, one database.
-func checkTwoInstances(t *testing.T, stA, stB storage.Storage) {
+// waitBlocked returns once n gestures wait on a guard.
+func checkTwoInstances(t *testing.T, stA, stB storage.Storage, waitBlocked func(n int)) {
 	tsA, _ := gestureServerOn(t, stA)
 	tsB, _ := gestureServerOn(t, stB)
 	tss := [2]*httptest.Server{tsA, tsB}
@@ -98,7 +125,7 @@ func checkTwoInstances(t *testing.T, stA, stB storage.Storage) {
 		f := seedDirection(t, stA, "1", "Open de Lyon")
 		run := f.running(t)
 		rs := raceOnTwo(t, tss, f.tenant, [2]string{"/v1/directions.enterResult", "/v1/directions.enterResult"},
-			[2]string{f.resultBody(run[0]), f.resultBody(run[1])}, f.versionOf(t, tsA))
+			[2]string{f.resultBody(run[0]), f.resultBody(run[1])}, f.versionOf(t, tsA), nil)
 		oneApplied(t, "two results", rs)
 		if got := len(f.running(t)); got != 1 {
 			t.Errorf("%d running after the race; want 1", got)
@@ -110,7 +137,7 @@ func checkTwoInstances(t *testing.T, stA, stB storage.Storage) {
 		b := seedSister(t, stA, f, "Speed", "s")
 		c := seedSister(t, stA, f, "Consolante", "k")
 		rs := raceOnTwo(t, tss, f.tenant, [2]string{"/v1/directions.confirmAllProposals", "/v1/directions.confirmAllProposals"},
-			[2]string{b.body(""), c.body("")}, f.versionOf(t, tsA))
+			[2]string{b.body(""), c.body("")}, f.versionOf(t, tsA), holdGuard(t, stA, f, waitBlocked))
 		oneApplied(t, "two sisters seating", rs)
 		seated := map[int]string{}
 		for _, x := range []directedFixture{f, b, c} {
@@ -133,7 +160,7 @@ func checkTwoInstances(t *testing.T, stA, stB storage.Storage) {
 			return `{"id":` + strconv.FormatInt(f.rencontreID, 10) + `,"name":"` + name + `","tables":4}`
 		}
 		rs := raceOnTwo(t, tss, f.tenant, [2]string{"/v1/rencontres.update", "/v1/rencontres.update"},
-			[2]string{body("Salle A"), body("Salle B")}, r.version)
+			[2]string{body("Salle A"), body("Salle B")}, r.version, nil)
 		oneApplied(t, "two renames", rs)
 	})
 }
@@ -151,5 +178,6 @@ func TestDirectionGestures_TwoInstancesSQLite(t *testing.T) {
 		return st
 	}
 	stA := open()
-	checkTwoInstances(t, stA, open())
+	// SQLite does not show who waits on its write lock: the gestures get time to reach it.
+	checkTwoInstances(t, stA, open(), func(int) { time.Sleep(300 * time.Millisecond) })
 }

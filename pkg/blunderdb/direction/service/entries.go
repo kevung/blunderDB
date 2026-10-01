@@ -316,7 +316,7 @@ func (d *Service) makeParticipantAbsent(ctx context.Context, tournamentID int64,
 		if until != "" {
 			t, err = time.Parse(time.RFC3339, until)
 			if err != nil {
-				return fmt.Errorf("direction: absence: heure de retour invalide: %w", err)
+				return direction.Refused(fmt.Errorf("direction: absence: heure de retour invalide: %w", err))
 			}
 		}
 		if t.IsZero() {

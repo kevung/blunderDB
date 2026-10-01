@@ -30,7 +30,7 @@ func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actio
 	if err := d.confirmProposal(ctx, tournamentID, a); err != nil {
 		return nil, err
 	}
-	return d.GetDirection(ctx, tournamentID)
+	return d.viewAfter(ctx, tournamentID)
 }
 
 func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tournoi.Action) (err error) {
@@ -48,12 +48,17 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 	if err != nil {
 		return err
 	}
+	if a.Kind == tournoi.ActStartMatch && a.Table > 0 {
+		if err := d.tableBeyond(ctx, dir, tournamentID, a.Table); err != nil {
+			return err
+		}
+	}
 	return confirm(ctx, dir, a)
 }
 
-// ConfirmAllProposals records every proposal in one gesture. It stops at the first refusal and
-// returns it with what was already recorded: a partial round is actionable, a rollback would
-// discard valid decisions.
+// ConfirmAllProposals records every proposal in one gesture, all or none: a refusal or a failure
+// at any proposal leaves the log as it was, and the director confirms again what is still
+// proposed.
 func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (*DirectionView, error) {
 	if err := d.confirmAllProposals(ctx, tournamentID); err != nil {
 		return nil, err
@@ -140,9 +145,8 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 		return err
 	}
 	defer release(&err)
-	// The sisters' tables are read before the transaction opens — on a single-connection
-	// database a read beside it would wait for it forever — and the room's lock keeps them as
-	// read until the match is written.
+	// The sisters' tables are read in the gesture's transaction, under the room's lock and the
+	// database's guard: no sister seats a match on one of them before this match is written.
 	sisters := map[int]string{}
 	if shared {
 		sisters = d.roomAround(ctx, tournamentID, nil).tables
@@ -160,6 +164,9 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 		}
 		if length <= 0 {
 			length = st.Phases[st.Current].Length
+		}
+		if err := d.tableBeyond(ctx, dir, tournamentID, table); err != nil {
+			return err
 		}
 		if table <= 0 {
 			// No number typed: the first free table, as a proposal would get — one no sister
