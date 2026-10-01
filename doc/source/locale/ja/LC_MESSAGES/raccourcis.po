@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 01:48+0200\n"
+"POT-Creation-Date: 2026-10-01 02:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -848,9 +848,9 @@ msgstr "1 … 6"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Saisir un dé : dé du joueur 1, puis dé du joueur 2 pour l'ouverture (le "
-"plus fort commence et joue les deux dés)."
-msgstr "ダイスを入力する：オープニングではプレイヤー1のダイス、次にプレイヤー2のダイス（大きい方が先手となり、両方のダイスを使う）。"
+"Saisir un dé. Sur le premier coup d'une partie : dé du joueur 1, puis dé "
+"du joueur 2 (le plus fort commence et joue les deux dés)."
+msgstr "ダイスを一つ入力します。ゲームの最初の手では、プレイヤー1のダイス、次にプレイヤー2のダイス(大きいほうが始め、両方のダイスを使います)。"
 
 #: ../../source/raccourcis.rst:1
 msgid "1 … 6 (jet saisi)"
@@ -864,16 +864,16 @@ msgid ""
 msgstr "選択された手を確定し、次の出目を開く。カーソルがすでに書かれたアクションの上にある見直し中のアクションでは、数字は確定せずそのアクションの出目をやり直す。"
 
 #: ../../source/raccourcis.rst:1
-msgid "1 … 6 (curseur sur l'ouverture d'une partie)"
-msgstr "1 … 6（カーソルがゲームのオープニング上）"
+msgid "1 … 6 (curseur sur le premier coup d'une partie)"
+msgstr "1 … 6(カーソルがゲームの最初の手の上)"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2, "
-"validés au second dé. Le plus fort l'emporte — gros dé d'abord, le trait "
-"revient au joueur 1 en bas ; petit dé d'abord, au joueur 2 en haut. Le "
-"premier coup de pions de la partie suit le nouveau vainqueur."
-msgstr "オープニングの出目を入力し直す。プレイヤー1のダイス、次にプレイヤー2のダイスで、2つ目のダイスで確定する。大きい方が勝つ——大きいダイスを先に打てば手番は下のプレイヤー1に、小さいダイスを先に打てば上のプレイヤー2に渡る。そのゲームの最初のチェッカーの手は新しい勝者に従う。"
+"Ressaisir le jet d'ouverture : dé du joueur 1 puis dé du joueur 2. Le "
+"plus fort l'emporte — gros dé d'abord, le coup revient au joueur 1 en bas"
+" ; petit dé d'abord, au joueur 2 en haut. Le coup change de colonne avec "
+"son camp et reste le même s'il est encore légal."
+msgstr "オープニングロールを打ち直します。プレイヤー1のダイス、次にプレイヤー2のダイス。大きいほうが勝ち、大きいダイスが先なら手は下のプレイヤー1に、小さいダイスが先なら上のプレイヤー2に渡ります。手はその側とともに列を移り、まだ合法なら同じ手のままです。"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -919,11 +919,9 @@ msgstr "クリック（出目の三角形）"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur "
-"la diagonale. Pendant l'ouverture, le triangle laisse la place à une "
-"rangée de six dés, un clic donnant le dé d'un camp."
-msgstr ""
-"ひとつの操作で出目を入力します。ひとつのマスが両方のダイスを表し、ゾロ目は対角線上に並びます。オープニングでは三角形に代わって 6 "
-"つのダイスの並びが現れ、クリックひとつで一方の陣営のダイスを与えます。"
+"la diagonale. Sur le premier coup d'une partie, le triangle laisse la "
+"place à une rangée de six dés, un clic donnant le dé d'un camp."
+msgstr "一度の操作で出目を入力します。マスは二つのダイスを持ち、ゾロ目は対角線上にあります。ゲームの最初の手では三角形の代わりに六つのダイスの列が現れ、一回のクリックで一方の側のダイスを与えます。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic, glisser (aucun dé saisi)"
@@ -1533,4 +1531,3 @@ msgstr "ヘルプを閉じる。"
 #~ "brouillon, ou le mettre à jour "
 #~ "s'il existe déjà."
 #~ msgstr "下書きからマッチを作成する。すでにあればそれを更新する。"
-

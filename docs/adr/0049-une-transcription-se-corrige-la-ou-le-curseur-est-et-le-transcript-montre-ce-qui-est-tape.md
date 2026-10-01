@@ -5,7 +5,7 @@ Voir aussi : ADR-0044, ADR-0045, ADR-0048 décision 1, ADR-0050, ADR-0054.
 
 ## Contexte
 
-Transcrire, c'est se reprendre : une passe lue pour une prise, une ouverture au mauvais camp.
+Transcrire, c'est se reprendre : une passe lue pour une prise, un premier coup au mauvais camp.
 Le transcript ne dessinait que le document (pas l'Entry en cours), les gestes de videau
 écrivaient toujours en bout de document, la cellule sous le curseur n'avait pas d'attente
 propre, et le plateau lisait `has_position = false` comme « rien à montrer ». Rien ici ne
@@ -19,7 +19,7 @@ Le geste écrit où le curseur est, et ce qui est tapé se voit à cette place a
    par-dessus la cellule qu'une correction remplace, entre deux voisines pour une insertion,
    au bas de la partie pour une saisie neuve. Dés, puis notation dès qu'un candidat est
    choisi ; le camp se lit à la colonne. Le moteur fournit tout (`transcript.EntryInfo` :
-   `Kind`, `Notation`) ; le composant ne dérive rien.
+   `Notation`, `GameStart`) ; le composant ne dérive rien.
 2. **Les quatre gestes de videau écrivent au rang de l'Entry** : sur une cellule relue ils
    remplacent, dans un créneau `i`/`a` ils remplissent, en bout de document ils ajoutent.
    `t` et `p` atteignent donc aussi la cellule tenue par le curseur ; dès qu'un dé est tapé,
@@ -27,26 +27,31 @@ Le geste écrit où le curseur est, et ce qui est tapé se voit à cette place a
 3. **Une insertion au milieu du document continue d'insérer** : la validation rouvre un
    créneau vide à la suite ; déplacer le curseur y met fin. Arrêt en fin de partie : ADR-0050
    règle 3.
-4. **La cellule sous le curseur a sa propre attente** (`entry.kind`), distincte de
-   `next.expects`. Ressaisir une ouverture se comporte en ouverture : dé du joueur 1, dé du
-   joueur 2, validation au second ; gros dé d'abord → le joueur 1 commence, petit dé d'abord →
-   le joueur 2.
+4. **La cellule sous le curseur a sa propre attente** (`entry`), distincte de `next` : elle
+   dit si elle est le premier coup d'une partie (`game_start`), celui de la cellule ou du
+   créneau visé, non celui du bout du document.
 5. **`has_position` n'est pas « rien à montrer »** : le plateau suit le curseur sur toute
    Action et lit `before` ; la fin du document n'est la réponse que passé la dernière.
-6. **L'ordre des dés ne nomme le camp que sur l'ouverture.** Ailleurs le trait est proposé par
-   le Replay, et `s` le change sur une Action écrite.
-7. **Le premier coup de pions suit l'ouverture corrigée** (`followOpening`) — seule entorse à
-   ADR-0045 règle 4, parce que ce camp n'a jamais été choisi par l'utilisateur et que rien ne
-   marquerait l'erreur (le coup reste légal pour les deux camps). Un premier coup déjà donné à
-   l'autre camp par `s` est laissé tel quel ; le reste de la partie garde ses camps.
+6. **L'ordre des dés ne nomme le camp que sur le premier coup d'une partie.** Il n'y a pas
+   d'Action d'ouverture : la partie commence par son premier coup, joué par le gagnant du jet
+   d'ouverture avec ce jet. Ses deux dés se tapent comme ce jet — dé du joueur 1, puis dé du
+   joueur 2 ; gros dé d'abord → le joueur 1 joue, petit dé d'abord → le joueur 2 — puis le
+   coup se choisit comme tout coup. Un double ne nomme personne : il est saisi tel quel et
+   marqué `inconsistent_dice`, aucun jet d'ouverture n'étant un double. Les égalités, rejouées
+   à la table, ne se transcrivent pas. Ailleurs le trait est proposé par le Replay, et `s` le
+   change sur une Action écrite, premier coup compris.
+7. **Retaper les dés d'un premier coup redécide son camp**, et le coup suit en miroir s'il
+   reste légal (la position de départ est symétrique) ; sinon le premier candidat est
+   présélectionné et la cellule marquée à revoir. Le reste de la partie garde ses camps
+   (ADR-0045 règle 4).
 
 ## Conséquences
 
-- `entryExpects` est écrit une fois, lu par `expectsOpening` et par `Replayer.Replay`.
+- `slotOpensGame` est écrit une fois, lu par `GestureEnterDie` et par `Replayer.Replay`.
 - Un `t` sur une cellule relue détruit ce qu'elle portait ; recours : `Ctrl+Z`, et le dessin
   qui montre d'avance ce que la validation écrira.
 
 ## Garde
 
 `pkg/blunderdb/transcript/inplace_test.go`, `correction_test.go`,
-`frontend/src/__tests__/TranscriptView.pending.test.js`, `transcriptionKeys.opening.test.js`.
+`frontend/src/__tests__/TranscriptView.pending.test.js`.

@@ -99,24 +99,24 @@ func TestDeleteRemovesTheDecisionBeingEdited(t *testing.T) {
 
 // TestTakeCorrectedContinuesTheGame holds ADR-0050's second decision: a pass
 // corrected into a take reopens its game, and the user types the rest of it
-// right there, until it ends — not over the next game's opening, not at the
+// right there, until it ends — not over the next game's first play, not at the
 // place the correction was started from.
 func TestTakeCorrectedContinuesTheGame(t *testing.T) {
 	doc := doubledMatch(t)
 	pass := len(doc.Actions) - 1
 	doubler := doc.Actions[pass-1].Side
-	// A second game follows in the record: its opening and a first play.
+	// A second game follows in the record: its first play.
 	doc = runSteps(t, doc, []step{
-		{"opening die 1", die(5), nil},
-		{"opening die 2", die(2), nil},
-		{"validate the opening", confirm(), nil},
+		{"player 1's opening die", die(5), nil},
+		{"player 2's opening die", die(2), nil},
 		{"a play", candidate(0), nil},
 		{"validate", confirm(), nil},
 	})
-	nextOpening := pass + 1
-	if doc.Actions[nextOpening].Kind != KindOpening {
-		t.Fatalf("fixture: action %d is %v, want the second game's opening", nextOpening, doc.Actions[nextOpening].Kind)
+	nextFirst := pass + 1
+	if !Replay(doc, 0).Actions[nextFirst].OpensGame {
+		t.Fatalf("fixture: action %d does not open the second game", nextFirst)
 	}
+	firstPlay := doc.Actions[nextFirst]
 	total := len(doc.Actions)
 
 	e := NewEditor(seek(t, doc, pass))
@@ -146,15 +146,15 @@ func TestTakeCorrectedContinuesTheGame(t *testing.T) {
 	if len(e.Doc.Actions) != total+1 || e.Doc.Actions[pass+1].Kind != KindChecker {
 		t.Fatalf("the roll was not inserted after the take: %d actions", len(e.Doc.Actions))
 	}
-	if e.Doc.Actions[pass+2].Kind != KindOpening {
-		t.Fatal("the next game's opening was overwritten")
+	if !sameAction(e.Doc.Actions[pass+2], firstPlay) {
+		t.Fatal("the next game's first play was overwritten")
 	}
 	if en := e.Doc.Entry; en == nil || en.Mode != EntryNew || en.At != pass+2 {
 		t.Fatalf("entry = %+v; the game is still running, the next slot must be open", en)
 	}
 
 	// The game ends on a double passed: the slot closes, and the Cursor rests on
-	// the next game's opening.
+	// the next game's first play.
 	for _, g := range []Gesture{{Kind: GestureDouble}, {Kind: GesturePass}} {
 		if err := e.Apply(g); err != nil {
 			t.Fatalf("%s: %v", g.Kind, err)
@@ -164,8 +164,8 @@ func TestTakeCorrectedContinuesTheGame(t *testing.T) {
 	if e.Doc.Actions[end].Kind != KindPass {
 		t.Fatalf("action %d = %v, want the pass", end, e.Doc.Actions[end].Kind)
 	}
-	if e.Doc.Cursor != end+1 || e.Doc.Actions[e.Doc.Cursor].Kind != KindOpening {
-		t.Errorf("cursor = %d, want %d — the next game's opening", e.Doc.Cursor, end+1)
+	if e.Doc.Cursor != end+1 || !Replay(e.Doc, 0).Actions[e.Doc.Cursor].OpensGame {
+		t.Errorf("cursor = %d, want %d — the next game's first play", e.Doc.Cursor, end+1)
 	}
 	if en := e.Doc.Entry; en != nil && en.Mode == EntryNew {
 		t.Errorf("an insertion slot is still open past the end of the game: %+v", en)
@@ -182,9 +182,10 @@ func TestCorrectionThatStillEndsTheGameReturns(t *testing.T) {
 	doc := doubledMatch(t)
 	pass := len(doc.Actions) - 1
 	doc = runSteps(t, doc, []step{
-		{"opening die 1", die(5), nil},
-		{"opening die 2", die(2), nil},
-		{"validate the opening", confirm(), nil},
+		{"player 1's opening die", die(5), nil},
+		{"player 2's opening die", die(2), nil},
+		{"a play", candidate(0), nil},
+		{"validate", confirm(), nil},
 	})
 	after, err := Apply(seek(t, doc, pass), Gesture{Kind: GesturePass})
 	if err != nil {

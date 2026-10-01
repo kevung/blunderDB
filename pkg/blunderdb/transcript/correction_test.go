@@ -18,7 +18,7 @@ func TestCorrectionInPlace(t *testing.T) {
 
 	t.Run("a roll retyped keeps a play it still allows", func(t *testing.T) {
 		doc := base(t)
-		at := 1 // player 1's first checker play, made with 6-3
+		at := 2 // player 1's second checker play, made with 4-2
 		doc = seek(t, doc, at)
 		played := doc.Actions[at].Steps
 		// The dice are retyped the other way round — the commonest reading
@@ -26,8 +26,8 @@ func TestCorrectionInPlace(t *testing.T) {
 		// du nouveau jet, ils sont gardés" (fonctionnel.md §2) has to hold: the
 		// user corrected the DICE, and must not be made to pick the play again.
 		doc = runSteps(t, doc, []step{
-			{"first die", die(3), nil},
-			{"second die", die(6), nil},
+			{"first die", die(2), nil},
+			{"second die", die(4), nil},
 		})
 		if doc.Entry == nil || !doc.Entry.Selected {
 			t.Fatalf("entry = %+v, want the recorded play kept and selected", doc.Entry)
@@ -42,7 +42,7 @@ func TestCorrectionInPlace(t *testing.T) {
 
 	t.Run("a roll the play does not belong to preselects a candidate, marked for review", func(t *testing.T) {
 		doc := base(t)
-		at := 1
+		at := 2
 		doc = seek(t, doc, at)
 		doc = runSteps(t, doc, []step{
 			{"first die", die(2), nil},
@@ -58,7 +58,7 @@ func TestCorrectionInPlace(t *testing.T) {
 			t.Errorf("the preselected play %v is not a play of 21", doc.Entry.Steps)
 		}
 		// Nothing is written until validation: the Action still says what it said.
-		if doc.Actions[at].Dice != [2]int{6, 3} {
+		if doc.Actions[at].Dice != [2]int{4, 2} {
 			t.Error("a correction wrote before it was validated")
 		}
 		// And picking through the list does not clear the mark — validating does.
@@ -299,12 +299,13 @@ func TestUndoRedoWalksTheSessionStack(t *testing.T) {
 
 // ── helpers ──────────────────────────────────────────────────────────────
 
-// typedMatch is a draft with an opening and four checker plays typed into it, which is
-// the shortest document a correction can be walked back into.
+// typedMatch is a draft with five checker plays typed into it, the first one rolled
+// 6-3 by player 1, which is the shortest document a correction can be walked back
+// into.
 func typedMatch(t *testing.T, length int) Document {
 	t.Helper()
 	doc := openedMatch(t, length)
-	rolls := [][2]int{{0, 0}, {5, 4}, {4, 2}, {6, 5}}
+	rolls := [][2]int{{0, 0}, {5, 4}, {4, 2}, {6, 5}, {3, 1}}
 	steps := []step{}
 	for i, r := range rolls {
 		if i > 0 {

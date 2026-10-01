@@ -226,9 +226,7 @@ func TestFromMATUnrecordedIsNotADance(t *testing.T) {
 	}
 	var kinds []Kind
 	for _, a := range doc.Actions {
-		if a.Kind != KindOpening {
-			kinds = append(kinds, a.Kind)
-		}
+		kinds = append(kinds, a.Kind)
 	}
 	want := []Kind{KindChecker, KindDance, KindUnrecorded}
 	if len(kinds) != len(want) {

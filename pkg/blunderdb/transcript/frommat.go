@@ -17,14 +17,12 @@ import (
 // testable and lets a .mat be REPLAYED for its Inconsistencies.
 //
 // A score line that differs from the derived score becomes a declared score on the
-// game's opening (ADR-0053), so the round trip is exact.
+// game's first Action (ADR-0053), so the round trip is exact. A game that follows
+// one the file leaves unfinished declares its score line all the same: it is what
+// starts a new game while the previous one is still running.
 //
-// Two things the format does not carry are reconstructed:
+// One thing the format does not carry is reconstructed:
 //
-//   - The opening roll. A .mat starts a game at the first play, so the opening is
-//     rebuilt from it — the two dice, given to the player who moved first. A first
-//     roll of doubles (which no opening can be) is written down as it stands and reads
-//     as a tie; the play that follows keeps its own side and roll either way.
 //   - The resignation. The format has no token for it: a game whose recorded plays do
 //     not end it, yet which announces a winner, ended by a resignation, and the level
 //     is what the announced points and the cube say it was.
@@ -56,20 +54,23 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 
 	for gi := range parsed.Games {
 		game := &parsed.Games[gi]
-		if rec := firstCheckerRecord(game.Moves); rec != nil {
-			opening := openingAction(rec)
-			// A score line the previous games do not give is read back as a
-			// declared score (ADR-0053), never corrected nor refused.
-			if score := game.Score; doc.Header.MatchLength > 0 && score != st.points {
-				opening.Score = &score
-				doc.FormatVersion = max(doc.FormatVersion, formatVersionScore)
+		// The game's first Action carries its score line when the previous games do
+		// not give it, or when the previous game is still running and only a
+		// declaration can close it (ADR-0053).
+		var declared *[2]int
+		score := game.Score
+		if doc.Header.MatchLength <= 0 {
+			score = [2]int{}
+		}
+		if st.gameActive || score != st.points {
+			declared = &score
+		}
+		first := true
+		push := func(a Action) {
+			if first {
+				a.Score, first = declared, false
 			}
-			push(opening)
-		} else {
-			// Nothing to rebuild an opening from: close the running game by hand so
-			// this one starts on a fresh board all the same.
-			st.endGame(-1, 0)
-			st.ensureGame()
+			push(a)
 		}
 
 		for i := range game.Moves {
@@ -89,8 +90,9 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 			}
 		}
 
-		// The plays do not end a game the file says was won: it was resigned.
-		if winner, points := statedResult(parsed.Games, gi, doc.Header.MatchLength); st.gameActive && points > 0 &&
+		// The plays do not end a game the file says was won — or there are none: it
+		// was resigned.
+		if winner, points := statedResult(parsed.Games, gi, doc.Header.MatchLength); (st.gameActive || first) && points > 0 &&
 			(winner == domain.Black || winner == domain.White) {
 			push(Action{
 				Side:  opponent(winner),
@@ -102,31 +104,6 @@ func fromParsedMAT(parsed *gnubgparser.Match) (Document, error) {
 
 	doc.Cursor = len(doc.Actions)
 	return doc, nil
-}
-
-// firstCheckerRecord returns the first play of a game, which is the only trace its
-// opening roll left in the file.
-func firstCheckerRecord(records []gnubgparser.MoveRecord) *gnubgparser.MoveRecord {
-	for i := range records {
-		if records[i].Type == gnubgparser.MoveTypeNormal {
-			return &records[i]
-		}
-	}
-	return nil
-}
-
-// openingAction rebuilds the opening from the first play: the higher die goes to the
-// player who moved, which is what having won the opening means.
-func openingAction(rec *gnubgparser.MoveRecord) Action {
-	hi, lo := rec.Dice[0], rec.Dice[1]
-	if lo > hi {
-		hi, lo = lo, hi
-	}
-	a := Action{Side: rec.Player, Kind: KindOpening, Dice: [2]int{hi, lo}}
-	if rec.Player == domain.White {
-		a.Dice = [2]int{lo, hi}
-	}
-	return a
 }
 
 // statedResult is what the FILE says a game was worth: the next game's score line,

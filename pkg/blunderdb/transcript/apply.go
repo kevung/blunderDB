@@ -16,7 +16,9 @@ const (
 	// its length, which a new draft inherits from the last one.
 	GestureCreate GestureKind = "create"
 	// GestureEnterDie fills the first free die of the Action being typed; once both
-	// are full it starts the roll again.
+	// are full it starts the roll again. On a game's first play the two dice are the
+	// opening roll, player 1's die then player 2's: the higher one gives the play to
+	// its side, and a double names no one.
 	GestureEnterDie GestureKind = "enter_die"
 	// GestureClearDice empties both dice of an Action not yet validated.
 	GestureClearDice GestureKind = "clear_dice"
@@ -63,7 +65,7 @@ const (
 	// play, or make a saved draft file a second Match.
 	GestureSetHeader GestureKind = "set_header"
 	// GestureSetScore declares (or, with a nil Gesture.Score, clears) the score of
-	// the game opened at Gesture.At (ADR-0053).
+	// the game whose first Action is Gesture.At (ADR-0053).
 	GestureSetScore GestureKind = "set_score"
 	// GestureUndo and GestureRedo are named here for one spelling, but [Apply]
 	// refuses them: the stack lives in [Editor], and the session layer routes them
@@ -103,7 +105,7 @@ type Gesture struct {
 	// Header is what GestureSetHeader writes.
 	Header Header
 	// At is the index of the Action a gesture about one written Action names —
-	// the opening of the game for GestureSetScore.
+	// the game's first Action for GestureSetScore.
 	At int
 	// Score is the score GestureSetScore declares, points of player 1 then of
 	// player 2; nil clears the declaration.
@@ -187,6 +189,12 @@ func apply(doc Document, g Gesture) (Document, error) {
 			e.Dice = [2]int{g.Die, 0}
 		}
 		e.Steps, e.Selected, e.Review = nil, false, false
+		if d := e.Dice; d[1] != 0 && d[0] != d[1] && slotOpensGame(Replay(out, 0), e.At, e.Mode == EntryReplace) {
+			e.Side = domain.Black
+			if d[1] > d[0] {
+				e.Side = domain.White
+			}
+		}
 		reroll(&out)
 		return out, nil
 
@@ -307,9 +315,6 @@ func apply(doc Document, g Gesture) (Document, error) {
 		for i := range out.Actions {
 			a := &out.Actions[i]
 			a.Side = opponent(a.Side)
-			if a.Kind == KindOpening {
-				a.Dice[0], a.Dice[1] = a.Dice[1], a.Dice[0]
-			}
 			if a.Score != nil {
 				a.Score[0], a.Score[1] = a.Score[1], a.Score[0]
 			}
@@ -338,18 +343,13 @@ func apply(doc Document, g Gesture) (Document, error) {
 	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)
 }
 
-// setScore is GestureSetScore. It refuses only the meaningless (not a game's
-// opening, money play, negative); a score past the length is declared and marked
+// setScore is GestureSetScore. It refuses only the meaningless (not a game's first
+// Action, money play, negative); a score past the length is declared and marked
 // (ADR-0044). It moves neither the Cursor nor the entry, and holds the Cursor.
 func setScore(doc, out Document, g Gesture) (Document, error) {
 	at := g.At
-	if at < 0 || at >= len(out.Actions) || out.Actions[at].Kind != KindOpening {
-		return doc, fmt.Errorf("transcript: action %d is not the opening of a game", at)
-	}
-	if at > 0 {
-		if prev := out.Actions[at-1]; prev.Kind == KindOpening && prev.Dice[0] == prev.Dice[1] {
-			return doc, fmt.Errorf("transcript: action %d is the re-roll of a tie, not the opening of a game", at)
-		}
+	if at < 0 || at >= len(out.Actions) || !Replay(out, 0).Actions[at].OpensGame {
+		return doc, fmt.Errorf("transcript: action %d is not the first of a game", at)
 	}
 	if g.Score == nil {
 		out.Actions[at].Score = nil
@@ -364,7 +364,6 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 	}
 	sc := *g.Score
 	out.Actions[at].Score = &sc
-	out.FormatVersion = max(out.FormatVersion, formatVersionScore)
 	out.HoldCursor = true
 	return out, nil
 }
@@ -392,9 +391,6 @@ func ensureEntry(doc *Document) *Entry {
 // proposedEntry is the Action the document expects where the Cursor stands: the one
 // already recorded there, which a new entry corrects in place, or a new one at the end
 // of the document.
-//
-// A new entry after a decided opening starts with the opening's roll, which the
-// user does not type again (fonctionnel.md §1.2).
 func proposedEntry(doc Document) Entry {
 	at := doc.Cursor
 	if at < 0 {
@@ -414,17 +410,7 @@ func proposedEntry(doc Document) Entry {
 			At:       at,
 		}
 	}
-	e := Entry{At: at, Mode: EntryNew, Side: Replay(doc, 0).Next.Side}
-	if at > 0 {
-		if prev := doc.Actions[at-1]; prev.Kind == KindOpening && prev.Dice[0] != prev.Dice[1] {
-			hi, lo := prev.Dice[0], prev.Dice[1]
-			if lo > hi {
-				hi, lo = lo, hi
-			}
-			e.Dice = [2]int{hi, lo}
-		}
-	}
-	return e
+	return Entry{At: at, Mode: EntryNew, Side: Replay(doc, 0).Next.Side}
 }
 
 // deleteDecision is GestureDelete: it removes the decision being edited and steps
@@ -454,11 +440,12 @@ func deleteDecision(doc, out Document) (Document, error) {
 		return doc, ErrNoAction
 	}
 	at := out.Cursor
-	// A tie that carried the game's declared score hands it to the re-roll after
-	// it, which now opens the game: deleting a roll is not undeclaring a score.
-	if gone := out.Actions[at]; gone.Kind == KindOpening && gone.Score != nil && gone.Dice[0] == gone.Dice[1] &&
-		at+1 < len(out.Actions) && out.Actions[at+1].Kind == KindOpening && out.Actions[at+1].Score == nil {
-		out.Actions[at+1].Score = gone.Score
+	// A game's first Action that carried its declared score hands it to the Action
+	// after it, which now opens the game: deleting a play is not undeclaring a score.
+	if gone := out.Actions[at]; gone.Score != nil && at+1 < len(out.Actions) && out.Actions[at+1].Score == nil {
+		if ann := Replay(out, 0); ann.Actions[at+1].GameIndex == ann.Actions[at].GameIndex {
+			out.Actions[at+1].Score = gone.Score
+		}
 	}
 	out.Actions = append(out.Actions[:at], out.Actions[at+1:]...)
 	out.Touched, out.HasTouched = at, true
@@ -538,23 +525,23 @@ func openHole(doc *Document, at int) {
 }
 
 // gameEndsAt reports whether the Action at `at` closes its game or the match: a
-// Replay of the prefix expects an opening next. An opening, tie included, never
-// does. It costs a prefix Replay, so it runs only on writes INSIDE the document.
+// Replay of the prefix expects a new game next. It costs a prefix Replay, so it
+// runs only on writes INSIDE the document.
 func gameEndsAt(doc Document, at int) bool {
-	if at < 0 || at >= len(doc.Actions) || doc.Actions[at].Kind == KindOpening {
+	if at < 0 || at >= len(doc.Actions) {
 		return false
 	}
 	prefix := Document{FormatVersion: doc.FormatVersion, Header: doc.Header, Actions: doc.Actions[:at+1]}
 	next := Replay(prefix, 0).Next
-	return next.MatchOver || next.Expects == KindOpening
+	return next.MatchOver || next.GameStart
 }
 
 // continueGame opens the slot right after `at` when the Action written there leaves
-// its game running but the next Action is already the next opening (a pass turned
-// take, ADR-0050): rolls are INSERTED until the game ends, rather than overwriting
-// that opening.
-func continueGame(doc *Document, at int) bool {
-	if at+1 >= len(doc.Actions) || doc.Actions[at+1].Kind != KindOpening || gameEndsAt(*doc, at) {
+// its game running although the next Action started the next game before the
+// correction (`nextOpened`; a pass turned take, ADR-0050): rolls are INSERTED until
+// the game ends, rather than overwriting that game's first play.
+func continueGame(doc *Document, at int, nextOpened bool) bool {
+	if !nextOpened || at+1 >= len(doc.Actions) || doc.Actions[at+1].Score != nil || gameEndsAt(*doc, at) {
 		return false
 	}
 	doc.Cursor, doc.HasReturn = at+1, false
@@ -644,9 +631,18 @@ func reroll(doc *Document) {
 	// Both tests are needed: the board says where the play LANDS, diceCoherent
 	// that its steps fit the dice (§1.4 "dés incohérents": a 6-1 played as
 	// 8/2 6/5 lands where a 6-1 lands, yet is no 5-4).
-	if _, reached := resolveSteps(pos.Board, e.Side, played.Steps); findPlay(legal, reached) != nil &&
-		diceCoherent(played.Steps, e.Dice, e.Side) {
-		e.Steps = append([]domain.CheckerStep(nil), played.Steps...)
+	steps := played.Steps
+	if played.Side != e.Side {
+		// A game's first play changing camp with its opening roll: the starting
+		// board is symmetric, so the same play, mirrored, is the new winner's.
+		steps = make([]domain.CheckerStep, len(played.Steps))
+		for i, st := range played.Steps {
+			steps[i] = domain.CheckerStep{From: mirrorIndex(st.From), To: mirrorIndex(st.To)}
+		}
+	}
+	if _, reached := resolveSteps(pos.Board, e.Side, steps); findPlay(legal, reached) != nil &&
+		diceCoherent(steps, e.Dice, e.Side) {
+		e.Steps = append([]domain.CheckerStep(nil), steps...)
 		e.Selected = true
 		return
 	}
@@ -694,58 +690,19 @@ func validate(doc Document) (Document, error) {
 	if e.Mode == EntryReplace && e.At < len(doc.Actions) && e.At+1 != len(doc.Actions) && !entryDiffers(doc.Actions[e.At], *e) {
 		return doc, nil
 	}
-	var a Action
-	if expectsOpening(doc, *e) {
-		a = Action{Side: e.Side, Kind: KindOpening, Dice: e.Dice}
-		if e.Dice[0] != e.Dice[1] {
-			a.Side = domain.Black
-			if e.Dice[1] > e.Dice[0] {
-				a.Side = domain.White
-			}
-		}
-	} else {
-		if !e.Selected {
-			return doc, ErrNoCandidate
-		}
-		a = Action{Side: e.Side, Kind: KindChecker, Dice: e.Dice, Steps: e.Steps}
-		if doc.pendingBoard != nil {
-			pos := entryPosition(doc)
-			pos.Dice, pos.PlayerOnRoll, pos.DecisionType = e.Dice, e.Side, domain.CheckerAction
-			if findPlay(domain.LegalMoves(&pos), *doc.pendingBoard) == nil {
-				b := *doc.pendingBoard
-				a.BoardAfter = &b
-			}
+	if !e.Selected {
+		return doc, ErrNoCandidate
+	}
+	a := Action{Side: e.Side, Kind: KindChecker, Dice: e.Dice, Steps: e.Steps}
+	if doc.pendingBoard != nil {
+		pos := entryPosition(doc)
+		pos.Dice, pos.PlayerOnRoll, pos.DecisionType = e.Dice, e.Side, domain.CheckerAction
+		if findPlay(domain.LegalMoves(&pos), *doc.pendingBoard) == nil {
+			b := *doc.pendingBoard
+			a.BoardAfter = &b
 		}
 	}
 	return record(doc, a), nil
-}
-
-// expectsOpening reports whether the slot the entry lands on is a game's first Action.
-func expectsOpening(doc Document, e Entry) bool {
-	return entryExpects(doc, e, Replay(doc, 0).Next.Expects) == KindOpening
-}
-
-// entryExpects is the Kind validating the entry would write, given what the
-// document expects PAST ITS END (`atEnd`, a Replay's Next.Expects).
-//
-// It is stated once and read twice — by [expectsOpening], which pays a Replay
-// for the end of the document, and by [Replayer.Replay], which has it in hand —
-// so that the rule cannot come apart: only the LAST slot can hold an opening the
-// document is waiting for, and a slot already occupied is whatever it holds.
-func entryExpects(doc Document, e Entry, atEnd Kind) Kind {
-	if e.Mode == EntryReplace && e.At < len(doc.Actions) {
-		if doc.Actions[e.At].Kind == KindOpening {
-			return KindOpening
-		}
-		return KindChecker
-	}
-	if e.At < len(doc.Actions) {
-		return KindChecker
-	}
-	if atEnd == KindOpening {
-		return KindOpening
-	}
-	return KindChecker
 }
 
 // clampSlot holds an index inside [0, n] — the slots of a document of n Actions,
@@ -782,15 +739,14 @@ func record(doc Document, a Action) Document {
 		doc.Touched, doc.HasTouched = at, true
 	}
 	if mode == EntryReplace && at < len(doc.Actions) {
-		replaced := doc.Actions[at]
-		// A corrected opening keeps the score declared on it: the entry retypes
-		// the roll, and the roll is all it knows about.
-		if replaced.Kind == KindOpening && a.Kind == KindOpening && a.Score == nil {
-			a.Score = replaced.Score
+		// A corrected Action keeps the score declared on it: the entry retypes the
+		// roll and the play, and they are all it knows about.
+		if a.Score == nil {
+			a.Score = doc.Actions[at].Score
 		}
+		nextOpened := at+1 < len(doc.Actions) && gameEndsAt(doc, at)
 		doc.Actions[at] = a
-		followOpening(doc, at, replaced, a)
-		if continueGame(&doc, at) {
+		if continueGame(&doc, at, nextOpened) {
 			return doc
 		}
 		doc.Cursor = at + 1
@@ -802,12 +758,18 @@ func record(doc Document, a Action) Document {
 			doc.Cursor, doc.HasReturn = doc.Return, false
 		}
 	} else {
+		// Inserted in front of a game's first Action, the new one opens the game in
+		// its place and takes over the score declared there.
+		if at < len(doc.Actions) && doc.Actions[at].Score != nil && a.Score == nil &&
+			slotOpensGame(Replay(doc, 0), at, false) {
+			a.Score, doc.Actions[at].Score = doc.Actions[at].Score, nil
+		}
 		doc.Actions = append(doc.Actions, Action{})
 		copy(doc.Actions[at+1:], doc.Actions[at:])
 		doc.Actions[at] = a
 		doc.Cursor = at + 1
 		// …until the game it fills ends: past that, the next Action is the next
-		// game's opening, and the Cursor rests on it rather than slipping a
+		// game's first play, and the Cursor rests on it rather than slipping a
 		// roll of this game in front of it (ADR-0050).
 		if doc.Cursor < len(doc.Actions) && !gameEndsAt(doc, at) {
 			// An insertion in the MIDDLE goes on inserting: the user is filling
@@ -821,36 +783,6 @@ func record(doc Document, a Action) Document {
 	}
 	doc.Entry, doc.pendingBoard = nil, nil
 	return doc
-}
-
-// followOpening gives the Action a game STARTS with to the camp a replaced opening
-// now names: the one exception to "the side belongs to the Action" (ADR-0045 §4),
-// since the user never chose that camp (fonctionnel.md §1.2).
-//
-// Without it the document would be silently wrong: the play stays legal for either
-// camp from the starting board and an opening bears no turn ([bearsTurn]), so the
-// Replay has nothing to mark. Only that first Action moves, and only if its side is
-// still the old winner's.
-func followOpening(doc Document, at int, replaced, written Action) {
-	if replaced.Kind != KindOpening || written.Kind != KindOpening {
-		return
-	}
-	// A tie names no winner: it is followed by another opening, not by a play.
-	if replaced.Dice[0] == replaced.Dice[1] || written.Dice[0] == written.Dice[1] {
-		return
-	}
-	if replaced.Side == written.Side {
-		return
-	}
-	next := at + 1
-	if next >= len(doc.Actions) {
-		return
-	}
-	a := &doc.Actions[next]
-	if !bearsTurn(a.Kind) || a.Side != replaced.Side {
-		return
-	}
-	a.Side = written.Side
 }
 
 // cubeGesture records a double, its answer or a resignation. Each of them first

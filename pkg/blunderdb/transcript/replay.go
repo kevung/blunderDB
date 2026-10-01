@@ -15,26 +15,28 @@ const (
 	// IllegalMove: the board the Action left is reachable by no legal play from the
 	// board before it. The Action's BoardAfter is then what really happened.
 	IllegalMove InconsistencyKind = "illegal_move"
-	// DoubleTurn: two consecutive Actions of the same side. Opening, take and pass are
-	// out of the count — after a take the doubler rolls, which is not a double turn.
+	// DoubleTurn: two consecutive Actions of the same side within one game. Take, pass
+	// and resignation are out of the count — after a take the doubler rolls, which is
+	// not a double turn — and a game's first play follows nobody.
 	DoubleTurn InconsistencyKind = "double_turn"
-	// ImpossibleCube: a double by a side that does not hold the cube, a double in the
-	// Crawford game or above the ceiling, an answer with no offer.
+	// ImpossibleCube: a double by a side that does not hold the cube, a double before
+	// the game's first play, in the Crawford game or above the ceiling, an answer with
+	// no offer.
 	ImpossibleCube InconsistencyKind = "impossible_cube"
 	// PastEnd: an Action recorded after the match was won — what shortening the match
 	// length produces.
 	PastEnd InconsistencyKind = "past_end"
 	// InconsistentDice: a checker play whose steps do not use the Action's dice, which
-	// is what correcting a roll under a kept play produces. It requalifies the play as
-	// illegal.
+	// is what correcting a roll under a kept play produces, or a game's first play
+	// rolled as a double, which no opening roll can be.
 	InconsistentDice InconsistencyKind = "inconsistent_dice"
 	// UnrecordedMove: the roll is known, the play is not — a KindUnrecorded Action,
 	// which a .mat writes "???". Nothing is wrong with the match; the RECORD is
 	// incomplete, and everything after it stands on a board nobody can check.
 	UnrecordedMove InconsistencyKind = "unrecorded_move"
-	// ScoreMismatch: the score declared on a game's opening is not the derived one
-	// (ADR-0053); the game is played at the declared score and the detail names the
-	// derived one. It also marks an unusable declaration (re-roll, money, negative).
+	// ScoreMismatch: the score declared on a game's first Action is not the derived
+	// one (ADR-0053); the game is played at the declared score and the detail names
+	// the derived one. It also marks an unusable declaration (money, negative).
 	ScoreMismatch InconsistencyKind = "score_mismatch"
 )
 
@@ -53,8 +55,8 @@ type ActionInfo struct {
 
 	// Before is the Position the Action was played from — board, cube, dice, away
 	// score with its Crawford sentinel, side on roll — and it is the Position the
-	// saved Move carries. HasPosition is false for the Actions that produce none: an
-	// opening and a resignation.
+	// saved Move carries. HasPosition is false for the one Action that produces
+	// none: a resignation.
 	Before      domain.Position `json:"before"`
 	HasPosition bool            `json:"has_position"`
 
@@ -71,9 +73,13 @@ type ActionInfo struct {
 	Score      [2]int `json:"score"`
 
 	// MoveNumber is the index this Action takes among its game's Moves, or -1 when it
-	// produces none (an opening, a resignation). It is how a caller lines an
+	// produces none (a resignation). It is how a caller lines an
 	// ActionInfo's Before position up with the Move that MatchParts returns.
 	MoveNumber int32 `json:"move_number"`
+
+	// OpensGame says the Action is its game's first: the opening roll's winner plays
+	// it, and it is the one that carries a declared score.
+	OpensGame bool `json:"opens_game"`
 
 	Inconsistencies []Inconsistency `json:"inconsistencies,omitempty"`
 }
@@ -86,11 +92,11 @@ func (i *ActionInfo) add(kind InconsistencyKind, detail string) {
 type GameInfo struct {
 	Number int `json:"number"`
 	// InitialScore is the score the game was PLAYED at: the declared one when its
-	// opening carries one (ADR-0053), the one the previous games give otherwise.
+	// first Action carries one (ADR-0053), the one the previous games give otherwise.
 	InitialScore [2]int `json:"initial_score"`
-	// Declared says the opening declared InitialScore; DerivedScore is what the
+	// Declared says the first Action declared InitialScore; DerivedScore is what the
 	// previous games give, equal to InitialScore when nothing was declared. The
-	// two differ exactly where the opening carries a ScoreMismatch.
+	// two differ exactly where the first Action carries a ScoreMismatch.
 	Declared     bool   `json:"declared"`
 	DerivedScore [2]int `json:"derived_score"`
 	// Winner is the gnubg encoding the domain uses: 0 = player 1, 1 = player 2,
@@ -111,7 +117,10 @@ type Next struct {
 	// Expects is the kind the panel offers first. An answer to a double is named
 	// KindTake, which is one of its two forms: the other is a pass, and the gesture,
 	// not the expectation, decides which.
-	Expects    Kind            `json:"expects"`
+	Expects Kind `json:"expects"`
+	// GameStart says no game is running: the next Action is a game's first play,
+	// whose side is the opening roll's winner ([Next.Side] is then only a default).
+	GameStart  bool            `json:"game_start"`
 	Side       int             `json:"side"`
 	Position   domain.Position `json:"position"`
 	GameNumber int             `json:"game_number"`
@@ -138,10 +147,13 @@ type EntryInfo struct {
 	// Review marks a play the user has to look at again — see [Entry].
 	Review bool `json:"review"`
 
-	// Kind is what validating the entry would write: KindOpening on a game's
-	// first slot, KindChecker everywhere else. It is [entryExpects], stated once
-	// here so that the panel does not read the slot a second time.
+	// Kind is what validating the entry would write: always KindChecker, a cube
+	// action or a resignation being a gesture of its own.
 	Kind Kind `json:"kind"`
+	// GameStart says the entry is a game's first play: its two dice are typed as
+	// the opening roll, player 1's then player 2's, and the higher one names the
+	// side ([GestureEnterDie]).
+	GameStart bool `json:"game_start"`
 
 	// Notation is the play picked so far, written as a Transcript writes it, and
 	// "" while none is.
@@ -260,10 +272,11 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 			Dice:      e.Dice,
 			Selected:  e.Selected,
 			Review:    e.Review,
-			Kind:      entryExpects(doc, *e, out.Next.Expects),
+			Kind:      KindChecker,
+			GameStart: slotOpensGame(out, e.At, e.Mode == EntryReplace),
 		}
 		// states[i] is the state before the entry's slot: no replay needed.
-		if at := clampSlot(e.At, len(doc.Actions)); len(e.Steps) > 0 && out.Entry.Kind != KindOpening {
+		if at := clampSlot(e.At, len(doc.Actions)); len(e.Steps) > 0 {
 			resolved, _ := resolveSteps(r.states[at].board, e.Side, e.Steps)
 			out.Entry.Notation = domain.Notation(resolved, e.Side)
 		}
@@ -278,6 +291,27 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 		}
 	}
 	return out
+}
+
+// slotOpensGame reports whether an Action written at slot `at` would be its game's
+// first: the one already there when the entry replaces it, otherwise whether the
+// game before the slot is over (or there is none).
+func slotOpensGame(ann Annotated, at int, replacing bool) bool {
+	n := len(ann.Actions)
+	switch {
+	case replacing && at >= 0 && at < n:
+		return ann.Actions[at].OpensGame
+	case at >= n:
+		return ann.Next.GameStart
+	case at <= 0:
+		return true
+	}
+	gi := ann.Actions[at-1].GameIndex
+	if gi < 0 || gi >= len(ann.Games) {
+		return true
+	}
+	g := ann.Games[gi]
+	return g.Finished && g.Last == at-1
 }
 
 // reusable returns how many leading Actions the cache still describes: the length of
@@ -350,14 +384,7 @@ type state struct {
 
 	prevKind Kind
 	prevSide int
-	prevTie  bool
 	hasPrev  bool
-
-	// opening is the decided opening roll the game's first play must use, by
-	// openingSide; openingPending says that play is still to come.
-	opening        [2]int
-	openingSide    int
-	openingPending bool
 }
 
 func newState(h Header) *state {
@@ -468,7 +495,6 @@ func (s *state) endGame(winner, points int) {
 	s.gameActive = false
 	s.pendingDouble = -1
 	s.turn = -1
-	s.openingPending = false
 }
 
 // gamePoints is what winning by bearing off is worth: a single, a gammon when the
@@ -508,8 +534,7 @@ func (s *state) trapped(loser, winner int) bool {
 	return false
 }
 
-// bearsTurn reports whether an Action counts for the double-turn rule. An opening is
-// nobody's turn; a take or a pass answers the other side's offer and leaves the turn
+// bearsTurn reports whether an Action counts for the double-turn rule. A take or a pass answers the other side's offer and leaves the turn
 // where it was, which is why the doubler playing right after a take is not a double
 // turn (fonctionnel.md §1.4).
 //
@@ -517,7 +542,7 @@ func (s *state) trapped(loser, winner int) bool {
 // would mark every resignation after its author's own play — a false positive.
 func bearsTurn(k Kind) bool {
 	switch k {
-	case KindOpening, KindTake, KindPass, KindResign:
+	case KindTake, KindPass, KindResign:
 		return false
 	}
 	return true
@@ -530,48 +555,35 @@ func (s *state) step(i int, a Action) ActionInfo {
 	if s.matchOver() {
 		info.add(PastEnd, "the match is already won")
 	}
-	if s.hasPrev && bearsTurn(s.prevKind) && bearsTurn(a.Kind) && s.prevSide == a.Side {
+	// An Action opens a game when none is running, or when it declares the score of
+	// one: the running game then stops there, unfinished.
+	opens := !s.gameActive || a.Score != nil
+	if !opens && s.hasPrev && bearsTurn(s.prevKind) && bearsTurn(a.Kind) && s.prevSide == a.Side {
 		info.add(DoubleTurn, fmt.Sprintf("player %d acts twice in a row", a.Side+1))
 	}
-
-	tie := false
-	switch a.Kind {
-	case KindOpening:
-		// A tie is followed by another opening in the SAME game; any other opening
-		// while a game is running closes that game unfinished and starts the next.
-		opens := !s.gameActive || !s.prevTie
-		if s.gameActive && !s.prevTie {
-			s.endGame(-1, 0)
-		}
+	if opens {
+		s.endGame(-1, 0)
 		// A declared score is posted BEFORE the game opens, so that the Crawford
 		// mention of the game is decided on the score it is played at.
 		derived := s.points
-		declared := a.Score != nil && s.declare(&info, *a.Score, opens)
+		declared := a.Score != nil && s.declare(&info, *a.Score)
 		s.ensureGame()
 		if declared {
 			g := &s.games[len(s.games)-1]
 			g.Declared, g.DerivedScore = true, derived
 		}
-		// An opening produces neither Move nor Position; Before still describes the
-		// board it is rolled from, because that is what the panel shows.
-		info.Before = s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
-		info.After = s.board
-		tie = a.Dice[domain.Black] == a.Dice[domain.White]
-		s.openingPending = false
-		if !tie {
-			s.turn = domain.Black
-			if a.Dice[domain.White] > a.Dice[domain.Black] {
-				s.turn = domain.White
-			}
-			s.opening, s.openingSide, s.openingPending = a.Dice, s.turn, true
-		}
+		info.OpensGame = true
+	}
 
+	switch a.Kind {
 	case KindChecker, KindDance, KindUnrecorded:
 		s.ensureGame()
 		pos := s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
 		info.Before, info.HasPosition = pos, true
 		legal := domain.LegalMoves(&pos)
-		s.openingPlayed(&info, a)
+		if opens && a.Dice[0] != 0 && a.Dice[0] == a.Dice[1] {
+			info.add(InconsistentDice, fmt.Sprintf("the game's first play is rolled %d%d: no opening roll is a double", a.Dice[0], a.Dice[1]))
+		}
 
 		if a.Kind == KindUnrecorded {
 			// The board is unknown: carry the last one forward, check nothing,
@@ -615,6 +627,8 @@ func (s *state) step(i int, a Action) ActionInfo {
 		info.Before, info.HasPosition = s.position(a.Side, [2]int{}, domain.CubeAction, s.cube), true
 		info.After = s.board
 		switch {
+		case opens:
+			info.add(ImpossibleCube, "no one doubles before the game's first play")
 		case s.pendingDouble >= 0:
 			info.add(ImpossibleCube, "a double is already waiting for its answer")
 		case s.cube.Owner != domain.None && s.cube.Owner != a.Side:
@@ -685,42 +699,23 @@ func (s *state) step(i int, a Action) ActionInfo {
 		g.Last = i
 	}
 
-	s.prevKind, s.prevSide, s.prevTie, s.hasPrev = a.Kind, a.Side, tie, true
+	s.prevKind, s.prevSide, s.hasPrev = a.Kind, a.Side, true
 	return info
 }
 
-// openingPlayed marks the game's first play when it is not the opening roll
-// played by its winner, or follows a tied opening that was never rolled again. A .mat has no opening line and reads the opening off
-// the first play, so an unmarked mismatch would be rewritten by the export.
-func (s *state) openingPlayed(info *ActionInfo, a Action) {
-	if s.hasPrev && s.prevTie {
-		info.add(InconsistentDice, "the opening roll was a tie: it is rolled again before anyone plays")
-		return
-	}
-	if !s.openingPending {
-		return
-	}
-	s.openingPending = false
-	o := s.opening
-	if a.Dice != o && a.Dice != [2]int{o[1], o[0]} {
-		info.add(InconsistentDice, fmt.Sprintf("the first play does not use the opening roll %d%d", max(o[0], o[1]), min(o[0], o[1])))
-	}
-	if a.Side != s.openingSide {
-		info.add(InconsistentDice, fmt.Sprintf("player %d won the opening roll and plays first", s.openingSide+1))
-	}
-}
-
-// declare posts the score an opening declares as the score of play, and reports
-// whether it did. An unusable score (re-roll, money, negative) is marked and left
+// declare posts the score a game's first Action declares as the score of play, and
+// reports whether it did. An unusable score (money, negative) is marked and left
 // aside; a used one is marked when it differs from the derived score (ADR-0053).
 // A score reaching the length is used; what follows is marked PastEnd.
-func (s *state) declare(info *ActionInfo, score [2]int, opens bool) bool {
+//
+// In money play a 0-0 is no declaration at all: it is what keeps two games of a
+// session apart when the first one stops short, and it says nothing wrong.
+func (s *state) declare(info *ActionInfo, score [2]int) bool {
 	switch {
-	case !opens:
-		info.add(ScoreMismatch, "a score is declared on a re-roll, not on the opening of the game")
-		return false
 	case s.header.MatchLength <= 0:
-		info.add(ScoreMismatch, "a money session has no score")
+		if score != [2]int{} {
+			info.add(ScoreMismatch, "a money session has no score")
+		}
 		return false
 	case score[0] < 0 || score[1] < 0:
 		info.add(ScoreMismatch, fmt.Sprintf("the declared score %d-%d is negative", score[0], score[1]))
@@ -747,8 +742,8 @@ func (s *state) next() Next {
 		n.Crawford = proj.games[len(proj.games)-1].Crawford
 	}
 	switch {
-	case !s.gameActive || (s.hasPrev && s.prevTie):
-		n.Expects, n.Side = KindOpening, domain.Black
+	case !s.gameActive:
+		n.Expects, n.Side, n.GameStart = KindChecker, domain.Black, true
 	case s.pendingDouble >= 0:
 		n.Expects, n.Side = KindTake, opponent(s.pendingDouble)
 	default:

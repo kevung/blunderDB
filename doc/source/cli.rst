@@ -1310,8 +1310,8 @@ contiendrait.
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
 de videau impossible, action au-delà de la fin du match, coup dont les pas
-n'utilisent pas ses propres dés, premier coup d'une partie qui n'est pas le
-lancer d'ouverture joué par son gagnant, coup non consigné — la cellule ``???`` que
+n'utilisent pas ses propres dés, premier coup d'une partie joué sur un double,
+qu'aucun jet d'ouverture ne peut être, coup non consigné — la cellule ``???`` que
 gnubg écrit quand il n'a pas gardé le coup joué, et qui n'est pas une danse —,
 score annoncé incohérent — une partie dont la ligne de score n'est pas celle
 que donnent les parties précédentes, rejouée au score écrit.
