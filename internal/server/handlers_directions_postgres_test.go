@@ -19,8 +19,8 @@ func TestDirectionReads_Postgres(t *testing.T) {
 }
 
 // TestDirectionReads_TenantIsolationPostgres: ids are global on PostgreSQL, so another
-// tenant naming this tenant's Tournament or Rencontre reads nothing — a 404, never a 304 on
-// a tag it could not have — and its lists hold only its own.
+// tenant naming this tenant's Tournament or Rencontre reads nothing — a 404, even with the tag
+// tenant 1 holds — and its lists hold only its own.
 func TestDirectionReads_TenantIsolationPostgres(t *testing.T) {
 	ts, srv := newPostgresTestServerAndHandler(t)
 	mine := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
@@ -34,8 +34,9 @@ func TestDirectionReads_TenantIsolationPostgres(t *testing.T) {
 		if resp.StatusCode != http.StatusNotFound {
 			t.Errorf("%s as tenant 2 on tenant 1's id: status %d, body %.200s; want 404", path, resp.StatusCode, b)
 		}
-		if resp, _ := readAs(t, ts, theirs.tenant, path, body, "*"); resp.StatusCode != http.StatusNotFound {
-			t.Errorf("%s as tenant 2 with If-None-Match *: status %d; want 404", path, resp.StatusCode)
+		mineResp, _ := readAs(t, ts, mine.tenant, path, body, "")
+		if resp, _ := readAs(t, ts, theirs.tenant, path, body, mineResp.ETag); resp.StatusCode != http.StatusNotFound {
+			t.Errorf("%s as tenant 2 with tenant 1's tag: status %d; want 404", path, resp.StatusCode)
 		}
 	}
 	for _, path := range []string{"/v1/directions.list", "/v1/rencontres.list", "/v1/directions.directory"} {

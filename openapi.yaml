@@ -1338,7 +1338,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/directionReq"
+              $ref: "#/components/schemas/directionSlotsReq"
       responses:
         "304":
           description: Not Modified — the If-None-Match tag still holds; no body.
@@ -3673,6 +3673,12 @@ components:
         round:
           type: integer
           format: int32
+    directionSlotsReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
     domain_AnkiDeck:
       type: object
       description: "Opaque: see the Go type domain.AnkiDeck (defined outside internal/server, not expanded here)."
