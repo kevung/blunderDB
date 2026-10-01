@@ -31,9 +31,8 @@ func TestTranscriptionTenantIsolation(t *testing.T) {
 		map[string]any{"id": st.ID, "sessionId": st.SessionID, "gesture": die}); status != http.StatusGone {
 		t.Errorf("tenant 2 naming tenant 1's session: status %d, want 410", status)
 	}
-	if status, _ := gesture(t, ts, "2", "/v1/transcriptions.apply", st.Revision,
-		map[string]any{"id": st.ID, "gesture": die}); status != http.StatusNotFound {
-		t.Errorf("tenant 2 typing into tenant 1's draft: status %d, want 404", status)
+	if status, _ := gesture(t, ts, "2", "/v1/transcriptions.open", 0, map[string]any{"id": st.ID}); status != http.StatusNotFound {
+		t.Errorf("tenant 2 opening tenant 1's draft: status %d, want 404", status)
 	}
 	if status, _ := gesture(t, ts, "2", "/v1/transcriptions.abandon", st.Revision, map[string]any{"id": st.ID}); status != http.StatusNotFound {
 		t.Errorf("tenant 2 abandoning tenant 1's draft: status %d, want 404", status)
