@@ -77,6 +77,8 @@
     import CommandPalette from './components/CommandPalette.svelte';
     import Board from './components/Board.svelte';
     import DirectionView from './components/direction/DirectionView.svelte';
+    import DirectionFullscreenToggle from './components/direction/DirectionFullscreenToggle.svelte';
+    import { directionFullscreenStore } from './services/directionFullscreen.js';
     import { directionPageShownStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
@@ -394,7 +396,7 @@
     });
 </script>
 
-<main class="main-container" bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
+<main class="main-container" class:td-fullscreen={$directionFullscreenStore} bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
             <div class="drop-overlay-content">
@@ -417,16 +419,20 @@
         <HomeScreen onDismiss={() => (homeDismissed = true)} />
     {/if}
 
-    <Toolbar />
+    <!-- Le plein écran de la Direction masque le chrome sans le démonter : `display: contents`
+         laisse les barres enfants directs de la colonne, `none` les efface. -->
+    <div class="chrome" aria-hidden={$directionFullscreenStore ? 'true' : undefined}>
+        <Toolbar />
 
-    <ViewTabs />
+        <ViewTabs />
 
-    <MatchInfoBar />
+        <MatchInfoBar />
+    </div>
 
     <!-- La file d'étude post-import : une bande, pas une fenêtre. Le
          reste de l'application doit rester utilisable pendant le parcours,
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
-    <StudyQueueBar />
+    <div class="chrome"><StudyQueueBar /></div>
 
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
@@ -460,7 +466,9 @@
 
     <CommandPalette />
 
-    <StatusBar onCommand={(cmd) => processCommand(cmd)} />
+    <div class="chrome"><StatusBar onCommand={(cmd) => processCommand(cmd)} /></div>
+
+    <DirectionFullscreenToggle />
 </main>
 
 <style>
@@ -494,6 +502,15 @@
     }
     .body.side {
         flex-direction: row;
+    }
+
+    .chrome {
+        display: contents;
+    }
+    .main-container.td-fullscreen .chrome,
+    .main-container.td-fullscreen .resize-handle,
+    .main-container.td-fullscreen .panel-wrapper {
+        display: none;
     }
 
     .scrollable-content {

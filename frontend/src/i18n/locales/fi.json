@@ -1703,6 +1703,10 @@
         "direct": "Johda tätä turnausta",
         "open": "Avaa johtaminen",
         "close": "Sulje johtaminen",
+        "fullscreen": {
+            "enter": "Koko näyttö (F11)",
+            "exit": "Poistu koko näytöstä (F11 tai Esc)"
+        },
         "directed": "johdettu",
         "state": {
             "draft": "valmistelussa",
