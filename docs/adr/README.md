@@ -72,3 +72,4 @@ that come out of them.
 | [0055](0055-le-contexte-d-un-agent-est-un-budget-borne.md) | Le contexte d'un agent est un budget borné | agent context budget, `.claude/` |
 | [0056](0056-une-rencontre-regroupe-des-tournois-dans-une-meme-salle.md) | Une Rencontre regroupe des Tournaments dirigés dans une même salle | Rencontre, shared hall, doubles, `pkg/blunderdb/direction` |
 | [0057](0057-la-transcription-et-la-direction-s-exposent-par-l-api-a-un-client-externe.md) | La transcription et la direction s'exposent par l'API à un client externe | `/v1/` transcription & direction, If-Match, SSE, `serve --direction`/`--transcription` |
+| [0058](0058-une-table-porte-ses-proprietes-et-une-rencontre-se-partage-en-salles.md) | Une table porte ses propriétés, et une Rencontre se partage en salles | `table_setting`, salles d'une épreuve, table réservée/attitrée, vue Toutes les tables |
