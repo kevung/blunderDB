@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import urllib.error
 import urllib.request
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator, Optional, Union
 
 
 class APIError(RuntimeError):
@@ -59,7 +59,7 @@ class BaseClient:
         payload: Optional[dict] = None,
         *,
         idempotency_key: Optional[str] = None,
-        if_match: Optional[int] = None,
+        if_match: Optional[Union[int, str]] = None,
     ) -> Optional[Any]:
         """One JSON call. Returns the decoded body, or None for no content."""
         body = self._request(path, payload, idempotency_key, if_match)
@@ -86,7 +86,7 @@ class BaseClient:
     # -- plumbing ----------------------------------------------------------
 
     def _build(
-        self, path: str, payload: Optional[dict], idempotency_key: Optional[str], if_match: Optional[int] = None
+        self, path: str, payload: Optional[dict], idempotency_key: Optional[str], if_match: Optional[Union[int, str]] = None
     ) -> urllib.request.Request:
         data = json.dumps(payload if payload is not None else {}).encode("utf-8")
         headers = {
@@ -96,12 +96,12 @@ class BaseClient:
         if idempotency_key:
             headers["Idempotency-Key"] = idempotency_key
         if if_match is not None:
-            # The revision a transcription gesture was typed against.
-            headers["If-Match"] = '"%d"' % if_match
+            # A transcription's revision (an integer) or a Direction-Version (a token).
+            headers["If-Match"] = '"%s"' % if_match
         return urllib.request.Request(self.base_url + path, data=data, headers=headers, method="POST")
 
     def _request(
-        self, path: str, payload: Optional[dict], idempotency_key: Optional[str], if_match: Optional[int] = None
+        self, path: str, payload: Optional[dict], idempotency_key: Optional[str], if_match: Optional[Union[int, str]] = None
     ) -> str:
         request = self._build(path, payload, idempotency_key, if_match)
         try:

@@ -108,9 +108,10 @@ func routeFromLit(lit *ast.CompositeLit, types map[string]typeInfo) (Route, bool
 	family, op := familyOf(pattern)
 	r := Route{Method: method, Pattern: pattern, Family: family, Op: op}
 	r.Kind, r.ReqType, r.RespType, r.ItemType, r.IdempotencyKeySupported = classifyHandler(lit.Elts[2], types)
-	r.IfMatchRequired = requiresIfMatch(lit.Elts[2])
 	r.Conditional = isConditional(lit.Elts[2])
 	r.Gesture = isGesture(lit.Elts[2])
+	// rpcGesture checks If-Match itself, as withIfMatch does around a handler.
+	r.IfMatchRequired = requiresIfMatch(lit.Elts[2]) || r.Gesture
 	return r, true, nil
 }
 

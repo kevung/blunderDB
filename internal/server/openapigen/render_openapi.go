@@ -67,8 +67,26 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	if r.Kind == kindStream {
 		b.WriteString("      x-streaming: true\n")
 	}
-	if r.Conditional {
+	if r.Conditional || r.IfMatchRequired || r.IdempotencyKeySupported {
 		b.WriteString("      parameters:\n")
+	}
+	if r.IfMatchRequired {
+		b.WriteString("        - name: If-Match\n")
+		b.WriteString("          in: header\n")
+		b.WriteString("          required: true\n")
+		b.WriteString("          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.\n")
+		b.WriteString("          schema:\n")
+		b.WriteString("            type: string\n")
+	}
+	if r.IdempotencyKeySupported {
+		b.WriteString("        - name: Idempotency-Key\n")
+		b.WriteString("          in: header\n")
+		b.WriteString("          required: false\n")
+		b.WriteString("          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.\n")
+		b.WriteString("          schema:\n")
+		b.WriteString("            type: string\n")
+	}
+	if r.Conditional {
 		b.WriteString("        - name: If-None-Match\n")
 		b.WriteString("          in: header\n")
 		b.WriteString("          required: false\n")

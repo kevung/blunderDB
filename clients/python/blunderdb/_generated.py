@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator, Optional, Union
 
 from .client import BaseClient
 
@@ -230,73 +230,73 @@ class GeneratedAPI(BaseClient):
         "POST /v1/comments.update — JSON."
         return self._call("/v1/comments.update", payload)
 
-    def directions_add_note(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.addNote — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.addNote", payload)
+    def directions_add_note(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.addNote — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.addNote", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_add_pair(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.addPair — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.addPair", payload)
+    def directions_add_pair(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.addPair — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.addPair", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_add_participant(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.addParticipant — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.addParticipant", payload)
+    def directions_add_participant(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.addParticipant — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.addParticipant", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_attach_match(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.attachMatch — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.attachMatch", payload)
+    def directions_attach_match(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.attachMatch — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.attachMatch", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_brackets(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.brackets — JSON."
         return self._call("/v1/directions.brackets", payload)
 
-    def directions_cancel_match(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.cancelMatch — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.cancelMatch", payload)
+    def directions_cancel_match(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.cancelMatch — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.cancelMatch", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_clock(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.clock — JSON."
         return self._call("/v1/directions.clock", payload)
 
-    def directions_close(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.close — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.close", payload)
+    def directions_close(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.close — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.close", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_confirm_all_proposals(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.confirmAllProposals — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.confirmAllProposals", payload)
+    def directions_confirm_all_proposals(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.confirmAllProposals — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.confirmAllProposals", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_confirm_proposal(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.confirmProposal — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.confirmProposal", payload)
+    def directions_confirm_proposal(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.confirmProposal — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.confirmProposal", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_correct_result(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.correctResult — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.correctResult", payload)
+    def directions_correct_result(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.correctResult — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.correctResult", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_create(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.create — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.create", payload)
+    def directions_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.create — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.create", payload, idempotency_key=idempotency_key)
 
-    def directions_detach_match(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.detachMatch — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.detachMatch", payload)
+    def directions_detach_match(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.detachMatch — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.detachMatch", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_directory(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.directory — JSON."
         return self._call("/v1/directions.directory", payload)
 
-    def directions_enter_forfeit(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.enterForfeit — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.enterForfeit", payload)
+    def directions_enter_forfeit(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.enterForfeit — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.enterForfeit", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_enter_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.enterParticipants — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.enterParticipants", payload)
+    def directions_enter_participants(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.enterParticipants — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.enterParticipants", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_enter_result(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.enterResult — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.enterResult", payload)
+    def directions_enter_result(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.enterResult — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.enterResult", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_free_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.freeParticipants — JSON."
@@ -318,17 +318,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.list — JSON."
         return self._call("/v1/directions.list", payload)
 
-    def directions_make_absent(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.makeAbsent — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.makeAbsent", payload)
+    def directions_make_absent(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.makeAbsent — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.makeAbsent", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_make_available(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.makeAvailable — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.makeAvailable", payload)
+    def directions_make_available(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.makeAvailable — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.makeAvailable", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_move_match_to_table(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.moveMatchToTable — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.moveMatchToTable", payload)
+    def directions_move_match_to_table(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.moveMatchToTable — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.moveMatchToTable", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_page_html(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.pageHtml — JSON."
@@ -346,17 +346,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.previewConfig — JSON."
         return self._call("/v1/directions.previewConfig", payload)
 
-    def directions_reinstate(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.reinstate — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.reinstate", payload)
+    def directions_reinstate(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.reinstate — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.reinstate", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_reopen(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.reopen — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.reopen", payload)
+    def directions_reopen(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.reopen — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.reopen", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_set_config(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.setConfig — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.setConfig", payload)
+    def directions_set_config(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.setConfig — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.setConfig", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.slots — JSON."
@@ -370,25 +370,25 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.standingsCsv — JSON."
         return self._call("/v1/directions.standingsCsv", payload)
 
-    def directions_start_match(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.startMatch — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.startMatch", payload)
+    def directions_start_match(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.startMatch — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.startMatch", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def directions_table_grid(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.tableGrid — JSON."
         return self._call("/v1/directions.tableGrid", payload)
 
-    def directions_update_pair(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.updatePair — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.updatePair", payload)
+    def directions_update_pair(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.updatePair — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.updatePair", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_update_participant(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.updateParticipant — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.updateParticipant", payload)
+    def directions_update_participant(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.updateParticipant — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.updateParticipant", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def directions_withdraw(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/directions.withdraw — hand-written handler — see openapi.yaml."
-        return self._call("/v1/directions.withdraw", payload)
+    def directions_withdraw(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.withdraw — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.withdraw", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def exports_json(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/exports.json — hand-written handler — see openapi.yaml."
@@ -678,17 +678,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/quiz.gradeCube — JSON."
         return self._call("/v1/quiz.gradeCube", payload)
 
-    def rencontres_attach(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.attach — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.attach", payload)
+    def rencontres_attach(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.attach — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.attach", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def rencontres_create(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.create — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.create", payload)
+    def rencontres_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.create — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.create", payload, idempotency_key=idempotency_key)
 
-    def rencontres_detach(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.detach — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.detach", payload)
+    def rencontres_detach(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.detach — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.detach", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def rencontres_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/rencontres.get — JSON."
@@ -702,21 +702,21 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.pageHtml — JSON."
         return self._call("/v1/rencontres.pageHtml", payload)
 
-    def rencontres_set_breaks(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.setBreaks — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.setBreaks", payload)
+    def rencontres_set_breaks(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.setBreaks — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.setBreaks", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def rencontres_set_table_out_of_service(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.setTableOutOfService — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.setTableOutOfService", payload)
+    def rencontres_set_table_out_of_service(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.setTableOutOfService — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.setTableOutOfService", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def rencontres_trash(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.trash — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.trash", payload)
+    def rencontres_trash(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.trash — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.trash", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def rencontres_update(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/rencontres.update — hand-written handler — see openapi.yaml."
-        return self._call("/v1/rencontres.update", payload)
+    def rencontres_update(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/rencontres.update — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
+        return self._call("/v1/rencontres.update", payload, if_match=if_match, idempotency_key=idempotency_key)
 
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
@@ -846,11 +846,11 @@ class GeneratedAPI(BaseClient):
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
 
-    def transcriptions_abandon(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+    def transcriptions_abandon(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.abandon — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.abandon", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def transcriptions_apply(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+    def transcriptions_apply(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.apply — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.apply", payload, if_match=if_match, idempotency_key=idempotency_key)
 
@@ -870,7 +870,7 @@ class GeneratedAPI(BaseClient):
         "POST /v1/transcriptions.exportMat — JSON."
         return self._call("/v1/transcriptions.exportMat", payload)
 
-    def transcriptions_finish(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+    def transcriptions_finish(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.finish — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.finish", payload, if_match=if_match, idempotency_key=idempotency_key)
 
@@ -890,11 +890,11 @@ class GeneratedAPI(BaseClient):
         "POST /v1/transcriptions.open — JSON."
         return self._call("/v1/transcriptions.open", payload)
 
-    def transcriptions_redo(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+    def transcriptions_redo(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.redo — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.redo", payload, if_match=if_match, idempotency_key=idempotency_key)
 
-    def transcriptions_undo(self, payload: Optional[dict] = None, *, if_match: int, idempotency_key: Optional[str] = None) -> Optional[Any]:
+    def transcriptions_undo(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.undo — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.undo", payload, if_match=if_match, idempotency_key=idempotency_key)
 

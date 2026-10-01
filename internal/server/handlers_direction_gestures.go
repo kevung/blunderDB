@@ -274,9 +274,8 @@ func (s *Server) directionGestureRoutes() []route {
 		return nil
 	}
 	svc := s.directionService
-	idem := s.withIdempotency
 	return []route{
-		{http.MethodPost, "/v1/directions.create", idem(rpc(func(ctx context.Context, scope string, req directionCreateReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req directionCreateReq) (*service.DirectionView, error) {
 			if req.TournamentID == 0 {
 				return nil, errNoTarget("tournamentId")
 			}
@@ -288,79 +287,79 @@ func (s *Server) directionGestureRoutes() []route {
 			p, err := svc(scope).PreviewDirectionConfig(ctx, req.TournamentID, rawText(req.Config))
 			return p, gestureError(err)
 		})},
-		{http.MethodPost, "/v1/directions.setConfig", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionConfigReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.setConfig", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionConfigReq) (*service.DirectionView, error) {
 			d := svc(scope)
 			return thenView(ctx, d, req.TournamentID, d.SetDirectionConfig(ctx, req.TournamentID, rawText(req.Config)))
 		}))},
-		{http.MethodPost, "/v1/directions.enterParticipants", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionPlayersReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.enterParticipants", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionPlayersReq) (*service.DirectionView, error) {
 			d := svc(scope)
 			return thenView(ctx, d, req.TournamentID, d.EnterParticipants(ctx, req.TournamentID, rawText(req.Players)))
 		}))},
-		{http.MethodPost, "/v1/directions.addParticipant", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionAddParticipantReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.addParticipant", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionAddParticipantReq) (*service.DirectionView, error) {
 			if req.Section != "" || req.Key != "" {
 				return bare(svc(scope).AddParticipantAtSlot(ctx, req.TournamentID, req.Name, req.Club, req.Rating, req.Section, req.Key))
 			}
 			return bare(svc(scope).AddParticipant(ctx, req.TournamentID, req.Name, req.Club, req.Rating))
 		}))},
-		{http.MethodPost, "/v1/directions.updateParticipant", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionUpdateParticipantReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.updateParticipant", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionUpdateParticipantReq) (*service.DirectionView, error) {
 			return bare(svc(scope).UpdateParticipant(ctx, req.TournamentID, req.ID, req.Name, req.Club, req.Rating))
 		}))},
-		{http.MethodPost, "/v1/directions.withdraw", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionWithdrawReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.withdraw", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionWithdrawReq) (*service.DirectionView, error) {
 			return bare(svc(scope).WithdrawParticipant(ctx, req.TournamentID, req.ID, req.AfterCurrent))
 		}))},
-		{http.MethodPost, "/v1/directions.reinstate", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionParticipantReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.reinstate", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionParticipantReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ReinstateParticipant(ctx, req.TournamentID, req.ID))
 		}))},
-		{http.MethodPost, "/v1/directions.makeAbsent", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionAbsentReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.makeAbsent", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionAbsentReq) (*service.DirectionView, error) {
 			return bare(svc(scope).MakeParticipantAbsent(ctx, req.TournamentID, req.ID, req.Until, req.Round))
 		}))},
-		{http.MethodPost, "/v1/directions.makeAvailable", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionParticipantReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.makeAvailable", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionParticipantReq) (*service.DirectionView, error) {
 			return bare(svc(scope).MakeParticipantAvailable(ctx, req.TournamentID, req.ID))
 		}))},
-		{http.MethodPost, "/v1/directions.addPair", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionAddPairReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.addPair", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionAddPairReq) (*service.DirectionView, error) {
 			return bare(svc(scope).AddPair(ctx, req.TournamentID, rawText(req.Members), req.Rating))
 		}))},
-		{http.MethodPost, "/v1/directions.updatePair", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionUpdatePairReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.updatePair", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionUpdatePairReq) (*service.DirectionView, error) {
 			return bare(svc(scope).UpdatePair(ctx, req.TournamentID, req.ID, rawText(req.Members), req.Rating))
 		}))},
-		{http.MethodPost, "/v1/directions.confirmProposal", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionProposalReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.confirmProposal", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionProposalReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ConfirmProposal(ctx, req.TournamentID, rawText(req.Action)))
 		}))},
-		{http.MethodPost, "/v1/directions.confirmAllProposals", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.confirmAllProposals", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ConfirmAllProposals(ctx, req.TournamentID))
 		}))},
-		{http.MethodPost, "/v1/directions.startMatch", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionStartMatchReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.startMatch", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionStartMatchReq) (*service.DirectionView, error) {
 			return bare(svc(scope).StartMatchManually(ctx, req.TournamentID, req.A, req.B, req.Length, req.Table))
 		}))},
-		{http.MethodPost, "/v1/directions.enterResult", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionResultReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.enterResult", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionResultReq) (*service.DirectionView, error) {
 			return bare(svc(scope).EnterResult(ctx, req.TournamentID, req.MatchID, req.Winner, req.ScoreA, req.ScoreB, req.Note))
 		}))},
-		{http.MethodPost, "/v1/directions.enterForfeit", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionForfeitReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.enterForfeit", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionForfeitReq) (*service.DirectionView, error) {
 			return bare(svc(scope).EnterForfeit(ctx, req.TournamentID, req.MatchID, req.Winner, req.Note))
 		}))},
-		{http.MethodPost, "/v1/directions.moveMatchToTable", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionMoveReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.moveMatchToTable", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionMoveReq) (*service.DirectionView, error) {
 			return bare(svc(scope).MoveMatchToTable(ctx, req.TournamentID, req.MatchID, req.Table))
 		}))},
-		{http.MethodPost, "/v1/directions.cancelMatch", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionMatchReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.cancelMatch", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionMatchReq) (*service.DirectionView, error) {
 			return bare(svc(scope).CancelMatch(ctx, req.TournamentID, req.MatchID))
 		}))},
-		{http.MethodPost, "/v1/directions.correctResult", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionResultReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.correctResult", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionResultReq) (*service.DirectionView, error) {
 			return bare(svc(scope).CorrectResult(ctx, req.TournamentID, req.MatchID, req.Winner, req.ScoreA, req.ScoreB, req.Note))
 		}))},
-		{http.MethodPost, "/v1/directions.close", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.close", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
 			return bare(svc(scope).CloseDirection(ctx, req.TournamentID))
 		}))},
-		{http.MethodPost, "/v1/directions.reopen", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.reopen", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ReopenDirection(ctx, req.TournamentID))
 		}))},
-		{http.MethodPost, "/v1/directions.addNote", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionNoteReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.addNote", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionNoteReq) (*service.DirectionView, error) {
 			return bare(svc(scope).AddDirectionNote(ctx, req.TournamentID, req.Text))
 		}))},
-		{http.MethodPost, "/v1/directions.attachMatch", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionSlotReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.attachMatch", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionSlotReq) (*service.DirectionView, error) {
 			d := svc(scope)
 			return thenView(ctx, d, req.TournamentID, d.AttachMatchToSlot(ctx, req.TournamentID, req.SlotID, req.MatchID))
 		}))},
-		{http.MethodPost, "/v1/directions.detachMatch", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionSlotReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/directions.detachMatch", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionSlotReq) (*service.DirectionView, error) {
 			d := svc(scope)
 			return thenView(ctx, d, req.TournamentID, d.DetachMatchFromSlot(ctx, req.TournamentID, req.SlotID))
 		}))},
@@ -373,31 +372,30 @@ func (s *Server) rencontreGestureRoutes() []route {
 		return nil
 	}
 	svc := s.directionService
-	idem := s.withIdempotency
 	return []route{
-		{http.MethodPost, "/v1/rencontres.create", idem(rpc(func(ctx context.Context, scope string, req rencontreCreateReq) (*service.RencontreView, error) {
+		{http.MethodPost, "/v1/rencontres.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req rencontreCreateReq) (*service.RencontreView, error) {
 			r, err := bareRoom(svc(scope).CreateRencontre(ctx, req.Name, req.StartsOn, req.EndsOn, req.Tables))
 			return r, gestureError(err)
 		}))},
-		{http.MethodPost, "/v1/rencontres.update", idem(rpcGesture(s, func(ctx context.Context, scope string, req rencontreUpdateReq) (*service.RencontreView, error) {
+		{http.MethodPost, "/v1/rencontres.update", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreUpdateReq) (*service.RencontreView, error) {
 			return bareRoom(svc(scope).UpdateRencontre(ctx, req.ID, req.Name, req.StartsOn, req.EndsOn, req.Tables))
 		}))},
-		{http.MethodPost, "/v1/rencontres.attach", idem(rpcGesture(s, func(ctx context.Context, scope string, req rencontreAttachReq) (*service.RencontreView, error) {
+		{http.MethodPost, "/v1/rencontres.attach", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreAttachReq) (*service.RencontreView, error) {
 			return bareRoom(svc(scope).AttachToRencontre(ctx, req.TournamentID, req.ID))
 		}))},
 		// detach names the Tournament leaving its room: the version is its own, the room's.
-		{http.MethodPost, "/v1/rencontres.detach", idem(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
+		{http.MethodPost, "/v1/rencontres.detach", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
 			d := svc(scope)
 			return thenView(ctx, d, req.TournamentID, d.DetachFromRencontre(ctx, req.TournamentID))
 		}))},
-		{http.MethodPost, "/v1/rencontres.trash", idem(rpcGesture(s, func(ctx context.Context, scope string, req rencontreGestureReq) (trashResp, error) {
+		{http.MethodPost, "/v1/rencontres.trash", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreGestureReq) (trashResp, error) {
 			id, err := svc(scope).TrashRencontre(ctx, req.ID)
 			return trashResp{TrashID: id}, err
 		}))},
-		{http.MethodPost, "/v1/rencontres.setTableOutOfService", idem(rpcGesture(s, func(ctx context.Context, scope string, req rencontreTableReq) (*service.RencontreView, error) {
+		{http.MethodPost, "/v1/rencontres.setTableOutOfService", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreTableReq) (*service.RencontreView, error) {
 			return bareRoom(svc(scope).SetRencontreTableOutOfService(ctx, req.ID, req.Table, req.Out))
 		}))},
-		{http.MethodPost, "/v1/rencontres.setBreaks", idem(rpcGesture(s, func(ctx context.Context, scope string, req rencontreBreaksReq) (*service.RencontreView, error) {
+		{http.MethodPost, "/v1/rencontres.setBreaks", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req rencontreBreaksReq) (*service.RencontreView, error) {
 			return bareRoom(svc(scope).SetRencontreBreaks(ctx, req.ID, rawText(req.Breaks)))
 		}))},
 	}

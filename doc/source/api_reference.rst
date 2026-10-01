@@ -69,46 +69,46 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/comments.text                        JSON
      POST /v1/comments.update                      JSON
    directions
-     POST /v1/directions.addNote                   custom
-     POST /v1/directions.addPair                   custom
-     POST /v1/directions.addParticipant            custom
-     POST /v1/directions.attachMatch               custom
+     POST /v1/directions.addNote                   JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.addPair                   JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.addParticipant            JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.attachMatch               JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.brackets                  JSON  (ETag)
-     POST /v1/directions.cancelMatch               custom
+     POST /v1/directions.cancelMatch               JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.clock                     JSON  (ETag)
-     POST /v1/directions.close                     custom
-     POST /v1/directions.confirmAllProposals       custom
-     POST /v1/directions.confirmProposal           custom
-     POST /v1/directions.correctResult             custom
-     POST /v1/directions.create                    custom
-     POST /v1/directions.detachMatch               custom
+     POST /v1/directions.close                     JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.confirmAllProposals       JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.confirmProposal           JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.correctResult             JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.create                    JSON  (Idempotency-Key)
+     POST /v1/directions.detachMatch               JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.directory                 JSON  (ETag)
-     POST /v1/directions.enterForfeit              custom
-     POST /v1/directions.enterParticipants         custom
-     POST /v1/directions.enterResult               custom
+     POST /v1/directions.enterForfeit              JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.enterParticipants         JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.enterResult               JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.freeParticipants          JSON  (ETag)
      POST /v1/directions.get                       JSON  (ETag)
      POST /v1/directions.history                   JSON  (ETag)
      POST /v1/directions.lastDecision              JSON  (ETag)
      POST /v1/directions.list                      JSON  (ETag)
-     POST /v1/directions.makeAbsent                custom
-     POST /v1/directions.makeAvailable             custom
-     POST /v1/directions.moveMatchToTable          custom
+     POST /v1/directions.makeAbsent                JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.makeAvailable             JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.moveMatchToTable          JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.pageHtml                  JSON  (ETag)
      POST /v1/directions.pairingSheetHtml          JSON  (ETag)
      POST /v1/directions.participants              JSON  (ETag)
      POST /v1/directions.previewConfig             JSON
-     POST /v1/directions.reinstate                 custom
-     POST /v1/directions.reopen                    custom
-     POST /v1/directions.setConfig                 custom
+     POST /v1/directions.reinstate                 JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.reopen                    JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.setConfig                 JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.slots                     JSON  (ETag)
      POST /v1/directions.standings                 JSON  (ETag)
      POST /v1/directions.standingsCsv              JSON  (ETag)
-     POST /v1/directions.startMatch                custom
+     POST /v1/directions.startMatch                JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/directions.tableGrid                 JSON  (ETag)
-     POST /v1/directions.updatePair                custom
-     POST /v1/directions.updateParticipant         custom
-     POST /v1/directions.withdraw                  custom
+     POST /v1/directions.updatePair                JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.updateParticipant         JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/directions.withdraw                  JSON  (Idempotency-Key)  (If-Match)  (If-Match)
    exports
      POST /v1/exports.json                         custom
      POST /v1/exports.sqlite                       custom
@@ -194,16 +194,16 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/quiz.gradeCheckerMove                JSON
      POST /v1/quiz.gradeCube                       JSON
    rencontres
-     POST /v1/rencontres.attach                    custom
-     POST /v1/rencontres.create                    custom
-     POST /v1/rencontres.detach                    custom
+     POST /v1/rencontres.attach                    JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/rencontres.create                    JSON  (Idempotency-Key)
+     POST /v1/rencontres.detach                    JSON  (Idempotency-Key)  (If-Match)  (If-Match)
      POST /v1/rencontres.get                       JSON  (ETag)
      POST /v1/rencontres.list                      JSON  (ETag)
      POST /v1/rencontres.pageHtml                  JSON  (ETag)
-     POST /v1/rencontres.setBreaks                 custom
-     POST /v1/rencontres.setTableOutOfService      custom
-     POST /v1/rencontres.trash                     custom
-     POST /v1/rencontres.update                    custom
+     POST /v1/rencontres.setBreaks                 JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/rencontres.setTableOutOfService      JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/rencontres.trash                     JSON  (Idempotency-Key)  (If-Match)  (If-Match)
+     POST /v1/rencontres.update                    JSON  (Idempotency-Key)  (If-Match)  (If-Match)
    search
      POST /v1/search.find                          NDJSON
      POST /v1/search.parse                         JSON
@@ -275,7 +275,7 @@ La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et ``positions.save`` (comme le reste de
 ``positions.*``) est naturellement idempotente grâce au hachage Zobrist du
 contenu — enregistrer deux fois la même position renvoie la même ligne, jamais
-un doublon. 8 méthodes n'ont pas cette propriété (deux appels sont deux effets
+un doublon. 39 méthodes n'ont pas cette propriété (deux appels sont deux effets
 distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel : un appel
 rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
 répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau
