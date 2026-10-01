@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 05:25+0200\n"
+"POT-Creation-Date: 2026-10-01 06:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -42,18 +42,18 @@ msgstr ""
 " with their response shape (JSON, or NDJSON for a streamed list) and, "
 "where it exists, a note of the optional ``Idempotency-Key`` header."
 
-#: ../../source/api_reference.rst:240
+#: ../../source/api_reference.rst:272
 msgid "Idempotence"
 msgstr "Idempotency"
 
-#: ../../source/api_reference.rst:242
+#: ../../source/api_reference.rst:274
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et ``positions.save`` (comme le reste "
 "de ``positions.*``) est naturellement idempotente grâce au hachage "
 "Zobrist du contenu — enregistrer deux fois la même position renvoie la "
-"même ligne, jamais un doublon. 8 méthodes n'ont pas cette propriété (deux"
-" appels sont deux effets distincts) et acceptent un en-tête "
+"même ligne, jamais un doublon. 39 méthodes n'ont pas cette propriété "
+"(deux appels sont deux effets distincts) et acceptent un en-tête "
 "``Idempotency-Key`` optionnel : un appel rejoué avec la même clé renvoie "
 "le résultat de la première tentative au lieu de répéter son effet — voir "
 "la marque « (Idempotency-Key) » dans le tableau ci-dessus. Aucune autre "
@@ -62,18 +62,18 @@ msgstr ""
 "Most methods need no special mechanism at all: reads have no side effect,"
 " and ``positions.save`` (like the rest of ``positions.*``) is naturally "
 "idempotent through its Zobrist content hash — saving the same position "
-"twice returns the same row, never a duplicate. 8 methods lack that "
+"twice returns the same row, never a duplicate. 39 methods lack that "
 "property (two calls are two distinct effects) and accept an optional "
 "``Idempotency-Key`` header: a call retried with the same key returns the "
 "first attempt's result instead of repeating its effect — see the "
 "\"(Idempotency-Key)\" mark in the table above. No other method needs or "
 "accepts that header."
 
-#: ../../source/api_reference.rst:253
+#: ../../source/api_reference.rst:285
 msgid "Lectures conditionnelles"
 msgstr "Conditional reads"
 
-#: ../../source/api_reference.rst:255
+#: ../../source/api_reference.rst:287
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

@@ -493,6 +493,15 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
 Un geste de tournoi rend la vue complète du tournoi, comme ``directions.get`` ;
 un geste de salle rend la Rencontre. Le service réécrit ensuite les pages
 d'affichage dans le dossier que la base désigne, comme au poste de travail.
+Une page qui ne peut pas s'écrire (dossier disparu, disque plein) n'annule pas
+le geste : la réponse porte un en-tête ``Direction-Page-Warning`` par page non
+écrite (``tournament 3``, ``rencontre 2``), sans le chemin du serveur, et le
+poste de travail l'affiche dans sa barre d'état.
+
+Un geste que les règles refusent (nom vide, table occupée, tournoi qui n'a pas
+commencé, configuration rejetée par le moteur) rend ``400`` avec le motif. Une
+panne du démon ou de sa base rend ``500``, sans détail : le motif reste dans le
+journal du démon.
 
 **Version obligatoire.** Toute lecture d'un tournoi ou d'une Rencontre rend un
 en-tête ``Direction-Version``, et tout geste le renvoie dans ``If-Match`` :
@@ -504,16 +513,30 @@ en-tête ``Direction-Version``, et tout geste le renvoie dans ``If-Match`` :
 * sinon le geste s'applique et rend la nouvelle version dans
   ``Direction-Version``.
 
-La comparaison se fait sous le verrou du geste : de deux gestes envoyés sur la
-même lecture, un seul s'applique. Un tournoi joué dans une Rencontre a la
+La comparaison se fait dans la transaction du geste, sous un verrou de la base
+(verrou consultatif PostgreSQL par tournoi ou par Rencontre, verrou d'écriture
+SQLite) : de deux gestes envoyés sur la même lecture, un seul s'applique, qu'ils
+passent par un même démon, par deux démons sur une même base PostgreSQL, ou par
+le poste de travail et ``call`` sur un même fichier. Le geste écrit tout ou
+rien. Un tournoi joué dans une Rencontre a la
 version de sa salle, si bien qu'un geste dans une épreuve sœur la change
 aussi. ``directions.create`` et ``rencontres.create`` ne visent rien
 d'existant et ne prennent pas de version.
 
 **Idempotence.** Un geste qui porte un en-tête ``Idempotency-Key`` ne
-s'applique qu'une fois : renvoyé avec la même clé, il rend la première réponse
-(en-tête ``Idempotency-Replayed: true``). Un double clic ou une reprise réseau
-ne saisit pas deux résultats.
+s'applique qu'une fois : renvoyé avec la même clé, il rend la première réponse,
+avec ses en-têtes (``Direction-Version`` compris) et
+``Idempotency-Replayed: true``. Un double clic ou une reprise réseau ne saisit
+pas deux résultats ; deux envois simultanés de la même clé n'exécutent le geste
+qu'une fois. Seule une réponse réussie est retenue.
+
+* La clé est liée au corps de la requête : la même clé avec un autre corps rend
+  ``422``.
+* Le rejeu passe avant le contrôle de version : il rend la réponse retenue sans
+  ``428`` ni ``409``, même si la version a bougé depuis.
+* Les clés vivent en mémoire, dans chaque instance du démon, pendant 24 heures,
+  au plus 1 000 par tenant : un redémarrage les oublie, et une autre instance
+  ne les connaît pas.
 
 .. code-block:: bash
 

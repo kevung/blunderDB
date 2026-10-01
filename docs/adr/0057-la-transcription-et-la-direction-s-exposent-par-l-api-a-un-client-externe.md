@@ -47,6 +47,14 @@ comment deux écritures concurrentes se détectent, et comment un client apprend
    de schéma (bump de `DatabaseVersion`, migration SQLite et PostgreSQL), parce que la
    version doit se lire et se comparer sans désérialiser le document. Les lectures rendent un `ETag` ; `If-None-Match`
    → 304. Le GUI de bureau passe par le même contrôle.
+
+   Exceptions en vigueur : `directions.create` et `rencontres.create` ne visent rien qui ait
+   déjà une version et ne prennent pas d'`If-Match` ; un `Idempotency-Key` les protège du
+   double envoi. Le GUI de bureau n'envoie pas de version : ses gestes prennent le même verrou
+   de base que ceux du démon (verrou consultatif PostgreSQL par Direction ou Rencontre,
+   `BEGIN IMMEDIATE` en SQLite), si bien qu'un geste du bureau et un geste d'un client externe
+   sur un même fichier ne s'entrelacent pas ; un client qui a lu avant le geste du bureau
+   reçoit 409.
 5. **L'écriture est éteinte par défaut, la lecture non.** `serve --direction` ouvre les gestes
    de Direction et de Rencontre, `serve --transcription` ceux de la Transcription ; sans ces
    drapeaux, les routes d'écriture répondent comme absentes. Les routes de lecture sont

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 05:25+0200\n"
+"POT-Creation-Date: 2026-10-01 06:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,39 +42,39 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:240
+#: ../../source/api_reference.rst:272
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:242
+#: ../../source/api_reference.rst:274
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et ``positions.save`` (comme le reste "
 "de ``positions.*``) est naturellement idempotente grâce au hachage "
 "Zobrist du contenu — enregistrer deux fois la même position renvoie la "
-"même ligne, jamais un doublon. 8 méthodes n'ont pas cette propriété (deux"
-" appels sont deux effets distincts) et acceptent un en-tête "
+"même ligne, jamais un doublon. 39 méthodes n'ont pas cette propriété "
+"(deux appels sont deux effets distincts) et acceptent un en-tête "
 "``Idempotency-Key`` optionnel : un appel rejoué avec la même clé renvoie "
 "le résultat de la première tentative au lieu de répéter son effet — voir "
 "la marque « (Idempotency-Key) » dans le tableau ci-dessus. Aucune autre "
 "méthode n'a besoin ou n'accepte cet en-tête."
 msgstr ""
 "Useimmat menetelmät eivät tarvitse mitään erityistä mekanismia: "
-"lukemisilla ei ole sivuvaikutuksia, ja ``positions.save`` (kuten muu "
+"lukemisilla ei ole sivuvaikutuksia, ja ``positions.save`` (kuten muutkin "
 "``positions.*``) on luonnostaan idempotentti sisällön Zobrist-tiivisteen "
-"ansiosta — saman position tallentaminen kahdesti palauttaa saman rivin, "
-"ei koskaan kaksoiskappaletta. 8 menetelmältä puuttuu tämä ominaisuus "
+"ansiosta — saman aseman tallentaminen kahdesti palauttaa saman rivin, ei "
+"koskaan kaksoiskappaletta. 39 menetelmällä ei ole tätä ominaisuutta "
 "(kaksi kutsua on kaksi erillistä vaikutusta) ja ne hyväksyvät valinnaisen"
 " ``Idempotency-Key``-otsakkeen: samalla avaimella toistettu kutsu "
 "palauttaa ensimmäisen yrityksen tuloksen sen vaikutuksen toistamisen "
-"sijaan — ks. merkintä ”(Idempotency-Key)” yllä olevassa taulukossa. "
+"sijaan — katso merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. "
 "Mikään muu menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:253
+#: ../../source/api_reference.rst:285
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:255
+#: ../../source/api_reference.rst:287
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
