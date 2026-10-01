@@ -1637,6 +1637,20 @@ refusée, et la barre d'état en donne le motif. En ligne de commande,
 ``blunderdb tournament move`` fait le même déplacement ou le même échange
 (voir :ref:`cli`).
 
+.. _direction_plein_ecran:
+
+Le plein écran
+~~~~~~~~~~~~~~
+
+La touche *F11* de la page Direction, ou le bouton en bas à droite, la met en
+plein écran : la barre d'outils, les onglets, le plateau, le panneau et la barre
+d'état disparaissent, et toute la fenêtre est rendue à la direction. Le mode
+traverse les onglets de la direction (Direction, Joueurs, Historique, …). Un menu
+ou une fiche ouverts se ferment d'abord sur *ÉCHAP* ; un second *ÉCHAP*, ou
+*F11*, sort du plein écran et rend la fenêtre à son état précédent. Quitter la
+page, en changeant d'onglet de l'application ou en fermant la direction, y met
+fin aussi.
+
 .. _direction_recherche:
 
 La recherche rapide

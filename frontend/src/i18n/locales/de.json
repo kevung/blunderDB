@@ -1703,6 +1703,10 @@
         "direct": "Dieses Turnier leiten",
         "open": "Leitung öffnen",
         "close": "Leitung schließen",
+        "fullscreen": {
+            "enter": "Vollbild (F11)",
+            "exit": "Vollbild verlassen (F11 oder Esc)"
+        },
         "directed": "geleitet",
         "state": {
             "draft": "in Vorbereitung",

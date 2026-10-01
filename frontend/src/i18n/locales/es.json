@@ -1703,6 +1703,10 @@
         "direct": "Dirigir este torneo",
         "open": "Abrir la dirección",
         "close": "Cerrar la dirección",
+        "fullscreen": {
+            "enter": "Pantalla completa (F11)",
+            "exit": "Salir de pantalla completa (F11 o Esc)"
+        },
         "directed": "dirigido",
         "state": {
             "draft": "en preparación",

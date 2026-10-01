@@ -7,6 +7,7 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
 import { directionOwnsKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
+import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 
 import { newDatabase, openDatabase, exitApp } from './databaseService.js';
@@ -200,6 +201,13 @@ export function handleKeyDown(event) {
     if (directionOwnsKey(event)) return;
     // The scrolling keys scroll the Direction page natively, without browsing the hidden board.
     if (directionLeavesToPage(event)) return;
+
+    // F11 on the Direction page toggles its dedicated full screen (services/directionFullscreen.js).
+    if (directionFullscreenKey(event)) {
+        event.preventDefault();
+        toggleDirectionFullscreen();
+        return;
+    }
 
     // `/` on the Direction page opens the palette on the room's players, tables and events.
     if (directionSearchKey(event)) {

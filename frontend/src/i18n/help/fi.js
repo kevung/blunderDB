@@ -368,6 +368,8 @@ export default {
 <p>Luovutus, ottelun peruutus ja pelaajan vetäytyminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa. Kun toiminto on käynnissä, toimivat valinnat näkyvät harmaina kuten painikkeet. Vain yksi valikko on auki kerrallaan: toisen avaaminen sulkee ensimmäisen.</p>
 <p>Näppäimistöllä ruudukko vie vain yhden <em>TAB</em>-pysähdyksen: jokainen ruutu, myös vapaa, saa kohdistuksen, ja <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkentässä, ja myös <em>X</em>, olipa kortti jo auki tai ei: varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</p>
 <p>Hiirellä varattu ruutu <strong>vedetään</strong> toisen päälle: vapaaseen ruutuun ottelu vaihtaa pöytää; varattuun ruutuun rivi ”Pöytä 3 ↔ Pöytä 7?” pyytää vahvistamaan kahden ottelun <strong>vaihdon</strong>. Haamukuva seuraa osoitinta ja kohderuutu korostuu; <em>ESC</em> peruu eleen, eikä mitään kirjoiteta ennen kuin osoitin vapautetaan ruudun päällä. Käytöstä poistettu pöytä hylätään, ja tilarivi kertoo syyn. Komentorivillä <code>blunderdb tournament move</code> tekee saman siirron tai vaihdon (katso Komentoriviliittymä (CLI)).</p>
+<h4>Koko näyttö</h4>
+<p>Turnauksenjohdon sivun <em>F11</em>-näppäin tai oikean alakulman painike asettaa sivun koko näytön tilaan: työkalupalkki, välilehdet, lauta, paneeli ja tilapalkki katoavat ja koko ikkuna annetaan turnauksenjohdolle. Tila säilyy johdon välilehtien (Johto, Pelaajat, Historia, …) välillä. Avoin valikko tai kortti sulkeutuu ensin näppäimellä <em>ESC</em>; toinen <em>ESC</em> tai <em>F11</em> poistuu koko näytöstä ja palauttaa ikkunan aiempaan tilaansa. Tila päättyy myös sivulta poistuttaessa, vaihtamalla sovelluksen välilehteä tai sulkemalla johdon.</p>
 <h4>Pikahaku</h4>
 <p>Direction-sivun <em>/</em>-näppäin avaa paletin pelkästään salille: avoimen Rencontren pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut, tai pelkän kilpailun, kun se ei ole missään Rencontressa. Kirjoitetaan nimi, seura tai pöydän numero (”4” tai ”t4”); pöydässä olevat pelaajat tulevat ennen vapaita pelaajia. <em>ENTER</em> vie kohteeseen: pelaaja ottelussa, ottelu tai varattu pöytä avaavat pöydän kortin, vapaa pöytä saa kohdistuksen ruudukossa, vapaa pelaaja näytetään <strong>Pelaajat</strong>-välilehdellä nimellään suodatettuna, kilpailusta tulee nykyinen välilehti. Rencontren toisen kilpailun tulos vaihtaa ensin kilpailua. <em>ESC</em> sulkee avaamatta mitään, ja syöttökentässä näppäin pysyy vinoviivana. <em>CTRL-SHIFT-P</em> avaa täyden paletin, jossa sali on myös mukana.</p>
 <h4>Pelaajat</h4>
@@ -1438,6 +1440,10 @@ export default {
 <tr>
 <td>/</td>
 <td>Avaa pikahaku: salin pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut löytyvät nimellä tai pöydän numerolla (lisätiedot). Ei vaikutusta syöttökentässä.</td>
+</tr>
+<tr>
+<td>F11</td>
+<td>Aseta turnauksenjohdon sivu koko näytön tilaan (työkalupalkki, välilehdet, paneeli ja tilapalkki piilotettuina) tai poistu siitä. ESC poistuu myös, kun avoin valikko tai kortti on suljettu (lisätiedot).</td>
 </tr>
 <tr>
 <td>Vedä varattu ruutu toisen päälle</td>

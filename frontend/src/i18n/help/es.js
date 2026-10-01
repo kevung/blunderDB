@@ -368,6 +368,8 @@ export default {
 <p>El abandono, la anulación de una partida y la retirada de un jugador conservan la confirmación que tienen en la ficha y en los botones de las filas. Mientras una acción está en curso, las entradas que actúan aparecen atenuadas, como los botones. Solo hay un menú abierto a la vez: abrir un segundo cierra el primero.</p>
 <p>Con el teclado, la cuadrícula ocupa una sola parada de <em>TAB</em>: cada casilla recibe el foco, también las libres, y <em>IZQUIERDA</em>, <em>DERECHA</em>, <em>ARRIBA</em>, <em>ABAJO</em>, <em>INICIO</em> y <em>FIN</em> pasan de una casilla a otra. Un dígito abre la ficha de la mesa con ese número; para una mesa superior a 9, el segundo dígito se teclea en 0,4 s. <em>M</em> abre la ficha en el campo de mesa, y <em>X</em> también, esté la ficha ya abierta o no: apuntar a una mesa ocupada intercambia las dos partidas.</p>
 <p>Con el ratón, se <strong>arrastra</strong> una casilla ocupada sobre otra: sobre una casilla libre el partido cambia de mesa; sobre una casilla ocupada, una línea «¿Mesa 3 ↔ Mesa 7?» pide confirmar el <strong>intercambio</strong> de los dos partidos. Un fantasma sigue al puntero y la casilla de destino se resalta; <em>ESC</em> cancela el gesto, y no se escribe nada hasta soltar el puntero sobre una casilla. Una mesa fuera de servicio se rechaza y la barra de estado da el motivo. En la línea de comandos, <code>blunderdb tournament move</code> hace el mismo traslado o intercambio (véase Interfaz de línea de comandos (CLI)).</p>
+<h4>Pantalla completa</h4>
+<p>La tecla <em>F11</em> de la página Dirección, o el botón de abajo a la derecha, la pone en pantalla completa: la barra de herramientas, las pestañas, el tablero, el panel y la barra de estado desaparecen y toda la ventana pasa a la dirección. El modo atraviesa las pestañas de la dirección (Dirección, Jugadores, Historial, …). Un menú o una ficha abiertos se cierran primero con <em>ESC</em>; un segundo <em>ESC</em>, o <em>F11</em>, sale de la pantalla completa y devuelve la ventana a su estado anterior. Salir de la página, cambiando de pestaña de la aplicación o cerrando la dirección, también le pone fin.</p>
 <h4>La búsqueda rápida</h4>
 <p>La tecla <em>/</em> de la página Dirección abre la paleta solo sobre la sala: jugadores, mesas, matches en curso y pruebas de la Rencontre abierta, o de la prueba sola cuando no está en ninguna Rencontre. Se teclea un nombre, un club o un número de mesa («4» o «t4»); los jugadores en una mesa van antes que los jugadores libres. <em>INTRO</em> lleva al objeto: un jugador en un match, un match o una mesa ocupada abren la ficha de la mesa, una mesa libre recibe el foco en la cuadrícula, un jugador libre se muestra en la pestaña <strong>Jugadores</strong> filtrado por su nombre, una prueba pasa a ser la pestaña actual. Un resultado de otra prueba de la Rencontre cambia primero de prueba. <em>ESC</em> cierra sin abrir nada, y la tecla sigue siendo una barra oblicua en un campo de texto. <em>CTRL-MAYÚS-P</em> abre la paleta completa, que también contiene la sala.</p>
 <h4>Los jugadores</h4>
@@ -1438,6 +1440,10 @@ export default {
 <tr>
 <td>/</td>
 <td>Abrir la búsqueda rápida: jugadores, mesas, matches en curso y pruebas de la sala, encontrados por un nombre o un número de mesa (detalle). Sin efecto en un campo de texto.</td>
+</tr>
+<tr>
+<td>F11</td>
+<td>Poner la página Dirección en pantalla completa (barra de herramientas, pestañas, panel y barra de estado ocultos), o salir de ella. ESC también sale, tras cerrar el menú o la ficha abiertos (detalle).</td>
 </tr>
 <tr>
 <td>Arrastrar una casilla ocupada sobre otra</td>

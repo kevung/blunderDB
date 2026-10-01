@@ -368,6 +368,8 @@ export default {
 <p>Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la confirmation qu'ils ont dans la fiche et dans les boutons des lignes. Pendant qu'une action est en cours, les entrées qui agissent sont grisées, comme les boutons. Un seul menu est ouvert à la fois : en ouvrir un second ferme le premier.</p>
 <p>Au clavier, la grille ne prend qu'un arrêt de <em>TAB</em> : chaque case se focalise, libre comprise, et <em>GAUCHE</em>, <em>DROITE</em>, <em>HAUT</em>, <em>BAS</em>, <em>DÉBUT</em> et <em>FIN</em> passent d'une case à l'autre. Un chiffre ouvre la fiche de la table de ce numéro ; pour une table au-delà de 9, le second chiffre se tape dans les 0,4 s. <em>M</em> ouvre la fiche sur le champ de table, et <em>X</em> aussi, que la fiche soit déjà ouverte ou non : viser une table occupée échange les deux matchs.</p>
 <p>À la souris, on <strong>glisse</strong> une case occupée sur une autre : sur une case libre le match change de table ; sur une case occupée, une ligne « Table 3 ↔ Table 7 ? » demande de confirmer l'<strong>échange</strong> des deux matchs. Un fantôme suit le pointeur et la case visée s'entoure ; <em>ÉCHAP</em> annule le geste, et rien n'est écrit tant que le pointeur n'est pas relâché sur une case. Une table hors service est refusée, et la barre d'état en donne le motif. En ligne de commande, <code>blunderdb tournament move</code> fait le même déplacement ou le même échange (voir Interface en ligne de commande (CLI)).</p>
+<h4>Le plein écran</h4>
+<p>La touche <em>F11</em> de la page Direction, ou le bouton en bas à droite, la met en plein écran : la barre d'outils, les onglets, le plateau, le panneau et la barre d'état disparaissent, et toute la fenêtre est rendue à la direction. Le mode traverse les onglets de la direction (Direction, Joueurs, Historique, …). Un menu ou une fiche ouverts se ferment d'abord sur <em>ÉCHAP</em> ; un second <em>ÉCHAP</em>, ou <em>F11</em>, sort du plein écran et rend la fenêtre à son état précédent. Quitter la page, en changeant d'onglet de l'application ou en fermant la direction, y met fin aussi.</p>
 <h4>La recherche rapide</h4>
 <p>La touche <em>/</em> de la page Direction ouvre la palette sur la salle seule : joueurs, tables, matchs en cours et épreuves de la Rencontre ouverte, ou de l'épreuve seule quand elle n'est dans aucune Rencontre. On tape un nom, un club ou un numéro de table (« 4 » ou « t4 ») ; les joueurs à une table passent avant les joueurs libres. <em>ENTRÉE</em> amène à l'objet : un joueur en cours de match, un match ou une table occupée ouvrent la fiche de la table, une table libre se focalise dans la grille, un joueur libre s'affiche dans l'onglet <strong>Joueurs</strong> filtré sur son nom, une épreuve devient l'onglet courant. Un résultat d'une autre épreuve de la Rencontre change d'abord d'épreuve. <em>ÉCHAP</em> referme sans rien ouvrir, et la touche reste une barre oblique dans un champ de saisie. <em>CTRL-MAJ-P</em> ouvre la palette complète, qui contient aussi la salle.</p>
 <h4>Les joueurs</h4>
@@ -1438,6 +1440,10 @@ export default {
 <tr>
 <td>/</td>
 <td>Ouvrir la recherche rapide : joueurs, tables, matchs en cours et épreuves de la salle, retrouvés par un nom ou un numéro de table (détail). Sans effet dans un champ de saisie.</td>
+</tr>
+<tr>
+<td>F11</td>
+<td>Mettre la page Direction en plein écran (barre d'outils, onglets, panneau et barre d'état masqués), ou en sortir. ÉCHAP en sort aussi, après avoir fermé le menu ou la fiche ouverts (détail).</td>
 </tr>
 <tr>
 <td>Glisser une case occupée sur une autre</td>

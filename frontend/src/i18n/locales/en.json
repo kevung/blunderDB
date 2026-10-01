@@ -1703,6 +1703,10 @@
         "direct": "Direct this tournament",
         "open": "Open the direction",
         "close": "Close the direction",
+        "fullscreen": {
+            "enter": "Full screen (F11)",
+            "exit": "Leave full screen (F11 or Esc)"
+        },
         "directed": "directed",
         "state": {
             "draft": "in preparation",
