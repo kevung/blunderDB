@@ -366,6 +366,7 @@ export default {
 </ul>
 <p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
 <p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
+<p>Mit der Maus <strong>zieht</strong> man ein belegtes Feld auf ein anderes: auf ein freies Feld wechselt das Match den Tisch; auf ein belegtes Feld fragt eine Zeile „Tisch 3 ↔ Tisch 7?“ nach der Bestätigung des <strong>Tauschs</strong> der beiden Matches. Ein Geisterbild folgt dem Zeiger und das Zielfeld wird umrandet; <em>ESC</em> bricht die Geste ab, und es wird nichts geschrieben, bevor der Zeiger über einem Feld losgelassen wird. Ein Tisch außer Betrieb wird abgelehnt, die Statusleiste nennt den Grund. In der Kommandozeile führt <code>blunderdb tournament move</code> dieselbe Verschiebung oder denselben Tausch aus (siehe Befehlszeilenschnittstelle (CLI)).</p>
 <h4>Die Spieler</h4>
 <p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
 <p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV kopiert oder in einer Datei gespeichert (<strong>Speichern…</strong>) und eingefügt wieder eingelesen.</p>
@@ -1430,6 +1431,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>Auf einem belegten Feld die Karte öffnen (oder, wenn sie offen ist, das Tischfeld); ein belegter Zieltisch tauscht die beiden Matches.</td>
+</tr>
+<tr>
+<td>Ein belegtes Feld auf ein anderes ziehen</td>
+<td>Mit der Maus: auf ein freies Feld das Match verschieben; auf ein belegtes Feld die beiden Matches nach Bestätigung tauschen. ESC bricht das Ziehen ab.</td>
 </tr>
 </tbody>
 </table>

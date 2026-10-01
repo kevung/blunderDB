@@ -49,6 +49,7 @@ func (cli *CLI) tournamentHandlers() map[string]func([]string) error {
 		"standings": cli.runTournamentStandings,
 		"page":      cli.runTournamentPage,
 		"export":    cli.runTournamentExport,
+		"move":      cli.runTournamentMove,
 	}
 }
 
@@ -68,7 +69,8 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("Usage: blunderdb tournament <sub-command> [options]")
 	fmt.Println()
 	fmt.Println("Read a directed tournament without a graphical interface. Directing one")
-	fmt.Println("interactively is the engine's own console; these sub-commands only read.")
+	fmt.Println("interactively is the engine's own console; these sub-commands read, except")
+	fmt.Println("`move`, which changes the table of a running match.")
 	fmt.Println()
 	fmt.Println("Sub-commands:")
 	fmt.Println("  list       List the directed tournaments of the database")
@@ -76,6 +78,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  standings  Print the standings as CSV")
 	fmt.Println("  page       Write the standalone display page, or a Rencontre's wall page")
 	fmt.Println("  export     Print the raw event journal, replayable by the engine's tools")
+	fmt.Println("  move       Move a running match to another table, swapping with its occupant")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb tournament list --db base.db")
@@ -84,6 +87,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  blunderdb tournament page --db base.db --id 3 --out /tmp/affichage")
 	fmt.Println("  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
 	fmt.Println("  blunderdb tournament export --db base.db --id 3 > journal.json")
+	fmt.Println("  blunderdb tournament move --db base.db --id 3 --match m4 --table 7")
 }
 
 func tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
@@ -286,4 +290,41 @@ func (cli *CLI) runTournamentExport(args []string) error {
 	}
 	_, err = os.Stdout.WriteString(body)
 	return err
+}
+
+// ── move ─────────────────────────────────────────────────────────────────────
+
+// runTournamentMove is the drag-and-drop of the table grid: a running match goes to another
+// table, and when that table is taken the two matches swap. The rule (out-of-service table
+// refused, both moves in one transaction) is the service's; this only names the gesture.
+func (cli *CLI) runTournamentMove(args []string) error {
+	fs, dbPath := tournamentFlagSet("move", "Move a running match to another table; a taken table swaps the two matches.",
+		"blunderdb tournament move --db base.db --id 3 --match m4 --table 7",
+		"blunderdb tournament move --db base.db --id 3 --match m4 --table 2 --format json")
+	id := fs.Int64("id", 0, "Tournament ID (required)")
+	match := fs.String("match", "", "Running match ID (required)")
+	table := fs.Int("table", 0, "Destination table number (required)")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *id == 0 || *match == "" || *table <= 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --id, --match and --table are all required")
+	}
+	view, err := cli.db.MoveMatchToTable(*id, *match, *table)
+	if err != nil {
+		return err
+	}
+	rows := make([]map[string]any, 0, len(view.Running))
+	for _, m := range view.Running {
+		rows = append(rows, map[string]any{"match": string(m.ID), "table": m.Table})
+	}
+	if strings.ToLower(*format) == "json" {
+		return printJSON(rows)
+	}
+	for _, r := range rows {
+		fmt.Printf("%s\ttable %d\n", r["match"], r["table"])
+	}
+	return nil
 }

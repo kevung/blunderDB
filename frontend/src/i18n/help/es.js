@@ -366,6 +366,7 @@ export default {
 </ul>
 <p>El abandono, la anulación de una partida y la retirada de un jugador conservan la confirmación que tienen en la ficha y en los botones de las filas. Mientras una acción está en curso, las entradas que actúan aparecen atenuadas, como los botones. Solo hay un menú abierto a la vez: abrir un segundo cierra el primero.</p>
 <p>Con el teclado, la cuadrícula ocupa una sola parada de <em>TAB</em>: cada casilla recibe el foco, también las libres, y <em>IZQUIERDA</em>, <em>DERECHA</em>, <em>ARRIBA</em>, <em>ABAJO</em>, <em>INICIO</em> y <em>FIN</em> pasan de una casilla a otra. Un dígito abre la ficha de la mesa con ese número; para una mesa superior a 9, el segundo dígito se teclea en 0,4 s. <em>M</em> abre la ficha en el campo de mesa, y <em>X</em> también, esté la ficha ya abierta o no: apuntar a una mesa ocupada intercambia las dos partidas.</p>
+<p>Con el ratón, se <strong>arrastra</strong> una casilla ocupada sobre otra: sobre una casilla libre el partido cambia de mesa; sobre una casilla ocupada, una línea «¿Mesa 3 ↔ Mesa 7?» pide confirmar el <strong>intercambio</strong> de los dos partidos. Un fantasma sigue al puntero y la casilla de destino se resalta; <em>ESC</em> cancela el gesto, y no se escribe nada hasta soltar el puntero sobre una casilla. Una mesa fuera de servicio se rechaza y la barra de estado da el motivo. En la línea de comandos, <code>blunderdb tournament move</code> hace el mismo traslado o intercambio (véase Interfaz de línea de comandos (CLI)).</p>
 <h4>Los jugadores</h4>
 <p>La pestaña <strong>Jugadores</strong> inscribe, corrige y retira. El campo de inscripción mantiene el foco y se vacía tras cada nombre: veinte jugadores se inscriben solo con el teclado. El autocompletado propone los jugadores de la base; elegir uno fija la ortografía exacta que llevan sus partidos y rellena su valoración con su PR.</p>
 <p>El <strong>directorio</strong> reúne a los inscritos de todos los torneos dirigidos de la base, sin duplicados por nombre, con el club y la valoración de su última inscripción. Nunca se almacena: borrar una dirección retira de él a sus inscritos. Retomar los inscritos de un torneo anterior es un clic, sean cuantos sean; el directorio se copia en CSV o se guarda en un archivo (<strong>Guardar…</strong>), y se relee pegado.</p>
@@ -1430,6 +1431,10 @@ export default {
 <tr>
 <td>M, X</td>
 <td>En una casilla ocupada, abrir la ficha (o, si está abierta, el campo de mesa); apuntar a una mesa ocupada intercambia las dos partidas.</td>
+</tr>
+<tr>
+<td>Arrastrar una casilla ocupada sobre otra</td>
+<td>Con el ratón: sobre una casilla libre, mover el partido; sobre una casilla ocupada, intercambiar los dos partidos tras confirmación. ESC cancela el arrastre.</td>
 </tr>
 </tbody>
 </table>

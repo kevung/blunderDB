@@ -1941,7 +1941,10 @@
             "none": "卓が登録されていません。",
             "noTable": "卓なし",
             "elsewhere": "使用中：{event}",
-            "shared": "この台に2つの試合があります。1つを移動してください"
+            "shared": "この台に2つの試合があります。1つを移動してください",
+            "swapConfirm": "テーブル {from} ↔ テーブル {to} を入れ替えますか?",
+            "swap": "入れ替える",
+            "moveRefused": "移動は拒否されました: {reason}"
         },
         "result": {
             "title": "結果",
