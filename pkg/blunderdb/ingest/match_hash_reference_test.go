@@ -1,6 +1,7 @@
 package ingest
 
 import (
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -68,17 +69,23 @@ func TestMatchHashReference(t *testing.T) {
 		})
 	}
 
-	// A match fixture added to testdata/ must get its reference here.
+	// A match fixture added to testdata/ must get its reference here. Only tracked files count:
+	// a developer's own matches, ignored by git, are not fixtures.
 	root := filepath.Join("..", "..", "..", "testdata")
-	for _, pat := range []string{"*.xg", "*/*/*.xg", "*.sgf", "*.mat", "*.bgf"} {
-		found, err := filepath.Glob(filepath.Join(root, pat))
-		if err != nil {
-			t.Fatal(err)
+	out, err := exec.Command("git", "-C", root, "ls-files", "--full-name", "--", ".").Output()
+	if err != nil {
+		t.Logf("git unavailable, uncovered fixtures not checked: %v", err)
+		return
+	}
+	for _, name := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+		f := filepath.Join(root, strings.TrimPrefix(name, "testdata/"))
+		switch filepath.Ext(f) {
+		case ".xg", ".sgf", ".mat", ".bgf":
+		default:
+			continue
 		}
-		for _, f := range found {
-			if !covered[f] {
-				t.Errorf("%s has no reference hash", f)
-			}
+		if !covered[f] {
+			t.Errorf("%s has no reference hash", f)
 		}
 	}
 }
