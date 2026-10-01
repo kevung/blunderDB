@@ -52,8 +52,10 @@ type validatedReq interface {
 	validate() error
 }
 
-// versionFunc returns the version token of what a key names under a scope.
-type versionFunc func(ctx context.Context, scope string, k readKey) (string, error)
+// versionFunc returns the version token of what a key names under a scope, and the version a
+// gesture on it states in If-Match (gesture.go) — empty when the read names nothing a gesture
+// writes as one (the whole scope, the Slots with their drafts).
+type versionFunc func(ctx context.Context, scope string, k readKey) (tag, gesture string, err error)
 
 // rpcRead is rpc for a read route: the same JSON in and out, plus ETag / If-None-Match.
 //
@@ -82,8 +84,11 @@ func rpcRead[Req keyedReq, Resp any](version versionFunc, fn func(ctx context.Co
 			return
 		}
 		scope := scopeOf(r)
-		if v, err := version(r.Context(), scope, req.readKey()); err == nil {
+		if v, gv, err := version(r.Context(), scope, req.readKey()); err == nil {
 			tag := readETag(r.URL.Path, scope, req, v)
+			if gv != "" {
+				w.Header().Set(versionHeader, quoteVersion(gv))
+			}
 			if etagMatches(r.Header.Get("If-None-Match"), tag) {
 				w.Header().Set("ETag", tag)
 				w.WriteHeader(http.StatusNotModified)

@@ -230,17 +230,73 @@ class GeneratedAPI(BaseClient):
         "POST /v1/comments.update — JSON."
         return self._call("/v1/comments.update", payload)
 
+    def directions_add_note(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.addNote — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.addNote", payload)
+
+    def directions_add_pair(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.addPair — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.addPair", payload)
+
+    def directions_add_participant(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.addParticipant — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.addParticipant", payload)
+
+    def directions_attach_match(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.attachMatch — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.attachMatch", payload)
+
     def directions_brackets(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.brackets — JSON."
         return self._call("/v1/directions.brackets", payload)
+
+    def directions_cancel_match(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.cancelMatch — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.cancelMatch", payload)
 
     def directions_clock(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.clock — JSON."
         return self._call("/v1/directions.clock", payload)
 
+    def directions_close(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.close — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.close", payload)
+
+    def directions_confirm_all_proposals(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.confirmAllProposals — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.confirmAllProposals", payload)
+
+    def directions_confirm_proposal(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.confirmProposal — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.confirmProposal", payload)
+
+    def directions_correct_result(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.correctResult — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.correctResult", payload)
+
+    def directions_create(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.create — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.create", payload)
+
+    def directions_detach_match(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.detachMatch — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.detachMatch", payload)
+
     def directions_directory(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.directory — JSON."
         return self._call("/v1/directions.directory", payload)
+
+    def directions_enter_forfeit(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.enterForfeit — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.enterForfeit", payload)
+
+    def directions_enter_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.enterParticipants — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.enterParticipants", payload)
+
+    def directions_enter_result(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.enterResult — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.enterResult", payload)
 
     def directions_free_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.freeParticipants — JSON."
@@ -262,6 +318,18 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.list — JSON."
         return self._call("/v1/directions.list", payload)
 
+    def directions_make_absent(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.makeAbsent — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.makeAbsent", payload)
+
+    def directions_make_available(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.makeAvailable — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.makeAvailable", payload)
+
+    def directions_move_match_to_table(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.moveMatchToTable — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.moveMatchToTable", payload)
+
     def directions_page_html(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.pageHtml — JSON."
         return self._call("/v1/directions.pageHtml", payload)
@@ -273,6 +341,22 @@ class GeneratedAPI(BaseClient):
     def directions_participants(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.participants — JSON."
         return self._call("/v1/directions.participants", payload)
+
+    def directions_preview_config(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.previewConfig — JSON."
+        return self._call("/v1/directions.previewConfig", payload)
+
+    def directions_reinstate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.reinstate — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.reinstate", payload)
+
+    def directions_reopen(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.reopen — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.reopen", payload)
+
+    def directions_set_config(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.setConfig — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.setConfig", payload)
 
     def directions_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.slots — JSON."
@@ -286,9 +370,25 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.standingsCsv — JSON."
         return self._call("/v1/directions.standingsCsv", payload)
 
+    def directions_start_match(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.startMatch — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.startMatch", payload)
+
     def directions_table_grid(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.tableGrid — JSON."
         return self._call("/v1/directions.tableGrid", payload)
+
+    def directions_update_pair(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.updatePair — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.updatePair", payload)
+
+    def directions_update_participant(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.updateParticipant — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.updateParticipant", payload)
+
+    def directions_withdraw(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.withdraw — hand-written handler — see openapi.yaml."
+        return self._call("/v1/directions.withdraw", payload)
 
     def exports_json(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/exports.json — hand-written handler — see openapi.yaml."
@@ -578,6 +678,18 @@ class GeneratedAPI(BaseClient):
         "POST /v1/quiz.gradeCube — JSON."
         return self._call("/v1/quiz.gradeCube", payload)
 
+    def rencontres_attach(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.attach — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.attach", payload)
+
+    def rencontres_create(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.create — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.create", payload)
+
+    def rencontres_detach(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.detach — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.detach", payload)
+
     def rencontres_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/rencontres.get — JSON."
         return self._call("/v1/rencontres.get", payload)
@@ -589,6 +701,22 @@ class GeneratedAPI(BaseClient):
     def rencontres_page_html(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/rencontres.pageHtml — JSON."
         return self._call("/v1/rencontres.pageHtml", payload)
+
+    def rencontres_set_breaks(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.setBreaks — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.setBreaks", payload)
+
+    def rencontres_set_table_out_of_service(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.setTableOutOfService — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.setTableOutOfService", payload)
+
+    def rencontres_trash(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.trash — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.trash", payload)
+
+    def rencontres_update(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.update — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rencontres.update", payload)
 
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."

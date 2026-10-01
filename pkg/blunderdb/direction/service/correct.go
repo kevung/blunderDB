@@ -89,7 +89,11 @@ func (d *Service) LastDecision(ctx context.Context, tournamentID int64) (*LastDe
 // The engine raises whatever the correction breaks (a bracket match now played by the wrong
 // players); nothing is repaired behind the director's back.
 func (d *Service) CorrectResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err

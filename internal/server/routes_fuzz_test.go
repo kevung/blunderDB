@@ -42,7 +42,7 @@ func fuzzServer(t *testing.T) (http.Handler, []string) {
 			fuzzSrvErr = err
 			return
 		}
-		srv, err := New(Options{Storage: st, Logger: slog.New(slog.DiscardHandler)})
+		srv, err := New(Options{Storage: st, Logger: slog.New(slog.DiscardHandler), EnableDirection: true})
 		if err != nil {
 			fuzzSrvErr = err
 			return

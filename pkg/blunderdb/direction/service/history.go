@@ -122,7 +122,11 @@ func historyMatches(e HistoryEntry, player, match string) bool {
 // the log where their own words go, and it is refused by nothing — including after the close,
 // since a note about a closed tournament is exactly when one is written.
 func (d *Service) AddDirectionNote(ctx context.Context, tournamentID int64, text string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err

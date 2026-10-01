@@ -24,6 +24,75 @@ import (
 // not cover is the wall clock: proposals, pages and the clock also depend on the time of the
 // reading, and a caller that caches on this token bounds that drift itself.
 
+// ErrStale refuses a gesture whose caller stated a version that is no longer the current one:
+// someone else wrote in between. The caller reads the fresh state and decides again.
+var ErrStale = fmt.Errorf("%w: the version moved since it was read", storage.ErrConflict)
+
+type expectKey struct{}
+
+// expectation is what a caller states before a gesture, and what the gesture leaves it.
+type expectation struct {
+	want   string
+	result string
+}
+
+// ExpectVersion returns ctx carrying the version its caller last read (DirectionVersion, or
+// RencontreVersion for a gesture on a room). A gesture run under it compares that version
+// with the current one under its own lock, before it writes anything, and refuses with
+// ErrStale when they differ — so of two gestures sent on one reading, one only applies.
+func ExpectVersion(ctx context.Context, version string) context.Context {
+	return context.WithValue(ctx, expectKey{}, &expectation{want: version})
+}
+
+// ResultVersion is the version a gesture run under ExpectVersion left behind, read under its
+// lock: the version of the state it wrote, never of a later one. Empty when the gesture wrote
+// nothing, or removed what it named.
+func ResultVersion(ctx context.Context) string {
+	if e, ok := expectedVersion(ctx); ok {
+		return e.result
+	}
+	return ""
+}
+
+func expectedVersion(ctx context.Context) (*expectation, bool) {
+	e, ok := ctx.Value(expectKey{}).(*expectation)
+	return e, ok
+}
+
+// versionOf is the version of the Rencontre rencontreID, or else of the Direction tournamentID.
+func (d *Service) versionOf(ctx context.Context, tournamentID, rencontreID int64) (string, error) {
+	if rencontreID != 0 {
+		return d.RencontreVersion(ctx, rencontreID)
+	}
+	return d.DirectionVersion(ctx, tournamentID)
+}
+
+// checkVersion compares the caller's version, if it stated one, with the current version of
+// what the gesture names. Called under the gesture's lock, so nothing of this process writes
+// between the comparison and the gesture.
+func (d *Service) checkVersion(ctx context.Context, tournamentID, rencontreID int64) error {
+	e, ok := expectedVersion(ctx)
+	if !ok {
+		return nil
+	}
+	cur, err := d.versionOf(ctx, tournamentID, rencontreID)
+	if err != nil {
+		return err
+	}
+	if cur != e.want {
+		return ErrStale
+	}
+	return nil
+}
+
+// recordVersion hands the caller of a versioned gesture the version it left, still under the
+// gesture's lock.
+func (d *Service) recordVersion(ctx context.Context, tournamentID, rencontreID int64) {
+	if e, ok := expectedVersion(ctx); ok {
+		e.result, _ = d.versionOf(ctx, tournamentID, rencontreID)
+	}
+}
+
 // DirectionVersion is the token of a read about one Direction. A Direction that plays in a
 // Rencontre reads its sister events too (busy tables, players seated elsewhere), so its token
 // is the Rencontre's.

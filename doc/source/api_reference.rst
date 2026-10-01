@@ -69,21 +69,46 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/comments.text                        JSON
      POST /v1/comments.update                      JSON
    directions
+     POST /v1/directions.addNote                   custom
+     POST /v1/directions.addPair                   custom
+     POST /v1/directions.addParticipant            custom
+     POST /v1/directions.attachMatch               custom
      POST /v1/directions.brackets                  JSON  (ETag)
+     POST /v1/directions.cancelMatch               custom
      POST /v1/directions.clock                     JSON  (ETag)
+     POST /v1/directions.close                     custom
+     POST /v1/directions.confirmAllProposals       custom
+     POST /v1/directions.confirmProposal           custom
+     POST /v1/directions.correctResult             custom
+     POST /v1/directions.create                    custom
+     POST /v1/directions.detachMatch               custom
      POST /v1/directions.directory                 JSON  (ETag)
+     POST /v1/directions.enterForfeit              custom
+     POST /v1/directions.enterParticipants         custom
+     POST /v1/directions.enterResult               custom
      POST /v1/directions.freeParticipants          JSON  (ETag)
      POST /v1/directions.get                       JSON  (ETag)
      POST /v1/directions.history                   JSON  (ETag)
      POST /v1/directions.lastDecision              JSON  (ETag)
      POST /v1/directions.list                      JSON  (ETag)
+     POST /v1/directions.makeAbsent                custom
+     POST /v1/directions.makeAvailable             custom
+     POST /v1/directions.moveMatchToTable          custom
      POST /v1/directions.pageHtml                  JSON  (ETag)
      POST /v1/directions.pairingSheetHtml          JSON  (ETag)
      POST /v1/directions.participants              JSON  (ETag)
+     POST /v1/directions.previewConfig             JSON
+     POST /v1/directions.reinstate                 custom
+     POST /v1/directions.reopen                    custom
+     POST /v1/directions.setConfig                 custom
      POST /v1/directions.slots                     JSON  (ETag)
      POST /v1/directions.standings                 JSON  (ETag)
      POST /v1/directions.standingsCsv              JSON  (ETag)
+     POST /v1/directions.startMatch                custom
      POST /v1/directions.tableGrid                 JSON  (ETag)
+     POST /v1/directions.updatePair                custom
+     POST /v1/directions.updateParticipant         custom
+     POST /v1/directions.withdraw                  custom
    exports
      POST /v1/exports.json                         custom
      POST /v1/exports.sqlite                       custom
@@ -169,9 +194,16 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/quiz.gradeCheckerMove                JSON
      POST /v1/quiz.gradeCube                       JSON
    rencontres
+     POST /v1/rencontres.attach                    custom
+     POST /v1/rencontres.create                    custom
+     POST /v1/rencontres.detach                    custom
      POST /v1/rencontres.get                       JSON  (ETag)
      POST /v1/rencontres.list                      JSON  (ETag)
      POST /v1/rencontres.pageHtml                  JSON  (ETag)
+     POST /v1/rencontres.setBreaks                 custom
+     POST /v1/rencontres.setTableOutOfService      custom
+     POST /v1/rencontres.trash                     custom
+     POST /v1/rencontres.update                    custom
    search
      POST /v1/search.find                          NDJSON
      POST /v1/search.parse                         JSON

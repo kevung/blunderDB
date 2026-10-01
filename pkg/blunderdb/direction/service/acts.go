@@ -34,7 +34,10 @@ func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actio
 }
 
 func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tournoi.Action) error {
-	release, shared := d.lockTables(ctx, tournamentID)
+	release, shared, err := d.lockTables(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
 	defer release()
 	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
 		if _, taken := d.roomAround(ctx, tournamentID, nil).tables[a.Table]; taken {
@@ -61,7 +64,10 @@ func (d *Service) ConfirmAllProposals(ctx context.Context, tournamentID int64) (
 func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) error {
 	// The room's lock in a Rencontre: the sisters' tables are read once, and none of them may
 	// take one of the tables handed out here before the batch is written.
-	release, _ := d.lockTables(ctx, tournamentID)
+	release, _, err := d.lockTables(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
 	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
@@ -122,7 +128,10 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // (unknown player, already playing, against themselves) — and a table another match is
 // played on, in this event or a sister of its room, which would hide that match.
 func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
-	release, shared := d.lockTables(ctx, tournamentID)
+	release, shared, err := d.lockTables(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
 	defer release()
 	// The sisters' tables are read before the transaction opens — on a single-connection
 	// database a read beside it would wait for it forever — and the room's lock keeps them as
@@ -133,7 +142,7 @@ func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a,
 	}
 	// The occupancy check and the write share one transaction: checked outside it, two
 	// directors could both see the table free and both start a match on it.
-	err := d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
+	err = d.directionTx(ctx, func(ctx context.Context, _ storage.Tx, store direction.Store) error {
 		dir, err := direction.Open(ctx, store, tournamentID)
 		if err != nil {
 			return err

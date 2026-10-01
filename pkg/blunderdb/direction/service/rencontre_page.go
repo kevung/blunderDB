@@ -68,7 +68,11 @@ func (d *Service) SetRencontreOutputDir(ctx context.Context, id int64, dir strin
 }
 
 func (d *Service) setRencontreOutputDir(ctx context.Context, id int64, dir string) error {
-	defer d.lockRoom()()
+	release, err := d.lockRoom(ctx, 0, id)
+	if err != nil {
+		return err
+	}
+	defer release()
 	r, err := d.st.Rencontres().Get(ctx, d.scope, id)
 	if err != nil {
 		return err
@@ -106,7 +110,12 @@ func (d *Service) effectiveOutputDir(ctx context.Context, tournamentID int64, ow
 // afterRoomGesture regenerates the room's wall page — a gesture on the room is a gesture on
 // every member too (ADR-0056 §6) — and returns the Rencontre as it now stands.
 func (d *Service) afterRoomGesture(ctx context.Context, id int64) (*RencontreView, error) {
-	_, _ = d.WriteRencontrePage(ctx, id)
+	if r, err := d.st.Rencontres().Get(ctx, d.scope, id); err == nil && len(r.TournamentIDs) > 0 {
+		// Each member's own page shows the room's tables and breaks too.
+		d.writePages(ctx, r.TournamentIDs...)
+	} else {
+		_, _ = d.WriteRencontrePage(ctx, id)
+	}
 	return d.GetRencontre(ctx, id)
 }
 

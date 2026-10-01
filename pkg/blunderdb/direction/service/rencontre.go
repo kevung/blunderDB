@@ -186,7 +186,11 @@ func alignTables(ctx context.Context, store direction.Store, tournamentID int64,
 // Realign puts every member of a Rencontre back on the room's tables, as attaching
 // them does. A restored Rencontre needs it: its events kept their own tables while detached.
 func (d *Service) Realign(ctx context.Context, id int64) error {
-	defer d.lockRoom()()
+	release, err := d.lockRoom(ctx, 0, id)
+	if err != nil {
+		return err
+	}
+	defer release()
 	return d.inRoom(ctx, id, func(ctx context.Context, _ storage.Tx, store direction.Store, r *domain.Rencontre, room direction.Room) error {
 		for _, tid := range r.TournamentIDs {
 			if err := alignTables(ctx, store, tid, room); err != nil {
@@ -199,9 +203,12 @@ func (d *Service) Realign(ctx context.Context, id int64) error {
 
 // DetachFromRencontre takes a Tournament out of its room. It keeps its log and its tables.
 func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) error {
-	release := d.lockRoom()
+	release, err := d.lockRoom(ctx, tournamentID, 0)
+	if err != nil {
+		return err
+	}
 	rid, _ := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
-	err := d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0)
+	err = d.st.Rencontres().Attach(ctx, d.scope, tournamentID, 0)
 	release()
 	if err != nil {
 		return err
@@ -215,7 +222,11 @@ func (d *Service) DetachFromRencontre(ctx context.Context, tournamentID int64) e
 // TrashRencontre deletes a Rencontre through the trash (ADR-0036). Its Tournaments are detached,
 // never deleted.
 func (d *Service) TrashRencontre(ctx context.Context, id int64) (int64, error) {
-	defer d.lockRoom()()
+	release, err := d.lockRoom(ctx, 0, id)
+	if err != nil {
+		return 0, err
+	}
+	defer release()
 	return trash.Rencontre(ctx, d.st, d.scope, id)
 }
 
@@ -260,7 +271,11 @@ func (d *Service) SetRencontreBreaks(ctx context.Context, id int64, breaksJSON s
 // lockedRoom is inRoom under the room's lock, released on return: what a room gesture does
 // next — rewriting its wall page — runs without it.
 func (d *Service) lockedRoom(ctx context.Context, id int64, fn func(context.Context, storage.Tx, direction.Store, *domain.Rencontre, direction.Room) error) error {
-	defer d.lockRoom()()
+	release, err := d.lockRoom(ctx, 0, id)
+	if err != nil {
+		return err
+	}
+	defer release()
 	return d.inRoom(ctx, id, fn)
 }
 

@@ -89,10 +89,10 @@ func (m *Memory) gestureLocks(scope string, tournamentID int64) (*sync.RWMutex, 
 	return room, own
 }
 
-// lockDirection serialises the gestures of one Direction: a gesture reads the log, decides,
-// and appends at the next sequence number, so two at once would claim the same number. The
+// ownLock serialises the gestures of one Direction: a gesture reads the log, decides, and
+// appends at the next sequence number, so two at once would claim the same number. The
 // returned func releases it. Gestures of other Directions run alongside.
-func (d *Service) lockDirection(tournamentID int64) func() {
+func (d *Service) ownLock(tournamentID int64) func() {
 	room, own := d.gestureLocks(d.scope, tournamentID)
 	room.RLock()
 	own.Lock()
@@ -102,33 +102,82 @@ func (d *Service) lockDirection(tournamentID int64) func() {
 	}
 }
 
-// lockRoom serialises a gesture that may write several Directions of the scope — a room, a
+// roomLock serialises a gesture that may write several Directions of the scope — a room, a
 // configuration a room shares — against every other gesture of the scope.
-func (d *Service) lockRoom() func() {
+func (d *Service) roomLock() func() {
 	room, _ := d.gestureLocks(d.scope, 0)
 	room.Lock()
 	return room.Unlock
 }
 
-// lockTables takes the lock a gesture that puts a match on a table needs. In a Rencontre it is
+// tablesLock takes the lock a gesture that puts a match on a table needs. In a Rencontre it is
 // the room's: a table free of the sisters must stay free until the match is written on it, and
 // a swap may write a sister's log. Membership is read under the room's lock, so it cannot change
 // between that reading and the choice; outside any Rencontre the gesture falls back to its own
 // Direction's lock, and checks again that no attach slipped in meanwhile. shared says which lock
 // is held.
-func (d *Service) lockTables(ctx context.Context, tournamentID int64) (release func(), shared bool) {
+func (d *Service) tablesLock(ctx context.Context, tournamentID int64) (release func(), shared bool) {
 	for {
-		release = d.lockRoom()
+		release = d.roomLock()
 		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err != nil || rid != 0 {
 			return release, true
 		}
 		release()
-		release = d.lockDirection(tournamentID)
+		release = d.ownLock(tournamentID)
 		if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err == nil && rid == 0 {
 			return release, false
 		}
 		release()
 	}
+}
+
+// lockDirection opens a gesture on one Direction: its lock, then the caller's version checked
+// under it (ExpectVersion). The returned func releases the lock and rewrites the Direction's
+// display page, so every caller gets its page alike and a slow folder holds no gesture.
+//
+// A caller that states a version holds the token of the whole room when the Direction plays in
+// a Rencontre (DirectionVersion), and a sister's gesture moves it: the check then takes the
+// room's lock, or two gestures on two sisters could both pass under one token.
+func (d *Service) lockDirection(ctx context.Context, tournamentID int64) (func(), error) {
+	if _, ok := expectedVersion(ctx); ok {
+		release, _, err := d.lockTables(ctx, tournamentID)
+		return release, err
+	}
+	unlock := d.ownLock(tournamentID)
+	return func() {
+		unlock()
+		d.writePages(ctx, tournamentID)
+	}, nil
+}
+
+// lockTables is tablesLock for a gesture: the caller's version is checked under the lock, and
+// the release rewrites the Direction's display page.
+func (d *Service) lockTables(ctx context.Context, tournamentID int64) (release func(), shared bool, err error) {
+	unlock, shared := d.tablesLock(ctx, tournamentID)
+	if err := d.checkVersion(ctx, tournamentID, 0); err != nil {
+		unlock()
+		return nil, false, err
+	}
+	return func() {
+		d.recordVersion(ctx, tournamentID, 0)
+		unlock()
+		d.writePages(ctx, tournamentID)
+	}, shared, nil
+}
+
+// lockRoom is roomLock for a gesture on a room: the caller's version of what it names — a
+// Direction, or a Rencontre when rencontreID is set — is checked under the lock. Its release
+// writes nothing: a room gesture rewrites the pages it changed itself.
+func (d *Service) lockRoom(ctx context.Context, tournamentID, rencontreID int64) (func(), error) {
+	unlock := d.roomLock()
+	if err := d.checkVersion(ctx, tournamentID, rencontreID); err != nil {
+		unlock()
+		return nil, err
+	}
+	return func() {
+		d.recordVersion(ctx, tournamentID, rencontreID)
+		unlock()
+	}, nil
 }
 
 type forecastKey struct {

@@ -27,6 +27,8 @@ Examples:
   blunderdb call metadata.counts --db my.db
   blunderdb call positions.list --db my.db --json '{"limit":10}'
   blunderdb call matches.get --db my.db --json '{"id":1}'
+  blunderdb call directions.enterResult --db my.db --if-match <version> \
+      --json '{"tournamentId":3,"matchId":"m1","winner":"aa"}'
 
 Flags:
 `
@@ -57,6 +59,7 @@ func RunCall(args []string) error {
 		jsonBody = fs.String("json", "{}", "request body as JSON")
 		jsonFile = fs.String("json-file", "", "read the request body from a file instead of --json")
 		list     = fs.Bool("list", false, "list every available <family>.<method> and exit")
+		ifMatch  = fs.String("if-match", "", "version a gesture of a Direction or a Rencontre was decided on, sent as If-Match: the Direction-Version a read printed on stderr")
 	)
 	if err := fs.Parse(rest); err != nil {
 		return err
@@ -90,7 +93,8 @@ func RunCall(args []string) error {
 		return fmt.Errorf("call: migrate: %w", err)
 	}
 
-	srv, err := New(Options{Storage: st})
+	// A local process, like the CLI: the gestures of a Direction are served (ADR-0057).
+	srv, err := New(Options{Storage: st, EnableDirection: true})
 	if err != nil {
 		return err
 	}
@@ -121,11 +125,18 @@ func RunCall(args []string) error {
 		return fmt.Errorf("call: build request: %w", err)
 	}
 	req.Header.Set(middleware.TenantHeader, *scope)
+	if *ifMatch != "" {
+		req.Header.Set("If-Match", quoteVersion(strings.Trim(*ifMatch, `"`)))
+	}
 
 	// Stream to stdout instead of buffering in a recorder: NDJSON routes and
 	// exports would otherwise sit whole in RAM before the first byte.
 	w := newStdoutResponseWriter()
 	srv.Handler().ServeHTTP(w, req)
+	// stdout stays the JSON answer alone; the version the next gesture states goes beside it.
+	if v := w.header.Get(versionHeader); v != "" {
+		_, _ = fmt.Fprintf(os.Stderr, "%s: %s\n", versionHeader, v)
+	}
 
 	// The response body (JSON or the error envelope) always goes to stdout so
 	// it stays parseable; an error status maps to a non-zero exit code.

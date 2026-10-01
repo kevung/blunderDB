@@ -18,6 +18,9 @@ const (
 	CodeInvalid     = "invalid"
 	CodeInternal    = "internal"
 	CodeRateLimited = "rate_limited"
+	// CodePreconditionRequired: a gesture that writes named no revision in
+	// If-Match (428).
+	CodePreconditionRequired = "precondition_required"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -44,6 +47,8 @@ func statusForCode(code string) int {
 		return http.StatusBadRequest
 	case CodeRateLimited:
 		return http.StatusTooManyRequests
+	case CodePreconditionRequired:
+		return http.StatusPreconditionRequired
 	default:
 		return http.StatusInternalServerError
 	}

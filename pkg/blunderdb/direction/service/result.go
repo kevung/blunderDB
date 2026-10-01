@@ -168,7 +168,11 @@ func playerNameIn(st *tournoi.State, id tournoi.PlayerID) string {
 // EnterResult records the result of a match. Only `winner` is required; both scores may be zero.
 // `note` travels on the event. A score beyond the length raises a standing warning.
 func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, winner string, scoreA, scoreB int, note string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -186,7 +190,11 @@ func (d *Service) EnterResult(ctx context.Context, tournamentID int64, matchID, 
 // EnterForfeit records that a player did not turn up for THIS match, without withdrawing them
 // from the tournament: they go on to follow a loser's path, the consolation for instance.
 func (d *Service) EnterForfeit(ctx context.Context, tournamentID int64, matchID, winner, note string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
@@ -227,8 +235,13 @@ func (d *Service) MoveMatchToTable(ctx context.Context, tournamentID int64, matc
 func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID string, table int) (touched int64, err error) {
 	// The room's lock as soon as the event is in a Rencontre, and its members read under it: a
 	// swap may write a sister's log, and the membership must not change in between.
-	release, shared := d.lockTables(ctx, tournamentID)
+	// The pages are written by the caller, the sister's with them, rather than on release.
+	release, shared := d.tablesLock(ctx, tournamentID)
 	defer release()
+	if err := d.checkVersion(ctx, tournamentID, 0); err != nil {
+		return 0, err
+	}
+	defer d.recordVersion(ctx, tournamentID, 0)
 	var sisters []int64
 	if shared {
 		sisters = d.sistersOf(ctx, tournamentID)
@@ -346,7 +359,11 @@ func occupant(st *tournoi.State, table int, self tournoi.MatchID) *tournoi.Match
 // CancelMatch removes a match launched by mistake — the wrong players, the wrong table. The
 // state is recomputed; nothing is erased from the log.
 func (d *Service) CancelMatch(ctx context.Context, tournamentID int64, matchID string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err

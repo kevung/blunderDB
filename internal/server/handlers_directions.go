@@ -13,8 +13,8 @@ import (
 
 // The Direction and the Rencontre, read (ADR-0057). Every route here is a read of the
 // Direction service — the one the desktop and the CLI call — bound to the caller's tenant, and
-// every one is conditional (conditional.go). The gestures are not served here: they write,
-// and the daemon opens them only on request (rule 5).
+// every one is conditional (conditional.go). The gestures are served by
+// handlers_direction_gestures.go, and only on request (rule 5).
 //
 // Left out on purpose: the routes that write a file on the server's disk (WriteDirectionPage,
 // WriteRencontrePage, the output folders) — a remote client reads pageHtml instead, and the
@@ -90,27 +90,32 @@ func (s *Server) directionService(scope string) *service.Service {
 	return service.New(s.opts.Storage, scope, s.direction)
 }
 
-// readVersion is the version of what k names, with the minute folded in (see conditional.go).
-func (s *Server) readVersion(ctx context.Context, scope string, k readKey) (string, error) {
+// readVersion is the version of what k names, with the minute folded in (see conditional.go),
+// and the version a gesture on it states (gesture.go): a Direction's or a Rencontre's own.
+func (s *Server) readVersion(ctx context.Context, scope string, k readKey) (tag, gesture string, err error) {
 	svc := s.directionService(scope)
 	var v string
-	var err error
 	switch {
 	case k.tournamentID != 0 && k.drafts:
 		v, err = svc.SlotsVersion(ctx, k.tournamentID)
+		if err == nil {
+			gesture, err = svc.DirectionVersion(ctx, k.tournamentID)
+		}
 	case k.tournamentID != 0:
 		v, err = svc.DirectionVersion(ctx, k.tournamentID)
+		gesture = v
 	case k.rencontreID != 0:
 		v, err = svc.RencontreVersion(ctx, k.rencontreID)
+		gesture = v
 	case k.scopeWide:
 		v, err = svc.ScopeVersion(ctx)
 	default:
-		return "", fmt.Errorf("%w: no tournament or rencontre named", storage.ErrInvalid)
+		return "", "", fmt.Errorf("%w: no tournament or rencontre named", storage.ErrInvalid)
 	}
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return fmt.Sprintf("%s|%d", v, s.opts.now().Unix()/60), nil
+	return fmt.Sprintf("%s|%d", v, s.opts.now().Unix()/60), gesture, nil
 }
 
 func (s *Server) directionReadRoutes() []route {

@@ -92,7 +92,11 @@ func (d *Service) ListDirections(ctx context.Context) ([]DirectionSummary, error
 // engine's own JSON so the frontend composes it without this file knowing every format option.
 // A seed of 0 means "pick one" (and record it, so the draw stays reproducible).
 func (d *Service) CreateDirection(ctx context.Context, tournamentID int64, configJSON string, seed int64) error {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release()
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
 		return err
@@ -162,7 +166,13 @@ func (d *Service) HasDirection(ctx context.Context, tournamentID int64) (bool, e
 // alike. It is always an event, so decisions stay readable in order. PreviewDirectionConfig
 // shows the engine's refusal BEFORE the click; the refusal returned here is the same *tournoi.ConfigRefusal.
 func (d *Service) SetDirectionConfig(ctx context.Context, tournamentID int64, configJSON string) error {
-	defer d.lockRoom()()
+	release, err := d.lockRoom(ctx, tournamentID, 0)
+	if err != nil {
+		return err
+	}
+	// Deferred first, so it runs once the lock is released.
+	defer d.writeRoomPages(ctx, tournamentID)
+	defer release()
 	cfg, err := parseDirectionConfig(configJSON)
 	if err != nil {
 		return err
@@ -184,7 +194,11 @@ func (d *Service) SetDirectionConfig(ctx context.Context, tournamentID int64, co
 
 // SetDirectionOutputDir remembers where the standalone display page is written.
 func (d *Service) SetDirectionOutputDir(ctx context.Context, tournamentID int64, dir string) error {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release()
 	dd, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return err
@@ -195,7 +209,11 @@ func (d *Service) SetDirectionOutputDir(ctx context.Context, tournamentID int64,
 // EnterParticipants records several entries at once — what an import or "take last time's
 // entrants" produces. Entering is possible in preparation and afterwards alike.
 func (d *Service) EnterParticipants(ctx context.Context, tournamentID int64, playersJSON string) error {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release()
 	var players []tournoi.Player
 	if playersJSON == "" {
 		return nil
@@ -231,7 +249,11 @@ func (d *Service) EnterParticipants(ctx context.Context, tournamentID int64, pla
 // DeleteDirection removes a Direction and its log. The Tournament and its Matches stay; the
 // Matches merely lose the Slot they filled (ADR-0047).
 func (d *Service) DeleteDirection(ctx context.Context, tournamentID int64) error {
-	defer d.lockRoom()()
+	release, err := d.lockRoom(ctx, tournamentID, 0)
+	if err != nil {
+		return err
+	}
+	defer release()
 	return d.dirStore().DeleteDirection(ctx, tournamentID)
 }
 

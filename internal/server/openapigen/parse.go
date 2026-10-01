@@ -55,6 +55,10 @@ type Route struct {
 	// Conditional is true for the read routes built with rpcRead: they answer
 	// with an ETag and turn a matching If-None-Match into 304.
 	Conditional bool
+
+	// Gesture is true for the versioned gestures built with rpcGesture: they
+	// require If-Match (428 without it) and answer 409 when it is stale.
+	Gesture bool
 }
 
 const (

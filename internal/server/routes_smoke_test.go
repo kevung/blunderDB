@@ -91,7 +91,8 @@ func smokeServer(t *testing.T) (*Server, *httptest.Server) {
 		Storage: st,
 		// The probe deliberately trips validation on every route; the
 		// request log would drown the failures that matter.
-		Logger: slog.New(slog.DiscardHandler),
+		Logger:          slog.New(slog.DiscardHandler),
+		EnableDirection: true,
 	})
 	if err != nil {
 		t.Fatalf("New: %v", err)

@@ -35,7 +35,10 @@ func CORS(allowOrigin string) func(http.Handler) http.Handler {
 				h.Set("Access-Control-Allow-Origin", origin)
 			}
 			h.Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-			h.Set("Access-Control-Allow-Headers", "Content-Type, "+TenantHeader)
+			// The conditional reads and the gestures of a Direction (ADR-0057) speak in
+			// these headers; a browser client must be allowed to send and to read them.
+			h.Set("Access-Control-Allow-Headers", "Content-Type, "+TenantHeader+", If-Match, If-None-Match, Idempotency-Key")
+			h.Set("Access-Control-Expose-Headers", "ETag, Direction-Version, Idempotency-Replayed")
 			if r.Method == http.MethodOptions {
 				w.WriteHeader(http.StatusNoContent)
 				return

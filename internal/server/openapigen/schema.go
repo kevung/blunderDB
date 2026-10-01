@@ -158,7 +158,7 @@ func primitiveSchema(t string) (*Schema, bool) {
 		return &Schema{Type: "integer", Format: "int32"}, true
 	case "int64", "uint64":
 		return &Schema{Type: "integer", Format: "int64"}, true
-	case "any", "interface{}":
+	case "any", "interface{}", "json.RawMessage":
 		return &Schema{Type: "object", Description: "Arbitrary JSON value."}, true
 	}
 	return nil, false

@@ -73,15 +73,33 @@ func (d *Service) writePages(ctx context.Context, tournamentIDs ...int64) {
 	}
 }
 
+// writeRoomPages is writePages for a gesture that may have changed the whole room: the
+// Direction's page and, when it plays in a Rencontre, every sister's.
+func (d *Service) writeRoomPages(ctx context.Context, tournamentID int64) {
+	if rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID); err == nil && rid != 0 {
+		if r, err := d.st.Rencontres().Get(ctx, d.scope, rid); err == nil {
+			d.writePages(ctx, r.TournamentIDs...)
+			return
+		}
+	}
+	d.writePages(ctx, tournamentID)
+}
+
 // writeOwnPage is WriteDirectionPage without the room's wall page.
 func (d *Service) writeOwnPage(ctx context.Context, tournamentID int64) (string, error) {
-	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
+	// The folder first, from the record alone: with none chosen — the daemon's usual case —
+	// a gesture pays no replay for a page nobody reads.
+	rec, err := d.st.Directions().Get(ctx, d.scope, tournamentID)
 	if err != nil {
 		return "", err
 	}
-	out := d.effectiveOutputDir(ctx, tournamentID, dir.Record().OutputDir)
+	out := d.effectiveOutputDir(ctx, tournamentID, rec.OutputDir)
 	if out == "" {
 		return "", nil
+	}
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
+	if err != nil {
+		return "", err
 	}
 	cat, lang := d.directionStrings(ctx)
 	page, err := d.directionPage(ctx, dir, tournamentID, cat, lang)

@@ -39,7 +39,7 @@ func kindOf(h http.HandlerFunc) handlerKind {
 	switch {
 	case strings.Contains(name, ".rpcStream["):
 		return kindStream
-	case strings.Contains(name, ".rpc["), strings.Contains(name, ".rpcVoid["), strings.Contains(name, ".rpcRead["):
+	case strings.Contains(name, ".rpc["), strings.Contains(name, ".rpcVoid["), strings.Contains(name, ".rpcRead["), strings.Contains(name, ".rpcGesture["):
 		return kindJSON
 	default:
 		return kindCustom
@@ -155,6 +155,8 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.trashRoutes()...)
 	rs = append(rs, s.directionReadRoutes()...)
 	rs = append(rs, s.rencontreReadRoutes()...)
+	rs = append(rs, s.directionGestureRoutes()...)
+	rs = append(rs, s.rencontreGestureRoutes()...)
 	return rs
 }
 

@@ -56,6 +56,13 @@ type Options struct {
 	// forbids — a daemon exposed with no proxy in front of it.
 	EnableWebUI bool
 
+	// EnableDirection serves the gestures of a Direction and of a Rencontre
+	// (/v1/directions.*, /v1/rencontres.* that write, ADR-0057 rule 5). OFF by
+	// default for the reason EnableWebUI is: the daemon authenticates nobody
+	// (ADR-0005), and these routes enter results. Without it they answer 404,
+	// as absent; the reads are served either way.
+	EnableDirection bool
+
 	// CORSAllowOrigin enables CORS for the given origin(s): "*", or a
 	// comma-separated list of exact origins (each one echoed back only to a
 	// request whose Origin header matches it — see middleware.CORS). Empty

@@ -87,8 +87,21 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 		b.WriteString("        \"304\":\n")
 		b.WriteString("          description: Not Modified — the If-None-Match tag still holds; no body.\n")
 	}
+	if r.Gesture {
+		b.WriteString("        \"409\":\n")
+		b.WriteString("          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.\n")
+		b.WriteString("        \"428\":\n")
+		b.WriteString("          description: Precondition Required — no usable If-Match.\n")
+	}
 	b.WriteString("        \"200\":\n")
 	b.WriteString("          description: OK\n")
+	if r.Gesture {
+		b.WriteString("          headers:\n")
+		b.WriteString("            Direction-Version:\n")
+		b.WriteString("              description: The version the gesture left; the If-Match of the next one.\n")
+		b.WriteString("              schema:\n")
+		b.WriteString("                type: string\n")
+	}
 	if r.Conditional {
 		b.WriteString("          headers:\n")
 		b.WriteString("            ETag:\n")

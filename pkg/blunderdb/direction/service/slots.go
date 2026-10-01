@@ -196,7 +196,11 @@ func disagreement(m *tournoi.Match, aName string, f filledMatch) string {
 // Attaching also puts the Match in the Tournament if it was not there, since a Match filling a
 // Slot of that tournament is a match OF that tournament.
 func (d *Service) AttachMatchToSlot(ctx context.Context, tournamentID int64, slotID string, matchID int64) error {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release()
 	if slotID == "" {
 		return fmt.Errorf("direction: no slot given")
 	}
@@ -218,7 +222,11 @@ func (d *Service) AttachMatchToSlot(ctx context.Context, tournamentID int64, slo
 // DetachMatchFromSlot empties a Slot. It touches neither the Match nor the recorded result:
 // the Match keeps its Tournament, and the Slot keeps what the director said happened.
 func (d *Service) DetachMatchFromSlot(ctx context.Context, tournamentID int64, slotID string) error {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release()
 	return d.st.Directions().DetachSlot(ctx, d.scope, tournamentID, slotID)
 }
 

@@ -966,6 +966,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/directions.addNote:
+    post:
+      operationId: directions.addNote
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.addPair:
+    post:
+      operationId: directions.addPair
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.addParticipant:
+    post:
+      operationId: directions.addParticipant
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.attachMatch:
+    post:
+      operationId: directions.attachMatch
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.brackets:
     post:
       operationId: directions.brackets
@@ -999,6 +1051,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_BracketPhase"
+  /v1/directions.cancelMatch:
+    post:
+      operationId: directions.cancelMatch
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.clock:
     post:
       operationId: directions.clock
@@ -1031,6 +1096,84 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_ClockView"
                 nullable: true
+  /v1/directions.close:
+    post:
+      operationId: directions.close
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.confirmAllProposals:
+    post:
+      operationId: directions.confirmAllProposals
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.confirmProposal:
+    post:
+      operationId: directions.confirmProposal
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.correctResult:
+    post:
+      operationId: directions.correctResult
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.create:
+    post:
+      operationId: directions.create
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.detachMatch:
+    post:
+      operationId: directions.detachMatch
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.directory:
     post:
       operationId: directions.directory
@@ -1064,6 +1207,45 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_DirectoryEntry"
+  /v1/directions.enterForfeit:
+    post:
+      operationId: directions.enterForfeit
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.enterParticipants:
+    post:
+      operationId: directions.enterParticipants
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.enterResult:
+    post:
+      operationId: directions.enterResult
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.freeParticipants:
     post:
       operationId: directions.freeParticipants
@@ -1227,6 +1409,45 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_DirectionSummary"
+  /v1/directions.makeAbsent:
+    post:
+      operationId: directions.makeAbsent
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.makeAvailable:
+    post:
+      operationId: directions.makeAvailable
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.moveMatchToTable:
+    post:
+      operationId: directions.moveMatchToTable
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.pageHtml:
     post:
       operationId: directions.pageHtml
@@ -1322,6 +1543,63 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_ParticipantRow"
+  /v1/directions.previewConfig:
+    post:
+      operationId: directions.previewConfig
+      tags: [directions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionConfigReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_ConfigPreview"
+                nullable: true
+  /v1/directions.reinstate:
+    post:
+      operationId: directions.reinstate
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.reopen:
+    post:
+      operationId: directions.reopen
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.setConfig:
+    post:
+      operationId: directions.setConfig
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.slots:
     post:
       operationId: directions.slots
@@ -1418,6 +1696,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/csvResp"
+  /v1/directions.startMatch:
+    post:
+      operationId: directions.startMatch
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/directions.tableGrid:
     post:
       operationId: directions.tableGrid
@@ -1451,6 +1742,45 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_TableCell"
+  /v1/directions.updatePair:
+    post:
+      operationId: directions.updatePair
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.updateParticipant:
+    post:
+      operationId: directions.updateParticipant
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/directions.withdraw:
+    post:
+      operationId: directions.withdraw
+      tags: [directions]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/exports.json:
     post:
       operationId: exports.json
@@ -2656,6 +2986,45 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/engine_QuizVerdict"
+  /v1/rencontres.attach:
+    post:
+      operationId: rencontres.attach
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rencontres.create:
+    post:
+      operationId: rencontres.create
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rencontres.detach:
+    post:
+      operationId: rencontres.detach
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/rencontres.get:
     post:
       operationId: rencontres.get
@@ -2752,6 +3121,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/htmlResp"
+  /v1/rencontres.setBreaks:
+    post:
+      operationId: rencontres.setBreaks
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rencontres.setTableOutOfService:
+    post:
+      operationId: rencontres.setTableOutOfService
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rencontres.trash:
+    post:
+      operationId: rencontres.trash
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rencontres.update:
+    post:
+      operationId: rencontres.update
+      tags: [rencontres]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/search.find:
     post:
       operationId: search.find
@@ -3648,6 +4069,15 @@ components:
           type: string
         description:
           type: string
+    directionConfigReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        config:
+          type: object
+          description: "Arbitrary JSON value."
     directionHistoryReq:
       type: object
       properties:
@@ -4236,6 +4666,9 @@ components:
     service_ClockView:
       type: object
       description: "Opaque: see the Go type service.ClockView (defined outside internal/server, not expanded here)."
+    service_ConfigPreview:
+      type: object
+      description: "Opaque: see the Go type service.ConfigPreview (defined outside internal/server, not expanded here)."
     service_DirectionSummary:
       type: object
       description: "Opaque: see the Go type service.DirectionSummary (defined outside internal/server, not expanded here)."

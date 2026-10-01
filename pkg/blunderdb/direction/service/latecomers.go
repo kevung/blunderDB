@@ -47,7 +47,11 @@ func (d *Service) DirectionFreeSlots(ctx context.Context, tournamentID int64) ([
 // Separate from AddParticipant on purpose: the place is the director's decision, and one no
 // longer free is refused rather than replaced.
 func (d *Service) AddParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (*DirectionView, error) {
-	defer d.lockDirection(tournamentID)()
+	release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return nil, fmt.Errorf("direction: an entry needs a name")
