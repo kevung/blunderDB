@@ -124,10 +124,17 @@ func (r *sessionRun) countMatches() int {
 func (r *sessionRun) save() {
 	r.t.Helper()
 	r.trace = append(r.trace, "SAVE")
-	res, err := r.db.SaveTranscriptionAsMatch(r.id)
+	// Terminer releases the draft; the run goes on in the draft opened again
+	// on the Match, which is how a correction continues after it.
+	res, err := r.db.FinishTranscription(r.id)
 	if err != nil {
 		return
 	}
+	state, err := r.db.EditMatchTranscription(res.MatchID)
+	if err != nil {
+		r.fail("editing the Match %d just finished: %v", res.MatchID, err)
+	}
+	r.id = state.ID
 	if r.matchID == 0 {
 		r.matchID = res.MatchID
 	} else if res.MatchID != r.matchID {
@@ -325,14 +332,23 @@ func TestTranscriptionUndoAfterSaveKeepsTheMatch(t *testing.T) {
 			t.Fatalf("%s: %v", g.Kind, err)
 		}
 	}
-	first, err := db.SaveTranscriptionAsMatch(st.ID)
+	first, err := db.FinishTranscription(st.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := db.ApplyTranscriptionGesture(st.ID, transcript.Gesture{Kind: transcript.GestureUndo}); err != nil {
+	edited, err := db.EditMatchTranscription(first.MatchID)
+	if err != nil {
 		t.Fatal(err)
 	}
-	second, err := db.SaveTranscriptionAsMatch(st.ID)
+	if _, err := db.ApplyTranscriptionGesture(edited.ID, transcript.Gesture{
+		Kind: transcript.GestureSetHeader, Header: transcript.Header{MatchLength: 7, Player1: "Alice"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.ApplyTranscriptionGesture(edited.ID, transcript.Gesture{Kind: transcript.GestureUndo}); err != nil {
+		t.Fatal(err)
+	}
+	second, err := db.FinishTranscription(edited.ID)
 	if err != nil {
 		t.Fatal(err)
 	}

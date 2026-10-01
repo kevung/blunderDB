@@ -52,7 +52,7 @@ const (
 	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
-	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture, and its draft never leaves the library it names two players of: the daemon exposes nothing of it (ADR-0045 rule 9, ADR-0039), and the CLI's `transcribe` REPLAYS a transcription rather than typing one — it reads a document, it never writes a gesture into one"
+	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture, and its draft never leaves the library it names two players of: the daemon exposes nothing of it (ADR-0045 rule 9, ADR-0039), and the CLI's `transcribe` REPLAYS a transcription rather than typing one — it reads a document and never writes a gesture into one; it finishes, abandons or opens one on a match through the panel's own methods"
 	// whyTranscriptionMAT: the panel's ".mat text" pane renders a DRAFT held
 	// in the desktop session, not a saved Match — `export --type mat` and
 	// /v1/matches.exportMat render the other object, so neither covers this.
@@ -202,7 +202,10 @@ var databaseParity = map[string]parityEntry{
 	"CloseTranscription":                {Why: whyTranscription},
 	"ApplyTranscriptionGesture":         {Why: whyTranscription},
 	"TranscriptionMAT":                  {Why: whyTranscriptionMAT},
-	"SaveTranscriptionAsMatch":          {Why: whyTranscription},
+	"FinishTranscription":               {CLI: "transcribe --finish", Why: whyTranscription},
+	"AbandonTranscription":              {CLI: "transcribe --abandon", Why: whyTranscription},
+	"EditMatchTranscription":            {CLI: "transcribe --edit", Why: whyTranscription},
+	"MatchTranscriptionLosses":          {CLI: "transcribe --edit", Why: whyTranscription},
 	"ExportTranscriptionMAT":            {Why: whyTranscription},
 	"SuggestTranscriptionMatFilename":   {Why: whyTranscription},
 	"PendingTranscriptionAnalysis":      {Why: whyResumeOffer},

@@ -145,6 +145,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Transcription/CRUD", testTranscriptionCRUD},
 		{"Transcription/ListNewestFirst", testTranscriptionListNewestFirst},
 		{"Transcription/MatchLinkSurvivesTheMatch", testTranscriptionMatchLink},
+		{"Transcription/DeleteInTxRollsBack", testTranscriptionDeleteInTx},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

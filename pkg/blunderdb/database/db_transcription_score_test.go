@@ -60,9 +60,14 @@ func TestDeclaredScore_TravelsIntoTheMatchAndTheMAT(t *testing.T) {
 		t.Fatalf("the reopened draft lost the score: version %d, %+v", doc.FormatVersion, doc.Actions[opening])
 	}
 
-	saved, err := db.SaveTranscriptionAsMatch(id)
+	// Rendered before finishing: finishing releases the draft.
+	draftText, err := db.TranscriptionMAT(id)
 	if err != nil {
-		t.Fatalf("SaveTranscriptionAsMatch: %v", err)
+		t.Fatal(err)
+	}
+	saved, err := db.FinishTranscription(id)
+	if err != nil {
+		t.Fatalf("FinishTranscription: %v", err)
 	}
 	got := savedInitialScores(t, db, saved.MatchID)
 	if fmt.Sprint(got) != fmt.Sprint(want) {
@@ -74,10 +79,6 @@ func TestDeclaredScore_TravelsIntoTheMatchAndTheMAT(t *testing.T) {
 		t.Fatal(err)
 	}
 	text, err := os.ReadFile(out)
-	if err != nil {
-		t.Fatal(err)
-	}
-	draftText, err := db.TranscriptionMAT(id)
 	if err != nil {
 		t.Fatal(err)
 	}
