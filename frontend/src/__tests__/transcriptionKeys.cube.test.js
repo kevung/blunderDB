@@ -125,7 +125,7 @@ describe('le videau, ligne à ligne d’ux.md §3', () => {
     test('une réponse attendue n’est pas une saisie de dés', () => {
         const d = driver({ expects: 'take' });
         expect(d.press('Digit3').handled).toBe(false);
-        expect(d.press('KeyJ').handled).toBe(false);
+        expect(d.press('KeyJ').handled).toBe(true); // reste dans la transcription, sans liste à déplacer
         expect(d.commands).toEqual([]);
     });
 

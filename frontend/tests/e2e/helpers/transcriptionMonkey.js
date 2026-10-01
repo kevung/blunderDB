@@ -20,7 +20,7 @@
  *   - `__monkeyViolations` : gestes reçus pour un brouillon alors qu'un AUTRE
  *     était affiché (`__monkeyDisplayed`, posé par la spec depuis le store) ;
  *   - `__monkeyIntent` : le brouillon que l'utilisateur a demandé en dernier
- *     (ouvert, créé ; null après fermeture).
+ *     (ouvert, créé ; null après Terminer ou Abandonner).
  */
 
 import { contactPosition } from './transcriptionDraft.js';
@@ -278,13 +278,24 @@ export async function installMonkeyEngine(page, opts) {
                 docs.get(id).header.match_length = opts?.match_length ?? 7;
                 return slow(() => annotate(docs.get(id)));
             };
-            db.CloseTranscription = (id) => {
+            /** Un brouillon quitte le moteur (Terminer, Abandonner) ; la liste ne reste jamais vide. */
+            const release = (id) => {
+                docs.delete(id);
                 if (window.__monkeyIntent === id) window.__monkeyIntent = null;
-                return slow(() => {
-                    docs.delete(id);
+                if (!docs.size) fresh(nextId++, 'Kévin', 'Alice', 4);
+            };
+            db.FinishTranscription = (id) =>
+                slow(() => {
+                    if (!docs.has(id)) throw new Error(`transcription ${id} is not open`);
+                    release(id);
+                    return { match_id: 7, replaced: false, to_analyze: 0 };
+                });
+            db.AbandonTranscription = (id) =>
+                slow(() => {
+                    release(id);
                     return null;
                 });
-            };
+            db.MatchTranscriptionLosses = () => slow(() => ({ draft_id: 0, imported: false, analyses: 0, comments: 0 }));
             db.ApplyTranscriptionGesture = (id, gesture) => {
                 const shown = window.__monkeyDisplayed;
                 window.__monkeyGestures.push({ id, kind: gesture?.Kind, shown });
@@ -297,7 +308,6 @@ export async function installMonkeyEngine(page, opts) {
                 });
             };
             db.TranscriptionMAT = () => slow(() => '');
-            db.SaveTranscriptionAsMatch = () => slow(() => ({ match_id: 7, replaced: false, to_analyze: 0 }));
             db.PendingTranscriptionAnalysis = () => slow(() => null);
             db.SuggestTranscriptionMatFilename = () => slow(() => 'match.mat');
             db.ExportTranscriptionMAT = () => slow(() => null);

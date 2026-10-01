@@ -35,10 +35,11 @@ const TRANSCRIPTION_CALLS = new Set([
     'ListTranscriptions',
     'OpenTranscription',
     'CreateTranscription',
-    'CloseTranscription',
+    'FinishTranscription',
+    'AbandonTranscription',
+    'MatchTranscriptionLosses',
     'ApplyTranscriptionGesture',
     'TranscriptionMAT',
-    'SaveTranscriptionAsMatch',
     'PendingTranscriptionAnalysis',
     'SuggestTranscriptionMatFilename',
     'ExportTranscriptionMAT',
@@ -107,15 +108,9 @@ const KEYS = [
  */
 const GLOBAL_KEYS = new Set(['Tab', ' ', 'p']);
 
-/**
- * Fuites connues, gardées par les tests `test.skip` en fin de fichier : les
- * vérifier ici arrêterait chaque graine au même endroit et cacherait le reste.
- */
-const KNOWN_LEAKS = new Set(['j', 'k']);
-
 /** Une touche que le panneau doit garder pour lui quand il a le focus. */
 function panelOwned(key) {
-    return !key.startsWith('Control+') && !GLOBAL_KEYS.has(key) && !KNOWN_LEAKS.has(key);
+    return !key.startsWith('Control+') && !GLOBAL_KEYS.has(key);
 }
 
 /**
@@ -295,12 +290,9 @@ async function step(page, rand) {
     return { desc: await click(`${panel} .candidates tbody tr, ${panel} .plain-candidate, ${panel} .die`, 'candidat/dé') };
 }
 
-/**
- * Invariant 3 : la touche, tapée dans le panneau, est restée dans le panneau.
- * `known` vérifie aussi les fuites connues (les repros réduites).
- */
-async function checkLeak(page, s, { known = false } = {}) {
-    if (!s.key || !(panelOwned(s.key) || (known && KNOWN_LEAKS.has(s.key)))) return [];
+/** Invariant 3 : la touche, tapée dans le panneau, est restée dans le panneau. */
+async function checkLeak(page, s) {
+    if (!s.key || !panelOwned(s.key)) return [];
     const b = s.before;
     if (b.tab !== 'transcription' || b.draft == null || !b.focusInPanel || b.modal) return [];
     const after = await worldOf(page);
@@ -407,9 +399,7 @@ async function openFirstDraft(page) {
     await page.locator(`${panel} .save-state`).click();
 }
 
-// Repros réduites des manquements trouvés par le singe. Chacune est sautée
-// tant que le panneau n'est pas corrigé ; la retirer de `test.skip` (et la
-// touche de KNOWN_LEAKS) une fois le correctif en place.
+// Repros réduites des manquements que le singe a trouvés : plus courtes à rejouer que sa graine.
 test.describe('transcription — singe, manquements réduits', () => {
     test.beforeEach(() => test.setTimeout(60_000));
 
@@ -417,7 +407,7 @@ test.describe('transcription — singe, manquements réduits', () => {
     // sans liste de candidats `k` n'est pas pris par la machine à touches et
     // remonte au dispatcher global, qui recule dans la bibliothèque (et
     // recharge analyse, commentaire, provenance). `j` passe par la même branche.
-    test.skip('k sans candidats ne parcourt pas la bibliothèque', async ({ page }) => {
+    test('k sans candidats ne parcourt pas la bibliothèque', async ({ page }) => {
         const errors = [];
         await boot(page, 1, errors);
         await openFirstDraft(page);
@@ -425,13 +415,12 @@ test.describe('transcription — singe, manquements réduits', () => {
         await page.keyboard.press('k');
         await settle(page);
         expect(before.focusInPanel).toBe(true);
-        expect(await checkLeak(page, { key: 'k', before }, { known: true })).toEqual([]);
+        expect(await checkLeak(page, { key: 'k', before })).toEqual([]);
     });
 
-    // Modale MAT, bouton Copier, presse-papiers refusé par le webview :
-    // `copyMat` attend `writeTextToClipboard` sans l'entourer, le rejet
-    // remonte en exception non rattrapée.
-    test.skip('Copier le MAT sans droit au presse-papiers ne lève rien', async ({ page }) => {
+    // Modale MAT, bouton Copier, presse-papiers refusé par le webview : le
+    // refus est annoncé (console.error du logger) sans exception non rattrapée.
+    test('Copier le MAT sans droit au presse-papiers ne lève rien', async ({ page }) => {
         const errors = [];
         await boot(page, 1, errors);
         await page.context().clearPermissions();
@@ -439,6 +428,6 @@ test.describe('transcription — singe, manquements réduits', () => {
         await page.locator(`${panel} .draft-bar .new-btn`).nth(2).click();
         await page.locator('.modal-overlay .mat-body button').click();
         await settle(page);
-        expect(errors).toEqual([]);
+        expect(errors.filter((e) => e.startsWith('pageerror'))).toEqual([]);
     });
 });

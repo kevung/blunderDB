@@ -119,6 +119,20 @@ describe('la file des gestes', () => {
         expect(/** @type {any} */ (finishDraft).mock.calls[0][0].annotated.document.actions).toHaveLength(1);
     });
 
+    test("une frappe pendant Terminer n'est pas envoyée au brouillon qu'il libère", async () => {
+        const finishing = deferred();
+        /** @type {any} */ (finishDraft).mockReturnValueOnce(finishing.promise);
+        await openedPanel();
+
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('.primary-btn')));
+        await vi.waitFor(() => expect(finishDraft).toHaveBeenCalledTimes(1));
+        await press('Digit3');
+        await tick();
+        expect(ApplyTranscriptionGesture).not.toHaveBeenCalled();
+
+        finishing.resolve(null);
+    });
+
     test("l'export attend le geste en vol", async () => {
         const reply = deferred();
         /** @type {any} */ (ApplyTranscriptionGesture).mockReturnValue(reply.promise);
