@@ -31,6 +31,11 @@ const (
 	// CodeUnavailable: the daemon is stopping and takes nothing new; retry
 	// against another instance or later (503).
 	CodeUnavailable = "unavailable"
+	// CodeUnknownRoute answers a path no route serves. Same 404 status as
+	// not_found (no resource lives at that URI, and status-only clients keep
+	// their behaviour), but a distinct code: a client whose method was renamed
+	// or removed by a version skew must see a fault, not an absent row.
+	CodeUnknownRoute = "unknown_route"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -49,7 +54,7 @@ type errorBody struct {
 // statusForCode maps an error code to its HTTP status.
 func statusForCode(code string) int {
 	switch code {
-	case CodeNotFound:
+	case CodeNotFound, CodeUnknownRoute:
 		return http.StatusNotFound
 	case CodeConflict:
 		return http.StatusConflict

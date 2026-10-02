@@ -67,6 +67,28 @@ func TestPositionsRoundtrip(t *testing.T) {
 	}
 }
 
+// The wire answer carries created; the store's own semantics are the storage
+// contract's to prove.
+func TestPositionsSaveReportsCreated(t *testing.T) {
+	ts := newTestServer(t)
+	p := domain.InitializePosition()
+	for i, want := range []bool{true, false} {
+		resp := post(t, ts, "/v1/positions.save", positionReq{Position: &p})
+		var got struct {
+			ID      int64 `json:"id"`
+			Created *bool `json:"created"`
+		}
+		err := json.NewDecoder(resp.Body).Decode(&got)
+		resp.Body.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got.Created == nil || *got.Created != want {
+			t.Fatalf("save #%d: created = %v, want %v", i+1, got.Created, want)
+		}
+	}
+}
+
 func TestPositionsListNDJSON(t *testing.T) {
 	ts := newTestServer(t)
 	p := domain.InitializePosition()

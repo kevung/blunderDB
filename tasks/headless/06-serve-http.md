@@ -24,7 +24,7 @@ Routes: `POST /v1/<family>.<method>`.
 
 Examples:
 ```
-POST /v1/positions.save        body: { "position": {...} }
+POST /v1/positions.save        body: { "position": {...} }   → { "id": 7, "created": true }
 POST /v1/positions.list        body: { "filter": {...} }   → NDJSON stream
 POST /v1/matches.delete        body: { "id": 42 }
 POST /v1/search.byFilter       body: { "filter": "..." }   → NDJSON stream
@@ -97,7 +97,7 @@ pkg/blunderdb/api/
 ```json
 {
   "error": {
-    "code": "not_found" | "conflict" | "invalid" | "internal",
+    "code": "not_found" | "unknown_route" | "conflict" | "invalid" | "internal" | "rate_limited",
     "message": "human-readable description",
     "details": { /* optional, code-specific */ }
   }
@@ -111,6 +111,8 @@ Mapping `storage.Err*` → HTTP status:
 - `ErrConflict` → 409 `conflict` (e.g. Zobrist dedup)
 - `ErrInvalid` → 400 `invalid`
 - anything else → 500 `internal`
+- a path no route serves → 404 `unknown_route` (never `not_found`: a client
+  must tell a renamed or removed method from an absent row)
 
 ## HTTP framework
 
